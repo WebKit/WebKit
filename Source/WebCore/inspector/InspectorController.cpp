@@ -112,6 +112,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
 #if ENABLE(WORKERS)
     , m_workerAgent(InspectorWorkerAgent::create(m_instrumentingAgents.get()))
 #endif
+    , m_page(page)
     , m_inspectorClient(inspectorClient)
     , m_openingFrontend(false)
     , m_startUserInitiatedDebuggingWhenFrontedIsConnected(false)
@@ -126,6 +127,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
         , m_domStorageAgent.get()
 #endif
     );
+    InspectorInstrumentation::bindInstrumentingAgents(m_page, m_instrumentingAgents.get());
 }
 
 InspectorController::~InspectorController()
@@ -135,6 +137,7 @@ InspectorController::~InspectorController()
 
 void InspectorController::inspectedPageDestroyed()
 {
+    InspectorInstrumentation::unbindInstrumentingAgents(m_page);
     disconnectFrontend();
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     m_domDebuggerAgent.clear();
@@ -143,6 +146,7 @@ void InspectorController::inspectedPageDestroyed()
     m_injectedScriptManager->disconnect();
     m_inspectorClient->inspectorDestroyed();
     m_inspectorClient = 0;
+    m_page = 0;
 }
 
 void InspectorController::setInspectorFrontendClient(PassOwnPtr<InspectorFrontendClient> inspectorFrontendClient)
@@ -162,7 +166,7 @@ void InspectorController::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWo
 
     // If the page is supposed to serve as InspectorFrontend notify inspector frontend
     // client that it's cleared so that the client can expose inspector bindings.
-    if (m_inspectorFrontendClient && frame == m_inspectorAgent->inspectedPage()->mainFrame())
+    if (m_inspectorFrontendClient && frame == m_page->mainFrame())
         m_inspectorFrontendClient->windowObjectCleared();
 }
 
@@ -376,7 +380,7 @@ bool InspectorController::enabled() const
 
 Page* InspectorController::inspectedPage() const
 {
-    return m_inspectorAgent->inspectedPage();
+    return m_page;
 }
 
 bool InspectorController::timelineProfilerEnabled()

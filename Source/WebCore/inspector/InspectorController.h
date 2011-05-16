@@ -155,6 +155,7 @@ private:
     RefPtr<InspectorBackendDispatcher> m_inspectorBackendDispatcher;
     OwnPtr<InspectorFrontendClient> m_inspectorFrontendClient;
     OwnPtr<InspectorFrontend> m_inspectorFrontend;
+    Page* m_page;
     InspectorClient* m_inspectorClient;
     bool m_openingFrontend;
     bool m_startUserInitiatedDebuggingWhenFrontedIsConnected;

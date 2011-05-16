@@ -41,8 +41,8 @@ namespace WebCore {
 inline void InspectorInstrumentation::didOpenDatabase(ScriptExecutionContext* context, PassRefPtr<Database> database, const String& domain, const String& name, const String& version)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForContext(context))
-        didOpenDatabaseImpl(inspectorAgent, database, domain, name, version);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        didOpenDatabaseImpl(instrumentingAgents, database, domain, name, version);
 #endif
 }
 #endif

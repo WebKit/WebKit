@@ -41,48 +41,49 @@ namespace WebCore {
 inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> callStack)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        addMessageToConsoleImpl(inspectorAgent, source, type, level, message, arguments, callStack);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, arguments, callStack);
 #endif
 }
 
 inline void InspectorInstrumentation::addMessageToConsole(Page* page, MessageSource source, MessageType type, MessageLevel level, const String& message, unsigned lineNumber, const String& sourceID)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        addMessageToConsoleImpl(inspectorAgent, source, type, level, message, lineNumber, sourceID);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        addMessageToConsoleImpl(instrumentingAgents, source, type, level, message, lineNumber, sourceID);
 #endif
 }
 
 inline void InspectorInstrumentation::consoleCount(Page* page, PassRefPtr<ScriptArguments> arguments, PassRefPtr<ScriptCallStack> stack)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        consoleCountImpl(inspectorAgent, arguments, stack);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        consoleCountImpl(instrumentingAgents, arguments, stack);
 #endif
 }
 
 inline void InspectorInstrumentation::startConsoleTiming(Page* page, const String& title)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        startConsoleTimingImpl(inspectorAgent, title);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        startConsoleTimingImpl(instrumentingAgents, title);
 #endif
 }
 
 inline void InspectorInstrumentation::stopConsoleTiming(Page* page, const String& title, PassRefPtr<ScriptCallStack> stack)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        stopConsoleTimingImpl(inspectorAgent, title, stack);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        stopConsoleTimingImpl(instrumentingAgents, title, stack);
 #endif
 }
 
 inline void InspectorInstrumentation::consoleMarkTimeline(Page* page, PassRefPtr<ScriptArguments> arguments)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentWithFrontendForPage(page))
-        consoleMarkTimelineImpl(inspectorAgent, arguments);
+    FAST_RETURN_IF_NO_FRONTENDS();
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        consoleMarkTimelineImpl(instrumentingAgents, arguments);
 #endif
 }
 
@@ -90,24 +91,24 @@ inline void InspectorInstrumentation::consoleMarkTimeline(Page* page, PassRefPtr
 inline void InspectorInstrumentation::addStartProfilingMessageToConsole(Page* page, const String& title, unsigned lineNumber, const String& sourceURL)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        addStartProfilingMessageToConsoleImpl(inspectorAgent, title, lineNumber, sourceURL);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        addStartProfilingMessageToConsoleImpl(instrumentingAgents, title, lineNumber, sourceURL);
 #endif
 }
 
 inline void InspectorInstrumentation::addProfile(Page* page, RefPtr<ScriptProfile> profile, PassRefPtr<ScriptCallStack> callStack)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        addProfileImpl(inspectorAgent, profile, callStack);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        addProfileImpl(instrumentingAgents, profile, callStack);
 #endif
 }
 
 inline bool InspectorInstrumentation::profilerEnabled(Page* page)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        return profilerEnabledImpl(inspectorAgent);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        return profilerEnabledImpl(instrumentingAgents);
 #endif
     return false;
 }
@@ -115,8 +116,8 @@ inline bool InspectorInstrumentation::profilerEnabled(Page* page)
 inline String InspectorInstrumentation::getCurrentUserInitiatedProfileName(Page* page, bool incrementProfileNumber)
 {
 #if ENABLE(INSPECTOR)
-    if (InspectorAgent* inspectorAgent = inspectorAgentForPage(page))
-        return InspectorInstrumentation::getCurrentUserInitiatedProfileNameImpl(inspectorAgent, incrementProfileNumber);
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        return InspectorInstrumentation::getCurrentUserInitiatedProfileNameImpl(instrumentingAgents, incrementProfileNumber);
 #endif
     return "";
 }

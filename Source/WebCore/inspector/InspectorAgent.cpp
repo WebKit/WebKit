@@ -69,7 +69,6 @@ InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScript
     , m_canIssueEvaluateForTestInFrontend(false)
 {
     ASSERT_ARG(page, page);
-    InspectorInstrumentation::bindInspectorAgent(m_inspectedPage, this);
     m_instrumentingAgents->setInspectorAgent(this);
 }
 
@@ -86,7 +85,6 @@ void InspectorAgent::inspectedPageDestroyed()
     if (m_frontend)
         m_frontend->inspector()->disconnectFromBackend();
     ASSERT(m_inspectedPage);
-    InspectorInstrumentation::unbindInspectorAgent(m_inspectedPage);
     m_inspectedPage = 0;
 }
 

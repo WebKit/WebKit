@@ -61,7 +61,6 @@ public:
 
     bool enabled() const;
 
-    Page* inspectedPage() const { return m_inspectedPage; }
     KURL inspectedURL() const;
     KURL inspectedURLWithoutFragment() const;
     void reloadPage(ErrorString*, bool ignoreCache);
@@ -71,8 +70,6 @@ public:
     InspectorFrontend* frontend() const { return m_frontend; }
     void clearFrontend();
     void restore();
-
-    InstrumentingAgents* instrumentingAgents() const { return m_instrumentingAgents; }
 
     void didClearWindowObjectInWorld(Frame*, DOMWrapperWorld*);
 

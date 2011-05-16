@@ -277,7 +277,7 @@ void HTMLDocument::releaseEvents()
 
 PassRefPtr<DocumentParser> HTMLDocument::createParser()
 {
-    bool reportErrors = InspectorInstrumentation::hasFrontend(this->page());
+    bool reportErrors = InspectorInstrumentation::collectingHTMLParseErrors(this->page());
     return HTMLDocumentParser::create(this, reportErrors);
 }
 
