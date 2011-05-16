@@ -50,7 +50,7 @@ ArgumentEncoder::~ArgumentEncoder()
 {
     if (m_buffer)
         fastFree(m_buffer);
-#if !PLATFORM(QT) && !PLATFORM(GTK)
+#if !USE(UNIX_DOMAIN_SOCKETS)
     // FIXME: We need to dispose of the attachments in cases of failure.
 #else
     for (int i = 0; i < m_attachments.size(); ++i)

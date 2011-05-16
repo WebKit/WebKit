@@ -1,3 +1,15 @@
+2011-05-16  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt][Wk2][Symbian] Fix build after r86560
+        https://bugs.webkit.org/show_bug.cgi?id=60887
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::~ArgumentDecoder): guard Unix and Gtk code with USE(UNIX_DOMAIN_SOCKETS)
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::ArgumentEncoder::~ArgumentEncoder): ditto
+
 2011-05-16  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Roben.

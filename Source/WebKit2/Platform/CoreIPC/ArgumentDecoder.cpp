@@ -47,7 +47,7 @@ ArgumentDecoder::~ArgumentDecoder()
 {
     ASSERT(m_allocatedBase);
     fastFree(m_allocatedBase);
-#if !PLATFORM(QT) && !PLATFORM(GTK)
+#if !USE(UNIX_DOMAIN_SOCKETS)
     // FIXME: We need to dispose of the mach ports in cases of failure.
 #else
     Deque<Attachment>::iterator end = m_attachments.end();
