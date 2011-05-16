@@ -151,13 +151,14 @@ var WebInspector = {
         }
     },
 
-    _createPanels: function(hiddenPanels)
+    _createPanels: function()
     {
         if (WebInspector.WorkerManager.isWorkerFrontend()) {
             this.panels.scripts = new WebInspector.ScriptsPanel();
             this.panels.console = new WebInspector.ConsolePanel();
             return;
         }
+        var hiddenPanels = (InspectorFrontendHost.hiddenPanels() || "").split(',');
         if (hiddenPanels.indexOf("elements") === -1)
             this.panels.elements = new WebInspector.ElementsPanel();
         if (hiddenPanels.indexOf("resources") === -1)
@@ -172,6 +173,8 @@ var WebInspector = {
             this.panels.profiles = new WebInspector.ProfilesPanel();
         if (hiddenPanels.indexOf("audits") === -1)
             this.panels.audits = new WebInspector.AuditsPanel();
+        if (hiddenPanels.indexOf("console") === -1)
+            this.panels.console = new WebInspector.ConsolePanel();
     },
 
     get attached()
@@ -414,7 +417,7 @@ WebInspector.doLoadedDone = function()
     WebInspector.shortcutsHelp.section(WebInspector.UIString("Elements Panel"));
 
     this.drawer = new WebInspector.Drawer();
-    this.console = new WebInspector.ConsolePanel(this.drawer);
+    this.console = new WebInspector.ConsoleView(this.drawer);
     this.drawer.visibleView = this.console;
     this.networkManager = new WebInspector.NetworkManager();
     this.resourceTreeModel = new WebInspector.ResourceTreeModel();
@@ -439,12 +442,8 @@ WebInspector.doLoadedDone = function()
     this.searchController = new WebInspector.SearchController();
     this.domBreakpointsSidebarPane = new WebInspector.DOMBreakpointsSidebarPane();
 
-    var hiddenPanels = (InspectorFrontendHost.hiddenPanels() || "").split(',');
     this.panels = {};
-    this._createPanels(hiddenPanels);
-    if (hiddenPanels.indexOf("console") === -1)
-        this.panels.console = this.console;
-
+    this._createPanels();
     this._panelHistory = new WebInspector.PanelHistory();
     this.toolbar = new WebInspector.Toolbar();
     this.toolbar.attached = WebInspector.attached;

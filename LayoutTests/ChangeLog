@@ -1,3 +1,23 @@
+2011-05-16  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r86589.
+        http://trac.webkit.org/changeset/86589
+        https://bugs.webkit.org/show_bug.cgi?id=54670
+
+        Broke chromium inspector tests.
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest.InspectorTest.evaluateInConsole):
+        * inspector/console/console-assert.html:
+        * inspector/console/console-trace-in-eval.html:
+        * inspector/console/console-trace.html:
+        * inspector/console/console-uncaught-exception.html:
+        * inspector/debugger/debugger-autocontinue-on-syntax-error.html:
+        * inspector/styles/styles-iframe.html:
+        * inspector/timeline/timeline-network-resource.html:
+        * inspector/timeline/timeline-script-tag-1.html:
+        * inspector/timeline/timeline-script-tag-2.html:
+
 2011-05-16  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

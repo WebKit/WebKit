@@ -26,7 +26,7 @@ InspectorTest.evaluateInConsole = function(code, callback)
     var event = document.createEvent("KeyboardEvent");
     event.initKeyboardEvent("keydown", true, true, null, "Enter", "");
     WebInspector.console.promptElement.dispatchEvent(event);
-    InspectorTest.waitUntilConsoleMessageAdded(
+    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage",
         function(commandResult) {
             callback(commandResult.toMessageElement().textContent);
         });
@@ -42,11 +42,6 @@ InspectorTest.evaluateInConsoleAndDump = function(code, callback)
         callback(text);
     }
     InspectorTest.evaluateInConsole(code, mycallback);
-}
-
-InspectorTest.waitUntilConsoleMessageAdded = function(callback, sticky)
-{
-    InspectorTest.addSniffer(WebInspector.ConsolePanel.prototype, "addMessage", callback, sticky);
 }
 
 InspectorTest.evaluateInPage = function(code, callback)

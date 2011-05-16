@@ -1,3 +1,31 @@
+2011-05-16  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r86589.
+        http://trac.webkit.org/changeset/86589
+        https://bugs.webkit.org/show_bug.cgi?id=54670
+
+        Broke chromium inspector tests.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.show):
+        (WebInspector.ConsoleView.prototype.afterShow):
+        (WebInspector.ConsoleView.prototype.hide):
+        (WebInspector.ConsoleView.prototype.addMessage):
+        (WebInspector.ConsoleView.prototype.clearMessages):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.set visibleView):
+        (WebInspector.Drawer.prototype.show.animationFinished):
+        (WebInspector.Drawer.prototype.show):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+
 2011-05-16  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Enrica Casucci.
