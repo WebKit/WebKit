@@ -143,6 +143,8 @@ private:
 
     bool tryToShortCircuitEvaluate(NPObject*, const String& scriptString, NPVariant* result);
 
+    bool inInitialize() const { return m_pluginCreationParameters; }
+
     void platformInitialize();
     void platformDestroy();
     void platformGeometryDidChange();
@@ -172,6 +174,9 @@ private:
     // A timer that we use to prevent destruction of the plug-in while plug-in
     // code is on the stack.
     RunLoop::Timer<PluginControllerProxy> m_pluginDestroyTimer;
+
+    // Will point to the plug-in creation parameters of the plug-in we're currently initializing and will be null when we're done initializing.
+    const PluginCreationParameters* m_pluginCreationParameters;
 
     // Whether we're waiting for the plug-in proxy in the web process to draw the contents of its
     // backing store into the web process backing store.

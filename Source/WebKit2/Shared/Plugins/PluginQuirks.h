@@ -48,6 +48,12 @@ public:
         // transparent.
         MakeTransparentIfBackgroundAttributeExists,
 
+        // Whether we can short circuit some NPRuntime calls during plug-in initialization.
+        // The Flash plug-in uses NPRuntime to figure out the URL of the frame it is in, as well
+        // as the URL of the main frame. Since we know the exact NPRuntime calls the plug-in makes,
+        // we can return the right values without having to do sync IPC back into the web process.
+        CanShortCircuitSomeNPRuntimeCallsDuringInitialization,
+
 #ifndef NP_NO_QUICKDRAW
         // Allow the plug-in to use the QuickDraw drawing model, since we know that the plug-in
         // will never paint or receive events. Used by the AppleConnect plug-in.

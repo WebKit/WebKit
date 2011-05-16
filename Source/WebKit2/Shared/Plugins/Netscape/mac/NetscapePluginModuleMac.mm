@@ -415,6 +415,9 @@ void NetscapePluginModule::determineQuirks()
 
         // Flash supports snapshotting.
         m_pluginQuirks.add(PluginQuirks::SupportsSnapshotting);
+
+        // We can short circuit some NPRuntime calls during initialization.
+        m_pluginQuirks.add(PluginQuirks::CanShortCircuitSomeNPRuntimeCallsDuringInitialization);
     }
 
     if (plugin.bundleIdentifier == "com.microsoft.SilverlightPlugin") {

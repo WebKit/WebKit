@@ -1,5 +1,51 @@
 2011-05-16  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Oliver Hunt.
+
+        Short-circuit NPRuntime calls made by Flash during plug-in instantiation
+        https://bugs.webkit.org/show_bug.cgi?id=60894
+        <rdar://problem/8804681>
+
+        During plug-in instantiation, Flash makes a couple of NPRuntime calls to get the
+        URL of the current document as well as the URL of the toplevel document. This leads to
+        a bunch of IPC traffic that slows down instantiation.
+
+        Since we know what calls Flash is making and what results are expected, we can handle the
+        NPRuntime calls directly in the plug-in process and avoid extra IPC overhead.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::PluginControllerProxy):
+        Initialize m_pluginCreationParameters.
+
+        (WebKit::PluginControllerProxy::initialize):
+        Set m_pluginCreationParameters to point to the creation parameters right before
+        calling Plugin::initialize and restore it back afterwards.
+
+        (WebKit::PluginControllerProxy::tryToShortCircuitInvoke):
+        If the plug-in calling NPN_Invoke has the CanShortCircuitSomeNPRuntimeCallsDuringInitialization
+        quirk, and we're being initialized, check for the __flash_getWindowLocation and
+        __flash_getTopLocation function calls and return the correct values.
+
+        (WebKit::PluginControllerProxy::tryToShortCircuitEvaluate):
+        Check if the script string has the definitions of __flash_getWindowLocation or __flash_getTopLocation
+        and just ignore them. Note that ignoring them has the effect of not adding them to the window object,
+        which could in theory be a backwards compatibility problem if web pages were to assume that these
+        functions existed on a page with plug-ins. In practice this is probably not a problem, especially since
+        these functions are only used on Mac WebKit.
+
+        * PluginProcess/PluginControllerProxy.h:
+        (WebKit::PluginControllerProxy::inInitialize):
+        Add helper function.
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        Add the CanShortCircuitSomeNPRuntimeCallsDuringInitialization quirk for Flash on Mac.
+
+        * Shared/Plugins/PluginQuirks.h:
+        Add Mac specific CanShortCircuitSomeNPRuntimeCallsDuringInitialization quirk.
+
+2011-05-16  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Adam Roben.
 
         Add a returnValue parameter to tryToShortCircuitInvoke

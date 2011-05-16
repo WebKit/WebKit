@@ -41,6 +41,7 @@
 #include "WebCoreArgumentCoders.h"
 #include "WebProcessConnection.h"
 #include <WebCore/GraphicsContext.h>
+#include <WebCore/IdentifierRep.h>
 #include <WebCore/NotImplemented.h>
 #include <wtf/text/WTFString.h>
 
@@ -64,6 +65,7 @@ PluginControllerProxy::PluginControllerProxy(WebProcessConnection* connection, c
     , m_paintTimer(RunLoop::main(), this, &PluginControllerProxy::paint)
     , m_pluginDestructionProtectCount(0)
     , m_pluginDestroyTimer(RunLoop::main(), this, &PluginControllerProxy::destroy)
+    , m_pluginCreationParameters(0)
     , m_waitingForDidUpdate(false)
     , m_pluginCanceledManualStreamLoad(false)
 #if PLATFORM(MAC)
@@ -99,7 +101,11 @@ bool PluginControllerProxy::initialize(const PluginCreationParameters& creationP
     m_windowNPObject = m_connection->npRemoteObjectMap()->createNPObjectProxy(creationParameters.windowNPObjectID, m_plugin.get());
     ASSERT(m_windowNPObject);
 
-    if (!m_plugin->initialize(this, creationParameters.parameters)) {
+    m_pluginCreationParameters = &creationParameters;
+    bool returnValue = m_plugin->initialize(this, creationParameters.parameters);
+    m_pluginCreationParameters = 0;
+
+    if (!returnValue) {
         // Get the plug-in so we can pass it to removePluginControllerProxy. The pointer is only
         // used as an identifier so it's OK to just get a weak reference.
         Plugin* plugin = m_plugin.get();
@@ -281,8 +287,48 @@ bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptStr
     return true;
 }
 
-bool PluginControllerProxy::tryToShortCircuitInvoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, bool& returnValue, NPVariant& result)
+bool PluginControllerProxy::tryToShortCircuitInvoke(NPObject* npObject, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, bool& returnValue, NPVariant& result)
 {
+    // Only try to short circuit evaluate for plug-ins that have the quirk specified.
+    if (!PluginProcess::shared().netscapePluginModule()->pluginQuirks().contains(PluginQuirks::CanShortCircuitSomeNPRuntimeCallsDuringInitialization))
+        return false;
+    
+    // And only when we're in initialize.
+    if (!inInitialize())
+        return false;
+    
+    // And only when the NPObject is the window NPObject.
+    if (npObject != m_windowNPObject)
+        return false;
+
+    // And only when we don't have any arguments.
+    if (argumentCount)
+        return false;
+
+    IdentifierRep* methodNameRep = static_cast<IdentifierRep*>(methodName);
+    if (!methodNameRep->isString())
+        return false;
+
+    if (!strcmp(methodNameRep->string(), "__flash_getWindowLocation")) {
+        result.type = NPVariantType_String;
+        result.value.stringValue = createNPString(m_pluginCreationParameters->parameters.documentURL.utf8()); 
+        returnValue = true;
+        return true;
+    }
+    
+    if (!strcmp(methodNameRep->string(), "__flash_getTopLocation")) {
+        if (m_pluginCreationParameters->parameters.toplevelDocumentURL.isNull()) {
+            // If the toplevel document is URL it means that the frame that the plug-in is in doesn't have access to the toplevel document.
+            returnValue = false;
+            return true;
+        }
+
+        result.type = NPVariantType_String;
+        result.value.stringValue = createNPString(m_pluginCreationParameters->parameters.toplevelDocumentURL.utf8()); 
+        returnValue = true;
+        return true;
+    }
+
     return false;
 }
 
@@ -542,7 +588,25 @@ void PluginControllerProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEn
 
 bool PluginControllerProxy::tryToShortCircuitEvaluate(NPObject* npObject, const String& scriptString, NPVariant* result)
 {
-    return false;
+    // Only try to short circuit evaluate for plug-ins that have the quirk specified.
+    if (!PluginProcess::shared().netscapePluginModule()->pluginQuirks().contains(PluginQuirks::CanShortCircuitSomeNPRuntimeCallsDuringInitialization))
+        return false;
+
+    // And only when we're in initialize.
+    if (!inInitialize())
+        return false;
+
+    // And only when the NPObject is the window NPObject.
+    if (npObject != m_windowNPObject)
+        return false;
+
+    // Now, check for the right strings.
+    if (scriptString != "function __flash_getWindowLocation() { return window.location; }"
+        && scriptString != "function __flash_getTopLocation() { return top.location; }")
+        return false;
+
+    VOID_TO_NPVARIANT(*result);
+    return true;
 }
 
 } // namespace WebKit
