@@ -1,3 +1,19 @@
+2011-05-16  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] shard V8DerivedSources into 19 files
+        https://bugs.webkit.org/show_bug.cgi?id=60926
+
+        This reduces the clobber build time by 4s on my machine.  It helps
+        by making the slowest to compile V8DerivedSources faster (and thus
+        more parallelizable).  With 8 files, the 3 slowest are 23s, 18s and
+        10s.  With 19 files, the 3 slowest are 16s, 10s, and 10s.
+
+        * WebCore.gyp/WebCore.gyp:
+        * storage/IDBObjectStore.h: Fix a missing include that was working
+          because a different .cpp file before it was including the header.
+
 2011-05-16  Chris Rogers  <crogers@google.com>
 
         Unreviewed build fix.

@@ -32,6 +32,7 @@
 #include "IDBKeyRange.h"
 #include "IDBObjectStoreBackendInterface.h"
 #include "IDBRequest.h"
+#include "IDBTransaction.h"
 #include "OptionsObject.h"
 #include "PlatformString.h"
 #include "SerializedScriptValue.h"
