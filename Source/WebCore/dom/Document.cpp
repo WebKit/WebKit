@@ -422,6 +422,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_writingModeSetOnDocumentElement(false)
     , m_writeRecursionIsTooDeep(false)
     , m_writeRecursionDepth(0)
+    , m_wheelEventHandlerCount(0)
 {
     m_document = this;
 
@@ -5078,5 +5079,22 @@ PassRefPtr<TouchList> Document::createTouchList(ExceptionCode&) const
     return TouchList::create();
 }
 #endif
+
+void Document::didAddWheelEventHandler()
+{
+    ++m_wheelEventHandlerCount;
+    Frame* mainFrame = page() ? page()->mainFrame() : 0;
+    if (mainFrame)
+        mainFrame->notifyChromeClientWheelEventHandlerCountChanged();
+}
+
+void Document::didRemoveWheelEventHandler()
+{
+    ASSERT(m_wheelEventHandlerCount > 0);
+    --m_wheelEventHandlerCount;
+    Frame* mainFrame = page() ? page()->mainFrame() : 0;
+    if (mainFrame)
+        mainFrame->notifyChromeClientWheelEventHandlerCountChanged();
+}
 
 } // namespace WebCore

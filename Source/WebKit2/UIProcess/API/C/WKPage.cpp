@@ -146,6 +146,11 @@ WKBackForwardListRef WKPageGetBackForwardList(WKPageRef pageRef)
     return toAPI(toImpl(pageRef)->backForwardList());
 }
 
+bool WKPageWillHandleHorizontalScrollEvents(WKPageRef pageRef)
+{
+    return toImpl(pageRef)->willHandleHorizontalScrollEvents();
+}
+
 WKStringRef WKPageCopyTitle(WKPageRef pageRef)
 {
     return toCopiedAPI(toImpl(pageRef)->pageTitle());

@@ -182,6 +182,10 @@ public:
 #if ENABLE(CONTEXT_MENUS)
     virtual void showContextMenu();
 #endif
+    
+    virtual void numWheelEventHandlersChanged(unsigned) { }
+    
+    virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return false; }
 private:
     WebView *m_webView;
 };

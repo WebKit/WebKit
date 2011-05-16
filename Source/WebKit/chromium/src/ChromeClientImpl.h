@@ -196,6 +196,9 @@ public:
 
     virtual void willRunModalDialogDuringPageDismissal(const DialogType&) const;
 
+    virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return true; }
+    virtual void numWheelEventHandlersChanged(unsigned) { }
+
 private:
     void getPopupMenuInfo(WebCore::PopupContainer*, WebPopupMenuInfo*);
     void setCursor(const WebCursorInfo&);

@@ -182,6 +182,9 @@ public:
     virtual void exitFullScreenForElement(WebCore::Element*);
 #endif
 
+    virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return true; }
+    virtual void numWheelEventHandlersChanged(unsigned) { }
+
 private:
     COMPtr<IWebUIDelegate> uiDelegate();
 

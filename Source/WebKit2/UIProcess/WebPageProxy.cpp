@@ -3060,6 +3060,11 @@ void WebPageProxy::didFailToInitializePlugin(const String& mimeType)
     m_loaderClient.didFailToInitializePlugin(this, mimeType);
 }
 
+bool WebPageProxy::willHandleHorizontalScrollEvents() const
+{
+    return m_wheelEventHandlerCount > 0;
+}
+
 void WebPageProxy::didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference& dataReference)
 {
     m_pageClient->didFinishLoadingDataForCustomRepresentation(suggestedFilename, dataReference);

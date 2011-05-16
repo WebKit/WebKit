@@ -28,6 +28,8 @@
 #include "AXObjectCache.h"
 #include "Attr.h"
 #include "Attribute.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "CSSParser.h"
 #include "CSSRule.h"
 #include "CSSRuleList.h"
@@ -2668,9 +2670,12 @@ static inline bool tryAddEventListener(Node* targetNode, const AtomicString& eve
     if (!targetNode->EventTarget::addEventListener(eventType, listener, useCapture))
         return false;
 
-    if (Document* document = targetNode->document())
+    if (Document* document = targetNode->document()) {
         document->addListenerTypeIfNeeded(eventType);
-
+        if (eventType == eventNames().mousewheelEvent)
+            document->didAddWheelEventHandler();
+    }
+        
     return true;
 }
 
@@ -2715,7 +2720,11 @@ static inline bool tryRemoveEventListener(Node* targetNode, const AtomicString& 
 
     // FIXME: Notify Document that the listener has vanished. We need to keep track of a number of
     // listeners for each type, not just a bool - see https://bugs.webkit.org/show_bug.cgi?id=33861
-
+    if (Document* document = targetNode->document()) {
+        if (eventType == eventNames().mousewheelEvent)
+            document->didRemoveWheelEventHandler();
+    }
+    
     return true;
 }
 

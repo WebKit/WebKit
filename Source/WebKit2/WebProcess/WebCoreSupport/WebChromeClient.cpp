@@ -759,4 +759,22 @@ void WebChromeClient::notifyScrollerThumbIsVisibleInRect(const IntRect& scroller
     m_page->send(Messages::WebPageProxy::NotifyScrollerThumbIsVisibleInRect(scrollerThumb));
 }
 
+bool WebChromeClient::shouldRubberBandInDirection(WebCore::ScrollDirection direction) const
+{
+    ASSERT(direction != WebCore::ScrollUp && direction != WebCore::ScrollDown);
+    
+    if (direction == WebCore::ScrollLeft)
+        return m_page->injectedBundleUIClient().shouldRubberBandInDirection(m_page, WKScrollDirectionLeft);
+    if (direction == WebCore::ScrollRight)
+        return m_page->injectedBundleUIClient().shouldRubberBandInDirection(m_page, WKScrollDirectionRight);
+
+    ASSERT_NOT_REACHED();
+    return true;
+}
+
+void WebChromeClient::numWheelEventHandlersChanged(unsigned count)
+{
+    m_page->send(Messages::WebPageProxy::NumWheelEventHandlersChanged(count));
+}
+
 } // namespace WebKit

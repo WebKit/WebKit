@@ -247,6 +247,8 @@ public:
     IntRect getRectToExpose(const IntRect& visibleRect, const IntRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY);
 
     bool scrollsOverflow() const;
+    virtual void didAddHorizontalScrollbar(Scrollbar*);
+    virtual void willRemoveHorizontalScrollbar(Scrollbar*);
     void setHasHorizontalScrollbar(bool);
     void setHasVerticalScrollbar(bool);
 

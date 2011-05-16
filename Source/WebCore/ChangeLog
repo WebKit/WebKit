@@ -1,3 +1,70 @@
+2011-05-16  Jon Lee  <jonlee@apple.com>
+
+       Reviewed by Simon Fraser.
+
+       Can't horizontally scroll iframes and overflow because wheel events are always accepted
+       https://bugs.webkit.org/show_bug.cgi?id=60779
+
+       * dom/Document.cpp:
+       (WebCore::Document::Document): Initialize wheel event handler count
+       (WebCore::Document::didAddWheelEventHandler): Increment count, and tell the main frame
+       to recalculate the total number of wheel event handlers in all of its frames' documents
+       (WebCore::Document::didRemoveWheelEventHandler): Reverse of previous method
+       * dom/Document.h:
+       (WebCore::Document::wheelEventHandlerCount): Access the count
+       * dom/Node.cpp:
+       (WebCore::tryAddEventListener): If the event listener is a mouse wheel event, then
+       tell the document to increment its count
+       (WebCore::tryRemoveEventListener): Reverse of previous method
+
+       * page/ChromeClient.h: Two new methods:
+         numWheelEventHandlersChanged: WebProcess tells UIProcess to update its cached
+           count of total wheel event handlers, which in this case only include horizontal
+           scrollbars and mouse wheel JS handlers
+         shouldRubberBandInDirection: allow the UIProcess to provide some control over
+           whether rubber banding is allowed when scrolling in a particular direction
+       * loader/EmptyClients.h:
+       (WebCore::EmptyChromeClient::numWheelEventHandlersChanged): Default empty impl
+       (WebCore::EmptyChromeClient::shouldRubberBandInDirection): Default empty impl
+       * page/EventHandler.cpp:
+       (WebCore::EventHandler::handleWheelEvent): Remove a redundant pointer check
+       * page/Frame.cpp:
+       (WebCore::Frame::setDocument): When the frame's document changes, calculate that
+       document's total wheel event handlers, and notify the UIProcess
+       (WebCore::Frame::notifyChromeClientWheelEventHandlerCountChanged): Performs a crawl
+       of the frame tree to aggregate the count
+       * page/Frame.h:
+
+       * platform/ScrollableArea.h: Virtualize didAddHorizontalScrollbar and
+       willRemoveHorizontalScrollbar for overriding in RenderLayer and FrameView
+       (WebCore::ScrollableArea::isHorizontalScrollerPinnedToMinimumPosition): Returns true if there is
+       no scrollbar or the scroller position is in the minimum scroll position.
+       (WebCore::ScrollableArea::isHorizontalScrollerPinnedToMaximumPosition): Converse of the above.
+       (WebCore::ScrollableArea::shouldRubberBandInDirection): Default impl
+       * page/FrameView.cpp:
+       (WebCore::FrameView::didAddHorizontalScrollbar): Updates the frame's document's count
+       (WebCore::FrameView::willRemoveHorizontalScrollbar): Updates the frame's document's
+       count
+       (WebCore::FrameView::shouldRubberBandInDirection): Connective glue
+       * page/FrameView.h: Adding overriding methods from ScrollableArea
+       * rendering/RenderLayer.cpp: Similar functionality to FrameView
+       (WebCore::RenderLayer::didAddHorizontalScrollbar):
+       (WebCore::RenderLayer::willRemoveHorizontalScrollbar):
+       * rendering/RenderLayer.h:
+       
+       * platform/mac/ScrollAnimatorMac.h: Fix typo of "momentum"
+       * platform/mac/ScrollAnimatorMac.mm:
+       (WebCore::ScrollAnimatorMac::ScrollAnimatorMac): Fix typo of "momentum"
+       (WebCore::ScrollAnimatorMac::smoothScrollWithEvent): Fix typo of "coalesced"
+       (WebCore::ScrollAnimatorMac::beginScrollGesture): Fix typo of "coalesced"
+       (WebCore::ScrollAnimatorMac::snapRubberBand): Fix typo of "momentum"
+       
+       (WebCore::ScrollAnimatorMac::handleWheelEvent): New logic for determining whether
+       to allow rubber-banding based on the area's scroll position and the wheel event.
+       Could prevent accepting the wheel event. Also, fix typo of "momentum"
+       (WebCore::isScrollingLeftAndShouldNotRubberBand): Inline helper function for logic
+       (WebCore::isScrollingRightAndShouldNotRubberBand): Inline helper function for logic
+
 2011-05-16  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Tony Gentilcore.

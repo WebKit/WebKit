@@ -152,6 +152,9 @@ public:
     virtual PassRefPtr<PopupMenu> createPopupMenu(PopupMenuClient*) const;
     virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
 
+    virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return true; }
+    virtual void numWheelEventHandlersChanged(unsigned) { }
+
     Evas_Object* m_view;
     KURL m_hoveredLinkURL;
 };

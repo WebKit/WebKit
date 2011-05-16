@@ -82,6 +82,8 @@ public:
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollbarOrientation);
 
     virtual bool avoidScrollbarCreation() const;
+    virtual void didAddHorizontalScrollbar(Scrollbar*);
+    virtual void willRemoveHorizontalScrollbar(Scrollbar*);
 
     virtual void setContentsSize(const IntSize&);
 
@@ -160,6 +162,7 @@ public:
     void setScrollPosition(const IntPoint&);
     void scrollPositionChangedViaPlatformWidget();
     virtual void repaintFixedElementsAfterScrolling();
+    virtual bool shouldRubberBandInDirection(ScrollDirection) const;
 
     String mediaType() const;
     void setMediaType(const String&);

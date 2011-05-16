@@ -223,6 +223,10 @@ public:
 #if ENABLE(TOUCH_EVENTS)
     virtual void needTouchEvents(bool) { }
 #endif
+    
+    virtual void numWheelEventHandlersChanged(unsigned) { }
+    
+    virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return false; }
 };
 
 class EmptyFrameLoaderClient : public FrameLoaderClient {

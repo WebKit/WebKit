@@ -194,6 +194,9 @@ public:
 
     virtual void dispatchViewportDataDidChange(const ViewportArguments&) const;
 
+    virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return true; }
+    virtual void numWheelEventHandlersChanged(unsigned) { }
+
     QWebPage* m_webPage;
     KURL lastHoverURL;
     String lastHoverTitle;

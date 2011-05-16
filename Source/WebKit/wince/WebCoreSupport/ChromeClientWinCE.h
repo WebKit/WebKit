@@ -177,6 +177,9 @@ public:
     virtual PassRefPtr<WebCore::PopupMenu> createPopupMenu(WebCore::PopupMenuClient*) const;
     virtual PassRefPtr<WebCore::SearchPopupMenu> createSearchPopupMenu(WebCore::PopupMenuClient*) const;
 
+    virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return true; }
+    virtual void numWheelEventHandlersChanged(unsigned) { }
+
 private:
     WebView* m_webView;
 };

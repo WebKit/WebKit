@@ -206,6 +206,9 @@ namespace WebCore {
 #if ENABLE(MEDIA_STREAM)
         MediaStreamFrameController* mediaStreamFrameController() const { return m_mediaStreamFrameController.get(); }
 #endif
+        
+        // Should only be called on the main frame of a page.
+        void notifyChromeClientWheelEventHandlerCountChanged() const;
 
     // ========
 

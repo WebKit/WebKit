@@ -58,6 +58,8 @@ public:
 
     String shouldGenerateFileForUpload(WebPage*, const String& originalFilePath);
     String generateFileForUpload(WebPage*, const String& originalFilePath);
+    
+    bool shouldRubberBandInDirection(WebPage*, WKScrollDirection) const;
 };
 
 } // namespace WebKit

@@ -459,7 +459,7 @@ ScrollAnimatorMac::ScrollAnimatorMac(ScrollableArea* scrollableArea)
     , m_inScrollGesture(false)
     , m_momentumScrollInProgress(false)
     , m_ignoreMomentumScrolls(false)
-    , m_lastMomemtumScrollTimestamp(0)
+    , m_lastMomentumScrollTimestamp(0)
     , m_startTime(0)
     , m_snapRubberBandTimer(this, &ScrollAnimatorMac::snapRubberBandTimerFired)
 #endif
@@ -764,6 +764,16 @@ static float scrollWheelMultiplier()
     return multiplier;
 }
 
+static inline bool isScrollingLeftAndShouldNotRubberBand(PlatformWheelEvent& wheelEvent, ScrollableArea* scrollableArea)
+{
+    return wheelEvent.deltaX() > 0 && !scrollableArea->shouldRubberBandInDirection(ScrollLeft);
+}
+
+static inline bool isScrollingRightAndShouldNotRubberBand(PlatformWheelEvent& wheelEvent, ScrollableArea* scrollableArea)
+{
+    return wheelEvent.deltaX() < 0 && !scrollableArea->shouldRubberBandInDirection(ScrollRight);
+}
+
 void ScrollAnimatorMac::handleWheelEvent(PlatformWheelEvent& wheelEvent)
 {
     m_haveScrolledSincePageLoad = true;
@@ -787,17 +797,47 @@ void ScrollAnimatorMac::handleWheelEvent(PlatformWheelEvent& wheelEvent)
             ScrollAnimator::handleWheelEvent(wheelEvent);
             return;
         }
+        
+        if (m_scrollableArea->horizontalScrollbar()) {
+            // If there is a scrollbar, we aggregate the wheel events to get an
+            // overall trend of the scroll. If the direction of the scroll is ever
+            // in the opposite direction of the pin location, then we switch the
+            // boolean, and rubber band. That is, if we were pinned to the left,
+            // and we ended up scrolling to the right, we rubber band.
+            m_cumulativeHorizontalScroll += wheelEvent.deltaX();
+            if (m_scrollerInitiallyPinnedOnLeft && m_cumulativeHorizontalScroll < 0)
+                m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin = true;
+            if (m_scrollerInitiallyPinnedOnRight && m_cumulativeHorizontalScroll > 0)
+                m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin = true;
+        }
+
+        // After a gesture begins, we go through:
+        // 1+ PlatformWheelEventPhaseNone
+        // 0+ PlatformWheelEventPhaseChanged
+        // 1 PlatformWheelEventPhaseEnded if there was at least one changed event
+        if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseNone && !m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin) {
+            if ((isScrollingLeftAndShouldNotRubberBand(wheelEvent, m_scrollableArea) &&
+                m_scrollerInitiallyPinnedOnLeft &&
+                m_scrollableArea->isHorizontalScrollerPinnedToMinimumPosition()) ||
+                (isScrollingRightAndShouldNotRubberBand(wheelEvent, m_scrollableArea) &&
+                m_scrollerInitiallyPinnedOnRight &&
+                m_scrollableArea->isHorizontalScrollerPinnedToMaximumPosition())) {
+                ScrollAnimator::handleWheelEvent(wheelEvent);
+                return;
+            }
+        }
     }
 
-    wheelEvent.accept();
-
-    bool isMometumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhaseNone);
-    if (m_ignoreMomentumScrolls && (isMometumScrollEvent || m_snapRubberBandTimer.isActive())) {
-        if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded)
+    bool isMomentumScrollEvent = (wheelEvent.momentumPhase() != PlatformWheelEventPhaseNone);
+    if (m_ignoreMomentumScrolls && (isMomentumScrollEvent || m_snapRubberBandTimer.isActive())) {
+        if (wheelEvent.momentumPhase() == PlatformWheelEventPhaseEnded) {
             m_ignoreMomentumScrolls = false;
+            wheelEvent.accept();
+        }
         return;
     }
 
+    wheelEvent.accept();
     smoothScrollWithEvent(wheelEvent);
 }
 
@@ -881,11 +921,11 @@ void ScrollAnimatorMac::smoothScrollWithEvent(PlatformWheelEvent& wheelEvent)
     // Reset overflow values because we may decide to remove delta at various points and put it into overflow.
     m_overflowScrollDelta = FloatSize();
 
-    float eventCoallescedDeltaX = -wheelEvent.deltaX();
-    float eventCoallescedDeltaY = -wheelEvent.deltaY();
+    float eventCoalescedDeltaX = -wheelEvent.deltaX();
+    float eventCoalescedDeltaY = -wheelEvent.deltaY();
 
-    deltaX += eventCoallescedDeltaX;
-    deltaY += eventCoallescedDeltaY;
+    deltaX += eventCoalescedDeltaX;
+    deltaY += eventCoalescedDeltaY;
 
     // Slightly prefer scrolling vertically by applying the = case to deltaY
     if (fabsf(deltaY) >= fabsf(deltaX))
@@ -908,14 +948,14 @@ void ScrollAnimatorMac::smoothScrollWithEvent(PlatformWheelEvent& wheelEvent)
     if (!m_momentumScrollInProgress && (phase == PlatformWheelEventPhaseBegan || phase == PlatformWheelEventPhaseChanged))
         m_momentumScrollInProgress = true;
 
-    CFTimeInterval timeDelta = wheelEvent.timestamp() - m_lastMomemtumScrollTimestamp;
+    CFTimeInterval timeDelta = wheelEvent.timestamp() - m_lastMomentumScrollTimestamp;
     if (m_inScrollGesture || m_momentumScrollInProgress) {
-        if (m_lastMomemtumScrollTimestamp && timeDelta > 0 && timeDelta < scrollVelocityZeroingTimeout) {
-            m_momentumVelocity.setWidth(eventCoallescedDeltaX / (float)timeDelta);
-            m_momentumVelocity.setHeight(eventCoallescedDeltaY / (float)timeDelta);
-            m_lastMomemtumScrollTimestamp = wheelEvent.timestamp();
+        if (m_lastMomentumScrollTimestamp && timeDelta > 0 && timeDelta < scrollVelocityZeroingTimeout) {
+            m_momentumVelocity.setWidth(eventCoalescedDeltaX / (float)timeDelta);
+            m_momentumVelocity.setHeight(eventCoalescedDeltaY / (float)timeDelta);
+            m_lastMomentumScrollTimestamp = wheelEvent.timestamp();
         } else {
-            m_lastMomemtumScrollTimestamp = wheelEvent.timestamp();
+            m_lastMomentumScrollTimestamp = wheelEvent.timestamp();
             m_momentumVelocity = FloatSize();
         }
 
@@ -969,7 +1009,7 @@ void ScrollAnimatorMac::smoothScrollWithEvent(PlatformWheelEvent& wheelEvent)
         } else {
             if (!allowsHorizontalStretching()) {
                 deltaX = 0;
-                eventCoallescedDeltaX = 0;
+                eventCoalescedDeltaX = 0;
             } else if ((deltaX != 0) && !isHorizontallyStretched && !pinnedInDirection(deltaX, 0)) {
                 deltaX *= scrollWheelMultiplier();
 
@@ -982,7 +1022,7 @@ void ScrollAnimatorMac::smoothScrollWithEvent(PlatformWheelEvent& wheelEvent)
             
             if (!allowsVerticalStretching()) {
                 deltaY = 0;
-                eventCoallescedDeltaY = 0;
+                eventCoalescedDeltaY = 0;
             } else if ((deltaY != 0) && !isVerticallyStretched && !pinnedInDirection(0, deltaY)) {
                 deltaY *= scrollWheelMultiplier();
 
@@ -996,7 +1036,7 @@ void ScrollAnimatorMac::smoothScrollWithEvent(PlatformWheelEvent& wheelEvent)
             IntSize stretchAmount = m_scrollableArea->overhangAmount();
         
             if (m_momentumScrollInProgress) {
-                if ((pinnedInDirection(eventCoallescedDeltaX, eventCoallescedDeltaY) || (fabsf(eventCoallescedDeltaX) + fabsf(eventCoallescedDeltaY) <= 0)) && m_lastMomemtumScrollTimestamp) {
+                if ((pinnedInDirection(eventCoalescedDeltaX, eventCoalescedDeltaY) || (fabsf(eventCoalescedDeltaX) + fabsf(eventCoalescedDeltaY) <= 0)) && m_lastMomentumScrollTimestamp) {
                     m_ignoreMomentumScrolls = true;
                     m_momentumScrollInProgress = false;
                     snapRubberBand();
@@ -1021,7 +1061,7 @@ void ScrollAnimatorMac::smoothScrollWithEvent(PlatformWheelEvent& wheelEvent)
     if (m_momentumScrollInProgress && phase == PlatformWheelEventPhaseEnded) {
         m_momentumScrollInProgress = false;
         m_ignoreMomentumScrolls = false;
-        m_lastMomemtumScrollTimestamp = 0;
+        m_lastMomentumScrollTimestamp = 0;
     }
 }
 
@@ -1033,9 +1073,13 @@ void ScrollAnimatorMac::beginScrollGesture()
     m_inScrollGesture = true;
     m_momentumScrollInProgress = false;
     m_ignoreMomentumScrolls = false;
-    m_lastMomemtumScrollTimestamp = 0;
+    m_lastMomentumScrollTimestamp = 0;
     m_momentumVelocity = FloatSize();
-
+    m_scrollerInitiallyPinnedOnLeft = m_scrollableArea->isHorizontalScrollerPinnedToMinimumPosition();
+    m_scrollerInitiallyPinnedOnRight = m_scrollableArea->isHorizontalScrollerPinnedToMaximumPosition();
+    m_cumulativeHorizontalScroll = 0;
+    m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin = false;
+    
     IntSize stretchAmount = m_scrollableArea->overhangAmount();
     m_stretchScrollForce.setWidth(reboundDeltaForElasticDelta(stretchAmount.width()));
     m_stretchScrollForce.setHeight(reboundDeltaForElasticDelta(stretchAmount.height()));
@@ -1055,8 +1099,8 @@ void ScrollAnimatorMac::endScrollGesture()
 
 void ScrollAnimatorMac::snapRubberBand()
 {
-    CFTimeInterval timeDelta = [[NSProcessInfo processInfo] systemUptime] - m_lastMomemtumScrollTimestamp;
-    if (m_lastMomemtumScrollTimestamp && timeDelta >= scrollVelocityZeroingTimeout)
+    CFTimeInterval timeDelta = [[NSProcessInfo processInfo] systemUptime] - m_lastMomentumScrollTimestamp;
+    if (m_lastMomentumScrollTimestamp && timeDelta >= scrollVelocityZeroingTimeout)
         m_momentumVelocity = FloatSize();
 
     m_inScrollGesture = false;

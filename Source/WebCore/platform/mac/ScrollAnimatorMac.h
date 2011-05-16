@@ -144,8 +144,12 @@ private:
     bool m_inScrollGesture;
     bool m_momentumScrollInProgress;
     bool m_ignoreMomentumScrolls;
+    bool m_scrollerInitiallyPinnedOnLeft;
+    bool m_scrollerInitiallyPinnedOnRight;
+    int m_cumulativeHorizontalScroll;
+    bool m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin;
     
-    CFTimeInterval m_lastMomemtumScrollTimestamp;
+    CFTimeInterval m_lastMomentumScrollTimestamp;
     FloatSize m_overflowScrollDelta;
     FloatSize m_stretchScrollForce;
     FloatSize m_momentumVelocity;

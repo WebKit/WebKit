@@ -2136,10 +2136,11 @@ bool EventHandler::handleWheelEvent(PlatformWheelEvent& e)
     if (e.isAccepted())
         return true;
 
+    // We do another check on the frame view because the event handler can run JS which results in the frame getting destroyed.
     view = m_frame->view();
     if (!view)
         return false;
-
+    
     view->wheelEvent(e);
     return e.isAccepted();
 }

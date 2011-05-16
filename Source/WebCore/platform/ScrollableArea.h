@@ -73,8 +73,8 @@ public:
 
     void didAddVerticalScrollbar(Scrollbar*);
     void willRemoveVerticalScrollbar(Scrollbar*);
-    void didAddHorizontalScrollbar(Scrollbar*);
-    void willRemoveHorizontalScrollbar(Scrollbar*);
+    virtual void didAddHorizontalScrollbar(Scrollbar*);
+    virtual void willRemoveHorizontalScrollbar(Scrollbar*);
 
     bool hasOverlayScrollbars() const;
     virtual ScrollbarOverlayStyle recommendedScrollbarOverlayStyle() const { return ScrollbarOverlayStyleDefault; }
@@ -131,6 +131,11 @@ public:
     virtual bool shouldSuspendScrollAnimations() const { return true; }
     virtual void scrollbarStyleChanged() { }
     virtual void setVisibleScrollerThumbRect(const IntRect&) { }
+    
+    bool isHorizontalScrollerPinnedToMinimumPosition() const { return !horizontalScrollbar() || scrollPosition(horizontalScrollbar()) <= minimumScrollPosition().x(); }
+    bool isHorizontalScrollerPinnedToMaximumPosition() const { return !horizontalScrollbar() || scrollPosition(horizontalScrollbar()) >= maximumScrollPosition().x(); }
+    
+    virtual bool shouldRubberBandInDirection(ScrollDirection) const { return true; }
 
     virtual void disconnectFromPage() { }
 

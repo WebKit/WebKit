@@ -62,6 +62,7 @@ messages -> WebPageProxy {
     DidChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
     DidChangeScrollOffsetPinningForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar)
     DidFailToInitializePlugin(WTF::String mimeType)
+    NumWheelEventHandlersChanged(unsigned count)
 
 #if ENABLE(TILED_BACKING_STORE)
     PageDidRequestScroll(WebCore::IntPoint point)

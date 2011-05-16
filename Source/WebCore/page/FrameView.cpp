@@ -28,6 +28,7 @@
 #include "FrameView.h"
 
 #include "AXObjectCache.h"
+#include "BackForwardController.h"
 #include "CSSStyleSelector.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
@@ -304,6 +305,21 @@ void FrameView::detachCustomScrollbars()
         m_scrollCorner->destroy();
         m_scrollCorner = 0;
     }
+}
+
+void FrameView::didAddHorizontalScrollbar(Scrollbar* scrollbar)
+{
+    if (m_frame->document())
+        m_frame->document()->didAddWheelEventHandler();
+    ScrollView::didAddHorizontalScrollbar(scrollbar);
+}
+
+void FrameView::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
+{
+    ScrollView::willRemoveHorizontalScrollbar(scrollbar);
+    // FIXME: maybe need a separate ScrollableArea::didRemoveHorizontalScrollbar callback?
+    if (m_frame->document())
+        m_frame->document()->didRemoveWheelEventHandler();
 }
 
 ScrollbarOverlayStyle FrameView::recommendedScrollbarOverlayStyle() const
@@ -1488,6 +1504,14 @@ void FrameView::repaintFixedElementsAfterScrolling()
 #endif
         }
     }
+}
+
+bool FrameView::shouldRubberBandInDirection(ScrollDirection direction) const
+{
+    Page* page = frame() ? frame()->page() : 0;
+    if (!page)
+        return ScrollView::shouldRubberBandInDirection(direction);
+    return page->chrome()->client()->shouldRubberBandInDirection(direction);
 }
 
 HostWindow* FrameView::hostWindow() const

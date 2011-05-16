@@ -115,4 +115,9 @@ String InjectedBundlePageUIClient::generateFileForUpload(WebPage* page, const St
     return generatedFilePath ? generatedFilePath->string() : String();
 }
 
+bool InjectedBundlePageUIClient::shouldRubberBandInDirection(WebPage* page, WKScrollDirection direction) const
+{
+    return m_client.shouldRubberBandInDirection(toAPI(page), direction, m_client.clientInfo);
+}
+
 } // namespace WebKit

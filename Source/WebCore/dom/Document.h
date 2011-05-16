@@ -1100,6 +1100,11 @@ public:
 
     ContentSecurityPolicy* contentSecurityPolicy() { return m_contentSecurityPolicy.get(); }
 
+    // Used to keep track of horizontal scrollbars and onmousewheel event handlers only.
+    unsigned wheelEventHandlerCount() const { return m_wheelEventHandlerCount; }
+    void didAddWheelEventHandler();
+    void didRemoveWheelEventHandler();
+    
 protected:
     Document(Frame*, const KURL&, bool isXHTML, bool isHTML);
 
@@ -1397,6 +1402,8 @@ private:
     RefPtr<MediaQueryMatcher> m_mediaQueryMatcher;
     bool m_writeRecursionIsTooDeep;
     unsigned m_writeRecursionDepth;
+    
+    unsigned m_wheelEventHandlerCount;
 
 #if ENABLE(REQUEST_ANIMATION_FRAME)
     OwnPtr<ScriptedAnimationController> m_scriptedAnimationController;

@@ -170,6 +170,7 @@ namespace WebCore {
         virtual void setToolTip(const String&, TextDirection) = 0;
 
         virtual void print(Frame*) = 0;
+        virtual bool shouldRubberBandInDirection(ScrollDirection) const = 0;
 
 #if ENABLE(DATABASE)
         virtual void exceededDatabaseQuota(Frame*, const String& databaseName) = 0;
@@ -320,6 +321,8 @@ namespace WebCore {
         };
         virtual void willRunModalDialogDuringPageDismissal(const DialogType&) const { }
 
+        virtual void numWheelEventHandlersChanged(unsigned) = 0;
+        
     protected:
         virtual ~ChromeClient() { }
     };

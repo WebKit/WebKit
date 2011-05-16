@@ -159,6 +159,9 @@ namespace WebCore {
         // Notification that the given form element has changed. This function
         // will be called frequently, so handling should be very fast.
         virtual void formStateDidChange(const Node*);
+
+        virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const { return true; }
+        virtual void numWheelEventHandlersChanged(unsigned) { }
     };
 
 } // namespace WebCore

@@ -218,6 +218,9 @@ private:
 
     virtual void didCompleteRubberBandForMainFrame(const WebCore::IntSize&) const;
     virtual void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
+    virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const;
+    
+    virtual void numWheelEventHandlersChanged(unsigned);
 
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;

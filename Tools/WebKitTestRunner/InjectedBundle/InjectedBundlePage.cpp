@@ -225,6 +225,7 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, /*paintCustomOverhangArea*/
         0, /*shouldGenerateFileForUpload*/
         0, /*generateFileForUpload*/
+        0, /*shouldRubberBandInDirection*/
     };
     WKBundlePageSetUIClient(m_page, &uiClient);
 

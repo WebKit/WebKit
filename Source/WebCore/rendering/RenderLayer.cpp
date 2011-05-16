@@ -1930,6 +1930,19 @@ bool RenderLayer::scrollsOverflow() const
     return toRenderBox(renderer())->scrollsOverflow();
 }
 
+void RenderLayer::didAddHorizontalScrollbar(Scrollbar* scrollbar)
+{
+    m_renderer->document()->didAddWheelEventHandler();
+    ScrollableArea::didAddHorizontalScrollbar(scrollbar);
+}
+
+void RenderLayer::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
+{
+    ScrollableArea::willRemoveHorizontalScrollbar(scrollbar);
+    // FIXME: maybe need a separate ScrollableArea::didRemoveHorizontalScrollbar callback?
+    m_renderer->document()->didRemoveWheelEventHandler();
+}
+
 void RenderLayer::setHasHorizontalScrollbar(bool hasScrollbar)
 {
     if (hasScrollbar == (m_hBar != 0))

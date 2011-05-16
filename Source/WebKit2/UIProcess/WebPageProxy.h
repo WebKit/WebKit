@@ -226,6 +226,8 @@ public:
     void didChangeBackForwardList(WebBackForwardListItem* addedItem, Vector<RefPtr<APIObject> >* removedItems);
     void shouldGoToBackForwardListItem(uint64_t itemID, bool& shouldGoToBackForwardListItem);
 
+    bool willHandleHorizontalScrollEvents() const;
+
     bool canShowMIMEType(const String& mimeType) const;
 
     bool drawsBackground() const { return m_drawsBackground; }
@@ -611,6 +613,7 @@ private:
     void didChangeScrollbarsForMainFrame(bool hasHorizontalScrollbar, bool hasVerticalScrollbar);
     void didChangeScrollOffsetPinningForMainFrame(bool pinnedToLeftSide, bool pinnedToRightSide);
     void didFailToInitializePlugin(const String& mimeType);
+    void numWheelEventHandlersChanged(unsigned count) { m_wheelEventHandlerCount = count; }
 
     void reattachToWebProcess();
     void reattachToWebProcessWithItem(WebBackForwardListItem*);
@@ -866,6 +869,9 @@ private:
 
     bool m_mainFrameHasHorizontalScrollbar;
     bool m_mainFrameHasVerticalScrollbar;
+    // This aggregated count of wheel handlers only includes horizontal scrollbars
+    // and JS wheel event handlers.
+    int m_wheelEventHandlerCount;
 
     bool m_mainFrameIsPinnedToLeftSide;
     bool m_mainFrameIsPinnedToRightSide;
