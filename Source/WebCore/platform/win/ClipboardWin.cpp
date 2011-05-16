@@ -700,7 +700,7 @@ void ClipboardWin::writeURL(const KURL& kurl, const String& titleStr, Frame*)
 
     String fsPath = filesystemPathFromUrlOrTitle(url, titleStr, L".URL", true);
     String contentString("[InternetShortcut]\r\nURL=" + url + "\r\n");
-    CString content = contentString.ascii();
+    CString content = contentString.latin1();
 
     if (fsPath.length() <= 0)
         return;

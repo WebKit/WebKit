@@ -1,3 +1,17 @@
+2011-05-16  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Enrica Casucci.
+
+        REGRESSION (r86555): Dropping URL onto Desktop creates broken Internet Shortcut file.
+        
+        r86477 fixed this bug by using latin1 as the CString's encoding instead of ascii, but r86555
+        undid this change.
+        
+        Change it back to latin1 to fix the bug.
+
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::writeURL):
+
 2011-05-16  Jeremy Noble  <jer.noble@apple.com>
 
         Unreviewed; build fix for non-SnowLeopard builds.
