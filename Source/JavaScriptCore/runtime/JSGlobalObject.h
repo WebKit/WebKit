@@ -108,6 +108,13 @@ namespace JSC {
         Debugger* m_debugger;
 
         WeakMapSet m_weakMaps;
+        Weak<JSGlobalObject> m_weakMapsFinalizer;
+        class WeakMapsFinalizer : public WeakHandleOwner {
+        public:
+            virtual void finalize(Handle<Unknown>, void* context);
+        };
+        static WeakMapsFinalizer* weakMapsFinalizer();
+
         WeakRandom m_weakRandom;
 
         SymbolTable m_symbolTable;
@@ -256,6 +263,8 @@ namespace JSC {
 
         void registerWeakMap(OpaqueJSWeakObjectMap* map)
         {
+            if (!m_weakMapsFinalizer)
+                m_weakMapsFinalizer.set(globalData(), this, weakMapsFinalizer());
             m_weakMaps.add(map);
         }
 

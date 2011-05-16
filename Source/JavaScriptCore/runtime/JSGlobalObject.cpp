@@ -444,6 +444,18 @@ void* JSGlobalObject::operator new(size_t size, JSGlobalData* globalData)
     return globalData->heap.allocate(size);
 }
 
+void JSGlobalObject::WeakMapsFinalizer::finalize(Handle<Unknown> handle, void*)
+{
+    JSGlobalObject* globalObject = asGlobalObject(handle.get());
+    globalObject->m_weakMaps.clear();
+}
+
+JSGlobalObject::WeakMapsFinalizer* JSGlobalObject::weakMapsFinalizer()
+{
+    static WeakMapsFinalizer* finalizer = new WeakMapsFinalizer();
+    return finalizer;
+}
+
 DynamicGlobalObjectScope::DynamicGlobalObjectScope(JSGlobalData& globalData, JSGlobalObject* dynamicGlobalObject)
     : m_dynamicGlobalObjectSlot(globalData.dynamicGlobalObject)
     , m_savedDynamicGlobalObject(m_dynamicGlobalObjectSlot)

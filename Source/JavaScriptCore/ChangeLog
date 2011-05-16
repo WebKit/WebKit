@@ -1,3 +1,22 @@
+2011-05-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        JSWeakObjectMap finalisation may occur while gc is in inconsistent state
+        https://bugs.webkit.org/show_bug.cgi?id=60908
+        <rdar://problem/9409491>
+
+        We need to ensure that we have called all the weak map finalizers while
+        the global object (and hence global context) is still in a consistent
+        state.  The best way to achieve this is to simply use a weak handle and
+        finalizer on the global object.
+
+        * JavaScriptCore.exp:
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::WeakMapFinalizer::finalize):
+        * runtime/JSGlobalObject.h:
+        (JSC::JSGlobalObject::registerWeakMap):
+
 2011-05-16  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.
