@@ -59,6 +59,7 @@ public:
 protected:
     virtual const char* layerTypeAsString() const { return "ImageLayer"; }
 
+    virtual PassOwnPtr<LayerTextureUpdater> createTextureUpdater();
     virtual TransformationMatrix tilingTransform();
     virtual IntRect layerBounds() const;
 

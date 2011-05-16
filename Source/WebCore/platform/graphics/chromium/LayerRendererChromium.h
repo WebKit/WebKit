@@ -64,11 +64,12 @@ class CCHeadsUpDisplay;
 class CCLayerImpl;
 class GeometryBinding;
 class GraphicsContext3D;
+class LayerPainterChromium;
 
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public RefCounted<LayerRendererChromium> {
 public:
-    static PassRefPtr<LayerRendererChromium> create(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TilePaintInterface> contentPaint);
+    static PassRefPtr<LayerRendererChromium> create(PassRefPtr<GraphicsContext3D>, PassOwnPtr<LayerPainterChromium> contentPaint);
 
     ~LayerRendererChromium();
 
@@ -148,7 +149,7 @@ private:
     typedef Vector<RefPtr<CCLayerImpl> > LayerList;
     typedef HashMap<GraphicsContext3D*, int> ChildContextMap;
 
-    explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TilePaintInterface> contentPaint);
+    LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<LayerPainterChromium> contentPaint);
 
     void updateLayers(LayerList& renderSurfaceLayerList);
     void updateRootLayerContents();
@@ -188,7 +189,6 @@ private:
     TransformationMatrix m_projectionMatrix;
 
     RefPtr<LayerChromium> m_rootLayer;
-    OwnPtr<TilePaintInterface> m_rootLayerContentPaint;
     OwnPtr<LayerTilerChromium> m_rootLayerContentTiler;
 
     bool m_hardwareCompositing;
