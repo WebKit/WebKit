@@ -2,6 +2,19 @@
 
         Attempt to fix Qt build.  (Strict PassOwnPtr fix.)
 
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyWrapper::release):
+        (WebCore::QNetworkReplyWrapper::receiveMetaData):
+        (WebCore::QNetworkReplyWrapper::receiveSniffedMIMEType):
+        (WebCore::QNetworkReplyHandler::release):
+        (WebCore::QNetworkReplyHandler::finish):
+        (WebCore::QNetworkReplyHandler::redirect):
+        (WebCore::QNetworkReplyHandler::start):
+
+2011-05-15  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix Qt build.  (Strict PassOwnPtr fix.)
+
         * dom/XMLDocumentParserQt.cpp:
         (WebCore::XMLDocumentParser::doEnd):
 
