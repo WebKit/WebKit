@@ -1,3 +1,25 @@
+2011-05-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove disable-javascript-urls CSP directive
+        https://bugs.webkit.org/show_bug.cgi?id=60874
+
+        After talking this out with various folks in the CSP working group, we
+        decided that this syntax isn't the right way to approach this issue.
+        If we want to address the use case of enabling JavaScript URLs
+        separately from inline script, we'll probably just make
+
+          script-src javascript:
+
+        work that way.
+
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::ContentSecurityPolicy::ContentSecurityPolicy):
+        (WebCore::ContentSecurityPolicy::allowJavaScriptURLs):
+        (WebCore::ContentSecurityPolicy::addDirective):
+        * page/ContentSecurityPolicy.h:
+
 2011-05-16  Jon Lee  <jonlee@apple.com>
 
        Reviewed by Simon Fraser.

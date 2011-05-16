@@ -1,3 +1,15 @@
+2011-05-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Remove disable-javascript-urls CSP directive
+        https://bugs.webkit.org/show_bug.cgi?id=60874
+
+        No need to test a feature that doesn't exist.
+
+        * http/tests/security/contentSecurityPolicy/javascript-urls-blocked-expected.txt: Removed.
+        * http/tests/security/contentSecurityPolicy/javascript-urls-blocked.html: Removed.
+
 2011-05-16  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Tony Gentilcore.

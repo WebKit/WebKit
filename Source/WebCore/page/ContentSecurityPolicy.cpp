@@ -456,7 +456,6 @@ ContentSecurityPolicy::ContentSecurityPolicy(Document* document)
     : m_havePolicy(false)
     , m_document(document)
     , m_reportOnly(false)
-    , m_disableJavaScriptURLs(false)
 {
 }
 
@@ -557,10 +556,6 @@ bool ContentSecurityPolicy::checkSourceAndReportViolation(CSPDirective* directiv
 bool ContentSecurityPolicy::allowJavaScriptURLs() const
 {
     DEFINE_STATIC_LOCAL(String, consoleMessage, ("Refused to execute JavaScript URL because of Content-Security-Policy.\n"));
-    if (m_disableJavaScriptURLs) {
-        reportViolation(String(), consoleMessage);
-        return denyIfEnforcingPolicy();
-    }
     return checkInlineAndReportViolation(operativeDirective(m_scriptSrc.get()), consoleMessage);
 }
 
@@ -735,7 +730,6 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
     DEFINE_STATIC_LOCAL(String, fontSrc, ("font-src"));
     DEFINE_STATIC_LOCAL(String, mediaSrc, ("media-src"));
     DEFINE_STATIC_LOCAL(String, reportURI, ("report-uri"));
-    DEFINE_STATIC_LOCAL(String, disableJavaScriptURLs, ("disable-javascript-urls"));
 
     ASSERT(!name.isEmpty());
 
@@ -757,8 +751,6 @@ void ContentSecurityPolicy::addDirective(const String& name, const String& value
         m_mediaSrc = createCSPDirective(name, value);
     else if (m_reportURLs.isEmpty() && equalIgnoringCase(name, reportURI))
         parseReportURI(value);
-    else if (equalIgnoringCase(name, disableJavaScriptURLs))
-        m_disableJavaScriptURLs = true;
 }
 
 }

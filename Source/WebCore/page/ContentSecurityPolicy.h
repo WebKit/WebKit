@@ -96,13 +96,6 @@ private:
     OwnPtr<CSPDirective> m_styleSrc;
     OwnPtr<CSPDirective> m_fontSrc;
     OwnPtr<CSPDirective> m_mediaSrc;
-
-    // This directive is an experiment and not part of the W3C spec.
-    // FIXME: Remove this feature when we rename from X-WebKit-CSP to
-    // Content-Security-Policy if we don't convince the working group to adopt
-    // the feature.
-    bool m_disableJavaScriptURLs;
-
     Vector<KURL> m_reportURLs;
 };
 
