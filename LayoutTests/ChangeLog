@@ -1,3 +1,9 @@
+2011-05-16  Dan Bernstein  <mitz@apple.com>
+
+        Re-added platform-specific result after r86599.
+
+        * platform/mac-leopard/editing/text-iterator/findString-expected.txt: Copied from platform/mac-leopard/editing/text-iterator/findString-expected.txt.
+
 2011-05-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Enrica Casucci.
