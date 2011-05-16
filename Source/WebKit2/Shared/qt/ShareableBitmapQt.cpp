@@ -41,10 +41,11 @@ static inline QImage createQImage(void* data, int width, int height)
 
 PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
+    // FIXME: Should this be OwnPtr<QImage>?
     QImage* image = new QImage(createQImage(data(), m_size.width(), m_size.height()));
-    GraphicsContext* context = new GraphicsContext(new QPainter(image));
+    OwnPtr<GraphicsContext> context = adoptPtr(new GraphicsContext(new QPainter(image)));
     context->takeOwnershipOfPlatformContext();
-    return context;
+    return context.release();
 }
 
 void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)

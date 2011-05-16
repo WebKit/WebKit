@@ -1,3 +1,10 @@
+2011-05-16  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix the Qt build.  (Strict PassOwnPtr fix.)
+
+        * Shared/qt/ShareableBitmapQt.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+
 2011-05-15  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.
