@@ -35,6 +35,9 @@ WebInspector.ResourceTreeModel = function(networkManager)
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceUpdated, this._onResourceUpdated, this);
     WebInspector.networkManager.addEventListener(WebInspector.NetworkManager.EventTypes.ResourceFinished, this._onResourceUpdated, this);
 
+    WebInspector.console.addEventListener(WebInspector.ConsoleView.Events.MessageAdded, this._consoleMessageAdded, this);
+    WebInspector.console.addEventListener(WebInspector.ConsoleView.Events.ConsoleCleared, this._consoleCleared, this);
+
     this.frontendReused();
     InspectorBackend.registerDomainDispatcher("Page", new WebInspector.PageDispatcher(this));
 }
@@ -212,8 +215,9 @@ WebInspector.ResourceTreeModel.prototype = {
         return this._callForFrameResources("", callback);
     },
 
-    addConsoleMessage: function(msg)
+    _consoleMessageAdded: function(event)
     {
+        var msg = event.data;
         var resource = this.resourceForURL(msg.url);
         if (!resource)
             return;
@@ -232,7 +236,7 @@ WebInspector.ResourceTreeModel.prototype = {
             view.addMessage(msg);
     },
 
-    clearConsoleMessages: function()
+    _consoleCleared: function()
     {
         function callback(resource)
         {

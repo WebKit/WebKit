@@ -975,7 +975,7 @@ function highlightSearchResults(element, resultRanges)
         while (currentSnapshotItem < snapshotLength) {
             textNode = textNodeSnapshot.snapshotItem(currentSnapshotItem++);
             var textNodeLength = textNode.nodeValue.length;
-            if (snapshotNodeOffset + textNodeLength >= startOffset) {
+            if (snapshotNodeOffset + textNodeLength > startOffset) {
                 textNodeOffset = startOffset - snapshotNodeOffset;
                 snapshotNodeOffset += textNodeLength;
                 found = true;

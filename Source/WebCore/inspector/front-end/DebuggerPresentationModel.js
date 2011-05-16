@@ -46,6 +46,9 @@ WebInspector.DebuggerPresentationModel = function()
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.DebuggerResumed, this._debuggerResumed, this);
     WebInspector.debuggerModel.addEventListener(WebInspector.DebuggerModel.Events.Reset, this._debuggerReset, this);
 
+    WebInspector.console.addEventListener(WebInspector.ConsoleView.Events.MessageAdded, this._consoleMessageAdded, this);
+    WebInspector.console.addEventListener(WebInspector.ConsoleView.Events.ConsoleCleared, this._consoleCleared, this);
+
     new WebInspector.DebuggerPresentationModelResourceBinding(this);
 }
 
@@ -53,6 +56,7 @@ WebInspector.DebuggerPresentationModel.Events = {
     SourceFileAdded: "source-file-added",
     SourceFileChanged: "source-file-changed",
     ConsoleMessageAdded: "console-message-added",
+    ConsoleMessagesCleared: "console-messages-cleared",
     BreakpointAdded: "breakpoint-added",
     BreakpointRemoved: "breakpoint-removed",
     DebuggerPaused: "debugger-paused",
@@ -224,7 +228,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
             this._addScript(scripts[id]);
 
         for (var i = 0; i < messages.length; ++i)
-            this.addConsoleMessage(messages[i]);
+            this._addConsoleMessage(messages[i]);
 
         if (WebInspector.debuggerModel.callFrames)
             this._debuggerPaused();
@@ -237,7 +241,14 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return this._scriptFormatter;
     },
 
-    addConsoleMessage: function(message)
+    _consoleMessageAdded: function(event)
+    {
+        var message = event.data;
+        if (message.isErrorOrWarning() && message.message)
+            this._addConsoleMessage(message);
+    },
+
+    _addConsoleMessage: function(message)
     {
         this._messages.push(message);
 
@@ -257,11 +268,12 @@ WebInspector.DebuggerPresentationModel.prototype = {
         sourceFile.requestSourceMapping(didRequestSourceMapping.bind(this));
     },
 
-    clearConsoleMessages: function()
+    _consoleCleared: function()
     {
         this._messages = [];
         for (var id in this._sourceFiles)
             this._sourceFiles[id].messages = [];
+        this.dispatchEventToListeners(WebInspector.DebuggerPresentationModel.Events.ConsoleMessagesCleared);
     },
 
     continueToLine: function(sourceFileId, lineNumber)

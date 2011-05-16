@@ -187,6 +187,7 @@ WebInspector.ScriptsPanel = function()
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.SourceFileAdded, this._sourceFileAdded, this)
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.SourceFileChanged, this._sourceFileChanged, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleMessageAdded, this._consoleMessageAdded, this);
+    this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.ConsoleMessagesCleared, this._consoleMessagesCleared, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointAdded, this._breakpointAdded, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.BreakpointRemoved, this._breakpointRemoved, this);
     this._presentationModel.addEventListener(WebInspector.DebuggerPresentationModel.Events.DebuggerPaused, this._debuggerPaused, this);
@@ -331,15 +332,8 @@ WebInspector.ScriptsPanel.prototype = {
             option.text = option.text.replace(/[*]$/, "");
     },
 
-    addConsoleMessage: function(message)
+    _consoleMessagesCleared: function()
     {
-        if (message.isErrorOrWarning() && message.message)
-            this._presentationModel.addConsoleMessage(message);
-    },
-
-    clearConsoleMessages: function()
-    {
-        this._presentationModel.clearConsoleMessages();
         for (var sourceFileId in this._sourceFileIdToSourceFrame)
             this._sourceFileIdToSourceFrame[sourceFileId].clearMessages();
     },
