@@ -1,3 +1,11 @@
+2011-05-16  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed chromium expectations changes to disable crashing tests.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60931
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, rebaselining media/video-aspect-ratio.html for chromium-gpu-{linux,mac,win}.

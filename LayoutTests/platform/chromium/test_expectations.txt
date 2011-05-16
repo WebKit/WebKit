@@ -4049,3 +4049,8 @@ BUGWK60822 : plugins/get-url-with-javascript-url.html = TIMEOUT
 
 // New test added at r86476, crashes.
 BUGWK60822 : plugins/get-url-notify-with-url-that-fails-to-load.html = CRASH TIMEOUT PASS
+
+// Started crashing after r86584.
+BUGWK60931:  http/tests/security/aboutBlank/window-open-self-about-blank.html = CRASH
+BUGWK60931:  http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html = CRASH
+BUGWK60931:  http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html = CRASH
