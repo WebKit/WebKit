@@ -290,7 +290,7 @@ void SpellingCorrectionController::correctionPanelTimerFired(Timer<SpellingCorre
         VisiblePosition start(selection.start(), selection.affinity());
         VisiblePosition p = startOfWord(start, LeftWordIfOnBoundary);
         VisibleSelection adjacentWords = VisibleSelection(p, start);
-        m_frame->editor()->markAllMisspellingsAndBadGrammarInRanges(Editor::MarkSpelling | Editor::ShowCorrectionPanel, adjacentWords.toNormalizedRange().get(), 0);
+        m_frame->editor()->markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeSpelling | TextCheckingTypeShowCorrectionPanel, adjacentWords.toNormalizedRange().get(), 0);
     }
         break;
     case CorrectionPanelInfo::PanelTypeReversion: {
