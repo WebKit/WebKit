@@ -1,3 +1,67 @@
+2011-05-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen & Michael Saboff.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60860
+        Simplify backtracking in YARR JIT
+
+        YARR JIT currently performs a single pass of code generation over the pattern,
+        with special handling to allow the code generation for some backtracking code
+        out of line. We can simplify things by moving to a common mechanism whereby all
+        forwards matching code is generated in one pass, and all backtracking code is
+        generated in another. Backtracking code can be generated in reverse order, to
+        optimized the common fall-through case.
+
+        To make it easier to walk over the pattern, we can first convert to a more
+        byte-code like format before JIT generating. In time we should unify this with
+        the YARR interpreter to more closely unify the two.
+
+        * yarr/YarrJIT.cpp:
+        (JSC::Yarr::YarrGenerator::jumpIfNoAvailableInput):
+        (JSC::Yarr::YarrGenerator::YarrOp::YarrOp):
+        (JSC::Yarr::YarrGenerator::BacktrackingState::BacktrackingState):
+        (JSC::Yarr::YarrGenerator::BacktrackingState::append):
+        (JSC::Yarr::YarrGenerator::BacktrackingState::fallthrough):
+        (JSC::Yarr::YarrGenerator::BacktrackingState::link):
+        (JSC::Yarr::YarrGenerator::BacktrackingState::linkTo):
+        (JSC::Yarr::YarrGenerator::BacktrackingState::takeBacktracksToJumpList):
+        (JSC::Yarr::YarrGenerator::BacktrackingState::isEmpty):
+        (JSC::Yarr::YarrGenerator::BacktrackingState::linkDataLabels):
+        (JSC::Yarr::YarrGenerator::BacktrackingState::ReturnAddressRecord::ReturnAddressRecord):
+        (JSC::Yarr::YarrGenerator::generateAssertionBOL):
+        (JSC::Yarr::YarrGenerator::backtrackAssertionBOL):
+        (JSC::Yarr::YarrGenerator::generateAssertionEOL):
+        (JSC::Yarr::YarrGenerator::backtrackAssertionEOL):
+        (JSC::Yarr::YarrGenerator::matchAssertionWordchar):
+        (JSC::Yarr::YarrGenerator::generateAssertionWordBoundary):
+        (JSC::Yarr::YarrGenerator::backtrackAssertionWordBoundary):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterOnce):
+        (JSC::Yarr::YarrGenerator::backtrackPatternCharacterOnce):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterFixed):
+        (JSC::Yarr::YarrGenerator::backtrackPatternCharacterFixed):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackPatternCharacterGreedy):
+        (JSC::Yarr::YarrGenerator::generatePatternCharacterNonGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackPatternCharacterNonGreedy):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassOnce):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassOnce):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassFixed):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassFixed):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassGreedy):
+        (JSC::Yarr::YarrGenerator::generateCharacterClassNonGreedy):
+        (JSC::Yarr::YarrGenerator::backtrackCharacterClassNonGreedy):
+        (JSC::Yarr::YarrGenerator::generateTerm):
+        (JSC::Yarr::YarrGenerator::backtrackTerm):
+        (JSC::Yarr::YarrGenerator::generate):
+        (JSC::Yarr::YarrGenerator::backtrack):
+        (JSC::Yarr::YarrGenerator::opCompileParenthesesSubpattern):
+        (JSC::Yarr::YarrGenerator::opCompileParentheticalAssertion):
+        (JSC::Yarr::YarrGenerator::opCompileAlternative):
+        (JSC::Yarr::YarrGenerator::opCompileBody):
+        (JSC::Yarr::YarrGenerator::YarrGenerator):
+        (JSC::Yarr::YarrGenerator::compile):
+
 2011-05-15  Adam Barth  <abarth@webkit.org>
 
         Enable strict PassOwnPtr on Qt.  (Build fixes to follow.)

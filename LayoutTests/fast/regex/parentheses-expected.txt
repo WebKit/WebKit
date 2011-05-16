@@ -87,7 +87,10 @@ PASS regexp50.exec('abbbbbbbbbbbbbbbbbbbbbbbbbbbbcx') is ['abbbbbbbbbbbbbbbbbbbb
 PASS regexp50.exec('dx') is ['dx', 'd', undefined]
 PASS regexp51.exec('abc') is null
 PASS regexp51.exec(s) is ['){-,}P{Any}',')',undefined]
-PASS 'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/) is ['Bob',undefined,'Bob',undefined,undefined]
+PASS 'Hi Bob'.match(regexp52) is ['Bob',undefined,'Bob',undefined,undefined]
+PASS regexp53.exec('#') is ['',undefined,'']
+PASS regexp54.exec('#') is ['','',undefined,undefined,'']
+PASS regexp55.exec('#') is ['','']
 PASS successfullyParsed is true
 
 TEST COMPLETE

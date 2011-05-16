@@ -212,9 +212,11 @@ var regexp47 = /(.*?)(?:(?:\?(.*?)?)?)(?:(?:#)?)$/;
 shouldBe("regexp47.exec('/www.acme.com/this/is/a/path/file.txt')", "['/www.acme.com/this/is/a/path/file.txt','/www.acme.com/this/is/a/path/file.txt',undefined]");
 
 var regexp48 = /^(?:(\w+):\/*([\w\.\-\d]+)(?::(\d+)|)(?=(?:\/|$))|)(?:$|\/?(.*?)(?:\?(.*?)?|)(?:#(.*)|)$)/;
+/* The regexp on the prior line confuses Xcode syntax highlighting, this coment fixes it! */
 shouldBe("regexp48.exec('http://www.acme.com/this/is/a/path/file.txt')", "['http://www.acme.com/this/is/a/path/file.txt','http','www.acme.com',undefined,'this/is/a/path/file.txt',undefined,undefined]");
 
 var regexp49 = /(?:([^:]*?)(?:(?:\?(.*?)?)?)(?:(?:#)?)$)|(?:^(?:(\w+):\/*([\w\.\-\d]+)(?::(\d+)|)(?=(?:\/|$))|)(?:$|\/?(.*?)(?:\?(.*?)?|)(?:#(.*)|)$))/;
+/* The regexp on the prior line confuses Xcode syntax highlighting, this coment fixes it! */
 shouldBe("regexp49.exec('http://www.acme.com/this/is/a/path/file.txt')", "['http://www.acme.com/this/is/a/path/file.txt',undefined,undefined,'http','www.acme.com',undefined,'this/is/a/path/file.txt',undefined,undefined]");
 
 var regexp50 = /((a)b{28,}c|d)x/;
@@ -227,7 +229,16 @@ var regexp51 = new RegExp(s);
 shouldBeNull("regexp51.exec('abc')");
 shouldBe("regexp51.exec(s)", "[')\x9e{-,}P{Any}',')',undefined]");
 
-shouldBe("'Hi Bob'.match(/(Rob)|(Bob)|(Robert)|(Bobby)/)", "['Bob',undefined,'Bob',undefined,undefined]");
+var regexp52 = /(Rob)|(Bob)|(Robert)|(Bobby)/;
+shouldBe("'Hi Bob'.match(regexp52)", "['Bob',undefined,'Bob',undefined,undefined]");
+
+// Test cases discovered by fuzzing that crashed the compiler.
+var regexp53 = /(?=(?:(?:(gB)|(?!cs|<))((?=(?!v6){0,})))|(?=#)+?)/m;
+shouldBe("regexp53.exec('#')", "['',undefined,'']");
+var regexp54 = /((?:(?:()|(?!))((?=(?!))))|())/m;
+shouldBe("regexp54.exec('#')", "['','',undefined,undefined,'']");
+var regexp55 = /(?:(?:(?:a?|(?:))((?:)))|a?)/m;
+shouldBe("regexp55.exec('#')", "['','']");
 
 var successfullyParsed = true;
 

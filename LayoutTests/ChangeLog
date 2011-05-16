@@ -1,3 +1,13 @@
+2011-05-15  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen & Michael Saboff.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60860
+        Add layout tests for some regular expressions that used to crash the compiler.
+
+        * fast/regex/parentheses-expected.txt:
+        * fast/regex/script-tests/parentheses.js:
+
 2011-05-06  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Martin Robinson.
