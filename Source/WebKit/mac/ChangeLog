@@ -1,3 +1,12 @@
+2011-05-16  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/60913> C++ exceptions should not be enabled when building with llvm-gcc-4.2
+        <rdar://problem/9446430>
+
+        Reviewed by Mark Rowe.
+
+        * Configurations/Base.xcconfig: Fixed typo.
+
 2011-05-13  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Simon Fraser.
