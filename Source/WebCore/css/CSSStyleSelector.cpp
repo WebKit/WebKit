@@ -2056,8 +2056,10 @@ inline bool CSSStyleSelector::checkSelector(const RuleData& ruleData)
         return false;
     return true;
 }
+    
+namespace {
 
-static inline bool selectorTagMatches(const Element* element, const CSSSelector* selector)
+inline bool selectorTagMatches(const Element* element, const CSSSelector* selector)
 {
     if (!selector->hasTag())
         return true;
@@ -2068,7 +2070,7 @@ static inline bool selectorTagMatches(const Element* element, const CSSSelector*
     return namespaceURI == starAtom || namespaceURI == element->namespaceURI();
 }
 
-static inline bool isFastCheckableSelector(const CSSSelector* selector)
+inline bool isFastCheckableSelector(const CSSSelector* selector)
 {
     for (; selector; selector = selector->tagHistory()) {
         if (selector->relation() != CSSSelector::Descendant && selector->relation() != CSSSelector::Child && selector->relation() != CSSSelector::SubSelector)
@@ -2079,12 +2081,12 @@ static inline bool isFastCheckableSelector(const CSSSelector* selector)
     return true;
 }
     
-template <class ValueChecker>
+template <bool checkValue(const Element*, AtomicStringImpl*)>
 inline bool fastCheckSingleSelector(const CSSSelector*& selector, const Element*& element, const CSSSelector*& topChildOrSubselector, const Element*& topChildOrSubselectorMatchElement)
 {
     AtomicStringImpl* value = selector->value().impl();
     for (; element; element = element->parentElement()) {
-        if (ValueChecker::checkValue(element, value) && selectorTagMatches(element, selector)) {
+        if (checkValue(element, value) && selectorTagMatches(element, selector)) {
             if (selector->relation() == CSSSelector::Descendant)
                 topChildOrSubselector = 0;
             else if (!topChildOrSubselector) {
@@ -2114,24 +2116,22 @@ inline bool fastCheckSingleSelector(const CSSSelector*& selector, const Element*
     return false;
 }
 
-struct ClassCheck {
-    static bool checkValue(const Element* element, AtomicStringImpl* value) 
-    {
-        return element->hasClass() && static_cast<const StyledElement*>(element)->classNames().contains(value);
-    }
-};
-struct IdCheck {
-    static bool checkValue(const Element* element, AtomicStringImpl* value) 
-    {
-        return element->hasID() && element->idForStyleResolution().impl() == value;
-    }
-};
-struct TagCheck {
-    static bool checkValue(const Element*, AtomicStringImpl*)
-    {
-        return true;
-    }
-};
+inline bool checkClassValue(const Element* element, AtomicStringImpl* value) 
+{
+    return element->hasClass() && static_cast<const StyledElement*>(element)->classNames().contains(value);
+}
+
+inline bool checkIDValue(const Element* element, AtomicStringImpl* value) 
+{
+    return element->hasID() && element->idForStyleResolution().impl() == value;
+}
+
+inline bool checkTagValue(const Element*, AtomicStringImpl*)
+{
+    return true;
+}
+
+}
 
 bool CSSStyleSelector::SelectorChecker::fastCheckSelector(const CSSSelector* selector, const Element* element)
 {
@@ -2155,15 +2155,15 @@ bool CSSStyleSelector::SelectorChecker::fastCheckSelector(const CSSSelector* sel
     while (selector) {
         switch (selector->m_match) {
         case CSSSelector::Class:
-            if (!fastCheckSingleSelector<ClassCheck>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
+            if (!fastCheckSingleSelector<checkClassValue>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
                 return false;
             break;
         case CSSSelector::Id:
-            if (!fastCheckSingleSelector<IdCheck>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
+            if (!fastCheckSingleSelector<checkIDValue>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
                 return false;
             break;
         case CSSSelector::None:
-            if (!fastCheckSingleSelector<TagCheck>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
+            if (!fastCheckSingleSelector<checkTagValue>(selector, element, topChildOrSubselector, topChildOrSubselectorMatchElement))
                 return false;
             break;
         default:

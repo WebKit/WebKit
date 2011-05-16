@@ -1,3 +1,16 @@
+2011-05-16  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Dave Kilzer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60927
+        fastCheckSelector() does not inline correctly in all cases
+
+        Use anonymous namespace instead of static qualifier to get internal linkage.
+        Use functions as template arguments instead of classes.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::fastCheckSelector):
+
 2011-05-16  Chris Rogers  <crogers@google.com>
 
         Unreviewed build fix.
