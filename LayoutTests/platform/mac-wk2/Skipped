@@ -387,6 +387,7 @@ media/media-fullscreen-inline.html
 media/video-controls-visible-audio-only.html
 platform/mac/editing/deleting/backward-delete.html
 platform/mac/editing/pasteboard/dataTransfer-set-data-file-url.html
+platform/mac/editing/pasteboard/drag-selections-to-contenteditable.html
 platform/mac/editing/selection/doubleclick-should-not-expand-across-lines.html
 platform/mac/editing/selection/word-thai.html
 platform/mac/fast/forms/listbox-scrollbar-hit-test.html
