@@ -1,5 +1,13 @@
 2011-05-16  Sam Weinig  <sam@webkit.org>
 
+        Fix typo pointed out by Dave Levin.
+
+        * TestWebKitAPI/PlatformUtilities.h:
+        (TestWebKitAPI::Util::assertWKStringEqual):
+        Strig -> String.
+
+2011-05-16  Sam Weinig  <sam@webkit.org>
+
         Reviewed by David Levin.
 
         Convert api tester over to using gtest expectations directly

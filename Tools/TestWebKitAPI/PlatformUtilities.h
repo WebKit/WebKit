@@ -60,13 +60,13 @@ std::string toSTD(const char*);
 WKRetainPtr<WKStringRef> toWK(const char* utf8String);
 
 template<typename T, typename U>
-static inline ::testing::AssertionResult assertWKStrigEqual(const char* expected_expression, const char* actual_expression, T expected, U actual)
+static inline ::testing::AssertionResult assertWKStringEqual(const char* expected_expression, const char* actual_expression, T expected, U actual)
 {
     return ::testing::internal::CmpHelperSTREQ(expected_expression, actual_expression, Util::toSTD(expected).c_str(), Util::toSTD(actual).c_str());
 }
 
 #define EXPECT_WK_STREQ(expected, actual) \
-    EXPECT_PRED_FORMAT2(TestWebKitAPI::Util::assertWKStrigEqual, expected, actual)
+    EXPECT_PRED_FORMAT2(TestWebKitAPI::Util::assertWKStringEqual, expected, actual)
 
 } // namespace Util
 } // namespace TestWebKitAPI
