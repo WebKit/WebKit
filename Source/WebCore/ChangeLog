@@ -1,3 +1,30 @@
+2011-05-15  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        <output>, <meter> and <progress> elements with display:block can be focused if you try to tab to it
+        https://bugs.webkit.org/show_bug.cgi?id=60602
+
+        HTMLFormControlElement::isFocusable() returns true when the element is
+        visible as a block element.  However, for output, meter, and progress
+        elements, the function should not return true unless they have
+        tabindex attributes.  Override supportsFocus() of these elements to
+        apply the result of Node::supportsFocus() because it takes care of
+        whether the element has tabindex or not.
+
+        Test: fast/forms/focus-with-display-block.html
+
+        * html/HTMLFormControlElement.h: Made supportsFocus() protected.
+        * html/HTMLMeterElement.cpp:
+        (WebCore::HTMLMeterElement::supportsFocus): Added.
+        * html/HTMLMeterElement.h:
+        * html/HTMLOutputElement.cpp:
+        (WebCore::HTMLOutputElement::supportsFocus): Added.
+        * html/HTMLOutputElement.h:
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::supportsFocus): Added.
+        * html/HTMLProgressElement.h:
+
 2011-05-15  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Dan Bernstein.

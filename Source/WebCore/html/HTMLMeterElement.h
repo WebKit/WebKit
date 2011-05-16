@@ -65,6 +65,8 @@ private:
     HTMLMeterElement(const QualifiedName&, Document*, HTMLFormElement*);
     virtual ~HTMLMeterElement();
 
+    virtual bool supportsFocus() const;
+
     virtual bool recalcWillValidate() const { return false; }
     virtual const AtomicString& formControlType() const;
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

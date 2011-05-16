@@ -56,6 +56,11 @@ const AtomicString& HTMLOutputElement::formControlType() const
     return output;
 }
 
+bool HTMLOutputElement::supportsFocus() const
+{
+    return Node::supportsFocus() && !disabled();
+}
+
 void HTMLOutputElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == HTMLNames::forAttr)

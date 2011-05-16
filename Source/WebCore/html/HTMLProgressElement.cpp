@@ -64,6 +64,11 @@ RenderObject* HTMLProgressElement::createRenderer(RenderArena* arena, RenderStyl
     return new (arena) RenderProgress(this);
 }
 
+bool HTMLProgressElement::supportsFocus() const
+{
+    return Node::supportsFocus() && !disabled();
+}
+
 const AtomicString& HTMLProgressElement::formControlType() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, progress, ("progress"));

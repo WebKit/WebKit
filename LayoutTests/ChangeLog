@@ -1,3 +1,17 @@
+2011-05-15  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        <output>, <meter> and <progress> elements with display:block can be focused if you try to tab to it
+        https://bugs.webkit.org/show_bug.cgi?id=60602
+
+        Add a test that ensures <output>, <meter> and <progress> are not focused.
+        Add tabindex attributes to <progress> elements in progressbar.html so that these elements can be focused.
+
+        * fast/forms/focus-with-display-block-expected.txt: Added.
+        * fast/forms/focus-with-display-block.html: Added.
+        * platform/mac/accessibility/progressbar.html: Added tabindex attributes to progress elements.
+
 2011-05-12  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

@@ -49,6 +49,8 @@ private:
     HTMLProgressElement(const QualifiedName&, Document*, HTMLFormElement*);
     virtual ~HTMLProgressElement();
 
+    virtual bool supportsFocus() const;
+
     virtual bool recalcWillValidate() const { return false; }
 
     virtual const AtomicString& formControlType() const;

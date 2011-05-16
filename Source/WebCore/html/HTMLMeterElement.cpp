@@ -66,6 +66,11 @@ const AtomicString& HTMLMeterElement::formControlType() const
     return meter;
 }
 
+bool HTMLMeterElement::supportsFocus() const
+{
+    return Node::supportsFocus() && !disabled();
+}
+
 void HTMLMeterElement::parseMappedAttribute(Attribute* attribute)
 {
     if (attribute->name() == valueAttr || attribute->name() == minAttr || attribute->name() == maxAttr || attribute->name() == lowAttr || attribute->name() == highAttr || attribute->name() == optimumAttr)

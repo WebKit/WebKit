@@ -117,6 +117,7 @@ protected:
     virtual void removedFromDocument();
     virtual void willMoveToNewOwnerDocument();
 
+    virtual bool supportsFocus() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
 
@@ -138,8 +139,6 @@ private:
     virtual void derefFormAssociatedElement() { deref(); }
 
     virtual bool isFormControlElement() const { return true; }
-
-    virtual bool supportsFocus() const;
 
     virtual short tabIndex() const;
 
