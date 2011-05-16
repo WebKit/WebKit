@@ -1,3 +1,14 @@
+2011-05-16  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        [Gtk] plugins/get-url-notify-with-url-that-fails-to-load.html crashes on buildbot
+
+        https://bugs.webkit.org/show_bug.cgi?id=60838
+
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+
 2011-05-16  Dan Bernstein  <mitz@apple.com>
 
         Re-added platform-specific result after r86599.

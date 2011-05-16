@@ -317,6 +317,8 @@ static void
 webkit_test_plugin_url_notify(NPP instance, const char* url, NPReason reason, void* notifyData)
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
+    if (obj->pluginTest->NPP_URLNotify(url, reason, notifyData))
+        return;
 
     if (obj->onURLNotify)
         executeScript(obj, obj->onURLNotify);

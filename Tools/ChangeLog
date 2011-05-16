@@ -1,3 +1,17 @@
+2011-05-16  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        [Gtk] plugins/get-url-notify-with-url-that-fails-to-load.html crashes on buildbot
+
+        https://bugs.webkit.org/show_bug.cgi?id=60838
+
+        The unix test plugin needs to call the test's NPP_URLNotify
+        rather than the browsers.
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_url_notify):
+
 2011-05-16  Brent Fulgham  <bfulgham@webkit.org>
 
         Rubber-stamped by Adam Roben.
