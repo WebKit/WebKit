@@ -1,5 +1,12 @@
 2011-05-16  Yury Semikhatsky  <yurys@chromium.org>
 
+        Unreviewed. Windows build fix.
+
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::consoleMarkTimeline):
+
+2011-05-16  Yury Semikhatsky  <yurys@chromium.org>
+
         Unreviewed. Build fix.
 
         * inspector/InspectorInstrumentation.h:
