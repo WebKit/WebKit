@@ -42,7 +42,8 @@
 #endif
 
 #if PLATFORM(GTK)
-#include <WebCore/RefPtrCairo.h>
+#include <RefPtrCairo.h>
+#include <WebCore/GtkWidgetBackingStore.h>
 #endif
 
 namespace WebCore {
@@ -96,7 +97,7 @@ private:
 #elif PLATFORM(QT)
     QPixmap m_pixmap;
 #elif PLATFORM(GTK)
-    RefPtr<cairo_surface_t> m_surface;
+    OwnPtr<WebCore::GtkWidgetBackingStore> m_backingStore;
 #endif
 };
 

@@ -3742,6 +3742,9 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/GtkClickCounter.h \
 	Source/WebCore/platform/gtk/GtkUtilities.cpp \
 	Source/WebCore/platform/gtk/GtkUtilities.h \
+	Source/WebCore/platform/gtk/GtkWidgetBackingStore.h \
+	Source/WebCore/platform/gtk/GtkWidgetBackingStoreCairo.cpp \
+	Source/WebCore/platform/gtk/GtkWidgetBackingStoreX11.cpp \
 	Source/WebCore/platform/gtk/GeolocationServiceGtk.cpp \
 	Source/WebCore/platform/gtk/GeolocationServiceGtk.h \
 	Source/WebCore/platform/gtk/GOwnPtrGtk.cpp \

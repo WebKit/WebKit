@@ -1,3 +1,20 @@
+2011-05-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Anders Carlsson.
+
+        [GTK] [WebKit2] Provide a fast version of the backing store for X11
+        https://bugs.webkit.org/show_bug.cgi?id=60912
+
+        Instead of allocating the backing store surface directly in WebKit2,
+        instantiate the GtkWidgetBackingStore class which abstracts away the
+        platform-specific details of maintaining the backing store.
+
+        * UIProcess/BackingStore.h:
+        * UIProcess/gtk/BackingStoreGtk.cpp:
+        (WebKit::BackingStore::paint): Call into GtkWidgetBackingStore to get the Cairo surface now.
+        (WebKit::BackingStore::incorporateUpdate): Ditto.
+        (WebKit::BackingStore::scroll): Call into GtkWidgetBackingStore to do the actual backing store scroll.
+
 2011-05-16  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Darin Adler.

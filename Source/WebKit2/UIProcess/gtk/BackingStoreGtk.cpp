@@ -40,26 +40,24 @@ namespace WebKit {
 
 void BackingStore::paint(cairo_t* context, const IntRect& rect)
 {
+    ASSERT(m_backingStore);
+
     cairo_set_operator(context, CAIRO_OPERATOR_SOURCE);
-    cairo_set_source_surface(context, m_surface.get(), 0, 0);
+    cairo_set_source_surface(context, m_backingStore->cairoSurface(), 0, 0);
     cairo_rectangle(context, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_fill(context);
 }
 
 void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& updateInfo)
 {
-    GtkWidget* viewWidget = m_webPageProxy->viewWidget();
-    if (!m_surface) {
-        m_surface = adoptRef(gdk_window_create_similar_surface(gtk_widget_get_window(viewWidget),
-                                                               CAIRO_CONTENT_COLOR_ALPHA,
-                                                               size().width(), size().height()));
-    }
+    if (!m_backingStore)
+        m_backingStore = GtkWidgetBackingStore::create(m_webPageProxy->viewWidget(), size());
 
     scroll(updateInfo.scrollRect, updateInfo.scrollOffset);
 
     // Paint all update rects.
     IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
-    RefPtr<cairo_t> context(adoptRef(cairo_create(m_surface.get())));
+    RefPtr<cairo_t> context(adoptRef(cairo_create(m_backingStore->cairoSurface())));
     GraphicsContext graphicsContext(context.get());
     for (size_t i = 0; i < updateInfo.updateRects.size(); ++i) {
         IntRect updateRect = updateInfo.updateRects[i];
@@ -74,27 +72,8 @@ void BackingStore::scroll(const IntRect& scrollRect, const IntSize& scrollOffset
     if (scrollOffset.isZero())
         return;
 
-    ASSERT(m_surface);
-    RefPtr<cairo_t> context = adoptRef(cairo_create(m_surface.get()));
-    cairo_push_group(context.get());
-
-    IntRect targetRect(scrollRect);
-    targetRect.move(scrollOffset);
-    targetRect.shiftMaxXEdgeTo(targetRect.maxX() - scrollOffset.width());
-    targetRect.shiftMaxYEdgeTo(targetRect.maxY() - scrollOffset.height());
-    if (targetRect.isEmpty())
-        return;
-
-    cairo_set_source_surface(context.get(), m_surface.get(), 
-                             scrollOffset.width(), scrollOffset.height());
-    cairo_rectangle(context.get(), targetRect.x(), targetRect.y(), 
-                    targetRect.width(), targetRect.height());
-    cairo_fill(context.get());
-
-    cairo_pop_group_to_source(context.get());
-    cairo_rectangle(context.get(), targetRect.x(), targetRect.y(),
-                    targetRect.width(), targetRect.height());
-    cairo_fill(context.get());
+    ASSERT(m_backingStore);
+    m_backingStore->scroll(scrollRect, scrollOffset);
 }
 
 } // namespace WebKit

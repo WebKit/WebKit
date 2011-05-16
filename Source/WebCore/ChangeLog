@@ -1,3 +1,19 @@
+2011-05-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Anders Carlsson.
+
+        [GTK] [WebKit2] Provide a fast version of the backing store for X11
+        https://bugs.webkit.org/show_bug.cgi?id=60912
+
+        No new tests. This will be covered by WebKit2 pixel tests.
+
+        * GNUmakefile.list.am: Added new GtkWidgetBackingStore source and header files.
+        * platform/gtk/GtkWidgetBackingStore.h: Added.
+        * platform/gtk/GtkWidgetBackingStoreCairo.cpp: Added this implementation of the backing
+        store that uses Cairo and has the same performance characteristics as the WebKit2 implementaiton.
+        * platform/gtk/GtkWidgetBackingStoreX11.cpp: Added this implementation of the backing
+        store that uses X11 directly and has better performance than the Cairo version.
+
 2011-05-16  Chris Rogers  <crogers@google.com>
 
         Reviewed by senorblanco@chromium.org.
