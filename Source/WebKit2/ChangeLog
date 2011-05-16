@@ -1,3 +1,22 @@
+2011-05-16  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Plug-in hit testing is broken after zooming
+        https://bugs.webkit.org/show_bug.cgi?id=60916
+
+        Construct a WebMouseEvent to send to plugin, adjusting values to take pageScaleFactor
+        into account. Also adjusted bounds sent to viewGeometryDidChange to take pageScaleFactor
+        into account. Both are needed or the plugin will think the mouse positions are outside
+        its bounds.
+
+        * Shared/WebEvent.h:
+        * Shared/WebMouseEvent.cpp:Add ctor to clone a WebMouseEvent and add a scaleFactor to values
+        (WebKit::WebMouseEvent::WebMouseEvent):
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::handleEvent):Adjust mouse coords to take pageScaleFactor into account
+        (WebKit::PluginView::viewGeometryDidChange):Adjust bounds to take pageScaleFactor into account
+
 2011-05-16  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Anders Carlsson.

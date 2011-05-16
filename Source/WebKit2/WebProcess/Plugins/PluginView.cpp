@@ -38,7 +38,7 @@
 #include <WebCore/Credential.h>
 #include <WebCore/CredentialStorage.h>
 #include <WebCore/DocumentLoader.h>
-#include <WebCore/Event.h>
+#include <WebCore/MouseEvent.h>
 #include <WebCore/FocusController.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
@@ -575,8 +575,11 @@ void PluginView::handleEvent(Event* event)
         // We have a mouse event.
         if (currentEvent->type() == WebEvent::MouseDown)
             focusPluginElement();
-
-        didHandleEvent = m_plugin->handleMouseEvent(static_cast<const WebMouseEvent&>(*currentEvent));
+        
+        // Adjust mouse coordinates to account for pageScaleFactor
+        float scaleFactor = frame()->pageScaleFactor();
+        WebMouseEvent eventWithScaledCoordinates(*(static_cast<const WebMouseEvent*>(currentEvent)), scaleFactor);
+        didHandleEvent = m_plugin->handleMouseEvent(eventWithScaledCoordinates);
     } else if (event->type() == eventNames().mousewheelEvent && currentEvent->type() == WebEvent::Wheel) {
         // We have a wheel event.
         didHandleEvent = m_plugin->handleWheelEvent(static_cast<const WebWheelEvent&>(*currentEvent));
@@ -640,6 +643,11 @@ void PluginView::viewGeometryDidChange()
 
     // Get the frame rect in window coordinates.
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
+    
+    // Adjust bounds to account for pageScaleFactor
+    float scaleFactor = frame()->pageScaleFactor();
+    frameRectInWindowCoordinates.setX(frameRectInWindowCoordinates.x() / scaleFactor);
+    frameRectInWindowCoordinates.setY(frameRectInWindowCoordinates.y() / scaleFactor);
     frameRectInWindowCoordinates.setSize(m_boundsSize);
     m_plugin->geometryDidChange(frameRectInWindowCoordinates, clipRectInWindowCoordinates());
 }
