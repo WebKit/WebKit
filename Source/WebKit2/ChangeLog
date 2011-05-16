@@ -1,3 +1,14 @@
+2011-05-16  Martin Robinson  <martin.james.robinson@gmail.com>
+
+        Try to fix the WinCairo build after r86612.
+
+        Move the LayerTreeContextGtk.cpp stub to LayerTreeContextCairo.cpp and add
+        it to the WinCairo build.
+
+        * GNUmakefile.am: Update the source list.
+        * Shared/cairo/LayerTreeContextCairo.cpp: Renamed from Source/WebKit2/Shared/gtk/LayerTreeContextGtk.cpp.
+        * win/WebKit2.vcproj: Update the source list.
+
 2011-05-16  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Anders Carlsson.
