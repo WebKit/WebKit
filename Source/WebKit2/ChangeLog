@@ -1,3 +1,17 @@
+2011-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        If the root compositing layer changes while we're about to exit compositing mode, make sure to enter compositing mode
+        https://bugs.webkit.org/show_bug.cgi?id=60905
+        <rdar://problem/9365574>
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::setRootCompositingLayer):
+        If we have a layer tree host, but haven't yet sent a EnterAcceleratedCompositingMode message (this can happen
+        when quickly going in and out of compositing mode), make sure to schedule a notification when the layer tree host
+        does it next flush. This will end up sending the EnterAcceleratedCompositingMode message.
+
 2011-05-13  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.

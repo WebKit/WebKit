@@ -225,13 +225,24 @@ void DrawingAreaImpl::layerHostDidFlushLayers()
 
 void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
 {
+    // FIXME: Instead of using nested if statements, we should keep a compositing state
+    // enum in the DrawingAreaImpl object and have a changeAcceleratedCompositingState function
+    // that takes the new state.
+
     if (graphicsLayer) {
         if (!m_layerTreeHost) {
             // We're actually entering accelerated compositing mode.
             enterAcceleratedCompositingMode(graphicsLayer);
         } else {
-            m_exitCompositingTimer.stop();
             // We're already in accelerated compositing mode, but the root compositing layer changed.
+
+            m_exitCompositingTimer.stop();
+
+            // If we haven't sent the EnterAcceleratedCompositingMode message, make sure that the
+            // layer tree host calls us back after the next layer flush so we can send it then.
+            if (!m_compositingAccordingToProxyMessages)
+                m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(true);
+
             m_layerTreeHost->setRootCompositingLayer(graphicsLayer);
         }
     } else {
