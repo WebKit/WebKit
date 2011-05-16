@@ -61,6 +61,13 @@ public:
         String mimeType;
         bool loadManually;
 
+        // The URL of the document that the plug-in is in.
+        String documentURL;
+
+        // The URL of the document in the main frame. Will be null if the document the plug-in
+        // doesn't have access to the main frame document.
+        String toplevelDocumentURL;
+
         void encode(CoreIPC::ArgumentEncoder*) const;
         static bool decode(CoreIPC::ArgumentDecoder*, Parameters&);
     };

@@ -39,6 +39,8 @@ void Plugin::Parameters::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encode(values);
     encoder->encode(mimeType);
     encoder->encode(loadManually);
+    encoder->encode(documentURL);
+    encoder->encode(toplevelDocumentURL);
 }
 
 bool Plugin::Parameters::decode(CoreIPC::ArgumentDecoder* decoder, Parameters& parameters)
@@ -56,6 +58,10 @@ bool Plugin::Parameters::decode(CoreIPC::ArgumentDecoder* decoder, Parameters& p
     if (!decoder->decode(parameters.mimeType))
         return false;
     if (!decoder->decode(parameters.loadManually))
+        return false;
+    if (!decoder->decode(parameters.documentURL))
+        return false;
+    if (!decoder->decode(parameters.toplevelDocumentURL))
         return false;
 
     if (parameters.names.size() != parameters.values.size()) {

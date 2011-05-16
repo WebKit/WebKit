@@ -1,3 +1,27 @@
+2011-05-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Pass the document URL and toplevel document URL when creating a plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=60863
+
+        This is the first of a series of patches intended to reduce the IPC traffic
+        during plug-in instantiation.
+
+        * WebProcess/Plugins/Plugin.cpp:
+        (WebKit::Plugin::Parameters::encode):
+        Encode the URLs.
+
+        (WebKit::Plugin::Parameters::decode):
+        Decode the URLs.
+
+        * WebProcess/Plugins/Plugin.h:
+        Add the document and toplevel document URLs.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        Initialize the document and toplevel document URLs.
+
 2011-05-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
