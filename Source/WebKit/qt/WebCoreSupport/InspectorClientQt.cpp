@@ -233,10 +233,11 @@ void InspectorClientQt::openInspectorFrontend(WebCore::InspectorController* insp
     m_inspectedWebPage->d->inspectorFrontend = inspectorView.get();
     inspector->d->setFrontend(inspectorView.get());
 
-    InspectorController* inspectorController = inspectorView->page()->d->page->inspectorController();
+    // Is 'controller' the same object as 'inspectorController' (which appears to be unused)?
+    InspectorController* controller = inspectorView->page()->d->page->inspectorController();
     OwnPtr<InspectorFrontendClientQt> frontendClient = adoptPtr(new InspectorFrontendClientQt(m_inspectedWebPage, inspectorView.release(), this));
     m_frontendClient = frontendClient.get();
-    inspectorController->setInspectorFrontendClient(frontendClient.release());
+    controller->setInspectorFrontendClient(frontendClient.release());
     m_frontendWebPage = inspectorPage;
 #endif
 }
