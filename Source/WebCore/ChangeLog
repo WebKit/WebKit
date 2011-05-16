@@ -2,9 +2,9 @@
 
         Reviewed by Enrica Casucci.
 
-        REGRESSION (r86555): Dropping URL onto Desktop creates broken Internet Shortcut file.
+        REGRESSION (r86542): Dropping URL onto Desktop creates broken Internet Shortcut file.
         
-        r86477 fixed this bug by using latin1 as the CString's encoding instead of ascii, but r86555
+        r86477 fixed this bug by using latin1 as the CString's encoding instead of ascii, but r86542
         undid this change.
         
         Change it back to latin1 to fix the bug.
