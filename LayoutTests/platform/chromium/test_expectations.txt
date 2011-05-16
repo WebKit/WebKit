@@ -3791,8 +3791,6 @@ BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgd
 BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html = TIMEOUT
 BUGWK59166 WIN LINUX DEBUG CPU : svg/filters/feDropShadow.svg = TIMEOUT
 
-BUGWK59167 BUGCR80878 MAC LINUX GPU : media/video-zoom.html = IMAGE
-
 BUGWK59172 : fast/html/details-children-merge-crash.html = TEXT
 BUGWK59172 : fast/html/details-element-render-inline-crash.html = TEXT
 BUGWK59172 : fast/html/details-mouse-click.html = TEXT

@@ -60,6 +60,14 @@
 
 2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
 
+        Unreviewed, rebaselining media/video-zoom.html for chromium-gpu-{linux,mac}.
+
+        * platform/chromium-gpu-linux/media/video-zoom-expected.png:
+        * platform/chromium-gpu-mac/media/video-zoom-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
+
         Unreviewed, removing baselines for media/media-document-audio-repaint.html as they're incorrect.
 
         * platform/chromium-linux/media/media-document-audio-repaint-expected.png: Removed.
