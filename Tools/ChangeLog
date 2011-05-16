@@ -1,3 +1,12 @@
+2011-05-16  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by David Levin.
+
+        add dpranke as a reviewer
+        https://bugs.webkit.org/show_bug.cgi?id=60919
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-05-16  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Anders Carlsson.
