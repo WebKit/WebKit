@@ -3709,8 +3709,8 @@ BUGWK60103 : fast/overflow/border-radius-clipping.html = IMAGE
 BUGWK60103 WIN LINUX : fast/repaint/border-radius-repaint.html = IMAGE
 BUGWK60103 WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
 
-BUGCR82004 GPU : media/video-zoom-controls.html = PASS FAIL
-BUGCR59704 CPU : media/video-zoom-controls.html = IMAGE+TEXT
+// Regressed in r85290 but should start passing when underlying flexbox bugs are fixed.
+BUGCR59704 BUGWK59644 : media/video-zoom-controls.html = IMAGE+TEXT
 
 // probably just needs a new baseline
 BUGWK60130 WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT

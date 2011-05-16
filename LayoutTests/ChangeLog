@@ -1,3 +1,9 @@
+2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, de-duplicating media/video-zoom-controls.html expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-16  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
