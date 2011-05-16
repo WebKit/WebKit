@@ -44,16 +44,16 @@ layer at (0,0) size 785x1289
               RenderText {#text} at (20,2) size 13x19
                 text run at (20,2) width 13: "el"
             RenderTableCell {TD} at (57,94) size 710x24 [border: (1px solid #EEEEEE)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 205x19
-                text run at (2,2) width 205: "\x{3B3}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3C3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{3AE}\x{3C4}\x{3B1}"
+              RenderText {#text} at (2,2) size 204x19
+                text run at (2,2) width 204: "\x{3B3}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3C3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{3AE}\x{3C4}\x{3B1}"
           RenderTableRow {TR} at (0,120) size 769x64
             RenderTableCell {TH} at (2,140) size 53x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (18,2) size 17x19
                 text run at (18,2) width 17: "en"
             RenderTableCell {TD} at (57,120) size 710x64 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 408x19
-                text run at (2,2) width 408: "'cept nut'in safari\x{2019}s \x{2018}sure\x{2019} nai\x{308}ve r\x{E9}sum\x{E9}\x{2014}h\x{E1}c\x{30C}ek full\x{2010}time one-to-one"
-              RenderBR {BR} at (410,17) size 0x0
+              RenderText {#text} at (2,2) size 407x19
+                text run at (2,2) width 407: "'cept nut'in safari\x{2019}s \x{2018}sure\x{2019} nai\x{308}ve r\x{E9}sum\x{E9}\x{2014}h\x{E1}c\x{30C}ek full\x{2010}time one-to-one"
+              RenderBR {BR} at (409,17) size 0x0
               RenderText {#text} at (2,22) size 298x19
                 text run at (2,22) width 298: "\"newcastle\x{2011}upon\x{2011}tyne\" washington\x{2011}on\x{2011}the\x{2011}brazos"
               RenderBR {BR} at (300,37) size 0x0
@@ -153,16 +153,16 @@ layer at (0,0) size 785x1289
               RenderText {#text} at (20,2) size 13x19
                 text run at (20,2) width 13: "el"
             RenderTableCell {TD} at (57,94) size 710x24 [border: (1px solid #EEEEEE)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 212x19
-                text run at (2,2) width 212: "\x{393}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3A3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{389}\x{3C4}\x{3B1}"
+              RenderText {#text} at (2,2) size 211x19
+                text run at (2,2) width 211: "\x{393}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3A3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{389}\x{3C4}\x{3B1}"
           RenderTableRow {TR} at (0,120) size 769x64
             RenderTableCell {TH} at (2,140) size 53x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (18,2) size 17x19
                 text run at (18,2) width 17: "en"
             RenderTableCell {TD} at (57,120) size 710x64 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 450x19
-                text run at (2,2) width 450: "'Cept Nut'in Safari\x{2019}s \x{2018}Sure\x{2019} Na\x{EF}ve R\x{E9}sum\x{E9}\x{2014}H\x{E1}\x{10D}ek Full\x{2010}time One-to-One"
-              RenderBR {BR} at (452,17) size 0x0
+              RenderText {#text} at (2,2) size 449x19
+                text run at (2,2) width 449: "'Cept Nut'in Safari\x{2019}s \x{2018}Sure\x{2019} Na\x{EF}ve R\x{E9}sum\x{E9}\x{2014}H\x{E1}\x{10D}ek Full\x{2010}time One-to-One"
+              RenderBR {BR} at (451,17) size 0x0
               RenderText {#text} at (2,22) size 314x19
                 text run at (2,22) width 314: "\"Newcastle-upon-Tyne\" Washington\x{2011}on\x{2011}the\x{2011}Brazos"
               RenderBR {BR} at (316,37) size 0x0
@@ -246,16 +246,16 @@ layer at (0,0) size 785x1289
               RenderText {#text} at (20,2) size 13x19
                 text run at (20,2) width 13: "el"
             RenderTableCell {TD} at (57,94) size 710x24 [border: (1px solid #EEEEEE)] [r=2 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 212x19
-                text run at (2,2) width 212: "\x{393}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3A3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{389}\x{3C4}\x{3B1}"
+              RenderText {#text} at (2,2) size 211x19
+                text run at (2,2) width 211: "\x{393}\x{3B5}\x{3C9}\x{3B3}\x{3C1}\x{3B1}\x{3C6}\x{3B9}\x{3BA}\x{3AC}\x{2010}\x{3A3}\x{3C5}\x{3C3}\x{3C7}\x{3B5}\x{3C4}\x{3B9}\x{3C3}\x{3BC}\x{3AD}\x{3BD}\x{3B5}\x{3C2} \x{389}\x{3C4}\x{3B1}"
           RenderTableRow {TR} at (0,120) size 769x64
             RenderTableCell {TH} at (2,140) size 53x24 [bgcolor=#F8F8F8] [border: (1px solid #EEEEEE)] [r=3 c=0 rs=1 cs=1]
               RenderText {#text} at (18,2) size 17x19
                 text run at (18,2) width 17: "en"
             RenderTableCell {TD} at (57,120) size 710x64 [border: (1px solid #EEEEEE)] [r=3 c=1 rs=1 cs=1]
-              RenderText {#text} at (2,2) size 460x19
-                text run at (2,2) width 460: "'Cept Nut'in Safari\x{2019}s \x{2018}Sure\x{2019} Nai\x{308}ve R\x{E9}sum\x{E9}\x{2014}H\x{E1}c\x{30C}ek Full\x{2010}Time One-To-One"
-              RenderBR {BR} at (462,17) size 0x0
+              RenderText {#text} at (2,2) size 459x19
+                text run at (2,2) width 459: "'Cept Nut'in Safari\x{2019}s \x{2018}Sure\x{2019} Nai\x{308}ve R\x{E9}sum\x{E9}\x{2014}H\x{E1}c\x{30C}ek Full\x{2010}Time One-To-One"
+              RenderBR {BR} at (461,17) size 0x0
               RenderText {#text} at (2,22) size 327x19
                 text run at (2,22) width 327: "\"Newcastle\x{2011}Upon\x{2011}Tyne\" Washington\x{2011}On\x{2011}The\x{2011}Brazos"
               RenderBR {BR} at (329,37) size 0x0
