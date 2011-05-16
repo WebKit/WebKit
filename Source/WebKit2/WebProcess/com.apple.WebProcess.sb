@@ -179,3 +179,21 @@
 (allow file-read*
        (home-literal "/Library/Preferences/com.apple.Safari.RSS.plist")
        (home-literal "/Library/Preferences/com.apple.Syndication.plist"))
+
+;; FIXME should be removed when <rdar://problem/9347205> + related radar in Safari is fixed
+(allow mach-lookup
+       (global-name "org.h5l.kcm")
+       (global-name "com.apple.system.logger")
+       (global-name "com.apple.system.notification_center"))
+(allow network-outbound
+       (remote udp))
+(allow file-read*
+        (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.Kerberos.plist"))
+        (literal (string-append (param "HOME_DIR") "/Library/Preferences/com.apple.GSS.plist"))
+        (literal (string-append (param "HOME_DIR") "/Library/Preferences/edu.mit.Kerberos"))
+        (literal "/Library/Preferences/com.apple.Kerberos.plist")
+        (literal "/Library/Preferences/com.apple.GSS.plist")
+        (literal "/Library/Preferences/edu.mit.Kerberos")
+        (literal "/private/etc/krb5.conf")
+        (literal "/private/etc/services")
+        (literal "/private/etc/host"))
