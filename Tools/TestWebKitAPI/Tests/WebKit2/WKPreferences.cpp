@@ -25,6 +25,7 @@
 
 #include "Test.h"
 
+#include "PlatformUtilities.h"
 #include <WebKit2/WKPreferences.h>
 #include <WebKit2/WKPreferencesPrivate.h>
 #include <WebKit2/WKRetainPtr.h>
@@ -37,7 +38,7 @@ TEST(WebKit2, WKPreferencesBasic)
 {
     WKPreferencesRef preference = WKPreferencesCreate();
 
-    TEST_ASSERT(WKGetTypeID(preference) == WKPreferencesGetTypeID());
+    EXPECT_EQ(WKPreferencesGetTypeID(), WKGetTypeID(preference));
 
     WKRelease(preference);
 }
@@ -62,43 +63,37 @@ TEST(WebKit2, WKPreferencesDefaults)
 
     WKPreferencesRef preference = WKPreferencesCreate();
 
-    TEST_ASSERT(WKPreferencesGetJavaScriptEnabled(preference) == true);
-    TEST_ASSERT(WKPreferencesGetLoadsImagesAutomatically(preference) == true);
-    TEST_ASSERT(WKPreferencesGetOfflineWebApplicationCacheEnabled(preference) == false);
-    TEST_ASSERT(WKPreferencesGetLocalStorageEnabled(preference) == true);
-    TEST_ASSERT(WKPreferencesGetXSSAuditorEnabled(preference) == true);
-    TEST_ASSERT(WKPreferencesGetFrameFlatteningEnabled(preference) == false);
-    TEST_ASSERT(WKPreferencesGetPluginsEnabled(preference) == true);
-    TEST_ASSERT(WKPreferencesGetJavaEnabled(preference) == true);
-    TEST_ASSERT(WKPreferencesGetJavaScriptCanOpenWindowsAutomatically(preference) == true);
-    TEST_ASSERT(WKPreferencesGetHyperlinkAuditingEnabled(preference) == true);
-    WKRetainPtr<WKStringRef> standardFontFamily(AdoptWK, WKPreferencesCopyStandardFontFamily(preference));
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(standardFontFamily.get(), expectedStandardFontFamily));
-    WKRetainPtr<WKStringRef> fixedFontFamily(AdoptWK, WKPreferencesCopyFixedFontFamily(preference));
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(fixedFontFamily.get(), expectedFixedFontFamily));
-    WKRetainPtr<WKStringRef> serifFontFamily(AdoptWK, WKPreferencesCopySerifFontFamily(preference));
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(serifFontFamily.get(), expectedSerifFontFamily));
-    WKRetainPtr<WKStringRef> sansSerifFontFamily(AdoptWK, WKPreferencesCopySansSerifFontFamily(preference));
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(sansSerifFontFamily.get(), expectedSansSerifFontFamily));
-    WKRetainPtr<WKStringRef> cursiveFontFamily(AdoptWK, WKPreferencesCopyCursiveFontFamily(preference));
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(cursiveFontFamily.get(), expectedCursiveFontFamily));
-    WKRetainPtr<WKStringRef> fantasyFontFamily(AdoptWK, WKPreferencesCopyFantasyFontFamily(preference));
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(fantasyFontFamily.get(), expectedFantasyFontFamily));
-    TEST_ASSERT(WKPreferencesGetMinimumFontSize(preference) == 0);
-    TEST_ASSERT(WKPreferencesGetPrivateBrowsingEnabled(preference) == false);
-    TEST_ASSERT(WKPreferencesGetDeveloperExtrasEnabled(preference) == false);
-    TEST_ASSERT(WKPreferencesGetTextAreasAreResizable(preference) == true);
+    EXPECT_TRUE(WKPreferencesGetJavaScriptEnabled(preference));
+    EXPECT_TRUE(WKPreferencesGetLoadsImagesAutomatically(preference));
+    EXPECT_FALSE(WKPreferencesGetOfflineWebApplicationCacheEnabled(preference));
+    EXPECT_TRUE(WKPreferencesGetLocalStorageEnabled(preference));
+    EXPECT_TRUE(WKPreferencesGetXSSAuditorEnabled(preference));
+    EXPECT_FALSE(WKPreferencesGetFrameFlatteningEnabled(preference));
+    EXPECT_TRUE(WKPreferencesGetPluginsEnabled(preference));
+    EXPECT_TRUE(WKPreferencesGetJavaEnabled(preference));
+    EXPECT_TRUE(WKPreferencesGetJavaScriptCanOpenWindowsAutomatically(preference));
+    EXPECT_TRUE(WKPreferencesGetHyperlinkAuditingEnabled(preference));
+    EXPECT_WK_STREQ(expectedStandardFontFamily, adoptWK(WKPreferencesCopyStandardFontFamily(preference)));
+    EXPECT_WK_STREQ(expectedFixedFontFamily, adoptWK(WKPreferencesCopyFixedFontFamily(preference)));
+    EXPECT_WK_STREQ(expectedSerifFontFamily, adoptWK(WKPreferencesCopySerifFontFamily(preference)));
+    EXPECT_WK_STREQ(expectedSansSerifFontFamily, adoptWK(WKPreferencesCopySansSerifFontFamily(preference)));
+    EXPECT_WK_STREQ(expectedCursiveFontFamily, adoptWK(WKPreferencesCopyCursiveFontFamily(preference)));
+    EXPECT_WK_STREQ(expectedFantasyFontFamily, adoptWK(WKPreferencesCopyFantasyFontFamily(preference)));
+    EXPECT_EQ(0u, WKPreferencesGetMinimumFontSize(preference));
+    EXPECT_FALSE(WKPreferencesGetPrivateBrowsingEnabled(preference));
+    EXPECT_FALSE(WKPreferencesGetDeveloperExtrasEnabled(preference));
+    EXPECT_TRUE(WKPreferencesGetTextAreasAreResizable(preference));
 
 #if PLATFORM(WIN)
-    TEST_ASSERT(WKPreferencesGetFontSmoothingLevel(preference) == kWKFontSmoothingLevelWindows);
+    EXPECT_EQ(kWKFontSmoothingLevelWindows, WKPreferencesGetFontSmoothingLevel(preference));
 #else
-    TEST_ASSERT(WKPreferencesGetFontSmoothingLevel(preference) == kWKFontSmoothingLevelMedium);
+    EXPECT_EQ(kWKFontSmoothingLevelMedium, WKPreferencesGetFontSmoothingLevel(preference));
 #endif
 
-    TEST_ASSERT(WKPreferencesGetAcceleratedCompositingEnabled(preference) == true);
-    TEST_ASSERT(WKPreferencesGetCompositingBordersVisible(preference) == false);
-    TEST_ASSERT(WKPreferencesGetCompositingRepaintCountersVisible(preference) == false);
-    TEST_ASSERT(WKPreferencesGetNeedsSiteSpecificQuirks(preference) == false);
+    EXPECT_TRUE(WKPreferencesGetAcceleratedCompositingEnabled(preference));
+    EXPECT_FALSE(WKPreferencesGetCompositingBordersVisible(preference));
+    EXPECT_FALSE(WKPreferencesGetCompositingRepaintCountersVisible(preference));
+    EXPECT_FALSE(WKPreferencesGetNeedsSiteSpecificQuirks(preference));
 
     WKRelease(preference);
 }

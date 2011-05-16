@@ -38,10 +38,10 @@ static bool testDone;
 
 static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
 {
-    TEST_ASSERT(WKFrameGetFrameLoadState(frame) == kWKFrameLoadStateFinished);
+    EXPECT_EQ(kWKFrameLoadStateFinished, WKFrameGetFrameLoadState(frame));
 
     WKURLRef url = WKFrameCopyProvisionalURL(frame);
-    TEST_ASSERT(!url);
+    EXPECT_NULL(url);
 
     testDone = true;
 }

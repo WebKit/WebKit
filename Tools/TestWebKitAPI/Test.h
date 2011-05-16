@@ -26,13 +26,22 @@
 #ifndef Test_h
 #define Test_h
 
-#include "TestsController.h"
-
 #include <gtest/gtest.h>
 
 namespace TestWebKitAPI {
 
-#define TEST_ASSERT(expression) EXPECT_TRUE(expression)
+#define EXPECT_NOT_NULL(expression) \
+    EXPECT_TRUE(expression)
+
+#define EXPECT_NULL(expression) \
+    EXPECT_TRUE(!(expression))
+
+#define ASSERT_NOT_NULL(expression) \
+    ASSERT_TRUE(expression)
+
+#define ASSERT_NULL(expression) \
+    ASSERT_TRUE(!(expression))
+
 #define TEST_ASSERT_RETURN(expression, returnValue) \
     do { \
         if (!(expression)) { \

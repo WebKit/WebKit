@@ -38,8 +38,8 @@ public:
 
     virtual void didCreatePage(WKBundleRef bundle, WKBundlePageRef page)
     {
-        WKRetainPtr<WKStringRef> doneMessageName(AdoptWK, WKStringCreateWithUTF8CString("DoneMessageName"));
-        WKRetainPtr<WKStringRef> doneMessageBody(AdoptWK, WKStringCreateWithUTF8CString("DoneMessageBody"));
+        WKRetainPtr<WKStringRef> doneMessageName = adoptWK(WKStringCreateWithUTF8CString("DoneMessageName"));
+        WKRetainPtr<WKStringRef> doneMessageBody = adoptWK(WKStringCreateWithUTF8CString("DoneMessageBody"));
         WKBundlePostMessage(bundle, doneMessageName.get(), doneMessageBody.get());
     }
 };

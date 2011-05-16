@@ -37,10 +37,10 @@ TEST(WebKit2, WKStringJSString)
     JSStringRef jsString = JSStringCreateWithUTF8CString("hello");
     
     WKStringRef convertedJSString = WKStringCreateWithJSString(jsString);
-    TEST_ASSERT(WKStringIsEqual(wkString, convertedJSString));
+    EXPECT_TRUE(WKStringIsEqual(wkString, convertedJSString));
     
     JSStringRef convertedWKString = WKStringCopyJSString(wkString);
-    TEST_ASSERT(JSStringIsEqual(jsString, convertedWKString));
+    EXPECT_TRUE(JSStringIsEqual(jsString, convertedWKString));
 
     WKRelease(wkString);
     WKRelease(convertedJSString);

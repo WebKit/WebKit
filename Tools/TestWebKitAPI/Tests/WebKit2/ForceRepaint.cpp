@@ -37,7 +37,7 @@ static bool test2Done;
     
 void didForceRepaint(WKErrorRef error, void*)
 {
-    TEST_ASSERT(!error);
+    EXPECT_NULL(error);
     test2Done = true;
 }
 

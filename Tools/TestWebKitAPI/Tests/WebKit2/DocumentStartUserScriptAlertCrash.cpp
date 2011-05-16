@@ -36,9 +36,10 @@ static bool done;
 
 static void runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo)
 {
-    TEST_ASSERT(frame);
-    TEST_ASSERT(WKFrameGetPage(frame) == page);
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(alertText, "an alert"));
+    ASSERT_NOT_NULL(frame);
+
+    EXPECT_EQ(page, WKFrameGetPage(frame));
+    EXPECT_WK_STREQ("an alert", alertText);
 
     done = true;
 }

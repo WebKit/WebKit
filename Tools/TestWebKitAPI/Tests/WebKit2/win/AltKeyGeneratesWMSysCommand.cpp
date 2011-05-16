@@ -80,7 +80,7 @@ TEST(WebKit2, AltKeyGeneratesWMSysCommand)
 
     // The WM_SYSKEYUP message should have generated a WM_SYSCOMMAND message that was sent to the
     // WKView's parent window.
-    TEST_ASSERT(observer.windowDidReceiveWMSysCommand());
+    EXPECT_TRUE(observer.windowDidReceiveWMSysCommand());
 }
 
 } // namespace TestWebKitAPI

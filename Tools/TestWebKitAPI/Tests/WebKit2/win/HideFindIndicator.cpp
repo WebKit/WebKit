@@ -72,14 +72,14 @@ TEST(WebKit2, HideFindIndicator)
     Util::run(&findIndicatorCallbackWasCalled);
     findIndicatorCallbackWasCalled = false;
 
-    TEST_ASSERT(bitmap);
+    EXPECT_NOT_NULL(bitmap);
     ::DeleteObject(bitmap);
     bitmap = 0;
 
     WKPageHideFindUI(webView.page());
     Util::run(&findIndicatorCallbackWasCalled);
 
-    TEST_ASSERT(!bitmap);
+    EXPECT_NULL(bitmap);
 }
 
 } // namespace TestWebKitAPI

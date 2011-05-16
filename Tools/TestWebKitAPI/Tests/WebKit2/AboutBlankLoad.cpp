@@ -35,7 +35,7 @@ static bool done;
 
 static void decidePolicyForResponse(WKPageRef, WKFrameRef, WKURLResponseRef response, WKURLRequestRef, WKFramePolicyListenerRef listener, WKTypeRef, const void*)
 {
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(Util::MIMETypeForWKURLResponse(response).get(), "text/html"));
+    EXPECT_WK_STREQ("text/html", Util::MIMETypeForWKURLResponse(response));
 
     WKFramePolicyListenerUse(listener);
     done = true;

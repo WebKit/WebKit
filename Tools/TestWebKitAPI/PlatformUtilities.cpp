@@ -58,6 +58,16 @@ std::string toSTD(WKStringRef string)
     return std::string(buffer.get(), stringLength - 1);
 }
 
+std::string toSTD(WKRetainPtr<WKStringRef> string)
+{
+    return toSTD(string.get());
+}
+
+std::string toSTD(const char* string)
+{
+    return std::string(string);
+}
+
 WKRetainPtr<WKStringRef> toWK(const char* utf8String)
 {
     return WKRetainPtr<WKStringRef>(AdoptWK, WKStringCreateWithUTF8CString(utf8String));

@@ -26,10 +26,11 @@
 #ifndef PlatformUtilities_h
 #define PlatformUtilities_h
 
-#include <WebKit2/WebKit2.h>
 #include <WebKit2/WKRetainPtr.h>
-#include <wtf/Platform.h>
+#include <WebKit2/WebKit2.h>
+#include <gtest/gtest.h>
 #include <string>
+#include <wtf/Platform.h>
 
 namespace TestWebKitAPI {
 namespace Util {
@@ -52,8 +53,20 @@ WKRetainPtr<WKStringRef> MIMETypeForWKURLResponse(WKURLResponseRef);
 
 bool isKeyDown(WKNativeEventPtr);
 
-std::string toSTD(WKStringRef string);
+std::string toSTD(WKStringRef);
+std::string toSTD(WKRetainPtr<WKStringRef>);
+std::string toSTD(const char*);
+
 WKRetainPtr<WKStringRef> toWK(const char* utf8String);
+
+template<typename T, typename U>
+static inline ::testing::AssertionResult assertWKStrigEqual(const char* expected_expression, const char* actual_expression, T expected, U actual)
+{
+    return ::testing::internal::CmpHelperSTREQ(expected_expression, actual_expression, Util::toSTD(expected).c_str(), Util::toSTD(actual).c_str());
+}
+
+#define EXPECT_WK_STREQ(expected, actual) \
+    EXPECT_PRED_FORMAT2(TestWebKitAPI::Util::assertWKStrigEqual, expected, actual)
 
 } // namespace Util
 } // namespace TestWebKitAPI

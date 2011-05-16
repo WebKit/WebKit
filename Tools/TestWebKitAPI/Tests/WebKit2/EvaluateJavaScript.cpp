@@ -38,12 +38,12 @@ static bool testDone;
 
 static void didRunJavaScript(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* context)
 {
-    TEST_ASSERT(context == reinterpret_cast<void*>(0x1234578));
-    TEST_ASSERT(!resultSerializedScriptValue);
+    EXPECT_EQ(reinterpret_cast<void*>(0x1234578), context);
+    EXPECT_NULL(resultSerializedScriptValue);
 
     // FIXME: We should also check the error, but right now it's always null.
     // Assert that it's null so we can revisit when this changes.
-    TEST_ASSERT(!error);
+    EXPECT_NULL(error);
 
     testDone = true;
 }

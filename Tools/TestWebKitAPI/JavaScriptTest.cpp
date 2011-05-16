@@ -43,18 +43,18 @@ struct JavaScriptCallbackContext {
 
 static void javaScriptCallback(WKSerializedScriptValueRef resultSerializedScriptValue, WKErrorRef error, void* ctx)
 {
-    TEST_ASSERT(resultSerializedScriptValue);
+    ASSERT_NOT_NULL(resultSerializedScriptValue);
 
     JavaScriptCallbackContext* context = static_cast<JavaScriptCallbackContext*>(ctx);
 
     JSGlobalContextRef scriptContext = JSGlobalContextCreate(0);
-    TEST_ASSERT(scriptContext);
+    ASSERT_NOT_NULL(scriptContext);
 
     JSValueRef scriptValue = WKSerializedScriptValueDeserialize(resultSerializedScriptValue, scriptContext, 0);
-    TEST_ASSERT(scriptValue);
+    ASSERT_NOT_NULL(scriptValue);
 
     JSStringRef scriptString = JSValueToStringCopy(scriptContext, scriptValue, 0);
-    TEST_ASSERT(scriptString);
+    ASSERT_NOT_NULL(scriptString);
 
     context->didFinish = true;
     context->didMatchExpectedString = JSStringIsEqualToUTF8CString(scriptString, context->expectedString);
@@ -62,18 +62,13 @@ static void javaScriptCallback(WKSerializedScriptValueRef resultSerializedScript
     JSStringRelease(scriptString);
     JSGlobalContextRelease(scriptContext);
 
-    TEST_ASSERT(!error);
-}
-
-static WKRetainPtr<WKStringRef> wk(const char* utf8String)
-{
-    return WKRetainPtr<WKStringRef>(AdoptWK, WKStringCreateWithUTF8CString(utf8String));
+    EXPECT_NULL(error);
 }
 
 bool runJSTest(WKPageRef page, const char* script, const char* expectedResult)
 {
     JavaScriptCallbackContext context(expectedResult);
-    WKPageRunJavaScriptInMainFrame(page, wk(script).get(), &context, javaScriptCallback);
+    WKPageRunJavaScriptInMainFrame(page, Util::toWK(script).get(), &context, javaScriptCallback);
     Util::run(&context.didFinish);
     return context.didMatchExpectedString;
 }

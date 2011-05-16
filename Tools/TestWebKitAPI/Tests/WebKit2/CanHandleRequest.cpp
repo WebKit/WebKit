@@ -39,8 +39,9 @@ static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messag
 {
     didReceiveMessage = true;
 
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(messageName, "DidCheckCanHandleRequest"));
-    TEST_ASSERT(WKGetTypeID(body) == WKBooleanGetTypeID());
+    EXPECT_WK_STREQ("DidCheckCanHandleRequest", messageName);
+    EXPECT_EQ(WKBooleanGetTypeID(), WKGetTypeID(body));
+
     canHandleRequest = WKBooleanGetValue(static_cast<WKBooleanRef>(body));
 }
 
@@ -66,7 +67,7 @@ TEST(WebKit2, CanHandleRequest)
 
     WKContextPostMessageToInjectedBundle(context.get(), Util::toWK("CheckCanHandleRequest").get(), 0);
     Util::run(&didReceiveMessage);
-    TEST_ASSERT(canHandleRequest);
+    EXPECT_TRUE(canHandleRequest);
 }
 
 } // namespace TestWebKitAPI

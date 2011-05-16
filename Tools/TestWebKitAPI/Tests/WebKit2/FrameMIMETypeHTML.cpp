@@ -36,20 +36,20 @@ static bool testDone;
 
 static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
-    WKRetainPtr<WKStringRef> wkMIME(AdoptWK, WKFrameCopyMIMEType(frame));
-    TEST_ASSERT(WKStringIsEmpty(wkMIME.get()));
+    WKRetainPtr<WKStringRef> wkMIME = adoptWK(WKFrameCopyMIMEType(frame));
+    EXPECT_TRUE(WKStringIsEmpty(wkMIME.get()));
 }
 
 static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
-    WKRetainPtr<WKStringRef> wkMIME(AdoptWK, WKFrameCopyMIMEType(frame));
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(wkMIME.get(), "text/html"));
+    WKRetainPtr<WKStringRef> wkMIME = adoptWK(WKFrameCopyMIMEType(frame));
+    EXPECT_WK_STREQ("text/html", wkMIME);
 }
 
 static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
-    WKRetainPtr<WKStringRef> wkMIME(AdoptWK, WKFrameCopyMIMEType(frame));
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(wkMIME.get(), "text/html"));
+    WKRetainPtr<WKStringRef> wkMIME = adoptWK(WKFrameCopyMIMEType(frame));
+    EXPECT_WK_STREQ("text/html", wkMIME);
 
     testDone = true;
 }

@@ -68,34 +68,35 @@ TEST(WebKit2, SpacebarScrolling)
     WKPageLoadURL(webView.page(), url.get());
     Util::run(&didFinishLoad);
 
-    TEST_ASSERT(runJSTest(webView.page(), "isDocumentScrolled()", "false"));
-    TEST_ASSERT(runJSTest(webView.page(), "textFieldContainsSpace()", "false"));
+    EXPECT_TRUE(runJSTest(webView.page(), "isDocumentScrolled()", "false"));
+    EXPECT_TRUE(runJSTest(webView.page(), "textFieldContainsSpace()", "false"));
 
     webView.simulateSpacebarKeyPress();
 
-    TEST_ASSERT(runJSTest(webView.page(), "isDocumentScrolled()", "false"));
-    TEST_ASSERT(runJSTest(webView.page(), "textFieldContainsSpace()", "true"));
+    EXPECT_TRUE(runJSTest(webView.page(), "isDocumentScrolled()", "false"));
+    EXPECT_TRUE(runJSTest(webView.page(), "textFieldContainsSpace()", "true"));
 
     // On Mac, a key down event represents both a raw key down and a key press. On Windows, a key
     // down event only represents a raw key down. We expect the key press to be handled (because it
     // inserts text into the text field). But the raw key down should not be handled.
 #if PLATFORM(MAC)
-    TEST_ASSERT(!didNotHandleKeyDownEvent);
+    EXPECT_FALSE(didNotHandleKeyDownEvent);
 #elif PLATFORM(WIN)
-    TEST_ASSERT(didNotHandleKeyDownEvent);
+    EXPECT_TRUE(didNotHandleKeyDownEvent);
 #endif
 
-    TEST_ASSERT(runJSTest(webView.page(), "blurTextField()", "undefined"));
+    EXPECT_TRUE(runJSTest(webView.page(), "blurTextField()", "undefined"));
 
     didNotHandleKeyDownEvent = false;
     webView.simulateSpacebarKeyPress();
 
-    TEST_ASSERT(runJSTest(webView.page(), "isDocumentScrolled()", "true"));
-    TEST_ASSERT(runJSTest(webView.page(), "textFieldContainsSpace()", "true"));
+    EXPECT_TRUE(runJSTest(webView.page(), "isDocumentScrolled()", "true"));
+    EXPECT_TRUE(runJSTest(webView.page(), "textFieldContainsSpace()", "true"));
+
 #if PLATFORM(MAC)
-    TEST_ASSERT(!didNotHandleKeyDownEvent);
+    EXPECT_FALSE(didNotHandleKeyDownEvent);
 #elif PLATFORM(WIN)
-    TEST_ASSERT(didNotHandleKeyDownEvent);
+    EXPECT_TRUE(didNotHandleKeyDownEvent);
 #endif
 }
 

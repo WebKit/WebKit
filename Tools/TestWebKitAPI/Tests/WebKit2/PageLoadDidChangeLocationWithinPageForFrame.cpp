@@ -47,13 +47,13 @@ static bool didChangeLocationWithinPage;
 static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocumentNavigationType type, WKTypeRef, const void*)
 {
     if (!didPopStateWithinPage) {
-        TEST_ASSERT(type == kWKSameDocumentNavigationSessionStatePop);
-        TEST_ASSERT(!didChangeLocationWithinPage);
+        EXPECT_EQ(type, kWKSameDocumentNavigationSessionStatePop);
+        EXPECT_FALSE(didChangeLocationWithinPage);
         didPopStateWithinPage = true;
         return;
     }
 
-    TEST_ASSERT(type == kWKSameDocumentNavigationAnchorNavigation);
+    EXPECT_EQ(kWKSameDocumentNavigationAnchorNavigation, type);
     didChangeLocationWithinPage = true;
 }
 
@@ -79,7 +79,7 @@ TEST(WebKit2, PageLoadDidChangeLocationWithinPageForFrame)
 
     WKRetainPtr<WKURLRef> urlAfterAnchorClick = adoptWK(WKFrameCopyURL(WKPageGetMainFrame(webView.page())));
 
-    TEST_ASSERT(!WKURLIsEqual(initialURL.get(), urlAfterAnchorClick.get()));
+    EXPECT_FALSE(WKURLIsEqual(initialURL.get(), urlAfterAnchorClick.get()));
 }
 
 } // namespace TestWebKitAPI

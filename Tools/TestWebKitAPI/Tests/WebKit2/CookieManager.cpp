@@ -41,8 +41,9 @@ static WKRetainPtr<WKContextRef> wkContext;
 
 static void didGetTestHTTPCookieAcceptPolicy(WKHTTPCookieAcceptPolicy policy, WKErrorRef, void* context)
 {
-    TEST_ASSERT(context == reinterpret_cast<void*>(0x1234578));
-    TEST_ASSERT(policy == testPolicy);
+    EXPECT_EQ(reinterpret_cast<void*>(0x1234578), context);
+    EXPECT_EQ(testPolicy, policy);
+
     WKCookieManagerRef cookieManager = WKContextGetCookieManager(wkContext.get());
     WKCookieManagerSetHTTPCookieAcceptPolicy(cookieManager, userPolicy);
 
@@ -51,7 +52,7 @@ static void didGetTestHTTPCookieAcceptPolicy(WKHTTPCookieAcceptPolicy policy, WK
 
 static void didGetUserHTTPCookieAcceptPolicy(WKHTTPCookieAcceptPolicy policy, WKErrorRef, void* context)
 {
-    TEST_ASSERT(context == reinterpret_cast<void*>(0x1234578));
+    EXPECT_EQ(reinterpret_cast<void*>(0x1234578), context);
 
     userPolicy = policy;
 

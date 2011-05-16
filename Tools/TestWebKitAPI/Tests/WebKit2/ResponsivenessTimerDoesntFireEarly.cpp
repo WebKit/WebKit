@@ -37,7 +37,7 @@ static bool didBrieflyPause;
 static void didReceiveMessageFromInjectedBundle(WKContextRef, WKStringRef messageName, WKTypeRef, const void*)
 {
     didBrieflyPause = true;
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(messageName, "DidBrieflyPause"));
+    EXPECT_WK_STREQ("DidBrieflyPause", messageName);
 }
 
 static void didFinishLoadForFrame(WKPageRef, WKFrameRef, WKTypeRef, const void*)
@@ -92,7 +92,8 @@ TEST(WebKit2, ResponsivenessTimerDoesntFireEarly)
     webView.simulateSpacebarKeyPress();
 
     Util::run(&didBrieflyPause);
-    TEST_ASSERT(!didBecomeUnresponsive);
+
+    EXPECT_FALSE(didBecomeUnresponsive);
 }
 
 } // namespace TestWebKitAPI

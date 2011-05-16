@@ -85,7 +85,7 @@ TEST(WebKit2, TranslateMessageGeneratesWMChar)
     runAndWatchForWMChar(&didNotHandleKeyEventCalled);
 
     // WebKit should not have called TranslateMessage() on the WM_KEYDOWN message since we installed a didNotHandleKeyEvent callback.
-    TEST_ASSERT(!didSeeWMChar);
+    EXPECT_FALSE(didSeeWMChar);
 }
 
 } // namespace TestWebKitAPI

@@ -75,12 +75,12 @@ TEST(WebKit2, RestoreSessionStateContainingFormData)
     setPageLoaderClient(webView.page());
 
     WKRetainPtr<WKDataRef> data = createSessionStateContainingFormData(context.get());
-    TEST_ASSERT(data);
+    EXPECT_NOT_NULL(data);
 
     WKPageRestoreFromSessionState(webView.page(), data.get());
     Util::run(&didFinishLoad);
 
-    TEST_ASSERT(WKPageCanGoBack(webView.page()));
+    EXPECT_TRUE(WKPageCanGoBack(webView.page()));
 }
 
 } // namespace TestWebKitAPI

@@ -32,38 +32,38 @@ namespace TestWebKitAPI {
 TEST(WebKit2, WKString)
 {
     WKStringRef string = WKStringCreateWithUTF8CString("hello");
-    TEST_ASSERT(!WKStringIsEmpty(string));
-    TEST_ASSERT(WKStringIsEqual(string, string));
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(string, "hello"));
-    TEST_ASSERT(WKStringGetMaximumUTF8CStringSize(string) == 16);
+    EXPECT_TRUE(!WKStringIsEmpty(string));
+    EXPECT_TRUE(WKStringIsEqual(string, string));
+    EXPECT_TRUE(WKStringIsEqualToUTF8CString(string, "hello"));
+    EXPECT_EQ(16u, WKStringGetMaximumUTF8CStringSize(string));
 
     size_t maxSize = WKStringGetMaximumUTF8CStringSize(string);
     char* buffer = new char[maxSize];
 
     size_t actualSize = WKStringGetUTF8CString(string, buffer, maxSize);
-    TEST_ASSERT(actualSize == 6);
-    TEST_ASSERT(strcmp(buffer, "hello") == 0);
+    EXPECT_EQ(6u, actualSize);
+    EXPECT_STREQ("hello", buffer);
 
     delete[] buffer;
     
     maxSize = WKStringGetLength(string);
-    TEST_ASSERT(maxSize == 5);
+    EXPECT_EQ(5u, maxSize);
 
     // Allocate a buffer one character larger than we need.
     WKChar* uniBuffer = new WKChar[maxSize+1];
     actualSize = WKStringGetCharacters(string, uniBuffer, maxSize);
-    TEST_ASSERT(actualSize == 5);
+    EXPECT_EQ(5u, actualSize);
     
     WKChar helloBuffer[] = { 'h', 'e', 'l', 'l', 'o' };
-    TEST_ASSERT(!memcmp(uniBuffer, helloBuffer, 10));
+    EXPECT_TRUE(!memcmp(uniBuffer, helloBuffer, 10));
     
     // Test passing a buffer length < the string length.
-    actualSize = WKStringGetCharacters(string, uniBuffer, maxSize-1);
-    TEST_ASSERT(actualSize == 4);
+    actualSize = WKStringGetCharacters(string, uniBuffer, maxSize - 1);
+    EXPECT_EQ(4u, actualSize);
     
     // Test passing a buffer length > the string length.
-    actualSize = WKStringGetCharacters(string, uniBuffer, maxSize+1);
-    TEST_ASSERT(actualSize == 5);
+    actualSize = WKStringGetCharacters(string, uniBuffer, maxSize + 1);
+    EXPECT_EQ(5u, actualSize);
     
     delete[] uniBuffer;
     

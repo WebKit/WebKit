@@ -50,14 +50,13 @@ struct State {
 static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
     State* state = reinterpret_cast<State*>(const_cast<void*>(clientInfo));
-    TEST_ASSERT(state->didDecidePolicyForNavigationAction);
-    TEST_ASSERT(!state->didCommitLoadForFrame);
+    EXPECT_TRUE(state->didDecidePolicyForNavigationAction);
+    EXPECT_FALSE(state->didCommitLoadForFrame);
 
     // The commited URL should be null.
-    TEST_ASSERT(!WKFrameCopyURL(frame));
+    EXPECT_NULL(WKFrameCopyURL(frame));
 
-    TEST_ASSERT(!state->didStartProvisionalLoadForFrame);
-
+    EXPECT_FALSE(state->didStartProvisionalLoadForFrame);
 
     state->didStartProvisionalLoadForFrame = true;
 }
@@ -65,11 +64,11 @@ static void didStartProvisionalLoadForFrame(WKPageRef page, WKFrameRef frame, WK
 static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
     State* state = reinterpret_cast<State*>(const_cast<void*>(clientInfo));
-    TEST_ASSERT(state->didDecidePolicyForNavigationAction);
-    TEST_ASSERT(state->didStartProvisionalLoadForFrame);
+    EXPECT_TRUE(state->didDecidePolicyForNavigationAction);
+    EXPECT_TRUE(state->didStartProvisionalLoadForFrame);
 
     // The provisional URL should be null.
-    TEST_ASSERT(!WKFrameCopyProvisionalURL(frame));
+    EXPECT_NULL(WKFrameCopyProvisionalURL(frame));
 
     state->didCommitLoadForFrame = true;
 }
@@ -77,12 +76,12 @@ static void didCommitLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
 static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
 {
     State* state = reinterpret_cast<State*>(const_cast<void*>(clientInfo));
-    TEST_ASSERT(state->didDecidePolicyForNavigationAction);
-    TEST_ASSERT(state->didStartProvisionalLoadForFrame);
-    TEST_ASSERT(state->didCommitLoadForFrame);
+    EXPECT_TRUE(state->didDecidePolicyForNavigationAction);
+    EXPECT_TRUE(state->didStartProvisionalLoadForFrame);
+    EXPECT_TRUE(state->didCommitLoadForFrame);
 
     // The provisional URL should be null.
-    TEST_ASSERT(!WKFrameCopyProvisionalURL(frame));
+    EXPECT_NULL(WKFrameCopyProvisionalURL(frame));
 
     test1Done = true;
 }
@@ -90,8 +89,8 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
 static void decidePolicyForNavigationAction(WKPageRef page, WKFrameRef frame, WKFrameNavigationType navigationType, WKEventModifiers modifiers, WKEventMouseButton mouseButton, WKURLRequestRef request, WKFramePolicyListenerRef listener, WKTypeRef userData, const void* clientInfo)
 {
     State* state = reinterpret_cast<State*>(const_cast<void*>(clientInfo));
-    TEST_ASSERT(!state->didStartProvisionalLoadForFrame);
-    TEST_ASSERT(!state->didCommitLoadForFrame);
+    EXPECT_FALSE(state->didStartProvisionalLoadForFrame);
+    EXPECT_FALSE(state->didCommitLoadForFrame);
 
     state->didDecidePolicyForNavigationAction = true;
 

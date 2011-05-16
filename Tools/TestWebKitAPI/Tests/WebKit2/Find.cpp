@@ -42,8 +42,8 @@ static void didFinishLoadForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef us
 
 static void didCountStringMatches(WKPageRef page, WKStringRef string, unsigned numMatches, const void* clientInfo)
 {
-    TEST_ASSERT(WKStringIsEqualToUTF8CString(string, "Hello"));
-    TEST_ASSERT(numMatches == 3);
+    EXPECT_WK_STREQ("Hello", string);
+    EXPECT_EQ(3u, numMatches);
 
     didCallCountStringMatches = true;
 }
