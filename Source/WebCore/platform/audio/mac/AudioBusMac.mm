@@ -58,7 +58,7 @@ PassOwnPtr<AudioBus> AudioBus::loadPlatformResource(const char* name, double sam
 
     ASSERT_NOT_REACHED();
     [pool release];
-    return adoptPtr(static_cast<AudioBus*>(0));
+    return nullptr;
 }
 
 } // namespace WebCore
