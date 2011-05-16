@@ -136,9 +136,16 @@ WebInspector.ResourceSourceFrame.prototype = {
         return this._resource;
     },
 
-    isContentEditable: function()
+    doubleClick: function(lineNumber)
     {
-        return this._resource.isEditable();
+        if (!this._resource.isEditable())
+            return;
+
+        if (this._commitEditingInProgress)
+            return;
+
+        this._textViewer.readOnly = false;
+        WebInspector.markBeingEdited(this._textViewer.element, true);
     },
 
     editContent: function(newText, callback)
@@ -156,7 +163,7 @@ WebInspector.ResourceSourceFrame.prototype = {
         WebInspector.SourceFrame.prototype.cancelEditing.call(this);
     },
 
-    endEditing: function(oldRange, newRange)
+    afterTextChanged: function(oldRange, newRange)
     {
         function commitIncrementalEdit()
         {
@@ -204,9 +211,8 @@ WebInspector.RevisionSourceFrame.prototype = {
         return this._revision.resource;
     },
 
-    isContentEditable: function()
+    doubleClick: function(lineNumber)
     {
-        return false;
     },
 
     requestContent: function(callback)

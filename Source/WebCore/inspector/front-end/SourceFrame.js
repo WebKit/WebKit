@@ -233,17 +233,7 @@ WebInspector.SourceFrame.prototype = {
         delete this._viewerState;
     },
 
-    isContentEditable: function()
-    {
-        return this._delegate.canEditScriptSource();
-    },
-
-    readOnlyStateChanged: function(readOnly)
-    {
-        WebInspector.markBeingEdited(this._textViewer.element, !readOnly);
-    },
-
-    startEditing: function()
+    beforeTextChanged: function()
     {
         if (!this._viewerState) {
             this._saveViewerState();
@@ -254,7 +244,7 @@ WebInspector.SourceFrame.prototype = {
         this.clearMessages();
     },
 
-    endEditing: function(oldRange, newRange)
+    afterTextChanged: function(oldRange, newRange)
     {
         if (!oldRange || !newRange)
             return;
@@ -883,23 +873,35 @@ WebInspector.SourceFrame.prototype = {
         this._textViewer.resize();
     },
 
+    doubleClick: function(lineNumber)
+    {
+        if (!this._delegate.canEditScriptSource())
+            return;
+
+        if (this._commitEditingInProgress)
+            return;
+
+        this._setReadOnly(false);
+    },
+
     commitEditing: function(callback)
     {
         if (!this._viewerState) {
             // No editing was actually done.
-            this._delegate.setScriptSourceIsBeingEdited(false);
+            this._setReadOnly(true);
             callback();
             return;
         }
 
         function didEditContent(error)
         {
+            this._commitEditingInProgress = false;
             if (error) {
                 if (error.data && error.data[0]) {
                     WebInspector.log(error.data[0], WebInspector.ConsoleMessage.MessageLevel.Error);
                     WebInspector.showConsole();
                 }
-                callback(error);
+                this._textViewer.readOnly = false;
                 return;
             }
 
@@ -918,10 +920,10 @@ WebInspector.SourceFrame.prototype = {
             }
 
             delete this._viewerState;
-            this._delegate.setScriptSourceIsBeingEdited(false);
-
-            callback();
+            this._setReadOnly(true);
         }
+        this._commitEditingInProgress = true;
+        this._textViewer.readOnly = true;
         this.editContent(this._textModel.text, didEditContent.bind(this));
     },
 
@@ -933,7 +935,15 @@ WebInspector.SourceFrame.prototype = {
     cancelEditing: function()
     {
         this._restoreViewerState();
-        this._delegate.setScriptSourceIsBeingEdited(false);
+        this._setReadOnly(true);
+    },
+
+    _setReadOnly: function(readOnly)
+    {
+        this._textViewer.readOnly = readOnly;
+        WebInspector.markBeingEdited(this._textViewer.element, !readOnly);
+        if (readOnly)
+            this._delegate.setScriptSourceIsBeingEdited(false);
     }
 }
 
