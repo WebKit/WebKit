@@ -36,7 +36,7 @@
 #include "SubresourceLoader.h"
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 // We use -2 here because some plugins like to return -1 to indicate error
 // and this way we won't clash with them.
@@ -141,7 +141,7 @@ void PluginStream::startStream()
         Vector<UChar> stringBuilder;
         String separator(": ");
 
-        String statusLine = makeString("HTTP ", String::number(m_resourceResponse.httpStatusCode()), " OK\n");
+        String statusLine = "HTTP " + String::number(m_resourceResponse.httpStatusCode()) + " OK\n";
         stringBuilder.append(statusLine.characters(), statusLine.length());
 
         HTTPHeaderMap::const_iterator end = m_resourceResponse.httpHeaderFields().end();
