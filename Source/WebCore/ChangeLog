@@ -1,3 +1,15 @@
+2011-05-16  Chris Rogers  <crogers@google.com>
+
+        Unreviewed build fix.
+
+        Fix web audio enabled mac port compile errors
+        https://bugs.webkit.org/show_bug.cgi?id=60930
+
+        * platform/audio/mac/AudioBusMac.mm:
+        (WebCore::AudioBus::loadPlatformResource):
+        * platform/audio/mac/AudioFileReaderMac.cpp:
+        (WebCore::AudioFileReader::createBus):
+
 2011-05-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

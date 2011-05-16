@@ -138,13 +138,13 @@ SInt64 AudioFileReader::getSizeProc(void* clientData)
 PassOwnPtr<AudioBus> AudioFileReader::createBus(double sampleRate, bool mixToMono)
 {
     if (!m_extAudioFileRef)
-        return 0;
+        return adoptPtr(static_cast<AudioBus*>(0));
 
     // Get file's data format
     UInt32 size = sizeof(m_fileDataFormat);
     OSStatus result = ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileDataFormat, &size, &m_fileDataFormat);
     if (result != noErr)
-        return 0;
+        return adoptPtr(static_cast<AudioBus*>(0));
 
     // Number of channels
     size_t numberOfChannels = m_fileDataFormat.mChannelsPerFrame;
@@ -154,7 +154,7 @@ PassOwnPtr<AudioBus> AudioFileReader::createBus(double sampleRate, bool mixToMon
     size = sizeof(numberOfFrames64);
     result = ExtAudioFileGetProperty(m_extAudioFileRef, kExtAudioFileProperty_FileLengthFrames, &size, &numberOfFrames64);
     if (result != noErr)
-        return 0;
+        return adoptPtr(static_cast<AudioBus*>(0));
 
     // Sample-rate
     double fileSampleRate = m_fileDataFormat.mSampleRate;
@@ -177,7 +177,7 @@ PassOwnPtr<AudioBus> AudioFileReader::createBus(double sampleRate, bool mixToMon
 
     result = ExtAudioFileSetProperty(m_extAudioFileRef, kExtAudioFileProperty_ClientDataFormat, sizeof(AudioStreamBasicDescription), &m_clientDataFormat);
     if (result != noErr)
-        return 0;
+        return adoptPtr(static_cast<AudioBus*>(0));
 
     // Change numberOfFrames64 to destination sample-rate
     numberOfFrames64 = numberOfFrames64 * (m_clientDataFormat.mSampleRate / fileSampleRate);
@@ -226,7 +226,7 @@ PassOwnPtr<AudioBus> AudioFileReader::createBus(double sampleRate, bool mixToMon
     UInt32 framesToRead = numberOfFrames;
     result = ExtAudioFileRead(m_extAudioFileRef, &framesToRead, bufferList);
     if (result != noErr)
-        return 0;
+        return adoptPtr(static_cast<AudioBus*>(0));
 
     if (mixToMono && numberOfChannels == 2) {
         // Mix stereo down to mono
