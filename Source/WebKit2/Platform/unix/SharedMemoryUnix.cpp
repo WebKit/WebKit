@@ -26,6 +26,7 @@
  */
 
 #include "config.h"
+#if USE(UNIX_DOMAIN_SOCKETS)
 #include "SharedMemory.h"
 
 #include "ArgumentDecoder.h"
@@ -236,3 +237,6 @@ unsigned SharedMemory::systemPageSize()
 }
 
 } // namespace WebKit
+
+#endif
+

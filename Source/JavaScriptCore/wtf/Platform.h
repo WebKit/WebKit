@@ -1210,7 +1210,7 @@
    breakages one port at a time. */
 #define WTF_USE_EXPORT_MACROS 0
 
-#if PLATFORM(QT) || PLATFORM(GTK)
+#if (PLATFORM(QT) && !OS(SYMBIAN)) || PLATFORM(GTK)
 #define WTF_USE_UNIX_DOMAIN_SOCKETS 1
 #endif
 
