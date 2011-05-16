@@ -61,7 +61,7 @@ WebInspector.Drawer.prototype = {
 
         var firstTime = !this._visibleView;
         if (this._visibleView)
-            this._visibleView.hide();
+            this._visibleView.hideInDrawer();
 
         this._visibleView = x;
 
@@ -69,7 +69,7 @@ WebInspector.Drawer.prototype = {
             this._safelyRemoveChildren();
             this._viewStatusBar.removeChildren(); // optimize this? call old.detach()
             x.attach(this.element, this._viewStatusBar);
-            x.show();
+            x.showInDrawer();
             this.visible = true;
         }
     },
@@ -92,7 +92,7 @@ WebInspector.Drawer.prototype = {
             return;
 
         if (this.visibleView)
-            this.visibleView.show();
+            this.visibleView.showInDrawer();
 
         WebInspector.View.prototype.show.call(this);
 
@@ -124,8 +124,8 @@ WebInspector.Drawer.prototype = {
         {
             if ("updateStatusBarItems" in WebInspector.currentPanel)
                 WebInspector.currentPanel.updateStatusBarItems();
-            if (this.visibleView.afterShow)
-                this.visibleView.afterShow();
+            if (this.visibleView.afterShowInDrawer)
+                this.visibleView.afterShowInDrawer();
             delete this._animating;
             delete this._currentAnimation;
             this.state = (this.fullPanel ? WebInspector.Drawer.State.Full : WebInspector.Drawer.State.Variable);
@@ -144,7 +144,7 @@ WebInspector.Drawer.prototype = {
         WebInspector.View.prototype.hide.call(this);
 
         if (this.visibleView)
-            this.visibleView.hide();
+            this.visibleView.hideInDrawer();
 
         this._animating = true;
 

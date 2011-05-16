@@ -26,9 +26,9 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Panel = function(name)
+WebInspector.Panel = function(name, element)
 {
-    WebInspector.View.call(this);
+    WebInspector.View.call(this, element);
 
     this.element.addStyleClass("panel");
     this.element.addStyleClass(name);

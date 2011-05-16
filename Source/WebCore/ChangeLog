@@ -1,3 +1,36 @@
+2011-05-16  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: merge ConsoleView into ConsolePanel.
+        https://bugs.webkit.org/show_bug.cgi?id=54670
+
+        Console view in drawer looks exactly the same as console panel. Merging ConsoleView and ConsolePanel together
+        will allow us to reuse panel's functionality (e.g. resizable sidebar) even when console is docked.
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsolePanel.prototype.get toolbarItemLabel):
+        (WebInspector.ConsolePanel.prototype.show):
+        (WebInspector.ConsolePanel.prototype.hide):
+        (WebInspector.ConsolePanel.prototype.showInDrawer):
+        (WebInspector.ConsolePanel.prototype.afterShowInDrawer):
+        (WebInspector.ConsolePanel.prototype.hideInDrawer):
+        (WebInspector.ConsolePanel.prototype.addMessage):
+        (WebInspector.ConsolePanel.prototype.clearMessages):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.set visibleView):
+        (WebInspector.Drawer.prototype.show.animationFinished):
+        (WebInspector.Drawer.prototype.show):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+
 2011-05-13  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.

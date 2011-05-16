@@ -29,9 +29,9 @@
 
 const ExpressionStopCharacters = " =:[({;,!+-*/&|^<>";
 
-WebInspector.ConsoleView = function(drawer)
+WebInspector.ConsolePanel = function(drawer)
 {
-    WebInspector.View.call(this, document.getElementById("console-view"));
+    WebInspector.Panel.call(this, "console", document.getElementById("console-view"));
 
     this.messages = [];
     this.drawer = drawer;
@@ -101,13 +101,13 @@ WebInspector.ConsoleView = function(drawer)
     this._registerConsoleDomainDispatcher();
 }
 
-WebInspector.ConsoleView.Events = {
+WebInspector.ConsolePanel.Events = {
   ConsoleCleared: "console-cleared",
   EntryAdded: "console-entry-added",
   MessageAdded: "console-message-added"
 }
 
-WebInspector.ConsoleView.prototype = {
+WebInspector.ConsolePanel.prototype = {
     _registerConsoleDomainDispatcher: function() {
         var console = this;
         var dispatcher = {
@@ -242,20 +242,73 @@ WebInspector.ConsoleView.prototype = {
         statusBarElement.appendChild(this.filterBarElement);
     },
 
+    get toolbarItemLabel()
+    {
+        return WebInspector.UIString("Console");
+    },
+
     show: function()
     {
+        WebInspector.Panel.prototype.show.call(this);
+
+        this._previousConsoleState = WebInspector.drawer.state;
+        WebInspector.drawer.enterPanelMode();
+        WebInspector.showConsole();
+
+        // Move the scope bar to the top of the messages, like the resources filter.
+        var scopeBar = document.getElementById("console-filter");
+        var consoleMessages = document.getElementById("console-messages");
+
+        scopeBar.parentNode.removeChild(scopeBar);
+        document.getElementById("console-view").insertBefore(scopeBar, consoleMessages);
+
+        // Update styles, and give console-messages a top margin so it doesn't overwrite the scope bar.
+        scopeBar.addStyleClass("console-filter-top");
+        scopeBar.removeStyleClass("status-bar-item");
+
+        consoleMessages.addStyleClass("console-filter-top");
+    },
+
+    hide: function()
+    {
+        if (this._previousConsoleState === WebInspector.Drawer.State.Hidden) {
+            WebInspector.Panel.prototype.hide.call(this);
+            WebInspector.drawer.immediatelyExitPanelMode();
+        } else {
+            if ("_toolbarItem" in this)
+                this._toolbarItem.removeStyleClass("toggled-on");
+            WebInspector.drawer.exitPanelMode();
+        }
+        delete this._previousConsoleState;
+
+        // Move the scope bar back to the bottom bar, next to Clear Console.
+        var scopeBar = document.getElementById("console-filter");
+
+        scopeBar.parentNode.removeChild(scopeBar);
+        document.getElementById("other-drawer-status-bar-items").appendChild(scopeBar);
+
+        // Update styles, and remove the top margin on console-messages.
+        scopeBar.removeStyleClass("console-filter-top");
+        scopeBar.addStyleClass("status-bar-item");
+
+        document.getElementById("console-messages").removeStyleClass("console-filter-top");
+    },
+
+    showInDrawer: function()
+    {
+        WebInspector.View.prototype.show.call(this);
         this.toggleConsoleButton.addStyleClass("toggled-on");
         this.toggleConsoleButton.title = WebInspector.UIString("Hide console.");
         if (!this.prompt.isCaretInsidePrompt())
             this.prompt.moveCaretToEndOfPrompt();
     },
 
-    afterShow: function()
+    afterShowInDrawer: function()
     {
         WebInspector.currentFocusElement = this.promptElement;
     },
 
-    hide: function()
+    hideInDrawer: function()
     {
         this.toggleConsoleButton.removeStyleClass("toggled-on");
         this.toggleConsoleButton.title = WebInspector.UIString("Show console.");
@@ -280,7 +333,7 @@ WebInspector.ConsoleView.prototype = {
 
         if (msg instanceof WebInspector.ConsoleMessage && !(msg instanceof WebInspector.ConsoleCommandResult)) {
             this._incrementErrorWarningCount(msg);
-            this.dispatchEventToListeners(WebInspector.ConsoleView.Events.MessageAdded, msg);
+            this.dispatchEventToListeners(WebInspector.ConsolePanel.Events.MessageAdded, msg);
             this.commandSincePreviousMessage = false;
             this.previousMessage = msg;
         } else if (msg instanceof WebInspector.ConsoleCommand) {
@@ -309,7 +362,7 @@ WebInspector.ConsoleView.prototype = {
         if (shouldScrollToLastMessage || (msg instanceof WebInspector.ConsoleCommandResult))
             this._scheduleScrollIntoView();
 
-        this.dispatchEventToListeners(WebInspector.ConsoleView.Events.EntryAdded, msg);
+        this.dispatchEventToListeners(WebInspector.ConsolePanel.Events.EntryAdded, msg);
     },
 
     _incrementErrorWarningCount: function(msg)
@@ -331,7 +384,7 @@ WebInspector.ConsoleView.prototype = {
 
     clearMessages: function()
     {
-        this.dispatchEventToListeners(WebInspector.ConsoleView.Events.ConsoleCleared);
+        this.dispatchEventToListeners(WebInspector.ConsolePanel.Events.ConsoleCleared);
 
         this.messages = [];
 
@@ -677,7 +730,7 @@ WebInspector.ConsoleView.prototype = {
     }
 }
 
-WebInspector.ConsoleView.prototype.__proto__ = WebInspector.View.prototype;
+WebInspector.ConsolePanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 WebInspector.ConsoleMessage = function(source, type, level, line, url, repeatCount, message, parameters, stackTrace, requestId)
 {
