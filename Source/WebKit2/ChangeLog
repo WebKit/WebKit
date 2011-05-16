@@ -2,6 +2,20 @@
 
         Reviewed by Oliver Hunt.
 
+        Silverlight: Selection via keyboard selects the entire plugin instead of the contents of a TextBox
+        https://bugs.webkit.org/show_bug.cgi?id=60898
+        <rdar://problem/9309903>
+
+        Special-case Command-A and always return true, indicating that the plug-in handled the event.
+        This matches WebKit1.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformHandleKeyboardEvent):
+
+2011-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Short-circuit NPRuntime calls made by Flash during plug-in instantiation
         https://bugs.webkit.org/show_bug.cgi?id=60894
         <rdar://problem/8804681>

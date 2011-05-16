@@ -759,8 +759,14 @@ bool NetscapePlugin::platformHandleKeyboardEvent(const WebKeyboardEvent& keyboar
     // Most plug-ins simply return true for all keyboard events, even those that aren't handled.
     // This leads to bugs such as <rdar://problem/8740926>. We work around this by returning false
     // if the keyboard event has the command modifier pressed.
-    if (keyboardEvent.metaKey())
+    // However, for command-A (the shortcurt for 'Select All' we will always return true, since we don't
+    // want the entire page to be selected if the focus is in a plug-in text field (see <rdar://problem/9309903>).
+    if (keyboardEvent.metaKey()) {
+        if (keyboardEvent.text() == "a")
+            return true;
+
         return false;
+    }
 
     return handled;
 }
