@@ -3,6 +3,8 @@
     <head>
         <script src=media-file.js></script>
         <script src=video-test.js></script>
+        <script src=media-controls.js></script>
+
         <script>
             if (window.layoutTestController) {
                 layoutTestController.dumpAsText();
@@ -51,7 +53,11 @@
 
                 var audio = document.getElementById('audio');
 
-                var seekCoords = mediaControlsButtonCoordinates(audio, "seek-forward-button");
+                try {
+                    var seekCoords = mediaControlsButtonCoordinates(audio, "seek-forward-button");
+                } catch (exception) {
+                    failTest(exception.description);
+                }
                 var x = seekCoords[0];
                 var y = seekCoords[1];
 

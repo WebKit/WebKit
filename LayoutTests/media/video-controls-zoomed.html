@@ -7,6 +7,7 @@
     }
   </style>
   <script src=media-file.js></script>
+  <script src=media-controls.js></script>
   <script type="text/javascript" charset="utf-8">
     function runTest()
     {
@@ -20,7 +21,11 @@
         if (window.eventSender)
         {
             // Find the play button and click the middle of its bounding box.
-            var playCoords = mediaControlsButtonCoordinates(video, "play-button");
+            try {
+                var playCoords = mediaControlsButtonCoordinates(video, "play-button");
+            } catch (exception) {
+                failTest(exception.description);
+            }
             var clickX = playCoords[0];
             var clickY = playCoords[1];
 

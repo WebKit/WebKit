@@ -1,3 +1,23 @@
+2011-05-12  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Darin Adler.
+
+        Move mediaControlsButtonCoordinates() out of video-test.js
+        https://bugs.webkit.org/show_bug.cgi?id=60693
+
+        Moved the function to a new js file called media-controls.js. Also
+        made the function throw an exception if the button is not found
+        and handle the exception in the various tests using the function.
+
+        * media/audio-delete-while-step-button-clicked.html:
+        * media/media-controls.js: Added.
+        (mediaControlsButtonCoordinates):
+        * media/video-controls-transformed.html:
+        * media/video-controls-visible-audio-only.html:
+        * media/video-controls-zoomed.html:
+        * media/video-test.js:
+        (isInTimeRanges):
+
 2011-05-15  MORITA Hajime  <morrita@google.com>
 
         Unreviewed an expectation update.
