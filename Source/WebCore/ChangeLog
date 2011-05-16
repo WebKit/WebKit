@@ -1,3 +1,19 @@
+2011-05-16  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: debuggerWasEnabled notification should not be send to front-end on navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=60888
+
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::disableDebugger):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::enable):
+        (WebCore::InspectorDebuggerAgent::disable):
+        (WebCore::InspectorDebuggerAgent::restore):
+        (WebCore::InspectorDebuggerAgent::clearFrontend):
+        * inspector/InspectorDebuggerAgent.h:
+
 2011-05-16  Yury Semikhatsky  <yurys@chromium.org>
 
         Unreviewed. Windows build fix.

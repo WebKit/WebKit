@@ -447,7 +447,8 @@ void InspectorController::showAndEnableDebugger()
 
 void InspectorController::disableDebugger()
 {
-    m_debuggerAgent->disable();
+    ErrorString error;
+    m_debuggerAgent->disable(&error);
 }
 
 void InspectorController::startUserInitiatedProfiling()

@@ -64,37 +64,27 @@ InspectorDebuggerAgent::~InspectorDebuggerAgent()
     ASSERT(!m_instrumentingAgents->inspectorDebuggerAgent());
 }
 
-void InspectorDebuggerAgent::enable(bool restoringFromState)
+void InspectorDebuggerAgent::enable()
 {
-    ASSERT(m_frontend);
-    if (!restoringFromState && enabled())
-        return;
-    m_inspectorState->setBoolean(DebuggerAgentState::debuggerEnabled, true);
     m_instrumentingAgents->setInspectorDebuggerAgent(this);
 
-    scriptDebugServer().clearBreakpoints();
     // FIXME(WK44513): breakpoints activated flag should be synchronized between all front-ends
     scriptDebugServer().setBreakpointsActivated(true);
     startListeningScriptDebugServer();
 
-    m_frontend->debuggerWasEnabled();
     if (m_listener)
         m_listener->debuggerWasEnabled();
 }
 
 void InspectorDebuggerAgent::disable()
 {
-    if (!enabled())
-        return;
-    m_inspectorState->setBoolean(DebuggerAgentState::debuggerEnabled, false);
     m_inspectorState->setObject(DebuggerAgentState::javaScriptBreakpoints, InspectorObject::create());
     m_instrumentingAgents->setInspectorDebuggerAgent(0);
 
     stopListeningScriptDebugServer();
+    scriptDebugServer().clearBreakpoints();
     clear();
 
-    if (m_frontend)
-        m_frontend->debuggerWasDisabled();
     if (m_listener)
         m_listener->debuggerWasDisabled();
 }
@@ -104,10 +94,34 @@ bool InspectorDebuggerAgent::enabled()
     return m_inspectorState->getBoolean(DebuggerAgentState::debuggerEnabled);
 }
 
+void InspectorDebuggerAgent::enable(ErrorString*)
+{
+    if (enabled())
+        return;
+
+    enable();
+    m_inspectorState->setBoolean(DebuggerAgentState::debuggerEnabled, true);
+
+    ASSERT(m_frontend);
+    m_frontend->debuggerWasEnabled();
+}
+
+void InspectorDebuggerAgent::disable(ErrorString*)
+{
+    if (!enabled())
+        return;
+
+    disable();
+    m_inspectorState->setBoolean(DebuggerAgentState::debuggerEnabled, false);
+
+    if (m_frontend)
+        m_frontend->debuggerWasDisabled();
+}
+
 void InspectorDebuggerAgent::restore()
 {
-    if (m_inspectorState->getBoolean(DebuggerAgentState::debuggerEnabled))
-        enable(true);
+    if (enabled())
+        enable();
 }
 
 void InspectorDebuggerAgent::setFrontend(InspectorFrontend* frontend)
@@ -121,10 +135,13 @@ void InspectorDebuggerAgent::clearFrontend()
 
     if (!enabled())
         return;
-    // If the window is being closed with the debugger enabled,
-    // remember this state to re-enable debugger on the next window
-    // opening.
+
     disable();
+
+    // FIXME: due to m_state->mute() hack in InspectorController, debuggerEnabled is actually set to false only
+    // in InspectorState, but not in cookie. That's why after navigation debuggerEnabled will be true,
+    // but after front-end re-open it will still be false.
+    m_inspectorState->setBoolean(DebuggerAgentState::debuggerEnabled, false);
 }
 
 void InspectorDebuggerAgent::setBreakpointsActive(ErrorString*, bool active)

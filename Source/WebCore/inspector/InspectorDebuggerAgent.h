@@ -68,9 +68,8 @@ class InspectorDebuggerAgent : public ScriptDebugListener {
 public:
     virtual ~InspectorDebuggerAgent();
 
-    void enable(ErrorString*) { enable(false); }
-    void disable(ErrorString*) { disable(); }
-    void disable();
+    void enable(ErrorString*);
+    void disable(ErrorString*);
     bool enabled();
     void restore();
     void setFrontend(InspectorFrontend*);
@@ -116,7 +115,8 @@ protected:
     virtual void stopListeningScriptDebugServer() = 0;
 
 private:
-    void enable(bool restoringFromState);
+    void enable();
+    void disable();
 
     PassRefPtr<InspectorArray> currentCallFrames();
 
