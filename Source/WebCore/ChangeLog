@@ -1,3 +1,18 @@
+2011-05-16  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Document why RenderBlockLineLayout has its own deleteLineBoxTree implementation
+        https://bugs.webkit.org/show_bug.cgi?id=60925
+
+        I suspect this difference is really just papering over other bugs
+        but now that I finally understand the difference, I should at least
+        document it for others.
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::deleteLineRange):
+        (WebCore::RenderBlock::determineStartPosition):
+
 2011-05-16  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by James Robinson.

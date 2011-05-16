@@ -822,6 +822,8 @@ static void deleteLineRange(RenderArena* arena, RootInlineBox* startLine, int& r
     while (boxToDelete && boxToDelete != stopLine) {
         repaintLogicalTop = min(repaintLogicalTop, boxToDelete->logicalTopVisualOverflow());
         repaintLogicalBottom = max(repaintLogicalBottom, boxToDelete->logicalBottomVisualOverflow());
+        // Note: deleteLineRange(renderArena(), firstRootBox()) is not identical to deleteLineBoxTree().
+        // deleteLineBoxTree uses nextLineBox() instead of nextRootBox() when traversing.
         RootInlineBox* next = boxToDelete->nextRootBox();
         boxToDelete->deleteLine(arena);
         boxToDelete = next;
@@ -1255,17 +1257,17 @@ RootInlineBox* RenderBlock::determineStartPosition(LineInfo& lineInfo, bool& ful
     }
 
     if (fullLayout) {
-        // Nuke all our lines.
-        if (firstRootBox()) {
-            RenderArena* arena = renderArena();
-            curr = firstRootBox();
-            while (curr) {
-                RootInlineBox* next = curr->nextRootBox();
-                curr->deleteLine(arena);
-                curr = next;
-            }
-            ASSERT(!firstLineBox() && !lastLineBox());
+        // FIXME: This should just call deleteLineBoxTree, but that causes
+        // crashes for fast/repaint tests.
+        RenderArena* arena = renderArena();
+        curr = firstRootBox();
+        while (curr) {
+            // Note: This uses nextRootBox() insted of nextLineBox() like deleteLineBoxTree does.
+            RootInlineBox* next = curr->nextRootBox();
+            curr->deleteLine(arena);
+            curr = next;
         }
+        ASSERT(!firstLineBox() && !lastLineBox());
     } else {
         if (curr) {
             // We have a dirty line.
