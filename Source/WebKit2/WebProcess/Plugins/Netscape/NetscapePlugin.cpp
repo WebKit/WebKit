@@ -237,6 +237,11 @@ NPObject* NetscapePlugin::pluginElementNPObject()
     return m_pluginController->pluginElementNPObject();
 }
 
+bool NetscapePlugin::tryToShortCircuitInvoke(NPObject* npObject, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+{
+    return m_pluginController->tryToShortCircuitInvoke(npObject, methodName, arguments, argumentCount, result);
+}
+
 void NetscapePlugin::cancelStreamLoad(NetscapePluginStream* pluginStream)
 {
     if (pluginStream == m_manualStream) {

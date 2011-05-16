@@ -656,8 +656,13 @@ static void NPN_ReleaseObject(NPObject *npObject)
     releaseNPObject(npObject);
 }
 
-static bool NPN_Invoke(NPP, NPObject *npObject, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+static bool NPN_Invoke(NPP npp, NPObject *npObject, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
 {
+    if (RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp)) {
+        if (plugin->tryToShortCircuitInvoke(npObject, methodName, arguments, argumentCount, result))
+            return true;
+    }
+
     if (npObject->_class->invoke)
         return npObject->_class->invoke(npObject, methodName, arguments, argumentCount, result);
 

@@ -1,3 +1,35 @@
+2011-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add the ability for a plug-in controller to short-circuit calls to NPN_Invoke
+        https://bugs.webkit.org/show_bug.cgi?id=60886
+
+        Make it possible for a plug-in controller to intercept calls to NPN_Invoke, which
+        will be useful for avoiding sync IPC messages during instantiation.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::evaluate):
+        Call tryToShortCircuitEvaluate. If it returns true, we don't need to call back to
+        the web process to ask it to evaluate the script string.
+
+        (WebKit::PluginControllerProxy::tryToShortCircuitInvoke):
+        (WebKit::PluginControllerProxy::tryToShortCircuitEvaluate):
+        Always return false for now.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_Invoke):
+        Get the plug-in and call tryToShortCircuitInvoke.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::tryToShortCircuitInvoke):
+        Call the plug-in controller.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::tryToShortCircuitInvoke):
+        Always return false here, since there's no need to short-circuit calls
+        for plug-ins that live in the web process.
+
 2011-05-16  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Laszlo Gombos.

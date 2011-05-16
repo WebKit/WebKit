@@ -257,6 +257,9 @@ NPObject* PluginControllerProxy::pluginElementNPObject()
 
 bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result, bool allowPopups)
 {
+    if (tryToShortCircuitEvaluate(npObject, scriptString, result))
+        return true;
+
     PluginDestructionProtector protector(this);
 
     NPVariant npObjectAsNPVariant;
@@ -276,6 +279,11 @@ bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptStr
 
     *result = m_connection->npRemoteObjectMap()->npVariantDataToNPVariant(resultData, m_plugin.get());
     return true;
+}
+
+bool PluginControllerProxy::tryToShortCircuitInvoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+{
+    return false;
 }
 
 void PluginControllerProxy::setStatusbarText(const String& statusbarText)
@@ -530,6 +538,11 @@ void PluginControllerProxy::getPluginScriptableNPObject(uint64_t& pluginScriptab
 void PluginControllerProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEnabled)
 {
     m_plugin->privateBrowsingStateChanged(isPrivateBrowsingEnabled);
+}
+
+bool PluginControllerProxy::tryToShortCircuitEvaluate(NPObject* npObject, const String& scriptString, NPVariant* result)
+{
+    return false;
 }
 
 } // namespace WebKit

@@ -89,6 +89,7 @@ private:
     virtual NPObject* windowScriptNPObject();
     virtual NPObject* pluginElementNPObject();
     virtual bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups);
+    virtual bool tryToShortCircuitInvoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result);
     virtual void setStatusbarText(const String&);
     virtual bool isAcceleratedCompositingEnabled();
     virtual void pluginProcessCrashed();
@@ -139,6 +140,8 @@ private:
 #endif
 
     void privateBrowsingStateChanged(bool);
+
+    bool tryToShortCircuitEvaluate(NPObject*, const String& scriptString, NPVariant* result);
 
     void platformInitialize();
     void platformDestroy();
