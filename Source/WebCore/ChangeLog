@@ -1,3 +1,10 @@
+2011-05-16  Jeremy Noble  <jer.noble@apple.com>
+
+        Unreviewed; build fix for non-SnowLeopard builds.
+
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm: Wrap definition 
+            of layerIsDescendentOf in a #if check.
+
 2011-05-16  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
