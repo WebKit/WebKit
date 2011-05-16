@@ -1,3 +1,20 @@
+2011-05-15  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Suboptimal lifetime of BackingStore objects in DrawingAreaProxyImpl
+        https://bugs.webkit.org/show_bug.cgi?id=60864
+
+        Implemented reuse of BackingStore's in 
+        DrawingAreaProxyImpl::didUpdateBackingStoreState when the size needed
+        matches the size of the existing BackingStore.
+        Also reduced the discardBackingStoreTimer from 5 to 2 seconds.
+        These changes reduces memory usage up to 10MB on memory tests.
+
+        * UIProcess/DrawingAreaProxyImpl.cpp:
+        (WebKit::DrawingAreaProxyImpl::didUpdateBackingStoreState):
+        (WebKit::DrawingAreaProxyImpl::discardBackingStoreSoon):
+
 2011-05-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Maciej Stachowiak.

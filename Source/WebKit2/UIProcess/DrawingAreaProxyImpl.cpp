@@ -214,9 +214,9 @@ void DrawingAreaProxyImpl::didUpdateBackingStoreState(uint64_t backingStoreState
     }
 #endif
 
-    // FIXME: We could just reuse our existing backing store if it's the same size as
-    // updateInfo.viewSize.
-    m_backingStore = nullptr;
+    // If we have a backing store the right size, reuse it.
+    if (m_backingStore && m_backingStore->size() != updateInfo.viewSize)
+        m_backingStore = nullptr;
     incorporateUpdate(updateInfo);
 }
 
@@ -357,7 +357,7 @@ void DrawingAreaProxyImpl::discardBackingStoreSoon()
 
     // We'll wait this many seconds after the last paint before throwing away our backing store to save memory.
     // FIXME: It would be smarter to make this delay based on how expensive painting is. See <http://webkit.org/b/55733>.
-    static const double discardBackingStoreDelay = 5;
+    static const double discardBackingStoreDelay = 2;
 
     m_discardBackingStoreTimer.startOneShot(discardBackingStoreDelay);
 }
