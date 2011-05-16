@@ -309,6 +309,9 @@ public:
 
     HWND nativeWindow() const;
 #endif
+#if PLATFORM(GTK)
+    GtkWidget* viewWidget();
+#endif
 #if ENABLE(TILED_BACKING_STORE)
     void setActualVisibleContentRect(const WebCore::IntRect& rect);
 #endif

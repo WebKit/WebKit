@@ -48,6 +48,8 @@ public:
         return adoptPtr(new PageClientImpl(viewWidget));
     }
 
+    GtkWidget* viewWidget() { return m_viewWidget; }
+
 private:
     PageClientImpl(GtkWidget*);
 

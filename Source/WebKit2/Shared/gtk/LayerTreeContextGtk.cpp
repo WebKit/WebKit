@@ -23,38 +23,44 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LayerTreeContext_h
-#define LayerTreeContext_h
+#include "config.h"
+#include "LayerTreeContext.h"
 
-namespace CoreIPC {
-    class ArgumentDecoder;
-    class ArgumentEncoder;
-}
+#include "NotImplemented.h"
 
 namespace WebKit {
 
-class LayerTreeContext {
-public:
-    LayerTreeContext();
-    ~LayerTreeContext();
-
-    void encode(CoreIPC::ArgumentEncoder*) const;
-    static bool decode(CoreIPC::ArgumentDecoder*, LayerTreeContext&);
-
-    bool isEmpty() const;
-
-#if PLATFORM(MAC)
-    uint32_t contextID;
-#endif
-};
-
-bool operator==(const LayerTreeContext&, const LayerTreeContext&);
-
-inline bool operator!=(const LayerTreeContext& a, const LayerTreeContext& b)
+LayerTreeContext::LayerTreeContext()
 {
-    return !(a == b);
+    notImplemented();
 }
 
-};
+LayerTreeContext::~LayerTreeContext()
+{
+    notImplemented();
+}
 
-#endif // LayerTreeContext_h
+void LayerTreeContext::encode(CoreIPC::ArgumentEncoder*) const
+{
+    notImplemented();
+}
+
+bool LayerTreeContext::decode(CoreIPC::ArgumentDecoder*, LayerTreeContext&)
+{
+    notImplemented();
+    return true;
+}
+
+bool LayerTreeContext::isEmpty() const
+{
+    notImplemented();
+    return true;
+}
+
+bool operator==(const LayerTreeContext&, const LayerTreeContext&)
+{
+    notImplemented();
+    return true;
+}
+
+} // namespace WebKit

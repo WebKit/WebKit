@@ -53,9 +53,7 @@ public:
     static PassOwnPtr<DrawingArea> create(WebPage*, const WebPageCreationParameters&);
     virtual ~DrawingArea();
     
-#if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT)
     void didReceiveDrawingAreaMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-#endif
 
     virtual void setNeedsDisplay(const WebCore::IntRect&) = 0;
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset) = 0;

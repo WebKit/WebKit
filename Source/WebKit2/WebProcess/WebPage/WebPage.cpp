@@ -1970,13 +1970,11 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
         return;
     }
 
-#if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT)
     if (messageID.is<CoreIPC::MessageClassDrawingArea>()) {
         if (m_drawingArea)
             m_drawingArea->didReceiveDrawingAreaMessage(connection, messageID, arguments);
         return;
     }
-#endif
     
 #if ENABLE(INSPECTOR)
     if (messageID.is<CoreIPC::MessageClassWebInspector>()) {

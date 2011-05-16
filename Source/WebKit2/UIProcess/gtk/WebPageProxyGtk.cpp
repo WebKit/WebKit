@@ -29,9 +29,14 @@
 
 #include "NativeWebKeyboardEvent.h"
 #include "NotImplemented.h"
-#include "PageClient.h"
+#include "PageClientImpl.h"
 
 namespace WebKit {
+
+GtkWidget* WebPageProxy::viewWidget()
+{
+    return static_cast<PageClientImpl*>(m_pageClient)->viewWidget();
+}
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {

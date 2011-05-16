@@ -329,7 +329,6 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
     if (!m_isPaintingSuspended && (!m_layerTreeHost || m_layerTreeHost->participatesInDisplay()))
         display(updateInfo);
 
-#if USE(ACCELERATED_COMPOSITING)
     LayerTreeContext layerTreeContext;
 
     if (m_isPaintingSuspended || (m_layerTreeHost && !m_layerTreeHost->participatesInDisplay())) {
@@ -349,7 +348,6 @@ void DrawingAreaImpl::sendDidUpdateBackingStoreState()
 
     m_webPage->send(Messages::DrawingAreaProxy::DidUpdateBackingStoreState(m_backingStoreStateID, updateInfo, layerTreeContext));
     m_compositingAccordingToProxyMessages = !layerTreeContext.isEmpty();
-#endif
 }
 
 void DrawingAreaImpl::didUpdate()

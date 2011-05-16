@@ -1,3 +1,53 @@
+2011-05-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Anders Carlsson.
+
+        GTK port of WebKit2 should switch to new DrawingAreaImpl model
+        https://bugs.webkit.org/show_bug.cgi?id=59655
+
+        * GNUmakefile.am: Add the files necessary to use the DrawingAreaProxyImpl
+        to the source list. The source list also needs the LayerContextTree stubs.
+        * Shared/LayerTreeContext.h: This file should not be guarded by
+        USE(ACCELERATED_COMPOSITING) as it's needed for the DrawingAreaProxyImpl
+        IPC messaging.
+        * Shared/gtk/LayerTreeContextGtk.cpp: Added this stub.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createDrawingAreaProxy): Instead of creating the deprecated
+        chunked drawing area, create a DrawingAreaProxyImpl.
+        (WebKit::PageClientImpl::setViewNeedsDisplay): Here we must now queue a redraw. Previously
+        the chunked drawing area was doing this manually. This is the appropriate place though.
+        (WebKit::PageClientImpl::scrollView): Add an implementation that just calls into setViewNeedsDisplay.
+        * UIProcess/API/gtk/PageClientImpl.h: Added a getter for m_viewWidget.
+        (WebKit::PageClientImpl::viewWidget):
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (callDrawingAreaPaintMethod): Added this helper which reduces code duplication between
+        GTK+ 2.x and 3.x
+        (webkitWebViewBaseExpose): Call the new helper now.
+        (webkitWebViewBaseDraw): Ditto.
+        * UIProcess/BackingStore.h: Updated to include GTK+ specific types.
+        * UIProcess/DrawingAreaProxy.h: Ditto.
+        * UIProcess/DrawingAreaProxy.messages.in: Do not the DrawingAreaProxyImpl-specific
+         message with USE(ACCELERATED_COMPOSITING).
+        * UIProcess/WebPageProxy.cpp: Removed these guards, as DrawingAreProxyImpl is used on all platforms now.
+        (WebKit::WebPageProxy::didReceiveMessage): Ditto.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/gtk/BackingStoreGtk.cpp: Added. This implementation heavily uses Cairo,
+        but depends on GTK+/GDK in a few places.
+        (WebKit::BackingStore::paint):
+        (WebKit::BackingStore::incorporateUpdate):
+        (WebKit::BackingStore::scroll):
+        * UIProcess/gtk/WebPageProxyGtk.cpp: Added a getting for the viewWidget, which is
+        required by BackingStoreGtk. A similar getter exists for Windows and Mac.
+        (WebKit::WebPageProxy::viewWidget): Ditto.
+        * WebProcess/WebPage/DrawingArea.cpp: Removed these guards as DrawingAreaProxyImpl is used on all platforms now.
+        (WebKit::DrawingArea::create): Ditto.
+        * WebProcess/WebPage/DrawingArea.h: Ditto.
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::sendDidUpdateBackingStoreState): Do not guard
+        this DrawingAreaProxyImpl-specific message with USE(ACCELERATED_COMPOSITING)
+        * WebProcess/WebPage/WebPage.cpp: Removed these guards as DrawingAreaProxyImpl is used on all platforms now.
+        (WebKit::WebPage::didReceiveMessage): Ditto.
+
 2011-05-16  Maciej Stachowiak  <mjs@apple.com>
 
         Reviewed by Sam Weinig.

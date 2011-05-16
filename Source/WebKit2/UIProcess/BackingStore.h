@@ -41,6 +41,10 @@
 #include <QtGui/QPixmap>
 #endif
 
+#if PLATFORM(GTK)
+#include <WebCore/RefPtrCairo.h>
+#endif
+
 namespace WebCore {
     class IntRect;
 }
@@ -66,6 +70,8 @@ public:
     typedef HDC PlatformGraphicsContext;
 #elif PLATFORM(QT)
     typedef QPainter* PlatformGraphicsContext;
+#elif PLATFORM(GTK)
+    typedef cairo_t* PlatformGraphicsContext;
 #endif
 
     void paint(PlatformGraphicsContext, const WebCore::IntRect&);
@@ -89,6 +95,8 @@ private:
     OwnPtr<HBITMAP> m_bitmap;
 #elif PLATFORM(QT)
     QPixmap m_pixmap;
+#elif PLATFORM(GTK)
+    RefPtr<cairo_surface_t> m_surface;
 #endif
 };
 

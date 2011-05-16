@@ -72,9 +72,7 @@ public:
 
     DrawingAreaType type() const { return m_type; }
 
-#if PLATFORM(MAC) || PLATFORM(WIN) || PLATFORM(QT)
     void didReceiveDrawingAreaProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-#endif
 
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;
 

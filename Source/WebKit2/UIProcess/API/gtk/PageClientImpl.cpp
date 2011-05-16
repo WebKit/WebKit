@@ -28,7 +28,7 @@
 #include "config.h"
 #include "PageClientImpl.h"
 
-#include "ChunkedUpdateDrawingAreaProxy.h"
+#include "DrawingAreaProxyImpl.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
 #include "NotImplemented.h"
@@ -64,13 +64,12 @@ void PageClientImpl::getEditorCommandsForKeyEvent(const NativeWebKeyboardEvent& 
 // PageClient's pure virtual functions
 PassOwnPtr<DrawingAreaProxy> PageClientImpl::createDrawingAreaProxy()
 {
-    WebKitWebViewBase* view = WEBKIT_WEB_VIEW_BASE(m_viewWidget);
-    return ChunkedUpdateDrawingAreaProxy::create(view, webkitWebViewBaseGetPage(view));
+    return DrawingAreaProxyImpl::create(webkitWebViewBaseGetPage(WEBKIT_WEB_VIEW_BASE(m_viewWidget)));
 }
 
-void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect&)
+void PageClientImpl::setViewNeedsDisplay(const WebCore::IntRect& rect)
 {
-    notImplemented();
+    gtk_widget_queue_draw_area(m_viewWidget, rect.x(), rect.y(), rect.width(), rect.height());
 }
 
 void PageClientImpl::displayView()
@@ -80,7 +79,7 @@ void PageClientImpl::displayView()
 
 void PageClientImpl::scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset)
 {
-    notImplemented();
+    setViewNeedsDisplay(scrollRect);
 }
 
 WebCore::IntSize PageClientImpl::viewSize()

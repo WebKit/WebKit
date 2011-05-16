@@ -28,6 +28,7 @@
 #include "config.h"
 #include "WebKitWebViewBase.h"
 
+#include "DrawingAreaProxyImpl.h"
 #include "GOwnPtrGtk.h"
 #include "GtkClickCounter.h"
 #include "GtkVersioning.h"
@@ -37,6 +38,7 @@
 #include "NotImplemented.h"
 #include "PageClientImpl.h"
 #include "RefPtrCairo.h"
+#include "Region.h"
 #include "WebContext.h"
 #include "WebEventFactory.h"
 #include "WebKitWebViewBasePrivate.h"
@@ -146,30 +148,30 @@ static void webkit_web_view_base_init(WebKitWebViewBase* webkitWebViewBase)
     priv->pageClient = PageClientImpl::create(GTK_WIDGET(webkitWebViewBase));
 }
 
+static void callDrawingAreaPaintMethod(DrawingAreaProxy* drawingArea, cairo_t* context, const IntRect& area)
+{
+    WebKit::Region unpaintedRegion; // This is simply unused.
+    static_cast<DrawingAreaProxyImpl*>(drawingArea)->paint(context, area, unpaintedRegion);
+}
+
 #ifdef GTK_API_VERSION_2
 static gboolean webkitWebViewBaseExpose(GtkWidget* widget, GdkEventExpose* event)
 {
-    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
-
     GdkRectangle clipRect;
     gdk_region_get_clipbox(event->region, &clipRect);
 
     RefPtr<cairo_t> cr = adoptRef(gdk_cairo_create(gtk_widget_get_window(widget)));
-    webViewBase->priv->pageProxy->drawingArea()->paint(clipRect, cr.get());
-
+    callDrawingAreaPaintMethod(WEBKIT_WEB_VIEW_BASE(widget)->priv->pageProxy->drawingArea(), cr.get(), clipRect);
     return FALSE;
 }
 #else
 static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
 {
-    WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
-
     GdkRectangle clipRect;
     if (!gdk_cairo_get_clip_rectangle(cr, &clipRect))
         return FALSE;
 
-    webViewBase->priv->pageProxy->drawingArea()->paint(clipRect, cr);
-
+    callDrawingAreaPaintMethod(WEBKIT_WEB_VIEW_BASE(widget)->priv->pageProxy->drawingArea(), cr, clipRect);
     return FALSE;
 }
 #endif

@@ -102,6 +102,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/Platform/Module.cpp \
 	Source/WebKit2/Platform/Module.h \
 	Source/WebKit2/Platform/PlatformProcessIdentifier.h \
+	Source/WebKit2/Platform/Region.cpp \
+	Source/WebKit2/Platform/Region.h \
 	Source/WebKit2/Platform/RunLoop.cpp \
 	Source/WebKit2/Platform/RunLoop.h \
 	Source/WebKit2/Platform/SharedMemory.h \
@@ -187,6 +189,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/Shared/EditorState.h \
 	Source/WebKit2/Shared/FontSmoothingLevel.h \
 	Source/WebKit2/Shared/cairo/ShareableBitmapCairo.cpp \
+	Source/WebKit2/Shared/gtk/LayerTreeContextGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebKeyboardEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebMouseEventGtk.cpp \
 	Source/WebKit2/Shared/gtk/NativeWebWheelEventGtk.cpp \
@@ -241,6 +244,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/Shared/StringPairVector.h \
 	Source/WebKit2/Shared/TextCheckerState.h \
 	Source/WebKit2/Shared/UserMessageCoders.h \
+	Source/WebKit2/Shared/UpdateInfo.cpp \
+	Source/WebKit2/Shared/UpdateInfo.h \
 	Source/WebKit2/Shared/VisitedLinkTable.cpp \
 	Source/WebKit2/Shared/VisitedLinkTable.h \
 	Source/WebKit2/Shared/WebBackForwardListItem.cpp \
@@ -370,12 +375,16 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/Authentication/WebCredential.h \
 	Source/WebKit2/UIProcess/Authentication/WebProtectionSpace.cpp \
 	Source/WebKit2/UIProcess/Authentication/WebProtectionSpace.h \
+	Source/WebKit2/UIProcess/BackingStore.cpp \
+	Source/WebKit2/UIProcess/BackingStore.h \
 	Source/WebKit2/UIProcess/ChunkedUpdateDrawingAreaProxy.cpp \
 	Source/WebKit2/UIProcess/ChunkedUpdateDrawingAreaProxy.h \
 	Source/WebKit2/UIProcess/Downloads/DownloadProxy.cpp \
 	Source/WebKit2/UIProcess/Downloads/DownloadProxy.h \
 	Source/WebKit2/UIProcess/DrawingAreaProxy.cpp \
 	Source/WebKit2/UIProcess/DrawingAreaProxy.h \
+	Source/WebKit2/UIProcess/DrawingAreaProxyImpl.cpp \
+	Source/WebKit2/UIProcess/DrawingAreaProxyImpl.h \
 	Source/WebKit2/UIProcess/FindIndicator.cpp \
 	Source/WebKit2/UIProcess/FindIndicator.h \
 	Source/WebKit2/UIProcess/GenericCallback.h \
@@ -383,6 +392,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/GeolocationPermissionRequestManagerProxy.h \
 	Source/WebKit2/UIProcess/GeolocationPermissionRequestProxy.cpp \
 	Source/WebKit2/UIProcess/GeolocationPermissionRequestProxy.h \
+	Source/WebKit2/UIProcess/gtk/BackingStoreGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/ChunkedUpdateDrawingAreaProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/TextCheckerGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebContextGtk.cpp \
@@ -659,6 +669,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/WebPage/DecoderAdapter.h \
 	Source/WebKit2/WebProcess/WebPage/DrawingArea.cpp \
 	Source/WebKit2/WebProcess/WebPage/DrawingArea.h \
+	Source/WebKit2/WebProcess/WebPage/DrawingAreaImpl.cpp \
 	Source/WebKit2/WebProcess/WebPage/EncoderAdapter.cpp \
 	Source/WebKit2/WebProcess/WebPage/EncoderAdapter.h \
 	Source/WebKit2/WebProcess/WebPage/FindController.cpp \
@@ -666,6 +677,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/WebPage/gtk/ChunkedUpdateDrawingAreaGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebInspectorGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebPageGtk.cpp \
+	Source/WebKit2/WebProcess/WebPage/LayerTreeHost.cpp \
 	Source/WebKit2/WebProcess/WebPage/PageOverlay.cpp \
 	Source/WebKit2/WebProcess/WebPage/PageOverlay.h \
 	Source/WebKit2/WebProcess/WebPage/TiledDrawingArea.cpp \
@@ -821,6 +833,10 @@ pkgconfig_DATA += Source/WebKit2/gtk/@WEBKITGTK_PC_NAME@2-@WEBKITGTK_API_VERSION
 webkit2_built_sources += \
 	DerivedSources/WebKit2/AuthenticationManagerMessageReceiver.cpp \
 	DerivedSources/WebKit2/AuthenticationManagerMessages.h \
+	DerivedSources/WebKit2/DrawingAreaMessageReceiver.cpp \
+	DerivedSources/WebKit2/DrawingAreaMessages.h \
+	DerivedSources/WebKit2/DrawingAreaProxyMessages.h \
+	DerivedSources/WebKit2/DrawingAreaProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/DownloadProxyMessageReceiver.cpp \
 	DerivedSources/WebKit2/DownloadProxyMessages.h \
 	DerivedSources/WebKit2/NPObjectMessageReceiverMessageReceiver.cpp \
