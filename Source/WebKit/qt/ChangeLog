@@ -1,3 +1,18 @@
+2011-05-16  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        REGRESSION(r83820): [Qt] Accelerated compositing no longer works in QGraphicsWebView.
+        https://bugs.webkit.org/show_bug.cgi?id=60892
+
+        Don't set the ItemClipsChildrenToShape flag for the root platform layer,
+        since that is now the overflow controls layer. The clip layer, which was
+        previously the root platform layer, already gets the flag by way of
+        the GraphicsLayer mask-to-bounds flag.
+
+        * WebCoreSupport/PageClientQt.cpp:
+        (WebCore::PageClientQGraphicsWidget::setRootGraphicsLayer):
+
 2011-05-16  Adam Barth  <abarth@webkit.org>
 
         Partial revert of r86537.  FullScreenVideoQt.h can't depend on OwnPtr.h

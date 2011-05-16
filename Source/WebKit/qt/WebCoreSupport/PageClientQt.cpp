@@ -289,7 +289,6 @@ void PageClientQGraphicsWidget::setRootGraphicsLayer(GraphicsLayer* layer)
     rootGraphicsLayer = layer ? layer->platformLayer() : 0;
 
     if (rootGraphicsLayer) {
-        rootGraphicsLayer.data()->setFlag(QGraphicsItem::ItemClipsChildrenToShape, true);
         rootGraphicsLayer.data()->setParentItem(view);
         rootGraphicsLayer.data()->setZValue(RootGraphicsLayerZValue);
     }
