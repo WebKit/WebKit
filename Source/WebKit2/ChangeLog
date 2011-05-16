@@ -1,3 +1,27 @@
+2011-05-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Add a returnValue parameter to tryToShortCircuitInvoke
+        https://bugs.webkit.org/show_bug.cgi?id=60891
+
+        tryToShortCircuitInvoke needs to be able to indicate that an invoke
+        call failed. Add a returnValue parameter and have the real return value
+        indicate whether tryToShortCircuitInvoke did short-circuit the invoke or not.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::tryToShortCircuitInvoke):
+        * PluginProcess/PluginControllerProxy.h:
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_Invoke):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::tryToShortCircuitInvoke):
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        * WebProcess/Plugins/PluginController.h:
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::tryToShortCircuitInvoke):
+        * WebProcess/Plugins/PluginView.h:
+
 2011-05-16  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Csaba Osztrogonác.

@@ -82,7 +82,7 @@ public:
     virtual bool evaluate(NPObject*, const String& scriptString, NPVariant* result, bool allowPopups) = 0;
 
     // Tries to short circuit the NPN_Invoke call with the given parameters. Returns true on success.
-    virtual bool tryToShortCircuitInvoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result) = 0;
+    virtual bool tryToShortCircuitInvoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, bool& returnValue, NPVariant& result) = 0;
 
     // Set the statusbar text.
     virtual void setStatusbarText(const String&) = 0;

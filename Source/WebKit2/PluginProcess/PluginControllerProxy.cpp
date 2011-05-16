@@ -281,7 +281,7 @@ bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptStr
     return true;
 }
 
-bool PluginControllerProxy::tryToShortCircuitInvoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+bool PluginControllerProxy::tryToShortCircuitInvoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, bool& returnValue, NPVariant& result)
 {
     return false;
 }

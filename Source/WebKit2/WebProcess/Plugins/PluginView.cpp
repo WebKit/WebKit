@@ -991,7 +991,7 @@ bool PluginView::evaluate(NPObject* npObject, const String& scriptString, NPVari
     return returnValue;
 }
 
-bool PluginView::tryToShortCircuitInvoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, NPVariant* result)
+bool PluginView::tryToShortCircuitInvoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, bool& returnValue, NPVariant& result)
 {
     // Never try to short-circuit invoke in the web process.
     return false;
