@@ -22,6 +22,12 @@
 
 2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
 
+        Unreviewed, marking media/video-transformed.html as passing on all platforms.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
+
         Unreviewed, rebaselining media/video-aspect-ratio.html for chromium-gpu-{linux,mac,win}.
 
         * platform/chromium-gpu-linux/media/video-aspect-ratio-expected.png: Added.
