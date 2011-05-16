@@ -1,3 +1,39 @@
+2011-05-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Enrica Casucci.
+
+        editing/pasteboard/5075944-2.html and 5075944-3.html should be renamed and converted to dump-as-markup tests
+        https://bugs.webkit.org/show_bug.cgi?id=60923
+
+        Renamed pasteboard/5075944-2.html to pasteboard/preserve-underline-color.html and pasteboard/5075944-3.html to
+        deleting/deleting-line-break-preserves-underline-color.html. Also converted them to dump-as-markup tests.
+
+        * editing/deleting/deleting-line-break-preserves-underline-color-expected.txt: Added.
+        * editing/deleting/deleting-line-break-preserves-underline-color.html: Copied from LayoutTests/editing/pasteboard/5075944-3.html.
+        * editing/pasteboard/5075944-2.html: Removed.
+        * editing/pasteboard/5075944-3.html: Removed.
+        * editing/pasteboard/preserve-underline-color-expected.txt: Added.
+        * editing/pasteboard/preserve-underline-color.html: Copied from LayoutTests/editing/pasteboard/5075944-2.html.
+        * platform/chromium-linux/editing/pasteboard/5075944-2-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/5075944-3-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/5075944-2-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/5075944-2-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/5075944-3-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/5075944-3-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/5075944-2-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/5075944-2-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/5075944-3-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/5075944-2-expected.png: Removed.
+        * platform/mac-leopard/editing/pasteboard/5075944-3-expected.png: Removed.
+        * platform/mac/editing/pasteboard/5075944-2-expected.png: Removed.
+        * platform/mac/editing/pasteboard/5075944-2-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/5075944-3-expected.png: Removed.
+        * platform/mac/editing/pasteboard/5075944-3-expected.txt: Removed.
+        * platform/qt-arm/Skipped:
+        * platform/qt-mac/Skipped:
+        * platform/qt/editing/pasteboard/5075944-2-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/5075944-3-expected.txt: Removed.
+
 2011-05-16  Adam Barth  <abarth@webkit.org>
 
         Layout Test fast/dom/HTMLAnchorElement/set-href-attribute-hash.html is failing
