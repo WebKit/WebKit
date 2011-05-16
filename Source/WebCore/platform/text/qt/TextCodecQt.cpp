@@ -64,7 +64,7 @@ void TextCodecQt::registerEncodingNames(EncodingNameRegistrar registrar)
 
 static PassOwnPtr<TextCodec> newTextCodecQt(const TextEncoding& encoding, const void*)
 {
-    return new TextCodecQt(encoding);
+    return adoptPtr(new TextCodecQt(encoding));
 }
 
 void TextCodecQt::registerCodecs(TextCodecRegistrar registrar)

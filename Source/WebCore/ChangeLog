@@ -2,6 +2,13 @@
 
         Attempt to fix Qt build.  (Strict PassOwnPtr fix.)
 
+        * platform/text/qt/TextCodecQt.cpp:
+        (WebCore::newTextCodecQt):
+
+2011-05-15  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix Qt build.  (Strict PassOwnPtr fix.)
+
         * platform/network/qt/QNetworkReplyHandler.cpp:
         (WebCore::QNetworkReplyWrapper::release):
         (WebCore::QNetworkReplyWrapper::receiveMetaData):
