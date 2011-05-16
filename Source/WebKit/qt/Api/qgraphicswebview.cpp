@@ -473,7 +473,7 @@ void QGraphicsWebViewPrivate::detachCurrentPage()
         return;
 
     page->d->view.clear();
-    page->d->client = 0;
+    page->d->client = nullptr;
 
     // if the page was created by us, we own it and need to
     // destroy it as well.
@@ -506,7 +506,7 @@ void QGraphicsWebView::setPage(QWebPage* page)
     if (!d->page)
         return;
 
-    d->page->d->client = new PageClientQGraphicsWidget(this, page); // set the page client
+    d->page->d->client = adoptPtr(new PageClientQGraphicsWidget(this, page));
 
     if (d->overlay())
         d->overlay()->prepareGraphicsItemGeometryChange();

@@ -1,3 +1,13 @@
+2011-05-15  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix the Qt build.  (Strict PassOwnPtr fix.)
+
+        * Api/qgraphicswebview.cpp:
+        (QGraphicsWebViewPrivate::detachCurrentPage):
+        (QGraphicsWebView::setPage):
+        * Api/qwebpage.cpp:
+        (QWebPage::setView):
+
 2011-05-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86504.

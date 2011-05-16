@@ -2044,7 +2044,7 @@ void QWebPage::setView(QWidget* view)
     }
 
     if (view)
-        d->client = new PageClientQWidget(view, this);
+        d->client = adoptPtr(new PageClientQWidget(view, this));
 }
 
 /*!
