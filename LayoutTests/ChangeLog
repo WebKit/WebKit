@@ -1,5 +1,11 @@
 2011-05-16  Adam Roben  <aroben@apple.com>
 
+        Skip another new test that relies on parts of EventSender that WTR doesn't support
+
+        * platform/mac-wk2/Skipped: Added fast/forms/focus-with-display-block.html.
+
+2011-05-16  Adam Roben  <aroben@apple.com>
+
         Skip a new test that relies on parts of EventSender that WTR doesn't support
 
         * platform/mac-wk2/Skipped: Addd
