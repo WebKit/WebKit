@@ -1,5 +1,41 @@
 2011-05-15  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Maciej Stachowiak.
+
+        Pass the window NPObject identifier in the plug-in creation parameters
+        https://bugs.webkit.org/show_bug.cgi?id=60865
+
+        This avoids a synchronous call when the plug-in wants to get the NPObject that
+        corresponds to the window.
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::initialize):
+        Change this to take the PluginCreationParameters. Initialize the window NPObject.
+
+        (WebKit::PluginControllerProxy::windowScriptNPObject):
+        Just return the window NPObject; it's already been initialized.
+
+        * PluginProcess/PluginControllerProxy.h:
+        * PluginProcess/PluginCreationParameters.cpp:
+        (WebKit::PluginCreationParameters::PluginCreationParameters):
+        (WebKit::PluginCreationParameters::encode):
+        (WebKit::PluginCreationParameters::decode):
+        * PluginProcess/PluginCreationParameters.h:
+        Add the window NPObject ID.
+
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::createPlugin):
+        Pass the creation parameters to PluginControllerProxy::initialize.
+
+        * WebProcess/Plugins/PluginProxy.cpp:
+        (WebKit::PluginProxy::initialize):
+        Initialize the window NPObject ID.
+
+        * WebProcess/Plugins/PluginProxy.messages.in:
+        Remove the GetWindowScriptNPObject message.
+
+2011-05-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Pass the document URL and toplevel document URL when creating a plug-in

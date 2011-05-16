@@ -101,6 +101,7 @@ bool PluginProxy::initialize(PluginController* pluginController, const Parameter
     // Ask the plug-in process to create a plug-in.
     PluginCreationParameters creationParameters;
     creationParameters.pluginInstanceID = m_pluginInstanceID;
+    creationParameters.windowNPObjectID = windowNPObjectID();
     creationParameters.parameters = parameters;
     creationParameters.userAgent = pluginController->userAgent();
     creationParameters.isPrivateBrowsingEnabled = pluginController->isPrivateBrowsingEnabled();
@@ -410,16 +411,16 @@ void PluginProxy::getAuthenticationInfo(const ProtectionSpace& protectionSpace, 
     returnValue = m_pluginController->getAuthenticationInfo(protectionSpace, username, password);
 }
 
-void PluginProxy::getWindowScriptNPObject(uint64_t& windowScriptNPObjectID)
+uint64_t PluginProxy::windowNPObjectID()
 {
     NPObject* windowScriptNPObject = m_pluginController->windowScriptNPObject();
-    if (!windowScriptNPObject) {
-        windowScriptNPObjectID = 0;
-        return;
-    }
+    if (!windowScriptNPObject)
+        return 0;
 
-    windowScriptNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(windowScriptNPObject, this);
+    uint64_t windowNPObjectID = m_connection->npRemoteObjectMap()->registerNPObject(windowScriptNPObject, this);
     releaseNPObject(windowScriptNPObject);
+
+    return windowNPObjectID;
 }
 
 void PluginProxy::getPluginElementNPObject(uint64_t& pluginElementNPObjectID)

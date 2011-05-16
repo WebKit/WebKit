@@ -61,7 +61,7 @@ public:
 
     uint64_t pluginInstanceID() const { return m_pluginInstanceID; }
 
-    bool initialize(const Plugin::Parameters&);
+    bool initialize(const PluginCreationParameters&);
     void destroy();
 
     void didReceivePluginControllerProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

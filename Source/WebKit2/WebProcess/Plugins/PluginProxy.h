@@ -105,6 +105,7 @@ private:
     virtual PluginController* controller();
 
     bool needsBackingStore() const;
+    uint64_t windowNPObjectID();
 
     // Message handlers.
     void loadURL(uint64_t requestID, const String& method, const String& urlString, const String& target, const WebCore::HTTPHeaderMap& headerFields, const Vector<uint8_t>& httpBody, bool allowPopups);
@@ -113,7 +114,6 @@ private:
     void cookiesForURL(const String& urlString, String& cookieString);
     void setCookiesForURL(const String& urlString, const String& cookieString);
     void getAuthenticationInfo(const WebCore::ProtectionSpace&, bool& returnValue, String& username, String& password);
-    void getWindowScriptNPObject(uint64_t& windowScriptNPObjectID);
     void getPluginElementNPObject(uint64_t& pluginElementNPObjectID);
     void evaluate(const NPVariantData& npObjectAsVariantData, const String& scriptString, bool allowPopups, bool& returnValue, NPVariantData& resultData);
     void cancelStreamLoad(uint64_t streamID);

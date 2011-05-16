@@ -34,6 +34,7 @@ namespace WebKit {
 
 PluginCreationParameters::PluginCreationParameters()
     : pluginInstanceID(0)
+    , windowNPObjectID(0)
     , isPrivateBrowsingEnabled(false)
 #if USE(ACCELERATED_COMPOSITING)
     , isAcceleratedCompositingEnabled(false)
@@ -44,6 +45,7 @@ PluginCreationParameters::PluginCreationParameters()
 void PluginCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     encoder->encode(pluginInstanceID);
+    encoder->encode(windowNPObjectID);
     encoder->encode(parameters);
     encoder->encode(userAgent);
     encoder->encode(isPrivateBrowsingEnabled);
@@ -56,6 +58,9 @@ void PluginCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) const
 bool PluginCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, PluginCreationParameters& result)
 {
     if (!decoder->decode(result.pluginInstanceID) || !result.pluginInstanceID)
+        return false;
+
+    if (!decoder->decode(result.windowNPObjectID))
         return false;
 
     if (!decoder->decode(result.parameters))

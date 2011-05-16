@@ -46,6 +46,9 @@ struct PluginCreationParameters {
     // The unique ID of this plug-in instance.
     uint64_t pluginInstanceID;
 
+    // The ID of the window NPObject.
+    uint64_t windowNPObjectID;
+
     // The parameters passed to the plug-in.
     Plugin::Parameters parameters;
 

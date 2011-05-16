@@ -85,7 +85,7 @@ PluginControllerProxy::~PluginControllerProxy()
         releaseNPObject(m_pluginElementNPObject);
 }
 
-bool PluginControllerProxy::initialize(const Plugin::Parameters& parameters)
+bool PluginControllerProxy::initialize(const PluginCreationParameters& creationParameters)
 {
     ASSERT(!m_plugin);
 
@@ -96,7 +96,10 @@ bool PluginControllerProxy::initialize(const Plugin::Parameters& parameters)
         return false;
     }
 
-    if (!m_plugin->initialize(this, parameters)) {
+    m_windowNPObject = m_connection->npRemoteObjectMap()->createNPObjectProxy(creationParameters.windowNPObjectID, m_plugin.get());
+    ASSERT(m_windowNPObject);
+
+    if (!m_plugin->initialize(this, creationParameters.parameters)) {
         // Get the plug-in so we can pass it to removePluginControllerProxy. The pointer is only
         // used as an identifier so it's OK to just get a weak reference.
         Plugin* plugin = m_plugin.get();
@@ -229,19 +232,6 @@ void PluginControllerProxy::cancelManualStreamLoad()
 
 NPObject* PluginControllerProxy::windowScriptNPObject()
 {
-    if (!m_windowNPObject) {
-        uint64_t windowScriptNPObjectID = 0;
-
-        if (!m_connection->connection()->sendSync(Messages::PluginProxy::GetWindowScriptNPObject(), Messages::PluginProxy::GetWindowScriptNPObject::Reply(windowScriptNPObjectID), m_pluginInstanceID))
-            return 0;
-
-        if (!windowScriptNPObjectID)
-            return 0;
-
-        m_windowNPObject = m_connection->npRemoteObjectMap()->createNPObjectProxy(windowScriptNPObjectID, m_plugin.get());
-        ASSERT(m_windowNPObject);
-    }
-
     retainNPObject(m_windowNPObject);
     return m_windowNPObject;
 }

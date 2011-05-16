@@ -173,7 +173,7 @@ void WebProcessConnection::createPlugin(const PluginCreationParameters& creation
     addPluginControllerProxy(pluginControllerProxy.release());
 
     // Now try to initialize the plug-in.
-    result = pluginControllerProxyPtr->initialize(creationParameters.parameters);
+    result = pluginControllerProxyPtr->initialize(creationParameters);
 
     if (!result)
         return;

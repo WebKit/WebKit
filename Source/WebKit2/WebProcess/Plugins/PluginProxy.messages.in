@@ -41,9 +41,6 @@ messages -> PluginProxy {
     # Gets the authentication info for the given protection space.
     GetAuthenticationInfo(WebCore::ProtectionSpace protectionSpace) -> (bool returnValue, WTF::String username, WTF::String password)
 
-    # Gets a reference to the window NPObject.
-    GetWindowScriptNPObject() -> (uint64_t windowScriptNPObjectID)
-
     # Gets a reference to the plug-in element NPObject.
     GetPluginElementNPObject() -> (uint64_t pluginElementNPObjectID)
 
