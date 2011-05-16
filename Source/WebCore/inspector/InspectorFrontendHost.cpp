@@ -242,7 +242,8 @@ String InspectorFrontendHost::loadSessionSetting(const String& key)
 
 void InspectorFrontendHost::sendMessageToBackend(const String& message)
 {
-    m_client->sendMessageToBackend(message);
+    if (m_client)
+        m_client->sendMessageToBackend(message);
 }
 
 #if ENABLE(CONTEXT_MENUS)

@@ -1,3 +1,15 @@
+2011-05-15  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        [Qt] Fix crash in inspector/console/console-long-eval-crash.html
+        https://bugs.webkit.org/show_bug.cgi?id=60858
+
+        The client may be gone when sendMessageToBackend() is called.
+
+        * inspector/InspectorFrontendHost.cpp:
+        (WebCore::InspectorFrontendHost::sendMessageToBackend):
+
 2011-05-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.
