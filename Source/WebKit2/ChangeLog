@@ -1,3 +1,22 @@
+2011-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Enable building GTK port with ENABLE_PLUGIN_PROCESS=1
+        https://bugs.webkit.org/show_bug.cgi?id=58223
+
+        * GNUmakefile.am: Add new files to compilation.
+        * PluginProcess/gtk/PluginControllerProxyGtk.cpp: Added.
+        (WebKit::PluginControllerProxy::platformInitialize):
+        (WebKit::PluginControllerProxy::platformDestroy):
+        (WebKit::PluginControllerProxy::platformGeometryDidChange):
+        * PluginProcess/gtk/PluginProcessGtk.cpp: Added.
+        (WebKit::PluginProcess::platformInitialize):
+        * UIProcess/Plugins/gtk/PluginProcessProxyGtk.cpp: Added.
+        (WebKit::PluginProcessProxy::platformInitializePluginProcess):
+        * WebProcess/Plugins/Netscape/gtk/PluginProxyGtk.cpp: Added.
+        (WebKit::PluginProxy::needsBackingStore):
+
 2011-05-16  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix the Qt build.  (Strict PassOwnPtr fix.)

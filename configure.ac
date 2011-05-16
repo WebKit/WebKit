@@ -1045,6 +1045,18 @@ AC_ARG_ENABLE(webkit2,
                 [], [enable_webkit2="no"])
 AC_MSG_RESULT([$enable_webkit2])
 
+# Plugin Process
+AC_MSG_CHECKING([whether to build plugin process for WebKit2])
+AC_ARG_ENABLE(plugin_process,
+            AC_HELP_STRING([--enable-plugin-process],
+                           [build plugin process for WebKit2 [default=yes]]),
+                           [], [enable_plugin_process="no"])
+# Build the plugin process only when building webkit2.
+if test "$enable_webkit2" = "no"; then
+    enable_plugin_process=no
+fi
+AC_MSG_RESULT([$enable_plugin_process])
+
 GTK_DOC_CHECK([1.10])
 
 # OS conditionals
@@ -1128,6 +1140,7 @@ AM_CONDITIONAL([ENABLE_WEB_AUDIO],[test "$enable_web_audio" = "yes"])
 AM_CONDITIONAL([ENABLE_WEB_TIMING],[test "$enable_web_timing" = "yes"])
 AM_CONDITIONAL([ENABLE_OPCODE_STATS],[test "$enable_opcode_stats" = "yes"])
 AM_CONDITIONAL([ENABLE_WEBKIT2],[test "$enable_webkit2" = "yes"])
+AM_CONDITIONAL([ENABLE_PLUGIN_PROCESS],[test "$enable_plugin_process" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
 AM_CONDITIONAL([ENABLE_ANIMATION_API],[test "$enable_animation_api" = "yes"])
 AM_CONDITIONAL([ENABLE_TOUCH_ICON_LOADING],[test "$enable_touch_icon_loading" = "yes"])
@@ -1233,6 +1246,7 @@ GTK+ configuration:
  Hildon UI extensions                                     : $with_hildon
  Introspection support                                    : $enable_introspection
  WebKit2 support                                          : $enable_webkit2
+ WebKit2 plugin process                                   : $enable_plugin_process
 "
 if test "$with_unicode_backend" = "glib"; then
    echo "     >> WARNING: the glib-based unicode backend is slow and incomplete <<"

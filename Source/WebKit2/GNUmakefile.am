@@ -116,6 +116,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/PluginProcess/PluginProcessMain.h \
 	Source/WebKit2/PluginProcess/WebProcessConnection.cpp \
 	Source/WebKit2/PluginProcess/WebProcessConnection.h \
+	Source/WebKit2/PluginProcess/gtk/PluginControllerProxyGtk.cpp \
+	Source/WebKit2/PluginProcess/gtk/PluginProcessGtk.cpp \
 	Source/WebKit2/Shared/APIClient.h \
 	Source/WebKit2/Shared/API/c/gtk/WKBaseGtk.h \
 	Source/WebKit2/Shared/API/c/gtk/WKGraphicsContextGtk.h \
@@ -401,6 +403,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/Plugins/PluginProcessProxy.h \
 	Source/WebKit2/UIProcess/Plugins/WebPluginSiteDataManager.h \
 	Source/WebKit2/UIProcess/Plugins/WebPluginSiteDataManager.cpp \
+	Source/WebKit2/UIProcess/Plugins/gtk/PluginProcessProxyGtk.cpp \
 	Source/WebKit2/UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp \
 	Source/WebKit2/UIProcess/ProcessModel.h \
 	Source/WebKit2/UIProcess/ResponsivenessTimer.cpp \
@@ -603,6 +606,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/Plugins/Netscape/NPRuntimeObjectMap.h \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NPRuntimeUtilities.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/NPRuntimeUtilities.h \
+	Source/WebKit2/WebProcess/Plugins/Netscape/gtk/PluginProxyGtk.cpp \
 	Source/WebKit2/WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp \
 	Source/WebKit2/WebProcess/Plugins/PluginController.h \
 	Source/WebKit2/WebProcess/Plugins/Plugin.cpp \
@@ -774,6 +778,12 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_ladir 
 if !TARGET_WIN32
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPFLAGS += \
 	-DXP_UNIX
+endif
+
+# Plugin process
+if ENABLE_PLUGIN_PROCESS
+libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPFLAGS += \
+	-DENABLE_PLUGIN_PROCESS=1
 endif
 
 libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_LDFLAGS = \
