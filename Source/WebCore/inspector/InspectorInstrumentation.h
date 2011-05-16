@@ -851,7 +851,7 @@ inline void InspectorInstrumentation::didUseDOMStorage(Page* page, StorageArea* 
 #endif
 
 #if ENABLE(WORKERS)
-inline bool InspectorInstrumentation::willStartWorkerContext(ScriptExecutionContext* context, WorkerContextProxy*)
+inline bool InspectorInstrumentation::willStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*)
 {
     return false;
 }

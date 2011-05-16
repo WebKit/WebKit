@@ -1,3 +1,10 @@
+2011-05-16  Yury Semikhatsky  <yurys@chromium.org>
+
+        Unreviewed. Build fix.
+
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::willStartWorkerContext):
+
 2011-05-11  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
