@@ -1,3 +1,10 @@
+2011-05-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed, skip failing tests.
+
+        * platform/mac-wk2/Skipped: Add fast/forms/focus-with-display-block.html because of missing eventSender.keyDown implementation
+        * platform/qt-wk2/Skipped: Add fast/js/array-sort-modifying-tostring.html to make WK2 bot green to be able to catch new regressions
+
 2011-05-16  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: fix inspector dom action test flake.

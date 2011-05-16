@@ -288,7 +288,6 @@ fast/forms/focus-change-on-keypress.html
 fast/forms/focus-control-to-page.html
 fast/forms/focus-selection-input.html
 fast/forms/focus-selection-textarea.html
-fast/forms/focus-with-display-block.html
 fast/forms/get-file-upload.html
 fast/forms/implicit-submission.html
 fast/forms/input-file-re-render.html
@@ -1778,6 +1777,7 @@ fast/forms/reset-autofilled.html
 
 # eventSender.keyDown is unimplemented
 fast/forms/radio-group-keyboard-change-event.html
+fast/forms/focus-with-display-block.html
 
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################

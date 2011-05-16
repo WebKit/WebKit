@@ -3521,3 +3521,7 @@ editing/execCommand/print.html
 editing/execCommand/remove-list-from-range-selection.html
 editing/execCommand/remove-list-item-1.html
 editing/execCommand/selectAll.html
+
+# [Qt]REGRESSION(86499): GC related bug
+# https://bugs.webkit.org/show_bug.cgi?id=60881
+fast/js/array-sort-modifying-tostring.html
