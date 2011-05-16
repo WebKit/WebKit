@@ -130,7 +130,6 @@ editing/selection/5354455-2.html
 editing/selection/anchor-focus2.html
 editing/selection/anchor-focus3.html
 editing/selection/button-right-click.html
-editing/selection/click-below-rtl-text.html
 editing/selection/click-in-focusable-link-should-not-clear-selection.html
 editing/selection/click-in-margins-inside-editable-div.html
 editing/selection/click-in-padding-with-multiple-line-boxes.html
@@ -323,7 +322,6 @@ fast/forms/select-double-onchange.html
 fast/forms/select-empty-list.html
 fast/forms/select-listbox-focus-displaynone.html
 fast/forms/select-listbox-multiple-no-focusring.html
-fast/forms/select-live-pseudo-selectors.html
 fast/forms/select-option-accesskey-crash.html
 fast/forms/select-popup-pagekeys.html
 fast/forms/select-script-onchange.html
@@ -950,7 +948,6 @@ fast/harness/override-preferences.html
 fast/harness/page-cache-crash-on-data-urls.html
 fast/harness/use-page-cache.html
 fast/history/timed-refresh-in-cached-frame.html
-fast/images/animated-gif-restored-from-bfcache.html
 fast/loader/frames-with-unload-handlers-in-page-cache.html
 fast/loader/input-element-page-cache-crash.html
 fast/loader/scroll-position-restored-on-back.html
@@ -1095,8 +1092,6 @@ fast/history/gesture-before-onload-form-submit.html
 fast/history/gesture-before-onload-location-href.html
 fast/history/history-length.html
 fast/history/redirect-via-iframe.html
-fast/history/same-document-iframes-changing-fragment.html
-fast/history/same-document-iframes-changing-pushstate.html
 fast/loader/location-port.html
 fast/loader/stateobjects/document-destroyed-navigate-back-with-fragment-scroll.html
 fast/loader/stateobjects/document-destroyed-navigate-back.html
