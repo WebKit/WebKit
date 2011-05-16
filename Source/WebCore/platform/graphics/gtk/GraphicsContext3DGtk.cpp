@@ -28,7 +28,7 @@
 #include "GraphicsContext3D.h"
 
 #if ENABLE(WEBGL)
-
+#include <wtf/PassOwnPtr.h>
 #include "Extensions3DOpenGL.h"
 #include "GraphicsContext3DInternal.h"
 #include "OpenGLShims.h"
@@ -43,12 +43,12 @@ PassRefPtr<GraphicsContext3D> GraphicsContext3D::create(GraphicsContext3D::Attri
     if (renderStyle == RenderDirectlyToHostWindow)
         return 0;
 
-    GraphicsContext3DInternal* internal = GraphicsContext3DInternal::create();
+    OwnPtr<GraphicsContext3DInternal> internal = GraphicsContext3DInternal::create();
     if (!internal)
         return 0;
 
     RefPtr<GraphicsContext3D> context = adoptRef(new GraphicsContext3D(attributes, hostWindow, false));
-    context->m_internal.set(internal);
+    context->m_internal = internal.release();
     return context.release();
 }
 

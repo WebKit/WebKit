@@ -32,7 +32,7 @@ class GraphicsContext3D;
 
 class GraphicsContext3DInternal {
     public:
-    static GraphicsContext3DInternal* create();
+    static PassOwnPtr<GraphicsContext3DInternal> create();
     ~GraphicsContext3DInternal();
     void makeContextCurrent();
 

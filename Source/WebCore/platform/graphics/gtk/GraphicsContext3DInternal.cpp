@@ -18,6 +18,7 @@
  */
 
 #include "config.h"
+#include <wtf/PassOwnPtr.h>
 #include "GraphicsContext3DInternal.h"
 
 #if ENABLE(WEBGL)
@@ -87,10 +88,10 @@ void GraphicsContext3DInternal::cleanupActiveContextsAtExit()
     gSharedDisplay = 0;
 }
 
-GraphicsContext3DInternal* GraphicsContext3DInternal::create()
+PassOwnPtr<GraphicsContext3DInternal> GraphicsContext3DInternal::create()
 {
     if (!sharedDisplay())
-        return 0;
+        return nullptr;
 
     static bool initialized = false;
     static bool success = true;
@@ -99,17 +100,17 @@ GraphicsContext3DInternal* GraphicsContext3DInternal::create()
         initialized = true;
     }
     if (!success)
-        return 0;
+        return nullptr;
 
     GraphicsContext3DInternal* internal = createPbufferContext();
     if (!internal)
         internal = createPixmapContext();
     if (!internal)
-        return 0;
+        return nullptr;
 
     // The GraphicsContext3D constructor requires that this context is the current OpenGL context.
     internal->makeContextCurrent();
-    return internal;
+    return adoptPtr(internal);
 }
 
 GraphicsContext3DInternal* GraphicsContext3DInternal::createPbufferContext()

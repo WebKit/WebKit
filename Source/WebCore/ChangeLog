@@ -1,3 +1,18 @@
+2011-05-16  Naiem Shaik  <naiem.shaik@gmail.com>
+
+        Reviewed by Adam Barth.
+
+        This is for fixing build break in webgl due to https://bugs.webkit.org/show_bug.cgi?id=59861
+        The bug raised for fixing this is https://bugs.webkit.org/show_bug.cgi?id=60867
+
+        No new tests. This does not change any functionality.
+
+        * platform/graphics/gtk/GraphicsContext3DGtk.cpp:
+        (WebCore::GraphicsContext3D::create):
+        * platform/graphics/gtk/GraphicsContext3DInternal.cpp:
+        (WebCore::GraphicsContext3DInternal::create):
+        * platform/graphics/gtk/GraphicsContext3DInternal.h:
+
 2011-05-16  Pavel Feldman  <pfeldman@chromium.org>
 
         Reviewed by Yury Semikhatsky.
