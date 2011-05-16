@@ -111,6 +111,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/Platform/WorkQueue.h \
 	Source/WebKit2/PluginProcess/PluginControllerProxy.cpp \
 	Source/WebKit2/PluginProcess/PluginControllerProxy.h \
+	Source/WebKit2/PluginProcess/PluginCreationParameters.cpp \
+	Source/WebKit2/PluginProcess/PluginCreationParameters.h \
 	Source/WebKit2/PluginProcess/PluginProcess.cpp \
 	Source/WebKit2/PluginProcess/PluginProcess.h \
 	Source/WebKit2/PluginProcess/PluginProcessMain.h \

@@ -1,5 +1,12 @@
 2011-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Unreviewed. Fix WebKit2 GTK build after r86489.
+
+        * GNUmakefile.am: Add PluginProcess/PluginCreationParameters.cpp
+        and PluginProcess/PluginCreationParameters.h to compilation.
+
+2011-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Reviewed by Martin Robinson.
 
         [GTK] Enable building GTK port with ENABLE_PLUGIN_PROCESS=1
