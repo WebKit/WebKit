@@ -1,5 +1,16 @@
 2011-05-16  Adam Barth  <abarth@webkit.org>
 
+        Layout Test fast/dom/HTMLAnchorElement/set-href-attribute-hash.html is failing
+        http://code.google.com/p/chromium/issues/detail?id=72428
+
+        This test is passing, not failing.
+
+        * platform/chromium/fast/dom/HTMLAnchorElement: Added.
+        * platform/chromium/fast/dom/HTMLAnchorElement/set-href-attribute-hash-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-05-16  Adam Barth  <abarth@webkit.org>
+
         cross-frame-access-call.html fails after WebKit r74449
         http://code.google.com/p/chromium/issues/detail?id=67767
 

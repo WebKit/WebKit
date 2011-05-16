@@ -3065,8 +3065,6 @@ BUGWK54322 SNOWLEOPARD : storage/indexeddb/data-corruption.html = TIMEOUT PASS
 BUGWK54322 SNOWLEOPARD : svg/custom/acid3-test-77.html = TIMEOUT PASS
 BUGWK54322 SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS TEXT
 
-BUGCR72428 : fast/dom/HTMLAnchorElement/set-href-attribute-hash.html = TEXT
-
 BUGCR72861 : fast/css/test-setting-canvas-color.html = TEXT
 
 // Release definitely renders wrong; debug differences from reference may just
