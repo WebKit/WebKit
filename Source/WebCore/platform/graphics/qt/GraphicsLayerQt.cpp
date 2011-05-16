@@ -944,7 +944,7 @@ void GraphicsLayerQtImpl::notifyAnimationStarted()
 
 GraphicsLayerQt::GraphicsLayerQt(GraphicsLayerClient* client)
     : GraphicsLayer(client)
-    , m_impl(PassOwnPtr<GraphicsLayerQtImpl>(new GraphicsLayerQtImpl(this)))
+    , m_impl(adoptPtr(new GraphicsLayerQtImpl(this)))
 {
 }
 
@@ -955,7 +955,7 @@ GraphicsLayerQt::~GraphicsLayerQt()
 // This is the hook for WebCore compositor to know that Qt implements compositing with GraphicsLayerQt.
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
-    return new GraphicsLayerQt(client);
+    return adoptPtr(new GraphicsLayerQt(client));
 }
 
 /* \reimp (GraphicsLayer.h): The current size might change, thus we need to update the whole display.

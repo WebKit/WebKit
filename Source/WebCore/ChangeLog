@@ -2,6 +2,14 @@
 
         Attempt to fix Qt build.  (Strict PassOwnPtr fix.)
 
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQt::GraphicsLayerQt):
+        (WebCore::GraphicsLayer::create):
+
+2011-05-15  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix Qt build.  (Strict PassOwnPtr fix.)
+
         * platform/text/qt/TextCodecQt.cpp:
         (WebCore::newTextCodecQt):
 
