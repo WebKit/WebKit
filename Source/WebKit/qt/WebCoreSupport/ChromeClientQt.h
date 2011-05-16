@@ -34,6 +34,7 @@
 #include "KURL.h"
 #include "PlatformString.h"
 #include "QtPlatformPlugin.h"
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 
 QT_BEGIN_NAMESPACE
@@ -189,7 +190,7 @@ public:
     virtual PassRefPtr<SearchPopupMenu> createSearchPopupMenu(PopupMenuClient*) const;
     virtual void populateVisitedLinks();
 
-    QWebSelectMethod* createSelectPopup() const;
+    PassOwnPtr<QWebSelectMethod> createSelectPopup() const;
 
     virtual void dispatchViewportDataDidChange(const ViewportArguments&) const;
 

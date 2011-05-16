@@ -73,9 +73,9 @@ NotificationWrapper::NotificationWrapper()
 #if ENABLE(NOTIFICATIONS)
 
 #ifndef QT_NO_SYSTEMTRAYICON
-    m_notificationIcon = 0;
+    m_notificationIcon = nullptr;
 #endif
-    m_presenter = 0;
+    m_presenter = nullptr;
 #endif
 }
 
@@ -211,9 +211,9 @@ void NotificationPresenterClientQt::displayNotification(Notification* notificati
         QPixmap pixmap;
         if (bytes.length() && pixmap.loadFromData(bytes)) {
             QIcon icon(pixmap);
-            wrapper->m_notificationIcon = new QSystemTrayIcon(icon);
+            wrapper->m_notificationIcon = adoptPtr(new QSystemTrayIcon(icon));
         } else
-            wrapper->m_notificationIcon = new QSystemTrayIcon();
+            wrapper->m_notificationIcon = adoptPtr(new QSystemTrayIcon());
 #endif
     }
 

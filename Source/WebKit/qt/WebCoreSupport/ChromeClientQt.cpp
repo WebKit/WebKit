@@ -696,18 +696,18 @@ void ChromeClientQt::exitFullscreenForNode(Node* node)
 } 
 #endif
 
-QWebSelectMethod* ChromeClientQt::createSelectPopup() const
+PassOwnPtr<QWebSelectMethod> ChromeClientQt::createSelectPopup() const
 {
-    QWebSelectMethod* result = m_platformPlugin.createSelectInputMethod();
+    OwnPtr<QWebSelectMethod> result = m_platformPlugin.createSelectInputMethod();
     if (result)
-        return result;
+        return result.release();
 
 #if defined(Q_WS_MAEMO_5)
-    return new QtMaemoWebPopup;
+    return adoptPtr(new QtMaemoWebPopup);
 #elif !defined(QT_NO_COMBOBOX)
-    return new QtFallbackWebPopup(this);
+    return adoptPtr(new QtFallbackWebPopup(this));
 #else
-    return 0;
+    return nullptr;
 #endif
 }
 

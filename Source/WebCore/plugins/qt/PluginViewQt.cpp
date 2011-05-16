@@ -945,7 +945,7 @@ bool PluginView::platformStart()
         if (m_parentFrame->page()->chrome()->client()->allowsAcceleratedCompositing()
             && m_parentFrame->page()->settings() 
             && m_parentFrame->page()->settings()->acceleratedCompositingEnabled()) {
-            m_platformLayer = new PluginGraphicsLayerQt(this);
+            m_platformLayer = adoptPtr(new PluginGraphicsLayerQt(this));
             // Trigger layer computation in RenderLayerCompositor
             m_element->setNeedsStyleRecalc(SyntheticStyleChange);
         }

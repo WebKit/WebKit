@@ -22,6 +22,7 @@
 #define QtPlatformPlugin_h
 
 #include <QPluginLoader>
+#include <wtf/PassOwnPtr.h>
 
 class QWebSelectMethod;
 class QWebKitPlatformPlugin;
@@ -37,15 +38,20 @@ namespace WebCore {
 
 class QtPlatformPlugin {
 public:
-    QtPlatformPlugin() : m_loaded(false), m_plugin(0) {}
+    QtPlatformPlugin()
+        : m_loaded(false)
+        , m_plugin(0)
+    {
+    }
+
     ~QtPlatformPlugin();
 
-    QWebSelectMethod* createSelectInputMethod();
-    QWebNotificationPresenter* createNotificationPresenter();
-    QWebHapticFeedbackPlayer* createHapticFeedbackPlayer();
-    QWebTouchModifier* createTouchModifier();
+    PassOwnPtr<QWebSelectMethod> createSelectInputMethod();
+    PassOwnPtr<QWebNotificationPresenter> createNotificationPresenter();
+    PassOwnPtr<QWebHapticFeedbackPlayer> createHapticFeedbackPlayer();
+    PassOwnPtr<QWebTouchModifier> createTouchModifier();
 #if ENABLE(VIDEO) && USE(QT_MULTIMEDIA)
-    QWebFullScreenVideoHandler* createFullScreenVideoHandler();
+    PassOwnPtr<QWebFullScreenVideoHandler> createFullScreenVideoHandler();
 #endif
 
     QWebKitPlatformPlugin* plugin();

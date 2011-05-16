@@ -22,6 +22,7 @@
 
 #include "PopupMenu.h"
 #include <QObject>
+#include <wtf/PassOwnPtr.h>
 
 class QWebSelectData;
 class QWebSelectMethod;
@@ -49,8 +50,8 @@ private slots:
 
 private:
     PopupMenuClient* m_popupClient;
-    QWebSelectMethod* m_popup;
-    QWebSelectData* m_selectData;
+    OwnPtr<QWebSelectMethod> m_popup;
+    OwnPtr<QWebSelectData> m_selectData;
     const ChromeClientQt* m_chromeClient;
 };
 

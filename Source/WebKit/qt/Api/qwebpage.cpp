@@ -1319,7 +1319,7 @@ void QWebPagePrivate::adjustPointForClicking(QMouseEvent*)
 void QWebPagePrivate::adjustPointForClicking(QGraphicsSceneMouseEvent* ev)
 {
     QtPlatformPlugin platformPlugin;
-    QWebTouchModifier* touchModifier = platformPlugin.createTouchModifier();
+    OwnPtr<QWebTouchModifier> touchModifier = platformPlugin.createTouchModifier();
     if (!touchModifier)
         return;
 
@@ -1328,8 +1328,7 @@ void QWebPagePrivate::adjustPointForClicking(QGraphicsSceneMouseEvent* ev)
     unsigned bottomPadding = touchModifier->hitTestPaddingForTouch(QWebTouchModifier::Down);
     unsigned leftPadding = touchModifier->hitTestPaddingForTouch(QWebTouchModifier::Left);
 
-    delete touchModifier;
-    touchModifier = 0;
+    touchModifier = nullptr;
 
     if (!topPadding && !rightPadding && !bottomPadding && !leftPadding)
         return;

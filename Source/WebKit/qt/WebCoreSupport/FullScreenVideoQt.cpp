@@ -138,25 +138,19 @@ FullScreenVideoQt::FullScreenVideoQt(ChromeClientQt* chromeClient)
 #if USE(QT_MULTIMEDIA)
     m_FullScreenVideoHandler = m_chromeClient->m_platformPlugin.createFullScreenVideoHandler();
     if (!m_FullScreenVideoHandler)
-        m_FullScreenVideoHandler = new DefaultFullScreenVideoHandler;
+        m_FullScreenVideoHandler = adoptPtr(new DefaultFullScreenVideoHandler);
 
     if (m_FullScreenVideoHandler)
-        connect(m_FullScreenVideoHandler, SIGNAL(fullScreenClosed()), this, SLOT(aboutToClose()));
+        connect(m_FullScreenVideoHandler.get(), SIGNAL(fullScreenClosed()), this, SLOT(aboutToClose()));
 #endif
 
 #if USE(GSTREAMER)
-    m_FullScreenVideoHandlerGStreamer = new GStreamerFullScreenVideoHandler;
+    m_FullScreenVideoHandlerGStreamer = adoptPtr(new GStreamerFullScreenVideoHandler);
 #endif
 }
 
 FullScreenVideoQt::~FullScreenVideoQt()
 {
-#if USE(QT_MULTIMEDIA)
-    delete m_FullScreenVideoHandler;
-#endif
-#if USE(GSTREAMER)
-    delete m_FullScreenVideoHandlerGStreamer;
-#endif
 }
 
 void FullScreenVideoQt::enterFullScreenForNode(Node* node)
