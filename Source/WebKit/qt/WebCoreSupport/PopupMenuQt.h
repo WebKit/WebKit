@@ -22,6 +22,7 @@
 
 #include "PopupMenu.h"
 #include <QObject>
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
 class QWebSelectData;

@@ -1,5 +1,11 @@
 2011-05-16  Adam Barth  <abarth@webkit.org>
 
+        Missing include.
+
+        * WebCoreSupport/PopupMenuQt.h:
+
+2011-05-16  Adam Barth  <abarth@webkit.org>
+
         [Qt] QtPlatformPlugin create methods should use PassOwnPtr
         https://bugs.webkit.org/show_bug.cgi?id=60873
 
