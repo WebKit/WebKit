@@ -38,7 +38,7 @@ static bool testDone;
 
 static void didFailProvisionalLoadWithErrorForFrame(WKPageRef page, WKFrameRef frame, WKErrorRef error, WKTypeRef userData, const void* clientInfo)
 {
-    EXPECT_EQ(kWKFrameLoadStateFinished, WKFrameGetFrameLoadState(frame));
+    EXPECT_EQ(static_cast<uint32_t>(kWKFrameLoadStateFinished), WKFrameGetFrameLoadState(frame));
 
     WKURLRef url = WKFrameCopyProvisionalURL(frame);
     EXPECT_NULL(url);

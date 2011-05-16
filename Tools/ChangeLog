@@ -1,3 +1,22 @@
+2011-05-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        TestWebKitAPI should build with clang if it can
+        https://bugs.webkit.org/show_bug.cgi?id=60918
+
+        * TestWebKitAPI/Configurations/CompilerVersion.xcconfig:
+        Update CompilerVersion.xcconfig to match others.
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        Add CompilerVersion.xcconfig to the project.
+
+        * TestWebKitAPI/Tests/WebKit2/FailedLoad.cpp:
+        (TestWebKitAPI::didFailProvisionalLoadWithErrorForFrame):
+        * TestWebKitAPI/Tests/WebKit2/PageLoadDidChangeLocationWithinPageForFrame.cpp:
+        (TestWebKitAPI::didSameDocumentNavigationForFrame):
+        Add some casts to quiet warnings from clang.
+
 2011-05-16  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by David Levin.

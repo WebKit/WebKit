@@ -47,13 +47,13 @@ static bool didChangeLocationWithinPage;
 static void didSameDocumentNavigationForFrame(WKPageRef, WKFrameRef, WKSameDocumentNavigationType type, WKTypeRef, const void*)
 {
     if (!didPopStateWithinPage) {
-        EXPECT_EQ(type, kWKSameDocumentNavigationSessionStatePop);
+        EXPECT_EQ(static_cast<uint32_t>(kWKSameDocumentNavigationSessionStatePop), type);
         EXPECT_FALSE(didChangeLocationWithinPage);
         didPopStateWithinPage = true;
         return;
     }
 
-    EXPECT_EQ(kWKSameDocumentNavigationAnchorNavigation, type);
+    EXPECT_EQ(static_cast<uint32_t>(kWKSameDocumentNavigationAnchorNavigation), type);
     didChangeLocationWithinPage = true;
 }
 
