@@ -1,3 +1,20 @@
+2011-05-16  Pavel Feldman  <pfeldman@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: parse edited attributes by means of InspectorDOMAgent.
+        https://bugs.webkit.org/show_bug.cgi?id=60807
+
+        This change moves attribute parsing from the front-end to the backend. 
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::setAttribute):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode.prototype.setAttribute):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted.moveToNextAttributeIfNeeded):
+        (WebInspector.ElementsTreeElement.prototype._attributeEditingCommitted):
+
 2011-05-16  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.

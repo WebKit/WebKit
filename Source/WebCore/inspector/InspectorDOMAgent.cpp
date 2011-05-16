@@ -574,11 +574,48 @@ int InspectorDOMAgent::boundNodeId(Node* node)
 void InspectorDOMAgent::setAttribute(ErrorString* errorString, int elementId, const String& name, const String& value)
 {
     Element* element = assertElement(errorString, elementId);
-    if (element) {
-        ExceptionCode ec = 0;
-        element->setAttribute(name, value, ec);
+    if (!element)
+        return;
+
+    ExceptionCode ec = 0;
+    RefPtr<Element> parsedElement = element->document()->createElement("span", ec);
+    if (ec) {
+        *errorString = "Internal error: could not set attribute value.";
+        return;
+    }
+
+    toHTMLElement(parsedElement.get())->setInnerHTML("<span " + value + "></span>", ec);
+    if (ec) {
+        *errorString = "Could not parse value as attributes.";
+        return;
+    }
+
+    const NamedNodeMap* attrMap = toHTMLElement(parsedElement->firstChild())->attributes(true);
+    if (!attrMap) {
+        element->removeAttribute(name, ec);
         if (ec)
-            *errorString = "Exception while setting attribute value";
+            *errorString = "Could not remove attribute.";
+        return;
+    }
+
+    bool foundOriginalAttribute = false;
+    unsigned numAttrs = attrMap->length();
+    for (unsigned i = 0; i < numAttrs; ++i) {
+        // Add attribute pair
+        const Attribute *attribute = attrMap->attributeItem(i);
+        foundOriginalAttribute = foundOriginalAttribute || attribute->name().toString() == name;
+        element->setAttribute(attribute->name(), attribute->value(), ec);
+        if (ec) {
+            *errorString = "Internal error: could not set attribute value.";
+            return;
+        }
+    }
+
+    if (!foundOriginalAttribute) {
+        element->removeAttribute(name, ec);
+        if (ec)
+            *errorString = "Could not remove attribute.";
+        return;
     }
 }
 

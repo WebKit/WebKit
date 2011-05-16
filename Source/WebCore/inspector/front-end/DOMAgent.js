@@ -135,20 +135,7 @@ WebInspector.DOMNode.prototype = {
 
     setAttribute: function(name, value, callback)
     {
-        function mycallback(error)
-        {
-            if (!error) {
-                var attr = this._attributesMap[name];
-                if (attr)
-                    attr.value = value;
-                else
-                    attr = this._addAttribute(name, value);
-            }
-
-            if (callback)
-                callback();
-        }
-        DOMAgent.setAttribute(this.id, name, value, mycallback.bind(this));
+        DOMAgent.setAttribute(this.id, name, value, callback);
     },
 
     attributes: function()
