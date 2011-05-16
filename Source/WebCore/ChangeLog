@@ -1,3 +1,18 @@
+2011-05-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Switch from Vector<UChar> to StringBuilder in dom/
+        https://bugs.webkit.org/show_bug.cgi?id=57843
+
+        * dom/DatasetDOMStringMap.cpp:
+        (WebCore::convertAttributeNameToPropertyName):
+        (WebCore::convertPropertyNameToAttributeName):
+        * dom/Range.cpp:
+        (WebCore::Range::toString):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::scriptContent):
+
 2011-05-05  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

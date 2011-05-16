@@ -48,6 +48,7 @@
 #include <wtf/RefCountedLeakCounter.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -1045,7 +1046,7 @@ String Range::toString(ExceptionCode& ec) const
         return String();
     }
 
-    Vector<UChar> result;
+    StringBuilder builder;
 
     Node* pastLast = pastLastNode();
     for (Node* n = firstNode(); n != pastLast; n = n->traverseNextNode()) {
@@ -1054,11 +1055,11 @@ String Range::toString(ExceptionCode& ec) const
             int length = data.length();
             int start = (n == m_start.container()) ? min(max(0, m_start.offset()), length) : 0;
             int end = (n == m_end.container()) ? min(max(start, m_end.offset()), length) : length;
-            result.append(data.characters() + start, end - start);
+            builder.append(data.characters() + start, end - start);
         }
     }
 
-    return String::adopt(result);
+    return builder.toString();
 }
 
 String Range::toHTML() const

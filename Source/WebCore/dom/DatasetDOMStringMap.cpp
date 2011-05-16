@@ -31,6 +31,7 @@
 #include "ExceptionCode.h"
 #include "NamedNodeMap.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
 
@@ -51,23 +52,23 @@ static bool isValidAttributeName(const String& name)
 
 static String convertAttributeNameToPropertyName(const String& name)
 {
-    Vector<UChar> newStringBuffer;
+    StringBuilder stringBuilder;
 
     const UChar* characters = name.characters();
     unsigned length = name.length();
     for (unsigned i = 5; i < length; ++i) {
         if (characters[i] != '-')
-            newStringBuffer.append(characters[i]);
+            stringBuilder.append(characters[i]);
         else {
             if ((i + 1 < length) && isASCIILower(characters[i + 1])) {
-                newStringBuffer.append(toASCIIUpper(characters[i + 1]));
+                stringBuilder.append(toASCIIUpper(characters[i + 1]));
                 ++i;
             } else
-                newStringBuffer.append(characters[i]);
+                stringBuilder.append(characters[i]);
         }
     }
 
-    return String::adopt(newStringBuffer);
+    return stringBuilder.toString();
 }
 
 static bool propertyNameMatchesAttributeName(const String& propertyName, const String& attributeName)
@@ -111,27 +112,22 @@ static bool isValidPropertyName(const String& name)
 
 static String convertPropertyNameToAttributeName(const String& name)
 {
-    Vector<UChar> newStringBuffer;
-
-    newStringBuffer.append('d');
-    newStringBuffer.append('a');
-    newStringBuffer.append('t');
-    newStringBuffer.append('a');
-    newStringBuffer.append('-');
+    StringBuilder builder;
+    builder.append("data-");
 
     const UChar* characters = name.characters();
     unsigned length = name.length();
     for (unsigned i = 0; i < length; ++i) {
-        if (isASCIIUpper(characters[i])) {
-            newStringBuffer.append('-');
-            newStringBuffer.append(toASCIILower(characters[i]));
+        UChar character = characters[i];
+        if (isASCIIUpper(character)) {
+            builder.append('-');
+            builder.append(toASCIILower(characters[i]));
         } else
-            newStringBuffer.append(characters[i]);
+            builder.append(character);
     }
 
-    return String::adopt(newStringBuffer);
+    return builder.toString();
 }
-
 
 void DatasetDOMStringMap::ref()
 {

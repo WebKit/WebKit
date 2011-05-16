@@ -42,6 +42,7 @@
 #include "Settings.h"
 #include "Text.h"
 #include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
 #include <wtf/text/StringHash.h>
 
 #if ENABLE(SVG)
@@ -335,7 +336,7 @@ bool ScriptElement::isScriptForEventSupported() const
 
 String ScriptElement::scriptContent() const
 {
-    Vector<UChar> val;
+    StringBuilder content;
     Text* firstTextNode = 0;
     bool foundMultipleTextNodes = false;
 
@@ -345,10 +346,10 @@ String ScriptElement::scriptContent() const
 
         Text* t = static_cast<Text*>(n);
         if (foundMultipleTextNodes)
-            append(val, t->data());
+            content.append(t->data());
         else if (firstTextNode) {
-            append(val, firstTextNode->data());
-            append(val, t->data());
+            content.append(firstTextNode->data());
+            content.append(t->data());
             foundMultipleTextNodes = true;
         } else
             firstTextNode = t;
@@ -357,7 +358,7 @@ String ScriptElement::scriptContent() const
     if (firstTextNode && !foundMultipleTextNodes)
         return firstTextNode->data();
 
-    return String::adopt(val);
+    return content.toString();
 }
 
 ScriptElement* toScriptElement(Element* element)
