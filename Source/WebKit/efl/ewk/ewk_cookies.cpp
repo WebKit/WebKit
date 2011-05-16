@@ -45,7 +45,7 @@
  * @return @c EINA_FALSE if it wasn't possible to create the cookie jar,
  *          @c EINA_FALSE otherwise.
  */
-EAPI Eina_Bool ewk_cookies_file_set(const char *filename)
+Eina_Bool ewk_cookies_file_set(const char *filename)
 {
 #if USE(SOUP)
     SoupCookieJar* cookieJar = 0;
@@ -76,7 +76,7 @@ EAPI Eina_Bool ewk_cookies_file_set(const char *filename)
 /**
  * Clears all the cookies from the cookie jar.
  */
-EAPI void ewk_cookies_clear(void)
+void ewk_cookies_clear(void)
 {
 #if USE(SOUP)
     GSList* l;
@@ -96,7 +96,7 @@ EAPI void ewk_cookies_clear(void)
  *
  * @return an @c Eina_List with all the cookies in the cookie jar.
  */
-EAPI Eina_List* ewk_cookies_get_all(void)
+Eina_List* ewk_cookies_get_all(void)
 {
     Eina_List* el = 0;
 #if USE(SOUP)
@@ -131,7 +131,7 @@ EAPI Eina_List* ewk_cookies_get_all(void)
  *
  * @param cookie an @c Ewk_Cookie that has the info relative to that cookie.
  */
-EAPI void ewk_cookies_cookie_del(Ewk_Cookie *cookie)
+void ewk_cookies_cookie_del(Ewk_Cookie *cookie)
 {
 #if USE(SOUP)
     EINA_SAFETY_ON_NULL_RETURN(cookie);
@@ -160,7 +160,7 @@ EAPI void ewk_cookies_cookie_del(Ewk_Cookie *cookie)
  *
  * @param cookie the Ewk_Cookie struct that will be freed.
  */
-EAPI void ewk_cookies_cookie_free(Ewk_Cookie *cookie)
+void ewk_cookies_cookie_free(Ewk_Cookie *cookie)
 {
 #if USE(SOUP)
     EINA_SAFETY_ON_NULL_RETURN(cookie);
@@ -178,7 +178,7 @@ EAPI void ewk_cookies_cookie_free(Ewk_Cookie *cookie)
  * @param p the acceptance policy
  * @see Ewk_Cookie_Policy
  */
-EAPI void ewk_cookies_policy_set(Ewk_Cookie_Policy p)
+void ewk_cookies_policy_set(Ewk_Cookie_Policy p)
 {
 #if USE(SOUP)
     SoupCookieJar* cookieJar = WebCore::defaultCookieJar();
@@ -207,7 +207,7 @@ EAPI void ewk_cookies_policy_set(Ewk_Cookie_Policy p)
  * @return the current acceptance policy
  * @see Ewk_Cookie_Policy
  */
-EAPI Ewk_Cookie_Policy ewk_cookies_policy_get(void)
+Ewk_Cookie_Policy ewk_cookies_policy_get(void)
 {
     Ewk_Cookie_Policy ewk_policy = EWK_COOKIE_JAR_ACCEPT_ALWAYS;
 #if USE(SOUP)

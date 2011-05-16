@@ -42,7 +42,7 @@ struct _Ewk_Window_Features {
  *
  * @param window_features the object to decrease reference count
  */
-EAPI void ewk_window_features_unref(Ewk_Window_Features* window_features)
+void ewk_window_features_unref(Ewk_Window_Features* window_features)
 {
     EINA_SAFETY_ON_NULL_RETURN(window_features);
     EINA_SAFETY_ON_FALSE_RETURN(window_features->__ref > 0);
@@ -60,7 +60,7 @@ EAPI void ewk_window_features_unref(Ewk_Window_Features* window_features)
  *
  * @param window_features the object to increase reference count
  */
-EAPI void ewk_window_features_ref(Ewk_Window_Features* window_features)
+void ewk_window_features_ref(Ewk_Window_Features* window_features)
 {
     EINA_SAFETY_ON_NULL_RETURN(window_features);
     window_features->__ref++;
@@ -82,7 +82,7 @@ EAPI void ewk_window_features_ref(Ewk_Window_Features* window_features)
  *
  * @see ewk_window_features_int_property_get
  */
-EAPI void ewk_window_features_bool_property_get(Ewk_Window_Features* window_features, Eina_Bool* toolbar_visible, Eina_Bool* statusbar_visible, Eina_Bool* scrollbars_visible, Eina_Bool* menubar_visible, Eina_Bool* locationbar_visible, Eina_Bool* fullscreen)
+void ewk_window_features_bool_property_get(Ewk_Window_Features* window_features, Eina_Bool* toolbar_visible, Eina_Bool* statusbar_visible, Eina_Bool* scrollbars_visible, Eina_Bool* menubar_visible, Eina_Bool* locationbar_visible, Eina_Bool* fullscreen)
 {
     EINA_SAFETY_ON_NULL_RETURN(window_features);
     EINA_SAFETY_ON_NULL_RETURN(window_features->core);
@@ -123,7 +123,7 @@ EAPI void ewk_window_features_bool_property_get(Ewk_Window_Features* window_feat
  *
  * @see ewk_window_features_bool_property_get
  */
-EAPI void ewk_window_features_int_property_get(Ewk_Window_Features* window_features, int* x, int* y, int* w, int* h)
+void ewk_window_features_int_property_get(Ewk_Window_Features* window_features, int* x, int* y, int* w, int* h)
 {
     EINA_SAFETY_ON_NULL_RETURN(window_features);
     EINA_SAFETY_ON_NULL_RETURN(window_features->core);

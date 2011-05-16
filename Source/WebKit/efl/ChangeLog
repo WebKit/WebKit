@@ -1,3 +1,27 @@
+2011-05-16  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove EAPI macro from functions definition
+        https://bugs.webkit.org/show_bug.cgi?id=60754
+
+        This macro should be used in header files only.
+        It's not necessary to have it in definitions.
+
+        * ewk/ewk_cookies.cpp:
+        (ewk_cookies_file_set):
+        (ewk_cookies_clear):
+        (ewk_cookies_get_all):
+        (ewk_cookies_cookie_del):
+        (ewk_cookies_cookie_free):
+        (ewk_cookies_policy_set):
+        (ewk_cookies_policy_get):
+        * ewk/ewk_window_features.cpp:
+        (ewk_window_features_unref):
+        (ewk_window_features_ref):
+        (ewk_window_features_bool_property_get):
+        (ewk_window_features_int_property_get):
+
 2011-05-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix style error.
