@@ -37,10 +37,9 @@
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
-#include "PlatformString.h"
 #include "ScriptDebugServer.h"
 #include "ScriptObject.h"
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -157,7 +156,7 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString*, const String& url,
     int columnNumber = optionalColumnNumber ? *optionalColumnNumber : 0;
     String condition = optionalCondition ? *optionalCondition : "";
 
-    String breakpointId = makeString(url, ":", String::number(lineNumber), ":", String::number(columnNumber));
+    String breakpointId = url + ':' + String::number(lineNumber) + ':' + String::number(columnNumber);
     RefPtr<InspectorObject> breakpointsCookie = m_inspectorState->getObject(DebuggerAgentState::javaScriptBreakpoints);
     if (breakpointsCookie->find(breakpointId) != breakpointsCookie->end())
         return;
@@ -196,9 +195,9 @@ void InspectorDebuggerAgent::setBreakpoint(ErrorString* errorString, PassRefPtr<
     if (!parseLocation(errorString, location, &sourceId, &lineNumber, &columnNumber))
         return;
 
-    String condition = optionalCondition ? *optionalCondition : "";
+    String condition = optionalCondition ? *optionalCondition : emptyString();
 
-    String breakpointId = makeString(sourceId, ":", String::number(lineNumber), ":", String::number(columnNumber));
+    String breakpointId = sourceId + ':' + String::number(lineNumber) + ':' + String::number(columnNumber);
     if (m_breakpointIdToDebugServerBreakpointIds.find(breakpointId) != m_breakpointIdToDebugServerBreakpointIds.end())
         return;
     ScriptBreakpoint breakpoint(lineNumber, columnNumber, condition);

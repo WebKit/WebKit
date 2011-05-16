@@ -83,7 +83,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/StringExtras.h>
 #include <wtf/UnusedParam.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -167,8 +167,8 @@ void V8Proxy::reportUnsafeAccessTo(Frame* target)
 
     // FIXME: This error message should contain more specifics of why the same
     // origin check has failed.
-    String str = makeString("Unsafe JavaScript attempt to access frame with URL ", targetDocument->url().string(),
-                            " from frame with URL ", sourceDocument->url().string(), ". Domains, protocols and ports must match.\n");
+    String str = "Unsafe JavaScript attempt to access frame with URL " + targetDocument->url().string() +
+                 " from frame with URL " + sourceDocument->url().string() + ". Domains, protocols and ports must match.\n";
 
     // Build a console message with fake source ID and line number.
     const String kSourceID = "";

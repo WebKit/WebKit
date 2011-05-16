@@ -25,7 +25,7 @@
 
 #include "FloatPoint.h"
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -39,7 +39,7 @@ String SVGPointList::valueAsString() const
             builder.append(" "); // FIXME: Shouldn't we use commas to seperate?
 
         const FloatPoint& point = at(i);
-        builder.append(makeString(String::number(point.x()), ' ', String::number(point.y())));
+        builder.append(String::number(point.x()) + ' ' + String::number(point.y()));
     }
 
     return builder.toString();

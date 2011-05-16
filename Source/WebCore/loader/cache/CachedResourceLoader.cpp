@@ -49,7 +49,7 @@
 #include "Settings.h"
 #include <wtf/UnusedParam.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 #define PRELOAD_DEBUG 0
 
@@ -489,9 +489,11 @@ void CachedResourceLoader::printAccessDeniedMessage(const KURL& url) const
     if (!settings || settings->privateBrowsingEnabled())
         return;
 
-    String message = m_document->url().isNull() ?
-        makeString("Unsafe attempt to load URL ", url.string(), '.') :
-        makeString("Unsafe attempt to load URL ", url.string(), " from frame with URL ", m_document->url().string(), ". Domains, protocols and ports must match.\n");
+    String message;
+    if (m_document->url().isNull())
+        message = "Unsafe attempt to load URL " + url.string() + '.';
+    else
+        message = "Unsafe attempt to load URL " + url.string() + " from frame with URL " + m_document->url().string() + ". Domains, protocols and ports must match.\n";
 
     // FIXME: provide a real line number and source URL.
     frame()->domWindow()->console()->addMessage(OtherMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String());

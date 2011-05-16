@@ -36,7 +36,7 @@
 #include "MIMETypeRegistry.h"
 #include <ApplicationServices/ApplicationServices.h>
 #include <wtf/Assertions.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/RetainPtr.h>
 #include <wtf/Threading.h>
@@ -344,7 +344,7 @@ static String CGImageToDataURL(CGImageRef image, const String& mimeType, const d
     Vector<char> out;
     base64Encode(reinterpret_cast<const char*>(CFDataGetBytePtr(data.get())), CFDataGetLength(data.get()), out);
 
-    return makeString("data:", mimeType, ";base64,", out);
+    return "data:" + mimeType + ";base64," + out;
 }
 
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const

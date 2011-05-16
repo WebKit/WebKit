@@ -27,7 +27,7 @@
 #include "AffineTransform.h"
 #include "FloatRect.h"
 #include "SVGParserUtilities.h"
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -332,10 +332,10 @@ String SVGPreserveAspectRatio::valueAsString() const
     case SVG_MEETORSLICE_UNKNOWN:
         return alignType;
     case SVG_MEETORSLICE_MEET:
-        return makeString(alignType, " meet");
+        return alignType + " meet";
     case SVG_MEETORSLICE_SLICE:
-        return makeString(alignType, " slice");
-    };
+        return alignType + " slice";
+    }
 }
 
 }

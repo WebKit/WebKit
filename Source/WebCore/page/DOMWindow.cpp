@@ -79,7 +79,6 @@
 #include "PageTransitionEvent.h"
 #include "Performance.h"
 #include "PlatformScreen.h"
-#include "PlatformString.h"
 #include "ScheduledAction.h"
 #include "Screen.h"
 #include "SecurityOrigin.h"
@@ -96,7 +95,7 @@
 #include <algorithm>
 #include <wtf/CurrentTime.h>
 #include <wtf/MathExtras.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(FILE_SYSTEM)
 #include "AsyncFileSystem.h"
@@ -847,8 +846,8 @@ void DOMWindow::postMessageTimerFired(PassOwnPtr<PostMessageTimer> t)
     if (timer->targetOrigin()) {
         // Check target origin now since the target document may have changed since the simer was scheduled.
         if (!timer->targetOrigin()->isSameSchemeHostPort(document()->securityOrigin())) {
-            String message = makeString("Unable to post message to ", timer->targetOrigin()->toString(),
-                                        ". Recipient has origin ", document()->securityOrigin()->toString(), ".\n");
+            String message = "Unable to post message to " + timer->targetOrigin()->toString() +
+                             ". Recipient has origin " + document()->securityOrigin()->toString() + ".\n";
             console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 0, String());
             return;
         }
@@ -1699,8 +1698,7 @@ String DOMWindow::crossDomainAccessErrorMessage(DOMWindow* activeWindow)
     // FIXME: This error message should contain more specifics of why the same origin check has failed.
     // Perhaps we should involve the security origin object in composing it.
     // FIXME: This message, and other console messages, have extra newlines. Should remove them.
-    return makeString("Unsafe JavaScript attempt to access frame with URL ", m_url.string(),
-        " from frame with URL ", activeWindowURL.string(), ". Domains, protocols and ports must match.\n");
+    return "Unsafe JavaScript attempt to access frame with URL " + m_url.string() + " from frame with URL " + activeWindowURL.string() + ". Domains, protocols and ports must match.\n";
 }
 
 bool DOMWindow::isInsecureScriptAccess(DOMWindow* activeWindow, const String& urlString)

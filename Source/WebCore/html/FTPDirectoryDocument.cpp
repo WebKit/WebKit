@@ -37,7 +37,7 @@
 #include "SharedBuffer.h"
 #include "Text.h"
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/unicode/CharacterNames.h>
@@ -253,9 +253,9 @@ static String processFileDateString(const FTPTime& fileTime)
     String dateString;
 
     if (fileTime.tm_year > -1)
-        dateString = makeString(months[month], ' ', String::number(fileTime.tm_mday), ", ", String::number(fileTime.tm_year));
+        dateString = months[month] + ' ' + String::number(fileTime.tm_mday) + ", " + String::number(fileTime.tm_year);
     else
-        dateString = makeString(months[month], ' ', String::number(fileTime.tm_mday), ", ", String::number(now.tm_year));
+        dateString = months[month] + ' ' + String::number(fileTime.tm_mday) + ", " + String::number(now.tm_year);
 
     return dateString + timeOfDay;
 }

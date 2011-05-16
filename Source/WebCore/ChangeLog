@@ -1,3 +1,124 @@
+2011-05-16  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Replace direct StringConcatenate usage, by using operator+ (again)
+        https://bugs.webkit.org/show_bug.cgi?id=60700
+
+        Remove makeString() usage everywhere, instead directly use operator+.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::listMarkerTextForNodeAndPosition):
+        * bindings/js/JSDOMWindowBase.cpp:
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::setBreakpoint):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::reportUnsafeAccessTo):
+        * css/CSSMutableStyleDeclaration.cpp:
+        (WebCore::CSSMutableStyleDeclaration::borderSpacingValue):
+        * dom/ExceptionBase.cpp:
+        (WebCore::ExceptionBase::ExceptionBase):
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::handleError):
+        * html/FTPDirectoryDocument.cpp:
+        (WebCore::processFileDateString):
+        * inspector/CodeGeneratorInspector.pm:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::count):
+        (WebCore::InspectorConsoleAgent::didReceiveResponse):
+        * inspector/InspectorDOMAgent.cpp:
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::setBreakpointByUrl):
+        (WebCore::InspectorDebuggerAgent::setBreakpoint):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkIfDisplayInsecureContent):
+        (WebCore::FrameLoader::checkIfRunInsecureContent):
+        (WebCore::FrameLoader::shouldAllowNavigation):
+        * loader/archive/cf/LegacyWebArchive.cpp:
+        (WebCore::LegacyWebArchive::createFromSelection):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::printAccessDeniedMessage):
+        * page/ContentSecurityPolicy.cpp:
+        (WebCore::CSPDirective::CSPDirective):
+        (WebCore::ContentSecurityPolicy::checkSourceAndReportViolation):
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::postMessageTimerFired):
+        (WebCore::DOMWindow::crossDomainAccessErrorMessage):
+        * page/PageSerializer.cpp:
+        (WebCore::SerializerMarkupAccumulator::SerializerMarkupAccumulator):
+        (WebCore::SerializerMarkupAccumulator::appendElement):
+        (WebCore::PageSerializer::urlForBlankFrame):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::pageProperty):
+        (WebCore::PrintContext::pageSizeAndMarginsInPixels):
+        * platform/efl/PlatformKeyboardEventEfl.cpp:
+        (WebCore::createKeyMap):
+        (WebCore::createWindowsKeyMap):
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::formatMediaControlsCurrentTime):
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::animationNameForTransition):
+        * platform/graphics/brew/ImageBrew.cpp:
+        (WebCore::Image::loadPlatformResource):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::animationIdentifier):
+        * platform/graphics/cg/ImageBufferCG.cpp:
+        (WebCore::CGImageToDataURL):
+        * platform/graphics/gtk/ImageBufferGtk.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/haiku/ImageBufferHaiku.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/qt/ImageBufferQt.cpp:
+        (WebCore::ImageBuffer::toDataURL):
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::ImageToDataURL):
+        * platform/network/CredentialStorage.cpp:
+        (WebCore::originStringFromURL):
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::reportErrorToClient):
+        * platform/sql/SQLiteDatabase.cpp:
+        (WebCore::SQLiteDatabase::setSynchronous):
+        * platform/text/wince/TextCodecWinCE.cpp:
+        (WebCore::LanguageManager::LanguageManager):
+        * platform/win/ClipboardUtilitiesWin.cpp:
+        * platform/win/ClipboardWin.cpp:
+        (WebCore::ClipboardWin::writeURL):
+        * platform/win/FileSystemWin.cpp:
+        (WebCore::listDirectory):
+        * platform/win/LanguageWin.cpp:
+        (WebCore::platformDefaultLanguage):
+        * platform/win/PathWalker.cpp:
+        (WebCore::PathWalker::PathWalker):
+        * platform/win/SystemInfo.cpp:
+        (WebCore::osVersionForUAString):
+        (WebCore::windowsVersionForUAString):
+        * plugins/PluginStream.cpp:
+        (WebCore::PluginStream::startStream):
+        * svg/SVGAngle.cpp:
+        (WebCore::SVGAngle::valueAsString):
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::valueAsString):
+        * svg/SVGPaint.cpp:
+        (WebCore::SVGPaint::cssText):
+        * svg/SVGPointList.cpp:
+        (WebCore::SVGPointList::valueAsString):
+        * svg/SVGPreserveAspectRatio.cpp:
+        (WebCore::SVGPreserveAspectRatio::valueAsString):
+        * svg/SVGTransform.cpp:
+        (WebCore::SVGTransform::valueAsString):
+        * svg/SVGTransformList.cpp:
+        * svg/SVGUseElement.cpp:
+        (WebCore::dumpInstanceTree):
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::connect):
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::didFail):
+        (WebCore::WebSocketChannel::appendToBuffer):
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readServerHandshake):
+
 2011-05-12  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

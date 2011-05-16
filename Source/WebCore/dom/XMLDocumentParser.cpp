@@ -50,7 +50,7 @@
 #include "ScriptValue.h"
 #include "TextResourceDecoder.h"
 #include "TreeDepthLimit.h"
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/StringExtras.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
@@ -144,11 +144,11 @@ void XMLDocumentParser::handleError(ErrorType type, const char* m, TextPosition1
     if (type == fatal || (m_errorCount < maxErrors && m_lastErrorPosition.m_line != position.m_line && m_lastErrorPosition.m_column != position.m_column)) {
         switch (type) {
             case warning:
-                m_errorMessages += makeString("warning on line ", String::number(position.m_line.oneBasedInt()), " at column ", String::number(position.m_column.oneBasedInt()), ": ", m);
+                m_errorMessages += "warning on line " + String::number(position.m_line.oneBasedInt()) + " at column " + String::number(position.m_column.oneBasedInt()) + ": " + m;
                 break;
             case fatal:
             case nonFatal:
-                m_errorMessages += makeString("error on line ", String::number(position.m_line.oneBasedInt()), " at column ", String::number(position.m_column.oneBasedInt()), ": ", m);
+                m_errorMessages += "error on line " + String::number(position.m_line.oneBasedInt()) + " at column " + String::number(position.m_column.oneBasedInt()) + ": " + m;
         }
 
         m_lastErrorPosition = position;

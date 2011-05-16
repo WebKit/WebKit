@@ -47,7 +47,7 @@
 #include "SkColorPriv.h"
 #include "SkiaUtils.h"
 
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 using namespace std;
 
@@ -365,7 +365,7 @@ static String ImageToDataURL(T& source, const String& mimeType, const double* qu
     Vector<char> base64Data;
     base64Encode(*reinterpret_cast<Vector<char>*>(&encodedImage), base64Data);
 
-    return makeString("data:", mimeType, ";base64,", base64Data);
+    return "data:" + mimeType + ";base64," + base64Data;
 }
 
 String ImageBuffer::toDataURL(const String& mimeType, const double* quality) const

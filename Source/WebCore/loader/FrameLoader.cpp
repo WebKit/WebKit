@@ -100,7 +100,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(SHARED_WORKERS)
 #include "SharedWorkerRepository.h"
@@ -1115,7 +1115,7 @@ bool FrameLoader::checkIfDisplayInsecureContent(SecurityOrigin* context, const K
 
     Settings* settings = m_frame->settings();
     bool allowed = settings && settings->allowDisplayOfInsecureContent();
-    String message = makeString((allowed ? "" : "[blocked] "), "The page at ", m_frame->document()->url().string(), " displayed insecure content from ", url.string(), ".\n");
+    String message = (allowed ? emptyString() : "[blocked] ") + "The page at " + m_frame->document()->url().string() + " displayed insecure content from " + url.string() + ".\n";
     m_frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message, 1, String());
 
     m_client->didDisplayInsecureContent();
@@ -1129,7 +1129,7 @@ bool FrameLoader::checkIfRunInsecureContent(SecurityOrigin* context, const KURL&
 
     Settings* settings = m_frame->settings();
     bool allowed = settings && settings->allowRunningOfInsecureContent();
-    String message = makeString((allowed ? "" : "[blocked] "), "The page at ", m_frame->document()->url().string(), " ran insecure content from ", url.string(), ".\n");
+    String message = (allowed ? emptyString() : "[blocked] ") + "The page at " + m_frame->document()->url().string() + " ran insecure content from " + url.string() + ".\n";
     m_frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message, 1, String());
 
     m_client->didRunInsecureContent(context, url);
@@ -1763,8 +1763,8 @@ bool FrameLoader::shouldAllowNavigation(Frame* targetFrame) const
     if (settings && !settings->privateBrowsingEnabled()) {
         Document* targetDocument = targetFrame->document();
         // FIXME: this error message should contain more specifics of why the navigation change is not allowed.
-        String message = makeString("Unsafe JavaScript attempt to initiate a navigation change for frame with URL ",
-                                    targetDocument->url().string(), " from frame with URL ", activeDocument->url().string(), ".\n");
+        String message = "Unsafe JavaScript attempt to initiate a navigation change for frame with URL " +
+                         targetDocument->url().string() + " from frame with URL " + activeDocument->url().string() + ".\n";
 
         // FIXME: should we print to the console of the activeFrame as well?
         targetFrame->domWindow()->console()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, message, 1, String());

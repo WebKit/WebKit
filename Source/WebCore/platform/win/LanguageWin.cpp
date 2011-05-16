@@ -26,7 +26,7 @@
 #include "config.h"
 #include "Language.h"
 
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -60,7 +60,7 @@ String platformDefaultLanguage()
     if (countryName.isEmpty())
         computedDefaultLanguage = languageName;
     else
-        computedDefaultLanguage = makeString(languageName, '-', countryName);
+        computedDefaultLanguage = languageName + '-' + countryName;
 
     return computedDefaultLanguage;
 }

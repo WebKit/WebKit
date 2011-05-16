@@ -32,10 +32,9 @@
 
 #include "NotImplemented.h"
 #include "PathWalker.h"
-#include "PlatformString.h"
 #include <wtf/HashMap.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 #include <windows.h>
 #include <winbase.h>
@@ -337,7 +336,7 @@ Vector<String> listDirectory(const String& directory, const String& filter)
         if (walker.data().dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
             continue;
 
-        entries.append(makeString(directory, "\\", reinterpret_cast<const UChar*>(walker.data().cFileName)));
+        entries.append(directory + "\\" + reinterpret_cast<const UChar*>(walker.data().cFileName));
     } while (walker.step());
 
     return entries;

@@ -35,7 +35,7 @@
 #include "StillImageQt.h"
 #include "TransparencyLayer.h"
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 #include <QBuffer>
 #include <QColor>
@@ -421,7 +421,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double* quality) con
 
     buffer.close();
 
-    return makeString("data:", mimeType, ";base64,", data.toBase64().data());
+    return "data:" + mimeType + ";base64," + data.toBase64().data();
 }
 
 }

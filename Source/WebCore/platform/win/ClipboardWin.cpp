@@ -45,7 +45,6 @@
 #include "Page.h"
 #include "Pasteboard.h"
 #include "PlatformMouseEvent.h"
-#include "PlatformString.h"
 #include "Range.h"
 #include "RenderImage.h"
 #include "ResourceResponse.h"
@@ -56,7 +55,7 @@
 #include <wininet.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/text/StringHash.h>
 
 using namespace std;
@@ -700,7 +699,8 @@ void ClipboardWin::writeURL(const KURL& kurl, const String& titleStr, Frame*)
     ASSERT(url.containsOnlyASCII()); // KURL::string() is URL encoded.
 
     String fsPath = filesystemPathFromUrlOrTitle(url, titleStr, L".URL", true);
-    CString content = makeString("[InternetShortcut]\r\nURL=", url, "\r\n").latin1();
+    String contentString("[InternetShortcut]\r\nURL=" + url + "\r\n");
+    CString content = contentString.ascii();
 
     if (fsPath.length() <= 0)
         return;

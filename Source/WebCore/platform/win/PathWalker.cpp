@@ -26,13 +26,13 @@
 #include "config.h"
 #include "PathWalker.h"
 
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 PathWalker::PathWalker(const String& directory, const String& pattern)
 {
-    String path = makeString(directory, "\\", pattern);
+    String path = directory + "\\" + pattern;
     m_handle = ::FindFirstFileW(path.charactersWithNullTermination(), &m_data);
 }
 

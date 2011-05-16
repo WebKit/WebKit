@@ -26,7 +26,7 @@
 
 #include "SVGException.h"
 #include "SVGURIReference.h"
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -134,14 +134,14 @@ String SVGPaint::cssText() const
     case SVG_PAINTTYPE_NONE:
         return "none";
     case SVG_PAINTTYPE_URI_NONE:
-        return makeString(m_uri, " none");
+        return m_uri + " none";
     case SVG_PAINTTYPE_URI_CURRENTCOLOR:
     case SVG_PAINTTYPE_URI_RGBCOLOR:
     case SVG_PAINTTYPE_URI_RGBCOLOR_ICCCOLOR: {
         String color = SVGColor::cssText();
         if (color.isEmpty())
             return m_uri;
-        return makeString(m_uri, ' ', color);
+        return m_uri + ' ' + color;
     }
     case SVG_PAINTTYPE_URI:
         return m_uri;

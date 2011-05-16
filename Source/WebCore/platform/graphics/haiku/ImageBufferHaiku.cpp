@@ -33,7 +33,7 @@
 #include "MIMETypeRegistry.h"
 #include "StillImageHaiku.h"
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 #include <BitmapStream.h>
 #include <String.h>
 #include <TranslatorRoster.h>
@@ -373,7 +373,7 @@ String ImageBuffer::toDataURL(const String& mimeType, const double*) const
     base64Encode(reinterpret_cast<const char*>(translatedStream.Buffer()),
                  translatedStream.BufferLength(), encodedBuffer);
 
-    return makeString("data:", mimeType, ";base64,", encodedBuffer);
+    return "data:" + mimeType + ";base64," + encodedBuffer;
 }
 
 } // namespace WebCore

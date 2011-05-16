@@ -29,7 +29,7 @@
 #include "Credential.h"
 #include "KURL.h"
 #include "ProtectionSpaceHash.h"
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -60,9 +60,9 @@ static PathToDefaultProtectionSpaceMap& pathToDefaultProtectionSpaceMap()
 static String originStringFromURL(const KURL& url)
 {
     if (url.port())
-        return makeString(url.protocol(), "://", url.host(), ':', String::number(url.port()), '/');
+        return url.protocol() + "://" + url.host() + ':' + String::number(url.port()) + '/';
 
-    return makeString(url.protocol(), "://", url.host(), '/');
+    return url.protocol() + "://" + url.host() + '/';
 }
 
 static String protectionSpaceMapKeyFromURL(const KURL& url)

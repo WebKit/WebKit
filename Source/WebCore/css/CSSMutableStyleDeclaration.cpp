@@ -35,7 +35,7 @@
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "StyledElement.h"
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 using namespace std;
 
@@ -290,7 +290,7 @@ String CSSMutableStyleDeclaration::borderSpacingValue(const int properties[2]) c
     String verticalValueCSSText = verticalValue->cssText();
     if (horizontalValueCSSText == verticalValueCSSText)
         return horizontalValueCSSText;
-    return makeString(horizontalValueCSSText, ' ', verticalValueCSSText);
+    return horizontalValueCSSText + ' ' + verticalValueCSSText;
 }
 
 String CSSMutableStyleDeclaration::get4Values(const int* properties) const

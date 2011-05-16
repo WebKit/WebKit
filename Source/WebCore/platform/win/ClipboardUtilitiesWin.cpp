@@ -28,7 +28,6 @@
 
 #include "DocumentFragment.h"
 #include "KURL.h"
-#include "PlatformString.h"
 #include "TextEncoding.h"
 #include "markup.h"
 #include <shlobj.h>
@@ -36,7 +35,7 @@
 #include <wininet.h> // for INTERNET_MAX_URL_LENGTH
 #include <wtf/StringExtras.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 #if USE(CF)
 #include <CoreFoundation/CoreFoundation.h>

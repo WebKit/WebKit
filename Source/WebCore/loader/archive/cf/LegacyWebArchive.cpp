@@ -47,7 +47,7 @@
 #include "Range.h"
 #include "SharedBuffer.h"
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/RetainPtr.h>
 
@@ -574,8 +574,8 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::createFromSelection(Frame* frame)
         
     // Wrap the frameset document in an iframe so it can be pasted into
     // another document (which will have a body or frameset of its own). 
-    String iframeMarkup = makeString("<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\"",
-                                     frame->loader()->documentLoader()->response().url().string(), "\"></iframe>");
+    String iframeMarkup = "<iframe frameborder=\"no\" marginwidth=\"0\" marginheight=\"0\" width=\"98%%\" height=\"98%%\" src=\"" +
+                          frame->loader()->documentLoader()->response().url().string() + "\"></iframe>";
     RefPtr<ArchiveResource> iframeResource = ArchiveResource::create(utf8Buffer(iframeMarkup), blankURL(), "text/html", "UTF-8", String());
 
     Vector<PassRefPtr<ArchiveResource> > subresources;

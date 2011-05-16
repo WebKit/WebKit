@@ -33,7 +33,6 @@
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "PlatformCALayer.h"
-#include "PlatformString.h"
 #include "RotateTransformOperation.h"
 #include "ScaleTransformOperation.h"
 #include "SystemTime.h"
@@ -41,7 +40,7 @@
 #include <QuartzCore/CATransform3D.h>
 #include <limits.h>
 #include <wtf/CurrentTime.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 #if PLATFORM(MAC)
 #include "WebCoreSystemInterface.h"
@@ -224,7 +223,7 @@ static String propertyIdToString(AnimatedPropertyID property)
 
 static String animationIdentifier(const String& animationName, AnimatedPropertyID property, int index)
 {
-    return makeString(animationName, '_', String::number(property), '_', String::number(index));
+    return animationName + '_' + String::number(property) + '_' + String::number(index);
 }
 
 static bool animationHasStepsTimingFunction(const KeyframeValueList& valueList, const Animation* anim)

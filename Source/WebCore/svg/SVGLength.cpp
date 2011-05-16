@@ -34,7 +34,7 @@
 #include "SVGSVGElement.h"
 
 #include <wtf/MathExtras.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -274,7 +274,7 @@ void SVGLength::setValueAsString(const String& string, ExceptionCode& ec)
 
 String SVGLength::valueAsString() const
 {
-    return makeString(String::number(m_valueInSpecifiedUnits), lengthTypeToString(extractType(m_unit)));
+    return String::number(m_valueInSpecifiedUnits) + lengthTypeToString(extractType(m_unit));
 }
 
 void SVGLength::newValueSpecifiedUnits(unsigned short type, float value, ExceptionCode& ec)

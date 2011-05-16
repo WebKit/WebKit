@@ -26,7 +26,7 @@
 
 #include "SVGParserUtilities.h"
 #include <wtf/MathExtras.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -112,15 +112,21 @@ inline SVGAngle::SVGAngleType stringToAngleType(const UChar*& ptr, const UChar* 
 String SVGAngle::valueAsString() const
 {
     switch (m_unitType) {
-    case SVG_ANGLETYPE_DEG:
-        return makeString(String::number(m_valueInSpecifiedUnits), "deg");
-    case SVG_ANGLETYPE_RAD:
-        return makeString(String::number(m_valueInSpecifiedUnits), "rad");
-    case SVG_ANGLETYPE_GRAD:
-        return makeString(String::number(m_valueInSpecifiedUnits), "grad");
+    case SVG_ANGLETYPE_DEG: {
+        DEFINE_STATIC_LOCAL(String, degString, ("deg"));
+        return String::number(m_valueInSpecifiedUnits) + degString;
+    }
+    case SVG_ANGLETYPE_RAD: {
+        DEFINE_STATIC_LOCAL(String, radString, ("rad"));
+        return String::number(m_valueInSpecifiedUnits) + radString;
+    }
+    case SVG_ANGLETYPE_GRAD: {
+        DEFINE_STATIC_LOCAL(String, gradString, ("grad"));
+        return String::number(m_valueInSpecifiedUnits) + gradString;
+    }
     case SVG_ANGLETYPE_UNSPECIFIED:
     case SVG_ANGLETYPE_UNKNOWN:
-        return makeString(String::number(m_valueInSpecifiedUnits));
+        return String::number(m_valueInSpecifiedUnits);
     }
 
     ASSERT_NOT_REACHED();

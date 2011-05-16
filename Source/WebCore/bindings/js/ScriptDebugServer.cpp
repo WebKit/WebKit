@@ -43,7 +43,7 @@
 #include <parser/SourceProvider.h>
 #include <runtime/JSLock.h>
 #include <wtf/MainThread.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 using namespace JSC;
 
@@ -80,7 +80,7 @@ String ScriptDebugServer::setBreakpoint(const String& sourceID, const ScriptBrea
     *actualLineNumber = scriptBreakpoint.lineNumber;
     // FIXME(WK53003): implement setting breakpoints by line:column.
     *actualColumnNumber = 0;
-    return makeString(sourceID, ":", String::number(scriptBreakpoint.lineNumber));
+    return sourceID + ":" + String::number(scriptBreakpoint.lineNumber);
 }
 
 void ScriptDebugServer::removeBreakpoint(const String& breakpointId)

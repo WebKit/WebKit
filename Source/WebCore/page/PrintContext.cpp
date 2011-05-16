@@ -26,7 +26,7 @@
 #include "FrameView.h"
 #include "RenderLayer.h"
 #include "RenderView.h"
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -291,9 +291,9 @@ String PrintContext::pageProperty(Frame* frame, const char* propertyName, int pa
     if (!strcmp(propertyName, "font-family"))
         return style->fontDescription().family().family().string();
     if (!strcmp(propertyName, "size"))
-        return makeString(String::number(style->pageSize().width().value()), ' ', String::number(style->pageSize().height().value()));
+        return String::number(style->pageSize().width().value()) + ' ' + String::number(style->pageSize().height().value());
 
-    return makeString("pageProperty() unimplemented for: ", propertyName);
+    return String("pageProperty() unimplemented for: ") + propertyName;
 }
 
 bool PrintContext::isPageBoxVisible(Frame* frame, int pageNumber)
@@ -306,9 +306,8 @@ String PrintContext::pageSizeAndMarginsInPixels(Frame* frame, int pageNumber, in
     IntSize pageSize(width, height);
     frame->document()->pageSizeAndMarginsInPixels(pageNumber, pageSize, marginTop, marginRight, marginBottom, marginLeft);
 
-    // We don't have a makeString() function that takes up to 12 arguments, if this is a hot function, we can provide one.
-    return makeString('(', String::number(pageSize.width()), ", ", String::number(pageSize.height()), ") ") +
-           makeString(String::number(marginTop), ' ', String::number(marginRight), ' ', String::number(marginBottom), ' ', String::number(marginLeft));
+    return "(" + String::number(pageSize.width()) + ", " + String::number(pageSize.height()) + ") " +
+           String::number(marginTop) + ' ' + String::number(marginRight) + ' ' + String::number(marginBottom) + ' ' + String::number(marginLeft);
 }
 
 int PrintContext::numberOfPages(Frame* frame, const FloatSize& pageSizeInPixels)

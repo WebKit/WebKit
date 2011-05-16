@@ -26,14 +26,13 @@
 #include "TextCodecWinCE.h"
 
 #include "FontCache.h"
-#include "PlatformString.h"
 #include <mlang.h>
 #include <winbase.h>
 #include <winnls.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -110,7 +109,7 @@ LanguageManager::LanguageManager()
                 info.m_aliases.append(name);
                 info.m_aliases.append(String(cpInfo.wszHeaderCharset).latin1());
                 info.m_aliases.append(String(cpInfo.wszBodyCharset).latin1());
-                String cpName = makeString("cp", String::number(cpInfo.uiCodePage));
+                String cpName = "cp" + String::number(cpInfo.uiCodePage);
                 info.m_aliases.append(cpName.latin1());
                 supportedCharsets().add(i->second.data());
             }

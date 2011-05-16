@@ -30,7 +30,7 @@
 #include "ExceptionBase.h"
 #include "ExceptionCode.h"
 
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -40,9 +40,9 @@ ExceptionBase::ExceptionBase(const ExceptionCodeDescription& description)
     , m_description(description.description)
 {
     if (description.name)
-        m_message = makeString(description.name, ": ", description.typeName, " Exception ", String::number(description.code));
+        m_message = String(description.name) + ": " + description.typeName + " Exception " + String::number(description.code);
     else
-        m_message = makeString(description.typeName, " Exception ", String::number(description.code));
+        m_message = String(description.typeName) + " Exception " + String::number(description.code);
 }
 
 String ExceptionBase::toString() const

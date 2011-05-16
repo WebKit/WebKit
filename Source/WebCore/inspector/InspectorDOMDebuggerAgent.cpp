@@ -41,7 +41,7 @@
 #include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace {
 
@@ -311,7 +311,7 @@ void InspectorDOMDebuggerAgent::pauseOnNativeEventIfNeeded(const String& categor
     if (!debuggerAgent)
         return;
 
-    String fullEventName = makeString(categoryType, ":", eventName);
+    String fullEventName = categoryType + ':' + eventName;
     RefPtr<InspectorObject> eventListenerBreakpoints = m_inspectorState->getObject(DOMDebuggerAgentState::eventListenerBreakpoints);
     if (eventListenerBreakpoints->find(fullEventName) == eventListenerBreakpoints->end())
         return;

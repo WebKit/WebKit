@@ -27,7 +27,7 @@
 #include "SystemInfo.h"
 
 #include <windows.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -111,7 +111,7 @@ static String osVersionForUAString()
     }
 
     const char* familyName = (version >= WindowsNT3) ? "Windows NT " : "Windows CE ";
-    return makeString(familyName, String::number(major), '.', String::number(minor));
+    return familyName + String::number(major) + '.' + String::number(minor);
 }
 
 #if !OS(WINCE)
@@ -175,7 +175,7 @@ static String architectureTokenForUAString()
 
 String windowsVersionForUAString()
 {
-    return makeString(osVersionForUAString(), architectureTokenForUAString());
+    return osVersionForUAString() + architectureTokenForUAString();
 }
 
 } // namespace WebCore

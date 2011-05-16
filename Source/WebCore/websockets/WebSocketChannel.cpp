@@ -39,7 +39,6 @@
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "Page.h"
-#include "PlatformString.h"
 #include "ProgressTracker.h"
 #include "ScriptCallStack.h"
 #include "ScriptExecutionContext.h"
@@ -49,7 +48,7 @@
 #include "WebSocketHandshake.h"
 
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/text/StringHash.h>
 #include <wtf/Deque.h>
 #include <wtf/FastMalloc.h>
@@ -216,9 +215,9 @@ void WebSocketChannel::didFail(SocketStreamHandle* handle, const SocketStreamErr
         if (error.isNull())
             message = "WebSocket network error";
         else if (error.localizedDescription().isNull())
-            message = makeString("WebSocket network error: error code ", String::number(error.errorCode()));
+            message = "WebSocket network error: error code " + String::number(error.errorCode());
         else
-            message = makeString("WebSocket network error: ", error.localizedDescription());
+            message = "WebSocket network error: " + error.localizedDescription();
         String failingURL = error.failingURL();
         ASSERT(failingURL.isNull() || m_handshake.url().string() == failingURL);
         if (failingURL.isNull())
@@ -254,7 +253,7 @@ bool WebSocketChannel::appendToBuffer(const char* data, size_t len)
         m_bufferSize = newBufferSize;
         return true;
     }
-    m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, makeString("WebSocket frame (at ", String::number(static_cast<unsigned long>(newBufferSize)), " bytes) is too long."), 0, m_handshake.clientOrigin(), 0);
+    m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "WebSocket frame (at " + String::number(static_cast<unsigned long>(newBufferSize)) + " bytes) is too long.", 0, m_handshake.clientOrigin(), 0);
     return false;
 }
 

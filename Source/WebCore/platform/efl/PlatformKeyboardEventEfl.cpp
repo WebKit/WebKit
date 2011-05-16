@@ -39,7 +39,7 @@
 #include <Evas.h>
 #include <stdio.h>
 #include <wtf/HashMap.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/text/StringHash.h>
 
 namespace WebCore {
@@ -53,7 +53,7 @@ static WindowsKeyMap gWindowsKeyMap;
 static void createKeyMap()
 {
     for (unsigned int i = 1; i < 25; i++) {
-        String key = makeString('F', String::number(i));
+        String key = "F" + String::number(i);
         gKeyMap.set(key, key);
     }
     gKeyMap.set("Alt_L", "Alt");
@@ -161,7 +161,7 @@ static void createWindowsKeyMap()
 
     // F_XX
     for (unsigned int i = 1; i < 25; i++) {
-        String key = makeString('F', String::number(i));
+        String key = "F" + String::number(i);
         gWindowsKeyMap.set(key, VK_F1 + i);
     }
 }

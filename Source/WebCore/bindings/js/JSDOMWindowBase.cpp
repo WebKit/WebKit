@@ -36,7 +36,6 @@
 #include "Settings.h"
 #include "WebCoreJSClientData.h"
 #include <wtf/Threading.h>
-#include <wtf/text/StringConcatenate.h>
 
 using namespace JSC;
 

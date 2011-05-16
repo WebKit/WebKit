@@ -650,7 +650,7 @@ $mapEntries
 
     HashMap<String, CallHandler>::iterator it = dispatchMap.find(method);
     if (it == dispatchMap.end()) {
-        reportProtocolError(&callId, MethodNotFound, makeString("Invalid method name was received. '", method, "' wasn't found."));
+        reportProtocolError(&callId, MethodNotFound, "Invalid method name was received. '" + method + "' wasn't found.");
         return;
     }
 
@@ -961,7 +961,7 @@ sub generateSource
     my @sourceContent = split("\r", $licenseTemplate);
     push(@sourceContent, "\n#include \"config.h\"");
     push(@sourceContent, "#include \"$className.h\"");
-    push(@sourceContent, "#include <wtf/text/StringConcatenate.h>");
+    push(@sourceContent, "#include <wtf/text/WTFString.h>");
     push(@sourceContent, "#include <wtf/text/CString.h>");
     push(@sourceContent, "");
     push(@sourceContent, "#if ENABLE(INSPECTOR)");

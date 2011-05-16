@@ -41,7 +41,7 @@
 #include "RenderSlider.h"
 #include "UserAgentStyleSheets.h"
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 #include <Ecore_Evas.h>
 #include <Edje.h>
@@ -1102,7 +1102,7 @@ String RenderThemeEfl::extraMediaControlsStyleSheet()
 
 String RenderThemeEfl::formatMediaControlsCurrentTime(float currentTime, float duration) const
 {
-    return makeString(formatMediaControlsTime(currentTime), " / ", formatMediaControlsTime(duration));
+    return formatMediaControlsTime(currentTime) + " / " + formatMediaControlsTime(duration);
 }
 
 bool RenderThemeEfl::paintMediaFullscreenButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)

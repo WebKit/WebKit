@@ -55,7 +55,7 @@
 #include "Text.h"
 #include "TextEncoding.h"
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -112,7 +112,7 @@ SerializerMarkupAccumulator::SerializerMarkupAccumulator(PageSerializer* seriali
 {
     // MarkupAccumulator does not serialize the <?xml ... line, so we add it explicitely to ensure the right encoding is specified.
     if (m_document->isXHTMLDocument() || m_document->xmlStandalone() || m_document->isSVGDocument())
-        appendString(makeString("<?xml version=\"", m_document->xmlVersion(), "\" encoding=\"", m_document->charset(), "\"?>"));
+        appendString("<?xml version=\"" + m_document->xmlVersion() + "\" encoding=\"" + m_document->charset() + "\"?>");
 }
 
 SerializerMarkupAccumulator::~SerializerMarkupAccumulator()
@@ -132,7 +132,7 @@ void SerializerMarkupAccumulator::appendElement(Vector<UChar>& out, Element* ele
         MarkupAccumulator::appendElement(out, element, namespaces);
 
     if (element->hasTagName(HTMLNames::headTag)) {
-        String meta = makeString("<meta charset=\"", m_document->charset(), "\">");
+        String meta = "<meta charset=\"" + m_document->charset() + "\">";
         out.append(meta.characters(), meta.length());
     }
 
@@ -340,7 +340,7 @@ KURL PageSerializer::urlForBlankFrame(Frame* frame)
     HashMap<Frame*, KURL>::iterator iter = m_blankFrameURLs.find(frame);
     if (iter != m_blankFrameURLs.end())
         return iter->second;
-    String url = makeString("wyciwyg://frame/", String::number(m_blankFrameCounter++));
+    String url = "wyciwyg://frame/" + String::number(m_blankFrameCounter++);
     KURL fakeURL(ParsedURLString, url);
     m_blankFrameURLs.add(frame, fakeURL);
 

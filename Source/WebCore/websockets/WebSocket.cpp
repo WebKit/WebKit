@@ -51,7 +51,7 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/CString.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -145,7 +145,7 @@ void WebSocket::connect(const String& url, const String& protocol, ExceptionCode
         return;
     }
     if (!portAllowed(m_url)) {
-        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, makeString("WebSocket port ", String::number(m_url.port()), " blocked"), 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
+        scriptExecutionContext()->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "WebSocket port " + String::number(m_url.port()) + " blocked", 0, scriptExecutionContext()->securityOrigin()->toString(), 0);
         m_state = CLOSED;
         ec = SECURITY_ERR;
         return;

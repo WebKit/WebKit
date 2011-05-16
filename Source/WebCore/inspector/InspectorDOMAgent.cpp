@@ -72,7 +72,6 @@
 #include "NodeList.h"
 #include "Page.h"
 #include "Pasteboard.h"
-#include "PlatformString.h"
 #include "RenderStyle.h"
 #include "RenderStyleConstants.h"
 #include "ScriptEventListener.h"
@@ -87,12 +86,11 @@
 #include "markup.h"
 
 #include <wtf/text/CString.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/HashSet.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Vector.h>
-#include <wtf/text/AtomicString.h>
 
 namespace WebCore {
 

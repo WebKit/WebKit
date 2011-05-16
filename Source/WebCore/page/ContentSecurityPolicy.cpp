@@ -35,7 +35,7 @@
 #include "PingLoader.h"
 #include "SecurityOrigin.h"
 #include "TextEncoding.h"
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -432,7 +432,7 @@ class CSPDirective {
 public:
     CSPDirective(const String& name, const String& value, SecurityOrigin* origin)
         : m_sourceList(origin)
-        , m_text(makeString(name, " ", value))
+        , m_text(name + ' ' + value)
     {
         m_sourceList.parse(value);
     }
@@ -550,7 +550,7 @@ bool ContentSecurityPolicy::checkSourceAndReportViolation(CSPDirective* directiv
 {
     if (!directive || directive->allows(url))
         return true;
-    reportViolation(directive->text(), makeString("Refused to load ", type, " from '", url.string(), "' because of Content-Security-Policy.\n"));
+    reportViolation(directive->text(), "Refused to load " + type + " from '" + url.string() + "' because of Content-Security-Policy.\n");
     return denyIfEnforcingPolicy();
 }
 

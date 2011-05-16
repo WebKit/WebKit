@@ -54,7 +54,7 @@
 #include "visible_units.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
@@ -433,7 +433,7 @@ String AccessibilityObject::listMarkerTextForNodeAndPosition(Node* node, const V
     // Append text, plus the period that follows the text.
     // FIXME: Not all list marker styles are followed by a period, but this
     // sounds much better when there is a synthesized pause because of a period.
-    return makeString(markerText, ". ");
+    return markerText + ". ";
 }
     
 String AccessibilityObject::stringForVisiblePositionRange(const VisiblePositionRange& visiblePositionRange) const

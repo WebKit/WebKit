@@ -44,7 +44,7 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
@@ -175,7 +175,7 @@ void InspectorConsoleAgent::count(PassRefPtr<ScriptArguments> arguments, PassRef
     // the same bucket as no argument
     String title;
     arguments->getFirstArgumentAsString(title);
-    String identifier = makeString(title, '@', lastCaller.sourceURL(), ':', String::number(lastCaller.lineNumber()));
+    String identifier = title + '@' + lastCaller.sourceURL() + ':' + String::number(lastCaller.lineNumber());
 
     HashMap<String, unsigned>::iterator it = m_counts.find(identifier);
     int count;
@@ -188,7 +188,7 @@ void InspectorConsoleAgent::count(PassRefPtr<ScriptArguments> arguments, PassRef
 
     m_counts.add(identifier, count);
 
-    String message = makeString(title, ": ", String::number(count));
+    String message = title + ": " + String::number(count);
     addMessageToConsole(JSMessageSource, LogMessageType, LogMessageLevel, message, lastCaller.lineNumber(), lastCaller.sourceURL());
 }
 
@@ -206,7 +206,7 @@ void InspectorConsoleAgent::didReceiveResponse(unsigned long identifier, const R
         return;
 
     if (response.httpStatusCode() >= 400) {
-        String message = makeString("Failed to load resource: the server responded with a status of ", String::number(response.httpStatusCode()), " (", response.httpStatusText(), ')');
+        String message = "Failed to load resource: the server responded with a status of " + String::number(response.httpStatusCode()) + " (" + response.httpStatusText() + ')';
         addConsoleMessage(adoptPtr(new ConsoleMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, response.url().string(), identifier)));
     }
 }

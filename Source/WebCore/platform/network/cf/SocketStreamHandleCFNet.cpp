@@ -39,7 +39,7 @@
 #include "SocketStreamError.h"
 #include "SocketStreamHandleClient.h"
 #include <wtf/MainThread.h>
-#include <wtf/text/StringConcatenate.h>
+#include <wtf/text/WTFString.h>
 
 #ifdef BUILDING_ON_LEOPARD
 #include <SystemConfiguration/SystemConfiguration.h>
@@ -534,7 +534,7 @@ void SocketStreamHandle::reportErrorToClient(CFErrorRef error)
     if (CFEqual(CFErrorGetDomain(error), kCFErrorDomainOSStatus)) {
         const char* descriptionOSStatus = GetMacOSStatusCommentString(static_cast<OSStatus>(errorCode));
         if (descriptionOSStatus && descriptionOSStatus[0] != '\0')
-            description = makeString("OSStatus Error ", String::number(errorCode), ": ", descriptionOSStatus);
+            description = "OSStatus Error " + String::number(errorCode) + ": " + descriptionOSStatus;
     }
 #endif
 

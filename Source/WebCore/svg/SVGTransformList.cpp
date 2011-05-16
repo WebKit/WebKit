@@ -26,9 +26,7 @@
 #include "AffineTransform.h"
 #include "SVGSVGElement.h"
 #include "SVGTransform.h"
-
 #include <wtf/text/StringBuilder.h>
-#include <wtf/text/StringConcatenate.h>
 
 namespace WebCore {
 
