@@ -2985,7 +2985,8 @@ BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH
 
 BUGCR74979 GPU MAC: media/video-canvas-alpha.html = IMAGE
 
-BUGWK55718 BUGCR75354 GPU : media/media-document-audio-repaint.html = IMAGE+TEXT
+// This test needs completely new baselines.
+BUGWK55718 BUGCR75354 : media/media-document-audio-repaint.html = PASS FAIL
 
 BUGWK55968 BUGWK58306 GPU MAC : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE+TEXT CRASH
 BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE

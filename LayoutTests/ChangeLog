@@ -1,3 +1,15 @@
+2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, removing baselines for media/media-document-audio-repaint.html as they're incorrect.
+
+        * platform/chromium-linux/media/media-document-audio-repaint-expected.png: Removed.
+        * platform/chromium-mac-leopard/media/media-document-audio-repaint-expected.png: Removed.
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.png: Removed.
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.txt: Removed.
+        * platform/chromium-win/media/media-document-audio-repaint-expected.png: Removed.
+        * platform/chromium-win/media/media-document-audio-repaint-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-16  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
