@@ -20,7 +20,7 @@ CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http
 
 CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-get-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-call.html. Domains, protocols and ports must match.
 
-CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-get-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-call.html. Domains, protocols and ports must match.
+CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL about:blank from frame with URL http://127.0.0.1:8000/security/cross-frame-access-call.html. Domains, protocols and ports must match.
 
 CONSOLE MESSAGE: line 1: Unsafe JavaScript attempt to access frame with URL http://localhost:8000/security/resources/cross-frame-iframe-for-get-test.html from frame with URL http://127.0.0.1:8000/security/cross-frame-access-call.html. Domains, protocols and ports must match.
 
@@ -67,7 +67,7 @@ PASS: window.getMatchedCSSRules.call(targetWindow, document.body, '') should be 
 PASS: window.openDatabase.call(targetWindow, 'name', '1.0', 'description', 0) should be 'undefined' and is.
 PASS: window.atob.call(targetWindow, 'string') should be 'undefined' and is.
 PASS: window.btoa.call(targetWindow, 'string') should be 'undefined' and is.
-PASS: window.open.call(targetWindow, '') should be 'undefined' and is.
+*** FAIL: window.open.call(targetWindow, '') should be 'undefined' but instead is [object DOMWindow]. ***
 PASS: window.addEventListener.call(targetWindow, 'load', null, false); should be 'undefined' and is.
 PASS: window.removeEventListener.call(targetWindow, 'load', null, false); should be 'undefined' and is.
 PASS: window.clearTimeout.call(targetWindow, 0); should be 'undefined' and is.

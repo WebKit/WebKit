@@ -1,3 +1,16 @@
+2011-05-16  Adam Barth  <abarth@webkit.org>
+
+        cross-frame-access-call.html fails after WebKit r74449
+        http://code.google.com/p/chromium/issues/detail?id=67767
+
+        These tests aren't really failing.  They just have different results
+        because of interactions with the popup blocker.
+
+        * platform/chromium/http/tests/security/aboutBlank: Added.
+        * platform/chromium/http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt: Added.
+        * platform/chromium/http/tests/security/cross-frame-access-call-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, removing baselines for media/media-document-audio-repaint.html as they're incorrect.

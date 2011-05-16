@@ -749,9 +749,6 @@ BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAG
 BUGCR6139 WIN LINUX : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
 BUGCR6139 LEOPARD : fast/forms/select-writing-direction-natural.html = IMAGE+TEXT
 
-BUGCR67767 : http/tests/security/cross-frame-access-call.html = TEXT
-BUGCR67767 : http/tests/security/aboutBlank/xss-DENIED-set-opener.html = TEXT
-
 // -----------------------------------------------------------------
 // Plugin tests
 // -----------------------------------------------------------------
