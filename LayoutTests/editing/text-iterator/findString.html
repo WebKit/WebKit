@@ -50,7 +50,7 @@
     testFindString("cocoa", "co", [], [[0, 2], [2, 4], []]);
     testFindString("cocoa", "co", ["AtWordStarts"], [[0, 2], []]);
 
-    testFindString("webkit.org", "org", ["AtWordStarts"], [[7, 10], []]);
+    testFindString("webkit.org", "org", ["AtWordStarts"], [[]]);
     testFindString("webkit.org", ".org", ["AtWordStarts"], [[6, 10], []]);
 
     testFindString("webkit.org", "rg", ["AtWordStarts", "TreatMedialCapitalAsWordStart"], [[]]);

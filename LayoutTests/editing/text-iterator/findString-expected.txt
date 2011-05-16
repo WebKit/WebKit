@@ -49,7 +49,6 @@ PASS: Got a match at 0,2 as expected.
 PASS: Got no match as expected.
 
 Searching for ‘org’ in ‘webkit.org’ with options [AtWordStarts]:
-PASS: Got a match at 7,10 as expected.
 PASS: Got no match as expected.
 
 Searching for ‘.org’ in ‘webkit.org’ with options [AtWordStarts]:

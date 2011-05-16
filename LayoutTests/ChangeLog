@@ -1,3 +1,13 @@
+2011-05-16  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9446653> REGRESSION (r84750): Moving by word stops at apostrophe mid-word
+        https://bugs.webkit.org/show_bug.cgi?id=60915
+
+        * editing/text-iterator/findString-expected.txt:
+        * editing/text-iterator/findString.html:
+
 2011-05-16  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r86589.
