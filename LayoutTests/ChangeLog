@@ -1,3 +1,9 @@
+2011-05-15  Dominic Cooney  <dominicc@chromium.org>
+
+        Unreviewed. Remove expectation of gc-shadow.html flakiness.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-15  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Eric Seidel.

@@ -3945,7 +3945,6 @@ BUGKBR WIN DEBUG : fast/events/change-overflow-on-overflow-change.html = PASS TI
 // Flakiness on canaries (noted ~ r85220)
 BUGKBR WIN : editing/input/option-page-up-down.html = PASS TEXT
 BUGKBR WIN LINUX : http/tests/inspector/resource-tree/resource-tree-frame-navigate.html = PASS TIMEOUT TEXT
-BUGWK59726 : fast/dom/shadow/gc-shadow.html = PASS TEXT
 
 BUGWK60112 : fast/css/epub-properties.html = TEXT
 
