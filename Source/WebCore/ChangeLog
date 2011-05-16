@@ -1,3 +1,28 @@
+2011-05-15  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        https://bugs.webkit.org/show_bug.cgi?id=59699
+        Global object is recreated on teardown, for no good reason
+        
+        (Another partial fix for <rdar://problem/9417875> REGRESSION: SunSpider
+        ~7% slower in browser than on command line (was 17%))
+        
+        I'm basically rolling out http://trac.webkit.org/changeset/49786 because
+
+        (a) it created this performance problem
+        
+        and
+        
+        (b) a more complete fix, which obsoletes http://trac.webkit.org/changeset/49786,
+        was committed in http://trac.webkit.org/changeset/53439.
+        
+        Tested with the file attached to https://bugs.webkit.org/show_bug.cgi?id=29832.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame): Don't create a new window every time we destroy
+        a frame.
+
 2011-05-12  MORITA Hajime  <morrita@google.com>
 
         ShadowContentElement should affect the order of renderer children

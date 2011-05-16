@@ -230,8 +230,6 @@ Frame::~Frame()
         m_mediaStreamFrameController->disconnectFrame();
 #endif
 
-    script()->clearWindowShell();
-
     HashSet<DOMWindow*>::iterator end = m_liveFormerWindows.end();
     for (HashSet<DOMWindow*>::iterator it = m_liveFormerWindows.begin(); it != end; ++it)
         (*it)->disconnectFrame();
