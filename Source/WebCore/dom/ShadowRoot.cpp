@@ -35,6 +35,80 @@
 
 namespace WebCore {
 
+static inline void forceReattach(Node* node)
+{
+    if (!node->attached())
+        return;
+    node->detach();
+    node->attach();
+}
+
+class ShadowContentSelector {
+    WTF_MAKE_NONCOPYABLE(ShadowContentSelector);
+public:
+    explicit ShadowContentSelector(ShadowRoot*);
+    ~ShadowContentSelector();
+
+    void attachChildrenFor(ShadowContentElement*);
+    ShadowRoot* shadowRoot() const { return m_shadowRoot; }
+    Element* activeElement() const { return m_activeElement; }
+
+    static ShadowContentSelector* currentInstance() { return s_currentInstance; }
+
+private:
+    ShadowContentSelector* m_parent;
+    ShadowRoot* m_shadowRoot;
+    Element* m_activeElement;
+    Vector<RefPtr<Node> > m_children;
+
+    static ShadowContentSelector* s_currentInstance;
+};
+
+ShadowContentSelector* ShadowContentSelector::s_currentInstance = 0;
+
+ShadowContentSelector::ShadowContentSelector(ShadowRoot* shadowRoot)
+    : m_parent(s_currentInstance)
+    , m_shadowRoot(shadowRoot)
+    , m_activeElement(0)
+{
+    s_currentInstance = this;
+    for (Node* node = shadowRoot->shadowHost()->firstChild(); node; node = node->nextSibling())
+        m_children.append(node);
+}
+
+ShadowContentSelector::~ShadowContentSelector()
+{
+    ASSERT(s_currentInstance == this);
+    s_currentInstance = m_parent;
+}
+
+void ShadowContentSelector::attachChildrenFor(ShadowContentElement* contentElement)
+{
+    m_activeElement = contentElement;
+
+    for (size_t i = 0; i < m_children.size(); ++i) {
+        Node* child = m_children[i].get();
+        if (!child)
+            continue;
+        if (!contentElement->shouldInclude(child))
+            continue;
+
+        forceReattach(child);
+        m_children[i] = 0;
+    }
+
+    m_activeElement = 0;
+}
+
+// FIXME: Should have its own file. https://bugs.webkit.org/show_bug.cgi?id=59117 will fix this.
+void ShadowContentElement::attach()
+{
+    ASSERT(!firstChild()); // Currently doesn't support any light child.
+    HTMLDivElement::attach();
+    if (ShadowContentSelector* selector = ShadowContentSelector::currentInstance())
+        selector->attachChildrenFor(this);
+}
+
 ShadowRoot::ShadowRoot(Document* document)
     : TreeScope(document)
 {
@@ -84,37 +158,31 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
 
 void ShadowRoot::recalcStyle(StyleChange change)
 {
-    for (Node* n = firstChild(); n; n = n->nextSibling())
-        n->recalcStyle(change);
+    if (hasContentElement())
+        forceReattach(this);
+    else {
+        for (Node* n = firstChild(); n; n = n->nextSibling())
+            n->recalcStyle(change);
+    }
 
     clearNeedsStyleRecalc();
     clearChildNeedsStyleRecalc();
 }
 
-ContainerNode* ShadowRoot::contentContainerFor(Node* node)
+ContainerNode* ShadowRoot::activeContentContainer()
 {
-    // Current limitation:
-    // - There is at most one content element for each shadow tree
-    // - The shadow tree accepts any light node.
-    for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {
-        // FIXME: This should be replaced with tag-name checking once <content> is ready.
-        // See also http://webkit.org/b/56973
-        if (n->isShadowBoundary() && static_cast<ShadowContentElement*>(n)->shouldInclude(node))
-            return toContainerNode(n);
-    }
-
-    return 0;
+    ShadowContentSelector* selector = ShadowContentSelector::currentInstance();
+    if (!selector || selector->shadowRoot() != this)
+        return 0;
+    return selector->activeElement();
 }
 
 void ShadowRoot::hostChildrenChanged()
 {
     if (!hasContentElement())
         return;
-    Element* host = shadowHost();
-    if (!host || !host->attached())
-        return;
-    host->detach();
-    host->lazyAttach();
+    // This results in forced detaching/attaching of the shadow render tree. See ShadowRoot::recalcStyle().
+    setNeedsStyleRecalc();
 }
 
 bool ShadowRoot::hasContentElement() const
@@ -132,6 +200,12 @@ bool ShadowRoot::hasContentElement() const
 bool ShadowRoot::applyAuthorSheets() const
 {
     return false;
+}
+
+void ShadowRoot::attach()
+{
+    ShadowContentSelector selector(this);
+    TreeScope::attach();
 }
 
 }

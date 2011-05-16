@@ -1,3 +1,54 @@
+2011-05-12  MORITA Hajime  <morrita@google.com>
+
+        ShadowContentElement should affect the order of renderer children
+        https://bugs.webkit.org/show_bug.cgi?id=59157
+
+        Introduced ShadowContentSelector to collect and forward content
+        children for each ShadowContentElement. ShadowRoot collects child
+        nodes of its host (we call these children "content children"), and
+        the descendant ShadowContentElement pulls that these content
+        children and put it under its child during
+        ShadowContentElement::attach().
+        
+        Content children no longer create its renderer during its normal
+        attach() phase (called "light" phase). And they create it during
+        attach() as a content children instead (called "forwarded phase").
+        These phases are detected by NodeRendererFactory and represented
+        as NodeRendererFactory::AttachPhase value AttachContentLight and
+        AttachContentForwarded.
+        
+        Tests: fast/html/details-add-details-child-1.html
+               fast/html/details-add-details-child-2.html
+               fast/html/details-nested-1.html
+               fast/html/details-nested-2.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::attach):
+        (WebCore::Element::childrenChanged):
+        * dom/Node.cpp:
+        (WebCore::NodeRendererFactory::NodeRendererFactory):
+        (WebCore::NodeRendererFactory::shouldCreateRenderer):
+        (WebCore::NodeRendererFactory::nextRenderer):
+        (WebCore::NodeRendererFactory::createRendererIfNeeded):
+        * dom/ShadowRoot.cpp:
+        (WebCore::forceReattach):
+        (WebCore::ShadowContentSelector::shadowRoot):
+        (WebCore::ShadowContentSelector::activeElement):
+        (WebCore::ShadowContentSelector::currentInstance):
+        (WebCore::ShadowContentSelector::ShadowContentSelector):
+        (WebCore::ShadowContentSelector::~ShadowContentSelector):
+        (WebCore::ShadowContentSelector::attachChildrenFor):
+        (WebCore::ShadowContentElement::attach):
+        (WebCore::ShadowRoot::recalcStyle):
+        (WebCore::ShadowRoot::activeContentContainer):
+        (WebCore::ShadowRoot::hostChildrenChanged):
+        (WebCore::ShadowRoot::attach):
+        * dom/ShadowRoot.h:
+        * html/shadow/ShadowContentElement.h:
+        (WebCore::ShadowContentElement::rendererIsNeeded):
+        * rendering/RenderDetails.cpp:
+        * rendering/RenderDetails.h:
+
 2011-05-13  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.

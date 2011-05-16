@@ -36,14 +36,6 @@ RenderDetails::RenderDetails(Node* node)
 {
 }
 
-void RenderDetails::addChild(RenderObject* newChild, RenderObject* beforeChild)
-{
-    if (static_cast<HTMLDetailsElement*>(node())->mainSummary() == newChild->node())
-        RenderBlock::addChild(newChild, firstChild());
-    else
-        RenderBlock::addChild(newChild, beforeChild);
-}
-
 void RenderDetails::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);

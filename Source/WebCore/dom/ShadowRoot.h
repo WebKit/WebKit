@@ -32,6 +32,7 @@
 namespace WebCore {
 
 class Document;
+class ShadowContentElement;
 
 class ShadowRoot : public TreeScope {
 public:
@@ -40,7 +41,7 @@ public:
     virtual bool isShadowBoundary() const { return true; }
     virtual void recalcStyle(StyleChange = NoChange);
 
-    ContainerNode* contentContainerFor(Node*);
+    ContainerNode* activeContentContainer();
     void hostChildrenChanged();
 
 private:
@@ -52,6 +53,7 @@ private:
     virtual PassRefPtr<Node> cloneNode(bool deep);
     virtual bool childTypeAllowed(NodeType) const;
     virtual bool applyAuthorSheets() const;
+    virtual void attach();
 
     bool hasContentElement() const;
 };

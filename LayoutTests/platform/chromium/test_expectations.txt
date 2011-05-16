@@ -3974,6 +3974,12 @@ BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-sv
 BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = IMAGE
 BUGWK59782 WIN MAC LINUX RELEASE : svg/filters/feDropShadow.svg = IMAGE
 
+// Needs missing expectations.
+BUGWK59157 : fast/html/details-nested-2.html = FAIL
+BUGWK59157 : fast/html/details-nested-1.html = FAIL
+BUGWK59157 : fast/html/details-add-details-child-1.html = FAIL
+BUGWK59157 : fast/html/details-add-details-child-2.html = FAIL
+
 // New test added in r85303.
 BUG_HCLAM : compositing/masks/layer-mask-placement.html = IMAGE
 

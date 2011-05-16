@@ -39,7 +39,6 @@ private:
     virtual const char* renderName() const { return "RenderDetails"; }
     virtual bool isDetails() const { return true; }
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-    virtual void addChild(RenderObject* newChild, RenderObject *beforeChild = 0);
 };
 
 inline RenderDetails* toRenderDetails(RenderObject* object)

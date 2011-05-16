@@ -993,14 +993,14 @@ void Element::attach()
     
     StyleSelectorParentPusher parentPusher(this);
 
-    if (ShadowRoot* shadow = shadowRoot()) {
-        parentPusher.push();
-        shadow->attach();
-    }
-
     if (firstChild())
         parentPusher.push();
     ContainerNode::attach();
+
+    if (Node* shadow = shadowRoot()) {
+        parentPusher.push();
+        shadow->attach();
+    }
 
     if (hasRareData()) {   
         ElementRareData* data = rareData();
@@ -1321,8 +1321,6 @@ void Element::childrenChanged(bool changedByParser, Node* beforeChange, Node* af
         checkForEmptyStyleChange(this, renderStyle());
     else
         checkForSiblingStyleChanges(this, renderStyle(), false, beforeChange, afterChange, childCountDelta);
-    if (ShadowRoot* shadow = shadowRoot())
-        shadow->hostChildrenChanged();
 }
 
 void Element::beginParsingChildren()

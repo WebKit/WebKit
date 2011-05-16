@@ -47,11 +47,13 @@ public:
     }
 
     virtual bool shouldInclude(Node*) = 0;
+    virtual void attach();
 
 private:
     // FIXME: This should be replaced with tag-name checking once <content> is ready.
     // See also http://webkit.org/b/56973
     virtual bool isShadowBoundary() const { return true; }
+    virtual bool rendererIsNeeded(RenderStyle*) { return false; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) { return 0; }
 };
 

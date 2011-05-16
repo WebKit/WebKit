@@ -1460,73 +1460,86 @@ Node *Node::nextLeafNode() const
 
 class NodeRendererFactory {
 public:
-    enum Type {
-        NotFound,
-        AsLightChild,
-        AsShadowChild,
-        AsContentChild
+    enum TreeLocation {
+        LocationNotInTree,
+        LocationLightChild,
+        LocationShadowChild,
     };
 
-    NodeRendererFactory(Node* node)
-        : m_type(NotFound)
-        , m_node(node)
-        , m_visualParentShadowRoot(0)
-    {
-        m_parentNodeForRenderingAndStyle = findVisualParent();
-    }
-  
+    enum AttachPhase {
+        AttachStraight,
+        AttachContentLight,
+        AttachContentForwarded,
+    };
+
+    explicit NodeRendererFactory(Node*);
     ContainerNode* parentNodeForRenderingAndStyle() const { return m_parentNodeForRenderingAndStyle; }
     void createRendererIfNeeded();
 
 private:
     Document* document() { return m_node->document(); }
-    ContainerNode* findVisualParent();
-    RenderObject* nextRenderer() const { return m_node->nextRenderer(); }
+    void initialize();
+    RenderObject* nextRenderer() const;
     RenderObject* createRendererAndStyle();
     bool shouldCreateRenderer() const;
 
-    Type m_type;
+    TreeLocation m_location;
+    AttachPhase m_phase;
     Node* m_node;
     ContainerNode* m_parentNodeForRenderingAndStyle;
     ShadowRoot* m_visualParentShadowRoot;
 };
 
-ContainerNode* NodeRendererFactory::findVisualParent()
+NodeRendererFactory::NodeRendererFactory(Node* node)
+    : m_location(LocationNotInTree)
+    , m_phase(AttachStraight)
+    , m_node(node)
+    , m_parentNodeForRenderingAndStyle(0)
+    , m_visualParentShadowRoot(0)
 {
     ContainerNode* parent = m_node->parentOrHostNode();
     if (!parent)
-        return 0;
+        return;
 
     if (parent->isShadowBoundary()) {
-        m_type = AsShadowChild;
-        return parent->shadowHost();
+        m_location = LocationShadowChild;
+        m_parentNodeForRenderingAndStyle = parent->shadowHost();
+        return;
     }
+
+    m_location = LocationLightChild;
 
     if (parent->isElementNode()) {
         m_visualParentShadowRoot = toElement(parent)->shadowRoot();
-        if (m_visualParentShadowRoot) {
-            if (ContainerNode* contentContainer = m_visualParentShadowRoot->contentContainerFor(m_node)) {
-                m_type = AsContentChild;
-                return NodeRendererFactory(contentContainer).parentNodeForRenderingAndStyle();
-            }
 
-            // FIXME: should be not found once light/shadow is mutual exclusive.
+        if (m_visualParentShadowRoot) {
+            if (ContainerNode* contentContainer = m_visualParentShadowRoot->activeContentContainer()) {
+                m_phase = AttachContentForwarded;
+                m_parentNodeForRenderingAndStyle = NodeRendererFactory(contentContainer).parentNodeForRenderingAndStyle();
+                return;
+            } 
+                
+            m_phase = AttachContentLight;
+            m_parentNodeForRenderingAndStyle = parent;
+            return;
         }
     }
 
-    m_type = AsLightChild;
-    return parent;
+    m_parentNodeForRenderingAndStyle = parent;
 }
 
 bool NodeRendererFactory::shouldCreateRenderer() const
 {
     ASSERT(m_parentNodeForRenderingAndStyle);
 
+    if (m_location == LocationNotInTree || m_phase == AttachContentLight)
+        return false;
+
     RenderObject* parentRenderer = m_parentNodeForRenderingAndStyle->renderer();
     if (!parentRenderer)
         return false;
 
-    if (m_type == AsLightChild) {
+    if (m_location == LocationLightChild && m_phase == AttachStraight) {
         // FIXME: Ignoring canHaveChildren() in a case of shadow children might be wrong.
         // See https://bugs.webkit.org/show_bug.cgi?id=52423
         if (!parentRenderer->canHaveChildren())
@@ -1568,6 +1581,16 @@ RenderObject* NodeRendererFactory::createRendererAndStyle()
     return newRenderer;
 }
 
+RenderObject* NodeRendererFactory::nextRenderer() const
+{
+    if (m_phase != AttachContentForwarded)
+        return m_node->nextRenderer();
+    // Returns 0 here to insert renderer at the end of child list.
+    // We assume content children are always attached in tree order and
+    // there is no partial render tree creation.
+    return 0;
+}
+
 #if ENABLE(FULLSCREEN_API)
 static RenderFullScreen* wrapWithRenderFullScreen(RenderObject* object, Document* document)
 {
@@ -1595,6 +1618,10 @@ void NodeRendererFactory::createRendererIfNeeded()
     if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == m_node)
         newRenderer = wrapWithRenderFullScreen(newRenderer, document());
 #endif
+
+    // FIXME: This side effect should be visible from attach() code.
+    if (m_phase == AttachContentLight)
+        m_visualParentShadowRoot->hostChildrenChanged();
 
     if (!newRenderer)
         return;
