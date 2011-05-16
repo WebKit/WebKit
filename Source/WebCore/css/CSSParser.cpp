@@ -375,7 +375,7 @@ static bool parseSimpleLengthValue(CSSMutableStyleDeclaration* declaration, int 
         return false;
 
     CSSPrimitiveValue::UnitTypes unit = CSSPrimitiveValue::CSS_NUMBER;
-    if (length > 2 && characters[length - 2] == 'p' && characters[length - 1] == 'x') {
+    if (length > 2 && (characters[length - 2] | 0x20) == 'p' && (characters[length - 1] | 0x20) == 'x') {
         length -= 2;
         unit = CSSPrimitiveValue::CSS_PX;
     } else if (length > 1 && characters[length - 1] == '%') {

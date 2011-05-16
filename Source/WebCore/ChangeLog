@@ -1,3 +1,16 @@
+2011-05-16  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        CSS: Fast path for 'px' lengths should be case-insensitive.
+        https://bugs.webkit.org/show_bug.cgi?id=60703
+
+        No new tests, this is an optimization that avoids creating
+        a full CSSParser to parse the value.
+
+        * css/CSSParser.cpp:
+        (WebCore::parseSimpleLengthValue):
+
 2011-05-16  Naiem Shaik  <naiem.shaik@gmail.com>
 
         Reviewed by Adam Barth.
