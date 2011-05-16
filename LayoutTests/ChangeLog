@@ -1,3 +1,9 @@
+2011-05-15  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed an expectation update.
+
+        * platform/gtk/fast/html/details-add-child-2-expected.txt:
+
 2011-05-15  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Kent Tamura.
