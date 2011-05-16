@@ -1,3 +1,13 @@
+2011-05-16  Adam Barth  <abarth@webkit.org>
+
+        Layout test file-URL-with-port-number.html fails on Mac and Linux
+        http://code.google.com/p/chromium/issues/detail?id=10342
+
+        The consensus is to not support this behavior unless there is a
+        compelling compatibility reason.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Enrica Casucci.

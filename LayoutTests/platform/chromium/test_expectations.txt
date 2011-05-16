@@ -1169,7 +1169,7 @@ BUGCR10340 LINUX : fast/frames/viewsource-attribute.html = FAIL
 
 // We fail to load a file URL with a port number -- how does this work on
 // Windows?
-BUGCR10342 LINUX MAC : fast/loader/file-URL-with-port-number.html = TIMEOUT
+BUGCR10342 WONTFIX SKIP LINUX MAC : fast/loader/file-URL-with-port-number.html = TIMEOUT
 
 // Text doesn't display at all -- maybe we don't have the slow font
 // code enabled?
