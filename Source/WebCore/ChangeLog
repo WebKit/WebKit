@@ -1,3 +1,61 @@
+2011-05-16  Chris Rogers  <crogers@google.com>
+
+        Reviewed by senorblanco@chromium.org.
+
+        Add DynamicsCompressorNode implementation
+        https://bugs.webkit.org/show_bug.cgi?id=60682
+
+        No new tests since audio API is not yet implemented.
+
+        * DerivedSources.make:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/DynamicsCompressor.cpp: Added.
+        (WebCore::DynamicsCompressor::DynamicsCompressor):
+        (WebCore::DynamicsCompressor::initializeParameters):
+        (WebCore::DynamicsCompressor::parameterValue):
+        (WebCore::DynamicsCompressor::setEmphasisStageParameters):
+        (WebCore::DynamicsCompressor::setEmphasisParameters):
+        (WebCore::DynamicsCompressor::process):
+        (WebCore::DynamicsCompressor::reset):
+        * platform/audio/DynamicsCompressor.h: Added.
+        (WebCore::DynamicsCompressor::isStereo):
+        (WebCore::DynamicsCompressor::sampleRate):
+        (WebCore::DynamicsCompressor::nyquist):
+        * platform/audio/DynamicsCompressorKernel.cpp: Added.
+        (WebCore::saturate):
+        (WebCore::DynamicsCompressorKernel::DynamicsCompressorKernel):
+        (WebCore::DynamicsCompressorKernel::setPreDelayTime):
+        (WebCore::DynamicsCompressorKernel::process):
+        (WebCore::DynamicsCompressorKernel::reset):
+        * platform/audio/DynamicsCompressorKernel.h: Added.
+        (WebCore::DynamicsCompressorKernel::latencyFrames):
+        (WebCore::DynamicsCompressorKernel::sampleRate):
+        * platform/audio/ZeroPole.cpp: Added.
+        (WebCore::ZeroPole::process):
+        * platform/audio/ZeroPole.h: Added.
+        (WebCore::ZeroPole::ZeroPole):
+        (WebCore::ZeroPole::reset):
+        (WebCore::ZeroPole::setZero):
+        (WebCore::ZeroPole::setPole):
+        (WebCore::ZeroPole::zero):
+        (WebCore::ZeroPole::pole):
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createDynamicsCompressor):
+        * webaudio/AudioContext.h:
+        * webaudio/AudioContext.idl:
+        * webaudio/AudioNode.h:
+        * webaudio/DynamicsCompressorNode.cpp: Added.
+        (WebCore::DynamicsCompressorNode::DynamicsCompressorNode):
+        (WebCore::DynamicsCompressorNode::~DynamicsCompressorNode):
+        (WebCore::DynamicsCompressorNode::process):
+        (WebCore::DynamicsCompressorNode::reset):
+        (WebCore::DynamicsCompressorNode::initialize):
+        (WebCore::DynamicsCompressorNode::uninitialize):
+        * webaudio/DynamicsCompressorNode.h: Added.
+        (WebCore::DynamicsCompressorNode::create):
+        * webaudio/DynamicsCompressorNode.idl: Added.
+
 2011-05-16  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Antti Koivisto.

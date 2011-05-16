@@ -42,6 +42,7 @@
 #include "DefaultAudioDestinationNode.h"
 #include "DelayNode.h"
 #include "Document.h"
+#include "DynamicsCompressorNode.h"
 #include "FFTFrame.h"
 #include "HRTFDatabaseLoader.h"
 #include "HRTFPanner.h"
@@ -289,6 +290,13 @@ PassRefPtr<ConvolverNode> AudioContext::createConvolver()
     ASSERT(isMainThread());
     lazyInitialize();
     return ConvolverNode::create(this, m_destinationNode->sampleRate());
+}
+
+PassRefPtr<DynamicsCompressorNode> AudioContext::createDynamicsCompressor()
+{
+    ASSERT(isMainThread());
+    lazyInitialize();
+    return DynamicsCompressorNode::create(this, m_destinationNode->sampleRate());
 }
 
 PassRefPtr<RealtimeAnalyserNode> AudioContext::createAnalyser()

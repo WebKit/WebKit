@@ -62,6 +62,7 @@ module webaudio {
         HighPass2FilterNode createHighPass2Filter();
         AudioPannerNode createPanner();
         ConvolverNode createConvolver();
+        DynamicsCompressorNode createDynamicsCompressor();
         RealtimeAnalyserNode createAnalyser();
         JavaScriptAudioNode createJavaScriptNode(in unsigned long bufferSize);
 

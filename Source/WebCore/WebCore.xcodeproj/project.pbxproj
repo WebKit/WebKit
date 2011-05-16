@@ -5862,6 +5862,16 @@
 		FD3160BE12B0272A00C1A359 /* AudioFileReaderMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD3160B812B0272A00C1A359 /* AudioFileReaderMac.cpp */; };
 		FD3160BF12B0272A00C1A359 /* AudioFileReaderMac.h in Headers */ = {isa = PBXBuildFile; fileRef = FD3160B912B0272A00C1A359 /* AudioFileReaderMac.h */; };
 		FD3160C012B0272A00C1A359 /* FFTFrameMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD3160BA12B0272A00C1A359 /* FFTFrameMac.cpp */; };
+		FD537352137B651800008DCE /* ZeroPole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD537350137B651800008DCE /* ZeroPole.cpp */; };
+		FD537353137B651800008DCE /* ZeroPole.h in Headers */ = {isa = PBXBuildFile; fileRef = FD537351137B651800008DCE /* ZeroPole.h */; };
+		FD537356137B653B00008DCE /* DynamicsCompressorKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD537354137B653B00008DCE /* DynamicsCompressorKernel.cpp */; };
+		FD537357137B653B00008DCE /* DynamicsCompressorKernel.h in Headers */ = {isa = PBXBuildFile; fileRef = FD537355137B653B00008DCE /* DynamicsCompressorKernel.h */; };
+		FD6ED2C3136B8E42003CF072 /* DynamicsCompressorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */; };
+		FD6ED2C4136B8E42003CF072 /* DynamicsCompressorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */; };
+		FD6ED2C7136B8E66003CF072 /* DynamicsCompressor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD6ED2C5136B8E66003CF072 /* DynamicsCompressor.cpp */; };
+		FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */ = {isa = PBXBuildFile; fileRef = FD6ED2C6136B8E66003CF072 /* DynamicsCompressor.h */; };
+		FD7868B9136B999200D403DF /* JSDynamicsCompressorNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */; };
+		FD7868BA136B999200D403DF /* JSDynamicsCompressorNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */; };
 		FDA15E9D12B03EE1003A583A /* JSAudioBuffer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */; };
 		FDA15E9E12B03EE1003A583A /* JSAudioBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA15E8212B03EE1003A583A /* JSAudioBuffer.h */; };
 		FDA15E9F12B03EE1003A583A /* JSAudioBufferSourceNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA15E8312B03EE1003A583A /* JSAudioBufferSourceNode.cpp */; };
@@ -12250,7 +12260,7 @@
 		FBC220DE1237FBEB00BCF788 /* GraphicsContext3DOpenGL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GraphicsContext3DOpenGL.cpp; sourceTree = "<group>"; };
 		FD06DFA3134A4DEF006F5D7D /* DefaultAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DefaultAudioDestinationNode.cpp; sourceTree = "<group>"; };
 		FD06DFA4134A4DEF006F5D7D /* DefaultAudioDestinationNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DefaultAudioDestinationNode.h; sourceTree = "<group>"; };
-		FD1660A413787C6D001FFA7B /* DenormalDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DenormalDisabler.h; path = webaudio/audio/DenormalDisabler.h; sourceTree = SOURCE_ROOT; };
+		FD1660A413787C6D001FFA7B /* DenormalDisabler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DenormalDisabler.h; sourceTree = "<group>"; };
 		FD2DBF0E12B048A300ED98C6 /* Accelerate.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Accelerate.framework; path = /System/Library/Frameworks/Accelerate.framework; sourceTree = "<absolute>"; };
 		FD2DBF0F12B048A300ED98C6 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = /System/Library/Frameworks/AudioToolbox.framework; sourceTree = "<absolute>"; };
 		FD2DBF1012B048A300ED98C6 /* AudioUnit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioUnit.framework; path = /System/Library/Frameworks/AudioUnit.framework; sourceTree = "<absolute>"; };
@@ -12389,6 +12399,17 @@
 		FD3160B812B0272A00C1A359 /* AudioFileReaderMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioFileReaderMac.cpp; sourceTree = "<group>"; };
 		FD3160B912B0272A00C1A359 /* AudioFileReaderMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioFileReaderMac.h; sourceTree = "<group>"; };
 		FD3160BA12B0272A00C1A359 /* FFTFrameMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FFTFrameMac.cpp; sourceTree = "<group>"; };
+		FD537350137B651800008DCE /* ZeroPole.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZeroPole.cpp; sourceTree = "<group>"; };
+		FD537351137B651800008DCE /* ZeroPole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZeroPole.h; sourceTree = "<group>"; };
+		FD537354137B653B00008DCE /* DynamicsCompressorKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicsCompressorKernel.cpp; sourceTree = "<group>"; };
+		FD537355137B653B00008DCE /* DynamicsCompressorKernel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicsCompressorKernel.h; sourceTree = "<group>"; };
+		FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicsCompressorNode.cpp; sourceTree = "<group>"; };
+		FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicsCompressorNode.h; sourceTree = "<group>"; };
+		FD6ED2C5136B8E66003CF072 /* DynamicsCompressor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicsCompressor.cpp; sourceTree = "<group>"; };
+		FD6ED2C6136B8E66003CF072 /* DynamicsCompressor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DynamicsCompressor.h; sourceTree = "<group>"; };
+		FD6ED2C9136B8E9D003CF072 /* DynamicsCompressorNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DynamicsCompressorNode.idl; sourceTree = "<group>"; };
+		FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDynamicsCompressorNode.cpp; sourceTree = "<group>"; };
+		FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDynamicsCompressorNode.h; sourceTree = "<group>"; };
 		FDA15E8112B03EE1003A583A /* JSAudioBuffer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBuffer.cpp; sourceTree = "<group>"; };
 		FDA15E8212B03EE1003A583A /* JSAudioBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAudioBuffer.h; sourceTree = "<group>"; };
 		FDA15E8312B03EE1003A583A /* JSAudioBufferSourceNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferSourceNode.cpp; sourceTree = "<group>"; };
@@ -19539,6 +19560,9 @@
 				FD315FE512B0267600C1A359 /* DelayNode.idl */,
 				FD315FE612B0267600C1A359 /* DelayProcessor.cpp */,
 				FD315FE712B0267600C1A359 /* DelayProcessor.h */,
+				FD6ED2C1136B8E42003CF072 /* DynamicsCompressorNode.cpp */,
+				FD6ED2C2136B8E42003CF072 /* DynamicsCompressorNode.h */,
+				FD6ED2C9136B8E9D003CF072 /* DynamicsCompressorNode.idl */,
 				FD315FE812B0267600C1A359 /* HighPass2FilterNode.cpp */,
 				FD315FE912B0267600C1A359 /* HighPass2FilterNode.h */,
 				FD315FEA12B0267600C1A359 /* HighPass2FilterNode.idl */,
@@ -19590,6 +19614,10 @@
 				FD31605912B026F700C1A359 /* Cone.h */,
 				FD31605A12B026F700C1A359 /* Distance.cpp */,
 				FD31605B12B026F700C1A359 /* Distance.h */,
+				FD6ED2C5136B8E66003CF072 /* DynamicsCompressor.cpp */,
+				FD6ED2C6136B8E66003CF072 /* DynamicsCompressor.h */,
+				FD537354137B653B00008DCE /* DynamicsCompressorKernel.cpp */,
+				FD537355137B653B00008DCE /* DynamicsCompressorKernel.h */,
 				FD1660A413787C6D001FFA7B /* DenormalDisabler.h */,
 				FD31605C12B026F700C1A359 /* EqualPowerPanner.cpp */,
 				FD31605D12B026F700C1A359 /* EqualPowerPanner.h */,
@@ -19621,6 +19649,8 @@
 				FD31607712B026F700C1A359 /* ReverbInputBuffer.h */,
 				FD31607812B026F700C1A359 /* VectorMath.cpp */,
 				FD31607912B026F700C1A359 /* VectorMath.h */,
+				FD537350137B651800008DCE /* ZeroPole.cpp */,
+				FD537351137B651800008DCE /* ZeroPole.h */,
 			);
 			path = audio;
 			sourceTree = "<group>";
@@ -19673,6 +19703,8 @@
 				FDA15EBC12B03F0B003A583A /* JSConvolverNode.h */,
 				FDA15ECF12B03F94003A583A /* JSDelayNode.cpp */,
 				FDA15ED012B03F94003A583A /* JSDelayNode.h */,
+				FD7868B7136B999200D403DF /* JSDynamicsCompressorNode.cpp */,
+				FD7868B8136B999200D403DF /* JSDynamicsCompressorNode.h */,
 				FDA15EBF12B03F2D003A583A /* JSHighPass2FilterNode.cpp */,
 				FDA15EC012B03F2D003A583A /* JSHighPass2FilterNode.h */,
 				FDA15ECB12B03F61003A583A /* JSJavaScriptAudioNode.cpp */,
@@ -22771,10 +22803,15 @@
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
+				FD6ED2C4136B8E42003CF072 /* DynamicsCompressorNode.h in Headers */,
+				FD6ED2C8136B8E66003CF072 /* DynamicsCompressor.h in Headers */,
+				FD7868BA136B999200D403DF /* JSDynamicsCompressorNode.h in Headers */,
 				37AFFDF71370A0B800E895C0 /* SharedBufferCRLFLineReader.h in Headers */,
 				379E371713736A6600B9E919 /* QuotedPrintable.h in Headers */,
 				FD1660A513787C6D001FFA7B /* DenormalDisabler.h in Headers */,
 				BCE5644E137A34D6007D2934 /* ConsoleTypes.h in Headers */,
+				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				FD537357137B653B00008DCE /* DynamicsCompressorKernel.h in Headers */,
 				BCF7E491137CD7C7001DDAE7 /* AdjustViewSizeOrNot.h in Headers */,
 				B1E54593134629C10092A545 /* CallbackTask.h in Headers */,
 			);
@@ -25442,8 +25479,13 @@
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
+				FD6ED2C3136B8E42003CF072 /* DynamicsCompressorNode.cpp in Sources */,
+				FD6ED2C7136B8E66003CF072 /* DynamicsCompressor.cpp in Sources */,
+				FD7868B9136B999200D403DF /* JSDynamicsCompressorNode.cpp in Sources */,
 				37AFFDF61370A0B800E895C0 /* SharedBufferCRLFLineReader.cpp in Sources */,
 				379E371613736A6600B9E919 /* QuotedPrintable.cpp in Sources */,
+				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				FD537356137B653B00008DCE /* DynamicsCompressorKernel.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

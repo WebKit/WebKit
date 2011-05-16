@@ -69,6 +69,7 @@ DOM_CLASSES = \
     AudioSourceNode \
     ConvolverNode \
     DelayNode \
+    DynamicsCompressorNode \
     HighPass2FilterNode \
     JavaScriptAudioNode \
     LowPass2FilterNode \

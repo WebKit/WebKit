@@ -55,6 +55,7 @@ class Document;
 class LowPass2FilterNode;
 class HighPass2FilterNode;
 class ConvolverNode;
+class DynamicsCompressorNode;
 class RealtimeAnalyserNode;
 class JavaScriptAudioNode;
 
@@ -104,6 +105,7 @@ public:
     PassRefPtr<HighPass2FilterNode> createHighPass2Filter();
     PassRefPtr<AudioPannerNode> createPanner();
     PassRefPtr<ConvolverNode> createConvolver();
+    PassRefPtr<DynamicsCompressorNode> createDynamicsCompressor();    
     PassRefPtr<RealtimeAnalyserNode> createAnalyser();
     PassRefPtr<JavaScriptAudioNode> createJavaScriptNode(size_t bufferSize);
     PassRefPtr<AudioChannelSplitter> createChannelSplitter();

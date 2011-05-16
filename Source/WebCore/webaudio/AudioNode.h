@@ -67,6 +67,7 @@ public:
         NodeTypeChannelSplitter,
         NodeTypeChannelMerger,
         NodeTypeAnalyser,
+        NodeTypeDynamicsCompressor,
         NodeTypeEnd
     };
 
