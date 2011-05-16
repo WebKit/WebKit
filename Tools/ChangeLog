@@ -1,3 +1,9 @@
+2011-05-15  Dominic Cooney  <dominicc@chromium.org>
+
+        Unreviewed: adding myself to committers.py.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-05-15  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Chris Jerdonek.
