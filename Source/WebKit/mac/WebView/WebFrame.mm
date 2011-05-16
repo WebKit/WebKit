@@ -1343,8 +1343,9 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!root)
         return [NSArray array];
 
-    float printWidth = root->style()->isHorizontalWritingMode() ? root->docWidth() / printScaleFactor : pageSize.width;
-    float printHeight = root->style()->isHorizontalWritingMode() ? pageSize.height : root->docHeight() / printScaleFactor;
+    const IntRect& documentRect = root->documentRect();
+    float printWidth = root->style()->isHorizontalWritingMode() ? documentRect.width() / printScaleFactor : pageSize.width;
+    float printHeight = root->style()->isHorizontalWritingMode() ? pageSize.height : documentRect.height() / printScaleFactor;
 
     PrintContext printContext(_private->coreFrame);
     printContext.computePageRectsWithPageSize(FloatSize(printWidth, printHeight), true);

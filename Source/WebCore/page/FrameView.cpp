@@ -502,9 +502,9 @@ void FrameView::adjustViewSize()
     if (!root)
         return;
 
-    IntSize size = IntSize(root->docWidth(), root->docHeight());
-
-    ScrollView::setScrollOrigin(IntPoint(-root->docLeft(), -root->docTop()), !m_frame->document()->printing(), size == contentsSize());
+    const IntRect& rect = root->documentRect();
+    const IntSize& size = rect.size();
+    ScrollView::setScrollOrigin(IntPoint(-rect.x(), -rect.y()), !m_frame->document()->printing(), size == contentsSize());
     
     setContentsSize(size);
 }
@@ -2552,7 +2552,9 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
         // page width when shrunk, we will lay out at maximum shrink and clip extra content.
         // FIXME: We are assuming a shrink-to-fit printing implementation.  A cropping
         // implementation should not do this!
-        int docLogicalWidth = root->style()->isHorizontalWritingMode() ? root->docWidth() : root->docHeight();
+        const IntRect& documentRect = root->documentRect();
+        bool horizontalWritingMode = root->style()->isHorizontalWritingMode();
+        int docLogicalWidth = horizontalWritingMode ? documentRect.width() : documentRect.height();
         if (docLogicalWidth > pageLogicalWidth) {
             flooredPageLogicalWidth = std::min<int>(docLogicalWidth, pageLogicalWidth * maximumShrinkFactor);
             if (pageLogicalHeight)
@@ -2560,14 +2562,14 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
             root->setLogicalWidth(flooredPageLogicalWidth);
             root->setNeedsLayoutAndPrefWidthsRecalc();
             forceLayout();
-            int docLogicalHeight = root->style()->isHorizontalWritingMode() ? root->docHeight() : root->docWidth();
-            int docLogicalTop = root->style()->isHorizontalWritingMode() ? root->docTop() : root->docLeft();
-            int docLogicalRight = root->style()->isHorizontalWritingMode() ? root->docRight() : root->docBottom();
+            int docLogicalHeight = horizontalWritingMode ? documentRect.height() : documentRect.width();
+            int docLogicalTop = horizontalWritingMode ? documentRect.y() : documentRect.x();
+            int docLogicalRight = horizontalWritingMode ? documentRect.maxX() : documentRect.maxY();
             int clippedLogicalLeft = 0;
             if (!root->style()->isLeftToRightDirection())
                 clippedLogicalLeft = docLogicalRight - flooredPageLogicalWidth;
             IntRect overflow(clippedLogicalLeft, docLogicalTop, flooredPageLogicalWidth, docLogicalHeight);
-            if (!root->style()->isHorizontalWritingMode())
+            if (!horizontalWritingMode)
                 overflow = overflow.transposedRect();
             root->clearLayoutOverflow();
             root->addLayoutOverflow(overflow); // This is how we clip in case we overflow again.

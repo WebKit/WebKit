@@ -74,13 +74,14 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
 
     float pageWidth;
     float pageHeight;
+    const IntRect& documentRect = view->documentRect();
     if (isHorizontal) {
         float ratio = printRect.height() / printRect.width();
-        pageWidth = view->docWidth();
+        pageWidth = documentRect.width();
         pageHeight = floorf(pageWidth * ratio);
     } else {
         float ratio = printRect.width() / printRect.height();
-        pageHeight = view->docHeight();
+        pageHeight = documentRect.height();
         pageWidth = floorf(pageHeight * ratio);
     }
 

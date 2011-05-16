@@ -1,3 +1,15 @@
+2011-05-16  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Replace docTop/Right/Bottom/Left/Width/Height with documentRect
+        https://bugs.webkit.org/show_bug.cgi?id=60743
+
+        Replace uses of docWidth/Height with documentRect.
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _computePageRectsWithPrintScaleFactor:pageSize:]):
+
 2011-05-16  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Antti Koivisto.

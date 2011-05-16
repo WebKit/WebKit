@@ -653,40 +653,13 @@ IntRect RenderView::viewRect() const
     return IntRect();
 }
 
-int RenderView::docTop() const
-{
-    IntRect overflowRect(0, minYLayoutOverflow(), 0, maxYLayoutOverflow() - minYLayoutOverflow());
-    flipForWritingMode(overflowRect);
-    if (hasTransform())
-        overflowRect = layer()->currentTransform().mapRect(overflowRect);
-    return overflowRect.y();
-}
-
-int RenderView::docBottom() const
+IntRect RenderView::documentRect() const
 {
     IntRect overflowRect(layoutOverflowRect());
     flipForWritingMode(overflowRect);
     if (hasTransform())
         overflowRect = layer()->currentTransform().mapRect(overflowRect);
-    return overflowRect.maxY();
-}
-
-int RenderView::docLeft() const
-{
-    IntRect overflowRect(layoutOverflowRect());
-    flipForWritingMode(overflowRect);
-    if (hasTransform())
-        overflowRect = layer()->currentTransform().mapRect(overflowRect);
-    return overflowRect.x();
-}
-
-int RenderView::docRight() const
-{
-    IntRect overflowRect(layoutOverflowRect());
-    flipForWritingMode(overflowRect);
-    if (hasTransform())
-        overflowRect = layer()->currentTransform().mapRect(overflowRect);
-    return overflowRect.maxX();
+    return overflowRect;
 }
 
 int RenderView::viewHeight() const

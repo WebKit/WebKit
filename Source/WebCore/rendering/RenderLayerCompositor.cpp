@@ -1139,8 +1139,9 @@ void RenderLayerCompositor::willMoveOffscreen()
 void RenderLayerCompositor::updateRootLayerPosition()
 {
     if (m_rootPlatformLayer) {
-        m_rootPlatformLayer->setSize(FloatSize(m_renderView->docWidth(), m_renderView->docHeight()));
-        m_rootPlatformLayer->setPosition(FloatPoint(m_renderView->docLeft(), m_renderView->docTop()));
+        const IntRect& documentRect = m_renderView->documentRect();
+        m_rootPlatformLayer->setSize(documentRect.size());
+        m_rootPlatformLayer->setPosition(documentRect.location());
     }
     if (m_clipLayer) {
         FrameView* frameView = m_renderView->frameView();

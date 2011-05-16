@@ -1,3 +1,30 @@
+2011-05-16  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Replace docTop/Right/Bottom/Left/Width/Height with documentRect
+        https://bugs.webkit.org/show_bug.cgi?id=60743
+
+        Change RenderView::documentRect to compute rect once rather than four times.
+        Replace all uses of docTop/Right/Bottom/Left/Width/Height with documentRect to
+        simplify the code and reduce complexity.
+
+        Covered by existing tests.
+
+        * WebCore.exp.in:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::adjustViewSize):
+        (WebCore::FrameView::forceLayoutForPagination):
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::computePageRects):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintRootBoxFillLayers):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateRootLayerPosition):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::documentRect):
+        * rendering/RenderView.h:
+
 2011-05-16  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

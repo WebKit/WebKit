@@ -168,13 +168,7 @@ public:
     bool usesCompositing() const;
 #endif
 
-    int docTop() const;
-    int docBottom() const;
-    int docHeight() const { return docBottom() - docTop(); }
-    int docLeft() const;
-    int docRight() const;
-    int docWidth() const { return docRight() - docLeft(); }
-    IntRect documentRect() const { return IntRect(docLeft(), docTop(), docWidth(), docHeight()); }
+    IntRect documentRect() const;
 
 protected:
     virtual void mapLocalToContainer(RenderBoxModelObject* repaintContainer, bool useTransforms, bool fixed, TransformState&) const;
