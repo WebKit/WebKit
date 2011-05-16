@@ -688,8 +688,8 @@ BUGWK60107 WIN LINUX : inspector/console/console-log-before-inspector-open.html 
 BUGWK60107 WIN LINUX : inspector/console/console-tests.html = TEXT PASS TIMEOUT
 BUGWK60107 WIN LINUX : inspector/console/console-clear.html = PASS TEXT
 
-BUGWK60109 WIN LINUX RELEASE : inspector/elements/edit-dom-actions.html = PASS TEXT
-BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS TEXT
+BUGWK60109 WIN LINUX RELEASE : inspector/elements/edit-dom-actions.html = PASS
+BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS
 
 // -----------------------------------------------------------------
 // Other

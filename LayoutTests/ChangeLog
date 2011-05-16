@@ -1,3 +1,9 @@
+2011-05-16  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: fix inspector dom action test flake.
+
+        * inspector/elements/edit-dom-actions.html:
+
 2011-05-16  Adam Roben  <aroben@apple.com>
 
         Skip another new test that relies on parts of EventSender that WTR doesn't support

@@ -74,15 +74,18 @@ function test()
          
             function testBody(node, done)
             {
-                editNodePart(node, "webkit-html-attribute");
-
-                var editorElement = window.getSelection().anchorNode.parentElement;
+                var editorElement = editNodePart(node, "webkit-html-attribute");
                 editorElement.dispatchEvent(InspectorTest.createKeyEvent("U+0009")); // Tab
-
-                var editorElement = window.getSelection().anchorNode.parentElement;
-                editorElement.textContent = "newattr=\"new-value\"";
-                editorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
-                InspectorTest.runAfterPendingDispatches(done);
+                
+                InspectorTest.runAfterPendingDispatches(testContinuation);
+                
+                function testContinuation()
+                {
+                    var editorElement = window.getSelection().anchorNode.parentElement;
+                    editorElement.textContent = "newattr=\"new-value\"";
+                    editorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
+                    InspectorTest.runAfterPendingDispatches(done);
+                }
             }
         },
 
