@@ -31,7 +31,7 @@
 #include "OwnPtrCommon.h"
 #include "TypeTraits.h"
 
-#if !PLATFORM(CHROMIUM) && !PLATFORM(WIN) && !PLATFORM(MAC)
+#if !PLATFORM(CHROMIUM) && !PLATFORM(WIN) && !PLATFORM(MAC) && !PLATFORM(QT)
 // Remove this once we make all WebKit code compatible with stricter rules about PassOwnPtr.
 #define LOOSE_PASS_OWN_PTR
 #endif
