@@ -1,3 +1,30 @@
+2011-05-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Enrica Casucci.
+
+        editing/deleting/5091898.html should be renamed and converted to a dump-as-markup test
+        https://bugs.webkit.org/show_bug.cgi?id=60920
+
+        Renamed 5091898.html to delete-line-break-before-underlined-content.html and converted it
+        to a dump-as-markup test.
+
+        * editing/deleting/5091898.html: Removed.
+        * editing/deleting/delete-line-break-before-underlined-content-expected.txt: Added.
+        * editing/deleting/delete-line-break-before-underlined-content.html: Copied from LayoutTests/editing/deleting/5091898.html.
+        * platform/chromium-linux/editing/deleting/5091898-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5091898-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5091898-expected.txt: Removed.
+        * platform/gtk/editing/deleting/5091898-expected.txt: Removed.
+        * platform/mac-leopard/editing/deleting/5091898-expected.png: Removed.
+        * platform/mac/editing/deleting/5091898-expected.png: Removed.
+        * platform/mac/editing/deleting/5091898-expected.txt: Removed.
+        * platform/mac/editing/style/5091898-expected.png: Removed.
+        * platform/mac/editing/style/5091898-expected.txt: Removed.
+        * platform/qt-arm/Skipped:
+        * platform/qt-mac/Skipped:
+        * platform/qt/editing/deleting/5091898-expected.png: Removed.
+        * platform/qt/editing/deleting/5091898-expected.txt: Removed.
+
 2011-05-16  Tony Chang  <tony@chromium.org>
 
         Move chromium-linux-x86_64 results into chromium-linux.  We're making
