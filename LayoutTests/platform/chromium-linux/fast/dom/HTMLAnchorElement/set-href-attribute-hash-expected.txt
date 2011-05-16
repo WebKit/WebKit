@@ -18,7 +18,7 @@ PASS a.href is 'https://www.mydomain.com/path/testurl.html#'
 Add hash to mailto: protocol
 FAIL a.href should be mailto:e-mail_address@goes_here#hash-value. Was mailto:e-mail_address@goes_here.
 Add hash to file: protocol
-FAIL a.href should be file:///some%20path#hash%20value. Was file:///some%20path#hash value.
+PASS a.href is 'file:///some%20path#hash value'
 Set hash to '#'
 PASS a.href is 'http://mydomain.com/#'
 Add hash to non-standard protocol

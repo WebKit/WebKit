@@ -1,3 +1,10 @@
+2011-05-16  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix baselines for set-href-attribute-hash.html.  This is too hard.
+
+        * platform/chromium-linux/fast/dom/HTMLAnchorElement/set-href-attribute-hash-expected.txt:
+        * platform/chromium-win-vista/fast/dom/HTMLAnchorElement/set-href-attribute-hash-expected.txt:
+
 2011-05-16  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed chromium expectations changes to disable crashing tests.
