@@ -1,3 +1,16 @@
+2011-05-16  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Tools.pro misses include(common.pri)
+        https://bugs.webkit.org/show_bug.cgi?id=60883
+
+        It includes features.pri, which depends on common.pri (the build is
+        not broken today with the default options, but this is the right
+        thing to do).
+
+        * Tools.pro:
+
 2011-05-15  Dominic Cooney  <dominicc@chromium.org>
 
         Unreviewed: adding myself to committers.py.
