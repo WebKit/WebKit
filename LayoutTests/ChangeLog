@@ -1,3 +1,18 @@
+2011-05-16  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Port Mozilla's IndexedDB tests: cursors
+        https://bugs.webkit.org/show_bug.cgi?id=60804
+
+        This test creates an object store with a few records and exercises
+        a variety of cursors going forward, backward, and over key ranges.
+        It also updates records from the cursor and checks that the update
+        stuck.
+
+        * storage/indexeddb/mozilla/cursors-expected.txt: Added.
+        * storage/indexeddb/mozilla/cursors.html: Added.
+
 2011-05-16  Jessie Berlin  <jberlin@apple.com>
 
         Remove the failing mac-wk2 expected results for online-fallback-layering.html, since it now
