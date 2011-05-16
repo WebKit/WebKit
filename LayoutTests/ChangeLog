@@ -1,3 +1,10 @@
+2011-05-15  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
+        * platform/chromium-linux/svg/custom/small-rect-scale-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/small-rect-scale-expected.png: Added.
+
 2011-05-15  Dominic Cooney  <dominicc@chromium.org>
 
         Unreviewed. Remove expectation of gc-shadow.html flakiness.
