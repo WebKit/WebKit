@@ -1,3 +1,15 @@
+2011-05-16  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Remove unused member variables from LayerRendererChromium
+        https://bugs.webkit.org/show_bug.cgi?id=60899
+
+        These should have been removed when tiling was enabled for root
+        layers.
+
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2011-05-16  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r86589.

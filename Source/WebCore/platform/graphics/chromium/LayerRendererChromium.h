@@ -199,16 +199,6 @@ private:
     unsigned m_offscreenFramebufferId;
     bool m_compositeOffscreen;
 
-#if USE(SKIA)
-    OwnPtr<SkCanvas> m_rootLayerCanvas;
-    OwnPtr<PlatformContextSkia> m_rootLayerSkiaContext;
-    OwnPtr<GraphicsContext> m_rootLayerGraphicsContext;
-#elif USE(CG)
-    Vector<uint8_t> m_rootLayerBackingStore;
-    RetainPtr<CGContextRef> m_rootLayerCGContext;
-    OwnPtr<GraphicsContext> m_rootLayerGraphicsContext;
-#endif
-
     // Maximum texture dimensions supported.
     int m_maxTextureSize;
 
