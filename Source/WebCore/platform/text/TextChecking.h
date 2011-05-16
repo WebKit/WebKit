@@ -47,7 +47,8 @@ enum TextCheckingType {
     TextCheckingTypeQuote       = 1 << 6,
     TextCheckingTypeDash        = 1 << 7,
     TextCheckingTypeReplacement = 1 << 8,
-    TextCheckingTypeCorrection  = 1 << 9
+    TextCheckingTypeCorrection  = 1 << 9,
+    TextCheckingTypeShowCorrectionPanel = 1 << 10
 };
 
 typedef unsigned TextCheckingTypeMask;

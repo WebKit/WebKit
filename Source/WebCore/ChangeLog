@@ -1,3 +1,22 @@
+2011-05-13  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Refactoring: Editor::TextCheckingOptions should be replaced with TextCheckingType
+        https://bugs.webkit.org/show_bug.cgi?id=57088
+
+        Removed Editor::TextCheckingOptions and replaced it with TextCheckingTypeMask
+        No new tests, no behavior change.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::replaceSelectionWithFragment):
+        (WebCore::Editor::markMisspellingsAfterTypingToWord):
+        (WebCore::Editor::markAllMisspellingsAndBadGrammarInRanges):
+        (WebCore::Editor::markMisspellingsAndBadGrammar):
+        (WebCore::Editor::resolveTextCheckingTypeMask):
+        * editing/Editor.h:
+        * platform/text/TextChecking.h: Added TextCheckingTypeShowCorrectionPanel
+
 2011-05-15  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
