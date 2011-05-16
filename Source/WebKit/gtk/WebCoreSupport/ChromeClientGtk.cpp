@@ -403,6 +403,7 @@ void ChromeClient::invalidateContentsAndWindow(const IntRect& updateRect, bool i
 void ChromeClient::invalidateContentsForSlowScroll(const IntRect& updateRect, bool immediate)
 {
     invalidateContentsAndWindow(updateRect, immediate);
+    m_adjustmentWatcher.updateAdjustmentsFromScrollbarsLater();
 }
 
 void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, const IntRect& clipRect)

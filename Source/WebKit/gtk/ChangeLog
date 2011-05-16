@@ -1,3 +1,19 @@
+2011-05-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Scrolling in Twitter is broken after r86102
+        https://bugs.webkit.org/show_bug.cgi?id=60922
+
+        Fix adjustment handling for pages that trigger the slow scrolling path.
+        The slow scrolling path is triggered by WebCore when it determines that
+        doing a simple invalidation is quicker than doing a normal scroll. This
+        typically happens when there are large elements with fixed positions.
+
+        * WebCoreSupport/ChromeClientGtk.cpp:
+        (WebKit::ChromeClient::invalidateContentsForSlowScroll): Poke the adjustment
+        watcher to update its adjustments when a page triggers the slow scrolling path.
+
 2011-05-13  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Simon Fraser.
