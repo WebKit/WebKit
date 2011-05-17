@@ -1,3 +1,14 @@
+2011-05-17  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r86647.
+        http://trac.webkit.org/changeset/86647
+        https://bugs.webkit.org/show_bug.cgi?id=56814
+
+        Broke tests downstream in Chromium
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::addMarker):
+
 2011-05-17  Yufeng Shen  <miletus@chromium.org>
 
         Reviewed by Darin Fisher.

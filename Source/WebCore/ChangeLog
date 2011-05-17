@@ -1,5 +1,52 @@
 2011-05-17  Andrew Wilson  <atwilson@chromium.org>
 
+        Unreviewed, rolling out r86647.
+        http://trac.webkit.org/changeset/86647
+        https://bugs.webkit.org/show_bug.cgi?id=56814
+
+        Broke tests downstream in Chromium
+
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::operator==):
+        (WebCore::DocumentMarker::operator!=):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addMarker):
+        (WebCore::DocumentMarkerController::copyMarkers):
+        (WebCore::DocumentMarkerController::removeMarkers):
+        (WebCore::DocumentMarkerController::markerContainingPoint):
+        (WebCore::DocumentMarkerController::markersInRange):
+        (WebCore::DocumentMarkerController::renderedRectsForMarkers):
+        (WebCore::DocumentMarkerController::removeMarkersFromList):
+        (WebCore::DocumentMarkerController::repaintMarkers):
+        (WebCore::DocumentMarkerController::shiftMarkers):
+        (WebCore::DocumentMarkerController::setMarkersActive):
+        (WebCore::DocumentMarkerController::hasMarkers):
+        (WebCore::DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange):
+        (WebCore::DocumentMarkerController::showMarkers):
+        * dom/DocumentMarkerController.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelection):
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionStartHasMarkerFor):
+        * editing/SpellingCorrectionController.cpp:
+        (WebCore::SpellingCorrectionController::respondToChangedSelection):
+        * editing/SpellingCorrectionController.h:
+        (WebCore::SpellingCorrectionController::shouldStartTimerFor):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::spellingToolTip):
+        (WebCore::HitTestResult::replacedString):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer):
+
+2011-05-17  Andrew Wilson  <atwilson@chromium.org>
+
         Unreviewed, rolling out r86656.
         http://trac.webkit.org/changeset/86656
 

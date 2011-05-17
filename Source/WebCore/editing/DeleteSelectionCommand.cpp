@@ -762,9 +762,9 @@ String DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelec
     Vector<DocumentMarker> markers = document()->markers()->markersInRange(rangeOfFirstCharacter.get(), DocumentMarker::Autocorrected);
     for (size_t i = 0; i < markers.size(); ++i) {
         const DocumentMarker& marker = markers[i];
-        int startOffset = marker.startOffset();
+        int startOffset = marker.startOffset;
         if (startOffset == startOfSelection.deepEquivalent().offsetInContainerNode())
-            return marker.description();
+            return marker.description;
     }
     return String();
 }

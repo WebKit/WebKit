@@ -99,7 +99,7 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
         const DocumentMarker& marker = *markerIt;
 
         // SVG is only interessted in the TextMatch marker, for now.
-        if (marker.type() != DocumentMarker::TextMatch)
+        if (marker.type != DocumentMarker::TextMatch)
             continue;
 
         FloatRect markerRect;
@@ -109,8 +109,8 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
 
             SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(box);
 
-            int markerStartPosition = max<int>(marker.startOffset() - textBox->start(), 0);
-            int markerEndPosition = min<int>(marker.endOffset() - textBox->start(), textBox->len());
+            int markerStartPosition = max<int>(marker.startOffset - textBox->start(), 0);
+            int markerEndPosition = min<int>(marker.endOffset - textBox->start(), textBox->len());
 
             if (markerStartPosition >= markerEndPosition)
                 continue;
