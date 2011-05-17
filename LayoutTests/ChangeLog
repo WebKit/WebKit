@@ -1,3 +1,30 @@
+2011-05-17  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] rebaseline skipped tests after r83871
+        https://bugs.webkit.org/show_bug.cgi?id=60961
+
+        Rebaseline tests after r83871 and remove them from Qt Skipped file.
+
+        * platform/qt/Skipped:
+        * platform/qt/http/tests/local/file-url-sent-as-referer-expected.txt:
+        * platform/qt/http/tests/misc/error404-expected.txt:
+        * platform/qt/http/tests/misc/frame-access-during-load-expected.txt:
+        * platform/qt/http/tests/misc/generated-content-inside-table-expected.txt:
+        * platform/qt/http/tests/misc/iframe404-expected.txt:
+        * platform/qt/http/tests/misc/location-replace-crossdomain-expected.txt:
+        * platform/qt/http/tests/uri/css-href-expected.txt:
+        * platform/qt/tables/layering/paint-test-layering-1-expected.txt:
+        * platform/qt/tables/layering/paint-test-layering-2-expected.txt:
+        * platform/qt/tables/mozilla/bugs/adforce_imgis_com-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug56201-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug92647-2-expected.txt:
+        * platform/qt/tables/mozilla/other/slashlogo-expected.txt:
+        * platform/qt/tables/mozilla_expected_failures/bugs/bug23847-expected.txt:
+        * platform/qt/transforms/2d/transform-fixed-container-expected.txt:
+        * platform/qt/transitions/svg-text-shadow-transition-expected.txt:
+
 2011-05-17  Jessie Berlin  <jberlin@apple.com>
 
         WebKit2 needs layoutTestController.overridePreference.

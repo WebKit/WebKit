@@ -3,13 +3,13 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderTable {TABLE} at (0,0) size 192x27
-        RenderTableSection {TBODY} at (0,0) size 192x27
-          RenderTableRow {TR} at (0,2) size 192x23
-            RenderTableCell {TD} at (2,2) size 188x23 [r=0 c=0 rs=1 cs=1]
-              RenderBlock {DIV} at (1,1) size 186x21
-                RenderText {#text} at (0,0) size 182x21
+      RenderTable {TABLE} at (0,0) size 192x28
+        RenderTableSection {TBODY} at (0,0) size 192x28
+          RenderTableRow {TR} at (0,2) size 192x24
+            RenderTableCell {TD} at (2,2) size 188x24 [r=0 c=0 rs=1 cs=1]
+              RenderBlock {DIV} at (1,1) size 186x22
+                RenderText {#text} at (0,0) size 182x22
                   text run at (0,0) width 182: "This text should not break "
-                RenderInline (generated) at (0,0) size 4x21
-                  RenderText at (182,0) size 4x21
+                RenderInline (generated) at (0,0) size 4x22
+                  RenderText at (182,0) size 4x22
                     text run at (182,0) width 4: "."
