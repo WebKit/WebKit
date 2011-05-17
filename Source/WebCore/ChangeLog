@@ -1,3 +1,11 @@
+2011-05-17  Anders Carlsson  <andersca@apple.com>
+
+        Fix the clang build.
+
+        * rendering/RenderText.h:
+        (WebCore::RenderText::nodeAtPoint):
+        nodeAtPoint should take a const IntPoint reference.
+
 2011-05-17  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Ryosuke Niwa.
