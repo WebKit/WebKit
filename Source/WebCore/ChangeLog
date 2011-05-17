@@ -1,3 +1,12 @@
+2011-05-17  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] GraphicsLayerQtImpl: Remove an unused variable.
+
+        * platform/graphics/qt/GraphicsLayerQt.cpp:
+        (WebCore::GraphicsLayerQtImpl::paint):
+
 2011-05-17  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

@@ -645,7 +645,6 @@ void GraphicsLayerQtImpl::paint(QPainter* painter, const QStyleOptionGraphicsIte
                 // We might need to recache, in case we try to paint and the cache was purged (e.g. if it was full).
                 if (!QPixmapCache::find(m_backingStore.key, &backingStore) || backingStore.size() != m_size.toSize())
                     backingStore = recache(QRegion(m_state.contentsRect));
-                const QRectF bounds(0, 0, m_backingStore.size.width(), m_backingStore.size.height());
                 painter->drawPixmap(0, 0, backingStore);
             }
         }
