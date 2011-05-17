@@ -1,3 +1,11 @@
+2011-05-16  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
+        svg/hixie/perf/00{1,2}.xml now pass on Linux.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86648.

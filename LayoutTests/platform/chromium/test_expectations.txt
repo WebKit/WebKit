@@ -2477,8 +2477,8 @@ BUGCR58257 WIN : http/tests/misc/last-modified-parsing.html = PASS TEXT TIMEOUT
 
 // Flaky because they snapshot and animation.
 // Started failing on Mac since 69314:69342.
-BUGCR10479 : svg/hixie/perf/001.xml = IMAGE PASS
-BUGCR10479 : svg/hixie/perf/002.xml = IMAGE PASS
+BUGCR10479 WIN MAC : svg/hixie/perf/001.xml = IMAGE PASS
+BUGCR10479 WIN MAC : svg/hixie/perf/002.xml = IMAGE PASS
 
 // From r69334. Mask seems broken on the reflected image.
 BUGCR58358 WIN LINUX : fast/css/transformed-mask.html = IMAGE+TEXT
