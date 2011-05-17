@@ -792,7 +792,7 @@ void GraphicsLayerQtImpl::flushChanges(bool recursive, bool forceUpdateTransform
         case HTMLContentType:
             if (m_pendingContent.contentType != m_currentContent.contentType)
                 update();
-            if (!m_state.drawsContent && m_layer->drawsContent())
+            else if (!m_state.drawsContent && m_layer->drawsContent())
                 update();
 
             setFlag(ItemHasNoContents, !m_layer->drawsContent());
@@ -1395,6 +1395,9 @@ public:
     {
     }
 
+
+    virtual AnimatedPropertyID animatedProperty() const = 0;
+
     virtual void updateState(QAbstractAnimation::State newState, QAbstractAnimation::State oldState)
     {
         QAbstractAnimation::updateState(newState, oldState);
@@ -1528,6 +1531,8 @@ public:
             setCurrentTime(1);
     }
 
+    virtual AnimatedPropertyID animatedProperty() const { return AnimatedPropertyWebkitTransform; }
+
     // The idea is that we let WebCore manage the transform operations and Qt just manage the
     // animation heartbeat and the bottom-line QTransform. We gain performance, not by using
     // Transform instead of TransformationMatrix, but by proper caching of items that are
@@ -1599,6 +1604,8 @@ public:
             setCurrentTime(1);
     }
 
+    virtual AnimatedPropertyID animatedProperty() const { return AnimatedPropertyOpacity; }
+
     virtual void applyFrame(const qreal& fromValue, const qreal& toValue, qreal progress)
     {
         qreal opacity = qBound(qreal(0), fromValue + (toValue - fromValue) * progress, qreal(1));
@@ -1640,8 +1647,11 @@ bool GraphicsLayerQt::addAnimation(const KeyframeValueList& values, const IntSiz
     for (it = m_impl->m_animations.begin(); it != m_impl->m_animations.end(); ++it) {
         if (*it) {
             AnimationQtBase* curAnimation = static_cast<AnimationQtBase*>(it->data());
-            if (curAnimation && curAnimation->m_webkitAnimation == anim)
+            if (curAnimation && curAnimation->m_webkitAnimation == anim
+                && values.property() == curAnimation->animatedProperty()) {
                 newAnim = curAnimation;
+                break;
+            }
         }
     }
 

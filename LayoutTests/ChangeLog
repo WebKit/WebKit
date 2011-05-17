@@ -1,3 +1,15 @@
+2011-05-17  Sam Magnuson  <smagnuson@netflix.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Node that have both an opacity and a transform animation on them seem not to fire.
+        https://bugs.webkit.org/show_bug.cgi?id=40841
+
+        * compositing/animation/busy-indicator-no.png: Added.
+        * compositing/animation/busy-indicator.html: Added.
+        * compositing/animation/busy-indicator.png: Added.
+        * compositing/animation/busy-indicator-expected.txt: Added.
+
 2011-05-17  Andreas Kling  <kling@webkit.org>
 
         Bot-matching rebaseline after r86675.
