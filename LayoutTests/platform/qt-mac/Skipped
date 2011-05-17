@@ -2662,6 +2662,7 @@ plugins/npruntime/round-trip-npobject.html
 plugins/npruntime/throw-exception.html
 plugins/object-embed-plugin-scripting.html
 plugins/invalidate_rect.html
+plugins/get-url-notify-with-url-that-fails-to-load.html
 printing/page-rule-in-media-query.html
 scrollbars/basic-scrollbar.html
 scrollbars/custom-scrollbar-with-incomplete-style.html

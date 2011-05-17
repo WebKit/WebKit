@@ -1,3 +1,15 @@
+2011-05-17  Robert Hogan  <robert@webkit.org>
+
+        Rubber-stamped by Csaba Osztrogonac.
+
+        [Gtk] plugins/get-url-notify-with-url-that-fails-to-load.html crashes on buildbot
+
+        Skip on qt-mac
+
+        http://bugs.webkit.org/show_bug.cgi?id=60838
+
+        * platform/qt-mac/Skipped:
+
 2011-05-17  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Ryosuke Niwa.
