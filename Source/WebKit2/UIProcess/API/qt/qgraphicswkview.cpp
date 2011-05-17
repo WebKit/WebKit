@@ -21,11 +21,9 @@
 #include "config.h"
 #include "qgraphicswkview.h"
 
-#include "ChunkedUpdateDrawingAreaProxy.h"
 #include "IntSize.h"
 #include "RunLoop.h"
 #include "TiledDrawingAreaProxy.h"
-#include "UpdateChunk.h"
 #include "WKAPICast.h"
 #include "qwkpage.h"
 #include "qwkpage_p.h"
