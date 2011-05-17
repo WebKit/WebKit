@@ -682,18 +682,19 @@ private:
         // Also, consider a QMetaType::Void QVariant to be undefined
         QString escaped = s;
         escaped.replace('\'', "\\'"); // Don't preescape your single quotes!
-        evalJS("var retvalue;\
-               var typevalue; \
-               try {\
-               retvalue = eval('" + escaped + "'); \
-               typevalue = typeof retvalue; \
-               if (retvalue instanceof Array) \
-               typevalue = 'array'; \
-           } \
-               catch(e) {\
-               retvalue = e.name + ': ' + e.message;\
-               typevalue = 'error';\
-           }");
+        QString code("var retvalue; "
+                     "var typevalue; "
+                     "try { "
+                     "    retvalue = eval('%1'); "
+                     "    typevalue = typeof retvalue; "
+                     "    if (retvalue instanceof Array) "
+                     "        typevalue = 'array'; "
+                     "} catch(e) { "
+                     "    retvalue = e.name + ': ' + e.message; "
+                     "    typevalue = 'error'; "
+                     "}");
+        evalJS(code.arg(escaped));
+
         QVariant ret = evalJSV("retvalue");
         if (ret.userType() != QMetaType::Void)
             type = evalJS("typevalue");

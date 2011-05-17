@@ -1,3 +1,17 @@
+2011-05-17  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Simplify syntax in test code to make prepare-ChangeLog less confused
+        https://bugs.webkit.org/show_bug.cgi?id=60978
+
+        Backslash to escape newlines was confusing both prepare-ChangeLog and the
+        QtCreator highlight system.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::evalJSV):
+        Remove usage of backslash to escape newlines in string literal.
+
 2011-05-17  Young Han Lee  <joybro@company100.net>
 
         Reviewed by Csaba Osztrogonác.
