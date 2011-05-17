@@ -1,3 +1,38 @@
+2011-05-17  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Add a LineLayoutState object to hold global state during line layout
+        https://bugs.webkit.org/show_bug.cgi?id=60113
+
+        Like LayoutState for layout(), LineLayoutState keeps track of global information
+        during an entire linebox tree layout pass (aka layoutInlineChildren).
+
+        For now it just holds isFullLayout and the logicalRepaintTop/Bottom.
+        It's possible we should hold the useRepaintBounds bool as well as
+        the startLine and endLine RootInlineBox pointers.
+
+        No change in behavior, thus no tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlock):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::LineLayoutState::LineLayoutState):
+        (WebCore::LineLayoutState::markForFullLayout):
+        (WebCore::LineLayoutState::isFullLayout):
+        (WebCore::LineLayoutState::setRepaintRange):
+        (WebCore::LineLayoutState::updateRepaintRangeFromBox):
+        (WebCore::LineLayoutState::startLine):
+        (WebCore::LineLayoutState::endLine):
+        (WebCore::deleteLineRange):
+        (WebCore::RenderBlock::layoutRunsAndFloats):
+        (WebCore::RenderBlock::layoutInlineChildren):
+        (WebCore::RenderBlock::checkFloatsInCleanLine):
+        (WebCore::RenderBlock::determineStartPosition):
+        (WebCore::RenderBlock::determineEndPosition):
+        (WebCore::RenderBlock::matchedEndLine):
+
 2011-05-17  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

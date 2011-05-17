@@ -1282,6 +1282,7 @@ void RenderBlock::layoutBlock(bool relayoutChildren, int pageLogicalHeight)
     // we overflow or not.
     updateScrollInfoAfterLayout();
 
+    // FIXME: This repaint logic should be moved into a separate helper function!
     // Repaint with our new bounds if they are different from our old bounds.
     bool didFullRepaint = repainter.repaintAfterLayout();
     if (!didFullRepaint && repaintLogicalTop != repaintLogicalBottom && (style()->visibility() == VISIBLE || enclosingLayer()->hasVisibleContent())) {

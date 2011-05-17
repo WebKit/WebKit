@@ -816,12 +816,39 @@ RootInlineBox* RenderBlock::createLineBoxesFromBidiRuns(BidiRunList<BidiRun>& bi
     return lineBox;
 }
 
-static void deleteLineRange(RenderArena* arena, RootInlineBox* startLine, int& repaintLogicalTop, int& repaintLogicalBottom, RootInlineBox* stopLine = 0)
+// Like LayoutState for layout(), LineLayoutState keeps track of global information
+// during an entire linebox tree layout pass (aka layoutInlineChildren).
+class LineLayoutState {
+public:
+    LineLayoutState(bool fullLayout, int& repaintLogicalTop, int& repaintLogicalBottom)
+        : m_isFullLayout(fullLayout)
+        , m_repaintLogicalTop(repaintLogicalTop)
+        , m_repaintLogicalBottom(repaintLogicalBottom)
+    { }
+
+    void markForFullLayout() { m_isFullLayout = true; }
+    bool isFullLayout() const { return m_isFullLayout; }
+
+    void setRepaintRange(int logicalHeight) { m_repaintLogicalTop = m_repaintLogicalBottom = logicalHeight; }
+    void updateRepaintRangeFromBox(RootInlineBox* box, int paginationDelta = 0)
+    {
+        m_repaintLogicalTop = min(m_repaintLogicalTop, box->logicalTopVisualOverflow() + min(paginationDelta, 0));
+        m_repaintLogicalBottom = max(m_repaintLogicalBottom, box->logicalBottomVisualOverflow() + max(paginationDelta, 0));
+    }
+
+private:
+    bool m_isFullLayout;
+
+    // FIXME: Should this be a range object instead of two ints?
+    int& m_repaintLogicalTop;
+    int& m_repaintLogicalBottom;
+};
+
+static void deleteLineRange(LineLayoutState& layoutState, RenderArena* arena, RootInlineBox* startLine, RootInlineBox* stopLine = 0)
 {
     RootInlineBox* boxToDelete = startLine;
     while (boxToDelete && boxToDelete != stopLine) {
-        repaintLogicalTop = min(repaintLogicalTop, boxToDelete->logicalTopVisualOverflow());
-        repaintLogicalBottom = max(repaintLogicalBottom, boxToDelete->logicalBottomVisualOverflow());
+        layoutState.updateRepaintRangeFromBox(boxToDelete);
         // Note: deleteLineRange(renderArena(), firstRootBox()) is not identical to deleteLineBoxTree().
         // deleteLineBoxTree uses nextLineBox() instead of nextRootBox() when traversing.
         RootInlineBox* next = boxToDelete->nextRootBox();
@@ -830,21 +857,22 @@ static void deleteLineRange(RenderArena* arena, RootInlineBox* startLine, int& r
     }
 }
 
-void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vector<FloatWithRect>& floats, int& repaintLogicalTop, int& repaintLogicalBottom)
+void RenderBlock::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInlineChild, Vector<FloatWithRect>& floats)
 {
     // We want to skip ahead to the first dirty line
     InlineBidiResolver resolver;
     unsigned floatIndex;
     LineInfo lineInfo;
+    // FIXME: Should useRepaintBounds be on the LineLayoutState?
+    // It appears to be used to track the case where we're only repainting a subset of our lines.
     bool useRepaintBounds = false;
 
-    RootInlineBox* startLine = determineStartPosition(lineInfo, fullLayout, resolver, floats, floatIndex,
-                                                      useRepaintBounds, repaintLogicalTop, repaintLogicalBottom);
+    RootInlineBox* startLine = determineStartPosition(layoutState, lineInfo, resolver, floats, floatIndex, useRepaintBounds);
 
     // FIXME: This would make more sense outside of this function, but since
     // determineStartPosition can change the fullLayout flag we have to do this here. Failure to call
     // determineStartPosition first will break fast/repaint/line-flow-with-floats-9.html.
-    if (fullLayout && hasInlineChild && !selfNeedsLayout()) {
+    if (layoutState.isFullLayout() && hasInlineChild && !selfNeedsLayout()) {
         setNeedsLayout(true, false);  // Mark ourselves as needing a full layout. This way we'll repaint like
         // we're supposed to.
         RenderView* v = view();
@@ -866,21 +894,20 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
     InlineIterator cleanLineStart;
     BidiStatus cleanLineBidiStatus;
     int endLineLogicalTop = 0;
-    RootInlineBox* endLine = (fullLayout || !startLine) ?
+    RootInlineBox* endLine = (layoutState.isFullLayout() || !startLine) ?
         0 : determineEndPosition(startLine, floats, floatIndex, cleanLineStart, cleanLineBidiStatus, endLineLogicalTop);
 
     if (startLine) {
         if (!useRepaintBounds) {
             useRepaintBounds = true;
-            repaintLogicalTop = logicalHeight();
-            repaintLogicalBottom = logicalHeight();
+            layoutState.setRepaintRange(logicalHeight());
         }
-        deleteLineRange(renderArena(), startLine, repaintLogicalTop, repaintLogicalBottom);
+        deleteLineRange(layoutState, renderArena(), startLine);
     }
 
     InlineIterator end = resolver.position();
 
-    if (!fullLayout && lastRootBox() && lastRootBox()->endsWithBreak()) {
+    if (!layoutState.isFullLayout() && lastRootBox() && lastRootBox()->endsWithBreak()) {
         // If the last line before the start line ends with a line break that clear floats,
         // adjust the height accordingly.
         // A line break can be either the first or the last object on a line, depending on its direction.
@@ -909,7 +936,7 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
 
     while (!end.atEnd()) {
         // FIXME: Is this check necessary before the first iteration or can it be moved to the end?
-        if (checkForEndLineMatch && (endLineMatched = matchedEndLine(resolver, cleanLineStart, cleanLineBidiStatus, endLine, endLineLogicalTop, repaintLogicalBottom, repaintLogicalTop)))
+        if (checkForEndLineMatch && (endLineMatched = matchedEndLine(layoutState, resolver, cleanLineStart, cleanLineBidiStatus, endLine, endLineLogicalTop)))
             break;
 
         lineMidpointState.reset();
@@ -957,10 +984,8 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
 
             if (lineBox) {
                 lineBox->setLineBreakInfo(end.m_obj, end.m_pos, resolver.status());
-                if (useRepaintBounds) {
-                    repaintLogicalTop = min(repaintLogicalTop, lineBox->logicalTopVisualOverflow());
-                    repaintLogicalBottom = max(repaintLogicalBottom, lineBox->logicalBottomVisualOverflow());
-                }
+                if (useRepaintBounds)
+                    layoutState.updateRepaintRangeFromBox(lineBox);
 
                 if (paginated) {
                     int adjustment = 0;
@@ -968,8 +993,8 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
                     if (adjustment) {
                         int oldLineWidth = availableLogicalWidthForLine(oldLogicalHeight, lineInfo.isFirstLine());
                         lineBox->adjustBlockDirectionPosition(adjustment);
-                        if (useRepaintBounds) // This can only be a positive adjustment, so no need to update repaintTop.
-                            repaintLogicalBottom = max(repaintLogicalBottom, lineBox->logicalBottomVisualOverflow());
+                        if (useRepaintBounds)
+                            layoutState.updateRepaintRangeFromBox(lineBox);
 
                         if (availableLogicalWidthForLine(oldLogicalHeight + adjustment, lineInfo.isFirstLine()) != oldLineWidth) {
                             // We have to delete this line, remove all floats that got added, and let line layout re-run.
@@ -1030,8 +1055,7 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
                     adjustLinePositionForPagination(line, delta);
                 }
                 if (delta) {
-                    repaintLogicalTop = min(repaintLogicalTop, line->logicalTopVisualOverflow() + min(delta, 0));
-                    repaintLogicalBottom = max(repaintLogicalBottom, line->logicalBottomVisualOverflow() + max(delta, 0));
+                    layoutState.updateRepaintRangeFromBox(line, delta);
                     line->adjustBlockDirectionPosition(delta);
                 }
                 if (Vector<RenderBox*>* cleanLineFloats = line->floatsPtr()) {
@@ -1048,7 +1072,7 @@ void RenderBlock::layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vect
             setLogicalHeight(lastRootBox()->blockLogicalHeight());
         } else {
             // Delete all the remaining lines.
-            deleteLineRange(renderArena(), endLine, repaintLogicalTop, repaintLogicalBottom);
+            deleteLineRange(layoutState, renderArena(), endLine);
         }
     }
     if (m_floatingObjects && (checkForFloatsFromLastLine || positionNewFloats()) && lastRootBox()) {
@@ -1105,8 +1129,10 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
 
     // Figure out if we should clear out our line boxes.
     // FIXME: Handle resize eventually!
-    bool fullLayout = !firstLineBox() || selfNeedsLayout() || relayoutChildren;
-    if (fullLayout)
+    bool isFullLayout = !firstLineBox() || selfNeedsLayout() || relayoutChildren;
+    LineLayoutState layoutState(isFullLayout, repaintLogicalTop, repaintLogicalBottom);
+
+    if (isFullLayout)
         lineBoxes()->deleteLineBoxes(renderArena());
 
     // Text truncation only kicks in if your overflow isn't visible and your text-overflow-mode isn't
@@ -1144,22 +1170,22 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                     o->containingBlock()->insertPositionedObject(box);
                 else if (o->isFloating())
                     floats.append(FloatWithRect(box));
-                else if (fullLayout || o->needsLayout()) {
+                else if (layoutState.isFullLayout() || o->needsLayout()) {
                     // Replaced elements
-                    toRenderBox(o)->dirtyLineBoxes(fullLayout);
+                    toRenderBox(o)->dirtyLineBoxes(layoutState.isFullLayout());
                     o->layoutIfNeeded();
                 }
             } else if (o->isText() || (o->isRenderInline() && !endOfInline)) {
                 if (!o->isText())
                     toRenderInline(o)->updateAlwaysCreateLineBoxes();
-                if (fullLayout || o->selfNeedsLayout())
-                    dirtyLineBoxesForRenderer(o, fullLayout);
+                if (layoutState.isFullLayout() || o->selfNeedsLayout())
+                    dirtyLineBoxesForRenderer(o, layoutState.isFullLayout());
                 o->setNeedsLayout(false);
             }
             o = bidiNext(this, o, 0, false, &endOfInline);
         }
 
-        layoutRunsAndFloats(fullLayout, hasInlineChild, floats, repaintLogicalTop, repaintLogicalBottom);
+        layoutRunsAndFloats(layoutState, hasInlineChild, floats);
     }
 
     // Expand the last line to accommodate Ruby and emphasis marks.
@@ -1200,6 +1226,7 @@ void RenderBlock::checkFloatsInCleanLine(RootInlineBox* line, Vector<FloatWithRe
             encounteredNewFloat = true;
             return;
         }
+
         if (floats[floatIndex].rect.size() != newSize) {
             int floatTop = isHorizontalWritingMode() ? floats[floatIndex].rect.y() : floats[floatIndex].rect.x();
             int floatHeight = isHorizontalWritingMode() ? max(floats[floatIndex].rect.height(), newSize.height())
@@ -1214,14 +1241,15 @@ void RenderBlock::checkFloatsInCleanLine(RootInlineBox* line, Vector<FloatWithRe
     }
 }
 
-RootInlineBox* RenderBlock::determineStartPosition(LineInfo& lineInfo, bool& fullLayout, InlineBidiResolver& resolver, Vector<FloatWithRect>& floats,
-                                                   unsigned& numCleanFloats, bool& useRepaintBounds, int& repaintLogicalTop, int& repaintLogicalBottom)
+RootInlineBox* RenderBlock::determineStartPosition(LineLayoutState& layoutState, LineInfo& lineInfo, InlineBidiResolver& resolver, Vector<FloatWithRect>& floats,
+                                                   unsigned& numCleanFloats, bool& useRepaintBounds)
 {
     RootInlineBox* curr = 0;
     RootInlineBox* last = 0;
 
+    // FIXME: This entire float-checking block needs to be broken into a new function.
     bool dirtiedByFloat = false;
-    if (!fullLayout) {
+    if (!layoutState.isFullLayout()) {
         // Paginate all of the clean lines.
         bool paginated = view()->layoutState() && view()->layoutState()->isPaginated();
         int paginationDelta = 0;
@@ -1233,30 +1261,33 @@ RootInlineBox* RenderBlock::determineStartPosition(LineInfo& lineInfo, bool& ful
                 if (paginationDelta) {
                     if (containsFloats() || !floats.isEmpty()) {
                         // FIXME: Do better eventually.  For now if we ever shift because of pagination and floats are present just go to a full layout.
-                        fullLayout = true;
+                        layoutState.markForFullLayout();
                         break;
                     }
 
                     if (!useRepaintBounds)
                         useRepaintBounds = true;
 
-                    repaintLogicalTop = min(repaintLogicalTop, curr->logicalTopVisualOverflow() + min(paginationDelta, 0));
-                    repaintLogicalBottom = max(repaintLogicalBottom, curr->logicalBottomVisualOverflow() + max(paginationDelta, 0));
+                    layoutState.updateRepaintRangeFromBox(curr, paginationDelta);
                     curr->adjustBlockDirectionPosition(paginationDelta);
                 }
             }
 
-            // If a new float has been inserted before this line or before its last known float,just do a full layout.
-            checkFloatsInCleanLine(curr, floats, floatIndex, fullLayout, dirtiedByFloat);
-            if (dirtiedByFloat || fullLayout)
+            // If a new float has been inserted before this line or before its last known float, just do a full layout.
+            bool encounteredNewFloat = false;
+            checkFloatsInCleanLine(curr, floats, floatIndex, encounteredNewFloat, dirtiedByFloat);
+            if (encounteredNewFloat)
+                layoutState.markForFullLayout();
+
+            if (dirtiedByFloat || layoutState.isFullLayout())
                 break;
         }
         // Check if a new float has been inserted after the last known float.
         if (!curr && floatIndex < floats.size())
-            fullLayout = true;
+            layoutState.markForFullLayout();
     }
 
-    if (fullLayout) {
+    if (layoutState.isFullLayout()) {
         // FIXME: This should just call deleteLineBoxTree, but that causes
         // crashes for fast/repaint tests.
         RenderArena* arena = renderArena();
@@ -1361,8 +1392,7 @@ RootInlineBox* RenderBlock::determineEndPosition(RootInlineBox* startLine, Vecto
     return last;
 }
 
-bool RenderBlock::matchedEndLine(const InlineBidiResolver& resolver, const InlineIterator& endLineStart, const BidiStatus& endLineStatus, RootInlineBox*& endLine,
-                                 int& endLogicalTop, int& repaintLogicalBottom, int& repaintLogicalTop)
+bool RenderBlock::matchedEndLine(LineLayoutState& layoutState, const InlineBidiResolver& resolver, const InlineIterator& endLineStart, const BidiStatus& endLineStatus, RootInlineBox*& endLine, int& endLogicalTop)
 {
     if (resolver.position() == endLineStart) {
         if (resolver.status() != endLineStatus)
@@ -1428,7 +1458,7 @@ bool RenderBlock::matchedEndLine(const InlineBidiResolver& resolver, const Inlin
             }
 
             // Now delete the lines that we failed to sync.
-            deleteLineRange(renderArena(), endLine, repaintLogicalTop, repaintLogicalBottom, result);
+            deleteLineRange(layoutState, renderArena(), endLine, result);
             endLine = result;
             return result;
         }

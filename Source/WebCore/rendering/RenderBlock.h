@@ -37,6 +37,7 @@ class ColumnInfo;
 class InlineIterator;
 class LayoutStateMaintainer;
 class LazyLineBreakIterator;
+class LineLayoutState;
 class LineWidth;
 class RenderInline;
 class RenderText;
@@ -520,14 +521,11 @@ private:
         EClear m_clear;
         Vector<RenderBox*> m_positionedObjects;
     };
-    
+
     void checkFloatsInCleanLine(RootInlineBox*, Vector<FloatWithRect>&, size_t& floatIndex, bool& encounteredNewFloat, bool& dirtiedByFloat);
-    RootInlineBox* determineStartPosition(LineInfo&, bool& fullLayout, InlineBidiResolver&, Vector<FloatWithRect>& floats, unsigned& numCleanFloats,
-                                          bool& useRepaintBounds, int& repaintTop, int& repaintBottom);
-    RootInlineBox* determineEndPosition(RootInlineBox* startBox, Vector<FloatWithRect>& floats, size_t floatIndex, InlineIterator& cleanLineStart,
-                                        BidiStatus& cleanLineBidiStatus, int& yPos);
-    bool matchedEndLine(const InlineBidiResolver&, const InlineIterator& endLineStart, const BidiStatus& endLineStatus,
-                        RootInlineBox*& endLine, int& endYPos, int& repaintBottom, int& repaintTop);
+    RootInlineBox* determineStartPosition(LineLayoutState&, LineInfo&, InlineBidiResolver&, Vector<FloatWithRect>&, unsigned& numCleanFloats, bool& useRepaintBounds);
+    RootInlineBox* determineEndPosition(RootInlineBox* startBox, Vector<FloatWithRect>&, size_t floatIndex, InlineIterator& cleanLineStart, BidiStatus& cleanLineBidiStatus, int& yPos);
+    bool matchedEndLine(LineLayoutState&, const InlineBidiResolver&, const InlineIterator& endLineStart, const BidiStatus& endLineStatus, RootInlineBox*& endLine, int& endYPos);
 
     RootInlineBox* constructLine(BidiRunList<BidiRun>&, const LineInfo&);
     InlineFlowBox* createLineBoxes(RenderObject*, const LineInfo&, InlineBox* childBox);
@@ -731,7 +729,7 @@ private:
 
     // Helper function for layoutInlineChildren()
     RootInlineBox* createLineBoxesFromBidiRuns(BidiRunList<BidiRun>&, const InlineIterator& end, LineInfo&, VerticalPositionCache&, BidiRun* trailingSpaceRun);
-    void layoutRunsAndFloats(bool fullLayout, bool hasInlineChild, Vector<FloatWithRect>&, int& repaintLogicalTop, int& repaintLogicalBottom);
+    void layoutRunsAndFloats(LineLayoutState&, bool hasInlineChild, Vector<FloatWithRect>&);
 
     // Pagination routines.
     int nextPageLogicalTop(int logicalOffset) const; // Returns the top of the next page following logicalOffset.
