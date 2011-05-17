@@ -1,3 +1,11 @@
+2011-05-17  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
+        fast/js/mozilla/strict/eval-variable-environment.html now passes.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-17  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
