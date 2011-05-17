@@ -30,6 +30,8 @@
 #include <WebKit2/WKGeometry.h>
 #include <windows.h>
 
+struct IDropTarget;
+
 #ifdef __cplusplus
 extern "C" {
 #endif

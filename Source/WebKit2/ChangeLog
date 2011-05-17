@@ -1,5 +1,11 @@
 2011-05-17  Brian Weinstein  <bweinstein@apple.com>
 
+        Build fix after r86717.
+
+        * UIProcess/API/C/win/WKView.h: Add a forward declaration of IDropTarget
+
+2011-05-17  Brian Weinstein  <bweinstein@apple.com>
+
         Reviewed by Adam Roben.
 
         WebKit2: Needs API to set a custom drop target
