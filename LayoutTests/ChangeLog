@@ -1,3 +1,11 @@
+2011-05-17  Anton Muhin  <antonm@chromium.org>
+
+        Unreviewed.
+
+        Improving test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-17  Sam Magnuson  <smagnuson@netflix.com>
 
         Reviewed by Kenneth Rohde Christiansen.
