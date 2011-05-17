@@ -1,3 +1,18 @@
+2011-05-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove bogus ASSERT in Document::setCompatibilityMode
+        https://bugs.webkit.org/show_bug.cgi?id=60935
+
+        The ASSERT is invalid when the parser is in the initial state and the
+        document is non-empty, which is strange but not impossible.
+
+        Test: fast/parser/append-child-followed-by-document-write.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setCompatibilityMode):
+
 2011-05-16  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

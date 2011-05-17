@@ -1,3 +1,15 @@
+2011-05-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove bogus ASSERT in Document::setCompatibilityMode
+        https://bugs.webkit.org/show_bug.cgi?id=60935
+
+        This test case triggers the ASSERT.
+
+        * fast/parser/append-child-followed-by-document-write-expected.txt: Added.
+        * fast/parser/append-child-followed-by-document-write.html: Added.
+
 2011-05-16  Ian Henderson  <ianh@apple.com>
 
         Reviewed by Joseph Pecoraro.

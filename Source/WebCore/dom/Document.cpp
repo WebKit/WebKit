@@ -653,7 +653,7 @@ void Document::setCompatibilityMode(CompatibilityMode mode)
 {
     if (m_compatibilityModeLocked || mode == m_compatibilityMode)
         return;
-    ASSERT(!documentElement() && !m_styleSheets->length());
+    ASSERT(!m_styleSheets->length());
     bool wasInQuirksMode = inQuirksMode();
     m_compatibilityMode = mode;
     if (inQuirksMode() != wasInQuirksMode) {
