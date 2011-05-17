@@ -29,10 +29,24 @@ namespace JSC {
 
     class StringConstructor : public InternalFunction {
     public:
-        StringConstructor(ExecState*, JSGlobalObject*, Structure*, Structure* functionStructure, StringPrototype*);
+        StringConstructor(ExecState*, JSGlobalObject*, Structure*, StringPrototype*);
 
+        static const ClassInfo s_info;
+
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        {
+            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        }
+
+    protected:
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
+
+    private:
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
+
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     };
 
 } // namespace JSC

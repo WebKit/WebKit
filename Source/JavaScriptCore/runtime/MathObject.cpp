@@ -59,8 +59,6 @@ static EncodedJSValue JSC_HOST_CALL mathProtoFuncTan(ExecState*);
 
 namespace JSC {
 
-// ------------------------------ MathObject --------------------------------
-
 const ClassInfo MathObject::s_info = { "Math", &JSObjectWithGlobalObject::s_info, 0, ExecState::mathTable };
 
 /* Source for MathObject.lut.h
@@ -100,8 +98,6 @@ MathObject::MathObject(ExecState* exec, JSGlobalObject* globalObject, Structure*
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "SQRT1_2"), jsNumber(sqrt(0.5)), DontDelete | DontEnum | ReadOnly);
     putDirectWithoutTransition(exec->globalData(), Identifier(exec, "SQRT2"), jsNumber(sqrt(2.0)), DontDelete | DontEnum | ReadOnly);
 }
-
-// ECMA 15.8
 
 bool MathObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
 {

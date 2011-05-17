@@ -284,6 +284,9 @@ sub output() {
         if ($key eq "pow") {
             $thunkGenerator = "powThunkGenerator";
         }
+        if ($key eq "fromCharCode") {
+            $thunkGenerator = "fromCharCodeThunkGenerator";
+        }
         print "   { \"$key\", $attrs[$i], (intptr_t)" . $castStr . "($firstValue), (intptr_t)$secondValue THUNK_GENERATOR($thunkGenerator) },\n";
         $i++;
     }
