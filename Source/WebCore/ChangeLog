@@ -1,3 +1,22 @@
+2011-05-17  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Always set layerRenderer, even on non-drawn-layers
+        https://bugs.webkit.org/show_bug.cgi?id=60977
+
+        This is a defensive fixe for crbug.com/82799, in which
+        a RenderLayer could not prepare itself because its owning layerImpl
+        had no associated layerRenderer. The underlying issue is that we
+        sometimes put renderSurfaces onto the list that won't actually render.
+        For now, the priority is to reduce fragility so that invisible layers
+        dont lead to crashers. We do this by being more agressive about 
+        binding CCLayerImpls to the LayerRenderer, doing it all the time rather
+        than only when we think it will get rendered.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::paintLayerContents):
+
 2011-05-17  Anders Carlsson  <andersca@apple.com>
 
         Fix the clang build.

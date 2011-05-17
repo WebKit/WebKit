@@ -355,6 +355,11 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
         RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
         ASSERT(renderSurface);
 
+        // Make sure any renderSurfaceLayer is associated with this layerRenderer.
+        // This is a defensive assignment in case the owner of this layer hasn't
+        // set the layerRenderer on this layer already.
+        renderSurfaceLayer->setLayerRenderer(this);
+
         // Render surfaces whose drawable area has zero width or height
         // will have no layers associated with them and should be skipped.
         if (!renderSurface->m_layerList.size())
@@ -371,10 +376,9 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
                 continue;
 
             LayerChromium* layer = ccLayerImpl->owner();
-            if (layer->bounds().isEmpty())
-                continue;
 
             layer->setLayerRenderer(this);
+
             if (layer->maskLayer())
                 layer->maskLayer()->setLayerRenderer(this);
             if (layer->replicaLayer()) {
@@ -382,6 +386,9 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
                 if (layer->replicaLayer()->maskLayer())
                     layer->replicaLayer()->maskLayer()->setLayerRenderer(this);
             }
+
+            if (layer->bounds().isEmpty())
+              continue;
 
             IntRect targetSurfaceRect = ccLayerImpl->targetRenderSurface() ? ccLayerImpl->targetRenderSurface()->contentRect() : m_defaultRenderSurface->contentRect();
             IntRect scissorRect = layer->ccLayerImpl()->scissorRect();
