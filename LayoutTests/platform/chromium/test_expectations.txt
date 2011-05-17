@@ -1062,7 +1062,6 @@ BUGCR78457 WIN LINUX GPU : fast/canvas/fillrect_gradient.html = IMAGE
 BUGCR78457 WIN LINUX GPU : fast/canvas/image-object-in-canvas.html = IMAGE
 BUGCR78457 WIN LINUX GPU : fast/canvas/image-pattern-rotate.html = IMAGE
 BUGCR78457 WIN LINUX GPU : fast/canvas/patternfill-repeat.html = IMAGE
-BUGCR78457 WIN LINUX GPU : media/video-canvas-alpha.html = IMAGE
 BUGCR78457 WIN LINUX GPU : fast/canvas/canvas-transforms-during-path.html = IMAGE
 BUGCR78457 WIN LINUX GPU : fast/canvas/fillrect-gradient-zero-stops.html = IMAGE
 
