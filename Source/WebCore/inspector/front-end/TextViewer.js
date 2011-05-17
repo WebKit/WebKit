@@ -108,6 +108,9 @@ WebInspector.TextViewer.prototype = {
 
     highlightLine: function(lineNumber)
     {
+        if (typeof lineNumber !== "number" || lineNumber < 0)
+            return;
+
         lineNumber = Math.min(lineNumber, this._textModel.linesCount - 1);
         this._mainPanel.highlightLine(lineNumber);
     },
@@ -425,6 +428,12 @@ WebInspector.TextEditorChunkedPanel.prototype = {
     {
         var chunkNumber = this._chunkNumberForLine(lineNumber);
         var oldChunk = this._textChunks[chunkNumber];
+
+        if (!oldChunk) {
+            console.error("No chunk for line number: " + lineNumber);
+            return;
+        }
+
         if (oldChunk.linesCount === 1)
             return oldChunk;
 

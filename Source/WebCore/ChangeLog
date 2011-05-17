@@ -1,3 +1,14 @@
+2011-05-17  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: navigating from elements panel does not show source view.
+        https://bugs.webkit.org/show_bug.cgi?id=60970
+
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextViewer.prototype.highlightLine):
+        (WebInspector.TextEditorChunkedPanel.prototype.makeLineAChunk):
+
 2011-05-17  Sam Magnuson  <smagnuson@netflix.com>
 
         Reviewed by Kenneth Rohde Christiansen.
