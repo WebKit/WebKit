@@ -53,12 +53,12 @@ class ChromiumLinuxPortTest(port_testcase.PortTestCase):
             executive=executive, filesystem=filesystem)
         self.assertEquals(port.architecture(), expected_architecture)
         if expected_architecture == 'x86':
+            self.assertTrue(port.baseline_path().endswith('chromium-linux-x86'))
+            self.assertTrue(port.baseline_search_path()[0].endswith('chromium-linux-x86'))
+            self.assertTrue(port.baseline_search_path()[1].endswith('chromium-linux'))
+        else:
             self.assertTrue(port.baseline_path().endswith('chromium-linux'))
             self.assertTrue(port.baseline_search_path()[0].endswith('chromium-linux'))
-        else:
-            self.assertTrue(port.baseline_path().endswith('chromium-linux-x86_64'))
-            self.assertTrue(port.baseline_search_path()[0].endswith('chromium-linux-x86_64'))
-            self.assertTrue(port.baseline_search_path()[1].endswith('chromium-linux'))
 
     def test_architectures(self):
         self.assert_architecture(port_name='chromium-linux-x86',
@@ -82,7 +82,7 @@ class ChromiumLinuxPortTest(port_testcase.PortTestCase):
         # Test that we default to 'x86' if the driver doesn't exist.
         filesystem = filesystem_mock.MockFileSystem()
         port = chromium_linux.ChromiumLinuxPort(filesystem=filesystem)
-        self.assertEquals(port.architecture(), 'x86')
+        self.assertEquals(port.architecture(), 'x86_64')
 
         # Test that we default to 'x86' on an unknown architecture.
         filesystem = filesystem_mock.MockFileSystem()
@@ -90,7 +90,7 @@ class ChromiumLinuxPortTest(port_testcase.PortTestCase):
         executive = executive_mock.MockExecutive2('win32')
         port = chromium_linux.ChromiumLinuxPort(filesystem=filesystem,
                                                 executive=executive)
-        self.assertEquals(port.architecture(), 'x86')
+        self.assertEquals(port.architecture(), 'x86_64')
 
         # Test that we raise errors if something weird happens.
         filesystem = filesystem_mock.MockFileSystem()

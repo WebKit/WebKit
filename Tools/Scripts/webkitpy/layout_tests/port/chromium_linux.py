@@ -43,8 +43,8 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
     SUPPORTED_ARCHITECTURES = ('x86', 'x86_64')
 
     FALLBACK_PATHS = {
-        'x86_64': ['chromium-linux-x86_64', 'chromium-linux', 'chromium-win', 'chromium', 'win', 'mac'],
-        'x86': ['chromium-linux', 'chromium-win', 'chromium', 'win', 'mac'],
+        'x86_64': ['chromium-linux', 'chromium-win', 'chromium', 'win', 'mac'],
+        'x86': ['chromium-linux-x86', 'chromium-linux', 'chromium-win', 'chromium', 'win', 'mac'],
     }
 
     def __init__(self, port_name=None, **kwargs):
@@ -68,8 +68,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
                              'chromium-gpu-linux-x86_64')
         self._name = port_name
         self._operating_system = 'linux'
-        # FIXME: add support for 'lucid'
-        self._version = 'hardy'
+        self._version = 'lucid'  # We only support lucid right now.
 
     def _determine_architecture(self):
         driver_path = self._path_to_driver()
@@ -90,7 +89,7 @@ class ChromiumLinuxPort(chromium.ChromiumPort):
         # maybe we're rebaselining and the binary doesn't actually exist,
         # or something else weird is going on. It's okay to do this because
         # if we actually try to use the binary, check_build() should fail.
-        return 'x86'
+        return 'x86_64'
 
     def baseline_search_path(self):
         port_names = self.FALLBACK_PATHS[self._architecture]

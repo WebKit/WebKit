@@ -1048,8 +1048,8 @@ class TestConfiguration(object):
                 ('xp', 'x86'),
                 ('vista', 'x86'),
                 ('win7', 'x86'),
-                ('hardy', 'x86'),
-                ('hardy', 'x86_64'))
+                ('lucid', 'x86'),
+                ('lucid', 'x86_64'))
 
     def all_build_types(self):
         return ('debug', 'release')

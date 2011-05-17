@@ -120,7 +120,7 @@ def cluster_file_hashes(glob_pattern):
 
 def dirname_to_platform(dirname):
     if dirname == 'chromium-linux':
-        return 'chromium-linux-x86'
+        return 'chromium-linux-x86_64'
     elif dirname == 'chromium-win':
         return 'chromium-win-win7'
     elif dirname == 'chromium-mac':

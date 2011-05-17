@@ -805,7 +805,7 @@ class ModifierMatcher(object):
     MACROS = {
         'mac': ['leopard', 'snowleopard'],
         'win': ['xp', 'vista', 'win7'],
-        'linux': ['hardy'],
+        'linux': ['lucid'],
     }
 
     # We don't include the "none" modifier because it isn't actually legal.

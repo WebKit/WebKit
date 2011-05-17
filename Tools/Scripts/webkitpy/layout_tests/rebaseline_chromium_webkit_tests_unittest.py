@@ -107,22 +107,22 @@ def test_zip_factory():
             'layout-test-results/failures/expected/image-actual.checksum': 'new-image-checksum',
             'layout-test-results/failures/expected/image-actual.png': 'new-image-png',
         },
-         ARCHIVE_URL + '/Webkit_Vista/1/layout-test-results.zip': {
+        ARCHIVE_URL + '/Webkit_Vista/1/layout-test-results.zip': {
             'layout-test-results/failures/expected/image-actual.txt': 'win-image-txt',
             'layout-test-results/failures/expected/image-actual.checksum': 'win-image-checksum',
             'layout-test-results/failures/expected/image-actual.png': 'win-image-png',
         },
-          ARCHIVE_URL + '/Webkit_Win7/1/layout-test-results.zip': {
+        ARCHIVE_URL + '/Webkit_Win7/1/layout-test-results.zip': {
             'layout-test-results/failures/expected/image-actual.txt': 'win-image-txt',
             'layout-test-results/failures/expected/image-actual.checksum': 'win-image-checksum',
             'layout-test-results/failures/expected/image-actual.png': 'win-image-png',
         },
-          ARCHIVE_URL + '/Webkit_Win/1/layout-test-results.zip': {
+        ARCHIVE_URL + '/Webkit_Win/1/layout-test-results.zip': {
             'layout-test-results/failures/expected/image-actual.txt': 'win-image-txt',
             'layout-test-results/failures/expected/image-actual.checksum': 'win-image-checksum',
             'layout-test-results/failures/expected/image-actual.png': 'win-image-png',
         },
-          ARCHIVE_URL + '/Webkit_Linux/1/layout-test-results.zip': {
+        ARCHIVE_URL + '/Webkit_Linux/1/layout-test-results.zip': {
             'layout-test-results/failures/expected/image-actual.txt': 'win-image-txt',
             'layout-test-results/failures/expected/image-actual.checksum': 'win-image-checksum',
             'layout-test-results/failures/expected/image-actual.png': 'win-image-png',

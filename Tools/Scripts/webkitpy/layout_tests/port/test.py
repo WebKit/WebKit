@@ -245,7 +245,7 @@ class TestPort(base.Port):
     ALL_BASELINE_VARIANTS = (
         'test-mac-snowleopard', 'test-mac-leopard',
         'test-win-win7', 'test-win-vista', 'test-win-xp',
-        'test-linux-x86',
+        'test-linux-x86_64',
     )
 
     def __init__(self, port_name=None, user=None, filesystem=None, **kwargs):
@@ -272,7 +272,7 @@ class TestPort(base.Port):
             'test-win-vista': 'vista',
             'test-mac-leopard': 'leopard',
             'test-mac-snowleopard': 'snowleopard',
-            'test-linux-x86': '',
+            'test-linux-x86_64': '',
         }
         self._version = version_map[port_name]
 
@@ -290,7 +290,7 @@ class TestPort(base.Port):
             'test-win-win7': ['test-win-win7'],
             'test-win-vista': ['test-win-vista', 'test-win-win7'],
             'test-win-xp': ['test-win-xp', 'test-win-vista', 'test-win-win7'],
-            'test-linux-x86': ['test-linux', 'test-win-win7'],
+            'test-linux-x86_64': ['test-linux', 'test-win-win7'],
         }
         return [self._webkit_baseline_path(d) for d in search_paths[self.name()]]
 
