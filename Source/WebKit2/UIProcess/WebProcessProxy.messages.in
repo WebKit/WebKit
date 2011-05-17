@@ -31,4 +31,12 @@ messages -> WebProcessProxy {
     GetPluginProcessConnection(WTF::String pluginPath) -> (CoreIPC::MachPort connectionHandle) Delayed
     PluginSyncMessageSendTimedOut(WTF::String pluginPath)
 #endif
+
+#if PLATFORM(MAC)
+    SecItemCopyMatching(WebKit::SecItemRequestData query) -> (WebKit::SecItemResponseData result)
+    SecItemAdd(WebKit::SecItemRequestData query) -> (WebKit::SecItemResponseData result)
+    SecItemUpdate(WebKit::SecItemRequestData query) -> (WebKit::SecItemResponseData result)
+    SecItemDelete(WebKit::SecItemRequestData query) -> (WebKit::SecItemResponseData result)
+#endif
+
 }

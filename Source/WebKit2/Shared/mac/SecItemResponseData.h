@@ -38,7 +38,7 @@ namespace WebKit {
 class SecItemResponseData {
 public:
     SecItemResponseData();
-    SecItemResponseData(CFTypeRef result, OSStatus);
+    SecItemResponseData(OSStatus, CFTypeRef result);
 
     void encode(CoreIPC::ArgumentEncoder*) const;
     static bool decode(CoreIPC::ArgumentDecoder*, SecItemResponseData&);

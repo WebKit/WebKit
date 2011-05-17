@@ -37,24 +37,24 @@ extern "C" void WebKitWebProcessShimInitialize(const WebProcessShimCallbacks&);
 
 static WebProcessShimCallbacks webProcessShimCallbacks;
 
-static OSStatus shimSecItemCopyMatching(CFDictionaryRef query, CFTypeRef *result)
+static OSStatus shimSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
 {
-    return SecItemCopyMatching(query, result);
+    return webProcessShimCallbacks.secItemCopyMatching(query, result);
 }
 
-static OSStatus shimSecItemAdd(CFDictionaryRef query, CFTypeRef *result)
+static OSStatus shimSecItemAdd(CFDictionaryRef query, CFTypeRef* result)
 {
-    return SecItemAdd(query, result);
+    return webProcessShimCallbacks.secItemAdd(query, result);
 }
 
 static OSStatus shimSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attributesToUpdate)
 {
-    return SecItemUpdate(query, attributesToUpdate);
+    return webProcessShimCallbacks.secItemUpdate(query, attributesToUpdate);
 }
 
 static OSStatus shimSecItemDelete(CFDictionaryRef query)
 {
-    return SecItemDelete(query);
+    return webProcessShimCallbacks.secItemDelete(query);
 }
 
 DYLD_INTERPOSE(shimSecItemCopyMatching, SecItemCopyMatching)

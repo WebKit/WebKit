@@ -22,49 +22,57 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+ 
+#import "config.h"
+#import "WebProcessProxy.h"
 
-#include "config.h"
-#include "SecItemResponseData.h"
-
-#include "ArgumentCoders.h"
-#include "ArgumentCodersCF.h"
+#import "SecItemRequestData.h"
+#import "SecItemResponseData.h"
+#import <Security/SecItem.h>
 
 namespace WebKit {
 
-SecItemResponseData::SecItemResponseData()
+void WebProcessProxy::secItemCopyMatching(const SecItemRequestData& queryData, SecItemResponseData& result)
 {
+    CFDictionaryRef query = queryData.query();
+    CFTypeRef resultObject;
+    OSStatus resultCode;
+
+    resultCode = SecItemCopyMatching(query, &resultObject);
+
+    result = SecItemResponseData(resultCode, resultObject);
 }
 
-SecItemResponseData::SecItemResponseData(OSStatus resultCode, CFTypeRef resultObject)
-    : m_resultObject(resultObject)
-    , m_resultCode(resultCode)
+void WebProcessProxy::secItemAdd(const SecItemRequestData& queryData, SecItemResponseData& result)
 {
+    CFDictionaryRef query = queryData.query();
+    CFTypeRef resultObject;
+    OSStatus resultCode;
+
+    resultCode = SecItemAdd(query, &resultObject);
+
+    result = SecItemResponseData(resultCode, resultObject);
 }
 
-void SecItemResponseData::encode(CoreIPC::ArgumentEncoder* encoder) const
+void WebProcessProxy::secItemUpdate(const SecItemRequestData& queryData, SecItemResponseData& result)
 {
-    encoder->encodeInt64((int64_t)m_resultCode);
-    encoder->encodeBool(m_resultObject.get());
-    if (m_resultObject)
-        CoreIPC::encode(encoder, m_resultObject.get());
+    CFDictionaryRef query = queryData.query();
+    CFDictionaryRef attributesToMatch = queryData.attributesToMatch();
+    OSStatus resultCode;
+
+    resultCode = SecItemUpdate(query, attributesToMatch);
+
+    result = SecItemResponseData(resultCode, 0);
 }
 
-bool SecItemResponseData::decode(CoreIPC::ArgumentDecoder* decoder, SecItemResponseData& secItemResponseData)
+void WebProcessProxy::secItemDelete(const SecItemRequestData& queryData, SecItemResponseData& result)
 {
-    int64_t resultCode;
-    if (!decoder->decodeInt64(resultCode))
-        return false;
-    secItemResponseData.m_resultCode = (OSStatus)resultCode;
-    secItemResponseData.m_resultObject = 0;
+    CFDictionaryRef query = queryData.query();
+    OSStatus resultCode;
 
-    bool expectResultObject;
-    if (!decoder->decodeBool(expectResultObject))
-        return false;
+    resultCode = SecItemDelete(query);
 
-    if (expectResultObject && !CoreIPC::decode(decoder, secItemResponseData.m_resultObject))
-        return false;
-
-    return true;
+    result = SecItemResponseData(resultCode, 0);
 }
 
 } // namespace WebKit

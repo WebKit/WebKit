@@ -47,6 +47,11 @@ namespace WebCore {
 
 namespace WebKit {
 
+#if PLATFORM(MAC)
+class SecItemRequestData;
+class SecItemResponseData;
+#endif
+
 class WebBackForwardListItem;
 class WebContext;
 class WebPageGroup;
@@ -123,6 +128,12 @@ private:
 #if ENABLE(PLUGIN_PROCESS)
     void getPluginProcessConnection(const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply>);
     void pluginSyncMessageSendTimedOut(const String& pluginPath);
+#endif
+#if PLATFORM(MAC)
+    void secItemCopyMatching(const SecItemRequestData&, SecItemResponseData&);
+    void secItemAdd(const SecItemRequestData&, SecItemResponseData&);
+    void secItemUpdate(const SecItemRequestData&, SecItemResponseData&);
+    void secItemDelete(const SecItemRequestData&, SecItemResponseData&);
 #endif
 
     // CoreIPC::Connection::Client

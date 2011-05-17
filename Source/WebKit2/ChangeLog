@@ -1,3 +1,50 @@
+2011-05-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Part 4 of <rdar://problem/8814289> and https://bugs.webkit.org/show_bug.cgi?id=60595
+        Mac WebKit2 WebProcess needs a shim to make prompts appear to be from the UIProcess
+
+        This patch actually hooks up the shim to the WebProcess shim callbacks, which messages these
+        4 calls up to the UIProcess and returns the result.
+
+        Note that this patch uncovered the fact that CoreIPC can't sync message out from a secondary thread,
+        so I filed https://bugs.webkit.org/show_bug.cgi?id=60975 as a followup to allow that.
+
+        * Shared/mac/SecItemResponseData.cpp:
+        (WebKit::SecItemResponseData::SecItemResponseData): Reorder the constructor arguments to be 
+          a little cleaner.
+        * Shared/mac/SecItemResponseData.h:
+
+        Call the shim callbacks for each method:
+        * WebProcess/mac/WebProcessShim.mm:
+        (WebKit::shimSecItemCopyMatching):
+        (WebKit::shimSecItemAdd):
+        (WebKit::shimSecItemUpdate):
+        (WebKit::shimSecItemDelete):
+
+        Implement the shim callbacks, which each marshall to the main thread, which then calls out to CoreIPC:
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebSecItemCopyMatchingMainThread):
+        (WebKit::WebSecItemCopyMatching):
+        (WebKit::WebSecItemAddOnMainThread):
+        (WebKit::WebSecItemAdd):
+        (WebKit::WebSecItemUpdateOnMainThread):
+        (WebKit::WebSecItemUpdate):
+        (WebKit::WebSecItemDeleteOnMainThread):
+        (WebKit::WebSecItemDelete):
+
+        Add the 4 messages and their implementations in the UIProcess:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/mac/WebProcessProxyMac.mm: Added.
+        (WebKit::WebProcessProxy::secItemCopyMatching):
+        (WebKit::WebProcessProxy::secItemAdd):
+        (WebKit::WebProcessProxy::secItemUpdate):
+        (WebKit::WebProcessProxy::secItemDelete):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
 2011-05-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
