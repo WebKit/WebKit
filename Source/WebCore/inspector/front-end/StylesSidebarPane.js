@@ -110,6 +110,8 @@ WebInspector.StylesSidebarPane.PseudoIdNames = [
     "-webkit-resizer", "-webkit-input-list-button", "-webkit-inner-spin-button", "-webkit-outer-spin-button"
 ];
 
+WebInspector.StylesSidebarPane.CSSNumberRegex = /^(-?(?:\d+(?:\.\d+)?|\.\d+))$/;
+
 WebInspector.StylesSidebarPane.alteredFloatNumber = function(number, event)
 {
     var arrowKeyPressed = (event.keyIdentifier === "Up" || event.keyIdentifier === "Down");
@@ -143,6 +145,8 @@ WebInspector.StylesSidebarPane.alteredFloatNumber = function(number, event)
         // Make the new number and constrain it to a precision of 6, this matches numbers the engine returns.
         // Use the Number constructor to forget the fixed precision, so 1.100000 will print as 1.1.
         result = Number((number + changeAmount).toFixed(6));
+        if (!String(result).match(WebInspector.StylesSidebarPane.CSSNumberRegex))
+            return null;
     }
 
     return result;
@@ -1757,6 +1761,10 @@ WebInspector.StylePropertyTreeElement.prototype = {
                 prefix = matches[1];
                 suffix = matches[3];
                 number = WebInspector.StylesSidebarPane.alteredFloatNumber(parseFloat(matches[2]), event);
+                if (number === null) {
+                    // Need to check for null explicitly.
+                    return false;
+                }
 
                 replacementString = prefix + number + suffix;
             }

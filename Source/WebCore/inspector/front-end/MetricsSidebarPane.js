@@ -305,6 +305,11 @@ WebInspector.MetricsSidebarPane.prototype = {
             prefix = matches[1];
             suffix = matches[3];
             number = WebInspector.StylesSidebarPane.alteredFloatNumber(parseFloat(matches[2]), event);
+            if (number === null) {
+                // Need to check for null explicitly.
+                return;
+            }
+
             if (styleProperty !== "margin" && number < 0)
                 number = 0;
 

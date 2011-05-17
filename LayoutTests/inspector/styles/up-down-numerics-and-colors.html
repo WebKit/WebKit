@@ -5,6 +5,7 @@
 h1 {
     color: #FF2;
     opacity: .5;
+    -webkit-transform: rotate(1000000000000000065537deg);
 }
 </style>
 
@@ -43,14 +44,31 @@ function test()
             next();
         },
 
-        function testAlterNumber()
+        function testAlterNumber(next)
         {
             var opacityTreeElement = section.findTreeElementWithName("opacity");
             opacityTreeElement.startEditing(opacityTreeElement.valueElement);
             opacityTreeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("Up"));
             opacityTreeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("PageUp"));
             InspectorTest.addResult(opacityTreeElement.listItemElement.textContent);
-            InspectorTest.completeTest();
+            next();
+        },
+
+        function testAlterBigNumber(next)
+        {
+            var treeElement = section.findTreeElementWithName("-webkit-transform");
+            treeElement.startEditing(treeElement.valueElement);
+            var selection = window.getSelection();
+            var range = selection.getRangeAt(0);
+            var newRange = document.createRange();
+            newRange.setStart(range.startContainer, 10);
+            newRange.setEnd(range.startContainer, 10);
+            selection.removeAllRanges();
+            selection.addRange(newRange);
+            treeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("Up"));
+            treeElement.valueElement.dispatchEvent(InspectorTest.createKeyEvent("PageUp"));
+            InspectorTest.addResult(treeElement.listItemElement.textContent);
+            next();
         }
     ]);
 }

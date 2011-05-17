@@ -1,3 +1,13 @@
+2011-05-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Increment/decrement of very big CSS numeric values results in invalid CSS
+        https://bugs.webkit.org/show_bug.cgi?id=60890
+
+        * inspector/styles/up-down-numerics-and-colors-expected.txt:
+        * inspector/styles/up-down-numerics-and-colors.html:
+
 2011-05-17  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.
