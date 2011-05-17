@@ -119,7 +119,7 @@ sub runTestTool(@)
             $apiTesterNameSuffix = "_debug";
         }
         my $apiTesterPath = File::Spec->catfile(productDir(), "TestWebKitAPI$apiTesterNameSuffix.exe");
-        $result = system $apiTesterPath, @ARGV;
+        $result = system { $apiTesterPath } $apiTesterPath, @ARGV;
     } else {
         die "run-api-tests is not supported on this platform.\n"
     }

@@ -1,3 +1,16 @@
+2011-05-17  Adam Roben  <aroben@apple.com>
+
+        Make run-api-tests work on Windows when there are spaces in the path
+
+        Fixes <http://webkit.org/b/60954> REGRESSION (r86511): run-api-tests fails if there are
+        spaces in the path to TestWebKitAPI.exe
+
+        Reviewed by David Levin.
+
+        * Scripts/run-api-tests:
+        (runTestTool): Use the "direct object" form of system() to avoid having the path to
+        TestWebKitAPI.exe be split by the shell.
+
 2011-05-16  Ian Henderson  <ianh@apple.com>
 
         Reviewed by Joseph Pecoraro.
