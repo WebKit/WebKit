@@ -186,6 +186,14 @@ WebProcessProxy* WebPageProxy::process() const
     return m_process.get();
 }
 
+PlatformProcessIdentifier WebPageProxy::processIdentifier() const
+{
+    if (!m_process)
+        return 0;
+
+    return m_process->processIdentifier();
+}
+
 bool WebPageProxy::isValid()
 {
     // A page that has been explicitly closed is never valid.

@@ -1,3 +1,19 @@
+2011-05-16  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Jon Honeycutt.
+
+        Add access to process pid in WebKit2 API
+        https://bugs.webkit.org/show_bug.cgi?id=60938
+
+        * UIProcess/API/C/mac/WKPagePrivateMac.cpp: Added.
+        (WKPageGetProcessIdentifier):
+        * UIProcess/API/C/mac/WKPagePrivateMac.h: Added.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::processIdentifier):
+        * UIProcess/WebPageProxy.h:
+        * WebKit2.xcodeproj/project.pbxproj:
+        Add WKPageGetProcessIdentifier as SPI for the mac.
+
 2011-05-16  Martin Robinson  <mrobinson@igalia.com>
 
         Add file missing from my previous commit.

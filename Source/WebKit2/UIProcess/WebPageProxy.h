@@ -33,6 +33,7 @@
 #include "DrawingAreaProxy.h"
 #include "EditorState.h"
 #include "GeolocationPermissionRequestManagerProxy.h"
+#include "PlatformProcessIdentifier.h"
 #include "SandboxExtension.h"
 #include "SharedMemory.h"
 #include "WKBase.h"
@@ -455,6 +456,7 @@ public:
     void registerEditCommand(PassRefPtr<WebEditCommandProxy>, UndoOrRedo);
 
     WebProcessProxy* process() const;
+    PlatformProcessIdentifier processIdentifier() const;
 
     WebPageGroup* pageGroup() const { return m_pageGroup.get(); }
 
