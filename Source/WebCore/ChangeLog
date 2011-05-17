@@ -1,3 +1,10 @@
+2011-05-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the Cairo build for older versions of GTK+.
+
+        * platform/gtk/GtkWidgetBackingStoreX11.cpp: Include GtkVersioning.h to
+        satisfy older versions of GTK+ 2.x.
+
 2011-05-16  Ian Henderson  <ianh@apple.com>
 
         Reviewed by Joseph Pecoraro.

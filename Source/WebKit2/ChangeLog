@@ -1,3 +1,9 @@
+2011-05-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Take another shot at fixing the WinCairo build.
+
+        * Shared/cairo/LayerTreeContextCairo.cpp: Include NotImplemented.h using a framework include.
+
 2011-05-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Jon Honeycutt.

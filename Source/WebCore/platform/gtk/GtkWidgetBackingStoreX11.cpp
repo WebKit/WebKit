@@ -21,6 +21,7 @@
 
 #ifdef XP_UNIX
 
+#include "GtkVersioning.h"
 #include "RefPtrCairo.h"
 #include <X11/Xlib.h>
 #include <cairo/cairo-xlib.h>
