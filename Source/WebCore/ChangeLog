@@ -1,3 +1,18 @@
+2011-05-16  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        HTML5 Number Spinbox displays a 0 in situations where a 0 is not between the min and max.
+        https://bugs.webkit.org/show_bug.cgi?id=60871
+
+        Test: fast/forms/input-stepup-stepdown-from-renderer.html
+
+        In number input type, if the value is not a number, including empty, the currect valued is assumed 0.
+        But we have to handle it separately from the case when the value is actuall "0".
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::stepUpFromRenderer): Added cliping for default value.
+
 2011-05-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

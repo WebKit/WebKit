@@ -1461,13 +1461,18 @@ void HTMLInputElement::stepUpFromRenderer(int n)
     if (!isfinite(current)) {
         ExceptionCode ec;
         current = m_inputType->defaultValueForStepUp();
+        int nextDiff = step * n;
+        if (current < m_inputType->minimum() - nextDiff)
+            current = m_inputType->minimum() - nextDiff;
+        if (current > m_inputType->maximum() - nextDiff)
+            current = m_inputType->maximum() - nextDiff;
         setValueAsNumber(current, ec);
     }
     if ((sign > 0 && current < m_inputType->minimum()) || (sign < 0 && current > m_inputType->maximum()))
         setValue(m_inputType->serialize(sign > 0 ? m_inputType->minimum() : m_inputType->maximum()));
     else {
         ExceptionCode ec;
-        if (stepMismatch(currentStringValue)) {
+        if (stepMismatch(value())) {
             ASSERT(step);
             double newValue;
             double scale = pow(10.0, static_cast<double>(max(stepDecimalPlaces, baseDecimalPlaces)));

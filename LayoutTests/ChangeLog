@@ -1,3 +1,13 @@
+2011-05-16  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        HTML5 Number Spinbox displays a 0 in situations where a 0 is not between the min and max.
+        https://bugs.webkit.org/show_bug.cgi?id=60871
+
+        * fast/forms/input-stepup-stepdown-from-renderer-expected.txt: Added expected results.
+        * fast/forms/script-tests/input-stepup-stepdown-from-renderer.js: Added test patterns when initial values are empty.
+
 2011-05-16  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
