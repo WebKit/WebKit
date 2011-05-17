@@ -4061,3 +4061,8 @@ BUGCR82881 : http/tests/appcache/interrupted-update.html = PASS TEXT
 BUGCR82891 LINUX : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-searchandspeech.html = IMAGE+TEXT PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
+
+// Fails on windows - added in r86693
+BUGCR82950 WIN : http/tests/navigation/post-301-response.html = TEXT
+BUGCR82950 WIN : http/tests/navigation/post-302-response.html = TEXT
+BUGCR82950 WIN : http/tests/navigation/post-303-response.html = TEXT
