@@ -1,3 +1,21 @@
+2011-05-17  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Needs API to set a custom drop target
+        https://bugs.webkit.org/show_bug.cgi?id=60991
+        <rdar://problem/9090868>
+        
+        Add API to set a custom drop target on a WKView.
+
+        * UIProcess/API/C/win/WKView.cpp:
+        (WKViewSetCustomDropTarget): Call through to WebView::setCustomDropTarget.
+        * UIProcess/API/C/win/WKView.h:
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::setCustomDropTarget): Revoke the current drop target, and register the
+            custom one.
+        * UIProcess/win/WebView.h:
+
 2011-05-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Dan Bernstein.

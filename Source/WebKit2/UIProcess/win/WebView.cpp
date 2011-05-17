@@ -1121,6 +1121,19 @@ void WebView::unapplyEditCommand(WebEditCommandProxy* command)
     command->unapply();
 }
 
+void WebView::setCustomDropTarget(IDropTarget* dropTarget)
+{
+    if (!m_page->isValid() || !m_window)
+        return;
+
+    ::RevokeDragDrop(m_window);
+
+    if (dropTarget)
+        ::RegisterDragDrop(m_window, dropTarget);
+    else
+        ::RegisterDragDrop(m_window, this);
+}
+
 FloatRect WebView::convertToDeviceSpace(const FloatRect& rect)
 {
     return rect;

@@ -89,6 +89,8 @@ public:
     void reapplyEditCommand(WebEditCommandProxy*);
     void unapplyEditCommand(WebEditCommandProxy*);
 
+    void setCustomDropTarget(IDropTarget*);
+
     // IUnknown
     virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
     virtual ULONG STDMETHODCALLTYPE AddRef(void);

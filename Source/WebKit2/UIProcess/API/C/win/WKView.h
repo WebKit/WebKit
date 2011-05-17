@@ -83,6 +83,8 @@ WK_EXPORT bool WKViewIsPageOverlayInstalled(WKViewRef view);
 WK_EXPORT void WKViewSetDrawsTransparentBackground(WKViewRef view, bool drawsTransparentBackground);
 WK_EXPORT bool WKViewDrawsTransparentBackground(WKViewRef view);
 
+WK_EXPORT void WKViewSetCustomDropTarget(WKViewRef view, IDropTarget*);
+
 #ifdef __cplusplus
 }
 #endif

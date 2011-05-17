@@ -119,3 +119,8 @@ bool WKViewDrawsTransparentBackground(WKViewRef viewRef)
     return toImpl(viewRef)->page()->drawsTransparentBackground();
 }
 
+void WKViewSetCustomDropTarget(WKViewRef viewRef, IDropTarget* dropTarget)
+{
+    return toImpl(viewRef)->setCustomDropTarget(dropTarget);
+}
+
