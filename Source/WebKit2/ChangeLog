@@ -1,3 +1,12 @@
+2011-05-17  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Loose end from fix for https://bugs.webkit.org/show_bug.cgi?id=60938
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        Made new header file "private" instead of "project" so clients can access it.
+
 2011-05-17  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
