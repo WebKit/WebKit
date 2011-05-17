@@ -1,3 +1,24 @@
+2011-05-16  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+        https://bugs.webkit.org/show_bug.cgi?id=58830
+
+        Add unit tests for the compositor's TreeSynchronizer.
+
+        * WebKit.gypi:
+        * tests/TreeSynchronizerTest.cpp: Added.
+        (WebCore::MockCCLayerImpl::create):
+        (WebCore::MockCCLayerImpl::~MockCCLayerImpl):
+        (WebCore::MockCCLayerImpl::setCCLayerDestructionList):
+        (WebCore::MockCCLayerImpl::MockCCLayerImpl):
+        (WebCore::MockLayerChromium::create):
+        (WebCore::MockLayerChromium::~MockLayerChromium):
+        (WebCore::MockLayerChromium::createCCLayerImpl):
+        (WebCore::MockLayerChromium::pushPropertiesTo):
+        (WebCore::MockLayerChromium::MockLayerChromium):
+        (WebCore::expectTreesAreIdentical):
+        (WebCore::TEST):
+
 2011-05-16  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

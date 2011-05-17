@@ -163,10 +163,6 @@ public:
     // These exists just for debugging (via drawDebugBorder()).
     void setBorderColor(const Color&);
 
-#ifndef NDEBUG
-    int debugID() const { return m_debugID; }
-#endif
-
     void drawDebugBorder();
     String layerTreeAsText() const;
 
@@ -174,7 +170,6 @@ public:
 
     // Everything from here down in the public section will move to CCLayerImpl.
     CCLayerImpl* ccLayerImpl();
-    void createCCLayerImplIfNeeded();
 
     static void drawTexturedQuad(GraphicsContext3D*, const TransformationMatrix& projectionMatrix, const TransformationMatrix& layerMatrix,
                                  float width, float height, float opacity,
@@ -187,6 +182,9 @@ public:
     // End calls that forward to the CCLayerImpl.
 
     typedef ProgramBinding<VertexShaderPos, FragmentShaderColor> BorderProgram;
+
+    int id() const { return m_layerId; }
+
 protected:
     GraphicsLayerChromium* m_owner;
     explicit LayerChromium(GraphicsLayerChromium* owner);
@@ -216,11 +214,13 @@ protected:
     static const unsigned s_positionAttribLocation;
     static const unsigned s_texCoordAttribLocation;
 
+    friend class TreeSynchronizer;
     // Constructs a CCLayerImpl of the correct runtime type for this LayerChromium type.
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
+    // FIXME: Remove when https://bugs.webkit.org/show_bug.cgi?id=58830 is fixed.
+    void setCCLayerImpl(CCLayerImpl* impl) { m_ccLayerImpl = impl; }
+    int m_layerId;
 
-    // For now, the LayerChromium directly owns its CCLayerImpl.
-    RefPtr<CCLayerImpl> m_ccLayerImpl;
 private:
     void setNeedsCommit();
 
@@ -242,9 +242,9 @@ private:
 
     RefPtr<LayerRendererChromium> m_layerRenderer;
 
-#ifndef NDEBUG
-    int m_debugID;
-#endif
+    // Temporary forward weak pointer to the CCLayerImpl associated with this layer.
+    // FIXME: Remove when https://bugs.webkit.org/show_bug.cgi?id=58830 is fixed.
+    CCLayerImpl* m_ccLayerImpl;
 
     // Layer properties.
     IntSize m_bounds;

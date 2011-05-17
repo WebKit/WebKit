@@ -163,11 +163,7 @@ void RenderSurfaceChromium::draw(const IntRect&)
 
 String RenderSurfaceChromium::name() const
 {
-#ifndef NDEBUG
-    return String::format("RenderSurface(id=%i,owner=%s)", m_owningLayer->debugID(), m_owningLayer->name().utf8().data());
-#else
-    return String::format("RenderSurface(owner=%s)", m_owningLayer->name().utf8().data());
-#endif
+    return String::format("RenderSurface(id=%d,owner=%s)", m_owningLayer->id(), m_owningLayer->name().utf8().data());
 }
 
 static void writeIndent(TextStream& ts, int indent)

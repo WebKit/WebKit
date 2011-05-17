@@ -36,8 +36,8 @@
 
 namespace WebCore {
 
-CCPluginLayerImpl::CCPluginLayerImpl(LayerChromium* owner)
-    : CCLayerImpl(owner)
+CCPluginLayerImpl::CCPluginLayerImpl(LayerChromium* owner, int id)
+    : CCLayerImpl(owner, id)
     , m_textureId(0)
 {
 }

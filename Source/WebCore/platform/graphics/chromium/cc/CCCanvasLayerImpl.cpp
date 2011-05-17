@@ -36,8 +36,8 @@
 
 namespace WebCore {
 
-CCCanvasLayerImpl::CCCanvasLayerImpl(LayerChromium* owner)
-    : CCLayerImpl(owner)
+CCCanvasLayerImpl::CCCanvasLayerImpl(LayerChromium* owner, int id)
+    : CCLayerImpl(owner, id)
     , m_textureId(0)
     , m_premultipliedAlpha(true)
 {

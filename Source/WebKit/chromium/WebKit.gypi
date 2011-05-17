@@ -64,6 +64,7 @@
             'tests/PODIntervalTreeTest.cpp',
             'tests/PODRedBlackTreeTest.cpp',
             'tests/TilingDataTest.cpp',
+            'tests/TreeSynchronizerTest.cpp',
             'tests/TreeTestHelpers.cpp',
             'tests/TreeTestHelpers.h',
             'tests/WebFrameTest.cpp',

@@ -49,9 +49,7 @@ namespace WebCore {
 
 using namespace std;
 
-#ifndef NDEBUG
-static int s_nextLayerDebugID = 1;
-#endif
+static int s_nextLayerId = 1;
 
 PassRefPtr<LayerChromium> LayerChromium::create(GraphicsLayerChromium* owner)
 {
@@ -61,12 +59,9 @@ PassRefPtr<LayerChromium> LayerChromium::create(GraphicsLayerChromium* owner)
 LayerChromium::LayerChromium(GraphicsLayerChromium* owner)
     : m_owner(owner)
     , m_contentsDirty(false)
-    , m_maskLayer(0)
-    , m_ccLayerImpl(0)
+    , m_layerId(s_nextLayerId++)
     , m_parent(0)
-#ifndef NDEBUG
-    , m_debugID(s_nextLayerDebugID++)
-#endif
+    , m_ccLayerImpl(0)
     , m_anchorPoint(0.5, 0.5)
     , m_backgroundColor(0, 0, 0, 0)
     , m_opacity(1.0)
@@ -92,7 +87,7 @@ LayerChromium::~LayerChromium()
     ASSERT(!parent());
 
     if (m_ccLayerImpl)
-        m_ccLayerImpl->resetOwner();
+        m_ccLayerImpl->clearOwner();
 
     // Remove the parent reference from all children.
     removeAllChildren();
@@ -100,8 +95,6 @@ LayerChromium::~LayerChromium()
 
 void LayerChromium::cleanupResources()
 {
-    if (m_ccLayerImpl)
-        m_ccLayerImpl->cleanupResources();
 }
 
 void LayerChromium::setLayerRenderer(LayerRendererChromium* renderer)
@@ -362,8 +355,6 @@ void LayerChromium::dumpLayer(TextStream& ts, int indent) const
     writeIndent(ts, indent);
     ts << layerTypeAsString() << "(" << m_name << ")\n";
     dumpLayerProperties(ts, indent+2);
-    if (m_ccLayerImpl)
-        m_ccLayerImpl->dumpLayerProperties(ts, indent+2);
     if (m_replicaLayer) {
         writeIndent(ts, indent+2);
         ts << "Replica:\n";
@@ -381,28 +372,18 @@ void LayerChromium::dumpLayer(TextStream& ts, int indent) const
 void LayerChromium::dumpLayerProperties(TextStream& ts, int indent) const
 {
     writeIndent(ts, indent);
-#ifndef NDEBUG
-    ts << "debugID: " << debugID() << ", ";
-#else
-#endif
-    ts << "drawsContent: " << drawsContent() << "\n";
+    ts << "id: " << id() << " drawsContent: " << drawsContent() << " bounds " << m_bounds.width() << "x" << m_bounds.height() << "\n";
 
 }
 
 PassRefPtr<CCLayerImpl> LayerChromium::createCCLayerImpl()
 {
-    return CCLayerImpl::create(this);
-}
-
-void LayerChromium::createCCLayerImplIfNeeded()
-{
-    if (!m_ccLayerImpl)
-        m_ccLayerImpl = createCCLayerImpl();
+    return CCLayerImpl::create(this, m_layerId);
 }
 
 CCLayerImpl* LayerChromium::ccLayerImpl()
 {
-    return m_ccLayerImpl.get();
+    return m_ccLayerImpl;
 }
 
 void LayerChromium::setBorderColor(const Color& color)

@@ -4060,6 +4060,8 @@
             'platform/graphics/chromium/TextureManager.h',
             'platform/graphics/chromium/TransparencyWin.cpp',
             'platform/graphics/chromium/TransparencyWin.h',
+            'platform/graphics/chromium/TreeSynchronizer.cpp',
+            'platform/graphics/chromium/TreeSynchronizer.h',
             'platform/graphics/chromium/UniscribeHelper.cpp',
             'platform/graphics/chromium/UniscribeHelper.h',
             'platform/graphics/chromium/UniscribeHelperTextRun.cpp',

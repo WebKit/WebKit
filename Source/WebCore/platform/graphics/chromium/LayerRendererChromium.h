@@ -148,11 +148,14 @@ private:
     typedef Vector<RefPtr<CCLayerImpl> > LayerList;
     typedef HashMap<GraphicsContext3D*, int> ChildContextMap;
 
-    explicit LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TilePaintInterface> contentPaint);
+    // FIXME: This needs to be moved to the CCViewImpl when that class exists.
+    RefPtr<CCLayerImpl> m_rootCCLayerImpl;
+
+    LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<TilePaintInterface> contentPaint);
 
     void updateLayers(LayerList& renderSurfaceLayerList);
     void updateRootLayerContents();
-    void updatePropertiesAndRenderSurfaces(LayerChromium*, const TransformationMatrix& parentMatrix, LayerList& renderSurfaceLayerList, LayerList& layers);
+    void updatePropertiesAndRenderSurfaces(CCLayerImpl*, const TransformationMatrix& parentMatrix, LayerList& renderSurfaceLayerList, LayerList& layers);
 
     void paintLayerContents(const LayerList&);
     void updateCompositorResourcesRecursive(LayerChromium*);

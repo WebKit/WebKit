@@ -1,3 +1,76 @@
+2011-05-16  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Decouple LayerChromium/CCLayerImpl trees
+        https://bugs.webkit.org/show_bug.cgi?id=58830
+
+        Makes the CCLayerImpl tree self-hosting and provides an explicit step
+        to synchronize the LayerChromium tree to the CCLayerImpl tree.
+        Tested by compositing/ layout tests and by unit tests in WebKit/chromium.
+
+        * WebCore.gypi:
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/LayerChromium.cpp:
+        (WebCore::LayerChromium::LayerChromium):
+        (WebCore::LayerChromium::~LayerChromium):
+        (WebCore::LayerChromium::cleanupResources):
+        (WebCore::LayerChromium::dumpLayer):
+        (WebCore::LayerChromium::dumpLayerProperties):
+        (WebCore::LayerChromium::createCCLayerImpl):
+        (WebCore::LayerChromium::ccLayerImpl):
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::id):
+        (WebCore::LayerChromium::setCCLayerImpl):
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateAndDrawLayers):
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+        (WebCore::LayerRendererChromium::updateCompositorResourcesRecursive):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/PluginLayerChromium.cpp:
+        (WebCore::PluginLayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/TreeSynchronizer.cpp: Added.
+        (WebCore::TreeSynchronizer::addCCLayerImplsToMapRecursive):
+        (WebCore::TreeSynchronizer::synchronizeTreeRecursive):
+        (WebCore::TreeSynchronizer::synchronizeTrees):
+        * platform/graphics/chromium/TreeSynchronizer.h:
+        * platform/graphics/chromium/VideoLayerChromium.cpp:
+        (WebCore::VideoLayerChromium::createCCLayerImpl):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        (WebCore::CCCanvasLayerImpl::CCCanvasLayerImpl):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.h:
+        (WebCore::CCCanvasLayerImpl::create):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        (WebCore::CCLayerImpl::addChild):
+        (WebCore::CCLayerImpl::removeFromParent):
+        (WebCore::CCLayerImpl::removeAllChildren):
+        (WebCore::CCLayerImpl::clearChildList):
+        (WebCore::CCLayerImpl::descendantsDrawsContent):
+        (WebCore::CCLayerImpl::drawsContent):
+        (WebCore::CCLayerImpl::updateCompositorResources):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::create):
+        (WebCore::CCLayerImpl::parent):
+        (WebCore::CCLayerImpl::children):
+        (WebCore::CCLayerImpl::setMaskLayer):
+        (WebCore::CCLayerImpl::maskLayer):
+        (WebCore::CCLayerImpl::setReplicaLayer):
+        (WebCore::CCLayerImpl::replicaLayer):
+        (WebCore::CCLayerImpl::id):
+        (WebCore::CCLayerImpl::owner):
+        (WebCore::CCLayerImpl::setParent):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::CCPluginLayerImpl):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.h:
+        (WebCore::CCPluginLayerImpl::create):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::CCVideoLayerImpl):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.h:
+        (WebCore::CCVideoLayerImpl::create):
+
 2011-05-16  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Kent Tamura.

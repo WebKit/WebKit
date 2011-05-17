@@ -44,22 +44,30 @@ class RenderSurfaceChromium;
 
 class CCLayerImpl : public RefCounted<CCLayerImpl> {
 public:
-    static PassRefPtr<CCLayerImpl> create(LayerChromium* owner)
+    static PassRefPtr<CCLayerImpl> create(LayerChromium* owner, int id)
     {
-        return adoptRef(new CCLayerImpl(owner));
+        return adoptRef(new CCLayerImpl(owner, id));
     }
-    // When this class gets subclasses, remember to add 'virtual' here.
     virtual ~CCLayerImpl();
-    void resetOwner() { m_owner = 0; }
-    LayerChromium* owner() const { return m_owner; }
+
+    // Tree structure.
+    CCLayerImpl* parent() const { return m_parent; }
+    const Vector<RefPtr<CCLayerImpl> >& children() const { return m_children; }
+    void addChild(PassRefPtr<CCLayerImpl>);
+    void removeFromParent();
+    void removeAllChildren();
+
+    void setMaskLayer(PassRefPtr<CCLayerImpl> maskLayer) { m_maskLayer = maskLayer; }
+    CCLayerImpl* maskLayer() const { return m_maskLayer.get(); }
+
+    void setReplicaLayer(PassRefPtr<CCLayerImpl> replicaLayer) { m_replicaLayer = replicaLayer; }
+    CCLayerImpl* replicaLayer() const { return m_replicaLayer.get(); }
+
+    int id() const { return m_layerId; }
 
 #ifndef NDEBUG
     int debugID() const { return m_debugID; }
 #endif
-
-    CCLayerImpl* parent() const;
-    CCLayerImpl* maskLayer() const;
-    CCLayerImpl* replicaLayer() const;
 
     virtual void draw(const IntRect& contentRect);
     virtual void updateCompositorResources();
@@ -138,14 +146,29 @@ public:
 
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
+    // HACK TODO fix this
+    LayerChromium* owner() const { return m_owner; }
+    void clearOwner() { m_owner = 0; }
 protected:
-    // For now, CCLayers are owned directly by a LayerChromium.
+    // For now, CCLayerImpls have a back pointer to their LayerChromium.
+    // FIXME: remove this after https://bugs.webkit.org/show_bug.cgi?id=58833 is fixed.
     LayerChromium* m_owner;
-    explicit CCLayerImpl(LayerChromium*);
+    CCLayerImpl(LayerChromium*, int);
 
     static void writeIndent(TextStream&, int indent);
 
 private:
+    void setParent(CCLayerImpl* parent) { m_parent = parent; }
+    friend class TreeSynchronizer;
+    void clearChildList(); // Warning: This does not preserve tree structure invariants and so is only exposed to the tree synchronizer.
+
+    // Properties internal to CCLayerImpl
+    CCLayerImpl* m_parent;
+    Vector<RefPtr<CCLayerImpl> > m_children;
+    RefPtr<CCLayerImpl> m_maskLayer;
+    RefPtr<CCLayerImpl> m_replicaLayer;
+    int m_layerId;
+
     // Properties synchronized from the associated LayerChromium.
     FloatPoint m_anchorPoint;
     float m_anchorPointZ;

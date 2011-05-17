@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,47 +23,35 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef TreeSynchronizer_h
+#define TreeSynchronizer_h
 
-#if USE(ACCELERATED_COMPOSITING)
-
-#include "PluginLayerChromium.h"
-
-#include "GraphicsContext3D.h"
-#include "LayerRendererChromium.h"
-#include "cc/CCLayerImpl.h"
-#include "cc/CCPluginLayerImpl.h"
+#include <wtf/HashMap.h>
+#include <wtf/Noncopyable.h>
+#include <wtf/PassRefPtr.h>
 
 namespace WebCore {
 
-PassRefPtr<PluginLayerChromium> PluginLayerChromium::create(GraphicsLayerChromium* owner)
-{
-    return adoptRef(new PluginLayerChromium(owner));
-}
+class CCLayerImpl;
+class LayerChromium;
 
-PluginLayerChromium::PluginLayerChromium(GraphicsLayerChromium* owner)
-    : LayerChromium(owner)
-    , m_textureId(0)
-{
-}
+class TreeSynchronizer {
+WTF_MAKE_NONCOPYABLE(TreeSynchronizer);
+public:
+    // Accepts a LayerChromium tree and returns a reference to a CCLayerImpl tree that duplicates the structure
+    // of the LayerChromium tree, reusing the CCLayerImpls in the tree provided by oldCCLayerImplRoot if possible.
+    static PassRefPtr<CCLayerImpl> synchronizeTrees(LayerChromium* layerRoot, PassRefPtr<CCLayerImpl> oldCCLayerImplRoot);
 
-PassRefPtr<CCLayerImpl> PluginLayerChromium::createCCLayerImpl()
-{
-    return CCPluginLayerImpl::create(this, m_layerId);
-}
+private:
+    TreeSynchronizer(); // Not instantiable.
 
-void PluginLayerChromium::setTextureId(unsigned id)
-{
-    m_textureId = id;
-}
+    typedef HashMap<int, RefPtr<CCLayerImpl> > CCLayerImplMap;
 
-void PluginLayerChromium::pushPropertiesTo(CCLayerImpl* layer)
-{
-    LayerChromium::pushPropertiesTo(layer);
+    // Declared as static member functions so they can access functions on LayerChromium as a friend class.
+    static void addCCLayerImplsToMapRecursive(CCLayerImplMap&, CCLayerImpl*);
+    static PassRefPtr<CCLayerImpl> synchronizeTreeRecursive(LayerChromium*, CCLayerImplMap&);
+};
 
-    CCPluginLayerImpl* pluginLayer = static_cast<CCPluginLayerImpl*>(layer);
-    pluginLayer->setTextureId(m_textureId);
-}
+} // namespace WebCore
 
-}
-#endif // USE(ACCELERATED_COMPOSITING)
+#endif // TreeSynchronizer_h

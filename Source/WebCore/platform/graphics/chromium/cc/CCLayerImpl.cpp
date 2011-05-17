@@ -30,7 +30,7 @@
 #include "cc/CCLayerImpl.h"
 
 #include "GraphicsContext3D.h"
-#include "LayerChromium.h" // FIXME: temporary and bad
+#include "LayerChromium.h"
 #include "LayerRendererChromium.h"
 #include "RenderSurfaceChromium.h"
 #include <wtf/text/WTFString.h>
@@ -60,17 +60,16 @@ void toGLMatrix(float* flattened, const WebCore::TransformationMatrix& m)
 
 namespace WebCore {
 
-CCLayerImpl::CCLayerImpl(LayerChromium* owner)
+CCLayerImpl::CCLayerImpl(LayerChromium* owner, int id)
     : m_owner(owner)
+    , m_parent(0)
+    , m_layerId(id)
     , m_anchorPoint(0.5, 0.5)
     , m_anchorPointZ(0)
     , m_doubleSided(true)
     , m_masksToBounds(false)
     , m_opacity(1.0)
     , m_preserves3D(false)
-#ifndef NDEBUG
-    , m_debugID(owner->debugID())
-#endif
     , m_targetRenderSurface(0)
     , m_drawDepth(0)
     , m_drawOpacity(0)
@@ -84,20 +83,34 @@ CCLayerImpl::~CCLayerImpl()
 {
 }
 
-// These are pseudo-structural hacks until we get real tree syncing up in this piece.
-CCLayerImpl* CCLayerImpl::parent() const
+void CCLayerImpl::addChild(PassRefPtr<CCLayerImpl> child)
 {
-    return m_owner->parent() ? m_owner->parent()->ccLayerImpl() : 0;
+    child->setParent(this);
+    m_children.append(child);
 }
 
-CCLayerImpl* CCLayerImpl::maskLayer() const
+void CCLayerImpl::removeFromParent()
 {
-    return m_owner->maskLayer() ? m_owner->maskLayer()->ccLayerImpl() : 0;
+    if (!m_parent)
+        return;
+    for (size_t i = 0; i < m_parent->m_children.size(); ++i) {
+        if (m_parent->m_children[i].get() == this) {
+            m_parent->m_children.remove(i);
+            break;
+        }
+    }
+    m_parent = 0;
 }
 
-CCLayerImpl* CCLayerImpl::replicaLayer() const
+void CCLayerImpl::removeAllChildren()
 {
-    return m_owner->replicaLayer() ? m_owner->replicaLayer()->ccLayerImpl() : 0;
+    while (m_children.size())
+        m_children[0]->removeFromParent();
+}
+
+void CCLayerImpl::clearChildList()
+{
+    m_children.clear();
 }
 
 void CCLayerImpl::setLayerRenderer(LayerRendererChromium* renderer)
@@ -113,10 +126,8 @@ RenderSurfaceChromium* CCLayerImpl::createRenderSurface()
 
 bool CCLayerImpl::descendantsDrawsContent()
 {
-    const Vector<RefPtr<LayerChromium> >& children = m_owner->children();
-    for (size_t i = 0; i < children.size(); ++i) {
-        children[i]->createCCLayerImplIfNeeded();
-        if (children[i]->ccLayerImpl()->drawsContent() || children[i]->ccLayerImpl()->descendantsDrawsContent())
+    for (size_t i = 0; i < m_children.size(); ++i) {
+        if (m_children[i]->drawsContent() || m_children[i]->descendantsDrawsContent())
             return true;
     }
     return false;
@@ -125,7 +136,7 @@ bool CCLayerImpl::descendantsDrawsContent()
 // These belong on CCLayerImpl, but should be overridden by each type and not defer to the LayerChromium subtypes.
 bool CCLayerImpl::drawsContent() const
 {
-    return m_owner && m_owner->drawsContent();
+    return m_owner->drawsContent();
 }
 
 void CCLayerImpl::draw(const IntRect& targetSurfaceRect)
@@ -135,7 +146,7 @@ void CCLayerImpl::draw(const IntRect& targetSurfaceRect)
 
 void CCLayerImpl::updateCompositorResources()
 {
-    return m_owner->updateCompositorResources();
+    m_owner->updateCompositorResources();
 }
 
 void CCLayerImpl::unreserveContentsTexture()
