@@ -1,3 +1,15 @@
+2011-05-17  Yufeng Shen  <miletus@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Make WebKit expose extra touch information
+        https://bugs.webkit.org/show_bug.cgi?id=59030
+
+        * public/WebTouchPoint.h:
+        (WebKit::WebTouchPoint::WebTouchPoint):
+        * src/WebInputEventConversion.cpp:
+        (WebKit::PlatformTouchPointBuilder::PlatformTouchPointBuilder):
+
 2011-05-16  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
@@ -1476,6 +1488,7 @@
 
         * src/gtk/WebInputEventFactory.cpp: set click count for mouse up events.
         * tests/WebInputEventFactoryTestGtk.cpp: added test case MouseUpClickCount.
+
 2011-04-20  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.

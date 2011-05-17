@@ -212,6 +212,9 @@ PlatformTouchPointBuilder::PlatformTouchPointBuilder(Widget* widget, const WebTo
     m_state = toPlatformTouchPointState(point.state);
     m_pos = widget->convertFromContainingWindow(point.position);
     m_screenPos = point.screenPosition;
+    m_radiusY = point.radiusY;
+    m_radiusX = point.radiusX;
+    m_rotationAngle = point.rotationAngle;
 }
 
 PlatformTouchEventBuilder::PlatformTouchEventBuilder(Widget* widget, const WebTouchEvent& event)

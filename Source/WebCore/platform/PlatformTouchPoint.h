@@ -59,12 +59,18 @@ public:
     State state() const { return m_state; }
     IntPoint screenPos() const { return m_screenPos; }
     IntPoint pos() const { return m_pos; }
-    
+    int radiusX() const { return m_radiusX; }
+    int radiusY() const { return m_radiusY; }
+    float rotationAngle() const { return m_rotationAngle; }
+
 protected:
     unsigned m_id;
     State m_state;
     IntPoint m_screenPos;
     IntPoint m_pos;
+    int m_radiusY;
+    int m_radiusX;
+    float m_rotationAngle;
 };
 
 }

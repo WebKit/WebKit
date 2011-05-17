@@ -36,5 +36,8 @@ module events {
         readonly attribute long             pageY;
         readonly attribute EventTarget      target;
         readonly attribute unsigned long    identifier;
+        readonly attribute int              webkitRadiusX;
+        readonly attribute int              webkitRadiusY;
+        readonly attribute float            webkitRotationAngle;
     };
 }

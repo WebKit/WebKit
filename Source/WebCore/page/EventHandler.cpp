@@ -3159,7 +3159,8 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
         RefPtr<Touch> touch = Touch::create(doc->frame(), touchTarget.get(), point.id(),
                                             point.screenPos().x(), point.screenPos().y(),
-                                            adjustedPageX, adjustedPageY);
+                                            adjustedPageX, adjustedPageY,
+                                            point.radiusX(), point.radiusY(), point.rotationAngle());
 
         // Ensure this target's touch list exists, even if it ends up empty, so it can always be passed to TouchEvent::Create below.
         TargetTouchesMap::iterator targetTouchesIterator = touchesByTarget.find(touchTarget.get());

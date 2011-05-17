@@ -1,3 +1,13 @@
+2011-05-17  Yufeng Shen  <miletus@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Make WebKit expose extra touch information
+        https://bugs.webkit.org/show_bug.cgi?id=59030
+
+        * fast/events/touch/document-create-touch-expected.txt:
+        * fast/events/touch/script-tests/document-create-touch.js:
+
 2011-05-17  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

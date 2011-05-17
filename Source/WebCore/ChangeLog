@@ -1,3 +1,29 @@
+2011-05-17  Yufeng Shen  <miletus@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Make WebKit expose extra touch information
+        https://bugs.webkit.org/show_bug.cgi?id=59030
+
+        * dom/Document.cpp:
+        (WebCore::Document::createTouch):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/Touch.cpp:
+        (WebCore::Touch::Touch):
+        * dom/Touch.h:
+        (WebCore::Touch::create):
+        (WebCore::Touch::webkitRadiusX):
+        (WebCore::Touch::webkitRadiusY):
+        (WebCore::Touch::webkitRotationAngle):
+        * dom/Touch.idl:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleTouchEvent):
+        * platform/PlatformTouchPoint.h:
+        (WebCore::PlatformTouchPoint::radiusX):
+        (WebCore::PlatformTouchPoint::radiusY):
+        (WebCore::PlatformTouchPoint::rotationAngle):
+
 2011-05-17  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Ryosuke Niwa.

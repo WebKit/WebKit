@@ -46,7 +46,12 @@ public:
 
     WebTouchPoint()
         : id(FingerFirst)
-        , state(StateUndefined) { }
+        , state(StateUndefined)
+        , radiusX(0)
+        , radiusY(0)
+        , rotationAngle(0)
+    {
+    }
 
     enum State {
         StateUndefined,
@@ -61,6 +66,10 @@ public:
     State state;
     WebPoint screenPosition;
     WebPoint position;
+
+    int radiusX;
+    int radiusY;
+    float rotationAngle;
 };
 
 } // namespace WebKit
