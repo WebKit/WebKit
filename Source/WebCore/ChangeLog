@@ -1,3 +1,10 @@
+2011-05-17  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed warning fix introduced by r86377.
+
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintMask):
+
 2011-05-17  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.

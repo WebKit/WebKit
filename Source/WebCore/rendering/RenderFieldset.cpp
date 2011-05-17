@@ -177,7 +177,6 @@ void RenderFieldset::paintMask(PaintInfo& paintInfo, IntSize paintOffset)
         return;
 
     IntRect paintRect = IntRect(toPoint(paintOffset), size());
-    IntSize adjustedSize = size();
     RenderBox* legend = findLegend();
     if (!legend)
         return RenderBlock::paintMask(paintInfo, paintOffset);
