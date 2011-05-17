@@ -1,3 +1,13 @@
+2011-05-16  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: WebSocketHandshake prints a carriage return to console
+        https://bugs.webkit.org/show_bug.cgi?id=60880
+
+        * http/tests/websocket/tests/handshake-error-expected.txt:
+        Remove a carriage return in the first line.
+
 2011-05-16  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.

@@ -1,3 +1,17 @@
+2011-05-16  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: WebSocketHandshake prints a carriage return to console
+        https://bugs.webkit.org/show_bug.cgi?id=60880
+
+        * websockets/WebSocketHandshake.cpp:
+        (WebCore::WebSocketHandshake::readStatusLine):
+        WebSocketHandshake should not print a carriage return to console. To fix this,
+        we first check whether the status line ends with CRLF. After that,
+        we can print the first (lineLength - 2) characters of the status line
+        which do not contain a carriage return.
+
 2011-05-16  MORITA Hajime  <morrita@google.com>
 
         Unreviewed build fix for r86647, which broke SUPPORT_AUTOCORRECTION_PANEL.

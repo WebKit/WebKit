@@ -450,20 +450,20 @@ int WebSocketHandshake::readStatusLine(const char* header, size_t headerLength, 
         return -1; // We have not received '\n' yet.
 
     const char* end = p + 1;
-    if (end - header > maximumLength) {
+    int lineLength = end - header;
+    if (lineLength > maximumLength) {
         m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Status line is too long", 0, clientOrigin(), 0);
         return maximumLength;
     }
-    int lineLength = end - header;
 
-    if (!space1 || !space2) {
-        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "No response code found: " + trimConsoleMessage(header, lineLength - 1), 0, clientOrigin(), 0);
+    // The line must end with "\r\n".
+    if (lineLength < 2 || *(end - 2) != '\r') {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Status line does not end with CRLF", 0, clientOrigin(), 0);
         return lineLength;
     }
 
-    // The line must end with "\r\n".
-    if (*(end - 2) != '\r') {
-        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Status line does not end with CRLF", 0, clientOrigin(), 0);
+    if (!space1 || !space2) {
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "No response code found: " + trimConsoleMessage(header, lineLength - 2), 0, clientOrigin(), 0);
         return lineLength;
     }
 
