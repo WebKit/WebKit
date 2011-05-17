@@ -24,12 +24,20 @@
 #include "WKAPICast.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
+#include <qwkcontext.h>
 #include <qwkpage.h>
 #include <qwkpage_p.h>
 #include <WKFrame.h>
 #include <WKType.h>
 
 using namespace WebKit;
+
+static QWKContext* toQWKContext(const void* clientInfo)
+{
+    if (clientInfo)
+        return reinterpret_cast<QWKContext*>(const_cast<void*>(clientInfo));
+    return 0;
+}
 
 static QWKPage* toQWKPage(const void* clientInfo)
 {
@@ -187,4 +195,14 @@ void qt_wk_didSameDocumentNavigationForFrame(WKPageRef page, WKFrameRef frame, W
     QUrl qUrl = urlStr;
     emit toQWKPage(clientInfo)->urlChanged(qUrl);
     QWKPagePrivate::get(toQWKPage(clientInfo))->updateNavigationActions();
+}
+
+void qt_wk_didChangeIconForPageURL(WKIconDatabaseRef iconDatabase, WKURLRef pageURL, const void* clientInfo)
+{
+    QUrl qUrl = WKURLCopyQUrl(pageURL);
+    emit toQWKContext(clientInfo)->iconChangedForPageURL(qUrl);
+}
+
+void qt_wk_didRemoveAllIcons(WKIconDatabaseRef iconDatabase, const void* clientInfo)
+{
 }

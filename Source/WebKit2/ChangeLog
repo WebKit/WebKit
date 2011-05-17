@@ -1,3 +1,35 @@
+2011-05-17  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt][WK2] Initial support for favicons.
+        https://bugs.webkit.org/show_bug.cgi?id=58937
+
+        Add the following API to QWKContext:
+
+        - void setIconDatabasePath(QString)
+        - void iconChangedForPageURL(QUrl) [signal]
+        - QIcon iconForPageURL(QUrl)
+
+        This is mostly analogous to the QWebSettings/QWebFrame icon API we had in WebKit1.
+
+        * UIProcess/API/qt/ClientImpl.h: Added WKIconDatabaseClient methods.
+
+        * UIProcess/API/qt/ClientImpl.cpp:
+        (toQWKContext): Helper to cast from "void* clientInfo" to a QWKContext*.
+        (qt_wk_didChangeIconForPageURL): Emits QWKContext::iconChangedForPageURL(QUrl).
+        (qt_wk_didRemoveAllIcons): Stub.
+
+        * UIProcess/API/qt/qwkcontext.h:
+        * UIProcess/API/qt/qwkcontext_p.h:
+        * UIProcess/API/qt/qwkcontext.cpp:
+        (QWKContextPrivate::QWKContextPrivate): Set up and register a WKIconDatabaseClient.
+        (QWKContext::QWKContext): Minor refactor to avoid code duplication in constructors.
+        (QWKContext::setIconDatabasePath): Exactly what it sounds like.
+        (QWKContext::iconForPageURL): Retrieves the favicon for a given page URL as a QIcon.
+
+        * WebKit2API.pri: Add WKIconDatabase.cpp and WKIconDatabase.h to build.
+
 2011-05-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

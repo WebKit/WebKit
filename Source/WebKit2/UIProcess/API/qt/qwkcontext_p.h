@@ -26,7 +26,7 @@
 
 class QWKContextPrivate {
 public:
-    QWKContextPrivate(QWKContext*);
+    QWKContextPrivate(QWKContext*, WebKit::WebContext* = 0);
     ~QWKContextPrivate();
 
     QWKContext* q;

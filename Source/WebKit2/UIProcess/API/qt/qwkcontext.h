@@ -24,6 +24,8 @@
 #include <QObject>
 #include <WebKit2/WKContext.h>
 
+class QIcon;
+class QUrl;
 class QWKContextPrivate;
 
 class QWEBKIT_EXPORT QWKContext : public QObject {
@@ -34,6 +36,12 @@ public:
 
     // Bridge from the C API
     QWKContext(WKContextRef contextRef, QObject* parent = 0);
+
+    void setIconDatabasePath(const QString&);
+    QIcon iconForPageURL(const QUrl&) const;
+
+public:
+    Q_SIGNAL void iconChangedForPageURL(const QUrl&);
 
 private:
     QWKContextPrivate* d;

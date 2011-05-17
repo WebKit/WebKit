@@ -53,6 +53,10 @@ void qt_wk_takeFocus(WKPageRef page, WKFocusDirection direction, const void *cli
 void qt_wk_runJavaScriptAlert(WKPageRef page, WKStringRef alertText, WKFrameRef frame, const void* clientInfo);
 void qt_wk_setStatusText(WKPageRef page, WKStringRef text, const void *clientInfo);
 
+// IconDatabase client.
+void qt_wk_didChangeIconForPageURL(WKIconDatabaseRef, WKURLRef, const void* clientInfo);
+void qt_wk_didRemoveAllIcons(WKIconDatabaseRef, const void* clientInfo);
+
 #ifdef __cplusplus
 }
 #endif
