@@ -1,3 +1,19 @@
+2011-05-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        Add API to determine if a frame has any form elements without going to javascript
+        https://bugs.webkit.org/show_bug.cgi?id=60999
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFrameContainsAnyFormElements):
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::containsAnyFormElements):
+        * WebProcess/WebPage/WebFrame.h:
+        Add WKBundleFrameContainsAnyFormElements which does a walk of the document to determine
+        if there are any form elements.
+
 2011-05-17  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

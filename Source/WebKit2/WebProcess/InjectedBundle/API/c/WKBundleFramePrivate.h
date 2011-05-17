@@ -49,6 +49,8 @@ WK_EXPORT unsigned WKBundleFrameGetPendingUnloadCount(WKBundleFrameRef frame);
 WK_EXPORT WKStringRef WKBundleFrameCopyLayerTreeAsText(WKBundleFrameRef frame);
 WK_EXPORT void WKBundleFrameClearOpener(WKBundleFrameRef frame);
 
+WK_EXPORT bool WKBundleFrameContainsAnyFormElements(WKBundleFrameRef frame);
+
 #ifdef __cplusplus
 }
 #endif

@@ -46,6 +46,7 @@
 #include <WebCore/Frame.h>
 #include <WebCore/FrameView.h>
 #include <WebCore/HTMLFrameOwnerElement.h>
+#include <WebCore/HTMLNames.h>
 #include <WebCore/JSCSSStyleDeclaration.h>
 #include <WebCore/JSElement.h>
 #include <WebCore/JSRange.h>
@@ -547,6 +548,24 @@ bool WebFrame::getDocumentBackgroundColor(double* red, double* green, double* bl
 
     bgColor.getRGBA(*red, *green, *blue, *alpha);
     return true;
+}
+
+bool WebFrame::containsAnyFormElements() const
+{
+    if (!m_coreFrame)
+        return false;
+    
+    Document* document = m_coreFrame->document();
+    if (!document)
+        return false;
+
+    for (Node* node = document->documentElement(); node; node = node->traverseNextNode()) {
+        if (!node->isElementNode())
+            continue;
+        if (static_cast<Element*>(node)->hasTagName(HTMLNames::formTag))
+            return true;
+    }
+    return false;
 }
 
 WebFrame* WebFrame::frameForContext(JSContextRef context)

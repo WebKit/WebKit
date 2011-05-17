@@ -225,3 +225,8 @@ WKStringRef WKBundleFrameCopyMIMETypeForResourceWithURL(WKBundleFrameRef frameRe
 {
     return toCopiedAPI(toImpl(frameRef)->mimeTypeForResourceWithURL(WebCore::KURL(WebCore::KURL(), toImpl(urlRef)->string())));
 }
+
+bool WKBundleFrameContainsAnyFormElements(WKBundleFrameRef frameRef)
+{
+    return toImpl(frameRef)->containsAnyFormElements();
+}
