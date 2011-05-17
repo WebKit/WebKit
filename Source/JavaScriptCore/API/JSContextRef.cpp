@@ -138,14 +138,17 @@ void JSGlobalContextRelease(JSGlobalContextRef ctx)
     // * If this is the last reference to any contexts in the given context group,
     //   call destroy on the heap (the global data is being  freed).
     // * If this was the last reference to the global object, then unprotecting
-    //   it may  release a lot of GC memory - run the garbage collector now.
+    //   it may release a lot of GC memory - tickle the activity callback to
+    //   garbage collect soon.
     // * If there are more references remaining the the global object, then do nothing
     //   (specifically that is more protects, which we assume come from other JSGlobalContextRefs).
     if (releasingContextGroup) {
         globalData.clearBuiltinStructures();
         globalData.heap.destroy();
-    } else if (releasingGlobalObject)
-        globalData.heap.collectAllGarbage();
+    } else if (releasingGlobalObject) {
+        globalData.heap.activityCallback()->synchronize();
+        (*globalData.heap.activityCallback())();
+    }
 
     globalData.deref();
 

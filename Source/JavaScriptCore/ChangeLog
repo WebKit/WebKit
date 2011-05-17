@@ -1,3 +1,14 @@
+2011-05-17  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Oliver Hunt.
+
+        JSGlobalContextRelease should not trigger a synchronous garbage collection
+        https://bugs.webkit.org/show_bug.cgi?id=60990
+
+        * API/JSContextRef.cpp:
+        Change synchronous call to collectAllGarbage to a call to trigger the
+        activityCallback.
+
 2011-05-16  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
