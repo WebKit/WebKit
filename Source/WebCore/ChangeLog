@@ -1,3 +1,15 @@
+2011-05-17  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r86656.
+        http://trac.webkit.org/changeset/86656
+
+        Broke tests downstream in Chromium
+
+        * editing/SpellingCorrectionController.cpp:
+        (WebCore::markersHaveIdenticalDescription):
+        (WebCore::SpellingCorrectionController::recordSpellcheckerResponseForModifiedCorrection):
+        (WebCore::SpellingCorrectionController::processMarkersOnTextToBeReplacedByResult):
+
 2011-05-17  Yufeng Shen  <miletus@chromium.org>
 
         Reviewed by Darin Fisher.
