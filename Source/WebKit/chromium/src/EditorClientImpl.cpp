@@ -320,14 +320,14 @@ bool EditorClientImpl::canCopyCut(Frame* frame, bool defaultValue) const
 {
     if (!m_webView->permissionClient())
         return defaultValue;
-    return m_webView->permissionClient()->allowReadFromClipboard(WebFrameImpl::fromFrame(frame), defaultValue);
+    return m_webView->permissionClient()->allowWriteToClipboard(WebFrameImpl::fromFrame(frame), defaultValue);
 }
 
 bool EditorClientImpl::canPaste(Frame* frame, bool defaultValue) const
 {
     if (!m_webView->permissionClient())
         return defaultValue;
-    return m_webView->permissionClient()->allowWriteToClipboard(WebFrameImpl::fromFrame(frame), defaultValue);
+    return m_webView->permissionClient()->allowReadFromClipboard(WebFrameImpl::fromFrame(frame), defaultValue);
 }
 
 bool EditorClientImpl::canUndo() const
