@@ -1348,6 +1348,7 @@ SET(WebCore_SOURCES
     storage/StorageTracker.cpp
 
     websockets/ThreadableWebSocketChannel.cpp
+    websockets/ThreadableWebSocketChannelClientWrapper.cpp
     websockets/WebSocket.cpp
     websockets/WebSocketChannel.cpp
     websockets/WebSocketHandshake.cpp

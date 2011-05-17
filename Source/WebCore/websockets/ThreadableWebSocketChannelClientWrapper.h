@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -34,127 +34,41 @@
 #if ENABLE(WEB_SOCKETS)
 
 #include "PlatformString.h"
-#include "WebSocketChannelClient.h"
 #include <wtf/Forward.h>
-#include <wtf/PassRefPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
 
+class WebSocketChannelClient;
+
 class ThreadableWebSocketChannelClientWrapper : public ThreadSafeRefCounted<ThreadableWebSocketChannelClientWrapper> {
 public:
-    static PassRefPtr<ThreadableWebSocketChannelClientWrapper> create(WebSocketChannelClient* client)
-    {
-        return adoptRef(new ThreadableWebSocketChannelClientWrapper(client));
-    }
+    static PassRefPtr<ThreadableWebSocketChannelClientWrapper> create(WebSocketChannelClient*);
 
-    void clearSyncMethodDone()
-    {
-        m_syncMethodDone = false;
-    }
-    void setSyncMethodDone()
-    {
-        m_syncMethodDone = true;
-    }
+    void clearSyncMethodDone();
+    void setSyncMethodDone();
+    bool syncMethodDone() const;
 
-    bool syncMethodDone() const
-    {
-        return m_syncMethodDone;
-    }
+    bool sent() const;
+    void setSent(bool);
 
-    bool sent() const
-    {
-        return m_sent;
-    }
-    void setSent(bool sent)
-    {
-        m_sent = sent;
-        m_syncMethodDone = true;
-    }
+    unsigned long bufferedAmount() const;
+    void setBufferedAmount(unsigned long);
 
-    unsigned long bufferedAmount() const
-    {
-        return m_bufferedAmount;
-    }
-    void setBufferedAmount(unsigned long bufferedAmount)
-    {
-        m_bufferedAmount = bufferedAmount;
-        m_syncMethodDone = true;
-    }
+    void clearClient();
 
-    void clearClient()
-    {
-        m_client = 0;
-    }
+    void didConnect();
+    void didReceiveMessage(const String& message);
+    void didClose(unsigned long unhandledBufferedAmount);
 
-    void didConnect()
-    {
-        m_pendingConnected = true;
-        if (!m_suspended)
-            processPendingEvents();
-    }
-
-    void didReceiveMessage(const String& msg)
-    {
-        m_pendingMessages.append(msg);
-        if (!m_suspended)
-            processPendingEvents();
-    }
-
-    void didClose(unsigned long unhandledBufferedAmount)
-    {
-        m_pendingClosed = true;
-        m_bufferedAmount = unhandledBufferedAmount;
-        if (!m_suspended)
-            processPendingEvents();
-    }
-
-    void suspend()
-    {
-        m_suspended = true;
-    }
-
-    void resume()
-    {
-        m_suspended = false;
-        processPendingEvents();
-    }
+    void suspend();
+    void resume();
 
 protected:
-    ThreadableWebSocketChannelClientWrapper(WebSocketChannelClient* client)
-        : m_client(client)
-        , m_syncMethodDone(false)
-        , m_sent(false)
-        , m_bufferedAmount(0)
-        , m_suspended(false)
-        , m_pendingConnected(false)
-        , m_pendingClosed(false)
-    {
-    }
+    ThreadableWebSocketChannelClientWrapper(WebSocketChannelClient*);
 
-    void processPendingEvents()
-    {
-        ASSERT(!m_suspended);
-        if (m_pendingConnected) {
-            m_pendingConnected = false;
-            if (m_client)
-                m_client->didConnect();
-        }
-
-        Vector<String> messages;
-        messages.swap(m_pendingMessages);
-        for (Vector<String>::const_iterator iter = messages.begin(); iter != messages.end(); ++iter) {
-            if (m_client)
-                m_client->didReceiveMessage(*iter);
-        }
-
-        if (m_pendingClosed) {
-            m_pendingClosed = false;
-            if (m_client)
-                m_client->didClose(m_bufferedAmount);
-        }
-    }
+    void processPendingEvents();
 
     WebSocketChannelClient* m_client;
     bool m_syncMethodDone;

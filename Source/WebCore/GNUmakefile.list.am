@@ -3556,6 +3556,7 @@ webcore_sources += \
 	Source/WebCore/svg/SVGZoomEvent.h \
 	Source/WebCore/WebCorePrefix.h \
 	Source/WebCore/websockets/CloseEvent.h \
+	Source/WebCore/websockets/ThreadableWebSocketChannelClientWrapper.cpp \
 	Source/WebCore/websockets/ThreadableWebSocketChannelClientWrapper.h \
 	Source/WebCore/websockets/ThreadableWebSocketChannel.cpp \
 	Source/WebCore/websockets/ThreadableWebSocketChannel.h \

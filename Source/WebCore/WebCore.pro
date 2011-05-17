@@ -3394,6 +3394,7 @@ contains(DEFINES, ENABLE_WEB_SOCKETS=1) {
         websockets/WebSocketHandshakeRequest.cpp \
         websockets/WebSocketHandshakeResponse.cpp \
         websockets/ThreadableWebSocketChannel.cpp \
+        websockets/ThreadableWebSocketChannelClientWrapper.cpp \
         platform/network/SocketStreamErrorBase.cpp \
         platform/network/SocketStreamHandleBase.cpp \
         platform/network/qt/SocketStreamHandleQt.cpp

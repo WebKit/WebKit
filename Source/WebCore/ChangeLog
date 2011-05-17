@@ -1,3 +1,40 @@
+2011-05-17  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: Uninline methods in ThreadableWebSocketChannelClientWrapper
+        https://bugs.webkit.org/show_bug.cgi?id=60945
+
+        Add ThreadableWebSocketChannelClientWrapper.cpp. Uninline methods in this class and
+        move these definitions into .cpp in order to allow further modifications in this class.
+
+        No new tests, as this is just refactoring.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp: Added.
+        (WebCore::ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::create):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::clearSyncMethodDone):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::setSyncMethodDone):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::syncMethodDone):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::sent):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::setSent):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::bufferedAmount):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::setBufferedAmount):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::clearClient):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnect):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessage):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didClose):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::suspend):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::resume):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingEvents):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+
 2011-05-17  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -67186,6 +67186,10 @@
 				>
 			</File>
 			<File
+				RelativePath="..\websockets\ThreadableWebSocketChannelClientWrapper.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\websockets\ThreadableWebSocketChannelClientWrapper.h"
 				>
 			</File>

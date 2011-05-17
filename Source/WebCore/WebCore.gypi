@@ -5972,6 +5972,7 @@
             'websockets/CloseEvent.h',
             'websockets/ThreadableWebSocketChannel.cpp',
             'websockets/ThreadableWebSocketChannel.h',
+            'websockets/ThreadableWebSocketChannelClientWrapper.cpp',
             'websockets/ThreadableWebSocketChannelClientWrapper.h',
             'websockets/WebSocket.cpp',
             'websockets/WebSocket.h',

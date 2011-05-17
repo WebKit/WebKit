@@ -1224,6 +1224,7 @@
 		510D4A4E103177A20049EA54 /* WebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510D4A47103177A20049EA54 /* WebSocketChannel.cpp */; };
 		510D4A4F103177A20049EA54 /* WebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A48103177A20049EA54 /* WebSocketChannel.h */; };
 		510D4A50103177A20049EA54 /* WebSocketChannelClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 510D4A49103177A20049EA54 /* WebSocketChannelClient.h */; };
+		510F079B11FEE9C000B8EE49 /* ThreadableWebSocketChannelClientWrapper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 510F078111FEBE7500B8EE49 /* ThreadableWebSocketChannelClientWrapper.cpp */; };
 		5112247210CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5112247110CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp */; };
 		5112247410CFB8D8008099D7 /* ThreadableWebSocketChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5112247310CFB8D8008099D7 /* ThreadableWebSocketChannel.h */; };
 		5112247610CFB8E8008099D7 /* ThreadableWebSocketChannelClientWrapper.h in Headers */ = {isa = PBXBuildFile; fileRef = 5112247510CFB8E8008099D7 /* ThreadableWebSocketChannelClientWrapper.h */; };
@@ -7746,6 +7747,7 @@
 		510D4A47103177A20049EA54 /* WebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebSocketChannel.cpp; sourceTree = "<group>"; };
 		510D4A48103177A20049EA54 /* WebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketChannel.h; sourceTree = "<group>"; };
 		510D4A49103177A20049EA54 /* WebSocketChannelClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebSocketChannelClient.h; sourceTree = "<group>"; };
+		510F078111FEBE7500B8EE49 /* ThreadableWebSocketChannelClientWrapper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadableWebSocketChannelClientWrapper.cpp; sourceTree = "<group>"; };
 		5112247110CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ThreadableWebSocketChannel.cpp; sourceTree = "<group>"; };
 		5112247310CFB8D8008099D7 /* ThreadableWebSocketChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadableWebSocketChannel.h; sourceTree = "<group>"; };
 		5112247510CFB8E8008099D7 /* ThreadableWebSocketChannelClientWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThreadableWebSocketChannelClientWrapper.h; sourceTree = "<group>"; };
@@ -13809,6 +13811,7 @@
 				5112247110CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp */,
 				5112247310CFB8D8008099D7 /* ThreadableWebSocketChannel.h */,
 				5112247510CFB8E8008099D7 /* ThreadableWebSocketChannelClientWrapper.h */,
+				510F078111FEBE7500B8EE49 /* ThreadableWebSocketChannelClientWrapper.cpp */,
 				518A34BE1026C831001B6896 /* WebSocket.cpp */,
 				518A34BF1026C831001B6896 /* WebSocket.h */,
 				518A34C01026C831001B6896 /* WebSocket.idl */,
@@ -25342,6 +25345,7 @@
 				976D6C94122B8A3D001FD1F7 /* ThreadableBlobRegistry.cpp in Sources */,
 				0B90561E0F257E930095FF6A /* ThreadableLoader.cpp in Sources */,
 				5112247210CFB8C6008099D7 /* ThreadableWebSocketChannel.cpp in Sources */,
+				510F079B11FEE9C000B8EE49 /* ThreadableWebSocketChannelClientWrapper.cpp in Sources */,
 				51DF6D800B92A18E00C2DC85 /* ThreadCheck.mm in Sources */,
 				E1FF57A60F01256B00891EBB /* ThreadGlobalData.cpp in Sources */,
 				185BCF280F3279CE000EA262 /* ThreadTimers.cpp in Sources */,
