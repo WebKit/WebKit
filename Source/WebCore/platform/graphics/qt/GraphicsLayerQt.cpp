@@ -299,12 +299,13 @@ public:
 
         State()
             : maskLayer(0)
+            , contentsOrientation(GraphicsLayer::CompositingCoordinatesTopDown)
             , opacity(1.f)
             , preserves3D(false)
             , masksToBounds(false)
             , drawsContent(false)
             , contentsOpaque(false)
-            , backfaceVisibility(false)
+            , backfaceVisibility(true)
             , distributeOpacity(false)
         {
         }
