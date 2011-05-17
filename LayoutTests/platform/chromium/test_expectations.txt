@@ -2566,9 +2566,6 @@ BUGWK61161 LINUX WIN : fast/blockflow/border-image-vertical-lr.html = IMAGE+TEXT
 // We're passing it but possibly by sheer luck. Needs investigation.
 //BUGCR61166 LINUX MAC WIN : media/video-seek-by-small-increment.html = TEXT
 
-// Only seems to timeout on GPU.
-BUGWK60132 BUGCR80771 GPU : media/controls-css-overload.html = TIMEOUT
-
 // These tests started failing presumably after r70850
 BUGWK48627 LEOPARD : fast/invalid/missing-end-tag.xhtml = IMAGE
 BUGWK48627 MAC : svg/custom/createImageElement2.xhtml = IMAGE
@@ -3723,6 +3720,7 @@ BUGWK60131 SLOW : fast/css/visited-link-hang.html = PASS
 
 // webkit roll : 84350:84431
 BUGDPRANKE MAC LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
+BUGWK60132 BUGCR80771 : media/controls-css-overload.html = TIMEOUT PASS
 BUGDPRANKE WIN LINUX : animations/change-one-anim.html = TEXT PASS
 
 // pulled in from downstream during webkit roll 84350:84431
