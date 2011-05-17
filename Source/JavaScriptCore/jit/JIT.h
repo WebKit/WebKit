@@ -174,9 +174,10 @@ namespace JSC {
         using MacroAssembler::Label;
 
         static const int patchGetByIdDefaultStructure = -1;
+        static const int patchGetByIdDefaultOffset = 0;
         // Magic number - initial offset cannot be representable as a signed 8bit value, or the X86Assembler
         // will compress the displacement, and we may not be able to fit a patched offset.
-        static const int patchGetByIdDefaultOffset = 256;
+        static const int patchPutByIdDefaultOffset = 256;
 
     public:
         static JITCode compile(JSGlobalData* globalData, CodeBlock* codeBlock, CodePtr* functionEntryArityCheck = 0)
@@ -349,9 +350,9 @@ namespace JSC {
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 7;
         static const int patchOffsetGetByIdBranchToSlowCase = 13;
-        static const int patchOffsetGetByIdPropertyMapOffset1 = 22;
-        static const int patchOffsetGetByIdPropertyMapOffset2 = 28;
-        static const int patchOffsetGetByIdPutResult = 28;
+        static const int patchOffsetGetByIdPropertyMapOffset1 = 19;
+        static const int patchOffsetGetByIdPropertyMapOffset2 = 22;
+        static const int patchOffsetGetByIdPutResult = 22;
 #if ENABLE(OPCODE_SAMPLING)
         static const int patchOffsetGetByIdSlowCaseCall = 37;
 #else
@@ -584,8 +585,8 @@ namespace JSC {
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 10;
         static const int patchOffsetGetByIdBranchToSlowCase = 20;
-        static const int patchOffsetGetByIdPropertyMapOffset = 31;
-        static const int patchOffsetGetByIdPutResult = 31;
+        static const int patchOffsetGetByIdPropertyMapOffset = 28;
+        static const int patchOffsetGetByIdPutResult = 28;
 #if ENABLE(OPCODE_SAMPLING)
         static const int patchOffsetGetByIdSlowCaseCall = 64;
 #else

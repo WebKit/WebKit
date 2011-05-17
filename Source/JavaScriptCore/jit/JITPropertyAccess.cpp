@@ -420,7 +420,7 @@ void JIT::compileGetByIdHotPath(int, int baseVReg, Identifier*, unsigned propert
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureCheck), patchOffsetGetByIdBranchToSlowCase)
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), regT0);
-    DataLabel32 displacementLabel = loadPtrWithAddressOffsetPatch(Address(regT0, patchGetByIdDefaultOffset), regT0);
+    DataLabelCompact displacementLabel = loadPtrWithCompactAddressOffsetPatch(Address(regT0, patchGetByIdDefaultOffset), regT0);
     ASSERT_JIT_OFFSET_UNUSED(displacementLabel, differenceBetween(hotPathBegin, displacementLabel), patchOffsetGetByIdPropertyMapOffset);
 
     Label putResult(this);
@@ -496,7 +496,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureToCompare), patchOffsetPutByIdStructure);
 
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), regT0);
-    DataLabel32 displacementLabel = storePtrWithAddressOffsetPatch(regT1, Address(regT0, patchGetByIdDefaultOffset));
+    DataLabel32 displacementLabel = storePtrWithAddressOffsetPatch(regT1, Address(regT0, patchPutByIdDefaultOffset));
 
     END_UNINTERRUPTED_SEQUENCE(sequencePutById);
 
@@ -628,7 +628,7 @@ void JIT::patchGetByIdSelf(CodeBlock* codeBlock, StructureStubInfo* stubInfo, St
 
     // Patch the offset into the propoerty map to load from, then patch the Structure to look for.
     repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelPtrAtOffset(patchOffsetGetByIdStructure), structure);
-    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabel32AtOffset(patchOffsetGetByIdPropertyMapOffset), offset);
+    repatchBuffer.repatch(stubInfo->hotPathBegin.dataLabelCompactAtOffset(patchOffsetGetByIdPropertyMapOffset), offset);
 }
 
 void JIT::patchMethodCallProto(JSGlobalData& globalData, CodeBlock* codeBlock, MethodCallLinkInfo& methodCallLinkInfo, JSFunction* callee, Structure* structure, JSObject* proto, ReturnAddressPtr returnAddress)

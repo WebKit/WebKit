@@ -744,6 +744,11 @@ namespace JSC {
         {
             patchPointerInternal(reinterpret_cast<intptr_t>(from), reinterpret_cast<void*>(to));
         }
+        
+        static void repatchCompact(void* where, int32_t value)
+        {
+            repatchInt32(where, value);
+        }
 
         static void repatchPointer(void* from, void* to)
         {

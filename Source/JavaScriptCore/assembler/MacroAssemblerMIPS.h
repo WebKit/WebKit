@@ -57,6 +57,8 @@ public:
     // FP temp register
     static const FPRegisterID fpTempRegister = MIPSRegisters::f16;
 
+    static const int MaximumCompactPtrAlignedAddressOffset = 0x7FFFFFFF;
+
     enum RelationalCondition {
         Equal,
         NotEqual,
@@ -608,6 +610,13 @@ public:
         m_assembler.addu(addrTempRegister, addrTempRegister, address.base);
         m_assembler.lw(dest, addrTempRegister, 0);
         m_fixedWidth = false;
+        return dataLabel;
+    }
+    
+    DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        DataLabelCompact dataLabel(this);
+        load32WithAddressOffsetPatch(address, dest);
         return dataLabel;
     }
 

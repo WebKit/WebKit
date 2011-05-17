@@ -1,3 +1,71 @@
+2011-05-16  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Reduce code size for inline cache
+        https://bugs.webkit.org/show_bug.cgi?id=60942
+
+        This patch introduces the concept of a "compact" address that
+        allows individual architectures to control the maximum offset
+        used for the inline path of get_by_id.  This reduces the code
+        size of get_by_id by 3 bytes on x86 and x86_64 and slightly
+        improves performance on v8 tests.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::repatchCompact):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::repatchCompact):
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::DataLabelCompact::DataLabelCompact):
+        (JSC::AbstractMacroAssembler::differenceBetween):
+        (JSC::AbstractMacroAssembler::repatchCompact):
+        * assembler/CodeLocation.h:
+        (JSC::CodeLocationDataLabelCompact::CodeLocationDataLabelCompact):
+        (JSC::CodeLocationCommon::dataLabelCompactAtOffset):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::locationOf):
+        * assembler/MIPSAssembler.h:
+        (JSC::MIPSAssembler::repatchCompact):
+        * assembler/MacroAssembler.h:
+        (JSC::MacroAssembler::loadPtrWithCompactAddressOffsetPatch):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::load32WithCompactAddressOffsetPatch):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load32WithCompactAddressOffsetPatch):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::load32WithCompactAddressOffsetPatch):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::load32WithAddressOffsetPatch):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::repatchCompact):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::loadCompactWithAddressOffsetPatch):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::loadPtrWithCompactAddressOffsetPatch):
+        * assembler/RepatchBuffer.h:
+        (JSC::RepatchBuffer::repatch):
+        * assembler/SH4Assembler.h:
+        (JSC::SH4Assembler::repatchCompact):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::movl_mr_disp8):
+        (JSC::X86Assembler::movq_mr_disp8):
+        (JSC::X86Assembler::repatchCompact):
+        (JSC::X86Assembler::setInt8):
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp_disp8):
+        (JSC::X86Assembler::X86InstructionFormatter::oneByteOp64_disp8):
+        (JSC::X86Assembler::X86InstructionFormatter::memoryModRM):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::patchGetByIdSelf):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::patchGetByIdSelf):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCacheGetByID):
+
 2011-05-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86653.

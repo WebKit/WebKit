@@ -1748,6 +1748,11 @@ public:
         
         setInt32(where, value);
     }
+    
+    static void repatchCompact(void* where, int32_t value)
+    {
+        repatchInt32(where, value);
+    }
 
     static void repatchPointer(void* where, void* value)
     {

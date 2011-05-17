@@ -304,6 +304,35 @@ public:
         {
         }
 
+        AssemblerLabel label() const { return m_label; }
+
+    private:
+        AssemblerLabel m_label;
+    };
+
+    // DataLabelCompact:
+    //
+    // A DataLabelCompact is used to refer to a location in the code containing a
+    // compact immediate to be patched after the code has been generated.
+    class DataLabelCompact {
+        template<class TemplateAssemblerType>
+        friend class AbstractMacroAssembler;
+        friend class LinkBuffer;
+    public:
+        DataLabelCompact()
+        {
+        }
+        
+        DataLabelCompact(AbstractMacroAssembler<AssemblerType>* masm)
+            : m_label(masm->m_assembler.label())
+        {
+        }
+    
+        DataLabelCompact(AssemblerLabel label)
+            : m_label(label)
+        {
+        }
+
     private:
         AssemblerLabel m_label;
     };
@@ -500,6 +529,11 @@ public:
     {
         return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
     }
+    
+    ptrdiff_t differenceBetween(Label from, DataLabelCompact to)
+    {
+        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
+    }
 
     ptrdiff_t differenceBetween(DataLabelPtr from, Jump to)
     {
@@ -564,6 +598,11 @@ protected:
         AssemblerType::relinkCall(nearCall.dataLocation(), destination.executableAddress());
     }
 
+    static void repatchCompact(CodeLocationDataLabelCompact dataLabelCompact, int32_t value)
+    {
+        AssemblerType::repatchCompact(dataLabelCompact.dataLocation(), value);
+    }
+    
     static void repatchInt32(CodeLocationDataLabel32 dataLabel32, int32_t value)
     {
         AssemblerType::repatchInt32(dataLabel32.dataLocation(), value);

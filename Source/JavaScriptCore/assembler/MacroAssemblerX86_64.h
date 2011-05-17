@@ -268,6 +268,12 @@ public:
         m_assembler.movq_mr_disp32(address.offset, address.base, dest);
         return DataLabel32(this);
     }
+    
+    DataLabelCompact loadPtrWithCompactAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        m_assembler.movq_mr_disp8(address.offset, address.base, dest);
+        return DataLabelCompact(this);
+    }
 
     void storePtr(RegisterID src, ImplicitAddress address)
     {

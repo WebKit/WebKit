@@ -1352,6 +1352,11 @@ public:
         changePCrelativeAddress((*instructionPtr & 0xff), instructionPtr, value);
     }
 
+    static void repatchCompact(void* where, int32_t value)
+    {
+        repatchInt32(where, value);
+    }
+
     static void relinkCall(void* from, void* to)
     {
         uint16_t* instructionPtr = reinterpret_cast<uint16_t*>(from);

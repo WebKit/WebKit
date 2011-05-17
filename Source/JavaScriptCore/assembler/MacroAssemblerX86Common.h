@@ -40,6 +40,8 @@ class MacroAssemblerX86Common : public AbstractMacroAssembler<X86Assembler> {
 
 public:
     typedef X86Assembler::FPRegisterID FPRegisterID;
+    
+    static const int MaximumCompactPtrAlignedAddressOffset = 127;
 
     enum RelationalCondition {
         Equal = X86Assembler::ConditionE,
@@ -447,6 +449,25 @@ public:
     {
         m_assembler.movl_mr_disp32(address.offset, address.base, dest);
         return DataLabel32(this);
+    }
+    
+    DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        m_assembler.movl_mr_disp8(address.offset, address.base, dest);
+        return DataLabelCompact(this);
+    }
+    
+    static void repatchCompact(CodeLocationDataLabelCompact dataLabelCompact, int32_t value)
+    {
+        ASSERT(value >= 0);
+        ASSERT(value < MaximumCompactPtrAlignedAddressOffset);
+        AssemblerType_T::repatchCompact(dataLabelCompact.dataLocation(), value);
+    }
+    
+    DataLabelCompact loadCompactWithAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        m_assembler.movl_mr_disp8(address.offset, address.base, dest);
+        return DataLabelCompact(this);
     }
 
     void load16(BaseIndex address, RegisterID dest)

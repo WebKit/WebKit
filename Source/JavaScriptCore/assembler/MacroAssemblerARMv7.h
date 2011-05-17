@@ -48,6 +48,7 @@ public:
     typedef ARMv7Assembler::LinkRecord LinkRecord;
     typedef ARMv7Assembler::JumpType JumpType;
     typedef ARMv7Assembler::JumpLinkType JumpLinkType;
+    static const int MaximumCompactPtrAlignedAddressOffset = 0x7FFFFFFF;
 
     MacroAssemblerARMv7()
         : m_inUninterruptedSequence(false)
@@ -480,6 +481,12 @@ public:
         DataLabel32 label = moveWithPatch(TrustedImm32(address.offset), dataTempRegister);
         load32(ArmAddress(address.base, dataTempRegister), dest);
         return label;
+    }
+    
+    DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
+    {
+        DataLabel32 label = load32WithAddressOffsetPatch(address, dest);
+        return DataLabelCompact(label.label());
     }
 
     void load16(BaseIndex address, RegisterID dest)
