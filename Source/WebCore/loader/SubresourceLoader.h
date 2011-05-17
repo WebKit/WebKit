@@ -59,6 +59,7 @@ namespace WebCore {
         virtual bool shouldUseCredentialStorage();
         virtual void didReceiveAuthenticationChallenge(const AuthenticationChallenge&);
         virtual void receivedCancellation(const AuthenticationChallenge&);        
+        virtual void willCancel(const ResourceError&);
         virtual void didCancel(const ResourceError&);
 
 #if HAVE(CFNETWORK_DATA_ARRAY_CALLBACK)

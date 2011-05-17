@@ -99,24 +99,23 @@ void MainResourceLoader::receivedError(const ResourceError& error)
     ASSERT(reachedTerminalState());
 }
 
-void MainResourceLoader::didCancel(const ResourceError& error)
+void MainResourceLoader::willCancel(const ResourceError&)
 {
     m_dataLoadTimer.stop();
 
-    // FrameLoader won't be reachable after calling ResourceLoader::didCancel().
-    FrameLoader* frameLoader = this->frameLoader();
-
     if (m_waitingForContentPolicy) {
-        frameLoader->policyChecker()->cancelCheck();
+        frameLoader()->policyChecker()->cancelCheck();
         ASSERT(m_waitingForContentPolicy);
         m_waitingForContentPolicy = false;
         deref(); // balances ref in didReceiveResponse
     }
-    ResourceLoader::didCancel(error);
+}
 
+void MainResourceLoader::didCancel(const ResourceError& error)
+{
     // We should notify the frame loader after fully canceling the load, because it can do complicated work
     // like calling DOMWindow::print(), during which a half-canceled load could try to finish.
-    frameLoader->receivedMainResourceError(error, true);
+    frameLoader()->receivedMainResourceError(error, true);
 }
 
 ResourceError MainResourceLoader::interruptionForPolicyChangeError() const

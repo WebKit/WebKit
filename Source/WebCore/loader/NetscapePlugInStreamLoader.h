@@ -65,7 +65,8 @@ namespace WebCore {
 
         NetscapePlugInStreamLoader(Frame*, NetscapePlugInStreamLoaderClient*);
 
-        virtual void didCancel(const ResourceError& error);
+        virtual void willCancel(const ResourceError&);
+        virtual void didCancel(const ResourceError&);
 
         NetscapePlugInStreamLoaderClient* m_client;
     };

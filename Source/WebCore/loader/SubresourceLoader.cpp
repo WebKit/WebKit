@@ -224,27 +224,15 @@ void SubresourceLoader::didFail(const ResourceError& error)
     ResourceLoader::didFail(error);
 }
 
-void SubresourceLoader::didCancel(const ResourceError& error)
+void SubresourceLoader::willCancel(const ResourceError& error)
 {
-    ASSERT(!reachedTerminalState());
-
-    // Calling removeSubresourceLoader will likely result in a call to deref, so we must protect ourselves.
-    RefPtr<SubresourceLoader> protect(this);
-
     if (m_client)
         m_client->didFail(this, error);
-    
-    if (cancelled())
-        return;
-    
-    // The only way the subresource loader can reach the terminal state here is if the run loop spins when calling
-    // m_client->didFail. This should in theory not happen which is why the assert is here. 
-    ASSERT(!reachedTerminalState());
-    if (reachedTerminalState())
-        return;
-    
+}
+
+void SubresourceLoader::didCancel(const ResourceError&)
+{
     m_documentLoader->removeSubresourceLoader(this);
-    ResourceLoader::didCancel(error);
 }
 
 bool SubresourceLoader::shouldUseCredentialStorage()

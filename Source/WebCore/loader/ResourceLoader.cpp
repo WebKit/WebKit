@@ -63,6 +63,7 @@ ResourceLoader::ResourceLoader(Frame* frame, bool sendResourceLoadCallbacks, boo
     , m_documentLoader(frame->loader()->activeDocumentLoader())
     , m_identifier(0)
     , m_reachedTerminalState(false)
+    , m_calledWillCancel(false)
     , m_cancelled(false)
     , m_calledDidFinishLoad(false)
     , m_sendResourceLoadCallbacks(sendResourceLoadCallbacks)
@@ -337,35 +338,6 @@ void ResourceLoader::didFail(const ResourceError& error)
     releaseResources();
 }
 
-void ResourceLoader::didCancel(const ResourceError& error)
-{
-    ASSERT(!m_cancelled);
-    ASSERT(!m_reachedTerminalState);
-
-    if (FormData* data = m_request.httpBody())
-        data->removeGeneratedFilesIfNeeded();
-
-    // This flag prevents bad behavior when loads that finish cause the
-    // load itself to be cancelled (which could happen with a javascript that 
-    // changes the window location). This is used to prevent both the body
-    // of this method and the body of connectionDidFinishLoading: running
-    // for a single delegate. Canceling wins.
-    m_cancelled = true;
-    
-    if (m_handle)
-        m_handle->clearAuthentication();
-
-    m_documentLoader->cancelPendingSubstituteLoad(this);
-    if (m_handle) {
-        m_handle->cancel();
-        m_handle = 0;
-    }
-    if (m_sendResourceLoadCallbacks && m_identifier && !m_calledDidFinishLoad)
-        frameLoader()->notifier()->didFailToLoad(this, error);
-
-    releaseResources();
-}
-
 void ResourceLoader::cancel()
 {
     cancel(ResourceError());
@@ -373,12 +345,53 @@ void ResourceLoader::cancel()
 
 void ResourceLoader::cancel(const ResourceError& error)
 {
+    // If the load has already completed - succeeded, failed, or previously cancelled - do nothing.
     if (m_reachedTerminalState)
         return;
-    if (!error.isNull())
-        didCancel(error);
-    else
-        didCancel(cancelledError());
+       
+    ResourceError nonNullError = error.isNull() ? cancelledError() : error;
+    
+    // willCancel() and didFailToLoad() both call out to clients that might do 
+    // something causing the last reference to this object to go away.
+    RefPtr<ResourceLoader> protector(this);
+    
+    // If we re-enter cancel() from inside willCancel(), we want to pick up from where we left 
+    // off without re-running willCancel()
+    if (!m_calledWillCancel) {
+        m_calledWillCancel = true;
+        
+        willCancel(nonNullError);
+    }
+
+    // If we re-enter cancel() from inside didFailToLoad(), we want to pick up from where we 
+    // left off without redoing any of this work.
+    if (!m_cancelled) {
+        m_cancelled = true;
+        
+        if (FormData* data = m_request.httpBody())
+            data->removeGeneratedFilesIfNeeded();
+
+        if (m_handle)
+            m_handle->clearAuthentication();
+
+        m_documentLoader->cancelPendingSubstituteLoad(this);
+        if (m_handle) {
+            m_handle->cancel();
+            m_handle = 0;
+        }
+
+        if (m_sendResourceLoadCallbacks && m_identifier && !m_calledDidFinishLoad)
+            frameLoader()->notifier()->didFailToLoad(this, nonNullError);
+    }
+
+    // If cancel() completed from within the call to willCancel() or didFailToLoad(),
+    // we don't want to redo didCancel() or releasesResources().
+    if (m_reachedTerminalState)
+        return;
+
+    didCancel(nonNullError);
+            
+    releaseResources();
 }
 
 const ResourceResponse& ResourceLoader::response() const

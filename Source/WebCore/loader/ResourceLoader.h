@@ -150,7 +150,6 @@ namespace WebCore {
         // deferred) and should only be called by ResourceLoadScheduler or setDefersLoading().
         void start();
         
-        virtual void didCancel(const ResourceError&);
         void didFinishLoadingOnePart(double finishTime);
 
         const ResourceRequest& request() const { return m_request; }
@@ -163,12 +162,16 @@ namespace WebCore {
         ResourceResponse m_response;
         
     private:
+        virtual void willCancel(const ResourceError&) = 0;
+        virtual void didCancel(const ResourceError&) = 0;
+
         ResourceRequest m_request;
         RefPtr<SharedBuffer> m_resourceData;
         
         unsigned long m_identifier;
 
         bool m_reachedTerminalState;
+        bool m_calledWillCancel;
         bool m_cancelled;
         bool m_calledDidFinishLoad;
 

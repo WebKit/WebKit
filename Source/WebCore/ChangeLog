@@ -1,3 +1,46 @@
+2011-05-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9366728> and https://webkit.org/b/60796
+        Crash when code inside a ResourceLoadDelegate method calls [WebView stopLoading:]
+
+        Break up ResourceLoader::didCancel() into willCancel() and didCancel(), and making them pure virtual.
+        This change has the following benefits:
+          - Managing ResourceLoader state can be in the base class; Subclasses no longer need to protect
+            themselves, check these variables as often, or ASSERT them.
+          - ResourceLoader subclasses no longer have to call the base class ::didCancel
+          - ResourceLoader::cancel becomes more capable of handling reentrancy with the design that the 
+            cancellation is completed inside the last call.
+
+        No new tests - No change in behavior for previous tests, and new test would require API usage outside
+        the scope of DumpRenderTree.
+
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::ResourceLoader):
+        (WebCore::ResourceLoader::cancel): Moved from ResourceLoader::didCancel, and does all of that same work
+          except it interposes calls to "willCancel" and "didCancel" as required to maintain the same behavior.
+        * loader/ResourceLoader.h: Added pure virtual didCancel() and willCancel().
+
+        Split-up into willCancel() and didCancel(), based on when the base class didCancel() used to be called:
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::willCancel):
+        (WebCore::MainResourceLoader::didCancel):
+        * loader/MainResourceLoader.h:
+
+        Split-up into willCancel() and didCancel(), based on when the "reached terminal state" flag used to be checked:
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::didReceiveResponse): Call the entry point cancel() instead of the old didCancel()
+        (WebCore::NetscapePlugInStreamLoader::willCancel):
+        (WebCore::NetscapePlugInStreamLoader::didCancel):
+        * loader/NetscapePlugInStreamLoader.h:
+
+        Split-up into willCancel() and didCancel(), based on when the "reached terminal state" flag used to be checked:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::willCancel):
+        (WebCore::SubresourceLoader::didCancel):
+        * loader/SubresourceLoader.h:
+
 2011-05-17  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.

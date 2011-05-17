@@ -74,6 +74,7 @@ namespace WebCore {
     private:
         MainResourceLoader(Frame*);
 
+        virtual void willCancel(const ResourceError&);
         virtual void didCancel(const ResourceError&);
 
         bool loadNow(ResourceRequest&);
