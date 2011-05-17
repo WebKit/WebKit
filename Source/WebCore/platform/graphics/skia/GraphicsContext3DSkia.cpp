@@ -34,6 +34,7 @@
 #include "Image.h"
 #include "ImageSource.h"
 #include "NativeImageSkia.h"
+#include "SkColorPriv.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 
@@ -80,7 +81,8 @@ bool GraphicsContext3D::getImageData(Image* image,
     ASSERT(skiaImage->rowBytes() == skiaImage->width() * 4);
     outputVector.resize(skiaImage->rowBytes() * skiaImage->height());
     return packPixels(reinterpret_cast<const uint8_t*>(skiaImage->getPixels()),
-                      SourceFormatBGRA8, skiaImage->width(), skiaImage->height(), 0,
+                      SK_B32_SHIFT ? SourceFormatRGBA8 : SourceFormatBGRA8,
+                      skiaImage->width(), skiaImage->height(), 0,
                       format, type, neededAlphaOp, outputVector.data());
 }
 
