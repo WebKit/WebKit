@@ -61,6 +61,7 @@ private:
     
     enum Shape { Default, Poly, Rect, Circle, Unknown };
     Path getRegion(const IntSize&) const;
+    void invalidateCachedRegion();
 
     OwnPtr<Path> m_region;
     OwnArrayPtr<Length> m_coords;

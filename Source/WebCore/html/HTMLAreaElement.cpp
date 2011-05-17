@@ -63,12 +63,19 @@ void HTMLAreaElement::parseMappedAttribute(Attribute* attr)
             m_shape = Poly;
         else if (equalIgnoringCase(attr->value(), "rect"))
             m_shape = Rect;
+        invalidateCachedRegion();
     } else if (attr->name() == coordsAttr) {
         m_coords = newCoordsArray(attr->value().string(), m_coordsLen);
+        invalidateCachedRegion();
     } else if (attr->name() == altAttr || attr->name() == accesskeyAttr) {
         // Do nothing.
     } else
         HTMLAnchorElement::parseMappedAttribute(attr);
+}
+
+void HTMLAreaElement::invalidateCachedRegion()
+{
+    m_lastSize = IntSize(-1, -1);
 }
 
 bool HTMLAreaElement::mapMouseEvent(int x, int y, const IntSize& size, HitTestResult& result)

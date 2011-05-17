@@ -1,3 +1,16 @@
+2011-05-17  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Area element doesn't update region when dynamically altered.
+        https://bugs.webkit.org/show_bug.cgi?id=54636
+
+        * fast/images/imagemap-dynamic-area-updates-expected.txt: Added.
+        * fast/images/imagemap-dynamic-area-updates.html: Added.
+        * fast/images/script-tests/imagemap-dynamic-area-updates.js: Added.
+        (setArea):
+        (checkForArea):
+
 2011-05-09  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

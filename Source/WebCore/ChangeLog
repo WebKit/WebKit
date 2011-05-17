@@ -1,3 +1,20 @@
+2011-05-17  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Area element doesn't update region when dynamically altered.
+        https://bugs.webkit.org/show_bug.cgi?id=54636
+
+        Recompute the clickable region after the "shape" or "coords" attribute
+        of an area element is changed.
+
+        Test: fast/images/imagemap-dynamic-area-updates.html
+
+        * html/HTMLAreaElement.cpp:
+        (WebCore::HTMLAreaElement::parseMappedAttribute):
+        (WebCore::HTMLAreaElement::invalidateCachedRegion):
+        * html/HTMLAreaElement.h:
+
 2011-05-09  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
