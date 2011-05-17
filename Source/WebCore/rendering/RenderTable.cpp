@@ -1198,18 +1198,18 @@ IntRect RenderTable::overflowClipRect(int tx, int ty, OverlayScrollbarSizeReleva
     return rect;
 }
 
-bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int xPos, int yPos, int tx, int ty, HitTestAction action)
+bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction action)
 {
     tx += x();
     ty += y();
 
     // Check kids first.
-    if (!hasOverflowClip() || overflowClipRect(tx, ty).intersects(result.rectForPoint(xPos, yPos))) {
+    if (!hasOverflowClip() || overflowClipRect(tx, ty).intersects(result.rectForPoint(pointInContainer))) {
         for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
             if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child == m_caption)) {
                 IntPoint childPoint = flipForWritingMode(toRenderBox(child), IntPoint(tx, ty), ParentToChildFlippingAdjustment);
-                if (child->nodeAtPoint(request, result, xPos, yPos, childPoint.x(), childPoint.y(), action)) {
-                    updateHitTestResult(result, IntPoint(xPos - childPoint.x(), yPos - childPoint.y()));
+                if (child->nodeAtPoint(request, result, pointInContainer, childPoint.x(), childPoint.y(), action)) {
+                    updateHitTestResult(result, toPoint(pointInContainer - childPoint));
                     return true;
                 }
             }
@@ -1218,9 +1218,9 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     // Check our bounds next.
     IntRect boundsRect = IntRect(tx, ty, width(), height());
-    if (visibleToHitTesting() && (action == HitTestBlockBackground || action == HitTestChildBlockBackground) && boundsRect.intersects(result.rectForPoint(xPos, yPos))) {
-        updateHitTestResult(result, flipForWritingMode(IntPoint(xPos - tx, yPos - ty)));
-        if (!result.addNodeToRectBasedTestResult(node(), xPos, yPos, boundsRect))
+    if (visibleToHitTesting() && (action == HitTestBlockBackground || action == HitTestChildBlockBackground) && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
+        updateHitTestResult(result, flipForWritingMode(pointInContainer - IntSize(tx, ty)));
+        if (!result.addNodeToRectBasedTestResult(node(), pointInContainer.x(), pointInContainer.y(), boundsRect))
             return true;
     }
 

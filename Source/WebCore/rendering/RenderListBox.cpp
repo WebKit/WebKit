@@ -666,21 +666,21 @@ void RenderListBox::setScrollTop(int newTop)
     ScrollableArea::scrollToYOffsetWithoutAnimation(index);
 }
 
-bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction)
 {
-    if (!RenderBlock::nodeAtPoint(request, result, x, y, tx, ty, hitTestAction))
+    if (!RenderBlock::nodeAtPoint(request, result, pointInContainer, tx, ty, hitTestAction))
         return false;
     const Vector<Element*>& listItems = toSelectElement(static_cast<Element*>(node()))->listItems();
     int size = numItems();
     tx += this->x();
     ty += this->y();
     for (int i = 0; i < size; ++i) {
-        if (itemBoundingBoxRect(tx, ty, i).contains(x, y)) {
+        if (itemBoundingBoxRect(tx, ty, i).contains(pointInContainer)) {
             if (Element* node = listItems[i]) {
                 result.setInnerNode(node);
                 if (!result.innerNonSharedNode())
                     result.setInnerNonSharedNode(node);
-                result.setLocalPoint(IntPoint(x - tx, y - ty));
+                result.setLocalPoint(pointInContainer - IntSize(tx, ty));
                 break;
             }
         }

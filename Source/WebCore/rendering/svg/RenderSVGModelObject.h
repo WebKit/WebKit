@@ -67,7 +67,7 @@ public:
 
 private:
     // This method should never be called, SVG uses a different nodeAtPoint method
-    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int xInContainer, int yInContainer, int dxParentToContainer, int dyParentToContainer, HitTestAction);
+    bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int dxParentToContainer, int dyParentToContainer, HitTestAction);
 };
 
 }

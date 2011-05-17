@@ -101,7 +101,7 @@ void EllipsisBox::paintSelection(GraphicsContext* context, int tx, int ty, Rende
         IntPoint(m_x + tx, m_y + ty + y), h, c, style->colorSpace());
 }
 
-bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, int lineTop, int lineBottom)
+bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, int lineTop, int lineBottom)
 {
     tx += m_x;
     ty += m_y;
@@ -111,16 +111,16 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         RenderStyle* style = m_renderer->style(m_firstLine);
         int mtx = tx + m_logicalWidth - m_markupBox->x();
         int mty = ty + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->fontMetrics().ascent());
-        if (m_markupBox->nodeAtPoint(request, result, x, y, mtx, mty, lineTop, lineBottom)) {
-            renderer()->updateHitTestResult(result, IntPoint(x - mtx, y - mty));
+        if (m_markupBox->nodeAtPoint(request, result, pointInContainer, mtx, mty, lineTop, lineBottom)) {
+            renderer()->updateHitTestResult(result, pointInContainer - IntSize(mtx, mty));
             return true;
         }
     }
 
     IntRect boundsRect = IntRect(tx, ty, m_logicalWidth, m_height);
-    if (visibleToHitTesting() && boundsRect.intersects(result.rectForPoint(x, y))) {
-        renderer()->updateHitTestResult(result, IntPoint(x - tx, y - ty));
-        if (!result.addNodeToRectBasedTestResult(renderer()->node(), x, y, boundsRect))
+    if (visibleToHitTesting() && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
+        renderer()->updateHitTestResult(result, pointInContainer - IntSize(tx, ty));
+        if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer.x(), pointInContainer.y(), boundsRect))
             return true;
     }
 

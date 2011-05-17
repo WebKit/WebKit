@@ -107,7 +107,7 @@ public:
 
 protected:
     virtual void paint(PaintInfo&, int tx, int ty, int lineTop, int lineBottom);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, int lineTop, int lineBottom);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, int lineTop, int lineBottom);
 
 public:
     RenderText* textRenderer() const;

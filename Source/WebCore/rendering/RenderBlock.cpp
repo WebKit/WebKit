@@ -3897,61 +3897,57 @@ bool RenderBlock::isPointInOverflowControl(HitTestResult& result, int _x, int _y
     return layer()->hitTestOverflowControls(result, IntPoint(_x - _tx, _y - _ty));
 }
 
-bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int _x, int _y, int _tx, int _ty, HitTestAction hitTestAction)
+bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction)
 {
-    int tx = _tx + x();
-    int ty = _ty + y();
+    IntSize localOffset(tx + x(), ty + y());
 
     if (!isRenderView()) {
         // Check if we need to do anything at all.
         IntRect overflowBox = visualOverflowRect();
-        overflowBox.move(tx, ty);
-        if (!overflowBox.intersects(result.rectForPoint(_x, _y)))
+        overflowBox.move(localOffset);
+        if (!overflowBox.intersects(result.rectForPoint(pointInContainer)))
             return false;
     }
 
-    if ((hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) && isPointInOverflowControl(result, _x, _y, tx, ty)) {
-        updateHitTestResult(result, IntPoint(_x - tx, _y - ty));
+    if ((hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) && isPointInOverflowControl(result, pointInContainer.x(), pointInContainer.y(), localOffset.width(), localOffset.height())) {
+        updateHitTestResult(result, pointInContainer - localOffset);
         // FIXME: isPointInOverflowControl() doesn't handle rect-based tests yet.
-        if (!result.addNodeToRectBasedTestResult(node(), _x, _y))
+        if (!result.addNodeToRectBasedTestResult(node(), pointInContainer.x(), pointInContainer.y()))
            return true;
     }
 
     // If we have clipping, then we can't have any spillout.
     bool useOverflowClip = hasOverflowClip() && !hasSelfPaintingLayer();
     bool useClip = (hasControlClip() || useOverflowClip);
-    IntRect hitTestArea(result.rectForPoint(_x, _y));
-    bool checkChildren = !useClip || (hasControlClip() ? controlClipRect(tx, ty).intersects(hitTestArea) : overflowClipRect(tx, ty, IncludeOverlayScrollbarSize).intersects(hitTestArea));
+    IntRect hitTestArea(result.rectForPoint(pointInContainer));
+    bool checkChildren = !useClip || (hasControlClip() ? controlClipRect(localOffset.width(), localOffset.height()).intersects(hitTestArea) : overflowClipRect(localOffset.width(), localOffset.height(), IncludeOverlayScrollbarSize).intersects(hitTestArea));
     if (checkChildren) {
         // Hit test descendants first.
-        int scrolledX = tx;
-        int scrolledY = ty;
+        IntSize scrolledOffset(localOffset);
         if (hasOverflowClip()) {
-            IntSize offset = layer()->scrolledContentOffset();
-            scrolledX -= offset.width();
-            scrolledY -= offset.height();
+            scrolledOffset -= layer()->scrolledContentOffset();
         }
 
         // Hit test contents if we don't have columns.
         if (!hasColumns()) {
-            if (hitTestContents(request, result, _x, _y, scrolledX, scrolledY, hitTestAction)) {
-                updateHitTestResult(result, IntPoint(_x - tx, _y - ty));
+            if (hitTestContents(request, result, pointInContainer.x(), pointInContainer.y(), scrolledOffset.width(), scrolledOffset.height(), hitTestAction)) {
+                updateHitTestResult(result, pointInContainer - localOffset);
                 return true;
             }
-            if (hitTestAction == HitTestFloat && hitTestFloats(request, result, _x, _y, scrolledX, scrolledY))
+            if (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer.x(), pointInContainer.y(), scrolledOffset.width(), scrolledOffset.height()))
                 return true;
-        } else if (hitTestColumns(request, result, _x, _y, scrolledX, scrolledY, hitTestAction)) {
-            updateHitTestResult(result, IntPoint(_x - tx, _y - ty));
+        } else if (hitTestColumns(request, result, pointInContainer.x(), pointInContainer.y(), scrolledOffset.width(), scrolledOffset.height(), hitTestAction)) {
+            updateHitTestResult(result, pointInContainer - localOffset);
             return true;
         }
     }
 
     // Now hit test our background
     if (hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) {
-        IntRect boundsRect(tx, ty, width(), height());
-        if (visibleToHitTesting() && boundsRect.intersects(result.rectForPoint(_x, _y))) {
-            updateHitTestResult(result, flipForWritingMode(IntPoint(_x - tx, _y - ty)));
-            if (!result.addNodeToRectBasedTestResult(node(), _x, _y, boundsRect))
+        IntRect boundsRect(localOffset.width(), localOffset.height(), width(), height());
+        if (visibleToHitTesting() && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
+            updateHitTestResult(result, flipForWritingMode(pointInContainer - localOffset));
+            if (!result.addNodeToRectBasedTestResult(node(), pointInContainer.x(), pointInContainer.y(), boundsRect))
                 return true;
         }
     }
@@ -4048,7 +4044,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
             childHitTest = HitTestChildBlockBackground;
         for (RenderBox* child = lastChildBox(); child; child = child->previousSiblingBox()) {
             IntPoint childPoint = flipForWritingMode(child, IntPoint(tx, ty), ParentToChildFlippingAdjustment);
-            if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, x, y, childPoint.x(), childPoint.y(), childHitTest))
+            if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, IntPoint(x, y), childPoint.x(), childPoint.y(), childHitTest))
                 return true;
         }
     }

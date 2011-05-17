@@ -57,13 +57,13 @@ void RenderTextControlMultiLine::subtreeHasChanged()
         frame->editor()->textDidChangeInTextArea(textArea);
 }
 
-bool RenderTextControlMultiLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+bool RenderTextControlMultiLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction)
 {
-    if (!RenderTextControl::nodeAtPoint(request, result, x, y, tx, ty, hitTestAction))
+    if (!RenderTextControl::nodeAtPoint(request, result, pointInContainer, tx, ty, hitTestAction))
         return false;
 
     if (result.innerNode() == node() || result.innerNode() == innerTextElement())
-        hitInnerTextElement(result, x, y, tx, ty);
+        hitInnerTextElement(result, pointInContainer.x(), pointInContainer.y(), tx, ty);
 
     return true;
 }

@@ -38,7 +38,7 @@ private:
 
     virtual void subtreeHasChanged();
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);
 
     virtual float getAvgCharWidth(AtomicString family);
     virtual int preferredContentWidth(float charWidth) const;

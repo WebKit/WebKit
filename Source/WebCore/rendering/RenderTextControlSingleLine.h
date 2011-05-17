@@ -71,7 +71,7 @@ private:
     virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
     virtual void layout();
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);
 
     virtual void autoscroll();
 

@@ -158,12 +158,12 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, int tx, int ty)
 }
 
 bool RenderFrameSet::nodeAtPoint(const HitTestRequest& request, HitTestResult& result,
-    int x, int y, int tx, int ty, HitTestAction action)
+    const IntPoint& pointInContainer, int tx, int ty, HitTestAction action)
 {
     if (action != HitTestForeground)
         return false;
 
-    bool inside = RenderBox::nodeAtPoint(request, result, x, y, tx, ty, action)
+    bool inside = RenderBox::nodeAtPoint(request, result, pointInContainer, tx, ty, action)
         || m_isResizing;
 
     if (inside && frameSet()->noResize()

@@ -202,6 +202,11 @@ inline IntPoint roundedIntPoint(const FloatPoint& p)
     return IntPoint(static_cast<int>(roundf(p.x())), static_cast<int>(roundf(p.y())));
 }
 
+inline IntPoint flooredIntPoint(const FloatPoint& p)
+{
+    return IntPoint(static_cast<int>(p.x()), static_cast<int>(p.y()));
+}
+
 float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c);
 
 // Find point where lines through the two pairs of points intersect. Returns false if the lines don't intersect.

@@ -546,7 +546,7 @@ public:
 #endif
 
     bool hitTest(const HitTestRequest&, HitTestResult&, const IntPoint&, int tx, int ty, HitTestFilter = HitTestAll);
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);
     virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
 
     VisiblePosition positionForCoordinates(int x, int y);

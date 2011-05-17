@@ -106,7 +106,7 @@ void RenderSVGModelObject::updateFromElement()
     SVGResourcesCache::clientUpdatedFromElement(this, style());
 }
 
-bool RenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)
+bool RenderSVGModelObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint&, int, int, HitTestAction)
 {
     ASSERT_NOT_REACHED();
     return false;

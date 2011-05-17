@@ -194,14 +194,14 @@ bool RenderSVGText::nodeAtFloatPoint(const HitTestRequest& request, HitTestResul
             if (!SVGRenderSupport::pointInClippingArea(this, localPoint))
                 return false;       
 
-            return RenderBlock::nodeAtPoint(request, result, (int)localPoint.x(), (int)localPoint.y(), 0, 0, hitTestAction);
+            return RenderBlock::nodeAtPoint(request, result, flooredIntPoint(localPoint), 0, 0, hitTestAction);
         }
     }
 
     return false;
 }
 
-bool RenderSVGText::nodeAtPoint(const HitTestRequest&, HitTestResult&, int, int, int, int, HitTestAction)
+bool RenderSVGText::nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint&, int, int, HitTestAction)
 {
     ASSERT_NOT_REACHED();
     return false;

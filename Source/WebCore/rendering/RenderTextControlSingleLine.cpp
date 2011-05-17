@@ -333,7 +333,7 @@ void RenderTextControlSingleLine::layout()
     }
 }
 
-bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int xPos, int yPos, int tx, int ty, HitTestAction hitTestAction)
+bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction)
 {
     // If we're within the text control, we want to act as if we've hit the inner text block element, in case the point
     // was on the control but not on the inner element (see Radar 4617841).
@@ -341,14 +341,14 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     // In a search field, we want to act as if we've hit the results block if we're to the left of the inner text block,
     // and act as if we've hit the close block if we're to the right of the inner text block.
 
-    if (!RenderTextControl::nodeAtPoint(request, result, xPos, yPos, tx, ty, hitTestAction))
+    if (!RenderTextControl::nodeAtPoint(request, result, pointInContainer, tx, ty, hitTestAction))
         return false;
 
     // If we hit a node inside the inner text element, say that we hit that element,
     // and if we hit our node (e.g. we're over the border or padding), also say that we hit the
     // inner text element so that it gains focus.
     if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == node())
-        hitInnerTextElement(result, xPos, yPos, tx, ty);
+        hitInnerTextElement(result, pointInContainer.x(), pointInContainer.y(), tx, ty);
 
     // If we found a spin button, we're done.
     if (m_innerSpinButton && result.innerNode() == m_innerSpinButton)
@@ -371,20 +371,20 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     localPoint.move(-innerBlockRenderer->x(), -innerBlockRenderer->y());
 
     int textLeft = tx + x() + innerBlockRenderer->x() + innerTextRenderer->x();
-    if (m_resultsButton && m_resultsButton->renderer() && xPos < textLeft)
+    if (m_resultsButton && m_resultsButton->renderer() && pointInContainer.x() < textLeft)
         innerNode = m_resultsButton.get();
 
 #if ENABLE(INPUT_SPEECH)
     if (!innerNode && m_speechButton && m_speechButton->renderer()) {
         int buttonLeft = tx + x() + innerBlockRenderer->x() + innerBlockRenderer->width() - m_speechButton->renderBox()->width();
-        if (xPos >= buttonLeft)
+        if (pointInContainer.x() >= buttonLeft)
             innerNode = m_speechButton.get();
     }
 #endif
 
     if (!innerNode) {
         int textRight = textLeft + innerTextRenderer->width();
-        if (m_cancelButton && m_cancelButton->renderer() && xPos > textRight)
+        if (m_cancelButton && m_cancelButton->renderer() && pointInContainer.x() > textRight)
             innerNode = m_cancelButton.get();
     }
 

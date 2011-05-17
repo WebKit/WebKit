@@ -96,7 +96,7 @@ private:
     virtual bool isFrameSet() const { return true; }
 
     virtual void layout();
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
 

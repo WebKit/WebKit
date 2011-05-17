@@ -315,9 +315,8 @@ void RenderSVGRoot::updateCachedBoundaries()
     m_repaintBoundingBox.inflate(borderAndPaddingWidth());
 }
 
-bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction)
 {
-    IntPoint pointInContainer(x, y);
     IntSize containerToParentOffset(tx, ty);
 
     IntPoint pointInParent = pointInContainer - containerToParentOffset;
@@ -335,7 +334,7 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
             // FIXME: CSS/HTML assumes the local point is relative to the border box, right?
             updateHitTestResult(result, pointInBorderBox);
             // FIXME: nodeAtFloatPoint() doesn't handle rect-based hit tests yet.
-            result.addNodeToRectBasedTestResult(child->node(), x, y);
+            result.addNodeToRectBasedTestResult(child->node(), pointInContainer.x(), pointInContainer.y());
             return true;
         }
     }
