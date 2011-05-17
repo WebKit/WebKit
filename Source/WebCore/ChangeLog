@@ -1,3 +1,69 @@
+2011-05-16  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        [Refactoring] Member variables of DocumentMarker should be encapsulated.        
+        https://bugs.webkit.org/show_bug.cgi?id=56814
+
+        - Moved DocumentMarker's member variables to private and added getters for them.
+        - Added DocumentMarker setters and constructors, which contain assertions against m_type values
+          because description and activeMatch are used with specific type of MarkerType.
+        - Moved chromium's WebKit::WebFrameImpl::addMarker() to DocumentMarkerController because
+          it accesses DocumentMarker internals.
+        - Moved a version of DMC::addMarker() to private and add alternatives that hide
+          internals of DocumentMarker. (The internal will be renewed by upcoming change.)
+        
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::type):
+        (WebCore::DocumentMarker::startOffset):
+        (WebCore::DocumentMarker::endOffset):
+        (WebCore::DocumentMarker::description):
+        (WebCore::DocumentMarker::hasDescription):
+        (WebCore::DocumentMarker::activeMatch):
+        (WebCore::DocumentMarker::clearDescription):
+        (WebCore::DocumentMarker::setStartOffset):
+        (WebCore::DocumentMarker::setEndOffset):
+        (WebCore::DocumentMarker::operator==):
+        (WebCore::DocumentMarker::DocumentMarker):
+        (WebCore::DocumentMarker::shiftOffsets):
+        (WebCore::DocumentMarker::setActiveMatch):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addMarker):
+        (WebCore::DocumentMarkerController::addTextMatchMarker):
+        (WebCore::DocumentMarkerController::copyMarkers):
+        (WebCore::DocumentMarkerController::removeMarkers):
+        (WebCore::DocumentMarkerController::markerContainingPoint):
+        (WebCore::DocumentMarkerController::markersInRange):
+        (WebCore::DocumentMarkerController::renderedRectsForMarkers):
+        (WebCore::DocumentMarkerController::removeMarkersFromList):
+        (WebCore::DocumentMarkerController::repaintMarkers):
+        (WebCore::DocumentMarkerController::shiftMarkers):
+        (WebCore::DocumentMarkerController::setMarkersActive):
+        (WebCore::DocumentMarkerController::hasMarkers):
+        (WebCore::DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange):
+        (WebCore::DocumentMarkerController::showMarkers):
+        * dom/DocumentMarkerController.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelection):
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionStartHasMarkerFor):
+        * editing/SpellingCorrectionController.cpp:
+        (WebCore::SpellingCorrectionController::respondToChangedSelection):
+        * editing/SpellingCorrectionController.h:
+        (WebCore::SpellingCorrectionController::shouldStartTimerFor):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::spellingToolTip):
+        (WebCore::HitTestResult::replacedString):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer):
+
 2011-05-16  Martin Robinson  <mrobinson@igalia.com>
 
         Fix the Cairo build for older versions of GTK+.

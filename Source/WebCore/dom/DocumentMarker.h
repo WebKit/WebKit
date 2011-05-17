@@ -84,23 +84,79 @@ struct DocumentMarker {
         {
         }
     };
-    
-    MarkerType type;
-    unsigned startOffset;
-    unsigned endOffset;
-    String description;
-    bool activeMatch;
+
+
+    DocumentMarker();
+    DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset);
+    DocumentMarker(MarkerType, unsigned startOffset, unsigned endOffset, const String& description);
+    DocumentMarker(unsigned startOffset, unsigned endOffset, bool activeMatch);
+
+    MarkerType type() const { return m_type; }
+    unsigned startOffset() const { return m_startOffset; }
+    unsigned endOffset() const { return m_endOffset; }
+    const String& description() const { return m_description; }
+    bool hasDescription() const { return !m_description.isEmpty(); }
+    bool activeMatch() const { return m_activeMatch; }
+
+    void setActiveMatch(bool);
+    void clearDescription() { m_description = String(); }
+
+    // Offset modifications are done by DocumentMarkerController.
+    // Other classes should not call following setters.
+    void setStartOffset(unsigned offset) { m_startOffset = offset; }
+    void setEndOffset(unsigned offset) { m_endOffset = offset; }
+    void shiftOffsets(int delta);
 
     bool operator==(const DocumentMarker& o) const
     {
-        return type == o.type && startOffset == o.startOffset && endOffset == o.endOffset;
+        return type() == o.type() && startOffset() == o.startOffset() && endOffset() == o.endOffset();
     }
 
     bool operator!=(const DocumentMarker& o) const
     {
         return !(*this == o);
     }
+
+private:    
+    MarkerType m_type;
+    unsigned m_startOffset;
+    unsigned m_endOffset;
+    String m_description;
+    bool m_activeMatch;
 };
+
+inline DocumentMarker::DocumentMarker() 
+    : m_type(Spelling), m_startOffset(0), m_endOffset(0), m_activeMatch(false)
+{
+}
+
+inline DocumentMarker::DocumentMarker(MarkerType type, unsigned startOffset, unsigned endOffset)
+    : m_type(type), m_startOffset(startOffset), m_endOffset(endOffset), m_activeMatch(false)
+{
+}
+
+inline DocumentMarker::DocumentMarker(MarkerType type, unsigned startOffset, unsigned endOffset, const String& description)
+    : m_type(type), m_startOffset(startOffset), m_endOffset(endOffset), m_description(description), m_activeMatch(false)
+{
+    ASSERT(type == DocumentMarker::Grammar || DocumentMarker::Autocorrected);
+}
+
+inline DocumentMarker::DocumentMarker(unsigned startOffset, unsigned endOffset, bool activeMatch)
+    : m_type(DocumentMarker::TextMatch), m_startOffset(startOffset), m_endOffset(endOffset), m_activeMatch(activeMatch)
+{
+}
+
+inline void DocumentMarker::shiftOffsets(int delta)
+{
+    m_startOffset += delta;
+    m_endOffset +=  delta;
+}
+
+inline void DocumentMarker::setActiveMatch(bool active)
+{
+    ASSERT(m_type == DocumentMarker::TextMatch);
+    m_activeMatch = active;
+}
 
 } // namespace WebCore
 

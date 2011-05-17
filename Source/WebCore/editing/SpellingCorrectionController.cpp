@@ -409,17 +409,17 @@ void SpellingCorrectionController::respondToChangedSelection(const VisibleSelect
         const DocumentMarker& marker = markers[i];
         if (!shouldStartTimerFor(marker, endOffset))
             continue;
-        RefPtr<Range> wordRange = Range::create(m_frame->document(), node, marker.startOffset, node, marker.endOffset);
+        RefPtr<Range> wordRange = Range::create(m_frame->document(), node, marker.startOffset(), node, marker.endOffset());
         String currentWord = plainText(wordRange.get());
         if (!currentWord.length())
             continue;
 
         m_correctionPanelInfo.rangeToBeReplaced = wordRange;
         m_correctionPanelInfo.replacedString = currentWord;
-        if (marker.type == DocumentMarker::Spelling)
+        if (marker.type() == DocumentMarker::Spelling)
             startCorrectionPanelTimer(CorrectionPanelInfo::PanelTypeSpellingSuggestions);
         else {
-            m_correctionPanelInfo.replacementString = marker.description;
+            m_correctionPanelInfo.replacementString = marker.description();
             startCorrectionPanelTimer(CorrectionPanelInfo::PanelTypeReversion);
         }
 
