@@ -805,13 +805,13 @@ BUGCR20226 : fast/forms/input-list.html = FAIL
 BUGCR20226 : fast/forms/input-selectedoption.html = FAIL
 
 // Timing out.
-BUGCR78376 SKIP : http/tests/media/video-play-stall-seek.html = TIMEOUT
+BUGCR78376 : http/tests/media/video-play-stall-seek.html = TIMEOUT
 
 // video.seekable returning unexpected results.
-BUGCR78375 SKIP : http/tests/media/video-seekable-stall.html = TIMEOUT
+BUGCR78375 : http/tests/media/video-seekable-stall.html = TIMEOUT
 
 // canplaythrough event is sent too early.
-BUGCR73609 SKIP : http/tests/media/video-play-stall.html = TEXT
+BUGCR73609 : http/tests/media/video-play-stall.html = TEXT
 
 // UNIMPLEMENTED : * we don't have test-par-16-9.ogv generated in WebKit * we don't handle aspect ratio correctly.
 BUGCR59635 SKIP : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
@@ -829,7 +829,7 @@ BUGCR25375 BUGCR59399 SKIP : media/audio-delete-while-step-button-clicked.html =
 
 // Seeks to the end of file, which results in ogg packets with no timestamps.
 // KNOWNISSUE : fails because progress event is not published 
-BUGCR59675 BUGCR59263 SKIP : media/event-attributes.html = PASS FAIL TIMEOUT
+BUGCR59675 BUGCR59263 : media/event-attributes.html = PASS FAIL TIMEOUT
 
 // We haven't implemented the WebKit fullscreen extension.
 // UNIMPLEMENTED

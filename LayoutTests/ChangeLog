@@ -1,3 +1,9 @@
+2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, un-skipping a few Chromium layout test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-16  Adam Barth  <abarth@webkit.org>
 
         Attempt to fix baselines for xss-DENIED-set-opener.html.  This is too hard.
