@@ -720,6 +720,16 @@ void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool, JSStri
     // FIXME: implement
 }
 
+void LayoutTestController::goBack()
+{
+    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
+}
+
+void LayoutTestController::setDefersLoading(bool)
+{
+    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
+}
+
 void LayoutTestController::setAppCacheMaximumSize(unsigned long long size)
 {
     webkit_application_cache_set_maximum_size(size);

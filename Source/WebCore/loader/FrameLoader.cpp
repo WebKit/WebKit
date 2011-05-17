@@ -252,6 +252,7 @@ void FrameLoader::setDefersLoading(bool defers)
         m_provisionalDocumentLoader->setDefersLoading(defers);
     if (m_policyDocumentLoader)
         m_policyDocumentLoader->setDefersLoading(defers);
+    history()->setDefersLoading(defers);
 
     if (!defers) {
         m_frame->navigationScheduler()->startTimer();

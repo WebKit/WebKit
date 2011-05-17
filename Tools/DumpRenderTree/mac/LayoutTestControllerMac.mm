@@ -433,6 +433,16 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
     [origin release];
 }
 
+void LayoutTestController::goBack()
+{
+    [[mainFrame webView] goBack];
+}
+
+void LayoutTestController::setDefersLoading(bool defers)
+{
+    [[mainFrame webView] setDefersCallbacks:defers];
+}
+
 void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
 {
     RetainPtr<CFStringRef> schemeCFString(AdoptCF, JSStringCopyCFString(kCFAllocatorDefault, scheme));

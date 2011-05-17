@@ -287,6 +287,16 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
     // FIXME: implement
 }
 
+void LayoutTestController::goBack()
+{
+    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
+}
+
+void LayoutTestController::setDefersLoading(bool)
+{
+    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
+}
+
 void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool, JSStringRef)
 {
     // FIXME: implement

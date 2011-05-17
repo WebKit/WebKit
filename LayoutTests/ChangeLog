@@ -1,3 +1,16 @@
+2011-05-16  Ian Henderson  <ianh@apple.com>
+
+        Reviewed by Joseph Pecoraro.
+
+        Page::goToItem doesn't work while loading is deferred
+        https://bugs.webkit.org/show_bug.cgi?id=60412
+
+        * loader/navigation-while-deferring-loads-expected.txt: Added.
+        * loader/navigation-while-deferring-loads.html: Added.
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, checking in new baselines for media/video-canvas-alpha.html for chromium-gpu-{linux,win}.

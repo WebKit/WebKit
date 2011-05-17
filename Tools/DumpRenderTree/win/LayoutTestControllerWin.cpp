@@ -1047,6 +1047,16 @@ void LayoutTestController::setDatabaseQuota(unsigned long long quota)
     databaseManager->setQuota(TEXT("file:///"), quota);
 }
 
+void LayoutTestController::goBack()
+{
+    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
+}
+
+void LayoutTestController::setDefersLoading(bool)
+{
+    // FIXME: implement to enable loader/navigation-while-deferring-loads.html
+}
+
 void LayoutTestController::setDomainRelaxationForbiddenForURLScheme(bool forbidden, JSStringRef scheme)
 {
     COMPtr<IWebViewPrivate> webView;

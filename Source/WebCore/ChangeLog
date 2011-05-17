@@ -1,3 +1,30 @@
+2011-05-16  Ian Henderson  <ianh@apple.com>
+
+        Reviewed by Joseph Pecoraro.
+
+        Page::goToItem doesn't work while loading is deferred
+        https://bugs.webkit.org/show_bug.cgi?id=60412
+
+        If goToItem is called while loading is deferred, save the arguments
+        and try again later instead of doing nothing.
+
+        Test: loader/navigation-while-deferring-loads.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::setDefersLoading):
+        Pipe the "defersLoading" state into HistoryController.
+        * loader/HistoryController.cpp:
+        (WebCore::HistoryController::HistoryController):
+        (WebCore::HistoryController::goToItem):
+        Save the HistoryItem and FrameLoadType if loading is deferred.
+        (WebCore::HistoryController::setDefersLoading):
+        If we have a saved HistoryItem after resuming, try going to it.
+        * loader/HistoryController.h:
+        * page/Page.cpp:
+        (WebCore::Page::goToItem):
+        No longer bail early if loading is deferred, since HistoryController
+        now handles this case.
+
 2011-05-16  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed, rolling out r86625.

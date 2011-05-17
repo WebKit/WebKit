@@ -1,3 +1,32 @@
+2011-05-16  Ian Henderson  <ianh@apple.com>
+
+        Reviewed by Joseph Pecoraro.
+
+        Page::goToItem doesn't work while loading is deferred
+        https://bugs.webkit.org/show_bug.cgi?id=60412
+
+        Add setDefersLoading and goBack methods to LayoutTestController.  We
+        need to use goBack() instead of history.back() because the latter goes
+        through NavigationScheduler, hence doesn't exhibit the bug.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (goBackCallback):
+        (setDefersLoadingCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::goBack):
+        (LayoutTestController::setDefersLoading):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::goBack):
+        (LayoutTestController::setDefersLoading):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::goBack):
+        (LayoutTestController::setDefersLoading):
+        * DumpRenderTree/wx/LayoutTestControllerWx.cpp:
+        (LayoutTestController::goBack):
+        (LayoutTestController::setDefersLoading):
+
 2011-05-16  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -2591,6 +2591,9 @@ fast/events/page-visibility-transition-test.html
 http/tests/inspector/network/download.html
 http/tests/inspector/network/x-frame-options-deny.html
 
+# Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
+loader/navigation-while-deferring-loads.html
+
 # [Qt] fast/events/backspace-nagivates-back fails on Qt bots (Mac and Linux)
 # https://bugs.webkit.org/show_bug.cgi?id=60311
 fast/events/backspace-navigates-back.html

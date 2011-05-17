@@ -84,6 +84,8 @@ public:
     void pushState(PassRefPtr<SerializedScriptValue>, const String& title, const String& url);
     void replaceState(PassRefPtr<SerializedScriptValue>, const String& title, const String& url);
 
+    void setDefersLoading(bool);
+
 private:
     friend class Page;
     bool shouldStopLoadingForHistoryItem(HistoryItem*) const;
@@ -110,6 +112,10 @@ private:
     RefPtr<HistoryItem> m_provisionalItem;
 
     bool m_frameLoadComplete;
+
+    bool m_defersLoading;
+    RefPtr<HistoryItem> m_deferredItem;
+    FrameLoadType m_deferredFrameLoadType;
 };
 
 } // namespace WebCore

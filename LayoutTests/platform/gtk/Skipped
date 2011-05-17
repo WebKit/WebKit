@@ -1421,6 +1421,9 @@ tables/mozilla_expected_failures/bugs/bug85016.html
 # https://bugs.webkit.org/show_bug.cgi?id=60206
 http/tests/navigation/response204.html
 
+# Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
+loader/navigation-while-deferring-loads.html
+
 # This platform does not support the Page Visibility API.
 fast/events/page-visibility-iframe-delete-test.html
 fast/events/page-visibility-iframe-move-test.html

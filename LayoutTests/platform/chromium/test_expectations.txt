@@ -206,6 +206,9 @@ BUGCR61676 SKIP : storage/storageinfo-query-usage.html = FAIL
 // Animation API is disabled
 WONTFIX SKIP : animations/animation-api-1.html = FAIL
 
+// Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
+BUGWK60877 SKIP : loader/navigation-while-deferring-loads.html = FAIL
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------

@@ -1295,3 +1295,6 @@ fast/events/page-visibility-iframe-delete-test.html
 fast/events/page-visibility-iframe-move-test.html
 fast/events/page-visibility-iframe-propagation-test.html
 fast/events/page-visibility-transition-test.html
+
+# Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
+loader/navigation-while-deferring-loads.html

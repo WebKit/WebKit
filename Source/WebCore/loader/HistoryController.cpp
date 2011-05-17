@@ -68,6 +68,7 @@ static inline void addVisitedLink(Page* page, const KURL& url)
 HistoryController::HistoryController(Frame* frame)
     : m_frame(frame)
     , m_frameLoadComplete(true)
+    , m_defersLoading(false)
 {
 }
 
@@ -248,6 +249,11 @@ void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
         return;
     if (!m_frame->loader()->client()->shouldGoToHistoryItem(targetItem))
         return;
+    if (m_defersLoading) {
+        m_deferredItem = targetItem;
+        m_deferredFrameLoadType = type;
+        return;
+    }
 
     // Set the BF cursor before commit, which lets the user quickly click back/forward again.
     // - plus, it only makes sense for the top level of the operation through the frametree,
@@ -263,6 +269,15 @@ void HistoryController::goToItem(HistoryItem* targetItem, FrameLoadType type)
     recursiveSetProvisionalItem(targetItem, currentItem.get(), type);
     // Now that all other frames have provisional items, do the actual navigation.
     recursiveGoToItem(targetItem, currentItem.get(), type);
+}
+
+void HistoryController::setDefersLoading(bool defer)
+{
+    m_defersLoading = defer;
+    if (!defer && m_deferredItem) {
+        goToItem(m_deferredItem.get(), m_deferredFrameLoadType);
+        m_deferredItem = 0;
+    }
 }
 
 void HistoryController::updateForBackForwardNavigation()
