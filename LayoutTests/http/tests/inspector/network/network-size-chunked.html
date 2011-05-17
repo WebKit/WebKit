@@ -17,7 +17,7 @@ function resourceLoaded()
 
 function test()
 {
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
+    InspectorTest.waitUntilConsoleMessageAdded(step2);
     InspectorTest.evaluateInPage("loadImages()");
 
     function step2()

@@ -6,7 +6,7 @@
 
 function test()
 {
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", addMessage, true);
+    InspectorTest.waitUntilConsoleMessageAdded(addMessage, true);
     InspectorTest.evaluateInPage("loadIframe()");
     function addMessage(message)
     {

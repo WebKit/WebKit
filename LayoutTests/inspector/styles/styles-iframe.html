@@ -19,7 +19,7 @@ function loadIframe()
 function test()
 {
     InspectorTest.evaluateInPage("loadIframe()");
-    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step0);
+    InspectorTest.waitUntilConsoleMessageAdded(step0);
 
     function step0()
     {
