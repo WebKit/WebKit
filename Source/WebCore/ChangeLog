@@ -1,3 +1,10 @@
+2011-05-16  Kent Tamura  <tkent@chromium.org>
+
+        Fix Leopard build.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::stepUpFromRenderer): Use double instead of int.
+
 2011-05-16  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

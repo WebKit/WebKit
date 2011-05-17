@@ -1461,7 +1461,7 @@ void HTMLInputElement::stepUpFromRenderer(int n)
     if (!isfinite(current)) {
         ExceptionCode ec;
         current = m_inputType->defaultValueForStepUp();
-        int nextDiff = step * n;
+        double nextDiff = step * n;
         if (current < m_inputType->minimum() - nextDiff)
             current = m_inputType->minimum() - nextDiff;
         if (current > m_inputType->maximum() - nextDiff)
