@@ -72,7 +72,7 @@ public:
         painter->setRenderHints(QPainter::Antialiasing | QPainter::SmoothPixmapTransform, false);
     }
 
-    static PassOwnPtr<TextureMapper> create() { return new TextureMapperQt; }
+    static PassOwnPtr<TextureMapper> create() { return adoptPtr(new TextureMapperQt); }
 private:
     inline QPainter* currentPainter() { return m_currentSurface ? m_currentSurface->painter() : m_painter; }
 

@@ -1,3 +1,19 @@
+2011-05-17  Young Han Lee  <joybro@company100.net>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Texmap][Qt] Enable strict PassOwnPtr for Qt with texmap enabled.
+        https://bugs.webkit.org/show_bug.cgi?id=60947
+
+        No new tests. Build fix.
+
+        * platform/graphics/qt/TextureMapperQt.cpp:
+        (WebCore::TextureMapper::create):
+        * platform/graphics/qt/TextureMapperQt.h:
+        (WebCore::TextureMapperQt::create):
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayer::create):
+
 2011-05-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -76,7 +76,7 @@ void PageClientQWidget::setRootGraphicsLayer(GraphicsLayer* layer)
 {
     if (layer) {
         textureMapperNodeClient = adoptPtr(new TextureMapperNodeClientQt(page->mainFrame(), layer));
-        textureMapperNodeClient->setTextureMapper(new TextureMapperQt);
+        textureMapperNodeClient->setTextureMapper(adoptPtr(new TextureMapperQt));
         textureMapperNodeClient->syncRootLayer();
         return;
     }

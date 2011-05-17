@@ -351,7 +351,7 @@ PlatformLayer* GraphicsLayerTextureMapper::platformLayer() const
 
 PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
 {
-    return new GraphicsLayerTextureMapper(client);
+    return adoptPtr(new GraphicsLayerTextureMapper(client));
 }
 
 bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)

@@ -187,9 +187,9 @@ PassOwnPtr<TextureMapper> TextureMapper::create(GraphicsContext* context)
 {
 #ifdef QT_OPENGL_LIB
     if (context && context->platformContext()->paintEngine()->type() == QPaintEngine::OpenGL2)
-        return new TextureMapperGL;
+        return adoptPtr(new TextureMapperGL);
 #endif
-    return new TextureMapperQt;
+    return adoptPtr(new TextureMapperQt);
 }
 
 PassRefPtr<BitmapTexture> TextureMapperQt::createTexture()
