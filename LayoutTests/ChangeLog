@@ -13,6 +13,12 @@
 
 2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
 
+        Unreviewed, updating expectation for media/controls-css-overload.html.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-16  Andrew Scherkus  <scherkus@chromium.org>
+
         Unreviewed, checking in new baselines for media/video-canvas-alpha.html for chromium-gpu-{linux,win}.
 
         * platform/chromium-gpu-linux/media/video-canvas-alpha-expected.png:
