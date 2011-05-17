@@ -1,3 +1,16 @@
+2011-05-12  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Steve Block.
+
+        IndexedDB: Index population should ignore records without key for index
+        https://bugs.webkit.org/show_bug.cgi?id=60697
+
+        Test that we can create a new index for which not all current records
+        have a key.
+
+        * storage/indexeddb/index-basics-expected.txt:
+        * storage/indexeddb/index-basics.html:
+
 2011-05-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

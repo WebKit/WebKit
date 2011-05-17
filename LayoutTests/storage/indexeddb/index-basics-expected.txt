@@ -27,8 +27,9 @@ PASS 'openCursor' in indexObject is true
 PASS 'getKey' in indexObject is true
 PASS 'get' in indexObject is true
 store.add({x: 'value', y: 'zzz', z: 2.72}, 'key')
-event.target.source.add({x: 'value2', y: 'zzz2', z: 2.71}, 'key2')
+event.target.source.add({x: 'value2', y: 'zzz2', z: 2.71, foobar: 12}, 'key2')
 store.createIndex('indexWhileAddIsInFlight', 'x')
+store.createIndex('indexWithWeirdKeyPath', 'foobar')
 indexObject.getKey('value')
 PASS event.target.result is "key"
 indexObject2.getKey('zzz')

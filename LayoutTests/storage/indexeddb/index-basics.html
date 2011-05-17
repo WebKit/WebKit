@@ -68,10 +68,11 @@ function addData()
 
 function addMore()
 {
-    request = evalAndLog("event.target.source.add({x: 'value2', y: 'zzz2', z: 2.71}, 'key2')");
+    request = evalAndLog("event.target.source.add({x: 'value2', y: 'zzz2', z: 2.71, foobar: 12}, 'key2')");
     request.onsuccess = getData;
     request.onerror = unexpectedErrorCallback;
     window.indexObject4 = evalAndLog("store.createIndex('indexWhileAddIsInFlight', 'x')");
+    window.indexObject5 = evalAndLog("store.createIndex('indexWithWeirdKeyPath', 'foobar')");
 }
 
 function getData()
