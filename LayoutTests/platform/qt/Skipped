@@ -425,10 +425,6 @@ http/tests/cookies/simple-cookies-expired.html
 http/tests/xmlhttprequest/workers/close.html
 http/tests/xmlhttprequest/workers/shared-worker-close.html
 
-storage/database-lock-after-reload.html
-storage/empty-statement.html
-storage/execute-sql-args.html
-storage/hash-change-with-xhr.html
 transitions/change-values-during-transition.html
 
 # http/tests/inspector/resource-har-conversion.html is failing on the release bot after r63191

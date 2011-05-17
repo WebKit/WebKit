@@ -1,3 +1,12 @@
+2011-05-17  Sakamuri Ramakrishna  <ramakrishna.sakamuri@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] 4 of the skipped storage layout tests pass on Qt Linux- skip list to be modified
+        https://bugs.webkit.org/show_bug.cgi?id=60715
+
+        * platform/qt/Skipped:
+
 2011-05-17  Anton Muhin  <antonm@chromium.org>
 
         Unreviewed.
