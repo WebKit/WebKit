@@ -1,3 +1,15 @@
+2011-05-17  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        document.activeElement doesn't point to the focused frame
+        https://bugs.webkit.org/show_bug.cgi?id=49509
+
+        This tests that an iframe is the activeElement when focus is inside that frame.
+
+        * fast/dom/HTMLDocument/active-element-frames-expected.txt: Added.
+        * fast/dom/HTMLDocument/active-element-frames.html: Added.
+
 2011-05-16  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

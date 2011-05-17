@@ -68,6 +68,7 @@
 #include "HTMLDocumentParser.h"
 #include "HTMLBodyElement.h"
 #include "HTMLElementFactory.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
 #include "KURL.h"
@@ -137,9 +138,15 @@ void HTMLDocument::setDesignMode(const String& value)
 
 Element* HTMLDocument::activeElement()
 {
-    if (Node* node = focusedNode())
+    if (Node* node = focusedNode()) {
         if (node->isElementNode())
             return static_cast<Element*>(node);
+    } else if (Page* page = this->page()) {
+        for (Frame* focusedFrame = page->focusController()->focusedFrame(); focusedFrame; focusedFrame = focusedFrame->tree()->parent()) {
+            if (focusedFrame->tree()->parent() == frame())
+                return focusedFrame->ownerElement();
+        }
+    }
     return body();
 }
 

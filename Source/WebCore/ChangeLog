@@ -1,3 +1,17 @@
+2011-05-17  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        document.activeElement doesn't point to the focused frame
+        https://bugs.webkit.org/show_bug.cgi?id=49509
+
+        This makes us match IE and Firefox and there is an ongoing WHATWG discussion to make the spec match this.
+
+        Test: fast/dom/HTMLDocument/active-element-frames.html
+
+        * html/HTMLDocument.cpp:
+        (WebCore::HTMLDocument::activeElement): Walk up the frame tree from the focusedFrame to find the active frame if any.
+
 2011-05-17  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.
