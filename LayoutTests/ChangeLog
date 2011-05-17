@@ -1,3 +1,9 @@
+2011-05-17  Andreas Kling  <kling@webkit.org>
+
+        Bot-matching rebaseline after r86675.
+
+        * platform/qt/tables/mozilla/bugs/bug92647-2-expected.txt:
+
 2011-05-17  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Reviewed by Andreas Kling.

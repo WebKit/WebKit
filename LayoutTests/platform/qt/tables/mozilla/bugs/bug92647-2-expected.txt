@@ -12,5 +12,5 @@ layer at (0,0) size 800x600
                   RenderTableRow {TR} at (0,2) size 36x41
                     RenderTableCell {TD} at (2,20) size 4x4 [border: (1px inset #808080)] [r=0 c=0 rs=1 cs=1]
                     RenderTableCell {TD} at (8,2) size 20x41 [border: (1px inset #808080)] [r=0 c=1 rs=1 cs=1]
-                      RenderButton {INPUT} at (4,4) size 12x33 [color=#1B1918] [bgcolor=#C0C0C0]
+                      RenderButton {INPUT} at (4,4) size 12x33 [bgcolor=#C0C0C0]
                     RenderTableCell {TD} at (30,20) size 4x4 [border: (1px inset #808080)] [r=0 c=2 rs=1 cs=1]
