@@ -28,7 +28,6 @@
 #include "FontCache.h"
 #include "FontTranscoder.h"
 #if PLATFORM(QT) && HAVE(QRAWFONT)
-#include "ContextShadow.h"
 #include "GraphicsContext.h"
 #endif
 #include "IntPoint.h"
@@ -146,7 +145,7 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoi
     CodePath codePathToUse = codePath(run);
 
 #if PLATFORM(QT) && HAVE(QRAWFONT)
-    if (context->textDrawingMode() & TextModeStroke || context->contextShadow()->m_type != ContextShadow::NoShadow)
+    if (context->textDrawingMode() & TextModeStroke)
         codePathToUse = Complex;
 #endif
 

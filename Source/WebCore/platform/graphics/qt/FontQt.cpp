@@ -339,7 +339,7 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* fontData, 
     glyphIndexes.reserve(numGlyphs);
     positions.reserve(numGlyphs);
 
-    float x = 0;
+    float width = 0;
 
     for (int i = 0; i < numGlyphs; ++i) {
         Glyph glyph = glyphBuffer.glyphAt(from + i);
@@ -347,16 +347,47 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* fontData, 
         if (!glyph)
             continue;
         glyphIndexes.append(glyph);
-        positions.append(QPointF(x, 0));
-        x += advance;
+        positions.append(QPointF(width, 0));
+        width += advance;
     }
+
+    QRawFont rawFont(fontData->platformData().rawFont());
 
     QGlyphs qtGlyphs;
     qtGlyphs.setGlyphIndexes(glyphIndexes);
     qtGlyphs.setPositions(positions);
-    qtGlyphs.setFont(fontData->platformData().rawFont());
+    qtGlyphs.setFont(rawFont);
 
     QPainter* painter = context->platformContext();
+
+    ContextShadow* shadow = context->contextShadow();
+    switch (shadow->m_type) {
+    case ContextShadow::SolidShadow: {
+        QPen previousPen = painter->pen();
+        painter->setPen(shadow->m_color);
+        painter->translate(shadow->offset());
+        painter->drawGlyphs(point, qtGlyphs);
+        painter->translate(-shadow->offset());
+        painter->setPen(previousPen);
+        break;
+    }
+    case ContextShadow::BlurShadow: {
+        qreal height = rawFont.ascent() + rawFont.descent() + 1;
+        QRectF boundingRect(point.x(), point.y() - rawFont.ascent(), width, height);
+        QPainter* shadowPainter = shadow->beginShadowLayer(context, boundingRect);
+        if (shadowPainter) {
+            shadowPainter->setPen(shadow->m_color);
+            shadowPainter->drawGlyphs(point, qtGlyphs);
+            shadow->endShadowLayer(context);
+        }
+        break;
+    }
+    case ContextShadow::NoShadow:
+        break;
+    default:
+        ASSERT_NOT_REACHED();
+        break;
+    }
 
     QPen previousPen = painter->pen();
     painter->setPen(fillPenForContext(context));
