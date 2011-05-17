@@ -156,6 +156,7 @@ public:
     virtual void scheduleCompositingLayerSync();
     virtual CompositingTriggerFlags allowedCompositingTriggers() const;
 #endif
+    virtual bool allowsAcceleratedCompositing() const;
 
 #if ENABLE(TILED_BACKING_STORE)
     virtual IntRect visibleRectForTiledBackingStore() const;

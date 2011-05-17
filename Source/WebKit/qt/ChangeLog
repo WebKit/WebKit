@@ -1,3 +1,17 @@
+2011-05-16  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        plugins/invalidate_rect.html fails on linux ports
+
+        Add ChromeClientQt::allowsAcceleratedCompositing().
+
+        https://bugs.webkit.org/show_bug.cgi?id=54051
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::allowsAcceleratedCompositing):
+        * WebCoreSupport/ChromeClientQt.h:
+
 2011-05-17  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Andreas Kling.

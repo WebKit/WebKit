@@ -133,6 +133,7 @@ public slots:
     bool checkDesktopNotificationPermission(const QString& origin);
     void simulateDesktopNotificationClick(const QString& title);
     void display();
+    void displayInvalidatedRegion();
     void clearBackForwardList();
     QString pathToLocalResource(const QString& url);
     void dumpTitleChanges() { m_dumpTitleChanges = true; }

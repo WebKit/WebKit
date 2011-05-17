@@ -98,6 +98,17 @@ webkit_test_plugin_new_instance(NPMIMEType mimetype,
                 obj->testWindowOpen = TRUE;
             else if (strcasecmp(argn[i], "onSetWindow") == 0 && !obj->onSetWindow)
                 obj->onSetWindow = strdup(argv[i]);
+            else if (!strcasecmp(argn[i], "windowedPlugin")) {
+                void* windowed = 0;
+                if (!strcasecmp(argv[i], "false") || !strcasecmp(argv[i], "0"))
+                    windowed = 0;
+                else if (!strcasecmp(argv[i], "true") || !strcasecmp(argv[i], "1"))
+                    windowed = reinterpret_cast<void*>(1);
+                else
+                    assert(false);
+                browser->setvalue(instance, NPPVpluginWindowBool, windowed);
+            } else if (!strcasecmp(argn[i], "onPaintEvent") && !obj->onPaintEvent)
+                obj->onPaintEvent = strdup(argv[i]);
         }
 
         browser->getvalue(instance, NPNVprivateModeBool, (void *)&obj->cachedPrivateBrowsingMode);
@@ -278,33 +289,43 @@ static int16_t
 webkit_test_plugin_handle_event(NPP instance, void* event)
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
-    if (!obj->eventLogging)
-        return 0;
 
     XEvent* evt = static_cast<XEvent*>(event);
 
     switch (evt->type) {
         case ButtonRelease:
-            pluginLog(instance, "mouseUp at (%d, %d)", evt->xbutton.x, evt->xbutton.y);
+            if (obj->eventLogging)
+                pluginLog(instance, "mouseUp at (%d, %d)", evt->xbutton.x, evt->xbutton.y);
             break;
         case ButtonPress:
-            pluginLog(instance, "mouseDown at (%d, %d)", evt->xbutton.x, evt->xbutton.y);
+            if (obj->eventLogging)
+                pluginLog(instance, "mouseDown at (%d, %d)", evt->xbutton.x, evt->xbutton.y);
             break;
         case KeyRelease:
-            pluginLog(instance, "keyUp '%c'", keyEventToChar(&evt->xkey));
+            if (obj->eventLogging)
+                pluginLog(instance, "keyUp '%c'", keyEventToChar(&evt->xkey));
             break;
         case KeyPress:
-            pluginLog(instance, "keyDown '%c'", keyEventToChar(&evt->xkey));
+            if (obj->eventLogging)
+                pluginLog(instance, "keyDown '%c'", keyEventToChar(&evt->xkey));
             break;
         case MotionNotify:
         case EnterNotify:
         case LeaveNotify:
             break;
         case FocusIn:
-            pluginLog(instance, "getFocusEvent");
+            if (obj->eventLogging)
+                pluginLog(instance, "getFocusEvent");
             break;
         case FocusOut:
-            pluginLog(instance, "loseFocusEvent");
+            if (obj->eventLogging)
+                pluginLog(instance, "loseFocusEvent");
+            break;
+        case GraphicsExpose:
+            if (obj->eventLogging)
+                pluginLog(instance, "updateEvt");
+            if (obj->onPaintEvent)
+                executeScript(obj, obj->onPaintEvent);
             break;
         default:
             pluginLog(instance, "event %d", evt->type);

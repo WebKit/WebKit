@@ -224,6 +224,11 @@ void LayoutTestController::display()
     emit showPage();
 }
 
+void LayoutTestController::displayInvalidatedRegion()
+{
+    display();
+}
+
 void LayoutTestController::clearBackForwardList()
 {
     m_drt->webPage()->history()->clear();

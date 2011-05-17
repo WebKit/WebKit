@@ -1,3 +1,14 @@
+2011-05-16  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        plugins/invalidate_rect.html fails on linux ports
+
+        https://bugs.webkit.org/show_bug.cgi?id=54051
+
+       * platform/qt/Skipped: Unskip plugins/invalidate_rect.html
+       * platform/qt-mac/Skipped: Skip plugins/invalidate_rect.html
+
 2011-05-17  Tony Chang  <tony@chromium.org>
 
         Land linux 32 bit results.

@@ -652,6 +652,8 @@ static int16_t handleEventX11(NPP instance, PluginObject* obj, XEvent* event)
     case GraphicsExpose:
         if (obj->eventLogging)
             pluginLog(instance, "updateEvt");
+        if (obj->onPaintEvent)
+            executeScript(obj, obj->onPaintEvent);
         break;
     // NPAPI events
     case FocusIn:

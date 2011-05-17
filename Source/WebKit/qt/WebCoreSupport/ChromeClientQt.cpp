@@ -130,6 +130,13 @@ FloatRect ChromeClientQt::windowRect()
     return platformPageClient()->windowRect();
 }
 
+bool ChromeClientQt::allowsAcceleratedCompositing() const
+{
+    if (!platformPageClient())
+        return false;
+    return platformPageClient()->allowsAcceleratedCompositing();
+}
+
 FloatRect ChromeClientQt::pageRect()
 {
     if (!m_webPage)
