@@ -1,3 +1,17 @@
+2011-05-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86668.
+        http://trac.webkit.org/changeset/86668
+        https://bugs.webkit.org/show_bug.cgi?id=61001
+
+        It made 52 tests crash on Qt WK2 bot (Requested by Ossy on
+        #webkit).
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        * UIProcess/API/qt/qgraphicswkview.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::createDrawingAreaProxy):
+
 2011-05-17  Brian Weinstein  <bweinstein@apple.com>
 
         Build fix after r86717.

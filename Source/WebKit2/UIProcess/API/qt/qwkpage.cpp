@@ -24,6 +24,7 @@
 
 #include "qwkpreferences_p.h"
 
+#include "ChunkedUpdateDrawingAreaProxy.h"
 #include "ClientImpl.h"
 #include "DrawingAreaProxyImpl.h"
 #include "qgraphicswkview.h"
@@ -137,7 +138,9 @@ PassOwnPtr<DrawingAreaProxy> QWKPagePrivate::createDrawingAreaProxy()
     if (backingStoreType == QGraphicsWKView::Tiled)
         return TiledDrawingAreaProxy::create(wkView, page.get());
 #endif
-    return DrawingAreaProxyImpl::create(page.get());
+    if (backingStoreType == QGraphicsWKView::Impl)
+        return DrawingAreaProxyImpl::create(page.get());
+    return ChunkedUpdateDrawingAreaProxy::create(wkView, page.get());
 }
 
 void QWKPagePrivate::setViewNeedsDisplay(const WebCore::IntRect& rect)

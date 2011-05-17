@@ -26,7 +26,7 @@ class QWEBKIT_EXPORT QGraphicsWKView : public QGraphicsWidget {
     Q_PROPERTY(QUrl url READ url WRITE setUrl)
 
 public:
-    enum BackingStoreType { Simple, Tiled };
+    enum BackingStoreType { Simple, Tiled, Impl };
     QGraphicsWKView(QWKContext* context, BackingStoreType backingStoreType = Simple, QGraphicsItem* parent = 0);
 
     virtual ~QGraphicsWKView();
