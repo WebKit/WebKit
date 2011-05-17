@@ -1,3 +1,9 @@
+2011-05-16  Martin Robinson  <mrobinson@igalia.com>
+
+        Add file missing from my previous commit.
+
+        * Shared/cairo/LayerTreeContextCairo.cpp: Added.
+
 2011-05-16  Martin Robinson  <martin.james.robinson@gmail.com>
 
         Try to fix the WinCairo build after r86612.
