@@ -34,7 +34,6 @@
 #include "LayerChromium.h"
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
-#include "PlatformCanvas.h"
 #include "TextRun.h"
 #include "TextStream.h"
 #include "TextureManager.h"
@@ -115,7 +114,7 @@ void CCHeadsUpDisplay::draw()
             memcpy(pixelDest, locker.pixels(), hudSize.width() * hudSize.height() * 4);
             extensions->unmapTexSubImage2DCHROMIUM(pixelDest);
         } else
-            GLC(context, context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, canvas.size().width(), canvas.size().height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, locker.pixels()));
+            GLC(context.get(), context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, canvas.size().width(), canvas.size().height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, locker.pixels()));
     }
 
     // Draw the HUD onto the default render surface.

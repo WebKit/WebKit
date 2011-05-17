@@ -1,3 +1,55 @@
+2011-05-16  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r86625.
+        http://trac.webkit.org/changeset/86625
+        https://bugs.webkit.org/show_bug.cgi?id=60719
+
+        Caused failed assertion on Chromium gpu canary bots
+
+        * WebCore.gypi:
+        * platform/chromium/TraceEvent.h:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::create):
+        (WebCore::ContentLayerChromium::ContentLayerChromium):
+        (WebCore::ContentLayerChromium::~ContentLayerChromium):
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        (WebCore::ContentLayerChromium::setLayerRenderer):
+        (WebCore::ContentLayerChromium::createTilerIfNeeded):
+        (WebCore::ContentLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        (WebCore::ContentLayerChromium::drawsContent):
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        (WebCore::ImageLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerPainterChromium.h: Removed.
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::updateRootLayerContents):
+        (WebCore::LayerRendererChromium::drawRootLayer):
+        (WebCore::LayerRendererChromium::updateAndDrawLayers):
+        (WebCore::LayerRendererChromium::updateLayers):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTextureSubImage.cpp: Removed.
+        * platform/graphics/chromium/LayerTextureSubImage.h: Removed.
+        * platform/graphics/chromium/LayerTextureUpdater.h: Removed.
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp: Removed.
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h: Removed.
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::create):
+        (WebCore::LayerTilerChromium::LayerTilerChromium):
+        (WebCore::LayerTilerChromium::setLayerRenderer):
+        (WebCore::LayerTilerChromium::setTileSize):
+        (WebCore::LayerTilerChromium::update):
+        (WebCore::LayerTilerChromium::uploadCanvas):
+        (WebCore::LayerTilerChromium::updateFromPixels):
+        (WebCore::LayerTilerChromium::draw):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        (WebCore::LayerTilerChromium::Tile::Tile):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+
 2011-05-16  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Dave Kilzer.

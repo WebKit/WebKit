@@ -40,9 +40,7 @@
 #include "GeometryBinding.h"
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
-#include "LayerPainterChromium.h"
 #include "LayerTexture.h"
-#include "LayerTextureUpdaterCanvas.h"
 #include "NotImplemented.h"
 #include "TextStream.h"
 #include "TextureManager.h"
@@ -95,7 +93,7 @@ static bool isScaleOrTranslation(const TransformationMatrix& m)
 
 }
 
-PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<LayerPainterChromium> contentPaint)
+PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<TilePaintInterface> contentPaint)
 {
     if (!context)
         return 0;
@@ -108,9 +106,10 @@ PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassRefPtr<Graph
 }
 
 LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> context,
-                                             PassOwnPtr<LayerPainterChromium> contentPaint)
+                                             PassOwnPtr<TilePaintInterface> contentPaint)
     : m_viewportScrollPosition(IntPoint(-1, -1))
     , m_rootLayer(0)
+    , m_rootLayerContentPaint(contentPaint)
     , m_currentShader(0)
     , m_currentRenderSurface(0)
     , m_offscreenFramebufferId(0)
@@ -126,9 +125,7 @@ LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> conte
     if (m_contextSupportsMapSub)
         m_context->getExtensions()->ensureEnabled("GL_CHROMIUM_map_sub");
     m_hardwareCompositing = initializeSharedObjects();
-
-    OwnPtr<LayerTextureUpdater> textureUpdater = adoptPtr(new LayerTextureUpdaterBitmap(m_context.get(), contentPaint, m_contextSupportsMapSub));
-    m_rootLayerContentTiler = LayerTilerChromium::create(this, textureUpdater.release(), IntSize(256, 256), LayerTilerChromium::NoBorderTexels);
+    m_rootLayerContentTiler = LayerTilerChromium::create(this, IntSize(256, 256), LayerTilerChromium::NoBorderTexels);
     ASSERT(m_rootLayerContentTiler);
 
     m_headsUpDisplay = CCHeadsUpDisplay::create(this);
@@ -168,7 +165,7 @@ void LayerRendererChromium::invalidateRootLayerRect(const IntRect& dirtyRect)
 void LayerRendererChromium::updateRootLayerContents()
 {
     TRACE_EVENT("LayerRendererChromium::updateRootLayerContents", this, 0);
-    m_rootLayerContentTiler->prepareToUpdate(m_viewportVisibleRect);
+    m_rootLayerContentTiler->update(*m_rootLayerContentPaint, m_viewportVisibleRect);
 }
 
 void LayerRendererChromium::drawRootLayer()
@@ -176,6 +173,7 @@ void LayerRendererChromium::drawRootLayer()
     TransformationMatrix scroll;
     scroll.translate(-m_viewportVisibleRect.x(), -m_viewportVisibleRect.y());
 
+    m_rootLayerContentTiler->uploadCanvas();
     m_rootLayerContentTiler->draw(m_viewportVisibleRect, scroll, 1.0f);
 }
 
@@ -214,6 +212,7 @@ void LayerRendererChromium::updateAndDrawLayers()
         return;
 
     LayerList renderSurfaceLayerList;
+
     updateLayers(renderSurfaceLayerList);
 
     // Before drawLayers:
@@ -318,8 +317,6 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
 //  }
 
     updateCompositorResourcesRecursive(m_rootLayer.get());
-    // Update compositor resources for root layer.
-    m_rootLayerContentTiler->updateRect();
 
     // After updateCompositorResourcesRecursive, set/wait latches for all child
     // contexts. This will prevent the compositor from using any of the child

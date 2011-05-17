@@ -26,7 +26,6 @@
 #define TraceEvent_h
 
 #include "PlatformBridge.h"
-#include <wtf/OwnArrayPtr.h>
 
 // Implementation detail: trace event macros create temporary variables
 // to keep instrumentation overhead low. These macros give each temporary

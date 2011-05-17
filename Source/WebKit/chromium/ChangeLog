@@ -1,3 +1,13 @@
+2011-05-16  Andrew Wilson  <atwilson@chromium.org>
+
+        Unreviewed, rolling out r86625.
+        http://trac.webkit.org/changeset/86625
+        https://bugs.webkit.org/show_bug.cgi?id=60719
+
+        Caused failed assertion on Chromium gpu canary bots
+
+        * src/WebViewImpl.cpp:
+
 2011-05-16  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by James Robinson.

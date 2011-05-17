@@ -31,22 +31,28 @@
 
 #include "LayerChromium.h"
 #include "LayerTexture.h"
+#include "PlatformCanvas.h"
 #include "TilingData.h"
 #include <wtf/HashTraits.h>
+#include <wtf/OwnArrayPtr.h>
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
 class GraphicsContext3D;
 class LayerRendererChromium;
-class LayerTextureUpdater;
+
+class TilePaintInterface {
+public:
+    virtual void paint(GraphicsContext& context, const IntRect& contentRect) = 0;
+};
 
 class LayerTilerChromium {
     WTF_MAKE_NONCOPYABLE(LayerTilerChromium);
 public:
     enum BorderTexelOption { HasBorderTexels, NoBorderTexels };
 
-    static PassOwnPtr<LayerTilerChromium> create(LayerRendererChromium*, PassOwnPtr<LayerTextureUpdater>, const IntSize& tileSize, BorderTexelOption);
+    static PassOwnPtr<LayerTilerChromium> create(LayerRendererChromium*, const IntSize& tileSize, BorderTexelOption);
 
     ~LayerTilerChromium();
 
@@ -54,10 +60,16 @@ public:
     void invalidateRect(const IntRect& contentRect);
     void invalidateEntireLayer();
 
-    // Prepare data needed to update textures that instersect with contentRect.
-    void prepareToUpdate(const IntRect& contentRect);
-    // Update invalid textures that intersect with contentRect provided in prepareToUpdate().
-    void updateRect();
+    // Paint all invalidations and missing tiles needed to draw the contentRect
+    // into the internal canvas.
+    void update(TilePaintInterface& painter, const IntRect& contentRect);
+
+    // Reserve and upload tile textures from the internal canvas.
+    void uploadCanvas();
+
+    // Reserve and upload tile textures from an externally painted buffer.
+    void updateFromPixels(const IntRect& contentRect, const IntRect& paintRect, const uint8_t* pixels);
+
     // Draw all tiles that intersect with the content rect.
     void draw(const IntRect& contentRect, const TransformationMatrix&, float opacity);
 
@@ -65,6 +77,7 @@ public:
     void setLayerPosition(const IntPoint& position);
     // Change the tile size.  This may invalidate all the existing tiles.
     void setTileSize(const IntSize& size);
+    void setLayerRenderer(LayerRendererChromium*);
 
     bool skipsDraw() const { return m_skipsDraw; }
 
@@ -74,12 +87,12 @@ public:
     LayerTexture* getSingleTexture();
 
 private:
-    LayerTilerChromium(LayerRendererChromium*, PassOwnPtr<LayerTextureUpdater>, const IntSize& tileSize, BorderTexelOption);
+    LayerTilerChromium(LayerRendererChromium*, const IntSize& tileSize, BorderTexelOption);
 
     class Tile : public RefCounted<Tile> {
         WTF_MAKE_NONCOPYABLE(Tile);
     public:
-        explicit Tile(PassOwnPtr<LayerTexture> tex) : m_tex(tex), m_i(-1), m_j(-1) { }
+        explicit Tile(PassOwnPtr<LayerTexture> tex) : m_tex(tex), m_i(-1), m_j(-1) {}
 
         LayerTexture* texture() { return m_tex.get(); }
 
@@ -144,13 +157,19 @@ private:
     // Tightly packed set of unused tiles.
     Vector<RefPtr<Tile> > m_unusedTiles;
 
-    // State held between update and upload.
+    // State held between update and uploadCanvas.
     IntRect m_paintRect;
     IntRect m_updateRect;
+    PlatformCanvas m_canvas;
+
+    // Cache a tile-sized pixel buffer to draw into.
+    OwnArrayPtr<uint8_t> m_tilePixels;
 
     TilingData m_tilingData;
 
-    OwnPtr<LayerTextureUpdater> m_textureUpdater;
+    // Whether the tiler will use GL_CHROMIUM_map_sub for texture uploads.
+    bool m_useMapSubForUploads;
+
     LayerRendererChromium* m_layerRenderer;
 };
 

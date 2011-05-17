@@ -36,11 +36,8 @@
 
 #include "cc/CCLayerImpl.h"
 #include "GraphicsContext3D.h"
-#include "LayerPainterChromium.h"
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
-#include "LayerTextureUpdaterCanvas.h"
-#include "LayerTilerChromium.h"
 #include "RenderLayerBacking.h"
 #include "TextStream.h"
 
@@ -54,7 +51,24 @@ using namespace std;
 
 namespace WebCore {
 
-class ContentLayerPainter : public LayerPainterChromium {
+PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(GraphicsLayerChromium* owner)
+{
+    return adoptRef(new ContentLayerChromium(owner));
+}
+
+ContentLayerChromium::ContentLayerChromium(GraphicsLayerChromium* owner)
+    : LayerChromium(owner)
+    , m_tilingOption(ContentLayerChromium::AutoTile)
+{
+}
+
+ContentLayerChromium::~ContentLayerChromium()
+{
+    m_tiler.clear();
+    LayerChromium::cleanupResources();
+}
+
+class ContentLayerPainter : public TilePaintInterface {
 public:
     explicit ContentLayerPainter(GraphicsLayerChromium* owner)
         : m_owner(owner)
@@ -71,27 +85,14 @@ private:
     GraphicsLayerChromium* m_owner;
 };
 
-PassRefPtr<ContentLayerChromium> ContentLayerChromium::create(GraphicsLayerChromium* owner)
-{
-    return adoptRef(new ContentLayerChromium(owner));
-}
-
-ContentLayerChromium::ContentLayerChromium(GraphicsLayerChromium* owner)
-    : LayerChromium(owner)
-    , m_tilingOption(ContentLayerChromium::AutoTile)
-{
-}
-
-ContentLayerChromium::~ContentLayerChromium()
-{
-    cleanupResources();
-}
-
 void ContentLayerChromium::paintContentsIfDirty(const IntRect& targetSurfaceRect)
 {
     ASSERT(drawsContent());
     ASSERT(layerRenderer());
 
+    createTilerIfNeeded();
+
+    ContentLayerPainter painter(m_owner);
     updateLayerSize(layerBounds().size());
 
     IntRect layerRect = visibleLayerRect(targetSurfaceRect);
@@ -102,26 +103,15 @@ void ContentLayerChromium::paintContentsIfDirty(const IntRect& targetSurfaceRect
     dirty.intersect(layerBounds());
     m_tiler->invalidateRect(dirty);
 
-    m_tiler->prepareToUpdate(layerRect);
+    m_tiler->update(painter, layerRect);
     m_dirtyRect = FloatRect();
-}
-
-void ContentLayerChromium::cleanupResources()
-{
-    m_tiler.clear();
-    LayerChromium::cleanupResources();
 }
 
 void ContentLayerChromium::setLayerRenderer(LayerRendererChromium* layerRenderer)
 {
     LayerChromium::setLayerRenderer(layerRenderer);
     createTilerIfNeeded();
-}
-
-PassOwnPtr<LayerTextureUpdater> ContentLayerChromium::createTextureUpdater()
-{
-    OwnPtr<LayerPainterChromium> painter = adoptPtr(new ContentLayerPainter(m_owner));
-    return adoptPtr(new LayerTextureUpdaterBitmap(layerRendererContext(), painter.release(), layerRenderer()->contextSupportsMapSub()));
+    m_tiler->setLayerRenderer(layerRenderer);
 }
 
 TransformationMatrix ContentLayerChromium::tilingTransform()
@@ -196,26 +186,16 @@ void ContentLayerChromium::draw(const IntRect& targetSurfaceRect)
         m_tiler->draw(layerRect, transform, ccLayerImpl()->drawOpacity());
 }
 
-bool ContentLayerChromium::drawsContent() const
-{
-    return m_owner && m_owner->drawsContent() && (!m_tiler || !m_tiler->skipsDraw());
-}
-
 void ContentLayerChromium::createTilerIfNeeded()
 {
     if (m_tiler)
         return;
-
-    m_tiler = LayerTilerChromium::create(
-        layerRenderer(),
-        createTextureUpdater(),
-        IntSize(defaultTileSize, defaultTileSize),
-        LayerTilerChromium::HasBorderTexels);
+    m_tiler = LayerTilerChromium::create(layerRenderer(), IntSize(defaultTileSize, defaultTileSize), LayerTilerChromium::HasBorderTexels);
 }
 
 void ContentLayerChromium::updateCompositorResources()
 {
-    m_tiler->updateRect();
+    m_tiler->uploadCanvas();
 }
 
 void ContentLayerChromium::setTilingOption(TilingOption option)

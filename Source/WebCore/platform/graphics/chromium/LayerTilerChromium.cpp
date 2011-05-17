@@ -35,28 +35,36 @@
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
-#include "LayerTextureUpdater.h"
 #include "TraceEvent.h"
+
+#include <wtf/PassOwnArrayPtr.h>
 
 using namespace std;
 
 namespace WebCore {
 
-PassOwnPtr<LayerTilerChromium> LayerTilerChromium::create(LayerRendererChromium* layerRenderer, PassOwnPtr<LayerTextureUpdater> textureUpdater, const IntSize& tileSize, BorderTexelOption border)
+PassOwnPtr<LayerTilerChromium> LayerTilerChromium::create(LayerRendererChromium* layerRenderer, const IntSize& tileSize, BorderTexelOption border)
 {
     if (!layerRenderer || tileSize.isEmpty())
         return nullptr;
 
-    return adoptPtr(new LayerTilerChromium(layerRenderer, textureUpdater, tileSize, border));
+    return adoptPtr(new LayerTilerChromium(layerRenderer, tileSize, border));
 }
 
-LayerTilerChromium::LayerTilerChromium(LayerRendererChromium* layerRenderer, PassOwnPtr<LayerTextureUpdater> textureUpdater, const IntSize& tileSize, BorderTexelOption border)
+LayerTilerChromium::LayerTilerChromium(LayerRendererChromium* layerRenderer, const IntSize& tileSize, BorderTexelOption border)
     : m_skipsDraw(false)
     , m_tilingData(max(tileSize.width(), tileSize.height()), 0, 0, border == HasBorderTexels)
-    , m_textureUpdater(textureUpdater)
+    , m_useMapSubForUploads(layerRenderer->contextSupportsMapSub())
     , m_layerRenderer(layerRenderer)
 {
     setTileSize(tileSize);
+}
+
+void LayerTilerChromium::setLayerRenderer(LayerRendererChromium* layerRenderer)
+{
+    if (m_layerRenderer != layerRenderer)
+        reset();
+    m_layerRenderer = layerRenderer;
 }
 
 LayerTilerChromium::~LayerTilerChromium()
@@ -78,6 +86,8 @@ void LayerTilerChromium::setTileSize(const IntSize& size)
     reset();
 
     m_tileSize = size;
+    if (!m_useMapSubForUploads)
+        m_tilePixels = adoptArrayPtr(new uint8_t[m_tileSize.width() * m_tileSize.height() * 4]);
     m_tilingData.setMaxTextureSize(max(size.width(), size.height()));
 }
 
@@ -220,7 +230,7 @@ void LayerTilerChromium::invalidateEntireLayer()
     m_tilingData.setTotalSize(0, 0);
 }
 
-void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect)
+void LayerTilerChromium::update(TilePaintInterface& painter, const IntRect& contentRect)
 {
     if (m_skipsDraw)
         return;
@@ -257,10 +267,30 @@ void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect)
     if (dirtyLayerRect.isEmpty())
         return;
 
-    m_textureUpdater->prepareToUpdate(m_paintRect, m_tileSize, m_tilingData.borderTexels());
+    m_canvas.resize(m_paintRect.size());
+
+    // Assumption: if a tiler is using border texels, then it is because the
+    // layer is likely to be filtered or transformed. Because of it might be
+    // transformed, draw the text in grayscale instead of subpixel antialiasing.
+    PlatformCanvas::Painter::TextOption textOption = m_tilingData.borderTexels() ? PlatformCanvas::Painter::GrayscaleText : PlatformCanvas::Painter::SubpixelText;
+    PlatformCanvas::Painter canvasPainter(&m_canvas, textOption);
+    canvasPainter.context()->translate(-m_paintRect.x(), -m_paintRect.y());
+    {
+        TRACE_EVENT("LayerTilerChromium::update::paint", this, 0);
+        painter.paint(*canvasPainter.context(), m_paintRect);
+    }
 }
 
-void LayerTilerChromium::updateRect()
+void LayerTilerChromium::uploadCanvas()
+{
+    PlatformCanvas::AutoLocker locker(&m_canvas);
+    {
+        TRACE_EVENT("LayerTilerChromium::updateFromPixels", this, 0);
+        updateFromPixels(m_updateRect, m_paintRect, locker.pixels());
+    }
+}
+
+void LayerTilerChromium::updateFromPixels(const IntRect& contentRect, const IntRect& paintRect, const uint8_t* paintPixels)
 {
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
     if (!m_tilingData.totalSizeX() || !m_tilingData.totalSizeY())
@@ -269,7 +299,7 @@ void LayerTilerChromium::updateRect()
     GraphicsContext3D* context = layerRendererContext();
 
     int left, top, right, bottom;
-    contentRectToTileIndices(m_updateRect, left, top, right, bottom);
+    contentRectToTileIndices(contentRect, left, top, right, bottom);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             Tile* tile = tileAt(i, j);
@@ -284,7 +314,7 @@ void LayerTilerChromium::updateRect()
             sourceRect.intersect(layerRectToContentRect(tile->m_dirtyLayerRect));
             // Paint rect not guaranteed to line up on tile boundaries, so
             // make sure that sourceRect doesn't extend outside of it.
-            sourceRect.intersect(m_paintRect);
+            sourceRect.intersect(paintRect);
             if (sourceRect.isEmpty())
                 continue;
 
@@ -304,22 +334,57 @@ void LayerTilerChromium::updateRect()
                 CRASH();
 
             // Offset from paint rectangle to this tile's dirty rectangle.
-            IntPoint paintOffset(sourceRect.x() - m_paintRect.x(), sourceRect.y() - m_paintRect.y());
+            IntPoint paintOffset(sourceRect.x() - paintRect.x(), sourceRect.y() - paintRect.y());
             if (paintOffset.x() < 0)
                 CRASH();
             if (paintOffset.y() < 0)
                 CRASH();
-            if (paintOffset.x() + destRect.width() > m_paintRect.width())
+            if (paintOffset.x() + destRect.width() > paintRect.width())
                 CRASH();
-            if (paintOffset.y() + destRect.height() > m_paintRect.height())
+            if (paintOffset.y() + destRect.height() > paintRect.height())
                 CRASH();
 
             tile->texture()->bindTexture();
+
             const GC3Dint filter = m_tilingData.borderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, filter));
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
 
-            m_textureUpdater->updateTextureRect(tile->texture(), sourceRect, destRect);
+            if (m_useMapSubForUploads) {
+                // Upload tile data via a mapped transfer buffer
+                Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());
+                uint8_t* pixelDest = static_cast<uint8_t*>(extensions->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
+                ASSERT(pixelDest);
+                if (paintRect.width() == sourceRect.width() && !paintOffset.x())
+                    memcpy(pixelDest, &paintPixels[4 * paintOffset.y() * paintRect.width()], paintRect.width() * destRect.height() * 4);
+                else {
+                    // Strides not equal, so do a row-by-row memcpy from the
+                    // paint results into the pixelDest
+                    for (int row = 0; row < destRect.height(); ++row)
+                        memcpy(&pixelDest[destRect.width() * 4 * row],
+                               &paintPixels[4 * (paintOffset.x() + (paintOffset.y() + row) * paintRect.width())],
+                               destRect.width() * 4);
+                }
+                extensions->unmapTexSubImage2DCHROMIUM(pixelDest);
+            } else {
+                const uint8_t* pixelSource;
+                if (paintRect.width() == sourceRect.width() && !paintOffset.x())
+                    pixelSource = &paintPixels[4 * paintOffset.y() * paintRect.width()];
+                else {
+                    // Strides not equal, so do a row-by-row memcpy from the
+                    // paint results into a temp buffer for uploading.
+                    for (int row = 0; row < destRect.height(); ++row)
+                        memcpy(&m_tilePixels[destRect.width() * 4 * row],
+                               &paintPixels[4 * (paintOffset.x() + (paintOffset.y() + row) * paintRect.width())],
+                               destRect.width() * 4);
+
+                    pixelSource = &m_tilePixels[0];
+                }
+
+
+                GLC(context, context->texSubImage2D(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, pixelSource));
+            }
+
             tile->clearDirty();
         }
     }
@@ -365,12 +430,7 @@ void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMa
             float texTranslateY = texOffset.y() / tileHeight;
             float texScaleX = tileRect.width() / tileWidth;
             float texScaleY = tileRect.height() / tileHeight;
-            // OpenGL coordinate system is bottom-up.
-            // If tile texture is top-down, we need to flip the texture coordinates.
-            if (m_textureUpdater->orientation() == LayerTextureUpdater::TopDownOrientation) {
-                texTranslateY += 1.0;
-                texScaleY *= -1.0;
-            }
+
             drawTexturedQuad(context, layerRenderer()->projectionMatrix(), tileMatrix, tileRect.width(), tileRect.height(), opacity, texTranslateX, texTranslateY, texScaleX, texScaleY, program);
         }
     }

@@ -38,45 +38,8 @@
 #include "Image.h"
 #include "LayerRendererChromium.h"
 #include "LayerTexture.h"
-#include "LayerTextureSubImage.h"
-#include "LayerTextureUpdater.h"
 
 namespace WebCore {
-
-class ImageLayerTextureUpdater : public LayerTextureUpdater {
-public:
-    ImageLayerTextureUpdater(GraphicsContext3D* context, const PlatformImage& image, bool useMapTexSubImage)
-        : LayerTextureUpdater(context)
-        , m_image(image)
-        , m_texSubImage(useMapTexSubImage)
-    {
-    }
-    virtual ~ImageLayerTextureUpdater() { }
-
-    virtual Orientation orientation() { return LayerTextureUpdater::BottomUpOrientation; }
-
-    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels)
-    {
-        ASSERT(imageRect().contains(contentRect));
-        m_texSubImage.setSubImageSize(tileSize);
-    }
-
-    virtual void updateTextureRect(LayerTexture* texture, const IntRect& sourceRect, const IntRect& destRect)
-    {
-        texture->bindTexture();
-        m_texSubImage.upload(m_image.pixels(), imageRect(), sourceRect, destRect, context());
-    }
-
-private:
-    IntRect imageRect() const
-    {
-        return IntRect(IntPoint::zero(), m_image.size());
-    }
-
-    // FIXME: ImageLayerTextureUpdater should rather own a PlatformImage rather than keeping a reference.
-    const PlatformImage& m_image;
-    LayerTextureSubImage m_texSubImage;
-};
 
 PassRefPtr<ImageLayerChromium> ImageLayerChromium::create(GraphicsLayerChromium* owner)
 {
@@ -117,18 +80,13 @@ void ImageLayerChromium::paintContentsIfDirty(const IntRect&)
             m_tiler->invalidateRect(paintRect);
             m_dirtyRect = IntRect();
         }
-        m_tiler->prepareToUpdate(paintRect);
     }
 }
 
 void ImageLayerChromium::updateCompositorResources()
 {
-    m_tiler->updateRect();
-}
-
-PassOwnPtr<LayerTextureUpdater> ImageLayerChromium::createTextureUpdater()
-{
-    return adoptPtr(new ImageLayerTextureUpdater(layerRendererContext(), m_decodedImage, layerRenderer()->contextSupportsMapSub()));
+    IntRect paintRect(IntPoint(0, 0), m_decodedImage.size());
+    m_tiler->updateFromPixels(paintRect, paintRect, m_decodedImage.pixels());
 }
 
 IntRect ImageLayerChromium::layerBounds() const
