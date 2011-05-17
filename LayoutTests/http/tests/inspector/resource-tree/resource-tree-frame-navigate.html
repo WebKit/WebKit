@@ -31,7 +31,7 @@ function test()
         InspectorTest.addResult("Before navigation");
         InspectorTest.addResult("====================================");
         InspectorTest.dumpResourceTreeEverything();
-        InspectorTest.waitUntilConsoleMessageAdded(step2);
+        InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", step2);
         InspectorTest.evaluateInPage("navigateIframe()");
     }
 

@@ -27,7 +27,7 @@ function loadIframe()
 
 function test()
 {
-    InspectorTest.waitUntilConsoleMessageAdded(addMessage, true);
+    InspectorTest.addSniffer(WebInspector.ConsoleView.prototype, "addMessage", addMessage, true);
 
     var messageCount = 0;
     function addMessage(message)

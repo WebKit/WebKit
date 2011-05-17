@@ -1,3 +1,32 @@
+2011-05-17  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86660.
+        http://trac.webkit.org/changeset/86660
+        https://bugs.webkit.org/show_bug.cgi?id=60958
+
+        broke search in console panel (Requested by podivilov on
+        #webkit).
+
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype.show):
+        (WebInspector.ConsoleView.prototype.afterShow):
+        (WebInspector.ConsoleView.prototype.hide):
+        (WebInspector.ConsoleView.prototype.addMessage):
+        (WebInspector.ConsoleView.prototype.clearMessages):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel):
+        * inspector/front-end/Drawer.js:
+        (WebInspector.Drawer.prototype.set visibleView):
+        (WebInspector.Drawer.prototype.show.animationFinished):
+        (WebInspector.Drawer.prototype.show):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel):
+        * inspector/front-end/inspector.html:
+        * inspector/front-end/inspector.js:
+        (WebInspector._createPanels):
+
 2011-05-17  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed warning fix introduced by r86377.
