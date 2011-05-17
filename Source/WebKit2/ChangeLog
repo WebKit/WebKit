@@ -1,3 +1,32 @@
+2011-05-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Part one of <rdar://problem/8814289> and https://bugs.webkit.org/show_bug.cgi?id=60595
+        Mac WebKit2 WebProcess needs a shim to make prompts appear to be from the UIProcess
+
+        Add am empty shim for a new WebProcess shim and install it at launch.
+
+        Use the same Shim.xcconfig for both the web and plugin processes:
+        * Configurations/PluginProcessShim.xcconfig: Removed.
+        * Configurations/Shim.xcconfig: Copied from Configurations/PluginProcessShim.xcconfig.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        * WebProcess/WebProcess.h: Add initializeShim() for Mac-only
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::initializeShim): Initialize the (empty) shim callbacks.
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain): Call initializeShim()
+
+        * WebProcess/mac/WebProcessShim.h: Added.
+        * WebProcess/mac/WebProcessShim.mm: Added.
+        (WebKit::WebKitWebProcessShimInitialize): Empty for now.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess): Install the Plugin Process shim for plugin processes
+          and the WebProcess shim for the web content process.
+
 2011-05-17  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Adam Roben.

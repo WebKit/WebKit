@@ -90,6 +90,9 @@ int WebProcessMain(const CommandLine& commandLine)
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
+    // Initialize the shim.
+    WebProcess::shared().initializeShim();
+    
     // Create the connection.
     WebProcess::shared().initialize(serverPort, RunLoop::main());
 

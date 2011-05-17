@@ -30,17 +30,19 @@
 #import "SandboxExtension.h"
 #import "WebPage.h"
 #import "WebProcessCreationParameters.h"
+#import "WebProcessShim.h"
 #import <WebCore/FileSystem.h>
+#import <WebCore/LocalizedStrings.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/PageCache.h>
 #import <WebKitSystemInterface.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>
+#import <dlfcn.h>
 #import <mach/host_info.h>
 #import <mach/mach.h>
 #import <mach/mach_error.h>
 #import <objc/runtime.h>
-#import <WebCore/LocalizedStrings.h>
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
 #import <sandbox.h>
@@ -235,6 +237,15 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     // no window in WK2, NSApplication needs to use the focused page's focused element.
     Method methodToPatch = class_getInstanceMethod([NSApplication class], @selector(accessibilityFocusedUIElement));
     method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
+}
+
+void WebProcess::initializeShim()
+{
+    const WebProcessShimCallbacks callbacks = {
+    };
+    
+    WebProcessShimInitializeFunc initFunc = reinterpret_cast<WebProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitWebProcessShimInitialize"));
+    initFunc(callbacks);
 }
 
 void WebProcess::platformTerminate()

@@ -142,15 +142,18 @@ void ProcessLauncher::launchProcess()
     if (![frameworksPath hasPrefix:@"/System/"])
         environmentVariables.appendValue("DYLD_FRAMEWORK_PATH", [frameworksPath fileSystemRepresentation], ':');
 
-    if (m_launchOptions.processType == ProcessLauncher::PluginProcess) {
-        // We need to insert the plug-in process shim.
-        NSString *pluginProcessShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"PluginProcessShim.dylib"];
-        const char* pluginProcessShimPath = [pluginProcessShimPathNSString fileSystemRepresentation];
-
-        // Make sure that the file exists.
+    NSString *processShimPathNSString = nil;
+    if (m_launchOptions.processType == ProcessLauncher::PluginProcess)
+        processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"PluginProcessShim.dylib"];
+    else if (m_launchOptions.processType == ProcessLauncher::WebProcess)
+        processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"WebProcessShim.dylib"];
+    
+    // Make sure that the shim library file exists and insert it.
+    if (processShimPathNSString) {
+        const char* processShimPath = [processShimPathNSString fileSystemRepresentation];
         struct stat statBuf;
-        if (stat(pluginProcessShimPath, &statBuf) == 0 && (statBuf.st_mode & S_IFMT) == S_IFREG)
-            environmentVariables.appendValue("DYLD_INSERT_LIBRARIES", pluginProcessShimPath, ':');
+        if (stat(processShimPath, &statBuf) == 0 && (statBuf.st_mode & S_IFMT) == S_IFREG)
+            environmentVariables.appendValue("DYLD_INSERT_LIBRARIES", processShimPath, ':');
     }
     
     int result = posix_spawn(&processIdentifier, args[0], 0, &attr, const_cast<char**>(args), environmentVariables.environmentPointer());
