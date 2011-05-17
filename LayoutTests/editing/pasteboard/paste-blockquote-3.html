@@ -1,3 +1,6 @@
+<!DOCTYPE html>
+<html>
+<head>
 <style>
 blockquote {
     color: blue;
@@ -6,11 +9,14 @@ blockquote {
     padding: 0 0 0 20px;
 }
 </style>
-
-<p>This tests pasting a blockquote into the middle of a paragraph.</p>
+</head>
+<body>
 <div id="div" contenteditable="true">This should not be blockquoted. This should not be blockquoted.</div>
-
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
+
+Markup.description("This tests pasting a blockquote into the middle of a paragraph.");
+
 var sel = window.getSelection();
 var div = document.getElementById("div");
 
@@ -22,4 +28,8 @@ sel.modify("move", "forward", "word");
 sel.modify("move", "forward", "word");
 sel.modify("move", "forward", "character");
 document.execCommand("InsertHTML", false, "<blockquote type='cite'>&nbsp;This should not be blockquoted.<br>This should be blockquoted.<br>This should not be blockquoted.</blockquote>");
+
+Markup.dump('div');
 </script>
+</body>
+</html>

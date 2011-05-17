@@ -2,6 +2,39 @@
 
         Reviewed by Enrica Casucci.
 
+        editing/pasteboard/paste-blockquote-2.html and paste-blockquote-3.html should be dump-as-markup tests
+        https://bugs.webkit.org/show_bug.cgi?id=60998
+
+        Converted the tests.
+
+        * editing/pasteboard/paste-blockquote-2-expected.txt: Added.
+        * editing/pasteboard/paste-blockquote-2.html:
+        * editing/pasteboard/paste-blockquote-3-expected.txt: Added.
+        * editing/pasteboard/paste-blockquote-3.html:
+        * platform/chromium-linux/editing/pasteboard/paste-blockquote-2-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/paste-blockquote-3-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/pasteboard/paste-blockquote-2-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/pasteboard/paste-blockquote-3-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/paste-blockquote-2-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/paste-blockquote-3-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-blockquote-2-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-blockquote-2-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-blockquote-3-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-blockquote-3-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/paste-blockquote-2-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/paste-blockquote-3-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/paste-blockquote-3-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-blockquote-2-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-blockquote-2-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/paste-blockquote-3-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-blockquote-3-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/paste-blockquote-2-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/paste-blockquote-3-expected.txt: Removed.
+
+2011-05-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Enrica Casucci.
+
         editing/pasteboard/paste-text-012.html should be a dump-as-markup test
         https://bugs.webkit.org/show_bug.cgi?id=60996
 
