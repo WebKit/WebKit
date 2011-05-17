@@ -1008,7 +1008,7 @@ WebInspector.ElementsPanel.prototype = {
     {
         var stylesSidebarPane = this.sidebarPanes.styles;
         var computedStylePane = this.sidebarPanes.computedStyle;
-        if ((!stylesSidebarPane.expanded && !computedStylePane.expanded) || !stylesSidebarPane.needsUpdate)
+        if ((!stylesSidebarPane.expanded && !computedStylePane.expanded) || !stylesSidebarPane.needsUpdate || this._isEditingStyle)
             return;
 
         stylesSidebarPane.update(this.focusedDOMNode, null, forceUpdate);
