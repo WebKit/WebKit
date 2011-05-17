@@ -29,6 +29,10 @@
 namespace WebKit {
 
 struct WebProcessShimCallbacks {
+    OSStatus (*secItemCopyMatching)(CFDictionaryRef query, CFTypeRef *result);
+    OSStatus (*secItemAdd)(CFDictionaryRef attributes, CFTypeRef *result);
+    OSStatus (*secItemUpdate)(CFDictionaryRef query, CFDictionaryRef attributesToUpdate);
+    OSStatus (*secItemDelete)(CFDictionaryRef query);
 };
 
 typedef void (*WebProcessShimInitializeFunc)(const WebProcessShimCallbacks& callbacks);

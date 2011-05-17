@@ -239,9 +239,37 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
 }
 
+static OSStatus WebSecItemCopyMatching(CFDictionaryRef query, CFTypeRef *result)
+{
+    ASSERT_NOT_REACHED();
+    return -1;
+}
+
+static OSStatus WebSecItemAdd(CFDictionaryRef query, CFTypeRef *result)
+{
+    ASSERT_NOT_REACHED();
+    return -1;
+}
+
+static OSStatus WebSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attributesToUpdate)
+{
+    ASSERT_NOT_REACHED();
+    return -1;
+}
+
+static OSStatus WebSecItemDelete(CFDictionaryRef query)
+{
+    ASSERT_NOT_REACHED();
+    return -1;
+}
+
 void WebProcess::initializeShim()
 {
     const WebProcessShimCallbacks callbacks = {
+        WebSecItemCopyMatching,
+        WebSecItemAdd,
+        WebSecItemUpdate,
+        WebSecItemDelete
     };
     
     WebProcessShimInitializeFunc initFunc = reinterpret_cast<WebProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitWebProcessShimInitialize"));

@@ -2,7 +2,35 @@
 
         Reviewed by Anders Carlsson.
 
-        Part one of <rdar://problem/8814289> and https://bugs.webkit.org/show_bug.cgi?id=60595
+        Part 2 of <rdar://problem/8814289> and https://bugs.webkit.org/show_bug.cgi?id=60595
+        Mac WebKit2 WebProcess needs a shim to make prompts appear to be from the UIProcess
+
+        Hookup some of the methods we plan to shim in the patch, but just have them call through
+        to the actual implementations for now.
+
+        Also stub-out the future shimmed versions of the methods.
+
+        * WebProcess/mac/WebProcessShim.h: Add the methods to the shim callbacks.
+        * WebProcess/mac/WebProcessShim.mm:
+        (WebKit::shimSecItemCopyMatching): Call through to the actual function for now.
+        (WebKit::shimSecItemAdd): Ditto.
+        (WebKit::shimSecItemUpdate): Ditto.
+        (WebKit::shimSecItemDelete): Ditto.
+        (WebKit::WebKitWebProcessShimInitialize): Copy over the shim callbacks.
+        * WebKit2.xcodeproj/project.pbxproj: Link the shim to required frameworks.
+        
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebSecItemCopyMatching): Add placeholders for the future to-be-shimmed functions.
+        (WebKit::WebSecItemAdd): Ditto.
+        (WebKit::WebSecItemUpdate): Ditto.
+        (WebKit::WebSecItemDelete): Ditto.
+        (WebKit::WebProcess::initializeShim): Pass along those placeholders to the shim initializer.
+
+2011-05-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Part 1 of <rdar://problem/8814289> and https://bugs.webkit.org/show_bug.cgi?id=60595
         Mac WebKit2 WebProcess needs a shim to make prompts appear to be from the UIProcess
 
         Add am empty shim for a new WebProcess shim and install it at launch.

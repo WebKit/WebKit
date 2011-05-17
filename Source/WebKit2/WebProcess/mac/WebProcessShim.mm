@@ -25,6 +25,8 @@
 
 #import "WebProcessShim.h"
 
+#import <Security/SecItem.h>
+
 #define DYLD_INTERPOSE(_replacement,_replacee) \
     __attribute__((used)) static struct{ const void* replacement; const void* replacee; } _interpose_##_replacee \
     __attribute__ ((section ("__DATA,__interpose"))) = { (const void*)(unsigned long)&_replacement, (const void*)(unsigned long)&_replacee };
@@ -33,9 +35,37 @@ namespace WebKit {
 
 extern "C" void WebKitWebProcessShimInitialize(const WebProcessShimCallbacks&);
 
+static WebProcessShimCallbacks webProcessShimCallbacks;
+
+static OSStatus shimSecItemCopyMatching(CFDictionaryRef query, CFTypeRef *result)
+{
+    return SecItemCopyMatching(query, result);
+}
+
+static OSStatus shimSecItemAdd(CFDictionaryRef query, CFTypeRef *result)
+{
+    return SecItemAdd(query, result);
+}
+
+static OSStatus shimSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attributesToUpdate)
+{
+    return SecItemUpdate(query, attributesToUpdate);
+}
+
+static OSStatus shimSecItemDelete(CFDictionaryRef query)
+{
+    return SecItemDelete(query);
+}
+
+DYLD_INTERPOSE(shimSecItemCopyMatching, SecItemCopyMatching)
+DYLD_INTERPOSE(shimSecItemAdd, SecItemAdd)
+DYLD_INTERPOSE(shimSecItemUpdate, SecItemUpdate)
+DYLD_INTERPOSE(shimSecItemDelete, SecItemDelete)
+
 __attribute__((visibility("default")))
 void WebKitWebProcessShimInitialize(const WebProcessShimCallbacks& callbacks)
 {
+    webProcessShimCallbacks = callbacks;
 }
 
 } // namespace WebKit
