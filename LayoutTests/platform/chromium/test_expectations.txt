@@ -3157,9 +3157,9 @@ BUGCR75561 LEOPARD : fast/blockflow/text-orientation-basic.html = IMAGE
 // introduced by brarraclough in WK r80621
 BUGCR75562 : fast/js/array-proto-func-length-getter-except.html = TEXT
 
-BUGWK56060 LINUX X86_64 : http/tests/loading/preload-slow-loading.php = TEXT
+BUGWK56060 LINUX : http/tests/loading/preload-slow-loading.php = TEXT
 BUGWK56060 LINUX X86_64 : svg/custom/pattern-excessive-malloc.svg = IMAGE
-BUGWK56060 LINUX X86_64 : fast/images/favicon-as-image.html = IMAGE+TEXT
+BUGWK56060 LINUX : fast/images/favicon-as-image.html = IMAGE+TEXT
 
 BUGCR75632 LINUX : svg/W3C-SVG-1.1/text-text-03-b.svg = CRASH PASS
 

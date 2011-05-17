@@ -1,3 +1,25 @@
+2011-05-17  Tony Chang  <tony@chromium.org>
+
+        Land linux 32 bit results.
+
+        * platform/chromium-linux-x86/fast/repaint/moving-shadow-on-container-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/paths-data-03-f-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/paths-data-03-f-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/paths-data-12-t-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/paths-data-12-t-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/pservers-grad-13-b-expected.png: Added.
+        * platform/chromium-linux-x86/svg/css/composite-shadow-example-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/css/composite-shadow-with-opacity-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/css/stars-with-shadow-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/radial-gradient-with-outstanding-focalPoint-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/svg-curve-with-relative-cordinates-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/use-on-symbol-inside-pattern-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/hixie/perf/001-expected.png: Added.
+        * platform/chromium-linux-x86/svg/hixie/perf/001-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/hixie/perf/002-expected.png: Added.
+        * platform/chromium-linux-x86/svg/hixie/perf/002-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-17  Andrew Wilson  <atwilson@chromium.org>
 
         Unreviewed chromium test expectations update.
