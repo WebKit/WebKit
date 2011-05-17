@@ -2,6 +2,14 @@
 
         Unreviewed Chromium test expectation change.
 
+        http/tests/appcache/interrupted-update.html is flaky on win, mac, and linux.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-16  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
         svg/hixie/perf/00{1,2}.xml now pass on Linux.
 
         * platform/chromium/test_expectations.txt:

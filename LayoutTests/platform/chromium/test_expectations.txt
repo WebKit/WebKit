@@ -4054,3 +4054,6 @@ BUGWK60822 : plugins/get-url-notify-with-url-that-fails-to-load.html = CRASH TIM
 BUGWK60931:  http/tests/security/aboutBlank/window-open-self-about-blank.html = CRASH
 BUGWK60931:  http/tests/security/javascriptURL/xss-ALLOWED-from-javascript-url-window-open.html = CRASH
 BUGWK60931:  http/tests/security/javascriptURL/xss-ALLOWED-to-javascript-url-window-open.html = CRASH
+
+// Flaky since added by r86478
+BUGCR82881 : http/tests/appcache/interrupted-update.html = PASS TEXT
