@@ -1,3 +1,25 @@
+2011-05-09  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Redirection of HTTP POST (3xx) incorrectly includes original POST data
+        https://bugs.webkit.org/show_bug.cgi?id=60440
+
+        These new tests check that no POST content is sent to the new URL after receiving http
+        status codes 301, 302 and 303, and checks that the POST content is sent to the new URL
+        after receiving a 307 http status code.
+
+        * http/tests/navigation/post-301-response-expected.txt: Added.
+        * http/tests/navigation/post-301-response.html: Added.
+        * http/tests/navigation/post-302-response-expected.txt: Added.
+        * http/tests/navigation/post-302-response.html: Added.
+        * http/tests/navigation/post-303-response-expected.txt: Added.
+        * http/tests/navigation/post-303-response.html: Added.
+        * http/tests/navigation/post-307-response-expected.txt: Added.
+        * http/tests/navigation/post-307-response.html: Added.
+        * http/tests/navigation/resources/redirected-post-request-contents.php: Added.
+        * http/tests/navigation/resources/redirection-response.php: Added.
+
 2011-05-17  Sakamuri Ramakrishna  <ramakrishna.sakamuri@nokia.com>
 
         Reviewed by Andreas Kling.
