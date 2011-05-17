@@ -948,6 +948,7 @@ fast/harness/override-preferences.html
 fast/harness/page-cache-crash-on-data-urls.html
 fast/harness/use-page-cache.html
 fast/history/timed-refresh-in-cached-frame.html
+fast/images/animated-gif-restored-from-bfcache.html
 fast/loader/frames-with-unload-handlers-in-page-cache.html
 fast/loader/input-element-page-cache-crash.html
 fast/loader/scroll-position-restored-on-back.html
