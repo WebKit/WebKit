@@ -2,6 +2,43 @@
 
         Reviewed by Anders Carlsson.
 
+        Part 3 of <rdar://problem/8814289> and https://bugs.webkit.org/show_bug.cgi?id=60595
+        Mac WebKit2 WebProcess needs a shim to make prompts appear to be from the UIProcess
+
+        Add CoreIPC stuff we'll need to marshall the SecItem calls to the UIProcess and back.
+
+        Teach ArgumentCodersCF about CFDateRef, SecKeychainItemRef, and generic CFTypeRefs:
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::typeFromCFTypeRef):
+        (CoreIPC::encode):
+        (CoreIPC::decode):
+        * Shared/cf/ArgumentCodersCF.h:
+
+        Serializable object that contains the query CFDictionaryRef and optionally the 
+        "attributesToMatch" CFDictionaryRef:
+        * Shared/mac/SecItemRequestData.cpp: Added.
+        (WebKit::SecItemRequestData::SecItemRequestData):
+        (WebKit::SecItemRequestData::encode):
+        (WebKit::SecItemRequestData::decode):
+        * Shared/mac/SecItemRequestData.h: Added.
+        (WebKit::SecItemRequestData::query):
+        (WebKit::SecItemRequestData::attributesToMatch):
+
+        Serializable object that returns an OSStatus and optionally a "result object" CFTypeRef:
+        * Shared/mac/SecItemResponseData.cpp: Added.
+        (WebKit::SecItemResponseData::SecItemResponseData):
+        (WebKit::SecItemResponseData::encode):
+        (WebKit::SecItemResponseData::decode):
+        * Shared/mac/SecItemResponseData.h: Added.
+        (WebKit::SecItemResponseData::resultObject):
+        (WebKit::SecItemResponseData::resultCode):
+
+        * WebKit2.xcodeproj/project.pbxproj:
+
+2011-05-17  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
         Part 2 of <rdar://problem/8814289> and https://bugs.webkit.org/show_bug.cgi?id=60595
         Mac WebKit2 WebProcess needs a shim to make prompts appear to be from the UIProcess
 

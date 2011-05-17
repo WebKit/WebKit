@@ -30,6 +30,7 @@
 
 #if PLATFORM(MAC)
 #include <Security/SecCertificate.h>
+#include <Security/SecKeychainItem.h>
 #endif
 
 namespace CoreIPC {
@@ -49,6 +50,10 @@ bool decode(ArgumentDecoder*, RetainPtr<CFBooleanRef>& result);
 void encode(ArgumentEncoder*, CFDataRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFDataRef>& result);
 
+// CFDateRef
+void encode(ArgumentEncoder*, CFDateRef);
+bool decode(ArgumentDecoder*, RetainPtr<CFDateRef>& result);
+
 // CFDictionaryRef
 void encode(ArgumentEncoder*, CFDictionaryRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFDictionaryRef>& result);
@@ -61,6 +66,10 @@ bool decode(ArgumentDecoder*, RetainPtr<CFNumberRef>& result);
 void encode(ArgumentEncoder*, CFStringRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFStringRef>& result);
 
+// CFTypeRef
+void encode(ArgumentEncoder*, CFTypeRef);
+bool decode(ArgumentDecoder*, RetainPtr<CFTypeRef>& result);
+
 // CFURLRef
 void encode(ArgumentEncoder*, CFURLRef);
 bool decode(ArgumentDecoder*, RetainPtr<CFURLRef>& result);
@@ -69,6 +78,10 @@ bool decode(ArgumentDecoder*, RetainPtr<CFURLRef>& result);
 // SecCertificateRef
 void encode(ArgumentEncoder*, SecCertificateRef);
 bool decode(ArgumentDecoder*, RetainPtr<SecCertificateRef>& result);
+
+// SecKeychainItemRef
+void encode(ArgumentEncoder*, SecKeychainItemRef);
+bool decode(ArgumentDecoder*, RetainPtr<SecKeychainItemRef>& result);
 #endif
 
 CFTypeRef tokenNullTypeRef();

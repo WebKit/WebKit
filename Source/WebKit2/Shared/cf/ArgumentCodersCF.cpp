@@ -43,6 +43,7 @@ enum CFType {
     CFArray,
     CFBoolean,
     CFData,
+    CFDate,
     CFDictionary,
     CFNull,
     CFNumber,
@@ -50,6 +51,7 @@ enum CFType {
     CFURL,
 #if PLATFORM(MAC)
     SecCertificate,
+    SecKeychainItem,
 #endif
     Null,
     Unknown,
@@ -69,6 +71,8 @@ static CFType typeFromCFTypeRef(CFTypeRef type)
         return CFBoolean;
     if (typeID == CFDataGetTypeID())
         return CFData;
+    if (typeID == CFDateGetTypeID())
+        return CFDate;
     if (typeID == CFDictionaryGetTypeID())
         return CFDictionary;
     if (typeID == CFNullGetTypeID())
@@ -82,13 +86,15 @@ static CFType typeFromCFTypeRef(CFTypeRef type)
 #if PLATFORM(MAC)
     if (typeID == SecCertificateGetTypeID())
         return SecCertificate;
+    if (typeID == SecKeychainItemGetTypeID())
+        return SecKeychainItem;
 #endif
 
     ASSERT_NOT_REACHED();
     return Unknown;
 }
 
-static void encode(ArgumentEncoder* encoder, CFTypeRef typeRef)
+void encode(ArgumentEncoder* encoder, CFTypeRef typeRef)
 {
     CFType type = typeFromCFTypeRef(typeRef);
     encoder->encodeEnum(type);
@@ -102,6 +108,9 @@ static void encode(ArgumentEncoder* encoder, CFTypeRef typeRef)
         return;
     case CFData:
         encode(encoder, static_cast<CFDataRef>(typeRef));
+        return;
+    case CFDate:
+        encode(encoder, static_cast<CFDateRef>(typeRef));
         return;
     case CFDictionary:
         encode(encoder, static_cast<CFDictionaryRef>(typeRef));
@@ -121,6 +130,9 @@ static void encode(ArgumentEncoder* encoder, CFTypeRef typeRef)
     case SecCertificate:
         encode(encoder, (SecCertificateRef)typeRef);
         return;
+    case SecKeychainItem:
+        encode(encoder, (SecKeychainItemRef)typeRef);
+        return;
 #endif
     case Null:
         return;
@@ -131,7 +143,7 @@ static void encode(ArgumentEncoder* encoder, CFTypeRef typeRef)
     ASSERT_NOT_REACHED();
 }
 
-static bool decode(ArgumentDecoder* decoder, RetainPtr<CFTypeRef>& result)
+bool decode(ArgumentDecoder* decoder, RetainPtr<CFTypeRef>& result)
 {
     CFType type;
     if (!decoder->decodeEnum(type))
@@ -157,6 +169,13 @@ static bool decode(ArgumentDecoder* decoder, RetainPtr<CFTypeRef>& result)
         if (!decode(decoder, data))
             return false;
         result.adoptCF(data.leakRef());
+        return true;
+    }
+    case CFDate: {
+        RetainPtr<CFDateRef> date;
+        if (!decode(decoder, date))
+            return false;
+        result.adoptCF(date.leakRef());
         return true;
     }
     case CFDictionary: {
@@ -196,6 +215,13 @@ static bool decode(ArgumentDecoder* decoder, RetainPtr<CFTypeRef>& result)
         if (!decode(decoder, certificate))
             return false;
         result.adoptCF(certificate.leakRef());
+        return true;
+    }
+    case SecKeychainItem: {
+        RetainPtr<SecKeychainItemRef> keychainItem;
+        if (!decode(decoder, keychainItem))
+            return false;
+        result.adoptCF(keychainItem.leakRef());
         return true;
     }
 #endif
@@ -275,6 +301,21 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<CFDataRef>& result)
         return false;
 
     result.adoptCF(CFDataCreate(0, dataReference.data(), dataReference.size()));
+    return true;
+}
+
+void encode(ArgumentEncoder* encoder, CFDateRef date)
+{
+    encoder->encodeDouble(CFDateGetAbsoluteTime(date));
+}
+
+bool decode(ArgumentDecoder* decoder, RetainPtr<CFDateRef>& result)
+{
+    double absoluteTime;
+    if (!decoder->decodeDouble(absoluteTime))
+        return false;
+
+    result.adoptCF(CFDateCreate(0, absoluteTime));
     return true;
 }
 
@@ -496,6 +537,30 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<SecCertificateRef>& result)
     result.adoptCF(SecCertificateCreateWithData(0, data.get()));
     return true;
 }
+
+void encode(ArgumentEncoder* encoder, SecKeychainItemRef keychainItem)
+{
+    CFDataRef data;
+    if (SecKeychainItemCreatePersistentReference(keychainItem, &data) == errSecSuccess) {
+        encode(encoder, data);
+        CFRelease(data);
+    }
+}
+
+bool decode(ArgumentDecoder* decoder, RetainPtr<SecKeychainItemRef>& result)
+{
+    RetainPtr<CFDataRef> data;
+    if (!CoreIPC::decode(decoder, data))
+        return false;
+
+    SecKeychainItemRef item;
+    if (SecKeychainItemCopyFromPersistentReference(data.get(), &item) != errSecSuccess || !item)
+        return false;
+    
+    result.adoptCF(item);
+    return true;
+}
+
 #endif
 
 } // namespace CoreIPC
