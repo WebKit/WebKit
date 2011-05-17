@@ -1,3 +1,17 @@
+2011-05-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Incomplete page painting at dropbox.com
+        https://bugs.webkit.org/show_bug.cgi?id=60974
+        <rdar://problem/9448213>
+
+        When we're exiting compositing mode and haven't sent an EnterAcceleratedCompositingMode
+        message to the UI process, we still need to send the updated bits to the ui process.
+        
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode):
+
 2011-05-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

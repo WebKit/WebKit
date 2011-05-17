@@ -455,6 +455,10 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
         if (m_compositingAccordingToProxyMessages) {
             m_webPage->send(Messages::DrawingAreaProxy::ExitAcceleratedCompositingMode(m_backingStoreStateID, updateInfo));
             m_compositingAccordingToProxyMessages = false;
+        } else {
+            // If we left accelerated compositing mode before we sent an EnterAcceleratedCompositingMode message to the
+            // UI process, we still need to let it know about the new contents, so send an Update message.
+            m_webPage->send(Messages::DrawingAreaProxy::Update(m_backingStoreStateID, updateInfo));
         }
     }
 #endif
