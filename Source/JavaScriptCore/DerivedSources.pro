@@ -14,24 +14,15 @@ CONFIG(standalone_package) {
 }
 
 LUT_FILES += \
-    runtime/ArrayConstructor.cpp \
     runtime/ArrayPrototype.cpp \
-    runtime/BooleanPrototype.cpp \
-    runtime/DateConstructor.cpp \
     runtime/DatePrototype.cpp \
-    runtime/ErrorPrototype.cpp \
-    runtime/JSGlobalObject.cpp \
     runtime/JSONObject.cpp \
     runtime/MathObject.cpp \
     runtime/NumberConstructor.cpp \
-    runtime/NumberPrototype.cpp \
     runtime/ObjectConstructor.cpp \
-    runtime/ObjectPrototype.cpp \
     runtime/RegExpConstructor.cpp \
     runtime/RegExpObject.cpp \
-    runtime/RegExpPrototype.cpp \
-    runtime/StringConstructor.cpp \
-    runtime/StringPrototype.cpp \
+    runtime/StringPrototype.cpp
 
 KEYWORDLUT_FILES += \
     parser/Keywords.table

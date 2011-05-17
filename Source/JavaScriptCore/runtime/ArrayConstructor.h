@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,21 +29,7 @@ namespace JSC {
 
     class ArrayConstructor : public InternalFunction {
     public:
-        ArrayConstructor(ExecState*, JSGlobalObject*, Structure*, ArrayPrototype*);
-
-        static const ClassInfo s_info;
-
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
-        {
-            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
-        }
-
-    protected:
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
-
-    private:
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
+        ArrayConstructor(ExecState*, JSGlobalObject*, Structure*, ArrayPrototype*, Structure*);
 
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);

@@ -38,43 +38,22 @@
 
 namespace JSC {
 
+ASSERT_CLASS_FITS_IN_CELL(RegExpPrototype);
+
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncTest(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncExec(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState*);
 static EncodedJSValue JSC_HOST_CALL regExpProtoFuncToString(ExecState*);
 
-}
+// ECMA 15.10.5
 
-#include "RegExpPrototype.lut.h"
-
-namespace JSC {
-
-const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, 0, ExecState::regExpPrototypeTable };
-
-/* Source for RegExpPrototype.lut.h
-@begin regExpPrototypeTable
-  compile   regExpProtoFuncCompile      DontEnum|Function 2
-  exec      regExpProtoFuncExec         DontEnum|Function 1
-  test      regExpProtoFuncTest         DontEnum|Function 1
-  toString  regExpProtoFuncToString     DontEnum|Function 0
-@end
-*/
-
-ASSERT_CLASS_FITS_IN_CELL(RegExpPrototype);
-
-RegExpPrototype::RegExpPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+RegExpPrototype::RegExpPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* functionStructure)
     : RegExpObject(globalObject, structure, RegExp::create(&exec->globalData(), "", NoFlags))
 {
-}
-
-bool RegExpPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec), this, propertyName, slot);
-}
-
-bool RegExpPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticFunctionDescriptor<RegExpObject>(exec, ExecState::regExpPrototypeTable(exec), this, propertyName, descriptor);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 2, exec->propertyNames().compile, regExpProtoFuncCompile), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().exec, regExpProtoFuncExec), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().test, regExpProtoFuncTest), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().toString, regExpProtoFuncToString), DontEnum);
 }
 
 // ------------------------------ Functions ---------------------------

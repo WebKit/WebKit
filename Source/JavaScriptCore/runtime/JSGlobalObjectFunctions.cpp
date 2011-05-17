@@ -587,4 +587,13 @@ EncodedJSValue JSC_HOST_CALL globalFuncUnescape(ExecState* exec)
     return JSValue::encode(jsString(exec, builder.toUString()));
 }
 
+#ifndef NDEBUG
+EncodedJSValue JSC_HOST_CALL globalFuncJSCPrint(ExecState* exec)
+{
+    CString string = exec->argument(0).toString(exec).utf8();
+    puts(string.data());
+    return JSValue::encode(jsUndefined());
+}
+#endif
+
 } // namespace JSC

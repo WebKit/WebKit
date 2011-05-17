@@ -1,5 +1,5 @@
 /*
- *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2004, 2005, 2006, 2007, 2008, 2009 Apple Inc. All rights reserved.
  *  Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  *
  *  This library is free software; you can redistribute it and/or
@@ -313,7 +313,6 @@ public:
 private:
     const char* typeName(JSCell*);
     OwnPtr<TypeCountSet> m_typeCountSet;
-    HashSet<JSCell*> m_cells;
 };
 
 inline TypeCounter::TypeCounter()
@@ -340,8 +339,6 @@ inline const char* TypeCounter::typeName(JSCell* cell)
 
 inline void TypeCounter::operator()(JSCell* cell)
 {
-    if (!m_cells.add(cell).second)
-        return;
     m_typeCountSet->add(typeName(cell));
 }
 

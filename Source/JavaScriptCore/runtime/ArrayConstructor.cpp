@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2003, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008 Apple Inc. All rights reserved.
  *  Copyright (C) 2003 Peter Kelly (pmk@post.com)
  *  Copyright (C) 2006 Alexey Proskuryakov (ap@nypop.com)
  *
@@ -33,42 +33,22 @@
 
 namespace JSC {
 
+ASSERT_CLASS_FITS_IN_CELL(ArrayConstructor);
+    
 static EncodedJSValue JSC_HOST_CALL arrayConstructorIsArray(ExecState*);
 
-}
-
-#include "ArrayConstructor.lut.h"
-
-namespace JSC {
-
-const ClassInfo ArrayConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::arrayConstructorTable };
-
-/* Source for ArrayConstructor.lut.h
-@begin arrayConstructorTable
-  isArray   arrayConstructorIsArray     DontEnum|Function 1
-@end
-*/
-
-ASSERT_CLASS_FITS_IN_CELL(ArrayConstructor);
-
-ArrayConstructor::ArrayConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ArrayPrototype* arrayPrototype)
+ArrayConstructor::ArrayConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, ArrayPrototype* arrayPrototype, Structure* functionStructure)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, arrayPrototype->classInfo()->className))
 {
+    // ECMA 15.4.3.1 Array.prototype
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, arrayPrototype, DontEnum | DontDelete | ReadOnly);
+
+    // no. of arguments for constructor
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
-}
 
-bool ArrayConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::arrayConstructorTable(exec), this, propertyName, slot);
+    // ES5
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().isArray, arrayConstructorIsArray), DontEnum);
 }
-
-bool ArrayConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::arrayConstructorTable(exec), this, propertyName, descriptor);
-}
-
-// ------------------------------ Functions ---------------------------
 
 static inline JSObject* constructArrayWithSizeQuirk(ExecState* exec, const ArgList& args)
 {
@@ -92,6 +72,7 @@ static EncodedJSValue JSC_HOST_CALL constructWithArrayConstructor(ExecState* exe
     return JSValue::encode(constructArrayWithSizeQuirk(exec, args));
 }
 
+// ECMA 15.4.2
 ConstructType ArrayConstructor::getConstructData(ConstructData& constructData)
 {
     constructData.native.function = constructWithArrayConstructor;
@@ -104,6 +85,7 @@ static EncodedJSValue JSC_HOST_CALL callArrayConstructor(ExecState* exec)
     return JSValue::encode(constructArrayWithSizeQuirk(exec, args));
 }
 
+// ECMA 15.6.1
 CallType ArrayConstructor::getCallData(CallData& callData)
 {
     // equivalent to 'new Array(....)'

@@ -35,28 +35,19 @@ VPATH = \
 
 .PHONY : all
 all : \
-    ArrayConstructor.lut.h \
     ArrayPrototype.lut.h \
-    BooleanPrototype.lut.h \
-    DateConstructor.lut.h \
     DatePrototype.lut.h \
-    ErrorPrototype.lut.h \
     HeaderDetection.h \
     JSONObject.lut.h \
     JavaScriptCore.JSVALUE32_64.exp \
     JavaScriptCore.JSVALUE64.exp \
-    JSGlobalObject.lut.h \
     Lexer.lut.h \
     MathObject.lut.h \
     NumberConstructor.lut.h \
-    NumberPrototype.lut.h \
     ObjectConstructor.lut.h \
-    ObjectPrototype.lut.h \
     RegExpConstructor.lut.h \
-    RegExpPrototype.lut.h \
     RegExpJitTables.h \
     RegExpObject.lut.h \
-    StringConstructor.lut.h \
     StringPrototype.lut.h \
     docs/bytecode.html \
 #

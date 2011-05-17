@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2004, 2005, 2006, 2007, 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2004, 2005, 2006, 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -51,43 +51,22 @@ using namespace WTF;
 
 namespace JSC {
 
+ASSERT_CLASS_FITS_IN_CELL(DateConstructor);
+
 static EncodedJSValue JSC_HOST_CALL dateParse(ExecState*);
 static EncodedJSValue JSC_HOST_CALL dateNow(ExecState*);
 static EncodedJSValue JSC_HOST_CALL dateUTC(ExecState*);
 
-}
-
-#include "DateConstructor.lut.h"
-
-namespace JSC {
-
-const ClassInfo DateConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::dateConstructorTable };
-
-/* Source for DateConstructor.lut.h
-@begin dateConstructorTable
-  parse     dateParse   DontEnum|Function 1
-  UTC       dateUTC     DontEnum|Function 7
-  now       dateNow     DontEnum|Function 0
-@end
-*/
-
-ASSERT_CLASS_FITS_IN_CELL(DateConstructor);
-
-DateConstructor::DateConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, DatePrototype* datePrototype)
+DateConstructor::DateConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* functionStructure, DatePrototype* datePrototype)
     : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, datePrototype->classInfo()->className))
 {
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, datePrototype, DontEnum | DontDelete | ReadOnly);
+
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().parse, dateParse), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 7, exec->propertyNames().UTC, dateUTC), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().now, dateNow), DontEnum);
+
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(7), ReadOnly | DontEnum | DontDelete);
-}
-
-bool DateConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::dateConstructorTable(exec), this, propertyName, slot);
-}
-
-bool DateConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::dateConstructorTable(exec), this, propertyName, descriptor);
 }
 
 // ECMA 15.9.3

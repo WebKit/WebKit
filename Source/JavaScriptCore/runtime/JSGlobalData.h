@@ -136,24 +136,15 @@ namespace JSC {
         GlobalDataType globalDataType;
         ClientData* clientData;
 
-        const HashTable* arrayConstructorTable;
-        const HashTable* arrayPrototypeTable;
-        const HashTable* booleanPrototypeTable;
+        const HashTable* arrayTable;
         const HashTable* dateTable;
-        const HashTable* dateConstructorTable;
-        const HashTable* errorPrototypeTable;
-        const HashTable* globalObjectTable;
         const HashTable* jsonTable;
         const HashTable* mathTable;
-        const HashTable* numberConstructorTable;
-        const HashTable* numberPrototypeTable;
+        const HashTable* numberTable;
         const HashTable* objectConstructorTable;
-        const HashTable* objectPrototypeTable;
         const HashTable* regExpTable;
         const HashTable* regExpConstructorTable;
-        const HashTable* regExpPrototypeTable;
         const HashTable* stringTable;
-        const HashTable* stringConstructorTable;
         
         Strong<Structure> structureStructure;
         Strong<Structure> activationStructure;

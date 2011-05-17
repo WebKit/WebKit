@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000,2003 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -34,6 +34,8 @@
 
 namespace JSC {
 
+ASSERT_CLASS_FITS_IN_CELL(NumberPrototype);
+
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncToLocaleString(ExecState*);
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncValueOf(ExecState*);
@@ -41,47 +43,26 @@ static EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState*);
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState*);
 static EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState*);
 
-}
+// ECMA 15.7.4
 
-#include "NumberPrototype.lut.h"
-
-namespace JSC {
-
-const ClassInfo NumberPrototype::s_info = { "Number", &NumberObject::s_info, 0, ExecState::numberPrototypeTable };
-
-/* Source for NumberPrototype.lut.h
-@begin numberPrototypeTable
-  toString          numberProtoFuncToString         DontEnum|Function 1
-  toLocaleString    numberProtoFuncToLocaleString   DontEnum|Function 0
-  valueOf           numberProtoFuncValueOf          DontEnum|Function 0
-  toFixed           numberProtoFuncToFixed          DontEnum|Function 1
-  toExponential     numberProtoFuncToExponential    DontEnum|Function 1
-  toPrecision       numberProtoFuncToPrecision      DontEnum|Function 1
-@end
-*/
-
-ASSERT_CLASS_FITS_IN_CELL(NumberPrototype);
-
-NumberPrototype::NumberPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+NumberPrototype::NumberPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* functionStructure)
     : NumberObject(exec->globalData(), structure)
 {
     setInternalValue(exec->globalData(), jsNumber(0));
 
-    ASSERT(inherits(&s_info));
-    putAnonymousValue(globalObject->globalData(), 0, globalObject);
-}
+    // The constructor will be added later, after NumberConstructor has been constructed
 
-bool NumberPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<NumberObject>(exec, ExecState::numberPrototypeTable(exec), this, propertyName, slot);
-}
-
-bool NumberPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticFunctionDescriptor<NumberObject>(exec, ExecState::numberPrototypeTable(exec), this, propertyName, descriptor);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().toString, numberProtoFuncToString), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().toLocaleString, numberProtoFuncToLocaleString), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().valueOf, numberProtoFuncValueOf), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().toFixed, numberProtoFuncToFixed), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().toExponential, numberProtoFuncToExponential), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().toPrecision, numberProtoFuncToPrecision), DontEnum);
 }
 
 // ------------------------------ Functions ---------------------------
+
+// ECMA 15.7.4.2 - 15.7.4.7
 
 static ALWAYS_INLINE bool toThisNumber(JSValue thisValue, double &x)
 {

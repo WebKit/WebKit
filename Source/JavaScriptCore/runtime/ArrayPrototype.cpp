@@ -85,10 +85,10 @@ static inline bool isNumericCompareFunction(ExecState* exec, CallType callType, 
 
 // ------------------------------ ArrayPrototype ----------------------------
 
-const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, 0, ExecState::arrayPrototypeTable};
+const ClassInfo ArrayPrototype::s_info = {"Array", &JSArray::s_info, 0, ExecState::arrayTable};
 
 /* Source for ArrayPrototype.lut.h
-@begin arrayPrototypeTable 16
+@begin arrayTable 16
   toString       arrayProtoFuncToString       DontEnum|Function 0
   toLocaleString arrayProtoFuncToLocaleString DontEnum|Function 0
   concat         arrayProtoFuncConcat         DontEnum|Function 1
@@ -123,12 +123,12 @@ ArrayPrototype::ArrayPrototype(JSGlobalObject* globalObject, Structure* structur
 
 bool ArrayPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticFunctionSlot<JSArray>(exec, ExecState::arrayPrototypeTable(exec), this, propertyName, slot);
+    return getStaticFunctionSlot<JSArray>(exec, ExecState::arrayTable(exec), this, propertyName, slot);
 }
 
 bool ArrayPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticFunctionDescriptor<JSArray>(exec, ExecState::arrayPrototypeTable(exec), this, propertyName, descriptor);
+    return getStaticFunctionDescriptor<JSArray>(exec, ExecState::arrayTable(exec), this, propertyName, descriptor);
 }
 
 // ------------------------------ Array Functions ----------------------------

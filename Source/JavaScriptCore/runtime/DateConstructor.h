@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -29,24 +29,11 @@ namespace JSC {
 
     class DateConstructor : public InternalFunction {
     public:
-        DateConstructor(ExecState*, JSGlobalObject*, Structure*, DatePrototype*);
-
-        static const ClassInfo s_info;
-
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
-        {
-            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
-        }
-
-    protected:
-        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | InternalFunction::StructureFlags;
+        DateConstructor(ExecState*, JSGlobalObject*, Structure*, Structure* functionStructure, DatePrototype*);
 
     private:
         virtual ConstructType getConstructData(ConstructData&);
         virtual CallType getCallData(CallData&);
-
-        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
-        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     };
 
     JSObject* constructDate(ExecState*, JSGlobalObject*, const ArgList&);

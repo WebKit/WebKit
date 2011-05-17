@@ -29,43 +29,6 @@
 
 namespace JSC {
 
-static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState*);
-
-}
-
-#include "StringConstructor.lut.h"
-
-namespace JSC {
-
-const ClassInfo StringConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::stringConstructorTable };
-
-/* Source for StringConstructor.lut.h
-@begin stringConstructorTable
-  fromCharCode          stringFromCharCode         DontEnum|Function 1
-@end
-*/
-
-ASSERT_CLASS_FITS_IN_CELL(StringConstructor);
-
-StringConstructor::StringConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, StringPrototype* stringPrototype)
-    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, stringPrototype->classInfo()->className))
-{
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, stringPrototype, ReadOnly | DontEnum | DontDelete);
-    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
-}
-
-bool StringConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<InternalFunction>(exec, ExecState::stringConstructorTable(exec), this, propertyName, slot);
-}
-
-bool StringConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticFunctionDescriptor<InternalFunction>(exec, ExecState::stringConstructorTable(exec), this, propertyName, descriptor);
-}
-
-// ------------------------------ Functions --------------------------------
-
 static NEVER_INLINE JSValue stringFromCharCodeSlowCase(ExecState* exec)
 {
     unsigned length = exec->argumentCount();
@@ -83,6 +46,25 @@ static EncodedJSValue JSC_HOST_CALL stringFromCharCode(ExecState* exec)
     return JSValue::encode(stringFromCharCodeSlowCase(exec));
 }
 
+ASSERT_CLASS_FITS_IN_CELL(StringConstructor);
+
+StringConstructor::StringConstructor(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* functionStructure, StringPrototype* stringPrototype)
+    : InternalFunction(&exec->globalData(), globalObject, structure, Identifier(exec, stringPrototype->classInfo()->className))
+{
+    // ECMA 15.5.3.1 String.prototype
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().prototype, stringPrototype, ReadOnly | DontEnum | DontDelete);
+
+    // ECMA 15.5.3.2 fromCharCode()
+#if ENABLE(JIT) && ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().fromCharCode, exec->globalData().getHostFunction(stringFromCharCode, fromCharCodeThunkGenerator)), DontEnum);
+#else
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().fromCharCode, stringFromCharCode), DontEnum);
+#endif
+    // no. of arguments for constructor
+    putDirectWithoutTransition(exec->globalData(), exec->propertyNames().length, jsNumber(1), ReadOnly | DontEnum | DontDelete);
+}
+
+// ECMA 15.5.2
 static EncodedJSValue JSC_HOST_CALL constructWithStringConstructor(ExecState* exec)
 {
     JSGlobalObject* globalObject = asInternalFunction(exec->callee())->globalObject();
@@ -97,6 +79,7 @@ ConstructType StringConstructor::getConstructData(ConstructData& constructData)
     return ConstructTypeHost;
 }
 
+// ECMA 15.5.1
 static EncodedJSValue JSC_HOST_CALL callStringConstructor(ExecState* exec)
 {
     if (!exec->argumentCount())

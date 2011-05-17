@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -92,24 +92,15 @@ inline void Recompiler::operator()(JSCell* cell)
 
 namespace JSC {
 
-extern JSC_CONST_HASHTABLE HashTable arrayConstructorTable;
-extern JSC_CONST_HASHTABLE HashTable arrayPrototypeTable;
-extern JSC_CONST_HASHTABLE HashTable booleanPrototypeTable;
+extern JSC_CONST_HASHTABLE HashTable arrayTable;
 extern JSC_CONST_HASHTABLE HashTable jsonTable;
 extern JSC_CONST_HASHTABLE HashTable dateTable;
-extern JSC_CONST_HASHTABLE HashTable dateConstructorTable;
-extern JSC_CONST_HASHTABLE HashTable errorPrototypeTable;
-extern JSC_CONST_HASHTABLE HashTable globalObjectTable;
 extern JSC_CONST_HASHTABLE HashTable mathTable;
-extern JSC_CONST_HASHTABLE HashTable numberConstructorTable;
-extern JSC_CONST_HASHTABLE HashTable numberPrototypeTable;
+extern JSC_CONST_HASHTABLE HashTable numberTable;
 extern JSC_CONST_HASHTABLE HashTable objectConstructorTable;
-extern JSC_CONST_HASHTABLE HashTable objectPrototypeTable;
 extern JSC_CONST_HASHTABLE HashTable regExpTable;
 extern JSC_CONST_HASHTABLE HashTable regExpConstructorTable;
-extern JSC_CONST_HASHTABLE HashTable regExpPrototypeTable;
 extern JSC_CONST_HASHTABLE HashTable stringTable;
-extern JSC_CONST_HASHTABLE HashTable stringConstructorTable;
 
 void* JSGlobalData::jsArrayVPtr;
 void* JSGlobalData::jsByteArrayVPtr;
@@ -155,24 +146,15 @@ void JSGlobalData::storeVPtrs()
 JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType threadStackType)
     : globalDataType(globalDataType)
     , clientData(0)
-    , arrayConstructorTable(fastNew<HashTable>(JSC::arrayConstructorTable))
-    , arrayPrototypeTable(fastNew<HashTable>(JSC::arrayPrototypeTable))
-    , booleanPrototypeTable(fastNew<HashTable>(JSC::booleanPrototypeTable))
+    , arrayTable(fastNew<HashTable>(JSC::arrayTable))
     , dateTable(fastNew<HashTable>(JSC::dateTable))
-    , dateConstructorTable(fastNew<HashTable>(JSC::dateConstructorTable))
-    , errorPrototypeTable(fastNew<HashTable>(JSC::errorPrototypeTable))
-    , globalObjectTable(fastNew<HashTable>(JSC::globalObjectTable))
     , jsonTable(fastNew<HashTable>(JSC::jsonTable))
     , mathTable(fastNew<HashTable>(JSC::mathTable))
-    , numberConstructorTable(fastNew<HashTable>(JSC::numberConstructorTable))
-    , numberPrototypeTable(fastNew<HashTable>(JSC::numberPrototypeTable))
+    , numberTable(fastNew<HashTable>(JSC::numberTable))
     , objectConstructorTable(fastNew<HashTable>(JSC::objectConstructorTable))
-    , objectPrototypeTable(fastNew<HashTable>(JSC::objectPrototypeTable))
     , regExpTable(fastNew<HashTable>(JSC::regExpTable))
     , regExpConstructorTable(fastNew<HashTable>(JSC::regExpConstructorTable))
-    , regExpPrototypeTable(fastNew<HashTable>(JSC::regExpPrototypeTable))
     , stringTable(fastNew<HashTable>(JSC::stringTable))
-    , stringConstructorTable(fastNew<HashTable>(JSC::stringConstructorTable))
     , identifierTable(globalDataType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
     , emptyList(new MarkedArgumentBuffer)
@@ -293,43 +275,25 @@ JSGlobalData::~JSGlobalData()
     interpreter = 0;
 #endif
 
-    arrayPrototypeTable->deleteTable();
-    arrayConstructorTable->deleteTable();
-    booleanPrototypeTable->deleteTable();
+    arrayTable->deleteTable();
     dateTable->deleteTable();
-    dateConstructorTable->deleteTable();
-    errorPrototypeTable->deleteTable();
-    globalObjectTable->deleteTable();
     jsonTable->deleteTable();
     mathTable->deleteTable();
-    numberConstructorTable->deleteTable();
-    numberPrototypeTable->deleteTable();
+    numberTable->deleteTable();
     objectConstructorTable->deleteTable();
-    objectPrototypeTable->deleteTable();
     regExpTable->deleteTable();
     regExpConstructorTable->deleteTable();
-    regExpPrototypeTable->deleteTable();
     stringTable->deleteTable();
-    stringConstructorTable->deleteTable();
 
-    fastDelete(const_cast<HashTable*>(arrayConstructorTable));
-    fastDelete(const_cast<HashTable*>(arrayPrototypeTable));
-    fastDelete(const_cast<HashTable*>(booleanPrototypeTable));
+    fastDelete(const_cast<HashTable*>(arrayTable));
     fastDelete(const_cast<HashTable*>(dateTable));
-    fastDelete(const_cast<HashTable*>(dateConstructorTable));
-    fastDelete(const_cast<HashTable*>(errorPrototypeTable));
-    fastDelete(const_cast<HashTable*>(globalObjectTable));
     fastDelete(const_cast<HashTable*>(jsonTable));
     fastDelete(const_cast<HashTable*>(mathTable));
-    fastDelete(const_cast<HashTable*>(numberConstructorTable));
-    fastDelete(const_cast<HashTable*>(numberPrototypeTable));
+    fastDelete(const_cast<HashTable*>(numberTable));
     fastDelete(const_cast<HashTable*>(objectConstructorTable));
-    fastDelete(const_cast<HashTable*>(objectPrototypeTable));
     fastDelete(const_cast<HashTable*>(regExpTable));
     fastDelete(const_cast<HashTable*>(regExpConstructorTable));
-    fastDelete(const_cast<HashTable*>(regExpPrototypeTable));
     fastDelete(const_cast<HashTable*>(stringTable));
-    fastDelete(const_cast<HashTable*>(stringConstructorTable));
 
     delete parser;
     delete lexer;

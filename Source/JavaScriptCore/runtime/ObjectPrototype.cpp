@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008, 2011 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -28,6 +28,8 @@
 
 namespace JSC {
 
+ASSERT_CLASS_FITS_IN_CELL(ObjectPrototype);
+
 static EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectProtoFuncHasOwnProperty(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectProtoFuncIsPrototypeOf(ExecState*);
@@ -38,42 +40,27 @@ static EncodedJSValue JSC_HOST_CALL objectProtoFuncLookupSetter(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectProtoFuncPropertyIsEnumerable(ExecState*);
 static EncodedJSValue JSC_HOST_CALL objectProtoFuncToLocaleString(ExecState*);
 
-}
-
-#include "ObjectPrototype.lut.h"
-
-namespace JSC {
-
-const ClassInfo ObjectPrototype::s_info = { "Object", &JSNonFinalObject::s_info, 0, ExecState::objectPrototypeTable };
-
-/* Source for ObjectPrototype.lut.h
-@begin objectPrototypeTable
-  toString              objectProtoFuncToString                 DontEnum|Function 0
-  toLocaleString        objectProtoFuncToLocaleString           DontEnum|Function 0
-  valueOf               objectProtoFuncValueOf                  DontEnum|Function 0
-  hasOwnProperty        objectProtoFuncHasOwnProperty           DontEnum|Function 1
-  propertyIsEnumerable  objectProtoFuncPropertyIsEnumerable     DontEnum|Function 1
-  isPrototypeOf         objectProtoFuncIsPrototypeOf            DontEnum|Function 1
-  __defineGetter__      objectProtoFuncDefineGetter             DontEnum|Function 2
-  __defineSetter__      objectProtoFuncDefineSetter             DontEnum|Function 2
-  __lookupGetter__      objectProtoFuncLookupGetter             DontEnum|Function 1
-  __lookupSetter__      objectProtoFuncLookupSetter             DontEnum|Function 1
-@end
-*/
-
-ASSERT_CLASS_FITS_IN_CELL(ObjectPrototype);
-
-ObjectPrototype::ObjectPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* stucture)
+ObjectPrototype::ObjectPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* stucture, Structure* functionStructure)
     : JSNonFinalObject(exec->globalData(), stucture)
     , m_hasNoPropertiesWithUInt32Names(true)
 {
-    ASSERT(inherits(&s_info));
-    putAnonymousValue(globalObject->globalData(), 0, globalObject);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().toString, objectProtoFuncToString), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().toLocaleString, objectProtoFuncToLocaleString), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().valueOf, objectProtoFuncValueOf), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().hasOwnProperty, objectProtoFuncHasOwnProperty), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().propertyIsEnumerable, objectProtoFuncPropertyIsEnumerable), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().isPrototypeOf, objectProtoFuncIsPrototypeOf), DontEnum);
+
+    // Mozilla extensions
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 2, exec->propertyNames().__defineGetter__, objectProtoFuncDefineGetter), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 2, exec->propertyNames().__defineSetter__, objectProtoFuncDefineSetter), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().__lookupGetter__, objectProtoFuncLookupGetter), DontEnum);
+    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 1, exec->propertyNames().__lookupSetter__, objectProtoFuncLookupSetter), DontEnum);
 }
 
 void ObjectPrototype::put(ExecState* exec, const Identifier& propertyName, JSValue value, PutPropertySlot& slot)
 {
-    JSNonFinalObject::put(exec, propertyName, value, slot);
+    JSObject::put(exec, propertyName, value, slot);
 
     if (m_hasNoPropertiesWithUInt32Names) {
         bool isUInt32;
@@ -86,20 +73,12 @@ bool ObjectPrototype::getOwnPropertySlot(ExecState* exec, unsigned propertyName,
 {
     if (m_hasNoPropertiesWithUInt32Names)
         return false;
-    return JSNonFinalObject::getOwnPropertySlot(exec, propertyName, slot);
-}
-
-bool ObjectPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
-{
-    return getStaticFunctionSlot<JSNonFinalObject>(exec, ExecState::objectPrototypeTable(exec), this, propertyName, slot);
-}
-
-bool ObjectPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
-{
-    return getStaticFunctionDescriptor<JSNonFinalObject>(exec, ExecState::objectPrototypeTable(exec), this, propertyName, descriptor);
+    return JSObject::getOwnPropertySlot(exec, propertyName, slot);
 }
 
 // ------------------------------ Functions --------------------------------
+
+// ECMA 15.2.4.2, 15.2.4.4, 15.2.4.5, 15.2.4.7
 
 EncodedJSValue JSC_HOST_CALL objectProtoFuncValueOf(ExecState* exec)
 {
