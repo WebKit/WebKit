@@ -1,3 +1,9 @@
+2011-05-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed. Sorted XCode project file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-05-18  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
