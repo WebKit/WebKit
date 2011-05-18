@@ -1,3 +1,75 @@
+2011-05-18  Adam Roben  <aroben@apple.com>
+
+        Add a new page to build.webkit.org to help find when tests started failing
+
+        The page is accessible at <http://build.webkit.org/TestFailures/>. It is pretty minimalist
+        right now, but already shows some useful information. It's somewhat similar to webkit-patch
+        failure-reason and sheriffbot, and perhaps can be combined with them eventually. It's a
+        little more convenient than either of them, though, because it's all done in the browser
+        (and thus it's easy to go directly to the relevant test results).
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Buildbot.js: Added.
+        (Buildbot): This class represents a Buildbot server.
+        (Buildbot.prototype.buildURL): Returns the URL for the summary page for a particular build.
+        (Buildbot.prototype.builderNamed): Returns a Builder with the given name.
+        (Buildbot.prototype.getTesterNames): Fetches the names of all testers and passes them to the
+        callback.
+        (Buildbot.prototype.parseBuildName): Breaks up a build name into its constituent parts. Must
+        be implemented by a derived class that understands this server's build naming scheme.
+        (Buildbot.prototype.resultsDirectoryURL): Returns the URL for the results directory for a
+        particular build.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js: Added.
+        (Builder): This class represents one builder on the buildbot.
+        (Builder.prototype.buildURL): Returns the URL for the summary page for a particular build.
+        (Builder.prototype.failureDiagnosisTextAndURL): Returns data that provides a little more
+        information about a particular test failure.
+        (Builder.prototype.startFetchingBuildHistory): Periodically calls the callback with
+        information about when tests started failing.
+        (Builder.prototype.resultsDirectoryURL): Returns the URL for the results directory for a
+        particular build.
+        (Builder.prototype._getBuildNames): Fetches the names of all builds and passes them to the
+        callback.
+        (Builder.prototype._getFailingTests): Fetches the results.html page for the given build and
+        extracts all the failing tests listed in it, passing them to the callback.
+        (Builder.prototype._incorporateBuildHistory): Gets the failing tests for the specified
+        build, merges them into the build history, and calls the callback telling it whether the
+        next build should be fetched to provide more information.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css:
+        Added. Just some simple styles.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Utilities.js: Added.
+        (createDefinitionList): Takes an array of pairs and turns them into a DL element.
+        (getResource): Wrapper around XMLHttpRequest.
+        (Array.prototype.findFirst): Finds the first element matching the given predicate and
+        returns it.
+        (Array.prototype.last): Returns the last element of the array.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js: Added.
+        (ViewController): This class contains the main logic for displaying the page.
+        (ViewController.loaded): Just calls through to parseHash.
+        (ViewController.parseHash): Either starts analyzing failures on a particular builder, or
+        shows the list of all testers so one can be chosen. This function is called when the page
+        loads and whenever we get a hashchange event.
+        (ViewController._displayBuilder): Asks the builder to fetch build history, and displays it
+        as it is fetched. The display ends up grouping tests by when they started failing.
+        (ViewController._displayTesters): Gets the list of testers and displays it.
+
+        (ViewController._domForBuildName):
+        (ViewController._domForFailedTest):
+        Helper functions to create descriptions and links for a particular build or failed test.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/WebKitBuildbot.js: Added.
+        (WebKitBuildbot): Calls up to the base class constructor with the correct base URL.
+        (WebKitBuildbot.prototype.parseBuildName): Parses a build.webkit.org-style build name.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/index.html: Added. Just
+        loads all the files and sets up a ViewController, which does the rest.
+
+        * BuildSlaveSupport/build.webkit.org-config/templates/root.html: Added a link to the new
+        page.
+
 2011-05-18  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.
