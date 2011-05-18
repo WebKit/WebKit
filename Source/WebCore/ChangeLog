@@ -1,3 +1,23 @@
+2011-05-18  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        NULL deref when SVG elements have table styles 
+        https://bugs.webkit.org/show_bug.cgi?id=45561
+
+        Restrict computed CSS values for SVG display property to block, inline or none.
+
+        Tests: svg/custom/display-table-caption-foreignObject.svg
+               svg/custom/display-table-caption-inherit-foreignObject.xhtml
+               svg/custom/display-table-caption-inherit-text.xhtml
+               svg/custom/display-table-caption-text.svg
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::SVGDisplayPropertyGuard::SVGDisplayPropertyGuard):
+        (WebCore::SVGDisplayPropertyGuard::~SVGDisplayPropertyGuard):
+        (WebCore::isAcceptableForSVGElement):
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-05-18  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
