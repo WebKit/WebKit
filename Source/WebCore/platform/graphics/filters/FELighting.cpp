@@ -30,6 +30,7 @@
 #include "FELighting.h"
 
 #include "FELightingNEON.h"
+#include <wtf/ParallelJobs.h>
 
 namespace WebCore {
 
@@ -227,18 +228,58 @@ void FELighting::setPixel(int offset, LightingData& data, LightSource::PaintingD
     inlineSetPixel(offset, data, paintingData, lightX, lightY, factorX, factorY, normalVector);
 }
 
-inline void FELighting::platformApplyGeneric(LightingData& data, LightSource::PaintingData& paintingData)
+inline void FELighting::platformApplyGenericPaint(LightingData& data, LightSource::PaintingData& paintingData, int startY, int endY)
 {
     IntPoint normalVector;
     int offset = 0;
 
-    for (int y = 1; y < data.heightDecreasedByOne; ++y) {
+    for (int y = startY; y < endY; ++y) {
         offset = y * data.widthMultipliedByPixelSize + cPixelSize;
         for (int x = 1; x < data.widthDecreasedByOne; ++x, offset += cPixelSize) {
             data.interior(offset, normalVector);
             inlineSetPixel(offset, data, paintingData, x, y, cFactor1div4, cFactor1div4, normalVector);
         }
     }
+}
+
+#if ENABLE(PARALLEL_JOBS)
+void FELighting::platformApplyGenericWorker(PlatformApplyGenericParameters* parameters)
+{
+    parameters->filter->platformApplyGenericPaint(parameters->data, parameters->paintingData, parameters->yStart, parameters->yEnd);
+}
+#endif // ENABLE(PARALLEL_JOBS)
+
+inline void FELighting::platformApplyGeneric(LightingData& data, LightSource::PaintingData& paintingData)
+{
+#if ENABLE(PARALLEL_JOBS)
+    int optimalThreadNumber = ((data.widthDecreasedByOne - 1) * (data.heightDecreasedByOne - 1)) / s_minimalRectDimension;
+    if (optimalThreadNumber > 1) {
+        // Initialize parallel jobs
+        ParallelJobs<PlatformApplyGenericParameters> parallelJobs(&platformApplyGenericWorker, optimalThreadNumber);
+
+        // Fill the parameter array
+        int job = parallelJobs.numberOfJobs();
+        if (job > 1) {
+            int yStart = 1;
+            int yStep = (data.widthDecreasedByOne - 1) / job;
+            for (--job; job >= 0; --job) {
+                PlatformApplyGenericParameters& params = parallelJobs.parameter(job);
+                params.filter = this;
+                params.data = data;
+                params.paintingData = paintingData;
+                params.yStart = yStart;
+                if (job > 0) {
+                    params.yEnd = yStart + yStep;
+                    yStart += yStep;
+                } else
+                    params.yEnd = data.heightDecreasedByOne;
+            }
+            parallelJobs.execute();
+            return;
+        }
+    }
+#endif
+    platformApplyGenericPaint(data, paintingData, 1, data.heightDecreasedByOne);
 }
 
 inline void FELighting::platformApply(LightingData& data, LightSource::PaintingData& paintingData)

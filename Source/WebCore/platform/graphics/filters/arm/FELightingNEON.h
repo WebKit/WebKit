@@ -33,6 +33,7 @@
 
 #include "FELighting.h"
 #include <wtf/Alignment.h>
+#include <wtf/ParallelJobs.h>
 
 namespace WebCore {
 
@@ -76,8 +77,9 @@ struct FELightingFloatArgumentsForNeon {
 
 struct FELightingPaintingDataForNeon {
     unsigned char* pixels;
+    float yStart;
     int widthDecreasedByTwo;
-    int heightDecreasedByTwo;
+    int absoluteHeight;
     // Combination of FLAG constants above.
     int flags;
     int specularExponent;
@@ -98,6 +100,7 @@ inline void FELighting::platformApplyNeon(LightingData& data, LightSource::Paint
 
     FELightingPaintingDataForNeon neonData = {
         data.pixels->data(),
+        1,
         data.widthDecreasedByOne - 1,
         data.heightDecreasedByOne - 1,
         0,
@@ -163,6 +166,34 @@ inline void FELighting::platformApplyNeon(LightingData& data, LightSource::Paint
     }
     if (floatArguments.diffuseConstant == 1)
         neonData.flags |= FLAG_DIFFUSE_CONST_IS_1;
+
+#if ENABLE(PARALLEL_JOBS)
+    int optimalThreadNumber = ((data.widthDecreasedByOne - 1) * (data.heightDecreasedByOne - 1)) / s_minimalRectDimension;
+    if (optimalThreadNumber > 1) {
+        // Initialize parallel jobs
+        ParallelJobs<FELightingPaintingDataForNeon> parallelJobs(&WebCore::FELighting::platformApplyNeonWorker, optimalThreadNumber);
+
+        // Fill the parameter array
+        int job = parallelJobs.numberOfJobs();
+        if (job > 1) {
+            int yStart = 1;
+            int yStep = (data.heightDecreasedByOne - 1) / job;
+            for (--job; job >= 0; --job) {
+                FELightingPaintingDataForNeon& params = parallelJobs.parameter(job);
+                params = neonData;
+                params.yStart = yStart;
+                params.pixels += (yStart - 1) * (data.widthDecreasedByOne + 1) * 4;
+                if (job > 0) {
+                    params.absoluteHeight = yStep;
+                    yStart += yStep;
+                } else
+                    params.absoluteHeight = data.heightDecreasedByOne - yStart;
+            }
+            parallelJobs.execute();
+            return;
+        }
+    }
+#endif
 
     neonDrawLighting(&neonData);
 }

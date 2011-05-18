@@ -41,6 +41,8 @@
 
 namespace WebCore {
 
+struct FELightingPaintingDataForNeon;
+
 class FELighting : public FilterEffect {
 public:
     virtual void apply();
@@ -48,6 +50,10 @@ public:
     virtual void determineAbsolutePaintRect() { setAbsolutePaintRect(enclosingIntRect(maxEffectRect())); }
 
 protected:
+#if ENABLE(PARALLEL_JOBS)
+    static const int s_minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
+#endif
+
     enum LightingType {
         DiffuseLighting,
         SpecularLighting
@@ -72,6 +78,22 @@ protected:
         inline void bottomRight(int offset, IntPoint& normalVector);
     };
 
+#if ENABLE(PARALLEL_JOBS)
+    template<typename Type>
+    friend class ParallelJobs;
+
+    struct PlatformApplyGenericParameters {
+        FELighting* filter;
+        LightingData data;
+        LightSource::PaintingData paintingData;
+        int yStart;
+        int yEnd;
+    };
+
+    static void platformApplyGenericWorker(PlatformApplyGenericParameters*);
+    static void platformApplyNeonWorker(FELightingPaintingDataForNeon*);
+#endif
+
     FELighting(Filter*, LightingType, const Color&, float, float, float, float, float, float, PassRefPtr<LightSource>);
 
     bool drawLighting(ByteArray*, int, int);
@@ -84,7 +106,9 @@ protected:
 
     inline void platformApply(LightingData&, LightSource::PaintingData&);
 
+    inline void platformApplyGenericPaint(LightingData&, LightSource::PaintingData&, int startX, int startY);
     inline void platformApplyGeneric(LightingData&, LightSource::PaintingData&);
+
     static int getPowerCoefficients(float exponent);
     inline void platformApplyNeon(LightingData&, LightSource::PaintingData&);
 

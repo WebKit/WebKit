@@ -50,17 +50,25 @@ short* feLightingConstantsForNeon()
     return s_FELightingConstantsForNeon;
 }
 
+#if ENABLE(PARALLEL_JOBS)
+void FELighting::platformApplyNeonWorker(FELightingPaintingDataForNeon* parameters)
+{
+    neonDrawLighting(parameters);
+}
+#endif
+
 #define ASSTRING(str) #str
 #define TOSTRING(value) ASSTRING(value)
 
 #define PIXELS_OFFSET TOSTRING(0)
-#define WIDTH_OFFSET TOSTRING(4)
-#define HEIGHT_OFFSET TOSTRING(8)
-#define FLAGS_OFFSET TOSTRING(12)
-#define SPECULAR_EXPONENT_OFFSET TOSTRING(16)
-#define CONE_EXPONENT_OFFSET TOSTRING(20)
-#define FLOAT_ARGUMENTS_OFFSET TOSTRING(24)
-#define PAINTING_CONSTANTS_OFFSET TOSTRING(28)
+#define YSTART_OFFSET TOSTRING(4)
+#define WIDTH_OFFSET TOSTRING(8)
+#define HEIGHT_OFFSET TOSTRING(12)
+#define FLAGS_OFFSET TOSTRING(16)
+#define SPECULAR_EXPONENT_OFFSET TOSTRING(20)
+#define CONE_EXPONENT_OFFSET TOSTRING(24)
+#define FLOAT_ARGUMENTS_OFFSET TOSTRING(28)
+#define PAINTING_CONSTANTS_OFFSET TOSTRING(32)
 #define NL "\n"
 
 // Register allocation
@@ -221,6 +229,7 @@ TOSTRING(neonDrawLighting) ":" NL
     "ldr r0, [" PAINTING_DATA_R ", #" FLOAT_ARGUMENTS_OFFSET "]" NL
     "ldr r1, [" PAINTING_DATA_R ", #" PAINTING_CONSTANTS_OFFSET "]" NL
     "ldr " PIXELS_R ", [" PAINTING_DATA_R ", #" PIXELS_OFFSET "]" NL
+    "vldr.f32 " POSITION_Y_S ", [" PAINTING_DATA_R ", #" YSTART_OFFSET "]"  NL
     "ldr " WIDTH_R ", [" PAINTING_DATA_R ", #" WIDTH_OFFSET "]" NL
     "ldr " HEIGHT_R ", [" PAINTING_DATA_R ", #" HEIGHT_OFFSET "]" NL
     "ldr " FLAGS_R ", [" PAINTING_DATA_R ", #" FLAGS_OFFSET "]" NL
@@ -241,7 +250,6 @@ TOSTRING(neonDrawLighting) ":" NL
     "add " PIXELS_R ", " PIXELS_R ", #3" NL
     "mov r0, #0" NL
     "vmov.f32 " CONST_ZERO_S ", r0" NL
-    "vmov.f32 " POSITION_Y_S ", " CONST_ONE_S NL
     "tst " FLAGS_R ", #" TOSTRING(FLAG_SPOT_LIGHT) NL
     "vmov.f32 " SPOT_COLOR_Q ", " COLOR_Q NL
     "mov " RESET_WIDTH_R ", " WIDTH_R NL

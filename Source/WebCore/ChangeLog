@@ -1,3 +1,27 @@
+2011-05-18  Gabor Loki  <loki@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Apply the ParallelJobs support to FELighting
+        https://bugs.webkit.org/show_bug.cgi?id=61048
+
+        The lighting filter of SVG can consume lots of resources if it is
+        applied to a large area. The computation can be distributed to multiple
+        cores if the architecture supports.
+        The average performance progression is 10-20% on dual-core machines.
+
+        Developed in cooperation with Zoltan Herczeg.
+
+        * platform/graphics/filters/FELighting.cpp:
+        (WebCore::FELighting::platformApplyGenericPaint):
+        (WebCore::FELighting::platformApplyGenericWorker):
+        (WebCore::FELighting::platformApplyGeneric):
+        * platform/graphics/filters/FELighting.h:
+        * platform/graphics/filters/arm/FELightingNEON.cpp:
+        (WebCore::FELighting::platformApplyNeonWorker):
+        * platform/graphics/filters/arm/FELightingNEON.h:
+        (WebCore::FELighting::platformApplyNeon):
+
 2011-05-18  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Andreas Kling.
