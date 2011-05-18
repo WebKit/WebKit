@@ -131,21 +131,23 @@ WebFullScreenManagerMac::~WebFullScreenManagerMac()
 
 void WebFullScreenManagerMac::setRootFullScreenLayer(WebCore::GraphicsLayer* layer)
 {
-    if (m_fullScreenRootLayer == (layer ? layer->platformLayer() : 0))
+    if ((!m_rootLayer || m_rootLayer->children().isEmpty()) && !layer)
         return;
 
     if (!layer) {
         m_page->send(Messages::WebFullScreenManagerProxy::ExitAcceleratedCompositingMode());
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"WebKitLayerHostChanged" object:m_rootLayer->platformLayer() userInfo:nil];
         if (m_rootLayer) {
             m_rootLayer->removeAllChildren();
             m_rootLayer = nullptr;
         }
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"WebKitLayerHostChanged" object:m_fullScreenRootLayer.get() userInfo:nil];
-        m_fullScreenRootLayer = 0;
+
         return;
     }
-    
+
+    if (m_rootLayer && m_rootLayer->children().contains(layer))
+        return;
+
     if (!m_rootLayer) {
         mach_port_t serverPort = WebProcess::shared().compositingRenderServerPort();
         m_remoteLayerClient = WKCARemoteLayerClientMakeWithServerPort(serverPort);
@@ -165,20 +167,16 @@ void WebFullScreenManagerMac::setRootFullScreenLayer(WebCore::GraphicsLayer* lay
 
     m_rootLayer->removeAllChildren();
     m_rootLayer->addChild(layer);
+    m_rootLayer->syncCompositingState();
 
-    m_rootLayer->syncCompositingStateForThisLayerOnly();
-    m_page->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
-    m_fullScreenRootLayer = layer->platformLayer();
-    layer->syncCompositingState();
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"WebKitLayerHostChanged" object:m_fullScreenRootLayer.get() userInfo:nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"WebKitLayerHostChanged" object:m_rootLayer->platformLayer() userInfo:nil];
 }
 
 void WebFullScreenManagerMac::beginEnterFullScreenAnimation(float duration)
 {
     ASSERT(m_element);
     
-    if (!m_fullScreenRootLayer) {
+    if (!m_rootLayer || m_rootLayer->children().isEmpty()) {
         // If we don't have a root layer, we can't animate in and out of full screen
         this->beganEnterFullScreenAnimation();
         this->finishedEnterFullScreenAnimation(true);
@@ -187,13 +185,12 @@ void WebFullScreenManagerMac::beginEnterFullScreenAnimation(float duration)
 
     IntRect destinationFrame = getFullScreenRect();
     m_element->document()->setFullScreenRendererSize(destinationFrame.size());
-    m_rootLayer->syncCompositingStateForThisLayerOnly();
-    m_page->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+    m_rootLayer->syncCompositingState();
 
     // FIXME: Once we gain the ability to do native WebKit animations of generated
     // content, this can change to use them.  Meanwhile, we'll have to animate the
     // CALayer directly:
-    CALayer* caLayer = m_fullScreenRootLayer.get();
+    CALayer* caLayer = m_rootLayer->children().first()->platformLayer();
 
     // Create a transformation matrix that will transform the renderer layer such that
     // the fullscreen element appears to move from its starting position and size to its
@@ -233,7 +230,7 @@ void WebFullScreenManagerMac::beginExitFullScreenAnimation(float duration)
 {
     ASSERT(m_element);
     
-    if (!m_fullScreenRootLayer) {
+    if (!m_rootLayer || m_rootLayer->children().isEmpty()) {
         // If we don't have a root layer, we can't animate in and out of full screen
         this->beganExitFullScreenAnimation();
         this->finishedExitFullScreenAnimation(true);
@@ -242,19 +239,19 @@ void WebFullScreenManagerMac::beginExitFullScreenAnimation(float duration)
 
     IntRect destinationFrame = getFullScreenRect();
     m_element->document()->setFullScreenRendererSize(destinationFrame.size());
-    m_rootLayer->syncCompositingStateForThisLayerOnly();
-    m_page->corePage()->mainFrame()->view()->syncCompositingStateIncludingSubframes();
+    m_rootLayer->syncCompositingState();
 
     // FIXME: Once we gain the ability to do native WebKit animations of generated
     // content, this can change to use them.  Meanwhile, we'll have to animate the
     // CALayer directly:
-    CALayer* caLayer = m_fullScreenRootLayer.get();
+    CALayer* caLayer = m_rootLayer->children().first()->platformLayer();
+    CALayer* presentationLayer = [caLayer presentationLayer] ? (CALayer*)[caLayer presentationLayer] : caLayer;
 
     // Create a transformation matrix that will transform the renderer layer such that
     // the fullscreen element appears to move from its starting position and size to its
     // final one.
-    CGPoint destinationPosition = [(CALayer *)[caLayer presentationLayer] position];
-    CGRect destinationBounds = [(CALayer *)[caLayer presentationLayer] bounds];
+    CGPoint destinationPosition = [presentationLayer position];
+    CGRect destinationBounds = [presentationLayer bounds];
     CGPoint layerAnchor = [caLayer anchorPoint];
     CGPoint initialPosition = CGPointMake(
         m_initialFrame.x() + m_initialFrame.width() * layerAnchor.x,
@@ -268,7 +265,7 @@ void WebFullScreenManagerMac::beginExitFullScreenAnimation(float duration)
         destinationPosition.y - initialPosition.y, 0);
     CATransform3D finalTransform = CATransform3DConcat(shrinkTransform, shiftTransform);
 
-    CATransform3D initialTransform = [(CALayer*)[caLayer presentationLayer] transform];
+    CATransform3D initialTransform = [presentationLayer transform];
 
     // Use a CABasicAnimation here for the zoom effect. We want to be notified that the animation has
     // completed by way of the CAAnimation delegate.

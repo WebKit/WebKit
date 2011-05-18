@@ -1,3 +1,32 @@
+2011-05-17  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Exiting full screen will leave up invisible full-screen window, blocking all mouse clicks.
+        https://bugs.webkit.org/show_bug.cgi?id=60982
+
+        The GraphicsLayer tree has unparented m_fullScreenRootLayer behind our backs, replacing the 
+        tiled layer with a normal one.  Instead of holding on to a specific layer, assume that the 
+        w_rootLayer will only have 0 or 1 children, and if a child is present, then that is our full-
+        screen layer.
+
+        Additionally, check to see if the animating layer's presentationLayer is nil
+        before calling it; asking a nil object for a CATransform3D will give back a struct full of 
+        garbage.
+
+        In WKFullScreenWindowController, when the exit animation completes, ignore the "completed"
+        parameter.  This eliminates the possibility that the full screen window will end up left
+        on top of the screen if the animation is cancelled and a enter full screen animation isn't
+        forthcoming.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]):
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.h:
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::setRootFullScreenLayer):
+        (WebKit::WebFullScreenManagerMac::beginEnterFullScreenAnimation):
+        (WebKit::WebFullScreenManagerMac::beginExitFullScreenAnimation):
+
 2011-05-17  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Alice Liu.
