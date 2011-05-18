@@ -1,3 +1,14 @@
+2011-05-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Disable gc validation in release builds
+        https://bugs.webkit.org/show_bug.cgi?id=60680
+
+        Add back the NDEBUG check
+
+        * wtf/Platform.h:
+
 2011-05-17  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled out attempts to fix EFL build because they're not enough -- the

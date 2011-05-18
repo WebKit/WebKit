@@ -1214,7 +1214,10 @@
 #define WTF_USE_UNIX_DOMAIN_SOCKETS 1
 #endif
 
-/* Make this debug only again -- https://bugs.webkit.org/show_bug.cgi?id=60680 */
+#ifndef NDEBUG
+#ifndef ENABLE_GC_VALIDATION
 #define ENABLE_GC_VALIDATION 1
+#endif
+#endif
 
 #endif /* WTF_Platform_h */
