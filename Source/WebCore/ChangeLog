@@ -1,3 +1,15 @@
+2011-05-17  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Make sure that AudioNode gets re-enabled after having been disconnected and re-connected.
+        https://bugs.webkit.org/show_bug.cgi?id=60995
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioNode.cpp:
+        (WebCore::AudioNode::ref):
+
 2011-05-17  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

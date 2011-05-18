@@ -191,11 +191,16 @@ void AudioNode::ref(RefType refType)
     printf("%p: %d: AudioNode::ref(%d) %d %d %d\n", this, type(), refType, m_normalRefCount, m_connectionRefCount, m_disabledRefCount);
 #endif
 
-    if (m_connectionRefCount == 1 && refType == RefTypeConnection) {
-        // FIXME: implement wake-up - this is an advanced feature and is not necessary in a simple implementation.
-        // We should not be "actively" connected to anything, but now we're "waking up"
-        // For example, a note which has finished playing, but is now being played again.
-        // Note that if this is considered a worthwhile feature to add, then an evaluation of the locking considerations must be made.
+    // See the disabling code in finishDeref() below. This handles the case where a node
+    // is being re-connected after being used at least once and disconnected.
+    // In this case, we need to re-enable.
+    if (m_isDisabled && m_connectionRefCount > 0 && refType == RefTypeConnection) {
+        ASSERT(isMainThread());
+        AudioContext::AutoLocker locker(context());
+
+        m_isDisabled = false;
+        for (unsigned i = 0; i < m_outputs.size(); ++i)
+            output(i)->enable();
     }
 }
 
