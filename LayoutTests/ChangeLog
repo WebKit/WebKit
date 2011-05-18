@@ -1,3 +1,14 @@
+2011-05-18  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Beth Dakin.
+
+        Tests that we do not crash when prematurely calling removeChild,
+        followed by destroy call on table caption.
+        https://bugs.webkit.org/show_bug.cgi?id=61083
+
+        * fast/table/table-captions-child-visible-crash-expected.txt: Added.
+        * fast/table/table-captions-child-visible-crash.html: Added.
+
 2011-05-18  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

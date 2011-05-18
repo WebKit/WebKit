@@ -701,10 +701,6 @@ void RenderTable::recalcCaption(RenderBlock* caption) const
         m_caption = caption;
         m_caption->setNeedsLayout(true);
     } else {
-        // Detach the child from the table.
-        const RenderBlock* block = static_cast<const RenderBlock*>(this);
-        const_cast<RenderBlock*>(block)->removeChild(caption);
-
         // Make sure to null out the child's renderer.
         if (Node* node = caption->node())
             node->setRenderer(0);
