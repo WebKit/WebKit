@@ -93,7 +93,8 @@ void CCHeadsUpDisplay::draw()
         hudSize.setHeight(128);
     }
 
-    m_hudTexture->reserve(hudSize, GraphicsContext3D::RGBA);
+    if (!m_hudTexture->reserve(hudSize, GraphicsContext3D::RGBA))
+        return;
 
     // Render pixels into the texture.
     PlatformCanvas canvas;
