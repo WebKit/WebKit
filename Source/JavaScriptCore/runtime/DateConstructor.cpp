@@ -29,7 +29,6 @@
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
-#include "Lookup.h"
 #include "ObjectPrototype.h"
 #include <math.h>
 #include <time.h>

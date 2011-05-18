@@ -1,5 +1,14 @@
 2011-05-17  Geoffrey Garen  <ggaren@apple.com>
 
+        Rolled out attempts to fix EFL build because they're not enough -- the
+        build script needs to be fixed.
+
+        * runtime/BooleanPrototype.cpp:
+        * runtime/DateConstructor.cpp:
+        * runtime/ErrorPrototype.cpp:
+
+2011-05-17  Geoffrey Garen  <ggaren@apple.com>
+
         More attempts to work around the EFL build system being borken.
 
         * runtime/DateConstructor.cpp:
