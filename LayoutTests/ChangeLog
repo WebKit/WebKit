@@ -2,6 +2,14 @@
 
         Unreviewed Chromium test expectation change.
 
+        Removed duplcate entries added by r86749
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-18  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
         Since Chromium r85744, tests for <details> element pass on Mac and TEXT mismatch on Linux.
 
         * platform/chromium/test_expectations.txt:
