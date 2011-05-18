@@ -1310,10 +1310,6 @@ fast/multicol/hit-test-above-or-below.html
 # https://bugs.webkit.org/show_bug.cgi?id=37697
 fast/url/host.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=39852
-fast/encoding/yentest.html
-fast/encoding/yentest2.html
-
 # -- fail with --platform mac --ignore-metrics
 fast/box-sizing/percentage-height.html
 fast/css/acid2-pixel.html

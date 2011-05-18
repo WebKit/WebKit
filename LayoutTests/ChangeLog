@@ -1,3 +1,12 @@
+2011-05-18  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Oliver Hunt.
+
+        [Qt] fast/encoding/yentest.html and yentest2.html fail
+        https://bugs.webkit.org/show_bug.cgi?id=39852
+
+        * platform/qt/Skipped: Unskip passing tests.
+
 2011-05-18  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed.
