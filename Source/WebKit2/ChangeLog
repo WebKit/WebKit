@@ -1,3 +1,14 @@
+2011-05-17  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Alice Liu.
+
+        <rdar://problem/9458300> REGRESSION (r86724): Repro crash loading any webpage in WebKit2 on SnowLeopard
+        https://bugs.webkit.org/show_bug.cgi?id=61022
+
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain): As long as we are not loading the shim on Snow Leopard, we should not
+        try to initialize it.
+
 2011-05-17  Brady Eidson  <beidson@apple.com>
 
         Rubberstamped by Sam Weinig.
