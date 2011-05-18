@@ -93,10 +93,10 @@ WebInspector.SourceFile.prototype = {
 
         if (!this._concatenatedScripts)
             this._concatenatedScripts = {};
-        if (this._concatenatedScripts[script.sourceID])
+        if (this._concatenatedScripts[script.sourceId])
             return;
         for (var i = 0; i < this._scripts.length; ++i)
-            this._concatenatedScripts[this._scripts[i].sourceID] = true;
+            this._concatenatedScripts[this._scripts[i].sourceId] = true;
 
         this.reload();
 
@@ -192,7 +192,7 @@ WebInspector.SourceFile.prototype = {
             }
             var end = { lineNumber: lineNumber, columnNumber: columnNumber };
             if (script)
-                scriptRanges.push({ start: start, end: end, sourceID: script.sourceID });
+                scriptRanges.push({ start: start, end: end, sourceId: script.sourceId });
         }
 
         var scriptOpenTag = "<script>";
@@ -289,7 +289,7 @@ WebInspector.SourceMapping.prototype = {
                 break;
             closestScript = script;
         }
-        return { sourceID: closestScript.sourceID, lineNumber: lineNumber, columnNumber: columnNumber };
+        return { sourceId: closestScript.sourceId, lineNumber: lineNumber, columnNumber: columnNumber };
     }
 }
 
