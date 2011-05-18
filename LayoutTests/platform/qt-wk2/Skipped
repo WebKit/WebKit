@@ -3411,6 +3411,8 @@ fast/dom/Range/surroundContents-1.html
 fast/dom/Window/open-existing-pop-up-blocking.html
 fast/forms/button-align.html
 fast/text/text-letter-spacing.html
+http/tests/misc/generated-content-inside-table.html
+http/tests/misc/iframe404.html
 http/tests/security/contentSecurityPolicy/inline-script-blocked-goofy.html
 http/tests/security/cross-frame-access-callback-explicit-domain-DENY.html
 transitions/hang-with-bad-transition-list.html

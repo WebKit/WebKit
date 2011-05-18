@@ -1,3 +1,9 @@
+2011-05-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Skip two failing tests.
+
+        * platform/qt-wk2/Skipped:
+
 2011-05-18  Zoltan Horvath  <zoltan@webkit.org>
 
         Remove whitespace from the line of fast/forms/ValidityState-valueMissing-002.html
