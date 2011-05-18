@@ -1,3 +1,20 @@
+2011-05-16  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Disable keyboard input (with exceptions) in full-screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=60943
+
+        Tests: fullscreen/full-screen-keyboard-disabled.html
+               fullscreen/full-screen-keyboard-enabled.html
+
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::isKeyEventAllowedInFullScreen): Added.  Implements the 
+            list of allowed keyboard events in the proposed API.
+        (WebCore::EventHandler::keyEvent): Discard events which are not allowed in
+            full-screen mode.
+        * page/EventHandler.h:
+
 2011-05-17  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

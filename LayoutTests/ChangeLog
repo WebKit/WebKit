@@ -1,3 +1,15 @@
+2011-05-16  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Disable keyboard input (with exceptions) in full-screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=60943
+
+        * fullscreen/full-screen-keyboard-disabled-expected.txt: Added.
+        * fullscreen/full-screen-keyboard-disabled.html: Added.
+        * fullscreen/full-screen-keyboard-enabled-expected.txt: Added.
+        * fullscreen/full-screen-keyboard-enabled.html: Added.
+
 2011-05-17  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
