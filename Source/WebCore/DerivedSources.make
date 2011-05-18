@@ -353,6 +353,7 @@ DOM_CLASSES = \
     StorageEvent \
     StorageInfo \
     StorageInfoErrorCallback \
+    StorageInfoQuotaCallback \
     StorageInfoUsageCallback \
     StringCallback \
     SVGAElement \

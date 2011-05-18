@@ -2624,6 +2624,8 @@
 		892CF20C134C8BB300AAEDA1 /* JSStorageInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF204134C8BB300AAEDA1 /* JSStorageInfo.h */; };
 		892CF20D134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 892CF205134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.cpp */; };
 		892CF20E134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF206134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.h */; };
+		892CF20F134C8BB300AAEDA1 /* JSStorageInfoQuotaCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 892CF207134C8BB300AAEDA1 /* JSStorageInfoQuotaCallback.cpp */; };
+		892CF210134C8BB300AAEDA1 /* JSStorageInfoQuotaCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF208134C8BB300AAEDA1 /* JSStorageInfoQuotaCallback.h */; };
 		892CF211134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 892CF209134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp */; };
 		892CF212134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 892CF20A134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h */; };
 		893C47A71238908B002B3D86 /* FileCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = 893C47A51238908B002B3D86 /* FileCallback.h */; };
@@ -17010,6 +17012,8 @@
 				892CF204134C8BB300AAEDA1 /* JSStorageInfo.h */,
 				892CF205134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.cpp */,
 				892CF206134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.h */,
+				892CF207134C8BB300AAEDA1 /* JSStorageInfoQuotaCallback.cpp */,
+				892CF208134C8BB300AAEDA1 /* JSStorageInfoQuotaCallback.h */,
 				892CF209134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp */,
 				892CF20A134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h */,
 			);
@@ -21602,6 +21606,7 @@
 				51E0BAEB0DA55D4A00A9E417 /* JSStorageEvent.h in Headers */,
 				892CF20C134C8BB300AAEDA1 /* JSStorageInfo.h in Headers */,
 				892CF20E134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.h in Headers */,
+				892CF210134C8BB300AAEDA1 /* JSStorageInfoQuotaCallback.h in Headers */,
 				892CF212134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h in Headers */,
 				0FF5026A102BA9430066F39A /* JSStyleMedia.h in Headers */,
 				BCE0139B0C0BEF180043860A /* JSStyleSheet.h in Headers */,
@@ -24485,6 +24490,7 @@
 				51E0BAEA0DA55D4A00A9E417 /* JSStorageEvent.cpp in Sources */,
 				892CF20B134C8BB300AAEDA1 /* JSStorageInfo.cpp in Sources */,
 				892CF20D134C8BB300AAEDA1 /* JSStorageInfoErrorCallback.cpp in Sources */,
+				892CF20F134C8BB300AAEDA1 /* JSStorageInfoQuotaCallback.cpp in Sources */,
 				892CF211134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp in Sources */,
 				0FF50269102BA9430066F39A /* JSStyleMedia.cpp in Sources */,
 				BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */,

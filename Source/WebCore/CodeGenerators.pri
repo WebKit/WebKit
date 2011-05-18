@@ -361,6 +361,7 @@ IDL_BINDINGS += \
     storage/StorageEvent.idl \
     storage/StorageInfo.idl \
     storage/StorageInfoErrorCallback.idl \
+    storage/StorageInfoQuotaCallback.idl \
     storage/StorageInfoUsageCallback.idl \
     storage/SQLError.idl \
     storage/SQLException.idl \

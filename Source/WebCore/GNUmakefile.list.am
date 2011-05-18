@@ -443,6 +443,7 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSStorage.h \
 	DerivedSources/WebCore/JSStorageInfo.h \
 	DerivedSources/WebCore/JSStorageInfoErrorCallback.h \
+	DerivedSources/WebCore/JSStorageInfoQuotaCallback.h \
 	DerivedSources/WebCore/JSStorageInfoUsageCallback.h \
 	DerivedSources/WebCore/JSStyleMedia.cpp \
 	DerivedSources/WebCore/JSStyleMedia.h \
@@ -3208,6 +3209,7 @@ webcore_sources += \
 	Source/WebCore/storage/StorageInfo.cpp \
 	Source/WebCore/storage/StorageInfo.h \
 	Source/WebCore/storage/StorageInfoErrorCallback.h \
+	Source/WebCore/storage/StorageInfoQuotaCallback.h \
 	Source/WebCore/storage/StorageInfoUsageCallback.h \
 	Source/WebCore/storage/StorageMap.cpp \
 	Source/WebCore/storage/StorageMap.h \

@@ -202,6 +202,7 @@ WONTFIX SKIP MAC WIN : platform/chromium/fast/text/chromium-linux-fontconfig-ren
 
 // Quota API is not yet enabled by default.
 BUGCR61676 SKIP : storage/storageinfo-query-usage.html = FAIL
+BUGCR61676 SKIP : storage/storageinfo-request-quota.html = FAIL
 
 // Animation API is disabled
 WONTFIX SKIP : animations/animation-api-1.html = FAIL

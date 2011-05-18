@@ -1254,6 +1254,7 @@ fast/transforms/selection-bounds-in-transformed-view.html
 
 # Quota API is not supported.
 storage/storageinfo-query-usage.html
+storage/storageinfo-request-quota.html
 
 # Expose title direction in WebKit API
 # https://bugs.webkit.org/show_bug.cgi?id=58845

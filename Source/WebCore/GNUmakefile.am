@@ -256,6 +256,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSStorageInfo.h \
 	DerivedSources/WebCore/JSStorageInfoErrorCallback.cpp \
 	DerivedSources/WebCore/JSStorageInfoErrorCallback.h \
+	DerivedSources/WebCore/JSStorageInfoQuotaCallback.cpp \
+	DerivedSources/WebCore/JSStorageInfoQuotaCallback.h \
 	DerivedSources/WebCore/JSStorageInfoUsageCallback.cpp \
 	DerivedSources/WebCore/JSStorageInfoUsageCallback.h
 endif # END ENABLE_QUOTA

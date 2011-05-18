@@ -282,6 +282,7 @@
 #include "JSStorageEvent.cpp"
 #include "JSStorageInfo.cpp"
 #include "JSStorageInfoErrorCallback.cpp"
+#include "JSStorageInfoQuotaCallback.cpp"
 #include "JSStorageInfoUsageCallback.cpp"
 #include "JSStringCallback.cpp"
 #include "JSStyleMedia.cpp"

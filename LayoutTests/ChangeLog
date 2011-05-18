@@ -1,3 +1,19 @@
+2011-05-18  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by David Levin.
+
+        Expose webkitStorageInfo.requestQuota() for Quota API if QUOTA flag is enabled
+        https://bugs.webkit.org/show_bug.cgi?id=59681
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * storage/script-tests/storageinfo-request-quota.js: Added.
+        * storage/storageinfo-request-quota-expected.txt: Added.
+        * storage/storageinfo-request-quota.html: Added.
+
 2011-05-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Skip two failing tests.

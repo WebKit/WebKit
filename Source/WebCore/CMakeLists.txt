@@ -376,6 +376,7 @@ SET(WebCore_IDL_FILES
     storage/StorageEvent.idl
     storage/StorageInfo.idl
     storage/StorageInfoErrorCallback.idl
+    storage/StorageInfoQuotaCallback.idl
     storage/StorageInfoUsageCallback.idl
 
     webaudio/AudioBuffer.idl
