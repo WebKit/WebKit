@@ -1012,7 +1012,10 @@ void MediaPlayerPrivateGStreamer::sourceChanged()
                        reinterpret_cast<GstObject*>(element.get()));
 
     if (WEBKIT_IS_WEB_SRC(element.get())) {
-        Frame* frame = m_player->frameView() ? m_player->frameView()->frame() : 0;
+        Frame* frame = 0;
+        Document* document = m_player->mediaPlayerClient()->mediaPlayerOwningDocument();
+        if (document)
+            frame = document->frame();
 
         if (frame)
             webKitWebSrcSetFrame(WEBKIT_WEB_SRC(element.get()), frame);

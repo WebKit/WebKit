@@ -1,3 +1,15 @@
+2011-05-18  Alexis Menard  <alexis.menard@openbossa.org>, Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        MediaElements fails to load the data in some cases.
+        https://bugs.webkit.org/show_bug.cgi?id=60760
+
+        This test creates an hidden video element and make sure the loading works.
+
+        * http/tests/media/media-can-load-when-hidden-expected.txt: Added.
+        * http/tests/media/media-can-load-when-hidden.html: Added.
+
 2011-05-18  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed.

@@ -1,3 +1,33 @@
+2011-05-18  Alexis Menard  <alexis.menard@openbossa.org>, Simon Hausmann  <simon.hausmann@nokia.com>
+
+        Reviewed by Eric Carlson.
+
+        MediaElements fails to load the data in some cases.
+        https://bugs.webkit.org/show_bug.cgi?id=60760
+
+        WebKitWebSourceGStreamer is the interface between WebKit and GStreamer
+        that uses the ResourceHandle API to request data and pass it down. For
+        our builds it is absolutely essential that we have a NetworkingContext
+        available there, in order to get access to the QNetworkAccessManager.
+        No access means we basically cannot load the video. The WebSource gains
+        access to the NetworkingContext through a WebCore::Frame pointer it has.
+
+        MediaPlayerPrivateGStreamer is responsible for propagating a pointer of
+        the WebCore::Frame to the WebKitWebSource in
+        mediaPlayerPrivateSourceChangedCallback. In there we used the MediaPlayer's
+        frameView() accessor to access the frame. However the frameView() member
+        is only set through the render tree's RenderVideo, which is rather unreliable
+        given that some sites create "fake" video tags initially that only become
+        visible later (or never).
+
+        A more reliable way is to simply use the document of the MediaPlayerClient,
+        which is provided at constructor time.
+
+        Test: http/tests/media/media-can-load-when-hidden.html
+
+        * platform/graphics/gstreamer/MediaPlayerPrivateGStreamer.cpp:
+        (WebCore::MediaPlayerPrivateGStreamer::sourceChanged):
+
 2011-05-18  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
