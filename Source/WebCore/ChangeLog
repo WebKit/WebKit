@@ -1,3 +1,14 @@
+2011-05-18  Pratik Solanki  <psolanki@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Don't use DEFINE_STATIC_LOCAL with an unsigned
+        https://bugs.webkit.org/show_bug.cgi?id=61026
+
+        * storage/StorageTracker.cpp:
+        (WebCore::StorageTracker::syncFileSystemAndTrackerDatabase): DEFINE_STATIC_LOCAL is meant
+        for objects, not unsigned ints. We can just use static here.
+
 2011-05-18  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.
