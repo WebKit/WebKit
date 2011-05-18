@@ -1061,6 +1061,7 @@
             'svg/SVGTransformList.h',
             'svg/animation/SMILTime.h',
             'svg/animation/SVGSMILElement.h',
+            'svg/properties/SVGAnimatedEnumerationPropertyTearOff.h',
             'svg/properties/SVGAnimatedListPropertyTearOff.h',
             'svg/properties/SVGAnimatedProperty.h',
             'svg/properties/SVGAnimatedPropertyDescription.h',

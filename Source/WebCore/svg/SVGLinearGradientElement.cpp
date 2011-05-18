@@ -146,7 +146,7 @@ void SVGLinearGradientElement::collectGradientAttributes(LinearGradientAttribute
 
     while (current) {
         if (!attributes.hasSpreadMethod() && current->hasAttribute(SVGNames::spreadMethodAttr))
-            attributes.setSpreadMethod((GradientSpreadMethod) current->spreadMethod());
+            attributes.setSpreadMethod(current->spreadMethod());
 
         if (!attributes.hasBoundingBoxMode() && current->hasAttribute(SVGNames::gradientUnitsAttr))
             attributes.setBoundingBoxMode(current->gradientUnits() == SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);

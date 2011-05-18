@@ -34,19 +34,19 @@
 #include "SVGStopElement.h"
 #include "SVGTransformList.h"
 #include "SVGTransformable.h"
-#include "SVGUnitTypes.h"
 
 namespace WebCore {
 
 // Animated property definitions
-DEFINE_ANIMATED_ENUMERATION(SVGGradientElement, SVGNames::spreadMethodAttr, SpreadMethod, spreadMethod)
-DEFINE_ANIMATED_ENUMERATION(SVGGradientElement, SVGNames::gradientUnitsAttr, GradientUnits, gradientUnits)
+DEFINE_ANIMATED_ENUMERATION(SVGGradientElement, SVGNames::spreadMethodAttr, SpreadMethod, spreadMethod, SVGGradientElement::SVGSpreadMethodType)
+DEFINE_ANIMATED_ENUMERATION(SVGGradientElement, SVGNames::gradientUnitsAttr, GradientUnits, gradientUnits, SVGUnitTypes::SVGUnitType)
 DEFINE_ANIMATED_TRANSFORM_LIST(SVGGradientElement, SVGNames::gradientTransformAttr, GradientTransform, gradientTransform)
 DEFINE_ANIMATED_STRING(SVGGradientElement, XLinkNames::hrefAttr, Href, href)
 DEFINE_ANIMATED_BOOLEAN(SVGGradientElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
 SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
+    , m_spreadMethod(SVG_SPREADMETHOD_PAD)
     , m_gradientUnits(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX)
 {
 }
@@ -54,10 +54,9 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* d
 void SVGGradientElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::gradientUnitsAttr) {
-        if (attr->value() == "userSpaceOnUse")
-            setGradientUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if (attr->value() == "objectBoundingBox")
-            setGradientUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attr->value());
+        if (propertyValue > 0)
+            setGradientUnitsBaseValue(propertyValue);
     } else if (attr->name() == SVGNames::gradientTransformAttr) {
         SVGTransformList newList;
         if (!SVGTransformable::parseTransformAttribute(newList, attr->value()))
@@ -66,12 +65,9 @@ void SVGGradientElement::parseMappedAttribute(Attribute* attr)
         detachAnimatedGradientTransformListWrappers(newList.size());
         setGradientTransformBaseValue(newList);
     } else if (attr->name() == SVGNames::spreadMethodAttr) {
-        if (attr->value() == "reflect")
-            setSpreadMethodBaseValue(SpreadMethodReflect);
-        else if (attr->value() == "repeat")
-            setSpreadMethodBaseValue(SpreadMethodRepeat);
-        else if (attr->value() == "pad")
-            setSpreadMethodBaseValue(SpreadMethodPad);
+        SVGSpreadMethodType propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(attr->value());
+        if (propertyValue > 0)
+            setSpreadMethodBaseValue(propertyValue);
     } else {
         if (SVGURIReference::parseMappedAttribute(attr))
             return;

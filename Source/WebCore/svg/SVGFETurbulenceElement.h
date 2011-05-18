@@ -59,8 +59,66 @@ private:
     DECLARE_ANIMATED_NUMBER(BaseFrequencyY, baseFrequencyY)
     DECLARE_ANIMATED_INTEGER(NumOctaves, numOctaves)
     DECLARE_ANIMATED_NUMBER(Seed, seed)
-    DECLARE_ANIMATED_ENUMERATION(StitchTiles, stitchTiles)
-    DECLARE_ANIMATED_ENUMERATION(Type, type)
+    DECLARE_ANIMATED_ENUMERATION(StitchTiles, stitchTiles, SVGStitchOptions)
+    DECLARE_ANIMATED_ENUMERATION(Type, type, TurbulenceType)
+};
+
+template<>
+struct SVGPropertyTraits<SVGStitchOptions> {
+    static SVGStitchOptions highestEnumValue() { return SVG_STITCHTYPE_NOSTITCH; }
+
+    static String toString(SVGStitchOptions type)
+    {
+        switch (type) {
+        case SVG_STITCHTYPE_UNKNOWN:
+            return emptyString();
+        case SVG_STITCHTYPE_STITCH:
+            return "stitch";
+        case SVG_STITCHTYPE_NOSTITCH:
+            return "noStitch";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static SVGStitchOptions fromString(const String& value)
+    {
+        if (value == "stitch")
+            return SVG_STITCHTYPE_STITCH;
+        if (value == "noStitch")
+            return SVG_STITCHTYPE_NOSTITCH;
+        return SVG_STITCHTYPE_UNKNOWN;
+    }
+};
+
+template<>
+struct SVGPropertyTraits<TurbulenceType> {
+    static TurbulenceType highestEnumValue() { return FETURBULENCE_TYPE_TURBULENCE; }
+
+    static String toString(TurbulenceType type)
+    {
+        switch (type) {
+        case FETURBULENCE_TYPE_UNKNOWN:
+            return emptyString();
+        case FETURBULENCE_TYPE_FRACTALNOISE:
+            return "fractalNoise";
+        case FETURBULENCE_TYPE_TURBULENCE:
+            return "turbulence";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static TurbulenceType fromString(const String& value)
+    {
+        if (value == "fractalNoise")
+            return FETURBULENCE_TYPE_FRACTALNOISE;
+        if (value == "turbulence")
+            return FETURBULENCE_TYPE_TURBULENCE;
+        return FETURBULENCE_TYPE_UNKNOWN;
+    }
 };
 
 } // namespace WebCore

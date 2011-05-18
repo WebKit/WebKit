@@ -188,35 +188,13 @@ static TextStream& operator<<(TextStream& ts, const WindRule rule)
 
 static TextStream& operator<<(TextStream& ts, const SVGUnitTypes::SVGUnitType& unitType)
 {
-    switch (unitType) {
-    case SVGUnitTypes::SVG_UNIT_TYPE_UNKNOWN:
-        ts << "unknown";
-        break;
-    case SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE:
-        ts << "userSpaceOnUse";
-        break;
-    case SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX:
-        ts << "objectBoundingBox";
-        break;
-    }
-
+    ts << SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::toString(unitType);
     return ts;
 }
 
 static TextStream& operator<<(TextStream& ts, const SVGMarkerElement::SVGMarkerUnitsType& markerUnit)
 {
-    switch (markerUnit) {
-    case SVGMarkerElement::SVG_MARKERUNITS_UNKNOWN:
-        ts << "unknown";
-        break;
-    case SVGMarkerElement::SVG_MARKERUNITS_USERSPACEONUSE:
-        ts << "userSpaceOnUse";
-        break;
-    case SVGMarkerElement::SVG_MARKERUNITS_STROKEWIDTH:
-        ts << "strokeWidth";
-        break;
-    }
-
+    ts << SVGPropertyTraits<SVGMarkerElement::SVGMarkerUnitsType>::toString(markerUnit);
     return ts;
 }
 
@@ -273,21 +251,9 @@ static TextStream& operator<<(TextStream& ts, LineJoin style)
     return ts;
 }
 
-// FIXME: Maybe this should be in Gradient.cpp
-static TextStream& operator<<(TextStream& ts, GradientSpreadMethod mode)
+static TextStream& operator<<(TextStream& ts, const SVGGradientElement::SVGSpreadMethodType& type)
 {
-    switch (mode) {
-    case SpreadMethodPad:
-        ts << "PAD";
-        break;
-    case SpreadMethodRepeat:
-        ts << "REPEAT";
-        break;
-    case SpreadMethodReflect:
-        ts << "REFLECT";
-        break;
-    }
-
+    ts << SVGPropertyTraits<SVGGradientElement::SVGSpreadMethodType>::toString(type).upper();
     return ts;
 }
 
@@ -534,11 +500,11 @@ static inline String boundingBoxModeString(bool boundingBoxMode)
     return boundingBoxMode ? "objectBoundingBox" : "userSpaceOnUse";
 }
 
-static inline void writeCommonGradientProperties(TextStream& ts, GradientSpreadMethod spreadMethod, const AffineTransform& gradientTransform, bool boundingBoxMode)
+static inline void writeCommonGradientProperties(TextStream& ts, SVGGradientElement::SVGSpreadMethodType spreadMethod, const AffineTransform& gradientTransform, bool boundingBoxMode)
 {
     writeNameValuePair(ts, "gradientUnits", boundingBoxModeString(boundingBoxMode));
 
-    if (spreadMethod != SpreadMethodPad)
+    if (spreadMethod != SVGGradientElement::SVG_SPREADMETHOD_PAD)
         ts << " [spreadMethod=" << spreadMethod << "]";
 
     if (!gradientTransform.isIdentity())

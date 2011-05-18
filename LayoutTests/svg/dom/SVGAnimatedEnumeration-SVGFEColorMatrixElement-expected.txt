@@ -1,0 +1,45 @@
+This test checks the use of SVGAnimatedEnumeration within SVGFEColorMatrixElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial 'type; value
+PASS feColorMatrixElement.type.toString() is "[object SVGAnimatedEnumeration]"
+PASS typeof(feColorMatrixElement.type.baseVal) is "number"
+PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_MATRIX
+
+Switch to 'saturate'
+PASS feColorMatrixElement.type.baseVal = SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_SATURATE is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_SATURATE
+PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_SATURATE
+PASS feColorMatrixElement.getAttribute('type') is "saturate"
+
+Switch to 'hueRotate'
+PASS feColorMatrixElement.type.baseVal = SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_HUEROTATE is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_HUEROTATE
+PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_HUEROTATE
+PASS feColorMatrixElement.getAttribute('type') is "hueRotate"
+
+Switch to 'luminanceToAlpha'
+PASS feColorMatrixElement.type.baseVal = SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA
+PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA
+PASS feColorMatrixElement.getAttribute('type') is "luminanceToAlpha"
+
+Try setting invalid values
+PASS feColorMatrixElement.type.baseVal = 5 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA
+PASS feColorMatrixElement.getAttribute('type') is "luminanceToAlpha"
+PASS feColorMatrixElement.type.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA
+PASS feColorMatrixElement.getAttribute('type') is "luminanceToAlpha"
+PASS feColorMatrixElement.type.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA
+PASS feColorMatrixElement.getAttribute('type') is "luminanceToAlpha"
+
+Switch to 'matrix'
+PASS feColorMatrixElement.type.baseVal = SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_MATRIX is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_MATRIX
+PASS feColorMatrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_MATRIX
+PASS feColorMatrixElement.getAttribute('type') is "matrix"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

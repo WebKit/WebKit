@@ -2262,6 +2262,7 @@ HEADERS += \
     svg/graphics/filters/SVGFilterBuilder.h \
     svg/graphics/filters/SVGFilter.h \
     svg/graphics/SVGImage.h \
+    svg/properties/SVGAnimatedEnumerationPropertyTearOff.h \
     svg/properties/SVGAnimatedListPropertyTearOff.h \
     svg/properties/SVGAnimatedPathSegListPropertyTearOff.h \
     svg/properties/SVGAnimatedProperty.h \

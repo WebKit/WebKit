@@ -32,7 +32,7 @@ namespace WebCore {
 
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGFEMorphologyElement, SVGNames::inAttr, In1, in1)
-DEFINE_ANIMATED_ENUMERATION(SVGFEMorphologyElement, SVGNames::operatorAttr, _operator, _operator)
+DEFINE_ANIMATED_ENUMERATION(SVGFEMorphologyElement, SVGNames::operatorAttr, _operator, _operator, MorphologyOperatorType)
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEMorphologyElement, SVGNames::radiusAttr, radiusXIdentifier(), RadiusX, radiusX)
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEMorphologyElement, SVGNames::radiusAttr, radiusYIdentifier(), RadiusY, radiusY)
 
@@ -71,10 +71,9 @@ void SVGFEMorphologyElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::operatorAttr) {
-        if (value == "erode")
-            set_operatorBaseValue(FEMORPHOLOGY_OPERATOR_ERODE);
-        else if (value == "dilate")
-            set_operatorBaseValue(FEMORPHOLOGY_OPERATOR_DILATE);
+        MorphologyOperatorType propertyValue = SVGPropertyTraits<MorphologyOperatorType>::fromString(value);
+        if (propertyValue > 0)
+            set_operatorBaseValue(propertyValue);
     } else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else if (attr->name() == SVGNames::radiusAttr) {
@@ -91,7 +90,7 @@ bool SVGFEMorphologyElement::setFilterEffectAttribute(FilterEffect* effect, cons
 {
     FEMorphology* morphology = static_cast<FEMorphology*>(effect);
     if (attrName == SVGNames::operatorAttr)
-        return morphology->setMorphologyOperator(static_cast<MorphologyOperatorType>(_operator()));
+        return morphology->setMorphologyOperator(_operator());
     if (attrName == SVGNames::radiusAttr)
         return (morphology->setRadiusX(radiusX()) || morphology->setRadiusY(radiusY()));
 
@@ -161,7 +160,7 @@ PassRefPtr<FilterEffect> SVGFEMorphologyElement::build(SVGFilterBuilder* filterB
     if (xRadius < 0 || yRadius < 0)
         return 0;
 
-    RefPtr<FilterEffect> effect = FEMorphology::create(filter, static_cast<MorphologyOperatorType>(_operator()), xRadius, yRadius);
+    RefPtr<FilterEffect> effect = FEMorphology::create(filter, _operator(), xRadius, yRadius);
     effect->inputEffects().append(input1);
     return effect.release();
 }

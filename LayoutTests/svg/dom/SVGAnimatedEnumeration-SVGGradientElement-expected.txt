@@ -1,0 +1,66 @@
+This test checks the use of SVGAnimatedEnumeration within SVGGradientElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial 'gradientUnits' value
+PASS gradientElement.gradientUnits.toString() is "[object SVGAnimatedEnumeration]"
+PASS typeof(gradientElement.gradientUnits.baseVal) is "number"
+PASS gradientElement.gradientUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE
+
+Switch to 'objectBoundingBox'
+PASS gradientElement.gradientUnits.baseVal = SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS gradientElement.gradientUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS gradientElement.getAttribute('gradientUnits') is "objectBoundingBox"
+
+Try setting invalid values
+PASS gradientElement.gradientUnits.baseVal = 3 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS gradientElement.gradientUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS gradientElement.getAttribute('gradientUnits') is "objectBoundingBox"
+PASS gradientElement.gradientUnits.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS gradientElement.gradientUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS gradientElement.getAttribute('gradientUnits') is "objectBoundingBox"
+PASS gradientElement.gradientUnits.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS gradientElement.gradientUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
+PASS gradientElement.getAttribute('gradientUnits') is "objectBoundingBox"
+
+Switch to 'userSpaceOnUse'
+PASS gradientElement.gradientUnits.baseVal = SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE is SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE
+PASS gradientElement.gradientUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE
+PASS gradientElement.getAttribute('gradientUnits') is "userSpaceOnUse"
+
+Check initial 'spreadMethod' value
+PASS gradientElement.spreadMethod.toString() is "[object SVGAnimatedEnumeration]"
+PASS typeof(gradientElement.spreadMethod.baseVal) is "number"
+PASS gradientElement.spreadMethod.baseVal is SVGGradientElement.SVG_SPREADMETHOD_PAD
+
+Switch to 'reflect' value
+PASS gradientElement.spreadMethod.baseVal = SVGGradientElement.SVG_SPREADMETHOD_REFLECT is SVGGradientElement.SVG_SPREADMETHOD_REFLECT
+PASS gradientElement.spreadMethod.baseVal is SVGGradientElement.SVG_SPREADMETHOD_REFLECT
+PASS gradientElement.getAttribute('spreadMethod') is "reflect"
+
+Switch to 'repeat' value
+PASS gradientElement.spreadMethod.baseVal = SVGGradientElement.SVG_SPREADMETHOD_REPEAT is SVGGradientElement.SVG_SPREADMETHOD_REPEAT
+PASS gradientElement.spreadMethod.baseVal is SVGGradientElement.SVG_SPREADMETHOD_REPEAT
+PASS gradientElement.getAttribute('spreadMethod') is "repeat"
+
+Try setting invalid values
+PASS gradientElement.spreadMethod.baseVal = 4 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS gradientElement.spreadMethod.baseVal is SVGGradientElement.SVG_SPREADMETHOD_REPEAT
+PASS gradientElement.getAttribute('spreadMethod') is "repeat"
+PASS gradientElement.spreadMethod.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS gradientElement.spreadMethod.baseVal is SVGGradientElement.SVG_SPREADMETHOD_REPEAT
+PASS gradientElement.getAttribute('spreadMethod') is "repeat"
+PASS gradientElement.spreadMethod.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS gradientElement.spreadMethod.baseVal is SVGGradientElement.SVG_SPREADMETHOD_REPEAT
+PASS gradientElement.getAttribute('spreadMethod') is "repeat"
+
+Switch to 'pad'
+PASS gradientElement.spreadMethod.baseVal = SVGGradientElement.SVG_SPREADMETHOD_PAD is SVGGradientElement.SVG_SPREADMETHOD_PAD
+PASS gradientElement.spreadMethod.baseVal is SVGGradientElement.SVG_SPREADMETHOD_PAD
+PASS gradientElement.getAttribute('spreadMethod') is "pad"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

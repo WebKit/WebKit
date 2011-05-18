@@ -83,8 +83,7 @@ private:
     DECLARE_ANIMATED_LENGTH(RefY, refY)
     DECLARE_ANIMATED_LENGTH(MarkerWidth, markerWidth)
     DECLARE_ANIMATED_LENGTH(MarkerHeight, markerHeight)
-    DECLARE_ANIMATED_ENUMERATION(MarkerUnits, markerUnits)
-    DECLARE_ANIMATED_ENUMERATION(OrientType, orientType)
+    DECLARE_ANIMATED_ENUMERATION(MarkerUnits, markerUnits, SVGMarkerUnitsType)
     DECLARE_ANIMATED_ANGLE(OrientAngle, orientAngle)
 
     // SVGExternalResourcesRequired
@@ -93,6 +92,65 @@ private:
     // SVGFitToViewBox
     DECLARE_ANIMATED_RECT(ViewBox, viewBox)
     DECLARE_ANIMATED_PRESERVEASPECTRATIO(PreserveAspectRatio, preserveAspectRatio)
+
+public:
+    // Custom animated property: orientType
+    SVGMarkerOrientType& orientType() const { return m_orientType.value; }
+    SVGMarkerOrientType& orientTypeBaseValue() const { return m_orientType.value; }
+    void setOrientTypeBaseValue(const SVGMarkerOrientType& type) { m_orientType.value = type; }
+    PassRefPtr<SVGAnimatedEnumerationPropertyTearOff<SVGMarkerOrientType> > orientTypeAnimated();
+
+private:
+    void synchronizeOrientType();
+    mutable SVGSynchronizableAnimatedProperty<SVGMarkerOrientType> m_orientType;
+};
+
+template<>
+struct SVGPropertyTraits<SVGMarkerElement::SVGMarkerUnitsType> {
+    static SVGMarkerElement::SVGMarkerUnitsType highestEnumValue() { return SVGMarkerElement::SVG_MARKERUNITS_STROKEWIDTH; }
+
+    static String toString(SVGMarkerElement::SVGMarkerUnitsType type)
+    {
+        switch (type) {
+        case SVGMarkerElement::SVG_MARKERUNITS_UNKNOWN:
+            return emptyString();
+        case SVGMarkerElement::SVG_MARKERUNITS_USERSPACEONUSE:
+            return "userSpaceOnUse";
+        case SVGMarkerElement::SVG_MARKERUNITS_STROKEWIDTH:
+            return "strokeWidth";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static SVGMarkerElement::SVGMarkerUnitsType fromString(const String& value)
+    {
+        if (value == "userSpaceOnUse")
+            return SVGMarkerElement::SVG_MARKERUNITS_USERSPACEONUSE;
+        if (value == "strokeWidth")
+            return SVGMarkerElement::SVG_MARKERUNITS_STROKEWIDTH;
+        return SVGMarkerElement::SVG_MARKERUNITS_UNKNOWN;
+    }
+};
+
+template<>
+struct SVGPropertyTraits<SVGMarkerElement::SVGMarkerOrientType> {
+    static SVGMarkerElement::SVGMarkerOrientType highestEnumValue() { return SVGMarkerElement::SVG_MARKER_ORIENT_ANGLE; }
+
+    // toString is not needed, synchronizeOrientType() handles this on its own.
+
+    static SVGMarkerElement::SVGMarkerOrientType fromString(const String& value, SVGAngle& angle)
+    {
+        if (value == "auto")
+            return SVGMarkerElement::SVG_MARKER_ORIENT_AUTO;
+
+        ExceptionCode ec = 0;
+        angle.setValueAsString(value, ec);
+        if (!ec)
+            return SVGMarkerElement::SVG_MARKER_ORIENT_ANGLE;
+        return SVGMarkerElement::SVG_MARKER_ORIENT_UNKNOWN;
+    }
 };
 
 }

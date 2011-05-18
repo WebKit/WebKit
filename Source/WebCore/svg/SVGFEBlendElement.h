@@ -46,7 +46,48 @@ private:
     // Animated property declarations
     DECLARE_ANIMATED_STRING(In1, in1)
     DECLARE_ANIMATED_STRING(In2, in2)
-    DECLARE_ANIMATED_ENUMERATION(Mode, mode)
+    DECLARE_ANIMATED_ENUMERATION(Mode, mode, BlendModeType)
+};
+
+template<>
+struct SVGPropertyTraits<BlendModeType> {
+    static BlendModeType highestEnumValue() { return FEBLEND_MODE_LIGHTEN; }
+
+    static String toString(BlendModeType type)
+    {
+        switch (type) {
+        case FEBLEND_MODE_UNKNOWN:
+            return emptyString();
+        case FEBLEND_MODE_NORMAL:
+            return "normal";
+        case FEBLEND_MODE_MULTIPLY:
+            return "multiply";
+        case FEBLEND_MODE_SCREEN:
+            return "screen";
+        case FEBLEND_MODE_DARKEN:
+            return "darken";
+        case FEBLEND_MODE_LIGHTEN:
+            return "lighten";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static BlendModeType fromString(const String& value)
+    {
+        if (value == "normal")
+            return FEBLEND_MODE_NORMAL;
+        if (value == "multiply")
+            return FEBLEND_MODE_MULTIPLY;
+        if (value == "screen")
+            return FEBLEND_MODE_SCREEN;
+        if (value == "darken")
+            return FEBLEND_MODE_DARKEN;
+        if (value == "lighten")
+            return FEBLEND_MODE_LIGHTEN;
+        return FEBLEND_MODE_UNKNOWN;
+    }
 };
 
 } // namespace WebCore

@@ -33,7 +33,7 @@ namespace WebCore {
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGFEBlendElement, SVGNames::inAttr, In1, in1)
 DEFINE_ANIMATED_STRING(SVGFEBlendElement, SVGNames::in2Attr, In2, in2)
-DEFINE_ANIMATED_ENUMERATION(SVGFEBlendElement, SVGNames::modeAttr, Mode, mode)
+DEFINE_ANIMATED_ENUMERATION(SVGFEBlendElement, SVGNames::modeAttr, Mode, mode, BlendModeType)
 
 inline SVGFEBlendElement::SVGFEBlendElement(const QualifiedName& tagName, Document* document)
     : SVGFilterPrimitiveStandardAttributes(tagName, document)
@@ -51,16 +51,9 @@ void SVGFEBlendElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::modeAttr) {
-        if (value == "normal")
-            setModeBaseValue(FEBLEND_MODE_NORMAL);
-        else if (value == "multiply")
-            setModeBaseValue(FEBLEND_MODE_MULTIPLY);
-        else if (value == "screen")
-            setModeBaseValue(FEBLEND_MODE_SCREEN);
-        else if (value == "darken")
-            setModeBaseValue(FEBLEND_MODE_DARKEN);
-        else if (value == "lighten")
-            setModeBaseValue(FEBLEND_MODE_LIGHTEN);
+        BlendModeType propertyValue = SVGPropertyTraits<BlendModeType>::fromString(value);
+        if (propertyValue > 0)
+            setModeBaseValue(propertyValue);
     } else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else if (attr->name() == SVGNames::in2Attr)
@@ -73,7 +66,7 @@ bool SVGFEBlendElement::setFilterEffectAttribute(FilterEffect* effect, const Qua
 {
     FEBlend* blend = static_cast<FEBlend*>(effect);
     if (attrName == SVGNames::modeAttr)
-        return blend->setBlendMode(static_cast<BlendModeType>(mode()));
+        return blend->setBlendMode(mode());
 
     ASSERT_NOT_REACHED();
     return false;
@@ -134,7 +127,7 @@ PassRefPtr<FilterEffect> SVGFEBlendElement::build(SVGFilterBuilder* filterBuilde
     if (!input1 || !input2)
         return 0;
 
-    RefPtr<FilterEffect> effect = FEBlend::create(filter, static_cast<BlendModeType>(mode()));
+    RefPtr<FilterEffect> effect = FEBlend::create(filter, mode());
     FilterEffectVector& inputEffects = effect->inputEffects();
     inputEffects.reserveCapacity(2);
     inputEffects.append(input1);
@@ -145,5 +138,3 @@ PassRefPtr<FilterEffect> SVGFEBlendElement::build(SVGFilterBuilder* filterBuilde
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

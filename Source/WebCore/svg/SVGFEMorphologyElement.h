@@ -50,9 +50,38 @@ private:
 
     // Animated property declarations
     DECLARE_ANIMATED_STRING(In1, in1)
-    DECLARE_ANIMATED_ENUMERATION(_operator, _operator)
+    DECLARE_ANIMATED_ENUMERATION(_operator, _operator, MorphologyOperatorType)
     DECLARE_ANIMATED_NUMBER(RadiusX, radiusX)
     DECLARE_ANIMATED_NUMBER(RadiusY, radiusY)
+};
+
+template<>
+struct SVGPropertyTraits<MorphologyOperatorType> {
+    static MorphologyOperatorType highestEnumValue() { return FEMORPHOLOGY_OPERATOR_DILATE; }
+
+    static String toString(MorphologyOperatorType type)
+    {
+        switch (type) {
+        case FEMORPHOLOGY_OPERATOR_UNKNOWN:
+            return emptyString();
+        case FEMORPHOLOGY_OPERATOR_ERODE:
+            return "erode";
+        case FEMORPHOLOGY_OPERATOR_DILATE:
+            return "dilate";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static MorphologyOperatorType fromString(const String& value)
+    {
+        if (value == "erode")
+            return FEMORPHOLOGY_OPERATOR_ERODE;
+        if (value == "dilate")
+            return FEMORPHOLOGY_OPERATOR_DILATE;
+        return FEMORPHOLOGY_OPERATOR_UNKNOWN;
+    }
 };
 
 } // namespace WebCore

@@ -46,8 +46,45 @@ private:
 
     // Animated property declarations
     DECLARE_ANIMATED_STRING(In1, in1)
-    DECLARE_ANIMATED_ENUMERATION(Type, type)
+    DECLARE_ANIMATED_ENUMERATION(Type, type, ColorMatrixType)
     DECLARE_ANIMATED_NUMBER_LIST(Values, values)
+};
+
+template<>
+struct SVGPropertyTraits<ColorMatrixType> {
+    static ColorMatrixType highestEnumValue() { return FECOLORMATRIX_TYPE_LUMINANCETOALPHA; }
+
+    static String toString(ColorMatrixType type)
+    {
+        switch (type) {
+        case FECOLORMATRIX_TYPE_UNKNOWN:
+            return emptyString();
+        case FECOLORMATRIX_TYPE_MATRIX:
+            return "matrix";
+        case FECOLORMATRIX_TYPE_SATURATE:
+            return "saturate";
+        case FECOLORMATRIX_TYPE_HUEROTATE:
+            return "hueRotate";
+        case FECOLORMATRIX_TYPE_LUMINANCETOALPHA:
+            return "luminanceToAlpha";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static ColorMatrixType fromString(const String& value)
+    {
+        if (value == "matrix")
+            return FECOLORMATRIX_TYPE_MATRIX;
+        if (value == "saturate")
+            return FECOLORMATRIX_TYPE_SATURATE;
+        if (value == "hueRotate")
+            return FECOLORMATRIX_TYPE_HUEROTATE;
+        if (value == "luminanceToAlpha")
+            return FECOLORMATRIX_TYPE_LUMINANCETOALPHA;
+        return FECOLORMATRIX_TYPE_UNKNOWN;
+    }
 };
 
 } // namespace WebCore

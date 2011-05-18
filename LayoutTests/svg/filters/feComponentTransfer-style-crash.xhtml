@@ -8,7 +8,12 @@ if (window.layoutTestController) {
 }
 window.onload = function()
 {
-    document.getElementById('tgt').type.baseVal=99999;
+    try {
+        document.getElementById('tgt').type.baseVal=99999;
+    } catch (e) {
+        alert (e);
+    }
+
     setTimeout(function () {
             document.body.innerHTML = "PASS";
             if (window.layoutTestController)

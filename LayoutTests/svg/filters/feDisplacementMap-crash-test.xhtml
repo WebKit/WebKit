@@ -9,8 +9,13 @@ if (window.layoutTestController) {
 
 window.onload = function()
 {
-    document.getElementById('d').xChannelSelector.baseVal=0x80000000;
-    document.getElementById('d').yChannelSelector.baseVal=0x40000000;
+    try {
+        document.getElementById('d').xChannelSelector.baseVal=0x80000000;
+        document.getElementById('d').yChannelSelector.baseVal=0x40000000;
+    } catch(e) {
+        alert (e);
+    }
+
     setTimeout(function () {
             document.body.innerHTML = "PASS";
             layoutTestController.notifyDone();

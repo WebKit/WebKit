@@ -32,6 +32,7 @@
 #include "SVGLangSpace.h"
 #include "SVGStyledElement.h"
 #include "SVGURIReference.h"
+#include "SVGUnitTypes.h"
 
 namespace WebCore {
 
@@ -65,8 +66,8 @@ private:
     static const AtomicString& filterResYIdentifier();
 
     // Animated property declarations
-    DECLARE_ANIMATED_ENUMERATION(FilterUnits, filterUnits)
-    DECLARE_ANIMATED_ENUMERATION(PrimitiveUnits, primitiveUnits)
+    DECLARE_ANIMATED_ENUMERATION(FilterUnits, filterUnits, SVGUnitTypes::SVGUnitType)
+    DECLARE_ANIMATED_ENUMERATION(PrimitiveUnits, primitiveUnits, SVGUnitTypes::SVGUnitType)
     DECLARE_ANIMATED_LENGTH(X, x)
     DECLARE_ANIMATED_LENGTH(Y, y)
     DECLARE_ANIMATED_LENGTH(Width, width)

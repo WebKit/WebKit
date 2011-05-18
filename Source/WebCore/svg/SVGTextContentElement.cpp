@@ -37,7 +37,7 @@
 namespace WebCore {
 
 // Animated property definitions
-DEFINE_ANIMATED_ENUMERATION(SVGTextContentElement, SVGNames::lengthAdjustAttr, LengthAdjust, lengthAdjust)
+DEFINE_ANIMATED_ENUMERATION(SVGTextContentElement, SVGNames::lengthAdjustAttr, LengthAdjust, lengthAdjust, SVGTextContentElement::SVGLengthAdjustType)
 DEFINE_ANIMATED_BOOLEAN(SVGTextContentElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
 SVGTextContentElement::SVGTextContentElement(const QualifiedName& tagName, Document* document)
@@ -182,10 +182,9 @@ void SVGTextContentElement::selectSubString(unsigned charnum, unsigned nchars, E
 void SVGTextContentElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::lengthAdjustAttr) {
-        if (attr->value() == "spacing")
-            setLengthAdjustBaseValue(LENGTHADJUST_SPACING);
-        else if (attr->value() == "spacingAndGlyphs")
-            setLengthAdjustBaseValue(LENGTHADJUST_SPACINGANDGLYPHS);
+        SVGLengthAdjustType propertyValue = SVGPropertyTraits<SVGLengthAdjustType>::fromString(attr->value());
+        if (propertyValue > 0)
+            setLengthAdjustBaseValue(propertyValue);
     } else if (attr->name() == SVGNames::textLengthAttr) {
         m_textLength.value = SVGLength(LengthModeOther, attr->value());
         if (m_textLength.value.value(this) < 0)

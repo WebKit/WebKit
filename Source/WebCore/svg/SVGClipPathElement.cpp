@@ -30,12 +30,11 @@
 #include "RenderSVGResourceClipper.h"
 #include "SVGNames.h"
 #include "SVGTransformList.h"
-#include "SVGUnitTypes.h"
 
 namespace WebCore {
 
 // Animated property definitions
-DEFINE_ANIMATED_ENUMERATION(SVGClipPathElement, SVGNames::clipPathUnitsAttr, ClipPathUnits, clipPathUnits)
+DEFINE_ANIMATED_ENUMERATION(SVGClipPathElement, SVGNames::clipPathUnitsAttr, ClipPathUnits, clipPathUnits, SVGUnitTypes::SVGUnitType)
 DEFINE_ANIMATED_BOOLEAN(SVGClipPathElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
 
 inline SVGClipPathElement::SVGClipPathElement(const QualifiedName& tagName, Document* document)
@@ -53,10 +52,9 @@ PassRefPtr<SVGClipPathElement> SVGClipPathElement::create(const QualifiedName& t
 void SVGClipPathElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::clipPathUnitsAttr) {
-        if (attr->value() == "userSpaceOnUse")
-            setClipPathUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if (attr->value() == "objectBoundingBox")
-            setClipPathUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attr->value());
+        if (propertyValue > 0)
+            setClipPathUnitsBaseValue(propertyValue);
     } else {
         if (SVGTests::parseMappedAttribute(attr))
             return;

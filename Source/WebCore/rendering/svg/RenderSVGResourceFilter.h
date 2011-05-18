@@ -78,8 +78,8 @@ public:
 
     PassRefPtr<SVGFilterBuilder> buildPrimitives(Filter*);
 
-    SVGUnitTypes::SVGUnitType filterUnits() const { return toUnitType(static_cast<SVGFilterElement*>(node())->filterUnits()); }
-    SVGUnitTypes::SVGUnitType primitiveUnits() const { return toUnitType(static_cast<SVGFilterElement*>(node())->primitiveUnits()); }
+    SVGUnitTypes::SVGUnitType filterUnits() const { return static_cast<SVGFilterElement*>(node())->filterUnits(); }
+    SVGUnitTypes::SVGUnitType primitiveUnits() const { return static_cast<SVGFilterElement*>(node())->primitiveUnits(); }
 
     void primitiveAttributeChanged(RenderObject*, const QualifiedName&);
 

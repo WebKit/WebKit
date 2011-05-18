@@ -99,8 +99,8 @@ void FEDisplacementMap::apply()
     if (!in->hasResult() || !in2->hasResult())
         return;
 
-    if (m_xChannelSelector == CHANNEL_UNKNOWN || m_yChannelSelector == CHANNEL_UNKNOWN)
-        return;
+    ASSERT(m_xChannelSelector != CHANNEL_UNKNOWN);
+    ASSERT(m_yChannelSelector != CHANNEL_UNKNOWN);
 
     ByteArray* dstPixelArray = createPremultipliedImageResult();
     if (!dstPixelArray)

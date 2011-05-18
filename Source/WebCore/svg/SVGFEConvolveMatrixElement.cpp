@@ -42,7 +42,7 @@ DEFINE_ANIMATED_NUMBER(SVGFEConvolveMatrixElement, SVGNames::divisorAttr, Diviso
 DEFINE_ANIMATED_NUMBER(SVGFEConvolveMatrixElement, SVGNames::biasAttr, Bias, bias)
 DEFINE_ANIMATED_INTEGER(SVGFEConvolveMatrixElement, SVGNames::targetXAttr, TargetX, targetX)
 DEFINE_ANIMATED_INTEGER(SVGFEConvolveMatrixElement, SVGNames::targetYAttr, TargetY, targetY)
-DEFINE_ANIMATED_ENUMERATION(SVGFEConvolveMatrixElement, SVGNames::operatorAttr, EdgeMode, edgeMode)
+DEFINE_ANIMATED_ENUMERATION(SVGFEConvolveMatrixElement, SVGNames::edgeModeAttr, EdgeMode, edgeMode, EdgeModeType)
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEConvolveMatrixElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthXIdentifier(), KernelUnitLengthX, kernelUnitLengthX)
 DEFINE_ANIMATED_NUMBER_MULTIPLE_WRAPPERS(SVGFEConvolveMatrixElement, SVGNames::kernelUnitLengthAttr, kernelUnitLengthYIdentifier(), KernelUnitLengthY, kernelUnitLengthY)
 DEFINE_ANIMATED_BOOLEAN(SVGFEConvolveMatrixElement, SVGNames::preserveAlphaAttr, PreserveAlpha, preserveAlpha)
@@ -95,12 +95,9 @@ void SVGFEConvolveMatrixElement::parseMappedAttribute(Attribute* attr)
             setOrderYBaseValue(y);
         }
     } else if (attr->name() == SVGNames::edgeModeAttr) {
-        if (value == "duplicate")
-            setEdgeModeBaseValue(EDGEMODE_DUPLICATE);
-        else if (value == "wrap")
-            setEdgeModeBaseValue(EDGEMODE_WRAP);
-        else if (value == "none")
-            setEdgeModeBaseValue(EDGEMODE_NONE);
+        EdgeModeType propertyValue = SVGPropertyTraits<EdgeModeType>::fromString(attr->value());
+        if (propertyValue > 0)
+            setEdgeModeBaseValue(propertyValue);
     } else if (attr->name() == SVGNames::kernelMatrixAttr) {
         SVGNumberList newList;
         newList.parse(value);
@@ -133,7 +130,7 @@ bool SVGFEConvolveMatrixElement::setFilterEffectAttribute(FilterEffect* effect, 
 {
     FEConvolveMatrix* convolveMatrix = static_cast<FEConvolveMatrix*>(effect);
     if (attrName == SVGNames::edgeModeAttr)
-        return convolveMatrix->setEdgeMode(static_cast<EdgeModeType>(edgeMode()));
+        return convolveMatrix->setEdgeMode(edgeMode());
     if (attrName == SVGNames::divisorAttr)
         return convolveMatrix->setDivisor(divisor());
     if (attrName == SVGNames::biasAttr)
@@ -182,6 +179,39 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
         || attrName == SVGNames::orderAttr
         || attrName == SVGNames::kernelMatrixAttr)
         invalidate();
+}
+
+void SVGFEConvolveMatrixElement::synchronizeProperty(const QualifiedName& attrName)
+{
+    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+
+    if (attrName == anyQName()) {
+        synchronizeEdgeMode();
+        synchronizeDivisor();
+        synchronizeBias();
+        synchronizeTargetX();
+        synchronizeTargetY();
+        synchronizeKernelUnitLengthX();
+        synchronizeKernelUnitLengthY();
+        synchronizePreserveAlpha();
+        return;
+    }
+
+    if (attrName == SVGNames::edgeModeAttr)
+        synchronizeEdgeMode();
+    else if (attrName == SVGNames::divisorAttr)
+        synchronizeDivisor();
+    else if (attrName == SVGNames::biasAttr)
+        synchronizeBias();
+    else if (attrName == SVGNames::targetXAttr)
+        synchronizeTargetX();
+    else if (attrName == SVGNames::targetYAttr)
+        synchronizeTargetY();
+    else if (attrName == SVGNames::kernelUnitLengthAttr) {
+        synchronizeKernelUnitLengthX();
+        synchronizeKernelUnitLengthY();
+    } else if (attrName == SVGNames::preserveAlphaAttr)
+        synchronizePreserveAlpha();
 }
 
 AttributeToPropertyTypeMap& SVGFEConvolveMatrixElement::attributeToPropertyTypeMap()
@@ -251,7 +281,7 @@ PassRefPtr<FilterEffect> SVGFEConvolveMatrixElement::build(SVGFilterBuilder* fil
 
     RefPtr<FilterEffect> effect = FEConvolveMatrix::create(filter,
                     IntSize(orderXValue, orderYValue), divisorValue,
-                    bias(), IntPoint(targetXValue, targetYValue), static_cast<EdgeModeType>(edgeMode()),
+                    bias(), IntPoint(targetXValue, targetYValue), edgeMode(),
                     FloatPoint(kernelUnitLengthX(), kernelUnitLengthX()), preserveAlpha(), kernelMatrix);
     effect->inputEffects().append(input1);
     return effect.release();

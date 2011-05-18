@@ -32,7 +32,7 @@ namespace WebCore {
 
 // Animated property definitions
 DEFINE_ANIMATED_STRING(SVGFEColorMatrixElement, SVGNames::inAttr, In1, in1)
-DEFINE_ANIMATED_ENUMERATION(SVGFEColorMatrixElement, SVGNames::typeAttr, Type, type)
+DEFINE_ANIMATED_ENUMERATION(SVGFEColorMatrixElement, SVGNames::typeAttr, Type, type, ColorMatrixType)
 DEFINE_ANIMATED_NUMBER_LIST(SVGFEColorMatrixElement, SVGNames::valuesAttr, Values, values)
 
 inline SVGFEColorMatrixElement::SVGFEColorMatrixElement(const QualifiedName& tagName, Document* document)
@@ -51,14 +51,9 @@ void SVGFEColorMatrixElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::typeAttr) {
-        if (value == "matrix")
-            setTypeBaseValue(FECOLORMATRIX_TYPE_MATRIX);
-        else if (value == "saturate")
-            setTypeBaseValue(FECOLORMATRIX_TYPE_SATURATE);
-        else if (value == "hueRotate")
-            setTypeBaseValue(FECOLORMATRIX_TYPE_HUEROTATE);
-        else if (value == "luminanceToAlpha")
-            setTypeBaseValue(FECOLORMATRIX_TYPE_LUMINANCETOALPHA);
+        ColorMatrixType propertyValue = SVGPropertyTraits<ColorMatrixType>::fromString(attr->value());
+        if (propertyValue > 0)
+            setTypeBaseValue(propertyValue);
     } else if (attr->name() == SVGNames::inAttr)
         setIn1BaseValue(value);
     else if (attr->name() == SVGNames::valuesAttr) {
@@ -74,7 +69,7 @@ bool SVGFEColorMatrixElement::setFilterEffectAttribute(FilterEffect* effect, con
 {
     FEColorMatrix* colorMatrix = static_cast<FEColorMatrix*>(effect);
     if (attrName == SVGNames::typeAttr)
-        return colorMatrix->setType(static_cast<ColorMatrixType>(type()));
+        return colorMatrix->setType(type());
     if (attrName == SVGNames::valuesAttr)
         return colorMatrix->setValues(values());
 
@@ -136,7 +131,7 @@ PassRefPtr<FilterEffect> SVGFEColorMatrixElement::build(SVGFilterBuilder* filter
         return 0;
 
     Vector<float> filterValues;
-    const ColorMatrixType filterType(static_cast<ColorMatrixType>(type()));
+    ColorMatrixType filterType = type();
 
     // Use defaults if values is empty (SVG 1.1 15.10).
     if (!hasAttribute(SVGNames::valuesAttr)) {

@@ -48,9 +48,46 @@ private:
     // Animated property declarations
     DECLARE_ANIMATED_STRING(In1, in1)
     DECLARE_ANIMATED_STRING(In2, in2)
-    DECLARE_ANIMATED_ENUMERATION(XChannelSelector, xChannelSelector)
-    DECLARE_ANIMATED_ENUMERATION(YChannelSelector, yChannelSelector)
+    DECLARE_ANIMATED_ENUMERATION(XChannelSelector, xChannelSelector, ChannelSelectorType)
+    DECLARE_ANIMATED_ENUMERATION(YChannelSelector, yChannelSelector, ChannelSelectorType)
     DECLARE_ANIMATED_NUMBER(Scale, scale)
+};
+
+template<>
+struct SVGPropertyTraits<ChannelSelectorType> {
+    static ChannelSelectorType highestEnumValue() { return CHANNEL_A; }
+
+    static String toString(ChannelSelectorType type)
+    {
+        switch (type) {
+        case CHANNEL_UNKNOWN:
+            return emptyString();
+        case CHANNEL_R:
+            return "R";
+        case CHANNEL_G:
+            return "G";
+        case CHANNEL_B:
+            return "B";
+        case CHANNEL_A:
+            return "A";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static ChannelSelectorType fromString(const String& value)
+    {
+        if (value == "R")
+            return CHANNEL_R;
+        if (value == "G")
+            return CHANNEL_G;
+        if (value == "B")
+            return CHANNEL_B;
+        if (value == "A")
+            return CHANNEL_A;
+        return CHANNEL_UNKNOWN;
+    }
 };
 
 } // namespace WebCore

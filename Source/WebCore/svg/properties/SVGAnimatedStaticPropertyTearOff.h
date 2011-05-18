@@ -39,7 +39,7 @@ public:
         return m_property;
     }
 
-    void setBaseVal(const PropertyType& property)
+    virtual void setBaseVal(const PropertyType& property, ExceptionCode&)
     {
         m_property = property;
         commitChange();
@@ -48,7 +48,7 @@ public:
     // FIXME: No animVal support.
     void setAnimVal(const PropertyType&) { }
 
-private:
+protected:
     friend class SVGAnimatedProperty;
 
     static PassRefPtr<SVGAnimatedStaticPropertyTearOff<PropertyType> > create(SVGElement* contextElement, const QualifiedName& attributeName, PropertyType& property)
@@ -62,6 +62,8 @@ private:
         , m_property(property)
     {
     }
+
+    virtual ~SVGAnimatedStaticPropertyTearOff() { }
 
 private:
     PropertyType& m_property;

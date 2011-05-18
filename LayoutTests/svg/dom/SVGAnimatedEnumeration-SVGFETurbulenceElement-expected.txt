@@ -1,0 +1,61 @@
+This test checks the use of SVGAnimatedEnumeration within SVGFETurbulenceElement
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+
+Check initial 'type' value
+PASS feTurbulenceElement.type.toString() is "[object SVGAnimatedEnumeration]"
+PASS typeof(feTurbulenceElement.type.baseVal) is "number"
+PASS feTurbulenceElement.type.baseVal is SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_FRACTALNOISE
+
+Switch to 'turbulence'
+PASS feTurbulenceElement.type.baseVal = SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_TURBULENCE is SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_TURBULENCE
+PASS feTurbulenceElement.type.baseVal is SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_TURBULENCE
+PASS feTurbulenceElement.getAttribute('type') is "turbulence"
+
+Try setting invalid values
+PASS feTurbulenceElement.type.baseVal = 3 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feTurbulenceElement.type.baseVal is SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_TURBULENCE
+PASS feTurbulenceElement.getAttribute('type') is "turbulence"
+PASS feTurbulenceElement.type.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feTurbulenceElement.type.baseVal is SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_TURBULENCE
+PASS feTurbulenceElement.getAttribute('type') is "turbulence"
+PASS feTurbulenceElement.type.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feTurbulenceElement.type.baseVal is SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_TURBULENCE
+PASS feTurbulenceElement.getAttribute('type') is "turbulence"
+
+Switch to 'fractalNoise'
+PASS feTurbulenceElement.type.baseVal = SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_FRACTALNOISE is SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_FRACTALNOISE
+PASS feTurbulenceElement.type.baseVal is SVGFETurbulenceElement.SVG_TURBULENCE_TYPE_FRACTALNOISE
+PASS feTurbulenceElement.getAttribute('type') is "fractalNoise"
+
+Check initial 'stitchTiles' value
+PASS feTurbulenceElement.stitchTiles.toString() is "[object SVGAnimatedEnumeration]"
+PASS typeof(feTurbulenceElement.stitchTiles.baseVal) is "number"
+PASS feTurbulenceElement.stitchTiles.baseVal is SVGFETurbulenceElement.SVG_STITCHTYPE_STITCH
+
+Switch to 'noStitch'
+PASS feTurbulenceElement.stitchTiles.baseVal = SVGFETurbulenceElement.SVG_STITCHTYPE_NOSTITCH is SVGFETurbulenceElement.SVG_STITCHTYPE_NOSTITCH
+PASS feTurbulenceElement.stitchTiles.baseVal is SVGFETurbulenceElement.SVG_STITCHTYPE_NOSTITCH
+PASS feTurbulenceElement.getAttribute('stitchTiles') is "noStitch"
+
+Try setting invalid values
+PASS feTurbulenceElement.stitchTiles.baseVal = 3 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feTurbulenceElement.stitchTiles.baseVal is SVGFETurbulenceElement.SVG_STITCHTYPE_NOSTITCH
+PASS feTurbulenceElement.getAttribute('stitchTiles') is "noStitch"
+PASS feTurbulenceElement.stitchTiles.baseVal = -1 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feTurbulenceElement.stitchTiles.baseVal is SVGFETurbulenceElement.SVG_STITCHTYPE_NOSTITCH
+PASS feTurbulenceElement.getAttribute('stitchTiles') is "noStitch"
+PASS feTurbulenceElement.stitchTiles.baseVal = 0 threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
+PASS feTurbulenceElement.stitchTiles.baseVal is SVGFETurbulenceElement.SVG_STITCHTYPE_NOSTITCH
+PASS feTurbulenceElement.getAttribute('stitchTiles') is "noStitch"
+
+Switch to 'stitch'
+PASS feTurbulenceElement.stitchTiles.baseVal = SVGFETurbulenceElement.SVG_STITCHTYPE_STITCH is SVGFETurbulenceElement.SVG_STITCHTYPE_STITCH
+PASS feTurbulenceElement.stitchTiles.baseVal is SVGFETurbulenceElement.SVG_STITCHTYPE_STITCH
+PASS feTurbulenceElement.getAttribute('stitchTiles') is "stitch"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

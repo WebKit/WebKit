@@ -65417,6 +65417,10 @@
 				Name="properties"
 				>
 				<File
+					RelativePath="..\svg\properties\SVGAnimatedEnumerationPropertyTearOff.h"
+					>
+				</File>
+				<File
 					RelativePath="..\svg\properties\SVGAnimatedListPropertyTearOff.h"
 					>
 				</File>

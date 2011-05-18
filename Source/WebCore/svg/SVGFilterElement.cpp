@@ -32,13 +32,12 @@
 #include "SVGFilterPrimitiveStandardAttributes.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
-#include "SVGUnitTypes.h"
 
 namespace WebCore {
 
 // Animated property definitions
-DEFINE_ANIMATED_ENUMERATION(SVGFilterElement, SVGNames::filterUnitsAttr, FilterUnits, filterUnits)
-DEFINE_ANIMATED_ENUMERATION(SVGFilterElement, SVGNames::primitiveUnitsAttr, PrimitiveUnits, primitiveUnits)
+DEFINE_ANIMATED_ENUMERATION(SVGFilterElement, SVGNames::filterUnitsAttr, FilterUnits, filterUnits, SVGUnitTypes::SVGUnitType)
+DEFINE_ANIMATED_ENUMERATION(SVGFilterElement, SVGNames::primitiveUnitsAttr, PrimitiveUnits, primitiveUnits, SVGUnitTypes::SVGUnitType)
 DEFINE_ANIMATED_LENGTH(SVGFilterElement, SVGNames::xAttr, X, x)
 DEFINE_ANIMATED_LENGTH(SVGFilterElement, SVGNames::yAttr, Y, y)
 DEFINE_ANIMATED_LENGTH(SVGFilterElement, SVGNames::widthAttr, Width, width)
@@ -95,15 +94,13 @@ void SVGFilterElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
     if (attr->name() == SVGNames::filterUnitsAttr) {
-        if (value == "userSpaceOnUse")
-            setFilterUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if (value == "objectBoundingBox")
-            setFilterUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
+        if (propertyValue > 0)
+            setFilterUnitsBaseValue(propertyValue);
     } else if (attr->name() == SVGNames::primitiveUnitsAttr) {
-        if (value == "userSpaceOnUse")
-            setPrimitiveUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if (value == "objectBoundingBox")
-            setPrimitiveUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(value);
+        if (propertyValue > 0)
+            setPrimitiveUnitsBaseValue(propertyValue);
     } else if (attr->name() == SVGNames::xAttr)
         setXBaseValue(SVGLength(LengthModeWidth, value));
     else if (attr->name() == SVGNames::yAttr)

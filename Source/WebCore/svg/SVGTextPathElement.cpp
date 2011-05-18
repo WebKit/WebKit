@@ -32,8 +32,8 @@ namespace WebCore {
 
 // Animated property definitions
 DEFINE_ANIMATED_LENGTH(SVGTextPathElement, SVGNames::startOffsetAttr, StartOffset, startOffset)
-DEFINE_ANIMATED_ENUMERATION(SVGTextPathElement, SVGNames::methodAttr, Method, method)
-DEFINE_ANIMATED_ENUMERATION(SVGTextPathElement, SVGNames::spacingAttr, Spacing, spacing)
+DEFINE_ANIMATED_ENUMERATION(SVGTextPathElement, SVGNames::methodAttr, Method, method, SVGTextPathMethodType)
+DEFINE_ANIMATED_ENUMERATION(SVGTextPathElement, SVGNames::spacingAttr, Spacing, spacing, SVGTextPathSpacingType)
 DEFINE_ANIMATED_STRING(SVGTextPathElement, XLinkNames::hrefAttr, Href, href)
 
 inline SVGTextPathElement::SVGTextPathElement(const QualifiedName& tagName, Document* document)
@@ -53,19 +53,16 @@ PassRefPtr<SVGTextPathElement> SVGTextPathElement::create(const QualifiedName& t
 void SVGTextPathElement::parseMappedAttribute(Attribute* attr)
 {
     const String& value = attr->value();
-
     if (attr->name() == SVGNames::startOffsetAttr)
         setStartOffsetBaseValue(SVGLength(LengthModeOther, value));
     else if (attr->name() == SVGNames::methodAttr) {
-        if (value == "align")
-            setSpacingBaseValue(SVG_TEXTPATH_METHODTYPE_ALIGN);
-        else if (value == "stretch")
-            setSpacingBaseValue(SVG_TEXTPATH_METHODTYPE_STRETCH);
+        SVGTextPathMethodType propertyValue = SVGPropertyTraits<SVGTextPathMethodType>::fromString(value);
+        if (propertyValue > 0)
+            setMethodBaseValue(propertyValue);
     } else if (attr->name() == SVGNames::spacingAttr) {
-        if (value == "auto")
-            setMethodBaseValue(SVG_TEXTPATH_SPACINGTYPE_AUTO);
-        else if (value == "exact")
-            setMethodBaseValue(SVG_TEXTPATH_SPACINGTYPE_EXACT);
+        SVGTextPathSpacingType propertyValue = SVGPropertyTraits<SVGTextPathSpacingType>::fromString(value);
+        if (propertyValue > 0)
+            setSpacingBaseValue(propertyValue);
     } else {
         if (SVGURIReference::parseMappedAttribute(attr))
             return;

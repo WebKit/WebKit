@@ -21,22 +21,22 @@
 #define SVGAnimatedEnumeration_h
 
 #if ENABLE(SVG)
+#include "SVGAnimatedEnumerationPropertyTearOff.h"
 #include "SVGAnimatedPropertyMacros.h"
-#include "SVGAnimatedStaticPropertyTearOff.h"
 
 namespace WebCore {
 
 typedef SVGAnimatedStaticPropertyTearOff<int> SVGAnimatedEnumeration;
 
 // Helper macros to declare/define a SVGAnimatedEnumeration object
-#define DECLARE_ANIMATED_ENUMERATION(UpperProperty, LowerProperty) \
-DECLARE_ANIMATED_PROPERTY(SVGAnimatedEnumeration, int, UpperProperty, LowerProperty)
+#define DECLARE_ANIMATED_ENUMERATION(UpperProperty, LowerProperty, EnumType) \
+DECLARE_ANIMATED_PROPERTY(SVGAnimatedEnumerationPropertyTearOff<EnumType>, EnumType, UpperProperty, LowerProperty)
 
-#define DEFINE_ANIMATED_ENUMERATION(OwnerType, DOMAttribute, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedEnumeration, int, UpperProperty, LowerProperty)
+#define DEFINE_ANIMATED_ENUMERATION(OwnerType, DOMAttribute, UpperProperty, LowerProperty, EnumType) \
+DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, DOMAttribute.localName(), SVGAnimatedEnumerationPropertyTearOff<EnumType>, EnumType, UpperProperty, LowerProperty)
 
-#define DEFINE_ANIMATED_ENUMERATION_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
-DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedEnumeration, int, UpperProperty, LowerProperty)
+#define DEFINE_ANIMATED_ENUMERATION_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty, EnumType) \
+DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedEnumerationPropertyTearOff<EnumType>, EnumType, UpperProperty, LowerProperty)
 
 } // namespace WebCore
 

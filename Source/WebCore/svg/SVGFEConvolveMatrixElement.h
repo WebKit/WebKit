@@ -44,6 +44,7 @@ private:
     virtual void parseMappedAttribute(Attribute*);
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName&);
     virtual void svgAttributeChanged(const QualifiedName&);
+    virtual void synchronizeProperty(const QualifiedName&);
     virtual void fillAttributeToPropertyTypeMap();
     virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
     virtual PassRefPtr<FilterEffect> build(SVGFilterBuilder*, Filter*);
@@ -62,10 +63,43 @@ private:
     DECLARE_ANIMATED_NUMBER(Bias, bias)
     DECLARE_ANIMATED_INTEGER(TargetX, targetX)
     DECLARE_ANIMATED_INTEGER(TargetY, targetY)
-    DECLARE_ANIMATED_ENUMERATION(EdgeMode, edgeMode)
+    DECLARE_ANIMATED_ENUMERATION(EdgeMode, edgeMode, EdgeModeType)
     DECLARE_ANIMATED_NUMBER(KernelUnitLengthX, kernelUnitLengthX)
     DECLARE_ANIMATED_NUMBER(KernelUnitLengthY, kernelUnitLengthY)
     DECLARE_ANIMATED_BOOLEAN(PreserveAlpha, preserveAlpha)
+};
+
+template<>
+struct SVGPropertyTraits<EdgeModeType> {
+    static EdgeModeType highestEnumValue() { return EDGEMODE_NONE; }
+
+    static String toString(EdgeModeType type)
+    {
+        switch (type) {
+        case EDGEMODE_UNKNOWN:
+            return emptyString();
+        case EDGEMODE_DUPLICATE:
+            return "duplicate";
+        case EDGEMODE_WRAP:
+            return "wrap";
+        case EDGEMODE_NONE:
+            return "none";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static EdgeModeType fromString(const String& value)
+    {
+        if (value == "duplicate")
+            return EDGEMODE_DUPLICATE;
+        if (value == "wrap")
+            return EDGEMODE_WRAP;
+        if (value == "none")
+            return EDGEMODE_NONE;
+        return EDGEMODE_UNKNOWN;
+    }
 };
 
 } // namespace WebCore

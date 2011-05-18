@@ -1549,6 +1549,7 @@
 		6EBF0E7712A9868800DB1709 /* JSOESTextureFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBF0E7512A9868800DB1709 /* JSOESTextureFloat.h */; };
 		6EE8A77210F803F3005A4A24 /* JSWebGLContextAttributes.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */; };
 		6EE8A77310F803F3005A4A24 /* JSWebGLContextAttributes.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */; };
+		71FB967B1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h in Headers */ = {isa = PBXBuildFile; fileRef = 71FB967A1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		72626E020EF022FE00A07E20 /* FontFastPath.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 72626E010EF022FE00A07E20 /* FontFastPath.cpp */; };
 		750D029311D0E7F300BD1B27 /* RenderInputSpeech.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 750D029111D0E7F300BD1B27 /* RenderInputSpeech.cpp */; };
 		750D029411D0E7F300BD1B27 /* RenderInputSpeech.h in Headers */ = {isa = PBXBuildFile; fileRef = 750D029211D0E7F300BD1B27 /* RenderInputSpeech.h */; };
@@ -4092,12 +4093,12 @@
 		ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */; };
 		B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1827492134CA4C100B98C2D /* CallbackFunction.cpp */; };
 		B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */; };
+		B1E54593134629C10092A545 /* CallbackTask.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E54587134629C10092A545 /* CallbackTask.h */; };
 		B1E54594134629C10092A545 /* MediaStreamClient.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E54588134629C10092A545 /* MediaStreamClient.h */; };
 		B1E54595134629C10092A545 /* MediaStreamFrameController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E54589134629C10092A545 /* MediaStreamFrameController.cpp */; };
 		B1E54596134629C10092A545 /* MediaStreamFrameController.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458A134629C10092A545 /* MediaStreamFrameController.h */; };
 		B1E54597134629C10092A545 /* MediaStreamController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E5458B134629C10092A545 /* MediaStreamController.cpp */; };
 		B1E54598134629C10092A545 /* MediaStreamController.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458C134629C10092A545 /* MediaStreamController.h */; };
-		B1E54593134629C10092A545 /* CallbackTask.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E54587134629C10092A545 /* CallbackTask.h */; };
 		B1E54599134629C10092A545 /* NavigatorUserMediaError.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */; };
 		B1E5459B134629C10092A545 /* NavigatorUserMediaErrorCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E5458F134629C10092A545 /* NavigatorUserMediaErrorCallback.h */; };
 		B1E5459D134629C10092A545 /* NavigatorUserMediaSuccessCallback.h in Headers */ = {isa = PBXBuildFile; fileRef = B1E54591134629C10092A545 /* NavigatorUserMediaSuccessCallback.h */; };
@@ -8103,6 +8104,7 @@
 		6EBF0E7512A9868800DB1709 /* JSOESTextureFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOESTextureFloat.h; sourceTree = "<group>"; };
 		6EE8A77010F803F3005A4A24 /* JSWebGLContextAttributes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSWebGLContextAttributes.cpp; sourceTree = "<group>"; };
 		6EE8A77110F803F3005A4A24 /* JSWebGLContextAttributes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSWebGLContextAttributes.h; sourceTree = "<group>"; };
+		71FB967A1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGAnimatedEnumerationPropertyTearOff.h; sourceTree = "<group>"; };
 		72626E010EF022FE00A07E20 /* FontFastPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FontFastPath.cpp; sourceTree = "<group>"; };
 		750D029111D0E7F300BD1B27 /* RenderInputSpeech.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderInputSpeech.cpp; sourceTree = "<group>"; };
 		750D029211D0E7F300BD1B27 /* RenderInputSpeech.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderInputSpeech.h; sourceTree = "<group>"; };
@@ -10364,12 +10366,12 @@
 		ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGPath.h; sourceTree = "<group>"; };
 		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
 		B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackFunction.h; sourceTree = "<group>"; };
+		B1E54587134629C10092A545 /* CallbackTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackTask.h; sourceTree = "<group>"; };
 		B1E54588134629C10092A545 /* MediaStreamClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamClient.h; sourceTree = "<group>"; };
 		B1E54589134629C10092A545 /* MediaStreamFrameController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamFrameController.cpp; sourceTree = "<group>"; };
 		B1E5458A134629C10092A545 /* MediaStreamFrameController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamFrameController.h; sourceTree = "<group>"; };
 		B1E5458B134629C10092A545 /* MediaStreamController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaStreamController.cpp; sourceTree = "<group>"; };
 		B1E5458C134629C10092A545 /* MediaStreamController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaStreamController.h; sourceTree = "<group>"; };
-		B1E54587134629C10092A545 /* CallbackTask.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackTask.h; sourceTree = "<group>"; };
 		B1E5458D134629C10092A545 /* NavigatorUserMediaError.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaError.h; sourceTree = "<group>"; };
 		B1E5458E134629C10092A545 /* NavigatorUserMediaError.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = NavigatorUserMediaError.idl; sourceTree = "<group>"; };
 		B1E5458F134629C10092A545 /* NavigatorUserMediaErrorCallback.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigatorUserMediaErrorCallback.h; sourceTree = "<group>"; };
@@ -12562,6 +12564,7 @@
 		081CDFBD126ECFE800D215CA /* properties */ = {
 			isa = PBXGroup;
 			children = (
+				71FB967A1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h */,
 				088A0DFB126EF1DB00978F7A /* SVGAnimatedListPropertyTearOff.h */,
 				089A8E06128D8B3D00E7A534 /* SVGAnimatedPathSegListPropertyTearOff.h */,
 				088A0DFC126EF1DB00978F7A /* SVGAnimatedProperty.h */,
@@ -22832,6 +22835,7 @@
 				FD537357137B653B00008DCE /* DynamicsCompressorKernel.h in Headers */,
 				BCF7E491137CD7C7001DDAE7 /* AdjustViewSizeOrNot.h in Headers */,
 				B1E54593134629C10092A545 /* CallbackTask.h in Headers */,
+				71FB967B1383D64600AC8A4C /* SVGAnimatedEnumerationPropertyTearOff.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,3 +1,187 @@
+2011-05-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        All animated SVG enum properties are now ints
+        https://bugs.webkit.org/show_bug.cgi?id=10749
+
+        DECLARE/DEFINE_ANIMATED_ENUMERATION created fooBaseVal()/setFooBaseVal() methods that take int parameters, and stored all enum types as integers.
+        Modify the SVG DOM API to store real enums, and get rid of any int<->enum conversions. It's now impossible to change any enum values to undefined
+        types, which is the root of several filter security bugs in the past, that were fixed by adding workarounds.
+        (Usual workaround: svgAttributeChanged(): if fooAttr has been changed from SVG DOM, and if it's an enum, check whether the enum is in range, or fix it up.)
+
+        Using a type-safe internal representation for these enum values we can get rid of ugly int<->enum conversions.
+        A lot of parseMappedAttribute() functions duplicated the code for parsing enum values (eg. userSpaceOnUse/objectBoundingBox unit values, in pattern/filter/mask/etc..)
+        Add dozens of new SVGPropertyTraits<EnumType> specializations for all enums we expose to JS, and offer static fromString/toString conversion methods in single places.
+        Use the new SVGPropertyTraits everywhere in svg/.
+
+        This also fixes SVG DOM <-> XML DOM synchronization for SVGAnimatedEnumeration types.
+        Example: <clipPath clipPathUnits="objectBoundingBox">
+        myClipPath.clipPathUnits.baseVal = SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE;
+        alert(myClipPath.getAttribute('clipPathUnits')); <- without this patch it says "1", now it says "userSpaceOnUse" as expected, and as other browsers do.
+        We're now properly converting the enum values to strings.
+
+        Add testcases for all SVGAnimatedEnumeration objects used in the SVG DOM API. Found several small bugs:
+        - SVGFEConvolveMatrix 'edgeMode' SVG DOM <-> XML DOM synchronization was not working, because of a typo: s/operatorAttr/edgeModeAttr
+        - SVGFEConvolveMatrix was missing an synchronizeProperty() implementation, disabling SVG <-> XML DOM synchronization completly.
+
+        Tests: svg/dom/SVGAnimatedEnumeration-SVGClipPathElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGComponentTransferFunctionElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGFEBlendElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGFEColorMatrixElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGFECompositeElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGFEConvolveMatrixElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGFEDisplacementMapElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGFEMorphologyElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGFETurbulenceElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGFilterElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGGradientElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGMarkerElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGMaskElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGPatternElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGTextContentElement.html
+               svg/dom/SVGAnimatedEnumeration-SVGTextPathElement.html
+
+        Fixes existing svg/dynamic-update/SVGTextContentElement-svgdom-lengthAdjust-prop.html where I found the bug initially.
+
+        * GNUmakefile.list.am: Add svg/properties/SVGAnimatedEnumerationPropertyTearOff.h to build.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * bindings/scripts/CodeGeneratorV8.pm: Add V8 magic, to avoid ambigious conversion warning in toV8(PassRefPtr<SVGAnimatedEnumeration>).
+        * platform/graphics/GraphicsTypes.h: Cleanup GradientSpreadMethod, as the SVG dependency is gone.
+        * platform/graphics/filters/FEBlend.cpp:
+        (WebCore::FEBlend::apply): Turn early-returns (introduce in security patches a while ago) into ASSERTs, as the underlying bug has been fixed.
+        * platform/graphics/filters/FEDisplacementMap.cpp:
+        (WebCore::FEDisplacementMap::apply): Ditto.
+        * rendering/svg/RenderSVGResourceClipper.h: Remove toUnitType() usage, the clipPathUnits() provided by SVGClipPathElement have the correct enum type now.
+        (WebCore::RenderSVGResourceClipper::clipPathUnits):
+        * rendering/svg/RenderSVGResourceFilter.h: Remove toUnitType() usage, the filterUnits()/primitiveUnits() provided by SVGFilterElement have the correct enum type now.
+        (WebCore::RenderSVGResourceFilter::filterUnits):
+        (WebCore::RenderSVGResourceFilter::primitiveUnits):
+        * rendering/svg/RenderSVGResourceGradient.cpp: Add helper method platformSpreadMethodFromSVGType() converting from SVGGradientElement::SVGSpreadMethodType to GradientSpreadMethod (platform).
+        (WebCore::RenderSVGResourceGradient::applyResource):
+        * rendering/svg/RenderSVGResourceGradient.h: Ditto.
+        * rendering/svg/RenderSVGResourceLinearGradient.cpp:
+        (WebCore::RenderSVGResourceLinearGradient::buildGradient): Use platformSpreadMethodFromSVGType().
+        * rendering/svg/RenderSVGResourceMarker.h: Remove toUnitType() usage, the markerUnits() provided by SVGMarkerElement have the correct enum type now.
+        (WebCore::RenderSVGResourceMarker::markerUnits):
+        * rendering/svg/RenderSVGResourceMasker.h: Remove toUnitType() usage, the maskUnits()/maskContentUnits() provided by SVGMaskElement have the correct enum type now.
+        (WebCore::RenderSVGResourceMasker::maskUnits):
+        (WebCore::RenderSVGResourceMasker::maskContentUnits):
+        * rendering/svg/RenderSVGResourceRadialGradient.cpp:
+        (WebCore::RenderSVGResourceRadialGradient::buildGradient): Use platformSpreadMethodFromSVGType().
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::operator<<): Use SVGPropertyTraits<SomeSVGEnumType>::toString() to convert from enum to string, remove code duplication.
+        (WebCore::writeCommonGradientProperties):
+        * rendering/svg/SVGTextChunkBuilder.cpp:
+        (WebCore::SVGTextChunkBuilder::addTextChunk): Remove int->enum casting for SVGAnimatedEnumeration types, they are enums now.
+        * rendering/svg/SVGTextLayoutEngine.cpp:
+        (WebCore::SVGTextLayoutEngine::parentDefinesTextLength): Ditto.
+        (WebCore::SVGTextLayoutEngine::beginTextPathLayout): Ditto.
+        * svg/GradientAttributes.h: Change spread method type from platform GradientSpreadMethod to SVGSpreadMethodType.
+        (WebCore::GradientAttributes::GradientAttributes):
+        (WebCore::GradientAttributes::spreadMethod):
+        (WebCore::GradientAttributes::setSpreadMethod):
+        * svg/SVGAnimatedBoolean.idl: Enable potential exception raising on baseVal setting for the primitive types.
+        * svg/SVGAnimatedEnumeration.h: Switch from generic SVGAnimatedStaticPropertyTearOff<int> to new SVGAnimatedEnumerationPropertyTearOff<EnumType>.
+        * svg/SVGAnimatedEnumeration.idl: Enable potential exception raising on baseVal setting for the primitive types.
+                                          Only SVGAnimatedEnumeration makes use of this if the assigned value is out of range.
+        * svg/SVGAnimatedInteger.idl: Ditto.
+        * svg/SVGAnimatedNumber.idl: Ditto.
+        * svg/SVGAnimatedString.idl: Ditto.
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<EnumType>::fromString(attr->value()).
+        * svg/SVGClipPathElement.h:
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement): Initialize type to identity, not unknown, as per spec.
+        (WebCore::SVGComponentTransferFunctionElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<EnumType>::fromString(attr->value()).
+        (WebCore::SVGComponentTransferFunctionElement::transferFunction): Remove int->enum casting for SVGAnimatedEnumeration types, they are enums now.
+        * svg/SVGComponentTransferFunctionElement.h: Remove svgAttributeChanged() method, that verified the enum value is not out of range.
+                                                     It's not possible anymore for these values to go out of range.
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<BlendModeType>::fromString(attr->value()).
+        (WebCore::SVGFEBlendElement::setFilterEffectAttribute): Remove int->enum casting for SVGAnimatedEnumeration types, they are enums now.
+        (WebCore::SVGFEBlendElement::build): Ditto.
+        * svg/SVGFEBlendElement.h: Add SVGPropertyTraits<BlendModeType> specializations.
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<ColorMatrixType>::fromString(attr->value()).
+        (WebCore::SVGFEColorMatrixElement::setFilterEffectAttribute): Remove int->enum casting for SVGAnimatedEnumeration types, they are enums now..
+        (WebCore::SVGFEColorMatrixElement::build): Ditto.
+        * svg/SVGFEColorMatrixElement.h: Add SVGPropertyTraits<ColorMatrixType> specializations.
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<CompositeOperationType>::fromString(attr->value()).
+        (WebCore::SVGFECompositeElement::setFilterEffectAttribute): Remove int->enum casting for SVGAnimatedEnumeration types, they are enums now.
+        (WebCore::SVGFECompositeElement::build): Ditto.
+        * svg/SVGFECompositeElement.h: Add SVGPropertyTraits<CompositeOperationType> specializations.
+        * svg/SVGFEConvolveMatrixElement.cpp: Fix typo, edgeMode needs to be associated with SVGNames::edgeModeAttr, not SVGNames::operatorAttr.
+        (WebCore::SVGFEConvolveMatrixElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<EdgeModeType>::fromString(attr->value()).
+        (WebCore::SVGFEConvolveMatrixElement::setFilterEffectAttribute): Remove int->enum casting for SVGAnimatedEnumeration types, they are enums now.
+        (WebCore::SVGFEConvolveMatrixElement::synchronizeProperty): Add missing synchronizeProperty() implementation, otherwhise SVG DOM <-> XML DOM is not in sync.
+        (WebCore::SVGFEConvolveMatrixElement::build): Remove int->enum casting for SVGAnimatedEnumeration types, they are enums now.
+        * svg/SVGFEConvolveMatrixElement.h: Add SVGPropertyTraits<EdgeModeType> specializations.
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<ChannelSelectorType>::fromString(attr->value()).
+        (WebCore::SVGFEDisplacementMapElement::setFilterEffectAttribute): Remove int->enum casting for SVGAnimatedEnumeration types, they are enums now.
+        (WebCore::SVGFEDisplacementMapElement::svgAttributeChanged): Remove range validation for enum types, they are always in range now.
+        (WebCore::SVGFEDisplacementMapElement::build): Remove int->enum casting for SVGAnimatedEnumeration types, they are enums now.
+        * svg/SVGFEDisplacementMapElement.h: Add SVGPropertyTraits<ChannelSelectorType> specializations.
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<MorphologyOperatorType>::fromString(attr->value()).
+        (WebCore::SVGFEMorphologyElement::setFilterEffectAttribute): Remove int->enum casting for SVGAnimatedEnumeration types, they are enums now.
+        (WebCore::SVGFEMorphologyElement::build): Ditto.
+        * svg/SVGFEMorphologyElement.h: Add SVGPropertyTraits<MorphologyOperatorType> specializations.
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<SVGStitchOptions/TurbulenceType>::fromString(attr->value()).
+        (WebCore::SVGFETurbulenceElement::setFilterEffectAttribute): Remove int->enum casting for SVGAnimatedEnumeration types, they are enums now.
+        (WebCore::SVGFETurbulenceElement::build): Ditto.
+        * svg/SVGFETurbulenceElement.h: Add SVGPropertyTraits<SVGStitchOptions/TurbulenceType> specializations.
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<SVGUnitType>::fromString(attr->value()).
+        * svg/SVGFilterElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::SVGGradientElement): Missing spread method default initialization: set it to 'pad' as per spec.
+        (WebCore::SVGGradientElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<SVGUnitType/SVGSpreadMethodType>::fromString(attr->value()).
+        * svg/SVGGradientElement.h: Add SVGPropertyTraits<SVGSpreadMethodType> specializations.
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::collectGradientAttributes): Remove int->enum casting for SVGAnimatedEnumeration types, they are enums now.
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<EnumType>::fromString(attr->value()).
+        (WebCore::SVGMarkerElement::synchronizeOrientType): Add a custom synchronization method, that handles orientType/orientAngle -> orientAttr synchronization, which is special
+                                                            as it depends on to other SVG DOM objects (SVGAnimatedAngle and SVGAnimatedEnumeration). All covered by new tests.
+        (WebCore::SVGMarkerElement::orientTypeAnimated): Custom tear off creation method, which would usually be generated by the DECLARE_ANIMATED_... macros.
+        * svg/SVGMarkerElement.h: Add SVGPropertyTraits<SVGMarkerUnitsType/SVGMarkerOrientType> specializations.
+        (WebCore::SVGMarkerElement::orientType): Add custom property handling for the 'orientType' SVGAnimatedEnumeration object, as it has special demands, based on 'orientAngle'.
+        (WebCore::SVGMarkerElement::orientTypeBaseValue): Ditto.
+        (WebCore::SVGMarkerElement::setOrientTypeBaseValue): Ditto.
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<EnumType>::fromString(attr->value()).
+        * svg/SVGMaskElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<EnumType>::fromString(attr->value()).
+        * svg/SVGPatternElement.h:
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::collectGradientAttributes): Remove int->enum casting for SVGAnimatedEnumeration types, they are enums now.
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<SVGLengthAdjustType>::fromString(attr->value()).
+        * svg/SVGTextContentElement.h: Add SVGPropertyTraits<SVGLengthAdjustType> specializations.
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::parseMappedAttribute): Convert attribute parsing to use SVGPropertyTraits<SVGTextPathMethodType/SVGTextPathSpacingType>::fromString(attr->value()).
+        * svg/SVGTextPathElement.h: Add SVGPropertyTraits<SVGTextPathMethodType/SVGTextPathSpacingType> specializations.
+        * svg/SVGUnitTypes.h: Add SVGPropertyTraits<SVGUnitType> specializations.
+        * svg/properties/SVGAnimatedEnumerationPropertyTearOff.h: Added. SVGAnimatedEnumerationPropertyTearOff inherits from SVGAnimatedStaticPropertyTearOff<int>.
+                                                                  SVGAnimatedEnumeration remains a typedef to SVGAnimatedStaticPropertyTearOff<int>, to have a common base
+                                                                  class for all enum types. This special tear off object, overrides setBaseVal, to verify the incoming int
+                                                                  is within the enum range, otherwhise raise an SVG DOM exception. This makes it impossible to make any of
+                                                                  the enums go out of range anymore (which lead to security bugs in the past).
+        (WebCore::SVGAnimatedEnumerationPropertyTearOff::setBaseVal):
+        (WebCore::SVGAnimatedEnumerationPropertyTearOff::create):
+        (WebCore::SVGAnimatedEnumerationPropertyTearOff::SVGAnimatedEnumerationPropertyTearOff):
+        * svg/properties/SVGAnimatedStaticPropertyTearOff.h:
+        (WebCore::SVGAnimatedStaticPropertyTearOff::setBaseVal): Made this method virtual, to SVGAnimatedEnumerationPropertyTearOff can override the default behaviour. Also added an ExceptionCode param.
+        (WebCore::SVGAnimatedStaticPropertyTearOff::~SVGAnimatedStaticPropertyTearOff):
+
 2011-05-18  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.

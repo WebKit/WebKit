@@ -102,8 +102,8 @@ void FEBlend::apply()
     if (!in->hasResult() || !in2->hasResult())
         return;
 
-    if (m_mode <= FEBLEND_MODE_UNKNOWN || m_mode > FEBLEND_MODE_LIGHTEN)
-        return;
+    ASSERT(m_mode > FEBLEND_MODE_UNKNOWN);
+    ASSERT(m_mode <= FEBLEND_MODE_LIGHTEN);
 
     ByteArray* dstPixelArray = createPremultipliedImageResult();
     if (!dstPixelArray)

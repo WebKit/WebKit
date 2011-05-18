@@ -803,6 +803,8 @@ END
     } else {
         # Can inline the function call into the return statement to avoid overhead of using a Ref<> temporary
         $result = $getterString;
+        # Fix amigious conversion problem, by casting to the base type first ($getterString returns a type that inherits from SVGAnimatedEnumeration, not the base class directly).
+        $result = "static_pointer_cast<SVGAnimatedEnumeration>($result)" if $returnType eq "SVGAnimatedEnumeration";
     }
  
     # Special case for readonly or Replaceable attributes (with a few exceptions). This attempts to ensure that JS wrappers don't get

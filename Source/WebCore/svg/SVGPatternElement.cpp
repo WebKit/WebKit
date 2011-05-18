@@ -38,7 +38,6 @@
 #include "SVGSVGElement.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTransformable.h"
-#include "SVGUnitTypes.h"
 
 namespace WebCore {
 
@@ -47,8 +46,8 @@ DEFINE_ANIMATED_LENGTH(SVGPatternElement, SVGNames::xAttr, X, x)
 DEFINE_ANIMATED_LENGTH(SVGPatternElement, SVGNames::yAttr, Y, y)
 DEFINE_ANIMATED_LENGTH(SVGPatternElement, SVGNames::widthAttr, Width, width)
 DEFINE_ANIMATED_LENGTH(SVGPatternElement, SVGNames::heightAttr, Height, height)
-DEFINE_ANIMATED_ENUMERATION(SVGPatternElement, SVGNames::patternUnitsAttr, PatternUnits, patternUnits)
-DEFINE_ANIMATED_ENUMERATION(SVGPatternElement, SVGNames::patternContentUnitsAttr, PatternContentUnits, patternContentUnits)
+DEFINE_ANIMATED_ENUMERATION(SVGPatternElement, SVGNames::patternUnitsAttr, PatternUnits, patternUnits, SVGUnitTypes::SVGUnitType)
+DEFINE_ANIMATED_ENUMERATION(SVGPatternElement, SVGNames::patternContentUnitsAttr, PatternContentUnits, patternContentUnits, SVGUnitTypes::SVGUnitType)
 DEFINE_ANIMATED_TRANSFORM_LIST(SVGPatternElement, SVGNames::patternTransformAttr, PatternTransform, patternTransform) 
 DEFINE_ANIMATED_STRING(SVGPatternElement, XLinkNames::hrefAttr, Href, href)
 DEFINE_ANIMATED_BOOLEAN(SVGPatternElement, SVGNames::externalResourcesRequiredAttr, ExternalResourcesRequired, externalResourcesRequired)
@@ -75,15 +74,13 @@ PassRefPtr<SVGPatternElement> SVGPatternElement::create(const QualifiedName& tag
 void SVGPatternElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == SVGNames::patternUnitsAttr) {
-        if (attr->value() == "userSpaceOnUse")
-            setPatternUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if (attr->value() == "objectBoundingBox")
-            setPatternUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attr->value());
+        if (propertyValue > 0)
+            setPatternUnitsBaseValue(propertyValue);
     } else if (attr->name() == SVGNames::patternContentUnitsAttr) {
-        if (attr->value() == "userSpaceOnUse")
-            setPatternContentUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_USERSPACEONUSE);
-        else if (attr->value() == "objectBoundingBox")
-            setPatternContentUnitsBaseValue(SVGUnitTypes::SVG_UNIT_TYPE_OBJECTBOUNDINGBOX);
+        SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attr->value());
+        if (propertyValue > 0)
+            setPatternContentUnitsBaseValue(propertyValue);
     } else if (attr->name() == SVGNames::patternTransformAttr) {
         SVGTransformList newList;
         if (!SVGTransformable::parseTransformAttribute(newList, attr->value()))

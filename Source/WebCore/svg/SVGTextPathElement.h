@@ -73,11 +73,69 @@ private:
 
     // Animated property declarations
     DECLARE_ANIMATED_LENGTH(StartOffset, startOffset)
-    DECLARE_ANIMATED_ENUMERATION(Method, method)
-    DECLARE_ANIMATED_ENUMERATION(Spacing, spacing)
+    DECLARE_ANIMATED_ENUMERATION(Method, method, SVGTextPathMethodType)
+    DECLARE_ANIMATED_ENUMERATION(Spacing, spacing, SVGTextPathSpacingType)
 
     // SVGURIReference
     DECLARE_ANIMATED_STRING(Href, href)
+};
+
+template<>
+struct SVGPropertyTraits<SVGTextPathMethodType> {
+    static SVGTextPathMethodType highestEnumValue() { return SVG_TEXTPATH_METHODTYPE_STRETCH; }
+
+    static String toString(SVGTextPathMethodType type)
+    {
+        switch (type) {
+        case SVG_TEXTPATH_METHODTYPE_UNKNOWN:
+            return emptyString();
+        case SVG_TEXTPATH_METHODTYPE_ALIGN:
+            return "align";
+        case SVG_TEXTPATH_METHODTYPE_STRETCH:
+            return "stretch";
+        }
+    
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static SVGTextPathMethodType fromString(const String& value)
+    {
+        if (value == "align")
+            return SVG_TEXTPATH_METHODTYPE_ALIGN;
+        if (value == "stretch")
+            return SVG_TEXTPATH_METHODTYPE_STRETCH;
+        return SVG_TEXTPATH_METHODTYPE_UNKNOWN;
+    }
+};
+
+template<>
+struct SVGPropertyTraits<SVGTextPathSpacingType> {
+    static SVGTextPathSpacingType highestEnumValue() { return SVG_TEXTPATH_SPACINGTYPE_EXACT; }
+
+    static String toString(SVGTextPathSpacingType type)
+    {
+        switch (type) {
+        case SVG_TEXTPATH_SPACINGTYPE_UNKNOWN:
+            return emptyString();
+        case SVG_TEXTPATH_SPACINGTYPE_AUTO:
+            return "auto";
+        case SVG_TEXTPATH_SPACINGTYPE_EXACT:
+            return "exact";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static SVGTextPathSpacingType fromString(const String& value)
+    {
+        if (value == "auto")
+            return SVG_TEXTPATH_SPACINGTYPE_AUTO;
+        if (value == "exact")
+            return SVG_TEXTPATH_SPACINGTYPE_EXACT;
+        return SVG_TEXTPATH_SPACINGTYPE_UNKNOWN;
+    }
 };
 
 } // namespace WebCore

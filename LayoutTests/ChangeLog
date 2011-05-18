@@ -1,3 +1,72 @@
+2011-05-18  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        All animated SVG enum properties are now ints
+        https://bugs.webkit.org/show_bug.cgi?id=10749
+
+        Add tests for all elements using SVGAnimatedEnumeration in the SVG DOM API.
+
+        * platform/mac/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png: Update result, progression.
+        * svg/dom/SVGAnimatedEnumeration-SVGClipPathElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGClipPathElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGComponentTransferFunctionElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGComponentTransferFunctionElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFEBlendElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFEBlendElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFEColorMatrixElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFEColorMatrixElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFECompositeElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFECompositeElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFEConvolveMatrixElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFEConvolveMatrixElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFEDisplacementMapElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFEDisplacementMapElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFEMorphologyElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFEMorphologyElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFETurbulenceElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFETurbulenceElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFilterElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGFilterElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGGradientElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGGradientElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGMarkerElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGMarkerElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGMaskElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGMaskElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGPatternElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGPatternElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGTextContentElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGTextContentElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGTextPathElement-expected.txt: Added.
+        * svg/dom/SVGAnimatedEnumeration-SVGTextPathElement.html: Added.
+        * svg/dom/SVGAnimatedEnumeration-expected.txt:
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGClipPathElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGComponentTransferFunctionElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGFEBlendElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGFEColorMatrixElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGFECompositeElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGFEConvolveMatrixElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGFEDisplacementMapElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGFEMorphologyElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGFETurbulenceElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGFilterElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGGradientElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGMarkerElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGMaskElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGPatternElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGTextContentElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration-SVGTextPathElement.js: Added.
+        * svg/dom/script-tests/SVGAnimatedEnumeration.js:
+        * svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.txt:
+        * svg/dynamic-updates/script-tests/SVGTextElement-svgdom-lengthAdjust-prop.js:
+        (executeTest):
+        * svg/filters/feBlend-invalid-mode-expected.txt:
+        * svg/filters/feComponentTransfer-style-crash-expected.txt:
+        * svg/filters/feComponentTransfer-style-crash.xhtml:
+        * svg/filters/feDisplacementMap-crash-test-expected.txt:
+        * svg/filters/feDisplacementMap-crash-test.xhtml:
+
 2011-05-18  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by David Levin.

@@ -79,10 +79,39 @@ private:
     void synchronizeTextLength();
     SVGLength m_specifiedTextLength;
     mutable SVGSynchronizableAnimatedProperty<SVGLength> m_textLength;
-    DECLARE_ANIMATED_ENUMERATION(LengthAdjust, lengthAdjust)
+    DECLARE_ANIMATED_ENUMERATION(LengthAdjust, lengthAdjust, SVGLengthAdjustType)
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired) 
+};
+
+template<>
+struct SVGPropertyTraits<SVGTextContentElement::SVGLengthAdjustType> {
+    static SVGTextContentElement::SVGLengthAdjustType highestEnumValue() { return SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS; }
+
+    static String toString(SVGTextContentElement::SVGLengthAdjustType type)
+    {
+        switch (type) {
+        case SVGTextContentElement::LENGTHADJUST_UNKNOWN:
+            return emptyString();
+        case SVGTextContentElement::LENGTHADJUST_SPACING:
+            return "spacing";
+        case SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS:
+            return "spacingAndGlyphs";
+        }
+
+        ASSERT_NOT_REACHED();
+        return emptyString();
+    }
+
+    static SVGTextContentElement::SVGLengthAdjustType fromString(const String& value)
+    {
+        if (value == "spacingAndGlyphs")
+            return SVGTextContentElement::LENGTHADJUST_SPACINGANDGLYPHS;
+        if (value == "spacing")
+            return SVGTextContentElement::LENGTHADJUST_SPACING;
+        return SVGTextContentElement::LENGTHADJUST_UNKNOWN;
+    }
 };
 
 } // namespace WebCore

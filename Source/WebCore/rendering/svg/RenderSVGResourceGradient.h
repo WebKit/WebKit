@@ -61,6 +61,8 @@ protected:
     virtual void collectGradientAttributes(SVGGradientElement*) = 0;
     virtual void buildGradient(GradientData*, SVGGradientElement*) const = 0;
 
+    GradientSpreadMethod platformSpreadMethodFromSVGType(SVGGradientElement::SVGSpreadMethodType) const;
+
 private:
     bool m_shouldCollectGradientAttributes : 1;
     HashMap<RenderObject*, GradientData*> m_gradient;

@@ -28,6 +28,7 @@
 #include "SVGLangSpace.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTests.h"
+#include "SVGUnitTypes.h"
 
 namespace WebCore {
 
@@ -56,7 +57,7 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     // Animated property declarations
-    DECLARE_ANIMATED_ENUMERATION(ClipPathUnits, clipPathUnits)
+    DECLARE_ANIMATED_ENUMERATION(ClipPathUnits, clipPathUnits, SVGUnitTypes::SVGUnitType)
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)

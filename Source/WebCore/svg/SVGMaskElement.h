@@ -28,6 +28,7 @@
 #include "SVGLangSpace.h"
 #include "SVGStyledLocatableElement.h"
 #include "SVGTests.h"
+#include "SVGUnitTypes.h"
 
 namespace WebCore {
 
@@ -58,8 +59,8 @@ private:
     virtual bool selfHasRelativeLengths() const;
 
     // Animated property declarations
-    DECLARE_ANIMATED_ENUMERATION(MaskUnits, maskUnits)
-    DECLARE_ANIMATED_ENUMERATION(MaskContentUnits, maskContentUnits)
+    DECLARE_ANIMATED_ENUMERATION(MaskUnits, maskUnits, SVGUnitTypes::SVGUnitType)
+    DECLARE_ANIMATED_ENUMERATION(MaskContentUnits, maskContentUnits, SVGUnitTypes::SVGUnitType)
     DECLARE_ANIMATED_LENGTH(X, x)
     DECLARE_ANIMATED_LENGTH(Y, y)
     DECLARE_ANIMATED_LENGTH(Width, width)

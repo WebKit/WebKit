@@ -55,7 +55,7 @@ void RenderSVGResourceLinearGradient::buildGradient(GradientData* gradientData, 
     linearGradientElement->calculateStartEndPoints(m_attributes, startPoint, endPoint);
 
     gradientData->gradient = Gradient::create(startPoint, endPoint);
-    gradientData->gradient->setSpreadMethod(m_attributes.spreadMethod());
+    gradientData->gradient->setSpreadMethod(platformSpreadMethodFromSVGType(m_attributes.spreadMethod()));
 
     // Add stops
     addStops(gradientData, m_attributes.stops());

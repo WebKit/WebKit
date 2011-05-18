@@ -60,7 +60,7 @@ void RenderSVGResourceRadialGradient::buildGradient(GradientData* gradientData, 
                                               centerPoint,
                                               radius);
 
-    gradientData->gradient->setSpreadMethod(m_attributes.spreadMethod());
+    gradientData->gradient->setSpreadMethod(platformSpreadMethodFromSVGType(m_attributes.spreadMethod()));
 
     // Add stops
     addStops(gradientData, m_attributes.stops());
