@@ -365,15 +365,6 @@
 		969A079A0ED1D3AE00F1F681 /* Opcode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07940ED1D3AE00F1F681 /* Opcode.cpp */; };
 		969A079B0ED1D3AE00F1F681 /* Opcode.h in Headers */ = {isa = PBXBuildFile; fileRef = 969A07950ED1D3AE00F1F681 /* Opcode.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		96DD73790F9DA3100027FBCC /* VMTags.h in Headers */ = {isa = PBXBuildFile; fileRef = 96DD73780F9DA3100027FBCC /* VMTags.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		9714AF46122F28850092D9F5 /* URLSegments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9714AF35122F27E70092D9F5 /* URLSegments.cpp */; };
-		9714AF4B122F289A0092D9F5 /* RawURLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9714AF31122F27E70092D9F5 /* RawURLBuffer.h */; };
-		9714AF4C122F289A0092D9F5 /* URLBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 9714AF32122F27E70092D9F5 /* URLBuffer.h */; };
-		9714AF4D122F289A0092D9F5 /* URLComponent.h in Headers */ = {isa = PBXBuildFile; fileRef = 9714AF33122F27E70092D9F5 /* URLComponent.h */; };
-		9714AF4E122F289A0092D9F5 /* URLParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 9714AF34122F27E70092D9F5 /* URLParser.h */; };
-		9714AF4F122F289A0092D9F5 /* URLSegments.h in Headers */ = {isa = PBXBuildFile; fileRef = 9714AF36122F27E70092D9F5 /* URLSegments.h */; };
-		9714AF5E122F32070092D9F5 /* ParsedURL.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 9714AF57122F31F50092D9F5 /* ParsedURL.cpp */; };
-		9714AF5F122F32070092D9F5 /* ParsedURL.h in Headers */ = {isa = PBXBuildFile; fileRef = 9714AF58122F31F50092D9F5 /* ParsedURL.h */; };
-		9714AF60122F32070092D9F5 /* URLString.h in Headers */ = {isa = PBXBuildFile; fileRef = 9714AF59122F31F50092D9F5 /* URLString.h */; };
 		971EDEA61169E0D3005E4262 /* Terminator.h in Headers */ = {isa = PBXBuildFile; fileRef = 97F6903A1169DF7F00A6BB46 /* Terminator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97941A5713029AAB004A3447 /* OSRandomSource.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97941A3F130299DB004A3447 /* OSRandomSource.cpp */; };
 		97941A5A13029ACC004A3447 /* OSRandomSource.h in Headers */ = {isa = PBXBuildFile; fileRef = 97941A40130299DB004A3447 /* OSRandomSource.h */; };
@@ -1082,20 +1073,6 @@
 		969A07950ED1D3AE00F1F681 /* Opcode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Opcode.h; sourceTree = "<group>"; };
 		969A09220ED1E09C00F1F681 /* Completion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Completion.cpp; sourceTree = "<group>"; };
 		96DD73780F9DA3100027FBCC /* VMTags.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VMTags.h; sourceTree = "<group>"; };
-		9714AF31122F27E70092D9F5 /* RawURLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RawURLBuffer.h; path = url/src/RawURLBuffer.h; sourceTree = "<group>"; };
-		9714AF32122F27E70092D9F5 /* URLBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLBuffer.h; path = url/src/URLBuffer.h; sourceTree = "<group>"; };
-		9714AF33122F27E70092D9F5 /* URLComponent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLComponent.h; path = url/src/URLComponent.h; sourceTree = "<group>"; };
-		9714AF34122F27E70092D9F5 /* URLParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLParser.h; path = url/src/URLParser.h; sourceTree = "<group>"; };
-		9714AF35122F27E70092D9F5 /* URLSegments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = URLSegments.cpp; path = url/src/URLSegments.cpp; sourceTree = "<group>"; };
-		9714AF36122F27E70092D9F5 /* URLSegments.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLSegments.h; path = url/src/URLSegments.h; sourceTree = "<group>"; };
-		9714AF57122F31F50092D9F5 /* ParsedURL.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = ParsedURL.cpp; path = url/api/ParsedURL.cpp; sourceTree = "<group>"; };
-		9714AF58122F31F50092D9F5 /* ParsedURL.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ParsedURL.h; path = url/api/ParsedURL.h; sourceTree = "<group>"; };
-		9714AF59122F31F50092D9F5 /* URLString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLString.h; path = url/api/URLString.h; sourceTree = "<group>"; };
-		972A485D12661E0800F4514F /* URLCharacterTypes.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = URLCharacterTypes.cpp; path = url/src/URLCharacterTypes.cpp; sourceTree = "<group>"; };
-		972A485E12661E0800F4514F /* URLCharacterTypes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLCharacterTypes.h; path = url/src/URLCharacterTypes.h; sourceTree = "<group>"; };
-		972A48741266256F00F4514F /* URLEscape.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = URLEscape.cpp; path = url/src/URLEscape.cpp; sourceTree = "<group>"; };
-		972A48751266256F00F4514F /* URLEscape.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLEscape.h; path = url/src/URLEscape.h; sourceTree = "<group>"; };
-		972A48761266256F00F4514F /* URLQueryCanonicalizer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = URLQueryCanonicalizer.h; path = url/src/URLQueryCanonicalizer.h; sourceTree = "<group>"; };
 		97941A3F130299DB004A3447 /* OSRandomSource.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OSRandomSource.cpp; sourceTree = "<group>"; };
 		97941A40130299DB004A3447 /* OSRandomSource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OSRandomSource.h; sourceTree = "<group>"; };
 		97941A7C1302A098004A3447 /* CryptographicallyRandomNumber.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CryptographicallyRandomNumber.cpp; sourceTree = "<group>"; };
@@ -1772,7 +1749,6 @@
 				0B4D7E620F319AC800AD7E58 /* TypeTraits.h */,
 				E195678D09E7CF1200B89D13 /* unicode */,
 				935AF46B09E9D9DB00ACD1D8 /* UnusedParam.h */,
-				9714AF2F122F27C60092D9F5 /* url */,
 				E17FF770112131D200076A19 /* ValueCheck.h */,
 				6592C316098B7DE10003D4F6 /* Vector.h */,
 				6592C317098B7DE10003D4F6 /* VectorTraits.h */,
@@ -2170,43 +2146,6 @@
 			path = bytecode;
 			sourceTree = "<group>";
 		};
-		9714AF2F122F27C60092D9F5 /* url */ = {
-			isa = PBXGroup;
-			children = (
-				9714AF56122F31DD0092D9F5 /* api */,
-				9714AF30122F27D20092D9F5 /* src */,
-			);
-			name = url;
-			sourceTree = "<group>";
-		};
-		9714AF30122F27D20092D9F5 /* src */ = {
-			isa = PBXGroup;
-			children = (
-				9714AF31122F27E70092D9F5 /* RawURLBuffer.h */,
-				9714AF32122F27E70092D9F5 /* URLBuffer.h */,
-				972A485D12661E0800F4514F /* URLCharacterTypes.cpp */,
-				972A485E12661E0800F4514F /* URLCharacterTypes.h */,
-				9714AF33122F27E70092D9F5 /* URLComponent.h */,
-				972A48741266256F00F4514F /* URLEscape.cpp */,
-				972A48751266256F00F4514F /* URLEscape.h */,
-				9714AF34122F27E70092D9F5 /* URLParser.h */,
-				972A48761266256F00F4514F /* URLQueryCanonicalizer.h */,
-				9714AF35122F27E70092D9F5 /* URLSegments.cpp */,
-				9714AF36122F27E70092D9F5 /* URLSegments.h */,
-			);
-			name = src;
-			sourceTree = "<group>";
-		};
-		9714AF56122F31DD0092D9F5 /* api */ = {
-			isa = PBXGroup;
-			children = (
-				9714AF57122F31F50092D9F5 /* ParsedURL.cpp */,
-				9714AF58122F31F50092D9F5 /* ParsedURL.h */,
-				9714AF59122F31F50092D9F5 /* URLString.h */,
-			);
-			name = api;
-			sourceTree = "<group>";
-		};
 		E195678D09E7CF1200B89D13 /* unicode */ = {
 			isa = PBXGroup;
 			children = (
@@ -2469,7 +2408,6 @@
 				14FFF98D12BFFF7500795BB8 /* PageAllocationAligned.h in Headers */,
 				14B3EF0512BC24DD00D29EFF /* PageBlock.h in Headers */,
 				8690231512092D5C00630AF9 /* PageReservation.h in Headers */,
-				9714AF5F122F32070092D9F5 /* ParsedURL.h in Headers */,
 				BC18C44B0E16F5CD00B34460 /* Parser.h in Headers */,
 				93052C350FB792190048FDC3 /* ParserArena.h in Headers */,
 				BCFBE696122560E800309E9D /* PassOwnArrayPtr.h in Headers */,
@@ -2490,7 +2428,6 @@
 				147B84630E6DE6B1004775A4 /* PutPropertySlot.h in Headers */,
 				088FA5BC0EF76D4300578E6F /* RandomNumber.h in Headers */,
 				08E279E90EF83B10007DB523 /* RandomNumberSeed.h in Headers */,
-				9714AF4B122F289A0092D9F5 /* RawURLBuffer.h in Headers */,
 				BC18C4570E16F5CD00B34460 /* RefCounted.h in Headers */,
 				90D3469C0E285280009492EE /* RefCountedLeakCounter.h in Headers */,
 				BC18C4580E16F5CD00B34460 /* RefPtr.h in Headers */,
@@ -2565,11 +2502,6 @@
 				BC18C4730E16F5CD00B34460 /* Unicode.h in Headers */,
 				BC18C4740E16F5CD00B34460 /* UnicodeIcu.h in Headers */,
 				BC18C4750E16F5CD00B34460 /* UnusedParam.h in Headers */,
-				9714AF4C122F289A0092D9F5 /* URLBuffer.h in Headers */,
-				9714AF4D122F289A0092D9F5 /* URLComponent.h in Headers */,
-				9714AF4E122F289A0092D9F5 /* URLParser.h in Headers */,
-				9714AF4F122F289A0092D9F5 /* URLSegments.h in Headers */,
-				9714AF60122F32070092D9F5 /* URLString.h in Headers */,
 				BC18C4760E16F5CD00B34460 /* UString.h in Headers */,
 				08DDA5C11264631700751732 /* UStringBuilder.h in Headers */,
 				BC18C4770E16F5CD00B34460 /* UTF8.h in Headers */,
@@ -2995,7 +2927,6 @@
 				97941A5713029AAB004A3447 /* OSRandomSource.cpp in Sources */,
 				14FFF98C12BFFF7500795BB8 /* PageAllocationAligned.cpp in Sources */,
 				14B3EF0612BC24DD00D29EFF /* PageBlock.cpp in Sources */,
-				9714AF5E122F32070092D9F5 /* ParsedURL.cpp in Sources */,
 				148F21BC107EC54D0042EC2C /* Parser.cpp in Sources */,
 				93052C340FB792190048FDC3 /* ParserArena.cpp in Sources */,
 				95742F650DD11F5A000917FB /* Profile.cpp in Sources */,
@@ -3040,7 +2971,6 @@
 				A7386555118697B400540279 /* ThunkGenerators.cpp in Sources */,
 				14A42E3F0F4F60EE00599099 /* TimeoutChecker.cpp in Sources */,
 				0B330C270F38C62300692DE3 /* TypeTraits.cpp in Sources */,
-				9714AF46122F28850092D9F5 /* URLSegments.cpp in Sources */,
 				14469DEE107EC7E700650446 /* UString.cpp in Sources */,
 				E1EF79AA0CE97BA60088D500 /* UTF8.cpp in Sources */,
 				868BFA17117CF19900B908B1 /* WTFString.cpp in Sources */,

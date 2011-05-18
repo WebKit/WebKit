@@ -1,3 +1,33 @@
+2011-05-18  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        Delete WTFURL
+        https://bugs.webkit.org/show_bug.cgi?id=61084
+
+        It's been a year and we've failed to complete this project.  It's time
+        to throw in the towel.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * wtf/url: Removed.
+        * wtf/url/api: Removed.
+        * wtf/url/api/ParsedURL.cpp: Removed.
+        * wtf/url/api/ParsedURL.h: Removed.
+        * wtf/url/api/URLString.h: Removed.
+        * wtf/url/src: Removed.
+        * wtf/url/src/RawURLBuffer.h: Removed.
+        * wtf/url/src/URLBuffer.h: Removed.
+        * wtf/url/src/URLCharacterTypes.cpp: Removed.
+        * wtf/url/src/URLCharacterTypes.h: Removed.
+        * wtf/url/src/URLComponent.h: Removed.
+        * wtf/url/src/URLEscape.cpp: Removed.
+        * wtf/url/src/URLEscape.h: Removed.
+        * wtf/url/src/URLParser.h: Removed.
+        * wtf/url/src/URLQueryCanonicalizer.h: Removed.
+        * wtf/url/src/URLSegments.cpp: Removed.
+        * wtf/url/src/URLSegments.h: Removed.
+        * wtf/url/wtfurl.gyp: Removed.
+
 2011-05-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
