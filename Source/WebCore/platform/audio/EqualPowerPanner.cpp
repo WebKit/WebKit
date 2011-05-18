@@ -30,11 +30,14 @@
 
 #include "AudioBus.h"
 #include "AudioUtilities.h"
+#include <algorithm>
 #include <wtf/MathExtras.h>
 
 // Use a 50ms smoothing / de-zippering time-constant.
 const double SmoothingTimeConstant = 0.050;
- 
+
+using namespace std;
+
 namespace WebCore {
 
 EqualPowerPanner::EqualPowerPanner(double sampleRate)
@@ -67,14 +70,19 @@ void EqualPowerPanner::pan(double azimuth, double /*elevation*/, AudioBus* input
     if (!sourceP || !destinationL || !destinationR)
         return;
 
-    // Pan smoothly from left to right with azimuth going from -30 -> +30 degrees.
-    double desiredPanPosition;
-    if (azimuth > 30.0)
-        desiredPanPosition = 1.0;
-    else if (azimuth < -30.0)
-        desiredPanPosition = 0.0;
-    else
-        desiredPanPosition = (azimuth + 30.0) / 60.0;
+    // Clamp azimuth to allowed range of -180 -> +180.
+    azimuth = max(-180.0, azimuth);
+    azimuth = min(180.0, azimuth);
+    
+    // Alias the azimuth ranges behind us to in front of us:
+    // -90 -> -180 to -90 -> 0 and 90 -> 180 to 90 -> 0
+    if (azimuth < -90)
+        azimuth = -180 - azimuth;
+    else if (azimuth > 90)
+        azimuth = 180 - azimuth;
+    
+    // Pan smoothly from left to right with azimuth going from -90 -> +90 degrees.
+    double desiredPanPosition = (azimuth + 90) / 180;
 
     double desiredGainL = 0.5 * cos(piDouble * desiredPanPosition) + 0.5;
     double desiredGainR = sqrt(1.0 - desiredGainL*desiredGainL);
