@@ -1,3 +1,9 @@
+2011-05-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix build break.
+
+        * Source/cmake/WebKitMacros.cmake: Add -i option in order to include Lookup.h
+
 2011-05-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

@@ -71,7 +71,7 @@ MACRO (GENERATE_HASH_LUT _input _output)
         OUTPUT ${_output}
         MAIN_DEPENDENCY ${_main_dependency}
         DEPENDS ${_input} ${HASH_LUT_GENERATOR}
-        COMMAND ${PERL_EXECUTABLE} ${HASH_LUT_GENERATOR} ${_input} > ${_output}
+        COMMAND ${PERL_EXECUTABLE} ${HASH_LUT_GENERATOR} ${_input} -i > ${_output}
         VERBATIM)
 ENDMACRO ()
 
