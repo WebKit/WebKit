@@ -395,6 +395,7 @@ void SelectElement::setSelectedIndex(SelectElementData& data, Element* element, 
         }
     }
 
+    toSelectElement(element)->updateValidity();
     if (Frame* frame = element->document()->frame())
         frame->page()->chrome()->client()->formStateDidChange(element);
 }

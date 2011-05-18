@@ -1,3 +1,15 @@
+2011-05-18  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        valueMissing validity for <select> is lame when selecting a value by a key operation
+        https://bugs.webkit.org/show_bug.cgi?id=61021
+
+        Add test cases for the bug.
+
+        * fast/forms/ValidityState-valueMissing-002-expected.txt:
+        * fast/forms/ValidityState-valueMissing-002.html:
+
 2011-05-18  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.

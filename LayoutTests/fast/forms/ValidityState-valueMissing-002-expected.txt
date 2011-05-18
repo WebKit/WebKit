@@ -13,7 +13,14 @@ PASS valueMissingFor("select-with-fake-placeholder-multiple") is false
 PASS valueMissingFor("select-without-fake-placeholder-multiple") is false
 PASS valueMissingFor("select-with-fake-placeholder-size2-multiple") is false
 PASS valueMissingFor("select-without-fake-placeholder-size2-multiple") is false
+Updating valueMissing state by a key input:
+PASS valueMissingFor("select-selecting-by-key") is true
+PASS select.value is "a"
+PASS valueMissingFor("select-selecting-by-key") is false
+PASS valueMissingFor("select-selecting-by-key-2") is true
+PASS select.value is "a"
+PASS valueMissingFor("select-selecting-by-key-2") is false
 PASS successfullyParsed is true
 
 TEST COMPLETE
-         
+

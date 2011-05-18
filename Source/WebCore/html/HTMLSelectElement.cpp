@@ -84,7 +84,6 @@ void HTMLSelectElement::deselectItems(HTMLOptionElement* excludeElement)
 void HTMLSelectElement::setSelectedIndex(int optionIndex, bool deselect)
 {
     SelectElement::setSelectedIndex(m_data, this, optionIndex, deselect, false, false);
-    setNeedsValidityCheck();
 }
 
 void HTMLSelectElement::setSelectedIndexByUser(int optionIndex, bool deselect, bool fireOnChangeNow, bool allowMultipleSelection)
@@ -107,7 +106,6 @@ void HTMLSelectElement::setSelectedIndexByUser(int optionIndex, bool deselect, b
         return;
     
     SelectElement::setSelectedIndex(m_data, this, optionIndex, deselect, fireOnChangeNow, true);
-    setNeedsValidityCheck();
 }
 
 bool HTMLSelectElement::hasPlaceholderLabelOption() const
