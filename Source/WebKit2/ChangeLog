@@ -1,3 +1,13 @@
+2011-05-18  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Crash in injected bundle client
+        https://bugs.webkit.org/show_bug.cgi?id=61086
+
+        * WebProcess/InjectedBundle/InjectedBundlePageUIClient.cpp:
+        (WebKit::InjectedBundlePageUIClient::shouldRubberBandInDirection): Check for existence of method in client prior to calling.
+
 2011-05-18  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
