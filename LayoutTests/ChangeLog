@@ -1,3 +1,15 @@
+2011-05-18  Adam Roben  <aroben@apple.com>
+
+        Remove mac-wk2 expected failure results for a plugins test that I fixed in r86456
+
+        Fixes <http://webkit.org/b/57456> <rdar://problem/9209331>
+        plugins/embed-prefers-plugins-for-images.html failing on SnowLeopard Intel Release (WebKit2
+        Tests)
+
+        * platform/mac-wk2/plugins/embed-prefers-plugins-for-images-expected.txt: Removed.
+        * platform/win-wk2/plugins/embed-prefers-plugins-for-images-expected.txt: Removed. We don't
+        need this extra passing result now that mac-wk2's failing result is gone.
+
 2011-05-18  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
