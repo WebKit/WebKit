@@ -1,3 +1,34 @@
+2011-05-18  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed.
+
+        Chromium expectations update for SVG tests.
+
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1-SE: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/filters: Added.
+        * platform/chromium-linux-x86/svg/filters/feBlend-invalid-mode-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt:
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png:
+        * platform/chromium-linux/svg/filters/feBlend-invalid-mode-expected.txt: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png:
+        * platform/chromium-mac/svg/filters/feBlend-invalid-mode-expected.txt: Added.
+        * platform/chromium-win-vista/svg/W3C-SVG-1.1-SE: Added.
+        * platform/chromium-win-vista/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png: Added.
+        * platform/chromium-win-vista/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt: Added.
+        * platform/chromium-win-vista/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png: Added.
+        * platform/chromium-win-vista/svg/filters: Added.
+        * platform/chromium-win-vista/svg/filters/feBlend-invalid-mode-expected.txt: Added.
+
 2011-05-18  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Andreas Kling.
