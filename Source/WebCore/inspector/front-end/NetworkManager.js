@@ -98,7 +98,7 @@ WebInspector.NetworkDispatcher.prototype = {
             resource.requestHeadersText = response.requestHeadersText;
 
         resource.connectionReused = response.connectionReused;
-        resource.connectionId = response.connectionId;
+        resource.connectionID = response.connectionID;
 
         if (response.fromDiskCache)
             resource.cached = true;

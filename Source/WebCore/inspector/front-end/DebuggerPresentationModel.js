@@ -97,7 +97,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     _addScript: function(script)
     {
-        var sourceFileId = this._createSourceFileId(script.sourceURL, script.sourceId);
+        var sourceFileId = this._createSourceFileId(script.sourceURL, script.sourceID);
         var sourceFile = this._sourceFiles[sourceFileId];
         if (sourceFile) {
             sourceFile.addScript(script);
@@ -166,7 +166,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
         var oldSource = sourceFile.requestContent(didReceiveSource.bind(this));
         function didReceiveSource(oldSource)
         {
-            WebInspector.debuggerModel.editScriptSource(script.sourceId, newSource, didEditScriptSource.bind(this, oldSource));
+            WebInspector.debuggerModel.editScriptSource(script.sourceID, newSource, didEditScriptSource.bind(this, oldSource));
         }
     },
 
@@ -335,11 +335,11 @@ WebInspector.DebuggerPresentationModel.prototype = {
         function didRequestSourceMapping(mapping)
         {
             var location = mapping.sourceLineToScriptLocation(breakpoint.lineNumber);
-            var script = WebInspector.debuggerModel.scriptForSourceID(location.sourceId);
+            var script = WebInspector.debuggerModel.scriptForSourceID(location.sourceID);
             if (script.sourceURL)
                 WebInspector.debuggerModel.setBreakpoint(script.sourceURL, location.lineNumber, location.columnNumber, breakpoint.condition, didSetBreakpoint.bind(this));
             else {
-                location.sourceId = script.sourceId;
+                location.sourceID = script.sourceID;
                 WebInspector.debuggerModel.setBreakpointBySourceId(location, breakpoint.condition, didSetBreakpoint.bind(this));
             }
         }
@@ -520,9 +520,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
         for (var i = 0; i < callFrames.length; ++i) {
             var callFrame = callFrames[i];
             var sourceFile;
-            var script = WebInspector.debuggerModel.scriptForSourceID(callFrame.location.sourceId);
+            var script = WebInspector.debuggerModel.scriptForSourceID(callFrame.location.sourceID);
             if (script)
-                sourceFile = this._sourceFileForScript(script.sourceURL, script.sourceId);
+                sourceFile = this._sourceFileForScript(script.sourceURL, script.sourceID);
             this._presentationCallFrames.push(new WebInspector.PresenationCallFrame(callFrame, i, sourceFile));
         }
         var details = WebInspector.debuggerModel.debuggerPausedDetails;
@@ -550,24 +550,24 @@ WebInspector.DebuggerPresentationModel.prototype = {
         return this._presentationCallFrames[this._selectedCallFrameIndex];
     },
 
-    _sourceFileForScript: function(sourceURL, sourceId)
+    _sourceFileForScript: function(sourceURL, sourceID)
     {
-        return this._sourceFiles[this._createSourceFileId(sourceURL, sourceId)];
+        return this._sourceFiles[this._createSourceFileId(sourceURL, sourceID)];
     },
 
     _scriptForSourceFileId: function(sourceFileId)
     {
         function filter(script)
         {
-            return this._createSourceFileId(script.sourceURL, script.sourceId) === sourceFileId;
+            return this._createSourceFileId(script.sourceURL, script.sourceID) === sourceFileId;
         }
         return WebInspector.debuggerModel.queryScripts(filter.bind(this))[0];
     },
 
-    _createSourceFileId: function(sourceURL, sourceId)
+    _createSourceFileId: function(sourceURL, sourceID)
     {
         var prefix = this._formatSourceFiles ? "deobfuscated:" : "";
-        return prefix + (sourceURL || sourceId);
+        return prefix + (sourceURL || sourceID);
     },
 
     _reset: function()
@@ -654,7 +654,7 @@ WebInspector.PresenationCallFrame = function(callFrame, index, sourceFile)
     this._callFrame = callFrame;
     this._index = index;
     this._sourceFile = sourceFile;
-    this._script = WebInspector.debuggerModel.scriptForSourceID(callFrame.location.sourceId);
+    this._script = WebInspector.debuggerModel.scriptForSourceID(callFrame.location.sourceID);
 }
 
 WebInspector.PresenationCallFrame.prototype = {

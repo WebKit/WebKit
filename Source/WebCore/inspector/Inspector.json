@@ -432,7 +432,7 @@
                     { "name": "requestHeaders", "type": "object", "optional": true, "description": "Refined HTTP request headers that were actually transmitted over the network." },
                     { "name": "requestHeadersText", "type": "string", "optional": true, "description": "HTTP request headers text." },
                     { "name": "connectionReused", "type": "boolean", "description": "Specifies whether physical connection was actually reused for this request." },
-                    { "name": "connectionId", "type": "number", "description": "Physical connection id that was actually used for this request." },
+                    { "name": "connectionID", "type": "number", "description": "Physical connection id that was actually used for this request." },
                     { "name": "fromDiskCache", "type": "boolean", "optional": true, "description": "Specifies that the resource was loaded from the disk cache." },
                     { "name": "timing", "$ref": "ResourceTiming", "optional": true, "description": "Timing information for the given request." }
                 ]
@@ -1341,7 +1341,7 @@
                 "id": "Location",
                 "type": "object",
                 "properties": [
-                    { "name": "sourceId", "type": "string", "description": "Script identifier as reported by the <code>scriptParsed</code>" },
+                    { "name": "sourceID", "type": "string", "description": "Script identifier as reported by the <code>scriptParsed</code>" },
                     { "name": "lineNumber", "type": "integer", "description": "Line number in the script." },
                     { "name": "columnNumber", "type": "integer", "optional": true, "description": "Column number in the script." }
                 ],
@@ -1448,7 +1448,7 @@
             {
                 "name": "editScriptSource",
                 "parameters": [
-                    { "name": "sourceId", "type": "string", "description": "Id of the script to edit." },
+                    { "name": "sourceID", "type": "string", "description": "Id of the script to edit." },
                     { "name": "scriptSource", "type": "string", "description": "New content of the script." }
                 ],
                 "returns": [
@@ -1459,7 +1459,7 @@
             {
                 "name": "getScriptSource",
                 "parameters": [
-                    { "name": "sourceId", "type": "string", "description": "Id of the script to get source for." }
+                    { "name": "sourceID", "type": "string", "description": "Id of the script to get source for." }
                 ],
                 "returns": [
                     { "name": "scriptSource", "type": "string", "description": "Script source." }
@@ -1500,7 +1500,7 @@
             {
                 "name": "scriptParsed",
                 "parameters": [
-                    { "name": "sourceId", "type": "string", "description": "Identifier of the script parsed." },
+                    { "name": "sourceID", "type": "string", "description": "Identifier of the script parsed." },
                     { "name": "url", "type": "string", "description": "URL of the script parsed (if any)." },
                     { "name": "startLine", "type": "integer", "description": "Line offset of the script within the resource with given URL (for script tags)." },
                     { "name": "startColumn", "type": "integer", "description": "Column offset of the script within the resource with given URL." },

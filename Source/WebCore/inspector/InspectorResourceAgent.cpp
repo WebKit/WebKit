@@ -149,7 +149,7 @@ static PassRefPtr<InspectorObject> buildObjectForResourceResponse(const Resource
 
     responseObject->setString("mimeType", response.mimeType());
     responseObject->setBoolean("connectionReused", response.connectionReused());
-    responseObject->setNumber("connectionId", response.connectionID());
+    responseObject->setNumber("connectionID", response.connectionID());
     responseObject->setBoolean("fromDiskCache", response.wasCached());
     if (response.resourceLoadTiming())
         responseObject->setObject("timing", buildObjectForTiming(*response.resourceLoadTiming()));

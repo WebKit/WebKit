@@ -193,7 +193,7 @@ void InspectorDebuggerAgent::setBreakpointByUrl(ErrorString*, const String& url,
 
 static bool parseLocation(ErrorString* errorString, RefPtr<InspectorObject> location, String* sourceId, int* lineNumber, int* columnNumber)
 {
-    if (!location->getString("sourceId", sourceId) || !location->getNumber("lineNumber", lineNumber)) {
+    if (!location->getString("sourceID", sourceId) || !location->getNumber("lineNumber", lineNumber)) {
         // FIXME: replace with input validation.
         *errorString = "sourceId and lineNumber are required.";
         return false;
@@ -279,21 +279,21 @@ PassRefPtr<InspectorObject> InspectorDebuggerAgent::resolveBreakpoint(const Stri
     debugServerBreakpointIdsIterator->second.append(debugServerBreakpointId);
 
     RefPtr<InspectorObject> location = InspectorObject::create();
-    location->setString("sourceId", sourceId);
+    location->setString("sourceID", sourceId);
     location->setNumber("lineNumber", actualLineNumber);
     location->setNumber("columnNumber", actualColumnNumber);
     return location;
 }
 
-void InspectorDebuggerAgent::editScriptSource(ErrorString* error, const String& sourceId, const String& newContent, RefPtr<InspectorArray>* newCallFrames)
+void InspectorDebuggerAgent::editScriptSource(ErrorString* error, const String& sourceID, const String& newContent, RefPtr<InspectorArray>* newCallFrames)
 {
-    if (scriptDebugServer().editScriptSource(sourceId, newContent, error, &m_currentCallStack))
+    if (scriptDebugServer().editScriptSource(sourceID, newContent, error, &m_currentCallStack))
         *newCallFrames = currentCallFrames();
 }
 
-void InspectorDebuggerAgent::getScriptSource(ErrorString*, const String& sourceId, String* scriptSource)
+void InspectorDebuggerAgent::getScriptSource(ErrorString*, const String& sourceID, String* scriptSource)
 {
-    *scriptSource = m_scripts.get(sourceId).data;
+    *scriptSource = m_scripts.get(sourceID).data;
 }
 
 void InspectorDebuggerAgent::schedulePauseOnNextStatement(DebuggerEventType type, PassRefPtr<InspectorValue> data)
@@ -383,12 +383,12 @@ PassRefPtr<InspectorArray> InspectorDebuggerAgent::currentCallFrames()
 
 // JavaScriptDebugListener functions
 
-void InspectorDebuggerAgent::didParseSource(const String& sourceId, const String& url, const String& data, int startLine, int startColumn, int endLine, int endColumn, bool isContentScript)
+void InspectorDebuggerAgent::didParseSource(const String& sourceID, const String& url, const String& data, int startLine, int startColumn, int endLine, int endColumn, bool isContentScript)
 {
     // Don't send script content to the front end until it's really needed.
-    m_frontend->scriptParsed(sourceId, url, startLine, startColumn, endLine, endColumn, isContentScript);
+    m_frontend->scriptParsed(sourceID, url, startLine, startColumn, endLine, endColumn, isContentScript);
 
-    m_scripts.set(sourceId, Script(url, data, startLine, startColumn, endLine, endColumn));
+    m_scripts.set(sourceID, Script(url, data, startLine, startColumn, endLine, endColumn));
 
     if (url.isEmpty())
         return;
@@ -404,7 +404,7 @@ void InspectorDebuggerAgent::didParseSource(const String& sourceId, const String
         breakpointObject->getNumber("lineNumber", &breakpoint.lineNumber);
         breakpointObject->getNumber("columnNumber", &breakpoint.columnNumber);
         breakpointObject->getString("condition", &breakpoint.condition);
-        RefPtr<InspectorObject> location = resolveBreakpoint(it->first, sourceId, breakpoint);
+        RefPtr<InspectorObject> location = resolveBreakpoint(it->first, sourceID, breakpoint);
         if (location)
             m_frontend->breakpointResolved(it->first, location);
     }
