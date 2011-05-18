@@ -35,6 +35,7 @@
 
 #include <wtf/ByteArray.h>
 #include <wtf/MathExtras.h>
+#include <wtf/ParallelJobs.h>
 
 using std::max;
 
@@ -130,8 +131,90 @@ inline void FEGaussianBlur::platformApplyGeneric(ByteArray* srcPixelArray, ByteA
     }
 }
 
+#if ENABLE(PARALLEL_JOBS)
+void FEGaussianBlur::platformApplyWorker(PlatformApplyParameters* parameters)
+{
+    IntSize paintSize(parameters->width, parameters->height);
+#if CPU(ARM_NEON) && COMPILER(GCC)
+    parameters->filter->platformApplyNeon(parameters->srcPixelArray.get(), parameters->dstPixelArray.get(),
+        parameters->kernelSizeX, parameters->kernelSizeY, paintSize);
+#else
+    parameters->filter->platformApplyGeneric(parameters->srcPixelArray.get(), parameters->dstPixelArray.get(),
+        parameters->kernelSizeX, parameters->kernelSizeY, paintSize);
+#endif
+}
+#endif
+
 inline void FEGaussianBlur::platformApply(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize)
 {
+#if ENABLE(PARALLEL_JOBS)
+    int scanline = 4 * paintSize.width();
+    int extraHeight = 3 * kernelSizeY * 0.5f;
+    int optimalThreadNumber = (paintSize.width() * paintSize.height()) / (s_minimalRectDimension + extraHeight * paintSize.width());
+
+    if (optimalThreadNumber > 1) {
+        ParallelJobs<PlatformApplyParameters> parallelJobs(&platformApplyWorker, optimalThreadNumber);
+
+        int jobs = parallelJobs.numberOfJobs();
+        if (jobs > 1) {
+            int blockHeight = paintSize.height() / jobs;
+            --jobs;
+            for (int job = jobs; job >= 0; --job) {
+                PlatformApplyParameters& params = parallelJobs.parameter(job);
+                params.filter = this;
+
+                int startY;
+                int endY;
+                if (!job) {
+                    startY = 0;
+                    endY = blockHeight + extraHeight;
+                    params.srcPixelArray = srcPixelArray;
+                    params.dstPixelArray = tmpPixelArray;
+                } else {
+                    if (job == jobs) {
+                        startY = job * blockHeight - extraHeight;
+                        endY = paintSize.height();
+                    } else {
+                        startY = job * blockHeight - extraHeight;
+                        endY = (job + 1) * blockHeight + extraHeight;
+                    }
+
+                    int blockSize = (endY - startY) * scanline;
+                    params.srcPixelArray = ByteArray::create(blockSize);
+                    params.dstPixelArray = ByteArray::create(blockSize);
+                    memcpy(params.srcPixelArray->data(), srcPixelArray->data() + startY * scanline, blockSize);
+                }
+
+                params.width = paintSize.width();
+                params.height = endY - startY;
+                params.kernelSizeX = kernelSizeX;
+                params.kernelSizeY = kernelSizeY;
+            }
+
+            parallelJobs.execute();
+
+            // Copy together the parts of the image.
+            for (int job = jobs; job >= 1; --job) {
+                PlatformApplyParameters& params = parallelJobs.parameter(job);
+                int sourceOffset;
+                int destinationOffset;
+                int size;
+                if (job == jobs) {
+                    sourceOffset = extraHeight * scanline;
+                    destinationOffset = job * blockHeight * scanline;
+                    size = (paintSize.height() - job * blockHeight) * scanline;
+                } else {
+                    sourceOffset = extraHeight * scanline;
+                    destinationOffset = job * blockHeight * scanline;
+                    size = blockHeight * scanline;
+                }
+                memcpy(srcPixelArray->data() + destinationOffset, params.srcPixelArray->data() + sourceOffset, size);
+            }
+            return;
+        }
+    }
+#endif // PARALLEL_JOBS
+
     // The selection here eventually should happen dynamically on some platforms.
 #if CPU(ARM_NEON) && COMPILER(GCC)
     platformApplyNeon(srcPixelArray, tmpPixelArray, kernelSizeX, kernelSizeY, paintSize);

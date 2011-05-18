@@ -44,19 +44,37 @@ public:
     virtual void dump();
     
     virtual void determineAbsolutePaintRect();
+    static void calculateKernelSize(Filter*, unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY);
 
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
 
-    static void calculateKernelSize(Filter*, unsigned& kernelSizeX, unsigned& kernelSizeY, float stdX, float stdY);
+private:
+#if ENABLE(PARALLEL_JOBS)
+    static const int s_minimalRectDimension = 100 * 100; // Empirical data limit for parallel jobs
+
+    template<typename Type>
+    friend class ParallelJobs;
+
+    struct PlatformApplyParameters {
+        FEGaussianBlur* filter;
+        RefPtr<ByteArray> srcPixelArray;
+        RefPtr<ByteArray> dstPixelArray;
+        int width;
+        int height;
+        unsigned kernelSizeX;
+        unsigned kernelSizeY;
+    };
+
+    static void platformApplyWorker(PlatformApplyParameters*);
+#endif // ENABLE(PARALLEL_JOBS)
+
+    FEGaussianBlur(Filter*, float, float);
 
     static inline void kernelPosition(int boxBlur, unsigned& std, int& dLeft, int& dRight);
     inline void platformApply(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
 
     inline void platformApplyGeneric(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
     inline void platformApplyNeon(ByteArray* srcPixelArray, ByteArray* tmpPixelArray, unsigned kernelSizeX, unsigned kernelSizeY, IntSize& paintSize);
-
-private:
-    FEGaussianBlur(Filter*, float, float);
 
     float m_stdX;
     float m_stdY;

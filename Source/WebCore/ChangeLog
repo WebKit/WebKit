@@ -1,3 +1,23 @@
+2011-05-18  Renata Hodovan  <reni@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Apply the ParallelJobs support to FEGaussianBlur
+        https://bugs.webkit.org/show_bug.cgi?id=61049
+
+        The Gaussian blur filter of SVG can consume lots of resources if it is
+        applied to a large area. The computation can be distributed to multiple
+        cores if the architecture supports.
+        The average performance progression is about 15% on dual-core machines.
+
+        Developed in cooperation with Gabor Loki and Zoltan Herczeg.
+
+
+        * platform/graphics/filters/FEGaussianBlur.cpp:
+        (WebCore::FEGaussianBlur::platformApplyWorker):
+        (WebCore::FEGaussianBlur::platformApply):
+        * platform/graphics/filters/FEGaussianBlur.h:
+
 2011-05-18  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
