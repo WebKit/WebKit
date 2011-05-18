@@ -362,6 +362,8 @@
 		51ACBB82127A8BAD00D203B9 /* WebContextMenuProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACBB81127A8BAD00D203B9 /* WebContextMenuProxy.h */; };
 		51ACBBA0127A8F2C00D203B9 /* WebContextMenuProxyMac.h in Headers */ = {isa = PBXBuildFile; fileRef = 51ACBB9E127A8F2C00D203B9 /* WebContextMenuProxyMac.h */; };
 		51ACBBA1127A8F2C00D203B9 /* WebContextMenuProxyMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51ACBB9F127A8F2C00D203B9 /* WebContextMenuProxyMac.mm */; };
+		51B15A8413843A3900321AD8 /* EnvironmentUtilities.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B15A8213843A3900321AD8 /* EnvironmentUtilities.cpp */; };
+		51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */; };
 		51B3005012529D0E000B5CA0 /* WebBackForwardListCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004E12529D0E000B5CA0 /* WebBackForwardListCF.cpp */; };
 		51B3005112529D0E000B5CA0 /* WebPageProxyCF.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */; };
 		51C4032C136749D800DC972D /* AuthenticationManager.mac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 51C4032B136749D800DC972D /* AuthenticationManager.mac.mm */; };
@@ -1290,6 +1292,8 @@
 		51ACBB81127A8BAD00D203B9 /* WebContextMenuProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuProxy.h; sourceTree = "<group>"; };
 		51ACBB9E127A8F2C00D203B9 /* WebContextMenuProxyMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuProxyMac.h; sourceTree = "<group>"; };
 		51ACBB9F127A8F2C00D203B9 /* WebContextMenuProxyMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebContextMenuProxyMac.mm; sourceTree = "<group>"; };
+		51B15A8213843A3900321AD8 /* EnvironmentUtilities.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = EnvironmentUtilities.cpp; path = unix/EnvironmentUtilities.cpp; sourceTree = "<group>"; };
+		51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EnvironmentUtilities.h; path = unix/EnvironmentUtilities.h; sourceTree = "<group>"; };
 		51B3004E12529D0E000B5CA0 /* WebBackForwardListCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebBackForwardListCF.cpp; path = cf/WebBackForwardListCF.cpp; sourceTree = "<group>"; };
 		51B3004F12529D0E000B5CA0 /* WebPageProxyCF.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebPageProxyCF.cpp; path = cf/WebPageProxyCF.cpp; sourceTree = "<group>"; };
 		51C4032B136749D800DC972D /* AuthenticationManager.mac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AuthenticationManager.mac.mm; path = mac/AuthenticationManager.mac.mm; sourceTree = "<group>"; };
@@ -2426,6 +2430,15 @@
 			name = KeyValueStorage;
 			sourceTree = "<group>";
 		};
+		51B15A7D138439B200321AD8 /* unix */ = {
+			isa = PBXGroup;
+			children = (
+				51B15A8213843A3900321AD8 /* EnvironmentUtilities.cpp */,
+				51B15A8313843A3900321AD8 /* EnvironmentUtilities.h */,
+			);
+			name = unix;
+			sourceTree = "<group>";
+		};
 		51B3004D12529CF5000B5CA0 /* cf */ = {
 			isa = PBXGroup;
 			children = (
@@ -3017,6 +3030,7 @@
 				1AA2E51A12E4C05600BC4966 /* cg */,
 				1AB5A1BA10E021D30040F6CF /* CoreIPC */,
 				1A7E814E1152D2240003695B /* mac */,
+				51B15A7D138439B200321AD8 /* unix */,
 				51A7F2F4125BF8D4008AEB1D /* Logging.cpp */,
 				51A7F2F2125BF820008AEB1D /* Logging.h */,
 				C0E3AA451209E2BA00A49D01 /* Module.cpp */,
@@ -3795,6 +3809,7 @@
 				1A179780137EE82C00F97D45 /* PluginCreationParameters.h in Headers */,
 				51D130541382EAC000351EDD /* SecItemRequestData.h in Headers */,
 				51D130561382EAC000351EDD /* SecItemResponseData.h in Headers */,
+				51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4461,6 +4476,7 @@
 				51D130531382EAC000351EDD /* SecItemRequestData.cpp in Sources */,
 				51D130551382EAC000351EDD /* SecItemResponseData.cpp in Sources */,
 				51D130581382F10500351EDD /* WebProcessProxyMac.mm in Sources */,
+				51B15A8413843A3900321AD8 /* EnvironmentUtilities.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

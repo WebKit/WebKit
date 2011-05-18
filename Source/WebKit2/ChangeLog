@@ -1,3 +1,31 @@
+2011-05-18  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/9457633> and https://bugs.webkit.org/show_bug.cgi?id=61009
+        Processes spawned by SnowLeopard's WebProcess attempt to install WebKit2 shims.
+
+        If the WebProcess or PluginProcess forks, it shouldn't pass WebKit2 shims along to the new process
+        in the DYLD_INSERT_LIBRARIES environment variable.
+
+        Add Environment Utilities helper to strip unwanted values from an environment variable:
+        * Platform/unix/EnvironmentUtilities.cpp: Added.
+        (WebKit::EnvironmentUtilities::stripValuesEndingWithString):
+        * Platform/unix/EnvironmentUtilities.h: Added.
+        * WebKit2.xcodeproj/project.pbxproj:
+
+        Strip PluginProcessShim.dylib from DYLD_INSERT_LIBRARIES:
+        * PluginProcess/mac/PluginProcessMainMac.mm:
+        (WebKit::PluginProcessMain):
+
+        Strip WebProcessShim.dylib from DYLD_INSERT_LIBRARIES:
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+
+        Unprotect SnowLeopard now that it will behave and not spawn processes trying to use WebKit2 shims:
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+
 2011-05-18  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Simon Fraser.

@@ -29,6 +29,7 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #import "CommandLine.h"
+#import "EnvironmentUtilities.h"
 #import "NetscapePluginModule.h"
 #import "PluginProcess.h"
 #import "RunLoop.h"
@@ -51,9 +52,9 @@ namespace WebKit {
 
 int PluginProcessMain(const CommandLine& commandLine)
 {
-    // Unset DYLD_INSERT_LIBRARIES. We don't want our plug-in process shim to be loaded 
-    // by any child processes that the plug-in may launch.
-    unsetenv("DYLD_INSERT_LIBRARIES");
+    // Remove the PluginProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes 
+    // spawned by the PluginProcess don't try to insert the shim and crash.
+    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/PluginProcessShim.dylib");
 
     // Check if we're being spawned to write a MIME type preferences file.
     String pluginPath = commandLine["createPluginMIMETypesPreferences"];
