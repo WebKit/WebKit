@@ -1,3 +1,14 @@
+2011-05-18  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Implement layoutTestController.setValueForUser()
+        https://bugs.webkit.org/show_bug.cgi?id=60956
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::setValueForUser):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-05-16  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

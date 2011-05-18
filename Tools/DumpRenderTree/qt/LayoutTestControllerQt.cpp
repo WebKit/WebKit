@@ -445,6 +445,11 @@ void LayoutTestController::setTimelineProfilingEnabled(bool enable)
     DumpRenderTreeSupportQt::setTimelineProfilingEnabled(m_drt->webPage(), enable);
 }
 
+void LayoutTestController::setValueForUser(const QWebElement& element, const QString& value)
+{
+    DumpRenderTreeSupportQt::setValueForUser(element, value);
+}
+
 void LayoutTestController::setFixedContentsSize(int width, int height)
 {
     m_topLoadingFrame->page()->setPreferredContentsSize(QSize(width, height));

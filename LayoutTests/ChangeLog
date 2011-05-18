@@ -1,3 +1,12 @@
+2011-05-18  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Implement layoutTestController.setValueForUser()
+        https://bugs.webkit.org/show_bug.cgi?id=60956
+
+        * platform/qt/Skipped: Unskip fast/forms/onchange-setvalueforuser.html
+
 2011-05-16  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

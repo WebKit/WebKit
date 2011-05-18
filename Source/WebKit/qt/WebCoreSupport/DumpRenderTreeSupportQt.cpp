@@ -263,6 +263,18 @@ void DumpRenderTreeSupportQt::setJavaScriptProfilingEnabled(QWebFrame* frame, bo
 #endif
 }
 
+void DumpRenderTreeSupportQt::setValueForUser(const QWebElement& element, const QString& value)
+{
+    WebCore::Element* webElement = element.m_element;
+    if (!webElement)
+        return;
+    HTMLInputElement* inputElement = webElement->toInputElement();
+    if (!inputElement)
+        return;
+
+    inputElement->setValueForUser(value);
+}
+
 // Pause a given CSS animation or transition on the target node at a specific time.
 // If the animation or transition is already paused, it will update its pause time.
 // This method is only intended to be used for testing the CSS animation and transition system.
