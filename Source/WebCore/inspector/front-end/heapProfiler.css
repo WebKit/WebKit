@@ -143,27 +143,22 @@
     left: 0;
     right: 0;
     bottom: 0;
-    -webkit-box-orient: vertical;
 }
 
 .detailed-heapshot-view.visible {
-    display: -webkit-box;
+    display: block;
 }
 
 .detailed-heapshot-view .view {
     display: none;
-    -webkit-box-flex: 3;
-    -webkit-box-orient: vertical;
 }
 
 .detailed-heapshot-view .view.visible {
-    display: -webkit-box;
+    display: block;
 }
 
 .detailed-heapshot-view .data-grid {
     border: none;
-    position: relative;
-    -webkit-box-flex: 1;
 }
 
 .detailed-heapshot-view .data-grid td.count-column {
@@ -224,31 +219,61 @@
     background-color: #d6dde5;
 }
 
-.detailed-heapshot-view .retaining-paths-view {
-    -webkit-box-flex: 1;
+.detailed-heapshot-view .data-grid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
-.detailed-heapshot-view .retaining-paths-view .title {
-    background-color: rgb(235, 235, 235);
-    background-image: url(Images/statusbarBackground.png);
-    background-repeat: repeat-x;
+.detailed-heapshot-view .views-container { 
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 173px;
+}
+
+.detailed-heapshot-view .views-container .view {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+.detailed-heapshot-view .retaining-paths-view {
+    height: 150px;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.detailed-heapshot-view .retainers-view-header {
+    background-image: url(Images/statusbarResizerVertical.png), url(Images/statusbarBackground.png);
+    background-repeat: no-repeat, repeat-x;
+    background-position: right center, center;
+    cursor: row-resize;
     height: 23px;
     font: -webkit-small-control;
     font-weight: bold;
     color: rgb(48, 48, 48);
     text-shadow: rgba(255, 255, 255, 0.75) 0 1px 0;
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 150px;
 }
 
-.detailed-heapshot-view .retaining-paths-view .title > span {
+.detailed-heapshot-view .retainers-view-header .title > span {
     display: inline-block;
     padding-top: 3px;
     vertical-align: middle;
     margin-left: 4px;
     margin-right: 8px;
-}
-
-.detailed-heapshot-view .retaining-paths-to-windows {
-    
 }
 
 .heapshot-help-status-bar-item .glyph {

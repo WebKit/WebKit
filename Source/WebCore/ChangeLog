@@ -1,3 +1,19 @@
+2011-05-17  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Make retaining paths list of the Detailed
+        heap snapshots view resizable.
+        https://bugs.webkit.org/show_bug.cgi?id=60960
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.DetailedHeapshotView.prototype.resize):
+        (WebInspector.DetailedHeapshotView.prototype._startRetainersHeaderDragging):
+        (WebInspector.DetailedHeapshotView.prototype._retainersHeaderDragging):
+        (WebInspector.DetailedHeapshotView.prototype._endRetainersHeaderDragging):
+        (WebInspector.DetailedHeapshotView.prototype._updateRetainmentViewHeight):
+        * inspector/front-end/heapProfiler.css:
+
 2011-05-16  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

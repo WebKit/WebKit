@@ -494,37 +494,41 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.showShallowSizeAsPercent = false;
     this.showRetainedSizeAsPercent = false;
 
+    this.viewsContainer = document.createElement("div");
+    this.viewsContainer.addStyleClass("views-container");
+    this.element.appendChild(this.viewsContainer);
+
     this.containmentView = new WebInspector.View();
     this.containmentView.element.addStyleClass("view");
     this.containmentDataGrid = new WebInspector.HeapSnapshotContainmentDataGrid();
     this.containmentDataGrid.element.addEventListener("click", this._mouseClickInContainmentGrid.bind(this), true);
     this.containmentView.element.appendChild(this.containmentDataGrid.element);
-    this.element.appendChild(this.containmentView.element);
+    this.viewsContainer.appendChild(this.containmentView.element);
 
     this.constructorsView = new WebInspector.View();
     this.constructorsView.element.addStyleClass("view");
     this.constructorsDataGrid = new WebInspector.HeapSnapshotConstructorsDataGrid();
     this.constructorsDataGrid.element.addEventListener("click", this._mouseClickInContainmentGrid.bind(this), true);
     this.constructorsView.element.appendChild(this.constructorsDataGrid.element);
-    this.element.appendChild(this.constructorsView.element);
+    this.viewsContainer.appendChild(this.constructorsView.element);
 
     this.diffView = new WebInspector.View();
     this.diffView.element.addStyleClass("view");
     this.diffDataGrid = new WebInspector.HeapSnapshotDiffDataGrid();
     this.diffDataGrid.element.addEventListener("click", this._mouseClickInContainmentGrid.bind(this), true);
     this.diffView.element.appendChild(this.diffDataGrid.element);
-    this.element.appendChild(this.diffView.element);
+    this.viewsContainer.appendChild(this.diffView.element);
 
     this.dominatorView = new WebInspector.View();
     this.dominatorView.element.addStyleClass("view");
     this.dominatorDataGrid = new WebInspector.HeapSnapshotDominatorsDataGrid();
     this.dominatorDataGrid.element.addEventListener("click", this._mouseClickInContainmentGrid.bind(this), true);
     this.dominatorView.element.appendChild(this.dominatorDataGrid.element);
-    this.element.appendChild(this.dominatorView.element);
+    this.viewsContainer.appendChild(this.dominatorView.element);
 
-    var retainmentView = new WebInspector.View();
-    retainmentView.element.addStyleClass("view");
-    retainmentView.element.addStyleClass("retaining-paths-view");
+    this.retainmentViewHeader = document.createElement("div");
+    this.retainmentViewHeader.addStyleClass("retainers-view-header");
+    this.retainmentViewHeader.addEventListener("mousedown", this._startRetainersHeaderDragging.bind(this), true);
     var retainingPathsTitleDiv = document.createElement("div");
     retainingPathsTitleDiv.className = "title";
     var retainingPathsTitle = document.createElement("span");
@@ -540,12 +544,17 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
     this.retainingPathsRoot.appendChild(toWindowObjectsTraceOption);
     retainingPathsTitleDiv.appendChild(retainingPathsTitle);
     retainingPathsTitleDiv.appendChild(this.retainingPathsRoot);
-    retainmentView.element.appendChild(retainingPathsTitleDiv);
+    this.retainmentViewHeader.appendChild(retainingPathsTitleDiv);
+    this.element.appendChild(this.retainmentViewHeader);
+
+    this.retainmentView = new WebInspector.View();
+    this.retainmentView.element.addStyleClass("view");
+    this.retainmentView.element.addStyleClass("retaining-paths-view");
     this.retainmentDataGrid = new WebInspector.HeapSnapshotRetainingPathsList();
     this.retainmentDataGrid.element.addEventListener("click", this._mouseClickInRetainmentGrid.bind(this), true);
-    retainmentView.element.appendChild(this.retainmentDataGrid.element);
-    retainmentView.visible = true;
-    this.element.appendChild(retainmentView.element);
+    this.retainmentView.element.appendChild(this.retainmentDataGrid.element);
+    this.retainmentView.visible = true;
+    this.element.appendChild(this.retainmentView.element);
     this.retainmentDataGrid.reset();
 
     this.dataGrid = this.constructorsDataGrid;
@@ -670,6 +679,9 @@ WebInspector.DetailedHeapshotView.prototype = {
     {
         if (this.dataGrid)
             this.dataGrid.updateWidths();
+
+        var height = this.retainmentView.element.clientHeight;
+        this._updateRetainmentViewHeight(height);
     },
 
     refreshShowAsPercents: function()
@@ -1080,6 +1092,41 @@ WebInspector.DetailedHeapshotView.prototype = {
             this.helpPopover.hide();
         else
             this.helpPopover.show(this.helpButton.element);
+    },
+
+    _startRetainersHeaderDragging: function(event)
+    {
+        if (!this.visible || event.target === this.retainingPathsRoot)
+            return;
+
+        WebInspector.elementDragStart(this.retainmentViewHeader, this._retainersHeaderDragging.bind(this), this._endRetainersHeaderDragging.bind(this), event, "row-resize");
+        this._previousDragPosition = event.pageY;
+        event.stopPropagation();
+    },
+
+    _retainersHeaderDragging: function(event)
+    {
+        var height = this.retainmentView.element.clientHeight;
+        height += this._previousDragPosition - event.pageY;
+        this._previousDragPosition = event.pageY;
+        this._updateRetainmentViewHeight(height);
+        event.preventDefault();
+        event.stopPropagation();
+    },
+
+    _endRetainersHeaderDragging: function(event)
+    {
+        WebInspector.elementDragEnd(event);
+        delete this._previousDragPosition;
+        event.stopPropagation();
+    },
+
+    _updateRetainmentViewHeight: function(height)
+    {
+        height = Number.constrain(height, Preferences.minConsoleHeight, this.element.clientHeight - Preferences.minConsoleHeight);
+        this.viewsContainer.style.bottom = (height + this.retainmentViewHeader.clientHeight) + "px";
+        this.retainmentView.element.style.height = height + "px";
+        this.retainmentViewHeader.style.bottom = height + "px";        
     },
 
     _updateBaseOptions: function()
