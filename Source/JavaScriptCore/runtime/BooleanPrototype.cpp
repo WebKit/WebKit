@@ -25,6 +25,7 @@
 #include "ExceptionHelpers.h"
 #include "JSFunction.h"
 #include "JSString.h"
+#include "Lookup.h"
 #include "ObjectPrototype.h"
 
 namespace JSC {

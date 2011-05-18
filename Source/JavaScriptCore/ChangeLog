@@ -1,3 +1,9 @@
+2011-05-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Try to fix the EFL build.
+
+        * runtime/BooleanPrototype.cpp:
+
 2011-05-16  Geoffrey Garen  <ggaren@apple.com>
 
         Rolling back in r86653 with build fixed.
