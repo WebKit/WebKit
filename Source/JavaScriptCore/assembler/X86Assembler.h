@@ -1019,11 +1019,6 @@ public:
     {
         m_formatter.oneByteOp_disp32(OP_MOV_GvEv, dst, base, offset);
     }
-    
-    void movl_mr_disp8(int offset, RegisterID base, RegisterID dst)
-    {
-        m_formatter.oneByteOp_disp8(OP_MOV_GvEv, dst, base, offset);
-    }
 
     void movl_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
     {
@@ -1093,11 +1088,6 @@ public:
     void movq_mr_disp32(int offset, RegisterID base, RegisterID dst)
     {
         m_formatter.oneByteOp64_disp32(OP_MOV_GvEv, dst, base, offset);
-    }
-
-    void movq_mr_disp8(int offset, RegisterID base, RegisterID dst)
-    {
-        m_formatter.oneByteOp64_disp8(OP_MOV_GvEv, dst, base, offset);
     }
 
     void movq_mr(int offset, RegisterID base, RegisterID index, int scale, RegisterID dst)
@@ -1547,13 +1537,6 @@ public:
     {
         setRel32(from, to);
     }
-    
-    static void repatchCompact(void* where, int32_t value)
-    {
-        ASSERT(value >= 0);
-        ASSERT(value <= std::numeric_limits<int8_t>::max());
-        setInt8(where, value);
-    }
 
     static void repatchInt32(void* where, int32_t value)
     {
@@ -1603,11 +1586,6 @@ private:
     static void setInt32(void* where, int32_t value)
     {
         reinterpret_cast<int32_t*>(where)[-1] = value;
-    }
-    
-    static void setInt8(void* where, int8_t value)
-    {
-        reinterpret_cast<int8_t*>(where)[-1] = value;
     }
 
     static void setRel32(void* from, void* to)
@@ -1682,14 +1660,6 @@ private:
             emitRexIfNeeded(reg, 0, base);
             m_buffer.putByteUnchecked(opcode);
             memoryModRM_disp32(reg, base, offset);
-        }
-        
-        void oneByteOp_disp8(OneByteOpcodeID opcode, int reg, RegisterID base, int offset)
-        {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexIfNeeded(reg, 0, base);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM_disp8(reg, base, offset);
         }
 
         void oneByteOp(OneByteOpcodeID opcode, int reg, RegisterID base, RegisterID index, int scale, int offset)
@@ -1796,14 +1766,6 @@ private:
             emitRexW(reg, 0, base);
             m_buffer.putByteUnchecked(opcode);
             memoryModRM_disp32(reg, base, offset);
-        }
-        
-        void oneByteOp64_disp8(OneByteOpcodeID opcode, int reg, RegisterID base, int offset)
-        {
-            m_buffer.ensureSpace(maxInstructionSize);
-            emitRexW(reg, 0, base);
-            m_buffer.putByteUnchecked(opcode);
-            memoryModRM_disp8(reg, base, offset);
         }
 
         void oneByteOp64(OneByteOpcodeID opcode, int reg, RegisterID base, RegisterID index, int scale, int offset)
@@ -2037,24 +1999,7 @@ private:
                 }
             }
         }
-
-        void memoryModRM_disp8(int reg, RegisterID base, int offset)
-        {
-            // A base of esp or r12 would be interpreted as a sib, so force a sib with no index & put the base in there.
-            ASSERT(CAN_SIGN_EXTEND_8_32(offset));
-#if CPU(X86_64)
-            if ((base == hasSib) || (base == hasSib2)) {
-#else
-            if (base == hasSib) {
-#endif
-                putModRmSib(ModRmMemoryDisp8, reg, base, noIndex, 0);
-                m_buffer.putByteUnchecked(offset);
-            } else {
-                putModRm(ModRmMemoryDisp8, reg, base);
-                m_buffer.putByteUnchecked(offset);
-            }
-        }
-
+    
         void memoryModRM_disp32(int reg, RegisterID base, int offset)
         {
             // A base of esp or r12 would be interpreted as a sib, so force a sib with no index & put the base in there.

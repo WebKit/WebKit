@@ -745,11 +745,6 @@ public:
         insn--;
         ExecutableAllocator::cacheFlush(insn, 2 * sizeof(MIPSWord));
     }
-    
-    static void repatchCompact(void* where, int32_t value)
-    {
-        repatchInt32(where, value);
-    }
 
     static void repatchPointer(void* from, void* to)
     {

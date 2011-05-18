@@ -235,11 +235,6 @@ public:
     {
         return load32WithAddressOffsetPatch(address, dest);
     }
-    
-    DataLabelCompact loadPtrWithCompactAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        return load32WithCompactAddressOffsetPatch(address, dest);
-    }
 
     void comparePtr(RelationalCondition cond, RegisterID left, TrustedImm32 right, RegisterID dest)
     {

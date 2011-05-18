@@ -45,8 +45,6 @@ public:
     static const RegisterID linkRegister = SH4Registers::pr;
     static const RegisterID scratchReg3 = SH4Registers::r13;
 
-    static const int MaximumCompactPtrAlignedAddressOffset = 0x7FFFFFFF;
-
     enum RelationalCondition {
         Equal = SH4Assembler::EQ,
         NotEqual = SH4Assembler::NE,
@@ -728,17 +726,6 @@ public:
     {
         RegisterID scr = claimScratch();
         DataLabel32 label(this);
-        m_assembler.loadConstantUnReusable(address.offset, scr);
-        m_assembler.addlRegReg(address.base, scr);
-        m_assembler.movlMemReg(scr, dest);
-        releaseScratch(scr);
-        return label;
-    }
-    
-    DataLabel32 load32WithAddressOffsetPatch(Address address, RegisterID dest)
-    {
-        RegisterID scr = claimScratch();
-        DataLabelCompact label(this);
         m_assembler.loadConstantUnReusable(address.offset, scr);
         m_assembler.addlRegReg(address.base, scr);
         m_assembler.movlMemReg(scr, dest);
