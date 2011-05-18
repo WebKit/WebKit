@@ -1451,7 +1451,7 @@ WebInspector.StylePropertyTreeElement.prototype = {
             var colorRegex = /((?:rgb|hsl)a?\([^)]+\)|#[0-9a-fA-F]{6}|#[0-9a-fA-F]{3}|\b\w+\b(?!-))/g;
             var colorProcessor = processValue.bind(window, colorRegex, processColor, null);
 
-            valueElement.appendChild(processValue(/url\(\s*([^)\s]+)\s*\)/g, linkifyURL, colorProcessor, value));
+            valueElement.appendChild(processValue(/url\(\s*([^)\s]+)\s*\)/g, linkifyURL, WebInspector.CSSKeywordCompletions.isColorAwareProperty(self.name) ? colorProcessor : null, value));
         }
 
         this.listItemElement.removeChildren();
