@@ -584,7 +584,8 @@ PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrame(Frame* frame
 {
     RefPtr<InspectorObject> frameObject = InspectorObject::create();
     frameObject->setString("id", frameId(frame));
-    frameObject->setString("parentId", frameId(frame->tree()->parent()));
+    if (frame->tree()->parent())
+        frameObject->setString("parentId", frameId(frame->tree()->parent()));
     if (frame->ownerElement()) {
         String name = frame->ownerElement()->getAttribute(HTMLNames::nameAttr);
         if (name.isEmpty())

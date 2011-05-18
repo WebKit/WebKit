@@ -89,6 +89,7 @@ WebInspector.ResourceTreeModel.prototype = {
 
     _addFrame: function(frame)
     {
+        frame.parentId = frame.parentId || "";
         this._frameIds[frame.id] = frame;
         var subframes = this._subframes[frame.parentId];
         if (!subframes) {

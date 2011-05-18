@@ -1,3 +1,16 @@
+2011-05-18  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: make parentId for frame optional.
+        https://bugs.webkit.org/show_bug.cgi?id=61032
+
+        * inspector/Inspector.json:
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::buildObjectForFrame):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._addFrame):
+
 2011-05-18  Gabor Loki  <loki@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

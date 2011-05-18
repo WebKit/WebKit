@@ -72,7 +72,7 @@
                 "description": "Information about the Frame on the page.",
                 "properties": [
                     { "name": "id", "type": "string", "description": "Frame unique identifier." },
-                    { "name": "parentId", "type": "string", "description": "Parent frame identifier." },
+                    { "name": "parentId", "type": "string", "optional": true, "description": "Parent frame identifier." },
                     { "name": "loaderId", "type": "string", "description": "Identifier of the loader associated with this frame." },
                     { "name": "name", "type": "string", "optional": true, "description": "Frame's name as specified in the tag." },
                     { "name": "url", "type": "string", "description": "Frame document's URL." }
