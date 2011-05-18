@@ -41,6 +41,10 @@
 #include <wtf/RetainPtr.h>
 #endif
 
+#if PLATFORM(MAC)
+#include "WebCoreSystemInterface.h"
+#endif
+
 namespace WebCore {
 
 // We can't use String::format for two reasons:
@@ -311,7 +315,12 @@ String DefaultLocalizationStrategy::contextMenuItemTagLearnSpelling()
 
 String DefaultLocalizationStrategy::contextMenuItemTagSearchWeb()
 {
-    return WEB_UI_STRING("Search in Google", "Search in Google context menu item");
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+    RetainPtr<CFStringRef> searchProviderName(AdoptCF, wkCopyDefaultSearchProviderDisplayName());
+    return formatLocalizedString(WEB_UI_STRING("Search with %@", "Search with search provider context menu item with provider name inserted"), searchProviderName.get());
+#else
+    return WEB_UI_STRING("Search with Google", "Search with Google context menu item");
+#endif
 }
 
 String DefaultLocalizationStrategy::contextMenuItemTagLookUpInDictionary(const String& selectedString)

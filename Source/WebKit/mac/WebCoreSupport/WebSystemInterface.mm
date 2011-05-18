@@ -152,6 +152,7 @@ void InitWebCoreSystemInterface(void)
     INIT(DidEndScrollGesture);
     INIT(ScrollbarPainterUsesOverlayScrollers);
     INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
+    INIT(CopyDefaultSearchProviderDisplayName);
 #endif
 
     INIT(GetAXTextMarkerTypeID);

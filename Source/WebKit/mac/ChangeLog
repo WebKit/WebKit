@@ -1,3 +1,17 @@
+2011-05-17  Timothy Hatcher  <timothy@apple.com>
+
+        Update the the context menu to reflect the system search provider on Mac.
+
+        <rdar://problem/9198419>
+
+        Reviewed by Sam Weinig.
+
+        * DefaultDelegates/WebDefaultContextMenuDelegate.mm:
+        (-[WebDefaultUIDelegate menuItemWithTag:target:representedObject:]): Use wkCopyDefaultSearchProviderDisplayName to
+        create the web search context menu title.
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Added CopyDefaultSearchProviderDisplayName.
+
 2011-05-16  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

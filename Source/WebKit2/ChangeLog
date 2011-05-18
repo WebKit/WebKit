@@ -1,3 +1,16 @@
+2011-05-17  Timothy Hatcher  <timothy@apple.com>
+
+        Update the the context menu to reflect the system search provider on Mac.
+
+        <rdar://problem/9198419>
+
+        Reviewed by Sam Weinig.
+
+        * WebProcess/WebCoreSupport/WebContextMenuClient.cpp:
+        (WebKit::WebContextMenuClient::searchWithGoogle): Add a FIXME about using NSPerformService on Mac.
+        * WebProcess/WebCoreSupport/mac/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface): Added CopyDefaultSearchProviderDisplayName.
+
 2011-05-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

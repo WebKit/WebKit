@@ -1,3 +1,19 @@
+2011-05-17  Timothy Hatcher  <timothy@apple.com>
+
+        Update the the context menu to reflect the system search provider on Mac.
+
+        <rdar://problem/9198419>
+
+        Reviewed by Sam Weinig.
+
+        * English.lproj/Localizable.strings: Updated.
+        * Source/WebCore/WebCore.exp.in: Added _wkCopyDefaultSearchProviderDisplayName.
+        * platform/DefaultLocalizationStrategy.cpp:
+        (WebCore::DefaultLocalizationStrategy::contextMenuItemTagSearchWeb): Use wkCopyDefaultSearchProviderDisplayName to
+        create the string.
+        * platform/mac/WebCoreSystemInterface.h: Added wkCopyDefaultSearchProviderDisplayName.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
 2011-05-18  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.
