@@ -1,3 +1,19 @@
+2011-05-18  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] make action_derivedsourcesallinone.py quiet
+        https://bugs.webkit.org/show_bug.cgi?id=61081
+
+        In gyp, it's the responsibility of the build system to print what actions are doing;
+        for example, the compile command is generally silent, while the build system prints
+        "compiling".
+
+        Make this program behave like a compiler: silent on success.
+
+        * WebCore.gyp/scripts/action_derivedsourcesallinone.py:
+        delete a print statement.
+
 2011-05-18  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/61078> Use toHTTPPipeliningPriority() in initializeMaximumHTTPConnectionCountPerHost()

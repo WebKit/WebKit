@@ -191,7 +191,6 @@ def main(args):
 
     filesMetaData = extractMetaData(idlFileNames)
     for fileName in outputFileNames:
-        print 'Generating derived sources list into %s...' % fileName
         partition = outputFileNames.index(fileName)
         fileContents = generateContent(filesMetaData, partition, len(outputFileNames))
         writeContent(fileContents, fileName)
