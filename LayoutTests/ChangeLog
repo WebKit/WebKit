@@ -1,3 +1,19 @@
+2011-05-18  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        editing/style/apply-through-end-of-document.html is supposed to be dumpAsText
+        https://bugs.webkit.org/show_bug.cgi?id=61077
+
+        * editing/style/apply-through-end-of-document-expected.txt:
+        * editing/style/apply-through-end-of-document.html:
+        * platform/chromium-linux/editing/style/apply-through-end-of-document-expected.png: Removed.
+        * platform/chromium-win/editing/style/apply-through-end-of-document-expected.png: Removed.
+        * platform/chromium-win/editing/style/apply-through-end-of-document-expected.txt: Removed.
+        * platform/gtk/editing/style/apply-through-end-of-document-expected.txt: Removed.
+        * platform/mac-leopard/editing/style/apply-through-end-of-document-expected.png: Removed.
+        * platform/mac/editing/style/apply-through-end-of-document-expected.png: Removed.
+
 2011-05-18  Erik Arvidsson  <arv@chromium.org>
 
         Reviewed by Ojan Vafai.
