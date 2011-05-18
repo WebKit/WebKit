@@ -21,7 +21,7 @@ document.childWebSocket = null;
 function endTest()
 {
     shouldBe("closedSocket", '"socket1"');
-    shouldBe("document.childWebSocket.readyState", "2");
+    shouldBe("document.childWebSocket.readyState", "3");
     isSuccessfullyParsed();
     if (window.layoutTestController)
         layoutTestController.notifyDone();

@@ -1,3 +1,27 @@
+2011-05-17  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: Add CLOSING state
+        https://bugs.webkit.org/show_bug.cgi?id=60878
+
+        The value of WebSocket.CLOSED has been changed from 2 to 3, we have to update
+        expected results of tests that dump WebSocket.readyState.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * http/tests/websocket/tests/bufferedAmount-after-close-expected.txt:
+        * http/tests/websocket/tests/close-on-unload-reference-in-parent-expected.txt:
+        * http/tests/websocket/tests/close-on-unload-reference-in-parent.html:
+        * http/tests/websocket/tests/handshake-error-expected.txt:
+        * http/tests/websocket/tests/script-tests/bufferedAmount-after-close.js:
+        (ws.onclose):
+        * http/tests/websocket/tests/script-tests/handshake-error.js:
+        (ws.onclose):
+        * http/tests/websocket/tests/send-after-close-on-unload-expected.txt:
+        * http/tests/websocket/tests/send-after-close-on-unload.html:
+        * http/tests/websocket/tests/simple-expected.txt:
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+
 2011-05-17  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.

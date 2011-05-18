@@ -8,7 +8,7 @@ PASS document.childWebSocket is non-null.
 PASS 'socket1' is sent to the server. unload the iframe. expect receiving 'socket1' on ws...
 PASS document.childWebSocket.send('send to closed socket') is false
 PASS closedSocket is "socket1"
-PASS document.childWebSocket.readyState is 2
+PASS document.childWebSocket.readyState is 3
 PASS successfullyParsed is true
 
 TEST COMPLETE

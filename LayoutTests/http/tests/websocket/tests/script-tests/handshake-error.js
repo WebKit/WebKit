@@ -28,7 +28,7 @@ ws.onmessage = function(messageEvent)
 ws.onclose = function()
 {
     debug("Closed.");
-    shouldBe("ws.readyState", "2")
+    shouldBe("ws.readyState", "3")
     endTest();
 };
 

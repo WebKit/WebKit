@@ -21,7 +21,7 @@ ws.onopen = function()
 ws.onclose = function()
 {
     debug("Closed.");
-    shouldBe("ws.readyState", "2");
+    shouldBe("ws.readyState", "3");
     shouldBe("ws.bufferedAmount", "0");
     shouldBeFalse("ws.send('send to closed socket')");
     // If the connection is closed, bufferedAmount attribute's value will only

@@ -58,7 +58,8 @@ namespace WebCore {
         enum State {
             CONNECTING = 0,
             OPEN = 1,
-            CLOSED = 2
+            CLOSING = 2,
+            CLOSED = 3
         };
 
         void connect(const String& url, ExceptionCode&);

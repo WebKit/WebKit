@@ -43,7 +43,7 @@ namespace WebCore {
 
     class SocketStreamHandleBase {
     public:
-        enum SocketStreamState { Connecting, Open, Closed };
+        enum SocketStreamState { Connecting, Open, Closing, Closed };
         virtual ~SocketStreamHandleBase() { }
         SocketStreamState state() const;
 
