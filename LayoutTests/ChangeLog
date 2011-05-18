@@ -2,6 +2,13 @@
 
         Unreviewed.
 
+        Chromium test expectations update for details element (Windows).
+        * platform/chromium/test_expectations.txt:
+
+2011-05-18  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed.
+
         Chromium expectations update for SVG tests.
 
         * platform/chromium-linux-x86/svg/W3C-SVG-1.1-SE: Added.
