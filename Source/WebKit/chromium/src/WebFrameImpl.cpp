@@ -520,14 +520,6 @@ WebURL WebFrameImpl::url() const
     return ds->request().url();
 }
 
-WebURL WebFrameImpl::favIconURL() const
-{
-    WebVector<WebIconURL> urls = iconURLs(WebIconURL::TypeFavicon);
-    if (urls.size())
-        return urls[0].iconURL();
-    return WebURL();
-}
-
 WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypes) const
 {
     FrameLoader* frameLoader = m_frame->loader();

@@ -759,12 +759,8 @@ void FrameLoaderClientImpl::dispatchDidReceiveTitle(const StringWithDirection& t
 
 void FrameLoaderClientImpl::dispatchDidChangeIcons(WebCore::IconType type)
 {
-    if (m_webFrame->client()) {
+    if (m_webFrame->client())
         m_webFrame->client()->didChangeIcon(m_webFrame, static_cast<WebIconURL::Type>(type));
-        // FIXME : Keep the API work in the transient.
-        if (type == WebCore::Favicon)
-            m_webFrame->client()->didChangeIcons(m_webFrame);
-    }
 }
 
 void FrameLoaderClientImpl::dispatchDidCommitLoad()

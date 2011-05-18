@@ -202,9 +202,6 @@ public:
         didReceiveTitle(frame, title);
     }
 
-    // DEPRECATED: Implement didChangeIcon instead.
-    virtual void didChangeIcons(WebFrame*) { }
-
     // The icon for the page have changed.
     virtual void didChangeIcon(WebFrame*, WebIconURL::Type) { }
 

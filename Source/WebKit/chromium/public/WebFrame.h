@@ -132,19 +132,11 @@ public:
     // dataSource()->request().url().
     virtual WebURL url() const = 0;
 
-    // DEPRECATED: Use iconIRLs instead.
-    virtual WebURL favIconURL() const = 0;
-
     // The urls of the given combination types of favicon (if any) specified by
     // the document loaded in this frame. The iconTypes is a bit-mask of
     // WebIconURL::Type values, used to select from the available set of icon
     // URLs
-    virtual WebVector<WebIconURL> iconURLs(int iconTypes) const
-    {
-        // FIXME : Remove the implementation, this make buildbot happy during
-        //         the transient.
-        return WebVector<WebIconURL>();
-    }
+    virtual WebVector<WebIconURL> iconURLs(int iconTypes) const = 0;
 
     // The url of the OpenSearch Desription Document (if any) specified by
     // the document loaded in this frame.

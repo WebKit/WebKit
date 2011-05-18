@@ -1,3 +1,18 @@
+2011-05-17  Tao Bai  <michaelbai@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Clear deprecated icon APIs from chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=60989
+
+        * public/WebFrame.h: Removed faviconURL()
+        * public/WebFrameClient.h: Removed didChangeIcons()
+        * src/FrameLoaderClientImpl.cpp:
+             Removed the code to support deprecated API
+        (WebKit::FrameLoaderClientImpl::dispatchDidChangeIcons):
+        * src/WebFrameImpl.cpp: Removed faviconURL()
+        * src/WebFrameImpl.h:  Removed faviconURL()
+
 2011-05-17  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Ryosuke Niwa.

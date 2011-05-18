@@ -70,7 +70,6 @@ public:
     virtual void setName(const WebString&);
     virtual long long identifier() const;
     virtual WebURL url() const;
-    virtual WebURL favIconURL() const;
     virtual WebVector<WebIconURL> iconURLs(int iconTypes) const;
     virtual WebURL openSearchDescriptionURL() const;
     virtual WebString encoding() const;
