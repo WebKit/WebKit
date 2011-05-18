@@ -1,3 +1,15 @@
+2011-05-18  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Expand layout test for testing the coords of a click on a label element
+        https://bugs.webkit.org/show_bug.cgi?id=61080
+
+        This expands the existing test to click on a label inside a scrolled element.
+
+        * fast/events/simulated-click-coords-expected.txt:
+        * fast/events/simulated-click-coords.html:
+
 2011-05-18  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Beth Dakin.
