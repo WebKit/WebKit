@@ -1,3 +1,13 @@
+2011-05-18  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: scripts panel file selector element doesn't track keyboard events 
+        https://bugs.webkit.org/show_bug.cgi?id=61047
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+
 2011-05-16  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
