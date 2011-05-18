@@ -18,14 +18,14 @@
         var span = document.getElementsByTagName('span')[0];
     
         var spanEnteredFullScreen = function(event) {
-            callback = documentEnteredFullScreen;
+            callback = spanExitedFullScreen;
             testExpected("document.webkitCurrentFullScreenElement", span);
             span.parentNode.removeChild(span);
         };
     
-        var documentEnteredFullScreen = function(event) {
+        var spanExitedFullScreen = function(event) {
             callback = null;
-            testExpected("document.webkitCurrentFullScreenElement", document.documentElement);
+            testExpected("document.webkitCurrentFullScreenElement", null);
             endTest();
         };
     

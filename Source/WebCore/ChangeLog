@@ -1,3 +1,19 @@
+2011-05-17  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Removing a full-screen element or ancestor from the DOM should trigger exiting full-screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=60997
+
+        Tests: fullscreen/full-screen-remove-ancestor.html
+               fullscreen/full-screen-remove-children.html
+               fullscreen/full-screen-remove.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::fullScreenChangeDelayTimerFired): If the target node was removed from the document
+            make sure to message the documentElement() as well.
+        (WebCore::Document::fullScreenElementRemoved): Cancel full screen mode.
+
 2011-05-17  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.

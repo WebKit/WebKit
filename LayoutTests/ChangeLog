@@ -1,3 +1,20 @@
+2011-05-17  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Removing a full-screen element or ancestor from the DOM should trigger exiting full-screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=60997
+
+        Updated the following tests with the new expectation that removing an element from the DOM will trigger
+        full screen mode to exit.
+
+        * fullscreen/full-screen-remove-ancestor-expected.txt:
+        * fullscreen/full-screen-remove-ancestor.html:
+        * fullscreen/full-screen-remove-children-expected.txt:
+        * fullscreen/full-screen-remove-children.html:
+        * fullscreen/full-screen-remove-expected.txt:
+        * fullscreen/full-screen-remove.html:
+
 2011-05-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Skip failing tests on minor Qt platforms.
