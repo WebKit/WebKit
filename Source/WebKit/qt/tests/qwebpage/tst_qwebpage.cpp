@@ -2150,19 +2150,66 @@ void tst_QWebPage::inputMethods()
                                             "<textarea rows='5' cols='1' id='input5' value=''/>" \
                                             "</body></html>");
     page->mainFrame()->evaluateJavaScript("var inputEle = document.getElementById('input5'); inputEle.focus(); inputEle.select();");
+    
+    // Enter Key without key text
     QKeyEvent keyEnter(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
     page->event(&keyEnter);
     QList<QInputMethodEvent::Attribute> attribs;
 
-    QInputMethodEvent eventText("\n", attribs);
+    QInputMethodEvent eventText(QString(), attribs);
+    eventText.setCommitString("\n");
     page->event(&eventText);
 
-    QInputMethodEvent eventText2("third line", attribs);
+    QInputMethodEvent eventText2(QString(), attribs);
+    eventText2.setCommitString("third line");
     page->event(&eventText2);
     qApp->processEvents();
 
     QString inputValue2 = page->mainFrame()->evaluateJavaScript("document.getElementById('input5').value").toString();
     QCOMPARE(inputValue2, QString("\n\nthird line"));
+
+    // Enter Key with key text '\r'
+    page->mainFrame()->evaluateJavaScript("var inputEle = document.getElementById('input5'); inputEle.value = ''; inputEle.focus(); inputEle.select();");
+    inputValue2 = page->mainFrame()->evaluateJavaScript("document.getElementById('input5').value").toString();
+    QCOMPARE(inputValue2, QString(""));
+
+    QKeyEvent keyEnterWithCarriageReturn(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier, "\r");
+    page->event(&keyEnterWithCarriageReturn);
+    page->event(&eventText);
+    page->event(&eventText2);
+    qApp->processEvents();
+
+    inputValue2 = page->mainFrame()->evaluateJavaScript("document.getElementById('input5').value").toString();
+    QCOMPARE(inputValue2, QString("\n\nthird line"));
+
+    // Enter Key with key text '\n'
+    page->mainFrame()->evaluateJavaScript("var inputEle = document.getElementById('input5'); inputEle.value = ''; inputEle.focus(); inputEle.select();");
+    inputValue2 = page->mainFrame()->evaluateJavaScript("document.getElementById('input5').value").toString();
+    QCOMPARE(inputValue2, QString(""));
+
+    QKeyEvent keyEnterWithLineFeed(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier, "\n");
+    page->event(&keyEnterWithLineFeed);
+    page->event(&eventText);
+    page->event(&eventText2);
+    qApp->processEvents();
+
+    inputValue2 = page->mainFrame()->evaluateJavaScript("document.getElementById('input5').value").toString();
+    QCOMPARE(inputValue2, QString("\n\nthird line"));
+
+    // Enter Key with key text "\n\r"
+    page->mainFrame()->evaluateJavaScript("var inputEle = document.getElementById('input5'); inputEle.value = ''; inputEle.focus(); inputEle.select();");
+    inputValue2 = page->mainFrame()->evaluateJavaScript("document.getElementById('input5').value").toString();
+    QCOMPARE(inputValue2, QString(""));
+
+    QKeyEvent keyEnterWithLFCR(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier, "\n\r");
+    page->event(&keyEnterWithLFCR);
+    page->event(&eventText);
+    page->event(&eventText2);
+    qApp->processEvents();
+
+    inputValue2 = page->mainFrame()->evaluateJavaScript("document.getElementById('input5').value").toString();
+    QCOMPARE(inputValue2, QString("\n\nthird line"));
+
     // END - Newline test for textarea
 
     delete container;

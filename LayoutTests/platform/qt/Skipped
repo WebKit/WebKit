@@ -2249,10 +2249,6 @@ fast/dom/HTMLMeterElement/meter-styles.html
 http/tests/inspector/network/network-size-chunked.html
 http/tests/inspector/network/network-size-sync.html
 
-# [Qt]REGRESSION(r82243): fast/events/onsearch-enter.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=57472
-fast/events/onsearch-enter.html
-
 # [Qt] media/video-playbackrate.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=57476
 media/video-playbackrate.html

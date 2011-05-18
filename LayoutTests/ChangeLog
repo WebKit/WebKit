@@ -1,3 +1,14 @@
+2011-05-18  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Enterkey to go to Newline does not work in the text area(in HTML form)
+        https://bugs.webkit.org/show_bug.cgi?id=33179
+
+        Unskip the fast/events/onsearch-enter.html test.
+
+        * platform/qt/Skipped:
+
 2011-05-18  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.

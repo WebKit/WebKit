@@ -1,3 +1,18 @@
+2011-05-18  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Enterkey to go to Newline does not work in the text area(in HTML form)
+        https://bugs.webkit.org/show_bug.cgi?id=33179
+
+        Remove the implementation of the handleInputMethodKeydown, which introduces
+        a regression(r82243) on Linux. Also, add more Api tests for the EnterKey event.
+
+        * WebCoreSupport/EditorClientQt.cpp:
+        (WebCore::EditorClientQt::handleInputMethodKeydown): Remove implementation.
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::inputMethods): Add more tests.
+
 2011-05-18  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.
