@@ -1,3 +1,82 @@
+2011-05-18  Alok Priyadarshi  <alokp@chromium.org> and Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Split canvas from LayerTilerChromium
+        https://bugs.webkit.org/show_bug.cgi?id=60719
+
+        LayerTilerChromium now just does tiling. It delegates the task of painting and updating textures to LayerTextureUpdater.
+        Also abstracted LayerTextureSubImage to upload texture pixels.
+
+        * WebCore.gypi:
+        * platform/chromium/TraceEvent.h:
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::create):
+        (WebCore::ContentLayerChromium::ContentLayerChromium):
+        (WebCore::ContentLayerChromium::~ContentLayerChromium):
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        (WebCore::ContentLayerChromium::cleanupResources):
+        (WebCore::ContentLayerChromium::setLayerRenderer):
+        (WebCore::ContentLayerChromium::createTextureUpdater):
+        (WebCore::ContentLayerChromium::drawsContent):
+        (WebCore::ContentLayerChromium::createTilerIfNeeded):
+        (WebCore::ContentLayerChromium::updateCompositorResources):
+        * platform/graphics/chromium/ContentLayerChromium.h:
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::ImageLayerTextureUpdater):
+        (WebCore::ImageLayerTextureUpdater::~ImageLayerTextureUpdater):
+        (WebCore::ImageLayerTextureUpdater::orientation):
+        (WebCore::ImageLayerTextureUpdater::prepareToUpdate):
+        (WebCore::ImageLayerTextureUpdater::updateTextureRect):
+        (WebCore::ImageLayerTextureUpdater::imageRect):
+        (WebCore::ImageLayerChromium::paintContentsIfDirty):
+        (WebCore::ImageLayerChromium::updateCompositorResources):
+        (WebCore::ImageLayerChromium::createTextureUpdater):
+        * platform/graphics/chromium/ImageLayerChromium.h:
+        * platform/graphics/chromium/LayerPainterChromium.h: Added.
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::create):
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        (WebCore::LayerRendererChromium::updateRootLayerContents):
+        (WebCore::LayerRendererChromium::drawRootLayer):
+        (WebCore::LayerRendererChromium::updateAndDrawLayers):
+        (WebCore::LayerRendererChromium::updateLayers):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTextureSubImage.cpp: Added.
+        (WebCore::LayerTextureSubImage::LayerTextureSubImage):
+        (WebCore::LayerTextureSubImage::~LayerTextureSubImage):
+        (WebCore::LayerTextureSubImage::setSubImageSize):
+        (WebCore::LayerTextureSubImage::upload):
+        (WebCore::LayerTextureSubImage::uploadWithTexSubImage):
+        (WebCore::LayerTextureSubImage::uploadWithMapTexSubImage):
+        * platform/graphics/chromium/LayerTextureSubImage.h: Copied from Source/WebCore/platform/chromium/TraceEvent.h.
+        * platform/graphics/chromium/LayerTextureUpdater.h: Copied from Source/WebCore/platform/chromium/TraceEvent.h.
+        (WebCore::LayerTextureUpdater::LayerTextureUpdater):
+        (WebCore::LayerTextureUpdater::~LayerTextureUpdater):
+        (WebCore::LayerTextureUpdater::context):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp: Added.
+        (WebCore::LayerTextureUpdaterCanvas::LayerTextureUpdaterCanvas):
+        (WebCore::LayerTextureUpdaterCanvas::paintContents):
+        (WebCore::LayerTextureUpdaterBitmap::LayerTextureUpdaterBitmap):
+        (WebCore::LayerTextureUpdaterBitmap::prepareToUpdate):
+        (WebCore::LayerTextureUpdaterBitmap::updateTextureRect):
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.h: Added.
+        (WebCore::LayerTextureUpdaterCanvas::~LayerTextureUpdaterCanvas):
+        (WebCore::LayerTextureUpdaterCanvas::contentRect):
+        (WebCore::LayerTextureUpdaterBitmap::~LayerTextureUpdaterBitmap):
+        (WebCore::LayerTextureUpdaterBitmap::orientation):
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::create):
+        (WebCore::LayerTilerChromium::LayerTilerChromium):
+        (WebCore::LayerTilerChromium::setTileSize):
+        (WebCore::LayerTilerChromium::prepareToUpdate):
+        (WebCore::LayerTilerChromium::updateRect):
+        (WebCore::LayerTilerChromium::draw):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        (WebCore::LayerTilerChromium::Tile::Tile):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+
 2011-05-18  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

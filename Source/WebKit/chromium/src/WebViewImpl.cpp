@@ -72,6 +72,7 @@
 #include "InspectorController.h"
 #include "KeyboardCodes.h"
 #include "KeyboardEvent.h"
+#include "LayerPainterChromium.h"
 #include "MIMETypeRegistry.h"
 #include "NodeRenderStyle.h"
 #include "Page.h"
@@ -2409,7 +2410,7 @@ void WebViewImpl::invalidateRootLayerRect(const IntRect& rect)
     setRootLayerNeedsDisplay();
 }
 
-class WebViewImplContentPainter : public TilePaintInterface {
+class WebViewImplContentPainter : public LayerPainterChromium {
     WTF_MAKE_NONCOPYABLE(WebViewImplContentPainter);
 public:
     static PassOwnPtr<WebViewImplContentPainter*> create(WebViewImpl* webViewImpl)
