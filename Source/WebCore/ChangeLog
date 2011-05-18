@@ -1,3 +1,20 @@
+2011-05-18  Erik Arvidsson  <arv@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        event.clientX/clientY is 0/0 in a click generated through a label
+        https://bugs.webkit.org/show_bug.cgi?id=56606
+
+        This copies the coordinates from the underlying event to the simulated mouse event if the underlying event
+        is a mouse event.
+
+        This makes us match Firefox and IE.
+
+        Test: fast/events/simulated-click-coords.html
+
+        * dom/MouseEvent.cpp:
+        (WebCore::SimulatedMouseEvent::SimulatedMouseEvent):
+
 2011-05-18  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed. Sorted XCode project file.

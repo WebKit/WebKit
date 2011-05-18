@@ -150,6 +150,13 @@ SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, PassRefP
         m_metaKey = keyStateEvent->metaKey();
     }
     setUnderlyingEvent(underlyingEvent);
+
+    if (this->underlyingEvent() && this->underlyingEvent()->isMouseEvent()) {
+        MouseEvent* mouseEvent = static_cast<MouseEvent*>(this->underlyingEvent());
+        m_screenX = mouseEvent->screenX();
+        m_screenY = mouseEvent->screenY();
+        initCoordinates(mouseEvent->clientX(), mouseEvent->clientY());
+    }
 }
 
 MouseEventDispatchMediator::MouseEventDispatchMediator(PassRefPtr<MouseEvent> mouseEvent)
