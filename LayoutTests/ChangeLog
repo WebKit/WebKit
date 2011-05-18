@@ -1,3 +1,11 @@
+2011-05-17  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Simon Fraser.
+
+        Remove empty directory.
+
+        * fast/inspector: Removed.
+
 2011-05-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Enrica Casucci.
