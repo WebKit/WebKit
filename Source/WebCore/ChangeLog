@@ -1,3 +1,29 @@
+2011-05-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        JSGlobalObject and some others do GC allocation during initialization, which can cause heap corruption
+        https://bugs.webkit.org/show_bug.cgi?id=61090
+
+        Rather than having Constructor objects create their structure
+        as part of initialisation, we now pass their expected structure
+        in as an argument.  This required fixing the few custom Constructors
+        and the code generator.
+
+        * bindings/js/JSAudioConstructor.cpp:
+        (WebCore::JSAudioConstructor::JSAudioConstructor):
+        * bindings/js/JSAudioConstructor.h:
+        * bindings/js/JSDOMGlobalObject.h:
+        (WebCore::getDOMConstructor):
+          Pass the Constructor objects structure in as an argument
+        * bindings/js/JSImageConstructor.cpp:
+        (WebCore::JSImageConstructor::JSImageConstructor):
+        * bindings/js/JSImageConstructor.h:
+        * bindings/js/JSOptionConstructor.cpp:
+        (WebCore::JSOptionConstructor::JSOptionConstructor):
+        * bindings/js/JSOptionConstructor.h:
+        * bindings/scripts/CodeGeneratorJS.pm:
+
 2011-05-18  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Beth Dakin.

@@ -1,5 +1,30 @@
 2011-05-18  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        JSGlobalObject and some others do GC allocation during initialization, which can cause heap corruption
+        https://bugs.webkit.org/show_bug.cgi?id=61090
+
+        Remove the Structure-free JSGlobalObject constructor and instead always
+        pass the structure into the JSGlobalObject constructor.
+        Stop DebuggerActivation creating a new structure every time, and simply
+        use a single shared structure held by the GlobalData.
+
+        * API/JSContextRef.cpp:
+        * debugger/DebuggerActivation.cpp:
+        (JSC::DebuggerActivation::DebuggerActivation):
+        * jsc.cpp:
+        (GlobalObject::GlobalObject):
+        (functionRun):
+        (jscmain):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::clearBuiltinStructures):
+        * runtime/JSGlobalData.h:
+        * runtime/JSGlobalObject.h:
+
+2011-05-18  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Adam Roben.
 
         Disable gc validation in release builds

@@ -123,19 +123,7 @@ namespace JSC {
 
     public:
         void* operator new(size_t, JSGlobalData*);
-        
-        explicit JSGlobalObject(JSGlobalData& globalData)
-            : JSVariableObject(globalData, JSGlobalObject::createStructure(globalData, jsNull()), &m_symbolTable, 0)
-            , m_registerArraySize(0)
-            , m_globalScopeChain()
-            , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
-            , m_isEvalEnabled(true)
-        {
-            COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
-            putThisToAnonymousValue(0);
-            init(this);
-        }
-        
+
         explicit JSGlobalObject(JSGlobalData& globalData, Structure* structure)
             : JSVariableObject(globalData, structure, &m_symbolTable, 0)
             , m_registerArraySize(0)
