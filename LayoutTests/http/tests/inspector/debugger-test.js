@@ -106,7 +106,7 @@ InspectorTest.captureStackTrace = function(callFrames)
     InspectorTest.addResult("Call stack:");
     for (var i = 0; i < callFrames.length; i++) {
         var frame = callFrames[i];
-        var script = WebInspector.debuggerModel.scriptForSourceID(frame.location.sourceID);
+        var script = WebInspector.debuggerModel.scriptForSourceID(frame.location.sourceId);
         var url;
         if (script)
             url = WebInspector.displayNameForURL(script.sourceURL);

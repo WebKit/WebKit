@@ -23,9 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector.Script = function(sourceID, sourceURL, startLine, startColumn, endLine, endColumn, errorLine, errorMessage, isContentScript)
+WebInspector.Script = function(sourceId, sourceURL, startLine, startColumn, endLine, endColumn, errorLine, errorMessage, isContentScript)
 {
-    this.sourceID = sourceID;
+    this.sourceId = sourceId;
     this.sourceURL = sourceURL;
     this.lineOffset = startLine;
     this.columnOffset = startColumn;
@@ -49,7 +49,7 @@ WebInspector.Script.prototype = {
             this._source = source;
             callback(this._source);
         }
-        DebuggerAgent.getScriptSource(this.sourceID, didGetScriptSource.bind(this));
+        DebuggerAgent.getScriptSource(this.sourceId, didGetScriptSource.bind(this));
     },
 
     editSource: function(newSource, callback)
@@ -60,6 +60,6 @@ WebInspector.Script.prototype = {
                 this._source = newSource;
             callback(error, callFrames);
         }
-        DebuggerAgent.editScriptSource(this.sourceID, newSource, didEditScriptSource.bind(this));
+        DebuggerAgent.editScriptSource(this.sourceId, newSource, didEditScriptSource.bind(this));
     }
 }

@@ -1,3 +1,60 @@
+2011-05-18  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: make "Id" suffixes use consistent case.
+        https://bugs.webkit.org/show_bug.cgi?id=61028
+
+        * inspector/InjectedScriptSource.js:
+        * inspector/Inspector.json:
+        * inspector/InspectorConsoleAgent.cpp:
+        (WebCore::InspectorConsoleAgent::addMessageToConsole):
+        * inspector/InspectorConsoleAgent.h:
+        * inspector/InspectorConsoleInstrumentation.h:
+        (WebCore::InspectorInstrumentation::addMessageToConsole):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::parseLocation):
+        (WebCore::InspectorDebuggerAgent::resolveBreakpoint):
+        (WebCore::InspectorDebuggerAgent::editScriptSource):
+        (WebCore::InspectorDebuggerAgent::getScriptSource):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::addMessageToConsoleImpl):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::buildObjectForResourceResponse):
+        * inspector/ScriptDebugListener.h:
+        * inspector/front-end/DebuggerModel.js:
+        (WebInspector.DebuggerModel.prototype.scriptForSourceID):
+        (WebInspector.DebuggerModel.prototype.queryScripts):
+        (WebInspector.DebuggerModel.prototype.editScriptSource):
+        (WebInspector.DebuggerModel.prototype._didEditScriptSource):
+        (WebInspector.DebuggerModel.prototype._parsedScriptSource):
+        (WebInspector.DebuggerDispatcher.prototype.scriptParsed):
+        (WebInspector.DebuggerDispatcher.prototype.breakpointResolved):
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.editScriptSource.didReceiveSource):
+        (WebInspector.DebuggerPresentationModel.prototype.editScriptSource):
+        (WebInspector.DebuggerPresentationModel.prototype._setBreakpointInDebugger.didRequestSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype._setBreakpointInDebugger):
+        (WebInspector.DebuggerPresentationModel.prototype._debuggerPaused):
+        (WebInspector.DebuggerPresentationModel.prototype._sourceFileForScript):
+        (WebInspector.DebuggerPresentationModel.prototype._scriptForSourceFileId):
+        (WebInspector.DebuggerPresentationModel.prototype._createSourceFileId):
+        (WebInspector.PresenationCallFrame):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkDispatcher.prototype._updateResourceWithResponse):
+        * inspector/front-end/Script.js:
+        (WebInspector.Script):
+        (WebInspector.Script.prototype.requestSource):
+        (WebInspector.Script.prototype.editSource):
+        * inspector/front-end/SourceFile.js:
+        (WebInspector.SourceFile.prototype.forceLoadContent):
+        (WebInspector.SourceFile.prototype._concatenateScriptsContent):
+        (WebInspector.SourceMapping.prototype._sourceLocationToScriptLocation):
+        (WebInspector):
+
 2011-05-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86747.
