@@ -2,6 +2,21 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [Qt][WK2] Remove usage of ChunkedUpdateDrawingArea.
+        https://bugs.webkit.org/show_bug.cgi?id=60901
+
+        To prepare for the eventual removal of the ChunkedUpdateDrawingArea,
+        make QGraphicsWKView's "Simple" backing store type map to DrawingAreaImpl.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        * UIProcess/API/qt/qgraphicswkview.h:
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::createDrawingAreaProxy):
+
+2011-05-18  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [Qt][WK2] Don't lie about supporting accelerated compositing.
         https://bugs.webkit.org/show_bug.cgi?id=61054
 
