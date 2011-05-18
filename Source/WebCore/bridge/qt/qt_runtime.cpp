@@ -180,6 +180,37 @@ static JSRealType valueRealType(ExecState* exec, JSValue val)
     return String; // I don't know.
 }
 
+QVariant convertValueToQVariant(ExecState*, JSValue, QMetaType::Type, int*, HashSet<JSObject*>*, int);
+
+static QVariantMap convertValueToQVariantMap(ExecState* exec, JSObject* object, HashSet<JSObject*>* visitedObjects, int recursionLimit)
+{
+    Q_ASSERT(!exec->hadException());
+
+    PropertyNameArray properties(exec);
+    object->getPropertyNames(exec, properties);
+    PropertyNameArray::const_iterator it = properties.begin();
+    QVariantMap result;
+    int objdist = 0;
+
+    while (it != properties.end()) {
+        if (object->propertyIsEnumerable(exec, *it)) {
+            JSValue val = object->get(exec, *it);
+            if (exec->hadException())
+                exec->clearException();
+            else {
+                QVariant v = convertValueToQVariant(exec, val, QMetaType::Void, &objdist, visitedObjects, recursionLimit);
+                if (objdist >= 0) {
+                    UString ustring = (*it).ustring();
+                    QString id = QString((const QChar*)ustring.impl()->characters(), ustring.length());
+                    result.insert(id, v);
+                }
+            }
+        }
+        ++it;
+    }
+    return result;
+}
+
 QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type hint, int *distance, HashSet<JSObject*>* visitedObjects, int recursionLimit)
 {
     --recursionLimit;
@@ -354,27 +385,9 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
 
         case QMetaType::QVariantMap:
             if (type == Object || type == Array || type == RTArray) {
-                // Enumerate the contents of the object
-                PropertyNameArray properties(exec);
-                object->getPropertyNames(exec, properties);
-                PropertyNameArray::const_iterator it = properties.begin();
-
-                QVariantMap result;
-                int objdist = 0;
-                while(it != properties.end()) {
-                    if (object->propertyIsEnumerable(exec, *it)) {
-                        JSValue val = object->get(exec, *it);
-                        QVariant v = convertValueToQVariant(exec, val, QMetaType::Void, &objdist, visitedObjects, recursionLimit);
-                        if (objdist >= 0) {
-                            UString ustring = (*it).ustring();
-                            QString id = QString((const QChar*)ustring.impl()->characters(), ustring.length());
-                            result.insert(id, v);
-                        }
-                    }
-                    ++it;
-                }
+                ret = QVariant(convertValueToQVariantMap(exec, object, visitedObjects, recursionLimit));
+                // Those types can still have perfect matches, e.g. 'bool' if value is a Boolean Object.
                 dist = 1;
-                ret = QVariant(result);
             }
             break;
 
