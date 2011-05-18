@@ -1,3 +1,17 @@
+2011-05-18  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt][WK2] Don't lie about supporting accelerated compositing.
+        https://bugs.webkit.org/show_bug.cgi?id=61054
+
+        Until we have an implementation of LayerTreeHost, we shouldn't lie about it.
+
+        * WebKit2.pro:
+        * WebProcess/WebPage/LayerTreeHost.h:
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp: Added.
+        (WebKit::LayerTreeHost::supportsAcceleratedCompositing):
+
 2011-05-17  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

@@ -79,7 +79,7 @@ protected:
     WebPage* m_webPage;
 };
 
-#if !PLATFORM(WIN)
+#if !PLATFORM(WIN) && !PLATFORM(QT)
 inline bool LayerTreeHost::supportsAcceleratedCompositing()
 {
     return true;

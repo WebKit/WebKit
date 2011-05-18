@@ -540,6 +540,7 @@ SOURCES += \
     WebProcess/WebPage/WebPageGroupProxy.cpp \
     WebProcess/WebPage/qt/WebInspectorQt.cpp \
     WebProcess/WebPage/qt/ChunkedUpdateDrawingAreaQt.cpp \
+    WebProcess/WebPage/qt/LayerTreeHostQt.cpp \
     WebProcess/WebPage/qt/TiledDrawingAreaQt.cpp \
     WebProcess/WebPage/qt/WebPageQt.cpp \
     WebProcess/WebProcess.cpp \
