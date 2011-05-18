@@ -24,6 +24,7 @@
 #include "JSFunction.h"
 #include "JSString.h"
 #include "JSStringBuilder.h"
+#include "Lookup.h"
 #include "ObjectPrototype.h"
 #include "StringRecursionChecker.h"
 #include "UString.h"
