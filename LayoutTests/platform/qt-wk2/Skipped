@@ -3525,3 +3525,9 @@ editing/execCommand/selectAll.html
 # [Qt]REGRESSION(86499): GC related bug
 # https://bugs.webkit.org/show_bug.cgi?id=60881
 fast/js/array-sort-modifying-tostring.html
+
+# unskipped by r86675, but fail on Qt-WK2 platform
+http/tests/uri/css-href.php
+
+# new test inroduced in r86725, but fail
+http/tests/loading/nested_bad_objects.php

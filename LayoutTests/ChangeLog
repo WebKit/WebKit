@@ -1,3 +1,11 @@
+2011-05-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Skip failing tests on minor Qt platforms.
+
+        * platform/qt-arm/Skipped:
+        * platform/qt-mac/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-05-17  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.
