@@ -22,6 +22,10 @@ body: []
 
 rule
 body: []
+['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+
+rule
+body: []
 ['font-size':'12px'] @[5-21] active
 ['foo':'bar !
 
@@ -185,6 +189,74 @@ h1: []
 ['border-bottom-width':'0px'] @[undefined-undefined] style
 ['border-left-width':'0px'] @[undefined-undefined] style
 
+StyleSheet: '@import url(styles-new-API-2.css);
+
+@page { margin: 2cm } /* All margins set to 2cm */
+
+@page :first {
+  margin-top: 10cm    /* Top margin on first page 10cm */
+}
+
+@media screen {
+
+#absent-id {
+}
+
+@font-face {
+    font-family: 'TheFont';
+    src: url('font.url');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    property: imported-media-screen-stylesheet;
+}
+
+}
+'
+
+rule
+#absent-id: []
+
+rule
+body: []
+['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+
+StyleSheet: '@import url(styles-new-API-1.css);
+
+@page { margin: 2cm } /* All margins set to 2cm */
+
+@page :first {
+  margin-top: 10cm    /* Top margin on first page 10cm */
+}
+
+@media screen {
+
+#absent-id {
+}
+
+@font-face {
+    font-family: 'TheFont';
+    src: url('font.url');
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    property: imported-media-screen-stylesheet;
+}
+
+}
+'
+
+rule
+#absent-id: []
+
+rule
+body: []
+['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
+
 StyleSheet: '
 
 /* An inline stylesheet */
@@ -267,6 +339,10 @@ body: [user-agent]
 ['margin-right':'8px'] @[undefined-undefined] style
 ['margin-bottom':'8px'] @[undefined-undefined] style
 ['margin-left':'8px'] @[undefined-undefined] style
+
+rule
+body: []
+['property':'imported-media-screen-stylesheet' non-parsed] @[5-48] active
 
 rule
 body: []

@@ -1,3 +1,17 @@
+2011-05-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: model-based CSS editing does not update @import-ed stylesheet resources
+        https://bugs.webkit.org/show_bug.cgi?id=60966
+
+        Imported stylesheets didn't use to be returned by InspectorCSSAgent.
+
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getAllStyleSheets):
+        (WebCore::InspectorCSSAgent::collectStyleSheets):
+        * inspector/InspectorCSSAgent.h:
+
 2011-05-18  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

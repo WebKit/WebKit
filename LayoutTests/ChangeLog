@@ -1,3 +1,19 @@
+2011-05-18  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: model-based CSS editing does not update @import-ed stylesheet resources
+        https://bugs.webkit.org/show_bug.cgi?id=60966
+
+        * inspector/styles/resources/styles-new-API-1.css:
+        * inspector/styles/resources/styles-new-API-2.css: Copied from LayoutTests/inspector/styles/resources/styles-new-API-1.css.
+        (@page):
+        (@page :first):
+        (#absent-id):
+        (@font-face):
+        (body):
+        * inspector/styles/styles-new-API-expected.txt:
+
 2011-05-18  Zoltan Horvath  <zoltan@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
@@ -11746,7 +11762,7 @@
         [Chromium] Mark css2.1/t140201-c533-bgimage-00-a.html as crash on Linux, Win Debug
         https://bugs.webkit.org/show_bug.cgi?id=58995
 
-	Accidentally indicated MAC instead of WIN.
+        Accidentally indicated MAC instead of WIN.
 
         * platform/chromium/test_expectations.txt:
 
@@ -11806,8 +11822,8 @@
         [Chromium] Rebaseline some border-related tests on Mac
         https://bugs.webkit.org/show_bug.cgi?id=58985
 
-	Most likely related to http://trac.webkit.org/changeset/84341/
-	"background color of elements with border-radius shows around outer edge of border at corners"
+        Most likely related to http://trac.webkit.org/changeset/84341/
+        "background color of elements with border-radius shows around outer edge of border at corners"
 
         * platform/chromium-mac-leopard/fast/forms/menulist-clip-expected.png:
         * platform/chromium-mac-leopard/fast/forms/menulist-narrow-width-expected.png:
@@ -11857,8 +11873,8 @@
         [Chromium] Rebaseline fast/repaint/trailing-floats-root-line-box-overflow fast/canvas/webgl/css-webkit-canvas fast/canvas/webgl/css-webkit-canvas-repaint
         https://bugs.webkit.org/show_bug.cgi?id=58978
 
-	Windows bots are now generating baselines, so include them.
-	fast/repaint/trailing-floats-root-line-box-overflow looks like correct output.
+        Windows bots are now generating baselines, so include them.
+        fast/repaint/trailing-floats-root-line-box-overflow looks like correct output.
 
         * platform/chromium-mac/fast/repaint/trailing-floats-root-line-box-overflow-expected.png: Added.
         * platform/chromium-win/fast/canvas/webgl/css-webkit-canvas-expected.png: Added.
@@ -12735,8 +12751,8 @@
         [Chromium] Mark animations/play-state.html as flaky.
         https://bugs.webkit.org/show_bug.cgi?id=58880
 
-	See also existing chromium bug:
-	http://code.google.com/p/chromium/issues/detail?id=76609
+        See also existing chromium bug:
+        http://code.google.com/p/chromium/issues/detail?id=76609
 
         * platform/chromium/test_expectations.txt:
 
@@ -12747,8 +12763,8 @@
         [Chromium] Mark tables/mozilla/bugs/bug28341.html as flaky on Mac
         https://bugs.webkit.org/show_bug.cgi?id=58879
 
-	See also existing chromium bug:
-	http://code.google.com/p/chromium/issues/detail?id=32231
+        See also existing chromium bug:
+        http://code.google.com/p/chromium/issues/detail?id=32231
 
         * platform/chromium/test_expectations.txt:
 
@@ -12759,8 +12775,8 @@
         [Chromium] Mark svg/text/font-size-below-point-five.svg as flaky on Linux, Mac
         https://bugs.webkit.org/show_bug.cgi?id=58878
 
-	See also existing chromium bug:
-	http://code.google.com/p/chromium/issues/detail?id=74710
+        See also existing chromium bug:
+        http://code.google.com/p/chromium/issues/detail?id=74710
 
         * platform/chromium/test_expectations.txt:
 
@@ -12771,8 +12787,8 @@
         [Chromium] Mark layout test editing/execCommand/delete-empty-container.html as flaky
         https://bugs.webkit.org/show_bug.cgi?id=58877
 
-	Chromium bug filed.
-	http://code.google.com/p/chromium/issues/detail?id=79854
+        Chromium bug filed.
+        http://code.google.com/p/chromium/issues/detail?id=79854
 
         * platform/chromium/test_expectations.txt:
 
@@ -12807,8 +12823,8 @@
         [Chromium] Reenable layout test canvas/philip/tests/2d.gradient.interpolate.outside.html
         https://bugs.webkit.org/show_bug.cgi?id=58873
 
-	Fixed in Chromium r81956.
-	http://code.google.com/p/chromium/issues/detail?id=79725
+        Fixed in Chromium r81956.
+        http://code.google.com/p/chromium/issues/detail?id=79725
 
         * platform/chromium/test_expectations.txt:
 

@@ -28,6 +28,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "CSSComputedStyleDeclaration.h"
+#include "CSSImportRule.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSPropertyNames.h"
 #include "CSSPropertySourceData.h"
@@ -267,10 +268,8 @@ void InspectorCSSAgent::getAllStyleSheets(ErrorString*, RefPtr<InspectorArray>* 
         StyleSheetList* list = (*it)->styleSheets();
         for (unsigned i = 0; i < list->length(); ++i) {
             StyleSheet* styleSheet = list->item(i);
-            if (styleSheet->isCSSStyleSheet()) {
-                InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(static_cast<CSSStyleSheet*>(styleSheet));
-                (*styleInfos)->pushObject(inspectorStyleSheet->buildObjectForStyleSheetInfo());
-            }
+            if (styleSheet->isCSSStyleSheet())
+                collectStyleSheets(static_cast<CSSStyleSheet*>(styleSheet), styleInfos->get());
         }
     }
 }
@@ -415,6 +414,20 @@ Element* InspectorCSSAgent::elementForId(ErrorString* errorString, int nodeId)
         return 0;
     }
     return static_cast<Element*>(node);
+}
+
+void InspectorCSSAgent::collectStyleSheets(CSSStyleSheet* styleSheet, InspectorArray* result)
+{
+    InspectorStyleSheet* inspectorStyleSheet = bindStyleSheet(static_cast<CSSStyleSheet*>(styleSheet));
+    result->pushObject(inspectorStyleSheet->buildObjectForStyleSheetInfo());
+    for (unsigned i = 0, size = styleSheet->length(); i < size; ++i) {
+        StyleBase* styleBase = styleSheet->item(i);
+        if (styleBase->isImportRule()) {
+            StyleBase* importedStyleSheet = static_cast<CSSImportRule*>(styleBase)->styleSheet();
+            if (importedStyleSheet && importedStyleSheet->isCSSStyleSheet())
+                collectStyleSheets(static_cast<CSSStyleSheet*>(importedStyleSheet), result);
+        }
+    }
 }
 
 InspectorStyleSheet* InspectorCSSAgent::bindStyleSheet(CSSStyleSheet* styleSheet)
