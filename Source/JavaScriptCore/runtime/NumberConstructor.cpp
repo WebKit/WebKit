@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000,2003 Harri Porten (porten@kde.org)
- *  Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2007, 2008, 2011 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -42,10 +42,10 @@ static JSValue numberConstructorMinValue(ExecState*, JSValue, const Identifier&)
 
 namespace JSC {
 
-const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::numberTable };
+const ClassInfo NumberConstructor::s_info = { "Function", &InternalFunction::s_info, 0, ExecState::numberConstructorTable };
 
 /* Source for NumberConstructor.lut.h
-@begin numberTable
+@begin numberConstructorTable
    NaN                   numberConstructorNaNValue       DontEnum|DontDelete|ReadOnly
    NEGATIVE_INFINITY     numberConstructorNegInfinity    DontEnum|DontDelete|ReadOnly
    POSITIVE_INFINITY     numberConstructorPosInfinity    DontEnum|DontDelete|ReadOnly
@@ -68,12 +68,12 @@ NumberConstructor::NumberConstructor(ExecState* exec, JSGlobalObject* globalObje
 
 bool NumberConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<NumberConstructor, InternalFunction>(exec, ExecState::numberTable(exec), this, propertyName, slot);
+    return getStaticValueSlot<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec), this, propertyName, slot);
 }
 
 bool NumberConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<NumberConstructor, InternalFunction>(exec, ExecState::numberTable(exec), this, propertyName, descriptor);
+    return getStaticValueDescriptor<NumberConstructor, InternalFunction>(exec, ExecState::numberConstructorTable(exec), this, propertyName, descriptor);
 }
 
 static JSValue numberConstructorNaNValue(ExecState*, JSValue, const Identifier&)

@@ -145,14 +145,26 @@ EXTRA_DIST += \
 # Clean rules for JavaScriptCore
 # FIXME: Should this list be generated from javascriptcore_built_nosources?
 CLEANFILES += \
-	Source/JavaScriptCore/runtime/ArrayPrototype.lut.h \
-	Source/JavaScriptCore/runtime/DatePrototype.lut.h \
-	Source/JavaScriptCore/runtime/JSONObject.lut.h \
-	Source/JavaScriptCore/runtime/MathObject.lut.h \
-	Source/JavaScriptCore/runtime/NumberConstructor.lut.h \
-	Source/JavaScriptCore/runtime/RegExpConstructor.lut.h \
-	Source/JavaScriptCore/runtime/RegExpObject.lut.h \
-	Source/JavaScriptCore/runtime/StringPrototype.lut.h \
+	Source/JavaScriptCore/Lexer.lut.h \
+	Source/JavaScriptCore/RegExpJitTables.h \
+        Source/JavaScriptCore/runtime/ArrayConstructor.lut.h \
+        Source/JavaScriptCore/runtime/ArrayPrototype.lut.h \
+        Source/JavaScriptCore/runtime/BooleanPrototype.lut.h \
+        Source/JavaScriptCore/runtime/DateConstructor.lut.h \
+        Source/JavaScriptCore/runtime/DatePrototype.lut.h \
+        Source/JavaScriptCore/runtime/ErrorPrototype.lut.h \
+        Source/JavaScriptCore/runtime/JSGlobalObject.lut.h \
+        Source/JavaScriptCore/runtime/JSONObject.lut.h \
+        Source/JavaScriptCore/runtime/MathObject.lut.h \
+        Source/JavaScriptCore/runtime/NumberConstructor.lut.h \
+        Source/JavaScriptCore/runtime/NumberPrototype.lut.h \
+        Source/JavaScriptCore/runtime/ObjectConstructor.lut.h \
+        Source/JavaScriptCore/runtime/ObjectPrototype.lut.h \
+        Source/JavaScriptCore/runtime/RegExpConstructor.lut.h \
+        Source/JavaScriptCore/runtime/RegExpObject.lut.h \
+        Source/JavaScriptCore/runtime/RegExpPrototype.lut.h \
+        Source/JavaScriptCore/runtime/StringConstructor.lut.h \
+        Source/JavaScriptCore/runtime/StringPrototype.lut.h \
 	Programs/jsc \
 	Programs/jsc-@WEBKITGTK_API_MAJOR_VERSION@ \
 	Programs/minidom

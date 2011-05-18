@@ -1,3 +1,125 @@
+2011-05-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Rolling back in r86653 with build fixed.
+
+        Reviewed by Gavin Barraclough and Oliver Hunt.
+
+        Global object initialization is expensive
+        https://bugs.webkit.org/show_bug.cgi?id=60933
+        
+        Changed a bunch of globals to allocate their properties lazily, and changed
+        the global object to allocate a bunch of its globals lazily.
+        
+        This reduces the footprint of a global object from 287 objects with 58
+        functions for 24K to 173 objects with 20 functions for 15K.
+
+        Large patch, but it's all mechanical.
+
+        * DerivedSources.make:
+        * JavaScriptCore.exp: Build!
+
+        * create_hash_table: Added a special case for fromCharCode, since it uses
+        a custom "thunk generator".
+
+        * heap/Heap.cpp:
+        (JSC::TypeCounter::operator()): Fixed a bug where the type counter would
+        overcount objects that were owned through more than one mechanism because
+        it was getting in the way of counting the results for this patch.
+
+        * interpreter/CallFrame.h:
+        (JSC::ExecState::arrayConstructorTable):
+        (JSC::ExecState::arrayPrototypeTable):
+        (JSC::ExecState::booleanPrototypeTable):
+        (JSC::ExecState::dateConstructorTable):
+        (JSC::ExecState::errorPrototypeTable):
+        (JSC::ExecState::globalObjectTable):
+        (JSC::ExecState::numberConstructorTable):
+        (JSC::ExecState::numberPrototypeTable):
+        (JSC::ExecState::objectPrototypeTable):
+        (JSC::ExecState::regExpPrototypeTable):
+        (JSC::ExecState::stringConstructorTable): Added new tables.
+
+        * runtime/ArrayConstructor.cpp:
+        (JSC::ArrayConstructor::ArrayConstructor):
+        (JSC::ArrayConstructor::getOwnPropertySlot):
+        (JSC::ArrayConstructor::getOwnPropertyDescriptor):
+        * runtime/ArrayConstructor.h:
+        (JSC::ArrayConstructor::createStructure):
+        * runtime/ArrayPrototype.cpp:
+        (JSC::ArrayPrototype::getOwnPropertySlot):
+        (JSC::ArrayPrototype::getOwnPropertyDescriptor):
+        * runtime/ArrayPrototype.h:
+        * runtime/BooleanPrototype.cpp:
+        (JSC::BooleanPrototype::BooleanPrototype):
+        (JSC::BooleanPrototype::getOwnPropertySlot):
+        (JSC::BooleanPrototype::getOwnPropertyDescriptor):
+        * runtime/BooleanPrototype.h:
+        (JSC::BooleanPrototype::createStructure):
+        * runtime/DateConstructor.cpp:
+        (JSC::DateConstructor::DateConstructor):
+        (JSC::DateConstructor::getOwnPropertySlot):
+        (JSC::DateConstructor::getOwnPropertyDescriptor):
+        * runtime/DateConstructor.h:
+        (JSC::DateConstructor::createStructure):
+        * runtime/ErrorPrototype.cpp:
+        (JSC::ErrorPrototype::ErrorPrototype):
+        (JSC::ErrorPrototype::getOwnPropertySlot):
+        (JSC::ErrorPrototype::getOwnPropertyDescriptor):
+        * runtime/ErrorPrototype.h:
+        (JSC::ErrorPrototype::createStructure): Standardized these objects
+        to use static tables for function properties.
+
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::~JSGlobalData):
+        * runtime/JSGlobalData.h: Added new tables.
+
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        (JSC::JSGlobalObject::addStaticGlobals):
+        (JSC::JSGlobalObject::getOwnPropertySlot):
+        (JSC::JSGlobalObject::getOwnPropertyDescriptor):
+        * runtime/JSGlobalObject.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        * runtime/JSGlobalObjectFunctions.h: Changed JSGlobalObject to use a
+        static table for its global functions. This required uninlining some
+        things to avoid a circular header dependency. However, those things
+        probably shouldn't have been inlined in the first place.
+        
+        Even more global object properties can be made lazy, but that requires
+        more in-depth changes.
+
+        * runtime/MathObject.cpp:
+        * runtime/NumberConstructor.cpp:
+        (JSC::NumberConstructor::getOwnPropertySlot):
+        (JSC::NumberConstructor::getOwnPropertyDescriptor):
+        * runtime/NumberPrototype.cpp:
+        (JSC::NumberPrototype::NumberPrototype):
+        (JSC::NumberPrototype::getOwnPropertySlot):
+        (JSC::NumberPrototype::getOwnPropertyDescriptor):
+        * runtime/NumberPrototype.h:
+        (JSC::NumberPrototype::createStructure):
+        * runtime/ObjectPrototype.cpp:
+        (JSC::ObjectPrototype::ObjectPrototype):
+        (JSC::ObjectPrototype::put):
+        (JSC::ObjectPrototype::getOwnPropertySlot):
+        (JSC::ObjectPrototype::getOwnPropertyDescriptor):
+        * runtime/ObjectPrototype.h:
+        (JSC::ObjectPrototype::createStructure):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::RegExpPrototype::RegExpPrototype):
+        (JSC::RegExpPrototype::getOwnPropertySlot):
+        (JSC::RegExpPrototype::getOwnPropertyDescriptor):
+        * runtime/RegExpPrototype.h:
+        (JSC::RegExpPrototype::createStructure):
+        * runtime/StringConstructor.cpp:
+        (JSC::StringConstructor::StringConstructor):
+        (JSC::StringConstructor::getOwnPropertySlot):
+        (JSC::StringConstructor::getOwnPropertyDescriptor):
+        * runtime/StringConstructor.h:
+        (JSC::StringConstructor::createStructure): Standardized these objects
+        to use static tables for function properties.
+
 2011-05-17  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Oliver Hunt.

@@ -1,7 +1,7 @@
 /*
  *  Copyright (C) 1999-2001 Harri Porten (porten@kde.org)
  *  Copyright (C) 2001 Peter Kelly (pmk@post.com)
- *  Copyright (C) 2003, 2007, 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2003, 2007, 2008, 2011 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Library General Public
@@ -75,15 +75,24 @@ namespace JSC  {
 #ifndef NDEBUG
         void dumpCaller();
 #endif
-        static const HashTable* arrayTable(CallFrame* callFrame) { return callFrame->globalData().arrayTable; }
+        static const HashTable* arrayConstructorTable(CallFrame* callFrame) { return callFrame->globalData().arrayConstructorTable; }
+        static const HashTable* arrayPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().arrayPrototypeTable; }
+        static const HashTable* booleanPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().booleanPrototypeTable; }
         static const HashTable* dateTable(CallFrame* callFrame) { return callFrame->globalData().dateTable; }
+        static const HashTable* dateConstructorTable(CallFrame* callFrame) { return callFrame->globalData().dateConstructorTable; }
+        static const HashTable* errorPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().errorPrototypeTable; }
+        static const HashTable* globalObjectTable(CallFrame* callFrame) { return callFrame->globalData().globalObjectTable; }
         static const HashTable* jsonTable(CallFrame* callFrame) { return callFrame->globalData().jsonTable; }
         static const HashTable* mathTable(CallFrame* callFrame) { return callFrame->globalData().mathTable; }
-        static const HashTable* numberTable(CallFrame* callFrame) { return callFrame->globalData().numberTable; }
+        static const HashTable* numberConstructorTable(CallFrame* callFrame) { return callFrame->globalData().numberConstructorTable; }
+        static const HashTable* numberPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().numberPrototypeTable; }
         static const HashTable* objectConstructorTable(CallFrame* callFrame) { return callFrame->globalData().objectConstructorTable; }
+        static const HashTable* objectPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().objectPrototypeTable; }
         static const HashTable* regExpTable(CallFrame* callFrame) { return callFrame->globalData().regExpTable; }
         static const HashTable* regExpConstructorTable(CallFrame* callFrame) { return callFrame->globalData().regExpConstructorTable; }
+        static const HashTable* regExpPrototypeTable(CallFrame* callFrame) { return callFrame->globalData().regExpPrototypeTable; }
         static const HashTable* stringTable(CallFrame* callFrame) { return callFrame->globalData().stringTable; }
+        static const HashTable* stringConstructorTable(CallFrame* callFrame) { return callFrame->globalData().stringConstructorTable; }
 
         static CallFrame* create(Register* callFrameBase) { return static_cast<CallFrame*>(callFrameBase); }
         Register* registers() { return this; }

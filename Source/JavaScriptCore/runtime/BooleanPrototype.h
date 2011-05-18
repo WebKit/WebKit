@@ -1,6 +1,6 @@
 /*
  *  Copyright (C) 1999-2000 Harri Porten (porten@kde.org)
- *  Copyright (C) 2008 Apple Inc. All rights reserved.
+ *  Copyright (C) 2008, 2011 Apple Inc. All rights reserved.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -27,7 +27,22 @@ namespace JSC {
 
     class BooleanPrototype : public BooleanObject {
     public:
-        BooleanPrototype(ExecState*, JSGlobalObject*, Structure*, Structure* functionStructure);
+        BooleanPrototype(ExecState*, JSGlobalObject*, Structure*);
+
+        static const ClassInfo s_info;
+
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        {
+            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        }
+
+    protected:
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | BooleanObject::StructureFlags;
+        static const unsigned AnonymousSlotCount = BooleanObject::AnonymousSlotCount + 1;
+
+    private:
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     };
 
 } // namespace JSC

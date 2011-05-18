@@ -1,6 +1,6 @@
 S15.9.4.3_A1_T2
 
-PASS 
+FAIL SputnikError: #2: The Date.UTC property has not the attributes DontDelete
 
 TEST COMPLETE
 

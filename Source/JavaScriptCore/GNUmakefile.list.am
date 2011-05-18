@@ -13,15 +13,24 @@ javascriptcore_h_api += \
 javascriptcore_built_nosources += \
 	Source/JavaScriptCore/Lexer.lut.h \
 	Source/JavaScriptCore/RegExpJitTables.h \
-	Source/JavaScriptCore/runtime/ArrayPrototype.lut.h \
-	Source/JavaScriptCore/runtime/DatePrototype.lut.h \
-	Source/JavaScriptCore/runtime/JSONObject.lut.h \
-	Source/JavaScriptCore/runtime/MathObject.lut.h \
-	Source/JavaScriptCore/runtime/NumberConstructor.lut.h \
-	Source/JavaScriptCore/runtime/ObjectConstructor.lut.h \
-	Source/JavaScriptCore/runtime/RegExpConstructor.lut.h \
-	Source/JavaScriptCore/runtime/RegExpObject.lut.h \
-	Source/JavaScriptCore/runtime/StringPrototype.lut.h
+        Source/JavaScriptCore/runtime/ArrayConstructor.lut.h \
+        Source/JavaScriptCore/runtime/ArrayPrototype.lut.h \
+        Source/JavaScriptCore/runtime/BooleanPrototype.lut.h \
+        Source/JavaScriptCore/runtime/DateConstructor.lut.h \
+        Source/JavaScriptCore/runtime/DatePrototype.lut.h \
+        Source/JavaScriptCore/runtime/ErrorPrototype.lut.h \
+        Source/JavaScriptCore/runtime/JSGlobalObject.lut.h \
+        Source/JavaScriptCore/runtime/JSONObject.lut.h \
+        Source/JavaScriptCore/runtime/MathObject.lut.h \
+        Source/JavaScriptCore/runtime/NumberConstructor.lut.h \
+        Source/JavaScriptCore/runtime/NumberPrototype.lut.h \
+        Source/JavaScriptCore/runtime/ObjectConstructor.lut.h \
+        Source/JavaScriptCore/runtime/ObjectPrototype.lut.h \
+        Source/JavaScriptCore/runtime/RegExpConstructor.lut.h \
+        Source/JavaScriptCore/runtime/RegExpObject.lut.h \
+        Source/JavaScriptCore/runtime/RegExpPrototype.lut.h \
+        Source/JavaScriptCore/runtime/StringConstructor.lut.h \
+        Source/JavaScriptCore/runtime/StringPrototype.lut.h
 
 javascriptcore_sources += \
 	Source/JavaScriptCore/API/APICast.h \

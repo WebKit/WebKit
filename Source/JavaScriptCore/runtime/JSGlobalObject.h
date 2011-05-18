@@ -148,6 +148,8 @@ namespace JSC {
             init(this);
         }
 
+        static JS_EXPORTDATA const ClassInfo s_info;
+
     protected:
         JSGlobalObject(JSGlobalData& globalData, Structure* structure, JSObject* thisValue)
             : JSVariableObject(globalData, structure, &m_symbolTable, 0)
@@ -315,42 +317,6 @@ namespace JSC {
     {
         JSVariableObject::setRegisters(registers, registerArray);
         m_registerArraySize = count;
-    }
-
-    inline void JSGlobalObject::addStaticGlobals(GlobalPropertyInfo* globals, int count)
-    {
-        size_t oldSize = m_registerArraySize;
-        size_t newSize = oldSize + count;
-        OwnArrayPtr<WriteBarrier<Unknown> > registerArray = adoptArrayPtr(new WriteBarrier<Unknown>[newSize]);
-        if (m_registerArray) {
-            // memcpy is safe here as we're copying barriers we already own from the existing array
-            memcpy(registerArray.get() + count, m_registerArray.get(), oldSize * sizeof(Register));
-        }
-
-        WriteBarrier<Unknown>* registers = registerArray.get() + newSize;
-        setRegisters(registers, registerArray.release(), newSize);
-
-        for (int i = 0, index = -static_cast<int>(oldSize) - 1; i < count; ++i, --index) {
-            GlobalPropertyInfo& global = globals[i];
-            ASSERT(global.attributes & DontDelete);
-            SymbolTableEntry newEntry(index, global.attributes);
-            symbolTable().add(global.identifier.impl(), newEntry);
-            registerAt(index).set(globalData(), this, global.value);
-        }
-    }
-
-    inline bool JSGlobalObject::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
-    {
-        if (JSVariableObject::getOwnPropertySlot(exec, propertyName, slot))
-            return true;
-        return symbolTableGet(propertyName, slot);
-    }
-
-    inline bool JSGlobalObject::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
-    {
-        if (symbolTableGet(propertyName, descriptor))
-            return true;
-        return JSVariableObject::getOwnPropertyDescriptor(exec, propertyName, descriptor);
     }
 
     inline bool JSGlobalObject::hasOwnPropertyForWrite(ExecState* exec, const Identifier& propertyName)

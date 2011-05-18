@@ -34,15 +34,42 @@ ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
 
 static EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState*);
 
-// ECMA 15.9.4
-ErrorPrototype::ErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure, Structure* functionStructure)
+}
+
+#include "ErrorPrototype.lut.h"
+
+namespace JSC {
+
+const ClassInfo ErrorPrototype::s_info = { "Error", &ErrorInstance::s_info, 0, ExecState::errorPrototypeTable };
+
+/* Source for ErrorPrototype.lut.h
+@begin errorPrototypeTable
+  toString          errorProtoFuncToString         DontEnum|Function 0
+@end
+*/
+
+ASSERT_CLASS_FITS_IN_CELL(ErrorPrototype);
+
+ErrorPrototype::ErrorPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
     : ErrorInstance(&exec->globalData(), structure)
 {
-    // The constructor will be added later in ErrorConstructor's constructor
-
     putDirectWithoutTransition(exec->globalData(), exec->propertyNames().name, jsNontrivialString(exec, "Error"), DontEnum);
-    putDirectFunctionWithoutTransition(exec, new (exec) JSFunction(exec, globalObject, functionStructure, 0, exec->propertyNames().toString, errorProtoFuncToString), DontEnum);
+
+    ASSERT(inherits(&s_info));
+    putAnonymousValue(globalObject->globalData(), 0, globalObject);
 }
+
+bool ErrorPrototype::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot &slot)
+{
+    return getStaticFunctionSlot<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec), this, propertyName, slot);
+}
+
+bool ErrorPrototype::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
+{
+    return getStaticFunctionDescriptor<ErrorInstance>(exec, ExecState::errorPrototypeTable(exec), this, propertyName, descriptor);
+}
+
+// ------------------------------ Functions ---------------------------
 
 EncodedJSValue JSC_HOST_CALL errorProtoFuncToString(ExecState* exec)
 {

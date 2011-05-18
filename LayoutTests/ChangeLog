@@ -1,3 +1,25 @@
+2011-05-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Global object initialization is expensive
+        https://bugs.webkit.org/show_bug.cgi?id=60933
+        
+        Added a few more expected failures, now that more code uses static hash
+        tables.
+        
+        The fact that built-ins are not deletable, but should be, is covered by
+        https://bugs.webkit.org/show_bug.cgi?id=61014
+
+        * sputnik/Conformance/15_Native_Objects/15.6_Boolean/15.6.2/S15.6.2.1_A4-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.6_Boolean/15.6.3/15.6.3.1_Boolean.prototype/S15.6.3.1_A1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.6_Boolean/15.6.4/S15.6.4_A1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.7_Number/15.7.2/S15.7.2.1_A4-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.7_Number/15.7.3/15.7.3.1_Number.prototype/S15.7.3.1_A2_T1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.7_Number/15.7.4/S15.7.4_A1-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.4/15.9.4.2_Date.parse/S15.9.4.2_A1_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.9_Date/15.9.4/15.9.4.3_Date.UTC/S15.9.4.3_A1_T2-expected.txt:
+
 2011-05-17  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Adam Barth.

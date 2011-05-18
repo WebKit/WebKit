@@ -1,6 +1,6 @@
 S15.6.4_A1
 
-PASS 
+FAIL SputnikError: #3: The [[Class]] property of the Boolean prototype object is set to "Boolean"
 
 TEST COMPLETE
 

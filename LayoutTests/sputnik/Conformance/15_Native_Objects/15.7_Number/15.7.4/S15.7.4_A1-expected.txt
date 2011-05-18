@@ -1,6 +1,6 @@
 S15.7.4_A1
 
-PASS 
+FAIL SputnikError: #3: The [[Class]] property of the Number prototype object is set to "Number"
 
 TEST COMPLETE
 
