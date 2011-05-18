@@ -1170,7 +1170,7 @@ WebInspector.displayNameForURL = function(url)
 
 WebInspector._showAnchorLocation = function(anchor)
 {
-    var preferedPanel = this.panels[anchor.getAttribute("preferred_panel") || "resources"];
+    var preferedPanel = this.panels[anchor.getAttribute("preferred_panel") || "scripts"];
     if (WebInspector._showAnchorLocationInPanel(anchor, preferedPanel))
         return true;
     if (preferedPanel !== this.panels.resources && WebInspector._showAnchorLocationInPanel(anchor, this.panels.resources))

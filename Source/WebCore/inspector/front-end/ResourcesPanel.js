@@ -350,7 +350,8 @@ WebInspector.ResourcesPanel.prototype = {
             }
             return;
         }
-        this.showResource(resource, anchor.getAttribute("line_number") - 1);
+        var lineNumber = parseInt(anchor.getAttribute("line_number"));
+        this.showResource(resource, lineNumber !== NaN ? lineNumber - 1 : undefined);
     },
 
     showResource: function(resource, line)
