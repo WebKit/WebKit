@@ -3083,10 +3083,7 @@ BUGCR73091 : animations/play-state-suspend.html = PASS TEXT
 BUGCR73092 WIN : fast/dom/gc-11.html = PASS TEXT
 BUGCR73094 LINUX : http/tests/websocket/tests/send-after-close-on-unload.html = PASS TIMEOUT
 
-BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-normalcaller-direct-strictcode.html = TEXT
 BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-normalcaller-indirect-strictcode.html = TEXT
-BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-strictcaller-direct-normalcode.html = TEXT
-BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-strictcaller-direct-strictcode.html = TEXT
 BUGV8_1168 : fast/js/mozilla/eval/exhaustive-fun-strictcaller-indirect-strictcode.html = TEXT
 BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-normalcaller-direct-strictcode.html = TEXT
 BUGV8_1168 : fast/js/mozilla/eval/exhaustive-global-normalcaller-indirect-strictcode.html = TEXT

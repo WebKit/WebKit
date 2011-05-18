@@ -2,6 +2,17 @@
 
         Unreviewed Chromium test expectation change.
 
+        The following tests now pass:
+        fast/js/mozilla/eval/exhaustive-fun-normalcaller-direct-strictcode.html
+        fast/js/mozilla/eval/exhaustive-fun-strictcaller-direct-normalcode.html
+        fast/js/mozilla/eval/exhaustive-fun-strictcaller-direct-strictcode.html
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-17  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
         plugins/windowless_plugin_paint_test.html now passes on Linux, timeouts on Mac.
 
         * platform/chromium/test_expectations.txt:
