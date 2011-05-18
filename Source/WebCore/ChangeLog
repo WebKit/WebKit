@@ -1,3 +1,15 @@
+2011-05-17  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Clear the image from ImageLoader rather than clearing the ImageLoader in HTMLObjectElement::renderFallbackContent.
+        https://bugs.webkit.org/show_bug.cgi?id=61005
+
+        Test: http/tests/loading/nested_bad_objects.php
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderFallbackContent):
+
 2011-05-17  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.
