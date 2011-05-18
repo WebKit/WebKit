@@ -56,10 +56,9 @@ PASS event.target.result.name is "Abraham"
 PASS event.target.result.number is "2107"
 store = trans.objectStore('PlainOldStore')
 Try adding with no key to object store without auto increment.
-store.add({name: 'Adam'})
-addAdamError():
-PASS event.target.errorCode is webkitIDBDatabaseException.DATA_ERR
-event.preventDefault()
+Expecting exception from store.add({name: 'Adam'})
+PASS Exception was thrown.
+PASS code is webkitIDBDatabaseException.DATA_ERR
 store.add({name: 'Adam'}, 1)
 addAdamSuccess():
 PASS event.target.result is 1

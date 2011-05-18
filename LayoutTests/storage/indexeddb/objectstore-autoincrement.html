@@ -147,18 +147,7 @@ function getAbrahamSuccess()
 
     window.store = evalAndLog("store = trans.objectStore('PlainOldStore')");
     debug("Try adding with no key to object store without auto increment.");
-    request = evalAndLog("store.add({name: 'Adam'})");
-    request.onsuccess = unexpectedSuccessCallback;
-    request.onerror = addAdamError;
-}
-
-function addAdamError()
-{
-    debug("addAdamError():");
-    shouldBe("event.target.errorCode", "webkitIDBDatabaseException.DATA_ERR");
-
-    evalAndLog("event.preventDefault()");
-
+    evalAndExpectException("store.add({name: 'Adam'})", "webkitIDBDatabaseException.DATA_ERR");
     request = evalAndLog("store.add({name: 'Adam'}, 1)");
     request.onsuccess = addAdamSuccess;
     request.onerror = unexpectedErrorCallback;

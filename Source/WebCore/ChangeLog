@@ -1,3 +1,22 @@
+2011-05-18  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB put() should fail adding to object store that uses
+        out-of-line keys and has no key generator and the key parameter
+        was not provided
+        https://bugs.webkit.org/show_bug.cgi?id=58609
+
+        Out-of-line keys means that objectStore->m_keyPath is null in ::put(),
+        no key generator means that objectStore->autoIncrement() is false, and
+        key parameter was not provided means that prpKey will be a null pointer.
+        The combination of these 3 should throw a DATA_ERR.
+
+        Test: storage/indexeddb/mozilla/key-requirements-put-no-key.html
+
+        * storage/IDBObjectStoreBackendImpl.cpp:
+        (WebCore::IDBObjectStoreBackendImpl::put):
+
 2011-05-18  Chris Rogers  <crogers@google.com>
 
         Reviewed by James Robinson.

@@ -135,6 +135,14 @@ void IDBObjectStoreBackendImpl::put(PassRefPtr<SerializedScriptValue> prpValue, 
         ec = IDBDatabaseException::DATA_ERR;
         return;
     }
+
+    const bool autoIncrement = objectStore->autoIncrement();
+    const bool hasKeyPath = !objectStore->m_keyPath.isNull();
+    if (!key && !autoIncrement && !hasKeyPath) {
+        ec = IDBDatabaseException::DATA_ERR;
+        return;
+    }
+
     // FIXME: This should throw a SERIAL_ERR on structured clone problems.
     // FIXME: This should throw a DATA_ERR when the wrong key/keyPath data is supplied.
     if (!transaction->scheduleTask(createCallbackTask(&IDBObjectStoreBackendImpl::putInternal, objectStore, value, key, putMode, callbacks, transaction)))
