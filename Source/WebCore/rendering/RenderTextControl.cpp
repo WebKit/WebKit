@@ -542,7 +542,7 @@ float RenderTextControl::getAvgCharWidth(AtomicString family)
         return roundf(style()->font().primaryFont()->avgCharWidth());
 
     const UChar ch = '0';
-    return style()->font().width(TextRun(&ch, 1, false, 0, 0, TextRun::AllowTrailingExpansion));
+    return style()->font().width(constructTextRunAllowTrailingExpansion(String(&ch, 1), style()));
 }
 
 float RenderTextControl::scaleEmToUnits(int x) const

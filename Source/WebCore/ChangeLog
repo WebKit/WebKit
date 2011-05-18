@@ -1,3 +1,53 @@
+2011-05-17  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Refactor TextRun creation
+        https://bugs.webkit.org/show_bug.cgi?id=60255
+
+        Add constructTextRun() methods to RenderBlock/InlineTextBox and use it in various places in rendering/.
+        The long-term goal is to remove the ugly eight parameters catch-it-all TextRun constructor, and
+        replace it with explicit setters/getters. To avoid expanding dozens of callsites, when removing
+        the catch-it-all constructor, these helper functions are introduced, which hide the details of
+        creating a TextRun.
+
+        Furthermore it will be used to remove the platform layering violation, that TextRun stores
+        RenderObject pointers for the sake of SVG Fonts support, see bug 60254.
+
+        No change in functionaliy, no new tests.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::selectionRect):
+        (WebCore::EllipsisBox::paintSelection):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        (WebCore::InlineTextBox::constructTextRun):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::constructTextRunAllowTrailingExpansion):
+        * rendering/RenderBlock.h:
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        (WebCore::RenderFileUploadControl::computePreferredLogicalWidths):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::setImageSizeForAltText):
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::getAvgCharWidth):
+
 2011-05-17  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

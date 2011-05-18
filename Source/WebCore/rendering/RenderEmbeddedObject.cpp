@@ -197,7 +197,7 @@ bool RenderEmbeddedObject::getReplacementTextGeometry(int tx, int ty, FloatRect&
     font = Font(fontDescription, 0, 0);
     font.update(0);
     
-    run = TextRun(m_replacementText.characters(), m_replacementText.length());
+    run = TextRun(m_replacementText);
     textWidth = font.width(run);
     
     replacementTextRect.setSize(FloatSize(textWidth + replacementTextRoundedRectLeftRightTextMargin * 2, replacementTextRoundedRectHeight));

@@ -42,6 +42,7 @@
 #include "RenderRubyText.h"
 #include "RenderTheme.h"
 #include "Text.h"
+#include "TextRun.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
 
@@ -159,8 +160,6 @@ RenderObject::SelectionState InlineTextBox::selectionState()
     return state;
 }
 
-typedef Vector<UChar, 256> BufferForAppendingHyphen;
-
 static void adjustCharactersAndLengthForHyphen(BufferForAppendingHyphen& charactersWithHyphen, RenderStyle* style, const UChar*& characters, int& length)
 {
     const AtomicString& hyphenString = style->hyphenString();
@@ -185,16 +184,13 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     RenderStyle* styleToUse = textObj->style(m_firstLine);
     const Font& f = styleToUse->font();
 
-    const UChar* characters = textObj->text()->characters() + m_start;
-    int len = m_len;
     BufferForAppendingHyphen charactersWithHyphen;
-    if (ePos == len && hasHyphen()) {
-        adjustCharactersAndLengthForHyphen(charactersWithHyphen, styleToUse, characters, len);
-        ePos = len;
-    }
+    bool respectHyphen = ePos == m_len && hasHyphen();
+    TextRun textRun = constructTextRun(styleToUse, respectHyphen ? &charactersWithHyphen : 0);
+    if (respectHyphen)
+        endPos = textRun.length();
 
-    IntRect r = enclosingIntRect(f.selectionRectForText(TextRun(characters, len, textObj->allowTabs(), textPos(), m_expansion, expansionBehavior(), direction(), m_dirOverride),
-                                                        FloatPoint(logicalLeft(), selTop), selHeight, sPos, ePos));
+    IntRect r = enclosingIntRect(f.selectionRectForText(textRun, FloatPoint(logicalLeft(), selTop), selHeight, sPos, ePos));
 
     int logicalWidth = r.width();
     if (r.x() > logicalRight())
@@ -647,10 +643,9 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/,
         combinedText->charactersToRender(m_start, characters, length);
 
     BufferForAppendingHyphen charactersWithHyphen;
+    TextRun textRun = constructTextRun(styleToUse, characters, length, hasHyphen() ? &charactersWithHyphen : 0);
     if (hasHyphen())
-        adjustCharactersAndLengthForHyphen(charactersWithHyphen, styleToUse, characters, length);
-
-    TextRun textRun(characters, length, textRenderer()->allowTabs(), textPos(), m_expansion, expansionBehavior(), direction(), m_dirOverride || styleToUse->visuallyOrdered());
+        length = textRun.length();
 
     int sPos = 0;
     int ePos = 0;
@@ -812,10 +807,10 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     const UChar* characters = textRenderer()->text()->characters() + m_start;
 
     BufferForAppendingHyphen charactersWithHyphen;
-    if (ePos == length && hasHyphen()) {
-        adjustCharactersAndLengthForHyphen(charactersWithHyphen, style, characters, length);
-        ePos = length;
-    }
+    bool respectHyphen = ePos == length && hasHyphen();
+    TextRun textRun = constructTextRun(style, characters, length, respectHyphen ? &charactersWithHyphen : 0);
+    if (respectHyphen)
+        ePos = textRun.length();
 
     int deltaY = renderer()->style()->isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     int selHeight = selectionHeight();
@@ -827,9 +822,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
     clipRect.setWidth(maxX - clipRect.x());
     context->clip(clipRect);
 
-    context->drawHighlightForText(font, TextRun(characters, length, textRenderer()->allowTabs(), textPos(), m_expansion, expansionBehavior(), 
-                                  direction(), m_dirOverride || style->visuallyOrdered()),
-                                  localOrigin, selHeight, c, style->colorSpace(), sPos, ePos);
+    context->drawHighlightForText(font, textRun, localOrigin, selHeight, c, style->colorSpace(), sPos, ePos);
 }
 
 void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const FloatPoint& boxOrigin, RenderStyle* style, const Font& font, int startPos, int endPos)
@@ -850,9 +843,7 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const F
     int deltaY = renderer()->style()->isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     int selHeight = selectionHeight();
     FloatPoint localOrigin(boxOrigin.x(), boxOrigin.y() - deltaY);
-    context->drawHighlightForText(font, TextRun(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_expansion, expansionBehavior(),
-                                  direction(), m_dirOverride || style->visuallyOrdered()),
-                                  localOrigin, selHeight, c, style->colorSpace(), sPos, ePos);
+    context->drawHighlightForText(font, constructTextRun(style), localOrigin, selHeight, c, style->colorSpace(), sPos, ePos);
 }
 
 #if PLATFORM(MAC)
@@ -1010,8 +1001,8 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, const Floa
         int deltaY = renderer()->style()->isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
         int selHeight = selectionHeight();
         FloatPoint startPoint(boxOrigin.x(), boxOrigin.y() - deltaY);
-        TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_expansion, expansionBehavior(), direction(), m_dirOverride || style->visuallyOrdered());
-        
+        TextRun run = constructTextRun(style);
+
         // FIXME: Convert the document markers to float rects.
         IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, selHeight, startPosition, endPosition));
         start = markerRect.x() - startPoint.x();
@@ -1055,8 +1046,8 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& 
 
     int sPos = max(marker.startOffset - m_start, (unsigned)0);
     int ePos = min(marker.endOffset - m_start, (unsigned)m_len);    
-    TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_expansion, expansionBehavior(), direction(), m_dirOverride || style->visuallyOrdered());
-    
+    TextRun run = constructTextRun(style);
+
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, IntPoint(m_x, selectionTop()), selHeight, sPos, ePos));
     markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
@@ -1082,7 +1073,7 @@ void InlineTextBox::computeRectForReplacementMarker(const DocumentMarker& marker
     
     int sPos = max(marker.startOffset - m_start, (unsigned)0);
     int ePos = min(marker.endOffset - m_start, (unsigned)m_len);    
-    TextRun run(textRenderer()->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_expansion, expansionBehavior(), direction(), m_dirOverride || style->visuallyOrdered());
+    TextRun run = constructTextRun(style);
     IntPoint startPoint = IntPoint(m_x, y);
     
     // Compute and store the rect associated with this marker.
@@ -1242,9 +1233,7 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
     RenderText* text = toRenderText(renderer());
     RenderStyle* style = text->style(m_firstLine);
     const Font* f = &style->font();
-    int offset = f->offsetForPosition(TextRun(textRenderer()->text()->characters() + m_start, m_len,
-        textRenderer()->allowTabs(), textPos(), m_expansion, expansionBehavior(), direction(), m_dirOverride || style->visuallyOrdered()),
-        lineOffset - logicalLeft(), includePartialGlyphs);
+    int offset = f->offsetForPosition(constructTextRun(style), lineOffset - logicalLeft(), includePartialGlyphs);
     if (blockIsInOppositeDirection && (!offset || offset == m_len))
         return !offset ? m_len : 0;
     return offset;
@@ -1259,12 +1248,13 @@ float InlineTextBox::positionForOffset(int offset) const
         return logicalLeft();
 
     RenderText* text = toRenderText(renderer());
-    const Font& f = text->style(m_firstLine)->font();
+    RenderStyle* styleToUse = text->style(m_firstLine);
+    ASSERT(styleToUse);
+    const Font& f = styleToUse->font();
     int from = !isLeftToRightDirection() ? offset - m_start : 0;
     int to = !isLeftToRightDirection() ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
-    return f.selectionRectForText(TextRun(text->text()->characters() + m_start, m_len, textRenderer()->allowTabs(), textPos(), m_expansion, expansionBehavior(), direction(), m_dirOverride),
-                                  IntPoint(logicalLeft(), 0), 0, from, to).maxX();
+    return f.selectionRectForText(constructTextRun(styleToUse), IntPoint(logicalLeft(), 0), 0, from, to).maxX();
 }
 
 bool InlineTextBox::containsCaretOffset(int offset) const
@@ -1289,6 +1279,31 @@ bool InlineTextBox::containsCaretOffset(int offset) const
 
     // Offsets at the end are "in" for normal boxes (but the caller has to check affinity).
     return true;
+}
+
+TextRun InlineTextBox::constructTextRun(RenderStyle* style, BufferForAppendingHyphen* charactersWithHyphen) const
+{
+    ASSERT(style);
+
+    RenderText* textRenderer = this->textRenderer();
+    ASSERT(textRenderer);
+    ASSERT(textRenderer->characters());
+
+    return constructTextRun(style, textRenderer->characters() + start(), len(), charactersWithHyphen);
+}
+
+TextRun InlineTextBox::constructTextRun(RenderStyle* style, const UChar* characters, int length, BufferForAppendingHyphen* charactersWithHyphen) const
+{
+    ASSERT(style);
+
+    RenderText* textRenderer = this->textRenderer();
+    ASSERT(textRenderer);
+
+    if (charactersWithHyphen)
+        adjustCharactersAndLengthForHyphen(*charactersWithHyphen, style, characters, length);
+
+    // FIXME: Remove TextRuns all-in-one-constructor and use explicit setters here.
+    return TextRun(characters, length, textRenderer->allowTabs(), textPos(), expansion(), expansionBehavior(), direction(), m_dirOverride || style->visuallyOrdered());
 }
 
 #ifndef NDEBUG

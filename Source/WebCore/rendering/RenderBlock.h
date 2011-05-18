@@ -55,6 +55,14 @@ typedef MidpointState<InlineIterator> LineMidpointState;
 
 enum CaretType { CursorCaret, DragCaret };
 
+enum TextRunFlag {
+    DefaultTextRunFlags = 0,
+    RespectDirection = 1 << 0,
+    RespectDirectionOverride = 1 << 1
+};
+
+typedef unsigned TextRunFlags;
+
 class RenderBlock : public RenderBox {
 public:
     RenderBlock(Node*);
@@ -160,6 +168,9 @@ public:
     RenderBlock* createAnonymousBlockWithSameTypeAs(RenderBlock* otherAnonymousBlock) const;
     
     static void appendRunsForObject(BidiRunList<BidiRun>&, int start, int end, RenderObject*, InlineBidiResolver&);
+
+    static TextRun constructTextRunAllowTrailingExpansion(const String&, RenderStyle*, TextRunFlags = DefaultTextRunFlags);
+    static TextRun constructTextRunAllowTrailingExpansion(const UChar*, int length, RenderStyle*, TextRunFlags = DefaultTextRunFlags);
 
     ColumnInfo* columnInfo() const;
     int columnGap() const;

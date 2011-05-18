@@ -6316,6 +6316,27 @@ inline void RenderBlock::FloatingObjects::decreaseObjectsCount(FloatingObject::T
         m_rightObjectsCount--;
 }
 
+TextRun RenderBlock::constructTextRunAllowTrailingExpansion(const UChar* characters, int length, RenderStyle* style, TextRunFlags flags)
+{
+    ASSERT(style);
+
+    TextDirection textDirection = LTR;
+    bool directionalOverride = style->visuallyOrdered();
+    if (flags != DefaultTextRunFlags) {
+        if (flags & RespectDirection)
+            textDirection = style->direction();
+        if (flags & RespectDirectionOverride)
+            directionalOverride |= style->unicodeBidi() == Override;
+    }
+
+    // FIXME: Remove TextRuns all-in-one-constructor and use explicit setters here.
+    return TextRun(characters, length, false, 0, 0, TextRun::AllowTrailingExpansion, textDirection, directionalOverride);
+}
+
+TextRun RenderBlock::constructTextRunAllowTrailingExpansion(const String& string, RenderStyle* style, TextRunFlags flags)
+{
+    return constructTextRunAllowTrailingExpansion(string.characters(), string.length(), style, flags);
+}
 
 #ifndef NDEBUG
 

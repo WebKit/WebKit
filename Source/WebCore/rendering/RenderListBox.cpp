@@ -120,7 +120,7 @@ void RenderListBox::updateFromElement()
 
             if (!text.isEmpty()) {
                 // FIXME: Why is this always LTR? Can't text direction affect the width?
-                float textWidth = itemFont.width(TextRun(text.impl(), false, 0, 0, TextRun::AllowTrailingExpansion, LTR));
+                float textWidth = itemFont.width(constructTextRunAllowTrailingExpansion(text, style()));
                 width = max(width, textWidth);
             }
         }

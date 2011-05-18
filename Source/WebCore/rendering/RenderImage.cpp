@@ -104,7 +104,7 @@ bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
     // we have an alt and the user meant it (its not a text we invented)
     if (!m_altText.isEmpty()) {
         const Font& font = style()->font();
-        IntSize textSize(min(font.width(TextRun(m_altText.characters(), m_altText.length())), maxAltTextWidth), min(font.fontMetrics().height(), maxAltTextHeight));
+        IntSize textSize(min(font.width(TextRun(m_altText)), maxAltTextWidth), min(font.fontMetrics().height(), maxAltTextHeight));
         imageSize = imageSize.expandedTo(textSize);
     }
 
@@ -286,7 +286,7 @@ void RenderImage::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 
                 // Only draw the alt text if it'll fit within the content box,
                 // and only if it fits above the error image.
-                TextRun textRun(text.characters(), text.length());
+                TextRun textRun(text);
                 int textWidth = font.width(textRun);
                 if (errorPictureDrawn) {
                     if (usableWidth >= textWidth && fontMetrics.height() <= imageY)

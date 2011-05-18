@@ -34,6 +34,7 @@ struct DocumentMarker;
 
 const unsigned short cNoTruncation = USHRT_MAX;
 const unsigned short cFullTruncation = USHRT_MAX - 1;
+typedef Vector<UChar, 256> BufferForAppendingHyphen;
 
 // Helper functions shared by InlineTextBox / SVGRootInlineBox
 void updateGraphicsContext(GraphicsContext*, const Color& fillColor, const Color& strokeColor, float strokeThickness, ColorSpace);
@@ -97,6 +98,9 @@ private:
     int selectionTop();
     int selectionBottom();
     int selectionHeight();
+
+    TextRun constructTextRun(RenderStyle*, BufferForAppendingHyphen* = 0) const;
+    TextRun constructTextRun(RenderStyle*, const UChar*, int length, BufferForAppendingHyphen* = 0) const;
 
 public:
     virtual IntRect calculateBoundaries() const { return IntRect(x(), y(), width(), height()); }
