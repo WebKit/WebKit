@@ -605,6 +605,8 @@ SET(WebCore_SOURCES
     dom/ScriptRunner.cpp
     dom/SelectElement.cpp
     dom/SelectorNodeList.cpp
+    dom/ShadowContentElement.cpp
+    dom/ShadowContentSelector.cpp
     dom/ShadowRoot.cpp
     dom/SpaceSplitString.cpp
     dom/StaticHashSetNodeList.cpp

@@ -30,6 +30,7 @@
 #include "PlatformMouseEvent.h"
 #include "RenderSummary.h"
 #include "ShadowContentElement.h"
+
 #include "ShadowRoot.h"
 
 namespace WebCore {
@@ -42,7 +43,7 @@ public:
 
 private:
     SummaryContentElement(Document* document)
-        : ShadowContentElement(document)
+        : ShadowContentElement(HTMLNames::divTag, document)
     {
     }
 

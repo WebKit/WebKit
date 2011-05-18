@@ -531,6 +531,8 @@ SOURCES += \
     dom/ScriptRunner.cpp \
     dom/SelectElement.cpp \
     dom/SelectorNodeList.cpp \
+    dom/ShadowContentElement.cpp \
+    dom/ShadowContentSelector.cpp \
     dom/ShadowRoot.cpp \
     dom/SpaceSplitString.cpp \
     dom/StaticNodeList.cpp \
@@ -1503,6 +1505,8 @@ HEADERS += \
     dom/ScriptExecutionContext.h \
     dom/SelectElement.h \
     dom/SelectorNodeList.h \
+    dom/ShadowContentElement.h \
+    dom/ShadowContentSelector.h \
     dom/ShadowRoot.h \
     dom/SpaceSplitString.h \
     dom/StaticNodeList.h \

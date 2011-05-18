@@ -31,18 +31,17 @@
 #ifndef ShadowContentElement_h
 #define ShadowContentElement_h
 
-#include "HTMLDivElement.h"
-#include "HTMLNames.h"
+#include "StyledElement.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
 // NOTE: Current implementation doesn't support dynamic insertion/deletion of ShadowContentElement.
 // You should create ShadowContentElement during the host construction.
-class ShadowContentElement : public HTMLDivElement {
+class ShadowContentElement : public StyledElement {
 public:
-    ShadowContentElement(Document* document)
-        : HTMLDivElement(HTMLNames::divTag, document)
+    ShadowContentElement(const QualifiedName& name, Document* document)
+        : StyledElement(name, document, CreateHTMLElement)
     {
     }
 

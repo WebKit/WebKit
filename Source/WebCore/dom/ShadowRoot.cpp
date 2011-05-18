@@ -30,84 +30,9 @@
 
 #include "Document.h"
 #include "NodeRareData.h"
-// FIXME: This dependency might look strange. But it should be sane. See https://bugs.webkit.org/show_bug.cgi?id=59117
-#include "ShadowContentElement.h"
+#include "ShadowContentSelector.h"
 
 namespace WebCore {
-
-static inline void forceReattach(Node* node)
-{
-    if (!node->attached())
-        return;
-    node->detach();
-    node->attach();
-}
-
-class ShadowContentSelector {
-    WTF_MAKE_NONCOPYABLE(ShadowContentSelector);
-public:
-    explicit ShadowContentSelector(ShadowRoot*);
-    ~ShadowContentSelector();
-
-    void attachChildrenFor(ShadowContentElement*);
-    ShadowRoot* shadowRoot() const { return m_shadowRoot; }
-    Element* activeElement() const { return m_activeElement; }
-
-    static ShadowContentSelector* currentInstance() { return s_currentInstance; }
-
-private:
-    ShadowContentSelector* m_parent;
-    ShadowRoot* m_shadowRoot;
-    Element* m_activeElement;
-    Vector<RefPtr<Node> > m_children;
-
-    static ShadowContentSelector* s_currentInstance;
-};
-
-ShadowContentSelector* ShadowContentSelector::s_currentInstance = 0;
-
-ShadowContentSelector::ShadowContentSelector(ShadowRoot* shadowRoot)
-    : m_parent(s_currentInstance)
-    , m_shadowRoot(shadowRoot)
-    , m_activeElement(0)
-{
-    s_currentInstance = this;
-    for (Node* node = shadowRoot->shadowHost()->firstChild(); node; node = node->nextSibling())
-        m_children.append(node);
-}
-
-ShadowContentSelector::~ShadowContentSelector()
-{
-    ASSERT(s_currentInstance == this);
-    s_currentInstance = m_parent;
-}
-
-void ShadowContentSelector::attachChildrenFor(ShadowContentElement* contentElement)
-{
-    m_activeElement = contentElement;
-
-    for (size_t i = 0; i < m_children.size(); ++i) {
-        Node* child = m_children[i].get();
-        if (!child)
-            continue;
-        if (!contentElement->shouldInclude(child))
-            continue;
-
-        forceReattach(child);
-        m_children[i] = 0;
-    }
-
-    m_activeElement = 0;
-}
-
-// FIXME: Should have its own file. https://bugs.webkit.org/show_bug.cgi?id=59117 will fix this.
-void ShadowContentElement::attach()
-{
-    ASSERT(!firstChild()); // Currently doesn't support any light child.
-    HTMLDivElement::attach();
-    if (ShadowContentSelector* selector = ShadowContentSelector::currentInstance())
-        selector->attachChildrenFor(this);
-}
 
 ShadowRoot::ShadowRoot(Document* document)
     : TreeScope(document)
@@ -159,7 +84,7 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
 void ShadowRoot::recalcStyle(StyleChange change)
 {
     if (hasContentElement())
-        forceReattach(this);
+        forceReattach();
     else {
         for (Node* n = firstChild(); n; n = n->nextSibling())
             n->recalcStyle(change);

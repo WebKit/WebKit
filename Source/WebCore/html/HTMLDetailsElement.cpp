@@ -42,7 +42,7 @@ public:
 
 private:
     DetailsContentElement(Document* document)
-        : ShadowContentElement(document)
+        : ShadowContentElement(HTMLNames::divTag, document)
     {
     }
 
@@ -67,7 +67,7 @@ public:
 
 private:
     DetailsSummaryElement(Document* document)
-        : ShadowContentElement(document)
+        : ShadowContentElement(HTMLNames::divTag, document)
     {
     }
 

@@ -1,3 +1,49 @@
+2011-05-16  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Refactoring] ShadowContentElement should be part of dom/
+        https://bugs.webkit.org/show_bug.cgi?id=59117
+
+        - Moved html/shadow/ShadowContentElement.h to dom/ShadowContentElement.h
+        - Pulled ShadowContentElement up to a subclass of StyledElement, from HTMLDivElement
+        - Added ShadowContentElement.cpp
+        - Extracted ShadowContentSelector.{cpp,h} from ShadowRoot.{cpp,h}
+        
+        No new tests, no behavior change.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/DOMAllInOne.cpp: Added new ShadowContentSelector.cpp and ShadowContentElement.cpp.
+        * dom/Node.h: 
+        (WebCore::Node::forceReattach): Moved from static local function to share between classes.
+        * dom/ShadowContentElement.cpp: Copied from Source/WebCore/html/shadow/ShadowContentElement.h.
+        (WebCore::ShadowContentElement::attach):
+        * dom/ShadowContentElement.h: Copied from Source/WebCore/html/shadow/ShadowContentElement.h.
+        (WebCore::ShadowContentElement::ShadowContentElement):
+        (WebCore::ShadowContentElement::isShadowBoundary):
+        (WebCore::ShadowContentElement::rendererIsNeeded):
+        (WebCore::ShadowContentElement::createRenderer):
+        * dom/ShadowContentSelector.cpp: Copied from Source/WebCore/html/shadow/ShadowContentElement.h.
+        (WebCore::ShadowContentSelector::ShadowContentSelector):
+        (WebCore::ShadowContentSelector::~ShadowContentSelector):
+        (WebCore::ShadowContentSelector::attachChildrenFor):
+        * dom/ShadowContentSelector.h: Renamed from Source/WebCore/html/shadow/ShadowContentElement.h.
+        (WebCore::ShadowContentSelector::shadowRoot):
+        (WebCore::ShadowContentSelector::activeElement):
+        (WebCore::ShadowContentSelector::currentInstance):
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::recalcStyle):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::DetailsContentElement::DetailsContentElement):
+        (WebCore::DetailsSummaryElement::DetailsSummaryElement):
+        * html/HTMLSummaryElement.cpp:
+        (WebCore::SummaryContentElement::SummaryContentElement):
+
 2011-05-17  Cris Neckar  <cdn@chromium.org>
 
         Reviewed by Adam Barth.
