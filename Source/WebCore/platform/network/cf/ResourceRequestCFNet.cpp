@@ -253,10 +253,10 @@ unsigned initializeMaximumHTTPConnectionCountPerHost()
         ResourceRequest::setHTTPPipeliningEnabled(true);
 
     if (ResourceRequest::httpPipeliningEnabled()) {
-        wkSetHTTPPipeliningMaximumPriority(ResourceLoadPriorityHighest);
+        wkSetHTTPPipeliningMaximumPriority(toHTTPPipeliningPriority(ResourceLoadPriorityHighest));
 #if !PLATFORM(WIN)
         // FIXME: <rdar://problem/9375609> Implement minimum fast lane priority setting on Windows
-        wkSetHTTPPipeliningMinimumFastLanePriority(ResourceLoadPriorityMedium);
+        wkSetHTTPPipeliningMinimumFastLanePriority(toHTTPPipeliningPriority(ResourceLoadPriorityMedium));
 #endif
         // When pipelining do not rate-limit requests sent from WebCore since CFNetwork handles that.
         return unlimitedConnectionCount;
