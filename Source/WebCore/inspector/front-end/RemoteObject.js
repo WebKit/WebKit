@@ -125,8 +125,10 @@ WebInspector.RemoteObject.prototype = {
         }
         function remoteObjectBinder(error, properties)
         {
-            if (error)
+            if (error) {
+                callback(null);
                 return;
+            }
             for (var i = 0; properties && i < properties.length; ++i)
                 properties[i].value = WebInspector.RemoteObject.fromPayload(properties[i].value);
             callback(properties);

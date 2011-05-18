@@ -350,6 +350,12 @@ WebInspector.ConsoleView.prototype = {
         // Pass less stop characters to rangeOfWord so the range will be a more complete expression.
         var expressionRange = wordRange.startContainer.rangeOfWord(wordRange.startOffset, ExpressionStopCharacters, this.promptElement, "backward");
         var expressionString = expressionRange.toString();
+        var prefix = wordRange.toString();
+        this._completions(expressionString, prefix, bestMatchOnly, completionsReadyCallback);
+    },
+
+    _completions: function(expressionString, prefix, bestMatchOnly, completionsReadyCallback)
+    {
         var lastIndex = expressionString.length - 1;
 
         var dotNotation = (expressionString[lastIndex] === ".");
@@ -358,11 +364,13 @@ WebInspector.ConsoleView.prototype = {
         if (dotNotation || bracketNotation)
             expressionString = expressionString.substr(0, lastIndex);
 
-        var prefix = wordRange.toString();
         if (!expressionString && !prefix)
             return;
 
-        this.evalInInspectedWindow(expressionString, "completion", true, evaluated.bind(this));
+        if (!expressionString && WebInspector.panels.scripts.paused)
+            WebInspector.panels.scripts.getSelectedCallFrameVariables(reportCompletions.bind(this));
+        else
+            this.evalInInspectedWindow(expressionString, "completion", true, evaluated.bind(this));
 
         function evaluated(result, wasThrown)
         {
@@ -374,14 +382,22 @@ WebInspector.ConsoleView.prototype = {
         function evaluatedProperties(properties)
         {
             RuntimeAgent.releaseObjectGroup("completion");
-            var propertyNames = [];
+            var propertyNames = {};
             for (var i = 0; properties && i < properties.length; ++i)
-                propertyNames.push(properties[i].name);
+                propertyNames[properties[i].name] = true;
+            reportCompletions.call(this, propertyNames);
+        }
 
+        function reportCompletions(propertyNames)
+        {
             var includeCommandLineAPI = (!dotNotation && !bracketNotation);
-            if (includeCommandLineAPI)
-                propertyNames.splice(0, 0, "dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear");
-            this._reportCompletions(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, propertyNames);
+            if (includeCommandLineAPI) {
+                const commandLineAPI = ["dir", "dirxml", "keys", "values", "profile", "profileEnd", "monitorEvents", "unmonitorEvents", "inspect", "copy", "clear"];
+                for (var i = 0; i < commandLineAPI.length; ++i)
+                    propertyNames[commandLineAPI[i]] = true;
+            }
+            
+            this._reportCompletions(bestMatchOnly, completionsReadyCallback, dotNotation, bracketNotation, prefix, Object.keys(propertyNames));
         }
     },
 

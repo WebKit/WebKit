@@ -1,0 +1,71 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script src="../../http/tests/inspector/debugger-test.js"></script>
+<script>
+
+var a = 1;
+function testFunction()
+{
+    var var1 = 2;
+    var var2 = 3;
+    debugger;
+}
+
+var test = function()
+{
+    InspectorTest.startDebuggerTest(step1);
+
+    function step1()
+    {
+        InspectorTest.runTestFunctionAndWaitUntilPaused(step2);
+    }
+
+    function step2()
+    {
+        WebInspector.console._completions("", "var", false, checkAgainstGolden.bind(this, [ "var1", "var2" ], step3));
+    }
+
+    function step3()
+    {
+        WebInspector.console._completions("", "di", false, checkAgainstGolden.bind(this, [ "dir", "dirxml" ], step4));
+    }
+
+    function step4()
+    {
+        WebInspector.console._completions("", "win", false, checkAgainstGolden.bind(this, [ "window" ], step5));
+    }
+
+    function step5()
+    {
+        WebInspector.console._completions("", "t", false, checkAgainstGolden.bind(this, [ "this" ], step6));
+    }
+
+    function step6()
+    {
+        InspectorTest.completeDebuggerTest();
+    }
+
+    function checkAgainstGolden(golden, continuation, completions)
+    {
+        for (var i = 0; i < golden.length; ++i) {
+            if (completions.indexOf(golden[i]) !== -1)
+                InspectorTest.addResult(golden[i]);
+            else
+                InspectorTest.addResult("NOT FOUND: " + golden[i]);
+        }
+        continuation();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Test that completions in the context of the call frame will result in names
+of its scope variables.
+</p>
+
+</body>
+</html>

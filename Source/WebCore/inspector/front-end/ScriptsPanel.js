@@ -376,6 +376,32 @@ WebInspector.ScriptsPanel.prototype = {
         selectedCallFrame.evaluate(code, objectGroup, includeCommandLineAPI, callback);
     },
 
+    getSelectedCallFrameVariables: function(callback)
+    {
+        var result = { this: true };
+
+        var selectedCallFrame = this._presentationModel.selectedCallFrame;
+        if (!selectedCallFrame)
+            callback(result);
+
+        var pendingRequests = 0;
+
+        function propertiesCollected(properties)
+        {
+            for (var i = 0; properties && i < properties.length; ++i)
+                result[properties[i].name] = true;
+            if (--pendingRequests == 0)
+                callback(result);
+        }
+
+        for (var i = 0; i < selectedCallFrame.scopeChain.length; ++i) {
+            var scope = selectedCallFrame.scopeChain[i];
+            var object = WebInspector.RemoteObject.fromPayload(scope.object);
+            pendingRequests++;
+            object.getAllProperties(propertiesCollected);
+        }
+    },
+
     _debuggerPaused: function(event)
     {
         var callFrames = event.data.callFrames;
