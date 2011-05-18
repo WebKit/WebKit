@@ -1,3 +1,14 @@
+2011-05-18  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dirk Schulze.
+
+        Tests that we do not crash when trying to access a removed
+        smil element in animated elements list.
+        https://bugs.webkit.org/show_bug.cgi?id=60980
+
+        * svg/animations/smil-element-not-removed-crash-expected.txt: Added.
+        * svg/animations/smil-element-not-removed-crash.html: Added.
+
 2011-05-18  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Hajime Morita.

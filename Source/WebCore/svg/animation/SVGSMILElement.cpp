@@ -141,6 +141,8 @@ SVGSMILElement::~SVGSMILElement()
     disconnectConditions();
     if (m_timeContainer)
         m_timeContainer->unschedule(this);
+    if (m_targetElement)
+        document()->accessSVGExtensions()->removeAnimationElementFromTarget(this, m_targetElement);
 }
 
 static inline QualifiedName constructQualifiedName(const SVGElement* svgElement, const String& attributeName)

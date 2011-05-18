@@ -1,3 +1,16 @@
+2011-05-18  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dirk Schulze.
+
+        When SMIL element is getting removed, make sure to remove it
+        from target's animation elements list.
+        https://bugs.webkit.org/show_bug.cgi?id=60980
+
+        Test: svg/animations/smil-element-not-removed-crash.html
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::~SVGSMILElement):
+
 2011-05-18  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
