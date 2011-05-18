@@ -1,3 +1,21 @@
+2011-05-16  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: refactoring: ScriptDebugListener::didParseSource has too many parameters.
+        https://bugs.webkit.org/show_bug.cgi?id=60900
+
+        * bindings/js/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::dispatchDidParseSource):
+        * inspector/InspectorDebuggerAgent.cpp:
+        (WebCore::InspectorDebuggerAgent::getScriptSource):
+        (WebCore::InspectorDebuggerAgent::didParseSource):
+        * inspector/InspectorDebuggerAgent.h:
+        * inspector/ScriptDebugListener.h:
+        (WebCore::ScriptDebugListener::Script::Script):
+
 2011-05-18  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.

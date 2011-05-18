@@ -120,42 +120,13 @@ private:
 
     PassRefPtr<InspectorArray> currentCallFrames();
 
-    virtual void didParseSource(const String& sourceId, const String& url, const String& data, int startLine, int startColumn, int endLine, int endColumn, bool isContentScript);
+    virtual void didParseSource(const String& sourceId, const Script&);
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage);
     virtual void didPause(ScriptState*, const ScriptValue& callFrames, const ScriptValue& exception);
     virtual void didContinue();
 
     PassRefPtr<InspectorObject> resolveBreakpoint(const String& breakpointId, const String& sourceId, const ScriptBreakpoint&);
     void clear();
-
-    class Script {
-    public:
-        Script()
-            : startLine(0)
-            , startColumn(0)
-            , endLine(0)
-            , endColumn(0)
-        {
-        }
-
-        Script(const String& url, const String& data, int startLine, int startColumn, int endLine, int endColumn)
-            : url(url)
-            , data(data)
-            , startLine(startLine)
-            , startColumn(startColumn)
-            , endLine(endLine)
-            , endColumn(endColumn)
-        {
-        }
-
-        String url;
-        String data;
-        int startLine;
-        int startColumn;
-        int endLine;
-        int endColumn;
-        int linesCount;
-    };
 
     typedef HashMap<String, Script> ScriptsMap;
     typedef HashMap<String, Vector<String> > BreakpointIdToDebugServerBreakpointIdsMap;

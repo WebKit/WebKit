@@ -32,6 +32,7 @@
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
 
+#include "PlatformString.h"
 #include "ScriptState.h"
 #include <wtf/Forward.h>
 
@@ -40,9 +41,30 @@ class ScriptValue;
 
 class ScriptDebugListener {
 public:
+    class Script {
+    public:
+        Script()
+            : startLine(0)
+            , startColumn(0)
+            , endLine(0)
+            , endColumn(0)
+            , isContentScript(false)
+        {
+        }
+
+        String url;
+        String source;
+        String sourceMappingURL;
+        int startLine;
+        int startColumn;
+        int endLine;
+        int endColumn;
+        bool isContentScript;
+    };
+
     virtual ~ScriptDebugListener() { }
 
-    virtual void didParseSource(const String&  sourceId, const String& url, const String& data,  int startLine, int startColumn, int endLine, int endColumn, bool isContentScript) = 0;
+    virtual void didParseSource(const String& sourceId, const Script&) = 0;
     virtual void failedToParseSource(const String& url, const String& data, int firstLine, int errorLine, const String& errorMessage) = 0;
     virtual void didPause(ScriptState*, const ScriptValue& callFrames, const ScriptValue& exception) = 0;
     virtual void didContinue() = 0;

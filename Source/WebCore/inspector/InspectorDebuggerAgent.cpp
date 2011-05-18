@@ -293,7 +293,7 @@ void InspectorDebuggerAgent::editScriptSource(ErrorString* error, const String& 
 
 void InspectorDebuggerAgent::getScriptSource(ErrorString*, const String& sourceId, String* scriptSource)
 {
-    *scriptSource = m_scripts.get(sourceId).data;
+    *scriptSource = m_scripts.get(sourceId).source;
 }
 
 void InspectorDebuggerAgent::schedulePauseOnNextStatement(DebuggerEventType type, PassRefPtr<InspectorValue> data)
@@ -383,14 +383,14 @@ PassRefPtr<InspectorArray> InspectorDebuggerAgent::currentCallFrames()
 
 // JavaScriptDebugListener functions
 
-void InspectorDebuggerAgent::didParseSource(const String& sourceId, const String& url, const String& data, int startLine, int startColumn, int endLine, int endColumn, bool isContentScript)
+void InspectorDebuggerAgent::didParseSource(const String& sourceId, const Script& script)
 {
     // Don't send script content to the front end until it's really needed.
-    m_frontend->scriptParsed(sourceId, url, startLine, startColumn, endLine, endColumn, isContentScript);
+    m_frontend->scriptParsed(sourceId, script.url, script.startLine, script.startColumn, script.endLine, script.endColumn, script.isContentScript);
 
-    m_scripts.set(sourceId, Script(url, data, startLine, startColumn, endLine, endColumn));
+    m_scripts.set(sourceId, script);
 
-    if (url.isEmpty())
+    if (script.url.isEmpty())
         return;
 
     RefPtr<InspectorObject> breakpointsCookie = m_inspectorState->getObject(DebuggerAgentState::javaScriptBreakpoints);
@@ -398,7 +398,7 @@ void InspectorDebuggerAgent::didParseSource(const String& sourceId, const String
         RefPtr<InspectorObject> breakpointObject = it->second->asObject();
         String breakpointURL;
         breakpointObject->getString("url", &breakpointURL);
-        if (breakpointURL != url)
+        if (breakpointURL != script.url)
             continue;
         ScriptBreakpoint breakpoint;
         breakpointObject->getNumber("lineNumber", &breakpoint.lineNumber);

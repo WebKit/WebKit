@@ -221,31 +221,34 @@ void ScriptDebugServer::dispatchDidContinue(ScriptDebugListener* listener)
 void ScriptDebugServer::dispatchDidParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, bool isContentScript)
 {
     String sourceID = ustringToString(JSC::UString::number(sourceProvider->asID()));
-    String url = ustringToString(sourceProvider->url());
-    String data = ustringToString(JSC::UString(sourceProvider->data(), sourceProvider->length()));
-    int lineOffset = sourceProvider->startPosition().m_line.convertAsZeroBasedInt();
-    int columnOffset = sourceProvider->startPosition().m_column.convertAsZeroBasedInt();
 
+    ScriptDebugListener::Script script;
+    script.url = ustringToString(sourceProvider->url());
+    script.source = ustringToString(JSC::UString(sourceProvider->data(), sourceProvider->length()));
+    script.startLine = sourceProvider->startPosition().m_line.convertAsZeroBasedInt();
+    script.startColumn = sourceProvider->startPosition().m_column.convertAsZeroBasedInt();
+    script.isContentScript = isContentScript;
+
+    int sourceLength = script.source.length();
     int lineCount = 1;
     int lastLineStart = 0;
-    for (size_t i = 0; i < data.length() - 1; ++i) {
-        if (data[i] == '\n') {
+    for (int i = 0; i < sourceLength - 1; ++i) {
+        if (script.source[i] == '\n') {
             lineCount += 1;
             lastLineStart = i + 1;
         }
     }
 
-    int endLine = lineOffset + lineCount - 1;
-    int endColumn;
+    script.endLine = script.startLine + lineCount - 1;
     if (lineCount == 1)
-        endColumn = data.length() + columnOffset;
+        script.endColumn = script.startColumn + sourceLength;
     else
-        endColumn = data.length() - lastLineStart;
+        script.endColumn = sourceLength - lastLineStart;
 
     Vector<ScriptDebugListener*> copy;
     copyToVector(listeners, copy);
     for (size_t i = 0; i < copy.size(); ++i)
-        copy[i]->didParseSource(sourceID, url, data, lineOffset, columnOffset, endLine, endColumn, isContentScript);
+        copy[i]->didParseSource(sourceID, script);
 }
 
 void ScriptDebugServer::dispatchFailedToParseSource(const ListenerSet& listeners, SourceProvider* sourceProvider, int errorLine, const String& errorMessage)

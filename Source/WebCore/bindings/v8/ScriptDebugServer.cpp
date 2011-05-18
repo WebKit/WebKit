@@ -352,15 +352,19 @@ void ScriptDebugServer::handleV8DebugEvent(const v8::Debug::EventDetails& eventD
 
 void ScriptDebugServer::dispatchDidParseSource(ScriptDebugListener* listener, v8::Handle<v8::Object> object)
 {
-    listener->didParseSource(
-        toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("id"))),
-        toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("name"))),
-        toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("source"))),
-        object->Get(v8::String::New("startLine"))->ToInteger()->Value(),
-        object->Get(v8::String::New("startColumn"))->ToInteger()->Value(),
-        object->Get(v8::String::New("endLine"))->ToInteger()->Value(),
-        object->Get(v8::String::New("endColumn"))->ToInteger()->Value(),
-        object->Get(v8::String::New("isContentScript"))->ToBoolean()->Value());
+    String sourceID = toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("id")));
+
+    ScriptDebugListener::Script script;
+    script.url = toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("name")));
+    script.source = toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("source")));
+    script.sourceMappingURL = toWebCoreStringWithNullOrUndefinedCheck(object->Get(v8::String::New("sourceMappingURL")));
+    script.startLine = object->Get(v8::String::New("startLine"))->ToInteger()->Value();
+    script.startColumn = object->Get(v8::String::New("startColumn"))->ToInteger()->Value();
+    script.endLine = object->Get(v8::String::New("endLine"))->ToInteger()->Value();
+    script.endColumn = object->Get(v8::String::New("endColumn"))->ToInteger()->Value();
+    script.isContentScript = object->Get(v8::String::New("isContentScript"))->ToBoolean()->Value();
+
+    listener->didParseSource(sourceID, script);
 }
 
 void ScriptDebugServer::ensureDebuggerScriptCompiled()
