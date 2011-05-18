@@ -1765,6 +1765,7 @@ fast/forms/reset-autofilled.html
 # eventSender.keyDown is unimplemented
 fast/forms/radio-group-keyboard-change-event.html
 fast/forms/focus-with-display-block.html
+fast/forms/ValidityState-valueMissing-002.html	
 
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################

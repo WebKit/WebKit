@@ -1,3 +1,12 @@
+2011-05-18  Zoltan Horvath  <zoltan@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Add fast/forms/ValidityState-valueMissing-002.html to the Skipped list since
+        eventSender.keyDown is unimplemented.
+
+        * platform/mac-wk2/Skipped:
+
 2011-05-18  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.
