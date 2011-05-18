@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Fixing previous Chromium tests expectations update for details element.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-18  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed.
+
         Another Chromium tests expectations update for details element.
 
         * platform/chromium/test_expectations.txt:
