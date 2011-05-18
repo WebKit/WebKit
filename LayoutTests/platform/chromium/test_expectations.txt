@@ -4154,3 +4154,4 @@ BUGWK61087 WIN LINUX : fast/html/details-remove-summary-5.html = TEXT
 BUGWK61087 WIN LINUX : fast/html/details-remove-summary-6-and-click.html = TEXT
 BUGWK61087 WIN LINUX : fast/html/details-remove-summary-6.html = TEXT
 BUGWK61087 WIN LINUX : fast/html/details-writing-mode.html = TEXT
+BUGWK61087 LINUX MAC : fast/multicol/span/clone-anonymous-block-non-inline-child-crash.html = TEXT
