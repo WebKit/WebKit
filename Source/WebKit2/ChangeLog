@@ -1,3 +1,15 @@
+2011-05-17  Brady Eidson  <beidson@apple.com>
+
+        Rubberstamped by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60595
+        Fix the rampant WebProcess crashing because we're trying to install the WebProcess shim
+        into QTKitServer when we launch it.
+
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess): This is only happening on SnowLeopard, so put
+          SnowLeopard build guards around the shim install path.
+
 2011-05-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86668.

@@ -145,8 +145,10 @@ void ProcessLauncher::launchProcess()
     NSString *processShimPathNSString = nil;
     if (m_launchOptions.processType == ProcessLauncher::PluginProcess)
         processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"PluginProcessShim.dylib"];
+#ifndef BUILDING_ON_SNOW_LEOPARD
     else if (m_launchOptions.processType == ProcessLauncher::WebProcess)
         processShimPathNSString = [[processAppExecutablePath stringByDeletingLastPathComponent] stringByAppendingPathComponent:@"WebProcessShim.dylib"];
+#endif
     
     // Make sure that the shim library file exists and insert it.
     if (processShimPathNSString) {
