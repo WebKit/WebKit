@@ -1435,6 +1435,7 @@ http/tests/loading/empty-subframe.html
 http/tests/loading/gmail-assert-on-load.html
 http/tests/loading/load-javascript-after-many-xhrs.html
 http/tests/loading/location-hash-reload-cycle.html
+http/tests/loading/nested_bad_objects.php
 http/tests/loading/onload-vs-immediate-refresh.pl
 http/tests/loading/preload-img-test.html
 http/tests/loading/redirect-with-no-location-crash.html

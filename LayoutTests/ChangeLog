@@ -1,5 +1,11 @@
 2011-05-18  Adam Roben  <aroben@apple.com>
 
+        Skip a new test that fails due to unimplemented WTR features
+
+        * platform/mac-wk2/Skipped: Added http/tests/loading/nested_bad_objects.php.
+
+2011-05-18  Adam Roben  <aroben@apple.com>
+
         Remove mac-wk2 expected failure results for a plugins test that I fixed in r86456
 
         Fixes <http://webkit.org/b/57456> <rdar://problem/9209331>
