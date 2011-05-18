@@ -1,3 +1,23 @@
+2011-05-18  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Marker test from ietestcenter fails
+        https://bugs.webkit.org/show_bug.cgi?id=60721
+
+        Change <marker> renderer creation behaviour to always create the renderer. This fixes
+        the problem that no marker is rendered when display=none is set on the <marker>. The
+        specification states that display=none should have no influence on <marker> usage:
+        "The ‘display’ property does not apply to the ‘marker’ element; thus, ..., and ‘marker’
+        elements are available for referencing even when the ‘display’ property on the ‘marker’
+        element or any of its ancestors is set to none."
+
+        Tests: svg/W3C-SVG-1.1-SE/painting-marker-07-f.svg
+               svg/custom/painting-marker-07-f-inherit.svg
+
+        * svg/SVGMarkerElement.h:
+        (WebCore::SVGMarkerElement::rendererIsNeeded):
+
 2011-05-18  Alexis Menard  <alexis.menard@openbossa.org>, Simon Hausmann  <simon.hausmann@nokia.com>
 
         Reviewed by Eric Carlson.
