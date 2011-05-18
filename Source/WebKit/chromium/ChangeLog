@@ -1,3 +1,13 @@
+2011-05-17  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Enable detailed heap snapshots by default.
+        https://bugs.webkit.org/show_bug.cgi?id=60286
+
+        * src/js/DevTools.js:
+        ():
+
 2011-05-17  Tao Bai  <michaelbai@chromium.org>
 
         Reviewed by Darin Fisher.

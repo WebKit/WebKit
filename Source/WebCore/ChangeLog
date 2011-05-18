@@ -35,6 +35,15 @@
 
         Reviewed by Pavel Feldman.
 
+        Web Inspector: [Chromium] Enable detailed heap snapshots by default.
+        https://bugs.webkit.org/show_bug.cgi?id=60286
+
+        * inspector/front-end/ProfilesPanel.js:
+
+2011-05-17  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
         Web Inspector: [Chromium] Make retaining paths list of the Detailed
         heap snapshots view resizable.
         https://bugs.webkit.org/show_bug.cgi?id=60960
