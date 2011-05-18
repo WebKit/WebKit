@@ -373,7 +373,7 @@ WebString WebURLResponse::downloadFilePath() const
 
 void WebURLResponse::setDownloadFilePath(const WebString& downloadFilePath)
 {
-    m_private->m_resourceResponse->setDownloadedFile(File::create(downloadFilePath));
+    m_private->m_resourceResponse->setDownloadedFile(downloadFilePath.isEmpty() ? 0 : File::create(downloadFilePath));
 }
 
 WebString WebURLResponse::remoteIPAddress() const

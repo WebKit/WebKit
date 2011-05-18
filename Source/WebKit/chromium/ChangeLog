@@ -1,3 +1,13 @@
+2011-05-18  Brett Wilson  <brettw@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Don't create empty file objects if no download file path is specified.
+        https://bugs.webkit.org/show_bug.cgi?id=60798
+
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponse::setDownloadFilePath):
+
 2011-05-17  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
