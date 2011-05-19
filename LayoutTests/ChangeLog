@@ -1,5 +1,20 @@
 2011-05-19  Lucas Forschler  <lforschler@apple.com
 
+    Merged r86781.
+
+    2011-05-18  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Beth Dakin.
+
+        Tests that we do not crash when prematurely calling removeChild,
+        followed by destroy call on table caption.
+        https://bugs.webkit.org/show_bug.cgi?id=61083
+
+        * fast/table/table-captions-child-visible-crash-expected.txt: Added.
+        * fast/table/table-captions-child-visible-crash.html: Added.
+
+2011-05-19  Lucas Forschler  <lforschler@apple.com
+
     Merged r86741.
 
     2011-05-16  Jeremy Noble  <jer.noble@apple.com>
