@@ -1,3 +1,9 @@
+2011-05-19  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Skip failing tests after r86834.
+
+        * platform/qt-arm/Skipped:
+
 2011-05-19  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip 2 failing tests on GTK.
