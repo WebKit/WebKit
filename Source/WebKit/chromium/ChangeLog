@@ -1,3 +1,16 @@
+2011-05-18  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Add histograms for paint times
+        https://bugs.webkit.org/show_bug.cgi?id=61010
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::animate):
+        (WebKit::WebViewImpl::layout):
+        (WebKit::WebViewImpl::paint):
+        (WebKit::WebViewImplContentPainter::paint):
+
 2011-05-17  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

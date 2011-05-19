@@ -1,3 +1,13 @@
+2011-05-18  Nat Duca  <nduca@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Add histograms for paint times
+        https://bugs.webkit.org/show_bug.cgi?id=61010
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerPainter::paint):
+
 2011-05-18  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

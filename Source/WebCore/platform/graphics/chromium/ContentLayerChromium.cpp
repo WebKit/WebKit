@@ -41,8 +41,10 @@
 #include "LayerTexture.h"
 #include "LayerTextureUpdaterCanvas.h"
 #include "LayerTilerChromium.h"
+#include "PlatformBridge.h"
 #include "RenderLayerBacking.h"
 #include "TextStream.h"
+#include <wtf/CurrentTime.h>
 
 // Maximum size the width or height of this layer can be before enabling tiling
 // when m_tilingOption == AutoTile.
@@ -63,9 +65,14 @@ public:
 
     virtual void paint(GraphicsContext& context, const IntRect& contentRect)
     {
+        double paintStart = currentTime();
         context.clearRect(contentRect);
         context.clip(contentRect);
         m_owner->paintGraphicsLayerContents(context, contentRect);
+        double paintEnd = currentTime();
+        double pixelsPerSec = (contentRect.width() * contentRect.height()) / (paintEnd - paintStart);
+        PlatformBridge::histogramCustomCounts("Renderer4.AccelContentPaintDurationMS", (paintEnd - paintStart) * 1000, 0, 120, 30);
+        PlatformBridge::histogramCustomCounts("Renderer4.AccelContentPaintMegapixPerSecond", pixelsPerSec / 1000000, 10, 210, 30);
     }
 private:
     GraphicsLayerChromium* m_owner;
