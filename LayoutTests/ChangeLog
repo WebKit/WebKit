@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Chromium expectations update.
+ 
+        * platform/chromium/test_expectations.txt:
+
+2011-05-19  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed.
+
         Chromium gradient expectations update.
 
         * platform/chromium-linux-x86/fast/gradients: Added.

@@ -4120,4 +4120,4 @@ BUGWK61103 MAC : fast/canvas/canvas-putImageData.html = CRASH PASS
 BUGWK38788 WIN LINUX: fast/css/border-radius-non-negative.html = IMAGE
 
 // Crashes after CSP changes landed in WebKit 86837
-BUGCR83268 WIN MAC LINUX : inspector/debugger/event-listener-breakpoints.html = CRASH
+BUGCR83268 WIN MAC LINUX : inspector/debugger/event-listener-breakpoints.html = CRASH PASS SLOW TIMEOUT
