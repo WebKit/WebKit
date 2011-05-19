@@ -980,9 +980,10 @@ void ReplaceSelectionCommand::doApply()
 
         // FIXME: isInlineNodeWithStyle does not check editability.
         if (RefPtr<Node> nodeToSplitTo = highestEnclosingNodeOfType(insertionPos, isInlineNodeWithStyle)) {
-            if (insertionPos.containerNode() != nodeToSplitTo)
+            if (insertionPos.containerNode() != nodeToSplitTo) {
                 nodeToSplitTo = splitTreeToNode(insertionPos.anchorNode(), nodeToSplitTo.get(), true).get();
-            insertionPos = positionInParentBeforeNode(nodeToSplitTo.get());
+                insertionPos = positionInParentBeforeNode(nodeToSplitTo.get());
+            }
         }
     }
 

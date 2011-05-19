@@ -1,3 +1,20 @@
+2011-05-19  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r83322): Many crashes in Mail.app in WebCore::Node::nodeIndex
+        https://bugs.webkit.org/show_bug.cgi?id=61012
+
+        Added a test to ensure WebKit does not crash when inserting a content immediately after
+        a styled element inside a Mail blockquote. Regrettably the expected result is incorrect,
+        but it matches the behavior of WebKit before r83322.
+
+        * editing/pasteboard/5065605-expected.txt: Reintroduced redundant style spans.
+        * editing/pasteboard/paste-text-011-expected.txt: Ditto.
+        * platform/chromium-win/editing/pasteboard/paste-text-011-expected.txt: Ditto.
+        * editing/pasteboard/paste-after-inline-style-element-expected.txt: Added.
+        * editing/pasteboard/paste-after-inline-style-element.html: Added.
+
 2011-05-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Skip failing test after r86841.
