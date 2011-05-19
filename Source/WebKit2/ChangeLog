@@ -1,3 +1,16 @@
+2011-05-19  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix plugins/windowless_plugin_paint_test.html
+
+        Call gdk_init_check before gdk_display_get_default().
+        If we don't do this, gdk_display_get_default() will hang
+        the next time it's called.
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::getPluginDisplay):
+
 2011-05-18  Chris Marrin  <cmarrin@apple.com>
 
         Reviewed by Anders Carlsson.

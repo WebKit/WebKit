@@ -366,9 +366,6 @@ http/tests/plugins/plugin-document-has-focus.html
 # headless display (like the buildbot), so XKeysymToKeycode doesn't work.
 plugins/keyboard-events.html
 
-#Times out
-plugins/windowless_plugin_paint_test.html
-
 # =========================================================================== #
 # Failing Sputnik tests                                                       #
 # =========================================================================== #

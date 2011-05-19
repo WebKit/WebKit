@@ -854,6 +854,11 @@ static Display *getPluginDisplay()
     if (!library.load())
         return 0;
 
+    typedef void *(*gdk_init_check_ptr)(void*, void*);
+    gdk_init_check_ptr gdk_init_check = (gdk_init_check_ptr)library.resolve("gdk_init_check");
+    if (!gdk_init_check)
+        return 0;
+
     typedef void *(*gdk_display_get_default_ptr)();
     gdk_display_get_default_ptr gdk_display_get_default = (gdk_display_get_default_ptr)library.resolve("gdk_display_get_default");
     if (!gdk_display_get_default)
@@ -864,6 +869,7 @@ static Display *getPluginDisplay()
     if (!gdk_x11_display_get_xdisplay)
         return 0;
 
+    gdk_init_check(0, 0);
     return (Display*)gdk_x11_display_get_xdisplay(gdk_display_get_default());
 }
 
