@@ -70,6 +70,7 @@ public:
 
 #if !ASSERT_DISABLED
     bool hasWeakOwner(HandleSlot, WeakHandleOwner*);
+    bool hasFinalizer(HandleSlot);
 #endif
 
     unsigned protectedGlobalObjectCount();
@@ -196,6 +197,11 @@ inline void HandleHeap::makeWeak(HandleSlot handle, WeakHandleOwner* weakOwner, 
 inline bool HandleHeap::hasWeakOwner(HandleSlot handle, WeakHandleOwner* weakOwner)
 {
     return toNode(handle)->weakOwner() == weakOwner;
+}
+
+inline bool HandleHeap::hasFinalizer(HandleSlot handle)
+{
+    return toNode(handle)->weakOwner();
 }
 #endif
 

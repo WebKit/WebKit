@@ -57,6 +57,10 @@ namespace JSC {
             , m_numParametersForCall(numParameters)
             , m_numParametersForConstruct(numParameters)
         {
+#if ENABLE(JIT)
+            Weak<ExecutableBase> finalizer(globalData, this, executableFinalizer());
+            finalizer.leakHandle();
+#endif
         }
 
         bool isHostFunction() const
@@ -88,11 +92,20 @@ namespace JSC {
             return m_jitCodeForConstruct;
         }
 
+        void clearExecutableCode()
+        {
+            m_jitCodeForCall.clear();
+            m_jitCodeForConstruct.clear();
+        }
+
     protected:
         JITCode m_jitCodeForCall;
         JITCode m_jitCodeForConstruct;
         MacroAssemblerCodePtr m_jitCodeForCallWithArityCheck;
         MacroAssemblerCodePtr m_jitCodeForConstructWithArityCheck;
+        
+    private:
+        static WeakHandleOwner* executableFinalizer();
 #endif
     };
 

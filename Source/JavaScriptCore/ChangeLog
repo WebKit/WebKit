@@ -1,3 +1,25 @@
+2011-05-19  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make Executables release their JIT code as soon as they become dead
+        https://bugs.webkit.org/show_bug.cgi?id=61134
+
+        Add an ability to clear an Executable's jit code without requiring
+        it to be destroyed, and then call that from a finalizer.
+
+        * heap/Weak.h:
+        (JSC::Weak::Weak):
+        (JSC::Weak::leak):
+        * jit/JITCode.h:
+        (JSC::JITCode::clear):
+        * runtime/Executable.cpp:
+        (JSC::ExecutableFinalizer::finalize):
+        (JSC::ExecutableBase::executableFinalizer):
+        * runtime/Executable.h:
+        (JSC::ExecutableBase::ExecutableBase):
+        (JSC::ExecutableBase::clearExecutableCode):
+
 2011-05-19  Adam Roben  <aroben@apple.com>
 
         Remove a redundant and broken data export

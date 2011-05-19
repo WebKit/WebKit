@@ -42,6 +42,22 @@ namespace JSC {
 
 const ClassInfo ExecutableBase::s_info = { "Executable", 0, 0, 0 };
 
+#if ENABLE(JIT)
+class ExecutableFinalizer : public WeakHandleOwner {
+    virtual void finalize(Handle<Unknown> handle, void*)
+    {
+        Weak<ExecutableBase> executable(Weak<ExecutableBase>::Adopt, handle);
+        executable->clearExecutableCode();
+    }
+};
+
+WeakHandleOwner* ExecutableBase::executableFinalizer()
+{
+    DEFINE_STATIC_LOCAL(ExecutableFinalizer, finalizer, ());
+    return &finalizer;
+}
+#endif
+    
 const ClassInfo NativeExecutable::s_info = { "NativeExecutable", &ExecutableBase::s_info, 0, 0 };
 
 NativeExecutable::~NativeExecutable()

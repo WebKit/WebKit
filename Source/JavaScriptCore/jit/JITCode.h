@@ -101,6 +101,12 @@ namespace JSC {
             return JITCode(code.dataLocation(), 0, 0);
         }
 
+        void clear()
+        {
+            m_ref.~CodeRef();
+            new (&m_ref) CodeRef();
+        }
+
     private:
         JITCode(void* code, PassRefPtr<ExecutablePool> executablePool, size_t size)
             : m_ref(code, executablePool, size)
