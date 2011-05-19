@@ -102,6 +102,10 @@ JSValue ObjcField::valueFromInstance(ExecState* exec, const Instance* instance) 
     @try {
         if (id objcValue = [targetObject valueForKey:(NSString *)_name.get()])
             result = convertObjcValueToValue(exec, &objcValue, ObjcObjectType, instance->rootObject());
+        {
+            JSLock lock(SilenceAssertionsOnly);
+            ObjcInstance::moveGlobalExceptionToExecState(exec);
+        }
     } @catch(NSException* localException) {
         JSLock::lock(SilenceAssertionsOnly);
         throwError(exec, [localException reason]);
@@ -130,6 +134,10 @@ void ObjcField::setValueToInstance(ExecState* exec, const Instance* instance, JS
 
     @try {
         [targetObject setValue:value forKey:(NSString *)_name.get()];
+        {
+            JSLock lock(SilenceAssertionsOnly);
+            ObjcInstance::moveGlobalExceptionToExecState(exec);
+        }
     } @catch(NSException* localException) {
         JSLock::lock(SilenceAssertionsOnly);
         throwError(exec, [localException reason]);

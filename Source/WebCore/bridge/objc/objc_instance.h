@@ -67,6 +67,7 @@ protected:
     virtual void virtualEnd();
 
 private:
+    friend class ObjcField;
     static void moveGlobalExceptionToExecState(ExecState*);
 
     ObjcInstance(ObjectStructPtr, PassRefPtr<RootObject>);

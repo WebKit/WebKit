@@ -1,3 +1,20 @@
+2011-05-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        +[WebScriptObject throwException:] doesn't work when invoked from obj-c field access
+        https://bugs.webkit.org/show_bug.cgi?id=61100
+
+        The objc bindings were written to assume exceptions would
+        come from obj-c style exceptions, rather than throwException:
+        This code simply calls the global ObjcInstance mechanism for
+        transferring the reported exception.
+
+        * bridge/objc/objc_instance.h:
+        * bridge/objc/objc_runtime.mm:
+        (JSC::Bindings::ObjcField::valueFromInstance):
+        (JSC::Bindings::ObjcField::setValueToInstance):
+
 2011-05-16  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
