@@ -1,5 +1,12 @@
 2011-05-19  Anders Carlsson  <andersca@apple.com>
 
+        Address a review comment by Sam Weinig.
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didUpdateHistoryTitle):
+
+2011-05-19  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Hang UI appears when WebProcess isn't running

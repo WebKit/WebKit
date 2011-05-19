@@ -455,7 +455,7 @@ void WebContext::didUpdateHistoryTitle(uint64_t pageID, const String& title, con
     MESSAGE_CHECK(frame);
     MESSAGE_CHECK(frame->page() == page);
 
-    m_historyClient.didUpdateHistoryTitle(this, frame->page(), title, url, frame);
+    m_historyClient.didUpdateHistoryTitle(this, page, title, url, frame);
 }
 
 void WebContext::populateVisitedLinks()
