@@ -1,3 +1,14 @@
+2011-05-19  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Anders Carlsson.
+
+        Fix build with ENABLE_PLUGIN_PROCESS=1 for non-mac platforms after r86578
+        https://bugs.webkit.org/show_bug.cgi?id=61113
+
+        * PluginProcess/PluginControllerProxy.cpp:
+        (WebKit::PluginControllerProxy::tryToShortCircuitInvoke):
+        (WebKit::PluginControllerProxy::tryToShortCircuitEvaluate):
+
 2011-05-19  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, follow-up fix of the messages python unittests after r86812.

@@ -290,9 +290,13 @@ bool PluginControllerProxy::evaluate(NPObject* npObject, const String& scriptStr
 bool PluginControllerProxy::tryToShortCircuitInvoke(NPObject* npObject, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, bool& returnValue, NPVariant& result)
 {
     // Only try to short circuit evaluate for plug-ins that have the quirk specified.
+#if PLUGIN_ARCHITECTURE(MAC)
     if (!PluginProcess::shared().netscapePluginModule()->pluginQuirks().contains(PluginQuirks::CanShortCircuitSomeNPRuntimeCallsDuringInitialization))
         return false;
-    
+#else
+    return false;
+#endif
+
     // And only when we're in initialize.
     if (!inInitialize())
         return false;
@@ -589,8 +593,12 @@ void PluginControllerProxy::privateBrowsingStateChanged(bool isPrivateBrowsingEn
 bool PluginControllerProxy::tryToShortCircuitEvaluate(NPObject* npObject, const String& scriptString, NPVariant* result)
 {
     // Only try to short circuit evaluate for plug-ins that have the quirk specified.
+#if PLUGIN_ARCHITECTURE(MAC)
     if (!PluginProcess::shared().netscapePluginModule()->pluginQuirks().contains(PluginQuirks::CanShortCircuitSomeNPRuntimeCallsDuringInitialization))
         return false;
+#else
+    return false;
+#endif
 
     // And only when we're in initialize.
     if (!inInitialize())
