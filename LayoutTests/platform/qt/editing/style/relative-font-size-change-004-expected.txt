@@ -7,44 +7,58 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
   RenderView at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x124 [border: (2px solid #0000FF)]
-        RenderText {#text} at (14,14) size 752x95
-          text run at (14,14) width 752: "Size check should say: 30px. All text in the red boxes should appear to "
-          text run at (14,46) width 718: "be 24px. This test checks removing font size tags when they are no "
-          text run at (14,78) width 187: "longer necessary."
-      RenderBlock {DIV} at (0,148) size 784x32
-        RenderText {#text} at (0,0) size 129x31
-          text run at (0,0) width 129: "Size check: "
-        RenderInline {SPAN} at (0,0) size 51x31
-          RenderText {#text} at (129,0) size 51x31
-            text run at (129,0) width 51: "30px"
-      RenderBlock {DIV} at (0,196) size 784x152
-        RenderBlock {DIV} at (0,0) size 784x152 [border: (2px solid #FF0000)]
-          RenderBlock (anonymous) at (14,14) size 756x32
-            RenderText {#text} at (0,0) size 151x31
-              text run at (0,0) width 151: "There is a tide"
-          RenderBlock {DIV} at (14,46) size 756x60 [border: (2px solid #FF0000)]
-            RenderText {#text} at (14,14) size 212x31
-              text run at (14,14) width 212: "In the affairs of men"
-          RenderBlock (anonymous) at (14,106) size 756x32
-            RenderText {#text} at (0,0) size 256x31
-              text run at (0,0) width 256: "Which taken at the flood"
+      RenderBlock {DIV} at (0,0) size 784x127 [border: (2px solid #0000FF)]
+        RenderText {#text} at (14,14) size 751x99
+          text run at (14,14) width 745: "Size check should say: 30px. All text in the red boxes should appear to be"
+          text run at (759,14) width 6: " "
+          text run at (14,47) width 717: "24px. This test checks removing font size tags when they are no longer"
+          text run at (731,47) width 6: " "
+          text run at (14,80) width 105: "necessary."
+      RenderBlock {DIV} at (0,151) size 784x33
+        RenderText {#text} at (0,0) size 121x33
+          text run at (0,0) width 121: "Size check: "
+        RenderInline {SPAN} at (0,0) size 49x33
+          RenderText {#text} at (121,0) size 49x33
+            text run at (121,0) width 49: "30px"
+      RenderBlock {DIV} at (0,200) size 784x155
+        RenderBlock {DIV} at (0,0) size 784x155 [border: (2px solid #FF0000)]
+          RenderBlock (anonymous) at (14,14) size 756x33
+            RenderText {#text} at (0,0) size 147x33
+              text run at (0,0) width 147: "There is a tide"
+          RenderBlock {DIV} at (14,47) size 756x61 [border: (2px solid #FF0000)]
+            RenderText {#text} at (14,14) size 209x33
+              text run at (14,14) width 209: "In the affairs of men"
+          RenderBlock (anonymous) at (14,108) size 756x33
+            RenderText {#text} at (0,0) size 253x33
+              text run at (0,0) width 253: "Which taken at the flood"
 selection start: position 0 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body
 selection end:   position 21 of child 0 {#text} of child 1 {DIV} of child 1 {DIV} of child 5 {DIV} of body

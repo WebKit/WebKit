@@ -17,28 +17,28 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x19
-        RenderText {#text} at (0,0) size 509x19
-          text run at (0,0) width 103: "This tests copy. "
-          text run at (103,0) width 406: "Non-inheritable styles should be brought down from stylesheets."
-      RenderBlock {SPAN} at (0,33) size 784x57
-        RenderBlock (anonymous) at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 185x19
-            text run at (0,0) width 185: "This shouldn't have a border."
-        RenderBlock {DIV} at (0,19) size 784x19
-          RenderText {#text} at (0,0) size 292x19
-            text run at (0,0) width 292: "This should have blue border when its pasted."
-        RenderBlock (anonymous) at (0,38) size 784x19
-          RenderText {#text} at (0,0) size 185x19
-            text run at (0,0) width 185: "This shouldn't have a border."
-      RenderBlock {SPAN} at (0,90) size 784x59
-        RenderBlock (anonymous) at (0,0) size 784x19
-          RenderText {#text} at (0,0) size 185x19
-            text run at (0,0) width 185: "This shouldn't have a border."
-        RenderBlock {DIV} at (0,19) size 784x21 [border: (1px solid #0000FF)]
-          RenderText {#text} at (1,1) size 292x19
-            text run at (1,1) width 292: "This should have blue border when its pasted."
-        RenderBlock (anonymous) at (0,40) size 784x19
-          RenderText {#text} at (0,0) size 185x19
-            text run at (0,0) width 185: "This shouldn't have a border."
+      RenderBlock {P} at (0,0) size 784x22
+        RenderText {#text} at (0,0) size 539x22
+          text run at (0,0) width 107: "This tests copy. "
+          text run at (107,0) width 432: "Non-inheritable styles should be brought down from stylesheets."
+      RenderBlock {SPAN} at (0,38) size 784x66
+        RenderBlock (anonymous) at (0,0) size 784x22
+          RenderText {#text} at (0,0) size 200x22
+            text run at (0,0) width 200: "This shouldn't have a border."
+        RenderBlock {DIV} at (0,22) size 784x22
+          RenderText {#text} at (0,0) size 311x22
+            text run at (0,0) width 311: "This should have blue border when its pasted."
+        RenderBlock (anonymous) at (0,44) size 784x22
+          RenderText {#text} at (0,0) size 200x22
+            text run at (0,0) width 200: "This shouldn't have a border."
+      RenderBlock {SPAN} at (0,104) size 784x68
+        RenderBlock (anonymous) at (0,0) size 784x22
+          RenderText {#text} at (0,0) size 200x22
+            text run at (0,0) width 200: "This shouldn't have a border."
+        RenderBlock {DIV} at (0,22) size 784x24 [border: (1px solid #0000FF)]
+          RenderText {#text} at (1,1) size 311x22
+            text run at (1,1) width 311: "This should have blue border when its pasted."
+        RenderBlock (anonymous) at (0,46) size 784x22
+          RenderText {#text} at (0,0) size 200x22
+            text run at (0,0) width 200: "This shouldn't have a border."
 caret: position 29 of child 2 {#text} of child 5 {SPAN} of body

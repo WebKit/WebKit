@@ -1,3 +1,79 @@
+2011-05-19  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Rebaseline editing/style tests that are working
+        https://bugs.webkit.org/show_bug.cgi?id=61075
+
+        Also based on digging of Zsolt Fehér.
+
+        * platform/qt/Skipped:
+        * platform/qt/editing/style/5046875-1-expected.png: Added.
+        * platform/qt/editing/style/5046875-1-expected.txt:
+        * platform/qt/editing/style/5046875-2-expected.png: Added.
+        * platform/qt/editing/style/5046875-2-expected.txt:
+        * platform/qt/editing/style/5065910-expected.png: Added.
+        * platform/qt/editing/style/5065910-expected.txt:
+        * platform/qt/editing/style/5084241-expected.png: Added.
+        * platform/qt/editing/style/5084241-expected.txt:
+        * platform/qt/editing/style/5279521-expected.png: Added.
+        * platform/qt/editing/style/5279521-expected.txt:
+        * platform/qt/editing/style/block-style-004-expected.png: Added.
+        * platform/qt/editing/style/block-style-005-expected.png: Added.
+        * platform/qt/editing/style/block-style-006-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-001-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-001-expected.txt:
+        * platform/qt/editing/style/create-block-for-style-002-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-002-expected.txt:
+        * platform/qt/editing/style/create-block-for-style-003-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-003-expected.txt:
+        * platform/qt/editing/style/create-block-for-style-004-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-004-expected.txt:
+        * platform/qt/editing/style/create-block-for-style-005-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-005-expected.txt:
+        * platform/qt/editing/style/create-block-for-style-006-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-006-expected.txt:
+        * platform/qt/editing/style/create-block-for-style-007-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-007-expected.txt:
+        * platform/qt/editing/style/create-block-for-style-008-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-008-expected.txt:
+        * platform/qt/editing/style/create-block-for-style-009-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-009-expected.txt:
+        * platform/qt/editing/style/create-block-for-style-010-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-010-expected.txt:
+        * platform/qt/editing/style/create-block-for-style-011-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-011-expected.txt:
+        * platform/qt/editing/style/create-block-for-style-012-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-012-expected.txt:
+        * platform/qt/editing/style/create-block-for-style-013-expected.png: Added.
+        * platform/qt/editing/style/create-block-for-style-013-expected.txt:
+        * platform/qt/editing/style/font-family-with-space-expected.png: Added.
+        * platform/qt/editing/style/font-family-with-space-expected.txt:
+        * platform/qt/editing/style/fontsize-1-expected.png: Added.
+        * platform/qt/editing/style/non-inheritable-styles-expected.png: Added.
+        * platform/qt/editing/style/non-inheritable-styles-expected.txt:
+        * platform/qt/editing/style/relative-font-size-change-001-expected.png: Added.
+        * platform/qt/editing/style/relative-font-size-change-001-expected.txt:
+        * platform/qt/editing/style/relative-font-size-change-002-expected.png: Added.
+        * platform/qt/editing/style/relative-font-size-change-002-expected.txt:
+        * platform/qt/editing/style/relative-font-size-change-003-expected.png: Added.
+        * platform/qt/editing/style/relative-font-size-change-003-expected.txt:
+        * platform/qt/editing/style/relative-font-size-change-004-expected.png: Added.
+        * platform/qt/editing/style/relative-font-size-change-004-expected.txt:
+        * platform/qt/editing/style/smoosh-styles-001-expected.png: Added.
+        * platform/qt/editing/style/smoosh-styles-001-expected.txt:
+        * platform/qt/editing/style/smoosh-styles-003-expected.png: Added.
+        * platform/qt/editing/style/smoosh-styles-003-expected.txt:
+        * platform/qt/editing/style/style-3690704-fix-expected.png: Added.
+        * platform/qt/editing/style/style-3998892-fix-expected.png: Added.
+        * platform/qt/editing/style/style-3998892-fix-expected.txt:
+        * platform/qt/editing/style/style-boundary-001-expected.png: Added.
+        * platform/qt/editing/style/style-boundary-001-expected.txt:
+        * platform/qt/editing/style/style-boundary-004-expected.png: Added.
+        * platform/qt/editing/style/style-boundary-004-expected.txt:
+        * platform/qt/editing/style/table-selection-expected.png: Added.
+        * platform/qt/editing/style/table-selection-expected.txt:
+
 2011-05-19  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip failing GTK fullscreen test
