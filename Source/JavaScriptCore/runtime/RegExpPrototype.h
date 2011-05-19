@@ -28,7 +28,21 @@ namespace JSC {
 
     class RegExpPrototype : public RegExpObject {
     public:
-        RegExpPrototype(ExecState*, JSGlobalObject*, Structure*, Structure* functionStructure);
+        RegExpPrototype(ExecState*, JSGlobalObject*, Structure*);
+
+        static const ClassInfo s_info;
+
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        {
+            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        }
+
+    protected:
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | RegExpObject::StructureFlags;
+
+    private:
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     };
 
 } // namespace JSC

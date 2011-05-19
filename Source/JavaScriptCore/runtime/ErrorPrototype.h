@@ -29,7 +29,22 @@ namespace JSC {
 
     class ErrorPrototype : public ErrorInstance {
     public:
-        ErrorPrototype(ExecState*, JSGlobalObject*, Structure*, Structure* functionStructure);
+        ErrorPrototype(ExecState*, JSGlobalObject*, Structure*);
+
+        static const ClassInfo s_info;
+
+        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
+        {
+            return Structure::create(globalData, prototype, TypeInfo(ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
+        }
+
+    protected:
+        static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ErrorInstance::StructureFlags;
+        static const unsigned AnonymousSlotCount = ErrorInstance::AnonymousSlotCount + 1;
+
+    private:
+        virtual bool getOwnPropertySlot(ExecState*, const Identifier&, PropertySlot&);
+        virtual bool getOwnPropertyDescriptor(ExecState*, const Identifier&, PropertyDescriptor&);
     };
 
 } // namespace JSC

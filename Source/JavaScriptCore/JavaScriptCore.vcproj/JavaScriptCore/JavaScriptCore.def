@@ -56,6 +56,7 @@ EXPORTS
     ?addPropertyTransitionToExistingStructure@Structure@JSC@@SAPAV12@PAV12@ABVIdentifier@2@IPAVJSCell@2@AAI@Z
     ?addPropertyWithoutTransition@Structure@JSC@@QAEIAAVJSGlobalData@2@ABVIdentifier@2@IPAVJSCell@2@@Z
     ?addSlowCase@Identifier@JSC@@CA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PAVStringImpl@4@@Z
+    ?addStaticGlobals@JSGlobalObject@JSC@@IAEXPAUGlobalPropertyInfo@12@H@Z
     ?allocate@Heap@JSC@@QAEPAXI@Z
     ?allocateFromSizeClass@MarkedSpace@JSC@@AAEPAXAAUSizeClass@12@@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXII@Z
@@ -182,6 +183,7 @@ EXPORTS
     ?getConstructData@JSCell@JSC@@UAE?AW4ConstructType@2@AATConstructData@2@@Z
     ?getJSNumber@JSCell@JSC@@UAE?AVJSValue@2@XZ
     ?getObject@JSCell@JSC@@QAEPAVJSObject@2@XZ
+    ?getOwnPropertyDescriptor@JSGlobalObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?getOwnPropertyDescriptor@JSObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?getOwnPropertyDescriptor@JSString@JSC@@EAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
     ?getOwnPropertyDescriptor@StringObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertyDescriptor@2@@Z
@@ -191,6 +193,7 @@ EXPORTS
     ?getOwnPropertySlot@JSArray@JSC@@UAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
     ?getOwnPropertySlot@JSCell@JSC@@EAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
     ?getOwnPropertySlot@JSCell@JSC@@EAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
+    ?getOwnPropertySlot@JSGlobalObject@JSC@@UAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
     ?getOwnPropertySlot@JSObject@JSC@@UAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
     ?getOwnPropertySlot@JSString@JSC@@EAE_NPAVExecState@2@ABVIdentifier@2@AAVPropertySlot@2@@Z
     ?getOwnPropertySlot@JSString@JSC@@EAE_NPAVExecState@2@IAAVPropertySlot@2@@Z
@@ -240,10 +243,6 @@ EXPORTS
     ?lockCount@JSLock@JSC@@SAHXZ
     ?lookupGetter@JSObject@JSC@@UAE?AVJSValue@2@PAVExecState@2@ABVIdentifier@2@@Z
     ?lookupSetter@JSObject@JSC@@UAE?AVJSValue@2@PAVExecState@2@ABVIdentifier@2@@Z
-    ?visitChildren@JSGlobalObject@JSC@@UAEXAAVMarkStack@2@@Z
-    ?visitChildren@JSObject@JSC@@UAEXAAVMarkStack@2@@Z
-    ?visitChildren@JSWrapperObject@JSC@@EAEXAAVMarkStack@2@@Z
-    ?visitChildren@ScopeChainNode@JSC@@UAEXAAVMarkStack@2@@Z
     ?materializePropertyMap@Structure@JSC@@AAEXAAVJSGlobalData@2@@Z
     ?monthFromDayInYear@WTF@@YAHH_N@Z
     ?msToYear@WTF@@YAHN@Z
@@ -297,6 +296,7 @@ EXPORTS
     ?restoreAll@Profile@JSC@@QAEXXZ
     ?retrieveCaller@Interpreter@JSC@@QBE?AVJSValue@2@PAVExecState@2@PAVJSFunction@2@@Z
     ?retrieveLastCaller@Interpreter@JSC@@QBEXPAVExecState@2@AAH1AAVUString@2@AAVJSValue@2@@Z
+    ?s_info@JSGlobalObject@JSC@@2UClassInfo@2@B
     ?setAccessorDescriptor@PropertyDescriptor@JSC@@QAEXVJSValue@2@0I@Z
     ?setConfigurable@PropertyDescriptor@JSC@@QAEX_N@Z
     ?setDescriptor@PropertyDescriptor@JSC@@QAEXVJSValue@2@I@Z
@@ -369,6 +369,10 @@ EXPORTS
     ?unprotect@Heap@JSC@@QAE_NVJSValue@2@@Z
     ?unwrappedObject@JSObject@JSC@@UAEPAV12@XZ
     ?utf8@UString@JSC@@QBE?AVCString@WTF@@_N@Z
+    ?visitChildren@JSGlobalObject@JSC@@UAEXAAVMarkStack@2@@Z
+    ?visitChildren@JSObject@JSC@@UAEXAAVMarkStack@2@@Z
+    ?visitChildren@JSWrapperObject@JSC@@EAEXAAVMarkStack@2@@Z
+    ?visitChildren@ScopeChainNode@JSC@@UAEXAAVMarkStack@2@@Z
     ?vtableAnchor@InternalFunction@JSC@@EAEXXZ
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
