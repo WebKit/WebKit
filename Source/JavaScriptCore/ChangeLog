@@ -1,5 +1,36 @@
 2011-05-19  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        Add guard pages to each end of the memory region used by the fixedvm allocator
+        https://bugs.webkit.org/show_bug.cgi?id=61150
+
+        Add mechanism to notify the OSAllocator that pages at either end of an
+        allocation should be considered guard pages.  Update PageReservation,
+        PageAllocation, etc to handle this.
+
+        * JavaScriptCore.exp:
+        * jit/ExecutableAllocatorFixedVMPool.cpp:
+        (JSC::FixedVMPoolAllocator::FixedVMPoolAllocator):
+        * wtf/OSAllocator.h:
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveUncommitted):
+        (WTF::OSAllocator::reserveAndCommit):
+        * wtf/PageAllocation.h:
+        (WTF::PageAllocation::PageAllocation):
+        * wtf/PageAllocationAligned.h:
+        (WTF::PageAllocationAligned::PageAllocationAligned):
+        * wtf/PageBlock.h:
+        (WTF::PageBlock::PageBlock):
+        * wtf/PageReservation.h:
+        (WTF::PageReservation::reserve):
+        (WTF::PageReservation::reserveWithGuardPages):
+            Add a new function to make a reservation that will add guard
+            pages to the ends of an allocation.
+        (WTF::PageReservation::PageReservation):
+
+2011-05-19  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Make Executables release their JIT code as soon as they become dead

@@ -74,7 +74,7 @@ static PageAllocatorSymbian* dataAllocatorInstance()
 }
 
 // Reserve memory and return the base address of the region
-void* OSAllocator::reserveUncommitted(size_t reservationSize, Usage usage, bool , bool executable) 
+void* OSAllocator::reserveUncommitted(size_t reservationSize, Usage usage, bool , bool executable, bool) 
 {
     void* base = 0; 
     if (executable) 
@@ -110,7 +110,7 @@ void OSAllocator::decommit(void* address, size_t bytes)
         deallocateCodeChunk(address); // for code chunk, decommit AND release    
 }
     
-void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable)
+void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bool executable, bool)
 { 
     void* base = reserveUncommitted(bytes, usage, writable, executable);
     commit(base, bytes, writable, executable);

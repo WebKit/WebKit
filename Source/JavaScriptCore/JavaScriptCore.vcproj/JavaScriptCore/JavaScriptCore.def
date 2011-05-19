@@ -285,7 +285,7 @@ EXPORTS
     ?releaseDecommitted@OSAllocator@WTF@@SAXPAXI@Z
     ?releaseStack@MarkStack@JSC@@CAXPAXI@Z
     ?reportExtraMemoryCostSlowCase@Heap@JSC@@AAEXI@Z
-    ?reserveAndCommit@OSAllocator@WTF@@SAPAXIW4Usage@12@_N1@Z
+    ?reserveAndCommit@OSAllocator@WTF@@SAPAXIW4Usage@12@_N11@Z
     ?reserveCapacity@StringBuilder@WTF@@QAEXI@Z
     ?reset@ParserArena@JSC@@QAEXXZ
     ?reset@TimeoutChecker@JSC@@QAEXXZ

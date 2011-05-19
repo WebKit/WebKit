@@ -409,7 +409,7 @@ public:
         ASSERT(PageTables32MB::size() == 32 * 1024 * 1024);
         ASSERT(PageTables1GB::size() == 1024 * 1024 * 1024);
 
-        m_reservation = PageReservation::reserve(FixedVMPoolPageTables::size(), OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
+        m_reservation = PageReservation::reserveWithGuardPages(FixedVMPoolPageTables::size(), OSAllocator::JSJITCodePages, EXECUTABLE_POOL_WRITABLE, true);
 #if !ENABLE(INTERPRETER)
         if (!isValid())
             CRASH();
