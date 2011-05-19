@@ -689,7 +689,7 @@ GraphicsContext3D::GraphicsContext3D(GraphicsContext3D::Attributes attrs, HostWi
     : m_isResourceSafe(false), m_internal(adoptPtr(new GraphicsContext3DInternal(attrs, hostWindow)))
 {
     if (!m_internal->isValid())
-        m_internal = 0;
+        m_internal.clear();
 }
 
 GraphicsContext3D::~GraphicsContext3D()

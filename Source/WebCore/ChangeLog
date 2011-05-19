@@ -1,3 +1,14 @@
+2011-05-19  Andrew Wason  <rectalogic@rectalogic.com>
+
+        Reviewed by Darin Adler.
+
+        Fix GraphicsContext3DQt.cpp compile error
+        https://bugs.webkit.org/show_bug.cgi?id=61128
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::GraphicsContext3D):
+         clear() m_internal OwnPtr.
+
 2011-05-19  Tonis Tiigi  <tonistiigi@gmail.com>
 
         Reviewed by Pavel Feldman.
