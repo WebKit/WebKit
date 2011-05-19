@@ -1,3 +1,11 @@
+2011-05-18  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed.
+
+        Chromium test expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-18  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

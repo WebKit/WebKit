@@ -4112,3 +4112,6 @@ BUGCR82950 WIN : http/tests/navigation/post-303-response.html = TEXT
 // Fails after details element turned on in Chrome r85744
 // See also BUGWK59172
 BUGWK61087 WIN MAC LINUX : fast/multicol/span/clone-anonymous-block-non-inline-child-crash.html = TEXT
+
+// Random crashes started between: http://trac.webkit.org/log/?verbose=on&rev=86756&stop_rev=86755
+BUGWK61103 MAC : fast/canvas/canvas-putImageData.html = CRASH PASS
