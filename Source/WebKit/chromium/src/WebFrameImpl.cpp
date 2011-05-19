@@ -1161,9 +1161,7 @@ bool WebFrameImpl::firstRectForCharacterRange(unsigned location, unsigned length
         return false;
     IntRect intRect = frame()->editor()->firstRectForRange(range.get());
     rect = WebRect(intRect);
-    // When inside an text control, don't adjust the range.
-    if (!selectionRoot)
-        rect = frame()->view()->contentsToWindow(rect);
+    rect = frame()->view()->contentsToWindow(rect);
 
     return true;
 }

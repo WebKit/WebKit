@@ -181,15 +181,15 @@ void TextInputController::firstRectForCharacterRange(const CppArgumentList& argu
 {
     result->setNull();
 
-    WebFrame* mainFrame = getMainFrame();
-    if (!mainFrame)
+    WebFrame* frame = testShell->webView()->focusedFrame();
+    if (!frame)
         return;
 
     if (arguments.size() < 2 || !arguments[0].isNumber() || !arguments[1].isNumber())
         return;
 
     WebRect rect;
-    if (!mainFrame->firstRectForCharacterRange(arguments[0].toInt32(), arguments[1].toInt32(), rect))
+    if (!frame->firstRectForCharacterRange(arguments[0].toInt32(), arguments[1].toInt32(), rect))
         return;
 
     Vector<int> intArray(4);

@@ -1,3 +1,16 @@
+2011-05-19  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] IME candidate window appears wrong position in an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=61023
+
+        Call the focused frame's firstRectForCharacterRange() instead of the
+        main frame so that DRT behaves as the same as Chromium.
+
+        * DumpRenderTree/chromium/TextInputController.cpp:
+        (TextInputController::firstRectForCharacterRange):
+
 2011-05-18  Adam Roben  <aroben@apple.com>
 
         Add a new page to build.webkit.org to help find when tests started failing

@@ -1,3 +1,16 @@
+2011-05-19  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] IME candidate window appears wrong position in an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=61023
+
+        Always adjusts the range to window relative coordinates.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::firstRectForCharacterRange): Removed condition
+        which excludes editable selectionRoot from adjusting.
+
 2011-05-18  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.

@@ -1,3 +1,17 @@
+2011-05-19  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] IME candidate window appears wrong position in an iframe
+        https://bugs.webkit.org/show_bug.cgi?id=61023
+
+        Added a test which ensures the IME candidate position is located
+        at suitable position.
+
+        * platform/chromium-mac/editing/input/ime-candidate-window-position-expected.txt: Added.
+        * platform/chromium-mac/editing/input/ime-candidate-window-position.html: Added.
+        * platform/chromium-mac/editing/resources/ime-candidate-window-position-iframe.html: Added.
+
 2011-05-19  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
