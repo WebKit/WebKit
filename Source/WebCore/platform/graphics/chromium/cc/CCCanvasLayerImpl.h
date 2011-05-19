@@ -47,11 +47,13 @@ public:
     virtual void dumpLayerProperties(TextStream&, int indent) const;
 
     void setTextureId(unsigned id) { m_textureId = id; }
+    void setHasAlpha(bool hasAlpha) { m_hasAlpha = hasAlpha; }
     void setPremultipliedAlpha(bool premultipliedAlpha) { m_premultipliedAlpha = premultipliedAlpha; }
 private:
     CCCanvasLayerImpl(LayerChromium*, int);
 
     unsigned m_textureId;
+    bool m_hasAlpha;
     bool m_premultipliedAlpha;
 };
 

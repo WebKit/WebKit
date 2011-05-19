@@ -54,6 +54,7 @@ protected:
 
     bool m_textureChanged;
     unsigned m_textureId;
+    bool m_hasAlpha;
     bool m_premultipliedAlpha;
 };
 

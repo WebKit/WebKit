@@ -1,3 +1,24 @@
+2011-05-18  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Disable blending in compositor for WebGL layers with alpha=false
+        https://bugs.webkit.org/show_bug.cgi?id=61091
+
+        Test: compositing/webgl/webgl-no-alpha.html
+
+        * platform/graphics/chromium/CanvasLayerChromium.cpp:
+        (WebCore::CanvasLayerChromium::CanvasLayerChromium):
+        (WebCore::CanvasLayerChromium::pushPropertiesTo):
+        * platform/graphics/chromium/CanvasLayerChromium.h:
+        * platform/graphics/chromium/WebGLLayerChromium.cpp:
+        (WebCore::WebGLLayerChromium::setContext):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        (WebCore::CCCanvasLayerImpl::CCCanvasLayerImpl):
+        (WebCore::CCCanvasLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.h:
+        (WebCore::CCCanvasLayerImpl::setHasAlpha):
+
 2011-05-18  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

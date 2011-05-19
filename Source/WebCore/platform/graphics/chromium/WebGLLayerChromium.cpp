@@ -121,7 +121,9 @@ void WebGLLayerChromium::setContext(const GraphicsContext3D* context)
         m_textureUpdated = true;
     }
     m_textureId = textureId;
-    m_premultipliedAlpha = m_context->getContextAttributes().premultipliedAlpha;
+    GraphicsContext3D::Attributes attributes = m_context->getContextAttributes();
+    m_hasAlpha = attributes.alpha;
+    m_premultipliedAlpha = attributes.premultipliedAlpha;
     m_contextSupportsRateLimitingExtension = m_context->getExtensions()->supports("GL_CHROMIUM_rate_limit_offscreen_context");
 }
 

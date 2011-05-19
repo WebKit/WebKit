@@ -861,6 +861,7 @@ fast/canvas/webgl/context-lost.html
 fast/canvas/webgl/uninitialized-test.html
 compositing/webgl/webgl-background-color.html
 compositing/webgl/webgl-reflection.html
+compositing/webgl/webgl-no-alpha.html
 compositing/webgl/webgl-nonpremultiplied-blend.html
 fast/canvas/webgl/array-buffer-crash.html
 fast/canvas/webgl/array-buffer-view-crash.html

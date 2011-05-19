@@ -39,6 +39,7 @@ namespace WebCore {
 CCCanvasLayerImpl::CCCanvasLayerImpl(LayerChromium* owner, int id)
     : CCLayerImpl(owner, id)
     , m_textureId(0)
+    , m_hasAlpha(true)
     , m_premultipliedAlpha(true)
 {
 }
@@ -55,15 +56,22 @@ void CCCanvasLayerImpl::draw(const IntRect&)
     GraphicsContext3D* context = layerRenderer()->context();
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
     GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, m_textureId));
-    GC3Denum sfactor = m_premultipliedAlpha ? GraphicsContext3D::ONE : GraphicsContext3D::SRC_ALPHA;
-    GLC(context, context->blendFunc(sfactor, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+    if (!m_hasAlpha) {
+        // Even though the WebGL layer's texture was likely allocated
+        // as GL_RGB, disable blending anyway for better robustness.
+        context->disable(GraphicsContext3D::BLEND);
+    } else {
+        GC3Denum sfactor = m_premultipliedAlpha ? GraphicsContext3D::ONE : GraphicsContext3D::SRC_ALPHA;
+        GLC(context, context->blendFunc(sfactor, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
+    }
     layerRenderer()->useShader(program->program());
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
     LayerChromium::drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
                                     bounds().width(), bounds().height(), drawOpacity(),
                                     program->vertexShader().matrixLocation(),
                                     program->fragmentShader().alphaLocation());
-
+    if (!m_hasAlpha)
+        context->enable(GraphicsContext3D::BLEND);
 }
 
 
