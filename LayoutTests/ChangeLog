@@ -1,3 +1,13 @@
+2011-05-19  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION (r80808): Multiple <select> - Selection reset to first element from multiple selected ones
+        https://bugs.webkit.org/show_bug.cgi?id=60986
+
+        * fast/dom/HTMLSelectElement/change-multiple-preserve-selection-expected.txt:
+        * fast/dom/HTMLSelectElement/change-multiple-preserve-selection.html:
+
 2011-05-19  Mihnea Ovidenie  <mihnea@adobe.com>
 
         Reviewed by Simon Fraser.

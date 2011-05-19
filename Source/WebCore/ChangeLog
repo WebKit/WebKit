@@ -1,3 +1,14 @@
+2011-05-19  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        REGRESSION (r80808): Multiple <select> - Selection reset to first element from multiple selected ones
+        https://bugs.webkit.org/show_bug.cgi?id=60986
+
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::setMultiple):
+        Don't restore selection if the multiple attribute hasn't changed.
+
 2011-05-18  Fumitoshi Ukai  <ukai@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

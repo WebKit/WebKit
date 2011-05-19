@@ -432,12 +432,14 @@ void HTMLSelectElement::accessKeySetSelectedIndex(int index)
     
 void HTMLSelectElement::setMultiple(bool multiple)
 {
+    bool oldMultiple = this->multiple();
     int oldSelectedIndex = selectedIndex();
     setAttribute(multipleAttr, multiple ? "" : 0);
 
     // Restore selectedIndex after changing the multiple flag to preserve
     // selection as single-line and multi-line has different defaults.
-    setSelectedIndex(oldSelectedIndex);
+    if (oldMultiple != this->multiple())
+        setSelectedIndex(oldSelectedIndex);
 }
 
 void HTMLSelectElement::setSize(int size)
