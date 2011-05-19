@@ -1,3 +1,9 @@
+2011-05-19  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: inspector protocol tests fixed.
+
+        * inspector/InjectedScriptSource.js:
+
 2011-05-19  David Grogan  <dgrogan@chromium.org>
 
         Reviewed by David Levin.

@@ -447,7 +447,7 @@ InjectedScript.RemoteObject.fromObject = function(object, objectId)
     var type = injectedScript._type(object);
     var rawType = typeof object;
     var hasChildren = (rawType === "object" && object !== null && (!!Object.getOwnPropertyNames(object).length || !!object.__proto__)) || rawType === "function";
-    var className = InjectedScriptHost.internalConstructorName(object);
+    var className = typeof object === "object" || typeof object === "function" ? InjectedScriptHost.internalConstructorName(object) : undefined;
     var description = injectedScript._describe(object);
     return new InjectedScript.RemoteObject(objectId, type, className, description, hasChildren);
 }
