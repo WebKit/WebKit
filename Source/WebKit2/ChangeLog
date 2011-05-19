@@ -1,3 +1,32 @@
+2011-05-19  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Hang UI appears when WebProcess isn't running
+        https://bugs.webkit.org/show_bug.cgi?id=61147
+        <rdar://problem/9413683>
+
+        This fixes two bugs:
+
+        1. The HistoryClient related message handlers in WebContext could get invoked for pages that have been closed,
+           and thus didn't have any subframes. Since we have a MESSAGE_CHECK that checks that the frame exists, we'd
+           mark the currently dispatched message as invalid, which would end up calling Connection::Client::didReceiveInvalidMessage.
+           Fix this by checking that the page exists first.
+
+        2. In the call to WebProcessProxy::didReceiveInvalidMessage we'd first invalidate the CoreIPC connection to make sure 
+           that we won't get any further messages from this connection. We'd then go ahead and terminate the web process, 
+           but because we've already invalidated the CoreIPC connection we would never get the Connection::Client::didClose
+           callback that would call WebPageProxy::processDidCrash. Fix this by explicitly calling WebProcessProxy::didClose.
+           Also, add logging when we receive an invalid message
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didNavigateWithNavigationData):
+        (WebKit::WebContext::didPerformClientRedirect):
+        (WebKit::WebContext::didPerformServerRedirect):
+        (WebKit::WebContext::didUpdateHistoryTitle):
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveInvalidMessage):
+
 2011-05-19  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

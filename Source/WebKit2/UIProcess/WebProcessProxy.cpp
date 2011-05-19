@@ -300,10 +300,18 @@ void WebProcessProxy::didClose(CoreIPC::Connection*)
 
 void WebProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID)
 {
+    // This fprintf is intentionally left because this function should 
+    // only be hit in the case of a misbehaving web process.
+    fprintf(stderr, "Receive an invalid message from the web process with message ID %x\n", messageID.toInt());
+
     // We received an invalid message from the web process, invalidate our connection and kill it.
     m_connection->invalidate();
 
     terminate();
+
+    // Since we've invalidated the connection we'll never get a Connection::Client::didClose
+    // callback so we'll explicitly call it here instead.
+    didClose(m_connection.get());
 }
 
 void WebProcessProxy::syncMessageSendTimedOut(CoreIPC::Connection*)
