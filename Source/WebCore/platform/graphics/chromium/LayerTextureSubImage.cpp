@@ -49,8 +49,7 @@ void LayerTextureSubImage::setSubImageSize(const IntSize& subImageSize)
         return;
 
     m_subImageSize = subImageSize;
-    if (!m_useMapTexSubImage)
-        m_subImage = adoptArrayPtr(new uint8_t[m_subImageSize.width() * m_subImageSize.height() * 4]);
+    m_subImage.clear();
 }
 
 void LayerTextureSubImage::upload(const uint8_t* image, const IntRect& imageRect,
@@ -67,6 +66,9 @@ void LayerTextureSubImage::uploadWithTexSubImage(const uint8_t* image, const Int
                                                  const IntRect& sourceRect, const IntRect& destRect,
                                                  GraphicsContext3D* context)
 {
+    if (!m_subImage)
+        m_subImage = adoptArrayPtr(new uint8_t[m_subImageSize.width() * m_subImageSize.height() * 4]);
+
     // Offset from image-rect to source-rect.
     IntPoint offset(sourceRect.x() - imageRect.x(), sourceRect.y() - imageRect.y());
 
@@ -96,7 +98,12 @@ void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const 
     // Upload tile data via a mapped transfer buffer
     Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());
     uint8_t* pixelDest = static_cast<uint8_t*>(extensions->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, destRect.x(), destRect.y(), destRect.width(), destRect.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
-    ASSERT(pixelDest);
+
+    if (!pixelDest) {
+        uploadWithTexSubImage(image, imageRect, sourceRect, destRect, context);
+        return;
+    }
+
     if (imageRect.width() == sourceRect.width() && !offset.x())
         memcpy(pixelDest, &image[4 * offset.y() * imageRect.width()], imageRect.width() * destRect.height() * 4);
     else {
