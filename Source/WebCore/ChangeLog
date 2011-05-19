@@ -1,3 +1,9 @@
+2011-05-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        One more fix after r86869.
+
+        * WebCore.exp.in: Made __ZN7WebCore12JSDOMWrapperD2Ev only export for debug builds.
+
 2011-05-19  Anders Carlsson  <andersca@apple.com>
 
         Add two more symbols needed by the window.internals library.
