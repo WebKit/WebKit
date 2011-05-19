@@ -1,5 +1,22 @@
 2011-05-18  Brady Eidson  <beidson@apple.com>
 
+        As originally reviewed by Anders Carlsson.
+
+        <rdar://problem/9457633> and https://bugs.webkit.org/show_bug.cgi?id=61009
+        Processes spawned by SnowLeopard's WebProcess attempt to install WebKit2 shims.
+
+        Restore r86797 to how it was supposed to be using the appropriate #ifdef,
+        reverting the temporary r86814 in the process.
+
+        The #ifdef is BUILDING_ON_SNOW_LEOPARD, not BUILDING_ON_SNOWLEOPARD!
+        
+        * UIProcess/Launcher/mac/ProcessLauncherMac.mm:
+        (WebKit::ProcessLauncher::launchProcess):
+        * WebProcess/mac/WebProcessMainMac.mm:
+        (WebKit::WebProcessMain):
+
+2011-05-18  Brady Eidson  <beidson@apple.com>
+
         Fix the WK2 SnowLeopard layouttests (again) until I can explore on a SnowLeopard machine tomorrow.
 
         * UIProcess/Launcher/mac/ProcessLauncherMac.mm:

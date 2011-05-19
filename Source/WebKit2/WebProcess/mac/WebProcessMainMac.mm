@@ -60,7 +60,7 @@ namespace WebKit {
 
 int WebProcessMain(const CommandLine& commandLine)
 {
-#ifdef BUILDING_ON_SNOWLEOPARD
+#ifdef BUILDING_ON_SNOW_LEOPARD
     // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
     // the WebProcess don't try to insert the shim and crash.
     EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
@@ -99,9 +99,7 @@ int WebProcessMain(const CommandLine& commandLine)
     RunLoop::initializeMainRunLoop();
 
     // Initialize the shim.
-#ifndef BUILDING_ON_SNOWLEOPARD
     WebProcess::shared().initializeShim();
-#endif
 
     // Create the connection.
     WebProcess::shared().initialize(serverPort, RunLoop::main());
