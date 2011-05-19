@@ -1,6 +1,6 @@
 EVENT(webkitfullscreenchange)
 EXPECTED (document.webkitCurrentFullScreenElement == '[object HTMLElement]') OK
 EVENT(webkitfullscreenchange)
-EXPECTED (document.webkitCurrentFullScreenElement == '[object HTMLHtmlElement]') OK
+EXPECTED (document.webkitCurrentFullScreenElement == 'null') OK
 END OF TEST
 

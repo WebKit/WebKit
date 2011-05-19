@@ -4987,26 +4987,16 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
             element = documentElement();
         
         element->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
+
+        // If the element was removed from our tree, also message the documentElement.
+        if (!contains(element.get()))
+            m_fullScreenChangeEventTargetQueue.append(documentElement());
     }
 }
 
 void Document::fullScreenElementRemoved()
 {
-    // If the current full screen element or any of its ancestors is removed, set the current
-    // full screen element to the document root, and fire a fullscreenchange event to inform 
-    // clients of the DOM.
-    if (m_fullScreenRenderer)
-        m_fullScreenRenderer->remove();
-    setFullScreenRenderer(0);
-
-    m_fullScreenChangeEventTargetQueue.append(m_fullScreenElement.release());
-    m_fullScreenElement = documentElement();
-    recalcStyle(Force);
-    
-    // Dispatch this event manually, before the element is actually removed from the DOM
-    // so that the message cascades as expected.
-    fullScreenChangeDelayTimerFired(&m_fullScreenChangeDelayTimer);
-    m_fullScreenChangeDelayTimer.stop();
+    webkitCancelFullScreen();
 }
 
 void Document::removeFullScreenElementOfSubtree(Node* node, bool amongChildrenOnly)
