@@ -70,6 +70,8 @@ void WebContextMenuClient::downloadURL(const KURL& url)
 
 void WebContextMenuClient::searchWithGoogle(const Frame* frame)
 {
+    // FIXME: this should use NSPerformService on Mac to support the system default search provider.
+
     String searchString = frame->editor()->selectedText();
     searchString.stripWhiteSpace();
     String encoded = encodeWithURLEscapeSequences(searchString);

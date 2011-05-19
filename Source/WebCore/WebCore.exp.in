@@ -1421,6 +1421,7 @@ _wkContentAreaDidShow
 _wkContentAreaResized
 _wkContentAreaScrolled
 _wkContentAreaWillPaint
+_wkCopyDefaultSearchProviderDisplayName
 _wkCreateCTTypesetterWithUniCharProviderAndOptions
 _wkDidBeginScrollGesture
 _wkDidEndScrollGesture

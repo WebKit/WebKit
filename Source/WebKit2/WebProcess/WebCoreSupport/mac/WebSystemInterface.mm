@@ -146,6 +146,7 @@ void InitWebCoreSystemInterface(void)
         INIT(DidEndScrollGesture);
         INIT(ScrollbarPainterUsesOverlayScrollers);
         INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
+        INIT(CopyDefaultSearchProviderDisplayName);
 #else
         INIT(GetHyphenationLocationBeforeIndex);
         INIT(GetNSEventMomentumPhase);

@@ -261,6 +261,8 @@ extern void (*wkDidEndScrollGesture)(WKScrollbarPainterControllerRef);
 extern bool (*wkScrollbarPainterUsesOverlayScrollers)(void);
 
 extern bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
+
+extern CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
 #endif
 
 extern void (*wkUnregisterUniqueIdForElement)(id element);

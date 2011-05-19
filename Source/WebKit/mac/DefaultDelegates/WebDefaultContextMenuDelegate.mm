@@ -48,6 +48,7 @@
 #import <WebCore/FrameLoader.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMPrivate.h>
+#import <WebKitSystemInterface.h>
 #import <wtf/Assertions.h>
 
 @implementation WebDefaultUIDelegate (WebContextMenu)
@@ -87,10 +88,16 @@
             title = UI_STRING_INTERNAL("Search in Spotlight", "Search in Spotlight context menu item");
             action = @selector(_searchWithSpotlightFromMenu:);
             break;
-        case WebMenuItemTagSearchWeb:
-            title = UI_STRING_INTERNAL("Search in Google", "Search in Google context menu item");
+        case WebMenuItemTagSearchWeb: {
+#if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+            RetainPtr<CFStringRef> searchProviderName(AdoptCF, WKCopyDefaultSearchProviderDisplayName());
+            title = [NSString stringWithFormat:UI_STRING_INTERNAL("Search with %@", "Search with search provider context menu item with provider name inserted"), searchProviderName.get()];
+#else
+            title = UI_STRING_INTERNAL("Search with Google", "Search with Google context menu item");
+#endif
             action = @selector(_searchWithGoogleFromMenu:);
             break;
+        }
         case WebMenuItemTagLookUpInDictionary:
             title = UI_STRING_INTERNAL("Look Up in Dictionary", "Look Up in Dictionary context menu item");
             action = @selector(_lookUpInDictionaryFromMenu:);
