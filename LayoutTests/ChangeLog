@@ -1,3 +1,13 @@
+2011-05-15  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt][GTK] plugins/get-url-with-javascript-url.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=60834
+        Fix unix test plugin for plugins/get-url-with-javascript-url.html
+
+        * platform/qt/Skipped:
+
 2011-05-19  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed.

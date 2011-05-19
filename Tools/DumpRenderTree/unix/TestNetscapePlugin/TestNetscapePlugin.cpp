@@ -195,9 +195,9 @@ static void executeScript(const PluginObject* obj, const char* script)
 
 static NPError
 webkit_test_plugin_new_stream(NPP instance,
-                              NPMIMEType /*type*/,
+                              NPMIMEType type,
                               NPStream *stream,
-                              NPBool /*seekable*/,
+                              NPBool seekable,
                               uint16_t* stype)
 {
     PluginObject* obj = static_cast<PluginObject*>(instance->pdata);
@@ -213,7 +213,7 @@ webkit_test_plugin_new_stream(NPP instance,
     if (obj->onStreamLoad)
         executeScript(obj, obj->onStreamLoad);
 
-    return NPERR_NO_ERROR;
+    return obj->pluginTest->NPP_NewStream(type, stream, seekable, stype);
 }
 
 static NPError
@@ -253,24 +253,25 @@ webkit_test_plugin_stream_as_file(NPP /*instance*/, NPStream* /*stream*/, const 
 }
 
 static int32_t
-webkit_test_plugin_write_ready(NPP /*instance*/, NPStream* /*stream*/)
+webkit_test_plugin_write_ready(NPP instance, NPStream* stream)
 {
-    return 4096;
+    PluginObject* obj = (PluginObject*)instance->pdata;
+    return obj->pluginTest->NPP_WriteReady(stream);
 }
 
 static int32_t
 webkit_test_plugin_write(NPP instance,
-                         NPStream* /*stream*/,
-                         int32_t /*offset*/,
+                         NPStream* stream,
+                         int32_t offset,
                          int32_t len,
-                         void* /*buffer*/)
+                         void* buffer)
 {
     PluginObject* obj = (PluginObject*)instance->pdata;
 
     if (obj->returnNegativeOneFromWrite)
         return -1;
 
-    return len;
+    return obj->pluginTest->NPP_Write(stream, offset, len, buffer);
 }
 
 static void

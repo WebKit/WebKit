@@ -2527,6 +2527,3 @@ fast/events/remove-target-in-mouseup-insertback.html
 fast/events/remove-target-in-mouseup-twice.html
 fast/events/remove-target-in-mouseup.html
 
-# [Qt][GTK] plugins/get-url-with-javascript-url.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=60834
-plugins/get-url-with-javascript-url.html
