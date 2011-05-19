@@ -27,6 +27,7 @@
 #import "WebProcessMain.h"
 
 #import "CommandLine.h"
+#import "EnvironmentUtilities.h"
 #import "RunLoop.h"
 #import "WebProcess.h"
 #import "WebSystemInterface.h"
@@ -42,6 +43,7 @@
 #import <wtf/RetainPtr.h>
 #import <wtf/Threading.h>
 #import <wtf/text/CString.h>
+#import <wtf/text/StringBuilder.h>
 
 // FIXME: We should be doing this another way.
 extern "C" kern_return_t bootstrap_look_up2(mach_port_t, const name_t, mach_port_t*, pid_t, uint64_t);
@@ -58,6 +60,12 @@ namespace WebKit {
 
 int WebProcessMain(const CommandLine& commandLine)
 {
+#ifdef BUILDING_ON_SNOWLEOPARD
+    // Remove the WebProcess shim from the DYLD_INSERT_LIBRARIES environment variable so any processes spawned by
+    // the WebProcess don't try to insert the shim and crash.
+    EnvironmentUtilities::stripValuesEndingWithString("DYLD_INSERT_LIBRARIES", "/WebProcessShim.dylib");
+#endif
+
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
     String serviceName = commandLine["servicename"];
@@ -90,10 +98,8 @@ int WebProcessMain(const CommandLine& commandLine)
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
-#ifndef BUILDING_ON_SNOW_LEOPARD
     // Initialize the shim.
     WebProcess::shared().initializeShim();
-#endif
 
     // Create the connection.
     WebProcess::shared().initialize(serverPort, RunLoop::main());
