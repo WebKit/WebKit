@@ -661,24 +661,23 @@ void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, Core
     switch (messageID.get<Messages::WebPage::Kind>()) {
     case Messages::WebPage::CreatePluginID:
         CoreIPC::handleMessage<Messages::WebPage::CreatePlugin>(arguments, reply.get(), this, &WebPage::createPlugin);
-        return CoreIPC::AutomaticReply;
+        return;
     case Messages::WebPage::RunJavaScriptAlertID:
         CoreIPC::handleMessage<Messages::WebPage::RunJavaScriptAlert>(arguments, reply.get(), this, &WebPage::runJavaScriptAlert);
-        return CoreIPC::AutomaticReply;
+        return;
     case Messages::WebPage::GetPluginProcessConnectionID:
-        CoreIPC::handleMessageDelayed<Messages::WebPage::GetPluginProcessConnection>(connection, arguments, reply.release(), this, &WebPage::getPluginProcessConnection);
-        return CoreIPC::ManualReply;
+        CoreIPC::handleMessageDelayed<Messages::WebPage::GetPluginProcessConnection>(connection, arguments, reply, this, &WebPage::getPluginProcessConnection);
+        return;
 #if PLATFORM(MAC)
     case Messages::WebPage::InterpretKeyEventID:
         CoreIPC::handleMessage<Messages::WebPage::InterpretKeyEvent>(arguments, reply.get(), this, &WebPage::interpretKeyEvent);
-        return CoreIPC::AutomaticReply;
+        return;
 #endif
     default:
         break;
     }
 
     ASSERT_NOT_REACHED();
-    return CoreIPC::AutomaticReply;
 }
 
 } // namespace WebKit

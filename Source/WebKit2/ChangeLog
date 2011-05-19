@@ -1,3 +1,12 @@
+2011-05-19  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, follow-up fix of the messages python unittests after r86812.
+
+        [WebKit2] handleMessageDelayed leaks replyEncoder if decoding fails
+        https://bugs.webkit.org/show_bug.cgi?id=60872
+
+        * Scripts/webkit2/messages_unittest.py:
+
 2011-05-18  Brady Eidson  <beidson@apple.com>
 
         As originally reviewed by Anders Carlsson.
