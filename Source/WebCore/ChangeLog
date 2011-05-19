@@ -1,3 +1,9 @@
+2011-05-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Accept XCode's decisions to keep modifying WebCore.xcodeproj.
+
+        * WebCore.xcodeproj/project.pbxproj: Opened in XCode then closed.
+
 2011-05-19  Andrew Wason  <rectalogic@rectalogic.com>
 
         Reviewed by Darin Adler.
