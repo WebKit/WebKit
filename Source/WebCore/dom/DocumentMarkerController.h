@@ -47,8 +47,10 @@ public:
     ~DocumentMarkerController() { detach(); }
 
     void detach();
-    void addMarker(Range*, DocumentMarker::MarkerType, String description = String());
-    void addMarker(Node*, const DocumentMarker&);
+    void addMarker(Range*, DocumentMarker::MarkerType);
+    void addMarker(Range*, DocumentMarker::MarkerType, const String& description);
+    void addTextMatchMarker(Range*, bool activeMatch);
+
     void copyMarkers(Node* srcNode, unsigned startOffset, int length, Node* dstNode, int delta);
     bool hasMarkers(Range*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
 
@@ -79,6 +81,8 @@ public:
 #endif
 
 private:
+    void addMarker(Node*, const DocumentMarker&);
+
     typedef Vector<RenderedDocumentMarker> MarkerList;
     typedef HashMap<RefPtr<Node>, MarkerList*> MarkerMap;
     bool possiblyHasMarkers(DocumentMarker::MarkerTypes);

@@ -2232,37 +2232,7 @@ void WebFrameImpl::invalidateArea(AreaToInvalidate area)
 
 void WebFrameImpl::addMarker(Range* range, bool activeMatch)
 {
-    // Use a TextIterator to visit the potentially multiple nodes the range
-    // covers.
-    TextIterator markedText(range);
-    for (; !markedText.atEnd(); markedText.advance()) {
-        RefPtr<Range> textPiece = markedText.range();
-        int exception = 0;
-
-        DocumentMarker marker = {
-            DocumentMarker::TextMatch,
-            textPiece->startOffset(exception),
-            textPiece->endOffset(exception),
-            "",
-            activeMatch
-        };
-
-        if (marker.endOffset > marker.startOffset) {
-            // Find the node to add a marker to and add it.
-            Node* node = textPiece->startContainer(exception);
-            frame()->document()->markers()->addMarker(node, marker);
-
-            // Rendered rects for markers in WebKit are not populated until each time
-            // the markers are painted. However, we need it to happen sooner, because
-            // the whole purpose of tickmarks on the scrollbar is to show where
-            // matches off-screen are (that haven't been painted yet).
-            Vector<DocumentMarker> markers = frame()->document()->markers()->markersForNode(node);
-            frame()->document()->markers()->setRenderedRectForMarker(
-                textPiece->startContainer(exception),
-                markers[markers.size() - 1],
-                range->boundingBox());
-        }
-    }
+    frame()->document()->markers()->addTextMatchMarker(range, activeMatch);
 }
 
 void WebFrameImpl::setMarkerActive(Range* range, bool active)

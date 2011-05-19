@@ -201,7 +201,7 @@ String HitTestResult::spellingToolTip(TextDirection& dir) const
 
     if (RenderObject* renderer = m_innerNonSharedNode->renderer())
         dir = renderer->style()->direction();
-    return marker->description;
+    return marker->description();
 }
 
 String HitTestResult::replacedString() const
@@ -215,7 +215,7 @@ String HitTestResult::replacedString() const
     if (!marker)
         return String();
     
-    return marker->description;
+    return marker->description();
 }    
     
 String HitTestResult::title(TextDirection& dir) const

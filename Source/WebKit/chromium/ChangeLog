@@ -1,3 +1,16 @@
+2011-05-17  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        [Refactoring] Member variables of DocumentMarker should be encapsulated.        
+        https://bugs.webkit.org/show_bug.cgi?id=56814
+
+        Moved addMarker() implementation to
+        WebCore::DocumentMarkerController::addTextMatchMarker().
+        
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::addMarker):
+
 2011-05-18  Alok Priyadarshi  <alokp@chromium.org> and Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.
