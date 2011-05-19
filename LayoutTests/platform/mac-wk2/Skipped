@@ -1679,16 +1679,7 @@ inspector/console/console-long-eval-crash.html
 
 # WebKit2 needs fullscreen support
 # https://bugs.webkit.org/show_bug.cgi?id=56318
-fullscreen/full-screen-css.html
-fullscreen/full-screen-iframe-allowed.html
-fullscreen/full-screen-iframe-not-allowed.html
-fullscreen/full-screen-frameset.html
-fullscreen/full-screen-remove-ancestor.html
-fullscreen/full-screen-remove.html
-fullscreen/full-screen-request.html
-fullscreen/full-screen-twice.html
-fullscreen/full-screen-zIndex.html
-fullscreen/video-specified-size.html
+fullscreen/
 
 # WebKit2 needs to support synchronous creation of about:blank/data:url frames
 fast/dom/HTMLDocument/hasFocus.html

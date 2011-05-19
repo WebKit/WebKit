@@ -351,6 +351,10 @@ private:
     PlatformMouseEvent currentPlatformMouseEvent() const;
 #endif
 
+#if ENABLE(FULLSCREEN_API)
+    bool isKeyEventAllowedInFullScreen(const PlatformKeyboardEvent&) const;
+#endif
+
     Frame* m_frame;
 
     bool m_mousePressed;
