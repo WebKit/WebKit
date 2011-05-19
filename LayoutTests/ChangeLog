@@ -1,5 +1,11 @@
 2011-05-19  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Make Mac Leopard bot happy after r81176.
+
+        * platform/mac-leopard/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt:
+
+2011-05-19  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Darin Adler.
 
         REGRESSION (r83322): Many crashes in Mail.app in WebCore::Node::nodeIndex
