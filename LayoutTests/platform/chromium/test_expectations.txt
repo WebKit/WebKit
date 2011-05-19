@@ -3976,7 +3976,7 @@ BUGWK59673 : http/tests/history/cross-origin-replace-history-object-child.html =
 
 // Flakiness on canaries (noted ~ r85140)
 BUGKBR WIN DEBUG : fast/filesystem/file-writer-truncate-extend.html = PASS TEXT
-BUGKBR WIN DEBUG : fast/events/change-overflow-on-overflow-change.html = PASS TIMEOUT
+BUGKBR WIN LINUX DEBUG : fast/events/change-overflow-on-overflow-change.html = PASS TIMEOUT
 
 // Flakiness on canaries (noted ~ r85220)
 BUGKBR WIN : editing/input/option-page-up-down.html = PASS TEXT
@@ -4120,4 +4120,7 @@ BUGWK61103 MAC : fast/canvas/canvas-putImageData.html = CRASH PASS
 BUGWK38788 WIN LINUX: fast/css/border-radius-non-negative.html = IMAGE
 
 // Crashes after CSP changes landed in WebKit 86837
-BUGCR83268 WIN MAC LINUX : inspector/debugger/event-listener-breakpoints.html = CRASH PASS SLOW TIMEOUT
+BUGCR83268 WIN MAC LINUX : inspector/debugger/event-listener-breakpoints.html = CRASH PASS TIMEOUT
+
+// Random timeouts and failures going back a week.
+BUGCR83290 WIN : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS TIMEOUT TEXT
