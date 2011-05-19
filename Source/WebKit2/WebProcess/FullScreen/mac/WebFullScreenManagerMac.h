@@ -54,7 +54,6 @@ private:
     virtual void beginExitFullScreenAnimation(float duration);
 
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
-    RetainPtr<PlatformLayer> m_fullScreenRootLayer;
     LayerTreeContext m_layerTreeContext;
     RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
     RetainPtr<id> m_enterFullScreenListener;

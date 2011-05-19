@@ -340,15 +340,12 @@ using namespace WebCore;
 
     NSDisableScreenUpdates();
     
-    if (completed) {
-        [self _updateMenuAndDockForFullScreen];
-        [self _updatePowerAssertions];
-        [NSCursor setHiddenUntilMouseMoves:YES];
-                
-        [[self window] orderOut:self];
-        [[_webView window] makeKeyAndOrderFront:self];
-    }
-    
+    [self _updateMenuAndDockForFullScreen];
+    [self _updatePowerAssertions];
+    [NSCursor setHiddenUntilMouseMoves:YES];
+    [[self window] orderOut:self];
+    [[_webView window] makeKeyAndOrderFront:self];
+
     [self _manager]->didExitFullScreen();
     NSEnableScreenUpdates();    
 }
