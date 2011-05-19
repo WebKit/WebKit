@@ -77,9 +77,9 @@ static bool markersHaveIdenticalDescription(const Vector<DocumentMarker>& marker
     if (markers.isEmpty())
         return true;
 
-    const String& description = markers[0].description;
+    const String& description = markers[0].description();
     for (size_t i = 1; i < markers.size(); ++i) {
-        if (description != markers[i].description)
+        if (description != markers[i].description())
             return false;
     }
     return true;
