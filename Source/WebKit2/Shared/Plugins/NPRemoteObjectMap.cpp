@@ -219,13 +219,13 @@ void NPRemoteObjectMap::pluginDestroyed(Plugin* plugin)
     }
 }
 
-CoreIPC::SyncReplyMode NPRemoteObjectMap::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+void NPRemoteObjectMap::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
     NPObjectMessageReceiver* messageReceiver = m_registeredNPObjects.get(arguments->destinationID());
     if (!messageReceiver)
-        return CoreIPC::AutomaticReply;
+        return;
 
-    return messageReceiver->didReceiveSyncNPObjectMessageReceiverMessage(connection, messageID, arguments, reply);
+    messageReceiver->didReceiveSyncNPObjectMessageReceiverMessage(connection, messageID, arguments, reply);
 }
 
 } // namespace WebKit

@@ -260,25 +260,27 @@ void WebProcessProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
     pageProxy->didReceiveMessage(connection, messageID, arguments);
 }
 
-CoreIPC::SyncReplyMode WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
-    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>())
-        return didReceiveSyncWebProcessProxyMessage(connection, messageID, arguments, reply);
+    if (messageID.is<CoreIPC::MessageClassWebProcessProxy>()) {
+        didReceiveSyncWebProcessProxyMessage(connection, messageID, arguments, reply);
+        return;
+    }
 
     if (messageID.is<CoreIPC::MessageClassWebContext>() || messageID.is<CoreIPC::MessageClassWebContextLegacy>() 
-        || messageID.is<CoreIPC::MessageClassDownloadProxy>() || messageID.is<CoreIPC::MessageClassWebIconDatabase>())
-        return m_context->didReceiveSyncMessage(connection, messageID, arguments, reply);
+        || messageID.is<CoreIPC::MessageClassDownloadProxy>() || messageID.is<CoreIPC::MessageClassWebIconDatabase>()) {
+        m_context->didReceiveSyncMessage(connection, messageID, arguments, reply);
+    }
 
     uint64_t pageID = arguments->destinationID();
     if (!pageID)
-        return CoreIPC::AutomaticReply;
+        return;
     
     WebPageProxy* pageProxy = webPage(pageID);
     if (!pageProxy)
-        return CoreIPC::AutomaticReply;
+        return;
     
     pageProxy->didReceiveSyncMessage(connection, messageID, arguments, reply);
-    return CoreIPC::AutomaticReply;
 }
 
 void WebProcessProxy::didClose(CoreIPC::Connection*)

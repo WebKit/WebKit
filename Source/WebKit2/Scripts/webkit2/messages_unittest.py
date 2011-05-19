@@ -656,21 +656,21 @@ void WebPage::didReceiveWebPageMessage(CoreIPC::Connection*, CoreIPC::MessageID 
     ASSERT_NOT_REACHED();
 }
 
-CoreIPC::SyncReplyMode WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+void WebPage::didReceiveSyncWebPageMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
     switch (messageID.get<Messages::WebPage::Kind>()) {
     case Messages::WebPage::CreatePluginID:
-        CoreIPC::handleMessage<Messages::WebPage::CreatePlugin>(arguments, reply, this, &WebPage::createPlugin);
+        CoreIPC::handleMessage<Messages::WebPage::CreatePlugin>(arguments, reply.get(), this, &WebPage::createPlugin);
         return CoreIPC::AutomaticReply;
     case Messages::WebPage::RunJavaScriptAlertID:
-        CoreIPC::handleMessage<Messages::WebPage::RunJavaScriptAlert>(arguments, reply, this, &WebPage::runJavaScriptAlert);
+        CoreIPC::handleMessage<Messages::WebPage::RunJavaScriptAlert>(arguments, reply.get(), this, &WebPage::runJavaScriptAlert);
         return CoreIPC::AutomaticReply;
     case Messages::WebPage::GetPluginProcessConnectionID:
-        CoreIPC::handleMessageDelayed<Messages::WebPage::GetPluginProcessConnection>(connection, arguments, reply, this, &WebPage::getPluginProcessConnection);
+        CoreIPC::handleMessageDelayed<Messages::WebPage::GetPluginProcessConnection>(connection, arguments, reply.release(), this, &WebPage::getPluginProcessConnection);
         return CoreIPC::ManualReply;
 #if PLATFORM(MAC)
     case Messages::WebPage::InterpretKeyEventID:
-        CoreIPC::handleMessage<Messages::WebPage::InterpretKeyEvent>(arguments, reply, this, &WebPage::interpretKeyEvent);
+        CoreIPC::handleMessage<Messages::WebPage::InterpretKeyEvent>(arguments, reply.get(), this, &WebPage::interpretKeyEvent);
         return CoreIPC::AutomaticReply;
 #endif
     default:

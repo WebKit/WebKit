@@ -57,7 +57,7 @@ public:
     void pluginProcessCrashed();
 
     void didReceivePluginProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments);
-    CoreIPC::SyncReplyMode didReceiveSyncPluginProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
+    void didReceiveSyncPluginProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
 
 private:
     explicit PluginProxy(const String& pluginPath);

@@ -1367,7 +1367,7 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
     didReceiveWebPageProxyMessage(connection, messageID, arguments);
 }
 
-void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+void WebPageProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
 #if ENABLE(INSPECTOR)
     if (messageID.is<CoreIPC::MessageClassWebInspectorProxy>()) {

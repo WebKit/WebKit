@@ -559,18 +559,17 @@ void WebProcess::terminate()
     m_runLoop->stop();
 }
 
-CoreIPC::SyncReplyMode WebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+void WebProcess::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {   
     uint64_t pageID = arguments->destinationID();
     if (!pageID)
-        return CoreIPC::AutomaticReply;
+        return;
     
     WebPage* page = webPage(pageID);
     if (!page)
-        return CoreIPC::AutomaticReply;
+        return;
     
     page->didReceiveSyncMessage(connection, messageID, arguments, reply);
-    return CoreIPC::AutomaticReply;
 }
 
 void WebProcess::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)

@@ -114,24 +114,26 @@ void WebProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, Co
     pluginControllerProxy->didReceivePluginControllerProxyMessage(connection, messageID, arguments);
 }
 
-CoreIPC::SyncReplyMode WebProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+void WebProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
     uint64_t destinationID = arguments->destinationID();
 
-    if (!destinationID)
-        return didReceiveSyncWebProcessConnectionMessage(connection, messageID, arguments, reply);
+    if (!destinationID) {
+        didReceiveSyncWebProcessConnectionMessage(connection, messageID, arguments, reply);
+        return;
+    }
 
-    if (messageID.is<CoreIPC::MessageClassNPObjectMessageReceiver>())
-        return m_npRemoteObjectMap->didReceiveSyncMessage(connection, messageID, arguments, reply);
+    if (messageID.is<CoreIPC::MessageClassNPObjectMessageReceiver>()) {
+        m_npRemoteObjectMap->didReceiveSyncMessage(connection, messageID, arguments, reply);
+        return;
+    }
 
     PluginControllerProxy* pluginControllerProxy = m_pluginControllers.get(arguments->destinationID());
     if (!pluginControllerProxy)
-        return CoreIPC::AutomaticReply;
+        return;
 
     PluginController::PluginDestructionProtector protector(pluginControllerProxy->asPluginController());
-    CoreIPC::SyncReplyMode replyMode = pluginControllerProxy->didReceiveSyncPluginControllerProxyMessage(connection, messageID, arguments, reply);
-
-    return replyMode;
+    pluginControllerProxy->didReceiveSyncPluginControllerProxyMessage(connection, messageID, arguments, reply);
 }
 
 void WebProcessConnection::didClose(CoreIPC::Connection*)

@@ -64,7 +64,7 @@ public:
 
     void pluginDestroyed(Plugin*);
 
-    CoreIPC::SyncReplyMode didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply);
+    void didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply);
 
 private:
     explicit NPRemoteObjectMap(CoreIPC::Connection*);

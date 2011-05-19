@@ -64,9 +64,9 @@ void WebFullScreenManagerProxy::didReceiveMessage(CoreIPC::Connection* connectio
     didReceiveWebFullScreenManagerProxyMessage(connection, messageID, arguments);
 }
 
-CoreIPC::SyncReplyMode WebFullScreenManagerProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+void WebFullScreenManagerProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
-    return didReceiveSyncWebFullScreenManagerProxyMessage(connection, messageID, arguments, reply);
+    didReceiveSyncWebFullScreenManagerProxyMessage(connection, messageID, arguments, reply);
 }
 
 void WebFullScreenManagerProxy::willEnterFullScreen()

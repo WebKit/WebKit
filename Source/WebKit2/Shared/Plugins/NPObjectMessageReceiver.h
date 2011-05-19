@@ -47,7 +47,7 @@ public:
     static PassOwnPtr<NPObjectMessageReceiver> create(NPRemoteObjectMap*, Plugin*, uint64_t npObjectID, NPObject*);
     ~NPObjectMessageReceiver();
 
-    CoreIPC::SyncReplyMode didReceiveSyncNPObjectMessageReceiverMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*);
+    void didReceiveSyncNPObjectMessageReceiverMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, OwnPtr<CoreIPC::ArgumentEncoder>&);
 
     Plugin* plugin() const { return m_plugin; }
     NPObject* npObject() const { return m_npObject; }

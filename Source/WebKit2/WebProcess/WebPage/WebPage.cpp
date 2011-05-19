@@ -1994,9 +1994,9 @@ void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Messag
     didReceiveWebPageMessage(connection, messageID, arguments);
 }
 
-CoreIPC::SyncReplyMode WebPage::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+void WebPage::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {   
-    return didReceiveSyncWebPageMessage(connection, messageID, arguments, reply);
+    didReceiveSyncWebPageMessage(connection, messageID, arguments, reply);
 }
     
 InjectedBundleBackForwardList* WebPage::backForwardList()

@@ -35,6 +35,7 @@
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/ObjectPrototype.h>
 #include <WebCore/IdentifierRep.h>
+#include <wtf/Assertions.h>
 #include <wtf/text/WTFString.h>
 
 using namespace JSC;

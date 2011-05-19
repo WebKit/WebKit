@@ -401,12 +401,8 @@ def sync_case_statement(receiver, message):
 
     result = []
     result.append('    case Messages::%s::%s:\n' % (receiver.name, message.id()))
-    result.append('        CoreIPC::%s<Messages::%s::%s>(%sarguments, reply, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if message.is_delayed else '', handler_function(receiver, message)))
-
-    if message.is_delayed:
-        result.append('        return CoreIPC::ManualReply;\n')
-    else:
-        result.append('        return CoreIPC::AutomaticReply;\n')
+    result.append('        CoreIPC::%s<Messages::%s::%s>(%sarguments, reply%s, this, &%s);\n' % (dispatch_function, receiver.name, message.name, 'connection, ' if message.is_delayed else '', '' if message.is_delayed else '.get()', handler_function(receiver, message)))
+    result.append('        return;\n')
 
     return surround_in_condition(''.join(result), message.condition)
 
@@ -622,7 +618,7 @@ def generate_message_handler(file):
 
     if sync_messages:
         result.append('\n')
-        result.append('CoreIPC::SyncReplyMode %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
+        result.append('void %s::didReceiveSync%sMessage(CoreIPC::Connection*%s, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)\n' % (receiver.name, receiver.name, ' connection' if sync_delayed_messages else ''))
         result.append('{\n')
         result.append('    switch (messageID.get<Messages::%s::Kind>()) {\n' % receiver.name)
         result += [sync_case_statement(receiver, message) for message in sync_messages]
@@ -630,7 +626,6 @@ def generate_message_handler(file):
         result.append('        break;\n')
         result.append('    }\n\n')
         result.append('    ASSERT_NOT_REACHED();\n')
-        result.append('    return CoreIPC::AutomaticReply;\n')
         result.append('}\n')
 
     result.append('\n} // namespace WebKit\n')

@@ -619,34 +619,23 @@ void Connection::dispatchSyncMessage(MessageID messageID, ArgumentDecoder* argum
 {
     ASSERT(messageID.isSync());
 
-    // Decode the sync request ID.
     uint64_t syncRequestID = 0;
-
     if (!arguments->decodeUInt64(syncRequestID) || !syncRequestID) {
         // We received an invalid sync message.
         arguments->markInvalid();
         return;
     }
 
-    // Create our reply encoder.
     OwnPtr<ArgumentEncoder> replyEncoder = ArgumentEncoder::create(syncRequestID);
-    
+
     // Hand off both the decoder and encoder to the client.
-    SyncReplyMode syncReplyMode = m_client->didReceiveSyncMessage(this, messageID, arguments, replyEncoder.get());
+    m_client->didReceiveSyncMessage(this, messageID, arguments, replyEncoder);
 
     // FIXME: If the message was invalid, we should send back a SyncMessageError.
     ASSERT(!arguments->isInvalid());
 
-    if (syncReplyMode == ManualReply) {
-        // The client will take ownership of the reply encoder and send it at some point in the future.
-        ArgumentEncoder *encoder = replyEncoder.leakPtr();
-        (void)encoder;
-
-        return;
-    }
-
-    // Send the reply.
-    sendSyncReply(replyEncoder.release());
+    if (replyEncoder)
+        sendSyncReply(replyEncoder.release());
 }
 
 void Connection::didFailToSendSyncMessage()

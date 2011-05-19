@@ -312,13 +312,13 @@ void handleMessageVariadic(ArgumentDecoder* argumentDecoder, ArgumentEncoder* re
 }
 
 template<typename T, typename C, typename MF>
-void handleMessageDelayed(Connection* connection, ArgumentDecoder* argumentDecoder, ArgumentEncoder* replyEncoder, C* object, MF function)
+void handleMessageDelayed(Connection* connection, ArgumentDecoder* argumentDecoder, OwnPtr<ArgumentEncoder>& replyEncoder, C* object, MF function)
 {
     typename T::DecodeType::ValueType arguments;
     if (!argumentDecoder->decode(arguments))
         return;
 
-    RefPtr<typename T::DelayedReply> delayedReply = adoptRef(new typename T::DelayedReply(connection, adoptPtr(replyEncoder)));
+    RefPtr<typename T::DelayedReply> delayedReply = adoptRef(new typename T::DelayedReply(connection, replyEncoder.release()));
     callMemberFunction(arguments, delayedReply.release(), object, function);
 }
 

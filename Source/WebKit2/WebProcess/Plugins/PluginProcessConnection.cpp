@@ -109,16 +109,19 @@ void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection,
     ASSERT_NOT_REACHED();
 }
 
-CoreIPC::SyncReplyMode PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
-    if (messageID.is<CoreIPC::MessageClassNPObjectMessageReceiver>())
-        return m_npRemoteObjectMap->didReceiveSyncMessage(connection, messageID, arguments, reply);
+    if (messageID.is<CoreIPC::MessageClassNPObjectMessageReceiver>()) {
+        m_npRemoteObjectMap->didReceiveSyncMessage(connection, messageID, arguments, reply);
+        return;
+    }
 
-    if (PluginProxy* pluginProxy = m_plugins.get(arguments->destinationID()))
-        return pluginProxy->didReceiveSyncPluginProxyMessage(connection, messageID, arguments, reply);
+    if (PluginProxy* pluginProxy = m_plugins.get(arguments->destinationID())) {
+        pluginProxy->didReceiveSyncPluginProxyMessage(connection, messageID, arguments, reply);
+        return;
+    }
 
     ASSERT_NOT_REACHED();
-    return CoreIPC::AutomaticReply;
 }
 
 void PluginProcessConnection::didClose(CoreIPC::Connection*)

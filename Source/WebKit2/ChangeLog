@@ -1,3 +1,78 @@
+2011-05-18  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        [WebKit2] handleMessageDelayed leaks replyEncoder if decoding fails
+        https://bugs.webkit.org/show_bug.cgi?id=60872
+
+        Eliminate the concept of SyncReplyMode and instead hand around ownership
+        of the reply decoder using an OwnPtr.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::dispatchSyncMessage): Eliminated comments that say
+        the same things the code itself does. Removed code that handles the
+        reply mode. Instead, pass the OwnPtr to the message handling function and
+        make the call to sendSyncReply conditional on whether the reply encoder
+        is still non-null.
+
+        * Platform/CoreIPC/Connection.h: Removed SyncReplyMode. Made
+        didReceiveSyncMessage return void, and take OwnPtr<ArgumentEncoder>& for
+        the reply encoder.
+
+        * Platform/CoreIPC/HandleMessage.h:
+        (CoreIPC::handleMessageDelayed): Take an OwnPtr&. Replaced the call to
+        adoptPtr with a call to release.
+
+        * PluginProcess/PluginControllerProxy.h: Updated to take an OwnPtr& and
+        not return SyncReplyMode.
+        * PluginProcess/WebProcessConnection.cpp:
+        (WebKit::WebProcessConnection::didReceiveSyncMessage): Ditto.
+        * PluginProcess/WebProcessConnection.h: Ditto.
+
+        * Scripts/webkit2/messages.py: Updated for changes to sync messages.
+        Eliminated unneeded return types and use get() when apporopriate to call
+        the handleMessage functions.
+
+        * Scripts/webkit2/messages_unittest.py: Tried to update this too.
+        I don't know how to run the test, though.
+
+        * Shared/Plugins/NPObjectMessageReceiver.h: Updated to take an OwnPtr& and
+        not return SyncReplyMode.
+        * Shared/Plugins/NPRemoteObjectMap.cpp:
+        (WebKit::NPRemoteObjectMap::didReceiveSyncMessage): Ditto.
+        * Shared/Plugins/NPRemoteObjectMap.h: Ditto.
+        * UIProcess/Downloads/DownloadProxy.h: Ditto.
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::didReceiveSyncMessage): Ditto.
+        * UIProcess/WebContext.h: Ditto.
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::didReceiveSyncMessage): Ditto.
+        * UIProcess/WebFullScreenManagerProxy.h: Ditto.
+        * UIProcess/WebIconDatabase.cpp:
+        (WebKit::WebIconDatabase::didReceiveSyncMessage): Ditto.
+        * UIProcess/WebIconDatabase.h: Ditto.
+        * UIProcess/WebInspectorProxy.h: Ditto.
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveSyncMessage): Ditto.
+        * UIProcess/WebPageProxy.h: Ditto.
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveSyncMessage): Ditto.
+        * UIProcess/WebProcessProxy.h: Ditto.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp: Added a missing include.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::PluginProcessConnection::didReceiveSyncMessage): Updated to take
+        an OwnPtr& and not return SyncReplyMode.
+        * WebProcess/Plugins/PluginProcessConnection.h: Ditto.
+        * WebProcess/Plugins/PluginProxy.h: Ditto.
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveSyncMessage): Ditto.
+        * WebProcess/WebPage/WebPage.h: Ditto.
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::didReceiveSyncMessage): Ditto.
+        * WebProcess/WebProcess.h: Ditto.
+
 2011-05-18  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Maciej Stachowiak.

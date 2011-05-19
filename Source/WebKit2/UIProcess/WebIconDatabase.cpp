@@ -264,9 +264,9 @@ void WebIconDatabase::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC
     didReceiveWebIconDatabaseMessage(connection, messageID, decoder);
 }
 
-CoreIPC::SyncReplyMode WebIconDatabase::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* decoder, CoreIPC::ArgumentEncoder* reply)
+void WebIconDatabase::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* decoder, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
-    return didReceiveSyncWebIconDatabaseMessage(connection, messageID, decoder, reply);
+    didReceiveSyncWebIconDatabaseMessage(connection, messageID, decoder, reply);
 }
 
 } // namespace WebKit

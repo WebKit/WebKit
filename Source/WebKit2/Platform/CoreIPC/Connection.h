@@ -56,11 +56,6 @@ namespace CoreIPC {
 
 class MessageID;
     
-enum SyncReplyMode {
-    AutomaticReply,
-    ManualReply
-};
-
 enum MessageSendFlags {
     // Whether this message should be dispatched when waiting for a sync reply.
     // This is the default for synchronous messages.
@@ -80,7 +75,7 @@ public:
     class MessageReceiver {
     public:
         virtual void didReceiveMessage(Connection*, MessageID, ArgumentDecoder*) = 0;
-        virtual SyncReplyMode didReceiveSyncMessage(Connection*, MessageID, ArgumentDecoder*, ArgumentEncoder*) { ASSERT_NOT_REACHED(); return AutomaticReply; }
+        virtual void didReceiveSyncMessage(Connection*, MessageID, ArgumentDecoder*, OwnPtr<ArgumentEncoder>&) { ASSERT_NOT_REACHED(); }
 
     protected:
         virtual ~MessageReceiver() { }

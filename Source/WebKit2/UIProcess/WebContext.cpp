@@ -647,20 +647,23 @@ void WebContext::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::Mes
     ASSERT_NOT_REACHED();
 }
 
-CoreIPC::SyncReplyMode WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, CoreIPC::ArgumentEncoder* reply)
+void WebContext::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
 {
-    if (messageID.is<CoreIPC::MessageClassWebContext>())
-        return didReceiveSyncWebContextMessage(connection, messageID, arguments, reply);
+    if (messageID.is<CoreIPC::MessageClassWebContext>()) {
+        didReceiveSyncWebContextMessage(connection, messageID, arguments, reply);
+        return;
+    }
 
     if (messageID.is<CoreIPC::MessageClassDownloadProxy>()) {
         if (DownloadProxy* downloadProxy = m_downloads.get(arguments->destinationID()).get())
-            return downloadProxy->didReceiveSyncDownloadProxyMessage(connection, messageID, arguments, reply);
-
-        return CoreIPC::AutomaticReply;
+            downloadProxy->didReceiveSyncDownloadProxyMessage(connection, messageID, arguments, reply);
+        return;
     }
     
-    if (messageID.is<CoreIPC::MessageClassWebIconDatabase>())
-        return m_iconDatabase->didReceiveSyncMessage(connection, messageID, arguments, reply);
+    if (messageID.is<CoreIPC::MessageClassWebIconDatabase>()) {
+        m_iconDatabase->didReceiveSyncMessage(connection, messageID, arguments, reply);
+        return;
+    }
     
     switch (messageID.get<WebContextLegacyMessage::Kind>()) {
         case WebContextLegacyMessage::PostSynchronousMessage: {
@@ -670,18 +673,16 @@ CoreIPC::SyncReplyMode WebContext::didReceiveSyncMessage(CoreIPC::Connection* co
             RefPtr<APIObject> messageBody;
             WebContextUserMessageDecoder messageDecoder(messageBody, this);
             if (!arguments->decode(CoreIPC::Out(messageName, messageDecoder)))
-                return CoreIPC::AutomaticReply;
+                return;
 
             RefPtr<APIObject> returnData;
             didReceiveSynchronousMessageFromInjectedBundle(messageName, messageBody.get(), returnData);
             reply->encode(CoreIPC::In(WebContextUserMessageEncoder(returnData.get())));
-            return CoreIPC::AutomaticReply;
+            return;
         }
         case WebContextLegacyMessage::PostMessage:
             ASSERT_NOT_REACHED();
     }
-
-    return CoreIPC::AutomaticReply;
 }
 
 void WebContext::setEnhancedAccessibility(bool flag)
