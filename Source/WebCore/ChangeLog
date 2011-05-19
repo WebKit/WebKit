@@ -1,3 +1,26 @@
+2011-05-19  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: Use ScriptContext::Task to hold pending events of ThreadableWebSocketChannelClientWrapper
+        https://bugs.webkit.org/show_bug.cgi?id=61034
+
+        Refactoring only. No new tests.
+
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnect):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessage):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didClose):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::resume):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::processPendingTasks):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnectCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didCloseCallback):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        Remove m_pendingConnected, m_pendingMessages and m_pendingClosed, and use ScriptContext::Task
+        to hold these pending events.
+
 2011-05-19  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

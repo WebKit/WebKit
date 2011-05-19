@@ -32,8 +32,11 @@
 #if ENABLE(WEB_SOCKETS)
 #include "ThreadableWebSocketChannelClientWrapper.h"
 
+#include "CrossThreadCopier.h"
+#include "CrossThreadTask.h"
 #include "WebSocketChannelClient.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -43,8 +46,6 @@ ThreadableWebSocketChannelClientWrapper::ThreadableWebSocketChannelClientWrapper
     , m_sent(false)
     , m_bufferedAmount(0)
     , m_suspended(false)
-    , m_pendingConnected(false)
-    , m_pendingClosed(false)
 {
 }
 
@@ -97,24 +98,23 @@ void ThreadableWebSocketChannelClientWrapper::clearClient()
 
 void ThreadableWebSocketChannelClientWrapper::didConnect()
 {
-    m_pendingConnected = true;
+    m_pendingTasks.append(createCallbackTask(&ThreadableWebSocketChannelClientWrapper::didConnectCallback, AllowCrossThreadAccess(this)));
     if (!m_suspended)
-        processPendingEvents();
+        processPendingTasks();
 }
 
 void ThreadableWebSocketChannelClientWrapper::didReceiveMessage(const String& message)
 {
-    m_pendingMessages.append(message);
+    m_pendingTasks.append(createCallbackTask(&ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback, AllowCrossThreadAccess(this), message));
     if (!m_suspended)
-        processPendingEvents();
+        processPendingTasks();
 }
 
 void ThreadableWebSocketChannelClientWrapper::didClose(unsigned long unhandledBufferedAmount)
 {
-    m_pendingClosed = true;
-    m_bufferedAmount = unhandledBufferedAmount;
+    m_pendingTasks.append(createCallbackTask(&ThreadableWebSocketChannelClientWrapper::didCloseCallback, AllowCrossThreadAccess(this), unhandledBufferedAmount));
     if (!m_suspended)
-        processPendingEvents();
+        processPendingTasks();
 }
 
 void ThreadableWebSocketChannelClientWrapper::suspend()
@@ -125,30 +125,37 @@ void ThreadableWebSocketChannelClientWrapper::suspend()
 void ThreadableWebSocketChannelClientWrapper::resume()
 {
     m_suspended = false;
-    processPendingEvents();
+    processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::processPendingEvents()
+void ThreadableWebSocketChannelClientWrapper::processPendingTasks()
 {
     ASSERT(!m_suspended);
-    if (m_pendingConnected) {
-        m_pendingConnected = false;
-        if (m_client)
-            m_client->didConnect();
-    }
+    Vector<OwnPtr<ScriptExecutionContext::Task> > tasks;
+    tasks.swap(m_pendingTasks);
+    for (Vector<OwnPtr<ScriptExecutionContext::Task> >::const_iterator iter = tasks.begin(); iter != tasks.end(); ++iter)
+        (*iter)->performTask(0);
+}
 
-    Vector<String> messages;
-    messages.swap(m_pendingMessages);
-    for (Vector<String>::const_iterator iter = messages.begin(); iter != messages.end(); ++iter) {
-        if (m_client)
-            m_client->didReceiveMessage(*iter);
-    }
+void ThreadableWebSocketChannelClientWrapper::didConnectCallback(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
+{
+    ASSERT_UNUSED(context, !context);
+    if (wrapper->m_client)
+        wrapper->m_client->didConnect();
+}
 
-    if (m_pendingClosed) {
-        m_pendingClosed = false;
-        if (m_client)
-            m_client->didClose(m_bufferedAmount);
-    }
+void ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, String message)
+{
+    ASSERT_UNUSED(context, !context);
+    if (wrapper->m_client)
+        wrapper->m_client->didReceiveMessage(message);
+}
+
+void ThreadableWebSocketChannelClientWrapper::didCloseCallback(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, unsigned long unhandledBufferedAmount)
+{
+    ASSERT_UNUSED(context, !context);
+    if (wrapper->m_client)
+        wrapper->m_client->didClose(unhandledBufferedAmount);
 }
 
 } // namespace WebCore

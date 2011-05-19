@@ -34,7 +34,9 @@
 #if ENABLE(WEB_SOCKETS)
 
 #include "PlatformString.h"
+#include "ScriptExecutionContext.h"
 #include <wtf/Forward.h>
+#include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
 #include <wtf/Vector.h>
 
@@ -68,16 +70,17 @@ public:
 protected:
     ThreadableWebSocketChannelClientWrapper(WebSocketChannelClient*);
 
-    void processPendingEvents();
+    void processPendingTasks();
+    static void didConnectCallback(ScriptExecutionContext*, RefPtr<ThreadableWebSocketChannelClientWrapper>);
+    static void didReceiveMessageCallback(ScriptExecutionContext*, RefPtr<ThreadableWebSocketChannelClientWrapper>, String message);
+    static void didCloseCallback(ScriptExecutionContext*, RefPtr<ThreadableWebSocketChannelClientWrapper>, unsigned long unhandledBufferedAmount);
 
     WebSocketChannelClient* m_client;
     bool m_syncMethodDone;
     bool m_sent;
     unsigned long m_bufferedAmount;
     bool m_suspended;
-    bool m_pendingConnected;
-    Vector<String> m_pendingMessages;
-    bool m_pendingClosed;
+    Vector<OwnPtr<ScriptExecutionContext::Task> > m_pendingTasks;
 };
 
 } // namespace WebCore
