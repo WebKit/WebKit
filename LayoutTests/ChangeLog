@@ -1,3 +1,69 @@
+2011-05-19  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        Update mac pixel test baseline, had marginal differences in the filter results and the text selection rectangles since a while.
+        The baseline passes again on my 32bit and 64bit machine, using run-webkit-tests --tolerance 0.011 -p svg
+
+        * platform/mac/svg/W3C-SVG-1.1/filters-color-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-comptran-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-morph-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-01-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-tselect-02-f-expected.png:
+        * platform/mac/svg/batik/filters/feTile-expected.png:
+        * platform/mac/svg/custom/feComponentTransfer-Discrete-expected.png:
+        * platform/mac/svg/custom/feComponentTransfer-Gamma-expected.png:
+        * platform/mac/svg/custom/feComponentTransfer-Linear-expected.png:
+        * platform/mac/svg/custom/feComponentTransfer-Table-expected.png:
+        * platform/mac/svg/custom/foreign-object-skew-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetY-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edgeMode-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-preserveAlpha-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetY-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEImageElement-dom-preserveAspectRatio-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEImageElement-svgdom-preserveAspectRatio-prop-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop-expected.png:
+        * platform/mac/svg/filters/feTile-expected.png:
+        * platform/mac/svg/filters/filterRes-expected.png:
+        * platform/mac/svg/filters/filterRes1-expected.png:
+        * platform/mac/svg/filters/filterRes3-expected.png:
+        * platform/mac/svg/filters/parent-children-with-same-filter-expected.png:
+        * platform/mac/svg/filters/subRegion-one-effect-expected.png:
+        * platform/mac/svg/filters/subRegion-two-effects-expected.png:
+        * platform/mac/svg/text/select-textLength-spacing-stretch-4-expected.png:
+        * platform/mac/svg/text/text-align-01-b-expected.png:
+        * platform/mac/svg/text/text-align-02-b-expected.png:
+        * platform/mac/svg/text/text-align-04-b-expected.png:
+        * platform/mac/svg/text/text-align-05-b-expected.png:
+        * platform/mac/svg/text/text-align-06-b-expected.png:
+        * platform/mac/svg/text/text-altglyph-01-b-expected.png:
+        * platform/mac/svg/text/text-deco-01-b-expected.png:
+        * platform/mac/svg/text/text-fonts-01-t-expected.png:
+        * platform/mac/svg/text/text-fonts-02-t-expected.png:
+        * platform/mac/svg/text/text-intro-05-t-expected.png:
+        * platform/mac/svg/text/text-path-01-b-expected.png:
+        * platform/mac/svg/text/text-text-01-b-expected.png:
+        * platform/mac/svg/text/text-text-03-b-expected.png:
+        * platform/mac/svg/text/text-text-04-t-expected.png:
+        * platform/mac/svg/text/text-text-05-t-expected.png:
+        * platform/mac/svg/text/text-text-06-t-expected.png:
+        * platform/mac/svg/text/text-text-07-t-expected.png:
+        * platform/mac/svg/text/text-text-08-b-expected.png:
+        * platform/mac/svg/text/text-tref-01-b-expected.png:
+        * platform/mac/svg/text/text-tselect-01-b-expected.png:
+        * platform/mac/svg/text/text-tselect-02-f-expected.png:
+        * platform/mac/svg/text/text-tspan-01-b-expected.png:
+        * platform/mac/svg/text/text-ws-01-t-expected.png:
+        * platform/mac/svg/text/text-ws-02-t-expected.png:
+        * platform/mac/svg/zoom/text/zoom-foreignObject-expected.png:
+
 2011-05-18  Gabor Loki  <loki@webkit.org>
 
         Rubber-stamped by Csaba Osztrogonác.
