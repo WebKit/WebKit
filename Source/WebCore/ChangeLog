@@ -1,3 +1,15 @@
+2011-05-18  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Fix incorrect size when clipping image layer upload rects
+        https://bugs.webkit.org/show_bug.cgi?id=61105
+
+        The clipped destination and source rects should have the same size.
+
+        * platform/graphics/chromium/ImageLayerChromium.cpp:
+        (WebCore::ImageLayerTextureUpdater::updateTextureRect):
+
 2011-05-17  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.

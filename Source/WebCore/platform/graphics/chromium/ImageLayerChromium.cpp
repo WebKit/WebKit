@@ -71,7 +71,7 @@ public:
 
         IntRect clippedDestRect = destRect;
         clippedDestRect.move(clippedSourceRect.location() - sourceRect.location());
-        clippedDestRect.setSize(sourceRect.size());
+        clippedDestRect.setSize(clippedSourceRect.size());
 
         m_texSubImage.upload(m_image.pixels(), imageRect(), clippedSourceRect, clippedDestRect, context());
     }
