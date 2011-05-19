@@ -1,3 +1,13 @@
+2011-05-19  Adam Roben  <aroben@apple.com>
+
+        Remove a redundant and broken data export
+
+        Data can't be exported from JavaScriptCore.dll by listing it in the .def file. The
+        JS_EXPORTDATA macro must be used instead. (In this case it was already being used, leading
+        to a linker warning about multiple definitions.)
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Removed JSGlobalData::s_info.
+
 2011-05-18  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
