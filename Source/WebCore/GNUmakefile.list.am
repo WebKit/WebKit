@@ -1348,8 +1348,6 @@ webcore_sources += \
 	Source/WebCore/editing/InsertParagraphSeparatorCommand.h \
 	Source/WebCore/editing/InsertTextCommand.cpp \
 	Source/WebCore/editing/InsertTextCommand.h \
-	Source/WebCore/editing/JoinTextNodesCommand.cpp \
-	Source/WebCore/editing/JoinTextNodesCommand.h \
 	Source/WebCore/editing/markup.cpp \
 	Source/WebCore/editing/markup.h \
 	Source/WebCore/editing/MarkupAccumulator.cpp \

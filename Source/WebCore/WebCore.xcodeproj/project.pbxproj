@@ -2809,8 +2809,6 @@
 		93309DF0099E64920056E581 /* InsertParagraphSeparatorCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DA1099E64910056E581 /* InsertParagraphSeparatorCommand.h */; };
 		93309DF1099E64920056E581 /* InsertTextCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DA2099E64910056E581 /* InsertTextCommand.cpp */; };
 		93309DF2099E64920056E581 /* InsertTextCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DA3099E64910056E581 /* InsertTextCommand.h */; };
-		93309DF3099E64920056E581 /* JoinTextNodesCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DA4099E64910056E581 /* JoinTextNodesCommand.cpp */; };
-		93309DF4099E64920056E581 /* JoinTextNodesCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DA5099E64910056E581 /* JoinTextNodesCommand.h */; };
 		93309DF7099E64920056E581 /* markup.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DA8099E64910056E581 /* markup.cpp */; };
 		93309DF8099E64920056E581 /* markup.h in Headers */ = {isa = PBXBuildFile; fileRef = 93309DA9099E64910056E581 /* markup.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		93309DF9099E64920056E581 /* MergeIdenticalElementsCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93309DAA099E64910056E581 /* MergeIdenticalElementsCommand.cpp */; };
@@ -9333,8 +9331,6 @@
 		93309DA1099E64910056E581 /* InsertParagraphSeparatorCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsertParagraphSeparatorCommand.h; sourceTree = "<group>"; };
 		93309DA2099E64910056E581 /* InsertTextCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InsertTextCommand.cpp; sourceTree = "<group>"; };
 		93309DA3099E64910056E581 /* InsertTextCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InsertTextCommand.h; sourceTree = "<group>"; };
-		93309DA4099E64910056E581 /* JoinTextNodesCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JoinTextNodesCommand.cpp; sourceTree = "<group>"; };
-		93309DA5099E64910056E581 /* JoinTextNodesCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JoinTextNodesCommand.h; sourceTree = "<group>"; };
 		93309DA8099E64910056E581 /* markup.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = markup.cpp; sourceTree = "<group>"; };
 		93309DA9099E64910056E581 /* markup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = markup.h; sourceTree = "<group>"; };
 		93309DAA099E64910056E581 /* MergeIdenticalElementsCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MergeIdenticalElementsCommand.cpp; sourceTree = "<group>"; };
@@ -15558,8 +15554,6 @@
 				93309DA1099E64910056E581 /* InsertParagraphSeparatorCommand.h */,
 				93309DA2099E64910056E581 /* InsertTextCommand.cpp */,
 				93309DA3099E64910056E581 /* InsertTextCommand.h */,
-				93309DA4099E64910056E581 /* JoinTextNodesCommand.cpp */,
-				93309DA5099E64910056E581 /* JoinTextNodesCommand.h */,
 				93309DA8099E64910056E581 /* markup.cpp */,
 				93309DA9099E64910056E581 /* markup.h */,
 				9728C3111268E4390041E89B /* MarkupAccumulator.cpp */,
@@ -21311,7 +21305,6 @@
 				59EE12321106082900885116 /* JNIUtility.h in Headers */,
 				59EE122E1106080F00885116 /* JNIUtilityPrivate.h in Headers */,
 				596950821321059900C3ED18 /* JobjectWrapper.h in Headers */,
-				93309DF4099E64920056E581 /* JoinTextNodesCommand.h in Headers */,
 				418F88050FF957AF0080F045 /* JSAbstractWorker.h in Headers */,
 				49EECF01105070C400099FAB /* JSArrayBuffer.h in Headers */,
 				49EECF1C105072F300099FAB /* JSArrayBufferView.h in Headers */,
@@ -24103,7 +24096,6 @@
 				59EE12301106081F00885116 /* JNIUtility.cpp in Sources */,
 				59EE122C1106080500885116 /* JNIUtilityPrivate.cpp in Sources */,
 				59695084132105A500C3ED18 /* JobjectWrapper.cpp in Sources */,
-				93309DF3099E64920056E581 /* JoinTextNodesCommand.cpp in Sources */,
 				418F88040FF957AE0080F045 /* JSAbstractWorker.cpp in Sources */,
 				49EECF00105070C400099FAB /* JSArrayBuffer.cpp in Sources */,
 				BC275CB311C5E85C00C9206C /* JSArrayBufferCustom.cpp in Sources */,

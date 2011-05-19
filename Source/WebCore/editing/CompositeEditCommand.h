@@ -66,7 +66,6 @@ protected:
     void insertParagraphSeparator(bool useDefaultParagraphElement = false);
     void insertLineBreak();
     void insertTextIntoNode(PassRefPtr<Text>, unsigned offset, const String& text);
-    void joinTextNodes(PassRefPtr<Text>, PassRefPtr<Text>);
     void mergeIdenticalElements(PassRefPtr<Element>, PassRefPtr<Element>);
     void rebalanceWhitespace();
     void rebalanceWhitespaceAt(const Position&);

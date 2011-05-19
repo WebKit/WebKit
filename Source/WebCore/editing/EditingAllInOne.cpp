@@ -49,7 +49,6 @@
 #include <InsertNodeBeforeCommand.cpp>
 #include <InsertParagraphSeparatorCommand.cpp>
 #include <InsertTextCommand.cpp>
-#include <JoinTextNodesCommand.cpp>
 #include <MarkupAccumulator.cpp>
 #include <MergeIdenticalElementsCommand.cpp>
 #include <ModifySelectionListLevel.cpp>

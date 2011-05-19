@@ -663,7 +663,6 @@ SET(WebCore_SOURCES
     editing/InsertNodeBeforeCommand.cpp
     editing/InsertParagraphSeparatorCommand.cpp
     editing/InsertTextCommand.cpp
-    editing/JoinTextNodesCommand.cpp
     editing/MarkupAccumulator.cpp
     editing/MergeIdenticalElementsCommand.cpp
     editing/ModifySelectionListLevel.cpp

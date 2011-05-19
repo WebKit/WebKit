@@ -43,7 +43,6 @@
 #include "InsertNodeBeforeCommand.h"
 #include "InsertParagraphSeparatorCommand.h"
 #include "InsertTextCommand.h"
-#include "JoinTextNodesCommand.h"
 #include "MergeIdenticalElementsCommand.h"
 #include "Range.h"
 #include "RemoveCSSPropertyCommand.h"
@@ -291,11 +290,6 @@ void CompositeEditCommand::wrapContentsInDummySpan(PassRefPtr<Element> element)
 void CompositeEditCommand::splitTextNodeContainingElement(PassRefPtr<Text> text, unsigned offset)
 {
     applyCommandToComposite(SplitTextNodeContainingElementCommand::create(text, offset));
-}
-
-void CompositeEditCommand::joinTextNodes(PassRefPtr<Text> text1, PassRefPtr<Text> text2)
-{
-    applyCommandToComposite(JoinTextNodesCommand::create(text1, text2));
 }
 
 void CompositeEditCommand::inputText(const String& text, bool selectInsertedText)

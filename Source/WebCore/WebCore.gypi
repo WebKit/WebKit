@@ -2643,8 +2643,6 @@
             'editing/InsertParagraphSeparatorCommand.h',
             'editing/InsertTextCommand.cpp',
             'editing/InsertTextCommand.h',
-            'editing/JoinTextNodesCommand.cpp',
-            'editing/JoinTextNodesCommand.h',
             'editing/MarkupAccumulator.cpp',
             'editing/MarkupAccumulator.h',
             'editing/MergeIdenticalElementsCommand.cpp',

@@ -584,7 +584,6 @@ SOURCES += \
     editing/InsertNodeBeforeCommand.cpp \
     editing/InsertParagraphSeparatorCommand.cpp \
     editing/InsertTextCommand.cpp \
-    editing/JoinTextNodesCommand.cpp \
     editing/markup.cpp \
     editing/MarkupAccumulator.cpp \
     editing/MergeIdenticalElementsCommand.cpp \
@@ -1559,7 +1558,6 @@ HEADERS += \
     editing/InsertNodeBeforeCommand.h \
     editing/InsertParagraphSeparatorCommand.h \
     editing/InsertTextCommand.h \
-    editing/JoinTextNodesCommand.h \
     editing/markup.h \
     editing/MergeIdenticalElementsCommand.h \
     editing/ModifySelectionListLevel.h \
