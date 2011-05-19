@@ -1,3 +1,11 @@
+2011-05-19  Yuzo Fujishima  <yuzo@google.com>
+
+        Unreviewed Chromium test expectation change.
+
+        svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr.html needs new reference image on Snow Leopard.
+
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEMorphologyElement-dom-radius-attr-expected.png: Added.
+
 2011-05-19  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.
