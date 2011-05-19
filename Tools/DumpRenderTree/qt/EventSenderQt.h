@@ -77,6 +77,7 @@ public slots:
     void zoomPageOut();
     void textZoomIn();
     void textZoomOut();
+    void scalePageBy(float scaleFactor, float x, float y);
     void clearTouchPoints();
     void releaseTouchPoint(int index);
 

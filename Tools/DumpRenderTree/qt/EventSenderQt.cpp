@@ -511,6 +511,12 @@ void EventSender::textZoomOut()
         frame->setTextSizeMultiplier(frame->textSizeMultiplier() / ZOOM_STEP);
 }
 
+void EventSender::scalePageBy(float scaleFactor, float x, float y)
+{
+    if (QWebFrame* frame = m_page->mainFrame())
+        DumpRenderTreeSupportQt::scalePageBy(frame, scaleFactor, QPoint(x, y));
+}
+
 QWebFrame* EventSender::frameUnderMouse() const
 {
     QWebFrame* frame = m_page->mainFrame();

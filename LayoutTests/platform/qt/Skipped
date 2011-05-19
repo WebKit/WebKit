@@ -671,9 +671,6 @@ fast/ruby/rubyDOM-remove-text2.html
 # https://bugs.webkit.org/show_bug.cgi?id=58396
 http/tests/misc/favicon-loads-with-icon-loading-override.html
 
-# Missing eventSender.scalePageBy() implementation
-fast/transforms/selection-bounds-in-transformed-view.html
-
 # ============================================================================= #
 # Failing SVG tests
 # ============================================================================= #

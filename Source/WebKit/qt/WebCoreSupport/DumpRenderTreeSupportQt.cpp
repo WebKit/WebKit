@@ -780,6 +780,12 @@ QString DumpRenderTreeSupportQt::viewportAsText(QWebPage* page, int deviceDPI, c
     return res;
 }
 
+void DumpRenderTreeSupportQt::scalePageBy(QWebFrame* frame, float scalefactor, const QPoint& origin)
+{
+    WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);
+    coreFrame->scalePage(scalefactor, origin);
+}
+
 void DumpRenderTreeSupportQt::activeMockDeviceOrientationClient(bool b)
 {
 #if ENABLE(DEVICE_ORIENTATION)

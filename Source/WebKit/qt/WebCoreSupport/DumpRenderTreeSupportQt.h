@@ -192,6 +192,8 @@ public:
     static void simulateDesktopNotificationClick(const QString& title);
     static QString viewportAsText(QWebPage*, int deviceDPI, const QSize& deviceSize, const QSize& availableSize);
 
+    static void scalePageBy(QWebFrame*, float scale, const QPoint& origin);
+
     static QVariantList nodesFromRect(const QWebElement& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping);
     static QString responseMimeType(QWebFrame*);
     static void clearOpener(QWebFrame*);

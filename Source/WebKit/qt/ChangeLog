@@ -1,3 +1,14 @@
+2011-05-19  Zsolt Fehér  <h490267@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Implement eventSender.scalePageBy
+        https://bugs.webkit.org/show_bug.cgi?id=60015
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::scalePageBy):
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-05-18  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Andreas Kling.

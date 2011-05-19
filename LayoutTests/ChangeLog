@@ -1,3 +1,12 @@
+2011-05-19  Zsolt Fehér  <h490267@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Implement eventSender.scalePageBy
+        https://bugs.webkit.org/show_bug.cgi?id=60015
+
+        * platform/qt/Skipped: Unskip fast/transforms/selection-bounds-in-transformed-view.html.
+
 2011-05-19  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Skip failing tests after r86834.

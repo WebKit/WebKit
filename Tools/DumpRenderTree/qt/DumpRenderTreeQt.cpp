@@ -564,6 +564,7 @@ void DumpRenderTree::resetToConsistentStateBeforeTesting(const QUrl& url)
 #endif
     
     clearHistory(m_page);
+    DumpRenderTreeSupportQt::scalePageBy(m_page->mainFrame(), 1, QPoint(0, 0));
     DumpRenderTreeSupportQt::clearFrameName(m_page->mainFrame());
 
     m_page->mainFrame()->setScrollBarPolicy(Qt::Vertical, Qt::ScrollBarAsNeeded);
