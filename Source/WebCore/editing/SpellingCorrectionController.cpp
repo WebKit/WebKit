@@ -500,7 +500,7 @@ void SpellingCorrectionController::recordSpellcheckerResponseForModifiedCorrecti
     
     // Spelling corrected text has been edited. We need to determine whether user has reverted it to original text or
     // edited it to something else, and notify spellchecker accordingly.
-    if (markersHaveIdenticalDescription(correctedOnceMarkers) && correctedOnceMarkers[0].description == corrected)
+    if (markersHaveIdenticalDescription(correctedOnceMarkers) && correctedOnceMarkers[0].description() == corrected)
         client()->recordAutocorrectionResponse(EditorClient::AutocorrectionReverted, corrected, correction);
     else
         client()->recordAutocorrectionResponse(EditorClient::AutocorrectionEdited, corrected, correction);
@@ -553,7 +553,7 @@ bool SpellingCorrectionController::processMarkersOnTextToBeReplacedByResult(cons
     Vector<DocumentMarker> markers = markerController->markersInRange(precedingCharacterRange.get(), DocumentMarker::DeletedAutocorrection);
 
     for (size_t i = 0; i < markers.size(); ++i) {
-        if (markers[i].description == stringToBeReplaced)
+        if (markers[i].description() == stringToBeReplaced)
             return false;
     }
 
