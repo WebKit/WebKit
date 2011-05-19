@@ -339,6 +339,7 @@ private:
 #endif
     bool m_stateRestored : 1;
     bool m_parsingInProgress : 1;
+    bool m_wasModifiedByUser : 1;
     OwnPtr<InputType> m_inputType;
 };
 

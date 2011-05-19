@@ -38,7 +38,7 @@ textarea = document.createElement('textarea');
 document.body.appendChild(textarea);
 textarea.maxLength = 3;
 textarea.value = 'abcde';
-shouldBeTrue('textarea.validity.tooLong');
+shouldBeFalse('textarea.validity.tooLong');
 
 debug('');
 debug('Disabled');
@@ -59,24 +59,27 @@ textarea.maxLength = 1;
 shouldBeFalse('textarea.validity.tooLong');
 
 debug('');
-debug('A value set by resetting a form or by a child node change doesn\'t make tooLong true.');
+debug('A value set by resetting a form doesn\'t make tooLong true.');
 // Make a dirty textarea.
 var parent = document.createElement('div');
 document.body.appendChild(parent);
-parent.innerHTML = '<form><textarea maxlength=2>abc</textarea></form>';
+parent.innerHTML = '<form><textarea maxlength=2>abcdef</textarea></form>';
 textarea = parent.firstChild.firstChild;
-textarea.value = 'def';
+textarea.focus();
+textarea.setSelectionRange(6, 6);
+document.execCommand('delete');
 shouldBeTrue('textarea.validity.tooLong');
 parent.firstChild.reset();
-shouldBe('textarea.value', '"abc"');
+shouldBe('textarea.value', '"abcdef"');
 shouldBeFalse('textarea.validity.tooLong');
 
+debug('');
+debug('A value set by a child node change doesn\'t make tooLong true.');
 parent.innerHTML = '<textarea maxlength=2>abc</textarea>';
 textarea = parent.firstChild;
-textarea.value = 'def';
-shouldBeTrue('textarea.validity.tooLong');
+shouldBeFalse('textarea.validity.tooLong');
 parent.firstChild.innerHTML = 'abcdef';
-shouldBe('textarea.value', '"def"');
-shouldBeTrue('textarea.validity.tooLong');
+shouldBe('textarea.value', '"abcdef"');
+shouldBeFalse('textarea.validity.tooLong');
 
 var successfullyParsed = true;

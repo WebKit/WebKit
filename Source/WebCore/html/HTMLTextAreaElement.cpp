@@ -71,6 +71,7 @@ HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document*
     , m_cachedSelectionStart(-1)
     , m_cachedSelectionEnd(-1)
     , m_isDirty(false)
+    , m_wasModifiedByUser(false)
 {
     ASSERT(hasTagName(textareaTag));
     setFormControlValueMatchesRenderer(true);
@@ -277,6 +278,7 @@ void HTMLTextAreaElement::updateValue() const
     const_cast<HTMLTextAreaElement*>(this)->setFormControlValueMatchesRenderer(true);
     notifyFormStateChanged(this);
     m_isDirty = true;
+    const_cast<HTMLTextAreaElement*>(this)->m_wasModifiedByUser = true;
     const_cast<HTMLTextAreaElement*>(this)->updatePlaceholderVisibility(false);
 }
 
@@ -304,6 +306,7 @@ void HTMLTextAreaElement::setNonDirtyValue(const String& value)
 
 void HTMLTextAreaElement::setValueCommon(const String& value)
 {
+    m_wasModifiedByUser = false;
     // Code elsewhere normalizes line endings added by the user via the keyboard or pasting.
     // We normalize line endings coming from JavaScript here.
     String normalizedValue = value.isNull() ? "" : value;
@@ -384,8 +387,9 @@ void HTMLTextAreaElement::setMaxLength(int newValue, ExceptionCode& ec)
 
 bool HTMLTextAreaElement::tooLong(const String& value, NeedsToCheckDirtyFlag check) const
 {
-    // Return false for the default value even if it is longer than maxLength.
-    if (check == CheckDirtyFlag && !m_isDirty)
+    // Return false for the default value or value set by script even if it is
+    // longer than maxLength.
+    if (check == CheckDirtyFlag && !m_wasModifiedByUser)
         return false;
 
     int max = maxLength();

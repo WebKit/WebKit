@@ -1,3 +1,41 @@
+2011-05-19  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        tooLong validity should not be true for a value set by a script
+        https://bugs.webkit.org/show_bug.cgi?id=60948
+
+        The specification has been updated so that tooLong should be true only
+        for user-edit values.
+        
+        Introduce m_wasModifiedByUser flag to HTMLInputElement and
+        HTMLTextAreaElemnt. It is set to true when a renderer updates the
+        value, and is cleared when the value is updated by others.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::HTMLInputElement):
+          Initialize m_wasModifiedByUser.
+        (WebCore::HTMLInputElement::tooLong):
+          Skip the check if m_wasModifiedByUser is false.
+        (WebCore::HTMLInputElement::updateType): Clear m_wasModifiedByUser.
+        (WebCore::HTMLInputElement::copyNonAttributeProperties):
+        (WebCore::HTMLInputElement::setValue): If sendChange is true,
+          m_wasModifiedByUser should be true because sendChange is set in a case
+          of form auto-fill.  We assume a value set by form auto-fill is a kind
+          of user-edit.
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+          m_wasModifiedByUser should be true for the update by a renderer.
+        * html/HTMLInputElement.h: Declare m_wasModifiedByUser.
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::HTMLTextAreaElement):
+          Initialize m_wasModifiedByUser.
+        (WebCore::HTMLTextAreaElement::updateValue):
+          m_wasModifiedByUser should be true for the update by a renderer.
+        (WebCore::HTMLTextAreaElement::setValueCommon): Clear m_wasModifiedByUser.
+        (WebCore::HTMLTextAreaElement::tooLong):
+          Skip the check if m_wasModifiedByUser is false.
+        * html/HTMLTextAreaElement.h: Declare m_wasModifiedByUser.
+
 2011-05-19  David Barr  <davidbarr@chromium.org>
 
         Reviewed by Simon Fraser.

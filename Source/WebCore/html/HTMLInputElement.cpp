@@ -93,6 +93,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* docum
     , m_isAutofilled(false)
     , m_stateRestored(false)
     , m_parsingInProgress(createdByParser)
+    , m_wasModifiedByUser(false)
     , m_inputType(InputType::createText(this))
 {
     ASSERT(hasTagName(inputTag) || hasTagName(isindexTag));
@@ -218,9 +219,10 @@ bool HTMLInputElement::tooLong(const String& value, NeedsToCheckDirtyFlag check)
     if (max < 0)
         return false;
     if (check == CheckDirtyFlag) {
-        // Return false for the default value even if it is longer than maxLength.
-        bool userEdited = !m_value.isNull();
-        if (!userEdited)
+        // Return false for the default value or a value set by a script even if
+        // it is longer than maxLength.
+        bool dirty = !m_value.isNull();
+        if (!dirty || !m_wasModifiedByUser)
             return false;
     }
     return numGraphemeClusters(value) > static_cast<unsigned>(max);
@@ -518,6 +520,7 @@ void HTMLInputElement::updateType()
         m_value = sanitizeValue(fastGetAttribute(valueAttr));
     else
         updateValueIfNeeded();
+    m_wasModifiedByUser = false;
 
     if (neededActivationCallback)
         unregisterForActivationCallbackIfNeeded();
@@ -861,6 +864,7 @@ void HTMLInputElement::copyNonAttributeProperties(const Element* source)
     const HTMLInputElement* sourceElement = static_cast<const HTMLInputElement*>(source);
 
     m_value = sourceElement->m_value;
+    m_wasModifiedByUser = false;
     setChecked(sourceElement->m_isChecked);
     m_reflectsCheckedAttribute = sourceElement->m_reflectsCheckedAttribute;
     m_isIndeterminate = sourceElement->m_isIndeterminate;
@@ -928,6 +932,7 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
             files()->clear();
         else {
             m_value = sanitizeValue(value);
+            m_wasModifiedByUser = sendChangeEvent;
             if (isTextField())
                 updatePlaceholderVisibility(false);
         }
@@ -1017,6 +1022,7 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     m_value = value == "\n" ? String("") : value;
 
     setFormControlValueMatchesRenderer(true);
+    m_wasModifiedByUser = true;
 
     // Input event is fired by the Node::defaultEventHandler for editable controls.
     if (!isTextField())

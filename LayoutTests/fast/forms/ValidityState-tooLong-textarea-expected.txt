@@ -18,7 +18,7 @@ PASS textarea.validity.tooLong is true
 PASS textarea.validity.tooLong is false
 
 Sets a value via DOM property
-PASS textarea.validity.tooLong is true
+PASS textarea.validity.tooLong is false
 
 Disabled
 PASS textarea.validity.tooLong is false
@@ -26,13 +26,15 @@ PASS textarea.validity.tooLong is false
 Grapheme length is not greater than maxLength though character length is greater
 PASS textarea.validity.tooLong is false
 
-A value set by resetting a form or by a child node change doesn't make tooLong true.
+A value set by resetting a form doesn't make tooLong true.
 PASS textarea.validity.tooLong is true
-PASS textarea.value is "abc"
+PASS textarea.value is "abcdef"
 PASS textarea.validity.tooLong is false
-PASS textarea.validity.tooLong is true
-PASS textarea.value is "def"
-PASS textarea.validity.tooLong is true
+
+A value set by a child node change doesn't make tooLong true.
+PASS textarea.validity.tooLong is false
+PASS textarea.value is "abcdef"
+PASS textarea.validity.tooLong is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -110,6 +110,7 @@ private:
     int m_cachedSelectionStart;
     int m_cachedSelectionEnd;
     mutable bool m_isDirty;
+    bool m_wasModifiedByUser;
 };
 
 } //namespace

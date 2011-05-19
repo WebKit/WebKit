@@ -36,7 +36,7 @@ debug('');
 debug('Sets a value via DOM property');
 input.maxLength = 3;
 input.value = 'abcde';
-shouldBeTrue('input.validity.tooLong');
+shouldBeFalse('input.validity.tooLong');
 
 debug('');
 debug('Disabled');
@@ -61,9 +61,10 @@ debug('Change the type with a too long value');
 input.maxLength = 3;
 input.value = 'abcde';
 input.type = 'search';
+input.focus();
+input.setSelectionRange(5, 5);
+document.execCommand('delete');
 shouldBeTrue('input.validity.tooLong');
-
-input.type = 'number';
-shouldBeFalse('input.validity.tooLong');
+shouldBeFalse('input.type = "number"; input.validity.tooLong');
 
 var successfullyParsed = true;
