@@ -7,18 +7,6 @@
 	objects = {
 
 /* Begin PBXAggregateTarget section */
-		41816F7913859C550057AAA4 /* All */ = {
-			isa = PBXAggregateTarget;
-			buildConfigurationList = 41816F8113859C640057AAA4 /* Build configuration list for PBXAggregateTarget "All" */;
-			buildPhases = (
-			);
-			dependencies = (
-				41816F8313859C7A0057AAA4 /* PBXTargetDependency */,
-				41816F8513859C7D0057AAA4 /* PBXTargetDependency */,
-			);
-			name = All;
-			productName = All;
-		};
 		5D87BB6411E3EBC100702B6F /* WebCoreExportFileGenerator Generator */ = {
 			isa = PBXAggregateTarget;
 			buildConfigurationList = 5D87BB6C11E3EC0000702B6F /* Build configuration list for PBXAggregateTarget "WebCoreExportFileGenerator Generator" */;
@@ -864,12 +852,6 @@
 		416E75CC0EDF90C700360E1D /* ScriptCallFrame.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 416E75CA0EDF90C700360E1D /* ScriptCallFrame.cpp */; };
 		417253AA1354BBBC00360F2A /* MediaControlElements.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 417253A81354BBBC00360F2A /* MediaControlElements.cpp */; };
 		417253AB1354BBBC00360F2A /* MediaControlElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 417253A91354BBBC00360F2A /* MediaControlElements.h */; };
-		417DA6D913734E6E007C57FB /* Internals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 417DA4CF13734326007C57FB /* Internals.cpp */; };
-		417DA6DA13734E6E007C57FB /* Internals.h in Headers */ = {isa = PBXBuildFile; fileRef = 417DA4CE13734326007C57FB /* Internals.h */; };
-		417DA71D13735DFA007C57FB /* JSInternals.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 417DA71B13735DFA007C57FB /* JSInternals.cpp */; };
-		417DA71E13735DFA007C57FB /* JSInternals.h in Headers */ = {isa = PBXBuildFile; fileRef = 417DA71C13735DFA007C57FB /* JSInternals.h */; };
-		41815C1E138319830057AAA4 /* WebCoreTestSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41815C1C138319830057AAA4 /* WebCoreTestSupport.cpp */; };
-		41815C1F138319830057AAA4 /* WebCoreTestSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 41815C1D138319830057AAA4 /* WebCoreTestSupport.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41885B9311B6FDA6003383BB /* FormSubmission.h in Headers */ = {isa = PBXBuildFile; fileRef = 41885B9111B6FDA6003383BB /* FormSubmission.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		41885B9411B6FDA6003383BB /* FormSubmission.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 41885B9211B6FDA6003383BB /* FormSubmission.cpp */; };
 		418A06D0133C04D500CD379C /* EventDispatcher.h in Headers */ = {isa = PBXBuildFile; fileRef = 418A06CE133C04D500CD379C /* EventDispatcher.h */; };
@@ -5971,27 +5953,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		417DA6D413734E0D007C57FB /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 93F198A508245E59001E9ABC;
-			remoteInfo = WebCore;
-		};
-		41816F8213859C7A0057AAA4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 93F198A508245E59001E9ABC /* WebCore */;
-			remoteInfo = WebCore;
-		};
-		41816F8413859C7D0057AAA4 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 417DA6CF13734E02007C57FB /* WebCoreTestSupport */;
-			remoteInfo = WebCoreTestSupport;
-		};
 		5D87BB6A11E3EBD200702B6F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0867D690FE84028FC02AAC07 /* Project object */;
@@ -7358,14 +7319,6 @@
 		416E75CA0EDF90C700360E1D /* ScriptCallFrame.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallFrame.cpp; sourceTree = "<group>"; };
 		417253A81354BBBC00360F2A /* MediaControlElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MediaControlElements.cpp; sourceTree = "<group>"; };
 		417253A91354BBBC00360F2A /* MediaControlElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlElements.h; sourceTree = "<group>"; };
-		417DA4CE13734326007C57FB /* Internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Internals.h; sourceTree = "<group>"; };
-		417DA4CF13734326007C57FB /* Internals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Internals.cpp; sourceTree = "<group>"; };
-		417DA6D013734E02007C57FB /* libWebCoreTestSupport.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWebCoreTestSupport.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		417DA71B13735DFA007C57FB /* JSInternals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInternals.cpp; sourceTree = "<group>"; };
-		417DA71C13735DFA007C57FB /* JSInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInternals.h; sourceTree = "<group>"; };
-		41813F9113818AD60057AAA4 /* Internals.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Internals.idl; sourceTree = "<group>"; };
-		41815C1C138319830057AAA4 /* WebCoreTestSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreTestSupport.cpp; sourceTree = "<group>"; };
-		41815C1D138319830057AAA4 /* WebCoreTestSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebCoreTestSupport.h; sourceTree = "<group>"; };
 		41885B9111B6FDA6003383BB /* FormSubmission.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormSubmission.h; sourceTree = "<group>"; };
 		41885B9211B6FDA6003383BB /* FormSubmission.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FormSubmission.cpp; sourceTree = "<group>"; };
 		418A06CE133C04D500CD379C /* EventDispatcher.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventDispatcher.h; sourceTree = "<group>"; };
@@ -12547,13 +12500,6 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		417DA6CE13734E02007C57FB /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5D87BB4D11E3EAEB00702B6F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -12591,7 +12537,6 @@
 			isa = PBXGroup;
 			children = (
 				5D87BB4F11E3EAEB00702B6F /* WebCoreExportFileGenerator */,
-				417DA6D013734E02007C57FB /* libWebCoreTestSupport.a */,
 				93F19B1A08245E5A001E9ABC /* WebCore.framework */,
 			);
 			name = Products;
@@ -12664,7 +12609,6 @@
 				F523D2F302DE443B018635CA /* rendering */,
 				1AE82EC90CAAE177002237AE /* storage */,
 				B22277CA0D00BF1E0071B782 /* svg */,
-				417DA4CD13734204007C57FB /* testing */,
 				FD315FA212B025B100C1A359 /* webaudio */,
 				518A34BD1026C831001B6896 /* websockets */,
 				2E4346310F546A6800B0F1BA /* workers */,
@@ -12870,7 +12814,6 @@
 				BC9854460CD3DA5F00069BC1 /* Ranges */,
 				A83B79150CCB0078000B0825 /* Storage */,
 				A83B790A0CCAFF47000B0825 /* SVG */,
-				417DA71213735D90007C57FB /* Testing */,
 				E1C8BE4B0E8BD0D10064CB7D /* Threads */,
 				BC9854530CD3DA8F00069BC1 /* Traversal */,
 				FDA15E7B12B03E04003A583A /* WebAudio */,
@@ -13524,35 +13467,6 @@
 				142B97C813138943008BEF4B /* TextControlInnerElements.h */,
 			);
 			path = shadow;
-			sourceTree = "<group>";
-		};
-		417DA4CD13734204007C57FB /* testing */ = {
-			isa = PBXGroup;
-			children = (
-				41815C1B138319630057AAA4 /* js */,
-				417DA4CF13734326007C57FB /* Internals.cpp */,
-				417DA4CE13734326007C57FB /* Internals.h */,
-				41813F9113818AD60057AAA4 /* Internals.idl */,
-			);
-			path = testing;
-			sourceTree = "<group>";
-		};
-		417DA71213735D90007C57FB /* Testing */ = {
-			isa = PBXGroup;
-			children = (
-				417DA71B13735DFA007C57FB /* JSInternals.cpp */,
-				417DA71C13735DFA007C57FB /* JSInternals.h */,
-			);
-			name = Testing;
-			sourceTree = "<group>";
-		};
-		41815C1B138319630057AAA4 /* js */ = {
-			isa = PBXGroup;
-			children = (
-				41815C1C138319830057AAA4 /* WebCoreTestSupport.cpp */,
-				41815C1D138319830057AAA4 /* WebCoreTestSupport.h */,
-			);
-			path = js;
 			sourceTree = "<group>";
 		};
 		439046C212DA25CE00AF80A2 /* mathml */ = {
@@ -19817,16 +19731,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
-		417DA6CC13734E02007C57FB /* Headers */ = {
-			isa = PBXHeadersBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				417DA6DA13734E6E007C57FB /* Internals.h in Headers */,
-				417DA71E13735DFA007C57FB /* JSInternals.h in Headers */,
-				41815C1F138319830057AAA4 /* WebCoreTestSupport.h in Headers */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		93F198A608245E59001E9ABC /* Headers */ = {
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
@@ -22926,24 +22830,6 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		417DA6CF13734E02007C57FB /* WebCoreTestSupport */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 417DA6D813734E47007C57FB /* Build configuration list for PBXNativeTarget "WebCoreTestSupport" */;
-			buildPhases = (
-				417DA6CC13734E02007C57FB /* Headers */,
-				417DA6CD13734E02007C57FB /* Sources */,
-				417DA6CE13734E02007C57FB /* Frameworks */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				417DA6D513734E0D007C57FB /* PBXTargetDependency */,
-			);
-			name = WebCoreTestSupport;
-			productName = WebCoreTestSupport;
-			productReference = 417DA6D013734E02007C57FB /* libWebCoreTestSupport.a */;
-			productType = "com.apple.product-type.library.static";
-		};
 		5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 5D87BB5911E3EB0700702B6F /* Build configuration list for PBXNativeTarget "WebCoreExportFileGenerator" */;
@@ -23013,12 +22899,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				41816F7913859C550057AAA4 /* All */,
 				93F198A508245E59001E9ABC /* WebCore */,
 				DD041FBE09D9DDBE0010AF2A /* Derived Sources */,
 				5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */,
 				5D87BB6411E3EBC100702B6F /* WebCoreExportFileGenerator Generator */,
-				417DA6CF13734E02007C57FB /* WebCoreTestSupport */,
 			);
 		};
 /* End PBXProject section */
@@ -23229,16 +23113,6 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		417DA6CD13734E02007C57FB /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				417DA6D913734E6E007C57FB /* Internals.cpp in Sources */,
-				417DA71D13735DFA007C57FB /* JSInternals.cpp in Sources */,
-				41815C1E138319830057AAA4 /* WebCoreTestSupport.cpp in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		5D87BB4C11E3EAEB00702B6F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -25630,21 +25504,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		417DA6D513734E0D007C57FB /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 93F198A508245E59001E9ABC /* WebCore */;
-			targetProxy = 417DA6D413734E0D007C57FB /* PBXContainerItemProxy */;
-		};
-		41816F8313859C7A0057AAA4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 93F198A508245E59001E9ABC /* WebCore */;
-			targetProxy = 41816F8213859C7A0057AAA4 /* PBXContainerItemProxy */;
-		};
-		41816F8513859C7D0057AAA4 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 417DA6CF13734E02007C57FB /* WebCoreTestSupport */;
-			targetProxy = 41816F8413859C7D0057AAA4 /* PBXContainerItemProxy */;
-		};
 		5D87BB6B11E3EBD200702B6F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 5D87BB6411E3EBC100702B6F /* WebCoreExportFileGenerator Generator */;
@@ -25745,87 +25604,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 1CDD45E60BA9C84600F90147 /* Base.xcconfig */;
 			buildSettings = {
-			};
-			name = Production;
-		};
-		417DA6D113734E02007C57FB /* Debug */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = NO;
-				EXPORTED_SYMBOLS_FILE = "";
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
-				PRIVATE_HEADERS_FOLDER_PATH = WebCoreTestSupport;
-				PRODUCT_NAME = WebCoreTestSupport;
-			};
-			name = Debug;
-		};
-		417DA6D213734E02007C57FB /* Release */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				EXPORTED_SYMBOLS_FILE = "";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
-				PRIVATE_HEADERS_FOLDER_PATH = WebCoreTestSupport;
-				PRODUCT_NAME = WebCoreTestSupport;
-			};
-			name = Release;
-		};
-		417DA6D313734E02007C57FB /* Production */ = {
-			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1CDD45E50BA9C84600F90147 /* WebCore.xcconfig */;
-			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				EXPORTED_SYMBOLS_FILE = "";
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_MODEL_TUNING = G5;
-				INSTALL_PATH = /usr/local/lib;
-				OTHER_LDFLAGS = "";
-				PREBINDING = NO;
-				PRIVATE_HEADERS_FOLDER_PATH = WebCoreTestSupport;
-				PRODUCT_NAME = WebCoreTestSupport;
-			};
-			name = Production;
-		};
-		41816F7A13859C560057AAA4 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				PRODUCT_NAME = All;
-			};
-			name = Debug;
-		};
-		41816F7B13859C560057AAA4 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				PRODUCT_NAME = All;
-				ZERO_LINK = NO;
-			};
-			name = Release;
-		};
-		41816F7C13859C560057AAA4 /* Production */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				PRODUCT_NAME = All;
 			};
 			name = Production;
 		};
@@ -25930,26 +25708,6 @@
 				149C284408902B11008A9EFC /* Debug */,
 				149C284508902B11008A9EFC /* Release */,
 				149C284708902B11008A9EFC /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		417DA6D813734E47007C57FB /* Build configuration list for PBXNativeTarget "WebCoreTestSupport" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				417DA6D113734E02007C57FB /* Debug */,
-				417DA6D213734E02007C57FB /* Release */,
-				417DA6D313734E02007C57FB /* Production */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Production;
-		};
-		41816F8113859C640057AAA4 /* Build configuration list for PBXAggregateTarget "All" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				41816F7A13859C560057AAA4 /* Debug */,
-				41816F7B13859C560057AAA4 /* Release */,
-				41816F7C13859C560057AAA4 /* Production */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Production;

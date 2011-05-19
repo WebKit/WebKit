@@ -1,3 +1,27 @@
+2011-05-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86869, r86873, r86875, and r86877.
+        http://trac.webkit.org/changeset/86869
+        http://trac.webkit.org/changeset/86873
+        http://trac.webkit.org/changeset/86875
+        http://trac.webkit.org/changeset/86877
+        https://bugs.webkit.org/show_bug.cgi?id=61139
+
+        broke builds and debug DRT (Requested by rniwa on #webkit).
+
+        * DerivedSources.make:
+        * WebCore.exp.in:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * testing/Internals.cpp: Removed.
+        * testing/Internals.h: Removed.
+        * testing/Internals.idl: Removed.
+        * testing/js/WebCoreTestSupport.cpp: Removed.
+        * testing/js/WebCoreTestSupport.h: Removed.
+        * testing/v8/WebCoreTestSupport.cpp: Removed.
+        * testing/v8/WebCoreTestSupport.h: Removed.
+
 2011-05-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         One more fix after r86869.

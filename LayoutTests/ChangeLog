@@ -1,3 +1,25 @@
+2011-05-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86869, r86873, r86875, and r86877.
+        http://trac.webkit.org/changeset/86869
+        http://trac.webkit.org/changeset/86873
+        http://trac.webkit.org/changeset/86875
+        http://trac.webkit.org/changeset/86877
+        https://bugs.webkit.org/show_bug.cgi?id=61139
+
+        broke builds and debug DRT (Requested by rniwa on #webkit).
+
+        * fast/dom/Window/script-tests/window-property-descriptors.js:
+        * fast/dom/Window/window-properties.html:
+        * fast/dom/script-tests/prototype-inheritance-2.js:
+        * fast/dom/script-tests/prototype-inheritance.js:
+        * fast/harness/internals-object-expected.txt: Removed.
+        * fast/harness/internals-object.html: Removed.
+        * platform/gtk/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-05-19  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed.

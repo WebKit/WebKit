@@ -18,7 +18,6 @@ var __skip__ = {
     "objCPluginFunction" : 1,
     "plainText" : 1,
     "textInputController" : 1,
-    "internals" : 1,
     // Ignore these properties because they do not exist in all implementations. They will be tested separately
     "WebGLRenderingContext" : 1,
     "WebGLActiveInfo" : 1,
