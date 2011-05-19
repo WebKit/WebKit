@@ -117,6 +117,8 @@ String InjectedBundlePageUIClient::generateFileForUpload(WebPage* page, const St
 
 bool InjectedBundlePageUIClient::shouldRubberBandInDirection(WebPage* page, WKScrollDirection direction) const
 {
+    if (!m_client.shouldRubberBandInDirection)
+        return true;
     return m_client.shouldRubberBandInDirection(toAPI(page), direction, m_client.clientInfo);
 }
 
