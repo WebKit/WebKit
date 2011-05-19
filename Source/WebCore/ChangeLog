@@ -1,3 +1,9 @@
+2011-05-19  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Fix Leopard build after r86869.
+
+        * WebCore.exp.in: Moved now-always-used exported symbols out of the conditional guard.
+
 2011-05-19  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
