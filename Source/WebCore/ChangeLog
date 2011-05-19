@@ -1,3 +1,27 @@
+2011-05-18  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        InjectedScriptSource.js - "Don't be eval()."
+        https://bugs.webkit.org/show_bug.cgi?id=60800
+
+        Thanks to Adam Barth for providing JSC implementation!
+
+        InjectedScriptHost.evaluate is used to perform script evaluations for
+        inspector needs. This method is not affected by CSP and should fix inspector
+        on pages with CSP restrictions.
+
+        Test: inspector/console/console-eval-blocked.html
+
+        * bindings/js/JSInjectedScriptHostCustom.cpp:
+        (WebCore::JSInjectedScriptHost::evaluate):
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::evaluateCallback):
+        (WebCore::V8InjectedScriptHost::inspectedNodeCallback):
+        * inspector/InjectedScriptHost.idl:
+        * inspector/InjectedScriptSource.js:
+        (.):
+
 2011-05-19  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

@@ -240,7 +240,7 @@ int ScriptController::eventHandlerLineNumber() const
 
 void ScriptController::disableEval()
 {
-    windowShell(mainThreadNormalWorld())->window()->disableEval();
+    windowShell(mainThreadNormalWorld())->window()->setEvalEnabled(false);
 }
 
 bool ScriptController::processingUserGesture()

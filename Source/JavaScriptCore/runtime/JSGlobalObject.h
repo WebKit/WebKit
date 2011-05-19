@@ -119,7 +119,7 @@ namespace JSC {
 
         SymbolTable m_symbolTable;
 
-        bool m_isEvalEnabled;
+        bool m_evalEnabled;
 
     public:
         void* operator new(size_t, JSGlobalData*);
@@ -129,7 +129,7 @@ namespace JSC {
             , m_registerArraySize(0)
             , m_globalScopeChain()
             , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
-            , m_isEvalEnabled(true)
+            , m_evalEnabled(true)
         {
             COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
             putThisToAnonymousValue(0);
@@ -144,7 +144,7 @@ namespace JSC {
             , m_registerArraySize(0)
             , m_globalScopeChain()
             , m_weakRandom(static_cast<unsigned>(randomNumber() * (std::numeric_limits<unsigned>::max() + 1.0)))
-            , m_isEvalEnabled(true)
+            , m_evalEnabled(true)
         {
             COMPILE_ASSERT(JSGlobalObject::AnonymousSlotCount == 1, JSGlobalObject_has_only_a_single_slot);
             putThisToAnonymousValue(0);
@@ -235,8 +235,8 @@ namespace JSC {
 
         virtual bool isDynamicScope(bool& requiresDynamicChecks) const;
 
-        void disableEval();
-        bool isEvalEnabled() { return m_isEvalEnabled; }
+        void setEvalEnabled(bool enabled) { m_evalEnabled = enabled; }
+        bool evalEnabled() { return m_evalEnabled; }
 
         void copyGlobalsFrom(RegisterFile&);
         void copyGlobalsTo(RegisterFile&);

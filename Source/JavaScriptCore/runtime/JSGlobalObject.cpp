@@ -376,12 +376,6 @@ bool JSGlobalObject::isDynamicScope(bool&) const
     return true;
 }
 
-void JSGlobalObject::disableEval()
-{
-    ASSERT(m_isEvalEnabled);
-    m_isEvalEnabled = false;
-}
-
 void JSGlobalObject::copyGlobalsFrom(RegisterFile& registerFile)
 {
     ASSERT(!m_registerArray);

@@ -102,7 +102,7 @@ JSObject* EvalExecutable::compileInternal(ExecState* exec, ScopeChainNode* scope
     JSObject* exception = 0;
     JSGlobalData* globalData = &exec->globalData();
     JSGlobalObject* lexicalGlobalObject = exec->lexicalGlobalObject();
-    if (!lexicalGlobalObject->isEvalEnabled())
+    if (!lexicalGlobalObject->evalEnabled())
         return throwError(exec, createEvalError(exec, "Eval is disabled"));
     RefPtr<EvalNode> evalNode = globalData->parser->parse<EvalNode>(lexicalGlobalObject, lexicalGlobalObject->debugger(), exec, m_source, 0, isStrictMode() ? JSParseStrict : JSParseNormal, &exception);
     if (!evalNode) {

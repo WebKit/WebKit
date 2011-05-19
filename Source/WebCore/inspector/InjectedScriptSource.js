@@ -116,7 +116,7 @@ InjectedScript.prototype = {
 
     _parseObjectId: function(objectId)
     {
-        return eval("(" + objectId + ")");
+        return InjectedScriptHost.evaluate("(" + objectId + ")");
     },
 
     releaseObjectGroup: function(objectGroupName)
@@ -131,7 +131,7 @@ InjectedScript.prototype = {
 
     dispatch: function(methodName, args)
     {
-        var argsArray = eval("(" + args + ")");
+        var argsArray = InjectedScriptHost.evaluate("(" + args + ")");
         var result = this[methodName].apply(this, argsArray);
         if (typeof result === "undefined") {
             inspectedWindow.console.error("Web Inspector error: InjectedScript.%s returns undefined", methodName);
@@ -199,12 +199,12 @@ InjectedScript.prototype = {
             // There is a regression introduced here: eval is now happening against global object,
             // not call frame while on a breakpoint.
             // TODO: bring evaluation against call frame back.
-            var result = inspectedWindow.eval("(" + expression + ")");
+            var result = InjectedScriptHost.evaluate("(" + expression + ")");
             // Store the result in the property.
             object[propertyName] = result;
         } catch(e) {
             try {
-                var result = inspectedWindow.eval("\"" + expression.replace(/"/g, "\\\"") + "\"");
+                var result = InjectedScriptHost.evaluate("\"" + expression.replace(/"/g, "\\\"") + "\"");
                 object[propertyName] = result;
             } catch(e) {
                 return e.toString();
@@ -245,7 +245,7 @@ InjectedScript.prototype = {
 
     evaluate: function(expression, objectGroup, injectCommandLineAPI)
     {
-        return this._evaluateAndWrap(inspectedWindow.eval, inspectedWindow, expression, objectGroup, false, injectCommandLineAPI);
+        return this._evaluateAndWrap(InjectedScriptHost.evaluate, InjectedScriptHost, expression, objectGroup, false, injectCommandLineAPI);
     },
 
     evaluateOn: function(objectId, expression)
@@ -315,7 +315,7 @@ InjectedScript.prototype = {
 
     _callFrameForId: function(topCallFrame, callFrameId)
     {
-        var parsedCallFrameId = eval("(" + callFrameId + ")");
+        var parsedCallFrameId = InjectedScriptHost.evaluate("(" + callFrameId + ")");
         var ordinal = parsedCallFrameId.ordinal;
         var callFrame = topCallFrame;
         while (--ordinal >= 0 && callFrame)

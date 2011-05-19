@@ -74,7 +74,7 @@ CallType FunctionConstructor::getCallData(CallData& callData)
 // ECMA 15.3.2 The Function Constructor
 JSObject* constructFunction(ExecState* exec, JSGlobalObject* globalObject, const ArgList& args, const Identifier& functionName, const UString& sourceURL, int lineNumber)
 {
-    if (!globalObject->isEvalEnabled())
+    if (!globalObject->evalEnabled())
         return throwError(exec, createEvalError(exec, "Function constructor is disabled"));
     return constructFunctionSkippingEvalEnabledCheck(exec, globalObject, args, functionName, sourceURL, lineNumber);
 }
