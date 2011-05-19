@@ -1,3 +1,13 @@
+2011-05-18  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        http/tests/websocket/tests/workers/worker-handshake-challenge-randomness.html crashed once on Windows XP Debug (Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=57048
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::platformClose): use loaderRunLoop to schedule streams on platform WIN
+
 2011-05-18  MORITA Hajime  <morrita@google.com>
 
         Unreviewed attempt to fix clang build.

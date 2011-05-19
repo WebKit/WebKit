@@ -572,8 +572,13 @@ void SocketStreamHandle::platformClose()
     if (!m_readStream)
         return;
 
+#if PLATFORM(WIN)
+    CFReadStreamUnscheduleFromRunLoop(m_readStream.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
+    CFWriteStreamUnscheduleFromRunLoop(m_writeStream.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
+#else
     CFReadStreamUnscheduleFromRunLoop(m_readStream.get(), CFRunLoopGetCurrent(), kCFRunLoopCommonModes);
     CFWriteStreamUnscheduleFromRunLoop(m_writeStream.get(), CFRunLoopGetCurrent(), kCFRunLoopCommonModes);
+#endif
 
     CFReadStreamClose(m_readStream.get());
     CFWriteStreamClose(m_writeStream.get());
