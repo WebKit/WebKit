@@ -1,3 +1,17 @@
+2011-05-19  Lucas Forschler  <lforschler@apple.com>
+    
+    Merge r86725.
+    
+    2011-05-17  Cris Neckar  <cdn@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Tests for crash when two nested image objects with invalid data are loaded.
+        https://bugs.webkit.org/show_bug.cgi?id=61005
+
+        * http/tests/loading/nested_bad_objects-expected.txt: Added.
+        * http/tests/loading/nested_bad_objects.php: Added.
+
 2011-05-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Enrica Casucci.
