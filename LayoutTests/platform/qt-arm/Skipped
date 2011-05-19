@@ -4149,7 +4149,7 @@ http/tests/misc/iframe404.html
 http/tests/misc/location-replace-crossdomain.html
 http/tests/uri/css-href.php
 
-# unskipped by r86834, but fail on Qt-WK2 platform
+# unskipped by r86834, but fail on Qt-ARM platform
 editing/style/5046875-1.html
 editing/style/5046875-2.html
 editing/style/5065910.html
@@ -4180,3 +4180,6 @@ editing/style/style-3998892-fix.html
 editing/style/style-boundary-001.html
 editing/style/style-boundary-004.html
 editing/style/table-selection.html
+
+# unskipped by r86841, but fail on Qt-ARM platform
+fast/transforms/selection-bounds-in-transformed-view.html

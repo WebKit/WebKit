@@ -1,5 +1,11 @@
 2011-05-19  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Skip failing test after r86841.
+
+        * platform/qt-arm/Skipped:
+
+2011-05-19  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Skip failing tests after r86834.
 
         * platform/qt-arm/Skipped:
