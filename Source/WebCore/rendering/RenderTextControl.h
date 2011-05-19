@@ -63,7 +63,7 @@ protected:
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     void createSubtreeIfNeeded(TextControlInnerElement* innerBlock);
-    void hitInnerTextElement(HitTestResult&, int x, int y, int tx, int ty);
+    void hitInnerTextElement(HitTestResult&, const IntPoint& pointInContainer, int tx, int ty);
     void forwardEvent(Event*);
 
     int textBlockWidth() const;

@@ -63,7 +63,7 @@ bool RenderTextControlMultiLine::nodeAtPoint(const HitTestRequest& request, HitT
         return false;
 
     if (result.innerNode() == node() || result.innerNode() == innerTextElement())
-        hitInnerTextElement(result, pointInContainer.x(), pointInContainer.y(), tx, ty);
+        hitInnerTextElement(result, pointInContainer, tx, ty);
 
     return true;
 }
