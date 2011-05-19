@@ -495,6 +495,12 @@ static void endPointsFromAngle(float angleDeg, const IntSize& size, FloatPoint& 
         secondPoint.set(0, 0);
         return;
     }
+    
+    if (angleDeg == 270) {
+        firstPoint.set(0, 0);
+        secondPoint.set(0, size.height());
+        return;
+    }
 
     float slope = tan(deg2rad(angleDeg));
 

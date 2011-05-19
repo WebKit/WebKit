@@ -1,3 +1,18 @@
+2011-05-19  Mihnea Ovidenie  <mihnea@adobe.com>
+
+        Reviewed by Simon Fraser.
+
+        Gradients not horizontal using 270deg with odd div width
+        https://bugs.webkit.org/show_bug.cgi?id=60157
+        
+        When the angle of the linear gradient is 270, the endpoint should
+        be computed in the same way as for 0, 90, 180 cases since tan(270)
+        is undefined.
+
+        * fast/gradients/css3-linear-right-angle-gradients-expected.txt: Added.
+        * fast/gradients/css3-linear-right-angle-gradients.html: Added.
+        * platform/mac/fast/gradients/css3-linear-right-angle-gradients-expected.png: Added.
+
 2011-05-19  Yuzo Fujishima  <yuzo@google.com>
 
         Unreviewed Chromium test expectation change.
