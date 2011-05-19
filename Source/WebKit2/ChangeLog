@@ -1,3 +1,19 @@
+2011-05-19  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Crash when detaching Web Inspector when parent is in process of closing.
+        https://bugs.webkit.org/show_bug.cgi?id=61141
+        <rdar://problem/9470027>
+        
+        We were trying to send a WM_SIZE to a window that was in the process of closing. Switch
+        to using PostMessage, so the window will finish closing, and then it won't need to
+        process the WM_SIZE message anymore.
+
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformAttach): Call PostMessage instead of SendMessage.
+        (WebKit::WebInspectorProxy::platformDetach): Ditto.
+
 2011-05-19  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

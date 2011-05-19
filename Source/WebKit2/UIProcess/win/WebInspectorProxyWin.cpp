@@ -252,7 +252,7 @@ void WebInspectorProxy::platformAttach()
     m_inspectorView->setParentWindow(parentWindow);
     ::ShowWindow(m_inspectorWindow, SW_HIDE);
 
-    ::SendMessage(parentWindow, WM_SIZE, 0, 0);
+    ::PostMessage(parentWindow, WM_SIZE, 0, 0);
 }
 
 void WebInspectorProxy::platformDetach()
@@ -267,8 +267,8 @@ void WebInspectorProxy::platformDetach()
 
     // Send the detached inspector window and the WebView's parent window WM_SIZE messages
     // to have them re-layout correctly.
-    ::SendMessage(m_inspectorWindow, WM_SIZE, 0, 0);
-    ::SendMessage(::GetParent(webViewWindow), WM_SIZE, 0, 0);
+    ::PostMessage(m_inspectorWindow, WM_SIZE, 0, 0);
+    ::PostMessage(::GetParent(webViewWindow), WM_SIZE, 0, 0);
 }
 
 void WebInspectorProxy::platformSetAttachedWindowHeight(unsigned height)
