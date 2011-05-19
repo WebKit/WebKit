@@ -1,3 +1,24 @@
+2011-05-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add build logistics and plumbing for window.internals object.
+        https://bugs.webkit.org/show_bug.cgi?id=60313
+
+        Test: fast/harness/internals-object.html
+
+        * DerivedSources.make: Added support for generating from Internals.idl.
+        * WebCore.gyp/WebCore.gyp: Added new webcore_test_support library.
+        * WebCore.gypi: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Added WebCoreTestSupport library.
+        * testing/Internals.cpp: Added.
+        * testing/Internals.h: Added.
+        * testing/Internals.idl: Added.
+        * testing/js/WebCoreTestSupport.cpp: Added.
+        * testing/js/WebCoreTestSupport.h: Added.
+        * testing/v8/WebCoreTestSupport.cpp: Added.
+        * testing/v8/WebCoreTestSupport.h: Added.
+
 2011-05-19  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Accept XCode's decisions to keep modifying WebCore.xcodeproj.

@@ -1,3 +1,14 @@
+2011-05-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add build logistics and plumbing for window.internals object.
+        https://bugs.webkit.org/show_bug.cgi?id=60313
+
+        * WebKit.gyp: Added linking new webkit_test_support library.
+        * public/WebTestingSupport.h: Added.
+        * src/WebTestingSupport.cpp: Added.
+
 2011-05-19  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Kent Tamura.

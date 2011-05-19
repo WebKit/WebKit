@@ -2533,3 +2533,6 @@ fast/events/remove-target-in-mouseup.html
 # [Qt][GTK] plugins/get-url-with-javascript-url.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=60834
 plugins/get-url-with-javascript-url.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=61074
+fast/harness/internals-object.html

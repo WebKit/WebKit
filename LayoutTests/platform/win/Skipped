@@ -1299,3 +1299,6 @@ fast/events/page-visibility-transition-test.html
 
 # Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
 loader/navigation-while-deferring-loads.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=61076
+fast/harness/internals-object.html

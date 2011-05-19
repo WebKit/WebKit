@@ -1,3 +1,16 @@
+2011-05-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Add build logistics and plumbing for window.internals object.
+        https://bugs.webkit.org/show_bug.cgi?id=60313
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj: Added linking new WebCoreTestSupport library.
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::bindJSObjectsToWindow): Added injection code.
+        * DumpRenderTree/mac/FrameLoadDelegate.mm:
+        (-[FrameLoadDelegate didClearWindowObjectInStandardWorldForFrame:]): Ditto.
+
 2011-05-19  Zsolt Fehér  <h490267@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.

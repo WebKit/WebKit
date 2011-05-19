@@ -1533,6 +1533,9 @@ editing/undo/undo-iframe-location-change.html
 # http://webkit.org/b/59865
 transitions/transition-timing-function.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=61073
+fast/harness/internals-object.html
+
 ### END OF (1) Classified failures with bug reports
 ########################################
 

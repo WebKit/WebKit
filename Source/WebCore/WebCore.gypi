@@ -6089,6 +6089,17 @@
             'xml/XSLTUnicodeSort.cpp',
             'xml/XSLTUnicodeSort.h',
         ],
+        'webcore_test_support_idl_files': [
+          'testing/Internals.idl',
+        ],
+        'webcore_test_support_files': [
+            'testing/v8/WebCoreTestSupport.cpp',
+            'testing/v8/WebCoreTestSupport.h',
+            'testing/js/WebCoreTestSupport.cpp',
+            'testing/js/WebCoreTestSupport.h',
+            'testing/Internals.cpp',
+            'testing/Internals.h',
+        ],
         'webcore_resource_files': [
             'English.lproj/Localizable.strings',
             'English.lproj/localizedStrings.js',

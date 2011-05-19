@@ -604,6 +604,7 @@
                             ],
                             'dependencies': [
                                 '../../WebCore/WebCore.gyp/WebCore.gyp:webcore_bindings',
+                                '../../WebCore/WebCore.gyp/WebCore.gyp:webcore_test_support',
                                 '<(chromium_src_dir)/base/base.gyp:test_support_base',
                                 '<(chromium_src_dir)/build/temp_gyp/googleurl.gyp:googleurl',
                                 '<(chromium_src_dir)/testing/gtest.gyp:gtest',
@@ -630,6 +631,8 @@
                             ],
                             'sources': [
                                 '<@(webkit_unittest_files)',
+                                'src/WebTestingSupport.cpp',
+                                'public/WebTestingSupport.h',
                                 'tests/WebUnitTests.cpp',   # Components test runner support.
                             ],
                             'sources!': [
@@ -1084,6 +1087,20 @@
                     'dependencies': [
                         '<(chromium_src_dir)/webkit/support/setup_third_party.gyp:third_party_headers',
                     ]
+                }],
+                ['component!="shared_library"', {
+                    'dependencies': [
+                        '../../WebCore/WebCore.gyp/WebCore.gyp:webcore_test_support',
+                    ],
+                    'include_dirs': [
+                        # WARNING: Do not view this particular case as a precedent for
+                        # including WebCore headers in DumpRenderTree project.
+                        '../../WebCore/testing/v8', # for WebCoreTestSupport.h, needed to link in window.internals code.
+                    ],
+                    'sources': [
+                        'src/WebTestingSupport.cpp',
+                        'public/WebTestingSupport.h',
+                    ],
                 }],
             ],
         },

@@ -56,6 +56,8 @@
 		3713EDE3115BE19300705720 /* ColorBits.ttf in Copy Font Files */ = {isa = PBXBuildFile; fileRef = 3713EDE0115BE16F00705720 /* ColorBits.ttf */; };
 		3A5626CB131CA02A002BE6D9 /* StorageTrackerDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 3A5626C1131C8B17002BE6D9 /* StorageTrackerDelegate.mm */; };
 		3A5626CC131CA036002BE6D9 /* StorageTrackerDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 3A5626C0131C8B17002BE6D9 /* StorageTrackerDelegate.h */; };
+		417DAA1D137B3E24007C57FB /* WebCoreTestSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 417DAA1C137B3E24007C57FB /* WebCoreTestSupport.h */; };
+		417DAAEF137B40EF007C57FB /* libWebCoreTestSupport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 417DA70013735037007C57FB /* libWebCoreTestSupport.a */; };
 		440590711268453800CFD48D /* WebArchiveDumpSupportMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 440590701268453800CFD48D /* WebArchiveDumpSupportMac.mm */; };
 		4437730E125CBC3600AAE02C /* WebArchiveDumpSupport.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 44A997830FCDE86400580F10 /* WebArchiveDumpSupport.cpp */; };
 		4437730F125CBC4D00AAE02C /* WebArchiveDumpSupport.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A997820FCDE86400580F10 /* WebArchiveDumpSupport.h */; };
@@ -245,6 +247,8 @@
 		375F09790DAC3CB600C8B4E5 /* WebKitWeightWatcher900.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher900.ttf; path = fonts/WebKitWeightWatcher900.ttf; sourceTree = "<group>"; };
 		3A5626C0131C8B17002BE6D9 /* StorageTrackerDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StorageTrackerDelegate.h; sourceTree = "<group>"; };
 		3A5626C1131C8B17002BE6D9 /* StorageTrackerDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = StorageTrackerDelegate.mm; sourceTree = "<group>"; };
+		417DA70013735037007C57FB /* libWebCoreTestSupport.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libWebCoreTestSupport.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		417DAA1C137B3E24007C57FB /* WebCoreTestSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreTestSupport.h; path = WebCoreTestSupport/WebCoreTestSupport.h; sourceTree = BUILT_PRODUCTS_DIR; };
 		440590701268453800CFD48D /* WebArchiveDumpSupportMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = WebArchiveDumpSupportMac.mm; path = mac/WebArchiveDumpSupportMac.mm; sourceTree = "<group>"; };
 		44A997820FCDE86400580F10 /* WebArchiveDumpSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebArchiveDumpSupport.h; path = cf/WebArchiveDumpSupport.h; sourceTree = "<group>"; };
 		44A997830FCDE86400580F10 /* WebArchiveDumpSupport.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebArchiveDumpSupport.cpp; path = cf/WebArchiveDumpSupport.cpp; sourceTree = "<group>"; };
@@ -359,6 +363,7 @@
 				A817090408B164D300CCB9FB /* JavaScriptCore.framework in Frameworks */,
 				23BCB8900EA57623003C6289 /* OpenGL.framework in Frameworks */,
 				9340995108540CAE007F3BC8 /* WebKit.framework in Frameworks */,
+				417DAAEF137B40EF007C57FB /* libWebCoreTestSupport.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -403,6 +408,7 @@
 				A8B91AC40CF3B170008F91FF /* ObjCPlugin */,
 				141BF1F5096A439800E0753C /* TestNetscapePlugIn */,
 				9345229B0BD12B2C0086EDA0 /* Resources */,
+				417DA9181373674D007C57FB /* WebCoreTestSupport */,
 				A803FF6409CAACC1009B2A37 /* Frameworks */,
 				9340995508540CAF007F3BC8 /* Products */,
 				BCB281ED0CFA711D007E533E /* Configurations */,
@@ -512,6 +518,15 @@
 				1A31EB3713466AC100017372 /* ConvertPoint.cpp */,
 			);
 			path = mac;
+			sourceTree = "<group>";
+		};
+		417DA9181373674D007C57FB /* WebCoreTestSupport */ = {
+			isa = PBXGroup;
+			children = (
+				417DAA1C137B3E24007C57FB /* WebCoreTestSupport.h */,
+				417DA70013735037007C57FB /* libWebCoreTestSupport.a */,
+			);
+			name = WebCoreTestSupport;
 			sourceTree = "<group>";
 		};
 		9340995508540CAF007F3BC8 /* Products */ = {
@@ -659,6 +674,7 @@
 				E1B7816711AF31C3007E1BC2 /* MockGeolocationProvider.h in Headers */,
 				29CFBA10122736E600BC30C0 /* AccessibilityTextMarker.h in Headers */,
 				3A5626CC131CA036002BE6D9 /* StorageTrackerDelegate.h in Headers */,
+				417DAA1D137B3E24007C57FB /* WebCoreTestSupport.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

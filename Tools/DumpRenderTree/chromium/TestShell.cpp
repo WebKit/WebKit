@@ -39,6 +39,7 @@
 #include "WebElement.h"
 #include "WebFrame.h"
 #include "WebHistoryItem.h"
+#include "WebTestingSupport.h"
 #include "WebKit.h"
 #include "WebRuntimeFeatures.h"
 #include "WebScriptController.h"
@@ -581,6 +582,7 @@ void TestShell::dumpImage(SkCanvas* canvas) const
 
 void TestShell::bindJSObjectsToWindow(WebFrame* frame)
 {
+    WebTestingSupport::injectInternalsObject(frame);
     m_accessibilityController->bindToJavascript(frame, WebString::fromUTF8("accessibilityController"));
     m_layoutTestController->bindToJavascript(frame, WebString::fromUTF8("layoutTestController"));
     m_eventSender->bindToJavascript(frame, WebString::fromUTF8("eventSender"));
