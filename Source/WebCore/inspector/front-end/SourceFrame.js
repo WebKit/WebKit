@@ -92,7 +92,6 @@ WebInspector.SourceFrame.prototype = {
         this._ensureContentLoaded();
 
         this._textViewer.show(parentElement);
-        this._textViewer.resize();
 
         if (this.loaded) {
             if (this._scrollTop)
@@ -100,6 +99,8 @@ WebInspector.SourceFrame.prototype = {
             if (this._scrollLeft)
                 this._textViewer.scrollLeft = this._scrollLeft;
         }
+        // Resize after setting the initial scroll positions to avoid unnecessary rendering work.
+        this._textViewer.resize();
     },
 
     hide: function()

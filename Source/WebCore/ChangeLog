@@ -1,3 +1,25 @@
+2011-05-19  Andrey Adaikin  <aandrey@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: switch to Scripts panel is too slow
+        https://bugs.webkit.org/show_bug.cgi?id=61030
+
+        - It is very expensive to listen to the DOM mutation events, thus we remove the listeners whenever we do any internal
+        DOM manipulations (such as expand/collapse line rows) and set the listeners back when we are finished.
+        - Also, when we switch to the Scripts panel that have a non-zero scrollTop offset, we would do the rendering work twice.
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.show):
+        * inspector/front-end/TextViewer.js:
+        (WebInspector.TextEditorMainPanel):
+        (WebInspector.TextEditorMainPanel.prototype.beginDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype.endDomUpdates):
+        (WebInspector.TextEditorMainPanel.prototype._enableDOMNodeRemovedListener):
+        (WebInspector.TextEditorMainChunk):
+        (WebInspector.TextEditorMainChunk.prototype.set expanded):
+        (WebInspector.TextEditorMainChunk.prototype._createRow):
+
 2011-05-19  Pavel Feldman  <pfeldman@google.com>
 
         Not reviewed: inspector protocol tests fixed.

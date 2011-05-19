@@ -868,6 +868,10 @@ WebInspector.TextEditorMainPanel = function(textModel, url, syncScrollListener, 
     // attached to all DOM nodes that we want to track. Instead, we attach the DOMNodeRemoved
     // listeners only on the line rows, and use DOMSubtreeModified to track node removals inside
     // the line rows. For more info see: https://bugs.webkit.org/show_bug.cgi?id=55666
+    //
+    // OPTIMIZATION. It is very expensive to listen to the DOM mutation events, thus we remove the
+    // listeners whenever we do any internal DOM manipulations (such as expand/collapse line rows)
+    // and set the listeners back when we are finished.
     this._handleDOMUpdatesCallback = this._handleDOMUpdates.bind(this);
     this._container.addEventListener("DOMCharacterDataModified", this._handleDOMUpdatesCallback, false);
     this._container.addEventListener("DOMNodeInserted", this._handleDOMUpdatesCallback, false);
@@ -1048,6 +1052,34 @@ WebInspector.TextEditorMainPanel.prototype = {
         var chunk = WebInspector.TextEditorChunkedPanel.prototype._splitChunkOnALine.call(this, lineNumber, chunkNumber, createSuffixChunk);
         this._restoreSelection(selection);
         return chunk;
+    },
+
+    beginDomUpdates: function()
+    {
+        WebInspector.TextEditorChunkedPanel.prototype.beginDomUpdates.call(this);
+        if (this._domUpdateCoalescingLevel === 1) {
+            this._container.removeEventListener("DOMCharacterDataModified", this._handleDOMUpdatesCallback, false);
+            this._container.removeEventListener("DOMNodeInserted", this._handleDOMUpdatesCallback, false);
+            this._container.removeEventListener("DOMSubtreeModified", this._handleDOMUpdatesCallback, false);
+        }
+    },
+
+    endDomUpdates: function()
+    {
+        WebInspector.TextEditorChunkedPanel.prototype.endDomUpdates.call(this);
+        if (this._domUpdateCoalescingLevel === 0) {
+            this._container.addEventListener("DOMCharacterDataModified", this._handleDOMUpdatesCallback, false);
+            this._container.addEventListener("DOMNodeInserted", this._handleDOMUpdatesCallback, false);
+            this._container.addEventListener("DOMSubtreeModified", this._handleDOMUpdatesCallback, false);
+        }
+    },
+
+    _enableDOMNodeRemovedListener: function(lineRow, enable)
+    {
+        if (enable)
+            lineRow.addEventListener("DOMNodeRemoved", this._handleDOMUpdatesCallback, false);
+        else
+            lineRow.removeEventListener("DOMNodeRemoved", this._handleDOMUpdatesCallback, false);
     },
 
     _buildChunks: function()
@@ -1801,7 +1833,7 @@ WebInspector.TextEditorMainChunk = function(textViewer, startLine, endLine)
     this.element = document.createElement("div");
     this.element.lineNumber = startLine;
     this.element.className = "webkit-line-content";
-    this.element.addEventListener("DOMNodeRemoved", this._textViewer._handleDOMUpdatesCallback, false);
+    this._textViewer._enableDOMNodeRemovedListener(this.element, true);
 
     this._startLine = startLine;
     endLine = Math.min(this._textModel.linesCount, endLine);
@@ -1896,20 +1928,24 @@ WebInspector.TextEditorMainChunk.prototype = {
             var parentElement = this.element.parentElement;
             for (var i = this.startLine; i < this.startLine + this.linesCount; ++i) {
                 var lineRow = this._createRow(i);
+                this._textViewer._enableDOMNodeRemovedListener(lineRow, true);
                 this._updateElementReadOnlyState(lineRow);
                 parentElement.insertBefore(lineRow, this.element);
                 this._expandedLineRows.push(lineRow);
             }
+            this._textViewer._enableDOMNodeRemovedListener(this.element, false);
             parentElement.removeChild(this.element);
             this._textViewer._paintLines(this.startLine, this.startLine + this.linesCount);
         } else {
             var elementInserted = false;
             for (var i = 0; i < this._expandedLineRows.length; ++i) {
                 var lineRow = this._expandedLineRows[i];
+                this._textViewer._enableDOMNodeRemovedListener(lineRow, false);
                 var parentElement = lineRow.parentElement;
                 if (parentElement) {
                     if (!elementInserted) {
                         elementInserted = true;
+                        this._textViewer._enableDOMNodeRemovedListener(this.element, true);
                         parentElement.insertBefore(this.element, lineRow);
                     }
                     parentElement.removeChild(lineRow);
@@ -1965,7 +2001,6 @@ WebInspector.TextEditorMainChunk.prototype = {
         var lineRow = this._textViewer._cachedRows.pop() || document.createElement("div");
         lineRow.lineNumber = lineNumber;
         lineRow.className = "webkit-line-content";
-        lineRow.addEventListener("DOMNodeRemoved", this._textViewer._handleDOMUpdatesCallback, false);
         lineRow.textContent = this._textModel.line(lineNumber);
         if (!lineRow.textContent)
             lineRow.appendChild(document.createElement("br"));
