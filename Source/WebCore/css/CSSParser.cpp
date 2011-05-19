@@ -1391,14 +1391,14 @@ bool CSSParser::parseValue(int propId, bool important)
     case CSSPropertyBorderBottomRightRadius: {
         if (num != 1 && num != 2)
             return false;
-        validPrimitive = validUnit(value, FLength | FPercent, m_strict);
+        validPrimitive = validUnit(value, FLength | FPercent | FNonNeg, m_strict);
         if (!validPrimitive)
             return false;
         RefPtr<CSSPrimitiveValue> parsedValue1 = primitiveValueCache()->createValue(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
         RefPtr<CSSPrimitiveValue> parsedValue2;
         if (num == 2) {
             value = m_valueList->next();
-            validPrimitive = validUnit(value, FLength | FPercent, m_strict);
+            validPrimitive = validUnit(value, FLength | FPercent | FNonNeg, m_strict);
             if (!validPrimitive)
                 return false;
             parsedValue2 = primitiveValueCache()->createValue(value->fValue, (CSSPrimitiveValue::UnitTypes)value->unit);
@@ -4965,7 +4965,7 @@ bool CSSParser::parseBorderRadius(int propId, bool important)
         if (i - indexAfterSlash >= 4)
             return false;
 
-        if (!validUnit(value, FLength | FPercent, m_strict))
+        if (!validUnit(value, FLength | FPercent | FNonNeg, m_strict))
             return false;
 
         RefPtr<CSSPrimitiveValue> radius = primitiveValueCache()->createValue(value->fValue, static_cast<CSSPrimitiveValue::UnitTypes>(value->unit));

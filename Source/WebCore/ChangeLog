@@ -1,3 +1,19 @@
+2011-05-19  David Barr  <davidbarr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        CSS3: We fail 'border radius sum of radii' test
+        https://bugs.webkit.org/show_bug.cgi?id=38788
+
+        Ignore border-radius properties with negative values.
+
+        Test: fast/css/border-radius-non-negative.html
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        (WebCore::CSSParser::parseBorderRadius):
+
 2011-05-19  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.

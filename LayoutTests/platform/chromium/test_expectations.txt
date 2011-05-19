@@ -4115,3 +4115,6 @@ BUGWK61087 WIN MAC LINUX : fast/multicol/span/clone-anonymous-block-non-inline-c
 
 // Random crashes started between: http://trac.webkit.org/log/?verbose=on&rev=86756&stop_rev=86755
 BUGWK61103 MAC : fast/canvas/canvas-putImageData.html = CRASH PASS
+
+// New pixel tests added for bug 38788, rebaseline when webkit 38788 rolls.
+BUGWK38788 WIN LINUX: fast/css/border-radius-non-negative.html = IMAGE
