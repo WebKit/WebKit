@@ -1,3 +1,18 @@
+2011-05-18  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Poster is not shown in Safari for video element with no playable source elements.
+        https://bugs.webkit.org/show_bug.cgi?id=61109
+
+        Test: media/video-src-invalid-poster.html
+
+        In the case where no video sources are playable, update the display state and 
+        renderer, allowing the poster image to display.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::waitForSourceChange): 
+
 2011-05-19  Andrew Wilson  <atwilson@chromium.org>
 
         Reviewed by Darin Adler.
