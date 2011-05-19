@@ -1,3 +1,9 @@
+2011-05-18  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed attempt to fix clang build.
+
+        * rendering/InlineTextBox.h:
+
 2011-05-18  Nat Duca  <nduca@chromium.org>
 
         Reviewed by James Robinson.
