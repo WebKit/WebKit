@@ -90,9 +90,11 @@ int WebProcessMain(const CommandLine& commandLine)
     WTF::initializeMainThread();
     RunLoop::initializeMainRunLoop();
 
+#ifndef BUILDING_ON_SNOW_LEOPARD
     // Initialize the shim.
     WebProcess::shared().initializeShim();
-    
+#endif
+
     // Create the connection.
     WebProcess::shared().initialize(serverPort, RunLoop::main());
 
