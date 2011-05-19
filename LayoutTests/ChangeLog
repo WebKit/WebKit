@@ -1,3 +1,15 @@
+2011-05-19  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed.
+
+        Chromium gradient expectations update.
+
+        * platform/chromium-linux-x86/fast/gradients: Added.
+        * platform/chromium-linux-x86/fast/gradients/css3-linear-right-angle-gradients-expected.png: Added.
+        * platform/chromium-linux/fast/gradients/css3-linear-right-angle-gradients-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/gradients/css3-linear-right-angle-gradients-expected.png: Added.
+        * platform/chromium-win-vista/fast/gradients/css3-linear-right-angle-gradients-expected.png: Added.
+
 2011-05-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86869, r86873, r86875, and r86877.
