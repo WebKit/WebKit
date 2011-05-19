@@ -1,3 +1,16 @@
+2011-05-18  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Some tests crashing in JSC::MarkStack::validateValue beneath ScriptController::clearWindowShell on SnowLeopard Intel Release (WebKit2 Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=61064
+
+        Switch NonFinalObject to using WriteBarrier<> rather than WriteBarrierBase<>
+        for its inline storage.  This resolves the problem of GC occurring before
+        a subclass has initialised its anonymous storage.
+
+        * runtime/JSObject.h:
+
 2011-05-18  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Sam Weinig.

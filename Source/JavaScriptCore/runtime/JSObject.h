@@ -343,7 +343,7 @@ COMPILE_ASSERT((JSFinalObject_inlineStorageCapacity >= JSNonFinalObject_inlineSt
         }
 
     private:
-        WriteBarrierBase<Unknown> m_inlineStorage[JSNonFinalObject_inlineStorageCapacity];
+        WriteBarrier<Unknown> m_inlineStorage[JSNonFinalObject_inlineStorageCapacity];
     };
 
     // JSFinalObject is a type of JSObject that contains sufficent internal
