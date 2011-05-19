@@ -297,7 +297,7 @@ PluginView::~PluginView()
     m_pluginElement = nullptr;
 }
 
-Frame* PluginView::frame()
+Frame* PluginView::frame() const
 {
     return m_pluginElement->document()->frame();
 }
@@ -645,10 +645,7 @@ void PluginView::viewGeometryDidChange()
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
     
     // Adjust bounds to account for pageScaleFactor
-    float scaleFactor = frame()->pageScaleFactor();
-    frameRectInWindowCoordinates.setX(frameRectInWindowCoordinates.x() / scaleFactor);
-    frameRectInWindowCoordinates.setY(frameRectInWindowCoordinates.y() / scaleFactor);
-    frameRectInWindowCoordinates.setSize(m_boundsSize);
+    frameRectInWindowCoordinates.scale(1 / frame()->pageScaleFactor());
     m_plugin->geometryDidChange(frameRectInWindowCoordinates, clipRectInWindowCoordinates());
 }
 
@@ -666,7 +663,7 @@ IntRect PluginView::clipRectInWindowCoordinates() const
 
     // Get the frame rect in window coordinates.
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
-    frameRectInWindowCoordinates.setSize(m_boundsSize);
+    frameRectInWindowCoordinates.scale(1 / frame()->pageScaleFactor());
 
     // Get the window clip rect for the enclosing layer (in window coordinates).
     RenderLayer* layer = m_pluginElement->renderer()->enclosingLayer();

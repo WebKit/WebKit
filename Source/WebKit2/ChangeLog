@@ -1,3 +1,19 @@
+2011-05-18  Chris Marrin  <cmarrin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Plug-ins at YouTube, cnn.com, nytimes vanish when their top/left is scrolled out of view when zoomed
+        https://bugs.webkit.org/show_bug.cgi?id=61101
+
+        Scale both bounding boxes sent to m_plugin->geometryDidChange(), not just the frameRect. This fools
+        the plugin into thinking it is drawing into an unscaled box with an unscaled view even when scaled.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::frame):Made this const so it can be used in clipRectInWindowCoordinates()
+        (WebKit::PluginView::viewGeometryDidChange):Used IntRect::scale() rather than scaling by hand
+        (WebKit::PluginView::clipRectInWindowCoordinates):Added scale of clipRect.
+        * WebProcess/Plugins/PluginView.h:
+
 2011-05-19  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Anders Carlsson.
