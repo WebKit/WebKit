@@ -1,3 +1,10 @@
+2011-05-19  Philippe Normand  <pnormand@igalia.com>
+
+        Unreviewed, skip 2 failing tests on GTK.
+
+        * platform/gtk/Skipped: Skip http/tests/appcache/interrupted-update.html
+        and http/tests/navigation/post-307-response.html
+
 2011-05-19  Zsolt Fehér  <h490267@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.
