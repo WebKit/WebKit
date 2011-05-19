@@ -1,3 +1,33 @@
+2011-05-19  David Grogan  <dgrogan@chromium.org>
+
+        Reviewed by David Levin.
+
+        Make EventQueue post a Task to the task queue for each asynchronous event
+        https://bugs.webkit.org/show_bug.cgi?id=60790
+
+        Currently EventQueue queues up events to be fired asynchronously and
+        fires each of them when a single DOMTimer goes off.  In the words of
+        dimich, "Having 2 queues will sooner or later cause problems with
+        ordering of tasks, termination, suspension and other things that all
+        require some control on how queues operate."
+
+        No new tests; this is just a refactoring to avoid potential future
+        problems.
+
+        * dom/EventQueue.cpp:
+        (WebCore::EventQueue::EventQueue):
+        (WebCore::EventQueue::EventDispatcherTask::create):
+        (WebCore::EventQueue::EventDispatcherTask::dispatchEvent):
+        (WebCore::EventQueue::EventDispatcherTask::performTask):
+        (WebCore::EventQueue::EventDispatcherTask::cancel):
+        (WebCore::EventQueue::EventDispatcherTask::EventDispatcherTask):
+        (WebCore::EventQueue::removeEvent):
+        (WebCore::EventQueue::enqueueEvent):
+        (WebCore::EventQueue::enqueueOrDispatchScrollEvent):
+        (WebCore::EventQueue::cancelEvent):
+        (WebCore::EventQueue::cancelQueuedEvents):
+        * dom/EventQueue.h:
+
 2011-05-18  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

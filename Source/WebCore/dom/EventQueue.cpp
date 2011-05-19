@@ -33,7 +33,6 @@
 #include "EventNames.h"
 #include "RuntimeApplicationChecks.h"
 #include "ScriptExecutionContext.h"
-#include "SuspendableTimer.h"
 
 namespace WebCore {
     
@@ -43,40 +42,77 @@ static inline bool shouldDispatchScrollEventSynchronously(Document* document)
     return applicationIsSafari() && (document->url().protocolIs("feed") || document->url().protocolIs("feeds"));
 }
 
-class EventQueueTimer : public SuspendableTimer {
-    WTF_MAKE_NONCOPYABLE(EventQueueTimer);
-public:
-    EventQueueTimer(EventQueue* eventQueue, ScriptExecutionContext* context)
-        : SuspendableTimer(context)
-        , m_eventQueue(eventQueue) { }
-
-private:
-    virtual void fired() { m_eventQueue->pendingEventTimerFired(); }
-    EventQueue* m_eventQueue;    
-};
-
-PassRefPtr<EventQueue> EventQueue::create(ScriptExecutionContext* context)
+PassOwnPtr<EventQueue> EventQueue::create(ScriptExecutionContext* context)
 {
-    return adoptRef(new EventQueue(context));
+    return adoptPtr(new EventQueue(context));
 }
 
 EventQueue::EventQueue(ScriptExecutionContext* context)
-    : m_pendingEventTimer(adoptPtr(new EventQueueTimer(this, context)))
+    : m_scriptExecutionContext(context)
 {
 }
 
 EventQueue::~EventQueue()
 {
+    cancelQueuedEvents();
 }
 
-void EventQueue::enqueueEvent(PassRefPtr<Event> event)
+class EventQueue::EventDispatcherTask : public ScriptExecutionContext::Task {
+public:
+    static PassOwnPtr<EventDispatcherTask> create(PassRefPtr<Event> event, EventQueue* eventQueue)
+    {
+        return adoptPtr(new EventDispatcherTask(event, eventQueue));
+    }
+
+    void dispatchEvent(ScriptExecutionContext*, PassRefPtr<Event> event)
+    {
+        EventTarget* eventTarget = event->target();
+        if (eventTarget->toDOMWindow())
+            eventTarget->toDOMWindow()->dispatchEvent(event, 0);
+        else
+            eventTarget->dispatchEvent(event);
+    }
+
+    virtual void performTask(ScriptExecutionContext* context)
+    {
+        if (m_isCancelled)
+            return;
+        m_eventQueue->removeEvent(m_event.get());
+        dispatchEvent(context, m_event);
+    }
+
+    void cancel()
+    {
+        m_isCancelled = true;
+        m_event.clear();
+    }
+
+private:
+    EventDispatcherTask(PassRefPtr<Event> event, EventQueue* eventQueue)
+        : m_event(event)
+        , m_eventQueue(eventQueue)
+        , m_isCancelled(false)
+    {
+    }
+
+    RefPtr<Event> m_event;
+    EventQueue* m_eventQueue;
+    bool m_isCancelled;
+};
+
+void EventQueue::removeEvent(Event* event)
 {
-    ASSERT(event->target());
-    bool wasAdded = m_queuedEvents.add(event).second;
-    ASSERT_UNUSED(wasAdded, wasAdded); // It should not have already been in the list.
-    
-    if (!m_pendingEventTimer->isActive())
-        m_pendingEventTimer->startOneShot(0);
+    if (Node* node = event->target()->toNode())
+        m_nodesWithQueuedScrollEvents.remove(node);
+    m_eventTaskMap.remove(event);
+}
+
+void EventQueue::enqueueEvent(PassRefPtr<Event> prpEvent)
+{
+    RefPtr<Event> event = prpEvent;
+    OwnPtr<EventDispatcherTask> task = EventDispatcherTask::create(event, this);
+    m_eventTaskMap.add(event.release(), task.get());
+    m_scriptExecutionContext->postTask(task.release());
 }
 
 void EventQueue::enqueueOrDispatchScrollEvent(PassRefPtr<Node> target, ScrollEventTargetType targetType)
@@ -99,50 +135,22 @@ void EventQueue::enqueueOrDispatchScrollEvent(PassRefPtr<Node> target, ScrollEve
 
 bool EventQueue::cancelEvent(Event* event)
 {
-    bool found = m_queuedEvents.contains(event);
-    m_queuedEvents.remove(event);
-    if (m_queuedEvents.isEmpty())
-        m_pendingEventTimer->stop();
-    return found;
+    EventDispatcherTask* task = m_eventTaskMap.get(event);
+    if (!task)
+        return false;
+    task->cancel();
+    removeEvent(event);
+    return true;
 }
 
 void EventQueue::cancelQueuedEvents()
 {
-    m_pendingEventTimer->stop();
-    m_queuedEvents.clear();
-}
-
-void EventQueue::pendingEventTimerFired()
-{
-    ASSERT(!m_pendingEventTimer->isActive());
-    ASSERT(!m_queuedEvents.isEmpty());
-
-    m_nodesWithQueuedScrollEvents.clear();
-
-    // Insert a marker for where we should stop.
-    ASSERT(!m_queuedEvents.contains(0));
-    bool wasAdded = m_queuedEvents.add(0).second;
-    ASSERT_UNUSED(wasAdded, wasAdded); // It should not have already been in the list.
-
-    RefPtr<EventQueue> protector(this);
-
-    while (!m_queuedEvents.isEmpty()) {
-        ListHashSet<RefPtr<Event> >::iterator iter = m_queuedEvents.begin();
-        RefPtr<Event> event = *iter;
-        m_queuedEvents.remove(iter);
-        if (!event)
-            break;
-        dispatchEvent(event.get());
+    for (EventTaskMap::iterator it = m_eventTaskMap.begin(); it != m_eventTaskMap.end(); ++it) {
+        EventDispatcherTask* task = it->second;
+        task->cancel();
     }
-}
-
-void EventQueue::dispatchEvent(PassRefPtr<Event> event)
-{
-    EventTarget* eventTarget = event->target();
-    if (eventTarget->toDOMWindow())
-        eventTarget->toDOMWindow()->dispatchEvent(event, 0);
-    else
-        eventTarget->dispatchEvent(event);
+    m_eventTaskMap.clear();
+    m_nodesWithQueuedScrollEvents.clear();
 }
 
 }

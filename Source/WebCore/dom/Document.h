@@ -1374,7 +1374,7 @@ private:
 
     bool m_usingGeolocation;
 
-    RefPtr<EventQueue> m_eventQueue;
+    OwnPtr<EventQueue> m_eventQueue;
 
     RefPtr<DocumentWeakReference> m_weakReference;
 

@@ -27,27 +27,24 @@
 #ifndef EventQueue_h
 #define EventQueue_h
 
+#include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
-#include <wtf/ListHashSet.h>
-#include <wtf/OwnPtr.h>
-#include <wtf/RefCounted.h>
-#include <wtf/RefPtr.h>
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
 class Event;
-class EventQueueTimer;
 class Node;
 class ScriptExecutionContext;
 
-class EventQueue : public RefCounted<EventQueue> {
+class EventQueue {
 public:
     enum ScrollEventTargetType {
         ScrollEventDocumentTarget,
         ScrollEventElementTarget
     };
 
-    static PassRefPtr<EventQueue> create(ScriptExecutionContext*);
+    static PassOwnPtr<EventQueue> create(ScriptExecutionContext*);
     ~EventQueue();
 
     void enqueueEvent(PassRefPtr<Event>);
@@ -58,14 +55,14 @@ public:
 private:
     explicit EventQueue(ScriptExecutionContext*);
 
-    void pendingEventTimerFired();
-    void dispatchEvent(PassRefPtr<Event>);
+    void removeEvent(Event*);
 
-    OwnPtr<EventQueueTimer> m_pendingEventTimer;
-    ListHashSet<RefPtr<Event> > m_queuedEvents;
     HashSet<Node*> m_nodesWithQueuedScrollEvents;
-    
-    friend class EventQueueTimer;    
+    ScriptExecutionContext* m_scriptExecutionContext;
+
+    class EventDispatcherTask;
+    typedef HashMap<RefPtr<Event>, EventDispatcherTask*> EventTaskMap;
+    EventTaskMap m_eventTaskMap;
 };
 
 }
