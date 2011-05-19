@@ -1,3 +1,11 @@
+2011-05-18  Gabor Loki  <loki@webkit.org>
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        [Qt] Skip flaky timed out tests on ARM
+
+        * platform/qt-arm/Skipped:
+
 2011-05-18  Ryosuke Niwa  <rniwa@webkit.org>
 
         Yet another rebaseline after r81176.

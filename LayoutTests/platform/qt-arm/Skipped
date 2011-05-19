@@ -3,6 +3,11 @@ fast/xmlhttprequest/xmlhttprequest-bad-mimetype.html
 fast/xmlhttprequest/xmlhttprequest-default-attributes.html
 
 # Flakey tests
+dom/xhtml/level1/core/hc_nodehaschildnodes.xhtml
+dom/xhtml/level1/core/hc_nodehaschildnodesfalse.xhtml
+dom/xhtml/level1/core/hc_nodeinsertbefore.xhtml
+dom/xhtml/level1/core/hc_nodeinsertbeforedocfragment.xhtml
+dom/xhtml/level1/core/hc_nodeinsertbeforeinvalidnodetype.xhtml
 fast/css/hover-update.html
 fast/workers/wrapper-map-gc.html
 
