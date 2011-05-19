@@ -1,3 +1,21 @@
+2011-05-19  Tonis Tiigi  <tonistiigi@gmail.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Resizing columns in the network panel is weird
+        https://bugs.webkit.org/show_bug.cgi?id=55238
+
+        Makes network panel column resizing more usable by adding "first only" and "last only"
+        resizing methods to WebInspector.DataGrid. Current behavior is named "nearest" and
+        remains default. Network panels datagrid is set to use method "last".
+
+        * inspector/front-end/DataGrid.js:
+        (WebInspector.DataGrid.prototype.get resizeMethod):
+        (WebInspector.DataGrid.prototype.set resizeMethod):
+        (WebInspector.DataGrid.prototype._resizerDragging):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._createTable):
+
 2011-05-19  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.

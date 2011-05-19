@@ -922,6 +922,18 @@ WebInspector.DataGrid.prototype = {
         }
     },
     
+    get resizeMethod()
+    {
+        if (typeof this._resizeMethod === "undefined")
+            return WebInspector.DataGrid.ResizeMethod.Nearest;
+        return this._resizeMethod;
+    },
+
+    set resizeMethod(method)
+    {
+        this._resizeMethod = method;
+    },
+    
     _startResizerDragging: function(event)
     {
         this.currentResizer = event.target;
@@ -942,13 +954,23 @@ WebInspector.DataGrid.prototype = {
         var dragPoint = event.clientX - this.element.totalOffsetLeft;
         // Constrain the dragpoint to be within the space made up by the
         // column directly to the left and the column directly to the right.
-        var leftEdgeOfPreviousColumn = 0;
+        var leftCellIndex = resizer.leftNeighboringColumnID;
+        var rightCellIndex = resizer.rightNeighboringColumnID;
         var firstRowCells = this.headerTableBody.rows[0].cells;
-        for (var i = 0; i < resizer.leftNeighboringColumnID; i++)
+        var leftEdgeOfPreviousColumn = 0;
+        for (var i = 0; i < leftCellIndex; i++)
             leftEdgeOfPreviousColumn += firstRowCells[i].offsetWidth;
-            
-        var rightEdgeOfNextColumn = leftEdgeOfPreviousColumn + firstRowCells[resizer.leftNeighboringColumnID].offsetWidth + firstRowCells[resizer.rightNeighboringColumnID].offsetWidth;
-
+        
+        // Differences for other resize methods
+        if (this.resizeMethod == WebInspector.DataGrid.ResizeMethod.Last) {
+            rightCellIndex = this.resizers.length;
+        } else if (this.resizeMethod == WebInspector.DataGrid.ResizeMethod.First) {
+            leftEdgeOfPreviousColumn += firstRowCells[leftCellIndex].offsetWidth - firstRowCells[0].offsetWidth;
+            leftCellIndex = 0;
+        }
+        
+        var rightEdgeOfNextColumn = leftEdgeOfPreviousColumn + firstRowCells[leftCellIndex].offsetWidth + firstRowCells[rightCellIndex].offsetWidth;
+        
         // Give each column some padding so that they don't disappear.
         var leftMinimum = leftEdgeOfPreviousColumn + this.ColumnResizePadding;
         var rightMaximum = rightEdgeOfNextColumn - this.ColumnResizePadding;
@@ -958,12 +980,12 @@ WebInspector.DataGrid.prototype = {
         resizer.style.left = (dragPoint - this.CenterResizerOverBorderAdjustment) + "px";
 
         var percentLeftColumn = (((dragPoint - leftEdgeOfPreviousColumn) / this._dataTable.offsetWidth) * 100) + "%";
-        this._headerTableColumnGroup.children[resizer.leftNeighboringColumnID].style.width = percentLeftColumn;
-        this._dataTableColumnGroup.children[resizer.leftNeighboringColumnID].style.width = percentLeftColumn;
+        this._headerTableColumnGroup.children[leftCellIndex].style.width = percentLeftColumn;
+        this._dataTableColumnGroup.children[leftCellIndex].style.width = percentLeftColumn;
 
         var percentRightColumn = (((rightEdgeOfNextColumn - dragPoint) / this._dataTable.offsetWidth) * 100) + "%";
-        this._headerTableColumnGroup.children[resizer.rightNeighboringColumnID].style.width =  percentRightColumn;
-        this._dataTableColumnGroup.children[resizer.rightNeighboringColumnID].style.width = percentRightColumn;
+        this._headerTableColumnGroup.children[rightCellIndex].style.width =  percentRightColumn;
+        this._dataTableColumnGroup.children[rightCellIndex].style.width = percentRightColumn;
 
         this._positionResizers();
         event.preventDefault();
@@ -980,6 +1002,12 @@ WebInspector.DataGrid.prototype = {
     ColumnResizePadding: 10,
     
     CenterResizerOverBorderAdjustment: 3,
+}
+
+WebInspector.DataGrid.ResizeMethod = {
+    Nearest: "nearest",
+    First: "first",
+    Last: "last"
 }
 
 WebInspector.DataGrid.prototype.__proto__ = WebInspector.Object.prototype;

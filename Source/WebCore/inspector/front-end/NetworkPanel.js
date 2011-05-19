@@ -185,6 +185,7 @@ WebInspector.NetworkPanel.prototype = {
         columns.timeline.sort = "ascending";
 
         this._dataGrid = new WebInspector.DataGrid(columns);
+        this._dataGrid.resizeMethod = WebInspector.DataGrid.ResizeMethod.Last;
         this._dataGrid.element.addEventListener("contextmenu", this._contextMenu.bind(this), true);
         this.containerElement.appendChild(this._dataGrid.element);
         this._dataGrid.addEventListener("sorting changed", this._sortItems, this);
