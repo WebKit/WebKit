@@ -1,3 +1,17 @@
+2011-05-19  Andrew Wilson  <atwilson@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        MessagePortArray cloning code needs to verify source before copying.
+        https://bugs.webkit.org/show_bug.cgi?id=61130
+
+        * bindings/js/JSMessagePortCustom.cpp:
+        (WebCore::fillMessagePortArray):
+        Changed code to not pre-allocate the destination array.
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::getMessagePortArray):
+        Changed code to not pre-allocate the destination array.
+
 2011-05-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86869, r86873, r86875, and r86877.

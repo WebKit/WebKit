@@ -75,7 +75,6 @@ void fillMessagePortArray(JSC::ExecState* exec, JSC::JSValue value, MessagePortA
     if (exec->hadException())
         return;
 
-    portArray.resize(length);
     for (unsigned i = 0 ; i < length; ++i) {
         JSValue value = object->get(exec, i);
         if (exec->hadException())
@@ -92,7 +91,7 @@ void fillMessagePortArray(JSC::ExecState* exec, JSC::JSValue value, MessagePortA
             throwTypeError(exec);
             return;
         }
-        portArray[i] = port.release();
+        portArray.append(port.release());
     }
 }
 

@@ -86,8 +86,8 @@ bool getMessagePortArray(v8::Local<v8::Value> value, MessagePortArray& portArray
         }
         length = sequenceLength->Uint32Value();
     }
-    portArray.resize(length);
 
+    // Validate the passed array of ports.
     for (unsigned int i = 0; i < length; ++i) {
         v8::Local<v8::Value> port = ports->Get(v8::Integer::New(i));
         // Validation of non-null objects, per HTML5 spec 8.3.3.
@@ -100,7 +100,7 @@ bool getMessagePortArray(v8::Local<v8::Value> value, MessagePortArray& portArray
             throwError("MessagePortArray argument must contain only MessagePorts");
             return false;
         }
-        portArray[i] = V8MessagePort::toNative(v8::Handle<v8::Object>::Cast(port));
+        portArray.append(V8MessagePort::toNative(v8::Handle<v8::Object>::Cast(port)));
     }
     return true;
 }

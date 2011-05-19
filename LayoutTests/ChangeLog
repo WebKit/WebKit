@@ -1,3 +1,14 @@
+2011-05-19  Andrew Wilson  <atwilson@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        MessagePortArray cloning code needs to verify source before copying
+        https://bugs.webkit.org/show_bug.cgi?id=61130
+
+        * fast/events/message-port-multi-expected.txt:
+        * fast/events/resources/message-port-multi.js:
+        Added test for "passing an array with an item at a really large index" to postMessage().
+
 2011-05-19  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed.

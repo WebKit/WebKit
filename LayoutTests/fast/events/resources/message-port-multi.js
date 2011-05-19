@@ -8,6 +8,7 @@ description("This test checks the various use cases around sending multiple port
 var channel = new MessageChannel();
 var channel2 = new MessageChannel();
 var channel3 = new MessageChannel();
+var channel4 = new MessageChannel();
 
 channel.port1.postMessage("noport");
 channel.port1.postMessage("zero ports", []);
@@ -23,6 +24,12 @@ channel.port1.postMessage("entangled ports", [channel3.port1, channel3.port2]);
 
 shouldThrow('channel.port1.postMessage("notAnArray", channel3.port1)')
 shouldThrow('channel.port1.postMessage("notASequence", [{length: 3}])');
+
+// Should not crash (we should figure out that the array contains undefined
+// entries).
+var largePortArray = [];
+largePortArray[1234567890] = channel4.port1;
+shouldThrow('channel.port1.postMessage("largeSequence", largePortArray)');
 
 channel.port1.postMessage("done");
 
