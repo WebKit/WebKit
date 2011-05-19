@@ -21,6 +21,7 @@ response:
             objectId : <string>
             hasChildren : true
             type : "object"
+            className : <string>
             description : "TestObject"
         }
     }
@@ -47,6 +48,7 @@ response:
             objectId : <string>
             hasChildren : true
             type : "object"
+            className : <string>
             description : "TestObject"
         }
     }
@@ -156,6 +158,7 @@ response:
                     objectId : <string>
                     hasChildren : true
                     type : "object"
+                    className : <string>
                     description : "TestObject"
                 }
             }

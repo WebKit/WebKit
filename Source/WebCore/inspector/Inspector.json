@@ -223,7 +223,8 @@
                     { "name": "description", "type": "string", "description": "String representation of the object." },
                     { "name": "hasChildren", "type": "boolean", "optional": true, "description": "True when this object can be queried for children." },
                     { "name": "objectId", "type": "string", "optional": true, "description": "Unique object identifier (for non-primitive values)." },
-                    { "name": "type", "type": "string", "enum": ["object", "array", "function", "null", "node", "undefined", "string", "number", "boolean", "regexp", "date"], "description": "Object type." }
+                    { "name": "type", "type": "string", "enum": ["object", "array", "function", "null", "node", "undefined", "string", "number", "boolean", "regexp", "date"], "description": "Object type." },
+                    { "name": "className", "type": "string", "optional": true, "description": "Object class name." }
                 ]
             },
             {

@@ -27,7 +27,7 @@ function test()
             ["RuntimeAgent", "releaseObject", result.objectId],
             ["RuntimeAgent", "releaseObjectGroup", 'test']];
 
-        InspectorTest.runProtocolTestSuite("RuntimeAgent", testSuite, ['id', 'requestId', 'objectId']);
+        InspectorTest.runProtocolTestSuite("RuntimeAgent", testSuite, ['id', 'requestId', 'objectId', 'className']);
     }
 
     RuntimeAgent.evaluate('window.testObject', 'test', false, callback);

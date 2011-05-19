@@ -419,13 +419,15 @@ InjectedScript.prototype = {
 
 var injectedScript = new InjectedScript();
 
-InjectedScript.RemoteObject = function(objectId, type, description, hasChildren)
+InjectedScript.RemoteObject = function(objectId, type, className, description, hasChildren)
 {
     if (objectId) {
         this.objectId = objectId;
         this.hasChildren = hasChildren;
     }
     this.type = type;
+    if (className)
+        this.className = className;
     this.description = description;
 }
 
@@ -436,7 +438,7 @@ InjectedScript.RemoteObject.fromException = function(e)
     } catch (ex) {
         var description = "<failed to convert exception to string>";
     }
-    return new InjectedScript.RemoteObject(null, "string", "[ Exception: " + description + " ]");
+    return new InjectedScript.RemoteObject(null, "string", null, "[ Exception: " + description + " ]");
 }
 
 // This method may throw
@@ -445,9 +447,9 @@ InjectedScript.RemoteObject.fromObject = function(object, objectId)
     var type = injectedScript._type(object);
     var rawType = typeof object;
     var hasChildren = (rawType === "object" && object !== null && (!!Object.getOwnPropertyNames(object).length || !!object.__proto__)) || rawType === "function";
-    var description = "";
+    var className = InjectedScriptHost.internalConstructorName(object);
     var description = injectedScript._describe(object);
-    return new InjectedScript.RemoteObject(objectId, type, description, hasChildren);
+    return new InjectedScript.RemoteObject(objectId, type, className, description, hasChildren);
 }
 
 InjectedScript.CallFrameProxy = function(ordinal, callFrame)
