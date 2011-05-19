@@ -94,6 +94,8 @@ private:
     virtual void accessibilityWebProcessTokenReceived(const CoreIPC::DataReference&);    
     virtual void setComplexTextInputEnabled(uint64_t pluginComplexTextInputIdentifier, bool complexTextInputEnabled);
 
+    virtual void makeFirstResponder();
+    
     virtual CGContextRef containingWindowGraphicsContext();
 
     virtual void didChangeScrollbarsForMainFrame() const;

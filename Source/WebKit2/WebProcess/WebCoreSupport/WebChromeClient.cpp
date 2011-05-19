@@ -129,6 +129,13 @@ void WebChromeClient::unfocus()
     m_page->send(Messages::WebPageProxy::SetFocus(false));
 }
 
+#if PLATFORM(MAC)
+void WebChromeClient::makeFirstResponder()
+{
+    m_page->send(Messages::WebPageProxy::MakeFirstResponder());
+}    
+#endif    
+
 bool WebChromeClient::canTakeFocus(FocusDirection)
 {
     notImplemented();

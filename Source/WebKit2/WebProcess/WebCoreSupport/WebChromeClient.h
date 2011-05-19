@@ -214,6 +214,10 @@ private:
     virtual void setRootFullScreenLayer(WebCore::GraphicsLayer*);
 #endif
 
+#if PLATFORM(MAC)
+    virtual void makeFirstResponder();
+#endif
+    
     virtual void dispatchViewportDataDidChange(const WebCore::ViewportArguments&) const;
 
     virtual void didCompleteRubberBandForMainFrame(const WebCore::IntSize&) const;

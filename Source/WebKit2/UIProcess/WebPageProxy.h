@@ -379,6 +379,7 @@ public:
     void registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elemenToken, const CoreIPC::DataReference& windowToken);
     bool writeSelectionToPasteboard(const String& pasteboardName, const Vector<String>& pasteboardTypes);
     bool readSelectionFromPasteboard(const String& pasteboardName);
+    void makeFirstResponder();
 #endif
 
     void viewScaleFactorDidChange(double);

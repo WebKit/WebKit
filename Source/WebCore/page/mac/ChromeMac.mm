@@ -30,6 +30,12 @@ void Chrome::focusNSView(NSView* view)
 {
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
 
+    // Handle the WK2 case where there is no view passed in.
+    if (!view) {
+        client()->makeFirstResponder();
+        return;
+    }
+    
     NSResponder *firstResponder = client()->firstResponder();
     if (firstResponder == view)
         return;

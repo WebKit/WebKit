@@ -1,3 +1,20 @@
+2011-05-18  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WK2: VoiceOver cannot move focus into a web area programmatically
+        https://bugs.webkit.org/show_bug.cgi?id=60661
+
+        Accessibility code relies on the ability to bring focus to the containing widget view.
+        In WK2, that message needs to be propagated to the UI process.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::makeFirstResponder):
+        * page/mac/ChromeMac.mm:
+        (WebCore::Chrome::focusNSView):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::setFocus):
+
 2011-05-18  Alok Priyadarshi  <alokp@chromium.org> and Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

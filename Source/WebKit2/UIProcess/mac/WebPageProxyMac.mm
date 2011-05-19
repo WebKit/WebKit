@@ -326,6 +326,11 @@ void WebPageProxy::registerWebProcessAccessibilityToken(const CoreIPC::DataRefer
     m_pageClient->accessibilityWebProcessTokenReceived(data);
 }    
     
+void WebPageProxy::makeFirstResponder()
+{
+    m_pageClient->makeFirstResponder();
+}
+    
 void WebPageProxy::registerUIProcessAccessibilityTokens(const CoreIPC::DataReference& elementToken, const CoreIPC::DataReference& windowToken)
 {
     if (!isValid())

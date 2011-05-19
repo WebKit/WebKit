@@ -1,3 +1,25 @@
+2011-05-18  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WK2: VoiceOver cannot move focus into a web area programmatically
+        https://bugs.webkit.org/show_bug.cgi?id=60661
+
+        Add a makeFirstResponder method that will bring focus to the widget view within the UI
+        process.
+
+        * UIProcess/API/mac/PageClientImpl.h:
+        * UIProcess/API/mac/PageClientImpl.mm:
+        (WebKit::PageClientImpl::makeFirstResponder):
+        * UIProcess/PageClient.h:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/WebPageProxy.messages.in:
+        * UIProcess/mac/WebPageProxyMac.mm:
+        (WebKit::WebPageProxy::makeFirstResponder):
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::makeFirstResponder):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2011-05-18  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Anders Carlsson.

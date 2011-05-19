@@ -117,6 +117,7 @@ public:
     virtual void setDragImage(const WebCore::IntPoint& clientPosition, PassRefPtr<ShareableBitmap> dragImage, bool isLinkDrag) = 0;
     virtual void updateTextInputState(bool updateSecureInputState) = 0;
     virtual void resetTextInputState() = 0;
+    virtual void makeFirstResponder() = 0;
 #endif
 #if PLATFORM(WIN)
     virtual void compositionSelectionChanged(bool) = 0;
