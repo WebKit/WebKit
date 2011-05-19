@@ -684,6 +684,11 @@ WebInspector.PresenationCallFrame.prototype = {
         return this._callFrame.scopeChain;
     },
 
+    get this()
+    {
+        return this._callFrame.this;
+    },
+
     get index()
     {
         return this._index;

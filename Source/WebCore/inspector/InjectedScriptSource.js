@@ -456,6 +456,7 @@ InjectedScript.CallFrameProxy = function(ordinal, callFrame)
     this.functionName = (callFrame.type === "function" ? callFrame.functionName : "");
     this.location = { sourceId: String(callFrame.sourceID), lineNumber: callFrame.line, columnNumber: callFrame.column };
     this.scopeChain = this._wrapScopeChain(callFrame);
+    this.this = injectedScript._wrapObject(callFrame.thisObject, "backtrace");
 }
 
 InjectedScript.CallFrameProxy.prototype = {
@@ -483,10 +484,6 @@ InjectedScript.CallFrameProxy.prototype = {
 
             var scopeType = callFrame.scopeType(i);
             scope.type = scopeTypeNames[scopeType];
-
-            if (scopeType === LOCAL_SCOPE)
-                scope.this = injectedScript._wrapObject(callFrame.thisObject, "backtrace");
-
             scopeChainProxy.push(scope);
         }
         return scopeChainProxy;

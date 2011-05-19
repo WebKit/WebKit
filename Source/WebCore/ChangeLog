@@ -1,3 +1,15 @@
+2011-05-19  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: make "this" a part of callFrame, not scope in the protocol.
+        https://bugs.webkit.org/show_bug.cgi?id=61057
+
+        * inspector/InjectedScriptSource.js:
+        * inspector/Inspector.json:
+        * inspector/front-end/ScopeChainSidebarPane.js:
+        (WebInspector.ScopeChainSidebarPane.prototype.update):
+
 2011-05-19  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Hajime Morita.

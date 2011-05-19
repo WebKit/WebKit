@@ -1354,7 +1354,8 @@
                     { "name": "id", "type": "string", "description": "Call frame identifier." },
                     { "name": "functionName", "type": "string", "description": "Name of the function called on this frame." },
                     { "name": "location", "$ref": "Location", "description": "Location in the source code." },
-                    { "name": "scopeChain", "type": "array", "items": { "$ref": "Scope" }, "description": "Scope chain for given call frame." }
+                    { "name": "scopeChain", "type": "array", "items": { "$ref": "Scope" }, "description": "Scope chain for given call frame." },
+                    { "name": "this", "$ref": "Runtime.RemoteObject", "description": "<code>this</code> object for this call frame." }
                 ],
                 "description": "Debugger call frame. Array of call frames form call stack."
             },
@@ -1363,8 +1364,7 @@
                 "type": "object",
                 "properties": [
                     { "name": "type", "type": "string", "enum": ["global", "local", "with", "closure", "catch"], "description": "Scope type." },
-                    { "name": "object", "$ref": "Runtime.RemoteObject", "description": "Object representing the scope." },
-                    { "name": "this", "$ref": "Runtime.RemoteObject", "optional": true, "description": "<code>this</code> object for local scope." }
+                    { "name": "object", "$ref": "Runtime.RemoteObject", "description": "Object representing the scope." }
                 ],
                 "description": "Debugger call frame. Array of call frames form call stack."
             }

@@ -72,8 +72,8 @@ WebInspector.ScopeChainSidebarPane.prototype = {
                     title = WebInspector.UIString("Local");
                     emptyPlaceholder = WebInspector.UIString("No Variables");
                     subtitle = null;
-                    if (scope.this)
-                        extraProperties = [ new WebInspector.RemoteObjectProperty("this", WebInspector.RemoteObject.fromPayload(scope.this)) ];
+                    if (callFrame.this)
+                        extraProperties = [ new WebInspector.RemoteObjectProperty("this", WebInspector.RemoteObject.fromPayload(callFrame.this)) ];
                     if (i == 0) {
                         var exception = WebInspector.debuggerModel.debuggerPausedDetails.exception;
                         if (exception) {
