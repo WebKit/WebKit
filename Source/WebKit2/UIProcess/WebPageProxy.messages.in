@@ -227,6 +227,8 @@ messages -> WebPageProxy {
     Speak(WTF::String string)
     StopSpeaking()
 
+    MakeFirstResponder()
+
     # Spotlight
     SearchWithSpotlight(WTF::String string)
 #endif

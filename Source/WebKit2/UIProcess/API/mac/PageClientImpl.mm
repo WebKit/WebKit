@@ -164,6 +164,11 @@ bool PageClientImpl::isViewFocused()
     return [m_wkView _isFocused];
 }
 
+void PageClientImpl::makeFirstResponder()
+{
+     [[m_wkView window] makeFirstResponder:m_wkView];
+}
+    
 bool PageClientImpl::isViewVisible()
 {
     if (![m_wkView window])
