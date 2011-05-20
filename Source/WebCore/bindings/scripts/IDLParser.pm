@@ -25,6 +25,7 @@ use strict;
 
 use IPC::Open2;
 use IDLStructure;
+use preprocessor;
 
 use constant MODE_UNDEF    => 0; # Default mode.
 
@@ -65,30 +66,7 @@ sub Parse
     my $preprocessor = shift;
     $parentsOnly = shift;
 
-    if (!$preprocessor) {
-        require Config;
-        my $gccLocation = "";
-        if ($ENV{CC}) {
-            $gccLocation = $ENV{CC};
-        } elsif (($Config::Config{'osname'}) =~ /solaris/i) {
-            $gccLocation = "/usr/sfw/bin/gcc";
-        } else {
-            $gccLocation = "/usr/bin/gcc";
-        }
-        $preprocessor = $gccLocation . " -E -P -x c++";
-    }
-
-    if (!$defines) {
-        $defines = "";
-    }
-
-    print " | *** Starting to parse $fileName...\n |\n" unless $beQuiet;
-
-    my $pid = open2(\*PP_OUT, \*PP_IN, split(' ', $preprocessor), (map { "-D$_" } split(' ', $defines)), $fileName);
-    close PP_IN;
-    my @documentContent = <PP_OUT>;
-    close PP_OUT;
-    waitpid($pid, 0);
+    my @documentContent = applyPreprocessor($fileName, $defines, $preprocessor, $beQuiet);
 
     my $dataAvailable = 0;
 

@@ -32,20 +32,21 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# usage: action_useragentstylesheets.py OUTPUTS -- INPUTS
-#
-# Multiple OUTPUTS and INPUTS may be listed. The sections are separated by
-# -- arguments.
+# usage:
+# action_useragentstylesheets.py OUTPUTS INPUTS -- MAINSCRIPT MODULES -- OPTIONS
 #
 # OUTPUTS must contain two items, in order: a path to UserAgentStyleSheets.h
 # and a path to UserAgentStyleSheetsData.cpp.
+# INPUTS contains one or more CSS files.
 #
-# INPUTS must contain at least two items. The first item must be the path to
-# make-css-file-arrays.pl. The remaining items are paths to style sheets to
-# be fed to that script.
+# MAINSCRIPT is the path to make-css-file-arrays.pl. MODULES may contain
+# multiple paths to additional perl modules.
+#
+# OPTIONS are passed as-is to MAINSCRIPT as additional arguments.
 
 
 import os
+import shlex
 import subprocess
 import sys
 
@@ -76,18 +77,39 @@ def SplitArgsIntoSections(args):
 
 def main(args):
     sections = SplitArgsIntoSections(args[1:])
-    assert len(sections) == 2
-    (outputs, inputs) = sections
+    assert len(sections) == 3
+    (outputsInputs, scripts, options) = sections
 
-    assert len(outputs) == 2
-    outputH = outputs[0]
-    outputCpp = outputs[1]
+    assert len(outputsInputs) >= 3
+    outputH = outputsInputs[0]
+    outputCpp = outputsInputs[1]
+    styleSheets = outputsInputs[2:]
 
-    makeCssFileArrays = inputs[0]
-    styleSheets = inputs[1:]
+    assert len(scripts) >= 1
+    makeCssFileArrays = scripts[0]
+    perlModules = scripts[1:]
+
+    includeDirs = []
+    for perlModule in perlModules:
+        includeDir = os.path.dirname(perlModule)
+        if not includeDir in includeDirs:
+            includeDirs.append(includeDir)
+
+    # The defines come in as one flat string. Split it up into distinct arguments.
+    if '--defines' in options:
+        definesIndex = options.index('--defines')
+        if definesIndex + 1 < len(options):
+            splitOptions = shlex.split(options[definesIndex + 1])
+            if splitOptions:
+                options[definesIndex + 1] = ' '.join(splitOptions)
 
     # Build up the command.
-    command = ['perl', makeCssFileArrays, outputH, outputCpp]
+    command = ['perl']
+    for includeDir in includeDirs:
+        command.extend(['-I', includeDir])
+    command.append(makeCssFileArrays)
+    command.extend(options)
+    command.extend([outputH, outputCpp])
     command.extend(styleSheets)
 
     # Do it. check_call is new in 2.5, so simulate its behavior with call and

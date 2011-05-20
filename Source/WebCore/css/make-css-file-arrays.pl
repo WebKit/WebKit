@@ -23,6 +23,11 @@
 use strict;
 use Getopt::Long;
 
+my $defines;
+my $preprocessor;
+GetOptions('defines=s' => \$defines,
+           'preprocessor=s' => \$preprocessor);
+
 my $header = $ARGV[0];
 shift;
 
@@ -40,9 +45,19 @@ for my $in (@ARGV) {
     my $name = $1;
 
     # Slurp in the CSS file.
-    open IN, "<", $in or die;
-    my $text; { local $/; $text = <IN>; }
-    close IN;
+    my $text;
+    # We should not set --defines option and run "moc" preprocessor on Qt.
+    # See http://webkit.org/b/37296.
+    if (!$defines) {
+        open IN, "<", $in or die;
+        { local $/; $text = <IN>; }
+        close IN;
+        # Remove preprocessor directives.
+        $text =~ s|^#.*?$||mg;
+    } else {
+        require preprocessor;
+        $text = join('', applyPreprocessor($in, $defines, $preprocessor, 1));
+    }
 
     # Remove comments in a simple-minded way that will work fine for our files.
     # Could do this a fancier way if we were worried about arbitrary CSS source.

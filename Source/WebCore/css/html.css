@@ -438,10 +438,12 @@ input[type="search"]::-webkit-search-results-button {
     display: inline-block;
 }
 
+#if defined(ENABLE_DATALIST) && ENABLE_DATALIST
 input::-webkit-input-list-button {
     -webkit-appearance: list-button;
     display: inline-block;
 }
+#endif
 
 input::-webkit-inner-spin-button {
     -webkit-appearance: inner-spin-button;
@@ -460,10 +462,12 @@ input::-webkit-outer-spin-button {
     -webkit-user-select: none;
 }
 
+#if defined(ENABLE_INPUT_SPEECH) && ENABLE_INPUT_SPEECH
 input::-webkit-input-speech-button {
     -webkit-appearance: -webkit-input-speech-button;
     display: inline-block;
 }
+#endif
 
 keygen, select {
     -webkit-border-radius: 5px;
@@ -674,6 +678,7 @@ output {
     height: 16px;
 }
 
+#if defined(ENABLE_METER_TAG) && ENABLE_METER_TAG
 /* meter */
 
 meter {
@@ -709,7 +714,9 @@ meter::-webkit-meter-even-less-good-value {
     height: 100%;
     -webkit-box-sizing: border-box;
 }
+#endif
 
+#if defined(ENABLE_PROGRESS_TAG) && ENABLE_PROGRESS_TAG
 /* progress */
 
 progress {
@@ -734,6 +741,7 @@ progress::-webkit-progress-value {
     width: 50%; /* should be removed later */
     -webkit-box-sizing: border-box;
 }
+#endif
 
 /* inline elements */
 

@@ -637,22 +637,31 @@
         },
         {
           'action_name': 'UserAgentStyleSheets',
-          # The .css files are in the same order as ../DerivedSources.make.
+          'variables': {
+            'scripts': [
+              '../css/make-css-file-arrays.pl',
+              '../bindings/scripts/preprocessor.pm',
+            ],
+            # The .css files are in the same order as ../DerivedSources.make.
+            'stylesheets': [
+              '../css/html.css',
+              '../css/quirks.css',
+              '../css/view-source.css',
+              '../css/themeChromiumLinux.css', # Chromium only.
+              '../css/themeChromiumSkia.css',  # Chromium only.
+              '../css/themeWin.css',
+              '../css/themeWinQuirks.css',
+              '../css/svg.css',
+              '../css/mathml.css',
+              '../css/mediaControls.css',
+              '../css/mediaControlsChromium.css',
+              '../css/fullscreen.css',
+              # Skip fullscreenQuickTime.
+            ],
+          },
           'inputs': [
-            '../css/make-css-file-arrays.pl',
-            '../css/html.css',
-            '../css/quirks.css',
-            '../css/view-source.css',
-            '../css/themeChromiumLinux.css', # Chromium only.
-            '../css/themeChromiumSkia.css',  # Chromium only.
-            '../css/themeWin.css',
-            '../css/themeWinQuirks.css',
-            '../css/svg.css',
-            '../css/mathml.css',
-            '../css/mediaControls.css',
-            '../css/mediaControlsChromium.css',
-            '../css/fullscreen.css',
-            # Skip fullscreenQuickTime.
+            '<@(scripts)',
+            '<@(stylesheets)'
           ],
           'outputs': [
             '<(SHARED_INTERMEDIATE_DIR)/webkit/UserAgentStyleSheets.h',
@@ -662,8 +671,11 @@
             'python',
             'scripts/action_useragentstylesheets.py',
             '<@(_outputs)',
+            '<@(stylesheets)',
             '--',
-            '<@(_inputs)'
+            '<@(scripts)',
+            '--',
+            '--defines', '<(feature_defines)',
           ],
         },
         {
@@ -813,6 +825,7 @@
             '../bindings/scripts/CodeGeneratorV8.pm',
             '../bindings/scripts/IDLParser.pm',
             '../bindings/scripts/IDLStructure.pm',
+            '../bindings/scripts/preprocessor.pm',
           ],
           'outputs': [
             # FIXME:  The .cpp file should be in webkit/bindings once

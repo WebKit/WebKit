@@ -627,11 +627,12 @@ SCRIPTS_BINDINGS = \
 	$(WebCore)/bindings/scripts/IDLParser.pm \
 	$(WebCore)/bindings/scripts/IDLStructure.pm \
 	$(WebCore)/bindings/scripts/InFilesParser.pm \
-	$(WebCore)/bindings/scripts/generate-bindings.pl
+	$(WebCore)/bindings/scripts/generate-bindings.pl \
+	$(WebCore)/bindings/scripts/preprocessor.pm
 
 DerivedSources/WebCore/UserAgentStyleSheetsData.cpp: DerivedSources/WebCore/UserAgentStyleSheets.h
-DerivedSources/WebCore/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(USER_AGENT_STYLE_SHEETS)
-	$(AM_V_GEN)$(PERL) $< $@ DerivedSources/WebCore/UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
+DerivedSources/WebCore/UserAgentStyleSheets.h: $(WebCore)/css/make-css-file-arrays.pl $(WebCore)/bindings/scripts/preprocessor.pm $(USER_AGENT_STYLE_SHEETS)
+	$(AM_V_GEN)$(PERL) -I$(WebCore)/bindings/scripts $<  --defines "$(FEATURE_DEFINES)" $@ DerivedSources/WebCore/UserAgentStyleSheetsData.cpp $(USER_AGENT_STYLE_SHEETS)
 
 # HTML tag and attribute names
 DerivedSources/WebCore/JSHTMLElementWrapperFactory.cpp: DerivedSources/WebCore/HTMLElementFactory.cpp

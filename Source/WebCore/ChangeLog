@@ -1,3 +1,47 @@
+2011-05-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        Apply feature flags to user-agent style sheets
+        https://bugs.webkit.org/show_bug.cgi?id=52612
+
+        A user-agent style sheet should not have style definitions for disabled
+        features because such definitions makes feature detection harder and
+        causes incorrect behavior (See Bug 52214).
+
+        We have handled such feature-dependent style definitions by providing
+        separated CSS files and selecting them in build files. Adding such style
+        definition was hard because we need to update each of build files. This
+        change simplifies the process to add such style definitions by applying
+        preprocessor to the CSS files.
+
+        Implementation:
+        make-css-file-arrays.pl invokes a preprocessor if it has --defines
+        option. Otherwise, it just remove lines beginning with #.
+        In this change, we pass --defines on Mac, Windows, Chromium, GTK, and
+        CMake platforms. Qt and Android have no behavior change.
+
+        * CMakeLists.txt:
+          - IDL handling depends on preprocessor.pm.
+          - Pass --defines option to make-css-file-arrays.pl
+          - Add WebCore/bindings/scripts to @INC for make-css-file-arrays.pl
+        * CodeGenerators.pri: IDL handling depends on preprocessor.pm.
+        * DerivedSources.make: ditto.
+        * GNUmakefile.am: ditto.
+        * WebCore.gyp/WebCore.gyp: ditto.
+        * WebCore.gyp/scripts/action_useragentstylesheets.py:
+          Change parameter order to support perl modules and options.
+          Many code is taken from rule_bindings.py.
+        * WebCore.vcproj/MigrateScripts: Handles preprocessor.pm.
+        * bindings/scripts/IDLParser.pm:
+          Move the preprocessor code to preprocessor.pm.
+        * bindings/scripts/preprocessor.pm:
+          Added. The code was moved from IDLParser.pm
+        * css/html.css: Enclose some style definitions with #if-#endif.
+        * css/make-css-file-arrays.pl:
+          - Add --defines and --preprocessor options.
+          - Invoke a preprocessor if --defines is specified.
+
 2011-05-20  Dirk Schulze  <krit@webkit.org>
 
         Rubber-stamped by Nikolas Zimmermann.

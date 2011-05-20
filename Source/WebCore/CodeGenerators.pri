@@ -625,14 +625,16 @@ v8 {
                   $$PWD/bindings/scripts/CodeGeneratorV8.pm \
                   $$PWD/bindings/scripts/IDLParser.pm \
                   $$PWD/bindings/scripts/IDLStructure.pm \
-                  $$PWD/bindings/scripts/InFilesParser.pm
+                  $$PWD/bindings/scripts/InFilesParser.pm \
+                  $$PWD/bindings/scripts/preprocessor.pm
 } else {
     idl.output = $${WC_GENERATED_SOURCES_DIR}/JS${QMAKE_FILE_BASE}.cpp
     idl.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
                   $$PWD/bindings/scripts/CodeGeneratorJS.pm \
                   $$PWD/bindings/scripts/IDLParser.pm \
                   $$PWD/bindings/scripts/IDLStructure.pm \
-                  $$PWD/bindings/scripts/InFilesParser.pm
+                  $$PWD/bindings/scripts/InFilesParser.pm \
+                  $$PWD/bindings/scripts/preprocessor.pm
 }
 addExtraCompiler(idl)
 
@@ -655,6 +657,7 @@ inspectorIDL.depends = $$PWD/bindings/scripts/CodeGenerator.pm \
               $$PWD/bindings/scripts/IDLParser.pm \
               $$PWD/bindings/scripts/IDLStructure.pm \
               $$PWD/bindings/scripts/InFilesParser.pm \
+              $$PWD/bindings/scripts/preprocessor.pm \
               $$PWD/inspector/Inspector.json \
               $$PWD/inspector/generate-inspector-idl
 inspectorIDL.wkExtraSources = $$inspectorIDL.output
