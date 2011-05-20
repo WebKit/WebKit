@@ -30,6 +30,20 @@ function go() {
     selectElement.style.display = '';
     selectElement.multiple = true;
     shouldBe("selectElement.selectedIndex", "0");
+
+    // Test resetting the multiple attribute.
+    selectElement = document.getElementsByTagName('select')[4];
+    shouldBe("selectElement.options[0].selected", "true");
+    shouldBe("selectElement.options[1].selected", "true");
+    shouldBe("selectElement.options[2].selected", "false");
+    selectElement.multiple = true;
+    shouldBe("selectElement.options[0].selected", "true");
+    shouldBe("selectElement.options[1].selected", "true");
+    shouldBe("selectElement.options[2].selected", "false");
+    selectElement.multiple = false;
+    shouldBe("selectElement.options[0].selected", "true");
+    shouldBe("selectElement.options[1].selected", "false");
+    shouldBe("selectElement.options[2].selected", "false");
 }
 </script>
 <body onload="go()"> 
@@ -51,6 +65,11 @@ function go() {
     <select style="display: none;"> 
         <option id="opt1" value="1">1</option> 
         <option id="opt2" value="2">2</option>
+        <option id="opt2" value="3">3</option> 
+    </select>
+    <select multiple="true"> 
+        <option id="opt1" value="1" selected="selected">1</option> 
+        <option id="opt2" value="2" selected="selected">2</option>
         <option id="opt2" value="3">3</option> 
     </select>
     <div id="console"></div>
