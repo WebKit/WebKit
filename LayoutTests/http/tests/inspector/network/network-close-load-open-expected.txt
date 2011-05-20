@@ -1,0 +1,7 @@
+Test that when background event collection is enabled network panel correctly collects events with closed frontend. Bug 58064 Bug 58652
+
+
+resources count = 2
+http://127.0.0.1:8000/inspector/network/resources/resource.php?type=image&size=400
+http://127.0.0.1:8000/inspector/network/resources/resource.php?type=image&size=400&gzip=true
+

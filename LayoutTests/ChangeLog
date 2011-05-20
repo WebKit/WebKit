@@ -1,3 +1,28 @@
+2011-05-19  Sergey Vorobyev  <sergeyvorobyev@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Background network events collection - add GUI to Inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=58652
+
+        Move reopenFrontend() to inspector-test.js
+        Add first test for background events collection.
+
+        * http/tests/inspector/inspector-test.js:
+        ():
+        * http/tests/inspector/network-test.js: Added.
+        (initialize_NetworkTest.InspectorTest.enableBackgroundEventCollection):
+        (initialize_NetworkTest.InspectorTest.disableBackgroundEventCollection):
+        * http/tests/inspector/network/network-clear-after-disabled-expected.txt: Added.
+        * http/tests/inspector/network/network-clear-after-disabled.html: Added.
+        * http/tests/inspector/network/network-close-load-open-expected.txt: Added.
+        * http/tests/inspector/network/network-close-load-open.html: Added.
+        * http/tests/inspector/network/network-open-load-reopen-expected.txt: Added.
+        * http/tests/inspector/network/network-open-load-reopen.html: Added.
+        * inspector/debugger/open-close-open-expected.txt:
+        * inspector/debugger/open-close-open.html:
+        * platform/qt/Skipped:
+
 2011-05-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Skip failing tests.

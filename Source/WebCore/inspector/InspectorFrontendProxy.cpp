@@ -55,6 +55,11 @@ void InspectorFrontendProxy::setInspectorFrontendChannel(InspectorFrontendChanne
     m_receiver = receiver;
 }
 
+InspectorFrontendChannel* InspectorFrontendProxy::inspectorFrontendChannel()
+{
+    return m_receiver;
+}
+
 void InspectorFrontendProxy::setEventsCollector(EventsCollector* collector)
 {
     m_collector = collector;

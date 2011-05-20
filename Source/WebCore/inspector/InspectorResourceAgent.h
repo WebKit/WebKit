@@ -105,9 +105,10 @@ public:
     void didCloseWebSocket(unsigned long identifier);
 #endif
 
-    bool backgroundEventsCollectionEnabled();
+    void isBackgroundEventsCollectionEnabled(ErrorString*, bool* enabled);
+    void setBackgroundEventsCollectionEnabled(ErrorString*, bool enabled);
 
-    // Called from frontend 
+    // Called from frontend
     void enable(ErrorString*);
     void disable(ErrorString*);
     void setUserAgentOverride(ErrorString*, const String& userAgent);
@@ -117,15 +118,17 @@ public:
 private:
     InspectorResourceAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*);
 
+    bool isBackgroundEventsCollectionEnabled();
     void enable();
+    void initializeBackgroundCollection();
 
     InstrumentingAgents* m_instrumentingAgents;
     InspectorPageAgent* m_pageAgent;
     InspectorState* m_state;
-    OwnPtr<EventsCollector> m_eventsCollector;
     InspectorFrontend::Network* m_frontend;
-    OwnPtr<InspectorFrontend::Network> m_mockFrontend;
+    OwnPtr<EventsCollector> m_eventsCollector;
     OwnPtr<InspectorFrontendProxy> m_inspectorFrontendProxy;
+    OwnPtr<InspectorFrontend::Network> m_mockFrontend;
     String m_userAgentOverride;
 };
 

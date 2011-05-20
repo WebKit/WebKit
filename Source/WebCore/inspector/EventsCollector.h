@@ -40,6 +40,7 @@ public:
     EventsCollector();
     ~EventsCollector() { }
     void addEvent(const String& message);
+    void clear();
     void sendCollectedEvents(InspectorFrontendChannel*);
 private:
     static const size_t maxCapacity = 1024*1024; // 1 Mb

@@ -1,0 +1,61 @@
+<html>
+<head>
+<script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
+<script>
+
+function loadImagesAndOpenFrontend()
+{
+    var image = document.createElement("img");
+    image.setAttribute("src", "resources/resource.php?type=image&size=400");
+    image.onload = resourceLoaded;
+    document.body.appendChild(image);
+
+    var image2 = document.createElement("img");
+    image2.onload = resourceLoaded;
+    image2.setAttribute("src", "resources/resource.php?type=image&size=400&gzip=true");
+    document.body.appendChild(image2);
+}
+
+var loadedResourceCount = 0;
+function resourceLoaded()
+{
+    loadedResourceCount++;
+    if (loadedResourceCount === 2)
+        openFrontendAndIncrement();
+}
+
+function test()
+{
+    try {
+        InspectorTest.evaluateInPage("frontendReopeningCount", frontendReopeningCountReceiver);
+    } catch (e) {
+        InspectorTest.disableBackgroundEventCollection();
+        throw e;
+    }
+
+    function frontendReopeningCountReceiver(stepNumber) {
+        if (stepNumber._description === "0") {
+            InspectorTest.enableBackgroundEventCollection();
+            InspectorTest.evaluateInPage("closeFrontend(loadImagesAndOpenFrontend)");
+        } else {
+            InspectorTest.dumpNetworkResources();
+            // Switch off before completeTest.
+            InspectorTest.disableBackgroundEventCollection();
+            InspectorTest.completeTest();
+        }
+    }
+}
+
+</script>
+
+</head>
+
+<body onload="runTest()">
+<p>
+Test that when background event collection is enabled network panel correctly collects events with closed frontend.
+<a href="https://bugs.webkit.org/show_bug.cgi?id=58064">Bug 58064</a>
+<a href="https://bugs.webkit.org/show_bug.cgi?id=58652">Bug 58652</a>
+</p>
+</body>
+</html>

@@ -30,6 +30,12 @@
 
 WebInspector.NetworkPanel = function()
 {
+    function eventsCollectionEnabled(error, enabled)
+    {
+        this._backgroundCollectionEnabled = enabled;
+    }
+    NetworkAgent.isBackgroundEventsCollectionEnabled(eventsCollectionEnabled.bind(this));
+
     WebInspector.Panel.call(this, "network");
 
     this.createSidebar();
@@ -1020,6 +1026,9 @@ WebInspector.NetworkPanel.prototype = {
             contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Save all as HAR" : "Save All as HAR"), this._exportAll.bind(this));
         }
 
+        contextMenu.appendSeparator();
+        contextMenu.appendCheckboxItem(WebInspector.UIString("Enabled background events collection"), this._toggleBackgroundEventsCollection.bind(this), this._backgroundCollectionEnabled);
+
         contextMenu.show(event);
     },
 
@@ -1064,6 +1073,12 @@ WebInspector.NetworkPanel.prototype = {
     {
         var har = (new WebInspector.HAREntry(resource)).build();
         InspectorFrontendHost.saveAs(resource.displayName + ".har", JSON.stringify(har));
+    },
+
+    _toggleBackgroundEventsCollection: function(resource)
+    {
+        this._backgroundCollectionEnabled = !this._backgroundCollectionEnabled;
+        NetworkAgent.setBackgroundEventsCollectionEnabled(this._backgroundCollectionEnabled);
     },
 
     _updateOffscreenRows: function(e)

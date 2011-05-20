@@ -472,6 +472,19 @@
                 "parameters": [
                     { "name": "headers", "type": "object", "description": "Map with extra HTTP headers." }
                 ]
+            },
+            {
+                "name": "setBackgroundEventsCollectionEnabled",
+                "description": "Toggles background network event collection.",
+                "parameters": [
+                    { "name": "enabled", "type": "boolean", "description": "true - enable collection, false - disable" }
+                ]
+            },
+            {
+                "name": "isBackgroundEventsCollectionEnabled",
+                "returns": [
+                    { "name": "enabled", "type": "boolean" }
+                ]
             }
         ],
         "events": [

@@ -4,21 +4,10 @@
 <script src="../../http/tests/inspector/debugger-test.js"></script>
 <script>
 
-function reopenFrontend() {
-    // Do this asynchronously to allow InspectorBackendDispatcher to send response
-    // back to the frontend before it's destroyed.
-    setTimeout(function() {
-        window._frontendReopened = true;
-        layoutTestController.closeWebInspector();
-        layoutTestController.showWebInspector();
-        runTest();
-    }, 0);
-}
-
 function test()
 {
-    InspectorTest.evaluateInPage("window._frontendReopened", function(result) {
-        if (result._description === "undefined")
+    InspectorTest.evaluateInPage("frontendReopeningCount", function(result) {
+        if (result._description === "0")
             InspectorTest.evaluateInPage("reopenFrontend()")
         else {
             InspectorTest.runDebuggerTestSuite([

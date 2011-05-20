@@ -42,6 +42,7 @@ public:
     virtual ~InspectorFrontendProxy() { }
 
     void setInspectorFrontendChannel(InspectorFrontendChannel*);
+    InspectorFrontendChannel* inspectorFrontendChannel();
     void setEventsCollector(EventsCollector*);
     virtual bool sendMessageToFrontend(const String& message);
 

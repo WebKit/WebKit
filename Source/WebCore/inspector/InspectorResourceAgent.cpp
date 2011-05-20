@@ -68,12 +68,13 @@ namespace WebCore {
 namespace ResourceAgentState {
 static const char resourceAgentEnabled[] = "resourceAgentEnabled";
 static const char extraRequestHeaders[] = "extraRequestHeaders";
+static const char backgroundEventsCollectionEnabled[] = "backgroundEventsCollectionEnabled";
 }
 
 void InspectorResourceAgent::setFrontend(InspectorFrontend* frontend)
 {
     m_frontend = frontend->network();
-    if (backgroundEventsCollectionEnabled()) {
+    if (isBackgroundEventsCollectionEnabled()) {
         // Insert Message Proxy in receiver chain.
         InspectorFrontendChannel* client = m_frontend->getInspectorFrontendChannel();
         m_inspectorFrontendProxy->setInspectorFrontendChannel(client);
@@ -84,14 +85,16 @@ void InspectorResourceAgent::setFrontend(InspectorFrontend* frontend)
 
 void InspectorResourceAgent::clearFrontend()
 {
-    if (backgroundEventsCollectionEnabled()) {
-        m_inspectorFrontendProxy->setInspectorFrontendChannel(0);
+    if (isBackgroundEventsCollectionEnabled()) {
         m_frontend = m_mockFrontend.get();
-    } else
+        m_inspectorFrontendProxy->setInspectorFrontendChannel(0);
+        m_frontend->setInspectorFrontendChannel(m_inspectorFrontendProxy.get());
+    } else {
         m_frontend = 0;
-
+        ErrorString error;
+        disable(&error);
+    }
     m_userAgentOverride = "";
-    disable(0);
 }
 
 void InspectorResourceAgent::restore()
@@ -331,12 +334,35 @@ void InspectorResourceAgent::didCloseWebSocket(unsigned long identifier)
 }
 #endif // ENABLE(WEB_SOCKETS)
 
-bool InspectorResourceAgent::backgroundEventsCollectionEnabled()
+void InspectorResourceAgent::isBackgroundEventsCollectionEnabled(ErrorString*, bool* enabled)
 {
-    // FIXME (https://bugs.webkit.org/show_bug.cgi?id=58652)
-    // Add here condition to enable background events collection.
-    // Now this function is disable.
-    return false;
+    (*enabled) = isBackgroundEventsCollectionEnabled();
+}
+
+bool InspectorResourceAgent::isBackgroundEventsCollectionEnabled()
+{
+    return m_state->getBoolean(ResourceAgentState::backgroundEventsCollectionEnabled);
+}
+
+void InspectorResourceAgent::setBackgroundEventsCollectionEnabled(ErrorString*, bool enabled)
+{
+    if (enabled == isBackgroundEventsCollectionEnabled())
+        return;
+    if (enabled) {
+        if (!m_eventsCollector)
+            initializeBackgroundCollection();
+        // Insert Message Proxy in receiver chain.
+        ASSERT(m_frontend);
+        InspectorFrontendChannel* client = m_frontend->getInspectorFrontendChannel();
+        m_inspectorFrontendProxy->setInspectorFrontendChannel(client);
+        m_frontend->setInspectorFrontendChannel(m_inspectorFrontendProxy.get());
+    } else {
+        // Take out Message Proxy from receiver chain.
+        m_frontend->setInspectorFrontendChannel(m_inspectorFrontendProxy->inspectorFrontendChannel());
+        m_inspectorFrontendProxy->setInspectorFrontendChannel(0);
+        m_eventsCollector->clear();
+    }
+    return m_state->setBoolean(ResourceAgentState::backgroundEventsCollectionEnabled, enabled);
 }
 
 void InspectorResourceAgent::enable(ErrorString*)
@@ -368,16 +394,22 @@ void InspectorResourceAgent::setExtraHeaders(ErrorString*, PassRefPtr<InspectorO
     m_state->setObject(ResourceAgentState::extraRequestHeaders, headers);
 }
 
+void InspectorResourceAgent::initializeBackgroundCollection()
+{
+    m_eventsCollector = adoptPtr(new EventsCollector());
+    m_inspectorFrontendProxy = adoptPtr(new InspectorFrontendProxy(m_eventsCollector.get()));
+    // Create mock frontend, so we can collect network events.
+    m_mockFrontend = adoptPtr(new InspectorFrontend::Network(m_inspectorFrontendProxy.get()));
+}
+
 InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state)
     : m_instrumentingAgents(instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_state(state)
 {
-    if (backgroundEventsCollectionEnabled()) {
-        m_eventsCollector = adoptPtr(new EventsCollector);
-        m_inspectorFrontendProxy = adoptPtr(new InspectorFrontendProxy(m_eventsCollector.get()));
+    if (isBackgroundEventsCollectionEnabled()) {
+        initializeBackgroundCollection();
         // Create mock frontend, so we can collect network events.
-        m_mockFrontend = adoptPtr(new InspectorFrontend::Network(m_inspectorFrontendProxy.get()));
         m_frontend = m_mockFrontend.get();
         enable();
     } else

@@ -48,6 +48,11 @@ void EventsCollector::addEvent(const String& message)
     }
 }
 
+void EventsCollector::clear()
+{
+    m_events.clear();
+}
+
 void EventsCollector::sendCollectedEvents(InspectorFrontendChannel* receiver)
 {
     for (Vector<String>::iterator it = m_events.begin(); it != m_events.end(); ++it)

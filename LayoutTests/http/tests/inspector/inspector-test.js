@@ -324,6 +324,29 @@ InspectorTest.textContentWithLineBreaks = function(node)
 
 var runTestCallId = 0;
 var completeTestCallId = 1;
+var frontendReopeningCount = 0;
+
+function reopenFrontend()
+{
+    closeFrontend(openFrontendAndIncrement);
+}
+
+function closeFrontend(callback)
+{
+    // Do this asynchronously to allow InspectorBackendDispatcher to send response
+    // back to the frontend before it's destroyed.
+    setTimeout(function() {
+        layoutTestController.closeWebInspector();
+        callback();
+    }, 0);
+}
+
+function openFrontendAndIncrement()
+{
+    frontendReopeningCount++;
+    layoutTestController.showWebInspector();
+    runTest();
+}
 
 function runAfterIframeIsLoaded()
 {

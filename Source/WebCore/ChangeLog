@@ -1,3 +1,40 @@
+2011-05-19  Sergey Vorobyev  <sergeyvorobyev@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Background network events collection - add GUI to Inspector.
+        https://bugs.webkit.org/show_bug.cgi?id=58652
+
+        Now in WebInspector Network panel avalaible new checkbox item in context menu:
+        "Background events collection". It allows to save all network events when inspector
+        frontend closed. Events that occur before collection enabling are not preserved after
+        frontend reopening. Property unique for each page. Disabled by default.
+
+
+        Tests: http/tests/inspector/network/network-clear-after-disabled.html
+               http/tests/inspector/network/network-close-load-open.html
+               http/tests/inspector/network/network-open-load-reopen.html
+
+        * inspector/EventsCollector.cpp:
+        (WebCore::EventsCollector::clear):
+        * inspector/EventsCollector.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorFrontendProxy.cpp:
+        (WebCore::InspectorFrontendProxy::inspectorFrontendChannel):
+        * inspector/InspectorFrontendProxy.h:
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::setFrontend):
+        (WebCore::InspectorResourceAgent::clearFrontend):
+        (WebCore::InspectorResourceAgent::isBackgroundEventsCollectionEnabled):
+        (WebCore::InspectorResourceAgent::setBackgroundEventsCollectionEnabled):
+        (WebCore::InspectorResourceAgent::initializeBackgroundCollection):
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel):
+        (WebInspector.NetworkPanel.prototype._contextMenu):
+        (WebInspector.NetworkPanel.prototype._toggleBackgroundEventsCollection):
+
 2011-05-20  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

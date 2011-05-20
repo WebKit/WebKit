@@ -450,6 +450,11 @@ inspector/styles/styles-add-blank-property.html
 http/tests/inspector/change-iframe-src.html
 inspector/debugger/open-close-open.html
 
+# [Qt] This tests' fails probably has same reason as test inspector/debugger/open-close-open.html.
+http/tests/inspector/network/network-open-load-reopen.html
+http/tests/inspector/network/network-close-load-open.html
+http/tests/inspector/network/network-clear-after-disabled.html
+
 # [Qt] fast/frames/flattening/frameset-flattening-subframesets.html fails intermittently on Qt bot
 # Fails caused by layoutTestController.display() in fast/frames/flattening/frameset-flattening-subframe-resize.html
 # https://bugs.webkit.org/show_bug.cgi?id=37334
