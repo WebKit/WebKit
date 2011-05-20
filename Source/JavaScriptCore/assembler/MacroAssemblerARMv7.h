@@ -819,6 +819,10 @@ public:
             move(src, dest);
     }
 
+    void nop()
+    {
+        m_assembler.nop();
+    }
 
     // Forwards / external control flow operations:
     //

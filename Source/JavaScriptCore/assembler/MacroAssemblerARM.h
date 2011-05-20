@@ -935,6 +935,11 @@ public:
         return branchDouble(DoubleEqualOrUnordered, reg, scratch);
     }
 
+    void nop()
+    {
+        m_assembler.nop();
+    }
+
 protected:
     ARMAssembler::Condition ARMCondition(RelationalCondition cond)
     {

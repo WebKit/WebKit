@@ -138,6 +138,7 @@ private:
         OP_MOV_GvEv                     = 0x8B,
         OP_LEA                          = 0x8D,
         OP_GROUP1A_Ev                   = 0x8F,
+        OP_NOP                          = 0x90,
         OP_CDQ                          = 0x99,
         OP_MOV_EAXOv                    = 0xA1,
         OP_MOV_OvEAX                    = 0xA3,
@@ -1592,6 +1593,11 @@ public:
 #ifndef NDEBUG
     unsigned debugOffset() { return m_formatter.debugOffset(); }
 #endif
+
+    void nop()
+    {
+        m_formatter.oneByteOp(OP_NOP);
+    }
 
 private:
 

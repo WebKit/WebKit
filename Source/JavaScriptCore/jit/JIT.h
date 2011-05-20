@@ -997,6 +997,7 @@ namespace JSC {
         int m_uninterruptedConstantSequenceBegin;
 #endif
 #endif
+        WeakRandom m_randomGenerator;
         static CodePtr stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool);
     } JIT_CLASS_ALIGNMENT;
 

@@ -1,5 +1,38 @@
 2011-05-19  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        Randomise code starting location a little
+        https://bugs.webkit.org/show_bug.cgi?id=61161
+
+        Add a nop() function to the Assemblers so that we
+        can randomise code offsets slightly at no real cost.
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::nop):
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::nop):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::nop):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::nop):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::nop):
+        * assembler/MacroAssemblerSH4.h:
+        (JSC::MacroAssemblerSH4::nop):
+        * assembler/MacroAssemblerX86Common.h:
+        (JSC::MacroAssemblerX86Common::nop):
+        * assembler/X86Assembler.h:
+        (JSC::X86Assembler::nop):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * runtime/WeakRandom.h:
+        (JSC::WeakRandom::getUint32):
+
+2011-05-19  Oliver Hunt  <oliver@apple.com>
+
         Fix windows build.
 
         * wtf/OSAllocatorWin.cpp:

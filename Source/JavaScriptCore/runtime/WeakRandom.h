@@ -68,6 +68,11 @@ public:
         return advance() / (UINT_MAX + 1.0);
     }
 
+    unsigned getUint32()
+    {
+        return advance();
+    }
+
 private:
     unsigned advance()
     {

@@ -35,6 +35,7 @@ JSC::MacroAssemblerX86Common::SSE2CheckState JSC::MacroAssemblerX86Common::s_sse
 #endif
 
 #include "CodeBlock.h"
+#include "CryptographicallyRandomNumber.h"
 #include "Interpreter.h"
 #include "JITInlineMethods.h"
 #include "JITStubCall.h"
@@ -85,6 +86,11 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
 #else
     , m_lastResultBytecodeRegister(std::numeric_limits<int>::max())
     , m_jumpTargetsPosition(0)
+#endif
+#if USE(OS_RANDOMNESS)
+    , m_randomGenerator(cryptographicallyRandomNumber())
+#else
+    , m_randomGenerator(static_cast<unsigned>(randomNumber() * 0xFFFFFFF))
 #endif
 {
 }
@@ -458,6 +464,10 @@ void JIT::privateCompileSlowCases()
 
 JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 {
+    // Just add a little bit of randomness to the codegen
+    if (m_randomGenerator.getUint32() & 1)
+        nop();
+
     // Could use a pop_m, but would need to offset the following instruction if so.
     preserveReturnAddressAfterCall(regT2);
     emitPutToCallFrameHeader(regT2, RegisterFile::ReturnPC);
