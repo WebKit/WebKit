@@ -154,10 +154,12 @@ namespace JSC {
         return m_marks.isEmpty();
     }
 
+#if !ENABLE(JSC_ZOMBIES)
     inline void MarkedBlock::clearMarks()
     {
         m_marks.clearAll();
     }
+#endif
     
     inline size_t MarkedBlock::markCount()
     {

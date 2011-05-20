@@ -129,7 +129,7 @@ public:
     {
         this->m_cell = reinterpret_cast<JSCell*>(value);
 #if ENABLE(JSC_ZOMBIES)
-        ASSERT(!m_cell || !isZombie(m_cell));
+        ASSERT(!m_cell || value == reinterpret_cast<T*>(1) || !isZombie(m_cell));
 #endif
     }
 

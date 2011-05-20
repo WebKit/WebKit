@@ -41,6 +41,12 @@ public:
         ASSERT(inherits(&s_info));
     }
 
+    ~JSZombie()
+    {
+        /* Zombie cells should never been reused. */
+        ASSERT_NOT_REACHED();
+    }
+
     virtual bool isZombie() const { return true; }
 
     virtual bool isGetterSetter() const { ASSERT_NOT_REACHED(); return false; }

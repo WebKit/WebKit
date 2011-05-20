@@ -355,11 +355,11 @@ namespace JSC {
     {
         return MarkedSpace::heap(c);
     }
-    
+
 #if ENABLE(JSC_ZOMBIES)
     inline bool JSValue::isZombie() const
     {
-        return isCell() && asCell() > (JSCell*)0x1ffffffffL && asCell()->isZombie();
+        return isCell() && asCell()->isZombie();
     }
 #endif
 

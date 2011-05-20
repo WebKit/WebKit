@@ -46,9 +46,12 @@ MarkedSpace::MarkedSpace(JSGlobalData* globalData)
 
 void MarkedSpace::destroy()
 {
+    /* Keep our precious zombies! */
+#if !ENABLE(JSC_ZOMBIES)
     clearMarks();
     shrink();
     ASSERT(!size());
+#endif
 }
 
 MarkedBlock* MarkedSpace::allocateBlock(SizeClass& sizeClass)

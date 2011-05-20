@@ -62,9 +62,7 @@ SOURCES += \
     assembler/ARMAssembler.cpp \
     assembler/ARMv7Assembler.cpp \
     assembler/MacroAssemblerARM.cpp \
-    assembler/MacroAssemblerSH4.h \
     assembler/MacroAssemblerSH4.cpp \
-    assembler/SH4Assembler.h \
     bytecode/CodeBlock.cpp \
     bytecode/JumpTable.cpp \
     bytecode/Opcode.cpp \
@@ -167,6 +165,7 @@ SOURCES += \
     runtime/JSValue.cpp \
     runtime/JSVariableObject.cpp \
     runtime/JSWrapperObject.cpp \
+    runtime/JSZombie.cpp \
     runtime/LiteralParser.cpp \
     runtime/Lookup.cpp \
     runtime/MathObject.cpp \

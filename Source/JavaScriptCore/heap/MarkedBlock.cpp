@@ -86,4 +86,19 @@ void MarkedBlock::sweep()
     }
 }
 
+#if ENABLE(JSC_ZOMBIES)
+void MarkedBlock::clearMarks()
+{
+    /* Keep our precious zombies! */
+    for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
+        if (m_marks.get(i))
+            continue;
+
+        JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[i]);
+        if (!cell->isZombie())
+            m_marks.clear(i);
+    }
+}
+#endif
+
 } // namespace JSC

@@ -1,3 +1,26 @@
+2011-05-20  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Oliver Hunt.
+
+        Zombies should "live" forever
+        https://bugs.webkit.org/show_bug.cgi?id=61170
+
+        Reusing zombie cells could still hide garbage
+        collected cell related bugs.
+
+        * JavaScriptCore.pro:
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::clearMarks):
+        * heap/MarkedBlock.h:
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::destroy):
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSValue::isZombie):
+        * runtime/JSZombie.h:
+        (JSC::JSZombie::~JSZombie):
+        * runtime/WriteBarrier.h:
+        (JSC::WriteBarrierBase::setWithoutWriteBarrier):
+
 2011-05-20  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
