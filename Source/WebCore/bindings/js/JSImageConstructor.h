@@ -27,7 +27,7 @@ namespace WebCore {
 
     class JSImageConstructor : public DOMConstructorWithDocument {
     public:
-        JSImageConstructor(JSC::ExecState*, JSDOMGlobalObject*);
+        JSImageConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
 
         static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
         {

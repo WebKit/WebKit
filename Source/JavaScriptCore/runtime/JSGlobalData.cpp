@@ -32,6 +32,7 @@
 #include "ArgList.h"
 #include "Heap.h"
 #include "CommonIdentifiers.h"
+#include "DebuggerActivation.h"
 #include "FunctionConstructor.h"
 #include "GetterSetter.h"
 #include "Interpreter.h"
@@ -200,6 +201,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     IdentifierTable* existingEntryIdentifierTable = wtfThreadData().setCurrentIdentifierTable(identifierTable);
     JSLock lock(SilenceAssertionsOnly);
     structureStructure.set(*this, Structure::createStructure(*this));
+    debuggerActivationStructure.set(*this, DebuggerActivation::createStructure(*this, jsNull()));
     activationStructure.set(*this, JSActivation::createStructure(*this, jsNull()));
     interruptedExecutionErrorStructure.set(*this, JSNonFinalObject::createStructure(*this, jsNull()));
     terminatedExecutionErrorStructure.set(*this, JSNonFinalObject::createStructure(*this, jsNull()));
@@ -259,6 +261,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
 void JSGlobalData::clearBuiltinStructures()
 {
     structureStructure.clear();
+    debuggerActivationStructure.clear();
     activationStructure.clear();
     interruptedExecutionErrorStructure.clear();
     terminatedExecutionErrorStructure.clear();

@@ -156,6 +156,7 @@ namespace JSC {
         const HashTable* stringConstructorTable;
         
         Strong<Structure> structureStructure;
+        Strong<Structure> debuggerActivationStructure;
         Strong<Structure> activationStructure;
         Strong<Structure> interruptedExecutionErrorStructure;
         Strong<Structure> terminatedExecutionErrorStructure;

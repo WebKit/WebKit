@@ -2974,7 +2974,7 @@ sub GenerateConstructorDeclaration
 
     push(@$outputArray, "class ${constructorClassName} : public DOMConstructorObject {\n");
     push(@$outputArray, "public:\n");
-    push(@$outputArray, "    ${constructorClassName}(JSC::ExecState*, JSDOMGlobalObject*);\n\n");
+    push(@$outputArray, "    ${constructorClassName}(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);\n\n");
 
     push(@$outputArray, "    virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);\n");
     push(@$outputArray, "    virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);\n");
@@ -3013,8 +3013,8 @@ sub GenerateConstructorDefinition
 
     push(@$outputArray, "const ClassInfo ${constructorClassName}::s_info = { \"${visibleClassName}Constructor\", &DOMConstructorObject::s_info, &${constructorClassName}Table, 0 };\n\n");
 
-    push(@$outputArray, "${constructorClassName}::${constructorClassName}(ExecState* exec, JSDOMGlobalObject* globalObject)\n");
-    push(@$outputArray, "    : DOMConstructorObject(${constructorClassName}::createStructure(globalObject->globalData(), globalObject->objectPrototype()), globalObject)\n");
+    push(@$outputArray, "${constructorClassName}::${constructorClassName}(ExecState* exec, Structure* structure, JSDOMGlobalObject* globalObject)\n");
+    push(@$outputArray, "    : DOMConstructorObject(structure, globalObject)\n");
     push(@$outputArray, "{\n");
     push(@$outputArray, "    ASSERT(inherits(&s_info));\n");
     if ($interfaceName eq "DOMWindow") {
