@@ -1,3 +1,9 @@
+2011-05-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Skip one more plugins test after r86938.
+
+        * platform/qt-mac/Skipped:
+
 2011-05-20  Robert Hogan  <robert@webkit.org>
 
         Rubber-stamped by Csaba Osztrogonác.

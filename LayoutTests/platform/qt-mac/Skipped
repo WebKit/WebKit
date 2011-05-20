@@ -2613,6 +2613,7 @@ plugins/geturlnotify-during-document-teardown.html
 plugins/inner-html-display-none.html
 plugins/instance-available-before-stylesheets-loaded-object.html
 plugins/instance-available-before-stylesheets-loaded.html
+plugins/keyboard-events.html
 plugins/mouse-events-fixedpos.html
 plugins/mouse-events.html
 plugins/multiple-plugins.html
