@@ -1,3 +1,25 @@
+2011-05-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Interpreter uses wrong bytecode offset for determining exception handler
+        https://bugs.webkit.org/show_bug.cgi?id=61191
+
+        The bytecode offset given for the returnPC from the JIT is
+        actually the offset for the start of the instruction triggering
+        the call, whereas in the interpreter it is the actual return
+        VPC.  This means if the next instruction following a call was
+        in an exception region we would incorrectly redirect to its
+        handler.  Long term we want to completely redo how exceptions
+        are handled anyway so the simplest and lowest risk fix here is
+        to simply subtract one from the return vPC so that we have an
+        offset in the triggering instruction.
+
+        It turns out this is caught by a couple of tests already.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::unwindCallFrame):
+
 2011-05-20  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Oliver Hunt.

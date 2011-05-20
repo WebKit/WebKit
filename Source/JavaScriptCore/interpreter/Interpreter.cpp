@@ -578,15 +578,23 @@ NEVER_INLINE bool Interpreter::unwindCallFrame(CallFrame*& callFrame, JSValue ex
         return false;
 
     codeBlock = callerFrame->codeBlock();
+    
+    // Because of how the JIT records call site->bytecode offset
+    // information the JIT reports the bytecodeOffset for the returnPC
+    // to be at the beginning of the opcode that has caused the call.
+    // In the interpreter we have an actual return address, which is
+    // the beginning of next instruction to execute. To get an offset
+    // inside the call instruction that triggered the exception we
+    // have to subtract 1.
 #if ENABLE(JIT) && ENABLE(INTERPRETER)
     if (callerFrame->globalData().canUseJIT())
         bytecodeOffset = codeBlock->bytecodeOffset(callFrame->returnPC());
     else
-        bytecodeOffset = codeBlock->bytecodeOffset(callFrame->returnVPC());
+        bytecodeOffset = codeBlock->bytecodeOffset(callFrame->returnVPC()) - 1;
 #elif ENABLE(JIT)
     bytecodeOffset = codeBlock->bytecodeOffset(callFrame->returnPC());
 #else
-    bytecodeOffset = codeBlock->bytecodeOffset(callFrame->returnVPC());
+    bytecodeOffset = codeBlock->bytecodeOffset(callFrame->returnVPC()) - 1;
 #endif
 
     callFrame = callerFrame;
