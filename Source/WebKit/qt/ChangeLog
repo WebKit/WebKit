@@ -1,3 +1,13 @@
+2011-05-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Fix tst_QWebPage::testOptionalJSObjects() autotest
+        https://bugs.webkit.org/show_bug.cgi?id=61045
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::testOptionalJSObjects): Mark failing test cases as expected fails.
+
 2011-05-20  Peter Varga  <pvarga@webkit.org>
 
         Reviewed by Simon Hausmann.

@@ -2339,8 +2339,10 @@ void tst_QWebPage::testOptionalJSObjects()
     QCOMPARE(testFlag(webPage2, QWebSettings::OfflineWebApplicationCacheEnabled, "applicationCache", false), true);
 
     QCOMPARE(testFlag(webPage1, QWebSettings::LocalStorageEnabled, "localStorage", false), false);
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=61045", Continue);
     QCOMPARE(testFlag(webPage2, QWebSettings::LocalStorageEnabled, "localStorage", true),  true);
     QCOMPARE(testFlag(webPage1, QWebSettings::LocalStorageEnabled, "localStorage", false), false);
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=61045", Continue);
     QCOMPARE(testFlag(webPage2, QWebSettings::LocalStorageEnabled, "localStorage", false), true);
 }
 
