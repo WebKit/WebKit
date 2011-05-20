@@ -28,6 +28,7 @@
 
 #include "WebKit.h"
 #include "DOMCoreClasses.h"
+#include <WebCore/EventListener.h>
 
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
@@ -40,6 +41,17 @@ namespace WebCore {
 }
 
 class DOMUIEvent;
+
+class WebEventListener : public WebCore::EventListener {
+public:
+    WebEventListener(IDOMEventListener*);
+    ~WebEventListener();
+    virtual bool operator==(const EventListener&);
+    virtual void handleEvent(WebCore::ScriptExecutionContext*, WebCore::Event*);
+    static PassRefPtr<WebEventListener> create(IDOMEventListener*);
+private:
+    IDOMEventListener* m_iDOMEventListener;
+};
 
 class DOMEventListener : public DOMObject, public IDOMEventListener
 {

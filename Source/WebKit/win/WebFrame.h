@@ -105,6 +105,8 @@ public:
 
     virtual HRESULT STDMETHODCALLTYPE DOMDocument( 
         /* [retval][out] */ IDOMDocument** document);
+
+    virtual HRESULT STDMETHODCALLTYPE DOMWindow(/* [retval][out] */ IDOMWindow**);
     
     virtual HRESULT STDMETHODCALLTYPE frameElement( 
         /* [retval][out] */ IDOMHTMLElement **frameElement);

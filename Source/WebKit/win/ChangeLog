@@ -1,3 +1,56 @@
+2011-05-18  Anthony Johnson <anthony.johnson@flexsim.com>
+
+        Reviewed by Brent Fulgham.
+
+        Implement the ability to add C++ event listeners to html dom
+        elements and dom window. 
+        https://bugs.webkit.org/show_bug.cgi?id=60269
+
+        * DOMCoreClasses.cpp: Add new DOMWindow class and implementations.
+        (DOMNode::QueryInterface): Report that the DOMNode implements
+         the IDomEventTarget interface.
+        (DOMNode::addEventListener): Add implementation of a COM-based
+         event listener.
+        (DOMNode::removeEventListener):
+        (DOMNode::dispatchEvent): 
+        (DOMDocument::createInstance):
+        (DOMWindow::QueryInterface): New implementation.
+        (DOMWindow::document): New implementation.
+        (DOMWindow::getComputedStyle): Stub.
+        (DOMWindow::getMatchedCSSRules): Stub.
+        (DOMWindow::devicePixelRatio): Stub.
+        (DOMWindow::addEventListener): New implementation.
+        (DOMWindow::removeEventListener): New implementation.
+        (DOMWindow::dispatchEvent): New implementation.
+        (DOMWindow::DOMWindow): New implementation.
+        (DOMWindow::~DOMWindow): New implementation.
+        (DOMWindow::createInstance): New implementation.
+        * DOMCoreClasses.h: Add new DOMWindow class and declarations.
+        (DOMWindow::AddRef): New declaration.
+        (DOMWindow::Release): New declaration.
+        (DOMWindow::throwException): New declaration.
+        (DOMWindow::callWebScriptMethod): New declaration.
+        (DOMWindow::evaluateWebScript): New declaration.
+        (DOMWindow::removeWebScriptKey): New declaration.
+        (DOMWindow::stringRepresentation): New declaration.
+        (DOMWindow::webScriptValueAtIndex): New declaration.
+        (DOMWindow::setWebScriptValueAtIndex): New declaration.
+        (DOMWindow::setException): New declaration.
+        (DOMWindow::window): New declaration.
+        * DOMEventsClasses.cpp: Add new WebEventListener and implementation.
+        (DOMEventListener::handleEvent): New implementation.
+        (WebEventListener::WebEventListener): New implementation.
+        (WebEventListener::~WebEventListener): New implementation.
+        (WebEventListener::operator==): New implementation.
+        (WebEventListener::handleEvent): New implementation.
+        (WebEventListener::create): New implementation.
+        * DOMEventsClasses.h: Add new WebEventListener class declaration.
+        * Interfaces/IWebFrame.idl: Add new DOMWindow accessor to the
+         main Web Frame interface.
+        * WebFrame.cpp: Add implementation of new DOMWindow creation method.
+        (WebFrame::DOMWindow):
+        * WebFrame.h: Add DOMWindow declaration.
+
 2011-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

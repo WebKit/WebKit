@@ -32,6 +32,7 @@
 namespace WebCore {
 class Element;
 class Document;
+class DOMWindow;
 class Node;
 class NodeList;
 }
@@ -532,6 +533,91 @@ public:
 protected:
     WebCore::Document* m_document;
 };
+
+class DOMWindow : public DOMObject, public IDOMWindow, public IDOMEventTarget {
+protected:
+    DOMWindow(WebCore::DOMWindow*);
+    ~DOMWindow();
+
+public:
+    static IDOMWindow* createInstance(WebCore::DOMWindow*);
+
+public:
+    // IUnknown
+    virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void** ppvObject);
+    virtual ULONG STDMETHODCALLTYPE AddRef(void) { return DOMObject::AddRef(); }
+    virtual ULONG STDMETHODCALLTYPE Release(void) { return DOMObject::Release(); }
+
+    // IWebScriptObject
+    virtual HRESULT STDMETHODCALLTYPE throwException(
+        /* [in] */ BSTR exceptionMessage,
+        /* [retval][out] */ BOOL* result) { return DOMObject::throwException(exceptionMessage, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE callWebScriptMethod(
+        /* [in] */ BSTR name,
+        /* [size_is][in] */ const VARIANT args[  ],
+        /* [in] */ int cArgs,
+        /* [retval][out] */ VARIANT* result) { return DOMObject::callWebScriptMethod(name, args, cArgs, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE evaluateWebScript(
+        /* [in] */ BSTR script,
+        /* [retval][out] */ VARIANT* result) { return DOMObject::evaluateWebScript(script, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE removeWebScriptKey(
+        /* [in] */ BSTR name) { return DOMObject::removeWebScriptKey(name); }
+    
+    virtual HRESULT STDMETHODCALLTYPE stringRepresentation(
+        /* [retval][out] */ BSTR* stringRepresentation) { return DOMObject::stringRepresentation(stringRepresentation); }
+    
+    virtual HRESULT STDMETHODCALLTYPE webScriptValueAtIndex(
+        /* [in] */ unsigned int index,
+        /* [retval][out] */ VARIANT* result) { return DOMObject::webScriptValueAtIndex(index, result); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setWebScriptValueAtIndex(
+        /* [in] */ unsigned int index,
+        /* [in] */ VARIANT val) { return DOMObject::setWebScriptValueAtIndex(index, val); }
+    
+    virtual HRESULT STDMETHODCALLTYPE setException(
+        /* [in] */ BSTR description) { return DOMObject::setException(description); }
+
+    virtual HRESULT STDMETHODCALLTYPE document(
+        /* [out, retval] */ IDOMDocument**);
+
+    virtual HRESULT STDMETHODCALLTYPE getComputedStyle(
+        /* [in] */ IDOMElement*, 
+        /* [in] */ BSTR);
+
+    virtual HRESULT STDMETHODCALLTYPE getMatchedCSSRules(
+        /* [in] */ IDOMElement*, 
+        /* [in] */ BSTR, 
+        /* [in] */ BOOL, 
+        /* [out, retval] */ IDOMCSSRuleList**);
+
+    virtual HRESULT STDMETHODCALLTYPE devicePixelRatio(
+        /* [out, retval] */ double*);
+
+    virtual HRESULT STDMETHODCALLTYPE addEventListener(
+        /* [in] */ BSTR,
+        /* [in] */ IDOMEventListener *,
+        /* [in] */ BOOL);
+    
+    virtual HRESULT STDMETHODCALLTYPE removeEventListener(
+        /* [in] */ BSTR,
+        /* [in] */ IDOMEventListener *,
+        /* [in] */ BOOL);
+    
+    virtual HRESULT STDMETHODCALLTYPE dispatchEvent(
+        /* [in] */ IDOMEvent *,
+        /* [retval][out] */ BOOL *);
+
+    // DOMWindow
+    WebCore::DOMWindow* window() { return m_window; }
+
+protected:
+    WebCore::DOMWindow* m_window;
+};
+
+
 
 class DOMElement : public DOMNode, public IDOMElement, public IDOMElementPrivate, public IDOMNodeExtensions, public IDOMElementCSSInlineStyle, public IDOMElementExtensions {
 protected:

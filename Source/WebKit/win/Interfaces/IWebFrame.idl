@@ -260,4 +260,12 @@ interface IWebFrame : IUnknown
        @discussion Performs HTTP/1.1 end-to-end reload.
    */
    HRESULT reloadFromOrigin();
+
+    /*!
+        @method DOMWindow
+        @abstract Returns the DOM window of the frame.
+        @description Returns nil if the frame does not contain a DOM window such as a standalone image.
+        - (DOMWindow *)DOMWindow;
+    */
+    HRESULT DOMWindow([out, retval] IDOMWindow** window);
 }

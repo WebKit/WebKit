@@ -480,6 +480,24 @@ HRESULT STDMETHODCALLTYPE WebFrame::DOMDocument(
     return *result ? S_OK : E_FAIL;
 }
 
+
+HRESULT WebFrame::DOMWindow(/* [retval][out] */ IDOMWindow** window)
+{
+    if (!window) {
+        ASSERT_NOT_REACHED();
+        return E_POINTER;
+    }
+
+    *window = 0;
+
+    if (Frame* coreFrame = core(this)) {
+        if (WebCore::DOMWindow* coreWindow = coreFrame->domWindow())
+            *window = ::DOMWindow::createInstance(coreWindow);
+    }
+
+    return *window ? S_OK : E_FAIL;
+}
+
 HRESULT STDMETHODCALLTYPE WebFrame::frameElement( 
     /* [retval][out] */ IDOMHTMLElement** frameElement)
 {

@@ -28,10 +28,12 @@
 #include <initguid.h>
 #include "DOMEventsClasses.h"
 
+#include <WebCore/COMPtr.h>
 #include <WebCore/DOMWindow.h>
 #include <WebCore/Event.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/MouseEvent.h>
+#include <WebCore/ScriptExecutionContext.h>
 
 // DOMEventListener -----------------------------------------------------------
 
@@ -51,6 +53,36 @@ HRESULT STDMETHODCALLTYPE DOMEventListener::handleEvent(
     /* [in] */ IDOMEvent* /*evt*/)
 {
     return E_NOTIMPL;
+}
+
+WebEventListener::WebEventListener(IDOMEventListener* i)
+    : EventListener(CPPEventListenerType)
+    , m_iDOMEventListener(i)
+{
+    m_iDOMEventListener->AddRef();
+}
+
+WebEventListener::~WebEventListener()
+{
+    m_iDOMEventListener->Release();
+}
+
+bool WebEventListener::operator==(const WebCore::EventListener& other)
+{
+    return (other.type() == CPPEventListenerType 
+        && reinterpret_cast<const WebEventListener*>(&other)->m_iDOMEventListener == m_iDOMEventListener);
+}
+
+void WebEventListener::handleEvent(WebCore::ScriptExecutionContext* s, WebCore::Event* e)
+{
+    RefPtr<WebCore::Event> ePtr(e);
+    COMPtr<IDOMEvent> domEvent = DOMEvent::createInstance(ePtr);
+    m_iDOMEventListener->handleEvent(domEvent.get());
+}
+
+PassRefPtr<WebEventListener> WebEventListener::create(IDOMEventListener* d)
+{
+    return adoptRef(new WebEventListener(d));
 }
 
 // DOMEvent -------------------------------------------------------------------
@@ -561,7 +593,7 @@ HRESULT STDMETHODCALLTYPE DOMMutationEvent::attrChange(
     return E_NOTIMPL;
 }
 
-HRESULT STDMETHODCALLTYPE DOMMutationEvent::initMutationEvent( 
+HRESULT STDMETHODCALLTYPE DOMMutationEvent::initMutationEvent(
     /* [in] */ BSTR /*type*/,
     /* [in] */ BOOL /*canBubble*/,
     /* [in] */ BOOL /*cancelable*/,

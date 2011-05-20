@@ -90,6 +90,8 @@ HRESULT STDMETHODCALLTYPE DOMNode::QueryInterface(REFIID riid, void** ppvObject)
         *ppvObject = static_cast<IDOMNode*>(this);
     else if (IsEqualGUID(riid, __uuidof(DOMNode)))
         *ppvObject = static_cast<DOMNode*>(this);
+    else if (IsEqualGUID(riid, __uuidof(IDOMEventTarget)))
+        *ppvObject = static_cast<IDOMEventTarget*>(this);
     else
         return DOMObject::QueryInterface(riid, ppvObject);
 
@@ -399,33 +401,39 @@ HRESULT STDMETHODCALLTYPE DOMNode::setTextContent(
 
 // DOMNode - IDOMEventTarget --------------------------------------------------
 
-HRESULT STDMETHODCALLTYPE DOMNode::addEventListener( 
-    /* [in] */ BSTR /*type*/,
-    /* [in] */ IDOMEventListener* /*listener*/,
-    /* [in] */ BOOL /*useCapture*/)
+HRESULT DOMNode::addEventListener(
+    /* [in] */ BSTR type,
+    /* [in] */ IDOMEventListener* listener,
+    /* [in] */ BOOL useCapture)
 {
-    return E_NOTIMPL;
+    RefPtr<WebEventListener> webListener = WebEventListener::create(listener);
+    m_node->addEventListener(type, webListener, useCapture);
+
+    return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::removeEventListener( 
-    /* [in] */ BSTR /*type*/,
-    /* [in] */ IDOMEventListener* /*listener*/,
-    /* [in] */ BOOL /*useCapture*/)
+HRESULT DOMNode::removeEventListener(
+    /* [in] */ BSTR type,
+    /* [in] */ IDOMEventListener* listener,
+    /* [in] */ BOOL useCapture)
 {
-    return E_NOTIMPL;
+    if (!listener || !type)
+        return E_POINTER;
+    if (!m_node)
+        return E_FAIL;
+    RefPtr<WebEventListener> webListener = WebEventListener::create(listener);
+    m_node->removeEventListener(type, webListener.get(), useCapture);
+    return S_OK;
 }
 
-HRESULT STDMETHODCALLTYPE DOMNode::dispatchEvent( 
+HRESULT DOMNode::dispatchEvent(
     /* [in] */ IDOMEvent* evt,
     /* [retval][out] */ BOOL* result)
 {
-    if (!m_node || !evt)
+    if (!evt || !result)
+        return E_POINTER;
+    if (!m_node)
         return E_FAIL;
-
-#if 0   // FIXME - raise dom exceptions
-    if (![self _node]->isEventTargetNode())
-        WebCore::raiseDOMException(DOM_NOT_SUPPORTED_ERR);
-#endif
 
     COMPtr<DOMEvent> domEvent;
     HRESULT hr = evt->QueryInterface(IID_DOMEvent, (void**) &domEvent);
@@ -434,10 +442,7 @@ HRESULT STDMETHODCALLTYPE DOMNode::dispatchEvent(
 
     WebCore::ExceptionCode ec = 0;
     *result = m_node->dispatchEvent(domEvent->coreEvent(), ec) ? TRUE : FALSE;
-#if 0   // FIXME - raise dom exceptions
-    WebCore::raiseOnDOMError(ec);
-#endif
-    return S_OK;
+    return ec ? E_FAIL : S_OK;
 }
 
 // DOMNode - DOMNode ----------------------------------------------------------
@@ -816,6 +821,138 @@ IDOMDocument* DOMDocument::createInstance(WebCore::Document* d)
         return 0;
 
     return domDocument;
+}
+
+// DOMWindow - IUnknown ------------------------------------------------------
+
+HRESULT DOMWindow::QueryInterface(REFIID riid, void** ppvObject)
+{
+    *ppvObject = 0;
+    if (IsEqualGUID(riid, IID_IDOMWindow))
+        *ppvObject = static_cast<IDOMWindow*>(this);
+    else if (IsEqualGUID(riid, IID_IDOMEventTarget))
+        *ppvObject = static_cast<IDOMEventTarget*>(this);
+    else
+        return DOMObject::QueryInterface(riid, ppvObject);
+
+    AddRef();
+    return S_OK;
+}
+
+// DOMWindow - IDOMWindow ------------------------------------------------------
+
+HRESULT DOMWindow::document(
+    /* [out, retval] */ IDOMDocument** result)
+{
+    if (!result) {
+        ASSERT_NOT_REACHED();
+        return E_POINTER;
+    }
+
+    *result = DOMDocument::createInstance(m_window->document());
+    return *result ? S_OK : E_FAIL;
+}
+
+HRESULT DOMWindow::getComputedStyle(
+    /* [in] */ IDOMElement* element, 
+    /* [in] */ BSTR pseudoElement)
+{
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
+}
+
+HRESULT DOMWindow::getMatchedCSSRules(
+    /* [in] */ IDOMElement* element, 
+    /* [in] */ BSTR pseudoElement, 
+    /* [in] */ BOOL authorOnly, 
+    /* [out, retval] */ IDOMCSSRuleList** result)
+{
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
+}
+
+HRESULT DOMWindow::devicePixelRatio(
+    /* [out, retval] */ double* result)
+{
+    ASSERT_NOT_REACHED();
+    return E_NOTIMPL;
+}
+
+// DOMWindow - IDOMEventTarget ------------------------------------------------------
+
+HRESULT DOMWindow::addEventListener(
+    /* [in] */ BSTR type,
+    /* [in] */ IDOMEventListener* listener,
+    /* [in] */ BOOL useCapture)
+{
+    if (!type || !listener)
+        return E_POINTER;
+    if (!m_window)
+        return E_FAIL;
+    RefPtr<WebEventListener> webListener = WebEventListener::create(listener);
+    m_window->addEventListener(type, webListener, useCapture);
+    return S_OK;
+}
+
+HRESULT DOMWindow::removeEventListener(
+    /* [in] */ BSTR type,
+    /* [in] */ IDOMEventListener* listener,
+    /* [in] */ BOOL useCapture)
+{
+    if (!type || !listener)
+        return E_POINTER;
+    if (!m_window)
+        return E_FAIL;
+    RefPtr<WebEventListener> webListener = WebEventListener::create(listener);
+    m_window->removeEventListener(type, webListener.get(), useCapture);
+    return S_OK;
+}
+
+HRESULT DOMWindow::dispatchEvent(
+    /* [in] */ IDOMEvent* evt,
+    /* [retval][out] */ BOOL* result)
+{
+    if (!result || !evt)
+        return E_POINTER;
+    if (!m_window)
+        return E_FAIL;
+
+    COMPtr<DOMEvent> domEvent;
+    HRESULT hr = evt->QueryInterface(IID_DOMEvent, (void**) &domEvent);
+    if (FAILED(hr))
+        return hr;
+
+    WebCore::ExceptionCode ec = 0;
+    *result = m_window->dispatchEvent(domEvent->coreEvent(), ec) ? TRUE : FALSE;
+    return ec ? E_FAIL : S_OK;
+}
+
+
+// DOMWindow - DOMWindow --------------------------------------------------
+
+DOMWindow::DOMWindow(WebCore::DOMWindow* w)
+: m_window(w)
+{
+}
+
+DOMWindow::~DOMWindow()
+{
+}
+
+IDOMWindow* DOMWindow::createInstance(WebCore::DOMWindow* w)
+{
+    if (!w)
+        return 0;
+
+    DOMWindow* newWindow = new DOMWindow(w);
+
+    IDOMWindow* domWindow = 0;
+    HRESULT hr = newWindow->QueryInterface(IID_IDOMWindow, reinterpret_cast<void**>(&domWindow));
+
+    if (FAILED(hr))
+        return 0;
+
+    return domWindow;
 }
 
 // DOMElement - IUnknown ------------------------------------------------------
