@@ -42,6 +42,7 @@ Computed style of an element whose parent's 'display' value is 'none':
     font-variant: normal
     font-weight: normal
     height: 100px
+    image-rendering: auto
     left: auto
     letter-spacing: normal
     line-height: normal
@@ -190,7 +191,6 @@ Computed style of an element whose parent's 'display' value is 'none':
     fill: #000000
     fill-opacity: 1
     fill-rule: nonzero
-    image-rendering: auto
     marker-end: none
     marker-mid: none
     marker-start: none

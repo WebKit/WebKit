@@ -23,7 +23,7 @@ fill
 fill-opacity
 fill-rule
 #font-size-adjust
-image-rendering
+#image-rendering
 marker
 marker-end
 marker-mid

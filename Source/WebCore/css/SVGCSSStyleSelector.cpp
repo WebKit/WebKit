@@ -214,13 +214,6 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
                 svgstyle->setJoinStyle(*primitiveValue);
             break;
         }
-        case CSSPropertyImageRendering:
-        {
-            HANDLE_INHERIT_AND_INITIAL(imageRendering, ImageRendering)
-            if (primitiveValue)
-                svgstyle->setImageRendering(*primitiveValue);
-            break;
-        }
         case CSSPropertyShapeRendering:
         {
             HANDLE_INHERIT_AND_INITIAL(shapeRendering, ShapeRendering)

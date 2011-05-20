@@ -203,7 +203,6 @@ StyleDifference SVGRenderStyle::diff(const SVGRenderStyle* other) const
 
     // Changes of these flags only cause repaints.
     if (svg_inherited_flags._colorRendering != other->svg_inherited_flags._colorRendering
-        || svg_inherited_flags._imageRendering != other->svg_inherited_flags._imageRendering
         || svg_inherited_flags._shapeRendering != other->svg_inherited_flags._shapeRendering
         || svg_inherited_flags._clipRule != other->svg_inherited_flags._clipRule
         || svg_inherited_flags._fillRule != other->svg_inherited_flags._fillRule

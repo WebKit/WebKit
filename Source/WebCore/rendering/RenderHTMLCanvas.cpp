@@ -58,7 +58,8 @@ void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
 {
     IntRect rect = contentBoxRect();
     rect.move(tx, ty);
-    static_cast<HTMLCanvasElement*>(node())->paint(paintInfo.context, rect);
+    bool useLowQualityScale = style()->imageRendering() == ImageRenderingOptimizeContrast;
+    static_cast<HTMLCanvasElement*>(node())->paint(paintInfo.context, rect, useLowQualityScale);
 }
 
 void RenderHTMLCanvas::canvasSizeChanged()

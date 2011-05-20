@@ -287,7 +287,7 @@ static void writeStyle(TextStream& ts, const RenderObject& object)
 
     if (!object.localTransform().isIdentity())
         writeNameValuePair(ts, "transform", object.localTransform());
-    writeIfNotDefault(ts, "image rendering", svgStyle->imageRendering(), SVGRenderStyle::initialImageRendering());
+    writeIfNotDefault(ts, "image rendering", style->imageRendering(), RenderStyle::initialImageRendering());
     writeIfNotDefault(ts, "opacity", style->opacity(), RenderStyle::initialOpacity());
     if (object.isSVGPath()) {
         const RenderSVGPath& path = static_cast<const RenderSVGPath&>(object);

@@ -54,11 +54,6 @@ namespace WebCore {
     enum EColorRendering {
         CR_AUTO, CR_OPTIMIZESPEED, CR_OPTIMIZEQUALITY
     };
-    
-    enum EImageRendering {
-        IR_AUTO, IR_OPTIMIZESPEED, IR_OPTIMIZEQUALITY
-    };
-
     enum EShapeRendering {
         SR_AUTO, SR_OPTIMIZESPEED, SR_CRISPEDGES, SR_GEOMETRICPRECISION
     };

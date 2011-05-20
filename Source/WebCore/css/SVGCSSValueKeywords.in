@@ -197,7 +197,7 @@ linearRGB
 # CSS_PROP_COLOR_RENDERING
 #auto
 #optimizeSpeed
-optimizeQuality
+#optimizeQuality
 
 ## CSS_PROP_FILL
 #currentColor

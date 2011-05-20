@@ -1,3 +1,19 @@
+2011-05-19  Mike Lawther  <mikelawther@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        implement image-rendering: optimize-contrast (with a vendor prefix) as defined in CSS3 image values
+        https://bugs.webkit.org/show_bug.cgi?id=56627
+
+        * css3/images/optimize-contrast-canvas-expected.checksum: Added.
+        * css3/images/optimize-contrast-canvas-expected.png: Added.
+        * css3/images/optimize-contrast-canvas-expected.txt: Added.
+        * css3/images/optimize-contrast-canvas.html: Added.
+        * css3/images/optimize-contrast-image-expected.checksum: Added.
+        * css3/images/optimize-contrast-image-expected.png: Added.
+        * css3/images/optimize-contrast-image-expected.txt: Added.
+        * css3/images/optimize-contrast-image.html: Added.
+
 2011-05-19  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed.
