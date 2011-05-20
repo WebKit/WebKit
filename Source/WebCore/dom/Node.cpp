@@ -2888,11 +2888,17 @@ bool Node::dispatchWheelEvent(const PlatformWheelEvent& event)
 
 void Node::dispatchFocusEvent()
 {
+    if (document()->page())
+        document()->page()->chrome()->client()->elementDidFocus(this);
+    
     dispatchEvent(Event::create(eventNames().focusEvent, false, false));
 }
 
 void Node::dispatchBlurEvent()
 {
+    if (document()->page())
+        document()->page()->chrome()->client()->elementDidBlur(this);
+    
     dispatchEvent(Event::create(eventNames().blurEvent, false, false));
 }
 

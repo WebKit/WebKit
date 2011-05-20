@@ -123,7 +123,6 @@ protected:
 
     virtual void recalcStyle(StyleChange);
 
-    virtual void dispatchFocusEvent();
     virtual void dispatchBlurEvent();
     virtual void detach();
 

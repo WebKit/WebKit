@@ -201,8 +201,8 @@ public:
 
     virtual void formStateDidChange(const Node*) { }
 
-    virtual void formDidFocus(const Node*) { }
-    virtual void formDidBlur(const Node*) { }
+    virtual void elementDidFocus(const Node*) { }
+    virtual void elementDidBlur(const Node*) { }
 
     virtual void setCursor(const Cursor&) { }
 

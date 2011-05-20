@@ -846,12 +846,12 @@ String WebChromeClient::generateReplacementFile(const String& path)
     return [[m_webView _UIDelegateForwarder] webView:m_webView generateReplacementFile:path];
 }
 
-void WebChromeClient::formDidFocus(const WebCore::Node* node)
+void WebChromeClient::elementDidFocus(const WebCore::Node* node)
 {
     CallUIDelegate(m_webView, @selector(webView:formDidFocusNode:), kit(const_cast<WebCore::Node*>(node)));
 }
 
-void WebChromeClient::formDidBlur(const WebCore::Node* node)
+void WebChromeClient::elementDidBlur(const WebCore::Node* node)
 {
     CallUIDelegate(m_webView, @selector(webView:formDidBlurNode:), kit(const_cast<WebCore::Node*>(node)));
 }

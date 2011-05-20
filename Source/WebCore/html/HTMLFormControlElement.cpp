@@ -438,19 +438,8 @@ void HTMLFormControlElement::setCustomValidity(const String& error)
     validity()->setCustomErrorMessage(error);
 }
 
-void HTMLFormControlElement::dispatchFocusEvent()
-{
-    if (document()->page())
-        document()->page()->chrome()->client()->formDidFocus(this);
-
-    HTMLElement::dispatchFocusEvent();
-}
-
 void HTMLFormControlElement::dispatchBlurEvent()
 {
-    if (document()->page())
-        document()->page()->chrome()->client()->formDidBlur(this);
-
     HTMLElement::dispatchBlurEvent();
     hideVisibleValidationMessage();
 }

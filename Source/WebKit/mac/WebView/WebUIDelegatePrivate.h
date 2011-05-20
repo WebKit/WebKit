@@ -223,8 +223,8 @@ extern NSString *WebConsoleMessageDebugMessageLevel;
                                                                          frame:(WebFrame *)frame
                                                                       listener:(id<WebGeolocationPolicyListener>)listener;
 
-- (void)webView:(WebView *)sender formDidFocusNode:(DOMNode *)node;
-- (void)webView:(WebView *)sender formDidBlurNode:(DOMNode *)node;
+- (void)webView:(WebView *)sender elementDidFocusNode:(DOMNode *)node;
+- (void)webView:(WebView *)sender elementDidBlurNode:(DOMNode *)node;
 
 /*!
     @method webView:printFrame:

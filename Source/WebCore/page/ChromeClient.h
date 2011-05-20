@@ -236,8 +236,8 @@ namespace WebCore {
         // will be called frequently, so handling should be very fast.
         virtual void formStateDidChange(const Node*) = 0;
         
-        virtual void formDidFocus(const Node*) { };
-        virtual void formDidBlur(const Node*) { };
+        virtual void elementDidFocus(const Node*) { };
+        virtual void elementDidBlur(const Node*) { };
 
 #if USE(ACCELERATED_COMPOSITING)
         // Pass 0 as the GraphicsLayer to detatch the root layer.

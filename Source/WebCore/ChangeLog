@@ -1,3 +1,28 @@
+2011-05-20  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by David Kilzer.
+
+        Add delegate methods about focus and blur to all elements.
+        https://bugs.webkit.org/show_bug.cgi?id=61218
+
+        We want to have delegates for these events for all the elements, not only the form elements.
+        The patch moves the call to the delegate in the Node class and changes the name
+        of the methods not to be form element specific.
+
+        * dom/Node.cpp:
+        (WebCore::Node::dispatchFocusEvent): Added call to delegate with the new name.
+        (WebCore::Node::dispatchBlurEvent): Added call to delegate with the new name.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::dispatchBlurEvent): Removed code that calls the delegate since
+        it has been moved into Node.
+        * html/HTMLFormControlElement.h: Removed dispatchFocusEvent, since we are using the default inplementation in Node.
+        * loader/EmptyClients.h:
+        (WebCore::EmptyChromeClient::elementDidFocus): Name changed.
+        (WebCore::EmptyChromeClient::elementDidBlur): Name changed.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::elementDidFocus): Name changed.
+        (WebCore::ChromeClient::elementDidBlur): Name changed.
+
 2011-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Enrica Casucci.

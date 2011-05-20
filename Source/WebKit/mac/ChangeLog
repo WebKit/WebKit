@@ -1,3 +1,19 @@
+2011-05-20  Enrica Casucci  <enrica@apple.com>
+
+        Reviewed by David Kilzer.
+
+        Add delegate methods about focus and blur to all elements.
+        https://bugs.webkit.org/show_bug.cgi?id=61218
+
+        We want to have delegates for these events for all the elements, not only the form elements.
+        The patch changes the name of the methods in a way that is not form element specific.
+
+        * WebCoreSupport/WebChromeClient.h:
+        * WebCoreSupport/WebChromeClient.mm:
+        (WebChromeClient::elementDidFocus):
+        (WebChromeClient::elementDidBlur):
+        * WebView/WebUIDelegatePrivate.h:
+
 2011-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

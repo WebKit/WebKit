@@ -147,8 +147,8 @@ public:
 
     virtual void formStateDidChange(const WebCore::Node*) { }
 
-    virtual void formDidFocus(const WebCore::Node*);
-    virtual void formDidBlur(const WebCore::Node*);
+    virtual void elementDidFocus(const WebCore::Node*);
+    virtual void elementDidBlur(const WebCore::Node*);
 
 #if USE(ACCELERATED_COMPOSITING)
     virtual void attachRootGraphicsLayer(WebCore::Frame*, WebCore::GraphicsLayer*);
