@@ -1,3 +1,16 @@
+2011-05-19  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Flashing when entering and exiting full screen mode
+        https://bugs.webkit.org/show_bug.cgi?id=56957
+
+        Guard against the parameter of setAnimating() matching the ivar value it's 
+        setting, thus avoiding tearing down the renderer's layer backing.
+
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreen::setAnimating):
+
 2011-05-19  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Adam Barth.

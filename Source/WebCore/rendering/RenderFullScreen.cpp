@@ -38,6 +38,9 @@ using namespace WebCore;
 
 void RenderFullScreen::setAnimating(bool animating)
 {
+    if (m_isAnimating == animating)
+        return;
+
     m_isAnimating = animating;
 #if USE(ACCELERATED_COMPOSITING)
     if (layer()) {

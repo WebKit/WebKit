@@ -46,6 +46,8 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
 using namespace WebKit;
 using namespace WebCore;
 
+static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
+
 #if defined(BUILDING_ON_LEOPARD)
 @interface CATransaction(SnowLeopardConvenienceFunctions)
 + (void)setDisableActions:(BOOL)flag;
@@ -82,6 +84,7 @@ using namespace WebCore;
 - (WKFullScreenWindow *)_fullScreenWindow;
 - (CFTimeInterval)_animationDuration;
 - (void)_swapView:(NSView*)view with:(NSView*)otherView;
+- (WebPageProxy*)_page;
 - (WebFullScreenManagerProxy*)_manager;
 @end
 
@@ -241,8 +244,6 @@ using namespace WebCore;
     if (!_isEnteringFullScreen)
         return;
     _isEnteringFullScreen = NO;
-
-    NSDisableScreenUpdates();
     
     if (completed) {                
         // Swap the webView placeholder into place.
@@ -252,13 +253,8 @@ using namespace WebCore;
         
         // Then insert the WebView into the full screen window
         NSView* contentView = [[self _fullScreenWindow] contentView];
-        [contentView addSubview:_webView positioned:NSWindowBelow relativeTo:_layerHostingView.get()];
+        [contentView addSubview:_webView positioned:NSWindowBelow relativeTo:nil];
         [_webView setFrame:[contentView bounds]];
-
-        [CATransaction begin];
-        [CATransaction setDisableActions:YES];
-        [[[self _fullScreenWindow] backgroundLayer] setHidden:YES];
-        [CATransaction commit];
         
         NSWindow *webWindow = [_webViewPlaceholder.get() window];
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
@@ -271,11 +267,8 @@ using namespace WebCore;
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         [webWindow setAnimationBehavior:animationBehavior];
 #endif
-        [[self window] makeKeyAndOrderFront:self];
+        [self _manager]->didEnterFullScreen();
     }
-    
-    [self _manager]->didEnterFullScreen();
-    NSEnableScreenUpdates();
 }
 
 - (void)exitFullScreen
@@ -305,6 +298,16 @@ using namespace WebCore;
     
     // Swap the webView back into its original position:
     if ([_webView window] == [self window]) {
+#if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
+        // Work around a bug in AppKit <rdar://problem/9443385> where moving a 
+        // layer-hosted view from a layer-backed view to a non-layer-backed view
+        // generates an exception.
+        if (![_webView wantsLayer] && [_webView layer]) {
+            [_webView removeFromSuperview];
+            for (NSView* child in [_webView subviews])
+                [[child layer] removeFromSuperlayer];
+        }
+#endif
         [self _swapView:_webViewPlaceholder.get() with:_webView];
         NSWindow* webWindow = [_webView window];
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
@@ -364,7 +367,7 @@ using namespace WebCore;
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     WKFullScreenWindow* window = [self _fullScreenWindow];
-    [[window contentView] addSubview:_layerHostingView.get() positioned:NSWindowAbove relativeTo:[window animationView]];
+    [[window contentView] addSubview:_layerHostingView.get() positioned:NSWindowAbove relativeTo:nil];
     
     // Create a root layer that will back the NSView.
     RetainPtr<CALayer> rootLayer(AdoptNS, [[CALayer alloc] init]);
@@ -385,7 +388,13 @@ using namespace WebCore;
 {
     if (!_layerHostingView)
         return;
-    
+
+    NSDisableScreenUpdates();
+    [self _page]->forceRepaint(VoidCallback::create(self, exitCompositedModeRepaintCompleted));
+}
+
+- (void)exitCompositedModeRepaintCompleted
+{    
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     [_layerHostingView.get() removeFromSuperview];
@@ -395,6 +404,12 @@ using namespace WebCore;
     [CATransaction commit];
     
     _layerHostingView = 0;
+    NSEnableScreenUpdates();
+}
+
+static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context)
+{
+    [(WKFullScreenWindowController*)context exitCompositedModeRepaintCompleted];
 }
 
 - (WebCore::IntRect)getFullScreenRect
@@ -500,9 +515,14 @@ using namespace WebCore;
     }
 }
 
+- (WebPageProxy*)_page
+{
+    return toImpl([_webView pageRef]);
+}
+
 - (WebFullScreenManagerProxy*)_manager
 {
-    WebPageProxy* webPage = toImpl([_webView pageRef]);
+    WebPageProxy* webPage = [self _page];
     if (!webPage)
         return 0;
     return webPage->fullScreenManager();
@@ -582,6 +602,7 @@ using namespace WebCore;
 #endif
     
     NSView* contentView = [self contentView];
+    [contentView setWantsLayer:YES];
     _animationView = [[NSView alloc] initWithFrame:[contentView bounds]];
     
     CALayer* contentLayer = [[CALayer alloc] init];

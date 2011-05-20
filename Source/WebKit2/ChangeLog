@@ -1,3 +1,35 @@
+2011-05-19  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Flashing when entering and exiting full screen mode
+        https://bugs.webkit.org/show_bug.cgi?id=56957
+
+        In the WKFullscreenWindowController, when exiting accelerated compositing mode, 
+        force a repaint, and don't actually remove the animation layer until the repaint
+        completes.  Also, move back to parenting the WebView in a layer-backed view, and
+        work around the SnowLeopard bug which causes a crash in those situations.  We no
+        longer need to do a bunch of work in finishedEnterFullScreenAnimation, because 
+        the animation layer is "hiding" all the drawing happening in the webView underneath.
+
+        In the WebFullScreenManagerMac, when asked to tear down the root layer, instead
+        remove all its children, and set its contents to a flattened image of the full
+        screen element and its children.  This helps patch over the time where everything 
+        is re-rendering and helps give the appearance of continuousness in the animation.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]):
+        (-[WKFullScreenWindowController beganExitFullScreenAnimation]):
+        (-[WKFullScreenWindowController enterAcceleratedCompositingMode:WebKit::]):
+        (-[WKFullScreenWindowController exitAcceleratedCompositingMode]):
+        (-[WKFullScreenWindowController exitCompositedModeRepaintCompleted]):
+        (exitCompositedModeRepaintCompleted):
+        (-[WKFullScreenWindowController _page]):
+        (-[WKFullScreenWindowController _manager]):
+        (-[WKFullScreenWindow initWithContentRect:styleMask:backing:defer:]):
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::setRootFullScreenLayer):
+
 2011-05-19  Anders Carlsson  <andersca@apple.com>
 
         Address a review comment by Sam Weinig.

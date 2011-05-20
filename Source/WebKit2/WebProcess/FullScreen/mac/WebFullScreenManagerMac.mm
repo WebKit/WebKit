@@ -137,11 +137,20 @@ void WebFullScreenManagerMac::setRootFullScreenLayer(WebCore::GraphicsLayer* lay
     if (!layer) {
         m_page->send(Messages::WebFullScreenManagerProxy::ExitAcceleratedCompositingMode());
         [[NSNotificationCenter defaultCenter] postNotificationName:@"WebKitLayerHostChanged" object:m_rootLayer->platformLayer() userInfo:nil];
-        if (m_rootLayer) {
-            m_rootLayer->removeAllChildren();
-            m_rootLayer = nullptr;
-        }
 
+        Frame* frame = m_element->document()->frame();
+        DragImageRef dragImage = frame ? frame->nodeImage(m_element.get()) : 0;
+
+        if (m_rootLayer) {
+            [CATransaction begin];
+            PlatformLayer* rootPlatformLayer = m_rootLayer->platformLayer();
+            m_rootLayer->removeAllChildren();
+            m_rootLayer->syncCompositingStateForThisLayerOnly();
+            m_rootLayer = nullptr;
+            [rootPlatformLayer setContents:dragImage.get()];
+            [CATransaction commit];
+        }
+        
         return;
     }
 
