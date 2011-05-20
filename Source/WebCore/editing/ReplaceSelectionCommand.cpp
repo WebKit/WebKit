@@ -583,26 +583,17 @@ static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const
     if (!isStyleSpan(topNode))
         return false;
 
-    Node* sourceDocumentStyleSpan = topNode;
-    RefPtr<Node> copiedRangeStyleSpan = sourceDocumentStyleSpan->firstChild();
-
+    Node* wrappingStyleSpan = topNode;
     RefPtr<EditingStyle> styleAtInsertionPos = EditingStyle::create(insertionPos.parentAnchoredEquivalent());
     String styleText = styleAtInsertionPos->style()->cssText();
 
     // FIXME: This string comparison is a naive way of comparing two styles.
     // We should be taking the diff and check that the diff is empty.
-    if (styleText == static_cast<Element*>(sourceDocumentStyleSpan)->getAttribute(styleAttr)) {
-        fragment.removeNodePreservingChildren(sourceDocumentStyleSpan);
-        if (!isStyleSpan(copiedRangeStyleSpan.get()))
-            return true;
-    }
+    if (styleText != static_cast<Element*>(wrappingStyleSpan)->getAttribute(styleAttr))
+        return false;
 
-    if (isStyleSpan(copiedRangeStyleSpan.get()) && styleText == static_cast<Element*>(copiedRangeStyleSpan.get())->getAttribute(styleAttr)) {
-        fragment.removeNodePreservingChildren(copiedRangeStyleSpan.get());
-        return true;
-    }
-
-    return false;
+    fragment.removeNodePreservingChildren(wrappingStyleSpan);
+    return true;
 }
 
 // At copy time, WebKit wraps copied content in a span that contains the source document's 
@@ -615,86 +606,45 @@ static bool handleStyleSpansBeforeInsertion(ReplacementFragment& fragment, const
 // or at copy time.
 void ReplaceSelectionCommand::handleStyleSpans()
 {
-    Node* sourceDocumentStyleSpan = 0;
-    Node* copiedRangeStyleSpan = 0;
+    HTMLElement* wrappingStyleSpan = 0;
     // The style span that contains the source document's default style should be at
     // the top of the fragment, but Mail sometimes adds a wrapper (for Paste As Quotation),
     // so search for the top level style span instead of assuming it's at the top.
     for (Node* node = m_firstNodeInserted.get(); node; node = node->traverseNextNode()) {
         if (isStyleSpan(node)) {
-            sourceDocumentStyleSpan = node;
-            // If the copied Range's common ancestor had user applied inheritable styles
-            // on it, they'll be on a second style span, just below the one that holds the 
-            // document defaults.
-            if (isStyleSpan(node->firstChild()))
-                copiedRangeStyleSpan = node->firstChild();
+            wrappingStyleSpan = toHTMLElement(node);
             break;
         }
     }
     
     // There might not be any style spans if we're pasting from another application or if 
     // we are here because of a document.execCommand("InsertHTML", ...) call.
-    if (!sourceDocumentStyleSpan)
+    if (!wrappingStyleSpan)
         return;
 
-    RefPtr<EditingStyle> sourceDocumentStyle = EditingStyle::create(toHTMLElement(sourceDocumentStyleSpan)->getInlineStyleDecl());
-    ContainerNode* context = sourceDocumentStyleSpan->parentNode();
+    RefPtr<EditingStyle> style = EditingStyle::create(wrappingStyleSpan->getInlineStyleDecl());
+    ContainerNode* context = wrappingStyleSpan->parentNode();
 
     // If Mail wraps the fragment with a Paste as Quotation blockquote, or if you're pasting into a quoted region,
     // styles from blockquoteNode are allowed to override those from the source document, see <rdar://problem/4930986> and <rdar://problem/5089327>.
     Node* blockquoteNode = isMailPasteAsQuotationNode(context) ? context : enclosingNodeOfType(firstPositionInNode(context), isMailBlockquote, CanCrossEditingBoundary);
-    if (blockquoteNode) {
-        sourceDocumentStyle->removeStyleConflictingWithStyleOfNode(blockquoteNode);
-        context = blockquoteNode->parentNode();
-    }
+    if (blockquoteNode)
+        context = document()->documentElement();
 
     // This operation requires that only editing styles to be removed from sourceDocumentStyle.
-    sourceDocumentStyle->prepareToApplyAt(firstPositionInNode(context));
+    style->prepareToApplyAt(firstPositionInNode(context));
 
     // Remove block properties in the span's style. This prevents properties that probably have no effect 
     // currently from affecting blocks later if the style is cloned for a new block element during a future 
     // editing operation.
     // FIXME: They *can* have an effect currently if blocks beneath the style span aren't individually marked
     // with block styles by the editing engine used to style them.  WebKit doesn't do this, but others might.
-    sourceDocumentStyle->removeBlockProperties();
+    style->removeBlockProperties();
 
-    // The styles on sourceDocumentStyleSpan are all redundant, and there is no copiedRangeStyleSpan
-    // to consider.  We're finished.
-    if (sourceDocumentStyle->isEmpty() && !copiedRangeStyleSpan) {
-        removeNodePreservingChildren(sourceDocumentStyleSpan);
-        return;
-    }
-
-    // There are non-redundant styles on sourceDocumentStyleSpan, but there is no
-    // copiedRangeStyleSpan.  Remove the span, because it could be surrounding block elements,
-    // and apply the styles to its children.
-    if (!sourceDocumentStyle->isEmpty() && !copiedRangeStyleSpan) {
-        copyStyleToChildren(sourceDocumentStyleSpan, sourceDocumentStyle->style()); 
-        removeNodePreservingChildren(sourceDocumentStyleSpan);
-        return;
-    }
-    
-    RefPtr<EditingStyle> copiedRangeStyle = EditingStyle::create(toHTMLElement(copiedRangeStyleSpan)->getInlineStyleDecl());
-
-    // We're going to put sourceDocumentStyleSpan's non-redundant styles onto copiedRangeStyleSpan,
-    // as long as they aren't overridden by ones on copiedRangeStyleSpan.
-    copiedRangeStyle->style()->merge(sourceDocumentStyle->style(), false);
-
-    removeNodePreservingChildren(sourceDocumentStyleSpan);
-
-    // Remove redundant styles.
-    context = copiedRangeStyleSpan->parentNode();
-    copiedRangeStyle->prepareToApplyAt(firstPositionInNode(context));
-    copiedRangeStyle->removeBlockProperties();
-    if (copiedRangeStyle->isEmpty()) {
-        removeNodePreservingChildren(copiedRangeStyleSpan);
-        return;
-    }
-
-    // Clear the redundant styles from the span's style attribute.
-    // FIXME: If font-family:-webkit-monospace is non-redundant, then the font-size should stay, even if it
-    // appears redundant.
-    setNodeAttribute(static_cast<Element*>(copiedRangeStyleSpan), styleAttr, copiedRangeStyle->style()->cssText());
+    if (style->isEmpty() || !wrappingStyleSpan->firstChild())
+        removeNodePreservingChildren(wrappingStyleSpan);
+    else
+        setNodeAttribute(wrappingStyleSpan, styleAttr, style->style()->cssText());
 }
 
 // Take the style attribute of a span and apply it to it's children instead.  This allows us to

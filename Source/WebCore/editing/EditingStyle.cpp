@@ -90,6 +90,7 @@ static PassRefPtr<CSSMutableStyleDeclaration> editingStyleFromComputedStyle(Pass
 }
 
 static RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* styleWithRedundantProperties, CSSStyleDeclaration* baseStyle);
+static RGBA32 getRGBAFontColor(CSSStyleDeclaration*);
 
 class HTMLElementEquivalent {
 public:
@@ -705,6 +706,8 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
     }
 
     style->m_mutableStyle->diff(m_mutableStyle.get());
+    if (getRGBAFontColor(m_mutableStyle.get()) == getRGBAFontColor(style->m_mutableStyle.get()))
+        m_mutableStyle->removeProperty(CSSPropertyColor);
 
     // if alpha value is zero, we don't add the background color.
     RefPtr<CSSValue> backgroundColor = m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor);
@@ -1005,7 +1008,6 @@ RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* style
 
     return result;
 }
-
 
 int getIdentifierValue(CSSStyleDeclaration* style, int propertyID)
 {

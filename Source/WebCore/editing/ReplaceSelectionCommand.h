@@ -70,7 +70,7 @@ private:
     bool shouldRemoveEndBR(Node*, const VisiblePosition&);
     
     bool shouldMergeStart(bool, bool, bool);
-    bool shouldMergeEnd(bool selectEndWasEndOfParagraph);
+    bool shouldMergeEnd(bool selectionEndWasEndOfParagraph);
     bool shouldMerge(const VisiblePosition&, const VisiblePosition&);
     
     void mergeEndIfNeeded();

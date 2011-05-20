@@ -21,7 +21,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 0 of DIV > DIV > BODY > HTML > #document to 0 of DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 24 of #text > FONT > DIV > FONT > DIV > DIV > BODY > HTML > #document to 24 of #text > FONT > DIV > FONT > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 24 of #text > FONT > DIV > SPAN > FONT > DIV > DIV > BODY > HTML > #document to 24 of #text > FONT > DIV > SPAN > FONT > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
@@ -47,9 +47,8 @@ This tests for a bug where text copied with Select All + Copy would lose its col
 |         class="Apple-style-span"
 |         color="#ff0000"
 |         "This text should be red."
-|     <div>
-|       style="color: rgb(0, 0, 0); "
-|       <font>
-|         class="Apple-style-span"
-|         color="#ff0000"
-|         "This text should be red.<#selection-caret>"
+|       <div>
+|         <font>
+|           class="Apple-style-span"
+|           color="#ff0000"
+|           "This text should be red.<#selection-caret>"

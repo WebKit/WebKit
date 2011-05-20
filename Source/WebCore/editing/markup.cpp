@@ -640,27 +640,8 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         // get the color of content pasted into blockquotes right.
         style->removeStyleAddedByNode(enclosingNodeOfType(firstPositionInNode(parentOfLastClosed), isMailBlockquote, CanCrossEditingBoundary));
 
-        // Document default styles will be added on another wrapper span.
-        if (document && document->documentElement())
-            style->prepareToApplyAt(firstPositionInNode(document->documentElement()));
-
-        // Since we are converting blocks to inlines, remove any inherited block properties that are in the style.
-        // This cuts out meaningless properties and prevents properties from magically affecting blocks later
-        // if the style is cloned for a new block element during a future editing operation.
-        if (convertBlocksToInlines)
-            style->removeBlockProperties();
-
         if (!style->isEmpty())
             accumulator.wrapWithStyleNode(style->style(), document);
-    }
-    
-    if (lastClosed && lastClosed != document->documentElement()) {
-        // Add a style span with the document's default styles.  We add these in a separate
-        // span so that at paste time we can differentiate between document defaults and user
-        // applied styles.
-        RefPtr<EditingStyle> defaultStyle = EditingStyle::create(document->documentElement());
-        if (!defaultStyle->isEmpty())
-            accumulator.wrapWithStyleNode(defaultStyle->style(), document);
     }
 
     // FIXME: The interchange newline should be placed in the block that it's in, not after all of the content, unconditionally.

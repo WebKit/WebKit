@@ -1,3 +1,26 @@
+2011-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Enrica Casucci.
+
+        Wrap copied contents by one style span instead of two
+        https://bugs.webkit.org/show_bug.cgi?id=60988
+
+        Rebaselined tests due to the change in how WebKit preserves style in copy and paste.
+
+        * editing/pasteboard/4930986-2-expected.txt: Whitespace change.
+        * editing/pasteboard/5065605-expected.txt: No longer adds redundant inline style declaration.
+        * editing/pasteboard/paste-4039777-fix-expected.txt: Progression; Now we hit the list merging logic
+        in ReplaceSelectionCommand: isStyleSpan(refNode.get()) && isListElement(refNode->firstChild()).
+        * editing/pasteboard/paste-list-001-expected.txt: Ditto.
+        * editing/pasteboard/paste-text-011-expected.txt: An extra style span was added.
+        * editing/pasteboard/paste-text-012-expected.txt: Ditto.
+        * editing/pasteboard/smart-paste-003-trailing-whitespace-expected.txt: No longer adds redundant style span.
+        * platform/chromium-win/editing/pasteboard/paste-text-003-expected.txt: No longer adds empty anonymous nodes.
+        * platform/chromium-win/editing/pasteboard/paste-text-011-expected.txt: Ditto.
+        * platform/gtk/editing/pasteboard/paste-text-003-expected.txt: Ditto.
+        * platform/mac/editing/pasteboard/paste-text-003-expected.txt: Ditto.
+        * platform/qt/editing/pasteboard/paste-text-003-expected.txt: Ditto.
+
 2011-05-20  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed.

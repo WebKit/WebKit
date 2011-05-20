@@ -1,3 +1,30 @@
+2011-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Enrica Casucci.
+
+        Wrap copied contents by one style span instead of two
+        https://bugs.webkit.org/show_bug.cgi?id=60988
+
+        Replaced sourceDocumentStyleSpan and copiedRangeStyleSpan by one wrapping style span. Instead
+        of wrapping the copied contents by user-applied style and document default style in serialization,
+        take the difference with the document default's style in paste code.
+
+        This will dramatically simplify our copy and paste code and pave a way to fix the bug 60914.
+
+        No new tests because copy & paste is tested by existing layout tests.
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::prepareToApplyAt): Remove the color property if RGBA values of color
+        matches that of the computed style at the specified position.
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::handleStyleSpans): Replaced sourceDocumentStyleSpan and
+        copiedRangeStyleSpan by wrappingStyleSpan. When pasting as a quotation, compare style against
+        the document's default style to avoid keeping the document default style (tested by
+        editing/pasteboard/4930986-3.html).
+        * editing/ReplaceSelectionCommand.h:
+        * editing/markup.cpp:
+        (WebCore::createMarkup): Only use one style span to wrap the serialized contents.
+
 2011-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

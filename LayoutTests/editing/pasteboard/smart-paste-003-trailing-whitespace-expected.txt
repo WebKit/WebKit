@@ -9,4 +9,4 @@ A space should be added between the preexisting word and the word that's pasted.
 Actual result
 
 execCopyCommand: <div id="test" class="editing" style="font-size: 24px;"> hello world </div>
-execPasteCommand: <div id="test" class="editing" style="font-size: 24px;"> hello&nbsp;hello<span class="Apple-style-span" style="font-size: 24px; ">&nbsp;</span>world</div>
+execPasteCommand: <div id="test" class="editing" style="font-size: 24px;"> hello&nbsp;hello&nbsp;world</div>
