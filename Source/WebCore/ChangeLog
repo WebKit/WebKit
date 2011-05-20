@@ -1,3 +1,17 @@
+2011-05-19  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        Fix a problem that updating HTMLInputElement::value sets the cursor to a wrong position.
+        https://bugs.webkit.org/show_bug.cgi?id=61163
+
+        Manual test input-number-localization.html.
+        Because we can't assume any number formats in various WebKit ports.
+
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::setValue): The cursor must be the last position of visibleValue(), not m_value.
+        * manual-tests/input-number-localization.html: Added manual test to check the cursor correctly moved to the last poisition of the input.
+
 2011-05-19  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

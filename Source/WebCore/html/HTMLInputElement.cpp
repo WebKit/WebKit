@@ -943,7 +943,7 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
     setNeedsValidityCheck();
 
     if (isTextField()) {
-        unsigned max = m_value.length();
+        unsigned max = visibleValue().length();
         if (document()->focusedNode() == this)
             WebCore::setSelectionRange(this, max, max);
         else

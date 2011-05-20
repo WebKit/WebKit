@@ -21,6 +21,11 @@ You'll see an equivalent number in the standard format on the bottom of the text
 <div><input type=number id=target step=any oninput="handleInput()"></div>
 <div>Standard format: <output id=output></output></div>
 
+<p>Input test: Type the number text "1234" into the the followin number field.
+The number string will be "1,234" and the cursor position must be the last position.
+</p>
+<div><input type="number" onkeyup="this.value=this.value" /></div>
+
 <script>
 function handleInput() {
   document.getElementById('output').value = document.getElementById('target').value;
