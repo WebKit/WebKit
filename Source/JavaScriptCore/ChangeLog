@@ -1,5 +1,13 @@
 2011-05-19  Oliver Hunt  <oliver@apple.com>
 
+        Fix windows build.
+
+        * wtf/OSAllocatorWin.cpp:
+        (WTF::OSAllocator::reserveUncommitted):
+        (WTF::OSAllocator::reserveAndCommit):
+
+2011-05-19  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Gavin Barraclough.
 
         Add guard pages to each end of the memory region used by the fixedvm allocator
