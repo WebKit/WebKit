@@ -1,3 +1,11 @@
+2011-05-20  Dirk Schulze  <krit@webkit.org>
+
+        Rubber-stamped by Nikolas Zimmermann.
+
+        Remove unnecessary class Path inlcude from PathTraversalState.
+
+        * platform/graphics/PathTraversalState.h:
+
 2011-05-19  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

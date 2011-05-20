@@ -30,8 +30,6 @@
 
 namespace WebCore {
 
-class Path;
-
 class PathTraversalState {
 public:
     enum PathTraversalAction {
