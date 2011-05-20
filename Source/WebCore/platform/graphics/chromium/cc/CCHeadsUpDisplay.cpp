@@ -124,7 +124,7 @@ void CCHeadsUpDisplay::draw()
     ASSERT(program && program->initialized());
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
     m_hudTexture->bindTexture();
-    m_layerRenderer->useShader(program->program());
+    GLC(context, context->useProgram(program->program()));
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
     TransformationMatrix matrix;

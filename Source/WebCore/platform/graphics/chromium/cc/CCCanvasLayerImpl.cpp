@@ -64,7 +64,7 @@ void CCCanvasLayerImpl::draw(const IntRect&)
         GC3Denum sfactor = m_premultipliedAlpha ? GraphicsContext3D::ONE : GraphicsContext3D::SRC_ALPHA;
         GLC(context, context->blendFunc(sfactor, GraphicsContext3D::ONE_MINUS_SRC_ALPHA));
     }
-    layerRenderer()->useShader(program->program());
+    GLC(context, context->useProgram(program->program()));
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
     LayerChromium::drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
                                     bounds().width(), bounds().height(), drawOpacity(),

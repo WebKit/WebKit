@@ -111,7 +111,7 @@ void RenderSurfaceChromium::drawSurface(CCLayerImpl* maskLayer, const Transforma
     if (maskLayer && maskLayer->drawsContent()) {
         if (!maskLayer->bounds().isEmpty()) {
             context3D->makeContextCurrent();
-            layerRenderer()->useShader(maskProgram->program());
+            GLC(context3D, context3D->useProgram(maskProgram->program()));
             GLC(context3D, context3D->activeTexture(GraphicsContext3D::TEXTURE0));
             GLC(context3D, context3D->uniform1i(maskProgram->fragmentShader().samplerLocation(), 0));
             m_contentsTexture->bindTexture();
@@ -126,7 +126,7 @@ void RenderSurfaceChromium::drawSurface(CCLayerImpl* maskLayer, const Transforma
     }
 
     if (!useMask) {
-        layerRenderer()->useShader(program->program());
+        GLC(context3D, context3D->useProgram(program->program()));
         m_contentsTexture->bindTexture();
         GLC(context3D, context3D->uniform1i(program->fragmentShader().samplerLocation(), 0));
         shaderMatrixLocation = program->vertexShader().matrixLocation();

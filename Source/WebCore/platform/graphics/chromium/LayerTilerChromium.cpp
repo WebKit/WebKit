@@ -337,7 +337,7 @@ void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMa
 
     GraphicsContext3D* context = layerRendererContext();
     const LayerTilerChromium::Program* program = layerRenderer()->tilerProgram();
-    layerRenderer()->useShader(program->program());
+    GLC(context, context->useProgram(program->program()));
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
 
     int left, top, right, bottom;

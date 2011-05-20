@@ -62,7 +62,7 @@ void CCPluginLayerImpl::draw(const IntRect&)
     GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_S, GraphicsContext3D::CLAMP_TO_EDGE));
     GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_WRAP_T, GraphicsContext3D::CLAMP_TO_EDGE));
 
-    layerRenderer()->useShader(program->program());
+    GLC(context, context->useProgram(program->program()));
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
     LayerChromium::drawTexturedQuad(context, layerRenderer()->projectionMatrix(), drawTransform(),
                                     bounds().width(), bounds().height(), drawOpacity(),

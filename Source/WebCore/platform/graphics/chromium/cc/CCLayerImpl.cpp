@@ -181,13 +181,14 @@ void CCLayerImpl::drawDebugBorder()
         return;
 
     ASSERT(layerRenderer());
+    GraphicsContext3D* context = layerRenderer()->context();
     const LayerChromium::BorderProgram* program = layerRenderer()->borderProgram();
     ASSERT(program && program->initialized());
-    layerRenderer()->useShader(program->program());
+    GLC(context, context->useProgram(program->program()));
+
     TransformationMatrix renderMatrix = drawTransform();
     renderMatrix.scale3d(bounds().width(), bounds().height(), 1);
     toGLMatrix(&glMatrix[0], layerRenderer()->projectionMatrix() * renderMatrix);
-    GraphicsContext3D* context = layerRenderer()->context();
     GLC(context, context->uniformMatrix4fv(program->vertexShader().matrixLocation(), false, &glMatrix[0], 1));
 
     GLC(context, context->uniform4f(program->fragmentShader().colorLocation(), debugBorderColor().red() / 255.0, debugBorderColor().green() / 255.0, debugBorderColor().blue() / 255.0, 1));

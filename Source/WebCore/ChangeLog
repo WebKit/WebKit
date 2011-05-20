@@ -1,3 +1,31 @@
+2011-05-20  Alok Priyadarshi  <alokp@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Remove LayerRendererChromium::useShader
+        https://bugs.webkit.org/show_bug.cgi?id=61143
+
+        GPU compositor tests should be sufficient.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::LayerRendererChromium):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::draw):
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::drawSurface):
+        * platform/graphics/chromium/cc/CCCanvasLayerImpl.cpp:
+        (WebCore::CCCanvasLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::drawDebugBorder):
+        * platform/graphics/chromium/cc/CCPluginLayerImpl.cpp:
+        (WebCore::CCPluginLayerImpl::draw):
+        * platform/graphics/chromium/cc/CCVideoLayerImpl.cpp:
+        (WebCore::CCVideoLayerImpl::drawYUV):
+        (WebCore::CCVideoLayerImpl::drawRGBA):
+
 2011-05-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler.

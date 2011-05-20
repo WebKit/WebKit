@@ -112,8 +112,6 @@ public:
 
     const TransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
 
-    void useShader(unsigned);
-
     bool checkTextureSize(const IntSize&);
 
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
@@ -196,7 +194,6 @@ private:
 
     bool m_hardwareCompositing;
 
-    unsigned m_currentShader;
     RenderSurfaceChromium* m_currentRenderSurface;
 
     unsigned m_offscreenFramebufferId;

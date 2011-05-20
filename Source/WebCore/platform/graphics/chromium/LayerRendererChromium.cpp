@@ -112,7 +112,6 @@ LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> conte
                                              PassOwnPtr<LayerPainterChromium> contentPaint)
     : m_viewportScrollPosition(IntPoint(-1, -1))
     , m_rootLayer(0)
-    , m_currentShader(0)
     , m_currentRenderSurface(0)
     , m_offscreenFramebufferId(0)
     , m_compositeOffscreen(false)
@@ -151,14 +150,6 @@ void LayerRendererChromium::debugGLCall(GraphicsContext3D* context, const char* 
     unsigned long error = context->getError();
     if (error != GraphicsContext3D::NO_ERROR)
         LOG_ERROR("GL command failed: File: %s\n\tLine %d\n\tcommand: %s, error %x\n", file, line, command, static_cast<int>(error));
-}
-
-void LayerRendererChromium::useShader(unsigned programId)
-{
-    if (programId != m_currentShader) {
-        GLC(m_context.get(), m_context->useProgram(programId));
-        m_currentShader = programId;
-    }
 }
 
 void LayerRendererChromium::invalidateRootLayerRect(const IntRect& dirtyRect)

@@ -115,7 +115,7 @@ void CCVideoLayerImpl::drawYUV(const CCVideoLayerImpl::YUVProgram* program) cons
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE3));
     GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, vTexture.id));
 
-    layerRenderer()->useShader(program->program());
+    GLC(context, context->useProgram(program->program()));
 
     float yWidthScaleFactor = static_cast<float>(yTexture.visibleSize.width()) / yTexture.size.width();
     // Arbitrarily take the u sizes because u and v dimensions are identical.
@@ -147,7 +147,7 @@ void CCVideoLayerImpl::drawRGBA(const CCVideoLayerImpl::RGBAProgram* program) co
     GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
     GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, texture.id));
 
-    layerRenderer()->useShader(program->program());
+    GLC(context, context->useProgram(program->program()));
     float widthScaleFactor = static_cast<float>(texture.visibleSize.width()) / texture.size.width();
     GLC(context, context->uniform4f(program->vertexShader().texTransformLocation(), 0, 0, widthScaleFactor, 1));
 
