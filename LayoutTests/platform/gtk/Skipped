@@ -1443,3 +1443,6 @@ http/tests/appcache/interrupted-update.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=61122
 http/tests/navigation/post-307-response.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=61160
+media/video-src-invalid-poster.html

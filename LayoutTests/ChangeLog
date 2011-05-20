@@ -1,3 +1,9 @@
+2011-05-19  Jeremy Noble  <jer.noble@apple.com>
+
+        Unreviewed; added new test to gtk Skipped list.
+
+        * platform/gtk/Skipped:
+
 2011-05-18  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.
