@@ -29,20 +29,20 @@ CONFIG(standalone_package) {
 }
 
 V8_DIR = "$$[QT_INSTALL_PREFIX]/src/3rdparty/v8"
-
-v8:!exists($${V8_DIR}/include/v8.h) {
-    error("Cannot build with V8. Needed file $${V8_DIR}/include/v8.h does not exist.")
-}
+V8_LIB_DIR = "$$[QT_INSTALL_PREFIX]/src/script/v8"
 
 v8 {
+    lessThan(QT_MAJOR_VERSION, 5): error("To build QtWebKit+V8 you need qtscript-staging's v8 branch. (See: http://qt.gitorious.org/+qt-developers/qt/qtscript-staging)")
+    !exists($${V8_DIR}$${QMAKE_DIR_SEP}include$${QMAKE_DIR_SEP}v8.h): error("Cannot build with V8. Needed file $${V8_DIR}$${QMAKE_DIR_SEP}include$${QMAKE_DIR_SEP}v8.h does not exist.")
+    !exists($${V8_LIB_DIR}$${QMAKE_DIR_SEP}libv8.a): error("Cannot build with V8. Needed library $${V8_LIB_DIR}$${QMAKE_DIR_SEP}libv8.a does not exist.")
+
     message(Using V8 with QtScript)
     QT += script
     INCLUDEPATH += $${V8_DIR}/include
+
     DEFINES *= V8_BINDING=1
-    DEFINES += WTF_CHANGES=1
+    DEFINES *= WTF_CHANGES=1
     DEFINES *= WTF_USE_V8=1
-    DEFINES += USING_V8_SHARED
-    linux-*:LIBS += -lv8
 }
 
 v8 {

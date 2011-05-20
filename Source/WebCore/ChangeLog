@@ -1,3 +1,37 @@
+2011-05-20  Peter Varga  <pvarga@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt][V8] Use qtscript-staging's shipped version of V8 when building with --v8
+        https://bugs.webkit.org/show_bug.cgi?id=56649
+
+        Use the provided V8 and functionality of
+        http://qt.gitorious.org/+qt-developers/qt/qtscript-staging to build QtWebKit+V8.
+        Based on the original patch of Andras Becsi <abecsi@webkit.org>.
+
+        No new tests needed.
+
+        * CodeGenerators.pri: Add generating of DebuggerScriptSource.h
+        * WebCore.pri: Fix the options for V8 build.
+        * WebCore.pro: Ditto.
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::npObjectTypeInfo): Add missing initializer.
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::disableEval): Temporarily disable
+        unsupported feature on Qt.
+        * bindings/v8/ScriptControllerQt.cpp:
+        (WebCore::ScriptController::qtScriptEngine): use the QtScriptEngine
+        constructor of qtscript-staging.
+        * bindings/v8/custom/V8HTMLAudioElementConstructor.cpp: Add missing
+        initializer.
+        * bindings/v8/custom/V8HTMLImageElementConstructor.cpp: Ditto.
+        * bindings/v8/custom/V8HTMLOptionElementConstructor.cpp: Ditto.
+        * loader/appcache/ApplicationCacheGroup.cpp: Add missing header.
+        * loader/cache/CachedResourceRequest.cpp: Ditto.
+        * page/PageSerializer.cpp: Ditto.
+        * page/qt/FrameQt.cpp: Ditto.
+        * storage/StorageEventDispatcher.cpp: Ditto.
+
 2011-05-20  Tonis Tiigi  <tonistiigi@gmail.com>
 
         Reviewed by Pavel Feldman.

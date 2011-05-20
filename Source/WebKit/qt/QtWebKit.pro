@@ -24,6 +24,13 @@ webkit2 {
 }
 include($$SOURCE_DIR/WebCore/WebCore.pri)
 
+v8 {
+    linux-* {
+        QMAKE_LIBDIR += $${V8_LIB_DIR}
+        LIBS = -lv8 $$LIBS
+    }
+}
+
 !v8:prependJavaScriptCoreLib(../../JavaScriptCore)
 prependWebCoreLib(../../WebCore)
 webkit2:prependWebKit2Lib(../../WebKit2)

@@ -647,7 +647,7 @@ void QWebFrame::addToJavaScriptWindowObject(const QString &name, QObject *object
     if (!engine)
         return;
     QScriptValue v = engine->newQObject(object, ownership);
-    engine->globalObject().property("window").setProperty(name, v);
+    engine->globalObject().property(QLatin1String("window")).setProperty(name, v);
 #endif
 }
 

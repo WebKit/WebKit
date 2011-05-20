@@ -307,6 +307,11 @@ bool ScriptController::haveInterpreter() const
 
 void ScriptController::disableEval()
 {
+#if !PLATFORM(QT)
+// FIXME: https://bugs.webkit.org/show_bug.cgi?id=60384
+//        This functionality is disabled in QtWebkit V8 build because it isn't
+//        supported by the qtscript-staging's shipped version of V8 yet.
+
     m_proxy->windowShell()->initContextIfNeeded();
 
     v8::HandleScope handleScope;
@@ -315,6 +320,7 @@ void ScriptController::disableEval()
         return;
 
     v8Context->AllowCodeGenerationFromStrings(false);
+#endif
 }
 
 PassScriptInstance ScriptController::createScriptInstanceForWidget(Widget* widget)

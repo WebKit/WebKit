@@ -65,6 +65,7 @@
 #include "RenderTreeAsText.h"
 #include "ShadowRoot.h"
 #include "ScriptController.h"
+#include "ScriptSourceCode.h"
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"

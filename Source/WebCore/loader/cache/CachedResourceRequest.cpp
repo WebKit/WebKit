@@ -39,6 +39,7 @@
 #include "SharedBuffer.h"
 #include "SubresourceLoader.h"
 #include <wtf/Assertions.h>
+#include <wtf/UnusedParam.h>
 #include <wtf/Vector.h>
 #include <wtf/text/CString.h>
 

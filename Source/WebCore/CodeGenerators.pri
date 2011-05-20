@@ -42,6 +42,8 @@ INSPECTOR_BACKEND_STUB_QRC = $$PWD/inspector/front-end/InspectorBackendStub.qrc
 
 INJECTED_SCRIPT_SOURCE = $$PWD/inspector/InjectedScriptSource.js
 
+DEBUGGER_SCRIPT_SOURCE = $$PWD/bindings/v8/DebuggerScript.js
+
 contains(DEFINES, ENABLE_DASHBOARD_SUPPORT=1): DASHBOARDSUPPORTCSSPROPERTIES = $$PWD/css/DashboardSupportCSSPropertyNames.in
 
 XPATHBISON = $$PWD/xml/XPathGrammar.y
@@ -676,6 +678,13 @@ injectedScriptSource.input = INJECTED_SCRIPT_SOURCE
 injectedScriptSource.commands = perl $$PWD/inspector/xxd.pl InjectedScriptSource_js $$PWD/inspector/InjectedScriptSource.js  $${WC_GENERATED_SOURCES_DIR}/InjectedScriptSource.h
 injectedScriptSource.wkAddOutputToSources = false
 addExtraCompiler(injectedScriptSource)
+
+# GENERATOR 2-b: inspector debugger script source compiler
+debuggerScriptSource.output = $${WC_GENERATED_SOURCES_DIR}/DebuggerScriptSource.h
+debuggerScriptSource.input = DEBUGGER_SCRIPT_SOURCE
+debuggerScriptSource.commands = perl $$PWD/inspector/xxd.pl DebuggerScriptSource_js $$PWD/bindings/v8/DebuggerScript.js  $${WC_GENERATED_SOURCES_DIR}/DebuggerScriptSource.h
+debuggerScriptSource.wkAddOutputToSources = false
+addExtraCompiler(debuggerScriptSource)
 
 # GENERATOR 3: tokenizer (flex)
 tokenizer.output = $${WC_GENERATED_SOURCES_DIR}/${QMAKE_FILE_BASE}.cpp

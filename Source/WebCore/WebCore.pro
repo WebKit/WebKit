@@ -93,6 +93,7 @@ v8 {
         bindings/v8/DOMDataStore.cpp \
         bindings/v8/MainThreadDOMData.cpp \
         bindings/v8/NPV8Object.cpp \
+        bindings/v8/PageScriptDebugServer.cpp \
         bindings/v8/RetainedDOMInfo.cpp \
         bindings/v8/ScheduledAction.cpp \
         bindings/v8/ScopedDOMDataStore.cpp \
@@ -131,6 +132,7 @@ v8 {
         bindings/v8/V8WindowErrorHandler.cpp \
         bindings/v8/V8WorkerContextEventListener.cpp \
         bindings/v8/WorkerContextExecutionProxy.cpp \
+        bindings/v8/WorkerScriptDebugServer.cpp \
         bindings/v8/WorkerScriptController.cpp \
         \
         bindings/v8/V8DOMWindowShell.cpp \
@@ -148,6 +150,7 @@ v8 {
         bindings/v8/custom/V8CoordinatesCustom.cpp \
         bindings/v8/custom/V8ImageDataCustom.cpp \
         bindings/v8/custom/V8InjectedScriptHostCustom.cpp \
+        bindings/v8/custom/V8InjectedScriptManager.cpp \
         bindings/v8/custom/V8InspectorFrontendHostCustom.cpp \
         bindings/v8/custom/V8DOMSettableTokenListCustom.cpp \
         bindings/v8/custom/V8DOMStringMapCustom.cpp \
@@ -1232,6 +1235,7 @@ v8 {
         bindings/v8/npruntime_priv.h \
         bindings/v8/NPV8Object.h \
         bindings/v8/OwnHandle.h \
+        bindings/v8/PageScriptDebugServer.h \
         bindings/v8/RetainedDOMInfo.h \
         bindings/v8/RetainedObjectInfo.h \
         bindings/v8/ScheduledAction.h \
@@ -1273,6 +1277,7 @@ v8 {
         bindings/v8/V8WindowErrorHandler.h \
         bindings/v8/V8WorkerContextEventListener.h \
         bindings/v8/WorkerContextExecutionProxy.h \
+        bindings/v8/WorkerScriptDebugServer.h \
         bindings/v8/WorkerScriptController.h \
         bindings/v8/WorldContextHandle.h
 } else {

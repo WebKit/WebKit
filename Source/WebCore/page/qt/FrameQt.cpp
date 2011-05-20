@@ -22,6 +22,7 @@
  */
 
 #include "config.h"
+#include "Document.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"

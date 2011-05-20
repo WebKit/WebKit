@@ -28,6 +28,7 @@
 
 #if ENABLE(DOM_STORAGE)
 
+#include "Document.h"
 #include "DOMWindow.h"
 #include "EventNames.h"
 #include "Frame.h"

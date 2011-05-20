@@ -32,6 +32,7 @@
 
 #include "ApplicationCacheStorage.h"
 #include "DatabaseTracker.h"
+#include "Document.h"
 #include "FileChooser.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
