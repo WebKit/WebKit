@@ -1,3 +1,11 @@
+2011-05-20  Kent Tamura  <tkent@chromium.org>
+
+        [Windows] fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html failing since r86936
+        https://bugs.webkit.org/show_bug.cgi?id=61190
+
+        * platform/win/Skipped: Skip it because the test uses <progress> and
+          Windows doesn't have <progress> support.
+
 2011-05-19  Sergey Vorobyev  <sergeyvorobyev@google.com>
 
         Reviewed by Yury Semikhatsky.

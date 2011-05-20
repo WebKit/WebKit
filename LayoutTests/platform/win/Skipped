@@ -937,6 +937,7 @@ fast/dom/HTMLProgressElement/progress-bar-value-pseudo-element.html
 fast/dom/HTMLProgressElement/progress-element-form.html
 fast/dom/HTMLProgressElement/progress-writing-mode.html
 fast/forms/form-attribute.html
+fast/dom/HTMLFormElement/associated-elements-after-index-assertion-fail1.html
 
 # view mode media feature
 fast/media/view-mode-media-feature.html
