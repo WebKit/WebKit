@@ -1,3 +1,16 @@
+2011-05-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Remove unnecessary double->int conversion at the end of op_div
+        https://bugs.webkit.org/show_bug.cgi?id=61198
+
+        We don't attempt this conversion on 64bit, removing it actually speeds
+        up sunspider and v8 slightly, and it reduces code size.
+
+        * jit/JITArithmetic32_64.cpp:
+        (JSC::JIT::emit_op_div):
+
 2011-05-19  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.

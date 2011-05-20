@@ -1246,16 +1246,6 @@ void JIT::emit_op_div(Instruction* currentInstruction)
     convertInt32ToDouble(regT0, fpRegT0);
     convertInt32ToDouble(regT2, fpRegT1);
     divDouble(fpRegT1, fpRegT0);
-
-    JumpList doubleResult;
-    branchConvertDoubleToInt32(fpRegT0, regT0, doubleResult, fpRegT1);
-
-    // Int32 result.
-    emitStoreInt32(dst, regT0, (op1 == dst || op2 == dst));
-    end.append(jump());
-
-    // Double result.
-    doubleResult.link(this);
     emitStoreDouble(dst, fpRegT0);
     end.append(jump());
 
