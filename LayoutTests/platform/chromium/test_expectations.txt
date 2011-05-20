@@ -4163,3 +4163,5 @@ BUGCR83426 MAC DEBUG : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchT
 BUGCR83426 MAC DEBUG : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop.html = IMAGE PASS
 BUGCR83426 MAC DEBUG : svg/filters/feLighting-crash.svg = IMAGE PASS
 
+// New test from WK r86970
+BUGCR83441 : storage/indexeddb/mozilla/create-objectstore-null-name.html = TEXT

@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Chromium expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-20  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed.
+
         Chromium expectaions update.
 
         * platform/chromium/test_expectations.txt:
