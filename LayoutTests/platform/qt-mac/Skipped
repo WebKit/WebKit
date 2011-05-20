@@ -2662,6 +2662,8 @@ plugins/npruntime/throw-exception.html
 plugins/object-embed-plugin-scripting.html
 plugins/invalidate_rect.html
 plugins/get-url-notify-with-url-that-fails-to-load.html
+plugins/get-url-with-javascript-url.html
+plugins/windowless_plugin_paint_test.html
 printing/page-rule-in-media-query.html
 scrollbars/basic-scrollbar.html
 scrollbars/custom-scrollbar-with-incomplete-style.html
