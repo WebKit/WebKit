@@ -831,10 +831,6 @@ BUGCR49165 SKIP : http/tests/media/video-buffered.html = PASS
 // Test might be WONTFIX because we don't export a step button in the first place.
 BUGCR25375 BUGCR59399 SKIP : media/audio-delete-while-step-button-clicked.html = FAIL
 
-// Seeks to the end of file, which results in ogg packets with no timestamps.
-// KNOWNISSUE : fails because progress event is not published 
-BUGCR59675 BUGCR59263 : media/event-attributes.html = PASS FAIL TIMEOUT
-
 // We haven't implemented the WebKit fullscreen extension.
 // UNIMPLEMENTED
 BUGCR16735 SKIP : media/media-fullscreen-inline.html = TIMEOUT
