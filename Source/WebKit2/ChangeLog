@@ -1,3 +1,25 @@
+2011-05-20  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Media files cannot be saved in the Application Cache due to a sandbox violation
+        https://bugs.webkit.org/show_bug.cgi?id=61199
+
+        Instead of using a sandbox extension to give permission to the application cache directory,
+        initialize the sandbox with access to it like we do for other databases.
+
+        * Shared/WebProcessCreationParameters.cpp:
+        (WebKit::WebProcessCreationParameters::encode):
+        (WebKit::WebProcessCreationParameters::decode):
+        * Shared/WebProcessCreationParameters.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::ensureWebProcess):
+        * WebProcess/WebProcess.cpp:
+        (WebKit::WebProcess::initializeWebProcess):
+        * WebProcess/com.apple.WebProcess.sb:
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::initializeSandbox):
+
 2011-05-20  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

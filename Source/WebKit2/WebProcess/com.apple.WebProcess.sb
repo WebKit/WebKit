@@ -105,13 +105,17 @@
 (if (positive? (string-length (param "DARWIN_USER_TEMP_DIR")))
     (allow file* (subpath (param "DARWIN_USER_TEMP_DIR"))))
 
-;; Database dir
+;; Database directory.
 (if (positive? (string-length (param "WEBKIT_DATABASE_DIR")))
     (allow file* (subpath (param "WEBKIT_DATABASE_DIR"))))
 
-;; LocalStorage dir
+;; LocalStorage directory.
 (if (positive? (string-length (param "WEBKIT_LOCALSTORAGE_DIR")))
     (allow file* (subpath (param "WEBKIT_LOCALSTORAGE_DIR"))))
+
+;; ApplicationCache directory.
+(if (positive? (string-length (param "WEBKIT_APPLICATION_CACHE_DIR")))
+    (allow file* (subpath (param "WEBKIT_APPLICATION_CACHE_DIR"))))
 
 ;; The NSURLCache directory.
 (if (positive? (string-length (param "NSURL_CACHE_DIR")))
