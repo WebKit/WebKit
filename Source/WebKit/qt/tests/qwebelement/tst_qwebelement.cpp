@@ -483,6 +483,7 @@ void tst_QWebElement::style()
     QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("green"));
 
     p.setStyleProperty("color", "blue");
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=60372", Continue);
     QCOMPARE(p.styleProperty("color", QWebElement::InlineStyle), QLatin1String("blue"));
     QCOMPARE(p.styleProperty("color", QWebElement::CascadedStyle), QLatin1String("green"));
 
