@@ -408,9 +408,9 @@ namespace JSC {
         // These architecture specific value are used to enable patching - see comment on op_get_by_id.
         static const int patchOffsetGetByIdStructure = 10;
         static const int patchOffsetGetByIdBranchToSlowCase = 26;
-        static const int patchOffsetGetByIdPropertyMapOffset1 = 36;
-        static const int patchOffsetGetByIdPropertyMapOffset2 = 48;
-        static const int patchOffsetGetByIdPutResult = 52;
+        static const int patchOffsetGetByIdPropertyMapOffset1 = 28;
+        static const int patchOffsetGetByIdPropertyMapOffset2 = 30;
+        static const int patchOffsetGetByIdPutResult = 32;
 #if ENABLE(OPCODE_SAMPLING)
         #error "OPCODE_SAMPLING is not yet supported"
 #else

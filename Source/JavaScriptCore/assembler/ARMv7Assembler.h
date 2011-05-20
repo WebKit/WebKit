@@ -953,6 +953,14 @@ public:
             m_formatter.twoWordOp12Reg4Reg4Imm12(OP_LDR_imm_T3, rn, rt, imm.getUInt12());
     }
 
+    void ldrCompact(RegisterID rt, RegisterID rn, ARMThumbImmediate imm)
+    {
+        ASSERT(rn != ARMRegisters::pc); // LDR (literal)
+        ASSERT(imm.isUInt7());
+        ASSERT(!((rt | rn) & 8));
+        m_formatter.oneWordOp5Imm5Reg3Reg3(OP_LDR_imm_T1, imm.getUInt7() >> 2, rn, rt);
+    }
+
     // If index is set, this is a regular offset or a pre-indexed load;
     // if index is not set then is is a post-index load.
     //
@@ -1756,7 +1764,9 @@ public:
     
     static void repatchCompact(void* where, int32_t value)
     {
-        repatchInt32(where, value);
+        ASSERT(value >= 0);
+        ASSERT(ARMThumbImmediate::makeUInt12(value).isUInt7());
+        setUInt7ForLoad(where, ARMThumbImmediate::makeUInt12(value));
     }
 
     static void repatchPointer(void* where, void* value)
@@ -1845,6 +1855,16 @@ private:
         location[-1] = twoWordOp5i6Imm4Reg4EncodedImmSecond((location[-1] >> 8) & 0xf, hi16);
 
         ExecutableAllocator::cacheFlush(location - 4, 4 * sizeof(uint16_t));
+    }
+
+    static void setUInt7ForLoad(void* code, ARMThumbImmediate imm)
+    {
+        // Requires us to have planted a LDR_imm_T1
+        ASSERT(imm.isValid());
+        ASSERT(imm.isUInt7());
+        uint16_t* location = reinterpret_cast<uint16_t*>(code);
+        location[0] |= (imm.getUInt7() >> 2) << 6;
+        ExecutableAllocator::cacheFlush(location, sizeof(uint16_t));
     }
 
     static void setPointer(void* code, void* value)

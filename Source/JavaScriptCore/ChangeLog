@@ -1,3 +1,20 @@
+2011-05-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Reduce size of inline cache path of get_by_id on ARMv7
+        https://bugs.webkit.org/show_bug.cgi?id=61221
+
+        This reduces the code size of get_by_id by 20 bytes
+
+        * assembler/ARMv7Assembler.h:
+        (JSC::ARMv7Assembler::ldrCompact):
+        (JSC::ARMv7Assembler::repatchCompact):
+        (JSC::ARMv7Assembler::setUInt7ForLoad):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::load32WithCompactAddressOffsetPatch):
+        * jit/JIT.h:
+
 2011-05-20  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Oliver Hunt.

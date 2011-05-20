@@ -48,7 +48,9 @@ public:
     typedef ARMv7Assembler::LinkRecord LinkRecord;
     typedef ARMv7Assembler::JumpType JumpType;
     typedef ARMv7Assembler::JumpLinkType JumpLinkType;
-    static const int MaximumCompactPtrAlignedAddressOffset = 0x7FFFFFFF;
+    // Magic number is the biggest useful offset we can get on ARMv7 with
+    // a LDR_imm_T2 encoding
+    static const int MaximumCompactPtrAlignedAddressOffset = 124;
 
     MacroAssemblerARMv7()
         : m_inUninterruptedSequence(false)
@@ -485,8 +487,12 @@ public:
     
     DataLabelCompact load32WithCompactAddressOffsetPatch(Address address, RegisterID dest)
     {
-        DataLabel32 label = load32WithAddressOffsetPatch(address, dest);
-        return DataLabelCompact(label.label());
+        DataLabelCompact label(this);
+        ASSERT(address.offset >= 0);
+        ASSERT(address.offset <= MaximumCompactPtrAlignedAddressOffset);
+        ASSERT(ARMThumbImmediate::makeUInt12(address.offset).isUInt7());
+        m_assembler.ldrCompact(dest, address.base, ARMThumbImmediate::makeUInt12(address.offset));
+        return label;
     }
 
     void load16(BaseIndex address, RegisterID dest)
