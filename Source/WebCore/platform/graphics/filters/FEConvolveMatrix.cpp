@@ -31,6 +31,7 @@
 #include "TextStream.h"
 
 #include <wtf/ByteArray.h>
+#include <wtf/ParallelJobs.h>
 
 namespace WebCore {
 
@@ -237,11 +238,10 @@ ALWAYS_INLINE void setDestinationPixels(ByteArray* image, int& pixel, float* tot
 
 // Only for region C
 template<bool preserveAlphaValues>
-ALWAYS_INLINE void FEConvolveMatrix::fastSetInteriorPixels(PaintingData& paintingData, int clipRight, int clipBottom)
+ALWAYS_INLINE void FEConvolveMatrix::fastSetInteriorPixels(PaintingData& paintingData, int clipRight, int clipBottom, int yStart, int yEnd)
 {
     // edge mode does not affect these pixels
     int pixel = (m_targetOffset.y() * paintingData.width + m_targetOffset.x()) * 4;
-    int startKernelPixel = 0;
     int kernelIncrease = clipRight * 4;
     int xIncrease = (m_kernelSize.width() - 1) * 4;
     // Contains the sum of rgb(a) components
@@ -250,7 +250,11 @@ ALWAYS_INLINE void FEConvolveMatrix::fastSetInteriorPixels(PaintingData& paintin
     // m_divisor cannot be 0, SVGFEConvolveMatrixElement ensures this
     ASSERT(m_divisor);
 
-    for (int y = clipBottom + 1; y > 0; --y) {
+    // Skip the first '(clipBottom - yEnd)' lines
+    pixel += (clipBottom - yEnd) * (xIncrease + (clipRight + 1) * (preserveAlphaValues ? 3 : 4));
+    int startKernelPixel = (clipBottom - yEnd) * (xIncrease + (clipRight + 1) * 4);
+
+    for (int y = yEnd + 1; y > yStart; --y) {
         for (int x = clipRight + 1; x > 0; --x) {
             int kernelValue = m_kernelMatrix.size() - 1;
             int kernelPixel = startKernelPixel;
@@ -370,14 +374,14 @@ void FEConvolveMatrix::fastSetOuterPixels(PaintingData& paintingData, int x1, in
     }
 }
 
-ALWAYS_INLINE void FEConvolveMatrix::setInteriorPixels(PaintingData& paintingData, int clipRight, int clipBottom)
+ALWAYS_INLINE void FEConvolveMatrix::setInteriorPixels(PaintingData& paintingData, int clipRight, int clipBottom, int yStart, int yEnd)
 {
     // Must be implemented here, since it refers another ALWAYS_INLINE
     // function, which defined in this C++ source file as well
     if (m_preserveAlpha)
-        fastSetInteriorPixels<true>(paintingData, clipRight, clipBottom);
+        fastSetInteriorPixels<true>(paintingData, clipRight, clipBottom, yStart, yEnd);
     else
-        fastSetInteriorPixels<false>(paintingData, clipRight, clipBottom);
+        fastSetInteriorPixels<false>(paintingData, clipRight, clipBottom, yStart, yEnd);
 }
 
 ALWAYS_INLINE void FEConvolveMatrix::setOuterPixels(PaintingData& paintingData, int x1, int y1, int x2, int y2)
@@ -389,6 +393,13 @@ ALWAYS_INLINE void FEConvolveMatrix::setOuterPixels(PaintingData& paintingData, 
     else
         fastSetOuterPixels<false>(paintingData, x1, y1, x2, y2);
 }
+
+#if ENABLE(PARALLEL_JOBS)
+void FEConvolveMatrix::setInteriorPixelsWorker(InteriorPixelParameters* param)
+{
+    param->filter->setInteriorPixels(*param->paintingData, param->clipRight, param->clipBottom, param->yStart, param->yEnd);
+}
+#endif
 
 void FEConvolveMatrix::apply()
 {
@@ -428,7 +439,34 @@ void FEConvolveMatrix::apply()
     int clipBottom = paintSize.height() - m_kernelSize.height();
 
     if (clipRight >= 0 && clipBottom >= 0) {
-        setInteriorPixels(paintingData, clipRight, clipBottom);
+
+#if ENABLE(PARALLEL_JOBS)
+        int optimalThreadNumber = (absolutePaintRect().width() * absolutePaintRect().height()) / s_minimalRectDimension;
+        if (optimalThreadNumber > 1) {
+            ParallelJobs<InteriorPixelParameters> parallelJobs(&WebCore::FEConvolveMatrix::setInteriorPixelsWorker, optimalThreadNumber);
+            const int numOfThreads = parallelJobs.numberOfJobs();
+            const int heightPerThread = clipBottom / numOfThreads;
+            int startY = 0;
+
+            for (int job = 0; job < numOfThreads; ++job) {
+                InteriorPixelParameters& param = parallelJobs.parameter(job);
+                param.filter = this;
+                param.paintingData = &paintingData;
+                param.clipRight = clipRight;
+                param.clipBottom = clipBottom;
+                param.yStart = startY;
+                if (i < numOfThreads - 1) {
+                    startY += heightPerThread;
+                    param.yEnd = startY - 1;
+                } else
+                    param.yEnd = clipBottom;
+            }
+
+            parallelJobs.execute();
+        } else
+            // Fallback to the default setInteriorPixels call.
+#endif
+        setInteriorPixels(paintingData, clipRight, clipBottom, 0, clipBottom);
 
         clipRight += m_targetOffset.x() + 1;
         clipBottom += m_targetOffset.y() + 1;

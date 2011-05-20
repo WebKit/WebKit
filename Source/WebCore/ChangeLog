@@ -1,3 +1,24 @@
+2011-05-20  Piroska András  <Piroska.Andras@stud.u-szeged.hu>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Apply the ParallelJobs support to FEConvolveMatrix
+        https://bugs.webkit.org/show_bug.cgi?id=61171
+
+        The FEConvolveMatrix filter of SVG can consume lots of resources if it is
+        applied to a large area. The computation can be distributed to multiple
+        cores if the architecture supports.
+        The average performance progression is 20-30% on dual-core machines.
+
+        Developed in cooperation with Gabor Loki.
+
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::fastSetInteriorPixels):
+        (WebCore::FEConvolveMatrix::setInteriorPixels):
+        (WebCore::FEConvolveMatrix::setInteriorPixelsWorker):
+        (WebCore::FEConvolveMatrix::apply):
+        * platform/graphics/filters/FEConvolveMatrix.h:
+
 2011-05-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86920.
