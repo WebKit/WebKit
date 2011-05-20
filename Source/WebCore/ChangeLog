@@ -1,3 +1,35 @@
+2011-05-20  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Make auto-focus a post attach callback in
+        HTMLFormControlElement::attach().
+        https://bugs.webkit.org/show_bug.cgi?id=32882
+
+        Original patch by Darin Adler. This one uses a part of it.
+        
+        Test: fast/forms/input-element-attach-crash.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle): Make sure that m_inStyleRecalc is
+        already false by the time post-attach callbacks are done so that
+        layout triggered inside those callbacks can work properly.
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::shouldAutofocus): Helper function that expresses
+        the rule for which form control elements should auto-focus.
+        (WebCore::focusPostAttach): Called post-attach to focus an
+        element if we discover it should be focused during attach.
+        (WebCore::HTMLFormControlElement::attach): Refactored code for
+        which elements need auto-focus into a separate function. Instead
+        of focusing right away, use the focusPostAttach function to focus
+        after attach is done. Also added calls to suspendPostAttachCallbacks
+        and resumePostAttachCallbacks so post-attach callbacks happen late
+        enough. Before, they could run inside the base attach function.
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::attach): Added calls to
+        suspendPostAttachCallbacks and resumePostAttachCallbacks so
+        post-attach callbacks happen late enough
+
 2011-05-20  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by James Robinson.

@@ -1,3 +1,13 @@
+2011-05-20  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Tests that we do not crash when auto-focus triggers a attach.
+        https://bugs.webkit.org/show_bug.cgi?id=32882
+
+        * fast/forms/input-element-attach-crash-expected.txt: Added.
+        * fast/forms/input-element-attach-crash.html: Added.
+
 2011-05-20  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.
