@@ -1,3 +1,11 @@
+2011-05-20  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
+
+        [chromium] Updating chromium DEPS.
+
+        * DEPS:
+
 2011-05-19  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86869, r86873, r86875, and r86877.
