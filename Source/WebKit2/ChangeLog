@@ -1,3 +1,12 @@
+2011-05-20  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Default min DOM Timer interval is not set soon enough for first page to pick it up in WK2
+        https://bugs.webkit.org/show_bug.cgi?id=61215 
+
+        * WebProcess/WebPage/WebPage.cpp: Simply moving the DOM min timer interval setting to before the first page creation.
+
 2011-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

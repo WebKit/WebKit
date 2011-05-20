@@ -194,6 +194,9 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
 #endif
 {
     ASSERT(m_pageID);
+    // FIXME: This is a non-ideal location for this Setting and
+    // 4ms should be adopted project-wide now, https://bugs.webkit.org/show_bug.cgi?id=61214
+    Settings::setDefaultMinDOMTimerInterval(0.004);
 
     Page::PageClients pageClients;
     pageClients.chromeClient = new WebChromeClient(this);
@@ -223,7 +226,6 @@ WebPage::WebPage(uint64_t pageID, const WebPageCreationParameters& parameters)
     m_page->setGroupName(m_pageGroup->identifier());
 
     platformInitialize();
-    Settings::setDefaultMinDOMTimerInterval(0.004);
 
     m_drawingArea = DrawingArea::create(this, parameters);
     m_mainFrame = WebFrame::createMainFrame(this);
