@@ -69,6 +69,7 @@ class IntRect;
 - (void)enterAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)context;
 - (void)exitAcceleratedCompositingMode;
 - (WebCore::IntRect)getFullScreenRect;
+- (void)close;
 
 @end
 

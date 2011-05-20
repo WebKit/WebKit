@@ -1,3 +1,15 @@
+2011-05-20  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Exit full screen mode if the WebProcess crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=61151
+
+        * platform/graphics/win/FullScreenController.h:
+        * platform/graphics/win/FullScreenController.cpp:
+        (FullScreenController::close): Added.  Close the full-screen window without animation
+            if called.
+
 2011-05-20  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by David Kilzer.

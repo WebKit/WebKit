@@ -34,6 +34,15 @@
 
 namespace WebKit {
 
+void WebFullScreenManagerProxy::invalidate()
+{
+    if (!m_webView)
+        return;
+    
+    m_webView->fullScreenController()->close();
+    m_webView = 0;
+}
+
 void WebFullScreenManagerProxy::enterFullScreen()
 {
     if (!m_webView)

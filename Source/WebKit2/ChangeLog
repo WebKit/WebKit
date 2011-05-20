@@ -1,3 +1,25 @@
+2011-05-20  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        WebKit2: Exit full screen mode if the WebProcess crashes.
+        https://bugs.webkit.org/show_bug.cgi?id=61151
+
+        If the WebProcess crashes, exit full-screen mode to avoid getting stuck.  Move the
+        WebFullScreenManagerProxy::invalidate() implementation into the platform-specific
+        files, and have them close their respective platform's full-screen window.
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        * UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp:
+        (WebKit::WebFullScreenManagerProxy::invalidate): Added. Copied from main implementation.
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController close]): Added.
+        * UIProcess/mac/WebFullScreenManagerProxyMac.mm:
+        (WebKit::WebFullScreenManagerProxy::invalidate): Added. 
+        * UIProcess/win/WebFullScreenManagerProxyWin.cpp:
+        (WebKit::WebFullScreenManagerProxy::invalidate): Added.
+
 2011-05-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.

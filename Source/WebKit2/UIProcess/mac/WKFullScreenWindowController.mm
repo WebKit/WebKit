@@ -417,6 +417,17 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context)
     return enclosingIntRect([[self window] frame]);
 }
 
+- (void)close
+{
+    // We are being asked to close rapidly, most likely because the page 
+    // has closed or the web process has crashed.  Just walk through our
+    // normal exit full screen sequence, but don't wait to be called back
+    // in response.
+    [self exitFullScreen];
+    [self beganExitFullScreenAnimation];
+    [self finishedExitFullScreenAnimation:YES];
+}
+
 #pragma mark -
 #pragma mark Internal Interface
 
