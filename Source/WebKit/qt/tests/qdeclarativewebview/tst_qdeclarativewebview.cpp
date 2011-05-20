@@ -101,6 +101,7 @@ void tst_QDeclarativeWebView::basicProperties()
     QVERIFY(wv);
     QTRY_COMPARE(wv->property("progress").toDouble(), 1.0);
     QCOMPARE(wv->property("title").toString(), QLatin1String("Basic"));
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=61042", Continue);
     QTRY_COMPARE(qvariant_cast<QPixmap>(wv->property("icon")).width(), 48);
     QEXPECT_FAIL("", "'icon' property isn't working", Continue);
     QCOMPARE(qvariant_cast<QPixmap>(wv->property("icon")), QPixmap("qrc:///resources/basic.png"));
@@ -178,6 +179,7 @@ void tst_QDeclarativeWebView::historyNav()
     for (int i = 1; i <= 2; ++i) {
         QTRY_COMPARE(wv->property("progress").toDouble(), 1.0);
         QCOMPARE(wv->property("title").toString(), QLatin1String("Basic"));
+        QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=61042", Continue);
         QTRY_COMPARE(qvariant_cast<QPixmap>(wv->property("icon")).width(), 48);
         QEXPECT_FAIL("", "'icon' property isn't working", Continue);
         QCOMPARE(qvariant_cast<QPixmap>(wv->property("icon")), QPixmap("qrc:///data/basic.png"));
@@ -197,6 +199,7 @@ void tst_QDeclarativeWebView::historyNav()
     wv->setProperty("url", QUrl("qrc:///resources/forward.html"));
     QTRY_COMPARE(wv->property("progress").toDouble(), 1.0);
     QCOMPARE(wv->property("title").toString(), QLatin1String("Forward"));
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=61042", Continue);
     QTRY_COMPARE(qvariant_cast<QPixmap>(wv->property("icon")).width(), 32);
     QEXPECT_FAIL("", "'icon' property isn't working", Continue);
     QCOMPARE(qvariant_cast<QPixmap>(wv->property("icon")), QPixmap("qrc:///resources/forward.png"));

@@ -2,6 +2,17 @@
 
         Reviewed by Benjamin Poulain.
 
+        [Qt] Fix tst_QDeclarativeWebView::basicProperties() and historyNav() autotests
+        https://bugs.webkit.org/show_bug.cgi?id=61042
+
+        * tests/qdeclarativewebview/tst_qdeclarativewebview.cpp: Mark failing test cases as expected fails.
+        (tst_QDeclarativeWebView::basicProperties):
+        (tst_QDeclarativeWebView::historyNav):
+
+2011-05-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
         [Qt] Fix tst_QWebPage::testOptionalJSObjects() autotest
         https://bugs.webkit.org/show_bug.cgi?id=61045
 
