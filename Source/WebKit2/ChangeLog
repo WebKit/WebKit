@@ -1,3 +1,18 @@
+2011-05-20  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Win: non-full-screen content is briefly seen when entering full-screen mode (and vice versa)
+        https://bugs.webkit.org/show_bug.cgi?id=61108
+
+        When the fullScreenController asks us to repaint, make an async repaint request, and when the
+        callback is fired, notify the fullScreenController that repaint has completed.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::fullScreenClientForceRepaintCompleted): Added.
+        (WebKit::WebView::fullScreenClientForceRepaint): Added.
+        * UIProcess/win/WebView.h:
+
 2011-05-19  Adam Roben  <aroben@apple.com>
 
         Don't try to process DownloadProxy messages twice (and robustify code that runs if we do)

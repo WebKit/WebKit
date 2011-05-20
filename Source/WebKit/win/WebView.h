@@ -1031,6 +1031,7 @@ protected:
     virtual void fullScreenClientDidEnterFullScreen();
     virtual void fullScreenClientWillExitFullScreen();
     virtual void fullScreenClientDidExitFullScreen();
+    virtual void fullScreenClientForceRepaint();
 #endif
 
     ULONG m_refCount;

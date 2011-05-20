@@ -230,6 +230,7 @@ private:
     virtual void fullScreenClientDidEnterFullScreen();
     virtual void fullScreenClientWillExitFullScreen();
     virtual void fullScreenClientDidExitFullScreen();
+    virtual void fullScreenClientForceRepaint();
 #endif
 
     HWND m_window;

@@ -1,3 +1,24 @@
+2011-05-20  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Win: non-full-screen content is briefly seen when entering full-screen mode (and vice versa)
+        https://bugs.webkit.org/show_bug.cgi?id=61108
+
+        Instead of repainting the full- and non-full-screen windows in WebCore, delegate that
+        responsibility to the FullScreenControllerClient.  Because the repaint operation may 
+        be asynchronous, add a new method for clients to use to indicate repainting has completed.
+
+        * platform/graphics/win/FullScreenController.cpp:
+        (FullScreenController::Private::Private): Added new ivars.
+        (FullScreenController::enterFullScreen): Split into two functions (pre-and post repaint)
+        (FullScreenController::enterFullScreenRepaintCompleted): Ditto.
+        (FullScreenController::exitFullScreen): Ditto.
+        (FullScreenController::exitFullScreenRepaintCompleted): Ditto.
+        (FullScreenController::repaintCompleted): Call the appropriated repaint completed function.
+        * platform/graphics/win/FullScreenController.h:
+        * platform/graphics/win/FullScreenControllerClient.h:
+
 2011-05-20  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -42,10 +42,14 @@ public:
 public:
     void enterFullScreen();
     void exitFullScreen();
+    void repaintCompleted();
     
     bool isFullScreen() const;
 
 protected:
+    void enterFullScreenRepaintCompleted();
+    void exitFullScreenRepaintCompleted();
+
     class Private;
     friend class Private;
     OwnPtr<FullScreenController::Private> m_private;

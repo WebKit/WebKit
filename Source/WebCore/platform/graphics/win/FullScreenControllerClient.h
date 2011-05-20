@@ -39,6 +39,7 @@ public:
     virtual void fullScreenClientDidEnterFullScreen() = 0;
     virtual void fullScreenClientWillExitFullScreen() = 0;
     virtual void fullScreenClientDidExitFullScreen() = 0;
+    virtual void fullScreenClientForceRepaint() = 0;
 protected:
     virtual ~FullScreenControllerClient() { }
 };
