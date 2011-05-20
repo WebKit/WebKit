@@ -1,3 +1,17 @@
+2011-05-20  Robert Hogan  <robert@webkit.org>
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        [Qt] plugins/keyboard-events.html fails after r72717
+
+        https://bugs.webkit.org/show_bug.cgi?id=50050
+
+        keyboard-events.html now passes thanks to the buildbot
+        upgrades. It was blocked by a bug in Xvfb on xorg-server
+        1.4.2.
+
+       * platform/qt/Skipped:
+
 2011-05-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed. Remove unnecessary Qt specific expected files.
