@@ -3459,8 +3459,11 @@ void tst_QWebFrame::setUrlToInvalid()
     QVERIFY(invalidUrl != QUrl());
 
     frame->setUrl(invalidUrl);
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=59345", Continue);
     QCOMPARE(frame->url(), invalidUrl);
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=59345", Continue);
     QCOMPARE(frame->requestedUrl(), invalidUrl);
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=59345", Continue);
     QCOMPARE(frame->baseUrl(), invalidUrl);
 
     // QUrls equivalent to QUrl() will be treated as such.

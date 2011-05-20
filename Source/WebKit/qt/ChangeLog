@@ -1,3 +1,13 @@
+2011-05-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt]Fix tst_QWebFrame::setUrlToInvalid() autotest after r84762
+        https://bugs.webkit.org/show_bug.cgi?id=59345
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::setUrlToInvalid): Mark failing test cases as expected fails.
+
 2011-05-19  Zsolt Fehér  <h490267@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.
