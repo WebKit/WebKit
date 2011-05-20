@@ -1,3 +1,16 @@
+2011-05-19  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: ctrl+s should not switch source frame to read only mode.
+        https://bugs.webkit.org/show_bug.cgi?id=61125
+
+        * inspector/front-end/SourceFrame.js:
+        (WebInspector.SourceFrame.prototype.commitEditing.didEditContent):
+        (WebInspector.SourceFrame.prototype.commitEditing):
+        * inspector/front-end/inspector.js:
+        (WebInspector.documentKeyDown):
+
 2011-05-20  Piroska András  <Piroska.Andras@stud.u-szeged.hu>
 
         Reviewed by Nikolas Zimmermann.

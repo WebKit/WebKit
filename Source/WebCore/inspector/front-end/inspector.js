@@ -690,9 +690,6 @@ WebInspector.documentKeyDown = function(event)
         return;
     }
 
-    if (WebInspector.isEditingAnyField())
-        return;
-
     if (this.currentFocusElement && this.currentFocusElement.handleKeyEvent) {
         this.currentFocusElement.handleKeyEvent(event);
         if (event.handled) {
@@ -714,6 +711,9 @@ WebInspector.documentKeyDown = function(event)
         event.preventDefault();
         return;
     }
+
+    if (WebInspector.isEditingAnyField())
+        return;
 
     var isMac = WebInspector.isMac();
     switch (event.keyIdentifier) {

@@ -903,24 +903,24 @@ WebInspector.SourceFrame.prototype = {
         this._setReadOnly(false);
     },
 
-    commitEditing: function(callback)
+    commitEditing: function()
     {
         if (!this._viewerState) {
             // No editing was actually done.
             this._setReadOnly(true);
-            callback();
             return;
         }
 
         function didEditContent(error)
         {
             this._commitEditingInProgress = false;
+            this._textViewer.readOnly = false;
+
             if (error) {
                 if (error.data && error.data[0]) {
                     WebInspector.log(error.data[0], WebInspector.ConsoleMessage.MessageLevel.Error);
                     WebInspector.showConsole();
                 }
-                this._textViewer.readOnly = false;
                 return;
             }
 
@@ -939,7 +939,7 @@ WebInspector.SourceFrame.prototype = {
             }
 
             delete this._viewerState;
-            this._setReadOnly(true);
+            this._delegate.setScriptSourceIsBeingEdited(false);
         }
         this._commitEditingInProgress = true;
         this._textViewer.readOnly = true;
