@@ -385,9 +385,8 @@ static string dumpHistoryItem(const WebHistoryItem& item, int indent, bool isCur
     if (isCurrent) {
         result.append("curr->");
         result.append(indent - 6, ' '); // 6 == "curr->".length()
-    } else {
+    } else
         result.append(indent, ' ');
-    }
 
     string url = item.urlString().utf8();
     size_t pos;

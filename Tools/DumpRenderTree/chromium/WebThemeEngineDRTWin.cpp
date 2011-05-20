@@ -267,9 +267,8 @@ void WebThemeEngineDRTWin::paintButton(WebCanvas* canvas,
             ASSERT_NOT_REACHED();
             break;
         }
-    } else {
+    } else
         ASSERT_NOT_REACHED();
-    }
 
     drawControl(canvas, rect, ctype, cstate);
 }
@@ -311,9 +310,8 @@ void WebThemeEngineDRTWin::paintMenuList(WebCanvas* canvas,
             CRASH();
             break;
         }
-    } else {
+    } else
         CRASH();
-    }
 
     drawControl(canvas, rect, ctype, cstate);
 }
@@ -736,9 +734,8 @@ void WebThemeEngineDRTWin::paintTrackbar(WebCanvas* canvas,
         ASSERT(part == TUS_NORMAL);
         ASSERT(classicState == dfcsNormal);
         cstate = WebThemeControlDRTWin::NormalState;
-    } else {
+    } else
         ASSERT_NOT_REACHED();
-    }
 
     drawControl(canvas, rect, ctype, cstate);
 }

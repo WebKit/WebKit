@@ -53,7 +53,7 @@
 class WebThemeEngineDRTWin : public WebKit::WebThemeEngine {
     WTF_MAKE_NONCOPYABLE(WebThemeEngineDRTWin);
 public:
-    WebThemeEngineDRTWin() {}
+    WebThemeEngineDRTWin() { }
 
     // WebThemeEngine methods:
     virtual void paintButton(

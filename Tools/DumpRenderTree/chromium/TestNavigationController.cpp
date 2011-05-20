@@ -52,16 +52,16 @@ PassRefPtr<TestNavigationEntry> TestNavigationEntry::create(
 }
 
 TestNavigationEntry::TestNavigationEntry()
-    : m_pageID(-1) {}
+    : m_pageID(-1) { }
 
 TestNavigationEntry::TestNavigationEntry(
     int pageID, const WebURL& url, const WebString& title, const WebString& targetFrame)
     : m_pageID(pageID)
     , m_url(url)
     , m_title(title)
-    , m_targetFrame(targetFrame) {}
+    , m_targetFrame(targetFrame) { }
 
-TestNavigationEntry::~TestNavigationEntry() {}
+TestNavigationEntry::~TestNavigationEntry() { }
 
 void TestNavigationEntry::setContentState(const WebHistoryItem& state)
 {
@@ -76,7 +76,7 @@ TestNavigationController::TestNavigationController(NavigationHost* host)
     , m_lastCommittedEntryIndex(-1)
     , m_pendingEntryIndex(-1)
     , m_host(host)
-    , m_maxPageID(-1) {}
+    , m_maxPageID(-1) { }
 
 TestNavigationController::~TestNavigationController()
 {
@@ -96,8 +96,8 @@ void TestNavigationController::reload()
     // Base the navigation on where we are now...
     int currentIndex = currentEntryIndex();
 
-    // If we are no where, then we can't reload.  TODO(darin): We should add a
-    // CanReload method.
+    // If we are no where, then we can't reload.
+    // FIXME: We should add a CanReload method.
     if (currentIndex == -1)
         return;
 
@@ -130,7 +130,7 @@ void TestNavigationController::goToIndex(int index)
 void TestNavigationController::loadEntry(TestNavigationEntry* entry)
 {
     // When navigating to a new page, we don't know for sure if we will actually
-    // end up leaving the current page.  The new page load could for example
+    // end up leaving the current page. The new page load could for example
     // result in a download or a 'no content' response (e.g., a mailto: URL).
     discardPendingEntry();
     m_pendingEntry = entry;
@@ -185,7 +185,7 @@ void TestNavigationController::didNavigateToEntry(TestNavigationEntry* entry)
 
     // Otherwise, we just need to update an existing entry with matching PageID.
     // If the existing entry corresponds to the entry which is pending, then we
-    // must update the current entry index accordingly.  When navigating to the
+    // must update the current entry index accordingly. When navigating to the
     // same URL, a new PageID is not created.
 
     int existingEntryIndex = entryIndexWithPageID(entry->pageID());

@@ -58,23 +58,23 @@ public:
     }
 
     // WebWorker methods:
-    virtual void startWorkerContext(const WebKit::WebURL&, const WebKit::WebString&, const WebKit::WebString&) {}
-    virtual void terminateWorkerContext() {}
-    virtual void postMessageToWorkerContext(const WebKit::WebString&, const WebKit::WebMessagePortChannelArray&) {}
+    virtual void startWorkerContext(const WebKit::WebURL&, const WebKit::WebString&, const WebKit::WebString&) { }
+    virtual void terminateWorkerContext() { }
+    virtual void postMessageToWorkerContext(const WebKit::WebString&, const WebKit::WebMessagePortChannelArray&) { }
     virtual void workerObjectDestroyed()
     {
         // Releases the reference held for worker object.
         deref();
     }
-    virtual void clientDestroyed() {}
+    virtual void clientDestroyed() { }
 
     // WebWorkerClient methods:
-    virtual void postMessageToWorkerObject(const WebKit::WebString&, const WebKit::WebMessagePortChannelArray&) {}
-    virtual void postExceptionToWorkerObject(const WebKit::WebString&, int, const WebKit::WebString&) {}
-    virtual void postConsoleMessageToWorkerObject(int, int, int, int, const WebKit::WebString&, int, const WebKit::WebString&) {}
-    virtual void confirmMessageFromWorkerObject(bool) {}
-    virtual void reportPendingActivity(bool) {}
-    virtual void workerContextClosed() {}
+    virtual void postMessageToWorkerObject(const WebKit::WebString&, const WebKit::WebMessagePortChannelArray&) { }
+    virtual void postExceptionToWorkerObject(const WebKit::WebString&, int, const WebKit::WebString&) { }
+    virtual void postConsoleMessageToWorkerObject(int, int, int, int, const WebKit::WebString&, int, const WebKit::WebString&) { }
+    virtual void confirmMessageFromWorkerObject(bool) { }
+    virtual void reportPendingActivity(bool) { }
+    virtual void workerContextClosed() { }
     virtual void workerContextDestroyed()
     {
         // Releases the reference held for worker context object.
@@ -86,7 +86,7 @@ public:
     virtual bool allowDatabase(WebKit::WebFrame*, const WebKit::WebString&, const WebKit::WebString&, unsigned long) { return true; }
 
 private:
-    ~TestWebWorker() {}
+    ~TestWebWorker() { }
     friend class WTF::RefCounted<TestWebWorker>;
 };
 

@@ -124,7 +124,7 @@ static string descriptionSuitableForTestResult(const string& url)
     return url.substr(pos + 1);
 }
 
-// Adds a file called "DRTFakeFile" to |data_object| (CF_HDROP).  Use to fake
+// Adds a file called "DRTFakeFile" to dragData (CF_HDROP). Use to fake
 // dragging a file.
 static void addDRTFakeFileToDataObject(WebDragData* dragData)
 {
@@ -277,7 +277,7 @@ void WebViewHost::didStopLoading()
 }
 
 // The output from these methods in layout test mode should match that
-// expected by the layout tests.  See EditingDelegate.m in DumpRenderTree.
+// expected by the layout tests. See EditingDelegate.m in DumpRenderTree.
 
 bool WebViewHost::shouldBeginEditing(const WebRange& range)
 {
@@ -1283,7 +1283,7 @@ bool WebViewHost::navigate(const TestNavigationEntry& entry, bool reload)
     // back/forward navigations maintain the target frame?
 
     // A navigation resulting from loading a javascript URL should not be
-    // treated as a browser initiated event.  Instead, we want it to look as if
+    // treated as a browser initiated event. Instead, we want it to look as if
     // the page initiated any load resulting from JS execution.
     if (!GURL(entry.URL()).SchemeIs("javascript"))
         setPendingExtraData(adoptPtr(new TestShellExtraData(entry.pageID())));
@@ -1390,7 +1390,7 @@ void WebViewHost::updateURL(WebFrame* frame)
 void WebViewHost::updateSessionHistory(WebFrame* frame)
 {
     // If we have a valid page ID at this point, then it corresponds to the page
-    // we are navigating away from.  Otherwise, this is the first navigation, so
+    // we are navigating away from. Otherwise, this is the first navigation, so
     // there is no past session history to record.
     if (m_pageId == -1)
         return;
@@ -1492,7 +1492,7 @@ void WebViewHost::paintInvalidatedRegion()
     WebSize widgetSize = webWidget()->size();
     WebRect clientRect(0, 0, widgetSize.width, widgetSize.height);
 
-    // Paint the canvas if necessary.  Allow painting to generate extra rects
+    // Paint the canvas if necessary. Allow painting to generate extra rects
     // for the first two calls. This is necessary because some WebCore rendering
     // objects update their layout only when painted.
     // Store the total area painted in total_paint. Then tell the gdk window

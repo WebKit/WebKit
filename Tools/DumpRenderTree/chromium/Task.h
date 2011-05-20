@@ -57,11 +57,12 @@ protected:
 
 class TaskList {
 public:
-    TaskList() {}
+    TaskList() { }
     ~TaskList() { revokeAll(); }
     void registerTask(WebTask* task) { m_tasks.append(task); }
-    void unregisterTask(WebTask* task);
+    void unregisterTask(WebTask*);
     void revokeAll();
+
 private:
     Vector<WebTask*> m_tasks;
 };
@@ -71,7 +72,7 @@ private:
 // Class T must have "TaskList* taskList()".
 template<class T> class MethodTask: public WebTask {
 public:
-    MethodTask(T* object): WebTask(object->taskList()), m_object(object) {}
+    MethodTask(T* object): WebTask(object->taskList()), m_object(object) { }
     virtual void run()
     {
         if (m_object)
@@ -84,11 +85,12 @@ public:
         m_taskList = 0;
     }
     virtual void runIfValid() = 0;
+
 protected:
     T* m_object;
 };
 
-void postTask(WebTask* task);
-void postDelayedTask(WebTask* task, int64_t ms);
+void postTask(WebTask*);
+void postDelayedTask(WebTask*, int64_t ms);
 
 #endif // Task_h

@@ -83,9 +83,9 @@ void TestShell::waitTestFinished()
     m_testIsPending = true;
 
     // Create a watchdog thread which just sets a timer and
-    // kills the process if it times out.  This catches really
+    // kills the process if it times out. This catches really
     // bad hangs where the shell isn't coming back to the
-    // message loop.  If the watchdog is what catches a
+    // message loop. If the watchdog is what catches a
     // timeout, it can't do anything except terminate the test
     // shell, which is unfortunate.
     m_finishedEvent = CreateEvent(0, TRUE, FALSE, 0);

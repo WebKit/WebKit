@@ -118,7 +118,7 @@ private:
     bool isDragMode() { return dragMode.isBool() && dragMode.toBoolean(); }
 
     // Sometimes we queue up mouse move and mouse up events for drag drop
-    // handling purposes.  These methods dispatch the event.
+    // handling purposes. These methods dispatch the event.
     void doMouseMove(const WebKit::WebMouseEvent&);
     void doMouseUp(const WebKit::WebMouseEvent&);
     static void doLeapForward(int milliseconds);
@@ -145,7 +145,7 @@ private:
 
     TaskList m_taskList;
 
-    // Non-owning pointer.  The EventSender is owned by the TestShell.
+    // Non-owning pointer. The EventSender is owned by the TestShell.
     TestShell* m_shell;
 
     // Location of last mouseMoveTo event.

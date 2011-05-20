@@ -40,6 +40,7 @@ public:
         WebKit::WebThemeEngine::Size,
         const WebKit::WebRect&,
         const WebKit::WebThemeEngine::ScrollbarInfo&);
+
 private:
     virtual void paintHIThemeScrollbarThumb(
         WebKit::WebCanvas*,

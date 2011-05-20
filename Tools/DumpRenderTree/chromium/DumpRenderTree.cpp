@@ -259,8 +259,8 @@ int main(int argc, char* argv[])
         shell.callJSGC();
 
         // When we finish the last test, cleanup the LayoutTestController.
-        // It may have references to not-yet-cleaned up windows.  By
-        // cleaning up here we help purify reports.
+        // It may have references to not-yet-cleaned up windows. By cleaning up
+        // here we help purify reports.
         shell.resetTestController();
     }
 

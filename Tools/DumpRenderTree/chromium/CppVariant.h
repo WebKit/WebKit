@@ -58,7 +58,7 @@ public:
 
     // Note that setting a CppVariant to a string value involves copying the
     // string data, which must be freed with a call to freeData() when the
-    // CppVariant is set to a different value or is no longer needed.  Normally
+    // CppVariant is set to a different value or is no longer needed. Normally
     // this is handled by the other set() methods and by the destructor.
     void set(const char*); // Must be a null-terminated string.
     void set(const std::string&);
@@ -72,7 +72,7 @@ public:
     // the NP runtime nor CppVariant will ever free it.
     void set(NPObject*_value);
 
-    // These three methods all perform deep copies of any string data.  This
+    // These three methods all perform deep copies of any string data. This
     // allows local CppVariants to be released by the destructor without
     // corrupting their sources. In performance-critical code, or when strings
     // are very long, avoid creating new CppVariants.
@@ -89,8 +89,8 @@ public:
     // the ref-count (releases when ref-count becomes 0)
     void freeData();
 
-    // Compares this CppVariant's type and value to another's.  They must be
-    // identical in both type and value to be considered equal.  For string and
+    // Compares this CppVariant's type and value to another's. They must be
+    // identical in both type and value to be considered equal. For string and
     // object types, a deep comparison is performed; that is, the contents of the
     // strings, or the classes and refcounts of the objects, must be the same,
     // but they need not be the same pointers.
@@ -111,7 +111,7 @@ public:
     bool isEmpty() const { return (isVoid() || isNull()); }
     bool isObject() const { return (type == NPVariantType_Object); }
 
-    // Converters.  The CppVariant must be of a type convertible to these values.
+    // Converters. The CppVariant must be of a type convertible to these values.
     // For example, toInt32() works only if isNumber() is true.
     std::string toString() const;
     int32_t toInt32() const;
@@ -123,7 +123,7 @@ public:
 
     // Invoke method of the given name on an object with the supplied arguments.
     // The first argument should be the object on which the method is to be
-    // invoked.  Returns whether the method was successfully invoked.  If the
+    // invoked. Returns whether the method was successfully invoked. If the
     // method was invoked successfully, any return value is stored in the
     // CppVariant specified by result.
     bool invoke(const std::string&, const CppVariant* arguments,

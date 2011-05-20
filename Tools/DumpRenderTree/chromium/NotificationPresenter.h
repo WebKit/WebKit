@@ -43,7 +43,7 @@ class TestShell;
 // A class that implements WebNotificationPresenter for DRT.
 class NotificationPresenter : public WebKit::WebNotificationPresenter {
 public:
-    explicit NotificationPresenter(TestShell* shell) : m_shell(shell) {}
+    explicit NotificationPresenter(TestShell* shell) : m_shell(shell) { }
 
     // Called by the LayoutTestController to simulate a user granting permission.
     void grantPermission(const WebKit::WebString& origin);

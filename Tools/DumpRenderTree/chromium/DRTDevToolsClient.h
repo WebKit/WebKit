@@ -73,8 +73,9 @@ public:
     class AsyncCallTask: public MethodTask<DRTDevToolsClient> {
     public:
         AsyncCallTask(DRTDevToolsClient* object, const WebKit::WebString& args)
-            : MethodTask<DRTDevToolsClient>(object), m_args(args) {}
+            : MethodTask<DRTDevToolsClient>(object), m_args(args) { }
         virtual void runIfValid() { m_object->call(m_args); }
+
     private:
         WebKit::WebString m_args;
     };

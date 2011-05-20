@@ -37,7 +37,7 @@
 
 class DRTPrinter : public TestEventPrinter {
 public:
-    DRTPrinter() {}
+    DRTPrinter() { }
     void handleTestHeader(const char* url) const;
     void handleTimedOut() const;
     void handleTextHeader() const;
@@ -49,7 +49,7 @@ public:
 
 class TestShellPrinter : public TestEventPrinter {
 public:
-    TestShellPrinter() {}
+    TestShellPrinter() { }
     void handleTestHeader(const char* url) const;
     void handleTimedOut() const;
     void handleTextHeader() const;

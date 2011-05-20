@@ -64,7 +64,8 @@ void DRTDevToolsClient::reset()
     m_taskList.revokeAll();
 }
 
-void DRTDevToolsClient::sendFrontendLoaded() {
+void DRTDevToolsClient::sendFrontendLoaded()
+{
     if (m_drtDevToolsAgent)
         m_drtDevToolsAgent->frontendLoaded();
 }

@@ -132,7 +132,7 @@ public:
     // for drawing them is dependent on what WebKit tells us to do.
     // If drawEdges is true, draw an edge around the control. If
     // fillContentArea is true, fill the content area with the given color.
-    void drawTextField(bool drawEdges, bool fillContentArea, SkColor color);
+    void drawTextField(bool drawEdges, bool fillContentArea, SkColor);
 
     // Use this for drawing ProgressBar controls instead, since we
     // need to know the rect to fill inside the bar.
@@ -141,26 +141,26 @@ public:
 private:
     // Draws a box of size specified by irect, filled with the given color.
     // The box will have a border drawn in the default edge color.
-    void box(const SkIRect& irect, SkColor color);
+    void box(const SkIRect& irect, SkColor);
 
 
     // Draws a triangle of size specified by the three pairs of coordinates,
     // filled with the given color. The box will have an edge drawn in the
     // default edge color.
-    void triangle(int x0, int y0, int x1, int y1, int x2, int y2, SkColor color);
+    void triangle(int x0, int y0, int x1, int y1, int x2, int y2, SkColor);
 
     // Draws a rectangle the size of the control with rounded corners, filled
     // with the specified color (and with a border in the default edge color).
-    void roundRect(SkColor color);
+    void roundRect(SkColor);
 
     // Draws an oval the size of the control, filled with the specified color
     // and with a border in the default edge color.
-    void oval(SkColor color);
+    void oval(SkColor);
 
     // Draws a circle centered in the control with the specified radius,
     // filled with the specified color, and with a border draw in the
     // default edge color.
-    void circle(SkScalar radius, SkColor color);
+    void circle(SkScalar radius, SkColor);
 
     // Draws a box the size of the control, filled with the outerColor and
     // with a border in the default edge color, and then draws another box
@@ -174,7 +174,7 @@ private:
                      SkColor innerColor);
 
     // Draws a line between the two points in the given color.
-    void line(int x0, int y0, int x1, int y1, SkColor color);
+    void line(int x0, int y0, int x1, int y1, SkColor);
 
     // Draws a distinctive mark on the control for each state, so that the
     // state of the control can be determined without needing to know which

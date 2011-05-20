@@ -39,9 +39,9 @@
 using namespace WebKit;
 
 MockSpellCheck::MockSpellCheck()
-    : m_initialized(false) {}
+    : m_initialized(false) { }
 
-MockSpellCheck::~MockSpellCheck() {}
+MockSpellCheck::~MockSpellCheck() { }
 
 static bool isNotASCIIAlpha(UChar ch) { return !isASCIIAlpha(ch); }
 

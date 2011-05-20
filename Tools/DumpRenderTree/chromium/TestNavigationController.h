@@ -46,7 +46,7 @@ class TestShellExtraData : public WebKit::WebDataSource::ExtraData {
 public:
     TestShellExtraData(int32_t pendingPageID)
         : pendingPageID(pendingPageID)
-        , requestCommitted(false) {}
+        , requestCommitted(false) { }
 
     // Contains the page_id for this navigation or -1 if there is none yet.
     int32_t pendingPageID;
@@ -142,7 +142,7 @@ public:
     int entryCount() const { return static_cast<int>(m_entries.size()); }
 
     // Returns the active entry, which is the pending entry if a navigation is in
-    // progress or the last committed entry otherwise.  NOTE: This can be 0!!
+    // progress or the last committed entry otherwise. NOTE: This can be 0!!
     //
     // If you are trying to get the current state of the NavigationControllerBase,
     // this is the method you will typically want to call.
@@ -153,8 +153,7 @@ public:
     // it is the m_pendingEntryIndex.
     int currentEntryIndex() const;
 
-    // Returns the entry at the specified index.  Returns 0 if out of
-    // bounds.
+    // Returns the entry at the specified index. Returns 0 if out of bounds.
     TestNavigationEntry* entryAtIndex(int) const;
 
     // Return the entry with the corresponding type and page ID, or 0 if
@@ -192,8 +191,8 @@ private:
     typedef NavigationEntryList::iterator NavigationEntryListIterator;
     NavigationEntryList m_entries;
 
-    // An entry we haven't gotten a response for yet.  This will be discarded
-    // when we navigate again.  It's used only so we know what the currently
+    // An entry we haven't gotten a response for yet. This will be discarded
+    // when we navigate again. It's used only so we know what the currently
     // displayed tab is.
     RefPtr<TestNavigationEntry> m_pendingEntry;
 

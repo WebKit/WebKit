@@ -31,10 +31,10 @@
 // This file contains the definition for EventSender.
 //
 // Some notes about drag and drop handling:
-// Windows drag and drop goes through a system call to doDragDrop.  At that
+// Windows drag and drop goes through a system call to doDragDrop. At that
 // point, program control is given to Windows which then periodically makes
-// callbacks into the webview.  This won't work for layout tests, so instead,
-// we queue up all the mouse move and mouse up events.  When the test tries to
+// callbacks into the webview. This won't work for layout tests, so instead,
+// we queue up all the mouse move and mouse up events. When the test tries to
 // start a drag (by calling EvenSendingController::doDragDrop), we take the
 // events in the queue and replay them.
 // The behavior of queuing events and replaying them can be disabled by a
@@ -84,7 +84,7 @@ struct SavedEvent {
     SavedEvent()
         : type(Unspecified)
         , buttonType(WebMouseEvent::ButtonNone)
-        , milliseconds(0) {}
+        , milliseconds(0) { }
 };
 
 static WebDragData currentDragData;
@@ -115,7 +115,7 @@ inline bool outsideMultiClickRadius(const WebPoint& a, const WebPoint& b)
         multipleClickRadiusPixels * multipleClickRadiusPixels;
 }
 
-// Used to offset the time the event hander things an event happened.  This is
+// Used to offset the time the event hander things an event happened. This is
 // done so tests can run without a delay, but bypass checks that are time
 // dependent (e.g., dragging has a timeout vs selection).
 static uint32 timeOffsetMs = 0;
@@ -248,7 +248,7 @@ EventSender::EventSender(TestShell* shell)
     : m_shell(shell)
 {
     // Initialize the map that associates methods of this class with the names
-    // they will use when called by JavaScript.  The actual binding of those
+    // they will use when called by JavaScript. The actual binding of those
     // names to their methods will be done by calling bindToJavaScript() (defined
     // by CppBoundClass, the parent to EventSender).
     bindMethod("addTouchPoint", &EventSender::addTouchPoint);
@@ -498,7 +498,7 @@ void EventSender::keyDown(const CppArgumentList& arguments, CppVariant* result)
     // FIXME: Should we also generate a KEY_UP?
     string codeStr = arguments[0].toString();
 
-    // Convert \n -> VK_RETURN.  Some layout tests use \n to mean "Enter", when
+    // Convert \n -> VK_RETURN. Some layout tests use \n to mean "Enter", when
     // Windows uses \r for "Enter".
     int code = 0;
     int text = 0;
@@ -795,8 +795,9 @@ void EventSender::contextClick(const CppArgumentList& arguments, CppVariant* res
 class MouseDownTask: public MethodTask<EventSender> {
 public:
     MouseDownTask(EventSender* obj, const CppArgumentList& arg)
-        : MethodTask<EventSender>(obj), m_arguments(arg) {}
+        : MethodTask<EventSender>(obj), m_arguments(arg) { }
     virtual void runIfValid() { m_object->mouseDown(m_arguments, 0); }
+
 private:
     CppArgumentList m_arguments;
 };
@@ -804,8 +805,9 @@ private:
 class MouseUpTask: public MethodTask<EventSender> {
 public:
     MouseUpTask(EventSender* obj, const CppArgumentList& arg)
-        : MethodTask<EventSender>(obj), m_arguments(arg) {}
+        : MethodTask<EventSender>(obj), m_arguments(arg) { }
     virtual void runIfValid() { m_object->mouseUp(m_arguments, 0); }
+
 private:
     CppArgumentList m_arguments;
 };

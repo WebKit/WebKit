@@ -78,7 +78,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
 {
 
     // Initialize the map that associates methods of this class with the names
-    // they will use when called by JavaScript.  The actual binding of those
+    // they will use when called by JavaScript. The actual binding of those
     // names to their methods will be done by calling bindToJavaScript() (defined
     // by CppBoundClass, the parent to LayoutTestController).
     bindMethod("addFileToPasteboardOnDrag", &LayoutTestController::addFileToPasteboardOnDrag);
@@ -265,9 +265,8 @@ void LayoutTestController::WorkQueue::processWork()
 void LayoutTestController::WorkQueue::reset()
 {
     m_frozen = false;
-    while (!m_queue.isEmpty()) {
+    while (!m_queue.isEmpty())
         delete m_queue.takeFirst();
-    }
 }
 
 void LayoutTestController::WorkQueue::addWork(WorkItem* work)
@@ -394,12 +393,13 @@ void LayoutTestController::completeNotifyDone(bool isTimeout)
 
 class WorkItemBackForward : public LayoutTestController::WorkItem {
 public:
-    WorkItemBackForward(int distance) : m_distance(distance) {}
+    WorkItemBackForward(int distance) : m_distance(distance) { }
     bool run(TestShell* shell)
     {
         shell->goToOffset(m_distance);
         return true; // FIXME: Did it really start a navigation?
     }
+
 private:
     int m_distance;
 };
@@ -435,24 +435,26 @@ void LayoutTestController::queueReload(const CppArgumentList&, CppVariant* resul
 
 class WorkItemLoadingScript : public LayoutTestController::WorkItem {
 public:
-    WorkItemLoadingScript(const string& script) : m_script(script) {}
+    WorkItemLoadingScript(const string& script) : m_script(script) { }
     bool run(TestShell* shell)
     {
         shell->webView()->mainFrame()->executeScript(WebScriptSource(WebString::fromUTF8(m_script)));
         return true; // FIXME: Did it really start a navigation?
     }
+
 private:
     string m_script;
 };
 
 class WorkItemNonLoadingScript : public LayoutTestController::WorkItem {
 public:
-    WorkItemNonLoadingScript(const string& script) : m_script(script) {}
+    WorkItemNonLoadingScript(const string& script) : m_script(script) { }
     bool run(TestShell* shell)
     {
         shell->webView()->mainFrame()->executeScript(WebScriptSource(WebString::fromUTF8(m_script)));
         return false;
     }
+
 private:
     string m_script;
 };
@@ -475,12 +477,13 @@ class WorkItemLoad : public LayoutTestController::WorkItem {
 public:
     WorkItemLoad(const WebURL& url, const WebString& target)
         : m_url(url)
-        , m_target(target) {}
+        , m_target(target) { }
     bool run(TestShell* shell)
     {
         shell->webViewHost()->loadURLForFrame(m_url, m_target);
         return true; // FIXME: Did it really start a navigation?
     }
+
 private:
     WebURL m_url;
     WebString m_target;
@@ -506,17 +509,18 @@ class WorkItemLoadHTMLString : public LayoutTestController::WorkItem  {
 public:
     WorkItemLoadHTMLString(const std::string& html, const WebURL& baseURL)
         : m_html(html)
-        , m_baseURL(baseURL) {}
+        , m_baseURL(baseURL) { }
     WorkItemLoadHTMLString(const std::string& html, const WebURL& baseURL, const WebURL& unreachableURL)
         : m_html(html)
         , m_baseURL(baseURL)
-        , m_unreachableURL(unreachableURL) {}
+        , m_unreachableURL(unreachableURL) { }
     bool run(TestShell* shell)
     {
         shell->webView()->mainFrame()->loadHTMLString(
             WebKit::WebData(m_html.data(), m_html.length()), m_baseURL, m_unreachableURL);
         return true;
     }
+
 private:
     std::string m_html;
     WebURL m_baseURL;
@@ -926,7 +930,7 @@ void LayoutTestController::pathToLocalResource(const CppArgumentList& arguments,
     }
 #endif
 
-    // Some layout tests use file://// which we resolve as a UNC path.  Normalize
+    // Some layout tests use file://// which we resolve as a UNC path. Normalize
     // them to just file:///.
     string lowerUrl = url;
     transform(lowerUrl.begin(), lowerUrl.end(), lowerUrl.begin(), ::tolower);

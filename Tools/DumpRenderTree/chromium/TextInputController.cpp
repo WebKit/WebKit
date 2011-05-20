@@ -39,8 +39,8 @@
 #include "WebString.h"
 #include "WebVector.h"
 #include "WebView.h"
-#include <wtf/StringExtras.h>
 #include <string>
+#include <wtf/StringExtras.h>
 
 using namespace WebKit;
 

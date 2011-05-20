@@ -77,14 +77,14 @@ public:
     // Callback class for "void function(CppVariant*)"
     class GetterCallback {
     public:
-        virtual ~GetterCallback() {}
+        virtual ~GetterCallback() { }
         virtual void run(CppVariant*) = 0;
     };
 
     // The constructor should call BindMethod, BindProperty, and
     // SetFallbackMethod as needed to set up the methods, properties, and
     // fallback method.
-    CppBoundClass() : m_boundToFrame(false) {}
+    CppBoundClass() : m_boundToFrame(false) { }
     virtual ~CppBoundClass();
 
     // Return a CppVariant representing this class, for use with BindProperty().
@@ -92,7 +92,7 @@ public:
     CppVariant* getAsCppVariant();
 
     // Given a WebFrame, BindToJavascript builds the NPObject that will represent
-    // the class and binds it to the frame's window under the given name.  This
+    // the class and binds it to the frame's window under the given name. This
     // should generally be called from the WebView delegate's
     // WindowObjectCleared(). A class so bound will be accessible to JavaScript
     // as window.<classname>. The owner of the CppBoundObject is responsible for
@@ -100,7 +100,7 @@ public:
     // afterwards.
     void bindToJavascript(WebKit::WebFrame*, const WebKit::WebString& classname);
 
-    // Used by a test.  Returns true if a method with name |name| exists,
+    // Used by a test. Returns true if a method with the specified name exists,
     // regardless of whether a fallback is registered.
     bool isMethodRegistered(const std::string&) const;
 
@@ -108,7 +108,7 @@ protected:
     // Callback for "void function(const CppArguemntList&, CppVariant*)"
     class Callback {
     public:
-        virtual ~Callback() {}
+        virtual ~Callback() { }
         virtual void run(const CppArgumentList&, CppVariant*) = 0;
     };
 
@@ -118,13 +118,14 @@ protected:
         typedef void (T::*MethodType)(const CppArgumentList&, CppVariant*);
         MemberCallback(T* object, MethodType method)
             : m_object(object)
-            , m_method(method) {}
-        virtual ~MemberCallback() {}
+            , m_method(method) { }
+        virtual ~MemberCallback() { }
 
         virtual void run(const CppArgumentList& arguments, CppVariant* result)
         {
             (m_object->*m_method)(arguments, result);
         }
+
     private:
         T* m_object;
         MethodType m_method;
@@ -136,10 +137,11 @@ protected:
         typedef void (T::*MethodType)(CppVariant*);
         MemberGetterCallback(T* object, MethodType method)
             : m_object(object)
-            , m_method(method) {}
-        virtual ~MemberGetterCallback() {}
+            , m_method(method) { }
+        virtual ~MemberGetterCallback() { }
 
         virtual void run(CppVariant* result) { (m_object->*m_method)(result); }
+
     private:
         T* m_object;
         MethodType m_method;
@@ -149,7 +151,7 @@ protected:
     void bindCallback(const std::string&, Callback*);
 
     // A wrapper for bindCallback, to simplify the common case of binding a
-    // method on the current object.  Though not verified here, |method|
+    // method on the current object. Though not verified here, the method parameter
     // must be a method of this CppBoundClass subclass.
     template<class T>
     void bindMethod(const std::string& name, void (T::*method)(const CppArgumentList&, CppVariant*))
@@ -163,7 +165,7 @@ protected:
     void bindGetterCallback(const std::string&, PassOwnPtr<GetterCallback>);
 
     // A wrapper for BindGetterCallback, to simplify the common case of binding a
-    // property on the current object.  Though not verified here, |method|
+    // property on the current object. Though not verified here, the method parameter
     // must be a method of this CppBoundClass subclass.
     template<class T>
     void bindProperty(const std::string& name, void (T::*method)(CppVariant*))
@@ -195,7 +197,7 @@ protected:
     }
 
     // A wrapper for BindFallbackCallback, to simplify the common case of
-    // binding a method on the current object.  Though not verified here,
+    // binding a method on the current object. Though not verified here,
     // |method| must be a method of this CppBoundClass subclass.
     // Passing 0 for |method| clears out any existing binding.
     template<class T>
@@ -231,7 +233,7 @@ private:
     bool getProperty(NPIdentifier, NPVariant* result) const;
     bool setProperty(NPIdentifier, const NPVariant*);
 
-    // A lazily-initialized CppVariant representing this class.  We retain 1
+    // A lazily-initialized CppVariant representing this class. We retain 1
     // reference to this object, and it is released on deletion.
     CppVariant m_selfVariant;
 

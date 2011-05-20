@@ -34,7 +34,12 @@
 #include "WebKit.h"
 #include "WebKitClient.h"
 
-WebTask::WebTask(TaskList* list): m_taskList(list) { m_taskList->registerTask(this); }
+WebTask::WebTask(TaskList* list)
+    : m_taskList(list)
+{
+    m_taskList->registerTask(this);
+}
+
 WebTask::~WebTask()
 {
     if (m_taskList)

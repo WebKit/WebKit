@@ -90,7 +90,7 @@ private:
     OwnPtr<CppBoundClass::GetterCallback> m_callback;
 };
 
-// Our special NPObject type.  We extend an NPObject with a pointer to a
+// Our special NPObject type. We extend an NPObject with a pointer to a
 // CppBoundClass, which is just a C++ interface that we forward all NPObject
 // callbacks to.
 struct CppNPObject {
@@ -113,27 +113,27 @@ struct CppNPObject {
     static void deallocate(NPObject*);
 
     // Returns true if the C++ class associated with this NPObject exposes the
-    // given property.  Called by the JS runtime.
+    // given property. Called by the JS runtime.
     static bool hasProperty(NPObject*, NPIdentifier);
 
     // Returns true if the C++ class associated with this NPObject exposes the
-    // given method.  Called by the JS runtime.
+    // given method. Called by the JS runtime.
     static bool hasMethod(NPObject*, NPIdentifier);
 
     // If the given method is exposed by the C++ class associated with this
-    // NPObject, invokes it with the given arguments and returns a result.  Otherwise,
-    // returns "undefined" (in the JavaScript sense).  Called by the JS runtime.
+    // NPObject, invokes it with the given arguments and returns a result. Otherwise,
+    // returns "undefined" (in the JavaScript sense). Called by the JS runtime.
     static bool invoke(NPObject*, NPIdentifier,
                        const NPVariant* arguments, uint32_t argumentCount,
                        NPVariant* result);
 
     // If the given property is exposed by the C++ class associated with this
-    // NPObject, returns its value.  Otherwise, returns "undefined" (in the
-    // JavaScript sense).  Called by the JS runtime.
+    // NPObject, returns its value. Otherwise, returns "undefined" (in the
+    // JavaScript sense). Called by the JS runtime.
     static bool getProperty(NPObject*, NPIdentifier, NPVariant* result);
 
     // If the given property is exposed by the C++ class associated with this
-    // NPObject, sets its value.  Otherwise, does nothing. Called by the JS
+    // NPObject, sets its value. Otherwise, does nothing. Called by the JS
     // runtime.
     static bool setProperty(NPObject*, NPIdentifier, const NPVariant* value);
 };
@@ -329,7 +329,7 @@ bool CppBoundClass::isMethodRegistered(const string& name) const
 CppVariant* CppBoundClass::getAsCppVariant()
 {
     if (!m_selfVariant.isObject()) {
-        // Create an NPObject using our static NPClass.  The first argument (a
+        // Create an NPObject using our static NPClass. The first argument (a
         // plugin's instance handle) is passed through to the allocate function
         // directly, and we don't use it, so it's ok to be 0.
         NPObject* npObj = WebBindings::createObject(0, &CppNPObject::npClass);
@@ -345,7 +345,7 @@ CppVariant* CppBoundClass::getAsCppVariant()
 void CppBoundClass::bindToJavascript(WebFrame* frame, const WebString& classname)
 {
     // BindToWindowObject will take its own reference to the NPObject, and clean
-    // up after itself.  It will also (indirectly) register the object with V8,
+    // up after itself. It will also (indirectly) register the object with V8,
     // so we must remember this so we can unregister it when we're destroyed.
     frame->bindToWindowObject(classname, NPVARIANT_TO_OBJECT(*getAsCppVariant()));
     m_boundToFrame = true;

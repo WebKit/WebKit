@@ -75,7 +75,7 @@ struct TestParams {
         , dumpPixels(false)
         , debugRenderTree(false)
         , debugLayerTree(false)
-        , printSeparators(false) {}
+        , printSeparators(false) { }
 };
 
 class TestShell {
@@ -103,7 +103,7 @@ public:
     void waitTestFinished();
 
     // Operations to the main window.
-    void loadURL(const WebKit::WebURL& url);
+    void loadURL(const WebKit::WebURL&);
     void reload();
     void goToOffset(int offset);
     int navigationEntryCount() const;
@@ -132,7 +132,7 @@ public:
     void setLegacyAccelerated2dCanvasEnabled(bool enabled) { m_legacyAccelerated2dCanvasEnabled = enabled; }
     void setAcceleratedDrawingEnabled(bool enabled) { m_acceleratedDrawingEnabled = enabled; }
 #if defined(OS_WIN)
-    // Access to the finished event.  Used by the static WatchDog thread.
+    // Access to the finished event. Used by the static WatchDog thread.
     HANDLE finishedEvent() { return m_finishedEvent; }
 #endif
 

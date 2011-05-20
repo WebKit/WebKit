@@ -66,7 +66,7 @@ struct WebWindowFeatures;
 
 class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewClient, public WebKit::WebFrameClient, public NavigationHost {
  public:
-    WebViewHost(TestShell* shell);
+    WebViewHost(TestShell*);
     ~WebViewHost();
     void setWebWidget(WebKit::WebWidget*);
     WebKit::WebView* webView() const;
@@ -253,7 +253,7 @@ private:
     void setAddressBarURL(const WebKit::WebURL&);
 
     // In the Mac code, this is called to trigger the end of a test after the
-    // page has finished loading.  From here, we can generate the dump for the
+    // page has finished loading. From here, we can generate the dump for the
     // test.
     void locationChangeDone(WebKit::WebFrame*);
 
@@ -276,8 +276,8 @@ private:
     // don't actually want to open the mail program.
     bool m_policyDelegateEnabled;
 
-    // Toggles the behavior of the policy delegate.  If true, then navigations
-    // will be allowed.  Otherwise, they will be ignored (dropped).
+    // Toggles the behavior of the policy delegate. If true, then navigations
+    // will be allowed. Otherwise, they will be ignored (dropped).
     bool m_policyDelegateIsPermissive;
 
     // If true, the policy delegate will signal layout test completion.
@@ -292,7 +292,7 @@ private:
     // This is non-0 IFF a load is in progress.
     WebKit::WebFrame* m_topLoadingFrame;
 
-    // For tracking session history.  See RenderView.
+    // For tracking session history. See RenderView.
     int m_pageId;
     int m_lastPageIdUpdated;
 

@@ -72,33 +72,33 @@ public:
     void dumpAsText(const CppArgumentList&, CppVariant*);
 
     // This function should set a flag that tells the test_shell to print a line
-    // of descriptive text for each database command.  It should take no
+    // of descriptive text for each database command. It should take no
     // arguments, and ignore any that may be present. However, at the moment, we
     // don't have any DB function that prints messages, so for now this function
     // doesn't do anything.
     void dumpDatabaseCallbacks(const CppArgumentList&, CppVariant*);
 
     // This function sets a flag that tells the test_shell to print a line of
-    // descriptive text for each editing command.  It takes no arguments, and
+    // descriptive text for each editing command. It takes no arguments, and
     // ignores any that may be present.
     void dumpEditingCallbacks(const CppArgumentList&, CppVariant*);
 
     // This function sets a flag that tells the test_shell to print a line of
-    // descriptive text for each frame load callback.  It takes no arguments, and
+    // descriptive text for each frame load callback. It takes no arguments, and
     // ignores any that may be present.
     void dumpFrameLoadCallbacks(const CppArgumentList&, CppVariant*);
 
     // This function sets a flag that tells the test_shell to print a line of
-    // user gesture status text for some frame load callbacks.  It takes no
+    // user gesture status text for some frame load callbacks. It takes no
     // arguments, and ignores any that may be present.
     void dumpUserGestureInFrameLoadCallbacks(const CppArgumentList&, CppVariant*);
 
     // This function sets a flag that tells the test_shell to print out a text
-    // representation of the back/forward list.  It ignores all arguments.
+    // representation of the back/forward list. It ignores all arguments.
     void dumpBackForwardList(const CppArgumentList&, CppVariant*);
 
     // This function sets a flag that tells the test_shell to print out the
-    // scroll offsets of the child frames.  It ignores all.
+    // scroll offsets of the child frames. It ignores all.
     void dumpChildFrameScrollPositions(const CppArgumentList&, CppVariant*);
 
     // This function sets a flag that tells the test_shell to recursively
@@ -126,17 +126,17 @@ public:
     // attempt is made. It ignores any additional arguments.
     void setAcceptsEditing(const CppArgumentList&, CppVariant*);
 
-    // Functions for dealing with windows.  By default we block all new windows.
+    // Functions for dealing with windows. By default we block all new windows.
     void windowCount(const CppArgumentList&, CppVariant*);
     void setCanOpenWindows(const CppArgumentList&, CppVariant*);
     void setCloseRemainingWindowsWhenComplete(const CppArgumentList&, CppVariant*);
 
-    // By default, tests end when page load is complete.  These methods are used
+    // By default, tests end when page load is complete. These methods are used
     // to delay the completion of the test until notifyDone is called.
     void waitUntilDone(const CppArgumentList&, CppVariant*);
     void notifyDone(const CppArgumentList&, CppVariant*);
 
-    // Methods for adding actions to the work queue.  Used in conjunction with
+    // Methods for adding actions to the work queue. Used in conjunction with
     // waitUntilDone/notifyDone above.
     void queueBackNavigation(const CppArgumentList&, CppVariant*);
     void queueForwardNavigation(const CppArgumentList&, CppVariant*);
@@ -219,7 +219,7 @@ public:
     // the test.
     void setStopProvisionalFrameLoads(const CppArgumentList&, CppVariant*);
 
-    // Enable or disable smart insert/delete.  This is enabled by default.
+    // Enable or disable smart insert/delete. This is enabled by default.
     void setSmartInsertDeleteEnabled(const CppArgumentList&, CppVariant*);
 
     // Enable or disable trailing whitespace selection on double click.
@@ -245,8 +245,8 @@ public:
     void setDeferMainResourceDataLoad(const CppArgumentList&, CppVariant*);
     void setEditingBehavior(const CppArgumentList&, CppVariant*);
 
-    // The following are only stubs.  TODO(pamg): Implement any of these that
-    // are needed to pass the layout tests.
+    // The following are only stubs.
+    // FIXME: Implement any of these that are needed to pass the layout tests.
     void dumpAsWebArchive(const CppArgumentList&, CppVariant*);
     void dumpTitleChanges(const CppArgumentList&, CppVariant*);
     void setMainFrameIsFirstResponder(const CppArgumentList&, CppVariant*);
@@ -419,18 +419,17 @@ public:
     // waitForPolicyDelegate was called.
     void policyDelegateDone();
 
-    // Reinitializes all static values.  The reset() method should be called
-    // before the start of each test (currently from
-    // TestShell::runFileTest).
+    // Reinitializes all static values. The reset() method should be called
+    // before the start of each test (currently from TestShell::runFileTest).
     void reset();
 
     // A single item in the work queue.
     class WorkItem {
     public:
-        virtual ~WorkItem() {}
+        virtual ~WorkItem() { }
 
         // Returns true if this started a load.
-        virtual bool run(TestShell* shell) = 0;
+        virtual bool run(TestShell*) = 0;
     };
 
     TaskList* taskList() { return &m_taskList; }
@@ -443,14 +442,14 @@ private:
     // queueScript.
     class WorkQueue {
     public:
-        WorkQueue(LayoutTestController* controller) : m_frozen(false), m_controller(controller) {}
+        WorkQueue(LayoutTestController* controller) : m_frozen(false), m_controller(controller) { }
         virtual ~WorkQueue();
         void processWorkSoon();
 
         // Reset the state of the class between tests.
         void reset();
 
-        void addWork(WorkItem* work);
+        void addWork(WorkItem*);
 
         void setFrozen(bool frozen) { m_frozen = frozen; }
         bool isEmpty() { return m_queue.isEmpty(); }
@@ -460,7 +459,7 @@ private:
         void processWork();
         class WorkQueueTask: public MethodTask<WorkQueue> {
         public:
-            WorkQueueTask(WorkQueue* object): MethodTask<WorkQueue>(object) {}
+            WorkQueueTask(WorkQueue* object): MethodTask<WorkQueue>(object) { }
             virtual void runIfValid() { m_object->processWork(); }
         };
 
@@ -479,7 +478,7 @@ private:
     void completeNotifyDone(bool isTimeout);
     class NotifyDoneTimedOutTask: public MethodTask<LayoutTestController> {
     public:
-        NotifyDoneTimedOutTask(LayoutTestController* object): MethodTask<LayoutTestController>(object) {}
+        NotifyDoneTimedOutTask(LayoutTestController* object): MethodTask<LayoutTestController>(object) { }
         virtual void runIfValid() { m_object->completeNotifyDone(true); }
     };
 
@@ -494,7 +493,7 @@ private:
     // Used for test timeouts.
     TaskList m_taskList;
 
-    // Non-owning pointer.  The LayoutTestController is owned by the host.
+    // Non-owning pointer. The LayoutTestController is owned by the host.
     TestShell* m_shell;
 
     // If true, the test_shell will produce a plain text dump rather than a
@@ -546,18 +545,18 @@ private:
     // If true, the test_shell will generate pixel results in dumpAsText mode
     bool m_generatePixelResults;
 
-    // If true, the element will be treated as editable.  This value is returned
+    // If true, the element will be treated as editable. This value is returned
     // from various editing callbacks that are called just before edit operations
     // are allowed.
     bool m_acceptsEditing;
 
-    // If true, new windows can be opened via javascript or by plugins.  By
+    // If true, new windows can be opened via javascript or by plugins. By
     // default, set to false and can be toggled to true using
     // setCanOpenWindows().
     bool m_canOpenWindows;
 
     // When reset is called, go through and close all but the main test shell
-    // window.  By default, set to true but toggled to false using
+    // window. By default, set to true but toggled to false using
     // setCloseRemainingWindowsWhenComplete().
     bool m_closeRemainingWindows;
 

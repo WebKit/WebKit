@@ -1,3 +1,103 @@
+2011-05-20  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Fix style errors in DumpRenderTree/chromium/.
+        https://bugs.webkit.org/show_bug.cgi?id=61172
+
+        * DumpRenderTree/chromium/CppBoundClass.cpp:
+        (CppBoundClass::getAsCppVariant):
+        (CppBoundClass::bindToJavascript):
+        * DumpRenderTree/chromium/CppBoundClass.h:
+        (CppBoundClass::GetterCallback::~GetterCallback):
+        (CppBoundClass::CppBoundClass):
+        (CppBoundClass::Callback::~Callback):
+        (CppBoundClass::MemberCallback::MemberCallback):
+        (CppBoundClass::MemberCallback::~MemberCallback):
+        (CppBoundClass::MemberGetterCallback::MemberGetterCallback):
+        (CppBoundClass::MemberGetterCallback::~MemberGetterCallback):
+        * DumpRenderTree/chromium/CppVariant.h:
+        * DumpRenderTree/chromium/DRTDevToolsAgent.h:
+        (DRTDevToolsAgent::~DRTDevToolsAgent):
+        * DumpRenderTree/chromium/DRTDevToolsClient.cpp:
+        (DRTDevToolsClient::sendFrontendLoaded):
+        * DumpRenderTree/chromium/DRTDevToolsClient.h:
+        * DumpRenderTree/chromium/DumpRenderTree.cpp:
+        (main):
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (SavedEvent::SavedEvent):
+        (EventSender::EventSender):
+        (EventSender::keyDown):
+        * DumpRenderTree/chromium/EventSender.h:
+        * DumpRenderTree/chromium/ImageDiff.cpp:
+        (Image::Image):
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::WorkQueue::reset):
+        (WorkItemBackForward::WorkItemBackForward):
+        (WorkItemLoadingScript::WorkItemLoadingScript):
+        (WorkItemNonLoadingScript::WorkItemNonLoadingScript):
+        (WorkItemLoad::WorkItemLoad):
+        (WorkItemLoadHTMLString::WorkItemLoadHTMLString):
+        (LayoutTestController::pathToLocalResource):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController::WorkItem::~WorkItem):
+        (LayoutTestController::WorkQueue::WorkQueue):
+        * DumpRenderTree/chromium/MockSpellCheck.cpp:
+        (MockSpellCheck::MockSpellCheck):
+        (MockSpellCheck::~MockSpellCheck):
+        * DumpRenderTree/chromium/MockSpellCheck.h:
+        * DumpRenderTree/chromium/NotificationPresenter.h:
+        (NotificationPresenter::NotificationPresenter):
+        * DumpRenderTree/chromium/Task.cpp:
+        (WebTask::WebTask):
+        * DumpRenderTree/chromium/Task.h:
+        (TaskList::TaskList):
+        * DumpRenderTree/chromium/TestEventPrinter.cpp:
+        (DRTPrinter::DRTPrinter):
+        (TestShellPrinter::TestShellPrinter):
+        * DumpRenderTree/chromium/TestNavigationController.cpp:
+        (TestNavigationEntry::TestNavigationEntry):
+        (TestNavigationEntry::~TestNavigationEntry):
+        (TestNavigationController::TestNavigationController):
+        (TestNavigationController::reload):
+        (TestNavigationController::loadEntry):
+        (TestNavigationController::didNavigateToEntry):
+        * DumpRenderTree/chromium/TestNavigationController.h:
+        (TestShellExtraData::TestShellExtraData):
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (dumpHistoryItem):
+        * DumpRenderTree/chromium/TestShell.h:
+        (TestParams::TestParams):
+        * DumpRenderTree/chromium/TestShellWin.cpp:
+        (TestShell::waitTestFinished):
+        * DumpRenderTree/chromium/TestWebWorker.h:
+        (TestWebWorker::startWorkerContext):
+        (TestWebWorker::terminateWorkerContext):
+        (TestWebWorker::postMessageToWorkerContext):
+        (TestWebWorker::clientDestroyed):
+        (TestWebWorker::postMessageToWorkerObject):
+        (TestWebWorker::postExceptionToWorkerObject):
+        (TestWebWorker::postConsoleMessageToWorkerObject):
+        (TestWebWorker::confirmMessageFromWorkerObject):
+        (TestWebWorker::reportPendingActivity):
+        (TestWebWorker::workerContextClosed):
+        (TestWebWorker::~TestWebWorker):
+        * DumpRenderTree/chromium/TextInputController.cpp:
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.h:
+        * DumpRenderTree/chromium/WebThemeEngineDRTMac.h:
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.cpp:
+        (WebThemeEngineDRTWin::paintButton):
+        (WebThemeEngineDRTWin::paintMenuList):
+        (WebThemeEngineDRTWin::paintTrackbar):
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.h:
+        (WebThemeEngineDRTWin::WebThemeEngineDRTWin):
+        * DumpRenderTree/chromium/WebViewHost.cpp:
+        (WebViewHost::navigate):
+        (WebViewHost::updateSessionHistory):
+        (WebViewHost::paintInvalidatedRegion):
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-05-19  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by Adam Roben.

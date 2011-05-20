@@ -52,7 +52,7 @@ class DRTDevToolsAgent : public WebKit::WebDevToolsAgentClient {
     WTF_MAKE_NONCOPYABLE(DRTDevToolsAgent);
 public:
     DRTDevToolsAgent();
-    virtual ~DRTDevToolsAgent() {}
+    virtual ~DRTDevToolsAgent() { }
     void reset();
 
     void setWebView(WebKit::WebView*);
@@ -70,7 +70,7 @@ public:
     void frontendLoaded();
 
     bool evaluateInWebInspector(long callID, const std::string& script);
-    bool setTimelineProfilingEnabled(bool enable);
+    bool setTimelineProfilingEnabled(bool);
     TaskList* taskList() { return &m_taskList; }
 
 private:
@@ -82,14 +82,15 @@ private:
     class AsyncCallTask: public MethodTask<DRTDevToolsAgent> {
     public:
         AsyncCallTask(DRTDevToolsAgent* object, const WebKit::WebString& args)
-            : MethodTask<DRTDevToolsAgent>(object), m_args(args) {}
+            : MethodTask<DRTDevToolsAgent>(object), m_args(args) { }
         virtual void runIfValid() { m_object->call(m_args); }
+
     private:
         WebKit::WebString m_args;
     };
 
     struct DelayedFrontendLoadedTask: public MethodTask<DRTDevToolsAgent> {
-        DelayedFrontendLoadedTask(DRTDevToolsAgent* object) : MethodTask<DRTDevToolsAgent>(object) {}
+        DelayedFrontendLoadedTask(DRTDevToolsAgent* object) : MethodTask<DRTDevToolsAgent>(object) { }
         virtual void runIfValid() { m_object->delayedFrontendLoaded(); }
     };
 

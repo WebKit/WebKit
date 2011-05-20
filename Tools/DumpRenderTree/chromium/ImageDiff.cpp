@@ -69,12 +69,12 @@ class Image {
 public:
     Image()
         : m_width(0)
-        , m_height(0) {}
+        , m_height(0) { }
 
     Image(const Image& image)
         : m_width(image.m_width)
         , m_height(image.m_height)
-        , m_data(image.m_data) {}
+        , m_data(image.m_data) { }
 
     bool hasImage() const { return m_width > 0 && m_height > 0; }
     int width() const { return m_width; }
