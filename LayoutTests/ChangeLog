@@ -1,3 +1,9 @@
+2011-05-20  Sergio Villar Senin  <svillar@igalia.com>
+
+        Unreviewed, new GTK+ test expectations after r86920.
+
+        * platform/gtk/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+
 2011-05-20  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r86920.
