@@ -1,3 +1,14 @@
+2011-05-20  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/9472883> and https://bugs.webkit.org/show_bug.cgi?id=61203
+        Horrendous bug in callOnMainThreadAndWait
+
+        * wtf/MainThread.cpp:
+        (WTF::dispatchFunctionsFromMainThread): Before signaling the background thread with the
+          syncFlag condition, reacquire the mutex first.
+
 2011-05-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
