@@ -1,5 +1,11 @@
 2011-05-20  Kent Tamura  <tkent@chromium.org>
 
+        Try to fix Windows CE build. 
+
+        * CMakeLists.txt: Add --preprocessor flag.
+
+2011-05-20  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Hajime Morita.
 
         Apply feature flags to user-agent style sheets
