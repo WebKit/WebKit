@@ -1,5 +1,22 @@
 2011-05-20  Sergio Villar Senin  <svillar@igalia.com>
 
+        Unreviewed, new GTK+ test results.
+
+        * platform/gtk/fast/html/details-add-details-child-1-expected.png: Added.
+        * platform/gtk/fast/html/details-add-details-child-1-expected.txt: Added.
+        * platform/gtk/fast/html/details-nested-1-expected.png: Added.
+        * platform/gtk/fast/html/details-nested-1-expected.txt: Added.
+        * platform/gtk/fast/html/details-nested-2-expected.png: Added.
+        * platform/gtk/fast/html/details-nested-2-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt: Added.
+        * platform/gtk/svg/custom/painting-marker-07-f-inherit-expected.png: Added.
+        * platform/gtk/svg/custom/painting-marker-07-f-inherit-expected.txt: Added.
+        * platform/gtk/svg/custom/small-rect-scale-expected.png: Added.
+        * platform/gtk/svg/custom/small-rect-scale-expected.txt: Added.
+
+2011-05-20  Sergio Villar Senin  <svillar@igalia.com>
+
         Unreviewed, new GTK+ test expectations after r86920.
 
         * platform/gtk/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
