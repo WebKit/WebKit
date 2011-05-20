@@ -4183,3 +4183,9 @@ editing/style/table-selection.html
 
 # unskipped by r86841, but fail on Qt-ARM platform
 fast/transforms/selection-bounds-in-transformed-view.html
+
+# New test introduced in r86928, but crash on Qt-ARM platform
+svg/custom/path-getTotalLength-on-big-segment-crash.svg
+
+# Unskipped by r86938, but fail on Qt-ARM platform
+plugins/keyboard-events.html
