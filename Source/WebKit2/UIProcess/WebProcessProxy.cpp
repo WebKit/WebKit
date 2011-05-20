@@ -270,6 +270,7 @@ void WebProcessProxy::didReceiveSyncMessage(CoreIPC::Connection* connection, Cor
     if (messageID.is<CoreIPC::MessageClassWebContext>() || messageID.is<CoreIPC::MessageClassWebContextLegacy>() 
         || messageID.is<CoreIPC::MessageClassDownloadProxy>() || messageID.is<CoreIPC::MessageClassWebIconDatabase>()) {
         m_context->didReceiveSyncMessage(connection, messageID, arguments, reply);
+        return;
     }
 
     uint64_t pageID = arguments->destinationID();

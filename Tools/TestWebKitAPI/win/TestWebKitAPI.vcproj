@@ -412,6 +412,10 @@
 				Name="WebKit2"
 				>
 				<File
+					RelativePath="..\Tests\WebKit2\18-characters.html"
+					>
+				</File>
+				<File
 					RelativePath="..\Tests\WebKit2\AboutBlankLoad.cpp"
 					>
 				</File>
@@ -425,6 +429,10 @@
 				</File>
 				<File
 					RelativePath="..\Tests\WebKit2\DocumentStartUserScriptAlertCrash.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Tests\WebKit2\DownloadDecideDestinationCrash.cpp"
 					>
 				</File>
 				<File

@@ -1,3 +1,26 @@
+2011-05-19  Adam Roben  <aroben@apple.com>
+
+        Don't try to process DownloadProxy messages twice (and robustify code that runs if we do)
+
+        Fixes <http://webkit.org/b/61142> <rdar://problem/9471680> REGRESSION (r86812): Crash
+        (preceded by assertion) in fastMalloc when downloading a file
+
+        Reviewed by Darin Adler.
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::alignedBufferIsLargeEnoughToContain): Added. This helper function checks that the
+        given buffer is large enough to hold |size| bytes (and correctly handles the case where
+        we're already at the end or beyond the end of the buffer).
+
+        (CoreIPC::ArgumentDecoder::alignBufferPosition):
+        (CoreIPC::ArgumentDecoder::bufferIsLargeEnoughToContain):
+        Replaced old code that was vulnerable to underflow with the new helper function.
+
+        * UIProcess/WebProcessProxy.cpp:
+        (WebKit::WebProcessProxy::didReceiveSyncMessage): Added back an early return that was
+        mistakenly removed in r86812 so that we don't mistakenly pass DownloadProxy messages on to
+        a WebPageProxy after we've already handled them.
+
 2011-05-19  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

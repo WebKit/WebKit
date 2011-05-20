@@ -79,22 +79,27 @@ void ArgumentDecoder::initialize(const uint8_t* buffer, size_t bufferSize)
     decodeUInt64(m_destinationID);
 }
 
+static inline bool alignedBufferIsLargeEnoughToContain(const uint8_t* alignedPosition, const uint8_t* bufferEnd, size_t size)
+{
+    return bufferEnd >= alignedPosition && static_cast<size_t>(bufferEnd - alignedPosition) >= size;
+}
+
 bool ArgumentDecoder::alignBufferPosition(unsigned alignment, size_t size)
 {
-    uint8_t* buffer = roundUpToAlignment(m_bufferPos, alignment);
-    if (static_cast<size_t>(m_bufferEnd - buffer) < size) {
+    uint8_t* alignedPosition = roundUpToAlignment(m_bufferPos, alignment);
+    if (!alignedBufferIsLargeEnoughToContain(alignedPosition, m_bufferEnd, size)) {
         // We've walked off the end of this buffer.
         markInvalid();
         return false;
     }
     
-    m_bufferPos = buffer;
+    m_bufferPos = alignedPosition;
     return true;
 }
 
 bool ArgumentDecoder::bufferIsLargeEnoughToContain(unsigned alignment, size_t size) const
 {
-    return static_cast<size_t>(m_bufferEnd - roundUpToAlignment(m_bufferPos, alignment)) >= size;
+    return alignedBufferIsLargeEnoughToContain(roundUpToAlignment(m_bufferPos, alignment), m_bufferEnd, size);
 }
 
 bool ArgumentDecoder::decodeBytes(Vector<uint8_t>& buffer)

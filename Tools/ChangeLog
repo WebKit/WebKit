@@ -1,3 +1,32 @@
+2011-05-19  Adam Roben  <aroben@apple.com>
+
+        Test that the WebKit2 UI process doesn't crash when starting a download
+
+        Test for <http://webkit.org/b/61142> <rdar://problem/9471680> REGRESSION (r86812): Crash
+        (preceded by assertion) in fastMalloc when downloading a file
+
+        Reviewed by Darin Adler.
+
+        * TestWebKitAPI/Tests/WebKit2/18-characters.html: Added.
+
+        * TestWebKitAPI/Tests/WebKit2/DownloadDecideDestinationCrash.cpp: Added.
+        (TestWebKitAPI::decidePolicyForNavigationAction): Start a download.
+        (TestWebKitAPI::decideDestinationWithSuggestedFilename): Record that the download was
+        started, cancel the download, and return a bogus string.
+
+        (TestWebKitAPI::setContextDownloadClient):
+        (TestWebKitAPI::setPagePolicyClient):
+        Simple helper functions.
+
+        (TestWebKitAPI::TEST): Load 18-characters.html, which should trigger a download thanks to
+        our policy client, and run until we know that the download was started. If we haven't
+        crashed, we win!
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+        * TestWebKitAPI/win/copy-resources.cmd:
+        Added new files.
+
 2011-05-20  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Ryosuke Niwa.
