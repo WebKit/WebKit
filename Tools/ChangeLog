@@ -1,3 +1,13 @@
+2011-05-19  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by Adam Roben.
+
+        run-api-tests should run one test per process
+        https://bugs.webkit.org/show_bug.cgi?id=61088
+
+        * Scripts/run-api-tests: Resurrecting the previous revison of this file, with fixes to system call under Windows, 
+        return code, and parsing GTest output format.
+
 2011-05-15  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.
