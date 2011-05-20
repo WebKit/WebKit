@@ -1,3 +1,17 @@
+2011-05-20  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        SVG Large curve path segment OOM crash
+        https://bugs.webkit.org/show_bug.cgi?id=42079
+
+        Added a test to verify, that the browser does not crash on calculating the total length on big segments.
+        It makes no sense to add the result of getTotalLength(), since they differ a lot bewteen platforms.
+        This is caused by the platform graphic libraries. See comment #9 on the bug.
+
+        * svg/custom/path-getTotalLength-on-big-segment-crash-expected.txt: Added.
+        * svg/custom/path-getTotalLength-on-big-segment-crash.svg: Added.
+
 2011-05-19  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed.

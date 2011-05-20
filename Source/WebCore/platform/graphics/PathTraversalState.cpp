@@ -1,7 +1,5 @@
 /*
- * This file is part of the WebKit open source project.
- *
- * Copyright (C) 2006, 2007 Eric Seidel (eric@webkit.org)
+ * Copyright (C) 2006, 2007 Eric Seidel <eric@webkit.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,9 +20,8 @@
 #include "config.h"
 #include "PathTraversalState.h"
 
-#include "Path.h"
-
-#include <math.h>
+#include <wtf/MathExtras.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
@@ -119,17 +116,20 @@ struct CubicBezier {
 template<class CurveType>
 static float curveLength(PathTraversalState& traversalState, CurveType curve)
 {
+    static const unsigned curveStackDepthLimit = 20;
+
     Vector<CurveType> curveStack;
     curveStack.append(curve);
 
-    float totalLength = 0.0f;
+    float totalLength = 0;
     do {
         float length = curve.approximateDistance();
-        if ((length - distanceLine(curve.start, curve.end)) > kPathSegmentLengthTolerance) {
-            CurveType left, right;
-            curve.split(left, right);
-            curve = left;
-            curveStack.append(right);
+        if ((length - distanceLine(curve.start, curve.end)) > kPathSegmentLengthTolerance && curveStack.size() <= curveStackDepthLimit) {
+            CurveType leftCurve;
+            CurveType rightCurve;
+            curve.split(leftCurve, rightCurve);
+            curve = leftCurve;
+            curveStack.append(rightCurve);
         } else {
             totalLength += length;
             if (traversalState.m_action == PathTraversalState::TraversalPointAtLength
@@ -150,10 +150,10 @@ static float curveLength(PathTraversalState& traversalState, CurveType curve)
 PathTraversalState::PathTraversalState(PathTraversalAction action)
     : m_action(action)
     , m_success(false)
-    , m_totalLength(0.0f)
+    , m_totalLength(0)
     , m_segmentIndex(0)
-    , m_desiredLength(0.0f)
-    , m_normalAngle(0.0f)
+    , m_desiredLength(0)
+    , m_normalAngle(0)
 {
 }
 
@@ -167,7 +167,7 @@ float PathTraversalState::closeSubpath()
 float PathTraversalState::moveTo(const FloatPoint& point)
 {
     m_current = m_start = m_control1 = m_control2 = point;
-    return 0.0f;
+    return 0;
 }
 
 float PathTraversalState::lineTo(const FloatPoint& point)

@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg">
+<text x="10" y="30">Test passes if it does not crash.</text>
+<script>
+<![CDATA[
+    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+    path.setAttribute("d", "M0,0");
+    var x   = -764285429.594597,  y = -4016805151.510674,
+        x1  = -1.227687,          y1 = -4089196561.699610,
+        x2  = -2172808631,        y2 = .990756267;
+    pathSeg = path.createSVGPathSegCurvetoCubicAbs(x, y, x1 ,y1 ,x2 ,y2);
+    pathSegList = path.pathSegList;
+    pathSegList.appendItem(pathSeg);
+    path.getTotalLength();
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+
+]]>
+</script>
+</svg>
