@@ -33,6 +33,9 @@ public:
     SVGPathTraversalStateBuilder();
 
     unsigned long pathSegmentIndex();
+    float totalLength();
+    FloatPoint currentPoint();
+
     void setCurrentTraversalState(PathTraversalState* traversalState) { m_traversalState = traversalState; }
     void setDesiredLength(float);
     virtual void incrementPathSegmentCount();

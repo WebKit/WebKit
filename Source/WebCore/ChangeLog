@@ -1,3 +1,32 @@
+2011-05-20  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        SVGPathSegList needs better getTotalLength, getSegmentAtLength path traversal code
+        https://bugs.webkit.org/show_bug.cgi?id=12047
+
+        Right now SVGPathElement::getTotalLength and SVGPathElement::getPointAtLength use toPathData()
+        to transform a SVGPathByteStream to a Path. This Path gets traversed to find the searched value.
+        With this patch both functions use the SVGPathByteStream directly together with the existing
+        traversing code in SVG. This avoids the intermediate transforming to a platform path and gives
+        platform independent results.
+        The traversal code in SVG needed to be extended to support all PathTraversalActions.
+
+        No new tests added. The existing tests cover the changes.
+
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::getTotalLength):
+        (WebCore::SVGPathElement::getPointAtLength):
+        * svg/SVGPathParserFactory.cpp:
+        (WebCore::SVGPathParserFactory::getTotalLengthOfSVGPathByteStream):
+        (WebCore::SVGPathParserFactory::getPointAtLengthOfSVGPathByteStream):
+        * svg/SVGPathParserFactory.h:
+        * svg/SVGPathTraversalStateBuilder.cpp:
+        (WebCore::SVGPathTraversalStateBuilder::continueConsuming):
+        (WebCore::SVGPathTraversalStateBuilder::totalLength):
+        (WebCore::SVGPathTraversalStateBuilder::currentPoint):
+        * svg/SVGPathTraversalStateBuilder.h:
+
 2011-05-20  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

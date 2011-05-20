@@ -267,6 +267,40 @@ bool SVGPathParserFactory::getSVGPathSegAtLengthFromSVGPathByteStream(SVGPathByt
     return ok;
 }
 
+bool SVGPathParserFactory::getTotalLengthOfSVGPathByteStream(SVGPathByteStream* stream, float& totalLength)
+{
+    ASSERT(stream);
+    if (stream->isEmpty())
+        return false;
+    
+    PathTraversalState traversalState(PathTraversalState::TraversalTotalLength);
+    SVGPathTraversalStateBuilder* builder = globalSVGPathTraversalStateBuilder(traversalState, 0);
+    
+    OwnPtr<SVGPathByteStreamSource> source = SVGPathByteStreamSource::create(stream);
+    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
+    bool ok = parser->parsePathDataFromSource(NormalizedParsing);
+    totalLength = builder->totalLength();
+    parser->cleanup();
+    return ok;
+}
+
+bool SVGPathParserFactory::getPointAtLengthOfSVGPathByteStream(SVGPathByteStream* stream, float length, FloatPoint& point)
+{
+    ASSERT(stream);
+    if (stream->isEmpty())
+        return false;
+    
+    PathTraversalState traversalState(PathTraversalState::TraversalPointAtLength);
+    SVGPathTraversalStateBuilder* builder = globalSVGPathTraversalStateBuilder(traversalState, length);
+    
+    OwnPtr<SVGPathByteStreamSource> source = SVGPathByteStreamSource::create(stream);
+    SVGPathParser* parser = globalSVGPathParser(source.get(), builder);
+    bool ok = parser->parsePathDataFromSource(NormalizedParsing);
+    point = builder->currentPoint();
+    parser->cleanup();
+    return ok;
+}
+
 }
 
 #endif

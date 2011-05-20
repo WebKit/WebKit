@@ -64,26 +64,22 @@ PassRefPtr<SVGPathElement> SVGPathElement::create(const QualifiedName& tagName, 
 
 float SVGPathElement::getTotalLength()
 {
-    // FIXME: this may wish to use the pathSegList instead of the pathdata if that's cheaper to build (or cached)
-    Path path;
-    toPathData(path);
-    return path.length();
+    float totalLength = 0;
+    SVGPathParserFactory::self()->getTotalLengthOfSVGPathByteStream(m_pathByteStream.get(), totalLength);
+    return totalLength;
 }
 
 FloatPoint SVGPathElement::getPointAtLength(float length)
 {
-    // FIXME: this may wish to use the pathSegList instead of the pathdata if that's cheaper to build (or cached)
-    bool ok = false;
-    Path path;
-    toPathData(path);
-    return path.pointAtLength(length, ok);
+    FloatPoint point;
+    SVGPathParserFactory::self()->getPointAtLengthOfSVGPathByteStream(m_pathByteStream.get(), length, point);
+    return point;
 }
 
 unsigned long SVGPathElement::getPathSegAtLength(float length)
 {
-    SVGPathParserFactory* factory = SVGPathParserFactory::self();
     unsigned long pathSeg = 0;
-    factory->getSVGPathSegAtLengthFromSVGPathByteStream(m_pathByteStream.get(), length, pathSeg);
+    SVGPathParserFactory::self()->getSVGPathSegAtLengthFromSVGPathByteStream(m_pathByteStream.get(), length, pathSeg);
     return pathSeg;
 }
 

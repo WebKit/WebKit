@@ -65,9 +65,26 @@ void SVGPathTraversalStateBuilder::setDesiredLength(float desiredLength)
 
 bool SVGPathTraversalStateBuilder::continueConsuming()
 {
-    ASSERT(m_traversalState);
-    ASSERT(m_traversalState->m_action == PathTraversalState::TraversalSegmentAtLength);
-    return m_traversalState->m_totalLength < m_traversalState->m_desiredLength;
+    ASSERT(m_traversalState);    
+    if (m_traversalState->m_action == PathTraversalState::TraversalSegmentAtLength
+        && m_traversalState->m_totalLength >= m_traversalState->m_desiredLength)
+        m_traversalState->m_success = true;
+    
+    if ((m_traversalState->m_action == PathTraversalState::TraversalPointAtLength
+         || m_traversalState->m_action == PathTraversalState::TraversalNormalAngleAtLength)
+        && m_traversalState->m_totalLength >= m_traversalState->m_desiredLength) {
+        FloatSize change = m_traversalState->m_current - m_traversalState->m_previous;
+        float slope = atan2f(change.height(), change.width());
+        if (m_traversalState->m_action == PathTraversalState::TraversalPointAtLength) {
+            float offset = m_traversalState->m_desiredLength - m_traversalState->m_totalLength;
+            m_traversalState->m_current.move(offset * cosf(slope), offset * sinf(slope));
+        } else
+            m_traversalState->m_normalAngle = rad2deg(slope);
+        m_traversalState->m_success = true;
+    }
+    m_traversalState->m_previous = m_traversalState->m_current;
+
+    return !m_traversalState->m_success;
 }
 
 void SVGPathTraversalStateBuilder::incrementPathSegmentCount()
@@ -80,6 +97,18 @@ unsigned long SVGPathTraversalStateBuilder::pathSegmentIndex()
 {
     ASSERT(m_traversalState);
     return m_traversalState->m_segmentIndex;
+}
+
+float SVGPathTraversalStateBuilder::totalLength()
+{
+    ASSERT(m_traversalState);
+    return m_traversalState->m_totalLength;
+}
+
+FloatPoint SVGPathTraversalStateBuilder::currentPoint()
+{
+    ASSERT(m_traversalState);
+    return m_traversalState->m_current;
 }
 
 }
