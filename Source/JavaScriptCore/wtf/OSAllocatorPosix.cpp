@@ -55,6 +55,18 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
 
     int flags = MAP_PRIVATE | MAP_ANON;
 
+#if OS(LINUX)
+    // Linux distros usually do not allow overcommit by default, so
+    // JSC's strategy of mmaping a large amount of memory upfront
+    // won't work very well on some systems. Fortunately there's a
+    // flag we can pass to mmap to disable the overcommit check for
+    // this particular call, so we can get away with it as long as the
+    // overcommit flag value in /proc/sys/vm/overcommit_memory is 0
+    // ('heuristic') and not 2 (always check). 0 is the usual default
+    // value, so this should work well in general.
+    flags |= MAP_NORESERVE;
+#endif
+
 #if OS(DARWIN)
     int fd = usage;
 #else

@@ -1,3 +1,17 @@
+2011-05-20  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Oliver Hunt.
+
+        JIT requires VM overcommit (particularly on x86-64), Linux does not by default support this without swap?
+        https://bugs.webkit.org/show_bug.cgi?id=42756
+
+        Use the MAP_NORESERVE flag for mmap on Linux to skip the kernel
+        check of the available memory. This should give us an
+        overcommit-like behavior in most systems, which is what we want.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveAndCommit): pass MAP_NORSERVE to mmap.
+
 2011-05-19  Gabor Loki  <loki@webkit.org>
 
         Fix ARM build after r86919
