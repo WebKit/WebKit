@@ -51,7 +51,7 @@ class PluginView : public WebCore::PluginViewBase, WebCore::MediaCanStartListene
 public:
     static PassRefPtr<PluginView> create(PassRefPtr<WebCore::HTMLPlugInElement>, PassRefPtr<Plugin>, const Plugin::Parameters&);
 
-    WebCore::Frame* frame();
+    WebCore::Frame* frame() const;
 
     bool isBeingDestroyed() const { return m_isBeingDestroyed; }
 
