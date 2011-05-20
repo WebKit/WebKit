@@ -118,6 +118,16 @@
 
 2011-05-20  Andrew Scherkus  <scherkus@chromium.org>
 
+        Unreviewed, checking in baselines for media/media-document-audio-repaint.html for chromium-{mac,linux,win}.
+
+        * platform/chromium-linux/media/media-document-audio-repain-expected.png: Added.
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.png: Added.
+        * platform/chromium-mac/media/media-document-audio-repaint-expected.txt: Added.
+        * platform/chromium-win/media/media-document-audio-repaint-expected.png: Added.
+        * platform/chromium-win/media/media-document-audio-repaint-expected.txt: Added.
+
+2011-05-20  Andrew Scherkus  <scherkus@chromium.org>
+
         Unreviewed, updating media/event-attributes.html as passing for Chromium.
 
         * platform/chromium/test_expectations.txt:
