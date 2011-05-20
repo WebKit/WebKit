@@ -43,7 +43,10 @@ bool isOnAccessControlSimpleRequestMethodWhitelist(const String& method)
 
 bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name, const String& value)
 {
-    if (equalIgnoringCase(name, "accept") || equalIgnoringCase(name, "accept-language") || equalIgnoringCase(name, "content-language"))
+    if (equalIgnoringCase(name, "accept")
+        || equalIgnoringCase(name, "accept-language")
+        || equalIgnoringCase(name, "content-language")
+        || equalIgnoringCase(name, "origin"))
         return true;
 
     // Preflight is required for MIME types that can not be sent via form submission.
@@ -91,6 +94,42 @@ bool isOnAccessControlResponseHeaderWhitelist(const String& name)
     AtomicallyInitializedStatic(HTTPHeaderSet*, allowedCrossOriginResponseHeaders = createAllowedCrossOriginResponseHeadersSet().leakPtr());
 
     return allowedCrossOriginResponseHeaders->contains(name);
+}
+
+void updateRequestForAccessControl(ResourceRequest& request, SecurityOrigin* securityOrigin, bool allowCredentials)
+{
+    request.removeCredentials();
+    request.setAllowCookies(allowCredentials);
+    request.setHTTPOrigin(securityOrigin->toString());
+}
+
+ResourceRequest createAccessControlPreflightRequest(const ResourceRequest& request, SecurityOrigin* securityOrigin, bool allowCredentials)
+{
+    ResourceRequest preflightRequest(request.url());
+    updateRequestForAccessControl(preflightRequest, securityOrigin, allowCredentials);
+    preflightRequest.setHTTPMethod("OPTIONS");
+    preflightRequest.setHTTPHeaderField("Access-Control-Request-Method", request.httpMethod());
+    preflightRequest.setPriority(request.priority());
+
+    const HTTPHeaderMap& requestHeaderFields = request.httpHeaderFields();
+
+    if (requestHeaderFields.size() > 0) {
+        Vector<UChar> headerBuffer;
+        HTTPHeaderMap::const_iterator it = requestHeaderFields.begin();
+        append(headerBuffer, it->first);
+        ++it;
+
+        HTTPHeaderMap::const_iterator end = requestHeaderFields.end();
+        for (; it != end; ++it) {
+            headerBuffer.append(',');
+            headerBuffer.append(' ');
+            append(headerBuffer, it->first);
+        }
+
+        preflightRequest.setHTTPHeaderField("Access-Control-Request-Headers", String::adopt(headerBuffer));
+    }
+
+    return preflightRequest;
 }
 
 bool passesAccessControlCheck(const ResourceResponse& response, bool includeCredentials, SecurityOrigin* securityOrigin, String& errorDescription)

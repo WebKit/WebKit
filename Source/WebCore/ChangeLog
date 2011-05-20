@@ -1,3 +1,30 @@
+2011-05-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Factor CORS request preparation out of DocumentThreadableLoader
+        https://bugs.webkit.org/show_bug.cgi?id=61209
+
+        DocumentThreadableLoader has two jobs:
+
+        1) Proxy loads between threads.
+        2) Run the CORS state machine.
+
+        This patch begins the work of separating those concerns, allowing CORS
+        to be used elsewhere in the loading pipeline.  In particular, this
+        patch moves knowledge of how to prepare CORS requests out of
+        DocumentThreadableLoder.
+
+        * loader/CrossOriginAccessControl.cpp:
+        (WebCore::isOnAccessControlSimpleRequestHeaderWhitelist):
+        (WebCore::updateRequestForAccessControl):
+        (WebCore::createAccessControlPreflightRequest):
+        * loader/CrossOriginAccessControl.h:
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest):
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight):
+
 2011-05-20  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Dirk Schulze.

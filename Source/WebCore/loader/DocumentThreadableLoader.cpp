@@ -89,8 +89,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document* document, Threadabl
     ASSERT(m_options.crossOriginRequestPolicy == UseAccessControl);
 
     OwnPtr<ResourceRequest> crossOriginRequest = adoptPtr(new ResourceRequest(request));
-    crossOriginRequest->removeCredentials();
-    crossOriginRequest->setAllowCookies(m_options.allowCredentials);
+    updateRequestForAccessControl(*crossOriginRequest, m_document->securityOrigin(), m_options.allowCredentials);
 
     if (!m_options.forcePreflight && isSimpleCrossOriginAccessRequest(crossOriginRequest->httpMethod(), crossOriginRequest->httpHeaderFields()))
         makeSimpleCrossOriginAccessRequest(*crossOriginRequest);
@@ -109,47 +108,18 @@ void DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest(const Resource
     ASSERT(isSimpleCrossOriginAccessRequest(request.httpMethod(), request.httpHeaderFields()));
 
     // Cross-origin requests are only defined for HTTP. We would catch this when checking response headers later, but there is no reason to send a request that's guaranteed to be denied.
+    // FIXME: Consider allowing simple CORS requests to non-HTTP URLs.
     if (!request.url().protocolInHTTPFamily()) {
         m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, request.url().string(), "Cross origin requests are only supported for HTTP."));
         return;
     }
 
-    // Make a copy of the passed request so that we can modify some details.
-    ResourceRequest crossOriginRequest(request);
-    crossOriginRequest.setHTTPOrigin(m_document->securityOrigin()->toString());
-
-    loadRequest(crossOriginRequest, DoSecurityCheck);
+    loadRequest(request, DoSecurityCheck);
 }
 
 void DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight(const ResourceRequest& request)
 {
-    ResourceRequest preflightRequest(request.url());
-    preflightRequest.removeCredentials();
-    preflightRequest.setHTTPOrigin(m_document->securityOrigin()->toString());
-    preflightRequest.setAllowCookies(m_options.allowCredentials);
-    preflightRequest.setHTTPMethod("OPTIONS");
-    preflightRequest.setHTTPHeaderField("Access-Control-Request-Method", request.httpMethod());
-
-    const HTTPHeaderMap& requestHeaderFields = request.httpHeaderFields();
-
-    if (requestHeaderFields.size() > 0) {
-        Vector<UChar> headerBuffer;
-        HTTPHeaderMap::const_iterator it = requestHeaderFields.begin();
-        append(headerBuffer, it->first);
-        ++it;
-
-        HTTPHeaderMap::const_iterator end = requestHeaderFields.end();
-        for (; it != end; ++it) {
-            headerBuffer.append(',');
-            headerBuffer.append(' ');
-            append(headerBuffer, it->first);
-        }
-
-        preflightRequest.setHTTPHeaderField("Access-Control-Request-Headers", String::adopt(headerBuffer));
-    }
-
-    preflightRequest.setPriority(request.priority());
-
+    ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, m_document->securityOrigin(), m_options.allowCredentials);
     loadRequest(preflightRequest, DoSecurityCheck);
 }
 

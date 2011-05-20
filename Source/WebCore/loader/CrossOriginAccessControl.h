@@ -27,20 +27,24 @@
 #ifndef CrossOriginAccessControl_h
 #define CrossOriginAccessControl_h
 
+#include "ResourceRequest.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-    class HTTPHeaderMap;
-    class ResourceResponse;
-    class SecurityOrigin;
+class HTTPHeaderMap;
+class ResourceResponse;
+class SecurityOrigin;
 
-    bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
-    bool isOnAccessControlSimpleRequestMethodWhitelist(const String&);
-    bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name, const String& value);
-    bool isOnAccessControlResponseHeaderWhitelist(const String&);
+bool isSimpleCrossOriginAccessRequest(const String& method, const HTTPHeaderMap&);
+bool isOnAccessControlSimpleRequestMethodWhitelist(const String&);
+bool isOnAccessControlSimpleRequestHeaderWhitelist(const String& name, const String& value);
+bool isOnAccessControlResponseHeaderWhitelist(const String&);
 
-    bool passesAccessControlCheck(const ResourceResponse&, bool includeCredentials, SecurityOrigin*, String& errorDescription);
+void updateRequestForAccessControl(ResourceRequest&, SecurityOrigin*, bool allowCredentials);
+ResourceRequest createAccessControlPreflightRequest(const ResourceRequest&, SecurityOrigin*, bool allowCredentials);
+
+bool passesAccessControlCheck(const ResourceResponse&, bool includeCredentials, SecurityOrigin*, String& errorDescription);
 
 } // namespace WebCore
 
