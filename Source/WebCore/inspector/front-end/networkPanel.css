@@ -81,7 +81,7 @@
     background-color: white;
 }
 
-.network-sidebar .data-grid td.name-column {
+.network-sidebar .data-grid tr:not(.filler) td.name-column {
     font-weight: bold;
     cursor: pointer;
 }

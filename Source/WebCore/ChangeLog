@@ -1,3 +1,15 @@
+2011-05-20  Tonis Tiigi  <tonistiigi@gmail.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Network panel should only show pointer cursor over valid resources
+        https://bugs.webkit.org/show_bug.cgi?id=55240
+
+        Cursor style removed from filler area.
+
+        * inspector/front-end/networkPanel.css:
+        (.network-sidebar .data-grid tr:not(.filler) td.name-column):
+
 2011-05-20  Peter Varga  <pvarga@webkit.org>
 
         Reviewed by Simon Hausmann.
