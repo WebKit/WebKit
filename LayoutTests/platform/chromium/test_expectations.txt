@@ -4127,3 +4127,7 @@ BUGCR83290 WIN : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS T
 
 // Started crashing after seemingly unrelated r85786
 BUGCR83325 MAC DEBUG : canvas/philip/tests/2d.imageData.put.created.html = CRASH PASS
+
+// New test added ar r86920
+BUGWK61169 : css3/images/optimize-contrast-canvas.html = IMAGE
+BUGWK61169 : css3/images/optimize-contrast-image.html = IMAGE
