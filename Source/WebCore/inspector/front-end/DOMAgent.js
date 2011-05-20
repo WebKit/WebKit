@@ -75,6 +75,7 @@ WebInspector.DOMNode = function(doc, payload) {
         this.internalSubset = payload.internalSubset;
     } else if (this._nodeType === Node.DOCUMENT_NODE) {
         this.documentURL = payload.documentURL;
+        this.xmlVersion = payload.xmlVersion;
     } else if (this._nodeType === Node.ATTRIBUTE_NODE) {
         this.name = payload.name;
         this.value = payload.value;

@@ -1,3 +1,20 @@
+2011-05-20  Tonis Tiigi  <tonistiigi@gmail.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: console.log(XMLDocument) should be case preserving
+        https://bugs.webkit.org/show_bug.cgi?id=60765
+
+        Changes the XML document checking from base documents MIME type
+        to xmlVersion parameter.
+
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::InspectorDOMAgent::buildObjectForNode):
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMNode):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeOutline.prototype.set rootDOMNode):
+
 2011-05-20  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
