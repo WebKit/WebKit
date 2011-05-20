@@ -4165,3 +4165,6 @@ BUGCR83426 MAC DEBUG : svg/filters/feLighting-crash.svg = IMAGE PASS
 
 // New test from WK r86970
 BUGCR83441 : storage/indexeddb/mozilla/create-objectstore-null-name.html = TEXT
+
+// New test that appears to just need a set of baselines.
+BUGCR83444 WIN LINUX : svg/W3C-SVG-1.1-SE/struct-use-14-f.svg = IMAGE+TEXT

@@ -1,3 +1,12 @@
+2011-05-20  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed.
+
+        Chromium expectations exception for:
+        svg/W3C-SVG-1.1-SE/struct-use-14-f.svg 
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rebaselines after r86983.
