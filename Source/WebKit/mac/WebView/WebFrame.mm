@@ -1040,7 +1040,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (!controller)
         return false;
 
-    return controller->numberOfActiveAnimations();
+    return controller->numberOfActiveAnimations(frame->document());
 }
 
 - (void) _suspendAnimations

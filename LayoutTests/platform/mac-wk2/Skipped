@@ -1462,13 +1462,6 @@ plugins/npruntime/plugin-scriptable-object-invoke-default.html
 fast/parser/remove-misnested-iframe-in-beforeload.html
 fast/parser/remove-misnested-iframe-parent-in-beforeload.html
 
-# Transitions sometimes don't stop when they should in WebKit2
-# <rdar://problem/8883326>
-transitions/hang-with-bad-transition-list.html
-transitions/remove-transition-style.html
-transitions/repeated-firing-background-color.html
-transitions/zero-duration-with-non-zero-delay-end.html
-
 # CSSValue and CSSPrimitiveValue prototypes are wrong
 # <rdar://problem/8772988>
 fast/dom/global-constructors.html

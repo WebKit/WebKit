@@ -431,7 +431,7 @@ unsigned int DumpRenderTreeSupportGtk::numberOfActiveAnimations(WebKitWebFrame* 
     if (!coreFrame)
         return 0;
 
-    return coreFrame->animation()->numberOfActiveAnimations();
+    return coreFrame->animation()->numberOfActiveAnimations(coreFrame->document());
 }
 
 void DumpRenderTreeSupportGtk::suspendAnimations(WebKitWebFrame* frame)

@@ -1303,7 +1303,7 @@ HRESULT WebFrame::numberOfActiveAnimations(UINT* number)
     if (!controller)
         return E_FAIL;
 
-    *number = controller->numberOfActiveAnimations();
+    *number = controller->numberOfActiveAnimations(frame->document());
     return S_OK;
 }
 

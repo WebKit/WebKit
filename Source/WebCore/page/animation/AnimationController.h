@@ -58,7 +58,7 @@ public:
 
     bool pauseAnimationAtTime(RenderObject*, const String& name, double t); // To be used only for testing
     bool pauseTransitionAtTime(RenderObject*, const String& property, double t); // To be used only for testing
-    unsigned numberOfActiveAnimations() const; // To be used only for testing
+    unsigned numberOfActiveAnimations(Document*) const; // To be used only for testing
     
     bool isRunningAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow = true) const;
     bool isRunningAcceleratedAnimationOnRenderer(RenderObject*, CSSPropertyID, bool isRunningNow = true) const;

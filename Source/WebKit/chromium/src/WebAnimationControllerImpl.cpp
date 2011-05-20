@@ -84,7 +84,7 @@ unsigned WebAnimationControllerImpl::numberOfActiveAnimations() const
     AnimationController* controller = animationController();
     if (!controller)
         return 0;
-    return controller->numberOfActiveAnimations();
+    return controller->numberOfActiveAnimations(m_frameImpl->frame()->document());
 }
 
 void WebAnimationControllerImpl::suspendAnimations() const

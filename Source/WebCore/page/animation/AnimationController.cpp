@@ -352,14 +352,16 @@ PassRefPtr<RenderStyle> AnimationControllerPrivate::getAnimatedStyleForRenderer(
     return animatingStyle.release();
 }
 
-unsigned AnimationControllerPrivate::numberOfActiveAnimations() const
+unsigned AnimationControllerPrivate::numberOfActiveAnimations(Document* document) const
 {
     unsigned count = 0;
     
     RenderObjectAnimationMap::const_iterator animationsEnd = m_compositeAnimations.end();
     for (RenderObjectAnimationMap::const_iterator it = m_compositeAnimations.begin(); it != animationsEnd; ++it) {
+        RenderObject* renderer = it->first;
         CompositeAnimation* compAnim = it->second.get();
-        count += compAnim->numberOfActiveAnimations();
+        if (renderer->document() == document)
+            count += compAnim->numberOfActiveAnimations();
     }
     
     return count;
@@ -525,9 +527,9 @@ bool AnimationController::pauseAnimationAtTime(RenderObject* renderer, const Str
     return m_data->pauseAnimationAtTime(renderer, name, t);
 }
 
-unsigned AnimationController::numberOfActiveAnimations() const
+unsigned AnimationController::numberOfActiveAnimations(Document* document) const
 {
-    return m_data->numberOfActiveAnimations();
+    return m_data->numberOfActiveAnimations(document);
 }
 
 bool AnimationController::pauseTransitionAtTime(RenderObject* renderer, const String& property, double t)

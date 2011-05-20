@@ -80,7 +80,7 @@ public:
 
     bool pauseAnimationAtTime(RenderObject*, const String& name, double t);
     bool pauseTransitionAtTime(RenderObject*, const String& property, double t);
-    unsigned numberOfActiveAnimations() const;
+    unsigned numberOfActiveAnimations(Document*) const;
 
     PassRefPtr<RenderStyle> getAnimatedStyleForRenderer(RenderObject* renderer);
 

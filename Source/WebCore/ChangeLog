@@ -1,3 +1,23 @@
+2011-05-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        numberOfActiveAnimations() can include animations from documents in the page cache
+        https://bugs.webkit.org/show_bug.cgi?id=53641
+        
+        Some transition tests using layoutTestController.numberOfActiveAnimations() failed
+        in WebKit2 because numberOfActiveAnimations() could include those from other documents
+        in the page cache.
+        
+        Fix by passing in the document for which we wish to count animations.
+
+        * WebCore.exp.in:
+        * page/animation/AnimationController.cpp:
+        (WebCore::AnimationControllerPrivate::numberOfActiveAnimations):
+        (WebCore::AnimationController::numberOfActiveAnimations):
+        * page/animation/AnimationController.h:
+        * page/animation/AnimationControllerPrivate.h:
+
 2011-05-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
