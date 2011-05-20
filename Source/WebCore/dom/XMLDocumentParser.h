@@ -43,14 +43,15 @@
 
 namespace WebCore {
 
-    class Node;
-    class CachedScript;
-    class CachedResourceLoader;
-    class DocumentFragment;
-    class Document;
-    class Element;
-    class FrameView;
-    class PendingCallbacks;
+class ContainerNode;
+class CachedScript;
+class CachedResourceLoader;
+class DocumentFragment;
+class Document;
+class Element;
+class FrameView;
+class PendingCallbacks;
+class Text;
 
 #if !USE(QXMLSTREAM)
     class XMLParserContext : public RefCounted<XMLParserContext> {
@@ -161,7 +162,7 @@ public:
     private:
         void initializeParserContext(const char* chunk = 0);
 
-        void pushCurrentNode(Node*);
+        void pushCurrentNode(ContainerNode*);
         void popCurrentNode();
         void clearCurrentNodeStack();
 
@@ -186,8 +187,10 @@ public:
         OwnPtr<PendingCallbacks> m_pendingCallbacks;
         Vector<xmlChar> m_bufferedText;
 #endif
-        Node* m_currentNode;
-        Vector<Node*> m_currentNodeStack;
+        ContainerNode* m_currentNode;
+        Vector<ContainerNode*> m_currentNodeStack;
+
+        RefPtr<Text> m_leafTextNode;
 
         bool m_sawError;
         bool m_sawCSS;

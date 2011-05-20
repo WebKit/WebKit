@@ -425,12 +425,12 @@ void XMLDocumentParser::parse()
                ) {
                 QString entity = m_stream.name().toString();
                 UChar c = decodeNamedEntity(entity.toUtf8().constData());
-                if (!m_currentNode->isTextNode())
+                if (!m_leafTextNode)
                     enterText();
                 ExceptionCode ec = 0;
                 String str(&c, 1);
                 // qDebug()<<" ------- adding entity "<<str;
-                static_cast<Text*>(m_currentNode)->appendData(str, ec);
+                m_leafTextNode->appendData(str, ec);
             }
         }
             break;
@@ -533,7 +533,7 @@ void XMLDocumentParser::parseStartElement()
     if (scriptElement)
         m_scriptStartPosition = textPositionOneBased();
 
-    m_currentNode->deprecatedParserAddChild(newElement.get());
+    m_currentNode->parserAddChild(newElement.get());
 
     pushCurrentNode(newElement.get());
     if (m_view && !newElement->attached())
@@ -552,7 +552,7 @@ void XMLDocumentParser::parseEndElement()
 {
     exitText();
 
-    Node* n = m_currentNode;
+    ContainerNode* n = m_currentNode;
     n->finishParsingChildren();
 
     if (m_scriptingPermission == FragmentScriptingNotAllowed && n->isElementNode() && toScriptElement(static_cast<Element*>(n))) {
@@ -613,10 +613,10 @@ void XMLDocumentParser::parseEndElement()
 
 void XMLDocumentParser::parseCharacters()
 {
-    if (!m_currentNode->isTextNode())
+    if (!m_leafTextNode)
         enterText();
     ExceptionCode ec = 0;
-    static_cast<Text*>(m_currentNode)->appendData(m_stream.text(), ec);
+    m_leafTextNode->appendData(m_stream.text(), ec);
 }
 
 void XMLDocumentParser::parseProcessingInstruction()
@@ -633,7 +633,7 @@ void XMLDocumentParser::parseProcessingInstruction()
 
     pi->setCreatedByParser(true);
 
-    m_currentNode->deprecatedParserAddChild(pi.get());
+    m_currentNode->parserAddChild(pi.get());
     if (m_view && !pi->attached())
         pi->attach();
 
@@ -652,9 +652,9 @@ void XMLDocumentParser::parseCdata()
 {
     exitText();
 
-    RefPtr<Node> newNode = CDATASection::create(document(), m_stream.text());
+    RefPtr<CDATASection> newNode = CDATASection::create(document(), m_stream.text());
 
-    m_currentNode->deprecatedParserAddChild(newNode.get());
+    m_currentNode->parserAddChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
 }
@@ -663,9 +663,9 @@ void XMLDocumentParser::parseComment()
 {
     exitText();
 
-    RefPtr<Node> newNode = Comment::create(document(), m_stream.text());
+    RefPtr<Comment> newNode = Comment::create(document(), m_stream.text());
 
-    m_currentNode->deprecatedParserAddChild(newNode.get());
+    m_currentNode->parserAddChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
 }

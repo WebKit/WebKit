@@ -68,7 +68,7 @@ using namespace HTMLNames;
 
 const int maxErrors = 25;
 
-void XMLDocumentParser::pushCurrentNode(Node* n)
+void XMLDocumentParser::pushCurrentNode(ContainerNode* n)
 {
     ASSERT(n);
     ASSERT(m_currentNode);
@@ -98,6 +98,7 @@ void XMLDocumentParser::clearCurrentNodeStack()
     if (m_currentNode && m_currentNode != document())
         m_currentNode->deref();
     m_currentNode = 0;
+    m_leafTextNode = 0;
 
     if (m_currentNodeStack.size()) { // Aborted parsing.
         for (size_t i = m_currentNodeStack.size() - 1; i != 0; --i)
@@ -167,9 +168,9 @@ void XMLDocumentParser::enterText()
 #if !USE(QXMLSTREAM)
     ASSERT(m_bufferedText.size() == 0);
 #endif
-    RefPtr<Node> newNode = Text::create(document(), "");
-    m_currentNode->deprecatedParserAddChild(newNode.get());
-    pushCurrentNode(newNode.get());
+    ASSERT(!m_leafTextNode);
+    m_leafTextNode = Text::create(document(), "");
+    m_currentNode->parserAddChild(m_leafTextNode.get());
 }
 
 #if !USE(QXMLSTREAM)
@@ -185,20 +186,20 @@ void XMLDocumentParser::exitText()
     if (isStopped())
         return;
 
-    if (!m_currentNode || !m_currentNode->isTextNode())
+    if (!m_leafTextNode)
         return;
 
 #if !USE(QXMLSTREAM)
     ExceptionCode ec = 0;
-    static_cast<Text*>(m_currentNode)->appendData(toString(m_bufferedText.data(), m_bufferedText.size()), ec);
+    m_leafTextNode->appendData(toString(m_bufferedText.data(), m_bufferedText.size()), ec);
     Vector<xmlChar> empty;
     m_bufferedText.swap(empty);
 #endif
 
-    if (m_view && m_currentNode && !m_currentNode->attached())
-        m_currentNode->attach();
+    if (m_view && !m_leafTextNode->attached())
+        m_leafTextNode->attach();
 
-    popCurrentNode();
+    m_leafTextNode = 0;
 }
 
 void XMLDocumentParser::detach()

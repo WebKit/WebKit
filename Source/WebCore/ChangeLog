@@ -1,3 +1,47 @@
+2011-05-19  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Adam Barth.
+
+        Remove Node::deprecatedParserAddChild
+        https://bugs.webkit.org/show_bug.cgi?id=60818
+
+        Refactoring only so no new tests.
+
+        This patch fails short of one instance of deprecatedParserAddChild which will
+        require a refactoring of <input> shadow DOM to be removed.
+
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::pushCurrentNode): Updated to use a ContainerNode.
+        (WebCore::XMLDocumentParser::clearCurrentNodeStack): We now need to clear
+        up m_leafTextNode too.
+
+        (WebCore::XMLDocumentParser::enterText):
+        (WebCore::XMLDocumentParser::exitText):
+        Those methods were updated to use m_leafTextNode instead of m_currentNode.
+
+        * dom/XMLDocumentParser.h:
+        Changed the currentNode logic to use ContainerNode. Also fixed the style of the
+        forward declarations.
+
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::startElementNs):
+        (WebCore::XMLDocumentParser::endElementNs):
+        (WebCore::XMLDocumentParser::characters):
+        (WebCore::XMLDocumentParser::processingInstruction):
+        (WebCore::XMLDocumentParser::cdataBlock):
+        (WebCore::XMLDocumentParser::comment):
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::parse):
+        (WebCore::XMLDocumentParser::parseStartElement):
+        (WebCore::XMLDocumentParser::parseEndElement):
+        (WebCore::XMLDocumentParser::parseCharacters):
+        (WebCore::XMLDocumentParser::parseProcessingInstruction):
+        (WebCore::XMLDocumentParser::parseCdata):
+        (WebCore::XMLDocumentParser::parseComment):
+        Removed the calls to deprecatedParserAddChild, changed the code to use
+        m_leafTextNode when it made sense and used ContainerNode instead of
+        Node for m_currentNode.
+
 2011-05-19  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by Simon Fraser.

@@ -823,7 +823,7 @@ void XMLDocumentParser::startElementNs(const xmlChar* xmlLocalName, const xmlCha
     if (scriptElement)
         m_scriptStartPosition = textPositionOneBased();
 
-    m_currentNode->deprecatedParserAddChild(newElement.get());
+    m_currentNode->parserAddChild(newElement.get());
 
     pushCurrentNode(newElement.get());
     if (m_view && !newElement->attached())
@@ -850,7 +850,7 @@ void XMLDocumentParser::endElementNs()
 
     exitText();
 
-    Node* n = m_currentNode;
+    ContainerNode* n = m_currentNode;
     n->finishParsingChildren();
 
     if (m_scriptingPermission == FragmentScriptingNotAllowed && n->isElementNode() && toScriptElement(static_cast<Element*>(n))) {
@@ -929,7 +929,7 @@ void XMLDocumentParser::characters(const xmlChar* s, int len)
         return;
     }
 
-    if (!m_currentNode->isTextNode())
+    if (!m_leafTextNode)
         enterText();
     m_bufferedText.append(s, len);
 }
@@ -979,7 +979,7 @@ void XMLDocumentParser::processingInstruction(const xmlChar* target, const xmlCh
 
     pi->setCreatedByParser(true);
 
-    m_currentNode->deprecatedParserAddChild(pi.get());
+    m_currentNode->parserAddChild(pi.get());
     if (m_view && !pi->attached())
         pi->attach();
 
@@ -1006,8 +1006,8 @@ void XMLDocumentParser::cdataBlock(const xmlChar* s, int len)
 
     exitText();
 
-    RefPtr<Node> newNode = CDATASection::create(document(), toString(s, len));
-    m_currentNode->deprecatedParserAddChild(newNode.get());
+    RefPtr<CDATASection> newNode = CDATASection::create(document(), toString(s, len));
+    m_currentNode->parserAddChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
 }
@@ -1024,8 +1024,8 @@ void XMLDocumentParser::comment(const xmlChar* s)
 
     exitText();
 
-    RefPtr<Node> newNode = Comment::create(document(), toString(s));
-    m_currentNode->deprecatedParserAddChild(newNode.get());
+    RefPtr<Comment> newNode = Comment::create(document(), toString(s));
+    m_currentNode->parserAddChild(newNode.get());
     if (m_view && !newNode->attached())
         newNode->attach();
 }
