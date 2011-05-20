@@ -1,3 +1,16 @@
+2011-05-20  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB createObjectStore should throw if name is null
+        https://bugs.webkit.org/show_bug.cgi?id=58465
+
+        Test: storage/indexeddb/mozilla/create-objectstore-null-name.html
+
+        * storage/IDBDatabase.idl:
+        * storage/IDBDatabaseBackendImpl.cpp:
+        (WebCore::IDBDatabaseBackendImpl::createObjectStore):
+
 2011-05-20  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Ryosuke Niwa.

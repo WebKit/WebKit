@@ -39,7 +39,7 @@ module storage {
         attribute EventListener onerror;
         attribute EventListener onversionchange;
 
-        IDBObjectStore createObjectStore(in DOMString name, in [Optional] OptionsObject options)
+        IDBObjectStore createObjectStore(in [ConvertNullToNullString] DOMString name, in [Optional] OptionsObject options)
             raises (IDBDatabaseException);
         void deleteObjectStore(in DOMString name)
             raises (IDBDatabaseException);

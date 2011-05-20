@@ -101,6 +101,10 @@ PassRefPtr<IDBObjectStoreBackendInterface> IDBDatabaseBackendImpl::createObjectS
 {
     ASSERT(transactionPtr->mode() == IDBTransaction::VERSION_CHANGE);
 
+    if (name.isNull()) {
+        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
+        return 0;
+    }
     if (m_objectStores.contains(name)) {
         ec = IDBDatabaseException::CONSTRAINT_ERR;
         return 0;
