@@ -500,6 +500,11 @@ long long PlatformBridge::databaseGetFileSize(const String& vfsFileName)
     return webKitClient()->databaseGetFileSize(WebString(vfsFileName));
 }
 
+long long PlatformBridge::databaseGetSpaceAvailableForOrigin(const String& originIdentifier)
+{
+    return webKitClient()->databaseGetSpaceAvailableForOrigin(originIdentifier);
+}
+
 // Indexed Database -----------------------------------------------------------
 
 PassRefPtr<IDBFactoryBackendInterface> PlatformBridge::idbFactory()

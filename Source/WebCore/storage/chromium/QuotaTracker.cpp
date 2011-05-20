@@ -30,6 +30,7 @@
 
 #include "config.h"
 #include "QuotaTracker.h"
+#include "PlatformBridge.h"
 
 #if ENABLE(DATABASE)
 
@@ -47,26 +48,45 @@ void QuotaTracker::getDatabaseSizeAndSpaceAvailableToOrigin(
     const String& originIdentifier, const String& databaseName,
     unsigned long long* databaseSize, unsigned long long* spaceAvailable)
 {
-    MutexLocker lockData(m_dataGuard);
-    ASSERT(m_databaseSizes.contains(originIdentifier));
-    HashMap<String, SizeMap>::const_iterator it = m_databaseSizes.find(originIdentifier);
-    ASSERT(it->second.contains(databaseName));
-    *databaseSize = it->second.get(databaseName);
+    // Extra scope to unlock prior to potentially calling PlatformBridge.
+    {
+        MutexLocker lockData(m_dataGuard);
+        ASSERT(m_databaseSizes.contains(originIdentifier));
+        HashMap<String, SizeMap>::const_iterator it = m_databaseSizes.find(originIdentifier);
+        ASSERT(it->second.contains(databaseName));
+        *databaseSize = it->second.get(databaseName);
 
-    ASSERT(m_spaceAvailableToOrigins.contains(originIdentifier));
-    *spaceAvailable = m_spaceAvailableToOrigins.get(originIdentifier);
+        if (m_spaceAvailableToOrigins.contains(originIdentifier)) {
+            *spaceAvailable = m_spaceAvailableToOrigins.get(originIdentifier);
+            return;
+        }
+    }
+
+    // The embedder hasn't pushed this value to us, so we pull it as needed.
+    *spaceAvailable = PlatformBridge::databaseGetSpaceAvailableForOrigin(originIdentifier);
 }
 
-void QuotaTracker::updateDatabaseSizeAndSpaceAvailableToOrigin(
+void QuotaTracker::updateDatabaseSize(
     const String& originIdentifier, const String& databaseName,
-    unsigned long long databaseSize, unsigned long long spaceAvailable)
+    unsigned long long databaseSize)
 {
     MutexLocker lockData(m_dataGuard);
-    m_spaceAvailableToOrigins.set(originIdentifier, spaceAvailable);
     HashMap<String, SizeMap>::iterator it = m_databaseSizes.add(originIdentifier, SizeMap()).first;
     it->second.set(databaseName, databaseSize);
 }
 
+void QuotaTracker::updateSpaceAvailableToOrigin(const String& originIdentifier, unsigned long long spaceAvailable)
+{
+    MutexLocker lockData(m_dataGuard);
+    m_spaceAvailableToOrigins.set(originIdentifier, spaceAvailable);
 }
+
+void QuotaTracker::resetSpaceAvailableToOrigin(const String& originIdentifier)
+{
+    MutexLocker lockData(m_dataGuard);
+    m_spaceAvailableToOrigins.remove(originIdentifier);
+}
+
+} // namespace WebCore
 
 #endif // ENABLE(DATABASE)

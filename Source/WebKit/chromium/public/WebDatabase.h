@@ -52,10 +52,19 @@ public:
     WEBKIT_API static WebDatabaseObserver* observer();
 
     WEBKIT_API static void updateDatabaseSize(
-        const WebString& originIdentifier, const WebString& databaseName,
-        unsigned long long databaseSize, unsigned long long spaceAvailable);
+        const WebString& originIdentifier, const WebString& name, long long size);
+    WEBKIT_API static void updateSpaceAvailable(
+        const WebString& originIdentifier, long long spaceAvailable);
+    WEBKIT_API static void resetSpaceAvailable(
+        const WebString& originIdentifier);
+
     WEBKIT_API static void closeDatabaseImmediately(
         const WebString& originIdentifier, const WebString& databaseName);
+
+    // DEPRECATED - to be removed soon
+    WEBKIT_API static void updateDatabaseSize(
+        const WebString& originIdentifier, const WebString& databaseName,
+        long long databaseSize, long long spaceAvailable);
 
 #if WEBKIT_IMPLEMENTATION
     WebDatabase(const WebCore::AbstractDatabase*);

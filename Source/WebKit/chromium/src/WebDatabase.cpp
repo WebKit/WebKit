@@ -92,13 +92,35 @@ WebDatabaseObserver* WebDatabase::observer()
     return databaseObserver;
 }
 
-void WebDatabase::updateDatabaseSize(
-    const WebString& originIdentifier, const WebString& databaseName,
-    unsigned long long databaseSize, unsigned long long spaceAvailable)
+void WebDatabase::updateDatabaseSize(const WebString& originIdentifier, const WebString& name, long long size)
 {
 #if ENABLE(DATABASE)
-    WebCore::QuotaTracker::instance().updateDatabaseSizeAndSpaceAvailableToOrigin(
-        originIdentifier, databaseName, databaseSize, spaceAvailable);
+    QuotaTracker::instance().updateDatabaseSize(originIdentifier, name, size);
+#endif // ENABLE(DATABASE)
+}
+
+void WebDatabase::updateSpaceAvailable(const WebString& originIdentifier, long long spaceAvailable)
+{
+#if ENABLE(DATABASE)
+    QuotaTracker::instance().updateSpaceAvailableToOrigin(originIdentifier, spaceAvailable);
+#endif // ENABLE(DATABASE)
+}
+
+void WebDatabase::resetSpaceAvailable(const WebString& originIdentifier)
+{
+#if ENABLE(DATABASE)
+    QuotaTracker::instance().resetSpaceAvailableToOrigin(originIdentifier);
+#endif // ENABLE(DATABASE)
+}
+
+// FIXME: This is deprecated, delete after rolling DEPs and chrome is using the new methods.
+void WebDatabase::updateDatabaseSize(
+    const WebString& originIdentifier, const WebString& databaseName,
+    long long databaseSize, long long spaceAvailable)
+{
+#if ENABLE(DATABASE)
+    updateDatabaseSize(originIdentifier, databaseName, databaseSize);
+    updateSpaceAvailable(originIdentifier, spaceAvailable);
 #endif // ENABLE(DATABASE)
 }
 

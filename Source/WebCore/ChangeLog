@@ -1,3 +1,21 @@
+2011-05-20  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Support the new webkit apis so the WebDatabase system participates
+        in the unified quota management system.
+        https://bugs.webkit.org/show_bug.cgi?id=60985
+
+        No change in functionality, no new tests.
+
+        * platform/chromium/PlatformBridge.h:
+        * storage/chromium/QuotaTracker.cpp:
+        (WebCore::QuotaTracker::getDatabaseSizeAndSpaceAvailableToOrigin):
+        (WebCore::QuotaTracker::updateDatabaseSize):
+        (WebCore::QuotaTracker::updateSpaceAvailableToOrigin):
+        (WebCore::QuotaTracker::resetSpaceAvailableToOrigin):
+        * storage/chromium/QuotaTracker.h:
+
 2011-05-20  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

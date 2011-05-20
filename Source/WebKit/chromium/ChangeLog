@@ -1,3 +1,35 @@
+2011-05-20  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Darin Fisher.
+
+        Changes to allow the WebDatabase system to participate in Chrome's unified quota
+        management system. Now that changes outside of the database system affect the space
+        available to the database system, we need new ways of getting the limit to renderers.
+
+        Split WebDatabase::updateDatabaseSizeAndSpaceAvailable() into three methods.
+        - WebDatabase::updateDatababaseSize()
+        - WebDatabase::updateSpaceAvailable()
+        - WebDatabase::resetSpaceAvailable()
+        The WebDatabase methods are used to 'push' size and space available info into renderers.
+        The space available can change independently of a database having changed size.
+
+        Also provide a means for the renderer to 'pull' the space available from the main
+        process if that value has not been pushed into it.
+        - WebCore::PlatformBridge::databaseGetSpaceAvailableForOrigin()
+        - WebKit::WebKitClient::databaseGetSpaceAvailableForOrigin()
+
+        https://bugs.webkit.org/show_bug.cgi?id=60985
+
+        * public/WebDatabase.h:
+        * public/WebKitClient.h:
+        (WebKit::WebKitClient::databaseGetSpaceAvailableForOrigin):
+        * src/PlatformBridge.cpp:
+        (WebCore::PlatformBridge::databaseGetSpaceAvailableForOrigin):
+        * src/WebDatabase.cpp:
+        (WebKit::WebDatabase::updateDatabaseSize):
+        (WebKit::WebDatabase::updateSpaceAvailable):
+        (WebKit::WebDatabase::resetSpaceAvailable):
+
 2011-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

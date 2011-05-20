@@ -168,6 +168,8 @@ public:
     static long databaseGetFileAttributes(const String& vfsFileName);
     // Returns the size of the DB file
     static long long databaseGetFileSize(const String& vfsFileName);
+    // Returns the space available for the origin
+    static long long databaseGetSpaceAvailableForOrigin(const String& originIdentifier);
 
     // IndexedDB ----------------------------------------------------------
     static PassRefPtr<IDBFactoryBackendInterface> idbFactory();

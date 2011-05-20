@@ -139,6 +139,8 @@ public:
     // Returns the size of the given database file
     virtual long long databaseGetFileSize(const WebString& vfsFileName) { return 0; }
 
+    // Returns the space available for the given origin
+    virtual long long databaseGetSpaceAvailableForOrigin(const WebKit::WebString& originIdentifier) { return 0; }
 
     // Indexed Database ----------------------------------------------------
 

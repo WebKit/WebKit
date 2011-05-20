@@ -47,9 +47,11 @@ public:
     void getDatabaseSizeAndSpaceAvailableToOrigin(
         const String& originIdentifier, const String& databaseName,
         unsigned long long* databaseSize, unsigned long long* spaceAvailable);
-    void updateDatabaseSizeAndSpaceAvailableToOrigin(
+    void updateDatabaseSize(
         const String& originIdentifier, const String& databaseName,
-        unsigned long long databaseSize, unsigned long long spaceAvailable);
+        unsigned long long databaseSize);
+    void updateSpaceAvailableToOrigin(const String& originIdentifier, unsigned long long spaceAvailable);
+    void resetSpaceAvailableToOrigin(const String& originIdentifier);
 
 private:
     QuotaTracker() { }
