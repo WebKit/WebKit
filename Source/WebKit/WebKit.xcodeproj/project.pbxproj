@@ -170,7 +170,7 @@
 		939810220824BF01008DF038 /* WebNSImageExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 8398847A03426FB000BC5F5E /* WebNSImageExtras.h */; };
 		939810230824BF01008DF038 /* WebNSPasteboardExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = ED2B2474033A2DA800C1A526 /* WebNSPasteboardExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810240824BF01008DF038 /* WebNSViewExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = F508946902B71D59018A9CD4 /* WebNSViewExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		939810250824BF01008DF038 /* WebNSWindowExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 9345DDAE0365FB27008635CE /* WebNSWindowExtras.h */; };
+		939810250824BF01008DF038 /* WebNSWindowExtras.h in Headers */ = {isa = PBXBuildFile; fileRef = 9345DDAE0365FB27008635CE /* WebNSWindowExtras.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810270824BF01008DF038 /* WebStringTruncator.h in Headers */ = {isa = PBXBuildFile; fileRef = F59668C802AD2923018635CA /* WebStringTruncator.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		939810290824BF01008DF038 /* WebAuthenticationPanel.h in Headers */ = {isa = PBXBuildFile; fileRef = F8CA15B5029A39D901000122 /* WebAuthenticationPanel.h */; };
 		9398102A0824BF01008DF038 /* WebPanelAuthenticationHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 93154EF103A41270008635CE /* WebPanelAuthenticationHandler.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -1468,6 +1468,7 @@
 				51CBFCAD0D10E6C5002DBF51 /* WebCachedFramePlatformData.h in Headers */,
 				14D8252F0AF955090004F057 /* WebChromeClient.h in Headers */,
 				939810490824BF01008DF038 /* WebClipView.h in Headers */,
+				939810250824BF01008DF038 /* WebNSWindowExtras.h in Headers */,
 				065AD5A30B0C32C7005A2B1D /* WebContextMenuClient.h in Headers */,
 				939810160824BF01008DF038 /* WebCoreStatistics.h in Headers */,
 				51AEDEF10CECF45700854328 /* WebDatabaseManagerInternal.h in Headers */,
@@ -1581,7 +1582,6 @@
 				65E0F88408500917007E5CB9 /* WebNSURLRequestExtras.h in Headers */,
 				65E0F9E608500F23007E5CB9 /* WebNSUserDefaultsExtras.h in Headers */,
 				939810240824BF01008DF038 /* WebNSViewExtras.h in Headers */,
-				939810250824BF01008DF038 /* WebNSWindowExtras.h in Headers */,
 				9398102A0824BF01008DF038 /* WebPanelAuthenticationHandler.h in Headers */,
 				37B6FB4E1063530C000FDB3B /* WebPDFDocumentExtras.h in Headers */,
 				939810A50824BF01008DF038 /* WebPDFRepresentation.h in Headers */,

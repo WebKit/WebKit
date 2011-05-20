@@ -1,3 +1,23 @@
+2011-05-20  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebView loses firstResponder status when entering full-screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=61153
+
+        * Misc/WebNSWindowExtras.h:
+        * Misc/WebNSWindowExtras.m:
+        (-[NSWindow makeResponder:firstResponderIfDescendantOfView:]): Add a
+        convenience method to NSWindow that makes the given NSResponder first
+        responder only if it is a descendant of the given view.
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController windowDidEnterFullscreen:]): If the WebView
+        was a descendant of the browser window's first responder when entering
+        full-screen mode, set the full-screen window's first responder to that
+        same NSResponder.
+        (-[WebFullScreenController exitFullscreen]): Do the reverse of what is
+        done in windowDidEnterFullscreen:.
+
 2011-05-20  Enrica Casucci  <enrica@apple.com>
 
         Reviewed by David Kilzer.

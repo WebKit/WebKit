@@ -1,3 +1,13 @@
+2011-05-20  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        WebView loses firstResponder status when entering full-screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=61153
+
+        * WebKit.xcodeproj/project.pbxproj: Export WebNSWindowExtras.h as a
+        private header so that WebKit2 can include it.
+
 2011-05-16  Dan Bernstein  <mitz@apple.com>
 
         No need to compile .js files, that is what the JIT is for.
