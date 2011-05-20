@@ -1,3 +1,28 @@
+2011-05-20  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGRootInlineBox triggers calculateBoundaries twice in layout
+        https://bugs.webkit.org/show_bug.cgi?id=60979
+
+        SVGRootInlineBox was calculating boundaries for children twice
+        in computePerCharacterLayoutInformation(). The first time of
+        calculation was in layoutChildBoxes() which is called by
+        computePerCharacterLayoutInformation(), and the second time of
+        calculation was in layoutRootBox() following layoutChildBoxes().
+
+        This patch calculates rectangle of children in layoutChildBoxes()
+        and then uses the rectange in layoutRootBox() to reduce a pass
+        of calculating child boundaries.
+
+        No functionality change, no new tests.
+
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::computePerCharacterLayoutInformation):
+        (WebCore::SVGRootInlineBox::layoutChildBoxes):
+        (WebCore::SVGRootInlineBox::layoutRootBox):
+        * rendering/svg/SVGRootInlineBox.h:
+
 2011-05-19  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Kent Tamura.

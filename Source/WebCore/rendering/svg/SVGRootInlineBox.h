@@ -57,8 +57,8 @@ public:
 private:
     void reorderValueLists(Vector<SVGTextLayoutAttributes>&);
     void layoutCharactersInTextBoxes(InlineFlowBox*, SVGTextLayoutEngine&);
-    void layoutChildBoxes(InlineFlowBox*);
-    void layoutRootBox();
+    void layoutChildBoxes(InlineFlowBox*, IntRect* = 0);
+    void layoutRootBox(const IntRect&);
 
 private:
     int m_logicalHeight;

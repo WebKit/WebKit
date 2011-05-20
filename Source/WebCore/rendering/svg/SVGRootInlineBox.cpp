@@ -3,6 +3,7 @@
  * Copyright (C) 2006 Apple Computer Inc.
  * Copyright (C) 2007 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) 2011 Torch Mobile (Beijing) CO. Ltd. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -88,8 +89,9 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
 
     // Perform SVG text layout phase four
     // Position & resize all SVGInlineText/FlowBoxes in the inline box tree, resize the root box as well as the RenderSVGText parent block.
-    layoutChildBoxes(this);
-    layoutRootBox();
+    IntRect childRect;
+    layoutChildBoxes(this, &childRect);
+    layoutRootBox(childRect);
 }
 
 void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGTextLayoutEngine& characterLayout)
@@ -131,15 +133,16 @@ void SVGRootInlineBox::layoutCharactersInTextBoxes(InlineFlowBox* start, SVGText
     }
 }
 
-void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start)
+void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start, IntRect* childRect)
 {
     for (InlineBox* child = start->firstChild(); child; child = child->nextOnLine()) {
+        IntRect boxRect;
         if (child->isSVGInlineTextBox()) {
             ASSERT(child->renderer());
             ASSERT(child->renderer()->isSVGInlineText());
 
             SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(child);
-            IntRect boxRect = textBox->calculateBoundaries();
+            boxRect = textBox->calculateBoundaries();
             textBox->setX(boxRect.x());
             textBox->setY(boxRect.y());
             textBox->setLogicalWidth(boxRect.width());
@@ -154,27 +157,21 @@ void SVGRootInlineBox::layoutChildBoxes(InlineFlowBox* start)
             SVGInlineFlowBox* flowBox = static_cast<SVGInlineFlowBox*>(child);
             layoutChildBoxes(flowBox);
 
-            IntRect boxRect = flowBox->calculateBoundaries();
+            boxRect = flowBox->calculateBoundaries();
             flowBox->setX(boxRect.x());
             flowBox->setY(boxRect.y());
             flowBox->setLogicalWidth(boxRect.width());
             flowBox->setLogicalHeight(boxRect.height());
         }
+        if (childRect)
+            childRect->unite(boxRect);
     }
 }
 
-void SVGRootInlineBox::layoutRootBox()
+void SVGRootInlineBox::layoutRootBox(const IntRect& childRect)
 {
     RenderBlock* parentBlock = block();
     ASSERT(parentBlock);
-
-    IntRect childRect;
-    for (InlineBox* child = firstChild(); child; child = child->nextOnLine()) {
-        // Skip generated content.
-        if (!child->renderer()->node())
-            continue;
-        childRect.unite(child->calculateBoundaries());
-    }
 
     int widthBlock = childRect.width();
     int heightBlock = childRect.height();
