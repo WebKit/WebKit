@@ -98,7 +98,7 @@ void WorkerInspectorController::connectFrontend(InspectorFrontendChannel* channe
     ASSERT(!m_frontend);
     m_state->unmute();
     m_frontend = adoptPtr(new InspectorFrontend(channel));
-    m_backendDispatcher = adoptPtr(new InspectorBackendDispatcher(
+    m_backendDispatcher = adoptRef(new InspectorBackendDispatcher(
         channel,
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         0, // InspectorApplicationCacheAgent
@@ -138,6 +138,7 @@ void WorkerInspectorController::disconnectFrontend()
 {
     if (!m_frontend)
         return;
+    m_backendDispatcher->clearFrontend();
     m_backendDispatcher.clear();
     // Destroying agents would change the state, but we don't want that.
     // Pre-disconnect state will be used to restore inspector agents.

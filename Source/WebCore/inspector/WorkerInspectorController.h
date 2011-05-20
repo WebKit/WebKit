@@ -37,6 +37,7 @@
 #include <wtf/Forward.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -71,7 +72,7 @@ private:
     OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
 
     OwnPtr<InspectorFrontend> m_frontend;
-    OwnPtr<InspectorBackendDispatcher> m_backendDispatcher;
+    RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
 };
 
 }

@@ -1,3 +1,15 @@
+2011-05-20  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: use RefPtr instead of OwnPtr to store InspectorBackendDispatcher
+        https://bugs.webkit.org/show_bug.cgi?id=61188
+
+        * inspector/WorkerInspectorController.cpp:
+        (WebCore::WorkerInspectorController::connectFrontend):
+        (WebCore::WorkerInspectorController::disconnectFrontend):
+        * inspector/WorkerInspectorController.h:
+
 2011-05-20  Tonis Tiigi  <tonistiigi@gmail.com>
 
         Reviewed by Pavel Feldman.
