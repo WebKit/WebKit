@@ -1,3 +1,14 @@
+2011-05-20  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Use test from ietestcenter fails
+        https://bugs.webkit.org/show_bug.cgi?id=60844
+
+        * platform/mac/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt: Added.
+        * svg/W3C-SVG-1.1-SE/struct-use-14-f.svg: Added.
+
 2011-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

@@ -1,3 +1,22 @@
+2011-05-20  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Use test from ietestcenter fails
+        https://bugs.webkit.org/show_bug.cgi?id=60844
+
+        When an id changes on an in-document element, we need to check whether the id
+        is part of the pending elements. Since this is the same thing as happens in
+        insertedIntoDocument, split out the common code into buildPendingResourcesIfNeeded.
+
+        Test: svg/W3C-SVG-1.1-SE/struct-use-14-f.svg
+
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::svgAttributeChanged):
+        (WebCore::SVGStyledElement::insertedIntoDocument):
+        (WebCore::SVGStyledElement::buildPendingResourcesIfNeeded):
+        * svg/SVGStyledElement.h:
+
 2011-05-20  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Kent Tamura.

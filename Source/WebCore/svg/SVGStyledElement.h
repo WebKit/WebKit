@@ -87,6 +87,8 @@ protected:
 private:
     virtual bool isStyled() const { return true; }
 
+    void buildPendingResourcesIfNeeded() const;
+
     HashSet<SVGStyledElement*> m_elementsWithRelativeLengths;
 
     // Animated property declarations

@@ -336,6 +336,8 @@ void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
         // Notify resources about id changes, this is important as we cache resources by id in SVGDocumentExtensions
         if (object && object->isSVGResourceContainer())
             object->toRenderSVGResourceContainer()->idChanged();
+        if (inDocument())
+            buildPendingResourcesIfNeeded();
     }
 
     // Invalidate all SVGElementInstances associated with us
@@ -362,7 +364,11 @@ void SVGStyledElement::insertedIntoDocument()
 {
     SVGElement::insertedIntoDocument();
     updateRelativeLengthsInformation();
+    buildPendingResourcesIfNeeded();
+}
 
+void SVGStyledElement::buildPendingResourcesIfNeeded() const
+{
     Document* document = this->document();
     if (!needsPendingResourceHandling() || !document)
         return;
