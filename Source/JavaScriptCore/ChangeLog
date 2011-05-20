@@ -1,3 +1,10 @@
+2011-05-19  Gabor Loki  <loki@webkit.org>
+
+        Fix ARM build after r86919
+
+        * assembler/ARMAssembler.h:
+        (JSC::ARMAssembler::nop):
+
 2011-05-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

@@ -167,12 +167,12 @@ namespace JSC {
             CLZ = 0x016f0f10,
             BKPT = 0xe1200070,
             BLX = 0x012fff30,
-            NOP_T2 = 0xf3af8000,
 #endif
 #if WTF_ARM_ARCH_AT_LEAST(7)
             MOVW = 0x03000000,
             MOVT = 0x03400000,
 #endif
+            NOP = 0xe1a00000,
         };
 
         enum {
@@ -572,10 +572,10 @@ namespace JSC {
             dtr_dr(true, ARMRegisters::S0, ARMRegisters::S0, ARMRegisters::S0);
 #endif
         }
-        
+
         void nop()
         {
-            m_buffer.putInt(OP_NOP_T2);
+            m_buffer.putInt(NOP);
         }
 
         void bx(int rm, Condition cc = AL)
