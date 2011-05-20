@@ -8,7 +8,7 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldInsertNode:#document-fragment replacingDOMRange:range from 7 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document givenAction:WebViewInsertActionPasted
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
-EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document to 2 of #text > SPAN > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 7 of #text > DIV > DIV > BODY > HTML > #document to 7 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -38,12 +38,9 @@ layer at (0,0) size 800x600
         RenderBlock {DIV} at (0,0) size 784x32 [border: (2px solid #FF0000)]
           RenderText {#text} at (2,2) size 47x27
             text run at (2,2) width 47: "test t"
-          RenderText {#text} at (49,2) size 40x27
-            text run at (49,2) width 40: " test"
-          RenderInline {SPAN} at (0,0) size 12x27
-            RenderText {#text} at (89,2) size 12x27
-              text run at (89,2) width 12: "  "
+          RenderText {#text} at (49,2) size 52x27
+            text run at (49,2) width 52: " test  "
           RenderText {#text} at (101,2) size 27x27
             text run at (101,2) width 27: "est"
         RenderBlock (anonymous) at (0,32) size 784x0
-caret: position 2 of child 0 {#text} of child 2 {SPAN} of child 1 {DIV} of child 3 {DIV} of body
+caret: position 7 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of body

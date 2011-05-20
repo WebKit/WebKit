@@ -1,3 +1,12 @@
+2011-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Rebaselines after r86983.
+
+        * platform/chromium-win/editing/pasteboard/smart-paste-003-expected.txt:
+        * platform/chromium-win/editing/pasteboard/smart-paste-004-expected.txt:
+        * platform/gtk/editing/pasteboard/paste-xml-expected.txt:
+        * platform/win/editing/pasteboard/paste-xml-expected.txt:
+
 2011-05-20  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed.
