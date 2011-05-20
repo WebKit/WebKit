@@ -1214,14 +1214,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\Shared\win\UpdateChunk.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\Shared\win\UpdateChunk.h"
-					>
-				</File>
-				<File
 					RelativePath="..\Shared\win\WebCoreArgumentCodersWin.cpp"
 					>
 				</File>
@@ -1842,14 +1834,6 @@
 				Name="WebPage"
 				>
 				<File
-					RelativePath="..\WebProcess\WebPage\ChunkedUpdateDrawingArea.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\WebProcess\WebPage\ChunkedUpdateDrawingArea.h"
-					>
-				</File>
-				<File
 					RelativePath="..\WebProcess\WebPage\DecoderAdapter.cpp"
 					>
 				</File>
@@ -1984,10 +1968,6 @@
 				<Filter
 					Name="win"
 					>
-					<File
-						RelativePath="..\WebProcess\WebPage\win\ChunkedUpdateDrawingAreaWin.cpp"
-						>
-					</File>
 					<File
 						RelativePath="..\WebProcess\WebPage\win\LayerTreeHostWin.cpp"
 						>
@@ -2608,14 +2588,6 @@
 			</File>
 			<File
 				RelativePath="..\UIProcess\BackingStore.h"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\ChunkedUpdateDrawingAreaProxy.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\UIProcess\ChunkedUpdateDrawingAreaProxy.h"
 				>
 			</File>
 			<File
@@ -3523,10 +3495,6 @@
 				>
 				<File
 					RelativePath="..\UIProcess\win\BackingStoreWin.cpp"
-					>
-				</File>
-				<File
-					RelativePath="..\UIProcess\win\ChunkedUpdateDrawingAreaProxyWin.cpp"
 					>
 				</File>
 				<File

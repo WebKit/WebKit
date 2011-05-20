@@ -27,7 +27,6 @@
 #import "WKView.h"
 
 #import "AttributedString.h"
-#import "ChunkedUpdateDrawingAreaProxy.h"
 #import "DataReference.h"
 #import "DrawingAreaProxyImpl.h"
 #import "EditorState.h"

@@ -377,8 +377,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/Authentication/WebProtectionSpace.h \
 	Source/WebKit2/UIProcess/BackingStore.cpp \
 	Source/WebKit2/UIProcess/BackingStore.h \
-	Source/WebKit2/UIProcess/ChunkedUpdateDrawingAreaProxy.cpp \
-	Source/WebKit2/UIProcess/ChunkedUpdateDrawingAreaProxy.h \
 	Source/WebKit2/UIProcess/Downloads/DownloadProxy.cpp \
 	Source/WebKit2/UIProcess/Downloads/DownloadProxy.h \
 	Source/WebKit2/UIProcess/DrawingAreaProxy.cpp \
@@ -393,7 +391,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/UIProcess/GeolocationPermissionRequestProxy.cpp \
 	Source/WebKit2/UIProcess/GeolocationPermissionRequestProxy.h \
 	Source/WebKit2/UIProcess/gtk/BackingStoreGtk.cpp \
-	Source/WebKit2/UIProcess/gtk/ChunkedUpdateDrawingAreaProxyGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/TextCheckerGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebContextGtk.cpp \
 	Source/WebKit2/UIProcess/gtk/WebFullScreenManagerProxyGtk.cpp \
@@ -663,8 +660,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/WebCoreSupport/WebPopupMenu.h \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebSearchPopupMenu.cpp \
 	Source/WebKit2/WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
-	Source/WebKit2/WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp \
-	Source/WebKit2/WebProcess/WebPage/ChunkedUpdateDrawingArea.h \
 	Source/WebKit2/WebProcess/WebPage/DecoderAdapter.cpp \
 	Source/WebKit2/WebProcess/WebPage/DecoderAdapter.h \
 	Source/WebKit2/WebProcess/WebPage/DrawingArea.cpp \
@@ -674,7 +669,6 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/WebPage/EncoderAdapter.h \
 	Source/WebKit2/WebProcess/WebPage/FindController.cpp \
 	Source/WebKit2/WebProcess/WebPage/FindController.h \
-	Source/WebKit2/WebProcess/WebPage/gtk/ChunkedUpdateDrawingAreaGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebInspectorGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/gtk/WebPageGtk.cpp \
 	Source/WebKit2/WebProcess/WebPage/LayerTreeHost.cpp \

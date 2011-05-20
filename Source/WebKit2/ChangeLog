@@ -1,3 +1,44 @@
+2011-05-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Remove the chunked update drawing area
+        https://bugs.webkit.org/show_bug.cgi?id=61216
+
+        The chunked update drawing area is no longer used in any port, so remove all traces of it.
+
+        Qt still uses UpdateChunks for the tiled drawing area so keep the Shared/qt/UpdateChunk.* classes for now.
+
+        * GNUmakefile.am:
+        * Shared/DrawingAreaInfo.h:
+        * Shared/gtk/UpdateChunk.cpp: Removed.
+        * Shared/gtk/UpdateChunk.h: Removed.
+        * Shared/mac/UpdateChunk.cpp: Removed.
+        * Shared/mac/UpdateChunk.h: Removed.
+        * Shared/win/UpdateChunk.cpp: Removed.
+        * Shared/win/UpdateChunk.h: Removed.
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.cpp: Removed.
+        * UIProcess/ChunkedUpdateDrawingAreaProxy.h: Removed.
+        * UIProcess/gtk/ChunkedUpdateDrawingAreaProxyGtk.cpp: Removed.
+        * UIProcess/mac/ChunkedUpdateDrawingAreaProxyMac.mm: Removed.
+        * UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp: Removed.
+        * UIProcess/win/ChunkedUpdateDrawingAreaProxyWin.cpp: Removed.
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::paint):
+        (WebKit::WebView::createDrawingAreaProxy):
+        (WebKit::WebView::enterAcceleratedCompositingMode):
+        (WebKit::WebView::exitAcceleratedCompositingMode):
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp: Removed.
+        * WebProcess/WebPage/ChunkedUpdateDrawingArea.h: Removed.
+        * WebProcess/WebPage/DrawingArea.cpp:
+        (WebKit::DrawingArea::create):
+        * WebProcess/WebPage/mac/ChunkedUpdateDrawingAreaMac.cpp: Removed.
+        * WebProcess/WebPage/qt/ChunkedUpdateDrawingAreaQt.cpp: Removed.
+        * WebProcess/WebPage/win/ChunkedUpdateDrawingAreaWin.cpp: Removed.
+        * win/WebKit2.vcproj:
+
 2011-05-20  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Steve Falkenburg.

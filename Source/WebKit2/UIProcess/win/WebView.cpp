@@ -26,7 +26,6 @@
 #include "config.h"
 #include "WebView.h"
 
-#include "ChunkedUpdateDrawingAreaProxy.h"
 #include "DrawingAreaProxyImpl.h"
 #include "FindIndicator.h"
 #include "Logging.h"
@@ -102,13 +101,6 @@ static const int kMaxToolTipWidth = 250;
 enum {
     UpdateActiveStateTimer = 1,
 };
-
-static bool useNewDrawingArea()
-{
-    // FIXME: Remove this function and the old drawing area code once we aren't interested in
-    // testing the old drawing area anymore.
-    return true;
-}
 
 LRESULT CALLBACK WebView::WebViewWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
@@ -647,27 +639,20 @@ static void drawPageBackground(HDC dc, const WebPageProxy* page, const RECT& rec
 void WebView::paint(HDC hdc, const IntRect& dirtyRect)
 {
     m_page->endPrinting();
-    if (useNewDrawingArea()) {
-        if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(m_page->drawingArea())) {
-            // FIXME: We should port WebKit1's rect coalescing logic here.
-            Region unpaintedRegion;
-            drawingArea->paint(hdc, dirtyRect, unpaintedRegion);
+    if (DrawingAreaProxyImpl* drawingArea = static_cast<DrawingAreaProxyImpl*>(m_page->drawingArea())) {
+        // FIXME: We should port WebKit1's rect coalescing logic here.
+        Region unpaintedRegion;
+        drawingArea->paint(hdc, dirtyRect, unpaintedRegion);
 
-            Vector<IntRect> unpaintedRects = unpaintedRegion.rects();
-            for (size_t i = 0; i < unpaintedRects.size(); ++i) {
-                RECT winRect = unpaintedRects[i];
-                drawPageBackground(hdc, m_page.get(), unpaintedRects[i]);
-            }
-        } else
-            drawPageBackground(hdc, m_page.get(), dirtyRect);
+        Vector<IntRect> unpaintedRects = unpaintedRegion.rects();
+        for (size_t i = 0; i < unpaintedRects.size(); ++i) {
+            RECT winRect = unpaintedRects[i];
+            drawPageBackground(hdc, m_page.get(), unpaintedRects[i]);
+        }
+    } else
+        drawPageBackground(hdc, m_page.get(), dirtyRect);
 
-        m_page->didDraw();
-    } else {
-        if (m_page->isValid() && m_page->drawingArea() && m_page->drawingArea()->paint(dirtyRect, hdc))
-            m_page->didDraw();
-        else
-            drawPageBackground(hdc, m_page.get(), dirtyRect);
-    }
+    m_page->didDraw();
 }
 
 static void flashRects(HDC dc, const IntRect rects[], size_t rectCount, HBRUSH brush)
@@ -938,10 +923,7 @@ void WebView::close()
 
 PassOwnPtr<DrawingAreaProxy> WebView::createDrawingAreaProxy()
 {
-    if (useNewDrawingArea())
-        return DrawingAreaProxyImpl::create(m_page.get());
-
-    return ChunkedUpdateDrawingAreaProxy::create(this, m_page.get());
+    return DrawingAreaProxyImpl::create(m_page.get());
 }
 
 void WebView::setViewNeedsDisplay(const WebCore::IntRect& rect)
@@ -1530,14 +1512,12 @@ void WebView::setIsVisible(bool isVisible)
 
 void WebView::enterAcceleratedCompositingMode(const LayerTreeContext&)
 {
-    ASSERT(useNewDrawingArea());
     // FIXME: Implement.
     ASSERT_NOT_REACHED();
 }
 
 void WebView::exitAcceleratedCompositingMode()
 {
-    ASSERT(useNewDrawingArea());
     // FIXME: Implement.
     ASSERT_NOT_REACHED();
 }

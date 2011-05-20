@@ -289,7 +289,6 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebPopupMenu.h \
     WebProcess/WebCoreSupport/WebSearchPopupMenu.h \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.h \
-    WebProcess/WebPage/ChunkedUpdateDrawingArea.h \
     WebProcess/WebPage/DrawingArea.h \
     WebProcess/WebPage/DrawingAreaImpl.h \
     WebProcess/WebPage/FindController.h \
@@ -390,7 +389,6 @@ SOURCES += \
     UIProcess/Authentication/WebProtectionSpace.cpp \
     UIProcess/BackingStore.cpp \
     UIProcess/qt/BackingStoreQt.cpp \
-    UIProcess/ChunkedUpdateDrawingAreaProxy.cpp \
     UIProcess/Downloads/DownloadProxy.cpp \
     UIProcess/DrawingAreaProxy.cpp \
     UIProcess/DrawingAreaProxyImpl.cpp \
@@ -448,7 +446,6 @@ SOURCES += \
     UIProcess/WebResourceCacheManagerProxy.cpp \
     UIProcess/WebResourceLoadClient.cpp \
     UIProcess/WebUIClient.cpp \
-    UIProcess/qt/ChunkedUpdateDrawingAreaProxyQt.cpp \
     UIProcess/qt/TiledDrawingAreaProxyQt.cpp \
     UIProcess/qt/TiledDrawingAreaTileQt.cpp \
     UIProcess/qt/TextCheckerQt.cpp \
@@ -521,7 +518,6 @@ SOURCES += \
     WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp \
     WebProcess/WebCoreSupport/qt/WebFrameNetworkingContext.cpp \
     WebProcess/WebCoreSupport/qt/WebPopupMenuQt.cpp \
-    WebProcess/WebPage/ChunkedUpdateDrawingArea.cpp \
     WebProcess/WebPage/DecoderAdapter.cpp \
     WebProcess/WebPage/DrawingArea.cpp \
     WebProcess/WebPage/DrawingAreaImpl.cpp \
@@ -539,7 +535,6 @@ SOURCES += \
     WebProcess/WebPage/WebPage.cpp \
     WebProcess/WebPage/WebPageGroupProxy.cpp \
     WebProcess/WebPage/qt/WebInspectorQt.cpp \
-    WebProcess/WebPage/qt/ChunkedUpdateDrawingAreaQt.cpp \
     WebProcess/WebPage/qt/LayerTreeHostQt.cpp \
     WebProcess/WebPage/qt/TiledDrawingAreaQt.cpp \
     WebProcess/WebPage/qt/WebPageQt.cpp \

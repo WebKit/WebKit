@@ -27,7 +27,6 @@
 #include "DrawingArea.h"
 
 // Subclasses
-#include "ChunkedUpdateDrawingArea.h"
 #include "DrawingAreaImpl.h"
 
 #if ENABLE(TILED_BACKING_STORE)
@@ -43,8 +42,6 @@ PassOwnPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreat
     switch (parameters.drawingAreaType) {
     case DrawingAreaTypeImpl:
         return DrawingAreaImpl::create(webPage, parameters);
-    case DrawingAreaTypeChunkedUpdate:
-        return adoptPtr(new ChunkedUpdateDrawingArea(webPage));
 #if ENABLE(TILED_BACKING_STORE)
     case DrawingAreaTypeTiled:
         return adoptPtr(new TiledDrawingArea(webPage));

@@ -30,7 +30,6 @@ namespace WebKit {
 
 enum DrawingAreaType {
     DrawingAreaTypeImpl,
-    DrawingAreaTypeChunkedUpdate,
 #if ENABLE(TILED_BACKING_STORE)
     DrawingAreaTypeTiled,
 #endif
