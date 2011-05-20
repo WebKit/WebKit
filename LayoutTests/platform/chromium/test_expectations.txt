@@ -4124,3 +4124,6 @@ BUGCR83268 WIN MAC LINUX : inspector/debugger/event-listener-breakpoints.html = 
 
 // Random timeouts and failures going back a week.
 BUGCR83290 WIN : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS TIMEOUT TEXT
+
+// Started crashing after seemingly unrelated r85786
+BUGCR83325 MAC DEBUG : canvas/philip/tests/2d.imageData.put.created.html = CRASH PASS

@@ -1,3 +1,11 @@
+2011-05-19  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed.
+
+        Chromium expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-19  Jeremy Noble  <jer.noble@apple.com>
 
         Unreviewed; added new test to gtk Skipped list.
