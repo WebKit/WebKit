@@ -1,3 +1,13 @@
+2011-05-20  Dirk Schulze  <krit@webkit.org>
+
+        Unreviewed rebaseline of Qt. One of the two tests doesn't even need a platform specific result anymore.
+
+        SVGPathSegList needs better getTotalLength, getSegmentAtLength path traversal code
+        https://bugs.webkit.org/show_bug.cgi?id=12047
+
+        * platform/qt/svg/custom/path-getTotalLength-expected.txt: Removed.
+        * platform/qt/svg/custom/path-textPath-simulation-expected.txt:
+
 2011-05-20  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Dirk Schulze.
