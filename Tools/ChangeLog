@@ -2,6 +2,15 @@
 
         Reviewed by Adam Roben.
 
+        Detect hangs in run-api-tests
+        https://bugs.webkit.org/show_bug.cgi?id=48043
+
+        * Scripts/run-api-tests: Added test timeouts
+
+2011-05-19  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by Adam Roben.
+
         run-api-tests should run one test per process
         https://bugs.webkit.org/show_bug.cgi?id=61088
 

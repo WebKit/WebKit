@@ -45,6 +45,9 @@ sub runAllTests();
 sub runAllTestsInSuite($);
 sub runTest($$);
 
+# Timeout for individual test, in sec
+my $timeout = 10;
+
 my $showHelp = 0;
 my $verbose = 0;
 my $dump = 0;
@@ -131,6 +134,7 @@ sub runTest($$)
     print "    Test: $testName -> ";
 
     my $result = 0;
+    my $timedOut = 0;
     if (isAppleMacWebKit()) {
         my $productDir = productDir();
         $ENV{DYLD_FRAMEWORK_PATH} = $productDir;
@@ -159,10 +163,20 @@ sub runTest($$)
         close($childOut);
         close($childErr);
         close(DEVNULL) unless ($verbose);
+        eval {
+            local $SIG{ALRM} = sub { die "alarm\n" };
+            alarm $timeout;
+            waitpid($pid, 0);
+            alarm 0;
+            $result = $?;
+        };
+        if ($@) {
+            die unless $@ eq "alarm\n";
+            kill SIGTERM, $pid or kill SIGKILL, $pid;
+            $timedOut = 1;
+        };
 
-        waitpid($pid, 0);
-        $result = $?;
-    } elsif (isAppleWinWebKit()) {
+     } elsif (isAppleWinWebKit()) {
         my $apiTesterNameSuffix;
         if (configurationForVisualStudio() ne "Debug_All") {
             $apiTesterNameSuffix = "";
@@ -170,17 +184,28 @@ sub runTest($$)
             $apiTesterNameSuffix = "_debug";
         }
         my $apiTesterPath = File::Spec->catfile(productDir(), "TestWebKitAPI$apiTesterNameSuffix.exe");
-        $result = system { $apiTesterPath } $apiTesterPath, $gtestArg, @ARGV;
+        eval {
+            local $SIG{ALRM} = sub { die "alarm\n" };
+            alarm $timeout;
+            $result = system { $apiTesterPath } $apiTesterPath, $gtestArg, @ARGV;
+            alarm 0;
+        };
+        if ($@) {
+            die unless $@ eq "alarm\n";
+            $timedOut = 1;
+        };
     } else {
         die "run-api-tests is not supported on this platform.\n"
     }
-   
-    if (!$result) {
+
+    if ($timedOut) {
+        print BOLD YELLOW, "Timeout", RESET, "\n";
+    } elsif (!$result) {
         print BOLD GREEN, "Passed", RESET, "\n";
     } else {
         print BOLD RED, "Failed", RESET, "\n";
     }
-    return $result;
+    return $timedOut || $result;
 }
 
 sub populateTests()
