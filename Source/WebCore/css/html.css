@@ -901,4 +901,5 @@ summary::-webkit-details-marker {
     border-width: 0px;
 }
 
-/* noscript is handled internally, as it depends on settings */
+/* noscript is handled internally, as it depends on settings. */
+

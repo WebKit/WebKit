@@ -1,5 +1,12 @@
 2011-05-20  Kent Tamura  <tkent@chromium.org>
 
+        Try to fix Windows CE build.
+        Touch html.css to kick UA style sheet generation.
+
+        * css/html.css:
+
+2011-05-20  Kent Tamura  <tkent@chromium.org>
+
         Try to fix Windows CE build. 
 
         * CMakeLists.txt: Add --preprocessor flag.
