@@ -1,3 +1,13 @@
+2011-05-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Building instructions should not talk about Tiger
+        https://bugs.webkit.org/show_bug.cgi?id=61210
+
+        * building/tools.html: Removed steps that are only necessary on Tiger, and changed required
+        Xcode version to the latest Leopard one.
+
 2011-05-16  Huzaifa Sidhpurwala <huzaifas@redhat.com>
 
        Reviewed by Adam Barth.
