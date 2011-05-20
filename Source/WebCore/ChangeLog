@@ -1,3 +1,59 @@
+2011-05-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86920.
+        http://trac.webkit.org/changeset/86920
+        https://bugs.webkit.org/show_bug.cgi?id=61173
+
+        It cause compile error on some buildbot in chromium. e.g.
+        http://build.chromium.org/p/chromium.memory/builders/Chromium%20Mac%20Builder%20%28valgrind%29/builds/12336/steps/compile/logs/stdio#error1
+        (Requested by ukai_ on #webkit).
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getPropertyCSSValue):
+        * css/CSSParser.cpp:
+        (WebCore::CSSParser::parseValue):
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EImageRendering):
+        * css/CSSPropertyNames.in:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        * css/CSSValueKeywords.in:
+        * css/SVGCSSComputedStyleDeclaration.cpp:
+        (WebCore::CSSComputedStyleDeclaration::getSVGPropertyCSSValue):
+        * css/SVGCSSPropertyNames.in:
+        * css/SVGCSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applySVGProperty):
+        * css/SVGCSSValueKeywords.in:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::paint):
+        * html/HTMLCanvasElement.h:
+        * platform/graphics/ImageRenderingMode.h: Removed.
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::ImageQualityController::shouldPaintAtLowQuality):
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::diff):
+        * rendering/style/RenderStyle.h:
+        * rendering/style/RenderStyleConstants.h:
+        * rendering/style/SVGRenderStyle.cpp:
+        (WebCore::SVGRenderStyle::diff):
+        * rendering/style/SVGRenderStyle.h:
+        (WebCore::SVGRenderStyle::initialImageRendering):
+        (WebCore::SVGRenderStyle::setImageRendering):
+        (WebCore::SVGRenderStyle::imageRendering):
+        (WebCore::SVGRenderStyle::InheritedFlags::operator==):
+        (WebCore::SVGRenderStyle::setBitDefaults):
+        * rendering/style/SVGRenderStyleDefs.h:
+        * rendering/style/StyleRareInheritedData.cpp:
+        (WebCore::StyleRareInheritedData::StyleRareInheritedData):
+        (WebCore::StyleRareInheritedData::operator==):
+        * rendering/style/StyleRareInheritedData.h:
+        * rendering/svg/SVGRenderTreeAsText.cpp:
+        (WebCore::writeStyle):
+
 2011-05-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Eric Seidel.

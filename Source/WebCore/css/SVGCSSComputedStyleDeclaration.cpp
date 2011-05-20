@@ -103,6 +103,8 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getSVGPropertyCSSValue(int pro
             return CSSPrimitiveValue::create(svgStyle->fillRule());
         case CSSPropertyColorRendering:
             return CSSPrimitiveValue::create(svgStyle->colorRendering());
+        case CSSPropertyImageRendering:
+            return CSSPrimitiveValue::create(svgStyle->imageRendering());
         case CSSPropertyShapeRendering:
             return CSSPrimitiveValue::create(svgStyle->shapeRendering());
         case CSSPropertyStrokeLinecap:

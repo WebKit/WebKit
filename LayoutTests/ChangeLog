@@ -1,3 +1,25 @@
+2011-05-20  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r86920.
+        http://trac.webkit.org/changeset/86920
+        https://bugs.webkit.org/show_bug.cgi?id=61173
+
+        It cause compile error on some buildbot in chromium. e.g.
+        http://build.chromium.org/p/chromium.memory/builders/Chromium%20Mac%20Builder%20%28valgrind%29/builds/12336/steps/compile/logs/stdio#error1
+        (Requested by ukai_ on #webkit).
+
+        * css3/images/optimize-contrast-canvas-expected.png: Removed.
+        * css3/images/optimize-contrast-canvas-expected.txt: Removed.
+        * css3/images/optimize-contrast-canvas.html: Removed.
+        * css3/images/optimize-contrast-image-expected.png: Removed.
+        * css3/images/optimize-contrast-image-expected.txt: Removed.
+        * css3/images/optimize-contrast-image.html: Removed.
+        * fast/css/getComputedStyle/computed-style-expected.txt:
+        * fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/mac/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * platform/qt/fast/css/getComputedStyle/computed-style-without-renderer-expected.txt:
+        * svg/css/getComputedStyle-basic-expected.txt:
+
 2011-05-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Eric Seidel.

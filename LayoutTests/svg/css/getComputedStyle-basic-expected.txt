@@ -84,8 +84,6 @@ rect: style.getPropertyValue(font-weight) : normal
 rect: style.getPropertyCSSValue(font-weight) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(height) : 0px
 rect: style.getPropertyCSSValue(height) : [object CSSPrimitiveValue]
-rect: style.getPropertyValue(image-rendering) : auto
-rect: style.getPropertyCSSValue(image-rendering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(left) : auto
 rect: style.getPropertyCSSValue(left) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(letter-spacing) : normal
@@ -400,6 +398,8 @@ rect: style.getPropertyValue(fill-opacity) : 1
 rect: style.getPropertyCSSValue(fill-opacity) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(fill-rule) : nonzero
 rect: style.getPropertyCSSValue(fill-rule) : [object CSSPrimitiveValue]
+rect: style.getPropertyValue(image-rendering) : auto
+rect: style.getPropertyCSSValue(image-rendering) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(marker-end) : none
 rect: style.getPropertyCSSValue(marker-end) : [object CSSPrimitiveValue]
 rect: style.getPropertyValue(marker-mid) : none
@@ -530,8 +530,6 @@ g: style.getPropertyValue(font-weight) : normal
 g: style.getPropertyCSSValue(font-weight) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(height) : 0px
 g: style.getPropertyCSSValue(height) : [object CSSPrimitiveValue]
-g: style.getPropertyValue(image-rendering) : auto
-g: style.getPropertyCSSValue(image-rendering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(left) : auto
 g: style.getPropertyCSSValue(left) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(letter-spacing) : normal
@@ -846,6 +844,8 @@ g: style.getPropertyValue(fill-opacity) : 1
 g: style.getPropertyCSSValue(fill-opacity) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(fill-rule) : nonzero
 g: style.getPropertyCSSValue(fill-rule) : [object CSSPrimitiveValue]
+g: style.getPropertyValue(image-rendering) : auto
+g: style.getPropertyCSSValue(image-rendering) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(marker-end) : none
 g: style.getPropertyCSSValue(marker-end) : [object CSSPrimitiveValue]
 g: style.getPropertyValue(marker-mid) : none

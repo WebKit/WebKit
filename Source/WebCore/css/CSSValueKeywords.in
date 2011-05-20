@@ -803,8 +803,4 @@ glyphs
 inline-box
 replaced
 
-# image-rendering
-#auto
-#optimizeSpeed
-optimizeQuality
--webkit-optimize-contrast
+

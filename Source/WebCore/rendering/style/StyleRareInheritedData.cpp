@@ -52,7 +52,6 @@ StyleRareInheritedData::StyleRareInheritedData()
     , textEmphasisMark(TextEmphasisMarkNone)
     , textEmphasisPosition(TextEmphasisPositionOver)
     , m_lineBoxContain(RenderStyle::initialLineBoxContain())
-    , m_imageRendering(RenderStyle::initialImageRendering())
     , hyphenationLimitBefore(-1)
     , hyphenationLimitAfter(-1)
 {
@@ -87,7 +86,6 @@ StyleRareInheritedData::StyleRareInheritedData(const StyleRareInheritedData& o)
     , textEmphasisMark(o.textEmphasisMark)
     , textEmphasisPosition(o.textEmphasisPosition)
     , m_lineBoxContain(o.m_lineBoxContain)
-    , m_imageRendering(o.m_imageRendering)
     , hyphenationString(o.hyphenationString)
     , hyphenationLimitBefore(o.hyphenationLimitBefore)
     , hyphenationLimitAfter(o.hyphenationLimitAfter)
@@ -143,8 +141,7 @@ bool StyleRareInheritedData::operator==(const StyleRareInheritedData& o) const
         && hyphenationString == o.hyphenationString
         && locale == o.locale
         && textEmphasisCustomMark == o.textEmphasisCustomMark
-        && *quotes == *o.quotes
-        && m_imageRendering == o.m_imageRendering;
+        && *quotes == *o.quotes;
 }
 
 bool StyleRareInheritedData::shadowDataEquivalent(const StyleRareInheritedData& o) const

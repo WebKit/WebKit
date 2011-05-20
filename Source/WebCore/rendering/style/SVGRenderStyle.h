@@ -63,6 +63,7 @@ public:
     static EColorInterpolation initialColorInterpolationFilters() { return CI_LINEARRGB; }
     static EColorRendering initialColorRendering() { return CR_AUTO; }
     static WindRule initialFillRule() { return RULE_NONZERO; }
+    static EImageRendering initialImageRendering() { return IR_AUTO; }
     static LineJoin initialJoinStyle() { return MiterJoin; }
     static EShapeRendering initialShapeRendering() { return SR_AUTO; }
     static ETextAnchor initialTextAnchor() { return TA_START; }
@@ -139,6 +140,7 @@ public:
     void setColorInterpolationFilters(EColorInterpolation val) { svg_inherited_flags._colorInterpolationFilters = val; }
     void setColorRendering(EColorRendering val) { svg_inherited_flags._colorRendering = val; }
     void setFillRule(WindRule val) { svg_inherited_flags._fillRule = val; }
+    void setImageRendering(EImageRendering val) { svg_inherited_flags._imageRendering = val; }
     void setJoinStyle(LineJoin val) { svg_inherited_flags._joinStyle = val; }
     void setShapeRendering(EShapeRendering val) { svg_inherited_flags._shapeRendering = val; }
     void setTextAnchor(ETextAnchor val) { svg_inherited_flags._textAnchor = val; }
@@ -295,6 +297,7 @@ public:
     EColorInterpolation colorInterpolationFilters() const { return (EColorInterpolation) svg_inherited_flags._colorInterpolationFilters; }
     EColorRendering colorRendering() const { return (EColorRendering) svg_inherited_flags._colorRendering; }
     WindRule fillRule() const { return (WindRule) svg_inherited_flags._fillRule; }
+    EImageRendering imageRendering() const { return (EImageRendering) svg_inherited_flags._imageRendering; }
     LineJoin joinStyle() const { return (LineJoin) svg_inherited_flags._joinStyle; }
     EShapeRendering shapeRendering() const { return (EShapeRendering) svg_inherited_flags._shapeRendering; }
     ETextAnchor textAnchor() const { return (ETextAnchor) svg_inherited_flags._textAnchor; }
@@ -343,6 +346,7 @@ protected:
         bool operator==(const InheritedFlags& other) const
         {
             return (_colorRendering == other._colorRendering)
+                && (_imageRendering == other._imageRendering)
                 && (_shapeRendering == other._shapeRendering)
                 && (_clipRule == other._clipRule)
                 && (_fillRule == other._fillRule)
@@ -362,6 +366,7 @@ protected:
         }
 
         unsigned _colorRendering : 2; // EColorRendering
+        unsigned _imageRendering : 2; // EImageRendering 
         unsigned _shapeRendering : 2; // EShapeRendering 
         unsigned _clipRule : 1; // WindRule
         unsigned _fillRule : 1; // WindRule
@@ -417,6 +422,7 @@ private:
         svg_inherited_flags._clipRule = initialClipRule();
         svg_inherited_flags._colorRendering = initialColorRendering();
         svg_inherited_flags._fillRule = initialFillRule();
+        svg_inherited_flags._imageRendering = initialImageRendering();
         svg_inherited_flags._shapeRendering = initialShapeRendering();
         svg_inherited_flags._textAnchor = initialTextAnchor();
         svg_inherited_flags._capStyle = initialCapStyle();

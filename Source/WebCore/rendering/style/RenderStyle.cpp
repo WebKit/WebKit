@@ -560,8 +560,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         || rareInheritedData->textFillColor != other->rareInheritedData->textFillColor
         || rareInheritedData->textStrokeColor != other->rareInheritedData->textStrokeColor
         || rareInheritedData->textEmphasisColor != other->rareInheritedData->textEmphasisColor
-        || rareInheritedData->textEmphasisFill != other->rareInheritedData->textEmphasisFill
-        || rareInheritedData->m_imageRendering != other->rareInheritedData->m_imageRendering)
+        || rareInheritedData->textEmphasisFill != other->rareInheritedData->textEmphasisFill)
         return StyleDifferenceRepaint;
 
 #if USE(ACCELERATED_COMPOSITING)

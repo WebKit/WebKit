@@ -2949,35 +2949,30 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EImageRendering e)
     , m_hasCachedCSSText(false)
 {
     switch (e) {
-    case ImageRenderingAuto:
-        m_value.ident = CSSValueAuto;
-        break;
-    case ImageRenderingOptimizeSpeed:
-        m_value.ident = CSSValueOptimizespeed;
-        break;
-    case ImageRenderingOptimizeQuality:
-        m_value.ident = CSSValueOptimizequality;
-        break;
-    case ImageRenderingOptimizeContrast:
-        m_value.ident = CSSValueWebkitOptimizeContrast;
-        break;
+        case IR_AUTO:
+            m_value.ident = CSSValueAuto;
+            break;
+        case IR_OPTIMIZESPEED:
+            m_value.ident = CSSValueOptimizespeed;
+            break;
+        case IR_OPTIMIZEQUALITY:
+            m_value.ident = CSSValueOptimizequality;
+            break;
     }
 }
 
 template<> inline CSSPrimitiveValue::operator EImageRendering() const
 {
     switch (m_value.ident) {
-    case CSSValueAuto:
-        return ImageRenderingAuto;
-    case CSSValueOptimizespeed:
-        return ImageRenderingOptimizeSpeed;
-    case CSSValueOptimizequality:
-        return ImageRenderingOptimizeQuality;
-    case CSSValueWebkitOptimizeContrast:
-        return ImageRenderingOptimizeContrast;
-    default:
-        ASSERT_NOT_REACHED();
-        return ImageRenderingAuto;
+        case CSSValueAuto:
+            return IR_AUTO;
+        case CSSValueOptimizespeed:
+            return IR_OPTIMIZESPEED;
+        case CSSValueOptimizequality:
+            return IR_OPTIMIZEQUALITY;
+        default:
+            ASSERT_NOT_REACHED();
+            return IR_AUTO;
     }
 }
 

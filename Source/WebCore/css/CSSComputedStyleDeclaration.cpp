@@ -99,7 +99,6 @@ static const int computedProperties[] = {
     CSSPropertyFontVariant,
     CSSPropertyFontWeight,
     CSSPropertyHeight,
-    CSSPropertyImageRendering,
     CSSPropertyLeft,
     CSSPropertyLetterSpacing,
     CSSPropertyLineHeight,
@@ -264,6 +263,7 @@ static const int computedProperties[] = {
     CSSPropertyFill,
     CSSPropertyFillOpacity,
     CSSPropertyFillRule,
+    CSSPropertyImageRendering,
     CSSPropertyMarkerEnd,
     CSSPropertyMarkerMid,
     CSSPropertyMarkerStart,
@@ -1156,8 +1156,6 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             if (style->borderFit() == BorderFitBorder)
                 return primitiveValueCache->createIdentifierValue(CSSValueBorder);
             return primitiveValueCache->createIdentifierValue(CSSValueLines);
-        case CSSPropertyImageRendering:
-            return CSSPrimitiveValue::create(style->imageRendering());
         case CSSPropertyLeft:
             return getPositionOffsetValue(style.get(), CSSPropertyLeft, primitiveValueCache);
         case CSSPropertyLetterSpacing:
@@ -1784,6 +1782,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
         case CSSPropertyFill:
         case CSSPropertyFillOpacity:
         case CSSPropertyFillRule:
+        case CSSPropertyImageRendering:
         case CSSPropertyMarker:
         case CSSPropertyMarkerEnd:
         case CSSPropertyMarkerMid:
