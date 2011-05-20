@@ -108,6 +108,7 @@ public:
 
     unsigned numberOfActiveAnimations() const;
     bool pauseAnimationOnElementWithId(const String& animationName, const String& elementID, double time);
+    bool pauseTransitionOnElementWithId(const String& propertyName, const String& elementID, double time);
     void suspendAnimations();
     void resumeAnimations();
     String layerTreeAsText() const;

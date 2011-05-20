@@ -1,3 +1,20 @@
+2011-05-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs layoutTestController.pauseTransitionAtTimeOnElementWithId
+        https://bugs.webkit.org/show_bug.cgi?id=42550
+        
+        Plumb through methods to pause a transition of a given property on an element.
+
+        * WebProcess/InjectedBundle/API/c/WKBundleFrame.cpp:
+        (WKBundleFramePauseAnimationOnElementWithId):
+        (WKBundleFramePauseTransitionOnElementWithId):
+        * WebProcess/InjectedBundle/API/c/WKBundleFramePrivate.h:
+        * WebProcess/WebPage/WebFrame.cpp:
+        (WebKit::WebFrame::pauseTransitionOnElementWithId):
+        * WebProcess/WebPage/WebFrame.h:
+
 2011-05-20  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

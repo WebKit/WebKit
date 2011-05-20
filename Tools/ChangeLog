@@ -1,3 +1,18 @@
+2011-05-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs layoutTestController.pauseTransitionAtTimeOnElementWithId
+        https://bugs.webkit.org/show_bug.cgi?id=42550
+        
+        Implement pauseTransitionAtTimeOnElementWithId in WebKitTestRunner.
+
+        * WebKitTestRunner/InjectedBundle/Bindings/LayoutTestController.idl:
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.cpp:
+        Copy the code for pausing animations, FIXME comments and all.
+        (WTR::LayoutTestController::pauseTransitionAtTimeOnElementWithId):
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+
 2011-05-20  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by Stephen White.

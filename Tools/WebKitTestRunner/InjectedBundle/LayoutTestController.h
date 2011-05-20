@@ -105,6 +105,7 @@ public:
     // Animation testing.
     unsigned numberOfActiveAnimations() const;
     bool pauseAnimationAtTimeOnElementWithId(JSStringRef animationName, double time, JSStringRef elementId);
+    bool pauseTransitionAtTimeOnElementWithId(JSStringRef propertyName, double time, JSStringRef elementId);
     void suspendAnimations();
     void resumeAnimations();
     

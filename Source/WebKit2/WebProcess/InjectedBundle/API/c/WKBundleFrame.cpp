@@ -89,9 +89,14 @@ unsigned WKBundleFrameGetNumberOfActiveAnimations(WKBundleFrameRef frameRef)
     return toImpl(frameRef)->numberOfActiveAnimations();
 }
 
-bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frameRef, WKStringRef name, WKStringRef elementID, double time)
+bool WKBundleFramePauseAnimationOnElementWithId(WKBundleFrameRef frameRef, WKStringRef animationName, WKStringRef elementID, double time)
 {
-    return toImpl(frameRef)->pauseAnimationOnElementWithId(toImpl(name)->string(), toImpl(elementID)->string(), time);
+    return toImpl(frameRef)->pauseAnimationOnElementWithId(toImpl(animationName)->string(), toImpl(elementID)->string(), time);
+}
+
+bool WKBundleFramePauseTransitionOnElementWithId(WKBundleFrameRef frameRef, WKStringRef propertyName, WKStringRef elementID, double time)
+{
+    return toImpl(frameRef)->pauseTransitionOnElementWithId(toImpl(propertyName)->string(), toImpl(elementID)->string(), time);
 }
 
 void WKBundleFrameSuspendAnimations(WKBundleFrameRef frameRef)

@@ -1,3 +1,18 @@
+2011-05-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WebKitTestRunner needs layoutTestController.pauseTransitionAtTimeOnElementWithId
+        https://bugs.webkit.org/show_bug.cgi?id=42550
+        
+        REGRESSION (r84961): transitions/transition-timing-function.html failing on SnowLeopard Intel Release (WebKit2 Tests)
+        https://bugs.webkit.org/show_bug.cgi?id=59865
+        
+        Unskip transition tests that rely on the pause API, and remove a line which refers
+        to a test that no longer exists.
+
+        * platform/mac-wk2/Skipped:
+
 2011-05-20  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Kent Tamura.

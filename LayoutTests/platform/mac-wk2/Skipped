@@ -1244,15 +1244,6 @@ svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
 svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/svg-disallowed-in-dashboard-object.html
 
-# WebKitTestRunner needs layoutTestController.pauseTransitionAtTimeOnElementWithId
-# <https://bugs.webkit.org/show_bug.cgi?id=42550>
-transitions/transition-drt-api-delay.html
-transitions/transition-drt-api.html
-transitions/transition-hit-test.html
-transitions/transition-hit-test-transform.html
-transitions/transition-shorthand-delay.html
-transitions/negative-delay.html
-
 # WebKitTestRunner needs layoutTestController.setJavaScriptCanAccessClipboard
 # <https://bugs.webkit.org/show_bug.cgi?id=42669>
 editing/execCommand/clipboard-access.html
@@ -1529,10 +1520,6 @@ plugins/private-browsing-mode-2.html
 # Sometimes fails
 # http://webkit.org/b/58990
 editing/undo/undo-iframe-location-change.html
-
-# Failing since r84961, always with slightly different results
-# http://webkit.org/b/59865
-transitions/transition-timing-function.html
 
 ### END OF (1) Classified failures with bug reports
 ########################################
@@ -1947,7 +1934,6 @@ http/tests/navigation/post-goback1.html
 # Unexplained plugin failures
 platform/mac/plugins/testplugin-onnew-onpaint.html
 plugins/no-mime-with-valid-extension.html
-fast/dom/object-embed-plugin-scripting.html
 
 # Causes subsequent plugin tests to fail, time out or crash
 plugins/destroy-on-setwindow.html
