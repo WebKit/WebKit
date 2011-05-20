@@ -212,6 +212,8 @@ void InspectorProfilerAgent::getProfile(ErrorString*, const String& type, unsign
         if (it != m_profiles.end()) {
             *profileObject = createProfileHeader(*it->second);
             (*profileObject)->setObject("head", it->second->buildInspectorObjectForHead());
+            if (it->second->bottomUpHead())
+                (*profileObject)->setObject("bottomUpHead", it->second->buildInspectorObjectForBottomUpHead());
         }
     } else if (type == HeapProfileType) {
         HeapSnapshotsMap::iterator it = m_snapshots.find(uid);

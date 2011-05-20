@@ -117,8 +117,12 @@ WebInspector.CPUProfileView.prototype = {
 
     get bottomUpProfileDataGridTree()
     {
-        if (!this._bottomUpProfileDataGridTree)
-            this._bottomUpProfileDataGridTree = new WebInspector.BottomUpProfileDataGridTree(this, this.profile.head);
+        if (!this._bottomUpProfileDataGridTree) {
+            if (this.profile.bottomUpHead)
+                this._bottomUpProfileDataGridTree = new WebInspector.TopDownProfileDataGridTree(this, this.profile.bottomUpHead);
+            else
+                this._bottomUpProfileDataGridTree = new WebInspector.BottomUpProfileDataGridTree(this, this.profile.head);
+        }
         return this._bottomUpProfileDataGridTree;
     },
 

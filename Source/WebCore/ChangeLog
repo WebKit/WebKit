@@ -1,3 +1,24 @@
+2011-05-20  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Chromium] Use bottom-up CPU profile tree built in VM,
+        instead of building it on Inspector's side.
+        https://bugs.webkit.org/show_bug.cgi?id=61185
+
+        * bindings/js/ScriptProfile.cpp:
+        (WebCore::ScriptProfile::bottomUpHead):
+        (WebCore::ScriptProfile::buildInspectorObjectForBottomUpHead):
+        * bindings/js/ScriptProfile.h:
+        * bindings/v8/ScriptProfile.cpp:
+        (WebCore::ScriptProfile::bottomUpHead):
+        (WebCore::ScriptProfile::buildInspectorObjectForBottomUpHead):
+        * bindings/v8/ScriptProfile.h:
+        * inspector/InspectorProfilerAgent.cpp:
+        (WebCore::InspectorProfilerAgent::getProfile):
+        * inspector/front-end/ProfileView.js:
+        (WebInspector.CPUProfileView.prototype.get bottomUpProfileDataGridTree):
+
 2011-05-20  Adam Roben  <aroben@apple.com>
 
         Mac build fix after r86936

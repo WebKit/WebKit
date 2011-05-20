@@ -53,8 +53,10 @@ public:
     String title() const;
     unsigned int uid() const;
     PassRefPtr<ScriptProfileNode> head() const;
+    PassRefPtr<ScriptProfileNode> bottomUpHead() const;
 
     PassRefPtr<InspectorObject> buildInspectorObjectForHead() const;
+    PassRefPtr<InspectorObject> buildInspectorObjectForBottomUpHead() const;
 
 private:
     ScriptProfile(const v8::CpuProfile* profile)

@@ -50,9 +50,11 @@ public:
     String title() const;
     unsigned int uid() const;
     ScriptProfileNode* head() const;
+    PassRefPtr<ScriptProfileNode> bottomUpHead() const;
 
 #if ENABLE(INSPECTOR)
     PassRefPtr<InspectorObject> buildInspectorObjectForHead() const;
+    PassRefPtr<InspectorObject> buildInspectorObjectForBottomUpHead() const;
 #endif
 
 private:
