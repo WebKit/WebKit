@@ -1162,20 +1162,46 @@ VisiblePosition rightBoundaryOfLine(const VisiblePosition& c, TextDirection dire
 }
 
 static const int invalidOffset = -1;
-    
+
 static VisiblePosition previousWordBreakInBoxInsideBlockWithSameDirectionality(const InlineBox* box, const VisiblePosition& previousWordBreak, int& offsetOfWordBreak)
 {
-    bool hasSeenWordBreakInThisBox = previousWordBreak.isNotNull();
     // In a LTR block, the word break should be on the left boundary of a word.
     // In a RTL block, the word break should be on the right boundary of a word.
     // Because nextWordPosition() returns the word break on the right boundary of the word for LTR text,
     // we need to use previousWordPosition() to traverse words within the inline boxes from right to left
     // to find the previous word break (i.e. the first word break on the left). The same applies to RTL text.
     
-    VisiblePosition wordBreak = hasSeenWordBreakInThisBox ? previousWordBreak : Position(box->renderer()->node(), box->caretMaxOffset(), Position::PositionIsOffsetInAnchor);
+    bool hasSeenWordBreakInThisBox = previousWordBreak.isNotNull();
 
-    // FIXME: handle multi-spaces (http://webkit.org/b/57543).
+    VisiblePosition wordBreak;
+
+    if (hasSeenWordBreakInThisBox)
+        wordBreak = previousWordBreak;
+    else {
+        wordBreak = Position(box->renderer()->node(), box->caretMaxOffset(), Position::PositionIsOffsetInAnchor);
+        // Return the rightmost word boundary of LTR box or leftmost word boundary of RTL box if
+        // it is not in the previously visited boxes. For example, given a logical text 
+        // "abc def     hij opq", there are 2 boxes: the "abc def " (starts at 0 and length is 8) 
+        // and the "hij opq" (starts at 12 and length is 7). The word breaks are 
+        // "abc |def |    hij |opq". We normally catch the word break between "def" and "hij" when
+        // we visit the box that contains "hij opq", but this word break doesn't exist in the box
+        // that contains "hij opq" when there are multiple spaces. So we detect it when we're
+        // traversing the box that contains "abc def " instead.
+
+        if ((box->isLeftToRightDirection() && box->nextLeafChild())
+            || (!box->isLeftToRightDirection() && box->prevLeafChild())) {
     
+            VisiblePosition positionAfterWord = nextWordPosition(wordBreak);
+            VisiblePosition positionBeforeWord = previousWordPosition(positionAfterWord);
+        
+            InlineBox* boxContainingPreviousWordBreak;
+            positionBeforeWord.getInlineBoxAndOffset(boxContainingPreviousWordBreak, offsetOfWordBreak);
+        
+            if (boxContainingPreviousWordBreak == box)
+                return positionBeforeWord;
+        }
+    }
+  
     wordBreak = previousWordPosition(wordBreak);
     if (previousWordBreak == wordBreak)
         return VisiblePosition();
@@ -1283,8 +1309,6 @@ static VisiblePosition nextWordBreakInBoxInsideBlockWithDifferentDirectionality(
     // we need to use nextWordPosition() to traverse words within the inline boxes from right to left to find the next word break.
     // The same applies to LTR text, in which words are traversed within the inline boxes from left to right.
     
-    // FIXME: handle multi-spaces (http://webkit.org/b/57543).
-    
     bool hasSeenWordBreakInThisBox = previousWordBreak.isNotNull();
     VisiblePosition wordBreak = hasSeenWordBreakInThisBox ? previousWordBreak : Position(box->renderer()->node(), box->caretMinOffset(), Position::PositionIsOffsetInAnchor);
     wordBreak = nextWordPosition(wordBreak);
@@ -1343,8 +1367,8 @@ static void collectWordBreaksInBoxInsideBlockWithDifferntDirectionality(const In
     
     VisiblePosition wordBreak;
     int offsetOfWordBreak = invalidOffset;
+    bool isLastWordBreakInBox = false;
     while (1) {
-        bool isLastWordBreakInBox = false;
         wordBreak = nextWordBreakInBoxInsideBlockWithDifferentDirectionality(box, wordBreak, offsetOfWordBreak, isLastWordBreakInBox);
         if (wordBreak.isNotNull()) {
             WordBoundaryEntry wordBoundaryEntry(wordBreak, offsetOfWordBreak);
@@ -1446,7 +1470,7 @@ static VisiblePosition leftWordBoundary(const InlineBox* box, int offset, TextDi
     VisiblePosition wordBreak;
     for  (const InlineBox* adjacentBox = box; adjacentBox; adjacentBox = adjacentBox->prevLeafChild()) {
         if (blockDirection == LTR) {
-            if (box->isLeftToRightDirection()) 
+            if (adjacentBox->isLeftToRightDirection()) 
                 wordBreak = previousWordBoundaryInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset);
             else
                 wordBreak = nextWordBoundaryInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset);
@@ -1464,7 +1488,7 @@ static VisiblePosition rightWordBoundary(const InlineBox* box, int offset, TextD
     VisiblePosition wordBreak;
     for (const InlineBox* adjacentBox = box; adjacentBox; adjacentBox = adjacentBox->nextLeafChild()) {
         if (blockDirection == RTL) {
-            if (box->isLeftToRightDirection())
+            if (adjacentBox->isLeftToRightDirection())
                 wordBreak = nextWordBoundaryInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset);
             else
                 wordBreak = previousWordBoundaryInBox(adjacentBox, adjacentBox == box ? offset : invalidOffset);

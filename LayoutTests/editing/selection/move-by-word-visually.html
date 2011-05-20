@@ -188,19 +188,6 @@ function moveByWord(sel, test, searchDirection, dir)
     log("\n");
 }
 
-function positionPassWordBreak(position, wordBreak, searchDirection)
-{
-    // Hack for space collapse.
-    // sel.modify("move", dir, "character") not reach multi-space.
-    var node = position.node;
-    if (node.parentNode.id == "multispace") {
-        if (searchDirection == "right" && position.offset >= wordBreak
-            || searchDirection == "left" && position.offset <= wordBreak) 
-            return true;
-    }
-    return false;
-}
-
 function moveByWordOnEveryChar(sel, test, searchDirection, dir)
 {
     collectWordBreaks(test, searchDirection);
@@ -239,8 +226,7 @@ function moveByWordOnEveryChar(sel, test, searchDirection, dir)
 
         position = { node: sel.anchorNode, offset: sel.anchorOffset };
         if (wordBreakIndex < wordBreaks.length 
-            && (positionEqualToWordBreak(position, wordBreaks[wordBreakIndex]) 
-            || positionPassWordBreak(position, wordBreaks[wordBreakIndex], searchDirection)))
+            && positionEqualToWordBreak(position, wordBreaks[wordBreakIndex]))
             ++wordBreakIndex;
 
         prevNode = sel.anchorNode;
@@ -352,10 +338,31 @@ where child_node_index is optional, default is the first child of the anchor nod
 <div dir=ltr class="test_move_by_word" title="0 4 8 11|11 8 4 0" contenteditable>שנב abc סטז</div>
 <div dir=rtl class="test_move_by_word" title="11 8 4 0|0 4 8" contenteditable>שנב abc סטז</div>
 
-<!-- multiple spaces between word. 
-     FAILED: word break between "def" and "hij" is unreachable.
--->
-<div id="multispace" dir=ltr class="test_move_by_word" title="0 4 11 15|18 15 11 4 0" contenteditable>abc def    hij opq</div>
+<!-- test multispaces -->
+<div dir=ltr class="test_move_by_word" title="0 4 8 15|18 15 8 4 0" contenteditable>abc def    hij opq</div>
+<div dir=ltr class="test_move_by_word" title="4 8 15 22|28 22 15 8 4" contenteditable>    abc    def    hij    opq    </div>
+<div dir=ltr class="test_move_by_word" title="4 8 15|21 15 8 4" contenteditable>    abc    אבצ    def    </div>
+<div dir=ltr class="test_move_by_word" title="4 8 15 21 29 36|42 36 29 21 15 8 4" contenteditable>    abc    def    אבצ    דדפ    hij    opq    </div>
+<div dir=ltr class="test_move_by_word" title="4 8 15 22 35 28 43 50 57|63 57 50 43 28 35 22 15 8 4" contenteditable>    abc    def    hij    אבצ    דעפ    היח    opq    rst    uvw    </div>
+<div dir=ltr class="test_move_by_word" title="4 21 14 7|28 7 14 21 4" contenteditable>    אבצ    דעפ    חיח    ופק    </div>
+<div dir=ltr class="test_move_by_word" title="4 8 15|21 15 8 4" contenteditable>    אבצ    abc    דעפ     </div>
+<div dir=ltr class="test_move_by_word" title="4 7 15 22 28 33|40 33 28 22 15 7 4" contenteditable>    אבצ    דעפ    abc   def   חיח    ופק    </div>
+<div dir=ltr class="test_move_by_word" title="4 14 7 22 29 35 41 51 46|58 46 51 41 35 29 22 7 14 4" contenteditable>    אבצ    דעפ    חיח    abc   def   jih   ופק  ופק    רסת     </div>
+
+<div dir=ltr class="test_move_by_word" title="0 14 7 3|18 3 7 14 0" contenteditable>אבצ דעפ    היח ופק</div>
+<div dir=ltr class="test_move_by_word" title="0 7 3 12 19 23|26 23 19 12 3 7 0" contenteditable>אבצ דעפ היח    abc def hij</div>
+<div dir=ltr class="test_move_by_word" title="0 4 8 12 22 18 27 34 38|41 38 34 27 18 22 12 8 4 0" contenteditable>abc def hij    אבצ דעפ היח    opq rst uvw</div>
+
+<div dir=rtl class="test_move_by_word" title="18 3 7 14 0|0 14 7 3" contenteditable>abc def    hij opq</div>
+<div dir=rtl class="test_move_by_word" title="28 7 14 21 4|4 21 14 7" contenteditable>    abc    def    hij    opq    </div>
+<div dir=rtl class="test_move_by_word" title="21 15 8 4|4 8 15" contenteditable>    abc    אבצ    def    </div>
+<div dir=rtl class="test_move_by_word" title="42 35 29 22 15 7 4|4 7 15 22 29 35" contenteditable>    abc    def    אבצ    דדפ    hij    opq    </div>
+<div dir=rtl class="test_move_by_word" title="63 49 56 43 36 29 22 7 14 4|4 14 7 22 29 36 43 56 49" contenteditable>    abc    def    hij    אבצ    דעפ    היח    opq    rst    uvw    </div>
+<div dir=rtl class="test_move_by_word" title="28 22 15 8 4|4 8 15 22" contenteditable>    אבצ    דעפ    חיח    ופק    </div>
+<div dir=rtl class="test_move_by_word" title="21 15 8 4|4 8 15" contenteditable>    אבצ    abc    דעפ     </div>
+<div dir=rtl class="test_move_by_word" title="40 34 28 21 15 8 4|4 8 15 21 28 34" contenteditable>    אבצ    דעפ    abc   def   חיח    ופק    </div>
+<div dir=rtl class="test_move_by_word" title="58 52 47 41 28 34 22 15 8 4|4 8 15 22 34 28 41 47 52" contenteditable>    אבצ    דעפ    חיח    abc   def   jih   ופק  ופק    רסת     </div>
+
 
 <!-- Inline element -->
 <div dir=ltr id="div_1" class="test_move_by_word" title="[div_1, 0][div_1, 3]|[span_1, 2][div_1, 3][div_1,0]" contenteditable>אאא <span id="span_1">בב</span></div>
@@ -405,6 +412,7 @@ where child_node_index is optional, default is the first child of the anchor nod
 
 <div id="div_19" dir=ltr class="test_move_by_word" title="[div_19, 0, 1][div_19, 4, 1][span_19, 4, 1][span_19, 7, 1]|[div_19, 3, 3][span_19, 7, 1][span_19, 4, 1][div_19, 4, 1][div_19, 0, 1]" contenteditable>aaa <span id="span_19">bbb אאא </span>ווש</div>
 
+<div id="div_20" dir=rtl class="test_move_by_word" title="[div_20, 15, 3][div_20, 12, 3][div_20, 7, 3][div_20, 4, 3][span_20, 3, 1][span_20, 7, 1][span_20, 8, 1][span_20, 15, 1][div_20, 16, 1][div_20, 12, 1][div_20, 7, 1][div_20, 4, 1][div_20, 0, 1]|[div_20, 0, 1][div_20, 4, 1][div_20, 7, 1][div_20, 12, 1][div_20, 16, 1][span_20, 15, 1][span_20, 8, 1][span_20, 7, 1][span_20, 3, 1][div_20, 4, 3][div_20, 7, 3][div_20, 12, 3]" contenteditable>אבד opq rst דעפ <span dir=ltr id="span_20">abc uvw אאא def lmn</span>אבצ hij xyz וקק</div>
 </div>
 
 <pre id="console"></pre>

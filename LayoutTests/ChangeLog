@@ -1,3 +1,15 @@
+2011-05-20  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        ctrl-arrow does not work on words separated by multiple spaces.
+        https://bugs.webkit.org/show_bug.cgi?id=57543.
+
+        Add more test cases for mutiplespaces.
+
+        * editing/selection/move-by-word-visually-expected.txt:
+        * editing/selection/move-by-word-visually.html:
+
 2011-05-20  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, updating media/event-attributes.html as passing for Chromium.
