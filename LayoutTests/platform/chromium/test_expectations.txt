@@ -692,8 +692,8 @@ BUGWK60107 WIN LINUX : inspector/console/console-log-before-inspector-open.html 
 BUGWK60107 WIN LINUX : inspector/console/console-tests.html = TEXT PASS TIMEOUT
 BUGWK60107 WIN LINUX : inspector/console/console-clear.html = PASS TEXT
 
-BUGWK60109 WIN LINUX RELEASE : inspector/elements/edit-dom-actions.html = PASS
-BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = PASS
+BUGWK60109 WIN LINUX RELEASE : inspector/elements/edit-dom-actions.html = TEXT PASS
+BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = TEXT PASS
 
 // -----------------------------------------------------------------
 // Other
@@ -3658,9 +3658,6 @@ BUGWK60095 SLOW DEBUG : editing/selection/move-by-word-visually.html = PASS
 BUGWK58951 MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
 BUGWK58924 MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT
 
-BUGWK60100 DEBUG : svg/custom/foreignObject-crash-on-hover.xml = CRASH PASS
-BUGWK60100 LINUX DEBUG : svg/custom/foreign-object-skew.svg = CRASH PASS
-
 BUGWK60099 DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH PASS
 BUGWK60096 DEBUG : fast/css/last-child-pseudo-class.html = TEXT PASS
 BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT PASS
@@ -4125,5 +4122,44 @@ BUGCR83290 WIN : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS T
 BUGCR83325 MAC DEBUG : canvas/philip/tests/2d.imageData.put.created.html = CRASH PASS
 
 // New test added ar r86920
-BUGWK61169 : css3/images/optimize-contrast-canvas.html = IMAGE
+BUGWK61169 : css3/images/optimize-contrast-canvas.html = IMAGE PASS
 BUGWK61169 : css3/images/optimize-contrast-image.html = IMAGE
+
+// Appears to be a configuration error in the Mac 10.6 debug deps 
+// Has been going on for at least a few weeks (as of 20/5/2011)
+BUGCR83426 MAC DBG : fast/borders/svg-as-border-image-2.html = IMAGE PASS
+BUGCR83426 MAC DBG : fast/borders/svg-as-border-image.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/W3C-SVG-1.1/filters-color-01-b.svg = IMAGE PASS
+BUGCR83426 MAC DBG : svg/W3C-SVG-1.1/filters-specular-01-f.svg = IMAGE PASS
+BUGCR83426 MAC DBG : svg/W3C-SVG-1.1/filters-turb-01-f.svg = IMAGE PASS
+BUGCR83426 MAC DBG : svg/W3C-SVG-1.1/filters-turb-02-f.svg = IMAGE PASS
+BUGCR83426 MAC DBG : svg/W3C-SVG-1.1/masking-mask-01-b.svg = IMAGE PASS
+BUGCR83426 MAC DBG : svg/css/circle-in-mask-with-shadow.svg = IMAGE PASS
+BUGCR83426 MAC DBG : svg/custom/foreign-object-skew.svg = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFEColorMatrixElement-dom-in-attr.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFEColorMatrixElement-dom-type-attr.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFEColorMatrixElement-dom-values-attr.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFEColorMatrixElement-svgdom-in-prop.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-preserveAlpha-prop.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFESpecularLightingElement-dom-in-attr.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularConstant-attr.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFESpecularLightingElement-dom-specularExponent-attr.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFESpecularLightingElement-dom-suraceScale-attr.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFESpecularLightingElement-inherit-lighting-color-css-prop.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFESpecularLightingElement-lighting-color-css-prop.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-in-prop.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularConstant-prop.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-specularExponent-prop.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFESpecularLightingElement-svgdom-suraceScale-prop.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFETurbulenceElement-dom-baseFrequency-attr.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFETurbulenceElement-dom-numOctaves-attr.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFETurbulenceElement-dom-seed-attr.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFETurbulenceElement-dom-stitchTiles-attr.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFETurbulenceElement-dom-type-attr.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-numOctaves-prop.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-seed-prop.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-prop.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop.html = IMAGE PASS
+BUGCR83426 MAC DBG : svg/filters/feLighting-crash.svg = IMAGE PASS
+
