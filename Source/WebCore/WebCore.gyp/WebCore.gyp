@@ -874,7 +874,7 @@
     },
     {
       'target_name': 'webcore_bindings',
-      'type': '<(library)',
+      'type': 'static_library',
       'hard_dependency': 1,
       'dependencies': [
         'webcore_bindings_sources',
@@ -1219,7 +1219,7 @@
     },
     {
       'target_name': 'webcore_html',
-      'type': '<(library)',
+      'type': 'static_library',
       'dependencies': [
         'webcore_prerequisites',
       ],
@@ -1237,7 +1237,7 @@
     },
     {
       'target_name': 'webcore_svg',
-      'type': '<(library)',
+      'type': 'static_library',
       'dependencies': [
         'webcore_prerequisites',
       ],
@@ -1261,7 +1261,7 @@
     },
     {
       'target_name': 'webcore_platform',
-      'type': '<(library)',
+      'type': 'static_library',
       'dependencies': [
         'webcore_prerequisites',
       ],
@@ -1448,7 +1448,7 @@
     },
     {
       'target_name': 'webcore_rendering',
-      'type': '<(library)',
+      'type': 'static_library',
       'dependencies': [
         'webcore_prerequisites',
       ],
@@ -1506,7 +1506,7 @@
     },
     {
       'target_name': 'webcore_remaining',
-      'type': '<(library)',
+      'type': 'static_library',
       'dependencies': [
         'webcore_prerequisites',
       ],

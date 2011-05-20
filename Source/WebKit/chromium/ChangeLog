@@ -1,3 +1,14 @@
+2011-05-19  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] remove <(library) variable
+        https://bugs.webkit.org/show_bug.cgi?id=61158
+
+        This was for a build experiment; we can just use the correct value now.
+
+        * WebKit.gyp:
+
 2011-05-20  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Unreviewed.

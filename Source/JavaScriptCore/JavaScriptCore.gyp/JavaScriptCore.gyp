@@ -93,7 +93,7 @@
     },
     {
       'target_name': 'wtf',
-      'type': '<(library)',
+      'type': 'static_library',
       'msvs_guid': 'AA8A5A85-592B-4357-BC60-E0E91E026AF6',
       'dependencies': [
         'wtf_config',
@@ -190,7 +190,7 @@
     },
     {
       'target_name': 'yarr',
-      'type': '<(library)',
+      'type': 'static_library',
       'dependencies': [
         'wtf',
       ],
