@@ -203,5 +203,23 @@ float PathTraversalState::cubicBezierTo(const FloatPoint& newControl1, const Flo
     return distance;
 }
 
+void PathTraversalState::processSegment()
+{
+    if (m_action == TraversalSegmentAtLength && m_totalLength >= m_desiredLength)
+        m_success = true;
+        
+    if ((m_action == TraversalPointAtLength || m_action == TraversalNormalAngleAtLength) && m_totalLength >= m_desiredLength) {
+        FloatSize change = m_current - m_previous;
+        float slope = atan2f(change.height(), change.width());
+        if (m_action == TraversalPointAtLength) {
+            float offset = m_desiredLength - m_totalLength;
+            m_current.move(offset * cosf(slope), offset * sinf(slope));
+        } else
+            m_normalAngle = rad2deg(slope);
+        m_success = true;
+    }
+    m_previous = m_current;
+}
+
 }
 

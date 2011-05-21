@@ -46,6 +46,8 @@ public:
     float lineTo(const FloatPoint&);
     float quadraticBezierTo(const FloatPoint& newControl, const FloatPoint& newEnd);
     float cubicBezierTo(const FloatPoint& newControl1, const FloatPoint& newControl2, const FloatPoint& newEnd);
+    
+    void processSegment();
 
 public:
     PathTraversalAction m_action;

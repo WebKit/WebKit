@@ -1,3 +1,22 @@
+2011-05-20  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Share more code in PathTraversalState
+        https://bugs.webkit.org/show_bug.cgi?id=61238
+
+        Share more code between SVGPathTraversalStateBuilder and Path in PathTraversalState.
+
+        No change in functionality, so no new tests.
+
+        * platform/graphics/Path.cpp:
+        (WebCore::pathLengthApplierFunction):
+        * platform/graphics/PathTraversalState.cpp:
+        (WebCore::PathTraversalState::processSegment):
+        * platform/graphics/PathTraversalState.h:
+        * svg/SVGPathTraversalStateBuilder.cpp:
+        (WebCore::SVGPathTraversalStateBuilder::continueConsuming):
+
 2011-05-21  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Rob Buis.

@@ -46,7 +46,6 @@ static void pathLengthApplierFunction(void* info, const PathElement* element)
     PathTraversalState& traversalState = *static_cast<PathTraversalState*>(info);
     if (traversalState.m_success)
         return;
-    traversalState.m_previous = traversalState.m_current;
     FloatPoint* points = element->points;
     float segmentLength = 0;
     switch (element->type) {
@@ -67,20 +66,7 @@ static void pathLengthApplierFunction(void* info, const PathElement* element)
             break;
     }
     traversalState.m_totalLength += segmentLength; 
-    if ((traversalState.m_action == PathTraversalState::TraversalPointAtLength || 
-         traversalState.m_action == PathTraversalState::TraversalNormalAngleAtLength) &&
-        (traversalState.m_totalLength >= traversalState.m_desiredLength)) {
-        FloatSize change = traversalState.m_current - traversalState.m_previous;
-        float slope = atan2f(change.height(), change.width());
-
-        if (traversalState.m_action == PathTraversalState::TraversalPointAtLength) {
-            float offset = traversalState.m_desiredLength - traversalState.m_totalLength;
-            traversalState.m_current.move(offset * cosf(slope), offset * sinf(slope));
-        } else
-            traversalState.m_normalAngle = rad2deg(slope);
-
-        traversalState.m_success = true;
-    }
+    traversalState.processSegment();
 }
 
 float Path::length() const
