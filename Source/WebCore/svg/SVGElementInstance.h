@@ -76,6 +76,15 @@ public:
 
     Document* ownerDocument() const { return m_element ? m_element->ownerDocument() : 0; }
 
+    class InvalidationGuard {
+        WTF_MAKE_NONCOPYABLE(InvalidationGuard);
+    public:    
+        InvalidationGuard(SVGElement* element) : m_element(element) { }
+        ~InvalidationGuard() { SVGElementInstance::invalidateAllInstancesOfElement(m_element); }
+    private:
+        SVGElement* m_element;
+    };
+
     static void invalidateAllInstancesOfElement(SVGElement*);
 
     using TreeShared<SVGElementInstance>::ref;

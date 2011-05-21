@@ -27,6 +27,7 @@
 #include "Attribute.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -69,44 +70,74 @@ AffineTransform* SVGStyledTransformableElement::supplementalTransform()
     return m_supplementalTransform.get();
 }
 
+bool SVGStyledTransformableElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty())
+        supportedAttributes.add(SVGNames::transformAttr);
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGStyledTransformableElement::parseMappedAttribute(Attribute* attr)
 {
-    if (SVGTransformable::isKnownAttribute(attr->name())) {
+    if (!isSupportedAttribute(attr->name())) {
+        SVGStyledLocatableElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    if (attr->name() == SVGNames::transformAttr) {
         SVGTransformList newList;
         if (!SVGTransformable::parseTransformAttribute(newList, attr->value()))
             newList.clear();
         detachAnimatedTransformListWrappers(newList.size());
         setTransformBaseValue(newList);
-    } else 
-        SVGStyledLocatableElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGStyledTransformableElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGStyledLocatableElement::svgAttributeChanged(attrName);
-
-    if (!SVGStyledTransformableElement::isKnownAttribute(attrName))
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledLocatableElement::svgAttributeChanged(attrName);
         return;
+    }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     RenderObject* object = renderer();
     if (!object)
         return;
 
-    object->setNeedsTransformUpdate();
-    RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
+    if (attrName == SVGNames::transformAttr) {
+        object->setNeedsTransformUpdate();
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGStyledTransformableElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGStyledLocatableElement::synchronizeProperty(attrName);
-
-    if (attrName == anyQName() || SVGTransformable::isKnownAttribute(attrName))
+    if (attrName == anyQName()) {
         synchronizeTransform();
-}
+        SVGStyledLocatableElement::synchronizeProperty(attrName);
+        return;
+    }
 
-bool SVGStyledTransformableElement::isKnownAttribute(const QualifiedName& attrName)
-{
-    return SVGTransformable::isKnownAttribute(attrName) || SVGStyledLocatableElement::isKnownAttribute(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledLocatableElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::transformAttr) {
+        synchronizeTransform();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 SVGElement* SVGStyledTransformableElement::nearestViewportElement() const

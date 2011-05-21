@@ -25,6 +25,7 @@
 
 #include "Attribute.h"
 #include "FilterEffect.h"
+#include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
@@ -45,29 +46,65 @@ PassRefPtr<SVGFETileElement> SVGFETileElement::create(const QualifiedName& tagNa
     return adoptRef(new SVGFETileElement(tagName, document));
 }
 
+bool SVGFETileElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty())
+        supportedAttributes.add(SVGNames::inAttr);
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGFETileElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
-    if (attr->name() == SVGNames::inAttr)
-        setIn1BaseValue(value);
-    else
+    if (!isSupportedAttribute(attr->name())) {
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    if (attr->name() == SVGNames::inAttr) {
+        setIn1BaseValue(attr->value());
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFETileElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
-    
-    if (attrName == SVGNames::inAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        return;
+    }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+
+    if (attrName == SVGNames::inAttr) {
         invalidate();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFETileElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-
-    if (attrName == anyQName() || attrName == SVGNames::inAttr)
+    if (attrName == anyQName()) {
         synchronizeIn1();
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }
+    
+    if (attrName == SVGNames::inAttr) {
+        synchronizeIn1();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGFETileElement::attributeToPropertyTypeMap()

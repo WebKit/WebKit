@@ -43,6 +43,11 @@ bool SVGExternalResourcesRequired::isKnownAttribute(const QualifiedName& attrNam
     return attrName == SVGNames::externalResourcesRequiredAttr;
 }
 
+void SVGExternalResourcesRequired::addSupportedAttributes(HashSet<QualifiedName>& supportedAttributes)
+{
+    supportedAttributes.add(SVGNames::externalResourcesRequiredAttr);
+}
+
 }
 
 #endif // ENABLE(SVG)

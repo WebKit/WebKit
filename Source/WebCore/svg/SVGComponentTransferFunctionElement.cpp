@@ -48,36 +48,74 @@ SVGComponentTransferFunctionElement::SVGComponentTransferFunctionElement(const Q
 {
 }
 
+bool SVGComponentTransferFunctionElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        supportedAttributes.add(SVGNames::typeAttr);
+        supportedAttributes.add(SVGNames::tableValuesAttr);
+        supportedAttributes.add(SVGNames::slopeAttr);
+        supportedAttributes.add(SVGNames::interceptAttr);
+        supportedAttributes.add(SVGNames::amplitudeAttr);
+        supportedAttributes.add(SVGNames::exponentAttr);
+        supportedAttributes.add(SVGNames::offsetAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGComponentTransferFunctionElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
+    if (!isSupportedAttribute(attr->name())) {
+        SVGElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::typeAttr) {
         ComponentTransferType propertyValue = SVGPropertyTraits<ComponentTransferType>::fromString(value);
         if (propertyValue > 0)
             setTypeBaseValue(propertyValue);
-    } else if (attr->name() == SVGNames::tableValuesAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::tableValuesAttr) {
         SVGNumberList newList;
         newList.parse(value);
         detachAnimatedTableValuesListWrappers(newList.size());
         setTableValuesBaseValue(newList);
-    } else if (attr->name() == SVGNames::slopeAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::slopeAttr) {
         setSlopeBaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::interceptAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::interceptAttr) {
         setInterceptBaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::amplitudeAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::amplitudeAttr) {
         setAmplitudeBaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::exponentAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::exponentAttr) {
         setExponentBaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::offsetAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::offsetAttr) {
         setOffsetBaseValue(value.toFloat());
-    else
-        SVGElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGComponentTransferFunctionElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeType();
         synchronizeTableValues();
@@ -86,23 +124,51 @@ void SVGComponentTransferFunctionElement::synchronizeProperty(const QualifiedNam
         synchronizeAmplitude();
         synchronizeExponent();
         synchronizeOffset();
+        SVGElement::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::typeAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::typeAttr) {
         synchronizeType();
-    else if (attrName == SVGNames::tableValuesAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::tableValuesAttr) {
         synchronizeTableValues();
-    else if (attrName == SVGNames::slopeAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::slopeAttr) {
         synchronizeSlope();
-    else if (attrName == SVGNames::interceptAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::interceptAttr) {
         synchronizeIntercept();
-    else if (attrName == SVGNames::amplitudeAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::amplitudeAttr) {
         synchronizeAmplitude();
-    else if (attrName == SVGNames::exponentAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::exponentAttr) {
         synchronizeExponent();
-    else if (attrName == SVGNames::offsetAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::offsetAttr) {
         synchronizeOffset();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGComponentTransferFunctionElement::attributeToPropertyTypeMap()

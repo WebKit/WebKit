@@ -24,6 +24,7 @@
 
 #include "Attribute.h"
 #include "RenderStyle.h"
+#include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -72,58 +73,112 @@ void SVGFEDropShadowElement::setStdDeviation(float x, float y)
     invalidate();
 }
 
+bool SVGFEDropShadowElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        supportedAttributes.add(SVGNames::inAttr);
+        supportedAttributes.add(SVGNames::dxAttr);
+        supportedAttributes.add(SVGNames::dyAttr);
+        supportedAttributes.add(SVGNames::stdDeviationAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGFEDropShadowElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
+    if (!isSupportedAttribute(attr->name())) {
+        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::stdDeviationAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setStdDeviationXBaseValue(x);
             setStdDeviationYBaseValue(y);
         }
-    } else if (attr->name() == SVGNames::inAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
-    else if (attr->name() == SVGNames::dxAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::dxAttr) {
         setDxBaseValue(attr->value().toFloat());
-    else if (attr->name() == SVGNames::dyAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::dyAttr) {
         setDyBaseValue(attr->value().toFloat());
-    else
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFEDropShadowElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        return;
+    }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
     
     if (attrName == SVGNames::inAttr
         || attrName == SVGNames::stdDeviationAttr
         || attrName == SVGNames::dxAttr
-        || attrName == SVGNames::dyAttr)
+        || attrName == SVGNames::dyAttr) {
         invalidate();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFEDropShadowElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-    
     if (attrName == anyQName()) {
         synchronizeStdDeviationX();
         synchronizeStdDeviationY();
         synchronizeDx();
         synchronizeDy();
         synchronizeIn1();
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
         return;
     }
-    
+
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }
+
     if (attrName == SVGNames::stdDeviationAttr) {
         synchronizeStdDeviationX();
         synchronizeStdDeviationY();
-    } else if (attrName == SVGNames::inAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::inAttr) {
         synchronizeIn1();
-    else if (attrName == SVGNames::dxAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::dxAttr) {
         synchronizeDx();
-    else if (attrName == SVGNames::dyAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::dyAttr) {
         synchronizeDy();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 PassRefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder* filterBuilder, Filter* filter)

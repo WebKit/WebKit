@@ -43,6 +43,7 @@ public:
 private:
     SVGFETurbulenceElement(const QualifiedName&, Document*);
 
+    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual bool setFilterEffectAttribute(FilterEffect*, const QualifiedName& attrName);
     virtual void svgAttributeChanged(const QualifiedName&);

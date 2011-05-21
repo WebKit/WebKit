@@ -25,6 +25,7 @@
 
 #include "Attribute.h"
 #include "FilterEffect.h"
+#include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 
@@ -51,27 +52,67 @@ PassRefPtr<SVGFECompositeElement> SVGFECompositeElement::create(const QualifiedN
     return adoptRef(new SVGFECompositeElement(tagName, document));
 }
 
+bool SVGFECompositeElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        supportedAttributes.add(SVGNames::inAttr);
+        supportedAttributes.add(SVGNames::in2Attr);
+        supportedAttributes.add(SVGNames::operatorAttr);
+        supportedAttributes.add(SVGNames::k1Attr);
+        supportedAttributes.add(SVGNames::k2Attr);
+        supportedAttributes.add(SVGNames::k3Attr);
+        supportedAttributes.add(SVGNames::k4Attr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGFECompositeElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
+    if (!isSupportedAttribute(attr->name())) {
+        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::operatorAttr) {
         CompositeOperationType propertyValue = SVGPropertyTraits<CompositeOperationType>::fromString(value);
         if (propertyValue > 0)
             set_operatorBaseValue(propertyValue);
-    } else if (attr->name() == SVGNames::inAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
-    else if (attr->name() == SVGNames::in2Attr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::in2Attr) {
         setIn2BaseValue(value);
-    else if (attr->name() == SVGNames::k1Attr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::k1Attr) {
         setK1BaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::k2Attr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::k2Attr) {
         setK2BaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::k3Attr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::k3Attr) {
         setK3BaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::k4Attr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::k4Attr) {
         setK4BaseValue(value.toFloat());
-    else
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
@@ -95,24 +136,32 @@ bool SVGFECompositeElement::setFilterEffectAttribute(FilterEffect* effect, const
 
 void SVGFECompositeElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        return;
+    }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (attrName == SVGNames::operatorAttr
         || attrName == SVGNames::k1Attr
         || attrName == SVGNames::k2Attr
         || attrName == SVGNames::k3Attr
-        || attrName == SVGNames::k4Attr)
+        || attrName == SVGNames::k4Attr) {
         primitiveAttributeChanged(attrName);
+        return;
+    }
 
-    if (attrName == SVGNames::inAttr
-        || attrName == SVGNames::in2Attr)
+    if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr) {
         invalidate();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFECompositeElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronize_operator();
         synchronizeIn1();
@@ -121,23 +170,51 @@ void SVGFECompositeElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeK2();
         synchronizeK3();
         synchronizeK4();
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::operatorAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::operatorAttr) {
         synchronize_operator();
-    else if (attrName == SVGNames::inAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::inAttr) {
         synchronizeIn1();
-    else if (attrName == SVGNames::in2Attr)
+        return;
+    }
+
+    if (attrName == SVGNames::in2Attr) {
         synchronizeIn2();
-    else if (attrName == SVGNames::k1Attr)
+        return;
+    }
+
+    if (attrName == SVGNames::k1Attr) {
         synchronizeK1();
-    else if (attrName == SVGNames::k2Attr)
+        return;
+    }
+
+    if (attrName == SVGNames::k2Attr) {
         synchronizeK2();
-    else if (attrName == SVGNames::k3Attr)
+        return;
+    }
+
+    if (attrName == SVGNames::k3Attr) {
         synchronizeK3();
-    else if (attrName == SVGNames::k4Attr)
+        return;
+    }
+
+    if (attrName == SVGNames::k4Attr) {
         synchronizeK4();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGFECompositeElement::attributeToPropertyTypeMap()

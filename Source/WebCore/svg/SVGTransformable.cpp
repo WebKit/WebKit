@@ -206,11 +206,6 @@ bool SVGTransformable::parseTransformAttribute(SVGTransformList& list, const UCh
     return !delimParsed;
 }
 
-bool SVGTransformable::isKnownAttribute(const QualifiedName& attrName)
-{
-    return attrName == SVGNames::transformAttr;
-}
-
 }
 
 #endif // ENABLE(SVG)

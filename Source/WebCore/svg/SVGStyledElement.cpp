@@ -297,10 +297,9 @@ bool SVGStyledElement::mapToEntry(const QualifiedName& attrName, MappedAttribute
 
 void SVGStyledElement::parseMappedAttribute(Attribute* attr)
 {
-    const QualifiedName& attrName = attr->name();
     // NOTE: Any subclass which overrides parseMappedAttribute for a property handled by
     // cssPropertyIdForSVGAttributeName will also have to override mapToEntry to disable the default eSVG mapping
-    int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(attrName);
+    int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(attr->name());
     if (propId > 0) {
         addCSSProperty(attr, propId, attr->value());
         setNeedsStyleRecalc();
@@ -311,11 +310,13 @@ void SVGStyledElement::parseMappedAttribute(Attribute* attr)
     // the className here.  svgAttributeChanged actually causes the resulting
     // style updates (instead of StyledElement::parseMappedAttribute). We don't
     // tell StyledElement about the change to avoid parsing the class list twice
-    if (attrName.matches(HTMLNames::classAttr))
+    if (attr->name() == HTMLNames::classAttr) {
         setClassNameBaseValue(attr->value());
-    else
-        // id is handled by StyledElement which SVGElement inherits from
-        SVGElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    // id is handled by StyledElement which SVGElement inherits from
+    SVGElement::parseMappedAttribute(attr);
 }
 
 bool SVGStyledElement::isKnownAttribute(const QualifiedName& attrName)
@@ -325,30 +326,33 @@ bool SVGStyledElement::isKnownAttribute(const QualifiedName& attrName)
 
 void SVGStyledElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGElement::svgAttributeChanged(attrName);
+    int propId = SVGStyledElement::cssPropertyIdForSVGAttributeName(attrName);
+    if (propId > 0) {
+        SVGElementInstance::invalidateAllInstancesOfElement(this);
+        return;
+    }
 
-    if (attrName.matches(HTMLNames::classAttr))
+    if (attrName == HTMLNames::classAttr) {
         classAttributeChanged(className());
-
-    RenderObject* object = renderer();
+        SVGElementInstance::invalidateAllInstancesOfElement(this);
+        return;
+    }
 
     if (isIdAttributeName(attrName)) {
+        RenderObject* object = renderer();
         // Notify resources about id changes, this is important as we cache resources by id in SVGDocumentExtensions
         if (object && object->isSVGResourceContainer())
             object->toRenderSVGResourceContainer()->idChanged();
         if (inDocument())
             buildPendingResourcesIfNeeded();
+        SVGElementInstance::invalidateAllInstancesOfElement(this);
+        return;
     }
-
-    // Invalidate all SVGElementInstances associated with us
-    SVGElementInstance::invalidateAllInstancesOfElement(this);
 }
 
 void SVGStyledElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGElement::synchronizeProperty(attrName);
-
-    if (attrName == anyQName() || attrName.matches(HTMLNames::classAttr))
+    if (attrName == anyQName() || attrName == HTMLNames::classAttr)
         synchronizeClassName();
 }
 

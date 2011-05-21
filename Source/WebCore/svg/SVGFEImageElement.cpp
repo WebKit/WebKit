@@ -32,6 +32,7 @@
 #include "Image.h"
 #include "RenderObject.h"
 #include "RenderSVGResource.h"
+#include "SVGElementInstance.h"
 #include "SVGImageBufferTools.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
@@ -77,50 +78,96 @@ void SVGFEImageElement::requestImageResource()
         m_cachedImage->addClient(this);
 }
 
+bool SVGFEImageElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGURIReference::addSupportedAttributes(supportedAttributes);
+        SVGLangSpace::addSupportedAttributes(supportedAttributes);
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::preserveAspectRatioAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGFEImageElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
-    if (attr->name() == SVGNames::preserveAspectRatioAttr)
-        SVGPreserveAspectRatio::parsePreserveAspectRatio(this, value);
-    else {
-        if (SVGURIReference::parseMappedAttribute(attr)) {
-            requestImageResource();
-            return;
-        }
-        if (SVGLangSpace::parseMappedAttribute(attr))
-            return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-            return;
-
+    if (!isSupportedAttribute(attr->name())) {
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
     }
+
+    const AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::preserveAspectRatioAttr) {
+        SVGPreserveAspectRatio::parsePreserveAspectRatio(this, value);
+        return;
+    }
+
+    if (SVGURIReference::parseMappedAttribute(attr)) {
+        requestImageResource();
+        return;
+    }
+
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFEImageElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        return;
+    }
 
-    if (attrName == SVGNames::preserveAspectRatioAttr)
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
+    if (attrName == SVGNames::preserveAspectRatioAttr) {
         invalidate();
+        return;
+    }
+
+    // FIXME: This can't be correct, I'm just preserving existing code. <feImage> + SVG DOM 'href' changes need testing.
+    if (SVGLangSpace::isKnownAttribute(attrName) || SVGExternalResourcesRequired::isKnownAttribute(attrName) || SVGURIReference::isKnownAttribute(attrName))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFEImageElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizePreserveAspectRatio();
         synchronizeHref();
         synchronizeExternalResourcesRequired();
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::preserveAspectRatioAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }   
+
+    if (attrName == SVGNames::preserveAspectRatioAttr) {
         synchronizePreserveAspectRatio();
-    else if (SVGURIReference::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGURIReference::isKnownAttribute(attrName)) {
         synchronizeHref();
-    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         synchronizeExternalResourcesRequired();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGFEImageElement::attributeToPropertyTypeMap()

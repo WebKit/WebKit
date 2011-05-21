@@ -1,3 +1,399 @@
+2011-05-21  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        SVG svgAttributeChanged/synchronizeProperty/parseMappedAttribute should be optimized
+        https://bugs.webkit.org/show_bug.cgi?id=61183
+
+        Example: rect.x.baseVal.value = 100;
+        What happens: SVGRectElement::svgAttributeChanged(const QualifiedName& attrName) is invoked with "SVGNames::rectAttr" as parameter.
+
+        void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
+        {
+            SVGStyledTransformableElement::svgAttributeChanged(attrName);
+            // Handle my own attribute changes...
+        }
+
+        Currently we always traverse the base class hierarchy, when invoking svgAttributeChanged. Every svgAttributeChanged call from a class
+        like SVGRectElement has to reach the base class SVGStyledElement::svgAttributeChanged, as it handles invalidation of the instances of
+        an element. Say that a <rect> is referenced by a <use> and we change the 'x' attribute of the <rect>, then SVGStyledElement::svgAttributeChanged,
+        calls SVGElementInstance::invalidateAllInstancesOfElement(this), so that the <use> can rebuild its shadow tree...
+        That's the only reason all svgAttributeChanged implementations call the base class immediately, so SVGStyledElement is always reached.
+
+        Switch to a more efficient pattern, by providing a "bool isSupportedAttribute(const QualifiedName&);" function for all SVG*Elements.
+        It contains all attributes the particular SVG*Element class handles (but not its parent classes attributes). For example SVGRectElement
+        contains x/y/width/height/rx/ry attributes, and the ones from SVGTests/SVGLangSpace/SVGExternalResourcesRequired (xml:space/lang, etc.),
+        but not eg. transform as that's handled by the parent class SVGStyledTransformableElement.
+
+        void SVGRectElement::svgAttributeChanged(const QualifiedName& attrName)
+        {
+            if (!isSupportedAttribute.contains(attrName)) {
+                SVGStyledTransformableElement::svgAttributeChanged(attrName);
+                return;
+            }
+
+            // When we get here, we know for sure it's one of our attributes that has changed.
+            // Note for eg. SVGNames::transformAttr, the call from SVGRectElement::svgAttributeChanged, would be immediately forwarded to the base class, which handles transformAttr changes)
+
+            if (attrName == SVGNames::xAttr) { do_work(); return; }
+            if (attrName == SVGNames::yAttr) { do_work(); return; }
+            ...
+            // Assure that we handled all properties we claim support for in "isSupportedAttribute()".
+            ASSERT_NOT_REACHED();
+        }
+
+        Exactly the same pattern can be applied to synchronizeProperty and parseMappedAttribute to speed them up as well.
+
+        Add "SVGElementInstance::InvalidationGuard guard(this)" statements in all svgAttributeChanged implementations, that calls invalidateAllInstancesOfElement(this)
+        upon destruction, after we've reacted to the svg attribute change. This assures we never forget to call the invalidation method anywhere, and don't
+        need to rely on the base class svgAttributeChanged() call to do it.
+       
+        It's a slight overal performance progression.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::isSupportedAttribute):
+        (WebCore::SVGAElement::parseMappedAttribute):
+        (WebCore::SVGAElement::svgAttributeChanged):
+        (WebCore::SVGAElement::synchronizeProperty):
+        * svg/SVGAElement.h:
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::isSupportedAttribute):
+        (WebCore::SVGAnimateMotionElement::parseMappedAttribute):
+        * svg/SVGAnimateMotionElement.h:
+        * svg/SVGAnimateTransformElement.cpp:
+        (WebCore::SVGAnimateTransformElement::isSupportedAttribute):
+        (WebCore::SVGAnimateTransformElement::parseMappedAttribute):
+        * svg/SVGAnimateTransformElement.h:
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::isSupportedAttribute):
+        (WebCore::SVGAnimationElement::parseMappedAttribute):
+        * svg/SVGAnimationElement.h:
+        * svg/SVGCircleElement.cpp:
+        (WebCore::SVGCircleElement::isSupportedAttribute):
+        (WebCore::SVGCircleElement::parseMappedAttribute):
+        (WebCore::SVGCircleElement::svgAttributeChanged):
+        (WebCore::SVGCircleElement::synchronizeProperty):
+        * svg/SVGCircleElement.h:
+        * svg/SVGClipPathElement.cpp:
+        (WebCore::SVGClipPathElement::isSupportedAttribute):
+        (WebCore::SVGClipPathElement::parseMappedAttribute):
+        (WebCore::SVGClipPathElement::svgAttributeChanged):
+        (WebCore::SVGClipPathElement::synchronizeProperty):
+        * svg/SVGClipPathElement.h:
+        * svg/SVGComponentTransferFunctionElement.cpp:
+        (WebCore::SVGComponentTransferFunctionElement::isSupportedAttribute):
+        (WebCore::SVGComponentTransferFunctionElement::parseMappedAttribute):
+        (WebCore::SVGComponentTransferFunctionElement::synchronizeProperty):
+        * svg/SVGComponentTransferFunctionElement.h:
+        * svg/SVGCursorElement.cpp:
+        (WebCore::SVGCursorElement::isSupportedAttribute):
+        (WebCore::SVGCursorElement::parseMappedAttribute):
+        (WebCore::SVGCursorElement::svgAttributeChanged):
+        (WebCore::SVGCursorElement::synchronizeProperty):
+        * svg/SVGCursorElement.h:
+        * svg/SVGElementInstance.h:
+        (WebCore::SVGElementInstance::InvalidationGuard::InvalidationGuard):
+        (WebCore::SVGElementInstance::InvalidationGuard::~InvalidationGuard):
+        * svg/SVGEllipseElement.cpp:
+        (WebCore::SVGEllipseElement::isSupportedAttribute):
+        (WebCore::SVGEllipseElement::parseMappedAttribute):
+        (WebCore::SVGEllipseElement::svgAttributeChanged):
+        (WebCore::SVGEllipseElement::synchronizeProperty):
+        * svg/SVGEllipseElement.h:
+        * svg/SVGExternalResourcesRequired.cpp:
+        (WebCore::SVGExternalResourcesRequired::addSupportedAttributes):
+        * svg/SVGExternalResourcesRequired.h:
+        * svg/SVGFEBlendElement.cpp:
+        (WebCore::SVGFEBlendElement::isSupportedAttribute):
+        (WebCore::SVGFEBlendElement::parseMappedAttribute):
+        (WebCore::SVGFEBlendElement::svgAttributeChanged):
+        (WebCore::SVGFEBlendElement::synchronizeProperty):
+        * svg/SVGFEBlendElement.h:
+        * svg/SVGFEColorMatrixElement.cpp:
+        (WebCore::SVGFEColorMatrixElement::isSupportedAttribute):
+        (WebCore::SVGFEColorMatrixElement::parseMappedAttribute):
+        (WebCore::SVGFEColorMatrixElement::svgAttributeChanged):
+        (WebCore::SVGFEColorMatrixElement::synchronizeProperty):
+        * svg/SVGFEColorMatrixElement.h:
+        * svg/SVGFEComponentTransferElement.cpp:
+        (WebCore::SVGFEComponentTransferElement::isSupportedAttribute):
+        (WebCore::SVGFEComponentTransferElement::parseMappedAttribute):
+        (WebCore::SVGFEComponentTransferElement::synchronizeProperty):
+        * svg/SVGFEComponentTransferElement.h:
+        * svg/SVGFECompositeElement.cpp:
+        (WebCore::SVGFECompositeElement::isSupportedAttribute):
+        (WebCore::SVGFECompositeElement::parseMappedAttribute):
+        (WebCore::SVGFECompositeElement::svgAttributeChanged):
+        (WebCore::SVGFECompositeElement::synchronizeProperty):
+        * svg/SVGFECompositeElement.h:
+        * svg/SVGFEConvolveMatrixElement.cpp:
+        (WebCore::SVGFEConvolveMatrixElement::isSupportedAttribute):
+        (WebCore::SVGFEConvolveMatrixElement::parseMappedAttribute):
+        (WebCore::SVGFEConvolveMatrixElement::svgAttributeChanged):
+        (WebCore::SVGFEConvolveMatrixElement::synchronizeProperty):
+        * svg/SVGFEConvolveMatrixElement.h:
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::isSupportedAttribute):
+        (WebCore::SVGFEDiffuseLightingElement::parseMappedAttribute):
+        (WebCore::SVGFEDiffuseLightingElement::svgAttributeChanged):
+        (WebCore::SVGFEDiffuseLightingElement::synchronizeProperty):
+        * svg/SVGFEDiffuseLightingElement.h:
+        * svg/SVGFEDisplacementMapElement.cpp:
+        (WebCore::SVGFEDisplacementMapElement::isSupportedAttribute):
+        (WebCore::SVGFEDisplacementMapElement::parseMappedAttribute):
+        (WebCore::SVGFEDisplacementMapElement::svgAttributeChanged):
+        (WebCore::SVGFEDisplacementMapElement::synchronizeProperty):
+        * svg/SVGFEDisplacementMapElement.h:
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::isSupportedAttribute):
+        (WebCore::SVGFEDropShadowElement::parseMappedAttribute):
+        (WebCore::SVGFEDropShadowElement::svgAttributeChanged):
+        (WebCore::SVGFEDropShadowElement::synchronizeProperty):
+        * svg/SVGFEDropShadowElement.h:
+        * svg/SVGFEGaussianBlurElement.cpp:
+        (WebCore::SVGFEGaussianBlurElement::isSupportedAttribute):
+        (WebCore::SVGFEGaussianBlurElement::parseMappedAttribute):
+        (WebCore::SVGFEGaussianBlurElement::svgAttributeChanged):
+        (WebCore::SVGFEGaussianBlurElement::synchronizeProperty):
+        * svg/SVGFEGaussianBlurElement.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::isSupportedAttribute):
+        (WebCore::SVGFEImageElement::parseMappedAttribute):
+        (WebCore::SVGFEImageElement::svgAttributeChanged):
+        (WebCore::SVGFEImageElement::synchronizeProperty):
+        * svg/SVGFEImageElement.h:
+        * svg/SVGFELightElement.cpp:
+        (WebCore::SVGFELightElement::isSupportedAttribute):
+        (WebCore::SVGFELightElement::parseMappedAttribute):
+        (WebCore::SVGFELightElement::svgAttributeChanged):
+        (WebCore::SVGFELightElement::synchronizeProperty):
+        * svg/SVGFELightElement.h:
+        * svg/SVGFEMergeNodeElement.cpp:
+        (WebCore::SVGFEMergeNodeElement::isSupportedAttribute):
+        (WebCore::SVGFEMergeNodeElement::parseMappedAttribute):
+        (WebCore::SVGFEMergeNodeElement::svgAttributeChanged):
+        (WebCore::SVGFEMergeNodeElement::synchronizeProperty):
+        * svg/SVGFEMergeNodeElement.h:
+        * svg/SVGFEMorphologyElement.cpp:
+        (WebCore::SVGFEMorphologyElement::isSupportedAttribute):
+        (WebCore::SVGFEMorphologyElement::parseMappedAttribute):
+        (WebCore::SVGFEMorphologyElement::svgAttributeChanged):
+        (WebCore::SVGFEMorphologyElement::synchronizeProperty):
+        * svg/SVGFEMorphologyElement.h:
+        * svg/SVGFEOffsetElement.cpp:
+        (WebCore::SVGFEOffsetElement::isSupportedAttribute):
+        (WebCore::SVGFEOffsetElement::parseMappedAttribute):
+        (WebCore::SVGFEOffsetElement::svgAttributeChanged):
+        (WebCore::SVGFEOffsetElement::synchronizeProperty):
+        * svg/SVGFEOffsetElement.h:
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::isSupportedAttribute):
+        (WebCore::SVGFESpecularLightingElement::parseMappedAttribute):
+        (WebCore::SVGFESpecularLightingElement::svgAttributeChanged):
+        (WebCore::SVGFESpecularLightingElement::synchronizeProperty):
+        * svg/SVGFESpecularLightingElement.h:
+        * svg/SVGFETileElement.cpp:
+        (WebCore::SVGFETileElement::isSupportedAttribute):
+        (WebCore::SVGFETileElement::parseMappedAttribute):
+        (WebCore::SVGFETileElement::svgAttributeChanged):
+        (WebCore::SVGFETileElement::synchronizeProperty):
+        * svg/SVGFETileElement.h:
+        * svg/SVGFETurbulenceElement.cpp:
+        (WebCore::SVGFETurbulenceElement::isSupportedAttribute):
+        (WebCore::SVGFETurbulenceElement::parseMappedAttribute):
+        (WebCore::SVGFETurbulenceElement::svgAttributeChanged):
+        (WebCore::SVGFETurbulenceElement::synchronizeProperty):
+        * svg/SVGFETurbulenceElement.h:
+        * svg/SVGFilterElement.cpp:
+        (WebCore::SVGFilterElement::isSupportedAttribute):
+        (WebCore::SVGFilterElement::parseMappedAttribute):
+        (WebCore::SVGFilterElement::svgAttributeChanged):
+        (WebCore::SVGFilterElement::synchronizeProperty):
+        * svg/SVGFilterElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        (WebCore::SVGFilterPrimitiveStandardAttributes::isSupportedAttribute):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::parseMappedAttribute):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::svgAttributeChanged):
+        (WebCore::SVGFilterPrimitiveStandardAttributes::synchronizeProperty):
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGFitToViewBox.cpp:
+        (WebCore::SVGFitToViewBox::parseMappedAttribute):
+        (WebCore::SVGFitToViewBox::synchronizeProperties):
+        (WebCore::SVGFitToViewBox::addSupportedAttributes):
+        * svg/SVGFitToViewBox.h:
+        * svg/SVGForeignObjectElement.cpp:
+        (WebCore::SVGForeignObjectElement::isSupportedAttribute):
+        (WebCore::SVGForeignObjectElement::parseMappedAttribute):
+        (WebCore::SVGForeignObjectElement::svgAttributeChanged):
+        (WebCore::SVGForeignObjectElement::synchronizeProperty):
+        * svg/SVGForeignObjectElement.h:
+        * svg/SVGGElement.cpp:
+        (WebCore::SVGGElement::isSupportedAttribute):
+        (WebCore::SVGGElement::parseMappedAttribute):
+        (WebCore::SVGGElement::svgAttributeChanged):
+        (WebCore::SVGGElement::synchronizeProperty):
+        * svg/SVGGElement.h:
+        * svg/SVGGradientElement.cpp:
+        (WebCore::SVGGradientElement::isSupportedAttribute):
+        (WebCore::SVGGradientElement::parseMappedAttribute):
+        (WebCore::SVGGradientElement::svgAttributeChanged):
+        (WebCore::SVGGradientElement::synchronizeProperty):
+        * svg/SVGGradientElement.h:
+        * svg/SVGImageElement.cpp:
+        (WebCore::SVGImageElement::isSupportedAttribute):
+        (WebCore::SVGImageElement::parseMappedAttribute):
+        (WebCore::SVGImageElement::svgAttributeChanged):
+        (WebCore::SVGImageElement::synchronizeProperty):
+        * svg/SVGImageElement.h:
+        * svg/SVGLangSpace.cpp:
+        (WebCore::SVGLangSpace::addSupportedAttributes):
+        * svg/SVGLangSpace.h:
+        * svg/SVGLineElement.cpp:
+        (WebCore::SVGLineElement::isSupportedAttribute):
+        (WebCore::SVGLineElement::parseMappedAttribute):
+        (WebCore::SVGLineElement::svgAttributeChanged):
+        (WebCore::SVGLineElement::synchronizeProperty):
+        * svg/SVGLineElement.h:
+        * svg/SVGLinearGradientElement.cpp:
+        (WebCore::SVGLinearGradientElement::isSupportedAttribute):
+        (WebCore::SVGLinearGradientElement::parseMappedAttribute):
+        (WebCore::SVGLinearGradientElement::svgAttributeChanged):
+        (WebCore::SVGLinearGradientElement::synchronizeProperty):
+        * svg/SVGLinearGradientElement.h:
+        * svg/SVGMPathElement.cpp:
+        (WebCore::SVGMPathElement::isSupportedAttribute):
+        (WebCore::SVGMPathElement::parseMappedAttribute):
+        (WebCore::SVGMPathElement::synchronizeProperty):
+        * svg/SVGMPathElement.h:
+        * svg/SVGMarkerElement.cpp:
+        (WebCore::SVGMarkerElement::isSupportedAttribute):
+        (WebCore::SVGMarkerElement::parseMappedAttribute):
+        (WebCore::SVGMarkerElement::svgAttributeChanged):
+        (WebCore::SVGMarkerElement::synchronizeProperty):
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMaskElement.cpp:
+        (WebCore::SVGMaskElement::isSupportedAttribute):
+        (WebCore::SVGMaskElement::parseMappedAttribute):
+        (WebCore::SVGMaskElement::svgAttributeChanged):
+        (WebCore::SVGMaskElement::synchronizeProperty):
+        * svg/SVGMaskElement.h:
+        * svg/SVGPathElement.cpp:
+        (WebCore::SVGPathElement::isSupportedAttribute):
+        (WebCore::SVGPathElement::parseMappedAttribute):
+        (WebCore::SVGPathElement::svgAttributeChanged):
+        (WebCore::SVGPathElement::synchronizeProperty):
+        * svg/SVGPathElement.h:
+        * svg/SVGPatternElement.cpp:
+        (WebCore::SVGPatternElement::isSupportedAttribute):
+        (WebCore::SVGPatternElement::parseMappedAttribute):
+        (WebCore::SVGPatternElement::svgAttributeChanged):
+        (WebCore::SVGPatternElement::synchronizeProperty):
+        * svg/SVGPatternElement.h:
+        * svg/SVGPolyElement.cpp:
+        (WebCore::SVGPolyElement::isSupportedAttribute):
+        (WebCore::SVGPolyElement::parseMappedAttribute):
+        (WebCore::SVGPolyElement::svgAttributeChanged):
+        * svg/SVGPolyElement.h:
+        * svg/SVGRadialGradientElement.cpp:
+        (WebCore::SVGRadialGradientElement::isSupportedAttribute):
+        (WebCore::SVGRadialGradientElement::parseMappedAttribute):
+        (WebCore::SVGRadialGradientElement::svgAttributeChanged):
+        (WebCore::SVGRadialGradientElement::synchronizeProperty):
+        * svg/SVGRadialGradientElement.h:
+        * svg/SVGRectElement.cpp:
+        (WebCore::SVGRectElement::isSupportedAttribute):
+        (WebCore::SVGRectElement::parseMappedAttribute):
+        (WebCore::SVGRectElement::svgAttributeChanged):
+        (WebCore::SVGRectElement::synchronizeProperty):
+        * svg/SVGRectElement.h:
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::svgAttributeChanged):
+        (WebCore::SVGSVGElement::synchronizeProperty):
+        * svg/SVGScriptElement.cpp:
+        (WebCore::SVGScriptElement::isSupportedAttribute):
+        (WebCore::SVGScriptElement::parseMappedAttribute):
+        (WebCore::SVGScriptElement::svgAttributeChanged):
+        (WebCore::SVGScriptElement::synchronizeProperty):
+        * svg/SVGScriptElement.h:
+        * svg/SVGStopElement.cpp:
+        (WebCore::SVGStopElement::isSupportedAttribute):
+        (WebCore::SVGStopElement::parseMappedAttribute):
+        (WebCore::SVGStopElement::svgAttributeChanged):
+        (WebCore::SVGStopElement::synchronizeProperty):
+        * svg/SVGStopElement.h:
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::isSupportedAttribute):
+        (WebCore::SVGStyleElement::parseMappedAttribute):
+        * svg/SVGStyleElement.h:
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::parseMappedAttribute):
+        (WebCore::SVGStyledElement::svgAttributeChanged):
+        (WebCore::SVGStyledElement::synchronizeProperty):
+        * svg/SVGStyledTransformableElement.cpp:
+        (WebCore::SVGStyledTransformableElement::isSupportedAttribute):
+        (WebCore::SVGStyledTransformableElement::parseMappedAttribute):
+        (WebCore::SVGStyledTransformableElement::svgAttributeChanged):
+        (WebCore::SVGStyledTransformableElement::synchronizeProperty):
+        * svg/SVGStyledTransformableElement.h:
+        * svg/SVGSymbolElement.cpp:
+        (WebCore::SVGSymbolElement::isSupportedAttribute):
+        (WebCore::SVGSymbolElement::parseMappedAttribute):
+        (WebCore::SVGSymbolElement::svgAttributeChanged):
+        (WebCore::SVGSymbolElement::synchronizeProperty):
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTRefElement.cpp:
+        (WebCore::SVGTRefElement::isSupportedAttribute):
+        (WebCore::SVGTRefElement::parseMappedAttribute):
+        (WebCore::SVGTRefElement::svgAttributeChanged):
+        (WebCore::SVGTRefElement::synchronizeProperty):
+        * svg/SVGTRefElement.h:
+        * svg/SVGTests.cpp:
+        (WebCore::SVGTests::addSupportedAttributes):
+        * svg/SVGTests.h:
+        * svg/SVGTextContentElement.cpp:
+        (WebCore::SVGTextContentElement::isSupportedAttribute):
+        (WebCore::SVGTextContentElement::parseMappedAttribute):
+        (WebCore::SVGTextContentElement::synchronizeProperty):
+        (WebCore::SVGTextContentElement::svgAttributeChanged):
+        * svg/SVGTextContentElement.h:
+        * svg/SVGTextElement.cpp:
+        (WebCore::SVGTextElement::isSupportedAttribute):
+        (WebCore::SVGTextElement::parseMappedAttribute):
+        (WebCore::SVGTextElement::svgAttributeChanged):
+        (WebCore::SVGTextElement::synchronizeProperty):
+        * svg/SVGTextElement.h:
+        * svg/SVGTextPathElement.cpp:
+        (WebCore::SVGTextPathElement::isSupportedAttribute):
+        (WebCore::SVGTextPathElement::parseMappedAttribute):
+        (WebCore::SVGTextPathElement::svgAttributeChanged):
+        (WebCore::SVGTextPathElement::synchronizeProperty):
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::isSupportedAttribute):
+        (WebCore::SVGTextPositioningElement::parseMappedAttribute):
+        (WebCore::SVGTextPositioningElement::svgAttributeChanged):
+        (WebCore::SVGTextPositioningElement::synchronizeProperty):
+        * svg/SVGTextPositioningElement.h:
+        * svg/SVGTransformable.cpp:
+        * svg/SVGTransformable.h:
+        * svg/SVGURIReference.cpp:
+        (WebCore::SVGURIReference::addSupportedAttributes):
+        * svg/SVGURIReference.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::SVGUseElement::isSupportedAttribute):
+        (WebCore::SVGUseElement::parseMappedAttribute):
+        (WebCore::SVGUseElement::svgAttributeChanged):
+        (WebCore::SVGUseElement::synchronizeProperty):
+        * svg/SVGUseElement.h:
+        * svg/SVGViewElement.cpp:
+        (WebCore::SVGViewElement::isSupportedAttribute):
+        (WebCore::SVGViewElement::parseMappedAttribute):
+        (WebCore::SVGViewElement::synchronizeProperty):
+        * svg/SVGViewElement.h:
+        * svg/SVGZoomAndPan.cpp:
+        (WebCore::SVGZoomAndPan::addSupportedAttributes):
+        * svg/SVGZoomAndPan.h:
+
 2011-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

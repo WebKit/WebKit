@@ -43,6 +43,7 @@ public:
     bool parseMappedAttribute(Attribute*);
     bool isKnownAttribute(const QualifiedName&);
 
+    void addSupportedAttributes(HashSet<QualifiedName>&);
     bool handleAttributeChange(const SVGElement*, const QualifiedName&);
     void synchronizeProperties(SVGElement*, const QualifiedName&);
 

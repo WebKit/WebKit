@@ -25,6 +25,7 @@
 
 #include "Attribute.h"
 #include "FilterEffect.h"
+#include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 
@@ -46,46 +47,91 @@ PassRefPtr<SVGFEOffsetElement> SVGFEOffsetElement::create(const QualifiedName& t
     return adoptRef(new SVGFEOffsetElement(tagName, document));
 }
 
+bool SVGFEOffsetElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        supportedAttributes.add(SVGNames::inAttr);
+        supportedAttributes.add(SVGNames::dxAttr);
+        supportedAttributes.add(SVGNames::dyAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGFEOffsetElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
-    if (attr->name() == SVGNames::dxAttr)
-        setDxBaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::dyAttr)
-        setDyBaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::inAttr)
-        setIn1BaseValue(value);
-    else
+    if (!isSupportedAttribute(attr->name())) {
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    const AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::dxAttr) {
+        setDxBaseValue(value.toFloat());
+        return;
+    }
+
+    if (attr->name() == SVGNames::dyAttr) {
+        setDyBaseValue(value.toFloat());
+        return;
+    }
+
+    if (attr->name() == SVGNames::inAttr) {
+        setIn1BaseValue(value);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFEOffsetElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        return;
+    }
 
-    if (attrName == SVGNames::inAttr
-        || attrName == SVGNames::dxAttr
-        || attrName == SVGNames::dyAttr)
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
+    if (attrName == SVGNames::inAttr || attrName == SVGNames::dxAttr || attrName == SVGNames::dyAttr) {
         invalidate();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFEOffsetElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeDx();
         synchronizeDy();
         synchronizeIn1();
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::dxAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::dxAttr) {
         synchronizeDx();
-    else if (attrName == SVGNames::dyAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::dyAttr) {
         synchronizeDy();
-    else if (attrName == SVGNames::inAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::inAttr) {
         synchronizeIn1();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGFEOffsetElement::attributeToPropertyTypeMap()

@@ -31,6 +31,7 @@
 #include "FloatPoint.h"
 #include "RadialGradientAttributes.h"
 #include "RenderSVGResourceRadialGradient.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGStopElement.h"
 #include "SVGTransform.h"
@@ -63,66 +64,114 @@ PassRefPtr<SVGRadialGradientElement> SVGRadialGradientElement::create(const Qual
     return adoptRef(new SVGRadialGradientElement(tagName, document));
 }
 
+bool SVGRadialGradientElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        supportedAttributes.add(SVGNames::cxAttr);
+        supportedAttributes.add(SVGNames::cyAttr);
+        supportedAttributes.add(SVGNames::fxAttr);
+        supportedAttributes.add(SVGNames::fyAttr);
+        supportedAttributes.add(SVGNames::rAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGRadialGradientElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == SVGNames::cxAttr)
-        setCxBaseValue(SVGLength(LengthModeWidth, attr->value()));
-    else if (attr->name() == SVGNames::cyAttr)
-        setCyBaseValue(SVGLength(LengthModeHeight, attr->value()));
-    else if (attr->name() == SVGNames::rAttr) {
-        setRBaseValue(SVGLength(LengthModeOther, attr->value()));
-        if (rBaseValue().value(this) < 0.0)
-            document()->accessSVGExtensions()->reportError("A negative value for radial gradient radius <r> is not allowed");
-    } else if (attr->name() == SVGNames::fxAttr)
-        setFxBaseValue(SVGLength(LengthModeWidth, attr->value()));
-    else if (attr->name() == SVGNames::fyAttr)
-        setFyBaseValue(SVGLength(LengthModeHeight, attr->value()));
-    else
+    if (!isSupportedAttribute(attr->name())) {
         SVGGradientElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    if (attr->name() == SVGNames::cxAttr) {
+        setCxBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::cyAttr) {
+        setCyBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::rAttr) {
+        setRBaseValue(SVGLength(LengthModeOther, attr->value()));
+        if (rBaseValue().value(this) < 0)
+            document()->accessSVGExtensions()->reportError("A negative value for radial gradient radius <r> is not allowed");
+        return;
+    }
+
+    if (attr->name() == SVGNames::fxAttr) {
+        setFxBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::fyAttr) {
+        setFyBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGRadialGradientElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGGradientElement::svgAttributeChanged(attrName);
-
-    if (attrName == SVGNames::cxAttr
-        || attrName == SVGNames::cyAttr
-        || attrName == SVGNames::fxAttr
-        || attrName == SVGNames::fyAttr
-        || attrName == SVGNames::rAttr) {
-        updateRelativeLengthsInformation();
-        
-        RenderObject* object = renderer();
-        if (!object)
-            return;
-
-        object->setNeedsLayout(true);
+    if (!isSupportedAttribute(attrName)) {
+        SVGGradientElement::svgAttributeChanged(attrName);
+        return;
     }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
+    updateRelativeLengthsInformation();
+        
+    if (RenderObject* object = renderer())
+        object->setNeedsLayout(true);
 }
 
 void SVGRadialGradientElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGGradientElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeCx();
         synchronizeCy();
         synchronizeFx();
         synchronizeFy();
         synchronizeR();
+        SVGGradientElement::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::cxAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGGradientElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::cxAttr) {
         synchronizeCx();
-    else if (attrName == SVGNames::cyAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::cyAttr) {
         synchronizeCy();
-    else if (attrName == SVGNames::fxAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::fxAttr) {
         synchronizeFx();
-    else if (attrName == SVGNames::fyAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::fyAttr) {
         synchronizeFy();
-    else if (attrName == SVGNames::rAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::rAttr) {
         synchronizeR();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGRadialGradientElement::attributeToPropertyTypeMap()

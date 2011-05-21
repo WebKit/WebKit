@@ -26,6 +26,7 @@
 #include "Attribute.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGTextPath.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -50,61 +51,104 @@ PassRefPtr<SVGTextPathElement> SVGTextPathElement::create(const QualifiedName& t
     return adoptRef(new SVGTextPathElement(tagName, document));
 }
 
+bool SVGTextPathElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGURIReference::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::startOffsetAttr);
+        supportedAttributes.add(SVGNames::methodAttr);
+        supportedAttributes.add(SVGNames::spacingAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGTextPathElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
-    if (attr->name() == SVGNames::startOffsetAttr)
+    if (!isSupportedAttribute(attr->name())) {
+        SVGTextContentElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    const AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::startOffsetAttr) {
         setStartOffsetBaseValue(SVGLength(LengthModeOther, value));
-    else if (attr->name() == SVGNames::methodAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::methodAttr) {
         SVGTextPathMethodType propertyValue = SVGPropertyTraits<SVGTextPathMethodType>::fromString(value);
         if (propertyValue > 0)
             setMethodBaseValue(propertyValue);
-    } else if (attr->name() == SVGNames::spacingAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::spacingAttr) {
         SVGTextPathSpacingType propertyValue = SVGPropertyTraits<SVGTextPathSpacingType>::fromString(value);
         if (propertyValue > 0)
             setSpacingBaseValue(propertyValue);
-    } else {
-        if (SVGURIReference::parseMappedAttribute(attr))
-            return;
-        SVGTextContentElement::parseMappedAttribute(attr);
+        return;
     }
+
+    if (SVGURIReference::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGTextPathElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGTextContentElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGTextContentElement::svgAttributeChanged(attrName);
+        return;
+    }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (attrName == SVGNames::startOffsetAttr)
         updateRelativeLengthsInformation();
 
-    if (!renderer())
-        return;
-
-    if (attrName == SVGNames::startOffsetAttr
-        || SVGURIReference::isKnownAttribute(attrName))
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer());
+    if (RenderObject* object = renderer())
+        RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
 }
 
 void SVGTextPathElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGTextContentElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeStartOffset();
         synchronizeMethod();
         synchronizeSpacing();
         synchronizeHref();
+        SVGTextContentElement::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::startOffsetAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGTextContentElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::startOffsetAttr) {
         synchronizeStartOffset();
-    else if (attrName == SVGNames::methodAttr)
+        return;
+    }
+    
+    if (attrName == SVGNames::methodAttr) {
         synchronizeMethod();
-    else if (attrName == SVGNames::spacingAttr)
+        return;
+    }
+    
+    if (attrName == SVGNames::spacingAttr) {
         synchronizeSpacing();
-    else if (SVGURIReference::isKnownAttribute(attrName))
+        return;
+    }
+    
+    if (SVGURIReference::isKnownAttribute(attrName)) {
         synchronizeHref();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGTextPathElement::attributeToPropertyTypeMap()

@@ -68,6 +68,21 @@ bool SVGLangSpace::isKnownAttribute(const QualifiedName& attrName)
 {
     return attrName.matches(XMLNames::langAttr) || attrName.matches(XMLNames::spaceAttr);
 }
+    
+void SVGLangSpace::addSupportedAttributes(HashSet<QualifiedName>& supportedAttributes)
+{
+    DEFINE_STATIC_LOCAL(AtomicString, xmlPrefix, ("xml"));
+
+    QualifiedName langWithPrefix = XMLNames::langAttr;
+    langWithPrefix.setPrefix(xmlPrefix);
+    supportedAttributes.add(langWithPrefix);
+    supportedAttributes.add(XMLNames::langAttr);
+
+    QualifiedName spaceWithPrefix = XMLNames::spaceAttr;
+    spaceWithPrefix.setPrefix(xmlPrefix);
+    supportedAttributes.add(spaceWithPrefix);
+    supportedAttributes.add(XMLNames::spaceAttr);
+}
 
 }
 

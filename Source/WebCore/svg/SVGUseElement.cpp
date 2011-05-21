@@ -98,31 +98,63 @@ SVGElementInstance* SVGUseElement::animatedInstanceRoot() const
     return 0;
 }
  
+bool SVGUseElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGTests::addSupportedAttributes(supportedAttributes);
+        SVGLangSpace::addSupportedAttributes(supportedAttributes);
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+        SVGURIReference::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::xAttr);
+        supportedAttributes.add(SVGNames::yAttr);
+        supportedAttributes.add(SVGNames::widthAttr);
+        supportedAttributes.add(SVGNames::heightAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGUseElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
-    else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength(LengthModeHeight, attr->value()));
-    else if (attr->name() == SVGNames::widthAttr) {
-        setWidthBaseValue(SVGLength(LengthModeWidth, attr->value()));
-        if (widthBaseValue().value(this) < 0.0)
-            document()->accessSVGExtensions()->reportError("A negative value for use attribute <width> is not allowed");
-    } else if (attr->name() == SVGNames::heightAttr) {
-        setHeightBaseValue(SVGLength(LengthModeHeight, attr->value()));
-        if (heightBaseValue().value(this) < 0.0)
-            document()->accessSVGExtensions()->reportError("A negative value for use attribute <height> is not allowed");
-    } else {
-        if (SVGTests::parseMappedAttribute(attr))
-            return;
-        if (SVGLangSpace::parseMappedAttribute(attr))
-            return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-            return;
-        if (SVGURIReference::parseMappedAttribute(attr))
-            return;
+    if (!isSupportedAttribute(attr->name())) {
         SVGStyledTransformableElement::parseMappedAttribute(attr);
+        return;
     }
+
+    if (attr->name() == SVGNames::xAttr) {
+        setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::yAttr) {
+        setYBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::widthAttr) {
+        setWidthBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        if (widthBaseValue().value(this) < 0)
+            document()->accessSVGExtensions()->reportError("A negative value for use attribute <width> is not allowed");
+        return;
+    }
+
+    if (attr->name() == SVGNames::heightAttr) {
+        setHeightBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        if (heightBaseValue().value(this) < 0)
+            document()->accessSVGExtensions()->reportError("A negative value for use attribute <height> is not allowed");
+        return;
+    }
+
+    if (SVGTests::parseMappedAttribute(attr))
+        return;
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+    if (SVGURIReference::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 static inline bool isWellFormedDocument(Document* document)
@@ -148,7 +180,12 @@ void SVGUseElement::removedFromDocument()
 
 void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGStyledTransformableElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledTransformableElement::svgAttributeChanged(attrName);
+        return;
+    }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     bool isXYAttribute = attrName == SVGNames::xAttr || attrName == SVGNames::yAttr;
     bool isWidthHeightAttribute = attrName == SVGNames::widthAttr || attrName == SVGNames::heightAttr;
@@ -198,15 +235,16 @@ void SVGUseElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (SVGLangSpace::isKnownAttribute(attrName)
-        || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+    if (SVGLangSpace::isKnownAttribute(attrName) || SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         invalidateShadowTree();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGUseElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGStyledTransformableElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeX();
         synchronizeY();
@@ -215,23 +253,51 @@ void SVGUseElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeExternalResourcesRequired();
         synchronizeHref();
         SVGTests::synchronizeProperties(this, attrName);
+        SVGStyledTransformableElement::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::xAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledTransformableElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::xAttr) {
         synchronizeX();
-    else if (attrName == SVGNames::yAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::yAttr) {
         synchronizeY();
-    else if (attrName == SVGNames::widthAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::widthAttr) {
         synchronizeWidth();
-    else if (attrName == SVGNames::heightAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::heightAttr) {
         synchronizeHeight();
-    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         synchronizeExternalResourcesRequired();
-    else if (SVGURIReference::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGURIReference::isKnownAttribute(attrName)) {
         synchronizeHref();
-    else if (SVGTests::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGTests::isKnownAttribute(attrName)) {
         SVGTests::synchronizeProperties(this, attrName);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGUseElement::attributeToPropertyTypeMap()

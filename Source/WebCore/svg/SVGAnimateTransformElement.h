@@ -42,6 +42,7 @@ private:
     virtual bool hasValidAttributeType() const;
     AnimatedAttributeType determineAnimatedAttributeType(SVGElement*) const;
 
+    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
 
     virtual void resetToBaseValue(const String&);

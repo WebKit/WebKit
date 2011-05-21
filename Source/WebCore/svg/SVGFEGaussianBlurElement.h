@@ -37,6 +37,7 @@ public:
 private:
     SVGFEGaussianBlurElement(const QualifiedName&, Document*);
 
+    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);

@@ -61,6 +61,7 @@ public:
 protected:
     SVGAnimationElement(const QualifiedName&, Document*);
 
+    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
 
     enum CalcMode { CalcModeDiscrete, CalcModeLinear, CalcModePaced, CalcModeSpline };

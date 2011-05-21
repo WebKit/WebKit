@@ -26,6 +26,7 @@
 
 #include "Attribute.h"
 #include "RenderSVGResourceMarker.h"
+#include "SVGElementInstance.h"
 #include "SVGFitToViewBox.h"
 #include "SVGNames.h"
 #include "SVGSVGElement.h"
@@ -78,71 +79,99 @@ AffineTransform SVGMarkerElement::viewBoxToViewTransform(float viewWidth, float 
     return SVGFitToViewBox::viewBoxToViewTransform(viewBox(), preserveAspectRatio(), viewWidth, viewHeight);
 }
 
+bool SVGMarkerElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGLangSpace::addSupportedAttributes(supportedAttributes);
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+        SVGFitToViewBox::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::markerUnitsAttr);
+        supportedAttributes.add(SVGNames::refXAttr);
+        supportedAttributes.add(SVGNames::refYAttr);
+        supportedAttributes.add(SVGNames::markerWidthAttr);
+        supportedAttributes.add(SVGNames::markerHeightAttr);
+        supportedAttributes.add(SVGNames::orientAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGMarkerElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
+    if (!isSupportedAttribute(attr->name())) {
+        SVGStyledElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::markerUnitsAttr) {
         SVGMarkerUnitsType propertyValue = SVGPropertyTraits<SVGMarkerUnitsType>::fromString(value);
         if (propertyValue > 0)
             setMarkerUnitsBaseValue(propertyValue);
-    } else if (attr->name() == SVGNames::refXAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::refXAttr) {
         setRefXBaseValue(SVGLength(LengthModeWidth, value));
-    else if (attr->name() == SVGNames::refYAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::refYAttr) {
         setRefYBaseValue(SVGLength(LengthModeHeight, value));
-    else if (attr->name() == SVGNames::markerWidthAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::markerWidthAttr) {
         setMarkerWidthBaseValue(SVGLength(LengthModeWidth, value));
-    else if (attr->name() == SVGNames::markerHeightAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::markerHeightAttr) {
         setMarkerHeightBaseValue(SVGLength(LengthModeHeight, value));
-    else if (attr->name() == SVGNames::orientAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::orientAttr) {
         SVGAngle angle;
         SVGMarkerOrientType orientType = SVGPropertyTraits<SVGMarkerOrientType>::fromString(value, angle);
         if (orientType > 0)
             setOrientTypeBaseValue(orientType);
         if (orientType == SVG_MARKER_ORIENT_ANGLE)
             setOrientAngleBaseValue(angle);
-    } else {
-        if (SVGLangSpace::parseMappedAttribute(attr))
-            return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-            return;
-        if (SVGFitToViewBox::parseMappedAttribute(document(), attr))
-            return;
-
-        SVGStyledElement::parseMappedAttribute(attr);
+        return;
     }
+
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+    if (SVGFitToViewBox::parseMappedAttribute(document(), attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGMarkerElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGStyledElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledElement::svgAttributeChanged(attrName);
+        return;
+    }
 
-    bool invalidateClients = false;
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
     if (attrName == SVGNames::refXAttr
         || attrName == SVGNames::refYAttr
         || attrName == SVGNames::markerWidthAttr
-        || attrName == SVGNames::markerHeightAttr) {
-        invalidateClients = true;
+        || attrName == SVGNames::markerHeightAttr)
         updateRelativeLengthsInformation();
-    }
 
-    RenderObject* object = renderer();
-    if (!object)
-        return;
-
-    if (invalidateClients
-        || attrName == SVGNames::markerUnitsAttr
-        || attrName == SVGNames::orientAttr
-        || SVGLangSpace::isKnownAttribute(attrName)
-        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
-        || SVGFitToViewBox::isKnownAttribute(attrName)
-        || SVGStyledElement::isKnownAttribute(attrName))
+    if (RenderObject* object = renderer())
         object->setNeedsLayout(true);
 }
 
 void SVGMarkerElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGStyledElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeMarkerUnits();
         synchronizeRefX();
@@ -152,30 +181,58 @@ void SVGMarkerElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeOrientAngle();
         synchronizeOrientType();
         synchronizeExternalResourcesRequired();
-        synchronizeViewBox();
-        synchronizePreserveAspectRatio();
+        SVGFitToViewBox::synchronizeProperties(attrName);
+        SVGStyledElement::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::markerUnitsAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::markerUnitsAttr) {
         synchronizeMarkerUnits();
-    else if (attrName == SVGNames::refXAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::refXAttr) {
         synchronizeRefX();
-    else if (attrName == SVGNames::refYAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::refYAttr) {
         synchronizeRefY();
-    else if (attrName == SVGNames::markerWidthAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::markerWidthAttr) {
         synchronizeMarkerWidth();
-    else if (attrName == SVGNames::markerHeightAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::markerHeightAttr) {
         synchronizeMarkerHeight();
-    else if (attrName == SVGNames::orientAttr) {
+        return;
+    }
+
+    if (attrName == SVGNames::orientAttr) {
         synchronizeOrientAngle();
         synchronizeOrientType();
-    } else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
-        synchronizeExternalResourcesRequired();
-    else if (SVGFitToViewBox::isKnownAttribute(attrName)) {
-        synchronizeViewBox();
-        synchronizePreserveAspectRatio();
+        return;
     }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
+        synchronizeExternalResourcesRequired();
+        return;
+    }
+
+    if (SVGFitToViewBox::isKnownAttribute(attrName)) {
+        SVGFitToViewBox::synchronizeProperties(attrName);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGMarkerElement::attributeToPropertyTypeMap()

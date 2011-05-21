@@ -28,6 +28,7 @@
 #include "FloatRect.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGText.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGRenderStyle.h"
 #include "SVGTSpanElement.h"
@@ -48,17 +49,32 @@ PassRefPtr<SVGTextElement> SVGTextElement::create(const QualifiedName& tagName, 
     return adoptRef(new SVGTextElement(tagName, document));
 }
 
+bool SVGTextElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty())
+        supportedAttributes.add(SVGNames::transformAttr);
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGTextElement::parseMappedAttribute(Attribute* attr)
 {
-    if (SVGTransformable::isKnownAttribute(attr->name())) {
+    if (!isSupportedAttribute(attr->name())) {
+        SVGTextPositioningElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    if (attr->name() == SVGNames::transformAttr) {
         SVGTransformList newList;
         if (!SVGTransformable::parseTransformAttribute(newList, attr->value()))
             newList.clear();
 
         detachAnimatedTransformListWrappers(newList.size());
         setTransformBaseValue(newList);
-    } else
-        SVGTextPositioningElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 SVGElement* SVGTextElement::nearestViewportElement() const
@@ -124,24 +140,45 @@ bool SVGTextElement::childShouldCreateRenderer(Node* child) const
 
 void SVGTextElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGTextPositioningElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGTextPositioningElement::svgAttributeChanged(attrName);
+        return;
+    }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     RenderObject* renderer = this->renderer();
     if (!renderer)
         return;
 
-    if (SVGTransformable::isKnownAttribute(attrName)) {
+    if (attrName == SVGNames::transformAttr) {
         renderer->setNeedsTransformUpdate();
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+        return;
     }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGTextElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGTextPositioningElement::synchronizeProperty(attrName);
-
-    if (attrName == anyQName() || SVGTransformable::isKnownAttribute(attrName))
+    if (attrName == anyQName()) {
         synchronizeTransform();
+        SVGTextPositioningElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (!isSupportedAttribute(attrName)) {
+        SVGTextPositioningElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::transformAttr) {
+        synchronizeTransform();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGTextElement::attributeToPropertyTypeMap()

@@ -41,6 +41,7 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGTransformableContainer.h"
 #include "ResourceRequest.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGSMILElement.h"
 #include "XLinkNames.h"
@@ -74,26 +75,51 @@ String SVGAElement::title() const
     return SVGStyledElement::title();
 }
 
+bool SVGAElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGURIReference::addSupportedAttributes(supportedAttributes);
+        SVGTests::addSupportedAttributes(supportedAttributes);
+        SVGLangSpace::addSupportedAttributes(supportedAttributes);
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::targetAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGAElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == SVGNames::targetAttr)
-        setSVGTargetBaseValue(attr->value());
-    else {
-        if (SVGURIReference::parseMappedAttribute(attr))
-            return;
-        if (SVGTests::parseMappedAttribute(attr))
-            return;
-        if (SVGLangSpace::parseMappedAttribute(attr))
-            return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-            return;
+    if (!isSupportedAttribute(attr->name())) {
         SVGStyledTransformableElement::parseMappedAttribute(attr);
+        return;
     }
+
+    if (attr->name() == SVGNames::targetAttr) {
+        setSVGTargetBaseValue(attr->value());
+        return;
+    }
+
+    if (SVGURIReference::parseMappedAttribute(attr))
+        return;
+    if (SVGTests::parseMappedAttribute(attr))
+        return;
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGAElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGStyledTransformableElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledTransformableElement::svgAttributeChanged(attrName);
+        return;
+    }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     // Unlike other SVG*Element classes, SVGAElement only listens to SVGURIReference changes
     // as none of the other properties changes the linking behaviour for our <a> element.
@@ -123,24 +149,41 @@ void SVGAElement::fillAttributeToPropertyTypeMap()
 
 void SVGAElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGStyledTransformableElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeSVGTarget();
         synchronizeHref();
         synchronizeExternalResourcesRequired();
         SVGTests::synchronizeProperties(this, attrName);
+        SVGStyledTransformableElement::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::targetAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledTransformableElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::targetAttr) {
         synchronizeSVGTarget();
-    else if (SVGURIReference::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGURIReference::isKnownAttribute(attrName)) {
         synchronizeHref();
-    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         synchronizeExternalResourcesRequired();
-    else if (SVGTests::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGTests::isKnownAttribute(attrName)) {
         SVGTests::synchronizeProperties(this, attrName);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 RenderObject* SVGAElement::createRenderer(RenderArena* arena, RenderStyle*)

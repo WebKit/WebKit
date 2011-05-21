@@ -81,24 +81,39 @@ AnimatedAttributeType SVGAnimateTransformElement::determineAnimatedAttributeType
     return AnimatedTransformList;
 }
 
-void SVGAnimateTransformElement::parseMappedAttribute(Attribute* attr)
+bool SVGAnimateTransformElement::isSupportedAttribute(const QualifiedName& attrName)
 {
-    if (attr->name() == SVGNames::typeAttr) {
-        if (attr->value() == "translate")
-            m_type = SVGTransform::SVG_TRANSFORM_TRANSLATE;
-        else if (attr->value() == "scale")
-            m_type = SVGTransform::SVG_TRANSFORM_SCALE;
-        else if (attr->value() == "rotate")
-            m_type = SVGTransform::SVG_TRANSFORM_ROTATE;
-        else if (attr->value() == "skewX")
-            m_type = SVGTransform::SVG_TRANSFORM_SKEWX;
-        else if (attr->value() == "skewY")
-            m_type = SVGTransform::SVG_TRANSFORM_SKEWY;
-    } else
-        SVGAnimationElement::parseMappedAttribute(attr);
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty())
+        supportedAttributes.add(SVGNames::typeAttr);
+    return supportedAttributes.contains(attrName);
 }
 
-    
+void SVGAnimateTransformElement::parseMappedAttribute(Attribute* attr)
+{
+    if (!isSupportedAttribute(attr->name())) {
+        SVGAnimationElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    if (attr->name() == SVGNames::typeAttr) {
+        const AtomicString& value = attr->value();
+        if (value == "translate")
+            m_type = SVGTransform::SVG_TRANSFORM_TRANSLATE;
+        else if (value == "scale")
+            m_type = SVGTransform::SVG_TRANSFORM_SCALE;
+        else if (value == "rotate")
+            m_type = SVGTransform::SVG_TRANSFORM_ROTATE;
+        else if (value == "skewX")
+            m_type = SVGTransform::SVG_TRANSFORM_SKEWX;
+        else if (value == "skewY")
+            m_type = SVGTransform::SVG_TRANSFORM_SKEWY;
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
+}
+
 static SVGTransformList* transformListFor(SVGElement* element)
 {
     ASSERT(element);

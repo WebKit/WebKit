@@ -48,21 +48,49 @@ PassRefPtr<SVGFEComponentTransferElement> SVGFEComponentTransferElement::create(
     return adoptRef(new SVGFEComponentTransferElement(tagName, document));
 }
 
+bool SVGFEComponentTransferElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty())
+        supportedAttributes.add(SVGNames::inAttr);
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGFEComponentTransferElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
-    if (attr->name() == SVGNames::inAttr)
-        setIn1BaseValue(value);
-    else
+    if (!isSupportedAttribute(attr->name())) {
         SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    const AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::inAttr) {
+        setIn1BaseValue(value);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFEComponentTransferElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-
-    if (attrName == anyQName() || attrName == SVGNames::inAttr)
+    if (attrName == anyQName()) {
         synchronizeIn1();
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::inAttr) {
+        synchronizeIn1();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGFEComponentTransferElement::attributeToPropertyTypeMap()

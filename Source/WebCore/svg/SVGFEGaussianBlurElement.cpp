@@ -25,6 +25,7 @@
 
 #include "Attribute.h"
 #include "FilterEffect.h"
+#include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -66,46 +67,85 @@ void SVGFEGaussianBlurElement::setStdDeviation(float x, float y)
     invalidate();
 }
 
+bool SVGFEGaussianBlurElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        supportedAttributes.add(SVGNames::inAttr);
+        supportedAttributes.add(SVGNames::stdDeviationAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGFEGaussianBlurElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
+    if (!isSupportedAttribute(attr->name())) {
+        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::stdDeviationAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setStdDeviationXBaseValue(x);
             setStdDeviationYBaseValue(y);
         }
-    } else if (attr->name() == SVGNames::inAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
-    else
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFEGaussianBlurElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        return;
+    }
 
-    if (attrName == SVGNames::inAttr
-        || attrName == SVGNames::stdDeviationAttr)
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
+    if (attrName == SVGNames::inAttr || attrName == SVGNames::stdDeviationAttr) {
         invalidate();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFEGaussianBlurElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeStdDeviationX();
         synchronizeStdDeviationY();
         synchronizeIn1();
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
         return;
     }
 
     if (attrName == SVGNames::stdDeviationAttr) {
         synchronizeStdDeviationX();
         synchronizeStdDeviationY();
-    } else if (attrName == SVGNames::inAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::inAttr) {
         synchronizeIn1();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGFEGaussianBlurElement::attributeToPropertyTypeMap()

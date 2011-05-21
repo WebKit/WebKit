@@ -29,6 +29,7 @@
 #include "Attribute.h"
 #include "CSSStyleSelector.h"
 #include "RenderSVGResourceMasker.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGRenderSupport.h"
 #include "SVGUnitTypes.h"
@@ -63,88 +64,154 @@ PassRefPtr<SVGMaskElement> SVGMaskElement::create(const QualifiedName& tagName, 
     return adoptRef(new SVGMaskElement(tagName, document));
 }
 
+bool SVGMaskElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGTests::addSupportedAttributes(supportedAttributes);
+        SVGLangSpace::addSupportedAttributes(supportedAttributes);
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::maskUnitsAttr);
+        supportedAttributes.add(SVGNames::maskContentUnitsAttr);
+        supportedAttributes.add(SVGNames::xAttr);
+        supportedAttributes.add(SVGNames::yAttr);
+        supportedAttributes.add(SVGNames::widthAttr);
+        supportedAttributes.add(SVGNames::heightAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGMaskElement::parseMappedAttribute(Attribute* attr)
 {
+    if (!isSupportedAttribute(attr->name())) {
+        SVGStyledElement::parseMappedAttribute(attr);
+        return;
+    }
+
     if (attr->name() == SVGNames::maskUnitsAttr) {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attr->value());
         if (propertyValue > 0)
             setMaskUnitsBaseValue(propertyValue);
-    } else if (attr->name() == SVGNames::maskContentUnitsAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::maskContentUnitsAttr) {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attr->value());
         if (propertyValue > 0)
             setMaskContentUnitsBaseValue(propertyValue);
-    } else if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
-    else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength(LengthModeHeight, attr->value()));
-    else if (attr->name() == SVGNames::widthAttr)
-        setWidthBaseValue(SVGLength(LengthModeWidth, attr->value()));
-    else if (attr->name() == SVGNames::heightAttr)
-        setHeightBaseValue(SVGLength(LengthModeHeight, attr->value()));
-    else {
-        if (SVGTests::parseMappedAttribute(attr))
-            return;
-        if (SVGLangSpace::parseMappedAttribute(attr))
-            return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-            return;
-        SVGStyledElement::parseMappedAttribute(attr);
+        return;
     }
+
+    if (attr->name() == SVGNames::xAttr) {
+        setXBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::yAttr) {
+        setYBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::widthAttr) {
+        setWidthBaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::heightAttr) {
+        setHeightBaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
+
+    if (SVGTests::parseMappedAttribute(attr))
+        return;
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGMaskElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGStyledElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledElement::svgAttributeChanged(attrName);
+        return;
+    }
 
-    bool invalidateClients = false;
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
     if (attrName == SVGNames::xAttr
         || attrName == SVGNames::yAttr
         || attrName == SVGNames::widthAttr
-        || attrName == SVGNames::heightAttr) {
-        invalidateClients = true;
+        || attrName == SVGNames::heightAttr)
         updateRelativeLengthsInformation();
-    }
 
-    RenderObject* object = renderer();
-    if (!object)
-        return;
-
-    if (invalidateClients
-        || attrName == SVGNames::maskUnitsAttr
-        || attrName == SVGNames::maskContentUnitsAttr
-        || SVGTests::isKnownAttribute(attrName)
-        || SVGLangSpace::isKnownAttribute(attrName)
-        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
-        || SVGStyledElement::isKnownAttribute(attrName))
+    if (RenderObject* object = renderer())
         object->setNeedsLayout(true);
 }
 
 void SVGMaskElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGStyledElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeMaskUnits();
         synchronizeMaskContentUnits();
         synchronizeX();
         synchronizeY();
+        synchronizeWidth();
+        synchronizeHeight();
         synchronizeExternalResourcesRequired();
+        SVGTests::synchronizeProperties(this, attrName);
+        SVGStyledElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::maskUnitsAttr) {
+        synchronizeMaskUnits();
+        return;
+    }
+
+    if (attrName == SVGNames::maskContentUnitsAttr) {
+        synchronizeMaskContentUnits();
+        return;
+    }
+
+    if (attrName == SVGNames::xAttr) {
+        synchronizeX();
+        return;
+    }
+
+    if (attrName == SVGNames::yAttr) {
+        synchronizeY();
+        return;
+    }
+
+    if (attrName == SVGNames::widthAttr) {
+        synchronizeWidth();
+        return;
+    }
+
+    if (attrName == SVGNames::heightAttr) {
+        synchronizeHeight();
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
+        synchronizeExternalResourcesRequired();
+        return;
+    }
+
+    if (SVGTests::isKnownAttribute(attrName)) {
         SVGTests::synchronizeProperties(this, attrName);
         return;
     }
 
-    if (attrName == SVGNames::maskUnitsAttr)
-        synchronizeMaskUnits();
-    else if (attrName == SVGNames::maskContentUnitsAttr)
-        synchronizeMaskContentUnits();
-    else if (attrName == SVGNames::xAttr)
-        synchronizeX();
-    else if (attrName == SVGNames::yAttr)
-        synchronizeY();
-    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
-        synchronizeExternalResourcesRequired();
-    else if (SVGTests::isKnownAttribute(attrName))
-        SVGTests::synchronizeProperties(this, attrName);
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGMaskElement::attributeToPropertyTypeMap()

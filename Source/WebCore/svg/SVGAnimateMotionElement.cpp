@@ -89,14 +89,29 @@ bool SVGAnimateMotionElement::hasValidAttributeType() const
     return false;
 }
 
+bool SVGAnimateMotionElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty())
+        supportedAttributes.add(SVGNames::pathAttr);
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGAnimateMotionElement::parseMappedAttribute(Attribute* attr)
 {
+    if (!isSupportedAttribute(attr->name())) {
+        SVGAnimationElement::parseMappedAttribute(attr);
+        return;
+    }
+
     if (attr->name() == SVGNames::pathAttr) {
         m_path = Path();
         SVGPathParserFactory* factory = SVGPathParserFactory::self();
         factory->buildPathFromString(attr->value(), m_path);
-    } else
-        SVGAnimationElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
     
 SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const

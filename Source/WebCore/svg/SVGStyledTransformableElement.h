@@ -47,8 +47,6 @@ public:
 
     virtual FloatRect getBBox(StyleUpdateStrategy = AllowStyleUpdate) const;
 
-    bool isKnownAttribute(const QualifiedName&);
-
     // "base class" methods for all the elements which render as paths
     virtual void toPathData(Path&) const { }
     virtual void toClipPath(Path&) const;
@@ -57,6 +55,7 @@ public:
 protected:
     SVGStyledTransformableElement(const QualifiedName&, Document*);
 
+    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);

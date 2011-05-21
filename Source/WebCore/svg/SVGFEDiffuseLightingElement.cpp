@@ -27,6 +27,7 @@
 #include "FilterEffect.h"
 #include "RenderStyle.h"
 #include "SVGColor.h"
+#include "SVGElementInstance.h"
 #include "SVGFELightElement.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
@@ -66,23 +67,52 @@ const AtomicString& SVGFEDiffuseLightingElement::kernelUnitLengthYIdentifier()
     return s_identifier;
 }
 
+bool SVGFEDiffuseLightingElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        supportedAttributes.add(SVGNames::inAttr);
+        supportedAttributes.add(SVGNames::diffuseConstantAttr);
+        supportedAttributes.add(SVGNames::surfaceScaleAttr);
+        supportedAttributes.add(SVGNames::kernelUnitLengthAttr);
+        supportedAttributes.add(SVGNames::lighting_colorAttr); // Even though it's a SVG-CSS property, we override its handling here.
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGFEDiffuseLightingElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
-    if (attr->name() == SVGNames::inAttr)
+    if (!isSupportedAttribute(attr->name()) || attr->name() == SVGNames::lighting_colorAttr) {
+        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    const AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
-    else if (attr->name() == SVGNames::surfaceScaleAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::surfaceScaleAttr) {
         setSurfaceScaleBaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::diffuseConstantAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::diffuseConstantAttr) {
         setDiffuseConstantBaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::kernelUnitLengthAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::kernelUnitLengthAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setKernelUnitLengthXBaseValue(x);
             setKernelUnitLengthYBaseValue(y);
         }
-    } else
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 bool SVGFEDiffuseLightingElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
@@ -132,16 +162,27 @@ bool SVGFEDiffuseLightingElement::setFilterEffectAttribute(FilterEffect* effect,
 
 void SVGFEDiffuseLightingElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        return;
+    }
 
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
     if (attrName == SVGNames::surfaceScaleAttr
         || attrName == SVGNames::diffuseConstantAttr
         || attrName == SVGNames::kernelUnitLengthAttr
-        || attrName == SVGNames::lighting_colorAttr)
+        || attrName == SVGNames::lighting_colorAttr) {
         primitiveAttributeChanged(attrName);
+        return;
+    }
 
-    if (attrName == SVGNames::inAttr)
+    if (attrName == SVGNames::inAttr) {
         invalidate();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFEDiffuseLightingElement::lightElementAttributeChanged(const SVGFELightElement* lightElement, const QualifiedName& attrName)
@@ -155,27 +196,46 @@ void SVGFEDiffuseLightingElement::lightElementAttributeChanged(const SVGFELightE
 
 void SVGFEDiffuseLightingElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeIn1();
         synchronizeSurfaceScale();
         synchronizeDiffuseConstant();
         synchronizeKernelUnitLengthX();
         synchronizeKernelUnitLengthY();
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::inAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::lighting_colorAttr)
+        return;
+
+    if (attrName == SVGNames::inAttr) {
         synchronizeIn1();
-    else if (attrName == SVGNames::surfaceScaleAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::surfaceScaleAttr) {
         synchronizeSurfaceScale();
-    else if (attrName == SVGNames::diffuseConstantAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::diffuseConstantAttr) {
         synchronizeDiffuseConstant();
-    else if (attrName == SVGNames::kernelUnitLengthAttr) {
+        return;
+    }
+
+    if (attrName == SVGNames::kernelUnitLengthAttr) {
         synchronizeKernelUnitLengthX();
         synchronizeKernelUnitLengthY();
+        return;
     }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGFEDiffuseLightingElement::attributeToPropertyTypeMap()

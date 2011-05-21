@@ -48,37 +48,68 @@ PassRefPtr<SVGViewElement> SVGViewElement::create(const QualifiedName& tagName, 
     return adoptRef(new SVGViewElement(tagName, document));
 }
 
+bool SVGViewElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+        SVGFitToViewBox::addSupportedAttributes(supportedAttributes);
+        SVGZoomAndPan::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::viewTargetAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGViewElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == SVGNames::viewTargetAttr)
-        viewTarget().reset(attr->value());
-    else {
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr)
-           || SVGFitToViewBox::parseMappedAttribute(document(), attr)
-           || SVGZoomAndPan::parseMappedAttribute(attr))
-            return;
-
+    if (!isSupportedAttribute(attr->name())) {
         SVGStyledElement::parseMappedAttribute(attr);
+        return;
     }
+
+    if (attr->name() == SVGNames::viewTargetAttr) {
+        viewTarget().reset(attr->value());
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+    if (SVGFitToViewBox::parseMappedAttribute(document(), attr))
+        return;
+    if (SVGZoomAndPan::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGViewElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGStyledElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeExternalResourcesRequired();
-        synchronizeViewBox();
-        synchronizePreserveAspectRatio();
+        SVGFitToViewBox::synchronizeProperties(attrName);
+        SVGStyledElement::synchronizeProperty(attrName);
         return;
     }
 
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
-        synchronizeExternalResourcesRequired();
-    else if (SVGFitToViewBox::isKnownAttribute(attrName)) {
-        synchronizeViewBox();
-        synchronizePreserveAspectRatio();
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledElement::synchronizeProperty(attrName);
+        return;
     }
+
+    if (attrName == SVGNames::viewTargetAttr)
+        return;
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
+        synchronizeExternalResourcesRequired();
+        return;
+    }
+
+    if (SVGFitToViewBox::isKnownAttribute(attrName)) {
+        SVGFitToViewBox::synchronizeProperties(attrName);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGViewElement::attributeToPropertyTypeMap()

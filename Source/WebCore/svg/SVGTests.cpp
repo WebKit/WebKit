@@ -108,6 +108,13 @@ bool SVGTests::handleAttributeChange(const SVGElement* targetElement, const Qual
     return true;
 }
 
+void SVGTests::addSupportedAttributes(HashSet<QualifiedName>& supportedAttributes)
+{
+    supportedAttributes.add(SVGNames::requiredFeaturesAttr);
+    supportedAttributes.add(SVGNames::requiredExtensionsAttr);
+    supportedAttributes.add(SVGNames::systemLanguageAttr);
+}
+
 void SVGTests::synchronizeProperties(SVGElement* contextElement, const QualifiedName& attrName)
 {
     if (attrName == anyQName()) {

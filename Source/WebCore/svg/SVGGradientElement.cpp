@@ -30,6 +30,7 @@
 #include "RenderSVGPath.h"
 #include "RenderSVGResourceLinearGradient.h"
 #include "RenderSVGResourceRadialGradient.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGStopElement.h"
 #include "SVGTransformList.h"
@@ -51,73 +52,114 @@ SVGGradientElement::SVGGradientElement(const QualifiedName& tagName, Document* d
 {
 }
 
+bool SVGGradientElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGURIReference::addSupportedAttributes(supportedAttributes);
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::gradientUnitsAttr);
+        supportedAttributes.add(SVGNames::gradientTransformAttr);
+        supportedAttributes.add(SVGNames::spreadMethodAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGGradientElement::parseMappedAttribute(Attribute* attr)
 {
+    if (!isSupportedAttribute(attr->name())) {
+        SVGStyledElement::parseMappedAttribute(attr);
+        return;
+    }
+
     if (attr->name() == SVGNames::gradientUnitsAttr) {
         SVGUnitTypes::SVGUnitType propertyValue = SVGPropertyTraits<SVGUnitTypes::SVGUnitType>::fromString(attr->value());
         if (propertyValue > 0)
             setGradientUnitsBaseValue(propertyValue);
-    } else if (attr->name() == SVGNames::gradientTransformAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::gradientTransformAttr) {
         SVGTransformList newList;
         if (!SVGTransformable::parseTransformAttribute(newList, attr->value()))
             newList.clear();
 
         detachAnimatedGradientTransformListWrappers(newList.size());
         setGradientTransformBaseValue(newList);
-    } else if (attr->name() == SVGNames::spreadMethodAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::spreadMethodAttr) {
         SVGSpreadMethodType propertyValue = SVGPropertyTraits<SVGSpreadMethodType>::fromString(attr->value());
         if (propertyValue > 0)
             setSpreadMethodBaseValue(propertyValue);
-    } else {
-        if (SVGURIReference::parseMappedAttribute(attr))
-            return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-            return;
-        
-        SVGStyledElement::parseMappedAttribute(attr);
+        return;
     }
+
+    if (SVGURIReference::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGGradientElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGStyledElement::svgAttributeChanged(attrName);
-
-    RenderObject* object = renderer();
-    if (!object)
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledElement::svgAttributeChanged(attrName);
         return;
+    }
 
-    if (attrName == SVGNames::gradientUnitsAttr
-        || attrName == SVGNames::gradientTransformAttr
-        || attrName == SVGNames::spreadMethodAttr
-        || SVGURIReference::isKnownAttribute(attrName)
-        || SVGExternalResourcesRequired::isKnownAttribute(attrName)
-        || SVGStyledElement::isKnownAttribute(attrName))
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
+    if (RenderObject* object = renderer())
         object->setNeedsLayout(true);
 }
 
 void SVGGradientElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGStyledElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeGradientUnits();
         synchronizeGradientTransform();
         synchronizeSpreadMethod();
         synchronizeExternalResourcesRequired();
         synchronizeHref();
+        SVGStyledElement::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::gradientUnitsAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::gradientUnitsAttr) {
         synchronizeGradientUnits();
-    else if (attrName == SVGNames::gradientTransformAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::gradientTransformAttr) {
         synchronizeGradientTransform();
-    else if (attrName == SVGNames::spreadMethodAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::spreadMethodAttr) {
         synchronizeSpreadMethod();
-    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         synchronizeExternalResourcesRequired();
-    else if (SVGURIReference::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGURIReference::isKnownAttribute(attrName)) {
         synchronizeHref();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGGradientElement::fillPassedAttributeToPropertyTypeMap(AttributeToPropertyTypeMap& attributeToPropertyTypeMap)

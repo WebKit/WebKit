@@ -43,27 +43,53 @@ PassRefPtr<SVGMPathElement> SVGMPathElement::create(const QualifiedName& tagName
     return adoptRef(new SVGMPathElement(tagName, document));
 }
 
+bool SVGMPathElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGURIReference::addSupportedAttributes(supportedAttributes);
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGMPathElement::parseMappedAttribute(Attribute* attr)
 {
+    if (!isSupportedAttribute(attr->name())) {
+        SVGElement::parseMappedAttribute(attr);
+        return;
+    }
+
     if (SVGURIReference::parseMappedAttribute(attr))
         return;
-    SVGElement::parseMappedAttribute(attr);
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGMPathElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeExternalResourcesRequired();
         synchronizeHref();
         return;
     }
 
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+    if (!isSupportedAttribute(attrName))
+        return;
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         synchronizeExternalResourcesRequired();
-    else if (SVGURIReference::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGURIReference::isKnownAttribute(attrName)) {
         synchronizeHref();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGMPathElement::attributeToPropertyTypeMap()

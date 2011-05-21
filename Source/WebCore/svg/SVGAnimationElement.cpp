@@ -136,25 +136,57 @@ static void parseKeySplines(const String& parse, Vector<UnitBezier>& result)
         result.clear();
 }
 
+bool SVGAnimationElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGTests::addSupportedAttributes(supportedAttributes);
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::valuesAttr);
+        supportedAttributes.add(SVGNames::keyTimesAttr);
+        supportedAttributes.add(SVGNames::keyPointsAttr);
+        supportedAttributes.add(SVGNames::keySplinesAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+     
 void SVGAnimationElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == SVGNames::valuesAttr)
-        attr->value().string().split(';', m_values);
-    else if (attr->name() == SVGNames::keyTimesAttr)
-        parseKeyTimes(attr->value(), m_keyTimes, true);
-    else if (attr->name() == SVGNames::keyPointsAttr && hasTagName(SVGNames::animateMotionTag)) {
-        // This is specified to be an animateMotion attribute only but it is simpler to put it here 
-        // where the other timing calculatations are.
-        parseKeyTimes(attr->value(), m_keyPoints, false);
-    } else if (attr->name() == SVGNames::keySplinesAttr)
-        parseKeySplines(attr->value(), m_keySplines);
-    else {
-        if (SVGTests::parseMappedAttribute(attr))
-            return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-            return;
+    if (!isSupportedAttribute(attr->name())) {
         SVGSMILElement::parseMappedAttribute(attr);
+        return;
     }
+
+    if (attr->name() == SVGNames::valuesAttr) {
+        attr->value().string().split(';', m_values);
+        return;
+    }
+
+    if (attr->name() == SVGNames::keyTimesAttr) {
+        parseKeyTimes(attr->value(), m_keyTimes, true);
+        return;
+    }
+
+    if (attr->name() == SVGNames::keyPointsAttr) {
+        if (hasTagName(SVGNames::animateMotionTag)) {
+            // This is specified to be an animateMotion attribute only but it is simpler to put it here 
+            // where the other timing calculatations are.
+            parseKeyTimes(attr->value(), m_keyPoints, false);
+        }
+        return;
+    }
+
+    if (attr->name() == SVGNames::keySplinesAttr) {
+        parseKeySplines(attr->value(), m_keySplines);
+        return;
+    }
+
+    if (SVGTests::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGAnimationElement::attributeChanged(Attribute* attr, bool preserveDecls)

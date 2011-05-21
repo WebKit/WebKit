@@ -92,11 +92,10 @@ bool SVGFitToViewBox::parseMappedAttribute(Document* document, Attribute* attr)
 {
     if (attr->name() == SVGNames::viewBoxAttr) {
         FloatRect viewBox;
-        if (!attr->value().isNull()) {
-            if (!parseViewBox(document, attr->value(), viewBox))
-                return true;
-        }
+        if (!attr->value().isNull())
+            parseViewBox(document, attr->value(), viewBox);
         setViewBoxBaseValue(viewBox);
+        return true;
     } else if (attr->name() == SVGNames::preserveAspectRatioAttr) {
         SVGPreserveAspectRatio::parsePreserveAspectRatio(this, attr->value());
         return true;
@@ -105,9 +104,29 @@ bool SVGFitToViewBox::parseMappedAttribute(Document* document, Attribute* attr)
     return false;
 }
 
+void SVGFitToViewBox::synchronizeProperties(const QualifiedName& attrName)
+{
+    if (attrName == anyQName()) {
+        synchronizeViewBox();
+        synchronizePreserveAspectRatio();
+        return;
+    }
+
+    if (attrName == SVGNames::viewBoxAttr)
+        synchronizeViewBox();
+    else if (attrName == SVGNames::preserveAspectRatioAttr)
+        synchronizePreserveAspectRatio();
+}
+
 bool SVGFitToViewBox::isKnownAttribute(const QualifiedName& attrName)
 {
     return attrName == SVGNames::viewBoxAttr || attrName == SVGNames::preserveAspectRatioAttr;
+}
+
+void SVGFitToViewBox::addSupportedAttributes(HashSet<QualifiedName>& supportedAttributes)
+{
+    supportedAttributes.add(SVGNames::viewBoxAttr);
+    supportedAttributes.add(SVGNames::preserveAspectRatioAttr);
 }
 
 }

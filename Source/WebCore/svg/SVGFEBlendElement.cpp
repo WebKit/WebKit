@@ -25,6 +25,7 @@
 
 #include "Attribute.h"
 #include "FilterEffect.h"
+#include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 
@@ -47,19 +48,43 @@ PassRefPtr<SVGFEBlendElement> SVGFEBlendElement::create(const QualifiedName& tag
     return adoptRef(new SVGFEBlendElement(tagName, document));
 }
 
+bool SVGFEBlendElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        supportedAttributes.add(SVGNames::modeAttr);
+        supportedAttributes.add(SVGNames::inAttr);
+        supportedAttributes.add(SVGNames::in2Attr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGFEBlendElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
+    if (!isSupportedAttribute(attr->name())) {
+        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::modeAttr) {
         BlendModeType propertyValue = SVGPropertyTraits<BlendModeType>::fromString(value);
         if (propertyValue > 0)
             setModeBaseValue(propertyValue);
-    } else if (attr->name() == SVGNames::inAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
-    else if (attr->name() == SVGNames::in2Attr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::in2Attr) {
         setIn2BaseValue(value);
-    else
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 bool SVGFEBlendElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
@@ -74,33 +99,57 @@ bool SVGFEBlendElement::setFilterEffectAttribute(FilterEffect* effect, const Qua
 
 void SVGFEBlendElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        return;
+    }
 
-    if (attrName == SVGNames::modeAttr)
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+
+    if (attrName == SVGNames::modeAttr) {
         primitiveAttributeChanged(attrName);
+        return;
+    }
 
-    if (attrName == SVGNames::inAttr
-        || attrName == SVGNames::in2Attr)
+    if (attrName == SVGNames::inAttr || attrName == SVGNames::in2Attr) {
         invalidate();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFEBlendElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeMode();
         synchronizeIn1();
         synchronizeIn2();
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::modeAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::modeAttr) {
         synchronizeMode();
-    else if (attrName == SVGNames::inAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::inAttr) {
         synchronizeIn1();
-    else if (attrName == SVGNames::in2Attr)
+        return;
+    }
+
+    if (attrName == SVGNames::in2Attr) {
         synchronizeIn2();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGFEBlendElement::attributeToPropertyTypeMap()

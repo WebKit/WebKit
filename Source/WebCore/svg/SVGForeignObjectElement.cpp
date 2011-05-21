@@ -27,6 +27,7 @@
 #include "CSSPropertyNames.h"
 #include "RenderSVGForeignObject.h"
 #include "RenderSVGResource.h"
+#include "SVGElementInstance.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include <wtf/Assertions.h>
@@ -56,32 +57,68 @@ PassRefPtr<SVGForeignObjectElement> SVGForeignObjectElement::create(const Qualif
     return adoptRef(new SVGForeignObjectElement(tagName, document));
 }
 
+bool SVGForeignObjectElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGTests::addSupportedAttributes(supportedAttributes);
+        SVGLangSpace::addSupportedAttributes(supportedAttributes);
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::xAttr);
+        supportedAttributes.add(SVGNames::yAttr);
+        supportedAttributes.add(SVGNames::widthAttr);
+        supportedAttributes.add(SVGNames::heightAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGForeignObjectElement::parseMappedAttribute(Attribute* attr)
 {
-    const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::xAttr)
-        setXBaseValue(SVGLength(LengthModeWidth, value));
-    else if (attr->name() == SVGNames::yAttr)
-        setYBaseValue(SVGLength(LengthModeHeight, value));
-    else if (attr->name() == SVGNames::widthAttr)
-        setWidthBaseValue(SVGLength(LengthModeWidth, value));
-    else if (attr->name() == SVGNames::heightAttr)
-        setHeightBaseValue(SVGLength(LengthModeHeight, value));
-    else {
-        if (SVGTests::parseMappedAttribute(attr))
-            return;
-        if (SVGLangSpace::parseMappedAttribute(attr))
-            return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-            return;
+    if (!isSupportedAttribute(attr->name())) {
         SVGStyledTransformableElement::parseMappedAttribute(attr);
+        return;
     }
+
+    const AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::xAttr) {
+        setXBaseValue(SVGLength(LengthModeWidth, value));
+        return;
+    }
+
+    if (attr->name() == SVGNames::yAttr) {
+        setYBaseValue(SVGLength(LengthModeHeight, value));
+        return;
+    }
+
+    if (attr->name() == SVGNames::widthAttr) {
+        setWidthBaseValue(SVGLength(LengthModeWidth, value));
+        return;
+    }
+
+    if (attr->name() == SVGNames::heightAttr) {
+        setHeightBaseValue(SVGLength(LengthModeHeight, value));
+        return;
+    }
+
+    if (SVGTests::parseMappedAttribute(attr))
+        return;
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGStyledTransformableElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledTransformableElement::svgAttributeChanged(attrName);
+        return;
+    }
 
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
     bool isLengthAttribute = attrName == SVGNames::xAttr
                           || attrName == SVGNames::yAttr
                           || attrName == SVGNames::widthAttr
@@ -93,20 +130,12 @@ void SVGForeignObjectElement::svgAttributeChanged(const QualifiedName& attrName)
     if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
-    RenderObject* renderer = this->renderer();
-    if (!renderer)
-        return;
-
-    if (isLengthAttribute
-        || SVGLangSpace::isKnownAttribute(attrName)
-        || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+    if (RenderObject* renderer = this->renderer())
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
 void SVGForeignObjectElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGStyledTransformableElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeX();
         synchronizeY();
@@ -115,21 +144,46 @@ void SVGForeignObjectElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeExternalResourcesRequired();
         synchronizeHref();
         SVGTests::synchronizeProperties(this, attrName);
+        SVGStyledTransformableElement::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::xAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledTransformableElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::xAttr) {
         synchronizeX();
-    else if (attrName == SVGNames::yAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::yAttr) {
         synchronizeY();
-    else if (attrName == SVGNames::widthAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::widthAttr) {
         synchronizeWidth();
-    else if (attrName == SVGNames::heightAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::heightAttr) {
         synchronizeHeight();
-    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         synchronizeExternalResourcesRequired();
-    else if (SVGTests::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGTests::isKnownAttribute(attrName)) {
         SVGTests::synchronizeProperties(this, attrName);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGForeignObjectElement::attributeToPropertyTypeMap()

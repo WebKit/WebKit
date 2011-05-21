@@ -24,6 +24,7 @@
 
 #include "Attribute.h"
 #include "FilterEffect.h"
+#include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -67,23 +68,47 @@ void SVGFEMorphologyElement::setRadius(float x, float y)
     invalidate();
 }
 
+bool SVGFEMorphologyElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        supportedAttributes.add(SVGNames::inAttr);
+        supportedAttributes.add(SVGNames::operatorAttr);
+        supportedAttributes.add(SVGNames::radiusAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGFEMorphologyElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
+    if (!isSupportedAttribute(attr->name())) {
+        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    const AtomicString& value = attr->value();
     if (attr->name() == SVGNames::operatorAttr) {
         MorphologyOperatorType propertyValue = SVGPropertyTraits<MorphologyOperatorType>::fromString(value);
         if (propertyValue > 0)
             set_operatorBaseValue(propertyValue);
-    } else if (attr->name() == SVGNames::inAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
-    else if (attr->name() == SVGNames::radiusAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::radiusAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setRadiusXBaseValue(x);
             setRadiusYBaseValue(y);
         }
-    } else
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 bool SVGFEMorphologyElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
@@ -100,36 +125,59 @@ bool SVGFEMorphologyElement::setFilterEffectAttribute(FilterEffect* effect, cons
 
 void SVGFEMorphologyElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        return;
+    }
 
-    if (attrName == SVGNames::operatorAttr
-        || attrName == SVGNames::radiusAttr)
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
+    if (attrName == SVGNames::operatorAttr || attrName == SVGNames::radiusAttr) {
         primitiveAttributeChanged(attrName);
+        return;
+    }
 
-    if (attrName == SVGNames::inAttr)
+    if (attrName == SVGNames::inAttr) {
         invalidate();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFEMorphologyElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronize_operator();
         synchronizeIn1();
         synchronizeRadiusX();
         synchronizeRadiusY();
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::operatorAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::operatorAttr) {
         synchronize_operator();
-    else if (attrName == SVGNames::inAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::inAttr) {
         synchronizeIn1();
-    else if (attrName == SVGNames::radiusAttr) {
+        return;
+    }
+
+    if (attrName == SVGNames::radiusAttr) {
         synchronizeRadiusX();
         synchronizeRadiusY();
+        return;
     }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGFEMorphologyElement::attributeToPropertyTypeMap()

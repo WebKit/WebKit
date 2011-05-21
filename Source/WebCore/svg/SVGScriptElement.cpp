@@ -28,6 +28,7 @@
 #include "Event.h"
 #include "EventNames.h"
 #include "HTMLNames.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "ScriptEventListener.h"
 
@@ -49,31 +50,61 @@ PassRefPtr<SVGScriptElement> SVGScriptElement::create(const QualifiedName& tagNa
     return adoptRef(new SVGScriptElement(tagName, document, insertedByParser, false));
 }
 
+bool SVGScriptElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGURIReference::addSupportedAttributes(supportedAttributes);
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::typeAttr);
+        supportedAttributes.add(HTMLNames::onerrorAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGScriptElement::parseMappedAttribute(Attribute* attr)
 {
-    const QualifiedName& attrName = attr->name();
-
-    if (attrName == SVGNames::typeAttr)
-        setType(attr->value());
-    else if (attr->name() == HTMLNames::onerrorAttr)
-        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attr));
-    else {
-        if (SVGURIReference::parseMappedAttribute(attr))
-            return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-            return;
-
+    if (!isSupportedAttribute(attr->name())) {
         SVGElement::parseMappedAttribute(attr);
+        return;
     }
+
+    if (attr->name() == SVGNames::typeAttr) {
+        setType(attr->value());
+        return;
+    }
+
+    if (attr->name() == HTMLNames::onerrorAttr) {
+        setAttributeEventListener(eventNames().errorEvent, createAttributeEventListener(this, attr));
+        return;
+    }
+
+    if (SVGURIReference::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGElement::svgAttributeChanged(attrName);
+        return;
+    }
 
-    if (SVGURIReference::isKnownAttribute(attrName))
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+
+    if (attrName == SVGNames::typeAttr || attrName == HTMLNames::onerrorAttr)
+        return;
+
+    if (SVGURIReference::isKnownAttribute(attrName)) {
         handleSourceAttribute(href());
-    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         // Handle dynamic updates of the 'externalResourcesRequired' attribute. Only possible case: changing from 'true' to 'false'
         // causes an immediate dispatch of the SVGLoad event. If the attribute value was 'false' before inserting the script element
         // in the document, the SVGLoad event has already been dispatched.
@@ -83,23 +114,37 @@ void SVGScriptElement::svgAttributeChanged(const QualifiedName& attrName)
 
             sendSVGLoadEventIfPossible();
         }
+        return;
     }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGScriptElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeExternalResourcesRequired();
+        synchronizeHref();
+        SVGElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (!isSupportedAttribute(attrName)) {
+        SVGElement::synchronizeProperty(attrName);
+        return;
+    }   
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
+        synchronizeExternalResourcesRequired();
+        return;
+    }
+
+    if (SVGURIReference::isKnownAttribute(attrName)) {
         synchronizeHref();
         return;
     }
 
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
-        synchronizeExternalResourcesRequired();
-    else if (SVGURIReference::isKnownAttribute(attrName))
-        synchronizeHref();
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGScriptElement::attributeToPropertyTypeMap()

@@ -26,6 +26,7 @@
 #include "Attribute.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGPathParserFactory.h"
 #include "SVGPathSegArc.h"
@@ -178,31 +179,59 @@ PassRefPtr<SVGPathSegCurvetoQuadraticSmoothRel> SVGPathElement::createSVGPathSeg
     return SVGPathSegCurvetoQuadraticSmoothRel::create(this, role, x, y);
 }
 
+bool SVGPathElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGTests::addSupportedAttributes(supportedAttributes);
+        SVGLangSpace::addSupportedAttributes(supportedAttributes);
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::dAttr);
+        supportedAttributes.add(SVGNames::pathLengthAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGPathElement::parseMappedAttribute(Attribute* attr)
 {
+    if (!isSupportedAttribute(attr->name())) {
+        SVGStyledTransformableElement::parseMappedAttribute(attr);
+        return;
+    }
+
     if (attr->name() == SVGNames::dAttr) {
         SVGPathParserFactory* factory = SVGPathParserFactory::self();
         if (!factory->buildSVGPathByteStreamFromString(attr->value(), m_pathByteStream, UnalteredParsing))
             document()->accessSVGExtensions()->reportError("Problem parsing d=\"" + attr->value() + "\"");
-    } else if (attr->name() == SVGNames::pathLengthAttr) {
-        setPathLengthBaseValue(attr->value().toFloat());
-        if (pathLengthBaseValue() < 0.0f)
-            document()->accessSVGExtensions()->reportError("A negative value for path attribute <pathLength> is not allowed");
-    } else {
-        if (SVGTests::parseMappedAttribute(attr))
-            return;
-        if (SVGLangSpace::parseMappedAttribute(attr))
-            return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-            return;
-        SVGStyledTransformableElement::parseMappedAttribute(attr);
+        return;
     }
+
+    if (attr->name() == SVGNames::pathLengthAttr) {
+        setPathLengthBaseValue(attr->value().toFloat());
+        if (pathLengthBaseValue() < 0)
+            document()->accessSVGExtensions()->reportError("A negative value for path attribute <pathLength> is not allowed");
+        return;
+    }
+
+    if (SVGTests::parseMappedAttribute(attr))
+        return;
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGStyledTransformableElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledTransformableElement::svgAttributeChanged(attrName);
+        return;
+    }
 
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
     if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
@@ -216,43 +245,51 @@ void SVGPathElement::svgAttributeChanged(const QualifiedName& attrName)
             m_pathSegList.value = newList;
         }
 
-        if (!renderer)
-            return;
-
-        renderer->setNeedsPathUpdate();
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
-        return;
+        if (renderer)
+            renderer->setNeedsPathUpdate();
     }
 
-    if (!renderer)
-        return;
-
-    if (attrName == SVGNames::pathLengthAttr
-        || SVGLangSpace::isKnownAttribute(attrName)
-        || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+    if (renderer)
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
 void SVGPathElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGStyledTransformableElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeD();
         synchronizePathLength();
         synchronizeExternalResourcesRequired();
         SVGTests::synchronizeProperties(this, attrName);
+        SVGStyledTransformableElement::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::dAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledTransformableElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::dAttr) {
         synchronizeD();
-    else if (attrName == SVGNames::pathLengthAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::pathLengthAttr) {
         synchronizePathLength();
-    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         synchronizeExternalResourcesRequired();
-    else if (SVGTests::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGTests::isKnownAttribute(attrName)) {
         SVGTests::synchronizeProperties(this, attrName);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGPathElement::synchronizeD()

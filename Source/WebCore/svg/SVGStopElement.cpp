@@ -27,6 +27,7 @@
 #include "Document.h"
 #include "RenderSVGGradientStop.h"
 #include "RenderSVGResource.h"
+#include "SVGElementInstance.h"
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
 
@@ -47,35 +48,72 @@ PassRefPtr<SVGStopElement> SVGStopElement::create(const QualifiedName& tagName, 
     return adoptRef(new SVGStopElement(tagName, document));
 }
 
+bool SVGStopElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty())
+        supportedAttributes.add(SVGNames::offsetAttr);
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGStopElement::parseMappedAttribute(Attribute* attr)
 {
+    if (!isSupportedAttribute(attr->name())) {
+        SVGStyledElement::parseMappedAttribute(attr);
+        return;
+    }
+
     if (attr->name() == SVGNames::offsetAttr) {
         const String& value = attr->value();
         if (value.endsWith("%"))
             setOffsetBaseValue(value.left(value.length() - 1).toFloat() / 100.0f);
         else
             setOffsetBaseValue(value.toFloat());
-    } else
-        SVGStyledElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGStopElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGStyledElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledElement::svgAttributeChanged(attrName);
+        return;
+    }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (!renderer())
         return;
 
-    if (attrName == SVGNames::offsetAttr)
+    if (attrName == SVGNames::offsetAttr) {
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer());
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGStopElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGStyledElement::synchronizeProperty(attrName);
-
-    if (attrName == anyQName() || attrName == SVGNames::offsetAttr)
+    if (attrName == anyQName()) {
         synchronizeOffset();
+        SVGStyledElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::offsetAttr) {
+        synchronizeOffset();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGStopElement::attributeToPropertyTypeMap()

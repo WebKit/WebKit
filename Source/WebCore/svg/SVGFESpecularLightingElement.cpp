@@ -28,6 +28,7 @@
 #include "FilterEffect.h"
 #include "RenderStyle.h"
 #include "SVGColor.h"
+#include "SVGElementInstance.h"
 #include "SVGFELightElement.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
@@ -69,25 +70,57 @@ const AtomicString& SVGFESpecularLightingElement::kernelUnitLengthYIdentifier()
     return s_identifier;
 }
 
+bool SVGFESpecularLightingElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        supportedAttributes.add(SVGNames::inAttr);
+        supportedAttributes.add(SVGNames::specularConstantAttr);
+        supportedAttributes.add(SVGNames::specularExponentAttr);
+        supportedAttributes.add(SVGNames::surfaceScaleAttr);
+        supportedAttributes.add(SVGNames::kernelUnitLengthAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGFESpecularLightingElement::parseMappedAttribute(Attribute* attr)
-{    
-    const String& value = attr->value();
-    if (attr->name() == SVGNames::inAttr)
+{
+    if (!isSupportedAttribute(attr->name())) {
+        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    const AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
-    else if (attr->name() == SVGNames::surfaceScaleAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::surfaceScaleAttr) {
         setSurfaceScaleBaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::specularConstantAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::specularConstantAttr) {
         setSpecularConstantBaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::specularExponentAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::specularExponentAttr) {
         setSpecularExponentBaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::kernelUnitLengthAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::kernelUnitLengthAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setKernelUnitLengthXBaseValue(x);
             setKernelUnitLengthYBaseValue(y);
         }
-    } else
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 bool SVGFESpecularLightingElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
@@ -139,16 +172,27 @@ bool SVGFESpecularLightingElement::setFilterEffectAttribute(FilterEffect* effect
 
 void SVGFESpecularLightingElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        return;
+    }
 
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
     if (attrName == SVGNames::surfaceScaleAttr
         || attrName == SVGNames::specularConstantAttr
         || attrName == SVGNames::specularExponentAttr
-        || attrName == SVGNames::kernelUnitLengthAttr)
+        || attrName == SVGNames::kernelUnitLengthAttr) {
         primitiveAttributeChanged(attrName);
+        return;
+    }
 
-    if (attrName == SVGNames::inAttr)
+    if (attrName == SVGNames::inAttr) {
         invalidate();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFESpecularLightingElement::lightElementAttributeChanged(const SVGFELightElement* lightElement, const QualifiedName& attrName)
@@ -162,8 +206,6 @@ void SVGFESpecularLightingElement::lightElementAttributeChanged(const SVGFELight
 
 void SVGFESpecularLightingElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeIn1();
         synchronizeSurfaceScale();
@@ -171,21 +213,42 @@ void SVGFESpecularLightingElement::synchronizeProperty(const QualifiedName& attr
         synchronizeSpecularExponent();
         synchronizeKernelUnitLengthX();
         synchronizeKernelUnitLengthY();
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::inAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::inAttr) {
         synchronizeIn1();
-    else if (attrName == SVGNames::surfaceScaleAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::surfaceScaleAttr) {
         synchronizeSurfaceScale();
-    else if (attrName == SVGNames::specularConstantAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::specularConstantAttr) {
         synchronizeSpecularConstant();
-    else if (attrName == SVGNames::specularExponentAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::specularExponentAttr) {
         synchronizeSpecularExponent();
-    else if (attrName == SVGNames::kernelUnitLengthAttr) {
+        return;
+    }
+
+    if (attrName == SVGNames::kernelUnitLengthAttr) {
         synchronizeKernelUnitLengthX();
         synchronizeKernelUnitLengthY();
+        return;
     }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGFESpecularLightingElement::attributeToPropertyTypeMap()

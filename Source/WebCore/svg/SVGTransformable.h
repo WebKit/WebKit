@@ -48,8 +48,6 @@ public:
 
     virtual AffineTransform localCoordinateSpaceTransform(SVGLocatable::CTMScope) const { return animatedLocalTransform(); }
     virtual AffineTransform animatedLocalTransform() const = 0;
-
-    bool isKnownAttribute(const QualifiedName&);
 };
 
 } // namespace WebCore

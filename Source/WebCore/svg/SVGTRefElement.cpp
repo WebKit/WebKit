@@ -26,6 +26,7 @@
 #include "RenderSVGInline.h"
 #include "RenderSVGResource.h"
 #include "SVGDocument.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "Text.h"
 #include "XLinkNames.h"
@@ -56,33 +57,68 @@ void SVGTRefElement::updateReferencedText()
     setTextContent(textContent, ignore);
 }
 
+bool SVGTRefElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty())
+        SVGURIReference::addSupportedAttributes(supportedAttributes);
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGTRefElement::parseMappedAttribute(Attribute* attr)
 {
+    if (!isSupportedAttribute(attr->name())) {
+        SVGTextPositioningElement::parseMappedAttribute(attr);
+        return;
+    }
+
     if (SVGURIReference::parseMappedAttribute(attr)) {
         updateReferencedText();
         return;
     }
 
-    SVGTextPositioningElement::parseMappedAttribute(attr);
+    ASSERT_NOT_REACHED();
 }
 
 void SVGTRefElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGTextPositioningElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGTextPositioningElement::svgAttributeChanged(attrName);
+        return;
+    }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (!renderer())
         return;
 
-    if (SVGURIReference::isKnownAttribute(attrName))
+    if (SVGURIReference::isKnownAttribute(attrName)) {
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer());
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGTRefElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGTextPositioningElement::synchronizeProperty(attrName);
-
-    if (attrName == anyQName() || SVGURIReference::isKnownAttribute(attrName))
+    if (attrName == anyQName()) {
         synchronizeHref();
+        SVGTextPositioningElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (!isSupportedAttribute(attrName)) {
+        SVGTextPositioningElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (SVGURIReference::isKnownAttribute(attrName)) {
+        synchronizeHref();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGTRefElement::attributeToPropertyTypeMap()

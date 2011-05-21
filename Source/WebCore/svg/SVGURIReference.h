@@ -35,6 +35,7 @@ public:
 
     bool parseMappedAttribute(Attribute*);
     bool isKnownAttribute(const QualifiedName&);
+    void addSupportedAttributes(HashSet<QualifiedName>&);
 
     static String getTarget(const String& url);
 

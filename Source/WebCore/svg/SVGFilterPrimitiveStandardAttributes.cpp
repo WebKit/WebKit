@@ -27,6 +27,7 @@
 #include "Attribute.h"
 #include "FilterEffect.h"
 #include "RenderSVGResourceFilterPrimitive.h"
+#include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
@@ -53,21 +54,53 @@ SVGFilterPrimitiveStandardAttributes::SVGFilterPrimitiveStandardAttributes(const
     // Spec: If the width/height attribute is not specified, the effect is as if a value of "100%" were specified.
 }
 
+bool SVGFilterPrimitiveStandardAttributes::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        supportedAttributes.add(SVGNames::xAttr);
+        supportedAttributes.add(SVGNames::yAttr);
+        supportedAttributes.add(SVGNames::widthAttr);
+        supportedAttributes.add(SVGNames::heightAttr);
+        supportedAttributes.add(SVGNames::resultAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(Attribute* attr)
 {
+    if (!isSupportedAttribute(attr->name())) {
+        SVGStyledElement::parseMappedAttribute(attr);
+        return;
+    }
+
     const AtomicString& value = attr->value();
-    if (attr->name() == SVGNames::xAttr)
+    if (attr->name() == SVGNames::xAttr) {
         setXBaseValue(SVGLength(LengthModeWidth, value));
-    else if (attr->name() == SVGNames::yAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::yAttr) {
         setYBaseValue(SVGLength(LengthModeHeight, value));
-    else if (attr->name() == SVGNames::widthAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::widthAttr) {
         setWidthBaseValue(SVGLength(LengthModeWidth, value));
-    else if (attr->name() == SVGNames::heightAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::heightAttr) {
         setHeightBaseValue(SVGLength(LengthModeHeight, value));
-    else if (attr->name() == SVGNames::resultAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::resultAttr) {
         setResultBaseValue(value);
-    else
-        return SVGStyledElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 bool SVGFilterPrimitiveStandardAttributes::setFilterEffectAttribute(FilterEffect*, const QualifiedName&)
@@ -79,39 +112,58 @@ bool SVGFilterPrimitiveStandardAttributes::setFilterEffectAttribute(FilterEffect
 
 void SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGStyledElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledElement::svgAttributeChanged(attrName);
+        return;
+    }
 
-    if (attrName == SVGNames::xAttr
-        || attrName == SVGNames::yAttr
-        || attrName == SVGNames::widthAttr
-        || attrName == SVGNames::heightAttr
-        || attrName == SVGNames::resultAttr)
-        invalidate();
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);    
+    invalidate();
 }
 
 void SVGFilterPrimitiveStandardAttributes::synchronizeProperty(const QualifiedName& attrName)
-{
-    SVGStyledElement::synchronizeProperty(attrName);
-
+{    
     if (attrName == anyQName()) {
         synchronizeX();
         synchronizeY();
         synchronizeWidth();
         synchronizeHeight();
         synchronizeResult();
+        SVGStyledElement::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::xAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::xAttr) {
         synchronizeX();
-    else if (attrName == SVGNames::yAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::yAttr) {
         synchronizeY();
-    else if (attrName == SVGNames::widthAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::widthAttr) {
         synchronizeWidth();
-    else if (attrName == SVGNames::heightAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::heightAttr) {
         synchronizeHeight();
-    else if (attrName == SVGNames::resultAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::resultAttr) {
         synchronizeResult();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFilterPrimitiveStandardAttributes::childrenChanged(bool changedByParser, Node* beforeChange, Node* afterChange, int childCountDelta)

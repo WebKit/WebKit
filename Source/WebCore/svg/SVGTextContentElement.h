@@ -65,6 +65,7 @@ protected:
 
     virtual bool isValid() const { return SVGTests::isValid(); }
 
+    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);
     virtual void synchronizeProperty(const QualifiedName&);

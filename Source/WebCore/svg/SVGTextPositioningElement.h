@@ -35,6 +35,7 @@ public:
 protected:
     SVGTextPositioningElement(const QualifiedName&, Document*);
 
+    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void childrenChanged(bool changedByParser = false, Node* beforeChange = 0, Node* afterChange = 0, int childCountDelta = 0);
     virtual void svgAttributeChanged(const QualifiedName&);

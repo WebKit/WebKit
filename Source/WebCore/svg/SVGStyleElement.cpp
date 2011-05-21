@@ -86,15 +86,33 @@ void SVGStyleElement::setTitle(const AtomicString& title, ExceptionCode& ec)
     setAttribute(SVGNames::titleAttr, title, ec);
 }
 
+bool SVGStyleElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGLangSpace::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::titleAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGStyleElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == SVGNames::titleAttr && m_sheet)
-        m_sheet->setTitle(attr->value());
-    else {
-        if (SVGLangSpace::parseMappedAttribute(attr))
-            return;
+    if (!isSupportedAttribute(attr->name())) {
         SVGElement::parseMappedAttribute(attr);
+        return;
     }
+
+    if (attr->name() == SVGNames::titleAttr) {
+        if (m_sheet)
+            m_sheet->setTitle(attr->value());
+        return;
+    }
+
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGStyleElement::finishParsingChildren()

@@ -49,6 +49,7 @@ public:
 private:
     SVGStyleElement(const QualifiedName&, Document*, bool createdByParser);
 
+    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();

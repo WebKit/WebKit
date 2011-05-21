@@ -44,6 +44,7 @@ public:
 private:
     SVGTextElement(const QualifiedName&, Document*);
 
+    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
 
     virtual AffineTransform* supplementalTransform();

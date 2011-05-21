@@ -27,6 +27,7 @@
 #include "FloatPoint.h"
 #include "RenderSVGPath.h"
 #include "RenderSVGResource.h"
+#include "SVGElementInstance.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 
@@ -54,34 +55,70 @@ PassRefPtr<SVGEllipseElement> SVGEllipseElement::create(const QualifiedName& tag
     return adoptRef(new SVGEllipseElement(tagName, document));
 }
 
+bool SVGEllipseElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGTests::addSupportedAttributes(supportedAttributes);
+        SVGLangSpace::addSupportedAttributes(supportedAttributes);
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+        supportedAttributes.add(SVGNames::cxAttr);
+        supportedAttributes.add(SVGNames::cyAttr);
+        supportedAttributes.add(SVGNames::rxAttr);
+        supportedAttributes.add(SVGNames::ryAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGEllipseElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == SVGNames::cxAttr)
+    if (!isSupportedAttribute(attr->name())) {
+        SVGStyledTransformableElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    if (attr->name() == SVGNames::cxAttr) {
         setCxBaseValue(SVGLength(LengthModeWidth, attr->value()));
-    else if (attr->name() == SVGNames::cyAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::cyAttr) {
         setCyBaseValue(SVGLength(LengthModeHeight, attr->value()));
-    else if (attr->name() == SVGNames::rxAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::rxAttr) {
         setRxBaseValue(SVGLength(LengthModeWidth, attr->value()));
         if (rxBaseValue().value(this) < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for ellipse <rx> is not allowed");
-    } else if (attr->name() == SVGNames::ryAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::ryAttr) {
         setRyBaseValue(SVGLength(LengthModeHeight, attr->value()));
         if (ryBaseValue().value(this) < 0.0)
             document()->accessSVGExtensions()->reportError("A negative value for ellipse <ry> is not allowed");
-    } else {
-        if (SVGTests::parseMappedAttribute(attr))
-            return;
-        if (SVGLangSpace::parseMappedAttribute(attr))
-            return;
-        if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
-            return;
-        SVGStyledTransformableElement::parseMappedAttribute(attr);
+        return;
     }
+
+    if (SVGTests::parseMappedAttribute(attr))
+        return;
+    if (SVGLangSpace::parseMappedAttribute(attr))
+        return;
+    if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
+        return;
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGStyledTransformableElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledTransformableElement::svgAttributeChanged(attrName);
+        return;
+    }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     bool isLengthAttribute = attrName == SVGNames::cxAttr
                           || attrName == SVGNames::cyAttr
@@ -104,15 +141,16 @@ void SVGEllipseElement::svgAttributeChanged(const QualifiedName& attrName)
         return;
     }
 
-    if (SVGLangSpace::isKnownAttribute(attrName)
-        || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+    if (SVGLangSpace::isKnownAttribute(attrName) || SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGEllipseElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGStyledTransformableElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeCx();
         synchronizeCy();
@@ -120,21 +158,46 @@ void SVGEllipseElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeRy();
         synchronizeExternalResourcesRequired();
         SVGTests::synchronizeProperties(this, attrName);
+        SVGStyledTransformableElement::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::cxAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledTransformableElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::cxAttr) {
         synchronizeCx();
-    else if (attrName == SVGNames::cyAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::cyAttr) {
         synchronizeCy();
-    else if (attrName == SVGNames::rxAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::rxAttr) {
         synchronizeRx();
-    else if (attrName == SVGNames::ryAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::ryAttr) {
         synchronizeRy();
-    else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
         synchronizeExternalResourcesRequired();
-    else if (SVGTests::isKnownAttribute(attrName))
+        return;
+    }
+
+    if (SVGTests::isKnownAttribute(attrName)) {
         SVGTests::synchronizeProperties(this, attrName);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGEllipseElement::attributeToPropertyTypeMap()

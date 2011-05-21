@@ -45,6 +45,8 @@ public:
 private:
     SVGViewElement(const QualifiedName&, Document*);
 
+    // FIXME: svgAttributeChanged missing.
+    bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void synchronizeProperty(const QualifiedName&);
     virtual void fillAttributeToPropertyTypeMap();

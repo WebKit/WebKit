@@ -27,6 +27,7 @@
 #include "FloatPoint.h"
 #include "IntPoint.h"
 #include "IntSize.h"
+#include "SVGElementInstance.h"
 #include "SVGFilterBuilder.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -83,47 +84,99 @@ const AtomicString& SVGFEConvolveMatrixElement::orderYIdentifier()
     return s_identifier;
 }
 
+bool SVGFEConvolveMatrixElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        supportedAttributes.add(SVGNames::inAttr);
+        supportedAttributes.add(SVGNames::orderAttr);
+        supportedAttributes.add(SVGNames::kernelMatrixAttr);
+        supportedAttributes.add(SVGNames::edgeModeAttr);
+        supportedAttributes.add(SVGNames::divisorAttr);
+        supportedAttributes.add(SVGNames::biasAttr);
+        supportedAttributes.add(SVGNames::targetXAttr);
+        supportedAttributes.add(SVGNames::targetYAttr);
+        supportedAttributes.add(SVGNames::kernelUnitLengthAttr);
+        supportedAttributes.add(SVGNames::preserveAlphaAttr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGFEConvolveMatrixElement::parseMappedAttribute(Attribute* attr)
 {
-    const String& value = attr->value();
-    if (attr->name() == SVGNames::inAttr)
+    if (!isSupportedAttribute(attr->name())) {
+        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    const AtomicString& value = attr->value();
+    if (attr->name() == SVGNames::inAttr) {
         setIn1BaseValue(value);
-    else if (attr->name() == SVGNames::orderAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::orderAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setOrderXBaseValue(x);
             setOrderYBaseValue(y);
         }
-    } else if (attr->name() == SVGNames::edgeModeAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::edgeModeAttr) {
         EdgeModeType propertyValue = SVGPropertyTraits<EdgeModeType>::fromString(attr->value());
         if (propertyValue > 0)
             setEdgeModeBaseValue(propertyValue);
-    } else if (attr->name() == SVGNames::kernelMatrixAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::kernelMatrixAttr) {
         SVGNumberList newList;
         newList.parse(value);
         detachAnimatedKernelMatrixListWrappers(newList.size());
         setKernelMatrixBaseValue(newList);
-    } else if (attr->name() == SVGNames::divisorAttr)
+        return;
+    }
+
+    if (attr->name() == SVGNames::divisorAttr) {
         setDivisorBaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::biasAttr)
+        return;
+    }
+    
+    if (attr->name() == SVGNames::biasAttr) {
         setBiasBaseValue(value.toFloat());
-    else if (attr->name() == SVGNames::targetXAttr)
-        setTargetXBaseValue(value.toUIntStrict());
-    else if (attr->name() == SVGNames::targetYAttr)
-        setTargetYBaseValue(value.toUIntStrict());
-    else if (attr->name() == SVGNames::kernelUnitLengthAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::targetXAttr) {
+        setTargetXBaseValue(value.string().toUIntStrict());
+        return;
+    }
+
+    if (attr->name() == SVGNames::targetYAttr) {
+        setTargetYBaseValue(value.string().toUIntStrict());
+        return;
+    }
+
+    if (attr->name() == SVGNames::kernelUnitLengthAttr) {
         float x, y;
         if (parseNumberOptionalNumber(value, x, y)) {
             setKernelUnitLengthXBaseValue(x);
             setKernelUnitLengthYBaseValue(y);
         }
-    } else if (attr->name() == SVGNames::preserveAlphaAttr) {
+        return;
+    }
+
+    if (attr->name() == SVGNames::preserveAlphaAttr) {
         if (value == "true")
             setPreserveAlphaBaseValue(true);
         else if (value == "false")
             setPreserveAlphaBaseValue(false);
-    } else
-        SVGFilterPrimitiveStandardAttributes::parseMappedAttribute(attr);
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 bool SVGFEConvolveMatrixElement::setFilterEffectAttribute(FilterEffect* effect, const QualifiedName& attrName)
@@ -164,7 +217,12 @@ void SVGFEConvolveMatrixElement::setKernelUnitLength(float x, float y)
 
 void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::svgAttributeChanged(attrName);
+        return;
+    }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
 
     if (attrName == SVGNames::edgeModeAttr
         || attrName == SVGNames::divisorAttr
@@ -172,19 +230,23 @@ void SVGFEConvolveMatrixElement::svgAttributeChanged(const QualifiedName& attrNa
         || attrName == SVGNames::targetXAttr
         || attrName == SVGNames::targetYAttr
         || attrName == SVGNames::kernelUnitLengthAttr
-        || attrName == SVGNames::preserveAlphaAttr)
+        || attrName == SVGNames::preserveAlphaAttr) {
         primitiveAttributeChanged(attrName);
+        return;
+    }
 
     if (attrName == SVGNames::inAttr
         || attrName == SVGNames::orderAttr
-        || attrName == SVGNames::kernelMatrixAttr)
+        || attrName == SVGNames::kernelMatrixAttr) {
         invalidate();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGFEConvolveMatrixElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeEdgeMode();
         synchronizeDivisor();
@@ -194,24 +256,52 @@ void SVGFEConvolveMatrixElement::synchronizeProperty(const QualifiedName& attrNa
         synchronizeKernelUnitLengthX();
         synchronizeKernelUnitLengthY();
         synchronizePreserveAlpha();
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::edgeModeAttr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGFilterPrimitiveStandardAttributes::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (attrName == SVGNames::edgeModeAttr) {
         synchronizeEdgeMode();
-    else if (attrName == SVGNames::divisorAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::divisorAttr) {
         synchronizeDivisor();
-    else if (attrName == SVGNames::biasAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::biasAttr) {
         synchronizeBias();
-    else if (attrName == SVGNames::targetXAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::targetXAttr) {
         synchronizeTargetX();
-    else if (attrName == SVGNames::targetYAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::targetYAttr) {
         synchronizeTargetY();
-    else if (attrName == SVGNames::kernelUnitLengthAttr) {
+        return;
+    }
+
+    if (attrName == SVGNames::kernelUnitLengthAttr) {
         synchronizeKernelUnitLengthX();
         synchronizeKernelUnitLengthY();
-    } else if (attrName == SVGNames::preserveAlphaAttr)
+        return;
+    }
+
+    if (attrName == SVGNames::preserveAlphaAttr) {
         synchronizePreserveAlpha();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGFEConvolveMatrixElement::attributeToPropertyTypeMap()

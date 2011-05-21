@@ -26,6 +26,7 @@
 #include "RenderSVGHiddenContainer.h"
 #include "RenderSVGResource.h"
 #include "RenderSVGTransformableContainer.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 
 namespace WebCore {
@@ -44,8 +45,24 @@ PassRefPtr<SVGGElement> SVGGElement::create(const QualifiedName& tagName, Docume
     return adoptRef(new SVGGElement(tagName, document));
 }
 
+bool SVGGElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        SVGTests::addSupportedAttributes(supportedAttributes);
+        SVGLangSpace::addSupportedAttributes(supportedAttributes);
+        SVGExternalResourcesRequired::addSupportedAttributes(supportedAttributes);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGGElement::parseMappedAttribute(Attribute* attr)
 {
+    if (!isSupportedAttribute(attr->name())) {
+        SVGStyledTransformableElement::parseMappedAttribute(attr);
+        return;
+    }
+
     if (SVGTests::parseMappedAttribute(attr))
         return;
     if (SVGLangSpace::parseMappedAttribute(attr))
@@ -53,39 +70,50 @@ void SVGGElement::parseMappedAttribute(Attribute* attr)
     if (SVGExternalResourcesRequired::parseMappedAttribute(attr))
         return;
 
-    SVGStyledTransformableElement::parseMappedAttribute(attr);
+    ASSERT_NOT_REACHED();
 }
 
 void SVGGElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGStyledTransformableElement::svgAttributeChanged(attrName);
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledTransformableElement::svgAttributeChanged(attrName);
+        return;
+    }
 
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
     if (SVGTests::handleAttributeChange(this, attrName))
         return;
 
-    RenderObject* renderer = this->renderer();
-    if (!renderer)
-        return;
-
-    if (SVGLangSpace::isKnownAttribute(attrName)
-        || SVGExternalResourcesRequired::isKnownAttribute(attrName))
+    if (RenderObject* renderer = this->renderer())
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);
 }
 
 void SVGGElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGStyledTransformableElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeExternalResourcesRequired();
+        SVGTests::synchronizeProperties(this, attrName);
+        SVGStyledTransformableElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (!isSupportedAttribute(attrName)) {
+        SVGStyledTransformableElement::synchronizeProperty(attrName);
+        return;
+    }
+
+    if (SVGExternalResourcesRequired::isKnownAttribute(attrName)) {
+        synchronizeExternalResourcesRequired();
+        return;
+    }
+
+    if (SVGTests::isKnownAttribute(attrName)) {
         SVGTests::synchronizeProperties(this, attrName);
         return;
     }
 
-    if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
-        synchronizeExternalResourcesRequired();
-    else if (SVGTests::isKnownAttribute(attrName))
-        SVGTests::synchronizeProperties(this, attrName);
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGGElement::attributeToPropertyTypeMap()

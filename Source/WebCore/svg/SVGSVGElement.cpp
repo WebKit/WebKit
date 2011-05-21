@@ -42,6 +42,7 @@
 #include "RenderSVGViewportContainer.h"
 #include "SMILTimeContainer.h"
 #include "SVGAngle.h"
+#include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGPreserveAspectRatio.h"
 #include "SVGTransform.h"
@@ -299,9 +300,7 @@ static void updateCSSForAttribute(SVGSVGElement* element, const QualifiedName& a
 }
 
 void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
-{
-    SVGStyledElement::svgAttributeChanged(attrName);
-
+{ 
     // FIXME: Ugly, ugly hack to around that parseMappedAttribute is not called
     // when svg.width.baseValue = 100 is evaluated.
     // Thus the CSS length value for width is not updated, and width() computeLogicalWidth()
@@ -324,33 +323,33 @@ void SVGSVGElement::svgAttributeChanged(const QualifiedName& attrName)
         updateRelativeLengthsInformation();
     }
 
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
     if (SVGTests::handleAttributeChange(this, attrName))
-        return;
-
-    if (!renderer())
         return;
 
     if (updateRelativeLengths
         || SVGLangSpace::isKnownAttribute(attrName)
         || SVGExternalResourcesRequired::isKnownAttribute(attrName)
-        || SVGZoomAndPan::isKnownAttribute(attrName)
-        || SVGStyledLocatableElement::isKnownAttribute(attrName))
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer());
+        || SVGZoomAndPan::isKnownAttribute(attrName)) {
+        if (renderer())
+            RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer());
+        return;
+    }
+
+    SVGStyledElement::svgAttributeChanged(attrName);
 }
 
 void SVGSVGElement::synchronizeProperty(const QualifiedName& attrName)
 {
-    SVGStyledElement::synchronizeProperty(attrName);
-
     if (attrName == anyQName()) {
         synchronizeX();
         synchronizeY();
         synchronizeWidth();
         synchronizeHeight();
         synchronizeExternalResourcesRequired();
-        synchronizeViewBox();
-        synchronizePreserveAspectRatio();
+        SVGFitToViewBox::synchronizeProperties(attrName);
         SVGTests::synchronizeProperties(this, attrName);
+        SVGStyledElement::synchronizeProperty(attrName);
         return;
     }
 
@@ -364,12 +363,12 @@ void SVGSVGElement::synchronizeProperty(const QualifiedName& attrName)
         synchronizeHeight();
     else if (SVGExternalResourcesRequired::isKnownAttribute(attrName))
         synchronizeExternalResourcesRequired();
-    else if (attrName == SVGNames::viewBoxAttr)
-        synchronizeViewBox();
-    else if (attrName == SVGNames::preserveAspectRatioAttr)
-        synchronizePreserveAspectRatio();
+    else if (SVGFitToViewBox::isKnownAttribute(attrName)) 
+        SVGFitToViewBox::synchronizeProperties(attrName);
     else if (SVGTests::isKnownAttribute(attrName))
         SVGTests::synchronizeProperties(this, attrName);
+    else
+        SVGStyledElement::synchronizeProperty(attrName);
 }
 
 AttributeToPropertyTypeMap& SVGSVGElement::attributeToPropertyTypeMap()

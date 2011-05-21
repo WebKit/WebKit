@@ -31,6 +31,7 @@
 #include "FloatPoint.h"
 #include "LinearGradientAttributes.h"
 #include "RenderSVGResourceLinearGradient.h"
+#include "SVGElementInstance.h"
 #include "SVGLength.h"
 #include "SVGNames.h"
 #include "SVGTransform.h"
@@ -61,58 +62,100 @@ PassRefPtr<SVGLinearGradientElement> SVGLinearGradientElement::create(const Qual
     return adoptRef(new SVGLinearGradientElement(tagName, document));
 }
 
+bool SVGLinearGradientElement::isSupportedAttribute(const QualifiedName& attrName)
+{
+    DEFINE_STATIC_LOCAL(HashSet<QualifiedName>, supportedAttributes, ());
+    if (supportedAttributes.isEmpty()) {
+        supportedAttributes.add(SVGNames::x1Attr);
+        supportedAttributes.add(SVGNames::x2Attr);
+        supportedAttributes.add(SVGNames::y1Attr);
+        supportedAttributes.add(SVGNames::y2Attr);
+    }
+    return supportedAttributes.contains(attrName);
+}
+
 void SVGLinearGradientElement::parseMappedAttribute(Attribute* attr)
 {
-    if (attr->name() == SVGNames::x1Attr)
-        setX1BaseValue(SVGLength(LengthModeWidth, attr->value()));
-    else if (attr->name() == SVGNames::y1Attr)
-        setY1BaseValue(SVGLength(LengthModeHeight, attr->value()));
-    else if (attr->name() == SVGNames::x2Attr)
-        setX2BaseValue(SVGLength(LengthModeWidth, attr->value()));
-    else if (attr->name() == SVGNames::y2Attr)
-        setY2BaseValue(SVGLength(LengthModeHeight, attr->value()));
-    else
+    if (!isSupportedAttribute(attr->name())) {
         SVGGradientElement::parseMappedAttribute(attr);
+        return;
+    }
+
+    if (attr->name() == SVGNames::x1Attr) {
+        setX1BaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::y1Attr) {
+        setY1BaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::x2Attr) {
+        setX2BaseValue(SVGLength(LengthModeWidth, attr->value()));
+        return;
+    }
+
+    if (attr->name() == SVGNames::y2Attr) {
+        setY2BaseValue(SVGLength(LengthModeHeight, attr->value()));
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 void SVGLinearGradientElement::svgAttributeChanged(const QualifiedName& attrName)
 {
-    SVGGradientElement::svgAttributeChanged(attrName);
-
-    if (attrName == SVGNames::x1Attr
-        || attrName == SVGNames::y1Attr
-        || attrName == SVGNames::x2Attr
-        || attrName == SVGNames::y2Attr) {
-        updateRelativeLengthsInformation();
-
-        RenderObject* object = renderer();
-        if (!object)
-            return;
-
-        object->setNeedsLayout(true);
+    if (!isSupportedAttribute(attrName)) {
+        SVGGradientElement::svgAttributeChanged(attrName);
+        return;
     }
+
+    SVGElementInstance::InvalidationGuard invalidationGuard(this);
+    
+    updateRelativeLengthsInformation();
+
+    if (RenderObject* object = renderer())
+        object->setNeedsLayout(true);
 }
 
 void SVGLinearGradientElement::synchronizeProperty(const QualifiedName& attrName)
-{
-    SVGGradientElement::synchronizeProperty(attrName);
-
+{    
     if (attrName == anyQName()) {
         synchronizeX1();
         synchronizeY1();
         synchronizeX2();
         synchronizeY2();
+        SVGGradientElement::synchronizeProperty(attrName);
         return;
     }
 
-    if (attrName == SVGNames::x1Attr)
+    if (!isSupportedAttribute(attrName)) {
+        SVGGradientElement::synchronizeProperty(attrName);
+        return;
+    }   
+
+    if (attrName == SVGNames::x1Attr) {
         synchronizeX1();
-    else if (attrName == SVGNames::y1Attr)
+        return;
+    }
+
+    if (attrName == SVGNames::y1Attr) {
         synchronizeY1();
-    else if (attrName == SVGNames::x2Attr)
+        return;
+    }
+
+    if (attrName == SVGNames::x2Attr) {
         synchronizeX2();
-    else if (attrName == SVGNames::y2Attr)
+        return;
+    }
+
+    if (attrName == SVGNames::y2Attr) {
         synchronizeY2();
+        return;
+    }
+
+    ASSERT_NOT_REACHED();
 }
 
 AttributeToPropertyTypeMap& SVGLinearGradientElement::attributeToPropertyTypeMap()
