@@ -38,6 +38,7 @@ using namespace std;
 namespace WebCore {
 
 const double DefaultGrainDuration = 0.020; // 20ms
+const double UnknownTime = -1;
 
 PassRefPtr<AudioBufferSourceNode> AudioBufferSourceNode::create(AudioContext* context, double sampleRate)
 {
@@ -51,6 +52,7 @@ AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, double sampl
     , m_isLooping(false)
     , m_hasFinished(false)
     , m_startTime(0.0)
+    , m_endTime(UnknownTime)
     , m_schedulingFrameDelay(0)
     , m_readIndex(0)
     , m_isGrain(false)
@@ -94,6 +96,13 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         double quantumStartTime = context()->currentTime();
         double quantumEndTime = quantumStartTime + framesToProcess / sampleRate;
 
+        // If we know the end time and it's already passed, then don't bother doing any more rendering this cycle.
+        if (m_endTime != UnknownTime && m_endTime <= quantumStartTime) {
+            m_isPlaying = false;
+            m_readIndex = 0;
+            finish();
+        }
+        
         if (!m_isPlaying || m_hasFinished || !buffer() || m_startTime >= quantumEndTime) {
             // FIXME: can optimize here by propagating silent hint instead of forcing the whole chain to process silence.
             outputBus->zero();
@@ -126,6 +135,25 @@ void AudioBufferSourceNode::process(size_t framesToProcess)
         // Apply the gain (in-place) to the output bus.
         double totalGain = gain()->value() * m_buffer->gain();
         outputBus->copyWithGainFrom(*outputBus, &m_lastGain, totalGain);
+
+        // If the end time is somewhere in the middle of this time quantum, then simply zero out the
+        // frames starting at the end time.
+        if (m_endTime != UnknownTime && m_endTime >= quantumStartTime && m_endTime < quantumEndTime) {
+            unsigned zeroStartFrame = (m_endTime - quantumStartTime) * sampleRate;
+            unsigned framesToZero = framesToProcess - zeroStartFrame;
+
+            bool isSafe = zeroStartFrame < framesToProcess && framesToZero <= framesToProcess && zeroStartFrame + framesToZero <= framesToProcess;
+            ASSERT(isSafe);
+            
+            if (isSafe) {
+                for (unsigned i = 0; i < outputBus->numberOfChannels(); ++i)
+                    memset(outputBus->channel(i)->data() + zeroStartFrame, 0, sizeof(float) * framesToZero);
+            }
+
+            m_isPlaying = false;
+            m_readIndex = 0;
+            finish();
+        }
 
         m_processLock.unlock();
     } else {
@@ -249,11 +277,7 @@ void AudioBufferSourceNode::provideInput(AudioBus* bus, size_t numberOfFrames)
                         memset(destinationR, 0, sizeof(float) * framesToProcess);
                 }
 
-                if (!m_hasFinished) {
-                    // Let the context dereference this AudioNode.
-                    context()->notifyNodeFinishedProcessing(this);
-                    m_hasFinished = true;
-                }
+                finish();
                 return;
             }
         }
@@ -342,6 +366,15 @@ void AudioBufferSourceNode::reset()
     m_lastGain = gain()->value();
 }
 
+void AudioBufferSourceNode::finish()
+{
+    if (!m_hasFinished) {
+        // Let the context dereference this AudioNode.
+        context()->notifyNodeFinishedProcessing(this);
+        m_hasFinished = true;
+    }
+}
+
 void AudioBufferSourceNode::setBuffer(AudioBuffer* buffer)
 {
     ASSERT(isMainThread());
@@ -399,7 +432,7 @@ void AudioBufferSourceNode::noteGrainOn(double when, double grainOffset, double 
     maxGrainOffset = max(0.0, maxGrainOffset);
 
     grainOffset = max(0.0, grainOffset);
-    grainOffset = min(maxGrainOffset, grainOffset);    
+    grainOffset = min(maxGrainOffset, grainOffset);
     m_grainOffset = grainOffset;
 
     m_grainDuration = grainDuration;
@@ -411,15 +444,14 @@ void AudioBufferSourceNode::noteGrainOn(double when, double grainOffset, double 
     m_isPlaying = true;
 }
 
-void AudioBufferSourceNode::noteOff(double)
+void AudioBufferSourceNode::noteOff(double when)
 {
     ASSERT(isMainThread());
     if (!m_isPlaying)
         return;
-        
-    // FIXME: the "when" argument to this method is ignored.
-    m_isPlaying = false;
-    m_readIndex = 0;
+    
+    when = max(0.0, when);
+    m_endTime = when;
 }
 
 double AudioBufferSourceNode::totalPitchRate()

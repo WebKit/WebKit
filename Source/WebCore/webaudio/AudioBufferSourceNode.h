@@ -104,6 +104,11 @@ private:
     // m_startTime is the time to start playing based on the context's timeline (0.0 or a time less than the context's current time means "now").
     double m_startTime; // in seconds
 
+    // m_endTime is the time to stop playing based on the context's timeline (0.0 or a time less than the context's current time means "now").
+    // If it hasn't been set explicitly, then the sound will not stop playing (if looping) or will stop when the end of the AudioBuffer
+    // has been reached.
+    double m_endTime; // in seconds
+    
     // m_schedulingFrameDelay is the sample-accurate scheduling offset.
     // It's used so that we start rendering audio samples at a very precise point in time.
     // It will only be a non-zero value the very first render quantum that we render from the buffer.
@@ -140,6 +145,9 @@ private:
 
     // readFromBufferWithGrainEnvelope() is a low-level blitter which reads from the AudioBuffer and applies a grain envelope.
     void readFromBufferWithGrainEnvelope(float* sourceL, float* sourceR, float* destinationL, float* destinationR, size_t framesToProcess);
+
+    // Handles the time when we reach the end of sample data (non-looping) or the noteOff() time has been reached.
+    void finish();
 };
 
 } // namespace WebCore

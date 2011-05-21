@@ -1,3 +1,21 @@
+2011-05-21  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        AudioBufferSourceNode noteOff() method must respect scheduling time
+        https://bugs.webkit.org/show_bug.cgi?id=61226
+
+        No new tests since audio API is not yet implemented.
+
+        * webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::AudioBufferSourceNode):
+        (WebCore::AudioBufferSourceNode::process):
+        (WebCore::AudioBufferSourceNode::provideInput):
+        (WebCore::AudioBufferSourceNode::finish):
+        (WebCore::AudioBufferSourceNode::noteGrainOn):
+        (WebCore::AudioBufferSourceNode::noteOff):
+        * webaudio/AudioBufferSourceNode.h:
+
 2011-05-20  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
