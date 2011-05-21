@@ -943,6 +943,7 @@ fast/dom/HTMLLinkElement/prefetch.html
 fast/dom/HTMLLinkElement/prefetch-onerror.html
 fast/dom/HTMLLinkElement/prefetch-onload.html
 fast/dom/HTMLLinkElement/prefetch-beforeload.html
+fast/dom/HTMLLinkElement/prerender.html
 fast/dom/HTMLLinkElement/subresource.html
 
 # Tests failing because the context menu is grabbing mouse events.

@@ -45,11 +45,8 @@
 
 namespace WebCore {
     
-static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource::Type type, ResourceLoadPriority priority)
+static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource::Type type)
 {
-#if !ENABLE(LINK_PREFETCH)
-    UNUSED_PARAM(priority);
-#endif
     switch (type) {
     case CachedResource::CSSStyleSheet:
 #if ENABLE(XSLT)
@@ -63,9 +60,11 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
     case CachedResource::ImageResource:
         return ResourceRequest::TargetIsImage;
 #if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkResource:
-        if (priority == ResourceLoadPriorityLowest)
-            return ResourceRequest::TargetIsPrefetch;
+    case CachedResource::LinkPrefetch:
+        return ResourceRequest::TargetIsPrefetch;
+    case CachedResource::LinkPrerender:
+        return ResourceRequest::TargetIsSubresource;
+    case CachedResource::LinkSubresource:
         return ResourceRequest::TargetIsSubresource;
 #endif
     }
@@ -93,7 +92,7 @@ PassRefPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
     RefPtr<CachedResourceRequest> request = adoptRef(new CachedResourceRequest(cachedResourceLoader, resource, incremental));
 
     ResourceRequest resourceRequest(resource->url());
-    resourceRequest.setTargetType(cachedResourceTypeToTargetType(resource->type(), resource->loadPriority()));
+    resourceRequest.setTargetType(cachedResourceTypeToTargetType(resource->type()));
 
     if (!resource->accept().isEmpty())
         resourceRequest.setHTTPAccept(resource->accept());
@@ -116,7 +115,7 @@ PassRefPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
     }
     
 #if ENABLE(LINK_PREFETCH)
-    if (resource->type() == CachedResource::LinkResource)
+    if (resource->type() == CachedResource::LinkPrefetch || resource->type() == CachedResource::LinkPrerender || resource->type() == CachedResource::LinkSubresource)
         resourceRequest.setHTTPHeaderField("Purpose", "prefetch");
 #endif
 

@@ -1,3 +1,39 @@
+2011-05-21  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add rel type prerender to distinguish prerender from prefetch
+        https://bugs.webkit.org/show_bug.cgi?id=61079
+
+        Chrome right now uses <link rel=prefetch ...> for one of two things,
+        to warm the cache in the same way as firefox, or to launch a speculative
+        rendering of a web page, for faster "loading" when the user navigates to it.
+
+        This new rel type will let us distinguish the two cases; the rel type prerender
+        isn't used on the web today, but the Google Web Search example prerendering application
+        is ready to experiment with it.
+
+        Test: fast/dom/HTMLLinkElement/prerender.html
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::tokenizeRelAttribute):
+        (WebCore::HTMLLinkElement::process):
+        * html/HTMLLinkElement.h:
+        (WebCore::HTMLLinkElement::RelAttribute::RelAttribute):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::defaultPriorityForResourceType):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::isLinkResource):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::createResource):
+        (WebCore::CachedResourceLoader::requestLinkResource):
+        (WebCore::CachedResourceLoader::canRequest):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::cachedResourceTypeToTargetType):
+        (WebCore::CachedResourceRequest::load):
+        * platform/network/ResourceRequestBase.h:
+
 2011-05-21  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -70,7 +70,7 @@ public:
     CachedXSLStyleSheet* requestXSLStyleSheet(const String& url);
 #endif
 #if ENABLE(LINK_PREFETCH)
-    CachedResource* requestLinkResource(const String &url, ResourceLoadPriority priority = ResourceLoadPriorityUnresolved);
+    CachedResource* requestLinkResource(CachedResource::Type, const String &url, ResourceLoadPriority priority = ResourceLoadPriorityUnresolved);
 #endif
 
     // Logs an access denied message to the console for the specified URL.

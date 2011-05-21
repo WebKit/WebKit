@@ -71,8 +71,12 @@ static CachedResource* createResource(CachedResource::Type type, const KURL& url
         return new CachedXSLStyleSheet(url.string());
 #endif
 #if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkResource:
-        return new CachedResource(url.string(), CachedResource::LinkResource);
+    case CachedResource::LinkPrefetch:
+        return new CachedResource(url.string(), CachedResource::LinkPrefetch);
+    case CachedResource::LinkPrerender:
+        return new CachedResource(url.string(), CachedResource::LinkPrerender);
+    case CachedResource::LinkSubresource:
+        return new CachedResource(url.string(), CachedResource::LinkSubresource);
 #endif
     }
     ASSERT_NOT_REACHED();
@@ -188,10 +192,11 @@ CachedXSLStyleSheet* CachedResourceLoader::requestXSLStyleSheet(const String& ur
 #endif
 
 #if ENABLE(LINK_PREFETCH)
-CachedResource* CachedResourceLoader::requestLinkResource(const String& url, ResourceLoadPriority priority)
+CachedResource* CachedResourceLoader::requestLinkResource(CachedResource::Type type, const String& url, ResourceLoadPriority priority)
 {
     ASSERT(frame());
-    return requestResource(CachedResource::LinkResource, url, String(), priority);
+    ASSERT(type == CachedResource::LinkPrefetch || type == CachedResource::LinkPrerender || type == CachedResource::LinkSubresource);
+    return requestResource(type, url, String(), priority);
 }
 #endif
 
@@ -213,7 +218,9 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     case CachedResource::Script:
     case CachedResource::FontResource:
 #if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkResource:
+    case CachedResource::LinkPrefetch:
+    case CachedResource::LinkPrerender:
+    case CachedResource::LinkSubresource:
 #endif
         // These types of resources can be loaded from any origin.
         // FIXME: Are we sure about CachedResource::FontResource?
@@ -260,7 +267,9 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
         break;
     }
 #if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkResource:
+    case CachedResource::LinkPrefetch:
+    case CachedResource::LinkPrerender:
+    case CachedResource::LinkSubresource:
         // Prefetch cannot affect the current document.
         break;
 #endif
@@ -289,7 +298,9 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
         break;
     }
 #if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkResource:
+    case CachedResource::LinkPrefetch:
+    case CachedResource::LinkPrerender:
+    case CachedResource::LinkSubresource:
         break;
 #endif
     }

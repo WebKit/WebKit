@@ -165,6 +165,7 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, RelAttribute
     relAttribute.m_isDNSPrefetch = false;
 #if ENABLE(LINK_PREFETCH)
     relAttribute.m_isLinkPrefetch = false;
+    relAttribute.m_isLinkPrerender = false;
     relAttribute.m_isLinkSubresource = false;
 #endif
     if (equalIgnoringCase(rel, "stylesheet"))
@@ -205,6 +206,8 @@ void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, RelAttribute
 #if ENABLE(LINK_PREFETCH)
             else if (equalIgnoringCase(*it, "prefetch"))
               relAttribute.m_isLinkPrefetch = true;
+            else if (equalIgnoringCase(*it, "prerender"))
+              relAttribute.m_isLinkPrerender = true;
             else if (equalIgnoringCase(*it, "subresource"))
               relAttribute.m_isLinkSubresource = true;
 #endif
@@ -249,14 +252,20 @@ void HTMLLinkElement::process()
     }
 
 #if ENABLE(LINK_PREFETCH)
-    if ((m_relAttribute.m_isLinkPrefetch || m_relAttribute.m_isLinkSubresource) && m_url.isValid() && document()->frame()) {
+    if ((m_relAttribute.m_isLinkPrefetch || m_relAttribute.m_isLinkPrerender || m_relAttribute.m_isLinkSubresource) && m_url.isValid() && document()->frame()) {
         if (!checkBeforeLoadEvent())
             return;
         ResourceLoadPriority priority = ResourceLoadPriorityUnresolved;
-        if (m_relAttribute.m_isLinkSubresource)
+        CachedResource::Type type = CachedResource::LinkPrefetch;
+        // We only make one request to the cachedresourcelodaer if multiple rel types are
+        // specified, 
+        if (m_relAttribute.m_isLinkSubresource) {
             priority = ResourceLoadPriorityLow;
+            type = CachedResource::LinkSubresource;
+        } else if (m_relAttribute.m_isLinkPrerender)
+            type = CachedResource::LinkPrerender;
 
-        m_cachedLinkResource = document()->cachedResourceLoader()->requestLinkResource(m_url, priority);
+        m_cachedLinkResource = document()->cachedResourceLoader()->requestLinkResource(type, m_url, priority);
         if (m_cachedLinkResource)
             m_cachedLinkResource->addClient(this);
     }

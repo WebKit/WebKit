@@ -65,7 +65,9 @@ public:
         , XSLStyleSheet
 #endif
 #if ENABLE(LINK_PREFETCH)
-        , LinkResource
+        , LinkPrefetch
+        , LinkPrerender
+        , LinkSubresource
 #endif
     };
 
@@ -132,7 +134,7 @@ public:
     bool isLinkResource() const
     {
 #if ENABLE(LINK_PREFETCH)
-        return type() == LinkResource;
+        return type() == LinkPrefetch || type() == LinkPrerender || type() == LinkSubresource;
 #else
         return false;
 #endif
