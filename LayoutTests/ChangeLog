@@ -1,3 +1,16 @@
+2011-05-20  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r70748): WebKit cannot play videos created by Podcast Producer.
+        https://bugs.webkit.org/show_bug.cgi?id=61229
+        
+        Test that an object element with a non-empty classid, a valid MIME
+        type and no fallback content is allowed to load.
+
+        * fast/replaced/object-with-non-empty-classid-triggers-fallback-expected.txt:
+        * fast/replaced/object-with-non-empty-classid-triggers-fallback.html:
+
 2011-05-20  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
 
         Reviewed by Simon Fraser.

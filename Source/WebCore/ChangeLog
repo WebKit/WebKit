@@ -1,3 +1,26 @@
+2011-05-20  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r70748): WebKit cannot play videos created by Podcast Producer.
+        https://bugs.webkit.org/show_bug.cgi?id=61229
+        
+        Podcast Producer uses an object tag with a classid attribute to embed
+        QuickTime Player into a page. In r70748, we changed our behavior to
+        render the object's fallback content when a non-empty classid is
+        encountered, per HTML5. Since Podcast Producer videos have no fallback
+        content, this change in behavior causes the video to fail to load.
+        
+        Since the object tag has a valid type attribute, we would be able to
+        load it if weren't for the non-empty classid. This patch changes our
+        policy to allow objects with non-empty classids if there is no fallback
+        content. We still continue to prefer fallback content if it exists,
+        however.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::hasValidClassId): Treat a non-empty
+        classid as valid if the object has no fallback content.
+
 2011-05-20  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
 
         Reviewed by Simon Fraser.
