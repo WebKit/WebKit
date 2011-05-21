@@ -1,5 +1,13 @@
 2011-05-21  Kent Tamura  <tkent@chromium.org>
 
+        [Qt] Update test results for r87014.
+
+        * platform/qt/fast/events/context-no-deselect-expected.txt:
+        * platform/qt/fast/forms/input-text-double-click-expected.txt:
+        * platform/qt/fast/forms/textfield-outline-expected.txt:
+
+2011-05-21  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Dimitri Glazkov.
 
         Change text-based <input> types to the new shadow DOM model
