@@ -1,3 +1,11 @@
+2011-05-21  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed.
+
+        Chromium SVG expectations update.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-21  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Adam Barth.
