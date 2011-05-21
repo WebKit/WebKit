@@ -17,9 +17,6 @@ namespace WTR {
 class WebView;
 };
 
-WKStringRef WKStringCreateWithQString(const QString& qString);
-QString WKStringCopyQString(WKStringRef stringRef);
-
 class QWEBKIT_EXPORT QGraphicsWKView : public QGraphicsWidget {
     Q_OBJECT
     Q_PROPERTY(QString title READ title)

@@ -1,3 +1,15 @@
+2011-05-21  Nancy Piedra  <nancy.piedra@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][Symbian] WKStringCopyQString function is not exported
+        https://bugs.webkit.org/show_bug.cgi?id=59285
+
+        A few functions were declared twice but without the export macro.
+        On Symbian, the linking failed when trying to reference these functions.
+
+        * UIProcess/API/qt/qgraphicswkview.h:
+
 2011-05-21  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.
