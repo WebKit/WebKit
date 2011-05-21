@@ -4035,7 +4035,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
 {
     if (childrenInline() && !isTable()) {
         // We have to hit-test our line boxes.
-        if (m_lineBoxes.hitTest(this, request, result, x, y, tx, ty, hitTestAction))
+        if (m_lineBoxes.hitTest(this, request, result, IntPoint(x, y), tx, ty, hitTestAction))
             return true;
     } else {
         // Hit test our children.

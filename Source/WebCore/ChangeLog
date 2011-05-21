@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        Change RenderLineBoxList::hitTest to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=61156
+
+        Change the RenderLineBoxList hit testing to use IntPoint and clean up the rect calculation.
+
+        Covered by existing tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hitTestContents):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::nodeAtPoint):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderLineBoxList.h:
+
+2011-05-21  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Change HitTestResult to use IntPoint
         https://bugs.webkit.org/show_bug.cgi?id=61230
 

@@ -274,7 +274,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
 }
 
 
-bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction) const
+bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction) const
 {
     if (hitTestAction != HitTestForeground)
         return false;
@@ -285,13 +285,10 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     if (!firstLineBox())
         return false;
 
-    bool isHorizontal = firstLineBox()->isHorizontal();
-    
-    int logicalPointStart = isHorizontal ? y - result.topPadding() : x - result.leftPadding();
-    int logicalPointEnd = (isHorizontal ? y + result.bottomPadding() : x + result.rightPadding()) + 1;
-    IntRect rect(isHorizontal ? x : logicalPointStart, isHorizontal ? logicalPointStart : y,
-                 isHorizontal ? 1 : logicalPointEnd - logicalPointStart,
-                 isHorizontal ? logicalPointEnd - logicalPointStart : 1);    
+    IntRect rect = firstLineBox()->isHorizontal() ?
+        IntRect(pointInContainer.x(), pointInContainer.y() - result.topPadding(), 1, result.topPadding() + result.bottomPadding() + 1) :
+        IntRect(pointInContainer.x() - result.leftPadding(), pointInContainer.y(), result.rightPadding() + result.leftPadding() + 1, 1);
+
     if (!anyLineIntersectsRect(renderer, rect, tx, ty))
         return false;
 
@@ -301,9 +298,9 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     for (InlineFlowBox* curr = lastLineBox(); curr; curr = curr->prevLineBox()) {
         RootInlineBox* root = curr->root();
         if (rangeIntersectsRect(renderer, curr->logicalTopVisualOverflow(root->lineTop()), curr->logicalBottomVisualOverflow(root->lineBottom()), rect, tx, ty)) {
-            bool inside = curr->nodeAtPoint(request, result, IntPoint(x, y), tx, ty, root->lineTop(), root->lineBottom());
+            bool inside = curr->nodeAtPoint(request, result, pointInContainer, tx, ty, root->lineTop(), root->lineBottom());
             if (inside) {
-                renderer->updateHitTestResult(result, IntPoint(x - tx, y - ty));
+                renderer->updateHitTestResult(result, pointInContainer - IntSize(tx, ty));
                 return true;
             }
         }
