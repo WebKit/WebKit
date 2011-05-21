@@ -428,9 +428,13 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context)
     // has closed or the web process has crashed.  Just walk through our
     // normal exit full screen sequence, but don't wait to be called back
     // in response.
-    [self exitFullScreen];
-    [self beganExitFullScreenAnimation];
-    [self finishedExitFullScreenAnimation:YES];
+    if (_isFullScreen) {
+        [self exitFullScreen];
+        [self beganExitFullScreenAnimation];
+    }
+    
+    if (_isExitingFullScreen)
+        [self finishedExitFullScreenAnimation:YES];
 }
 
 #pragma mark -

@@ -1,3 +1,16 @@
+2011-05-20  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Mark Rowe.
+
+        Crash in WebFullScreenManager::didExitFullScreen when closing a window in Safari.
+        https://bugs.webkit.org/show_bug.cgi?id=61228
+
+        Do not attempt to exit full screen if we aren't in full screen to begin with, as the WebProcess
+        won't be expecting will/didExitFullScreen notifications.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController close]):
+
 2011-05-20  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
