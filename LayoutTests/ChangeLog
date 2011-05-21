@@ -1,5 +1,14 @@
 2011-05-21  Kent Tamura  <tkent@chromium.org>
 
+        [GTK] [Chromium] Update test results for r87014.
+        https://bugs.webkit.org/show_bug.cgi?id=54179
+
+        * platform/chromium-win-vista/fast/forms/validation-message-appearance-expected.txt:
+        * platform/gtk/fast/forms/input-text-click-outside-expected.txt:
+        * platform/gtk/fast/text/textIteratorNilRenderer-expected.txt:
+
+2011-05-21  Kent Tamura  <tkent@chromium.org>
+
         [Qt] Update test results for r87014.
 
         * platform/qt/fast/events/context-no-deselect-expected.txt:
