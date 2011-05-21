@@ -118,7 +118,7 @@ bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     IntRect boundsRect = IntRect(tx, ty, m_logicalWidth, m_height);
     if (visibleToHitTesting() && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
         renderer()->updateHitTestResult(result, pointInContainer - IntSize(tx, ty));
-        if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer.x(), pointInContainer.y(), boundsRect))
+        if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer, boundsRect))
             return true;
     }
 

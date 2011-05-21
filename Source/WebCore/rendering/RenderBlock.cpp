@@ -3912,7 +3912,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     if ((hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) && isPointInOverflowControl(result, pointInContainer.x(), pointInContainer.y(), localOffset.width(), localOffset.height())) {
         updateHitTestResult(result, pointInContainer - localOffset);
         // FIXME: isPointInOverflowControl() doesn't handle rect-based tests yet.
-        if (!result.addNodeToRectBasedTestResult(node(), pointInContainer.x(), pointInContainer.y()))
+        if (!result.addNodeToRectBasedTestResult(node(), pointInContainer))
            return true;
     }
 
@@ -3947,7 +3947,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
         IntRect boundsRect(localOffset.width(), localOffset.height(), width(), height());
         if (visibleToHitTesting() && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
             updateHitTestResult(result, flipForWritingMode(pointInContainer - localOffset));
-            if (!result.addNodeToRectBasedTestResult(node(), pointInContainer.x(), pointInContainer.y(), boundsRect))
+            if (!result.addNodeToRectBasedTestResult(node(), pointInContainer, boundsRect))
                 return true;
         }
     }
@@ -4014,14 +4014,14 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
             currLogicalTopOffset += blockDelta;
         colRect.move(tx, ty);
         
-        if (colRect.intersects(result.rectForPoint(x, y))) {
+        if (colRect.intersects(result.rectForPoint(IntPoint(x, y)))) {
             // The point is inside this column.
             // Adjust tx and ty to change where we hit test.
         
             IntSize offset = isHorizontal ? IntSize(currLogicalLeftOffset, currLogicalTopOffset) : IntSize(currLogicalTopOffset, currLogicalLeftOffset);
             int finalX = tx + offset.width();
             int finalY = ty + offset.height();
-            if (result.isRectBasedTest() && !colRect.contains(result.rectForPoint(x, y)))
+            if (result.isRectBasedTest() && !colRect.contains(result.rectForPoint(IntPoint(x, y))))
                 hitTestContents(request, result, x, y, finalX, finalY, hitTestAction);
             else
                 return hitTestContents(request, result, x, y, finalX, finalY, hitTestAction) || (hitTestAction == HitTestFloat && hitTestFloats(request, result, x, y, finalX, finalY));

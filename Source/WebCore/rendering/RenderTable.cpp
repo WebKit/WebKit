@@ -1216,7 +1216,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     IntRect boundsRect = IntRect(tx, ty, width(), height());
     if (visibleToHitTesting() && (action == HitTestBlockBackground || action == HitTestChildBlockBackground) && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
         updateHitTestResult(result, flipForWritingMode(pointInContainer - IntSize(tx, ty)));
-        if (!result.addNodeToRectBasedTestResult(node(), pointInContainer.x(), pointInContainer.y(), boundsRect))
+        if (!result.addNodeToRectBasedTestResult(node(), pointInContainer, boundsRect))
             return true;
     }
 

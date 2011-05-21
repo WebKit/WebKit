@@ -103,7 +103,6 @@ public:
 
     // Rect-based hit test related methods.
     bool isRectBasedTest() const { return m_isRectBased; }
-    IntRect rectForPoint(int x, int y) const;
     IntRect rectForPoint(const IntPoint&) const;
     static IntRect rectForPoint(const IntPoint&, unsigned topPadding, unsigned rightPadding, unsigned bottomPadding, unsigned leftPadding);
     int topPadding() const { return m_topPadding; }
@@ -113,8 +112,8 @@ public:
 
     // Returns true if it is rect-based hit test and needs to continue until the rect is fully
     // enclosed by the boundaries of a node.
-    bool addNodeToRectBasedTestResult(Node*, int x, int y, const IntRect& = IntRect());
-    bool addNodeToRectBasedTestResult(Node*, int x, int y, const FloatRect&);
+    bool addNodeToRectBasedTestResult(Node*, const IntPoint& pointInContainer, const IntRect& = IntRect());
+    bool addNodeToRectBasedTestResult(Node*, const IntPoint& pointInContainer, const FloatRect&);
     void append(const HitTestResult&);
 
     // If m_rectBasedTestResult is 0 then set it to a new NodeSet. Return *m_rectBasedTestResult. Lazy allocation makes
@@ -144,11 +143,6 @@ private:
     int m_leftPadding;
     mutable OwnPtr<NodeSet> m_rectBasedTestResult;
 };
-
-inline IntRect HitTestResult::rectForPoint(int x, int y) const
-{
-    return rectForPoint(IntPoint(x, y), m_topPadding, m_rightPadding, m_bottomPadding, m_leftPadding);
-}
 
 // Formula:
 // x = p.x() - rightPadding

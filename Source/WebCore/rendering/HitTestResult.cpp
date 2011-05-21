@@ -508,7 +508,7 @@ bool HitTestResult::isContentEditable() const
     return m_innerNonSharedNode->rendererIsEditable();
 }
 
-bool HitTestResult::addNodeToRectBasedTestResult(Node* node, int x, int y, const IntRect& rect)
+bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const IntPoint& pointInContainer, const IntRect& rect)
 {
     // If it is not a rect-based hit test, this method has to be no-op.
     // Return false, so the hit test stops.
@@ -536,10 +536,10 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, int x, int y, const
                 mutableRectBasedTestResult().add(currInline->node()->shadowAncestorNode());
         }
     }
-    return !rect.contains(rectForPoint(x, y));
+    return !rect.contains(rectForPoint(pointInContainer));
 }
 
-bool HitTestResult::addNodeToRectBasedTestResult(Node* node, int x, int y, const FloatRect& rect)
+bool HitTestResult::addNodeToRectBasedTestResult(Node* node, const IntPoint& pointInContainer, const FloatRect& rect)
 {
     // If it is not a rect-based hit test, this method has to be no-op.
     // Return false, so the hit test stops.
@@ -567,7 +567,7 @@ bool HitTestResult::addNodeToRectBasedTestResult(Node* node, int x, int y, const
                 mutableRectBasedTestResult().add(currInline->node()->shadowAncestorNode());
         }
     }
-    return !rect.contains(rectForPoint(x, y));
+    return !rect.contains(rectForPoint(pointInContainer));
 }
 
 void HitTestResult::append(const HitTestResult& other)

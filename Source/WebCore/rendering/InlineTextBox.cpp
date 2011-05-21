@@ -350,7 +350,7 @@ bool InlineTextBox::nodeAtPoint(const HitTestRequest&, HitTestResult& result, co
     FloatRect rect(boxOrigin, IntSize(width(), height()));
     if (m_truncation != cFullTruncation && visibleToHitTesting() && rect.intersects(result.rectForPoint(pointInContainer))) {
         renderer()->updateHitTestResult(result, flipForWritingMode(pointInContainer - IntSize(tx, ty)));
-        if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer.x(), pointInContainer.y(), rect))
+        if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer, rect))
             return true;
     }
     return false;

@@ -1,3 +1,32 @@
+2011-05-21  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Change HitTestResult to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=61230
+
+        Covered by existing tests.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::addNodeToRectBasedTestResult):
+        * rendering/HitTestResult.h:
+        (WebCore::HitTestResult::isRectBasedTest):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::nodeAtPoint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::hitTestColumns):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+
 2011-05-21  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Darin Fisher.

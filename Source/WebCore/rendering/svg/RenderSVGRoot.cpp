@@ -334,7 +334,7 @@ bool RenderSVGRoot::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
             // FIXME: CSS/HTML assumes the local point is relative to the border box, right?
             updateHitTestResult(result, pointInBorderBox);
             // FIXME: nodeAtFloatPoint() doesn't handle rect-based hit tests yet.
-            result.addNodeToRectBasedTestResult(child->node(), pointInContainer.x(), pointInContainer.y());
+            result.addNodeToRectBasedTestResult(child->node(), pointInContainer);
             return true;
         }
     }

@@ -939,7 +939,7 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 
     if (visibleToHitTesting() && rect.intersects(result.rectForPoint(pointInContainer))) {
         renderer()->updateHitTestResult(result, flipForWritingMode(pointInContainer - IntSize(tx, ty))); // Don't add in m_x or m_y here, we want coords in the containing block's space.
-        if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer.x(), pointInContainer.y(), rect))
+        if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer, rect))
             return true;
     }
     

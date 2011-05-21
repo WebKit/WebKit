@@ -758,7 +758,7 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
     IntRect boundsRect = IntRect(tx, ty, width(), height());
     if (visibleToHitTesting() && action == HitTestForeground && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
         updateHitTestResult(result, pointInContainer - IntSize(tx, ty));
-        if (!result.addNodeToRectBasedTestResult(node(), pointInContainer.x(), pointInContainer.y(), boundsRect))
+        if (!result.addNodeToRectBasedTestResult(node(), pointInContainer, boundsRect))
             return true;
     }
 
