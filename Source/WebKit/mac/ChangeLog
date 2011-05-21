@@ -1,3 +1,19 @@
+2011-05-20  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Stack overflow in WebFullScreenController when built on Leopard and run on SnowLeopard.
+        https://bugs.webkit.org/show_bug.cgi?id=61224
+
+        Remove the CATransaction(SnowLeopardConvenience) functions, and replace them with the Leopard
+        versions of same.
+
+        * WebView/WebFullScreenController.mm:
+        (-[WebFullScreenController windowDidEnterFullscreen:]):
+        (-[WebFullScreenController enterFullscreen:]):
+        (-[WebFullScreenController exitFullscreen]):
+        (-[WebFullscreenWindow setRendererLayer:]):
+
 2011-05-20  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

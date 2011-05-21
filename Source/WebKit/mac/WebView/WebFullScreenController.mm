@@ -61,26 +61,6 @@ static NSString* const isEnteringFullscreenKey = @"isEnteringFullscreen";
 
 using namespace WebCore;
 
-#if defined(BUILDING_ON_LEOPARD)
-@interface CATransaction(SnowLeopardConvenienceFunctions)
-+ (void)setDisableActions:(BOOL)flag;
-+ (void)setAnimationDuration:(CFTimeInterval)dur;
-@end
-
-@implementation CATransaction(SnowLeopardConvenienceFunctions)
-+ (void)setDisableActions:(BOOL)flag
-{
-    [self setValue:[NSNumber numberWithBool:flag] forKey:kCATransactionDisableActions];
-}
-
-+ (void)setAnimationDuration:(CFTimeInterval)dur
-{
-    [self setValue:[NSNumber numberWithDouble:dur] forKey:kCATransactionAnimationDuration];
-}
-@end
-
-#endif
-
 @interface WebFullscreenWindow : NSWindow
 #ifndef BUILDING_ON_LEOPARD
 <NSAnimationDelegate>
@@ -307,7 +287,7 @@ private:
         [window setOpaque:YES];
 
         [CATransaction begin];
-        [CATransaction setDisableActions:YES];
+        [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
         [[[window animationView] layer] setOpacity:0];
         [CATransaction commit];
     }
@@ -469,7 +449,7 @@ private:
     // Start the opacity animation. We can use implicit animations here because we don't care when
     // the animation finishes.
     [CATransaction begin];
-    [CATransaction setAnimationDuration:duration];
+    [CATransaction setValue:[NSNumber numberWithDouble:duration] forKey:kCATransactionAnimationDuration];
     [backgroundLayer setOpacity:1];
     [CATransaction commit];
     
@@ -486,7 +466,7 @@ private:
     
     // Disable implicit animations and set the layer's transformation matrix to its final state.
     [CATransaction begin];
-    [CATransaction setDisableActions:YES];
+    [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
     [rendererLayer setTransform:CATransform3DIdentity];
     [rendererLayer addAnimation:zoomAnimation forKey:@"zoom"];
     [backgroundLayer setFrame:NSRectToCGRect(backgroundBounds)];
@@ -554,7 +534,7 @@ private:
         // disable animations when changing the layer's opacity. Other-
         // wise, the content will appear to fade into view.
         [CATransaction begin];
-        [CATransaction setDisableActions:YES];
+        [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
         WebFullscreenWindow* window = [self _fullscreenWindow];
         [[[window animationView] layer] setOpacity:1];
         [window setBackgroundColor:[NSColor clearColor]];
@@ -617,7 +597,7 @@ private:
 
     CALayer* backgroundLayer = [[self _fullscreenWindow] backgroundLayer];
     [CATransaction begin];
-    [CATransaction setAnimationDuration:duration];
+    [CATransaction setValue:[NSNumber numberWithDouble:duration] forKey:kCATransactionAnimationDuration];
     [backgroundLayer setOpacity:0];
     [CATransaction commit];
     
@@ -882,7 +862,7 @@ private:
 - (void)setRendererLayer:(CALayer *)rendererLayer
 {
     [CATransaction begin];
-    [CATransaction setDisableActions:YES];
+    [CATransaction setValue:[NSNumber numberWithBool:YES] forKey:kCATransactionDisableActions];
     [rendererLayer retain];
     [_rendererLayer removeFromSuperlayer];
     [_rendererLayer release];
