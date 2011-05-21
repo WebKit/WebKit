@@ -72,6 +72,11 @@ public:
         TargetIsFavicon = 12,
     };
 
+    class ExtraData {
+    public:
+        virtual ~ExtraData() { }
+    };
+
     ~WebURLRequest() { reset(); }
 
     WebURLRequest() : m_private(0) { }
@@ -163,6 +168,15 @@ public:
     // WebURLLoader.  See WebURLResponse::downloadedFilePath.
     WEBKIT_API bool downloadToFile() const;
     WEBKIT_API void setDownloadToFile(bool);
+
+    // Extra data associated with the underlying resource request. Resource
+    // requests can be copied. If non-null, each copy of a resource requests
+    // holds a pointer to the extra data, and the extra data pointer will be
+    // deleted when the last resource request is destroyed. Setting the extra
+    // data pointer will cause the underlying resource request to be
+    // dissociated from any existing non-null extra data pointer.
+    WEBKIT_API ExtraData* extraData() const;
+    WEBKIT_API void setExtraData(ExtraData*);
 
 #if defined(WEBKIT_IMPLEMENTATION)
     WebCore::ResourceRequest& toMutableResourceRequest();

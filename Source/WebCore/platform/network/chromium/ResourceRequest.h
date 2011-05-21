@@ -30,12 +30,20 @@
 
 #include "ResourceRequestBase.h"
 
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+
 namespace WebCore {
 
     class Frame;
 
     class ResourceRequest : public ResourceRequestBase {
     public:
+        class ExtraData : public RefCounted<ExtraData> {
+        public:
+            virtual ~ExtraData() { }
+        };
+
         ResourceRequest(const String& url) 
             : ResourceRequestBase(KURL(ParsedURLString, url), UseProtocolCachePolicy)
             , m_requestorID(0)
@@ -100,6 +108,10 @@ namespace WebCore {
         bool downloadToFile() const { return m_downloadToFile; }
         void setDownloadToFile(bool downloadToFile) { m_downloadToFile = downloadToFile; }
 
+        // Extra data associated with this request.
+        ExtraData* extraData() const { return m_extraData.get(); }
+        void setExtraData(PassRefPtr<ExtraData> extraData) { m_extraData = extraData; }
+
     private:
         friend class ResourceRequestBase;
 
@@ -114,6 +126,7 @@ namespace WebCore {
         int m_appCacheHostID;
         bool m_hasUserGesture;
         bool m_downloadToFile;
+        RefPtr<ExtraData> m_extraData;
     };
 
     struct CrossThreadResourceRequestData : public CrossThreadResourceRequestDataBase {

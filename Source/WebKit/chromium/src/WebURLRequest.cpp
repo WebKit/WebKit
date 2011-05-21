@@ -42,6 +42,27 @@ using namespace WebCore;
 
 namespace WebKit {
 
+namespace {
+
+class ExtraDataContainer : public ResourceRequest::ExtraData {
+public:
+    static PassRefPtr<ExtraDataContainer> create(WebURLRequest::ExtraData* extraData) { return adoptRef(new ExtraDataContainer(extraData)); }
+
+    virtual ~ExtraDataContainer() { }
+
+    WebURLRequest::ExtraData* extraData() const { return m_extraData.get(); }
+
+private:
+    explicit ExtraDataContainer(WebURLRequest::ExtraData* extraData)
+        : m_extraData(adoptPtr(extraData))
+    {
+    }
+
+    OwnPtr<WebURLRequest::ExtraData> m_extraData;
+};
+
+} // namespace
+
 // The standard implementation of WebURLRequestPrivate, which maintains
 // ownership of a ResourceRequest instance.
 class WebURLRequestPrivateImpl : public WebURLRequestPrivate {
@@ -274,6 +295,19 @@ bool WebURLRequest::downloadToFile() const
 void WebURLRequest::setDownloadToFile(bool downloadToFile)
 {
     m_private->m_resourceRequest->setDownloadToFile(downloadToFile);
+}
+
+WebURLRequest::ExtraData* WebURLRequest::extraData() const
+{
+    RefPtr<ResourceRequest::ExtraData> data = m_private->m_resourceRequest->extraData();
+    if (!data.get())
+        return 0;
+    return static_cast<ExtraDataContainer*>(data.get())->extraData();
+}
+
+void WebURLRequest::setExtraData(WebURLRequest::ExtraData* extraData)
+{
+    m_private->m_resourceRequest->setExtraData(ExtraDataContainer::create(extraData));
 }
 
 ResourceRequest& WebURLRequest::toMutableResourceRequest()

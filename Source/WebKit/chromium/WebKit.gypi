@@ -68,6 +68,7 @@
             'tests/TreeTestHelpers.cpp',
             'tests/TreeTestHelpers.h',
             'tests/WebFrameTest.cpp',
+            'tests/WebURLRequestTest.cpp',
         ],
 
         'conditions': [

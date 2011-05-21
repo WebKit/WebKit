@@ -1,3 +1,21 @@
+2011-05-21  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] add extraData field to resource requests
+        https://bugs.webkit.org/show_bug.cgi?id=61033
+
+        * WebKit.gypi:
+        * public/WebURLRequest.h:
+        (WebKit::WebURLRequest::ExtraData::~ExtraData):
+        * src/WebURLRequest.cpp:
+        (WebKit::WebURLRequest::extraData):
+        (WebKit::WebURLRequest::setExtraData):
+        * tests/WebURLRequestTest.cpp: Added.
+        (WebKit::TestExtraData::TestExtraData):
+        (WebKit::TestExtraData::~TestExtraData):
+        (WebKit::TEST):
+
 2011-05-20  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Darin Fisher.
