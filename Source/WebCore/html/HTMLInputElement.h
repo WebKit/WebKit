@@ -108,6 +108,16 @@ public:
     bool isSpeechEnabled() const;
 #endif
 
+    virtual HTMLElement* innerTextElement() const;
+    HTMLElement* innerBlockElement() const;
+    HTMLElement* innerSpinButtonElement() const;
+    HTMLElement* outerSpinButtonElement() const;
+    HTMLElement* resultsButtonElement() const;
+    HTMLElement* cancelButtonElement() const;
+#if ENABLE(INPUT_SPEECH)
+    HTMLElement* speechButtonElement() const;
+#endif
+
     bool checked() const { return m_isChecked; }
     void setChecked(bool, bool sendChangeEvent = false);
 
@@ -221,7 +231,7 @@ public:
 
 protected:
     HTMLInputElement(const QualifiedName&, Document*, HTMLFormElement*, bool createdByParser);
-
+    void createShadowSubtree();
     virtual void defaultEventHandler(Event*);
 
 private:

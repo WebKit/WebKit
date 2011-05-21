@@ -35,15 +35,29 @@
 
 namespace WebCore {
 
+class SearchFieldCancelButtonElement;
+class SearchFieldResultsButtonElement;
+
 class SearchInputType : public BaseTextInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
+protected:
+    virtual void createShadowSubtree();
+    virtual void destroyShadowSubtree();
+
 private:
-    SearchInputType(HTMLInputElement* element) : BaseTextInputType(element) { }
+    SearchInputType(HTMLInputElement*);
     virtual const AtomicString& formControlType() const;
     virtual bool shouldRespectSpeechAttribute();
     virtual bool isSearchField() const;
+    virtual HTMLElement* innerBlockElement() const { return m_innerBlock; }
+    virtual HTMLElement* resultsButtonElement() const { return m_resultsButton; }
+    virtual HTMLElement* cancelButtonElement() const { return m_cancelButton; }
+
+    HTMLElement* m_innerBlock;
+    HTMLElement* m_resultsButton;
+    HTMLElement* m_cancelButton;
 };
 
 } // namespace WebCore

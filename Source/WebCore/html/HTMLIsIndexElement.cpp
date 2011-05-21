@@ -41,12 +41,16 @@ HTMLIsIndexElement::HTMLIsIndexElement(const QualifiedName& tagName, Document* d
 
 PassRefPtr<HTMLIsIndexElement> HTMLIsIndexElement::create(Document* document, HTMLFormElement* form)
 {
-    return adoptRef(new HTMLIsIndexElement(isindexTag, document, form));
+    RefPtr<HTMLIsIndexElement> element = adoptRef(new HTMLIsIndexElement(isindexTag, document, form));
+    element->createShadowSubtree();
+    return element.release();
 }
 
 PassRefPtr<HTMLIsIndexElement> HTMLIsIndexElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
-    return adoptRef(new HTMLIsIndexElement(tagName, document, form));
+    RefPtr<HTMLIsIndexElement> element = adoptRef(new HTMLIsIndexElement(tagName, document, form));
+    element->createShadowSubtree();
+    return element.release();
 }
 
 void HTMLIsIndexElement::parseMappedAttribute(Attribute* attr)

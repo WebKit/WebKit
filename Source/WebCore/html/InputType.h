@@ -45,10 +45,12 @@ class DateComponents;
 class Event;
 class FileList;
 class FormDataList;
+class HTMLElement;
 class HTMLFormElement;
 class HTMLInputElement;
 class KeyboardEvent;
 class MouseEvent;
+class Node;
 class RenderArena;
 class RenderObject;
 class RenderStyle;
@@ -181,7 +183,17 @@ public:
     // Shadow tree handling
 
     virtual void createShadowSubtree();
-    void destroyShadowSubtree();
+    virtual void destroyShadowSubtree();
+
+    virtual HTMLElement* innerBlockElement() const { return 0; }
+    virtual HTMLElement* innerTextElement() const { return 0; }
+    virtual HTMLElement* innerSpinButtonElement() const { return 0; }
+    virtual HTMLElement* outerSpinButtonElement() const { return 0; }
+    virtual HTMLElement* resultsButtonElement() const { return 0; }
+    virtual HTMLElement* cancelButtonElement() const { return 0; }
+#if ENABLE(INPUT_SPEECH)
+    virtual HTMLElement* speechButtonElement() const { return 0; }
+#endif
 
     // Miscellaneous functions
 

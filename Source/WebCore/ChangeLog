@@ -1,3 +1,256 @@
+2011-05-21  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Change text-based <input> types to the new shadow DOM model
+        https://bugs.webkit.org/show_bug.cgi?id=54179
+
+        By this change, text field inputs and textareas have one extra
+        shadow node at the root of shadow trees.
+        e.g. Before the change:
+          <textarea> --(shadow-connection)-- <div> -- ...
+        After the change:
+          <textarea> --(shadow-connection)-- {#shadow-root} -- <div> -- ...
+
+        The goals of this change are
+        - Change to the new shadow DOM model, and
+        - Minimize the patch size.
+
+        We should use shadowPseudoId() in the new shadow DOM model, but the
+        shadow elements in this patch don't use it in order to reduce the patch
+        size.
+
+        * css/html.css:
+        (input::-webkit-inner-spin-button):
+         Add vertical-align in order to avoid the button affect the baseline.
+        (input::-webkit-outer-spin-button): ditto.
+        (input::-webkit-input-speech-button): ditto.
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle): Calls styleForRenderer() so that a
+         subclass of Element can override it.
+        (WebCore::Element::isSpellCheckingEnabled):
+        Handle ShadowRoot, which is not an Element.
+        * dom/Node.cpp:
+          Add utility functions for editing code.
+        (WebCore::Node::nonBoundaryShadowTreeRootNode):
+        (WebCore::Node::nonShadowBoundaryParentNode):
+        * dom/Node.h: Declare them.
+        * dom/Position.cpp:
+         - Add some assertions about ShadowRoot
+         - Replace parentNode() with nonShadowBoundaryParentNode()
+        Because input/textarea shadow structures are changed.
+        (WebCore::Position::Position):
+        (WebCore::Position::containerNode):
+        (WebCore::Position::parentAnchoredEquivalent):
+        (WebCore::Position::previous):
+        (WebCore::Position::next):
+        (WebCore::Position::parentEditingBoundary):
+        (WebCore::Position::atStartOfTree):
+        (WebCore::Position::atEndOfTree):
+        * dom/Position.h: ditto.
+        (WebCore::positionInParentBeforeNode):
+        (WebCore::positionInParentAfterNode):
+        * editing/CompositeEditCommand.cpp: ditto.
+        (WebCore::CompositeEditCommand::insertNodeAfter):
+        (WebCore::CompositeEditCommand::removeNode):
+        * editing/Editor.cpp:
+        (WebCore::Editor::findString): ditto.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectAll): Inline shadowTreeRootNode() calls.
+        * editing/FrameSelection.h:
+          Remove shadowTreeRootNode(). It is used only by FrameSelection::selectAll().
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply): Use nonShadowBoundaryParentNode()
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::removeNode): ditto.
+        (WebCore::ReplacementFragment::insertNodeBefore): ditto.
+        * editing/VisibleSelection.cpp:
+          Rename shadowTreeRootNode() to nonBoundaryShadowTreeRootNode(), and it reutrns
+          a child node of ShadowRoot.
+        (WebCore::VisibleSelection::isAll):
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries):
+        (WebCore::VisibleSelection::nonBoundaryShadowTreeRootNode):
+        * editing/VisibleSelection.h: ditto.
+        * editing/htmlediting.cpp: Add assertions.
+        (WebCore::visiblePositionBeforeNode):
+        (WebCore::visiblePositionAfterNode):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::create): Calls createShadowSubtree().
+        (WebCore::HTMLInputElement::createShadowSubtree):
+          Calls InputType::createShadowSubTree().
+        (WebCore::HTMLInputElement::innerTextElement):
+          Accessor of a shadow node. This is used by RenderTextControlSingleLine.
+        (WebCore::HTMLInputElement::innerBlockElement): ditto.
+        (WebCore::HTMLInputElement::innerSpinButtonElement): ditto.
+        (WebCore::HTMLInputElement::outerSpinButtonElement): ditto.
+        (WebCore::HTMLInputElement::resultsButtonElement): ditto.
+        (WebCore::HTMLInputElement::cancelButtonElement): ditto.
+        (WebCore::HTMLInputElement::speechButtonElement): ditto.
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+          Rebuild shadow trees because x-webkit-speech attribute affects it.
+        * html/HTMLInputElement.h: Add declarations.
+        * html/HTMLIsIndexElement.cpp:
+        (WebCore::HTMLIsIndexElement::create): Calls createShadowSubtree().
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::create): Calls createShadowSubtree().
+        (WebCore::HTMLTextAreaElement::createShadowSubtree): Added.
+        * html/HTMLTextAreaElement.h: Declare createShadowSubtree().
+        * html/InputType.h: Add default implementations of accessors.
+        (WebCore::InputType::innerBlockElement):
+        (WebCore::InputType::innerTextElement):
+        (WebCore::InputType::innerSpinButtonElement):
+        (WebCore::InputType::outerSpinButtonElement):
+        (WebCore::InputType::resultsButtonElement):
+        (WebCore::InputType::cancelButtonElement):
+        (WebCore::InputType::speechButtonElement):
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::SearchInputType): Initializes new data members.
+        (WebCore::SearchInputType::createShadowSubtree):
+          Moved from RenderTextControlSingleLine.
+        (WebCore::SearchInputType::destroyShadowSubtree): Clear element references.
+        * html/SearchInputType.h: Add declarations.
+        (WebCore::SearchInputType::innerBlockElement):
+        (WebCore::SearchInputType::resultsButtonElement):
+        (WebCore::SearchInputType::cancelButtonElement):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::TextFieldInputType):
+          Initializes new data members.
+        (WebCore::TextFieldInputType::createShadowSubtree):
+          Moved from RenderTextControlSingleLine.
+        (WebCore::TextFieldInputType::destroyShadowSubtree): Clear element references.
+        * html/TextFieldInputType.h: Add declarations.
+        (WebCore::TextFieldInputType::innerTextElement):
+        (WebCore::TextFieldInputType::innerSpinButtonElement):
+        (WebCore::TextFieldInputType::outerSpinButtonElement):
+        (WebCore::TextFieldInputType::speechButtonElement):
+        (WebCore::TextFieldInputType::setInnerTextElement):
+        (WebCore::TextFieldInputType::setSpeechButtonElement):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::TextControlInnerElement):
+          Remove shadowParent parameter. It is unnecessary because we switch to
+          new shadow model.
+        (WebCore::TextControlInnerElement::create):
+          Change the parameter type to Document.
+        (WebCore::TextControlInnerElement::styleForRenderer):
+          Override this in order to set style by
+          RenderTextControlSingleLine::createInnerBlockStyle().
+        (WebCore::TextControlInnerTextElement::TextControlInnerTextElement):
+          Remove shadowParent parameter.
+          Inherit HTMLDivElement, not TextControlInnerElement.
+        (WebCore::TextControlInnerTextElement::create): Remove shadowParent parameter.
+        (WebCore::TextControlInnerTextElement::styleForRenderer):
+          Override this in order to set style by
+          RenderTextControlSingleLine::createInnerTextStyle().
+        (WebCore::SearchFieldResultsButtonElement::SearchFieldResultsButtonElement):
+          Inherit HTMLDivElement, not TextControlInnerElement.
+        (WebCore::SearchFieldResultsButtonElement::styleForRenderer):
+          Override this in order to set style by
+          RenderTextControlSingleLine::createResultButtonStyle().
+        (WebCore::SearchFieldCancelButtonElement::SearchFieldCancelButtonElement):
+          Inherit HTMLDivElement, not TextControlInnerElement.
+        (WebCore::SearchFieldCancelButtonElement::styleForRenderer):
+          Override this in order to set style by
+          RenderTextControlSingleLine::createCancelButtonStyle().
+        (WebCore::SearchFieldCancelButtonElement::detach):
+          Update for the parent class change.
+        (WebCore::SpinButtonElement::SpinButtonElement):
+          - Change the parameter type: shadowParent -> Document
+          - Add the inner flag
+          - Inherit HTMLDivElement, not TextControlInnerElement.
+        (WebCore::SpinButtonElement::createInner): Introduce a new factory
+          method to hide a bool parameter of the constructor.
+        (WebCore::SpinButtonElement::createOuter): ditto.
+        (WebCore::SpinButtonElement::styleForRenderer):
+          Override this in order to set style by
+          RenderTextControlSingleLine::createInnerSpinButtonStyle() or
+          createOuterSpinButtonStyle().
+        (WebCore::SpinButtonElement::detach): Update for the parent class change.
+        (WebCore::SpinButtonElement::setHovered): ditto.
+        (WebCore::InputFieldSpeechButtonElement::InputFieldSpeechButtonElement):
+          - Change the parameter type: shadowParent -> Document
+          - Inherit HTMLDivElement, not TextControlInnerElement.
+          - Do not register this as a speech input listener here.
+        (WebCore::InputFieldSpeechButtonElement::create):
+          Update for the parameter change.
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+          Do not handle click event if listener registration is not done.
+        (WebCore::InputFieldSpeechButtonElement::attach):
+          Register this as a speech input listener.
+        (WebCore::InputFieldSpeechButtonElement::detach):
+          Update for the parent class change.
+        (WebCore::InputFieldSpeechButtonElement::styleForRenderer):
+          Override this in order to set style by
+          RenderTextControlSingleLine::createSpeechButtonStyle().
+        * html/shadow/TextControlInnerElements.h:
+        (WebCore::TextControlInnerTextElement::isMouseFocusable):
+          Add this because the class is not a subclass of TextControllInnerElement.
+        (WebCore::SearchFieldResultsButtonElement::isMouseFocusable): ditto.
+        (WebCore::SearchFieldCancelButtonElement::isMouseFocusable): ditto.
+        (WebCore::SpinButtonElement::isMouseFocusable): ditto.
+        (WebCore::InputFieldSpeechButtonElement::isMouseFocusable): ditto.
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::~RenderTextControl): Remove unnecessary code.
+        (WebCore::RenderTextControl::styleDidChange):
+          innerTextElement can have no renderer.
+          Explicitly call setNeedsStyleRecals() for innerTextElement. It is
+          needed for LayoutTests/editing/selection/select-across-readonly-input-*.html.
+        (WebCore::RenderTextControl::textBlockWidth): Member data -> function
+        (WebCore::RenderTextControl::updateFromElement): ditto.
+        (WebCore::RenderTextControl::setInnerTextValue): ditto.
+        (WebCore::RenderTextControl::hasVisibleTextArea): ditto.
+        (WebCore::RenderTextControl::isSelectableElement): ditto.
+        (WebCore::RenderTextControl::selection): ditto.
+        (WebCore::RenderTextControl::visiblePositionForIndex): ditto.
+        (WebCore::RenderTextControl::indexForVisiblePosition): ditto.
+        (WebCore::RenderTextControl::text): ditto.
+        (WebCore::RenderTextControl::textWithHardLineBreaks): ditto.
+        (WebCore::RenderTextControl::computeLogicalHeight): ditto.
+        (WebCore::RenderTextControl::hitInnerTextElement): ditto.
+        (WebCore::RenderTextControl::forwardEvent): ditto.
+        (WebCore::RenderTextControl::computePreferredLogicalWidths): ditto.
+        * rendering/RenderTextControl.h:
+          - Make m_innerText virtual function.
+          - Make createInnerTextStyle() public in order that
+            TextControlInnerElements can call it.
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::innerTextElement): Added.
+        (WebCore::RenderTextControlMultiLine::updateFromElement):
+          Remove unnecessary createSubtreeIfNeeded() call.
+        * rendering/RenderTextControlMultiLine.h: Add a declaration.
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::~RenderTextControlSingleLine):
+          Remove unnecessary code.
+        (WebCore::RenderTextControlSingleLine::innerTextElement): Added.
+        (WebCore::RenderTextControlSingleLine::innerBlockElement): Added.
+        (WebCore::RenderTextControlSingleLine::innerSpinButtonElement): Added.
+        (WebCore::RenderTextControlSingleLine::outerSpinButtonElement): Added.
+        (WebCore::RenderTextControlSingleLine::resultsButtonElement): Added.
+        (WebCore::RenderTextControlSingleLine::cancelButtonElement): Added.
+        (WebCore::RenderTextControlSingleLine::speechButtonElement): Added.
+        (WebCore::RenderTextControlSingleLine::textBaseStyle): Data member -> function
+        (WebCore::RenderTextControlSingleLine::subtreeHasChanged): ditto.
+        (WebCore::RenderTextControlSingleLine::layout): ditto.
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint): ditto.
+        (WebCore::RenderTextControlSingleLine::forwardEvent): ditto.
+        (WebCore::RenderTextControlSingleLine::styleDidChange): ditto.
+        (WebCore::RenderTextControlSingleLine::hasControlClip): ditto.
+        (WebCore::RenderTextControlSingleLine::controlClipRect): ditto.
+        (WebCore::RenderTextControlSingleLine::textBlockWidth): ditto.
+        (WebCore::RenderTextControlSingleLine::decorationWidthRight): ditto.
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth): ditto.
+        (WebCore::RenderTextControlSingleLine::preferredDecorationWidthRight): ditto.
+        (WebCore::RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight): ditto.
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+          ditto, and remove unnecessary createSubtreeIfNeeded() call.
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+          Data member -> function
+        (WebCore::RenderTextControlSingleLine::updateCancelButtonVisibility): ditto.
+        (WebCore::RenderTextControlSingleLine::clientPaddingLeft): ditto.
+        (WebCore::RenderTextControlSingleLine::clientPaddingRight): ditto.
+        (WebCore::RenderTextControlSingleLine::textBlockInsetTop): ditto.
+        * rendering/RenderTextControlSingleLine.h:
+          Add declarations, and remove unnecessary data members.
+
 2011-05-21  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

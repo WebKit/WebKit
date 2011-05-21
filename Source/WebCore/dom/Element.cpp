@@ -1083,7 +1083,7 @@ void Element::recalcStyle(StyleChange change)
             rareData()->resetComputedStyle();
     }
     if (hasParentStyle && (change >= Inherit || needsStyleRecalc())) {
-        RefPtr<RenderStyle> newStyle = document()->styleSelector()->styleForElement(this);
+        RefPtr<RenderStyle> newStyle = styleForRenderer();
         StyleChange ch = diff(currentStyle.get(), newStyle.get());
         if (ch == Detach || !currentStyle) {
             if (attached())
@@ -1916,7 +1916,12 @@ bool Element::isSpellCheckingEnabled() const
         }
 
         ContainerNode* parent = const_cast<Element*>(element)->parentOrHostNode();
-        element = (parent && parent->isElementNode()) ? toElement(parent) : 0;
+        if (parent && parent->isElementNode())
+            element = toElement(parent);
+        else if (parent && parent->isShadowBoundary())
+            element = toElement(parent->parentOrHostNode());
+        else
+            element = 0;
     }
 
     return true;

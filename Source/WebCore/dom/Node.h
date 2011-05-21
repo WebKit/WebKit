@@ -214,12 +214,17 @@ public:
     virtual bool canHaveLightChildRendererWithShadow() const { return false; }
 
     Node* shadowAncestorNode();
+    // Returns 0, a ShadowRoot, or a legacy shadow root.
     Node* shadowTreeRootNode();
+    // Returns 0, a child of ShadowRoot, or a legacy shadow root.
+    Node* nonBoundaryShadowTreeRootNode();
     bool isInShadowTree();
     // Node's parent, shadow tree host, or SVG use.
     ContainerNode* parentOrHostNode() const;
     // Use when it's guaranteed to that shadowHost is 0 and svgShadowHost is 0.
     ContainerNode* parentNodeGuaranteedHostFree() const;
+    // Returns the parent node, but 0 if the parent node is a ShadowRoot.
+    ContainerNode* nonShadowBoundaryParentNode() const;
 
     Element* shadowHost() const;
     void setShadowHost(Element*);
@@ -450,7 +455,7 @@ public:
 
     virtual void willRemove();
     void createRendererIfNeeded();
-    PassRefPtr<RenderStyle> styleForRenderer();
+    virtual PassRefPtr<RenderStyle> styleForRenderer();
     virtual bool rendererIsNeeded(RenderStyle*);
     virtual bool childShouldCreateRenderer(Node*) const { return true; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);

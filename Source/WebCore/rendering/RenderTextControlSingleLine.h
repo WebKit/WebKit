@@ -23,6 +23,7 @@
 #ifndef RenderTextControlSingleLine_h
 #define RenderTextControlSingleLine_h
 
+#include "HTMLInputElement.h"
 #include "PopupMenuClient.h"
 #include "RenderTextControl.h"
 #include "SearchPopupMenu.h"
@@ -31,16 +32,21 @@
 namespace WebCore {
 
 class HTMLInputElement;
-class InputFieldSpeechButtonElement;
-class SearchFieldCancelButtonElement;
-class SearchFieldResultsButtonElement;
-class SpinButtonElement;
-class TextControlInnerElement;
 
 class RenderTextControlSingleLine : public RenderTextControl, private PopupMenuClient {
 public:
     RenderTextControlSingleLine(Node*, bool);
     virtual ~RenderTextControlSingleLine();
+    // FIXME: Move create*Style() to their classes.
+    virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
+    PassRefPtr<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
+    PassRefPtr<RenderStyle> createInnerSpinButtonStyle() const;
+    PassRefPtr<RenderStyle> createOuterSpinButtonStyle() const;
+    PassRefPtr<RenderStyle> createResultsButtonStyle(const RenderStyle* startStyle) const;
+    PassRefPtr<RenderStyle> createCancelButtonStyle(const RenderStyle* startStyle) const;
+#if ENABLE(INPUT_SPEECH)
+    PassRefPtr<RenderStyle> createSpeechButtonStyle() const;
+#endif
 
     bool placeholderIsVisible() const { return m_placeholderVisible; }
     bool placeholderShouldBeVisible() const;
@@ -90,21 +96,11 @@ private:
     virtual int preferredContentWidth(float charWidth) const;
     virtual void adjustControlHeightBasedOnLineHeight(int lineHeight);
 
-    void createSubtreeIfNeeded();
     virtual void updateFromElement();
     virtual void cacheSelection(int start, int end);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
     virtual RenderStyle* textBaseStyle() const;
-    virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
-    PassRefPtr<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
-    PassRefPtr<RenderStyle> createResultsButtonStyle(const RenderStyle* startStyle) const;
-    PassRefPtr<RenderStyle> createCancelButtonStyle(const RenderStyle* startStyle) const;
-    PassRefPtr<RenderStyle> createInnerSpinButtonStyle() const;
-    PassRefPtr<RenderStyle> createOuterSpinButtonStyle() const;
-#if ENABLE(INPUT_SPEECH)
-    PassRefPtr<RenderStyle> createSpeechButtonStyle() const;
-#endif
 
     void updateCancelButtonVisibility() const;
     EVisibility visibilityForCancelButton() const;
@@ -148,17 +144,18 @@ private:
     virtual int textBlockInsetRight() const;
     virtual int textBlockInsetTop() const;
 
+    virtual HTMLElement* innerTextElement() const;
+    HTMLElement* innerBlockElement() const;
+    HTMLElement* innerSpinButtonElement() const;
+    HTMLElement* outerSpinButtonElement() const;
+    HTMLElement* resultsButtonElement() const;
+    HTMLElement* cancelButtonElement() const;
+#if ENABLE(INPUT_SPEECH)
+    HTMLElement* speechButtonElement() const;
+#endif
+
     bool m_searchPopupIsVisible;
     bool m_shouldDrawCapsLockIndicator;
-
-    RefPtr<TextControlInnerElement> m_innerBlock;
-    RefPtr<SearchFieldResultsButtonElement> m_resultsButton;
-    RefPtr<SearchFieldCancelButtonElement> m_cancelButton;
-    RefPtr<TextControlInnerElement> m_innerSpinButton;
-    RefPtr<TextControlInnerElement> m_outerSpinButton;
-#if ENABLE(INPUT_SPEECH)
-    RefPtr<InputFieldSpeechButtonElement> m_speechButton;
-#endif
 
     Timer<RenderTextControlSingleLine> m_searchEventTimer;
     RefPtr<SearchPopupMenu> m_searchPopup;

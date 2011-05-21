@@ -122,7 +122,6 @@ public:
     Element* rootEditableElement() const { return m_selection.rootEditableElement(); }
     bool isContentEditable() const { return m_selection.isContentEditable(); }
     bool isContentRichlyEditable() const { return m_selection.isContentRichlyEditable(); }
-    Node* shadowTreeRootNode() const { return m_selection.shadowTreeRootNode(); }
      
     void moveTo(const Range*, EAffinity, bool userTriggered = false);
     void moveTo(const VisiblePosition&, bool userTriggered = false, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded);
