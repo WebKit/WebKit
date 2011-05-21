@@ -75,6 +75,21 @@ void RoundedIntRect::Radii::expand(int topWidth, int bottomWidth, int leftWidth,
     m_bottomRight.setHeight(max(0, m_bottomRight.height() + bottomWidth));
 }
 
+void RoundedIntRect::inflateWithRadii(int size)
+{
+    IntRect old = m_rect;
+
+    m_rect.inflate(size);
+    // Considering the inflation factor of shorter size to scale the radii seems appropriate here
+    float factor;
+    if (m_rect.width() < m_rect.height())
+        factor = old.width() ? (float)m_rect.width() / old.width() : 0;
+    else
+        factor = old.height() ? (float)m_rect.height() / old.height() : 0;
+
+    m_radii.scale(factor);
+}
+
 void RoundedIntRect::Radii::includeLogicalEdges(const RoundedIntRect::Radii& edges, bool isHorizontal, bool includeLogicalLeftEdge, bool includeLogicalRightEdge)
 {
     if (includeLogicalLeftEdge) {

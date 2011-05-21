@@ -86,7 +86,7 @@ public:
 
     void move(const IntSize& size) { m_rect.move(size); }
     void inflate(int size) { m_rect.inflate(size);  }
-    void inflateWithRadii(int size) { m_rect.inflate(size); m_radii.expand(size); }
+    void inflateWithRadii(int size);
     void expandRadii(int size) { m_radii.expand(size); }
     void shrinkRadii(int size) { m_radii.shrink(size); }
 

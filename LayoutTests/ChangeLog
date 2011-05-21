@@ -1,3 +1,16 @@
+2011-05-20  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
+
+        Reviewed by Simon Fraser.
+
+        If both border-radius and box-shadow applied, shadow is not fully visible
+        https://bugs.webkit.org/show_bug.cgi?id=59577
+
+        * fast/css/box-shadow-and-border-radius.html: Added.
+        * platform/qt/fast/css/box-shadow-and-border-radius-expected.png: Added.
+        * platform/qt/fast/css/box-shadow-and-border-radius-expected.txt: Added.
+        * platform/win/fast/css/box-shadow-and-border-radius-expected.png: Added.
+        * platform/win/fast/css/box-shadow-and-border-radius-expected.txt: Added.
+
 2011-05-20  Kenneth Russell  <kbr@google.com>
 
         Unreviewed. Manually pulled missing layout test result from Mesa bots.

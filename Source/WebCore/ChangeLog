@@ -1,3 +1,25 @@
+2011-05-20  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
+
+        Reviewed by Simon Fraser.
+
+        If both border-radius and box-shadow applied, shadow is not fully visible
+        https://bugs.webkit.org/show_bug.cgi?id=59577
+
+        The current implementation of RoundedIntRect::inflateWithRadii() inflates
+        its rect size and corner radii out of sync. This leads to validation failure in
+        Path::addRoundedRect() and results in ignoring radii in the path.
+        When this invalid path is used to clip out the rounded corner box before painting
+        the box shadow, the entire rectangle is clipped out without the corner radii.
+
+        This patch implements RoundedIntRect::inflateWithRadii() properly to inflate
+        rounded rect radii based on inflate ratios of rect size.
+
+        Test: fast/css/box-shadow-and-border-radius.html
+
+        * platform/graphics/RoundedIntRect.cpp:
+        (WebCore::RoundedIntRect::inflateWithRadii):
+        * platform/graphics/RoundedIntRect.h:
+
 2011-05-20  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Darin Fisher.
