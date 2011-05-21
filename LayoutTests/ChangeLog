@@ -1,3 +1,14 @@
+2011-05-20  Leon Scroggins  <scroggo@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        gpu canvas alpha tests failing on the chromium canaries
+        https://bugs.webkit.org/show_bug.cgi?id=59768
+
+        Remove tests which are now passing from test_expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-20  Justin Schuh  <jschuh@chromium.org>
 
         Unreviewed.

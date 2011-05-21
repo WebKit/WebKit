@@ -3987,12 +3987,6 @@ BUGDPRANKE DEBUG : http/tests/local/link-stylesheet-preferred.html = CRASH PASS
 BUGDPRANKE DEBUG : http/tests/misc/window-dot-stop.html = PASS TEXT
 BUGDPRANKE WIN DEBUG : fast/css/getComputedStyle/counterIncrement-without-counter.html = CRASH PASS
 
-// failing on the deps bots??
-
-BUGWK59768 WIN7 GPU : canvas/philip/tests/2d.shadow.alpha.3.html = TEXT
-BUGWK59768 WIN7 GPU : canvas/philip/tests/2d.shadow.alpha.4.html = TEXT
-BUGWK59768 WIN7 GPU : canvas/philip/tests/2d.shadow.alpha.5.html = TEXT
-
 // flakiness on the deps bots (noted r~83476)
 BUGWK60105 DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
 
