@@ -358,7 +358,6 @@ fast/text/atsui-rtl-override-selection.html
 fast/text/international/khmer-selection.html
 fast/text/offsetForPosition-complex-fallback.html
 fast/text/reset-drag-on-mouse-down.html
-fullscreen/full-screen-cancel.html
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi/file-last-modified.html
@@ -1659,9 +1658,10 @@ fast/events/scroll-event-during-modal-dialog.html
 fast/harness/show-modal-dialog.html
 inspector/console/console-long-eval-crash.html
 
-# WebKit2 needs fullscreen support
-# https://bugs.webkit.org/show_bug.cgi?id=56318
-fullscreen/
+# WebKit2 needs fake key event support
+fullscreen/full-screen-frameset.html
+fullscreen/full-screen-keyboard-disabled.html
+fullscreen/full-screen-keyboard-enabled.html
 
 # WebKit2 needs to support synchronous creation of about:blank/data:url frames
 fast/dom/HTMLDocument/hasFocus.html

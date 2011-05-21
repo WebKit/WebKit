@@ -1,3 +1,15 @@
+2011-05-21  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        WebKit2: fix failing fullscreen/full-screen-remove* tests.
+        https://bugs.webkit.org/show_bug.cgi?id=61027
+
+        * dom/Document.cpp:
+        (WebCore::Document::fullScreenChangeDelayTimerFired): dispatchEvent can be
+            synchronous, so make sure to check whether the current element is
+            in the DOM before dispatching.
+
 2011-05-21  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Adam Barth.

@@ -4986,12 +4986,12 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
         RefPtr<Element> element = m_fullScreenChangeEventTargetQueue.takeFirst();
         if (!element)
             element = documentElement();
-        
-        element->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
 
         // If the element was removed from our tree, also message the documentElement.
         if (!contains(element.get()))
             m_fullScreenChangeEventTargetQueue.append(documentElement());
+        
+        element->dispatchEvent(Event::create(eventNames().webkitfullscreenchangeEvent, true, false));
     }
 }
 
