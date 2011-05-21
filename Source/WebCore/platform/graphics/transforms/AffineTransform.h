@@ -131,6 +131,11 @@ public:
         return m_transform[0] == 1 && m_transform[1] == 0 && m_transform[2] == 0 && (m_transform[3] == 1 || m_transform[3] == -1);
     }
 
+    bool preservesAxisAlignment() const
+    {
+        return (m_transform[1] == 0 && m_transform[2] == 0) || (m_transform[0] == 0 && m_transform[3] == 0);
+    }
+
     bool operator== (const AffineTransform& m2) const
     {
         return (m_transform[0] == m2.m_transform[0]

@@ -1,3 +1,14 @@
+2011-05-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Allow ShadowBlur to do tiling when the context is scaled
+        https://bugs.webkit.org/show_bug.cgi?id=61232
+
+        * fast/box-shadow/scaled-box-shadow.html: Added.
+        * platform/mac/fast/box-shadow/scaled-box-shadow-expected.png: Added.
+        * platform/mac/fast/box-shadow/scaled-box-shadow-expected.txt: Added.
+
 2011-05-20  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Kent Tamura.

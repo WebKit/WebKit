@@ -482,7 +482,7 @@ void ShadowBlur::drawRectShadow(GraphicsContext* graphicsContext, const FloatRec
 
     // drawRectShadowWithTiling does not work with rotations.
     // https://bugs.webkit.org/show_bug.cgi?id=45042
-    if (!graphicsContext->getCTM().isIdentityOrTranslationOrFlipped() || m_type != BlurShadow) {
+    if (!graphicsContext->getCTM().preservesAxisAlignment() || m_type != BlurShadow) {
         drawRectShadowWithoutTiling(graphicsContext, shadowedRect, radii, layerRect);
         return;
     }
@@ -509,7 +509,7 @@ void ShadowBlur::drawInsetShadow(GraphicsContext* graphicsContext, const FloatRe
 
     // drawInsetShadowWithTiling does not work with rotations.
     // https://bugs.webkit.org/show_bug.cgi?id=45042
-    if (!graphicsContext->getCTM().isIdentityOrTranslationOrFlipped() || m_type != BlurShadow) {
+    if (!graphicsContext->getCTM().preservesAxisAlignment() || m_type != BlurShadow) {
         drawInsetShadowWithoutTiling(graphicsContext, rect, holeRect, holeRadii, layerRect);
         return;
     }
@@ -762,49 +762,51 @@ void ShadowBlur::drawLayerPieces(GraphicsContext* graphicsContext, const FloatRe
 
     // Note that drawing the ImageBuffer is faster than creating a Image and drawing that,
     // because ImageBuffer::draw() knows that it doesn't have to copy the image bits.
+    FloatRect centerRect(shadowBounds.x() + leftSlice, shadowBounds.y() + topSlice, centerWidth, centerHeight);
+    centerRect = graphicsContext->roundToDevicePixels(centerRect);
     
     // Top side.
     FloatRect tileRect = FloatRect(leftSlice, 0, templateSideLength, topSlice);
-    FloatRect destRect = FloatRect(shadowBounds.x() + leftSlice, shadowBounds.y(), centerWidth, topSlice);
+    FloatRect destRect = FloatRect(centerRect.x(), centerRect.y() - topSlice, centerRect.width(), topSlice);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Draw the bottom side.
     tileRect.setY(templateSize.height() - bottomSlice);
     tileRect.setHeight(bottomSlice);
-    destRect.setY(shadowBounds.maxY() - bottomSlice);
+    destRect.setY(centerRect.maxY());
     destRect.setHeight(bottomSlice);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Left side.
     tileRect = FloatRect(0, topSlice, leftSlice, templateSideLength);
-    destRect = FloatRect(shadowBounds.x(), shadowBounds.y() + topSlice, leftSlice, centerHeight);
+    destRect = FloatRect(centerRect.x() - leftSlice, centerRect.y(), leftSlice, centerRect.height());
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Right side.
     tileRect.setX(templateSize.width() - rightSlice);
     tileRect.setWidth(rightSlice);
-    destRect.setX(shadowBounds.maxX() - rightSlice);
+    destRect.setX(centerRect.maxX());
     destRect.setWidth(rightSlice);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Top left corner.
     tileRect = FloatRect(0, 0, leftSlice, topSlice);
-    destRect = FloatRect(shadowBounds.x(), shadowBounds.y(), leftSlice, topSlice);
+    destRect = FloatRect(centerRect.x() - leftSlice, centerRect.y() - topSlice, leftSlice, topSlice);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Top right corner.
     tileRect = FloatRect(templateSize.width() - rightSlice, 0, rightSlice, topSlice);
-    destRect = FloatRect(shadowBounds.maxX() - rightSlice, shadowBounds.y(), rightSlice, topSlice);
+    destRect = FloatRect(centerRect.maxX(), centerRect.y() - topSlice, rightSlice, topSlice);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Bottom right corner.
     tileRect = FloatRect(templateSize.width() - rightSlice, templateSize.height() - bottomSlice, rightSlice, bottomSlice);
-    destRect = FloatRect(shadowBounds.maxX() - rightSlice, shadowBounds.maxY() - bottomSlice, rightSlice, bottomSlice);
+    destRect = FloatRect(centerRect.maxX(), centerRect.maxY(), rightSlice, bottomSlice);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 
     // Bottom left corner.
     tileRect = FloatRect(0, templateSize.height() - bottomSlice, leftSlice, bottomSlice);
-    destRect = FloatRect(shadowBounds.x(), shadowBounds.maxY() - bottomSlice, leftSlice, bottomSlice);
+    destRect = FloatRect(centerRect.x() - leftSlice, centerRect.maxY(), leftSlice, bottomSlice);
     graphicsContext->drawImageBuffer(m_layerImage, ColorSpaceDeviceRGB, destRect, tileRect);
 }
 

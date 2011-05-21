@@ -1,3 +1,25 @@
+2011-05-20  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Allow ShadowBlur to do tiling when the context is scaled
+        https://bugs.webkit.org/show_bug.cgi?id=61232
+
+        If the GraphicsContext is scaled or rotated by a multiple of 90deg, have ShadowBlur
+        use the tiling code path, to avoid blurring large areas on pages like cracked.com
+        when the context is scaled.
+
+        * platform/graphics/ShadowBlur.cpp:
+        (WebCore::ShadowBlur::drawRectShadow): Call preservesAxisAlignment()
+        to decide when to not use tiling.
+        (WebCore::ShadowBlur::drawInsetShadow): Ditto.
+        (WebCore::ShadowBlur::drawLayerPieces): Round to device pixels when drawing tiles
+        to avoid pixel cracks in scaled contexts.
+        * platform/graphics/transforms/AffineTransform.h:
+        (WebCore::AffineTransform::preservesAxisAlignment): Return true if there is the matrix
+        contains a transform that results in axis alignment (no rotation or skew, or rotations
+        which are multiples of 90deg).
+
 2011-05-20  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Kent Tamura.
