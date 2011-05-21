@@ -321,7 +321,8 @@ void CompositeEditCommand::inputText(const String& text, bool selectInsertedText
 
 void CompositeEditCommand::insertTextIntoNode(PassRefPtr<Text> node, unsigned offset, const String& text)
 {
-    applyCommandToComposite(InsertIntoTextNodeCommand::create(node, offset, text));
+    if (!text.isEmpty())
+        applyCommandToComposite(InsertIntoTextNodeCommand::create(node, offset, text));
 }
 
 void CompositeEditCommand::deleteTextFromNode(PassRefPtr<Text> node, unsigned offset, unsigned count)
@@ -332,7 +333,8 @@ void CompositeEditCommand::deleteTextFromNode(PassRefPtr<Text> node, unsigned of
 void CompositeEditCommand::replaceTextInNode(PassRefPtr<Text> node, unsigned offset, unsigned count, const String& replacementText)
 {
     applyCommandToComposite(DeleteFromTextNodeCommand::create(node.get(), offset, count));
-    applyCommandToComposite(InsertIntoTextNodeCommand::create(node, offset, replacementText));
+    if (!replacementText.isEmpty())
+        applyCommandToComposite(InsertIntoTextNodeCommand::create(node, offset, replacementText));
 }
 
 void CompositeEditCommand::replaceTextInNodePreservingMarkers(PassRefPtr<Text> prpNode, unsigned offset, unsigned count, const String& replacementText)

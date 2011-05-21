@@ -182,9 +182,6 @@ void TypingCommand::insertText(Document* document, const String& text, const Vis
         }
     }
     
-    if (newText.isEmpty())
-        return;
-    
     // Set the starting and ending selection appropriately if we are using a selection
     // that is different from the current selection.  In the future, we should change EditCommand
     // to deal with custom selections in a general way that can be used by all of the commands.

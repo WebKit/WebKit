@@ -1,3 +1,19 @@
+2011-05-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Kent Tamura.
+
+        Special characters can be inserted in text field having reached maxlength
+        https://bugs.webkit.org/show_bug.cgi?id=19479
+        <rdar://problem/7828739>
+
+        * platform/mac/editing/input/maxlength-expected.txt: Added.
+        * platform/mac/editing/input/maxlength.html: Added.
+
+        * fast/forms/input-number-commit-valid-only-expected.txt:
+        * fast/forms/script-tests/input-number-commit-valid-only.js:
+        The user can make a number field empty by deleting its content, so there is no reason why
+        execCommand shouldn't be able to make it empty.
+
 2011-05-20  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

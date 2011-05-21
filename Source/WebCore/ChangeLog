@@ -1,3 +1,22 @@
+2011-05-20  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Kent Tamura.
+
+        Special characters can be inserted in text field having reached maxlength
+        https://bugs.webkit.org/show_bug.cgi?id=19479
+        <rdar://problem/7828739>
+
+        Test: platform/mac/editing/input/maxlength.html
+
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertTextIntoNode):
+        (WebCore::CompositeEditCommand::replaceTextInNode):
+        Avoid hitting an assertion below, now that we can get here with empty text.
+
+        * editing/TypingCommand.cpp: (WebCore::TypingCommand::insertText): There is still work to do
+        even if beforetextinput removed all text from the event. At the very least, we should delete
+        the current selection.
+
 2011-05-20  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.

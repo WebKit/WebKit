@@ -19,6 +19,6 @@ input.focus();
 document.execCommand('SelectAll', false, null);
 document.execCommand('InsertText', false, '');
 input.blur();
-shouldBe('input.value', '"512"');
+shouldBe('input.value', '""');
 
 var successfullyParsed = true;
