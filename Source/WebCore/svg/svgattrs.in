@@ -54,11 +54,6 @@ enable-background
 end
 exponent
 externalResourcesRequired
-feColorMatrix
-feComposite
-feGaussianBlur
-feMorphology
-feTile
 fill
 fill-opacity
 fill-rule

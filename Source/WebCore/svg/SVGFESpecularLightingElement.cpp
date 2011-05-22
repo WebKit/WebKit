@@ -280,9 +280,12 @@ PassRefPtr<FilterEffect> SVGFESpecularLightingElement::build(SVGFilterBuilder* f
     if (!lightSource)
         return 0;
 
-    RefPtr<RenderStyle> filterStyle = styleForRenderer();
-
-    Color color = filterStyle->svgStyle()->lightingColor();
+    RenderObject* renderer = this->renderer();
+    if (!renderer)
+        return 0;
+    
+    ASSERT(renderer->style());
+    Color color = renderer->style()->svgStyle()->lightingColor();
 
     RefPtr<FilterEffect> effect = FESpecularLighting::create(filter, color, surfaceScale(), specularConstant(),
                                           specularExponent(), kernelUnitLengthX(), kernelUnitLengthY(), lightSource.release());

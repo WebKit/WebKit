@@ -1,3 +1,28 @@
+2011-05-22  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Don't do manually style resolution for SVGElements with renderer
+        https://bugs.webkit.org/show_bug.cgi?id=59176
+
+        General clean-up.
+
+        Don't resolve style manually, instead ask the RenderObject for its style.
+
+        Cleanup svgattrs.in, some SVG element names were accidently listed there as attributes.
+
+        No new tests needed. No change of behavior.
+
+        * svg/SVGFEDiffuseLightingElement.cpp:
+        (WebCore::SVGFEDiffuseLightingElement::build):
+        * svg/SVGFEDropShadowElement.cpp:
+        (WebCore::SVGFEDropShadowElement::build):
+        * svg/SVGFEFloodElement.cpp:
+        (WebCore::SVGFEFloodElement::build):
+        * svg/SVGFESpecularLightingElement.cpp:
+        (WebCore::SVGFESpecularLightingElement::build):
+        * svg/svgattrs.in:
+
 2011-05-21  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler.

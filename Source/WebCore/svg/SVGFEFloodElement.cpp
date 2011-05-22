@@ -61,10 +61,15 @@ bool SVGFEFloodElement::setFilterEffectAttribute(FilterEffect* effect, const Qua
 
 PassRefPtr<FilterEffect> SVGFEFloodElement::build(SVGFilterBuilder*, Filter* filter)
 {
-    RefPtr<RenderStyle> filterStyle = styleForRenderer();
+    RenderObject* renderer = this->renderer();
+    if (!renderer)
+        return 0;
+    
+    ASSERT(renderer->style());
+    const SVGRenderStyle* svgStyle = renderer->style()->svgStyle();
 
-    Color color = filterStyle->svgStyle()->floodColor();
-    float opacity = filterStyle->svgStyle()->floodOpacity();
+    Color color = svgStyle->floodColor();
+    float opacity = svgStyle->floodOpacity();
 
     return FEFlood::create(filter, color, opacity);
 }

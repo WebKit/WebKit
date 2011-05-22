@@ -188,7 +188,6 @@ PassRefPtr<FilterEffect> SVGFEDropShadowElement::build(SVGFilterBuilder* filterB
         return 0;
     
     ASSERT(renderer->style());
-    ASSERT(renderer->style()->svgStyle());
     const SVGRenderStyle* svgStyle = renderer->style()->svgStyle();
     
     Color color = svgStyle->floodColor();
