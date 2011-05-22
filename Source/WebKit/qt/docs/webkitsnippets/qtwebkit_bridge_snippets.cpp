@@ -15,6 +15,7 @@ void wrapInFunction()
         height: ...,
         toDataURL: function() { ... },
         assignToHTMLImageElement: function(element) { ... }
+        toImageData: function() { ... }
     }
     //! [1]
 #endif
@@ -41,11 +42,14 @@ void wrapInFunction()
                 function loadImage()
                 {
                     myObject.myPixmap.assignToHTMLImageElement(document.getElementById("imageElement"));
+                    var context = document.getElementById("canvasElement").getContext("2d");
+                    context.putImageData(myObject.myPixmap.toImageData());
                 }
             </script>
         </head>
         <body onload="loadImage()">
             <img id="imageElement" width="300" height="200" />
+            <canvas id="canvasElement" width="300" height="200" />
         </body>
     </html>
 //! [3]

@@ -56,6 +56,7 @@ public slots:
     void imageSlot(const QImage&);
     void pixmapSlot(const QPixmap&);
     void randomSlot(const QPixmap&);
+    QImage abcImage(int format);
 
 signals:
     void testComplete();
@@ -67,6 +68,7 @@ protected:
 
 private:
     Ui::Widget* ui;
+    QImage abcFilledImage;
 };
 
 #endif // widget_h

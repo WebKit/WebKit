@@ -27,9 +27,11 @@
 
 Widget::Widget(QWidget* parent) :
     QWidget(parent),
-    ui(new Ui::Widget)
+    ui(new Ui::Widget),
+    abcFilledImage(32, 32, QImage::Format_ARGB32)
 {
     ui->setupUi(this);
+    abcFilledImage.fill(qRgba(0xaa, 0xbb, 0xcc, 0xff));
 }
 
 void Widget::refreshJS()
@@ -78,6 +80,11 @@ QImage Widget::image() const
         ui->lbl2->render(&p);
     }
     return img;
+}
+
+QImage Widget::abcImage(int format)
+{
+    return abcFilledImage.convertToFormat(static_cast<QImage::Format>(format));
 }
 
 Widget::~Widget()

@@ -363,6 +363,7 @@
     by assigning it to an existing \c{<img>} element with \c{assignToHTMLImageElement()}. It can also use the \c{toDataURL()} function,
     which allows using the pixmap as the \c{src} attribute of an image or as a \c{background-image} URL. Note that the \c{toDataURL()}
     function is costly and should be used with caution.
+    It can also use the \c{toImageData()} function to convert the pixmap to a JavaScript \c{ImageData} object.
 
     Example code:
 

@@ -1,3 +1,21 @@
+2011-05-22  Andrew Wason  <rectalogic@rectalogic.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Implement toImageData() in QtWebKit Bridge
+        https://bugs.webkit.org/show_bug.cgi?id=60897
+
+        * docs/qtwebkit-bridge.qdoc:
+        * docs/webkitsnippets/qtwebkit_bridge_snippets.cpp:
+        (wrapInFunction):
+         Document Qt bridge toImageData() feature.
+        * tests/hybridPixmap/test.html:
+        * tests/hybridPixmap/widget.cpp:
+        (Widget::Widget):
+        (Widget::abcImage):
+        * tests/hybridPixmap/widget.h:
+         Add tests for Qt bridge toImageData() feature.
+
 2011-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.

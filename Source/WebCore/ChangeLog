@@ -1,3 +1,21 @@
+2011-05-22  Andrew Wason  <rectalogic@rectalogic.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Implement toImageData() in QtWebKit Bridge
+        https://bugs.webkit.org/show_bug.cgi?id=60897
+
+        Tests are in WebKit/qt/tests/hybridPixmap
+
+        * bridge/qt/qt_pixmapruntime.cpp:
+        (JSC::Bindings::QtPixmapToImageDataMethod::name):
+        (JSC::Bindings::QtPixmapToImageDataMethod::invoke):
+        (JSC::Bindings::QtPixmapToImageDataMethod::copyPixels):
+        (JSC::Bindings::QtPixmapClass::methodsNamed):
+        (JSC::Bindings::QtPixmapInstance::getPropertyNames):
+         Add toImageData() to Qt Bridge, alternative to
+         assignToHTMLImageElement().
+
 2011-05-22  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.

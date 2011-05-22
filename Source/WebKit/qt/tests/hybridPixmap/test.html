@@ -4,8 +4,42 @@
             img { display: block; border-style: groove}
         </style>
         <script>
+            function testImageData() {
+                var obj = myWidget.image;
+                var pxm = myWidget.pixmap;
+
+                function compareImageDataSize(o, imageData) {
+                    myWidget.compare(imageData.height, o.height);
+                    myWidget.compare(imageData.width, o.width);
+                }
+                compareImageDataSize(obj, obj.toImageData());
+                compareImageDataSize(pxm, pxm.toImageData());
+
+                function compareImageDataPixel(o, imageData) {
+                    compareImageDataSize(o, imageData);
+                    // Make sure pixels are 0xAABBCCFF
+                    var data = imageData.data;
+                    for (var i = 0; i < data.length; i += 4) {
+                        myWidget.compare(data[i], 0xaa); // R
+                        myWidget.compare(data[i+1], 0xbb); // G
+                        myWidget.compare(data[i+2], 0xcc); // B
+                        myWidget.compare(data[i+3], 0xff); // A
+                    }
+                }
+                var objARGB32 = myWidget.abcImage(5);
+                compareImageDataPixel(objARGB32, objARGB32.toImageData());
+                var objRGB32 = myWidget.abcImage(4);
+                compareImageDataPixel(objRGB32, objRGB32.toImageData());
+                var objRGB888 = myWidget.abcImage(13);
+                compareImageDataPixel(objRGB888, objRGB888.toImageData());
+                var objRGB444 = myWidget.abcImage(14);
+                compareImageDataPixel(objRGB444, objRGB444.toImageData());
+            }
+
             function startTest()
             {
+                testImageData();
+
                 var obj = myWidget.image;
                 var pxm = myWidget.pixmap;
 
