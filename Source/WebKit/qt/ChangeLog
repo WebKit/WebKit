@@ -1,3 +1,93 @@
+2011-05-22  Hui Huang  <hui.2.huang@nokia.com>, Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Upstream Symbian platform plugin
+        https://bugs.webkit.org/show_bug.cgi?id=58435
+
+        Upstream Symbian platform plugin with html5 video player.
+
+        * symbian/platformplugin/HTML5VideoPlugin.cpp: Added.
+        (HTML5FullScreenVideoHandler::HTML5FullScreenVideoHandler):
+        (HTML5FullScreenVideoHandler::enterFullScreen):
+        (HTML5FullScreenVideoHandler::exitFullScreen):
+        (HTML5FullScreenVideoHandler::onPlayerError):
+        (HTML5FullScreenVideoHandler::onPlayerStateChanged):
+        (HTML5FullScreenVideoHandler::onMediaStatusChanged):
+        (HTML5VideoPlugin::supportsExtension):
+        (HTML5VideoPlugin::createExtension):
+        * symbian/platformplugin/HTML5VideoPlugin.h: Added.
+        (HTML5FullScreenVideoHandler::requiresFullScreenForVideoPlayback):
+        (HTML5FullScreenVideoHandler::isFullScreen):
+        (HTML5FullScreenVideoHandler::updateScreenRect):
+        * symbian/platformplugin/HTML5VideoWidget.cpp: Added.
+        (HTML5VideoWidget::HTML5VideoWidget):
+        (HTML5VideoWidget::setDuration):
+        (HTML5VideoWidget::mousePressEvent):
+        (HTML5VideoWidget::onPlayerStopped):
+        (HTML5VideoWidget::onPlayerError):
+        (HTML5VideoWidget::onEndOfMedia):
+        (HTML5VideoWidget::onBufferingMedia):
+        (HTML5VideoWidget::onBufferedMedia):
+        (HTML5VideoWidget::onControlClicked):
+        (HTML5VideoWidget::onPositionChanged):
+        (HTML5VideoWidget::onSliderMoved):
+        (HTML5VideoWidget::onCloseClicked):
+        (HTML5VideoWidget::showFullScreen):
+        (HTML5VideoWidget::setVolume):
+        * symbian/platformplugin/HTML5VideoWidget.h: Added.
+        * symbian/platformplugin/OverlayWidget.cpp: Added.
+        (OverlayWidget::OverlayWidget):
+        (OverlayWidget::~OverlayWidget):
+        (OverlayWidget::setDuration):
+        (OverlayWidget::setPosition):
+        (OverlayWidget::setVolume):
+        (OverlayWidget::mousePressEvent):
+        (OverlayWidget::onPlayerStopped):
+        (OverlayWidget::onPlayerError):
+        (OverlayWidget::onEndOfMedia):
+        (OverlayWidget::onBufferingMedia):
+        (OverlayWidget::onBufferedMedia):
+        (OverlayWidget::timeToString):
+        (OverlayWidget::applyStyleSheet):
+        (OverlayWidget::onControlClicked):
+        (OverlayWidget::onSliderMoved):
+        (OverlayWidget::onSoundClicked):
+        (OverlayWidget::onCloseClicked):
+        (OverlayWidget::onVolumeSliderReleased):
+        (OverlayWidget::onVolumeSliderMoved):
+        (OverlayWidget::onTimerTimeout):
+        (OverlayWidget::showFullScreen):
+        * symbian/platformplugin/OverlayWidget.h: Added.
+        * symbian/platformplugin/PlayerButton.cpp: Added.
+        (PlayerButton::PlayerButton):
+        (PlayerButton::event):
+        * symbian/platformplugin/PlayerButton.h: Added.
+        * symbian/platformplugin/PlayerLabel.cpp: Added.
+        (PlayerLabel::PlayerLabel):
+        (PlayerLabel::onPlayerError):
+        (PlayerLabel::startBufferingAnimation):
+        (PlayerLabel::stopBufferingAnimation):
+        (PlayerLabel::onAnimationTimeout):
+        * symbian/platformplugin/PlayerLabel.h: Added.
+        * symbian/platformplugin/WebPlugin.cpp:
+        (WebPlugin::createExtension):
+        * symbian/platformplugin/images: Added.
+        * symbian/platformplugin/images/button_cannotplay.png: Added.
+        * symbian/platformplugin/images/button_close.png: Added.
+        * symbian/platformplugin/images/button_pause.png: Added.
+        * symbian/platformplugin/images/button_play.png: Added.
+        * symbian/platformplugin/images/button_sound_off.png: Added.
+        * symbian/platformplugin/images/button_sound_on.png: Added.
+        * symbian/platformplugin/images/loading_buffering_1.png: Added.
+        * symbian/platformplugin/images/loading_buffering_2.png: Added.
+        * symbian/platformplugin/images/loading_buffering_3.png: Added.
+        * symbian/platformplugin/images/loading_buffering_4.png: Added.
+        * symbian/platformplugin/platformplugin.pro:
+        * symbian/platformplugin/platformplugin.qrc: Added.
+        * symbian/platformplugin/qss: Added.
+        * symbian/platformplugin/qss/OverlayWidget.qss: Added.
+
 2011-05-22  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -1,0 +1,15 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource>
+    <file>images/button_cannotplay.png</file>
+    <file>images/button_close.png</file>
+    <file>images/button_pause.png</file>
+    <file>images/button_play.png</file>
+    <file>images/button_sound_off.png</file>
+    <file>images/button_sound_on.png</file>
+    <file>images/loading_buffering_1.png</file>
+    <file>images/loading_buffering_2.png</file>
+    <file>images/loading_buffering_3.png</file>
+    <file>images/loading_buffering_4.png</file>
+    <file>qss/OverlayWidget.qss</file>
+</qresource>
+</RCC>

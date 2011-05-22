@@ -20,6 +20,10 @@
 
 #include "WebPlugin.h"
 
+#if defined(WTF_USE_QT_MULTIMEDIA) && WTF_USE_QT_MULTIMEDIA
+#include "HTML5VideoPlugin.h"
+#endif
+
 #include <QtGui>
 #include <QtPlugin>
 #include <akndiscreetpopup.h>
@@ -247,6 +251,10 @@ QObject* WebPlugin::createExtension(Extension extension) const
         return new WebPopup();
     case Notifications:
         return new WebNotificationPresenter();
+#if defined(WTF_USE_QT_MULTIMEDIA) && WTF_USE_QT_MULTIMEDIA
+    case FullScreenVideoPlayer:
+        return new HTML5FullScreenVideoHandler();
+#endif
     default:
         return 0;
     }

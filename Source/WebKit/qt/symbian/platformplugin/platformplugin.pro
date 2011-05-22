@@ -15,6 +15,29 @@ load(mobilityconfig, true)
 
 isEmpty(OUTPUT_DIR): OUTPUT_DIR = ../../../..
 
+contains(MOBILITY_CONFIG, multimedia) {
+ 
+    CONFIG += mobility
+    MOBILITY += multimedia
+    DEFINES += WTF_USE_QT_MULTIMEDIA=1
+
+    SOURCES += \
+        HTML5VideoPlugin.cpp \
+        HTML5VideoWidget.cpp \
+        OverlayWidget.cpp \
+        PlayerButton.cpp \
+        PlayerLabel.cpp
+
+    HEADERS += \
+        HTML5VideoPlugin.h \
+        HTML5VideoWidget.h \
+        OverlayWidget.h \
+        PlayerButton.h \
+        PlayerLabel.h
+
+    RESOURCES = platformplugin.qrc
+}
+
 SOURCES += \
     WebPlugin.cpp
 

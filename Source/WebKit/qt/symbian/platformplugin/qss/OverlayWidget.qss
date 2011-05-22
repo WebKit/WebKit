@@ -1,0 +1,59 @@
+QSlider::groove {
+    border: 2px solid black;
+    border-radius: 5px;
+    background: white;
+}
+
+QSlider::handle {
+    border: 2px solid black;
+    border-radius: 8px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eee, stop:1 #ccc);
+}
+
+QSlider::add-page {
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+QSlider::sub-page {
+    border: 2px solid black;
+    border-radius: 5px;
+}
+
+QSlider::groove:horizontal { 
+    height: 10px;
+}
+
+QSlider::handle:horizontal {
+    width: 40px;
+    margin-top: -15px;
+    margin-bottom: -15px;
+}
+
+QSlider::add-page:horizontal {
+    height: 10px;
+    background: white;
+}
+
+QSlider::sub-page:horizontal {
+    height: 10px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eee, stop:1 #ccc);
+}
+
+QSlider::groove:vertical {
+    width: 10px;
+}
+
+QSlider::handle:vertical {
+    height: 40px; margin-left: -15px; margin-right: -15px;
+}
+
+QSlider::add-page:vertical {
+    width: 10px;
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #eee, stop:1 #ccc);
+}
+
+QSlider::sub-page:vertical {
+    width: 10px;
+    background: white;
+}
