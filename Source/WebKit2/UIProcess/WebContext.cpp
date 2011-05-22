@@ -129,7 +129,7 @@ WebContext::WebContext(ProcessModel processModel, const String& injectedBundlePa
 #endif
     , m_processTerminationEnabled(true)
 {
-#ifndef NDEBUG
+#if !LOG_DISABLED
     WebKit::initializeLogChannelsIfNecessary();
 #endif
 

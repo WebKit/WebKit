@@ -1,3 +1,13 @@
+2011-05-22  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Don't call WebKit::initializeLogChannelsIfNecessary if logging is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=61249
+
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::WebContext): Check #if !LOG_DISABLED, not #ifndef NDEBUG, to decide whether to call WebKit::initializeLogChannelsIfNecessary().
+
 2011-05-21  Nancy Piedra  <nancy.piedra@nokia.com>
 
         Reviewed by Andreas Kling.
