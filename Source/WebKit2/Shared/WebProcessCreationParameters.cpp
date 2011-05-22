@@ -51,7 +51,6 @@ void WebProcessCreationParameters::encode(CoreIPC::ArgumentEncoder* encoder) con
     encoder->encode(injectedBundlePath);
     encoder->encode(injectedBundlePathExtensionHandle);
     encoder->encode(applicationCacheDirectory);
-    encoder->encode(applicationCacheDirectoryExtensionHandle);
     encoder->encode(databaseDirectory);
     encoder->encode(localStorageDirectory);
     encoder->encode(urlSchemesRegistererdAsEmptyDocument);
@@ -98,8 +97,6 @@ bool WebProcessCreationParameters::decode(CoreIPC::ArgumentDecoder* decoder, Web
     if (!decoder->decode(parameters.injectedBundlePathExtensionHandle))
         return false;
     if (!decoder->decode(parameters.applicationCacheDirectory))
-        return false;
-    if (!decoder->decode(parameters.applicationCacheDirectoryExtensionHandle))
         return false;
     if (!decoder->decode(parameters.databaseDirectory))
         return false;

@@ -221,13 +221,8 @@ void WebContext::ensureWebProcess()
 
     WebProcessCreationParameters parameters;
 
-    parameters.applicationCacheDirectory = applicationCacheDirectory();
-    if (!parameters.applicationCacheDirectory.isEmpty())
-        SandboxExtension::createHandle(parameters.applicationCacheDirectory, SandboxExtension::ReadWrite, parameters.applicationCacheDirectoryExtensionHandle);
-
     if (!injectedBundlePath().isEmpty()) {
         parameters.injectedBundlePath = injectedBundlePath();
-
         SandboxExtension::createHandle(parameters.injectedBundlePath, SandboxExtension::ReadOnly, parameters.injectedBundlePathExtensionHandle);
     }
 
@@ -240,7 +235,7 @@ void WebContext::ensureWebProcess()
 #if PLATFORM(MAC)
     parameters.presenterApplicationPid = getpid();
 #endif
-    
+
     copyToVector(m_schemesToRegisterAsEmptyDocument, parameters.urlSchemesRegistererdAsEmptyDocument);
     copyToVector(m_schemesToRegisterAsSecure, parameters.urlSchemesRegisteredAsSecure);
     copyToVector(m_schemesToSetDomainRelaxationForbiddenFor, parameters.urlSchemesForWhichDomainRelaxationIsForbidden);

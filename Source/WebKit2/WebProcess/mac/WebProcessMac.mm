@@ -187,6 +187,7 @@ static void initializeSandbox(const WebProcessCreationParameters& parameters)
     appendReadwriteSandboxDirectory(sandboxParameters, "HOME_DIR", NSHomeDirectory());
     appendReadwriteSandboxDirectory(sandboxParameters, "WEBKIT_DATABASE_DIR", parameters.databaseDirectory);
     appendReadwriteSandboxDirectory(sandboxParameters, "WEBKIT_LOCALSTORAGE_DIR", parameters.localStorageDirectory);
+    appendReadwriteSandboxDirectory(sandboxParameters, "WEBKIT_APPLICATION_CACHE_DIR", parameters.applicationCacheDirectory);
     appendReadwriteSandboxDirectory(sandboxParameters, "NSURL_CACHE_DIR", parameters.nsURLCachePath);
 
     sandboxParameters.append(static_cast<const char*>(0));

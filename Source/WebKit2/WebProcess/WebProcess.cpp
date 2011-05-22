@@ -194,12 +194,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
 #endif
     
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    if (!parameters.applicationCacheDirectory.isEmpty()) {
-        m_applicationCachePathExtension = SandboxExtension::create(parameters.applicationCacheDirectoryExtensionHandle);
-        m_applicationCachePathExtension->consume();
-
+    if (!parameters.applicationCacheDirectory.isEmpty())
         cacheStorage().setCacheDirectory(parameters.applicationCacheDirectory);
-    }
 #endif
 
     setShouldTrackVisitedLinks(parameters.shouldTrackVisitedLinks);

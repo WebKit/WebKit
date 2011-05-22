@@ -53,9 +53,7 @@ struct WebProcessCreationParameters {
     String injectedBundlePath;
     SandboxExtension::Handle injectedBundlePathExtensionHandle;
 
-    String applicationCacheDirectory;
-    SandboxExtension::Handle applicationCacheDirectoryExtensionHandle;
-    
+    String applicationCacheDirectory;    
     String databaseDirectory;
     String localStorageDirectory;
     Vector<String> urlSchemesRegistererdAsEmptyDocument;
