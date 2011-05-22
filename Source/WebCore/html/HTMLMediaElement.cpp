@@ -772,6 +772,11 @@ void HTMLMediaElement::waitForSourceChange()
 
     // 6.18 - Set the element's delaying-the-load-event flag to false. This stops delaying the load event.
     setShouldDelayLoadEvent(false);
+
+    updateDisplayState();
+
+    if (renderer())
+        renderer()->updateFromElement();
 }
 
 void HTMLMediaElement::noneSupported()

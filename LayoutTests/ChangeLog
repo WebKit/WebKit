@@ -1,3 +1,17 @@
+2011-05-22  Lucas Forschler  <lforschler@apple.com>
+
+    Merge r86904.
+    
+    2011-05-18  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Poster is not shown in Safari for video element with no playable source elements.
+        https://bugs.webkit.org/show_bug.cgi?id=61109
+
+        * media/video-src-invalid-poster-expected.txt: Added.
+        * media/video-src-invalid-poster.html: Added.
+
 2011-05-19  Lucas Forschler  <lforschler@apple.com
 
     Merged r86852.
