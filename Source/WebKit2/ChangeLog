@@ -1,3 +1,11 @@
+2011-05-22  John Sullivan  <sullivan@apple.com>
+
+        Rolled out <http://trac.webkit.org/changeset/87030>, which I accidentally checked into
+        the branch instead of trunk.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::closePage):
+
 2011-05-22  Lucas Forschler  <lforschler@apple.com>
 
     Merge r86967.
