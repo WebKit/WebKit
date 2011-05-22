@@ -408,40 +408,52 @@ void WebContext::didReceiveSynchronousMessageFromInjectedBundle(const String& me
 
 void WebContext::didNavigateWithNavigationData(uint64_t pageID, const WebNavigationDataStore& store, uint64_t frameID) 
 {
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-    if (!frame->page())
+    WebPageProxy* page = m_process->webPage(pageID);
+    if (!page)
         return;
     
-    m_historyClient.didNavigateWithNavigationData(this, frame->page(), store, frame);
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+    MESSAGE_CHECK(frame->page() == page);
+    
+    m_historyClient.didNavigateWithNavigationData(this, page, store, frame);
 }
 
 void WebContext::didPerformClientRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
 {
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-    if (!frame->page())
+    WebPageProxy* page = m_process->webPage(pageID);
+    if (!page)
         return;
     
-    m_historyClient.didPerformClientRedirect(this, frame->page(), sourceURLString, destinationURLString, frame);
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+    MESSAGE_CHECK(frame->page() == page);
+    
+    m_historyClient.didPerformClientRedirect(this, page, sourceURLString, destinationURLString, frame);
 }
 
 void WebContext::didPerformServerRedirect(uint64_t pageID, const String& sourceURLString, const String& destinationURLString, uint64_t frameID)
 {
-    WebFrameProxy* frame = m_process->webFrame(frameID);
-    MESSAGE_CHECK(frame);
-    if (!frame->page())
+    WebPageProxy* page = m_process->webPage(pageID);
+    if (!page)
         return;
     
-    m_historyClient.didPerformServerRedirect(this, frame->page(), sourceURLString, destinationURLString, frame);
+    WebFrameProxy* frame = m_process->webFrame(frameID);
+    MESSAGE_CHECK(frame);
+    MESSAGE_CHECK(frame->page() == page);
+    
+    m_historyClient.didPerformServerRedirect(this, page, sourceURLString, destinationURLString, frame);
 }
 
 void WebContext::didUpdateHistoryTitle(uint64_t pageID, const String& title, const String& url, uint64_t frameID)
 {
+    WebPageProxy* page = m_process->webPage(pageID);
+    if (!page)
+        return;
+
     WebFrameProxy* frame = m_process->webFrame(frameID);
     MESSAGE_CHECK(frame);
-    if (!frame->page())
-        return;
+    MESSAGE_CHECK(frame->page() == page);
 
     m_historyClient.didUpdateHistoryTitle(this, frame->page(), title, url, frame);
 }
