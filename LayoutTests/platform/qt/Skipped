@@ -616,9 +616,6 @@ loader/go-back-to-different-window-size.html
 # Missing layoutTestController.findString() http://webkit.org/b/50236
 editing/text-iterator/findString.html
 
-# layoutTestController.waitForPolicyDelegate() does not report the origin node
-fast/encoding/mailto-always-utf-8.html
-
 # Missing layoutTestController.setAlwaysAcceptCookies()
 http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html
 

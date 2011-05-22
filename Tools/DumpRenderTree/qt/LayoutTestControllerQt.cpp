@@ -628,6 +628,7 @@ void LayoutTestController::setCustomPolicyDelegate(bool enabled, bool permissive
 
 void LayoutTestController::waitForPolicyDelegate()
 {
+    setCustomPolicyDelegate(true);
     m_waitForPolicy = true;
     waitUntilDone();
 }

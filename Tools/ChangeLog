@@ -1,3 +1,19 @@
+2011-05-22  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix policyDelegate in Qt DRT
+        https://bugs.webkit.org/show_bug.cgi?id=61247
+
+        Use the 'policy delegate' implemented in FrameLoaderClient
+        for layout tests. The partial implementation in DumpRenderTreeQt
+        is redundant, so remove it.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::acceptNavigationRequest):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::waitForPolicyDelegate):
+
 2011-05-22  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Darin Adler.

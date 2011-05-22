@@ -1,3 +1,14 @@
+2011-05-22  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Fix policyDelegate in Qt DRT
+        https://bugs.webkit.org/show_bug.cgi?id=61247
+
+        * platform/qt/Skipped: Unskip fast/encoding/mailto-always-utf-8.html
+        * platform/qt/fast/forms/mailto/formenctype-attribute-button-html-expected.txt: Removed.
+        * platform/qt/fast/forms/mailto/formenctype-attribute-input-html-expected.txt: Removed.
+
 2011-05-22  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.

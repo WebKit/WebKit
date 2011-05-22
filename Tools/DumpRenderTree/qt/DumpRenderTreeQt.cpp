@@ -324,39 +324,9 @@ bool WebPage::javaScriptPrompt(QWebFrame*, const QString& msg, const QString& de
 
 bool WebPage::acceptNavigationRequest(QWebFrame* frame, const QNetworkRequest& request, NavigationType type)
 {
-    if (m_drt->layoutTestController()->waitForPolicy()) {
-        QString url = QString::fromUtf8(request.url().toEncoded());
-        QString typeDescription;
-
-        switch (type) {
-        case NavigationTypeLinkClicked:
-            typeDescription = "link clicked";
-            break;
-        case NavigationTypeFormSubmitted:
-            typeDescription = "form submitted";
-            break;
-        case NavigationTypeBackOrForward:
-            typeDescription = "back/forward";
-            break;
-        case NavigationTypeReload:
-            typeDescription = "reload";
-            break;
-        case NavigationTypeFormResubmitted:
-            typeDescription = "form resubmitted";
-            break;
-        case NavigationTypeOther:
-            typeDescription = "other";
-            break;
-        default:
-            typeDescription = "illegal value";
-        }
-
-        if (isTextOutputEnabled())
-            fprintf(stdout, "Policy delegate: attempt to load %s with navigation type '%s'\n",
-                    url.toUtf8().constData(), typeDescription.toUtf8().constData());
-
+    if (m_drt->layoutTestController()->waitForPolicy())
         m_drt->layoutTestController()->notifyDone();
-    }
+
     return QWebPage::acceptNavigationRequest(frame, request, type);
 }
 

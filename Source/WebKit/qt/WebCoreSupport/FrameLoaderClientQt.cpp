@@ -1263,6 +1263,7 @@ void FrameLoaderClientQt::dispatchDecidePolicyForNavigationAction(FramePolicyFun
         else
             result = PolicyIgnore;
 
+        page->d->acceptNavigationRequest(m_webFrame, r, QWebPage::NavigationType(action.type()));
         callPolicyFunction(function, result);
         return;
     }
