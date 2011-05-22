@@ -1,3 +1,20 @@
+2011-05-21  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r66731): pointer-events are broken in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=45467
+
+        The SVGSVGElement shouldn't be the target of a mouse event, if its pointer-events attribute is set
+        to 'none'. This matches the behavior on Firefox where an embedded SVG element is the target of an event,
+        if none of its childs caught the event. This is the case for all pointer-events other than 'none'.
+
+        Tests: svg/custom/pointer-events-on-svg-with-pointer.xhtml
+               svg/custom/pointer-events-on-svg-without-pointer.xhtml
+
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+
 2011-05-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

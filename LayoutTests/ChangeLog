@@ -1,3 +1,17 @@
+2011-05-21  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION(r66731): pointer-events are broken in some cases
+        https://bugs.webkit.org/show_bug.cgi?id=45467
+
+        Check that an embedded SVG element doesn't have a pointer, if pointer-events is set to 'none'.
+
+        * svg/custom/pointer-events-on-svg-with-pointer-expected.txt: Added.
+        * svg/custom/pointer-events-on-svg-with-pointer.xhtml: Added.
+        * svg/custom/pointer-events-on-svg-without-pointer-expected.txt: Added.
+        * svg/custom/pointer-events-on-svg-without-pointer.xhtml: Added.
+
 2011-05-21  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.
