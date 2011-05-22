@@ -1303,7 +1303,7 @@ sub statusCommand(@)
 {
     my @files = @_;
 
-    my $filesString = "'" . join ("' '", @files) . "'";
+    my $filesString = "\"" . join ("\" \"", @files) . "\"";
     my $command;
     if ($isSVN) {
         $command = "$SVN stat $filesString";

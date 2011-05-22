@@ -1,3 +1,15 @@
+2011-05-22  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Use double quotes for filename arguments
+        https://bugs.webkit.org/show_bug.cgi?id=61250
+
+        Windows does not support single quotes on the command line,
+        so replace them with double quotes.
+
+        * Scripts/prepare-ChangeLog:
+
 2011-05-20  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sam Weinig.
