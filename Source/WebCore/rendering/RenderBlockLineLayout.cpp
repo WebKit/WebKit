@@ -1744,7 +1744,10 @@ public:
     void setTrailingWhitespace(RenderText*);
     void clear();
     void appendBoxIfNeeded(RenderBox*);
-    void updateMidpointsForTrailingBoxes(LineMidpointState&, const InlineIterator& lBreak);
+
+    enum CollapseFirstSpaceOrNot { DoNotCollapseFirstSpace, CollapseFirstSpace };
+
+    void updateMidpointsForTrailingBoxes(LineMidpointState&, const InlineIterator& lBreak, CollapseFirstSpaceOrNot);
 
 private:
     RenderText* m_whitespace;
@@ -1774,7 +1777,7 @@ inline void TrailingObjects::appendBoxIfNeeded(RenderBox* box)
         m_boxes.append(box);
 }
 
-void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMidpointState, const InlineIterator& lBreak)
+void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMidpointState, const InlineIterator& lBreak, CollapseFirstSpaceOrNot collapseFirstSpace)
 {
     if (!m_whitespace)
         return;
@@ -1786,7 +1789,8 @@ void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMid
         int trailingSpaceMidpoint = lineMidpointState.numMidpoints - 1;
         for ( ; trailingSpaceMidpoint >= 0 && lineMidpointState.midpoints[trailingSpaceMidpoint].m_obj != m_whitespace; --trailingSpaceMidpoint) { }
         ASSERT(trailingSpaceMidpoint >= 0);
-        lineMidpointState.midpoints[trailingSpaceMidpoint].m_pos--;
+        if (collapseFirstSpace == CollapseFirstSpace)
+            lineMidpointState.midpoints[trailingSpaceMidpoint].m_pos--;
 
         // Now make sure every single trailingPositionedBox following the trailingSpaceMidpoint properly stops and starts
         // ignoring spaces.
@@ -1805,6 +1809,7 @@ void TrailingObjects::updateMidpointsForTrailingBoxes(LineMidpointState& lineMid
         }
     } else if (!lBreak.m_obj) {
         ASSERT(m_whitespace->isText());
+        ASSERT(collapseFirstSpace == CollapseFirstSpace);
         // Add a new end midpoint that stops right at the very end.
         unsigned length = m_whitespace->textLength();
         unsigned pos = length >= 2 ? length - 2 : UINT_MAX;
@@ -2212,6 +2217,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
                             // spaces. Create a midpoint to terminate the run
                             // before the second space.
                             addMidpoint(lineMidpointState, ignoreStart);
+                            trailingObjects.updateMidpointsForTrailingBoxes(lineMidpointState, InlineIterator(), TrailingObjects::DoNotCollapseFirstSpace);
                         }
                     }
                 } else if (ignoringSpaces) {
@@ -2360,7 +2366,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
     // Sanity check our midpoints.
     checkMidpoints(lineMidpointState, lBreak);
 
-    trailingObjects.updateMidpointsForTrailingBoxes(lineMidpointState, lBreak);
+    trailingObjects.updateMidpointsForTrailingBoxes(lineMidpointState, lBreak, TrailingObjects::CollapseFirstSpace);
 
     // We might have made lBreak an iterator that points past the end
     // of the object. Do this adjustment to make it point to the start

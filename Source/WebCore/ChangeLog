@@ -1,3 +1,19 @@
+2011-05-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9479926> REGRESSION (r82144): Icon overlaps text in Twitter message dialog
+        https://bugs.webkit.org/show_bug.cgi?id=61241
+
+        Test: fast/block/positioning/start-ignoring-before.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::TrailingObjects::updateMidpointsForTrailingBoxes): Added a boolean parameter saying
+        whether to merge the first trailing space with the line break.
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak): When adding a midpoint behind the current
+        character, account for trailing positioned objects that occurred after the midpoint by calling
+        updateMidpointsForTrailingBoxes(), which adds midpoints for them.
+
 2011-05-21  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.
