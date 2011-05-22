@@ -4161,3 +4161,6 @@ BUGCR83426 MAC : svg/filters/feLighting-crash.svg = IMAGE PASS
 BUGCR83441 : storage/indexeddb/mozilla/create-objectstore-null-name.html = TEXT
 
 BUGCR83499 : fast/box-shadow/scaled-box-shadow.html = IMAGE IMAGE+TEXT PASS
+BUGCR83499 MAC : fast/box-shadow/box-shadow-transformed.html = IMAGE IMAGE+TEXT PASS
+
+BUGCR83504 WIN : fast/css/custom-font-xheight.html = PASS TIMEOUT

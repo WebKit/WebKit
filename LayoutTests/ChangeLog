@@ -1,5 +1,14 @@
 2011-05-21  Justin Schuh  <jschuh@chromium.org>
 
+        Unreviewed.
+
+        Chromium expectations exception for:
+        fast/css/custom-font-xheight.html
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-21  Justin Schuh  <jschuh@chromium.org>
+
         Unreviewed
 
         Chromium expectations updates.
