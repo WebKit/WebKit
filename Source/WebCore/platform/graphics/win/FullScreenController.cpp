@@ -49,6 +49,8 @@ public:
         , m_client(client)
         , m_originalHost(0)
         , m_isFullScreen(false)
+        , m_isEnteringFullScreen(false)
+        , m_isExitingFullScreen(false)
     {
     }
     virtual ~Private() { }
@@ -63,6 +65,8 @@ public:
     IntRect m_originalFrame;
     HWND m_originalHost;
     bool m_isFullScreen;
+    bool m_isEnteringFullScreen;
+    bool m_isExitingFullScreen;
 };
 
 LRESULT FullScreenController::Private::fullscreenClientWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -110,9 +114,10 @@ bool FullScreenController::isFullScreen() const
 
 void FullScreenController::enterFullScreen()
 {
-    if (m_private->m_isFullScreen)
+    if (m_private->m_isFullScreen || m_private->m_isEnteringFullScreen)
         return;
     m_private->m_isFullScreen = true;
+    m_private->m_isEnteringFullScreen = true;
 
     m_private->m_originalHost = m_private->m_client->fullScreenClientParentWindow();
     RECT originalFrame = {0, 0, 0, 0};
@@ -126,7 +131,6 @@ void FullScreenController::enterFullScreen()
     ::AnimateWindow(m_private->m_backgroundWindow->hwnd(), kFullScreenAnimationDuration, AW_BLEND | AW_ACTIVATE);
 
     m_private->m_client->fullScreenClientWillEnterFullScreen();
-
     ASSERT(!m_private->m_fullScreenWindow);
     m_private->m_fullScreenWindow = adoptPtr(new MediaPlayerPrivateFullscreenWindow(m_private.get()));
     ASSERT(m_private->m_fullScreenWindow);
@@ -137,17 +141,26 @@ void FullScreenController::enterFullScreen()
     IntRect viewFrame(IntPoint(), m_private->m_fullScreenFrame.size());
     ::SetWindowPos(m_private->m_fullScreenWindow->hwnd(), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     ::SetWindowPos(m_private->m_client->fullScreenClientWindow(), HWND_TOP, 0, 0, viewFrame.width(), viewFrame.height(), SWP_NOACTIVATE);
-    ::RedrawWindow(m_private->m_client->fullScreenClientWindow(), 0, 0, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_ALLCHILDREN);
 
     m_private->m_client->fullScreenClientDidEnterFullScreen();
+    m_private->m_client->fullScreenClientForceRepaint();
+}
+
+void FullScreenController::enterFullScreenRepaintCompleted()
+{
+    if (!m_private->m_isEnteringFullScreen)
+        return;
+    m_private->m_isEnteringFullScreen = false;
+
     ::AnimateWindow(m_private->m_fullScreenWindow->hwnd(), kFullScreenAnimationDuration, AW_BLEND | AW_ACTIVATE);
 }
 
 void FullScreenController::exitFullScreen()
 {
-    if (!m_private->m_isFullScreen)
+    if (!m_private->m_isFullScreen || m_private->m_isExitingFullScreen)
         return;
     m_private->m_isFullScreen = false;
+    m_private->m_isExitingFullScreen = true;
 
     ::AnimateWindow(m_private->m_fullScreenWindow->hwnd(), kFullScreenAnimationDuration, AW_HIDE | AW_BLEND);
 
@@ -155,13 +168,29 @@ void FullScreenController::exitFullScreen()
     m_private->m_client->fullScreenClientSetParentWindow(m_private->m_originalHost);
     m_private->m_fullScreenWindow = nullptr;
 
-    m_private->m_client->fullScreenClientDidExitFullScreen();
     ::SetWindowPos(m_private->m_client->fullScreenClientWindow(), 0, m_private->m_originalFrame.x(), m_private->m_originalFrame.y(), m_private->m_originalFrame.width(), m_private->m_originalFrame.height(), SWP_NOACTIVATE | SWP_NOZORDER);
-    ::RedrawWindow(m_private->m_client->fullScreenClientWindow(), 0, 0, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_ALLCHILDREN);
+
+    m_private->m_client->fullScreenClientDidExitFullScreen();
+    m_private->m_client->fullScreenClientForceRepaint();
+}
+
+void FullScreenController::exitFullScreenRepaintCompleted()
+{
+    if (!m_private->m_isExitingFullScreen)
+        return;
+    m_private->m_isExitingFullScreen = false;
 
     ASSERT(m_private->m_backgroundWindow);
     ::AnimateWindow(m_private->m_backgroundWindow->hwnd(), kFullScreenAnimationDuration, AW_HIDE | AW_BLEND);
     m_private->m_backgroundWindow = nullptr;
+}
+
+void FullScreenController::repaintCompleted()
+{
+    if (m_private->m_isEnteringFullScreen)
+        enterFullScreenRepaintCompleted();
+    else if (m_private->m_isExitingFullScreen)
+        exitFullScreenRepaintCompleted();
 }
 
 #endif

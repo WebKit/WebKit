@@ -1778,5 +1778,16 @@ void WebView::fullScreenClientDidExitFullScreen()
     page()->fullScreenManager()->didExitFullScreen();
 }
 
+static void fullScreenClientForceRepaintCompleted(WKErrorRef, void* context)
+{
+    ASSERT(context);
+    static_cast<WebView*>(context)->fullScreenController()->repaintCompleted();
+}
+
+void WebView::fullScreenClientForceRepaint()
+{
+    page()->forceRepaint(VoidCallback::create(this, &fullScreenClientForceRepaintCompleted));
+}
+
 #endif
 } // namespace WebKit

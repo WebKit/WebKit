@@ -1,3 +1,15 @@
+2011-05-20  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Win: non-full-screen content is briefly seen when entering full-screen mode (and vice versa)
+        https://bugs.webkit.org/show_bug.cgi?id=61108
+
+        * WebView.cpp:
+        (WebView::fullScreenClientForceRepaint): Repaint the view and immediately notify the 
+            full screen controller.
+        * WebView.h:
+
 2011-05-13  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Simon Fraser.

@@ -6828,5 +6828,13 @@ void WebView::fullScreenClientDidExitFullScreen()
     m_fullScreenElement = nullptr;
 }
 
+void WebView::fullScreenClientForceRepaint()
+{
+    ASSERT(m_fullScreenElement);
+    RECT windowRect = {0};
+    frameRect(&windowRect);
+    repaint(windowRect, true /*contentChanged*/, true /*immediate*/, false /*contentOnly*/);
+    m_fullscreenController->repaintCompleted();
+}
 
 #endif
