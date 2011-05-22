@@ -344,9 +344,6 @@ fast/dom/title-directionality.html
 # https://bugs.webkit.org/show_bug.cgi?id=58924
 plugins/mouse-click-iframe-to-plugin.html
 
-# Unskip when https://bugs.webkit.org/show_bug.cgi?id=59571 is fixed
-fast/dom/shadow
-
 # Animation API is disabled by default
 animations/animation-api-1.html
 

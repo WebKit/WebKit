@@ -1,3 +1,15 @@
+2011-05-22  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        When removing a shadow root, also remove it from the render tree.
+        https://bugs.webkit.org/show_bug.cgi?id=61245
+
+        Test: existing fast/dom/shadow/layout-tests-can-access-shadow.html
+
+        * dom/Element.cpp:
+        (WebCore::Element::removeShadowRoot): Call detach if attached.
+
 2011-05-22  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.
