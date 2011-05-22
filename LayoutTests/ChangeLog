@@ -1,3 +1,18 @@
+2011-05-21  Justin Schuh  <jschuh@chromium.org>
+
+        Unreviewed
+
+        Chromium expectations updates.
+
+        * platform/chromium-linux/fast/css/box-shadow-and-border-radius-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt: Added.
+        * platform/chromium-win/fast/box-shadow/border-radius-big-expected.png:
+        * platform/chromium-win/fast/css/box-shadow-and-border-radius-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-21  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.
