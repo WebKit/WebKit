@@ -1928,6 +1928,7 @@ void WebPageProxy::closePage(bool stopResponsivenessTimer)
     if (stopResponsivenessTimer)
         process()->responsivenessTimer()->stop();
 
+    m_pageClient->clearAllEditCommands();
     m_uiClient.close(this);
 }
 
