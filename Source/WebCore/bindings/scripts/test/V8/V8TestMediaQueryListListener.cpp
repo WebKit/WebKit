@@ -95,6 +95,8 @@ v8::Handle<v8::Object> V8TestMediaQueryListListener::wrapSlow(TestMediaQueryList
 
     impl->ref();
     v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
+    if (!hasDependentLifetime)
+        wrapperHandle.MarkIndependent();
     getDOMObjectMap().set(impl, wrapperHandle);
     return wrapper;
 }

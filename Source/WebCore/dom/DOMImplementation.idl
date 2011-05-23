@@ -21,7 +21,8 @@
 module core {
 
     interface [
-        GenerateIsReachable=ImplDocument
+        GenerateIsReachable=ImplDocument,
+        V8DependentLifetime
     ] DOMImplementation {
 
         // DOM Level 1

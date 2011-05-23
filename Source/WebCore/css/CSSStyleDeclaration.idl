@@ -26,7 +26,8 @@ module css {
         GenerateIsReachable=ImplRoot,
         DelegatingPutFunction,
         HasNameGetter,
-        HasIndexGetter
+        HasIndexGetter,
+        V8DependentLifetime
     ] CSSStyleDeclaration {
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString        cssText
                      setter raises(DOMException);

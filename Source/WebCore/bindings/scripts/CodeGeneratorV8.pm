@@ -232,6 +232,15 @@ sub GenerateHeader
     # EventTarget.
     $codeGenerator->AddMethodsConstantsAndAttributesFromParentClasses($dataNode, \@allParents, 1);
 
+    my $hasDependentLifetime = $dataNode->extendedAttributes->{"V8DependentLifetime"} || IsActiveDomType($interfaceName) || $className =~ /SVG/;
+    if (!$hasDependentLifetime) {
+        foreach (@{$dataNode->parents}) {
+            my $parent = $codeGenerator->StripModule($_);
+            next if $parent eq "EventTarget";
+            $headerIncludes{"V8${parent}.h"} = 1;
+        }
+    }
+
     my $hasLegacyParent = $dataNode->extendedAttributes->{"LegacyParent"};
 
     # - Add default header template
@@ -268,6 +277,26 @@ sub GenerateHeader
     }
     push(@headerContent, "\nclass FloatRect;\n") if $svgPropertyType && $svgPropertyType eq "FloatRect";
     push(@headerContent, "\nclass $className {\n");
+    push(@headerContent, "public:\n");
+
+    push(@headerContent, "    static const bool hasDependentLifetime = ");
+    if ($hasDependentLifetime) {
+        push(@headerContent, "true;\n");
+    } elsif (@{$dataNode->parents}) {
+        # Even if this type doesn't have the V8DependentLifetime attribute its parents may.
+        # Let the compiler statically determine this for us.
+        my $separator = "";
+        foreach (@{$dataNode->parents}) {
+            my $parent = $codeGenerator->StripModule($_);
+            next if $parent eq "EventTarget";
+            $headerIncludes{"V8${parent}.h"} = 1;
+            push(@headerContent, "${separator}V8${parent}::hasDependentLifetime");
+            $separator = " || ";
+        }
+        push(@headerContent, ";\n");
+    } else {
+        push(@headerContent, "false;\n");
+    }
 
     my $nativeType = GetNativeTypeForConversions($dataNode, $interfaceName);
     my $domMapFunction = GetDomMapFunction($dataNode, $interfaceName);
@@ -276,8 +305,6 @@ sub GenerateHeader
     my $forceNewObjectCall = IsDOMNodeType($interfaceName) ? ", forceNewObject" : "";
 
     push(@headerContent, <<END);
-
-public:
     static bool HasInstance(v8::Handle<v8::Value> value);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();
@@ -2526,6 +2553,8 @@ END
 
     push(@implContent, <<END);
     v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
+    if (!hasDependentLifetime)
+        wrapperHandle.MarkIndependent();
 END
     if (IsNodeSubType($dataNode)) {
         push(@implContent, <<END);

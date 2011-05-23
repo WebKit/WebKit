@@ -84,6 +84,8 @@ v8::Handle<v8::Object> V8TestSerializedScriptValueInterface::wrapSlow(TestSerial
     impl->ref();
     SerializedScriptValue::deserializeAndSetProperty(wrapper, "value", static_cast<v8::PropertyAttribute>(v8::DontDelete | v8::ReadOnly), impl->value());
     v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
+    if (!hasDependentLifetime)
+        wrapperHandle.MarkIndependent();
     getDOMObjectMap().set(impl, wrapperHandle);
     return wrapper;
 }

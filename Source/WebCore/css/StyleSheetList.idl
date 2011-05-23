@@ -24,7 +24,8 @@ module stylesheets {
     interface [
         GenerateIsReachable=ImplDocument,
         HasIndexGetter,
-        HasNameGetter
+        HasNameGetter,
+        V8DependentLifetime
     ] StyleSheetList {
         readonly attribute unsigned long    length;
         StyleSheet         item(in unsigned long index);

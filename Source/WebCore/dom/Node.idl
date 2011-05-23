@@ -30,7 +30,8 @@ module core {
         EventTarget,
         GenerateNativeConverter,
         InlineGetOwnPropertySlot,
-        Polymorphic
+        Polymorphic,
+        V8DependentLifetime
     ] Node
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         : Object, EventTarget

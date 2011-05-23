@@ -1,3 +1,49 @@
+2011-05-19  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Explicitly mark objects with complex GC rules.
+        https://bugs.webkit.org/show_bug.cgi?id=61131
+
+        From the GC point view there are two kinds of objects: the ones
+        that may participate in object grouping (i.e. their lifetime
+        depends on other objects) and the ones that never participate in
+        grouping (independent). V8 added support for marking persistent
+        handles as independent so that the GC can process the objects they
+        hold faster. The motivating use case here is typed arrays.
+
+        This patch adds V8-specific inherited IDL attribute
+        V8DependentLifetime to types used in V8GCController, which is
+        exactly the set of types with object lifetimes depending on other
+        objects. The handles for the types that are not marked with the
+        new attribute can be marked as independent and GC-ed faster.
+
+        * bindings/scripts/CodeGeneratorV8.pm: Added proccessing of the new attribute.
+
+        Updated test output:
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::V8TestInterface::wrapSlow):
+        * bindings/scripts/test/V8/V8TestInterface.h:
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore::V8TestMediaQueryListListener::wrapSlow):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.h:
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::V8TestObj::wrapSlow):
+        * bindings/scripts/test/V8/V8TestObj.h:
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::V8TestSerializedScriptValueInterface::wrapSlow):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.h:
+
+        Added the new attribute:
+        * css/CSSRule.idl:
+        * css/CSSRuleList.idl:
+        * css/CSSStyleDeclaration.idl:
+        * css/CSSValue.idl:
+        * css/StyleSheet.idl:
+        * css/StyleSheetList.idl:
+        * dom/DOMImplementation.idl:
+        * dom/Node.idl:
+
 2011-05-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87014, r87016, and r87017.

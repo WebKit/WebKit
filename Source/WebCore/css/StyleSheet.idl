@@ -25,7 +25,8 @@ module stylesheets {
         CustomMarkFunction,
         GenerateIsReachable,
         CustomToJS,
-        Polymorphic
+        Polymorphic,
+        V8DependentLifetime
     ] StyleSheet {
         readonly attribute [ConvertNullStringTo=Null] DOMString        type;
                  attribute boolean          disabled;

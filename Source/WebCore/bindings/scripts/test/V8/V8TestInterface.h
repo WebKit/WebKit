@@ -33,8 +33,8 @@
 namespace WebCore {
 
 class V8TestInterface {
-
 public:
+    static const bool hasDependentLifetime = false;
     static bool HasInstance(v8::Handle<v8::Value> value);
     static v8::Persistent<v8::FunctionTemplate> GetRawTemplate();
     static v8::Persistent<v8::FunctionTemplate> GetTemplate();

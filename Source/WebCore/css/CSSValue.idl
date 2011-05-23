@@ -24,7 +24,8 @@ module css {
         CustomToJS,
         CustomIsReachable,
         CustomFinalize,
-        Polymorphic
+        Polymorphic,
+        V8DependentLifetime
     ] CSSValue {
 
         // UnitTypes
