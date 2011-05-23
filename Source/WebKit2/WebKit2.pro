@@ -178,7 +178,6 @@ HEADERS += \
     UIProcess/Authentication/WebCredential.h \
     UIProcess/Authentication/WebProtectionSpace.h \
     UIProcess/BackingStore.h \
-    UIProcess/ChunkedUpdateDrawingAreaProxy.h \
     UIProcess/Downloads/DownloadProxy.h \
     UIProcess/DrawingAreaProxy.h \
     UIProcess/DrawingAreaProxyImpl.h \

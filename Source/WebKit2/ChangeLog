@@ -1,3 +1,9 @@
+2011-05-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed trivial fix after r86990.
+
+        * WebKit2.pro: Remove UIProcess/ChunkedUpdateDrawingAreaProxy.h.
+
 2011-05-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebKit2 GTK build after r86990.
