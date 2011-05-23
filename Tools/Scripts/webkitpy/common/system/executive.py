@@ -196,6 +196,15 @@ class Executive(object):
             return 'ruby'
         return None
 
+    @staticmethod
+    def shell_command_for_script(script_path, fs=FileSystem()):
+        # Win32 does not support shebang. We need to detect the interpreter ourself.
+        if sys.platform == 'win32':
+            interpreter = Executive.interpreter_for_script(script_path, fs)
+            if interpreter:
+                return [interpreter, script_path]
+        return [script_path]
+
     def kill_process(self, pid):
         """Attempts to kill the given pid.
         Will fail silently if pid does not exist or insufficient permisssions."""

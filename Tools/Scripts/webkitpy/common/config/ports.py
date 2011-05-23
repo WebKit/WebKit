@@ -45,12 +45,7 @@ class WebKitPort(object):
     @classmethod
     def script_shell_command(cls, script_name):
         script_path = cls.script_path(script_name)
-        # Win32 does not support shebang. We need to detect the interpreter ourself.
-        if sys.platform == 'win32':
-            interpreter = Executive.interpreter_for_script(script_path)
-            if interpreter:
-                return [interpreter, script_path]
-        return [script_path]
+        return Executive.shell_command_for_script(script_path)
 
     @staticmethod
     def port(port_name):
