@@ -1,3 +1,15 @@
+2011-05-23  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Fix division by zero in TilingData for boundary case texture sizes
+        https://bugs.webkit.org/show_bug.cgi?id=61164
+
+        Add additional tests for small max texture sizes.
+
+        * tests/TilingDataTest.cpp:
+        (WebCore::TEST):
+
 2011-05-23  Ruben  <chromium@hybridsource.org>
 
         Reviewed by Tony Chang.

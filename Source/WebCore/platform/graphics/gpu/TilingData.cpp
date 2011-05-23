@@ -75,12 +75,20 @@ void TilingData::setMaxTextureSize(int maxTextureSize)
 
 int TilingData::tileXIndexFromSrcCoord(int srcPos) const
 {
+    if (numTilesX() <= 1)
+        return 0;
+
+    ASSERT(m_maxTextureSize - 2 * m_borderTexels);
     int x = (srcPos - m_borderTexels) / (m_maxTextureSize - 2 * m_borderTexels);
     return min(max(x, 0), numTilesX() - 1);
 }
 
 int TilingData::tileYIndexFromSrcCoord(int srcPos) const
 {
+    if (numTilesY() <= 1)
+        return 0;
+
+    ASSERT(m_maxTextureSize - 2 * m_borderTexels);
     int y = (srcPos - m_borderTexels) / (m_maxTextureSize - 2 * m_borderTexels);
     return min(max(y, 0), numTilesY() - 1);
 }

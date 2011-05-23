@@ -177,6 +177,30 @@ TEST(TilingDataTest, tileXIndexFromSrcCoord)
     EXPECT_EQ(7, TilingData(3, 10, 10, true).tileXIndexFromSrcCoord(9));
     EXPECT_EQ(7, TilingData(3, 10, 10, true).tileXIndexFromSrcCoord(10));
     EXPECT_EQ(7, TilingData(3, 10, 10, true).tileXIndexFromSrcCoord(11));
+
+    EXPECT_EQ(0, TilingData(1, 1, 1, false).tileXIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(2, 2, 2, false).tileXIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(2, 2, 2, false).tileXIndexFromSrcCoord(1));
+    EXPECT_EQ(0, TilingData(3, 3, 3, false).tileXIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(3, 3, 3, false).tileXIndexFromSrcCoord(1));
+    EXPECT_EQ(0, TilingData(3, 3, 3, false).tileXIndexFromSrcCoord(2));
+
+    EXPECT_EQ(0, TilingData(3, 4, 3, false).tileXIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(3, 4, 3, false).tileXIndexFromSrcCoord(1));
+    EXPECT_EQ(0, TilingData(3, 4, 3, false).tileXIndexFromSrcCoord(2));
+    EXPECT_EQ(1, TilingData(3, 4, 3, false).tileXIndexFromSrcCoord(3));
+
+    EXPECT_EQ(0, TilingData(1, 1, 1, true).tileXIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(2, 2, 2, true).tileXIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(2, 2, 2, true).tileXIndexFromSrcCoord(1));
+    EXPECT_EQ(0, TilingData(3, 3, 3, true).tileXIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(3, 3, 3, true).tileXIndexFromSrcCoord(1));
+    EXPECT_EQ(0, TilingData(3, 3, 3, true).tileXIndexFromSrcCoord(2));
+
+    EXPECT_EQ(0, TilingData(3, 4, 3, true).tileXIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(3, 4, 3, true).tileXIndexFromSrcCoord(1));
+    EXPECT_EQ(1, TilingData(3, 4, 3, true).tileXIndexFromSrcCoord(2));
+    EXPECT_EQ(1, TilingData(3, 4, 3, true).tileXIndexFromSrcCoord(3));
 }
 TEST(TilingDataTest, tileYIndexFromSrcCoord)
 {
@@ -205,6 +229,30 @@ TEST(TilingDataTest, tileYIndexFromSrcCoord)
     EXPECT_EQ(7, TilingData(3, 10, 10, true).tileYIndexFromSrcCoord(9));
     EXPECT_EQ(7, TilingData(3, 10, 10, true).tileYIndexFromSrcCoord(10));
     EXPECT_EQ(7, TilingData(3, 10, 10, true).tileYIndexFromSrcCoord(11));
+
+    EXPECT_EQ(0, TilingData(1, 1, 1, false).tileYIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(2, 2, 2, false).tileYIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(2, 2, 2, false).tileYIndexFromSrcCoord(1));
+    EXPECT_EQ(0, TilingData(3, 3, 3, false).tileYIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(3, 3, 3, false).tileYIndexFromSrcCoord(1));
+    EXPECT_EQ(0, TilingData(3, 3, 3, false).tileYIndexFromSrcCoord(2));
+
+    EXPECT_EQ(0, TilingData(3, 3, 4, false).tileYIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(3, 3, 4, false).tileYIndexFromSrcCoord(1));
+    EXPECT_EQ(0, TilingData(3, 3, 4, false).tileYIndexFromSrcCoord(2));
+    EXPECT_EQ(1, TilingData(3, 3, 4, false).tileYIndexFromSrcCoord(3));
+
+    EXPECT_EQ(0, TilingData(1, 1, 1, true).tileYIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(2, 2, 2, true).tileYIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(2, 2, 2, true).tileYIndexFromSrcCoord(1));
+    EXPECT_EQ(0, TilingData(3, 3, 3, true).tileYIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(3, 3, 3, true).tileYIndexFromSrcCoord(1));
+    EXPECT_EQ(0, TilingData(3, 3, 3, true).tileYIndexFromSrcCoord(2));
+
+    EXPECT_EQ(0, TilingData(3, 3, 4, true).tileYIndexFromSrcCoord(0));
+    EXPECT_EQ(0, TilingData(3, 3, 4, true).tileYIndexFromSrcCoord(1));
+    EXPECT_EQ(1, TilingData(3, 3, 4, true).tileYIndexFromSrcCoord(2));
+    EXPECT_EQ(1, TilingData(3, 3, 4, true).tileYIndexFromSrcCoord(3));
 }
 
 TEST(TilingDataTest, tileSizeX)

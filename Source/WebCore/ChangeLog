@@ -1,3 +1,14 @@
+2011-05-23  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Fix division by zero in TilingData for boundary case texture sizes
+        https://bugs.webkit.org/show_bug.cgi?id=61164
+
+        * platform/graphics/gpu/TilingData.cpp:
+        (WebCore::TilingData::tileXIndexFromSrcCoord):
+        (WebCore::TilingData::tileYIndexFromSrcCoord):
+
 2011-05-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
