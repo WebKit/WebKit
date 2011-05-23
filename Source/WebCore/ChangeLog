@@ -1,3 +1,15 @@
+2011-05-23  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Convert raw pointer to RefPtr.
+        https://bugs.webkit.org/show_bug.cgi?id=61196
+
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLDocumentParser::endElementNs):
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::parseEndElement):
+
 2011-05-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
