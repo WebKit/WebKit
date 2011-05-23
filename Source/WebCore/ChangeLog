@@ -1,3 +1,54 @@
+2011-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        selectstart is fired for every mouse move
+        https://bugs.webkit.org/show_bug.cgi?id=19489
+
+        Fixed the bug by dispatching selectstart event immediately before modifying selection in
+        handleMousePressEventSingleClick and updateSelectionForMouseDrag.
+
+        Also replaced a boolean EventHandler::m_beganSelectingText by an enum-valued m_selectionInitiationState
+        to retain 3 states:
+        1. HaveNotStartedSelection - Selection has not been set by a mouse drag or a mouse click
+        2. PlacedCaret - A caret was placed by a mouse click, double click, or triple click, and is about
+        to replace selection if a mouse drag never occurs.
+        3. ExtendedSelection - A range selection was set by a mouse click, a double click, a triple click,
+        or a mouse drag; otherwise a caret selection was set by a mouse drag.
+
+        State 1 corresponds to m_beganSelectingText being false and state 3 corresponds to m_beganSelectingText
+        being true. State 2 is used in updateSelectionForMouseDrag to avoid dispatching selectstart twice.
+
+        States 1 and 2 are set by updateSelectionForMouseDownDispatchingSelectStart and state 3 is set by
+        updateSelectionForMouseDrag.
+
+        Test: fast/events/selectstart-by-double-triple-clicks.html
+              fast/events/selectstart-by-drag.html
+              fast/events/selectstart-by-single-click-with-shift.html
+
+        * page/EventHandler.cpp: Removed canMouseDragExtendSelect.
+        (WebCore::EventHandler::EventHandler): Initializes m_selectionInitiationState.
+        (WebCore::dispatchSelectStart): Returns true only if selectstart was successfully fired
+        and default action was not prevented.
+        (WebCore::EventHandler::updateSelectionForMouseDownDispatchingSelectStart): Updates m_selectionInitiationState
+        and modifies the selection if dispatchSelectStart returns true.
+        (WebCore::EventHandler::selectClosestWordFromMouseEvent): Calls updateSelectionForMouseDownDispatchingSelectStart.
+        (WebCore::EventHandler::selectClosestWordOrLinkFromMouseEvent): Ditto.
+        (WebCore::EventHandler::handleMousePressEventDoubleClick):
+        (WebCore::EventHandler::handleMousePressEventTripleClick): Ditto.
+        (WebCore::EventHandler::handleMousePressEventSingleClick): Ditto.
+        (WebCore::canMouseDownStartSelect): No longer dispatches startselect; also renamed from
+        EventHandler::canMouseDownStartSelect.
+        (WebCore::EventHandler::handleMousePressEvent): No longer calls canMouseDragExtendSelect.
+        (WebCore::EventHandler::handleMouseDraggedEvent):
+        (WebCore::EventHandler::updateSelectionForMouseDrag): Exit early if m_selectionInitiationState is
+        HaveNotStartedSelection and dispatchSelectStart returns false. Since setSelectionIfPossible dispatches
+        selectstart event before assigning PlacedCaret or ExtendedSelection to m_selectionInitiationState,
+        there is no need to dispatch event for those two cases.
+        (WebCore::EventHandler::handleMouseReleaseEvent):
+        * page/EventHandler.h: Removed canMouseDownStartSelect and canMouseDragExtendSelect from EventHandler
+        and added setSelectionIfPossible.
+
 2011-05-23  Adam Klein  <adamk@chromium.org>
 
         Reviewed by Jian Li.

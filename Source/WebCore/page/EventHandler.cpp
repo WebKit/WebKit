@@ -182,7 +182,7 @@ EventHandler::EventHandler(Frame* frame)
     , m_dragMayStartSelectionInstead(false)
 #endif
     , m_mouseDownWasSingleClickInSelection(false)
-    , m_beganSelectingText(false)
+    , m_selectionInitiationState(HaveNotStartedSelection)
     , m_panScrollInProgress(false)
     , m_panScrollButtonPressed(false)
     , m_springLoadedPanScrollInProgress(false)
@@ -281,6 +281,31 @@ static void setNonDirectionalSelectionIfNeeded(FrameSelection* selection, const 
         selection->setSelection(newSelection, granularity, MakeNonDirectionalSelection);
 }
 
+static inline bool dispatchSelectStart(Node* node)
+{
+    if (!node || !node->renderer())
+        return true;
+
+    return node->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
+}
+
+bool EventHandler::updateSelectionForMouseDownDispatchingSelectStart(Node* targetNode, const VisibleSelection& newSelection, TextGranularity granularity)
+{
+    if (!dispatchSelectStart(targetNode))
+        return false;
+
+    if (newSelection.isRange())
+        m_selectionInitiationState = ExtendedSelection;
+    else {
+        granularity = CharacterGranularity;
+        m_selectionInitiationState = PlacedCaret;
+    }
+
+    setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, granularity);
+
+    return true;
+}
+
 void EventHandler::selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults& result)
 {
     Node* innerNode = targetNode(result);
@@ -288,20 +313,15 @@ void EventHandler::selectClosestWordFromMouseEvent(const MouseEventWithHitTestRe
 
     if (innerNode && innerNode->renderer() && m_mouseDownMayStartSelect) {
         VisiblePosition pos(innerNode->renderer()->positionForPoint(result.localPoint()));
-        TextGranularity granularity = CharacterGranularity;
         if (pos.isNotNull()) {
             newSelection = VisibleSelection(pos);
             newSelection.expandUsingGranularity(WordGranularity);
         }
-    
-        if (newSelection.isRange()) {
-            granularity = WordGranularity;
-            m_beganSelectingText = true;
-            if (result.event().clickCount() == 2 && m_frame->editor()->isSelectTrailingWhitespaceEnabled()) 
-                newSelection.appendTrailingWhitespace();            
-        }
 
-        setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, granularity);
+        if (newSelection.isRange() && result.event().clickCount() == 2 && m_frame->editor()->isSelectTrailingWhitespaceEnabled()) 
+            newSelection.appendTrailingWhitespace();
+
+        updateSelectionForMouseDownDispatchingSelectStart(innerNode, newSelection, WordGranularity);
     }
 }
 
@@ -318,14 +338,8 @@ void EventHandler::selectClosestWordOrLinkFromMouseEvent(const MouseEventWithHit
         VisiblePosition pos(innerNode->renderer()->positionForPoint(result.localPoint()));
         if (pos.isNotNull() && pos.deepEquivalent().deprecatedNode()->isDescendantOf(URLElement))
             newSelection = VisibleSelection::selectionFromContentsOfNode(URLElement);
-    
-        TextGranularity granularity = CharacterGranularity;
-        if (newSelection.isRange()) {
-            granularity = WordGranularity;
-            m_beganSelectingText = true;
-        }
 
-        setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, granularity);
+        updateSelectionForMouseDownDispatchingSelectStart(innerNode, newSelection, WordGranularity);
     }
 }
 
@@ -340,7 +354,7 @@ bool EventHandler::handleMousePressEventDoubleClick(const MouseEventWithHitTestR
         // selectClosestWordFromMouseEvent, but do set
         // m_beganSelectingText to prevent handleMouseReleaseEvent
         // from setting caret selection.
-        m_beganSelectingText = true;
+        m_selectionInitiationState = ExtendedSelection;
     else
         selectClosestWordFromMouseEvent(event);
 
@@ -362,16 +376,8 @@ bool EventHandler::handleMousePressEventTripleClick(const MouseEventWithHitTestR
         newSelection = VisibleSelection(pos);
         newSelection.expandUsingGranularity(ParagraphGranularity);
     }
-    
-    TextGranularity granularity = CharacterGranularity;
-    if (newSelection.isRange()) {
-        granularity = ParagraphGranularity;
-        m_beganSelectingText = true;
-    }
 
-    setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, granularity);
-
-    return true;
+    return updateSelectionForMouseDownDispatchingSelectStart(innerNode, newSelection, ParagraphGranularity);
 }
 
 static int textDistance(const Position& start, const Position& end)
@@ -422,20 +428,26 @@ bool EventHandler::handleMousePressEventSingleClick(const MouseEventWithHitTestR
                 newSelection = VisibleSelection(end, pos);
             else
                 newSelection = VisibleSelection(start, pos);
-        } else {
+        } else
             newSelection.setExtent(pos);
-        }
 
         if (m_frame->selection()->granularity() != CharacterGranularity) {
             granularity = m_frame->selection()->granularity();
             newSelection.expandUsingGranularity(m_frame->selection()->granularity());
         }
-
-        m_beganSelectingText = true;
     } else
         newSelection = VisibleSelection(visiblePos);
+    
+    return updateSelectionForMouseDownDispatchingSelectStart(innerNode, newSelection, granularity);
+}
 
-    setNonDirectionalSelectionIfNeeded(m_frame->selection(), newSelection, granularity);
+static inline bool canMouseDownStartSelect(Node* node)
+{
+    if (!node || !node->renderer())
+        return true;
+
+    if (!node->canStartSelection())
+        return false;
 
     return true;
 }
@@ -497,7 +509,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
 
     bool swallowEvent = false;
     m_mousePressed = true;
-    m_beganSelectingText = false;
+    m_selectionInitiationState = HaveNotStartedSelection;
 
     if (event.event().clickCount() == 2)
         swallowEvent = handleMousePressEventDoubleClick(event);
@@ -573,7 +585,7 @@ bool EventHandler::handleMouseDraggedEvent(const MouseEventWithHitTestResults& e
         m_mouseDownMayStartAutoscroll = false;
     }
 
-    if (!m_beganSelectingText) {
+    if (m_selectionInitiationState != ExtendedSelection) {
         HitTestRequest request(HitTestRequest::ReadOnly | HitTestRequest::Active);
         HitTestResult result(m_mouseDownPos);
         m_frame->document()->renderView()->layer()->hitTest(request, result);
@@ -661,9 +673,6 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
     if (!target)
         return;
 
-    if (!canMouseDragExtendSelect(target))
-        return;
-
     VisiblePosition targetPosition = selectionExtentRespectingEditingBoundary(m_frame->selection()->selection(), hitTestResult.localPoint(), target);
 
     // Don't modify the selection if we're not on a node.
@@ -684,8 +693,12 @@ void EventHandler::updateSelectionForMouseDrag(const HitTestResult& hitTestResul
                     return;
 #endif
 
-    if (!m_beganSelectingText) {
-        m_beganSelectingText = true;
+    if (m_selectionInitiationState == HaveNotStartedSelection && !dispatchSelectStart(target))
+        return;
+
+    if (m_selectionInitiationState != ExtendedSelection) {
+        // Always extend selection here because it's caused by a mouse drag
+        m_selectionInitiationState = ExtendedSelection;
         newSelection = VisibleSelection(targetPosition);
     }
 
@@ -741,7 +754,7 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
     // press and it's not a context menu click.  We do this so when clicking
     // on the selection, the selection goes away.  However, if we are
     // editing, place the caret.
-    if (m_mouseDownWasSingleClickInSelection && !m_beganSelectingText
+    if (m_mouseDownWasSingleClickInSelection && m_selectionInitiationState != ExtendedSelection
 #if ENABLE(DRAG_SUPPORT)
             && m_dragStartPos == event.event().pos()
 #endif
@@ -2333,29 +2346,6 @@ void EventHandler::fakeMouseMoveEventTimerFired(Timer<EventHandler>* timer)
     PlatformMouseEvent fakeMouseMoveEvent(m_currentMousePosition, globalPoint, NoButton, MouseEventMoved, 0, shiftKey, ctrlKey, altKey, metaKey, currentTime());
     mouseMoved(fakeMouseMoveEvent);
 }
-
-// Whether or not a mouse down can begin the creation of a selection.  Fires the selectStart event.
-bool EventHandler::canMouseDownStartSelect(Node* node)
-{
-    if (!node || !node->renderer())
-        return true;
-    
-    // Some controls and images can't start a select on a mouse down.
-    if (!node->canStartSelection())
-        return false;
-            
-    return node->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
-}
-
-#if ENABLE(DRAG_SUPPORT)
-bool EventHandler::canMouseDragExtendSelect(Node* node)
-{
-    if (!node || !node->renderer())
-        return true;
-            
-    return node->dispatchEvent(Event::create(eventNames().selectstartEvent, true, true));
-}
-#endif // ENABLE(DRAG_SUPPORT)
 
 void EventHandler::setResizingFrameSet(HTMLFrameSetElement* frameSet)
 {

@@ -1,3 +1,20 @@
+2011-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        selectstart is fired for every mouse move
+        https://bugs.webkit.org/show_bug.cgi?id=19489
+
+        Added tests to ensure selectstart is dispatches exactly once when selecting text by a mouse drag,
+        a mouse click, a double click, or a triple click. Also rebaselined a test that previously logged
+        extra selectstart dispatches.
+
+        * fast/events/selectstart-by-double-triple-clicks-expected.txt: Added.
+        * fast/events/selectstart-by-double-triple-clicks.html: Added.
+        * fast/events/selectstart-by-drag.html:
+        * fast/events/selectstart-by-single-click-with-shift-expected.txt: Added.
+        * fast/events/selectstart-by-single-click-with-shift.html: Added.
+
 2011-05-22  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

@@ -33,6 +33,7 @@
 #include "PlatformMouseEvent.h"
 #include "ScrollTypes.h"
 #include "TextEventInputType.h"
+#include "TextGranularity.h"
 #include "Timer.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
@@ -71,6 +72,7 @@ class SVGElementInstance;
 class Scrollbar;
 class TextEvent;
 class TouchEvent;
+class VisibleSelection;
 class WheelEvent;
 class Widget;
 
@@ -230,6 +232,7 @@ private:
 #endif // ENABLE(DRAG_SUPPORT)
 
     bool eventActivatedView(const PlatformMouseEvent&) const;
+    bool updateSelectionForMouseDownDispatchingSelectStart(Node*, const VisibleSelection&, TextGranularity);
     void selectClosestWordFromMouseEvent(const MouseEventWithHitTestResults&);
     void selectClosestWordOrLinkFromMouseEvent(const MouseEventWithHitTestResults&);
 
@@ -255,11 +258,6 @@ private:
 #endif
 
     void hoverTimerFired(Timer<EventHandler>*);
-
-    static bool canMouseDownStartSelect(Node*);
-#if ENABLE(DRAG_SUPPORT)
-    static bool canMouseDragExtendSelect(Node*);
-#endif
 
     void handleAutoscroll(RenderObject*);
     void startAutoscrollTimer();
@@ -367,7 +365,8 @@ private:
     bool m_dragMayStartSelectionInstead;
 #endif
     bool m_mouseDownWasSingleClickInSelection;
-    bool m_beganSelectingText;
+    enum SelectionInitiationState { HaveNotStartedSelection, PlacedCaret, ExtendedSelection };
+    SelectionInitiationState m_selectionInitiationState;
 
 #if ENABLE(DRAG_SUPPORT)
     IntPoint m_dragStartPos;

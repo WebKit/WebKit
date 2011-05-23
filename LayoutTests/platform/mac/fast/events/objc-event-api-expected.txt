@@ -341,11 +341,6 @@ event type:      mousemove
   screenX:       -9999
   screenY:       -9999
   modifier keys: c:0 s:0 a:0 m:0
-event type:      selectstart
-  target:        <html>
-  eventPhase:    3
-  bubbles:       1
-  cancelable:    1
 event type:      mouseup
   target:        <html>
   eventPhase:    3
