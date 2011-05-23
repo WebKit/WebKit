@@ -1057,9 +1057,16 @@
                         ]
                     }],
                     'variables': {
-                      # FIXME: Enable warnings on other platforms.
-                      'chromium_code': 1,
+                        # FIXME: Enable warnings on other platforms.
+                        'chromium_code': 1,
                     },
+                    'conditions': [
+                        ['linux_use_tcmalloc == 1', {
+                            'dependencies': [
+                                '<(chromium_src_dir)/base/allocator/allocator.gyp:allocator',
+                            ],
+                        }],
+                    ],
                 },{ # toolkit_uses_gtk != 1
                     'sources/': [
                         ['exclude', '(Gtk|Linux)\\.cpp$']
