@@ -1,3 +1,15 @@
+2011-05-23  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: keyboard shortcut panel is 1px too short
+        https://bugs.webkit.org/show_bug.cgi?id=61242
+
+        Fixed bottom margin of attached helpscreen so it's glued to status bar.
+
+        * inspector/front-end/helpScreen.css:
+        (body.attached .help-window-outer):
+
 2011-05-23  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
