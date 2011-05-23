@@ -1,3 +1,28 @@
+2011-05-23  Mike West  <mkwst@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Missing fields in HAR
+        https://bugs.webkit.org/show_bug.cgi?id=58127
+
+        Setting correct expectations for the following fields newly added to
+        the HAR implementation:
+        - entry.request.httpVersion
+        - entry.request.headersSize
+        - entry.request.bodySize
+        - entry.response.httpVersion
+        - entry.response.headersSize
+        - entry.response.bodySize
+        - entry.response.content.compression
+
+        * http/tests/inspector/network/network-size.html:
+        * http/tests/inspector/resource-har-conversion-expected.txt:
+        * http/tests/inspector/resource-har-conversion.html:
+        * http/tests/inspector/resource-har-headers-expected.txt: Added.
+        * http/tests/inspector/resource-har-headers.html: Added.
+        * http/tests/inspector/resource-parameters-expected.txt:
+        * http/tests/inspector/resources-test.js:
+
 2011-05-23  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK] Skip a failing test.

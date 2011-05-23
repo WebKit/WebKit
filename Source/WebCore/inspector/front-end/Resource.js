@@ -6,13 +6,13 @@
  * are met:
  *
  * 1.  Redistributions of source code must retain the above copyright
- *     notice, this list of conditions and the following disclaimer. 
+ *     notice, this list of conditions and the following disclaimer.
  * 2.  Redistributions in binary form must reproduce the above copyright
  *     notice, this list of conditions and the following disclaimer in the
- *     documentation and/or other materials provided with the distribution. 
+ *     documentation and/or other materials provided with the distribution.
  * 3.  Neither the name of Apple Computer, Inc. ("Apple") nor the names of
  *     its contributors may be used to endorse or promote products derived
- *     from this software without specific prior written permission. 
+ *     from this software without specific prior written permission.
  *
  * THIS SOFTWARE IS PROVIDED BY APPLE AND ITS CONTRIBUTORS "AS IS" AND ANY
  * EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
@@ -491,39 +491,30 @@ WebInspector.Resource.prototype = {
         this._requestHeaders = x;
         delete this._sortedRequestHeaders;
         delete this._requestCookies;
-        delete this._responseHeadersSize;
 
         this.dispatchEventToListeners("requestHeaders changed");
     },
 
     get requestHeadersText()
     {
-        if (this._requestHeadersText !== undefined)
-            return this._requestHeadersText;
-
-        this._requestHeadersText = "";
-        for (var key in this.requestHeaders)
-            this._requestHeadersText += key + ": " + this.requestHeaders[key] + "\n"; 
+        if (this._requestHeadersText === undefined) {
+            this._requestHeadersText = this.requestMethod + " " + this.url + " HTTP/1.1\r\n";
+            for (var key in this.requestHeaders)
+                this._requestHeadersText += key + ": " + this.requestHeaders[key] + "\r\n";
+        }
         return this._requestHeadersText;
     },
 
     set requestHeadersText(x)
     {
         this._requestHeadersText = x;
-        delete this._responseHeadersSize;
 
         this.dispatchEventToListeners("requestHeaders changed");
     },
 
     get requestHeadersSize()
     {
-        if (typeof(this._requestHeadersSize) === "undefined") {
-            if (this._requestHeadersText)
-                this._requestHeadersSize = this._requestHeadersText.length;
-            else 
-                this._requestHeadersSize = this._headersSize(this._requestHeaders)
-        }
-        return this._requestHeadersSize;
+        return this.requestHeadersText.length;
     },
 
     get sortedRequestHeaders()
@@ -562,6 +553,13 @@ WebInspector.Resource.prototype = {
         delete this._parsedFormParameters;
     },
 
+    get requestHttpVersion()
+    {
+        var firstLine = this.requestHeadersText.split(/\r\n/)[0];
+        var match = firstLine.match(/(HTTP\/\d+\.\d+)$/);
+        return match ? match[1] : undefined;
+    },
+
     get responseHeaders()
     {
         return this._responseHeaders || {};
@@ -570,43 +568,33 @@ WebInspector.Resource.prototype = {
     set responseHeaders(x)
     {
         this._responseHeaders = x;
-        delete this._responseHeadersSize;
         delete this._sortedResponseHeaders;
         delete this._responseCookies;
 
         this.dispatchEventToListeners("responseHeaders changed");
     },
-    
+
     get responseHeadersText()
     {
-        if (this._responseHeadersText !== undefined)
-            return this._responseHeadersText;
-        
-        this._responseHeadersText = "";
-        for (var key in this.responseHeaders)
-            this._responseHeadersText += key + ": " + this.responseHeaders[key] + "\n"; 
+        if (this._responseHeadersText === undefined) {
+            this._responseHeadersText = "HTTP/1.1 " + this.statusCode + " " + this.statusText + "\r\n";
+            for (var key in this.responseHeaders)
+                this._responseHeadersText += key + ": " + this.responseHeaders[key] + "\r\n";
+        }
         return this._responseHeadersText;
     },
 
     set responseHeadersText(x)
     {
         this._responseHeadersText = x;
-        delete this._responseHeadersSize;
 
         this.dispatchEventToListeners("responseHeaders changed");
     },
-    
+
     get responseHeadersSize()
     {
-        if (typeof(this._responseHeadersSize) === "undefined") {
-            if (this._responseHeadersText)
-                this._responseHeadersSize = this._responseHeadersText.length;
-            else 
-                this._responseHeadersSize = this._headersSize(this._responseHeaders)
-        }
-        return this._responseHeadersSize;
+        return this.responseHeadersText.length;
     },
-    
 
     get sortedResponseHeaders()
     {
@@ -657,6 +645,12 @@ WebInspector.Resource.prototype = {
         return this._parsedFormParameters;
     },
 
+    get responseHttpVersion()
+    {
+        var match = this.responseHeadersText.match(/^(HTTP\/\d+\.\d+)/);
+        return match ? match[1] : undefined;
+    },
+
     _parseParameters: function(queryString)
     {
         function parseNameValue(pair)
@@ -681,16 +675,6 @@ WebInspector.Resource.prototype = {
             if (header.toLowerCase() === headerName)
                 return headers[header];
         }
-    },
-
-    _headersSize: function(headers)
-    {
-        // We should take actual headers size from network stack, when possible, but fall back to
-        // this lousy computation when no headers text is available.
-        var size = 0;
-        for (var header in headers)
-            size += header.length + headers[header].length + 4; // _typical_ overhead per header is ": ".length + "\r\n".length.
-        return size;
     },
 
     get errors()

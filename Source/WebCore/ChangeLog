@@ -1,3 +1,47 @@
+2011-05-23  Mike West  <mkwst@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Missing fields in HAR
+        https://bugs.webkit.org/show_bug.cgi?id=58127
+        
+        Specifically, this patch adds:
+        - entry.request.httpVersion
+        - entry.request.headersSize
+        - entry.request.bodySize
+        - entry.response.httpVersion
+        - entry.response.headersSize
+        - entry.response.bodySize
+        - entry.response.content.compression
+        
+        Tests: http/tests/inspector/resource-har-conversion.html
+               http/tests/inspector/resource-har-headers.html
+               http/tests/inspector/resource-parameters.html
+               http/tests/inspector/network/network-size.html
+
+        * inspector/front-end/HAREntry.js:
+        (WebInspector.HAREntry.prototype.build):
+        (WebInspector.HAREntry.prototype._buildRequest):
+        (WebInspector.HAREntry.prototype._buildResponse):
+        (WebInspector.HAREntry.prototype._buildContent):
+        (WebInspector.HAREntry.prototype._buildCookie):
+        (WebInspector.HAREntry.prototype._interval):
+        (WebInspector.HAREntry.prototype.get requestBodySize):
+        (WebInspector.HAREntry.prototype.get responseBodySize):
+        (WebInspector.HAREntry.prototype.get responseCompression):
+        (WebInspector.HARLog.prototype.build):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.set requestHeaders):
+        (WebInspector.Resource.prototype.get requestHeadersText):
+        (WebInspector.Resource.prototype.set requestHeadersText):
+        (WebInspector.Resource.prototype.get requestHeadersSize):
+        (WebInspector.Resource.prototype.get requestHttpVersion):
+        (WebInspector.Resource.prototype.set responseHeaders):
+        (WebInspector.Resource.prototype.get responseHeadersText):
+        (WebInspector.Resource.prototype.set responseHeadersText):
+        (WebInspector.Resource.prototype.get responseHeadersSize):
+        (WebInspector.Resource.prototype.get responseHttpVersion):
+
 2011-05-23  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
