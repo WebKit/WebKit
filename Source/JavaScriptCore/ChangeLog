@@ -1,3 +1,14 @@
+2011-05-23  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
+
+        Reviewed by Gavin Barraclough.
+
+        [SH4] AssemblerLabel does not name a type
+        https://bugs.webkit.org/show_bug.cgi?id=59927
+
+        SH4Assembler.h file shoold be included before AbstractMacroAssembler.h.
+
+        * assembler/MacroAssemblerSH4.h:
+
 2011-05-23  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Rubber stamped by Eric Seidel.

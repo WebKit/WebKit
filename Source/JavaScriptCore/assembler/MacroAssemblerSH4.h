@@ -29,8 +29,8 @@
 
 #if ENABLE(ASSEMBLER) && CPU(SH4)
 
-#include "AbstractMacroAssembler.h"
 #include "SH4Assembler.h"
+#include "AbstractMacroAssembler.h"
 #include <wtf/Assertions.h>
 
 namespace JSC {
