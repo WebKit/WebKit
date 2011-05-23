@@ -51,6 +51,16 @@ class Sheriff(object):
 
         self._tool.irc().post(irc_message)
 
+    def post_irc_summary(self, failure_map):
+        failing_tests = failure_map.failing_tests()
+        if not failing_tests:
+            return
+        test_list_limit = 5
+        irc_message = "New failures: %s" % ", ".join(sorted(failing_tests)[:test_list_limit])
+        if len(failing_tests) > test_list_limit:
+            irc_message += " (and more...)"
+        self._tool.irc().post(irc_message)
+
     def post_rollout_patch(self, svn_revision_list, rollout_reason):
         # Ensure that svn revisions are numbers (and not options to
         # create-rollout).

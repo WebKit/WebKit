@@ -74,3 +74,7 @@ class FailureMapTest(unittest.TestCase):
     def test_tests_failing_for(self):
         failure_map = self._make_failure_map()
         self.assertEquals(failure_map.tests_failing_for(1234), [u'test1'])
+
+    def test_failing_tests(self):
+        failure_map = self._make_failure_map()
+        self.assertEquals(failure_map.failing_tests(), set([u'test1']))

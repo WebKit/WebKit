@@ -81,7 +81,6 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
         number_of_failing_revisions = len(failing_revisions)
         for revision in failing_revisions:
             builders = failure_map.builders_failing_for(revision)
-            tests = failure_map.tests_failing_for(revision)
             try:
                 commit_info = self._tool.checkout().commit_info_for_revision(revision)
                 if not commit_info:
@@ -92,6 +91,7 @@ class SheriffBot(AbstractQueue, StepSequenceErrorHandler):
             finally:
                 for builder in builders:
                     self._tool.status_server.update_svn_revision(revision, builder.name())
+        self._sheriff.post_irc_summary(failure_map)
         return True
 
     def handle_unexpected_error(self, failure_map, message):

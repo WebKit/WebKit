@@ -412,6 +412,9 @@ class MockFailureMap(object):
     def tests_failing_for(self, revision):
         return ["mock-test-1"]
 
+    def failing_tests(self):
+        return set(["mock-test-1"])
+
 
 class MockBuildBot(object):
     buildbot_host = "dummy_buildbot_host"

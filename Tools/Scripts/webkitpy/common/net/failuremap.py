@@ -59,6 +59,9 @@ class FailureMap(object):
             result = result.union(test)
         return sorted(result)
 
+    def failing_tests(self):
+        return set(sum([self.tests_failing_for(revision) for revision in self.failing_revisions()], []))
+
     def _old_failures(self, is_old_failure):
         return filter(lambda revision: is_old_failure(revision),
                       self.failing_revisions())

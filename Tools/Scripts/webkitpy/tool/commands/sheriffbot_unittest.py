@@ -44,7 +44,22 @@ class SheriffBotTest(QueuesTest):
             "begin_work_queue": self._default_begin_work_queue_stderr("sheriff-bot", tool.scm().checkout_root),
             "next_work_item": "",
             "process_work_item": """MOCK: irc.post: abarth, darin, eseidel: http://trac.webkit.org/changeset/29837 might have broken Builder1
+MOCK: irc.post: New failures: mock-test-1
 """,
-            "handle_unexpected_error": "Mock error message\n"
+            "handle_unexpected_error": "Mock error message\n",
+        }
+        self.assert_queue_outputs(SheriffBot(), work_item=mock_work_item, expected_stderr=expected_stderr)
+
+    def test_many_failing_tests(self):
+        tool = MockTool()
+        mock_work_item = MockFailureMap(tool.buildbot)
+        mock_work_item.failing_tests = lambda: set(["test1", "test2", "test3", "test4", "test5", "test6", "test7"])
+        expected_stderr = {
+            "begin_work_queue": self._default_begin_work_queue_stderr("sheriff-bot", tool.scm().checkout_root),
+            "next_work_item": "",
+            "process_work_item": """MOCK: irc.post: abarth, darin, eseidel: http://trac.webkit.org/changeset/29837 might have broken Builder1
+MOCK: irc.post: New failures: test1, test2, test3, test4, test5 (and more...)
+""",
+            "handle_unexpected_error": "Mock error message\n",
         }
         self.assert_queue_outputs(SheriffBot(), work_item=mock_work_item, expected_stderr=expected_stderr)
