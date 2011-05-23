@@ -80,7 +80,6 @@ Position::Position(PassRefPtr<Node> anchorNode, int offset)
     , m_anchorType(anchorTypeForLegacyEditingPosition(m_anchorNode.get(), m_offset))
     , m_isLegacyEditingPosition(true)
 {
-    ASSERT(!m_anchorNode || !m_anchorNode->isShadowBoundary());
 }
 
 Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
@@ -89,7 +88,6 @@ Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
     , m_anchorType(anchorType)
     , m_isLegacyEditingPosition(false)
 {
-    ASSERT(!m_anchorNode || !m_anchorNode->isShadowBoundary());
     ASSERT(anchorType != PositionIsOffsetInAnchor);
 }
 
@@ -99,7 +97,7 @@ Position::Position(PassRefPtr<Node> anchorNode, int offset, AnchorType anchorTyp
     , m_anchorType(anchorType)
     , m_isLegacyEditingPosition(false)
 {
-    ASSERT(!m_anchorNode || !editingIgnoresContent(m_anchorNode.get()) || !m_anchorNode->isShadowBoundary());
+    ASSERT(!m_anchorNode || !editingIgnoresContent(m_anchorNode.get()));
     ASSERT(anchorType == PositionIsOffsetInAnchor);
 }
 
@@ -130,7 +128,7 @@ Node* Position::containerNode() const
         return m_anchorNode.get();
     case PositionIsBeforeAnchor:
     case PositionIsAfterAnchor:
-        return m_anchorNode->nonShadowBoundaryParentNode();
+        return m_anchorNode->parentNode();
     }
     ASSERT_NOT_REACHED();
     return 0;
@@ -169,7 +167,7 @@ Position Position::parentAnchoredEquivalent() const
     
     // FIXME: This should only be necessary for legacy positions, but is also needed for positions before and after Tables
     if (m_offset <= 0 && m_anchorType != PositionIsAfterAnchor) {
-        if (m_anchorNode->nonShadowBoundaryParentNode() && (editingIgnoresContent(m_anchorNode.get()) || isTableElement(m_anchorNode.get())))
+        if (m_anchorNode->parentNode() && (editingIgnoresContent(m_anchorNode.get()) || isTableElement(m_anchorNode.get())))
             return positionInParentBeforeNode(m_anchorNode.get());
         return firstPositionInOrBeforeNode(m_anchorNode.get());
     }
@@ -272,7 +270,7 @@ Position Position::previous(PositionMoveType moveType) const
         }
     }
 
-    ContainerNode* parent = n->nonShadowBoundaryParentNode();
+    ContainerNode* parent = n->parentNode();
     if (!parent)
         return *this;
 
@@ -304,7 +302,7 @@ Position Position::next(PositionMoveType moveType) const
         return Position(n, (moveType == Character) ? uncheckedNextOffset(n, o) : o + 1);
     }
 
-    ContainerNode* parent = n->nonShadowBoundaryParentNode();
+    ContainerNode* parent = n->parentNode();
     if (!parent)
         return *this;
 
@@ -371,8 +369,8 @@ Node* Position::parentEditingBoundary() const
         return 0;
 
     Node* boundary = m_anchorNode.get();
-    while (boundary != documentElement && boundary->nonShadowBoundaryParentNode() && m_anchorNode->rendererIsEditable() == boundary->parentNode()->rendererIsEditable())
-        boundary = boundary->nonShadowBoundaryParentNode();
+    while (boundary != documentElement && boundary->parentNode() && m_anchorNode->rendererIsEditable() == boundary->parentNode()->rendererIsEditable())
+        boundary = boundary->parentNode();
     
     return boundary;
 }
@@ -382,14 +380,14 @@ bool Position::atStartOfTree() const
 {
     if (isNull())
         return true;
-    return !deprecatedNode()->nonShadowBoundaryParentNode() && m_offset <= 0;
+    return !deprecatedNode()->parentNode() && m_offset <= 0;
 }
 
 bool Position::atEndOfTree() const
 {
     if (isNull())
         return true;
-    return !deprecatedNode()->nonShadowBoundaryParentNode() && m_offset >= lastOffsetForEditing(deprecatedNode());
+    return !deprecatedNode()->parentNode() && m_offset >= lastOffsetForEditing(deprecatedNode());
 }
 
 int Position::renderedOffset() const

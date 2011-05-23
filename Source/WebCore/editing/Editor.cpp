@@ -2967,7 +2967,7 @@ bool Editor::findString(const String& target, FindOptions options)
     else
         setEnd(searchRange.get(), startInSelection ? selection.visibleEnd() : selection.visibleStart());
 
-    RefPtr<Node> shadowTreeRoot = selection.nonBoundaryShadowTreeRootNode();
+    RefPtr<Node> shadowTreeRoot = selection.shadowTreeRootNode();
     if (shadowTreeRoot) {
         ExceptionCode ec = 0;
         if (forward)
@@ -3004,9 +3004,9 @@ bool Editor::findString(const String& target, FindOptions options)
     if (resultRange->collapsed(exception) && shadowTreeRoot) {
         searchRange = rangeOfContents(m_frame->document());
         if (forward)
-            searchRange->setStartAfter(shadowTreeRoot->shadowAncestorNode(), exception);
+            searchRange->setStartAfter(shadowTreeRoot->shadowHost(), exception);
         else
-            searchRange->setEndBefore(shadowTreeRoot->shadowAncestorNode(), exception);
+            searchRange->setEndBefore(shadowTreeRoot->shadowHost(), exception);
 
         resultRange = findPlainText(searchRange.get(), target, options);
     }

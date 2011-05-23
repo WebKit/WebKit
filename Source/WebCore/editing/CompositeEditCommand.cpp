@@ -146,7 +146,6 @@ void CompositeEditCommand::insertNodeAfter(PassRefPtr<Node> insertChild, PassRef
     ASSERT(!refChild->hasTagName(bodyTag));
     ContainerNode* parent = refChild->parentNode();
     ASSERT(parent);
-    ASSERT(!parent->isShadowBoundary());
     if (parent->lastChild() == refChild)
         appendNode(insertChild, parent);
     else {
@@ -205,7 +204,7 @@ void CompositeEditCommand::removeChildrenInRange(PassRefPtr<Node> node, unsigned
 
 void CompositeEditCommand::removeNode(PassRefPtr<Node> node)
 {
-    if (!node || !node->nonShadowBoundaryParentNode())
+    if (!node || !node->parentNode())
         return;
     applyCommandToComposite(RemoveNodeCommand::create(node));
 }

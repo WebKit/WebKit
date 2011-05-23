@@ -1,3 +1,139 @@
+2011-05-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87014, r87016, and r87017.
+        http://trac.webkit.org/changeset/87014
+        http://trac.webkit.org/changeset/87016
+        http://trac.webkit.org/changeset/87017
+        https://bugs.webkit.org/show_bug.cgi?id=61266
+
+        It made more tests assert (Requested by Ossy on #webkit).
+
+        * css/html.css:
+        (input::-webkit-inner-spin-button):
+        (input::-webkit-outer-spin-button):
+        (input::-webkit-input-speech-button):
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+        (WebCore::Element::isSpellCheckingEnabled):
+        * dom/Node.cpp:
+        * dom/Node.h:
+        * dom/Position.cpp:
+        (WebCore::Position::Position):
+        (WebCore::Position::containerNode):
+        (WebCore::Position::parentAnchoredEquivalent):
+        (WebCore::Position::previous):
+        (WebCore::Position::next):
+        (WebCore::Position::parentEditingBoundary):
+        (WebCore::Position::atStartOfTree):
+        (WebCore::Position::atEndOfTree):
+        * dom/Position.h:
+        (WebCore::positionInParentBeforeNode):
+        (WebCore::positionInParentAfterNode):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeAfter):
+        (WebCore::CompositeEditCommand::removeNode):
+        * editing/Editor.cpp:
+        (WebCore::Editor::findString):
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::selectAll):
+        * editing/FrameSelection.h:
+        (WebCore::FrameSelection::shadowTreeRootNode):
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::doApply):
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::removeNode):
+        (WebCore::ReplacementFragment::insertNodeBefore):
+        * editing/VisibleSelection.cpp:
+        (WebCore::VisibleSelection::isAll):
+        (WebCore::VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries):
+        (WebCore::VisibleSelection::shadowTreeRootNode):
+        * editing/VisibleSelection.h:
+        * editing/htmlediting.cpp:
+        (WebCore::visiblePositionBeforeNode):
+        (WebCore::visiblePositionAfterNode):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::create):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        * html/HTMLInputElement.h:
+        * html/HTMLIsIndexElement.cpp:
+        (WebCore::HTMLIsIndexElement::create):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::create):
+        * html/HTMLTextAreaElement.h:
+        * html/InputType.h:
+        * html/SearchInputType.cpp:
+        * html/SearchInputType.h:
+        (WebCore::SearchInputType::SearchInputType):
+        * html/TextFieldInputType.cpp:
+        * html/TextFieldInputType.h:
+        (WebCore::TextFieldInputType::TextFieldInputType):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::TextControlInnerElement::TextControlInnerElement):
+        (WebCore::TextControlInnerElement::create):
+        (WebCore::TextControlInnerElement::attachInnerElement):
+        (WebCore::TextControlInnerElement::detach):
+        (WebCore::TextControlInnerTextElement::TextControlInnerTextElement):
+        (WebCore::TextControlInnerTextElement::create):
+        (WebCore::SearchFieldResultsButtonElement::SearchFieldResultsButtonElement):
+        (WebCore::SearchFieldCancelButtonElement::SearchFieldCancelButtonElement):
+        (WebCore::SearchFieldCancelButtonElement::detach):
+        (WebCore::SpinButtonElement::SpinButtonElement):
+        (WebCore::SpinButtonElement::create):
+        (WebCore::SpinButtonElement::detach):
+        (WebCore::SpinButtonElement::setHovered):
+        (WebCore::InputFieldSpeechButtonElement::InputFieldSpeechButtonElement):
+        (WebCore::InputFieldSpeechButtonElement::create):
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+        (WebCore::InputFieldSpeechButtonElement::detach):
+        * html/shadow/TextControlInnerElements.h:
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::~RenderTextControl):
+        (WebCore::RenderTextControl::styleDidChange):
+        (WebCore::RenderTextControl::setInnerTextStyle):
+        (WebCore::RenderTextControl::createSubtreeIfNeeded):
+        (WebCore::RenderTextControl::textBlockWidth):
+        (WebCore::RenderTextControl::updateFromElement):
+        (WebCore::RenderTextControl::setInnerTextValue):
+        (WebCore::RenderTextControl::hasVisibleTextArea):
+        (WebCore::RenderTextControl::isSelectableElement):
+        (WebCore::RenderTextControl::selection):
+        (WebCore::RenderTextControl::visiblePositionForIndex):
+        (WebCore::RenderTextControl::indexForVisiblePosition):
+        (WebCore::RenderTextControl::text):
+        (WebCore::RenderTextControl::textWithHardLineBreaks):
+        (WebCore::RenderTextControl::computeLogicalHeight):
+        (WebCore::RenderTextControl::hitInnerTextElement):
+        (WebCore::RenderTextControl::forwardEvent):
+        (WebCore::RenderTextControl::computePreferredLogicalWidths):
+        (WebCore::RenderTextControl::innerTextElement):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::updateFromElement):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::~RenderTextControlSingleLine):
+        (WebCore::RenderTextControlSingleLine::textBaseStyle):
+        (WebCore::RenderTextControlSingleLine::subtreeHasChanged):
+        (WebCore::RenderTextControlSingleLine::layout):
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        (WebCore::RenderTextControlSingleLine::forwardEvent):
+        (WebCore::RenderTextControlSingleLine::styleDidChange):
+        (WebCore::RenderTextControlSingleLine::hasControlClip):
+        (WebCore::RenderTextControlSingleLine::controlClipRect):
+        (WebCore::RenderTextControlSingleLine::textBlockWidth):
+        (WebCore::RenderTextControlSingleLine::decorationWidthRight):
+        (WebCore::RenderTextControlSingleLine::preferredContentWidth):
+        (WebCore::RenderTextControlSingleLine::preferredDecorationWidthRight):
+        (WebCore::RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight):
+        (WebCore::RenderTextControlSingleLine::createSubtreeIfNeeded):
+        (WebCore::RenderTextControlSingleLine::updateFromElement):
+        (WebCore::RenderTextControlSingleLine::createInnerTextStyle):
+        (WebCore::RenderTextControlSingleLine::updateCancelButtonVisibility):
+        (WebCore::RenderTextControlSingleLine::clientPaddingLeft):
+        (WebCore::RenderTextControlSingleLine::clientPaddingRight):
+        (WebCore::RenderTextControlSingleLine::textBlockInsetTop):
+        * rendering/RenderTextControlSingleLine.h:
+
 2011-05-23  Syed Idris Shah  <syed.idris-shah@nokia.com>
 
         Reviewed by Andreas Kling.

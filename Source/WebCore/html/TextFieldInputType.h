@@ -39,26 +39,11 @@ namespace WebCore {
 // It supports not only the types for BaseTextInputType but also type=number.
 class TextFieldInputType : public InputType {
 protected:
-    TextFieldInputType(HTMLInputElement*);
+    TextFieldInputType(HTMLInputElement* element) : InputType(element) { }
     virtual bool canSetSuggestedValue();
     virtual void handleKeydownEvent(KeyboardEvent*);
     void handleKeydownEventForSpinButton(KeyboardEvent*);
     void handleWheelEventForSpinButton(WheelEvent*);
-
-    virtual HTMLElement* innerTextElement() const { return m_innerText; }
-    virtual HTMLElement* innerSpinButtonElement() const { return m_innerSpinButton; }
-    virtual HTMLElement* outerSpinButtonElement() const { return m_outerSpinButton; }
-#if ENABLE(INPUT_SPEECH)
-    virtual HTMLElement* speechButtonElement() const { return m_speechButton; }
-#endif
-
-protected:
-    virtual void createShadowSubtree();
-    virtual void destroyShadowSubtree();
-    void setInnerTextElement(HTMLElement* element) { m_innerText = element; }
-#if ENABLE(INPUT_SPEECH)
-    void setSpeechButtonElement(HTMLElement* element) { m_speechButton = element; }
-#endif
 
 private:
     virtual bool isTextField() const;
@@ -70,13 +55,6 @@ private:
     virtual bool shouldUseInputMethod() const;
     virtual String sanitizeValue(const String&);
     virtual bool shouldRespectListAttribute();
-
-    HTMLElement* m_innerText;
-    HTMLElement* m_innerSpinButton;
-    HTMLElement* m_outerSpinButton;
-#if ENABLE(INPUT_SPEECH)
-    HTMLElement* m_speechButton;
-#endif
 };
 
 } // namespace WebCore

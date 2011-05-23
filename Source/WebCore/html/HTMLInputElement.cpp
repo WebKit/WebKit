@@ -101,14 +101,7 @@ HTMLInputElement::HTMLInputElement(const QualifiedName& tagName, Document* docum
 
 PassRefPtr<HTMLInputElement> HTMLInputElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form, bool createdByParser)
 {
-    RefPtr<HTMLInputElement> inputElement = adoptRef(new HTMLInputElement(tagName, document, form, createdByParser));
-    inputElement->createShadowSubtree();
-    return inputElement.release();
-}
-
-void HTMLInputElement::createShadowSubtree()
-{
-    m_inputType->createShadowSubtree();
+    return adoptRef(new HTMLInputElement(tagName, document, form, createdByParser));
 }
 
 HTMLInputElement::~HTMLInputElement()
@@ -127,43 +120,6 @@ const AtomicString& HTMLInputElement::formControlName() const
 {
     return m_name.isNull() ? emptyAtom : m_name;
 }
-
-HTMLElement* HTMLInputElement::innerTextElement() const
-{
-    return m_inputType->innerTextElement();
-}
-
-HTMLElement* HTMLInputElement::innerBlockElement() const
-{
-    return m_inputType->innerBlockElement();
-}
-
-HTMLElement* HTMLInputElement::innerSpinButtonElement() const
-{
-    return m_inputType->innerSpinButtonElement();
-}
-
-HTMLElement* HTMLInputElement::outerSpinButtonElement() const
-{
-    return m_inputType->outerSpinButtonElement();
-}
-
-HTMLElement* HTMLInputElement::resultsButtonElement() const
-{
-    return m_inputType->resultsButtonElement();
-}
-
-HTMLElement* HTMLInputElement::cancelButtonElement() const
-{
-    return m_inputType->cancelButtonElement();
-}
-
-#if ENABLE(INPUT_SPEECH)
-HTMLElement* HTMLInputElement::speechButtonElement() const
-{
-    return m_inputType->speechButtonElement();
-}
-#endif
 
 bool HTMLInputElement::autoComplete() const
 {
@@ -745,12 +701,7 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
             // whether the speech button is visible or not. So we reset the whole thing and recreate
             // to get the right styles and layout.
             detach();
-            m_inputType->destroyShadowSubtree();
-            m_inputType->createShadowSubtree();
             attach();
-        } else {
-            m_inputType->destroyShadowSubtree();
-            m_inputType->createShadowSubtree();
         }
         setNeedsStyleRecalc();
     } else if (attr->name() == onwebkitspeechchangeAttr)

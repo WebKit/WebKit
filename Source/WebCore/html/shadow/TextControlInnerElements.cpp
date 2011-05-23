@@ -47,32 +47,63 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-TextControlInnerElement::TextControlInnerElement(Document* document)
+TextControlInnerElement::TextControlInnerElement(Document* document, HTMLElement* shadowParent)
     : HTMLDivElement(divTag, document)
 {
+    setShadowHost(shadowParent);
 }
 
-PassRefPtr<TextControlInnerElement> TextControlInnerElement::create(Document* document)
+PassRefPtr<TextControlInnerElement> TextControlInnerElement::create(HTMLElement* shadowParent)
 {
-    return adoptRef(new TextControlInnerElement(document));
+    return adoptRef(new TextControlInnerElement(shadowParent->document(), shadowParent));
 }
 
-PassRefPtr<RenderStyle> TextControlInnerElement::styleForRenderer()
+void TextControlInnerElement::attachInnerElement(Node* parent, PassRefPtr<RenderStyle> style, RenderArena* arena)
 {
-    RenderTextControlSingleLine* parentRenderer = toRenderTextControlSingleLine(shadowAncestorNode()->renderer());
-    return parentRenderer->createInnerBlockStyle(parentRenderer->style());
+    // When adding these elements, create the renderer & style first before adding to the DOM.
+    // Otherwise, the render tree will create some anonymous blocks that will mess up our layout.
+
+    // Create the renderer with the specified style
+    RenderObject* renderer = createRenderer(arena, style.get());
+    if (renderer) {
+        setRenderer(renderer);
+        renderer->setStyle(style);
+    }
+
+    // Set these explicitly since this normally happens during an attach()
+    setAttached();
+    setInDocument();
+
+    // For elements not yet in shadow DOM, add the node to the DOM normally.
+    if (!isShadowRoot()) {
+        // FIXME: This code seems very wrong.  Why are we magically adding |this| to the DOM here?
+        //        We shouldn't be calling parser API methods outside of the parser!
+        parent->deprecatedParserAddChild(this);
+    }
+
+    // Add the renderer to the render tree
+    if (renderer)
+        parent->renderer()->addChild(renderer);
+}
+
+void TextControlInnerElement::detach()
+{
+    HTMLDivElement::detach();
+    // FIXME: Remove once shadow DOM uses Element::setShadowRoot().
+    if (shadowHost())
+        setShadowHost(0);
 }
 
 // ----------------------------
 
-inline TextControlInnerTextElement::TextControlInnerTextElement(Document* document)
-    : HTMLDivElement(divTag, document)
+inline TextControlInnerTextElement::TextControlInnerTextElement(Document* document, HTMLElement* shadowParent)
+    : TextControlInnerElement(document, shadowParent)
 {
 }
 
-PassRefPtr<TextControlInnerTextElement> TextControlInnerTextElement::create(Document* document)
+PassRefPtr<TextControlInnerTextElement> TextControlInnerTextElement::create(Document* document, HTMLElement* shadowParent)
 {
-    return adoptRef(new TextControlInnerTextElement(document));
+    return adoptRef(new TextControlInnerTextElement(document, shadowParent));
 }
 
 void TextControlInnerTextElement::defaultEventHandler(Event* event)
@@ -103,28 +134,16 @@ RenderObject* TextControlInnerTextElement::createRenderer(RenderArena* arena, Re
     return new (arena) RenderTextControlInnerBlock(this, multiLine);
 }
 
-PassRefPtr<RenderStyle> TextControlInnerTextElement::styleForRenderer()
-{
-    RenderTextControl* parentRenderer = toRenderTextControl(shadowAncestorNode()->renderer());
-    return parentRenderer->createInnerTextStyle(parentRenderer->style());
-}
-
 // ----------------------------
 
 inline SearchFieldResultsButtonElement::SearchFieldResultsButtonElement(Document* document)
-    : HTMLDivElement(divTag, document)
+    : TextControlInnerElement(document)
 {
 }
 
 PassRefPtr<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::create(Document* document)
 {
     return adoptRef(new SearchFieldResultsButtonElement(document));
-}
-
-PassRefPtr<RenderStyle> SearchFieldResultsButtonElement::styleForRenderer()
-{
-    RenderTextControlSingleLine* parentRenderer = toRenderTextControlSingleLine(shadowAncestorNode()->renderer());
-    return parentRenderer->createResultsButtonStyle(parentRenderer->style());
 }
 
 void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
@@ -149,7 +168,7 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
 // ----------------------------
 
 inline SearchFieldCancelButtonElement::SearchFieldCancelButtonElement(Document* document)
-    : HTMLDivElement(divTag, document)
+    : TextControlInnerElement(document)
     , m_capturing(false)
 {
 }
@@ -159,19 +178,13 @@ PassRefPtr<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::creat
     return adoptRef(new SearchFieldCancelButtonElement(document));
 }
 
-PassRefPtr<RenderStyle> SearchFieldCancelButtonElement::styleForRenderer()
-{
-    RenderTextControlSingleLine* parentRenderer = toRenderTextControlSingleLine(shadowAncestorNode()->renderer());
-    return parentRenderer->createCancelButtonStyle(parentRenderer->style());
-}
-
 void SearchFieldCancelButtonElement::detach()
 {
     if (m_capturing) {
         if (Frame* frame = document()->frame())
             frame->eventHandler()->setCapturingMouseEventsNode(0);
     }
-    HTMLDivElement::detach();
+    TextControlInnerElement::detach();
 }
 
 
@@ -211,9 +224,8 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 
 // ----------------------------
 
-inline SpinButtonElement::SpinButtonElement(Document* document, bool isInner)
-    : HTMLDivElement(divTag, document)
-    , m_isInner(isInner)
+inline SpinButtonElement::SpinButtonElement(HTMLElement* shadowParent)
+    : TextControlInnerElement(shadowParent->document(), shadowParent)
     , m_capturing(false)
     , m_upDownState(Indeterminate)
     , m_pressStartingState(Indeterminate)
@@ -221,20 +233,9 @@ inline SpinButtonElement::SpinButtonElement(Document* document, bool isInner)
 {
 }
 
-PassRefPtr<SpinButtonElement> SpinButtonElement::createInner(Document* document)
+PassRefPtr<SpinButtonElement> SpinButtonElement::create(HTMLElement* shadowParent)
 {
-    return adoptRef(new SpinButtonElement(document, true));
-}
-
-PassRefPtr<SpinButtonElement> SpinButtonElement::createOuter(Document* document)
-{
-    return adoptRef(new SpinButtonElement(document, false));
-}
-
-PassRefPtr<RenderStyle> SpinButtonElement::styleForRenderer()
-{
-    RenderTextControlSingleLine* parentRenderer = toRenderTextControlSingleLine(shadowAncestorNode()->renderer());
-    return m_isInner ? parentRenderer->createInnerSpinButtonStyle() : parentRenderer->createOuterSpinButtonStyle();
+    return adoptRef(new SpinButtonElement(shadowParent));
 }
 
 void SpinButtonElement::detach()
@@ -246,7 +247,7 @@ void SpinButtonElement::detach()
             m_capturing = false;
         }
     }
-    HTMLDivElement::detach();
+    TextControlInnerElement::detach();
 }
 
 void SpinButtonElement::defaultEventHandler(Event* event)
@@ -348,7 +349,7 @@ void SpinButtonElement::setHovered(bool flag)
 {
     if (!hovered() && flag)
         m_upDownState = Indeterminate;
-    HTMLDivElement::setHovered(flag);
+    TextControlInnerElement::setHovered(flag);
 }
 
 
@@ -356,11 +357,11 @@ void SpinButtonElement::setHovered(bool flag)
 
 #if ENABLE(INPUT_SPEECH)
 
-inline InputFieldSpeechButtonElement::InputFieldSpeechButtonElement(Document* document)
-    : HTMLDivElement(divTag, document)
+inline InputFieldSpeechButtonElement::InputFieldSpeechButtonElement(HTMLElement* shadowParent)
+    : TextControlInnerElement(shadowParent->document(), shadowParent)
     , m_capturing(false)
     , m_state(Idle)
-    , m_listenerId(0)
+    , m_listenerId(document()->page()->speechInput()->registerListener(this))
 {
 }
 
@@ -374,9 +375,9 @@ InputFieldSpeechButtonElement::~InputFieldSpeechButtonElement()
     }
 }
 
-PassRefPtr<InputFieldSpeechButtonElement> InputFieldSpeechButtonElement::create(Document* document)
+PassRefPtr<InputFieldSpeechButtonElement> InputFieldSpeechButtonElement::create(HTMLElement* shadowParent)
 {
-    return adoptRef(new InputFieldSpeechButtonElement(document));
+    return adoptRef(new InputFieldSpeechButtonElement(shadowParent));
 }
 
 void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
@@ -421,7 +422,7 @@ void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
         }
     }
 
-    if (event->type() == eventNames().clickEvent && m_listenerId) {
+    if (event->type() == eventNames().clickEvent) {
         switch (m_state) {
         case Idle: {
               AtomicString language = input->computeInheritedLanguage();
@@ -489,13 +490,6 @@ void InputFieldSpeechButtonElement::setRecognitionResult(int, const SpeechInputR
         renderer()->repaint();
 }
 
-void InputFieldSpeechButtonElement::attach()
-{
-    ASSERT(!m_listenerId);
-    m_listenerId = document()->page()->speechInput()->registerListener(this);
-    HTMLDivElement::attach();
-}
-
 void InputFieldSpeechButtonElement::detach()
 {
     if (m_capturing) {
@@ -510,13 +504,7 @@ void InputFieldSpeechButtonElement::detach()
         m_listenerId = 0;
     }
 
-    HTMLDivElement::detach();
-}
-
-PassRefPtr<RenderStyle> InputFieldSpeechButtonElement::styleForRenderer()
-{
-    RenderTextControlSingleLine* parentRenderer = toRenderTextControlSingleLine(shadowAncestorNode()->renderer());
-    return parentRenderer->createSpeechButtonStyle();
+    TextControlInnerElement::detach();
 }
 
 #endif // ENABLE(INPUT_SPEECH)

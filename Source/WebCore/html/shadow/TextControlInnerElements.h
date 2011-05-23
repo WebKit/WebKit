@@ -38,30 +38,30 @@ class SpeechInput;
 
 class TextControlInnerElement : public HTMLDivElement {
 public:
-    static PassRefPtr<TextControlInnerElement> create(Document*);
+    static PassRefPtr<TextControlInnerElement> create(HTMLElement* shadowParent);
+    virtual void detach();
+
+    void attachInnerElement(Node*, PassRefPtr<RenderStyle>, RenderArena*);
 
 protected:
-    TextControlInnerElement(Document*);
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
+    TextControlInnerElement(Document*, HTMLElement* shadowParent = 0);
 
 private:
     virtual bool isMouseFocusable() const { return false; }
 };
 
-class TextControlInnerTextElement : public HTMLDivElement {
+class TextControlInnerTextElement : public TextControlInnerElement {
 public:
-    static PassRefPtr<TextControlInnerTextElement> create(Document*);
+    static PassRefPtr<TextControlInnerTextElement> create(Document*, HTMLElement* shadowParent);
 
     virtual void defaultEventHandler(Event*);
 
 private:
-    TextControlInnerTextElement(Document*);
-    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
-    virtual bool isMouseFocusable() const { return false; }
+    TextControlInnerTextElement(Document*, HTMLElement* shadowParent);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);  
 };
 
-class SearchFieldResultsButtonElement : public HTMLDivElement {
+class SearchFieldResultsButtonElement : public TextControlInnerElement {
 public:
     static PassRefPtr<SearchFieldResultsButtonElement> create(Document*);
 
@@ -69,11 +69,9 @@ public:
 
 private:
     SearchFieldResultsButtonElement(Document*);
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
-    virtual bool isMouseFocusable() const { return false; }
 };
 
-class SearchFieldCancelButtonElement : public HTMLDivElement {
+class SearchFieldCancelButtonElement : public TextControlInnerElement {
 public:
     static PassRefPtr<SearchFieldCancelButtonElement> create(Document*);
 
@@ -81,14 +79,13 @@ public:
 
 private:
     SearchFieldCancelButtonElement(Document*);
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
+
     virtual void detach();
-    virtual bool isMouseFocusable() const { return false; }
 
     bool m_capturing;
 };
 
-class SpinButtonElement : public HTMLDivElement {
+class SpinButtonElement : public TextControlInnerElement {
 public:
     enum UpDownState {
         Indeterminate, // Hovered, but the event is not handled.
@@ -96,14 +93,12 @@ public:
         Up,
     };
 
-    static PassRefPtr<SpinButtonElement> createInner(Document*);
-    static PassRefPtr<SpinButtonElement> createOuter(Document*);
+    static PassRefPtr<SpinButtonElement> create(HTMLElement*);
     UpDownState upDownState() const { return m_upDownState; }
 
 private:
-    SpinButtonElement(Document*, bool isInner);
+    SpinButtonElement(HTMLElement*);
 
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
     virtual void detach();
     virtual bool isSpinButtonElement() const { return true; }
     // FIXME: shadowAncestorNode() should be const.
@@ -114,9 +109,7 @@ private:
     void stopRepeatingTimer();
     void repeatingTimerFired(Timer<SpinButtonElement>*);
     virtual void setHovered(bool = true);
-    virtual bool isMouseFocusable() const { return false; }
 
-    bool m_isInner;
     bool m_capturing;
     UpDownState m_upDownState;
     UpDownState m_pressStartingState;
@@ -126,7 +119,7 @@ private:
 #if ENABLE(INPUT_SPEECH)
 
 class InputFieldSpeechButtonElement
-    : public HTMLDivElement,
+    : public TextControlInnerElement,
       public SpeechInputListener {
 public:
     enum SpeechInputState {
@@ -135,7 +128,7 @@ public:
         Recognizing,
     };
 
-    static PassRefPtr<InputFieldSpeechButtonElement> create(Document*);
+    static PassRefPtr<InputFieldSpeechButtonElement> create(HTMLElement*);
     virtual ~InputFieldSpeechButtonElement();
 
     virtual void detach();
@@ -149,12 +142,9 @@ public:
     void setRecognitionResult(int, const SpeechInputResultArray&);
 
 private:
-    InputFieldSpeechButtonElement(Document*);
+    InputFieldSpeechButtonElement(HTMLElement*);
     SpeechInput* speechInput();
     void setState(SpeechInputState state);
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
-    virtual bool isMouseFocusable() const { return false; }
-    virtual void attach();
 
     bool m_capturing;
     SpeechInputState m_state;

@@ -14,4 +14,4 @@ layer at (12,49) size 151x16
   RenderBlock {DIV} at (2,3) size 151x16
     RenderText {#text} at (1,0) size 25x16
       text run at (1,0) width 25: "Text"
-caret: position 4 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 3 {DIV} of body
+caret: position 4 of child 0 {#text} of child 0 {DIV} of child 1 {INPUT} of child 3 {DIV} of body

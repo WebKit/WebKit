@@ -43,9 +43,7 @@
 #include "RenderStyle.h"
 #include "RenderTextControlMultiLine.h"
 #include "ScriptEventListener.h"
-#include "ShadowRoot.h"
 #include "Text.h"
-#include "TextControlInnerElements.h"
 #include "TextIterator.h"
 #include "VisibleSelection.h"
 #include <wtf/StdLibExtras.h>
@@ -81,15 +79,7 @@ HTMLTextAreaElement::HTMLTextAreaElement(const QualifiedName& tagName, Document*
 
 PassRefPtr<HTMLTextAreaElement> HTMLTextAreaElement::create(const QualifiedName& tagName, Document* document, HTMLFormElement* form)
 {
-    RefPtr<HTMLTextAreaElement> textArea = adoptRef(new HTMLTextAreaElement(tagName, document, form));
-    textArea->createShadowSubtree();
-    return textArea.release();
-}
-
-void HTMLTextAreaElement::createShadowSubtree()
-{
-    ExceptionCode ec = 0;
-    ensureShadowRoot()->appendChild(TextControlInnerTextElement::create(document()), ec);
+    return adoptRef(new HTMLTextAreaElement(tagName, document, form));
 }
 
 const AtomicString& HTMLTextAreaElement::formControlType() const

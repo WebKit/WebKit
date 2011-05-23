@@ -28,8 +28,6 @@
 #include "HTMLNames.h"
 #include "HTMLTextAreaElement.h"
 #include "HitTestResult.h"
-#include "ShadowRoot.h"
-#include "TextControlInnerElements.h"
 
 namespace WebCore {
 
@@ -42,11 +40,6 @@ RenderTextControlMultiLine::~RenderTextControlMultiLine()
 {
     if (node() && node()->inDocument())
         static_cast<HTMLTextAreaElement*>(node())->rendererWillBeDestroyed();
-}
-
-HTMLElement* RenderTextControlMultiLine::innerTextElement() const
-{
-    return toHTMLElement(toElement(node())->shadowRoot()->firstChild());
 }
 
 void RenderTextControlMultiLine::subtreeHasChanged()
@@ -109,6 +102,7 @@ int RenderTextControlMultiLine::baselinePosition(FontBaseline baselineType, bool
 
 void RenderTextControlMultiLine::updateFromElement()
 {
+    createSubtreeIfNeeded(0);
     RenderTextControl::updateFromElement();
 
     setInnerTextValue(static_cast<HTMLTextAreaElement*>(node())->value());

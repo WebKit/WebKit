@@ -1459,14 +1459,14 @@ void FrameSelection::selectAll()
     Node* selectStartTarget = 0;
     if (isContentEditable()) {
         root = highestEditableRoot(m_selection.start());
-        if (Node* shadowRoot = m_selection.nonBoundaryShadowTreeRootNode())
-            selectStartTarget = shadowRoot->shadowAncestorNode();
+        if (Node* shadowRoot = shadowTreeRootNode())
+            selectStartTarget = shadowRoot->shadowHost();
         else
             selectStartTarget = root;
     } else {
-        root = m_selection.nonBoundaryShadowTreeRootNode();
+        root = shadowTreeRootNode();
         if (root)
-            selectStartTarget = root->shadowAncestorNode();
+            selectStartTarget = root->shadowHost();
         else {
             root = document->documentElement();
             selectStartTarget = document->body();

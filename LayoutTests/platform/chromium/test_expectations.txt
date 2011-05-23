@@ -3528,6 +3528,7 @@ BUGCR79857 DEBUG : fast/events/popup-blocking-timers.html = PASS TEXT
 // Slow test, flaky on linux debug.
 BUGCR79859 LINUX DEBUG : fast/css/create_element_align.xhtml = PASS TIMEOUT
 
+
 // line height may be incorrect
 BUGCR79908 SNOWLEOPARD : fast/css/line-height-font-order.html = IMAGE
 
@@ -4087,9 +4088,8 @@ BUGCR82881 : http/tests/appcache/interrupted-update.html = PASS TEXT
 
 // Flaky on Linux
 BUGCR82891 LINUX : fast/speech/input-appearance-numberandspeech.html = IMAGE+TEXT PASS
-BUGCR82891 LINUX : fast/speech/input-appearance-searchandspeech.html = FAIL PASS
+BUGCR82891 LINUX : fast/speech/input-appearance-searchandspeech.html = IMAGE+TEXT PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
-BUGWK59208 WIN MAC : fast/speech/input-appearance-searchandspeech.html = FAIL
 
 // Fails on windows - added in r86693
 BUGCR82950 WIN : http/tests/navigation/post-301-response.html = TEXT

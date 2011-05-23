@@ -23,4 +23,4 @@ layer at (11,117) size 53x18
   RenderBlock {DIV} at (3,3) size 53x18
     RenderText {#text} at (1,0) size 38x18
       text run at (1,0) width 38: "hello"
-caret: position 3 of child 0 {#text} of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 5 {DIV} of body
+caret: position 3 of child 0 {#text} of child 0 {DIV} of child 1 {INPUT} of child 5 {DIV} of body

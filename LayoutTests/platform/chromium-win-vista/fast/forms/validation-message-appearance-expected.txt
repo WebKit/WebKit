@@ -32,4 +32,4 @@ layer at (10,44) size 220x97
       text run at (10,68) width 148: "the current password."
 layer at (42,32) size 18x18 backgroundClip at (10,32) size 220x16 clip at (10,32) size 220x16 outlineClip at (10,32) size 220x16
   RenderBlock (relative positioned) zI: 2147483645 {DIV} at (0,0) size 18x18 [bgcolor=#F8ECEC] [border: (2px solid #440000) none (2px solid #440000)]
-caret: position 0 of child 0 {DIV} of {#shadow-root} of child 1 {INPUT} of child 0 {FORM} of body
+caret: position 0 of child 0 {DIV} of child 1 {INPUT} of child 0 {FORM} of body

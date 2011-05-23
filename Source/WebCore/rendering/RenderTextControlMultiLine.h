@@ -31,8 +31,6 @@ public:
     RenderTextControlMultiLine(Node*, bool);
     virtual ~RenderTextControlMultiLine();
 
-    virtual HTMLElement* innerTextElement() const;
-
     void forwardEvent(Event*);
 
 private:

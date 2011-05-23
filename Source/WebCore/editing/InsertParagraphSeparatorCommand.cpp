@@ -167,7 +167,7 @@ void InsertParagraphSeparatorCommand::doApply()
     Element* startBlock = static_cast<Element*>(startBlockNode);
     if (!startBlockNode
             || !startBlockNode->isElementNode()
-            || !startBlock->nonShadowBoundaryParentNode()
+            || !startBlock->parentNode()
             || isTableCell(startBlock)
             || startBlock->hasTagName(formTag)
             // FIXME: If the node is hidden, we don't have a canonical position so we will do the wrong thing for tables and <hr>. https://bugs.webkit.org/show_bug.cgi?id=40342

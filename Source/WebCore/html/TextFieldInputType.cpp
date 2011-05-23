@@ -37,26 +37,12 @@
 #include "HTMLInputElement.h"
 #include "KeyboardEvent.h"
 #include "RenderTextControlSingleLine.h"
-#include "RenderTheme.h"
-#include "ShadowRoot.h"
-#include "TextControlInnerElements.h"
 #include "TextEvent.h"
 #include "TextIterator.h"
 #include "WheelEvent.h"
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
-
-TextFieldInputType::TextFieldInputType(HTMLInputElement* element)
-    : InputType(element)
-    , m_innerText(0)
-    , m_innerSpinButton(0)
-    , m_outerSpinButton(0)
-#if ENABLE(INPUT_SPEECH)
-    , m_speechButton(0)
-#endif
-{
-}
 
 bool TextFieldInputType::isTextField() const
 {
@@ -128,57 +114,6 @@ bool TextFieldInputType::shouldSubmitImplicitly(Event* event)
 RenderObject* TextFieldInputType::createRenderer(RenderArena* arena, RenderStyle*) const
 {
     return new (arena) RenderTextControlSingleLine(element(), element()->placeholderShouldBeVisible());
-}
-
-void TextFieldInputType::createShadowSubtree()
-{
-    ASSERT(!m_innerText);
-    ASSERT(!m_innerSpinButton);
-    ASSERT(!m_outerSpinButton);
-
-    bool shouldHaveSpinButton = RenderTheme::themeForPage(element()->document()->page())->shouldHaveSpinButton(element());
-    bool hasDecorations = shouldHaveSpinButton;
-#if ENABLE(INPUT_SPEECH)
-    if (element()->isSpeechEnabled())
-        hasDecorations = true;
-#endif
-
-    ExceptionCode ec = 0;
-    Document* document = element()->document();
-    RefPtr<HTMLElement> innerText = TextControlInnerTextElement::create(document);
-    m_innerText = innerText.get();
-    element()->ensureShadowRoot()->appendChild(innerText.release(), ec);
-    if (!hasDecorations)
-        return;
-
-#if ENABLE(INPUT_SPEECH)
-    ASSERT(!m_speechButton);
-    if (element()->isSpeechEnabled()) {
-        RefPtr<HTMLElement> speech = InputFieldSpeechButtonElement::create(document);
-        m_speechButton = speech.get();
-        element()->ensureShadowRoot()->appendChild(speech.release(), ec);
-    }
-#endif
-
-    if (shouldHaveSpinButton) {
-        RefPtr<HTMLElement> inner = SpinButtonElement::createInner(document);
-        RefPtr<HTMLElement> outer = SpinButtonElement::createOuter(document);
-        m_innerSpinButton = inner.get();
-        m_outerSpinButton = outer.get();
-        element()->ensureShadowRoot()->appendChild(inner.release(), ec);
-        element()->ensureShadowRoot()->appendChild(outer.release(), ec);
-    }
-}
-
-void TextFieldInputType::destroyShadowSubtree()
-{
-    InputType::destroyShadowSubtree();
-    m_innerText = 0;
-#if ENABLE(INPUT_SPEECH)
-    m_speechButton = 0;
-#endif
-    m_innerSpinButton = 0;
-    m_outerSpinButton = 0;
 }
 
 bool TextFieldInputType::shouldUseInputMethod() const

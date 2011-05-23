@@ -213,7 +213,7 @@ void ReplacementFragment::removeNode(PassRefPtr<Node> node)
     if (!node)
         return;
     
-    ContainerNode* parent = node->nonShadowBoundaryParentNode();
+    ContainerNode* parent = node->parentNode();
     if (!parent)
         return;
     
@@ -227,7 +227,7 @@ void ReplacementFragment::insertNodeBefore(PassRefPtr<Node> node, Node* refNode)
     if (!node || !refNode)
         return;
         
-    ContainerNode* parent = refNode->nonShadowBoundaryParentNode();
+    ContainerNode* parent = refNode->parentNode();
     if (!parent)
         return;
         

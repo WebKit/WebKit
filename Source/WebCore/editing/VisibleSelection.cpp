@@ -220,7 +220,7 @@ static PassRefPtr<Range> makeSearchRange(const Position& pos)
 
 bool VisibleSelection::isAll(EditingBoundaryCrossingRule rule) const
 {
-    return !nonBoundaryShadowTreeRootNode() && visibleStart().previous(rule).isNull() && visibleEnd().next(rule).isNull();
+    return !shadowTreeRootNode() && visibleStart().previous(rule).isNull() && visibleEnd().next(rule).isNull();
 }
 
 void VisibleSelection::appendTrailingWhitespace()
@@ -457,8 +457,8 @@ void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
     if (m_base.isNull() || m_start.isNull() || m_end.isNull())
         return;
 
-    Node* startRootNode = m_start.anchorNode()->nonBoundaryShadowTreeRootNode();
-    Node* endRootNode = m_end.anchorNode()->nonBoundaryShadowTreeRootNode();
+    Node* startRootNode = m_start.anchorNode()->shadowTreeRootNode();
+    Node* endRootNode = m_end.anchorNode()->shadowTreeRootNode();
 
     if (!startRootNode && !endRootNode)
         return;
@@ -467,10 +467,10 @@ void VisibleSelection::adjustSelectionToAvoidCrossingShadowBoundaries()
         return;
 
     if (m_baseIsFirst) {
-        m_extent = startRootNode ? lastPositionInNode(startRootNode) : positionBeforeNode(endRootNode->shadowAncestorNode());
+        m_extent = startRootNode ? lastPositionInNode(startRootNode) : positionBeforeNode(endRootNode->shadowHost());
         m_end = m_extent;
     } else {
-        m_extent = endRootNode ? firstPositionInNode(endRootNode) : positionAfterNode(startRootNode->shadowAncestorNode());
+        m_extent = endRootNode ? firstPositionInNode(endRootNode) : positionAfterNode(startRootNode->shadowHost());
         m_start = m_extent;
     }
 }
@@ -597,9 +597,9 @@ Element* VisibleSelection::rootEditableElement() const
     return editableRootForPosition(start());
 }
 
-Node* VisibleSelection::nonBoundaryShadowTreeRootNode() const
+Node* VisibleSelection::shadowTreeRootNode() const
 {
-    return start().deprecatedNode() ? start().deprecatedNode()->nonBoundaryShadowTreeRootNode() : 0;
+    return start().deprecatedNode() ? start().deprecatedNode()->shadowTreeRootNode() : 0;
 }
 
 #ifndef NDEBUG
