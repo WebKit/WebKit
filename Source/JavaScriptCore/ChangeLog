@@ -1,3 +1,14 @@
+2011-05-23  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Remove safeFloatToInt() in FloatRect.cpp and replace with working version of clampToInteger()
+        https://bugs.webkit.org/show_bug.cgi?id=58216
+
+        * wtf/MathExtras.h:
+        (clampToInteger):
+        (clampToPositiveInteger):
+
 2011-05-23  Ruben  <chromium@hybridsource.org>
 
         Reviewed by Tony Chang.

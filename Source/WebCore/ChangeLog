@@ -1,3 +1,15 @@
+2011-05-23  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Remove safeFloatToInt() in FloatRect.cpp and replace with working version of clampToInteger()
+        https://bugs.webkit.org/show_bug.cgi?id=58216
+
+        No new tests. The SVG tests mask-excessive-malloc.svg and pattern-excessive-malloc.svg exercise this code path.
+
+        * platform/graphics/FloatRect.cpp:
+        (WebCore::enclosingIntRect):
+
 2011-05-20  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

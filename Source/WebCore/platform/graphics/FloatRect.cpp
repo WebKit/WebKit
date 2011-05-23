@@ -182,18 +182,6 @@ void FloatRect::fitToPoints(const FloatPoint& p0, const FloatPoint& p1, const Fl
     setLocationAndSizeFromEdges(left, top, right, bottom);
 }
 
-static inline int safeFloatToInt(float x)
-{
-    static const int s_intMax = std::numeric_limits<int>::max();
-    static const int s_intMin = std::numeric_limits<int>::min();
-
-    if (x >= static_cast<float>(s_intMax))
-        return s_intMax;
-    if (x < static_cast<float>(s_intMin))
-        return s_intMin;
-    return static_cast<int>(x);
-}
-
 IntRect enclosingIntRect(const FloatRect& rect)
 {
     float left = floorf(rect.x());
@@ -201,8 +189,8 @@ IntRect enclosingIntRect(const FloatRect& rect)
     float width = ceilf(rect.maxX()) - left;
     float height = ceilf(rect.maxY()) - top;
     
-    return IntRect(safeFloatToInt(left), safeFloatToInt(top), 
-                   safeFloatToInt(width), safeFloatToInt(height));
+    return IntRect(clampToInteger(left), clampToInteger(top), 
+                   clampToInteger(width), clampToInteger(height));
 }
 
 FloatRect mapRect(const FloatRect& r, const FloatRect& srcRect, const FloatRect& destRect)
