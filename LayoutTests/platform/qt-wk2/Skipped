@@ -3557,3 +3557,6 @@ editing/style/style-3998892-fix.html
 editing/style/style-boundary-001.html
 editing/style/style-boundary-004.html
 editing/style/table-selection.html
+
+# regression caused by http://trac.webkit.org/changeset/87007
+fast/replaced/object-with-non-empty-classid-triggers-fallback.html

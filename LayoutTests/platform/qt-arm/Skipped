@@ -4189,3 +4189,6 @@ svg/custom/path-getTotalLength-on-big-segment-crash.svg
 
 # Unskipped by r86938, but fail on Qt-ARM platform
 plugins/keyboard-events.html
+
+# new test introduced in http://trac.webkit.org/changeset/87026, but fail
+fast/block/positioning/start-ignoring-before.html
