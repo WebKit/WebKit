@@ -596,7 +596,7 @@ void FrameView::calculateScrollbarModesForLayout(ScrollbarMode& hMode, Scrollbar
 #if ENABLE(FULLSCREEN_API) && USE(ACCELERATED_COMPOSITING)
 static bool isDocumentRunningFullScreenAnimation(Document* document)
 {
-    return document->webkitIsFullScreen() && document->fullScreenRenderer() && document->fullScreenRenderer()->isAnimating();
+    return document->webkitIsFullScreen() && document->fullScreenRenderer() && document->isAnimatingFullScreen();
 }
 #endif
     

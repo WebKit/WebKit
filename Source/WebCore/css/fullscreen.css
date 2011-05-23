@@ -13,7 +13,7 @@
 }
 
 video:-webkit-full-screen {
-    background-color: black !important;
+    background-color: transparent !important;
     position: static !important;
     margin: 0 !important;
     height: 100% !important;

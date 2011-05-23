@@ -884,7 +884,7 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
         // For the sake of clients of the full screen renderer, don't reparent
         // the full screen layer out from under them if they're in the middle of
         // animating.
-        if (layer->renderer()->isRenderFullScreen() && toRenderFullScreen(layer->renderer())->isAnimating())
+        if (layer->renderer()->isRenderFullScreen() && m_renderView->document()->isAnimatingFullScreen())
             return;
 #endif
         childLayersOfEnclosingLayer.append(layerBacking->childForSuperlayers());
@@ -1414,7 +1414,7 @@ bool RenderLayerCompositor::requiresCompositingWhenDescendantsAreCompositing(Ren
 bool RenderLayerCompositor::requiresCompositingForFullScreen(RenderObject* renderer) const
 {
 #if ENABLE(FULLSCREEN_API)
-    return renderer->isRenderFullScreen() && toRenderFullScreen(renderer)->isAnimating();
+    return renderer->isRenderFullScreen() && m_renderView->document()->isAnimatingFullScreen();
 #else
     UNUSED_PARAM(renderer);
     return false;

@@ -54,6 +54,13 @@ video:-webkit-full-screen::-webkit-media-controls-panel {
         inset 0 -1px 0 0px   rgba(202, 202, 202, 0.09),
         0  0   0 1px rgba(0, 0, 0, 0.5);
     -webkit-border-radius: 8px;
+
+    -webkit-transition: opacity 0.3s linear;
+}
+
+video:-webkit-animating-full-screen-transition::-webkit-media-controls-panel {
+    opacity: 0 ! important;
+    -webkit-transition: opacity 0 ! important;
 }
 
 video:-webkit-full-screen::-webkit-media-controls-mute-button {

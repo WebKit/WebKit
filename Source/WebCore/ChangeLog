@@ -1,3 +1,79 @@
+2011-05-20  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Video looks squished when animating to full screen.
+        https://bugs.webkit.org/show_bug.cgi?id=61220
+
+        No new tests, because DumpRenderTree does not currently "animate" the full-screen transition.
+
+        There are three issues animating video content to full screen which this patch is meant to
+        address:
+        1) The animation scales between the client sizes of the element before and after full-screen.
+        Because these sizes have different aspect ratios, the video appears "squished" for part of
+        the animation. Instead, we will animate between the content box sizes before and after full
+        screen which, in the case of video now and object-fit content in the future, will have the
+        same aspect ratio before and after full screen.
+        2) Now that we are animating the full-screen video element's content box, the black letterbox
+        bars appear above and below the video (depending on the video's aspect ratio) as soon as the
+        animation begins. This is extremely jarring, so set the background color to clear. The
+        full-screen renderer's background color will serve the same purpose (providing the letterbox
+        background) once the animation completes.
+        3) Now that the letterbox color is gone, the full screen controls can appear to float in thin
+        air beneath the video (again, depending on aspect ratio) during the animation, so to avoid
+        that effect and to make the animation consistent with the old webkitenterfullscreen()
+        animation, we will hide the controls during the animation by adding a new CSS pseudo class
+        -webkit-animating-full-screen-transition.
+
+        Added a new css pseudo-class: -webkit-animating-full-screen.  During the transition animation, this
+        pseudo-class will be applied to the current full-screen element.  Styles have been added to 
+        fullscreenQuickTime.css to hide the video element's built-in controller during the full-screen
+        animation.
+
+        To accomplish this, the ivar tracking whether the full-screen animation is taking place has been moved
+        from the RenderFullScreen renderer, to the current full-screen Document.  Because changing 
+        isAnimatingFullScreen causes style changes, make sure to call recalcStyle on the full-screen element
+        after changing.
+
+        This extra transition caused assertions in HTMLFormControlElement::updateFromElementCallback. A
+        full-screen media control's renderer is disabled during the style recalculation when exiting full
+        screen. This assertion was exposed by the extra recalcStyle() issued during the exit transition, and
+        has been removed.
+
+        * WebCore.exp.in:
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId): Add support for new pseudo class -webkit-animate-full-screen-transition.
+        (WebCore::nameToPseudoTypeMap): Ditto.
+        (WebCore::CSSSelector::extractPseudoType): Ditto.
+        * css/CSSSelector.h:
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Ditto.
+        * css/fullscreen.css: 
+        (video:-webkit-full-screen): Set full screen video background color to clear.
+        * css/fullscreenQuickTime.css: 
+        (video:-webkit-full-screen::-webkit-media-controls-panel): Set a default opacity transition.
+        (video:-webkit-animating-full-screen::-webkit-media-controls-panel): Set the opacity to 0 and 
+            disable the transition.
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::webkitWillEnterFullScreenForElement): Call our new setAnimatingFullScreen function.
+        (WebCore::Document::webkitDidEnterFullScreenForElement): Ditto.
+        (WebCore::Document::webkitWillExitFullScreenForElement): Ditto.
+        (WebCore::Document::webkitDidExitFullScreenForElement): Ditto.
+        (WebCore::Document::isAnimatingFullScreen): Moved here from RenderFullScreen.
+        (WebCore::Document::setAnimatingFullScreen): Ditto.
+        * dom/Document.h:
+        * html/HTMLFormControlElement.cpp: 
+        (WebCore::updateFromElementCallback): Use the Document's isAnimatingFullScreen function.
+        * page/FrameView.cpp:
+        (WebCore::isDocumentRunningFullScreenAnimation): Ditto.
+        * rendering/RenderFullScreen.cpp:
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree): Ditto.
+        (WebCore::RenderLayerCompositor::requiresCompositingForFullScreen): Ditto.
+        * rendering/style/RenderStyleConstants.h:
+
 2011-05-23  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

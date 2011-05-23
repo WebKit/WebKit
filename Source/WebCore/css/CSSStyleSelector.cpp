@@ -2904,9 +2904,11 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                     return true;
                 if (!e->document()->webkitIsFullScreen())
                     return false;
+                return e == e->document()->webkitCurrentFullScreenElement();
+            case CSSSelector::PseudoAnimatingFullScreenTransition:
                 if (e != e->document()->webkitCurrentFullScreenElement())
                     return false;
-                return true;
+                return e->document()->isAnimatingFullScreen();
             case CSSSelector::PseudoFullScreenMediaDocument:
                 if (!e->document()->webkitIsFullScreen())
                     return false;

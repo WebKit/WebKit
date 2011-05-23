@@ -36,22 +36,6 @@
 
 using namespace WebCore;
 
-void RenderFullScreen::setAnimating(bool animating)
-{
-    if (m_isAnimating == animating)
-        return;
-
-    m_isAnimating = animating;
-#if USE(ACCELERATED_COMPOSITING)
-    if (layer()) {
-        layer()->contentChanged(RenderLayer::FullScreenChanged);
-        // Clearing the layer's backing will force the compositor to reparent
-        // the layer the next time layers are synchronized.
-        layer()->clearBacking();
-    }
-#endif
-}
-
 PassRefPtr<RenderStyle> RenderFullScreen::createFullScreenStyle()
 {
     RefPtr<RenderStyle> fullscreenStyle = RenderStyle::createDefaultStyle();

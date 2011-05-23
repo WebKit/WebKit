@@ -1,3 +1,22 @@
+2011-05-20  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Video looks squished when animating to full screen.
+        https://bugs.webkit.org/show_bug.cgi?id=61220
+
+        Instead of scaling between the client sizes of the full-screen element before and after 
+        entering full-screen, scale between their content boxes.  The difference is that the client
+        sizes can have different aspect ratios, and thus the animation can end up "squishing" the
+        content at one end of the animation.  When animating between the two content box sizes, their
+        aspect ratios (for the case of video) are equal, so the animation will appear to scale 
+        smoothly between the two states without "squishing" the content.
+
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::beginEnterFullScreenAnimation): Set the destination frame
+            to be the content box of the current full screen element.
+        (WebKit::WebFullScreenManagerMac::beginExitFullScreenAnimation): Ditto.
+
 2011-05-23  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

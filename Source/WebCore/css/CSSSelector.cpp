@@ -167,6 +167,8 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return FULL_SCREEN_DOCUMENT;
     case PseudoFullScreenMediaDocument:
         return FULL_SCREEN_MEDIA_DOCUMENT;
+    case PseudoAnimatingFullScreenTransition:
+        return ANIMATING_FULL_SCREEN_TRANSITION;
 #endif
             
     case PseudoInputListButton:
@@ -322,6 +324,7 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, fullScreen, ("-webkit-full-screen"));
     DEFINE_STATIC_LOCAL(AtomicString, fullScreenDocument, ("-webkit-full-screen-document"));
     DEFINE_STATIC_LOCAL(AtomicString, fullScreenMediaDocument, ("-webkit-full-screen-media-document"));
+    DEFINE_STATIC_LOCAL(AtomicString, animatingFullScreenTransition, ("-webkit-animating-full-screen-transition"));
 #endif
     DEFINE_STATIC_LOCAL(AtomicString, inRange, ("in-range"));
     DEFINE_STATIC_LOCAL(AtomicString, outOfRange, ("out-of-range"));
@@ -410,6 +413,7 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(fullScreen.impl(), CSSSelector::PseudoFullScreen);
         nameToPseudoType->set(fullScreenDocument.impl(), CSSSelector::PseudoFullScreenDocument);
         nameToPseudoType->set(fullScreenMediaDocument.impl(), CSSSelector::PseudoFullScreenMediaDocument);
+        nameToPseudoType->set(animatingFullScreenTransition.impl(), CSSSelector::PseudoAnimatingFullScreenTransition);
 #endif
         nameToPseudoType->set(inRange.impl(), CSSSelector::PseudoInRange);
         nameToPseudoType->set(outOfRange.impl(), CSSSelector::PseudoOutOfRange);
@@ -520,6 +524,7 @@ void CSSSelector::extractPseudoType() const
     case PseudoFullScreen:
     case PseudoFullScreenDocument:
     case PseudoFullScreenMediaDocument:
+    case PseudoAnimatingFullScreenTransition:
 #endif
     case PseudoInRange:
     case PseudoOutOfRange:

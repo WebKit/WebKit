@@ -1073,6 +1073,8 @@ public:
     bool fullScreenIsAllowedForElement(Element*) const;
     void fullScreenElementRemoved();
     void removeFullScreenElementOfSubtree(Node*, bool amongChildrenOnly = false);
+    bool isAnimatingFullScreen() const;
+    void setAnimatingFullScreen(bool);
 #endif
 
     // Used to allow element that loads data without going through a FrameLoader to delay the 'load' event.
@@ -1388,6 +1390,7 @@ private:
     RenderFullScreen* m_fullScreenRenderer;
     Timer<Document> m_fullScreenChangeDelayTimer;
     Deque<RefPtr<Element> > m_fullScreenChangeEventTargetQueue;
+    bool m_isAnimatingFullScreen;
 #endif
 
     int m_loadEventDelayCount;
