@@ -1,3 +1,17 @@
+2011-05-23  Mike Reed  <reed@google.com>
+
+        Reviewed by James Robinson.
+
+        Skia: Need to implement GraphicsContext::clipConvexPolygon()
+        https://bugs.webkit.org/show_bug.cgi?id=41311
+
+        No new tests. 
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::setPathFromConvexPoints):
+        (WebCore::GraphicsContext::drawConvexPolygon):
+        (WebCore::GraphicsContext::clipConvexPolygon):
+
 2011-05-23  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Adam Barth.
