@@ -1,3 +1,14 @@
+2011-05-22  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Unskip passing transitions tests
+        https://bugs.webkit.org/show_bug.cgi?id=61246
+
+        * platform/qt/Skipped:
+        * platform/qt/transitions/move-after-transition-expected.txt: Added.
+        * platform/qt/transitions/transition-end-event-rendering-expected.txt: Added.
+
 2011-05-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

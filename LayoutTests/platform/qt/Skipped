@@ -45,7 +45,6 @@
 # - Failed canvas tests from http://philip.html5.org/tests/canvas/suite/tests/
 # - failing transforms tests
 # - failing printing tests
-# - failing transitions tests
 # - failing websocket tests
 # - new tests without expected results
 # - Qt 4.7 related bugs
@@ -1912,13 +1911,6 @@ printing/compositing-layer-printing.html
 # Printing related layout test failure has no results, but obvious error message
 # https://bugs.webkit.org/show_bug.cgi?id=27913
 printing/media-queries-print.html
-
-# ============================================================================= #
-# failing transitions tests
-# ============================================================================= #
-transitions/move-after-transition.html
-transitions/transition-end-event-rendering.html
-transitions/transition-drt-api.html
 
 # ============================================================================= #
 # new tests without expected results
