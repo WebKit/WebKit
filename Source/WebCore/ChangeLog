@@ -1,3 +1,35 @@
+2011-05-23  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Update node list cache count on the containing TreeScope rather than the Document
+        https://bugs.webkit.org/show_bug.cgi?id=59983
+
+        Change code to call add/removeNodeListCache() and hasNodeListCaches() on the proper tree scope.
+        Move updating of the node list cache count from setDocument() to setTreeScopeRecursively().
+        Make setDocument() and setDocumentRecursively() private.
+
+        No new tests. (refactoring)
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::childrenChanged):
+        * dom/Node.cpp:
+        (WebCore::Node::~Node):
+        (WebCore::Node::setDocument):
+        (WebCore::Node::setTreeScopeRecursively):
+        (WebCore::Node::childNodes):
+        (WebCore::Node::registerDynamicNodeList):
+        (WebCore::Node::unregisterDynamicNodeList):
+        (WebCore::Node::notifyLocalNodeListsAttributeChanged):
+        (WebCore::Node::notifyLocalNodeListsChildrenChanged):
+        (WebCore::Node::getElementsByTagName):
+        (WebCore::Node::getElementsByTagNameNS):
+        (WebCore::Node::getElementsByName):
+        (WebCore::Node::getElementsByClassName):
+        * dom/Node.h:
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::HTMLFormControlElement::labels):
+
 2011-05-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

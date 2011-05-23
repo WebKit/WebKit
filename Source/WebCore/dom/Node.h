@@ -636,11 +636,6 @@ protected:
     };
     Node(Document*, ConstructionType);
 
-    // Do not use this method to change the document of a node until after the node has been
-    // removed from its previous document.
-    void setDocument(Document*);
-    void setDocumentRecursively(Document*);
-
     virtual void willMoveToNewOwnerDocument();
     virtual void didMoveToNewOwnerDocument();
     
@@ -654,6 +649,11 @@ protected:
     NodeRareData* ensureRareData();
 
 private:
+    // Do not use this method to change the document of a node until after the node has been
+    // removed from its previous document.
+    void setDocumentRecursively(Document*);
+    void setDocument(Document*);
+
     enum EditableLevel { Editable, RichlyEditable };
     bool rendererIsEditable(EditableLevel) const;
 

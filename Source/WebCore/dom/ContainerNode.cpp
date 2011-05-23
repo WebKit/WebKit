@@ -812,7 +812,7 @@ void ContainerNode::childrenChanged(bool changedByParser, Node* beforeChange, No
     Node::childrenChanged(changedByParser, beforeChange, afterChange, childCountDelta);
     if (!changedByParser && childCountDelta)
         document()->nodeChildrenChanged(this);
-    if (document()->hasNodeListCaches())
+    if (treeScope()->hasNodeListCaches())
         notifyNodeListsChildrenChanged();
 }
 

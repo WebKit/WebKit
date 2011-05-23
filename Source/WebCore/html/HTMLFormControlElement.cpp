@@ -487,7 +487,7 @@ PassRefPtr<NodeList> HTMLFormControlElement::labels()
     NodeRareData* data = Node::ensureRareData();
     if (!data->nodeLists()) {
         data->setNodeLists(NodeListsNodeData::create());
-        document()->addNodeListCache();
+        treeScope()->addNodeListCache();
     }
 
     if (data->nodeLists()->m_labelsNodeListCache)
