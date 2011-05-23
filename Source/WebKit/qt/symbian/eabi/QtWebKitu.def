@@ -780,8 +780,8 @@ EXPORTS
 	_ZN23DumpRenderTreeSupportQt12isTargetItemERK15QWebHistoryItem @ 779 NONAME
 	_ZN23DumpRenderTreeSupportQt17historyItemTargetERK15QWebHistoryItem @ 780 NONAME
 	_ZN23DumpRenderTreeSupportQt20getChildHistoryItemsERK15QWebHistoryItem @ 781 NONAME
-	_ZN23DumpRenderTreeSupportQt23setMockGeolocationErrorEiRK7QString @ 782 NONAME
-	_ZN23DumpRenderTreeSupportQt26setMockGeolocationPositionEddd @ 783 NONAME
+	_ZN23DumpRenderTreeSupportQt23setMockGeolocationErrorEP8QWebPageiRK7QString @ 782 NONAME
+	_ZN23DumpRenderTreeSupportQt26setMockGeolocationPositionEP8QWebPageddd @ 783 NONAME
 	_ZN23DumpRenderTreeSupportQt17clearScriptWorldsEv @ 784 NONAME
 	_ZN23DumpRenderTreeSupportQt23setCustomPolicyDelegateEbb @ 785 NONAME
 	_ZN15QWebScriptWorldC1ERKS_ @ 786 NONAME
@@ -812,7 +812,7 @@ EXPORTS
 	_ZN8QWebPage25requestPermissionFromUserEP9QWebFrameNS_16PermissionDomainE @ 811 NONAME ABSENT
 	_ZN8QWebPage27cancelRequestsForPermissionEP9QWebFrameNS_16PermissionDomainE @ 812 NONAME ABSENT
 	_ZNK16QGraphicsWebView10deviceSizeEv @ 813 NONAME ABSENT
-	_ZN23DumpRenderTreeSupportQt14viewportAsTextEP8QWebPageRK5QSize @ 814 NONAME
+	_ZN23DumpRenderTreeSupportQt14viewportAsTextEP8QWebPageiRK5QSizeS4_ @ 814 NONAME
 	_ZN23DumpRenderTreeSupportQt32simulateDesktopNotificationClickERK7QString @ 815 NONAME
 	_ZN8QWebPage23viewportChangeRequestedEv @ 816 NONAME
 	_ZNK8QWebPage28viewportConfigurationForSizeERK5QSize @ 817 NONAME ABSENT

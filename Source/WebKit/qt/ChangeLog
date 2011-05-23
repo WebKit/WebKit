@@ -1,3 +1,12 @@
+2011-05-23  Joe Wild  <joseph.wild@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] The Qt WebKit Symbian .def file needs to be updated so Symbian will build
+        https://bugs.webkit.org/show_bug.cgi?id=61200
+
+        * symbian/eabi/QtWebKitu.def:
+
 2011-05-22  Hui Huang  <hui.2.huang@nokia.com>, Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Laszlo Gombos.
