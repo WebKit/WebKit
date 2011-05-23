@@ -1,5 +1,17 @@
 2011-05-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Check in failing test expectations after r87096.
+        They are tracked by the bugs 61319, 61320, and 61322.
+
+        * platform/gtk/fast/events/selectstart-by-double-triple-clicks-expected.txt: Added.
+        * platform/gtk/fast/events/selectstart-by-drag-expected.txt: Added.
+        * platform/qt/fast/events/selectstart-by-double-triple-clicks-expected.txt: Added.
+        * platform/qt/fast/events/selectstart-by-drag-expected.txt: Added.
+        * platform/qt/fast/events/selectstart-by-single-click-with-shift-expected.txt: Added.
+        * platform/win/fast/events/selectstart-by-drag-expected.txt: Added.
+
+2011-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium test fix. On Chromium Windows, a space after a word is selected when you double click on the word.
 
         * fast/events/selectstart-by-double-triple-clicks.html:
