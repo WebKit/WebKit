@@ -1058,7 +1058,7 @@ void RenderThemeEfl::systemFont(int propId, FontDescription& fontDescription) co
 #if ENABLE(PROGRESS_TAG)
 void RenderThemeEfl::adjustProgressBarStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
-    style->setBoxShadow(0);
+    style->setBoxShadow(nullptr);
 }
 
 bool RenderThemeEfl::paintProgressBar(RenderObject* object, const PaintInfo& info, const IntRect& rect)

@@ -1,3 +1,10 @@
+2011-05-22  Adam Barth  <abarth@webkit.org>
+
+        Strict PassOwnPtr build fix.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::adjustProgressBarStyle):
+
 2011-05-22  Andrew Wason  <rectalogic@rectalogic.com>
 
         Reviewed by Benjamin Poulain.
