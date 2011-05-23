@@ -355,7 +355,7 @@ void DumpRenderTreeSupportGtk::addUserStyleSheet(WebKitWebFrame* frame, const ch
 
     WebKitWebView* webView = getViewFromFrame(frame);
     Page* page = core(webView);
-    page->group().addUserStyleSheetToWorld(mainThreadNormalWorld(), sourceCode, KURL(), 0, 0, allFrames ? InjectInAllFrames : InjectInTopFrameOnly); 
+    page->group().addUserStyleSheetToWorld(mainThreadNormalWorld(), sourceCode, KURL(), nullptr, nullptr, allFrames ? InjectInAllFrames : InjectInTopFrameOnly); 
 }
 
 /**
