@@ -81,21 +81,23 @@ WebInspector.PleaseWaitMessage.prototype = {
         element.appendChild(message);
     },
 
-    showAndWaitFor: function(element, listenObject, listenEvent)
+    showAndWaitFor: function(element, listenObject, listenEvent, action)
     {
         var instance = WebInspector.PleaseWaitMessage.prototype.instance;
         var message = instance.element;
-        if (message.parentNode === element)
-            return;
-
-        listenObject.addEventListener(listenEvent, WebInspector.PleaseWaitMessage.prototype.unlistenAndHide.bind(instance, listenObject, listenEvent), instance);
-        WebInspector.PleaseWaitMessage.prototype.show(element);
+        if (message.parentNode !== element) {
+            // If not already shown for this element.
+            listenObject.addEventListener(listenEvent, instance.unlistenAndHide.bind(instance, listenObject, listenEvent), instance);
+            WebInspector.PleaseWaitMessage.prototype.show(element);
+        }
+        if (action)
+            setTimeout(action, 0);
     },
 
     unlistenAndHide: function(listenObject, listenEvent)
     {
         var instance = WebInspector.PleaseWaitMessage.prototype.instance;
-        listenObject.removeEventListener(listenEvent, WebInspector.PleaseWaitMessage.prototype.unlistenAndHide, instance);
+        listenObject.removeEventListener(listenEvent, instance.unlistenAndHide, instance);
         WebInspector.PleaseWaitMessage.prototype.hide();
     }
 };

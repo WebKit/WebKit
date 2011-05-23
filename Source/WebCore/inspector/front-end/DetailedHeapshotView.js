@@ -74,12 +74,11 @@ WebInspector.HeapSnapshotSortableDataGrid.prototype = {
             return result;
         }
 
-        WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.element, this, "sorting complete");
+        WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.element, this, "sorting complete", sort.bind(this));
         function sort()
         {
             this._performSorting(SortByTwoFields);
         }
-        setTimeout(sort.bind(this), 0);
     },
 
     _performSorting: function(sortFunction)
@@ -605,6 +604,11 @@ WebInspector.DetailedHeapshotView = function(parent, profile)
             this.baseSelectElement.selectedIndex = profileIndex - 1;
         else
             this.baseSelectElement.selectedIndex = profileIndex;
+        WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.currentView.element, this.dataGrid, "sorting complete", setDataSource.bind(this));
+    }
+
+    function setDataSource()
+    {
         this.dataGrid.setDataSource(this, this.profileWrapper); 
         this._updatePercentButton();
     }
@@ -839,7 +843,11 @@ WebInspector.DetailedHeapshotView.prototype = {
         {
             delete this._baseProfileWrapper;
             this.baseProfile._lastShown = Date.now();
-            WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.currentView.element, this.diffDataGrid, "sorting complete");
+            WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.currentView.element, this.diffDataGrid, "sorting complete", setDataSource.bind(this));
+        }
+
+        function setDataSource()
+        {
             this.diffDataGrid.setBaseDataSource(this.baseProfileWrapper);
         }
 
@@ -959,11 +967,15 @@ WebInspector.DetailedHeapshotView.prototype = {
             }
         } else {
             this.baseSelectElement.addStyleClass("hidden");
-            if (!this.dataGrid.snapshotView) {
-                WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.currentView.element, this.dataGrid, "sorting complete");
-                this.dataGrid.setDataSource(this, this.profileWrapper);
-            }
+            if (!this.dataGrid.snapshotView)
+                WebInspector.PleaseWaitMessage.prototype.showAndWaitFor(this.currentView.element, this.dataGrid, "sorting complete", setDataSource.bind(this));
         }
+
+        function setDataSource()
+        {
+            this.dataGrid.setDataSource(this, this.profileWrapper);
+        }
+
 
         if (!this.currentQuery || !this._searchFinishedCallback || !this._searchResults)
             return;

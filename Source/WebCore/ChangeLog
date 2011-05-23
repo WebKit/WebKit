@@ -1,3 +1,25 @@
+2011-05-23  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Chromium] Show "Please wait" message during initial
+        heap snapshot processing.
+        https://bugs.webkit.org/show_bug.cgi?id=61040
+
+        * inspector/front-end/DetailedHeapshotView.js:
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype.sortingChanged.sort):
+        (WebInspector.HeapSnapshotSortableDataGrid.prototype.sortingChanged):
+        (WebInspector.DetailedHeapshotView.profileCallback):
+        (WebInspector.DetailedHeapshotView.setDataSource):
+        (WebInspector.DetailedHeapshotView):
+        (WebInspector.DetailedHeapshotView.prototype._changeBase.baseProfileLoaded):
+        (WebInspector.DetailedHeapshotView.prototype._changeBase.setDataSource):
+        (WebInspector.DetailedHeapshotView.prototype._changeBase):
+        (WebInspector.DetailedHeapshotView.prototype._changeView.setDataSource):
+        (WebInspector.DetailedHeapshotView.prototype._changeView):
+        * inspector/front-end/PleaseWaitMessage.js:
+        (WebInspector.PleaseWaitMessage.prototype.showAndWaitFor):
+
 2011-05-23  Adam Barth  <abarth@webkit.org>
 
         Strict PassOwnPtr build fixes.
