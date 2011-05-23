@@ -584,11 +584,11 @@ private:
     int lowestFloatLogicalBottom(FloatingObject::Type = FloatingObject::FloatBoth) const;
     int nextFloatLogicalBottomBelow(int) const;
     
-    virtual bool hitTestColumns(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-    virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty, HitTestAction);
-    bool hitTestFloats(const HitTestRequest&, HitTestResult&, int x, int y, int tx, int ty);
+    virtual bool hitTestColumns(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);
+    virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);
+    bool hitTestFloats(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty);
 
-    virtual bool isPointInOverflowControl(HitTestResult&, int x, int y, int tx, int ty);
+    virtual bool isPointInOverflowControl(HitTestResult&, const IntPoint& pointInContainer, int tx, int ty);
 
     void computeInlinePreferredLogicalWidths();
     void computeBlockPreferredLogicalWidths();

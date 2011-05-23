@@ -1,3 +1,30 @@
+2011-05-23  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Change RenderBlock hit testing to use IntPoint instead x,y pair
+        https://bugs.webkit.org/show_bug.cgi?id=61146
+
+        Covered by existing tests.
+
+        * platform/graphics/IntPoint.h:
+        (WebCore::toSize):
+        Add toSize function for converting from point to size.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isPointInOverflowControl):
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::hitTestColumns):
+        (WebCore::RenderBlock::hitTestContents):
+        * rendering/RenderBlock.h:
+        Change hit testing code in RenderBlock to use IntPoint.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isPointInOverflowControl):
+        * rendering/RenderListBox.h:
+        Change overridden method to use IntPoint.
+
 2011-05-23  Mike Reed  <reed@google.com>
 
         Reviewed by James Robinson.

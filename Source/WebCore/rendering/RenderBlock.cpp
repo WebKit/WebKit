@@ -3889,12 +3889,12 @@ int RenderBlock::getClearDelta(RenderBox* child, int yPos)
     return result;
 }
 
-bool RenderBlock::isPointInOverflowControl(HitTestResult& result, int _x, int _y, int _tx, int _ty)
+bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty)
 {
     if (!scrollsOverflow())
         return false;
 
-    return layer()->hitTestOverflowControls(result, IntPoint(_x - _tx, _y - _ty));
+    return layer()->hitTestOverflowControls(result, pointInContainer - IntSize(tx, ty));
 }
 
 bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction)
@@ -3909,7 +3909,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
             return false;
     }
 
-    if ((hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) && isPointInOverflowControl(result, pointInContainer.x(), pointInContainer.y(), localOffset.width(), localOffset.height())) {
+    if ((hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) && isPointInOverflowControl(result, pointInContainer, localOffset.width(), localOffset.height())) {
         updateHitTestResult(result, pointInContainer - localOffset);
         // FIXME: isPointInOverflowControl() doesn't handle rect-based tests yet.
         if (!result.addNodeToRectBasedTestResult(node(), pointInContainer))
@@ -3930,13 +3930,13 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
         // Hit test contents if we don't have columns.
         if (!hasColumns()) {
-            if (hitTestContents(request, result, pointInContainer.x(), pointInContainer.y(), scrolledOffset.width(), scrolledOffset.height(), hitTestAction)) {
+            if (hitTestContents(request, result, pointInContainer, scrolledOffset.width(), scrolledOffset.height(), hitTestAction)) {
                 updateHitTestResult(result, pointInContainer - localOffset);
                 return true;
             }
-            if (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer.x(), pointInContainer.y(), scrolledOffset.width(), scrolledOffset.height()))
+            if (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer, scrolledOffset.width(), scrolledOffset.height()))
                 return true;
-        } else if (hitTestColumns(request, result, pointInContainer.x(), pointInContainer.y(), scrolledOffset.width(), scrolledOffset.height(), hitTestAction)) {
+        } else if (hitTestColumns(request, result, pointInContainer, scrolledOffset.width(), scrolledOffset.height(), hitTestAction)) {
             updateHitTestResult(result, pointInContainer - localOffset);
             return true;
         }
@@ -3955,7 +3955,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     return false;
 }
 
-bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty)
+bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty)
 {
     if (!m_floatingObjects)
         return false;
@@ -3974,8 +3974,8 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
             int xOffset = xPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->x();
             int yOffset = yPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->y();
             IntPoint childPoint = flipFloatForWritingMode(floatingObject, IntPoint(tx + xOffset, ty + yOffset));
-            if (floatingObject->m_renderer->hitTest(request, result, IntPoint(x, y), childPoint.x(), childPoint.y())) {
-                updateHitTestResult(result, IntPoint(x - childPoint.x(), y - childPoint.y()));
+            if (floatingObject->m_renderer->hitTest(request, result, pointInContainer, childPoint.x(), childPoint.y())) {
+                updateHitTestResult(result, pointInContainer - toSize(childPoint));
                 return true;
             }
         }
@@ -3984,7 +3984,7 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
-bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction)
 {
     // We need to do multiple passes, breaking up our hit testing into strips.
     ColumnInfo* colInfo = columnInfo();
@@ -4014,28 +4014,28 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
             currLogicalTopOffset += blockDelta;
         colRect.move(tx, ty);
         
-        if (colRect.intersects(result.rectForPoint(IntPoint(x, y)))) {
+        if (colRect.intersects(result.rectForPoint(pointInContainer))) {
             // The point is inside this column.
             // Adjust tx and ty to change where we hit test.
         
             IntSize offset = isHorizontal ? IntSize(currLogicalLeftOffset, currLogicalTopOffset) : IntSize(currLogicalTopOffset, currLogicalLeftOffset);
             int finalX = tx + offset.width();
             int finalY = ty + offset.height();
-            if (result.isRectBasedTest() && !colRect.contains(result.rectForPoint(IntPoint(x, y))))
-                hitTestContents(request, result, x, y, finalX, finalY, hitTestAction);
+            if (result.isRectBasedTest() && !colRect.contains(result.rectForPoint(pointInContainer)))
+                hitTestContents(request, result, pointInContainer, finalX, finalY, hitTestAction);
             else
-                return hitTestContents(request, result, x, y, finalX, finalY, hitTestAction) || (hitTestAction == HitTestFloat && hitTestFloats(request, result, x, y, finalX, finalY));
+                return hitTestContents(request, result, pointInContainer, finalX, finalY, hitTestAction) || (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer, finalX, finalY));
         }
     }
 
     return false;
 }
 
-bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& result, int x, int y, int tx, int ty, HitTestAction hitTestAction)
+bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction)
 {
     if (childrenInline() && !isTable()) {
         // We have to hit-test our line boxes.
-        if (m_lineBoxes.hitTest(this, request, result, IntPoint(x, y), tx, ty, hitTestAction))
+        if (m_lineBoxes.hitTest(this, request, result, pointInContainer, tx, ty, hitTestAction))
             return true;
     } else {
         // Hit test our children.
@@ -4044,7 +4044,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
             childHitTest = HitTestChildBlockBackground;
         for (RenderBox* child = lastChildBox(); child; child = child->previousSiblingBox()) {
             IntPoint childPoint = flipForWritingMode(child, IntPoint(tx, ty), ParentToChildFlippingAdjustment);
-            if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, IntPoint(x, y), childPoint.x(), childPoint.y(), childHitTest))
+            if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, pointInContainer, childPoint.x(), childPoint.y(), childHitTest))
                 return true;
         }
     }

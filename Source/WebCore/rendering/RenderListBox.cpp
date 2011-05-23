@@ -434,17 +434,17 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, int tx, int ty, in
     }
 }
 
-bool RenderListBox::isPointInOverflowControl(HitTestResult& result, int _x, int _y, int _tx, int _ty)
+bool RenderListBox::isPointInOverflowControl(HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty)
 {
     if (!m_vBar)
         return false;
 
-    IntRect vertRect(_tx + width() - borderRight() - m_vBar->width(),
-                     _ty + borderTop(),
+    IntRect vertRect(tx + width() - borderRight() - m_vBar->width(),
+                     ty + borderTop(),
                      m_vBar->width(),
                      height() - borderTop() - borderBottom());
 
-    if (vertRect.contains(_x, _y)) {
+    if (vertRect.contains(pointInContainer)) {
         result.setScrollbar(m_vBar.get());
         return true;
     }

@@ -205,6 +205,11 @@ inline IntPoint toPoint(const IntSize& size)
     return IntPoint(size.width(), size.height());
 }
 
+inline IntSize toSize(const IntPoint& a)
+{
+    return IntSize(a.x(), a.y());
+}
+
 #if PLATFORM(QT)
 inline QDataStream& operator<<(QDataStream& stream, const IntPoint& point)
 {
