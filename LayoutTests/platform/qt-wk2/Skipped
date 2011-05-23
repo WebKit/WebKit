@@ -1685,10 +1685,6 @@ transitions/transition-hit-test-transform.html
 transitions/transition-shorthand-delay.html
 transitions/negative-delay.html
 
-# WebKitTestRunner needs layoutTestController.setJavaScriptCanAccessClipboard
-# <https://bugs.webkit.org/show_bug.cgi?id=42669>
-editing/execCommand/clipboard-access.html
-
 # WebKitTestRunner needs layoutTestController.queueReload
 # <https://bugs.webkit.org/show_bug.cgi?id=42672>
 fast/css/compare-content-style.html

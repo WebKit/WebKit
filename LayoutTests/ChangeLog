@@ -1,3 +1,15 @@
+2011-05-23  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Darin Adler.
+
+        WebKitTestRunner needs layoutTestController.setJavaScriptCanAccessClipboard
+        https://bugs.webkit.org/show_bug.cgi?id=42669
+
+        Unskip test case due to the implementation setJavaScriptCanAccessClipboard in WebKitTestRunner.
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-05-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

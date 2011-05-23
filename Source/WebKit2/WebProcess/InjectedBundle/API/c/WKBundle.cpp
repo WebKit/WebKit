@@ -143,6 +143,11 @@ void WKBundleSetFrameFlatteningEnabled(WKBundleRef bundleRef, WKBundlePageGroupR
     toImpl(bundleRef)->setFrameFlatteningEnabled(toImpl(pageGroupRef), enabled);
 }
 
+WK_EXPORT void WKBundleSetJavaScriptCanAccessClipboard(WKBundleRef bundleRef, WKBundlePageGroupRef pageGroupRef, bool enabled)
+{
+    toImpl(bundleRef)->setJavaScriptCanAccessClipboard(toImpl(pageGroupRef), enabled);
+}
+
 void WKBundleAddOriginAccessWhitelistEntry(WKBundleRef bundleRef, WKStringRef sourceOrigin, WKStringRef destinationProtocol, WKStringRef destinationHost, bool allowDestinationSubdomains)
 {
     toImpl(bundleRef)->addOriginAccessWhitelistEntry(toImpl(sourceOrigin)->string(), toImpl(destinationProtocol)->string(), toImpl(destinationHost)->string(), allowDestinationSubdomains);
