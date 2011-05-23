@@ -1,3 +1,14 @@
+2011-05-23  Adam Barth  <abarth@webkit.org>
+
+        Strict PassOwnPtr build fixes.
+
+        * platform/gtk/GeolocationServiceGtk.cpp:
+        (WebCore::GeolocationServiceGtk::create):
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::RenderThemeGtk::adjustSliderTrackStyle):
+        (WebCore::RenderThemeGtk::adjustSliderThumbStyle):
+        (WebCore::RenderThemeGtk::adjustProgressBarStyle):
+
 2011-05-22  Adam Barth  <abarth@webkit.org>
 
         Strict PassOwnPtr build fix.

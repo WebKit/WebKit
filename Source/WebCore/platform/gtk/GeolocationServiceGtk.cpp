@@ -40,7 +40,7 @@ namespace WebCore {
 
 PassOwnPtr<GeolocationService> GeolocationServiceGtk::create(GeolocationServiceClient* client)
 {
-    return new GeolocationServiceGtk(client);
+    return adoptPtr(new GeolocationServiceGtk(client));
 }
 
 GeolocationService::FactoryFunction* GeolocationService::s_factoryFunction = &GeolocationServiceGtk::create;

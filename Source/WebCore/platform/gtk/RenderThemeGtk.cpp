@@ -393,12 +393,12 @@ bool RenderThemeGtk::paintCapsLockIndicator(RenderObject* renderObject, const Pa
 
 void RenderThemeGtk::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    style->setBoxShadow(0);
+    style->setBoxShadow(nullptr);
 }
 
 void RenderThemeGtk::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    style->setBoxShadow(0);
+    style->setBoxShadow(nullptr);
 }
 
 double RenderThemeGtk::caretBlinkInterval() const
@@ -628,7 +628,7 @@ bool RenderThemeGtk::paintMediaCurrentTime(RenderObject* renderObject, const Pai
 #if ENABLE(PROGRESS_TAG)
 void RenderThemeGtk::adjustProgressBarStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
 {
-    style->setBoxShadow(0);
+    style->setBoxShadow(nullptr);
 }
 
 // These values have been copied from RenderThemeChromiumSkia.cpp
