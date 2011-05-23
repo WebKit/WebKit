@@ -1,5 +1,12 @@
 2011-05-22  Adam Barth  <abarth@webkit.org>
 
+        Build fix.  InspectorFrontendClient needs a public destructor so that
+        we can properly track ownership using OwnPtr.
+
+        * WebCoreSupport/InspectorClientGtk.h:
+
+2011-05-22  Adam Barth  <abarth@webkit.org>
+
         Strict PassOwnPtr build fix.
 
         * WebCoreSupport/InspectorClientGtk.cpp:

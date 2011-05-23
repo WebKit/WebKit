@@ -74,6 +74,7 @@ namespace WebKit {
     class InspectorFrontendClient : public WebCore::InspectorFrontendClientLocal {
     public:
         InspectorFrontendClient(WebKitWebView* inspectedWebView, WebKitWebView* inspectorWebView, WebKitWebInspector* webInspector, WebCore::Page* inspectorPage, InspectorClient* inspectorClient);
+        virtual ~InspectorFrontendClient();
 
         void disconnectInspectorClient() { m_inspectorClient = 0; }
 
@@ -95,8 +96,6 @@ namespace WebKit {
         virtual void inspectedURLChanged(const WTF::String& newURL);
 
     private:
-        virtual ~InspectorFrontendClient();
-
         WebKitWebView* m_inspectorWebView;
         WebKitWebView* m_inspectedWebView;
         WebKitWebInspector* m_webInspector;
