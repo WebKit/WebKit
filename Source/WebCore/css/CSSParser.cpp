@@ -4159,6 +4159,9 @@ static bool parseColorIntOrPercentage(const UChar*& string, const UChar* end, co
         localValue = newValue;
     }
 
+    if (current == end)
+        return false;
+
     if (expect == CSSPrimitiveValue::CSS_NUMBER && (*current == '.' || *current == '%'))
         return false;
 

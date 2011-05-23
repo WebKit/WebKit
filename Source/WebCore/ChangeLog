@@ -1,3 +1,16 @@
+2011-05-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Terminate css color parsing on integers which are not followed
+        by a terminator.
+        https://bugs.webkit.org/show_bug.cgi?id=61293
+
+        Test: fast/css/parse-color-int-or-percent-crash.html
+
+        * css/CSSParser.cpp:
+        (WebCore::parseColorIntOrPercentage):
+
 2011-05-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Enrica Casucci.
