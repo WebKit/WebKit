@@ -1,3 +1,11 @@
+2011-05-22  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
+        Chromium expectations update.
+
+        * platform/chromium/test_expectations.txt: add fast/block/positioning/058.html
+
 2011-05-22  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

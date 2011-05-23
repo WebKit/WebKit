@@ -4164,3 +4164,6 @@ BUGCR83499 : fast/box-shadow/scaled-box-shadow.html = IMAGE IMAGE+TEXT PASS
 BUGCR83499 MAC : fast/box-shadow/box-shadow-transformed.html = IMAGE IMAGE+TEXT PASS
 
 BUGCR83504 WIN : fast/css/custom-font-xheight.html = PASS TIMEOUT
+
+// New test from WK r87026
+BUGCR83555 WIN LINUX : fast/block/positioning/058.html = IMAGE+TEXT
