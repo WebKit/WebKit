@@ -57,7 +57,7 @@ const size_t ConversionBufferSize = 16384;
 
 static PassOwnPtr<TextCodec> newTextCodecGtk(const TextEncoding& encoding, const void*)
 {
-    return new TextCodecGtk(encoding);
+    return adoptPtr(new TextCodecGtk(encoding));
 }
 
 static bool isEncodingAvailable(const gchar* encodingName)

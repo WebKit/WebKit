@@ -1,3 +1,10 @@
+2011-05-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Strict PassOwnPtr build fix.
+
+        * platform/text/gtk/TextCodecGtk.cpp:
+        (WebCore::newTextCodecGtk):
+
 2011-05-23  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
