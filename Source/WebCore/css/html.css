@@ -450,6 +450,7 @@ input::-webkit-inner-spin-button {
     display: inline-block;
     position: relative;
     cursor: default;
+    vertical-align: top;
     -webkit-user-select: none;
 }
 
@@ -459,6 +460,7 @@ input::-webkit-outer-spin-button {
     position: relative;
     cursor: default;
     margin-left: 2px;
+    vertical-align: top;
     -webkit-user-select: none;
 }
 
@@ -466,6 +468,7 @@ input::-webkit-outer-spin-button {
 input::-webkit-input-speech-button {
     -webkit-appearance: -webkit-input-speech-button;
     display: inline-block;
+    vertical-align: top;
 }
 #endif
 

@@ -80,35 +80,22 @@ RenderTextControl::RenderTextControl(Node* node, bool placeholderVisible)
 
 RenderTextControl::~RenderTextControl()
 {
-    // The children renderers have already been destroyed by destroyLeftoverChildren
-    if (m_innerText)
-        m_innerText->detach();
 }
 
 void RenderTextControl::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
 {
     RenderBlock::styleDidChange(diff, oldStyle);
-
-    if (m_innerText) {
-        RenderBlock* textBlockRenderer = toRenderBlock(m_innerText->renderer());
-        RefPtr<RenderStyle> textBlockStyle = createInnerTextStyle(style());
+    Element* innerText = innerTextElement();
+    if (!innerText)
+        return;
+    RenderBlock* innerTextRenderer = toRenderBlock(innerText->renderer());
+    if (innerTextRenderer) {
         // We may have set the width and the height in the old style in layout().
         // Reset them now to avoid getting a spurious layout hint.
-        textBlockRenderer->style()->setHeight(Length());
-        textBlockRenderer->style()->setWidth(Length());
-        setInnerTextStyle(textBlockStyle);
-    }
-}
-
-void RenderTextControl::setInnerTextStyle(PassRefPtr<RenderStyle> style)
-{
-    if (m_innerText) {
-        RefPtr<RenderStyle> textStyle = style;
-        m_innerText->renderer()->setStyle(textStyle);
-        for (Node* n = m_innerText->firstChild(); n; n = n->traverseNextNode(m_innerText.get())) {
-            if (n->renderer())
-                n->renderer()->setStyle(textStyle);
-        }
+        innerTextRenderer->style()->setHeight(Length());
+        innerTextRenderer->style()->setWidth(Length());
+        innerTextRenderer->setStyle(createInnerTextStyle(style()));
+        innerText->setNeedsStyleRecalc();
     }
 }
 
@@ -138,18 +125,6 @@ void RenderTextControl::adjustInnerTextStyle(const RenderStyle* startStyle, Rend
         textBlockStyle->setColor(disabledTextColor(textBlockStyle->visitedDependentColor(CSSPropertyColor), startStyle->visitedDependentColor(CSSPropertyBackgroundColor)));
 }
 
-void RenderTextControl::createSubtreeIfNeeded(TextControlInnerElement* innerBlock)
-{
-    if (!m_innerText) {
-        // Create the text block element
-        // For non-search fields, there is no intermediate innerBlock as the shadow node.
-        // m_innerText will be the shadow node in that case.        
-        RenderStyle* parentStyle = innerBlock ? innerBlock->renderer()->style() : style();
-        m_innerText = TextControlInnerTextElement::create(document(), innerBlock ? 0 : toHTMLElement(node()));
-        m_innerText->attachInnerElement(innerBlock ? innerBlock : node(), createInnerTextStyle(parentStyle), renderArena());
-    }
-}
-
 int RenderTextControl::textBlockHeight() const
 {
     return height() - borderAndPaddingHeight();
@@ -157,18 +132,22 @@ int RenderTextControl::textBlockHeight() const
 
 int RenderTextControl::textBlockWidth() const
 {
-    return width() - borderAndPaddingWidth() - m_innerText->renderBox()->paddingLeft() - m_innerText->renderBox()->paddingRight();
+    Element* innerText = innerTextElement();
+    ASSERT(innerText);
+    return width() - borderAndPaddingWidth() - innerText->renderBox()->paddingLeft() - innerText->renderBox()->paddingRight();
 }
 
 void RenderTextControl::updateFromElement()
 {
-    updateUserModifyProperty(node(), m_innerText->renderer()->style());
+    Element* innerText = innerTextElement();
+    if (innerText)
+        updateUserModifyProperty(node(), innerText->renderer()->style());
 }
 
 void RenderTextControl::setInnerTextValue(const String& innerTextValue)
 {
     String value = innerTextValue;
-    if (value != text() || !m_innerText->hasChildNodes()) {
+    if (value != text() || !innerTextElement()->hasChildNodes()) {
         if (value != text()) {
             if (Frame* frame = this->frame()) {
                 frame->editor()->clearUndoRedoOperations();
@@ -179,11 +158,11 @@ void RenderTextControl::setInnerTextValue(const String& innerTextValue)
         }
 
         ExceptionCode ec = 0;
-        m_innerText->setInnerText(value, ec);
+        innerTextElement()->setInnerText(value, ec);
         ASSERT(!ec);
 
         if (value.endsWith("\n") || value.endsWith("\r")) {
-            m_innerText->appendChild(HTMLBRElement::create(document()), ec);
+            innerTextElement()->appendChild(HTMLBRElement::create(document()), ec);
             ASSERT(!ec);
         }
 
@@ -218,7 +197,8 @@ int RenderTextControl::selectionEnd() const
 
 bool RenderTextControl::hasVisibleTextArea() const
 {
-    return style()->visibility() == HIDDEN || !m_innerText || !m_innerText->renderer() || !m_innerText->renderBox()->height();
+    HTMLElement* innerText = innerTextElement();
+    return style()->visibility() == HIDDEN || !innerText || !innerText->renderer() || !innerText->renderBox()->height();
 }
 
 void setSelectionRange(Node* node, int start, int end)
@@ -258,13 +238,17 @@ void setSelectionRange(Node* node, int start, int end)
 
 bool RenderTextControl::isSelectableElement(Node* node) const
 {
-    if (!node || !m_innerText)
+    if (!node)
+        return false;
+
+    HTMLElement* innerText = innerTextElement();
+    if (!innerText)
         return false;
     
-    if (node->rootEditableElement() == m_innerText)
+    if (node->rootEditableElement() == innerText)
         return true;
     
-    if (!m_innerText->contains(node))
+    if (!innerText->contains(node))
         return false;
     
     Node* shadowAncestor = node->shadowAncestorNode();
@@ -286,16 +270,17 @@ static inline void setContainerAndOffsetForRange(Node* node, int offset, Node*& 
 PassRefPtr<Range> RenderTextControl::selection(int start, int end) const
 {
     ASSERT(start <= end);
-    if (!m_innerText)
+    HTMLElement* innerText = innerTextElement();
+    if (!innerText)
         return 0;
 
-    if (!m_innerText->firstChild())
-        return Range::create(document(), m_innerText, 0, m_innerText, 0);
+    if (!innerText->firstChild())
+        return Range::create(document(), innerText, 0, innerText, 0);
 
     int offset = 0;
     Node* startNode = 0;
     Node* endNode = 0;
-    for (Node* node = m_innerText->firstChild(); node; node = node->traverseNextNode(m_innerText.get())) {
+    for (Node* node = innerText->firstChild(); node; node = node->traverseNextNode(innerText)) {
         ASSERT(!node->firstChild());
         ASSERT(node->isTextNode() || node->hasTagName(brTag));
         int length = node->isTextNode() ? lastOffsetInNode(node) : 1;
@@ -320,10 +305,10 @@ PassRefPtr<Range> RenderTextControl::selection(int start, int end) const
 VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
 {
     if (index <= 0)
-        return VisiblePosition(Position(m_innerText.get(), 0, Position::PositionIsOffsetInAnchor), DOWNSTREAM);
+        return VisiblePosition(Position(innerTextElement(), 0, Position::PositionIsOffsetInAnchor), DOWNSTREAM);
     ExceptionCode ec = 0;
     RefPtr<Range> range = Range::create(document());
-    range->selectNodeContents(m_innerText.get(), ec);
+    range->selectNodeContents(innerTextElement(), ec);
     ASSERT(!ec);
     CharacterIterator it(range.get());
     it.advance(index - 1);
@@ -341,7 +326,7 @@ int RenderTextControl::indexForVisiblePosition(const VisiblePosition& pos) const
         return 0;
     ExceptionCode ec = 0;
     RefPtr<Range> range = Range::create(document());
-    range->setStart(m_innerText.get(), 0, ec);
+    range->setStart(innerTextElement(), 0, ec);
     ASSERT(!ec);
     range->setEnd(indexPosition.deprecatedNode(), indexPosition.deprecatedEditingOffset(), ec);
     ASSERT(!ec);
@@ -365,12 +350,13 @@ String RenderTextControl::finishText(Vector<UChar>& result) const
 
 String RenderTextControl::text()
 {
-    if (!m_innerText)
+    HTMLElement* innerText = innerTextElement();
+    if (!innerText)
         return "";
  
     Vector<UChar> result;
 
-    for (Node* n = m_innerText.get(); n; n = n->traverseNextNode(m_innerText.get())) {
+    for (Node* n = innerText; n; n = n->traverseNextNode(innerText)) {
         if (n->hasTagName(brTag))
             result.append(&newlineCharacter, 1);
         else if (n->isTextNode()) {
@@ -401,10 +387,11 @@ static void getNextSoftBreak(RootInlineBox*& line, Node*& breakNode, unsigned& b
 
 String RenderTextControl::textWithHardLineBreaks()
 {
-    if (!m_innerText)
+    HTMLElement* innerText = innerTextElement();
+    if (!innerText)
         return "";
 
-    RenderBlock* renderer = toRenderBlock(m_innerText->renderer());
+    RenderBlock* renderer = toRenderBlock(innerText->renderer());
     if (!renderer)
         return "";
 
@@ -418,7 +405,7 @@ String RenderTextControl::textWithHardLineBreaks()
 
     Vector<UChar> result;
 
-    for (Node* n = m_innerText->firstChild(); n; n = n->traverseNextNode(m_innerText.get())) {
+    for (Node* n = innerText->firstChild(); n; n = n->traverseNextNode(innerText)) {
         if (n->hasTagName(brTag))
             result.append(&newlineCharacter, 1);
         else if (n->isTextNode()) {
@@ -451,15 +438,19 @@ int RenderTextControl::scrollbarThickness() const
 
 void RenderTextControl::computeLogicalHeight()
 {
-    setHeight(m_innerText->renderBox()->borderTop() + m_innerText->renderBox()->borderBottom() +
-              m_innerText->renderBox()->paddingTop() + m_innerText->renderBox()->paddingBottom() +
-              m_innerText->renderBox()->marginTop() + m_innerText->renderBox()->marginBottom());
+    HTMLElement* innerText = innerTextElement();
+    ASSERT(innerText);
+    RenderBox* innerTextRenderBox = innerText->renderBox();
 
-    adjustControlHeightBasedOnLineHeight(m_innerText->renderBox()->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes));
+    setHeight(innerTextRenderBox->borderTop() + innerTextRenderBox->borderBottom() +
+              innerTextRenderBox->paddingTop() + innerTextRenderBox->paddingBottom() +
+              innerTextRenderBox->marginTop() + innerTextRenderBox->marginBottom());
+
+    adjustControlHeightBasedOnLineHeight(innerText->renderBox()->lineHeight(true, HorizontalLine, PositionOfInteriorLineBoxes));
     setHeight(height() + borderAndPaddingHeight());
 
     // We are able to have a horizontal scrollbar if the overflow style is scroll, or if its auto and there's no word wrap.
-    if (style()->overflowX() == OSCROLL ||  (style()->overflowX() == OAUTO && m_innerText->renderer()->style()->wordWrap() == NormalWordWrap))
+    if (style()->overflowX() == OSCROLL ||  (style()->overflowX() == OAUTO && innerText->renderer()->style()->wordWrap() == NormalWordWrap))
         setHeight(height() + scrollbarThickness());
 
     RenderBlock::computeLogicalHeight();
@@ -467,17 +458,18 @@ void RenderTextControl::computeLogicalHeight()
 
 void RenderTextControl::hitInnerTextElement(HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty)
 {
-    result.setInnerNode(m_innerText.get());
-    result.setInnerNonSharedNode(m_innerText.get());
+    HTMLElement* innerText = innerTextElement();
+    result.setInnerNode(innerText);
+    result.setInnerNonSharedNode(innerText);
     result.setLocalPoint(pointInContainer -
-        IntSize(tx + x() + m_innerText->renderBox()->x(), ty + y() + m_innerText->renderBox()->y()));
+        IntSize(tx + x() + innerText->renderBox()->x(), ty + y() + innerText->renderBox()->y()));
 }
 
 void RenderTextControl::forwardEvent(Event* event)
 {
     if (event->type() == eventNames().blurEvent || event->type() == eventNames().focusEvent)
         return;
-    m_innerText->defaultEventHandler(event);
+    innerTextElement()->defaultEventHandler(event);
 }
 
 static const char* fontFamiliesWithInvalidCharWidth[] = {
@@ -564,7 +556,8 @@ void RenderTextControl::computePreferredLogicalWidths()
     else {
         // Use average character width. Matches IE.
         AtomicString family = style()->font().family().family();
-        m_maxPreferredLogicalWidth = preferredContentWidth(getAvgCharWidth(family)) + m_innerText->renderBox()->paddingLeft() + m_innerText->renderBox()->paddingRight();
+        RenderBox* innerTextRenderBox = innerTextElement()->renderBox();
+        m_maxPreferredLogicalWidth = preferredContentWidth(getAvgCharWidth(family)) + innerTextRenderBox->paddingLeft() + innerTextRenderBox->paddingRight();
     }
 
     if (style()->minWidth().isFixed() && style()->minWidth().value() > 0) {
@@ -602,11 +595,6 @@ void RenderTextControl::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty
 {
     if (width() && height())
         rects.append(IntRect(tx, ty, width(), height()));
-}
-
-HTMLElement* RenderTextControl::innerTextElement() const
-{
-    return m_innerText.get();
 }
 
 void RenderTextControl::updatePlaceholderVisibility(bool placeholderShouldBeVisible, bool placeholderValueChanged)

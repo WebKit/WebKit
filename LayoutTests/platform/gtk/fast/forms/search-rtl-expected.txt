@@ -56,4 +56,4 @@ layer at (29,77) size 246x19
       text run at (197,0) width 48 RTL: "\x{5D4}\x{5D5}\x{5D0} \x{5D6}\x{5D4} "
 layer at (29,106) size 156x19
   RenderBlock {DIV} at (16,1) size 156x19
-caret: position 0 of child 1 {DIV} of child 0 {DIV} of child 9 {INPUT} of child 3 {P} of body
+caret: position 0 of child 1 {DIV} of child 0 {DIV} of {#shadow-root} of child 9 {INPUT} of child 3 {P} of body

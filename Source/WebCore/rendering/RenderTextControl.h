@@ -34,7 +34,8 @@ class RenderTextControl : public RenderBlock {
 public:
     virtual ~RenderTextControl();
 
-    HTMLElement* innerTextElement() const;
+    virtual HTMLElement* innerTextElement() const = 0;
+    virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
 
     bool lastChangeWasUserEdit() const { return m_lastChangeWasUserEdit; }
     void setLastChangeWasUserEdit(bool lastChangeWasUserEdit);
@@ -62,7 +63,6 @@ protected:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    void createSubtreeIfNeeded(TextControlInnerElement* innerBlock);
     void hitInnerTextElement(HitTestResult&, const IntPoint& pointInContainer, int tx, int ty);
     void forwardEvent(Event*);
 
@@ -76,7 +76,6 @@ protected:
     virtual int preferredContentWidth(float charWidth) const = 0;
     virtual void adjustControlHeightBasedOnLineHeight(int lineHeight) = 0;
     virtual void cacheSelection(int start, int end) = 0;
-    virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const = 0;
     virtual RenderStyle* textBaseStyle() const = 0;
 
     virtual void updateFromElement();
@@ -91,7 +90,6 @@ private:
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
     virtual bool canHaveChildren() const { return false; }
     virtual bool avoidsFloats() const { return true; }
-    void setInnerTextStyle(PassRefPtr<RenderStyle>);
     virtual void paintObject(PaintInfo&, int tx, int ty);
     
     virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
@@ -113,7 +111,6 @@ private:
     void paintPlaceholder(PaintInfo&, int tx, int ty);
 
     bool m_lastChangeWasUserEdit;
-    RefPtr<TextControlInnerTextElement> m_innerText;
 };
 
 void setSelectionRange(Node*, int start, int end);
