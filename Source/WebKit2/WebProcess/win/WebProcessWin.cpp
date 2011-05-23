@@ -138,12 +138,15 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     setShouldPaintNativeControls(parameters.shouldPaintNativeControls);
 
 #if USE(CFNETWORK)
-#if USE(CFURLSTORAGESESSIONS)
-    if (CFURLStorageSessionRef defaultStorageSession = wkDeserializeStorageSession(parameters.serializedDefaultStorageSession.get())) {
-        ResourceHandle::setDefaultStorageSession(defaultStorageSession);
+    CFURLStorageSessionRef defaultStorageSession = wkDeserializeStorageSession(parameters.serializedDefaultStorageSession.get());
+    ResourceHandle::setDefaultStorageSession(defaultStorageSession);
+
+    WebCookieManager::shared().setHTTPCookieAcceptPolicy(parameters.initialHTTPCookieAcceptPolicy);
+
+    // By using the default storage session that came from the ui process, the web process
+    // automatically uses the same the URL Cache as ui process.
+    if (defaultStorageSession)
         return;
-    }
-#endif // USE(CFURLSTORAGESESSIONS)
 
     RetainPtr<CFStringRef> cachePath(AdoptCF, parameters.cfURLCachePath.createCFString());
     if (!cachePath)
@@ -154,8 +157,6 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     RetainPtr<CFURLCacheRef> uiProcessCache(AdoptCF, CFURLCacheCreate(kCFAllocatorDefault, cacheMemoryCapacity, cacheDiskCapacity, cachePath.get()));
     CFURLCacheSetSharedURLCache(uiProcessCache.get());
 #endif // USE(CFNETWORK)
-
-    WebCookieManager::shared().setHTTPCookieAcceptPolicy(parameters.initialHTTPCookieAcceptPolicy);
 }
 
 void WebProcess::platformTerminate()

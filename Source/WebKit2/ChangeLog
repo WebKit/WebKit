@@ -1,3 +1,17 @@
+2011-05-23  Jessie Berlin  <jberlin@apple.com>
+
+        Reviewed by Darin Adler.
+
+        [Windows] Initial Cookie Accept Policy not set on Deserialized Storage Session.
+        https://bugs.webkit.org/show_bug.cgi?id=61255
+
+        * WebProcess/win/WebProcessWin.cpp:
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        Move the code to set the cookie policy before the early return that is taken when using the
+        default storage session from the UI Process.
+        Also, remove unnecessary #ifdefs (USE(CFURLSTORAGESESSIONS) is true if USE(CFNETWORK) is
+        true) and add a comment explaining the early return.
+
 2011-05-23  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Darin Adler.
