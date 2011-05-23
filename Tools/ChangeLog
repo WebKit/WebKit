@@ -1,3 +1,16 @@
+2011-05-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87078.
+        http://trac.webkit.org/changeset/87078
+        https://bugs.webkit.org/show_bug.cgi?id=61294
+
+        Patch contains errors and seems likely to break a bunch of
+        bots (Requested by abarth on #webkit).
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+
 2011-05-23  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Ojan Vafai.
