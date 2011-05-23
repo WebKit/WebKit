@@ -1,3 +1,9 @@
+2011-05-23  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix WebKit2 GTK build after r86990.
+
+        * GNUmakefile.am: Remove UpdateChunk.cpp and UpdateChunk.h.
+
 2011-05-21  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.
