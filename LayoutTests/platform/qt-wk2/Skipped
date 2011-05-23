@@ -3560,3 +3560,6 @@ editing/style/table-selection.html
 
 # regression caused by http://trac.webkit.org/changeset/87007
 fast/replaced/object-with-non-empty-classid-triggers-fallback.html
+
+# fail after http://trac.webkit.org/changeset/87067
+fast/forms/textfield-overflow.html

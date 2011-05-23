@@ -1,3 +1,9 @@
+2011-05-23  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK] Skip a failing test.
+
+        * platform/qt-wk2/Skipped:
+
 2011-05-23  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
