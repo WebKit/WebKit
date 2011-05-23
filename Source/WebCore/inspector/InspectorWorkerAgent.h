@@ -41,7 +41,6 @@ class InspectorFrontend;
 class InspectorObject;
 class InstrumentingAgents;
 class WorkerContextProxy;
-class WorkerContextInspectorProxy;
 
 typedef String ErrorString;
 

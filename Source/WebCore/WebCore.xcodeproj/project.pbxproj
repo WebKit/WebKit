@@ -5649,7 +5649,6 @@
 		F375CC071150D300008DDB81 /* InspectorWorkerResource.h in Headers */ = {isa = PBXBuildFile; fileRef = F375CC061150D300008DDB81 /* InspectorWorkerResource.h */; };
 		F3810C1B1365A49600ED6E33 /* InspectorWorkerAgent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F3810C191365A49600ED6E33 /* InspectorWorkerAgent.cpp */; };
 		F3810C1C1365A49600ED6E33 /* InspectorWorkerAgent.h in Headers */ = {isa = PBXBuildFile; fileRef = F3810C1A1365A49600ED6E33 /* InspectorWorkerAgent.h */; };
-		F3810C1E1365A4D400ED6E33 /* WorkerContextInspectorProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = F3810C1D1365A4D400ED6E33 /* WorkerContextInspectorProxy.h */; };
 		F392249C126F11AE00A926D9 /* ScriptCallStackFactory.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F392249A126F11AE00A926D9 /* ScriptCallStackFactory.cpp */; };
 		F392249D126F11AE00A926D9 /* ScriptCallStackFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F392249B126F11AE00A926D9 /* ScriptCallStackFactory.h */; };
 		F39BE95B12673BF400E0A674 /* ScriptArguments.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F39BE95912673BF400E0A674 /* ScriptArguments.cpp */; };
@@ -12143,7 +12142,6 @@
 		F375CC061150D300008DDB81 /* InspectorWorkerResource.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWorkerResource.h; sourceTree = "<group>"; };
 		F3810C191365A49600ED6E33 /* InspectorWorkerAgent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InspectorWorkerAgent.cpp; sourceTree = "<group>"; };
 		F3810C1A1365A49600ED6E33 /* InspectorWorkerAgent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InspectorWorkerAgent.h; sourceTree = "<group>"; };
-		F3810C1D1365A4D400ED6E33 /* WorkerContextInspectorProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WorkerContextInspectorProxy.h; path = workers/WorkerContextInspectorProxy.h; sourceTree = "<group>"; };
 		F392249A126F11AE00A926D9 /* ScriptCallStackFactory.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptCallStackFactory.cpp; sourceTree = "<group>"; };
 		F392249B126F11AE00A926D9 /* ScriptCallStackFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScriptCallStackFactory.h; sourceTree = "<group>"; };
 		F39BE95912673BF400E0A674 /* ScriptArguments.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptArguments.cpp; sourceTree = "<group>"; };
@@ -13383,7 +13381,6 @@
 				2E4346360F546A8200B0F1BA /* WorkerContext.cpp */,
 				2E4346370F546A8200B0F1BA /* WorkerContext.h */,
 				2E4346380F546A8200B0F1BA /* WorkerContext.idl */,
-				F3810C1D1365A4D400ED6E33 /* WorkerContextInspectorProxy.h */,
 				2E4346390F546A8200B0F1BA /* WorkerContextProxy.h */,
 				18F831B70FD48C7800D8C56B /* WorkerLoaderProxy.h */,
 				2E43463A0F546A8200B0F1BA /* WorkerLocation.cpp */,
@@ -22773,7 +22770,6 @@
 				379919971200DDF400EA041C /* WOFFFileFormat.h in Headers */,
 				2E4346460F546A8200B0F1BA /* Worker.h in Headers */,
 				2E4346490F546A8200B0F1BA /* WorkerContext.h in Headers */,
-				F3810C1E1365A4D400ED6E33 /* WorkerContextInspectorProxy.h in Headers */,
 				2E43464B0F546A8200B0F1BA /* WorkerContextProxy.h in Headers */,
 				F34742E11343631F00531BC2 /* WorkerDebuggerAgent.h in Headers */,
 				F36E07A51358A8BE00AACBC9 /* WorkerInspectorController.h in Headers */,

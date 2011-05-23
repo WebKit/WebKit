@@ -64,6 +64,9 @@ namespace WebCore {
         virtual void postMessageToWorkerObject(PassRefPtr<SerializedScriptValue>, PassOwnPtr<MessagePortChannelArray>);
         virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
         virtual void postConsoleMessageToWorkerObject(MessageSource, MessageType, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
+#if ENABLE(INSPECTOR)
+        virtual void postMessageToPageInspector(const String&);
+#endif
         virtual void confirmMessageFromWorkerObject(bool hasPendingActivity);
         virtual void reportPendingActivity(bool hasPendingActivity);
         virtual void workerContextClosed();

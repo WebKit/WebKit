@@ -36,6 +36,7 @@
 #include "WebFileSystem.h"
 #include "WebWorkerClient.h"
 #include "WorkerContextProxy.h"
+#include <wtf/OwnPtr.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
@@ -73,13 +74,17 @@ public:
     virtual bool hasPendingActivity() const;
     virtual void workerObjectDestroyed();
 
+    virtual void connectToInspector(WorkerContextProxy::PageInspector*);
+    virtual void disconnectFromInspector();
+    virtual void sendMessageToInspector(const String&);
+
     // WebWorkerClient methods:
     // These are called on the main WebKit thread.
     virtual void postMessageToWorkerObject(const WebString&, const WebMessagePortChannelArray&);
     virtual void postExceptionToWorkerObject(const WebString&, int, const WebString&);
 
-    // FIXME: the below is for compatibility only and should be     
-    // removed once Chromium is updated to remove message 
+    // FIXME: the below is for compatibility only and should be
+    // removed once Chromium is updated to remove message
     // destination parameter <http://webkit.org/b/37155>.
     virtual void postConsoleMessageToWorkerObject(int, int, int, int, const WebString&, int, const WebString&);
     virtual void postConsoleMessageToWorkerObject(int, int, int, const WebString&, int, const WebString&);
@@ -104,6 +109,8 @@ public:
         ASSERT_NOT_REACHED();
         return true;
     }
+
+    virtual void dispatchDevToolsMessage(const WebString&);
 
 private:
     virtual ~WebWorkerClientImpl();
@@ -160,6 +167,7 @@ private:
     unsigned m_unconfirmedMessageCount;
     bool m_workerContextHadPendingActivity;
     ThreadIdentifier m_workerThreadId;
+    WorkerContextProxy::PageInspector* m_pageInspector;
 };
 
 } // namespace WebKit;

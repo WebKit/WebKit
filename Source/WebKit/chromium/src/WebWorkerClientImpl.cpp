@@ -120,6 +120,7 @@ WebWorkerClientImpl::WebWorkerClientImpl(Worker* worker)
     , m_unconfirmedMessageCount(0)
     , m_workerContextHadPendingActivity(false)
     , m_workerThreadId(currentThread())
+    , m_pageInspector(0)
 {
 }
 
@@ -205,6 +206,24 @@ void WebWorkerClientImpl::workerObjectDestroyed()
     // this object, so don't delete it right away.
     WebWorkerBase::dispatchTaskToMainThread(createCallbackTask(&workerObjectDestroyedTask,
                                                                AllowCrossThreadAccess(this)));
+}
+
+void WebWorkerClientImpl::connectToInspector(WorkerContextProxy::PageInspector* pageInspector)
+{
+    ASSERT(!m_pageInspector);
+    m_pageInspector = pageInspector;
+    m_webWorker->attachDevTools();
+}
+
+void WebWorkerClientImpl::disconnectFromInspector()
+{
+    m_webWorker->detachDevTools();
+    m_pageInspector = 0;
+}
+
+void WebWorkerClientImpl::sendMessageToInspector(const String& message)
+{
+    m_webWorker->dispatchDevToolsMessage(message);
 }
 
 void WebWorkerClientImpl::postMessageToWorkerObject(const WebString& message,
@@ -313,6 +332,12 @@ void WebWorkerClientImpl::workerContextDestroyed()
 
 void WebWorkerClientImpl::workerContextClosed()
 {
+}
+
+void WebWorkerClientImpl::dispatchDevToolsMessage(const WebString& message)
+{
+    if (m_pageInspector)
+        m_pageInspector->dispatchMessageFromWorker(message);
 }
 
 void WebWorkerClientImpl::startWorkerContextTask(ScriptExecutionContext* context,

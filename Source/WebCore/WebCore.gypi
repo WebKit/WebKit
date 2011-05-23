@@ -6016,7 +6016,6 @@
             'workers/Worker.h',
             'workers/WorkerContext.cpp',
             'workers/WorkerContext.h',
-            'workers/WorkerContextInspectorProxy.h',
             'workers/WorkerContextProxy.h',
             'workers/WorkerLoaderProxy.h',
             'workers/WorkerLocation.cpp',

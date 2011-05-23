@@ -422,6 +422,18 @@ void WebWorkerBase::postConsoleMessageTask(ScriptExecutionContext* context,
                                                               lineNumber, sourceURL);
 }
 
+void WebWorkerBase::postMessageToPageInspector(const String& message)
+{
+    dispatchTaskToMainThread(createCallbackTask(&postMessageToPageInspectorTask, AllowCrossThreadAccess(this), message));
+}
+
+void WebWorkerBase::postMessageToPageInspectorTask(ScriptExecutionContext*, WebWorkerBase* thisPtr, const String& message)
+{
+    if (!thisPtr->client())
+        return;
+    thisPtr->client()->dispatchDevToolsMessage(message);
+}
+
 void WebWorkerBase::confirmMessageFromWorkerObject(bool hasPendingActivity)
 {
     dispatchTaskToMainThread(createCallbackTask(&confirmMessageTask, AllowCrossThreadAccess(this),

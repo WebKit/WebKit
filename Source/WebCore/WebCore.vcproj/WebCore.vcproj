@@ -48150,10 +48150,6 @@
 				>
 			</File>
 			<File
-				RelativePath="..\workers\WorkerContextInspectorProxy.h"
-				>
-			</File>
-			<File
 				RelativePath="..\workers\WorkerContextProxy.h"
 				>
 			</File>

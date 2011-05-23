@@ -3595,7 +3595,6 @@ webcore_sources += \
 	Source/WebCore/workers/SharedWorkerThread.h \
 	Source/WebCore/workers/WorkerContext.cpp \
 	Source/WebCore/workers/WorkerContext.h \
-	Source/WebCore/workers/WorkerContextInspectorProxy.h \
 	Source/WebCore/workers/WorkerContextProxy.h \
 	Source/WebCore/workers/Worker.cpp \
 	Source/WebCore/workers/Worker.h \

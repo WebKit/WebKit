@@ -43,7 +43,10 @@
 #include "InspectorRuntimeAgent.h"
 #include "InspectorState.h"
 #include "InstrumentingAgents.h"
+#include "WorkerContext.h"
 #include "WorkerDebuggerAgent.h"
+#include "WorkerReportingProxy.h"
+#include "WorkerThread.h"
 #include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
@@ -63,6 +66,19 @@ private:
         return scriptStateFromWorkerContext(m_workerContext);
     }
 
+    WorkerContext* m_workerContext;
+};
+
+class PageInspectorProxy : public InspectorFrontendChannel {
+public:
+    explicit PageInspectorProxy(WorkerContext* workerContext) : m_workerContext(workerContext) { }
+    virtual ~PageInspectorProxy() { }
+private:
+    virtual bool sendMessageToFrontend(const String& message)
+    {
+        m_workerContext->thread()->workerReportingProxy().postMessageToPageInspector(message);
+        return true;
+    }
     WorkerContext* m_workerContext;
 };
 
@@ -93,13 +109,14 @@ WorkerInspectorController::~WorkerInspectorController()
 {
 }
 
-void WorkerInspectorController::connectFrontend(InspectorFrontendChannel* channel)
+void WorkerInspectorController::connectFrontend()
 {
     ASSERT(!m_frontend);
     m_state->unmute();
-    m_frontend = adoptPtr(new InspectorFrontend(channel));
+    m_frontendChannel = adoptPtr(new PageInspectorProxy(m_workerContext));
+    m_frontend = adoptPtr(new InspectorFrontend(m_frontendChannel.get()));
     m_backendDispatcher = adoptRef(new InspectorBackendDispatcher(
-        channel,
+        m_frontendChannel.get(),
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         0, // InspectorApplicationCacheAgent
 #endif
@@ -149,6 +166,7 @@ void WorkerInspectorController::disconnectFrontend()
     m_injectedScriptManager->injectedScriptHost()->clearFrontend();
 
     m_frontend.clear();
+    m_frontendChannel.clear();
 }
 
 void WorkerInspectorController::dispatchMessageFromFrontend(const String& message)

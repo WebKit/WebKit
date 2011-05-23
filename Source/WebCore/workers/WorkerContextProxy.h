@@ -41,7 +41,6 @@ namespace WebCore {
 
     class KURL;
     class Worker;
-    class WorkerContextInspectorProxy;
 
     // A proxy to talk to the worker context.
     class WorkerContextProxy {
@@ -61,7 +60,14 @@ namespace WebCore {
         virtual void workerObjectDestroyed() = 0;
 
 #if ENABLE(INSPECTOR)
-        virtual WorkerContextInspectorProxy* inspectorProxy() { return 0; }
+        class PageInspector {
+        public:
+            virtual ~PageInspector() { }
+            virtual void dispatchMessageFromWorker(const String&) = 0;
+        };
+        virtual void connectToInspector(PageInspector*) { }
+        virtual void disconnectFromInspector() { }
+        virtual void sendMessageToInspector(const String&) { }
 #endif
     };
 

@@ -40,7 +40,6 @@
 #include "WebWorkerBase.h"
 
 namespace WebKit {
-class WebView;
 
 // This class is used by the worker process code to talk to the WebCore::Worker
 // implementation.  It can't use it directly since it uses WebKit types, so this
@@ -58,6 +57,10 @@ public:
     virtual void workerObjectDestroyed();
     virtual void clientDestroyed();
 
+    virtual void attachDevTools();
+    virtual void detachDevTools();
+    virtual void dispatchDevToolsMessage(const WebKit::WebString&);
+
     // WebWorkerBase methods:
     virtual WebWorkerClient* client() { return m_client; }
     virtual WebCommonWorkerClient* commonClient();
@@ -73,7 +76,6 @@ private:
         PassOwnPtr<WebCore::MessagePortChannelArray> channels);
 
     WebWorkerClient* m_client;
-
 };
 
 } // namespace WebKit

@@ -59,7 +59,7 @@ public:
     WorkerInspectorController(WorkerContext*);
     ~WorkerInspectorController();
 
-    void connectFrontend(InspectorFrontendChannel*);
+    void connectFrontend();
     void disconnectFrontend();
     void dispatchMessageFromFrontend(const String&);
 
@@ -71,6 +71,7 @@ private:
     OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
     OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
 
+    OwnPtr<InspectorFrontendChannel> m_frontendChannel;
     OwnPtr<InspectorFrontend> m_frontend;
     RefPtr<InspectorBackendDispatcher> m_backendDispatcher;
 };

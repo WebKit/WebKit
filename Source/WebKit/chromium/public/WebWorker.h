@@ -55,6 +55,10 @@ public:
         const WebMessagePortChannelArray&) = 0;
     virtual void workerObjectDestroyed() = 0;
     virtual void clientDestroyed() = 0;
+
+    virtual void attachDevTools() { }
+    virtual void detachDevTools() { }
+    virtual void dispatchDevToolsMessage(const WebString&) { }
 };
 
 } // namespace WebKit

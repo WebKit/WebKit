@@ -81,6 +81,9 @@ public:
     // WorkerReportingProxy
     virtual void postExceptionToWorkerObject(const String& errorMessage, int lineNumber, const String& sourceURL);
     virtual void postConsoleMessageToWorkerObject(MessageSource, MessageType, MessageLevel, const String& message, int lineNumber, const String& sourceURL);
+#if ENABLE(INSPECTOR)
+    virtual void postMessageToPageInspector(const String&);
+#endif
     virtual void workerContextClosed();
     virtual void workerContextDestroyed();
 
@@ -177,6 +180,12 @@ void SharedWorkerProxy::postConsoleMessageToWorkerObject(MessageSource source, M
     for (HashSet<Document*>::iterator iter = m_workerDocuments.begin(); iter != m_workerDocuments.end(); ++iter)
         (*iter)->postTask(createCallbackTask(&postConsoleMessageTask, source, type, level, message, lineNumber, sourceURL));
 }
+
+#if ENABLE(INSPECTOR)
+void SharedWorkerProxy::postMessageToPageInspector(const String&)
+{
+}
+#endif
 
 void SharedWorkerProxy::workerContextClosed()
 {

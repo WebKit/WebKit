@@ -1,3 +1,40 @@
+2011-05-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Web Inspector: provide initial implementation of worker inspector transport
+        https://bugs.webkit.org/show_bug.cgi?id=60267
+
+        WebWorker and WebWorkerClient are extended with methods for passing
+        DevTools messages between worker context inspector and page inspector.
+
+        * public/WebWorker.h:
+        (WebKit::WebWorker::attachDevTools):
+        (WebKit::WebWorker::detachDevTools):
+        (WebKit::WebWorker::dispatchDevToolsMessage):
+        * public/WebWorkerClient.h:
+        (WebKit::WebWorkerClient::dispatchDevToolsMessage):
+        * src/WebWorkerBase.cpp:
+        (WebKit::WebWorkerBase::postMessageToPageInspector):
+        (WebKit::WebWorkerBase::postMessageToPageInspectorTask):
+        * src/WebWorkerBase.h:
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::WebWorkerClientImpl):
+        (WebKit::WebWorkerClientImpl::connectToInspector):
+        (WebKit::WebWorkerClientImpl::disconnectFromInspector):
+        (WebKit::WebWorkerClientImpl::sendMessageToInspector):
+        (WebKit::WebWorkerClientImpl::dispatchDevToolsMessage):
+        * src/WebWorkerClientImpl.h:
+        * src/WebWorkerImpl.cpp:
+        (WebKit::WebWorkerImpl::startWorkerContext):
+        (WebKit::connectToWorkerContextInspectorTask):
+        (WebKit::WebWorkerImpl::attachDevTools):
+        (WebKit::disconnectFromWorkerContextInspectorTask):
+        (WebKit::WebWorkerImpl::detachDevTools):
+        (WebKit::dispatchOnInspectorBackendTask):
+        (WebKit::WebWorkerImpl::dispatchDevToolsMessage):
+        * src/WebWorkerImpl.h:
+
 2011-05-22  Greg Simon  <gregsimon@chromium.org>
 
         Reviewed by Darin Fisher.

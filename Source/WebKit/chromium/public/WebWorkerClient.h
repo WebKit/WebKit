@@ -52,6 +52,8 @@ public:
     virtual void confirmMessageFromWorkerObject(bool hasPendingActivity) = 0;
     virtual void reportPendingActivity(bool hasPendingActivity) = 0;
 
+    virtual void dispatchDevToolsMessage(const WebString&) { }
+
 protected:
     ~WebWorkerClient() { }
 };

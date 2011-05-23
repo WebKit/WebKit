@@ -353,6 +353,12 @@ void WorkerMessagingProxy::terminateWorkerContext()
         m_workerThread->stop();
 }
 
+#if ENABLE(INSPECTOR)
+void WorkerMessagingProxy::postMessageToPageInspector(const String&)
+{
+}
+#endif
+
 void WorkerMessagingProxy::confirmMessageFromWorkerObject(bool hasPendingActivity)
 {
     m_scriptExecutionContext->postTask(WorkerThreadActivityReportTask::create(this, true, hasPendingActivity));

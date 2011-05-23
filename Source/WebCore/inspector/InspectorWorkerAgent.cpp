@@ -38,41 +38,40 @@
 #include "InspectorFrontendChannel.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
-#include "WorkerContextInspectorProxy.h"
 #include "WorkerContextProxy.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
 
-class InspectorWorkerAgent::WorkerFrontendChannel : public InspectorFrontendChannel {
+class InspectorWorkerAgent::WorkerFrontendChannel : public WorkerContextProxy::PageInspector {
 public:
-    explicit WorkerFrontendChannel(InspectorFrontend* frontend, WorkerContextInspectorProxy* inspectorProxy)
+    explicit WorkerFrontendChannel(InspectorFrontend* frontend, WorkerContextProxy* proxy)
         : m_frontend(frontend)
-        , m_inspectorProxy(inspectorProxy)
+        , m_proxy(proxy)
         , m_id(s_nextId++)
     {
     }
     virtual ~WorkerFrontendChannel() { }
 
     int id() const { return m_id; }
-    WorkerContextInspectorProxy* inspectorProxy() const { return m_inspectorProxy; }
+    WorkerContextProxy* proxy() const { return m_proxy; }
 
 private:
-    virtual bool sendMessageToFrontend(const String& message)
+    // WorkerContextProxy::PageInspector implementation
+    virtual void dispatchMessageFromWorker(const String& message)
     {
         RefPtr<InspectorValue> value = InspectorValue::parseJSON(message);
         if (!value)
-            return false;
+            return;
         RefPtr<InspectorObject> messageObject = value->asObject();
         if (!messageObject)
-            return false;
+            return;
         m_frontend->worker()->dispatchMessageFromWorker(m_id, messageObject);
-        return true;
     }
 
     InspectorFrontend* m_frontend;
-    WorkerContextInspectorProxy* m_inspectorProxy;
+    WorkerContextProxy* m_proxy;
     int m_id;
     static int s_nextId;
 };
@@ -111,17 +110,17 @@ void InspectorWorkerAgent::sendMessageToWorker(ErrorString* error, int workerId,
 {
     WorkerFrontendChannel* channel = m_idToChannel.get(workerId);
     if (channel)
-        channel->inspectorProxy()->sendMessageToWorkerContextInspector(message->toJSONString());
+        channel->proxy()->sendMessageToInspector(message->toJSONString());
     else
         *error = "Worker is gone";
 }
 
 void InspectorWorkerAgent::didStartWorkerContext(WorkerContextProxy* workerContextProxy)
 {
-    WorkerFrontendChannel* channel = new WorkerFrontendChannel(m_inspectorFrontend, workerContextProxy->inspectorProxy());
+    WorkerFrontendChannel* channel = new WorkerFrontendChannel(m_inspectorFrontend, workerContextProxy);
     m_idToChannel.set(channel->id(), channel);
 
-    workerContextProxy->inspectorProxy()->connectFrontend(channel);
+    workerContextProxy->connectToInspector(channel);
     if (m_inspectorFrontend)
         m_inspectorFrontend->worker()->workerCreated(channel->id());
 }
