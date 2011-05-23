@@ -69,7 +69,8 @@ public:
         TargetIsWorker = 9,
         TargetIsSharedWorker = 10,
         TargetIsPrefetch = 11,
-        TargetIsFavicon = 12,
+        TargetIsPrerender = 12,
+        TargetIsFavicon = 13,
     };
 
     class ExtraData {

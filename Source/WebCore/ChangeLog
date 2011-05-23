@@ -1,3 +1,21 @@
+2011-05-23  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        fix rel=prerender target types
+        https://bugs.webkit.org/show_bug.cgi?id=61297
+
+        The original fix in https://bugs.webkit.org/show_bug.cgi?id=61079
+        didn't properly map the target type, and didn't carry the target
+        types through to chromium properly.  Fixed.
+
+        No new tests; it's very hard to catch these with a layout test, however
+        all of the chromium Prerender browser tests will test this functionality
+        when I land an upcoming chromium CL.
+
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::cachedResourceTypeToTargetType):
+
 2011-05-23  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.

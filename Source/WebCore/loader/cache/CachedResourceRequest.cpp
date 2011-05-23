@@ -63,7 +63,7 @@ static ResourceRequest::TargetType cachedResourceTypeToTargetType(CachedResource
     case CachedResource::LinkPrefetch:
         return ResourceRequest::TargetIsPrefetch;
     case CachedResource::LinkPrerender:
-        return ResourceRequest::TargetIsSubresource;
+        return ResourceRequest::TargetIsPrerender;
     case CachedResource::LinkSubresource:
         return ResourceRequest::TargetIsSubresource;
 #endif
