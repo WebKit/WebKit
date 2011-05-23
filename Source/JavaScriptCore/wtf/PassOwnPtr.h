@@ -31,11 +31,6 @@
 #include "OwnPtrCommon.h"
 #include "TypeTraits.h"
 
-#if !PLATFORM(CHROMIUM) && !PLATFORM(WIN) && !PLATFORM(MAC) && !PLATFORM(QT)
-// Remove this once we make all WebKit code compatible with stricter rules about PassOwnPtr.
-#define LOOSE_PASS_OWN_PTR
-#endif
-
 namespace WTF {
 
     // Unlike most of our smart pointers, PassOwnPtr can take either the pointer type or the pointed-to type.

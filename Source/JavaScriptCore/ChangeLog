@@ -1,3 +1,10 @@
+2011-05-22  Adam Barth  <abarth@webkit.org>
+
+        Enable strict PassOwnPtr for everyone.  I expect this patch will need
+        some followups to make the GTK and EFL bots green again.
+
+        * wtf/PassOwnPtr.h:
+
 2011-05-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
