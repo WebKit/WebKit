@@ -156,8 +156,7 @@ class JSONGeneratorTest(unittest.TestCase):
         if failed_count_map:
             tests = buildinfo[JRG.TESTS]
             for test_name in failed_count_map.iterkeys():
-                self.assertTrue(test_name in tests)
-                test = tests[test_name]
+                test = self._find_test_in_trie(test_name, tests)
 
                 failed = 0
                 for result in test[JRG.RESULTS]:
@@ -173,6 +172,14 @@ class JSONGeneratorTest(unittest.TestCase):
 
         if fixable_count:
             self.assertEqual(sum(buildinfo[JRG.FIXABLE_COUNT]), fixable_count)
+
+    def _find_test_in_trie(self, path, trie):
+        sub_trie = trie
+        nodes = path.split("/")
+        for node in nodes:
+            self.assertTrue(node in sub_trie)
+            sub_trie = sub_trie[node]
+        return sub_trie
 
     def test_json_generation(self):
         self._test_json_generation([], [])
@@ -196,6 +203,10 @@ class JSONGeneratorTest(unittest.TestCase):
         self._test_json_generation(
             ['FLAKY_B', 'DISABLED_C', 'FAILS_D'],
             ['A', 'FLAKY_E'])
+
+    def test_hierarchical_json_generation(self):
+        # FIXME(aboxhall): re-work tests to be more comprehensible and comprehensive.
+        self._test_json_generation(['foo/A'], ['foo/B', 'bar/C'])
 
     def test_test_timings_trie(self):
         test_port = test.TestPort()
