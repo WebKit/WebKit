@@ -57,12 +57,12 @@ unsigned copyFromSharedBuffer(char* buffer, unsigned bufferLength, const SharedB
 
 bool matchesGIFSignature(char* contents)
 {
-    return !memcmp(contents, "GIF8", 4);
+    return !memcmp(contents, "GIF87a", 6) || !memcmp(contents, "GIF89a", 6);
 }
 
 bool matchesPNGSignature(char* contents)
 {
-    return !memcmp(contents, "\x89\x50\x4E\x47", 4);
+    return !memcmp(contents, "\x89\x50\x4E\x47\x0D\x0A\x1A\x0A", 8);
 }
 
 bool matchesJPEGSignature(char* contents)

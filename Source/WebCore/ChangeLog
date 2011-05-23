@@ -1,3 +1,18 @@
+2011-05-23  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Update ImageDecoder::create to match sniffing spec
+        https://bugs.webkit.org/show_bug.cgi?id=47683
+
+        This change is difficult to test.  We're making this change to comply
+        with standards even if the change is difficult to observe.  (This patch
+        also causes us to match Firefox.)
+
+        Test: fast/images/busted-oval-does-not-render.html
+
+        * platform/image-decoders/ImageDecoder.cpp:
+
 2011-05-23  Ruben  <chromium@hybridsource.org>
 
         Reviewed by Tony Chang.
