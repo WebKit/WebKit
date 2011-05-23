@@ -235,6 +235,11 @@ InspectorTest.assertEquals = function(expected, found, message)
     throw new Error(error + " expected <" + expected + "> found <" + found + ">");
 }
 
+InspectorTest.assertTrue = function(found, message)
+{
+    InspectorTest.assertEquals(true, !!found);
+}
+
 InspectorTest.safeWrap = function(func, onexception)
 {
     function result()

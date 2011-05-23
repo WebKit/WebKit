@@ -64,13 +64,7 @@ FormattedContentBuilder.prototype = {
             this._needNewLine = false;
         }
 
-        if (token.pos - this._lastOriginalPosition !== this._formattedContentLength - this._lastFormattedPosition) {
-            this._mapping.original.push(this._originalOffset + token.pos);
-            this._lastOriginalPosition = token.pos;
-            this._mapping.formatted.push(this._formattedOffset + this._formattedContentLength);
-            this._lastFormattedPosition = this._formattedContentLength;
-        }
-
+        this._addMappingIfNeeded(token.pos);
         this._addText(this._originalContent.substring(token.pos, token.endPos));
         this._lineNumber = token.endLine;
     },
@@ -122,6 +116,7 @@ FormattedContentBuilder.prototype = {
         } else
             this.addSpace();
 
+        this._addMappingIfNeeded(comment.pos);
         if (comment.type === "comment1")
             this._addText("//");
         else
@@ -141,6 +136,16 @@ FormattedContentBuilder.prototype = {
     {
         this._formattedContent.push(text);
         this._formattedContentLength += text.length;
+    },
+
+    _addMappingIfNeeded: function(originalPosition)
+    {
+        if (originalPosition - this._lastOriginalPosition === this._formattedContentLength - this._lastFormattedPosition)
+            return;
+        this._mapping.original.push(this._originalOffset + originalPosition);
+        this._lastOriginalPosition = originalPosition;
+        this._mapping.formatted.push(this._formattedOffset + this._formattedContentLength);
+        this._lastFormattedPosition = this._formattedContentLength;
     }
 }
 

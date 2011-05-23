@@ -59,16 +59,20 @@ var test = function()
 
                 function testMapping(string)
                 {
-                    var originalLocation = WebInspector.ScriptFormatter.positionToLocation(source.lineEndings(), source.indexOf(string));
+                    var originalPosition = source.indexOf(string);
+                    InspectorTest.assertTrue(originalPosition !== -1);
+                    var originalLocation = WebInspector.ScriptFormatter.positionToLocation(source.lineEndings(), originalPosition);
                     var formattedLocation = mapping.originalToFormatted(originalLocation);
                     var formattedPosition = WebInspector.ScriptFormatter.locationToPosition(formattedSource.lineEndings(), formattedLocation);
                     var expectedFormattedPosition = formattedSource.indexOf(string);
-                    InspectorTest.assertEquals(expectedFormattedPosition, formattedPosition);
+                    InspectorTest.assertEquals(expectedFormattedPosition, formattedPosition, "wrong mapping for <" + string + ">");
                 }
 
                 testMapping("function");
                 testMapping("formatted1");
                 testMapping("variable1");
+
+                testMapping("    return \"functionWithComments\"");
 
                 testMapping("onmessage");
                 testMapping("indent_start");

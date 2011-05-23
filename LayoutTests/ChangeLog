@@ -1,3 +1,16 @@
+2011-05-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: source mapping for pretty-printed scripts is sometimes inaccurate after indented comments.
+        https://bugs.webkit.org/show_bug.cgi?id=61037
+
+        * http/tests/inspector/inspector-test.js:
+        (initialize_InspectorTest):
+        * inspector/debugger/resources/obfuscated.js:
+        (withComments):
+        * inspector/debugger/script-formatter.html:
+
 2011-05-23  Mike West  <mkwst@chromium.org>
 
         Reviewed by Yury Semikhatsky.
