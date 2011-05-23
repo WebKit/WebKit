@@ -117,9 +117,9 @@ namespace {
 
 class GetPathCallback : public FileSystemCallbacksBase {
 public:
-    static PassOwnPtr<GetPathCallback> create(PassRefPtr<DOMFileSystem> filesystem, const String& path, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+    static PassOwnPtr<GetPathCallback> create(PassRefPtr<DOMFileSystem> filesystem, const String& path, const String& name, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
     {
-        return adoptPtr(new GetPathCallback(filesystem, path, successCallback, errorCallback));
+        return adoptPtr(new GetPathCallback(filesystem, path, name, successCallback, errorCallback));
     }
 
     virtual void didReadMetadata(const FileMetadata& metadata)
@@ -127,20 +127,22 @@ public:
         if (!metadata.platformPath.isEmpty())
             m_path = metadata.platformPath;
 
-        m_filesystem->scheduleCallback(m_successCallback.release(), File::create(m_path));
+        m_filesystem->scheduleCallback(m_successCallback.release(), File::createWithName(m_path, m_name));
     }
 
 private:
-    GetPathCallback(PassRefPtr<DOMFileSystem> filesystem, const String& path, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+    GetPathCallback(PassRefPtr<DOMFileSystem> filesystem, const String& path, const String& name, PassRefPtr<FileCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
         : FileSystemCallbacksBase(errorCallback)
         , m_filesystem(filesystem)
         , m_path(path)
+        , m_name(name)
         , m_successCallback(successCallback)
     {
     }
 
     RefPtr<DOMFileSystem> m_filesystem;
     String m_path;
+    String m_name;
     RefPtr<FileCallback> m_successCallback;
 };
 
@@ -150,7 +152,7 @@ void DOMFileSystem::createFile(const FileEntry* fileEntry, PassRefPtr<FileCallba
 {
     String platformPath = m_asyncFileSystem->virtualToPlatformPath(fileEntry->fullPath());
 
-    m_asyncFileSystem->readMetadata(platformPath, GetPathCallback::create(this, platformPath, successCallback, errorCallback));
+    m_asyncFileSystem->readMetadata(platformPath, GetPathCallback::create(this, platformPath, fileEntry->name(), successCallback, errorCallback));
 }
 
 } // namespace WebCore

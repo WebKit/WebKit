@@ -33,18 +33,28 @@
 
 namespace WebCore {
 
-static PassOwnPtr<BlobData> createBlobDataForFile(const String& path)
+static PassOwnPtr<BlobData> createBlobDataForFile(const String& path, const String& name = String())
 {
     String type;
-    int index = path.reverseFind('.');
+    const String& nameForMIMEType = !name.isEmpty() ? name : path;
+    int index = nameForMIMEType.reverseFind('.');
     if (index != -1)
-        type = MIMETypeRegistry::getMIMETypeForExtension(path.substring(index + 1));
+        type = MIMETypeRegistry::getMIMETypeForExtension(nameForMIMEType.substring(index + 1));
 
     OwnPtr<BlobData> blobData = BlobData::create();
     blobData->setContentType(type);
     blobData->appendFile(path);
     return blobData.release();
 }
+
+#if ENABLE(DIRECTORY_UPLOAD)
+PassRefPtr<File> File::createWithRelativePath(const String& path, const String& relativePath)
+{
+    RefPtr<File> file = adoptRef(new File(path));
+    file->m_relativePath = relativePath;
+    return file.release();
+}
+#endif
 
 File::File(const String& path)
     : Blob(createBlobDataForFile(path), -1)
@@ -60,13 +70,12 @@ File::File(const String& path, const KURL& url, const String& type)
     m_name = pathGetFileName(path);
 }
 
-#if ENABLE(DIRECTORY_UPLOAD)
-File::File(const String& relativePath, const String& path)
-    : Blob(createBlobDataForFile(path), -1)
+#if ENABLE(FILE_SYSTEM)
+File::File(const String& path, const String& name)
+    : Blob(createBlobDataForFile(path, name), -1)
     , m_path(path)
-    , m_relativePath(relativePath)
+    , m_name(name)
 {
-    m_name = pathGetFileName(path);
 }
 #endif
 

@@ -169,7 +169,7 @@ PassRefPtr<File> DOMFileSystemSync::createFile(const FileEntrySync* fileEntry, E
     }
     if (!result->m_path.isEmpty())
         platformPath = result->m_path;
-    return File::create(platformPath);
+    return File::createWithName(platformPath, fileEntry->name());
 }
 
 namespace {

@@ -1,3 +1,27 @@
+2011-05-23  Adam Klein  <adamk@chromium.org>
+
+        Reviewed by Jian Li.
+
+        [fileapi] Add a File::createWithName method to avoid obfuscated filename leakage from FileEntry.file() method
+        https://bugs.webkit.org/show_bug.cgi?id=61155
+
+        Covered by existing tests: fast/filesystem/file-from-file-entry.html
+                                   fast/filesystem/workers/file-from-file-entry.html
+                                   fast/filesystem/workers/file-from-file-entry-sync.html
+
+        * fileapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::createFile): Updated to call createWithName().
+        * fileapi/DOMFileSystemSync.cpp:
+        (WebCore::DOMFileSystemSync::createFile): Updated to call createWithName().
+        * fileapi/File.cpp:
+        (WebCore::createBlobDataForFile): Added an optional name argument to fix MIME type lookup.
+        (WebCore::File::createWithRelativePath): Renamed from create() for consistency with new method.
+        (WebCore::File::File):
+        * fileapi/File.h:
+        (WebCore::File::createWithName):
+        * html/FileInputType.cpp:
+        (WebCore::FileInputType::setFileList): Updated the single caller of File::createWithRelativePath().
+
 2011-05-23  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

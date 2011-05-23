@@ -49,9 +49,14 @@ public:
     }
 
 #if ENABLE(DIRECTORY_UPLOAD)
-    static PassRefPtr<File> create(const String& relativePath, const String& path)
+    static PassRefPtr<File> createWithRelativePath(const String& path, const String& relativePath);
+#endif
+
+#if ENABLE(FILE_SYSTEM)
+    // Create a file with a name exposed to the author (via File.name and associated DOM properties) that differs from the one provided in the path.
+    static PassRefPtr<File> createWithName(const String& path, const String& name)
     {
-        return adoptRef(new File(relativePath, path));
+        return adoptRef(new File(path, name));
     }
 #endif
 
@@ -75,12 +80,12 @@ public:
 
 private:
     File(const String& path);
-    
+
     // For deserialization.
     File(const String& path, const KURL& srcURL, const String& type);
 
-#if ENABLE(DIRECTORY_UPLOAD)
-    File(const String& relativePath, const String& path);
+#if ENABLE(FILE_SYSTEM)
+    File(const String& path, const String& name);
 #endif
 
     String m_path;

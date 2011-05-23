@@ -178,7 +178,7 @@ void FileInputType::setFileList(const Vector<String>& paths)
         for (size_t i = 0; i < size; i++) {
             // Normalize backslashes to slashes before exposing the relative path to script.
             String relativePath = paths[i].substring(1 + rootPath.length()).replace('\\', '/');
-            m_fileList->append(File::create(relativePath, paths[i]));
+            m_fileList->append(File::createWithRelativePath(paths[i], relativePath));
         }
         return;
     }
