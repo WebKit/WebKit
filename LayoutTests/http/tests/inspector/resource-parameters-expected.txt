@@ -9,7 +9,6 @@ Tests that resources panel shows form data parameters.
     request : {
         method : "POST"
         url : "http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2="
-        httpVersion : "HTTP/1.1"
         headers : <object>
         queryString : [
             {
@@ -23,8 +22,8 @@ Tests that resources panel shows form data parameters.
         ]
         cookies : [
         ]
-        headersSize : <number>
-        bodySize : 33
+        headersSize : -1
+        bodySize : -1
         postData : {
             mimeType : "application/x-www-form-urlencoded"
             text : "formParam1=formValue1&formParam2="
@@ -43,17 +42,15 @@ Tests that resources panel shows form data parameters.
     response : {
         status : 200
         statusText : "OK"
-        httpVersion : "HTTP/1.1"
         headers : <object>
         cookies : [
         ]
         content : {
             size : 14
-            compression : 0
             mimeType : "application/xml"
         }
         redirectURL : ""
-        headersSize : <number>
+        headersSize : -1
         bodySize : 14
     }
     cache : {

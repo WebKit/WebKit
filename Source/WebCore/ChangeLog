@@ -1,3 +1,31 @@
+2011-05-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87070.
+        http://trac.webkit.org/changeset/87070
+        https://bugs.webkit.org/show_bug.cgi?id=61285
+
+        broke resource-parameters.html on win, weird failures on wk2
+        (Requested by caseq on #webkit).
+
+        * inspector/front-end/HAREntry.js:
+        (WebInspector.HAREntry.prototype.build):
+        (WebInspector.HAREntry.prototype._buildRequest):
+        (WebInspector.HAREntry.prototype._buildResponse):
+        (WebInspector.HAREntry.prototype._buildContent):
+        (WebInspector.HAREntry.prototype._buildCookie):
+        (WebInspector.HAREntry.prototype._interval):
+        (WebInspector.HARLog.prototype.build):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.set requestHeaders):
+        (WebInspector.Resource.prototype.get requestHeadersText):
+        (WebInspector.Resource.prototype.set requestHeadersText):
+        (WebInspector.Resource.prototype.get requestHeadersSize):
+        (WebInspector.Resource.prototype.set responseHeaders):
+        (WebInspector.Resource.prototype.get responseHeadersText):
+        (WebInspector.Resource.prototype.set responseHeadersText):
+        (WebInspector.Resource.prototype.get responseHeadersSize):
+        (WebInspector.Resource.prototype._headersSize):
+
 2011-05-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

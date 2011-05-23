@@ -48,7 +48,7 @@ WebInspector.HAREntry.prototype = {
             time: WebInspector.HAREntry._toMilliseconds(this._resource.duration),
             request: this._buildRequest(),
             response: this._buildResponse(),
-            cache: { }, // Not supported yet.
+            cache: { }, // Not supproted yet.
             timings: this._buildTimings()
         };
     },
@@ -58,16 +58,15 @@ WebInspector.HAREntry.prototype = {
         var res = {
             method: this._resource.requestMethod,
             url: this._resource.url,
-            httpVersion: this._resource.requestHttpVersion,
+            // httpVersion: "HTTP/1.1" -- Not available.
             headers: this._buildHeaders(this._resource.requestHeaders),
             queryString: this._buildParameters(this._resource.queryParameters || []),
             cookies: this._buildCookies(this._resource.requestCookies || []),
-            headersSize: this._resource.requestHeadersSize,
-            bodySize: this.requestBodySize
+            headersSize: -1, // Not available.
+            bodySize: -1 // Not available.
         };
         if (this._resource.requestFormData)
             res.postData = this._buildPostData();
-
         return res;
     },
 
@@ -76,13 +75,13 @@ WebInspector.HAREntry.prototype = {
         return {
             status: this._resource.statusCode,
             statusText: this._resource.statusText,
-            httpVersion: this._resource.responseHttpVersion,
+            // "httpVersion": "HTTP/1.1" -- Not available.
             headers: this._buildHeaders(this._resource.responseHeaders),
             cookies: this._buildCookies(this._resource.responseCookies || []),
             content: this._buildContent(),
             redirectURL: this._resource.responseHeaderValue("Location") || "",
-            headersSize: this._resource.responseHeadersSize,
-            bodySize: this.responseBodySize
+            headersSize: -1, // Not available.
+            bodySize: this._resource.resourceSize
         };
     },
 
@@ -90,9 +89,9 @@ WebInspector.HAREntry.prototype = {
     {
         return {
             size: this._resource.resourceSize,
-            compression: this.responseCompression,
+            // compression: 0, -- Not available.
             mimeType: this._resource.mimeType,
-            // text: this._resource.content // TODO: pull out into a boolean flag, as content can be huge (and needs to be requested with an async call)
+            // text: -- Not available.
         };
     },
 
@@ -160,6 +159,7 @@ WebInspector.HAREntry.prototype = {
 
     _buildCookie: function(cookie)
     {
+        
         return {
             name: cookie.name,
             value: cookie.value,
@@ -178,21 +178,6 @@ WebInspector.HAREntry.prototype = {
             return -1;
         var startTime = timing[start];
         return typeof startTime !== "number" || startTime === -1 ? -1 : Math.round(timing[end] - startTime);
-    },
-
-    get requestBodySize()
-    {
-        return !this._resource.requestFormData ? 0 : this._resource.requestFormData.length;
-    },
-
-    get responseBodySize()
-    {
-        return this._resource.transferSize - this._resource.responseHeadersSize
-    },
-
-    get responseCompression()
-    {
-        return this._resource.resourceSize - (this._resource.transferSize - this._resource.responseHeadersSize);
     }
 }
 
@@ -209,7 +194,7 @@ WebInspector.HARLog.prototype = {
     build: function()
     {
         var webKitVersion = /AppleWebKit\/([^ ]+)/.exec(window.navigator.userAgent);
-
+        
         return {
             version: "1.2",
             creator: {

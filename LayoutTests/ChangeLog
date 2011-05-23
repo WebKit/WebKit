@@ -1,3 +1,20 @@
+2011-05-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87070.
+        http://trac.webkit.org/changeset/87070
+        https://bugs.webkit.org/show_bug.cgi?id=61285
+
+        broke resource-parameters.html on win, weird failures on wk2
+        (Requested by caseq on #webkit).
+
+        * http/tests/inspector/network/network-size.html:
+        * http/tests/inspector/resource-har-conversion-expected.txt:
+        * http/tests/inspector/resource-har-conversion.html:
+        * http/tests/inspector/resource-har-headers-expected.txt: Removed.
+        * http/tests/inspector/resource-har-headers.html: Removed.
+        * http/tests/inspector/resource-parameters-expected.txt:
+        * http/tests/inspector/resources-test.js:
+
 2011-05-23  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Darin Adler.
