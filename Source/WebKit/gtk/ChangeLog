@@ -1,5 +1,11 @@
 2011-05-22  Adam Barth  <abarth@webkit.org>
 
+        Build fix.  More public destructors needed to play nice with OwnPtr.
+
+        * WebCoreSupport/InspectorClientGtk.cpp:
+
+2011-05-22  Adam Barth  <abarth@webkit.org>
+
         Build fix.  InspectorFrontendClient needs a public destructor so that
         we can properly track ownership using OwnPtr.
 

@@ -44,8 +44,10 @@ static void notifyWebViewDestroyed(WebKitWebView* webView, InspectorFrontendClie
 namespace {
 
 class InspectorFrontendSettingsGtk : public InspectorFrontendClientLocal::Settings {
-private:
+public:
     virtual ~InspectorFrontendSettingsGtk() { }
+
+private:
 #ifdef HAVE_GSETTINGS
     static bool shouldIgnoreSetting(const String& key)
     {
