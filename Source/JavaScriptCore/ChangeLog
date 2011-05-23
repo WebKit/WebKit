@@ -1,3 +1,12 @@
+2011-05-23  Ruben  <chromium@hybridsource.org>
+
+        Reviewed by Tony Chang.
+
+        Chromium gyp patch to use new POSIX defines toolkit_uses_gtk and os_posix
+        https://bugs.webkit.org/show_bug.cgi?id=61219
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+
 2011-05-23  Thouraya ANDOLSI  <thouraya.andolsi@st.com>
 
         Reviewed by Gavin Barraclough.

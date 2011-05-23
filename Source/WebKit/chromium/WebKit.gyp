@@ -650,7 +650,7 @@
                         }],
                     ],
                 }],
-                ['OS=="linux" or OS=="freebsd"', {
+                ['toolkit_uses_gtk == 1', {
                     'dependencies': [
                         '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
                         '<(chromium_src_dir)/build/linux/system.gyp:gtk',
@@ -661,7 +661,7 @@
                         'public/gtk',
                         'public/linux',
                     ],
-                }, { # else: OS!="linux" and OS!="freebsd"
+                }, { # else: toolkit_uses_gtk != 1
                     'sources/': [
                         ['exclude', '/gtk/'],
                         ['exclude', '/x11/'],
@@ -885,7 +885,7 @@
                         '<@(webkit_unittest_files)',
                     ],
                     'conditions': [
-                        ['OS=="linux" or OS=="freebsd"', {
+                        ['toolkit_uses_gtk == 1', {
                             'include_dirs': [
                                 'public/gtk',
                             ],
@@ -1040,7 +1040,7 @@
                         ['exclude', 'Mac\\.cpp$'],
                     ],
                 }],
-                ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
+                ['toolkit_uses_gtk == 1', {
                     'dependencies': [
                         '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
                         '<(chromium_src_dir)/build/linux/system.gyp:gtk',
@@ -1060,7 +1060,7 @@
                       # FIXME: Enable warnings on other platforms.
                       'chromium_code': 1,
                     },
-                },{ # OS!="linux" and OS!="freebsd" and OS!="openbsd" and OS!="solaris"
+                },{ # toolkit_uses_gtk != 1
                     'sources/': [
                         ['exclude', '(Gtk|Linux)\\.cpp$']
                     ]
@@ -1113,7 +1113,7 @@
                         'INFOPLIST_FILE': '../../../Tools/DumpRenderTree/TestNetscapePlugIn/mac/Info.plist',
                     },
                 }],
-                ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
+                ['os_posix == 1 and OS != "mac"', {
                     'cflags': [
                         '-fvisibility=default',
                     ],
@@ -1153,7 +1153,7 @@
                         'files': ['<(PRODUCT_DIR)/TestNetscapePlugIn.plugin/'],
                     }],
                 }],
-                ['OS=="linux" or OS=="freebsd" or OS=="openbsd" or OS=="solaris"', {
+                ['os_posix == 1 and OS != "mac"', {
                     'copies': [{
                         'destination': '<(PRODUCT_DIR)/plugins',
                         'files': ['<(PRODUCT_DIR)/libTestNetscapePlugIn.so'],

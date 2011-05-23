@@ -84,7 +84,7 @@
                     'tests/WebPageSerializerTest.cpp',
                 ],
             }],
-            ['OS=="linux" or OS=="freebsd"', {
+            ['toolkit_uses_gtk == 1', {
                 'webkit_unittest_files': [
                     # FIXME: Port DragImageTest to Mac.
                     'tests/DragImageTest.cpp',

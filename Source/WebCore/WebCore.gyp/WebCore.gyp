@@ -1084,7 +1084,7 @@
             '<(chromium_src_dir)/gpu/gpu.gyp:gles2_c_lib',
           ],
         }],
-        ['OS=="linux" or OS=="freebsd"', {
+        ['toolkit_uses_gtk == 1', {
           'dependencies': [
             '<(chromium_src_dir)/build/linux/system.gyp:fontconfig',
             '<(chromium_src_dir)/build/linux/system.gyp:gtk',
@@ -1297,7 +1297,7 @@
         ['exclude', 'platform/text/TextEncodingDetectorNone\\.cpp$'],
       ],
       'conditions': [
-        ['OS=="linux" or OS=="freebsd"', {
+        ['toolkit_uses_gtk == 1', {
           'sources/': [
             # Cherry-pick files excluded by the broader regular expressions above.
             ['include', 'platform/chromium/KeyCodeConversionGtk\\.cpp$'],
@@ -1416,7 +1416,7 @@
             ['exclude', 'platform/graphics/FontPlatformData\\.cpp$']
           ],
         }],
-        ['OS!="linux" and OS!="freebsd"', {
+        ['toolkit_uses_gtk == 0', {
           'sources/': [
             ['exclude', '(Gtk|Linux)\\.cpp$'],
             ['exclude', 'Harfbuzz[^/]+\\.(cpp|h)$'],
@@ -1484,12 +1484,12 @@
             ['exclude', 'rendering/RenderThemeChromiumSkia\\.cpp$'],
           ],
         }],
-        ['(OS=="linux" or OS=="freebsd" or OS=="openbsd") and gcc_version==42', {
+        ['os_posix == 1 and OS != "mac" and gcc_version == 42', {
           # Due to a bug in gcc 4.2.1 (the current version on hardy), we get
           # warnings about uninitialized this.
           'cflags': ['-Wno-uninitialized'],
         }],
-        ['OS!="linux" and OS!="freebsd"', {
+        ['toolkit_uses_gtk == 0', {
           'sources/': [
             ['exclude', '(Gtk|Linux)\\.cpp$'],
           ],
@@ -1617,12 +1617,12 @@
             ['include', '/TransparencyWin\\.cpp$'],
           ],
         }],
-        ['(OS=="linux" or OS=="freebsd" or OS=="openbsd") and gcc_version==42', {
+        ['os_posix == 1 and OS != "mac" and gcc_version == 42', {
           # Due to a bug in gcc 4.2.1 (the current version on hardy), we get
           # warnings about uninitialized this.
           'cflags': ['-Wno-uninitialized'],
         }],
-        ['OS!="linux" and OS!="freebsd"', {
+        ['toolkit_uses_gtk == 0', {
           'sources/': [
             ['exclude', '(Gtk|Linux)\\.cpp$'],
           ],
