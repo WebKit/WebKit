@@ -13,7 +13,7 @@ span.addEventListener('selectstart', function (event) { selectStartCount++; });
 function expect(title, expectedCount, expectedType, expectedString) {
     document.write(title + ': ');
     var actualSelectionType = window.getSelection().isCollapsed ? 'caret' : 'range';
-    var actualString = window.getSelection().toString();
+    var actualString = window.getSelection().toString().replace(/^\s*|\s*$/, '');
 
     if (selectStartCount != expectedCount)
         document.writeln('FAIL - expected ' + expectedCount + ' events but got ' + selectStartCount + ' events');

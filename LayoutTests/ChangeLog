@@ -1,5 +1,11 @@
 2011-05-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium test fix. On Chromium Windows, a space after a word is selected when you double click on the word.
+
+        * fast/events/selectstart-by-double-triple-clicks.html:
+
+2011-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Alexey Proskuryakov.
 
         selectstart is fired for every mouse move
