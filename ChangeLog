@@ -1,3 +1,15 @@
+2011-05-23  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Rubber stamped by Eric Seidel.
+
+        [CMAKE] Refactoring wtf related code.
+        https://bugs.webkit.org/show_bug.cgi?id=60146
+
+        Move WTF_INCLUDE_DIRECTORIES to Source/JavaScriptCore/wtf/CMakeLists.txt.
+
+        * Source/cmake/OptionsCommon.cmake:
+        * Source/cmake/OptionsEfl.cmake:
+
 2011-05-18  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix build break.

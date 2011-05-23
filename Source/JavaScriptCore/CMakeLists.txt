@@ -14,7 +14,8 @@ SET(JavaScriptCore_INCLUDE_DIRECTORIES
     "${JAVASCRIPTCORE_DIR}/profiler"
     "${JAVASCRIPTCORE_DIR}/runtime"
     "${JAVASCRIPTCORE_DIR}/yarr"
-    "${WTF_INCLUDE_DIRECTORIES}"
+    "${JAVASCRIPTCORE_DIR}/wtf"
+    "${DERIVED_SOURCES_JAVASCRIPTCORE_DIR}"
     "${CMAKE_SOURCE_DIR}"
 )
 
@@ -168,10 +169,6 @@ SET(JavaScriptCore_SOURCES
     yarr/YarrInterpreter.cpp
     yarr/YarrJIT.cpp
     yarr/YarrSyntaxChecker.cpp
-
-    wtf/DateMath.cpp
-    wtf/PageAllocationAligned.cpp
-    wtf/PageBlock.cpp
 )
 SET(JavaScriptCore_HEADERS )
 
