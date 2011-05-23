@@ -772,7 +772,7 @@ void GraphicsContext3D::getAttachedShaders(Platform3DObject program, GC3Dsizei m
     }
 
     m_internal->m_glWidget->makeCurrent();
-    getAttachedShaders(program, maxCount, count, shaders);
+    m_internal->getAttachedShaders(program, maxCount, count, shaders);
 }
 
 void GraphicsContext3D::bindAttribLocation(Platform3DObject program, GC3Duint index, const String& name)

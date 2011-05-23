@@ -1,3 +1,19 @@
+2011-05-23  Syed Idris Shah  <syed.idris-shah@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        GraphicsContext3DInternal object should be called for getAttachedShaders.
+        [Qt] fast/canvas/webgl/gl-object-get-calls.html crash for Qt based webkit
+        https://bugs.webkit.org/show_bug.cgi?id=61202 
+
+        LayoutTests/fast/canvas/webgl/gl-object-get-calls.html
+
+        getAttachedShaders should be called on GraphicsContext3DInternal instance.
+        It was left out by mistake.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp: 
+        (WebCore::GraphicsContext3D::getAttachedShaders): GraphicsContext3DInternal instance should be called.
+
 2011-05-23  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Strict PassOwnPtr build fix.
