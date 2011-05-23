@@ -2,6 +2,14 @@
 
         Strict PassOwnPtr build fix.
 
+        * WebCoreSupport/InspectorClientGtk.cpp:
+        (WebKit::InspectorClient::openInspectorFrontend):
+        (WebKit::InspectorFrontendClient::InspectorFrontendClient):
+
+2011-05-22  Adam Barth  <abarth@webkit.org>
+
+        Strict PassOwnPtr build fix.
+
         * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
         (DumpRenderTreeSupportGtk::addUserStyleSheet):
 

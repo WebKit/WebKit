@@ -146,8 +146,9 @@ void InspectorClient::openInspectorFrontend(InspectorController* controller)
     gtk_widget_show(GTK_WIDGET(inspectorWebView));
 
     m_frontendPage = core(inspectorWebView);
-    m_frontendClient = new InspectorFrontendClient(m_inspectedWebView, inspectorWebView, webInspector, m_frontendPage, this);
-    m_frontendPage->inspectorController()->setInspectorFrontendClient(m_frontendClient);
+    OwnPtr<InspectorFrontendClient> frontendClient = adoptPtr(new InspectorFrontendClient(m_inspectedWebView, inspectorWebView, webInspector, m_frontendPage, this));
+    m_frontendClient = frontendClient.get();
+    m_frontendPage->inspectorController()->setInspectorFrontendClient(frontendClient.release());
 
     // The inspector must be in it's own PageGroup to avoid deadlock while debugging.
     m_frontendPage->setGroupName("");
@@ -192,7 +193,7 @@ const char* InspectorClient::inspectorFilesPath()
 }
 
 InspectorFrontendClient::InspectorFrontendClient(WebKitWebView* inspectedWebView, WebKitWebView* inspectorWebView, WebKitWebInspector* webInspector, Page* inspectorPage, InspectorClient* inspectorClient)
-    : InspectorFrontendClientLocal(core(inspectedWebView)->inspectorController(), inspectorPage, new InspectorFrontendSettingsGtk())
+    : InspectorFrontendClientLocal(core(inspectedWebView)->inspectorController(), inspectorPage, adoptPtr(new InspectorFrontendSettingsGtk()))
     , m_inspectorWebView(inspectorWebView)
     , m_inspectedWebView(inspectedWebView)
     , m_webInspector(webInspector)
