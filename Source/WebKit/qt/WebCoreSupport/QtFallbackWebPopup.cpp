@@ -114,17 +114,6 @@ void QtFallbackWebPopup::show(const QWebSelectData& data)
 
     populate(data);
 
-    QColor backgroundColor = data.backgroundColor();
-    QColor foregroundColor = data.foregroundColor();
-
-    QPalette palette = m_combo->palette();
-    if (backgroundColor.isValid())
-        palette.setColor(QPalette::Background, backgroundColor);
-    if (foregroundColor.isValid())
-        palette.setColor(QPalette::Foreground, foregroundColor);
-    m_combo->setPalette(palette);
-
-
     QRect rect = geometry();
     if (QGraphicsWebView *webView = qobject_cast<QGraphicsWebView*>(pageClient()->pluginParent())) {
         QGraphicsProxyWidget* proxy = new QGraphicsProxyWidget(webView);

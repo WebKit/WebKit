@@ -1,3 +1,20 @@
+2011-05-23  Luiz Agostini  <luiz.agostini@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] When opening a combo-box the popup renders badly.
+        https://bugs.webkit.org/show_bug.cgi?id=61288
+
+        Removing combobox palette changes from QtFallbackWebPopup::show() because they
+        are causing rendering problems for some styles.
+
+        The changes in palette are not needed because the background and foreground
+        colors are already set by QStandardItem::setBackground() and QStandardItem::setForeground()
+        in method QtFallbackWebPopup::populate().
+
+        * WebCoreSupport/QtFallbackWebPopup.cpp:
+        (WebCore::QtFallbackWebPopup::show):
+
 2011-05-23  Joe Wild  <joseph.wild@nokia.com>
 
         Reviewed by Andreas Kling.
