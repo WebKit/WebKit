@@ -1,3 +1,16 @@
+2011-05-23  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Terminating a WebProcess should work even while a page is being closed
+        <rdar://problem/8934632>
+        https://bugs.webkit.org/show_bug.cgi?id=61299
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::terminateProcess):
+        Change validity check to only check for process validity, since terminating the process of a page that
+        is closed or is closing is acceptable behavior.
+
 2011-05-23  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Darin Adler.

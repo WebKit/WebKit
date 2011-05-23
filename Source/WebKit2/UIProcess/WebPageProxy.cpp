@@ -1034,7 +1034,9 @@ void WebPageProxy::setCustomTextEncodingName(const String& encodingName)
 
 void WebPageProxy::terminateProcess()
 {
-    if (!isValid())
+    // NOTE: This uses a check of m_isValid rather than calling isValid() since
+    // we want this to run even for pages being closed or that already closed.
+    if (!m_isValid)
         return;
 
     process()->terminate();
