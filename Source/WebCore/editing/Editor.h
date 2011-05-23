@@ -196,7 +196,6 @@ public:
     Command command(const String& commandName); // Command source is CommandFromMenuOrKeyBinding.
     Command command(const String& commandName, EditorCommandSource);
     static bool commandIsSupportedFromMenuOrKeyBinding(const String& commandName); // Works without a frame.
-    static bool hasTransparentBackgroundColor(CSSStyleDeclaration*);
 
     bool insertText(const String&, Event* triggeringEvent);
     bool insertTextForConfirmedComposition(const String& text);

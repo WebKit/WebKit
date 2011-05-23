@@ -45,6 +45,7 @@ class CSSStyleDeclaration;
 class CSSComputedStyleDeclaration;
 class CSSMutableStyleDeclaration;
 class CSSPrimitiveValue;
+class CSSValue;
 class Document;
 class HTMLElement;
 class Node;
@@ -58,7 +59,7 @@ enum TriState { FalseTriState, TrueTriState, MixedTriState };
 class EditingStyle : public RefCounted<EditingStyle> {
 public:
 
-    enum PropertiesToInclude { AllProperties, OnlyInheritableProperties };
+    enum PropertiesToInclude { AllProperties, OnlyInheritableProperties, InheritablePropertiesAndBackgroundColorInEffect };
     enum ShouldPreserveWritingDirection { PreserveWritingDirection, DoNotPreserveWritingDirection };
     enum ShouldExtractMatchingStyle { ExtractMatchingStyle, DoNotExtractMatchingStyle };
     static float NoFontDelta;
@@ -73,9 +74,9 @@ public:
         return adoptRef(new EditingStyle(node, propertiesToInclude));
     }
 
-    static PassRefPtr<EditingStyle> create(const Position& position)
+    static PassRefPtr<EditingStyle> create(const Position& position, PropertiesToInclude propertiesToInclude = OnlyInheritableProperties)
     {
-        return adoptRef(new EditingStyle(position));
+        return adoptRef(new EditingStyle(position, propertiesToInclude));
     }
 
     static PassRefPtr<EditingStyle> create(const CSSStyleDeclaration* style)
@@ -127,7 +128,7 @@ public:
 private:
     EditingStyle();
     EditingStyle(Node*, PropertiesToInclude);
-    EditingStyle(const Position&);
+    EditingStyle(const Position&, PropertiesToInclude);
     EditingStyle(const CSSStyleDeclaration*);
     EditingStyle(int propertyID, const String& value);
     void init(Node*, PropertiesToInclude);
@@ -201,6 +202,8 @@ private:
 int getIdentifierValue(CSSStyleDeclaration*, int propertyID);
 enum LegacyFontSizeMode { AlwaysUseLegacyFontSize, UseLegacyFontSizeOnlyIfPixelValuesMatch };
 int legacyFontSizeFromCSSValue(Document*, CSSPrimitiveValue*, bool shouldUseFixedFontDefaultSize, LegacyFontSizeMode);
+bool hasTransparentBackgroundColor(CSSStyleDeclaration*);
+PassRefPtr<CSSValue> backgroundColorInEffect(Node*);
 
 } // namespace WebCore
 

@@ -468,7 +468,7 @@ static bool isElementPresentational(const Node* node)
     RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesAndInlineDecl(node);
     if (!style)
         return false;
-    return !propertyMissingOrEqualToNone(style.get(), CSSPropertyTextDecoration) || (!node->isBlockFlow() && !Editor::hasTransparentBackgroundColor(style.get()));
+    return !propertyMissingOrEqualToNone(style.get(), CSSPropertyTextDecoration);
 }
 
 static bool shouldIncludeWrapperForFullySelectedRoot(Node* fullySelectedRoot, CSSMutableStyleDeclaration* style)
@@ -633,7 +633,7 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
     // Add a wrapper span with the styles that all of the nodes in the markup inherit.
     ContainerNode* parentOfLastClosed = lastClosed ? lastClosed->parentNode() : 0;
     if (parentOfLastClosed && parentOfLastClosed->renderer()) {
-        RefPtr<EditingStyle> style = EditingStyle::create(parentOfLastClosed);
+        RefPtr<EditingStyle> style = EditingStyle::create(parentOfLastClosed, EditingStyle::InheritablePropertiesAndBackgroundColorInEffect);
 
         // Styles that Mail blockquotes contribute should only be placed on the Mail blockquote, to help
         // us differentiate those styles from ones that the user has applied.  This helps us

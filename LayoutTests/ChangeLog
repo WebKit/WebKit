@@ -1,3 +1,25 @@
+2011-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Enrica Casucci.
+
+        REGRESSION(r84311): WebKit copies too much styles when copying
+        https://bugs.webkit.org/show_bug.cgi?id=60914
+
+        Added a test to ensure WebKit does not clone hierarchy to preserve background color.
+
+        Also renamed editing/pasteboard/do-not-copy-body-color.html to do-no-clone-unnecessary-styles.html
+        and updated the description to match new behavior. While this test ensures WebKit does not copy
+        body's background color when it's not fully selected, this isn't a necessary requirement for us
+        not to duplicate borders so new expected result is correct.
+
+        * editing/pasteboard/copy-text-with-backgroundcolor-expected.txt: Some spans became style spans.
+        * editing/pasteboard/do-no-clone-unnecessary-styles-2-expected.txt: Added.
+        * editing/pasteboard/do-no-clone-unnecessary-styles-2.html: Added.
+        * editing/pasteboard/do-no-clone-unnecessary-styles-expected.txt: Renamed from
+        LayoutTests/editing/pasteboard/do-not-copy-body-color-expected.txt.
+        * editing/pasteboard/do-no-clone-unnecessary-styles.html: Renamed from
+        LayoutTests/editing/pasteboard/do-not-copy-body-color.html.
+
 2011-05-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.

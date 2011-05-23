@@ -16,17 +16,16 @@ function runTest() {
     document.body.style.backgroundColor = "white";
     document.execCommand("Paste");
     document.body.innerText = document.body.innerHTML;
-    
 }
 </script>
 </head>
 <body onLoad="runTest();" contentEditable="true" style="background-color: #bbb;">
 <div>
-This test verifies that, when the body element has a background color, we don't copy the color if the selection is not the entire content nor any of the intermediate elements. To manually this test, select the text inside the div with the border, cut and paste it back. You should not see an additional red border.
+This test verifies that WebKit does not erroneously clone nodes hierarchy when copying text with background color.
+To manually this test, select the text inside the div with the border, cut and paste it back. You should not see an additional red border.
 <div style="border: 2px solid red">
     <div id="test">Select this text</div>
 </div>
 </div>
 </body>
 </html>
-

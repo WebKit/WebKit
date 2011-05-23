@@ -918,22 +918,6 @@ TriState Editor::selectionHasStyle(int propertyID, const String& value) const
     return state;
 }
 
-bool Editor::hasTransparentBackgroundColor(CSSStyleDeclaration* style)
-{
-    RefPtr<CSSValue> cssValue = style->getPropertyCSSValue(CSSPropertyBackgroundColor);
-    if (!cssValue)
-        return true;
-
-    if (!cssValue->isPrimitiveValue())
-        return false;
-    CSSPrimitiveValue* value = static_cast<CSSPrimitiveValue*>(cssValue.get());
-
-    if (value->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
-        return !alphaChannel(value->getRGBA32Value());
-
-    return value->getIdent() == CSSValueTransparent;
-}
-
 String Editor::selectionStartCSSPropertyValue(int propertyID)
 {
     RefPtr<EditingStyle> selectionStyle = selectionStartStyle();
@@ -948,11 +932,8 @@ String Editor::selectionStartCSSPropertyValue(int propertyID)
     if (propertyID == CSSPropertyBackgroundColor && (m_frame->selection()->isRange() || hasTransparentBackgroundColor(selectionStyle->style()))) {
         RefPtr<Range> range(m_frame->selection()->toNormalizedRange());
         ExceptionCode ec = 0;
-        for (Node* ancestor = range->commonAncestorContainer(ec); ancestor; ancestor = ancestor->parentNode()) {
-            RefPtr<CSSComputedStyleDeclaration> ancestorStyle = computedStyle(ancestor);
-            if (!hasTransparentBackgroundColor(ancestorStyle.get()))
-                return ancestorStyle->getPropertyValue(CSSPropertyBackgroundColor);
-        }
+        if (PassRefPtr<CSSValue> value = backgroundColorInEffect(range->commonAncestorContainer(ec)))
+            return value->cssText();
     }
 
     if (propertyID == CSSPropertyFontSize) {

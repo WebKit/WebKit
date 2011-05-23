@@ -1,3 +1,35 @@
+2011-05-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Enrica Casucci.
+
+        REGRESSION(r84311): WebKit copies too much styles when copying
+        https://bugs.webkit.org/show_bug.cgi?id=60914
+
+        The bug was caused by WebKit's cloning node hierarchy up until the node that has background color.
+        Fixed the bug by not cloning background color and adding the effective background color to the wrapping
+        style span.
+
+        Tests: editing/pasteboard/do-no-clone-unnecessary-styles-2.html
+               editing/pasteboard/do-no-clone-unnecessary-styles.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::cssValueToRGBA): Extracted from getRGBAFontColor.
+        (WebCore::getRGBAFontColor): Moved.
+        (WebCore::rgbaBackgroundColorInEffect): Added.
+        (WebCore::EditingStyle::init): Added support for InheritablePropertiesAndBackgroundColorInEffect.
+        (WebCore::EditingStyle::prepareToApplyAt): Include the effective background color at the given position.
+        Also remove the background color property when the effective background color is equal to the background
+        color property (in terms of RGBA value) of the editing style.
+        (WebCore::hasTransparentBackgroundColor): Moved from Editor class.
+        (WebCore::backgroundColorInEffect): Extracted from Editor::selectionStartCSSPropertyValue.
+        * editing/EditingStyle.h: Added prototypes for hasTransparentBackgroundColor and backgroundColorInEffect.
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionStartCSSPropertyValue): Calls backgroundColorInEffect.
+        * editing/Editor.h: Removed hasTransparentBackgroundColor.
+        * editing/markup.cpp:
+        (WebCore::isElementPresentational): Reverted r85090 and r84311.
+        (WebCore::createMarkup): Include the background color in effect when computing the editing style.
+
 2011-05-23  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Dimitri Glazkov.

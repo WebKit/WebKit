@@ -90,7 +90,6 @@ static PassRefPtr<CSSMutableStyleDeclaration> editingStyleFromComputedStyle(Pass
 }
 
 static RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* styleWithRedundantProperties, CSSStyleDeclaration* baseStyle);
-static RGBA32 getRGBAFontColor(CSSStyleDeclaration*);
 
 class HTMLElementEquivalent {
 public:
@@ -276,11 +275,11 @@ EditingStyle::EditingStyle(Node* node, PropertiesToInclude propertiesToInclude)
     init(node, propertiesToInclude);
 }
 
-EditingStyle::EditingStyle(const Position& position)
+EditingStyle::EditingStyle(const Position& position, PropertiesToInclude propertiesToInclude)
     : m_shouldUseFixedDefaultFontSize(false)
     , m_fontSizeDelta(NoFontDelta)
 {
-    init(position.deprecatedNode(), OnlyInheritableProperties);
+    init(position.deprecatedNode(), propertiesToInclude);
 }
 
 EditingStyle::EditingStyle(const CSSStyleDeclaration* style)
@@ -303,6 +302,30 @@ EditingStyle::~EditingStyle()
 {
 }
 
+static RGBA32 cssValueToRGBA(CSSValue* colorValue)
+{
+    if (!colorValue || !colorValue->isPrimitiveValue())
+        return Color::transparent;
+    
+    CSSPrimitiveValue* primitiveColor = static_cast<CSSPrimitiveValue*>(colorValue);
+    if (primitiveColor->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
+        return primitiveColor->getRGBA32Value();
+    
+    RGBA32 rgba = 0;
+    CSSParser::parseColor(rgba, colorValue->cssText());
+    return rgba;
+}
+
+static inline RGBA32 getRGBAFontColor(CSSStyleDeclaration* style)
+{
+    return cssValueToRGBA(style->getPropertyCSSValue(CSSPropertyColor).get());
+}
+
+static inline RGBA32 rgbaBackgroundColorInEffect(Node* node)
+{
+    return cssValueToRGBA(backgroundColorInEffect(node).get());
+}
+
 void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
 {
     if (isTabSpanTextNode(node))
@@ -312,6 +335,11 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
 
     RefPtr<CSSComputedStyleDeclaration> computedStyleAtPosition = computedStyle(node);
     m_mutableStyle = propertiesToInclude == AllProperties && computedStyleAtPosition ? computedStyleAtPosition->copy() : editingStyleFromComputedStyle(computedStyleAtPosition);
+
+    if (propertiesToInclude == InheritablePropertiesAndBackgroundColorInEffect) {
+        if (RefPtr<CSSValue> value = backgroundColorInEffect(node))
+            m_mutableStyle->setProperty(CSSPropertyBackgroundColor, value->cssText());
+    }
 
     if (node && node->computedStyle()) {
         RenderStyle* renderStyle = node->computedStyle();
@@ -532,6 +560,7 @@ static const int textOnlyProperties[] = {
 
 TriState EditingStyle::triStateOfStyle(CSSStyleDeclaration* styleToCompare, ShouldIgnoreTextOnlyProperties shouldIgnoreTextOnlyProperties) const
 {
+    // FIXME: take care of background-color in effect
     RefPtr<CSSMutableStyleDeclaration> difference = getPropertiesNotIn(m_mutableStyle.get(), styleToCompare);
 
     if (shouldIgnoreTextOnlyProperties == IgnoreTextOnlyProperties)
@@ -696,7 +725,7 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
     // ReplaceSelectionCommand::handleStyleSpans() requires that this function only removes the editing style.
     // If this function was modified in the future to delete all redundant properties, then add a boolean value to indicate
     // which one of editingStyleAtPosition or computedStyle is called.
-    RefPtr<EditingStyle> style = EditingStyle::create(position);
+    RefPtr<EditingStyle> style = EditingStyle::create(position, InheritablePropertiesAndBackgroundColorInEffect);
 
     RefPtr<CSSValue> unicodeBidi;
     RefPtr<CSSValue> direction;
@@ -709,13 +738,9 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
     if (getRGBAFontColor(m_mutableStyle.get()) == getRGBAFontColor(style->m_mutableStyle.get()))
         m_mutableStyle->removeProperty(CSSPropertyColor);
 
-    // if alpha value is zero, we don't add the background color.
-    RefPtr<CSSValue> backgroundColor = m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor);
-    if (backgroundColor && backgroundColor->isPrimitiveValue()
-        && !alphaChannel(static_cast<CSSPrimitiveValue*>(backgroundColor.get())->getRGBA32Value())) {
-        ExceptionCode ec;
-        m_mutableStyle->removeProperty(CSSPropertyBackgroundColor, ec);
-    }
+    if (hasTransparentBackgroundColor(m_mutableStyle.get())
+        || cssValueToRGBA(m_mutableStyle->getPropertyCSSValue(CSSPropertyBackgroundColor).get()) == rgbaBackgroundColorInEffect(position.containerNode()))
+        m_mutableStyle->removeProperty(CSSPropertyBackgroundColor);
 
     if (unicodeBidi && unicodeBidi->isPrimitiveValue()) {
         m_mutableStyle->setProperty(CSSPropertyUnicodeBidi, static_cast<CSSPrimitiveValue*>(unicodeBidi.get())->getIdent());
@@ -810,6 +835,7 @@ StyleChange::StyleChange(EditingStyle* style, const Position& position)
         return;
 
     RefPtr<CSSComputedStyleDeclaration> computedStyle = position.computedStyle();
+    // FIXME: take care of background-color in effect
     RefPtr<CSSMutableStyleDeclaration> mutableStyle = getPropertiesNotIn(style->style(), computedStyle.get());
 
     reconcileTextDecorationProperties(mutableStyle.get());
@@ -838,23 +864,6 @@ static void setTextDecorationProperty(CSSMutableStyleDeclaration* style, const C
         ASSERT(!style->getPropertyPriority(propertyID));
         style->removeProperty(propertyID);
     }
-}
-
-static RGBA32 getRGBAFontColor(CSSStyleDeclaration* style)
-{
-    RefPtr<CSSValue> colorValue = style->getPropertyCSSValue(CSSPropertyColor);
-    if (!colorValue || !colorValue->isPrimitiveValue())
-        return Color::transparent;
-
-    CSSPrimitiveValue* primitiveColor = static_cast<CSSPrimitiveValue*>(colorValue.get());
-    if (primitiveColor->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
-        return primitiveColor->getRGBA32Value();
-
-    // Need to take care of named color such as green and black
-    // This code should be removed after https://bugs.webkit.org/show_bug.cgi?id=28282 is fixed.
-    RGBA32 rgba = 0;
-    CSSParser::parseColor(rgba, colorValue->cssText());
-    return rgba;
 }
 
 void StyleChange::extractTextStyles(Document* document, CSSMutableStyleDeclaration* style, bool shouldUseFixedFontDefaultSize)
@@ -991,6 +1000,7 @@ RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* style
     ASSERT(styleWithRedundantProperties);
     ASSERT(baseStyle);
     RefPtr<CSSMutableStyleDeclaration> result = styleWithRedundantProperties->copy();
+
     baseStyle->diff(result.get());
 
     RefPtr<CSSValue> baseTextDecorationsInEffect = baseStyle->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
@@ -1004,7 +1014,7 @@ RefPtr<CSSMutableStyleDeclaration> getPropertiesNotIn(CSSStyleDeclaration* style
         result->removeProperty(CSSPropertyColor);
 
     if (getTextAlignment(result.get()) == getTextAlignment(baseStyle))
-        result->removeProperty(CSSPropertyTextAlign);        
+        result->removeProperty(CSSPropertyTextAlign);
 
     return result;
 }
@@ -1042,6 +1052,32 @@ int legacyFontSizeFromCSSValue(Document* document, CSSPrimitiveValue* value, boo
     if (CSSValueXSmall <= value->getIdent() && value->getIdent() <= CSSValueWebkitXxxLarge)
         return value->getIdent() - CSSValueXSmall + 1;
 
+    return 0;
+}
+
+bool hasTransparentBackgroundColor(CSSStyleDeclaration* style)
+{
+    RefPtr<CSSValue> cssValue = style->getPropertyCSSValue(CSSPropertyBackgroundColor);
+    if (!cssValue)
+        return true;
+    
+    if (!cssValue->isPrimitiveValue())
+        return false;
+    CSSPrimitiveValue* value = static_cast<CSSPrimitiveValue*>(cssValue.get());
+    
+    if (value->primitiveType() == CSSPrimitiveValue::CSS_RGBCOLOR)
+        return !alphaChannel(value->getRGBA32Value());
+    
+    return value->getIdent() == CSSValueTransparent;
+}
+
+PassRefPtr<CSSValue> backgroundColorInEffect(Node* node)
+{
+    for (Node* ancestor = node; ancestor; ancestor = ancestor->parentNode()) {
+        RefPtr<CSSComputedStyleDeclaration> ancestorStyle = computedStyle(ancestor);
+        if (!hasTransparentBackgroundColor(ancestorStyle.get()))
+            return ancestorStyle->getPropertyCSSValue(CSSPropertyBackgroundColor);
+    }
     return 0;
 }
 
