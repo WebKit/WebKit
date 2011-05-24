@@ -515,9 +515,18 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
     // overflow:hidden and overflow:scroll on <body> as applying to the document's
     // scrollbars.  The CSS2.1 draft states that HTML UAs should use the <html> or <body> element and XML/XHTML UAs should
     // use the root element.
+
+    // To combat the inability to scroll on a page with overflow:hidden on the root when scaled, disregard hidden when
+    // there is a pageScaleFactor that is greater than one on the main frame.
+
+    bool overrideHidden = m_frame->page() && m_frame->page()->mainFrame() == m_frame && m_frame->pageScaleFactor() > 1;
+
     switch (o->style()->overflowX()) {
         case OHIDDEN:
-            hMode = ScrollbarAlwaysOff;
+            if (overrideHidden)
+                hMode = ScrollbarAuto;
+            else
+                hMode = ScrollbarAlwaysOff;
             break;
         case OSCROLL:
             hMode = ScrollbarAlwaysOn;
@@ -532,7 +541,10 @@ void FrameView::applyOverflowToViewport(RenderObject* o, ScrollbarMode& hMode, S
     
      switch (o->style()->overflowY()) {
         case OHIDDEN:
-            vMode = ScrollbarAlwaysOff;
+            if (overrideHidden)
+                vMode = ScrollbarAuto;
+            else
+                vMode = ScrollbarAlwaysOff;
             break;
         case OSCROLL:
             vMode = ScrollbarAlwaysOn;

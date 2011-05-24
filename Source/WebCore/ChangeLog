@@ -1,3 +1,18 @@
+2011-05-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Can't scroll scaled page that has overflow:hidden on its root
+        <rdar://problem/9029189>
+        https://bugs.webkit.org/show_bug.cgi?id=61339
+
+        Test: fast/events/scroll-in-scaled-page-with-overflow-hidden.html
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::applyOverflowToViewport):
+        Scrollbars should be enabled for the viewport when scaled, even if overflow:hidden
+        is specified.
+
 2011-05-24  Adam Roben  <aroben@apple.com>
 
         Leopard build fix
