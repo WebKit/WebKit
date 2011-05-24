@@ -80,15 +80,40 @@ ViewController.prototype = {
     },
 
     _displayTesters: function() {
-        this._buildbot.getTesterNames(function(names) {
-            var list = document.createElement('ul');
-            names.forEach(function(name) {
+        var list = document.createElement('ul');
+        var testersAndFailureCounts = [];
+
+        function updateList() {
+            testersAndFailureCounts.sort(function(a, b) { return a.tester.name.localeCompare(b.tester.name) });
+            while (list.firstChild)
+                list.removeChild(list.firstChild);
+            testersAndFailureCounts.forEach(function(testerAndFailureCount) {
+                var tester = testerAndFailureCount.tester;
+                var failureCount = testerAndFailureCount.failureCount;
+
                 var link = document.createElement('a');
-                link.href = '#/' + name;
-                link.appendChild(document.createTextNode(name));
+                link.href = '#/' + tester.name;
+                link.appendChild(document.createTextNode(tester.name));
+
                 var item = document.createElement('li');
                 item.appendChild(link);
+                item.appendChild(document.createTextNode(' (' + failureCount + ' failing tests)'));
                 list.appendChild(item);
+            });
+        }
+
+        this._buildbot.getTesters(function(testers) {
+            testers.forEach(function(tester) {
+                tester.getMostRecentCompletedBuildNumber(function(buildNumber) {
+                    if (buildNumber < 0)
+                        return;
+                    tester.getNumberOfFailingTests(buildNumber, function(failureCount) {
+                        if (failureCount <= 0)
+                            return;
+                        testersAndFailureCounts.push({ tester: tester, failureCount: failureCount });
+                        updateList();
+                    });
+                });
             });
 
             document.body.innerHTML = '';

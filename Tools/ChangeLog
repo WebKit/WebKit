@@ -1,3 +1,34 @@
+2011-05-24  Adam Roben  <aroben@apple.com>
+
+        Make TestFailures show how many tests are failing on each tester, and omit testers with no failures
+
+        Fixes <http://webkit.org/b/61063> <rdar://problem/9460533> TestFailures page shows testers
+        that don't have any failing tests, which isn't useful
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Buildbot.js:
+        (Buildbot.prototype.getTesters): Renamed from getTesterNames. Now returns Builder objects
+        instead of name strings.
+        (Buildbot.prototype._buildersForNames): Added. Helper function to convert an array of
+        builder names into an array of builders.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getMostRecentCompletedBuildNumber): Added. Returns the build number of
+        the most recently completed build, or -1 if there is no such build.
+        (Builder.prototype.getNumberOfFailingTests): Added. Returns the number of tests that failed
+        in the given build, or -1 if the number could not be determined. Some of this code came from
+        _getFailingTests.
+        (Builder.prototype._getBuildJSON): Added. Code came from _getFailingTests.
+        (Builder.prototype._getFailingTests): Changed to use new _getBuildJSON and
+        getNumberOfFailingTests functions.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._displayTesters): Get the current number of test failures for each
+        tester and show it in the list. Omit testers that have no failures at all. We keep the
+        testers and failure counts in an array and sort it before displaying the current data, as
+        the order in which data will be fetched is unpredictable.
+
 2011-05-23  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.

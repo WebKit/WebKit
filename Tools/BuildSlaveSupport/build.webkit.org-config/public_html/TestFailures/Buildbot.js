@@ -41,10 +41,10 @@ Buildbot.prototype = {
         return this._builders[name];
     },
 
-    getTesterNames: function(callback) {
-        var cacheKey = 'getTesterNames';
+    getTesters: function(callback) {
+        var cacheKey = 'getTesters';
         if (cacheKey in this._cache) {
-            callback(this._cache[cacheKey]);
+            callback(this._buildersForNames(this._cache[cacheKey]));
             return;
         }
 
@@ -57,7 +57,7 @@ Buildbot.prototype = {
             });
 
             self._cache[cacheKey] = names;
-            callback(names);
+            callback(self._buildersForNames(names));
         });
     },
 
@@ -70,5 +70,10 @@ Buildbot.prototype = {
 
     resultsDirectoryURL: function(builderName, buildName) {
         return this.baseURL + 'results/' + builderName + '/' + buildName + '/';
+    },
+
+    _buildersForNames: function(names) {
+        var self = this;
+        return names.map(function(name) { return self.builderNamed(name) });
     },
 };

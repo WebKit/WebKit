@@ -57,6 +57,88 @@ Builder.prototype = {
         return diagnosticInfo[failureType];
     },
 
+    getMostRecentCompletedBuildNumber: function(callback) {
+        var cacheKey = 'getMostRecentCompletedBuildNumber';
+        if (cacheKey in this._cache) {
+            callback(this._cache[cacheKey]);
+            return;
+        }
+
+        var self = this;
+        getResource(self.buildbot.baseURL + 'json/builders/' + self.name, function(xhr) {
+            var data = JSON.parse(xhr.responseText);
+
+            var oldestUnfinishedBuild = Infinity;
+            if ('currentBuilds' in data)
+                oldestUnfinishedBuild = data.currentBuilds[0];
+
+            for (var i = data.cachedBuilds.length - 1; i >= 0; --i) {
+                if (data.cachedBuilds[i] >= oldestUnfinishedBuild)
+                    continue;
+
+                self._cache[cacheKey] = data.cachedBuilds[i];
+                callback(data.cachedBuilds[i]);
+                return;
+            }
+
+            self._cache[cacheKey] = -1;
+            callback(self._cache[cacheKey]);
+        },
+        function(xhr) {
+            self._cache[cacheKey] = -1;
+            callback(self._cache[cacheKey]);
+        });
+    },
+
+    getNumberOfFailingTests: function(buildNumber, callback) {
+        var cacheKey = 'getNumberOfFailingTests_' + buildNumber;
+        if (cacheKey in this._cache) {
+            callback(this._cache[cacheKey]);
+            return;
+        }
+
+        var self = this;
+        self._getBuildJSON(buildNumber, function(data) {
+            var layoutTestStep = data.steps.findFirst(function(step) { return step.name === 'layout-test'; });
+            if (!layoutTestStep) {
+                self._cache[cacheKey] = -1;
+                callback(self._cache[cacheKey]);
+                return;
+            }
+
+            if (!('isStarted' in layoutTestStep)) {
+                // run-webkit-tests never even ran.
+                self._cache[cacheKey] = -1;
+                callback(self._cache[cacheKey]);
+                return;
+            }
+
+            if (!('results' in layoutTestStep) || layoutTestStep.results[0] === 0) {
+                // All tests passed.
+                self._cache[cacheKey] = 0;
+                callback(self._cache[cacheKey]);
+                return;
+            }
+
+            if (/^Exiting early/.test(layoutTestStep.results[1][0])) {
+                // Too many tests crashed or timed out. We can't know for sure how many failed.
+                self._cache[cacheKey] = -1;
+                callback(self._cache[cacheKey]);
+                return;
+            }
+
+            var failureCount = layoutTestStep.results[1].reduce(function(sum, outputLine) {
+                var match = /^(\d+) test cases/.exec(outputLine);
+                if (!match)
+                    return sum;
+                return sum + parseInt(match[1], 10);
+            }, 0);
+
+            self._cache[cacheKey] = failureCount;
+            callback(failureCount);
+        });
+    },
+
     /*
      * Preiodically calls callback until all current failures have been explained. Callback is
      * passed an object like the following:
@@ -99,6 +181,21 @@ Builder.prototype = {
         return this.buildbot.resultsDirectoryURL(this.name, buildName);
     },
 
+    _getBuildJSON: function(buildNumber, callback) {
+        var cacheKey = 'getBuildJSON_' + buildNumber;
+        if (cacheKey in this._cache) {
+            callback(this._cache[cacheKey]);
+            return;
+        }
+
+        var self = this;
+        getResource(self.buildbot.baseURL + 'json/builders/' + self.name + '/builds/' + buildNumber, function(xhr) {
+            var data = JSON.parse(xhr.responseText);
+            self._cache[cacheKey] = data;
+            callback(data);
+        });
+    },
+
     _getBuildNames: function(callback) {
         var cacheKey = '_getBuildNames';
         if (cacheKey in this._cache) {
@@ -133,25 +230,19 @@ Builder.prototype = {
         var tests = {};
         this._cache[cacheKey] = tests;
 
+        var buildNumber = this.buildbot.parseBuildName(buildName).buildNumber;
+
         var self = this;
-        getResource(self.buildbot.baseURL + 'json/builders/' + self.name + '/builds/' + self.buildbot.parseBuildName(buildName).buildNumber, function(xhr) {
-            var data = JSON.parse(xhr.responseText);
-            var layoutTestStep = data.steps.findFirst(function(step) { return step.name === 'layout-test'; });
-            if (!('isStarted' in layoutTestStep)) {
-                // run-webkit-tests never even ran.
+        self.getNumberOfFailingTests(buildNumber, function(failingTestCount) {
+            if (failingTestCount < 0) {
+                // The number of failing tests couldn't be determined.
                 errorCallback(tests);
                 return;
             }
 
-            if (!('results' in layoutTestStep) || layoutTestStep.results[0] === 0) {
+            if (!failingTestCount) {
                 // All tests passed.
                 callback(tests);
-                return;
-            }
-
-            if (/^Exiting early/.test(layoutTestStep.results[1][0])) {
-                // Too many tests crashed or timed out. We can't use this test run.
-                errorCallback(tests);
                 return;
             }
 
