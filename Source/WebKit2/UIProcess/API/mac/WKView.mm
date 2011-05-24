@@ -2423,6 +2423,14 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
     }
     return _data->_fullScreenWindowController.get();
 }
+
+- (void)closeFullScreenWindowController
+{
+    if (!_data->_fullScreenWindowController)
+        return;
+    [_data->_fullScreenWindowController.get() close];
+    _data->_fullScreenWindowController = nullptr;
+}
 #endif
 
 - (bool)_executeSavedCommandBySelector:(SEL)selector

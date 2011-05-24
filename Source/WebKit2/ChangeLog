@@ -1,3 +1,30 @@
+2011-05-23  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r86990:86992): World leak when all windows closed
+        https://bugs.webkit.org/show_bug.cgi?id=61311
+
+        Three interlocking problems:
+        
+        1) Calling [WKView fullScreenController] will create the controller if it doesn't all ready
+        exist, so move the closing code into WKView, where we can bail early if there isn't a 
+        controller.
+        
+        2) A retain-cycle exists between WKView and WKFullScreenWindowController.  Make sure to break
+        the cycle explicitly by clearing the _fullScreenWindowController ivar when closing the
+        controller.
+        
+        3) [NSWindowController close] was overridden without calling [super close].  Do that.
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKView closeFullScreenWindowController]): Moved here from WebFullScreenManagerProxyMac.mm.
+        * UIProcess/API/mac/WKViewInternal.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController close]): Call [super close].
+        * UIProcess/mac/WebFullScreenManagerProxyMac.mm:
+        (WebKit::WebFullScreenManagerProxy::invalidate):
+
 2011-05-20  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
