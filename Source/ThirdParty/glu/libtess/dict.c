@@ -40,8 +40,8 @@
 */
 
 #include <stddef.h>
-#include "ThirdParty/glu/libtess/dict-list.h"
-#include "ThirdParty/glu/libtess/memalloc.h"
+#include "dict-list.h"
+#include "memalloc.h"
 
 /* really __gl_dictListNewDict */
 Dict *dictNewDict( void *frame,

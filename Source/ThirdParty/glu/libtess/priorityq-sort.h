@@ -42,7 +42,7 @@
 #ifndef __priorityq_sort_h_
 #define __priorityq_sort_h_
 
-#include "ThirdParty/glu/libtess/priorityq-heap.h"
+#include "priorityq-heap.h"
 
 #undef PQkey
 #undef PQhandle

@@ -42,6 +42,18 @@ typedef unsigned int GLenum;
 typedef float GLfloat;
 typedef void GLvoid;
 
+#define gluNewTess internal_gluNewTess
+#define gluDeleteTess internal_gluDeleteTess
+#define gluTessProperty internal_gluTessProperty
+#define gluGetTessProperty internal_gluGetTessProperty
+#define gluTessNormal internal_gluTessNormal
+#define gluTessCallback internal_gluTessCallback
+#define gluTessVertex internal_gluTessVertex
+#define gluTessBeginPolygon internal_gluTessBeginPolygon
+#define gluTessBeginContour internal_gluTessBeginContour
+#define gluTessEndContour internal_gluTessEndContour
+#define gluTessEndPolygon internal_gluTessEndPolygon
+
 #undef MIN
 #undef MAX
 

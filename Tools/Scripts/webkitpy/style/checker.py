@@ -206,6 +206,13 @@ _PATH_RULES_SPECIFIER = [
      ["-readability/naming",
       "-build/header_guard",
       "-build/include_order"]),
+
+    ([# glu's libtess is third-party code, and doesn't follow WebKit style.
+      "Source/ThirdParty/glu"],
+     ["-readability",
+      "-whitespace",
+      "-build/header_guard",
+      "-build/include_order"]),
 ]
 
 

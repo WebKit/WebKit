@@ -39,10 +39,10 @@
 ** $Header: //depot/main/gfx/lib/glu/libtess/geom.c#5 $
 */
 
+#include "gluos.h"
 #include <assert.h>
-#include "ThirdParty/glu/gluos.h"
-#include "ThirdParty/glu/libtess/mesh.h"
-#include "ThirdParty/glu/libtess/geom.h"
+#include "mesh.h"
+#include "geom.h"
 
 int __gl_vertLeq( GLUvertex *u, GLUvertex *v )
 {

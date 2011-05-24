@@ -42,7 +42,7 @@
 #ifndef __normal_h_
 #define __normal_h_
 
-#include "ThirdParty/glu/libtess/tess.h"
+#include "tess.h"
 
 /* __gl_projectPolygon( tess ) determines the polygon normal
  * and project vertices onto the plane of the polygon.

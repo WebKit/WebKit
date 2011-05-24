@@ -1,3 +1,45 @@
+2011-05-24  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Unfork glu sources as much as possible.
+        https://bugs.webkit.org/show_bug.cgi?id=61365
+
+        Restore the glu sources closer to the original version on oss.sgi.com
+        by removing the WebKit-specific include paths, restoring the include
+        order, and renaming the glu* functions via #defines rather than in
+        the source.
+
+        * glu/README.webkit:
+        Update the README to reflect the changes from trunk.
+        * glu/glu.gyp:
+        Add Source/Thirdparty/glu as an include path, so we can remove the
+        hardcoded paths from the source files.
+        * glu/gluos.h:
+        Add #defines to rename the glu entry points to internal_*.
+        * glu/internal_glu.h:
+        * glu/libtess/dict.c:
+        * glu/libtess/geom.c:
+        * glu/libtess/geom.h:
+        * glu/libtess/memalloc.c:
+        * glu/libtess/mesh.c:
+        * glu/libtess/mesh.h:
+        * glu/libtess/normal.c:
+        * glu/libtess/normal.h:
+        * glu/libtess/priorityq-heap.c:
+        * glu/libtess/priorityq-sort.h:
+        * glu/libtess/priorityq.c:
+        * glu/libtess/priorityq.h:
+        * glu/libtess/render.c:
+        * glu/libtess/render.h:
+        * glu/libtess/sweep.c:
+        * glu/libtess/sweep.h:
+        * glu/libtess/tess.c:
+        * glu/libtess/tess.h:
+        * glu/libtess/tessmono.c:
+        Remove WebKit-specific include paths, and internal_ prefixes from glu
+        entry points.  Restore include order to original source order.
+
 2011-05-19  Evan Martin  <evan@chromium.org>
 
         Reviewed by Tony Chang.

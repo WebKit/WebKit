@@ -42,7 +42,7 @@
 #ifndef __geom_h_
 #define __geom_h_
 
-#include "ThirdParty/glu/libtess/mesh.h"
+#include "mesh.h"
 
 #ifdef NO_BRANCH_CONDITIONS
 /* MIPS architecture has special instructions to evaluate boolean

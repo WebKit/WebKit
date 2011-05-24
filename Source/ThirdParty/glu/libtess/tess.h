@@ -42,12 +42,11 @@
 #ifndef __tess_h_
 #define __tess_h_
 
+#include <internal_glu.h>
 #include <setjmp.h>
-
-#include "ThirdParty/glu/internal_glu.h"
-#include "ThirdParty/glu/libtess/dict.h"
-#include "ThirdParty/glu/libtess/mesh.h"
-#include "ThirdParty/glu/libtess/priorityq.h"
+#include "mesh.h"
+#include "dict.h"
+#include "priorityq.h"
 
 /* The begin/end calls must be properly nested.  We keep track of
  * the current state to enforce the ordering.

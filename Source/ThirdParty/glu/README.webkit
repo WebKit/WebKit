@@ -8,16 +8,12 @@ LICENSE.txt in this directory.
 The following changes were made in order to incorporate this code:
 
   - The addition of a simplified gluos.h to eliminate operating system
-    dependencies.
+    dependencies.  All entry points to the tesselator were prefixed
+    with internal_ via #defines, to avoid symbol collisions with any
+    host OS version of GLU.
 
   - The removal of inclusion of GL/glu.h and replacement with an
     include of internal_glu.h.
-
-  - Includes were modified to be scoped within ThirdParty/glu/ and
-    ThirdParty/glu/libtess/.
-
-  - The entry points to the tessellator were prefixed with internal_
-    to avoid symbol collisions with any host OS version of GLU.
 
   - In tess.c, the obsolete entry points gluBeginPolygon,
     gluNextContour and gluEndPolygon in tess.c were #if 0'd out.

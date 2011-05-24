@@ -39,19 +39,19 @@
 ** $Header: //depot/main/gfx/lib/glu/libtess/sweep.c#5 $
 */
 
+#include "gluos.h"
 #include <assert.h>
+#include <stddef.h>
 #include <setjmp.h>		/* longjmp */
 #include <limits.h>		/* LONG_MAX */
-#include <stddef.h>
 
-#include "ThirdParty/glu/gluos.h"
-#include "ThirdParty/glu/libtess/dict.h"
-#include "ThirdParty/glu/libtess/geom.h"
-#include "ThirdParty/glu/libtess/memalloc.h"
-#include "ThirdParty/glu/libtess/mesh.h"
-#include "ThirdParty/glu/libtess/priorityq.h"
-#include "ThirdParty/glu/libtess/sweep.h"
-#include "ThirdParty/glu/libtess/tess.h"
+#include "mesh.h"
+#include "geom.h"
+#include "tess.h"
+#include "dict.h"
+#include "priorityq.h"
+#include "memalloc.h"
+#include "sweep.h"
 
 #define TRUE 1
 #define FALSE 0

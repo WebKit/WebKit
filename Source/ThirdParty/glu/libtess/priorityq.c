@@ -39,19 +39,19 @@
 ** $Header: //depot/main/gfx/lib/glu/libtess/priorityq.c#5 $
 */
 
+#include "gluos.h"
+#include <stddef.h>
 #include <assert.h>
 #include <limits.h>		/* LONG_MAX */
-#include <stddef.h>
-#include "ThirdParty/glu/gluos.h"
-#include "ThirdParty/glu/libtess/memalloc.h"
+#include "memalloc.h"
 
 /* Include all the code for the regular heap-based queue here. */
 
-#include "ThirdParty/glu/libtess/priorityq-heap.c"
+#include "priorityq-heap.c"
 
 /* Now redefine all the function names to map to their "Sort" versions. */
 
-#include "ThirdParty/glu/libtess/priorityq-sort.h"
+#include "priorityq-sort.h"
 
 /* really __gl_pqSortNewPriorityQ */
 PriorityQ *pqNewPriorityQ( int (*leq)(PQkey key1, PQkey key2) )

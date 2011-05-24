@@ -42,7 +42,7 @@
 #ifndef __sweep_h_
 #define __sweep_h_
 
-#include "ThirdParty/glu/libtess/mesh.h"
+#include "mesh.h"
 
 /* __gl_computeInterior( tess ) computes the planar arrangement specified
  * by the given contours, and further subdivides this arrangement

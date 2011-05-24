@@ -1,3 +1,13 @@
+2011-05-24  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Remove most style checks on Source/ThirdParty/glu, since it doesn't
+        follow WebKit style.
+        https://bugs.webkit.org/show_bug.cgi?id=61365
+
+        * Scripts/webkitpy/style/checker.py:
+
 2011-05-24  Adam Roben  <aroben@apple.com>
 
         Don't allow forcing builds through the build.webkit.org web interface

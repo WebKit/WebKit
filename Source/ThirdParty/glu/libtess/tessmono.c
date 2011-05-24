@@ -39,13 +39,12 @@
 ** $Header: //depot/main/gfx/lib/glu/libtess/tessmono.c#5 $
 */
 
-#include <assert.h>
+#include "gluos.h"
 #include <stdlib.h>
-
-#include "ThirdParty/glu/gluos.h"
-#include "ThirdParty/glu/libtess/geom.h"
-#include "ThirdParty/glu/libtess/mesh.h"
-#include "ThirdParty/glu/libtess/tessmono.h"
+#include "geom.h"
+#include "mesh.h"
+#include "tessmono.h"
+#include <assert.h>
 
 #define AddWinding(eDst,eSrc)	(eDst->winding += eSrc->winding, \
 				 eDst->Sym->winding += eSrc->Sym->winding)

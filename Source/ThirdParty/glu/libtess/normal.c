@@ -39,12 +39,12 @@
 ** $Header: //depot/main/gfx/lib/glu/libtess/normal.c#5 $
 */
 
-#include <assert.h>
+#include "gluos.h"
+#include "mesh.h"
+#include "tess.h"
+#include "normal.h"
 #include <math.h>
-#include "ThirdParty/glu/gluos.h"
-#include "ThirdParty/glu/libtess/mesh.h"
-#include "ThirdParty/glu/libtess/normal.h"
-#include "ThirdParty/glu/libtess/tess.h"
+#include <assert.h>
 
 #define TRUE 1
 #define FALSE 0

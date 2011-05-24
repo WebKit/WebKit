@@ -3,7 +3,7 @@
     'target_name': 'libtess',
     'type': 'static_library',
     'include_dirs': [
-      '../..',
+      '.',
     ],
     'sources': [
       'gluos.h',
