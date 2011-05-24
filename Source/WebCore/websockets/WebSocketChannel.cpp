@@ -121,6 +121,16 @@ void WebSocketChannel::close()
         m_handle->close();  // will call didClose()
 }
 
+void WebSocketChannel::fail(const String& reason)
+{
+    LOG(Network, "WebSocketChannel %p fail: %s", this, reason.utf8().data());
+    ASSERT(!m_suspended);
+    if (m_context)
+        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, reason, 0, m_handshake.clientOrigin(), 0);
+    if (m_handle)
+        m_handle->close(); // Will call didClose().
+}
+
 void WebSocketChannel::disconnect()
 {
     LOG(Network, "WebSocketChannel %p disconnect", this);

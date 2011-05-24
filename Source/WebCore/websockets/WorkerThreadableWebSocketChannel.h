@@ -64,6 +64,7 @@ public:
     virtual bool send(const String& message);
     virtual unsigned long bufferedAmount() const;
     virtual void close();
+    virtual void fail(const String& reason);
     virtual void disconnect(); // Will suppress didClose().
     virtual void suspend();
     virtual void resume();
@@ -91,6 +92,7 @@ private:
         void send(const String& message);
         void bufferedAmount();
         void close();
+        void fail(const String& reason);
         void disconnect();
         void suspend();
         void resume();
@@ -120,6 +122,7 @@ private:
         bool send(const String& message);
         unsigned long bufferedAmount();
         void close();
+        void fail(const String& reason);
         void disconnect();
         void suspend();
         void resume();
@@ -154,6 +157,7 @@ private:
     static void mainThreadSend(ScriptExecutionContext*, Peer*, const String& message);
     static void mainThreadBufferedAmount(ScriptExecutionContext*, Peer*);
     static void mainThreadClose(ScriptExecutionContext*, Peer*);
+    static void mainThreadFail(ScriptExecutionContext*, Peer*, const String& reason);
     static void mainThreadDestroy(ScriptExecutionContext*, Peer*);
     static void mainThreadSuspend(ScriptExecutionContext*, Peer*);
     static void mainThreadResume(ScriptExecutionContext*, Peer*);

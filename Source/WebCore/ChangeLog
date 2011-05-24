@@ -1,3 +1,26 @@
+2011-05-24  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: Add fail() to WebSocketChannel and its family
+        https://bugs.webkit.org/show_bug.cgi?id=61277
+
+        This is the first part of refactoring effort described in bug 61115.
+        Existing error reports will be modified to use fail() in a later patch.
+
+        No change in behavior, thus no new tests.
+
+        * websockets/ThreadableWebSocketChannel.h:
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::fail):
+        * websockets/WebSocketChannel.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::fail):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::fail):
+        (WebCore::WorkerThreadableWebSocketChannel::mainThreadFail):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::fail):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+
 2011-05-24  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.

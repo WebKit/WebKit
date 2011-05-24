@@ -58,7 +58,8 @@ namespace WebCore {
         virtual bool send(const String& message);
         virtual unsigned long bufferedAmount() const;
         virtual void close();
-        virtual void disconnect(); // Will suppress didClose().
+        virtual void fail(const String& reason);
+        virtual void disconnect();
 
         virtual void suspend();
         virtual void resume();

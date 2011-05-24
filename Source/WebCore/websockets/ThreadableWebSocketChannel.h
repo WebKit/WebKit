@@ -53,6 +53,8 @@ public:
     virtual bool send(const String& message) = 0;
     virtual unsigned long bufferedAmount() const = 0;
     virtual void close() = 0;
+    // Log the reason text and close the connection. Will call didClose().
+    virtual void fail(const String& reason) = 0;
     virtual void disconnect() = 0; // Will suppress didClose().
 
     virtual void suspend() = 0;
