@@ -1445,8 +1445,6 @@ void GraphicsContext3D::uniformMatrix4fv(GC3Dint location, GC3Dboolean transpose
 
 void GraphicsContext3D::useProgram(Platform3DObject program)
 {
-    ASSERT(program);
-    
     m_internal->m_glWidget->makeCurrent();
     m_internal->useProgram(program);
 }

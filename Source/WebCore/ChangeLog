@@ -1,3 +1,17 @@
+2011-05-24  Syed Idris Shah  <syed.idris-shah@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] fast/canvas/webgl/gl-uniform-arrays.html failing for Qt on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=60377 
+
+        LayoutTests/fast/canvas/webgl/gl-uniform-arrays.html
+
+        We do not need assert for the useProgram as program can be null.
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3D::useProgram): Program can be null. Removing assert.
+
 2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
