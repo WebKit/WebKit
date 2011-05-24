@@ -49,6 +49,7 @@ namespace JSC {
 #define failIfTrueIfStrict(cond) do { if ((cond) && strictMode()) fail(); } while (0)
 #define failIfFalseIfStrict(cond) do { if ((!(cond)) && strictMode()) fail(); } while (0)
 #define consumeOrFail(tokenType) do { if (!consume(tokenType)) fail(); } while (0)
+#define consumeOrFailWithFlags(tokenType, flags) do { if (!consume(tokenType, flags)) fail(); } while (0)
 #define matchOrFail(tokenType) do { if (!match(tokenType)) fail(); } while (0)
 #define failIfStackOverflow() do { failIfFalse(canRecurse()); } while (0)
 
@@ -98,7 +99,7 @@ private:
         bool m_isLoop;
     };
     
-    void next(Lexer::LexType lexType = Lexer::IdentifyReservedWords)
+    void next(unsigned lexType = 0)
     {
         m_lastLine = m_token.m_info.line;
         m_lastTokenEnd = m_token.m_info.endOffset;
@@ -111,11 +112,11 @@ private:
         return m_lexer->nextTokenIsColon();
     }
 
-    bool consume(JSTokenType expected)
+    bool consume(JSTokenType expected, unsigned flags = 0)
     {
         bool result = m_token.m_type == expected;
         failIfFalse(result);
-        next();
+        next(flags);
         return result;
     }
 
@@ -796,7 +797,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseVarDeclarationList(Tr
         if (hasInitializer) {
             int varDivot = tokenStart() + 1;
             initStart = tokenStart();
-            next(); // consume '='
+            next(TreeBuilder::DontBuildStrings); // consume '='
             int initialAssignments = m_assignmentCount;
             TreeExpression initializer = parseAssignmentExpression(context);
             initEnd = lastTokenEnd();
@@ -828,7 +829,7 @@ template <class TreeBuilder> TreeConstDeclList JSParser::parseConstDeclarationLi
         context.addVar(name, DeclarationStacks::IsConstant | (hasInitializer ? DeclarationStacks::HasInitializer : 0));
         TreeExpression initializer = 0;
         if (hasInitializer) {
-            next(); // consume '='
+            next(TreeBuilder::DontBuildStrings); // consume '='
             initializer = parseAssignmentExpression(context);
         }
         tail = context.appendConstDecl(tail, name, initializer);
@@ -1552,7 +1553,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseExpression(TreeBuilde
     failIfFalse(right);
     typename TreeBuilder::Comma commaNode = context.createCommaExpr(node, right);
     while (match(COMMA)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         right = parseAssignmentExpression(context);
         failIfFalse(right);
         context.appendToComma(commaNode, right);
@@ -1597,7 +1598,7 @@ template <typename TreeBuilder> TreeExpression JSParser::parseAssignmentExpressi
         context.assignmentStackAppend(assignmentStack, lhs, start, tokenStart(), m_assignmentCount, op);
         start = tokenStart();
         m_assignmentCount++;
-        next();
+        next(TreeBuilder::DontBuildStrings);
         if (strictMode() && m_lastIdentifier && context.isResolve(lhs)) {
             failIfTrueIfStrict(m_globalData->propertyNames->eval == *m_lastIdentifier);
             failIfTrueIfStrict(m_globalData->propertyNames->arguments == *m_lastIdentifier);
@@ -1630,9 +1631,9 @@ template <class TreeBuilder> TreeExpression JSParser::parseConditionalExpression
         return cond;
     m_nonTrivialExpressionCount++;
     m_nonLHSCount++;
-    next();
+    next(TreeBuilder::DontBuildStrings);
     TreeExpression lhs = parseAssignmentExpression(context);
-    consumeOrFail(COLON);
+    consumeOrFailWithFlags(COLON, TreeBuilder::DontBuildStrings);
 
     TreeExpression rhs = parseAssignmentExpression(context);
     failIfFalse(rhs);
@@ -1670,7 +1671,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseBinaryExpression(Tree
         m_nonTrivialExpressionCount++;
         m_nonLHSCount++;
         int operatorToken = m_token.m_type;
-        next();
+        next(TreeBuilder::DontBuildStrings);
 
         while (operatorStackDepth &&  context.operatorStackHasHigherPrecedence(operatorStackDepth, precedence)) {
             ASSERT(operandStackDepth > 1);
@@ -1705,7 +1706,11 @@ template <bool complete, class TreeBuilder> TreeProperty JSParser::parseProperty
         wasIdent = true;
     case STRING: {
         const Identifier* ident = m_token.m_data.ident;
-        next(Lexer::IgnoreReservedWords);
+        if (complete || (wasIdent && (*ident == m_globalData->propertyNames->get || *ident == m_globalData->propertyNames->set)))
+            next(Lexer::IgnoreReservedWords);
+        else
+            next(Lexer::IgnoreReservedWords | TreeBuilder::DontBuildKeywords);
+
         if (match(COLON)) {
             next();
             TreeExpression node = parseAssignmentExpression(context);
@@ -1747,7 +1752,7 @@ template <bool complete, class TreeBuilder> TreeProperty JSParser::parseProperty
 template <class TreeBuilder> TreeExpression JSParser::parseObjectLiteral(TreeBuilder& context)
 {
     int startOffset = m_token.m_data.intValue;
-    consumeOrFail(OPENBRACE);
+    consumeOrFailWithFlags(OPENBRACE, TreeBuilder::DontBuildStrings);
 
     if (match(CLOSEBRACE)) {
         next();
@@ -1764,7 +1769,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseObjectLiteral(TreeBui
     TreePropertyList propertyList = context.createPropertyList(property);
     TreePropertyList tail = propertyList;
     while (match(COMMA)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         // allow extra comma, see http://bugs.webkit.org/show_bug.cgi?id=5939
         if (match(CLOSEBRACE))
             break;
@@ -1829,15 +1834,15 @@ template <class TreeBuilder> TreeExpression JSParser::parseStrictObjectLiteral(T
 
 template <class TreeBuilder> TreeExpression JSParser::parseArrayLiteral(TreeBuilder& context)
 {
-    consumeOrFail(OPENBRACKET);
+    consumeOrFailWithFlags(OPENBRACKET, TreeBuilder::DontBuildStrings);
 
     int elisions = 0;
     while (match(COMMA)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         elisions++;
     }
     if (match(CLOSEBRACKET)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         return context.createArray(elisions);
     }
 
@@ -1847,7 +1852,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseArrayLiteral(TreeBuil
     typename TreeBuilder::ElementList tail = elementList;
     elisions = 0;
     while (match(COMMA)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         elisions = 0;
 
         while (match(COMMA)) {
@@ -1856,7 +1861,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseArrayLiteral(TreeBuil
         }
 
         if (match(CLOSEBRACKET)) {
-            next();
+            next(TreeBuilder::DontBuildStrings);
             return context.createArray(elisions, elementList);
         }
         TreeExpression elem = parseAssignmentExpression(context);
@@ -1948,9 +1953,9 @@ template <class TreeBuilder> TreeExpression JSParser::parsePrimaryExpression(Tre
 
 template <class TreeBuilder> TreeArguments JSParser::parseArguments(TreeBuilder& context)
 {
-    consumeOrFail(OPENPAREN);
+    consumeOrFailWithFlags(OPENPAREN, TreeBuilder::DontBuildStrings);
     if (match(CLOSEPAREN)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         return context.createArguments();
     }
     TreeExpression firstArg = parseAssignmentExpression(context);
@@ -1959,7 +1964,7 @@ template <class TreeBuilder> TreeArguments JSParser::parseArguments(TreeBuilder&
     TreeArgumentsList argList = context.createArgumentsList(firstArg);
     TreeArgumentsList tail = argList;
     while (match(COMMA)) {
-        next();
+        next(TreeBuilder::DontBuildStrings);
         TreeExpression arg = parseAssignmentExpression(context);
         failIfFalse(arg);
         tail = context.createArgumentsList(tail, arg);
@@ -2033,9 +2038,9 @@ template <class TreeBuilder> TreeExpression JSParser::parseMemberExpression(Tree
         case DOT: {
             m_nonTrivialExpressionCount++;
             int expressionEnd = lastTokenEnd();
-            next(Lexer::IgnoreReservedWords);
+            next(Lexer::IgnoreReservedWords | TreeBuilder::DontBuildKeywords);
             matchOrFail(IDENT);
-            base = context.createDotAccess(base, *m_token.m_data.ident, expressionStart, expressionEnd, tokenEnd());
+            base = context.createDotAccess(base, m_token.m_data.ident, expressionStart, expressionEnd, tokenEnd());
             next();
             break;
         }

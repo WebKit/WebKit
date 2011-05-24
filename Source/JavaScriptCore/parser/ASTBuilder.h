@@ -109,6 +109,8 @@ public:
     static const bool CreatesAST = true;
     static const bool NeedsFreeVariableInfo = true;
     static const bool CanUseFunctionCache = true;
+    static const int  DontBuildKeywords = 0;
+    static const int  DontBuildStrings = 0;
 
     ExpressionNode* makeBinaryNode(int token, std::pair<ExpressionNode*, BinaryOpInfo>, std::pair<ExpressionNode*, BinaryOpInfo>);
     ExpressionNode* makeFunctionCallNode(ExpressionNode* func, ArgumentsNode* args, int start, int divot, int end);
@@ -209,9 +211,9 @@ public:
         return node;
     }
 
-    ExpressionNode* createDotAccess(ExpressionNode* base, const Identifier& property, int start, int divot, int end)
+    ExpressionNode* createDotAccess(ExpressionNode* base, const Identifier* property, int start, int divot, int end)
     {
-        DotAccessorNode* node = new (m_globalData) DotAccessorNode(m_globalData, base, property);
+        DotAccessorNode* node = new (m_globalData) DotAccessorNode(m_globalData, base, *property);
         setExceptionLocation(node, start, divot, end);
         return node;
     }

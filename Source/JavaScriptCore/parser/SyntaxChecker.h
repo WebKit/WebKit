@@ -26,6 +26,7 @@
 #ifndef SyntaxChecker_h
 #define SyntaxChecker_h
 
+#include "Lexer.h"
 #include <yarr/YarrSyntaxChecker.h>
 
 namespace JSC {
@@ -113,6 +114,8 @@ public:
     static const bool CreatesAST = false;
     static const bool NeedsFreeVariableInfo = false;
     static const bool CanUseFunctionCache = true;
+    static const unsigned DontBuildKeywords = Lexer::DontBuildKeywords;
+    static const unsigned DontBuildStrings = Lexer::DontBuildStrings;
 
     int createSourceElements() { return 1; }
     ExpressionType makeFunctionCallNode(int, int, int, int, int) { return CallExpr; }
@@ -139,7 +142,7 @@ public:
     ExpressionType createBoolean(bool) { return BoolExpr; }
     ExpressionType createNull() { return NullExpr; }
     ExpressionType createBracketAccess(ExpressionType, ExpressionType, bool, int, int, int) { return BracketExpr; }
-    ExpressionType createDotAccess(ExpressionType, const Identifier&, int, int, int) { return DotExpr; }
+    ExpressionType createDotAccess(ExpressionType, const Identifier*, int, int, int) { return DotExpr; }
     ExpressionType createRegExp(const Identifier& pattern, const Identifier&, int) { return Yarr::checkSyntax(pattern.ustring()) ? 0 : RegExpExpr; }
     ExpressionType createNewExpr(ExpressionType, int, int, int, int) { return NewExpr; }
     ExpressionType createNewExpr(ExpressionType, int, int) { return NewExpr; }
@@ -153,9 +156,9 @@ public:
     int createArgumentsList(int, int) { return 1; }
     template <bool complete> Property createProperty(const Identifier* name, int, PropertyNode::Type type)
     {
-        ASSERT(name);
         if (!complete)
             return Property(type);
+        ASSERT(name);
         return Property(name, type);
     }
     template <bool complete> Property createProperty(JSGlobalData* globalData, double name, int, PropertyNode::Type type)

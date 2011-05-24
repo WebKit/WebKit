@@ -1,3 +1,43 @@
+2011-05-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Avoid creating unnecessary identifiers and strings in the syntax checker
+        https://bugs.webkit.org/show_bug.cgi?id=61378
+
+        Selectively tell the lexer that there are some places it does not need to
+        do the real work of creating Identifiers for IDENT and STRING tokens.
+
+        Make parseString and parseIdentifier templatized on whether they should
+        do real work, or merely validate the tokens.
+
+        SunSpider --parse-only reports ~5-8% win depending on hardware.
+
+        * parser/ASTBuilder.h:
+        (JSC::ASTBuilder::createDotAccess):
+        * parser/JSParser.cpp:
+        (JSC::JSParser::next):
+        (JSC::JSParser::consume):
+        (JSC::JSParser::parseVarDeclarationList):
+        (JSC::JSParser::parseConstDeclarationList):
+        (JSC::JSParser::parseExpression):
+        (JSC::JSParser::parseAssignmentExpression):
+        (JSC::JSParser::parseConditionalExpression):
+        (JSC::JSParser::parseBinaryExpression):
+        (JSC::JSParser::parseProperty):
+        (JSC::JSParser::parseObjectLiteral):
+        (JSC::JSParser::parseArrayLiteral):
+        (JSC::JSParser::parseArguments):
+        (JSC::JSParser::parseMemberExpression):
+        * parser/Lexer.cpp:
+        (JSC::Lexer::parseIdentifier):
+        (JSC::Lexer::parseString):
+        (JSC::Lexer::lex):
+        * parser/Lexer.h:
+        * parser/SyntaxChecker.h:
+        (JSC::SyntaxChecker::createDotAccess):
+        (JSC::SyntaxChecker::createProperty):
+
 2011-05-23  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Mark Rowe.

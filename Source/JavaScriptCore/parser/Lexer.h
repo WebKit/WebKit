@@ -52,8 +52,12 @@ namespace JSC {
         bool isReparsing() const { return m_isReparsing; }
 
         // Functions for the parser itself.
-        enum LexType { IdentifyReservedWords, IgnoreReservedWords };
-        JSTokenType lex(JSTokenData* lvalp, JSTokenInfo* llocp, LexType, bool strictMode);
+        enum LexType {
+            IgnoreReservedWords = 1, 
+            DontBuildStrings = 2,
+            DontBuildKeywords = 4
+        };
+        JSTokenType lex(JSTokenData* lvalp, JSTokenInfo* llocp, unsigned, bool strictMode);
         bool nextTokenIsColon();
         int lineNumber() const { return m_lineNumber; }
         void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
@@ -109,8 +113,8 @@ namespace JSC {
 
         ALWAYS_INLINE bool lastTokenWasRestrKeyword() const;
 
-        ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, LexType);
-        ALWAYS_INLINE bool parseString(JSTokenData* lvalp, bool strictMode);
+        template <bool shouldBuildIdentifiers> ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, unsigned);
+        template <bool shouldBuildStrings> ALWAYS_INLINE bool parseString(JSTokenData* lvalp, bool strictMode);
         ALWAYS_INLINE void parseHex(double& returnValue);
         ALWAYS_INLINE bool parseOctal(double& returnValue);
         ALWAYS_INLINE bool parseDecimal(double& returnValue);
