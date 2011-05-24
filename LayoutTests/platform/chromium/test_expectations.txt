@@ -4137,3 +4137,7 @@ BUGWK61342 MAC : fast/dom/vertical-scrollbar-in-rtl.html = TEXT
 BUGWK61342 MAC : fast/events/node-event-anchor-lock.html = TEXT
 BUGWK61342 MAC : fast/events/scroll-after-click-on-tab-index.html = TEXT
 BUGWK61342 MAC : fast/events/scrollbar-double-click.html = TEXT
+
+// New tests added in r87121
+BUGWK61169 : css3/images/optimize-contrast-canvas.html = IMAGE
+BUGWK61169 : css3/images/optimize-contrast-image.html = IMAGE

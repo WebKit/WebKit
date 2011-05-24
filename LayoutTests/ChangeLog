@@ -1,3 +1,12 @@
+2011-05-24  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed.
+
+        Chromium test expectations update.
+        https://bugs.webkit.org/show_bug.cgi?id=61169
+
+        * platform/chromium/test_expectations.txt: Marked optimize-contrast tests as IMAGE failure, BUGWK61169.
+
 2011-05-24  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Andreas Kling.
