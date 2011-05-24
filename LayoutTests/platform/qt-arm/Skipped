@@ -33,6 +33,9 @@ sputnik/Conformance/07_Lexical_Conventions/7.8_Literals/7.8.5_Regular_Expression
 storage/change-version-handle-reuse.html
 storage/change-version-no-crash-on-preflight-failure.html
 
+# Failing tests because of missing anti-aliased fonts
+transitions/move-after-transition.html
+
 # Failing tests
 animations/3d/change-transform-in-end-event.html
 animations/3d/state-at-end-event-transform.html
