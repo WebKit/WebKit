@@ -1,3 +1,14 @@
+2011-05-24  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Move code to discover if a CTFont has vertical glyphs out of SimpleFontData::platformInit()
+        https://bugs.webkit.org/show_bug.cgi?id=61392
+
+        * platform/graphics/mac/SimpleFontDataMac.mm:
+        (WebCore::fontHasVerticalGlyphs): Moved code here...
+        (WebCore::SimpleFontData::platformInit): ...from here.
+
 2011-05-24  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.

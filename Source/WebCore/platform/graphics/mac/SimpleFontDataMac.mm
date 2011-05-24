@@ -58,6 +58,19 @@ namespace WebCore {
 const float smallCapsFontSizeMultiplier = 0.7f;
 static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return x / unitsPerEm; }
 
+static bool fontHasVerticalGlyphs(CTFontRef ctFont)
+{
+    // The check doesn't look neat but this is what AppKit does for vertical writing...
+    RetainPtr<CFArrayRef> tableTags(AdoptCF, CTFontCopyAvailableTables(ctFont, kCTFontTableOptionExcludeSynthetic));
+    CFIndex numTables = CFArrayGetCount(tableTags.get());
+    for (CFIndex index = 0; index < numTables; ++index) {
+        CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tableTags.get(), index);
+        if (tag == kCTFontTableVhea || tag == kCTFontTableVORG)
+            return true;
+    }
+    return false;
+}
+
 static bool initFontData(SimpleFontData* fontData)
 {
     if (!fontData->platformData().cgFont())
@@ -212,18 +225,8 @@ void SimpleFontData::platformInit()
         descent = 3;
     }
     
-    if (platformData().orientation() == Vertical && !isTextOrientationFallback()) {
-        // The check doesn't look neat but this is what AppKit does for vertical writing...
-        RetainPtr<CFArrayRef> tableTags(AdoptCF, CTFontCopyAvailableTables(m_platformData.ctFont(), kCTFontTableOptionExcludeSynthetic));
-        CFIndex numTables = CFArrayGetCount(tableTags.get());
-        for (CFIndex index = 0; index < numTables; ++index) {
-            CTFontTableTag tag = (CTFontTableTag)(uintptr_t)CFArrayGetValueAtIndex(tableTags.get(), index);
-            if (tag == kCTFontTableVhea || tag == kCTFontTableVORG) {
-                m_hasVerticalGlyphs = true;
-                break;
-            }
-        }
-    }
+    if (platformData().orientation() == Vertical && !isTextOrientationFallback())
+        m_hasVerticalGlyphs = fontHasVerticalGlyphs(m_platformData.ctFont());
 
     float xHeight;
 
