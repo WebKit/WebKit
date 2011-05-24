@@ -1,3 +1,15 @@
+2011-05-24  Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Andres Kling.
+
+        JSAudioContextCustom doesn't encode errors
+        https://bugs.webkit.org/show_bug.cgi?id=61357
+
+        Fix AudioContext return values
+
+        * bindings/js/JSAudioContextCustom.cpp:
+        (WebCore::JSAudioContextConstructor::constructJSAudioContext):
+
 2011-05-24  Rob Buis  <rbuis@rim.com>
 
         Rubber-stamped by Dirk Schulze.

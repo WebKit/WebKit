@@ -52,14 +52,14 @@ EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(
 {
     JSAudioContextConstructor* jsConstructor = static_cast<JSAudioContextConstructor*>(exec->callee());
     if (!jsConstructor)
-      return throwError(exec, createReferenceError(exec, "AudioContext constructor callee is unavailable"));
+        return throwVMError(exec, createReferenceError(exec, "AudioContext constructor callee is unavailable"));
 
     ScriptExecutionContext* scriptExecutionContext = jsConstructor->scriptExecutionContext();
     if (!scriptExecutionContext)
-      return throwError(exec, createReferenceError(exec, "AudioContext constructor script execution context is unavailable"));
+        return throwVMError(exec, createReferenceError(exec, "AudioContext constructor script execution context is unavailable"));
         
     if (!scriptExecutionContext->isDocument())
-      return throwError(exec, createReferenceError(exec, "AudioContext constructor called in a script execution context which is not a document"));
+        return throwVMError(exec, createReferenceError(exec, "AudioContext constructor called in a script execution context which is not a document"));
 
     Document* document = static_cast<Document*>(scriptExecutionContext);
 
@@ -72,7 +72,7 @@ EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(
         // Constructor for offline (render-target) AudioContext which renders into an AudioBuffer.
         // new AudioContext(in unsigned long numberOfChannels, in unsigned long numberOfFrames, in float sampleRate);
         if (exec->argumentCount() < 3)
-            return throwError(exec, createSyntaxError(exec, "Not enough arguments"));
+            return throwVMError(exec, createSyntaxError(exec, "Not enough arguments"));
 
         unsigned numberOfChannels = exec->argument(0).toInt32(exec);
         unsigned numberOfFrames = exec->argument(1).toInt32(exec);
@@ -82,7 +82,7 @@ EncodedJSValue JSC_HOST_CALL JSAudioContextConstructor::constructJSAudioContext(
     }
 
     if (!audioContext.get())
-        return throwError(exec, createReferenceError(exec, "Error creating AudioContext"));
+        return throwVMError(exec, createReferenceError(exec, "Error creating AudioContext"));
 
     return JSValue::encode(asObject(toJS(exec, jsConstructor->globalObject(), audioContext.get())));
 }
