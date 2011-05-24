@@ -8,3 +8,4 @@ Second mouse up: FAIL - expected selection to be range but was caret
 Third mouse down: FAIL - expected selection to be range but was caret
 Third mouse up: FAIL - expected selection to be range but was caret
 Done.
+

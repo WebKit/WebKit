@@ -1,5 +1,16 @@
 2011-05-23  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Rebaselines work better if we had the new lines at the end of each file.
+
+        * platform/gtk/fast/events/selectstart-by-double-triple-clicks-expected.txt:
+        * platform/gtk/fast/events/selectstart-by-drag-expected.txt:
+        * platform/qt/fast/events/selectstart-by-double-triple-clicks-expected.txt:
+        * platform/qt/fast/events/selectstart-by-drag-expected.txt:
+        * platform/qt/fast/events/selectstart-by-single-click-with-shift-expected.txt:
+        * platform/win/fast/events/selectstart-by-drag-expected.txt:
+
+2011-05-23  Ryosuke Niwa  <rniwa@webkit.org>
+
         Check in failing test expectations after r87096.
         They are tracked by the bugs 61319, 61320, and 61322.
 

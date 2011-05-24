@@ -11,3 +11,4 @@ Moving to the right again: FAIL - expected selection to be range but was caret
 Mouse down on the right: PASS
 Moving to the left: FAIL - expected selection to be range but was caret
 Done.
+

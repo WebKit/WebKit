@@ -8,3 +8,4 @@ Second mouse up: PASS
 Third mouse down: FAIL - expected 3 events but got 2 events
 Third mouse up: FAIL - expected 3 events but got 2 events
 Done.
+

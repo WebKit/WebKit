@@ -7,3 +7,4 @@ Moving to the right: PASS
 Second mouse down: FAIL - expected selection to be range but was caret
 Second mouse up: FAIL - expected selection to be range but was caret
 Done.
+
