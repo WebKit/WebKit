@@ -1,3 +1,26 @@
+2011-05-23  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61306
+
+        The begin characters optimization currently has issues (#61129),
+        and does not appear to still be a performance win. The prudent
+        next step seems to be to disable while we ascertain whether this
+        is still a useful performance optimization.
+
+        * yarr/YarrInterpreter.cpp:
+        (JSC::Yarr::Interpreter::matchDisjunction):
+        (JSC::Yarr::Interpreter::interpret):
+        * yarr/YarrInterpreter.h:
+        (JSC::Yarr::BytecodePattern::BytecodePattern):
+        * yarr/YarrPattern.cpp:
+        (JSC::Yarr::YarrPatternConstructor::YarrPatternConstructor):
+        (JSC::Yarr::YarrPattern::compile):
+        (JSC::Yarr::YarrPattern::YarrPattern):
+        * yarr/YarrPattern.h:
+        (JSC::Yarr::YarrPattern::reset):
+
 2011-05-23  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
