@@ -1,3 +1,106 @@
+2011-05-23  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Chromium Mac: Use ScrollAnimatorMac.mm for overlay scrollbar support
+        https://bugs.webkit.org/show_bug.cgi?id=59753
+
+        No new tests. Just forking ScrollAnimatorMac to ScrollAnimatorChromiumMac.
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/ScrollAnimator.cpp:
+        * platform/chromium/ScrollAnimatorChromiumMac.h: Added.
+        (WebCore::ScrollAnimatorChromiumMac::setIsDrawingIntoLayer):
+        (WebCore::ScrollAnimatorChromiumMac::isDrawingIntoLayer):
+        (WebCore::ScrollAnimatorChromiumMac::haveScrolledSincePageLoad):
+        * platform/chromium/ScrollAnimatorChromiumMac.mm: Added. Forked from ScrollAnimatorMac and replaced all instances of ScrollAnimatorMac with ScrollAnimatorChromiumMac and ScrollbarThemeMac with ScrollbarThemeChromiumMac. Removed the ENABLE(SMOOTH_SCROLLING) around the file.
+        (abs):
+        (-[ScrollAnimationHelperDelegate initWithScrollAnimator:WebCore::]):
+        (-[ScrollAnimationHelperDelegate scrollAnimatorDestroyed]):
+        (-[ScrollAnimationHelperDelegate bounds]):
+        (-[ScrollAnimationHelperDelegate _immediateScrollToPoint:]):
+        (-[ScrollAnimationHelperDelegate _pixelAlignProposedScrollPosition:]):
+        (-[ScrollAnimationHelperDelegate convertSizeToBase:]):
+        (-[ScrollAnimationHelperDelegate convertSizeFromBase:]):
+        (-[ScrollAnimationHelperDelegate convertSizeToBacking:]):
+        (-[ScrollAnimationHelperDelegate convertSizeFromBacking:]):
+        (-[ScrollAnimationHelperDelegate superview]):
+        (-[ScrollAnimationHelperDelegate documentView]):
+        (-[ScrollAnimationHelperDelegate window]):
+        (-[ScrollAnimationHelperDelegate _recursiveRecomputeToolTips]):
+        (-[ScrollbarPainterControllerDelegate initWithScrollAnimator:WebCore::]):
+        (-[ScrollbarPainterControllerDelegate scrollAnimatorDestroyed]):
+        (-[ScrollbarPainterControllerDelegate contentAreaRectForScrollerImpPair:]):
+        (-[ScrollbarPainterControllerDelegate inLiveResizeForScrollerImpPair:]):
+        (-[ScrollbarPainterControllerDelegate mouseLocationInContentAreaForScrollerImpPair:]):
+        (-[ScrollbarPainterControllerDelegate scrollerImpPair:convertContentPoint:toScrollerImp:]):
+        (-[ScrollbarPainterControllerDelegate scrollerImpPair:setContentAreaNeedsDisplayInRect:]):
+        (-[ScrollbarPainterControllerDelegate scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle:]):
+        (-[ScrollbarPartAnimation initWithScrollbarPainter:part:WebCore::scrollAnimator:WebCore::animateAlphaTo:duration:]):
+        (-[ScrollbarPartAnimation setCurrentProgress:]):
+        (-[ScrollbarPartAnimation scrollAnimatorDestroyed]):
+        (-[ScrollbarPainterDelegate initWithScrollAnimator:WebCore::]):
+        (-[ScrollbarPainterDelegate cancelAnimations]):
+        (-[ScrollbarPainterDelegate convertRectToBacking:]):
+        (-[ScrollbarPainterDelegate convertRectFromBacking:]):
+        (-[ScrollbarPainterDelegate layer]):
+        (-[ScrollbarPainterDelegate setUpAnimation:scrollerPainter:part:WebCore::animateAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:animateKnobAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:animateTrackAlphaTo:duration:]):
+        (-[ScrollbarPainterDelegate scrollerImp:overlayScrollerStateChangedTo:]):
+        (-[ScrollbarPainterDelegate scrollAnimatorDestroyed]):
+        (WebCore::ScrollAnimator::create):
+        (WebCore::ScrollAnimatorChromiumMac::ScrollAnimatorChromiumMac):
+        (WebCore::ScrollAnimatorChromiumMac::~ScrollAnimatorChromiumMac):
+        (WebCore::ScrollAnimatorChromiumMac::scroll):
+        (WebCore::ScrollAnimatorChromiumMac::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollAnimatorChromiumMac::adjustScrollXPositionIfNecessary):
+        (WebCore::ScrollAnimatorChromiumMac::adjustScrollYPositionIfNecessary):
+        (WebCore::ScrollAnimatorChromiumMac::adjustScrollPositionIfNecessary):
+        (WebCore::ScrollAnimatorChromiumMac::immediateScrollToPoint):
+        (WebCore::ScrollAnimatorChromiumMac::immediateScrollByDeltaX):
+        (WebCore::ScrollAnimatorChromiumMac::immediateScrollByDeltaY):
+        (WebCore::ScrollAnimatorChromiumMac::notityPositionChanged):
+        (WebCore::ScrollAnimatorChromiumMac::contentAreaWillPaint):
+        (WebCore::ScrollAnimatorChromiumMac::mouseEnteredContentArea):
+        (WebCore::ScrollAnimatorChromiumMac::mouseExitedContentArea):
+        (WebCore::ScrollAnimatorChromiumMac::mouseMovedInContentArea):
+        (WebCore::ScrollAnimatorChromiumMac::willStartLiveResize):
+        (WebCore::ScrollAnimatorChromiumMac::contentsResized):
+        (WebCore::ScrollAnimatorChromiumMac::willEndLiveResize):
+        (WebCore::ScrollAnimatorChromiumMac::contentAreaDidShow):
+        (WebCore::ScrollAnimatorChromiumMac::contentAreaDidHide):
+        (WebCore::ScrollAnimatorChromiumMac::didBeginScrollGesture):
+        (WebCore::ScrollAnimatorChromiumMac::didEndScrollGesture):
+        (WebCore::ScrollAnimatorChromiumMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorChromiumMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorChromiumMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorChromiumMac::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollAnimatorChromiumMac::cancelAnimations):
+        (WebCore::elasticDeltaForTimeDelta):
+        (WebCore::reboundDeltaForElasticDelta):
+        (WebCore::elasticDeltaForReboundDelta):
+        (WebCore::scrollWheelMultiplier):
+        (WebCore::ScrollAnimatorChromiumMac::handleWheelEvent):
+        (WebCore::ScrollAnimatorChromiumMac::handleGestureEvent):
+        (WebCore::ScrollAnimatorChromiumMac::pinnedInDirection):
+        (WebCore::ScrollAnimatorChromiumMac::allowsVerticalStretching):
+        (WebCore::ScrollAnimatorChromiumMac::allowsHorizontalStretching):
+        (WebCore::ScrollAnimatorChromiumMac::smoothScrollWithEvent):
+        (WebCore::ScrollAnimatorChromiumMac::beginScrollGesture):
+        (WebCore::ScrollAnimatorChromiumMac::endScrollGesture):
+        (WebCore::ScrollAnimatorChromiumMac::snapRubberBand):
+        (WebCore::roundTowardZero):
+        (WebCore::roundToDevicePixelTowardZero):
+        (WebCore::ScrollAnimatorChromiumMac::snapRubberBandTimerFired):
+        (WebCore::ScrollAnimatorChromiumMac::startScrollbarPaintTimer):
+        (WebCore::ScrollAnimatorChromiumMac::scrollbarPaintTimerIsActive):
+        (WebCore::ScrollAnimatorChromiumMac::stopScrollbarPaintTimer):
+        (WebCore::ScrollAnimatorChromiumMac::initialScrollbarPaintTimerFired):
+        (WebCore::ScrollAnimatorChromiumMac::setVisibleScrollerThumbRect):
+        * platform/graphics/IntPoint.h:
+
 2011-05-22  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Ryosuke Niwa.
