@@ -4174,3 +4174,10 @@ BUGCR83682 WIN LINUX : fast/events/selectstart-by-double-triple-clicks.html = TE
 BUGCR83682 WIN LINUX : fast/events/selectstart-by-drag.html = TEXT
 
 BUGCR83683 : fast/dom/HTMLLinkElement/prerender.html = TEXT
+
+// Regression from webkit r87118
+BUGWK61342 MAC : fast/repaint/fixed-move-after-keyboard-scroll.html = IMAGE+TEXT
+BUGWK61342 MAC : fast/dom/vertical-scrollbar-in-rtl.html = TEXT
+BUGWK61342 MAC : fast/events/node-event-anchor-lock.html = TEXT
+BUGWK61342 MAC : fast/events/scroll-after-click-on-tab-index.html = TEXT
+BUGWK61342 MAC : fast/events/scrollbar-double-click.html = TEXT
