@@ -1160,6 +1160,7 @@ SET(WebCore_SOURCES
     platform/network/BlobRegistryImpl.cpp
     platform/network/BlobResourceHandle.cpp
     platform/network/Credential.cpp
+    platform/network/ContentTypeParser.cpp
     platform/network/DataURL.cpp
     platform/network/FormDataBuilder.cpp
     platform/network/FormData.cpp

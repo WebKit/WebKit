@@ -2,6 +2,13 @@
 
         [EFL] Build fix.
 
+        * CMakeLists.txt: Also build platform/network/ContentTypeParser.cpp,
+        added by r86289.
+
+2011-05-24  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Build fix.
+
         * bridge/runtime_root.cpp: Include <heap/Weak.h> instead of
         <JavaScriptCore/Weak.h>.
 
