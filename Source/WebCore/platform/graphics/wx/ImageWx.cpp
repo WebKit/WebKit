@@ -179,8 +179,6 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& dst, const FloatR
 
 void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& srcRect, const AffineTransform& patternTransform, const FloatPoint& phase, ColorSpace, CompositeOperator, const FloatRect& dstRect)
 {
-    
-
 #if USE(WXGC)
     wxGCDC* context = (wxGCDC*)ctxt->platformContext();
     wxGraphicsBitmap* bitmap = nativeImageForCurrentFrame();
@@ -195,33 +193,32 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& srcRect, const A
     ctxt->save();
     ctxt->clip(IntRect(dstRect.x(), dstRect.y(), dstRect.width(), dstRect.height()));
     
-    float currentW = 0;
-    float currentH = 0;
+    float adjustedX = 0;
+    float adjustedY = 0;
+    
+    adjustedX = phase.x() - dstRect.x() *
+                      narrowPrecisionToFloat(patternTransform.a());
+    adjustedY = (phase.y() - dstRect.y() *
+                      narrowPrecisionToFloat(patternTransform.d()));
     
 #if USE(WXGC)
     wxGraphicsContext* gc = context->GetGraphicsContext();
-
-    float adjustedX = phase.x() + srcRect.x() *
-                      narrowPrecisionToFloat(patternTransform.a());
-    float adjustedY = phase.y() + srcRect.y() *
-                      narrowPrecisionToFloat(patternTransform.d());
-                      
     gc->ConcatTransform(patternTransform);
 #else
     wxMemoryDC mydc;
     mydc.SelectObject(*bitmap);
 #endif
 
-    wxPoint origin(context->GetDeviceOrigin());
-    wxSize clientSize(context->GetSize());
+    float currentW = adjustedX;
+    float currentH = adjustedY;
 
-    while ( currentW < dstRect.width()  && currentW < clientSize.x - origin.x ) {
-        while ( currentH < dstRect.height() && currentH < clientSize.y - origin.y) {
+    while (currentW <= dstRect.x() + dstRect.width()) {
+        while (currentH <= dstRect.y() + dstRect.height()) {
 #if USE(WXGC)
 #if wxCHECK_VERSION(2,9,0)
-            gc->DrawBitmap(*bitmap, adjustedX + currentW, adjustedY + currentH, (wxDouble)srcRect.width(), (wxDouble)srcRect.height());
+            gc->DrawBitmap(*bitmap, currentW, currentH, (wxDouble)srcRect.width(), (wxDouble)srcRect.height());
 #else
-            gc->DrawGraphicsBitmap(*bitmap, adjustedX + currentW, adjustedY + currentH, (wxDouble)srcRect.width(), (wxDouble)srcRect.height());
+            gc->DrawGraphicsBitmap(*bitmap, currentW, currentH, (wxDouble)srcRect.width(), (wxDouble)srcRect.height());
 #endif
 #else
             context->Blit((wxCoord)dstRect.x() + currentW, (wxCoord)dstRect.y() + currentH,  
@@ -231,7 +228,7 @@ void Image::drawPattern(GraphicsContext* ctxt, const FloatRect& srcRect, const A
             currentH += srcRect.height();
         }
         currentW += srcRect.width();
-        currentH = 0;
+        currentH = adjustedY;
     }
     ctxt->restore();
 
