@@ -3104,6 +3104,8 @@ contains(DEFINES, ENABLE_GEOLOCATION=1) {
 
 contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
     HEADERS += \
+        dom/GeneratedStream.h \
+        dom/Stream.h \
         page/CallbackTask.h \
         page/MediaStreamClient.h \
         page/MediaStreamController.h \
@@ -3113,6 +3115,8 @@ contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
         page/NavigatorUserMediaSuccessCallback.h
 
     SOURCES += \
+        dom/GeneratedStream.cpp \
+        dom/Stream.cpp \
         page/MediaStreamController.cpp \
         page/MediaStreamFrameController.cpp
 

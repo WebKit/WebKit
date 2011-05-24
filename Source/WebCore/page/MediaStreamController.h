@@ -50,9 +50,11 @@ public:
     void unregisterFrameController(MediaStreamFrameController*);
 
     void generateStream(MediaStreamFrameController*, int requestId, GenerateStreamOptionFlags, PassRefPtr<SecurityOrigin>);
+    void stopGeneratedStream(const String& streamLabel);
 
     void streamGenerated(int requestId, const String& streamLabel);
     void streamGenerationFailed(int requestId, NavigatorUserMediaError::ErrorCode);
+    void streamFailed(const String& streamLabel);
 
 private:
     int registerRequest(int localRequestId, MediaStreamFrameController*);

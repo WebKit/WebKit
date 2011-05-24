@@ -51,6 +51,8 @@ public:
 
     class Scheduler {
     public:
+        virtual ~Scheduler() { }
+
         bool scheduleCallback(ScriptExecutionContext* context, PassRefPtr<ArgumentType> data)
         {
             if (context) {

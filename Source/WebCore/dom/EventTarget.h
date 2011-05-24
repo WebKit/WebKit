@@ -49,6 +49,7 @@ namespace WebCore {
     class EventSource;
     class FileReader;
     class FileWriter;
+    class GeneratedStream;
     class IDBDatabase;
     class IDBRequest;
     class IDBTransaction;
@@ -61,6 +62,7 @@ namespace WebCore {
     class ScriptExecutionContext;
     class SharedWorker;
     class SharedWorkerContext;
+    class Stream;
     class WebSocket;
     class Worker;
     class XMLHttpRequest;
@@ -145,6 +147,11 @@ namespace WebCore {
         virtual IDBRequest* toIDBRequest();
         virtual IDBTransaction* toIDBTransaction();
         virtual IDBVersionChangeRequest* toIDBVersionChangeRequest();
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+        virtual Stream* toStream();
+        virtual GeneratedStream* toGeneratedStream();
 #endif
 
         virtual ScriptExecutionContext* scriptExecutionContext() const = 0;

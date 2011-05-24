@@ -197,6 +197,7 @@ DOM_CLASSES = \
     FileWriterSync \
     FileSystemCallback \
     WebKitFlags \
+    GeneratedStream \
     Geolocation \
     Geoposition \
     HashChangeEvent \
@@ -357,6 +358,7 @@ DOM_CLASSES = \
     StorageInfoErrorCallback \
     StorageInfoQuotaCallback \
     StorageInfoUsageCallback \
+    Stream \
     StringCallback \
     SVGAElement \
     SVGAltGlyphElement \

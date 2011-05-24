@@ -112,6 +112,11 @@ void MediaStreamController::generateStream(MediaStreamFrameController* frameCont
     m_client->generateStream(controllerRequestId, flags, securityOrigin);
 }
 
+void MediaStreamController::stopGeneratedStream(const String& streamLabel)
+{
+    m_client->stopGeneratedStream(streamLabel);
+}
+
 void MediaStreamController::streamGenerated(int controllerRequestId, const String& streamLabel)
 {
     // Don't assert since the frame controller can have been destroyed while the request reply was coming back.
@@ -132,6 +137,13 @@ void MediaStreamController::streamGenerationFailed(int controllerRequestId, Navi
         m_requests.remove(controllerRequestId);
         request.frameController()->streamGenerationFailed(request.localId(), code);
     }
+}
+
+void MediaStreamController::streamFailed(const String& streamLabel)
+{
+    // Don't assert since the frame controller can have been destroyed by the time this is called.
+    if (m_streams.contains(streamLabel))
+        m_streams.get(streamLabel)->streamFailed(streamLabel);
 }
 
 } // namespace WebCore

@@ -27,9 +27,7 @@ module window {
         Conditional=MEDIA_STREAM,
         Callback=FunctionOnly
     ] NavigatorUserMediaSuccessCallback {
-        // FIXME: implement the correct type when the GeneratedStream class is available.
-        // boolean handleEvent(in GeneratedStream stream);
-        boolean handleEvent(in int dummy);
+        boolean handleEvent(in GeneratedStream stream);
     };
 
 }

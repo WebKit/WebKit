@@ -31,12 +31,12 @@
 
 namespace WebCore {
 
+class GeneratedStream;
+
 class NavigatorUserMediaSuccessCallback : public RefCounted<NavigatorUserMediaSuccessCallback> {
 public:
     virtual ~NavigatorUserMediaSuccessCallback() { }
-    // FIXME: set correct type when the GeneratedStream class is available.
-    // virtual bool handleEvent(GeneratedStream*) = 0;
-    virtual bool handleEvent(int dummy) = 0;
+    virtual bool handleEvent(GeneratedStream*) = 0;
 };
 
 } // namespace WebCore

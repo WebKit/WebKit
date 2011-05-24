@@ -30,6 +30,7 @@
 #include "DOMWindow.h"
 #include "Document.h"
 #include "Frame.h"
+#include "GeneratedStream.h"
 #include "MediaStreamController.h"
 #include "NavigatorUserMediaErrorCallback.h"
 #include "NavigatorUserMediaSuccessCallback.h"
@@ -42,9 +43,6 @@ namespace WebCore {
 class MediaStreamFrameController::Request : public RefCounted<Request> {
     WTF_MAKE_NONCOPYABLE(Request);
 public:
-    Request(ScriptExecutionContext* scriptExecutionContext)
-        : m_scriptExecutionContext(scriptExecutionContext) { }
-
     virtual ~Request() { }
 
     ScriptExecutionContext* scriptExecutionContext() const { return m_scriptExecutionContext; }
@@ -52,6 +50,10 @@ public:
     virtual bool isRecordedDataRequest() const { return false; }
 
     virtual void abort() = 0;
+
+protected:
+    Request(ScriptExecutionContext* scriptExecutionContext)
+        : m_scriptExecutionContext(scriptExecutionContext) { }
 
 private:
     // This is guaranteed to have the lifetime of the Frame, and it's only used to make
@@ -62,12 +64,12 @@ private:
 class MediaStreamFrameController::GenerateStreamRequest : public Request {
     WTF_MAKE_NONCOPYABLE(GenerateStreamRequest);
 public:
-    GenerateStreamRequest(ScriptExecutionContext* scriptExecutionContext,
-                          PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback,
-                          PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
-        : Request(scriptExecutionContext)
-        , m_successCallback(successCallback)
-        , m_errorCallback(errorCallback) { }
+    static PassRefPtr<GenerateStreamRequest> create(ScriptExecutionContext* scriptExecutionContext,
+                                                    PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback,
+                                                    PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
+    {
+        return adoptRef(new GenerateStreamRequest(scriptExecutionContext, successCallback, errorCallback));
+    }
 
     virtual ~GenerateStreamRequest() { }
 
@@ -76,7 +78,7 @@ public:
     virtual void abort()
     {
         if (m_errorCallback) {
-            RefPtr<NavigatorUserMediaError> error = adoptRef(new NavigatorUserMediaError(NavigatorUserMediaError::PERMISSION_DENIED));
+            RefPtr<NavigatorUserMediaError> error = NavigatorUserMediaError::create(NavigatorUserMediaError::PERMISSION_DENIED);
             // The callback itself is made with the JS callback's context, not with the frame's context.
             m_errorCallback->scheduleCallback(scriptExecutionContext(), error);
         }
@@ -86,6 +88,13 @@ public:
     PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback() const { return m_errorCallback; }
 
 private:
+    GenerateStreamRequest(ScriptExecutionContext* scriptExecutionContext,
+                          PassRefPtr<NavigatorUserMediaSuccessCallback> successCallback,
+                          PassRefPtr<NavigatorUserMediaErrorCallback> errorCallback)
+        : Request(scriptExecutionContext)
+        , m_successCallback(successCallback)
+        , m_errorCallback(errorCallback) { }
+
     RefPtr<NavigatorUserMediaSuccessCallback> m_successCallback;
     RefPtr<NavigatorUserMediaErrorCallback> m_errorCallback;
 };
@@ -152,7 +161,22 @@ MediaStreamController* MediaStreamFrameController::pageController() const
 void MediaStreamFrameController::unregister(StreamClient* client)
 {
     ASSERT(m_streams.contains(client->clientId()));
+
+    // Assuming we should stop any live streams when losing access to the embedder.
+    if (client->isGeneratedStream()) {
+        GeneratedStream* stream = static_cast<GeneratedStream*>(client);
+        if (stream->readyState() == Stream::LIVE)
+            stopGeneratedStream(stream->label());
+    }
+
     m_streams.remove(client->clientId());
+}
+
+Stream* MediaStreamFrameController::getStreamFromLabel(const String& label) const
+{
+    ASSERT(m_streams.contains(label));
+    ASSERT(m_streams.get(label)->isStream());
+    return static_cast<Stream*>(m_streams.get(label));
 }
 
 void MediaStreamFrameController::enterDetachedState()
@@ -253,7 +277,7 @@ void MediaStreamFrameController::generateStream(const String& options,
     }
 
     int requestId = m_requests.getNextId();
-    m_requests.add(requestId, adoptRef(new GenerateStreamRequest(scriptExecutionContext(), successCallback, errorCallback)));
+    m_requests.add(requestId, GenerateStreamRequest::create(scriptExecutionContext(), successCallback, errorCallback));
 
     if (!isClientAvailable()) {
         // This makes sure to call the error callback if provided.
@@ -264,33 +288,53 @@ void MediaStreamFrameController::generateStream(const String& options,
     pageController()->generateStream(this, requestId, flags, securityOrigin());
 }
 
+void MediaStreamFrameController::stopGeneratedStream(const String& streamLabel)
+{
+    ASSERT(m_streams.contains(streamLabel));
+    ASSERT(m_streams.get(streamLabel)->isGeneratedStream());
+
+    if (isClientAvailable())
+        pageController()->stopGeneratedStream(streamLabel);
+}
+
 void MediaStreamFrameController::streamGenerated(int requestId, const String& label)
 {
     // Don't assert since the request can have been aborted as a result of embedder detachment.
-    if (m_requests.contains(requestId)) {
-        ASSERT(m_requests.get(requestId)->isGenerateStreamRequest());
-        ASSERT(!label.isNull());
+    if (!m_requests.contains(requestId))
+        return;
 
-        // FIXME: create a GeneratedStream object and invoke the callback when the class is available.
-        m_requests.remove(requestId);
-    }
+    ASSERT(m_requests.get(requestId)->isGenerateStreamRequest());
+    ASSERT(!label.isNull());
+
+    RefPtr<GenerateStreamRequest> streamRequest = static_cast<GenerateStreamRequest*>(m_requests.get(requestId).get());
+    RefPtr<GeneratedStream> generatedStream = GeneratedStream::create(this, label);
+    m_streams.add(label, generatedStream.get());
+    m_requests.remove(requestId);
+    streamRequest->successCallback()->handleEvent(generatedStream.get());
 }
 
 void MediaStreamFrameController::streamGenerationFailed(int requestId, NavigatorUserMediaError::ErrorCode code)
 {
     // Don't assert since the request can have been aborted as a result of embedder detachment.
-    if (m_requests.contains(requestId)) {
-        ASSERT(m_requests.get(requestId)->isGenerateStreamRequest());
+    if (!m_requests.contains(requestId))
+        return;
 
-        RefPtr<GenerateStreamRequest> streamRequest = static_cast<GenerateStreamRequest*>(m_requests.get(requestId).get());
-        m_requests.remove(requestId);
+    ASSERT(m_requests.get(requestId)->isGenerateStreamRequest());
 
-        if (streamRequest->errorCallback()) {
-            RefPtr<NavigatorUserMediaError> error = adoptRef(new NavigatorUserMediaError(code));
-            streamRequest->errorCallback()->handleEvent(error.get());
-        }
+    RefPtr<GenerateStreamRequest> streamRequest = static_cast<GenerateStreamRequest*>(m_requests.get(requestId).get());
+    m_requests.remove(requestId);
+
+    if (streamRequest->errorCallback()) {
+        RefPtr<NavigatorUserMediaError> error = NavigatorUserMediaError::create(code);
+        streamRequest->errorCallback()->handleEvent(error.get());
     }
 }
+
+void MediaStreamFrameController::streamFailed(const String& label)
+{
+    getStreamFromLabel(label)->streamEnded();
+}
+
 
 } // namespace WebCore
 

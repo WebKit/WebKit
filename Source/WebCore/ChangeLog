@@ -1,3 +1,89 @@
+2011-05-24  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Media Stream API: adding Stream and GeneratedStream classes.
+        https://bugs.webkit.org/show_bug.cgi?id=56666
+
+        Add the code for the Stream and GeneratedStream classes and integrate it
+        with the existing stream generation requests.
+
+        Tests for the Media Stream API will be provided by the bug 56587.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * dom/DOMAllInOne.cpp:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toStream):
+        (WebCore::EventTarget::toGeneratedStream):
+        * dom/EventTarget.h:
+        * dom/GeneratedStream.cpp: Added.
+        (WebCore::GeneratedStream::DispatchUpdateTask::create):
+        (WebCore::GeneratedStream::DispatchUpdateTask::performTask):
+        (WebCore::GeneratedStream::DispatchUpdateTask::DispatchUpdateTask):
+        (WebCore::GeneratedStream::create):
+        (WebCore::GeneratedStream::GeneratedStream):
+        (WebCore::GeneratedStream::~GeneratedStream):
+        (WebCore::GeneratedStream::toGeneratedStream):
+        (WebCore::GeneratedStream::detachEmbedder):
+        (WebCore::GeneratedStream::stop):
+        (WebCore::GeneratedStream::onStop):
+        * dom/GeneratedStream.h: Added.
+        * dom/GeneratedStream.idl: Added.
+        * dom/Stream.cpp: Added.
+        (WebCore::Stream::create):
+        (WebCore::Stream::Stream):
+        (WebCore::Stream::~Stream):
+        (WebCore::Stream::toStream):
+        (WebCore::Stream::streamEnded):
+        (WebCore::Stream::scriptExecutionContext):
+        (WebCore::Stream::eventTargetData):
+        (WebCore::Stream::ensureEventTargetData):
+        * dom/Stream.h: Added.
+        (WebCore::Stream::readyState):
+        (WebCore::Stream::label):
+        (WebCore::Stream::refEventTarget):
+        (WebCore::Stream::derefEventTarget):
+        * dom/Stream.idl: Added.
+        * page/CallbackTask.h:
+        (WebCore::CallbackTask1::Scheduler::~Scheduler):
+        * page/MediaStreamClient.h:
+        * page/MediaStreamController.cpp:
+        (WebCore::MediaStreamController::stopGeneratedStream):
+        (WebCore::MediaStreamController::streamFailed):
+        * page/MediaStreamController.h:
+        * page/MediaStreamFrameController.cpp:
+        (WebCore::MediaStreamFrameController::Request::Request):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::create):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::abort):
+        (WebCore::MediaStreamFrameController::GenerateStreamRequest::GenerateStreamRequest):
+        (WebCore::MediaStreamFrameController::unregister):
+        (WebCore::MediaStreamFrameController::getStreamFromLabel):
+        (WebCore::MediaStreamFrameController::generateStream):
+        (WebCore::MediaStreamFrameController::stopGeneratedStream):
+        (WebCore::MediaStreamFrameController::streamGenerated):
+        (WebCore::MediaStreamFrameController::streamGenerationFailed):
+        (WebCore::MediaStreamFrameController::streamFailed):
+        * page/MediaStreamFrameController.h:
+        (WebCore::MediaStreamFrameController::StreamClient::StreamClient):
+        (WebCore::MediaStreamFrameController::StreamClient::isGeneratedStream):
+        * page/NavigatorUserMediaError.h:
+        (WebCore::NavigatorUserMediaError::create):
+        (WebCore::NavigatorUserMediaError::NavigatorUserMediaError):
+        * page/NavigatorUserMediaSuccessCallback.h:
+        * page/NavigatorUserMediaSuccessCallback.idl:
+
 2011-05-23  Antti Koivisto  <antti@apple.com>
 
         Reviewed by Oliver Hunt.

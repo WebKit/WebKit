@@ -22,42 +22,58 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamClient_h
-#define MediaStreamClient_h
+#include "config.h"
+#include "Stream.h"
 
 #if ENABLE(MEDIA_STREAM)
 
-#include <wtf/Forward.h>
+#include "Event.h"
+#include "ScriptExecutionContext.h"
 
 namespace WebCore {
 
-class SecurityOrigin;
+PassRefPtr<Stream> Stream::create(MediaStreamFrameController* frameController, const String& label)
+{
+    return adoptRef(new Stream(frameController, label));
+}
 
-enum GenerateStreamOptionFlag {
-    GenerateStreamRequestAudio = 1,
-    GenerateStreamRequestVideoFacingUser = 1 << 1,
-    GenerateStreamRequestVideoFacingEnvironment = 1 << 2,
-};
+Stream::Stream(MediaStreamFrameController* frameController, const String& label, bool isGeneratedStream)
+    : StreamClient(frameController, label, isGeneratedStream)
+    , m_readyState(LIVE)
+{
+}
 
-typedef unsigned GenerateStreamOptionFlags;
+Stream::~Stream()
+{
+}
 
-class MediaStreamClient {
-public:
-    // Notify the embedder client about the page controller being destroyed.
-    virtual void mediaStreamDestroyed() = 0;
+Stream* Stream::toStream()
+{
+    return this;
+}
 
-    // Generate a new local stream.
-    virtual void generateStream(int requestId, GenerateStreamOptionFlags, PassRefPtr<SecurityOrigin>) = 0;
+void Stream::streamEnded()
+{
+    ASSERT(m_readyState != ENDED);
+    m_readyState = ENDED;
+    dispatchEvent(Event::create(eventNames().endedEvent, false, false));
+}
 
-    // Stop a generated stream.
-    virtual void stopGeneratedStream(const String& streamLabel) = 0;
+ScriptExecutionContext* Stream::scriptExecutionContext() const
+{
+    return mediaStreamFrameController() ? mediaStreamFrameController()->scriptExecutionContext() : 0;
+}
 
-protected:
-    virtual ~MediaStreamClient() { }
-};
+EventTargetData* Stream::eventTargetData()
+{
+    return &m_eventTargetData;
+}
+
+EventTargetData* Stream::ensureEventTargetData()
+{
+    return &m_eventTargetData;
+}
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
-
-#endif // MediaStreamClient_h

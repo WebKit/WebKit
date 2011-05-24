@@ -48,6 +48,7 @@
 #include "V8EventSource.h"
 #include "V8FileReader.h"
 #include "V8FileWriter.h"
+#include "V8GeneratedStream.h"
 #include "V8HTMLCollection.h"
 #include "V8HTMLDocument.h"
 #include "V8IDBDatabase.h"
@@ -64,6 +65,7 @@
 #include "V8Proxy.h"
 #include "V8SharedWorker.h"
 #include "V8SharedWorkerContext.h"
+#include "V8Stream.h"
 #include "V8StyleSheet.h"
 #include "V8WebSocket.h"
 #include "V8Worker.h"
@@ -447,6 +449,14 @@ v8::Handle<v8::Value> V8DOMWrapper::convertEventTargetToV8Object(EventTarget* ta
     if (AudioContext* audioContext = target->toAudioContext())
         return toV8(audioContext);
 #endif    
+
+#if ENABLE(MEDIA_STREAM)
+    if (GeneratedStream* generatedStream = target->toGeneratedStream())
+        return toV8(generatedStream);
+
+    if (Stream* stream = target->toStream())
+        return toV8(stream);
+#endif
 
     ASSERT(0);
     return notHandledByInterceptor();

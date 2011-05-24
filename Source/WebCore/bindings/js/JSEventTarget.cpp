@@ -100,6 +100,11 @@
 #include "FileReader.h"
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include "GeneratedStream.h"
+#include "Stream.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -187,6 +192,14 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, EventTarget* targ
 #if ENABLE(BLOB)
     if (FileReader* fileReader = target->toFileReader())
         return toJS(exec, globalObject, fileReader);
+#endif
+
+#if ENABLE(MEDIA_STREAM)
+    if (GeneratedStream* generatedStream = target->toGeneratedStream())
+        return toJS(exec, globalObject, generatedStream);
+
+    if (Stream* stream = target->toStream())
+        return toJS(exec, globalObject, stream);
 #endif
 
     ASSERT_NOT_REACHED();

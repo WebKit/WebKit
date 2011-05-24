@@ -132,6 +132,7 @@ IDL_BINDINGS += \
     dom/EventException.idl \
 #    dom/EventListener.idl \
 #    dom/EventTarget.idl \
+    dom/GeneratedStream.idl \
     dom/HashChangeEvent.idl \
     dom/KeyboardEvent.idl \
     dom/MouseEvent.idl \
@@ -152,6 +153,7 @@ IDL_BINDINGS += \
     dom/ProgressEvent.idl \
     dom/RangeException.idl \
     dom/Range.idl \
+    dom/Stream.idl \
     dom/StringCallback.idl \
     dom/Text.idl \
     dom/TextEvent.idl \

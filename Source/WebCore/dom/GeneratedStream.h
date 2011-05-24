@@ -22,42 +22,40 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef MediaStreamClient_h
-#define MediaStreamClient_h
+#ifndef GeneratedStream_h
+#define GeneratedStream_h
 
 #if ENABLE(MEDIA_STREAM)
 
+#include "Stream.h"
 #include <wtf/Forward.h>
 
 namespace WebCore {
 
-class SecurityOrigin;
-
-enum GenerateStreamOptionFlag {
-    GenerateStreamRequestAudio = 1,
-    GenerateStreamRequestVideoFacingUser = 1 << 1,
-    GenerateStreamRequestVideoFacingEnvironment = 1 << 2,
-};
-
-typedef unsigned GenerateStreamOptionFlags;
-
-class MediaStreamClient {
+class GeneratedStream : public Stream {
 public:
-    // Notify the embedder client about the page controller being destroyed.
-    virtual void mediaStreamDestroyed() = 0;
+    // FIXME: add audio and video tracks when available.
+    static PassRefPtr<GeneratedStream> create(MediaStreamFrameController*, const String& label);
+    virtual ~GeneratedStream();
 
-    // Generate a new local stream.
-    virtual void generateStream(int requestId, GenerateStreamOptionFlags, PassRefPtr<SecurityOrigin>) = 0;
+    void stop();
 
-    // Stop a generated stream.
-    virtual void stopGeneratedStream(const String& streamLabel) = 0;
+    // MediaStreamFrameController::StreamClient implementation.
+    virtual void detachEmbedder();
 
-protected:
-    virtual ~MediaStreamClient() { }
+    // EventTarget.
+    virtual GeneratedStream* toGeneratedStream();
+
+private:
+    GeneratedStream(MediaStreamFrameController*, const String& label);
+    class DispatchUpdateTask;
+    friend class DispatchUpdateTask;
+
+    void onStop();
 };
 
 } // namespace WebCore
 
 #endif // ENABLE(MEDIA_STREAM)
 
-#endif // MediaStreamClient_h
+#endif // GeneratedStream_h

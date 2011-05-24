@@ -25,6 +25,7 @@
 #ifndef NavigatorUserMediaError_h
 #define NavigatorUserMediaError_h
 
+#include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
 
 #if ENABLE(MEDIA_STREAM)
@@ -38,12 +39,18 @@ public:
         PERMISSION_DENIED = 1
     };
 
-    NavigatorUserMediaError(ErrorCode code) : m_code(code) { }
+    static PassRefPtr<NavigatorUserMediaError> create(ErrorCode code)
+    {
+        return adoptRef(new NavigatorUserMediaError(code));
+    }
+
     virtual ~NavigatorUserMediaError() { }
 
     ErrorCode code() const { return m_code; }
 
 private:
+    NavigatorUserMediaError(ErrorCode code) : m_code(code) { }
+
     ErrorCode m_code;
 };
 

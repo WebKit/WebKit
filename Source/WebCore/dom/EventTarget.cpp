@@ -205,6 +205,18 @@ IDBVersionChangeRequest* EventTarget::toIDBVersionChangeRequest()
 }
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+Stream* EventTarget::toStream()
+{
+    return 0;
+}
+
+GeneratedStream* EventTarget::toGeneratedStream()
+{
+    return 0;
+}
+#endif
+
 bool EventTarget::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     EventTargetData* d = ensureEventTargetData();

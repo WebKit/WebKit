@@ -38,12 +38,14 @@
 namespace WebCore {
 
 class Frame;
+class GeneratedStream;
 class MediaStreamController;
 class NavigatorUserMediaErrorCallback;
 class NavigatorUserMediaSuccessCallback;
 class Page;
 class ScriptExecutionContext;
 class SecurityOrigin;
+class Stream;
 
 class MediaStreamFrameController {
     WTF_MAKE_NONCOPYABLE(MediaStreamFrameController);
@@ -101,16 +103,23 @@ public:
 
     class StreamClient : public ClientBase<String> {
     public:
-        StreamClient(MediaStreamFrameController* frameController, const String& label) : ClientBase<String>(frameController, label) { }
+        StreamClient(MediaStreamFrameController* frameController, const String& label, bool isGeneratedStream)
+            : ClientBase<String>(frameController, label)
+            , m_isGeneratedStream(isGeneratedStream) { }
+
         virtual ~StreamClient() { unregister(); }
 
         virtual bool isStream() const { return true; }
+
+        // Accessed by the destructor.
+        virtual bool isGeneratedStream() const { return m_isGeneratedStream; }
 
         // Stream has ended for some external reason.
         virtual void streamEnded() = 0;
 
     private:
         virtual void unregister() { unregisterClient(this); }
+        bool m_isGeneratedStream;
     };
 
     MediaStreamFrameController(Frame*);
@@ -130,6 +139,9 @@ public:
     // Create a new generated stream asynchronously with the provided options.
     void generateStream(const String& options, PassRefPtr<NavigatorUserMediaSuccessCallback>, PassRefPtr<NavigatorUserMediaErrorCallback>, ExceptionCode&);
 
+    // Stop a generated stream.
+    void stopGeneratedStream(const String& streamLabel);
+
     // --- Calls coming back from the controller. --- //
 
     // Report the generation of a new local stream.
@@ -137,6 +149,9 @@ public:
 
     // Report a failure in the generation of a new stream.
     void streamGenerationFailed(int requestId, NavigatorUserMediaError::ErrorCode);
+
+    // Report the end of a stream for external reasons.
+    void streamFailed(const String& streamLabel);
 
 private:
     class Request;
@@ -177,6 +192,7 @@ private:
 
     void unregister(StreamClient*);
     MediaStreamController* pageController() const;
+    Stream* getStreamFromLabel(const String&) const;
 
     RequestMap m_requests;
     StreamMap m_streams;
