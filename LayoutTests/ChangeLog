@@ -1,3 +1,14 @@
+2011-05-24  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] fast/workers/shared-worker-frame-lifecycle.html failed on Qt Bot
+        https://bugs.webkit.org/show_bug.cgi?id=34281
+
+        Remove the test case from skip list.
+
+        * platform/qt/Skipped:
+
 2011-05-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Adam Barth.

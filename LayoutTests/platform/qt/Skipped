@@ -475,9 +475,6 @@ fast/forms/menulist-width-change.html
 # https://bugs.webkit.org/show_bug.cgi?id=50152
 http/tests/websocket/tests/reload-crash.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=34281
-fast/workers/shared-worker-frame-lifecycle.html
-
 # Flaky Test: fast/events/tabindex-focus-blur-all.html
 # https://bugs.webkit.org/show_bug.cgi?id=52115
 fast/events/tabindex-focus-blur-all.html
