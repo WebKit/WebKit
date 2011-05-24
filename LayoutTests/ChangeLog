@@ -1,5 +1,20 @@
 2011-05-24  Lucas Forschler  <lforschler@apple.com>
 
+    Merged r87026.
+
+    2011-05-21  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9479926> REGRESSION (r82144): Icon overlaps text in Twitter message dialog
+        https://bugs.webkit.org/show_bug.cgi?id=61241
+
+        * fast/block/positioning/start-ignoring-before-expected.png: Added.
+        * fast/block/positioning/start-ignoring-before-expected.txt: Added.
+        * fast/block/positioning/start-ignoring-before.html: Added.
+
+2011-05-24  Lucas Forschler  <lforschler@apple.com>
+
     Merged r87009.
 
     2011-05-20  Simon Fraser  <simon.fraser@apple.com>
