@@ -253,6 +253,7 @@ fast/events/recorded-keydown-event.html
 fast/events/remove-child-onscroll.html
 fast/events/right-click-focus.html
 fast/events/scroll-after-click-on-tab-index.html
+fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 fast/events/scrollbar-double-click.html
 fast/events/select-element.html
 fast/events/select-onchange-crash.html

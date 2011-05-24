@@ -1,3 +1,10 @@
+2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip fast/events/scroll-in-scaled-page-with-overflow-hidden.html on Mac WebKit2
+        since WebKitTestRunner doesn't implement eventSender.mouseScrollBy yet (bug 42194).
+
+        * platform/mac-wk2/Skipped:
+
 2011-05-24  Alexey Proskuryakov  <ap@apple.com>
 
         Skip platform/mac/editing/input/maxlength.html - textInputController is not implemented.
