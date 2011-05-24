@@ -139,6 +139,12 @@ public:
         pruneLiveResources();
     }
 
+    void pruneToPercentage(float targetPercentLive)
+    {
+        PruneDeadResourcesToPercentage(targetPercentLive); // Prune dead first, in case it was "borrowing" capacity from live.
+        PruneLiveResourcesToPercentage(targetPercentLive);
+    }
+
     void setDeadDecodedDataDeletionInterval(double interval) { m_deadDecodedDataDeletionInterval = interval; }
     double deadDecodedDataDeletionInterval() const { return m_deadDecodedDataDeletionInterval; }
 
@@ -182,9 +188,15 @@ private:
 
     unsigned liveCapacity() const;
     unsigned deadCapacity() const;
-    
-    void pruneDeadResources(); // Flush decoded and encoded data from resources not referenced by Web pages.
-    void pruneLiveResources(); // Flush decoded data from resources still referenced by Web pages.
+
+    // pruneDead*() - Flush decoded and encoded data from resources not referenced by Web pages.
+    // pruneLive*() - Flush decoded data from resources still referenced by Web pages.
+    void pruneDeadResources(); // Automatically decide how much to prune.
+    void pruneLiveResources();
+    void PruneDeadResourcesToPercentage(float prunePercentage);
+    void PruneLiveResourcesToPercentage(float prunePercentage);
+    void pruneDeadResourcesToSize(unsigned targetSize);
+    void pruneLiveResourcesToSize(unsigned targetSize);
 
     bool makeResourcePurgeable(CachedResource*);
     void evict(CachedResource*);

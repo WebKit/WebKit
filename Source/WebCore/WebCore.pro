@@ -1021,6 +1021,7 @@ SOURCES += \
     platform/leveldb/LevelDBSlice.h \
     platform/LinkHash.cpp \
     platform/Logging.cpp \
+    platform/MemoryPressureHandler.cpp \
     platform/MIMETypeRegistry.cpp \
     platform/mock/DeviceOrientationClientMock.cpp \
     platform/mock/GeolocationClientMock.cpp \
@@ -1997,6 +1998,7 @@ HEADERS += \
     platform/LinkHash.h \
     platform/Logging.h \
     platform/Language.h \
+    platfory/MemoryPressureHandler.h \
     platform/MIMETypeRegistry.h \
     platform/network/AuthenticationChallengeBase.h \
     platform/network/AuthenticationClient.h \

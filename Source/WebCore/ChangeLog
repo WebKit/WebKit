@@ -1,3 +1,45 @@
+2011-05-24  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Improve handling in WebCore of low memory situations
+        https://bugs.webkit.org/show_bug.cgi?id=61222
+
+        Added new class, MemoryPressureHandler, to platform to respond to low
+        system memory events. Added Mac specific implementation that reduces the
+        page cache, NSURL cache, WebCore cache by half their current usage
+        and then garbage collects.  This can allow Safari to continue operating
+        in a low memory situation with minimal paging.
+        Split up prune operations in MemoryCache to allow for pruning to a
+        specific actual size to support this change.
+
+        No tests added as the functionality of WebKit wasn't changed.
+
+        * GNUmakefile.list.am:
+        * WebCore.exp.in:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * loader/cache/MemoryCache.cpp:
+        (WebCore::MemoryCache::pruneLiveResources):
+        (WebCore::MemoryCache::forcePruneLiveResources):
+        (WebCore::MemoryCache::pruneLiveResourcesToTarget):
+        (WebCore::MemoryCache::pruneDeadResources):
+        (WebCore::MemoryCache::forcePruneDeadResources):
+        (WebCore::MemoryCache::pruneDeadResourcesToTarget):
+        * loader/cache/MemoryCache.h:
+        (WebCore::MemoryCache::forcePrune):
+        * platform/MemoryPressureHandler.cpp: Added.
+        (WebCore::memoryPressureHandler):
+        (WebCore::MemoryPressureHandler::MemoryPressureHandler):
+        (WebCore::MemoryPressureHandler::install):
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+        * platform/MemoryPressureHandler.h: Added.
+        * platform/mac/MemoryPressureHandler.mm: Added.
+        (WebCore::MemoryPressureHandler::install):
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+
 2011-05-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

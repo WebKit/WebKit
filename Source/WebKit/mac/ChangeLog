@@ -1,3 +1,16 @@
+2011-05-24  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Improve handling in WebCore of low memory situations
+        https://bugs.webkit.org/show_bug.cgi?id=61222
+
+        Added call to enable memory pressure handling.
+
+        * WebView/WebView.mm:
+        (-[WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:]):
+        * WebView/WebViewInternal.h:
+
 2011-05-24  Jay Civelli  <jcivelli@chromium.org>
 
         Rubberstamped by David Kilzer.
