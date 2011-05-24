@@ -1,3 +1,38 @@
+2011-05-23  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Part of <rdar://problem/9434311> and https://bugs.webkit.org/show_bug.cgi?id=61334
+        Should shim a few SecKeychainItem* methods on SnowLeopard
+
+        In preparation for different WebProcess shims depending on platform, move the current
+        shim to its own files.
+        
+        * WebKit2.xcodeproj/project.pbxproj:
+        
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::initializeShim): For non-SnowLeopard platforms, call initializeSecItemShim().
+        
+        * WebProcess/mac/SecItemShimMethods.h: Added.
+        * WebProcess/mac/SecItemShimMethods.mm: Added. Actual webSecItem* methods moved from WebProcessMac.mm.
+        (WebKit::webSecItemCopyMatchingMainThread):
+        (WebKit::webSecItemCopyMatching):
+        (WebKit::webSecItemAddOnMainThread):
+        (WebKit::webSecItemAdd):
+        (WebKit::webSecItemUpdateOnMainThread):
+        (WebKit::webSecItemUpdate):
+        (WebKit::webSecItemDeleteOnMainThread):
+        (WebKit::webSecItemDelete):
+        (WebKit::initializeSecItemShim): Initialize the callbacks via WebKitWebProcessSecItemShimInitialize
+
+        * WebProcess/mac/WebProcessShim.h:
+        * WebProcess/mac/WebProcessShim.mm: Wrap all the actual code here in a !BUILDING_ON_SNOW_LEOPARD block
+        (WebKit::shimSecItemCopyMatching):
+        (WebKit::shimSecItemAdd):
+        (WebKit::shimSecItemUpdate):
+        (WebKit::shimSecItemDelete):
+        (WebKit::WebKitWebProcessSecItemShimInitialize):
+
 2011-05-23  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

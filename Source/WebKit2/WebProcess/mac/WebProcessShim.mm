@@ -33,28 +33,30 @@
 
 namespace WebKit {
 
-extern "C" void WebKitWebProcessShimInitialize(const WebProcessShimCallbacks&);
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
 
-static WebProcessShimCallbacks webProcessShimCallbacks;
+extern "C" void WebKitWebProcessSecItemShimInitialize(const WebProcessSecItemShimCallbacks&);
+
+static WebProcessSecItemShimCallbacks secItemShimCallbacks;
 
 static OSStatus shimSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
 {
-    return webProcessShimCallbacks.secItemCopyMatching(query, result);
+    return secItemShimCallbacks.secItemCopyMatching(query, result);
 }
 
 static OSStatus shimSecItemAdd(CFDictionaryRef query, CFTypeRef* result)
 {
-    return webProcessShimCallbacks.secItemAdd(query, result);
+    return secItemShimCallbacks.secItemAdd(query, result);
 }
 
 static OSStatus shimSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attributesToUpdate)
 {
-    return webProcessShimCallbacks.secItemUpdate(query, attributesToUpdate);
+    return secItemShimCallbacks.secItemUpdate(query, attributesToUpdate);
 }
 
 static OSStatus shimSecItemDelete(CFDictionaryRef query)
 {
-    return webProcessShimCallbacks.secItemDelete(query);
+    return secItemShimCallbacks.secItemDelete(query);
 }
 
 DYLD_INTERPOSE(shimSecItemCopyMatching, SecItemCopyMatching)
@@ -63,9 +65,11 @@ DYLD_INTERPOSE(shimSecItemUpdate, SecItemUpdate)
 DYLD_INTERPOSE(shimSecItemDelete, SecItemDelete)
 
 __attribute__((visibility("default")))
-void WebKitWebProcessShimInitialize(const WebProcessShimCallbacks& callbacks)
+void WebKitWebProcessSecItemShimInitialize(const WebProcessSecItemShimCallbacks& callbacks)
 {
-    webProcessShimCallbacks = callbacks;
+    secItemShimCallbacks = callbacks;
 }
+
+#endif // BUILDING_ON_SNOW_LEOPARD
 
 } // namespace WebKit
