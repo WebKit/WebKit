@@ -1,3 +1,20 @@
+2011-05-24  Matthew Delaney  <mdelaney@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Clamp coordinates to integers for canvas create/getImageData routines
+        https://bugs.webkit.org/show_bug.cgi?id=61135
+
+        Test: fast/canvas/canvas-getImageData-largeNonintegralDimensions.html
+
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::convertLogicalToDevice): clamp to ints
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createImageData):
+        (WebCore::CanvasRenderingContext2D::getImageData):
+        * platform/graphics/cg/ImageBufferDataCG.cpp:
+        (WebCore::ImageBufferData::getData):
+
 2011-05-24  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.

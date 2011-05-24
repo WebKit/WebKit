@@ -110,6 +110,10 @@ static void premultitplyScanline(void* data, size_t tileNumber)
 
 PassRefPtr<ByteArray> ImageBufferData::getData(const IntRect& rect, const IntSize& size, bool accelerateRendering, bool unmultiplied) const
 {
+    float area = 4.0f * rect.width() * rect.height();
+    if (area > static_cast<float>(std::numeric_limits<int>::max()))
+        return 0;
+
     RefPtr<ByteArray> result = ByteArray::create(rect.width() * rect.height() * 4);
     unsigned char* data = result->data();
     
