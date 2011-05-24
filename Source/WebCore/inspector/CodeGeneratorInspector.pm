@@ -416,11 +416,11 @@ sub generateBackendFunction
     my $function = shift;
 
     my $functionName = $function->signature->name;
-    my $fullQualifiedFunctionName = $interface->name . "_" . $function->signature->name;
-    my $fullQualifiedFunctionNameDot = $interface->name . "." . $function->signature->name;
+    my $fullQualifiedFunctionName = $interface->name . "_" . $functionName;
+    my $fullQualifiedFunctionNameDot = $interface->name . "." . $functionName;
 
-    push(@backendConstantDeclarations, "    static const char* ${fullQualifiedFunctionName}Cmd;");
-    push(@backendConstantDefinitions, "const char* ${backendClassName}::${fullQualifiedFunctionName}Cmd = \"${fullQualifiedFunctionNameDot}\";");
+    push(@backendConstantDeclarations, "        k${fullQualifiedFunctionName}Cmd,");
+    push(@backendConstantDefinitions, "    \"${fullQualifiedFunctionNameDot}\",");
 
     map($backendTypes{$_->type} = 1, @{$function->parameters}); # register required types
     my @inArgs = grep($_->direction eq "in", @{$function->parameters});
@@ -457,13 +457,15 @@ sub generateBackendFunction
     my $indent = "";
     if (scalar(@inArgs)) {
         push(@function, "    if (RefPtr<InspectorObject> paramsContainer = requestMessageObject->getObject(\"params\")) {");
+        push(@function, "        InspectorObject* paramsContainerPtr = paramsContainer.get();");
+        push(@function, "        InspectorArray* protocolErrorsPtr = protocolErrors.get();");
 
         foreach my $parameter (@inArgs) {
             my $name = $parameter->name;
             my $type = $parameter->type;
             my $typeString = camelCase($parameter->type);
             my $optional = $parameter->extendedAttributes->{"optional"} ? "true" : "false";
-            push(@function, "        " . typeTraits($type, "variable") . " in_$name = get$typeString(paramsContainer.get(), \"$name\", $optional, protocolErrors.get());");
+            push(@function, "        " . typeTraits($type, "variable") . " in_$name = get$typeString(paramsContainerPtr, \"$name\", $optional, protocolErrorsPtr);");
         }
         push(@function, "");
         $indent = "    ";
@@ -481,39 +483,50 @@ sub generateBackendFunction
         push(@function, "    } else");
         push(@function, "        protocolErrors->pushString(\"'params' property with type 'object' was not found.\");");
     }
-
     push(@function, "");
-    push(@function, "    // use InspectorFrontend as a marker of WebInspector availability");
-    push(@function, "");
-    push(@function, "    if (protocolErrors->length()) {");
-    push(@function, "        reportProtocolError(&callId, InvalidParams, protocolErrors);");
-    push(@function, "        return;");
-    push(@function, "    }");
-    push(@function, "");
-    push(@function, "    if (error.length()) {");
-    push(@function, "        reportProtocolError(&callId, ServerError, error);");
-    push(@function, "        return;");
-    push(@function, "    }");
-    push(@function, "");
-    push(@function, "    RefPtr<InspectorObject> responseMessage = InspectorObject::create();");
     push(@function, "    RefPtr<InspectorObject> result = InspectorObject::create();");
-    foreach my $parameter (@outArgs) {
-        my $offset = "        ";
-        # Don't add optional boolean parameter to the result unless it is "true"
-        if ($parameter->extendedAttributes->{"optional"} && $parameter->type eq "boolean") {
-            push(@function, $offset . "if (out_" . $parameter->name . ")");
-            $offset .= "    ";
+    if (scalar(@outArgs)) {
+        push(@function, "    if (!protocolErrors->length() && !error.length()) {");
+        foreach my $parameter (@outArgs) {
+            my $offset = "        ";
+            # Don't add optional boolean parameter to the result unless it is "true"
+            if ($parameter->extendedAttributes->{"optional"} && $parameter->type eq "boolean") {
+                push(@function, $offset . "if (out_" . $parameter->name . ")");
+                $offset .= "    ";
+            }
+            push(@function, $offset . "result->set" . typeTraits($parameter->type, "JSONType") . "(\"" . $parameter->name . "\", out_" . $parameter->name . ");");
         }
-        push(@function, $offset . "result->set" . typeTraits($parameter->type, "JSONType") . "(\"" . $parameter->name . "\", out_" . $parameter->name . ");");
+        push(@function, "    }");
     }
-    push(@function, "    responseMessage->setObject(\"result\", result);");
-    push(@function, "");
-    push(@function, "    responseMessage->setNumber(\"id\", callId);");
-    push(@function, "    if (m_inspectorFrontendChannel)");
-    push(@function, "        m_inspectorFrontendChannel->sendMessageToFrontend(responseMessage->toJSONString());");
+    push(@function, "    sendResponse(callId, result, protocolErrors, error);");
     push(@function, "}");
     push(@function, "");
     push(@backendMethodsImpl, @function);
+}
+
+sub generateBackendSendResponse
+{
+    my $sendResponse = << "EOF";
+
+void ${backendClassName}::sendResponse(long callId, PassRefPtr<InspectorObject> result, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError)
+{
+    if (protocolErrors->length()) {
+        reportProtocolError(&callId, InvalidParams, protocolErrors);
+        return;
+    }
+    if (invocationError.length()) {
+        reportProtocolError(&callId, ServerError, invocationError);
+        return;
+    }
+
+    RefPtr<InspectorObject> responseMessage = InspectorObject::create();
+    responseMessage->setObject("result", result);
+    responseMessage->setNumber("id", callId);
+    if (m_inspectorFrontendChannel)
+        m_inspectorFrontendChannel->sendMessageToFrontend(responseMessage->toJSONString());
+}    
+EOF
+    return split("\n", $sendResponse);
 }
 
 sub generateBackendReportProtocolError
@@ -567,7 +580,7 @@ sub generateArgumentGetters
     my $return  = typeTraits($type, "return") ? typeTraits($type, "return") : typeTraits($type, "param");
 
     my $typeString = camelCase($type);
-    push(@backendConstantDeclarations, "    $return get$typeString(InspectorObject* object, const String& name, bool optional, InspectorArray* protocolErrors);");
+    push(@backendConstantDeclarations, "    static $return get$typeString(InspectorObject* object, const String& name, bool optional, InspectorArray* protocolErrors);");
     my $getterBody = << "EOF";
 
 $return InspectorBackendDispatcher::get$typeString(InspectorObject* object, const String& name, bool optional, InspectorArray* protocolErrors)
@@ -597,7 +610,7 @@ EOF
 sub generateBackendDispatcher
 {
     my @body;
-    my @mapEntries = map("        dispatchMap.add(${_}Cmd, &${backendClassName}::$_);", map ($backendMethodSignatures{$_}, @backendMethods));
+    my @mapEntries = map("        &${backendClassName}::$_,", map ($backendMethodSignatures{$_}, @backendMethods));
     my $mapEntries = join("\n", @mapEntries);
 
     my $backendDispatcherBody = << "EOF";
@@ -610,7 +623,12 @@ void ${backendClassName}::dispatch(const String& message)
     long callId = 0;
 
     if (dispatchMap.isEmpty()) {
+        static CallHandler handlers[] = {
 $mapEntries
+        };
+        size_t length = sizeof(commandNames) / sizeof(commandNames[0]);
+        for (size_t i = 0; i < length; ++i)
+            dispatchMap.add(commandNames[i], handlers[i]);
     }
 
     RefPtr<InspectorValue> parsedMessage = InspectorValue::parseJSON(message);
@@ -1037,6 +1055,8 @@ sub generateBackendAgentFieldsAndConstructor
     push(@backendHead, "    void reportProtocolError(const long* const callId, CommonErrorCode, PassRefPtr<InspectorArray> data) const;");
     push(@backendHead, "    void dispatch(const String& message);");
     push(@backendHead, "    static bool getCommandName(const String& message, String* result);");
+    push(@backendHead, "");
+    push(@backendHead, "    enum MethodNames {");
     $backendConstructor = join("\n", @backendHead);
 }
 
@@ -1045,6 +1065,7 @@ sub finish
     my $object = shift;
 
     push(@backendMethodsImpl, generateBackendDispatcher());
+    push(@backendMethodsImpl, generateBackendSendResponse());
     push(@backendMethodsImpl, generateBackendReportProtocolError());
     unshift(@frontendMethodsImpl, generateFrontendConstructorImpl(), "");
 
@@ -1058,7 +1079,13 @@ sub finish
     close($HEADER);
     undef($HEADER);
 
+    unshift(@backendConstantDefinitions, "const char* InspectorBackendDispatcher::commandNames[] = {");
+    push(@backendConstantDefinitions, "};");
+
     # Make dispatcher methods private on the backend.
+    push(@backendConstantDeclarations, "};");
+    push(@backendConstantDeclarations, "");
+    push(@backendConstantDeclarations, "    static const char* commandNames[];");    
     push(@backendConstantDeclarations, "");
     push(@backendConstantDeclarations, "private:");
 
@@ -1067,6 +1094,9 @@ sub finish
             push(@backendMethodsImpl, generateArgumentGetters($type));
         }
     }
+
+    push(@backendConstantDeclarations, "    void sendResponse(long callId, PassRefPtr<InspectorObject> result, PassRefPtr<InspectorArray> protocolErrors, ErrorString invocationError);");
+
     generateBackendAgentFieldsAndConstructor();
 
     push(@backendMethodsImpl, generateBackendMessageParser());

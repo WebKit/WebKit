@@ -1,3 +1,13 @@
+2011-05-24  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Reorganize InspectorBackendDispatch code to eliminate duplication
+        https://bugs.webkit.org/show_bug.cgi?id=61300
+
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgent::shouldInterruptForMessage):
+
 2011-05-23  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Adam Barth.

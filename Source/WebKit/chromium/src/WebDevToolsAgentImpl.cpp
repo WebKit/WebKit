@@ -344,14 +344,14 @@ bool WebDevToolsAgent::shouldInterruptForMessage(const WebString& message)
     String commandName;
     if (!InspectorBackendDispatcher::getCommandName(message, &commandName))
         return false;
-    return commandName == InspectorBackendDispatcher::Debugger_pauseCmd
-        || commandName == InspectorBackendDispatcher::Debugger_setBreakpointCmd
-        || commandName == InspectorBackendDispatcher::Debugger_setBreakpointByUrlCmd
-        || commandName == InspectorBackendDispatcher::Debugger_removeBreakpointCmd
-        || commandName == InspectorBackendDispatcher::Debugger_setBreakpointsActiveCmd
-        || commandName == InspectorBackendDispatcher::Profiler_startCmd
-        || commandName == InspectorBackendDispatcher::Profiler_stopCmd
-        || commandName == InspectorBackendDispatcher::Profiler_getProfileCmd;
+    return commandName == InspectorBackendDispatcher::commandNames[InspectorBackendDispatcher::kDebugger_pauseCmd]
+        || commandName == InspectorBackendDispatcher::commandNames[InspectorBackendDispatcher::kDebugger_setBreakpointCmd]
+        || commandName == InspectorBackendDispatcher::commandNames[InspectorBackendDispatcher::kDebugger_setBreakpointByUrlCmd]
+        || commandName == InspectorBackendDispatcher::commandNames[InspectorBackendDispatcher::kDebugger_removeBreakpointCmd]
+        || commandName == InspectorBackendDispatcher::commandNames[InspectorBackendDispatcher::kDebugger_setBreakpointsActiveCmd]
+        || commandName == InspectorBackendDispatcher::commandNames[InspectorBackendDispatcher::kProfiler_startCmd]
+        || commandName == InspectorBackendDispatcher::commandNames[InspectorBackendDispatcher::kProfiler_stopCmd]
+        || commandName == InspectorBackendDispatcher::commandNames[InspectorBackendDispatcher::kProfiler_getProfileCmd];
 }
 
 void WebDevToolsAgent::processPendingMessages()
