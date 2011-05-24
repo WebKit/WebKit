@@ -1,3 +1,13 @@
+2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip the tests added by r87096 and remove the failing test expectations on Qt.
+        The failures are tracked by the bug 61322.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/events/selectstart-by-double-triple-clicks-expected.txt: Removed.
+        * platform/qt/fast/events/selectstart-by-drag-expected.txt: Removed.
+        * platform/qt/fast/events/selectstart-by-single-click-with-shift-expected.txt: Removed.
+
 2011-05-24  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Adam Barth.
