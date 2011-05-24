@@ -1,3 +1,12 @@
+2011-05-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Disable features on safari-534-branch.
+        <rdar://problem/9261347>
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+
 2011-05-12  Jessie Berlin  <jberlin@apple.com>
 
         Reviewed by Darin Adler.

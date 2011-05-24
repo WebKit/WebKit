@@ -63,7 +63,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_DETAILS"
-		Value="ENABLE_DETAILS"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
@@ -88,7 +88,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_FILTERS"
-		Value="ENABLE_FILTERS"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
@@ -138,7 +138,7 @@
 	/>
   <UserMacro
 		Name="ENABLE_METER_TAG"
-		Value="ENABLE_METER_TAG"
+		Value=""
 		PerformEnvironmentSet="true"
 	/>
   <UserMacro
