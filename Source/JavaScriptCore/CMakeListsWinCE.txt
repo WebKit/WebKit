@@ -1,7 +1,5 @@
 LIST(APPEND JavaScriptCore_SOURCES
     jit/ExecutableAllocator.cpp
-
-    heap/MarkStackWin.cpp
 )
 
 IF (ENABLE_JIT AND WTF_CPU_ARM)

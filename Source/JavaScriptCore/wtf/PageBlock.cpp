@@ -66,9 +66,18 @@ inline size_t systemPageSize()
 
 inline size_t systemPageSize()
 {
+#if CPU(ARMV5_OR_LOWER)
+    // The moving memory model (as used in ARMv5 and earlier platforms)
+    // on Symbian OS limits the number of chunks for each process to 16. 
+    // To mitigate this limitation increase the pagesize to allocate
+    // fewer, larger chunks. Set the page size to 256 Kb to compensate
+    // for moving memory model limitation
+    return 256 * 1024;
+#else
     static TInt page_size = 0;
     UserHal::PageSizeInBytes(page_size);
     return page_size;
+#endif
 }
 
 #endif

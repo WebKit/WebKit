@@ -66,8 +66,7 @@ extern "C" __declspec(dllimport) void CacheRangeFlush(LPVOID pAddr, DWORD dwLeng
 #include <wtf/brew/RefPtrBrew.h>
 #endif
 
-#define JIT_ALLOCATOR_PAGE_SIZE (ExecutableAllocator::pageSize)
-#define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (ExecutableAllocator::pageSize * 4)
+#define JIT_ALLOCATOR_LARGE_ALLOC_SIZE (pageSize() * 4)
 
 #if ENABLE(ASSEMBLER_WX_EXCLUSIVE)
 #define PROTECTION_FLAGS_RW (PROT_READ | PROT_WRITE)
@@ -177,11 +176,8 @@ class ExecutableAllocator {
     enum ProtectionSetting { Writable, Executable };
 
 public:
-    static size_t pageSize;
     ExecutableAllocator()
     {
-        if (!pageSize)
-            intializePageSize();
         if (isValid())
             m_smallAllocationPool = ExecutablePool::create(JIT_ALLOCATOR_LARGE_ALLOC_SIZE);
 #if !ENABLE(INTERPRETER)
@@ -338,12 +334,11 @@ private:
 #endif
 
     RefPtr<ExecutablePool> m_smallAllocationPool;
-    static void intializePageSize();
 };
 
 inline ExecutablePool::ExecutablePool(size_t n)
 {
-    size_t allocSize = roundUpAllocationSize(n, JIT_ALLOCATOR_PAGE_SIZE);
+    size_t allocSize = roundUpAllocationSize(n, pageSize());
     Allocation mem = systemAlloc(allocSize);
     m_pools.append(mem);
     m_freePtr = static_cast<char*>(mem.base());
@@ -354,7 +349,7 @@ inline ExecutablePool::ExecutablePool(size_t n)
 
 inline void* ExecutablePool::poolAllocate(size_t n)
 {
-    size_t allocSize = roundUpAllocationSize(n, JIT_ALLOCATOR_PAGE_SIZE);
+    size_t allocSize = roundUpAllocationSize(n, pageSize());
     
     Allocation result = systemAlloc(allocSize);
     if (!result.base())

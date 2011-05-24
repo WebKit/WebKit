@@ -33,6 +33,7 @@
 #include <wtf/Vector.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/OSAllocator.h>
+#include <wtf/PageBlock.h>
 
 namespace JSC {
 
@@ -82,8 +83,6 @@ namespace JSC {
         friend class HeapRootVisitor; // Allowed to mark a JSValue* or JSCell** directly.
 
     public:
-        static size_t pageSize();
-
         static void* allocateStack(size_t);
         static void releaseStack(void*, size_t);
 
@@ -108,8 +107,6 @@ namespace JSC {
         static void validateValue(JSValue);
 #endif
 
-        static void initializePagesize();
-
         void append(JSValue*);
         void append(JSValue*, size_t count);
         void append(JSCell**);
@@ -117,8 +114,6 @@ namespace JSC {
         void internalAppend(JSCell*);
         void internalAppend(JSValue);
         void visitChildren(JSCell*);
-
-        static size_t s_pageSize;
 
         void* m_jsArrayVPtr;
         MarkStackArray<MarkSet> m_markSets;
@@ -180,16 +175,9 @@ namespace JSC {
         OSAllocator::decommitAndRelease(addr, size);
     }
 
-    inline size_t MarkStack::pageSize()
-    {
-        if (!s_pageSize)
-            initializePagesize();
-        return s_pageSize;
-    }
-
     template <typename T> inline MarkStackArray<T>::MarkStackArray()
         : m_top(0)
-        , m_allocated(MarkStack::pageSize())
+        , m_allocated(pageSize())
         , m_capacity(m_allocated / sizeof(T))
     {
         m_data = reinterpret_cast<T*>(MarkStack::allocateStack(m_allocated));
@@ -243,7 +231,7 @@ namespace JSC {
     template <typename T> inline void MarkStackArray<T>::shrinkAllocation(size_t size)
     {
         ASSERT(size <= m_allocated);
-        ASSERT(0 == (size % MarkStack::pageSize()));
+        ASSERT(isPageAligned(size));
         if (size == m_allocated)
             return;
 #if OS(WINDOWS) || OS(SYMBIAN) || PLATFORM(BREWMP)

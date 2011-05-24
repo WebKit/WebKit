@@ -491,11 +491,6 @@ size_t ExecutableAllocator::committedByteCount()
     return allocator ? allocator->allocated() : 0;
 }   
 
-void ExecutableAllocator::intializePageSize()
-{
-    ExecutableAllocator::pageSize = getpagesize();
-}
-
 bool ExecutableAllocator::isValid() const
 {
     SpinLockHolder lock_holder(&spinlock);

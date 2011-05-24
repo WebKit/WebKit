@@ -31,23 +31,7 @@
 
 namespace JSC {
 
-size_t ExecutableAllocator::pageSize = 0;
-
 #if ENABLE(EXECUTABLE_ALLOCATOR_DEMAND)
-
-void ExecutableAllocator::intializePageSize()
-{
-#if OS(SYMBIAN) && CPU(ARMV5_OR_LOWER)
-    // The moving memory model (as used in ARMv5 and earlier platforms)
-    // on Symbian OS limits the number of chunks for each process to 16. 
-    // To mitigate this limitation increase the pagesize to allocate
-    // fewer, larger chunks. Set the page size to 256 Kb to compensate
-    // for moving memory model limitation
-    ExecutableAllocator::pageSize = 256 * 1024;
-#else
-    ExecutableAllocator::pageSize = WTF::pageSize();
-#endif
-}
 
 ExecutablePool::Allocation ExecutablePool::systemAlloc(size_t size)
 {
@@ -87,8 +71,7 @@ size_t ExecutableAllocator::committedByteCount()
 
 void ExecutableAllocator::reprotectRegion(void* start, size_t size, ProtectionSetting setting)
 {
-    if (!pageSize)
-        intializePageSize();
+    size_t pageSize = WTF::pageSize();
 
     // Calculate the start of the page containing this region,
     // and account for this extra memory within size.

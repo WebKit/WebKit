@@ -76,9 +76,6 @@ SOURCES += \
     heap/Heap.cpp \
     heap/MachineStackMarker.cpp \
     heap/MarkStack.cpp \
-    heap/MarkStackPosix.cpp \
-    heap/MarkStackSymbian.cpp \
-    heap/MarkStackWin.cpp \
     heap/MarkedBlock.cpp \
     heap/MarkedSpace.cpp \
     debugger/DebuggerActivation.cpp \

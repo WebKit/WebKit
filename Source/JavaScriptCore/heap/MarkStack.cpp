@@ -36,13 +36,10 @@
 
 namespace JSC {
 
-size_t MarkStack::s_pageSize = 0;
-
 void MarkStack::reset()
 {
-    ASSERT(s_pageSize);
-    m_values.shrinkAllocation(s_pageSize);
-    m_markSets.shrinkAllocation(s_pageSize);
+    m_values.shrinkAllocation(pageSize());
+    m_markSets.shrinkAllocation(pageSize());
     m_opaqueRoots.clear();
 }
 
