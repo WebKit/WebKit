@@ -1133,6 +1133,7 @@ platform/mac/editing/input/firstrectforcharacterrange-styled.html
 platform/mac/editing/input/hangul-enter-confirms-and-sends-keypress.html
 platform/mac/editing/input/insert-delete-smp-symbol.html
 platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline.html
+platform/mac/editing/input/maxlength.html
 platform/mac/editing/input/NSBackgroundColor-transparent.html
 platform/mac/editing/input/range-for-empty-document.html
 platform/mac/editing/input/replace-invalid-range.html

@@ -1,3 +1,9 @@
+2011-05-24  Alexey Proskuryakov  <ap@apple.com>
+
+        Skip platform/mac/editing/input/maxlength.html - textInputController is not implemented.
+
+        * platform/mac-wk2/Skipped:
+
 2011-05-24  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Ryosuke Niwa.
