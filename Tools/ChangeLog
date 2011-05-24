@@ -1,3 +1,17 @@
+2011-05-24  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Adam Roben.
+
+        WebKitTestRunner needs layoutTestController.setJavaScriptCanAccessClipboard
+        https://bugs.webkit.org/show_bug.cgi?id=42669
+
+        Fixes the regression issue caused by patch 94265. The patch didn't intialize the setting before the 
+        layouttest starting, it will make the test cases after editing/execCommand/clipboard-access.html failed.
+        Because that case changed the setting.
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundle.cpp:
+        (WTR::InjectedBundle::beginTesting):
+
 2011-05-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.

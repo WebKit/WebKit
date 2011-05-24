@@ -1,3 +1,15 @@
+2011-05-24  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Adam Roben.
+
+        WebKitTestRunner needs layoutTestController.setJavaScriptCanAccessClipboard
+        https://bugs.webkit.org/show_bug.cgi?id=42669
+
+        Fixes a typo issue for patch 94265.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleSetJavaScriptCanAccessClipboard):
+
 2011-05-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by John Sullivan.

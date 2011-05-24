@@ -178,6 +178,7 @@ void InjectedBundle::beginTesting()
     WKBundleSetShouldTrackVisitedLinks(m_bundle, false);
     WKBundleRemoveAllVisitedLinks(m_bundle);
     WKBundleSetAllowUniversalAccessFromFileURLs(m_bundle, m_pageGroup, true);
+    WKBundleSetJavaScriptCanAccessClipboard(m_bundle, m_pageGroup, true);
 
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);
 
