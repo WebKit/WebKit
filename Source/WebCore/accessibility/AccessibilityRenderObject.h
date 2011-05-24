@@ -119,6 +119,7 @@ public:
     virtual float valueForRange() const;
     virtual float maxValueForRange() const;
     virtual float minValueForRange() const;
+    virtual float stepValueForRange() const;
     virtual AccessibilityObject* selectedRadioButton();
     virtual AccessibilityObject* selectedTabItem();
     virtual int layoutCount() const;
@@ -279,6 +280,8 @@ private:
     AccessibilityRole determineAriaRoleAttribute() const;
 
     bool isTabItemSelected() const;
+    void alterSliderValue(bool increase);
+    void changeValueByStep(bool increase);
     bool isNativeCheckboxOrRadio() const;
     IntRect checkboxOrRadioRect() const;
     void addRadioButtonGroupMembers(AccessibilityChildrenVector& linkedUIElements) const;

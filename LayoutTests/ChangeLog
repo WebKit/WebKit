@@ -1,3 +1,13 @@
+2011-05-23  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        VO doesn't work with HTML5 range (slider) input @step attribute
+        https://bugs.webkit.org/show_bug.cgi?id=61298
+
+        * platform/mac/accessibility/range-alter-by-step-expected.txt: Added.
+        * platform/mac/accessibility/range-alter-by-step.html: Added.
+
 2011-05-23  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rebaselines work better if we had the new lines at the end of each file.

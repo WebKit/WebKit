@@ -879,20 +879,25 @@ Element* AccessibilityRenderObject::mouseButtonListener() const
     return 0;
 }
 
-void AccessibilityRenderObject::increment()
+void AccessibilityRenderObject::alterSliderValue(bool increase)
 {
     if (roleValue() != SliderRole)
         return;
+
+    if (!getAttribute(stepAttr).isEmpty())
+        changeValueByStep(increase);
+    else
+        changeValueByPercent(increase ? 5 : -5);
+}
     
-    changeValueByPercent(5);
+void AccessibilityRenderObject::increment()
+{
+    alterSliderValue(true);
 }
 
 void AccessibilityRenderObject::decrement()
 {
-    if (roleValue() != SliderRole)
-        return;
-    
-    changeValueByPercent(-5);
+    alterSliderValue(false);
 }
 
 static Element* siblingWithAriaRole(String role, Node* node)
@@ -1078,6 +1083,11 @@ String AccessibilityRenderObject::valueDescription() const
         return String();
     
     return getAttribute(aria_valuetextAttr).string();
+}
+    
+float AccessibilityRenderObject::stepValueForRange() const
+{
+    return getAttribute(stepAttr).toFloat();
 }
     
 float AccessibilityRenderObject::valueForRange() const
@@ -2206,6 +2216,18 @@ void AccessibilityRenderObject::setFocused(bool on)
     }
 }
 
+void AccessibilityRenderObject::changeValueByStep(bool increase)
+{
+    float step = stepValueForRange();
+    float value = valueForRange();
+    
+    value += increase ? step : -step;
+
+    setValue(String::number(value));
+    
+    axObjectCache()->postNotification(m_renderer, AXObjectCache::AXValueChanged, true);
+}
+    
 void AccessibilityRenderObject::changeValueByPercent(float percentChange)
 {
     float range = maxValueForRange() - minValueForRange();

@@ -354,6 +354,7 @@ public:
     virtual float valueForRange() const { return 0.0f; }
     virtual float maxValueForRange() const { return 0.0f; }
     virtual float minValueForRange() const { return 0.0f; }
+    virtual float stepValueForRange() const { return 0.0f; }
     virtual AccessibilityObject* selectedRadioButton() { return 0; }
     virtual AccessibilityObject* selectedTabItem() { return 0; }    
     virtual int layoutCount() const { return 0; }

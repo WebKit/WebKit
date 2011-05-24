@@ -1,3 +1,22 @@
+2011-05-23  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        VO doesn't work with HTML5 range (slider) input @step attribute
+        https://bugs.webkit.org/show_bug.cgi?id=61298
+
+        Test: platform/mac/accessibility/range-alter-by-step.html
+
+        * accessibility/AccessibilityObject.h:
+        (WebCore::AccessibilityObject::stepValueForRange):
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::alterSliderValue):
+        (WebCore::AccessibilityRenderObject::increment):
+        (WebCore::AccessibilityRenderObject::decrement):
+        (WebCore::AccessibilityRenderObject::stepValueForRange):
+        (WebCore::AccessibilityRenderObject::changeValueByStep):
+        * accessibility/AccessibilityRenderObject.h:
+
 2011-05-23  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Adam Barth.
