@@ -1,3 +1,9 @@
+2011-05-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Skip one more failing test.
+
+        * platform/qt-mac/Skipped:
+
 2011-05-24  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

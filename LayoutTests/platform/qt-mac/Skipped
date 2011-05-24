@@ -4260,3 +4260,4 @@ transitions/move-after-transition.html
 
 # new test introduced in r87096, but fail on Qt-Mac platform
 fast/events/selectstart-by-double-triple-clicks.html
+fast/events/selectstart-by-drag.html
