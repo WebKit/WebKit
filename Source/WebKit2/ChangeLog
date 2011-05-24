@@ -1,3 +1,15 @@
+2011-05-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by John Sullivan.
+
+        WebKit tells client that the page has become unresponsive while the beforeUnloadConfirm dialog is up
+        https://bugs.webkit.org/show_bug.cgi?id=61372
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::runBeforeUnloadConfirmPanel):
+        Stop the unresponsiveness timer like we do for other client functions that spin a
+        runloop.
+
 2011-05-24  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Simon Hausmann.
