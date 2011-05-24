@@ -247,11 +247,7 @@ bool HTMLObjectElement::hasValidClassId()
 
     // HTML5 says that fallback content should be rendered if a non-empty
     // classid is specified for which the UA can't find a suitable plug-in.
-    // However, in the case where an object tag with a classid also has a valid
-    // MIME type and no fallback content is present, it makes sense to ignore
-    // the classid and attempt to load the object rather than fall back to
-    // nothing.
-    return classId().isEmpty() || !hasFallbackContent();
+    return classId().isEmpty();
 }
 
 // FIXME: This should be unified with HTMLEmbedElement::updateWidget and

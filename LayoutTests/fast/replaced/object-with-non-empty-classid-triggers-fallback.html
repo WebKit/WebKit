@@ -1,35 +1,13 @@
-<!DOCTYPE html>
 <script>
-    if (window.layoutTestController) {
+    if (window.layoutTestController)
         layoutTestController.dumpAsText();
-        layoutTestController.waitUntilDone();
-    }
-
-    function runTest()
-    {
-        var pluginObject = document.getElementById("obj3");
-        var consoleDiv = document.getElementById("console");
-
-        if (pluginObject && pluginObject.testCallback)
-            consoleDiv.innerHTML += "PASS";
-        else
-            consoleDiv.innerHTML += "FAIL";
-
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
-    }
 </script>
-<body onload="runTest()">
 <p>This tests that fallback content is rendered for objects with non-empty classid attributes. The test passes if two lines are printed below containing the work 'PASS'.</p>
-<object id="obj1" classid="clsid:D27CDB6E-AE6D-11CF-96B8-444553540000">
+<object id="obj" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000">
     object with classid attribute but no type attribute renders fallback: PASS
 </object>
 <br>
-<object id="obj2" classid="clsid:D27CDB6E-AE6D-11CF-96B8-444553540000" type="application/x-webkit-test-netscape">
+<object id="obj" classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" type=application/x-webkit-test-netscape">
     object with classid and type attributes renders fallback: PASS
-</object>
-<br>
-<div id="console">object with classid and type attribute loads when the object has no fallback content: </div>
-<object id="obj3" classid="clsid:D27CDB6E-AE6D-11CF-96B8-444553540000" type="application/x-webkit-test-netscape">
 </object>
 
