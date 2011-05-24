@@ -1,3 +1,93 @@
+2011-05-24  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Part of <rdar://problem/9434311> and https://bugs.webkit.org/show_bug.cgi?id=61334
+        Should shim a few SecKeychainItem* methods on SnowLeopard
+
+        Initialize the KeychainItem shim on SnowLeopard:
+        * WebProcess/mac/WebProcessMac.mm:
+        (WebKit::WebProcess::initializeShim):
+
+        On SnowLeopard, shim the 4 SecKeychainItem methods:
+        * WebProcess/mac/WebProcessShim.h:
+        * WebProcess/mac/WebProcessShim.mm:
+        (WebKit::shimSecKeychainItemCopyContent):
+        (WebKit::shimSecKeychainItemCreateFromContent):
+        (WebKit::shimSecKeychainItemModifyContent):
+        (WebKit::shimSecKeychainItemFreeContent):
+        (WebKit::WebKitWebProcessKeychainItemShimInitialize):
+
+        * WebProcess/mac/KeychainItemShimMethods.h: Added.
+        * WebProcess/mac/KeychainItemShimMethods.mm: Added.
+        Manage a set of shim-controlled AttributeList data:
+        (WebKit::shimManagedAttributeLists):
+        (WebKit::freeAttributeListContents):
+        (WebKit::allocateAttributeListContents):
+
+        Manage a set of shim-controlled KeychainItem data:
+        (WebKit::shimManagedKeychainItemContents):
+        (WebKit::allocateKeychainItemContentData):
+
+        Free any shim-controlled AttributeList or KeychainItem data:
+        (WebKit::webFreeAttributeListContentOnMainThread):
+        (WebKit::webFreeAttributeListContent):
+        (WebKit::webFreeKeychainItemContentOnMainThread):
+        (WebKit::webFreeKeychainItemContent):
+
+        Marshall these 3 KeychainItem methods to the UIProcess:
+        (WebKit::webSecKeychainItemCopyContentOnMainThread):
+        (WebKit::webSecKeychainItemCopyContent):
+        (WebKit::webSecKeychainItemCreateFromContentOnMainThread):
+        (WebKit::webSecKeychainItemCreateFromContent):
+        (WebKit::webSecKeychainItemModifyContentOnMainThread):
+        (WebKit::webSecKeychainItemModifyContent):
+        (WebKit::initializeKeychainItemShim):
+
+        Container for an AttributeList entry that knows how to encode/decode:
+        * Shared/mac/KeychainAttribute.cpp: Added.
+        (WebKit::KeychainAttribute::KeychainAttribute):
+        (CoreIPC::encode):
+        (CoreIPC::decode):
+        * Shared/mac/KeychainAttribute.h: Added.
+
+        Container for the relevant arguments to the shimmed methods, to send to the UIProcess:
+        * Shared/mac/SecKeychainItemRequestData.cpp: Added.
+        (WebKit::SecKeychainItemRequestData::SecKeychainItemRequestData):
+        (WebKit::SecKeychainItemRequestData::initializeWithAttributeList):
+        (WebKit::SecKeychainItemRequestData::~SecKeychainItemRequestData):
+        (WebKit::SecKeychainItemRequestData::attributeList):
+        (WebKit::SecKeychainItemRequestData::encode):
+        (WebKit::SecKeychainItemRequestData::decode):
+        * Shared/mac/SecKeychainItemRequestData.h: Added.
+        (WebKit::SecKeychainItemRequestData::keychainItem):
+        (WebKit::SecKeychainItemRequestData::itemClass):
+        (WebKit::SecKeychainItemRequestData::length):
+        (WebKit::SecKeychainItemRequestData::data):
+
+        Container for the possible output from the shimmed methods, to send back to the WebProcess:
+        * Shared/mac/SecKeychainItemResponseData.cpp: Added.
+        (WebKit::SecKeychainItemResponseData::SecKeychainItemResponseData):
+        (WebKit::SecKeychainItemResponseData::encode):
+        (WebKit::SecKeychainItemResponseData::decode):
+        * Shared/mac/SecKeychainItemResponseData.h: Added.
+        (WebKit::SecKeychainItemResponseData::itemClass):
+        (WebKit::SecKeychainItemResponseData::data):
+        (WebKit::SecKeychainItemResponseData::resultCode):
+        (WebKit::SecKeychainItemResponseData::attributes):
+        (WebKit::SecKeychainItemResponseData::keychainItem):
+
+        Actually implement the calls to the SecKeychainItem* methods in the UIProcess:
+        * UIProcess/WebProcessProxy.h:
+        * UIProcess/WebProcessProxy.messages.in:
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::secKeychainItemCopyContent):
+        (WebKit::WebProcessProxy::secKeychainItemCreateFromContent):
+        (WebKit::WebProcessProxy::secKeychainItemModifyContent):
+
+        * WebKit2.xcodeproj/project.pbxproj: Project file stuff
+        * Configurations/Shim.xcconfig:
+
 2011-05-24  Jay Civelli  <jcivelli@chromium.org>
 
         Rubberstamped by David Kilzer.

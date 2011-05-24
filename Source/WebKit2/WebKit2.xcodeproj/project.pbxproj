@@ -298,6 +298,14 @@
 		512935D81288D19400A4B695 /* WebContextMenuItem.h in Headers */ = {isa = PBXBuildFile; fileRef = 512935D61288D19400A4B695 /* WebContextMenuItem.h */; };
 		512935E31288D97800A4B695 /* InjectedBundlePageContextMenuClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512935E11288D97800A4B695 /* InjectedBundlePageContextMenuClient.cpp */; };
 		512935E41288D97800A4B695 /* InjectedBundlePageContextMenuClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 512935E21288D97800A4B695 /* InjectedBundlePageContextMenuClient.h */; };
+		512DF6D8138C181A00A22FC6 /* KeychainItemShimMethods.h in Headers */ = {isa = PBXBuildFile; fileRef = 512DF6D6138C181A00A22FC6 /* KeychainItemShimMethods.h */; };
+		512DF6D9138C181A00A22FC6 /* KeychainItemShimMethods.mm in Sources */ = {isa = PBXBuildFile; fileRef = 512DF6D7138C181A00A22FC6 /* KeychainItemShimMethods.mm */; };
+		512DF6FE138C254600A22FC6 /* SecKeychainItemRequestData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5112CA4713858D4B0030867D /* SecKeychainItemRequestData.cpp */; };
+		512DF6FF138C254600A22FC6 /* SecKeychainItemRequestData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5112CA4813858D4B0030867D /* SecKeychainItemRequestData.h */; };
+		512DF700138C254600A22FC6 /* SecKeychainItemResponseData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5112CA4913858D4B0030867D /* SecKeychainItemResponseData.cpp */; };
+		512DF701138C254600A22FC6 /* SecKeychainItemResponseData.h in Headers */ = {isa = PBXBuildFile; fileRef = 5112CA4A13858D4B0030867D /* SecKeychainItemResponseData.h */; };
+		512DF70A138C26C700A22FC6 /* KeychainAttribute.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5112CB071385B97B0030867D /* KeychainAttribute.cpp */; };
+		512DF70B138C26C700A22FC6 /* KeychainAttribute.h in Headers */ = {isa = PBXBuildFile; fileRef = 5112CB051385B8D90030867D /* KeychainAttribute.h */; };
 		512E34E4130B4D0500ABD19A /* WKApplicationCacheManager.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 517A33B3130B308C00F80CB5 /* WKApplicationCacheManager.cpp */; };
 		512E34E5130B4D0500ABD19A /* WKApplicationCacheManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 517A33B4130B308C00F80CB5 /* WKApplicationCacheManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		512E3524130B550600ABD19A /* WebApplicationCacheManagerProxy.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 512E3520130B550100ABD19A /* WebApplicationCacheManagerProxy.cpp */; };
@@ -1203,6 +1211,12 @@
 		510FBB991288C95E00AFFDF4 /* WebContextMenuItemData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuItemData.h; sourceTree = "<group>"; };
 		5110AE0A133C16CB0072717A /* WKIconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WKIconDatabase.cpp; sourceTree = "<group>"; };
 		5110AE0B133C16CB0072717A /* WKIconDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WKIconDatabase.h; sourceTree = "<group>"; };
+		5112CA4713858D4B0030867D /* SecKeychainItemRequestData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecKeychainItemRequestData.cpp; sourceTree = "<group>"; };
+		5112CA4813858D4B0030867D /* SecKeychainItemRequestData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecKeychainItemRequestData.h; sourceTree = "<group>"; };
+		5112CA4913858D4B0030867D /* SecKeychainItemResponseData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SecKeychainItemResponseData.cpp; sourceTree = "<group>"; };
+		5112CA4A13858D4B0030867D /* SecKeychainItemResponseData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SecKeychainItemResponseData.h; sourceTree = "<group>"; };
+		5112CB051385B8D90030867D /* KeychainAttribute.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainAttribute.h; sourceTree = "<group>"; };
+		5112CB071385B97B0030867D /* KeychainAttribute.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = KeychainAttribute.cpp; sourceTree = "<group>"; };
 		511B24A4132E095700065A0C /* WebIconDatabaseProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebIconDatabaseProxy.cpp; path = IconDatabase/WebIconDatabaseProxy.cpp; sourceTree = "<group>"; };
 		511B24A5132E095700065A0C /* WebIconDatabaseProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebIconDatabaseProxy.h; path = IconDatabase/WebIconDatabaseProxy.h; sourceTree = "<group>"; };
 		511B24A8132E097200065A0C /* WebIconDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebIconDatabase.cpp; sourceTree = "<group>"; };
@@ -1217,6 +1231,8 @@
 		512935D61288D19400A4B695 /* WebContextMenuItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebContextMenuItem.h; sourceTree = "<group>"; };
 		512935E11288D97800A4B695 /* InjectedBundlePageContextMenuClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = InjectedBundlePageContextMenuClient.cpp; sourceTree = "<group>"; };
 		512935E21288D97800A4B695 /* InjectedBundlePageContextMenuClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InjectedBundlePageContextMenuClient.h; sourceTree = "<group>"; };
+		512DF6D6138C181A00A22FC6 /* KeychainItemShimMethods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeychainItemShimMethods.h; sourceTree = "<group>"; };
+		512DF6D7138C181A00A22FC6 /* KeychainItemShimMethods.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = KeychainItemShimMethods.mm; sourceTree = "<group>"; };
 		512E3520130B550100ABD19A /* WebApplicationCacheManagerProxy.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebApplicationCacheManagerProxy.cpp; sourceTree = "<group>"; };
 		512E3521130B550100ABD19A /* WebApplicationCacheManagerProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebApplicationCacheManagerProxy.h; sourceTree = "<group>"; };
 		512E352B130B55AF00ABD19A /* WebApplicationCacheManager.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = WebApplicationCacheManager.cpp; path = ApplicationCache/WebApplicationCacheManager.cpp; sourceTree = "<group>"; };
@@ -2014,6 +2030,8 @@
 			children = (
 				E1BB1688132018BA00F49431 /* FullKeyboardAccessWatcher.h */,
 				E1BB1689132018BA00F49431 /* FullKeyboardAccessWatcher.mm */,
+				512DF6D6138C181A00A22FC6 /* KeychainItemShimMethods.h */,
+				512DF6D7138C181A00A22FC6 /* KeychainItemShimMethods.mm */,
 				511F8A7D138B46FE00A95F44 /* SecItemShimMethods.h */,
 				511F8A7E138B46FE00A95F44 /* SecItemShimMethods.mm */,
 				1A6FA01D11E1526300DB1371 /* WebProcessMainMac.mm */,
@@ -2867,6 +2885,8 @@
 				1A6F9FB611E1408500DB1371 /* CommandLineMac.cpp */,
 				1A9639F512F38ECD0078A062 /* CoreAnimationRenderer.h */,
 				1A9639F612F38ECD0078A062 /* CoreAnimationRenderer.mm */,
+				5112CB071385B97B0030867D /* KeychainAttribute.cpp */,
+				5112CB051385B8D90030867D /* KeychainAttribute.h */,
 				1A92DC1212F8BAB90017AF65 /* LayerTreeContextMac.mm */,
 				31EA25D0134F78B2005B1452 /* NativeWebMouseEventMac.mm */,
 				C02BFF1D1251502E009CCBEA /* NativeWebKeyboardEventMac.mm */,
@@ -2881,6 +2901,10 @@
 				51D130501382EAC000351EDD /* SecItemRequestData.h */,
 				51D130511382EAC000351EDD /* SecItemResponseData.cpp */,
 				51D130521382EAC000351EDD /* SecItemResponseData.h */,
+				5112CA4713858D4B0030867D /* SecKeychainItemRequestData.cpp */,
+				5112CA4813858D4B0030867D /* SecKeychainItemRequestData.h */,
+				5112CA4913858D4B0030867D /* SecKeychainItemResponseData.cpp */,
+				5112CA4A13858D4B0030867D /* SecKeychainItemResponseData.h */,
 				1A9636BA12F348490078A062 /* ShareableSurface.cpp */,
 				1A9636BB12F348490078A062 /* ShareableSurface.h */,
 				BCE23262122C6CF300D5C35A /* WebCoreArgumentCodersMac.mm */,
@@ -3790,6 +3814,10 @@
 				51B15A8513843A3900321AD8 /* EnvironmentUtilities.h in Headers */,
 				511F8A7B138B460900A95F44 /* WebProcessShim.h in Headers */,
 				511F8A7F138B46FE00A95F44 /* SecItemShimMethods.h in Headers */,
+				512DF6D8138C181A00A22FC6 /* KeychainItemShimMethods.h in Headers */,
+				512DF6FF138C254600A22FC6 /* SecKeychainItemRequestData.h in Headers */,
+				512DF701138C254600A22FC6 /* SecKeychainItemResponseData.h in Headers */,
+				512DF70B138C26C700A22FC6 /* KeychainAttribute.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4453,6 +4481,10 @@
 				51D130581382F10500351EDD /* WebProcessProxyMac.mm in Sources */,
 				51B15A8413843A3900321AD8 /* EnvironmentUtilities.cpp in Sources */,
 				511F8A80138B46FE00A95F44 /* SecItemShimMethods.mm in Sources */,
+				512DF6D9138C181A00A22FC6 /* KeychainItemShimMethods.mm in Sources */,
+				512DF6FE138C254600A22FC6 /* SecKeychainItemRequestData.cpp in Sources */,
+				512DF700138C254600A22FC6 /* SecKeychainItemResponseData.cpp in Sources */,
+				512DF70A138C26C700A22FC6 /* KeychainAttribute.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

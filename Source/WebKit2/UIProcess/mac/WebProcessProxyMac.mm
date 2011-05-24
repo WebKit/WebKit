@@ -28,6 +28,8 @@
 
 #import "SecItemRequestData.h"
 #import "SecItemResponseData.h"
+#import "SecKeychainItemRequestData.h"
+#import "SecKeychainItemResponseData.h"
 #import <Security/SecItem.h>
 
 namespace WebKit {
@@ -73,6 +75,38 @@ void WebProcessProxy::secItemDelete(const SecItemRequestData& queryData, SecItem
     resultCode = SecItemDelete(query);
 
     result = SecItemResponseData(resultCode, 0);
+}
+
+void WebProcessProxy::secKeychainItemCopyContent(const SecKeychainItemRequestData& request, SecKeychainItemResponseData& response)
+{
+    SecKeychainItemRef item = request.keychainItem();
+    SecItemClass itemClass;
+    SecKeychainAttributeList* attrList = request.attributeList();    
+    UInt32 length;
+    void* outData;
+
+    OSStatus resultCode = SecKeychainItemCopyContent(item, &itemClass, attrList, &length, &outData);
+    
+    RetainPtr<CFDataRef> data(AdoptCF, CFDataCreate(0, static_cast<const UInt8*>(outData), length));
+    response = SecKeychainItemResponseData(resultCode, itemClass, attrList, data.get());
+    
+    SecKeychainItemFreeContent(attrList, outData);
+}
+
+void WebProcessProxy::secKeychainItemCreateFromContent(const SecKeychainItemRequestData& request, SecKeychainItemResponseData& response)
+{
+    SecKeychainItemRef keychainItem;
+    
+    OSStatus resultCode = SecKeychainItemCreateFromContent(request.itemClass(), request.attributeList(), request.length(), request.data(), 0, 0, &keychainItem);
+
+    response = SecKeychainItemResponseData(resultCode, RetainPtr<SecKeychainItemRef>(AdoptCF, keychainItem));
+}
+
+void WebProcessProxy::secKeychainItemModifyContent(const SecKeychainItemRequestData& request, SecKeychainItemResponseData& response)
+{
+    OSStatus resultCode = SecKeychainItemModifyContent(request.keychainItem(), request.attributeList(), request.length(), request.data());
+    
+    response = resultCode;
 }
 
 } // namespace WebKit
