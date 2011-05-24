@@ -1,3 +1,35 @@
+2011-05-24  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        editing/deleting/5026848-2 and editing/deleting/5026848-3 should be dump-as-markup tests
+        https://bugs.webkit.org/show_bug.cgi?id=61323
+
+        Convert editing/deleting/5026848-2 and editing/deleting/5026848-3 to dump-as-markup.
+
+        * editing/deleting/5026848-2-expected.txt: Added.
+        * editing/deleting/5026848-2.html: Convert to dump-as-markup.
+        * editing/deleting/5026848-3-expected.txt: Added.
+        * editing/deleting/5026848-3.html: Convert to dump-as-markup.
+        * platform/chromium-linux/editing/deleting/5026848-2-expected.png: Removed.
+        * platform/chromium-linux/editing/deleting/5026848-3-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5026848-2-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5026848-2-expected.txt: Removed.
+        * platform/chromium-win/editing/deleting/5026848-3-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5026848-3-expected.txt: Removed.
+        * platform/gtk/editing/deleting/5026848-2-expected.txt: Removed.
+        * platform/gtk/editing/deleting/5026848-3-expected.txt: Removed.
+        * platform/mac-leopard/editing/deleting/5026848-2-expected.png: Removed.
+        * platform/mac-leopard/editing/deleting/5026848-3-expected.png: Removed.
+        * platform/mac/editing/deleting/5026848-2-expected.png: Removed.
+        * platform/mac/editing/deleting/5026848-2-expected.txt: Removed.
+        * platform/mac/editing/deleting/5026848-3-expected.png: Removed.
+        * platform/mac/editing/deleting/5026848-3-expected.txt: Removed.
+        * platform/qt/editing/deleting/5026848-2-expected.png: Removed.
+        * platform/qt/editing/deleting/5026848-2-expected.txt: Removed.
+        * platform/qt/editing/deleting/5026848-3-expected.png: Removed.
+        * platform/qt/editing/deleting/5026848-3-expected.txt: Removed.
+
 2011-05-23  Gabor Loki  <loki@webkit.org>
 
         Rubber-stamped by Csaba Osztrogonác.

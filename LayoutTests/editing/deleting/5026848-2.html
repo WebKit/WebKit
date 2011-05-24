@@ -1,6 +1,7 @@
+<!DOCTYPE html>
 <html>
 <body>
-<p>This tests to see that selected non-editable nodes that are not in both the start and end editable root are preserved during a deletion.  You should see two 'Non-editable' pieces on either side of the editable piece below.</p>
+<p id="description">This tests to see that selected non-editable nodes that are not in both the start and end editable root are preserved during a deletion.  You should see two 'Non-editable' pieces on either side of the editable piece below.</p>
 <div id="div" contenteditable="true">
 <table contenteditable="false">
     <tr>
@@ -12,12 +13,15 @@
 Editable <span id="end">content</span>
 </div>
 
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
 var sel = window.getSelection();
 var start = document.getElementById("start");
 var end = document.getElementById("end");
 sel.setBaseAndExtent(start, 0, end, 0);
 document.execCommand("Delete");
+Markup.description(description.textContent);
+Markup.dump("div");
 </script>
 
 </body>

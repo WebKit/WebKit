@@ -1,0 +1,30 @@
+This tests to see that selected non-editable nodes that are not in both the start and end editable root are preserved during a deletion.  You should see two 'Non-editable' pieces on either side of the editable piece below.
+| "
+"
+| <table>
+|   contenteditable="false"
+|   "
+    "
+|   <tbody>
+|     <tr>
+|       "
+        "
+|       <td>
+|         "Non-editable"
+|       "
+        "
+|       <td>
+|         contenteditable="true"
+|         "Editable <#selection-caret>"
+|         <span>
+|           class="Apple-style-span"
+|           style="-webkit-border-horizontal-spacing: 0px; -webkit-border-vertical-spacing: 0px; "
+|           "content"
+|       "
+        "
+|       <td>
+|         "Non-editable"
+|       "
+    "
+|     "
+"
