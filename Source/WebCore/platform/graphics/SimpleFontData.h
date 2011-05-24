@@ -73,7 +73,7 @@ public:
     class AdditionalFontData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
-        virtual ~FontData() { }
+        virtual ~AdditionalFontData() { }
     
         virtual void initializeFontData(SimpleFontData*, int) = 0;
     };

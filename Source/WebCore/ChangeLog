@@ -5,6 +5,18 @@
         Remove platform layering violation: TextRun stores RenderObjects for SVG Fonts support
         https://bugs.webkit.org/show_bug.cgi?id=60254
 
+        Forgot to rename the destructor.
+
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::AdditionalFontData::~AdditionalFontData):
+
+2011-05-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed, build fix.
+
+        Remove platform layering violation: TextRun stores RenderObjects for SVG Fonts support
+        https://bugs.webkit.org/show_bug.cgi?id=60254
+
         Rename SimpleFontData::FontData subclass to AdditionalFontData, to avoid clashes with the WebCore::FontData class, which breaks the win build.
 
         * platform/graphics/SimpleFontData.cpp:
