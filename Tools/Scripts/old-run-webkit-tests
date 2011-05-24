@@ -2419,13 +2419,15 @@ sub readSkippedFiles($)
                             if (!$constraintPath) {
                                 # Always add $skipped since no constraint path was specified on the command line.
                                 push(@ARGV, $skipped);
-                            } elsif ($skipped =~ /^($constraintPath)/) {
+                            } elsif ($skipped =~ /^($constraintPath)/ || ("LayoutTests/".$skipped) =~ /^($constraintPath)/ ) {
                                 # Add $skipped only if it matches the current path constraint, e.g.,
-                                # "--skipped=only dir1" with "dir1/file1.html" on the skipped list.
+                                # "--skipped=only dir1" with "dir1/file1.html" on the skipped list or
+                                # "--skipped=only LayoutTests/dir1" with "dir1/file1.html" on the skipped list
                                 push(@ARGV, $skipped);
-                            } elsif ($constraintPath =~ /^($skipped)/) {
+                            } elsif ($constraintPath =~ /^("LayoutTests\/".$skipped)/ || $constraintPath =~ /^($skipped)/) {
                                 # Add current path constraint if it is more specific than the skip list entry,
-                                # e.g., "--skipped=only dir1/dir2/dir3" with "dir1" on the skipped list.
+                                # e.g., "--skipped=only dir1/dir2/dir3" with "dir1" on the skipped list or
+                                # e.g., "--skipped=only LayoutTests/dir1/dir2/dir3" with "dir1" on the skipped list.
                                 push(@ARGV, $constraintPath);
                             }
                         } elsif ($verbose) {
