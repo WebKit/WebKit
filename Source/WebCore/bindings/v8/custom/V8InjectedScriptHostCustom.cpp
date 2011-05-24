@@ -76,8 +76,6 @@ v8::Handle<v8::Value> V8InjectedScriptHost::evaluateCallback(const v8::Arguments
         return v8::ThrowException(v8::Exception::Error(v8::String::New("The argument must be a string.")));
 
     v8::Handle<v8::Script> script = v8::Script::Compile(expression);
-    if (script.IsEmpty()) // Return immediately in case of exception to let the caller handle it.
-        return v8::Handle<v8::Value>();
     return script->Run();
 }
 

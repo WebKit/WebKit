@@ -1,3 +1,14 @@
+2011-05-24  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed, rolling out r87145.
+        http://trac.webkit.org/changeset/87145
+        https://bugs.webkit.org/show_bug.cgi?id=61194
+
+        Regression in LayoutTests/inspector/debugger/scripts-panel.html on Chromium Win & Linux.
+
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::evaluateCallback):
+
 2011-05-24  Matthew Delaney  <mdelaney@apple.com>
 
         Reviewed by Simon Fraser.
