@@ -99,7 +99,10 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     m_colorBuffer = generateColorTexture(context, size);
     createSecondaryBuffers();
-    reset(size);
+    if (!reset(size)) {
+        m_context.clear();
+        return;
+    }
 }
 
 DrawingBuffer::~DrawingBuffer()

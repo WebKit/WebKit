@@ -8,7 +8,6 @@
         (GraphicsLayer
           (position 8.00 8.00)
           (bounds 500.00 20000.00)
-          (drawsContent 1)
         )
       )
     )
