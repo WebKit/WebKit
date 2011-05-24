@@ -1,3 +1,9 @@
+2011-05-24  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt][WK2] Paint the bot green for ultimate satisfaction of Ossy. 
+
+        * platform/qt-wk2/Skipped:
+
 2011-05-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Skip failing tests.

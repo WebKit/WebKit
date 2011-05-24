@@ -92,6 +92,11 @@ editing/style/non-inheritable-styles.html
 editing/style/smoosh-styles-001.html
 editing/style/smoosh-styles-003.html
 editing/style/style-boundary-005.html
+editing/pasteboard/do-not-copy-unnecessary-styles-2.html
+editing/pasteboard/do-not-copy-unnecessary-styles.html
+editing/pasteboard/onpaste-text-html-types.html
+editing/pasteboard/paste-removing-iframe.html
+editing/pasteboard/preserve-underline-color.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
@@ -2158,6 +2163,8 @@ transitions/font-family-during-transition.html
 transitions/min-max-width-height-transitions.html
 transitions/text-indent-transition.html
 fast/loader/stateobjects/popstate-fires-on-history-traversal.html
+fast/events/selectstart-by-double-triple-clicks.html
+fast/events/selectstart-by-single-click-with-shift.html
 
 ########################################
 
