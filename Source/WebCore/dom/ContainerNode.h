@@ -102,12 +102,6 @@ protected:
     void setLastChild(Node* child) { m_lastChild = child; }
 
 private:
-    // Never call this function directly.  If you're trying to call this
-    // function, your code is either wrong or you're supposed to call
-    // parserAddChild.  Please do not call parserAddChild unless you are the
-    // parser!
-    virtual void deprecatedParserAddChild(PassRefPtr<Node>);
-
     void removeBetween(Node* previousChild, Node* nextChild, Node* oldChild);
     void insertBeforeCommon(Node* nextChild, Node* oldChild);
 

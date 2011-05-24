@@ -686,11 +686,6 @@ void ContainerNode::parserAddChild(PassRefPtr<Node> newChild)
     childrenChanged(true, last, 0, 1);
 }
 
-void ContainerNode::deprecatedParserAddChild(PassRefPtr<Node> node)
-{
-    parserAddChild(node);
-}
-
 void ContainerNode::suspendPostAttachCallbacks()
 {
     if (!s_attachDepth) {

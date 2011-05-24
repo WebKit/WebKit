@@ -1,3 +1,19 @@
+2011-05-23  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Adam Barth.
+
+        Remove Node::deprecatedParserAddChild
+        https://bugs.webkit.org/show_bug.cgi?id=60818
+
+        No new tests as this is just a removal.
+
+        * dom/ContainerNode.cpp:
+        * dom/ContainerNode.h:
+        * dom/Node.cpp:
+        * dom/Node.h:
+        Removed the method now that the last instance got removed as part of the <input>
+        shadow DOM refactoring.
+
 2011-05-23  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Darin Adler.

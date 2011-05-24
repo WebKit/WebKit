@@ -268,9 +268,6 @@ public:
     
     bool inSameContainingBlockFlowElement(Node*);
 
-    // FIXME: All callers of this function are almost certainly wrong!
-    virtual void deprecatedParserAddChild(PassRefPtr<Node>);
-
     // Called by the parser when this element's close tag is reached,
     // signaling that all child tags have been parsed and added.
     // This is needed for <applet> and <object> elements, which can't lay themselves out

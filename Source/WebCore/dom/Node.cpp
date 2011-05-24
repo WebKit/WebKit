@@ -754,10 +754,6 @@ const AtomicString& Node::virtualNamespaceURI() const
     return nullAtom;
 }
 
-void Node::deprecatedParserAddChild(PassRefPtr<Node>)
-{
-}
-
 bool Node::isContentEditable() const
 {
     document()->updateLayoutIgnorePendingStylesheets();
