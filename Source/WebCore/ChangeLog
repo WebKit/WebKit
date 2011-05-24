@@ -1,3 +1,45 @@
+2011-05-24  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61345
+        part of <rdar://problem/8675177>
+        Don't initialize ResourceResponse.m_suggestedFilename until we want to use it.  Initializing it requires reading in and parsing a plist.  
+        Add new initialization state CommonAndUncommonFields to ResourceResponse.  This will be for all the header fields.
+        Move suggestedFilename initialization to AllFields so it is never initialized unless we ask for it. 
+        Add "Content-Type" to common headers since it is looked for by every CSS sheet load.
+
+        No new tests because functionality has not changed.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::suggestedFilename):
+        (WebCore::ResourceResponseBase::setSuggestedFilename):
+        (WebCore::ResourceResponseBase::httpStatusText):
+        (WebCore::ResourceResponseBase::setHTTPStatusText):
+        (WebCore::ResourceResponseBase::httpHeaderField):
+        (WebCore::ResourceResponseBase::setHTTPHeaderField):
+        (WebCore::ResourceResponseBase::httpHeaderFields):
+        (WebCore::ResourceResponseBase::isAttachment):
+        (WebCore::ResourceResponseBase::setLastModifiedDate):
+        (WebCore::ResourceResponseBase::lastModifiedDate):
+        (WebCore::ResourceResponseBase::wasCached):
+        (WebCore::ResourceResponseBase::connectionReused):
+        (WebCore::ResourceResponseBase::setConnectionReused):
+        (WebCore::ResourceResponseBase::connectionID):
+        (WebCore::ResourceResponseBase::setConnectionID):
+        (WebCore::ResourceResponseBase::resourceLoadTiming):
+        (WebCore::ResourceResponseBase::setResourceLoadTiming):
+        (WebCore::ResourceResponseBase::resourceLoadInfo):
+        (WebCore::ResourceResponseBase::setResourceLoadInfo):
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformLazyInit):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::platformLazyInit):
+
 2011-05-24  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.
