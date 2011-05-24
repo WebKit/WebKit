@@ -30,7 +30,7 @@
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"
 #include "MessageID.h"
-#include "UpdateChunk.h"
+#include "UpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
@@ -126,16 +126,16 @@ void TiledDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::Mes
     switch (messageID.get<DrawingAreaProxyLegacyMessage::Kind>()) {
     case DrawingAreaProxyLegacyMessage::TileUpdated: {
         int tileID;
-        UpdateChunk updateChunk;
+        UpdateInfo updateInfo;
         float scale;
         unsigned pendingUpdateCount;
-        if (!arguments->decode(CoreIPC::Out(tileID, updateChunk, scale, pendingUpdateCount)))
+        if (!arguments->decode(CoreIPC::Out(tileID, updateInfo, scale, pendingUpdateCount)))
             return;
 
         TiledDrawingAreaTile* tile = m_tilesByID.get(tileID);
         ASSERT(!tile || tile->ID() == tileID);
         if (tile)
-            tile->updateFromChunk(&updateChunk, scale);
+            tile->incorporateUpdate(updateInfo, scale);
         tileBufferUpdateComplete();
         break;
     }
@@ -160,10 +160,11 @@ void TiledDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::Mes
         break;
     }
     case DrawingAreaProxyLegacyMessage::SnapshotTaken: {
-        UpdateChunk chunk;
-        if (!arguments->decode(CoreIPC::Out(chunk)))
+        ShareableBitmap::Handle handle;
+        if (!arguments->decode(CoreIPC::Out(handle)))
             return;
-        snapshotTaken(chunk);
+        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle);
+        snapshotTaken(bitmap.get());
         break;
     }
     default:
@@ -180,19 +181,19 @@ void TiledDrawingAreaProxy::waitUntilUpdatesComplete()
 {
     while (hasPendingUpdates()) {
         int tileID;
-        UpdateChunk updateChunk;
+        UpdateInfo updateInfo;
         float scale;
         unsigned pendingUpdateCount;
         static const double tileUpdateTimeout = 10.0;
         OwnPtr<CoreIPC::ArgumentDecoder> arguments = page()->process()->connection()->deprecatedWaitFor(DrawingAreaProxyLegacyMessage::TileUpdated, page()->pageID(), tileUpdateTimeout);
         if (!arguments)
             break;
-        if (!arguments->decode(CoreIPC::Out(tileID, updateChunk, scale, pendingUpdateCount)))
+        if (!arguments->decode(CoreIPC::Out(tileID, updateInfo, scale, pendingUpdateCount)))
             break;
         TiledDrawingAreaTile* tile = m_tilesByID.get(tileID);
         ASSERT(!tile || tile->ID() == tileID);
         if (tile)
-            tile->updateFromChunk(&updateChunk, scale);
+            tile->incorporateUpdate(updateInfo, scale);
     }
     tileBufferUpdateComplete();
 }

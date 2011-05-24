@@ -35,7 +35,7 @@
 
 namespace WebKit {
 
-class UpdateChunk;
+class ShareableBitmap;
 
 class TiledDrawingArea : public DrawingArea {
 public:
@@ -67,7 +67,7 @@ private:
     void updateTile(int tileID, const WebCore::IntRect& dirtyRect, float scale);
 
     // Platform overrides
-    void paintIntoUpdateChunk(UpdateChunk*, float scale);
+    void paintIntoBitmap(ShareableBitmap*, const WebCore::IntRect& tileRect, float scale);
 
     void tileUpdateTimerFired();
 

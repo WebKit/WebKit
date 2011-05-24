@@ -30,7 +30,7 @@
 
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"
-#include "UpdateChunk.h"
+#include "ShareableBitmap.h"
 #include "WKAPICast.h"
 #include "WebPageProxy.h"
 
@@ -62,9 +62,9 @@ WebPageProxy* TiledDrawingAreaProxy::page()
     return toImpl(m_webView->page()->pageRef());
 }
 
-void TiledDrawingAreaProxy::snapshotTaken(UpdateChunk& chunk)
+void TiledDrawingAreaProxy::snapshotTaken(ShareableBitmap* bitmap)
 {
-    emit m_webView->snapshotTaken(chunk.createImage());
+    emit m_webView->snapshotTaken(bitmap->createQImage());
 }
 
 } // namespace WebKit

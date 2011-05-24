@@ -41,7 +41,7 @@
 namespace WebKit {
 
 class TiledDrawingAreaProxy;
-class UpdateChunk;
+class UpdateInfo;
 
 class TiledDrawingAreaTile : public RefCounted<TiledDrawingAreaTile> {
 public:
@@ -63,7 +63,7 @@ public:
     const WebCore::IntRect& rect() const { return m_rect; }
     void resize(const WebCore::IntSize&);
 
-    void updateFromChunk(UpdateChunk* updateChunk, float);
+    void incorporateUpdate(const UpdateInfo&, float scale);
 
     int ID() const { return m_ID; }
 

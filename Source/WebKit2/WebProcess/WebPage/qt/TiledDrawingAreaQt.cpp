@@ -28,7 +28,7 @@
 
 #if ENABLE(TILED_BACKING_STORE)
 
-#include "UpdateChunk.h"
+#include "ShareableBitmap.h"
 #include "WebPage.h"
 #include <WebCore/GraphicsContext.h>
 
@@ -39,20 +39,16 @@ using namespace WebCore;
 
 namespace WebKit {
 
-void TiledDrawingArea::paintIntoUpdateChunk(UpdateChunk* updateChunk, float scale)
+void TiledDrawingArea::paintIntoBitmap(ShareableBitmap* bitmap, const WebCore::IntRect& tileRect, float scale)
 {
-    IntRect tileRect = updateChunk->rect();
-    QImage image(updateChunk->createImage());
-    QPainter painter(&image);
-    // Now paint into the backing store.
-    GraphicsContext graphicsContext(&painter);
-    graphicsContext.translate(-tileRect.x(), -tileRect.y());
-    graphicsContext.scale(FloatSize(scale, scale));
+    OwnPtr<GraphicsContext> graphicsContext(bitmap->createGraphicsContext());
+    graphicsContext->translate(-tileRect.x(), -tileRect.y());
+    graphicsContext->scale(FloatSize(scale, scale));
     IntRect contentRect = enclosingIntRect(FloatRect(tileRect.x() / scale,
                                                      tileRect.y() / scale,
                                                      tileRect.width() / scale,
                                                      tileRect.height() / scale));
-    m_webPage->drawRect(graphicsContext, contentRect);
+    m_webPage->drawRect(*graphicsContext.get(), contentRect);
 }
 
 } // namespace WebKit

@@ -50,7 +50,7 @@ class QGraphicsWKView;
 
 namespace WebKit {
 
-class UpdateChunk;
+class ShareableBitmap;
 class WebPageProxy;
 
 #if PLATFORM(MAC)
@@ -109,7 +109,7 @@ private:
     WebCore::IntRect webViewVisibleRect();
     void updateWebView(const Vector<WebCore::IntRect>& paintedArea);
 
-    void snapshotTaken(UpdateChunk&);
+    void snapshotTaken(ShareableBitmap*);
 
     // DrawingAreaProxy
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

@@ -171,7 +171,6 @@ HEADERS += \
     Shared/Plugins/PluginProcessCreationParameters.h \
     Shared/Plugins/PluginQuirks.h \
     Shared/qt/PlatformCertificateInfo.h \
-    Shared/qt/UpdateChunk.h \
     Shared/qt/WebEventFactoryQt.h \
     UIProcess/Authentication/AuthenticationChallengeProxy.h \
     UIProcess/Authentication/AuthenticationDecisionListener.h \
@@ -377,7 +376,6 @@ SOURCES += \
     Shared/qt/NativeWebKeyboardEventQt.cpp \
     Shared/qt/NativeWebMouseEventQt.cpp \
     Shared/qt/NativeWebWheelEventQt.cpp \
-    Shared/qt/UpdateChunk.cpp \
     Shared/qt/WebCoreArgumentCodersQt.cpp \
     Shared/qt/WebEventFactoryQt.cpp \
     Shared/qt/WebURLRequestQt.cpp \

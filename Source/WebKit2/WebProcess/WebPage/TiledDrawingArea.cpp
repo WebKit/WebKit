@@ -31,7 +31,7 @@
 #include "DrawingAreaMessageKinds.h"
 #include "DrawingAreaProxyMessageKinds.h"
 #include "MessageID.h"
-#include "UpdateChunk.h"
+#include "UpdateInfo.h"
 #include "WebCore/Frame.h"
 #include "WebCore/FrameView.h"
 #include "WebCoreArgumentCoders.h"
@@ -138,11 +138,14 @@ void TiledDrawingArea::updateTile(int tileID, const IntRect& dirtyRect, float sc
 {
     m_webPage->layoutIfNeeded();
 
-    UpdateChunk updateChunk(dirtyRect);
-    paintIntoUpdateChunk(&updateChunk, scale);
+    UpdateInfo updateInfo;
+    updateInfo.updateRectBounds = dirtyRect;
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(dirtyRect.size(), ShareableBitmap::SupportsAlpha);
+    bitmap->createHandle(updateInfo.bitmapHandle);
+    paintIntoBitmap(bitmap.get(), dirtyRect, scale);
 
     unsigned pendingUpdateCount = m_pendingUpdates.size();
-    WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::TileUpdated, m_webPage->pageID(), CoreIPC::In(tileID, updateChunk, scale, pendingUpdateCount));
+    WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::TileUpdated, m_webPage->pageID(), CoreIPC::In(tileID, updateInfo, scale, pendingUpdateCount));
 }
 
 void TiledDrawingArea::tileUpdateTimerFired()
@@ -219,10 +222,16 @@ void TiledDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageI
 
         float targetScale = float(targetSize.width()) / contentsRect.width();
 
-        UpdateChunk updateChunk(IntRect(IntPoint(contentsRect.x() * targetScale, contentsRect.y() * targetScale), targetSize));
-        paintIntoUpdateChunk(&updateChunk, targetScale);
+        IntRect tileRect(IntPoint(contentsRect.x() * targetScale, contentsRect.y() * targetScale), targetSize);
 
-        WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::SnapshotTaken, m_webPage->pageID(), CoreIPC::In(updateChunk));
+        UpdateInfo updateInfo;
+        updateInfo.updateRectBounds = tileRect;
+        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(tileRect.size(), ShareableBitmap::SupportsAlpha);
+        bitmap->createHandle(updateInfo.bitmapHandle);
+
+        paintIntoBitmap(bitmap.get(), tileRect, targetScale);
+
+        WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::SnapshotTaken, m_webPage->pageID(), CoreIPC::In(updateInfo));
         break;
     }
     default:

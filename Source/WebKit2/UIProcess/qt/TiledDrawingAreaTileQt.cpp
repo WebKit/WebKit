@@ -29,10 +29,11 @@
 #if ENABLE(TILED_BACKING_STORE)
 
 #include "GraphicsContext.h"
+#include "ShareableBitmap.h"
 #include "TiledDrawingAreaProxy.h"
+#include "UpdateInfo.h"
 #include "WebPageProxy.h"
 #include "WebProcessProxy.h"
-#include "UpdateChunk.h"
 #include <QApplication>
 #include <QObject>
 #include <QPainter>
@@ -117,10 +118,11 @@ void TiledDrawingAreaTile::paint(GraphicsContext* context, const IntRect& rect)
     context->platformContext()->drawPixmap(target, m_buffer, source);
 }
 
-void TiledDrawingAreaTile::updateFromChunk(UpdateChunk* updateChunk, float)
+void TiledDrawingAreaTile::incorporateUpdate(const UpdateInfo& updateInfo, float)
 {
-    QImage image(updateChunk->createImage());
-    const IntRect& updateChunkRect = updateChunk->rect();
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(updateInfo.bitmapHandle);
+    QImage image(bitmap->createQImage());
+    const IntRect& updateChunkRect = updateInfo.updateRectBounds;
 
 #ifdef TILE_DEBUG_LOG
     qDebug() << "tile updated id=" << ID() << " rect=" << QRect(updateChunkRect);

@@ -1,3 +1,38 @@
+2011-05-24  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Simon Hausmann.
+
+        [WK2] Change TiledDrawingArea to use ShareableBitmap instead of UpdateChunk.
+        https://bugs.webkit.org/show_bug.cgi?id=61296
+
+        Pass UpdateInfo containing ShareableBitmaps instead of UpdateChunk for tile updates.
+        Only the bounds rect and bitmap handle in the UpdateInfo are used since none of the
+        other parameters are needed for TiledDrawingArea.
+
+        * Shared/ShareableBitmap.h:
+        * Shared/qt/ShareableBitmapQt.cpp:
+        (WebKit::ShareableBitmap::createQImage):
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::paint):
+        * Shared/qt/UpdateChunk.cpp: Removed.
+        * Shared/qt/UpdateChunk.h: Removed.
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::didReceiveMessage):
+        (WebKit::TiledDrawingAreaProxy::waitUntilUpdatesComplete):
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/TiledDrawingAreaTile.h:
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp:
+        (WebKit::TiledDrawingAreaProxy::snapshotTaken):
+        * UIProcess/qt/TiledDrawingAreaTileQt.cpp:
+        (WebKit::TiledDrawingAreaTile::incorporateUpdate):
+        * WebKit2.pro:
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::updateTile):
+        (WebKit::TiledDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/TiledDrawingArea.h:
+        * WebProcess/WebPage/qt/TiledDrawingAreaQt.cpp:
+        (WebKit::TiledDrawingArea::paintIntoBitmap):
+
 2011-05-24  Brady Eidson  <beidson@apple.com>
 
         Build fix after r87153

@@ -34,15 +34,15 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static inline QImage createQImage(void* data, int width, int height)
+QImage ShareableBitmap::createQImage()
 {
-    return QImage(reinterpret_cast<uchar*>(data), width, height, width * 4, QImage::Format_RGB32);
+    return QImage(reinterpret_cast<uchar*>(data()), m_size.width(), m_size.height(), m_size.width() * 4, QImage::Format_RGB32);
 }
 
 PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     // FIXME: Should this be OwnPtr<QImage>?
-    QImage* image = new QImage(createQImage(data(), m_size.width(), m_size.height()));
+    QImage* image = new QImage(createQImage());
     OwnPtr<GraphicsContext> context = adoptPtr(new GraphicsContext(new QPainter(image)));
     context->takeOwnershipOfPlatformContext();
     return context.release();
@@ -50,7 +50,7 @@ PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 
 void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, const IntRect& srcRect)
 {
-    QImage image = createQImage(data(), m_size.width(), m_size.height());
+    QImage image = createQImage();
     QPainter* painter = context.platformContext();
     painter->drawImage(dstPoint, image, QRect(srcRect));
 }
