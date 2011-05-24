@@ -45,7 +45,7 @@ public:
 
 private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual const AtomicString& shadowPseudoId() const;
 
     HTMLSummaryElement* summaryElement();

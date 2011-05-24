@@ -313,17 +313,17 @@ void HTMLMediaElement::parseMappedAttribute(Attribute* attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-bool HTMLMediaElement::rendererIsNeeded(RenderStyle* style)
+bool HTMLMediaElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    UNUSED_PARAM(style);
+    UNUSED_PARAM(context);
     Frame* frame = document()->frame();
     if (!frame)
         return false;
 
     return true;
 #else
-    return controls() ? HTMLElement::rendererIsNeeded(style) : false;
+    return controls() ? HTMLElement::rendererIsNeeded(context) : false;
 #endif
 }
 

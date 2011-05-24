@@ -48,7 +48,7 @@ private:
     virtual void synchronizeProperty(const QualifiedName&);
     virtual void fillAttributeToPropertyTypeMap();
     virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
-    virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+    virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
 
     virtual bool selfHasRelativeLengths() const;
 

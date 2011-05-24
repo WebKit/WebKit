@@ -183,10 +183,10 @@ void HTMLEmbedElement::updateWidget(PluginCreationOption pluginCreationOption)
     loader->requestObject(this, m_url, getAttribute(nameAttr), m_serviceType, paramNames, paramValues);
 }
 
-bool HTMLEmbedElement::rendererIsNeeded(RenderStyle* style)
+bool HTMLEmbedElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
     if (isImageType())
-        return HTMLPlugInImageElement::rendererIsNeeded(style);
+        return HTMLPlugInImageElement::rendererIsNeeded(context);
 
     Frame* frame = document()->frame();
     if (!frame)
@@ -211,7 +211,7 @@ bool HTMLEmbedElement::rendererIsNeeded(RenderStyle* style)
     }
 #endif
 
-    return HTMLPlugInImageElement::rendererIsNeeded(style);
+    return HTMLPlugInImageElement::rendererIsNeeded(context);
 }
 
 void HTMLEmbedElement::insertedIntoDocument()

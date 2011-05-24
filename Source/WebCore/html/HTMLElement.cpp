@@ -769,7 +769,7 @@ PassRefPtr<HTMLCollection> HTMLElement::children()
     return HTMLCollection::create(this, NodeChildren);
 }
 
-bool HTMLElement::rendererIsNeeded(RenderStyle *style)
+bool HTMLElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
     if (hasLocalName(noscriptTag)) {
         Frame* frame = document()->frame();
@@ -785,7 +785,7 @@ bool HTMLElement::rendererIsNeeded(RenderStyle *style)
         if (frame && frame->loader()->subframeLoader()->allowPlugins(NotAboutToInstantiatePlugin))
             return false;
     }
-    return StyledElement::rendererIsNeeded(style);
+    return StyledElement::rendererIsNeeded(context);
 }
 
 RenderObject* HTMLElement::createRenderer(RenderArena* arena, RenderStyle* style)

@@ -44,7 +44,7 @@ public:
     HTMLMeterElement* meterElement() const;
 
 private:
-    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
 };
 
 class MeterBarElement : public MeterShadowElement {

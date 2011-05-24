@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "Length.h"
 #include "MouseEvent.h"
+#include "NodeRenderingContext.h"
 #include "RenderFrameSet.h"
 #include "ScriptEventListener.h"
 #include "Text.h"
@@ -147,11 +148,11 @@ void HTMLFrameSetElement::parseMappedAttribute(Attribute* attr)
         HTMLElement::parseMappedAttribute(attr);
 }
 
-bool HTMLFrameSetElement::rendererIsNeeded(RenderStyle *style)
+bool HTMLFrameSetElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
     // For compatibility, frames render even when display: none is set.
     // However, we delay creating a renderer until stylesheets have loaded. 
-    return style->isStyleAvailable();
+    return context.style()->isStyleAvailable();
 }
 
 RenderObject *HTMLFrameSetElement::createRenderer(RenderArena *arena, RenderStyle *style)

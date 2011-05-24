@@ -35,7 +35,7 @@ private:
             
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual bool childShouldCreateRenderer(Node*) const;
-    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
 
     virtual void fillAttributeToPropertyTypeMap();
     virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();

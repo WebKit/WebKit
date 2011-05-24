@@ -41,7 +41,7 @@ private:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     
-    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     
     virtual bool isURLAttribute(Attribute*) const;

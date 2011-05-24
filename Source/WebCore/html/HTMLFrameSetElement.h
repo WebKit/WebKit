@@ -71,7 +71,7 @@ private:
     virtual void parseMappedAttribute(Attribute*);
 
     virtual void attach();
-    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     
     virtual void defaultEventHandler(Event*);

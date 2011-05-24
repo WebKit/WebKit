@@ -54,7 +54,7 @@ protected:
         ASSERT(type == CreateComment || type == CreateText);
     }
 
-    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
 
     void setDataImpl(PassRefPtr<StringImpl> impl) { m_data = impl; }
     void dispatchModifiedEvent(StringImpl* oldValue);

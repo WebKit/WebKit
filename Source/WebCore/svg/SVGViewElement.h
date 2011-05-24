@@ -52,7 +52,7 @@ private:
     virtual void fillAttributeToPropertyTypeMap();
     virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
-    virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+    virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
 
     // Animated property declarations
 

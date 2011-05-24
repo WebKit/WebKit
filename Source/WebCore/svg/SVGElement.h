@@ -126,7 +126,7 @@ protected:
 private:
     friend class SVGElementInstance;
 
-    virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+    virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
 
     virtual bool isSupported(StringImpl* feature, StringImpl* version) const;
 

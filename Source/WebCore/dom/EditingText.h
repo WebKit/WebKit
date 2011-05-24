@@ -30,7 +30,7 @@ public:
     static PassRefPtr<EditingText> create(Document*, const String&);
 
 private:
-    virtual bool rendererIsNeeded(RenderStyle *);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
 
     EditingText(Document*, const String&);
 };

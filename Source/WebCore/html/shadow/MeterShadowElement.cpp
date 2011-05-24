@@ -55,10 +55,10 @@ HTMLMeterElement* MeterShadowElement::meterElement() const
     return static_cast<HTMLMeterElement*>(node);
 }
 
-bool MeterShadowElement::rendererIsNeeded(RenderStyle* style)
+bool MeterShadowElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
     RenderMeter* meterRenderer = toRenderMeter(meterElement()->renderer());
-    return meterRenderer && !meterRenderer->theme()->supportsMeter(meterRenderer->style()->appearance()) && HTMLDivElement::rendererIsNeeded(style);
+    return meterRenderer && !meterRenderer->theme()->supportsMeter(meterRenderer->style()->appearance()) && HTMLDivElement::rendererIsNeeded(context);
 }
 
 const AtomicString& MeterBarElement::shadowPseudoId() const

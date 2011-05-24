@@ -55,9 +55,9 @@ PassRefPtr<HTMLVideoElement> HTMLVideoElement::create(const QualifiedName& tagNa
     return adoptRef(new HTMLVideoElement(tagName, document));
 }
 
-bool HTMLVideoElement::rendererIsNeeded(RenderStyle* style) 
+bool HTMLVideoElement::rendererIsNeeded(const NodeRenderingContext& context) 
 {
-    return HTMLElement::rendererIsNeeded(style); 
+    return HTMLElement::rendererIsNeeded(context); 
 }
 
 #if !ENABLE(PLUGIN_PROXY_FOR_VIDEO)

@@ -70,7 +70,7 @@ private:
     SVGFontElement(const QualifiedName&, Document*);
 
     virtual void synchronizeProperty(const QualifiedName&);
-    virtual bool rendererIsNeeded(RenderStyle*) { return false; }  
+    virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }  
     virtual void fillAttributeToPropertyTypeMap();
     virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 

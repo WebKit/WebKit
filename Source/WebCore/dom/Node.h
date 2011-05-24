@@ -62,6 +62,7 @@ class NamedNodeMap;
 class NameNodeList;
 class NodeList;
 class NodeRareData;
+class NodeRenderingContext;
 class PlatformKeyboardEvent;
 class PlatformMouseEvent;
 class PlatformWheelEvent;
@@ -457,7 +458,7 @@ public:
     virtual void willRemove();
     void createRendererIfNeeded();
     virtual PassRefPtr<RenderStyle> styleForRenderer();
-    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual bool childShouldCreateRenderer(Node*) const { return true; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     ContainerNode* parentNodeForRenderingAndStyle();

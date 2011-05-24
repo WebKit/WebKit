@@ -139,7 +139,7 @@ RenderObject* SVGGElement::createRenderer(RenderArena* arena, RenderStyle* style
     return new (arena) RenderSVGTransformableContainer(this);
 }
 
-bool SVGGElement::rendererIsNeeded(RenderStyle*)
+bool SVGGElement::rendererIsNeeded(const NodeRenderingContext&)
 {
     return parentNode() && parentNode()->isSVGElement(); 
 }

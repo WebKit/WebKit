@@ -37,7 +37,7 @@ PassRefPtr<EditingText> EditingText::create(Document* document, const String& da
     return adoptRef(new EditingText(document, data));
 }
 
-bool EditingText::rendererIsNeeded(RenderStyle*)
+bool EditingText::rendererIsNeeded(const NodeRenderingContext&)
 {
     return true;
 }

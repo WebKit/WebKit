@@ -1,3 +1,114 @@
+2011-05-19  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Refactoring] Pass NodeRenderingContext to Node::rendererIsNeeded()
+        https://bugs.webkit.org/show_bug.cgi?id=61114
+
+        - Extracted NodeRenderingContext from NodeRendererFactory, giving separate files to it.
+        - Changed signature rendererIsNeeded(RenderStyle*) 
+          to rendererIsNeeded(const NodeRenderingContext&).
+          The style object is retrieved from NodeRendererFactory::style()
+          This will allow rendererIsNeeded() to access contextual
+          information like attaching phase and rendering-parent.
+        
+        No new tests. No behaviour change.
+        
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::updateRenderer): Pass unresolved NodeRenderingContext& to rendererIsNeeded()
+        (WebCore::CharacterData::rendererIsNeeded):
+        * dom/CharacterData.h:
+        * dom/DOMAllInOne.cpp:
+        * dom/EditingText.cpp:
+        (WebCore::EditingText::rendererIsNeeded):
+        * dom/EditingText.h:
+        * dom/Node.cpp:
+        (WebCore::Node::parentNodeForRenderingAndStyle):
+        (WebCore::Node::rendererIsNeeded):
+        * dom/Node.h:
+        * dom/NodeRenderingContext.cpp: Added.
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRenderingContext::~NodeRenderingContext):
+        (WebCore::NodeRenderingContext::setStyle):
+        (WebCore::NodeRenderingContext::releaseStyle):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::parentRenderer):
+        (WebCore::NodeRenderingContext::hostChildrenChanged):
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        (WebCore::NodeRendererFactory::NodeRendererFactory):
+        (WebCore::NodeRendererFactory::createRendererAndStyle):
+        (WebCore::wrapWithRenderFullScreen):
+        (WebCore::NodeRendererFactory::createRendererIfNeeded):
+        * dom/NodeRenderingContext.h: Added.
+        (WebCore::NodeRenderingContext::node):
+        (WebCore::NodeRenderingContext::parentNodeForRenderingAndStyle):
+        (WebCore::NodeRenderingContext::style):
+        (WebCore::NodeRendererFactory::context):
+        * dom/ShadowContentElement.h:
+        * dom/Text.cpp:
+        * dom/Text.h:
+        * html/HTMLAppletElement.cpp:
+        * html/HTMLAppletElement.h:
+        * html/HTMLElement.cpp:
+        * html/HTMLElement.h:
+        * html/HTMLEmbedElement.cpp:
+        * html/HTMLEmbedElement.h:
+        * html/HTMLFormElement.cpp:
+        * html/HTMLFormElement.h:
+        * html/HTMLFrameElement.cpp:
+        * html/HTMLFrameElement.h:
+        * html/HTMLFrameSetElement.cpp:
+        * html/HTMLFrameSetElement.h:
+        * html/HTMLIFrameElement.cpp:
+        * html/HTMLIFrameElement.h:
+        * html/HTMLInputElement.cpp:
+        * html/HTMLInputElement.h:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+        * html/HTMLNoScriptElement.h:
+        * html/HTMLObjectElement.cpp:
+        * html/HTMLObjectElement.h:
+        * html/HTMLOptGroupElement.h:
+        * html/HTMLOptionElement.h:
+        * html/HTMLVideoElement.cpp:
+        * html/HTMLVideoElement.h:
+        * html/shadow/DetailsMarkerControl.cpp:
+        * html/shadow/DetailsMarkerControl.h:
+        * html/shadow/MeterShadowElement.cpp:
+        * html/shadow/MeterShadowElement.h:
+        * html/shadow/ProgressShadowElement.cpp:
+        * html/shadow/ProgressShadowElement.h:
+        * svg/SVGDescElement.h:
+        * svg/SVGElement.h:
+        * svg/SVGFilterPrimitiveStandardAttributes.cpp:
+        * svg/SVGFilterPrimitiveStandardAttributes.h:
+        * svg/SVGFontElement.h:
+        * svg/SVGGElement.cpp:
+        * svg/SVGGElement.h:
+        * svg/SVGGlyphElement.h:
+        * svg/SVGHKernElement.h:
+        * svg/SVGMarkerElement.h:
+        * svg/SVGMissingGlyphElement.h:
+        * svg/SVGSVGElement.h:
+        * svg/SVGStyledElement.cpp:
+        * svg/SVGStyledElement.h:
+        * svg/SVGSymbolElement.h:
+        * svg/SVGTRefElement.cpp:
+        * svg/SVGTRefElement.h:
+        * svg/SVGTSpanElement.cpp:
+        * svg/SVGTSpanElement.h:
+        * svg/SVGTextPathElement.cpp:
+        * svg/SVGTextPathElement.h:
+        * svg/SVGTitleElement.h:
+        * svg/SVGVKernElement.h:
+        * svg/SVGViewElement.h:
+
 2011-05-20  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

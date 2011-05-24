@@ -30,6 +30,7 @@
 #include "Frame.h"
 #include "HTMLDocument.h"
 #include "HTMLNames.h"
+#include "NodeRenderingContext.h"
 #include "RenderIFrame.h"
 
 namespace WebCore {
@@ -131,9 +132,9 @@ void HTMLIFrameElement::parseMappedAttribute(Attribute* attr)
         HTMLFrameElementBase::parseMappedAttribute(attr);
 }
 
-bool HTMLIFrameElement::rendererIsNeeded(RenderStyle* style)
+bool HTMLIFrameElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
-    return isURLAllowed() && style->display() != NONE;
+    return isURLAllowed() && context.style()->display() != NONE;
 }
 
 RenderObject* HTMLIFrameElement::createRenderer(RenderArena* arena, RenderStyle*)

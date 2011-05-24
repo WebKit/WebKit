@@ -184,12 +184,12 @@ bool SVGTextPathElement::childShouldCreateRenderer(Node* child) const
     return false;
 }
 
-bool SVGTextPathElement::rendererIsNeeded(RenderStyle* style)
+bool SVGTextPathElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
     if (parentNode()
         && (parentNode()->hasTagName(SVGNames::aTag)
             || parentNode()->hasTagName(SVGNames::textTag)))
-        return StyledElement::rendererIsNeeded(style);
+        return StyledElement::rendererIsNeeded(context);
 
     return false;
 }

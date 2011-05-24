@@ -37,7 +37,7 @@ private:
     virtual void attach();
     virtual void recalcStyle(StyleChange);
     virtual bool childShouldCreateRenderer(Node*) const;
-    virtual bool rendererIsNeeded(RenderStyle*) {  return true; }
+    virtual bool rendererIsNeeded(const NodeRenderingContext&) {  return true; }
 };
 
 } //namespace

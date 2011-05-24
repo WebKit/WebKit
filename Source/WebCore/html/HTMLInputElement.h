@@ -167,7 +167,7 @@ public:
 
     bool canHaveSelection() const;
 
-    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void detach();
 

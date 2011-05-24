@@ -100,12 +100,11 @@ void HTMLAppletElement::removedFromDocument()
     HTMLPlugInElement::removedFromDocument();
 }
 
-bool HTMLAppletElement::rendererIsNeeded(RenderStyle* style)
+bool HTMLAppletElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
     if (!fastHasAttribute(codeAttr))
         return false;
-
-    return HTMLPlugInElement::rendererIsNeeded(style);
+    return HTMLPlugInElement::rendererIsNeeded(context);
 }
 
 RenderObject* HTMLAppletElement::createRenderer(RenderArena*, RenderStyle* style)

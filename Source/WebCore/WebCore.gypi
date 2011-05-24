@@ -2503,6 +2503,8 @@
             'dom/NodeIterator.cpp',
             'dom/NodeIterator.h',
             'dom/NodeRareData.h',
+            'dom/NodeRenderingContext.cpp',
+            'dom/NodeRenderingContext.h',
             'dom/NodeRenderStyle.h',
             'dom/NodeWithIndex.h',
             'dom/Notation.cpp',

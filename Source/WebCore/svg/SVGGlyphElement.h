@@ -53,7 +53,7 @@ private:
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 
-    virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+    virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
 
     void invalidateGlyphCache();
 };

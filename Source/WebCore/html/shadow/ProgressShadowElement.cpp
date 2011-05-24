@@ -52,10 +52,10 @@ HTMLProgressElement* ProgressShadowElement::progressElement() const
     return static_cast<HTMLProgressElement*>(node);
 }
 
-bool ProgressShadowElement::rendererIsNeeded(RenderStyle* style)
+bool ProgressShadowElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
     RenderObject* progressRenderer = progressElement()->renderer();
-    return progressRenderer && !progressRenderer->style()->hasAppearance() && HTMLDivElement::rendererIsNeeded(style);
+    return progressRenderer && !progressRenderer->style()->hasAppearance() && HTMLDivElement::rendererIsNeeded(context);
 }
 
 const AtomicString& ProgressBarElement::shadowPseudoId() const

@@ -770,9 +770,9 @@ void HTMLInputElement::finishParsingChildren()
     }
 }
 
-bool HTMLInputElement::rendererIsNeeded(RenderStyle* style)
+bool HTMLInputElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
-    return m_inputType->rendererIsNeeded() && HTMLFormControlElementWithState::rendererIsNeeded(style);
+    return m_inputType->rendererIsNeeded() && HTMLFormControlElementWithState::rendererIsNeeded(context);
 }
 
 RenderObject* HTMLInputElement::createRenderer(RenderArena* arena, RenderStyle* style)

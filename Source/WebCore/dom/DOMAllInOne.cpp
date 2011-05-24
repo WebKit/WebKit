@@ -88,6 +88,7 @@
 #include "NodeFilter.cpp"
 #include "NodeFilterCondition.cpp"
 #include "NodeIterator.cpp"
+#include "NodeRenderingContext.cpp"
 #include "Notation.cpp"
 #include "OptionElement.cpp"
 #include "OptionGroupElement.cpp"

@@ -27,6 +27,7 @@
 #include "ExceptionCode.h"
 #include "InspectorInstrumentation.h"
 #include "MutationEvent.h"
+#include "NodeRenderingContext.h"
 #include "RenderText.h"
 #include "TextBreakIterator.h"
 
@@ -181,9 +182,9 @@ void CharacterData::setDataAndUpdate(PassRefPtr<StringImpl> newData, unsigned of
 
 void CharacterData::updateRenderer(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
 {
-    if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
+    if ((!renderer() || !rendererIsNeeded(NodeRenderingContext(this, renderer()->style()))) && attached())
         reattach();
-    } else if (renderer())
+    else if (renderer())
         toRenderText(renderer())->setTextWithOffset(m_data, offsetOfReplacedData, lengthOfReplacedData);
 }
 
@@ -216,11 +217,11 @@ int CharacterData::maxCharacterOffset() const
     return static_cast<int>(length());
 }
 
-bool CharacterData::rendererIsNeeded(RenderStyle *style)
+bool CharacterData::rendererIsNeeded(const NodeRenderingContext& context)
 {
     if (!m_data || !length())
         return false;
-    return Node::rendererIsNeeded(style);
+    return Node::rendererIsNeeded(context);
 }
 
 bool CharacterData::offsetInCharacters() const

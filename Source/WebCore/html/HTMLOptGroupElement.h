@@ -46,7 +46,7 @@ private:
     virtual bool supportsFocus() const;
     virtual bool isFocusable() const;
     virtual void parseMappedAttribute(Attribute*);
-    virtual bool rendererIsNeeded(RenderStyle*) { return false; }
+    virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
     virtual void attach();
     virtual void detach();
     virtual void setRenderStyle(PassRefPtr<RenderStyle>);

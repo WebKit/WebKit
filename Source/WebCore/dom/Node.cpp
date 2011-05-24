@@ -67,6 +67,7 @@
 #include "NameNodeList.h"
 #include "NamedNodeMap.h"
 #include "NodeRareData.h"
+#include "NodeRenderingContext.h"
 #include "Page.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
@@ -75,7 +76,6 @@
 #include "RegisteredEventListener.h"
 #include "RenderBlock.h"
 #include "RenderBox.h"
-#include "RenderFullScreen.h"
 #include "RenderTextControl.h"
 #include "RenderView.h"
 #include "ScopedEventQueue.h"
@@ -1459,182 +1459,9 @@ Node *Node::nextLeafNode() const
     return 0;
 }
 
-
-class NodeRendererFactory {
-public:
-    enum TreeLocation {
-        LocationNotInTree,
-        LocationLightChild,
-        LocationShadowChild,
-    };
-
-    enum AttachPhase {
-        AttachStraight,
-        AttachContentLight,
-        AttachContentForwarded,
-    };
-
-    explicit NodeRendererFactory(Node*);
-    ContainerNode* parentNodeForRenderingAndStyle() const { return m_parentNodeForRenderingAndStyle; }
-    void createRendererIfNeeded();
-
-private:
-    Document* document() { return m_node->document(); }
-    void initialize();
-    RenderObject* nextRenderer() const;
-    RenderObject* createRendererAndStyle();
-    bool shouldCreateRenderer() const;
-
-    TreeLocation m_location;
-    AttachPhase m_phase;
-    Node* m_node;
-    ContainerNode* m_parentNodeForRenderingAndStyle;
-    ShadowRoot* m_visualParentShadowRoot;
-};
-
-NodeRendererFactory::NodeRendererFactory(Node* node)
-    : m_location(LocationNotInTree)
-    , m_phase(AttachStraight)
-    , m_node(node)
-    , m_parentNodeForRenderingAndStyle(0)
-    , m_visualParentShadowRoot(0)
-{
-    ContainerNode* parent = m_node->parentOrHostNode();
-    if (!parent)
-        return;
-
-    if (parent->isShadowBoundary()) {
-        m_location = LocationShadowChild;
-        m_parentNodeForRenderingAndStyle = parent->shadowHost();
-        return;
-    }
-
-    m_location = LocationLightChild;
-
-    if (parent->isElementNode()) {
-        m_visualParentShadowRoot = toElement(parent)->shadowRoot();
-
-        if (m_visualParentShadowRoot) {
-            if (ContainerNode* contentContainer = m_visualParentShadowRoot->activeContentContainer()) {
-                m_phase = AttachContentForwarded;
-                m_parentNodeForRenderingAndStyle = NodeRendererFactory(contentContainer).parentNodeForRenderingAndStyle();
-                return;
-            } 
-                
-            m_phase = AttachContentLight;
-            m_parentNodeForRenderingAndStyle = parent;
-            return;
-        }
-    }
-
-    m_parentNodeForRenderingAndStyle = parent;
-}
-
-bool NodeRendererFactory::shouldCreateRenderer() const
-{
-    ASSERT(m_parentNodeForRenderingAndStyle);
-
-    if (m_location == LocationNotInTree || m_phase == AttachContentLight)
-        return false;
-
-    RenderObject* parentRenderer = m_parentNodeForRenderingAndStyle->renderer();
-    if (!parentRenderer)
-        return false;
-
-    if (m_location == LocationLightChild && m_phase == AttachStraight) {
-        // FIXME: Ignoring canHaveChildren() in a case of shadow children might be wrong.
-        // See https://bugs.webkit.org/show_bug.cgi?id=52423
-        if (!parentRenderer->canHaveChildren())
-            return false;
-    
-        if (m_visualParentShadowRoot && !m_parentNodeForRenderingAndStyle->canHaveLightChildRendererWithShadow())
-            return false;
-    }
-
-    if (!m_parentNodeForRenderingAndStyle->childShouldCreateRenderer(m_node))
-        return false;
-
-    return true;
-}
-
-RenderObject* NodeRendererFactory::createRendererAndStyle()
-{
-    ASSERT(!m_node->renderer());
-    ASSERT(document()->shouldCreateRenderers());
-
-    if (!shouldCreateRenderer())
-        return 0;
-
-    RefPtr<RenderStyle> style = m_node->styleForRenderer();
-    if (!m_node->rendererIsNeeded(style.get()))
-        return 0;
-
-    RenderObject* newRenderer = m_node->createRenderer(document()->renderArena(), style.get());
-    if (!newRenderer)
-        return 0;
-
-    if (!m_parentNodeForRenderingAndStyle->renderer()->isChildAllowed(newRenderer, style.get())) {
-        newRenderer->destroy();
-        return 0;
-    }
-
-    m_node->setRenderer(newRenderer);
-    newRenderer->setAnimatableStyle(style.release()); // setAnimatableStyle() can depend on renderer() already being set.
-    return newRenderer;
-}
-
-RenderObject* NodeRendererFactory::nextRenderer() const
-{
-    if (m_phase != AttachContentForwarded)
-        return m_node->nextRenderer();
-    // Returns 0 here to insert renderer at the end of child list.
-    // We assume content children are always attached in tree order and
-    // there is no partial render tree creation.
-    return 0;
-}
-
-#if ENABLE(FULLSCREEN_API)
-static RenderFullScreen* wrapWithRenderFullScreen(RenderObject* object, Document* document)
-{
-    RenderFullScreen* fullscreenRenderer = new (document->renderArena()) RenderFullScreen(document);
-    fullscreenRenderer->setStyle(RenderFullScreen::createFullScreenStyle());
-    // It's possible that we failed to create the new render and end up wrapping nothing.
-    // We'll end up displaying a black screen, but Jer says this is expected.
-    if (object)
-        fullscreenRenderer->addChild(object);
-    document->setFullScreenRenderer(fullscreenRenderer);
-    return fullscreenRenderer;
-}
-#endif
-
-void NodeRendererFactory::createRendererIfNeeded()
-{
-    if (!document()->shouldCreateRenderers())
-        return;
-
-    ASSERT(!m_node->renderer());
-
-    RenderObject* newRenderer = createRendererAndStyle();
-
-#if ENABLE(FULLSCREEN_API)
-    if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == m_node)
-        newRenderer = wrapWithRenderFullScreen(newRenderer, document());
-#endif
-
-    // FIXME: This side effect should be visible from attach() code.
-    if (m_phase == AttachContentLight)
-        m_visualParentShadowRoot->hostChildrenChanged();
-
-    if (!newRenderer)
-        return;
-
-    // Note: Adding newRenderer instead of renderer(). renderer() may be a child of newRenderer.
-    m_parentNodeForRenderingAndStyle->renderer()->addChild(newRenderer, nextRenderer());
-}
-
 ContainerNode* Node::parentNodeForRenderingAndStyle()
 {
-    return NodeRendererFactory(this).parentNodeForRenderingAndStyle();
+    return NodeRenderingContext(this).parentNodeForRenderingAndStyle();
 }
 
 void Node::createRendererIfNeeded()
@@ -1655,9 +1482,9 @@ PassRefPtr<RenderStyle> Node::styleForRenderer()
     return parentNode() && parentNode()->renderer() ? parentNode()->renderer()->style() : 0;
 }
 
-bool Node::rendererIsNeeded(RenderStyle *style)
+bool Node::rendererIsNeeded(const NodeRenderingContext& context)
 {
-    return (document()->documentElement() == this) || (style->display() != NONE);
+    return (document()->documentElement() == this) || (context.style()->display() != NONE);
 }
 
 RenderObject* Node::createRenderer(RenderArena*, RenderStyle*)

@@ -220,7 +220,7 @@ protected:
 
 private:
     virtual void attributeChanged(Attribute*, bool preserveDecls);
-    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();

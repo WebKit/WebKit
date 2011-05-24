@@ -300,14 +300,14 @@ void HTMLObjectElement::updateWidget(PluginCreationOption pluginCreationOption)
         renderFallbackContent();
 }
 
-bool HTMLObjectElement::rendererIsNeeded(RenderStyle* style)
+bool HTMLObjectElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
     // FIXME: This check should not be needed, detached documents never render!
     Frame* frame = document()->frame();
     if (!frame)
         return false;
 
-    return HTMLPlugInImageElement::rendererIsNeeded(style);
+    return HTMLPlugInImageElement::rendererIsNeeded(context);
 }
 
 void HTMLObjectElement::insertedIntoDocument()

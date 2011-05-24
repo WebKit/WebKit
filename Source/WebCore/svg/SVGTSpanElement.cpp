@@ -59,7 +59,7 @@ bool SVGTSpanElement::childShouldCreateRenderer(Node* child) const
     return false;
 }
 
-bool SVGTSpanElement::rendererIsNeeded(RenderStyle* style)
+bool SVGTSpanElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
     if (parentNode()
         && (parentNode()->hasTagName(SVGNames::aTag)
@@ -69,7 +69,7 @@ bool SVGTSpanElement::rendererIsNeeded(RenderStyle* style)
             || parentNode()->hasTagName(SVGNames::textTag)
             || parentNode()->hasTagName(SVGNames::textPathTag)
             || parentNode()->hasTagName(SVGNames::tspanTag)))
-        return StyledElement::rendererIsNeeded(style);
+        return StyledElement::rendererIsNeeded(context);
 
     return false;
 }

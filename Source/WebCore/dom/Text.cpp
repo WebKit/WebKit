@@ -23,6 +23,7 @@
 #include "Text.h"
 
 #include "ExceptionCode.h"
+#include "NodeRenderingContext.h"
 #include "RenderCombineText.h"
 #include "RenderText.h"
 
@@ -189,9 +190,9 @@ PassRefPtr<Node> Text::cloneNode(bool /*deep*/)
     return create(document(), data());
 }
 
-bool Text::rendererIsNeeded(RenderStyle *style)
+bool Text::rendererIsNeeded(const NodeRenderingContext& context)
 {
-    if (!CharacterData::rendererIsNeeded(style))
+    if (!CharacterData::rendererIsNeeded(context))
         return false;
 
     bool onlyWS = containsOnlyWhitespace();
@@ -203,7 +204,7 @@ bool Text::rendererIsNeeded(RenderStyle *style)
     if (par->isTable() || par->isTableRow() || par->isTableSection() || par->isTableCol() || par->isFrameSet())
         return false;
     
-    if (style->preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
+    if (context.style()->preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
         return true;
     
     RenderObject *prev = previousRenderer();

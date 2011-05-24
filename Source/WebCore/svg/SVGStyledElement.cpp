@@ -118,7 +118,7 @@ String SVGStyledElement::title() const
     return String();
 }
 
-bool SVGStyledElement::rendererIsNeeded(RenderStyle* style)
+bool SVGStyledElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
     // http://www.w3.org/TR/SVG/extend.html#PrivateData
     // Prevent anything other than SVG renderers from appearing in our render tree
@@ -126,7 +126,7 @@ bool SVGStyledElement::rendererIsNeeded(RenderStyle* style)
     // with the SVG content. In general, the SVG user agent will include the unknown
     // elements in the DOM but will otherwise ignore unknown elements. 
     if (!parentNode() || parentNode()->isSVGElement())
-        return StyledElement::rendererIsNeeded(style);
+        return StyledElement::rendererIsNeeded(context);
 
     return false;
 }

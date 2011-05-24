@@ -37,7 +37,7 @@ private:
     virtual bool mapToEntry(const QualifiedName& attrName, MappedAttributeEntry& result) const;
     virtual void parseMappedAttribute(Attribute*);
 
-    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void attributeChanged(Attribute*, bool preserveDecls = false);

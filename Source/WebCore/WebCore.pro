@@ -511,6 +511,7 @@ SOURCES += \
     dom/NodeFilterCondition.cpp \
     dom/NodeFilter.cpp \
     dom/NodeIterator.cpp \
+    dom/NodeRenderingContext.cpp \
     dom/Notation.cpp \
     dom/OptionGroupElement.cpp \
     dom/OptionElement.cpp \
@@ -1491,6 +1492,7 @@ HEADERS += \
     dom/NodeFilter.h \
     dom/Node.h \
     dom/NodeIterator.h \
+    dom/NodeRenderingContext.h \
     dom/Notation.h \
     dom/OptionElement.h \
     dom/OptionGroupElement.h \

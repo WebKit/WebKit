@@ -45,7 +45,7 @@ public:
     HTMLProgressElement* progressElement() const;
 
 private:
-    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
 };
 
 class ProgressBarElement : public ProgressShadowElement {

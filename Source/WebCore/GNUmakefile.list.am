@@ -1182,11 +1182,13 @@ webcore_sources += \
 	Source/WebCore/dom/NodeFilterCondition.h \
 	Source/WebCore/dom/NodeFilter.cpp \
 	Source/WebCore/dom/NodeFilter.h \
+	Source/WebCore/dom/NodeRenderingContext.cpp \
 	Source/WebCore/dom/Node.h \
 	Source/WebCore/dom/NodeIterator.cpp \
 	Source/WebCore/dom/NodeIterator.h \
 	Source/WebCore/dom/NodeList.h \
 	Source/WebCore/dom/NodeRareData.h \
+	Source/WebCore/dom/NodeRenderingContext.h \
 	Source/WebCore/dom/NodeRenderStyle.h \
 	Source/WebCore/dom/NodeWithIndex.h \
 	Source/WebCore/dom/Notation.cpp \

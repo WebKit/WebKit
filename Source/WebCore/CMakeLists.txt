@@ -585,6 +585,7 @@ SET(WebCore_SOURCES
     dom/NodeFilterCondition.cpp
     dom/NodeFilter.cpp
     dom/NodeIterator.cpp
+    dom/NodeRenderingContext.cpp
     dom/Notation.cpp
     dom/OptionElement.cpp
     dom/OptionGroupElement.cpp

@@ -46,6 +46,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "MIMETypeRegistry.h"
+#include "NodeRenderingContext.h"
 #include "Page.h"
 #include "RenderTextControl.h"
 #include "ScriptEventListener.h"
@@ -104,10 +105,10 @@ bool HTMLFormElement::formWouldHaveSecureSubmission(const String& url)
     return document()->completeURL(url).protocolIs("https");
 }
 
-bool HTMLFormElement::rendererIsNeeded(RenderStyle* style)
+bool HTMLFormElement::rendererIsNeeded(const NodeRenderingContext& context)
 {
     if (!m_wasDemoted)
-        return HTMLElement::rendererIsNeeded(style);
+        return HTMLElement::rendererIsNeeded(context);
 
     ContainerNode* node = parentNode();
     RenderObject* parentRenderer = node->renderer();
@@ -120,7 +121,7 @@ bool HTMLFormElement::rendererIsNeeded(RenderStyle* style)
     if (!parentIsTableElementPart)
         return true;
 
-    EDisplay display = style->display();
+    EDisplay display = context.style()->display();
     bool formIsTablePart = display == TABLE || display == INLINE_TABLE || display == TABLE_ROW_GROUP
         || display == TABLE_HEADER_GROUP || display == TABLE_FOOTER_GROUP || display == TABLE_ROW
         || display == TABLE_COLUMN_GROUP || display == TABLE_COLUMN || display == TABLE_CELL

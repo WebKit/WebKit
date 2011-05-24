@@ -72,7 +72,7 @@ private:
     virtual void insertedIntoTree(bool deep);
     virtual void removedFromTree(bool deep);
 
-    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void willMoveToNewOwnerDocument();

@@ -117,7 +117,7 @@ public:
 private:
     HTMLFormElement(const QualifiedName&, Document*);
 
-    virtual bool rendererIsNeeded(RenderStyle*);
+    virtual bool rendererIsNeeded(const NodeRenderingContext&);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
 

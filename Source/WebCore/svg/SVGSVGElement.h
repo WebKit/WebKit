@@ -136,7 +136,7 @@ private:
     
     virtual void parseMappedAttribute(Attribute*);
 
-    virtual bool rendererIsNeeded(RenderStyle* style) { return StyledElement::rendererIsNeeded(style); }
+    virtual bool rendererIsNeeded(const NodeRenderingContext& context) { return StyledElement::rendererIsNeeded(context); }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
 
     virtual void insertedIntoDocument();

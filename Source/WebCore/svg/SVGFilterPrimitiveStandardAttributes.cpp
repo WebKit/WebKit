@@ -220,10 +220,10 @@ RenderObject* SVGFilterPrimitiveStandardAttributes::createRenderer(RenderArena* 
     return new (arena) RenderSVGResourceFilterPrimitive(this);
 }
 
-bool SVGFilterPrimitiveStandardAttributes::rendererIsNeeded(RenderStyle* style)
+bool SVGFilterPrimitiveStandardAttributes::rendererIsNeeded(const NodeRenderingContext& context)
 {
     if (parentNode() && (parentNode()->hasTagName(SVGNames::filterTag)))
-        return SVGStyledElement::rendererIsNeeded(style);
+        return SVGStyledElement::rendererIsNeeded(context);
 
     return false;
 }
