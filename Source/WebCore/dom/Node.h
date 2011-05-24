@@ -214,9 +214,9 @@ public:
     virtual bool isShadowBoundary() const { return false; }
     virtual bool canHaveLightChildRendererWithShadow() const { return false; }
 
-    Node* shadowAncestorNode();
+    Node* shadowAncestorNode() const;
     // Returns 0, a ShadowRoot, or a legacy shadow root.
-    Node* shadowTreeRootNode();
+    Node* shadowTreeRootNode() const;
     // Returns 0, a child of ShadowRoot, or a legacy shadow root.
     Node* nonBoundaryShadowTreeRootNode();
     bool isInShadowTree();

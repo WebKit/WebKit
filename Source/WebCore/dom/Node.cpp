@@ -1538,7 +1538,7 @@ SVGUseElement* Node::svgShadowHost() const
 }
 #endif
 
-Node* Node::shadowAncestorNode()
+Node* Node::shadowAncestorNode() const
 {
 #if ENABLE(SVG)
     // SVG elements living in a shadow tree only occur when <use> created them.
@@ -1546,18 +1546,18 @@ Node* Node::shadowAncestorNode()
     // but the actual shadow tree element - as main difference to the HTML forms
     // shadow tree concept. (This function _could_ be made virtual - opinions?)
     if (isSVGElement())
-        return this;
+        return const_cast<Node*>(this);
 #endif
 
     Node* root = shadowTreeRootNode();
     if (root)
         return root->shadowHost();
-    return this;
+    return const_cast<Node*>(this);
 }
 
-Node* Node::shadowTreeRootNode()
+Node* Node::shadowTreeRootNode() const
 {
-    Node* root = this;
+    Node* root = const_cast<Node*>(this);
     while (root) {
         if (root->isShadowRoot() || root->isSVGShadowRoot())
             return root;
