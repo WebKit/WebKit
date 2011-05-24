@@ -182,8 +182,7 @@ void CharacterData::setDataAndUpdate(PassRefPtr<StringImpl> newData, unsigned of
 void CharacterData::updateRenderer(unsigned offsetOfReplacedData, unsigned lengthOfReplacedData)
 {
     if ((!renderer() || !rendererIsNeeded(renderer()->style())) && attached()) {
-        detach();
-        attach();
+        reattach();
     } else if (renderer())
         toRenderText(renderer())->setTextWithOffset(m_data, offsetOfReplacedData, lengthOfReplacedData);
 }

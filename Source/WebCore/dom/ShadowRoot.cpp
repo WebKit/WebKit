@@ -84,7 +84,7 @@ bool ShadowRoot::childTypeAllowed(NodeType type) const
 void ShadowRoot::recalcStyle(StyleChange change)
 {
     if (hasContentElement())
-        forceReattach();
+        reattach();
     else {
         for (Node* n = firstChild(); n; n = n->nextSibling())
             n->recalcStyle(change);

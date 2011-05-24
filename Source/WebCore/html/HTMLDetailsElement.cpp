@@ -146,15 +146,10 @@ void HTMLDetailsElement::refreshMainSummary(RefreshRenderer refreshRenderer)
     if (oldSummary == m_mainSummary || !attached())
         return;
 
-    if (oldSummary && oldSummary->parentNodeForRenderingAndStyle()) {
-        oldSummary->detach();
-        oldSummary->attach();
-    }
-        
-    if (m_mainSummary && refreshRenderer == RefreshRendererAllowed) {
-        m_mainSummary->detach();
-        m_mainSummary->attach();
-    }
+    if (oldSummary && oldSummary->parentNodeForRenderingAndStyle())
+        oldSummary->reattach();
+    if (m_mainSummary && refreshRenderer == RefreshRendererAllowed)
+        m_mainSummary->reattach();
 }
 
 void HTMLDetailsElement::createShadowSubtree()
@@ -196,10 +191,8 @@ void HTMLDetailsElement::parseMappedAttribute(Attribute* attr)
     if (attr->name() == openAttr) {
         bool oldValue = m_isOpen;
         m_isOpen =  !attr->value().isNull();
-        if (attached() && oldValue != m_isOpen) {
-            detach();
-            attach();
-        }
+        if (oldValue != m_isOpen)
+            reattachIfAttached();
     } else
         HTMLElement::parseMappedAttribute(attr);
 }

@@ -264,8 +264,7 @@ void HTMLSelectElement::parseMappedAttribute(Attribute* attr)
         m_data.setSize(size);
         setNeedsValidityCheck();
         if ((oldUsesMenuList != m_data.usesMenuList() || (!oldUsesMenuList && m_data.size() != oldSize)) && attached()) {
-            detach();
-            attach();
+            reattach();
             setRecalcListItems();
         }
     } else if (attr->name() == multipleAttr)

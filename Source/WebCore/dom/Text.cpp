@@ -265,11 +265,8 @@ void Text::recalcStyle(StyleChange change)
         if (renderer()) {
             if (renderer()->isText())
                 toRenderText(renderer())->setText(dataImpl());
-        } else {
-            if (attached())
-                detach();
-            attach();
-        }
+        } else
+            reattach();
     }
     clearNeedsStyleRecalc();
 }

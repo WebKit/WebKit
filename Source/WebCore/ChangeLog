@@ -1,3 +1,36 @@
+2011-05-20  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+        
+        [Refactoring] attach() following detach() should be replaced with Node::reattach()
+        https://bugs.webkit.org/show_bug.cgi?id=61011
+
+        - Renamed forceReattach() to reattach()
+        - Introduced reattachIfAttached() as a variant.
+        
+        No new tests. No behavior change.
+
+        * dom/CharacterData.cpp:
+        (WebCore::CharacterData::updateRenderer):
+        * dom/Element.cpp:
+        (WebCore::Element::recalcStyle):
+        * dom/Node.h:
+        (WebCore::Node::reattach):
+        (WebCore::Node::reattachIfAttached):
+        * dom/Text.cpp:
+        (WebCore::Text::recalcStyle):
+        * html/HTMLDetailsElement.cpp:
+        (WebCore::HTMLDetailsElement::refreshMainSummary):
+        (WebCore::HTMLDetailsElement::parseMappedAttribute):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::renderFallbackContent):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::recalcStyle):
+        * html/HTMLSelectElement.cpp:
+        (WebCore::HTMLSelectElement::parseMappedAttribute):
+
 2011-05-23  Mark Rowe  <mrowe@apple.com>
 
         Build fix after r87117.

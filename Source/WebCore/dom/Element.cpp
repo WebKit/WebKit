@@ -1086,9 +1086,8 @@ void Element::recalcStyle(StyleChange change)
         RefPtr<RenderStyle> newStyle = styleForRenderer();
         StyleChange ch = diff(currentStyle.get(), newStyle.get());
         if (ch == Detach || !currentStyle) {
-            if (attached())
-                detach();
-            attach(); // FIXME: The style gets computed twice by calling attach. We could do better if we passed the style along.
+            // FIXME: The style gets computed twice by calling attach. We could do better if we passed the style along.
+            reattach();
             // attach recalulates the style for all children. No need to do it twice.
             clearNeedsStyleRecalc();
             clearChildNeedsStyleRecalc();

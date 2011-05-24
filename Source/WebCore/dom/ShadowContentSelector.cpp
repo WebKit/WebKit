@@ -62,7 +62,7 @@ void ShadowContentSelector::attachChildrenFor(ShadowContentElement* contentEleme
         if (!contentElement->shouldInclude(child))
             continue;
 
-        child->forceReattach();
+        child->reattach();
         m_children[i] = 0;
     }
 

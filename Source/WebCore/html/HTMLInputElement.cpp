@@ -721,10 +721,8 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
         m_maxResults = !attr->isNull() ? std::min(attr->value().toInt(), maxSavedResults) : -1;
         // FIXME: Detaching just for maxResults change is not ideal.  We should figure out the right
         // time to relayout for this change.
-        if (m_maxResults != oldResults && (m_maxResults <= 0 || oldResults <= 0) && attached()) {
-            detach();
-            attach();
-        }
+        if (m_maxResults != oldResults && (m_maxResults <= 0 || oldResults <= 0))
+            reattachIfAttached();
         setNeedsStyleRecalc();
     } else if (attr->name() == autosaveAttr || attr->name() == incrementalAttr)
         setNeedsStyleRecalc();

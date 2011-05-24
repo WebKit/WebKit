@@ -451,7 +451,8 @@ public:
     // the node's rendering object from the rendering tree and delete it.
     virtual void detach();
 
-    void forceReattach();
+    void reattach();
+    void reattachIfAttached();
 
     virtual void willRemove();
     void createRendererIfNeeded();
@@ -739,12 +740,17 @@ inline ContainerNode* Node::parentNodeGuaranteedHostFree() const
     return parentOrHostNode();
 }
 
-inline void Node::forceReattach()
+inline void Node::reattach()
 {
-    if (!attached())
-        return;
-    detach();
+    if (attached())
+        detach();
     attach();
+}
+
+inline void Node::reattachIfAttached()
+{
+    if (attached())
+        reattach();
 }
 
 } //namespace
