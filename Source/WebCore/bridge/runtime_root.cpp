@@ -28,7 +28,7 @@
 
 #include "BridgeJSC.h"
 #include "runtime_object.h"
-#include <JavaScriptCore/Weak.h>
+#include <heap/Weak.h>
 #include <runtime/JSGlobalObject.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>

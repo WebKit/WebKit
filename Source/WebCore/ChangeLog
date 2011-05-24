@@ -1,3 +1,10 @@
+2011-05-24  Leandro Pereira  <leandro@profusion.mobi>
+
+        [EFL] Build fix.
+
+        * bridge/runtime_root.cpp: Include <heap/Weak.h> instead of
+        <JavaScriptCore/Weak.h>.
+
 2011-05-24  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Adam Barth.
