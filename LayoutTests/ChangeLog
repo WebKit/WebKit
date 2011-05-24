@@ -1,3 +1,17 @@
+2011-05-23  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Darin Adler.
+
+        Test for: Crash from null pointer dereference below WebCore::StorageAreaImpl::setItem()
+        https://bugs.webkit.org/show_bug.cgi?id=57140
+        <rdar://problem/9191214>
+
+        * fast/storage/storage-detached-iframe-expected.txt: Added.
+        * fast/storage/storage-detached-iframe.html: Added.
+
+        * platform/chromium/test_expectations.txt: Marked the test as CRASH
+        on Chromium - Linux.
+
 2011-05-23  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.

@@ -4167,3 +4167,5 @@ BUGCR83504 WIN : fast/css/custom-font-xheight.html = PASS TIMEOUT
 
 // New test from WK r87026
 BUGCR83555 WIN LINUX : fast/block/positioning/058.html = IMAGE+TEXT
+
+BUGWK61326 LINUX : fast/storage/storage-detached-iframe.html = PASS CRASH

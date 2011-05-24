@@ -1,3 +1,19 @@
+2011-05-23  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Darin Adler.
+
+        Crash from null pointer dereference below WebCore::StorageAreaImpl::setItem()
+        https://bugs.webkit.org/show_bug.cgi?id=57140
+
+        Test: fast/storage/storage-detached-iframe.html
+
+        Access of localStorage on a detached iframe was causing a crash because a detached 
+        iframe has a null m_page, and WebCore::privateBrowsingEnabled() wasn't testing for such.
+
+        * storage/StorageAreaImpl.cpp:
+        (WebCore::privateBrowsingEnabled): check that child->page() is non-null before
+        accessing it.
+
 2011-05-23  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.

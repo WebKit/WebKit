@@ -103,7 +103,7 @@ static bool privateBrowsingEnabled(Frame* frame)
     ASSERT(!frame);
     return false;
 #else
-    return frame->page()->settings()->privateBrowsingEnabled();
+    return frame->page() && frame->page()->settings()->privateBrowsingEnabled();
 #endif
 }
 
