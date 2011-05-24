@@ -1,3 +1,16 @@
+2011-05-24  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Adding MHTML reading support.
+        https://bugs.webkit.org/show_bug.cgi?id=7168
+
+        * Scripts/build-webkit:
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitperl/features.pm:
+        * Scripts/webkitpy/layout_tests/port/test_files.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-05-24  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.

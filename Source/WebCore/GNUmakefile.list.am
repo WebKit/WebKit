@@ -2008,6 +2008,7 @@ webcore_sources += \
 	Source/WebCore/loader/appcache/ManifestParser.h \
 	Source/WebCore/loader/archive/ArchiveFactory.cpp \
 	Source/WebCore/loader/archive/ArchiveFactory.h \
+	Source/WebCore/loader/archive/Archive.cpp \
 	Source/WebCore/loader/archive/Archive.h \
 	Source/WebCore/loader/archive/ArchiveResourceCollection.cpp \
 	Source/WebCore/loader/archive/ArchiveResourceCollection.h \
@@ -2552,6 +2553,8 @@ webcore_sources += \
 	Source/WebCore/platform/network/BlobResourceHandle.cpp \
 	Source/WebCore/platform/network/BlobResourceHandle.h \
 	Source/WebCore/platform/network/BlobStorageData.h \
+	Source/WebCore/platform/network/ContentTypeParser.cpp \
+	Source/WebCore/platform/network/ContentTypeParser.h \
 	Source/WebCore/platform/network/CookieStorage.h \
 	Source/WebCore/platform/network/Credential.cpp \
 	Source/WebCore/platform/network/Credential.h \
@@ -2564,6 +2567,8 @@ webcore_sources += \
 	Source/WebCore/platform/network/HTTPHeaderMap.h \
 	Source/WebCore/platform/network/HTTPParsers.cpp \
 	Source/WebCore/platform/network/HTTPParsers.h \
+	Source/WebCore/platform/network/MIMEHeader.cpp \
+	Source/WebCore/platform/network/MIMEHeader.h \
 	Source/WebCore/platform/network/NetworkingContext.h \
 	Source/WebCore/platform/network/ProxyServer.cpp \
 	Source/WebCore/platform/network/ProxyServer.h \
@@ -4625,3 +4630,18 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/opengl/Extensions3DOpenGL.h \
 	Source/WebCore/platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
 endif  # END ENABLE_WEBGL
+
+# ---
+# MHTML support
+# ---
+if ENABLE_MHTML
+webcore_sources += \
+	Source/WebCore/loader/archive/Archive.cpp \
+	Source/WebCore/loader/archive/Archive.h \
+	Source/WebCore/loader/archive/ArchiveFactory.cpp \
+	Source/WebCore/loader/archive/ArchiveFactory.h \
+	Source/WebCore/loader/archive/mhtml/MHTMLArchive.cpp \
+	Source/WebCore/loader/archive/mhtml/MHTMLArchive.h \
+	Source/WebCore/loader/archive/mhtml/MHTMLParser.cpp \
+	Source/WebCore/loader/archive/mhtml/MHTMLParser.h
+endif  # END ENABLE_MHTML

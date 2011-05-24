@@ -32,8 +32,11 @@
 #include "MIMETypeRegistry.h"
 #include "PlatformString.h"
 
-#if USE(CF) && !PLATFORM(QT)
+#if USE(CF) && !PLATFORM(QT) && ENABLE(WEB_ARCHIVE)
 #include "LegacyWebArchive.h"
+#endif
+#if ENABLE(MHTML)
+#include "MHTMLArchive.h"
 #endif
 
 #include <wtf/HashMap.h>
@@ -42,14 +45,14 @@
 
 namespace WebCore {
 
-typedef PassRefPtr<Archive> RawDataCreationFunction(SharedBuffer*);
+typedef PassRefPtr<Archive> RawDataCreationFunction(const KURL&, SharedBuffer*);
 typedef HashMap<String, RawDataCreationFunction*, CaseFoldingHash> ArchiveMIMETypesMap;
 
 // The create functions in the archive classes return PassRefPtr to concrete subclasses
 // of Archive. This adaptor makes the functions have a uniform return type.
-template <typename ArchiveClass> static PassRefPtr<Archive> archiveFactoryCreate(SharedBuffer* buffer)
+template <typename ArchiveClass> static PassRefPtr<Archive> archiveFactoryCreate(const KURL& url, SharedBuffer* buffer)
 {
-    return ArchiveClass::create(buffer);
+    return ArchiveClass::create(url, buffer);
 }
 
 static ArchiveMIMETypesMap& archiveMIMETypes()
@@ -60,8 +63,11 @@ static ArchiveMIMETypesMap& archiveMIMETypes()
     if (initialized)
         return mimeTypes;
 
-#if USE(CF)
+#if ENABLE(WEB_ARCHIVE) && USE(CF)
     mimeTypes.set("application/x-webarchive", archiveFactoryCreate<LegacyWebArchive>);
+#endif
+#if ENABLE(MHTML)
+    mimeTypes.set("multipart/related", archiveFactoryCreate<MHTMLArchive>);
 #endif
 
     initialized = true;
@@ -73,10 +79,10 @@ bool ArchiveFactory::isArchiveMimeType(const String& mimeType)
     return !mimeType.isEmpty() && archiveMIMETypes().contains(mimeType);
 }
 
-PassRefPtr<Archive> ArchiveFactory::create(SharedBuffer* data, const String& mimeType)
+PassRefPtr<Archive> ArchiveFactory::create(const KURL& url, SharedBuffer* data, const String& mimeType)
 {
     RawDataCreationFunction* function = mimeType.isEmpty() ? 0 : archiveMIMETypes().get(mimeType);
-    return function ? function(data) : PassRefPtr<Archive>(0);
+    return function ? function(url, data) : PassRefPtr<Archive>(0);
 }
 
 void ArchiveFactory::registerKnownArchiveMIMETypes()
@@ -84,7 +90,7 @@ void ArchiveFactory::registerKnownArchiveMIMETypes()
     HashSet<String>& mimeTypes = MIMETypeRegistry::getSupportedNonImageMIMETypes();
     ArchiveMIMETypesMap::iterator i = archiveMIMETypes().begin();
     ArchiveMIMETypesMap::iterator end = archiveMIMETypes().end();
-    
+
     for (; i != end; ++i)
         mimeTypes.add(i->first);
 }

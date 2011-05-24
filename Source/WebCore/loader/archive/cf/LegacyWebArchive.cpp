@@ -262,6 +262,11 @@ PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(PassRefPtr<ArchiveResource
 
 PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(SharedBuffer* data)
 {
+    return create(KURL(), data);
+}
+
+PassRefPtr<LegacyWebArchive> LegacyWebArchive::create(const KURL&, SharedBuffer* data)
+{
     LOG(Archives, "LegacyWebArchive - Creating from raw data");
     
     RefPtr<LegacyWebArchive> archive = create();
@@ -366,6 +371,11 @@ bool LegacyWebArchive::extract(CFDictionaryRef dictionary)
     return true;
 }
 
+Archive::Type LegacyWebArchive::type() const
+{
+    return Archive::WebArchive;
+}
+    
 RetainPtr<CFDataRef> LegacyWebArchive::rawDataRepresentation()
 {
     RetainPtr<CFDictionaryRef> propertyList = createPropertyListRepresentation(this);

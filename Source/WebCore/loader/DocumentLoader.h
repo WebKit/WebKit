@@ -47,7 +47,7 @@
 namespace WebCore {
 
     class ApplicationCacheHost;
-#if ENABLE(WEB_ARCHIVE)
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     class Archive;
 #endif
     class ArchiveResource;
@@ -132,17 +132,17 @@ namespace WebCore {
         void unschedule(SchedulePair*);
 #endif
 
-#if ENABLE(WEB_ARCHIVE)
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
         void addAllArchiveResources(Archive*);
         void addArchiveResource(PassRefPtr<ArchiveResource>);
         
-        PassRefPtr<Archive> popArchiveForSubframe(const String& frameName);
+        PassRefPtr<Archive> popArchiveForSubframe(const String& frameName, const KURL&);
         void clearArchiveResources();
         void setParsedArchiveData(PassRefPtr<SharedBuffer>);
         SharedBuffer* parsedArchiveData() const;
         
         bool scheduleArchiveLoad(ResourceLoader*, const ResourceRequest&, const KURL&);
-#endif // ENABLE(WEB_ARCHIVE)
+#endif // ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 
         // Return the ArchiveResource for the URL only when loading an Archive
         ArchiveResource* archiveResourceForURL(const KURL&) const;
@@ -324,7 +324,7 @@ namespace WebCore {
         Timer<DocumentLoader> m_substituteResourceDeliveryTimer;
 
         OwnPtr<ArchiveResourceCollection> m_archiveResourceCollection;
-#if ENABLE(WEB_ARCHIVE)
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
         RefPtr<SharedBuffer> m_parsedArchiveData;
 #endif
 

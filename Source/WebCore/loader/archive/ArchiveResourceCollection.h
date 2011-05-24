@@ -48,7 +48,7 @@ public:
     void addAllResources(Archive*);
     
     ArchiveResource* archiveResourceForURL(const KURL&);
-    PassRefPtr<Archive> popSubframeArchive(const String& frameName);
+    PassRefPtr<Archive> popSubframeArchive(const String& frameName, const KURL&);
     
 private:    
     HashMap<String, RefPtr<ArchiveResource> > m_subresources;

@@ -73,6 +73,7 @@ sub hasFeature($$)
         "3D Canvas" => "WebGLShader",
         "WCSS" => "parseWCSSInputProperty",
         "XHTMLMP" => "isXHTMLMPDocument",
+        "MHTML" => "MHTMLArchive"
     );
     my $symbolName = $symbolForFeature{$featureName};
     die "Unknown feature: $featureName" unless $symbolName;

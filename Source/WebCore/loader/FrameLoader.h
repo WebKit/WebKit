@@ -120,7 +120,7 @@ public:
     void load(const ResourceRequest&, const SubstituteData&, bool lockHistory);                 // Called both by WebFrame and internally, calls load(DocumentLoader*).
     void load(const ResourceRequest&, const String& frameName, bool lockHistory);               // Called by WebPluginController.
 
-#if ENABLE(WEB_ARCHIVE)
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     void loadArchive(PassRefPtr<Archive>);
 #endif
 
@@ -343,6 +343,10 @@ public:
 
     NetworkingContext* networkingContext() const;
 
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+    Archive* archive() const { return m_archive.get(); }
+#endif
+
 private:
     void checkTimerFired(Timer<FrameLoader>*);
     
@@ -498,6 +502,10 @@ private:
     SandboxFlags m_forcedSandboxFlags;
 
     RefPtr<FrameNetworkingContext> m_networkingContext;
+
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+    RefPtr<Archive> m_archive;
+#endif
 
     KURL m_previousUrl;
 };

@@ -54,7 +54,7 @@
 #include <wtf/text/CString.h>
 #include <wtf/unicode/Unicode.h>
 
-#if ENABLE(WEB_ARCHIVE)
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 #include "ArchiveFactory.h"
 #endif
 
@@ -300,7 +300,7 @@ void DocumentLoader::commitLoad(const char* data, int length)
     FrameLoader* frameLoader = DocumentLoader::frameLoader();
     if (!frameLoader)
         return;
-#if ENABLE(WEB_ARCHIVE)
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     if (ArchiveFactory::isArchiveMimeType(response().mimeType()))
         return;
 #endif
@@ -360,7 +360,7 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
     
     stopLoadingSubresources();
     stopLoadingPlugIns();
-#if ENABLE(WEB_ARCHIVE)
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     clearArchiveResources();
 #endif
 }
@@ -450,7 +450,7 @@ bool DocumentLoader::isLoadingInAPISense() const
     return frameLoader()->subframeIsLoading();
 }
 
-#if ENABLE(WEB_ARCHIVE)
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 void DocumentLoader::addAllArchiveResources(Archive* archive)
 {
     if (!m_archiveResourceCollection)
@@ -477,9 +477,9 @@ void DocumentLoader::addArchiveResource(PassRefPtr<ArchiveResource> resource)
     m_archiveResourceCollection->addResource(resource);
 }
 
-PassRefPtr<Archive> DocumentLoader::popArchiveForSubframe(const String& frameName)
+PassRefPtr<Archive> DocumentLoader::popArchiveForSubframe(const String& frameName, const KURL& url)
 {
-    return m_archiveResourceCollection ? m_archiveResourceCollection->popSubframeArchive(frameName) : PassRefPtr<Archive>(0);
+    return m_archiveResourceCollection ? m_archiveResourceCollection->popSubframeArchive(frameName, url) : PassRefPtr<Archive>(0);
 }
 
 void DocumentLoader::clearArchiveResources()
@@ -497,7 +497,7 @@ SharedBuffer* DocumentLoader::parsedArchiveData() const
 {
     return m_parsedArchiveData.get();
 }
-#endif // ENABLE(WEB_ARCHIVE)
+#endif // ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 
 ArchiveResource* DocumentLoader::archiveResourceForURL(const KURL& url) const
 {
@@ -627,26 +627,34 @@ void DocumentLoader::cancelPendingSubstituteLoad(ResourceLoader* loader)
         m_substituteResourceDeliveryTimer.stop();
 }
 
-#if ENABLE(WEB_ARCHIVE)
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 bool DocumentLoader::scheduleArchiveLoad(ResourceLoader* loader, const ResourceRequest& request, const KURL& originalURL)
 {
-    ArchiveResource* resource = 0;
-    
-    if (request.url() == originalURL)
-        resource = archiveResourceForURL(originalURL);
-
-    if (!resource) {
-        // WebArchiveDebugMode means we fail loads instead of trying to fetch them from the network if they're not in the archive.
-        bool shouldFailLoad = m_frame->settings()->webArchiveDebugModeEnabled() && ArchiveFactory::isArchiveMimeType(responseMIMEType());
-
-        if (!shouldFailLoad)
-            return false;
+    if (request.url() == originalURL) {
+        if (ArchiveResource* resource = archiveResourceForURL(originalURL)) {
+            m_pendingSubstituteResources.set(loader, resource);
+            deliverSubstituteResourcesAfterDelay();
+            return true;
+        }
     }
-    
-    m_pendingSubstituteResources.set(loader, resource);
-    deliverSubstituteResourcesAfterDelay();
-    
-    return true;
+
+    Archive* archive = frameLoader()->archive();
+    if (!archive)
+        return false;
+
+    switch (archive->type()) {
+#if ENABLE(WEB_ARCHIVE)
+    case Archive::WebArchive:
+        // WebArchiveDebugMode means we fail loads instead of trying to fetch them from the network if they're not in the archive.
+        return m_frame->settings()->webArchiveDebugModeEnabled() && ArchiveFactory::isArchiveMimeType(responseMIMEType());
+#endif
+#if ENABLE(MHTML)
+    case Archive::MHTML:
+        return true; // Always fail the load for resources not included in the MHTML.
+#endif
+    default:
+        return false;
+    }
 }
 #endif // ENABLE(WEB_ARCHIVE)
 

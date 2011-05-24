@@ -146,7 +146,7 @@ void ResourceLoader::start()
     ASSERT(!m_request.isNull());
     ASSERT(m_deferredRequest.isNull());
 
-#if ENABLE(WEB_ARCHIVE)
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     if (m_documentLoader->scheduleArchiveLoad(this, m_request, m_request.url()))
         return;
 #endif

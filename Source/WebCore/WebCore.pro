@@ -1032,6 +1032,7 @@ SOURCES += \
     platform/network/FormDataBuilder.cpp \
     platform/network/HTTPHeaderMap.cpp \
     platform/network/HTTPParsers.cpp \
+    platform/network/MIMEHeader.cpp \
     platform/network/NetworkStateNotifier.cpp \
     platform/network/ProtectionSpace.cpp \
     platform/network/ProxyServer.cpp \
@@ -3478,6 +3479,17 @@ contains(DEFINES, ENABLE_WEBGL=1) {
         platform/graphics/qt/GraphicsContext3DQt.cpp
 
         INCLUDEPATH += $$PWD/platform/graphics/gpu
+}
+
+contains(DEFINES, ENABLE_MHTML=1) {
+    HEADERS += \
+        loader/archive/Archive.h
+
+    SOURCES += \
+        loader/archive/Archive.cpp \
+        loader/archive/ArchiveFactory.cpp \
+        loader/archive/mhtml/MHTMLArchive.cpp \
+        loader/archive/mhtml/MHTMLParser.cpp
 }
 
 win32:!win32-g++*:contains(QMAKE_HOST.arch, x86_64):{

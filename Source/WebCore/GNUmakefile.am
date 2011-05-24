@@ -555,6 +555,14 @@ FEATURE_DEFINES += ENABLE_WEBGL=1
 webcore_cppflags += -DENABLE_WEBGL=1
 endif  # END ENABLE_WEBGL
 
+# ---
+# MHTML support
+# ---
+if ENABLE_MHTML
+FEATURE_DEFINES += ENABLE_MHTML=1
+webcore_cppflags += -DENABLE_MHTML=1
+endif  # END ENABLE_MHTML
+
 
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl

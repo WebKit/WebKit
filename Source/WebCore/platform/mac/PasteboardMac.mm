@@ -479,7 +479,7 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
     chosePlainText = false;
 
     if ([types containsObject:WebArchivePboardType]) {
-        RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::create(SharedBuffer::wrapNSData([m_pasteboard.get() dataForType:WebArchivePboardType]).get());
+        RefPtr<LegacyWebArchive> coreArchive = LegacyWebArchive::create(KURL(), SharedBuffer::wrapNSData([m_pasteboard.get() dataForType:WebArchivePboardType]).get());
         if (coreArchive) {
             RefPtr<ArchiveResource> mainResource = coreArchive->mainResource();
             if (mainResource) {

@@ -41,7 +41,7 @@ class SharedBuffer;
 class ArchiveFactory {
 public:
     static bool isArchiveMimeType(const String&);
-    static PassRefPtr<Archive> create(SharedBuffer* data, const String& mimeType);
+    static PassRefPtr<Archive> create(const KURL&, SharedBuffer* data, const String& mimeType);
     static void registerKnownArchiveMIMETypes();
 };
 

@@ -116,7 +116,7 @@
 #include "SVGViewSpec.h"
 #endif
 
-#if ENABLE(WEB_ARCHIVE)
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 #include "Archive.h"
 #include "ArchiveFactory.h"
 #endif
@@ -996,8 +996,8 @@ void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, 
 {
     ASSERT(childFrame);
 
-#if ENABLE(WEB_ARCHIVE)
-    RefPtr<Archive> subframeArchive = activeDocumentLoader()->popArchiveForSubframe(childFrame->tree()->uniqueName());    
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+    RefPtr<Archive> subframeArchive = activeDocumentLoader()->popArchiveForSubframe(childFrame->tree()->uniqueName(), url);    
     if (subframeArchive) {
         childFrame->loader()->loadArchive(subframeArchive.release());
         return;
@@ -1018,12 +1018,12 @@ void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, 
     childFrame->loader()->loadURL(url, referer, String(), false, FrameLoadTypeRedirectWithLockedBackForwardList, 0, 0);
 }
 
-#if ENABLE(WEB_ARCHIVE)
-void FrameLoader::loadArchive(PassRefPtr<Archive> prpArchive)
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+void FrameLoader::loadArchive(PassRefPtr<Archive> archive)
 {
-    RefPtr<Archive> archive = prpArchive;
+    m_archive = archive;
     
-    ArchiveResource* mainResource = archive->mainResource();
+    ArchiveResource* mainResource = m_archive->mainResource();
     ASSERT(mainResource);
     if (!mainResource)
         return;
@@ -1036,10 +1036,10 @@ void FrameLoader::loadArchive(PassRefPtr<Archive> prpArchive)
 #endif
 
     RefPtr<DocumentLoader> documentLoader = m_client->createDocumentLoader(request, substituteData);
-    documentLoader->addAllArchiveResources(archive.get());
+    documentLoader->addAllArchiveResources(m_archive.get());
     load(documentLoader.get());
 }
-#endif // ENABLE(WEB_ARCHIVE)
+#endif // ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
 
 ObjectContentType FrameLoader::defaultObjectContentType(const KURL& url, const String& mimeTypeIn, bool shouldPreferPlugInsForImages)
 {
@@ -1807,7 +1807,7 @@ void FrameLoader::stopAllLoaders(ClearProvisionalItemPolicy clearProvisionalItem
 
     setProvisionalDocumentLoader(0);
     
-#if ENABLE(WEB_ARCHIVE)
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
     if (m_documentLoader)
         m_documentLoader->clearArchiveResources();
 #endif
@@ -2321,21 +2321,21 @@ void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
         return;
 #endif
 
-#if !ENABLE(WEB_ARCHIVE)
+#if !ENABLE(WEB_ARCHIVE) && !ENABLE(MHTML)
     m_client->finishedLoading(loader);
 #else
     // Give archive machinery a crack at this document. If the MIME type is not an archive type, it will return 0.
-    RefPtr<Archive> archive = ArchiveFactory::create(loader->mainResourceData().get(), loader->responseMIMEType());
-    if (!archive) {
+    m_archive = ArchiveFactory::create(loader->response().url(), loader->mainResourceData().get(), loader->responseMIMEType());
+    if (!m_archive) {
         m_client->finishedLoading(loader);
         return;
     }
 
     // FIXME: The remainder of this function should be moved to DocumentLoader.
 
-    loader->addAllArchiveResources(archive.get());
+    loader->addAllArchiveResources(m_archive.get());
 
-    ArchiveResource* mainResource = archive->mainResource();
+    ArchiveResource* mainResource = m_archive->mainResource();
     loader->setParsedArchiveData(mainResource->data());
 
     loader->writer()->setMIMEType(mainResource->mimeType());

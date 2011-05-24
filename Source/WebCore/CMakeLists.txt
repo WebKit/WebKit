@@ -19,6 +19,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/loader"
     "${WEBCORE_DIR}/loader/appcache"
     "${WEBCORE_DIR}/loader/archive"
+    "${WEBCORE_DIR}/loader/archive/mhtml"
     "${WEBCORE_DIR}/loader/cache"
     "${WEBCORE_DIR}/loader/icon"
     "${WEBCORE_DIR}/mathml"
@@ -961,6 +962,7 @@ SET(WebCore_SOURCES
     loader/appcache/DOMApplicationCache.cpp
     loader/appcache/ManifestParser.cpp
 
+    loader/archive/Archive.cpp
     loader/archive/ArchiveFactory.cpp
     loader/archive/ArchiveResource.cpp
     loader/archive/ArchiveResourceCollection.cpp
@@ -1163,6 +1165,7 @@ SET(WebCore_SOURCES
     platform/network/FormData.cpp
     platform/network/HTTPHeaderMap.cpp
     platform/network/HTTPParsers.cpp
+    platform/network/MIMEHeader.cpp
     platform/network/NetworkStateNotifier.cpp
     platform/network/ProtectionSpace.cpp
     platform/network/ProxyServer.cpp
@@ -1953,6 +1956,12 @@ IF (ENABLE_MEDIA_STREAM)
     )
 ENDIF ()
 
+IF (ENABLE_MHTML)
+    LIST(APPEND WebCore_SOURCES
+        loader/archive/mhtml/MHTMLArchive.cpp
+        loader/archive/mhtml/MHTMLParser.cpp
+   )
+ENDIF ()
 
 # Modules that the bindings generator scripts may use
 SET(SCRIPTS_BINDINGS

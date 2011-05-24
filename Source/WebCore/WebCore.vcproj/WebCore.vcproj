@@ -25681,6 +25681,10 @@
 				Name="archive"
 				>
 				<File
+					RelativePath="..\loader\archive\Archive.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\loader\archive\Archive.h"
 					>
 				</File>
@@ -25717,6 +25721,26 @@
 					</File>
 					<File
 						RelativePath="..\loader\archive\cf\LegacyWebArchive.h"
+						>
+					</File>
+				</Filter>
+				<Filter
+					Name="mhtml"
+					>
+					<File
+						RelativePath="..\loader\archive\mhtml\MHTMLArchive.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\loader\archive\mhtml\MHTMLArchive.h"
+						>
+					</File>
+					<File
+						RelativePath="..\loader\archive\mhtml\MHTMLParser.cpp"
+						>
+					</File>
+					<File
+						RelativePath="..\loader\archive\mhtml\MHTMLParser.h"
 						>
 					</File>
 				</Filter>
@@ -29638,6 +29662,14 @@
 				</File>
 				<File
 					RelativePath="..\platform\network\HTTPParsers.h"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\MIMEHeader.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\platform\network\MIMEHeader.h"
 					>
 				</File>
 				<File

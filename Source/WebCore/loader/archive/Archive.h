@@ -39,8 +39,14 @@
 namespace WebCore {
 
 class Archive : public RefCounted<Archive> {
-public:    
-    ArchiveResource* mainResource() { return m_mainResource.get(); }    
+public:
+    enum Type {
+      WebArchive,
+      MHTML
+    };
+    virtual ~Archive();
+    virtual Type type() const = 0;
+    ArchiveResource* mainResource() { return m_mainResource.get(); }
     const Vector<RefPtr<ArchiveResource> >& subresources() const { return m_subresources; }
     const Vector<RefPtr<Archive> >& subframeArchives() const { return m_subframeArchives; }
 

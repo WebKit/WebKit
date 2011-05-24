@@ -44,7 +44,7 @@ _log = logutils.get_logger(__file__)
 
 # When collecting test cases, we include any file with these extensions.
 _supported_file_extensions = set(['.html', '.shtml', '.xml', '.xhtml', '.xhtmlmp', '.pl',
-                                  '.php', '.svg'])
+                                  '.php', '.svg', '.mht'])
 # When collecting test cases, skip these directories
 _skipped_directories = set(['.svn', '_svn', 'resources', 'script-tests'])
 

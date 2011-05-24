@@ -1,3 +1,36 @@
+2011-05-24  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Adding MHTML reading support to WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=7168
+
+        * mhtml/frame_0.html_original: Added.
+        * mhtml/frame_1.html_original: Added.
+        * mhtml/frame_2.html_original: Added.
+        * mhtml/frame_4.html_original: Added.
+        * mhtml/multi_frames.html_original: Added.
+        * mhtml/multi_frames_ie.mht: Added.
+        * mhtml/multi_frames_unmht.mht: Added.
+        * mhtml/page_with_css_and_js.html_original: Added.
+        * mhtml/page_with_css_and_js_ie.mht: Added.
+        * mhtml/page_with_css_and_js_unmht.mht: Added.
+        * mhtml/page_with_image.html_original: Added.
+        * mhtml/page_with_image_ie.mht: Added.
+        * mhtml/page_with_image_unmht.mht: Added.
+        * mhtml/resources/red_square.png: Added.
+        * mhtml/simple_page.html_original: Added.
+        * mhtml/simple_page_ie.mht: Added.
+        * mhtml/simple_page_unmht.mht: Added.
+        * platform/chromium/mhtml/multi_frames_ie-expected.txt: Added.
+        * platform/chromium/mhtml/multi_frames_unmht-expected.txt: Added.
+        * platform/chromium/mhtml/page_with_css_and_js_ie-expected.txt: Added.
+        * platform/chromium/mhtml/page_with_css_and_js_unmht-expected.txt: Added.
+        * platform/chromium/mhtml/page_with_image_ie-expected.txt: Added.
+        * platform/chromium/mhtml/page_with_image_unmht-expected.txt: Added.
+        * platform/chromium/mhtml/simple_page_ie-expected.txt: Added.
+        * platform/chromium/mhtml/simple_page_unmht-expected.txt: Added.
+
 2011-05-24  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.
