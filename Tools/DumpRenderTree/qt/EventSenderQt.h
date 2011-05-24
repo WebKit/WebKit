@@ -55,7 +55,7 @@ public:
     void resetClickCount() { m_clickCount = 0; }
 
 public slots:
-    void mouseDown(int button = 0);
+    void mouseDown(int button = 0, const QStringList& modifiers = QStringList());
     void mouseUp(int button = 0);
     void mouseMoveTo(int x, int y);
 #ifndef QT_NO_WHEELEVENT

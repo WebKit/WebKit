@@ -2521,4 +2521,3 @@ fast/events/remove-target-in-mouseup.html
 # https://bugs.webkit.org/show_bug.cgi?id=61322
 fast/events/selectstart-by-double-triple-clicks.html
 fast/events/selectstart-by-drag.html
-fast/events/selectstart-by-single-click-with-shift.html

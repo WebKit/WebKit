@@ -1,3 +1,17 @@
+2011-05-24  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        [Qt] Fix fast/events/selectstart-by-single-click-with-shift.html
+        https://bugs.webkit.org/show_bug.cgi?id=61393
+
+        * DumpRenderTree/qt/EventSenderQt.h:
+        * DumpRenderTree/qt/EventSenderQt.cpp:
+        (getModifiers): static function for interpreting modifiers
+        (EventSender::mouseDown): Respect keyboard modifiers
+        (EventSender::keyDown): use new static function
+        (EventSender::sendOrQueueEvent): whitespace fix
+
 2011-05-24  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Adam Barth.

@@ -74,8 +74,26 @@ EventSender::EventSender(QWebPage* parent)
     QApplication::setWheelScrollLines(2);
 }
 
-void EventSender::mouseDown(int button)
+static Qt::KeyboardModifiers getModifiers(const QStringList& modifiers)
 {
+    Qt::KeyboardModifiers modifs = 0;
+    for (int i = 0; i < modifiers.size(); ++i) {
+        const QString& m = modifiers.at(i);
+        if (m == "ctrlKey")
+            modifs |= Qt::ControlModifier;
+        else if (m == "shiftKey")
+            modifs |= Qt::ShiftModifier;
+        else if (m == "altKey")
+            modifs |= Qt::AltModifier;
+        else if (m == "metaKey")
+            modifs |= Qt::MetaModifier;
+    }
+    return modifs;
+}
+
+void EventSender::mouseDown(int button, const QStringList& modifiers)
+{
+    Qt::KeyboardModifiers modifs = getModifiers(modifiers);
     Qt::MouseButton mouseButton;
     switch (button) {
     case 0:
@@ -114,11 +132,11 @@ void EventSender::mouseDown(int button)
     if (isGraphicsBased()) {
         event = createGraphicsSceneMouseEvent((m_clickCount == 2) ?
                     QEvent::GraphicsSceneMouseDoubleClick : QEvent::GraphicsSceneMousePress,
-                    m_mousePos, m_mousePos, mouseButton, m_mouseButtons, Qt::NoModifier);
+                    m_mousePos, m_mousePos, mouseButton, m_mouseButtons, modifs);
     } else {
         event = new QMouseEvent((m_clickCount == 2) ? QEvent::MouseButtonDblClick :
                     QEvent::MouseButtonPress, m_mousePos, m_mousePos,
-                    mouseButton, m_mouseButtons, Qt::NoModifier);
+                    mouseButton, m_mouseButtons, modifs);
     }
 
     sendOrQueueEvent(event);
@@ -222,18 +240,7 @@ void EventSender::leapForward(int ms)
 void EventSender::keyDown(const QString& string, const QStringList& modifiers, unsigned int location)
 {
     QString s = string;
-    Qt::KeyboardModifiers modifs = 0;
-    for (int i = 0; i < modifiers.size(); ++i) {
-        const QString& m = modifiers.at(i);
-        if (m == "ctrlKey")
-            modifs |= Qt::ControlModifier;
-        else if (m == "shiftKey")
-            modifs |= Qt::ShiftModifier;
-        else if (m == "altKey")
-            modifs |= Qt::AltModifier;
-        else if (m == "metaKey")
-            modifs |= Qt::MetaModifier;
-    }
+    Qt::KeyboardModifiers modifs = getModifiers(modifiers);
     if (location == 3)
         modifs |= Qt::KeypadModifier;
     int code = 0;
@@ -536,10 +543,10 @@ redo:
 
 void EventSender::sendOrQueueEvent(QEvent* event)
 {
-    // Mouse move events are queued if 
+    // Mouse move events are queued if
     // 1. A previous event was queued.
     // 2. A delay was set-up by leapForward().
-    // 3. A call to mouseMoveTo while the mouse button is pressed could initiate a drag operation, and that does not return until mouseUp is processed. 
+    // 3. A call to mouseMoveTo while the mouse button is pressed could initiate a drag operation, and that does not return until mouseUp is processed.
     // To be safe and avoid a deadlock, this event is queued.
     if (endOfQueue == startOfQueue && !eventQueue[endOfQueue].m_delay && (!(m_mouseButtonPressed && (m_eventLoop && event->type() == QEvent::MouseButtonRelease)))) {
         sendEvent(m_page->view(), event);
