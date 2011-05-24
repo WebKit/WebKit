@@ -4698,6 +4698,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(outlineOffset, OutlineOffset)
         m_style->setOutlineOffset(primitiveValue->computeLengthInt(style(), m_rootElementStyle, zoomFactor));
         return;
+    case CSSPropertyImageRendering:
+        if (!primitiveValue)
+            return;
+        m_style->setImageRendering(*primitiveValue);
+        return;
     case CSSPropertyTextRendering: {
         FontDescription fontDescription = m_style->fontDescription();
         if (isInherit) 

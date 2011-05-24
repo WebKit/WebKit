@@ -783,6 +783,8 @@ public:
     bool isFlippedLinesWritingMode() const { return writingMode() == LeftToRightWritingMode || writingMode() == BottomToTopWritingMode; }
     bool isFlippedBlocksWritingMode() const { return writingMode() == RightToLeftWritingMode || writingMode() == BottomToTopWritingMode; }
 
+    EImageRendering imageRendering() const { return static_cast<EImageRendering>(rareInheritedData->m_imageRendering); }
+    
     ESpeak speak() { return static_cast<ESpeak>(rareInheritedData->speak); }
         
 // attribute setter methods
@@ -934,6 +936,7 @@ public:
     void setLineHeight(Length v) { SET_VAR(inherited, line_height, v) }
     void setZoom(float f) { SET_VAR(visual, m_zoom, f); setEffectiveZoom(effectiveZoom() * zoom()); }
     void setEffectiveZoom(float f) { SET_VAR(rareInheritedData, m_effectiveZoom, f) }
+    void setImageRendering(EImageRendering v) { SET_VAR(rareInheritedData, m_imageRendering, v) }
 
     void setWhiteSpace(EWhiteSpace v) { inherited_flags._white_space = v; }
 
@@ -1317,6 +1320,7 @@ public:
     static const AtomicString& initialTextEmphasisCustomMark() { return nullAtom; }
     static TextEmphasisPosition initialTextEmphasisPosition() { return TextEmphasisPositionOver; }
     static LineBoxContain initialLineBoxContain() { return LineBoxContainBlock | LineBoxContainInline | LineBoxContainReplaced; }
+    static EImageRendering initialImageRendering() { return ImageRenderingAuto; }
 
     // Keep these at the end.
     static LineClampValue initialLineClamp() { return LineClampValue(); }

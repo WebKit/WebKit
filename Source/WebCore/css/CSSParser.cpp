@@ -1716,7 +1716,10 @@ bool CSSParser::parseValue(int propId, bool important)
             (id >= CSSValueVisiblepainted && id <= CSSValueStroke))
             validPrimitive = true;
         break;
-
+    case CSSPropertyImageRendering: // auto | optimizeContrast
+        if (id == CSSValueAuto || id == CSSValueWebkitOptimizeContrast)
+            validPrimitive = true;
+        break;
     // End of CSS3 properties
 
     // Apple specific properties.  These will never be standardized and are purely to

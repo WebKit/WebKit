@@ -262,7 +262,7 @@ void HTMLCanvasElement::reset()
         (*it)->canvasResized(this);
 }
 
-void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
+void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r, bool useLowQualityScale)
 {
     // Clear the dirty rect
     m_dirtyRect = FloatRect();
@@ -280,11 +280,11 @@ void HTMLCanvasElement::paint(GraphicsContext* context, const IntRect& r)
         ImageBuffer* imageBuffer = buffer();
         if (imageBuffer) {
             if (m_presentedImage)
-                context->drawImage(m_presentedImage.get(), ColorSpaceDeviceRGB, r);
+                context->drawImage(m_presentedImage.get(), ColorSpaceDeviceRGB, r, CompositeSourceOver, useLowQualityScale);
             else if (imageBuffer->drawsUsingCopy())
-                context->drawImage(copiedImage(), ColorSpaceDeviceRGB, r);
+                context->drawImage(copiedImage(), ColorSpaceDeviceRGB, r, CompositeSourceOver, useLowQualityScale);
             else
-                context->drawImageBuffer(imageBuffer, ColorSpaceDeviceRGB, r);
+                context->drawImageBuffer(imageBuffer, ColorSpaceDeviceRGB, r, CompositeSourceOver, useLowQualityScale);
         }
     }
 

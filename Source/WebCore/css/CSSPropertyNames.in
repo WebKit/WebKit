@@ -93,6 +93,7 @@ empty-cells
 float
 font-stretch
 height
+image-rendering
 left
 letter-spacing
 list-style
