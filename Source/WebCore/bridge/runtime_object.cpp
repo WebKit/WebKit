@@ -47,6 +47,7 @@ RuntimeObject::RuntimeObject(ExecState*, JSGlobalObject* globalObject, Structure
 
 RuntimeObject::~RuntimeObject()
 {
+    ASSERT(!m_instance);
 }
 
 void RuntimeObject::invalidate()

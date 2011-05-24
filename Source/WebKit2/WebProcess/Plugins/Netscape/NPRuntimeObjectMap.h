@@ -26,7 +26,7 @@
 #ifndef NPJSObjectWrapperMap_h
 #define NPJSObjectWrapperMap_h
 
-#include <JavaScriptCore/WeakGCMap.h>
+#include <JavaScriptCore/HandleHeap.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
@@ -48,7 +48,7 @@ class NPJSObject;
 class PluginView;
 
 // A per plug-in map of NPObjects that wrap JavaScript objects.
-class NPRuntimeObjectMap {
+class NPRuntimeObjectMap : private JSC::WeakHandleOwner {
 public:
     explicit NPRuntimeObjectMap(PluginView*);
 
@@ -85,10 +85,13 @@ public:
     static void moveGlobalExceptionToExecState(JSC::ExecState*);
 
 private:
+    // WeakHandleOwner
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+
     PluginView* m_pluginView;
 
     HashMap<JSC::JSObject*, NPJSObject*> m_npJSObjects;
-    JSC::WeakGCMap<NPObject*, JSNPObject> m_jsNPObjects;
+    HashMap<NPObject*, JSC::Weak<JSNPObject> > m_jsNPObjects;
 };
 
 } // namespace WebKit

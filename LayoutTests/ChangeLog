@@ -1,3 +1,24 @@
+2011-05-24  Adam Roben  <aroben@apple.com>
+
+        Test that we don't crash when a JS wrapper for an NPObject is destroyed after its plugin is unloaded
+
+        Test for <http://webkit.org/b/61316> <rdar://problem/9489824> Crash in deallocateNPObject
+        when reloading yahoo.com webarchive in WebKit2
+
+        and
+
+        <http://webkit.org/b/61317> <rdar://problem/9489829> Crash in _NPN_DeallocateObject when
+        reloading yahoo.com webarchive in WebKit1
+
+        Reviewed by Oliver Hunt.
+
+        * plugins/npobject-js-wrapper-destroyed-after-plugin-unload-expected.txt: Added.
+        * plugins/npobject-js-wrapper-destroyed-after-plugin-unload.html: Added.
+        (startTest): Gets a JS wrapper for an NPObject from the plugin, allocate a bunch of memory
+        so the JS wrapper will be finalized, then destroy the plugin and wait for a little bit
+        before calling finishTest.
+        (finishTest): Force a GC so the JS wrapper will be destroyed. If we didn't crash, we passed!
+
 2011-05-24  Adam Klein  <adamk@chromium.org>
 
         Unreviewed, rolling out r87145.

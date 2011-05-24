@@ -31,8 +31,10 @@
 #endif
 #include <heap/Strong.h>
 
-#include <runtime/WeakGCMap.h>
+#include <JavaScriptCore/HandleHeap.h>
 #include <wtf/Forward.h>
+#include <wtf/HashCountedSet.h>
+#include <wtf/HashSet.h>
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -52,7 +54,7 @@ typedef HashCountedSet<JSObject*> ProtectCountSet;
 extern RootObject* findProtectingRootObject(JSObject*);
 extern RootObject* findRootObject(JSGlobalObject*);
 
-class RootObject : public RefCounted<RootObject> {
+class RootObject : public RefCounted<RootObject>, private JSC::WeakHandleOwner {
     friend class JavaJSObject;
 
 public:
@@ -82,14 +84,17 @@ public:
 
 private:
     RootObject(const void* nativeHandle, JSGlobalObject*);
-    
+
+    // WeakHandleOwner
+    virtual void finalize(JSC::Handle<JSC::Unknown>, void* context);
+
     bool m_isValid;
     
     const void* m_nativeHandle;
     Strong<JSGlobalObject> m_globalObject;
 
     ProtectCountSet m_protectCountSet;
-    WeakGCMap<RuntimeObject*, RuntimeObject> m_runtimeObjects; // Really need a WeakGCSet, but this will do.
+    HashMap<RuntimeObject*, JSC::Weak<RuntimeObject> > m_runtimeObjects; // Really need a WeakGCSet, but this will do.
 
     HashSet<InvalidationCallback*> m_invalidationCallbacks;
 };

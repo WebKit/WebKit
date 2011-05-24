@@ -1,3 +1,34 @@
+2011-05-24  Adam Roben  <aroben@apple.com>
+
+        Invalidate JSNPObjects when they are finalized
+
+        This will cause the underlying NPObject to be released at finalization time, rather than at
+        destruction time (which is unpredictable and could occur after the plugin has been
+        unloaded).
+
+        Test: plugins/npobject-js-wrapper-destroyed-after-plugin-unload.html
+
+        Fixes <http://webkit.org/b/61316> <rdar://problem/9489824> Crash in deallocateNPObject when
+        reloading yahoo.com webarchive in WebKit2
+
+        Reviewed by Oliver Hunt.
+
+        * WebProcess/Plugins/Netscape/JSNPObject.cpp:
+        (WebKit::JSNPObject::~JSNPObject): Assert that we've already been invalidated, rather than
+        trying to perform invalidation now (when the plugin might already be unloaded).
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.cpp:
+        (WebKit::NPRuntimeObjectMap::getOrCreateJSObject):
+        (WebKit::NPRuntimeObjectMap::invalidate):
+        Updated for m_jsNPObjects type change.
+
+        (WebKit::NPRuntimeObjectMap::finalize): Added. Invalidates the JSNPObject and removes it
+        from the map.
+
+        * WebProcess/Plugins/Netscape/NPRuntimeObjectMap.h: Now inherits from WeakHandleOwner.
+        Changed m_jsNPObjects from a WeakGCMap to a HashMap of JSC::Weak objects so that we will be
+        notified when the JSNPObjects are finalized.
+
 2011-05-24  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Adam Roben.

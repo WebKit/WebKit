@@ -95,11 +95,11 @@ JSObject* NPRuntimeObjectMap::getOrCreateJSObject(JSGlobalObject* globalObject, 
     if (NPJSObject::isNPJSObject(npObject))
         return NPJSObject::toNPJSObject(npObject)->jsObject();
     
-    if (JSNPObject* jsNPObject = m_jsNPObjects.get(npObject))
-        return jsNPObject;
+    if (JSC::Weak<JSNPObject> jsNPObject = m_jsNPObjects.get(npObject))
+        return jsNPObject.get();
 
     JSNPObject* jsNPObject = new (&globalObject->globalData()) JSNPObject(globalObject, this, npObject);
-    m_jsNPObjects.set(globalObject->globalData(), npObject, jsNPObject);
+    m_jsNPObjects.set(npObject, JSC::Weak<JSNPObject>(globalObject->globalData(), jsNPObject, this, npObject));
 
     return jsNPObject;
 }
@@ -217,9 +217,9 @@ void NPRuntimeObjectMap::invalidate()
     // We shouldn't have any NPJSObjects left now.
     ASSERT(m_npJSObjects.isEmpty());
 
-    WeakGCMap<NPObject*, JSNPObject>::iterator end = m_jsNPObjects.end();
-    for (WeakGCMap<NPObject*, JSNPObject>::iterator ptr = m_jsNPObjects.begin(); ptr != end; ++ptr)
-        ptr.get().second->invalidate();
+    HashMap<NPObject*, JSC::Weak<JSNPObject> >::iterator end = m_jsNPObjects.end();
+    for (HashMap<NPObject*, JSC::Weak<JSNPObject> >::iterator ptr = m_jsNPObjects.begin(); ptr != end; ++ptr)
+        ptr->second.get()->invalidate();
     m_jsNPObjects.clear();
 }
 
@@ -263,6 +263,16 @@ void NPRuntimeObjectMap::moveGlobalExceptionToExecState(ExecState* exec)
     }
     
     globalExceptionString() = String();
+}
+
+void NPRuntimeObjectMap::finalize(JSC::Handle<JSC::Unknown> handle, void* context)
+{
+    HashMap<NPObject*, JSC::Weak<JSNPObject> >::iterator found = m_jsNPObjects.find(static_cast<NPObject*>(context));
+    ASSERT(found != m_jsNPObjects.end());
+    ASSERT_UNUSED(handle, asObject(handle.get()) == found->second);
+
+    found->second.get()->invalidate();
+    m_jsNPObjects.remove(found);
 }
 
 } // namespace WebKit

@@ -1,3 +1,33 @@
+2011-05-24  Adam Roben  <aroben@apple.com>
+
+        Invalidate RuntimeObjects when they are finalized
+
+        This will cause the underlying NPObject to be released at finalization time, rather than at
+        destruction time (which is unpredictable and could occur after the plugin has been
+        unloaded).
+
+        Test: plugins/npobject-js-wrapper-destroyed-after-plugin-unload.html
+
+        Fixes <http://webkit.org/b/61317> <rdar://problem/9489829> Crash in _NPN_DeallocateObject
+        when reloading yahoo.com webarchive in WebKit1
+
+        Reviewed by Oliver Hunt.
+
+        * bridge/runtime_object.cpp:
+        (JSC::Bindings::RuntimeObject::~RuntimeObject): Assert that we've already been invalidated.
+
+        * bridge/runtime_root.cpp:
+        (JSC::Bindings::RootObject::invalidate):
+        (JSC::Bindings::RootObject::addRuntimeObject):
+        Updated for m_runtimeObjects type change.
+
+        (JSC::Bindings::RootObject::finalize): Added. Invalidates the RuntimeObject and removes it
+        from the map.
+
+        * bridge/runtime_root.h: Now inherits from WeakHandleOwner.
+        Changed m_runtimeObjects from a WeakGCMap to a HashMap of JSC::Weak objects so that we will
+        be notified when the RuntimeObjects are finalized.
+
 2011-05-24  Mike Reed  <reed@google.com>
 
         Reviewed by Kenneth Russell.
