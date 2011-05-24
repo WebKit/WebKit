@@ -1,5 +1,12 @@
 2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Skip fast/events/scroll-in-scaled-page-with-overflow-hidden.html added by r87187 on Windows
+        because Windows port doesn't implement eventSender.scalePageBy yet (bug 59098).
+
+        * platform/win/Skipped:
+
+2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Darin Adler.
 
         Undo gets broken in contenteditable area when a text field's value is set by script
