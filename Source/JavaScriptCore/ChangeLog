@@ -1,5 +1,12 @@
 2011-05-24  Geoffrey Garen  <ggaren@apple.com>
 
+        Windows build fix: update the #if OS(WINDOWS) section to match my last patch.
+
+        * heap/MarkStack.h:
+        (JSC::::shrinkAllocation):
+
+2011-05-24  Geoffrey Garen  <ggaren@apple.com>
+
         Rubber-stamped by Oliver Hunt.
 
         Split out function definitions and class definitions from class
