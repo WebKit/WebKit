@@ -248,7 +248,7 @@ WebInspector.XHRBreakpointsSidebarPane = function()
     this._breakpointElements = {};
 
     var addButton = document.createElement("button");
-    addButton.className = "add";
+    addButton.className = "pane-title-button add";
     addButton.addEventListener("click", this._addButtonClicked.bind(this), false);
     this.titleElement.appendChild(addButton);
 

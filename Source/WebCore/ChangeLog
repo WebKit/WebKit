@@ -1,3 +1,42 @@
+2011-05-23  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: watched expressions buttons do not match inspector styles.
+        https://bugs.webkit.org/show_bug.cgi?id=30554
+
+        * WebCore.gypi:
+        * inspector/front-end/BreakpointsSidebarPane.js:
+        (WebInspector.XHRBreakpointsSidebarPane):
+        * inspector/front-end/Images/deleteIcon.png: Added.
+        * inspector/front-end/Images/paneRefreshButtons.png: Added.
+        * inspector/front-end/WatchExpressionsSidebarPane.js:
+        (WebInspector.WatchExpressionsSidebarPane.prototype.reset):
+        (WebInspector.WatchExpressionsSidebarPane.prototype._addButtonClicked):
+        (WebInspector.WatchExpressionsSidebarPane.prototype._refreshButtonClicked):
+        (WebInspector.WatchExpressionsSidebarPane.prototype.refreshExpressions):
+        (WebInspector.WatchExpressionsSection):
+        (WebInspector.WatchExpressionsSection.prototype.update.appendResult):
+        (WebInspector.WatchExpressionsSection.prototype.update):
+        (WebInspector.WatchExpressionsSection.prototype.saveExpressions):
+        (WebInspector.WatchExpressionsSection.prototype._mouseMove):
+        (WebInspector.WatchExpressionsSection.prototype._mouseOut):
+        (WebInspector.WatchExpressionsSection.prototype._updateHoveredElement):
+        (WebInspector.WatchExpressionsSection.CompareProperties):
+        (WebInspector.WatchExpressionTreeElement.prototype.update):
+        (WebInspector.WatchExpressionTreeElement.prototype.editingCancelled):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.properties-tree.watch-expressions):
+        (.properties-tree.watch-expressions li):
+        (.section .properties .delete-button):
+        (.section .properties li.hovered .delete-button):
+        (.pane > .title > .pane-title-button):
+        (.pane > .title > .pane-title-button:hover):
+        (.pane > .title > .pane-title-button:active):
+        (.pane > .title > .pane-title-button.add):
+        (.pane > .title > .pane-title-button.refresh):
+
 2011-05-24  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.

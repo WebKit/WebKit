@@ -153,6 +153,7 @@
     <file>Images/debuggerStepInto.png</file>
     <file>Images/debuggerStepOut.png</file>
     <file>Images/debuggerStepOver.png</file>
+    <file>Images/deleteIcon.png</file>
     <file>Images/disclosureTriangleSmallDown.png</file>
     <file>Images/disclosureTriangleSmallDownBlack.png</file>
     <file>Images/disclosureTriangleSmallDownWhite.png</file>
@@ -179,6 +180,7 @@
     <file>Images/paneBottomGrow.png</file>
     <file>Images/paneBottomGrowActive.png</file>
     <file>Images/paneGrowHandleLine.png</file>
+    <file>Images/paneRefreshButtons.png</file>
     <file>Images/paneSettingsButtons.png</file>
     <file>Images/popoverArrows.png</file>
     <file>Images/popoverBackground.png</file>

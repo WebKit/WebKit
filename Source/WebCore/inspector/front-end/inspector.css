@@ -1347,10 +1347,6 @@ body.inactive .placard.selected {
     margin-top: 1px;
 }
 
-.watch-expressions-buttons-container {
-    text-align: center;
-}
-
 .events-pane .section:not(:nth-of-type(1)) {
     border-top: 1px solid rgb(191, 191, 191);
 }
@@ -1594,6 +1590,14 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     display: none !important;
 }
 
+.properties-tree.watch-expressions {
+    padding-bottom: 8px;
+}
+
+.properties-tree.watch-expressions li {
+    padding-top: 2px;
+}
+
 .watch-expressions > li.editing-sub-part .name {
     display: block; 
     width: 100%;
@@ -1613,15 +1617,22 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     text-overflow: clip;
 }
 
-/* FIXME: need a better icon (comment in bug 27514) */
 .section .properties .delete-button {
     width: 10px;
     height: 10px;
-    background-image: url(Images/errorIcon.png);
+    background-image: url(Images/deleteIcon.png);
     background-position: 0 0;
     background-color: transparent;
     background-repeat: no-repeat;
     border: 0 none transparent;
+    position: absolute;
+    margin-left: -25px;
+    margin-top: 2px;
+    display: none;
+}
+
+.section .properties li.hovered .delete-button {
+    display: inline;
 }
 
 .section .properties .name, .event-properties .name {
@@ -1728,14 +1739,13 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     color: black;
 }
 
-.pane > .title > button.add {
+.pane > .title > .pane-title-button {
     float: right;
     width: 23px;
     height: 17px;
     color: transparent;
     background-color: transparent;
     border: none;
-    background-image: url(Images/paneAddButtons.png);
     background-repeat: no-repeat;
     margin: 1px 0 0 0;
     padding: 0;
@@ -1743,12 +1753,20 @@ li.editing .swatch, li.editing .enabled-button,  li.editing-sub-part .delete-but
     -webkit-appearance: none;
 }
 
-.pane > .title > button.add:hover {
+.pane > .title > .pane-title-button:hover {
     background-position: -23px 0px;
 }
 
-.pane > .title > button.add:active {
+.pane > .title > .pane-title-button:active {
     background-position: -46px 0px;
+}
+
+.pane > .title > .pane-title-button.add {
+    background-image: url(Images/paneAddButtons.png);
+}
+
+.pane > .title > .pane-title-button.refresh {
+    background-image: url(Images/paneRefreshButtons.png);
 }
 
 .pane > .body {
