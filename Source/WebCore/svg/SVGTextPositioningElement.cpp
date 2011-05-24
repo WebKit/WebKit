@@ -222,10 +222,10 @@ void SVGTextPositioningElement::fillPassedAttributeToPropertyTypeMap(AttributeTo
 {
     SVGTextContentElement::fillPassedAttributeToPropertyTypeMap(attributeToPropertyTypeMap);
 
-    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedNumberList);
-    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedNumberList);
-    attributeToPropertyTypeMap.set(SVGNames::dxAttr, AnimatedNumberList);
-    attributeToPropertyTypeMap.set(SVGNames::dyAttr, AnimatedNumberList);
+    attributeToPropertyTypeMap.set(SVGNames::xAttr, AnimatedLengthList);
+    attributeToPropertyTypeMap.set(SVGNames::yAttr, AnimatedLengthList);
+    attributeToPropertyTypeMap.set(SVGNames::dxAttr, AnimatedLengthList);
+    attributeToPropertyTypeMap.set(SVGNames::dyAttr, AnimatedLengthList);
     attributeToPropertyTypeMap.set(SVGNames::rotateAttr, AnimatedNumberList);
 }
 

@@ -1,3 +1,20 @@
+2011-05-23  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        SVGTextPositioning attributes are marked as NumberList instead of LengthList
+        https://bugs.webkit.org/show_bug.cgi?id=61301
+
+        SVGTextPositioningElement attributes x, y, dx and dy were marked as AnimatedNumberList
+        instead of AnimatedLengthList.
+        See specification http://www.w3.org/TR/SVG/text.html#InterfaceSVGTextPositioningElement
+
+        This does not affect the behavior, since we do not respect SVG units in SMIL animation yet.
+        No new tests added.
+
+        * svg/SVGTextPositioningElement.cpp:
+        (WebCore::SVGTextPositioningElement::fillPassedAttributeToPropertyTypeMap):
+
 2011-05-19  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
