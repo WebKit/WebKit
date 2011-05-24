@@ -1447,3 +1447,6 @@ http/tests/navigation/post-307-response.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=61160
 media/video-src-invalid-poster.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=61396
+fast/events/scroll-in-scaled-page-with-overflow-hidden.html

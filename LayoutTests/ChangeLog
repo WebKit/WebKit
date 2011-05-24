@@ -1,5 +1,12 @@
 2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Skip fast/events/scroll-in-scaled-page-with-overflow-hidden.html added by r87187 on GTK
+        because GTK port doesn't implement eventSender.scalePageBy yet (bug 61396).
+
+        * platform/gtk/Skipped:
+
+2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Skip fast/events/scroll-in-scaled-page-with-overflow-hidden.html added by r87187 on Windows
         because Windows port doesn't implement eventSender.scalePageBy yet (bug 59098).
 
