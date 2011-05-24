@@ -1,3 +1,11 @@
+2011-05-24  Jay Civelli  <jcivelli@chromium.org>
+
+        Rubberstamped by David Kilzer.
+
+        Updated some files that I forgot in my previous MHTML CL.
+
+       * Configurations/FeatureDefines.xcconfig:
+
 2011-05-24  Sam Weinig  <sam@webkit.org>
 
         Clean up after Geoff and fix the WebKit2 build.

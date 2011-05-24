@@ -1,3 +1,11 @@
+2011-05-24  Jay Civelli  <jcivelli@chromium.org>
+
+        Rubberstamped by David Kilzer.
+
+        Updated some files that I forgot in my previous MHTML CL.
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-05-20  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.
