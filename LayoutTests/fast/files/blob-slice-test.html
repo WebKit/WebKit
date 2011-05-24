@@ -31,6 +31,7 @@ var sliceParams = [
     [-2147483648],
     [9223372036854775000],
     [-9223372036854775000],
+    [],
 ];
 
 function log(message)
@@ -41,15 +42,19 @@ function log(message)
 function testSlicing(start, end)
 {
     var subBlob;
-    var message;
     var reader = new FileReader();
-    if (end == undefined) {
+    var message = "Slicing ";
+    if (start == undefined && end == undefined) {
+        message += "without parameters";
+        subBlob = blob.webkitSlice();
+    } else if (end == undefined) {
+        message += "from " + start;
         subBlob = blob.webkitSlice(start);
-        message = "Slicing from " + start + ": ";
     } else {
+        message += "from " + start + " to " + end;
         subBlob = blob.webkitSlice(start, end);
-        message = "Slicing from " + start + " to " + end + ": ";
     }
+    message += ": ";
     reader.onload = function(event) {
         log(message + event.target.result);
         runNextTest();
