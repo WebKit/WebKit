@@ -1,3 +1,9 @@
+2011-05-24  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Sorted WebCore.xcodeproj again.
+
+        * WebCore.xcodeproj/project.pbxproj: Ran sort-XCode-project-file.
+
 2011-05-24  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Geoff Garen.
