@@ -1,3 +1,29 @@
+2011-05-24  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Chris Marrin.
+
+        Add ability to set compositing layer bounds origin
+        https://bugs.webkit.org/show_bug.cgi?id=61381
+
+        On Core Animation layers, the origin of the bounds
+        rectangle affects where layer content is rendered, as well
+        as the offset of sublayers. Currently we always set the
+        bounds offset to a zero point, but may need to make use
+        of the bounds offset in future, so expose it via GraphicsLayer.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::boundsOrigin):
+        (WebCore::GraphicsLayer::setBoundsOrigin):
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setSize):
+        (WebCore::GraphicsLayerCA::setBoundsOrigin):
+        (WebCore::GraphicsLayerCA::setAllowTiledLayer):
+        (WebCore::GraphicsLayerCA::commitLayerChangesBeforeSublayers):
+        (WebCore::GraphicsLayerCA::updateBounds):
+        (WebCore::GraphicsLayerCA::ensureStructuralLayer):
+        (WebCore::GraphicsLayerCA::swapFromOrToTiledLayer):
+        * platform/graphics/ca/GraphicsLayerCA.h:
+
 2011-05-24  Leandro Pereira  <leandro@profusion.mobi>
 
         [EFL] Build fix.

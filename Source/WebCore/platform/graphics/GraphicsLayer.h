@@ -233,9 +233,13 @@ public:
     const FloatPoint3D& anchorPoint() const { return m_anchorPoint; }
     virtual void setAnchorPoint(const FloatPoint3D& p) { m_anchorPoint = p; }
 
-    // The bounds of the layer
+    // The size of the layer.
     const FloatSize& size() const { return m_size; }
     virtual void setSize(const FloatSize& size) { m_size = size; }
+
+    // The boundOrigin affects the offset at which content is rendered, and sublayers are positioned.
+    const FloatPoint& boundsOrigin() const { return m_boundsOrigin; }
+    virtual void setBoundsOrigin(const FloatPoint& origin) { m_boundsOrigin = origin; }
 
     const TransformationMatrix& transform() const { return m_transform; }
     virtual void setTransform(const TransformationMatrix& t) { m_transform = t; }
@@ -382,6 +386,8 @@ protected:
     FloatPoint m_position;
     FloatPoint3D m_anchorPoint;
     FloatSize m_size;
+    FloatPoint m_boundsOrigin;
+
     TransformationMatrix m_transform;
     TransformationMatrix m_childrenTransform;
 

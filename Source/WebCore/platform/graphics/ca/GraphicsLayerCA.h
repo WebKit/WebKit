@@ -74,6 +74,7 @@ public:
     virtual void setPosition(const FloatPoint&);
     virtual void setAnchorPoint(const FloatPoint3D&);
     virtual void setSize(const FloatSize&);
+    virtual void setBoundsOrigin(const FloatPoint&);
 
     virtual void setTransform(const TransformationMatrix&);
 
@@ -263,7 +264,7 @@ private:
     void updateLayerNames();
     void updateSublayerList();
     void updateLayerPosition();
-    void updateLayerSize();
+    void updateBounds();
     void updateAnchorPoint();
     void updateTransform();
     void updateChildrenTransform();
@@ -308,7 +309,7 @@ private:
         ChildrenChanged = 1 << 2, // also used for content layer, and preserves-3d, and size if tiling changes?
         PositionChanged = 1 << 3,
         AnchorPointChanged = 1 << 4,
-        SizeChanged = 1 << 5,
+        BoundsChanged = 1 << 5,
         TransformChanged = 1 << 6,
         ChildrenTransformChanged = 1 << 7,
         Preserves3DChanged = 1 << 8,
