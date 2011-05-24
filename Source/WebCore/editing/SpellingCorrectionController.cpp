@@ -48,7 +48,7 @@ namespace WebCore {
 using namespace std;
 using namespace WTF;
 
-#if SUPPORT_AUTOCORRECTION_PANEL
+#if USE(AUTOCORRECTION_PANEL)
 
 static const Vector<DocumentMarker::MarkerType>& markerTypesForAutocorrection()
 {

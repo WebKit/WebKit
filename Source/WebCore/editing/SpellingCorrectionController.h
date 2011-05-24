@@ -26,17 +26,6 @@
 #ifndef SpellingCorrectionController_h
 #define SpellingCorrectionController_h
 
-#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-// Some platforms provide UI for suggesting autocorrection.
-#define SUPPORT_AUTOCORRECTION_PANEL 1
-// Some platforms use spelling and autocorrection markers to provide visual cue.
-// On such platform, if word with marker is edited, we need to remove the marker.
-#define REMOVE_MARKERS_UPON_EDITING 1
-#else
-#define SUPPORT_AUTOCORRECTION_PANEL 0
-#define REMOVE_MARKERS_UPON_EDITING 0
-#endif // #if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
-
 #include "DocumentMarker.h"
 #include "Range.h"
 #include "Timer.h"
@@ -73,7 +62,7 @@ enum ReasonForDismissingCorrectionPanel {
     ReasonForDismissingCorrectionPanelAccepted
 };
 
-#if SUPPORT_AUTOCORRECTION_PANEL
+#if USE(AUTOCORRECTION_PANEL)
 #define UNLESS_ENABLED(functionBody) ;
 #else
 #define UNLESS_ENABLED(functionBody) functionBody
@@ -110,7 +99,7 @@ public:
     bool hasPendingCorrection() const UNLESS_ENABLED({ return false; })
     bool isSpellingMarkerAllowed(PassRefPtr<Range> misspellingRange) const UNLESS_ENABLED({ UNUSED_PARAM(misspellingRange); return true; })
     bool isAutomaticSpellingCorrectionEnabled() UNLESS_ENABLED({ return false; })
-    bool shouldRemoveMarkersUponEditing() { return REMOVE_MARKERS_UPON_EDITING; }
+    bool shouldRemoveMarkersUponEditing();
 
     void correctionPanelTimerFired(Timer<SpellingCorrectionController>*) UNLESS_ENABLED({})
     void recordAutocorrectionResponseReversed(const String& replacedString, PassRefPtr<Range> replacementRange) UNLESS_ENABLED({ UNUSED_PARAM(replacedString); UNUSED_PARAM(replacementRange); })
@@ -122,7 +111,7 @@ public:
     bool processMarkersOnTextToBeReplacedByResult(const TextCheckingResult*, Range* rangeToBeReplaced, const String& stringToBeReplaced) UNLESS_ENABLED({ UNUSED_PARAM(rangeToBeReplaced); UNUSED_PARAM(stringToBeReplaced); return true; });
     void deletedAutocorrectionAtPosition(const Position&, const String& originalString) UNLESS_ENABLED({ UNUSED_PARAM(originalString); })
 
-#if SUPPORT_AUTOCORRECTION_PANEL
+#if USE(AUTOCORRECTION_PANEL)
 private:
     void recordAutocorrectionResponseReversed(const String& replacedString, const String& replacementString);
 
@@ -150,6 +139,15 @@ private:
 };
 
 #undef UNLESS_ENABLED
+
+inline bool SpellingCorrectionController::shouldRemoveMarkersUponEditing()
+{
+#if USE(MARKER_REMOVAL_UPON_EDITING)
+    return true;
+#else
+    return false;
+#endif
+}
 
 } // namespace WebCore
 

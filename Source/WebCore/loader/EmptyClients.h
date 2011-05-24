@@ -516,7 +516,7 @@ public:
 #endif
     TextCheckerClient* textChecker() { return &m_textCheckerClient; }
 
-#if SUPPORT_AUTOCORRECTION_PANEL
+#if USE(AUTOCORRECTION_PANEL)
     virtual void showCorrectionPanel(CorrectionPanelInfo::PanelType, const FloatRect&, const String&, const String&, const Vector<String>&) { }
     virtual void dismissCorrectionPanel(ReasonForDismissingCorrectionPanel) { }
     virtual String dismissCorrectionPanelSoon(ReasonForDismissingCorrectionPanel) { return String(); }

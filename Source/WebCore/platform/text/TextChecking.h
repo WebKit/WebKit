@@ -40,6 +40,14 @@ namespace WebCore {
 #define WTF_USE_AUTOMATIC_TEXT_REPLACEMENT 1
 #endif
 
+#if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+// Some platforms provide UI for suggesting autocorrection.
+#define WTF_USE_AUTOCORRECTION_PANEL 1
+// Some platforms use spelling and autocorrection markers to provide visual cue.
+// On such platform, if word with marker is edited, we need to remove the marker.
+#define WTF_USE_MARKER_REMOVAL_UPON_EDITING 1
+#endif // #if PLATFORM(MAC) && !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
+
 enum TextCheckingType {
     TextCheckingTypeSpelling    = 1 << 1,
     TextCheckingTypeGrammar     = 1 << 2,

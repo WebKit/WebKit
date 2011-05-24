@@ -155,7 +155,7 @@ public:
         AutocorrectionReverted
     };
 
-#if SUPPORT_AUTOCORRECTION_PANEL
+#if USE(AUTOCORRECTION_PANEL)
     virtual void showCorrectionPanel(CorrectionPanelInfo::PanelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacmentString, const Vector<String>& alternativeReplacementStrings) = 0;
     virtual void dismissCorrectionPanel(ReasonForDismissingCorrectionPanel) = 0;
     virtual String dismissCorrectionPanelSoon(ReasonForDismissingCorrectionPanel) = 0;

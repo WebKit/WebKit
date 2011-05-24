@@ -2221,7 +2221,9 @@ void Editor::markAllMisspellingsAndBadGrammarInRanges(TextCheckingTypeMask textC
                 continue;
 
             if (shouldShowCorrectionPanel) {
-                ASSERT(SUPPORT_AUTOCORRECTION_PANEL);
+#if !USE(AUTOCORRECTION_PANEL)
+                ASSERT_NOT_REACHED();
+#endif
                 // shouldShowCorrectionPanel can be true only when the panel is available.
                 if (resultLocation + resultLength == spellingRangeEndOffset) {
                     // We only show the correction panel on the last word.
