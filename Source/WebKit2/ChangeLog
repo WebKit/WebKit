@@ -1,3 +1,18 @@
+2011-05-24  Lucas Forschler  <lforschler@apple.com>
+
+    Merged r87022.
+
+    2011-05-21  Jeremy Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        WebKit2: fix failing fullscreen/full-screen-remove* tests.
+        https://bugs.webkit.org/show_bug.cgi?id=61027
+
+        * WebProcess/InjectedBundle/InjectedBundlePageFullScreenClient.cpp:
+        (WebKit::InjectedBundlePageFullScreenClient::exitFullScreenForElement): Call the 
+            exit functions (was calling the enter functions).
+
 2011-05-23  Lucas Forschler  <lforschler@apple.com>
 
     Merge r86985.

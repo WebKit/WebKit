@@ -61,9 +61,9 @@ void InjectedBundlePageFullScreenClient::enterFullScreenForElement(WebPage *page
 
 void InjectedBundlePageFullScreenClient::exitFullScreenForElement(WebPage *page, WebCore::Element *element)
 {
-    if (m_client.enterFullScreenForElement) {
+    if (m_client.exitFullScreenForElement) {
         RefPtr<InjectedBundleNodeHandle> nodeHandle = InjectedBundleNodeHandle::getOrCreate(element);
-        m_client.enterFullScreenForElement(toAPI(page), toAPI(nodeHandle.get()));
+        m_client.exitFullScreenForElement(toAPI(page), toAPI(nodeHandle.get()));
     } else
         page->send(Messages::WebFullScreenManagerProxy::ExitFullScreen());
 }
