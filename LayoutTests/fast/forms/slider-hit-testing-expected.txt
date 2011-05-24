@@ -1,0 +1,4 @@
+Clicking on the right side of slider should cause the thumb to move.
+
+
+PASSED

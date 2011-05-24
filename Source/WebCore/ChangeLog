@@ -1,3 +1,23 @@
+2011-05-24  Tony Chang  <tony@chromium.org>
+
+        Reviewed by James Robinson.
+
+        fix render overflow computation for input type=range
+        https://bugs.webkit.org/show_bug.cgi?id=61132
+
+        Test: fast/forms/slider-hit-testing.html
+
+        We need to clear m_overflow otherwise we use the first
+        size of the slider for hit testing (i.e., changes to the size
+        cause problems).  This only shows up if the thumb isn't contained
+        in the bounds of the slider.  Making the range have a smaller height
+        than the thumb shows the bug.
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::layout): Clear the overflow during layout
+            so we re-compute the overflow based on the current size of the
+            slider.
+
 2011-05-24  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by James Robinson.

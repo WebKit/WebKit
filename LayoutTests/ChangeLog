@@ -1,3 +1,13 @@
+2011-05-24  Tony Chang  <tony@chromium.org>
+
+        Reviewed by James Robinson.
+
+        fix render overflow computation for input type=range
+        https://bugs.webkit.org/show_bug.cgi?id=61132
+
+        * fast/forms/slider-hit-testing-expected.txt: Added.
+        * fast/forms/slider-hit-testing.html: Added.
+
 2011-05-24  Kenneth Russell  <kbr@google.com>
 
         Unreviewed. Fixed incorrect test expectations I previously checked in.

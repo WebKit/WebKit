@@ -153,6 +153,8 @@ void RenderSlider::layout()
     computeLogicalHeight();
     updateLayerTransform();
 
+    m_overflow.clear();
+
     if (thumb) {
         if (oldSize != size())
             thumb->setChildNeedsLayout(true, false);
