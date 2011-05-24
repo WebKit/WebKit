@@ -1,3 +1,12 @@
+2011-05-24  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed. Fixed incorrect test expectations I previously checked in.
+
+        * platform/chromium-gpu-mac/compositing/animation/busy-indicator-actual.png: Removed.
+        * platform/chromium-gpu-mac/compositing/animation/busy-indicator-expected.png: Added.
+        * platform/chromium-gpu-win/compositing/animation/busy-indicator-actual.png: Removed.
+        * platform/chromium-gpu-win/compositing/animation/busy-indicator-expected.png: Added.
+
 2011-05-24  Adam Klein  <adamk@chromium.org>
 
         Unreviewed.  Updated Chromium test expectations.
