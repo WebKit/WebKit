@@ -1,3 +1,21 @@
+2011-05-24  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium]Add clipping for listBox in popup window to fix wrong location display when the autofill item is really long.
+        https://bugs.webkit.org/show_bug.cgi?id=61252
+        http://code.google.com/p/chromium/issues/detail?id=83539
+
+        Manual test: manual-tests/autofill-popup-location.html.
+
+        * manual-tests/autofill-popup-location.html: With long long text, test the shown location is correct.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::setBaseWidth): Clip width with m_maxWindowWidth.
+        (WebCore::PopupListBox::PopupListBox): Add m_maxWindowWidth initialization.
+        (WebCore::PopupContainer::layoutAndCalculateWidgetRect): Call setMaxWidthAndLayout() when the width is clipped with screen size.
+        (WebCore::PopupListBox::setMaxWidthAndLayout): Set m_maxWindowWidth and call layout().
+        (WebCore::PopupListBox::layout): Compare renewed windowWidth and m_maxWindowWidth, and clip the it.
+
 2011-05-24  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

@@ -133,7 +133,7 @@ public:
     // Returns the number of items in the list.
     int numItems() const { return static_cast<int>(m_items.size()); }
 
-    void setBaseWidth(int width) { m_baseWidth = width; }
+    void setBaseWidth(int width) { m_baseWidth = min(m_maxWindowWidth, width); }
 
     // Computes the size of widget and children.
     void layout();
@@ -145,6 +145,8 @@ public:
     int getRowHeight(int index);
 
     void setMaxHeight(int maxHeight) { m_maxHeight = maxHeight; }
+
+    void setMaxWidthAndLayout(int);
 
     void disconnectClient() { m_popupClient = 0; }
 
@@ -165,6 +167,7 @@ private:
         , m_popupClient(client)
         , m_repeatingChar(0)
         , m_lastCharTime(0)
+        , m_maxWindowWidth(std::numeric_limits<int>::max())
     {
         setScrollbarModes(ScrollbarAlwaysOff, ScrollbarAlwaysOff);
     }
@@ -271,6 +274,9 @@ private:
 
     // The last time the user hit a key.  Used for typeAheadFind.
     TimeStamp m_lastCharTime;
+
+    // If width exeeds screen width, we have to clip it.
+    int m_maxWindowWidth;
 };
 
 static PlatformMouseEvent constructRelativeMouseEvent(const PlatformMouseEvent& e,
@@ -355,13 +361,17 @@ IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, co
 
         // If we have multiple screens and the browser rect is in one screen, we have
         // to clip the window width to the screen width.
+        // When clipping, we also need to set a maximum width for the list box.
         FloatRect windowRect = chromeClient->windowRect();
         if (windowRect.x() >= screen.x() && windowRect.maxX() <= screen.maxX()) {
             if (m_listBox->m_popupClient->menuStyle().textDirection() == RTL && widgetRect.x() < screen.x()) {
                 widgetRect.setWidth(widgetRect.maxX() - screen.x());
                 widgetRect.setX(screen.x());
-            } else if (widgetRect.maxX() > screen.maxX())
+                listBox()->setMaxWidthAndLayout(max(widgetRect.width() - kBorderSize * 2, 0));
+            } else if (widgetRect.maxX() > screen.maxX()) {
                 widgetRect.setWidth(screen.maxX() - widgetRect.x());
+                listBox()->setMaxWidthAndLayout(max(widgetRect.width() - kBorderSize * 2, 0));
+            }
         }
 
         // Calculate Y axis size.
@@ -1283,6 +1293,12 @@ void PopupListBox::updateFromElement()
     layout();
 }
 
+void PopupListBox::setMaxWidthAndLayout(int maxWidth)
+{
+    m_maxWindowWidth = maxWidth;
+    layout();
+}
+
 void PopupListBox::layout()
 {
     bool isRightAligned = m_popupClient->menuStyle().textDirection() == RTL;
@@ -1362,7 +1378,13 @@ void PopupListBox::layout()
         contentWidth = m_baseWidth - scrollbarWidth;
     } else {
         windowWidth = baseWidth + scrollbarWidth + paddingWidth;
-        contentWidth = baseWidth + paddingWidth;
+        if (windowWidth > m_maxWindowWidth) {
+            // windowWidth exceeds m_maxWindowWidth, so we have to clip.
+            windowWidth = m_maxWindowWidth;
+            baseWidth = windowWidth - scrollbarWidth - paddingWidth;
+            m_baseWidth = baseWidth;
+        }
+        contentWidth = windowWidth - scrollbarWidth;
 
         if (windowWidth < m_baseWidth) {
             windowWidth = m_baseWidth;
