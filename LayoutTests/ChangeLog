@@ -1,5 +1,11 @@
 2011-05-24  Adam Klein  <adamk@chromium.org>
 
+        Unreviewed.  Updated Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt: svg failure on Linux, BUGWK61370.
+
+2011-05-24  Adam Klein  <adamk@chromium.org>
+
         Unreviewed.
 
         Chromium test expectations update.
