@@ -1,3 +1,15 @@
+2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Undo gets broken in contenteditable area when a text field's value is set by script
+        https://bugs.webkit.org/show_bug.cgi?id=61340
+
+        Added a test to ensure WebKit does not clear undo stack when setting the value of input or textarea.
+
+        * editing/undo/undo-after-setting-value-expected.txt: Added.
+        * editing/undo/undo-after-setting-value.html: Added.
+
 2011-05-24  Adam Klein  <adamk@chromium.org>
 
         Unreviewed. Updating Chromium test expectations.

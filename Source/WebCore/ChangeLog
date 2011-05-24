@@ -1,3 +1,22 @@
+2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Undo gets broken in contenteditable area when a text field's value is set by script
+        https://bugs.webkit.org/show_bug.cgi?id=61340
+
+        The bug was caused by RenderTextControl::setInnerTextValue's clearing undo stack by
+        calling clearUndoRedoOperations whenever script sets new value to input or textarea.
+
+        Fixed the bug by removing the offending call to clearUndoRedoOperations. While this call
+        was added by r15565 to fix a crash, SimpleEditCommands have since become much more robust
+        and the test added by r15565 (fast/forms/text-field-setvalue-crash.html) still passes.
+
+        Test: editing/undo/undo-after-setting-value.html
+
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::setInnerTextValue):
+
 2011-05-24  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Dave Hyatt.

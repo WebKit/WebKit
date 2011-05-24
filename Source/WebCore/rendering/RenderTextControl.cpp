@@ -147,14 +147,8 @@ void RenderTextControl::setInnerTextValue(const String& innerTextValue)
 {
     String value = innerTextValue;
     if (value != text() || !innerTextElement()->hasChildNodes()) {
-        if (value != text()) {
-            if (Frame* frame = this->frame()) {
-                frame->editor()->clearUndoRedoOperations();
-                
-                if (AXObjectCache::accessibilityEnabled())
-                    document()->axObjectCache()->postNotification(this, AXObjectCache::AXValueChanged, false);
-            }
-        }
+        if (value != text() && document() && AXObjectCache::accessibilityEnabled())
+            document()->axObjectCache()->postNotification(this, AXObjectCache::AXValueChanged, false);
 
         ExceptionCode ec = 0;
         innerTextElement()->setInnerText(value, ec);
