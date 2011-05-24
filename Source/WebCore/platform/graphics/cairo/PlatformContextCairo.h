@@ -27,6 +27,7 @@
 #define PlatformContextCairo_h
 
 #include "ContextShadow.h"
+#include "GraphicsContext.h"
 #include "RefPtrCairo.h"
 
 namespace WebCore {
@@ -68,9 +69,13 @@ public:
     void pushImageMask(cairo_surface_t*, const FloatRect&);
     void drawSurfaceToContext(cairo_surface_t*, const FloatRect& destRect, const FloatRect& srcRect, GraphicsContext*);
 
+    void setImageInterpolationQuality(InterpolationQuality quality) { m_imageInterpolationQuality = quality; }
+    InterpolationQuality imageInterpolationQuality() const { return m_imageInterpolationQuality; }
+
 private:
     RefPtr<cairo_t> m_cr;
     Vector<ImageMaskInformation> m_maskImageStack;
+    InterpolationQuality m_imageInterpolationQuality;
 };
 
 } // namespace WebCore

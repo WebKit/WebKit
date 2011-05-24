@@ -102,6 +102,7 @@ public:
     Vector<float> layers;
     ContextShadow shadow;
     Vector<ContextShadow> shadowStack;
+    InterpolationQuality imageInterpolationQuality;
 
 #if PLATFORM(GTK)
     GdkEventExpose* expose;

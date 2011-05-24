@@ -1154,13 +1154,14 @@ void GraphicsContext::setPlatformShouldAntialias(bool enable)
     cairo_set_antialias(platformContext()->cr(), enable ? CAIRO_ANTIALIAS_DEFAULT : CAIRO_ANTIALIAS_NONE);
 }
 
-void GraphicsContext::setImageInterpolationQuality(InterpolationQuality)
+void GraphicsContext::setImageInterpolationQuality(InterpolationQuality quality)
 {
+    platformContext()->setImageInterpolationQuality(quality);
 }
 
 InterpolationQuality GraphicsContext::imageInterpolationQuality() const
 {
-    return InterpolationDefault;
+    return platformContext()->imageInterpolationQuality();
 }
 
 } // namespace WebCore

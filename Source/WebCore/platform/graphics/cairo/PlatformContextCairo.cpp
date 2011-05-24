@@ -97,6 +97,20 @@ void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const 
     // a pattern transformation on the image and draw the transformed pattern.
     // Test using example site at http://www.meyerweb.com/eric/css/edge/complexspiral/demo.html
     RefPtr<cairo_pattern_t> pattern = adoptRef(cairo_pattern_create_for_surface(surface));
+
+    switch (m_imageInterpolationQuality) {
+    case InterpolationNone:
+    case InterpolationLow:
+        cairo_pattern_set_filter(pattern.get(), CAIRO_FILTER_FAST);
+        break;
+    case InterpolationMedium:
+    case InterpolationHigh:
+        cairo_pattern_set_filter(pattern.get(), CAIRO_FILTER_BILINEAR);
+        break;
+    case InterpolationDefault:
+        cairo_pattern_set_filter(pattern.get(), CAIRO_FILTER_BILINEAR);
+        break;
+    }
     cairo_pattern_set_extend(pattern.get(), CAIRO_EXTEND_PAD);
 
     float scaleX = srcRect.width() / destRect.width();
