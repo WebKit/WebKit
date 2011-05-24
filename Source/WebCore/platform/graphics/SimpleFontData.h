@@ -65,7 +65,7 @@ namespace WebCore {
 class FontDescription;
 class SharedBuffer;
 
-enum FontDataVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant };
+enum FontDataVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant, BrokenIdeographVariant };
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
 class SimpleFontData : public FontData {
@@ -90,6 +90,7 @@ public:
 
     SimpleFontData* smallCapsFontData(const FontDescription&) const;
     SimpleFontData* emphasisMarkFontData(const FontDescription&) const;
+    SimpleFontData* brokenIdeographFontData() const;
 
     SimpleFontData* variantFontData(const FontDescription& description, FontDataVariant variant) const
     {
@@ -98,6 +99,8 @@ public:
             return smallCapsFontData(description);
         case EmphasisMarkVariant:
             return emphasisMarkFontData(description);
+        case BrokenIdeographVariant:
+            return brokenIdeographFontData();
         case AutoVariant:
         case NormalVariant:
             break;
@@ -108,7 +111,6 @@ public:
 
     SimpleFontData* verticalRightOrientationFontData() const;
     SimpleFontData* uprightOrientationFontData() const;
-    SimpleFontData* brokenIdeographFontData() const;
 
     bool hasVerticalGlyphs() const { return m_hasVerticalGlyphs; }
     bool isTextOrientationFallback() const { return m_isTextOrientationFallback; }

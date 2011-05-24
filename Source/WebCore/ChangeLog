@@ -1,3 +1,17 @@
+2011-05-24  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        ASSERT_NOT_REACHED reached with broken ideograph and system fallback
+        https://bugs.webkit.org/show_bug.cgi?id=53528
+
+        Test: fast/text/justify-ideograph-vertical.html (on chromium linux)
+
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter): Identify and handle broken ideographs as any other variant.
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::variantFontData): Added BrokenIdeographVariant.
+
 2011-05-24  Syed Idris Shah  <syed.idris-shah@nokia.com>
 
         Reviewed by Andreas Kling.

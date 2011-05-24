@@ -1,3 +1,12 @@
+2011-05-24  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        ASSERT_NOT_REACHED reached with broken ideograph and system fallback
+        https://bugs.webkit.org/show_bug.cgi?id=53528
+
+        * platform/chromium/test_expectations.txt: Remove CRASH from fixed test.
+
 2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip fast/events/scroll-in-scaled-page-with-overflow-hidden.html on Mac WebKit2

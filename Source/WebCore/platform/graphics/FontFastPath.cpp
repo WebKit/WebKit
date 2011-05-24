@@ -70,7 +70,7 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant va
             m_fontList->m_pageZero = node;
     }
 
-    GlyphPage* page;
+    GlyphPage* page = 0;
     if (variant == NormalVariant) {
         // Fastest loop, for the common case (normal variant).
         while (true) {
@@ -79,23 +79,14 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant va
                 GlyphData data = page->glyphDataForCharacter(c);
                 if (data.fontData && (data.fontData->platformData().orientation() == Horizontal || data.fontData->isTextOrientationFallback()))
                     return data;
-                
+
                 if (data.fontData) {
                     if (isCJKIdeographOrSymbol(c)) {
                         if (!data.fontData->hasVerticalGlyphs()) {
                             // Use the broken ideograph font data. The broken ideograph font will use the horizontal width of glyphs
                             // to make sure you get a square (even for broken glyphs like symbols used for punctuation).
-                            const SimpleFontData* brokenIdeographFontData = data.fontData->brokenIdeographFontData();
-                            GlyphPageTreeNode* brokenIdeographNode = GlyphPageTreeNode::getRootChild(brokenIdeographFontData, pageNumber);
-                            const GlyphPage* brokenIdeographPage = brokenIdeographNode->page();
-                            if (brokenIdeographPage) {
-                                GlyphData brokenIdeographData = brokenIdeographPage->glyphDataForCharacter(c);
-                                if (brokenIdeographData.fontData)
-                                    return brokenIdeographData;
-                            }
-                            
-                            // Shouldn't be possible to even reach this point.
-                            ASSERT_NOT_REACHED();
+                            variant = BrokenIdeographVariant;
+                            break;
                         }
                     } else {
                         if (m_fontDescription.textOrientation() == TextOrientationVerticalRight) {
@@ -145,7 +136,8 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant va
             else
                 m_fontList->m_pageZero = node;
         }
-    } else {
+    }
+    if (variant != NormalVariant) {
         while (true) {
             page = node->page();
             if (page) {
@@ -200,8 +192,12 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant va
         codeUnitsLength = 2;
     }
     const SimpleFontData* characterFontData = fontCache()->getFontDataForCharacters(*this, codeUnits, codeUnitsLength);
-    if (variant != NormalVariant && characterFontData)
-        characterFontData = characterFontData->variantFontData(m_fontDescription, variant);
+    if (characterFontData) {
+        if (characterFontData->platformData().orientation() == Vertical && !characterFontData->hasVerticalGlyphs() && isCJKIdeographOrSymbol(c))
+            variant = BrokenIdeographVariant;
+        if (variant != NormalVariant)
+            characterFontData = characterFontData->variantFontData(m_fontDescription, variant);
+    }
     if (characterFontData) {
         // Got the fallback glyph and font.
         GlyphPage* fallbackPage = GlyphPageTreeNode::getRootChild(characterFontData, pageNumber)->page();

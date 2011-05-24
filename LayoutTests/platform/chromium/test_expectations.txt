@@ -2820,15 +2820,11 @@ BUGCR70882 WIN : fast/text/offsetForPosition-complex-fallback.html = TEXT
 BUGCR70942 WIN : editing/execCommand/break-out-of-empty-list-item.html = PASS TIMEOUT
 BUGRNIWA SLOW WIN : editing/execCommand/4786404-1.html = PASS
 
-// Added by and started crashing at http://trac.webkit.org/changeset/76743,
-// stopped crashing at some point after 80582, but see BUGCR75426!
-BUGCR71013 LINUX : fast/text/justify-ideograph-vertical.html = CRASH IMAGE+TEXT
-
 // Started failing at http://trac.webkit.org/changeset/76743
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-complex.html = IMAGE+TEXT
 BUGCR71022 MAC : fast/text/justify-ideograph-complex.html = IMAGE
 BUGCR71022 WIN LINUX : fast/text/justify-ideograph-simple.html = IMAGE+TEXT
-BUGCR71022 WIN : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
+BUGCR71022 WIN LINUX : fast/text/justify-ideograph-vertical.html = IMAGE+TEXT
 // Seems to have started failing at http://trac.webkit.org/changeset/80582
 BUGCR71022 LEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
 
