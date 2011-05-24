@@ -1,3 +1,14 @@
+2011-05-23  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Cap painting to 30fps on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=61337
+        <rdar://problem/9213388>
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::displayTimerFired):
+
 2011-05-23  Jeremy Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
