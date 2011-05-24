@@ -1,3 +1,12 @@
+2011-05-24  David Kilzer  <ddkilzer@apple.com>
+
+        Part 2 of 2: <http://webkit.org/b/60805> Enable -Wnewline-eof on ANGLE
+
+        Reviewed by Adam Roben.
+
+        * Configurations/Base.xcconfig:
+        (GCC_WARN_ABOUT_MISSING_NEWLINE): Added. Set to YES.
+
 2011-05-23  David Kilzer  <ddkilzer@apple.com>
 
         Part 1 of 2: <http://webkit.org/b/60805> Enable -Wnewline-eof on ANGLE
