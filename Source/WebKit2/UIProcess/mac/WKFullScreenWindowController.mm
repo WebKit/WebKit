@@ -39,6 +39,7 @@
 #import <QuartzCore/QuartzCore.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/IntRect.h>
+#import <WebKit/WebNSWindowExtras.h>
 #import <WebKitSystemInterface.h>
 
 static const NSTimeInterval tickleTimerInterval = 1.0;
@@ -249,12 +250,14 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
         // Swap the webView placeholder into place.
         if (!_webViewPlaceholder)
             _webViewPlaceholder.adoptNS([[NSView alloc] init]);
+        NSResponder *webWindowFirstResponder = [[_webView window] firstResponder];
         [self _swapView:_webView with:_webViewPlaceholder.get()];
         
         // Then insert the WebView into the full screen window
         NSView* contentView = [[self _fullScreenWindow] contentView];
         [contentView addSubview:_webView positioned:NSWindowBelow relativeTo:nil];
         [_webView setFrame:[contentView bounds]];
+        [[self window] makeResponder:webWindowFirstResponder firstResponderIfDescendantOfView:_webView];
         
         NSWindow *webWindow = [_webViewPlaceholder.get() window];
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
@@ -298,6 +301,7 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
     
     // Swap the webView back into its original position:
     if ([_webView window] == [self window]) {
+        NSResponder *fullScreenWindowFirstResponder = [[self _fullScreenWindow] firstResponder];
 #if defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
         // Work around a bug in AppKit <rdar://problem/9443385> where moving a 
         // layer-hosted view from a layer-backed view to a non-layer-backed view
@@ -309,6 +313,7 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
         }
 #endif
         [self _swapView:_webViewPlaceholder.get() with:_webView];
+        [[_webView window] makeResponder:fullScreenWindowFirstResponder firstResponderIfDescendantOfView:_webView];
         NSWindow* webWindow = [_webView window];
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
         // In Lion, NSWindow will animate into and out of orderOut operations. Suppress that

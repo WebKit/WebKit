@@ -49,4 +49,10 @@
     [self setFrameOrigin:origin];
 }
 
+- (void)makeResponder:(NSResponder *)responder firstResponderIfDescendantOfView:(NSView *)view
+{
+    if ([responder isKindOfClass:[NSView class]] && [(id)responder isDescendantOf:view])
+        [self makeFirstResponder:responder];
+}
+
 @end

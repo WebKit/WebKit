@@ -27,6 +27,7 @@
 
 #import "WebFullScreenController.h"
 
+#import "WebNSWindowExtras.h"
 #import "WebPreferencesPrivate.h"
 #import "WebWindowAnimation.h"
 #import "WebViewInternal.h"
@@ -273,6 +274,7 @@ private:
 
         WebView *webView = [self webView];
         NSWindow *webWindow = [webView window];
+        NSResponder *webWindowFirstResponder = [webWindow firstResponder];
 
         // Do not swap the placeholder into place if already is in a window,
         // assuming the placeholder's window will always be the webView's 
@@ -284,6 +286,7 @@ private:
             [[webView superview] replaceSubview:webView with:_placeholderView];
             
             [[[self window] contentView] addSubview:webView];
+            [[self window] makeResponder:webWindowFirstResponder firstResponderIfDescendantOfView:webView];
             [webView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
             [webView setFrame:[(NSView *)[[self window] contentView] bounds]];
         }
@@ -523,10 +526,12 @@ private:
     if (_placeholderView && [_placeholderView window]) {
         // Move the webView back to its own native window:
         WebView* webView = [self webView];
+        NSResponder *fullScreenWindowFirstResponder = [[self window] firstResponder];
         [webView setFrame:[_placeholderView frame]];
         [webView setAutoresizingMask:[_placeholderView autoresizingMask]];
         [webView removeFromSuperview];
         [[_placeholderView superview] replaceSubview:_placeholderView with:webView];
+        [[webView window] makeResponder:fullScreenWindowFirstResponder firstResponderIfDescendantOfView:webView];
         
         NSWindow *webWindow = [[self webView] window];
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
