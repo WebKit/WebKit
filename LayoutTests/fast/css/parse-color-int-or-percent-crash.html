@@ -1,0 +1,21 @@
+<html>
+    <body>
+        <script>    
+            if (window.layoutTestController)
+                layoutTestController.dumpAsText();
+
+            var stopElement = document.createElementNS("http://www.w3.org/2000/svg", "stop");
+            stopElement.style.stopColor = "blue";
+
+            var colorString = "rgb(00000000000000000000";
+            var e;
+            try {
+                stopElement.style.getPropertyCSSValue("stop-color").setRGBColor(colorString);
+            } catch (err) {
+                e = err;
+            }
+            
+            document.body.innerHTML = (e && e.SVG_INVALID_VALUE_ERR == 1) ? "PASS" : "FAIL";
+        </script>
+    </body>
+</html>

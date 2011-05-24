@@ -1,5 +1,20 @@
 2011-05-24  Lucas Forschler  <lforschler@apple.com>
 
+    Merged r87083.
+
+    2011-05-23  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Tests that we do not crash when parsing css color for integer or
+        percentage values.
+        https://bugs.webkit.org/show_bug.cgi?id=61293
+
+        * fast/css/parse-color-int-or-percent-crash-expected.txt: Added.
+        * fast/css/parse-color-int-or-percent-crash.html: Added.
+
+2011-05-24  Lucas Forschler  <lforschler@apple.com>
+
     Merged r87026.
 
     2011-05-21  Dan Bernstein  <mitz@apple.com>
