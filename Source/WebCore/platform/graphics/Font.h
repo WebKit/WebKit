@@ -50,7 +50,6 @@ class FontSelector;
 class GlyphBuffer;
 class GlyphPageTreeNode;
 class GraphicsContext;
-class SVGFontElement;
 class TextRun;
 
 struct GlyphData;
@@ -157,14 +156,6 @@ public:
     enum CodePath { Auto, Simple, Complex, SimpleWithGlyphOverflow };
 
 private:
-#if ENABLE(SVG_FONTS)
-    void drawTextUsingSVGFont(GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
-    float floatWidthUsingSVGFont(const TextRun&) const;
-    float floatWidthUsingSVGFont(const TextRun&, int extraCharsAvailable, int& charsConsumed, String& glyphName) const;
-    FloatRect selectionRectForTextUsingSVGFont(const TextRun&, const FloatPoint&, int h, int from, int to) const;
-    int offsetForPositionForTextUsingSVGFont(const TextRun&, float position, bool includePartialGlyphs) const;
-#endif
-
     enum ForTextEmphasisOrNot { NotForTextEmphasis, ForTextEmphasis };
 
     // Returns the initial in-stream advance.
@@ -219,11 +210,6 @@ public:
     }
 
     static String normalizeSpaces(const UChar*, unsigned length);
-
-#if ENABLE(SVG_FONTS)
-    bool isSVGFont() const;
-    SVGFontElement* svgFont() const;
-#endif
 
     bool needsTranscoding() const { return m_needsTranscoding; }
 

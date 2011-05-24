@@ -26,7 +26,9 @@
 #include "SVGRenderStyle.h"
 
 #if ENABLE(SVG_FONTS)
+#include "SVGFontData.h"
 #include "SVGFontElement.h"
+#include "SVGFontFaceElement.h"
 #endif
 
 namespace WebCore {
@@ -40,13 +42,24 @@ SVGTextLayoutEngineSpacing::SVGTextLayoutEngineSpacing(const Font& font)
 float SVGTextLayoutEngineSpacing::calculateSVGKerning(bool isVerticalText, const SVGTextMetrics::Glyph& currentGlyph)
 {
 #if ENABLE(SVG_FONTS)
-    if (!m_font.isSVGFont()) {
+    const SimpleFontData* fontData = m_font.primaryFont();
+    if (!fontData->isSVGFont()) {
         m_lastGlyph.isValid = false;
         return 0;
     }
 
-    SVGFontElement* svgFont = m_font.svgFont();
-    ASSERT(svgFont);
+    ASSERT(fontData->isCustomFont());
+    ASSERT(fontData->isSVGFont());
+
+    const SVGFontData* svgFontData = static_cast<const SVGFontData*>(fontData->fontData());
+    SVGFontFaceElement* svgFontFace = svgFontData->svgFontFaceElement();
+    ASSERT(svgFontFace);
+
+    SVGFontElement* svgFont = svgFontFace->associatedFontElement();
+    if (!svgFont) {
+        m_lastGlyph.isValid = false;
+        return 0;
+    }
 
     float kerning = 0;
     if (m_lastGlyph.isValid) {

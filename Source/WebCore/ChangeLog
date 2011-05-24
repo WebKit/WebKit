@@ -1,3 +1,166 @@
+2011-05-24  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Antti Koivisto.
+
+        Remove platform layering violation: TextRun stores RenderObjects for SVG Fonts support
+        https://bugs.webkit.org/show_bug.cgi?id=60254
+
+        First part:
+        Remove a long-standing layering violation in TextRun: it stores RenderObject/RenderSVGResource pointers for SVG Fonts support.
+        Replace the two Render* pointers with a single RefPtr<AbstractRenderingContext>. AbstractRenderingContext is a helper class,
+        that can be derived from in order to associate additional data with a TextRun. This effectively reduces the memory consumption of TextRun.
+
+        Introduce rendering/TextRunRenderingContext.h, which inherits from TextRun::AbstractRenderingContext and holds additional data.
+        If the primary font in use is a SVG Font then allocate a TextRunRenderingContext object and store it in the RefPtr<AbstractRenderingContext>
+        in TextRun. If the primary font is not a SVG Font, don't even allocate the TextRunRenderingContext structure, as we won't need the context data.
+        SVG Fonts glyph matching only works within a context, so we need access to the RenderObject that's drawing the text.
+
+        This is the main preparation patch for the SVG Fonts rewrite, that will allow us to share the simple text code path for SVG Fonts as well,
+        making all CSS text properties work for HTML text using SVG Fonts, and allows proper integration within the GlyphPage concept. Soon
+        we can intermix WOFF/SVG & native fonts, within segment font declarations.
+
+        Second part:
+        Remove a long-standing layering violation in SimpleFontData: it stores SVGFontData objects, that are living in svg/.
+        Use the same concept as above, introduce SimpleFontData::AbstractFontData, and let SVGFontData inherit from AbstractFontData and extent it.
+        If SVG Fonts are used, CSSFontFaceSource will create a SVGFontData object and pass it as PassOwnPtr<AbstractFontData> to SimpleFontData.
+
+        All layering violations are gone now, SVG Fonts are cleanly integrated now.
+        Doesn't affect any tests yet, refactoring only.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * css/CSSFontFaceSource.cpp:
+        (WebCore::CSSFontFaceSource::getFontData):
+        * platform/graphics/Font.cpp:
+        (WebCore::Font::drawText):
+        (WebCore::Font::width):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::offsetForPosition):
+        * platform/graphics/Font.h:
+        * platform/graphics/SimpleFontData.cpp:
+        (WebCore::SimpleFontData::SimpleFontData):
+        (WebCore::SimpleFontData::~SimpleFontData):
+        * platform/graphics/SimpleFontData.h:
+        (WebCore::SimpleFontData::FontData::~FontData):
+        (WebCore::SimpleFontData::fontMetrics):
+        (WebCore::SimpleFontData::setMaxCharWidth):
+        (WebCore::SimpleFontData::setAvgCharWidth):
+        (WebCore::SimpleFontData::setSpaceWidth):
+        (WebCore::SimpleFontData::setSpaceGlyph):
+        (WebCore::SimpleFontData::setZeroWidthSpaceGlyph):
+        (WebCore::SimpleFontData::fontData):
+        (WebCore::SimpleFontData::isSVGFont):
+        (WebCore::SimpleFontData::setMissingGlyphData):
+        * platform/graphics/TextRun.h:
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::setAllowTabs):
+        (WebCore::TextRun::setXPos):
+        (WebCore::TextRun::RenderingContext::~RenderingContext):
+        (WebCore::TextRun::renderingContext):
+        (WebCore::TextRun::setRenderingContext):
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::selectionRect):
+        (WebCore::EllipsisBox::paintSelection):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintSelection):
+        (WebCore::InlineTextBox::paintCompositionBackground):
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        (WebCore::InlineTextBox::constructTextRun):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::stripTrailingSpace):
+        (WebCore::RenderBlock::constructTextRun):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::setLogicalWidthForTextRun):
+        (WebCore::textWidth):
+        (WebCore::tryHyphenating):
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+        (WebCore::RenderBlock::checkLinesForTextOverflow):
+        * rendering/RenderCombineText.cpp:
+        (WebCore::RenderCombineText::combineText):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::paintObject):
+        (WebCore::RenderFileUploadControl::computePreferredLogicalWidths):
+        * rendering/RenderFlexibleBox.cpp:
+        (WebCore::RenderFlexibleBox::applyLineClamp):
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::setImageSizeForAltText):
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        (WebCore::RenderListMarker::computePreferredLogicalWidths):
+        (WebCore::RenderListMarker::getRelativeMarkerRect):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::trimmedPrefWidths):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        (WebCore::RenderText::width):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::getAvgCharWidth):
+        * rendering/svg/RenderSVGAllInOne.cpp:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::offsetForPositionInFragment):
+        (WebCore::SVGInlineTextBox::prepareGraphicsContextForTextPainting):
+        (WebCore::SVGInlineTextBox::restoreGraphicsContextAfterTextPainting):
+        (WebCore::SVGInlineTextBox::constructTextRun):
+        (WebCore::SVGInlineTextBox::paintText):
+        * rendering/svg/SVGTextLayoutEngineSpacing.cpp:
+        (WebCore::SVGTextLayoutEngineSpacing::calculateSVGKerning):
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::constructTextRun):
+        (WebCore::SVGTextMetrics::measureCharacterRange):
+        * rendering/svg/SVGTextRunRenderingContext.cpp: Copied from svg/SVGFont.cpp.
+        (WebCore::svgFontAndFontFaceElementForFontData):
+        (WebCore::firstParentRendererForNonTextNode):
+        (WebCore::referencingRenderObjectFromRun):
+        (WebCore::activePaintingResourceFromRun):
+        (WebCore::SVGTextRunWalker::walk):
+        (WebCore::floatWidthMissingGlyphCallback):
+        (WebCore::floatWidthOfSubStringUsingSVGFont):
+        (WebCore::SVGTextRunRenderingContext::floatWidthUsingSVGFont):
+        (WebCore::SVGTextRunRenderingContext::drawTextUsingSVGFont):
+        (WebCore::SVGTextRunRenderingContext::selectionRectForTextUsingSVGFont):
+        (WebCore::SVGTextRunRenderingContext::offsetForPositionForTextUsingSVGFont):
+        * rendering/svg/SVGTextRunRenderingContext.h: Added.
+        (WebCore::SVGTextRunRenderingContext::create):
+        (WebCore::SVGTextRunRenderingContext::context):
+        (WebCore::SVGTextRunRenderingContext::activePaintingResource):
+        (WebCore::SVGTextRunRenderingContext::setActivePaintingResource):
+        (WebCore::SVGTextRunRenderingContext::SVGTextRunRenderingContext):
+        (WebCore::textRunNeedsRenderingContext):
+        * svg/SVGAllInOne.cpp:
+        * svg/SVGFont.cpp: Removed.
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::initializeFontData):
+        * svg/SVGFontData.h:
+        (WebCore::SVGFontData::create):
+        (WebCore::SVGFontData::isSVGFontData):
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::SVGGlyphElement::SVGGlyphElement):
+        (WebCore::SVGGlyphElement::buildGenericGlyphIdentifier):
+        (WebCore::SVGGlyphElement::buildGlyphIdentifier):
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::SVGHKernElement):
+        (WebCore::SVGHKernElement::buildHorizontalKerningPair):
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::SVGVKernElement):
+        (WebCore::SVGVKernElement::buildVerticalKerningPair):
+        * svg/SVGVKernElement.h:
+
 2011-05-24  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Andreas Kling.

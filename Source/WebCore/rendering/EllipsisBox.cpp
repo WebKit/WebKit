@@ -44,8 +44,9 @@ void EllipsisBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int l
         setShadow = true;
     }
 
+    const Font& font = style->font();
     if (selectionState() != RenderObject::SelectionNone) {
-        paintSelection(context, tx, ty, style, style->font());
+        paintSelection(context, tx, ty, style, font);
 
         // Select the correct color for painting the text.
         Color foreground = paintInfo.forceBlackText ? Color::black : renderer()->selectionForegroundColor();
@@ -54,7 +55,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int l
     }
 
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawText(style->font(), RenderBlock::constructTextRunAllowTrailingExpansion(m_str, style), IntPoint(m_x + tx, m_y + ty + style->fontMetrics().ascent()));
+    context->drawText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(m_x + tx, m_y + ty + style->fontMetrics().ascent()));
 
     // Restore the regular fill color.
     if (textColor != context->fillColor())
@@ -74,9 +75,9 @@ void EllipsisBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int l
 IntRect EllipsisBox::selectionRect(int tx, int ty)
 {
     RenderStyle* style = m_renderer->style(m_firstLine);
-    const Font& f = style->font();
+    const Font& font = style->font();
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    return enclosingIntRect(f.selectionRectForText(RenderBlock::constructTextRunAllowTrailingExpansion(m_str, style), IntPoint(m_x + tx, m_y + ty + root()->selectionTop()), root()->selectionHeight()));
+    return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(m_x + tx, m_y + ty + root()->selectionTop()), root()->selectionHeight()));
 }
 
 void EllipsisBox::paintSelection(GraphicsContext* context, int tx, int ty, RenderStyle* style, const Font& font)
@@ -96,7 +97,7 @@ void EllipsisBox::paintSelection(GraphicsContext* context, int tx, int ty, Rende
     int h = root()->selectionHeight();
     context->clip(IntRect(m_x + tx, y + ty, m_logicalWidth, h));
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawHighlightForText(font, RenderBlock::constructTextRunAllowTrailingExpansion(m_str, style), IntPoint(m_x + tx, m_y + ty + y), h, c, style->colorSpace());
+    context->drawHighlightForText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(m_x + tx, m_y + ty + y), h, c, style->colorSpace());
 }
 
 bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, int lineTop, int lineBottom)

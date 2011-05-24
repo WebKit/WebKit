@@ -40,7 +40,6 @@
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
-#include "TextRun.h"
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
@@ -534,7 +533,8 @@ float RenderTextControl::getAvgCharWidth(AtomicString family)
         return roundf(style()->font().primaryFont()->avgCharWidth());
 
     const UChar ch = '0';
-    return style()->font().width(constructTextRunAllowTrailingExpansion(String(&ch, 1), style()));
+    const Font& font = style()->font();
+    return font.width(constructTextRun(this, font, String(&ch, 1), style(), TextRun::AllowTrailingExpansion));
 }
 
 float RenderTextControl::scaleEmToUnits(int x) const

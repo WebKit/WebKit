@@ -36,7 +36,6 @@
 #include "RenderView.h"
 #include "Settings.h"
 #include "TextBreakIterator.h"
-#include "TextRun.h"
 #include "TrailingFloatsRootInlineBox.h"
 #include "VerticalPositionCache.h"
 #include "break_lines.h"
@@ -482,7 +481,8 @@ static inline void setLogicalWidthForTextRun(RootInlineBox* lineBox, BidiRun* ru
     int hyphenWidth = 0;
     if (static_cast<InlineTextBox*>(run->m_box)->hasHyphen()) {
         const AtomicString& hyphenString = renderer->style()->hyphenString();
-        hyphenWidth = renderer->style(lineInfo.isFirstLine())->font().width(TextRun(hyphenString.characters(), hyphenString.length()));
+        const Font& font = renderer->style(lineInfo.isFirstLine())->font();
+        hyphenWidth = font.width(RenderBlock::constructTextRun(renderer, font, hyphenString.string(), renderer->style()));
     }
     run->m_box->setLogicalWidth(renderer->width(run->m_start, run->m_stop - run->m_start, xPos, lineInfo.isFirstLine(), &fallbackFonts, &glyphOverflow) + hyphenWidth);
     if (!fallbackFonts.isEmpty()) {
@@ -1576,7 +1576,10 @@ static inline float textWidth(RenderText* text, unsigned from, unsigned len, con
 {
     if (isFixedPitch || (!from && len == text->textLength()) || text->style()->hasTextCombine())
         return text->width(from, len, font, xPos);
-    return font.width(TextRun(text->characters() + from, len, !collapseWhiteSpace, xPos));
+    TextRun run = RenderBlock::constructTextRun(text, font, text->characters() + from, len, text->style());
+    run.setAllowTabs(!collapseWhiteSpace);
+    run.setXPos(xPos);
+    return font.width(run);
 }
 
 static void tryHyphenating(RenderText* text, const Font& font, const AtomicString& localeIdentifier, int minimumPrefixLength, int minimumSuffixLength, int lastSpace, int pos, float xPos, int availableWidth, bool isFixedPitch, bool collapseWhiteSpace, int lastSpaceWordSpacing, InlineIterator& lineBreak, int nextBreakable, bool& hyphenated)
@@ -1592,7 +1595,7 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
         return;
 
     const AtomicString& hyphenString = text->style()->hyphenString();
-    int hyphenWidth = font.width(TextRun(hyphenString.characters(), hyphenString.length()));
+    int hyphenWidth = font.width(RenderBlock::constructTextRun(text, font, hyphenString.string(), text->style()));
 
     float maxPrefixWidth = availableWidth - xPos - hyphenWidth - lastSpaceWordSpacing;
     // If the maximum width available for the prefix before the hyphen is small, then it is very unlikely
@@ -1600,7 +1603,11 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
     if (maxPrefixWidth <= font.pixelSize() * 5 / 4)
         return;
 
-    unsigned prefixLength = font.offsetForPosition(TextRun(text->characters() + lastSpace, pos - lastSpace, !collapseWhiteSpace, xPos + lastSpaceWordSpacing), maxPrefixWidth, false);
+    TextRun run = RenderBlock::constructTextRun(text, font, text->characters() + lastSpace, pos - lastSpace, text->style());
+    run.setAllowTabs(!collapseWhiteSpace);
+    run.setXPos(xPos + lastSpaceWordSpacing);
+
+    unsigned prefixLength = font.offsetForPosition(run, maxPrefixWidth, false);
     if (prefixLength < static_cast<unsigned>(minimumPrefixLength))
         return;
 
@@ -2043,7 +2050,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 
             // Non-zero only when kerning is enabled, in which case we measure words with their trailing
             // space, then subtract its width.
-            float wordTrailingSpaceWidth = f.typesettingFeatures() & Kerning ? f.width(TextRun(&space, 1)) + wordSpacing : 0;
+            float wordTrailingSpaceWidth = f.typesettingFeatures() & Kerning ? f.width(constructTextRun(t, f, &space, 1, style)) + wordSpacing : 0;
 
             float wrapW = width.uncommittedWidth() + inlineLogicalWidth(current.m_obj, !appliedStartWidth, true);
             float charWidth = 0;
@@ -2072,7 +2079,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 
                 if (c == softHyphen && autoWrap && !hyphenWidth && style->hyphens() != HyphensNone) {
                     const AtomicString& hyphenString = style->hyphenString();
-                    hyphenWidth = f.width(TextRun(hyphenString.characters(), hyphenString.length()));
+                    hyphenWidth = f.width(constructTextRun(t, f, hyphenString.string(), current.m_obj->style()));
                     width.addUncommittedWidth(hyphenWidth);
                 }
 
@@ -2403,12 +2410,11 @@ void RenderBlock::checkLinesForTextOverflow()
 {
     // Determine the width of the ellipsis using the current font.
     // FIXME: CSS3 says this is configurable, also need to use 0x002E (FULL STOP) if horizontal ellipsis is "not renderable"
-    TextRun ellipsisRun(&horizontalEllipsis, 1);
+    const Font& font = style()->font();
     DEFINE_STATIC_LOCAL(AtomicString, ellipsisStr, (&horizontalEllipsis, 1));
     const Font& firstLineFont = firstLineStyle()->font();
-    const Font& font = style()->font();
-    int firstLineEllipsisWidth = firstLineFont.width(ellipsisRun);
-    int ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(ellipsisRun);
+    int firstLineEllipsisWidth = firstLineFont.width(constructTextRun(this, firstLineFont, &horizontalEllipsis, 1, firstLineStyle()));
+    int ellipsisWidth = (font == firstLineFont) ? firstLineEllipsisWidth : font.width(constructTextRun(this, font, &horizontalEllipsis, 1, style()));
 
     // For LTR text truncation, we want to get the right edge of our padding box, and then we want to see
     // if the right edge of a line box exceeds that.  For RTL, we use the left edge of the padding box and

@@ -32,7 +32,7 @@
 #include "RenderSVGResourceSolidColor.h"
 #include "SVGImageBufferTools.h"
 #include "SVGRootInlineBox.h"
-#include "TextRun.h"
+#include "SVGTextRunRenderingContext.h"
 
 using namespace std;
 
@@ -66,7 +66,7 @@ int SVGInlineTextBox::offsetForPositionInFragment(const SVGTextFragment& fragmen
     RenderStyle* style = textRenderer->style();
     ASSERT(style);
 
-    TextRun textRun(constructTextRun(style, fragment));
+    TextRun textRun = constructTextRun(style, fragment);
 
     // Eventually handle lengthAdjust="spacingAndGlyphs".
     // FIXME: Handle vertical text.
@@ -379,14 +379,17 @@ void SVGInlineTextBox::releasePaintingResource(GraphicsContext*& context, const 
 bool SVGInlineTextBox::prepareGraphicsContextForTextPainting(GraphicsContext*& context, float scalingFactor, TextRun& textRun, RenderStyle* style)
 {
     bool acquiredResource = acquirePaintingResource(context, scalingFactor, parent()->renderer(), style);
+    if (!acquiredResource)
+        return false;
 
 #if ENABLE(SVG_FONTS)
     // SVG Fonts need access to the painting resource used to draw the current text chunk.
-    if (acquiredResource)
-        textRun.setActivePaintingResource(m_paintingResource);
+    TextRun::RenderingContext* renderingContext = textRun.renderingContext();
+    if (renderingContext)
+        static_cast<SVGTextRunRenderingContext*>(renderingContext)->setActivePaintingResource(m_paintingResource);
 #endif
 
-    return acquiredResource;
+    return true;
 }
 
 void SVGInlineTextBox::restoreGraphicsContextAfterTextPainting(GraphicsContext*& context, TextRun& textRun)
@@ -394,7 +397,11 @@ void SVGInlineTextBox::restoreGraphicsContextAfterTextPainting(GraphicsContext*&
     releasePaintingResource(context, /* path */0);
 
 #if ENABLE(SVG_FONTS)
-    textRun.setActivePaintingResource(0);
+    TextRun::RenderingContext* renderingContext = textRun.renderingContext();
+    if (renderingContext)
+        static_cast<SVGTextRunRenderingContext*>(renderingContext)->setActivePaintingResource(0);
+#else
+    UNUSED_PARAM(textRun);
 #endif
 }
 
@@ -415,9 +422,8 @@ TextRun SVGInlineTextBox::constructTextRun(RenderStyle* style, const SVGTextFrag
                 , direction()
                 , m_dirOverride || style->visuallyOrdered() /* directionalOverride */);
 
-#if ENABLE(SVG_FONTS)
-    run.setReferencingRenderObject(text);
-#endif
+    if (textRunNeedsRenderingContext(style->font()))
+        run.setRenderingContext(SVGTextRunRenderingContext::create(text));
 
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
@@ -659,7 +665,7 @@ void SVGInlineTextBox::paintText(GraphicsContext* context, RenderStyle* style, R
     }
 
     // Fast path if there is no selection, just draw the whole chunk part using the regular style
-    TextRun textRun(constructTextRun(style, fragment));
+    TextRun textRun = constructTextRun(style, fragment);
     if (!hasSelection || startPosition >= endPosition) {
         paintTextWithShadows(context, style, textRun, fragment, 0, fragment.length);
         return;
@@ -673,7 +679,7 @@ void SVGInlineTextBox::paintText(GraphicsContext* context, RenderStyle* style, R
     if (style != selectionStyle)
         SVGResourcesCache::clientStyleChanged(parent()->renderer(), StyleDifferenceRepaint, selectionStyle);
 
-    TextRun selectionTextRun(constructTextRun(selectionStyle, fragment));
+    TextRun selectionTextRun = constructTextRun(selectionStyle, fragment);
     paintTextWithShadows(context, selectionStyle, textRun, fragment, startPosition, endPosition);
 
     if (style != selectionStyle)

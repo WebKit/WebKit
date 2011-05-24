@@ -27,6 +27,7 @@
 #include "RenderBox.h"
 #include "RenderLineBoxList.h"
 #include "RootInlineBox.h"
+#include "TextRun.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/ListHashSet.h>
 
@@ -169,8 +170,11 @@ public:
     
     static void appendRunsForObject(BidiRunList<BidiRun>&, int start, int end, RenderObject*, InlineBidiResolver&);
 
-    static TextRun constructTextRunAllowTrailingExpansion(const String&, RenderStyle*, TextRunFlags = DefaultTextRunFlags);
-    static TextRun constructTextRunAllowTrailingExpansion(const UChar*, int length, RenderStyle*, TextRunFlags = DefaultTextRunFlags);
+    static TextRun constructTextRun(RenderObject* context, const Font&, const String&, RenderStyle*,
+                                    TextRun::ExpansionBehavior = TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, TextRunFlags = DefaultTextRunFlags);
+
+    static TextRun constructTextRun(RenderObject* context, const Font&, const UChar*, int length, RenderStyle*,
+                                    TextRun::ExpansionBehavior = TextRun::AllowTrailingExpansion | TextRun::ForbidLeadingExpansion, TextRunFlags = DefaultTextRunFlags);
 
     ColumnInfo* columnInfo() const;
     int columnGap() const;

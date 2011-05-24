@@ -41,8 +41,8 @@
 #include "RenderRubyRun.h"
 #include "RenderRubyText.h"
 #include "RenderTheme.h"
+#include "SVGTextRunRenderingContext.h"
 #include "Text.h"
-#include "TextRun.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
 
@@ -182,15 +182,15 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     int selTop = selectionTop();
     int selHeight = selectionHeight();
     RenderStyle* styleToUse = textObj->style(m_firstLine);
-    const Font& f = styleToUse->font();
+    const Font& font = styleToUse->font();
 
     BufferForAppendingHyphen charactersWithHyphen;
     bool respectHyphen = ePos == m_len && hasHyphen();
-    TextRun textRun = constructTextRun(styleToUse, respectHyphen ? &charactersWithHyphen : 0);
+    TextRun textRun = constructTextRun(styleToUse, font, respectHyphen ? &charactersWithHyphen : 0);
     if (respectHyphen)
         endPos = textRun.length();
 
-    IntRect r = enclosingIntRect(f.selectionRectForText(textRun, FloatPoint(logicalLeft(), selTop), selHeight, sPos, ePos));
+    IntRect r = enclosingIntRect(font.selectionRectForText(textRun, FloatPoint(logicalLeft(), selTop), selHeight, sPos, ePos));
 
     int logicalWidth = r.width();
     if (r.x() > logicalRight())
@@ -643,7 +643,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/,
         combinedText->charactersToRender(m_start, characters, length);
 
     BufferForAppendingHyphen charactersWithHyphen;
-    TextRun textRun = constructTextRun(styleToUse, characters, length, hasHyphen() ? &charactersWithHyphen : 0);
+    TextRun textRun = constructTextRun(styleToUse, font, characters, length, hasHyphen() ? &charactersWithHyphen : 0);
     if (hasHyphen())
         length = textRun.length();
 
@@ -680,7 +680,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/,
         if (!emphasisMark.isEmpty()) {
             updateGraphicsContext(context, emphasisMarkColor, textStrokeColor, textStrokeWidth, styleToUse->colorSpace());
 
-            static TextRun objectReplacementCharacterTextRun(&objectReplacementCharacter, 1);
+            DEFINE_STATIC_LOCAL(TextRun, objectReplacementCharacterTextRun, (&objectReplacementCharacter, 1));
             TextRun& emphasisMarkTextRun = combinedText ? objectReplacementCharacterTextRun : textRun;
             FloatPoint emphasisMarkTextOrigin = combinedText ? FloatPoint(boxOrigin.x() + boxRect.width() / 2, boxOrigin.y() + font.fontMetrics().ascent()) : textOrigin;
             if (combinedText)
@@ -706,7 +706,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/,
         if (!emphasisMark.isEmpty()) {
             updateGraphicsContext(context, selectionEmphasisMarkColor, textStrokeColor, textStrokeWidth, styleToUse->colorSpace());
 
-            static TextRun objectReplacementCharacterTextRun(&objectReplacementCharacter, 1);
+            DEFINE_STATIC_LOCAL(TextRun, objectReplacementCharacterTextRun, (&objectReplacementCharacter, 1));
             TextRun& emphasisMarkTextRun = combinedText ? objectReplacementCharacterTextRun : textRun;
             FloatPoint emphasisMarkTextOrigin = combinedText ? FloatPoint(boxOrigin.x() + boxRect.width() / 2, boxOrigin.y() + font.fontMetrics().ascent()) : textOrigin;
             if (combinedText)
@@ -808,7 +808,7 @@ void InlineTextBox::paintSelection(GraphicsContext* context, const FloatPoint& b
 
     BufferForAppendingHyphen charactersWithHyphen;
     bool respectHyphen = ePos == length && hasHyphen();
-    TextRun textRun = constructTextRun(style, characters, length, respectHyphen ? &charactersWithHyphen : 0);
+    TextRun textRun = constructTextRun(style, font, characters, length, respectHyphen ? &charactersWithHyphen : 0);
     if (respectHyphen)
         ePos = textRun.length();
 
@@ -843,7 +843,7 @@ void InlineTextBox::paintCompositionBackground(GraphicsContext* context, const F
     int deltaY = renderer()->style()->isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     int selHeight = selectionHeight();
     FloatPoint localOrigin(boxOrigin.x(), boxOrigin.y() - deltaY);
-    context->drawHighlightForText(font, constructTextRun(style), localOrigin, selHeight, c, style->colorSpace(), sPos, ePos);
+    context->drawHighlightForText(font, constructTextRun(style, font), localOrigin, selHeight, c, style->colorSpace(), sPos, ePos);
 }
 
 #if PLATFORM(MAC)
@@ -1001,7 +1001,7 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, const Floa
         int deltaY = renderer()->style()->isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
         int selHeight = selectionHeight();
         FloatPoint startPoint(boxOrigin.x(), boxOrigin.y() - deltaY);
-        TextRun run = constructTextRun(style);
+        TextRun run = constructTextRun(style, font);
 
         // FIXME: Convert the document markers to float rects.
         IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, selHeight, startPosition, endPosition));
@@ -1046,7 +1046,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& 
 
     int sPos = max(marker.startOffset() - m_start, (unsigned)0);
     int ePos = min(marker.endOffset() - m_start, (unsigned)m_len);
-    TextRun run = constructTextRun(style);
+    TextRun run = constructTextRun(style, font);
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, IntPoint(m_x, selectionTop()), selHeight, sPos, ePos));
     markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
@@ -1073,7 +1073,7 @@ void InlineTextBox::computeRectForReplacementMarker(const DocumentMarker& marker
 
     int sPos = max(marker.startOffset() - m_start, (unsigned)0);
     int ePos = min(marker.endOffset() - m_start, (unsigned)m_len);
-    TextRun run = constructTextRun(style);
+    TextRun run = constructTextRun(style, font);
     IntPoint startPoint = IntPoint(m_x, y);
     
     // Compute and store the rect associated with this marker.
@@ -1232,8 +1232,8 @@ int InlineTextBox::offsetForPosition(float lineOffset, bool includePartialGlyphs
 
     RenderText* text = toRenderText(renderer());
     RenderStyle* style = text->style(m_firstLine);
-    const Font* f = &style->font();
-    int offset = f->offsetForPosition(constructTextRun(style), lineOffset - logicalLeft(), includePartialGlyphs);
+    const Font& font = style->font();
+    int offset = font.offsetForPosition(constructTextRun(style, font), lineOffset - logicalLeft(), includePartialGlyphs);
     if (blockIsInOppositeDirection && (!offset || offset == m_len))
         return !offset ? m_len : 0;
     return offset;
@@ -1250,11 +1250,11 @@ float InlineTextBox::positionForOffset(int offset) const
     RenderText* text = toRenderText(renderer());
     RenderStyle* styleToUse = text->style(m_firstLine);
     ASSERT(styleToUse);
-    const Font& f = styleToUse->font();
+    const Font& font = styleToUse->font();
     int from = !isLeftToRightDirection() ? offset - m_start : 0;
     int to = !isLeftToRightDirection() ? m_len : offset - m_start;
     // FIXME: Do we need to add rightBearing here?
-    return f.selectionRectForText(constructTextRun(styleToUse), IntPoint(logicalLeft(), 0), 0, from, to).maxX();
+    return font.selectionRectForText(constructTextRun(styleToUse, font), IntPoint(logicalLeft(), 0), 0, from, to).maxX();
 }
 
 bool InlineTextBox::containsCaretOffset(int offset) const
@@ -1281,7 +1281,7 @@ bool InlineTextBox::containsCaretOffset(int offset) const
     return true;
 }
 
-TextRun InlineTextBox::constructTextRun(RenderStyle* style, BufferForAppendingHyphen* charactersWithHyphen) const
+TextRun InlineTextBox::constructTextRun(RenderStyle* style, const Font& font, BufferForAppendingHyphen* charactersWithHyphen) const
 {
     ASSERT(style);
 
@@ -1289,10 +1289,10 @@ TextRun InlineTextBox::constructTextRun(RenderStyle* style, BufferForAppendingHy
     ASSERT(textRenderer);
     ASSERT(textRenderer->characters());
 
-    return constructTextRun(style, textRenderer->characters() + start(), len(), charactersWithHyphen);
+    return constructTextRun(style, font, textRenderer->characters() + start(), len(), charactersWithHyphen);
 }
 
-TextRun InlineTextBox::constructTextRun(RenderStyle* style, const UChar* characters, int length, BufferForAppendingHyphen* charactersWithHyphen) const
+TextRun InlineTextBox::constructTextRun(RenderStyle* style, const Font& font, const UChar* characters, int length, BufferForAppendingHyphen* charactersWithHyphen) const
 {
     ASSERT(style);
 
@@ -1302,8 +1302,11 @@ TextRun InlineTextBox::constructTextRun(RenderStyle* style, const UChar* charact
     if (charactersWithHyphen)
         adjustCharactersAndLengthForHyphen(*charactersWithHyphen, style, characters, length);
 
-    // FIXME: Remove TextRuns all-in-one-constructor and use explicit setters here.
-    return TextRun(characters, length, textRenderer->allowTabs(), textPos(), expansion(), expansionBehavior(), direction(), m_dirOverride || style->visuallyOrdered());
+    TextRun run(characters, length, textRenderer->allowTabs(), textPos(), expansion(), expansionBehavior(), direction(), m_dirOverride || style->visuallyOrdered());
+    if (textRunNeedsRenderingContext(font))
+        run.setRenderingContext(SVGTextRunRenderingContext::create(textRenderer));
+
+    return run;
 }
 
 #ifndef NDEBUG

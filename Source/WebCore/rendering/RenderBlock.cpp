@@ -51,7 +51,7 @@
 #include "RenderTheme.h"
 #include "RenderView.h"
 #include "Settings.h"
-#include "TextRun.h"
+#include "SVGTextRunRenderingContext.h"
 #include "TransformState.h"
 #include <wtf/StdLibExtras.h>
 
@@ -4707,7 +4707,7 @@ static inline void stripTrailingSpace(float& inlineMax, float& inlineMin,
         RenderText* t = toRenderText(trailingSpaceChild);
         const UChar space = ' ';
         const Font& font = t->style()->font(); // FIXME: This ignores first-line.
-        float spaceWidth = font.width(TextRun(&space, 1));
+        float spaceWidth = font.width(RenderBlock::constructTextRun(t, font, &space, 1, t->style()));
         inlineMax -= spaceWidth + font.wordSpacing();
         if (inlineMin > inlineMax)
             inlineMin = inlineMax;
@@ -6316,7 +6316,7 @@ inline void RenderBlock::FloatingObjects::decreaseObjectsCount(FloatingObject::T
         m_rightObjectsCount--;
 }
 
-TextRun RenderBlock::constructTextRunAllowTrailingExpansion(const UChar* characters, int length, RenderStyle* style, TextRunFlags flags)
+TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, const UChar* characters, int length, RenderStyle* style, TextRun::ExpansionBehavior expansion, TextRunFlags flags)
 {
     ASSERT(style);
 
@@ -6329,13 +6329,16 @@ TextRun RenderBlock::constructTextRunAllowTrailingExpansion(const UChar* charact
             directionalOverride |= style->unicodeBidi() == Override;
     }
 
-    // FIXME: Remove TextRuns all-in-one-constructor and use explicit setters here.
-    return TextRun(characters, length, false, 0, 0, TextRun::AllowTrailingExpansion, textDirection, directionalOverride);
+    TextRun run(characters, length, false, 0, 0, expansion, textDirection, directionalOverride);
+    if (textRunNeedsRenderingContext(font))
+        run.setRenderingContext(SVGTextRunRenderingContext::create(context));
+
+    return run;
 }
 
-TextRun RenderBlock::constructTextRunAllowTrailingExpansion(const String& string, RenderStyle* style, TextRunFlags flags)
+TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, const String& string, RenderStyle* style, TextRun::ExpansionBehavior expansion, TextRunFlags flags)
 {
-    return constructTextRunAllowTrailingExpansion(string.characters(), string.length(), style, flags);
+    return constructTextRun(context, font, string.characters(), string.length(), style, expansion, flags);
 }
 
 #ifndef NDEBUG

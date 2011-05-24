@@ -64,17 +64,26 @@ namespace WebCore {
 
 class FontDescription;
 class SharedBuffer;
-class SVGFontData;
 
 enum FontDataVariant { AutoVariant, NormalVariant, SmallCapsVariant, EmphasisMarkVariant };
 enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
 class SimpleFontData : public FontData {
 public:
+    class FontData {
+        WTF_MAKE_FAST_ALLOCATED;
+    public:
+        virtual ~FontData() { }
+    
+        virtual void initializeFontData(SimpleFontData*, int) = 0;
+    };
+
+    // Used to create platform fonts.
     SimpleFontData(const FontPlatformData&, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false);
-#if ENABLE(SVG_FONTS)
-    SimpleFontData(PassOwnPtr<SVGFontData>, int size, bool syntheticBold, bool syntheticItalic);
-#endif
+
+    // Used to create SVG Fonts.
+    SimpleFontData(PassOwnPtr<SimpleFontData::FontData>, int size, bool syntheticBold, bool syntheticItalic);
+
     virtual ~SimpleFontData();
 
     const FontPlatformData& platformData() const { return m_platformData; }
@@ -104,9 +113,14 @@ public:
     bool hasVerticalGlyphs() const { return m_hasVerticalGlyphs; }
     bool isTextOrientationFallback() const { return m_isTextOrientationFallback; }
 
+    FontMetrics& fontMetrics() { return m_fontMetrics; }
     const FontMetrics& fontMetrics() const { return m_fontMetrics; }
+    
     float maxCharWidth() const { return m_maxCharWidth; }
+    void setMaxCharWidth(float maxCharWidth) { m_maxCharWidth = maxCharWidth; }
+
     float avgCharWidth() const { return m_avgCharWidth; }
+    void setAvgCharWidth(float avgCharWidth) { m_avgCharWidth = avgCharWidth; }
 
     FloatRect boundsForGlyph(Glyph) const;
     float widthForGlyph(Glyph glyph) const;
@@ -114,12 +128,15 @@ public:
     float platformWidthForGlyph(Glyph) const;
 
     float spaceWidth() const { return m_spaceWidth; }
+    void setSpaceWidth(float spaceWidth) { m_spaceWidth = spaceWidth; }
 
 #if USE(CG) || USE(CAIRO) || PLATFORM(WX) || USE(SKIA_ON_MAC_CHROME)
     float syntheticBoldOffset() const { return m_syntheticBoldOffset; }
 #endif
 
     Glyph spaceGlyph() const { return m_spaceGlyph; }
+    void setSpaceGlyph(Glyph spaceGlyph) { m_spaceGlyph = spaceGlyph; }
+    void setZeroWidthSpaceGlyph(Glyph spaceGlyph) { m_zeroWidthSpaceGlyph = spaceGlyph; }
     bool isZeroWidthSpaceGlyph(Glyph glyph) const { return glyph == m_zeroWidthSpaceGlyph && glyph; }
 
     virtual const SimpleFontData* fontDataForCharacter(UChar32) const;
@@ -128,18 +145,15 @@ public:
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
 
-#if ENABLE(SVG_FONTS)
-    SVGFontData* svgFontData() const { return m_svgFontData.get(); }
-    bool isSVGFont() const { return m_svgFontData; }
-#else
-    bool isSVGFont() const { return false; }
-#endif
+    SimpleFontData::FontData* fontData() const { return m_fontData.get(); }
+    bool isSVGFont() const { return m_fontData; }
 
     virtual bool isCustomFont() const { return m_isCustomFont; }
     virtual bool isLoading() const { return m_isLoading; }
     virtual bool isSegmented() const;
 
     const GlyphData& missingGlyphData() const { return m_missingGlyphData; }
+    void setMissingGlyphData(const GlyphData& glyphData) { m_missingGlyphData = glyphData; }
 
 #ifndef NDEBUG
     virtual String description() const;
@@ -208,16 +222,12 @@ private:
     float m_avgCharWidth;
     
     FontPlatformData m_platformData;
+    OwnPtr<SimpleFontData::FontData> m_fontData;
 
     mutable OwnPtr<GlyphMetricsMap<FloatRect> > m_glyphToBoundsMap;
     mutable GlyphMetricsMap<float> m_glyphToWidthMap;
 
     bool m_treatAsFixedPitch;
-
-#if ENABLE(SVG_FONTS)
-    OwnPtr<SVGFontData> m_svgFontData;
-#endif
-
     bool m_isCustomFont;  // Whether or not we are custom font loaded via @font-face
     bool m_isLoading; // Whether or not this custom font is still in the act of loading.
     

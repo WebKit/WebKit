@@ -23,7 +23,7 @@
 #include "SVGTextMetrics.h"
 
 #include "RenderSVGInlineText.h"
-#include "TextRun.h"
+#include "SVGTextRunRenderingContext.h"
 
 namespace WebCore {
 
@@ -86,9 +86,8 @@ static TextRun constructTextRun(RenderSVGInlineText* text, const UChar* characte
                 , style->direction()
                 , style->unicodeBidi() == Override /* directionalOverride */);
 
-#if ENABLE(SVG_FONTS)
-    run.setReferencingRenderObject(text);
-#endif
+    if (textRunNeedsRenderingContext(style->font()))
+        run.setRenderingContext(SVGTextRunRenderingContext::create(text));
 
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
@@ -98,8 +97,7 @@ static TextRun constructTextRun(RenderSVGInlineText* text, const UChar* characte
 SVGTextMetrics SVGTextMetrics::measureCharacterRange(RenderSVGInlineText* text, unsigned position, unsigned length)
 {
     ASSERT(text);
-    TextRun run(constructTextRun(text, text->characters(), position, length));
-    return SVGTextMetrics(text, run, position, text->textLength());
+    return SVGTextMetrics(text, constructTextRun(text, text->characters(), position, length), position, text->textLength());
 }
 
 }

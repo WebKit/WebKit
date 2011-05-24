@@ -154,7 +154,7 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
                         m_svgFontFaceElement = fontFaceElement;
                     }
 
-                    fontData = adoptPtr(new SimpleFontData(adoptPtr(new SVGFontData(fontFaceElement)), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic));
+                    fontData = adoptPtr(new SimpleFontData(SVGFontData::create(fontFaceElement), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic));
                 }
             } else
 #endif
@@ -170,7 +170,7 @@ SimpleFontData* CSSFontFaceSource::getFontData(const FontDescription& fontDescri
 #if ENABLE(SVG_FONTS)
             // In-Document SVG Fonts
             if (m_svgFontFaceElement)
-                fontData = adoptPtr(new SimpleFontData(adoptPtr(new SVGFontData(m_svgFontFaceElement.get())), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic));
+                fontData = adoptPtr(new SimpleFontData(SVGFontData::create(m_svgFontFaceElement.get()), fontDescription.computedPixelSize(), syntheticBold, syntheticItalic));
 #endif
         }
     } else {

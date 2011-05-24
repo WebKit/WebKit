@@ -221,7 +221,8 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
     if (paintInfo.phase == PaintPhaseForeground) {
         const String& displayedFilename = fileTextValue();
-        TextRun textRun = constructTextRunAllowTrailingExpansion(displayedFilename, style(), RespectDirection | RespectDirectionOverride);
+        const Font& font = style()->font();
+        TextRun textRun = constructTextRun(this, font, displayedFilename, style(), TextRun::AllowTrailingExpansion, RespectDirection | RespectDirectionOverride);
 
         // Determine where the filename should be placed
         int contentLeft = tx + borderLeft() + paddingLeft();
@@ -231,7 +232,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
         if (style()->isLeftToRightDirection())
             textX = contentLeft + buttonAndIconWidth;
         else
-            textX = contentLeft + contentWidth() - buttonAndIconWidth - style()->font().width(textRun);
+            textX = contentLeft + contentWidth() - buttonAndIconWidth - font.width(textRun);
         // We want to match the button's baseline
         RenderButton* buttonRenderer = toRenderButton(m_button->renderer());
         int textY = buttonRenderer->absoluteBoundingBoxRect().y()
@@ -241,7 +242,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
         paintInfo.context->setFillColor(style()->visitedDependentColor(CSSPropertyColor), style()->colorSpace());
         
         // Draw the filename
-        paintInfo.context->drawBidiText(style()->font(), textRun, IntPoint(textX, textY));
+        paintInfo.context->drawBidiText(font, textRun, IntPoint(textX, textY));
         
         if (m_fileChooser->icon()) {
             // Determine where the icon should be placed
@@ -271,13 +272,14 @@ void RenderFileUploadControl::computePreferredLogicalWidths()
     RenderStyle* style = this->style();
     ASSERT(style);
 
+    const Font& font = style->font();
     if (style->width().isFixed() && style->width().value() > 0)
         m_minPreferredLogicalWidth = m_maxPreferredLogicalWidth = computeContentBoxLogicalWidth(style->width().value());
     else {
         // Figure out how big the filename space needs to be for a given number of characters
         // (using "0" as the nominal character).
         const UChar ch = '0';
-        float charWidth = style->font().width(constructTextRunAllowTrailingExpansion(String(&ch, 1), style));
+        float charWidth = font.width(constructTextRun(this, font, String(&ch, 1), style, TextRun::AllowTrailingExpansion));
         m_maxPreferredLogicalWidth = (int)ceilf(charWidth * defaultWidthNumChars);
     }
 

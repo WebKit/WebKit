@@ -56,7 +56,6 @@
 #include "ScrollbarTheme.h"
 #include "SelectElement.h"
 #include "SpatialNavigation.h"
-#include "TextRun.h"
 #include <math.h>
 
 using namespace std;
@@ -120,7 +119,7 @@ void RenderListBox::updateFromElement()
 
             if (!text.isEmpty()) {
                 // FIXME: Why is this always LTR? Can't text direction affect the width?
-                float textWidth = itemFont.width(constructTextRunAllowTrailingExpansion(text, style()));
+                float textWidth = itemFont.width(constructTextRun(this, itemFont, text, style(), TextRun::AllowTrailingExpansion));
                 width = max(width, textWidth);
             }
         }

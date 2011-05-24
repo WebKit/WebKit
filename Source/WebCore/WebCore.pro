@@ -2252,6 +2252,7 @@ HEADERS += \
     rendering/svg/SVGTextLayoutEngineSpacing.h \
     rendering/svg/SVGTextMetrics.h \
     rendering/svg/SVGTextQuery.h \
+    rendering/svg/SVGTextRunRenderingContext.h \
     rendering/TransformState.h \
     svg/animation/SMILTimeContainer.h \
     svg/animation/SMILTime.h \
@@ -3208,6 +3209,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               rendering/svg/SVGTextLayoutEngineSpacing.cpp \
               rendering/svg/SVGTextMetrics.cpp \
               rendering/svg/SVGTextQuery.cpp \
+              rendering/svg/SVGTextRunRenderingContext.cpp \
               svg/SVGDocumentExtensions.cpp \
               svg/SVGImageLoader.cpp \
               svg/ColorDistance.cpp \
@@ -3261,7 +3263,6 @@ contains(DEFINES, ENABLE_SVG=1) {
               svg/SVGFilterElement.cpp \
               svg/SVGFilterPrimitiveStandardAttributes.cpp \
               svg/SVGFitToViewBox.cpp \
-              svg/SVGFont.cpp \
               svg/SVGFontData.cpp \
               svg/SVGFontElement.cpp \
               svg/SVGFontFaceElement.cpp \

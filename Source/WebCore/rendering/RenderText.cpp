@@ -40,7 +40,6 @@
 #include "Text.h"
 #include "TextBreakIterator.h"
 #include "TextResourceDecoder.h"
-#include "TextRun.h"
 #include "VisiblePosition.h"
 #include "break_lines.h"
 #include <wtf/AlwaysInline.h>
@@ -631,7 +630,10 @@ ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len
         return w;
     }
 
-    return f.width(TextRun(text()->characters() + start, len, allowTabs(), xPos), fallbackFonts, glyphOverflow);
+    TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, text()->characters() + start, len, style());
+    run.setAllowTabs(allowTabs());
+    run.setXPos(xPos);
+    return f.width(run, fallbackFonts, glyphOverflow);
 }
 
 void RenderText::trimmedPrefWidths(float leadWidth,
@@ -676,13 +678,13 @@ void RenderText::trimmedPrefWidths(float leadWidth,
     ASSERT(m_text);
     StringImpl& text = *m_text.impl();
     if (text[0] == ' ' || (text[0] == '\n' && !style()->preserveNewline()) || text[0] == '\t') {
-        const Font& f = style()->font(); // FIXME: This ignores first-line.
+        const Font& font = style()->font(); // FIXME: This ignores first-line.
         if (stripFrontSpaces) {
             const UChar space = ' ';
-            float spaceWidth = f.width(TextRun(&space, 1));
+            float spaceWidth = font.width(RenderBlock::constructTextRun(this, font, &space, 1, style()));
             maxW -= spaceWidth;
         } else
-            maxW += f.wordSpacing();
+            maxW += font.wordSpacing();
     }
 
     stripFrontSpaces = collapseWhiteSpace && m_hasEndWS;
@@ -915,7 +917,11 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                     m_maxWidth = currMaxWidth;
                 currMaxWidth = 0;
             } else {
-                currMaxWidth += f.width(TextRun(txt + i, 1, allowTabs(), leadWidth + currMaxWidth));
+                TextRun run = RenderBlock::constructTextRun(this, f, txt + i, 1, style());
+                run.setAllowTabs(allowTabs());
+                run.setXPos(leadWidth + currMaxWidth);
+
+                currMaxWidth += f.width(run);
                 glyphOverflow.right = 0;
                 needsWordSpacing = isSpace && !previousCharacterIsSpace && i == len - 1;
             }
@@ -1289,8 +1295,12 @@ float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, 
                 w = maxLogicalWidth();
         } else
             w = widthFromCache(f, from, len, xPos, fallbackFonts, glyphOverflow);
-    } else
-        w = f.width(TextRun(text()->characters() + from, len, allowTabs(), xPos), fallbackFonts, glyphOverflow);
+    } else {
+        TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, text()->characters() + from, len, style());
+        run.setAllowTabs(allowTabs());
+        run.setXPos(xPos);
+        w = f.width(run, fallbackFonts, glyphOverflow);
+    }
 
     return w;
 }

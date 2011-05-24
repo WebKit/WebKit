@@ -22,21 +22,16 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGVKernElement.h"
 
-#include "SVGFontData.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
-#include "SimpleFontData.h"
-#include "XMLNames.h"
 
 namespace WebCore {
-
-using namespace SVGNames;
 
 inline SVGVKernElement::SVGVKernElement(const QualifiedName& tagName, Document* document)
     : SVGElement(tagName, document)
 {
-    ASSERT(hasTagName(vkernTag));
+    ASSERT(hasTagName(SVGNames::vkernTag));
 }
 
 PassRefPtr<SVGVKernElement> SVGVKernElement::create(const QualifiedName& tagName, Document* document)
@@ -66,10 +61,10 @@ void SVGVKernElement::removedFromDocument()
 
 void SVGVKernElement::buildVerticalKerningPair(KerningPairVector& kerningPairs)
 {
-    String u1 = getAttribute(u1Attr);
-    String g1 = getAttribute(g1Attr);
-    String u2 = getAttribute(u2Attr);
-    String g2 = getAttribute(g2Attr);
+    String u1 = getAttribute(SVGNames::u1Attr);
+    String g1 = getAttribute(SVGNames::g1Attr);
+    String u2 = getAttribute(SVGNames::u2Attr);
+    String g2 = getAttribute(SVGNames::g2Attr);
     if ((u1.isEmpty() && g1.isEmpty()) || (u2.isEmpty() && g2.isEmpty()))
         return;
 
@@ -78,7 +73,7 @@ void SVGVKernElement::buildVerticalKerningPair(KerningPairVector& kerningPairs)
         && parseGlyphName(g2, kerningPair.glyphName2)
         && parseKerningUnicodeString(u1, kerningPair.unicodeRange1, kerningPair.unicodeName1)
         && parseKerningUnicodeString(u2, kerningPair.unicodeRange2, kerningPair.unicodeName2)) {
-        kerningPair.kerning = getAttribute(kAttr).string().toFloat();
+        kerningPair.kerning = getAttribute(SVGNames::kAttr).string().toFloat();
         kerningPairs.append(kerningPair);
     }
 }

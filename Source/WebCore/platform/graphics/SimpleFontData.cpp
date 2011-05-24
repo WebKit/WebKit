@@ -33,13 +33,6 @@
 #include "Font.h"
 #include "FontCache.h"
 
-#if ENABLE(SVG_FONTS)
-#include "SVGFontData.h"
-#include "SVGFontElement.h"
-#include "SVGFontFaceElement.h"
-#include "SVGGlyphElement.h"
-#endif
-
 #include <wtf/MathExtras.h>
 #include <wtf/UnusedParam.h>
 
@@ -63,64 +56,18 @@ SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCust
     platformCharWidthInit();
 }
 
-#if ENABLE(SVG_FONTS)
-SimpleFontData::SimpleFontData(PassOwnPtr<SVGFontData> svgFontData, int size, bool syntheticBold, bool syntheticItalic)
+SimpleFontData::SimpleFontData(PassOwnPtr<SimpleFontData::FontData> fontData, int size, bool syntheticBold, bool syntheticItalic)
     : m_platformData(FontPlatformData(size, syntheticBold, syntheticItalic))
+    , m_fontData(fontData)
     , m_treatAsFixedPitch(false)
-    , m_svgFontData(svgFontData)
     , m_isCustomFont(true)
     , m_isLoading(false)
     , m_isTextOrientationFallback(false)
     , m_isBrokenIdeographFallback(false)
     , m_hasVerticalGlyphs(false)
 {
-    SVGFontFaceElement* svgFontFaceElement = m_svgFontData->svgFontFaceElement();
-    unsigned unitsPerEm = svgFontFaceElement->unitsPerEm();
-
-    float scale = size;
-    if (unitsPerEm)
-        scale /= unitsPerEm;
-
-    float xHeight = svgFontFaceElement->xHeight() * scale;
-    float ascent = svgFontFaceElement->ascent() * scale;
-    float descent = svgFontFaceElement->descent() * scale;
-    float lineGap = 0.1f * size;
-
-    SVGFontElement* associatedFontElement = svgFontFaceElement->associatedFontElement();
-    if (!xHeight) {    
-        // Fallback if x_heightAttr is not specified for the font element.
-        Vector<SVGGlyph> letterXGlyphs;
-        associatedFontElement->getGlyphIdentifiersForString(String("x", 1), letterXGlyphs);
-        xHeight = letterXGlyphs.isEmpty() ? 2 * ascent / 3 : letterXGlyphs.first().horizontalAdvanceX * scale;
-    }
-
-    m_fontMetrics.setUnitsPerEm(unitsPerEm);
-    m_fontMetrics.setAscent(ascent);
-    m_fontMetrics.setDescent(descent);
-    m_fontMetrics.setLineGap(lineGap);
-    m_fontMetrics.setLineSpacing(roundf(ascent) + roundf(descent) + roundf(lineGap));
-    m_fontMetrics.setXHeight(xHeight);
-
-    Vector<SVGGlyph> spaceGlyphs;
-    associatedFontElement->getGlyphIdentifiersForString(String(" ", 1), spaceGlyphs);
-    m_spaceWidth = spaceGlyphs.isEmpty() ? xHeight : spaceGlyphs.first().horizontalAdvanceX * scale;
-
-    Vector<SVGGlyph> numeralZeroGlyphs;
-    associatedFontElement->getGlyphIdentifiersForString(String("0", 1), numeralZeroGlyphs);
-    m_avgCharWidth = numeralZeroGlyphs.isEmpty() ? m_spaceWidth : numeralZeroGlyphs.first().horizontalAdvanceX * scale;
-
-    Vector<SVGGlyph> letterWGlyphs;
-    associatedFontElement->getGlyphIdentifiersForString(String("W", 1), letterWGlyphs);
-    m_maxCharWidth = letterWGlyphs.isEmpty() ? ascent : letterWGlyphs.first().horizontalAdvanceX * scale;
-
-    // FIXME: is there a way we can get the space glyph from the SVGGlyph above?
-    m_spaceGlyph = 0;
-    m_zeroWidthSpaceGlyph = 0;
-    determinePitch();
-    m_missingGlyphData.fontData = this;
-    m_missingGlyphData.glyph = 0;
+    m_fontData->initializeFontData(this, size);
 }
-#endif
 
 #if !(PLATFORM(QT) && !HAVE(QRAWFONT))
 // Estimates of avgCharWidth and maxCharWidth for platforms that don't support accessing these values from the font.
@@ -186,7 +133,7 @@ void SimpleFontData::platformGlyphInit()
 SimpleFontData::~SimpleFontData()
 {
 #if ENABLE(SVG_FONTS)
-    if (!m_svgFontData || !m_svgFontData->svgFontFaceElement())
+    if (!m_fontData)
 #endif
         platformDestroy();
 

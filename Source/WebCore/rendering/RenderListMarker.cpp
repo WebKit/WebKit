@@ -31,7 +31,6 @@
 #include "RenderLayer.h"
 #include "RenderListItem.h"
 #include "RenderView.h"
-#include "TextRun.h"
 #include <wtf/unicode/CharacterNames.h>
 
 using namespace std;
@@ -1253,7 +1252,8 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     if (m_text.isEmpty())
         return;
 
-    TextRun textRun(m_text);
+    const Font& font = style()->font();
+    TextRun textRun = RenderBlock::constructTextRun(this, font, m_text, style());
 
     GraphicsContextStateSaver stateSaver(*context, false);
     if (!style()->isHorizontalWritingMode()) {
@@ -1269,7 +1269,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     IntPoint textOrigin = IntPoint(marker.x(), marker.y() + style()->fontMetrics().ascent());
 
     if (type == Asterisks || type == Footnotes)
-        context->drawText(style()->font(), textRun, textOrigin);
+        context->drawText(font, textRun, textOrigin);
     else {
         // Text is not arbitrary. We can judge whether it's RTL from the first character,
         // and we only need to handle the direction RightToLeft for now.
@@ -1280,22 +1280,21 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
             reversedText.grow(length);
             for (int i = 0; i < length; ++i)
                 reversedText[length - i - 1] = m_text[i];
-            textRun = TextRun(reversedText.data(), length);
+            textRun.setText(reversedText.data(), length);
         }
 
-        const Font& font = style()->font();
         const UChar suffix = listMarkerSuffix(type, m_listItem->value());
         if (style()->isLeftToRightDirection()) {
             int width = font.width(textRun);
-            context->drawText(style()->font(), textRun, textOrigin);
+            context->drawText(font, textRun, textOrigin);
             UChar suffixSpace[2] = { suffix, ' ' };
-            context->drawText(style()->font(), TextRun(suffixSpace, 2), textOrigin + IntSize(width, 0));
+            context->drawText(font, RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()), textOrigin + IntSize(width, 0));
         } else {
             UChar spaceSuffix[2] = { ' ', suffix };
-            TextRun spaceSuffixRun(spaceSuffix, 2);
+            TextRun spaceSuffixRun = RenderBlock::constructTextRun(this, font, spaceSuffix, 2, style());
             int width = font.width(spaceSuffixRun);
-            context->drawText(style()->font(), spaceSuffixRun, textOrigin);
-            context->drawText(style()->font(), textRun, textOrigin + IntSize(width, 0));
+            context->drawText(font, spaceSuffixRun, textOrigin);
+            context->drawText(font, textRun, textOrigin + IntSize(width, 0));
         }
     }
 }
@@ -1455,7 +1454,7 @@ void RenderListMarker::computePreferredLogicalWidths()
             else {
                 int itemWidth = font.width(m_text);
                 UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem->value()), ' ' };
-                int suffixSpaceWidth = font.width(TextRun(suffixSpace, 2));
+                int suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));
                 logicalWidth = itemWidth + suffixSpaceWidth;
             }
             break;
@@ -1678,7 +1677,7 @@ IntRect RenderListMarker::getRelativeMarkerRect()
             const Font& font = style()->font();
             int itemWidth = font.width(m_text);
             UChar suffixSpace[2] = { listMarkerSuffix(type, m_listItem->value()), ' ' };
-            int suffixSpaceWidth = font.width(TextRun(suffixSpace, 2));
+            int suffixSpaceWidth = font.width(RenderBlock::constructTextRun(this, font, suffixSpace, 2, style()));
             relativeRect = IntRect(0, 0, itemWidth + suffixSpaceWidth, font.fontMetrics().height());
     }
 

@@ -24,13 +24,16 @@
 #ifndef TextRun_h
 #define TextRun_h
 
-#include "PlatformString.h"
 #include "TextDirection.h"
+#include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
-class RenderObject;
-class RenderSVGResource;
+class FloatPoint;
+class FloatRect;
+class Font;
+class GraphicsContext;
 
 class TextRun {
 public:
@@ -56,10 +59,6 @@ public:
         , m_direction(direction)
         , m_directionalOverride(directionalOverride)
         , m_disableSpacing(false)
-#if ENABLE(SVG_FONTS)
-        , m_referencingRenderObject(0)
-        , m_activePaintingResource(0)
-#endif
     {
     }
 
@@ -76,10 +75,6 @@ public:
         , m_direction(direction)
         , m_directionalOverride(directionalOverride)
         , m_disableSpacing(false)
-#if ENABLE(SVG_FONTS)
-        , m_referencingRenderObject(0)
-        , m_activePaintingResource(0)
-#endif
     {
     }
 
@@ -97,7 +92,9 @@ public:
 #endif
 
     bool allowTabs() const { return m_allowTabs; }
+    void setAllowTabs(bool allowTabs) { m_allowTabs = allowTabs; }
     float xPos() const { return m_xpos; }
+    void setXPos(float xPos) { m_xpos = xPos; }
     float expansion() const { return m_expansion; }
     bool allowsLeadingExpansion() const { return m_expansionBehavior & AllowLeadingExpansion; }
     bool allowsTrailingExpansion() const { return m_expansionBehavior & AllowTrailingExpansion; }
@@ -111,13 +108,22 @@ public:
     void setDirection(TextDirection direction) { m_direction = direction; }
     void setDirectionalOverride(bool override) { m_directionalOverride = override; }
 
-#if ENABLE(SVG_FONTS)
-    RenderObject* referencingRenderObject() const { return m_referencingRenderObject; }
-    void setReferencingRenderObject(RenderObject* object) { m_referencingRenderObject = object; }
+    class RenderingContext : public RefCounted<RenderingContext> {
+    public:
+        virtual ~RenderingContext() { }
 
-    RenderSVGResource* activePaintingResource() const { return m_activePaintingResource; }
-    void setActivePaintingResource(RenderSVGResource* object) { m_activePaintingResource = object; }
+#if ENABLE(SVG_FONTS)
+        // FIXME: Note that the SVG Font integration APIs will be more abstract and simpler once the SVG Fonts rewrite patch lands (59085).
+        virtual void drawTextUsingSVGFont(const Font&, GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const = 0;
+        virtual float floatWidthUsingSVGFont(const Font&, const TextRun&) const = 0;
+        virtual float floatWidthUsingSVGFont(const Font&, const TextRun&, int extraCharsAvailable, int& charsConsumed, String& glyphName) const = 0;
+        virtual FloatRect selectionRectForTextUsingSVGFont(const Font&, const TextRun&, const FloatPoint&, int h, int from, int to) const = 0;
+        virtual int offsetForPositionForTextUsingSVGFont(const Font&, const TextRun&, float position, bool includePartialGlyphs) const = 0;
 #endif
+    };
+
+    RenderingContext* renderingContext() const { return m_renderingContext.get(); }
+    void setRenderingContext(PassRefPtr<RenderingContext> context) { m_renderingContext = context; }
 
 private:
     const UChar* m_characters;
@@ -136,11 +142,7 @@ private:
     TextDirection m_direction;
     bool m_directionalOverride; // Was this direction set by an override character.
     bool m_disableSpacing;
-
-#if ENABLE(SVG_FONTS)
-    RenderObject* m_referencingRenderObject;
-    RenderSVGResource* m_activePaintingResource;
-#endif
+    RefPtr<RenderingContext> m_renderingContext;
 };
 
 }

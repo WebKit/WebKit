@@ -3091,6 +3091,8 @@ webcore_sources += \
 	Source/WebCore/rendering/svg/SVGTextMetrics.h \
 	Source/WebCore/rendering/svg/SVGTextQuery.cpp \
 	Source/WebCore/rendering/svg/SVGTextQuery.h \
+	Source/WebCore/rendering/svg/SVGTextRunRenderingContext.cpp \
+	Source/WebCore/rendering/svg/SVGTextRunRenderingContext.h \
 	Source/WebCore/rendering/TableLayout.h \
 	Source/WebCore/rendering/TrailingFloatsRootInlineBox.h \
 	Source/WebCore/rendering/TransformState.cpp \
@@ -3388,7 +3390,6 @@ webcore_sources += \
 	Source/WebCore/svg/SVGFilterPrimitiveStandardAttributes.h \
 	Source/WebCore/svg/SVGFitToViewBox.cpp \
 	Source/WebCore/svg/SVGFitToViewBox.h \
-	Source/WebCore/svg/SVGFont.cpp \
 	Source/WebCore/svg/SVGFontData.cpp \
 	Source/WebCore/svg/SVGFontData.h \
 	Source/WebCore/svg/SVGFontElement.cpp \

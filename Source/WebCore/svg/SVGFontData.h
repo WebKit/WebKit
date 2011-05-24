@@ -21,15 +21,22 @@
 #define SVGFontData_h
 
 #if ENABLE(SVG_FONTS)
+#include "SimpleFontData.h"
 #include "SVGFontFaceElement.h"
 
 namespace WebCore {
 
-class SVGFontData {
-    WTF_MAKE_NONCOPYABLE(SVGFontData); WTF_MAKE_FAST_ALLOCATED;
+class SVGFontData : public SimpleFontData::FontData {
 public:
-    SVGFontData(SVGFontFaceElement*);
+    static PassOwnPtr<SVGFontData> create(SVGFontFaceElement* element)
+    {
+        return adoptPtr(new SVGFontData(element));
+    }
+
     virtual ~SVGFontData() { }
+
+    virtual bool isSVGFontData() const { return true; }
+    virtual void initializeFontData(SimpleFontData*, int size);
 
     SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement; }
 
@@ -42,6 +49,8 @@ public:
     float verticalAdvanceY() const { return m_verticalAdvanceY; }
 
 private:
+    SVGFontData(SVGFontFaceElement*);
+
     // Ths SVGFontFaceElement is kept alive --
     // 1) in the external font case: by the CSSFontFaceSource, which holds a reference to the external SVG document
     //    containing the element;

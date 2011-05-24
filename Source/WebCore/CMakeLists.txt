@@ -1617,6 +1617,7 @@ IF (ENABLE_SVG)
         rendering/svg/SVGTextLayoutEngine.cpp
         rendering/svg/SVGTextLayoutEngineBaseline.cpp
         rendering/svg/SVGTextLayoutEngineSpacing.cpp
+        rendering/svg/SVGTextRunRenderingContext.cpp
         rendering/svg/SVGTextMetrics.cpp
         rendering/svg/SVGTextQuery.cpp
         svg/ColorDistance.cpp
@@ -1671,7 +1672,6 @@ IF (ENABLE_SVG)
         svg/SVGFilterElement.cpp
         svg/SVGFilterPrimitiveStandardAttributes.cpp
         svg/SVGFitToViewBox.cpp
-        svg/SVGFont.cpp
         svg/SVGFontData.cpp
         svg/SVGFontElement.cpp
         svg/SVGFontFaceElement.cpp

@@ -136,8 +136,8 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoi
     to = (to == -1 ? run.length() : to);
 
 #if ENABLE(SVG_FONTS)
-    if (primaryFont()->isSVGFont()) {
-        drawTextUsingSVGFont(context, run, point, from, to);
+    if (TextRun::RenderingContext* renderingContext = run.renderingContext()) {
+        renderingContext->drawTextUsingSVGFont(*this, context, run, point, from, to);
         return;
     }
 #endif
@@ -178,8 +178,8 @@ void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const
 float Font::width(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
 #if ENABLE(SVG_FONTS)
-    if (primaryFont()->isSVGFont())
-        return floatWidthUsingSVGFont(run);
+    if (TextRun::RenderingContext* renderingContext = run.renderingContext())
+        return renderingContext->floatWidthUsingSVGFont(*this, run);
 #endif
 
     CodePath codePathToUse = codePath(run);
@@ -195,11 +195,11 @@ float Font::width(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFo
 
 float Font::width(const TextRun& run, int extraCharsAvailable, int& charsConsumed, String& glyphName) const
 {
-#if !ENABLE(SVG_FONTS)
-    UNUSED_PARAM(extraCharsAvailable);
+#if ENABLE(SVG_FONTS)
+    if (TextRun::RenderingContext* renderingContext = run.renderingContext())
+        return renderingContext->floatWidthUsingSVGFont(*this, run, extraCharsAvailable, charsConsumed, glyphName);
 #else
-    if (primaryFont()->isSVGFont())
-        return floatWidthUsingSVGFont(run, extraCharsAvailable, charsConsumed, glyphName);
+    UNUSED_PARAM(extraCharsAvailable);
 #endif
 
     charsConsumed = run.length();
@@ -214,10 +214,10 @@ float Font::width(const TextRun& run, int extraCharsAvailable, int& charsConsume
 FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point, int h, int from, int to) const
 {
 #if ENABLE(SVG_FONTS)
-    if (primaryFont()->isSVGFont())
-        return selectionRectForTextUsingSVGFont(run, point, h, from, to);
+    if (TextRun::RenderingContext* renderingContext = run.renderingContext())
+        return renderingContext->selectionRectForTextUsingSVGFont(*this, run, point, h, from, to);
 #endif
-
+ 
     to = (to == -1 ? run.length() : to);
 
     if (codePath(run) != Complex)
@@ -229,8 +229,8 @@ FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point
 int Font::offsetForPosition(const TextRun& run, float x, bool includePartialGlyphs) const
 {
 #if ENABLE(SVG_FONTS)
-    if (primaryFont()->isSVGFont())
-        return offsetForPositionForTextUsingSVGFont(run, x, includePartialGlyphs);
+    if (TextRun::RenderingContext* renderingContext = run.renderingContext())
+        return renderingContext->offsetForPositionForTextUsingSVGFont(*this, run, x, includePartialGlyphs);
 #endif
 
     if (codePath(run) != Complex)
@@ -238,13 +238,6 @@ int Font::offsetForPosition(const TextRun& run, float x, bool includePartialGlyp
 
     return offsetForPositionForComplexText(run, x, includePartialGlyphs);
 }
-
-#if ENABLE(SVG_FONTS)
-bool Font::isSVGFont() const
-{ 
-    return primaryFont()->isSVGFont(); 
-}
-#endif
 
 String Font::normalizeSpaces(const UChar* characters, unsigned length)
 {

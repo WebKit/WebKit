@@ -30,17 +30,13 @@
 #include "SVGFontFaceElement.h"
 #include "SVGNames.h"
 #include "SVGPathParserFactory.h"
-#include "SimpleFontData.h"
-#include "XMLNames.h"
 
 namespace WebCore {
-
-using namespace SVGNames;
 
 inline SVGGlyphElement::SVGGlyphElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document)
 {
-    ASSERT(hasTagName(glyphTag));
+    ASSERT(hasTagName(SVGNames::glyphTag));
 }
 
 PassRefPtr<SVGGlyphElement> SVGGlyphElement::create(const QualifiedName& tagName, Document* document)
@@ -150,28 +146,28 @@ void SVGGlyphElement::fillAttributeToPropertyTypeMap()
 SVGGlyph SVGGlyphElement::buildGenericGlyphIdentifier(const SVGElement* element)
 {
     SVGGlyph identifier;
-    identifier.pathData = parsePathData(element->getAttribute(dAttr));
+    identifier.pathData = parsePathData(element->getAttribute(SVGNames::dAttr));
  
     // Spec: The horizontal advance after rendering the glyph in horizontal orientation.
     // If the attribute is not specified, the effect is as if the attribute were set to the
     // value of the font's horiz-adv-x attribute. Glyph widths are required to be non-negative,
     // even if the glyph is typically rendered right-to-left, as in Hebrew and Arabic scripts.
-    identifier.horizontalAdvanceX = parseSVGGlyphAttribute(element, horiz_adv_xAttr);
+    identifier.horizontalAdvanceX = parseSVGGlyphAttribute(element, SVGNames::horiz_adv_xAttr);
 
     // Spec: The X-coordinate in the font coordinate system of the origin of the glyph to be
     // used when drawing vertically oriented text. If the attribute is not specified, the effect
     // is as if the attribute were set to the value of the font's vert-origin-x attribute.
-    identifier.verticalOriginX = parseSVGGlyphAttribute(element, vert_origin_xAttr);
+    identifier.verticalOriginX = parseSVGGlyphAttribute(element, SVGNames::vert_origin_xAttr);
 
     // Spec: The Y-coordinate in the font coordinate system of the origin of a glyph to be
     // used when drawing vertically oriented text. If the attribute is not specified, the effect
     // is as if the attribute were set to the value of the font's vert-origin-y attribute.
-    identifier.verticalOriginY = parseSVGGlyphAttribute(element, vert_origin_yAttr);
+    identifier.verticalOriginY = parseSVGGlyphAttribute(element, SVGNames::vert_origin_yAttr);
 
     // Spec: The vertical advance after rendering a glyph in vertical orientation.
     // If the attribute is not specified, the effect is as if the attribute were set to the
     // value of the font's vert-adv-y attribute.
-    identifier.verticalAdvanceY = parseSVGGlyphAttribute(element, vert_adv_yAttr);
+    identifier.verticalAdvanceY = parseSVGGlyphAttribute(element, SVGNames::vert_adv_yAttr);
 
     return identifier;
 }
@@ -179,9 +175,9 @@ SVGGlyph SVGGlyphElement::buildGenericGlyphIdentifier(const SVGElement* element)
 SVGGlyph SVGGlyphElement::buildGlyphIdentifier() const
 {
     SVGGlyph identifier(buildGenericGlyphIdentifier(this));
-    identifier.glyphName = getAttribute(glyph_nameAttr);
-    identifier.orientation = parseOrientation(getAttribute(orientationAttr));
-    identifier.arabicForm = parseArabicForm(getAttribute(arabic_formAttr));
+    identifier.glyphName = getAttribute(SVGNames::glyph_nameAttr);
+    identifier.orientation = parseOrientation(getAttribute(SVGNames::orientationAttr));
+    identifier.arabicForm = parseArabicForm(getAttribute(SVGNames::arabic_formAttr));
 
     String language = getAttribute(SVGNames::langAttr);
     if (!language.isEmpty())

@@ -22,6 +22,9 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGFontData.h"
 
+#include "SVGFontElement.h"
+#include "SVGGlyph.h"
+
 namespace WebCore {
 
 SVGFontData::SVGFontData(SVGFontFaceElement* fontFaceElement)
@@ -34,6 +37,61 @@ SVGFontData::SVGFontData(SVGFontFaceElement* fontFaceElement)
     , m_verticalAdvanceY(fontFaceElement->verticalAdvanceY())
 {
     ASSERT_ARG(fontFaceElement, fontFaceElement);
+}
+
+void SVGFontData::initializeFontData(SimpleFontData* fontData, int size)
+{
+    ASSERT(fontData);
+
+    SVGFontFaceElement* svgFontFaceElement = this->svgFontFaceElement();
+    unsigned unitsPerEm = svgFontFaceElement->unitsPerEm();
+
+    float scale = size;
+    if (unitsPerEm)
+        scale /= unitsPerEm;
+
+    float xHeight = svgFontFaceElement->xHeight() * scale;
+    float ascent = svgFontFaceElement->ascent() * scale;
+    float descent = svgFontFaceElement->descent() * scale;
+    float lineGap = 0.1f * size;
+
+    SVGFontElement* associatedFontElement = svgFontFaceElement->associatedFontElement();
+    if (!xHeight) {
+        // Fallback if x_heightAttr is not specified for the font element.
+        Vector<SVGGlyph> letterXGlyphs;
+        associatedFontElement->getGlyphIdentifiersForString(String("x", 1), letterXGlyphs);
+        xHeight = letterXGlyphs.isEmpty() ? 2 * ascent / 3 : letterXGlyphs.first().horizontalAdvanceX * scale;
+    }
+
+    FontMetrics& fontMetrics = fontData->fontMetrics();
+    fontMetrics.setUnitsPerEm(unitsPerEm);
+    fontMetrics.setAscent(ascent);
+    fontMetrics.setDescent(descent);
+    fontMetrics.setLineGap(lineGap);
+    fontMetrics.setLineSpacing(roundf(ascent) + roundf(descent) + roundf(lineGap));
+    fontMetrics.setXHeight(xHeight);
+
+    Vector<SVGGlyph> spaceGlyphs;
+    associatedFontElement->getGlyphIdentifiersForString(String(" ", 1), spaceGlyphs);
+    fontData->setSpaceWidth(spaceGlyphs.isEmpty() ? xHeight : spaceGlyphs.first().horizontalAdvanceX * scale);
+
+    Vector<SVGGlyph> numeralZeroGlyphs;
+    associatedFontElement->getGlyphIdentifiersForString(String("0", 1), numeralZeroGlyphs);
+    fontData->setAvgCharWidth(numeralZeroGlyphs.isEmpty() ? fontData->spaceWidth() : numeralZeroGlyphs.first().horizontalAdvanceX * scale);
+
+    Vector<SVGGlyph> letterWGlyphs;
+    associatedFontElement->getGlyphIdentifiersForString(String("W", 1), letterWGlyphs);
+    fontData->setMaxCharWidth(letterWGlyphs.isEmpty() ? ascent : letterWGlyphs.first().horizontalAdvanceX * scale);
+
+    // FIXME: is there a way we can get the space glyph from the SVGGlyph above?
+    fontData->setSpaceGlyph(0);
+    fontData->setZeroWidthSpaceGlyph(0);
+    fontData->determinePitch();
+
+    GlyphData missingGlyphData;
+    missingGlyphData.fontData = fontData;
+    missingGlyphData.glyph = 0;
+    fontData->setMissingGlyphData(missingGlyphData);
 }
 
 } // namespace WebCore

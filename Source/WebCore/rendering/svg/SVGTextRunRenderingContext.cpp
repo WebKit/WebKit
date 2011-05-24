@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2007, 2008 Nikolas Zimmermann <zimmermann@kde.org>
- * Copyright (C) Research In Motion Limited 2010. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2010-2011. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,8 +36,8 @@
 #include "SVGGlyphMap.h"
 #include "SVGMissingGlyphElement.h"
 #include "SVGNames.h"
+#include "SVGTextRunRenderingContext.h"
 #include "SimpleFontData.h"
-#include "TextRun.h"
 #include "XMLNames.h"
 
 using namespace WTF::Unicode;
@@ -59,16 +59,40 @@ static inline bool isVerticalWritingMode(const SVGRenderStyle* style)
 
 static inline const SVGFontData* svgFontAndFontFaceElementForFontData(const SimpleFontData* fontData, SVGFontFaceElement*& fontFace, SVGFontElement*& font)
 {
+    ASSERT(fontData);
     ASSERT(fontData->isCustomFont());
     ASSERT(fontData->isSVGFont());
 
-    const SVGFontData* svgFontData = static_cast<const SVGFontData*>(fontData->svgFontData());
+    const SVGFontData* svgFontData = static_cast<const SVGFontData*>(fontData->fontData());
 
     fontFace = svgFontData->svgFontFaceElement();
     ASSERT(fontFace);
 
     font = fontFace->associatedFontElement();
     return svgFontData;
+}
+
+static inline RenderObject* firstParentRendererForNonTextNode(RenderObject* renderer)
+{
+    ASSERT(renderer);
+    RenderObject* newRenderer = renderer->isText() ? renderer->parent() : renderer;
+    ASSERT(newRenderer->node());
+    ASSERT(newRenderer->node()->isElementNode());
+    return newRenderer;
+}
+
+static inline RenderObject* referencingRenderObjectFromRun(const TextRun& run)
+{
+    if (TextRun::RenderingContext* renderingContext = run.renderingContext())
+        return static_cast<SVGTextRunRenderingContext*>(renderingContext)->renderer();
+    return 0;
+}
+
+static inline RenderSVGResource* activePaintingResourceFromRun(const TextRun& run)
+{
+    if (TextRun::RenderingContext* renderingContext = run.renderingContext())
+        return static_cast<SVGTextRunRenderingContext*>(renderingContext)->activePaintingResource();
+    return 0;
 }
 
 // Helper class to walk a text run. Lookup a SVGGlyph for each character
@@ -100,19 +124,18 @@ struct SVGTextRunWalker {
         int characterLookupRange;
         int endOfScanRange = to + m_walkerData.extraCharsAvailable;
 
+        RenderObject* renderObject = referencingRenderObjectFromRun(run);
+        RenderObject* parentRenderObject = firstParentRendererForNonTextNode(renderObject);
+
         bool haveAltGlyph = false;
         SVGGlyph altGlyphIdentifier;
-        if (RenderObject* renderObject = run.referencingRenderObject()) {
-            RenderObject* parentRenderer = renderObject->parent();
-            ASSERT(parentRenderer);
-            if (parentRenderer->node() && parentRenderer->node()->hasTagName(SVGNames::altGlyphTag)) {
-                SVGGlyphElement* glyphElement = static_cast<SVGAltGlyphElement*>(parentRenderer->node())->glyphElement();
-                if (glyphElement) {
-                    haveAltGlyph = true;
-                    altGlyphIdentifier = glyphElement->buildGlyphIdentifier();
-                    altGlyphIdentifier.isValid = true;
-                    altGlyphIdentifier.unicodeStringLength = to - from;
-                }
+        Node* node = parentRenderObject->node();
+        if (node->hasTagName(SVGNames::altGlyphTag)) {
+            if (SVGGlyphElement* glyphElement = static_cast<SVGAltGlyphElement*>(node)->glyphElement()) {
+                haveAltGlyph = true;
+                altGlyphIdentifier = glyphElement->buildGlyphIdentifier();
+                altGlyphIdentifier.isValid = true;
+                altGlyphIdentifier.unicodeStringLength = to - from;
             }
         }
 
@@ -157,6 +180,7 @@ struct SVGTextRunWalker {
                 } else {
                     // Fallback to system font fallback
                     TextRun subRun(run);
+                    subRun.setRenderingContext(0);
                     subRun.setText(subRun.data(i), 1);
 
                     (*m_walkerMissingGlyphCallback)(subRun, m_walkerData);
@@ -210,24 +234,12 @@ static void floatWidthMissingGlyphCallback(const TextRun& run, SVGTextRunWalkerM
     Font font(fontDescription, 0, 0); // spacing handled by SVG text code.
     font.update(data.font->fontSelector());
 
-    data.length += font.width(run);
+    TextRun fallbackRun(run);
+    fallbackRun.setRenderingContext(0);
+    data.length += font.width(fallbackRun);
 }
 
-
-SVGFontElement* Font::svgFont() const
-{ 
-    if (!isSVGFont())
-        return 0;
-
-    SVGFontElement* fontElement = 0;
-    SVGFontFaceElement* fontFaceElement = 0;
-    if (svgFontAndFontFaceElementForFontData(primaryFont(), fontFaceElement, fontElement))
-        return fontElement;
-    
-    return 0;
-}
-
-static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& run, int extraCharsAvailable, int from, int to, int& charsConsumed, String& glyphName)
+static float floatWidthOfSubStringUsingSVGFont(const Font& font, const TextRun& run, int extraCharsAvailable, int from, int to, int& charsConsumed, String& glyphName)
 {
     int newFrom = to > from ? from : to;
     int newTo = to > from ? to : from;
@@ -238,33 +250,26 @@ static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& 
     SVGFontElement* fontElement = 0;
     SVGFontFaceElement* fontFaceElement = 0;
 
-    if (const SVGFontData* fontData = svgFontAndFontFaceElementForFontData(font->primaryFont(), fontFaceElement, fontElement)) {
+    if (const SVGFontData* fontData = svgFontAndFontFaceElementForFontData(font.primaryFont(), fontFaceElement, fontElement)) {
         if (!fontElement)
             return 0.0f;
 
         SVGTextRunWalkerMeasuredLengthData data;
 
-        data.font = font;
+        data.font = &font;
         data.at = from;
         data.from = from;
         data.to = to;
         data.extraCharsAvailable = extraCharsAvailable;
         data.charsConsumed = 0;
-        data.scale = convertEmUnitToPixel(font->size(), fontFaceElement->unitsPerEm(), 1.0f);
+        data.scale = convertEmUnitToPixel(font.size(), fontFaceElement->unitsPerEm(), 1.0f);
         data.length = 0.0f;
 
-        String language;
-        bool isVerticalText = false; // Holds true for HTML text
+        RenderObject* renderObject = referencingRenderObjectFromRun(run);
+        RenderObject* parentRenderObject = firstParentRendererForNonTextNode(renderObject); 
 
-        // TODO: language matching & svg glyphs should be possible for HTML text, too.
-        if (RenderObject* renderObject = run.referencingRenderObject()) {
-            RenderObject* parentRenderer = renderObject->parent();
-            ASSERT(parentRenderer);
-            isVerticalText = isVerticalWritingMode(parentRenderer->style()->svgStyle());
-
-            if (SVGElement* element = static_cast<SVGElement*>(parentRenderer->node()))
-                language = element->getAttribute(XMLNames::langAttr);
-        }
+        String language = toElement(parentRenderObject->node())->getAttribute(XMLNames::langAttr);
+        bool isVerticalText = isVerticalWritingMode(parentRenderObject->style()->svgStyle());
 
         SVGTextRunWalker<SVGTextRunWalkerMeasuredLengthData> runWalker(fontData, fontElement, data, floatWidthUsingSVGFontCallback, floatWidthMissingGlyphCallback);
         runWalker.walk(run, isVerticalText, language, from, to);
@@ -276,16 +281,16 @@ static float floatWidthOfSubStringUsingSVGFont(const Font* font, const TextRun& 
     return 0.0f;
 }
 
-float Font::floatWidthUsingSVGFont(const TextRun& run) const
+float SVGTextRunRenderingContext::floatWidthUsingSVGFont(const Font& font, const TextRun& run) const
 {
     int charsConsumed;
     String glyphName;
-    return floatWidthOfSubStringUsingSVGFont(this, run, 0, 0, run.length(), charsConsumed, glyphName);
+    return floatWidthOfSubStringUsingSVGFont(font, run, 0, 0, run.length(), charsConsumed, glyphName);
 }
 
-float Font::floatWidthUsingSVGFont(const TextRun& run, int extraCharsAvailable, int& charsConsumed, String& glyphName) const
+float SVGTextRunRenderingContext::floatWidthUsingSVGFont(const Font& font, const TextRun& run, int extraCharsAvailable, int& charsConsumed, String& glyphName) const
 {
-    return floatWidthOfSubStringUsingSVGFont(this, run, extraCharsAvailable, 0, run.length(), charsConsumed, glyphName);
+    return floatWidthOfSubStringUsingSVGFont(font, run, extraCharsAvailable, 0, run.length(), charsConsumed, glyphName);
 }
 
 // Callback & data structures to draw text using SVG Fonts
@@ -310,26 +315,26 @@ static void drawTextMissingGlyphCallback(const TextRun& run, SVGTextRunWalkerDra
     data.fallbackCharacters.append(run[0]);
 }
 
-void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run, 
-                                const FloatPoint& point, int from, int to) const
+void SVGTextRunRenderingContext::drawTextUsingSVGFont(const Font& font, GraphicsContext* context, const TextRun& run, const FloatPoint& point, int from, int to) const
 {
     SVGFontElement* fontElement = 0;
     SVGFontFaceElement* fontFaceElement = 0;
 
-    if (const SVGFontData* fontData = svgFontAndFontFaceElementForFontData(primaryFont(), fontFaceElement, fontElement)) {
+    if (const SVGFontData* fontData = svgFontAndFontFaceElementForFontData(font.primaryFont(), fontFaceElement, fontElement)) {
         if (!fontElement)
             return;
 
         SVGTextRunWalkerDrawTextData data;
         FloatPoint currentPoint = point;
-        float scale = convertEmUnitToPixel(size(), fontFaceElement->unitsPerEm(), 1.0f);
+        float scale = convertEmUnitToPixel(font.size(), fontFaceElement->unitsPerEm(), 1.0f);
 
-        RenderSVGResource* activePaintingResource = run.activePaintingResource();
+        // We can only paint SVGFonts if a context is available.
+        RenderObject* renderObject = referencingRenderObjectFromRun(run);
+        RenderObject* parentRenderObject = firstParentRendererForNonTextNode(renderObject);
 
-        // If renderObject is not set, we're dealing for HTML text rendered using SVG Fonts.
-        if (!run.referencingRenderObject()) {
-            ASSERT(!activePaintingResource);
-
+        // If activePaintingResource is not set, we're dealing for HTML text rendered using SVG Fonts.
+        RenderSVGResource* activePaintingResource = activePaintingResourceFromRun(run);
+        if (!activePaintingResource) {
             // TODO: We're only supporting simple filled HTML text so far.
             RenderSVGResourceSolidColor* solidPaintingResource = RenderSVGResource::sharedSolidPaintingResource();
             solidPaintingResource->setColor(context->fillColor());
@@ -337,29 +342,16 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
             activePaintingResource = solidPaintingResource;
         }
 
-        ASSERT(activePaintingResource);
-
         int charsConsumed;
         String glyphName;
-        bool isVerticalText = false;
-        float xStartOffset = floatWidthOfSubStringUsingSVGFont(this, run, 0, run.rtl() ? to : 0, run.rtl() ? run.length() : from, charsConsumed, glyphName);
+        float xStartOffset = floatWidthOfSubStringUsingSVGFont(font, run, 0, run.rtl() ? to : 0, run.rtl() ? run.length() : from, charsConsumed, glyphName);
         FloatPoint glyphOrigin;
 
-        String language;
+        Node* node = parentRenderObject->node();
+        String language = toElement(node)->getAttribute(XMLNames::langAttr);
 
-        // TODO: language matching & svg glyphs should be possible for HTML text, too.
-        RenderObject* referencingRenderObject = run.referencingRenderObject();
-        RenderObject* referencingRenderObjectParent = referencingRenderObject ? referencingRenderObject->parent() : 0;
-        RenderStyle* referencingRenderObjectParentStyle = 0;
-        if (referencingRenderObject) {
-            ASSERT(referencingRenderObjectParent);
-            referencingRenderObjectParentStyle = referencingRenderObjectParent->style();
-
-            isVerticalText = isVerticalWritingMode(referencingRenderObjectParentStyle->svgStyle());    
-            if (SVGElement* element = static_cast<SVGElement*>(referencingRenderObjectParent->node()))
-                language = element->getAttribute(XMLNames::langAttr);
-        }
-
+        RenderStyle* parentRenderObjectStyle = parentRenderObject->style();
+        bool isVerticalText = isVerticalWritingMode(parentRenderObjectStyle->svgStyle());
         if (!isVerticalText) {
             glyphOrigin.setX(fontData->horizontalOriginX() * scale);
             glyphOrigin.setY(fontData->horizontalOriginY() * scale);
@@ -394,12 +386,12 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
                     Path glyphPath = identifier.pathData;
                     glyphPath.transform(glyphPathTransform);
 
-                    if (activePaintingResource->applyResource(referencingRenderObjectParent, referencingRenderObjectParentStyle, context, resourceMode)) {
-                        if (referencingRenderObject) {
-                            RenderSVGInlineText* textRenderer = toRenderSVGInlineText(referencingRenderObject);
+                    if (activePaintingResource->applyResource(parentRenderObject, parentRenderObjectStyle, context, resourceMode)) {
+                        if (renderObject && renderObject->isSVGInlineText()) {
+                            const RenderSVGInlineText* textRenderer = toRenderSVGInlineText(renderObject);
                             context->setStrokeThickness(context->strokeThickness() * textRenderer->scalingFactor());
                         }
-                        activePaintingResource->postApplyResource(referencingRenderObjectParent, context, resourceMode, &glyphPath);
+                        activePaintingResource->postApplyResource(parentRenderObject, context, resourceMode, &glyphPath);
                     }
                 }
 
@@ -409,12 +401,13 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
                     currentPoint.move(identifier.horizontalAdvanceX * scale, 0.0f);
             } else {
                 // Handle system font fallback
-                FontDescription fontDescription(m_fontDescription);
+                FontDescription fontDescription(font.fontDescription());
                 fontDescription.setFamily(FontFamily());
                 Font font(fontDescription, 0, 0); // spacing handled by SVG text code.
-                font.update(fontSelector());
+                font.update(font.fontSelector());
 
                 TextRun fallbackCharacterRun(run);
+                fallbackCharacterRun.setRenderingContext(0);
                 fallbackCharacterRun.setText(&data.fallbackCharacters[run.rtl() ? data.fallbackCharacters.size() - fallbackCharacterIndex - 1 : fallbackCharacterIndex], 1);
                 font.drawText(context, fallbackCharacterRun, currentPoint);
 
@@ -429,16 +422,16 @@ void Font::drawTextUsingSVGFont(GraphicsContext* context, const TextRun& run,
     }
 }
 
-FloatRect Font::selectionRectForTextUsingSVGFont(const TextRun& run, const FloatPoint& point, int height, int from, int to) const
+FloatRect SVGTextRunRenderingContext::selectionRectForTextUsingSVGFont(const Font& font, const TextRun& run, const FloatPoint& point, int height, int from, int to) const
 {
     int charsConsumed;
     String glyphName;
 
-    return FloatRect(point.x() + floatWidthOfSubStringUsingSVGFont(this, run, 0, run.rtl() ? to : 0, run.rtl() ? run.length() : from, charsConsumed, glyphName),
-                     point.y(), floatWidthOfSubStringUsingSVGFont(this, run, 0, from, to, charsConsumed, glyphName), height);
+    return FloatRect(point.x() + floatWidthOfSubStringUsingSVGFont(font, run, 0, run.rtl() ? to : 0, run.rtl() ? run.length() : from, charsConsumed, glyphName),
+                     point.y(), floatWidthOfSubStringUsingSVGFont(font, run, 0, from, to, charsConsumed, glyphName), height);
 }
 
-int Font::offsetForPositionForTextUsingSVGFont(const TextRun&, float, bool) const
+int SVGTextRunRenderingContext::offsetForPositionForTextUsingSVGFont(const Font&, const TextRun&, float, bool) const
 {
     // TODO: Fix text selection when HTML text is drawn using a SVG Font
     // We need to integrate the SVG text selection code in the offsetForPosition() framework.

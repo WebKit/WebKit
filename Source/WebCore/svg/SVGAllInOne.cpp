@@ -77,7 +77,6 @@
 #include "SVGFilterElement.cpp"
 #include "SVGFilterPrimitiveStandardAttributes.cpp"
 #include "SVGFitToViewBox.cpp"
-#include "SVGFont.cpp"
 #include "SVGFontData.cpp"
 #include "SVGFontElement.cpp"
 #include "SVGFontFaceElement.cpp"
