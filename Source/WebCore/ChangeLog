@@ -1,3 +1,16 @@
+2011-05-24  Mike Reed  <reed@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        skia: fix stroking of zero-height rectangles
+        https://bugs.webkit.org/show_bug.cgi?id=61284
+
+        Tests: canvas/philip/tests/2d.line.miter.lineedge.html
+               canvas/philip/tests/2d.strokeRect.zero.4.html
+
+        * platform/graphics/skia/GraphicsContextSkia.cpp:
+        (WebCore::GraphicsContext::strokeRect):
+
 2011-05-24  Zan Dobersek  <zandobersek@gmail.com> and Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Kenneth Russell.

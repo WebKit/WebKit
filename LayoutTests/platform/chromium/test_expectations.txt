@@ -1010,11 +1010,9 @@ BUGCR81858 WIN LINUX GPU : fast/canvas/canvas-longlived-context.html = PASS TEXT
 
 // Misc. render failures
 BUGCR81718 WIN LINUX GPU : compositing/tiling/huge-layer-img.html = CRASH
-BUGCR80593 WIN LINUX GPU : canvas/philip/tests/2d.strokeRect.zero.4.html = TEXT
 BUGCR79741 WIN LINUX GPU : fast/canvas/canvasDrawingIntoSelf.html = IMAGE
 BUGCR79741 WIN LINUX GPU : fast/canvas/drawImage.html = IMAGE
 BUGCR81601 WIN LINUX GPU : fast/repaint/canvas-putImageData.html = IMAGE+TEXT
-BUGCR81600 WIN LINUX GPU : canvas/philip/tests/2d.line.miter.lineedge.html = TEXT
 BUGCR81606 WIN LINUX GPU : fast/canvas/drawImage-with-globalAlpha.html = IMAGE
 
 // fillRect failures
