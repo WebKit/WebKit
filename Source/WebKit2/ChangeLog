@@ -1,3 +1,9 @@
+2011-05-24  Brady Eidson  <beidson@apple.com>
+
+        Build fix after r87153
+
+        * WebProcess/mac/SecItemShimMethods.mm: Don't compile this code on SnowLeopard.
+
 2011-05-23  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Sam Weinig.
