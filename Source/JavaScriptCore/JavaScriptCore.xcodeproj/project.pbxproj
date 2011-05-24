@@ -90,7 +90,6 @@
 		142D6F0D13539A2F00B02E86 /* MarkedSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 142D6F0B13539A2F00B02E86 /* MarkedSpace.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142D6F1113539A4100B02E86 /* MarkStack.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142D6F0E13539A4100B02E86 /* MarkStack.cpp */; };
 		142D6F1213539A4100B02E86 /* MarkStack.h in Headers */ = {isa = PBXBuildFile; fileRef = 142D6F0F13539A4100B02E86 /* MarkStack.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		142D6F1313539A4100B02E86 /* MarkStackPosix.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142D6F1013539A4100B02E86 /* MarkStackPosix.cpp */; };
 		142E3134134FF0A600AFADB5 /* Handle.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312B134FF0A600AFADB5 /* Handle.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142E3135134FF0A600AFADB5 /* HandleHeap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142E312C134FF0A600AFADB5 /* HandleHeap.cpp */; };
 		142E3136134FF0A600AFADB5 /* HandleHeap.h in Headers */ = {isa = PBXBuildFile; fileRef = 142E312D134FF0A600AFADB5 /* HandleHeap.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -744,7 +743,6 @@
 		142D6F0B13539A2F00B02E86 /* MarkedSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedSpace.h; sourceTree = "<group>"; };
 		142D6F0E13539A4100B02E86 /* MarkStack.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkStack.cpp; sourceTree = "<group>"; };
 		142D6F0F13539A4100B02E86 /* MarkStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkStack.h; sourceTree = "<group>"; };
-		142D6F1013539A4100B02E86 /* MarkStackPosix.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkStackPosix.cpp; sourceTree = "<group>"; };
 		142E312B134FF0A600AFADB5 /* Handle.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Handle.h; sourceTree = "<group>"; };
 		142E312C134FF0A600AFADB5 /* HandleHeap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HandleHeap.cpp; sourceTree = "<group>"; };
 		142E312D134FF0A600AFADB5 /* HandleHeap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HandleHeap.h; sourceTree = "<group>"; };
@@ -1494,7 +1492,6 @@
 				142D6F0B13539A2F00B02E86 /* MarkedSpace.h */,
 				142D6F0E13539A4100B02E86 /* MarkStack.cpp */,
 				142D6F0F13539A4100B02E86 /* MarkStack.h */,
-				142D6F1013539A4100B02E86 /* MarkStackPosix.cpp */,
 				142E3132134FF0A600AFADB5 /* Strong.h */,
 				142E3133134FF0A600AFADB5 /* Weak.h */,
 				146FA5A81378F6B0003627A3 /* HandleTypes.h */,
@@ -2983,7 +2980,6 @@
 				142D6F0813539A2800B02E86 /* MarkedBlock.cpp in Sources */,
 				142D6F0C13539A2F00B02E86 /* MarkedSpace.cpp in Sources */,
 				142D6F1113539A4100B02E86 /* MarkStack.cpp in Sources */,
-				142D6F1313539A4100B02E86 /* MarkStackPosix.cpp in Sources */,
 				86AE64A8135E5E1C00963012 /* MacroAssemblerSH4.cpp in Sources */,
 				7934BB7C1361979400CB99A1 /* ParallelJobsGeneric.cpp in Sources */,
 			);

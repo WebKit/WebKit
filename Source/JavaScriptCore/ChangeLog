@@ -1,5 +1,11 @@
 2011-05-24  Geoffrey Garen  <ggaren@apple.com>
 
+        Fix the Mac build: Yes, please do remove these files, svn.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2011-05-24  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Let's just have one way to get the system page size, bokay?
