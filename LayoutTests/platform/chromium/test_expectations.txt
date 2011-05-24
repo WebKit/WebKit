@@ -998,50 +998,10 @@ BUGCR10322 SKIP : platform/win/accessibility = PASS FAIL
 // -----------------------------------------------------------------
 
 // shadow rendering issues
-BUGCR79896 WIN7 GPU : fast/canvas/shadow-offset-1.html = IMAGE
-BUGCR79896 WIN7 GPU : fast/canvas/shadow-offset-2.html = IMAGE
-BUGCR79896 WIN7 GPU : fast/canvas/shadow-offset-3.html = IMAGE
-BUGCR79896 WIN7 GPU : fast/canvas/shadow-offset-4.html = IMAGE
-BUGCR79896 WIN7 GPU : fast/canvas/shadow-offset-5.html = IMAGE
-BUGCR79896 WIN7 GPU : fast/canvas/shadow-offset-6.html = IMAGE
-BUGCR79896 WIN7 GPU : fast/canvas/shadow-offset-7.html = IMAGE
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.fillRect.shadow.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.alpha.2.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.clip.1.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.clip.3.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.enable.x.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.enable.y.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.gradient.alpha.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.gradient.basic.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.gradient.transparent.2.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.outside.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.pattern.alpha.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.pattern.basic.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.pattern.transparent.2.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.stroke.basic.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.stroke.cap.2.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.stroke.join.2.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.transform.1.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.shadow.transform.2.html = TEXT
-BUGCR79896 WIN7 GPU : canvas/philip/tests/2d.strokeRect.shadow.html = TEXT
-BUGCR79896 WIN7 GPU : fast/canvas/canvas-createPattern-fillRect-shadow.html = TEXT
-BUGCR79896 WIN7 GPU : fast/canvas/canvas-fillRect-gradient-shadow.html = TEXT
-BUGCR79896 WIN7 GPU : fast/canvas/canvas-fillRect-shadow.html = TEXT
-BUGCR79896 WIN7 GPU : fast/canvas/canvas-scale-fillPath-shadow.html = TEXT
-BUGCR79896 WIN7 GPU : fast/canvas/canvas-scale-fillRect-shadow.html = TEXT
-BUGCR79896 WIN7 GPU : fast/canvas/canvas-scale-shadowBlur.html = TEXT
-BUGCR79896 WIN7 GPU : fast/canvas/canvas-scale-strokePath-shadow.html = TEXT
-BUGCR79896 WIN7 GPU : fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-shadow.html = TEXT
-
-// Once BUGCR79896 is resolved, these 4 tests may still be expected to time out (BUGWK57547)
-BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-strokePath-gradient-shadow.html = TEXT TIMEOUT
-BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-strokeRect-gradient-shadow.html = TEXT TIMEOUT
-BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-fillPath-gradient-shadow.html = TEXT TIMEOUT
-BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-fillPath-pattern-shadow.html = TEXT TIMEOUT
-
 BUGCR79896 WIN7 GPU : fast/canvas/canvas-strokePath-shadow.html = TEXT
-BUGCR79896 WIN7 GPU : fast/canvas/canvas-transforms-fillRect-shadow.html = TEXT
+
+BUGWK57547 LINUX GPU : fast/canvas/canvas-strokeRect-gradient-shadow.html = TEXT TIMEOUT
 
 // Flaky tests
 BUGCR81585 LINUX GPU : canvas/philip/tests/2d.drawImage.alpha.html = PASS TEXT
@@ -4114,10 +4074,6 @@ BUGCR83290 WIN : http/tests/misc/link-rel-prefetch-and-subresource.html = PASS T
 
 // Started crashing after seemingly unrelated r85786
 BUGCR83325 MAC DEBUG : canvas/philip/tests/2d.imageData.put.created.html = CRASH PASS
-
-// New test added ar r86920
-BUGWK61169 : css3/images/optimize-contrast-canvas.html = IMAGE PASS
-BUGWK61169 : css3/images/optimize-contrast-image.html = IMAGE
 
 // Appears to be a configuration error in the Mac 10.6 deps 
 // Has been going on for at least a few weeks (as of 20/5/2011)

@@ -1,3 +1,14 @@
+2011-05-24  Leon Scroggins  <scroggo@google.com>
+
+        Reviewed by James Robinson.
+
+        Update expectations for shadow tests which are now passing.
+        https://bugs.webkit.org/show_bug.cgi?id=61278
+
+        Also remove some expectations for missing tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Skip one more failing test.
