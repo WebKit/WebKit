@@ -28,6 +28,7 @@
 
 #include "DocumentMarker.h"
 #include "Range.h"
+#include "TextChecking.h"
 #include "Timer.h"
 #include "VisibleSelection.h"
 #include <wtf/Noncopyable.h>

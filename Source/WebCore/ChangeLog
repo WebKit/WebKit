@@ -1,3 +1,12 @@
+2011-05-23  Mark Rowe  <mrowe@apple.com>
+
+        Build fix after r87117.
+
+        When moving #defines out in to separate files I find that code is more likely to compile
+        when the new header file is actually #included.
+
+        * editing/SpellingCorrectionController.h:
+
 2011-05-23  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by James Robinson.
