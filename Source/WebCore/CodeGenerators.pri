@@ -331,7 +331,9 @@ IDL_BINDINGS += \
     page/Performance.idl \
     page/PerformanceNavigation.idl \
     page/PerformanceTiming.idl \
+    page/PositionCallback.idl \
     page/PositionError.idl \
+    page/PositionErrorCallback.idl \
     page/Screen.idl \
     page/SpeechInputEvent.idl \
     page/SpeechInputResult.idl \

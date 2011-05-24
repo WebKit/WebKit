@@ -405,8 +405,12 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSPerformanceTiming.h \
 	DerivedSources/WebCore/JSPopStateEvent.cpp \
 	DerivedSources/WebCore/JSPopStateEvent.h \
+	DerivedSources/WebCore/JSPositionCallback.cpp \
+	DerivedSources/WebCore/JSPositionCallback.h \
 	DerivedSources/WebCore/JSPositionError.cpp \
 	DerivedSources/WebCore/JSPositionError.h \
+	DerivedSources/WebCore/JSPositionErrorCallback.cpp \
+	DerivedSources/WebCore/JSPositionErrorCallback.h \
 	DerivedSources/WebCore/JSProcessingInstruction.cpp \
 	DerivedSources/WebCore/JSProcessingInstruction.h \
 	DerivedSources/WebCore/JSProgressEvent.cpp \
@@ -653,10 +657,6 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSClipboardCustom.cpp \
 	Source/WebCore/bindings/js/JSConsoleCustom.cpp \
 	Source/WebCore/bindings/js/JSCoordinatesCustom.cpp \
-	Source/WebCore/bindings/js/JSCustomPositionCallback.cpp \
-	Source/WebCore/bindings/js/JSCustomPositionCallback.h \
-	Source/WebCore/bindings/js/JSCustomPositionErrorCallback.cpp \
-	Source/WebCore/bindings/js/JSCustomPositionErrorCallback.h \
 	Source/WebCore/bindings/js/JSCustomSQLStatementErrorCallback.cpp \
 	Source/WebCore/bindings/js/JSCustomVoidCallback.cpp \
 	Source/WebCore/bindings/js/JSCustomVoidCallback.h \

@@ -31,8 +31,8 @@
 #include "Frame.h"
 #include "Geolocation.h"
 #include "V8Binding.h"
-#include "V8CustomPositionCallback.h"
-#include "V8CustomPositionErrorCallback.h"
+#include "V8PositionCallback.h"
+#include "V8PositionErrorCallback.h"
 #include "V8Utilities.h"
 
 using namespace std;
@@ -133,13 +133,13 @@ v8::Handle<v8::Value> V8Geolocation::getCurrentPositionCallback(const v8::Argume
 
     bool succeeded = false;
 
-    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<V8CustomPositionCallback>(args[0], succeeded);
+    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<V8PositionCallback>(args[0], succeeded);
     if (!succeeded)
         return v8::Undefined();
     ASSERT(positionCallback);
 
     // Argument is optional (hence undefined is allowed), and null is allowed.
-    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<V8CustomPositionErrorCallback>(args[1], succeeded, CallbackAllowUndefined | CallbackAllowNull);
+    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<V8PositionErrorCallback>(args[1], succeeded, CallbackAllowUndefined | CallbackAllowNull);
     if (!succeeded)
         return v8::Undefined();
 
@@ -159,13 +159,13 @@ v8::Handle<v8::Value> V8Geolocation::watchPositionCallback(const v8::Arguments& 
 
     bool succeeded = false;
 
-    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<V8CustomPositionCallback>(args[0], succeeded);
+    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<V8PositionCallback>(args[0], succeeded);
     if (!succeeded)
         return v8::Undefined();
     ASSERT(positionCallback);
 
     // Argument is optional (hence undefined is allowed), and null is allowed.
-    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<V8CustomPositionErrorCallback>(args[1], succeeded, CallbackAllowUndefined | CallbackAllowNull);
+    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<V8PositionErrorCallback>(args[1], succeeded, CallbackAllowUndefined | CallbackAllowNull);
     if (!succeeded)
         return v8::Undefined();
 

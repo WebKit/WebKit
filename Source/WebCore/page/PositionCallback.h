@@ -26,20 +26,18 @@
 #ifndef PositionCallback_h
 #define PositionCallback_h
 
-#include "ActiveDOMObject.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
-    
+
     class Geoposition;
-    
-    class PositionCallback : public RefCounted<PositionCallback>, public ActiveDOMObject {
+
+    class PositionCallback : public RefCounted<PositionCallback> {
     public:
-        PositionCallback(ScriptExecutionContext* context) : ActiveDOMObject(context, this) { }
         virtual ~PositionCallback() { }
-        virtual void handleEvent(Geoposition*) = 0;
+        virtual bool handleEvent(Geoposition*) = 0;
     };
-    
+
 } // namespace WebCore
 
 #endif // PositionCallback_h

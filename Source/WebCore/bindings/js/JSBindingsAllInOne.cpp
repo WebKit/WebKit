@@ -48,8 +48,6 @@
 #include "JSClipboardCustom.cpp"
 #include "JSConsoleCustom.cpp"
 #include "JSCoordinatesCustom.cpp"
-#include "JSCustomPositionCallback.cpp"
-#include "JSCustomPositionErrorCallback.cpp"
 #include "JSCustomSQLStatementErrorCallback.cpp"
 #include "JSCustomVoidCallback.cpp"
 #include "JSCustomXPathNSResolver.cpp"
@@ -175,4 +173,3 @@
 #include "SerializedScriptValue.cpp"
 #include "WorkerScriptController.cpp"
 #include "WorkerScriptDebugServer.cpp"
-

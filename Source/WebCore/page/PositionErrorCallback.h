@@ -26,20 +26,18 @@
 #ifndef PositionErrorCallback_h
 #define PositionErrorCallback_h
 
-#include "ActiveDOMObject.h"
 #include <wtf/RefCounted.h>
 
 namespace WebCore {
 
     class PositionError;
 
-    class PositionErrorCallback : public RefCounted<PositionErrorCallback>, public ActiveDOMObject {
+    class PositionErrorCallback : public RefCounted<PositionErrorCallback> {
     public:
-        PositionErrorCallback(ScriptExecutionContext* context) : ActiveDOMObject(context, this) { }
         virtual ~PositionErrorCallback() { }
-        virtual void handleEvent(PositionError*) = 0;
+        virtual bool handleEvent(PositionError*) = 0;
     };
-    
+
 } // namespace WebCore
 
 #endif // PositionErrorCallback_h

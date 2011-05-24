@@ -31,8 +31,6 @@ LIST(APPEND WebCore_SOURCES
     bindings/js/JSClipboardCustom.cpp
     bindings/js/JSConsoleCustom.cpp
     bindings/js/JSCoordinatesCustom.cpp
-    bindings/js/JSCustomPositionCallback.cpp
-    bindings/js/JSCustomPositionErrorCallback.cpp
     bindings/js/JSCustomSQLStatementErrorCallback.cpp
     bindings/js/JSCustomVoidCallback.cpp
     bindings/js/JSCustomXPathNSResolver.cpp

@@ -324,7 +324,9 @@ DOM_CLASSES = \
     PerformanceNavigation \
     PerformanceTiming \
     PopStateEvent \
+    PositionCallback \
     PositionError \
+    PositionErrorCallback \
     ProcessingInstruction \
     ProgressEvent \
     RGBColor \

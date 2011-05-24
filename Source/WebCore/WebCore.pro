@@ -251,8 +251,6 @@ v8 {
         bindings/js/JSClipboardCustom.cpp \
         bindings/js/JSConsoleCustom.cpp \
         bindings/js/JSCoordinatesCustom.cpp \
-        bindings/js/JSCustomPositionCallback.cpp \
-        bindings/js/JSCustomPositionErrorCallback.cpp \
         bindings/js/JSCustomVoidCallback.cpp \
         bindings/js/JSCustomXPathNSResolver.cpp \
         bindings/js/JSDOMBinding.cpp \
@@ -1213,8 +1211,6 @@ HEADERS += \
 
 v8 {
     HEADERS += \
-        bindings/v8/custom/V8CustomPositionCallback.h \
-        bindings/v8/custom/V8CustomPositionErrorCallback.h  \
         bindings/v8/custom/V8CustomVoidCallback.h \
         bindings/v8/custom/V8CustomXPathNSResolver.h \
         bindings/v8/custom/V8HTMLAudioElementConstructor.h \
@@ -1292,8 +1288,6 @@ v8 {
         bindings/js/JSAudioConstructor.h \
         bindings/js/JSCSSStyleDeclarationCustom.h \
         bindings/js/JSCallbackData.h \
-        bindings/js/JSCustomPositionCallback.h \
-        bindings/js/JSCustomPositionErrorCallback.h \
         bindings/js/JSCustomVoidCallback.h \
         bindings/js/JSCustomXPathNSResolver.h \
         bindings/js/JSDOMBinding.h \
@@ -3104,8 +3098,6 @@ contains(DEFINES, WTF_USE_QT_BEARER=1) {
 contains(DEFINES, ENABLE_GEOLOCATION=1) {
     v8 {
         SOURCES += \
-            bindings/v8/custom/V8CustomPositionCallback.cpp \
-            bindings/v8/custom/V8CustomPositionErrorCallback.cpp \
             bindings/v8/custom/V8GeolocationCustom.cpp
     }
 }

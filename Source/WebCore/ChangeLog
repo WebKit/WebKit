@@ -1,3 +1,47 @@
+2011-04-13  Steve Block  <steveblock@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Geolocation callbacks should make use of new callback generation mechanism
+        https://bugs.webkit.org/show_bug.cgi?id=40065
+
+        No new tests, refactoring only.
+
+        * Android.derived.jscbindings.mk:
+        * Android.derived.v8bindings.mk:
+        * Android.jscbindings.mk:
+        * Android.v8bindings.mk:
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSCustomPositionCallback.cpp: Removed.
+        * bindings/js/JSCustomPositionCallback.h: Removed.
+        * bindings/js/JSCustomPositionErrorCallback.cpp: Removed.
+        * bindings/js/JSCustomPositionErrorCallback.h: Removed.
+        * bindings/js/JSGeolocationCustom.cpp:
+        (WebCore::JSGeolocation::getCurrentPosition):
+        (WebCore::JSGeolocation::watchPosition):
+        * bindings/v8/custom/V8CustomPositionCallback.cpp: Removed.
+        * bindings/v8/custom/V8CustomPositionCallback.h: Removed.
+        * bindings/v8/custom/V8CustomPositionErrorCallback.cpp: Removed.
+        * bindings/v8/custom/V8CustomPositionErrorCallback.h: Removed.
+        * bindings/v8/custom/V8GeolocationCustom.cpp:
+        (WebCore::V8Geolocation::getCurrentPositionCallback):
+        (WebCore::V8Geolocation::watchPositionCallback):
+        * page/PositionCallback.h:
+        * page/PositionCallback.idl: Added.
+        * page/PositionErrorCallback.h:
+        * page/PositionErrorCallback.idl: Added.
+
 2011-05-23  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

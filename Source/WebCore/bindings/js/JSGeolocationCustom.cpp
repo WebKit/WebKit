@@ -31,9 +31,9 @@
 #include "CallbackFunction.h"
 #include "DOMWindow.h"
 #include "Geolocation.h"
-#include "JSCustomPositionCallback.h"
-#include "JSCustomPositionErrorCallback.h"
 #include "JSDOMWindow.h"
+#include "JSPositionCallback.h"
+#include "JSPositionErrorCallback.h"
 #include "PositionOptions.h"
 
 #if !ENABLE(CLIENT_BASED_GEOLOCATION)
@@ -113,12 +113,12 @@ JSValue JSGeolocation::getCurrentPosition(ExecState* exec)
 {
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
 
-    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<JSCustomPositionCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(0));
+    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<JSPositionCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(0));
     if (exec->hadException())
         return jsUndefined();
     ASSERT(positionCallback);
 
-    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<JSCustomPositionErrorCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(1), CallbackAllowUndefined | CallbackAllowNull);
+    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(1), CallbackAllowUndefined | CallbackAllowNull);
     if (exec->hadException())
         return jsUndefined();
 
@@ -135,12 +135,12 @@ JSValue JSGeolocation::watchPosition(ExecState* exec)
 {
     // Arguments: PositionCallback, (optional)PositionErrorCallback, (optional)PositionOptions
 
-    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<JSCustomPositionCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(0));
+    RefPtr<PositionCallback> positionCallback = createFunctionOnlyCallback<JSPositionCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(0));
     if (exec->hadException())
         return jsUndefined();
     ASSERT(positionCallback);
 
-    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<JSCustomPositionErrorCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(1), CallbackAllowUndefined | CallbackAllowNull);
+    RefPtr<PositionErrorCallback> positionErrorCallback = createFunctionOnlyCallback<JSPositionErrorCallback>(exec, static_cast<JSDOMGlobalObject*>(exec->lexicalGlobalObject()), exec->argument(1), CallbackAllowUndefined | CallbackAllowNull);
     if (exec->hadException())
         return jsUndefined();
 
