@@ -1,3 +1,22 @@
+2011-05-24  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Interpreter crashes with gc validation enabled due to failure to mark initial cache structure
+        https://bugs.webkit.org/show_bug.cgi?id=61385
+
+        The interpreter uses the structure slot of get_by_id and put_by_id to hold
+        the initial structure it encountered so that it can identify whether a
+        given access is stable.
+
+        When marking though we only visit the slot when we've decided to cache, and
+        so this value could die.  This was "safe" as the value was only used for a
+        pointer compare, but it was incorrect.  We now just mark the slot like we
+        should have been doing already.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitStructures):
+
 2011-05-24  Adam Roben  <aroben@apple.com>
 
         Windows build fix

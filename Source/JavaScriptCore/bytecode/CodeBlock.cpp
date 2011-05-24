@@ -1405,6 +1405,11 @@ void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC) const
 {
     Interpreter* interpreter = m_globalData->interpreter;
 
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id) && vPC[4].u.structure) {
+        visitor.append(&vPC[4].u.structure);
+        return;
+    }
+
     if (vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_getter_self) || vPC[0].u.opcode == interpreter->getOpcode(op_get_by_id_custom_self)) {
         visitor.append(&vPC[4].u.structure);
         return;
@@ -1423,6 +1428,10 @@ void CodeBlock::visitStructures(SlotVisitor& visitor, Instruction* vPC) const
         visitor.append(&vPC[4].u.structure);
         visitor.append(&vPC[5].u.structure);
         visitor.append(&vPC[6].u.structureChain);
+        return;
+    }
+    if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id) && vPC[4].u.structure) {
+        visitor.append(&vPC[4].u.structure);
         return;
     }
     if (vPC[0].u.opcode == interpreter->getOpcode(op_put_by_id_replace)) {
