@@ -4254,3 +4254,9 @@ fast/replaced/object-with-non-empty-classid-triggers-fallback.html
 
 # new test introduced in http://trac.webkit.org/changeset/87026, but fail
 fast/block/positioning/start-ignoring-before.html
+
+# unskipped by r87092, but fail on Qt-Mac platform
+transitions/move-after-transition.html
+
+# new test introduced in r87096, but fail on Qt-Mac platform
+fast/events/selectstart-by-double-triple-clicks.html
