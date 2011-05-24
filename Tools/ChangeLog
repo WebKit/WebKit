@@ -1,3 +1,9 @@
+2011-05-23  Darin Adler  <darin@apple.com>
+
+        Ignore generated .pyc files in a directory full of python code.
+
+        * Scripts/webkitpy/common/checkout/scm: Added property svn:ignore.
+
 2011-05-23  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
