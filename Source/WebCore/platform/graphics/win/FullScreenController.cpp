@@ -193,4 +193,19 @@ void FullScreenController::repaintCompleted()
         exitFullScreenRepaintCompleted();
 }
 
+void FullScreenController::close()
+{
+    if (!m_private->m_isFullScreen)
+        return;
+    m_private->m_isFullScreen = false;
+
+    m_private->m_client->fullScreenClientWillExitFullScreen();
+    m_private->m_client->fullScreenClientSetParentWindow(m_private->m_originalHost);
+    m_private->m_fullScreenWindow = nullptr;
+
+    m_private->m_client->fullScreenClientDidExitFullScreen();
+    ::SetWindowPos(m_private->m_client->fullScreenClientWindow(), 0, m_private->m_originalFrame.x(), m_private->m_originalFrame.y(), m_private->m_originalFrame.width(), m_private->m_originalFrame.height(), SWP_NOACTIVATE | SWP_NOZORDER);
+    ::RedrawWindow(m_private->m_client->fullScreenClientWindow(), 0, 0, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_ALLCHILDREN);
+    m_private->m_backgroundWindow = nullptr;
+}
 #endif

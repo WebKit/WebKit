@@ -49,11 +49,6 @@ WebFullScreenManagerProxy::~WebFullScreenManagerProxy()
 {
 }
 
-void WebFullScreenManagerProxy::invalidate()
-{
-    m_webView = 0;
-}
-
 void WebFullScreenManagerProxy::setWebView(PlatformWebView* webView)
 {
     m_webView = webView;

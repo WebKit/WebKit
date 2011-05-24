@@ -46,6 +46,8 @@ public:
     
     bool isFullScreen() const;
 
+    void close();
+
 protected:
     void enterFullScreenRepaintCompleted();
     void exitFullScreenRepaintCompleted();
