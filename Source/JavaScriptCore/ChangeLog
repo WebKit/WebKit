@@ -1,3 +1,9 @@
+2011-05-24  Adam Roben  <aroben@apple.com>
+
+        Windows build fix
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Removed now-inline functions.
+
 2011-05-24  Geoffrey Garen  <ggaren@apple.com>
 
         Windows build fix: update the #if OS(WINDOWS) section to match my last patch.

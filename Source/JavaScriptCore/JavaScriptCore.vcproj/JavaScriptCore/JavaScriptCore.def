@@ -61,7 +61,6 @@ EXPORTS
     ?allocateFromSizeClass@MarkedSpace@JSC@@AAEPAXAAUSizeClass@12@@Z
     ?allocatePropertyStorage@JSObject@JSC@@QAEXII@Z
     ?allocateSlowCase@Heap@JSC@@AAEPAXI@Z
-    ?allocateStack@MarkStack@JSC@@CAPAXI@Z
     ?append@StringBuilder@WTF@@QAEXPBDI@Z
     ?append@StringBuilder@WTF@@QAEXPB_WI@Z
     ?ascii@UString@JSC@@QBE?AVCString@WTF@@XZ
@@ -283,7 +282,6 @@ EXPORTS
     ?regExpFlags@JSC@@YA?AW4RegExpFlags@1@ABVUString@1@@Z
     ?reifyString@StringBuilder@WTF@@AAEXXZ
     ?releaseDecommitted@OSAllocator@WTF@@SAXPAXI@Z
-    ?releaseStack@MarkStack@JSC@@CAXPAXI@Z
     ?reportExtraMemoryCostSlowCase@Heap@JSC@@AAEXI@Z
     ?reserveAndCommit@OSAllocator@WTF@@SAPAXIW4Usage@12@_N11@Z
     ?reserveCapacity@StringBuilder@WTF@@QAEXI@Z
