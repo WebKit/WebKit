@@ -24,10 +24,9 @@
  */
 
 #include "config.h"
-
 #include "HandleStack.h"
 
-#include "MarkStack.h"
+#include "HeapRootVisitor.h"
 
 namespace JSC {
 

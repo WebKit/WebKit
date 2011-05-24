@@ -164,6 +164,7 @@
 		147F39D7107EC37600427A48 /* JSVariableObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC22A39A0E16E14800AF21C8 /* JSVariableObject.cpp */; };
 		1482B74E0A43032800517CFC /* JSStringRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B74C0A43032800517CFC /* JSStringRef.cpp */; };
 		1482B7E40A43076000517CFC /* JSObjectRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1482B7E20A43076000517CFC /* JSObjectRef.cpp */; };
+		1486300A138C61F800B42E16 /* HeapRootVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 14863009138C61F800B42E16 /* HeapRootVisitor.h */; };
 		148CD1D8108CF902008163C6 /* JSContextRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = 148CD1D7108CF902008163C6 /* JSContextRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		148F21AA107EC53A0042EC2C /* BytecodeGenerator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 969A07200ED1CE3300F1F681 /* BytecodeGenerator.cpp */; };
 		148F21B0107EC5410042EC2C /* Lexer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = F692A8650255597D01FF60F7 /* Lexer.cpp */; };
@@ -783,6 +784,7 @@
 		1482B7E10A43076000517CFC /* JSObjectRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectRef.h; sourceTree = "<group>"; };
 		1482B7E20A43076000517CFC /* JSObjectRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSObjectRef.cpp; sourceTree = "<group>"; };
 		1483B589099BC1950016E4F0 /* JSImmediate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSImmediate.h; sourceTree = "<group>"; };
+		14863009138C61F800B42E16 /* HeapRootVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HeapRootVisitor.h; path = ../../../webkit/Source/JavaScriptCore/heap/HeapRootVisitor.h; sourceTree = SOURCE_ROOT; };
 		148A1626095D16BB00666D0D /* ListRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ListRefPtr.h; sourceTree = "<group>"; };
 		148A1ECD0D10C23B0069A47C /* RefPtrHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefPtrHashMap.h; sourceTree = "<group>"; };
 		148CD1D7108CF902008163C6 /* JSContextRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSContextRefPrivate.h; sourceTree = "<group>"; };
@@ -1480,8 +1482,10 @@
 				142E312D134FF0A600AFADB5 /* HandleHeap.h */,
 				142E312E134FF0A600AFADB5 /* HandleStack.cpp */,
 				142E312F134FF0A600AFADB5 /* HandleStack.h */,
+				146FA5A81378F6B0003627A3 /* HandleTypes.h */,
 				14FB986B135225410085A5DB /* Heap.cpp */,
 				14FB986C135225410085A5DB /* Heap.h */,
+				14863009138C61F800B42E16 /* HeapRootVisitor.h */,
 				142E3130134FF0A600AFADB5 /* Local.h */,
 				142E3131134FF0A600AFADB5 /* LocalScope.h */,
 				14B7233F12D7D0DA003BD5ED /* MachineStackMarker.cpp */,
@@ -1494,7 +1498,6 @@
 				142D6F0F13539A4100B02E86 /* MarkStack.h */,
 				142E3132134FF0A600AFADB5 /* Strong.h */,
 				142E3133134FF0A600AFADB5 /* Weak.h */,
-				146FA5A81378F6B0003627A3 /* HandleTypes.h */,
 			);
 			path = heap;
 			sourceTree = "<group>";
@@ -2536,6 +2539,7 @@
 				7934BB7E1361979400CB99A1 /* ParallelJobsLibdispatch.h in Headers */,
 				7934BB7F1361979400CB99A1 /* ParallelJobsOpenMP.h in Headers */,
 				651DCA04136A6FEF00F74194 /* PassTraits.h in Headers */,
+				1486300A138C61F800B42E16 /* HeapRootVisitor.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -26,6 +26,7 @@
 #include "config.h"
 #include "HandleHeap.h"
 
+#include "HeapRootVisitor.h"
 #include "JSObject.h"
 
 namespace JSC {

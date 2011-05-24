@@ -319,6 +319,7 @@
             'heap/MachineStackMarker.h',
             'heap/MarkStack.cpp',
             'heap/MarkStack.h',
+            'heap/HeapRootVisitor.h',
             'heap/MarkedBlock.cpp',
             'heap/MarkedBlock.h',
             'heap/MarkedSpace.cpp',

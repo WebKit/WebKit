@@ -112,6 +112,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/MachineStackMarker.h \
 	Source/JavaScriptCore/heap/MarkStack.cpp \
 	Source/JavaScriptCore/heap/MarkStack.h \
+	Source/JavaScriptCore/heap/HeapRootVisitor.h \
 	Source/JavaScriptCore/heap/MarkedBlock.cpp \
 	Source/JavaScriptCore/heap/MarkedBlock.h \
 	Source/JavaScriptCore/heap/MarkedSpace.cpp \

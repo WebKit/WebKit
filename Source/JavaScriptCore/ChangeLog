@@ -1,3 +1,22 @@
+2011-05-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Split HeapRootVisitor into its own class
+        https://bugs.webkit.org/show_bug.cgi?id=61399
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/HandleHeap.cpp:
+        * heap/HandleStack.cpp:
+        * heap/Heap.cpp:
+        * heap/HeapRootVisitor.h: Copied from Source/JavaScriptCore/heap/MarkStack.h.
+        * heap/MarkStack.h:
+        * runtime/ArgList.cpp:
+        * runtime/SmallStrings.cpp:
+
 2011-05-24  Jay Civelli  <jcivelli@chromium.org>
 
         Rubberstamped by David Kilzer.

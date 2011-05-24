@@ -26,6 +26,7 @@
 #include "config.h"
 #include "SmallStrings.h"
 
+#include "HeapRootVisitor.h"
 #include "JSGlobalObject.h"
 #include "JSString.h"
 #include <wtf/Noncopyable.h>

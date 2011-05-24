@@ -1914,6 +1914,10 @@
                                     >
                             </File>
                             <File
+                                    RelativePath="..\..\heap\HeapRootVisitor.h"
+                                    >
+                            </File>
+                            <File
                                     RelativePath="..\..\heap\Heap.cpp"
                                     >
                             </File>

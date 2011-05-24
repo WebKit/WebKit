@@ -21,8 +21,8 @@
 #include "config.h"
 #include "ArgList.h"
 
+#include "HeapRootVisitor.h"
 #include "JSValue.h"
-#include "JSCell.h"
 #include "JSObject.h"
 #include "ScopeChain.h"
 

@@ -24,6 +24,7 @@
 #include "CodeBlock.h"
 #include "ConservativeRoots.h"
 #include "GCActivityCallback.h"
+#include "HeapRootVisitor.h"
 #include "Interpreter.h"
 #include "JSGlobalData.h"
 #include "JSGlobalObject.h"

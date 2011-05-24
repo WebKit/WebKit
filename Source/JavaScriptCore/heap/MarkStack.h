@@ -43,8 +43,6 @@ namespace JSC {
     class Register;
     template<typename T> class WriteBarrierBase;
     
-    typedef MarkStack SlotVisitor;
-
     enum MarkSetProperties { MayContainNullValues, NoNullValues };
     
     struct MarkSet {
@@ -278,56 +276,7 @@ namespace JSC {
             internalAppend(value.asCell());
     }
 
-    // Privileged class for marking JSValues directly. It is only safe to use
-    // this class to mark direct heap roots that are marked during every GC pass.
-    // All other references should be wrapped in WriteBarriers and marked through
-    // the MarkStack.
-    class HeapRootVisitor {
-    private:
-        friend class Heap;
-        HeapRootVisitor(SlotVisitor&);
-
-    public:
-        void mark(JSValue*);
-        void mark(JSValue*, size_t);
-        void mark(JSString**);
-        void mark(JSCell**);
-        
-        SlotVisitor& visitor();
-
-    private:
-        SlotVisitor& m_visitor;
-    };
-
-    inline HeapRootVisitor::HeapRootVisitor(SlotVisitor& visitor)
-        : m_visitor(visitor)
-    {
-    }
-
-    inline void HeapRootVisitor::mark(JSValue* slot)
-    {
-        m_visitor.append(slot);
-    }
-
-    inline void HeapRootVisitor::mark(JSValue* slot, size_t count)
-    {
-        m_visitor.append(slot, count);
-    }
-
-    inline void HeapRootVisitor::mark(JSString** slot)
-    {
-        m_visitor.append(reinterpret_cast<JSCell**>(slot));
-    }
-
-    inline void HeapRootVisitor::mark(JSCell** slot)
-    {
-        m_visitor.append(slot);
-    }
-
-    inline SlotVisitor& HeapRootVisitor::visitor()
-    {
-        return m_visitor;
-    }
+    typedef MarkStack SlotVisitor;
 
 } // namespace JSC
 
