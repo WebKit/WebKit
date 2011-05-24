@@ -1,3 +1,12 @@
+2011-05-24  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Disable features on safari-534-branch.
+        <rdar://problem/9261347> 
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-05-22  Lucas Forschler  <lforschler@apple.com>
 
     Merge r86972.
