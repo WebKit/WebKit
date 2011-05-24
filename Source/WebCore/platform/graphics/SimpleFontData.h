@@ -70,7 +70,7 @@ enum Pitch { UnknownPitch, FixedPitch, VariablePitch };
 
 class SimpleFontData : public FontData {
 public:
-    class FontData {
+    class AdditionalFontData {
         WTF_MAKE_FAST_ALLOCATED;
     public:
         virtual ~FontData() { }
@@ -82,7 +82,7 @@ public:
     SimpleFontData(const FontPlatformData&, bool isCustomFont = false, bool isLoading = false, bool isTextOrientationFallback = false);
 
     // Used to create SVG Fonts.
-    SimpleFontData(PassOwnPtr<SimpleFontData::FontData>, int size, bool syntheticBold, bool syntheticItalic);
+    SimpleFontData(PassOwnPtr<AdditionalFontData>, int size, bool syntheticBold, bool syntheticItalic);
 
     virtual ~SimpleFontData();
 
@@ -145,7 +145,7 @@ public:
     void determinePitch();
     Pitch pitch() const { return m_treatAsFixedPitch ? FixedPitch : VariablePitch; }
 
-    SimpleFontData::FontData* fontData() const { return m_fontData.get(); }
+    AdditionalFontData* fontData() const { return m_fontData.get(); }
     bool isSVGFont() const { return m_fontData; }
 
     virtual bool isCustomFont() const { return m_isCustomFont; }
@@ -222,7 +222,7 @@ private:
     float m_avgCharWidth;
     
     FontPlatformData m_platformData;
-    OwnPtr<SimpleFontData::FontData> m_fontData;
+    OwnPtr<AdditionalFontData> m_fontData;
 
     mutable OwnPtr<GlyphMetricsMap<FloatRect> > m_glyphToBoundsMap;
     mutable GlyphMetricsMap<float> m_glyphToWidthMap;

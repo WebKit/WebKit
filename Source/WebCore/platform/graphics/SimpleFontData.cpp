@@ -56,7 +56,7 @@ SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCust
     platformCharWidthInit();
 }
 
-SimpleFontData::SimpleFontData(PassOwnPtr<SimpleFontData::FontData> fontData, int size, bool syntheticBold, bool syntheticItalic)
+SimpleFontData::SimpleFontData(PassOwnPtr<AdditionalFontData> fontData, int size, bool syntheticBold, bool syntheticItalic)
     : m_platformData(FontPlatformData(size, syntheticBold, syntheticItalic))
     , m_fontData(fontData)
     , m_treatAsFixedPitch(false)

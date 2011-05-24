@@ -26,7 +26,7 @@
 
 namespace WebCore {
 
-class SVGFontData : public SimpleFontData::FontData {
+class SVGFontData : public SimpleFontData::AdditionalFontData {
 public:
     static PassOwnPtr<SVGFontData> create(SVGFontFaceElement* element)
     {
@@ -35,7 +35,6 @@ public:
 
     virtual ~SVGFontData() { }
 
-    virtual bool isSVGFontData() const { return true; }
     virtual void initializeFontData(SimpleFontData*, int size);
 
     SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement; }
