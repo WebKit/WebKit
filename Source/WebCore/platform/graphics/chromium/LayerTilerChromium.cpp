@@ -318,6 +318,7 @@ void LayerTilerChromium::updateRect()
             const GC3Dint filter = m_tilingData.borderTexels() ? GraphicsContext3D::LINEAR : GraphicsContext3D::NEAREST;
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MIN_FILTER, filter));
             GLC(context, context->texParameteri(GraphicsContext3D::TEXTURE_2D, GraphicsContext3D::TEXTURE_MAG_FILTER, filter));
+            GLC(context, context->bindTexture(GraphicsContext3D::TEXTURE_2D, 0));
 
             m_textureUpdater->updateTextureRect(tile->texture(), sourceRect, destRect);
             tile->clearDirty();
@@ -339,6 +340,7 @@ void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMa
     const LayerTilerChromium::Program* program = layerRenderer()->tilerProgram();
     GLC(context, context->useProgram(program->program()));
     GLC(context, context->uniform1i(program->fragmentShader().samplerLocation(), 0));
+    GLC(context, context->activeTexture(GraphicsContext3D::TEXTURE0));
 
     int left, top, right, bottom;
     contentRectToTileIndices(contentRect, left, top, right, bottom);

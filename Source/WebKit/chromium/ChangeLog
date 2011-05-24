@@ -1,3 +1,14 @@
+2011-05-24  Alok Priyadarshi  <alokp@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Enable skia gpu rendering for content layers
+        https://bugs.webkit.org/show_bug.cgi?id=56749
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::reallocateRenderer):
+
 2011-05-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -58,6 +58,10 @@
 #include <wtf/RetainPtr.h>
 #endif
 
+#if USE(SKIA)
+class GrContext;
+#endif
+
 namespace WebCore {
 
 class CCHeadsUpDisplay;
@@ -69,12 +73,15 @@ class LayerPainterChromium;
 // Class that handles drawing of composited render layers using GL.
 class LayerRendererChromium : public RefCounted<LayerRendererChromium> {
 public:
-    static PassRefPtr<LayerRendererChromium> create(PassRefPtr<GraphicsContext3D>, PassOwnPtr<LayerPainterChromium> contentPaint);
+    static PassRefPtr<LayerRendererChromium> create(PassRefPtr<GraphicsContext3D>, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing);
 
     ~LayerRendererChromium();
 
     GraphicsContext3D* context();
     bool contextSupportsMapSub() const { return m_contextSupportsMapSub; }
+#if USE(SKIA)
+    GrContext* skiaContext();
+#endif
 
     void invalidateRootLayerRect(const IntRect& dirtyRect);
 
@@ -101,6 +108,7 @@ public:
     void transferRootLayer(LayerRendererChromium* other);
 
     bool hardwareCompositing() const { return m_hardwareCompositing; }
+    bool accelerateDrawing() const { return m_accelerateDrawing; } 
 
     void setCompositeOffscreen(bool);
     bool isCompositingOffscreen() const { return m_compositeOffscreen; }
@@ -150,7 +158,9 @@ private:
     // FIXME: This needs to be moved to the CCViewImpl when that class exists.
     RefPtr<CCLayerImpl> m_rootCCLayerImpl;
 
-    LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<LayerPainterChromium> contentPaint);
+    LayerRendererChromium(PassRefPtr<GraphicsContext3D>, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing);
+
+    PassOwnPtr<LayerTextureUpdater> createRootLayerTextureUpdater(PassOwnPtr<LayerPainterChromium>);
 
     void updateLayers(LayerList& renderSurfaceLayerList);
     void updateRootLayerContents();
@@ -193,9 +203,9 @@ private:
     OwnPtr<LayerTilerChromium> m_rootLayerContentTiler;
 
     bool m_hardwareCompositing;
+    bool m_accelerateDrawing;
 
     RenderSurfaceChromium* m_currentRenderSurface;
-
     unsigned m_offscreenFramebufferId;
     bool m_compositeOffscreen;
 
@@ -222,8 +232,11 @@ private:
     OwnPtr<CCHeadsUpDisplay> m_headsUpDisplay;
 
     RefPtr<GraphicsContext3D> m_context;
-    ChildContextMap m_childContexts;
+#if USE(SKIA)
+    OwnPtr<GrContext> m_skiaContext;
+#endif
 
+    ChildContextMap m_childContexts;
     // If true, the child contexts were copied to the compositor texture targets
     // and the compositor will need to wait on the proper latches before using
     // the target textures. If false, the compositor is reusing the textures

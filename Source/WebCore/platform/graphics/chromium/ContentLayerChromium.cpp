@@ -128,6 +128,10 @@ void ContentLayerChromium::setLayerRenderer(LayerRendererChromium* layerRenderer
 PassOwnPtr<LayerTextureUpdater> ContentLayerChromium::createTextureUpdater()
 {
     OwnPtr<LayerPainterChromium> painter = adoptPtr(new ContentLayerPainter(m_owner));
+#if USE(SKIA)
+    if (layerRenderer()->accelerateDrawing())
+        return adoptPtr(new LayerTextureUpdaterSkPicture(layerRendererContext(), painter.release(), layerRenderer()->skiaContext()));
+#endif
     return adoptPtr(new LayerTextureUpdaterBitmap(layerRendererContext(), painter.release(), layerRenderer()->contextSupportsMapSub()));
 }
 

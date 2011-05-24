@@ -29,10 +29,19 @@
 
 #if USE(ACCELERATED_COMPOSITING)
 
+#include "GraphicsTypes3D.h"
 #include "LayerTextureSubImage.h"
 #include "LayerTextureUpdater.h"
 #include "PlatformCanvas.h"
 #include <wtf/PassOwnPtr.h>
+
+#if USE(SKIA)
+#include "SkPicture.h"
+
+class GrContext;
+class SkCanvas;
+class SkPicture;
+#endif
 
 namespace WebCore {
 
@@ -68,6 +77,32 @@ private:
     PlatformCanvas m_canvas;
     LayerTextureSubImage m_texSubImage;
 };
+
+#if USE(SKIA)
+class LayerTextureUpdaterSkPicture : public LayerTextureUpdaterCanvas {
+public:
+    LayerTextureUpdaterSkPicture(GraphicsContext3D*, PassOwnPtr<LayerPainterChromium>, GrContext*);
+    virtual ~LayerTextureUpdaterSkPicture();
+
+    virtual Orientation orientation() { return LayerTextureUpdater::TopDownOrientation; }
+    virtual void prepareToUpdate(const IntRect& contentRect, const IntSize& tileSize, int borderTexels);
+    virtual void updateTextureRect(LayerTexture*, const IntRect& sourceRect, const IntRect& destRect);
+
+private:
+    void deleteFrameBuffer();
+    bool createFrameBuffer();
+    void clearFrameBuffer();
+
+    GrContext* m_skiaContext; // SKIA graphics context.
+
+    bool m_createFrameBuffer; // Need to create FBO if true.
+    SkPicture m_picture; // Recording canvas.
+    IntSize m_bufferSize; // Frame buffer size.
+    Platform3DObject m_fbo; // Frame buffer id.
+    Platform3DObject m_stencilBuffer;
+    OwnPtr<SkCanvas> m_canvas; // GPU accelerated canvas.
+};
+#endif // SKIA
 
 } // namespace WebCore
 #endif // USE(ACCELERATED_COMPOSITING)

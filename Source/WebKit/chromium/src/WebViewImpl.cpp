@@ -2478,7 +2478,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
         }
 
 
-        m_layerRenderer = LayerRendererChromium::create(context.release(), WebViewImplContentPainter::create(this));
+        m_layerRenderer = LayerRendererChromium::create(context.release(), WebViewImplContentPainter::create(this), m_page->settings()->acceleratedDrawingEnabled());
         if (m_layerRenderer) {
             m_client->didActivateAcceleratedCompositing(true);
             m_isAcceleratedCompositingActive = true;
@@ -2522,7 +2522,7 @@ void WebViewImpl::reallocateRenderer()
         newContext = GraphicsContext3D::create(
             getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
     // GraphicsContext3D::create might fail and return 0, in that case LayerRendererChromium::create will also return 0.
-    RefPtr<LayerRendererChromium> layerRenderer = LayerRendererChromium::create(newContext, WebViewImplContentPainter::create(this));
+    RefPtr<LayerRendererChromium> layerRenderer = LayerRendererChromium::create(newContext, WebViewImplContentPainter::create(this), m_page->settings()->acceleratedDrawingEnabled());
 
     // Reattach the root layer.  Child layers will get reattached as a side effect of updateLayersRecursive.
     if (layerRenderer) {

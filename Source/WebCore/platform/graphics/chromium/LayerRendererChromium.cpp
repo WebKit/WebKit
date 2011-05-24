@@ -51,6 +51,8 @@
 #include "WebGLLayerChromium.h"
 #include "cc/CCLayerImpl.h"
 #if USE(SKIA)
+#include "Extensions3D.h"
+#include "GrContext.h"
 #include "NativeImageSkia.h"
 #include "PlatformContextSkia.h"
 #elif USE(CG)
@@ -96,12 +98,12 @@ static bool isScaleOrTranslation(const TransformationMatrix& m)
 
 }
 
-PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<LayerPainterChromium> contentPaint)
+PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassRefPtr<GraphicsContext3D> context, PassOwnPtr<LayerPainterChromium> contentPaint, bool accelerateDrawing)
 {
     if (!context)
         return 0;
 
-    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(context, contentPaint)));
+    RefPtr<LayerRendererChromium> layerRenderer(adoptRef(new LayerRendererChromium(context, contentPaint, accelerateDrawing)));
     if (!layerRenderer->hardwareCompositing())
         return 0;
 
@@ -109,9 +111,11 @@ PassRefPtr<LayerRendererChromium> LayerRendererChromium::create(PassRefPtr<Graph
 }
 
 LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> context,
-                                             PassOwnPtr<LayerPainterChromium> contentPaint)
+                                             PassOwnPtr<LayerPainterChromium> contentPaint,
+                                             bool accelerateDrawing)
     : m_viewportScrollPosition(IntPoint(-1, -1))
     , m_rootLayer(0)
+    , m_accelerateDrawing(accelerateDrawing)
     , m_currentRenderSurface(0)
     , m_offscreenFramebufferId(0)
     , m_compositeOffscreen(false)
@@ -127,8 +131,7 @@ LayerRendererChromium::LayerRendererChromium(PassRefPtr<GraphicsContext3D> conte
         m_context->getExtensions()->ensureEnabled("GL_CHROMIUM_map_sub");
     m_hardwareCompositing = initializeSharedObjects();
 
-    OwnPtr<LayerTextureUpdater> textureUpdater = adoptPtr(new LayerTextureUpdaterBitmap(m_context.get(), contentPaint, m_contextSupportsMapSub));
-    m_rootLayerContentTiler = LayerTilerChromium::create(this, textureUpdater.release(), IntSize(256, 256), LayerTilerChromium::NoBorderTexels);
+    m_rootLayerContentTiler = LayerTilerChromium::create(this, createRootLayerTextureUpdater(contentPaint), IntSize(256, 256), LayerTilerChromium::NoBorderTexels);
     ASSERT(m_rootLayerContentTiler);
 
     m_headsUpDisplay = CCHeadsUpDisplay::create(this);
@@ -144,6 +147,25 @@ GraphicsContext3D* LayerRendererChromium::context()
 {
     return m_context.get();
 }
+
+#if USE(SKIA)
+GrContext* LayerRendererChromium::skiaContext()
+{
+    if (!m_skiaContext) {
+        WebCore::Extensions3D* extensions = m_context->getExtensions();
+        extensions->ensureEnabled("GL_EXT_texture_format_BGRA8888");
+        extensions->ensureEnabled("GL_EXT_read_format_bgra");
+
+        m_skiaContext = adoptPtr(GrContext::CreateGLShaderContext());
+        // Limit the number of textures we hold in the bitmap->texture cache.
+        static const int maxTextureCacheCount = 512;
+        // Limit the bytes allocated toward textures in the bitmap->texture cache.
+        static const size_t maxTextureCacheBytes = 50 * 1024 * 1024;
+        m_skiaContext->setTextureCacheLimits(maxTextureCacheCount, maxTextureCacheBytes);
+    }
+    return m_skiaContext.get();
+}
+#endif
 
 void LayerRendererChromium::debugGLCall(GraphicsContext3D* context, const char* command, const char* file, int line)
 {
@@ -258,6 +280,15 @@ void LayerRendererChromium::updateAndDrawLayers()
 
     if (isCompositingOffscreen())
         copyOffscreenTextureToDisplay();
+}
+
+PassOwnPtr<LayerTextureUpdater> LayerRendererChromium::createRootLayerTextureUpdater(PassOwnPtr<LayerPainterChromium> painter)
+{
+#if USE(SKIA)
+    if (accelerateDrawing())
+        return adoptPtr(new LayerTextureUpdaterSkPicture(context(), painter, skiaContext()));
+#endif
+    return adoptPtr(new LayerTextureUpdaterBitmap(context(), painter, contextSupportsMapSub()));
 }
 
 void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
