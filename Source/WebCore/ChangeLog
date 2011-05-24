@@ -1,3 +1,49 @@
+2011-05-24  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Implement Float64Array
+        https://bugs.webkit.org/show_bug.cgi?id=39144
+
+        Implemented Float64Array based on the existing Float32Array sources.
+        Built and tested in Chromium on Linux and Mac OS X and Safari on Mac OS X.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * UseJSC.cmake:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSBindingsAllInOne.cpp:
+        * bindings/js/JSDOMWindowCustom.cpp:
+        (WebCore::JSDOMWindow::float64Array):
+        * bindings/js/JSFloat64ArrayCustom.cpp: Added.
+        (WebCore::JSFloat64Array::indexSetter):
+        (WebCore::toJS):
+        (WebCore::JSFloat64Array::set):
+        (WebCore::JSFloat64ArrayConstructor::constructJSFloat64Array):
+        * bindings/v8/custom/V8Float64ArrayCustom.cpp: Added.
+        (WebCore::V8Float64Array::constructorCallback):
+        (WebCore::V8Float64Array::setCallback):
+        (WebCore::toV8):
+        * html/canvas/ArrayBufferView.h:
+        (WebCore::ArrayBufferView::isDoubleArray):
+        * html/canvas/Float64Array.cpp: Added.
+        (WebCore::Float64Array::create):
+        (WebCore::Float64Array::Float64Array):
+        (WebCore::Float64Array::subarray):
+        * html/canvas/Float64Array.h: Added.
+        (WebCore::Float64Array::set):
+        (WebCore::Float64Array::item):
+        (WebCore::Float64Array::isDoubleArray):
+        * html/canvas/Float64Array.idl: Added.
+        * page/DOMWindow.idl:
+        * workers/WorkerContext.idl:
+
 2011-05-24  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Chris Marrin.

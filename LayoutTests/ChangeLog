@@ -1,3 +1,24 @@
+2011-05-24  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by James Robinson.
+
+        Implement Float64Array
+        https://bugs.webkit.org/show_bug.cgi?id=39144
+
+        Added unit tests to existing typed array tests in Khronos repository and
+        synced layout test with them. Updated other affected layout tests.
+
+        * fast/canvas/webgl/array-unit-tests-expected.txt:
+        * fast/canvas/webgl/array-unit-tests.html:
+        * fast/dom/Window/script-tests/window-property-descriptors.js:
+        * fast/dom/Window/window-properties.html:
+        * fast/dom/script-tests/constructed-objects-prototypes.js:
+        (constructorPropertiesOnWindow):
+        * fast/dom/script-tests/prototype-inheritance-2.js:
+        (constructorNamesForWindow):
+        * fast/dom/script-tests/prototype-inheritance.js:
+        * fast/js/script-tests/global-constructors.js:
+
 2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip the tests added by r87096 and remove the failing test expectations on Qt.

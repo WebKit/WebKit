@@ -674,6 +674,12 @@ function testNaNConversion(type, name) {
         results[i] = array[i];
       }
       break;
+    case Float64Array:
+      for (var i = 0; i < array.length; ++i) {
+        array[i] = NaN;
+        results[i] = array[i];
+      }
+      break;
     case Int8Array:
       for (var i = 0; i < array.length; ++i) {
         array[i] = NaN;
@@ -716,7 +722,7 @@ function testNaNConversion(type, name) {
     }
 
     // Some types preserve NaN values; all other types convert NaN to zero.
-    if (type === Float32Array) {
+    if (type === Float32Array || type === Float64Array) {
       assert('initial NaN preserved', isNaN(new type([NaN])[0]));
       for (var i = 0; i < array.length; ++i)
         assert('NaN preserved via setter', isNaN(results[i]));
@@ -746,6 +752,13 @@ function runTests() {
        unsigned: false,
        integral: false,
        elementSizeInBytes: 4,
+       testValues:     [ -500.5, 500.5 ],
+       expectedValues: [ -500.5, 500.5 ]
+      },
+      {name: "Float64Array",
+       unsigned: false,
+       integral: false,
+       elementSizeInBytes: 8,
        testValues:     [ -500.5, 500.5 ],
        expectedValues: [ -500.5, 500.5 ]
       },

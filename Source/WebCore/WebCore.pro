@@ -80,6 +80,7 @@ v8 {
         bindings/v8/custom/V8DeviceMotionEventCustom.cpp \
         bindings/v8/custom/V8DeviceOrientationEventCustom.cpp \
         bindings/v8/custom/V8Float32ArrayCustom.cpp \
+        bindings/v8/custom/V8Float64ArrayCustom.cpp \
         bindings/v8/custom/V8Int8ArrayCustom.cpp \
         bindings/v8/custom/V8Int16ArrayCustom.cpp \
         bindings/v8/custom/V8Int32ArrayCustom.cpp \
@@ -280,6 +281,7 @@ v8 {
         bindings/js/JSExceptionBase.cpp \
         bindings/js/JSFileReaderCustom.cpp \
         bindings/js/JSFloat32ArrayCustom.cpp \
+        bindings/js/JSFloat64ArrayCustom.cpp \
         bindings/js/JSGeolocationCustom.cpp \
         bindings/js/JSHTMLAllCollectionCustom.cpp \
         bindings/js/JSHTMLAppletElementCustom.cpp \
@@ -768,6 +770,7 @@ SOURCES += \
     html/canvas/CanvasStyle.cpp \
     html/canvas/DataView.cpp \
     html/canvas/Float32Array.cpp \
+    html/canvas/Float64Array.cpp \
     html/canvas/Int16Array.cpp \
     html/canvas/Int32Array.cpp \
     html/canvas/Int8Array.cpp \
@@ -1614,6 +1617,7 @@ HEADERS += \
     html/canvas/CanvasStyle.h \
     html/canvas/DataView.h \
     html/canvas/Float32Array.h \
+    html/canvas/Float64Array.h \
     html/canvas/Int16Array.h \
     html/canvas/Int32Array.h \
     html/canvas/Int8Array.h \

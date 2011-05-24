@@ -284,6 +284,7 @@ SET(WebCore_IDL_FILES
     html/canvas/CanvasRenderingContext.idl
     html/canvas/DataView.idl
     html/canvas/Float32Array.idl
+    html/canvas/Float64Array.idl
     html/canvas/Int16Array.idl
     html/canvas/Int32Array.idl
     html/canvas/Int8Array.idl
@@ -848,6 +849,7 @@ SET(WebCore_SOURCES
     html/canvas/CanvasStyle.cpp
     html/canvas/DataView.cpp
     html/canvas/Float32Array.cpp
+    html/canvas/Float64Array.cpp
     html/canvas/Int16Array.cpp
     html/canvas/Int32Array.cpp
     html/canvas/Int8Array.cpp

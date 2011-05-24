@@ -126,6 +126,7 @@ module threads {
         attribute Int32ArrayConstructor Int32Array; // Usable with new operator
         attribute Uint32ArrayConstructor Uint32Array; // Usable with new operator
         attribute Float32ArrayConstructor Float32Array; // Usable with new operator
+        attribute Float64ArrayConstructor Float64Array; // Usable with new operator
         attribute DataViewConstructor DataView; // Usable with new operator
     };
 

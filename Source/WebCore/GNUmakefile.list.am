@@ -174,6 +174,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSFileReaderSync.h \
 	DerivedSources/WebCore/JSFloat32Array.cpp \
 	DerivedSources/WebCore/JSFloat32Array.h \
+	DerivedSources/WebCore/JSFloat64Array.cpp \
+	DerivedSources/WebCore/JSFloat64Array.h \
 	DerivedSources/WebCore/JSGeneratedStream.cpp \
 	DerivedSources/WebCore/JSGeneratedStream.h \
 	DerivedSources/WebCore/JSGeolocation.cpp \
@@ -709,6 +711,7 @@ webcore_sources += \
 	Source/WebCore/bindings/js/JSExceptionBase.h \
 	Source/WebCore/bindings/js/JSFileReaderCustom.cpp \
 	Source/WebCore/bindings/js/JSFloat32ArrayCustom.cpp \
+	Source/WebCore/bindings/js/JSFloat64ArrayCustom.cpp \
 	Source/WebCore/bindings/js/JSGeolocationCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLAllCollectionCustom.cpp \
 	Source/WebCore/bindings/js/JSHTMLAppletElementCustom.cpp \
@@ -1539,6 +1542,8 @@ webcore_sources += \
 	Source/WebCore/html/canvas/DataView.h \
 	Source/WebCore/html/canvas/Float32Array.cpp \
 	Source/WebCore/html/canvas/Float32Array.h \
+	Source/WebCore/html/canvas/Float64Array.cpp \
+	Source/WebCore/html/canvas/Float64Array.h \
 	Source/WebCore/html/canvas/Int16Array.cpp \
 	Source/WebCore/html/canvas/Int16Array.h \
 	Source/WebCore/html/canvas/Int32Array.cpp \

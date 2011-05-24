@@ -37,6 +37,7 @@ var __skip__ = {
     "Int32Array" : 1,
     "Uint32Array" : 1,
     "Float32Array" : 1,
+    "Float64Array" : 1,
     "FileError" : 1,
     "FileReader" : 1,
     "WebKitBlobBuilder" : 1,

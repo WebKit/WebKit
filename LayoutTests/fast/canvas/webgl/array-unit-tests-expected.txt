@@ -46,6 +46,50 @@ PASS Setting Float32Array from Float32Array with out-of-range offset was caught
 PASS array.get is undefined.
 PASS array.set(0, 1) threw exception.
 PASS test storing NaN in Float32Array
+PASS test Float64Array SetAndGetPos10ToNeg10
+PASS test Float64Array ConstructWithArrayOfSignedValues
+PASS test Float64Array ConstructWithTypedArrayOfSignedValues
+Testing Float64Array GetWithOutOfRangeIndices
+PASS array[2] is undefined.
+PASS array[-1] is undefined.
+PASS array[0x20000000] is undefined.
+PASS test Float64Array OffsetsAndSizes
+PASS test Float64Array SetFromTypedArray
+PASS negativeTest Float64Array SetFromTypedArray
+PASS test Float64Array SetFromArray
+PASS negativeTest Float64Array SetFromArray
+PASS test Float64Array Subarray
+PASS negativeTest Float64Array Subarray
+PASS test Float64Array SetBoundaryConditions
+PASS test Float64Array ConstructionBoundaryConditions
+PASS Construction of Float64Array with null buffer threw exception
+PASS Construction of Float64Array with (null buffer, 0) threw exception
+PASS Construction of Float64Array with (null buffer, 0, 0) threw exception
+PASS Construction of Float64Array with out-of-range values threw an exception
+PASS Construction of ArrayBuffer with negative size threw exception
+PASS Construction of Float64Array with negative size threw exception
+PASS Construction of Float64Array with negative out-of-range values threw an exception
+PASS Construction of Float64Array with unaligned offset threw an exception
+PASS Construction of Float64Array with unaligned length threw an exception
+PASS Construction of huge Float64Array threw exception
+PASS Array lengths matched with explicit and implicit creation of ArrayBuffer
+Testing subarray of Float64Array
+PASS array.length is 32 / typeSize
+PASS array.subarray(4, 0x3FFFFFFF).length is (32 / typeSize) - 4
+PASS array.subarray(4, -2147483648).length is 0
+PASS array.length is 0
+Testing subarray with default inputs of Float64Array
+PASS array.length is 32 / typeSize
+PASS array.subarray(0).length is (32 / typeSize)
+PASS array.subarray(2).length is (32 / typeSize) - 2
+PASS array.subarray(-2).length is 2
+PASS array.subarray(-2147483648).length is (32 / typeSize)
+PASS Setting Float64Array from array with out-of-range offset was caught
+PASS Setting Float64Array from fake array with invalid length was caught
+PASS Setting Float64Array from Float64Array with out-of-range offset was caught
+PASS array.get is undefined.
+PASS array.set(0, 1) threw exception.
+PASS test storing NaN in Float64Array
 PASS test Int8Array SetAndGetPos10ToNeg10
 PASS test Int8Array ConstructWithArrayOfSignedValues
 PASS test Int8Array ConstructWithTypedArrayOfSignedValues

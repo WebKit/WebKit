@@ -52118,6 +52118,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\html\canvas\Float64Array.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\canvas\Float64Array.h"
+				>
+			</File>
+			<File
 				RelativePath="..\html\FormAssociatedElement.cpp"
 				>
 			</File>

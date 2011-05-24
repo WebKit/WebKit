@@ -73,6 +73,7 @@ function constructorNamesForWindow(globalObject)
             type == "ArrayBufferConstructor" ||
             type == "DataViewConstructor" ||
             type =="Float32ArrayConstructor" ||
+            type =="Float64ArrayConstructor" ||
             type =="Int8ArrayConstructor" ||
             type =="Int16ArrayConstructor" ||
             type =="Int32ArrayConstructor" ||

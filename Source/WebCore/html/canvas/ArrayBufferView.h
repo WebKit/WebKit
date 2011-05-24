@@ -46,6 +46,7 @@ class ArrayBufferView : public RefCounted<ArrayBufferView> {
     virtual bool isIntArray() const { return false; }
     virtual bool isUnsignedIntArray() const { return false; }
     virtual bool isFloatArray() const { return false; }
+    virtual bool isDoubleArray() const { return false; }
     virtual bool isDataView() const { return false; }
 
     PassRefPtr<ArrayBuffer> buffer() const

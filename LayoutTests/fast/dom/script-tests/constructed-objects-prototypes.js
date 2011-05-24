@@ -30,6 +30,7 @@ function constructorPropertiesOnWindow(globalObject)
         if (type == "WebGLRenderingContextConstructor" ||
             type == "ArrayBufferConstructor" ||
             type =="Float32ArrayConstructor" ||
+            type =="Float64ArrayConstructor" ||
             type =="Int8ArrayConstructor" ||
             type =="Int16ArrayConstructor" ||
             type =="Int32ArrayConstructor" ||

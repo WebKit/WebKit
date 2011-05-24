@@ -1556,6 +1556,11 @@
 		6E67D2A91280E8BD008758F7 /* Extensions3D.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E67D2A81280E8BD008758F7 /* Extensions3D.h */; };
 		6E96BB1C11986EE2007D94CD /* IntegralTypedArrayBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E96BB1A11986EE1007D94CD /* IntegralTypedArrayBase.h */; };
 		6E96BB1D11986EE2007D94CD /* TypedArrayBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 6E96BB1B11986EE1007D94CD /* TypedArrayBase.h */; };
+		6EBC5D81138B4C4E00A0CF8A /* Float64Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBC5D7E138B4C4E00A0CF8A /* Float64Array.cpp */; };
+		6EBC5D82138B4C4E00A0CF8A /* Float64Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBC5D7F138B4C4E00A0CF8A /* Float64Array.h */; };
+		6EBC5D85138B4CE000A0CF8A /* JSFloat64ArrayCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBC5D84138B4CE000A0CF8A /* JSFloat64ArrayCustom.cpp */; };
+		6EBC5EAF138B50F200A0CF8A /* JSFloat64Array.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBC5EAD138B50F200A0CF8A /* JSFloat64Array.cpp */; };
+		6EBC5EB0138B50F200A0CF8A /* JSFloat64Array.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBC5EAE138B50F200A0CF8A /* JSFloat64Array.h */; };
 		6EBF0E4812A8926100DB1709 /* OESTextureFloat.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBF0E4512A8926100DB1709 /* OESTextureFloat.cpp */; };
 		6EBF0E4912A8926100DB1709 /* OESTextureFloat.h in Headers */ = {isa = PBXBuildFile; fileRef = 6EBF0E4612A8926100DB1709 /* OESTextureFloat.h */; };
 		6EBF0E5412A8929800DB1709 /* WebGLExtension.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 6EBF0E5212A8929800DB1709 /* WebGLExtension.cpp */; };
@@ -8129,6 +8134,12 @@
 		6E67D2A81280E8BD008758F7 /* Extensions3D.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Extensions3D.h; sourceTree = "<group>"; };
 		6E96BB1A11986EE1007D94CD /* IntegralTypedArrayBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IntegralTypedArrayBase.h; path = canvas/IntegralTypedArrayBase.h; sourceTree = "<group>"; };
 		6E96BB1B11986EE1007D94CD /* TypedArrayBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TypedArrayBase.h; path = canvas/TypedArrayBase.h; sourceTree = "<group>"; };
+		6EBC5D7E138B4C4E00A0CF8A /* Float64Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Float64Array.cpp; path = canvas/Float64Array.cpp; sourceTree = "<group>"; };
+		6EBC5D7F138B4C4E00A0CF8A /* Float64Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Float64Array.h; path = canvas/Float64Array.h; sourceTree = "<group>"; };
+		6EBC5D80138B4C4E00A0CF8A /* Float64Array.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = Float64Array.idl; path = canvas/Float64Array.idl; sourceTree = "<group>"; };
+		6EBC5D84138B4CE000A0CF8A /* JSFloat64ArrayCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFloat64ArrayCustom.cpp; sourceTree = "<group>"; };
+		6EBC5EAD138B50F200A0CF8A /* JSFloat64Array.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSFloat64Array.cpp; sourceTree = "<group>"; };
+		6EBC5EAE138B50F200A0CF8A /* JSFloat64Array.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSFloat64Array.h; sourceTree = "<group>"; };
 		6EBF0E4512A8926100DB1709 /* OESTextureFloat.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = OESTextureFloat.cpp; path = canvas/OESTextureFloat.cpp; sourceTree = "<group>"; };
 		6EBF0E4612A8926100DB1709 /* OESTextureFloat.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OESTextureFloat.h; path = canvas/OESTextureFloat.h; sourceTree = "<group>"; };
 		6EBF0E4712A8926100DB1709 /* OESTextureFloat.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OESTextureFloat.idl; path = canvas/OESTextureFloat.idl; sourceTree = "<group>"; };
@@ -13597,6 +13608,9 @@
 				49EECDCD10503C2300099FAB /* Float32Array.cpp */,
 				49EECDCE10503C2300099FAB /* Float32Array.h */,
 				49EECDCF10503C2300099FAB /* Float32Array.idl */,
+				6EBC5D7E138B4C4E00A0CF8A /* Float64Array.cpp */,
+				6EBC5D7F138B4C4E00A0CF8A /* Float64Array.h */,
+				6EBC5D80138B4C4E00A0CF8A /* Float64Array.idl */,
 				49EECDD310503C2300099FAB /* Int16Array.cpp */,
 				49EECDD410503C2300099FAB /* Int16Array.h */,
 				49EECDD510503C2300099FAB /* Int16Array.idl */,
@@ -16330,6 +16344,8 @@
 				2E37E00412DBC5A400A6B233 /* JSDOMURL.h */,
 				49EECEF4105070C400099FAB /* JSFloat32Array.cpp */,
 				49EECEF5105070C400099FAB /* JSFloat32Array.h */,
+				6EBC5EAD138B50F200A0CF8A /* JSFloat64Array.cpp */,
+				6EBC5EAE138B50F200A0CF8A /* JSFloat64Array.h */,
 				BC97E410109154FA0010D361 /* JSHTMLAllCollection.cpp */,
 				BC97E411109154FA0010D361 /* JSHTMLAllCollection.h */,
 				1A4A2DEB0A1B852A00C807F8 /* JSHTMLAnchorElement.cpp */,
@@ -18201,6 +18217,7 @@
 				BC275B8011C5D2B400C9206C /* JSEventSourceCustom.cpp */,
 				2E7582ED12764F260062628B /* JSFileReaderCustom.cpp */,
 				49EECF7210508D9C00099FAB /* JSFloat32ArrayCustom.cpp */,
+				6EBC5D84138B4CE000A0CF8A /* JSFloat64ArrayCustom.cpp */,
 				FE80D7A60E9C1ED2000D6F75 /* JSGeolocationCustom.cpp */,
 				BCE7B1920D4E86960075A539 /* JSHistoryCustom.cpp */,
 				BC97E42B10915B060010D361 /* JSHTMLAllCollectionCustom.cpp */,
@@ -22913,6 +22930,8 @@
 				37DDCDA51384501C0008B793 /* MHTMLArchive.h in Headers */,
 				37DDCDA71384501C0008B793 /* MHTMLParser.h in Headers */,
 				370D6EDB138454550044103E /* ContentTypeParser.h in Headers */,
+				6EBC5D82138B4C4E00A0CF8A /* Float64Array.h in Headers */,
+				6EBC5EB0138B50F200A0CF8A /* JSFloat64Array.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25596,6 +25615,9 @@
 				37DDCDA41384501C0008B793 /* MHTMLArchive.cpp in Sources */,
 				37DDCDA61384501C0008B793 /* MHTMLParser.cpp in Sources */,
 				370D6EDA138454550044103E /* ContentTypeParser.cpp in Sources */,
+				6EBC5D81138B4C4E00A0CF8A /* Float64Array.cpp in Sources */,
+				6EBC5D85138B4CE000A0CF8A /* JSFloat64ArrayCustom.cpp in Sources */,
+				6EBC5EAF138B50F200A0CF8A /* JSFloat64Array.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

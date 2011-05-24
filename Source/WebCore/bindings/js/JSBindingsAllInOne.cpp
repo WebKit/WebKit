@@ -78,6 +78,7 @@
 #include "JSEventTarget.cpp"
 #include "JSExceptionBase.cpp"
 #include "JSFloat32ArrayCustom.cpp"
+#include "JSFloat64ArrayCustom.cpp"
 #include "JSGeolocationCustom.cpp"
 #include "JSHTMLAllCollectionCustom.cpp"
 #include "JSHTMLAppletElementCustom.cpp"

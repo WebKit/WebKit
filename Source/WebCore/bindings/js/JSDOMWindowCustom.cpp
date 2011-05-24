@@ -31,6 +31,7 @@
 #include "JSEventListener.h"
 #include "JSEventSource.h"
 #include "JSFloat32Array.h"
+#include "JSFloat64Array.h"
 #include "JSHTMLCollection.h"
 #include "JSHistory.h"
 #include "JSImageConstructor.h"
@@ -549,6 +550,11 @@ JSValue JSDOMWindow::uint16Array(ExecState* exec) const
 JSValue JSDOMWindow::float32Array(ExecState* exec) const
 {
     return getDOMConstructor<JSFloat32ArrayConstructor>(exec, this);
+}
+
+JSValue JSDOMWindow::float64Array(ExecState* exec) const
+{
+    return getDOMConstructor<JSFloat64ArrayConstructor>(exec, this);
 }
 
 JSValue JSDOMWindow::dataView(ExecState* exec) const

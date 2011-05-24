@@ -506,6 +506,7 @@ module window {
         attribute [JSCCustomGetter] Int32ArrayConstructor Int32Array; // Usable with new operator
         attribute [JSCCustomGetter] Uint32ArrayConstructor Uint32Array; // Usable with new operator
         attribute [JSCCustomGetter] Float32ArrayConstructor Float32Array; // Usable with new operator
+        attribute [JSCCustomGetter] Float64ArrayConstructor Float64Array; // Usable with new operator
         attribute [JSCCustomGetter] DataViewConstructor DataView; // Usable with new operator
 
         attribute [JSCCustomGetter,Conditional=WEB_AUDIO,EnabledAtRuntime] AudioContextConstructor webkitAudioContext; // Usable with new operator
