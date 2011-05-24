@@ -1,12 +1,3 @@
-2011-05-24  Steve Falkenburg  <sfalken@apple.com>
-
-        Reviewed by Adam Roben.
-
-        Disable features on safari-534-branch.
-        <rdar://problem/9261347> 
-
-        * Configurations/FeatureDefines.xcconfig:
-
 2011-05-17  Timothy Hatcher  <timothy@apple.com>
 
         Update the the context menu to reflect the system search provider on Mac.
