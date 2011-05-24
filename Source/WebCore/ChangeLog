@@ -1,3 +1,18 @@
+2011-05-24  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        close before open WebSocket doesn't fire close event.
+        https://bugs.webkit.org/show_bug.cgi?id=57301
+
+        In platformClose(), m_readStream may be 0 until proxy is resolved.
+        It should callback didClose() in such case.
+        
+        Test: http/tests/websocket/tests/close-before-open.html
+
+        * platform/network/cf/SocketStreamHandleCFNet.cpp:
+        (WebCore::SocketStreamHandle::platformClose):
+
 2011-05-23  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87118.

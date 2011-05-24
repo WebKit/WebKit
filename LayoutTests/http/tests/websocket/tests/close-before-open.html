@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../../js-test-resources/js-test-style.css">
+<script src="../../../js-test-resources/js-test-pre.js"></script>
+<script src="../../../js-test-resources/js-test-post-function.js"></script>
+</head>
+<body>
+<div id="description"></div>
+<div id="console"></div>
+<script type="text/javascript">
+description("Test if Web Socket fires close event when WebSocket is opened and closed fore open event is received.");
+
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/hanging-handshake");
+ws.onclose = function() {
+    debug("closed");
+    isSuccessfullyParsed();
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+};
+var successfullyParsed = true;
+ws.close();
+</script>
+
+</body>
+</html>

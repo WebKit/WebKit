@@ -1,3 +1,13 @@
+2011-05-24  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        close before open WebSocket doesn't fire close event.
+        https://bugs.webkit.org/show_bug.cgi?id=57301
+
+        * http/tests/websocket/tests/close-before-open-expected.txt: Added.
+        * http/tests/websocket/tests/close-before-open.html: Added.
+
 2011-05-24  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt][WK2] Paint the bot green for ultimate satisfaction of Ossy. 

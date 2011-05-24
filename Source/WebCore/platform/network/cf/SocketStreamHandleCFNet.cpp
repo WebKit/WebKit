@@ -569,8 +569,11 @@ void SocketStreamHandle::platformClose()
         removePACRunLoopSource();
 
     ASSERT(!m_readStream == !m_writeStream);
-    if (!m_readStream)
+    if (!m_readStream) {
+        if (m_connectingSubstate == New || m_connectingSubstate == ExecutingPACFile)
+            m_client->didClose(this);
         return;
+    }
 
 #if PLATFORM(WIN)
     CFReadStreamUnscheduleFromRunLoop(m_readStream.get(), loaderRunLoop(), kCFRunLoopDefaultMode);
