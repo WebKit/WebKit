@@ -30,6 +30,8 @@ WebInspector.ScriptsPanel = function()
 
     this._presentationModel = new WebInspector.DebuggerPresentationModel();
 
+    this.registerShortcuts();
+
     this.topStatusBar = document.createElement("div");
     this.topStatusBar.className = "status-bar";
     this.topStatusBar.id = "scripts-status-bar";
@@ -67,45 +69,7 @@ WebInspector.ScriptsPanel = function()
     // FIXME: append the functions select element to the top status bar when it is implemented.
     // this.topStatusBar.appendChild(this.functionsSelectElement);
 
-    this.sidebarButtonsElement = document.createElement("div");
-    this.sidebarButtonsElement.id = "scripts-sidebar-buttons";
-    this.topStatusBar.appendChild(this.sidebarButtonsElement);
-
-    this.pauseButton = document.createElement("button");
-    this.pauseButton.className = "status-bar-item";
-    this.pauseButton.id = "scripts-pause";
-    this.pauseButton.title = WebInspector.UIString("Pause script execution.");
-    this.pauseButton.disabled = true;
-    this.pauseButton.appendChild(document.createElement("img"));
-    this.pauseButton.addEventListener("click", this._togglePause.bind(this), false);
-    this.sidebarButtonsElement.appendChild(this.pauseButton);
-
-    this.stepOverButton = document.createElement("button");
-    this.stepOverButton.className = "status-bar-item";
-    this.stepOverButton.id = "scripts-step-over";
-    this.stepOverButton.title = WebInspector.UIString("Step over next function call.");
-    this.stepOverButton.disabled = true;
-    this.stepOverButton.addEventListener("click", this._stepOverClicked.bind(this), false);
-    this.stepOverButton.appendChild(document.createElement("img"));
-    this.sidebarButtonsElement.appendChild(this.stepOverButton);
-
-    this.stepIntoButton = document.createElement("button");
-    this.stepIntoButton.className = "status-bar-item";
-    this.stepIntoButton.id = "scripts-step-into";
-    this.stepIntoButton.title = WebInspector.UIString("Step into next function call.");
-    this.stepIntoButton.disabled = true;
-    this.stepIntoButton.addEventListener("click", this._stepIntoClicked.bind(this), false);
-    this.stepIntoButton.appendChild(document.createElement("img"));
-    this.sidebarButtonsElement.appendChild(this.stepIntoButton);
-
-    this.stepOutButton = document.createElement("button");
-    this.stepOutButton.className = "status-bar-item";
-    this.stepOutButton.id = "scripts-step-out";
-    this.stepOutButton.title = WebInspector.UIString("Step out of current function.");
-    this.stepOutButton.disabled = true;
-    this.stepOutButton.addEventListener("click", this._stepOutClicked.bind(this), false);
-    this.stepOutButton.appendChild(document.createElement("img"));
-    this.sidebarButtonsElement.appendChild(this.stepOutButton);
+    this._createSidebarButtons();
 
     this.toggleBreakpointsButton = new WebInspector.StatusBarButton(WebInspector.UIString("Deactivate all breakpoints."), "toggle-breakpoints");
     this.toggleBreakpointsButton.toggled = true;
@@ -151,6 +115,9 @@ WebInspector.ScriptsPanel = function()
 
     this.sidebarPanes.scopechain.expanded = true;
     this.sidebarPanes.jsBreakpoints.expanded = true;
+    
+    var helpSection = WebInspector.shortcutsHelp.section(WebInspector.UIString("Scripts Panel"));
+    this.sidebarPanes.callstack.registerShortcuts(helpSection, this.registerShortcut.bind(this));   
 
     var panelEnablerHeading = WebInspector.UIString("You need to enable debugging before you can use the Scripts panel.");
     var panelEnablerDisclaimer = WebInspector.UIString("Enabling debugging will make scripts run slower.");
@@ -175,8 +142,6 @@ WebInspector.ScriptsPanel = function()
     this._toggleFormatSourceFilesButton = new WebInspector.StatusBarButton(WebInspector.UIString("Pretty print"), "scripts-toggle-pretty-print-status-bar-item");
     this._toggleFormatSourceFilesButton.toggled = false;
     this._toggleFormatSourceFilesButton.addEventListener("click", this._toggleFormatSourceFiles.bind(this), false);
-
-    this._registerShortcuts();
 
     this._debuggerEnabled = Preferences.debuggerAlwaysEnabled;
 
@@ -930,48 +895,68 @@ WebInspector.ScriptsPanel.prototype = {
         return [ this.sidebarElement ];
     },
 
-    _registerShortcuts: function()
+    _createSidebarButtons: function()
     {
-        var section = WebInspector.shortcutsHelp.section(WebInspector.UIString("Scripts Panel"));
-        var handler, shortcut1, shortcut2;
+        this.sidebarButtonsElement = document.createElement("div");
+        this.sidebarButtonsElement.id = "scripts-sidebar-buttons";
+        this.topStatusBar.appendChild(this.sidebarButtonsElement);
+
+        var title, handler, shortcuts;
         var platformSpecificModifier = WebInspector.KeyboardShortcut.Modifiers.CtrlOrMeta;
 
-        var shortcuts = {};
-
         // Continue.
-        handler = this.pauseButton.click.bind(this.pauseButton);
-        shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F8);
-        shortcuts[shortcut1.key] = handler;
-        shortcut2 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Slash, platformSpecificModifier);
-        shortcuts[shortcut2.key] = handler;
-        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Pause/Continue"));
+        title = WebInspector.UIString("Pause script execution (%s).");
+        handler = this._togglePause.bind(this);
+        shortcuts = [];
+        shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F8));
+        shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Slash, platformSpecificModifier));
+        this.pauseButton = this._createSidebarButtonAndRegisterShortcuts("scripts-pause", title, handler, shortcuts, WebInspector.UIString("Pause/Continue"));
 
         // Step over.
-        handler = this.stepOverButton.click.bind(this.stepOverButton);
-        shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F10);
-        shortcuts[shortcut1.key] = handler;
-        shortcut2 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.SingleQuote, platformSpecificModifier);
-        shortcuts[shortcut2.key] = handler;
-        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Step over"));
+        title = WebInspector.UIString("Step over next function call (%s).");
+        handler = this._stepOverClicked.bind(this);
+        shortcuts = [];
+        shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F10));
+        shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.SingleQuote, platformSpecificModifier));
+        this.stepOverButton = this._createSidebarButtonAndRegisterShortcuts("scripts-step-over", title, handler, shortcuts, WebInspector.UIString("Step over"));
 
         // Step into.
-        handler = this.stepIntoButton.click.bind(this.stepIntoButton);
-        shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F11);
-        shortcuts[shortcut1.key] = handler;
-        shortcut2 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Semicolon, platformSpecificModifier);
-        shortcuts[shortcut2.key] = handler;
-        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Step into"));
+        title = WebInspector.UIString("Step into next function call (%s).");
+        handler = this._stepIntoClicked.bind(this);
+        shortcuts = [];
+        shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F11));
+        shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Semicolon, platformSpecificModifier));
+        this.stepIntoButton = this._createSidebarButtonAndRegisterShortcuts("scripts-step-into", title, handler, shortcuts, WebInspector.UIString("Step into"));
 
         // Step out.
-        handler = this.stepOutButton.click.bind(this.stepOutButton);
-        shortcut1 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F11, WebInspector.KeyboardShortcut.Modifiers.Shift);
-        shortcuts[shortcut1.key] = handler;
-        shortcut2 = WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Semicolon, WebInspector.KeyboardShortcut.Modifiers.Shift, platformSpecificModifier);
-        shortcuts[shortcut2.key] = handler;
-        section.addAlternateKeys([ shortcut1.name, shortcut2.name ], WebInspector.UIString("Step out"));
+        title = WebInspector.UIString("Step out of current function (%s).");
+        handler = this._stepOutClicked.bind(this);
+        shortcuts = [];
+        shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.F11, WebInspector.KeyboardShortcut.Modifiers.Shift));
+        shortcuts.push(WebInspector.KeyboardShortcut.makeDescriptor(WebInspector.KeyboardShortcut.Keys.Semicolon, WebInspector.KeyboardShortcut.Modifiers.Shift, platformSpecificModifier));
+        this.stepOutButton = this._createSidebarButtonAndRegisterShortcuts("scripts-step-out", title, handler, shortcuts, WebInspector.UIString("Step out"));
+    },
 
-        this.sidebarPanes.callstack.registerShortcuts(section, shortcuts);
-        this.registerShortcuts(shortcuts);
+    _createSidebarButtonAndRegisterShortcuts: function(buttonId, buttonTitle, handler, shortcuts, shortcutDescription)
+    {
+        var button = document.createElement("button");
+        button.className = "status-bar-item";
+        button.id = buttonId;
+        button.title = String.vsprintf(buttonTitle, [shortcuts[0].name]);
+        button.disabled = true;
+        button.appendChild(document.createElement("img"));
+        button.addEventListener("click", handler, false);
+        this.sidebarButtonsElement.appendChild(button);
+
+        var shortcutNames = [];
+        for (var i = 0; i < shortcuts.length; ++i) {
+            this.registerShortcut(shortcuts[i].key, handler);
+            shortcutNames.push(shortcuts[i].name);
+        }
+        var section = WebInspector.shortcutsHelp.section(WebInspector.UIString("Scripts Panel"));
+        section.addAlternateKeys(shortcutNames, shortcutDescription);
+
+        return button;
     },
 
     searchCanceled: function()

@@ -1,3 +1,21 @@
+2011-05-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: display keyboard shortcuts in scripts panel sidebar buttons tooltip text.
+        https://bugs.webkit.org/show_bug.cgi?id=61358
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/CallStackSidebarPane.js:
+        (WebInspector.CallStackSidebarPane.prototype._selectedPlacardByIndex):
+        (WebInspector.CallStackSidebarPane.prototype.registerShortcuts):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype.registerShortcut):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._createSidebarButtons):
+        (WebInspector.ScriptsPanel.prototype._createSidebarButtonAndRegisterShortcuts):
+
 2011-05-24  Philippe Normand  <pnormand@igalia.com>
 
         Reviewed by Andres Kling.
