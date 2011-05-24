@@ -1,3 +1,17 @@
+2011-05-24  Zan Dobersek  <zandobersek@gmail.com> and Philippe Normand  <pnormand@igalia.com>
+
+        Reviewed by Kenneth Russell.
+
+        Enable FloatArray usage outside WebGL guards
+        https://bugs.webkit.org/show_bug.cgi?id=61356
+
+        * webaudio/AudioBuffer.cpp:
+        * webaudio/AudioBuffer.idl:
+        * webaudio/RealtimeAnalyser.cpp:
+        * webaudio/RealtimeAnalyser.h:
+        * webaudio/RealtimeAnalyserNode.h:
+        * webaudio/RealtimeAnalyserNode.idl:
+
 2011-05-24  Adam Klein  <adamk@chromium.org>
 
         Unreviewed, rolling out r87145.

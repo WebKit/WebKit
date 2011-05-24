@@ -28,7 +28,7 @@
 
 module audio {
     interface [
-        Conditional=WEB_AUDIO & WEBGL
+        Conditional=WEB_AUDIO
     ] AudioBuffer {
         readonly attribute long length; // in sample-frames
         readonly attribute float duration; // in seconds

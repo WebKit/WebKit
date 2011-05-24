@@ -31,11 +31,8 @@
 #include "AudioBus.h"
 #include "AudioUtilities.h"
 #include "FFTFrame.h"
-
-#if ENABLE(WEBGL)
 #include "Float32Array.h"
 #include "Uint8Array.h"
-#endif
 
 #include <algorithm>
 #include <limits.h>
@@ -193,8 +190,6 @@ void RealtimeAnalyser::doFFTAnalysis()
     }
 }
 
-#if ENABLE(WEBGL)
-
 void RealtimeAnalyser::getFloatFrequencyData(Float32Array* destinationArray)
 {
     ASSERT(isMainThread());
@@ -293,8 +288,6 @@ void RealtimeAnalyser::getByteTimeDomainData(Uint8Array* destinationArray)
         }
     }
 }
-
-#endif // WEBGL
 
 } // namespace WebCore
 

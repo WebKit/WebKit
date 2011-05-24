@@ -59,11 +59,9 @@ public:
     void setSmoothingTimeConstant(float k) { m_analyser.setSmoothingTimeConstant(k); }
     float smoothingTimeConstant() const { return m_analyser.smoothingTimeConstant(); }
 
-#if ENABLE(WEBGL)
     void getFloatFrequencyData(Float32Array* array) { m_analyser.getFloatFrequencyData(array); }
     void getByteFrequencyData(Uint8Array* array) { m_analyser.getByteFrequencyData(array); }
     void getByteTimeDomainData(Uint8Array* array) { m_analyser.getByteTimeDomainData(array); }
-#endif
 
 private:
     RealtimeAnalyserNode(AudioContext*, double sampleRate);

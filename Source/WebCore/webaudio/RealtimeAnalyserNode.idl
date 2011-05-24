@@ -39,10 +39,10 @@ module audio {
         
         // Copies the current frequency data into the passed array.
         // If the array has fewer elements than the frequencyBinCount, the excess elements will be dropped.
-        [Conditional=WEBGL] void getFloatFrequencyData(in Float32Array array);
-        [Conditional=WEBGL] void getByteFrequencyData(in Uint8Array array);
+        void getFloatFrequencyData(in Float32Array array);
+        void getByteFrequencyData(in Uint8Array array);
 
         // Real-time waveform data
-        [Conditional=WEBGL] void getByteTimeDomainData(in Uint8Array array);
+        void getByteTimeDomainData(in Uint8Array array);
     };
 }
