@@ -1,3 +1,22 @@
+2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] selectstart-by-drag.html and selectstart-by-double-triple-clicks.html
+        fail on Windows and Linux
+        https://bugs.webkit.org/show_bug.cgi?id=61377
+
+        selectstart-by-drag.html pass on Chromium Windows and Chromium Linux so don't use
+        the failing test expectation on Windows port.
+
+        In selectstart-by-double-triple-clicks.html, /^\s|\s$/ isn't recognized by V8 so
+        replace it by /^[ \t]|[ \t]$/.
+
+        * platform/chromium/fast/events/selectstart-by-drag-expected.txt: Copied from
+        LayoutTests/fast/events/selectstart-by-drag-expected.txt.
+        * fast/events/selectstart-by-double-triple-clicks.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-05-24  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Eric Seidel.

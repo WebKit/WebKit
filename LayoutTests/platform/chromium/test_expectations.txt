@@ -4121,9 +4121,6 @@ BUGCR83555 WIN LINUX : fast/block/positioning/058.html = IMAGE+TEXT
 
 BUGWK61326 : fast/storage/storage-detached-iframe.html = CRASH
 
-BUGCR83682 WIN LINUX : fast/events/selectstart-by-double-triple-clicks.html = TEXT
-BUGCR83682 WIN LINUX : fast/events/selectstart-by-drag.html = TEXT
-
 BUGCR83683 : fast/dom/HTMLLinkElement/prerender.html = TEXT
 
 // Regression from webkit r87118
