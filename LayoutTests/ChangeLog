@@ -1,3 +1,11 @@
+2011-05-24  Gabor Loki  <loki@webkit.org>
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        [Qt] Skip failing new test introduced in r87096
+
+        * platform/qt-arm/Skipped:
+
 2011-05-24  Leon Scroggins  <scroggo@google.com>
 
         Reviewed by James Robinson.

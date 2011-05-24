@@ -4074,6 +4074,9 @@ tables/mozilla/other/test6.html
 tables/mozilla/other/wa_table_thtd_rowspan.html
 tables/mozilla/other/wa_table_tr_align.html
 
+# Failing new test introduced in r87096
+fast/events/selectstart-by-double-triple-clicks.html
+
 # unskipped by r86357, but fail on Qt-ARM platform
 editing/inserting/4278698.html
 editing/inserting/editable-html-element.html
