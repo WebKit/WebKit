@@ -26,7 +26,7 @@
 #ifndef NPJSObjectWrapperMap_h
 #define NPJSObjectWrapperMap_h
 
-#include <JavaScriptCore/HandleHeap.h>
+#include <heap/Weak.h>
 #include <wtf/Forward.h>
 #include <wtf/HashMap.h>
 
