@@ -3804,8 +3804,6 @@
             'platform/chromium/ReadableDataObject.cpp',
             'platform/chromium/ReadableDataObject.h',
             'platform/chromium/SSLKeyGeneratorChromium.cpp',
-            'platform/chromium/ScrollAnimatorChromiumMac.h',
-            'platform/chromium/ScrollAnimatorChromiumMac.mm',
             'platform/chromium/ScrollbarOverlayUtilitiesMac.h',
             'platform/chromium/ScrollbarOverlayUtilitiesMac.mm',
             'platform/chromium/ScrollbarThemeChromium.cpp',

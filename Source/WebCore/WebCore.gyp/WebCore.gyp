@@ -1146,10 +1146,6 @@
               'ScrollbarPrefsObserver=ChromiumWebCoreObjCScrollbarPrefsObserver',
               'WebCoreRenderThemeNotificationObserver=ChromiumWebCoreObjCWebCoreRenderThemeNotificationObserver',
               'WebFontCache=ChromiumWebCoreObjCWebFontCache',
-              'ScrollAnimationHelperDelegate=ChromiumWebCoreObjCScrollAnimationHelperDelegate',
-              'ScrollbarPainterControllerDelegate=ChromiumWebCoreObjCScrollbarPainterControllerDelegate',
-              'ScrollbarPainterDelegate=ChromiumWebCoreObjCScrollbarPainterDelegate',
-              'ScrollbarPartAnimation=ChromiumWebCoreObjCScrollbarPartAnimation',
             ],
             'include_dirs': [
               '../../../WebKitLibraries',

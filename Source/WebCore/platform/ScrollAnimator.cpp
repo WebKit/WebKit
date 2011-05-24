@@ -41,7 +41,7 @@ using namespace std;
 
 namespace WebCore {
 
-#if !ENABLE(SMOOTH_SCROLLING) && !(PLATFORM(CHROMIUM) && OS(DARWIN))
+#if !ENABLE(SMOOTH_SCROLLING)
 PassOwnPtr<ScrollAnimator> ScrollAnimator::create(ScrollableArea* scrollableArea)
 {
     return adoptPtr(new ScrollAnimator(scrollableArea));

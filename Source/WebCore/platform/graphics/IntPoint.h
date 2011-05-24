@@ -37,7 +37,7 @@ typedef struct CGPoint CGPoint;
 #endif
 
 
-#if OS(DARWIN)
+#if PLATFORM(MAC)
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGPoint NSPoint;
 #else
@@ -119,7 +119,7 @@ public:
     operator CGPoint() const;
 #endif
 
-#if OS(DARWIN) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     explicit IntPoint(const NSPoint&); // don't do this implicitly since it's lossy
     operator NSPoint() const;
 #endif

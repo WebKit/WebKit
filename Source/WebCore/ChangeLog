@@ -1,3 +1,21 @@
+2011-05-23  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87118.
+        http://trac.webkit.org/changeset/87118
+        https://bugs.webkit.org/show_bug.cgi?id=61347
+
+        patch breaks layout tests
+        (https://bugs.webkit.org/show_bug.cgi?id=61342), and chromium
+        tests (browser_test MacTestCmdUp and ui_test Scrollbar)
+        (Requested by ukai_ on #webkit).
+
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * platform/ScrollAnimator.cpp:
+        * platform/chromium/ScrollAnimatorChromiumMac.h: Removed.
+        * platform/chromium/ScrollAnimatorChromiumMac.mm: Removed.
+        * platform/graphics/IntPoint.h:
+
 2011-05-23  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Adam Barth.
