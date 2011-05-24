@@ -64,8 +64,6 @@ private:
     virtual void layout();
     virtual void paint(PaintInfo&, int parentX, int parentY);
 
-    virtual bool requiresLayer() const { return false; }
-
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 
     virtual AffineTransform localTransform() const { return m_localTransform; }

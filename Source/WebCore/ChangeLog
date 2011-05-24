@@ -1,3 +1,13 @@
+2011-05-24  Rob Buis  <rbuis@rim.com>
+
+        Rubber-stamped by Dirk Schulze.
+
+        Remove requiresLayer inlines, already provided by RenderSVGModelObject.
+
+        * rendering/svg/RenderSVGHiddenContainer.h:
+        (WebCore::RenderSVGHiddenContainer::isSVGHiddenContainer):
+        * rendering/svg/RenderSVGImage.h:
+
 2011-05-24  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed, build fix.

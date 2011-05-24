@@ -40,7 +40,6 @@ protected:
 
 private:
     virtual bool isSVGHiddenContainer() const { return true; }
-    virtual bool requiresLayer() const { return false; }
 
     virtual void paint(PaintInfo&, int parentX, int parentY);
     
