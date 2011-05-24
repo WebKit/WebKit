@@ -257,6 +257,8 @@ fast/events/scrollbar-double-click.html
 fast/events/select-element.html
 fast/events/select-onchange-crash.html
 fast/events/selectionchange-user-initiated.html
+fast/events/selectstart-by-double-triple-clicks.html
+fast/events/selectstart-by-drag.html
 fast/events/selectstart-during-autoscroll.html
 fast/events/space-scroll-event.html
 fast/events/special-key-events-in-input-text.html
