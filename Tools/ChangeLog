@@ -1,3 +1,11 @@
+2011-05-24  Adam Roben  <aroben@apple.com>
+
+        Don't allow forcing builds through the build.webkit.org web interface
+
+        Someone has been forcing bogus builds.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2011-05-24  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Adam Roben.
