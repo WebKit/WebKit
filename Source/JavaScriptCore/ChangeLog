@@ -1,3 +1,30 @@
+2011-05-24  Geoffrey Garen  <ggaren@apple.com>
+
+        Rubber-stamped by Oliver Hunt.
+
+        Split out function definitions and class definitions from class
+        declarations in MarkStack.h, for readability.
+
+        * heap/MarkStack.h:
+        (JSC::MarkStack::MarkStack):
+        (JSC::MarkStack::~MarkStack):
+        (JSC::MarkStack::addOpaqueRoot):
+        (JSC::MarkStack::containsOpaqueRoot):
+        (JSC::MarkStack::opaqueRootCount):
+        (JSC::MarkSet::MarkSet):
+        (JSC::MarkStack::allocateStack):
+        (JSC::MarkStack::releaseStack):
+        (JSC::MarkStack::pageSize):
+        (JSC::::MarkStackArray):
+        (JSC::::~MarkStackArray):
+        (JSC::::expand):
+        (JSC::::append):
+        (JSC::::removeLast):
+        (JSC::::last):
+        (JSC::::isEmpty):
+        (JSC::::size):
+        (JSC::::shrinkAllocation):
+
 2011-05-24  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
