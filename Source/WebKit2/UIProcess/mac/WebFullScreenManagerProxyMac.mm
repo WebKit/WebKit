@@ -40,7 +40,7 @@ void WebFullScreenManagerProxy::invalidate()
     if (!m_webView)
         return;
     
-    [[m_webView fullScreenWindowController] close];
+    [m_webView closeFullScreenWindowController];
     m_webView = 0;
 }
 

@@ -435,6 +435,8 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context)
     
     if (_isExitingFullScreen)
         [self finishedExitFullScreenAnimation:YES];
+
+    [super close];
 }
 
 #pragma mark -

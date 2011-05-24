@@ -84,6 +84,7 @@ namespace WebKit {
 
 #if ENABLE(FULLSCREEN_API)
 - (WKFullScreenWindowController*)fullScreenWindowController;
+- (void)closeFullScreenWindowController;
 #endif
 
 - (void)_cacheWindowBottomCornerRect;
