@@ -1,3 +1,37 @@
+2011-05-23  Antti Koivisto  <antti@apple.com>
+
+        Reviewed by Oliver Hunt.
+    
+        REGRESSION (r45620): Node list caches never deleted
+        https://bugs.webkit.org/show_bug.cgi?id=61268
+        <rdar://problem/9467379>
+        
+        NodeListsNodeData::isEmpty() tests if RefCounted objects have refcount of zero which is impossible.
+        As a results NodeList caches are never deleted, causing bad performance in DOM mutating operations as
+        they repeatedly invalidate caches.
+
+        * dom/Node.cpp:
+        (WebCore::Node::childNodes):
+            Construct m_childNodeListCaches lazily.
+
+        (WebCore::Node::unregisterDynamicNodeList):
+        (WebCore::Node::notifyLocalNodeListsAttributeChanged):
+        (WebCore::Node::notifyLocalNodeListsChildrenChanged):
+        (WebCore::Node::removeNodeListCacheIfPossible): 
+            Add a helper.
+
+        (WebCore::NodeListsNodeData::invalidateCaches):
+            Invalidate m_childNodeListCaches by clearing it if there are no additional clients
+
+        (WebCore::NodeListsNodeData::isEmpty):
+            Test emptiness of various NodeListCaches simply by testing hash emptiness instead of testing for non-zero ref count of items.
+            m_childNodeListCaches is empty if it is null.
+
+        * dom/Node.h: 
+        * dom/NodeRareData.h:
+        (WebCore::NodeListsNodeData::NodeListsNodeData):
+            Construct m_childNodeListCaches lazily.
+
 2011-05-24  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

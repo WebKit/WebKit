@@ -610,6 +610,8 @@ PassRefPtr<NodeList> Node::childNodes()
             treeScope()->addNodeListCache();
     }
 
+    if (!data->nodeLists()->m_childNodeListCaches)
+        data->nodeLists()->m_childNodeListCaches = DynamicNodeList::Caches::create();
     return ChildNodeList::create(this, data->nodeLists()->m_childNodeListCaches.get());
 }
 
@@ -991,15 +993,11 @@ void Node::unregisterDynamicNodeList(DynamicNodeList* list)
     if (list->hasOwnCaches()) {
         NodeRareData* data = rareData();
         data->nodeLists()->m_listsWithCaches.remove(list);
-        if (data->nodeLists()->isEmpty()) {
-            data->clearNodeLists();
-            if (treeScope())
-                treeScope()->removeNodeListCache();
-        }
+        removeNodeListCacheIfPossible();
     }
 }
 
-void Node::notifyLocalNodeListsAttributeChanged()
+inline void Node::notifyLocalNodeListsAttributeChanged()
 {
     if (!hasRareData())
         return;
@@ -1012,10 +1010,7 @@ void Node::notifyLocalNodeListsAttributeChanged()
     else
         data->nodeLists()->invalidateCaches();
 
-    if (data->nodeLists()->isEmpty()) {
-        data->clearNodeLists();
-        treeScope()->removeNodeListCache();
-    }
+    removeNodeListCacheIfPossible();
 }
 
 void Node::notifyNodeListsAttributeChanged()
@@ -1024,7 +1019,7 @@ void Node::notifyNodeListsAttributeChanged()
         n->notifyLocalNodeListsAttributeChanged();
 }
 
-void Node::notifyLocalNodeListsChildrenChanged()
+inline void Node::notifyLocalNodeListsChildrenChanged()
 {
     if (!hasRareData())
         return;
@@ -1038,10 +1033,18 @@ void Node::notifyLocalNodeListsChildrenChanged()
     for (NodeListsNodeData::NodeListSet::iterator i = data->nodeLists()->m_listsWithCaches.begin(); i != end; ++i)
         (*i)->invalidateCache();
 
-    if (data->nodeLists()->isEmpty()) {
-        data->clearNodeLists();
-        treeScope()->removeNodeListCache();
-    }
+    removeNodeListCacheIfPossible();
+}
+    
+void Node::removeNodeListCacheIfPossible()
+{
+    ASSERT(rareData()->nodeLists());
+
+    NodeRareData* data = rareData();
+    if (!data->nodeLists()->isEmpty())
+        return;
+    data->clearNodeLists();
+    treeScope()->removeNodeListCache();
 }
 
 void Node::notifyNodeListsChildrenChanged()
@@ -2378,7 +2381,12 @@ void Node::formatForDebugger(char* buffer, unsigned length) const
 
 void NodeListsNodeData::invalidateCaches()
 {
-    m_childNodeListCaches->reset();
+    if (m_childNodeListCaches) {
+        if (m_childNodeListCaches->hasOneRef())
+            m_childNodeListCaches.clear();
+        else
+            m_childNodeListCaches->reset();
+    }
 
     if (m_labelsNodeListCache)
         m_labelsNodeListCache->invalidateCache();
@@ -2409,32 +2417,17 @@ bool NodeListsNodeData::isEmpty() const
     if (!m_listsWithCaches.isEmpty())
         return false;
 
-    if (m_childNodeListCaches->refCount())
+    if (m_childNodeListCaches)
         return false;
-    
-    TagNodeListCache::const_iterator tagCacheEnd = m_tagNodeListCache.end();
-    for (TagNodeListCache::const_iterator it = m_tagNodeListCache.begin(); it != tagCacheEnd; ++it) {
-        if (it->second->refCount())
-            return false;
-    }
 
-    TagNodeListCacheNS::const_iterator tagCacheNSEnd = m_tagNodeListCacheNS.end();
-    for (TagNodeListCacheNS::const_iterator it = m_tagNodeListCacheNS.begin(); it != tagCacheNSEnd; ++it) {
-        if (it->second->refCount())
-            return false;
-    }
-
-    ClassNodeListCache::const_iterator classCacheEnd = m_classNodeListCache.end();
-    for (ClassNodeListCache::const_iterator it = m_classNodeListCache.begin(); it != classCacheEnd; ++it) {
-        if (it->second->refCount())
-            return false;
-    }
-
-    NameNodeListCache::const_iterator nameCacheEnd = m_nameNodeListCache.end();
-    for (NameNodeListCache::const_iterator it = m_nameNodeListCache.begin(); it != nameCacheEnd; ++it) {
-        if (it->second->refCount())
-            return false;
-    }
+    if (!m_tagNodeListCache.isEmpty())
+        return false;
+    if (!m_tagNodeListCacheNS.isEmpty())
+        return false;
+    if (!m_classNodeListCache.isEmpty())
+        return false;
+    if (!m_nameNodeListCache.isEmpty())
+        return false;
 
     if (m_labelsNodeListCache)
         return false;

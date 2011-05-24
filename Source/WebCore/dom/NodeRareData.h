@@ -69,10 +69,7 @@ public:
     bool isEmpty() const;
 
 private:
-    NodeListsNodeData()
-        : m_childNodeListCaches(DynamicNodeList::Caches::create()), m_labelsNodeListCache(0)
-    {
-    }
+    NodeListsNodeData() : m_labelsNodeListCache(0) {}
 };
     
 class NodeRareData {

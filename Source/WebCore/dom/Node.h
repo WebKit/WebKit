@@ -503,6 +503,7 @@ public:
     void showTreeAndMark(const Node* markedNode1, const char* markedLabel1, const Node* markedNode2 = 0, const char* markedLabel2 = 0) const;
 #endif
 
+    void removeNodeListCacheIfPossible();
     void registerDynamicNodeList(DynamicNodeList*);
     void unregisterDynamicNodeList(DynamicNodeList*);
     void notifyNodeListsChildrenChanged();
