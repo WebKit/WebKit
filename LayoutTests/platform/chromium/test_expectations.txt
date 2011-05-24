@@ -641,6 +641,7 @@ BUGCR24197 SKIP : fast/css/disabled-author-styles.html = FAIL
 
 // Needs eventSender.scalePageBy().
 BUGWK58013 : fast/repaint/scale-page-shrink.html = IMAGE+TEXT
+BUGWK58013 : fast/events/scroll-in-scaled-page-with-overflow-hidden.html = TEXT
 
 // -----------------------------------------------------------------
 // Inspector tests
@@ -757,7 +758,7 @@ BUGCR6139 LEOPARD : fast/forms/select-writing-direction-natural.html = IMAGE+TEX
 // Plugin tests
 // -----------------------------------------------------------------
 BUGCR21841 MAC WIN DEBUG : plugins/destroy-during-npp-new.html = CRASH PASS
-BUGCR61799 : plugins/evaluate-js-after-removing-plugin-element.html = CRASH TEXT
+BUGCR61799 : plugins/evaluate-js-after-removing-plugin-element.html = CRASH TEXT TIMEOUT
 BUGCR37962 MAC : plugins/iframe-shims.html = TEXT PASS TIMEOUT
 BUGCR10351 MAC : plugins/inner-html-display-none.html = FAIL
 BUGWK48164 MAC LINUX WIN : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT

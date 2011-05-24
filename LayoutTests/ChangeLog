@@ -1,3 +1,9 @@
+2011-05-24  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed. Updating Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-24  Kenneth Russell  <kbr@google.com>
 
         Reviewed by James Robinson.
