@@ -53,7 +53,7 @@
 #define JS_EXPORTDATA
 #endif
 
-#define WTF_EXPORT_PRIVATE JS_EXPORTDATA
-#define JS_EXPORT_PRIVATE JS_EXPORTDATA
+#define WTF_EXPORT_PRIVATE
+#define JS_EXPORT_PRIVATE
 
 #endif // config_h
