@@ -55,8 +55,18 @@ public:
     // Returns the current size of the WebWidget.
     virtual WebSize size() = 0;
 
+    // Used to group a series of resize events. For example, if the user
+    // drags a resizer then willStartLiveResize will be called, followed by a
+    // sequence of resize events, ending with willEndLiveResize when the user
+    // lets go of the resizer.
+    virtual void willStartLiveResize() = 0;
+
     // Called to resize the WebWidget.
     virtual void resize(const WebSize&) = 0;
+
+    // Ends a group of resize events that was started with a call to
+    // willStartLiveResize.
+    virtual void willEndLiveResize() = 0;
 
     // Called to update imperative animation state.  This should be called before
     // paint, although the client can rate-limit these calls.

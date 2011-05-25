@@ -972,6 +972,12 @@ void WebViewImpl::close()
     deref();  // Balances ref() acquired in WebView::create
 }
 
+void WebViewImpl::willStartLiveResize()
+{
+    if (mainFrameImpl() && mainFrameImpl()->frameView())
+        mainFrameImpl()->frameView()->willStartLiveResize();
+}
+
 void WebViewImpl::resize(const WebSize& newSize)
 {
     if (m_size == newSize)
@@ -1000,6 +1006,12 @@ void WebViewImpl::resize(const WebSize& newSize)
                                                        std::max(1, m_size.height)));
     }
 #endif
+}
+
+void WebViewImpl::willEndLiveResize()
+{
+    if (mainFrameImpl() && mainFrameImpl()->frameView())
+        mainFrameImpl()->frameView()->willEndLiveResize();
 }
 
 void WebViewImpl::animate()

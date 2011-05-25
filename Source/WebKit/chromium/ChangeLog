@@ -1,3 +1,20 @@
+2011-05-25  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Expose willStartLiveResize and willEndLiveResize in WebWidget
+        https://bugs.webkit.org/show_bug.cgi?id=60518
+
+        * public/WebWidget.h:
+        * src/WebPopupMenuImpl.cpp:
+        (WebKit::WebPopupMenuImpl::willStartLiveResize):
+        (WebKit::WebPopupMenuImpl::willEndLiveResize):
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::willStartLiveResize):
+        (WebKit::WebViewImpl::willEndLiveResize):
+        * src/WebViewImpl.h:
+
 2011-05-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87257.
