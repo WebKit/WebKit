@@ -92,3 +92,13 @@
 |         <tr>
 |           <td>
 |             "A"
+
+#data
+<legend>test</legend>
+#errors
+#document
+| <html>
+|   <head>
+|   <body>
+|     <legend>
+|       "test"

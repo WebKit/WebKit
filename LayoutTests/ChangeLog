@@ -1,3 +1,13 @@
+2011-05-24  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Hajime Morita.
+
+        <legend> element is dropped on the floor
+        https://bugs.webkit.org/show_bug.cgi?id=18691
+
+        * html5lib/resources/webkit02.dat: Added a passing
+        test for <legend> parsing.
+
 2011-05-24  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Tony Chang.
