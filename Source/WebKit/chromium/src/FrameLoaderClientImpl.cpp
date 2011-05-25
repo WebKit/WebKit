@@ -634,6 +634,9 @@ void FrameLoaderClientImpl::dispatchDidNavigateWithinPage()
             // insufficient to catch and properly flag these transitions. Once a
             // proper fix for this bug is identified and applied the following
             // block may no longer be required.
+            //
+            // FIXME: Why do we call isProcessingUserGesture here but none of
+            // the other ports do?
             bool wasClientRedirect =
                 (url == m_expectedClientRedirectDest && chainEnd == m_expectedClientRedirectSrc)
                 || !m_webFrame->isProcessingUserGesture();

@@ -1,3 +1,19 @@
+2011-05-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add FIXME comments about removing FrameLoader::isProcessingUserGesture
+        https://bugs.webkit.org/show_bug.cgi?id=61395
+
+        All the callers of the API are wrong.  They should call the more modern
+        static member function of ScriptController instead.  I'll remove the
+        FrameLoader function in a future patch.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::processingUserGesture):
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::click):
+
 2011-05-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix style error.

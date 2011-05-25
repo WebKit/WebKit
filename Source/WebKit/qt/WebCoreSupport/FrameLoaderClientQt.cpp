@@ -113,6 +113,7 @@ static QString drtDescriptionSuitableForTestResult(WebCore::Frame* webCoreFrame)
 
 static QString drtPrintFrameUserGestureStatus(WebCore::Frame* frame)
 {
+    // FIXME: We should call ScriptController::processingUserGesture().
     if (frame->loader()->isProcessingUserGesture())
         return QString::fromLatin1("Frame with user gesture \"%1\"").arg(QLatin1String("true"));
     return QString::fromLatin1("Frame with user gesture \"%1\"").arg(QLatin1String("false"));

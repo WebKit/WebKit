@@ -130,7 +130,7 @@ void RenderFileUploadControl::chooseIconForFiles(FileChooser* chooser, const Vec
 
 void RenderFileUploadControl::click()
 {
-    // Requires a user gesture to open the file dialog.
+    // FIXME: We should call ScriptController::processingUserGesture().
     if (!frame() || !frame()->loader()->isProcessingUserGesture())
         return;
     if (Chrome* chromePointer = chrome())

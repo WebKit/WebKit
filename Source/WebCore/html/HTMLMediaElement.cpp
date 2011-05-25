@@ -2402,11 +2402,12 @@ void HTMLMediaElement::defaultEventHandler(Event* event)
 
 bool HTMLMediaElement::processingUserGesture() const
 {
+    // FIXME: We should call ScriptController::processingUserGesture() so
+    // we know what to do without a Frame.
     Frame* frame = document()->frame();
-    FrameLoader* loader = frame ? frame->loader() : 0;
-
-    // return 'true' for safety if we don't know the answer 
-    return loader ? loader->isProcessingUserGesture() : true;
+    if (!frame)
+        return true;
+    return frame->loader()->isProcessingUserGesture();
 }
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

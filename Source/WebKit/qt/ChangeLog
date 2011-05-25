@@ -1,3 +1,13 @@
+2011-05-24  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add FIXME comments about removing FrameLoader::isProcessingUserGesture
+        https://bugs.webkit.org/show_bug.cgi?id=61395
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (drtPrintFrameUserGestureStatus):
+
 2011-05-23  Luiz Agostini  <luiz.agostini@openbossa.org>
 
         Reviewed by Andreas Kling.

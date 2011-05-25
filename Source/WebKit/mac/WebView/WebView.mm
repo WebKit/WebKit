@@ -1238,6 +1238,7 @@ static bool fastDocumentTeardownEnabled()
 - (BOOL)_isProcessingUserGesture
 {
     WebFrame *frame = [self mainFrame];
+    // FIXME: We should call ScriptController::processingUserGesture().
     return core(frame)->loader()->isProcessingUserGesture();
 }
 
