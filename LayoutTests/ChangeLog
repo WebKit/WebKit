@@ -1,3 +1,56 @@
+2011-05-25  Felician Marton  <marton.felician.zoltan@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Added dynamic tests for missing properties (and attributes) in TextElement. The corresponding Mac pixel test results also added.
+        https://bugs.webkit.org/show_bug.cgi?id=59677
+
+        * platform/mac/svg/dynamic-updates/SVGTextElement-dom-dx-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-dom-dy-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-dom-rotate-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-dom-x-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-dom-y-attr-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-svgdom-dx-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-svgdom-dy-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-svgdom-x-prop-expected.png: Added.
+        * platform/mac/svg/dynamic-updates/SVGTextElement-svgdom-y-prop-expected.png: Added.
+        * svg/dynamic-updates/SVGTextElement-dom-dx-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGTextElement-dom-dx-attr.html: Added.
+        * svg/dynamic-updates/SVGTextElement-dom-dy-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGTextElement-dom-dy-attr.html: Added.
+        * svg/dynamic-updates/SVGTextElement-dom-rotate-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGTextElement-dom-rotate-attr.html: Added.
+        * svg/dynamic-updates/SVGTextElement-dom-x-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGTextElement-dom-x-attr.html: Added.
+        * svg/dynamic-updates/SVGTextElement-dom-y-attr-expected.txt: Added.
+        * svg/dynamic-updates/SVGTextElement-dom-y-attr.html: Added.
+        * svg/dynamic-updates/SVGTextElement-svgdom-dx-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGTextElement-svgdom-dx-prop.html: Added.
+        * svg/dynamic-updates/SVGTextElement-svgdom-dy-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGTextElement-svgdom-dy-prop.html: Added.
+        * svg/dynamic-updates/SVGTextElement-svgdom-x-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGTextElement-svgdom-x-prop.html: Added.
+        * svg/dynamic-updates/SVGTextElement-svgdom-y-prop-expected.txt: Added.
+        * svg/dynamic-updates/SVGTextElement-svgdom-y-prop.html: Added.
+        * svg/dynamic-updates/script-tests/SVGTextElement-dom-dx-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGTextElement-dom-dy-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGTextElement-dom-rotate-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGTextElement-dom-x-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGTextElement-dom-y-attr.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGTextElement-svgdom-dx-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGTextElement-svgdom-dy-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGTextElement-svgdom-x-prop.js: Added.
+        (executeTest):
+        * svg/dynamic-updates/script-tests/SVGTextElement-svgdom-y-prop.js: Added.
+        (executeTest):
+
 2011-05-25  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.
