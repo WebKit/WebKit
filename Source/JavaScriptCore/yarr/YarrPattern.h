@@ -297,21 +297,6 @@ struct TermChain {
     Vector<TermChain> hotTerms;
 };
 
-struct BeginChar {
-    BeginChar()
-        : value(0)
-        , mask(0)
-    {}
-
-    BeginChar(unsigned value, unsigned mask)
-        : value(value)
-        , mask(mask)
-    {}
-
-    unsigned value;
-    unsigned mask;
-};
-
 struct YarrPattern {
     YarrPattern(const UString& pattern, bool ignoreCase, bool multiline, const char** error);
 
@@ -327,7 +312,6 @@ struct YarrPattern {
         m_maxBackReference = 0;
 
         m_containsBackreferences = false;
-        m_containsBeginChars = false;
         m_containsBOL = false;
 
         newlineCached = 0;
@@ -342,7 +326,6 @@ struct YarrPattern {
         m_disjunctions.clear();
         deleteAllValues(m_userCharacterClasses);
         m_userCharacterClasses.clear();
-        m_beginChars.clear();
     }
 
     bool containsIllegalBackReference()
@@ -396,14 +379,12 @@ struct YarrPattern {
     bool m_ignoreCase : 1;
     bool m_multiline : 1;
     bool m_containsBackreferences : 1;
-    bool m_containsBeginChars : 1;
     bool m_containsBOL : 1;
     unsigned m_numSubpatterns;
     unsigned m_maxBackReference;
     PatternDisjunction* m_body;
     Vector<PatternDisjunction*, 4> m_disjunctions;
     Vector<CharacterClass*> m_userCharacterClasses;
-    Vector<BeginChar> m_beginChars;
 
 private:
     const char* compile(const UString& patternString);

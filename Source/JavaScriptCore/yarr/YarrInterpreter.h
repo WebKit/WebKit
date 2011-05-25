@@ -328,7 +328,6 @@ public:
         : m_body(body)
         , m_ignoreCase(pattern.m_ignoreCase)
         , m_multiline(pattern.m_multiline)
-        , m_containsBeginChars(pattern.m_containsBeginChars)
         , m_allocator(allocator)
     {
         newlineCharacterClass = pattern.newlineCharacterClass();
@@ -340,8 +339,6 @@ public:
         // array, so that it won't delete them on destruction.  We'll
         // take responsibility for that.
         pattern.m_userCharacterClasses.clear();
-
-        m_beginChars.append(pattern.m_beginChars);
     }
 
     ~BytecodePattern()
@@ -353,15 +350,12 @@ public:
     OwnPtr<ByteDisjunction> m_body;
     bool m_ignoreCase;
     bool m_multiline;
-    bool m_containsBeginChars;
     // Each BytecodePattern is associated with a RegExp, each RegExp is associated
     // with a JSGlobalData.  Cache a pointer to out JSGlobalData's m_regExpAllocator.
     BumpPointerAllocator* m_allocator;
 
     CharacterClass* newlineCharacterClass;
     CharacterClass* wordcharCharacterClass;
-
-    Vector<BeginChar> m_beginChars;
 
 private:
     Vector<ByteDisjunction*> m_allParenthesesInfo;
