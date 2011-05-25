@@ -67,6 +67,7 @@ typedef struct _NSRect NSRect;
 #endif
 
 #ifdef __OBJC__
+@class AVAsset;
 @class NSArray;
 @class NSButtonCell;
 @class NSData;
@@ -87,6 +88,7 @@ typedef struct _NSRect NSRect;
 @class QTMovie;
 @class QTMovieView;
 #else
+class AVAsset;
 class NSArray;
 class NSButtonCell;
 class NSData;
@@ -159,6 +161,7 @@ extern NSString *(*wkQTMovieMaxTimeLoadedChangeNotification)(void);
 extern float (*wkQTMovieMaxTimeSeekable)(QTMovie*);
 extern int (*wkQTMovieGetType)(QTMovie*);
 extern BOOL (*wkQTMovieHasClosedCaptions)(QTMovie*);
+extern NSURL *(*wkQTMovieResolvedURL)(QTMovie*);
 extern void (*wkQTMovieSetShowClosedCaptions)(QTMovie*, BOOL);
 extern void (*wkQTMovieSelectPreferredAlternates)(QTMovie*);
 extern void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);
@@ -263,6 +266,8 @@ extern bool (*wkScrollbarPainterUsesOverlayScrollers)(void);
 extern bool (*wkExecutableWasLinkedOnOrBeforeSnowLeopard)(void);
 
 extern CFStringRef (*wkCopyDefaultSearchProviderDisplayName)(void);
+
+extern NSURL *(*wkAVAssetResolvedURL)(AVAsset*);
 #endif
 
 extern void (*wkUnregisterUniqueIdForElement)(id element);
@@ -292,7 +297,6 @@ extern CFURLRef (*wkGetCFURLResponseURL)(CFURLResponseRef);
 extern CFHTTPMessageRef (*wkGetCFURLResponseHTTPResponse)(CFURLResponseRef);
 extern CFStringRef (*wkCopyCFURLResponseSuggestedFilename)(CFURLResponseRef);
 extern void (*wkSetCFURLResponseMIMEType)(CFURLResponseRef, CFStringRef mimeType);
-
 }
 
 #endif

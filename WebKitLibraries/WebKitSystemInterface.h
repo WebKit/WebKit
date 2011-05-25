@@ -10,6 +10,7 @@
 
 @class QTMovie;
 @class QTMovieView;
+@class AVAsset;
 
 #ifdef __cplusplus
 extern "C" {
@@ -206,6 +207,7 @@ float WKQTMovieMaxTimeSeekable(QTMovie* movie);
 NSString *WKQTMovieMaxTimeLoadedChangeNotification(void);
 void WKQTMovieViewSetDrawSynchronously(QTMovieView* view, BOOL sync);
 void WKQTMovieDisableComponent(uint32_t[5]);
+NSURL *WKQTMovieResolvedURL(QTMovie* movie);
 
 CFStringRef WKCopyFoundationCacheDirectory(void);
 
@@ -454,6 +456,7 @@ NSRange WKExtractWordDefinitionTokenRangeFromContextualString(NSString *contextS
 void WKShowWordDefinitionWindow(NSAttributedString *term, NSPoint screenPoint, NSDictionary *options);
 void WKHideWordDefinitionWindow(void);
 
+NSURL* WKAVAssetResolvedURL(AVAsset*);
 #endif
 
 #ifdef __cplusplus

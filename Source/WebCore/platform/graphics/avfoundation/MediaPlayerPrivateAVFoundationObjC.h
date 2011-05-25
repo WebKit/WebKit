@@ -119,6 +119,8 @@ private:
     virtual bool hasContextRenderer() const;
     virtual bool hasLayerRenderer() const;
 
+    virtual bool hasSingleSecurityOrigin() const;
+
     RetainPtr<CGImageRef> createImageForTimeInRect(float, const IntRect&);
 
     MediaPlayer* m_player;

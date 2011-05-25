@@ -1,3 +1,18 @@
+2011-05-25  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Video fails to play on Vimeo
+        https://bugs.webkit.org/show_bug.cgi?id=61403
+
+        Added functions to retrieve the resolved URL for media types supported on 
+        mac.
+
+        * WebKitSystemInterface.h:
+        * WebKitSystemInterface.m:
+        (WKAVAssetResolvedURL): Added.
+        (WKQTMovieResolvedURL): Added.
+
 2011-05-24  Keishi Hattori  <keishi@webkit.org>
 
         Reviewed by Kent Tamura.

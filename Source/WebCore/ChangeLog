@@ -1,3 +1,37 @@
+2011-05-24  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Video fails to play on Vimeo
+        https://bugs.webkit.org/show_bug.cgi?id=61403
+
+        No new tests; Covered by media/video-canvas-source.html.
+
+        Vimeo redirects their assets from player.vimeo.com to av.vimeo.com, which is rejected
+        by AVFoundation and QTKit due to our setting a ForbidCrossSiteReference option when
+        creating an AVAsset or QTMovie. Instead, we should just reject local->remote and
+        remote->local and make our answer to hasSingleSecurityOrigin dynamic.
+
+        When checking whether a given request has a single security origin, use a 
+        SecurityOrigin to check the host, port, and scheme.
+
+        * WebCore.exp.in:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.h:
+        (WebCore::MediaPlayerPrivateAVFoundation::assetURL): Added.
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.h:
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL): Exchange ForbidCrossSiteReference
+            for ForbidRemoteReferenceToLocal and ForbidLocalReferenceToRemote
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin): Check to see that the
+            requested and resolved URLs have the same host and port.
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::commonMovieAttributes): Exchange NoCrossSiteAttribute for 
+            NoRemoteToLocalSiteAttribute and NoLocalToRemoteSiteAttribute.
+        (WebCore::MediaPlayerPrivateQTKit::hasSingleSecurityOrigin):     Check to see that the
+                requested and resolved URLs have the same host and port.
+        * platform/mac/WebCoreSystemInterface.h: Added wkAVAssetResolvedURL.
+        * platform/mac/WebCoreSystemInterface.mm: Ditto.
+
 2011-05-25  Andrew Scherkus  <scherkus@chromium.org>
 
         Reviewed by Eric Carlson.

@@ -42,6 +42,7 @@
 #import "GraphicsContext.h"
 #import "KURL.h"
 #import "MIMETypeRegistry.h"
+#import "SecurityOrigin.h"
 #import "SoftLinking.h"
 #import "TimeRanges.h"
 #import "WebCoreSystemInterface.h"
@@ -96,6 +97,8 @@ SOFT_LINK_POINTER(QTKit, QTMovieTimeScaleAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieURLAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieVolumeDidChangeNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTSecurityPolicyNoCrossSiteAttribute, NSString *)
+SOFT_LINK_POINTER(QTKit, QTSecurityPolicyNoLocalToRemoteSiteAttribute, NSString *)
+SOFT_LINK_POINTER(QTKit, QTSecurityPolicyNoRemoteToLocalSiteAttribute, NSString *)
 SOFT_LINK_POINTER(QTKit, QTVideoRendererWebKitOnlyNewImageAvailableNotification, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieApertureModeClean, NSString *)
 SOFT_LINK_POINTER(QTKit, QTMovieApertureModeAttribute, NSString *)
@@ -132,6 +135,8 @@ SOFT_LINK_POINTER(QTKit, QTMovieApertureModeAttribute, NSString *)
 #define QTMovieURLAttribute getQTMovieURLAttribute()
 #define QTMovieVolumeDidChangeNotification getQTMovieVolumeDidChangeNotification()
 #define QTSecurityPolicyNoCrossSiteAttribute getQTSecurityPolicyNoCrossSiteAttribute()
+#define QTSecurityPolicyNoLocalToRemoteSiteAttribute getQTSecurityPolicyNoLocalToRemoteSiteAttribute()
+#define QTSecurityPolicyNoRemoteToLocalSiteAttribute getQTSecurityPolicyNoRemoteToLocalSiteAttribute()
 #define QTVideoRendererWebKitOnlyNewImageAvailableNotification getQTVideoRendererWebKitOnlyNewImageAvailableNotification()
 #define QTMovieApertureModeClean getQTMovieApertureModeClean()
 #define QTMovieApertureModeAttribute getQTMovieApertureModeAttribute()
@@ -234,7 +239,9 @@ NSMutableDictionary *MediaPlayerPrivateQTKit::commonMovieAttributes()
     NSMutableDictionary *movieAttributes = [NSMutableDictionary dictionaryWithObjectsAndKeys:
             [NSNumber numberWithBool:m_player->preservesPitch()], QTMovieRateChangesPreservePitchAttribute,
             [NSNumber numberWithBool:YES], QTMoviePreventExternalURLLinksAttribute,
-            [NSNumber numberWithBool:YES], QTSecurityPolicyNoCrossSiteAttribute,
+            [NSNumber numberWithBool:NO], QTSecurityPolicyNoCrossSiteAttribute,
+            [NSNumber numberWithBool:YES], QTSecurityPolicyNoRemoteToLocalSiteAttribute,
+            [NSNumber numberWithBool:YES], QTSecurityPolicyNoLocalToRemoteSiteAttribute,
             [NSNumber numberWithBool:NO], QTMovieAskUnresolvedDataRefsAttribute,
             [NSNumber numberWithBool:NO], QTMovieLoopsAttribute,
             [NSNumber numberWithBool:!m_privateBrowsing], @"QTMovieAllowPersistentCacheAttribute",
@@ -1627,9 +1634,12 @@ void MediaPlayerPrivateQTKit::acceleratedRenderingStateChanged()
 
 bool MediaPlayerPrivateQTKit::hasSingleSecurityOrigin() const
 {
-    // We tell quicktime to disallow resources that come from different origins
-    // so we know all media is single origin.
-    return true;
+    if (!m_qtMovie)
+        return false;
+
+    RefPtr<SecurityOrigin> resolvedOrigin = SecurityOrigin::create(KURL(wkQTMovieResolvedURL(m_qtMovie.get())));
+    RefPtr<SecurityOrigin> requestedOrigin = SecurityOrigin::createFromString(m_movieURL);
+    return resolvedOrigin->isSameSchemeHostPort(requestedOrigin.get());
 }
 
 MediaPlayer::MovieLoadType MediaPlayerPrivateQTKit::movieLoadType() const
