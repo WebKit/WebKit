@@ -53,19 +53,13 @@ public:
 
     enum BackingStoreType {
         DefaultBackingStore,
-        LevelDBBackingStore,
-        SQLiteBackingStore
+        LevelDBBackingStore
     };
 
     // The WebKit implementation of open ignores the WebFrame* parameter.
     virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType) { WEBKIT_ASSERT_NOT_REACHED(); }
-    virtual void setEnableMigration(bool) { WEBKIT_ASSERT_NOT_REACHED(); }
 
     virtual void deleteDatabase(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir) { WEBKIT_ASSERT_NOT_REACHED(); }
-
-    // Used for DumpRenderTree tests.
-    WEBKIT_API static void setOverrideBackingStoreType(BackingStoreType);
-    WEBKIT_API static void setTemporaryDatabaseFolder(const WebString& path);
 };
 
 } // namespace WebKit

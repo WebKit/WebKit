@@ -44,28 +44,14 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static WebIDBFactory::BackingStoreType overriddenBackingStoreType = WebIDBFactory::DefaultBackingStore;
-static WebString tempDatabaseFolder;
-
 WebIDBFactory* WebIDBFactory::create()
 {
     return new WebIDBFactoryImpl();
 }
 
-void WebIDBFactory::setOverrideBackingStoreType(BackingStoreType type)
-{
-    overriddenBackingStoreType = type;
-}
-
-void WebIDBFactory::setTemporaryDatabaseFolder(const WebString& path)
-{
-    tempDatabaseFolder = path;
-}
-
 WebIDBFactoryImpl::WebIDBFactoryImpl()
     : m_idbFactoryBackend(IDBFactoryBackendImpl::create())
 {
-    m_idbFactoryBackend->setEnableMigration(true);
 }
 
 WebIDBFactoryImpl::~WebIDBFactoryImpl()
@@ -74,24 +60,7 @@ WebIDBFactoryImpl::~WebIDBFactoryImpl()
 
 void WebIDBFactoryImpl::open(const WebString& name, WebIDBCallbacks* callbacks, const WebSecurityOrigin& origin, WebFrame*, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType backingStoreType)
 {
-    WebString path = dataDir;
-    if (overriddenBackingStoreType != DefaultBackingStore) {
-        backingStoreType = overriddenBackingStoreType;
-
-        // The dataDir is empty for two reasons: LevelDB in icognito mode or
-        // LevelDB from DumpRenderTree. The first case is taken care of inside
-        // IDBFactoryBackendImpl.cpp by forcing SQLITE backend for incognito.
-        // For the DumpRenderTree case we need to keep track of the location
-        // so we can wipe it out when we're done with the test.
-        if (dataDir.isEmpty() && backingStoreType == LevelDBBackingStore)
-            path = tempDatabaseFolder;
-    }
-    m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, path, maximumSize, static_cast<IDBFactoryBackendInterface::BackingStoreType>(backingStoreType));
-}
-
-void WebIDBFactoryImpl::setEnableMigration(bool enable)
-{
-    m_idbFactoryBackend->setEnableMigration(enable);
+    m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, dataDir, maximumSize, static_cast<IDBFactoryBackendInterface::BackingStoreType>(backingStoreType));
 }
 
 } // namespace WebKit

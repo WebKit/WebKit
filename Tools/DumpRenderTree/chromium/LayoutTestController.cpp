@@ -44,7 +44,6 @@
 #include "WebElement.h"
 #include "WebFrame.h"
 #include "WebGeolocationClientMock.h"
-#include "WebIDBFactory.h"
 #include "WebInputElement.h"
 #include "WebKit.h"
 #include "WebNotificationPresenter.h"
@@ -83,7 +82,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     // names to their methods will be done by calling bindToJavaScript() (defined
     // by CppBoundClass, the parent to LayoutTestController).
     bindMethod("addFileToPasteboardOnDrag", &LayoutTestController::addFileToPasteboardOnDrag);
-    bindMethod("addMockSpeechInputResult", &LayoutTestController::addMockSpeechInputResult);
     bindMethod("addOriginAccessWhitelistEntry", &LayoutTestController::addOriginAccessWhitelistEntry);
     bindMethod("addUserScript", &LayoutTestController::addUserScript);
     bindMethod("addUserStyleSheet", &LayoutTestController::addUserStyleSheet);
@@ -161,7 +159,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setMockDeviceOrientation", &LayoutTestController::setMockDeviceOrientation);
     bindMethod("setMockGeolocationError", &LayoutTestController::setMockGeolocationError);
     bindMethod("setMockGeolocationPosition", &LayoutTestController::setMockGeolocationPosition);
-    bindMethod("setOverrideIndexedDBBackingStore", &LayoutTestController::setOverrideIndexedDBBackingStore);
+    bindMethod("addMockSpeechInputResult", &LayoutTestController::addMockSpeechInputResult);
     bindMethod("setPageVisibility", &LayoutTestController::setPageVisibility);
     bindMethod("setPluginsEnabled", &LayoutTestController::setPluginsEnabled);
     bindMethod("setPopupBlockingEnabled", &LayoutTestController::setPopupBlockingEnabled);
@@ -1129,29 +1127,6 @@ void LayoutTestController::setIconDatabaseEnabled(const CppArgumentList&, CppVar
     result->setNull();
 }
 
-void LayoutTestController::setOverrideIndexedDBBackingStore(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-#if ENABLE(INDEXED_DATABASE)
-    if (arguments.size() < 1 || !arguments[0].isString())
-        return;
-    string name = arguments[0].toString();
-    if (name == "sqlite")
-        WebIDBFactory::setOverrideBackingStoreType(WebIDBFactory::SQLiteBackingStore);
-    else if (name == "default")
-        WebIDBFactory::setOverrideBackingStoreType(WebIDBFactory::DefaultBackingStore);
-    else if (name == "leveldb") {
-        WebIDBFactory::setOverrideBackingStoreType(WebIDBFactory::LevelDBBackingStore);
-
-        m_tempFolder = adoptPtr(webkit_support::CreateScopedTempDirectory());
-        if (m_tempFolder) {
-            if (m_tempFolder->CreateUniqueTempDir())
-                WebIDBFactory::setTemporaryDatabaseFolder(WebString::fromUTF8(m_tempFolder->path().c_str()));
-        }
-    }
-#endif
-}
-
 void LayoutTestController::callShouldCloseOnWebView(const CppArgumentList&, CppVariant* result)
 {
     result->set(m_shell->webView()->dispatchBeforeUnloadEvent());
@@ -1517,7 +1492,6 @@ void LayoutTestController::clearAllDatabases(const CppArgumentList& arguments, C
 {
     result->setNull();
     webkit_support::ClearAllDatabases();
-    m_tempFolder.clear();
 }
 
 void LayoutTestController::setDatabaseQuota(const CppArgumentList& arguments, CppVariant* result)

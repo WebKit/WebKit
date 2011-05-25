@@ -77,12 +77,6 @@ void IDBFactoryBackendProxy::open(const String& name, PassRefPtr<IDBCallbacks> c
     m_webIDBFactory->open(name, new WebIDBCallbacksImpl(callbacks), origin, webFrame, dataDir, maximumSize, static_cast<WebIDBFactory::BackingStoreType>(backingStoreType));
 }
 
-void IDBFactoryBackendProxy::setEnableMigration(bool enable)
-{
-    m_webIDBFactory->setEnableMigration(enable);
-}
-
-
 } // namespace WebKit
 
 #endif // ENABLE(INDEXED_DATABASE)

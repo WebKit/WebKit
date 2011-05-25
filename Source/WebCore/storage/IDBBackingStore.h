@@ -29,8 +29,6 @@
 #if ENABLE(INDEXED_DATABASE)
 
 #include "IDBCursor.h"
-#include "IDBFactoryBackendImpl.h"
-#include "IDBFactoryBackendInterface.h"
 #include "SQLiteDatabase.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
@@ -39,6 +37,7 @@
 
 namespace WebCore {
 
+class IDBFactoryBackendImpl;
 class IDBKey;
 class IDBKeyRange;
 class SecurityOrigin;
@@ -107,7 +106,6 @@ public:
         virtual void rollback() = 0;
     };
     virtual PassRefPtr<Transaction> createTransaction() = 0;
-    virtual IDBFactoryBackendInterface::BackingStoreType backingStoreType() = 0;
 };
 
 } // namespace WebCore

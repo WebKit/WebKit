@@ -56,10 +56,6 @@ class WebSpeechInputControllerMock;
 class WebSpeechInputListener;
 }
 
-namespace webkit_support {
-class ScopedTempDirectory;
-}
-
 class TestShell;
 
 class LayoutTestController : public CppBoundClass {
@@ -308,8 +304,6 @@ public:
     void clearAllDatabases(const CppArgumentList&, CppVariant*);
     // Sets the default quota for all origins
     void setDatabaseQuota(const CppArgumentList&, CppVariant*);
-    // Overrides the backend for IndexedDB
-    void setOverrideIndexedDBBackingStore(const CppArgumentList&, CppVariant*);
 
     // Calls setlocale(LC_ALL, ...) for a specified locale.
     // Resets between tests.
@@ -592,9 +586,6 @@ private:
     WorkQueue m_workQueue;
 
     CppVariant m_globalFlag;
-
-    // Used to create and destroy temporary folders.
-    OwnPtr<webkit_support::ScopedTempDirectory> m_tempFolder;
 
     // Bound variable counting the number of top URLs visited.
     CppVariant m_webHistoryItemCount;

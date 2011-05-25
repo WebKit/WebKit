@@ -53,12 +53,10 @@ public:
 
     enum BackingStoreType {
         DefaultBackingStore,
-        LevelDBBackingStore,
-        SQLiteBackingStore
+        LevelDBBackingStore
     };
 
     virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType) = 0;
-    virtual void setEnableMigration(bool) = 0;
 };
 
 } // namespace WebCore

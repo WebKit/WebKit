@@ -1,3 +1,15 @@
+2011-05-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87257.
+        http://trac.webkit.org/changeset/87257
+        https://bugs.webkit.org/show_bug.cgi?id=61457
+
+        This broke layout tests, see bug 61431. (Requested by
+        hwennborg on #webkit).
+
+        * storage/indexeddb/migrate-basics-expected.txt: Removed.
+        * storage/indexeddb/migrate-basics.html: Removed.
+
 2011-05-25  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Andreas Kling.

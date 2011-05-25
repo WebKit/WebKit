@@ -1,3 +1,21 @@
+2011-05-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87257.
+        http://trac.webkit.org/changeset/87257
+        https://bugs.webkit.org/show_bug.cgi?id=61457
+
+        This broke layout tests, see bug 61431. (Requested by
+        hwennborg on #webkit).
+
+        * public/WebIDBFactory.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/IDBFactoryBackendProxy.cpp:
+        * src/IDBFactoryBackendProxy.h:
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::WebIDBFactoryImpl):
+        (WebKit::WebIDBFactoryImpl::open):
+        * src/WebIDBFactoryImpl.h:
+
 2011-05-24  Keishi Hattori  <keishi@webkit.org>
 
         Reviewed by Kent Tamura.

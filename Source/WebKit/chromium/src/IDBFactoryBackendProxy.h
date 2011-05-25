@@ -46,7 +46,6 @@ public:
 
     PassRefPtr<WebCore::DOMStringList> databases(void) const;
     virtual void open(const String& name, PassRefPtr<WebCore::IDBCallbacks>, PassRefPtr<WebCore::SecurityOrigin>, WebCore::Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType);
-    virtual void setEnableMigration(bool);
 
 private:
     IDBFactoryBackendProxy();

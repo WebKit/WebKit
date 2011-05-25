@@ -399,7 +399,6 @@ COMPILE_ASSERT_MATCHING_ENUM(WebIDBKey::NumberType, IDBKey::NumberType);
 
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBFactory::DefaultBackingStore, IDBFactoryBackendInterface::DefaultBackingStore);
 COMPILE_ASSERT_MATCHING_ENUM(WebIDBFactory::LevelDBBackingStore, IDBFactoryBackendInterface::LevelDBBackingStore);
-COMPILE_ASSERT_MATCHING_ENUM(WebIDBFactory::SQLiteBackingStore, IDBFactoryBackendInterface::SQLiteBackingStore);
 
 #if ENABLE(FILE_SYSTEM)
 COMPILE_ASSERT_MATCHING_ENUM(WebFileSystem::TypeTemporary, AsyncFileSystem::Temporary);
