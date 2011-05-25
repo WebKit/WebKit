@@ -36,6 +36,8 @@
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
+#if ENABLE(INPUT_COLOR)
+
 namespace WebCore {
 
 static bool isValidColorString(const String& value)
@@ -57,26 +59,14 @@ PassOwnPtr<InputType> ColorInputType::create(HTMLInputElement* element)
     return adoptPtr(new ColorInputType(element));
 }
 
+bool ColorInputType::isColorControl() const
+{
+    return true;
+}
+
 const AtomicString& ColorInputType::formControlType() const
 {
     return InputTypeNames::color();
-}
-
-bool ColorInputType::typeMismatchFor(const String& value) const
-{
-    // FIXME: Should not accept an empty value. Remove it when we implement value
-    // sanitization for type=color.
-    if (value.isEmpty())
-        return false;
-    return !isValidColorString(value);
-}
-
-bool ColorInputType::typeMismatch() const
-{
-    // FIXME: Should return false. We don't implement value sanitization for
-    // type=color yet.
-    String value = element()->value();
-    return !value.isEmpty() && !isValidColorString(value);
 }
 
 bool ColorInputType::supportsRequired() const
@@ -84,4 +74,22 @@ bool ColorInputType::supportsRequired() const
     return false;
 }
 
+String ColorInputType::fallbackValue()
+{
+    return String("#000000");
+}
+
+String ColorInputType::sanitizeValue(const String& proposedValue)
+{
+    if (proposedValue.isNull())
+        return proposedValue;
+
+    if (!isValidColorString(proposedValue))
+        return fallbackValue();
+
+    return proposedValue.lower();
+}
+
 } // namespace WebCore
+
+#endif // ENABLE(INPUT_COLOR)

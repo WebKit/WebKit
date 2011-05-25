@@ -5,7 +5,6 @@ PASS document.getElementById("number").offsetWidth is baseWidth
 PASS document.getElementById("password").offsetWidth is baseWidth
 PASS document.getElementById("tel").offsetWidth is baseWidth
 PASS document.getElementById("url").offsetWidth is baseWidth
-PASS document.getElementById("color").offsetWidth is baseWidth
 PASS document.getElementById("date").offsetWidth is baseWidth
 PASS document.getElementById("datetime").offsetWidth is baseWidth
 PASS document.getElementById("datetimelocal").offsetWidth is baseWidth

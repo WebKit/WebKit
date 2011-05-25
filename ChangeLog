@@ -1,3 +1,12 @@
+2011-05-24  Keishi Hattori  <keishi@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Disable textfield implementation of <input type=color>. Add INPUT_COLOR feature flag. Add input color sanitizer.
+        https://bugs.webkit.org/show_bug.cgi?id=61273
+
+        * configure.ac: Added INPUT_COLOR feature flag.
+
 2011-05-24  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Adam Barth.

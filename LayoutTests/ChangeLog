@@ -1,3 +1,27 @@
+2011-05-24  Keishi Hattori  <keishi@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Disable textfield implementation of <input type=color>. Add INPUT_COLOR feature flag. Add input color sanitizer.
+        https://bugs.webkit.org/show_bug.cgi?id=61273
+
+        * fast/forms/ValidityState-typeMismatch-color-expected.txt: Removed.
+        * fast/forms/ValidityState-typeMismatch-color.html: Removed.
+        * fast/forms/color/input-value-sanitization-color-expected.txt: Added.
+        * fast/forms/color/input-value-sanitization-color.html: Added. Tests
+        sanitization algorithm for input type=color.
+        * fast/forms/input-type-change3-expected.txt:
+        * fast/forms/input-widths-expected.txt:
+        * fast/forms/input-widths.html: Removed type=color because it
+        is no loger a text input type.
+        * fast/forms/script-tests/ValidityState-patternMismatch-unsupported.js: Changed to range input type.
+        * fast/forms/script-tests/ValidityState-typeMismatch-color.js: Removed.
+        * fast/forms/script-tests/input-type-change3.js:
+        * platform/gtk/Skipped: Skip fast/forms/color.
+        * platform/mac/Skipped: Skip fast/forms/color.
+        * platform/qt/Skipped: Skip fast/forms/color.
+        * platform/win/Skipped: Skip fast/forms/color.
+
 2011-05-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Skip new failing test.

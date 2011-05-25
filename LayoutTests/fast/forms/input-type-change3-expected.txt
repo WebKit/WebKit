@@ -13,7 +13,6 @@ PASS input.type for " text " is correctly "text".
 PASS input.type for "button" is correctly "button".
 PASS input.type for " button " is correctly "text".
 PASS input.type for "checkbox" is correctly "checkbox".
-PASS input.type for "color" is correctly "color".
 PASS input.type for "date" is correctly "date".
 PASS input.type for "datetime" is correctly "datetime".
 PASS input.type for "datetime-local" is correctly "datetime-local".

@@ -473,6 +473,14 @@ AC_ARG_ENABLE(indexed_database,
               [],[enable_indexed_database="no"])
 AC_MSG_RESULT([$enable_indexed_database])
 
+# check whether to enable the color input
+AC_MSG_CHECKING([whether to enable the color input])
+AC_ARG_ENABLE(input_color,
+              AC_HELP_STRING([--enable-input-color],
+                             [enable the color input [default=no]]),
+              [],[enable_input_color="no"])
+AC_MSG_RESULT([$enable_input_color])
+
 # check whether to enable the speech input API
 AC_MSG_CHECKING([whether to enable the speech input API])
 AC_ARG_ENABLE(input_speech,
@@ -1108,6 +1116,7 @@ AM_CONDITIONAL([ENABLE_QUOTA],[test "$enable_quota" = "yes"])
 AM_CONDITIONAL([ENABLE_ICONDATABASE],[test "$enable_icon_database" = "yes"])
 AM_CONDITIONAL([ENABLE_IMAGE_RESIZER],[test "$enable_image_resizer" = "yes"])
 AM_CONDITIONAL([ENABLE_INDEXED_DATABASE],[test "$enable_indexed_database" = "yes"])
+AM_CONDITIONAL([ENABLE_INPUT_COLOR],[test "$enable_input_color" = "yes"])
 AM_CONDITIONAL([ENABLE_INPUT_SPEECH],[test "$enable_input_speech" = "yes"])
 AM_CONDITIONAL([ENABLE_XHTMLMP],[test "$enable_xhtmlmp" = "yes"])
 AM_CONDITIONAL([ENABLE_XPATH],[test "$enable_xpath" = "yes"])
@@ -1223,6 +1232,7 @@ Features:
  Link prefetch support                                    : $enable_link_prefetch
  Opcode stats                                             : $enable_opcode_stats
  SharedWorkers support                                    : $enable_shared_workers
+ Color input support                                      : $enable_input_color
  Speech input support                                     : $enable_input_speech
  SVG support                                              : $enable_svg
  SVG animation support                                    : $enable_svg_animation

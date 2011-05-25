@@ -277,6 +277,9 @@ storage/indexeddb
 # StorageTracker is not enabled.
 storage/domstorage/localstorage/storagetracker
 
+# Color input is not yet enabled.
+fast/forms/color
+
 # Speech input is not yet enabled.
 fast/speech
 

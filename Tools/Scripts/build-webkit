@@ -87,6 +87,7 @@ my (
     $iconDatabaseSupport,
     $imageResizerSupport,
     $indexedDatabaseSupport,
+    $inputColorSupport,
     $inputSpeechSupport,
     $javaScriptDebuggerSupport,
     $linkPrefetchSupport,
@@ -193,6 +194,9 @@ my @features = (
 
     { option => "indexed-database", desc => "Toggle Indexed Database API support",
       define => "ENABLE_INDEXED_DATABASE", default => 0, value => \$indexedDatabaseSupport },
+
+    { option => "input-color", desc => "Color Input support",
+      define => "ENABLE_INPUT_COLOR", default => 0, value => \$inputColorSupport },
 
     { option => "input-speech", desc => "Speech Input API support",
       define => "ENABLE_INPUT_SPEECH", default => 0, value => \$inputSpeechSupport },

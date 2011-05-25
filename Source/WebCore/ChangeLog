@@ -1,3 +1,25 @@
+2011-05-24  Keishi Hattori  <keishi@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Disable textfield implementation of <input type=color>. Add INPUT_COLOR feature flag. Add input color sanitizer.
+        https://bugs.webkit.org/show_bug.cgi?id=61273
+
+        Test: fast/forms/color/input-value-sanitization-color.html
+
+        * Configurations/FeatureDefines.xcconfig: Added COLOR_INPUT feature flag.
+        * GNUmakefile.am: Added COLOR_INPUT feature flag.
+        * features.pri: Added COLOR_INPUT feature flag.
+        * html/ColorInputType.cpp: Wrapped with COLOR_INPUT feature flag.
+        (WebCore::ColorInputType::isColorControl): Added.
+        (WebCore::ColorInputType::fallbackValue): Added. Fallback value defined in spec.
+        (WebCore::ColorInputType::sanitizeValue): Added. Sanitize value string as defined in spec.
+        * html/ColorInputType.h: Wrapped with COLOR_INPUT feature flag.
+        (WebCore::ColorInputType::ColorInputType): Changed to inherit BaseButtonInputType.
+        * html/InputType.cpp:
+        (WebCore::InputType::isColorControl): Added.
+        * html/InputType.h:
+
 2011-05-24  Steve Lacey  <sjl@chromium.org>
 
         Reviewed by Eric Carlson.

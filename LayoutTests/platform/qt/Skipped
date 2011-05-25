@@ -1973,6 +1973,9 @@ fast/forms/input-number-events.html
 fast/forms/input-spinbutton-capturing.html
 fast/forms/input-number-large-padding.html
 
+# Color input is not yet enabled.
+fast/forms/color
+
 # Speech input is not yet enabled.
 fast/speech
 

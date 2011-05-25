@@ -197,6 +197,9 @@ editing/pasteboard/file-drag-to-editable.html
 # Hits an assert in FrameLoader.cpp. https://bugs.webkit.org/show_bug.cgi?id=31387
 http/tests/multipart/policy-ignore-crash.php
 
+# Color input is not yet enabled.
+fast/forms/color
+
 # Speech input is not yet enabled.
 fast/speech
 

@@ -79,7 +79,9 @@ static PassOwnPtr<InputTypeFactoryMap> createInputTypeFactoryMap()
     OwnPtr<InputTypeFactoryMap> map = adoptPtr(new InputTypeFactoryMap);
     map->add(InputTypeNames::button(), ButtonInputType::create);
     map->add(InputTypeNames::checkbox(), CheckboxInputType::create);
+#if ENABLE(INPUT_COLOR)
     map->add(InputTypeNames::color(), ColorInputType::create);
+#endif
     map->add(InputTypeNames::date(), DateInputType::create);
     map->add(InputTypeNames::datetime(), DateTimeInputType::create);
     map->add(InputTypeNames::datetimelocal(), DateTimeLocalInputType::create);
@@ -635,6 +637,13 @@ bool InputType::isSteppable() const
     return false;
 }
 
+#if ENABLE(INPUT_COLOR)
+bool InputType::isColorControl() const
+{
+    return false;
+}
+#endif
+
 bool InputType::shouldRespectHeightAndWidthAttributes()
 {
     return false;
@@ -657,11 +666,13 @@ const AtomicString& checkbox()
     return name;
 }
 
+#if ENABLE(INPUT_COLOR)
 const AtomicString& color()
 {
     DEFINE_STATIC_LOCAL(AtomicString, name, ("color"));
     return name;
 }
+#endif
 
 const AtomicString& date()
 {

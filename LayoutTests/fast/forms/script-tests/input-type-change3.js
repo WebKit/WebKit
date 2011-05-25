@@ -27,7 +27,6 @@ check(" text ", "text");
 check("button", "button");
 check(" button ", "text");
 check("checkbox", "checkbox");
-check("color", "color");
 check("date", "date");
 check("datetime", "datetime");
 check("datetime-local", "datetime-local");

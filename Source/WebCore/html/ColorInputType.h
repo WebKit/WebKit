@@ -31,22 +31,27 @@
 #ifndef ColorInputType_h
 #define ColorInputType_h
 
-#include "TextFieldInputType.h"
+#include "BaseButtonInputType.h"
+
+#if ENABLE(INPUT_COLOR)
 
 namespace WebCore {
 
-class ColorInputType : public TextFieldInputType {
+class ColorInputType : public BaseButtonInputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    ColorInputType(HTMLInputElement* element) : TextFieldInputType(element) { }
+    ColorInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
+    virtual bool isColorControl() const;
     virtual const AtomicString& formControlType() const;
-    virtual bool typeMismatchFor(const String&) const;
-    virtual bool typeMismatch() const;
     virtual bool supportsRequired() const;
+    virtual String fallbackValue();
+    virtual String sanitizeValue(const String&);
 };
 
 } // namespace WebCore
 
-#endif // ButtonInputType_h
+#endif // ENABLE(INPUT_COLOR)
+
+#endif // ColorInputType_h

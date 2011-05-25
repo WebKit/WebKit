@@ -273,6 +273,16 @@ webcore_cppflags += -DENABLE_TOUCH_ICON_LOADING=0
 endif # END ENABLE_TOUCH_ICON_LOADING
 
 # ----
+# Color Input API support
+# ----
+if ENABLE_INPUT_COLOR
+FEATURE_DEFINES += ENABLE_INPUT_COLOR=1
+webcore_cppflags += -DENABLE_INPUT_COLOR=1
+else
+webcore_cppflags += -DENABLE_INPUT_COLOR=0
+endif # END ENABLE_INPUT_COLOR
+
+# ----
 # Speech Input API support
 # ----
 if ENABLE_INPUT_SPEECH
