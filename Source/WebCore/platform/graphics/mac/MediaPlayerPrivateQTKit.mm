@@ -38,6 +38,7 @@
 #import "DocumentLoader.h"
 #import "Frame.h"
 #import "FrameView.h"
+#import "HostWindow.h"
 #import "GraphicsContext.h"
 #import "KURL.h"
 #import "MIMETypeRegistry.h"
@@ -58,7 +59,6 @@
 #import "RenderObject.h"
 #import "RenderStyle.h"
 #endif
-
 
 SOFT_LINK_FRAMEWORK(QTKit)
 
@@ -455,8 +455,11 @@ void MediaPlayerPrivateQTKit::createQTMovieView()
 
     m_qtMovieView.adoptNS([[QTMovieView alloc] init]);
     setSize(m_player->size());
-    NSView* parentView = m_player->frameView()->documentView();
+    NSView* parentView = 0;
+#if PLATFORM(MAC)
+    parentView = m_player->frameView()->documentView();
     [parentView addSubview:m_qtMovieView.get()];
+#endif
     [m_qtMovieView.get() setDelegate:m_objcObserver.get()];
     [m_objcObserver.get() setView:m_qtMovieView.get()];
     [m_qtMovieView.get() setMovie:m_qtMovie.get()];
@@ -493,7 +496,7 @@ void MediaPlayerPrivateQTKit::createQTVideoRenderer(QTVideoRendererMode renderer
         return;
     
     // associate our movie with our instance of QTVideoRendererWebKitOnly
-    [(id<WebKitVideoRenderingDetails>)m_qtVideoRenderer.get() setMovie:m_qtMovie.get()];    
+    [(id<WebKitVideoRenderingDetails>)m_qtVideoRenderer.get() setMovie:m_qtMovie.get()];
 
     if (rendererMode == QTVideoRendererModeListensForNewImages) {
         // listen to QTVideoRendererWebKitOnly's QTVideoRendererWebKitOnlyNewImageDidBecomeAvailableNotification
@@ -522,7 +525,7 @@ void MediaPlayerPrivateQTKit::destroyQTVideoRenderer()
 
 void MediaPlayerPrivateQTKit::createQTMovieLayer()
 {
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && !(PLATFORM(QT) && USE(QTKIT))
     if (!m_qtMovie)
         return;
 
@@ -573,7 +576,7 @@ MediaPlayerPrivateQTKit::MediaRenderingMode MediaPlayerPrivateQTKit::preferredRe
     if (!m_player->frameView() || !m_qtMovie)
         return MediaRenderingNone;
 
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && !(PLATFORM(QT) && USE(QTKIT))
     if (supportsAcceleratedRendering() && m_player->mediaPlayerClient()->mediaPlayerRenderingCanBeAccelerated(m_player))
         return MediaRenderingMovieLayer;
 #endif
@@ -699,7 +702,7 @@ PlatformMedia MediaPlayerPrivateQTKit::platformMedia() const
     return pm;
 }
 
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && !(PLATFORM(QT) && USE(QTKIT))
 PlatformLayer* MediaPlayerPrivateQTKit::platformLayer() const
 {
     return m_qtVideoLayer.get();
@@ -1212,7 +1215,7 @@ void MediaPlayerPrivateQTKit::didEnd()
     m_player->timeChanged();
 }
 
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && !(PLATFORM(QT) && USE(QTKIT))
 #if defined(BUILDING_ON_SNOW_LEOPARD)
 static bool layerIsDescendentOf(PlatformLayer* child, PlatformLayer* descendent)
 {
@@ -1327,14 +1330,28 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
 
     [m_objcObserver.get() setDelayCallbacks:YES];
     BEGIN_BLOCK_OBJC_EXCEPTIONS;
+    NSGraphicsContext* newContext;
+    FloatSize scaleFactor(1.0f, -1.0f);
+    IntRect paintRect(IntPoint(0, 0), IntSize(r.width(), r.height()));
+
+#if PLATFORM(QT) && USE(QTKIT)
+    // In Qt, GraphicsContext is a QPainter so every transformations applied on it won't matter because here
+    // the video is rendered by QuickTime not by Qt.
+    CGContextRef cgContext = static_cast<CGContextRef>([[NSGraphicsContext currentContext] graphicsPort]);
+    CGContextSaveGState(cgContext);
+    CGContextSetInterpolationQuality(cgContext, kCGInterpolationLow);
+    CGContextTranslateCTM(cgContext, r.x(), r.y() + r.height());
+    CGContextScaleCTM(cgContext, scaleFactor.width(), scaleFactor.height());
+
+    newContext = [NSGraphicsContext currentContext];
+#else
     GraphicsContextStateSaver stateSaver(*context);
     context->translate(r.x(), r.y() + r.height());
-    context->scale(FloatSize(1.0f, -1.0f));
+    context->scale(scaleFactor);
     context->setImageInterpolationQuality(InterpolationLow);
-    IntRect paintRect(IntPoint(0, 0), IntSize(r.width(), r.height()));
-    
-    NSGraphicsContext* newContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context->platformContext() flipped:NO];
 
+    newContext = [NSGraphicsContext graphicsContextWithGraphicsPort:context->platformContext() flipped:NO];
+#endif
     // draw the current video frame
     if (qtVideoRenderer) {
         [NSGraphicsContext saveGraphicsState];
@@ -1388,7 +1405,9 @@ void MediaPlayerPrivateQTKit::paint(GraphicsContext* context, const IntRect& r)
         }
     }
 #endif
-
+#if PLATFORM(QT) && USE(QTKIT)
+    CGContextRestoreGState(cgContext);
+#endif
     END_BLOCK_OBJC_EXCEPTIONS;
     [m_objcObserver.get() setDelayCallbacks:NO];
 }
@@ -1593,7 +1612,7 @@ void MediaPlayerPrivateQTKit::sawUnsupportedTracks()
     m_player->mediaPlayerClient()->mediaPlayerSawUnsupportedTracks(m_player);
 }
 
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && !(PLATFORM(QT) && USE(QTKIT))
 bool MediaPlayerPrivateQTKit::supportsAcceleratedRendering() const
 {
     return isReadyForVideoSetup() && getQTMovieLayerClass() != Nil;
@@ -1744,7 +1763,7 @@ void MediaPlayerPrivateQTKit::setPrivateBrowsingMode(bool privateBrowsing)
 
 - (void)layerHostChanged:(NSNotification *)notification
 {
-#if USE(ACCELERATED_COMPOSITING)
+#if USE(ACCELERATED_COMPOSITING) && !(PLATFORM(QT) && USE(QTKIT))
     CALayer* rootLayer = static_cast<CALayer*>([notification object]);
     m_callback->layerHostChanged(rootLayer);
 #else

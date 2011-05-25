@@ -1,3 +1,42 @@
+2011-05-25  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Eric Carlson.
+
+        [Qt] Enable usage of QuickTime mediaplayer for the Qt port on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=61279
+
+        Enable the QuickTime backend for the Qt port on Mac. The patch adds the bits in WebCore
+        to enable the QTKit backend of the Mac port. It can be enabled by passing DEFINES+=USE_QTKIT=1
+        when calling build-webkit.
+
+        * WebCore.pri:
+        * WebCore.pro:
+        * features.pri:
+        * platform/KURL.h:
+        * platform/SharedBuffer.h:
+        * platform/cf/KURLCFNet.cpp:
+        * platform/cf/SharedBufferCF.cpp:
+        * platform/graphics/FloatSize.h:
+        * platform/graphics/IntRect.h:
+        * platform/graphics/IntSize.h:
+        * platform/graphics/MediaPlayer.cpp:
+        * platform/graphics/cg/FloatSizeCG.cpp:
+        * platform/graphics/cg/IntRectCG.cpp:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.h:
+        * platform/graphics/mac/MediaPlayerPrivateQTKit.mm:
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovieView):
+        (WebCore::MediaPlayerPrivateQTKit::createQTVideoRenderer):
+        (WebCore::MediaPlayerPrivateQTKit::createQTMovieLayer):
+        (WebCore::MediaPlayerPrivateQTKit::preferredRenderingMode):
+        (WebCore::MediaPlayerPrivateQTKit::paint):
+        (-[WebCoreMovieObserver layerHostChanged:]):
+        * platform/mac/KURLMac.mm:
+        * platform/mac/SharedBufferMac.mm:
+        (+[WebCoreSharedBufferData initialize]):
+        * platform/mac/WebCoreObjCExtras.mm:
+        * platform/qt/WebCoreSystemInterface.h: Added.
+        * platform/qt/WebCoreSystemInterface.mm: Added.
+
 2011-05-25  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Eric Seidel.

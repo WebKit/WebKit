@@ -34,7 +34,7 @@
 typedef const struct __CFURL* CFURLRef;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
 #ifdef __OBJC__
 @class NSURL;
 #else
@@ -202,7 +202,7 @@ public:
     CFURLRef createCFURL() const;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
     KURL(NSURL*);
     operator NSURL*() const;
 #endif

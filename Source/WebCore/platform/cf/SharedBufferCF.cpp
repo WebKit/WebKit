@@ -40,7 +40,7 @@ SharedBuffer::SharedBuffer(CFDataRef cfData)
 
 // Mac is a CF platform but has an even more efficient version of this method,
 // so only use this version for non-Mac
-#if !PLATFORM(MAC)
+#if !PLATFORM(MAC) && !(PLATFORM(QT) && USE(QTKIT))
 CFDataRef SharedBuffer::createCFData()
 {
     if (m_cfData) {

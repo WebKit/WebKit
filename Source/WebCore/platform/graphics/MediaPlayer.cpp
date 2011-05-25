@@ -46,7 +46,7 @@
 #include "MediaPlayerPrivateGStreamer.h"
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
 #include "MediaPlayerPrivateQTKit.h"
 #if USE(AVFOUNDATION)
 #include "MediaPlayerPrivateAVFoundationObjC.h"
@@ -62,7 +62,7 @@
 #if USE(QT_MULTIMEDIA) && !USE(GSTREAMER)
 #include "MediaPlayerPrivateQt.h"
 #define PlatformMediaEngineClassName MediaPlayerPrivateQt
-#elif !USE(GSTREAMER)
+#elif !USE(GSTREAMER) && !USE(QTKIT)
 #include "MediaPlayerPrivatePhonon.h"
 #define PlatformMediaEngineClassName MediaPlayerPrivatePhonon
 #endif

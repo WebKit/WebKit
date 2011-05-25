@@ -109,6 +109,9 @@
 #endif // Q_OS_WIN32
 #include "TextIterator.h"
 #include "WebPlatformStrategies.h"
+#if USE(QTKIT)
+#include "WebSystemInterface.h"
+#endif
 #include "WindowFeatures.h"
 #include "WorkerThread.h"
 #include "runtime/InitializeThreading.h"
@@ -316,6 +319,10 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
     WebCore::SecurityOrigin::setLocalLoadPolicy(WebCore::SecurityOrigin::AllowLocalLoadsForLocalAndSubstituteData);
 
     WebPlatformStrategies::initialize();
+
+#if USE(QTKIT)
+    InitWebCoreSystemInterface();
+#endif
 
     Page::PageClients pageClients;
     pageClients.chromeClient = new ChromeClientQt(q);

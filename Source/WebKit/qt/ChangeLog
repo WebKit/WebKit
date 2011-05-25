@@ -1,3 +1,24 @@
+2011-05-25  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Eric Carlson.
+
+        [Qt] Enable usage of QuickTime mediaplayer for the Qt port on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=61279
+
+        Enable the usage of QuickTime backend for the Qt port. It can be enabled by
+        passing DEFINES+=USE_QTKIT=1 when calling build-webkit.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::QWebPagePrivate):
+        * QtWebKit.pro:
+        * WebCoreSupport/FullScreenVideoQt.cpp:
+        (WebCore::FullScreenVideoQt::enterFullScreenForNode):
+        (WebCore::FullScreenVideoQt::requiresFullScreenForVideoPlayback):
+        (WebCore::FullScreenVideoQt::isValid):
+        * WebCoreSupport/WebSystemInterface.h: Added.
+        * WebCoreSupport/WebSystemInterface.mm: Added.
+        (InitWebCoreSystemInterface):
+
 2011-05-25  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Andreas Kling.

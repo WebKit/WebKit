@@ -162,11 +162,10 @@ FullScreenVideoQt::~FullScreenVideoQt()
 void FullScreenVideoQt::enterFullScreenForNode(Node* node)
 {
     Q_ASSERT(node);
-    Q_ASSERT(m_FullScreenVideoHandler);
-
     m_videoElement = static_cast<HTMLVideoElement*>(node);
 
 #if USE(QT_MULTIMEDIA)
+    Q_ASSERT(m_FullScreenVideoHandler);
     HTMLVideoElement* videoElement = static_cast<HTMLVideoElement*>(node);
     PlatformMedia platformMedia = videoElement->platformMedia();
 
@@ -236,6 +235,8 @@ bool FullScreenVideoQt::requiresFullScreenForVideoPlayback()
 #endif
 #if USE(GSTREAMER)
     return false;
+#else
+    return false;
 #endif
 }
 
@@ -246,6 +247,8 @@ bool FullScreenVideoQt::isValid() const
 #endif
 #if USE(GSTREAMER)
     return m_FullScreenVideoHandlerGStreamer;
+#else
+    return 0;
 #endif
 }
 

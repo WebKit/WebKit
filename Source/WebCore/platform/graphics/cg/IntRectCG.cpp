@@ -26,7 +26,7 @@
 #include "config.h"
 #include "IntRect.h"
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROME)
+#if USE(CG) || USE(SKIA_ON_MAC_CHROME) || (PLATFORM(QT) && USE(QTKIT))
 
 #include <ApplicationServices/ApplicationServices.h>
 

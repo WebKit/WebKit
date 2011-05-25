@@ -27,6 +27,7 @@
 #import "KURL.h"
 
 #import "FoundationExtras.h"
+#import <CoreFoundation/CFURL.h>
 
 namespace WebCore {
 

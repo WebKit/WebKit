@@ -30,7 +30,7 @@
 typedef struct CGSize CGSize;
 #endif
 
-#if PLATFORM(MAC)
+#if PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))
 #ifdef NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES
 typedef struct CGSize NSSize;
 #else
@@ -114,7 +114,7 @@ public:
     operator CGSize() const;
 #endif
 
-#if PLATFORM(MAC) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
+#if (PLATFORM(MAC) || (PLATFORM(QT) && USE(QTKIT))) && !defined(NSGEOMETRY_TYPES_SAME_AS_CGGEOMETRY_TYPES)
     explicit IntSize(const NSSize &); // don't do this implicitly since it's lossy
     operator NSSize() const;
 #endif

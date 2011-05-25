@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2003, 2006 Apple Computer, Inc.  All rights reserved.
- * Copyright (C) 2005 Nokia.  All rights reserved.
+ * Copyright 2006, 2007, 2008, 2009, 2010 Apple Computer, Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -23,25 +22,23 @@
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
- 
-#include "config.h"
-#include "FloatSize.h"
 
-#if USE(CG) || USE(SKIA_ON_MAC_CHROME) || (PLATFORM(QT) && USE(QTKIT))
+#import "config.h"
+#import "WebCoreSystemInterface.h"
+#import <Foundation/Foundation.h>
 
-#include <ApplicationServices/ApplicationServices.h>
+unsigned (*wkQTIncludeOnlyModernMediaFileTypes)(void);
+int (*wkQTMovieDataRate)(QTMovie*);
+void (*wkQTMovieDisableComponent)(uint32_t[5]);
+float (*wkQTMovieMaxTimeLoaded)(QTMovie*);
+NSString *(*wkQTMovieMaxTimeLoadedChangeNotification)(void);
+float (*wkQTMovieMaxTimeSeekable)(QTMovie*);
+int (*wkQTMovieGetType)(QTMovie*);
+BOOL (*wkQTMovieHasClosedCaptions)(QTMovie*);
+void (*wkQTMovieSetShowClosedCaptions)(QTMovie*, BOOL);
+void (*wkQTMovieSelectPreferredAlternates)(QTMovie*);
+void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);
+NSArray *(*wkQTGetSitesInMediaDownloadCache)();
+void (*wkQTClearMediaDownloadCacheForSite)(NSString *site);
+void (*wkQTClearMediaDownloadCache)();
 
-namespace WebCore {
-
-FloatSize::FloatSize(const CGSize& s) : m_width(s.width), m_height(s.height)
-{
-}
-
-FloatSize::operator CGSize() const
-{
-    return CGSizeMake(m_width, m_height);
-}
-
-}
-
-#endif // USE(CG)
