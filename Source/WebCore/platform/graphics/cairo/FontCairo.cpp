@@ -113,29 +113,32 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
 
     cairo_t* cr = platformContext->cr();
     cairo_save(cr);
+
+    float globalAlpha = platformContext->globalAlpha();
+
     prepareContextForGlyphDrawing(cr, font, point);
     if (context->textDrawingMode() & TextModeFill) {
         if (context->fillGradient()) {
             cairo_set_source(cr, context->fillGradient()->platformGradient());
-            if (context->getAlpha() < 1.0f) {
+            if (globalAlpha < 1) {
                 cairo_push_group(cr);
-                cairo_paint_with_alpha(cr, context->getAlpha());
+                cairo_paint_with_alpha(cr, globalAlpha);
                 cairo_pop_group_to_source(cr);
             }
         } else if (context->fillPattern()) {
             AffineTransform affine;
             cairo_pattern_t* pattern = context->fillPattern()->createPlatformPattern(affine);
             cairo_set_source(cr, pattern);
-            if (context->getAlpha() < 1.0f) {
+            if (globalAlpha < 1) {
                 cairo_push_group(cr);
-                cairo_paint_with_alpha(cr, context->getAlpha());
+                cairo_paint_with_alpha(cr, globalAlpha);
                 cairo_pop_group_to_source(cr);
             }
             cairo_pattern_destroy(pattern);
         } else {
             float red, green, blue, alpha;
             context->fillColor().getRGBA(red, green, blue, alpha);
-            cairo_set_source_rgba(cr, red, green, blue, alpha * context->getAlpha());
+            cairo_set_source_rgba(cr, red, green, blue, alpha * globalAlpha);
         }
         drawGlyphsToContext(cr, font, glyphs, numGlyphs);
     }
@@ -147,25 +150,25 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     if (context->textDrawingMode() & TextModeStroke && context->strokeThickness() < 2 * offset) {
         if (context->strokeGradient()) {
             cairo_set_source(cr, context->strokeGradient()->platformGradient());
-            if (context->getAlpha() < 1.0f) {
+            if (globalAlpha < 1) {
                 cairo_push_group(cr);
-                cairo_paint_with_alpha(cr, context->getAlpha());
+                cairo_paint_with_alpha(cr, globalAlpha);
                 cairo_pop_group_to_source(cr);
             }
         } else if (context->strokePattern()) {
             AffineTransform affine;
             cairo_pattern_t* pattern = context->strokePattern()->createPlatformPattern(affine);
             cairo_set_source(cr, pattern);
-            if (context->getAlpha() < 1.0f) {
+            if (globalAlpha < 1) {
                 cairo_push_group(cr);
-                cairo_paint_with_alpha(cr, context->getAlpha());
+                cairo_paint_with_alpha(cr, globalAlpha);
                 cairo_pop_group_to_source(cr);
             }
             cairo_pattern_destroy(pattern);
         } else {
             float red, green, blue, alpha;
             context->strokeColor().getRGBA(red, green, blue, alpha);
-            cairo_set_source_rgba(cr, red, green, blue, alpha * context->getAlpha());
+            cairo_set_source_rgba(cr, red, green, blue, alpha * globalAlpha);
         }
         cairo_glyph_path(cr, glyphs, numGlyphs);
         cairo_set_line_width(cr, context->strokeThickness());

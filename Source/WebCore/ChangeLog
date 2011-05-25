@@ -1,3 +1,49 @@
+2011-05-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [Cairo] Move the global alpha property from GraphicsContext to PlatformContextCairo
+        https://bugs.webkit.org/show_bug.cgi?id=60185
+
+        Remove Cairo #ifdefs from GraphicsContext.h by pushing the global alpha
+        state into PlatformContextCairo. Since Cairo is the only platform that needs
+        to store this, this is the proper place for it. Change the image mask stack into
+        a more generic state stack that can keep track of the multiple bits of platform
+        specific state and properly handle save/restore pairs.
+
+        No new tests. This is just a code refactor.
+
+        * platform/graphics/GraphicsContext.h: Remove Cairo #ifdefs.
+        (WebCore::GraphicsContextState::GraphicsContextState): Ditto.
+        * platform/graphics/cairo/ContextShadowCairo.cpp: Access global alpha from PlatformContextCairo now.
+        (WebCore::ContextShadow::drawRectShadow):
+        * platform/graphics/cairo/FontCairo.cpp: Ditto.
+        (WebCore::Font::drawGlyphs):
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::setPlatformFill): Ditto.
+        (WebCore::setPlatformStroke): Ditto.
+        (WebCore::GraphicsContext::setAlpha): Ditto.
+        * platform/graphics/cairo/PlatformContextCairo.cpp: Moved ImageMaskInformation class from the
+        header file, since it can be private now. Abstract the image mask state and the global alpha
+        in a generic State class.
+        (WebCore::ImageMaskInformation::update): 
+        (WebCore::ImageMaskInformation::isValid):
+        (WebCore::ImageMaskInformation::maskSurface):
+        (WebCore::ImageMaskInformation::maskRect):
+        (WebCore::PlatformContextCairo::State::State): Added.
+        (WebCore::PlatformContextCairo::PlatformContextCairo): Intialize the state
+        class when this class is constructed.
+        (WebCore::PlatformContextCairo::restore): Now pop the last state off the state stack.
+        (WebCore::PlatformContextCairo::~PlatformContextCairo): Added this so that we can forward
+        declare the State class in the header.
+        (WebCore::PlatformContextCairo::save): Push a new state onto the stack.
+        (WebCore::PlatformContextCairo::pushImageMask): Operate on the state stack now.
+        (WebCore::PlatformContextCairo::globalAlpha): Added.
+        (WebCore::PlatformContextCairo::setGlobalAlpha): Added.
+        (WebCore::PlatformContextCairo::drawSurfaceToContext: Call globalAlpha().
+        * platform/graphics/cairo/PlatformContextCairo.h: Changed the image mask stack
+        into a more generic state stack, much like PlatformContextChromium.
+
 2011-05-25  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Sam Weinig.

@@ -199,12 +199,13 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
         max(bottomLeftRadius.height(), bottomRightRadius.height());
 
     cairo_t* cr = context->platformContext()->cr();
+    float globalAlpha = context->platformContext()->globalAlpha();
 
     // drawShadowedRect still does not work with rotations.
     // https://bugs.webkit.org/show_bug.cgi?id=45042
     if ((!context->getCTM().isIdentityOrTranslationOrFlipped()) || (internalShadowWidth > rect.width())
         || (internalShadowHeight > rect.height()) || (m_type != BlurShadow)) {
-        drawRectShadowWithoutTiling(context, rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, context->getAlpha());
+        drawRectShadowWithoutTiling(context, rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, globalAlpha);
         return;
     }
 
@@ -229,7 +230,7 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
     calculateLayerBoundingRect(context, shadowRect, IntRect(x1, y1, x2 - x1, y2 - y1));
 
     if ((shadowTemplateSize.width() * shadowTemplateSize.height() > m_sourceRect.width() * m_sourceRect.height())) {
-        drawRectShadowWithoutTiling(context, rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, context->getAlpha());
+        drawRectShadowWithoutTiling(context, rect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius, globalAlpha);
         return;
     }
 
@@ -251,7 +252,7 @@ void ContextShadow::drawRectShadow(GraphicsContext* context, const IntRect& rect
     path.addRoundedRect(templateRect, topLeftRadius, topRightRadius, bottomLeftRadius, bottomRightRadius);
     appendWebCorePathToCairoContext(m_layerContext, path);
 
-    cairo_set_source_rgba(m_layerContext, 0, 0, 0, context->getAlpha());
+    cairo_set_source_rgba(m_layerContext, 0, 0, 0, globalAlpha);
     cairo_fill(m_layerContext);
 
     // Blur the image.

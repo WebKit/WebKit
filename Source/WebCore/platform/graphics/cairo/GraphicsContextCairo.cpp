@@ -85,7 +85,7 @@ static inline void setPlatformFill(GraphicsContext* context, cairo_t* cr)
     else
         setSourceRGBAFromColor(cr, context->fillColor());
     cairo_clip_preserve(cr);
-    cairo_paint_with_alpha(cr, state.globalAlpha);
+    cairo_paint_with_alpha(cr, context->platformContext()->globalAlpha());
     cairo_restore(cr);
     if (pattern)
         cairo_pattern_destroy(pattern);
@@ -93,6 +93,7 @@ static inline void setPlatformFill(GraphicsContext* context, cairo_t* cr)
 
 static inline void setPlatformStroke(GraphicsContext* context, cairo_t* cr)
 {
+    float globalAlpha = context->platformContext()->globalAlpha();
     cairo_pattern_t* pattern = 0;
     cairo_save(cr);
     
@@ -104,12 +105,12 @@ static inline void setPlatformStroke(GraphicsContext* context, cairo_t* cr)
     } else if (state.strokeGradient)
         cairo_set_source(cr, state.strokeGradient->platformGradient());
     else  {
-        Color strokeColor = colorWithOverrideAlpha(context->strokeColor().rgb(), context->strokeColor().alpha() / 255.f * state.globalAlpha);
+        Color strokeColor = colorWithOverrideAlpha(context->strokeColor().rgb(), context->strokeColor().alpha() / 255.f * globalAlpha);
         setSourceRGBAFromColor(cr, strokeColor);
     }
-    if (state.globalAlpha < 1.0f && (state.strokePattern || state.strokeGradient)) {
+    if (globalAlpha < 1.0f && (state.strokePattern || state.strokeGradient)) {
         cairo_push_group(cr);
-        cairo_paint_with_alpha(cr, state.globalAlpha);
+        cairo_paint_with_alpha(cr, globalAlpha);
         cairo_pop_group_to_source(cr);
     }
     cairo_stroke_preserve(cr);
@@ -1010,12 +1011,7 @@ void GraphicsContext::setMiterLimit(float miter)
 
 void GraphicsContext::setAlpha(float alpha)
 {
-    m_state.globalAlpha = alpha;
-}
-
-float GraphicsContext::getAlpha()
-{
-    return m_state.globalAlpha;
+    platformContext()->setGlobalAlpha(alpha);
 }
 
 void GraphicsContext::setPlatformCompositeOperation(CompositeOperator op)

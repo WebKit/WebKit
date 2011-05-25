@@ -154,9 +154,6 @@ namespace WebCore {
         GraphicsContextState()
             : strokeThickness(0)
             , shadowBlur(0)
-#if USE(CAIRO)
-            , globalAlpha(1)
-#endif
             , textDrawingMode(TextModeFill)
             , strokeColor(Color::black)
             , fillColor(Color::black)
@@ -189,9 +186,6 @@ namespace WebCore {
         float strokeThickness;
         float shadowBlur;
 
-#if USE(CAIRO)
-        float globalAlpha;
-#endif
         TextDrawingModeFlags textDrawingMode;
 
         Color strokeColor;
@@ -390,9 +384,6 @@ namespace WebCore {
         void setMiterLimit(float);
 
         void setAlpha(float);
-#if USE(CAIRO)
-        float getAlpha();
-#endif
 
         void setCompositeOperation(CompositeOperator);
         CompositeOperator compositeOperation() const;

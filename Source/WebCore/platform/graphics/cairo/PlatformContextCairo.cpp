@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2011 Igalia S.L.
+ * Copyright (c) 2008, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,27 +32,77 @@
 
 namespace WebCore {
 
+// In Cairo image masking is immediate, so to emulate image clipping we must save masking
+// details as part of the context state and apply them during platform restore.
+class ImageMaskInformation {
+public:
+    void update(cairo_surface_t* maskSurface, const FloatRect& maskRect)
+    {
+        m_maskSurface = maskSurface;
+        m_maskRect = maskRect;
+    }
+
+    bool isValid() const { return m_maskSurface; }
+    cairo_surface_t* maskSurface() const { return m_maskSurface.get(); }
+    const FloatRect& maskRect() const { return m_maskRect; }
+
+private:
+    RefPtr<cairo_surface_t> m_maskSurface;
+    FloatRect m_maskRect;
+};
+
+
+// Encapsulates the additional painting state information we store for each
+// pushed graphics state.
+class PlatformContextCairo::State {
+public:
+    State()
+        : m_globalAlpha(1)
+    {
+    }
+
+    State(const State& state)
+        : m_globalAlpha(state.m_globalAlpha)
+    {
+        // We do not copy m_imageMaskInformation because otherwise it would be applied
+        // more than once during subsequent calls to restore().
+    }
+
+    ImageMaskInformation m_imageMaskInformation;
+    float m_globalAlpha;
+};
+
 PlatformContextCairo::PlatformContextCairo(cairo_t* cr)
     : m_cr(cr)
 {
+    m_stateStack.append(State());
+    m_state = &m_stateStack.last();
 }
 
 void PlatformContextCairo::restore()
 {
-    const ImageMaskInformation& maskInformation = m_maskImageStack.last();
+    const ImageMaskInformation& maskInformation = m_state->m_imageMaskInformation;
     if (maskInformation.isValid()) {
         const FloatRect& maskRect = maskInformation.maskRect();
         cairo_pop_group_to_source(m_cr.get());
         cairo_mask_surface(m_cr.get(), maskInformation.maskSurface(), maskRect.x(), maskRect.y());
     }
-    m_maskImageStack.removeLast();
+
+    m_stateStack.removeLast();
+    ASSERT(!m_stateStack.isEmpty());
+    m_state = &m_stateStack.last();
 
     cairo_restore(m_cr.get());
 }
 
+PlatformContextCairo::~PlatformContextCairo()
+{
+}
+
 void PlatformContextCairo::save()
 {
-    m_maskImageStack.append(ImageMaskInformation());
+    m_stateStack.append(State(*m_state));
+    m_state = &m_stateStack.last();
 
     cairo_save(m_cr.get());
 }
@@ -60,8 +111,8 @@ void PlatformContextCairo::pushImageMask(cairo_surface_t* surface, const FloatRe
 {
     // We must call savePlatformState at least once before we can use image masking,
     // since we actually apply the mask in restorePlatformState.
-    ASSERT(!m_maskImageStack.isEmpty());
-    m_maskImageStack.last().update(surface, rect);
+    ASSERT(!m_stateStack.isEmpty());
+    m_state->m_imageMaskInformation.update(surface, rect);
 
     // Cairo doesn't support the notion of an image clip, so we push a group here
     // and then paint it to the surface with an image mask (which is an immediate
@@ -127,9 +178,18 @@ void PlatformContextCairo::drawSurfaceToContext(cairo_surface_t* surface, const 
     }
 
     cairo_save(m_cr.get());
-    drawPatternToCairoContext(m_cr.get(), pattern.get(), destRect, context->getAlpha());
+    drawPatternToCairoContext(m_cr.get(), pattern.get(), destRect, globalAlpha());
     cairo_restore(m_cr.get());
 }
 
+float PlatformContextCairo::globalAlpha() const
+{
+    return m_state->m_globalAlpha;
+}
+
+void PlatformContextCairo::setGlobalAlpha(float globalAlpha)
+{
+    m_state->m_globalAlpha = globalAlpha;
+}
 
 } // namespace WebCore
