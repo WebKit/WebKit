@@ -227,13 +227,13 @@ void WebInspectorProxy::platformDidClose()
 
 void WebInspectorProxy::platformBringToFront()
 {
-    // FIXME: support bring to front in docked mode here.
-
-    if (!m_inspectorWindow)
+    // FIXME: this will not bring a background tab in Safari to the front, only its window.
+    HWND parentWindow = m_isAttached ? ::GetAncestor(m_page->nativeWindow(), GA_ROOT) : m_inspectorWindow;
+    if (!parentWindow)
         return;
 
-    ASSERT(::IsWindow(m_inspectorWindow));
-    ::SetWindowPos(m_inspectorWindow, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
+    ASSERT(::IsWindow(parentWindow));
+    ::SetWindowPos(parentWindow, HWND_TOP, 0, 0, 0, 0, SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
 }
 
 void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)

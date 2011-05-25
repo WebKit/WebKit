@@ -1,3 +1,17 @@
+2011-05-24  Timothy Hatcher  <timothy@apple.com>
+
+        Make the Web Inspector bring the right window to the front when docked.
+
+        rdar://problem/9464685
+        https://webkit.org/b/61420
+
+        Reviewed by Brian Weinstein.
+
+        * UIProcess/mac/WebInspectorProxyMac.mm:
+        (WebKit::WebInspectorProxy::platformBringToFront): Order front the parent window of the Inspector's WKView.
+        * UIProcess/win/WebInspectorProxyWin.cpp:
+        (WebKit::WebInspectorProxy::platformBringToFront): Ditto.
+
 2011-05-24  Keishi Hattori  <keishi@webkit.org>
 
         Reviewed by Kent Tamura.
