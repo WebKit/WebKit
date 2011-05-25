@@ -1,3 +1,14 @@
+2011-05-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
+        Additional sandbox extension required for quarantine database
+        <rdar://problem/9397494>
+        https://bugs.webkit.org/show_bug.cgi?id=61405
+
+        * WebProcess/com.apple.WebProcess.sb:
+        Add read-data access for ~/Library/Preferences.
+
 2011-05-24  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Geoffrey Garen.

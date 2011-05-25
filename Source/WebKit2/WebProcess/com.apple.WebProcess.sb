@@ -99,6 +99,10 @@
        (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2")
        (home-literal "/Library/Preferences/com.apple.LaunchServices.QuarantineEventsV2-journal"))
 
+(allow file-read-data
+       ;; FIXME: This should be removed when <rdar://problem/9276430> is fixed.
+       (home-literal "/Library/Preferences"))
+
 ;; Darwin temporary files and Security mds caches, if present
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow file* (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/mds"))))
