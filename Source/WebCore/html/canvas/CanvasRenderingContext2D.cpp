@@ -940,6 +940,9 @@ void CanvasRenderingContext2D::fill()
         return;
 
     if (!m_path.isEmpty()) {
+        if (shouldDisplayTransparencyElsewhere())
+            displayTransparencyElsewhere<Path>(m_path);
+
         c->fillPath(m_path);
         didDraw(m_path.boundingRect());
     }
@@ -1043,6 +1046,9 @@ void CanvasRenderingContext2D::fillRect(float x, float y, float width, float hei
         return;
 
     FloatRect rect(x, y, width, height);
+
+    if (shouldDisplayTransparencyElsewhere())
+        displayTransparencyElsewhere<IntRect>(enclosingIntRect(rect));
 
     c->fillRect(rect);
     didDraw(rect);
@@ -1488,6 +1494,28 @@ void CanvasRenderingContext2D::setAlpha(float alpha)
 void CanvasRenderingContext2D::setCompositeOperation(const String& operation)
 {
     setGlobalCompositeOperation(operation);
+}
+
+bool CanvasRenderingContext2D::shouldDisplayTransparencyElsewhere() const
+{
+    // See 4.8.11.1.3 Compositing
+    // CompositeSourceAtop is not listed here as the platforms already implement the specification's behavior.
+    return state().m_globalComposite == CompositeSourceIn || state().m_globalComposite == CompositeSourceOut;
+}
+
+template<class T> void CanvasRenderingContext2D::displayTransparencyElsewhere(const T& area)
+{
+    ASSERT(shouldDisplayTransparencyElsewhere());
+
+    FloatRect canvasRect(0, 0, canvas()->width(), canvas()->height());
+    canvasRect = state().m_transform.inverse().mapRect(canvasRect);
+
+    GraphicsContext* c = drawingContext();
+    c->save();
+    c->clipOut(area);
+    c->setCompositeOperation(CompositeClear);
+    c->fillRect(canvasRect);
+    c->restore();
 }
 
 void CanvasRenderingContext2D::prepareGradientForDashboard(CanvasGradient* gradient) const

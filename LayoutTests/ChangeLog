@@ -1,3 +1,39 @@
+2011-05-25  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by James Robinson.
+
+        http://philip.html5.org/tests/canvas/suite/tests/2d.composite.uncovered.fill.source-in.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=39027
+
+        And:
+
+        - Fix LayoutTests/canvas/philip/tests/2d.composite.uncovered.fill.source-out.html
+          https://bugs.webkit.org/show_bug.cgi?id=48295
+
+        - Fix LayoutTests/canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html
+          https://bugs.webkit.org/show_bug.cgi?id=48304
+
+        - Fix LayoutTests/canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html
+        https://bugs.webkit.org/show_bug.cgi?id=48305
+
+        * canvas/philip/tests/2d.composite.uncovered.pattern.source-in-expected.txt:
+        * canvas/philip/tests/2d.composite.uncovered.pattern.source-out-expected.txt:
+        Those 2 tests need a trailing line that was added as part of this change.
+
+        * fast/canvas/canvas-composite-alpha.html: Updated the test result to match the specification.
+        The changes are fairly simple:
+          - Clear up the destination rectangle as it should be always transparent now (source is transparent
+            outside the source rectangle).
+          - Clear the composition rectangle if source or destination is transparent.
+          - Fixed the test when run in the browser.
+        Validated the changes against FF and Opera (IE 9 cannot render this test).
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        Re-enable 4 tests.
+
 2011-05-20  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Geoffrey Garen.

@@ -292,6 +292,9 @@ private:
     void clearPathForDashboardBackwardCompatibilityMode();
 #endif
 
+    bool shouldDisplayTransparencyElsewhere() const;
+    template<class T> void displayTransparencyElsewhere(const T& area);
+
     void prepareGradientForDashboard(CanvasGradient* gradient) const;
 
     Vector<State, 1> m_stateStack;

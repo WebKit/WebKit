@@ -1,3 +1,38 @@
+2011-05-25  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by James Robinson.
+
+        http://philip.html5.org/tests/canvas/suite/tests/2d.composite.uncovered.fill.source-in.html fails
+        https://bugs.webkit.org/show_bug.cgi?id=39027
+
+        And:
+
+        - Fix LayoutTests/canvas/philip/tests/2d.composite.uncovered.fill.source-out.html
+          https://bugs.webkit.org/show_bug.cgi?id=48295
+
+        - Fix LayoutTests/canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html
+          https://bugs.webkit.org/show_bug.cgi?id=48304
+
+        - Fix LayoutTests/canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html
+        https://bugs.webkit.org/show_bug.cgi?id=48305
+
+        Those 4 tests have the same root cause for failing. Instead of splitting them in 2 fixes, I squashed
+        them together as the fix is common.
+
+        Based on an older work by Ariya Hidayat.
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::fill):
+        (WebCore::CanvasRenderingContext2D::fillRect): Added call displayTransparencyEverywhere for those 2
+        cases if we have to.
+
+        (WebCore::CanvasRenderingContext2D::shouldDisplayTransparencyEverywhere): This method returns true if
+        the spec says to display transparency everywhere. We only do so for source-in and source-out for now.
+        (WebCore::CanvasRenderingContext2D::displayTransparencyEverywhere): This method implements the spec
+        (which matches other browsers' behavior) and "display transparency elsewhere".
+
+        * html/canvas/CanvasRenderingContext2D.h: Added the two previous methods.
+
 2011-05-25  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

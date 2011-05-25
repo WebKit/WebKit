@@ -157,8 +157,6 @@ canvas/philip/tests/2d.composite.operation.highlight.html
 canvas/philip/tests/2d.composite.uncovered.fill.copy.html
 canvas/philip/tests/2d.composite.uncovered.fill.destination-atop.html
 canvas/philip/tests/2d.composite.uncovered.fill.destination-in.html
-canvas/philip/tests/2d.composite.uncovered.fill.source-in.html
-canvas/philip/tests/2d.composite.uncovered.fill.source-out.html
 canvas/philip/tests/2d.composite.uncovered.image.copy.html
 canvas/philip/tests/2d.composite.uncovered.image.destination-atop.html
 canvas/philip/tests/2d.composite.uncovered.image.destination-in.html
@@ -167,8 +165,6 @@ canvas/philip/tests/2d.composite.uncovered.image.source-out.html
 canvas/philip/tests/2d.composite.uncovered.pattern.copy.html
 canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop.html
 canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html
-canvas/philip/tests/2d.composite.uncovered.pattern.source-in.html
-canvas/philip/tests/2d.composite.uncovered.pattern.source-out.html
 canvas/philip/tests/2d.imageData.object.round.html
 canvas/philip/tests/2d.imageData.object.wrap.html
 
