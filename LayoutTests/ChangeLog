@@ -1,5 +1,11 @@
 2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Yet another attempt to make Chromium Windows test bots happy.
+
+        * fast/events/selectstart-by-double-triple-clicks.html:
+
+2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Tony Chang.
 
         [chromium] selectstart-by-drag.html and selectstart-by-double-triple-clicks.html
