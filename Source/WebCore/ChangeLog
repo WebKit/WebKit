@@ -1,3 +1,25 @@
+2011-05-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by James Robinson.
+
+        CSSStyleSelector should provide a way to obtain rules from non-author stylesheets
+        https://bugs.webkit.org/show_bug.cgi?id=61454
+
+        Replaced bool and enum arguments of styleRulesForElement and pseudoStyleRulesForElement
+        by one enum, and provided a way to obtain rules from UA/user stylesheets.
+
+        * css/CSSRule.h: Removed CSSRuleFilter.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleRulesForElement): See above.
+        (WebCore::CSSStyleSelector::pseudoStyleRulesForElement): Ditto.
+        * css/CSSStyleSelector.h: Moved CSSRuleFilter here.
+        * editing/markup.cpp:
+        (WebCore::styleFromMatchedRulesForElement): Calls styleRulesForElement.
+        * inspector/InspectorCSSAgent.cpp:
+        (WebCore::InspectorCSSAgent::getStylesForNode): Ditto.
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::getMatchedCSSRules): Ditto.
+
 2011-05-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Andreas Kling.

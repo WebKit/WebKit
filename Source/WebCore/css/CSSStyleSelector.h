@@ -128,8 +128,16 @@ public:
 
     public:
         // These methods will give back the set of rules that matched for a given element (or a pseudo-element).
-        PassRefPtr<CSSRuleList> styleRulesForElement(Element*, bool authorOnly, bool includeEmptyRules = false, CSSRuleFilter filter = AllCSSRules);
-        PassRefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, PseudoId, bool authorOnly, bool includeEmptyRules = false, CSSRuleFilter filter = AllCSSRules);
+        enum CSSRuleFilter {
+            UAAndUserCSSRules   = 1 << 1,
+            AuthorCSSRules      = 1 << 2,
+            EmptyCSSRules       = 1 << 3,
+            CrossOriginCSSRules = 1 << 4,
+            AllButEmptyCSSRules = UAAndUserCSSRules | AuthorCSSRules | CrossOriginCSSRules,
+            AllCSSRules         = AllButEmptyCSSRules | EmptyCSSRules,
+        };
+        PassRefPtr<CSSRuleList> styleRulesForElement(Element*, unsigned rulesToInclude = AllButEmptyCSSRules);
+        PassRefPtr<CSSRuleList> pseudoStyleRulesForElement(Element*, PseudoId, unsigned rulesToInclude = AllButEmptyCSSRules);
 
         // Given a CSS keyword in the range (xx-small to -webkit-xxx-large), this function will return
         // the correct font size scaled relative to the user's default (medium).

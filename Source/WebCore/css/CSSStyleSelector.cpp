@@ -1991,12 +1991,12 @@ void CSSStyleSelector::cacheBorderAndBackground()
     }
 }
 
-PassRefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, bool authorOnly, bool includeEmptyRules, CSSRuleFilter filter)
+PassRefPtr<CSSRuleList> CSSStyleSelector::styleRulesForElement(Element* e, unsigned rulesToInclude)
 {
-    return pseudoStyleRulesForElement(e, NOPSEUDO, authorOnly, includeEmptyRules, filter);
+    return pseudoStyleRulesForElement(e, NOPSEUDO, rulesToInclude);
 }
 
-PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e, PseudoId pseudoId, bool authorOnly, bool includeEmptyRules, CSSRuleFilter filter)
+PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e, PseudoId pseudoId, unsigned rulesToInclude)
 {
     if (!e || !e->document()->haveStylesheetsLoaded())
         return 0;
@@ -2006,7 +2006,7 @@ PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e,
     initElement(e);
     initForStyleResolve(e, 0, pseudoId);
 
-    if (!authorOnly) {
+    if (rulesToInclude & UAAndUserCSSRules) {
         int firstUARule = -1, lastUARule = -1;
         // First we match rules from the user agent sheet.
         matchUARules(firstUARule, lastUARule);
@@ -2014,16 +2014,16 @@ PassRefPtr<CSSRuleList> CSSStyleSelector::pseudoStyleRulesForElement(Element* e,
         // Now we check user sheet rules.
         if (m_matchAuthorAndUserStyles) {
             int firstUserRule = -1, lastUserRule = -1;
-            matchRules(m_userStyle.get(), firstUserRule, lastUserRule, includeEmptyRules);
+            matchRules(m_userStyle.get(), firstUserRule, lastUserRule, rulesToInclude & EmptyCSSRules);
         }
     }
 
     if (m_matchAuthorAndUserStyles) {
-        m_checker.m_sameOriginOnly = (filter == SameOriginCSSRulesOnly);
+        m_checker.m_sameOriginOnly = !(rulesToInclude & CrossOriginCSSRules);
 
         // Check the rules in author sheets.
         int firstAuthorRule = -1, lastAuthorRule = -1;
-        matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule, includeEmptyRules);
+        matchRules(m_authorStyle.get(), firstAuthorRule, lastAuthorRule, rulesToInclude & EmptyCSSRules);
 
         m_checker.m_sameOriginOnly = false;
     }

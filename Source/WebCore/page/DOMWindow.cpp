@@ -1291,13 +1291,20 @@ PassRefPtr<CSSStyleDeclaration> DOMWindow::getComputedStyle(Element* elt, const 
     return computedStyle(elt, false, pseudoElt);
 }
 
-PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* elt, const String&, bool authorOnly) const
+PassRefPtr<CSSRuleList> DOMWindow::getMatchedCSSRules(Element* element, const String&, bool authorOnly) const
 {
     if (!m_frame)
         return 0;
 
-    Settings* settings = m_frame->settings();
-    return m_frame->document()->styleSelector()->styleRulesForElement(elt, authorOnly, false, settings && settings->crossOriginCheckInGetMatchedCSSRulesDisabled() ? AllCSSRules : SameOriginCSSRulesOnly);
+    unsigned rulesToInclude = CSSStyleSelector::AuthorCSSRules;
+    if (!authorOnly)
+        rulesToInclude |= CSSStyleSelector::UAAndUserCSSRules;
+    if (Settings* settings = m_frame->settings()) {
+        if (settings->crossOriginCheckInGetMatchedCSSRulesDisabled())
+            rulesToInclude |= CSSStyleSelector::CrossOriginCSSRules;
+    }
+
+    return m_frame->document()->styleSelector()->styleRulesForElement(element, rulesToInclude);
 }
 
 PassRefPtr<WebKitPoint> DOMWindow::webkitConvertPointFromNodeToPage(Node* node, const WebKitPoint* p) const
