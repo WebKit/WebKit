@@ -496,8 +496,13 @@ void DrawingAreaImpl::scheduleDisplay()
 
 void DrawingAreaImpl::displayTimerFired()
 {
+#if PLATFORM(WIN)
+    // For now we'll cap painting on Windows to 30fps because painting is much slower there for some reason.
+    static const double minimumFrameInterval = 1.0 / 30.0;
+#else
     static const double minimumFrameInterval = 1.0 / 60.0;
-    
+#endif
+
     double timeSinceLastDisplay = currentTime() - m_lastDisplayTime;
     double timeUntilLayerTreeHostNeedsDisplay = m_layerTreeHost && m_layerTreeHost->participatesInDisplay() ? m_layerTreeHost->timeUntilNextDisplay() : 0;
     double timeUntilNextDisplay = max(minimumFrameInterval - timeSinceLastDisplay, timeUntilLayerTreeHostNeedsDisplay);
