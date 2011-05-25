@@ -1,3 +1,15 @@
+2011-05-25  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed. Test expectations update, followup to r87291.
+
+        The aforementioned change cleared out these files, when the intent
+        seems to have been removal to remove them.
+
+        * platform/chromium-mac/ietestcenter/Javascript/15.5.4.20-1-1-expected.txt: Removed.
+        * platform/chromium-mac/ietestcenter/Javascript/15.5.4.20-1-2-expected.txt: Removed.
+        * platform/chromium-win/ietestcenter/Javascript/15.5.4.20-1-1-expected.txt: Removed.
+        * platform/chromium-win/ietestcenter/Javascript/15.5.4.20-1-2-expected.txt: Removed.
+
 2011-05-25  Jon Honeycutt  <jhoneycutt@apple.com>
 
         REGRESSION (WebKit2): Crash in Flash on USA Today photo gallery
