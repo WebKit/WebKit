@@ -1,3 +1,28 @@
+2011-05-25  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: Fullscreen button on embedded Vimeo videos does nothing
+        https://bugs.webkit.org/show_bug.cgi?id=61461
+
+        Tests: fullscreen/full-screen-iframe-legacy.html
+
+        Allow calls from the legacy full-screen API to bypass the iframe
+        "webkitallowfullscreen" requirement by adding a parameter to 
+        Document::webkitRequestFullScreenForElement specifying the strictness
+        of that check.  Specify this new parameter everywhere that function is 
+        called, including in the default controls' full-screen button handler.
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitRequestFullScreenForElement):
+        * dom/Document.h:
+        * dom/Element.cpp:
+        (WebCore::Element::requestFullScreen): Renamed from webkitRequestFullScreen.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::enterFullscreen):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler):
+
 2011-05-25  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
 
         Reviewed by David Hyatt.

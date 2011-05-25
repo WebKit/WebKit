@@ -793,7 +793,7 @@ void MediaControlFullscreenButtonElement::defaultEventHandler(Event* event)
                 document()->webkitCancelFullScreen();
                 m_controls->exitedFullscreen();
             } else {
-                mediaElement()->webkitRequestFullScreen(0);
+                document()->requestFullScreenForElement(mediaElement(), 0, Document::ExemptIFrameAllowFulScreenRequirement);
                 m_controls->enteredFullscreen();
             }
         } else
