@@ -1998,7 +1998,7 @@ HEADERS += \
     platform/LinkHash.h \
     platform/Logging.h \
     platform/Language.h \
-    platfory/MemoryPressureHandler.h \
+    platform/MemoryPressureHandler.h \
     platform/MIMETypeRegistry.h \
     platform/network/AuthenticationChallengeBase.h \
     platform/network/AuthenticationClient.h \

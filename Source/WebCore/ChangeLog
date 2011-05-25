@@ -1,3 +1,9 @@
+2011-05-24  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed typo fix after r87228.
+
+        * WebCore.pro:
+
 2011-05-24  Keishi Hattori  <keishi@webkit.org>
 
         Reviewed by Kent Tamura.
