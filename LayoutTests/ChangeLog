@@ -1,3 +1,13 @@
+2011-05-24  Justin Novosad  <junov@chromium.org>
+
+        Reviewed by Stephen White.
+
+        [Chromium] cleanup test expectations for drawImage that are no longer
+        flaky
+        https://bugs.webkit.org/show_bug.cgi?id=61389
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-24  Greg Simon  <gregsimon@chromium.org>
 
         Reviewed by Dimitri Glazkov.

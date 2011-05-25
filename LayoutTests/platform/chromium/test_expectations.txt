@@ -1005,8 +1005,6 @@ BUGCR79896 WIN7 GPU : fast/canvas/canvas-strokePath-shadow.html = TEXT
 BUGWK57547 LINUX GPU : fast/canvas/canvas-strokeRect-gradient-shadow.html = TEXT TIMEOUT
 
 // Flaky tests
-BUGCR81585 LINUX GPU : canvas/philip/tests/2d.drawImage.alpha.html = PASS TEXT
-BUGCR81585 LINUX GPU : canvas/philip/tests/2d.drawImage.9arg.basic.html = PASS TEXT
 BUGCR81858 WIN LINUX GPU : fast/canvas/canvas-longlived-context.html = PASS TEXT
 
 // Misc. render failures
