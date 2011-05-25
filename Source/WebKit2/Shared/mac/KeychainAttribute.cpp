@@ -51,7 +51,7 @@ namespace CoreIPC {
 
 void encode(CoreIPC::ArgumentEncoder* encoder, const WebKit::KeychainAttribute& attribute)
 {
-    encoder->encodeUInt32(attribute.tag);
+    encoder->encodeUInt32(static_cast<uint32_t>(attribute.tag));
     encoder->encodeBool(attribute.data);
     if (attribute.data)
         CoreIPC::encode(encoder, attribute.data.get());
@@ -59,9 +59,12 @@ void encode(CoreIPC::ArgumentEncoder* encoder, const WebKit::KeychainAttribute& 
 
 bool decode(CoreIPC::ArgumentDecoder* decoder, WebKit::KeychainAttribute& attribute)
 {
-    if (!decoder->decodeUInt32(attribute.tag))
+    uint32_t tag;
+    if (!decoder->decodeUInt32(tag))
         return false;
-    
+
+    attribute.tag = tag;
+
     bool expectData;
     if (!decoder->decodeBool(expectData))
         return false;
