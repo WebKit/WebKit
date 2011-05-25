@@ -28,12 +28,10 @@
 
 #import "FullKeyboardAccessWatcher.h"
 #import "SandboxExtension.h"
-#import "SecItemRequestData.h"
-#import "SecItemResponseData.h"
 #import "WebPage.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessProxyMessages.h"
-#import "WebProcessShim.h"
+#import "SecItemShimMethods.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MemoryCache.h>
@@ -41,7 +39,6 @@
 #import <WebKitSystemInterface.h>
 #import <algorithm>
 #import <dispatch/dispatch.h>
-#import <dlfcn.h>
 #import <mach/host_info.h>
 #import <mach/mach.h>
 #import <mach/mach_error.h>
@@ -243,136 +240,11 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
     method_setImplementation(methodToPatch, (IMP)NSApplicationAccessibilityFocusedUIElement);
 }
 
-// FIXME (https://bugs.webkit.org/show_bug.cgi?id=60975) - Once CoreIPC supports sync messaging from a secondary thread,
-// we can remove SecItemAPIContext and these 4 main-thread methods, and we can have the shim methods call out directly 
-// from whatever thread they're on.
-
-struct SecItemAPIContext
-{
-    CFDictionaryRef query;
-    CFDictionaryRef attributesToUpdate;
-    CFTypeRef resultObject;
-    OSStatus resultCode;
-};
-
-static void WebSecItemCopyMatchingMainThread(void* voidContext)
-{
-    SecItemAPIContext* context = (SecItemAPIContext*)voidContext;
-    
-    SecItemRequestData requestData(context->query);
-    SecItemResponseData response;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::SecItemCopyMatching(requestData), Messages::WebProcessProxy::SecItemCopyMatching::Reply(response), 0)) {
-        context->resultCode = errSecInteractionNotAllowed;
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    context->resultObject = response.resultObject().leakRef();
-    context->resultCode = response.resultCode();
-}
-
-static OSStatus WebSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
-{
-    SecItemAPIContext context;
-    context.query = query;
-    
-    callOnMainThreadAndWait(WebSecItemCopyMatchingMainThread, &context);
-    
-    if (result)
-        *result = context.resultObject;
-    return context.resultCode;
-}
-
-static void WebSecItemAddOnMainThread(void* voidContext)
-{
-    SecItemAPIContext* context = (SecItemAPIContext*)voidContext;
-    
-    SecItemRequestData requestData(context->query);
-    SecItemResponseData response;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::SecItemAdd(requestData), Messages::WebProcessProxy::SecItemAdd::Reply(response), 0)) {
-        context->resultCode = errSecInteractionNotAllowed;
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    context->resultObject = response.resultObject().leakRef();
-    context->resultCode = response.resultCode();
-}
-
-static OSStatus WebSecItemAdd(CFDictionaryRef query, CFTypeRef* result)
-{    
-    SecItemAPIContext context;
-    context.query = query;
-    
-    callOnMainThreadAndWait(WebSecItemAddOnMainThread, &context);
-    
-    if (result)
-        *result = context.resultObject;
-    return context.resultCode;
-}
-
-static void WebSecItemUpdateOnMainThread(void* voidContext)
-{
-    SecItemAPIContext* context = (SecItemAPIContext*)voidContext;
-    
-    SecItemRequestData requestData(context->query, context->attributesToUpdate);
-    SecItemResponseData response;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::SecItemUpdate(requestData), Messages::WebProcessProxy::SecItemUpdate::Reply(response), 0)) {
-        context->resultCode = errSecInteractionNotAllowed;
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    context->resultCode = response.resultCode();
-}
-
-static OSStatus WebSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attributesToUpdate)
-{    
-    SecItemAPIContext context;
-    context.query = query;
-    context.attributesToUpdate = attributesToUpdate;
-    
-    callOnMainThreadAndWait(WebSecItemUpdateOnMainThread, &context);
-    
-    return context.resultCode;
-}
-
-static void WebSecItemDeleteOnMainThread(void* voidContext)
-{
-    SecItemAPIContext* context = (SecItemAPIContext*)voidContext;
-    
-    SecItemRequestData requestData(context->query);
-    SecItemResponseData response;
-    if (!WebProcess::shared().connection()->sendSync(Messages::WebProcessProxy::SecItemDelete(requestData), Messages::WebProcessProxy::SecItemDelete::Reply(response), 0)) {
-        context->resultCode = errSecInteractionNotAllowed;
-        ASSERT_NOT_REACHED();
-        return;
-    }
-    
-    context->resultCode = response.resultCode();
-}
-
-static OSStatus WebSecItemDelete(CFDictionaryRef query)
-{    
-    SecItemAPIContext context;
-    context.query = query;
-    
-    callOnMainThreadAndWait(WebSecItemDeleteOnMainThread, &context);
-
-    return context.resultCode;
-}
-
 void WebProcess::initializeShim()
 {
-    const WebProcessShimCallbacks callbacks = {
-        WebSecItemCopyMatching,
-        WebSecItemAdd,
-        WebSecItemUpdate,
-        WebSecItemDelete
-    };
-    
-    WebProcessShimInitializeFunc initFunc = reinterpret_cast<WebProcessShimInitializeFunc>(dlsym(RTLD_DEFAULT, "WebKitWebProcessShimInitialize"));
-    initFunc(callbacks);
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+    initializeSecItemShim();
+#endif
 }
 
 void WebProcess::platformTerminate()

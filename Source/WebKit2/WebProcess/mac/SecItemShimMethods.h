@@ -23,24 +23,13 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebProcessShim_h
-#define WebProcessShim_h
+#ifndef SecItemShimMethods_h
+#define SecItemShimMethods_h
 
 namespace WebKit {
 
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
-
-struct WebProcessSecItemShimCallbacks {
-    OSStatus (*secItemCopyMatching)(CFDictionaryRef query, CFTypeRef *result);
-    OSStatus (*secItemAdd)(CFDictionaryRef attributes, CFTypeRef *result);
-    OSStatus (*secItemUpdate)(CFDictionaryRef query, CFDictionaryRef attributesToUpdate);
-    OSStatus (*secItemDelete)(CFDictionaryRef query);
-};
-
-typedef void (*WebProcessSecItemShimInitializeFunc)(const WebProcessSecItemShimCallbacks& callbacks);
-
-#endif // BUILDING_ON_SNOW_LEOPARD
+void initializeSecItemShim();
 
 }
 
-#endif // WebProcessShim_h
+#endif // SecItemShimMethods_h
