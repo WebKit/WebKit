@@ -4112,6 +4112,18 @@
 		ABDDFE790A5C6E7000A3E11D /* RenderMenuList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = ABDDFE730A5C6E6F00A3E11D /* RenderMenuList.cpp */; };
 		ABDDFE7A0A5C6E7000A3E11D /* RenderMenuList.h in Headers */ = {isa = PBXBuildFile; fileRef = ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */; };
 		ADDF1AD71257CD9A0003A759 /* RenderSVGPath.h in Headers */ = {isa = PBXBuildFile; fileRef = ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */; };
+		B12D233E13560282002A28D4 /* ExclusiveTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B12D233513560282002A28D4 /* ExclusiveTrackList.cpp */; };
+		B12D233F13560282002A28D4 /* ExclusiveTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D233613560282002A28D4 /* ExclusiveTrackList.h */; };
+		B12D234113560282002A28D4 /* MultipleTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B12D233813560282002A28D4 /* MultipleTrackList.cpp */; };
+		B12D234213560282002A28D4 /* MultipleTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D233913560282002A28D4 /* MultipleTrackList.h */; };
+		B12D234413560282002A28D4 /* TrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B12D233B13560282002A28D4 /* TrackList.cpp */; };
+		B12D234513560282002A28D4 /* TrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D233C13560282002A28D4 /* TrackList.h */; };
+		B12D236513560330002A28D4 /* JSTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B12D23631356032F002A28D4 /* JSTrackList.cpp */; };
+		B12D236613560330002A28D4 /* JSTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D236413560330002A28D4 /* JSTrackList.h */; };
+		B12D23691356033F002A28D4 /* JSExclusiveTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B12D23671356033F002A28D4 /* JSExclusiveTrackList.cpp */; };
+		B12D236A1356033F002A28D4 /* JSExclusiveTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D23681356033F002A28D4 /* JSExclusiveTrackList.h */; };
+		B12D236D1356034D002A28D4 /* JSMultipleTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B12D236B1356034D002A28D4 /* JSMultipleTrackList.cpp */; };
+		B12D236E1356034D002A28D4 /* JSMultipleTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D236C1356034D002A28D4 /* JSMultipleTrackList.h */; };
 		B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1827492134CA4C100B98C2D /* CallbackFunction.cpp */; };
 		B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */; };
 		B1E5457A1346291F0092A545 /* GeneratedStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E545711346291F0092A545 /* GeneratedStream.cpp */; };
@@ -10417,6 +10429,21 @@
 		ABDDFE740A5C6E7000A3E11D /* RenderMenuList.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderMenuList.h; sourceTree = "<group>"; };
 		ADDF1AD41257CD9A0003A759 /* RenderSVGPath.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RenderSVGPath.cpp; sourceTree = "<group>"; };
 		ADDF1AD51257CD9A0003A759 /* RenderSVGPath.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderSVGPath.h; sourceTree = "<group>"; };
+		B12D233513560282002A28D4 /* ExclusiveTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExclusiveTrackList.cpp; sourceTree = "<group>"; };
+		B12D233613560282002A28D4 /* ExclusiveTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExclusiveTrackList.h; sourceTree = "<group>"; };
+		B12D233713560282002A28D4 /* ExclusiveTrackList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = ExclusiveTrackList.idl; sourceTree = "<group>"; };
+		B12D233813560282002A28D4 /* MultipleTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultipleTrackList.cpp; sourceTree = "<group>"; };
+		B12D233913560282002A28D4 /* MultipleTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultipleTrackList.h; sourceTree = "<group>"; };
+		B12D233A13560282002A28D4 /* MultipleTrackList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = MultipleTrackList.idl; sourceTree = "<group>"; };
+		B12D233B13560282002A28D4 /* TrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TrackList.cpp; sourceTree = "<group>"; };
+		B12D233C13560282002A28D4 /* TrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TrackList.h; sourceTree = "<group>"; };
+		B12D233D13560282002A28D4 /* TrackList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TrackList.idl; sourceTree = "<group>"; };
+		B12D23631356032F002A28D4 /* JSTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSTrackList.cpp; sourceTree = "<group>"; };
+		B12D236413560330002A28D4 /* JSTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSTrackList.h; sourceTree = "<group>"; };
+		B12D23671356033F002A28D4 /* JSExclusiveTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSExclusiveTrackList.cpp; sourceTree = "<group>"; };
+		B12D23681356033F002A28D4 /* JSExclusiveTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSExclusiveTrackList.h; sourceTree = "<group>"; };
+		B12D236B1356034D002A28D4 /* JSMultipleTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMultipleTrackList.cpp; sourceTree = "<group>"; };
+		B12D236C1356034D002A28D4 /* JSMultipleTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMultipleTrackList.h; sourceTree = "<group>"; };
 		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
 		B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackFunction.h; sourceTree = "<group>"; };
 		B1E545711346291F0092A545 /* GeneratedStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratedStream.cpp; sourceTree = "<group>"; };
@@ -16957,12 +16984,16 @@
 				65DF322E09D1DDBC000BE325 /* JSEntity.h */,
 				93F9B7720BA5FDDC00854064 /* JSEntityReference.cpp */,
 				93F9B7730BA5FDDC00854064 /* JSEntityReference.h */,
+				B12D23671356033F002A28D4 /* JSExclusiveTrackList.cpp */,
+				B12D23681356033F002A28D4 /* JSExclusiveTrackList.h */,
 				B1E545CF13462B0B0092A545 /* JSGeneratedStream.cpp */,
 				B1E545D013462B0B0092A545 /* JSGeneratedStream.h */,
 				FE80DA5F0E9C4703000D6F75 /* JSGeolocation.cpp */,
 				FE80DA600E9C4703000D6F75 /* JSGeolocation.h */,
 				FE80DA610E9C4703000D6F75 /* JSGeoposition.cpp */,
 				FE80DA620E9C4703000D6F75 /* JSGeoposition.h */,
+				B12D236B1356034D002A28D4 /* JSMultipleTrackList.cpp */,
+				B12D236C1356034D002A28D4 /* JSMultipleTrackList.h */,
 				BCD9C2BC0C17B69E005C90A2 /* JSNamedNodeMap.cpp */,
 				BCD9C2BD0C17B69E005C90A2 /* JSNamedNodeMap.h */,
 				14DC0D3509FED073007B0235 /* JSNode.cpp */,
@@ -16991,6 +17022,8 @@
 				B1E545D813462B0B0092A545 /* JSStream.h */,
 				65DF31EF09D1CC60000BE325 /* JSText.cpp */,
 				65DF31F009D1CC60000BE325 /* JSText.h */,
+				B12D23631356032F002A28D4 /* JSTrackList.cpp */,
+				B12D236413560330002A28D4 /* JSTrackList.h */,
 			);
 			name = Core;
 			sourceTree = "<group>";
@@ -19402,6 +19435,9 @@
 				BC60D8F10D2A11E000B9918F /* ExceptionBase.h */,
 				93831B560D087D6000E5C984 /* ExceptionCode.cpp */,
 				935FBCF109BA143B00E230B1 /* ExceptionCode.h */,
+				B12D233513560282002A28D4 /* ExclusiveTrackList.cpp */,
+				B12D233613560282002A28D4 /* ExclusiveTrackList.h */,
+				B12D233713560282002A28D4 /* ExclusiveTrackList.idl */,
 				A853123C11D0471B00D4D077 /* FragmentScriptingPermission.h */,
 				B1E545711346291F0092A545 /* GeneratedStream.cpp */,
 				B1E545721346291F0092A545 /* GeneratedStream.h */,
@@ -19431,6 +19467,9 @@
 				141B94E509EC4223000E9413 /* MouseEvent.idl */,
 				85031B310A44EFC700F992E0 /* MouseRelatedEvent.cpp */,
 				85031B320A44EFC700F992E0 /* MouseRelatedEvent.h */,
+				B12D233813560282002A28D4 /* MultipleTrackList.cpp */,
+				B12D233913560282002A28D4 /* MultipleTrackList.h */,
+				B12D233A13560282002A28D4 /* MultipleTrackList.idl */,
 				85031B330A44EFC700F992E0 /* MutationEvent.cpp */,
 				85031B340A44EFC700F992E0 /* MutationEvent.h */,
 				93EEC1F309C2877700C515D1 /* MutationEvent.idl */,
@@ -19544,6 +19583,9 @@
 				933A142D0B7D188600A53FFD /* TextEvent.h */,
 				933A142C0B7D188600A53FFD /* TextEvent.idl */,
 				A77B419F12E675A90054343D /* TextEventInputType.h */,
+				B12D233B13560282002A28D4 /* TrackList.cpp */,
+				B12D233C13560282002A28D4 /* TrackList.h */,
+				B12D233D13560282002A28D4 /* TrackList.idl */,
 				5DB1BC6810715A6400EFAA49 /* TransformSource.h */,
 				5DB1BC6910715A6400EFAA49 /* TransformSourceLibxslt.cpp */,
 				854FE72C0A2297BE0058D7AD /* Traversal.cpp */,
@@ -22949,6 +22991,12 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
+				B12D233F13560282002A28D4 /* ExclusiveTrackList.h in Headers */,
+				B12D234213560282002A28D4 /* MultipleTrackList.h in Headers */,
+				B12D234513560282002A28D4 /* TrackList.h in Headers */,
+				B12D236613560330002A28D4 /* JSTrackList.h in Headers */,
+				B12D236A1356033F002A28D4 /* JSExclusiveTrackList.h in Headers */,
+				B12D236E1356034D002A28D4 /* JSMultipleTrackList.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25638,6 +25686,12 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				B12D233E13560282002A28D4 /* ExclusiveTrackList.cpp in Sources */,
+				B12D234113560282002A28D4 /* MultipleTrackList.cpp in Sources */,
+				B12D234413560282002A28D4 /* TrackList.cpp in Sources */,
+				B12D236513560330002A28D4 /* JSTrackList.cpp in Sources */,
+				B12D23691356033F002A28D4 /* JSExclusiveTrackList.cpp in Sources */,
+				B12D236D1356034D002A28D4 /* JSMultipleTrackList.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

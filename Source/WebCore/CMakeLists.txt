@@ -154,12 +154,14 @@ SET(WebCore_IDL_FILES
     dom/ErrorEvent.idl
     dom/EventException.idl
     dom/Event.idl
+    dom/ExclusiveTrackList.idl
     dom/HashChangeEvent.idl
     dom/KeyboardEvent.idl
     dom/MessageChannel.idl
     dom/MessageEvent.idl
     dom/MessagePort.idl
     dom/MouseEvent.idl
+    dom/MultipleTrackList.idl
     dom/MutationEvent.idl
     dom/NamedNodeMap.idl
     dom/NodeFilter.idl
@@ -180,6 +182,7 @@ SET(WebCore_IDL_FILES
     dom/TouchEvent.idl
     dom/Touch.idl
     dom/TouchList.idl
+    dom/TrackList.idl
     dom/TreeWalker.idl
     dom/UIEvent.idl
     dom/WebKitAnimationEvent.idl
@@ -574,6 +577,7 @@ SET(WebCore_SOURCES
     dom/EventQueue.cpp
     dom/ExceptionBase.cpp
     dom/ExceptionCode.cpp
+    dom/ExclusiveTrackList.cpp
     dom/IconURL.cpp
     dom/KeyboardEvent.cpp
     dom/MessageChannel.cpp
@@ -582,6 +586,7 @@ SET(WebCore_SOURCES
     dom/MessagePort.cpp
     dom/MouseEvent.cpp
     dom/MouseRelatedEvent.cpp
+    dom/MultipleTrackList.cpp
     dom/MutationEvent.cpp
     dom/NamedNodeMap.cpp
     dom/NameNodeList.cpp
@@ -625,6 +630,7 @@ SET(WebCore_SOURCES
     dom/Touch.cpp
     dom/TouchEvent.cpp
     dom/TouchList.cpp
+    dom/TrackList.cpp
     dom/TransformSourceLibxslt.cpp
     dom/Traversal.cpp
     dom/TreeScope.cpp

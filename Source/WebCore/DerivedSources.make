@@ -184,6 +184,7 @@ DOM_CLASSES = \
     EventListener \
     EventSource \
     EventTarget \
+    ExclusiveTrackList \
     File \
     FileCallback \
     FileEntry \
@@ -303,6 +304,7 @@ DOM_CLASSES = \
     Metadata \
     MetadataCallback \
     MouseEvent \
+    MultipleTrackList \
     MutationEvent \
     NamedNodeMap \
     Navigator \
@@ -519,6 +521,7 @@ DOM_CLASSES = \
     Touch \
     TouchEvent \
     TouchList \
+    TrackList \
     TreeWalker \
     UIEvent \
     ValidityState \

@@ -1,3 +1,88 @@
+2011-05-25  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Introduce HTML5 track list objects.
+        https://bugs.webkit.org/show_bug.cgi?id=60184
+
+        Introduce the TrackList, MultipleTrackList and ExclusiveTrackList objects
+        for their use in the MediaStream API and the HTML Media Element.
+        Current spec: http://www.whatwg.org/specs/web-apps/current-work/multipage/the-iframe-element.html#tracklist
+
+        The Media Stream API will test this feature in the bug 56587.
+        More tests related to the HTML Media Element may be added later.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventTarget.cpp:
+        (WebCore::toJS):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::convertEventTargetToV8Object):
+        * dom/DOMAllInOne.cpp:
+        * dom/EventTarget.cpp:
+        (WebCore::EventTarget::toTrackList):
+        (WebCore::EventTarget::toMultipleTrackList):
+        (WebCore::EventTarget::toExclusiveTrackList):
+        * dom/EventTarget.h:
+        * dom/ExclusiveTrackList.cpp: Added.
+        (WebCore::ExclusiveTrackList::create):
+        (WebCore::ExclusiveTrackList::ExclusiveTrackList):
+        (WebCore::ExclusiveTrackList::~ExclusiveTrackList):
+        (WebCore::ExclusiveTrackList::clear):
+        (WebCore::ExclusiveTrackList::select):
+        (WebCore::ExclusiveTrackList::toExclusiveTrackList):
+        * dom/ExclusiveTrackList.h: Added.
+        (WebCore::ExclusiveTrackList::selectedIndex):
+        * dom/ExclusiveTrackList.idl: Added.
+        * dom/MultipleTrackList.cpp: Added.
+        (WebCore::MultipleTrackList::create):
+        (WebCore::MultipleTrackList::MultipleTrackList):
+        (WebCore::MultipleTrackList::~MultipleTrackList):
+        (WebCore::MultipleTrackList::clear):
+        (WebCore::MultipleTrackList::isEnabled):
+        (WebCore::MultipleTrackList::enable):
+        (WebCore::MultipleTrackList::disable):
+        (WebCore::MultipleTrackList::toMultipleTrackList):
+        * dom/MultipleTrackList.h: Added.
+        * dom/MultipleTrackList.idl: Added.
+        * dom/TrackList.cpp: Added.
+        (WebCore::Track::create):
+        (WebCore::Track::Track):
+        (WebCore::TrackList::create):
+        (WebCore::TrackList::TrackList):
+        (WebCore::TrackList::~TrackList):
+        (WebCore::TrackList::length):
+        (WebCore::TrackList::checkIndex):
+        (WebCore::TrackList::getID):
+        (WebCore::TrackList::getKind):
+        (WebCore::TrackList::getLabel):
+        (WebCore::TrackList::getLanguage):
+        (WebCore::TrackList::clear):
+        (WebCore::TrackList::postChangeEvent):
+        (WebCore::TrackList::dispatchChangeEvent):
+        (WebCore::TrackList::toTrackList):
+        (WebCore::TrackList::scriptExecutionContext):
+        (WebCore::TrackList::eventTargetData):
+        (WebCore::TrackList::ensureEventTargetData):
+        * dom/TrackList.h: Added.
+        (WebCore::Track::id):
+        (WebCore::Track::kind):
+        (WebCore::Track::label):
+        (WebCore::Track::language):
+        (WebCore::TrackList::DispatchTask::create):
+        (WebCore::TrackList::DispatchTask::performTask):
+        (WebCore::TrackList::DispatchTask::DispatchTask):
+        (WebCore::TrackList::refEventTarget):
+        (WebCore::TrackList::derefEventTarget):
+        * dom/TrackList.idl: Added.
+
 2011-05-25  Keishi Hattori  <keishi@webkit.org>
 
         Reviewed by Kent Tamura.

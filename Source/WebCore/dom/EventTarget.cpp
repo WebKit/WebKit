@@ -217,6 +217,23 @@ GeneratedStream* EventTarget::toGeneratedStream()
 }
 #endif
 
+#if ENABLE(MEDIA_STREAM) || ENABLE(VIDEO_TRACK)
+TrackList* EventTarget::toTrackList()
+{
+    return 0;
+}
+
+MultipleTrackList* EventTarget::toMultipleTrackList()
+{
+    return 0;
+}
+
+ExclusiveTrackList* EventTarget::toExclusiveTrackList()
+{
+    return 0;
+}
+#endif
+
 bool EventTarget::addEventListener(const AtomicString& eventType, PassRefPtr<EventListener> listener, bool useCapture)
 {
     EventTargetData* d = ensureEventTargetData();

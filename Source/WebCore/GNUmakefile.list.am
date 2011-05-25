@@ -160,6 +160,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSEvent.h \
 	DerivedSources/WebCore/JSEventSource.cpp \
 	DerivedSources/WebCore/JSEventSource.h \
+	DerivedSources/WebCore/JSExclusiveTrackList.cpp \
+	DerivedSources/WebCore/JSExclusiveTrackList.h \
 	DerivedSources/WebCore/JSFile.cpp \
 	DerivedSources/WebCore/JSFileError.cpp \
 	DerivedSources/WebCore/JSFileError.h \
@@ -365,6 +367,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSMessagePort.h \
 	DerivedSources/WebCore/JSMouseEvent.cpp \
 	DerivedSources/WebCore/JSMouseEvent.h \
+	DerivedSources/WebCore/JSMultipleTrackList.cpp \
+	DerivedSources/WebCore/JSMultipleTrackList.h \
 	DerivedSources/WebCore/JSMutationEvent.cpp \
 	DerivedSources/WebCore/JSMutationEvent.h \
 	DerivedSources/WebCore/JSNamedNodeMap.cpp \
@@ -477,6 +481,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSTouch.h \
 	DerivedSources/WebCore/JSTouchList.cpp \
 	DerivedSources/WebCore/JSTouchList.h \
+	DerivedSources/WebCore/JSTrackList.cpp \
+	DerivedSources/WebCore/JSTrackList.h \
 	DerivedSources/WebCore/JSTreeWalker.cpp \
 	DerivedSources/WebCore/JSTreeWalker.h \
 	DerivedSources/WebCore/JSUIEvent.cpp \
@@ -1158,6 +1164,8 @@ webcore_sources += \
 	Source/WebCore/dom/ExceptionBase.h \
 	Source/WebCore/dom/ExceptionCode.cpp \
 	Source/WebCore/dom/ExceptionCode.h \
+	Source/WebCore/dom/ExclusiveTrackList.cpp \
+	Source/WebCore/dom/ExclusiveTrackList.h \
 	Source/WebCore/dom/FragmentScriptingPermission.h \
 	Source/WebCore/dom/GeneratedStream.cpp \
 	Source/WebCore/dom/GeneratedStream.h \
@@ -1180,6 +1188,8 @@ webcore_sources += \
 	Source/WebCore/dom/MouseEvent.h \
 	Source/WebCore/dom/MouseRelatedEvent.cpp \
 	Source/WebCore/dom/MouseRelatedEvent.h \
+	Source/WebCore/dom/MultipleTrackList.cpp \
+	Source/WebCore/dom/MultipleTrackList.h \
 	Source/WebCore/dom/MutationEvent.cpp \
 	Source/WebCore/dom/MutationEvent.h \
 	Source/WebCore/dom/NamedNodeMap.cpp \
@@ -1272,6 +1282,8 @@ webcore_sources += \
 	Source/WebCore/dom/TextEventInputType.h \
 	Source/WebCore/dom/Text.h \
 	Source/WebCore/dom/TouchList.h \
+	Source/WebCore/dom/TrackList.cpp \
+	Source/WebCore/dom/TrackList.h \
 	Source/WebCore/dom/TransformSource.h \
 	Source/WebCore/dom/TransformSourceLibxslt.cpp \
 	Source/WebCore/dom/Traversal.cpp \

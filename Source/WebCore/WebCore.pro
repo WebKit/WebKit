@@ -496,6 +496,7 @@ SOURCES += \
     dom/EventQueue.cpp \
     dom/ExceptionBase.cpp \
     dom/ExceptionCode.cpp \
+    dom/ExclusiveTrackList.cpp \
     dom/IconURL.cpp \
     dom/KeyboardEvent.cpp \
     dom/MessageChannel.cpp \
@@ -504,6 +505,7 @@ SOURCES += \
     dom/MessagePortChannel.cpp \
     dom/MouseEvent.cpp \
     dom/MouseRelatedEvent.cpp \
+    dom/MultipleTrackList.cpp \
     dom/MutationEvent.cpp \
     dom/NamedNodeMap.cpp \
     dom/NameNodeList.cpp \
@@ -548,6 +550,7 @@ SOURCES += \
     dom/Touch.cpp \
     dom/TouchEvent.cpp \
     dom/TouchList.cpp \
+    dom/TrackList.cpp \
     dom/Traversal.cpp \
     dom/TreeScope.cpp \
     dom/TreeWalker.cpp \
@@ -1477,6 +1480,7 @@ HEADERS += \
     dom/EventTarget.h \
     dom/ExceptionBase.h \
     dom/ExceptionCode.h \
+    dom/ExclusiveTrackList.h \
     dom/FragmentScriptingPermission.h \
     dom/KeyboardEvent.h \
     dom/MessageChannel.h \
@@ -1485,6 +1489,7 @@ HEADERS += \
     dom/MessagePort.h \
     dom/MouseEvent.h \
     dom/MouseRelatedEvent.h \
+    dom/MultipleTrackList.h \
     dom/MutationEvent.h \
     dom/NamedNodeMap.h \
     dom/NameNodeList.h \
@@ -1525,6 +1530,7 @@ HEADERS += \
     dom/Touch.h \
     dom/TouchEvent.h \
     dom/TouchList.h \
+    dom/TrackList.h \
     dom/TransformSource.h \
     dom/Traversal.h \
     dom/TreeDepthLimit.h \
