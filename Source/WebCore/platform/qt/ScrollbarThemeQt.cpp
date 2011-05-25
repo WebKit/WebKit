@@ -35,7 +35,9 @@
 #include "Scrollbar.h"
 
 #include <QApplication>
-#include <QDebug>
+#ifdef Q_WS_MAC
+#include <QMacStyle>
+#endif
 #include <QMenu>
 #include <QPainter>
 #include <QStyle>
@@ -154,18 +156,23 @@ bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCont
     p.painter->setClipRect(opt->rect.intersected(damageRect), Qt::IntersectClip);
 
 #ifdef Q_WS_MAC
-    p.drawComplexControl(QStyle::CC_ScrollBar, *opt);
-#else
-    const QPoint topLeft = opt->rect.topLeft();
-    p.painter->translate(topLeft);
-    opt->rect.moveTo(QPoint(0, 0));
-
-    // The QStyle expects the background to be already filled
-    p.painter->fillRect(opt->rect, opt->palette.background());
-
-    p.drawComplexControl(QStyle::CC_ScrollBar, *opt);
-    opt->rect.moveTo(topLeft);
+    // FIXME: We also need to check the widget style but today ScrollbarTheme is not aware of the page so we
+    // can't get the widget.
+    if (qobject_cast<QMacStyle*>(style()))
+        p.drawComplexControl(QStyle::CC_ScrollBar, *opt);
+    else
 #endif
+    {
+        const QPoint topLeft = opt->rect.topLeft();
+        p.painter->translate(topLeft);
+        opt->rect.moveTo(QPoint(0, 0));
+
+        // The QStyle expects the background to be already filled.
+        p.painter->fillRect(opt->rect, opt->palette.background());
+
+        p.drawComplexControl(QStyle::CC_ScrollBar, *opt);
+        opt->rect.moveTo(topLeft);
+    }
     p.painter->restore();
 
     return true;
@@ -182,7 +189,7 @@ ScrollbarPart ScrollbarThemeQt::hitTest(Scrollbar* scrollbar, const PlatformMous
 
 bool ScrollbarThemeQt::shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent& evt)
 {
-    // Middle click centers slider thumb (if supported)
+    // Middle click centers slider thumb (if supported).
     return style()->styleHint(QStyle::SH_ScrollBar_MiddleClickAbsolutePosition) && evt.button() == MiddleButton;
 }
 

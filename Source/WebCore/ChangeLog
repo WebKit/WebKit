@@ -1,3 +1,18 @@
+2011-05-25  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] When QWebView has a different style set on it then the scrollbars are not rendered correctly
+        https://bugs.webkit.org/show_bug.cgi?id=34635
+
+        Make sure the scrollbar is properly rendered on Mac with another style than the Mac style. The code had
+        two paths, one for Mac and one for any other styles. The problem is that on Mac you can still run the
+        application with -style plastique for example, therefore the code used for other styles should also be
+        used whenever the current style is not the Mac style.
+
+        * platform/qt/ScrollbarThemeQt.cpp:
+        (WebCore::ScrollbarThemeQt::paint):
+
 2011-05-25  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.
