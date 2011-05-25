@@ -106,8 +106,13 @@ bool SVGRenderSupport::prepareToRenderSVGContent(RenderObject* object, PaintInfo
     }
 
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
-    if (!resources)
+    if (!resources) {
+#if ENABLE(FILTERS)
+        if (svgStyle->hasFilter())
+            return false;
+#endif
         return true;
+    }
 
     if (RenderSVGResourceMasker* masker = resources->masker()) {
         if (!masker->applyResource(object, style, paintInfo.context, ApplyToDefaultMode))
