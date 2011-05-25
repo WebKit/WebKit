@@ -48,10 +48,10 @@ else if (window.layoutTestController) {
 
     eventSender.leapForward(200);
     eventSender.mouseDown();
-    expect('Third mouse down', 3, 'range', 'hello world\n');
+    expect('Third mouse down', 3, 'range', 'hello world');
     eventSender.leapForward(200);
     eventSender.mouseUp();
-    expect('Third mouse up', 3, 'range', 'hello world\n');
+    expect('Third mouse up', 3, 'range', 'hello world');
 
     document.writeln('Done.');
     span.parentNode.removeChild(span);

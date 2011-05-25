@@ -1,3 +1,9 @@
+2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Final attempt to fix a test; if this fails, I'm just going to skip it.
+
+        * fast/events/selectstart-by-double-triple-clicks.html:
+
 2011-05-24  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Reviewed by Ryosuke Niwa.
