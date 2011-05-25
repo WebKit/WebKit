@@ -1,3 +1,11 @@
+2011-05-25  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/9504058> Need some way to query user gesture state from injected bundle
+
+        * WebCore.exp.in: Add an export that WebKit2 needs.
+
 2011-05-25  Jer Noble  <jer.noble@apple.com>
 
         Ureviewed; Build fix for Leopard and Snow Leopard.

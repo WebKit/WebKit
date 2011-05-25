@@ -1,3 +1,19 @@
+2011-05-25  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        <rdar://problem/9504058> Need some way to query user gesture state from injected bundle
+
+        Add WKBundleIsProcessingUserGesture.
+
+        * WebProcess/InjectedBundle/API/c/WKBundle.cpp:
+        (WKBundleIsPageBoxVisible):
+        (WKBundleIsProcessingUserGesture):
+        * WebProcess/InjectedBundle/API/c/WKBundlePrivate.h:
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::isProcessingUserGesture):
+        * WebProcess/InjectedBundle/InjectedBundle.h:
+
 2011-05-24  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

@@ -51,6 +51,7 @@
 #include <WebCore/PrintContext.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
+#include <WebCore/UserGestureIndicator.h>
 #include <wtf/OwnArrayPtr.h>
 #include <wtf/PassOwnArrayPtr.h>
 
@@ -214,6 +215,11 @@ bool InjectedBundle::isPageBoxVisible(WebFrame* frame, int pageIndex)
         return false;
 
     return PrintContext::isPageBoxVisible(coreFrame, pageIndex);
+}
+
+bool InjectedBundle::isProcessingUserGesture()
+{
+    return UserGestureIndicator::getUserGestureState() == DefinitelyProcessingUserGesture;
 }
 
 static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)
