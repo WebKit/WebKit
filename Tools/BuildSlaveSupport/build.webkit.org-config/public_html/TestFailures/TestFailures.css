@@ -1,11 +1,17 @@
 ol {
     list-style-type: none;
 }
+
 dt {
     float: left;
     font-weight: bold;
     margin-right: 3px;
 }
+
 dt::after {
     content: ':';
+}
+
+.info {
+    font-style: italic;
 }

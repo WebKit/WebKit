@@ -49,7 +49,7 @@ ViewController.prototype = {
         builder.startFetchingBuildHistory(function(history) {
             var list = document.createElement('ol');
             Object.keys(history).forEach(function(buildName, buildIndex, buildNameArray) {
-                if (!Object.keys(history[buildName]).length)
+                if (!Object.keys(history[buildName].tests).length)
                     return;
                 var dlItems = [
                     [document.createTextNode('Failed'), self._domForBuildName(builder, buildName)],
@@ -61,10 +61,17 @@ ViewController.prototype = {
                 item.appendChild(createDefinitionList(dlItems));
                 list.appendChild(item);
 
+                if (history[buildName].tooManyFailures) {
+                    var p = document.createElement('p');
+                    p.className = 'info';
+                    p.appendChild(document.createTextNode('run-webkit-tests exited early due to too many failures/crashes/timeouts'));
+                    item.appendChild(p);
+                }
+
                 var testList = document.createElement('ol');
-                for (var testName in history[buildName]) {
+                for (var testName in history[buildName].tests) {
                     var testItem = document.createElement('li');
-                    testItem.appendChild(self._domForFailedTest(builder, buildName, testName, history[buildName][testName]));
+                    testItem.appendChild(self._domForFailedTest(builder, buildName, testName, history[buildName].tests[testName]));
                     testList.appendChild(testItem);
                 }
                 item.appendChild(testList);
@@ -81,23 +88,23 @@ ViewController.prototype = {
 
     _displayTesters: function() {
         var list = document.createElement('ul');
-        var testersAndFailureCounts = [];
+        var latestBuildInfos = [];
 
         function updateList() {
-            testersAndFailureCounts.sort(function(a, b) { return a.tester.name.localeCompare(b.tester.name) });
+            latestBuildInfos.sort(function(a, b) { return a.tester.name.localeCompare(b.tester.name) });
             while (list.firstChild)
                 list.removeChild(list.firstChild);
-            testersAndFailureCounts.forEach(function(testerAndFailureCount) {
-                var tester = testerAndFailureCount.tester;
-                var failureCount = testerAndFailureCount.failureCount;
-
+            latestBuildInfos.forEach(function(buildInfo) {
                 var link = document.createElement('a');
-                link.href = '#/' + tester.name;
-                link.appendChild(document.createTextNode(tester.name));
+                link.href = '#/' + buildInfo.tester.name;
+                link.appendChild(document.createTextNode(buildInfo.tester.name));
 
                 var item = document.createElement('li');
                 item.appendChild(link);
-                item.appendChild(document.createTextNode(' (' + failureCount + ' failing tests)'));
+                if (buildInfo.tooManyFailures)
+                    item.appendChild(document.createTextNode(' (too many failures/crashes/timeouts)'));
+                else
+                    item.appendChild(document.createTextNode(' (' + buildInfo.failureCount + ' failing tests)'));
                 list.appendChild(item);
             });
         }
@@ -107,10 +114,10 @@ ViewController.prototype = {
                 tester.getMostRecentCompletedBuildNumber(function(buildNumber) {
                     if (buildNumber < 0)
                         return;
-                    tester.getNumberOfFailingTests(buildNumber, function(failureCount) {
+                    tester.getNumberOfFailingTests(buildNumber, function(failureCount, tooManyFailures) {
                         if (failureCount <= 0)
                             return;
-                        testersAndFailureCounts.push({ tester: tester, failureCount: failureCount });
+                        latestBuildInfos.push({ tester: tester, failureCount: failureCount, tooManyFailures: tooManyFailures });
                         updateList();
                     });
                 });

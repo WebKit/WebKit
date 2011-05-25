@@ -102,30 +102,27 @@ Builder.prototype = {
             var layoutTestStep = data.steps.findFirst(function(step) { return step.name === 'layout-test'; });
             if (!layoutTestStep) {
                 self._cache[cacheKey] = -1;
-                callback(self._cache[cacheKey]);
+                callback(self._cache[cacheKey], false);
                 return;
             }
 
             if (!('isStarted' in layoutTestStep)) {
                 // run-webkit-tests never even ran.
                 self._cache[cacheKey] = -1;
-                callback(self._cache[cacheKey]);
+                callback(self._cache[cacheKey], false);
                 return;
             }
 
             if (!('results' in layoutTestStep) || layoutTestStep.results[0] === 0) {
                 // All tests passed.
                 self._cache[cacheKey] = 0;
-                callback(self._cache[cacheKey]);
+                callback(self._cache[cacheKey], false);
                 return;
             }
 
-            if (/^Exiting early/.test(layoutTestStep.results[1][0])) {
-                // Too many tests crashed or timed out. We can't know for sure how many failed.
-                self._cache[cacheKey] = -1;
-                callback(self._cache[cacheKey]);
-                return;
-            }
+            var tooManyFailures = false;
+            if (/^Exiting early/.test(layoutTestStep.results[1][0]))
+                tooManyFailures = true;
 
             var failureCount = layoutTestStep.results[1].reduce(function(sum, outputLine) {
                 var match = /^(\d+) test cases/.exec(outputLine);
@@ -135,7 +132,7 @@ Builder.prototype = {
             }, 0);
 
             self._cache[cacheKey] = failureCount;
-            callback(failureCount);
+            callback(failureCount, tooManyFailures);
         });
     },
 
@@ -143,11 +140,21 @@ Builder.prototype = {
      * Preiodically calls callback until all current failures have been explained. Callback is
      * passed an object like the following:
      * {
-     *     'r2_1 (1)': {
-     *         'css1/basic/class_as_selector2.html': 'fail',
+     *     'r12347 (681)': {
+     *         'tooManyFailures': false,
+     *         'tests': {
+     *             'css1/basic/class_as_selector2.html': 'fail',
+     *         },
      *     },
-     *     'r1_1 (0)': {
-     *         'css1/basic/class_as_selector.html': 'crash',
+     *     'r12346 (680)': {
+     *         'tooManyFailures': false,
+     *         'tests': {},
+     *     },
+     *     'r12345 (679)': {
+     *         'tooManyFailures': false,
+     *         'tests': {
+     *             'css1/basic/class_as_selector.html': 'crash',
+     *         },
      *     },
      * },
      * Each build contains just the failures that a) are still occuring on the bots, and b) were new
@@ -233,16 +240,16 @@ Builder.prototype = {
         var buildNumber = this.buildbot.parseBuildName(buildName).buildNumber;
 
         var self = this;
-        self.getNumberOfFailingTests(buildNumber, function(failingTestCount) {
+        self.getNumberOfFailingTests(buildNumber, function(failingTestCount, tooManyFailures) {
             if (failingTestCount < 0) {
                 // The number of failing tests couldn't be determined.
-                errorCallback(tests);
+                errorCallback(tests, tooManyFailures);
                 return;
             }
 
             if (!failingTestCount) {
                 // All tests passed.
-                callback(tests);
+                callback(tests, tooManyFailures);
                 return;
             }
 
@@ -277,11 +284,11 @@ Builder.prototype = {
                     tests[name] = 'webprocess crash';
                 });
 
-                callback(tests);
+                callback(tests, tooManyFailures);
             },
             function(xhr) {
                 // We failed to fetch results.html. run-webkit-tests must have aborted early.
-                errorCallback(tests);
+                errorCallback(tests, tooManyFailures);
             });
         });
     },
@@ -290,19 +297,22 @@ Builder.prototype = {
         var previousBuildName = Object.keys(history).last();
         var nextBuildName = buildNames[buildIndex];
 
-        this._getFailingTests(nextBuildName, function(tests) {
-            history[nextBuildName] = {};
+        this._getFailingTests(nextBuildName, function(tests, tooManyFailures) {
+            history[nextBuildName] = {
+                tooManyFailures: tooManyFailures,
+                tests: {},
+            };
 
             for (var testName in tests) {
                 if (previousBuildName) {
-                    if (!(testName in history[previousBuildName]))
+                    if (!(testName in history[previousBuildName].tests))
                         continue;
-                    delete history[previousBuildName][testName];
+                    delete history[previousBuildName].tests[testName];
                 }
-                history[nextBuildName][testName] = tests[testName];
+                history[nextBuildName].tests[testName] = tests[testName];
             }
 
-            callback(Object.keys(history[nextBuildName]).length);
+            callback(Object.keys(history[nextBuildName].tests).length);
         },
         function(tests) {
             // Some tests failed, but we couldn't fetch results.html (perhaps because the test

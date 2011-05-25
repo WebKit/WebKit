@@ -1,3 +1,35 @@
+2011-05-25  Adam Roben  <aroben@apple.com>
+
+        Identify, rather than skip, builds where run-webkit-tests exited early due to too many failures
+
+        Fixes <http://webkit.org/b/61441> TestFailures page should show when run-webkit-tests
+        started exiting early due to too many crashes, timeouts, or failures
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getNumberOfFailingTests): Rather than returning -1 ("unknown") when
+        run-webkit-tests exits early due to too many failures, pass that information in another
+        argument to the callback.
+        (Builder.prototype.startFetchingBuildHistory): Updated the documentation comment to reflect
+        the new structure of the object passed to the callback.
+        (Builder.prototype._getFailingTests): Updated to expect a tooManyFailures boolean from
+        getNumberOfFailingTests and to pass that along to our own callbacks.
+        (Builder.prototype._incorporateBuildHistory): Updated to expect a tooManyFailures boolean
+        from _getFailingTests and to store that value in the history object.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/TestFailures.css:
+        (.info): Added.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._displayBuilder): Updated for change in structure to the history
+        object and to add a note when run-webkit-tests exited early due to too many failures.
+        (ViewController.prototype._displayTesters): Renamed testersAndFailureCounts to
+        latestBuildInfos since each entry now contains more than just the tester and failure count.
+        Now displays a message for testers where the latest build exited early due to too many
+        failures. Updated to expect a tooManyFailures boolean from getNumberOfFailingTests and to
+        store that value in latestBuildInfos.
+
 2011-05-24  Keishi Hattori  <keishi@webkit.org>
 
         Reviewed by Kent Tamura.
