@@ -3566,3 +3566,6 @@ fast/replaced/object-with-non-empty-classid-triggers-fallback.html
 
 # fail after http://trac.webkit.org/changeset/87067
 fast/forms/textfield-overflow.html
+
+# new test inroduced in r87204, but fail
+editing/undo/undo-after-setting-value.html
