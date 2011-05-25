@@ -1,3 +1,11 @@
+2011-05-25  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
+        Update chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-25  Felician Marton  <marton.felician.zoltan@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.

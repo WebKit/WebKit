@@ -4149,3 +4149,6 @@ BUGCR83833 : mhtml/page_with_image_ie.mht = MISSING
 BUGCR83833 : mhtml/page_with_image_unmht.mht = MISSING
 BUGCR83833 : mhtml/simple_page_ie.mht = MISSING
 BUGCR83833 : mhtml/simple_page_unmht.mht = MISSING
+
+// New tests added in r87274
+BUGCR83865 : fast/forms/color/input-value-sanitization-color.html = FAIL PASS
