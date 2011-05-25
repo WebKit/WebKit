@@ -1,16 +1,8 @@
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
-<script>
-function editingTest() {
-    var selection = window.getSelection();
-    var s = document.getElementById("start");
-    selection.setPosition(s, 0);
-    execMoveSelectionForwardByCharacterCommand();
-    for (i = 0; i < 3; i++) {
-        deleteCommand();
-    }
-}
-</script>
-<div contenteditable="true" id="test">
+<!DOCTYPE html>
+<html>
+<body>
+<p>This test checks that deleting into a table works properly. When deleting three times with the cursor after the character "a" in the "after" text after the table, the "a" should be deleted, as should the "o" of "buffalo" in the last table cell.</p>
+<div contenteditable="true" id="root">
 <div>Before</div>
   <table style="border:3px solid #aaa;">
     <tr>
@@ -32,6 +24,18 @@ function editingTest() {
   </table>
 <span id="start">after</span>
 </div>
+<script src=../editing.js></script>
 <script>
-runEditingTest();
+function editingTest() {
+    var selection = window.getSelection();
+    var s = document.getElementById("start");
+    selection.setPosition(s, 0);
+    execMoveSelectionForwardByCharacterCommand();
+    for (i = 0; i < 3; i++) {
+        deleteCommand();
+    }
+}
+runDumpAsTextEditingTest();
 </script>
+</body>
+</html>
