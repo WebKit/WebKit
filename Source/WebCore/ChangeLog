@@ -1,3 +1,10 @@
+2011-05-24  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix style error.
+
+        * platform/efl/WidgetEfl.cpp:
+        (WebCore::WidgetPrivate::WidgetPrivate):
+
 2011-05-24  Greg Simon  <gregsimon@chromium.org>
 
         Reviewed by Dimitri Glazkov.

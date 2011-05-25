@@ -138,7 +138,7 @@ public:
 #ifdef HAVE_ECORE_X
         , m_isUsingEcoreX(false)
 #endif
-    {}
+    { }
 
     /* cursor */
     String m_cursorGroup;
