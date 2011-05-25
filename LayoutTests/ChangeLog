@@ -1,3 +1,33 @@
+2011-05-24  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Convert LayoutTests/editing/selection/4895428-1 and -4 to dump-as-markup
+        https://bugs.webkit.org/show_bug.cgi?id=61402
+
+        Converts the two html files to dump-as-markup and adds doctype, html, and body tags.
+
+        * editing/selection/4895428-1-expected.txt: Added.
+        * editing/selection/4895428-1.html: Converted to dump-as-markup
+        * editing/selection/4895428-4-expected.txt: Added.
+        * editing/selection/4895428-4.html: Converted to dump-as-markup
+        * platform/chromium-linux/editing/selection/4895428-1-expected.png: Removed.
+        * platform/chromium-linux/editing/selection/4895428-4-expected.png: Removed.
+        * platform/chromium-win/editing/selection/4895428-1-expected.png: Removed.
+        * platform/chromium-win/editing/selection/4895428-1-expected.txt: Removed.
+        * platform/chromium-win/editing/selection/4895428-4-expected.png: Removed.
+        * platform/chromium-win/editing/selection/4895428-4-expected.txt: Removed.
+        * platform/gtk/editing/selection/4895428-1-expected.png: Removed.
+        * platform/gtk/editing/selection/4895428-1-expected.txt: Removed.
+        * platform/gtk/editing/selection/4895428-4-expected.png: Removed.
+        * platform/gtk/editing/selection/4895428-4-expected.txt: Removed.
+        * platform/mac-leopard/editing/selection/4895428-1-expected.png: Removed.
+        * platform/mac-leopard/editing/selection/4895428-4-expected.png: Removed.
+        * platform/mac/editing/selection/4895428-1-expected.png: Removed.
+        * platform/mac/editing/selection/4895428-1-expected.txt: Removed.
+        * platform/mac/editing/selection/4895428-4-expected.png: Removed.
+        * platform/mac/editing/selection/4895428-4-expected.txt: Removed.
+
 2011-05-24  Steve Lacey  <sjl@chromium.org>
 
         Reviewed by Eric Carlson.

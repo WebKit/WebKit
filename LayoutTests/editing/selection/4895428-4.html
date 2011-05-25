@@ -1,9 +1,15 @@
-<p>This tests to see if an editable selection containing a focusable node is draggable by content inside that focusable node. To achieve this we delay focus of such nodes until mouse up. Below, the table should be inside the red bordered div.</p>
+<doctype HTML>
+<html>
+<body>
+<p id="description">This tests to see if an editable selection containing a focusable node is draggable by content inside that focusable node. To achieve this we delay focus of such nodes until mouse up. Below, the table should be inside the red bordered div.</p>
+<div id="root">
 <div id="div" contenteditable="true" style="border: 1px solid blue;">
 <table contenteditable="false" border="1"><tr><td id="cell" contenteditable="true">editable</td></tr></table>
 </div>
 <div id="destination" contenteditable="true" style="border: 1px solid red;"><br></div>
 <ul id="console"></ul>
+</div>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
 function log(str) {
     var text = document.createTextNode(str);
@@ -32,7 +38,11 @@ function runTest() {
     y = destination.offsetParent.offsetTop + destination.offsetTop + destination.offsetHeight / 2;
     eventSender.mouseMoveTo(x, y);
     eventSender.mouseUp();
+    Markup.description(description.textContent);
+    Markup.dump(root);
 }
 
 runTest();
 </script>
+</body>
+</html>
