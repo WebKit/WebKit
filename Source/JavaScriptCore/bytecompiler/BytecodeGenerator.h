@@ -89,7 +89,7 @@ namespace JSC {
         typedef DeclarationStacks::VarStack VarStack;
         typedef DeclarationStacks::FunctionStack FunctionStack;
 
-        static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
+        JS_EXPORT_PRIVATE static void setDumpsGeneratedCode(bool dumpsGeneratedCode);
         static bool dumpsGeneratedCode();
 
         BytecodeGenerator(ProgramNode*, ScopeChainNode*, SymbolTable*, ProgramCodeBlock*);
