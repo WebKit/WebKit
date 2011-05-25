@@ -102,10 +102,6 @@ audio::-webkit-media-controls-current-time-display, video::-webkit-media-control
     overflow: hidden;
     cursor: default;
 
-    position: absolute;
-    top: 6px;
-    right: 0;
-
     line-height: 21px;
     height: 20px;
     width: 58px;
@@ -130,13 +126,8 @@ audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline {
     box-sizing: border-box;
     -webkit-box-flex: 1;
 
-    position: absolute;
-    top: 7px;
-    left: 6px;
-    right: 64px;
-
     padding: 0px;
-    margin: 0px;
+    margin: 0px 6px;
     height: 18px;
 
     border-color: rgba(255, 255, 255, 0.2);

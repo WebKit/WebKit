@@ -1,3 +1,16 @@
+2011-05-24  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Move chromium media controls timeline back to flexible rather than absolute
+        layout.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61379
+
+        * css/mediaControlsChromium.css:
+        (audio::-webkit-media-controls-current-time-display, video::-webkit-media-controls-current-time-display):
+        (audio::-webkit-media-controls-timeline, video::-webkit-media-controls-timeline):
+
 2011-05-24  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed. Fix clang error.

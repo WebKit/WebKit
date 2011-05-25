@@ -2939,7 +2939,10 @@ BUGWK55968 BUGWK58306 GPU MAC : compositing/webgl/webgl-nonpremultiplied-blend.h
 BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
 // 2 pixel stretching when rendering some videos with the GPU (Now it's flaky)
-BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE PASS
+// Revert back to commented line once WK61380 is checked in.
+//BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE PASS
+BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE+TEXT TEXT
+
 // BUGCR74102 GPU WIN : media/video-layer-crash.html = IMAGE
 
 // New test causes an assertion failure.
@@ -3648,8 +3651,20 @@ BUGWK60103 : fast/overflow/border-radius-clipping.html = IMAGE
 BUGWK60103 WIN LINUX : fast/repaint/border-radius-repaint.html = IMAGE
 BUGWK60103 WIN LINUX : fast/replaced/border-radius-clip.html = IMAGE
 
-// Regressed in r85290 but should start passing when underlying flexbox bugs are fixed.
-BUGCR59704 BUGWK59644 : media/video-zoom-controls.html = IMAGE+TEXT
+// Temporarily failing TEXT due to media controls using flexbox again.
+BUGWK61380 : fast/layers/video-layer.html = TEXT
+BUGWK61380 : media/controls-without-preload.html = TEXT
+BUGWK61380 : media/audio-controls-rendering.html = TEXT
+BUGWK61380 : media/audio-repaint.html = TEXT
+BUGWK61380 : media/controls-after-reload.html = TEXT
+BUGWK61380 : media/controls-strict.html = TEXT
+BUGWK61380 : media/controls-styling.html = TEXT
+BUGWK61380 CPU : media/video-controls-rendering.html = TEXT
+BUGWK61380 GPU WIN MAC : media/video-controls-rendering.html = TEXT
+BUGWK61380 : media/video-display-toggle.html = TEXT
+BUGWK61380 : media/video-empty-source.html = TEXT
+BUGWK61380 : media/video-no-audio.html = TEXT
+BUGWK61380 : media/video-volume-slider.html = TEXT
 
 // probably just needs a new baseline
 BUGWK60130 WIN LINUX : fast/backgrounds/background-leakage-transforms.html = IMAGE+TEXT
