@@ -1,3 +1,16 @@
+2011-05-24  Kevin Ollivier  <kevino@theolliviers.com>
+
+        Reviewed by Eric Seidel.
+
+        Add export macros to WTFString.h.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=27551
+
+        * wtf/text/WTFString.h:
+        (WTF::String::String):
+        (WTF::String::findIgnoringCase):
+        (WTF::String::isHashTableDeletedValue):
+
 2011-05-24  Geoffrey Garen  <ggaren@apple.com>
 
         Maybe fix the Mac build now?
