@@ -1,3 +1,15 @@
+2011-05-23  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Chromium DevTools: Tab crashes with "Aw, snap!" on entering "(new Image())." in console
+        https://bugs.webkit.org/show_bug.cgi?id=61194
+
+        Test: inspector/console/console-eval-syntax-error.html
+
+        * bindings/v8/custom/V8InjectedScriptHostCustom.cpp:
+        (WebCore::V8InjectedScriptHost::evaluateCallback): return immediately in case of syntax error
+
 2011-05-25  Yuzo Fujishima  <yuzo@google.com>
 
         Reviewed by Kent Tamura.
