@@ -38,6 +38,9 @@
 #import <WebCore/FrameView.h>
 #import <WebCore/GraphicsLayer.h>
 #import <WebCore/Page.h>
+#import <WebCore/RenderLayer.h>
+#import <WebCore/RenderLayerBacking.h>
+#import <WebCore/RenderObject.h>
 #import <WebCore/Settings.h>
 #import <WebKitSystemInterface.h>
 
@@ -196,6 +199,11 @@ void WebFullScreenManagerMac::beginEnterFullScreenAnimation(float duration)
     m_element->document()->setFullScreenRendererSize(destinationFrame.size());
     m_rootLayer->syncCompositingState();
 
+    RenderLayer* layer = m_element->renderer() ? m_element->renderer()->enclosingLayer() : 0;
+    RenderLayerBacking* backing = layer ? layer->backing() : 0;
+    if (backing)
+        destinationFrame.setSize(backing->contentsBox().size());
+
     // FIXME: Once we gain the ability to do native WebKit animations of generated
     // content, this can change to use them.  Meanwhile, we'll have to animate the
     // CALayer directly:
@@ -250,6 +258,11 @@ void WebFullScreenManagerMac::beginExitFullScreenAnimation(float duration)
     m_element->document()->setFullScreenRendererSize(destinationFrame.size());
     m_rootLayer->syncCompositingState();
 
+    RenderLayer* layer = m_element->renderer() ? m_element->renderer()->enclosingLayer() : 0;
+    RenderLayerBacking* backing = layer ? layer->backing() : 0;
+    if (backing)
+        destinationFrame.setSize(backing->contentsBox().size());
+
     // FIXME: Once we gain the ability to do native WebKit animations of generated
     // content, this can change to use them.  Meanwhile, we'll have to animate the
     // CALayer directly:
@@ -260,14 +273,13 @@ void WebFullScreenManagerMac::beginExitFullScreenAnimation(float duration)
     // the fullscreen element appears to move from its starting position and size to its
     // final one.
     CGPoint destinationPosition = [presentationLayer position];
-    CGRect destinationBounds = [presentationLayer bounds];
     CGPoint layerAnchor = [caLayer anchorPoint];
     CGPoint initialPosition = CGPointMake(
         m_initialFrame.x() + m_initialFrame.width() * layerAnchor.x,
         m_initialFrame.y() + m_initialFrame.height() * layerAnchor.y);
     CATransform3D shrinkTransform = CATransform3DMakeScale(
-        static_cast<CGFloat>(m_initialFrame.width()) / destinationBounds.size.width,
-        static_cast<CGFloat>(m_initialFrame.height()) / destinationBounds.size.height, 1);
+        static_cast<CGFloat>(m_initialFrame.width()) / destinationFrame.width(),
+        static_cast<CGFloat>(m_initialFrame.height()) / destinationFrame.height(), 1);
     CATransform3D shiftTransform = CATransform3DMakeTranslation(
         initialPosition.x - destinationPosition.x,
         // Drawing is flipped here, and so must be the translation transformation

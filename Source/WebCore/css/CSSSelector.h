@@ -190,6 +190,7 @@ namespace WebCore {
             PseudoFullScreen,
             PseudoFullScreenDocument,
             PseudoFullScreenMediaDocument,
+            PseudoAnimatingFullScreenTransition,
 #endif
             PseudoInRange,
             PseudoOutOfRange,

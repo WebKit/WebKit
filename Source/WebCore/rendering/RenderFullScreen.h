@@ -37,9 +37,6 @@ public:
     virtual bool isRenderFullScreen() const { return true; }
     virtual const char* renderName() const { return "RenderFullScreen"; }
     
-    bool isAnimating() const { return m_isAnimating; }
-    void setAnimating(bool);
-    
     static PassRefPtr<RenderStyle> createFullScreenStyle();
     
 protected:
