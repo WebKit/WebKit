@@ -1,3 +1,16 @@
+2011-05-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Missing update for expected results in LayoutTests after r87315
+        https://bugs.webkit.org/show_bug.cgi?id=61467
+
+        We now expose __qt_sender__ as a non-enumarated property in the
+        global object. Fix our expectations in relevant tests.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+
 2011-05-25  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
 
         Reviewed by David Hyatt.

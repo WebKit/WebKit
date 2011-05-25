@@ -333,6 +333,7 @@ PASS typeof Object.getOwnPropertyDescriptor(window, 'XPathEvaluator') is 'object
 PASS typeof Object.getOwnPropertyDescriptor(window, 'XPathException') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'XPathResult') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'XSLTProcessor') is 'object'
+PASS typeof Object.getOwnPropertyDescriptor(window, '__qt_sender__') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'applicationCache') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'areArraysEqual') is 'object'
 PASS typeof Object.getOwnPropertyDescriptor(window, 'clientInformation') is 'object'
