@@ -515,6 +515,7 @@ void HTMLMediaElement::prepareForLoad()
     // Perform the cleanup required for the resource load algorithm to run.
     stopPeriodicTimers();
     m_loadTimer.stop();
+    m_sentEndEvent = false;
     m_sentStalledEvent = false;
     m_haveFiredLoadedData = false;
     m_completelyLoaded = false;

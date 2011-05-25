@@ -1,3 +1,16 @@
+2011-05-25  Andrew Scherkus  <scherkus@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Fix media element regression where ended event stopped firing after changing the src attribute.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61336
+
+        Test: media/media-ended.html
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::prepareForLoad):
+
 2011-05-25  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

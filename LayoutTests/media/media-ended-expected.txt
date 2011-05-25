@@ -1,0 +1,13 @@
+Test ended by:
+
+Play to the end.
+When 'ended' event fires, change the source.
+Verify that 'ended' event fires again on different source.
+EVENT(ended)
+EXPECTED (audio.ended == 'true') OK
+EXPECTED (audio.ended == 'false') OK
+
+EVENT(ended)
+EXPECTED (audio.ended == 'true') OK
+END OF TEST
+
