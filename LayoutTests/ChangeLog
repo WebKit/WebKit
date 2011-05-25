@@ -1,3 +1,18 @@
+2011-05-25  Anton Muhin  <antonm@chromium.org>
+
+        Unreviewed.
+
+        Update test expectations after 3.3.6.1 v8 roll.
+
+        * platform/chromium-mac/ietestcenter/Javascript/15.5.4.20-1-1-expected.txt:
+        * platform/chromium-mac/ietestcenter/Javascript/15.5.4.20-1-2-expected.txt:
+        * platform/chromium-win/ietestcenter/Javascript/15.5.4.20-1-1-expected.txt:
+        * platform/chromium-win/ietestcenter/Javascript/15.5.4.20-1-2-expected.txt:
+        * platform/chromium/ietestcenter: Added.
+        * platform/chromium/ietestcenter/Javascript: Added.
+        * platform/chromium/ietestcenter/Javascript/15.4.4.14-5-28-expected.txt: Added.
+        * platform/chromium/ietestcenter/Javascript/15.4.4.15-5-28-expected.txt: Added.
+
 2011-05-25  Gabor Loki  <loki@webkit.org>
 
         Rubber-stamped by Csaba Osztrogonác.
