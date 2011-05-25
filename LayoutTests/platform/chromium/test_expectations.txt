@@ -4133,3 +4133,13 @@ BUGWK61169 : css3/images/optimize-contrast-canvas.html = IMAGE
 BUGWK61169 : css3/images/optimize-contrast-image.html = IMAGE
 
 BUGWK61370 LINUX : svg/W3C-SVG-1.1/fonts-glyph-04-t.svg = IMAGE
+
+// New tests added in r87189
+BUGCR83833 : mhtml/multi_frames_ie.mht = MISSING
+BUGCR83833 : mhtml/multi_frames_unmht.mht = MISSING
+BUGCR83833 : mhtml/page_with_css_and_js_ie.mht = MISSING
+BUGCR83833 : mhtml/page_with_css_and_js_unmht.mht = MISSING
+BUGCR83833 : mhtml/page_with_image_ie.mht = MISSING
+BUGCR83833 : mhtml/page_with_image_unmht.mht = MISSING
+BUGCR83833 : mhtml/simple_page_ie.mht = MISSING
+BUGCR83833 : mhtml/simple_page_unmht.mht = MISSING

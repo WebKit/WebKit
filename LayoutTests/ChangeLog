@@ -1,3 +1,11 @@
+2011-05-24  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed.
+
+        Chromium expectations update. (mhtml)
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-24  Leon Scroggins  <scroggo@google.com>
 
         Reviewed by Kenneth Russell.
