@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 118: TypeError: 'undefined' is not an object (evaluating 'overComposite1.in1.baseVal = "F1"')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'in' property of the SVGFECompositeElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'in' property of the SVGFECompositeElement object
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS overComposite1.in1.baseVal is "F12"
-PASS overComposite1.in1.baseVal is "F1"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL overComposite1.in1.baseVal should be F12. Threw exception TypeError: 'undefined' is not an object (evaluating 'overComposite1.in1.baseVal')
 

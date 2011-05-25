@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 58: TypeError: 'undefined' is not an object (evaluating 'specularElement.in1.baseVal = "SourceGraphic"')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'in' property of the SVGFESpecularLightingElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'in' property of the SVGFESpecularLightingElement o
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS specularElement.in1.baseVal is "SourceAlpha"
-PASS specularElement.in1.baseVal is "SourceGraphic"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL specularElement.in1.baseVal should be SourceAlpha. Threw exception TypeError: 'undefined' is not an object (evaluating 'specularElement.in1.baseVal')
 

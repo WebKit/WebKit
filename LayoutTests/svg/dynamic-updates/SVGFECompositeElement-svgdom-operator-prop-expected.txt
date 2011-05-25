@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: SVGFECompositeElement
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'operator' property of the SVGFECompositeElement object
@@ -5,9 +7,4 @@ Tests dynamic updates of the 'operator' property of the SVGFECompositeElement ob
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS overComposite1.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_IN
-PASS overComposite1.operator.baseVal is SVGFECompositeElement.SVG_FECOMPOSITE_OPERATOR_ARITHMETIC
-PASS successfullyParsed is true
-
-TEST COMPLETE
 

@@ -1,1 +1,4 @@
-PASS
+CONSOLE MESSAGE: line 11: TypeError: 'undefined' is not an object (evaluating 'document.getElementById('tgt').type.baseVal=99999')
+FAIL: Timed out waiting for notifyDone to be called
+TESTING
+

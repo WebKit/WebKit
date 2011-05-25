@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 51: TypeError: 'undefined' is not an object (evaluating 'gradientElement.in1.baseVal = "blur"')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'in' property of the SVGFEDiffuseLightingElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'in' property of the SVGFEDiffuseLightingElement ob
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS gradientElement.in1.baseVal is "SourceGraphic"
-PASS gradientElement.in1.baseVal is "blur"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL gradientElement.in1.baseVal should be SourceGraphic. Threw exception TypeError: 'undefined' is not an object (evaluating 'gradientElement.in1.baseVal')
 

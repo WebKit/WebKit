@@ -1,1 +1,3 @@
-PASS
+CONSOLE MESSAGE: line 12: TypeError: 'undefined' is not an object (evaluating 'document.getElementById('d').xChannelSelector.baseVal=0x80000000')
+FAIL: Timed out waiting for notifyDone to be called
+

@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 51: TypeError: 'undefined' is not an object (evaluating 'displacementMap.scale.baseVal = 64')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'scale' property of the SVGFEDisplacementMapElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'scale' property of the SVGFEDisplacementMapElement
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS displacementMap.scale.baseVal is 34
-PASS displacementMap.scale.baseVal is 64
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL displacementMap.scale.baseVal should be 34. Threw exception TypeError: 'undefined' is not an object (evaluating 'displacementMap.scale.baseVal')
 

@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 41: TypeError: 'undefined' is not an object (evaluating 'convolveMatrixElement.preserveAlpha.baseVal = true')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'preserveAlpha' property of the SVGFEConvolveMatrixElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'preserveAlpha' property of the SVGFEConvolveMatrix
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS convolveMatrixElement.preserveAlpha.baseVal is false
-PASS convolveMatrixElement.preserveAlpha.baseVal is true
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL convolveMatrixElement.preserveAlpha.baseVal should be false. Threw exception TypeError: 'undefined' is not an object (evaluating 'convolveMatrixElement.preserveAlpha.baseVal')
 

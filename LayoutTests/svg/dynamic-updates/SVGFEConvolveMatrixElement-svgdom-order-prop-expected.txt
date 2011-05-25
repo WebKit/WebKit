@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 42: TypeError: 'undefined' is not an object (evaluating 'convolveMatrixElement.orderX.baseVal = 3')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'order' property of the SVGFEConvolveMatrixElement object
@@ -5,11 +7,6 @@ Tests dynamic updates of the 'order' property of the SVGFEConvolveMatrixElement 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS convolveMatrixElement.orderX.baseVal is 2
-PASS convolveMatrixElement.orderY.baseVal is 2
-PASS convolveMatrixElement.orderX.baseVal is 3
-PASS convolveMatrixElement.orderY.baseVal is 3
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL convolveMatrixElement.orderX.baseVal should be 2. Threw exception TypeError: 'undefined' is not an object (evaluating 'convolveMatrixElement.orderX.baseVal')
+FAIL convolveMatrixElement.orderY.baseVal should be 2. Threw exception TypeError: 'undefined' is not an object (evaluating 'convolveMatrixElement.orderY.baseVal')
 

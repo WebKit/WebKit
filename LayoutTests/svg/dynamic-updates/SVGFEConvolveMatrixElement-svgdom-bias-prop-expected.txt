@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 41: TypeError: 'undefined' is not an object (evaluating 'convolveMatrixElement.bias.baseVal = 0')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'bias' property of the SVGFEConvolveMatrixElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'bias' property of the SVGFEConvolveMatrixElement o
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS convolveMatrixElement.bias.baseVal is 0.5
-PASS convolveMatrixElement.bias.baseVal is 0
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL convolveMatrixElement.bias.baseVal should be 0.5. Threw exception TypeError: 'undefined' is not an object (evaluating 'convolveMatrixElement.bias.baseVal')
 

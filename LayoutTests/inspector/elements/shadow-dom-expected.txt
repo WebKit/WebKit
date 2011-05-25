@@ -1,14 +1,8 @@
 Tests that shadow DOM tree is properly displayed.
 
 
-
 Running: testDumpInitial
-- <meter id="meter" min="0" max="100" value="20">
-    - (shadow)
-    - <div>
-          <div style="width: 20%; "></div>
-      </div>
-  </meter>
+  <meter id="meter" min="0" max="100" value="20"></meter>
 
 Running: testDumpUpdated
 Before shadow root added

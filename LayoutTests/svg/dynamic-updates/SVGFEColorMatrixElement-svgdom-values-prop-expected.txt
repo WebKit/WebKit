@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 186: TypeError: 'undefined' is not an object (evaluating 'matrixElement.values.baseVal')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'values' property of the SVGFEColorMatrixElement object
@@ -5,13 +7,7 @@ Tests dynamic updates of the 'values' property of the SVGFEColorMatrixElement ob
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS SVGNumberListToString(matrixElement.values.baseVal) is "0.9 0.9 0.9 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 "
-PASS Math.round(saturateElement.values.baseVal.getItem(0).value * 1000) is 500
-PASS Math.round(hueRotateElement.values.baseVal.getItem(0).value * 1000) is 10000
-PASS SVGNumberListToString(matrixElement.values.baseVal) is "0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 "
-PASS saturateElement.values.baseVal.getItem(0).value is 0.25
-PASS hueRotateElement.values.baseVal.getItem(0).value is 90
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL SVGNumberListToString(matrixElement.values.baseVal) should be 0.9 0.9 0.9 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 . Threw exception TypeError: 'undefined' is not an object (evaluating 'matrixElement.values.baseVal')
+FAIL Math.round(saturateElement.values.baseVal.getItem(0).value * 1000) should be 500. Threw exception TypeError: 'undefined' is not an object (evaluating 'saturateElement.values.baseVal')
+FAIL Math.round(hueRotateElement.values.baseVal.getItem(0).value * 1000) should be 10000. Threw exception TypeError: 'undefined' is not an object (evaluating 'hueRotateElement.values.baseVal')
 

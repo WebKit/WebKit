@@ -1,10 +1,14 @@
-details0's open attribute is expected to be'true' and is.
-details0's open attribute is expected to be'false' and is.
-details1's open attribute is expected to be'true' and is.
-details1's open attribute is expected to be'false' and is.
-details2's open attribute is expected to be'true' and is.
-details2's open attribute is expected to be'false' and is.
-details3's open attribute is expected to be'true' and is.
-details3's open attribute is expected to be'false' and is.
-PASS
+
+
+
+
+details0's open attribute is expected to be'true' but instead is 'undefined'.
+details0's open attribute is expected to be'true' but instead is 'undefined'.
+details1's open attribute is expected to be'true' but instead is 'undefined'.
+details1's open attribute is expected to be'true' but instead is 'undefined'.
+details2's open attribute is expected to be'true' but instead is 'undefined'.
+details2's open attribute is expected to be'true' but instead is 'undefined'.
+details3's open attribute is expected to be'true' but instead is 'undefined'.
+details3's open attribute is expected to be'true' but instead is 'undefined'.
+FAIL
 

@@ -4,43 +4,43 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 Test values before properties were set
-PASS p.value is 1
-PASS p.max is 1
-PASS p.position is -1
+FAIL p.value should be 1 (of type number). Was undefined (of type undefined).
+FAIL p.max should be 1 (of type number). Was undefined (of type undefined).
+FAIL p.position should be -1 (of type number). Was undefined (of type undefined).
 Set valid values
 PASS p.value is 70
-PASS p.max is 100
-PASS p.position is 0.7
+FAIL p.max should be 100 (of type number). Was 1e2 (of type string).
+FAIL p.position should be 0.7 (of type number). Was undefined (of type undefined).
 Set value bigger than max
-PASS p.value is 100
+FAIL p.value should be 100. Was 200.
 PASS p.max is 100
-PASS p.position is 1
+FAIL p.position should be 1 (of type number). Was undefined (of type undefined).
 Set invalid value, should throw
-PASS p.value = "200A"; threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+FAIL p.value = "200A"; should throw Error: NOT_SUPPORTED_ERR: DOM Exception 9. Was 200A.
 Set invalid max, should throw
-PASS p.max = "max"; threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+FAIL p.max = "max"; should throw Error: NOT_SUPPORTED_ERR: DOM Exception 9. Was max.
 Set max to Infinity, should throw
-PASS p.max = Infinity; threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+FAIL p.max = Infinity; should throw Error: NOT_SUPPORTED_ERR: DOM Exception 9. Was Infinity.
 Set value to NaN, should throw
-PASS p.value = NaN; threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
+FAIL p.value = NaN; should throw Error: NOT_SUPPORTED_ERR: DOM Exception 9. Was NaN.
 Set value to null and max to 0
-PASS p.value is 0
-PASS p.max is 1
-PASS p.position is 0
+FAIL p.value should be 0 (of type number). Was null (of type object).
+FAIL p.max should be 1. Was 0.
+FAIL p.position should be 0 (of type number). Was undefined (of type undefined).
 Set attributes to valid numbers
-PASS p.value is 5
-PASS p.max is 10
+FAIL p.value should be 5 (of type number). Was null (of type object).
+FAIL p.max should be 10. Was 0.
 PASS parseInt(p.getAttribute('value')) is 5
 PASS parseInt(p.getAttribute('max')) is 10
 Set attributes to invalid values
-PASS p.value is 0
-PASS p.max is 1
+FAIL p.value should be 0 (of type number). Was null (of type object).
+FAIL p.max should be 1. Was 0.
 PASS p.getAttribute('value') is 'ABC'
 PASS p.getAttribute('max') is '#'
 Set value and max to numbers with leading spaces
-PASS p.value is 0
-PASS p.max is 1
-PASS p.position is 0
+FAIL p.value should be 0 (of type number). Was null (of type object).
+FAIL p.max should be 1. Was 0.
+FAIL p.position should be 0 (of type number). Was undefined (of type undefined).
 PASS successfullyParsed is true
 
 TEST COMPLETE

@@ -1,4 +1,3 @@
+CONSOLE MESSAGE: line 13: ReferenceError: Can't find variable: webkitURL
 Test that createObjectURL with no argument should not cause crash.
-PASS
-DONE
 

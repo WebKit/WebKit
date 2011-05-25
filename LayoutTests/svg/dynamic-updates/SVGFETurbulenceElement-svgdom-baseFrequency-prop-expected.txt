@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 39: TypeError: 'undefined' is not an object (evaluating 'turbulence.baseFrequencyX.baseVal = 0.05')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'baseFrequency' property of the SVGFETurbulenceElment object
@@ -5,11 +7,6 @@ Tests dynamic updates of the 'baseFrequency' property of the SVGFETurbulenceElme
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS Math.round(turbulence.baseFrequencyX.baseVal * 1000) is 70
-PASS Math.round(turbulence.baseFrequencyY.baseVal * 1000) is 70
-PASS Math.round(turbulence.baseFrequencyX.baseVal * 1000) is 50
-PASS Math.round(turbulence.baseFrequencyY.baseVal * 1000) is 50
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL Math.round(turbulence.baseFrequencyX.baseVal * 1000) should be 70. Threw exception TypeError: 'undefined' is not an object (evaluating 'turbulence.baseFrequencyX.baseVal')
+FAIL Math.round(turbulence.baseFrequencyY.baseVal * 1000) should be 70. Threw exception TypeError: 'undefined' is not an object (evaluating 'turbulence.baseFrequencyY.baseVal')
 

@@ -109,7 +109,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 4 at (98.31,345.00) startOffset 3 endOffset 9 width 43.57: "Animat"
             chunk 1 text run 5 at (141.68,345.00) startOffset 9 endOffset 17 width 64.58: "edEnumer"
             chunk 1 text run 6 at (206.19,345.00) startOffset 17 endOffset 22 width 30.35: "ation"
-        RenderSVGPath {rect} at (120,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=360.00] [width=20.00] [height=20.00]
+        RenderSVGPath {rect} at (120,40) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [x=40.00] [y=360.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (70,363) size 131x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 131x15
             chunk 1 text run 1 at (70.00,375.00) startOffset 0 endOffset 1 width 9.34: "S"
@@ -118,7 +118,7 @@ layer at (0,0) size 480x360
             chunk 1 text run 4 at (98.31,375.00) startOffset 3 endOffset 9 width 43.57: "Animat"
             chunk 1 text run 5 at (141.68,375.00) startOffset 9 endOffset 14 width 31.14: "edInt"
             chunk 1 text run 6 at (172.62,375.00) startOffset 14 endOffset 18 width 28.01: "eger"
-        RenderSVGPath {rect} at (90,40) size 20x20 [fill={[type=SOLID] [color=#008000]}] [x=40.00] [y=390.00] [width=20.00] [height=20.00]
+        RenderSVGPath {rect} at (90,40) size 20x20 [fill={[type=SOLID] [color=#FF0000]}] [x=40.00] [y=390.00] [width=20.00] [height=20.00]
         RenderSVGText {text} at (70,393) size 138x15 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 138x15
             chunk 1 text run 1 at (70.00,405.00) startOffset 0 endOffset 1 width 9.34: "S"
@@ -135,8 +135,6 @@ layer at (0,0) size 480x360
         RenderSVGPath {circle} at (0,0) size 100x100 [fill={[type=SOLID] [color=#000000]}] [cx=0.00] [cy=0.00] [r=100.00]
         RenderSVGResourceMarker {marker} [id="marker"] [markerUnits=strokeWidth] [ref at (0,0)] [angle=60.00]
         RenderSVGViewportContainer {svg} at (0,0) size 0x0
-        RenderSVGResourceFilter {filter} [id=""] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feTurbulence type="TURBULANCE" baseFrequency="4.00, 5.00" seed="0.00" numOctaves="1" stitchTiles="0"]
     RenderSVGContainer {g} at (10,314) size 227x33
       RenderSVGText {text} at (10,314) size 227x33 contains 1 chunk(s)
         RenderSVGInlineText {#text} at (0,0) size 227x33

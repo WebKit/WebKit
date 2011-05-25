@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 45: TypeError: 'undefined' is not a function (evaluating 'filterElement.setFilterRes(200, 200)')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'setFilterRes' call of the SVGFilterElement object
@@ -5,11 +7,6 @@ Tests dynamic updates of the 'setFilterRes' call of the SVGFilterElement object
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS filterElement.filterResX.baseVal is 400
-PASS filterElement.filterResY.baseVal is 400
-PASS filterElement.filterResX.baseVal is 200
-PASS filterElement.filterResY.baseVal is 200
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL filterElement.filterResX.baseVal should be 400. Threw exception TypeError: 'undefined' is not an object (evaluating 'filterElement.filterResX.baseVal')
+FAIL filterElement.filterResY.baseVal should be 400. Threw exception TypeError: 'undefined' is not an object (evaluating 'filterElement.filterResY.baseVal')
 

@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 37: TypeError: 'undefined' is not an object (evaluating 'turbulence.numOctaves.baseVal = 3')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'numOctaves' property of the SVGFETurbulenceElment object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'numOctaves' property of the SVGFETurbulenceElment 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS turbulence.numOctaves.baseVal is 1
-PASS turbulence.numOctaves.baseVal is 3
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL turbulence.numOctaves.baseVal should be 1. Threw exception TypeError: 'undefined' is not an object (evaluating 'turbulence.numOctaves.baseVal')
 

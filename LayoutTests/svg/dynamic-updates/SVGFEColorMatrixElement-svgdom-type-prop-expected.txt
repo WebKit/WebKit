@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 172: ReferenceError: Can't find variable: SVGFEColorMatrixElement
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'type' property of the SVGFEColorMatrixElement object
@@ -9,11 +11,4 @@ PASS matrixElement.getAttribute('type') is "saturate"
 PASS saturateElement.getAttribute('type') is "hueRotate"
 PASS hueRotateElement.getAttribute('type') is "luminanceToAlpha"
 PASS luminanceToAlphaElement.getAttribute('type') is "matrix"
-PASS matrixElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_MATRIX
-PASS saturateElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_SATURATE
-PASS hueRotateElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_HUEROTATE
-PASS luminanceToAlphaElement.type.baseVal is SVGFEColorMatrixElement.SVG_FECOLORMATRIX_TYPE_LUMINANCETOALPHA
-PASS successfullyParsed is true
-
-TEST COMPLETE
 

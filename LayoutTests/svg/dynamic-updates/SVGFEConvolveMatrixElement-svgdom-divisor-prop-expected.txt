@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 41: TypeError: 'undefined' is not an object (evaluating 'convolveMatrixElement.divisor.baseVal = 12')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'divisor' property of the SVGFEConvolveMatrixElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'divisor' property of the SVGFEConvolveMatrixElemen
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS convolveMatrixElement.divisor.baseVal is 20
-PASS convolveMatrixElement.divisor.baseVal is 12
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL convolveMatrixElement.divisor.baseVal should be 20. Threw exception TypeError: 'undefined' is not an object (evaluating 'convolveMatrixElement.divisor.baseVal')
 

@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 40: TypeError: 'undefined' is not an object (evaluating 'blurElement.in1.baseVal = "SourceGraphic"')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'in' property of the SVGFEGaussianBlurElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'in' property of the SVGFEGaussianBlurElement objec
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS blurElement.in1.baseVal is "SourceAlpha"
-PASS blurElement.in1.baseVal is "SourceGraphic"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL blurElement.in1.baseVal should be SourceAlpha. Threw exception TypeError: 'undefined' is not an object (evaluating 'blurElement.in1.baseVal')
 

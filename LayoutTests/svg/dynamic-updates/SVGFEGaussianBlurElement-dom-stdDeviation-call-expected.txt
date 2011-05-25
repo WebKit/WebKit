@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 40: TypeError: 'undefined' is not a function (evaluating 'blurElement.setStdDeviation(10, 10)')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'stdDeviation' property of the SVGFEGaussianBlurElement object
@@ -5,11 +7,6 @@ Tests dynamic updates of the 'stdDeviation' property of the SVGFEGaussianBlurEle
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS blurElement.stdDeviationX.baseVal is 5
-PASS blurElement.stdDeviationY.baseVal is 5
-PASS blurElement.stdDeviationX.baseVal is 10
-PASS blurElement.stdDeviationY.baseVal is 10
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL blurElement.stdDeviationX.baseVal should be 5. Threw exception TypeError: 'undefined' is not an object (evaluating 'blurElement.stdDeviationX.baseVal')
+FAIL blurElement.stdDeviationY.baseVal should be 5. Threw exception TypeError: 'undefined' is not an object (evaluating 'blurElement.stdDeviationY.baseVal')
 

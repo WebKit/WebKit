@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 58: TypeError: 'undefined' is not an object (evaluating 'specularElement.surfaceScale.baseVal = 10')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'surfaceScale' property of the SVGFESpecularLightingElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'surfaceScale' property of the SVGFESpecularLightin
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS specularElement.surfaceScale.baseVal is 1
-PASS specularElement.surfaceScale.baseVal is 10
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL specularElement.surfaceScale.baseVal should be 1. Threw exception TypeError: 'undefined' is not an object (evaluating 'specularElement.surfaceScale.baseVal')
 

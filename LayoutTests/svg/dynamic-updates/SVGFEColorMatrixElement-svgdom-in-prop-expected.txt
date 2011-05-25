@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 172: TypeError: 'undefined' is not an object (evaluating 'matrixElement.in1.baseVal = "SourceGraphic"')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'in' property of the SVGFEColorMatrixElement object
@@ -5,15 +7,8 @@ Tests dynamic updates of the 'in' property of the SVGFEColorMatrixElement object
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS matrixElement.in1.baseVal is "SourceAlpha"
-PASS saturateElement.in1.baseVal is "SourceAlpha"
-PASS hueRotateElement.in1.baseVal is "SourceAlpha"
-PASS luminanceToAlphaElement.in1.baseVal is "SourceAlpha"
-PASS matrixElement.in1.baseVal is "SourceGraphic"
-PASS saturateElement.in1.baseVal is "SourceGraphic"
-PASS hueRotateElement.in1.baseVal is "SourceGraphic"
-PASS luminanceToAlphaElement.in1.baseVal is "SourceGraphic"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL matrixElement.in1.baseVal should be SourceAlpha. Threw exception TypeError: 'undefined' is not an object (evaluating 'matrixElement.in1.baseVal')
+FAIL saturateElement.in1.baseVal should be SourceAlpha. Threw exception TypeError: 'undefined' is not an object (evaluating 'saturateElement.in1.baseVal')
+FAIL hueRotateElement.in1.baseVal should be SourceAlpha. Threw exception TypeError: 'undefined' is not an object (evaluating 'hueRotateElement.in1.baseVal')
+FAIL luminanceToAlphaElement.in1.baseVal should be SourceAlpha. Threw exception TypeError: 'undefined' is not an object (evaluating 'luminanceToAlphaElement.in1.baseVal')
 

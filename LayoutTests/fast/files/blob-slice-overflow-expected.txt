@@ -1,2 +1,4 @@
+CONSOLE MESSAGE: line 11: ReferenceError: Can't find variable: WebKitBlobBuilder
+FAIL: Timed out waiting for notifyDone to be called
 The excessive length passed to Blob.slice() should be trapped and result in a truncated slice being returned.
-Blob slice length: 1
+

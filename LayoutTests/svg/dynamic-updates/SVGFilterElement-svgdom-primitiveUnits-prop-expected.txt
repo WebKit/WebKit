@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 48: TypeError: 'undefined' is not an object (evaluating 'filterElement.primitiveUnits.baseVal = SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'primitiveUnits' property of the SVGFilterElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'primitiveUnits' property of the SVGFilterElement o
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS filterElement.primitiveUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_USERSPACEONUSE
-PASS filterElement.primitiveUnits.baseVal is SVGUnitTypes.SVG_UNIT_TYPE_OBJECTBOUNDINGBOX
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL filterElement.primitiveUnits.baseVal should be 1. Threw exception TypeError: 'undefined' is not an object (evaluating 'filterElement.primitiveUnits.baseVal')
 

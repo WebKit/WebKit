@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 51: TypeError: 'undefined' is not an object (evaluating 'displacementMap.in2.baseVal = "Map"')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'in2' property of the SVGFEDisplacementMapElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'in2' property of the SVGFEDisplacementMapElement o
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS displacementMap.in2.baseVal is "Texture"
-PASS displacementMap.in2.baseVal is "Map"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL displacementMap.in2.baseVal should be Texture. Threw exception TypeError: 'undefined' is not an object (evaluating 'displacementMap.in2.baseVal')
 

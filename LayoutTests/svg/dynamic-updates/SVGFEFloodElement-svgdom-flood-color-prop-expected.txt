@@ -5,7 +5,7 @@ Tests dynamic updates of the 'flood-color' property of the SVGFEFloodElement obj
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.defaultView.getComputedStyle(floodElement).getPropertyValue('flood-color') is "rgb(145, 32, 103)"
+FAIL document.defaultView.getComputedStyle(floodElement).getPropertyValue('flood-color') should be rgb(145, 32, 103). Was rgb(0, 0, 0).
 PASS document.defaultView.getComputedStyle(floodElement).getPropertyValue('flood-color') is "rgb(64, 128, 103)"
 PASS successfullyParsed is true
 

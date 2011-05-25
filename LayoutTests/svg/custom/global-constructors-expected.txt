@@ -107,33 +107,33 @@ PASS SVGStopElement.toString() is '[object SVGStopElementConstructor]'
 PASS SVGPatternElement.toString() is '[object SVGPatternElementConstructor]'
 PASS SVGClipPathElement.toString() is '[object SVGClipPathElementConstructor]'
 PASS SVGMaskElement.toString() is '[object SVGMaskElementConstructor]'
-PASS SVGFilterElement.toString() is '[object SVGFilterElementConstructor]'
+FAIL SVGFilterElement.toString() should be [object SVGFilterElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFilterElement
 FAIL SVGFilterPrimitiveStandardAttributes.toString() should be [object SVGFilterPrimitiveStandardAttributesConstructor]. Threw exception ReferenceError: Can't find variable: SVGFilterPrimitiveStandardAttributes
-PASS SVGFEBlendElement.toString() is '[object SVGFEBlendElementConstructor]'
-PASS SVGFEColorMatrixElement.toString() is '[object SVGFEColorMatrixElementConstructor]'
-PASS SVGFEComponentTransferElement.toString() is '[object SVGFEComponentTransferElementConstructor]'
-PASS SVGComponentTransferFunctionElement.toString() is '[object SVGComponentTransferFunctionElementConstructor]'
-PASS SVGFEFuncRElement.toString() is '[object SVGFEFuncRElementConstructor]'
-PASS SVGFEFuncGElement.toString() is '[object SVGFEFuncGElementConstructor]'
-PASS SVGFEFuncBElement.toString() is '[object SVGFEFuncBElementConstructor]'
-PASS SVGFEFuncAElement.toString() is '[object SVGFEFuncAElementConstructor]'
-PASS SVGFECompositeElement.toString() is '[object SVGFECompositeElementConstructor]'
-PASS SVGFEConvolveMatrixElement.toString() is '[object SVGFEConvolveMatrixElementConstructor]'
-PASS SVGFEDiffuseLightingElement.toString() is '[object SVGFEDiffuseLightingElementConstructor]'
-PASS SVGFEDistantLightElement.toString() is '[object SVGFEDistantLightElementConstructor]'
-PASS SVGFEPointLightElement.toString() is '[object SVGFEPointLightElementConstructor]'
-PASS SVGFESpotLightElement.toString() is '[object SVGFESpotLightElementConstructor]'
-PASS SVGFEDisplacementMapElement.toString() is '[object SVGFEDisplacementMapElementConstructor]'
-PASS SVGFEFloodElement.toString() is '[object SVGFEFloodElementConstructor]'
-PASS SVGFEGaussianBlurElement.toString() is '[object SVGFEGaussianBlurElementConstructor]'
-PASS SVGFEImageElement.toString() is '[object SVGFEImageElementConstructor]'
-PASS SVGFEMergeElement.toString() is '[object SVGFEMergeElementConstructor]'
-PASS SVGFEMergeNodeElement.toString() is '[object SVGFEMergeNodeElementConstructor]'
-PASS SVGFEMorphologyElement.toString() is '[object SVGFEMorphologyElementConstructor]'
-PASS SVGFEOffsetElement.toString() is '[object SVGFEOffsetElementConstructor]'
-PASS SVGFESpecularLightingElement.toString() is '[object SVGFESpecularLightingElementConstructor]'
-PASS SVGFETileElement.toString() is '[object SVGFETileElementConstructor]'
-PASS SVGFETurbulenceElement.toString() is '[object SVGFETurbulenceElementConstructor]'
+FAIL SVGFEBlendElement.toString() should be [object SVGFEBlendElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEBlendElement
+FAIL SVGFEColorMatrixElement.toString() should be [object SVGFEColorMatrixElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEColorMatrixElement
+FAIL SVGFEComponentTransferElement.toString() should be [object SVGFEComponentTransferElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEComponentTransferElement
+FAIL SVGComponentTransferFunctionElement.toString() should be [object SVGComponentTransferFunctionElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGComponentTransferFunctionElement
+FAIL SVGFEFuncRElement.toString() should be [object SVGFEFuncRElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEFuncRElement
+FAIL SVGFEFuncGElement.toString() should be [object SVGFEFuncGElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEFuncGElement
+FAIL SVGFEFuncBElement.toString() should be [object SVGFEFuncBElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEFuncBElement
+FAIL SVGFEFuncAElement.toString() should be [object SVGFEFuncAElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEFuncAElement
+FAIL SVGFECompositeElement.toString() should be [object SVGFECompositeElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFECompositeElement
+FAIL SVGFEConvolveMatrixElement.toString() should be [object SVGFEConvolveMatrixElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEConvolveMatrixElement
+FAIL SVGFEDiffuseLightingElement.toString() should be [object SVGFEDiffuseLightingElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEDiffuseLightingElement
+FAIL SVGFEDistantLightElement.toString() should be [object SVGFEDistantLightElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEDistantLightElement
+FAIL SVGFEPointLightElement.toString() should be [object SVGFEPointLightElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEPointLightElement
+FAIL SVGFESpotLightElement.toString() should be [object SVGFESpotLightElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFESpotLightElement
+FAIL SVGFEDisplacementMapElement.toString() should be [object SVGFEDisplacementMapElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEDisplacementMapElement
+FAIL SVGFEFloodElement.toString() should be [object SVGFEFloodElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEFloodElement
+FAIL SVGFEGaussianBlurElement.toString() should be [object SVGFEGaussianBlurElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEGaussianBlurElement
+FAIL SVGFEImageElement.toString() should be [object SVGFEImageElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEImageElement
+FAIL SVGFEMergeElement.toString() should be [object SVGFEMergeElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEMergeElement
+FAIL SVGFEMergeNodeElement.toString() should be [object SVGFEMergeNodeElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEMergeNodeElement
+FAIL SVGFEMorphologyElement.toString() should be [object SVGFEMorphologyElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEMorphologyElement
+FAIL SVGFEOffsetElement.toString() should be [object SVGFEOffsetElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFEOffsetElement
+FAIL SVGFESpecularLightingElement.toString() should be [object SVGFESpecularLightingElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFESpecularLightingElement
+FAIL SVGFETileElement.toString() should be [object SVGFETileElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFETileElement
+FAIL SVGFETurbulenceElement.toString() should be [object SVGFETurbulenceElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGFETurbulenceElement
 PASS SVGCursorElement.toString() is '[object SVGCursorElementConstructor]'
 PASS SVGAElement.toString() is '[object SVGAElementConstructor]'
 PASS SVGViewElement.toString() is '[object SVGViewElementConstructor]'

@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 215: TypeError: 'undefined' is not an object (evaluating 'normalBlend.in2.baseVal = "normalImg"')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'in2' property of the SVGFEBlendElement object
@@ -5,17 +7,9 @@ Tests dynamic updates of the 'in2' property of the SVGFEBlendElement object
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS normalBlend.in2.baseVal is "lightenImg"
-PASS multiplyBlend.in2.baseVal is "normalImg"
-PASS screenBlend.in2.baseVal is "multiplyImg"
-PASS darkenBlend.in2.baseVal is "screenImg"
-PASS lightenBlend.in2.baseVal is "darkenImg"
-PASS normalBlend.in2.baseVal is "normalImg"
-PASS multiplyBlend.in2.baseVal is "multiplyImg"
-PASS screenBlend.in2.baseVal is "screenImg"
-PASS darkenBlend.in2.baseVal is "darkenImg"
-PASS lightenBlend.in2.baseVal is "lightenImg"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL normalBlend.in2.baseVal should be lightenImg. Threw exception TypeError: 'undefined' is not an object (evaluating 'normalBlend.in2.baseVal')
+FAIL multiplyBlend.in2.baseVal should be normalImg. Threw exception TypeError: 'undefined' is not an object (evaluating 'multiplyBlend.in2.baseVal')
+FAIL screenBlend.in2.baseVal should be multiplyImg. Threw exception TypeError: 'undefined' is not an object (evaluating 'screenBlend.in2.baseVal')
+FAIL darkenBlend.in2.baseVal should be screenImg. Threw exception TypeError: 'undefined' is not an object (evaluating 'darkenBlend.in2.baseVal')
+FAIL lightenBlend.in2.baseVal should be darkenImg. Threw exception TypeError: 'undefined' is not an object (evaluating 'lightenBlend.in2.baseVal')
 

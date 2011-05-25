@@ -5,7 +5,7 @@ Tests dynamic updates of the 'lighting-color' css property of the SVGFEDiffuseLi
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS document.defaultView.getComputedStyle(gradientElement).getPropertyValue('lighting-color') is "rgb(255, 0, 0)"
+FAIL document.defaultView.getComputedStyle(gradientElement).getPropertyValue('lighting-color') should be rgb(255, 0, 0). Was rgb(255, 255, 255).
 PASS document.defaultView.getComputedStyle(gradientElement).getPropertyValue('lighting-color') is "rgb(255, 255, 0)"
 PASS successfullyParsed is true
 

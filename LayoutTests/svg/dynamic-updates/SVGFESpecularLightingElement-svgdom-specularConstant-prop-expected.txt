@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 58: TypeError: 'undefined' is not an object (evaluating 'specularElement.specularConstant.baseVal = 1')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'specularConstant' property of the SVGFESpecularLightingElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'specularConstant' property of the SVGFESpecularLig
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS specularElement.specularConstant.baseVal is 4
-PASS specularElement.specularConstant.baseVal is 1
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL specularElement.specularConstant.baseVal should be 4. Threw exception TypeError: 'undefined' is not an object (evaluating 'specularElement.specularConstant.baseVal')
 

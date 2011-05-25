@@ -1,4 +1,5 @@
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: WebKitBlobBuilder
+FAIL: Timed out waiting for notifyDone to be called
 Test case for checking blob URL not allowed to be created from the code running from data URI
 
-PASS: no blob URL is created
 

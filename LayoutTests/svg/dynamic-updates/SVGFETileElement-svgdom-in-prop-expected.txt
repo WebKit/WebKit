@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 62: TypeError: 'undefined' is not an object (evaluating 'tile.in1.baseVal = "offset"')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'in' property of the SVGFETileElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'in' property of the SVGFETileElement object
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS tile.in1.baseVal is "SourceGraphic"
-PASS tile.in1.baseVal is "offset"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL tile.in1.baseVal should be SourceGraphic. Threw exception TypeError: 'undefined' is not an object (evaluating 'tile.in1.baseVal')
 

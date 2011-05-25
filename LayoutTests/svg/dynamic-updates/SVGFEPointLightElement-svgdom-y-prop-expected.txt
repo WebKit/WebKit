@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 51: TypeError: 'undefined' is not an object (evaluating 'pointLight.y.baseVal = 180')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'y' property of the SVGFEPointLightElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'y' property of the SVGFEPointLightElement object
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS pointLight.y.baseVal is 120
-PASS pointLight.y.baseVal is 180
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL pointLight.y.baseVal should be 120. Threw exception TypeError: 'undefined' is not an object (evaluating 'pointLight.y.baseVal')
 

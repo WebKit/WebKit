@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 50: TypeError: 'undefined' is not an object (evaluating 'distantLight.azimuth.baseVal = 100')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'azimuth' property of the SVGFEDistantLightElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'azimuth' property of the SVGFEDistantLightElement 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS distantLight.azimuth.baseVal is 10
-PASS distantLight.azimuth.baseVal is 100
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL distantLight.azimuth.baseVal should be 10. Threw exception TypeError: 'undefined' is not an object (evaluating 'distantLight.azimuth.baseVal')
 

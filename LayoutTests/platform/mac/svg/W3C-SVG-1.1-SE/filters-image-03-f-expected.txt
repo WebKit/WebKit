@@ -5,41 +5,15 @@ layer at (0,0) size 480x360
     RenderSVGHiddenContainer {defs} at (0,0) size 0x0
     RenderSVGContainer {g} at (59,99) size 352x152
       RenderSVGHiddenContainer {defs} at (0,0) size 0x0
-        RenderSVGResourceFilter {filter} [id="default"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="100x100"]
-        RenderSVGResourceFilter {filter} [id="all_specified_relative"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="100x100"]
-        RenderSVGResourceFilter {filter} [id="all_specified_absolute"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="100x100"]
-        RenderSVGResourceFilter {filter} [id="x_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="100x100"]
-        RenderSVGResourceFilter {filter} [id="y_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="100x100"]
-        RenderSVGResourceFilter {filter} [id="width_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="100x100"]
-        RenderSVGResourceFilter {filter} [id="height_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="100x100"]
-        RenderSVGResourceFilter {filter} [id="width_height_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="100x100"]
-        RenderSVGResourceFilter {filter} [id="x_y_specified"] [filterUnits=objectBoundingBox] [primitiveUnits=userSpaceOnUse]
-          [feImage image-size="100x100"]
       RenderSVGContainer {g} at (59,99) size 352x152 [transform={m=((1.00,0.00)(0.00,1.00)) t=(60.00,100.00)}]
         RenderSVGPath {rect} at (60,100) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
-          [filter="default"] RenderSVGResourceFilter {filter} at (0,0) size 50x50
         RenderSVGPath {rect} at (160,100) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=100.00] [y=0.00] [width=50.00] [height=50.00]
-          [filter="all_specified_relative"] RenderSVGResourceFilter {filter} at (100,0) size 50x50
         RenderSVGPath {rect} at (260,100) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=200.00] [y=0.00] [width=50.00] [height=50.00]
-          [filter="all_specified_absolute"] RenderSVGResourceFilter {filter} at (200,0) size 50x50
         RenderSVGPath {rect} at (360,100) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=300.00] [y=0.00] [width=50.00] [height=50.00]
-          [filter="y_specified"] RenderSVGResourceFilter {filter} at (300,0) size 50x50
         RenderSVGPath {rect} at (60,200) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=0.00] [y=100.00] [width=50.00] [height=50.00]
-          [filter="width_specified"] RenderSVGResourceFilter {filter} at (0,100) size 50x50
         RenderSVGPath {rect} at (160,200) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=100.00] [y=100.00] [width=50.00] [height=50.00]
-          [filter="height_specified"] RenderSVGResourceFilter {filter} at (100,100) size 50x50
         RenderSVGPath {rect} at (260,200) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=200.00] [y=100.00] [width=50.00] [height=50.00]
-          [filter="width_height_specified"] RenderSVGResourceFilter {filter} at (200,100) size 50x50
         RenderSVGPath {rect} at (360,200) size 50x50 [fill={[type=SOLID] [color=#FF0000]}] [x=300.00] [y=100.00] [width=50.00] [height=50.00]
-          [filter="x_y_specified"] RenderSVGResourceFilter {filter} at (300,100) size 50x50
         RenderSVGContainer {g} at (59,99) size 352x152
           RenderSVGPath {rect} at (59,99) size 52x52 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.00] [y=0.00] [width=50.00] [height=50.00]
           RenderSVGPath {rect} at (159,99) size 52x52 [stroke={[type=SOLID] [color=#0000FF]}] [x=100.00] [y=0.00] [width=50.00] [height=50.00]

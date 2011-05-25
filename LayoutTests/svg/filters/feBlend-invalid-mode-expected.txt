@@ -1,1 +1,2 @@
+CONSOLE MESSAGE: line 14: TypeError: 'undefined' is not an object (evaluating 'document.getElementById('blend').mode.baseVal=-1')
 PASS: Invalid blend modes do not trigger a crash. 

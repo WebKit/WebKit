@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 51: TypeError: 'undefined' is not an object (evaluating 'gradientElement.diffuseConstant.baseVal = 1')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'diffuseConstant' property of the SVGFEDiffuseLightingElement object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'diffuseConstant' property of the SVGFEDiffuseLight
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS gradientElement.diffuseConstant.baseVal is 0
-PASS gradientElement.diffuseConstant.baseVal is 1
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL gradientElement.diffuseConstant.baseVal should be 0. Threw exception TypeError: 'undefined' is not an object (evaluating 'gradientElement.diffuseConstant.baseVal')
 

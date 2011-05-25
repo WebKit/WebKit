@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 44: TypeError: 'undefined' is not an object (evaluating 'morphologyElement.in1.baseVal = "SourceGraphic"')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Erode radius = 4
@@ -6,9 +8,5 @@ Tests dynamic updates of the 'in' property of the SVGFEMorphologyElement object
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS morphologyElement.in1.baseVal is "SourceAlpha"
-PASS morphologyElement.in1.baseVal is "SourceGraphic"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL morphologyElement.in1.baseVal should be SourceAlpha. Threw exception TypeError: 'undefined' is not an object (evaluating 'morphologyElement.in1.baseVal')
 

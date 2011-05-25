@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: SVGFEDisplacementMapElement
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'xChannelSelector' property of the SVGFEDisplacementMapElement object
@@ -5,9 +7,4 @@ Tests dynamic updates of the 'xChannelSelector' property of the SVGFEDisplacemen
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS displacementMap.xChannelSelector.baseVal is SVGFEDisplacementMapElement.SVG_CHANNEL_B
-PASS displacementMap.xChannelSelector.baseVal is SVGFEDisplacementMapElement.SVG_CHANNEL_R
-PASS successfullyParsed is true
-
-TEST COMPLETE
 

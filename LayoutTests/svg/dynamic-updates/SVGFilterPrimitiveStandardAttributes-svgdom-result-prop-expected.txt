@@ -1,3 +1,5 @@
+CONSOLE MESSAGE: line 52: TypeError: 'undefined' is not an object (evaluating 'gradientElement.result.baseVal = "res2"')
+FAIL: Timed out waiting for notifyDone to be called
 SVG 1.1 dynamic update tests
 
 Tests dynamic updates of the 'result' propert of the SVGFilterPrimitiveStandardAttributes object
@@ -5,9 +7,5 @@ Tests dynamic updates of the 'result' propert of the SVGFilterPrimitiveStandardA
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS gradientElement.result.baseVal is "res1"
-PASS gradientElement.result.baseVal is "res2"
-PASS successfullyParsed is true
-
-TEST COMPLETE
+FAIL gradientElement.result.baseVal should be res1. Threw exception TypeError: 'undefined' is not an object (evaluating 'gradientElement.result.baseVal')
 
