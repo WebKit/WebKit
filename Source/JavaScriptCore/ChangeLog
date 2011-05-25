@@ -1,5 +1,11 @@
 2011-05-24  Geoffrey Garen  <ggaren@apple.com>
 
+        Maybe fix the Mac build now?
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2011-05-24  Geoffrey Garen  <ggaren@apple.com>
+
         Maybe fix the Mac build?
         
         * JavaScriptCore.xcodeproj/project.pbxproj:
