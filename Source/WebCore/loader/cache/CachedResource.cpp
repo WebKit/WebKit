@@ -78,8 +78,8 @@ static ResourceLoadPriority defaultPriorityForResourceType(CachedResource::Type 
 static RefCountedLeakCounter cachedResourceLeakCounter("CachedResource");
 #endif
 
-CachedResource::CachedResource(const String& url, Type type)
-    : m_url(url)
+CachedResource::CachedResource(const ResourceRequest& request, Type type)
+    : m_resourceRequest(request)
     , m_request(0)
     , m_loadPriority(defaultPriorityForResourceType(type))
     , m_responseTimestamp(currentTime())

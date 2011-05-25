@@ -72,7 +72,8 @@ void SVGFEImageElement::requestImageResource()
     if (hrefElement && hrefElement->isSVGElement() && hrefElement->renderer())
         return;
 
-    m_cachedImage = ownerDocument()->cachedResourceLoader()->requestImage(href());
+    ResourceRequest request(ownerDocument()->completeURL(href()));
+    m_cachedImage = ownerDocument()->cachedResourceLoader()->requestImage(request);
 
     if (m_cachedImage)
         m_cachedImage->addClient(this);

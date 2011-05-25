@@ -161,9 +161,10 @@ void ProcessingInstruction::checkStyleSheet()
             m_loading = true;
             document()->addPendingSheet();
             
+            ResourceRequest request(document()->completeURL(href));
 #if ENABLE(XSLT)
             if (m_isXSL)
-                m_cachedSheet = document()->cachedResourceLoader()->requestXSLStyleSheet(url);
+                m_cachedSheet = document()->cachedResourceLoader()->requestXSLStyleSheet(request);
             else
 #endif
             {
@@ -171,7 +172,7 @@ void ProcessingInstruction::checkStyleSheet()
                 if (charset.isEmpty())
                     charset = document()->charset();
 
-                m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(url, charset);
+                m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(request, charset);
             }
             if (m_cachedSheet)
                 m_cachedSheet->addClient(this);

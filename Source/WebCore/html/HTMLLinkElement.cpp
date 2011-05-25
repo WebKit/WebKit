@@ -265,7 +265,8 @@ void HTMLLinkElement::process()
         } else if (m_relAttribute.m_isLinkPrerender)
             type = CachedResource::LinkPrerender;
 
-        m_cachedLinkResource = document()->cachedResourceLoader()->requestLinkResource(type, m_url, priority);
+        ResourceRequest linkRequest(document()->completeURL(m_url));
+        m_cachedLinkResource = document()->cachedResourceLoader()->requestLinkResource(type, linkRequest, priority);
         if (m_cachedLinkResource)
             m_cachedLinkResource->addClient(this);
     }
@@ -306,7 +307,8 @@ void HTMLLinkElement::process()
 
         // Load stylesheets that are not needed for the rendering immediately with low priority.
         ResourceLoadPriority priority = blocking ? ResourceLoadPriorityUnresolved : ResourceLoadPriorityVeryLow;
-        m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(m_url, charset, priority);
+        ResourceRequest request(document()->completeURL(m_url));
+        m_cachedSheet = document()->cachedResourceLoader()->requestCSSStyleSheet(request, charset, priority);
         
         if (m_cachedSheet)
             m_cachedSheet->addClient(this);

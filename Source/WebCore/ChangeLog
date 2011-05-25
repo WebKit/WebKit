@@ -1,3 +1,73 @@
+2011-05-24  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Change CachedResources to take a ResourceRequest instead of
+        a url in their constructors and provide a very minimal set of
+        cases for avoiding reusing a CachedResource. The ResourceRequest
+        part of this change requires pushing responsibility
+        for calling Document::completeURL() to the caller, instead of
+        CachedResourceLoader, since ResourceRequest ASSERTs if it
+        is constructed with an invalid url.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61318
+
+        Refactor, no new tests.
+
+        * css/CSSFontSelector.cpp:
+        (WebCore::CSSFontSelector::addFontFaceRule):
+        * css/CSSImageValue.cpp:
+        (WebCore::CSSImageValue::cachedImage):
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::insertedIntoParent):
+        * dom/ProcessingInstruction.cpp:
+        (WebCore::ProcessingInstruction::checkStyleSheet):
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::requestScript):
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::process):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        * loader/cache/CachedCSSStyleSheet.cpp:
+        (WebCore::CachedCSSStyleSheet::CachedCSSStyleSheet):
+        (WebCore::CachedCSSStyleSheet::didAddClient):
+        (WebCore::CachedCSSStyleSheet::checkNotify):
+        * loader/cache/CachedCSSStyleSheet.h:
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::CachedFont):
+        * loader/cache/CachedFont.h:
+        * loader/cache/CachedImage.cpp:
+        (WebCore::CachedImage::CachedImage):
+        (WebCore::CachedImage::checkShouldPaintBrokenImage):
+        * loader/cache/CachedImage.h:
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::reuseRequest):
+        (WebCore::CachedResource::allowReuseOfRequest):
+        (WebCore::CachedResource::removeClient):
+        (WebCore::CachedResource::canUseCacheValidator):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::resourceRequest):
+        (WebCore::CachedResource::url):
+        * loader/cache/CachedResourceLoader.cpp:
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::load):
+        * loader/cache/CachedScript.cpp:
+        (WebCore::CachedScript::CachedScript):
+        * loader/cache/CachedScript.h:
+        * loader/cache/CachedXSLStyleSheet.cpp:
+        (WebCore::CachedXSLStyleSheet::CachedXSLStyleSheet):
+        (WebCore::CachedXSLStyleSheet::didAddClient):
+        (WebCore::CachedXSLStyleSheet::checkNotify):
+        * loader/cache/CachedXSLStyleSheet.h:
+        * svg/SVGFEImageElement.cpp:
+        (WebCore::SVGFEImageElement::requestImageResource):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::loadFont):
+        * xml/XSLImportRule.cpp:
+        (WebCore::XSLImportRule::loadSheet):
+
 2011-05-24  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -126,12 +126,13 @@ public:
             return;
 
         CachedResourceLoader* cachedResourceLoader = document->cachedResourceLoader();
+        ResourceRequest request = document->completeURL(m_urlToLoad);
         if (m_tagName == scriptTag)
-            cachedResourceLoader->preload(CachedResource::Script, m_urlToLoad, m_charset, scanningBody);
+            cachedResourceLoader->preload(CachedResource::Script, request, m_charset, scanningBody);
         else if (m_tagName == imgTag || (m_tagName == inputTag && m_inputIsImage))
-            cachedResourceLoader->preload(CachedResource::ImageResource, m_urlToLoad, String(), scanningBody);
+            cachedResourceLoader->preload(CachedResource::ImageResource, request, String(), scanningBody);
         else if (m_tagName == linkTag && m_linkIsStyleSheet && m_linkMediaAttributeIsScreen) 
-            cachedResourceLoader->preload(CachedResource::CSSStyleSheet, m_urlToLoad, m_charset, scanningBody);
+            cachedResourceLoader->preload(CachedResource::CSSStyleSheet, request, m_charset, scanningBody);
     }
 
     const AtomicString& tagName() const { return m_tagName; }

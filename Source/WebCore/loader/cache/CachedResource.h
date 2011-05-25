@@ -28,6 +28,7 @@
 #include "PlatformString.h"
 #include "PurgePriority.h"
 #include "ResourceLoadPriority.h"
+#include "ResourceRequest.h"
 #include "ResourceResponse.h"
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
@@ -79,7 +80,7 @@ public:
         DecodeError
     };
 
-    CachedResource(const String& url, Type);
+    CachedResource(const ResourceRequest&, Type);
     virtual ~CachedResource();
     
     virtual void load(CachedResourceLoader* cachedResourceLoader)  { load(cachedResourceLoader, false, DoSecurityCheck, true); }
@@ -92,7 +93,8 @@ public:
 
     virtual bool shouldIgnoreHTTPStatusCodeErrors() const { return false; }
 
-    const String &url() const { return m_url; }
+    ResourceRequest& resourceRequest() { return m_resourceRequest; }
+    const KURL& url() const { return m_resourceRequest.url();}
     Type type() const { return static_cast<Type>(m_type); }
     
     ResourceLoadPriority loadPriority() const { return m_loadPriority; }
@@ -229,7 +231,7 @@ protected:
     
     HashCountedSet<CachedResourceClient*> m_clients;
 
-    String m_url;
+    ResourceRequest m_resourceRequest;
     String m_accept;
     CachedResourceRequest* m_request;
     ResourceLoadPriority m_loadPriority;

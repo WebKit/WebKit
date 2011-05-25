@@ -161,13 +161,16 @@ void ImageLoader::updateFromElement()
         if (m_loadManually) {
             bool autoLoadOtherImages = document->cachedResourceLoader()->autoLoadImages();
             document->cachedResourceLoader()->setAutoLoadImages(false);
-            newImage = new CachedImage(sourceURI(attr));
+            ResourceRequest request = ResourceRequest(document->completeURL(sourceURI(attr)));
+            newImage = new CachedImage(request);
             newImage->setLoading(true);
             newImage->setOwningCachedResourceLoader(document->cachedResourceLoader());
             document->cachedResourceLoader()->m_documentResources.set(newImage->url(), newImage);
             document->cachedResourceLoader()->setAutoLoadImages(autoLoadOtherImages);
-        } else
-            newImage = document->cachedResourceLoader()->requestImage(sourceURI(attr));
+        } else {
+            ResourceRequest request(document->completeURL(sourceURI(attr)));
+            newImage = document->cachedResourceLoader()->requestImage(request);
+        }
 
         // If we do not have an image here, it means that a cross-site
         // violation occurred.

@@ -40,8 +40,8 @@
 
 namespace WebCore {
 
-CachedScript::CachedScript(const String& url, const String& charset)
-    : CachedResource(url, Script)
+CachedScript::CachedScript(const ResourceRequest& resourceRequest, const String& charset)
+    : CachedResource(resourceRequest, Script)
     , m_decoder(TextResourceDecoder::create("application/javascript", charset))
     , m_decodedDataDeletionTimer(this, &CachedScript::decodedDataDeletionTimerFired)
 {

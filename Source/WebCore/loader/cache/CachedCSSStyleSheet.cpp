@@ -37,8 +37,8 @@
 
 namespace WebCore {
 
-CachedCSSStyleSheet::CachedCSSStyleSheet(const String& url, const String& charset)
-    : CachedResource(url, CSSStyleSheet)
+CachedCSSStyleSheet::CachedCSSStyleSheet(const ResourceRequest& resourceRequest, const String& charset)
+    : CachedResource(resourceRequest, CSSStyleSheet)
     , m_decoder(TextResourceDecoder::create("text/css", charset))
 {
     // Prefer text/css but accept any type (dell.com serves a stylesheet
@@ -53,7 +53,7 @@ CachedCSSStyleSheet::~CachedCSSStyleSheet()
 void CachedCSSStyleSheet::didAddClient(CachedResourceClient *c)
 {
     if (!isLoading())
-        c->setCSSStyleSheet(m_url, m_response.url(), m_decoder->encoding().name(), this);
+        c->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
 }
 
 void CachedCSSStyleSheet::allClientsRemoved()
@@ -113,7 +113,7 @@ void CachedCSSStyleSheet::checkNotify()
 
     CachedResourceClientWalker w(m_clients);
     while (CachedResourceClient *c = w.next())
-        c->setCSSStyleSheet(m_url, m_response.url(), m_decoder->encoding().name(), this);
+        c->setCSSStyleSheet(m_resourceRequest.url(), m_response.url(), m_decoder->encoding().name(), this);
 }
 
 void CachedCSSStyleSheet::error(CachedResource::Status status)

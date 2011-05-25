@@ -60,17 +60,17 @@ public:
     CachedResourceLoader(Document*);
     ~CachedResourceLoader();
 
-    CachedImage* requestImage(const String& url);
-    CachedCSSStyleSheet* requestCSSStyleSheet(const String& url, const String& charset, ResourceLoadPriority priority = ResourceLoadPriorityUnresolved);
-    CachedCSSStyleSheet* requestUserCSSStyleSheet(const String& url, const String& charset);
-    CachedScript* requestScript(const String& url, const String& charset);
-    CachedFont* requestFont(const String& url);
+    CachedImage* requestImage(ResourceRequest&);
+    CachedCSSStyleSheet* requestCSSStyleSheet(ResourceRequest&, const String& charset, ResourceLoadPriority = ResourceLoadPriorityUnresolved);
+    CachedCSSStyleSheet* requestUserCSSStyleSheet(ResourceRequest&, const String& charset);
+    CachedScript* requestScript(ResourceRequest&, const String& charset);
+    CachedFont* requestFont(ResourceRequest&);
 
 #if ENABLE(XSLT)
-    CachedXSLStyleSheet* requestXSLStyleSheet(const String& url);
+    CachedXSLStyleSheet* requestXSLStyleSheet(ResourceRequest&);
 #endif
 #if ENABLE(LINK_PREFETCH)
-    CachedResource* requestLinkResource(CachedResource::Type, const String &url, ResourceLoadPriority priority = ResourceLoadPriorityUnresolved);
+    CachedResource* requestLinkResource(CachedResource::Type, ResourceRequest&, ResourceLoadPriority = ResourceLoadPriorityUnresolved);
 #endif
 
     // Logs an access denied message to the console for the specified URL.
@@ -103,15 +103,15 @@ public:
     
     void clearPreloads();
     void clearPendingPreloads();
-    void preload(CachedResource::Type, const String& url, const String& charset, bool referencedFromBody);
+    void preload(CachedResource::Type, ResourceRequest&, const String& charset, bool referencedFromBody);
     void checkForPendingPreloads();
     void printPreloadStats();
     
 private:
-    CachedResource* requestResource(CachedResource::Type, const String& url, const String& charset, ResourceLoadPriority priority = ResourceLoadPriorityUnresolved, bool isPreload = false);
+    CachedResource* requestResource(CachedResource::Type, ResourceRequest&, const String& charset, ResourceLoadPriority = ResourceLoadPriorityUnresolved, bool isPreload = false);
     CachedResource* revalidateResource(CachedResource*, ResourceLoadPriority priority);
-    CachedResource* loadResource(CachedResource::Type, const KURL&, const String& charset, ResourceLoadPriority priority);
-    void requestPreload(CachedResource::Type, const String& url, const String& charset);
+    CachedResource* loadResource(CachedResource::Type, ResourceRequest&, const String& charset, ResourceLoadPriority);
+    void requestPreload(CachedResource::Type, ResourceRequest& url, const String& charset);
 
     enum RevalidationPolicy { Use, Revalidate, Reload, Load };
     RevalidationPolicy determineRevalidationPolicy(CachedResource::Type, bool forPreload, CachedResource* existingResource) const;
@@ -135,7 +135,7 @@ private:
     OwnPtr<ListHashSet<CachedResource*> > m_preloads;
     struct PendingPreload {
         CachedResource::Type m_type;
-        String m_url;
+        ResourceRequest m_request;
         String m_charset;
     };
     Deque<PendingPreload> m_pendingPreloads;

@@ -46,7 +46,7 @@ struct FontCustomPlatformData;
 
 class CachedFont : public CachedResource {
 public:
-    CachedFont(const String& url);
+    CachedFont(const ResourceRequest&);
     virtual ~CachedFont();
     
     virtual void load(CachedResourceLoader* cachedResourceLoader);

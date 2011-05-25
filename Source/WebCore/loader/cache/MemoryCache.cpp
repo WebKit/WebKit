@@ -94,7 +94,7 @@ bool MemoryCache::add(CachedResource* resource)
     
     resourceAccessed(resource);
     
-    LOG(ResourceLoading, "MemoryCache::add Added '%s', resource %p\n", resource->url().latin1().data(), resource);
+    LOG(ResourceLoading, "MemoryCache::add Added '%s', resource %p\n", resource->url().string().latin1().data(), resource);
     return true;
 }
 
@@ -363,7 +363,7 @@ bool MemoryCache::makeResourcePurgeable(CachedResource* resource)
 
 void MemoryCache::evict(CachedResource* resource)
 {
-    LOG(ResourceLoading, "Evicting resource %p for '%s' from cache", resource, resource->url().latin1().data());
+    LOG(ResourceLoading, "Evicting resource %p for '%s' from cache", resource, resource->url().string().latin1().data());
     // The resource may have already been removed by someone other than our caller,
     // who needed a fresh copy for a reload. See <http://bugs.webkit.org/show_bug.cgi?id=12479#c6>.
     if (resource->inCache()) {

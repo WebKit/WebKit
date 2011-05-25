@@ -194,8 +194,10 @@ void CSSPreloadScanner::emitRule()
 {
     if (equalIgnoringCase("import", m_rule.data(), m_rule.size())) {
         String value = parseCSSStringOrURL(m_ruleValue.data(), m_ruleValue.size());
-        if (!value.isEmpty())
-            m_document->cachedResourceLoader()->preload(CachedResource::CSSStyleSheet, value, String(), m_scanningBody);
+        if (!value.isEmpty()) {
+            ResourceRequest request(m_document->completeURL(value));
+            m_document->cachedResourceLoader()->preload(CachedResource::CSSStyleSheet, request, String(), m_scanningBody);
+        }
         m_state = Initial;
     } else if (equalIgnoringCase("charset", m_rule.data(), m_rule.size()))
         m_state = Initial;
