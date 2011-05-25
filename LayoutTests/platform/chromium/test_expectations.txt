@@ -2095,8 +2095,6 @@ BUGWK39655 : fast/dom/prototype-property.html = FAIL
 // Hard to pin down which roll introduced the flakiness.
 BUGCR45106 WIN : svg/clip-path/clip-path-evenodd-nonzero.svg = PASS CRASH
 
-BUGCR45720 WIN LINUX : http/tests/websocket/tests/reload-crash.html = PASS CRASH
-
 // Chromium does not support cancel for notifications permissions.
 BUGWK42798 SKIP : fast/notifications/notifications-cancel-request-permission.html = FAIL
 
@@ -2265,8 +2263,6 @@ BUGCR51416 : fast/dom/DeviceMotion/window-property.html = TEXT
 
 // Slow test introduced in r64817
 BUGCR51571 WIN : http/tests/misc/bad-charset-alias.html = TIMEOUT PASS
-
-BUGCR51869 : http/tests/websocket/tests/frame-length-overflow.html = TEXT PASS
 
 BUGCR51854 WIN SLOW : http/tests/storage/callbacks-are-called-in-correct-context.html = PASS
 
