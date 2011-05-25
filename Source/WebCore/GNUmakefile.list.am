@@ -1828,6 +1828,8 @@ webcore_sources += \
 	Source/WebCore/html/parser/TextViewSourceParser.h \
 	Source/WebCore/html/parser/XSSFilter.cpp \
 	Source/WebCore/html/parser/XSSFilter.h \
+	Source/WebCore/html/shadow/ElementWithPseudoId.cpp \
+	Source/WebCore/html/shadow/ElementWithPseudoId.h \
 	Source/WebCore/html/shadow/DetailsMarkerControl.cpp \
 	Source/WebCore/html/shadow/DetailsMarkerControl.h \
 	Source/WebCore/html/shadow/MediaControls.cpp \

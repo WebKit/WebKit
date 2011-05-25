@@ -3175,6 +3175,8 @@
             'html/parser/TextViewSourceParser.h',
             'html/parser/XSSFilter.cpp',
             'html/parser/XSSFilter.h',
+            'html/shadow/ElementWithPseudoId.cpp',
+            'html/shadow/ElementWithPseudoId.h',
             'html/shadow/DetailsMarkerControl.cpp',
             'html/shadow/DetailsMarkerControl.h',
             'html/shadow/MediaControls.cpp',

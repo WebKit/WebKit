@@ -1,3 +1,25 @@
+2011-05-25  Keishi Hattori  <keishi@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Move ElementWithPseudoId to separate file
+        https://bugs.webkit.org/show_bug.cgi?id=61430
+
+        No new tests because no behavior changes.
+
+        * CMakeLists.txt: Added ElementWithPseudoId.cpp
+        * GNUmakefile.list.am: Added ElementWithPseudoId.{h,cpp}
+        * WebCore.gypi: Added ElementWithPseudoId.{h,cpp}
+        * WebCore.pro: Added ElementWithPseudoId.{h,cpp}
+        * WebCore.vcproj/WebCore.vcproj: Added ElementWithPseudoId.{h,cpp}
+        * WebCore.xcodeproj/project.pbxproj: Added ElementWithPseudoId.{h,cpp}
+        * html/ValidationMessage.cpp: Removed ElementWithPseudoId definition.
+        * html/shadow/ElementWithPseudoId.cpp: Added.
+        (WebCore::ElementWithPseudoId::shadowPseudoId):
+        * html/shadow/ElementWithPseudoId.h: Added.
+        (WebCore::ElementWithPseudoId::create):
+        (WebCore::ElementWithPseudoId::ElementWithPseudoId):
+
 2011-05-25  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Antonio Gomes.

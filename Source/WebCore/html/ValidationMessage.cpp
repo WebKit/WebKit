@@ -34,6 +34,7 @@
 #include "CSSPropertyNames.h"
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
+#include "ElementWithPseudoId.h"
 #include "FormAssociatedElement.h"
 #include "HTMLBRElement.h"
 #include "HTMLNames.h"
@@ -103,23 +104,6 @@ void ValidationMessage::setMessageDOMAndStartTimer(Timer<ValidationMessage>*)
         m_timer->startOneShot(max(5.0, static_cast<double>(m_message.length()) * magnification / 1000));
     }
 }
-
-class ElementWithPseudoId : public HTMLElement {
-public:
-    static PassRefPtr<HTMLElement> create(Document* doc, const AtomicString& pseudoName)
-    {
-        return adoptRef(new ElementWithPseudoId(doc, pseudoName));
-    }
-
-protected:
-    ElementWithPseudoId(Document* doc, const AtomicString& pseudoName)
-        : HTMLElement(divTag, doc)
-        , m_pseudoName(pseudoName) { };
-    virtual const AtomicString& shadowPseudoId() const { return m_pseudoName; }
-
-private:
-    AtomicString m_pseudoName;
-};
 
 static void adjustBubblePosition(const IntRect& hostRect, HTMLElement* bubble)
 {

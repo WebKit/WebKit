@@ -56873,6 +56873,14 @@
 				Name="shadow"
 				>
 				<File
+					RelativePath="..\html\shadow\ElementWithPseudoId.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\html\shadow\ElementWithPseudoId.h"
+					>
+				</File>
+				<File
 					RelativePath="..\html\shadow\DetailsMarkerControl.cpp"
 					>
 				</File>
