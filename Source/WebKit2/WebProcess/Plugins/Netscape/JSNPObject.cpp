@@ -64,9 +64,7 @@ JSNPObject::JSNPObject(JSGlobalObject* globalObject, NPRuntimeObjectMap* objectM
 
 JSNPObject::~JSNPObject()
 {
-    if (!m_npObject)
-        return;
-    releaseNPObject(m_npObject);
+    ASSERT(!m_npObject);
 }
 
 void JSNPObject::invalidate()
