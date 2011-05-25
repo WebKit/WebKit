@@ -25,6 +25,7 @@
 
 #import "config.h"
 #import "MemoryPressureHandler.h"
+
 #import <WebCore/GCController.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/PageCache.h>
@@ -86,13 +87,13 @@ void MemoryPressureHandler::install()
 void MemoryPressureHandler::respondToMemoryPressure()
 {
     int savedPageCacheCapacity = pageCache()->capacity();
-    pageCache()->setCapacity(pageCache()->pageCount()>>1);
+    pageCache()->setCapacity(pageCache()->pageCount()/2);
     pageCache()->setCapacity(savedPageCacheCapacity);
     pageCache()->releaseAutoreleasedPagesNow();
 
     NSURLCache *nsurlCache = [NSURLCache sharedURLCache];
     NSUInteger savedNsurlCacheMemoryCapacity = [nsurlCache memoryCapacity];
-    [nsurlCache setMemoryCapacity:[nsurlCache currentMemoryUsage]>>1];
+    [nsurlCache setMemoryCapacity:[nsurlCache currentMemoryUsage]/2];
     [nsurlCache setMemoryCapacity:savedNsurlCacheMemoryCapacity];
  
     memoryCache()->pruneToPercentage(0.5f);

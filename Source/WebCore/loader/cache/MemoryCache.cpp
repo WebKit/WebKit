@@ -176,7 +176,7 @@ void MemoryCache::pruneLiveResources()
     pruneLiveResourcesToSize(targetSize);
 }
 
-void MemoryCache::PruneLiveResourcesToPercentage(float prunePercentage)
+void MemoryCache::pruneLiveResourcesToPercentage(float prunePercentage)
 {
     if (!m_pruneEnabled)
         return;
@@ -239,7 +239,7 @@ void MemoryCache::pruneDeadResources()
     pruneDeadResourcesToSize(targetSize);
 }
 
-void MemoryCache::PruneDeadResourcesToPercentage(float prunePercentage)
+void MemoryCache::pruneDeadResourcesToPercentage(float prunePercentage)
 {
     if (!m_pruneEnabled)
         return;
