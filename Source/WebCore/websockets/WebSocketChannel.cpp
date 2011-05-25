@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc.  All rights reserved.
+ * Copyright (C) 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -127,7 +127,7 @@ void WebSocketChannel::fail(const String& reason)
     ASSERT(!m_suspended);
     if (m_context)
         m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, reason, 0, m_handshake.clientOrigin(), 0);
-    if (m_handle)
+    if (m_handle && !m_closed)
         m_handle->close(); // Will call didClose().
 }
 
@@ -164,10 +164,8 @@ void WebSocketChannel::didOpen(SocketStreamHandle* handle)
     if (m_identifier)
         InspectorInstrumentation::willSendWebSocketHandshakeRequest(m_context, m_identifier, m_handshake.clientHandshakeRequest());
     CString handshakeMessage = m_handshake.clientHandshakeMessage();
-    if (!handle->send(handshakeMessage.data(), handshakeMessage.length())) {
-        m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "Error sending handshake message.", 0, m_handshake.clientOrigin(), 0);
-        handle->close();
-    }
+    if (!handle->send(handshakeMessage.data(), handshakeMessage.length()))
+        fail("Failed to send WebSocket handshake.");
 }
 
 void WebSocketChannel::didClose(SocketStreamHandle* handle)
@@ -208,7 +206,7 @@ void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* da
         return;
     if (!appendToBuffer(data, len)) {
         m_shouldDiscardReceivedData = true;
-        handle->close();
+        fail("Ran out of memory while receiving WebSocket data.");
         return;
     }
     while (!m_suspended && m_client && m_buffer)
@@ -254,17 +252,16 @@ bool WebSocketChannel::appendToBuffer(const char* data, size_t len)
         return false;
     }
     char* newBuffer = 0;
-    if (tryFastMalloc(newBufferSize).getValue(newBuffer)) {
-        if (m_buffer)
-            memcpy(newBuffer, m_buffer, m_bufferSize);
-        memcpy(newBuffer + m_bufferSize, data, len);
-        fastFree(m_buffer);
-        m_buffer = newBuffer;
-        m_bufferSize = newBufferSize;
-        return true;
-    }
-    m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, "WebSocket frame (at " + String::number(static_cast<unsigned long>(newBufferSize)) + " bytes) is too long.", 0, m_handshake.clientOrigin(), 0);
-    return false;
+    if (!tryFastMalloc(newBufferSize).getValue(newBuffer))
+        return false;
+
+    if (m_buffer)
+        memcpy(newBuffer, m_buffer, m_bufferSize);
+    memcpy(newBuffer + m_bufferSize, data, len);
+    fastFree(m_buffer);
+    m_buffer = newBuffer;
+    m_bufferSize = newBufferSize;
+    return true;
 }
 
 void WebSocketChannel::skipBuffer(size_t len)
@@ -361,10 +358,7 @@ bool WebSocketChannel::processBuffer()
             skipBuffer(m_bufferSize); // Save memory.
             m_shouldDiscardReceivedData = true;
             m_client->didReceiveMessageError();
-            if (!m_client)
-                return false;
-            if (!m_closed)
-                m_handle->close();
+            fail("WebSocket frame length too large");
             return false;
         }
         ASSERT(p + length >= p);

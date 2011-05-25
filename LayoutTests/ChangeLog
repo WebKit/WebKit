@@ -1,3 +1,13 @@
+2011-05-25  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: Use fail() when WebSocketChannel has failed
+        https://bugs.webkit.org/show_bug.cgi?id=61353
+
+        * http/tests/websocket/tests/frame-length-overflow-expected.txt:
+        Added a new console message.
+
 2011-05-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

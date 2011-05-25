@@ -1,3 +1,33 @@
+2011-05-25  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: Use fail() when WebSocketChannel has failed
+        https://bugs.webkit.org/show_bug.cgi?id=61353
+
+        An existing error message has been modified, but it is impossible
+        to test this message in LayoutTests because it is only shown when
+        memory allocation has failed, which is hard to reproduce reliably.
+
+        One new message has been added. It is covered by an existing test
+        http/tests/websocket/tests/frame-length-overflow.html.
+
+        There is no other change in behavior. No new tests are added.
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::fail):
+        Do not close if we know the socket stream is already closed. This does not
+        change the behavior, because SocketStreamBase does nothing if it is already
+        closed.
+        (WebCore::WebSocketChannel::didOpen):
+        (WebCore::WebSocketChannel::didReceiveData):
+        We need to set m_shouldDiscardReceivedData to true before calling fail(),
+        so I moved the error message from appendToBuffer() to here.
+        The error message was rephrased in order to improve readability.
+        (WebCore::WebSocketChannel::appendToBuffer):
+        Unnested the code.
+        (WebCore::WebSocketChannel::processBuffer):
+
 2011-05-16  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by David Levin.
