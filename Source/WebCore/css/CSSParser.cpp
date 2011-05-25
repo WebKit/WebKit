@@ -92,6 +92,33 @@ extern int cssyyparse(void* parser);
 using namespace std;
 using namespace WTF;
 
+namespace {
+
+enum PropertyType {
+    PropertyExplicit,
+    PropertyImplicit
+};
+
+class ImplicitScope {
+    WTF_MAKE_NONCOPYABLE(ImplicitScope);
+public:
+    ImplicitScope(WebCore::CSSParser* parser, PropertyType propertyType)
+        : m_parser(parser)
+    {
+        m_parser->m_implicitShorthand = propertyType == PropertyImplicit;
+    }
+
+    ~ImplicitScope()
+    {
+        m_parser->m_implicitShorthand = false;
+    }
+
+private:
+    WebCore::CSSParser* m_parser;
+};
+
+} // namespace
+
 namespace WebCore {
 
 static const unsigned INVALID_NUM_PARSED_PROPERTIES = UINT_MAX;
@@ -2382,12 +2409,11 @@ bool CSSParser::parseShorthand(int propId, const int *properties, int numPropert
     }
 
     // Fill in any remaining properties with the initial value.
-    m_implicitShorthand = true;
+    ImplicitScope implicitScope(this, PropertyImplicit);
     for (int i = 0; i < numProperties; ++i) {
         if (!fnd[i])
             addProperty(properties[i], CSSInitialValue::createImplicit(), important);
     }
-    m_implicitShorthand = false;
 
     return true;
 }
@@ -2412,31 +2438,28 @@ bool CSSParser::parse4Values(int propId, const int *properties,  bool important)
             if (!parseValue(properties[0], important))
                 return false;
             CSSValue *value = m_parsedProperties[m_numParsedProperties-1]->value();
-            m_implicitShorthand = true;
+            ImplicitScope implicitScope(this, PropertyImplicit);
             addProperty(properties[1], value, important);
             addProperty(properties[2], value, important);
             addProperty(properties[3], value, important);
-            m_implicitShorthand = false;
             break;
         }
         case 2: {
             if (!parseValue(properties[0], important) || !parseValue(properties[1], important))
                 return false;
             CSSValue *value = m_parsedProperties[m_numParsedProperties-2]->value();
-            m_implicitShorthand = true;
+            ImplicitScope implicitScope(this, PropertyImplicit);
             addProperty(properties[2], value, important);
             value = m_parsedProperties[m_numParsedProperties-2]->value();
             addProperty(properties[3], value, important);
-            m_implicitShorthand = false;
             break;
         }
         case 3: {
             if (!parseValue(properties[0], important) || !parseValue(properties[1], important) || !parseValue(properties[2], important))
                 return false;
             CSSValue *value = m_parsedProperties[m_numParsedProperties-2]->value();
-            m_implicitShorthand = true;
+            ImplicitScope implicitScope(this, PropertyImplicit);
             addProperty(properties[3], value, important);
-            m_implicitShorthand = false;
             break;
         }
         case 4: {
@@ -4995,12 +5018,11 @@ bool CSSParser::parseBorderRadius(int propId, bool important)
     } else
         completeBorderRadii(radii[1]);
 
-    m_implicitShorthand = true;
+    ImplicitScope implicitScope(this, PropertyImplicit);
     addProperty(CSSPropertyBorderTopLeftRadius, primitiveValueCache()->createValue(Pair::create(radii[0][0].release(), radii[1][0].release())), important);
     addProperty(CSSPropertyBorderTopRightRadius, primitiveValueCache()->createValue(Pair::create(radii[0][1].release(), radii[1][1].release())), important);
     addProperty(CSSPropertyBorderBottomRightRadius, primitiveValueCache()->createValue(Pair::create(radii[0][2].release(), radii[1][2].release())), important);
     addProperty(CSSPropertyBorderBottomLeftRadius, primitiveValueCache()->createValue(Pair::create(radii[0][3].release(), radii[1][3].release())), important);
-    m_implicitShorthand = false;
     return true;
 }
 

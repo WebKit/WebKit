@@ -1,3 +1,22 @@
+2011-05-16  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by David Levin.
+
+        CSSParser: m_implicitShorthand should probably be RAII
+        https://bugs.webkit.org/show_bug.cgi?id=51586
+
+        It was impossible to entirely eliminate the m_implicitShorthand manual changes
+        due to the parseFill*() method stateful call chains.
+
+        No new tests, as this is a refactoring.
+
+        * css/CSSParser.cpp:
+        (ImplicitScope::ImplicitScope):
+        (ImplicitScope::~ImplicitScope):
+        (WebCore::CSSParser::parseShorthand):
+        (WebCore::CSSParser::parse4Values):
+        (WebCore::CSSParser::parseBorderRadius):
+
 2011-05-24  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
