@@ -173,16 +173,7 @@ namespace WebCore {
             PseudoNoButton,
             PseudoSelection,
             PseudoFileUploadButton,
-            PseudoSearchCancelButton,
-            PseudoSearchDecoration,
-            PseudoSearchResultsDecoration,
-            PseudoSearchResultsButton,
             PseudoInputListButton,
-#if ENABLE(INPUT_SPEECH)
-            PseudoInputSpeechButton,
-#endif
-            PseudoInnerSpinButton,
-            PseudoOuterSpinButton,
             PseudoLeftPage,
             PseudoRightPage,
             PseudoFirstPage,

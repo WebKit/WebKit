@@ -40,13 +40,6 @@ public:
     // FIXME: Move create*Style() to their classes.
     virtual PassRefPtr<RenderStyle> createInnerTextStyle(const RenderStyle* startStyle) const;
     PassRefPtr<RenderStyle> createInnerBlockStyle(const RenderStyle* startStyle) const;
-    PassRefPtr<RenderStyle> createInnerSpinButtonStyle() const;
-    PassRefPtr<RenderStyle> createOuterSpinButtonStyle() const;
-    PassRefPtr<RenderStyle> createResultsButtonStyle(const RenderStyle* startStyle) const;
-    PassRefPtr<RenderStyle> createCancelButtonStyle(const RenderStyle* startStyle) const;
-#if ENABLE(INPUT_SPEECH)
-    PassRefPtr<RenderStyle> createSpeechButtonStyle() const;
-#endif
 
     bool placeholderIsVisible() const { return m_placeholderVisible; }
     bool placeholderShouldBeVisible() const;

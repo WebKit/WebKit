@@ -130,18 +130,6 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return FILE_UPLOAD_BUTTON;
     case PseudoInputPlaceholder:
         return INPUT_PLACEHOLDER;
-#if ENABLE(INPUT_SPEECH)
-    case PseudoInputSpeechButton:
-        return INPUT_SPEECH_BUTTON;
-#endif
-    case PseudoSearchCancelButton:
-        return SEARCH_CANCEL_BUTTON;
-    case PseudoSearchDecoration:
-        return SEARCH_DECORATION;
-    case PseudoSearchResultsDecoration:
-        return SEARCH_RESULTS_DECORATION;
-    case PseudoSearchResultsButton:
-        return SEARCH_RESULTS_BUTTON;
     case PseudoScrollbar:
         return SCROLLBAR;
     case PseudoScrollbarButton:
@@ -156,10 +144,6 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return SCROLLBAR_TRACK_PIECE;
     case PseudoResizer:
         return RESIZER;
-    case PseudoInnerSpinButton:
-        return INNER_SPIN_BUTTON;
-    case PseudoOuterSpinButton:
-        return OUTER_SPIN_BUTTON;
 #if ENABLE(FULLSCREEN_API)
     case PseudoFullScreen:
         return FULL_SCREEN;
@@ -250,9 +234,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, before, ("before"));
     DEFINE_STATIC_LOCAL(AtomicString, checked, ("checked"));
     DEFINE_STATIC_LOCAL(AtomicString, fileUploadButton, ("-webkit-file-upload-button"));
-#if ENABLE(INPUT_SPEECH)
-    DEFINE_STATIC_LOCAL(AtomicString, inputSpeechButton, ("-webkit-input-speech-button"));
-#endif
     DEFINE_STATIC_LOCAL(AtomicString, defaultString, ("default"));
     DEFINE_STATIC_LOCAL(AtomicString, disabled, ("disabled"));
     DEFINE_STATIC_LOCAL(AtomicString, readOnly, ("read-only"));
@@ -275,7 +256,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, focus, ("focus"));
     DEFINE_STATIC_LOCAL(AtomicString, hover, ("hover"));
     DEFINE_STATIC_LOCAL(AtomicString, indeterminate, ("indeterminate"));
-    DEFINE_STATIC_LOCAL(AtomicString, innerSpinButton, ("-webkit-inner-spin-button"));
 #if ENABLE(DATALIST)
     DEFINE_STATIC_LOCAL(AtomicString, inputListButton, ("-webkit-input-list-button"));
 #endif
@@ -288,7 +268,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, onlyChild, ("only-child"));
     DEFINE_STATIC_LOCAL(AtomicString, onlyOfType, ("only-of-type"));
     DEFINE_STATIC_LOCAL(AtomicString, optional, ("optional"));
-    DEFINE_STATIC_LOCAL(AtomicString, outerSpinButton, ("-webkit-outer-spin-button"));
     DEFINE_STATIC_LOCAL(AtomicString, required, ("required"));
     DEFINE_STATIC_LOCAL(AtomicString, resizer, ("-webkit-resizer"));
     DEFINE_STATIC_LOCAL(AtomicString, root, ("root"));
@@ -298,10 +277,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, scrollbarThumb, ("-webkit-scrollbar-thumb"));
     DEFINE_STATIC_LOCAL(AtomicString, scrollbarTrack, ("-webkit-scrollbar-track"));
     DEFINE_STATIC_LOCAL(AtomicString, scrollbarTrackPiece, ("-webkit-scrollbar-track-piece"));
-    DEFINE_STATIC_LOCAL(AtomicString, searchCancelButton, ("-webkit-search-cancel-button"));
-    DEFINE_STATIC_LOCAL(AtomicString, searchDecoration, ("-webkit-search-decoration"));
-    DEFINE_STATIC_LOCAL(AtomicString, searchResultsDecoration, ("-webkit-search-results-decoration"));
-    DEFINE_STATIC_LOCAL(AtomicString, searchResultsButton, ("-webkit-search-results-button"));
     DEFINE_STATIC_LOCAL(AtomicString, selection, ("selection"));
     DEFINE_STATIC_LOCAL(AtomicString, target, ("target"));
     DEFINE_STATIC_LOCAL(AtomicString, visited, ("visited"));
@@ -340,9 +315,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(before.impl(), CSSSelector::PseudoBefore);
         nameToPseudoType->set(checked.impl(), CSSSelector::PseudoChecked);
         nameToPseudoType->set(fileUploadButton.impl(), CSSSelector::PseudoFileUploadButton);
-#if ENABLE(INPUT_SPEECH)
-        nameToPseudoType->set(inputSpeechButton.impl(), CSSSelector::PseudoInputSpeechButton);
-#endif
         nameToPseudoType->set(defaultString.impl(), CSSSelector::PseudoDefault);
         nameToPseudoType->set(disabled.impl(), CSSSelector::PseudoDisabled);
         nameToPseudoType->set(readOnly.impl(), CSSSelector::PseudoReadOnly);
@@ -369,7 +341,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(focus.impl(), CSSSelector::PseudoFocus);
         nameToPseudoType->set(hover.impl(), CSSSelector::PseudoHover);
         nameToPseudoType->set(indeterminate.impl(), CSSSelector::PseudoIndeterminate);
-        nameToPseudoType->set(innerSpinButton.impl(), CSSSelector::PseudoInnerSpinButton);
         nameToPseudoType->set(link.impl(), CSSSelector::PseudoLink);
         nameToPseudoType->set(lang.impl(), CSSSelector::PseudoLang);
         nameToPseudoType->set(notStr.impl(), CSSSelector::PseudoNot);
@@ -377,7 +348,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(nthOfType.impl(), CSSSelector::PseudoNthOfType);
         nameToPseudoType->set(nthLastChild.impl(), CSSSelector::PseudoNthLastChild);
         nameToPseudoType->set(nthLastOfType.impl(), CSSSelector::PseudoNthLastOfType);
-        nameToPseudoType->set(outerSpinButton.impl(), CSSSelector::PseudoOuterSpinButton);
         nameToPseudoType->set(root.impl(), CSSSelector::PseudoRoot);
         nameToPseudoType->set(windowInactive.impl(), CSSSelector::PseudoWindowInactive);
         nameToPseudoType->set(decrement.impl(), CSSSelector::PseudoDecrement);
@@ -399,10 +369,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(scrollbarTrack.impl(), CSSSelector::PseudoScrollbarTrack);
         nameToPseudoType->set(scrollbarTrackPiece.impl(), CSSSelector::PseudoScrollbarTrackPiece);
         nameToPseudoType->set(cornerPresent.impl(), CSSSelector::PseudoCornerPresent);
-        nameToPseudoType->set(searchCancelButton.impl(), CSSSelector::PseudoSearchCancelButton);
-        nameToPseudoType->set(searchDecoration.impl(), CSSSelector::PseudoSearchDecoration);
-        nameToPseudoType->set(searchResultsDecoration.impl(), CSSSelector::PseudoSearchResultsDecoration);
-        nameToPseudoType->set(searchResultsButton.impl(), CSSSelector::PseudoSearchResultsButton);
         nameToPseudoType->set(selection.impl(), CSSSelector::PseudoSelection);
         nameToPseudoType->set(target.impl(), CSSSelector::PseudoTarget);
         nameToPseudoType->set(visited.impl(), CSSSelector::PseudoVisited);
@@ -450,11 +416,6 @@ void CSSSelector::extractPseudoType() const
     case PseudoFileUploadButton:
     case PseudoInputListButton:
     case PseudoInputPlaceholder:
-#if ENABLE(INPUT_SPEECH)
-    case PseudoInputSpeechButton:
-#endif
-    case PseudoInnerSpinButton:
-    case PseudoOuterSpinButton: 
     case PseudoResizer:
     case PseudoScrollbar:
     case PseudoScrollbarCorner:
@@ -462,10 +423,6 @@ void CSSSelector::extractPseudoType() const
     case PseudoScrollbarThumb:
     case PseudoScrollbarTrack:
     case PseudoScrollbarTrackPiece:
-    case PseudoSearchCancelButton:
-    case PseudoSearchDecoration:
-    case PseudoSearchResultsDecoration:
-    case PseudoSearchResultsButton:
     case PseudoSelection:
         element = true;
         break;

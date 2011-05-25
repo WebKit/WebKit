@@ -708,9 +708,10 @@ void CSSStyleSelector::matchRules(RuleSet* rules, int& firstRuleIndex, int& last
         for (size_t i = 0; i < size; ++i)
             matchRulesForList(rules->getClassRules(classNames[i].impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
     }
-    if (!m_element->shadowPseudoId().isEmpty()) {
+    const AtomicString& pseudoId = m_element->shadowPseudoId();
+    if (!pseudoId.isEmpty()) {
         ASSERT(m_styledElement);
-        matchRulesForList(rules->getPseudoRules(m_element->shadowPseudoId().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
+        matchRulesForList(rules->getPseudoRules(pseudoId.impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
     }
     matchRulesForList(rules->getTagRules(m_element->localName().impl()), firstRuleIndex, lastRuleIndex, includeEmptyRules);
     matchRulesForList(rules->getUniversalRules(), firstRuleIndex, lastRuleIndex, includeEmptyRules);

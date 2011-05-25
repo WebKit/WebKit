@@ -69,7 +69,7 @@ public:
 
 private:
     SearchFieldResultsButtonElement(Document*);
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
+    virtual const AtomicString& shadowPseudoId() const;
     virtual bool isMouseFocusable() const { return false; }
 };
 
@@ -81,7 +81,7 @@ public:
 
 private:
     SearchFieldCancelButtonElement(Document*);
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
+    virtual const AtomicString& shadowPseudoId() const;
     virtual void detach();
     virtual bool isMouseFocusable() const { return false; }
 
@@ -103,7 +103,7 @@ public:
 private:
     SpinButtonElement(Document*, bool isInner);
 
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
+    virtual const AtomicString& shadowPseudoId() const;
     virtual void detach();
     virtual bool isSpinButtonElement() const { return true; }
     virtual bool isEnabledFormControl() const { return static_cast<Element*>(shadowAncestorNode())->isEnabledFormControl(); }
@@ -151,7 +151,7 @@ private:
     InputFieldSpeechButtonElement(Document*);
     SpeechInput* speechInput();
     void setState(SpeechInputState state);
-    virtual PassRefPtr<RenderStyle> styleForRenderer();
+    virtual const AtomicString& shadowPseudoId() const;
     virtual bool isMouseFocusable() const { return false; }
     virtual void attach();
 

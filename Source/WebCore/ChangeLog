@@ -1,3 +1,39 @@
+2011-05-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Use Element::shadowPseudoId() for text field decoration elements
+        https://bugs.webkit.org/show_bug.cgi?id=61351
+
+        No new tests. Covered by existing tests.
+
+        * css/CSSSelector.cpp: Remove support for the following static pseudo selectors:
+          - -webkit-inner-spin-button
+          - -webkit-input-speech-button
+          - -webkit-outer-spin-button
+          - -webkit-search-cancel-button
+          - -webkit-search-decoration
+          - -webkit-search-results-button
+          - -webkit-search-results-decoration
+        (WebCore::CSSSelector::pseudoId):
+        (WebCore::nameToPseudoTypeMap):
+        (WebCore::CSSSelector::extractPseudoType):
+        * css/CSSSelector.h: ditto.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchRules):
+          Store shadowPseudoId() result in a local variable because
+          SearchFieldResultsButtonElement::shadowPseudoId() is a little expensive.
+        * html/shadow/TextControlInnerElements.cpp:
+         Override Element::shadowPseudoId() instead of Element::styleForRenderer().
+        (WebCore::SearchFieldResultsButtonElement::shadowPseudoId):
+        (WebCore::SearchFieldCancelButtonElement::shadowPseudoId):
+        (WebCore::SpinButtonElement::shadowPseudoId):
+        (WebCore::InputFieldSpeechButtonElement::shadowPseudoId):
+        * html/shadow/TextControlInnerElements.h: Update declarations.
+        * rendering/RenderTextControlSingleLine.cpp: Remove createFooStyle() functions.
+        * rendering/RenderTextControlSingleLine.h: ditto.
+        * rendering/style/RenderStyleConstants.h: Remove unused pseudo IDs.
+
 2011-05-24  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Sorted WebCore.xcodeproj again.

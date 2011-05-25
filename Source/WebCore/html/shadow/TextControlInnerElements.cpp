@@ -121,10 +121,22 @@ PassRefPtr<SearchFieldResultsButtonElement> SearchFieldResultsButtonElement::cre
     return adoptRef(new SearchFieldResultsButtonElement(document));
 }
 
-PassRefPtr<RenderStyle> SearchFieldResultsButtonElement::styleForRenderer()
+const AtomicString& SearchFieldResultsButtonElement::shadowPseudoId() const
 {
-    RenderTextControlSingleLine* parentRenderer = toRenderTextControlSingleLine(shadowAncestorNode()->renderer());
-    return parentRenderer->createResultsButtonStyle(parentRenderer->style());
+    DEFINE_STATIC_LOCAL(AtomicString, resultsId, ("-webkit-search-results-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, resultsDecorationId, ("-webkit-search-results-decoration"));
+    DEFINE_STATIC_LOCAL(AtomicString, decorationId, ("-webkit-search-decoration"));
+    Node* host = shadowAncestorNode();
+    if (!host)
+        return resultsId;
+    if (HTMLInputElement* input = host->toInputElement()) {
+        if (input->maxResults() < 0)
+            return decorationId;
+        if (input->maxResults() > 0)
+            return resultsId;
+        return resultsDecorationId;
+    }
+    return resultsId;
 }
 
 void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
@@ -159,10 +171,10 @@ PassRefPtr<SearchFieldCancelButtonElement> SearchFieldCancelButtonElement::creat
     return adoptRef(new SearchFieldCancelButtonElement(document));
 }
 
-PassRefPtr<RenderStyle> SearchFieldCancelButtonElement::styleForRenderer()
+const AtomicString& SearchFieldCancelButtonElement::shadowPseudoId() const
 {
-    RenderTextControlSingleLine* parentRenderer = toRenderTextControlSingleLine(shadowAncestorNode()->renderer());
-    return parentRenderer->createCancelButtonStyle(parentRenderer->style());
+    DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-search-cancel-button"));
+    return pseudoId;
 }
 
 void SearchFieldCancelButtonElement::detach()
@@ -231,10 +243,11 @@ PassRefPtr<SpinButtonElement> SpinButtonElement::createOuter(Document* document)
     return adoptRef(new SpinButtonElement(document, false));
 }
 
-PassRefPtr<RenderStyle> SpinButtonElement::styleForRenderer()
+const AtomicString& SpinButtonElement::shadowPseudoId() const
 {
-    RenderTextControlSingleLine* parentRenderer = toRenderTextControlSingleLine(shadowAncestorNode()->renderer());
-    return m_isInner ? parentRenderer->createInnerSpinButtonStyle() : parentRenderer->createOuterSpinButtonStyle();
+    DEFINE_STATIC_LOCAL(AtomicString, innerPseudoId, ("-webkit-inner-spin-button"));
+    DEFINE_STATIC_LOCAL(AtomicString, outerPseudoId, ("-webkit-outer-spin-button"));
+    return m_isInner ? innerPseudoId : outerPseudoId;
 }
 
 void SpinButtonElement::detach()
@@ -513,10 +526,10 @@ void InputFieldSpeechButtonElement::detach()
     HTMLDivElement::detach();
 }
 
-PassRefPtr<RenderStyle> InputFieldSpeechButtonElement::styleForRenderer()
+const AtomicString& InputFieldSpeechButtonElement::shadowPseudoId() const
 {
-    RenderTextControlSingleLine* parentRenderer = toRenderTextControlSingleLine(shadowAncestorNode()->renderer());
-    return parentRenderer->createSpeechButtonStyle();
+    DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-input-speech-button"));
+    return pseudoId;
 }
 
 #endif // ENABLE(INPUT_SPEECH)
