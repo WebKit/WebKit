@@ -234,14 +234,14 @@ template<typename T> inline void MarkStack::append(WriteBarrierBase<T>* slot)
     internalAppend(*slot->slot());
 }
 
-inline void MarkStack::appendValues(WriteBarrierBase<Unknown>* barriers, size_t count, MarkSetProperties properties)
+inline void MarkStack::appendValues(WriteBarrierBase<Unknown>* barriers, size_t count)
 {
     JSValue* values = barriers->slot();
 #if ENABLE(GC_VALIDATION)
     validateSet(values, count);
 #endif
     if (count)
-        m_markSets.append(MarkSet(values, values + count, properties));
+        m_markSets.append(MarkSet(values, values + count));
 }
 
 } // namespace JSC

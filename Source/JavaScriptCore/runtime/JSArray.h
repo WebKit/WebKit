@@ -192,7 +192,7 @@ namespace JSC {
         ArrayStorage* storage = m_storage;
 
         unsigned usedVectorLength = std::min(storage->m_length, m_vectorLength);
-        visitor.appendValues(storage->m_vector, usedVectorLength, MayContainNullValues);
+        visitor.appendValues(storage->m_vector, usedVectorLength);
 
         if (SparseArrayValueMap* map = storage->m_sparseValueMap) {
             SparseArrayValueMap::iterator end = map->end();

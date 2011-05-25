@@ -99,7 +99,7 @@ void JSPropertyNameIterator::visitChildren(SlotVisitor& visitor)
 {
     ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     ASSERT(structure()->typeInfo().overridesVisitChildren());
-    visitor.appendValues(m_jsStrings.get(), m_jsStringsSize, MayContainNullValues);
+    visitor.appendValues(m_jsStrings.get(), m_jsStringsSize);
     if (m_cachedPrototypeChain)
         visitor.append(&m_cachedPrototypeChain);
 }

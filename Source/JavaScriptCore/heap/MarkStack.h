@@ -43,14 +43,11 @@ namespace JSC {
     class Register;
     template<typename T> class WriteBarrierBase;
     
-    enum MarkSetProperties { MayContainNullValues, NoNullValues };
-    
     struct MarkSet {
-        MarkSet(JSValue* values, JSValue* end, MarkSetProperties);
+        MarkSet(JSValue* values, JSValue* end);
 
         JSValue* m_values;
         JSValue* m_end;
-        MarkSetProperties m_properties;
     };
 
     template<typename T> class MarkStackArray {
@@ -90,7 +87,7 @@ namespace JSC {
         void append(ConservativeRoots&);
 
         template<typename T> inline void append(WriteBarrierBase<T>*);
-        inline void appendValues(WriteBarrierBase<Unknown>*, size_t count, MarkSetProperties = NoNullValues);
+        inline void appendValues(WriteBarrierBase<Unknown>*, size_t count);
         
         bool addOpaqueRoot(void*);
         bool containsOpaqueRoot(void*);
@@ -155,10 +152,9 @@ namespace JSC {
         return m_opaqueRoots.size();
     }
 
-    inline MarkSet::MarkSet(JSValue* values, JSValue* end, MarkSetProperties properties)
+    inline MarkSet::MarkSet(JSValue* values, JSValue* end)
             : m_values(values)
             , m_end(end)
-            , m_properties(properties)
         {
             ASSERT(values);
         }
@@ -251,7 +247,7 @@ namespace JSC {
 #if ENABLE(GC_VALIDATION)
         validateSet(slot, count);
 #endif
-        m_markSets.append(MarkSet(slot, slot + count, NoNullValues));
+        m_markSets.append(MarkSet(slot, slot + count));
     }
     
     ALWAYS_INLINE void MarkStack::append(JSValue* value)

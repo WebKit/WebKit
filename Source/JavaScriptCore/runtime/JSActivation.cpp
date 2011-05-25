@@ -73,7 +73,7 @@ void JSActivation::visitChildren(SlotVisitor& visitor)
     visitor.appendValues(registerArray, m_numParametersMinusThis);
 
     // Skip the call frame, which sits between the parameters and vars.
-    visitor.appendValues(registerArray + m_numParametersMinusThis + RegisterFile::CallFrameHeaderSize, m_numCapturedVars, MayContainNullValues);
+    visitor.appendValues(registerArray + m_numParametersMinusThis + RegisterFile::CallFrameHeaderSize, m_numCapturedVars);
 }
 
 inline bool JSActivation::symbolTableGet(const Identifier& propertyName, PropertySlot& slot)
