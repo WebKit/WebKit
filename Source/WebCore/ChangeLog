@@ -1,3 +1,13 @@
+2011-05-24  Fumitoshi Ukai  <ukai@chromium.org>
+
+        Unreviewed. Fix clang error.
+
+        error: initialization of pointer of type 'WebCore::MHTMLArchive *' to
+        NULL from a constant boolean expression [-Werror,-Wbool-conversio
+
+        * loader/archive/mhtml/MHTMLArchive.cpp:
+        (WebCore::MHTMLArchive::create):
+
 2011-05-24  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

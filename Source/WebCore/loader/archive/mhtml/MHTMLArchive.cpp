@@ -51,7 +51,7 @@ PassRefPtr<MHTMLArchive> MHTMLArchive::create(const KURL& url, SharedBuffer* dat
 {
     // For security reasons we only load MHTML pages from the local file system.
     if (!url.isLocalFile())
-        return false;
+        return 0;
 
     MHTMLParser parser(data);
     RefPtr<MHTMLArchive> mainArchive = parser.parseArchive();
