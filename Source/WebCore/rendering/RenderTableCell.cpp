@@ -294,7 +294,7 @@ void RenderTableCell::computeRectForRepaint(RenderBoxModelObject* repaintContain
     r.setY(r.y());
     RenderView* v = view();
     if ((!v || !v->layoutStateEnabled() || repaintContainer) && parent())
-        r.move(-parentBox()->x(), -parentBox()->y()); // Rows are in the same coordinate space, so don't add their offset in.
+        r.move(-parentBox()->location()); // Rows are in the same coordinate space, so don't add their offset in.
     RenderBlock::computeRectForRepaint(repaintContainer, r, fixed);
 }
 

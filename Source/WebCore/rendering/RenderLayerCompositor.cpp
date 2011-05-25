@@ -1445,7 +1445,7 @@ static void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const
     const IntRect& scrollbarRect = scrollbar->frameRect();
     context.translate(-scrollbarRect.x(), -scrollbarRect.y());
     IntRect transformedClip = clip;
-    transformedClip.move(scrollbarRect.x(), scrollbarRect.y());
+    transformedClip.move(scrollbarRect.location());
     scrollbar->paint(&context, transformedClip);
     context.restore();
 }
@@ -1461,7 +1461,7 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
         context.save();
         context.translate(-scrollCorner.x(), -scrollCorner.y());
         IntRect transformedClip = clip;
-        transformedClip.move(scrollCorner.x(), scrollCorner.y());
+        transformedClip.move(scrollCorner.location());
         m_renderView->frameView()->paintScrollCorner(&context, transformedClip);
         context.restore();
     }

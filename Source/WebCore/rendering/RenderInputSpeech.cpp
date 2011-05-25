@@ -82,7 +82,7 @@ bool RenderInputSpeech::paintInputFieldSpeechButton(RenderObject* object, const 
     // Move the rect into partRenderer's coords.
     buttonRect.move(offsetFromInputRenderer);
     // Account for the local drawing offset.
-    buttonRect.move(rect.x(), rect.y());
+    buttonRect.move(rect.location());
 
     DEFINE_STATIC_LOCAL(RefPtr<Image>, imageStateNormal, (Image::loadPlatformResource("inputSpeech")));
     DEFINE_STATIC_LOCAL(RefPtr<Image>, imageStateRecording, (Image::loadPlatformResource("inputSpeechRecording")));

@@ -1310,7 +1310,7 @@ IntSize RenderBox::offsetFromContainer(RenderObject* o, const IntPoint& point) c
                 IntRect columnRect(frameRect());
                 toRenderBlock(o)->flipForWritingModeIncludingColumns(columnRect);
                 offset += IntSize(columnRect.location().x(), columnRect.location().y());
-                columnRect.move(point.x(), point.y());
+                columnRect.move(point);
                 o->adjustForColumns(offset, columnRect.location());
             } else
                 offset += locationOffsetIncludingFlipping();
@@ -1436,7 +1436,7 @@ void RenderBox::computeRectForRepaint(RenderBoxModelObject* repaintContainer, In
             if (style()->position() == RelativePosition && layer())
                 rect.move(layer()->relativePositionOffset());
 
-            rect.move(x(), y());
+            rect.move(location());
             rect.move(layoutState->m_paintOffset);
             if (layoutState->m_clipped)
                 rect.intersect(layoutState->m_clipRect);
@@ -3095,7 +3095,7 @@ IntRect RenderBox::localCaretRect(InlineBox* box, int caretOffset, int* extraWid
         *extraWidthToEndOfLine = x() + width() - rect.maxX();
 
     // Move to local coords
-    rect.move(-x(), -y());
+    rect.move(-location());
     return rect;
 }
 

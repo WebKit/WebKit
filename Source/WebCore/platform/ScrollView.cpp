@@ -1008,11 +1008,11 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
         GraphicsContextStateSaver stateSaver(*context);
 
         context->translate(x(), y());
-        documentDirtyRect.move(-x(), -y());
+        documentDirtyRect.move(-location());
 
         if (!paintsEntireContents()) {
             context->translate(-scrollX(), -scrollY());
-            documentDirtyRect.move(scrollX(), scrollY());
+            documentDirtyRect.move(scrollPosition());
 
             context->clip(visibleContentRect());
         }
@@ -1033,7 +1033,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
         IntRect scrollViewDirtyRect = rect;
         scrollViewDirtyRect.intersect(frameRect());
         context->translate(x(), y());
-        scrollViewDirtyRect.move(-x(), -y());
+        scrollViewDirtyRect.move(-location());
 
         paintScrollbars(context, scrollViewDirtyRect);
     }
@@ -1127,7 +1127,7 @@ IntRect ScrollView::convertFromScrollbarToContainingView(const Scrollbar* scroll
 {
     // Scrollbars won't be transformed within us
     IntRect newRect = localRect;
-    newRect.move(scrollbar->x(), scrollbar->y());
+    newRect.move(scrollbar->location());
     return newRect;
 }
 
@@ -1135,7 +1135,7 @@ IntRect ScrollView::convertFromContainingViewToScrollbar(const Scrollbar* scroll
 {
     IntRect newRect = parentRect;
     // Scrollbars won't be transformed within us
-    newRect.move(-scrollbar->x(), -scrollbar->y());
+    newRect.move(-scrollbar->location());
     return newRect;
 }
 
@@ -1144,7 +1144,7 @@ IntPoint ScrollView::convertFromScrollbarToContainingView(const Scrollbar* scrol
 {
     // Scrollbars won't be transformed within us
     IntPoint newPoint = localPoint;
-    newPoint.move(scrollbar->x(), scrollbar->y());
+    newPoint.move(scrollbar->location());
     return newPoint;
 }
 
@@ -1152,7 +1152,7 @@ IntPoint ScrollView::convertFromContainingViewToScrollbar(const Scrollbar* scrol
 {
     IntPoint newPoint = parentPoint;
     // Scrollbars won't be transformed within us
-    newPoint.move(-scrollbar->x(), -scrollbar->y());
+    newPoint.move(-scrollbar->location());
     return newPoint;
 }
 

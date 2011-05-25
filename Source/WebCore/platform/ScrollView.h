@@ -242,7 +242,7 @@ public:
         IntPoint newPoint = point;
         if (!isScrollViewScrollbar(child))
             newPoint = point - scrollOffset();
-        newPoint.move(child->x(), child->y());
+        newPoint.move(child->location());
         return newPoint;
     }
 
@@ -251,7 +251,7 @@ public:
         IntPoint newPoint = point;
         if (!isScrollViewScrollbar(child))
             newPoint = point + scrollOffset();
-        newPoint.move(-child->x(), -child->y());
+        newPoint.move(-child->location());
         return newPoint;
     }
 

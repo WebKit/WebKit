@@ -90,6 +90,7 @@ public:
     void setY(int y) { m_y = y; }
 
     void move(const IntSize& s) { move(s.width(), s.height()); } 
+    void move(const IntPoint& offset) { move(offset.x(), offset.y()); }
     void move(int dx, int dy) { m_x += dx; m_y += dy; }
     
     IntPoint expandedTo(const IntPoint& other) const
@@ -188,6 +189,11 @@ inline IntSize operator-(const IntPoint& a, const IntPoint& b)
 inline IntPoint operator-(const IntPoint& a, const IntSize& b)
 {
     return IntPoint(a.x() - b.width(), a.y() - b.height());
+}
+
+inline IntPoint operator-(const IntPoint& point)
+{
+    return IntPoint(-point.x(), -point.y());
 }
 
 inline bool operator==(const IntPoint& a, const IntPoint& b)

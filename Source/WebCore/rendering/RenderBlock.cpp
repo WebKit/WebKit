@@ -2791,7 +2791,7 @@ IntRect RenderBlock::logicalRectToPhysicalRect(const IntPoint& rootBlockPhysical
     else
         result = IntRect(logicalRect.y(), logicalRect.x(), logicalRect.height(), logicalRect.width());
     flipForWritingMode(result);
-    result.move(rootBlockPhysicalPosition.x(), rootBlockPhysicalPosition.y());
+    result.move(rootBlockPhysicalPosition);
     return result;
 }
 
@@ -2804,7 +2804,7 @@ GapRects RenderBlock::selectionGaps(RenderBlock* rootBlock, const IntPoint& root
         // Note that we don't clip out overflow for positioned objects.  We just stick to the border box.
         IntRect flippedBlockRect = IntRect(offsetFromRootBlock.width(), offsetFromRootBlock.height(), width(), height());
         rootBlock->flipForWritingMode(flippedBlockRect);
-        flippedBlockRect.move(rootBlockPhysicalPosition.x(), rootBlockPhysicalPosition.y());
+        flippedBlockRect.move(rootBlockPhysicalPosition);
         clipOutPositionedObjects(paintInfo, flippedBlockRect.location(), m_positionedObjects.get());
         if (isBody() || isRoot()) // The <body> must make sure to examine its containingBlock's positioned objects.
             for (RenderBlock* cb = containingBlock(); cb && !cb->isRenderView(); cb = cb->containingBlock())

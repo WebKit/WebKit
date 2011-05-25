@@ -248,7 +248,7 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
         CGContextTranslateCTM(context, -transformOrigin.x(), -transformOrigin.y());
 
         IntRect dirtyRect = r;
-        dirtyRect.move(-transformOrigin.x(), -transformOrigin.y());
+        dirtyRect.move(-transformOrigin);
         if (![view isFlipped])
             dirtyRect.setY([view bounds].size.height - dirtyRect.maxY());
 
@@ -292,7 +292,7 @@ void Widget::paint(GraphicsContext* p, const IntRect& r)
         CGContextScaleCTM(cgContext, 1, -1);
 
         IntRect dirtyRect = r;
-        dirtyRect.move(-transformOrigin.x(), -transformOrigin.y());
+        dirtyRect.move(-transformOrigin);
         if (![view isFlipped])
             dirtyRect.setY([view bounds].size.height - dirtyRect.maxY());
 

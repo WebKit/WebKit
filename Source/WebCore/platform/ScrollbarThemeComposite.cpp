@@ -234,7 +234,7 @@ void ScrollbarThemeComposite::invalidatePart(Scrollbar* scrollbar, ScrollbarPart
                 result = thumbRect;
         }
     }
-    result.move(-scrollbar->x(), -scrollbar->y());
+    result.move(-scrollbar->location());
     scrollbar->invalidateRect(result);
 }
 

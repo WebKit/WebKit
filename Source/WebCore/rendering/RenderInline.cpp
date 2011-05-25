@@ -899,10 +899,10 @@ IntRect RenderInline::culledInlineVisualOverflowBoundingBox() const
             if (!currBox->hasSelfPaintingLayer() && currBox->inlineBoxWrapper()) {
                 IntRect logicalRect = currBox->logicalVisualOverflowRectForPropagation(style());
                 if (isHorizontal) {
-                    logicalRect.move(currBox->x(), currBox->y());
+                    logicalRect.move(currBox->location());
                     result.uniteIfNonZero(logicalRect);
                 } else {
-                    logicalRect.move(currBox->y(), currBox->x());
+                    logicalRect.move(currBox->location());
                     result.uniteIfNonZero(logicalRect.transposedRect());
                 }
             }

@@ -1111,7 +1111,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 
     IntPoint boxOrigin(tx + x(), ty + y());
     IntRect overflowRect(visualOverflowRect());
-    overflowRect.move(boxOrigin.x(), boxOrigin.y());
+    overflowRect.move(boxOrigin);
     overflowRect.inflate(maximalOutlineSize(paintInfo.phase));
 
     if (!paintInfo.rect.intersects(overflowRect))
@@ -1120,7 +1120,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     IntRect box(boxOrigin, IntSize(width(), height()));
     
     IntRect marker = getRelativeMarkerRect();
-    marker.move(boxOrigin.x(), boxOrigin.y());
+    marker.move(boxOrigin);
 
     GraphicsContext* context = paintInfo.context;
 
@@ -1132,7 +1132,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
         context->drawImage(m_image->image(this, marker.size()).get(), style()->colorSpace(), marker);
         if (selectionState() != SelectionNone) {
             IntRect selRect = localSelectionRect();
-            selRect.move(boxOrigin.x(), boxOrigin.y());
+            selRect.move(boxOrigin);
             context->fillRect(selRect, selectionBackgroundColor(), style()->colorSpace());
         }
         return;
@@ -1146,7 +1146,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 
     if (selectionState() != SelectionNone) {
         IntRect selRect = localSelectionRect();
-        selRect.move(boxOrigin.x(), boxOrigin.y());
+        selRect.move(boxOrigin);
         context->fillRect(selRect, selectionBackgroundColor(), style()->colorSpace());
     }
 
@@ -1257,7 +1257,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 
     GraphicsContextStateSaver stateSaver(*context, false);
     if (!style()->isHorizontalWritingMode()) {
-        marker.move(-boxOrigin.x(), -boxOrigin.y());
+        marker.move(-boxOrigin);
         marker = marker.transposedRect();
         marker.move(box.x(), box.y() - logicalHeight());
         stateSaver.save();

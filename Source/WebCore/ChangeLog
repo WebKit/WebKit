@@ -2,6 +2,71 @@
 
         Reviewed by Eric Seidel.
 
+        Add IntPoint versions of IntRect::move and IntPoint::move
+        https://bugs.webkit.org/show_bug.cgi?id=61390
+
+        Adding move methods to IntRect and IntPoint that take an IntPoint
+        that's acting as an offset. Since we also apply negative offsets,
+        also adding a single parameter operator- for IntPoint.
+
+        No new tests since this is refactoring.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::invalidateScrollbarRect):
+        (WebCore::FrameView::convertFromRenderer):
+        (WebCore::FrameView::convertToRenderer):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollView.h:
+        (WebCore::ScrollView::convertChildToSelf):
+        (WebCore::ScrollView::convertSelfToChild):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::invalidatePart):
+        * platform/graphics/IntPoint.h:
+        (WebCore::IntPoint::move):
+        (WebCore::operator-):
+        * platform/graphics/IntRect.h:
+        (WebCore::IntRect::move):
+        * platform/graphics/filters/FilterEffect.cpp:
+        (WebCore::FilterEffect::requestedRegionOfInputImageData):
+        * platform/graphics/gpu/Texture.cpp:
+        (WebCore::Texture::updateSubRect):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalRectToPhysicalRect):
+        (WebCore::RenderBlock::selectionGaps):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::localCaretRect):
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::paint):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::culledInlineVisualOverflowBoundingBox):
+        * rendering/RenderInputSpeech.cpp:
+        (WebCore::RenderInputSpeech::paintInputFieldSpeechButton):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::paintScrollbar):
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::paintScrollbar):
+        (WebCore::RenderLayerCompositor::paintContents):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeRectForRepaint):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle):
+
+2011-05-25  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Switch addFocusRingRects to use IntPoint
         https://bugs.webkit.org/show_bug.cgi?id=60783
 

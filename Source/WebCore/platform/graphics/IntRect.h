@@ -108,6 +108,7 @@ public:
     IntPoint center() const { return IntPoint(x() + width() / 2, y() + height() / 2); }
 
     void move(const IntSize& size) { m_location += size; } 
+    void move(const IntPoint& offset) { m_location.move(offset.x(), offset.y()); }
     void move(int dx, int dy) { m_location.move(dx, dy); } 
 
     void expand(const IntSize& size) { m_location += size; }

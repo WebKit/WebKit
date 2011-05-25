@@ -401,7 +401,7 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     RenderBox* innerTextRenderer = innerTextElement()->renderBox();
 
     IntPoint localPoint = result.localPoint();
-    localPoint.move(-innerBlockRenderer->x(), -innerBlockRenderer->y());
+    localPoint.move(-innerBlockRenderer->location());
 
     int textLeft = tx + x() + innerBlockRenderer->x() + innerTextRenderer->x();
     if (resultsButton && resultsButton->renderer() && pointInContainer.x() < textLeft)
@@ -423,7 +423,7 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
 
     if (innerNode) {
         result.setInnerNode(innerNode);
-        localPoint.move(-innerNode->renderBox()->x(), -innerNode->renderBox()->y());
+        localPoint.move(-innerNode->renderBox()->location());
     }
 
     result.setLocalPoint(localPoint);
