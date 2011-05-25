@@ -2,6 +2,28 @@
 
         Reviewed by Ryosuke Niwa.
 
+        Convert LayoutTests/editing/deleting/5206311-2.html to dump-as-markup
+        https://bugs.webkit.org/show_bug.cgi?id=61332
+
+        Used dump-as-markup to improve readability of results.
+        Also improved HTML and cleaned up descriptions.
+
+        * editing/deleting/5206311-2-expected.txt: Added.
+        * editing/deleting/5206311-2.html: Convert to dump-as-markup.
+        * platform/chromium-linux/editing/deleting/5206311-2-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5206311-2-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5206311-2-expected.txt: Removed.
+        * platform/gtk/editing/deleting/5206311-2-expected.txt: Removed.
+        * platform/mac-leopard/editing/deleting/5206311-2-expected.png: Removed.
+        * platform/mac/editing/deleting/5206311-2-expected.png: Removed.
+        * platform/mac/editing/deleting/5206311-2-expected.txt: Removed.
+        * platform/qt/editing/deleting/5206311-2-expected.png: Removed.
+        * platform/qt/editing/deleting/5206311-2-expected.txt: Removed.
+
+2011-05-24  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
         Convert LayoutTests/editing/deleting/delete-block-table.html to dumpAsText test.
         https://bugs.webkit.org/show_bug.cgi?id=61333
 
