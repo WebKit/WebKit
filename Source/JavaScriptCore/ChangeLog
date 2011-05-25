@@ -1,3 +1,19 @@
+2011-05-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make allocations with guard pages ensure that the allocation succeeded
+        https://bugs.webkit.org/show_bug.cgi?id=61453
+
+        Add null checks, and make PageBlock's operator bool() use
+        the realbase, rather than the start of usable memory.
+
+        * wtf/OSAllocatorPosix.cpp:
+        (WTF::OSAllocator::reserveAndCommit):
+        * wtf/PageBlock.h:
+        (WTF::PageBlock::operator bool):
+        (WTF::PageBlock::PageBlock):
+
 2011-04-10  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Eric Seidel.

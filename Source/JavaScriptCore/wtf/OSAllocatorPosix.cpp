@@ -95,9 +95,15 @@ void* OSAllocator::reserveAndCommit(size_t bytes, Usage usage, bool writable, bo
 #endif
 
     result = mmap(result, bytes, protection, flags, fd, 0);
-    if (result == MAP_FAILED)
-        CRASH();
-    if (includesGuardPages) {
+    if (result == MAP_FAILED) {
+    #if ENABLE(INTERPRETER)
+        if (executable)
+            result = 0;
+        else
+    #endif
+            CRASH();
+    }
+    if (result && includesGuardPages) {
         mprotect(result, pageSize(), PROT_NONE);
         mprotect(static_cast<char*>(result) + bytes - pageSize(), pageSize(), PROT_NONE);
     }

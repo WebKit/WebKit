@@ -42,7 +42,7 @@ public:
     void* base() const { return m_base; }
     size_t size() const { return m_size; }
 
-    operator bool() const { return !!m_base; }
+    operator bool() const { return !!m_realBase; }
 
     bool contains(void* containedBase, size_t containedSize)
     {
@@ -72,7 +72,7 @@ inline PageBlock::PageBlock(const PageBlock& other)
 
 inline PageBlock::PageBlock(void* base, size_t size, bool hasGuardPages)
     : m_realBase(base)
-    , m_base(static_cast<char*>(base) + (hasGuardPages ? pageSize() : 0))
+    , m_base(static_cast<char*>(base) + ((base && hasGuardPages) ? pageSize() : 0))
     , m_size(size)
 {
 }
