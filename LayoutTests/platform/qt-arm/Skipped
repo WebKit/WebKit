@@ -38,6 +38,19 @@ fast/js/regexp-char-insensitive.html
 
 # Failing tests because of missing anti-aliased fonts
 transitions/move-after-transition.html
+# after r87290
+transforms/2d/compound-transforms-vs-containers.html
+transforms/2d/transform-borderbox.html
+transforms/2d/transform-origin-borderbox.html
+transforms/2d/zoom-menulist.html
+transforms/no_transform_hit_testing.html
+transforms/svg-vs-css.xhtml
+# after r87292
+fast/block/float/float-not-removed-from-next-sibling.html
+fast/block/float/float-not-removed-from-next-sibling2.html
+fast/block/float/float-not-removed-from-next-sibling3.html
+fast/block/float/float-not-removed-from-next-sibling4.html
+fast/transforms/transform-positioned-ancestor.html
 
 # Failing tests
 animations/3d/change-transform-in-end-event.html
