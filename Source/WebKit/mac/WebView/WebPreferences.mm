@@ -137,22 +137,6 @@ static WebCacheModel cacheModelForMainBundle(void)
     return cacheModel;
 }
 
-static bool useQuickLookQuirks(void)
-{
-    NSArray* frameworks = [NSBundle allFrameworks];
-                           
-    if (!frameworks)
-        return false;
-
-    for (unsigned int i = 0; i < [frameworks count]; i++) {
-        NSBundle* bundle = [frameworks objectAtIndex: i];
-        const char* bundleID = [[bundle bundleIdentifier] UTF8String];
-        if (bundleID && !strcasecmp(bundleID, "com.apple.QuickLookUIFramework"))
-            return true;
-    }
-    return false;
-}
-
 @interface WebPreferencesPrivate : NSObject
 {
 @public
@@ -392,7 +376,6 @@ static bool useQuickLookQuirks(void)
         [NSNumber numberWithBool:YES],  WebKitHyperlinkAuditingEnabledPreferenceKey,
         [NSNumber numberWithBool:NO],   WebKitUsePreHTML5ParserQuirksKey,
         [NSNumber numberWithBool:YES],  WebKitAVFoundationEnabledKey,
-        [NSNumber numberWithBool:useQuickLookQuirks()], WebKitUseQuickLookResourceCachingQuirksPreferenceKey,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheTotalQuota,
         [NSNumber numberWithLongLong:WebCore::ApplicationCacheStorage::noQuota()], WebKitApplicationCacheDefaultOriginQuota,
         nil];
@@ -1423,11 +1406,6 @@ static NSString *classIBCreatorID = nil;
 - (void)setUsePreHTML5ParserQuirks:(BOOL)flag
 {
     [self _setBoolValue:flag forKey:WebKitUsePreHTML5ParserQuirksKey];
-}
-
-- (BOOL)useQuickLookResourceCachingQuirks
-{
-    return [self _boolValueForKey:WebKitUseQuickLookResourceCachingQuirksPreferenceKey];
 }
 
 - (void)didRemoveFromWebView

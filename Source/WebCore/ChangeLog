@@ -1,3 +1,25 @@
+2011-05-25  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61407
+        part of <rdar://problem/8675177>
+        Move Quicklook quirk down into WebCore so it can be caculated when the user
+        starts a reload.  Restructure the conditions so it only called when absolutely 
+        necessary.
+  
+        No change in functionality so no new tests.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::subresourceCachePolicy):
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        * platform/network/cf/ResourceRequest.h:
+        * platform/network/mac/ResourceRequestMac.mm:
+        (WebCore::initQuickLookResourceCachingQuirks):
+        (WebCore::ResourceRequest::useQuickLookResourceCachingQuirks):
+
 2011-05-24  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

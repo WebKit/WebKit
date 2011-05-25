@@ -91,6 +91,10 @@ namespace WebCore {
         static bool httpPipeliningEnabled();
         static void setHTTPPipeliningEnabled(bool);
 
+#if PLATFORM(MAC)
+        static bool useQuickLookResourceCachingQuirks();
+#endif
+
     private:
         friend class ResourceRequestBase;
 
