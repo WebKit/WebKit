@@ -1,3 +1,11 @@
+2011-05-25  Jer Noble  <jer.noble@apple.com>
+
+        Ureviewed; Build fix for Leopard and Snow Leopard.
+
+        Move _wkQTMovieResolvedURL outside of a #if check for Leopard and SL.
+
+        * WebCore.exp.in:
+
 2011-05-25  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Sam Weinig.

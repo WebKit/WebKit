@@ -1375,6 +1375,7 @@ _wkQTMovieHasClosedCaptions
 _wkQTMovieMaxTimeLoaded
 _wkQTMovieMaxTimeLoadedChangeNotification
 _wkQTMovieMaxTimeSeekable
+_wkQTMovieResolvedURL
 _wkQTMovieSelectPreferredAlternates
 _wkQTMovieSetShowClosedCaptions
 _wkQTMovieViewSetDrawSynchronously
@@ -1458,7 +1459,6 @@ _wkSetScrollbarPainterTrackAlpha
 _wkVerticalScrollbarPainterForController
 _wkWillEndLiveResize
 _wkWillStartLiveResize
-_wkQTMovieResolvedURL
 _wkAVAssetResolvedURL
 #else
 _wkGetNSEventMomentumPhase
