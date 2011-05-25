@@ -2426,9 +2426,6 @@ BUGCR58587 SKIP : fast/filesystem/file-writer-gc-blob.html = FAIL
 BUGCR58970 LINUX : svg/text/text-tselect-02-f.svg = IMAGE PASS
 BUGCR58931 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-17-b.svg = IMAGE PASS
 
-// Failing from around r62021
-BUGCR15797 WIN : fast/dom/object-embed-plugin-scripting.html = TIMEOUT PASS TEXT
-
 // Failing from r69420, mac failing from r71493:r71496
 BUGCR58735 SLOW : http/tests/misc/prefetch-purpose.html = PASS
 
@@ -4133,26 +4130,6 @@ BUGWK61370 LINUX : svg/W3C-SVG-1.1/fonts-glyph-04-t.svg = IMAGE
 
 // New tests added in r87274
 BUGCR83865 : fast/forms/color/input-value-sanitization-color.html = FAIL PASS
-
-// Regression from webkit r87257
-BUGWK61431 DEBUG : storage/indexeddb/create-and-remove-object-store.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/cursor-continue.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/cursor-index-delete.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/cursor-update.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/database-basics.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/duplicates.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/exception-in-event-aborts.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/index-cursor.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/migrate-basics.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/objectstore-basics.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/objectstore-cursor.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/open-cursor.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/request-event-propagation.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/set_version_queue.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/transaction-after-close.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/transaction-basics.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/transaction-event-propagation.html = CRASH
-BUGWK61431 DEBUG : storage/indexeddb/transaction-rollback.html = CRASH
 
 // New tests added in webkit r87284
 BUGCR83869 : svg/dynamic-updates/SVGTextElement-dom-dx-attr.html = IMAGE
