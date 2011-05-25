@@ -659,19 +659,20 @@ void PluginView::viewVisibilityDidChange()
 
 IntRect PluginView::clipRectInWindowCoordinates() const
 {
-    ASSERT(parent());
-
     // Get the frame rect in window coordinates.
     IntRect frameRectInWindowCoordinates = parent()->contentsToWindow(frameRect());
-    frameRectInWindowCoordinates.scale(1 / frame()->pageScaleFactor());
+
+    Frame* frame = this->frame();
 
     // Get the window clip rect for the enclosing layer (in window coordinates).
     RenderLayer* layer = m_pluginElement->renderer()->enclosingLayer();
-    FrameView* parentView = m_pluginElement->document()->frame()->view();
-    IntRect windowClipRect = parentView->windowClipRectForLayer(layer, true);
+    IntRect windowClipRect = frame->view()->windowClipRectForLayer(layer, true);
 
     // Intersect the two rects to get the view clip rect in window coordinates.
-    return intersection(frameRectInWindowCoordinates, windowClipRect);
+    frameRectInWindowCoordinates.intersect(windowClipRect);
+
+    frameRectInWindowCoordinates.scale(1 / frame->pageScaleFactor());
+    return frameRectInWindowCoordinates;
 }
 
 void PluginView::focusPluginElement()

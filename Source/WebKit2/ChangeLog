@@ -1,3 +1,14 @@
+2011-05-25  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        <rdar://problem/9496795> REGRESSION (r86851): Plug-ins disappear when scrolled with non-1 page scale
+        https://bugs.webkit.org/show_bug.cgi?id=61448
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::clipRectInWindowCoordinates): Correct for page scale
+        after intersecting the two rectangles.
+
 2011-05-24  Timothy Hatcher  <timothy@apple.com>
 
         Make the Web Inspector bring the right window to the front when docked.
