@@ -997,7 +997,6 @@ BUGCR10322 SKIP : platform/win/accessibility = PASS FAIL
 
 // shadow rendering issues
 BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-shadow.html = TEXT
-BUGCR79896 WIN7 GPU : fast/canvas/canvas-strokePath-shadow.html = TEXT
 
 BUGWK57547 LINUX GPU : fast/canvas/canvas-strokeRect-gradient-shadow.html = TEXT TIMEOUT
 
@@ -1006,7 +1005,6 @@ BUGCR81858 WIN LINUX GPU : fast/canvas/canvas-longlived-context.html = PASS TEXT
 
 // Misc. render failures
 BUGCR81718 WIN LINUX GPU : compositing/tiling/huge-layer-img.html = CRASH
-BUGCR81601 WIN LINUX GPU : fast/repaint/canvas-putImageData.html = IMAGE+TEXT
 BUGCR81606 WIN LINUX GPU : fast/canvas/drawImage-with-globalAlpha.html = IMAGE
 
 // fillRect failures

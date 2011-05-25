@@ -1,3 +1,12 @@
+2011-05-25  Leon Scroggins  <scroggo@google.com>
+
+        Reviewed by Steve Block.
+
+        Update chromium expectations for more canvas fixes.
+        https://bugs.webkit.org/show_bug.cgi?id=61433
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-25  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Reviewed by Antonio Gomes.
