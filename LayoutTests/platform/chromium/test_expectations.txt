@@ -4152,3 +4152,23 @@ BUGCR83833 : mhtml/simple_page_unmht.mht = MISSING
 
 // New tests added in r87274
 BUGCR83865 : fast/forms/color/input-value-sanitization-color.html = FAIL PASS
+
+// Regression from webkit r87257
+BUGWK61431 DEBUG : storage/indexeddb/create-and-remove-object-store.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/cursor-continue.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/cursor-index-delete.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/cursor-update.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/database-basics.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/duplicates.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/exception-in-event-aborts.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/index-cursor.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/migrate-basics.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/objectstore-basics.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/objectstore-cursor.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/open-cursor.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/request-event-propagation.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/set_version_queue.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/transaction-after-close.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/transaction-basics.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/transaction-event-propagation.html = CRASH
+BUGWK61431 DEBUG : storage/indexeddb/transaction-rollback.html = CRASH
