@@ -1,3 +1,16 @@
+2011-05-24  Greg Simon  <gregsimon@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Control Indexeddb backends from LayoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=61000
+
+        LayoutTest for migration between SQLite and LevelDB
+        in IndxededDB.
+
+        * storage/indexeddb/migrate-basics-expected.txt: Added.
+        * storage/indexeddb/migrate-basics.html: Added.
+
 2011-05-24  Fumitoshi Ukai  <ukai@chromium.org>
 
         Unreviewed.

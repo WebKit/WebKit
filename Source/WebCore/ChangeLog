@@ -1,3 +1,29 @@
+2011-05-24  Greg Simon  <gregsimon@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Control Indexeddb backends from LayoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=61000
+
+        Test: storage/indexeddb/migrate-basics.html
+
+        * storage/IDBBackingStore.h:
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::IDBFactoryBackendImpl):
+        (WebCore::IDBFactoryBackendImpl::open):
+        (WebCore::IDBFactoryBackendImpl::setEnableMigration):
+        (WebCore::IDBFactoryBackendImpl::migrate):
+        * storage/IDBFactoryBackendImpl.h:
+        * storage/IDBFactoryBackendInterface.h:
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::IDBLevelDBBackingStore::backingStoreExists):
+        * storage/IDBLevelDBBackingStore.h:
+        (WebCore::IDBLevelDBBackingStore::backingStoreType):
+        * storage/IDBSQLiteBackingStore.cpp:
+        (WebCore::IDBSQLiteBackingStore::backingStoreExists):
+        * storage/IDBSQLiteBackingStore.h:
+        (WebCore::IDBSQLiteBackingStore::backingStoreType):
+
 2011-05-24  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Reviewed by Ryosuke Niwa.

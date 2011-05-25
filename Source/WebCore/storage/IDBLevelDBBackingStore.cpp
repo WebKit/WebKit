@@ -1266,6 +1266,23 @@ PassRefPtr<IDBBackingStore::Transaction> IDBLevelDBBackingStore::createTransacti
     return adoptRef(new DummyTransaction());
 }
 
+bool IDBLevelDBBackingStore::backingStoreExists(SecurityOrigin* securityOrigin, const String& pathBaseArg)
+{
+    String pathBase = pathBaseArg;
+
+    if (pathBase.isEmpty())
+        return false;
+
+    // FIXME: We should eventually use the same LevelDB database for all origins.
+    String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb.leveldb");
+
+    // FIXME: It would be more thorough to open the database here but also more expensive.
+    if (fileExists(path+"/CURRENT"))
+        return true;
+
+    return false;
+}
+
 // FIXME: deleteDatabase should be part of IDBBackingStore.
 
 } // namespace WebCore

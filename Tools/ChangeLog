@@ -1,3 +1,16 @@
+2011-05-24  Greg Simon  <gregsimon@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Control Indexeddb backends from LayoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=61000
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::setOverrideIndexedDBBackingStore):
+        (LayoutTestController::clearAllDatabases):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+
 2011-05-24  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Ryosuke Niwa.

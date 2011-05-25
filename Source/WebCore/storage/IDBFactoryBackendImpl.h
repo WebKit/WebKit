@@ -56,9 +56,11 @@ public:
     void removeIDBBackingStore(const String& uniqueIdentifier);
 
     virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType);
+    virtual void setEnableMigration(bool);
 
 private:
     IDBFactoryBackendImpl();
+    bool migrate(const String& name, SecurityOrigin*, const String& dataDir, int64_t maximumSize);
 
     typedef HashMap<String, IDBDatabaseBackendImpl*> IDBDatabaseBackendMap;
     IDBDatabaseBackendMap m_databaseBackendMap;
@@ -67,6 +69,8 @@ private:
     IDBBackingStoreMap m_backingStoreMap;
 
     RefPtr<IDBTransactionCoordinator> m_transactionCoordinator;
+
+    bool m_migrateEnabled;
 
     // Only one instance of the factory should exist at any given time.
     static IDBFactoryBackendImpl* idbFactoryBackendImpl;

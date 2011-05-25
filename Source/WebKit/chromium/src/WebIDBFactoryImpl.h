@@ -45,6 +45,7 @@ public:
     virtual ~WebIDBFactoryImpl();
 
     virtual void open(const WebString& name, WebIDBCallbacks*, const WebSecurityOrigin&, WebFrame*, const WebString& dataDir, unsigned long long maximumSize, BackingStoreType);
+    virtual void setEnableMigration(bool);
 
 private:
     WTF::RefPtr<WebCore::IDBFactoryBackendInterface> m_idbFactoryBackend;

@@ -1,0 +1,36 @@
+Test migration from SQLite to LevelDB.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+webkitIndexedDB.open('MigrationDatabase')
+sqliteCreateSuccess():
+db = event.target.result
+db.setVersion('new version')
+sqliteSetVersionSuccess():
+window.db.createObjectStore('PlainOldStore', {autoIncrement: false})
+store = window.db.createObjectStore('StoreWithKeyPath', {keyPath: 'id', autoIncrement: true})
+window.db.createObjectStore('StoreWithAutoIncrement', {autoIncrement: true})
+trans = db.transaction([], webkitIDBTransaction.READ_WRITE)
+index = store.createIndex('ExampleIndex','id', false)
+sqliteTestAddRecords1():
+store = trans.objectStore('PlainOldStore')
+store = store.add({name: 'George'},1)
+sqliteTestAddRecords2():
+store = trans.objectStore('StoreWithKeyPath')
+store.add({name: 'Thomas', id: 3})
+sqliteTestAddRecords3():
+store = trans.objectStore('StoreWithAutoIncrement')
+store.add({name: 'Lincoln', number: '7012'}, 5)
+leveldbOpenSuccess():
+db = event.target.result
+trans = db.transaction([], webkitIDBTransaction.READ_WRITE, 0)
+leveldbCheckPlainOldStore():
+store = trans.objectStore('PlainOldStore')
+FAIL store = trans.objectStore('PlainOldStore') threw exception Error: NOT_FOUND_ERR: DOM IDBDatabase Exception 3
+request = store.openCursor(keyRange)
+FAIL request = store.openCursor(keyRange) threw exception TypeError: Cannot call method 'openCursor' of undefined
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
