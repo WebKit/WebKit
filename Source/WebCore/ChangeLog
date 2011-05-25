@@ -1,3 +1,27 @@
+2011-05-24  Andy Estes  <aestes@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        REGRESSION (r70748): WebKit cannot play QuickTime movies on Mac OS X Wiki Server pages
+        https://bugs.webkit.org/show_bug.cgi?id=61229
+
+        This site-specific hack maintains compatibility with Mac OS X Wiki Server,
+        which embeds QuickTime movies using an object tag containing QuickTime's
+        ActiveX classid. Treat this classid as valid only if OS X Server's unique
+        'generator' meta tag is present. Only apply this quirk if there is no
+        fallback content, which ensures the quirk will disable itself if Wiki
+        Server is updated to generate an alternate embed tag as fallback content.
+
+        * html/HTMLObjectElement.cpp:
+        (WebCore::HTMLObjectElement::shouldAllowQuickTimeClassIdQuirk): Return
+        true if site-specific quirks are enabled, the object element has no
+        fallback content, the classid attribute matches QuickTime's classid and
+        the document has a 'generator' meta tag matching Mac OS X Web Services
+        Server's unique generator string.
+        (WebCore::HTMLObjectElement::hasValidClassId): Call
+        shouldAllowQuickTimeClassIdQuirk()
+        * html/HTMLObjectElement.h:
+
 2011-05-24  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
