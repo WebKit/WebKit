@@ -48,7 +48,7 @@ function test()
     shouldBe("embed.getAttribute('width')", 1);
     shouldBe("embed.getAttribute('type')", 1);
     shouldBe("embed.getAttribute('src')", 1);
-    shouldBe("typeof embed.Play", "function");
+    shouldBe("typeof embed.testCallback", "function");
 
     print("----------");
     
@@ -56,9 +56,9 @@ function test()
     print("[Embed is dynamically created element with only type specified]");
 
     embed.style.visibility = "hidden";
-    embed.type = "video/quicktime";
+    embed.type = "application/x-webkit-test-netscape";
     document.body.appendChild(embed);
-    shouldBe("typeof embed.Play", "function");
+    shouldBe("typeof embed.testCallback", "function");
     
     print("----------");
     
@@ -66,9 +66,9 @@ function test()
     print("[Embed is dynamically created element with only src specified]");
 
     embed.style.visibility = "hidden";
-    embed.src = "resources/articles.m4a";
+    embed.src = "resources/test.testnetscape";
     document.body.appendChild(embed);
-    shouldBe("typeof embed.Play", "function");
+    shouldBe("typeof embed.testCallback", "function");
 }
 </script>
 </head>
@@ -78,7 +78,7 @@ function test()
 <hr>
 <div id='console'></div>
 
-<embed style="visibility: hidden" type="video/quicktime" id='embed'></embed>
+<embed style="visibility: hidden" type="application/x-webkit-test-netscape" id='embed'></embed>
 
 </body>
 </html>

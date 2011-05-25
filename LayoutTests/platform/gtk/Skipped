@@ -580,7 +580,6 @@ media/video-source-error.html
 
 # Tests in plugins/ directory
 #   Tests failing, need to implement NPP_HandleEvent() in TestNetscapePlugin
-plugins/embed-attributes-setting.html
 plugins/get-url-with-blank-target.html
 plugins/plugin-initiate-popup-window.html
 

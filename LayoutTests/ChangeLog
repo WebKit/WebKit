@@ -1,3 +1,21 @@
+2011-05-20  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        [Qt/Gtk/Chromium] Fix plugins/embed-attributes-setting.html
+
+        Use the test netscape plugin instead of quicktime.
+        Allows the test to pass on Qt/Gtk/Chromium as well as Mac.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61182
+        http://code.google.com/p/chromium/issues/detail?id=15797
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/qt/Skipped:
+        * plugins/embed-attributes-setting-expected.txt:
+        * plugins/embed-attributes-setting.html:
+
 2011-05-25  Leon Scroggins  <scroggo@google.com>
 
         Reviewed by Steve Block.
