@@ -1,3 +1,30 @@
+2011-05-25  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Generate regexp code lazily
+        https://bugs.webkit.org/show_bug.cgi?id=61476
+
+        RegExp construction now simply validates the RegExp, it does
+        not perform actual codegen.
+
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::recompile):
+        (JSC::RegExp::compile):
+        (JSC::RegExp::match):
+        * runtime/RegExp.h:
+        (JSC::RegExp::recompileIfNecessary):
+        * runtime/RegExpConstructor.h:
+        (JSC::RegExpConstructor::performMatch):
+        * runtime/RegExpObject.cpp:
+        (JSC::RegExpObject::match):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncReplace):
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+        (JSC::stringProtoFuncSplit):
+
 2011-05-24  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Geoffrey Garen.

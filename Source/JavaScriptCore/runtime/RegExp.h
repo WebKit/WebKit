@@ -49,7 +49,7 @@ namespace JSC {
         bool isValid() const { return !m_constructionError && m_flags != InvalidFlags; }
         const char* errorMessage() const { return m_constructionError; }
 
-        int match(const UString&, int startOffset, Vector<int, 32>* ovector = 0);
+        int match(JSGlobalData&, const UString&, int startOffset, Vector<int, 32>* ovector = 0);
         unsigned numSubpatterns() const { return m_numSubpatterns; }
         
 #if ENABLE(REGEXP_TRACING)
@@ -62,10 +62,17 @@ namespace JSC {
         enum RegExpState {
             ParseError,
             JITCode,
-            ByteCode
+            ByteCode,
+            NotCompiled
         } m_state;
 
-        RegExpState compile(JSGlobalData*);
+        void compile(JSGlobalData*);
+        void compileIfNecessary(JSGlobalData& globalData)
+        {
+            if (m_representation)
+                return;
+            compile(&globalData);
+        }
 
 #if ENABLE(YARR_JIT_DEBUG)
         void matchCompareWithInterpreter(const UString&, int startOffset, int* offsetVector, int jitResult);

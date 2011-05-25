@@ -70,7 +70,7 @@ namespace JSC {
 
         static const ClassInfo s_info;
 
-        void performMatch(RegExp*, const UString&, int startOffset, int& position, int& length, int** ovector = 0);
+        void performMatch(JSGlobalData&, RegExp*, const UString&, int startOffset, int& position, int& length, int** ovector = 0);
         JSObject* arrayOfMatches(ExecState*) const;
 
         void setInput(const UString&);
@@ -109,9 +109,9 @@ namespace JSC {
       expression matching through the performMatch function. We use cached results to calculate, 
       e.g., RegExp.lastMatch and RegExp.leftParen.
     */
-    ALWAYS_INLINE void RegExpConstructor::performMatch(RegExp* r, const UString& s, int startOffset, int& position, int& length, int** ovector)
+    ALWAYS_INLINE void RegExpConstructor::performMatch(JSGlobalData& globalData, RegExp* r, const UString& s, int startOffset, int& position, int& length, int** ovector)
     {
-        position = r->match(s, startOffset, &d->tempOvector());
+        position = r->match(globalData, s, startOffset, &d->tempOvector());
 
         if (ovector)
             *ovector = d->tempOvector().data();

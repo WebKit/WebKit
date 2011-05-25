@@ -73,8 +73,9 @@ struct RegExpRepresentation {
     OwnPtr<Yarr::BytecodePattern> m_regExpBytecode;
 };
 
-inline RegExp::RegExp(JSGlobalData* globalData, const UString& patternString, RegExpFlags flags)
-    : m_patternString(patternString)
+inline RegExp::RegExp(JSGlobalData*, const UString& patternString, RegExpFlags flags)
+    : m_state(NotCompiled)
+    , m_patternString(patternString)
     , m_flags(flags)
     , m_constructionError(0)
     , m_numSubpatterns(0)
@@ -82,9 +83,12 @@ inline RegExp::RegExp(JSGlobalData* globalData, const UString& patternString, Re
     , m_rtMatchCallCount(0)
     , m_rtMatchFoundCount(0)
 #endif
-    , m_representation(adoptPtr(new RegExpRepresentation))
 {
-    m_state = compile(globalData);
+    Yarr::YarrPattern pattern(m_patternString, ignoreCase(), multiline(), &m_constructionError);
+    if (m_constructionError)
+        m_state = ParseError;
+    else
+        m_numSubpatterns = pattern.m_numSubpatterns;
 }
 
 RegExp::~RegExp()
@@ -100,37 +104,42 @@ PassRefPtr<RegExp> RegExp::create(JSGlobalData* globalData, const UString& patte
     return res.release();
 }
 
-RegExp::RegExpState RegExp::compile(JSGlobalData* globalData)
+void RegExp::compile(JSGlobalData* globalData)
 {
+    ASSERT(m_state == NotCompiled);
+    m_representation = adoptPtr(new RegExpRepresentation);
     Yarr::YarrPattern pattern(m_patternString, ignoreCase(), multiline(), &m_constructionError);
-    if (m_constructionError)
-        return ParseError;
+    if (m_constructionError) {
+        ASSERT_NOT_REACHED();
+        m_state = ParseError;
+        return;
+    }
 
-    m_numSubpatterns = pattern.m_numSubpatterns;
+    ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
-    RegExpState res = ByteCode;
+    m_state = ByteCode;
 
 #if ENABLE(YARR_JIT)
     if (!pattern.m_containsBackreferences && globalData->canUseJIT()) {
         Yarr::jitCompile(pattern, globalData, m_representation->m_regExpJITCode);
 #if ENABLE(YARR_JIT_DEBUG)
         if (!m_representation->m_regExpJITCode.isFallBack())
-            res = JITCode;
+            m_state = JITCode;
         else
-            res = ByteCode;
+            m_state = ByteCode;
 #else
-        if (!m_representation->m_regExpJITCode.isFallBack())
-            return JITCode;
+        if (!m_representation->m_regExpJITCode.isFallBack()) {
+            m_state = JITCode;
+            return;
+        }
 #endif
     }
 #endif
 
     m_representation->m_regExpBytecode = Yarr::byteCompile(pattern, &globalData->m_regExpAllocator);
-
-    return res;
 }
 
-int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
+int RegExp::match(JSGlobalData& globalData, const UString& s, int startOffset, Vector<int, 32>* ovector)
 {
     if (startOffset < 0)
         startOffset = 0;
@@ -143,6 +152,7 @@ int RegExp::match(const UString& s, int startOffset, Vector<int, 32>* ovector)
         return -1;
 
     if (m_state != ParseError) {
+        compileIfNecessary(globalData);
         int offsetVectorSize = (m_numSubpatterns + 1) * 2;
         int* offsetVector;
         Vector<int, 32> nonReturnedOvector;

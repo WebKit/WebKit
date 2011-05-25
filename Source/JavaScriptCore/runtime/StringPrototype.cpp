@@ -300,6 +300,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
     JSString* sourceVal = thisValue.toThisJSString(exec);
     JSValue pattern = exec->argument(0);
     JSValue replacement = exec->argument(1);
+    JSGlobalData* globalData = &exec->globalData();
 
     UString replacementString;
     CallData callData;
@@ -335,7 +336,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
                 int matchIndex;
                 int matchLen = 0;
                 int* ovector;
-                regExpConstructor->performMatch(reg, source, startPosition, matchIndex, matchLen, &ovector);
+                regExpConstructor->performMatch(*globalData, reg, source, startPosition, matchIndex, matchLen, &ovector);
                 if (matchIndex < 0)
                     break;
 
@@ -380,7 +381,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncReplace(ExecState* exec)
                 int matchIndex;
                 int matchLen = 0;
                 int* ovector;
-                regExpConstructor->performMatch(reg, source, startPosition, matchIndex, matchLen, &ovector);
+                regExpConstructor->performMatch(*globalData, reg, source, startPosition, matchIndex, matchLen, &ovector);
                 if (matchIndex < 0)
                     break;
 
@@ -601,6 +602,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
     UString s = thisValue.toThisString(exec);
+    JSGlobalData* globalData = &exec->globalData();
 
     JSValue a0 = exec->argument(0);
 
@@ -618,7 +620,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
     int matchLength = 0;
-    regExpConstructor->performMatch(reg.get(), s, 0, pos, matchLength);
+    regExpConstructor->performMatch(*globalData, reg.get(), s, 0, pos, matchLength);
     if (!(reg->global())) {
         // case without 'g' flag is handled like RegExp.prototype.exec
         if (pos < 0)
@@ -631,7 +633,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     while (pos >= 0) {
         list.append(jsSubstring(exec, s, pos, matchLength));
         pos += matchLength == 0 ? 1 : matchLength;
-        regExpConstructor->performMatch(reg.get(), s, pos, pos, matchLength);
+        regExpConstructor->performMatch(*globalData, reg.get(), s, pos, pos, matchLength);
     }
     if (list.isEmpty()) {
         // if there are no matches at all, it's important to return
@@ -649,6 +651,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
     UString s = thisValue.toThisString(exec);
+    JSGlobalData* globalData = &exec->globalData();
 
     JSValue a0 = exec->argument(0);
 
@@ -666,7 +669,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
     int matchLength = 0;
-    regExpConstructor->performMatch(reg.get(), s, 0, pos, matchLength);
+    regExpConstructor->performMatch(*globalData, reg.get(), s, 0, pos, matchLength);
     return JSValue::encode(jsNumber(pos));
 }
 
@@ -703,6 +706,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
     if (thisValue.isUndefinedOrNull()) // CheckObjectCoercible
         return throwVMTypeError(exec);
     UString s = thisValue.toThisString(exec);
+    JSGlobalData* globalData = &exec->globalData();
 
     JSValue a0 = exec->argument(0);
     JSValue a1 = exec->argument(1);
@@ -713,14 +717,14 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSplit(ExecState* exec)
     unsigned limit = a1.isUndefined() ? 0xFFFFFFFFU : a1.toUInt32(exec);
     if (a0.inherits(&RegExpObject::s_info)) {
         RegExp* reg = asRegExpObject(a0)->regExp();
-        if (s.isEmpty() && reg->match(s, 0) >= 0) {
+        if (s.isEmpty() && reg->match(*globalData, s, 0) >= 0) {
             // empty string matched by regexp -> empty array
             return JSValue::encode(result);
         }
         unsigned pos = 0;
         while (i != limit && pos < s.length()) {
             Vector<int, 32> ovector;
-            int mpos = reg->match(s, pos, &ovector);
+            int mpos = reg->match(*globalData, s, pos, &ovector);
             if (mpos < 0)
                 break;
             int mlen = ovector[1] - ovector[0];

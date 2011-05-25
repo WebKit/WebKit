@@ -144,11 +144,11 @@ bool RegExpObject::match(ExecState* exec)
 {
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     UString input = exec->argument(0).toString(exec);
-
+    JSGlobalData* globalData = &exec->globalData();
     if (!regExp()->global()) {
         int position;
         int length;
-        regExpConstructor->performMatch(d->regExp.get(), input, 0, position, length);
+        regExpConstructor->performMatch(*globalData, d->regExp.get(), input, 0, position, length);
         return position >= 0;
     }
 
@@ -171,7 +171,7 @@ bool RegExpObject::match(ExecState* exec)
 
     int position;
     int length = 0;
-    regExpConstructor->performMatch(d->regExp.get(), input, lastIndex, position, length);
+    regExpConstructor->performMatch(*globalData, d->regExp.get(), input, lastIndex, position, length);
     if (position < 0) {
         setLastIndex(0);
         return false;
