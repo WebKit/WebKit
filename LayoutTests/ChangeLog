@@ -1,5 +1,20 @@
 2011-05-25  Adam Klein  <adamk@chromium.org>
 
+        Unreviewed. Rebaseline svg tests after r87310.
+
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/filters-felem-01-b-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/filters-felem-01-b-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-felem-01-b-expected.png: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/filters-felem-01-b-expected.png:
+
+2011-05-25  Adam Klein  <adamk@chromium.org>
+
         Unreviewed. Removing test_expectations for non-existent tests.
 
         * platform/chromium/test_expectations.txt:
