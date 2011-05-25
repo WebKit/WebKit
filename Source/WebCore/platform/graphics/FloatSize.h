@@ -28,7 +28,7 @@
 #ifndef FloatSize_h
 #define FloatSize_h
 
-#include "IntSize.h"
+#include "IntPoint.h"
 #include <wtf/MathExtras.h>
 
 #if USE(CG) || (PLATFORM(WX) && OS(DARWIN)) || USE(SKIA_ON_MAC_CHROME)
@@ -153,6 +153,11 @@ inline IntSize roundedIntSize(const FloatSize& p)
 inline IntSize expandedIntSize(const FloatSize& p)
 {
     return IntSize(clampToInteger(ceilf(p.width())), clampToInteger(ceilf(p.height())));
+}
+
+inline IntPoint flooredIntPoint(const FloatSize& p)
+{
+    return IntPoint(static_cast<int>(p.width()), static_cast<int>(p.height()));
 }
 
 } // namespace WebCore

@@ -1000,7 +1000,7 @@ void RenderObject::drawArcForBoxSide(GraphicsContext* graphicsContext, int x, in
 void RenderObject::paintFocusRing(GraphicsContext* context, int tx, int ty, RenderStyle* style)
 {
     Vector<IntRect> focusRingRects;
-    addFocusRingRects(focusRingRects, tx, ty);
+    addFocusRingRects(focusRingRects, IntPoint(tx, ty));
     if (style->outlineStyleIsAuto())
         context->drawFocusRing(focusRingRects, style->outlineWidth(), style->outlineOffset(), style->visitedDependentColor(CSSPropertyOutlineColor));
     else
@@ -1119,8 +1119,8 @@ void RenderObject::absoluteFocusRingQuads(Vector<FloatQuad>& quads)
     // implicitly assumes that. This doesn't work correctly with transformed
     // descendants.
     FloatPoint absolutePoint = localToAbsolute();
-    addFocusRingRects(rects, absolutePoint.x(), absolutePoint.y());
-    size_t count = rects.size();
+    addFocusRingRects(rects, flooredIntPoint(absolutePoint));
+    size_t count = rects.size(); 
     for (size_t i = 0; i < count; ++i) {
         IntRect rect = rects[i];
         rect.move(-absolutePoint.x(), -absolutePoint.y());

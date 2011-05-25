@@ -299,17 +299,17 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
-void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& additionalOffset)
 {
     if (!isSpatialNavigationEnabled(frame()))
-        return RenderBlock::addFocusRingRects(rects, tx, ty);
+        return RenderBlock::addFocusRingRects(rects, additionalOffset);
 
     SelectElement* select = toSelectElement(static_cast<Element*>(node()));
 
     // Focus the last selected item.
     int selectedItem = select->activeSelectionEndListIndex();
     if (selectedItem >= 0) {
-        rects.append(itemBoundingBoxRect(tx, ty, selectedItem));
+        rects.append(itemBoundingBoxRect(additionalOffset.x(), additionalOffset.y(), selectedItem));
         return;
     }
 
@@ -319,7 +319,7 @@ void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
     for (int i = 0; i < size; ++i) {
         OptionElement* optionElement = toOptionElement(listItems[i]);
         if (optionElement && !optionElement->disabled()) {
-            rects.append(itemBoundingBoxRect(tx, ty, i));
+            rects.append(itemBoundingBoxRect(additionalOffset.x(), additionalOffset.y(), i));
             return;
         }
     }

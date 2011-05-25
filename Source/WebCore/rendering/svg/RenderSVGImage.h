@@ -57,7 +57,7 @@ private:
     virtual FloatRect strokeBoundingBox() const { return m_objectBoundingBox; }
     virtual FloatRect repaintRectInLocalCoordinates() const { return m_repaintBoundingBox; }
 
-    virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
+    virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&);
 
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 

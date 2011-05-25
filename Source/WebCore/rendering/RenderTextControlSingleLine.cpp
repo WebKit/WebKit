@@ -261,11 +261,11 @@ void RenderTextControlSingleLine::paintBoxDecorations(PaintInfo& paintInfo, int 
     paintBoxDecorationsWithSize(paintInfo, IntRect(tx, ty, width() - decorationWidthRight(), height()));
 }
 
-void RenderTextControlSingleLine::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderTextControlSingleLine::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& additionalOffset)
 {
     int w = width() - decorationWidthRight();
     if (w && height())
-        rects.append(IntRect(tx, ty, w, height()));
+        rects.append(IntRect(additionalOffset, IntSize(w, height())));
 }
 
 void RenderTextControlSingleLine::layout()

@@ -333,7 +333,7 @@ protected:
     void addOverflowFromBlockChildren();
     void addOverflowFromInlineChildren();
 
-    virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
+    virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&);
 
 #if ENABLE(SVG)
     // Only used by RenderSVGText, which explicitely overrides RenderBlock::layoutBlock(), do NOT use for anything else.

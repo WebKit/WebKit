@@ -1337,36 +1337,32 @@ void RenderInline::imageChanged(WrappedImagePtr, const IntRect*)
     repaint();
 }
 
-void RenderInline::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& additionalOffset)
 {
     if (!alwaysCreateLineBoxes())
-        culledInlineAbsoluteRects(this, rects, IntSize(tx, ty));
+        culledInlineAbsoluteRects(this, rects, toSize(additionalOffset));
     else {
         for (InlineFlowBox* curr = firstLineBox(); curr; curr = curr->nextLineBox())
-            rects.append(enclosingIntRect(FloatRect(tx + curr->x(), ty + curr->y(), curr->width(), curr->height())));
+            rects.append(enclosingIntRect(FloatRect(additionalOffset.x() + curr->x(), additionalOffset.y() + curr->y(), curr->width(), curr->height())));
     }
 
     for (RenderObject* curr = firstChild(); curr; curr = curr->nextSibling()) {
         if (!curr->isText() && !curr->isListMarker()) {
-            FloatPoint pos(tx, ty);
+            FloatPoint pos(additionalOffset);
             // FIXME: This doesn't work correctly with transforms.
             if (curr->hasLayer()) 
                 pos = curr->localToAbsolute();
             else if (curr->isBox())
                 pos.move(toRenderBox(curr)->x(), toRenderBox(curr)->y());
-            curr->addFocusRingRects(rects, pos.x(), pos.y());
+            curr->addFocusRingRects(rects, flooredIntPoint(pos));
         }
     }
 
     if (continuation()) {
         if (continuation()->isInline())
-            continuation()->addFocusRingRects(rects, 
-                                              tx - containingBlock()->x() + continuation()->containingBlock()->x(),
-                                              ty - containingBlock()->y() + continuation()->containingBlock()->y());
+            continuation()->addFocusRingRects(rects, flooredIntPoint(additionalOffset + continuation()->containingBlock()->location() - containingBlock()->location()));
         else
-            continuation()->addFocusRingRects(rects, 
-                                              tx - containingBlock()->x() + toRenderBox(continuation())->x(),
-                                              ty - containingBlock()->y() + toRenderBox(continuation())->y());
+            continuation()->addFocusRingRects(rects, flooredIntPoint(additionalOffset + toRenderBox(continuation())->location() - containingBlock()->location()));
     }
 }
 

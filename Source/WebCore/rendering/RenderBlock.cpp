@@ -5843,7 +5843,7 @@ IntRect RenderBlock::localCaretRect(InlineBox* inlineBox, int caretOffset, int* 
     return IntRect(x, y, caretWidth, height);
 }
 
-void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& additionalOffset)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
@@ -5857,17 +5857,17 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
         bool prevInlineHasLineBox = toRenderInline(inlineElementContinuation()->node()->renderer())->firstLineBox(); 
         int topMargin = prevInlineHasLineBox ? collapsedMarginBefore() : 0;
         int bottomMargin = nextInlineHasLineBox ? collapsedMarginAfter() : 0;
-        IntRect rect(tx, ty - topMargin, width(), height() + topMargin + bottomMargin);
+        IntRect rect(additionalOffset.x(), additionalOffset.y() - topMargin, width(), height() + topMargin + bottomMargin);
         if (!rect.isEmpty())
             rects.append(rect);
     } else if (width() && height())
-        rects.append(IntRect(tx, ty, width(), height()));
+        rects.append(IntRect(additionalOffset, size()));
 
     if (!hasOverflowClip() && !hasControlClip()) {
         for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
             int top = max(curr->lineTop(), curr->logicalTop());
             int bottom = min(curr->lineBottom(), curr->logicalTop() + curr->logicalHeight());
-            IntRect rect(tx + curr->x(), ty + top, curr->logicalWidth(), bottom - top);
+            IntRect rect(additionalOffset.x() + curr->x(), additionalOffset.y() + top, curr->logicalWidth(), bottom - top);
             if (!rect.isEmpty())
                 rects.append(rect);
         }
@@ -5880,16 +5880,14 @@ void RenderBlock::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
                 if (box->layer()) 
                     pos = curr->localToAbsolute();
                 else
-                    pos = FloatPoint(tx + box->x(), ty + box->y());
-                box->addFocusRingRects(rects, pos.x(), pos.y());
+                    pos = FloatPoint(additionalOffset.x() + box->x(), additionalOffset.y() + box->y());
+                box->addFocusRingRects(rects, flooredIntPoint(pos));
             }
         }
     }
 
     if (inlineElementContinuation())
-        inlineElementContinuation()->addFocusRingRects(rects, 
-                                                       tx - x() + inlineElementContinuation()->containingBlock()->x(),
-                                                       ty - y() + inlineElementContinuation()->containingBlock()->y());
+        inlineElementContinuation()->addFocusRingRects(rects, flooredIntPoint(additionalOffset + inlineElementContinuation()->containingBlock()->location() - location()));
 }
 
 RenderBlock* RenderBlock::createAnonymousBlock(bool isFlexibleBox) const

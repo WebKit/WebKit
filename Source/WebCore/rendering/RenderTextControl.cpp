@@ -585,10 +585,10 @@ void RenderTextControl::selectionChanged(bool userTriggered)
     }
 }
 
-void RenderTextControl::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderTextControl::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& additionalOffset)
 {
-    if (width() && height())
-        rects.append(IntRect(tx, ty, width(), height()));
+    if (!size().isEmpty())
+        rects.append(IntRect(additionalOffset, size()));
 }
 
 void RenderTextControl::updatePlaceholderVisibility(bool placeholderShouldBeVisible, bool placeholderValueChanged)

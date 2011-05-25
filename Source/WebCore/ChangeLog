@@ -1,3 +1,50 @@
+2011-05-25  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch addFocusRingRects to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=60783
+
+        Switching addFocusRingRects to use an IntPoint representing the offset being
+        applied instead of a pair of ints.
+
+        No new tests as this is only refactoring.
+
+        * platform/graphics/FloatSize.h:
+        (WebCore::flooredIntPoint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::addFocusRingRects):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::addFocusRingRects):
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::addFocusRingRects):
+        * rendering/RenderInline.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::addFocusRingRects):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::paintFocusRing):
+        (WebCore::RenderObject::absoluteFocusRingQuads):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::addFocusRingRects):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::addFocusRingRects):
+        * rendering/RenderTextControl.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::addFocusRingRects):
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/svg/RenderSVGContainer.cpp:
+        (WebCore::RenderSVGContainer::addFocusRingRects):
+        * rendering/svg/RenderSVGContainer.h:
+        * rendering/svg/RenderSVGImage.cpp:
+        (WebCore::RenderSVGImage::addFocusRingRects):
+        * rendering/svg/RenderSVGImage.h:
+        * rendering/svg/RenderSVGPath.cpp:
+        (WebCore::RenderSVGPath::addFocusRingRects):
+        * rendering/svg/RenderSVGPath.h:
+
 2011-05-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87229.

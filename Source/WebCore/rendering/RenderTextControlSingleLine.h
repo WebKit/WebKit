@@ -67,7 +67,7 @@ private:
     virtual void subtreeHasChanged();
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
-    virtual void addFocusRingRects(Vector<IntRect>&, int tx, int ty);
+    virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&);
     virtual void layout();
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);

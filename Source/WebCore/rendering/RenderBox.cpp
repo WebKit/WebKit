@@ -506,10 +506,10 @@ IntRect RenderBox::outlineBoundsForRepaint(RenderBoxModelObject* repaintContaine
     return box;
 }
 
-void RenderBox::addFocusRingRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderBox::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& additionalOffset)
 {
-    if (width() && height())
-        rects.append(IntRect(tx, ty, width(), height()));
+    if (!size().isEmpty())
+        rects.append(IntRect(additionalOffset, size()));
 }
 
 IntRect RenderBox::reflectionBox() const
