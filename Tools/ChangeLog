@@ -1,3 +1,18 @@
+2011-05-25  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] fast/css/disabled-author-styles.html failed
+        https://bugs.webkit.org/show_bug.cgi?id=61438
+
+        Implemented API setAuthorAndUserStylesEnabled in LayoutTestControllerQt.
+
+        * DumpRenderTree/qt/DumpRenderTreeQt.cpp:
+        (WebCore::WebPage::resetSettings):
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setAuthorAndUserStylesEnabled):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2011-05-25  Adam Roben  <aroben@apple.com>
 
         Identify, rather than skip, builds where run-webkit-tests exited early due to too many failures

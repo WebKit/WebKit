@@ -673,6 +673,11 @@ void LayoutTestController::setCaretBrowsingEnabled(bool value)
     DumpRenderTreeSupportQt::setCaretBrowsingEnabled(m_drt->webPage(), value);
 }
 
+void LayoutTestController::setAuthorAndUserStylesEnabled(bool value)
+{
+    DumpRenderTreeSupportQt::setAuthorAndUserStylesEnabled(m_drt->webPage(), value);
+}
+
 void LayoutTestController::setUserStyleSheetEnabled(bool enabled)
 {
     m_userStyleSheetEnabled = enabled;

@@ -495,6 +495,11 @@ void DumpRenderTreeSupportQt::setCaretBrowsingEnabled(QWebPage* page, bool value
     page->handle()->page->settings()->setCaretBrowsingEnabled(value);
 }
 
+void DumpRenderTreeSupportQt::setAuthorAndUserStylesEnabled(QWebPage* page, bool value)
+{
+    page->handle()->page->settings()->setAuthorAndUserStylesEnabled(value);
+}
+
 void DumpRenderTreeSupportQt::setMediaType(QWebFrame* frame, const QString& type)
 {
     WebCore::Frame* coreFrame = QWebFramePrivate::core(frame);

@@ -1,3 +1,16 @@
+2011-05-25  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] fast/css/disabled-author-styles.html failed
+        https://bugs.webkit.org/show_bug.cgi?id=61438
+
+        Unskip test case and provide expect result files.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/css/disabled-author-styles-expected.png: Added.
+        * platform/qt/fast/css/disabled-author-styles-expected.txt: Added.
+
 2011-05-25  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Eric Seidel.

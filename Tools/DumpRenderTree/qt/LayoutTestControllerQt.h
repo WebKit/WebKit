@@ -169,6 +169,7 @@ public slots:
     void setJavaScriptCanAccessClipboard(bool enable);
     void setXSSAuditorEnabled(bool enable);
     void setCaretBrowsingEnabled(bool enable);
+    void setAuthorAndUserStylesEnabled(bool);
     void setViewModeMediaFeature(const QString& mode);
     void setSmartInsertDeleteEnabled(bool enable);
     void setSelectTrailingWhitespaceEnabled(bool enable);

@@ -1390,7 +1390,6 @@ fast/block/float/028.html
 fast/block/float/editable-text-overlapping-float.html
 fast/block/margin-collapse/103.html
 fast/block/positioning/auto/006.html
-fast/css/disabled-author-styles.html
 fast/css/text-overflow-ellipsis-bidi.html
 fast/css/text-overflow-ellipsis.html
 fast/css/text-overflow-ellipsis-strict.html
