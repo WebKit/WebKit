@@ -91,7 +91,7 @@
 #endif
 
 // This controls what strategy we use for mouse wheel coalesing.
-#define MERGE_WHEEL_EVENTS 0
+#define MERGE_WHEEL_EVENTS 1
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process()->connection())
 

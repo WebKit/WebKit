@@ -2,6 +2,16 @@
 
         Reviewed by Maciej Stachowiak.
 
+        Enable coalesced wheel events
+        <rdar://problem/9444786>
+
+        * UIProcess/WebPageProxy.cpp:
+        Flip the switch for coalescing wheel events rather than dropping them.
+
+2011-05-24  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Maciej Stachowiak.
+
         Additional sandbox extension required for quarantine database
         <rdar://problem/9397494>
         https://bugs.webkit.org/show_bug.cgi?id=61405
