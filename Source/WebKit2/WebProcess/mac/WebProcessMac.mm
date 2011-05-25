@@ -31,6 +31,7 @@
 #import "WebPage.h"
 #import "WebProcessCreationParameters.h"
 #import "WebProcessProxyMessages.h"
+#import "SecItemShimMethods.h"
 #import <WebCore/FileSystem.h>
 #import <WebCore/LocalizedStrings.h>
 #import <WebCore/MemoryCache.h>
@@ -42,12 +43,6 @@
 #import <mach/mach.h>
 #import <mach/mach_error.h>
 #import <objc/runtime.h>
-
-#if defined(BUILDING_ON_SNOW_LEOPARD)
-#import "KeychainItemShimMethods.h"
-#else
-#import "SecItemShimMethods.h"
-#endif
 
 #if ENABLE(WEB_PROCESS_SANDBOX)
 #import <sandbox.h>
@@ -247,9 +242,7 @@ void WebProcess::platformInitializeWebProcess(const WebProcessCreationParameters
 
 void WebProcess::initializeShim()
 {
-#if defined(BUILDING_ON_SNOW_LEOPARD)
-    initializeKeychainItemShim();
-#else
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
     initializeSecItemShim();
 #endif
 }
