@@ -1,3 +1,28 @@
+2011-05-25  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        REGRESSION (WebKit2): Crash in Flash on USA Today photo gallery
+        https://bugs.webkit.org/show_bug.cgi?id=61428
+        <rdar://problem/9457006>
+
+        Reviewed by Adam Roben.
+
+        The crash occurs when Flash posts a message to a window that it
+        creates, and in processing the message, it calls NPN_Evaluate to
+        evaluate JavaScript that removes the plug-in from the page. Flash then
+        crashes when we return to Flash code.
+
+        * Platform/WorkItem.h:
+        (DerefWorkItem::DerefWorkItem):
+        Initialize m_ptr.
+        (DerefWorkItem::execute):
+        Deref the object.
+        (WorkItem::createDeref):
+        Create and return a DerefWorkItem.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::unprotectPluginFromDestruction):
+        If the PluginView has only one reference left, deref it asynchronously.
+
 2011-05-25  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Anders Carlsson.

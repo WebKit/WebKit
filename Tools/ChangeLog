@@ -1,3 +1,38 @@
+2011-05-25  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        REGRESSION (WebKit2): Crash in Flash on USA Today photo gallery
+        https://bugs.webkit.org/show_bug.cgi?id=61428
+        <rdar://problem/9457006>
+
+        Reviewed by Adam Roben.
+
+        The crash occurs when Flash posts a message to a window that it
+        creates, and in processing the message, it calls NPN_Evaluate to
+        evaluate JavaScript that removes the plug-in from the page. Flash then
+        crashes when we return to Flash code.
+
+        This test emulates that behavior.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/CallJSThatDestroysPlugin.cpp: Added.
+        (CallJSThatDestroysPlugin::CallJSThatDestroysPlugin):
+        Initialize member vars.
+        (CallJSThatDestroysPlugin::~CallJSThatDestroysPlugin):
+        Remove our custom property from the message window, and destroy it.
+        (CallJSThatDestroysPlugin::NPP_Destroy):
+        Set m_isDestroyed, log that the plug-in was destroyed, and notify the
+        layout test controller that we're done.
+        (wndProc):
+        Get the PluginTest object, and call its runTest() function.
+        (CallJSThatDestroysPlugin::NPP_New):
+        Setup the test: register a class for the message-only window, create
+        it, and post a message to it to run the test.
+        (CallJSThatDestroysPlugin::runTest):
+        Execute JS that removes the plug-in from the page, and if we're not
+        destroyed, log a success message.
+
+        * DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.vcproj:
+        Add new test to project.
+
 2011-05-25  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

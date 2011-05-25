@@ -1129,7 +1129,17 @@ void PluginView::protectPluginFromDestruction()
 
 void PluginView::unprotectPluginFromDestruction()
 {
-    if (!m_isBeingDestroyed)
+    if (m_isBeingDestroyed)
+        return;
+
+    // A plug-in may ask us to evaluate JavaScript that removes the plug-in from the
+    // page, but expect the object to still be alive when the call completes. Flash,
+    // for example, may crash if the plug-in is destroyed and we return to code for
+    // the destroyed object higher on the stack. To prevent this, if the plug-in has
+    // only one remaining reference, call deref() asynchronously.
+    if (hasOneRef())
+        RunLoop::main()->scheduleWork(WorkItem::createDeref(this));
+    else
         deref();
 }
 
