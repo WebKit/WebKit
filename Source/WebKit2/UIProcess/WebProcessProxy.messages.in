@@ -37,6 +37,10 @@ messages -> WebProcessProxy {
     SecItemAdd(WebKit::SecItemRequestData query) -> (WebKit::SecItemResponseData result)
     SecItemUpdate(WebKit::SecItemRequestData query) -> (WebKit::SecItemResponseData result)
     SecItemDelete(WebKit::SecItemRequestData query) -> (WebKit::SecItemResponseData result)
+    
+    SecKeychainItemCopyContent(WebKit::SecKeychainItemRequestData query) -> (WebKit::SecKeychainItemResponseData result)
+    SecKeychainItemCreateFromContent(WebKit::SecKeychainItemRequestData query) -> (WebKit::SecKeychainItemResponseData result)
+    SecKeychainItemModifyContent(WebKit::SecKeychainItemRequestData query) -> (WebKit::SecKeychainItemResponseData result)
 #endif
 
 }
