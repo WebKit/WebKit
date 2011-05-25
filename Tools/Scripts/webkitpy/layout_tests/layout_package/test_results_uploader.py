@@ -34,6 +34,8 @@ import mimetypes
 import socket
 import urllib2
 
+from webkitpy.common.net.networktransaction import NetworkTransaction
+
 def get_mime_type(filename):
     return mimetypes.guess_type(filename)[0] or 'application/octet-stream'
 
@@ -99,6 +101,7 @@ class TestResultsUploader:
         orig_timeout = socket.getdefaulttimeout()
         try:
             socket.setdefaulttimeout(timeout_seconds)
-            self._upload_files(params, file_objs)
+            NetworkTransaction(timeout_seconds=timeout_seconds).run(
+                lambda: self._upload_files(params, file_objs))
         finally:
             socket.setdefaulttimeout(orig_timeout)

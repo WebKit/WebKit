@@ -1,3 +1,17 @@
+2011-05-25  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        webkitpy's NetworkTransaction shouldn't use mechanize
+        https://bugs.webkit.org/show_bug.cgi?id=61450
+
+        mechanize.HTTPError is just an alias for urllib2.HTTPError, so
+        use urllib2 directly.  Re-add NetworkTransaction to
+        test_results_uploader.py (reverting r87124).
+
+        * Scripts/webkitpy/common/net/networktransaction.py:
+        * Scripts/webkitpy/layout_tests/layout_package/test_results_uploader.py:
+
 2011-05-25  Kevin Ollivier  <kevino@theolliviers.com>
 
         [Chromium] Unreviewed build fix. Do not define WTF/JS_EXPORT_PRIVATE to JS_EXPORTDATA

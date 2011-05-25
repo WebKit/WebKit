@@ -28,6 +28,7 @@
 
 import logging
 import time
+import urllib2
 
 from webkitpy.common.system.deprecated_logging import log
 
@@ -49,12 +50,10 @@ class NetworkTransaction(object):
     def run(self, request):
         self._total_sleep = 0
         self._backoff_seconds = self._initial_backoff_seconds
-        from webkitpy.thirdparty.autoinstalled import mechanize
         while True:
             try:
                 return request()
-            # FIXME: We should catch urllib2.HTTPError here too.
-            except mechanize.HTTPError, e:
+            except urllib2.HTTPError, e:
                 if self._convert_404_to_None and e.code == 404:
                     return None
                 self._check_for_timeout()
