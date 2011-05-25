@@ -2057,6 +2057,9 @@ void WebPageProxy::runBeforeUnloadConfirmPanel(const String& message, uint64_t f
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
 
+    // Since runBeforeUnloadConfirmPanel() can spin a nested run loop we need to turn off the responsiveness timer.
+    process()->responsivenessTimer()->stop();
+
     shouldClose = m_uiClient.runBeforeUnloadConfirmPanel(this, message, frame);
 }
 
