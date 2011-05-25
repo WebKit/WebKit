@@ -697,8 +697,6 @@ PASS inner.escape.isInner is true
 PASS inner.escape.constructor.isInner is true
 PASS inner.eval.isInner is true
 PASS inner.eval.constructor.isInner is true
-PASS inner.execScript.isInner is true
-PASS inner.execScript.constructor.isInner is true
 PASS inner.find.isInner is true
 PASS inner.find.constructor.isInner is true
 FAIL inner.focus.isInner should be true. Was false.
