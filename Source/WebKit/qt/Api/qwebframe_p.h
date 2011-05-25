@@ -108,6 +108,8 @@ public:
     void emitUrlChanged();
     void _q_orientationChanged();
 
+    void didClearWindowObject();
+
     QWebFrame *q;
     Qt::ScrollBarPolicy horizontalScrollBarPolicy;
     Qt::ScrollBarPolicy verticalScrollBarPolicy;
@@ -126,6 +128,11 @@ public:
 
 #if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
     QtMobility::QOrientationSensor m_orientation;
+#endif
+
+private:
+#if USE(JSC)
+    void addQtSenderToGlobalObject();
 #endif
 };
 

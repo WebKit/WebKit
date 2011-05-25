@@ -763,7 +763,7 @@ void FrameLoaderClientQt::dispatchDidClearWindowObjectInWorld(DOMWrapperWorld* w
         return;
 
     if (m_webFrame)
-        emit m_webFrame->javaScriptWindowObjectCleared();
+        m_webFrame->d->didClearWindowObject();
 }
 
 void FrameLoaderClientQt::documentElementAvailable()

@@ -1838,26 +1838,17 @@ void QtConnectionObject::execute(void **argv)
                             l.append(jsUndefined());
                         }
                     }
-                    // Stuff in the __qt_sender property, if we can
-                    ScopeChainNode* oldsc = 0;
-                    JSFunction* fimp = 0;
-                    if (m_funcObject->inherits(&JSFunction::s_info)) {
-                        fimp = static_cast<JSFunction*>(m_funcObject.get());
 
-                        JSObject* qt_sender = QtInstance::getQtInstance(sender(), ro, QScriptEngine::QtOwnership)->createRuntimeObject(exec);
-                        JSObject* wrapper = constructEmptyObject(exec, createEmptyObjectStructure(exec->globalData(), jsNull()));
-                        PutPropertySlot slot;
-                        wrapper->put(exec, Identifier(exec, "__qt_sender__"), qt_sender, slot);
-                        oldsc = fimp->scope();
-                        fimp->setScope(exec->globalData(), oldsc->push(wrapper));
-                    }
+                    const bool withQtSenderStack = m_funcObject->inherits(&JSFunction::s_info);
+                    if (withQtSenderStack)
+                        QtInstance::qtSenderStack()->push(QObject::sender());
 
                     CallData callData;
                     CallType callType = m_funcObject->getCallData(callData);
                     call(exec, m_funcObject.get(), callType, callData, m_thisObject.get(), l);
 
-                    if (fimp)
-                        fimp->setScope(exec->globalData(), oldsc);
+                    if (withQtSenderStack)
+                        QtInstance::qtSenderStack()->pop();
                 }
             }
         }

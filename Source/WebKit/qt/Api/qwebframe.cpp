@@ -22,6 +22,7 @@
 #include "qwebframe.h"
 
 #if USE(JSC)
+#include "APICast.h"
 #include "BridgeJSC.h"
 #include "CallFrame.h"
 #elif USE(V8)
@@ -49,10 +50,13 @@
 #include "IconDatabase.h"
 #include "InspectorController.h"
 #if USE(JSC)
+#include "JavaScript.h"
 #include "JSDOMBinding.h"
 #include "JSDOMWindowBase.h"
 #include "JSLock.h"
 #include "JSObject.h"
+#include "JSRetainPtr.h"
+#include "OpaqueJSString.h"
 #elif USE(V8)
 #include "V8DOMWrapper.h"
 #include "V8DOMWindowShell.h"
@@ -471,6 +475,49 @@ void QWebFramePrivate::_q_orientationChanged()
     frame->sendOrientationChangeEvent(orientation);
 #endif
 }
+
+void QWebFramePrivate::didClearWindowObject()
+{
+#if USE(JSC)
+    if (page->settings()->testAttribute(QWebSettings::JavascriptEnabled))
+        addQtSenderToGlobalObject();
+#endif
+    emit q->javaScriptWindowObjectCleared();
+}
+
+#if USE(JSC)
+static JSValueRef qtSenderCallback(JSContextRef context, JSObjectRef, JSObjectRef, size_t, const JSValueRef[], JSValueRef*)
+{
+    QObject* sender = JSC::Bindings::QtInstance::qtSenderStack()->top();
+    if (!sender)
+        return JSValueMakeUndefined(context);
+
+    JSC::ExecState* exec = ::toJS(context);
+    RefPtr<JSC::Bindings::RootObject> rootObject = JSC::Bindings::findRootObject(exec->dynamicGlobalObject());
+    JSC::JSObject* jsSender = JSC::Bindings::QtInstance::getQtInstance(sender, rootObject, QScriptEngine::QtOwnership)->createRuntimeObject(exec);
+    return ::toRef(jsSender);
+}
+
+void QWebFramePrivate::addQtSenderToGlobalObject()
+{
+    JSC::JSLock lock(JSC::SilenceAssertionsOnly);
+
+    JSDOMWindow* window = toJSDOMWindow(frame, mainThreadNormalWorld());
+    Q_ASSERT(window);
+
+    JSC::ExecState* exec = window->globalExec();
+    Q_ASSERT(exec);
+
+    JSContextRef context = ::toRef(exec);
+    JSRetainPtr<JSStringRef> propertyName(Adopt, JSStringCreateWithUTF8CString("__qt_sender__"));
+    JSObjectRef function = JSObjectMakeFunctionWithCallback(context, propertyName.get(), qtSenderCallback);
+
+    // JSC public API doesn't support setting a Getter for a property of a given object, https://bugs.webkit.org/show_bug.cgi?id=61374.
+    window->defineGetter(exec, propertyName.get()->identifier(&exec->globalData()), ::toJS(function),
+                         JSC::ReadOnly | JSC::DontEnum | JSC::DontDelete);
+}
+#endif
+
 /*!
     \class QWebFrame
     \since 4.4

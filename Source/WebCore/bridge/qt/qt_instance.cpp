@@ -44,6 +44,9 @@ namespace Bindings {
 typedef QMultiHash<void*, QtInstance*> QObjectInstanceMap;
 static QObjectInstanceMap cachedInstances;
 
+// Used for implementing '__qt_sender__'.
+Q_GLOBAL_STATIC(QtInstance::QtSenderStack, senderStack)
+
 // Derived RuntimeObject
 class QtRuntimeObject : public RuntimeObject {
 public:
@@ -319,6 +322,11 @@ JSValue QtInstance::booleanValue() const
 JSValue QtInstance::valueOf(ExecState* exec) const
 {
     return stringValue(exec);
+}
+
+QtInstance::QtSenderStack* QtInstance::qtSenderStack()
+{
+    return senderStack();
 }
 
 // In qt_runtime.cpp

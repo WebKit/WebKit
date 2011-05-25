@@ -1,3 +1,37 @@
+2011-05-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] JSC bridge: implement __qt_sender__ without using Scope Chain
+        https://bugs.webkit.org/show_bug.cgi?id=61343
+
+        Create a '__qt_sender__' property in the global object, that returns the top of
+        the qtSenderStack. This is an alternative implementation for the feature of
+        providing a way for a function (acting as a Qt 'slot') discover which object
+        emitted the signal that caused it to be executed.
+
+        This reduces the coupling of the Qt bridge and JSC internal implementation. The
+        patch tries to use as much JSC public API as possible.
+
+        This behavior is covered by the tst_QWebFrame::connectAndDisconnect() auto test.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::dispatchDidClearWindowObjectInWorld):
+        Instead of emitting the QWebPage::javaScriptWindowObjectCleared() directly, calls
+        a QWebPagePrivate function to do it.
+
+        * Api/qwebframe_p.h:
+        * Api/qwebframe.cpp:
+        (QWebFramePrivate::didClearedWindowObject):
+        Before emitting the signal mentioned, adds the '__qt_sender__' to the fresh
+        global object.
+
+        (qtSenderCallback):
+        Returns the JSObjectRef corresponding to the top of qtSenderStack.
+
+        (QWebFramePrivate::addQtSenderToGlobalObject):
+        Create a property with a qtSenderCallback as getter function in the global object.
+
 2011-05-25  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Eric Carlson.

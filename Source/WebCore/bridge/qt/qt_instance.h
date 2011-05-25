@@ -22,6 +22,7 @@
 
 #include "BridgeJSC.h"
 #include "runtime_root.h"
+#include <QStack>
 #include <QtScript/qscriptengine.h>
 #include <qhash.h>
 #include <qpointer.h>
@@ -70,6 +71,18 @@ public:
     void removeCachedMethod(JSObject*);
 
     static QtInstance* getInstance(JSObject*);
+
+    class QtSenderStack {
+    public:
+        QObject* top() const { return m_stack.isEmpty() ? 0 : m_stack.top(); }
+        void push(QObject* object) { m_stack.push(object); }
+        void pop() { Q_ASSERT(!m_stack.isEmpty()); m_stack.pop(); }
+    private:
+        QStack<QObject*> m_stack;
+    };
+
+    // Used to implement '__qt_sender__'.
+    static QtSenderStack* qtSenderStack();
 
 private:
     static PassRefPtr<QtInstance> create(QObject *instance, PassRefPtr<RootObject> rootObject, QScriptEngine::ValueOwnership ownership)
