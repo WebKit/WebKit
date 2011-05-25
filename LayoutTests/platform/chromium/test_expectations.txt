@@ -1022,7 +1022,8 @@ BUGCR81605 WIN LINUX GPU : fast/canvas/canvas-text-baseline.html = IMAGE
 // Skia/GPU Anti-aliasing
 BUGCR78458 WIN LINUX GPU : fast/canvas/arc360.html = IMAGE
 BUGCR78458 WIN LINUX GPU : fast/canvas/quadraticCurveTo.xml = IMAGE
-BUGCR78458 WIN LINUX GPU : fast/canvas/canvas-composite.html = IMAGE
+
+BUGWK61470 : fast/canvas/canvas-composite.html = IMAGE
 
 // -----------------------------------------------------------------
 // Other failures
