@@ -25,6 +25,8 @@
 #import "config.h"
 #import "SecItemShimMethods.h"
 
+#if !defined(BUILDING_ON_SNOW_LEOPARD)
+
 #import "SecItemRequestData.h"
 #import "SecItemResponseData.h"
 #import "WebProcess.h"
@@ -168,3 +170,5 @@ void initializeSecItemShim()
 }
 
 } // namespace WebKit
+
+#endif // !BUILDING_ON_SNOW_LEOPARD
