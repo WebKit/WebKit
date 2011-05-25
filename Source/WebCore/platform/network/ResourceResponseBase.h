@@ -132,7 +132,6 @@ protected:
     enum InitLevel {
         Uninitialized,
         CommonFieldsOnly,
-        CommonAndUncommonFields,
         AllFields
     };
 

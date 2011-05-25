@@ -1,3 +1,42 @@
+2011-05-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87229.
+        http://trac.webkit.org/changeset/87229
+        https://bugs.webkit.org/show_bug.cgi?id=61445
+
+        Lots of tests crashing in
+        CFNetwork!URLResponse::createFilenameFromResponseHeaders on
+        Windows XP (Requested by aroben on #webkit).
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::suggestedFilename):
+        (WebCore::ResourceResponseBase::setSuggestedFilename):
+        (WebCore::ResourceResponseBase::httpStatusText):
+        (WebCore::ResourceResponseBase::setHTTPStatusText):
+        (WebCore::ResourceResponseBase::httpHeaderField):
+        (WebCore::ResourceResponseBase::setHTTPHeaderField):
+        (WebCore::ResourceResponseBase::httpHeaderFields):
+        (WebCore::ResourceResponseBase::isAttachment):
+        (WebCore::ResourceResponseBase::setLastModifiedDate):
+        (WebCore::ResourceResponseBase::lastModifiedDate):
+        (WebCore::ResourceResponseBase::wasCached):
+        (WebCore::ResourceResponseBase::connectionReused):
+        (WebCore::ResourceResponseBase::setConnectionReused):
+        (WebCore::ResourceResponseBase::connectionID):
+        (WebCore::ResourceResponseBase::setConnectionID):
+        (WebCore::ResourceResponseBase::resourceLoadTiming):
+        (WebCore::ResourceResponseBase::setResourceLoadTiming):
+        (WebCore::ResourceResponseBase::resourceLoadInfo):
+        (WebCore::ResourceResponseBase::setResourceLoadInfo):
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformLazyInit):
+        * platform/network/mac/ResourceResponseMac.mm:
+        (WebCore::ResourceResponse::platformLazyInit):
+
 2011-05-25  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Reviewed by Antonio Gomes.

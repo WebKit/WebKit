@@ -43,7 +43,7 @@ using namespace std;
 namespace WebCore {
 
 static CFStringRef const commonHeaderFields[] = {
-    CFSTR("Age"), CFSTR("Cache-Control"), CFSTR("Content-Type"), CFSTR("Date"), CFSTR("Etag"), CFSTR("Expires"), CFSTR("Last-Modified"), CFSTR("Pragma")
+    CFSTR("Age"), CFSTR("Cache-Control"), CFSTR("Date"), CFSTR("Etag"), CFSTR("Expires"), CFSTR("Last-Modified"), CFSTR("Pragma")
 };
 static const int numCommonHeaderFields = sizeof(commonHeaderFields) / sizeof(CFStringRef);
 
@@ -98,6 +98,9 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
 
         m_lastModifiedDate = toTimeT(CFURLResponseGetLastModifiedDate(m_cfResponse.get()));
 
+        RetainPtr<CFStringRef> suggestedFilename(AdoptCF, CFURLResponseCopySuggestedFilename(m_cfResponse.get()));
+        m_suggestedFilename = suggestedFilename.get();
+
         CFHTTPMessageRef httpResponse = CFURLResponseGetHTTPResponse(m_cfResponse.get());
         if (httpResponse) {
             m_httpStatusCode = CFHTTPMessageGetResponseStatusCode(httpResponse);
@@ -113,7 +116,7 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
             m_httpStatusCode = 0;
     }
 
-    if (m_initLevel < CommonAndUncommonFields && initLevel >= CommonAndUncommonFields) {
+    if (m_initLevel < AllFields && initLevel >= AllFields) {
         CFHTTPMessageRef httpResponse = CFURLResponseGetHTTPResponse(m_cfResponse.get());
         if (httpResponse) {
             RetainPtr<CFStringRef> statusLine(AdoptCF, CFHTTPMessageCopyResponseStatusLine(httpResponse));
@@ -127,11 +130,6 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
             for (int i = 0; i < headerCount; ++i)
                 m_httpHeaderFields.set((CFStringRef)keys[i], (CFStringRef)values[i]);
         }
-    }
-    
-    if (m_initLevel < AllFields && initLevel >= AllFields) {
-        RetainPtr<CFStringRef> suggestedFilename(AdoptCF, CFURLResponseCopySuggestedFilename(m_cfResponse.get()));
-        m_suggestedFilename = suggestedFilename.get();
     }
 
     m_initLevel = initLevel;
