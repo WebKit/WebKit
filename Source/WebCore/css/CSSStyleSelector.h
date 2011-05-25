@@ -191,6 +191,7 @@ public:
             Features();
             ~Features();
             HashSet<AtomicStringImpl*> idsInRules;
+            HashSet<AtomicStringImpl*> attrsInRules;
             OwnPtr<RuleSet> siblingRules;
             bool usesFirstLineRules;
             bool usesBeforeAfterRules;
@@ -261,8 +262,8 @@ public:
             SelectorChecker(Document*, bool strictParsing);
 
             bool checkSelector(CSSSelector*, Element*) const;
-            SelectorMatch checkSelector(CSSSelector*, Element*, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
-            bool checkOneSelector(CSSSelector*, Element*, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle*, RenderStyle* elementParentStyle) const;
+            SelectorMatch checkSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* = 0, RenderStyle* elementParentStyle = 0) const;
+            bool checkOneSelector(CSSSelector*, Element*, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle*, RenderStyle* elementParentStyle) const;
             bool checkScrollbarPseudoClass(CSSSelector*, PseudoId& dynamicPseudo) const;
             static bool fastCheckSelector(const CSSSelector*, const Element*);
 
@@ -359,7 +360,6 @@ public:
         bool m_matchAuthorAndUserStyles;
         
         RefPtr<CSSFontSelector> m_fontSelector;
-        HashSet<AtomicStringImpl*> m_selectorAttrs;
         Vector<CSSMutableStyleDeclaration*> m_additionalAttributeStyleDecls;
         Vector<MediaQueryResult*> m_viewportDependentMediaQueryResults;
 

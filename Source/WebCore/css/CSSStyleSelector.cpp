@@ -961,7 +961,7 @@ EInsideLink CSSStyleSelector::SelectorChecker::determineLinkStateSlowCase(Elemen
 bool CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* element) const
 {
     PseudoId dynamicPseudo = NOPSEUDO;
-    return checkSelector(sel, element, 0, dynamicPseudo, false, false) == SelectorMatches;
+    return checkSelector(sel, element, dynamicPseudo, false, false) == SelectorMatches;
 }
 
 static const unsigned cStyleSearchThreshold = 10;
@@ -2051,7 +2051,7 @@ inline bool CSSStyleSelector::checkSelector(const RuleData& ruleData)
     }
 
     // Slow path.
-    SelectorMatch match = m_checker.checkSelector(ruleData.selector(), m_element, &m_selectorAttrs, m_dynamicPseudo, false, false, style(), m_parentNode ? m_parentNode->renderStyle() : 0);
+    SelectorMatch match = m_checker.checkSelector(ruleData.selector(), m_element, m_dynamicPseudo, false, false, style(), m_parentNode ? m_parentNode->renderStyle() : 0);
     if (match != SelectorMatches)
         return false;
     if (m_checker.m_pseudoStyle != NOPSEUDO && m_checker.m_pseudoStyle != m_dynamicPseudo)
@@ -2180,7 +2180,7 @@ bool CSSStyleSelector::SelectorChecker::fastCheckSelector(const CSSSelector* sel
 // * SelectorMatches         - the selector matches the element e
 // * SelectorFailsLocally    - the selector fails for the element e
 // * SelectorFailsCompletely - the selector fails for e and any sibling or ancestor of e
-CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* e, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
+CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector(CSSSelector* sel, Element* e, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
 #if ENABLE(SVG)
     // Spec: CSS2 selectors cannot be applied to the (conceptually) cloned DOM tree
@@ -2190,7 +2190,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
 #endif
 
     // first selector has to match
-    if (!checkOneSelector(sel, e, selectorAttrs, dynamicPseudo, isSubSelector, encounteredLink, elementStyle, elementParentStyle))
+    if (!checkOneSelector(sel, e, dynamicPseudo, isSubSelector, encounteredLink, elementStyle, elementParentStyle))
         return SelectorFailsLocally;
 
     // The rest of the selectors has to match
@@ -2224,7 +2224,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
                 if (!n || !n->isElementNode())
                     return SelectorFailsCompletely;
                 e = static_cast<Element*>(n);
-                SelectorMatch match = checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink);
+                SelectorMatch match = checkSelector(sel, e, dynamicPseudo, false, encounteredLink);
                 if (match != SelectorFailsLocally)
                     return match;
             }
@@ -2235,7 +2235,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
             if (!n || !n->isElementNode())
                 return SelectorFailsCompletely;
             e = static_cast<Element*>(n);
-            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink);
+            return checkSelector(sel, e, dynamicPseudo, false, encounteredLink);
         }
         case CSSSelector::DirectAdjacent:
         {
@@ -2251,7 +2251,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
                 return SelectorFailsLocally;
             e = static_cast<Element*>(n);
             m_matchVisitedPseudoClass = false;
-            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink); 
+            return checkSelector(sel, e, dynamicPseudo, false, encounteredLink);
         }
         case CSSSelector::IndirectAdjacent:
             if (!m_collectRulesOnly && e->parentNode() && e->parentNode()->isElementNode()) {
@@ -2267,7 +2267,7 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
                     return SelectorFailsLocally;
                 e = static_cast<Element*>(n);
                 m_matchVisitedPseudoClass = false;
-                SelectorMatch match = checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink);
+                SelectorMatch match = checkSelector(sel, e, dynamicPseudo, false, encounteredLink);
                 if (match != SelectorFailsLocally)
                     return match;
             };
@@ -2279,14 +2279,14 @@ CSSStyleSelector::SelectorMatch CSSStyleSelector::SelectorChecker::checkSelector
             if ((elementStyle || m_collectRulesOnly) && dynamicPseudo != NOPSEUDO && dynamicPseudo != SELECTION &&
                 !((RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER) && sel->m_match == CSSSelector::PseudoClass))
                 return SelectorFailsCompletely;
-            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, true, encounteredLink, elementStyle, elementParentStyle);
+            return checkSelector(sel, e, dynamicPseudo, true, encounteredLink, elementStyle, elementParentStyle);
         case CSSSelector::ShadowDescendant:
         {
             Node* shadowHostNode = e->shadowAncestorNode();
             if (shadowHostNode == e || !shadowHostNode->isElementNode())
                 return SelectorFailsCompletely;
             e = static_cast<Element*>(shadowHostNode);
-            return checkSelector(sel, e, selectorAttrs, dynamicPseudo, false, encounteredLink);
+            return checkSelector(sel, e, dynamicPseudo, false, encounteredLink);
         }
     }
 
@@ -2360,7 +2360,7 @@ static bool htmlAttributeHasCaseInsensitiveValue(const QualifiedName& attr)
     return isPossibleHTMLAttr && htmlCaseInsensitiveAttributesSet->contains(attr.localName().impl());
 }
 
-bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, HashSet<AtomicStringImpl*>* selectorAttrs, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
+bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Element* e, PseudoId& dynamicPseudo, bool isSubSelector, bool encounteredLink, RenderStyle* elementStyle, RenderStyle* elementParentStyle) const
 {
     ASSERT(e);
     if (!e)
@@ -2381,8 +2381,6 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
         // FIXME: Handle the case were elementStyle is 0.
         if (elementStyle && (!e->isStyledElement() || (!static_cast<StyledElement*>(e)->isMappedAttribute(attr) && attr != typeAttr && attr != readonlyAttr))) {
             elementStyle->setAffectedByAttributeSelectors(); // Special-case the "type" and "readonly" attributes so input form controls can share style.
-            if (selectorAttrs)
-                selectorAttrs->add(attr.localName().impl());
         }
 
         const AtomicString& value = e->getAttribute(attr);
@@ -2456,7 +2454,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 // the parser enforces that this never occurs
                 ASSERT(subSel->pseudoType() != CSSSelector::PseudoNot);
 
-                if (!checkOneSelector(subSel, e, selectorAttrs, dynamicPseudo, true, encounteredLink, elementStyle, elementParentStyle))
+                if (!checkOneSelector(subSel, e, dynamicPseudo, true, encounteredLink, elementStyle, elementParentStyle))
                     return true;
             }
         } else if (dynamicPseudo != NOPSEUDO && (RenderScrollbar::scrollbarForStyleResolve() || dynamicPseudo == SCROLLBAR_CORNER || dynamicPseudo == RESIZER)) {
@@ -2765,7 +2763,7 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 break;
             case CSSSelector::PseudoAny:
                 for (CSSSelector* selector = sel->selectorList()->first(); selector; selector = CSSSelectorList::next(selector)) {
-                    if (checkSelector(selector, e, selectorAttrs, dynamicPseudo, true, encounteredLink, elementStyle, elementParentStyle) == SelectorMatches)
+                    if (checkSelector(selector, e, dynamicPseudo, true, encounteredLink, elementStyle, elementParentStyle) == SelectorMatches)
                         return true;
                 }
                 break;
@@ -3234,6 +3232,21 @@ static inline void collectFeaturesFromSelector(CSSStyleSelector::Features& featu
 {
     if (selector->m_match == CSSSelector::Id && !selector->value().isEmpty())
         features.idsInRules.add(selector->value().impl());
+    if (selector->hasAttribute()) {
+        switch (selector->m_match) {
+        case CSSSelector::Exact:
+        case CSSSelector::Set:
+        case CSSSelector::List:
+        case CSSSelector::Hyphen:
+        case CSSSelector::Contain:
+        case CSSSelector::Begin:
+        case CSSSelector::End:
+            features.attrsInRules.add(selector->attribute().localName().impl());
+            break;
+        default:
+            break;
+        }
+    }
     switch (selector->pseudoType()) {
     case CSSSelector::PseudoFirstLine:
         features.usesFirstLineRules = true;
@@ -4222,7 +4235,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                 m_style->setContent(m_element->getAttribute(attr).impl(), didSet);
                 didSet = true;
                 // register the fact that the attribute value affects the style
-                m_selectorAttrs.add(attr.localName().impl());
+                m_features.attrsInRules.add(attr.localName().impl());
                 break;
             }
             case CSSPrimitiveValue::CSS_URI: {
@@ -6521,7 +6534,7 @@ Color CSSStyleSelector::getColorFromPrimitiveValue(CSSPrimitiveValue* primitiveV
 
 bool CSSStyleSelector::hasSelectorForAttribute(const AtomicString &attrname) const
 {
-    return m_selectorAttrs.contains(attrname.impl());
+    return m_features.attrsInRules.contains(attrname.impl());
 }
 
 void CSSStyleSelector::addViewportDependentMediaQueryResult(const MediaQueryExp* expr, bool result)

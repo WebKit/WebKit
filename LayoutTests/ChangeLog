@@ -1,3 +1,27 @@
+2011-05-25  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
+
+        Reviewed by David Hyatt.
+
+        Selector matching doesn't update when DOM changes ("[data-a=x] #x")
+        https://bugs.webkit.org/show_bug.cgi?id=60752
+        
+        Added test cases for all the attribute selector types (CSS2.1 & CSS3).
+
+        * fast/css/attribute-selector-begin-dynamic-no-elementstyle-expected.txt: Added.
+        * fast/css/attribute-selector-begin-dynamic-no-elementstyle.html: Added.
+        * fast/css/attribute-selector-contain-dynamic-no-elementstyle-expected.txt: Added.
+        * fast/css/attribute-selector-contain-dynamic-no-elementstyle.html: Added.
+        * fast/css/attribute-selector-end-dynamic-no-elementstyle-expected.txt: Added.
+        * fast/css/attribute-selector-end-dynamic-no-elementstyle.html: Added.
+        * fast/css/attribute-selector-exact-dynamic-no-elementstyle-expected.txt: Added.
+        * fast/css/attribute-selector-exact-dynamic-no-elementstyle.html: Added.
+        * fast/css/attribute-selector-hyphen-dynamic-no-elementstyle-expected.txt: Added.
+        * fast/css/attribute-selector-hyphen-dynamic-no-elementstyle.html: Added.
+        * fast/css/attribute-selector-list-dynamic-no-elementstyle-expected.txt: Added.
+        * fast/css/attribute-selector-list-dynamic-no-elementstyle.html: Added.
+        * fast/css/attribute-selector-set-dynamic-no-elementstyle-expected.txt: Added.
+        * fast/css/attribute-selector-set-dynamic-no-elementstyle.html: Added.
+
 2011-05-25  Adam Klein  <adamk@chromium.org>
 
         Unreviewed. Update chromium expectations after r87307.

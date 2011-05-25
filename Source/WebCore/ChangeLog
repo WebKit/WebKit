@@ -1,3 +1,42 @@
+2011-05-25  Kulanthaivel Palanichamy  <kulanthaivel@codeaurora.org>
+
+        Reviewed by David Hyatt.
+
+        Selector matching doesn't update when DOM changes ("[data-a=x] #x")
+        https://bugs.webkit.org/show_bug.cgi?id=60752
+
+        Currently CSSStyleSelector maintains a HashSet of attributes (m_selectorAttrs)
+        which are used in CSS attribute selectors to determine the need for style
+        recalculation whenever element attributes are manipulated in DOM.
+        In certain conditions (element with no style, element is styled and attribute
+        is not a mapped attribute, attribute is of type 'type' or read-only)
+        even when attribute selector matches for an element, the attribute is not
+        added to m_selectorAttrs. This results in missing style recalculations
+        when a DOM element attribute is changed and is not found in m_selectorAttrs.
+
+        Removing the above said conditions in
+        CSSStyleSelector::SelectorChecker::checkOneSelector() for registering
+        attributes in m_selectorAttrs will solve this issue. But this particular
+        function is called numerous times which triggers adding duplicate attributes
+        again and again.
+
+        This patch follows the approach taken for collecting ids in selectors, where
+        all the attributes in selectors are added to a HashSet at the time of adding
+        style rules to CSSStyleSelector from StyleSheets and when
+        CSSStyleSelector::hasSelectorForAttribute() is called, the attribute is
+        simply looked up in this pre-populated hash set.
+
+        Test: fast/css/attribute-selector-dynamic-no-elementstyle.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector):
+        (WebCore::CSSStyleSelector::checkSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        (WebCore::collectFeaturesFromSelector):
+        (WebCore::CSSStyleSelector::applyProperty):
+        (WebCore::CSSStyleSelector::hasSelectorForAttribute):
+        * css/CSSStyleSelector.h:
+
 2011-05-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by James Robinson.
