@@ -443,8 +443,8 @@ public:
     
     CSSStyleSelector* styleSelectorIfExists() const { return m_styleSelector.get(); }
 
-    bool usesViewSourceStyles() const { return m_usesViewSourceStyles; }
-    void setUsesViewSourceStyles(bool usesViewSourceStyles) { m_usesViewSourceStyles = usesViewSourceStyles; }
+    bool isViewSource() const { return m_isViewSource; }
+    void setIsViewSource(bool);
 
     bool sawElementsInKnownNamespaces() const { return m_sawElementsInKnownNamespaces; }
 
@@ -1371,7 +1371,7 @@ private:
     bool m_isXHTML;
     bool m_isHTML;
 
-    bool m_usesViewSourceStyles;
+    bool m_isViewSource;
     bool m_sawElementsInKnownNamespaces;
 
     bool m_usingGeolocation;

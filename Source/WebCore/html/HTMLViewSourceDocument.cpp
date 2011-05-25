@@ -52,7 +52,7 @@ HTMLViewSourceDocument::HTMLViewSourceDocument(Frame* frame, const KURL& url, co
     , m_type(mimeType)
 {
     setUsesBeforeAfterRules(true);
-    setUsesViewSourceStyles(true);
+    setIsViewSource(true);
 
     setCompatibilityMode(QuirksMode);
     lockCompatibilityMode();

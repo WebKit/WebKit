@@ -29,6 +29,7 @@
 #include "Page.h"
 #include "ScriptSourceCode.h"
 #include "ScriptValue.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -38,6 +39,11 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
     // FIXME: We should get this information from the document instead of the frame.
     if (m_frame->loader()->isSandboxed(SandboxScripts))
         return false;
+
+    if (m_frame->document() && m_frame->document()->isViewSource()) {
+        ASSERT(m_frame->document()->securityOrigin()->isUnique());
+        return true;
+    }
 
     Settings* settings = m_frame->settings();
     const bool allowed = m_frame->loader()->client()->allowJavaScript(settings && settings->isJavaScriptEnabled());

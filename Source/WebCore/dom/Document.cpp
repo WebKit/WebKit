@@ -405,7 +405,7 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     , m_useSecureKeyboardEntryWhenActive(false)
     , m_isXHTML(isXHTML)
     , m_isHTML(isHTML)
-    , m_usesViewSourceStyles(false)
+    , m_isViewSource(false)
     , m_sawElementsInKnownNamespaces(false)
     , m_usingGeolocation(false)
     , m_eventQueue(EventQueue::create(this))
@@ -1716,6 +1716,15 @@ PassRefPtr<CSSPrimitiveValueCache> Document::cssPrimitiveValueCache() const
     if (!m_cssPrimitiveValueCache)
         m_cssPrimitiveValueCache = CSSPrimitiveValueCache::create();
     return m_cssPrimitiveValueCache;
+}
+
+void Document::setIsViewSource(bool isViewSource)
+{
+    m_isViewSource = isViewSource;
+    if (!m_isViewSource)
+        return;
+
+    ScriptExecutionContext::setSecurityOrigin(SecurityOrigin::create(url(), SandboxOrigin));
 }
 
 void Document::createStyleSelector()

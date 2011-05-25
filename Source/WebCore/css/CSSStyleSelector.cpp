@@ -1207,7 +1207,7 @@ void CSSStyleSelector::matchUARules(int& firstUARule, int& lastUARule)
         matchRules(defaultQuirksStyle, firstUARule, lastUARule, false);
         
     // If document uses view source styles (in view source mode or in xml viewer mode), then we match rules from the view source style sheet.
-    if (m_checker.m_document->usesViewSourceStyles()) {
+    if (m_checker.m_document->isViewSource()) {
         if (!defaultViewSourceStyle)
             loadViewSourceStyle();
         matchRules(defaultViewSourceStyle, firstUARule, lastUARule, false);

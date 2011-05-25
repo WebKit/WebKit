@@ -1,3 +1,27 @@
+2011-05-25  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Put view-source documents in a unique origin and always allow them to run scripts. This ensures tools like
+        XMLViewer work even when scripts are disabled, while still providing the protections expected when scripts are disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=59113
+
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::canExecuteScripts): Check whether the document is viewing source, and allow scripts in that case.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::matchUARules):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::setIsViewSource): Renamed from setUsesViewSourceStyles(), set's a unique security origin if we are viewing source.
+        * dom/Document.h:
+        (WebCore::Document::isViewSource): Renamed from usesViewSourceStyles().
+        * html/HTMLViewSourceDocument.cpp:
+        (WebCore::HTMLViewSourceDocument::HTMLViewSourceDocument):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::receivedFirstData):
+        * xml/XMLTreeViewer.cpp:
+        (WebCore::XMLTreeViewer::transformDocumentToTreeView):
+
 2011-05-25  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by James Robinson.

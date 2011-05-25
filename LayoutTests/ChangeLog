@@ -1,3 +1,11 @@
+2011-05-25  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add new console output for https://bugs.webkit.org/show_bug.cgi?id=59113.
+
+        * http/tests/security/view-source-no-javascript-url-expected.txt:
+
 2011-05-25  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by James Robinson.

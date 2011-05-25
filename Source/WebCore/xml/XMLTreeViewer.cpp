@@ -70,12 +70,7 @@ bool XMLTreeViewer::hasNoStyleInformation() const
 
 void XMLTreeViewer::transformDocumentToTreeView()
 {
-    // FIXME: Temporary hack to ensure that we still display some of the document (and don't crash)
-    // when script is disabled. See https://bugs.webkit.org/show_bug.cgi?id=59113 for work on a
-    // better solution.
-    if (!m_document->frame()->script()->canExecuteScripts(NotAboutToExecuteScript))
-        return;
-
+    m_document->setIsViewSource(true);
     String scriptString(reinterpret_cast<const char*>(XMLViewer_js), sizeof(XMLViewer_js));
     m_document->frame()->script()->evaluate(ScriptSourceCode(scriptString));
     String noStyleMessage("This XML file does not appear to have any style information associated with it. The document tree is shown below.");
@@ -85,8 +80,6 @@ void XMLTreeViewer::transformDocumentToTreeView()
     RefPtr<Text> text = m_document->createTextNode(cssString);
     ExceptionCode exceptionCode;
     m_document->getElementById("xml-viewer-style")->appendChild(text, exceptionCode);
-
-    m_document->setUsesViewSourceStyles(true);
     m_document->styleSelectorChanged(RecalcStyleImmediately);
 }
 
