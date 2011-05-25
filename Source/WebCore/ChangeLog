@@ -1,3 +1,17 @@
+2011-05-25  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] QtWebKit crashes when dragging not loaded images
+        https://bugs.webkit.org/show_bug.cgi?id=61314
+
+        Checks if nativeImageForCurrentFrame is a valid pointer.
+
+        Test: http/tests/misc/drag-not-loaded-image.html
+
+        * platform/qt/DragImageQt.cpp:
+        (WebCore::createDragImageFromImage):
+
 2011-05-25  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Xan Lopez.

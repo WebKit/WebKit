@@ -63,7 +63,7 @@ DragImageRef dissolveDragImageToFraction(DragImageRef image, float)
 
 DragImageRef createDragImageFromImage(Image* image)
 {
-    if (!image)
+    if (!image || !image->nativeImageForCurrentFrame())
         return 0;
 
     return new QPixmap(*image->nativeImageForCurrentFrame());

@@ -1,3 +1,15 @@
+2011-05-25  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] QtWebKit crashes when dragging not loaded images
+        https://bugs.webkit.org/show_bug.cgi?id=61314
+
+        Checks if WebKit crashes when dragging an image not yet loaded.
+
+        * http/tests/misc/drag-not-loaded-image-expected.txt: Added.
+        * http/tests/misc/drag-not-loaded-image.html: Added.
+
 2011-05-25  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed. Skipped 3 new inspector tests that time out on gtk.
