@@ -167,15 +167,11 @@ void RenderMediaVolumeSliderContainer::layout()
 
     RenderBox* buttonBox = toRenderBox(previousSibling());
 
-    if (view())
-        view()->disableLayoutState();
+    LayoutStateDisabler layoutStateDisabler(view());
 
     IntPoint offset = theme()->volumeSliderOffsetFromMuteButton(buttonBox, IntSize(width(), height()));
     setX(offset.x() + buttonBox->offsetLeft());
     setY(offset.y() + buttonBox->offsetTop());
-
-    if (view())
-        view()->enableLayoutState();
 }
 
 inline MediaControlVolumeSliderContainerElement::MediaControlVolumeSliderContainerElement(HTMLMediaElement* mediaElement)

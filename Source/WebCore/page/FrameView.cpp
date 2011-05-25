@@ -978,26 +978,23 @@ void FrameView::layout(bool allowSubtree)
 
     m_actionScheduler->pause();
 
-    bool disableLayoutState = false;
-    if (subtree) {
-        RenderView* view = root->view();
-        disableLayoutState = view->shouldDisableLayoutStateForSubtree(root);
-        view->pushLayoutState(root);
-        if (disableLayoutState)
-            view->disableLayoutState();
-    }
-        
-    m_inLayout = true;
-    beginDeferredRepaints();
-    root->layout();
-    endDeferredRepaints();
-    m_inLayout = false;
+    {
+        bool disableLayoutState = false;
+        if (subtree) {
+            RenderView* view = root->view();
+            disableLayoutState = view->shouldDisableLayoutStateForSubtree(root);
+            view->pushLayoutState(root);
+        }
+        LayoutStateDisabler layoutStateDisabler(disableLayoutState ? root->view() : 0);
 
-    if (subtree) {
-        RenderView* view = root->view();
-        view->popLayoutState(root);
-        if (disableLayoutState)
-            view->enableLayoutState();
+        m_inLayout = true;
+        beginDeferredRepaints();
+        root->layout();
+        endDeferredRepaints();
+        m_inLayout = false;
+
+        if (subtree)
+            root->view()->popLayoutState(root);
     }
     m_layoutRoot = 0;
 

@@ -309,7 +309,7 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, IntPoint
     if (m_hasVisibleContent) {
         RenderView* view = renderer()->view();
         ASSERT(view);
-        // FIXME: Optimize using LayoutState and remove the disableLayoutState() call
+        // FIXME: Optimize using LayoutState and remove LayoutStateDisabler instantiation
         // from updateScrollInfoAfterLayout().
         ASSERT(!view->layoutStateEnabled());
 
@@ -2181,12 +2181,9 @@ void RenderLayer::updateScrollInfoAfterLayout()
             ASSERT(view);
             // scrollToOffset() may call updateLayerPositions(), which doesn't work
             // with LayoutState.
-            // FIXME: Remove the disableLayoutState/enableLayoutState if the above changes.
-            if (view)
-                view->disableLayoutState();
+            // FIXME: Remove the LayoutStateDisabler instantiation if the above changes.
+            LayoutStateDisabler layoutStateDisabler(view);
             scrollToOffset(newX, newY);
-            if (view)
-                view->enableLayoutState();
         }
     }
 
@@ -2261,10 +2258,11 @@ void RenderLayer::updateScrollInfoAfterLayout()
     }
  
     RenderView* view = renderer()->view();
-    view->disableLayoutState();
-    scrollToOffset(scrollXOffset(), scrollYOffset());
-    view->enableLayoutState();
- 
+    {
+        LayoutStateDisabler layoutStateDisabler(view);
+        scrollToOffset(scrollXOffset(), scrollYOffset());
+    }
+
     if (renderer()->node() && renderer()->document()->hasListenerType(Document::OVERFLOWCHANGED_LISTENER))
         updateOverflowStatus(horizontalOverflow, verticalOverflow);
 }

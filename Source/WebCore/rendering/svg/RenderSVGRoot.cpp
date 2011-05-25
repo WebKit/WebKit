@@ -103,7 +103,7 @@ void RenderSVGRoot::layout()
     ASSERT(needsLayout());
 
     // Arbitrary affine transforms are incompatible with LayoutState.
-    view()->disableLayoutState();
+    LayoutStateDisabler layoutStateDisabler(view());
 
     bool needsLayout = selfNeedsLayout();
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && needsLayout);
@@ -128,7 +128,6 @@ void RenderSVGRoot::layout()
 
     repainter.repaintAfterLayout();
 
-    view()->enableLayoutState();
     setNeedsLayout(false);
 }
 

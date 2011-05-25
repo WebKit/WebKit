@@ -2225,7 +2225,7 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
 
     // FIXME: Avoid disabling LayoutState. At the very least, don't disable it for floats originating
     // in this block. Better yet would be to push extra state for the containers of other floats.
-    view()->disableLayoutState();
+    LayoutStateDisabler layoutStateDisabler(view());
     FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
     FloatingObjectSetIterator end = floatingObjectSet.end();
     for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
@@ -2238,7 +2238,6 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
             r->m_renderer->repaintOverhangingFloats();
         }
     }
-    view()->enableLayoutState();
 }
  
 void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
@@ -5351,14 +5350,14 @@ void RenderBlock::updateFirstLetter()
             newFirstLetter->setStyle(pseudoStyle);
 
             // Move the first letter into the new renderer.
-            view()->disableLayoutState();
+            LayoutStateDisabler layoutStateDisabler(view());
             while (RenderObject* child = firstLetter->firstChild()) {
                 if (child->isText())
                     toRenderText(child)->removeAndDestroyTextBoxes();
                 firstLetter->removeChild(child);
                 newFirstLetter->addChild(child, 0);
             }
-            
+
             RenderTextFragment* remainingText = 0;
             RenderObject* nextSibling = firstLetter->nextSibling();
             RenderObject* next = nextSibling;
@@ -5377,7 +5376,6 @@ void RenderBlock::updateFirstLetter()
             firstLetter->destroy();
             firstLetter = newFirstLetter;
             firstLetterContainer->addChild(firstLetter, nextSibling);
-            view()->enableLayoutState();
         } else
             firstLetter->setStyle(pseudoStyle);
 
@@ -5397,7 +5395,7 @@ void RenderBlock::updateFirstLetter()
 
     // Our layout state is not valid for the repaints we are going to trigger by
     // adding and removing children of firstLetterContainer.
-    view()->disableLayoutState();
+    LayoutStateDisabler layoutStateDisabler(view());
 
     RenderText* textObj = toRenderText(currChild);
 
@@ -5460,7 +5458,6 @@ void RenderBlock::updateFirstLetter()
 
         textObj->destroy();
     }
-    view()->enableLayoutState();
 }
 
 // Helper methods for obtaining the last line, computing line counts and heights for line counts

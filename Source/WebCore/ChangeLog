@@ -1,3 +1,36 @@
+2011-05-25  Yuzo Fujishima  <yuzo@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Fix for Bug 61352 - Refactor RenderView::{enable,disable}LayoutState call sites to use RIIA
+        https://bugs.webkit.org/show_bug.cgi?id=61352
+
+        No new tests because no behavior changes.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::RenderMediaVolumeSliderContainer::layout):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::repaintOverhangingFloats):
+        (WebCore::RenderBlock::updateFirstLetter):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::updateScrollInfoAfterLayout):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::layout):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::updateMarkerLocation):
+        * rendering/RenderMedia.cpp:
+        (WebCore::RenderMedia::layout):
+        * rendering/RenderView.h:
+        (WebCore::RenderView::disableLayoutState):
+        (WebCore::RenderView::enableLayoutState):
+        (WebCore::LayoutStateDisabler::LayoutStateDisabler):
+        (WebCore::LayoutStateDisabler::~LayoutStateDisabler):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::layout):
+
 2011-05-24  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed typo fix after r87228.

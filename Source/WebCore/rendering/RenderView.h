@@ -125,13 +125,6 @@ public:
     bool layoutStateEnabled() const { return m_layoutStateDisableCount == 0 && m_layoutState; }
     LayoutState* layoutState() const { return m_layoutState; }
 
-    // Suspends the LayoutState optimization. Used under transforms that cannot be represented by
-    // LayoutState (common in SVG) and when manipulating the render tree during layout in ways
-    // that can trigger repaint of a non-child (e.g. when a list item moves its list marker around).
-    // Note that even when disabled, LayoutState is still used to store layoutDelta.
-    void disableLayoutState() { m_layoutStateDisableCount++; }
-    void enableLayoutState() { ASSERT(m_layoutStateDisableCount > 0); m_layoutStateDisableCount--; }
-
     virtual void updateHitTestResult(HitTestResult&, const IntPoint&);
 
     unsigned pageLogicalHeight() const { return m_pageLogicalHeight; }
@@ -195,10 +188,19 @@ private:
         state->destroy(renderArena());
     }
 
+    // Suspends the LayoutState optimization. Used under transforms that cannot be represented by
+    // LayoutState (common in SVG) and when manipulating the render tree during layout in ways
+    // that can trigger repaint of a non-child (e.g. when a list item moves its list marker around).
+    // Note that even when disabled, LayoutState is still used to store layoutDelta.
+    // These functions may only be accessed by LayoutStateMaintainer or LayoutStateDisabler.
+    void disableLayoutState() { m_layoutStateDisableCount++; }
+    void enableLayoutState() { ASSERT(m_layoutStateDisableCount > 0); m_layoutStateDisableCount--; }
+
     size_t getRetainedWidgets(Vector<RenderWidget*>&);
     void releaseWidgets(Vector<RenderWidget*>&);
     
     friend class LayoutStateMaintainer;
+    friend class LayoutStateDisabler;
         
 protected:
     FrameView* m_frameView;
@@ -319,6 +321,25 @@ private:
     bool m_didStart : 1;        // true if we did a push or disable
     bool m_didEnd : 1;          // true if we popped or re-enabled
     bool m_didCreateLayoutState : 1; // true if we actually made a layout state.
+};
+
+class LayoutStateDisabler {
+    WTF_MAKE_NONCOPYABLE(LayoutStateDisabler);
+public:
+    LayoutStateDisabler(RenderView* view)
+        : m_view(view)
+    {
+        if (m_view)
+            m_view->disableLayoutState();
+    }
+
+    ~LayoutStateDisabler()
+    {
+        if (m_view)
+            m_view->enableLayoutState();
+    }
+private:
+    RenderView* m_view;
 };
 
 } // namespace WebCore

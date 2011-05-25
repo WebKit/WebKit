@@ -70,7 +70,7 @@ void RenderMedia::layout()
         return;
 
     // When calling layout() on a child node, a parent must either push a LayoutStateMaintainter, or 
-    // call view()->disableLayoutState().  Since using a LayoutStateMaintainer is slightly more efficient,
+    // instantiate LayoutStateDisabler. Since using a LayoutStateMaintainer is slightly more efficient,
     // and this method will be called many times per second during playback, use a LayoutStateMaintainer:
     LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), hasTransform() || hasReflection() || style()->isFlippedBlocksWritingMode());
 

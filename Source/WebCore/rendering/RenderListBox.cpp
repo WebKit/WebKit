@@ -150,9 +150,8 @@ void RenderListBox::layout()
 {
     RenderBlock::layout();
     if (m_scrollToRevealSelectionAfterLayout) {
-        view()->disableLayoutState();
+        LayoutStateDisabler layoutStateDisabler(view());
         scrollToRevealSelection();
-        view()->enableLayoutState();
     }
 }
 
