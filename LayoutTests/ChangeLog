@@ -1,5 +1,26 @@
 2011-05-24  Annie Sullivan  <sullivan@chromium.org>
 
+        Reviewed by Tony Chang.
+
+        editing/deleting/5032066 should be a dump-as-markup test
+        https://bugs.webkit.org/show_bug.cgi?id=61327
+
+        Converts 5032066 to dump-as-markup and adds doctype, html, and body tags.
+
+        * editing/deleting/5032066-expected.txt: Added.
+        * editing/deleting/5032066.html:
+        * platform/chromium-linux/editing/deleting/5032066-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5032066-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5032066-expected.txt: Removed.
+        * platform/gtk/editing/deleting/5032066-expected.txt: Removed.
+        * platform/mac-leopard/editing/deleting/5032066-expected.png: Removed.
+        * platform/mac/editing/deleting/5032066-expected.png: Removed.
+        * platform/mac/editing/deleting/5032066-expected.txt: Removed.
+        * platform/qt/editing/deleting/5032066-expected.png: Removed.
+        * platform/qt/editing/deleting/5032066-expected.txt: Removed.
+
+2011-05-24  Annie Sullivan  <sullivan@chromium.org>
+
         Reviewed by Ryosuke Niwa.
 
         Convert LayoutTests/editing/deleting/5115601.html to dump-as-markup.
