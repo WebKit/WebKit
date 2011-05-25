@@ -51,7 +51,6 @@ function test()
 
             function didEditScriptSource()
             {
-                InspectorTest.captureStackTrace(WebInspector.debuggerModel.callFrames);
                 InspectorTest.resumeExecution();
             }
 
@@ -59,6 +58,28 @@ function test()
             {
                 InspectorTest.assertEquals("3", result.description, "edited function returns wrong result");
                 next();
+            }
+        },
+
+        function testNoCrashWhenOnlyOneFunctionOnStack(next)
+        {
+            InspectorTest.showScriptSource("edit-me-when-paused.js", didShowScriptSource);
+
+            function didShowScriptSource(sourceFrame)
+            {
+                InspectorTest.waitUntilPaused(paused);
+                InspectorTest.evaluateInPage("setTimeout(f1, 0)");
+            }
+
+            function paused(callFrames)
+            {
+                InspectorTest.captureStackTrace(callFrames);
+                replaceInSource(panel.visibleView, "debugger;", "debugger;\n", didEditScriptSource);
+            }
+
+            function didEditScriptSource()
+            {
+                InspectorTest.resumeExecution(InspectorTest.waitUntilPaused.bind(InspectorTest, InspectorTest.resumeExecution.bind(InspectorTest, next)));
             }
         },
 
@@ -91,7 +112,7 @@ function test()
     {
         InspectorTest.addSniffer(WebInspector.debuggerModel, "_didEditScriptSource", callback);
         sourceFrame._textViewer._mainPanel.readOnly = false;
-        sourceFrame.startEditing();
+        sourceFrame.beforeTextChanged();
         var oldRange, newRange;
         var lines = sourceFrame._textModel._lines;
         for (var i = 0; i < lines.length; ++i) {
@@ -105,7 +126,7 @@ function test()
             newRange = new WebInspector.TextRange(i, column, i + lineEndings.length - 1, lastLineLength);
             break;
         }
-        sourceFrame.endEditing(oldRange, newRange);
+        sourceFrame.afterTextChanged(oldRange, newRange);
         sourceFrame._textViewer._commitEditing();
     }
 };

@@ -685,9 +685,6 @@ BUGJAMESR WIN LINUX : inspector/styles/styles-disable-then-delete.html = TIMEOUT
 
 BUGCR77630 WIN LINUX DEBUG SLOW : inspector/debugger/debugger-activation-crash.html = PASS TEXT
 
-BUGWK60106 DEBUG WIN LINUX : inspector/debugger/live-edit.html = TEXT TIMEOUT PASS
-BUGWK60106 RELEASE LINUX : inspector/debugger/live-edit.html = TEXT PASS
-
 BUGWK60107 WIN LINUX : inspector/console/console-object-constructor-name.html = TEXT PASS TIMEOUT
 BUGWK60107 WIN LINUX : inspector/console/console-log-before-inspector-open.html = TEXT PASS TIMEOUT
 BUGWK60107 WIN LINUX : inspector/console/console-tests.html = TEXT PASS TIMEOUT

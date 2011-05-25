@@ -1,3 +1,14 @@
+2011-05-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: inspected page crashes when call stack is empty after live edit.
+        https://bugs.webkit.org/show_bug.cgi?id=61364
+
+        * inspector/debugger/live-edit-expected.txt:
+        * inspector/debugger/live-edit.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-05-25  Mads Ager  <ager@chromium.org>
 
         Reviewed by Adam Barth.

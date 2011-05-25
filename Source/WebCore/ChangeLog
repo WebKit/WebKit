@@ -1,3 +1,13 @@
+2011-05-24  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: inspected page crashes when call stack is empty after live edit.
+        https://bugs.webkit.org/show_bug.cgi?id=61364
+
+        * bindings/v8/ScriptDebugServer.cpp:
+        (WebCore::ScriptDebugServer::currentCallFrame):
+
 2011-05-23  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Adam Barth.
