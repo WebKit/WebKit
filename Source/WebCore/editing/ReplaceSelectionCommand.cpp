@@ -156,6 +156,10 @@ ReplacementFragment::ReplacementFragment(Document* document, DocumentFragment* f
 
     Node* styleNode = selection.base().deprecatedNode();
     RefPtr<StyledElement> holder = insertFragmentForTestRendering(styleNode);
+    if (!holder) {
+        removeInterchangeNodes(m_fragment.get());
+        return;
+    }
     
     RefPtr<Range> range = VisibleSelection::selectionFromContentsOfNode(holder.get()).toNormalizedRange();
     String text = plainText(range.get());

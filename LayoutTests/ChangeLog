@@ -1,3 +1,19 @@
+2011-05-24  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by Ryosuke Niwa.
+
+        [SVG] Assertion failure by dragging text between input fields inside <foreignObject>s
+        https://bugs.webkit.org/show_bug.cgi?id=60692
+
+        Test case to verify dragging and dropping text between input fields
+        inside SVG <foreignObject>s. Test passes if no crash occurs in debug mode.
+
+        Drag and drop is not supported in Qt DRT, so skip this case on Qt platform.
+
+        * editing/pasteboard/drag-drop-input-in-svg-expected.txt: Added.
+        * editing/pasteboard/drag-drop-input-in-svg.svg: Added.
+        * platform/qt/Skipped:
+
 2011-05-24  Ryosuke Niwa  <rniwa@webkit.org>
 
         Yet another attempt to make Chromium Windows test bots happy.

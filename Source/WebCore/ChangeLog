@@ -1,3 +1,18 @@
+2011-05-24  Leo Yang  <leo.yang@torchmobile.com.cn>
+
+        Reviewed by Ryosuke Niwa.
+
+        [SVG] Assertion failure by dragging text between input fields inside <foreignObject>s
+        https://bugs.webkit.org/show_bug.cgi?id=60692
+
+        Add NULL check of 'holder' in WebCore::ReplacementFragment::ReplacementFragment()
+        before call VisibleSelection::selectionFromContentsOfNode() to prevent crashing.
+
+        Test: editing/pasteboard/drag-drop-input-in-svg.svg
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplacementFragment::ReplacementFragment):
+
 2011-05-24  Andy Estes  <aestes@apple.com>
 
         Reviewed by Geoffrey Garen.

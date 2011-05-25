@@ -144,6 +144,7 @@ editing/pasteboard/4947130.html
 editing/pasteboard/copy-standalone-image.html
 editing/pasteboard/drag-drop-dead-frame.html
 editing/pasteboard/drag-drop-input-textarea.html
+editing/pasteboard/drag-drop-input-in-svg.svg
 editing/pasteboard/drag-drop-iframe-refresh-crash.html
 editing/pasteboard/drag-drop-modifies-page.html
 editing/pasteboard/drag-drop-url-text.html
