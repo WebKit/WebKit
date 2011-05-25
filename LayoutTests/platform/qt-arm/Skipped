@@ -1860,7 +1860,6 @@ fast/forms/input-text-double-click.html
 fast/forms/input-text-option-delete.html
 fast/forms/input-text-self-emptying-click.html
 fast/forms/input-text-word-wrap.html
-fast/forms/input-type-change2.html
 fast/forms/input-type-change.html
 fast/forms/input-width.html
 fast/forms/isindex-placeholder.html

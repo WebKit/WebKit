@@ -1,3 +1,40 @@
+2011-05-24  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        Convert fast/forms/input-type-change.html to a dumpAsText() test
+        https://bugs.webkit.org/show_bug.cgi?id=61029
+
+        Merge input-type-change2 to input-type-change.html, and convert it to
+        a dumpAsText() test.
+
+        * fast/forms/input-type-change-expected.txt:
+        * fast/forms/input-type-change.html:
+        * fast/forms/input-type-change2.html: Removed.
+        * platform/chromium-linux/fast/forms/input-type-change-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/input-type-change2-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/forms/input-type-change-expected.png: Removed.
+        * platform/chromium-mac/fast/forms/input-type-change-expected.png: Removed.
+        * platform/chromium-win/fast/forms/input-type-change-expected.png: Removed.
+        * platform/chromium-win/fast/forms/input-type-change-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/input-type-change2-expected.png: Removed.
+        * platform/chromium-win/fast/forms/input-type-change2-expected.txt: Removed.
+        * platform/gtk/fast/forms/input-type-change-expected.png: Removed.
+        * platform/gtk/fast/forms/input-type-change-expected.txt: Removed.
+        * platform/gtk/fast/forms/input-type-change2-expected.png: Removed.
+        * platform/gtk/fast/forms/input-type-change2-expected.txt: Removed.
+        * platform/mac-leopard/fast/forms/input-type-change-expected.png: Removed.
+        * platform/mac-leopard/fast/forms/input-type-change2-expected.png: Removed.
+        * platform/mac/fast/forms/input-type-change-expected.png: Removed.
+        * platform/mac/fast/forms/input-type-change-expected.txt:
+        * platform/mac/fast/forms/input-type-change-expected.txt: Removed.
+        * platform/mac/fast/forms/input-type-change2-expected.png: Removed.
+        * platform/mac/fast/forms/input-type-change2-expected.txt: Removed.
+        * platform/qt-arm/Skipped: Remove input-type-change2.html.
+        * platform/qt-mac/Skipped: ditto.
+        * platform/qt/fast/forms/input-type-change-expected.txt: Removed.
+        * platform/qt/fast/forms/input-type-change2-expected.txt: Removed.
+
 2011-05-24  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Hajime Morita.
