@@ -393,7 +393,7 @@ WebInspector.ElementsPanel.prototype = {
             var node = this._searchResults[i];
             var treeElement = this.treeOutline.findTreeElement(node);
             if (treeElement)
-                treeElement.highlightSearchResults(null);
+                treeElement.hideSearchHighlights();
         }
     },
 

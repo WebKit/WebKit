@@ -259,6 +259,8 @@ Element.prototype.createChild = function(elementName, className)
     return element;
 }
 
+DocumentFragment.prototype.createChild = Element.prototype.createChild;
+
 Element.prototype.__defineGetter__("totalOffsetLeft", function()
 {
     var total = 0;
@@ -953,8 +955,9 @@ function highlightSearchResult(element, offset, length)
     return result.length ? result[0] : null;
 }
 
-function highlightSearchResults(element, resultRanges)
+function highlightSearchResults(element, resultRanges, changes)
 {
+    changes = changes || [];
     var highlightNodes = [];
     var lineText = element.textContent;
     var textNodeSnapshot = document.evaluate(".//text()", element, null, XPathResult.ORDERED_NODE_SNAPSHOT_TYPE, null);
@@ -997,10 +1000,14 @@ function highlightSearchResults(element, resultRanges)
         if (textNodeOffset + resultLength < text.length) {
             // Selection belongs to a single split mode.
             textNode.textContent = text.substring(textNodeOffset + resultLength);
+            changes.push({ node: textNode, type: "changed", oldText: text, newText: textNode.textContent });
+
             textNode.parentElement.insertBefore(highlightNode, textNode);
+            changes.push({ node: highlightNode, type: "added", nextSibling: textNode, parent: textNode.parentElement });
+
             var prefixNode = document.createTextNode(text.substring(0, textNodeOffset));
             textNode.parentElement.insertBefore(prefixNode, highlightNode);
-
+            changes.push({ node: prefixNode, type: "added", nextSibling: highlightNode, parent: textNode.parentElement });
             highlightNodes.push(highlightNode);
             continue;
         }
@@ -1010,6 +1017,7 @@ function highlightSearchResults(element, resultRanges)
 
         length -= text.length - textNodeOffset;
         textNode.textContent = text.substring(0, textNodeOffset);
+        changes.push({ node: textNode, type: "changed", oldText: text, newText: textNode.textContent });
 
         while (currentSnapshotItem < snapshotLength) {
             textNode = textNodeSnapshot.snapshotItem(currentSnapshotItem++);
@@ -1017,14 +1025,17 @@ function highlightSearchResults(element, resultRanges)
             var text = textNode.textContent;
             if (length < text.length) {
                 textNode.textContent = text.substring(length);
+                changes.push({ node: textNode, type: "changed", oldText: text, newText: textNode.textContent });
                 break;
             }
 
             length -= text.length;
             textNode.textContent = "";
+            changes.push({ node: textNode, type: "changed", oldText: text, newText: textNode.textContent });
         }
 
         parentElement.insertBefore(highlightNode, anchorElement);
+        changes.push({ node: highlightNode, type: "added", nextSibling: anchorElement, parent: parentElement });
         highlightNodes.push(highlightNode);
     }
 

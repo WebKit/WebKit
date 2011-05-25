@@ -329,14 +329,56 @@ WebInspector.ElementsTreeElement.EditTagBlacklist = [
 WebInspector.ElementsTreeElement.prototype = {
     highlightSearchResults: function(searchQuery)
     {
-        if (this._searchQuery === searchQuery)
-            return;
-
-        if (searchQuery)
-            delete this._searchHighlightedHTML; // A new search query (not clear-the-current-highlighting).
+        if (this._searchQuery !== searchQuery) {
+            this._updateSearchHighlight(false);
+            delete this._highlightResult; // A new search query.
+        }
 
         this._searchQuery = searchQuery;
+        this._searchHighlightsVisible = true;
         this.updateTitle(true);
+    },
+
+    hideSearchHighlights: function()
+    {
+        delete this._searchHighlightsVisible;
+        this._updateSearchHighlight(false);
+    },
+
+    _updateSearchHighlight: function(show)
+    {
+        if (!this._highlightResult)
+            return;
+
+        function updateEntryShow(entry)
+        {
+            switch (entry.type) {
+                case "added":
+                    entry.parent.insertBefore(entry.node, entry.nextSibling);
+                    break;
+                case "changed":
+                    entry.node.textContent = entry.newText;
+                    break;
+            }
+        }
+
+        function updateEntryHide(entry)
+        {
+            switch (entry.type) {
+                case "added":
+                    if (entry.node.parentElement)
+                        entry.node.parentElement.removeChild(entry.node);
+                    break;
+                case "changed":
+                    entry.node.textContent = entry.oldText;
+                    break;
+            }
+        }
+
+        var updater = show ? updateEntryShow : updateEntryHide;
+
+        for (var i = 0, size = this._highlightResult.length; i < size; ++i)
+            updater(this._highlightResult[i]);
     },
 
     get hovered()
@@ -838,7 +880,7 @@ WebInspector.ElementsTreeElement.prototype = {
         // Cannot just convert the textual html into an element without
         // a parent node. Use a temporary span container for the HTML.
         var container = document.createElement("span");
-        container.innerHTML = this._attributeHTML(" ", "");
+        this._buildAttributeDOM(container, " ", "");
         var attr = container.firstChild;
         attr.style.marginLeft = "2px"; // overrides the .editing margin rule
         attr.style.marginRight = "2px"; // overrides the .editing margin rule
@@ -1179,11 +1221,15 @@ WebInspector.ElementsTreeElement.prototype = {
         if (this._editing)
             return;
 
-        if (onlySearchQueryChanged && this._normalHTML)
-            this.titleHTML = this._normalHTML;
-        else {
-            delete this._normalHTML;
-            this.titleHTML = "<span class=\"highlight\">" + this._nodeTitleInfo(WebInspector.linkifyURL).titleHTML + "</span>";
+        if (onlySearchQueryChanged) {
+            if (this._highlightResult)
+                this._updateSearchHighlight(false);
+        } else {
+            var highlightElement = document.createElement("span");
+            highlightElement.className = "highlight";
+            highlightElement.appendChild(this._nodeTitleInfo(WebInspector.linkifyURLAsNode).titleDOM);
+            this.title = highlightElement;
+            delete this._highlightResult;
         }
 
         delete this.selectionElement;
@@ -1192,31 +1238,31 @@ WebInspector.ElementsTreeElement.prototype = {
         this._highlightSearchResults();
     },
 
-    _attributeHTML: function(name, value, node, linkify)
+    _buildAttributeDOM: function(parentElement, name, value, node, linkify)
     {
         var hasText = (value.length > 0);
-        var html = "<span class=\"webkit-html-attribute\"><span class=\"webkit-html-attribute-name\">" + name.escapeHTML() + "</span>";
+        var attrSpanElement = parentElement.createChild("span", "webkit-html-attribute");
+        var attrNameElement = attrSpanElement.createChild("span", "webkit-html-attribute-name");
+        attrNameElement.textContent = name.escapeHTML();
 
         if (hasText)
-            html += "=&#8203;\"";
+            attrSpanElement.appendChild(document.createTextNode("=\u200B\""));
 
         if (linkify && (name === "src" || name === "href")) {
             var rewrittenHref = WebInspector.resourceURLForRelatedNode(node, value);
             value = value.replace(/([\/;:\)\]\}])/g, "$1\u200B");
-            html += linkify(rewrittenHref, value, "webkit-html-attribute-value", node.nodeName().toLowerCase() === "a");
+            attrSpanElement.appendChild(linkify(rewrittenHref, value, "webkit-html-attribute-value", node.nodeName().toLowerCase() === "a"));
         } else {
-            value = value.escapeHTML().replace(/([\/;:\)\]\}])/g, "$1&#8203;");
-            html += "<span class=\"webkit-html-attribute-value\">" + value + "</span>";
+            value = value.escapeHTML().replace(/([\/;:\)\]\}])/g, "$1\u200B");
+            var attrValueElement = attrSpanElement.createChild("span", "webkit-html-attribute-value");
+            attrValueElement.textContent = value;
         }
 
         if (hasText)
-            html += "\"";
-
-        html += "</span>";
-        return html;
+            attrSpanElement.appendChild(document.createTextNode("\""));
     },
 
-    _tagHTML: function(tagName, isClosingTag, isDistinctTreeElement, linkify, isShadow)
+    _buildTagDOM: function(parentElement, tagName, isClosingTag, isDistinctTreeElement, linkify, isShadow)
     {
         var node = this.representedObject;
         var classes = [ "webkit-html-tag" ];
@@ -1224,121 +1270,134 @@ WebInspector.ElementsTreeElement.prototype = {
             classes.push("close");
         if (isShadow)
             classes.push("shadow");
-        var result = "<span class=\"" + classes.join(" ") + "\">&lt;";
-        result += "<span " + (isClosingTag ? "" : "class=\"webkit-html-tag-name\"") + ">" + (isClosingTag ? "/" : "") + tagName + "</span>";
+        var tagElement = parentElement.createChild("span", classes.join(" "));
+        tagElement.appendChild(document.createTextNode("<"));
+        var tagNameElement = tagElement.createChild("span", isClosingTag ? "" : "webkit-html-tag-name");
+        tagNameElement.textContent = (isClosingTag ? "/" : "") + tagName;
+
         if (!isClosingTag && node.hasAttributes()) {
             var attributes = node.attributes();
             for (var i = 0; i < attributes.length; ++i) {
                 var attr = attributes[i];
-                result += " " + this._attributeHTML(attr.name, attr.value, node, linkify);
+                tagElement.appendChild(document.createTextNode(" "));
+                this._buildAttributeDOM(tagElement, attr.name, attr.value, node, linkify);
             }
         }
-        result += "&gt;</span>&#8203;";
-
-        return result;
+        tagElement.appendChild(document.createTextNode(">"));
+        parentElement.appendChild(document.createTextNode("\u200B"));
     },
 
     _nodeTitleInfo: function(linkify)
     {
         var node = this.representedObject;
-        var info = {titleHTML: "", hasChildren: this.hasChildren};
+        var info = {titleDOM: document.createDocumentFragment(), hasChildren: this.hasChildren};
 
         switch (node.nodeType()) {
             case Node.DOCUMENT_NODE:
-                info.titleHTML = "Document";
+                info.titleDOM.appendChild(document.createTextNode("Document"));
                 break;
 
             case Node.DOCUMENT_FRAGMENT_NODE:
-                info.titleHTML = "Document Fragment";
+                info.titleDOM.appendChild(document.createTextNode("Document Fragment"));
                 break;
 
             case Node.ATTRIBUTE_NODE:
                 var value = node.value || "\u200B"; // Zero width space to force showing an empty value.
-                info.titleHTML = this._attributeHTML(node.name, value);
+                this._buildAttributeDOM(info.titleDOM, node.name, value);
                 break;
 
             case Node.ELEMENT_NODE:
                 var tagName = this.treeOutline.nodeNameToCorrectCase(node.nodeName()).escapeHTML();
                 if (this._elementCloseTag) {
-                    info.titleHTML = this._tagHTML(tagName, true, true, false, node.inShadowTree());
+                    this._buildTagDOM(info.titleDOM, tagName, true, true, false, node.inShadowTree());
                     info.hasChildren = false;
                     break;
                 }
 
-                var titleHTML = this._tagHTML(tagName, false, false, linkify, node.inShadowTree());
+                this._buildTagDOM(info.titleDOM, tagName, false, false, linkify, node.inShadowTree());
 
                 var textChild = this._singleTextChild(node);
                 var showInlineText = textChild && textChild.nodeValue().length < Preferences.maxInlineTextChildLength;
 
                 if (!this.expanded && (!showInlineText && (this.treeOutline.isXMLMimeType || !WebInspector.ElementsTreeElement.ForbiddenClosingTagElements[tagName]))) {
-                    if (this.hasChildren)
-                        titleHTML += "<span class=\"webkit-html-text-node\">&#8230;</span>&#8203;";
-                    titleHTML += this._tagHTML(tagName, true, false, false, node.inShadowTree());
+                    if (this.hasChildren) {
+                        var textNodeElement = info.titleDOM.createChild("span", "webkit-html-text-node");
+                        textNodeElement.textContent = "\u2026";
+                        info.titleDOM.appendChild(document.createTextNode("\u200B"));
+                    }
+                    this._buildTagDOM(info.titleDOM, tagName, true, false, false, node.inShadowTree());
                 }
 
                 // If this element only has a single child that is a text node,
                 // just show that text and the closing tag inline rather than
                 // create a subtree for them
                 if (showInlineText) {
-                    titleHTML += "<span class=\"webkit-html-text-node\">" + textChild.nodeValue().escapeHTML() + "</span>&#8203;" + this._tagHTML(tagName, true, false, node.inShadowTree());
+                    var textNodeElement = info.titleDOM.createChild("span", "webkit-html-text-node");
+                    textNodeElement.textContent = textChild.nodeValue().escapeHTML();
+                    info.titleDOM.appendChild(document.createTextNode("\u200B"));
+                    this._buildTagDOM(info.titleDOM, tagName, true, false, node.inShadowTree());
                     info.hasChildren = false;
                 }
-                info.titleHTML = titleHTML;
                 break;
 
             case Node.TEXT_NODE:
                 if (isNodeWhitespace.call(node))
-                    info.titleHTML = "(whitespace)";
+                    info.titleDOM.appendChild(document.createTextNode("(whitespace)"));
                 else {
                     if (node.parentNode && node.parentNode.nodeName().toLowerCase() === "script") {
-                        var newNode = document.createElement("span");
+                        var newNode = info.titleDOM.createChild("span", "webkit-html-text-node webkit-html-js-node");
                         newNode.textContent = node.nodeValue();
 
-                        var javascriptSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/javascript");
+                        var javascriptSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/javascript", true);
                         javascriptSyntaxHighlighter.syntaxHighlightNode(newNode);
-
-                        info.titleHTML = "<span class=\"webkit-html-text-node webkit-html-js-node\">" + newNode.innerHTML.replace(/^[\n\r]*/, "").replace(/\s*$/, "") + "</span>";
                     } else if (node.parentNode && node.parentNode.nodeName().toLowerCase() === "style") {
-                        var newNode = document.createElement("span");
+                        var newNode = info.titleDOM.createChild("span", "webkit-html-text-node webkit-html-css-node");
                         newNode.textContent = node.nodeValue();
 
-                        var cssSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/css");
+                        var cssSyntaxHighlighter = new WebInspector.DOMSyntaxHighlighter("text/css", true);
                         cssSyntaxHighlighter.syntaxHighlightNode(newNode);
-
-                        info.titleHTML = "<span class=\"webkit-html-text-node webkit-html-css-node\">" + newNode.innerHTML.replace(/^[\n\r]*/, "").replace(/\s*$/, "") + "</span>";
-                    } else
-                        info.titleHTML = "\"<span class=\"webkit-html-text-node\">" + node.nodeValue().escapeHTML() + "</span>\"";
+                    } else {
+                        info.titleDOM.appendChild(document.createTextNode("\""));
+                        var textNodeElement = info.titleDOM.createChild("span", "webkit-html-text-node");
+                        textNodeElement.textContent = node.nodeValue().escapeHTML();
+                        info.titleDOM.appendChild(document.createTextNode("\""));
+                    }
                 }
                 break;
 
             case Node.COMMENT_NODE:
-                info.titleHTML = "<span class=\"webkit-html-comment\">&lt;!--" + node.nodeValue().escapeHTML() + "--&gt;</span>";
+                var commentElement = info.titleDOM.createChild("span", "webkit-html-comment");
+                commentElement.appendChild(document.createTextNode("<!--" + node.nodeValue().escapeHTML() + "-->"));
                 break;
 
             case Node.DOCUMENT_TYPE_NODE:
-                var titleHTML = "<span class=\"webkit-html-doctype\">&lt;!DOCTYPE " + node.nodeName();
+                var docTypeElement = info.titleDOM.createChild("span", "webkit-html-doctype");
+                docTypeElement.appendChild(document.createTextNode("<!DOCTYPE " + node.nodeName()));
                 if (node.publicId) {
-                    titleHTML += " PUBLIC \"" + node.publicId + "\"";
+                    docTypeElement.appendChild(document.createTextNode(" PUBLIC \"" + node.publicId + "\""));
                     if (node.systemId)
-                        titleHTML += " \"" + node.systemId + "\"";
+                        docTypeElement.appendChild(document.createTextNode(" \"" + node.systemId + "\""));
                 } else if (node.systemId)
-                    titleHTML += " SYSTEM \"" + node.systemId + "\"";
+                    docTypeElement.appendChild(document.createTextNode(" SYSTEM \"" + node.systemId + "\""));
+
                 if (node.internalSubset)
-                    titleHTML += " [" + node.internalSubset + "]";
-                titleHTML += "&gt;</span>";
-                info.titleHTML = titleHTML;
+                    docTypeElement.appendChild(document.createTextNode(" [" + node.internalSubset + "]"));
+
+                docTypeElement.appendChild(document.createTextNode(">"));
                 break;
 
             case Node.CDATA_SECTION_NODE:
-                info.titleHTML = "<span class=\"webkit-html-text-node\">&lt;![CDATA[" + node.nodeValue().escapeHTML() + "]]&gt;</span>";
+                var cdataElement = info.titleDOM.createChild("span", "webkit-html-text-node");
+                cdataElement.appendChild(document.createTextNode("<![CDATA[" + node.nodeValue().escapeHTML() + "]]>"));
                 break;
 
             case Node.SHADOW_ROOT_NODE:
-                info.titleHTML = "<span class=\"dom-shadow-root\">(shadow)</span>";
+                var cdataElement = info.titleDOM.createChild("span", "dom-shadow-root");
+                cdataElement.appendChild(document.createTextNode("(shadow)"));
                 break;
 
             default:
-                info.titleHTML = this.treeOutline.nodeNameToCorrectCase(node.nodeName()).collapseWhitespace().escapeHTML();
+                var defaultElement = info.titleDOM.appendChild(document.createTextNode(this.treeOutline.nodeNameToCorrectCase(node.nodeName()).collapseWhitespace().escapeHTML()));
         }
 
         return info;
@@ -1423,15 +1482,12 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _highlightSearchResults: function()
     {
-        if (!this._searchQuery)
+        if (!this._searchQuery || !this._searchHighlightsVisible)
             return;
-        if (this._searchHighlightedHTML) {
-            this.listItemElement.innerHTML = this._searchHighlightedHTML;
+        if (this._highlightResult) {
+            this._updateSearchHighlight(true);
             return;
         }
-
-        if (!this._normalHTML)
-            this._normalHTML = this.titleHTML;
 
         var text = this.listItemElement.textContent;
         var regexObject = createSearchRegex(this._searchQuery, "g");
@@ -1448,8 +1504,8 @@ WebInspector.ElementsTreeElement.prototype = {
         if (!matchRanges.length)
             matchRanges.push({ offset: 0, length: text.length });
 
-        highlightSearchResults(this.listItemElement, matchRanges);
-        this._searchHighlightedHTML = this.listItemElement.innerHTML;
+        this._highlightResult = [];
+        highlightSearchResults(this.listItemElement, matchRanges, this._highlightResult);
     }
 }
 

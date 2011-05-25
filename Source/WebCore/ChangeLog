@@ -1,3 +1,31 @@
+2011-05-23  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: extreme lagging when searching for "img[src*="
+        https://bugs.webkit.org/show_bug.cgi?id=61282
+
+        No new tests, as this is a refactoring: ElementsTreeElement DOM is manipulated directly
+        when built and search-highlighted, rather than through innerHTML.
+
+        * inspector/front-end/DOMSyntaxHighlighter.js:
+        (WebInspector.DOMSyntaxHighlighter):
+        (WebInspector.DOMSyntaxHighlighter.prototype.createSpan):
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype._hideSearchHighlights):
+        * inspector/front-end/ElementsTreeOutline.js:
+        (WebInspector.ElementsTreeElement.prototype.highlightSearchResults):
+        (WebInspector.ElementsTreeElement.prototype.hideSearchHighlights):
+        (WebInspector.ElementsTreeElement.prototype._updateSearchHighlight.updateEntryShow):
+        (WebInspector.ElementsTreeElement.prototype._updateSearchHighlight.updateEntryHide):
+        (WebInspector.ElementsTreeElement.prototype._updateSearchHighlight):
+        (WebInspector.ElementsTreeElement.prototype._addNewAttribute):
+        (WebInspector.ElementsTreeElement.prototype.updateTitle):
+        (WebInspector.ElementsTreeElement.prototype._buildAttributeDOM):
+        ():
+        * inspector/front-end/utilities.js:
+        ():
+
 2011-05-25  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Tony Gentilcore.
