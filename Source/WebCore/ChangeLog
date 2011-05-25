@@ -1,3 +1,17 @@
+2011-05-25  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] combobox and scrollbar are rendered small size at gtk+2.22.0
+        https://bugs.webkit.org/show_bug.cgi?id=61436
+
+        Fix arguments of gdk_drawable_get_size.
+
+        No new tests, no behavior change.
+
+        * platform/gtk/GtkVersioning.c:
+        (getGdkDrawableSize):
+
 2011-05-23  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -278,7 +278,7 @@ void getGdkDrawableSize(GdkDrawable *drawable, int *width, int *height)
 #else
 void getGdkDrawableSize(GdkDrawable *drawable, int *width, int *height)
 {
-    gdk_drawable_get_size(drawable, &width, &height);
+    gdk_drawable_get_size(drawable, width, height);
 }
 #endif // GTK_CHECK_VERSION(2, 24, 0)
 
