@@ -4162,3 +4162,14 @@ BUGWK61431 DEBUG : storage/indexeddb/transaction-after-close.html = CRASH
 BUGWK61431 DEBUG : storage/indexeddb/transaction-basics.html = CRASH
 BUGWK61431 DEBUG : storage/indexeddb/transaction-event-propagation.html = CRASH
 BUGWK61431 DEBUG : storage/indexeddb/transaction-rollback.html = CRASH
+
+// New tests added in webkit r87284
+BUGCR83869 : svg/dynamic-updates/SVGTextElement-dom-dx-attr.html = IMAGE
+BUGCR83869 : svg/dynamic-updates/SVGTextElement-dom-dy-attr.html = IMAGE
+BUGCR83869 : svg/dynamic-updates/SVGTextElement-dom-rotate-attr.html = IMAGE
+BUGCR83869 : svg/dynamic-updates/SVGTextElement-dom-x-attr.html = IMAGE
+BUGCR83869 : svg/dynamic-updates/SVGTextElement-dom-y-attr.html = IMAGE
+BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-dx-prop.html = IMAGE
+BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-dy-prop.html = IMAGE
+BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-x-prop.html = IMAGE
+BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-y-prop.html = IMAGE
