@@ -1,5 +1,17 @@
 2011-05-26  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, GTK baselines for new tests.
+
+        * platform/gtk/fast/box-shadow/scaled-box-shadow-expected.txt: Added.
+        * platform/gtk/fast/css/box-shadow-and-border-radius-expected.txt: Added.
+        * platform/gtk/fast/html/details-add-details-child-2-expected.txt: Added.
+        * platform/gtk/fast/html/details-replace-summary-child-expected.txt: Added.
+        * platform/gtk/fast/html/details-replace-text-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt: Added.
+
+2011-05-26  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, rollout of r87373 and r87375. Those commits were
         mistaken. I'll properly land the baselines later on.
 
