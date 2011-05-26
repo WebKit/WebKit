@@ -1,5 +1,27 @@
 2011-05-26  Geoffrey Garen  <ggaren@apple.com>
 
+        Rolled back in http://trac.webkit.org/changeset/87408 with Windows build fixed.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedBlock.h:
+        * wtf/DoublyLinkedList.h:
+        (WTF::::DoublyLinkedListNode):
+        (WTF::::setPrev):
+        (WTF::::setNext):
+        (WTF::::prev):
+        (WTF::::next):
+        (WTF::::DoublyLinkedList):
+        (WTF::::isEmpty):
+        (WTF::::size):
+        (WTF::::clear):
+        (WTF::::head):
+        (WTF::::append):
+        (WTF::::remove):
+        (WTF::::removeHead):
+
+2011-05-26  Geoffrey Garen  <ggaren@apple.com>
+
         Rolled out http://trac.webkit.org/changeset/87408 because it broke the
         Windows build.
 
