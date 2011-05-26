@@ -1,3 +1,14 @@
+2011-05-26  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Remove test cases related to layoutTestController.dumpBackForwardList from qt-wk2/Skipped
+        https://bugs.webkit.org/show_bug.cgi?id=61462
+
+        WebKitTestRunner already support layoutTestController.dumpBackForwardList from r70723.
+
+        * platform/qt-wk2/Skipped:
+
 2011-05-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Yury Semikhatsky.
