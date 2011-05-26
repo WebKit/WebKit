@@ -731,7 +731,7 @@ bool DragController::startDrag(Frame* src, const DragState& state, DragOperation
             m_dragOffset = IntPoint(dragOrigin.x() - dragLoc.x(), dragOrigin.y() - dragLoc.y());
         }
         doSystemDrag(dragImage, dragLoc, dragOrigin, clipboard, src, false);
-    } else if (!imageURL.isEmpty() && node && node->isElementNode() && image
+    } else if (!imageURL.isEmpty() && node && node->isElementNode() && image && !image->isNull()
                && (m_dragSourceAction & DragSourceActionImage)) {
         // We shouldn't be starting a drag for an image that can't provide an extension.
         // This is an early detection for problems encountered later upon drop.

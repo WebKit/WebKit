@@ -1,3 +1,15 @@
+2011-05-26  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        drag-not-loaded-image.html test crashes when WebKit is built with debug option
+        https://bugs.webkit.org/show_bug.cgi?id=61480
+
+        Checks if image has content before starting to drag.
+
+        * page/DragController.cpp:
+        (WebCore::DragController::startDrag):
+
 2011-05-26  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by James Robinson.
