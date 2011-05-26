@@ -23,7 +23,6 @@ ResourceReceiveResponse Properties:
         identifier : <number>
         statusCode : 0
         mimeType : <string>
-        url : <string>
     }
     children : <object>
     endTime : <number>
@@ -38,7 +37,6 @@ ResourceFinish Properties:
     data : {
         identifier : <number>
         didFail : false
-        url : <string>
     }
     type : "ResourceFinish"
     usedHeapSize : <number>
