@@ -1,3 +1,14 @@
+2011-05-25  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] REGRESSION(r87298) Skip drag-not-loaded-image.html failing test
+        https://bugs.webkit.org/show_bug.cgi?id=61465
+
+        Skip drag-not-loaded-image.html layout test from Qt. see bug 31332
+
+        * platform/qt/Skipped:
+
 2011-05-25  Steve Lacey  <sjl@chromium.org>
 
         Reviewed by Eric Carlson.

@@ -132,6 +132,7 @@ http/tests/security/drag-over-remote-content-iframe.html
 http/tests/local/drag-over-remote-content.html
 http/tests/local/fileapi
 http/tests/security/drag-drop-same-unique-origin.html
+http/tests/misc/drag-not-loaded-image.html
 # CONSOLE MESSAGE: line 72: TypeError: Result of expression 'eventSender.beginDragWithFiles' [undefined] is not a function.
 http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/blob/send-sliced-data-blob.html
