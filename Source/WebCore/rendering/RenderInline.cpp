@@ -1379,6 +1379,9 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
         }
     }
 
+    if (graphicsContext->paintingDisabled())
+        return;
+
     if (styleToUse->outlineStyleIsAuto() || styleToUse->outlineStyle() == BNONE)
         return;
 
@@ -1423,6 +1426,9 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
     int ow = styleToUse->outlineWidth();
     EBorderStyle os = styleToUse->outlineStyle();
 
+    const AffineTransform& currentCTM = graphicsContext->getCTM();
+    bool antialias = !currentCTM.isIdentityOrTranslationOrFlipped();
+
     int offset = style()->outlineOffset();
 
     int t = ty + thisline.y() - offset;
@@ -1439,7 +1445,8 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                BSLeft,
                outlineColor, os,
                (lastline.isEmpty() || thisline.x() < lastline.x() || (lastline.maxX() - 1) <= thisline.x() ? ow : -ow),
-               (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.maxX() - 1) <= thisline.x() ? ow : -ow));
+               (nextline.isEmpty() || thisline.x() <= nextline.x() || (nextline.maxX() - 1) <= thisline.x() ? ow : -ow),
+               antialias);
     
     // right edge
     drawLineForBoxSide(graphicsContext,
@@ -1450,27 +1457,29 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                BSRight,
                outlineColor, os,
                (lastline.isEmpty() || lastline.maxX() < thisline.maxX() || (thisline.maxX() - 1) <= lastline.x() ? ow : -ow),
-               (nextline.isEmpty() || nextline.maxX() <= thisline.maxX() || (thisline.maxX() - 1) <= nextline.x() ? ow : -ow));
+               (nextline.isEmpty() || nextline.maxX() <= thisline.maxX() || (thisline.maxX() - 1) <= nextline.x() ? ow : -ow),
+               antialias);
     // upper edge
     if (thisline.x() < lastline.x())
         drawLineForBoxSide(graphicsContext,
                    l - ow,
                    t - ow,
                    min(r+ow, (lastline.isEmpty() ? 1000000 : tx + lastline.x())),
-                   t ,
+                   t,
                    BSTop, outlineColor, os,
                    ow,
-                   (!lastline.isEmpty() && tx + lastline.x() + 1 < r + ow) ? -ow : ow);
+                   (!lastline.isEmpty() && tx + lastline.x() + 1 < r + ow) ? -ow : ow,
+                   antialias);
     
     if (lastline.maxX() < thisline.maxX())
         drawLineForBoxSide(graphicsContext,
                    max(lastline.isEmpty() ? -1000000 : tx + lastline.maxX(), l - ow),
                    t - ow,
                    r + ow,
-                   t ,
+                   t,
                    BSTop, outlineColor, os,
                    (!lastline.isEmpty() && l - ow < tx + lastline.maxX()) ? -ow : ow,
-                   ow);
+                   ow, antialias);
     
     // lower edge
     if (thisline.x() < nextline.x())
@@ -1481,7 +1490,8 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                    b + ow,
                    BSBottom, outlineColor, os,
                    ow,
-                   (!nextline.isEmpty() && tx + nextline.x() + 1 < r + ow) ? -ow : ow);
+                   (!nextline.isEmpty() && tx + nextline.x() + 1 < r + ow) ? -ow : ow,
+                   antialias);
     
     if (nextline.maxX() < thisline.maxX())
         drawLineForBoxSide(graphicsContext,
@@ -1491,7 +1501,7 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
                    b + ow,
                    BSBottom, outlineColor, os,
                    (!nextline.isEmpty() && l - ow < tx + nextline.maxX()) ? -ow : ow,
-                   ow);
+                   ow, antialias);
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)

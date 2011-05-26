@@ -1,3 +1,17 @@
+2011-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Always antialias table borders when scaling
+        https://bugs.webkit.org/show_bug.cgi?id=61502
+        
+        Pixel tests for the drawing of collapsed table borders, column rules
+        and inline outlines when scaled.
+
+        * fast/borders/border-antialiasing.html: Added.
+        * platform/mac/fast/borders/border-antialiasing-expected.png: Added.
+        * platform/mac/fast/borders/border-antialiasing-expected.txt: Added.
+
 2011-05-26  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Update expected files after r87320.

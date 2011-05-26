@@ -1,3 +1,27 @@
+2011-05-25  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Always antialias borders, outlines and rules when scaling
+        https://bugs.webkit.org/show_bug.cgi?id=61502
+        
+        r84273 changed the behavior of drawLineForBoxSide() to never antialias by default.
+        This actually disabled antialiasing in some circumstances where it used to be enabled,
+        for example collapsed table border drawing.
+        
+        Fix by allowing antialiasing for collapsed table borders, column rules and span
+        outlines when the context is scaled.
+
+        Test: fast/borders/border-antialiasing.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnRules):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        (WebCore::RenderInline::paintOutlineForLine):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintCollapsedBorder):
+
 2011-05-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Yury Semikhatsky.
