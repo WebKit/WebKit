@@ -1,3 +1,24 @@
+2011-05-26  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Be robust to empty viewports in the compositor
+        https://bugs.webkit.org/show_bug.cgi?id=61545
+
+        It's possible for a frame to be requested to be drawn before it is
+        non-empty.  The compositor should be robust to that possibility.  The
+        changes in LayerTilerChromium are the only required changes to handle
+        this, but having an early out in LayerRendererChromium seemed like a
+        good sanity check.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateAndDrawLayers):
+        (WebCore::LayerRendererChromium::drawLayers):
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::prepareToUpdate):
+        (WebCore::LayerTilerChromium::updateRect):
+        (WebCore::LayerTilerChromium::draw):
+
 2011-05-26  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

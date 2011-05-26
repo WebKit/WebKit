@@ -211,6 +211,9 @@ void LayerRendererChromium::setViewport(const IntRect& visibleRect, const IntRec
 
 void LayerRendererChromium::updateAndDrawLayers()
 {
+    if (m_viewportVisibleRect.isEmpty())
+        return;
+
     // FIXME: use the frame begin time from the overall compositor scheduler.
     // This value is currently inaccessible because it is up in Chromium's
     // RenderWidget.
@@ -434,6 +437,9 @@ void LayerRendererChromium::paintLayerContents(const LayerList& renderSurfaceLay
 
 void LayerRendererChromium::drawLayers(const LayerList& renderSurfaceLayerList)
 {
+    if (m_viewportVisibleRect.isEmpty())
+        return;
+
     TRACE_EVENT("LayerRendererChromium::drawLayers", this, 0);
     CCLayerImpl* rootDrawLayer = m_rootLayer->ccLayerImpl();
     makeContextCurrent();

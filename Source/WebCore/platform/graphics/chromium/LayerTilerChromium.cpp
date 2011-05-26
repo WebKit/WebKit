@@ -222,8 +222,10 @@ void LayerTilerChromium::invalidateEntireLayer()
 
 void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect)
 {
-    if (m_skipsDraw)
+    if (m_skipsDraw || contentRect.isEmpty()) {
+        m_updateRect = IntRect();
         return;
+    }
 
     // Invalidate old tiles that were previously used but aren't in use this
     // frame so that they can get reused for new tiles.
@@ -263,7 +265,7 @@ void LayerTilerChromium::prepareToUpdate(const IntRect& contentRect)
 void LayerTilerChromium::updateRect()
 {
     // Painting could cause compositing to get turned off, which may cause the tiler to become invalidated mid-update.
-    if (!m_tilingData.totalSizeX() || !m_tilingData.totalSizeY())
+    if (!m_tilingData.totalSizeX() || !m_tilingData.totalSizeY() || m_updateRect.isEmpty())
         return;
 
     GraphicsContext3D* context = layerRendererContext();
@@ -333,7 +335,7 @@ void LayerTilerChromium::setLayerPosition(const IntPoint& layerPosition)
 
 void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMatrix& globalTransform, float opacity)
 {
-    if (m_skipsDraw || !m_tiles.size())
+    if (m_skipsDraw || !m_tiles.size() || contentRect.isEmpty())
         return;
 
     GraphicsContext3D* context = layerRendererContext();
