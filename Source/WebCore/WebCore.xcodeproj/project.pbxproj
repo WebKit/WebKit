@@ -2769,12 +2769,15 @@
 		8AF4E55611DC5A36000ED3DE /* PerformanceNavigation.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF4E55311DC5A36000ED3DE /* PerformanceNavigation.h */; };
 		8AF4E55B11DC5A63000ED3DE /* PerformanceTiming.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8AF4E55811DC5A63000ED3DE /* PerformanceTiming.cpp */; };
 		8AF4E55C11DC5A63000ED3DE /* PerformanceTiming.h in Headers */ = {isa = PBXBuildFile; fileRef = 8AF4E55911DC5A63000ED3DE /* PerformanceTiming.h */; };
+		8C0E334C138A92C7008DA94F /* LevelDBTransaction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C0E3348138A92C7008DA94F /* LevelDBTransaction.cpp */; };
+		8C0E334D138A92C7008DA94F /* LevelDBTransaction.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C0E3349138A92C7008DA94F /* LevelDBTransaction.h */; };
+		8C0E334E138A92C7008DA94F /* LevelDBWriteBatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C0E334A138A92C7008DA94F /* LevelDBWriteBatch.cpp */; };
+		8C0E334F138A92C7008DA94F /* LevelDBWriteBatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C0E334B138A92C7008DA94F /* LevelDBWriteBatch.h */; };
 		8C6EA61911EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8C6EA61711EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp */; };
 		8C6EA61A11EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = 8C6EA61811EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h */; };
 		8CADF2A9135C7B36009EF43F /* LevelDBComparator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CADF2A3135C7B36009EF43F /* LevelDBComparator.h */; };
 		8CADF2AA135C7B36009EF43F /* LevelDBDatabase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CADF2A4135C7B36009EF43F /* LevelDBDatabase.cpp */; };
 		8CADF2AB135C7B36009EF43F /* LevelDBDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CADF2A5135C7B36009EF43F /* LevelDBDatabase.h */; };
-		8CADF2AC135C7B36009EF43F /* LevelDBIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8CADF2A6135C7B36009EF43F /* LevelDBIterator.cpp */; };
 		8CADF2AD135C7B36009EF43F /* LevelDBIterator.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CADF2A7135C7B36009EF43F /* LevelDBIterator.h */; };
 		8CADF2AE135C7B36009EF43F /* LevelDBSlice.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CADF2A8135C7B36009EF43F /* LevelDBSlice.h */; };
 		8F67561B1288B17B0047ACA3 /* EventQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 8F6756191288B17B0047ACA3 /* EventQueue.h */; };
@@ -9334,12 +9337,15 @@
 		8AF4E55811DC5A63000ED3DE /* PerformanceTiming.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PerformanceTiming.cpp; sourceTree = "<group>"; };
 		8AF4E55911DC5A63000ED3DE /* PerformanceTiming.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PerformanceTiming.h; sourceTree = "<group>"; };
 		8AF4E55A11DC5A63000ED3DE /* PerformanceTiming.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = PerformanceTiming.idl; sourceTree = "<group>"; };
+		8C0E3348138A92C7008DA94F /* LevelDBTransaction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelDBTransaction.cpp; sourceTree = "<group>"; };
+		8C0E3349138A92C7008DA94F /* LevelDBTransaction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBTransaction.h; sourceTree = "<group>"; };
+		8C0E334A138A92C7008DA94F /* LevelDBWriteBatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelDBWriteBatch.cpp; sourceTree = "<group>"; };
+		8C0E334B138A92C7008DA94F /* LevelDBWriteBatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBWriteBatch.h; sourceTree = "<group>"; };
 		8C6EA61711EF7E0400FD8EE3 /* RuntimeEnabledFeatures.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RuntimeEnabledFeatures.cpp; path = generic/RuntimeEnabledFeatures.cpp; sourceTree = "<group>"; };
 		8C6EA61811EF7E0400FD8EE3 /* RuntimeEnabledFeatures.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RuntimeEnabledFeatures.h; path = generic/RuntimeEnabledFeatures.h; sourceTree = "<group>"; };
 		8CADF2A3135C7B36009EF43F /* LevelDBComparator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBComparator.h; sourceTree = "<group>"; };
 		8CADF2A4135C7B36009EF43F /* LevelDBDatabase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelDBDatabase.cpp; sourceTree = "<group>"; };
 		8CADF2A5135C7B36009EF43F /* LevelDBDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBDatabase.h; sourceTree = "<group>"; };
-		8CADF2A6135C7B36009EF43F /* LevelDBIterator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = LevelDBIterator.cpp; sourceTree = "<group>"; };
 		8CADF2A7135C7B36009EF43F /* LevelDBIterator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBIterator.h; sourceTree = "<group>"; };
 		8CADF2A8135C7B36009EF43F /* LevelDBSlice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LevelDBSlice.h; sourceTree = "<group>"; };
 		8F6756191288B17B0047ACA3 /* EventQueue.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventQueue.h; sourceTree = "<group>"; };
@@ -15604,9 +15610,12 @@
 				8CADF2A3135C7B36009EF43F /* LevelDBComparator.h */,
 				8CADF2A4135C7B36009EF43F /* LevelDBDatabase.cpp */,
 				8CADF2A5135C7B36009EF43F /* LevelDBDatabase.h */,
-				8CADF2A6135C7B36009EF43F /* LevelDBIterator.cpp */,
 				8CADF2A7135C7B36009EF43F /* LevelDBIterator.h */,
 				8CADF2A8135C7B36009EF43F /* LevelDBSlice.h */,
+				8C0E3348138A92C7008DA94F /* LevelDBTransaction.cpp */,
+				8C0E3349138A92C7008DA94F /* LevelDBTransaction.h */,
+				8C0E334A138A92C7008DA94F /* LevelDBWriteBatch.cpp */,
+				8C0E334B138A92C7008DA94F /* LevelDBWriteBatch.h */,
 			);
 			path = leveldb;
 			sourceTree = "<group>";
@@ -22997,6 +23006,8 @@
 				B12D236613560330002A28D4 /* JSTrackList.h in Headers */,
 				B12D236A1356033F002A28D4 /* JSExclusiveTrackList.h in Headers */,
 				B12D236E1356034D002A28D4 /* JSMultipleTrackList.h in Headers */,
+				8C0E334D138A92C7008DA94F /* LevelDBTransaction.h in Headers */,
+				8C0E334F138A92C7008DA94F /* LevelDBWriteBatch.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24901,7 +24912,6 @@
 				51B2417B0D931F3F00E83F5C /* LegacyWebArchiveMac.mm in Sources */,
 				BCE65BEA0EACDF16007E4533 /* Length.cpp in Sources */,
 				8CADF2AA135C7B36009EF43F /* LevelDBDatabase.cpp in Sources */,
-				8CADF2AC135C7B36009EF43F /* LevelDBIterator.cpp in Sources */,
 				84730D901248F0B300D3A9C9 /* LightSource.cpp in Sources */,
 				89B5EAA111E8003D00F2367E /* LineEnding.cpp in Sources */,
 				A7AD2F870EC89D07008AB002 /* LinkHash.cpp in Sources */,
@@ -25692,6 +25702,8 @@
 				B12D236513560330002A28D4 /* JSTrackList.cpp in Sources */,
 				B12D23691356033F002A28D4 /* JSExclusiveTrackList.cpp in Sources */,
 				B12D236D1356034D002A28D4 /* JSMultipleTrackList.cpp in Sources */,
+				8C0E334C138A92C7008DA94F /* LevelDBTransaction.cpp in Sources */,
+				8C0E334E138A92C7008DA94F /* LevelDBWriteBatch.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

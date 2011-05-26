@@ -1469,7 +1469,8 @@ ENDIF ()
 IF (ENABLE_LEVELDB)
     LIST(APPEND WebCore_SOURCES
         platform/leveldb/LevelDBDatabase.cpp
-        platform/leveldb/LevelDBIterator.cpp
+        platform/leveldb/LevelDBTransaction.cpp
+        platform/leveldb/LevelDBWriteBatch.cpp
     )
 ENDIF ()
 

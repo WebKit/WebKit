@@ -1,3 +1,136 @@
+2011-05-25  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Steve Block.
+
+        IndexedDB: Support LevelDB transactions.
+        https://bugs.webkit.org/show_bug.cgi?id=61270
+
+        Introduce LevelDBTransaction, which implements in-memory transaction
+        support on top of LevelDB, and hook this up for IndexedDB to use.
+
+        This is all covered by existing tests.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/leveldb/LevelDBDatabase.cpp:
+        (WebCore::LevelDBDatabase::open):
+        (WebCore::LevelDBDatabase::put):
+        (WebCore::LevelDBDatabase::remove):
+        (WebCore::LevelDBDatabase::write):
+        (WebCore::IteratorImpl::IteratorImpl):
+        (WebCore::IteratorImpl::isValid):
+        (WebCore::IteratorImpl::seekToLast):
+        (WebCore::IteratorImpl::seek):
+        (WebCore::IteratorImpl::next):
+        (WebCore::IteratorImpl::prev):
+        (WebCore::IteratorImpl::key):
+        (WebCore::IteratorImpl::value):
+        (WebCore::LevelDBDatabase::createIterator):
+        (WebCore::LevelDBDatabase::comparator):
+        * platform/leveldb/LevelDBDatabase.h:
+        * platform/leveldb/LevelDBIterator.h:
+        (WebCore::LevelDBIterator::~LevelDBIterator):
+        * platform/leveldb/LevelDBTransaction.cpp: Added.
+        (WebCore::LevelDBTransaction::create):
+        (WebCore::LevelDBTransaction::LevelDBTransaction):
+        (WebCore::LevelDBTransaction::clearTree):
+        (WebCore::LevelDBTransaction::~LevelDBTransaction):
+        (WebCore::makeVector):
+        (WebCore::LevelDBTransaction::set):
+        (WebCore::LevelDBTransaction::put):
+        (WebCore::LevelDBTransaction::remove):
+        (WebCore::LevelDBTransaction::get):
+        (WebCore::LevelDBTransaction::commit):
+        (WebCore::LevelDBTransaction::rollback):
+        (WebCore::LevelDBTransaction::createIterator):
+        (WebCore::LevelDBTransaction::TreeIterator::create):
+        (WebCore::LevelDBTransaction::TreeIterator::isValid):
+        (WebCore::LevelDBTransaction::TreeIterator::seekToLast):
+        (WebCore::LevelDBTransaction::TreeIterator::seek):
+        (WebCore::LevelDBTransaction::TreeIterator::next):
+        (WebCore::LevelDBTransaction::TreeIterator::prev):
+        (WebCore::LevelDBTransaction::TreeIterator::key):
+        (WebCore::LevelDBTransaction::TreeIterator::value):
+        (WebCore::LevelDBTransaction::TreeIterator::isDeleted):
+        (WebCore::LevelDBTransaction::TreeIterator::reset):
+        (WebCore::LevelDBTransaction::TreeIterator::~TreeIterator):
+        (WebCore::LevelDBTransaction::TreeIterator::TreeIterator):
+        (WebCore::LevelDBTransaction::TransactionIterator::create):
+        (WebCore::LevelDBTransaction::TransactionIterator::TransactionIterator):
+        (WebCore::LevelDBTransaction::TransactionIterator::isValid):
+        (WebCore::LevelDBTransaction::TransactionIterator::seekToLast):
+        (WebCore::LevelDBTransaction::TransactionIterator::seek):
+        (WebCore::LevelDBTransaction::TransactionIterator::next):
+        (WebCore::LevelDBTransaction::TransactionIterator::prev):
+        (WebCore::LevelDBTransaction::TransactionIterator::key):
+        (WebCore::LevelDBTransaction::TransactionIterator::value):
+        (WebCore::LevelDBTransaction::TransactionIterator::handleConflictsAndDeletes):
+        (WebCore::LevelDBTransaction::TransactionIterator::setCurrentIteratorToSmallestKey):
+        (WebCore::LevelDBTransaction::TransactionIterator::setCurrentIteratorToLargestKey):
+        (WebCore::LevelDBTransaction::registerIterator):
+        (WebCore::LevelDBTransaction::unregisterIterator):
+        (WebCore::LevelDBTransaction::resetIterators):
+        * platform/leveldb/LevelDBTransaction.h: Added.
+        (WebCore::LevelDBTransaction::AVLTreeAbstractor::get_less):
+        (WebCore::LevelDBTransaction::AVLTreeAbstractor::set_less):
+        (WebCore::LevelDBTransaction::AVLTreeAbstractor::get_greater):
+        (WebCore::LevelDBTransaction::AVLTreeAbstractor::set_greater):
+        (WebCore::LevelDBTransaction::AVLTreeAbstractor::get_balance_factor):
+        (WebCore::LevelDBTransaction::AVLTreeAbstractor::set_balance_factor):
+        (WebCore::LevelDBTransaction::AVLTreeAbstractor::compare_key_key):
+        (WebCore::LevelDBTransaction::AVLTreeAbstractor::compare_key_node):
+        (WebCore::LevelDBTransaction::AVLTreeAbstractor::compare_node_node):
+        (WebCore::LevelDBTransaction::AVLTreeAbstractor::null):
+        (WebCore::LevelDBTransaction::TransactionIterator::~TransactionIterator):
+        * platform/leveldb/LevelDBWriteBatch.cpp:
+        (WebCore::LevelDBWriteBatch::create):
+        (WebCore::LevelDBWriteBatch::LevelDBWriteBatch):
+        (WebCore::LevelDBWriteBatch::~LevelDBWriteBatch):
+        (WebCore::makeSlice):
+        (WebCore::LevelDBWriteBatch::put):
+        (WebCore::LevelDBWriteBatch::remove):
+        (WebCore::LevelDBWriteBatch::clear):
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::getInt):
+        (WebCore::putInt):
+        (WebCore::getString):
+        (WebCore::putString):
+        (WebCore::getNewObjectStoreId):
+        (WebCore::IDBLevelDBBackingStore::createObjectStore):
+        (WebCore::deleteRange):
+        (WebCore::IDBLevelDBBackingStore::deleteObjectStore):
+        (WebCore::IDBLevelDBBackingStore::getObjectStoreRecord):
+        (WebCore::getNewVersionNumber):
+        (WebCore::IDBLevelDBBackingStore::putObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::clearObjectStore):
+        (WebCore::IDBLevelDBBackingStore::deleteObjectStoreRecord):
+        (WebCore::IDBLevelDBBackingStore::nextAutoIncrementNumber):
+        (WebCore::IDBLevelDBBackingStore::keyExistsInObjectStore):
+        (WebCore::IDBLevelDBBackingStore::forEachObjectStoreRecord):
+        (WebCore::getNewIndexId):
+        (WebCore::IDBLevelDBBackingStore::createIndex):
+        (WebCore::IDBLevelDBBackingStore::putIndexDataForRecord):
+        (WebCore::findGreatestKeyLessThan):
+        (WebCore::versionExists):
+        (WebCore::IDBLevelDBBackingStore::getPrimaryKeyViaIndex):
+        (WebCore::IDBLevelDBBackingStore::keyExistsInIndex):
+        (WebCore::findLastIndexKeyEqualTo):
+        (WebCore::IDBLevelDBBackingStore::openObjectStoreCursor):
+        (WebCore::IDBLevelDBBackingStore::openIndexKeyCursor):
+        (WebCore::IDBLevelDBBackingStore::openIndexCursor):
+        (WebCore::IDBLevelDBBackingStore::createTransaction):
+        (WebCore::IDBLevelDBBackingStore::Transaction::create):
+        (WebCore::IDBLevelDBBackingStore::Transaction::Transaction):
+        (WebCore::IDBLevelDBBackingStore::Transaction::begin):
+        (WebCore::IDBLevelDBBackingStore::Transaction::commit):
+        (WebCore::IDBLevelDBBackingStore::Transaction::rollback):
+        * storage/IDBLevelDBBackingStore.h:
+        * storage/IDBTransactionBackendImpl.cpp:
+        (WebCore::IDBTransactionBackendImpl::abort):
+
 2011-05-26  Shane Stephens  <shanestephens@google.com>
 
         Reviewed by James Robinson.

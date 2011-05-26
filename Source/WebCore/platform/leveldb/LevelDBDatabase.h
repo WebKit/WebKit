@@ -43,6 +43,7 @@ namespace WebCore {
 class LevelDBComparator;
 class LevelDBIterator;
 class LevelDBSlice;
+class LevelDBWriteBatch;
 
 class LevelDBDatabase {
 public:
@@ -52,12 +53,15 @@ public:
     bool put(const LevelDBSlice& key, const Vector<char>& value);
     bool remove(const LevelDBSlice& key);
     bool get(const LevelDBSlice& key, Vector<char>& value);
+    bool write(LevelDBWriteBatch&);
     PassOwnPtr<LevelDBIterator> createIterator();
+    const LevelDBComparator* comparator() const;
 
 private:
     LevelDBDatabase();
 
     OwnPtr<leveldb::DB> m_db;
+    const LevelDBComparator* m_comparator;
     OwnPtr<leveldb::Comparator> m_comparatorAdapter;
 };
 

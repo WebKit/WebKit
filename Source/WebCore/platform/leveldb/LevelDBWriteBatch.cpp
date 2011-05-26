@@ -24,72 +24,50 @@
  */
 
 #include "config.h"
-#include "LevelDBIterator.h"
+#include "LevelDBWriteBatch.h"
 
 #if ENABLE(LEVELDB)
 
-#include <leveldb/iterator.h>
+#include "LevelDBSlice.h"
 #include <leveldb/slice.h>
-#include <wtf/PassOwnPtr.h>
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
+#include <leveldb/write_batch.h>
 
 namespace WebCore {
 
-LevelDBIterator::~LevelDBIterator()
+PassOwnPtr<LevelDBWriteBatch> LevelDBWriteBatch::create()
+{
+    return adoptPtr(new LevelDBWriteBatch);
+}
+
+LevelDBWriteBatch::LevelDBWriteBatch()
+    : m_writeBatch(adoptPtr(new leveldb::WriteBatch))
 {
 }
 
-LevelDBIterator::LevelDBIterator(PassOwnPtr<leveldb::Iterator> it)
-    : m_iterator(it)
+LevelDBWriteBatch::~LevelDBWriteBatch()
 {
 }
 
-static leveldb::Slice makeSlice(const Vector<char>& value)
+static leveldb::Slice makeSlice(const LevelDBSlice& s)
 {
-    return leveldb::Slice(value.data(), value.size());
+    return leveldb::Slice(s.begin(), s.end() - s.begin());
 }
 
-static LevelDBSlice makeLevelDBSlice(leveldb::Slice s)
+void LevelDBWriteBatch::put(const LevelDBSlice& key, const LevelDBSlice& value)
 {
-    return LevelDBSlice(s.data(), s.data() + s.size());
+    m_writeBatch->Put(makeSlice(key), makeSlice(value));
 }
 
-bool LevelDBIterator::isValid() const
+void LevelDBWriteBatch::remove(const LevelDBSlice& key)
 {
-    return m_iterator->Valid();
+    m_writeBatch->Delete(makeSlice(key));
 }
 
-void LevelDBIterator::seekToLast()
+void LevelDBWriteBatch::clear()
 {
-    m_iterator->SeekToLast();
+    m_writeBatch->Clear();
 }
 
-void LevelDBIterator::seek(const Vector<char>& target)
-{
-    m_iterator->Seek(makeSlice(target));
 }
 
-void LevelDBIterator::next()
-{
-    m_iterator->Next();
-}
-
-void LevelDBIterator::prev()
-{
-    m_iterator->Prev();
-}
-
-LevelDBSlice LevelDBIterator::key() const
-{
-    return makeLevelDBSlice(m_iterator->key());
-}
-
-LevelDBSlice LevelDBIterator::value() const
-{
-    return makeLevelDBSlice(m_iterator->value());
-}
-
-} // namespace WebCore
-
-#endif // ENABLE(LEVELDB)
+#endif

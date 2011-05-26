@@ -36,6 +36,7 @@ namespace WebCore {
 
 class LevelDBComparator;
 class LevelDBDatabase;
+class LevelDBTransaction;
 
 class IDBLevelDBBackingStore : public IDBBackingStore {
 public:
@@ -80,6 +81,19 @@ private:
     RefPtr<IDBFactoryBackendImpl> m_factory;
     OwnPtr<LevelDBDatabase> m_db;
     OwnPtr<LevelDBComparator> m_comparator;
+    RefPtr<LevelDBTransaction> m_currentTransaction;
+
+    class Transaction : public IDBBackingStore::Transaction {
+    public:
+        static PassRefPtr<Transaction> create(IDBLevelDBBackingStore*);
+        virtual void begin();
+        virtual void commit();
+        virtual void rollback();
+
+    private:
+        Transaction(IDBLevelDBBackingStore*);
+        IDBLevelDBBackingStore* m_backingStore;
+    };
 };
 
 } // namespace WebCore

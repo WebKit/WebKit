@@ -1017,12 +1017,9 @@ SOURCES += \
     platform/Language.cpp \
     platform/Length.cpp \
     platform/text/LineEnding.cpp \
-    platform/leveldb/LevelDBComparator.h \
     platform/leveldb/LevelDBDatabase.cpp \
-    platform/leveldb/LevelDBDatabase.h \
-    platform/leveldb/LevelDBIterator.cpp \
-    platform/leveldb/LevelDBIterator.h \
-    platform/leveldb/LevelDBSlice.h \
+    platform/leveldb/LevelDBTransaction.cpp \
+    platform/leveldb/LevelDBWriteBatch.cpp \
     platform/LinkHash.cpp \
     platform/Logging.cpp \
     platform/MemoryPressureHandler.cpp \
@@ -1998,6 +1995,12 @@ HEADERS += \
     platform/KillRing.h \
     platform/KURL.h \
     platform/Length.h \
+    platform/leveldb/LevelDBComparator.h \
+    platform/leveldb/LevelDBDatabase.h \
+    platform/leveldb/LevelDBIterator.h \
+    platform/leveldb/LevelDBSlice.h \
+    platform/leveldb/LevelDBTransaction.h \
+    platform/leveldb/LevelDBWriteBatch.h \
     platform/text/BidiRunList.h \
     platform/text/LineEnding.h \
     platform/text/TextCheckerClient.h \

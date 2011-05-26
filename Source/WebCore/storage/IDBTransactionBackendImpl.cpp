@@ -106,6 +106,8 @@ void IDBTransactionBackendImpl::abort()
     if (m_state == Finished)
         return;
 
+    bool wasRunning = m_state == Running;
+
     // The last reference to this object may be released while performing the
     // abort steps below. We therefore take a self reference to keep ourselves
     // alive while executing this method.
@@ -116,7 +118,8 @@ void IDBTransactionBackendImpl::abort()
     m_taskEventTimer.stop();
 
     closeOpenCursors();
-    m_transaction->rollback();
+    if (wasRunning)
+        m_transaction->rollback();
 
     // Run the abort tasks, if any.
     while (!m_abortTaskQueue.isEmpty()) {

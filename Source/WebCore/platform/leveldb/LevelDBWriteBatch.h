@@ -23,28 +23,41 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef LevelDBIterator_h
-#define LevelDBIterator_h
+#ifndef LevelDBWriteBatch_h
+#define LevelDBWriteBatch_h
 
 #if ENABLE(LEVELDB)
 
-#include "LevelDBSlice.h"
+#include <wtf/OwnPtr.h>
+#include <wtf/PassOwnPtr.h>
+
+namespace leveldb {
+class WriteBatch;
+}
 
 namespace WebCore {
 
-class LevelDBIterator {
+class LevelDBSlice;
+
+// Wrapper around leveldb::WriteBatch.
+// This class holds a collection of updates to apply atomically to a database.
+class LevelDBWriteBatch {
 public:
-    virtual ~LevelDBIterator() { };
-    virtual bool isValid() const = 0;
-    virtual void seekToLast() = 0;
-    virtual void seek(const LevelDBSlice& target) = 0;
-    virtual void next() = 0;
-    virtual void prev() = 0;
-    virtual LevelDBSlice key() const = 0;
-    virtual LevelDBSlice value() const = 0;
+    static PassOwnPtr<LevelDBWriteBatch> create();
+    ~LevelDBWriteBatch();
+
+    void put(const LevelDBSlice& key, const LevelDBSlice& value);
+    void remove(const LevelDBSlice& key); // Add remove operation to the batch.
+    void clear();
+
+private:
+    friend class LevelDBDatabase;
+    LevelDBWriteBatch();
+
+    OwnPtr<leveldb::WriteBatch> m_writeBatch;
 };
 
-} // namespace WebCore
+}
 
 #endif // ENABLE(LEVELDB)
-#endif // LevelDBIterator_h
+#endif // LevelDBWriteBatch_h

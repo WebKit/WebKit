@@ -2543,9 +2543,12 @@ webcore_sources += \
 	Source/WebCore/platform/leveldb/LevelDBComparator.h \
 	Source/WebCore/platform/leveldb/LevelDBDatabase.cpp \
 	Source/WebCore/platform/leveldb/LevelDBDatabase.h \
-	Source/WebCore/platform/leveldb/LevelDBIterator.cpp \
 	Source/WebCore/platform/leveldb/LevelDBIterator.h \
 	Source/WebCore/platform/leveldb/LevelDBSlice.h \
+	Source/WebCore/platform/leveldb/LevelDBTransaction.h \
+	Source/WebCore/platform/leveldb/LevelDBTransaction.cpp \
+	Source/WebCore/platform/leveldb/LevelDBWriteBatch.h \
+	Source/WebCore/platform/leveldb/LevelDBWriteBatch.cpp \
 	Source/WebCore/platform/LinkHash.cpp \
 	Source/WebCore/platform/LinkHash.h \
 	Source/WebCore/platform/LocalizedStrings.h \
