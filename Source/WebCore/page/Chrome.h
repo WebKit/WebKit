@@ -84,7 +84,6 @@ namespace WebCore {
         void scrollRectIntoView(const IntRect&) const;
 
         void contentsSizeChanged(Frame*, const IntSize&) const;
-        void contentsPreferredSizeChanged(Frame*, const IntSize&) const;
 
         void setWindowRect(const FloatRect&) const;
         FloatRect windowRect() const;

@@ -475,35 +475,24 @@ PassRefPtr<Scrollbar> FrameView::createScrollbar(ScrollbarOrientation orientatio
 
 void FrameView::setContentsSize(const IntSize& size)
 {
-    bool contentsSizeChanged = size != contentsSize();
+    if (size == contentsSize())
+        return;
+
+    m_deferSetNeedsLayouts++;
+
+    ScrollView::setContentsSize(size);
+    scrollAnimator()->contentsResized();
+    
     Page* page = frame() ? frame()->page() : 0;
-    if (contentsSizeChanged) {
-        m_deferSetNeedsLayouts++;
+    if (!page)
+        return;
 
-        ScrollView::setContentsSize(size);
-        scrollAnimator()->contentsResized();
-        if (page)
-            page->chrome()->contentsSizeChanged(frame(), size); // notify only
-    }
+    page->chrome()->contentsSizeChanged(frame(), size); //notify only
 
-    if (page) {
-        Document* document = frame()->document();
-        if (document && document->renderView() && document->documentElement()) {
-            IntSize preferedSize(document->renderView()->minPreferredLogicalWidth(),
-                                 document->documentElement()->scrollHeight());
-            if (preferedSize != m_lastPreferedSize) {
-                m_lastPreferedSize = preferedSize;
-                page->chrome()->contentsPreferredSizeChanged(frame(), preferedSize);
-            }
-        }
-    }
-
-    if (contentsSizeChanged) {
-        m_deferSetNeedsLayouts--;
-
-        if (!m_deferSetNeedsLayouts)
-            m_setNeedsLayoutWasDeferred = false; // FIXME: Find a way to make the deferred layout actually happen.
-    }
+    m_deferSetNeedsLayouts--;
+    
+    if (!m_deferSetNeedsLayouts)
+        m_setNeedsLayoutWasDeferred = false; // FIXME: Find a way to make the deferred layout actually happen.
 }
 
 void FrameView::adjustViewSize()
