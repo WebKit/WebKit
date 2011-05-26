@@ -1470,8 +1470,13 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
 {
     visitor.append(&m_globalObject);
     visitor.append(&m_ownerExecutable);
-    if (m_rareData)
+    if (m_rareData) {
         m_rareData->m_evalCodeCache.visitAggregate(visitor);
+        size_t regExpCount = m_rareData->m_regexps.size();
+        WriteBarrier<RegExp>* regexps = m_rareData->m_regexps.data();
+        for (size_t i = 0; i < regExpCount; i++)
+            visitor.append(regexps + i);
+    }
     visitor.appendValues(m_constantRegisters.data(), m_constantRegisters.size());
     for (size_t i = 0; i < m_functionExprs.size(); ++i)
         visitor.append(&m_functionExprs[i]);

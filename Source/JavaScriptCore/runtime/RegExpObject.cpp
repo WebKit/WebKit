@@ -61,9 +61,9 @@ const ClassInfo RegExpObject::s_info = { "RegExp", &JSObjectWithGlobalObject::s_
 @end
 */
 
-RegExpObject::RegExpObject(JSGlobalObject* globalObject, Structure* structure, NonNullPassRefPtr<RegExp> regExp)
+RegExpObject::RegExpObject(JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
     : JSObjectWithGlobalObject(globalObject, structure)
-    , d(adoptPtr(new RegExpObjectData(regExp)))
+    , d(adoptPtr(new RegExpObjectData(globalObject->globalData(), this, regExp)))
 {
     ASSERT(inherits(&s_info));
 }
@@ -78,6 +78,8 @@ void RegExpObject::visitChildren(SlotVisitor& visitor)
     COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
     ASSERT(structure()->typeInfo().overridesVisitChildren());
     Base::visitChildren(visitor);
+    if (d->regExp)
+        visitor.append(&d->regExp);
     if (UNLIKELY(!d->lastIndex.get().isInt32()))
         visitor.append(&d->lastIndex);
 }

@@ -34,6 +34,8 @@
 
 namespace JSC {
 
+const ClassInfo RegExp::s_info = { "RegExp", 0, 0, 0 };
+
 RegExpFlags regExpFlags(const UString& string)
 {
     RegExpFlags flags = NoFlags;
@@ -73,8 +75,9 @@ struct RegExpRepresentation {
     OwnPtr<Yarr::BytecodePattern> m_regExpBytecode;
 };
 
-inline RegExp::RegExp(JSGlobalData*, const UString& patternString, RegExpFlags flags)
-    : m_state(NotCompiled)
+inline RegExp::RegExp(JSGlobalData* globalData, const UString& patternString, RegExpFlags flags)
+    : JSCell(*globalData, globalData->regExpStructure.get())
+    , m_state(NotCompiled)
     , m_patternString(patternString)
     , m_flags(flags)
     , m_constructionError(0)
@@ -95,13 +98,13 @@ RegExp::~RegExp()
 {
 }
 
-PassRefPtr<RegExp> RegExp::create(JSGlobalData* globalData, const UString& patternString, RegExpFlags flags)
+RegExp* RegExp::create(JSGlobalData* globalData, const UString& patternString, RegExpFlags flags)
 {
-    RefPtr<RegExp> res = adoptRef(new RegExp(globalData, patternString, flags));
+    RegExp* res = new (globalData) RegExp(globalData, patternString, flags);
 #if ENABLE(REGEXP_TRACING)
     globalData->addRegExpToTrace(res);
 #endif
-    return res.release();
+    return res;
 }
 
 void RegExp::compile(JSGlobalData* globalData)
@@ -194,6 +197,10 @@ int RegExp::match(JSGlobalData& globalData, const UString& s, int startOffset, V
     return -1;
 }
 
+void RegExp::invalidateCode()
+{
+    m_representation.clear();
+}
 
 #if ENABLE(YARR_JIT_DEBUG)
 void RegExp::matchCompareWithInterpreter(const UString& s, int startOffset, int* offsetVector, int jitResult)

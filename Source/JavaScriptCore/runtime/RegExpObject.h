@@ -25,15 +25,15 @@
 #include "RegExp.h"
 
 namespace JSC {
-
+    
     class RegExpObject : public JSObjectWithGlobalObject {
     public:
         typedef JSObjectWithGlobalObject Base;
 
-        RegExpObject(JSGlobalObject*, Structure*, NonNullPassRefPtr<RegExp>);
+        RegExpObject(JSGlobalObject*, Structure*, RegExp*);
         virtual ~RegExpObject();
 
-        void setRegExp(PassRefPtr<RegExp> r) { d->regExp = r; }
+        void setRegExp(JSGlobalData& globalData, RegExp* r) { d->regExp.set(globalData, this, r); }
         RegExp* regExp() const { return d->regExp.get(); }
 
         void setLastIndex(size_t lastIndex)
@@ -74,13 +74,13 @@ namespace JSC {
         struct RegExpObjectData {
             WTF_MAKE_FAST_ALLOCATED;
         public:
-            RegExpObjectData(NonNullPassRefPtr<RegExp> regExp)
-                : regExp(regExp)
+            RegExpObjectData(JSGlobalData& globalData, RegExpObject* owner, RegExp* regExp)
+                : regExp(globalData, owner, regExp)
             {
                 lastIndex.setWithoutWriteBarrier(jsNumber(0));
             }
 
-            RefPtr<RegExp> regExp;
+            WriteBarrier<RegExp> regExp;
             WriteBarrier<Unknown> lastIndex;
         };
 #if COMPILER(MSVC)

@@ -36,7 +36,7 @@
 #include "JSGlobalObject.h"
 #include "JumpTable.h"
 #include "Nodes.h"
-#include "RegExp.h"
+#include "RegExpObject.h"
 #include "UString.h"
 #include <wtf/FastAllocBase.h>
 #include <wtf/PassOwnPtr.h>
@@ -451,7 +451,13 @@ namespace JSC {
         }
         FunctionExecutable* functionExpr(int index) { return m_functionExprs[index].get(); }
 
-        unsigned addRegExp(PassRefPtr<RegExp> r) { createRareDataIfNecessary(); unsigned size = m_rareData->m_regexps.size(); m_rareData->m_regexps.append(r); return size; }
+        unsigned addRegExp(RegExp* r)
+        {
+            createRareDataIfNecessary();
+            unsigned size = m_rareData->m_regexps.size();
+            m_rareData->m_regexps.append(WriteBarrier<RegExp>(*m_globalData, ownerExecutable(), r));
+            return size;
+        }
         RegExp* regexp(int index) const { ASSERT(m_rareData); return m_rareData->m_regexps[index].get(); }
 
         JSGlobalObject* globalObject() { return m_globalObject.get(); }
@@ -555,7 +561,7 @@ namespace JSC {
             Vector<HandlerInfo> m_exceptionHandlers;
 
             // Rare Constants
-            Vector<RefPtr<RegExp> > m_regexps;
+            Vector<WriteBarrier<RegExp> > m_regexps;
 
             // Jump Tables
             Vector<SimpleJumpTable> m_immediateSwitchJumpTables;
