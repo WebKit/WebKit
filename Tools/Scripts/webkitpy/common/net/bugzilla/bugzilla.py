@@ -748,8 +748,8 @@ class Bugzilla(object):
 Do you have EditBugs privileges at bugs.webkit.org?
 https://bugs.webkit.org/userprefs.cgi?tab=permissions
 
-If not, you should email webkit-committers@webkit.org or ask in #webkit for
-someone to add EditBugs to your bugs.webkit.org account.""")
+If not, you should email webkit-committers@lists.webkit.org or ask in #webkit
+for someone to add EditBugs to your bugs.webkit.org account.""")
             return
 
         if comment_text:

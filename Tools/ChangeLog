@@ -1,3 +1,9 @@
+2011-05-26  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed, correct address to webkit-committers mailing list.
+
+        * Scripts/webkitpy/common/net/bugzilla/bugzilla.py:
+
 2011-05-25  Adam Roben  <aroben@apple.com>
 
         Don't assume that builds finish in the order they were started
