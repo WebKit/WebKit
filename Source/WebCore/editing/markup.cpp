@@ -136,7 +136,6 @@ private:
     virtual void appendText(Vector<UChar>& out, Text*);
     String renderedText(const Node*, const Range*);
     String stringValueForRange(const Node*, const Range*);
-    void removeExteriorStyles(CSSMutableStyleDeclaration*);
     void appendElement(Vector<UChar>& out, Element* element, bool addDisplayInline, RangeFullySelectsNode);
     void appendElement(Vector<UChar>& out, Element* element, Namespaces*) { appendElement(out, element, false, DoesFullySelectNode); }
 
@@ -239,23 +238,6 @@ String StyledMarkupAccumulator::stringValueForRange(const Node* node, const Rang
     return str;
 }
 
-static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesForElement(Element* element)
-{
-    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
-    RefPtr<CSSRuleList> matchedRules = element->document()->styleSelector()->styleRulesForElement(element,
-        CSSStyleSelector::AuthorCSSRules | CSSStyleSelector::CrossOriginCSSRules);
-    if (matchedRules) {
-        for (unsigned i = 0; i < matchedRules->length(); i++) {
-            if (matchedRules->item(i)->type() == CSSRule::STYLE_RULE) {
-                RefPtr<CSSMutableStyleDeclaration> s = static_cast<CSSStyleRule*>(matchedRules->item(i))->style();
-                style->merge(s.get(), true);
-            }
-        }
-    }
-
-    return style.release();
-}
-
 void StyledMarkupAccumulator::appendElement(Vector<UChar>& out, Element* element, bool addDisplayInline, RangeFullySelectsNode rangeFullySelectsNode)
 {
     bool documentIsHTML = element->document()->isHTMLDocument();
@@ -272,53 +254,26 @@ void StyledMarkupAccumulator::appendElement(Vector<UChar>& out, Element* element
     }
 
     if (element->isHTMLElement() && (shouldAnnotate() || addDisplayInline)) {
-        RefPtr<CSSMutableStyleDeclaration> style = toHTMLElement(element)->getInlineStyleDecl()->copy();
-        if (shouldAnnotate()) {
-            RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(const_cast<Element*>(element));
-            // Styles from the inline style declaration, held in the variable "style", take precedence 
-            // over those from matched rules.
-            styleFromMatchedRules->merge(style.get());
-            style = styleFromMatchedRules;
-
-            RefPtr<CSSComputedStyleDeclaration> computedStyleForElement = computedStyle(element);
-            RefPtr<CSSMutableStyleDeclaration> fromComputedStyle = CSSMutableStyleDeclaration::create();
-
-            {
-                CSSMutableStyleDeclaration::const_iterator end = style->end();
-                for (CSSMutableStyleDeclaration::const_iterator it = style->begin(); it != end; ++it) {
-                    const CSSProperty& property = *it;
-                    CSSValue* value = property.value();
-                    // The property value, if it's a percentage, may not reflect the actual computed value.  
-                    // For example: style="height: 1%; overflow: visible;" in quirksmode
-                    // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
-                    if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
-                        if (static_cast<CSSPrimitiveValue*>(value)->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-                            if (RefPtr<CSSValue> computedPropertyValue = computedStyleForElement->getPropertyCSSValue(property.id()))
-                                fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue));
-                }
-            }
-            style->merge(fromComputedStyle.get());
-        }
+        RefPtr<EditingStyle> style = EditingStyle::create(toHTMLElement(element)->getInlineStyleDecl());
+        if (shouldAnnotate())
+            style->mergeStyleFromRulesForSerialization(toHTMLElement(element));
         if (addDisplayInline)
-            style->setProperty(CSSPropertyDisplay, CSSValueInline, true);
+            style->style()->setProperty(CSSPropertyDisplay, CSSValueInline, true);
+
         // If the node is not fully selected by the range, then we don't want to keep styles that affect its relationship to the nodes around it
         // only the ones that affect it and the nodes within it.
         if (rangeFullySelectsNode == DoesNotFullySelectNode)
-            removeExteriorStyles(style.get());
-        if (style->length() > 0) {
+            style->style()->removeProperty(CSSPropertyFloat);
+
+        if (!style->isEmpty()) {
             DEFINE_STATIC_LOCAL(const String, stylePrefix, (" style=\""));
             append(out, stylePrefix);
-            appendAttributeValue(out, style->cssText(), documentIsHTML);
+            appendAttributeValue(out, style->style()->cssText(), documentIsHTML);
             out.append('\"');
         }
     }
 
     appendCloseTag(out, element);
-}
-
-void StyledMarkupAccumulator::removeExteriorStyles(CSSMutableStyleDeclaration* style)
-{
-    style->removeProperty(CSSPropertyFloat);
 }
 
 Node* StyledMarkupAccumulator::serializeNodes(Node* startNode, Node* pastEnd)
@@ -447,7 +402,7 @@ static bool needInterchangeNewlineAfter(const VisiblePosition& v)
     return isEndOfParagraph(v) && isStartOfParagraph(next) && !(upstreamNode->hasTagName(brTag) && upstreamNode == downstreamNode);
 }
 
-static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesAndInlineDecl(const Node* node)
+static PassRefPtr<EditingStyle> styleFromMatchedRulesAndInlineDecl(const Node* node)
 {
     if (!node->isHTMLElement())
         return 0;
@@ -455,9 +410,8 @@ static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesAndInlineDecl
     // FIXME: Having to const_cast here is ugly, but it is quite a bit of work to untangle
     // the non-const-ness of styleFromMatchedRulesForElement.
     HTMLElement* element = const_cast<HTMLElement*>(static_cast<const HTMLElement*>(node));
-    RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesForElement(element);
-    RefPtr<CSSMutableStyleDeclaration> inlineStyleDecl = element->getInlineStyleDecl();
-    style->merge(inlineStyleDecl.get());
+    RefPtr<EditingStyle> style = EditingStyle::create(element->inlineStyleDecl());
+    style->mergeStyleFromRules(element);
     return style.release();
 }
 
@@ -466,18 +420,20 @@ static bool isElementPresentational(const Node* node)
     if (node->hasTagName(uTag) || node->hasTagName(sTag) || node->hasTagName(strikeTag)
         || node->hasTagName(iTag) || node->hasTagName(emTag) || node->hasTagName(bTag) || node->hasTagName(strongTag))
         return true;
-    RefPtr<CSSMutableStyleDeclaration> style = styleFromMatchedRulesAndInlineDecl(node);
-    if (!style)
-        return false;
-    return !propertyMissingOrEqualToNone(style.get(), CSSPropertyTextDecoration);
+    RefPtr<EditingStyle> style = styleFromMatchedRulesAndInlineDecl(node);
+    return style && style->style() && !propertyMissingOrEqualToNone(style->style(), CSSPropertyTextDecoration);
 }
 
-static bool shouldIncludeWrapperForFullySelectedRoot(Node* fullySelectedRoot, CSSMutableStyleDeclaration* style)
+static bool shouldIncludeWrapperForFullySelectedRoot(Node* fullySelectedRoot)
 {
     if (fullySelectedRoot->isElementNode() && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
         return true;
     
-    return style->getPropertyCSSValue(CSSPropertyBackgroundImage) || style->getPropertyCSSValue(CSSPropertyBackgroundColor);
+    RefPtr<EditingStyle> style = styleFromMatchedRulesAndInlineDecl(fullySelectedRoot);
+    if (!style || !style->style())
+        return false;
+
+    return style->style()->getPropertyCSSValue(CSSPropertyBackgroundImage) || style->style()->getPropertyCSSValue(CSSPropertyBackgroundColor);
 }
 
 static Node* highestAncestorToWrapMarkup(const Range* range, Node* fullySelectedRoot, EAnnotateForInterchange shouldAnnotate)
@@ -515,11 +471,9 @@ static Node* highestAncestorToWrapMarkup(const Range* range, Node* fullySelected
     if (Node *enclosingAnchor = enclosingNodeWithTag(firstPositionInNode(specialCommonAncestor ? specialCommonAncestor : commonAncestor), aTag))
         specialCommonAncestor = enclosingAnchor;
 
-    if (shouldAnnotate == AnnotateForInterchange && fullySelectedRoot) {
-        RefPtr<CSSMutableStyleDeclaration> fullySelectedRootStyle = styleFromMatchedRulesAndInlineDecl(fullySelectedRoot);
-        if (shouldIncludeWrapperForFullySelectedRoot(fullySelectedRoot, fullySelectedRootStyle.get()))
-            specialCommonAncestor = fullySelectedRoot;
-    }
+    if (shouldAnnotate == AnnotateForInterchange && fullySelectedRoot && shouldIncludeWrapperForFullySelectedRoot(fullySelectedRoot))
+        specialCommonAncestor = fullySelectedRoot;
+
     return specialCommonAncestor;
 }
 
@@ -599,22 +553,23 @@ String createMarkup(const Range* range, Vector<Node*>* nodes, EAnnotateForInterc
         // Also include all of the ancestors of lastClosed up to this special ancestor.
         for (ContainerNode* ancestor = lastClosed->parentNode(); ancestor; ancestor = ancestor->parentNode()) {
             if (ancestor == fullySelectedRoot && !convertBlocksToInlines) {
-                RefPtr<CSSMutableStyleDeclaration> fullySelectedRootStyle = styleFromMatchedRulesAndInlineDecl(fullySelectedRoot);
+                RefPtr<EditingStyle> fullySelectedRootStyle = styleFromMatchedRulesAndInlineDecl(fullySelectedRoot);
 
                 // Bring the background attribute over, but not as an attribute because a background attribute on a div
                 // appears to have no effect.
-                if (!fullySelectedRootStyle->getPropertyCSSValue(CSSPropertyBackgroundImage) && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
-                    fullySelectedRootStyle->setProperty(CSSPropertyBackgroundImage, "url('" + static_cast<Element*>(fullySelectedRoot)->getAttribute(backgroundAttr) + "')");
-                
-                if (fullySelectedRootStyle->length()) {
+                if ((!fullySelectedRootStyle || !fullySelectedRootStyle->style() || !fullySelectedRootStyle->style()->getPropertyCSSValue(CSSPropertyBackgroundImage))
+                    && static_cast<Element*>(fullySelectedRoot)->hasAttribute(backgroundAttr))
+                    fullySelectedRootStyle->style()->setProperty(CSSPropertyBackgroundImage, "url('" + static_cast<Element*>(fullySelectedRoot)->getAttribute(backgroundAttr) + "')");
+
+                if (fullySelectedRootStyle->style()) {
                     // Reset the CSS properties to avoid an assertion error in addStyleMarkup().
                     // This assertion is caused at least when we select all text of a <body> element whose
                     // 'text-decoration' property is "inherit", and copy it.
-                    if (!propertyMissingOrEqualToNone(fullySelectedRootStyle.get(), CSSPropertyTextDecoration))
-                        fullySelectedRootStyle->setProperty(CSSPropertyTextDecoration, CSSValueNone);
-                    if (!propertyMissingOrEqualToNone(fullySelectedRootStyle.get(), CSSPropertyWebkitTextDecorationsInEffect))
-                        fullySelectedRootStyle->setProperty(CSSPropertyWebkitTextDecorationsInEffect, CSSValueNone);
-                    accumulator.wrapWithStyleNode(fullySelectedRootStyle.get(), document, true);
+                    if (!propertyMissingOrEqualToNone(fullySelectedRootStyle->style(), CSSPropertyTextDecoration))
+                        fullySelectedRootStyle->style()->setProperty(CSSPropertyTextDecoration, CSSValueNone);
+                    if (!propertyMissingOrEqualToNone(fullySelectedRootStyle->style(), CSSPropertyWebkitTextDecorationsInEffect))
+                        fullySelectedRootStyle->style()->setProperty(CSSPropertyWebkitTextDecorationsInEffect, CSSValueNone);
+                    accumulator.wrapWithStyleNode(fullySelectedRootStyle->style(), document, true);
                 }
             } else {
                 // Since this node and all the other ancestors are not in the selection we want to set RangeFullySelectsNode to DoesNotFullySelectNode

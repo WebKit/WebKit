@@ -77,7 +77,7 @@ private:
     
     void removeUnrenderedTextNodesAtEnds();
     
-    void negateStyleRulesThatAffectAppearance();
+    void removeRedundantStylesAndKeepStyleSpanInline();
     void handleStyleSpans();
     void copyStyleToChildren(Node* parentNode, const CSSMutableStyleDeclaration* parentStyle);
     void handlePasteAsQuotationNode();

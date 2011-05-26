@@ -120,6 +120,9 @@ public:
     void prepareToApplyAt(const Position&, ShouldPreserveWritingDirection = DoNotPreserveWritingDirection);
     void mergeTypingStyle(Document*);
     void mergeInlineStyleOfElement(StyledElement*);
+    void mergeStyleFromRules(StyledElement*);
+    void mergeStyleFromRulesForSerialization(StyledElement*);
+    void removeStyleFromRules(StyledElement*);
 
     float fontSizeDelta() const { return m_fontSizeDelta; }
     bool hasFontSizeDelta() const { return m_fontSizeDelta != NoFontDelta; }

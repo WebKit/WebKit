@@ -1,3 +1,20 @@
+2011-05-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Enrica Casucci.
+
+        WebKit duplicates styles from css rules on copy and paste
+        https://bugs.webkit.org/show_bug.cgi?id=61466
+
+        Added a test to ensure Webkit does not leave redundant inline style declarations after paste.
+        Also rebaselined several tests that progressed.
+
+        * editing/pasteboard/4922709-expected.txt:
+        * editing/pasteboard/5780697-2-expected.txt:
+        * editing/pasteboard/paste-text-012-expected.txt:
+        * editing/pasteboard/style-from-rules-expected.txt: Added.
+        * editing/pasteboard/style-from-rules.html: Added.
+        * platform/chromium-win/editing/pasteboard/5780697-2-expected.txt:
+
 2011-05-26  Michael Schneider  <michschn@google.com>
 
         Reviewed by Pavel Feldman.

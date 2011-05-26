@@ -476,7 +476,7 @@ bool ReplaceSelectionCommand::shouldMerge(const VisiblePosition& source, const V
 
 // Style rules that match just inserted elements could change their appearance, like
 // a div inserted into a document with div { display:inline; }.
-void ReplaceSelectionCommand::negateStyleRulesThatAffectAppearance()
+void ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline()
 {
     for (RefPtr<Node> node = m_firstNodeInserted.get(); node; node = node->traverseNextNode()) {
         // FIXME: <rdar://problem/5371536> Style rules that match pasted content can change it's appearance
@@ -492,7 +492,18 @@ void ReplaceSelectionCommand::negateStyleRulesThatAffectAppearance()
                 e->getInlineStyleDecl()->setProperty(CSSPropertyDisplay, CSSValueInline);
             if (e->renderer() && e->renderer()->style()->floating() != FNONE)
                 e->getInlineStyleDecl()->setProperty(CSSPropertyFloat, CSSValueNone);
+        } else if (node->isStyledElement()) {
+            StyledElement* element = static_cast<StyledElement*>(node.get());
+            if (CSSMutableStyleDeclaration* inlineStyle = element->inlineStyleDecl()) {
+                RefPtr<EditingStyle> newInlineStyle = EditingStyle::create(inlineStyle);
+                newInlineStyle->removeStyleFromRules(element);
+                if (!newInlineStyle->style() || !newInlineStyle->style()->length())
+                    removeNodeAttribute(element, styleAttr);
+                else if (newInlineStyle->style()->length() < inlineStyle->length())
+                    setNodeAttribute(element, styleAttr, newInlineStyle->style()->cssText());                    
+            }
         }
+
         if (node == m_lastLeafInserted)
             break;
     }
@@ -995,7 +1006,7 @@ void ReplaceSelectionCommand::doApply()
     
     removeUnrenderedTextNodesAtEnds();
     
-    negateStyleRulesThatAffectAppearance();
+    removeRedundantStylesAndKeepStyleSpanInline();
     
     if (!handledStyleSpans)
         handleStyleSpans();

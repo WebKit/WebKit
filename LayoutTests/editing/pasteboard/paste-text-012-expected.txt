@@ -6,4 +6,4 @@ foo
 foo
 
 execCopyCommand: <div id="test" class="editing"><div><blockquote>foo</blockquote></div></div> <div class="editing"></div>
-execPasteCommand: <div id="test" class="editing"><div><blockquote>foo</blockquote></div></div> <div class="editing"><span class="Apple-style-span" style="font-size: medium; "><div id="test" class="editing" style="border-top-width: 2px; border-right-width: 2px; border-bottom-width: 2px; border-left-width: 2px; border-top-style: solid; border-right-style: solid; border-bottom-style: solid; border-left-style: solid; border-top-color: red; border-right-color: red; border-bottom-color: red; border-left-color: red; padding-top: 12px; padding-right: 12px; padding-bottom: 12px; padding-left: 12px; font-size: 24px; "><div><blockquote>foo</blockquote></div><div><br></div></div></span></div>
+execPasteCommand: <div id="test" class="editing"><div><blockquote>foo</blockquote></div></div> <div class="editing"><span class="Apple-style-span" style="font-size: medium; "><div id="test" class="editing"><div><blockquote>foo</blockquote></div><div><br></div></div></span></div>

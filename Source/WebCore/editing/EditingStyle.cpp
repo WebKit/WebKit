@@ -31,6 +31,7 @@
 #include "CSSComputedStyleDeclaration.h"
 #include "CSSMutableStyleDeclaration.h"
 #include "CSSParser.h"
+#include "CSSStyleRule.h"
 #include "CSSStyleSelector.h"
 #include "CSSValueKeywords.h"
 #include "CSSValueList.h"
@@ -283,7 +284,7 @@ EditingStyle::EditingStyle(const Position& position, PropertiesToInclude propert
 }
 
 EditingStyle::EditingStyle(const CSSStyleDeclaration* style)
-    : m_mutableStyle(style->copy())
+    : m_mutableStyle(style ? style->copy() : 0)
     , m_shouldUseFixedDefaultFontSize(false)
     , m_fontSizeDelta(NoFontDelta)
 {
@@ -382,6 +383,9 @@ void EditingStyle::replaceFontSizeByKeywordIfPossible(RenderStyle* renderStyle, 
 
 void EditingStyle::extractFontSizeDelta()
 {
+    if (!m_mutableStyle)
+        return;
+
     if (m_mutableStyle->getPropertyCSSValue(CSSPropertyFontSize)) {
         // Explicit font size overrides any delta.
         m_mutableStyle->removeProperty(CSSPropertyWebkitFontSizeDelta);
@@ -803,6 +807,70 @@ void EditingStyle::mergeStyle(CSSMutableStyleDeclaration* style)
         if (newTextDecorations->hasValue(lineThrough.get()) && !textDecorations->hasValue(lineThrough.get()))
             textDecorations->append(lineThrough.get());
     }
+}
+
+static PassRefPtr<CSSMutableStyleDeclaration> styleFromMatchedRulesForElement(Element* element)
+{
+    RefPtr<CSSMutableStyleDeclaration> style = CSSMutableStyleDeclaration::create();
+    RefPtr<CSSRuleList> matchedRules = element->document()->styleSelector()->styleRulesForElement(element,
+        CSSStyleSelector::AuthorCSSRules | CSSStyleSelector::CrossOriginCSSRules);
+    if (matchedRules) {
+        for (unsigned i = 0; i < matchedRules->length(); i++) {
+            if (matchedRules->item(i)->type() == CSSRule::STYLE_RULE) {
+                RefPtr<CSSMutableStyleDeclaration> s = static_cast<CSSStyleRule*>(matchedRules->item(i))->style();
+                style->merge(s.get(), true);
+            }
+        }
+    }
+    
+    return style.release();
+}
+
+void EditingStyle::mergeStyleFromRules(StyledElement* element)
+{
+    RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(element);
+    // Styles from the inline style declaration, held in the variable "style", take precedence 
+    // over those from matched rules.
+    if (m_mutableStyle)
+        styleFromMatchedRules->merge(m_mutableStyle.get());
+
+    clear();
+    m_mutableStyle = styleFromMatchedRules;
+}
+
+void EditingStyle::mergeStyleFromRulesForSerialization(StyledElement* element)
+{
+    mergeStyleFromRules(element);
+
+    // The property value, if it's a percentage, may not reflect the actual computed value.  
+    // For example: style="height: 1%; overflow: visible;" in quirksmode
+    // FIXME: There are others like this, see <rdar://problem/5195123> Slashdot copy/paste fidelity problem
+    RefPtr<CSSComputedStyleDeclaration> computedStyleForElement = computedStyle(element);
+    RefPtr<CSSMutableStyleDeclaration> fromComputedStyle = CSSMutableStyleDeclaration::create();
+    {
+        CSSMutableStyleDeclaration::const_iterator end = m_mutableStyle->end();
+        for (CSSMutableStyleDeclaration::const_iterator it = m_mutableStyle->begin(); it != end; ++it) {
+            const CSSProperty& property = *it;
+            CSSValue* value = property.value();
+            if (value->cssValueType() == CSSValue::CSS_PRIMITIVE_VALUE)
+                if (static_cast<CSSPrimitiveValue*>(value)->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+                    if (RefPtr<CSSValue> computedPropertyValue = computedStyleForElement->getPropertyCSSValue(property.id()))
+                        fromComputedStyle->addParsedProperty(CSSProperty(property.id(), computedPropertyValue));
+        }
+    }
+    m_mutableStyle->merge(fromComputedStyle.get());
+}
+
+void EditingStyle::removeStyleFromRules(StyledElement* element)
+{
+    if (!m_mutableStyle)
+        return;
+
+    RefPtr<CSSMutableStyleDeclaration> styleFromMatchedRules = styleFromMatchedRulesForElement(element);
+    if (!styleFromMatchedRules)
+        return;
+
+    m_mutableStyle = getPropertiesNotIn(m_mutableStyle.get(), styleFromMatchedRules.get());
 }
 
 static void reconcileTextDecorationProperties(CSSMutableStyleDeclaration* style)

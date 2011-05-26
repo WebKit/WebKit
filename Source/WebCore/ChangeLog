@@ -1,3 +1,35 @@
+2011-05-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Enrica Casucci.
+
+        WebKit duplicates styles from css rules on copy and paste
+        https://bugs.webkit.org/show_bug.cgi?id=61466
+
+        Fixed the bug by removing duplicate properties from inline style declarations in ReplaceSelectionCommand.
+        Also moved the code to obtain style from rules from markup.cpp to EditingStyle.cpp to share code.
+
+        Test: editing/pasteboard/style-from-rules.html
+
+        * editing/EditingStyle.cpp:
+        (WebCore::EditingStyle::EditingStyle): Added a null check.
+        (WebCore::EditingStyle::extractFontSizeDelta): Ditto.
+        (WebCore::styleFromMatchedRulesForElement): Moved from markup.cpp.
+        (WebCore::EditingStyle::mergeStyleFromRules): Extracted from StyledMarkupAccumulator::appendElement.
+        (WebCore::EditingStyle::mergeStyleFromRulesForSerialization): Ditto.
+        (WebCore::EditingStyle::removeStyleFromRules): Added.
+        * editing/EditingStyle.h:
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::removeRedundantStylesAndKeepStyleSpanInline): Renamed from
+        negateStyleRulesThatAffectAppearance; Calls removeStyleFromRules.
+        * editing/markup.cpp:
+        (WebCore::StyledMarkupAccumulator::appendElement): Calls mergeStyleFromRulesForSerialization.
+        (WebCore::styleFromMatchedRulesAndInlineDecl): Calls mergeStyleFromRules; changed the return type
+        from CSSMutableStyleDeclaration to EditingStyle.
+        (WebCore::isElementPresentational): Calls styleFromMatchedRulesAndInlineDecl.
+        (WebCore::shouldIncludeWrapperForFullySelectedRoot): Ditto.
+        (WebCore::highestAncestorToWrapMarkup): Calls shouldIncludeWrapperForFullySelectedRoot.
+        (WebCore::createMarkup): Calls styleFromMatchedRulesAndInlineDecl.
+
 2011-05-26  Michael Schneider  <michschn@google.com>
 
         Reviewed by Pavel Feldman.
