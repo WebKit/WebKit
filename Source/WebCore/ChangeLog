@@ -1,3 +1,17 @@
+2011-05-26  Leandro Gracia Gil  <leandrogracia@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        [V8] Add missing compile guards for WebWorkers in WebCore.
+        https://bugs.webkit.org/show_bug.cgi?id=61535
+
+        No new tests - refactoring only.
+
+        * bindings/v8/V8AbstractEventListener.cpp:
+        (WebCore::V8AbstractEventListener::invokeEventHandler):
+        * bindings/v8/V8DOMWrapper.cpp:
+        (WebCore::V8DOMWrapper::instantiateV8Object):
+
 2011-05-26  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

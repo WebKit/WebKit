@@ -156,8 +156,10 @@ void V8AbstractEventListener::invokeEventHandler(ScriptExecutionContext* context
             event->target()->uncaughtExceptionInEventHandler();
 
         if (!tryCatch.CanContinue()) { // Result of TerminateExecution().
+#if ENABLE(WORKERS)
             if (context->isWorkerContext())
                 static_cast<WorkerContext*>(context)->script()->forbidExecution();
+#endif
             return;
         }
         tryCatch.Reset();

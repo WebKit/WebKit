@@ -256,7 +256,9 @@ static bool globalObjectPrototypeIsDOMWindow(v8::Handle<v8::Object> objectProtot
 
 v8::Local<v8::Object> V8DOMWrapper::instantiateV8Object(V8Proxy* proxy, WrapperTypeInfo* type, void* impl)
 {
+#if ENABLE(WORKERS)
     WorkerContext* workerContext = 0;
+#endif
     if (V8IsolatedContext::getEntered()) {
         // This effectively disables the wrapper cache for isolated worlds.
         proxy = 0;
