@@ -1,3 +1,9 @@
+2011-05-26  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed. Skipping 3 new inspector tests on mac-wk2, see http://webkit.org/b/61437
+
+        * platform/mac-wk2/Skipped:
+
 2011-05-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Enrica Casucci.
