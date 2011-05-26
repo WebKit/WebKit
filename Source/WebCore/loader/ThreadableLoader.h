@@ -31,8 +31,10 @@
 #ifndef ThreadableLoader_h
 #define ThreadableLoader_h
 
+#include "SecurityOrigin.h"
 #include <wtf/Noncopyable.h>
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/Vector.h>
 
 namespace WebCore {
@@ -62,6 +64,7 @@ namespace WebCore {
         bool forcePreflight;  // If AccessControl is used, whether to force a preflight.
         CrossOriginRequestPolicy crossOriginRequestPolicy;
         bool shouldBufferData;
+        RefPtr<SecurityOrigin> securityOrigin;
     };
 
     // Useful for doing loader operations from any thread (not threadsafe, 

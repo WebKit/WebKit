@@ -789,6 +789,11 @@ void WebFrameImpl::executeScriptInIsolatedWorld(
     m_frame->script()->evaluateInIsolatedWorld(worldId, sources, extensionGroup);
 }
 
+void WebFrameImpl::setIsolatedWorldSecurityOrigin(int worldId, const WebSecurityOrigin& securityOrigin)
+{
+    m_frame->script()->setIsolatedWorldSecurityOrigin(worldId, securityOrigin.get());
+}
+
 void WebFrameImpl::addMessageToConsole(const WebConsoleMessage& message)
 {
     ASSERT(frame());

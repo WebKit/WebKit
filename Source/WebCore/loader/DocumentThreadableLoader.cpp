@@ -68,7 +68,7 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document* document, Threadabl
     , m_document(document)
     , m_options(options)
     , m_optionalOutgoingReferrer(optionalOutgoingReferrer)
-    , m_sameOriginRequest(document->securityOrigin()->canRequest(request.url()))
+    , m_sameOriginRequest(securityOrigin()->canRequest(request.url()))
     , m_async(blockingBehavior == LoadAsynchronously)
 {
     ASSERT(document);
@@ -89,14 +89,14 @@ DocumentThreadableLoader::DocumentThreadableLoader(Document* document, Threadabl
     ASSERT(m_options.crossOriginRequestPolicy == UseAccessControl);
 
     OwnPtr<ResourceRequest> crossOriginRequest = adoptPtr(new ResourceRequest(request));
-    updateRequestForAccessControl(*crossOriginRequest, m_document->securityOrigin(), m_options.allowCredentials);
+    updateRequestForAccessControl(*crossOriginRequest, securityOrigin(), m_options.allowCredentials);
 
     if (!m_options.forcePreflight && isSimpleCrossOriginAccessRequest(crossOriginRequest->httpMethod(), crossOriginRequest->httpHeaderFields()))
         makeSimpleCrossOriginAccessRequest(*crossOriginRequest);
     else {
         m_actualRequest = crossOriginRequest.release();
 
-        if (CrossOriginPreflightResultCache::shared().canSkipPreflight(document->securityOrigin()->toString(), m_actualRequest->url(), m_options.allowCredentials, m_actualRequest->httpMethod(), m_actualRequest->httpHeaderFields()))
+        if (CrossOriginPreflightResultCache::shared().canSkipPreflight(securityOrigin()->toString(), m_actualRequest->url(), m_options.allowCredentials, m_actualRequest->httpMethod(), m_actualRequest->httpHeaderFields()))
             preflightSuccess();
         else
             makeCrossOriginAccessRequestWithPreflight(*m_actualRequest);
@@ -119,7 +119,7 @@ void DocumentThreadableLoader::makeSimpleCrossOriginAccessRequest(const Resource
 
 void DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight(const ResourceRequest& request)
 {
-    ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, m_document->securityOrigin(), m_options.allowCredentials);
+    ResourceRequest preflightRequest = createAccessControlPreflightRequest(request, securityOrigin(), m_options.allowCredentials);
     loadRequest(preflightRequest, DoSecurityCheck);
 }
 
@@ -176,7 +176,7 @@ void DocumentThreadableLoader::didReceiveResponse(SubresourceLoader* loader, con
 
     String accessControlErrorDescription;
     if (m_actualRequest) {
-        if (!passesAccessControlCheck(response, m_options.allowCredentials, m_document->securityOrigin(), accessControlErrorDescription)) {
+        if (!passesAccessControlCheck(response, m_options.allowCredentials, securityOrigin(), accessControlErrorDescription)) {
             preflightFailure(response.url(), accessControlErrorDescription);
             return;
         }
@@ -189,10 +189,10 @@ void DocumentThreadableLoader::didReceiveResponse(SubresourceLoader* loader, con
             return;
         }
 
-        CrossOriginPreflightResultCache::shared().appendEntry(m_document->securityOrigin()->toString(), m_actualRequest->url(), preflightResult.release());
+        CrossOriginPreflightResultCache::shared().appendEntry(securityOrigin()->toString(), m_actualRequest->url(), preflightResult.release());
     } else {
         if (!m_sameOriginRequest && m_options.crossOriginRequestPolicy == UseAccessControl) {
-            if (!passesAccessControlCheck(response, m_options.allowCredentials, m_document->securityOrigin(), accessControlErrorDescription)) {
+            if (!passesAccessControlCheck(response, m_options.allowCredentials, securityOrigin(), accessControlErrorDescription)) {
                 m_client->didFail(ResourceError(errorDomainWebKitInternal, 0, response.url().string(), accessControlErrorDescription));
                 return;
             }
@@ -293,7 +293,7 @@ void DocumentThreadableLoader::preflightSuccess()
     OwnPtr<ResourceRequest> actualRequest;
     actualRequest.swap(m_actualRequest);
 
-    actualRequest->setHTTPOrigin(m_document->securityOrigin()->toString());
+    actualRequest->setHTTPOrigin(securityOrigin()->toString());
 
     // It should be ok to skip the security check since we already asked about the preflight request.
     loadRequest(*actualRequest, SkipSecurityCheck);
@@ -368,7 +368,12 @@ bool DocumentThreadableLoader::isAllowedRedirect(const KURL& url)
     // FIXME: We need to implement access control for each redirect. This will require some refactoring though, because the code
     // that processes redirects doesn't know about access control and expects a synchronous answer from its client about whether
     // a redirect should proceed.
-    return m_sameOriginRequest && m_document->securityOrigin()->canRequest(url);
+    return m_sameOriginRequest && securityOrigin()->canRequest(url);
+}
+
+SecurityOrigin* DocumentThreadableLoader::securityOrigin() const
+{
+    return m_options.securityOrigin ? m_options.securityOrigin.get() : m_document->securityOrigin();
 }
 
 } // namespace WebCore

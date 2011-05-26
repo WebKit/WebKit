@@ -266,12 +266,14 @@ public:
 
     void setJavaScriptCanAccessClipboard(const CppArgumentList&, CppVariant*);
     void setXSSAuditorEnabled(const CppArgumentList&, CppVariant*);
-    void evaluateScriptInIsolatedWorld(const CppArgumentList&, CppVariant*);
     void overridePreference(const CppArgumentList&, CppVariant*);
     void setAllowUniversalAccessFromFileURLs(const CppArgumentList&, CppVariant*);
     void setAllowDisplayOfInsecureContent(const CppArgumentList&, CppVariant*);
     void setAllowFileAccessFromFileURLs(const CppArgumentList&, CppVariant*);
     void setAllowRunningOfInsecureContent(const CppArgumentList&, CppVariant*);
+
+    void evaluateScriptInIsolatedWorld(const CppArgumentList&, CppVariant*);
+    void setIsolatedWorldSecurityOrigin(const CppArgumentList&, CppVariant*);
 
     void shadowRoot(const CppArgumentList&, CppVariant*);
     void ensureShadowRoot(const CppArgumentList&, CppVariant*);

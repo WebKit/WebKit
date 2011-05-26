@@ -1,0 +1,1 @@
+Test file for cross-origin XMLHttpRequest tests.

@@ -39,6 +39,7 @@ class Blob;
 class Document;
 class DOMFormData;
 class ResourceRequest;
+class SecurityOrigin;
 class SharedBuffer;
 class TextResourceDecoder;
 class ThreadableLoader;
@@ -46,7 +47,7 @@ class ThreadableLoader;
 class XMLHttpRequest : public RefCounted<XMLHttpRequest>, public EventTarget, private ThreadableLoaderClient, public ActiveDOMObject {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassRefPtr<XMLHttpRequest> create(ScriptExecutionContext* context) { return adoptRef(new XMLHttpRequest(context)); }
+    static PassRefPtr<XMLHttpRequest> create(ScriptExecutionContext*, PassRefPtr<SecurityOrigin> = 0);
     ~XMLHttpRequest();
 
     // These exact numeric values are important because JS expects them.
@@ -134,7 +135,7 @@ public:
     using RefCounted<XMLHttpRequest>::deref;
 
 private:
-    XMLHttpRequest(ScriptExecutionContext*);
+    XMLHttpRequest(ScriptExecutionContext*, PassRefPtr<SecurityOrigin>);
 
     virtual void refEventTarget() { ref(); }
     virtual void derefEventTarget() { deref(); }
@@ -142,6 +143,7 @@ private:
     virtual EventTargetData* ensureEventTargetData();
 
     Document* document() const;
+    SecurityOrigin* securityOrigin() const;
 
 #if ENABLE(DASHBOARD_SUPPORT)
     bool usesDashboardBackwardCompatibilityMode() const;
@@ -226,6 +228,8 @@ private:
 
     // An enum corresponding to the allowed string values for the responseType attribute.
     ResponseTypeCode m_responseTypeCode;
+
+    RefPtr<SecurityOrigin> m_securityOrigin;
 };
 
 } // namespace WebCore

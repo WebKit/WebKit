@@ -108,6 +108,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("ensureShadowRoot", &LayoutTestController::ensureShadowRoot);
     bindMethod("evaluateInWebInspector", &LayoutTestController::evaluateInWebInspector);
     bindMethod("evaluateScriptInIsolatedWorld", &LayoutTestController::evaluateScriptInIsolatedWorld);
+    bindMethod("setIsolatedWorldSecurityOrigin", &LayoutTestController::setIsolatedWorldSecurityOrigin);
     bindMethod("execCommand", &LayoutTestController::execCommand);
     bindMethod("grantDesktopNotificationPermission", &LayoutTestController::grantDesktopNotificationPermission);
     bindMethod("hasSpellingMarker", &LayoutTestController::hasSpellingMarker);
@@ -1285,6 +1286,18 @@ void LayoutTestController::evaluateScriptInIsolatedWorld(const CppArgumentList& 
         m_shell->webView()->focusedFrame()->executeScriptInIsolatedWorld(arguments[0].toInt32(), &source, 1, 1);
     }
     result->setNull();
+}
+
+void LayoutTestController::setIsolatedWorldSecurityOrigin(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+
+    if (arguments.size() != 2 || !arguments[0].isNumber() || !arguments[1].isString())
+        return;
+
+    m_shell->webView()->focusedFrame()->setIsolatedWorldSecurityOrigin(
+        arguments[0].toInt32(),
+        WebSecurityOrigin::createFromString(cppVariantToWebString(arguments[1])));
 }
 
 void LayoutTestController::setAllowUniversalAccessFromFileURLs(const CppArgumentList& arguments, CppVariant* result)

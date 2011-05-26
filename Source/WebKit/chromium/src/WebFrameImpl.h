@@ -104,6 +104,7 @@ public:
     virtual void executeScriptInIsolatedWorld(
         int worldId, const WebScriptSource* sources, unsigned numSources,
         int extensionGroup);
+    virtual void setIsolatedWorldSecurityOrigin(int worldId, const WebSecurityOrigin&);
     virtual void addMessageToConsole(const WebConsoleMessage&);
     virtual void collectGarbage();
 #if WEBKIT_USING_V8

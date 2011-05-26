@@ -34,7 +34,7 @@
 
 #include "Frame.h"
 #include "FrameLoaderClient.h"
-#include "HashMap.h"
+#include "SecurityOrigin.h"
 #include "V8DOMWindow.h"
 #include "V8HiddenPropertyName.h"
 
@@ -85,6 +85,11 @@ void V8IsolatedContext::destroy()
 V8IsolatedContext::~V8IsolatedContext()
 {
     m_context->disposeHandle();
+}
+
+void V8IsolatedContext::setSecurityOrigin(PassRefPtr<SecurityOrigin> securityOrigin)
+{
+    m_securityOrigin = securityOrigin;
 }
 
 } // namespace WebCore

@@ -172,7 +172,12 @@ static const XMLHttpRequestStaticData* initializeXMLHttpRequestStaticData()
     return dummy;
 }
 
-XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
+PassRefPtr<XMLHttpRequest> XMLHttpRequest::create(ScriptExecutionContext* context, PassRefPtr<SecurityOrigin> securityOrigin)
+{
+    return adoptRef(new XMLHttpRequest(context, securityOrigin));
+}
+
+XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context, PassRefPtr<SecurityOrigin> securityOrigin)
     : ActiveDOMObject(context, this)
     , m_async(true)
     , m_includeCredentials(false)
@@ -187,6 +192,7 @@ XMLHttpRequest::XMLHttpRequest(ScriptExecutionContext* context)
     , m_exceptionCode(0)
     , m_progressEventThrottle(this)
     , m_responseTypeCode(ResponseTypeDefault)
+    , m_securityOrigin(securityOrigin)
 {
     initializeXMLHttpRequestStaticData();
 #ifndef NDEBUG
@@ -205,6 +211,11 @@ Document* XMLHttpRequest::document() const
 {
     ASSERT(scriptExecutionContext()->isDocument());
     return static_cast<Document*>(scriptExecutionContext());
+}
+
+SecurityOrigin* XMLHttpRequest::securityOrigin() const
+{
+    return m_securityOrigin ? m_securityOrigin.get() : scriptExecutionContext()->securityOrigin();
 }
 
 #if ENABLE(DASHBOARD_SUPPORT)
@@ -249,7 +260,7 @@ Document* XMLHttpRequest::responseXML(ExceptionCode& ec)
             m_responseXML = Document::create(0, m_url);
             // FIXME: Set Last-Modified.
             m_responseXML->setContent(m_responseBuilder.toStringPreserveCapacity());
-            m_responseXML->setSecurityOrigin(document()->securityOrigin());
+            m_responseXML->setSecurityOrigin(securityOrigin());
             if (!m_responseXML->wellFormed())
                 m_responseXML = 0;
         }
@@ -617,7 +628,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
         }
     }
 
-    m_sameOriginRequest = scriptExecutionContext()->securityOrigin()->canRequest(m_url);
+    m_sameOriginRequest = securityOrigin()->canRequest(m_url);
 
     // We also remember whether upload events should be allowed for this request in case the upload listeners are
     // added after the request is started.
@@ -641,6 +652,7 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
     options.forcePreflight = uploadEvents;
     options.allowCredentials = m_sameOriginRequest || m_includeCredentials;
     options.crossOriginRequestPolicy = UseAccessControl;
+    options.securityOrigin = securityOrigin();
 
     m_exceptionCode = 0;
     m_error = false;
@@ -823,7 +835,7 @@ void XMLHttpRequest::setRequestHeader(const AtomicString& name, const String& va
     }
 
     // A privileged script (e.g. a Dashboard widget) can set any headers.
-    if (!scriptExecutionContext()->securityOrigin()->canLoadLocalResources() && !isSafeRequestHeader(name)) {
+    if (!securityOrigin()->canLoadLocalResources() && !isSafeRequestHeader(name)) {
         reportUnsafeUsage(scriptExecutionContext(), "Refused to set unsafe header \"" + name + "\"");
         return;
     }
@@ -866,7 +878,7 @@ String XMLHttpRequest::getAllResponseHeaders(ExceptionCode& ec) const
         //     2) There's no known harm in hiding Set-Cookie header fields entirely; we don't
         //        know any widely used technique that requires access to them.
         //     3) Firefox has implemented this policy.
-        if (isSetCookieHeader(it->first) && !scriptExecutionContext()->securityOrigin()->canLoadLocalResources())
+        if (isSetCookieHeader(it->first) && !securityOrigin()->canLoadLocalResources())
             continue;
 
         if (!m_sameOriginRequest && !isOnAccessControlResponseHeaderWhitelist(it->first))
@@ -891,7 +903,7 @@ String XMLHttpRequest::getResponseHeader(const AtomicString& name, ExceptionCode
     }
 
     // See comment in getAllResponseHeaders above.
-    if (isSetCookieHeader(name) && !scriptExecutionContext()->securityOrigin()->canLoadLocalResources()) {
+    if (isSetCookieHeader(name) && !securityOrigin()->canLoadLocalResources()) {
         reportUnsafeUsage(scriptExecutionContext(), "Refused to get unsafe header \"" + name + "\"");
         return String();
     }

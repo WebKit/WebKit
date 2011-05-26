@@ -32,7 +32,10 @@
 #include "V8XMLHttpRequest.h"
 
 #include "Frame.h"
+#include "OriginAccessEntry.h"
+#include "SecurityOrigin.h"
 #include "V8Binding.h"
+#include "V8IsolatedContext.h"
 #include "V8Proxy.h"
 #include "V8Utilities.h"
 #include "WorkerContext.h"
@@ -52,7 +55,11 @@ v8::Handle<v8::Value> V8XMLHttpRequest::constructorCallback(const v8::Arguments&
     ScriptExecutionContext* context = getScriptExecutionContext();
     if (!context)
         return throwError("XMLHttpRequest constructor's associated context is not available", V8Proxy::ReferenceError);
-    RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context);
+
+    RefPtr<SecurityOrigin> securityOrigin;
+    if (V8IsolatedContext* isolatedContext = V8IsolatedContext::getEntered())
+        securityOrigin = isolatedContext->securityOrigin();
+    RefPtr<XMLHttpRequest> xmlHttpRequest = XMLHttpRequest::create(context, securityOrigin);
     V8DOMWrapper::setDOMWrapper(args.Holder(), &info, xmlHttpRequest.get());
 
     // Add object to the wrapper map.

@@ -45,6 +45,7 @@ namespace WebCore {
     class Document;
     class KURL;
     class ResourceRequest;
+    class SecurityOrigin;
     class ThreadableLoaderClient;
 
     class DocumentThreadableLoader : public RefCounted<DocumentThreadableLoader>, public ThreadableLoader, private SubresourceLoaderClient  {
@@ -93,6 +94,8 @@ namespace WebCore {
 
         void loadRequest(const ResourceRequest&, SecurityCheckPolicy);
         bool isAllowedRedirect(const KURL&);
+
+        SecurityOrigin* securityOrigin() const;
 
         RefPtr<SubresourceLoader> m_loader;
         ThreadableLoaderClient* m_client;

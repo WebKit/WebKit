@@ -40,6 +40,7 @@
 
 namespace WebCore {
 
+class SecurityOrigin;
 class V8Proxy;
 
 // V8IsolatedContext
@@ -58,7 +59,7 @@ class V8IsolatedContext {
 public:
     // Creates an isolated world. To destroy it, call destroy().
     // This will delete the isolated world when the context it owns is GC'd.
-    V8IsolatedContext(V8Proxy* proxy, int extensionGroup);
+    V8IsolatedContext(V8Proxy*, int extensionGroup);
     ~V8IsolatedContext();
 
     // Call this to destroy the isolated world. It will be deleted sometime
@@ -93,6 +94,9 @@ public:
 
     IsolatedWorld* world() const { return m_world.get(); }
 
+    SecurityOrigin* securityOrigin() const { return m_securityOrigin.get(); }
+    void setSecurityOrigin(PassRefPtr<SecurityOrigin>);
+
 private:
     static v8::Handle<v8::Object> getGlobalObject(v8::Handle<v8::Context> context)
     {
@@ -108,6 +112,8 @@ private:
     RefPtr<SharedPersistent<v8::Context> > m_context;
 
     RefPtr<IsolatedWorld> m_world;
+
+    RefPtr<SecurityOrigin> m_securityOrigin;
 };
 
 } // namespace WebCore

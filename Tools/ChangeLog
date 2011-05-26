@@ -1,3 +1,17 @@
+2011-05-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Support cross-origin XMLHttpRequest in isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=59843
+
+        Expose setIsolatedWorldSecurityOrigin in LayoutTestController.
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::setIsolatedWorldSecurityOrigin):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+
 2011-05-25  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Adam Roben.

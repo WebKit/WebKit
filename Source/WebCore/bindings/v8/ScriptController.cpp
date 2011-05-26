@@ -216,6 +216,11 @@ void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<Sc
     m_proxy->evaluateInIsolatedWorld(worldID, sources, extensionGroup);
 }
 
+void ScriptController::setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin> securityOrigin)
+{
+    m_proxy->setIsolatedWorldSecurityOrigin(worldID, securityOrigin);
+}
+
 // Evaluate a script file in the environment of this proxy.
 ScriptValue ScriptController::evaluate(const ScriptSourceCode& sourceCode)
 {

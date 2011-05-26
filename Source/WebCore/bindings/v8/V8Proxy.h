@@ -59,6 +59,7 @@ namespace WebCore {
     class Node;
     class ScriptExecutionContext;
     class ScriptSourceCode;
+    class SecurityOrigin;
     class V8EventListener;
     class V8IsolatedContext;
     class WorldContextHandle;
@@ -159,6 +160,8 @@ namespace WebCore {
         // Array, and so-on), and its own wrappers for all DOM nodes and DOM
         // constructors.
         void evaluateInIsolatedWorld(int worldId, const Vector<ScriptSourceCode>& sources, int extensionGroup);
+        
+        void setIsolatedWorldSecurityOrigin(int worldId, PassRefPtr<SecurityOrigin>);
 
         // Returns true if the proxy is currently executing a script in V8.
         bool executingScript() const;
@@ -339,6 +342,9 @@ namespace WebCore {
         //        IsolatedContext directly.
         typedef HashMap<int, V8IsolatedContext*> IsolatedWorldMap;
         IsolatedWorldMap m_isolatedWorlds;
+        
+        typedef HashMap<int, RefPtr<SecurityOrigin> > IsolatedWorldSecurityOriginMap;
+        IsolatedWorldSecurityOriginMap m_isolatedWorldSecurityOrigins;
     };
 
     template <typename T>

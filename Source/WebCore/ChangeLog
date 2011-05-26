@@ -1,3 +1,56 @@
+2011-05-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Support cross-origin XMLHttpRequest in isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=59843
+
+        Allows isolated worlds to be associated with a different SecurityOrigin
+        (exposed as a setIsolatedWorldSecurityOrigin function in
+        ScriptController).
+
+        The XMLHttpRequest constructor can then check that it's being
+        instantiated in an isolated world and use its security origin.
+        XMLHttpRequest, ThreadableLoader and DocumentThreadableLoader had to be
+        changed to use the copied SecurityOrigin instead of always grabbing the
+        Document's.
+
+        Test: http/tests/security/isolatedWorld/cross-origin-xhr.html
+
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::setIsolatedWorldSecurityOrigin):
+        * bindings/v8/ScriptController.h:
+        * bindings/v8/V8IsolatedContext.cpp:
+        (WebCore::V8IsolatedContext::setSecurityOrigin):
+        * bindings/v8/V8IsolatedContext.h:
+        (WebCore::V8IsolatedContext::securityOrigin):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::evaluateInIsolatedWorld):
+        (WebCore::V8Proxy::setIsolatedWorldSecurityOrigin):
+        (WebCore::V8Proxy::resetIsolatedWorlds):
+        * bindings/v8/V8Proxy.h:
+        * bindings/v8/custom/V8XMLHttpRequestConstructor.cpp:
+        (WebCore::V8XMLHttpRequest::constructorCallback):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::makeCrossOriginAccessRequestWithPreflight):
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        (WebCore::DocumentThreadableLoader::preflightSuccess):
+        (WebCore::DocumentThreadableLoader::isAllowedRedirect):
+        (WebCore::DocumentThreadableLoader::securityOrigin):
+        * loader/DocumentThreadableLoader.h:
+        * loader/ThreadableLoader.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::create):
+        (WebCore::XMLHttpRequest::XMLHttpRequest):
+        (WebCore::XMLHttpRequest::securityOrigin):
+        (WebCore::XMLHttpRequest::responseXML):
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::setRequestHeader):
+        (WebCore::XMLHttpRequest::getAllResponseHeaders):
+        (WebCore::XMLHttpRequest::getResponseHeader):
+        * xml/XMLHttpRequest.h:
+
 2011-05-26  Michael Nordman  <michaeln@google.com>
 
         Reviewed by Darin Fisher.

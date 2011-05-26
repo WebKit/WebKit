@@ -99,6 +99,11 @@ public:
     // FIXME: Get rid of extensionGroup here.
     void evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>&, int extensionGroup);
 
+    // Associates an isolated world (see above for description) with a security
+    // origin. XMLHttpRequest instances used in that world will be considered
+    // to come from that origin, not the frame's.
+    void setIsolatedWorldSecurityOrigin(int worldId, PassRefPtr<SecurityOrigin>);
+
     // Masquerade 'this' as the windowShell.
     // This is a bit of a hack, but provides reasonable compatibility
     // with what JSC does as well.

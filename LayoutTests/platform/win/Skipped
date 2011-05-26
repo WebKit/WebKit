@@ -1305,3 +1305,6 @@ fast/events/page-visibility-transition-test.html
 
 # Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
 loader/navigation-while-deferring-loads.html
+
+# JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
+http/tests/security/isolatedWorld/cross-origin-xhr.html

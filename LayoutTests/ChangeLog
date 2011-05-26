@@ -1,3 +1,23 @@
+2011-05-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Support cross-origin XMLHttpRequest in isolated worlds
+        https://bugs.webkit.org/show_bug.cgi?id=59843
+
+        Add test for doing a cross-origin XHR in an isolated world via 
+        setIsolatedWorldSecurityOrigin and addOriginAccessWhitelistEntry.
+
+        Skipped on JSC ports.
+
+        * http/tests/security/isolatedWorld/cross-origin-xhr-expected.txt: Added.
+        * http/tests/security/isolatedWorld/cross-origin-xhr.html: Added.
+        * http/tests/security/isolatedWorld/resources/cross-origin-xhr.txt: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-05-26  Adam Klein  <adamk@chromium.org>
 
         Unreviewed. Suppress more flaky Linux tests.

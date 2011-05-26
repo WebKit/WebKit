@@ -47,6 +47,7 @@
 #include "PageGroup.h"
 #include "PlatformBridge.h"
 #include "ScriptSourceCode.h"
+#include "SecurityOrigin.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
 #include "V8Binding.h"
@@ -272,6 +273,10 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
                 return;
             }
         }
+        
+        IsolatedWorldSecurityOriginMap::iterator securityOriginIter = m_isolatedWorldSecurityOrigins.find(worldID);
+        if (securityOriginIter != m_isolatedWorldSecurityOrigins.end())
+            isolatedContext->setSecurityOrigin(securityOriginIter->second);
     } else {
         isolatedContext = new V8IsolatedContext(this, extensionGroup);
         if (isolatedContext->context().IsEmpty()) {
@@ -287,6 +292,16 @@ void V8Proxy::evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode
 
     if (worldID == 0)
       isolatedContext->destroy();
+}
+
+void V8Proxy::setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin> prpSecurityOriginIn)
+{
+    ASSERT(worldID);
+    RefPtr<SecurityOrigin> securityOrigin = prpSecurityOriginIn;
+    m_isolatedWorldSecurityOrigins.set(worldID, securityOrigin);
+    IsolatedWorldMap::iterator iter = m_isolatedWorlds.find(worldID);
+    if (iter != m_isolatedWorlds.end())
+        iter->second->setSecurityOrigin(securityOrigin);
 }
 
 bool V8Proxy::setInjectedScriptContextDebugId(v8::Handle<v8::Context> targetContext)
@@ -621,6 +636,7 @@ void V8Proxy::resetIsolatedWorlds()
         iter->second->destroy();
     }
     m_isolatedWorlds.clear();
+    m_isolatedWorldSecurityOrigins.clear();
 }
 
 void V8Proxy::clearForClose()
