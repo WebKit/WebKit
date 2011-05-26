@@ -1,3 +1,10 @@
+2011-05-25  Ryosuke Niwa  <rniwa@webkit.org>
+
+        An attempt to revive Windows bots.
+
+        * runtime/RegExp.cpp:
+        * runtime/RegExp.h:
+
 2011-05-25  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

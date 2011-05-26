@@ -282,5 +282,5 @@ void RegExp::matchCompareWithInterpreter(const UString& s, int startOffset, int*
         printf("%-40.40s %16.16s %10d %10d\n", formattedPattern, jitAddr, m_rtMatchCallCount, m_rtMatchFoundCount);
     }
 #endif
-    
+
 } // namespace JSC

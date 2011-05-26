@@ -52,7 +52,7 @@ namespace JSC {
 
         int match(JSGlobalData&, const UString&, int startOffset, Vector<int, 32>* ovector = 0);
         unsigned numSubpatterns() const { return m_numSubpatterns; }
-        
+
         void invalidateCode();
         
 #if ENABLE(REGEXP_TRACING)
