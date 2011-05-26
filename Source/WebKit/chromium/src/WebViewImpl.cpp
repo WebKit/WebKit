@@ -368,7 +368,8 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     m_page->setGroupName(pageGroupName);
 
 #if ENABLE(PAGE_VISIBILITY_API)
-    setVisibilityState(m_client->visibilityState(), true);
+    if (m_client)
+        setVisibilityState(m_client->visibilityState(), true);
 #endif
 
     m_inspectorSettingsMap = adoptPtr(new SettingsMap);

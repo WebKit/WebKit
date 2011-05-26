@@ -1,3 +1,13 @@
+2011-05-25  Shishir Agrawal  <shishir@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix crash in Chromium memory test.
+        https://bugs.webkit.org/show_bug.cgi?id=61451
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+
 2011-05-25  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87333.
