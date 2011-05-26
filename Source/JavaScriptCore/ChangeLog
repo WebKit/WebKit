@@ -1,3 +1,16 @@
+2011-05-26  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        ASSERT(isMainThread()) when using single threaded jsc executable
+        https://bugs.webkit.org/show_bug.cgi?id=60846
+
+        Remove the ASSERT since we do not have the concept of MainThread in JSC.
+
+        * wtf/CryptographicallyRandomNumber.cpp:
+        (WTF::ARC4Stream::ARC4RandomNumberGenerator::randomNumber):
+        (WTF::ARC4Stream::ARC4RandomNumberGenerator::randomValues):
+
 2011-05-25  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
