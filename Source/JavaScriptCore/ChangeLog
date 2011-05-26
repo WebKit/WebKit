@@ -2,6 +2,35 @@
 
         Reviewed by Oliver Hunt.
 
+        Filled out some features in DoublyLinkedList
+        https://bugs.webkit.org/show_bug.cgi?id=61549
+
+        * heap/MarkedBlock.h: Use DoublyLinkedListNode to simplify our class
+        definition.
+
+        * wtf/DoublyLinkedList.h:
+        (WTF::::DoublyLinkedListNode):
+        (WTF::::setPrev):
+        (WTF::::setNext):
+        (WTF::::prev):
+        (WTF::::next): Added a helper base class for being a node in a list.
+        The odd idioms here allow subclasses to choose their own data member
+        layout, which is sometimes important for performance.
+
+        (WTF::::DoublyLinkedList):
+        (WTF::::isEmpty):
+        (WTF::::size):
+        (WTF::::clear):
+        (WTF::::head):
+        (WTF::::append):
+        (WTF::::remove):
+        (WTF::::removeHead): Change "Node" to "T" to be more idiomatic, and added
+        clear(), removeHead(), and size() functions.
+
+2011-05-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Provide a real owner when copying a property table, for the sake of
         write barriers.
         https://bugs.webkit.org/show_bug.cgi?id=61547

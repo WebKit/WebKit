@@ -28,39 +28,94 @@
 
 namespace WTF {
 
-template <typename Node> class DoublyLinkedList {
+// This class allows nodes to share code without dictating data member layout.
+template<typename T> class DoublyLinkedListNode {
+public:
+    DoublyLinkedListNode();
+    
+    void setPrev(T*);
+    void setNext(T*);
+    
+    T* prev() const;
+    T* next() const;
+};
+
+template<typename T> inline DoublyLinkedListNode<T>::DoublyLinkedListNode()
+{
+    setPrev(0);
+    setNext(0);
+}
+
+template<typename T> inline void DoublyLinkedListNode<T>::setPrev(T* prev)
+{
+    static_cast<T*>(this)->m_prev = prev;
+}
+
+template<typename T> inline void DoublyLinkedListNode<T>::setNext(T* next)
+{
+    static_cast<T*>(this)->m_next = next;
+}
+
+template<typename T> inline T* DoublyLinkedListNode<T>::prev() const
+{
+    return static_cast<const T*>(this)->m_prev;
+}
+
+template<typename T> inline T* DoublyLinkedListNode<T>::next() const
+{
+    return static_cast<const T*>(this)->m_next;
+}
+
+template<typename T> class DoublyLinkedList {
 public:
     DoublyLinkedList();
     
-    bool isEmpty();
+    bool isEmpty() const;
+    size_t size() const; // This is O(n).
+    void clear();
 
-    Node* head();
+    T* head() const;
+    T* removeHead();
 
-    void append(Node*);
-    void remove(Node*);
+    void append(T*);
+    void remove(T*);
 
 private:
-    Node* m_head;
-    Node* m_tail;
+    T* m_head;
+    T* m_tail;
 };
 
-template <typename Node> inline DoublyLinkedList<Node>::DoublyLinkedList()
+template<typename T> inline DoublyLinkedList<T>::DoublyLinkedList()
     : m_head(0)
     , m_tail(0)
 {
 }
 
-template <typename Node> inline bool DoublyLinkedList<Node>::isEmpty()
+template<typename T> inline bool DoublyLinkedList<T>::isEmpty() const
 {
     return !m_head;
 }
 
-template <typename Node> inline Node* DoublyLinkedList<Node>::head()
+template<typename T> inline size_t DoublyLinkedList<T>::size() const
+{
+    size_t size = 0;
+    for (T* node = m_head; node; node = node->next())
+        ++size;
+    return size;
+}
+
+template<typename T> inline void DoublyLinkedList<T>::clear()
+{
+    m_head = 0;
+    m_tail = 0;
+}
+
+template<typename T> inline T* DoublyLinkedList<T>::head() const
 {
     return m_head;
 }
 
-template <typename Node> inline void DoublyLinkedList<Node>::append(Node* node)
+template<typename T> inline void DoublyLinkedList<T>::append(T* node)
 {
     if (!m_tail) {
         ASSERT(!m_head);
@@ -78,7 +133,7 @@ template <typename Node> inline void DoublyLinkedList<Node>::append(Node* node)
     m_tail = node;
 }
 
-template <typename Node> inline void DoublyLinkedList<Node>::remove(Node* node)
+template<typename T> inline void DoublyLinkedList<T>::remove(T* node)
 {
     if (node->prev()) {
         ASSERT(node != m_head);
@@ -97,8 +152,17 @@ template <typename Node> inline void DoublyLinkedList<Node>::remove(Node* node)
     }
 }
 
+template<typename T> inline T* DoublyLinkedList<T>::removeHead()
+{
+    T* node = head();
+    if (node)
+        remove(node);
+    return node;
+}
+
 } // namespace WTF
 
+using WTF::DoublyLinkedListNode;
 using WTF::DoublyLinkedList;
 
 #endif

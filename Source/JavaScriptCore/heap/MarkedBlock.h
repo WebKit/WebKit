@@ -23,6 +23,7 @@
 #define MarkedBlock_h
 
 #include <wtf/Bitmap.h>
+#include <wtf/DoublyLinkedList.h>
 #include <wtf/PageAllocationAligned.h>
 #include <wtf/StdLibExtras.h>
 
@@ -36,7 +37,8 @@ namespace JSC {
 
     static const size_t KB = 1024;
 
-    class MarkedBlock {
+    class MarkedBlock : public DoublyLinkedListNode<MarkedBlock> {
+        friend class DoublyLinkedListNode<MarkedBlock>;
     public:
         static const size_t atomSize = sizeof(double); // Ensures natural alignment for all built-in types.
 
@@ -49,11 +51,6 @@ namespace JSC {
         
         Heap* heap() const;
 
-        void setPrev(MarkedBlock*);
-        void setNext(MarkedBlock*);
-        MarkedBlock* prev() const;
-        MarkedBlock* next() const;
-        
         void* allocate();
         void reset();
         void sweep();
@@ -122,26 +119,6 @@ namespace JSC {
     inline Heap* MarkedBlock::heap() const
     {
         return m_heap;
-    }
-
-    inline void MarkedBlock::setPrev(MarkedBlock* prev)
-    {
-        m_prev = prev;
-    }
-
-    inline void MarkedBlock::setNext(MarkedBlock* next)
-    {
-        m_next = next;
-    }
-
-    inline MarkedBlock* MarkedBlock::prev() const
-    {
-        return m_prev;
-    }
-
-    inline MarkedBlock* MarkedBlock::next() const
-    {
-        return m_next;
     }
 
     inline void MarkedBlock::reset()
