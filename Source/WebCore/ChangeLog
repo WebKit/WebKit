@@ -1,3 +1,21 @@
+2011-05-25  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add site-specific hack for zipcar.com with old versions of requirejs.
+        https://bugs.webkit.org/show_bug.cgi?id=61321
+
+        Old versions of requirejs (< 0.15.0) try to load scripts in parallel but execute them in
+        order. This used to work in webkit by setting a bogus script type (script/cache), then
+        changing the type to a valid one when they wanted to execute it. This hack translates the
+        behavior into the new API (by disabling forceAsync).
+
+        * html/HTMLScriptElement.cpp:
+        (WebCore::needsOldRequirejsQuirk): Added.
+        (WebCore::HTMLScriptElement::insertedIntoDocument):
+        If hack is needed, set a proper script type so script loads.
+        If script isn't async, disable forceAsync so script executes in order.
+
 2011-05-25  Andreas Kling  <kling@webkit.org>
 
         Reviewed by David Levin.
