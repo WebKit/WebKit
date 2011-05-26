@@ -179,7 +179,7 @@ AccessibilityObject* AccessibilityListBox::elementAccessibilityHitTest(const Int
     AccessibilityObject* listBoxOption = 0;
     unsigned length = m_children.size();
     for (unsigned i = 0; i < length; i++) {
-        IntRect rect = toRenderListBox(m_renderer)->itemBoundingBoxRect(parentRect.x(), parentRect.y(), i);
+        IntRect rect = toRenderListBox(m_renderer)->itemBoundingBoxRect(parentRect.location(), i);
         // The cast to HTMLElement below is safe because the only other possible listItem type
         // would be a WMLElement, but WML builds don't use accessibility features at all.
         if (rect.contains(point)) {

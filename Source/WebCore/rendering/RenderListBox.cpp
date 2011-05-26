@@ -249,10 +249,10 @@ int RenderListBox::baselinePosition(FontBaseline baselineType, bool firstLine, L
     return RenderBox::baselinePosition(baselineType, firstLine, lineDirection, linePositionMode) - baselineAdjustment;
 }
 
-IntRect RenderListBox::itemBoundingBoxRect(int tx, int ty, int index)
+IntRect RenderListBox::itemBoundingBoxRect(const IntPoint& additionalOffset, int index)
 {
-    return IntRect(tx + borderLeft() + paddingLeft(),
-                   ty + borderTop() + paddingTop() + itemHeight() * (index - m_indexOffset),
+    return IntRect(additionalOffset.x() + borderLeft() + paddingLeft(),
+                   additionalOffset.y() + borderTop() + paddingTop() + itemHeight() * (index - m_indexOffset),
                    contentWidth(), itemHeight());
 }
     
@@ -309,7 +309,7 @@ void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& ad
     // Focus the last selected item.
     int selectedItem = select->activeSelectionEndListIndex();
     if (selectedItem >= 0) {
-        rects.append(itemBoundingBoxRect(additionalOffset.x(), additionalOffset.y(), selectedItem));
+        rects.append(itemBoundingBoxRect(additionalOffset, selectedItem));
         return;
     }
 
@@ -319,7 +319,7 @@ void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& ad
     for (int i = 0; i < size; ++i) {
         OptionElement* optionElement = toOptionElement(listItems[i]);
         if (optionElement && !optionElement->disabled()) {
-            rects.append(itemBoundingBoxRect(additionalOffset.x(), additionalOffset.y(), i));
+            rects.append(itemBoundingBoxRect(additionalOffset, i));
             return;
         }
     }
@@ -392,7 +392,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
     const UChar* string = itemText.characters();
     TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, itemStyle->direction(), itemStyle->unicodeBidi() == Override);
     Font itemFont = style()->font();
-    IntRect r = itemBoundingBoxRect(tx, ty, listIndex);
+    IntRect r = itemBoundingBoxRect(IntPoint(tx, ty), listIndex);
     r.move(itemOffsetForAlignment(textRun, itemStyle, itemFont, r));
 
     if (isOptionGroupElement(element)) {
@@ -426,7 +426,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, int tx, int ty, in
     // Draw the background for this list box item
     if (!element->renderStyle() || element->renderStyle()->visibility() != HIDDEN) {
         ColorSpace colorSpace = element->renderStyle() ? element->renderStyle()->colorSpace() : style()->colorSpace();
-        IntRect itemRect = itemBoundingBoxRect(tx, ty, listIndex);
+        IntRect itemRect = itemBoundingBoxRect(IntPoint(tx, ty), listIndex);
         itemRect.intersect(controlClipRect(tx, ty));
         paintInfo.context->fillRect(itemRect, backColor, colorSpace);
     }
@@ -673,7 +673,7 @@ bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     tx += this->x();
     ty += this->y();
     for (int i = 0; i < size; ++i) {
-        if (itemBoundingBoxRect(tx, ty, i).contains(pointInContainer)) {
+        if (itemBoundingBoxRect(IntPoint(tx, ty), i).contains(pointInContainer)) {
             if (Element* node = listItems[i]) {
                 result.setInnerNode(node);
                 if (!result.innerNonSharedNode())

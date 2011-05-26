@@ -1,3 +1,27 @@
+2011-05-25  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch itemBoundingBoxRect to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=60789
+
+        Changing itemBoundingBoxRect to use an IntPoint representing the offset
+        to be added tot he box rect instead of a pair of ints.
+
+        No new tests since this is just refactoring.
+
+        * accessibility/AccessibilityListBox.cpp:
+        (WebCore::AccessibilityListBox::elementAccessibilityHitTest):
+        * accessibility/AccessibilityListBoxOption.cpp:
+        (WebCore::AccessibilityListBoxOption::elementRect):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::itemBoundingBoxRect):
+        (WebCore::RenderListBox::addFocusRingRects):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        (WebCore::RenderListBox::nodeAtPoint):
+        * rendering/RenderListBox.h:
+
 2011-05-24  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

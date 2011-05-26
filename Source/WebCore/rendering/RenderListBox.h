@@ -46,7 +46,7 @@ public:
     void setOptionsChanged(bool changed) { m_optionsChanged = changed; }
 
     int listIndexAtOffset(int x, int y);
-    IntRect itemBoundingBoxRect(int tx, int ty, int index);
+    IntRect itemBoundingBoxRect(const IntPoint&, int index);
 
     bool scrollToRevealElementAtListIndex(int index);
     bool listIndexIsVisible(int index);
