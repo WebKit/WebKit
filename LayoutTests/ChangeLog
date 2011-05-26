@@ -1,3 +1,14 @@
+2011-05-26  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix a bug that <input type="number"> dispatches two blurs when tabbing
+        from an invalid number
+        https://bugs.webkit.org/show_bug.cgi?id=59071
+
+        * fast/forms/input-number-blur-twice-expected.txt: Added.
+        * fast/forms/input-number-blur-twice.html: Added.
+
 2011-05-26  Shane Stephens  <shanestephens@google.com>
 
         Reviewed by James Robinson.

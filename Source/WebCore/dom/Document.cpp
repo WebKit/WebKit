@@ -3220,10 +3220,12 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
 
     bool focusChangeBlocked = false;
     RefPtr<Node> oldFocusedNode = m_focusedNode;
-    m_focusedNode = 0;
 
     // Remove focus from the existing focus node (if any)
-    if (oldFocusedNode && !oldFocusedNode->inDetach()) { 
+    if (oldFocusedNode && !oldFocusedNode->inDetach()) {
+        // willBlur() should be called before any status changes.
+        oldFocusedNode->willBlur();
+        m_focusedNode = 0;
         if (oldFocusedNode->active())
             oldFocusedNode->setActive(false);
 
@@ -3268,7 +3270,8 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
             else
                 view()->setFocus(false);
         }
-    }
+    } else
+        m_focusedNode = 0;
 
     if (newFocusedNode) {
         if (newFocusedNode == newFocusedNode->rootEditableElement() && !acceptsEditingFocus(newFocusedNode.get())) {

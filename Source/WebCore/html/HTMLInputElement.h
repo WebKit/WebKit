@@ -301,6 +301,7 @@ private:
     virtual bool isEmptyValue() const { return value().isEmpty(); }
     virtual bool isEmptySuggestedValue() const { return suggestedValue().isEmpty(); }
     virtual void handleFocusEvent();
+    virtual void willBlur();
     virtual void handleBlurEvent();
     virtual int cachedSelectionStart() const { return m_cachedSelectionStart; }
     virtual int cachedSelectionEnd() const { return m_cachedSelectionEnd; }

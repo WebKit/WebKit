@@ -1,3 +1,47 @@
+2011-05-26  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Fix a bug that <input type="number"> dispatches two blurs when tabbing
+        from an invalid number
+        https://bugs.webkit.org/show_bug.cgi?id=59071
+
+        NumberInputType::handleBlurEvent() dispatched an extra focus event
+        and an extra blur event because
+        SelectionController::textWillBeReplaced() called by
+        RenderTextControlSingleLine::updateFromElement() focuses a node
+        with the selection.
+
+        In order to avoid this problem,
+         - Introduce Node::willBlur()
+           It is called before any state changes by a blur event.
+         - Call RenderTextControlSingleLine::updateFromElement() in willBlur()
+           It avoids extra focus/blur events because Document::m_focusedNode is
+           still the number input during willBlur().
+
+        Test: fast/forms/input-number-blur-twice.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setFocusedNode): Calls Node::beforeBlueEvent().
+        * dom/Node.cpp:
+        (WebCore::Node::willBlur):
+          Default empty implementation of willBlur().
+        * dom/Node.h: Declare willBlur().
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::willBlur):
+          Added.  It just calls InputType::willBlur().
+        (WebCore::HTMLInputElement::handleBlurEvent):
+          Removed InputType::handleBlurEvent() call.
+        * html/HTMLInputElement.h: Declare willBlur().
+        * html/InputType.cpp:
+        (WebCore::InputType::willBlur): Default empty implementation.
+        (WebCore::InputType::handleBlurEvent): Removed.
+        * html/InputType.h: Declare willBlur(), remove handleBlurEvent().
+        * html/NumberInputType.cpp:
+        (WebCore::NumberInputType::willBlur):
+          Move the code in handleBlurEvent() here.
+        * html/NumberInputType.h: Declare willBlur().
+
 2011-05-25  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Steve Block.

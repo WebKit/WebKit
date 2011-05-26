@@ -211,7 +211,7 @@ double NumberInputType::acceptableError(double step) const
     return step / pow(2.0, FLT_MANT_DIG);
 }
 
-void NumberInputType::handleBlurEvent()
+void NumberInputType::willBlur()
 {
     // Reset the renderer value, which might be unmatched with the element value.
     element()->setFormControlValueMatchesRenderer(false);

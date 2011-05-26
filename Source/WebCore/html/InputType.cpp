@@ -410,7 +410,7 @@ bool InputType::shouldUseInputMethod() const
     return false;
 }
 
-void InputType::handleBlurEvent()
+void InputType::willBlur()
 {
 }
 

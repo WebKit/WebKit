@@ -2731,6 +2731,10 @@ void Node::dispatchFocusEvent()
     dispatchEvent(Event::create(eventNames().focusEvent, false, false));
 }
 
+void Node::willBlur()
+{
+}
+
 void Node::dispatchBlurEvent()
 {
     if (document()->page())
