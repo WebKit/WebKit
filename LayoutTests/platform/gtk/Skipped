@@ -1453,3 +1453,6 @@ media/video-src-invalid-poster.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=61396
 fast/events/scroll-in-scaled-page-with-overflow-hidden.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=61523
+http/tests/eventsource/workers/eventsource-simple.html

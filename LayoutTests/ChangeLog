@@ -1,5 +1,14 @@
 2011-05-26  Philippe Normand  <pnormand@igalia.com>
 
+        Unreviewed, skip flaky test on GTK.
+
+        [GTK] http/tests/eventsource/workers/eventsource-simple.html is flaky crash
+        https://bugs.webkit.org/show_bug.cgi?id=61523
+
+        * platform/gtk/Skipped:
+
+2011-05-26  Philippe Normand  <pnormand@igalia.com>
+
         Unreviewed, GTK baselines for new tests.
 
         * platform/gtk/fast/box-shadow/scaled-box-shadow-expected.txt: Added.
