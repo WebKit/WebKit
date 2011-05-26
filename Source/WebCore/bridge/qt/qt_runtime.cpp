@@ -861,9 +861,9 @@ JSValue convertQVariantToValue(ExecState* exec, PassRefPtr<RootObject> root, con
             UString pattern((UChar*)re.pattern().utf16(), re.pattern().length());
             RegExpFlags flags = (re.caseSensitivity() == Qt::CaseInsensitive) ? FlagIgnoreCase : NoFlags;
 
-            JSC::RegExp* regExp = JSC::RegExp::create(&exec->globalData(), pattern, flags);
+            RefPtr<JSC::RegExp> regExp = JSC::RegExp::create(&exec->globalData(), pattern, flags);
             if (regExp->isValid())
-                return new (exec) RegExpObject(exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp);
+                return new (exec) RegExpObject(exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->regExpStructure(), regExp.release());
             return jsNull();
         }
     }

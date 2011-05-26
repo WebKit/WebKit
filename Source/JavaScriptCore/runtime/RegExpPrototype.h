@@ -28,7 +28,7 @@ namespace JSC {
 
     class RegExpPrototype : public RegExpObject {
     public:
-        RegExpPrototype(ExecState*, JSGlobalObject*, Structure*, RegExp*);
+        RegExpPrototype(ExecState*, JSGlobalObject*, Structure*);
 
         static const ClassInfo s_info;
 

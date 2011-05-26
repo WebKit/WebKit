@@ -24,7 +24,6 @@
 
 #include "UString.h"
 #include "ExecutableAllocator.h"
-#include "Structure.h"
 #include "RegExpKey.h"
 #include <wtf/Forward.h>
 #include <wtf/RefCounted.h>
@@ -36,9 +35,9 @@ namespace JSC {
 
     RegExpFlags regExpFlags(const UString&);
 
-    class RegExp : public JSCell {
+    class RegExp : public RefCounted<RegExp> {
     public:
-        static RegExp* create(JSGlobalData*, const UString& pattern, RegExpFlags);
+        static PassRefPtr<RegExp> create(JSGlobalData* globalData, const UString& pattern, RegExpFlags);
         ~RegExp();
 
         bool global() const { return m_flags & FlagGlobal; }
@@ -53,19 +52,10 @@ namespace JSC {
         int match(JSGlobalData&, const UString&, int startOffset, Vector<int, 32>* ovector = 0);
         unsigned numSubpatterns() const { return m_numSubpatterns; }
         
-        void invalidateCode();
-        
 #if ENABLE(REGEXP_TRACING)
         void printTraceData();
 #endif
 
-        static Structure* createStructure(JSGlobalData& globalData, JSValue prototype)
-        {
-            return Structure::create(globalData, prototype, TypeInfo(LeafType, 0), 0, &s_info);
-        }
-        
-        static JS_EXPORTDATA const ClassInfo s_info;
-        
     private:
         RegExp(JSGlobalData* globalData, const UString& pattern, RegExpFlags);
 

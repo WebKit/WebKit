@@ -3163,8 +3163,8 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_regexp)
 
     CallFrame* callFrame = stackFrame.callFrame;
 
-    RegExpHolder* regExp = stackFrame.args[0].regExp();
-    if (!regExp->get()->isValid()) {
+    RegExp* regExp = stackFrame.args[0].regExp();
+    if (!regExp->isValid()) {
         stackFrame.globalData->exception = createSyntaxError(callFrame, "Invalid flags supplied to RegExp constructor.");
         VM_THROW_EXCEPTION();
     }

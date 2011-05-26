@@ -1166,7 +1166,7 @@ private:
                 return JSValue();
             RegExpFlags reFlags = regExpFlags(flags->ustring());
             ASSERT(reFlags != InvalidFlags);
-            RegExp* regExp = RegExp::create(&m_exec->globalData(), pattern->ustring(), reFlags);
+            RefPtr<RegExp> regExp = RegExp::create(&m_exec->globalData(), pattern->ustring(), reFlags);
             return new (m_exec) RegExpObject(m_exec->lexicalGlobalObject(), m_globalObject->regExpStructure(), regExp); 
         }
         case ObjectReferenceTag: {

@@ -62,8 +62,8 @@ const ClassInfo RegExpPrototype::s_info = { "RegExp", &RegExpObject::s_info, 0, 
 
 ASSERT_CLASS_FITS_IN_CELL(RegExpPrototype);
 
-RegExpPrototype::RegExpPrototype(ExecState*, JSGlobalObject* globalObject, Structure* structure, RegExp* regExp)
-    : RegExpObject(globalObject, structure, regExp)
+RegExpPrototype::RegExpPrototype(ExecState* exec, JSGlobalObject* globalObject, Structure* structure)
+    : RegExpObject(globalObject, structure, RegExp::create(&exec->globalData(), "", NoFlags))
 {
 }
 
@@ -101,7 +101,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     if (!thisValue.inherits(&RegExpObject::s_info))
         return throwVMTypeError(exec);
 
-    RegExp* regExp;
+    RefPtr<RegExp> regExp;
     JSValue arg0 = exec->argument(0);
     JSValue arg1 = exec->argument(1);
     
@@ -128,7 +128,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
     if (!regExp->isValid())
         return throwVMError(exec, createSyntaxError(exec, regExp->errorMessage()));
 
-    asRegExpObject(thisValue)->setRegExp(exec->globalData(), regExp);
+    asRegExpObject(thisValue)->setRegExp(regExp.release());
     asRegExpObject(thisValue)->setLastIndex(0);
     return JSValue::encode(jsUndefined());
 }

@@ -27,7 +27,6 @@
 
 #include "RegExp.h"
 #include "RegExpKey.h"
-#include "Strong.h"
 #include "UString.h"
 #include <wtf/FixedArray.h>
 #include <wtf/HashMap.h>
@@ -39,11 +38,11 @@ namespace JSC {
 
 class RegExpCache {
 
-typedef HashMap<RegExpKey, Strong<RegExp> > RegExpCacheMap;
+typedef HashMap<RegExpKey, RefPtr<RegExp> > RegExpCacheMap;
 
 public:
-    RegExp* lookupOrCreate(const UString& patternString, RegExpFlags);
-    RegExp* create(const UString& patternString, RegExpFlags, RegExpCacheMap::iterator);
+    PassRefPtr<RegExp> lookupOrCreate(const UString& patternString, RegExpFlags);
+    PassRefPtr<RegExp> create(const UString& patternString, RegExpFlags, RegExpCacheMap::iterator);
     RegExpCache(JSGlobalData* globalData);
 
 private:

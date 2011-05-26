@@ -52,7 +52,6 @@
 #include "Nodes.h"
 #include "Parser.h"
 #include "RegExpCache.h"
-#include "RegExpObject.h"
 #include "StrictEvalActivation.h"
 #include <wtf/WTFThreadData.h>
 #if ENABLE(REGEXP_TRACING)
@@ -220,7 +219,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     programExecutableStructure.set(*this, ProgramExecutable::createStructure(*this, jsNull()));
     functionExecutableStructure.set(*this, FunctionExecutable::createStructure(*this, jsNull()));
     dummyMarkableCellStructure.set(*this, JSCell::createDummyStructure(*this));
-    regExpStructure.set(*this, RegExp::createStructure(*this, jsNull()));
     structureChainStructure.set(*this, StructureChain::createStructure(*this, jsNull()));
 
 #if ENABLE(JSC_ZOMBIES)
@@ -281,9 +279,8 @@ void JSGlobalData::clearBuiltinStructures()
     programExecutableStructure.clear();
     functionExecutableStructure.clear();
     dummyMarkableCellStructure.clear();
-    regExpStructure.clear();
     structureChainStructure.clear();
-
+    
 #if ENABLE(JSC_ZOMBIES)
     zombieStructure.clear();
 #endif
@@ -449,7 +446,7 @@ void JSGlobalData::recompileAllJSFunctions()
 }
 
 #if ENABLE(REGEXP_TRACING)
-void JSGlobalData::addRegExpToTrace(RegExp* regExp)
+void JSGlobalData::addRegExpToTrace(PassRefPtr<RegExp> regExp)
 {
     m_rtTraceList->add(regExp);
 }

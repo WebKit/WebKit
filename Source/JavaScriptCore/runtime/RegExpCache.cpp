@@ -28,31 +28,31 @@
 #include "config.h"
 
 #include "RegExpCache.h"
-#include "RegExpObject.h"
 
 namespace JSC {
 
-RegExp* RegExpCache::lookupOrCreate(const UString& patternString, RegExpFlags flags)
+PassRefPtr<RegExp> RegExpCache::lookupOrCreate(const UString& patternString, RegExpFlags flags)
 {
     if (patternString.length() < maxCacheablePatternLength) {
-        pair<RegExpCacheMap::iterator, bool> result = m_cacheMap.add(RegExpKey(flags, patternString), Strong<RegExp>());
+        pair<RegExpCacheMap::iterator, bool> result = m_cacheMap.add(RegExpKey(flags, patternString), 0);
         if (!result.second)
-            return result.first->second.get();
+            return result.first->second;
         else
             return create(patternString, flags, result.first);
     }
     return create(patternString, flags, m_cacheMap.end());
 }
 
-RegExp* RegExpCache::create(const UString& patternString, RegExpFlags flags, RegExpCacheMap::iterator iterator) 
+PassRefPtr<RegExp> RegExpCache::create(const UString& patternString, RegExpFlags flags, RegExpCacheMap::iterator iterator) 
 {
-    RegExp* regExp = RegExp::create(m_globalData, patternString, flags);
+    RefPtr<RegExp> regExp = RegExp::create(m_globalData, patternString, flags);
+
     if (patternString.length() >= maxCacheablePatternLength)
         return regExp;
 
     RegExpKey key = RegExpKey(flags, patternString);
     iterator->first = key;
-    iterator->second.set(*m_globalData, regExp);
+    iterator->second = regExp;
 
     ++m_nextKeyToEvict;
     if (m_nextKeyToEvict == maxCacheableEntries) {

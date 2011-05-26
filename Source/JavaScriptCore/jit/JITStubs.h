@@ -57,7 +57,7 @@ namespace JSC {
     class PropertySlot;
     class PutPropertySlot;
     class RegisterFile;
-    class RegExpHolder;
+    class RegExp;
 
     template <typename T> class Weak;
 
@@ -72,7 +72,7 @@ namespace JSC {
         int32_t int32() { return asInt32; }
         CodeBlock* codeBlock() { return static_cast<CodeBlock*>(asPointer); }
         FunctionExecutable* function() { return static_cast<FunctionExecutable*>(asPointer); }
-        RegExpHolder* regExp() { return static_cast<RegExpHolder*>(asPointer); }
+        RegExp* regExp() { return static_cast<RegExp*>(asPointer); }
         JSPropertyNameIterator* propertyNameIterator() { return static_cast<JSPropertyNameIterator*>(asPointer); }
         JSGlobalObject* globalObject() { return static_cast<JSGlobalObject*>(asPointer); }
         JSString* jsString() { return static_cast<JSString*>(asPointer); }
