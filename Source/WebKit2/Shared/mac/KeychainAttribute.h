@@ -22,30 +22,32 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef WebProcessShim_h
-#define WebProcessShim_h
+
+#ifndef KeychainAttribute_h
+#define KeychainAttribute_h
+
+#include <wtf/RetainPtr.h>
+#include <Security/Security.h>
 
 namespace WebKit {
-
-struct WebProcessSecItemShimCallbacks {
-    OSStatus (*secItemCopyMatching)(CFDictionaryRef query, CFTypeRef *result);
-    OSStatus (*secItemAdd)(CFDictionaryRef attributes, CFTypeRef *result);
-    OSStatus (*secItemUpdate)(CFDictionaryRef query, CFDictionaryRef attributesToUpdate);
-    OSStatus (*secItemDelete)(CFDictionaryRef query);
+    
+struct KeychainAttribute {
+    KeychainAttribute();
+    KeychainAttribute(const SecKeychainAttribute&);
+    SecKeychainAttrType tag;
+    RetainPtr<CFDataRef> data;
 };
-
-typedef void (*WebProcessSecItemShimInitializeFunc)(const WebProcessSecItemShimCallbacks& callbacks);
-
-struct WebProcessKeychainItemShimCallbacks {
-    OSStatus (*secKeychainItemCopyContent)(SecKeychainItemRef, SecItemClass*, SecKeychainAttributeList*, UInt32* length, void** outData);
-    OSStatus (*secKeychainItemCreateFromContent)(SecItemClass, SecKeychainAttributeList*, UInt32 length, const void* data, SecKeychainItemRef*);
-    OSStatus (*secKeychainItemModifyContent)(SecKeychainItemRef, const SecKeychainAttributeList*, UInt32 length, const void* data);
-    bool (*freeAttributeListContent)(SecKeychainAttributeList* attrList);
-    bool (*freeKeychainItemContentData)(void* data);
-};
-
-typedef void (*WebProcessKeychainItemShimInitializeFunc)(const WebProcessKeychainItemShimCallbacks& callbacks);
-
+    
 } // namespace WebKit
 
-#endif // WebProcessShim_h
+namespace CoreIPC {
+
+class ArgumentDecoder;
+class ArgumentEncoder;
+
+void encode(ArgumentEncoder*, const WebKit::KeychainAttribute&);
+bool decode(ArgumentDecoder*, WebKit::KeychainAttribute&);
+
+} // namespace CoreIPC
+
+#endif // KeychainAttribute_h

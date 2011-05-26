@@ -22,30 +22,54 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-#ifndef WebProcessShim_h
-#define WebProcessShim_h
+
+#include "config.h"
+#include "KeychainAttribute.h"
+
+#include "ArgumentCoders.h"
+#include "ArgumentCodersCF.h"
 
 namespace WebKit {
 
-struct WebProcessSecItemShimCallbacks {
-    OSStatus (*secItemCopyMatching)(CFDictionaryRef query, CFTypeRef *result);
-    OSStatus (*secItemAdd)(CFDictionaryRef attributes, CFTypeRef *result);
-    OSStatus (*secItemUpdate)(CFDictionaryRef query, CFDictionaryRef attributesToUpdate);
-    OSStatus (*secItemDelete)(CFDictionaryRef query);
-};
+KeychainAttribute::KeychainAttribute()
+    : tag(0)
+{
+}
 
-typedef void (*WebProcessSecItemShimInitializeFunc)(const WebProcessSecItemShimCallbacks& callbacks);
-
-struct WebProcessKeychainItemShimCallbacks {
-    OSStatus (*secKeychainItemCopyContent)(SecKeychainItemRef, SecItemClass*, SecKeychainAttributeList*, UInt32* length, void** outData);
-    OSStatus (*secKeychainItemCreateFromContent)(SecItemClass, SecKeychainAttributeList*, UInt32 length, const void* data, SecKeychainItemRef*);
-    OSStatus (*secKeychainItemModifyContent)(SecKeychainItemRef, const SecKeychainAttributeList*, UInt32 length, const void* data);
-    bool (*freeAttributeListContent)(SecKeychainAttributeList* attrList);
-    bool (*freeKeychainItemContentData)(void* data);
-};
-
-typedef void (*WebProcessKeychainItemShimInitializeFunc)(const WebProcessKeychainItemShimCallbacks& callbacks);
+KeychainAttribute::KeychainAttribute(const SecKeychainAttribute& secKeychainAttribute)
+    : tag(secKeychainAttribute.tag)
+{
+    if (!secKeychainAttribute.data)
+        return;
+    
+    data.adoptCF(CFDataCreate(0, static_cast<UInt8*>(secKeychainAttribute.data), secKeychainAttribute.length));
+}
 
 } // namespace WebKit
 
-#endif // WebProcessShim_h
+namespace CoreIPC {
+
+void encode(CoreIPC::ArgumentEncoder* encoder, const WebKit::KeychainAttribute& attribute)
+{
+    encoder->encodeUInt32(attribute.tag);
+    encoder->encodeBool(attribute.data);
+    if (attribute.data)
+        CoreIPC::encode(encoder, attribute.data.get());
+}
+
+bool decode(CoreIPC::ArgumentDecoder* decoder, WebKit::KeychainAttribute& attribute)
+{
+    if (!decoder->decodeUInt32(attribute.tag))
+        return false;
+    
+    bool expectData;
+    if (!decoder->decodeBool(expectData))
+        return false;
+    
+    if (expectData && !CoreIPC::decode(decoder, attribute.data))
+        return false;
+    
+    return true;
+}
+
+} // namespace CoreIPC
