@@ -4123,11 +4123,11 @@ BUGCR83833 WIN : mhtml/simple_page_unmht.mht = MISSING
 // New test added in r87324
 BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html = CRASH
 
-BUGWK61519 WIN LINUX : inspector/debugger/scripts-panel.html = TEXT PASS
+BUGWK61519 WIN LINUX : inspector/debugger/scripts-panel.html = TEXT TIMEOUT PASS
 BUGCR84031 MAC LINUX : storage/domstorage/sessionstorage/delete-removal.html = TIMEOUT PASS
 BUGCR84032 WIN : fast/dom/object-plugin-hides-properties.html = TIMEOUT PASS
 
-BUGWK61533 LINUX : inspector/profiler/cpu-profiler-profiling.html = CRASH PASS
+BUGWK61533 LINUX : inspector/profiler/cpu-profiler-profiling.html = CRASH TIMEOUT PASS
 
 BUGCR84093 VISTA : http/tests/history/redirect-200-refresh-2-seconds.pl = TIMEOUT PASS
 BUGCR84095 VISTA : svg/custom/use-detach.svg = TIMEOUT PASS
