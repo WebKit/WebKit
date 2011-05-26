@@ -606,7 +606,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
 
     JSValue a0 = exec->argument(0);
 
-    RefPtr<RegExp> reg;
+    RegExp* reg;
     if (a0.inherits(&RegExpObject::s_info))
         reg = asRegExpObject(a0)->regExp();
     else {
@@ -620,7 +620,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
     int matchLength = 0;
-    regExpConstructor->performMatch(*globalData, reg.get(), s, 0, pos, matchLength);
+    regExpConstructor->performMatch(*globalData, reg, s, 0, pos, matchLength);
     if (!(reg->global())) {
         // case without 'g' flag is handled like RegExp.prototype.exec
         if (pos < 0)
@@ -633,7 +633,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
     while (pos >= 0) {
         list.append(jsSubstring(exec, s, pos, matchLength));
         pos += matchLength == 0 ? 1 : matchLength;
-        regExpConstructor->performMatch(*globalData, reg.get(), s, pos, pos, matchLength);
+        regExpConstructor->performMatch(*globalData, reg, s, pos, pos, matchLength);
     }
     if (list.isEmpty()) {
         // if there are no matches at all, it's important to return
@@ -655,7 +655,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
 
     JSValue a0 = exec->argument(0);
 
-    RefPtr<RegExp> reg;
+    RegExp* reg;
     if (a0.inherits(&RegExpObject::s_info))
         reg = asRegExpObject(a0)->regExp();
     else { 
@@ -669,7 +669,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
     int matchLength = 0;
-    regExpConstructor->performMatch(*globalData, reg.get(), s, 0, pos, matchLength);
+    regExpConstructor->performMatch(*globalData, reg, s, 0, pos, matchLength);
     return JSValue::encode(jsNumber(pos));
 }
 

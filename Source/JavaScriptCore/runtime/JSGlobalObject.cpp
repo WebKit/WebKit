@@ -222,7 +222,9 @@ void JSGlobalObject::reset(JSValue prototype)
     m_datePrototype.set(exec->globalData(), this, new (exec) DatePrototype(exec, this, DatePrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
     m_dateStructure.set(exec->globalData(), this, DateInstance::createStructure(exec->globalData(), m_datePrototype.get()));
 
-    m_regExpPrototype.set(exec->globalData(), this, new (exec) RegExpPrototype(exec, this, RegExpPrototype::createStructure(exec->globalData(), m_objectPrototype.get())));
+    RegExp* emptyRegex = RegExp::create(&exec->globalData(), "", NoFlags);
+    
+    m_regExpPrototype.set(exec->globalData(), this, new (exec) RegExpPrototype(exec, this, RegExpPrototype::createStructure(exec->globalData(), m_objectPrototype.get()), emptyRegex));
     m_regExpStructure.set(exec->globalData(), this, RegExpObject::createStructure(exec->globalData(), m_regExpPrototype.get()));
 
     m_methodCallDummy.set(exec->globalData(), this, constructEmptyObject(exec));

@@ -71,6 +71,7 @@ namespace JSC {
         friend class ScopeChainNode;
         friend class Structure;
         friend class StructureChain;
+        friend class RegExp;
         enum CreatingEarlyCellTag { CreatingEarlyCell };
 
     protected:

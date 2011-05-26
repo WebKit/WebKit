@@ -174,6 +174,7 @@ namespace JSC {
         Strong<Structure> programExecutableStructure;
         Strong<Structure> functionExecutableStructure;
         Strong<Structure> dummyMarkableCellStructure;
+        Strong<Structure> regExpStructure;
         Strong<Structure> structureChainStructure;
 
 #if ENABLE(JSC_ZOMBIES)

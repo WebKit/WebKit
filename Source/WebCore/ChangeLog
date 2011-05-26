@@ -1,12 +1,3 @@
-2011-05-25  Oliver Hunt  <oliver@apple.com>
-
-        Revert last change, something weird happened when I went to land.
-
-        * bindings/js/SerializedScriptValue.cpp:
-        (WebCore::CloneDeserializer::readTerminal):
-        * bridge/qt/qt_runtime.cpp:
-        (JSC::Bindings::convertQVariantToValue):
-
 2011-05-25  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Geoffrey Garen

@@ -1,9 +1,5 @@
 2011-05-25  Oliver Hunt  <oliver@apple.com>
 
-        Revert last change, something weird happened when I went to land.
-
-2011-05-25  Oliver Hunt  <oliver@apple.com>
-
         Reviewed by Geoffrey Garen.
 
         Make RegExp GC allocated
