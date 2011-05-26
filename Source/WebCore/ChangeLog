@@ -1,3 +1,15 @@
+2011-05-26  Shane Stephens  <shanestephens@google.com>
+
+        Reviewed by James Robinson.
+
+        REGRESSION (r81992): layout triggered by position update fails to apply when transform is updated at same time
+        https://bugs.webkit.org/show_bug.cgi?id=60689
+
+        Test: transforms/2d/set-transform-and-top.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::simplifiedLayout):
+
 2011-05-26  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Reviewed by Andreas Kling.

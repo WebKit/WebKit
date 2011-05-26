@@ -431,7 +431,7 @@ public:
     bool hasBackground() const { return style()->hasBackground(); }
     bool needsLayout() const { return m_needsLayout || m_normalChildNeedsLayout || m_posChildNeedsLayout || m_needsSimplifiedNormalFlowLayout || m_needsPositionedMovementLayout; }
     bool selfNeedsLayout() const { return m_needsLayout; }
-    bool needsPositionedMovementLayout() const { return m_needsPositionedMovementLayout; }
+    bool needsPositionedMovementLayout() const { return m_needsPositionedMovementLayout || m_needsSimplifiedNormalFlowLayout; }
     bool needsPositionedMovementLayoutOnly() const { return m_needsPositionedMovementLayout && !m_needsLayout && !m_normalChildNeedsLayout && !m_posChildNeedsLayout && !m_needsSimplifiedNormalFlowLayout; }
     bool posChildNeedsLayout() const { return m_posChildNeedsLayout; }
     bool needsSimplifiedNormalFlowLayout() const { return m_needsSimplifiedNormalFlowLayout; }
