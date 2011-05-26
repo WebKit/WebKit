@@ -590,7 +590,7 @@ private:
     // Convert a point in absolute coords into layer coords, taking transforms into account
     IntPoint absoluteToContents(const IntPoint&) const;
 
-    void positionOverflowControls(int tx, int ty);
+    void positionOverflowControls(const IntSize&);
     void updateScrollCornerStyle();
     void updateResizerStyle();
 

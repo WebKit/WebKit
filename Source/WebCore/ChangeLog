@@ -1,3 +1,21 @@
+2011-05-26  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch positionOverflowControls to IntSize
+        https://bugs.webkit.org/show_bug.cgi?id=61493
+
+        Switching positionOverflowControls to take a layerOffset IntSize
+        as opposed to a pair of ints.
+
+        No new tests since this is just refactoring.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::RenderLayer::positionOverflowControls):
+        (WebCore::RenderLayer::paintOverflowControls):
+        * rendering/RenderLayer.h:
+
 2011-05-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87368.

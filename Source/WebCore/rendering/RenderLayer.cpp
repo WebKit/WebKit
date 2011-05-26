@@ -297,7 +297,7 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, IntPoint
 #endif
     } else
         convertToLayerCoords(root(), x, y);
-    positionOverflowControls(x, y);
+    positionOverflowControls(IntSize(x, y));
 
     updateVisibilityStatus();
 
@@ -2016,7 +2016,7 @@ bool RenderLayer::hasOverflowControls() const
     return m_hBar || m_vBar || m_scrollCorner || renderer()->style()->resize() != RESIZE_NONE;
 }
 
-void RenderLayer::positionOverflowControls(int tx, int ty)
+void RenderLayer::positionOverflowControls(const IntSize& offsetFromLayer)
 {
     if (!m_hBar && !m_vBar && (!renderer()->hasOverflowClip() || renderer()->style()->resize() == RESIZE_NONE))
         return;
@@ -2027,7 +2027,7 @@ void RenderLayer::positionOverflowControls(int tx, int ty)
 
     const IntRect& borderBox = box->borderBoxRect();
     const IntRect& scrollCorner = scrollCornerRect();
-    IntRect absBounds(borderBox.x() + tx, borderBox.y() + ty, borderBox.width(), borderBox.height());
+    IntRect absBounds(borderBox.location() + offsetFromLayer, borderBox.size());
     if (m_vBar)
         m_vBar->setFrameRect(IntRect(absBounds.maxX() - box->borderRight() - m_vBar->width(),
                                      absBounds.y() + box->borderTop(),
@@ -2043,14 +2043,14 @@ void RenderLayer::positionOverflowControls(int tx, int ty)
 #if USE(ACCELERATED_COMPOSITING)
     if (GraphicsLayer* layer = layerForHorizontalScrollbar()) {
         if (m_hBar) {
-            layer->setPosition(IntPoint(m_hBar->frameRect().x() - tx, m_hBar->frameRect().y() - ty));
+            layer->setPosition(m_hBar->frameRect().location() - offsetFromLayer);
             layer->setSize(m_hBar->frameRect().size());
         }
         layer->setDrawsContent(m_hBar);
     }
     if (GraphicsLayer* layer = layerForVerticalScrollbar()) {
         if (m_vBar) {
-            layer->setPosition(IntPoint(m_vBar->frameRect().x() - tx, m_vBar->frameRect().y() - ty));
+            layer->setPosition(m_vBar->frameRect().location() - offsetFromLayer);
             layer->setSize(m_vBar->frameRect().size());
         }
         layer->setDrawsContent(m_vBar);
@@ -2301,7 +2301,7 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, int tx, int ty
     // Move the scrollbar widgets if necessary.  We normally move and resize widgets during layout, but sometimes
     // widgets can move without layout occurring (most notably when you scroll a document that
     // contains fixed positioned elements).
-    positionOverflowControls(offsetX, offsetY);
+    positionOverflowControls(IntSize(offsetX, offsetY));
 
     // Now that we're sure the scrollbars are in the right place, paint them.
     if (m_hBar
