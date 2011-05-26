@@ -3852,7 +3852,7 @@ BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = TEXT
 
 BUGSENORBLANCO WIN LINUX : animations/animation-drt-api-multiple-keyframes.html = TEXT
 BUGSENORBLANCO WIN LINUX : animations/animation-drt-api.html = TEXT
-BUGSENORBLANCO GPU LEOPARD : compositing/direct-image-compositing.html = IMAGE CRASH
+BUGSENORBLANCO GPU MAC : compositing/direct-image-compositing.html = IMAGE CRASH
 BUGSENORBLANCO MAC LINUX : fast/css/string-quote-binary.html = CRASH PASS
 BUGSENORBLANCO LINUX : fast/events/panScroll-click-hyperlink.html = TEXT
 BUGSENORBLANCO : fast/files/domurl-script-execution-context-crash.html = CRASH PASS
@@ -4141,3 +4141,5 @@ BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-dx-prop.html = IMAGE
 BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-dy-prop.html = IMAGE
 BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-x-prop.html = IMAGE
 BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-y-prop.html = IMAGE
+
+BUGWK61486 : http/tests/misc/drag-not-loaded-image.html = CRASH
