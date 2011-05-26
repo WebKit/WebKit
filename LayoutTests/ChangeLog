@@ -1,3 +1,14 @@
+2011-05-26  Chang Shu  <cshu@webkit.org>
+
+        Unreviewed.
+
+        [Qt] http/tests/websocket/tests/reload-crash.html fails intermittently with time out
+        https://bugs.webkit.org/show_bug.cgi?id=50152
+
+        Unskip the test case as it's not reproducible. Will watch the buildbot results.
+
+        * platform/qt/Skipped: Unskip http/tests/websocket/tests/reload-crash.html
+
 2011-05-25  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adam Roben.
