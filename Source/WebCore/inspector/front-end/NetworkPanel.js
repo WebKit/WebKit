@@ -175,7 +175,7 @@ WebInspector.NetworkPanel.prototype = {
         columns.type.sortable = true;
         columns.type.width = "6%";
 
-        columns.size.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Size"), WebInspector.UIString("Transfer"));
+        columns.size.titleDOMFragment = this._makeHeaderFragment(WebInspector.UIString("Size"), WebInspector.UIString("Content"));
         columns.size.sortable = true;
         columns.size.width = "6%";
         columns.size.aligned = "right";
@@ -1600,16 +1600,16 @@ WebInspector.NetworkDataGridNode.prototype = {
 
     _refreshSizeCell: function()
     {
-        var resourceSize = typeof this._resource.resourceSize === "number" ? Number.bytesToString(this._resource.resourceSize) : "?";
-        var transferSize = typeof this._resource.transferSize === "number" ? Number.bytesToString(this._resource.transferSize) : "?";
-        var fromCache = this._resource.cached;
-        this._sizeCell.setTextAndTitle(!fromCache ? resourceSize : WebInspector.UIString("(from cache)"));
-        if (fromCache)
+        if (this._resource.cached) {
+            this._sizeCell.setTextAndTitle(WebInspector.UIString("(from cache)"));
             this._sizeCell.addStyleClass("network-dim-cell");
-        else
+        } else {
+            var resourceSize = typeof this._resource.resourceSize === "number" ? Number.bytesToString(this._resource.resourceSize) : "?";
+            var transferSize = typeof this._resource.transferSize === "number" ? Number.bytesToString(this._resource.transferSize) : "?";
+            this._sizeCell.setTextAndTitle(transferSize);
             this._sizeCell.removeStyleClass("network-dim-cell");
-        if (!fromCache)
-            this._appendSubtitle(this._sizeCell, transferSize);
+            this._appendSubtitle(this._sizeCell, resourceSize);
+        }
     },
 
     _refreshTimeCell: function()
