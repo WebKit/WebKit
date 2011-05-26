@@ -1,5 +1,11 @@
 2011-05-26  Adam Klein  <adamk@chromium.org>
 
+        Unreviewed. Suppress flaky timeouts and crashes in a few tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-26  Adam Klein  <adamk@chromium.org>
+
         Unreviewed. Remove test expectations for now-passing tests.
 
         * platform/chromium/test_expectations.txt: Narrow some failures to Win/Linux; remove tests now passing due to rollout.
