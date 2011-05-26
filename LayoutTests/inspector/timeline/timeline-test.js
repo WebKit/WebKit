@@ -18,6 +18,7 @@ InspectorTest.timelineNonDeterministicProps = {
 InspectorTest.startTimeline = function(callback)
 {
     InspectorTest._timelineRecords = [];
+    WebInspector.panels.timeline.toggleTimelineButton.toggled = true;
     TimelineAgent.start(callback);
     function addRecord(record)
     {
@@ -25,13 +26,16 @@ InspectorTest.startTimeline = function(callback)
         for (var i = 0; record.children && i < record.children.length; ++i)
             addRecord(record.children[i]);
     }
-    InspectorTest.addSniffer(WebInspector.TimelineDispatcher.prototype, "eventRecorded", addRecord, true);
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, function(event) {
+        addRecord(event.data);
+    });
 };
 
 InspectorTest.stopTimeline = function(callback)
 {
     function didStop()
     {
+        WebInspector.panels.timeline.toggleTimelineButton.toggled = false;
         callback(InspectorTest._timelineRecords);
     }
     TimelineAgent.stop(didStop);

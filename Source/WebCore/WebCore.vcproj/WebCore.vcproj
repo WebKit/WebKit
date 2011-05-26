@@ -67973,6 +67973,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\TimelineManager.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\TimelineOverviewPane.js"
 					>
 				</File>

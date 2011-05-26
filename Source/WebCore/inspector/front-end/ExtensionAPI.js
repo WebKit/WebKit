@@ -91,6 +91,7 @@ function InspectorExtensionAPI()
     this.inspectedWindow = new InspectedWindow();
     this.panels = new Panels();
     this.resources = new Resources();
+    this.timeline = new Timeline();
 
     this.onReset = new EventSink("reset");
 }
@@ -378,6 +379,11 @@ InspectedWindow.prototype = {
     }
 }
 
+function TimelineImpl()
+{
+    this.onEventRecorded = new EventSink("timeline-event-recorded");
+}
+
 function ExtensionServerClient()
 {
     this._callbacks = {};
@@ -484,6 +490,7 @@ var ExtensionSidebarPane = declareInterfaceClass(ExtensionSidebarPaneImpl);
 var Panel = declareInterfaceClass(PanelImpl);
 var PanelWithSidebar = declareInterfaceClass(PanelWithSidebarImpl);
 var Resource = declareInterfaceClass(ResourceImpl);
+var Timeline = declareInterfaceClass(TimelineImpl);
 
 var extensionServer = new ExtensionServerClient();
 

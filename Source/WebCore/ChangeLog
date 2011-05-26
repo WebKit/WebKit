@@ -1,3 +1,37 @@
+2011-05-26  Michael Schneider  <michschn@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Added API to access the timeline data in a inspector extension.
+        https://bugs.webkit.org/show_bug.cgi?id=61098
+
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/ExtensionAPI.js:
+        (WebInspector.injectedExtensionAPI.InspectorExtensionAPI):
+        (WebInspector.injectedExtensionAPI):
+        * inspector/front-end/ExtensionServer.js:
+        (WebInspector.ExtensionServer):
+        (WebInspector.ExtensionServer.prototype._addRecordToTimeline):
+        (WebInspector.ExtensionServer.prototype._onSubscribe):
+        (WebInspector.ExtensionServer.prototype._onUnsubscribe):
+        (WebInspector.ExtensionServer.prototype._registerHandler):
+        (WebInspector.ExtensionServer.prototype._registerSubscriptionHandler):
+        * inspector/front-end/TimelineManager.js: Added.
+        (WebInspector.TimelineManager):
+        (WebInspector.TimelineManager.prototype.start):
+        (WebInspector.TimelineManager.prototype.stop):
+        (WebInspector.TimelineDispatcher):
+        (WebInspector.TimelineDispatcher.prototype.started):
+        (WebInspector.TimelineDispatcher.prototype.stopped):
+        (WebInspector.TimelineDispatcher.prototype.eventRecorded):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+        (WebInspector.TimelinePanel.prototype._toggleTimelineButtonClicked):
+        (WebInspector.TimelinePanel.prototype._onTimelineEventRecorded):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.html:
+
 2011-05-26  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.

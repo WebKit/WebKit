@@ -102,6 +102,23 @@ function extension_testPanelShowHide(nextTest)
     webInspector.panels.create("Test Panel", "extension-panel.png", "extension-panel.html", onPanelCreated);
 }
 
+function extension_testTimelineEvents(nextTest)
+{
+    function onTimelineEvent(record)
+    {
+        if (record.type === "Layout") {
+            output("Got Layout event from timeline");
+            webInspector.timeline.onEventRecorded.removeListener(onTimelineEvent);
+            nextTest();
+        }
+    }
+
+    webInspector.timeline.onEventRecorded.addListener(onTimelineEvent);
+
+    // Trigger a relayout.
+    webInspector.inspectedWindow.eval("document.body.style.float = 'left';");
+}
+
 </script>
 </head>
 <body onload="runTest()">

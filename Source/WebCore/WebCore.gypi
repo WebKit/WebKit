@@ -6273,6 +6273,7 @@
             'inspector/front-end/TextPrompt.js',
             'inspector/front-end/TextViewer.js',
             'inspector/front-end/TimelineAgent.js',
+            'inspector/front-end/TimelineManager.js',
             'inspector/front-end/TimelineOverviewPane.js',
             'inspector/front-end/TimelineGrid.js',
             'inspector/front-end/TimelinePanel.js',

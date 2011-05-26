@@ -1,3 +1,17 @@
+2011-05-26  Michael Schneider  <michschn@google.com>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector: Added tests for timeline data API in a inspector extension.
+        https://bugs.webkit.org/show_bug.cgi?id=61098
+
+        * inspector/extensions/extensions-api-expected.txt:
+        * inspector/extensions/extensions-events-expected.txt:
+        * inspector/extensions/extensions-events.html:
+        * inspector/timeline/timeline-test.js:
+        (initialize_Timeline.InspectorTest.startTimeline):
+        (initialize_Timeline.InspectorTest.stopTimeline):
+
 2011-05-26  Adam Klein  <adamk@chromium.org>
 
         Unreviewed. Added baselines after r87387.

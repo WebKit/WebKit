@@ -41,6 +41,12 @@ RUNNING TEST: extension_testAPI
         getHAR : <function>
         addRequestHeaders : <function>
     }
+    timeline : {
+        onEventRecorded : {
+            addListener : <function>
+            removeListener : <function>
+        }
+    }
     onReset : {
         addListener : <function>
         removeListener : <function>

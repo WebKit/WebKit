@@ -16,5 +16,7 @@ Got onHidden event for panel elements
 Got onShown event for panel extension
 Got onHidden event for panel extension
 Got onShown event for panel elements
+RUNNING TEST: extension_testTimelineEvents
+Got Layout event from timeline
 All tests done.
 

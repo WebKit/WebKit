@@ -33,6 +33,8 @@ WebInspector.ExtensionServer = function()
     this._clientObjects = {};
     this._handlers = {};
     this._subscribers = {};
+    this._subscriptionStartHandlers = {};
+    this._subscriptionStopHandlers = {};
     this._extraHeaders = {};
     this._resources = {};
     this._lastResourceId = 0;
@@ -55,10 +57,19 @@ WebInspector.ExtensionServer = function()
     this._registerHandler("subscribe", this._onSubscribe.bind(this));
     this._registerHandler("unsubscribe", this._onUnsubscribe.bind(this));
 
+    this._registerSubscriptionHandler("timeline-event-recorded", WebInspector.timelineManager.start.bind(WebInspector.timelineManager), WebInspector.timelineManager.stop.bind(WebInspector.timelineManager));
+
     window.addEventListener("message", this._onWindowMessage.bind(this), false);
+
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._addRecordToTimeline, this);
 }
 
 WebInspector.ExtensionServer.prototype = {
+    _addRecordToTimeline: function(event)
+    {
+        this._postNotification("timeline-event-recorded", event.data);
+    },
+
     notifyObjectSelected: function(panelId, objectId)
     {
         this._postNotification("panel-objectSelected-" + panelId, objectId);
@@ -141,8 +152,11 @@ WebInspector.ExtensionServer.prototype = {
         var subscribers = this._subscribers[message.type];
         if (subscribers)
             subscribers.push(port);
-        else
+        else {
             this._subscribers[message.type] = [ port ];
+            if (this._subscriptionStartHandlers[message.type])
+                this._subscriptionStartHandlers[message.type]()
+        }
     },
 
     _onUnsubscribe: function(message, port)
@@ -151,8 +165,11 @@ WebInspector.ExtensionServer.prototype = {
         if (!subscribers)
             return;
         subscribers.remove(port);
-        if (!subscribers.length)
+        if (!subscribers.length) {
             delete this._subscribers[message.type];
+            if (this._subscriptionStopHandlers[message.type])
+                this._subscriptionStopHandlers[message.type]()
+        }
     },
 
     _onAddRequestHeaders: function(message)
@@ -446,6 +463,12 @@ WebInspector.ExtensionServer.prototype = {
     _registerHandler: function(command, callback)
     {
         this._handlers[command] = callback;
+    },
+
+    _registerSubscriptionHandler: function(eventTopic, onSubscribeFirst, onUnsubscribeLast)
+    {
+        this._subscriptionStartHandlers[eventTopic] =  onSubscribeFirst;
+        this._subscriptionStopHandlers[eventTopic] =  onUnsubscribeLast;
     }
 }
 

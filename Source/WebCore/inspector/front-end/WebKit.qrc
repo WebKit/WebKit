@@ -115,6 +115,7 @@
     <file>TextPrompt.js</file>
     <file>TextViewer.js</file>
     <file>TimelineAgent.js</file>
+    <file>TimelineManager.js</file>
     <file>TimelineGrid.js</file>
     <file>TimelineOverviewPane.js</file>
     <file>TimelinePanel.js</file>

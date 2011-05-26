@@ -99,7 +99,7 @@ WebInspector.TimelinePanel = function()
     this._markTimelineRecords = [];
     this._expandOffset = 15;
 
-    InspectorBackend.registerDomainDispatcher("Timeline", new WebInspector.TimelineDispatcher(this));
+    WebInspector.timelineManager.addEventListener(WebInspector.TimelineManager.EventTypes.TimelineEventRecorded, this._onTimelineEventRecorded, this);
 }
 
 // Define row height, should be in sync with styles for timeline graphs.
@@ -273,11 +273,12 @@ WebInspector.TimelinePanel.prototype = {
     _toggleTimelineButtonClicked: function()
     {
         if (this.toggleTimelineButton.toggled)
-            TimelineAgent.stop();
+            WebInspector.timelineManager.stop();
         else {
             this._clearPanel();
-            TimelineAgent.start();
+            WebInspector.timelineManager.start();
         }
+        this.toggleTimelineButton.toggled = !this.toggleTimelineButton.toggled;
     },
 
     _toggleFilterButtonClicked: function()
@@ -293,14 +294,10 @@ WebInspector.TimelinePanel.prototype = {
         ProfilerAgent.collectGarbage();
     },
 
-    _timelineProfilerWasStarted: function()
+    _onTimelineEventRecorded: function(event)
     {
-        this.toggleTimelineButton.toggled = true;
-    },
-
-    _timelineProfilerWasStopped: function()
-    {
-        this.toggleTimelineButton.toggled = false;
+        if (this.toggleTimelineButton.toggled)
+            this._addRecordToTimeline(event.data);
     },
 
     _addRecordToTimeline: function(record)
@@ -659,28 +656,6 @@ WebInspector.TimelinePanel.prototype = {
 }
 
 WebInspector.TimelinePanel.prototype.__proto__ = WebInspector.Panel.prototype;
-
-WebInspector.TimelineDispatcher = function(timelinePanel)
-{
-    this._timelinePanel = timelinePanel;
-}
-
-WebInspector.TimelineDispatcher.prototype = {
-    started: function()
-    {
-        this._timelinePanel._timelineProfilerWasStarted();
-    },
-
-    stopped: function()
-    {
-        this._timelinePanel._timelineProfilerWasStopped();
-    },
-
-    eventRecorded: function(record)
-    {
-        this._timelinePanel._addRecordToTimeline(record);
-    }
-}
 
 WebInspector.TimelineCategory = function(name, title, color)
 {
