@@ -1,36 +1,37 @@
 2011-05-26  Philippe Normand  <pnormand@igalia.com>
 
-        Unreviewed, GTK baselines for new tests.
+        Unreviewed, rollout of r87373 and r87375. Those commits were
+        mistaken. I'll properly land the baselines later on.
 
-        * platform/gtk/fast/box-shadow/scaled-box-shadow-actual.txt: Added.
-        * platform/gtk/fast/box-shadow/scaled-box-shadow-diffs.txt: Added.
-        * platform/gtk/fast/box-shadow/scaled-box-shadow-expected.txt: Added.
-        * platform/gtk/fast/box-shadow/scaled-box-shadow-pretty-diff.html: Added.
-        * platform/gtk/fast/box-shadow/scaled-box-shadow-stderr.txt: Added.
-        * platform/gtk/fast/css/box-shadow-and-border-radius-actual.txt: Added.
-        * platform/gtk/fast/css/box-shadow-and-border-radius-diffs.txt: Added.
-        * platform/gtk/fast/css/box-shadow-and-border-radius-expected.txt: Added.
-        * platform/gtk/fast/css/box-shadow-and-border-radius-pretty-diff.html: Added.
-        * platform/gtk/fast/html/details-add-details-child-2-actual.txt: Added.
-        * platform/gtk/fast/html/details-add-details-child-2-diffs.txt: Added.
-        * platform/gtk/fast/html/details-add-details-child-2-expected.txt: Added.
-        * platform/gtk/fast/html/details-add-details-child-2-pretty-diff.html: Added.
-        * platform/gtk/fast/html/details-replace-summary-child-actual.txt: Added.
-        * platform/gtk/fast/html/details-replace-summary-child-diffs.txt: Added.
-        * platform/gtk/fast/html/details-replace-summary-child-expected.txt: Added.
-        * platform/gtk/fast/html/details-replace-summary-child-pretty-diff.html: Added.
-        * platform/gtk/fast/html/details-replace-text-actual.txt: Added.
-        * platform/gtk/fast/html/details-replace-text-diffs.txt: Added.
-        * platform/gtk/fast/html/details-replace-text-expected.txt: Added.
-        * platform/gtk/fast/html/details-replace-text-pretty-diff.html: Added.
-        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-felem-01-b-actual.txt: Added.
-        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-felem-01-b-diffs.txt: Added.
-        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt: Added.
-        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-felem-01-b-pretty-diff.html: Added.
-        * platform/gtk/svg/W3C-SVG-1.1-SE/struct-use-14-f-actual.txt: Added.
-        * platform/gtk/svg/W3C-SVG-1.1-SE/struct-use-14-f-diffs.txt: Added.
-        * platform/gtk/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt: Added.
-        * platform/gtk/svg/W3C-SVG-1.1-SE/struct-use-14-f-pretty-diff.html: Added.
+        * platform/gtk/fast/box-shadow/scaled-box-shadow-actual.txt: Removed.
+        * platform/gtk/fast/box-shadow/scaled-box-shadow-diffs.txt: Removed.
+        * platform/gtk/fast/box-shadow/scaled-box-shadow-expectted.txt: Removed.
+        * platform/gtk/fast/box-shadow/scaled-box-shadow-pretty-diff.html.txt: Removed.
+        * platform/gtk/fast/box-shadow/scaled-box-shadow-stderr.txt: Removed.
+        * platform/gtk/fast/css/box-shadow-and-border-radius-actual.txt: Removed.
+        * platform/gtk/fast/css/box-shadow-and-border-radius-diffs.txt: Removed.
+        * platform/gtk/fast/css/box-shadow-and-border-radius-expected.txt: Removed.
+        * platform/gtk/fast/css/box-shadow-and-border-radius-pretty-diff.html.txt: Removed.
+        * platform/gtk/fast/html/details-add-details-child-2-actual.txt: Removed.
+        * platform/gtk/fast/html/details-add-details-child-2-diffs.txt: Removed.
+        * platform/gtk/fast/html/details-add-details-child-2-expected.txt: Removed.
+        * platform/gtk/fast/html/details-add-details-child-2-pretty-diff.html.txt: Removed.
+        * platform/gtk/fast/html/details-replace-summary-child-actual.txt: Removed.
+        * platform/gtk/fast/html/details-replace-summary-child-diffs.txt: Removed.
+        * platform/gtk/fast/html/details-replace-summary-child-expected.txt: Removed.
+        * platform/gtk/fast/html/details-replace-summary-child-pretty-diff.html.txt: Removed.
+        * platform/gtk/fast/html/details-replace-text-actual.txt: Removed.
+        * platform/gtk/fast/html/details-replace-text-diffs.txt: Removed.
+        * platform/gtk/fast/html/details-replace-text-expected.txt: Removed.
+        * platform/gtk/fast/html/details-replace-text-pretty-diff.html.txt: Removed.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-felem-01-b-actual.txt: Removed.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-felem-01-b-diffs.txt: Removed.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt: Removed.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/filters-felem-01-b-pretty-diff.html.txt: Removed.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/struct-use-14-f-actual.txt: Removed.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/struct-use-14-f-diffs.txt: Removed.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt: Removed.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/struct-use-14-f-pretty-diff.html.txt: Removed.
 
 2011-05-26  Keishi Hattori  <keishi@webkit.org>
 

@@ -1,1 +1,0 @@
-Xlib:  extension "RANDR" missing on display ":10.0".
