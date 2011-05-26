@@ -22,11 +22,10 @@ layer at (15,82) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,76) size 236x32
   RenderFlexibleBox (positioned) {DIV} at (30,0) size 236x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-layer at (45,83) size 164x18
-  RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
-    RenderBlock {DIV} at (77,-5) size 9x29
+    RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+      RenderBlock {DIV} at (77,-5) size 9x29
 layer at (215,82) size 58x20 scrollHeight 21
-  RenderFlexibleBox (positioned) {DIV} at (177,6) size 58x20 [color=#FFFFFF]
+  RenderFlexibleBox {DIV} at (177,6) size 58x20 [color=#FFFFFF]
     RenderBlock (anonymous) at (8,0) size 42x21
       RenderText {#text} at (0,1) size 42x19
         text run at (0,1) width 42: "00:00"
@@ -40,11 +39,10 @@ layer at (15,50) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,44) size 236x32
   RenderFlexibleBox (positioned) {DIV} at (30,0) size 236x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-layer at (45,51) size 164x18
-  RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
-    RenderBlock {DIV} at (77,-5) size 9x29
+    RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+      RenderBlock {DIV} at (77,-5) size 9x29
 layer at (215,50) size 58x20 scrollHeight 21
-  RenderFlexibleBox (positioned) {DIV} at (177,6) size 58x20 [color=#FFFFFF]
+  RenderFlexibleBox {DIV} at (177,6) size 58x20 [color=#FFFFFF]
     RenderBlock (anonymous) at (8,0) size 42x21
       RenderText {#text} at (0,1) size 42x19
         text run at (0,1) width 42: "00:00"
@@ -60,11 +58,10 @@ layer at (15,166) size 18x19
   RenderButton {INPUT} at (7,6) size 18x19
 layer at (38,160) size 236x32
   RenderFlexibleBox (positioned) {DIV} at (30,0) size 236x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
-layer at (45,167) size 164x18
-  RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
-    RenderBlock {DIV} at (77,-5) size 9x29
+    RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
+      RenderBlock {DIV} at (77,-5) size 9x29
 layer at (215,166) size 58x20 scrollHeight 21
-  RenderFlexibleBox (positioned) {DIV} at (177,6) size 58x20 [color=#FFFFFF]
+  RenderFlexibleBox {DIV} at (177,6) size 58x20 [color=#FFFFFF]
     RenderBlock (anonymous) at (8,0) size 42x21
       RenderText {#text} at (0,1) size 42x19
         text run at (0,1) width 42: "00:00"
