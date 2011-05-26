@@ -964,6 +964,11 @@ String* string(const char*);
 Vector<char> asciiDebug(StringImpl* impl);
 Vector<char> asciiDebug(String& string);
 
+void String::show()
+{
+    fprintf(stderr, "%s\n", asciiDebug(impl()).data());
+}
+
 String* string(const char* s)
 {
     // leaks memory!

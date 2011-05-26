@@ -1,3 +1,19 @@
+2011-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        [debug feature] WTFString should have show() method
+        https://bugs.webkit.org/show_bug.cgi?id=61149
+
+        Added String::show and AtomicString::show in NDEBUG.
+
+        * wtf/text/AtomicString.cpp:
+        (WTF::AtomicString::show):
+        * wtf/text/AtomicString.h:
+        * wtf/text/WTFString.cpp:
+        (String::show):
+        * wtf/text/WTFString.h:
+
 2011-05-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Geoffrey Garen.

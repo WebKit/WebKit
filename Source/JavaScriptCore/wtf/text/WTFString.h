@@ -347,6 +347,10 @@ public:
     String(WTF::HashTableDeletedValueType) : m_impl(WTF::HashTableDeletedValue) { }
     WTF_EXPORT_PRIVATE bool isHashTableDeletedValue() const { return m_impl.isHashTableDeletedValue(); }
 
+#ifndef NDEBUG
+    void show();
+#endif
+
 private:
     RefPtr<StringImpl> m_impl;
 };
