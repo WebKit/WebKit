@@ -30,6 +30,7 @@
 
 #include "LayerTextureUpdaterCanvas.h"
 
+#include "Extensions3D.h"
 #include "GraphicsContext.h"
 #include "LayerPainterChromium.h"
 #include "LayerTexture.h"
@@ -95,7 +96,7 @@ LayerTextureUpdaterSkPicture::LayerTextureUpdaterSkPicture(GraphicsContext3D* co
     , m_skiaContext(skiaContext)
     , m_createFrameBuffer(false)
     , m_fbo(0)
-    , m_stencilBuffer(0)
+    , m_depthStencilBuffer(0)
 {
 }
 
@@ -159,10 +160,14 @@ void LayerTextureUpdaterSkPicture::deleteFrameBuffer()
 {
     m_canvas.clear();
 
-    if (m_stencilBuffer)
-        context()->deleteRenderbuffer(m_stencilBuffer);
-    if (m_fbo)
+    if (m_depthStencilBuffer) {
+        context()->deleteRenderbuffer(m_depthStencilBuffer);
+        m_depthStencilBuffer = 0;
+    }
+    if (m_fbo) {
         context()->deleteFramebuffer(m_fbo);
+        m_fbo = 0;
+    }
 }
 
 bool LayerTextureUpdaterSkPicture::createFrameBuffer()
@@ -176,6 +181,19 @@ bool LayerTextureUpdaterSkPicture::createFrameBuffer()
     if (!contextAttribs.stencil)
         return false;
 
+    // SKIA only needs color and stencil buffers, not depth buffer.
+    // But it is very uncommon for cards to support color + stencil FBO config.
+    // The most common config is color + packed-depth-stencil.
+    // Instead of iterating through all possible FBO configs, we only try the
+    // most common one here.
+    // FIXME: Delegate the task of creating frame-buffer to SKIA.
+    // It has all necessary code to iterate through all possible configs
+    // and choose the one most suitable for its purposes.
+    Extensions3D* extensions = context()->getExtensions();
+    if (!extensions->supports("GL_OES_packed_depth_stencil"))
+        return false;
+    extensions->ensureEnabled("GL_OES_packed_depth_stencil");
+
     // Create and bind a frame-buffer-object.
     m_fbo = context()->createFramebuffer();
     if (!m_fbo)
@@ -185,15 +203,15 @@ bool LayerTextureUpdaterSkPicture::createFrameBuffer()
     // We just need to create a stencil buffer for FBO.
     // The color buffer (texture) will be provided by tiles.
     // SKIA does not need depth buffer.
-    m_stencilBuffer = context()->createRenderbuffer();
-    if (!m_stencilBuffer) {
-        context()->deleteFramebuffer(m_fbo);
-        m_fbo = 0;
+    m_depthStencilBuffer = context()->createRenderbuffer();
+    if (!m_depthStencilBuffer) {
+        deleteFrameBuffer();
         return false;
     }
-    context()->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
-    context()->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, GraphicsContext3D::STENCIL_INDEX8, m_bufferSize.width(), m_bufferSize.height());
-    context()->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_stencilBuffer);
+    context()->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
+    context()->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, Extensions3D::DEPTH24_STENCIL8, m_bufferSize.width(), m_bufferSize.height());
+    context()->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
+    context()->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
 
     // Create a skia gpu canvas.
     GrPlatformSurfaceDesc targetDesc;

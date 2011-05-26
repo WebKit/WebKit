@@ -99,7 +99,7 @@ private:
     SkPicture m_picture; // Recording canvas.
     IntSize m_bufferSize; // Frame buffer size.
     Platform3DObject m_fbo; // Frame buffer id.
-    Platform3DObject m_stencilBuffer;
+    Platform3DObject m_depthStencilBuffer;
     OwnPtr<SkCanvas> m_canvas; // GPU accelerated canvas.
 };
 #endif // SKIA

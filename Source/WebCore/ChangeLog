@@ -1,3 +1,20 @@
+2011-05-26  Alok Priyadarshi  <alokp@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Cannot create stencil render-buffer for accelerated drawing on desktop GL
+        https://bugs.webkit.org/show_bug.cgi?id=61444
+
+        Used DEPTH24_STENCIL8 format for stencil buffer instead of STENCIL_INDEX8.
+        Packed depth-stencil buffer is the most common format supported by graphics cards.
+        It is not very robust to rely on just one format being supported,
+        so long term the task of creating FBO should be delegated to SKIA,
+        which has necessary code to iterate through all possible formats.
+
+        * platform/graphics/chromium/LayerTextureUpdaterCanvas.cpp:
+        (WebCore::LayerTextureUpdaterSkPicture::deleteFrameBuffer):
+        (WebCore::LayerTextureUpdaterSkPicture::createFrameBuffer):
+
 2011-05-25  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Dan Bernstein.
