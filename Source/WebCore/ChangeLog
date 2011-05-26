@@ -1,3 +1,29 @@
+2011-05-24  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        RenderText with empty text is not created inside ShadowContentElement 
+        https://bugs.webkit.org/show_bug.cgi?id=61111        
+
+        - Changed Text::rendererIsNeeded() to be shadow-aware.
+        - previousRenderer(), nextRenderer() and parentRenderer() on NodeRenderingContext is now
+          safe even if it's used with an attached node, which was originally used only during attach().
+          We need this change because these APIs are called inside CharacterData::updateRenderer() callstack.
+        
+        Tests: fast/html/details-replace-summary-child.html
+               fast/html/details-replace-text.html
+
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext):
+        (WebCore::NodeRenderingContext::nextRenderer):
+        (WebCore::NodeRenderingContext::previousRenderer):
+        (WebCore::NodeRenderingContext::parentRenderer):
+        (WebCore::NodeRenderingContext::shouldCreateRenderer):
+        * dom/NodeRenderingContext.h:
+        (WebCore::NodeRenderingContext::parentNodeForRenderingAndStyle):
+        * dom/Text.cpp:
+        (WebCore::Text::rendererIsNeeded):
+
 2011-05-25  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Tony Chang.

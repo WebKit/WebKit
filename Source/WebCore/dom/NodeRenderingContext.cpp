@@ -74,7 +74,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
 }
 
 NodeRenderingContext::NodeRenderingContext(Node* node, RenderStyle* style)
-    : m_location(LocationNotInTree)
+    : m_location(LocationUndetermined)
     , m_phase(AttachStraight)
     , m_node(node)
     , m_parentNodeForRenderingAndStyle(0)
@@ -99,6 +99,13 @@ PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
 
 RenderObject* NodeRenderingContext::nextRenderer() const
 {
+    if (RenderObject* renderer = m_node->renderer()) {
+        ASSERT(m_location == LocationUndetermined);
+        return renderer->nextSibling();
+    }
+
+    ASSERT(m_location != LocationUndetermined);
+
     if (m_phase != AttachContentForwarded)
         return m_node->nextRenderer();
     // Returns 0 here to insert renderer at the end of child list.
@@ -107,9 +114,34 @@ RenderObject* NodeRenderingContext::nextRenderer() const
     return 0;
 }
 
+RenderObject* NodeRenderingContext::previousRenderer() const
+{
+    if (RenderObject* renderer = m_node->renderer()) {
+        ASSERT(m_location == LocationUndetermined);
+        return renderer->previousSibling();
+    }
+
+    ASSERT(m_location != LocationUndetermined);
+
+    if (m_phase != AttachContentForwarded)
+        return m_node->previousRenderer();
+    // Returns lastChild() here to insert renderer at the end of child list.
+    // We assume content children are always attached in tree order and
+    // there is no partial render tree creation.
+    if (RenderObject* parent = parentRenderer())
+        return parent->lastChild();
+    return 0;
+}
+
 RenderObject* NodeRenderingContext::parentRenderer() const
 {
-    return m_parentNodeForRenderingAndStyle->renderer();
+    if (RenderObject* renderer = m_node->renderer()) {
+        ASSERT(m_location == LocationUndetermined);
+        return renderer->parent();
+    }
+
+    ASSERT(m_location != LocationUndetermined);
+    return m_parentNodeForRenderingAndStyle ? m_parentNodeForRenderingAndStyle->renderer() : 0;
 }
 
 void NodeRenderingContext::hostChildrenChanged()
@@ -120,6 +152,7 @@ void NodeRenderingContext::hostChildrenChanged()
 
 bool NodeRenderingContext::shouldCreateRenderer() const
 {
+    ASSERT(m_location != LocationUndetermined);
     ASSERT(parentNodeForRenderingAndStyle());
 
     if (m_location == LocationNotInTree || m_phase == AttachContentLight)
@@ -197,10 +230,11 @@ void NodeRendererFactory::createRendererIfNeeded()
 {
     Node* node = m_context.node();
     Document* document = node->document();
-
     if (!document->shouldCreateRenderers())
         return;
 
+    RenderObject* parentRenderer = m_context.parentRenderer();
+    RenderObject* nextRenderer = m_context.nextRenderer();
     RenderObject* newRenderer = createRendererAndStyle();
 
 #if ENABLE(FULLSCREEN_API)
@@ -215,7 +249,7 @@ void NodeRendererFactory::createRendererIfNeeded()
         return;
 
     // Note: Adding newRenderer instead of renderer(). renderer() may be a child of newRenderer.
-    m_context.parentRenderer()->addChild(newRenderer, m_context.nextRenderer());
+    parentRenderer->addChild(newRenderer, nextRenderer);
 }
 
 }

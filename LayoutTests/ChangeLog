@@ -1,3 +1,28 @@
+2011-05-24  MORITA Hajime  <morrita@google.com>
+
+        RenderText with empty text is not created inside ShadowContentElement 
+        https://bugs.webkit.org/show_bug.cgi?id=61111
+
+        - Added tests that capture the probelem.
+        - Updated expectations that were wrong.
+
+        * fast/html/details-replace-summary-child.html: Added.
+        * fast/html/details-replace-text.html: Added.
+        * platform/gtk/fast/html/details-no-summary4-expected.txt:
+        * platform/gtk/fast/html/details-open-javascript-expected.txt:
+        * platform/gtk/fast/html/details-open4-expected.txt:
+        * platform/mac/fast/html/details-add-details-child-2-expected.txt:
+        * platform/mac/fast/html/details-no-summary4-expected.txt:
+        * platform/mac/fast/html/details-open-javascript-expected.txt:
+        * platform/mac/fast/html/details-open4-expected.txt:
+        * platform/mac/fast/html/details-replace-summary-child-expected.png: Added.
+        * platform/mac/fast/html/details-replace-summary-child-expected.txt: Added.
+        * platform/mac/fast/html/details-replace-text-expected.png: Added.
+        * platform/mac/fast/html/details-replace-text-expected.txt: Added.
+        * platform/qt/fast/html/details-no-summary4-expected.txt:
+        * platform/qt/fast/html/details-open-javascript-expected.txt:
+        * platform/qt/fast/html/details-open4-expected.txt:
+
 2011-05-25  Adam Klein  <adamk@chromium.org>
 
         Unreviewed. Add Win/CRASH expectation for new crashy plugin test,

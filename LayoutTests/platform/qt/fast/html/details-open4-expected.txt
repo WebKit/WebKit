@@ -10,6 +10,5 @@ layer at (0,0) size 800x600
             text run at (16,0) width 64: "summary"
         RenderBlock (anonymous) at (0,22) size 784x30
           RenderTextControl {INPUT} at (2,2) size 166x26
-          RenderText {#text} at (0,0) size 0x0
 layer at (12,34) size 162x22
   RenderBlock {DIV} at (2,2) size 162x22

@@ -199,15 +199,14 @@ bool Text::rendererIsNeeded(const NodeRenderingContext& context)
     if (!onlyWS)
         return true;
 
-    RenderObject *par = parentNode()->renderer();
-    
+    RenderObject* par = context.parentRenderer();
     if (par->isTable() || par->isTableRow() || par->isTableSection() || par->isTableCol() || par->isFrameSet())
         return false;
     
     if (context.style()->preserveNewline()) // pre/pre-wrap/pre-line always make renderers.
         return true;
     
-    RenderObject *prev = previousRenderer();
+    RenderObject* prev = context.previousRenderer();
     if (prev && prev->isBR()) // <span><br/> <br/></span>
         return false;
         
@@ -219,10 +218,10 @@ bool Text::rendererIsNeeded(const NodeRenderingContext& context)
         if (par->isRenderBlock() && !par->childrenInline() && (!prev || !prev->isInline()))
             return false;
         
-        RenderObject *first = par->firstChild();
+        RenderObject* first = par->firstChild();
         while (first && first->isFloatingOrPositioned())
             first = first->nextSibling();
-        RenderObject *next = nextRenderer();
+        RenderObject* next = context.nextRenderer();
         if (!first || next == first)
             // Whitespace at the start of a block just goes away.  Don't even
             // make a render object for this text.

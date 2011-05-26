@@ -48,6 +48,7 @@ public:
     ContainerNode* parentNodeForRenderingAndStyle() const;
     RenderObject* parentRenderer() const;
     RenderObject* nextRenderer() const;
+    RenderObject* previousRenderer() const;
 
     RenderStyle* style() const;
     void setStyle(PassRefPtr<RenderStyle>);
@@ -58,7 +59,9 @@ public:
     void hostChildrenChanged();
 
 private:
+
     enum TreeLocation {
+        LocationUndetermined,
         LocationNotInTree,
         LocationLightChild,
         LocationShadowChild,
@@ -85,6 +88,7 @@ inline Node* NodeRenderingContext::node() const
 
 inline ContainerNode* NodeRenderingContext::parentNodeForRenderingAndStyle() const
 {
+    ASSERT(m_location != LocationUndetermined);
     return m_parentNodeForRenderingAndStyle;
 }
 
@@ -92,7 +96,6 @@ inline RenderStyle* NodeRenderingContext::style() const
 {
     return m_style.get();
 }
-
 
 class NodeRendererFactory {
     WTF_MAKE_NONCOPYABLE(NodeRendererFactory);
