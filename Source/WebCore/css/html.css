@@ -583,6 +583,49 @@ input[type="radio"] {
     -webkit-box-sizing: border-box;
 }
 
+#if defined(ENABLE_INPUT_COLOR) && ENABLE_INPUT_COLOR
+
+input[type="color"] {
+    -webkit-appearance: square-button;
+    width: 44px;
+    height: 23px;
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+    display:-webkit-box;
+    padding: 4px 2px;
+    -webkit-box-sizing: border-box;
+    width: 100%;
+    height: 100%
+}
+
+input[type="color"]::-webkit-color-swatch {
+    background-color: #000000;
+    border: 1px solid #777777;
+    -webkit-box-flex: 1;
+}
+
+#if defined(ENABLE_DATALIST) && ENABLE_DATALIST
+
+input[type="color"][list] {
+    -webkit-appearance: menulist;
+    width: 88px;
+    height: 23px;
+}
+
+input[type="color"][list]::-webkit-color-swatch-wrapper {
+    padding-left: 8px;
+    padding-right: 24px;
+}
+
+input[type="color"][list]::-webkit-color-swatch {
+    border-color: #000000;
+}
+
+#endif // defined(ENABLE_DATALIST) && ENABLE_DATALIST
+
+#endif // defined(ENABLE_INPUT_COLOR) && ENABLE_INPUT_COLOR
+
 select {
     -webkit-appearance: menulist;
     -webkit-box-sizing: border-box;

@@ -32,7 +32,9 @@
 #include "ColorInputType.h"
 
 #include "Color.h"
+#include "ElementWithPseudoId.h"
 #include "HTMLInputElement.h"
+#include "ShadowRoot.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
@@ -88,6 +90,38 @@ String ColorInputType::sanitizeValue(const String& proposedValue)
         return fallbackValue();
 
     return proposedValue.lower();
+}
+
+void ColorInputType::createShadowSubtree()
+{
+    Document* document = element()->document();
+    RefPtr<HTMLElement> wrapperElement = ElementWithPseudoId::create(document, "-webkit-color-swatch-wrapper");
+    ExceptionCode ec = 0;
+    wrapperElement->appendChild(ElementWithPseudoId::create(document, "-webkit-color-swatch"), ec);
+    element()->ensureShadowRoot()->appendChild(wrapperElement.release(), ec);
+    
+    updateColorSwatch();
+}
+
+void ColorInputType::valueChanged()
+{
+    updateColorSwatch();
+}
+
+void ColorInputType::updateColorSwatch()
+{
+    HTMLElement* colorSwatch = shadowColorSwatch();
+    if (!colorSwatch)
+        return;
+
+    ExceptionCode ec;
+    colorSwatch->style()->setProperty("background-color", element()->value(), ec);
+}
+
+HTMLElement* ColorInputType::shadowColorSwatch() const
+{
+    Node* shadow = element()->shadowRoot();
+    return shadow ? toHTMLElement(shadow->firstChild()->firstChild()) : 0;
 }
 
 } // namespace WebCore

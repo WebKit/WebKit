@@ -1,3 +1,27 @@
+2011-05-26  Keishi Hattori  <keishi@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Add <input type=color> appearance.
+        https://bugs.webkit.org/show_bug.cgi?id=61275
+
+        Test: fast/forms/color/input-appearance-color.html
+
+        * css/html.css:
+        (input[type="color"]): Adds square-button appearance.
+        (input[type="color"]::-webkit-color-swatch-wrapper):
+        (input[type="color"]::-webkit-color-swatch):
+        (input[type="color"][list]): Adds menulist appearance.
+        (input[type="color"][list]::-webkit-color-swatch-wrapper):
+        (input[type="color"][list]::-webkit-color-swatch):
+        * html/ColorInputType.cpp:
+        (WebCore::ColorInputType::createShadowSubtree): Creates -webkit-color-swatch inside -webkit-color-swatch-wrapper.
+        (WebCore::ColorInputType::updateColorSwatch): Updates background color of shadowColorSwatch.
+        (WebCore::ColorInputType::valueChanged): Calls updateColorSwatch.
+        (WebCore::ColorInputType::shadowColorSwatch): Gets shadowColorSwatch element.
+        * html/ColorInputType.h:
+        (WebCore::ColorInputType::ColorInputType): Changed to inherit InputType.
+
 2011-05-26  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

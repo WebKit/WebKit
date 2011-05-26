@@ -37,17 +37,22 @@
 
 namespace WebCore {
 
-class ColorInputType : public BaseButtonInputType {
+class ColorInputType : public InputType {
 public:
     static PassOwnPtr<InputType> create(HTMLInputElement*);
 
 private:
-    ColorInputType(HTMLInputElement* element) : BaseButtonInputType(element) { }
+    ColorInputType(HTMLInputElement* element) : InputType(element) { }
     virtual bool isColorControl() const;
     virtual const AtomicString& formControlType() const;
     virtual bool supportsRequired() const;
     virtual String fallbackValue();
     virtual String sanitizeValue(const String&);
+    virtual void createShadowSubtree();
+    virtual void valueChanged();
+
+    void updateColorSwatch();
+    HTMLElement* shadowColorSwatch() const;
 };
 
 } // namespace WebCore

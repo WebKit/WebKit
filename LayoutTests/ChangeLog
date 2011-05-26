@@ -1,3 +1,15 @@
+2011-05-26  Keishi Hattori  <keishi@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Add <input type=color> appearance.
+        https://bugs.webkit.org/show_bug.cgi?id=61275
+
+        * fast/forms/color/input-appearance-color.html: Added. Tests appearance of input type=color.
+        * platform/chromium/test_expectations.txt: Expect FAIL for fast/forms/color
+        * platform/mac/fast/forms/color/input-appearance-color-expected.png: Added.
+        * platform/mac/fast/forms/color/input-appearance-color-expected.txt: Added.
+
 2011-05-26  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

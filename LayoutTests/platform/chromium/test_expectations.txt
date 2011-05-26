@@ -4116,7 +4116,7 @@ BUGWK61169 : css3/images/optimize-contrast-image.html = IMAGE
 BUGWK61370 LINUX : svg/W3C-SVG-1.1/fonts-glyph-04-t.svg = IMAGE
 
 // New tests added in r87274
-BUGCR83865 : fast/forms/color/input-value-sanitization-color.html = FAIL PASS
+BUGCR83865 : fast/forms/color = FAIL PASS
 
 // New tests added in webkit r87284
 BUGCR83869 : svg/dynamic-updates/SVGTextElement-dom-dx-attr.html = IMAGE
