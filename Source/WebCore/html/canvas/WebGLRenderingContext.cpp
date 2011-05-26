@@ -2444,7 +2444,7 @@ WebGLGetInfo WebGLRenderingContext::getUniform(WebGLProgram* program, const WebG
         if (!m_context->getActiveUniform(objectOrZero(program), i, info))
             return WebGLGetInfo();
         // Strip "[0]" from the name if it's an array.
-        if (info.size > 1)
+        if (info.size > 1 && info.name.endsWith("[0]"))
             info.name = info.name.left(info.name.length() - 3);
         // If it's an array, we need to iterate through each element, appending "[index]" to the name.
         for (GC3Dint index = 0; index < info.size; ++index) {

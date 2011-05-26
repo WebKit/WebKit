@@ -1,3 +1,19 @@
+2011-05-26  Syed Idris Shah  <syed.idris-shah@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] fast/canvas/webgl/gl-uniform-arrays.html failing for Qt on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=60377 
+
+        LayoutTests/fast/canvas/webgl/gl-uniform-arrays.html
+
+        For an array of active uniform, we should be careful while truncating the name of the uniform. 
+        Currently we are truncating the last three characters of an array with out checking for [0]. 
+        As a result we are truncating the the actual name of the active uniforms i.e. color to co. 
+
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::getUniform): Strip "[0]" from the name if it's an array and is part of the name.
+
 2011-05-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87444.
