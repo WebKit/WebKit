@@ -1,3 +1,21 @@
+2011-05-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61506
+
+        Move the silent spill/fill methods in the DFG JIT to the JITCodeGenerator
+        so that they are available to the SpeculativeJIT.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::silentSpillGPR):
+        (JSC::DFG::JITCodeGenerator::silentSpillFPR):
+        (JSC::DFG::JITCodeGenerator::silentFillGPR):
+        (JSC::DFG::JITCodeGenerator::silentFillFPR):
+        (JSC::DFG::JITCodeGenerator::silentSpillAllRegisters):
+        (JSC::DFG::JITCodeGenerator::silentFillAllRegisters):
+        * dfg/DFGNonSpeculativeJIT.h:
+
 2011-05-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         An attempt to revive Windows bots.
