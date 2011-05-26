@@ -104,7 +104,7 @@ ViewController.prototype = {
                 if (buildInfo.tooManyFailures)
                     item.appendChild(document.createTextNode(' (too many failures/crashes/timeouts)'));
                 else
-                    item.appendChild(document.createTextNode(' (' + buildInfo.failureCount + ' failing tests)'));
+                    item.appendChild(document.createTextNode(' (' + buildInfo.failureCount + ' failing test' + (buildInfo.failureCount > 1 ? 's' : '') + ')'));
                 list.appendChild(item);
             });
         }

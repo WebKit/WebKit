@@ -1,3 +1,20 @@
+2011-05-25  Adam Roben  <aroben@apple.com>
+
+        Correctly detect cases where only a single test failed/crashed/timed out
+
+        Fixes <http://webkit.org/b/61463> TestFailures page doesn't show testers with only a single
+        failing test
+
+        Reviewed by Darin Adler.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getNumberOfFailingTests): Don't require "test cases" to be plural. It
+        will be singular when only a single test fails/crashes/times out.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._displayTesters): Only pluralize "test" when more than one test
+        failed/crashed/timed out.
+
 2011-05-26  Tom Hudson  <tomhudson@google.com>
 
         Reviewed by Tony Chang.

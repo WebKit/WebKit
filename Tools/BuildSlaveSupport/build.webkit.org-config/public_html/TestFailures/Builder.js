@@ -125,7 +125,7 @@ Builder.prototype = {
                 tooManyFailures = true;
 
             var failureCount = layoutTestStep.results[1].reduce(function(sum, outputLine) {
-                var match = /^(\d+) test cases/.exec(outputLine);
+                var match = /^(\d+) test case/.exec(outputLine);
                 if (!match)
                     return sum;
                 return sum + parseInt(match[1], 10);
