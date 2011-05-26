@@ -51,7 +51,7 @@ public:
     virtual void updateBeforeAfterContent(PseudoId);
 
     virtual bool hasControlClip() const { return true; }
-    virtual IntRect controlClipRect(int /*tx*/, int /*ty*/) const;
+    virtual IntRect controlClipRect(const IntPoint&) const;
 
     void setText(const String&);
     String text() const;

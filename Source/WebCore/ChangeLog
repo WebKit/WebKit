@@ -1,3 +1,71 @@
+2011-05-25  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch controlClipRect to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=60806
+
+        Switching controlClipRect to take an IntPoint representing the
+        offset to be added instead of a pair of ints.
+
+        No new tests as this is just refactoring.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pushContentsClip):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::controlClipRect):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::controlClipRect):
+        * rendering/RenderButton.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemBackground):
+        (WebCore::RenderListBox::controlClipRect):
+        * rendering/RenderListBox.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::controlClipRect):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::controlClipRect):
+        * rendering/RenderTextControlSingleLine.h:
+
+<<<<<<< .mine
+2011-05-25  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch controlClipRect to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=60806
+
+        Switching controlClipRect to take an IntPoint representing the
+        offset to be added instead of a pair of ints.
+
+        No new tests as this is just refactoring.
+
+        * WebCore.xcodeproj/project.pbxproj:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pushContentsClip):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::controlClipRect):
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::controlClipRect):
+        * rendering/RenderButton.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintItemBackground):
+        (WebCore::RenderListBox::controlClipRect):
+        * rendering/RenderListBox.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::controlClipRect):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::controlClipRect):
+        * rendering/RenderTextControlSingleLine.h:
+
+=======
 2011-05-26  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Steve Falkenburg.
@@ -13,6 +81,7 @@
         (FullScreenController::Private::fullscreenClientWndProc): Exit fullscreen when m_fullScreenWindow is deactivated.
         (FullScreenController::enterFullScreenRepaintCompleted): Make m_fullScreenWindow a topmost window before animating it in to ensure the taskbar is hidden.
 
+>>>>>>> .r87442
 2011-05-26  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

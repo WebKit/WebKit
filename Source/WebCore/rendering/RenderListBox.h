@@ -66,7 +66,7 @@ private:
 
     virtual bool hasControlClip() const { return true; }
     virtual void paintObject(PaintInfo&, int tx, int ty);
-    virtual IntRect controlClipRect(int tx, int ty) const;
+    virtual IntRect controlClipRect(const IntPoint&) const;
 
     virtual bool isPointInOverflowControl(HitTestResult&, const IntPoint& pointInContainer, int tx, int ty);
 

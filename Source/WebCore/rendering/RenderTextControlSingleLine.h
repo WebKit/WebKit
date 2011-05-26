@@ -61,7 +61,7 @@ public:
 private:
     int preferredDecorationWidthRight() const;
     virtual bool hasControlClip() const;
-    virtual IntRect controlClipRect(int tx, int ty) const;
+    virtual IntRect controlClipRect(const IntPoint&) const;
     virtual bool isTextField() const { return true; }
 
     virtual void subtreeHasChanged();

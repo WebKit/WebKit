@@ -232,18 +232,18 @@ String RenderMenuList::text() const
     return m_buttonText ? m_buttonText->text() : 0;
 }
 
-IntRect RenderMenuList::controlClipRect(int tx, int ty) const
+IntRect RenderMenuList::controlClipRect(const IntPoint& additionalOffset) const
 {
     // Clip to the intersection of the content box and the content box for the inner box
     // This will leave room for the arrows which sit in the inner box padding,
     // and if the inner box ever spills out of the outer box, that will get clipped too.
-    IntRect outerBox(tx + borderLeft() + paddingLeft(), 
-                   ty + borderTop() + paddingTop(),
+    IntRect outerBox(additionalOffset.x() + borderLeft() + paddingLeft(), 
+                   additionalOffset.y() + borderTop() + paddingTop(),
                    contentWidth(), 
                    contentHeight());
     
-    IntRect innerBox(tx + m_innerBlock->x() + m_innerBlock->paddingLeft(), 
-                   ty + m_innerBlock->y() + m_innerBlock->paddingTop(),
+    IntRect innerBox(additionalOffset.x() + m_innerBlock->x() + m_innerBlock->paddingLeft(), 
+                   additionalOffset.y() + m_innerBlock->y() + m_innerBlock->paddingTop(),
                    m_innerBlock->contentWidth(), 
                    m_innerBlock->contentHeight());
 

@@ -518,13 +518,13 @@ bool RenderTextControlSingleLine::hasControlClip() const
     return clip;
 }
 
-IntRect RenderTextControlSingleLine::controlClipRect(int tx, int ty) const
+IntRect RenderTextControlSingleLine::controlClipRect(const IntPoint& additionalOffset) const
 {
     // This should only get called for search & speech inputs.
     ASSERT(hasControlClip());
 
     IntRect clipRect = IntRect(innerBlockElement()->renderBox()->frameRect());
-    clipRect.move(tx, ty);
+    clipRect.move(additionalOffset);
     return clipRect;
 }
 

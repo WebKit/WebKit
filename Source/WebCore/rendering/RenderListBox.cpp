@@ -427,7 +427,7 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, int tx, int ty, in
     if (!element->renderStyle() || element->renderStyle()->visibility() != HIDDEN) {
         ColorSpace colorSpace = element->renderStyle() ? element->renderStyle()->colorSpace() : style()->colorSpace();
         IntRect itemRect = itemBoundingBoxRect(IntPoint(tx, ty), listIndex);
-        itemRect.intersect(controlClipRect(tx, ty));
+        itemRect.intersect(controlClipRect(IntPoint(tx, ty)));
         paintInfo.context->fillRect(itemRect, backColor, colorSpace);
     }
 }
@@ -687,10 +687,10 @@ bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     return true;
 }
 
-IntRect RenderListBox::controlClipRect(int tx, int ty) const
+IntRect RenderListBox::controlClipRect(const IntPoint& additionalOffset) const
 {
     IntRect clipRect = contentBoxRect();
-    clipRect.move(tx, ty);
+    clipRect.move(additionalOffset);
     return clipRect;
 }
 

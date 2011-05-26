@@ -1116,7 +1116,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, int tx, int ty)
         paintObject(paintInfo, tx, ty);
         paintInfo.phase = PaintPhaseChildBlockBackgrounds;
     }
-    IntRect clipRect(isControlClip ? controlClipRect(tx, ty) : overflowClipRect(tx, ty));
+    IntRect clipRect(isControlClip ? controlClipRect(IntPoint(tx, ty)) : overflowClipRect(tx, ty));
     paintInfo.context->save();
     if (style()->hasBorderRadius())
         paintInfo.context->addRoundedRectClip(style()->getRoundedBorderFor(IntRect(tx, ty, width(), height())));

@@ -3926,7 +3926,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     bool useOverflowClip = hasOverflowClip() && !hasSelfPaintingLayer();
     bool useClip = (hasControlClip() || useOverflowClip);
     IntRect hitTestArea(result.rectForPoint(pointInContainer));
-    bool checkChildren = !useClip || (hasControlClip() ? controlClipRect(localOffset.width(), localOffset.height()).intersects(hitTestArea) : overflowClipRect(localOffset.width(), localOffset.height(), IncludeOverlayScrollbarSize).intersects(hitTestArea));
+    bool checkChildren = !useClip || (hasControlClip() ? controlClipRect(toPoint(localOffset)).intersects(hitTestArea) : overflowClipRect(localOffset.width(), localOffset.height(), IncludeOverlayScrollbarSize).intersects(hitTestArea));
     if (checkChildren) {
         // Hit test descendants first.
         IntSize scrolledOffset(localOffset);

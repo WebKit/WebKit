@@ -157,10 +157,10 @@ void RenderButton::updateBeforeAfterContent(PseudoId type)
         children()->updateBeforeAfterContent(this, type);
 }
 
-IntRect RenderButton::controlClipRect(int tx, int ty) const
+IntRect RenderButton::controlClipRect(const IntPoint& additionalOffset) const
 {
     // Clip to the padding box to at least give content the extra padding space.
-    return IntRect(tx + borderLeft(), ty + borderTop(), width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom());
+    return IntRect(additionalOffset.x() + borderLeft(), additionalOffset.y() + borderTop(), width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom());
 }
 
 void RenderButton::timerFired(Timer<RenderButton>*)

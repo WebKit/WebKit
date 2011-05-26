@@ -345,7 +345,7 @@ public:
     virtual IntRect overflowClipRect(int tx, int ty, OverlayScrollbarSizeRelevancy relevancy = IgnoreOverlayScrollbarSize);
     IntRect clipRect(int tx, int ty);
     virtual bool hasControlClip() const { return false; }
-    virtual IntRect controlClipRect(int /*tx*/, int /*ty*/) const { return IntRect(); }
+    virtual IntRect controlClipRect(const IntPoint&) const { return IntRect(); }
     bool pushContentsClip(PaintInfo&, int tx, int ty);
     void popContentsClip(PaintInfo&, PaintPhase originalPhase, int tx, int ty);
 
