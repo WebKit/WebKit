@@ -84,13 +84,6 @@ public:
 private:
     DatabaseTracker(const String& databasePath);
 
-    typedef HashSet<AbstractDatabase*> DatabaseSet;
-    typedef HashMap<String, DatabaseSet*> DatabaseNameMap;
-    typedef HashMap<RefPtr<SecurityOrigin>, DatabaseNameMap*, SecurityOriginHash> DatabaseOriginMap;
-
-    Mutex m_openDatabaseMapGuard;
-    mutable OwnPtr<DatabaseOriginMap> m_openDatabaseMap;
-
 #if !PLATFORM(CHROMIUM)
 public:
     void setDatabaseDirectoryPath(const String&);
@@ -136,6 +129,13 @@ private:
 
     bool deleteDatabaseFile(SecurityOrigin*, const String& name);
 
+    typedef HashSet<AbstractDatabase*> DatabaseSet;
+    typedef HashMap<String, DatabaseSet*> DatabaseNameMap;
+    typedef HashMap<RefPtr<SecurityOrigin>, DatabaseNameMap*, SecurityOriginHash> DatabaseOriginMap;
+
+    Mutex m_openDatabaseMapGuard;
+    mutable OwnPtr<DatabaseOriginMap> m_openDatabaseMap;
+
     // This lock protects m_database, m_quotaMap, m_proposedDatabases, m_databaseDirectoryPath, m_originsBeingDeleted, m_beingCreated, and m_beingDeleted.
     Mutex m_databaseGuard;
     SQLiteDatabase m_database;
@@ -171,6 +171,17 @@ private:
 
     static void scheduleForNotification();
     static void notifyDatabasesChanged(void*);
+#else
+public:
+    void getOpenDatabases(String originIdentifier, const String& name, HashSet<RefPtr<AbstractDatabase> >* databases);
+
+private:
+    typedef HashSet<AbstractDatabase*> DatabaseSet;
+    typedef HashMap<String, DatabaseSet*> DatabaseNameMap;
+    typedef HashMap<String, DatabaseNameMap*> DatabaseOriginMap;
+
+    Mutex m_openDatabaseMapGuard;
+    mutable OwnPtr<DatabaseOriginMap> m_openDatabaseMap;
 #endif // !PLATFORM(CHROMIUM)
 };
 

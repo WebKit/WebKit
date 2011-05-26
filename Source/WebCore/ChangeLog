@@ -1,3 +1,22 @@
+2011-05-26  Michael Nordman  <michaeln@google.com>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Use SecurityOrigin produced databaseIdentifier strings, instead of
+        SecurityOrigin RefPtrs, as the top level key into the DatabaseTracker's
+        collection of open databases. Otherwise we can fail to lookup databases when
+        trying to forceably close them via  WebDatabase::closeDatabaseImmediately.
+        https://bugs.webkit.org/show_bug.cgi?id=61417
+
+        New new functionality, no tests.
+
+        * storage/DatabaseTracker.h:
+        * storage/chromium/DatabaseTrackerChromium.cpp:
+        (WebCore::DatabaseTracker::addOpenDatabase):
+        (WebCore::DatabaseTracker::removeOpenDatabase):
+        (WebCore::DatabaseTracker::getOpenDatabases):
+        (WebCore::DatabaseTracker::interruptAllDatabasesForContext):
+
 2011-05-25  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

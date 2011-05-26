@@ -76,12 +76,13 @@ void DatabaseTracker::addOpenDatabase(AbstractDatabase* database)
     ASSERT(database->scriptExecutionContext()->isContextThread());
     MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
     if (!m_openDatabaseMap)
-        m_openDatabaseMap = adoptPtr(new DatabaseOriginMap());
+        m_openDatabaseMap = adoptPtr(new DatabaseOriginMap);
 
-    DatabaseNameMap* nameMap = m_openDatabaseMap->get(database->securityOrigin());
+    String originIdentifier = database->securityOrigin()->databaseIdentifier();
+    DatabaseNameMap* nameMap = m_openDatabaseMap->get(originIdentifier);
     if (!nameMap) {
         nameMap = new DatabaseNameMap();
-        m_openDatabaseMap->set(database->securityOrigin(), nameMap);
+        m_openDatabaseMap->set(originIdentifier, nameMap);
     }
 
     String name(database->stringIdentifier());
@@ -124,9 +125,10 @@ void DatabaseTracker::removeOpenDatabase(AbstractDatabase* database)
         return;
     }
 
+    String originIdentifier = database->securityOrigin()->databaseIdentifier();
     MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
     ASSERT(m_openDatabaseMap);
-    DatabaseNameMap* nameMap = m_openDatabaseMap->get(database->securityOrigin());
+    DatabaseNameMap* nameMap = m_openDatabaseMap->get(originIdentifier);
     ASSERT(nameMap);
     String name(database->stringIdentifier());
     DatabaseSet* databaseSet = nameMap->get(name);
@@ -137,7 +139,7 @@ void DatabaseTracker::removeOpenDatabase(AbstractDatabase* database)
         nameMap->remove(name);
         delete databaseSet;
         if (nameMap->isEmpty()) {
-            m_openDatabaseMap->remove(database->securityOrigin());
+            m_openDatabaseMap->remove(originIdentifier);
             delete nameMap;
         }
     }
@@ -145,14 +147,18 @@ void DatabaseTracker::removeOpenDatabase(AbstractDatabase* database)
     DatabaseObserver::databaseClosed(database);
 }
 
-
 void DatabaseTracker::getOpenDatabases(SecurityOrigin* origin, const String& name, HashSet<RefPtr<AbstractDatabase> >* databases)
+{
+    getOpenDatabases(origin->databaseIdentifier(), name, databases);
+}
+
+void DatabaseTracker::getOpenDatabases(String originIdentifier, const String& name, HashSet<RefPtr<AbstractDatabase> >* databases)
 {
     MutexLocker openDatabaseMapLock(m_openDatabaseMapGuard);
     if (!m_openDatabaseMap)
         return;
 
-    DatabaseNameMap* nameMap = m_openDatabaseMap->get(origin);
+    DatabaseNameMap* nameMap = m_openDatabaseMap->get(originIdentifier);
     if (!nameMap)
         return;
 
@@ -183,7 +189,7 @@ void DatabaseTracker::interruptAllDatabasesForContext(const ScriptExecutionConte
         if (!m_openDatabaseMap)
             return;
 
-        DatabaseNameMap* nameMap = m_openDatabaseMap->get(context->securityOrigin());
+        DatabaseNameMap* nameMap = m_openDatabaseMap->get(context->securityOrigin()->databaseIdentifier());
         if (!nameMap)
             return;
 

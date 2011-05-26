@@ -96,21 +96,21 @@ void WebDatabase::updateDatabaseSize(const WebString& originIdentifier, const We
 {
 #if ENABLE(DATABASE)
     QuotaTracker::instance().updateDatabaseSize(originIdentifier, name, size);
-#endif // ENABLE(DATABASE)
+#endif
 }
 
 void WebDatabase::updateSpaceAvailable(const WebString& originIdentifier, long long spaceAvailable)
 {
 #if ENABLE(DATABASE)
     QuotaTracker::instance().updateSpaceAvailableToOrigin(originIdentifier, spaceAvailable);
-#endif // ENABLE(DATABASE)
+#endif
 }
 
 void WebDatabase::resetSpaceAvailable(const WebString& originIdentifier)
 {
 #if ENABLE(DATABASE)
     QuotaTracker::instance().resetSpaceAvailableToOrigin(originIdentifier);
-#endif // ENABLE(DATABASE)
+#endif
 }
 
 // FIXME: This is deprecated, delete after rolling DEPs and chrome is using the new methods.
@@ -121,18 +121,17 @@ void WebDatabase::updateDatabaseSize(
 #if ENABLE(DATABASE)
     updateDatabaseSize(originIdentifier, databaseName, databaseSize);
     updateSpaceAvailable(originIdentifier, spaceAvailable);
-#endif // ENABLE(DATABASE)
+#endif
 }
 
 void WebDatabase::closeDatabaseImmediately(const WebString& originIdentifier, const WebString& databaseName)
 {
 #if ENABLE(DATABASE)
     HashSet<RefPtr<AbstractDatabase> > databaseHandles;
-    RefPtr<SecurityOrigin> origin = SecurityOrigin::createFromDatabaseIdentifier(originIdentifier);
-    DatabaseTracker::tracker().getOpenDatabases(origin.get(), databaseName, &databaseHandles);
+    DatabaseTracker::tracker().getOpenDatabases(originIdentifier, databaseName, &databaseHandles);
     for (HashSet<RefPtr<AbstractDatabase> >::iterator it = databaseHandles.begin(); it != databaseHandles.end(); ++it)
         it->get()->closeImmediately();
-#endif // ENABLE(DATABASE)
+#endif
 }
 
 WebDatabase::WebDatabase(const AbstractDatabase* database)
