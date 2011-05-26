@@ -615,7 +615,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncMatch(ExecState* exec)
          *  If regexp is not an object whose [[Class]] property is "RegExp", it is
          *  replaced with the result of the expression new RegExp(regexp).
          */
-        reg = exec->globalData().regExpCache()->lookupOrCreate(a0.toString(exec), NoFlags);
+        reg = RegExp::create(&exec->globalData(), a0.toString(exec), NoFlags);
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;
@@ -664,7 +664,7 @@ EncodedJSValue JSC_HOST_CALL stringProtoFuncSearch(ExecState* exec)
          *  If regexp is not an object whose [[Class]] property is "RegExp", it is
          *  replaced with the result of the expression new RegExp(regexp).
          */
-        reg = exec->globalData().regExpCache()->lookupOrCreate(a0.toString(exec), NoFlags);
+        reg = RegExp::create(&exec->globalData(), a0.toString(exec), NoFlags);
     }
     RegExpConstructor* regExpConstructor = exec->lexicalGlobalObject()->regExpConstructor();
     int pos;

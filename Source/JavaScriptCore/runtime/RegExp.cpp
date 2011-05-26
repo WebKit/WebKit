@@ -24,6 +24,7 @@
 #include "RegExp.h"
 
 #include "Lexer.h"
+#include "RegExpCache.h"
 #include "yarr/Yarr.h"
 #include "yarr/YarrJIT.h"
 #include <stdio.h>
@@ -75,7 +76,7 @@ struct RegExpRepresentation {
     OwnPtr<Yarr::BytecodePattern> m_regExpBytecode;
 };
 
-inline RegExp::RegExp(JSGlobalData* globalData, const UString& patternString, RegExpFlags flags)
+RegExp::RegExp(JSGlobalData* globalData, const UString& patternString, RegExpFlags flags)
     : JSCell(*globalData, globalData->regExpStructure.get())
     , m_state(NotCompiled)
     , m_patternString(patternString)
@@ -100,11 +101,7 @@ RegExp::~RegExp()
 
 RegExp* RegExp::create(JSGlobalData* globalData, const UString& patternString, RegExpFlags flags)
 {
-    RegExp* res = new (globalData) RegExp(globalData, patternString, flags);
-#if ENABLE(REGEXP_TRACING)
-    globalData->addRegExpToTrace(res);
-#endif
-    return res;
+    return globalData->regExpCache()->lookupOrCreate(patternString, flags);
 }
 
 void RegExp::compile(JSGlobalData* globalData)
@@ -117,6 +114,8 @@ void RegExp::compile(JSGlobalData* globalData)
         m_state = ParseError;
         return;
     }
+
+    globalData->regExpCache()->addToStrongCache(this);
 
     ASSERT(m_numSubpatterns == pattern.m_numSubpatterns);
 
@@ -156,6 +155,7 @@ int RegExp::match(JSGlobalData& globalData, const UString& s, int startOffset, V
 
     if (m_state != ParseError) {
         compileIfNecessary(globalData);
+
         int offsetVectorSize = (m_numSubpatterns + 1) * 2;
         int* offsetVector;
         Vector<int, 32> nonReturnedOvector;

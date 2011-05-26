@@ -53,6 +53,11 @@ namespace JSC {
         int match(JSGlobalData&, const UString&, int startOffset, Vector<int, 32>* ovector = 0);
         unsigned numSubpatterns() const { return m_numSubpatterns; }
 
+        bool hasCode()
+        {
+            return m_representation;
+        }
+
         void invalidateCode();
         
 #if ENABLE(REGEXP_TRACING)
@@ -65,8 +70,11 @@ namespace JSC {
         }
         
         static JS_EXPORTDATA const ClassInfo s_info;
-        
+
+        RegExpKey key() { return RegExpKey(m_flags, m_patternString); }
+
     private:
+        friend class RegExpCache;
         RegExp(JSGlobalData* globalData, const UString& pattern, RegExpFlags);
 
         enum RegExpState {

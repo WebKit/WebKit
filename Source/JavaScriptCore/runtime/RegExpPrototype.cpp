@@ -122,7 +122,7 @@ EncodedJSValue JSC_HOST_CALL regExpProtoFuncCompile(ExecState* exec)
             if (flags == InvalidFlags)
                 return throwVMError(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
         }
-        regExp = exec->globalData().regExpCache()->lookupOrCreate(pattern, flags);
+        regExp = RegExp::create(&exec->globalData(), pattern, flags);
     }
 
     if (!regExp->isValid())

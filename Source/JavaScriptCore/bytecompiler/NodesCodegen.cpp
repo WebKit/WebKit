@@ -125,8 +125,7 @@ RegisterID* RegExpNode::emitBytecode(BytecodeGenerator& generator, RegisterID* d
 {
     if (dst == generator.ignoredResult())
         return 0;
-    return generator.emitNewRegExp(generator.finalDestination(dst),
-        generator.globalData()->regExpCache()->lookupOrCreate(m_pattern.ustring(), regExpFlags(m_flags.ustring())));
+    return generator.emitNewRegExp(generator.finalDestination(dst), RegExp::create(generator.globalData(), m_pattern.ustring(), regExpFlags(m_flags.ustring())));
 }
 
 // ------------------------------ ThisNode -------------------------------------

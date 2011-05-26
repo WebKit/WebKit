@@ -317,7 +317,7 @@ JSObject* constructRegExp(ExecState* exec, JSGlobalObject* globalObject, const A
             return throwError(exec, createSyntaxError(exec, "Invalid flags supplied to RegExp constructor."));
     }
 
-    RegExp* regExp = exec->globalData().regExpCache()->lookupOrCreate(pattern, flags);
+    RegExp* regExp = RegExp::create(&exec->globalData(), pattern, flags);
     if (!regExp->isValid())
         return throwError(exec, createSyntaxError(exec, regExp->errorMessage()));
     return new (exec) RegExpObject(exec->lexicalGlobalObject(), globalObject->regExpStructure(), regExp);

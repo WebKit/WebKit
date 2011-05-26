@@ -1,3 +1,44 @@
+2011-05-26  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Make RegExpCache a weak map
+        https://bugs.webkit.org/show_bug.cgi?id=61554
+
+        Switch to a weak map for the regexp cache, and hide that
+        behaviour behind RegExp::create.
+
+        When a RegExp is compiled it attempts to add itself to
+        the "strong" cache.  This cache is a simple round-robin
+        buffer as was the old strong cache.  Happily this can
+        be smaller than the old strong cache as RegExps are only
+        added when they're compiled so it is under less pressure
+        to evict.
+
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::RegExpNode::emitBytecode):
+        * runtime/RegExp.cpp:
+        (JSC::RegExp::RegExp):
+        (JSC::RegExp::create):
+        (JSC::RegExp::match):
+        * runtime/RegExp.h:
+        (JSC::RegExp::gcShouldInvalidateCode):
+        (JSC::RegExp::hasCode):
+        (JSC::RegExp::key):
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::lookupOrCreate):
+        (JSC::RegExpCache::RegExpCache):
+        (JSC::RegExpCache::isReachableFromOpaqueRoots):
+        (JSC::RegExpCache::finalize):
+        * runtime/RegExpCache.h:
+        * runtime/RegExpConstructor.cpp:
+        (JSC::constructRegExp):
+        * runtime/RegExpPrototype.cpp:
+        (JSC::regExpProtoFuncCompile):
+        * runtime/StringPrototype.cpp:
+        (JSC::stringProtoFuncMatch):
+        (JSC::stringProtoFuncSearch):
+
 2011-05-26  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
