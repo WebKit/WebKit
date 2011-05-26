@@ -24,5 +24,6 @@
 #include "BaseTarget.xcconfig"
 
 GCC_DYNAMIC_NO_PIC = NO;
+HEADER_SEARCH_PATHS = $(BUILT_PRODUCTS_DIR)/usr/local/include;
 SKIP_INSTALL = YES;
 
