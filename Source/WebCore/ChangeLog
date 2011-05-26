@@ -1,3 +1,17 @@
+2011-05-26  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Overload resolution in generated JSC bindings could be more efficient.
+        https://bugs.webkit.org/show_bug.cgi?id=61544
+
+        Only fetch the arguments once, and not until they are needed (less work
+        in the case of an early return.)
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/JS/JSTestObj.cpp: Rebaselined.
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+
 2011-05-26  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

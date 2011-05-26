@@ -1619,15 +1619,18 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod5(
 
 EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod(ExecState* exec)
 {
-    if ((exec->argumentCount() == 2 && (exec->argument(0).isNull() || (exec->argument(0).isObject() && asObject(exec->argument(0))->inherits(&JSTestObj::s_info))) && (exec->argument(1).isUndefinedOrNull() || exec->argument(1).isString() || exec->argument(1).isObject())))
+    size_t argsCount = exec->argumentCount();
+    JSValue arg1(exec->argument(1));
+    JSValue arg0(exec->argument(0));
+    if ((argsCount == 2 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(&JSTestObj::s_info))) && (arg1.isUndefinedOrNull() || arg1.isString() || arg1.isObject())))
         return jsTestObjPrototypeFunctionOverloadedMethod1(exec);
-    if ((exec->argumentCount() == 1 && (exec->argument(0).isNull() || (exec->argument(0).isObject() && asObject(exec->argument(0))->inherits(&JSTestObj::s_info)))) || (exec->argumentCount() == 2 && (exec->argument(0).isNull() || (exec->argument(0).isObject() && asObject(exec->argument(0))->inherits(&JSTestObj::s_info)))))
+    if ((argsCount == 1 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(&JSTestObj::s_info)))) || (argsCount == 2 && (arg0.isNull() || (arg0.isObject() && asObject(arg0)->inherits(&JSTestObj::s_info)))))
         return jsTestObjPrototypeFunctionOverloadedMethod2(exec);
-    if ((exec->argumentCount() == 1 && (exec->argument(0).isUndefinedOrNull() || exec->argument(0).isString() || exec->argument(0).isObject())))
+    if ((argsCount == 1 && (arg0.isUndefinedOrNull() || arg0.isString() || arg0.isObject())))
         return jsTestObjPrototypeFunctionOverloadedMethod3(exec);
-    if (exec->argumentCount() == 1)
+    if (argsCount == 1)
         return jsTestObjPrototypeFunctionOverloadedMethod4(exec);
-    if ((exec->argumentCount() == 1 && (exec->argument(0).isNull() || exec->argument(0).isObject())))
+    if ((argsCount == 1 && (arg0.isNull() || arg0.isObject())))
         return jsTestObjPrototypeFunctionOverloadedMethod5(exec);
     return throwVMTypeError(exec);
 }

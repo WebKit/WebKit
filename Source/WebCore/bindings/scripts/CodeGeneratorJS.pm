@@ -1139,11 +1139,12 @@ sub GenerateParametersCheckExpression
     my $function = shift;
 
     my @andExpression = ();
-    push(@andExpression, "exec->argumentCount() == $numParameters");
+    push(@andExpression, "argsCount == $numParameters");
     my $parameterIndex = 0;
+    my %usedArguments = ();
     foreach $parameter (@{$function->parameters}) {
         last if $parameterIndex >= $numParameters;
-        my $value = "exec->argument($parameterIndex)";
+        my $value = "arg$parameterIndex";
         my $type = $codeGenerator->StripModule($parameter->type);
 
         # Only DOMString or wrapper types are checked.
@@ -1152,17 +1153,20 @@ sub GenerateParametersCheckExpression
         # be converted to a string via .toString).
         if ($codeGenerator->IsStringType($type)) {
             push(@andExpression, "(${value}.isUndefinedOrNull() || ${value}.isString() || ${value}.isObject())");
+            $usedArguments{$parameterIndex} = 1;
         } elsif ($parameter->extendedAttributes->{"Callback"}) {
             # For Callbacks only checks if the value is null or object.
             push(@andExpression, "(${value}.isNull() || ${value}.isObject())");
+            $usedArguments{$parameterIndex} = 1;
         } elsif (!IsNativeType($type)) {
             push(@andExpression, "(${value}.isNull() || (${value}.isObject() && asObject(${value})->inherits(&JS${type}::s_info)))");
+            $usedArguments{$parameterIndex} = 1;
         }
         $parameterIndex++;
     }
     my $res = join(" && ", @andExpression);
     $res = "($res)" if @andExpression > 1;
-    return $res;
+    return ($res, keys %usedArguments);
 }
 
 sub GenerateFunctionParametersCheck
@@ -1171,14 +1175,20 @@ sub GenerateFunctionParametersCheck
 
     my @orExpression = ();
     my $numParameters = 0;
+    my @neededArguments = ();
+
     foreach $parameter (@{$function->parameters}) {
         if ($parameter->extendedAttributes->{"Optional"}) {
-            push(@orExpression, GenerateParametersCheckExpression($numParameters, $function));
+            my ($expression, @usedArguments) = GenerateParametersCheckExpression($numParameters, $function);
+            push(@orExpression, $expression);
+            push(@neededArguments, @usedArguments);
         }
         $numParameters++;
     }
-    push(@orExpression, GenerateParametersCheckExpression($numParameters, $function));
-    return join(" || ", @orExpression);
+    my ($expression, @usedArguments) = GenerateParametersCheckExpression($numParameters, $function);
+    push(@orExpression, $expression);
+    push(@neededArguments, @usedArguments);
+    return (join(" || ", @orExpression), @neededArguments);
 }
 
 sub GenerateOverloadedPrototypeFunction
@@ -1198,9 +1208,20 @@ sub GenerateOverloadedPrototypeFunction
     push(@implContent, "EncodedJSValue JSC_HOST_CALL ${functionName}(ExecState* exec)\n");
     push(@implContent, <<END);
 {
+    size_t argsCount = exec->argumentCount();
 END
+
+    my %fetchedArguments = ();
+
     foreach my $overload (@{$function->{overloads}}) {
-        my $parametersCheck = GenerateFunctionParametersCheck($overload);
+        my ($parametersCheck, @neededArguments) = GenerateFunctionParametersCheck($overload);
+
+        foreach my $parameterIndex (@neededArguments) {
+            next if exists $fetchedArguments{$parameterIndex};
+            push(@implContent, "    JSValue arg$parameterIndex(exec->argument($parameterIndex));\n");
+            $fetchedArguments{$parameterIndex} = 1;
+        }
+
         push(@implContent, "    if ($parametersCheck)\n");
         push(@implContent, "        return ${functionName}$overload->{overloadIndex}(exec);\n");
     }
