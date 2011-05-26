@@ -359,3 +359,6 @@ fast/events/page-visibility-transition-test.html
 # console long eval test is timeout 60616
 inspector/console/console-long-eval-crash.html
 
+# Fails after r87328:
+# https://bugs.webkit.org/show_bug.cgi?id=61487
+http/tests/media/video-cross-site.html

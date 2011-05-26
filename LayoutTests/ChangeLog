@@ -1,3 +1,9 @@
+2011-05-25  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed; Skip failing tests after r87328.
+
+        * platform/mac/Skipped:
+
 2011-05-25  Adam Klein  <adamk@chromium.org>
 
         Unreviewed. Test expectations update.
