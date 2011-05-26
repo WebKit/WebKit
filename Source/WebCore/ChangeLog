@@ -1,3 +1,16 @@
+2011-05-26  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87368.
+        http://trac.webkit.org/changeset/87368
+        https://bugs.webkit.org/show_bug.cgi?id=61564
+
+        Wrong approach, will do the wrong thing if the element needs
+        simplified normal flow layout but is not positioned (Requested
+        by jamesr on #webkit).
+
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::needsPositionedMovementLayout):
+
 2011-05-02  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Roben.
