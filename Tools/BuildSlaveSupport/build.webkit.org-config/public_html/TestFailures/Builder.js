@@ -68,12 +68,12 @@ Builder.prototype = {
         getResource(self.buildbot.baseURL + 'json/builders/' + self.name, function(xhr) {
             var data = JSON.parse(xhr.responseText);
 
-            var oldestUnfinishedBuild = Infinity;
+            var currentBuilds = {};
             if ('currentBuilds' in data)
-                oldestUnfinishedBuild = data.currentBuilds[0];
+                data.currentBuilds.forEach(function(buildNumber) { currentBuilds[buildNumber] = true });
 
             for (var i = data.cachedBuilds.length - 1; i >= 0; --i) {
-                if (data.cachedBuilds[i] >= oldestUnfinishedBuild)
+                if (data.cachedBuilds[i] in currentBuilds)
                     continue;
 
                 self._cache[cacheKey] = data.cachedBuilds[i];

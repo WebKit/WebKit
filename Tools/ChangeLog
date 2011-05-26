@@ -1,5 +1,19 @@
 2011-05-25  Adam Roben  <aroben@apple.com>
 
+        Don't assume that builds finish in the order they were started
+
+        Fixes <http://webkit.org/b/61464> TestFailures page shows failures from a not-most-recent
+        build when one slave is taking a long time to finish a build
+
+        Reviewed by Antti Koivisto.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.getMostRecentCompletedBuildNumber): Don't assume that all builds that are
+        newer than the oldest in-progress build are also themselves in progress. Just check whether
+        each build is actually in progress (as signified by its presence in the currentBuilds set).
+
+2011-05-25  Adam Roben  <aroben@apple.com>
+
         Correctly detect cases where only a single test failed/crashed/timed out
 
         Fixes <http://webkit.org/b/61463> TestFailures page doesn't show testers with only a single
