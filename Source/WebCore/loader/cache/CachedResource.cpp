@@ -607,11 +607,8 @@ bool CachedResource::wasPurged() const
 
 unsigned CachedResource::overheadSize() const
 {
-    return sizeof(CachedResource) + m_response.memoryUsage() + 576;
-    /*
-        576 = 192 +                   // average size of m_url
-              384;                    // average size of m_clients hash map
-    */
+    static const int kAverageClientsHashMapSize = 384;
+    return sizeof(CachedResource) + m_response.memoryUsage() + kAverageClientsHashMapSize + m_resourceRequest.url().string().length() * 2;
 }
     
 void CachedResource::setLoadPriority(ResourceLoadPriority loadPriority) 

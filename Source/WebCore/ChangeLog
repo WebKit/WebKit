@@ -1,3 +1,20 @@
+2011-05-25  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Geoffrey Garen
+
+        CachedResource overhead size calculation ignores the actual size of the URL
+        https://bugs.webkit.org/show_bug.cgi?id=61481
+
+        CachedResource::overheadSize is used to determine the size of an entry in the memory cache to know when to evict
+        it.  When the resource is a large data: URL, for example representing image or audio data, the URL size itself
+        can be significant.
+
+        This patch uses an estimate of actual number of bytes used by the URL that is valid for ASCII urls and close for
+        other types of strings instead of a fixed number.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::overheadSize):
+
 2011-05-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
