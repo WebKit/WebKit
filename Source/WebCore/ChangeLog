@@ -1,3 +1,24 @@
+2011-05-25  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        30 second rewind button dysfunctional viewing trailers fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=61505
+
+        Add support for painting MediaReturnToRealtimeButton, as well as hide and show
+        the correct default video control buttons when entering full-screen mode.
+
+        * css/fullscreenQuickTime.css:
+        (video:-webkit-full-screen::-webkit-media-controls-return-to-realtime-button):
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::enteredFullscreen): Show the "Back 30s" and
+            "Return to Realtime" buttons for Live Streams in full-screen mode.
+        (WebCore::MediaControlRootElement::exitedFullscreen): Reset the styles of 
+            all the buttons affected by enteredFullscreen().
+        * rendering/RenderMediaControls.cpp:
+        (WebCore::RenderMediaControls::paintMediaControlsPart): Add support for 
+            MediaReturnToRealtimeButton.
+
 2011-05-25  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Dimitri Glazkov.

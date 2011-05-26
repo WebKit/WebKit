@@ -136,6 +136,9 @@ bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, R
         case MediaRewindButton:
             wkDrawMediaUIPart(WKMediaUIPartRewindButton, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
             break;
+        case MediaReturnToRealtimeButton:
+            wkDrawMediaUIPart(WKMediaUIPartSeekToRealtimeButton, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
+            break;
         case MediaSeekBackButton:
             wkDrawMediaUIPart(WKMediaUIPartSeekBackButton, themeStyle, paintInfo.context->platformContext(), r, determineState(o));
             break;

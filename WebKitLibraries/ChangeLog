@@ -1,5 +1,18 @@
 2011-05-25  Jer Noble  <jer.noble@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        30 second rewind button dysfunctional viewing trailers fullscreen.
+        https://bugs.webkit.org/show_bug.cgi?id=61505
+
+        Updated WKSI Libraries with new images for Backward buttons in default
+        video controls.
+
+        * libWebKitSystemInterfaceLeopard.a:
+        * libWebKitSystemInterfaceSnowLeopard.a:
+
+2011-05-25  Jer Noble  <jer.noble@apple.com>
+
         Reviewed by Darin Adler.
 
         Video fails to play on Vimeo
