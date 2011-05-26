@@ -4147,3 +4147,5 @@ BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html 
 BUGWK61519 WIN LINUX : inspector/debugger/scripts-panel.html = TEXT PASS
 BUGCR84031 MAC LINUX : storage/domstorage/sessionstorage/delete-removal.html = TIMEOUT PASS
 BUGCR84032 WIN : fast/dom/object-plugin-hides-properties.html = TIMEOUT PASS
+
+BUGWK61533 LINUX : inspector/profiler/cpu-profiler-profiling.html = CRASH PASS
