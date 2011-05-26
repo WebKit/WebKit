@@ -1,3 +1,11 @@
+2011-05-26  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Update expected files after r87320.
+
+        * platform/qt-wk2/Skipped:
+        * platform/qt-wk2/fast/dom/Window/window-properties-expected.txt: Added.
+        * platform/qt-wk2/fast/dom/Window/window-property-descriptors-expected.txt: Added.
+
 2011-05-26  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Andreas Kling.

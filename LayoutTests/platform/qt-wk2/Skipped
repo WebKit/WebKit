@@ -2630,7 +2630,6 @@ fast/dom/timer-increase-then-decrease-min-interval.html
 fast/dom/timer-increase-then-decrease-min-interval-repeating.html
 fast/dom/vertical-scrollbar-in-rtl.html
 fast/dom/Window/console-functions.html
-fast/dom/Window/window-properties.html
 fast/dynamic/015.html
 fast/events/change-frame-focus.html
 fast/events/check-defocus-event-order-when-triggered-by-mouse-click.html
