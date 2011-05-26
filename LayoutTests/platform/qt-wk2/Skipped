@@ -1773,11 +1773,6 @@ printing/setPrinting.html
 # <https://bugs.webkit.org/show_bug.cgi?id=42696>
 security/set-form-autocomplete-attribute.html
 
-# WebKitTestRunner needs layoutTestController.setPrivateBrowsingEnabled
-# <https://bugs.webkit.org/show_bug.cgi?id=42697>
-storage/domstorage/localstorage/private-browsing-affects-storage.html
-storage/domstorage/sessionstorage/private-browsing-affects-storage.html
-
 # WebKitTestRunner needs layoutTestController.setAppCacheMaximumSize
 # <https://bugs.webkit.org/show_bug.cgi?id=42698>
 http/tests/appcache/max-size.html
@@ -2866,7 +2861,6 @@ sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.15_String.protot
 sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.17_String.prototype.toLocaleLowerCase/S15.5.4.17_A7.html
 sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.7_String.prototype.indexOf/S15.5.4.7_A7.html
 sputnik/Conformance/15_Native_Objects/15.5_String/15.5.4/15.5.4.8_String.prototype.lastIndexOf/S15.5.4.8_A7.html
-storage/private-browsing-noread-nowrite.html
 svg/animations/animate-calcMode-spline-by.html
 svg/animations/animate-calcMode-spline-from-by.html
 svg/animations/animate-calcMode-spline-from-to.html

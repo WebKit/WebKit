@@ -80,6 +80,7 @@ public:
     void setAllowFileAccessFromFileURLs(bool);
     void setFrameFlatteningEnabled(bool);
     void setJavaScriptCanAccessClipboard(bool);
+    void setPrivateBrowsingEnabled(bool);
     void addOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
     void removeOriginAccessWhitelistEntry(JSStringRef sourceOrigin, JSStringRef destinationProtocol, JSStringRef destinationHost, bool allowDestinationSubdomains);
 
