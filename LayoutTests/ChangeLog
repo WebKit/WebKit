@@ -1,5 +1,18 @@
 2011-05-25  Simon Fraser  <simon.fraser@apple.com>
 
+        Reviewed by Adam Roben.
+
+        Some repeating linear gradients look wrong
+        https://bugs.webkit.org/show_bug.cgi?id=61371
+        
+        Pixel test for repeating linear gradient.
+
+        * fast/gradients/css3-repeating-linear-gradients2-expected.txt: Added.
+        * fast/gradients/css3-repeating-linear-gradients2.html: Added.
+        * platform/mac/fast/gradients/css3-repeating-linear-gradients2-expected.png: Added.
+
+2011-05-25  Simon Fraser  <simon.fraser@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Always antialias table borders when scaling

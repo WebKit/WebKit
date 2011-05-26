@@ -1,3 +1,21 @@
+2011-05-26  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adam Roben.
+
+        Some repeating linear gradients look wrong
+        https://bugs.webkit.org/show_bug.cgi?id=61371
+
+        Test: fast/gradients/css3-repeating-linear-gradients2.html
+        
+        Fix incorrect stop duplication code when filling forwards a repeating
+        gradient. The "if (srcStopOrdinal < originalNumStops - 1)" test was wrong
+        because srcStopOrdinal had been adjusted for stops added by start-filling,
+        but originalNumStops had not. Fix by considering srcStopOrdinal as an index
+        into the original stops, so comparing it with originalNumStops remains valid.
+
+        * css/CSSGradientValue.cpp:
+        (WebCore::CSSGradientValue::addStops):
+
 2011-05-26  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -281,16 +281,17 @@ void CSSGradientValue::addStops(Gradient* gradient, RenderObject* renderer, Rend
             float lastOffset = stops[stops.size() - 1].offset;
             if (lastOffset < maxExtent) {
                 float currOffset = lastOffset;
-                size_t srcStopOrdinal = originalFirstStopIndex;
+                size_t srcStopOrdinal = 0;
 
                 while (true) {
-                    GradientStop newStop = stops[srcStopOrdinal];
+                    size_t srcStopIndex = originalFirstStopIndex + srcStopOrdinal;
+                    GradientStop newStop = stops[srcStopIndex];
                     newStop.offset = currOffset;
                     stops.append(newStop);
                     if (currOffset > maxExtent)
                         break;
                     if (srcStopOrdinal < originalNumStops - 1)
-                        currOffset += stops[srcStopOrdinal + 1].offset - stops[srcStopOrdinal].offset;
+                        currOffset += stops[srcStopIndex + 1].offset - stops[srcStopIndex].offset;
                     srcStopOrdinal = (srcStopOrdinal + 1) % originalNumStops;
                 }
             }
