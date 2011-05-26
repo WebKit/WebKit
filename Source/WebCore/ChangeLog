@@ -1,3 +1,20 @@
+2011-05-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Need a callback for when the preferred rendered size changed.
+        https://bugs.webkit.org/show_bug.cgi?id=61309
+
+        No new tests needed since no new functionality is exposed.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::contentsPreferredSizeChanged): Plumbed through the call.
+        * page/Chrome.h: Added the new method.
+        * page/ChromeClient.h: Ditto.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::setContentsSize): Added calculations for the preferred size
+        and the call to contentsPreferredSizeChanged.
+
 2011-05-25  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

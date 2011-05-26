@@ -307,6 +307,9 @@ public:
     // The size of the content area changed.
     virtual void didChangeContentsSize(WebFrame*, const WebSize&) { }
 
+    // The preferred dimensions for the rendered HTML contents changed.
+    virtual void didChangeContentsPreferredSize(WebFrame*, const WebSize&) const { }
+
     // The main frame scrolled.
     virtual void didChangeScrollOffset(WebFrame*) { }
 

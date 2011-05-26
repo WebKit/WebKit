@@ -1,3 +1,17 @@
+2011-05-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Need a callback for when the preferred rendered size changed.
+        https://bugs.webkit.org/show_bug.cgi?id=61309
+
+        * public/WebFrameClient.h
+        (WebKit::WebFrameClient::didChangeContentsPreferredSize): Added stub.
+        * src/ChromeClientImpl.h:
+        (WebKit::ChromeClientImpl::contentsPreferredSizeChanged): Added declaration.
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::contentsPreferredSizeChanged): Added call to WebFrameClient::didChangeContentsPreferredSize.
+
 2011-05-26  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

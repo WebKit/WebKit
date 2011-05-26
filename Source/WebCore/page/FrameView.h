@@ -392,6 +392,7 @@ private:
     bool m_isTransparent;
     Color m_baseBackgroundColor;
     IntSize m_lastLayoutSize;
+    IntSize m_lastPreferedSize;
     float m_lastZoomFactor;
 
     String m_mediaType;
