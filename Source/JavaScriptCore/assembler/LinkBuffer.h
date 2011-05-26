@@ -101,13 +101,13 @@ public:
     void link(Call call, FunctionPtr function)
     {
         ASSERT(call.isFlagSet(Call::Linkable));
-        call.m_jmp = applyOffset(call.m_jmp);
+        call.m_label = applyOffset(call.m_label);
         MacroAssembler::linkCall(code(), call, function);
     }
     
     void link(Jump jump, CodeLocationLabel label)
     {
-        jump.m_jmp = applyOffset(jump.m_jmp);
+        jump.m_label = applyOffset(jump.m_label);
         MacroAssembler::linkJump(code(), jump, label);
     }
 
@@ -135,14 +135,14 @@ public:
     {
         ASSERT(call.isFlagSet(Call::Linkable));
         ASSERT(!call.isFlagSet(Call::Near));
-        return CodeLocationCall(MacroAssembler::getLinkerAddress(code(), applyOffset(call.m_jmp)));
+        return CodeLocationCall(MacroAssembler::getLinkerAddress(code(), applyOffset(call.m_label)));
     }
 
     CodeLocationNearCall locationOfNearCall(Call call)
     {
         ASSERT(call.isFlagSet(Call::Linkable));
         ASSERT(call.isFlagSet(Call::Near));
-        return CodeLocationNearCall(MacroAssembler::getLinkerAddress(code(), applyOffset(call.m_jmp)));
+        return CodeLocationNearCall(MacroAssembler::getLinkerAddress(code(), applyOffset(call.m_label)));
     }
 
     CodeLocationLabel locationOf(Label label)
@@ -169,7 +169,7 @@ public:
     // the start of the code.
     unsigned returnAddressOffset(Call call)
     {
-        call.m_jmp = applyOffset(call.m_jmp);
+        call.m_label = applyOffset(call.m_label);
         return MacroAssembler::getLinkerCallReturnOffset(call);
     }
 

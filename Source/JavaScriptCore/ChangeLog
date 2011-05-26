@@ -2,6 +2,40 @@
 
         Reviewed by Sam Weinig.
 
+        Bug 61501 - Unify AbstractMacroAssembler::differenceBetween methods.
+
+        * assembler/AbstractMacroAssembler.h:
+        (JSC::AbstractMacroAssembler::Call::Call):
+        (JSC::AbstractMacroAssembler::Call::fromTailJump):
+        (JSC::AbstractMacroAssembler::Jump::Jump):
+        (JSC::AbstractMacroAssembler::Jump::link):
+        (JSC::AbstractMacroAssembler::Jump::linkTo):
+        (JSC::AbstractMacroAssembler::Jump::isSet):
+        (JSC::AbstractMacroAssembler::differenceBetween):
+        (JSC::AbstractMacroAssembler::linkJump):
+        (JSC::AbstractMacroAssembler::getLinkerCallReturnOffset):
+        * assembler/LinkBuffer.h:
+        (JSC::LinkBuffer::link):
+        (JSC::LinkBuffer::locationOf):
+        (JSC::LinkBuffer::locationOfNearCall):
+        (JSC::LinkBuffer::returnAddressOffset):
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::linkCall):
+        * assembler/MacroAssemblerARMv7.h:
+        (JSC::MacroAssemblerARMv7::linkCall):
+        * assembler/MacroAssemblerMIPS.h:
+        (JSC::MacroAssemblerMIPS::linkCall):
+        * assembler/MacroAssemblerSH4.cpp:
+        (JSC::MacroAssemblerSH4::linkCall):
+        * assembler/MacroAssemblerX86.h:
+        (JSC::MacroAssemblerX86::linkCall):
+        * assembler/MacroAssemblerX86_64.h:
+        (JSC::MacroAssemblerX86_64::linkCall):
+
+2011-05-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
         https://bugs.webkit.org/show_bug.cgi?id=61500
         Add JSObject::offsetOfPropertyStorage
 

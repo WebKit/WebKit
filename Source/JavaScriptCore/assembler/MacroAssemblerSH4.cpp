@@ -34,7 +34,7 @@ namespace JSC {
 
 void MacroAssemblerSH4::linkCall(void* code, Call call, FunctionPtr function)
 {
-    SH4Assembler::linkCall(code, call.m_jmp, function.value());
+    SH4Assembler::linkCall(code, call.m_label, function.value());
 }
 
 void MacroAssemblerSH4::repatchCall(CodeLocationCall call, CodeLocationLabel destination)

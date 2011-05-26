@@ -361,7 +361,7 @@ public:
         }
         
         Call(AssemblerLabel jmp, Flags flags)
-            : m_jmp(jmp)
+            : m_label(jmp)
             , m_flags(flags)
         {
         }
@@ -373,10 +373,10 @@ public:
 
         static Call fromTailJump(Jump jump)
         {
-            return Call(jump.m_jmp, Linkable);
+            return Call(jump.m_label, Linkable);
         }
 
-        AssemblerLabel m_jmp;
+        AssemblerLabel m_label;
     private:
         Flags m_flags;
     };
@@ -400,14 +400,14 @@ public:
 #if CPU(ARM_THUMB2)
         // Fixme: this information should be stored in the instruction stream, not in the Jump object.
         Jump(AssemblerLabel jmp, ARMv7Assembler::JumpType type, ARMv7Assembler::Condition condition = ARMv7Assembler::ConditionInvalid)
-            : m_jmp(jmp)
+            : m_label(jmp)
             , m_type(type)
             , m_condition(condition)
         {
         }
 #else
         Jump(AssemblerLabel jmp)    
-            : m_jmp(jmp)
+            : m_label(jmp)
         {
         }
 #endif
@@ -415,25 +415,25 @@ public:
         void link(AbstractMacroAssembler<AssemblerType>* masm) const
         {
 #if CPU(ARM_THUMB2)
-            masm->m_assembler.linkJump(m_jmp, masm->m_assembler.label(), m_type, m_condition);
+            masm->m_assembler.linkJump(m_label, masm->m_assembler.label(), m_type, m_condition);
 #else
-            masm->m_assembler.linkJump(m_jmp, masm->m_assembler.label());
+            masm->m_assembler.linkJump(m_label, masm->m_assembler.label());
 #endif
         }
         
         void linkTo(Label label, AbstractMacroAssembler<AssemblerType>* masm) const
         {
 #if CPU(ARM_THUMB2)
-            masm->m_assembler.linkJump(m_jmp, label.m_label, m_type, m_condition);
+            masm->m_assembler.linkJump(m_label, label.m_label, m_type, m_condition);
 #else
-            masm->m_assembler.linkJump(m_jmp, label.m_label);
+            masm->m_assembler.linkJump(m_label, label.m_label);
 #endif
         }
 
-        bool isSet() const { return m_jmp.isSet(); }
+        bool isSet() const { return m_label.isSet(); }
 
     private:
-        AssemblerLabel m_jmp;
+        AssemblerLabel m_label;
 #if CPU(ARM_THUMB2)
         ARMv7Assembler::JumpType m_type;
         ARMv7Assembler::Condition m_condition;
@@ -505,49 +505,10 @@ public:
         return Label(this);
     }
 
-    ptrdiff_t differenceBetween(Label from, Jump to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
-    }
-
-    ptrdiff_t differenceBetween(Label from, Call to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
-    }
-
-    ptrdiff_t differenceBetween(Label from, Label to)
+    template<typename T, typename U>
+    ptrdiff_t differenceBetween(T from, U to)
     {
         return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
-    }
-
-    ptrdiff_t differenceBetween(Label from, DataLabelPtr to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
-    }
-
-    ptrdiff_t differenceBetween(Label from, DataLabel32 to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
-    }
-    
-    ptrdiff_t differenceBetween(Label from, DataLabelCompact to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
-    }
-
-    ptrdiff_t differenceBetween(DataLabelPtr from, Jump to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
-    }
-
-    ptrdiff_t differenceBetween(DataLabelPtr from, DataLabelPtr to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_label);
-    }
-
-    ptrdiff_t differenceBetween(DataLabelPtr from, Call to)
-    {
-        return AssemblerType::getDifferenceBetweenLabels(from.m_label, to.m_jmp);
     }
 
     // Temporary interface; likely to be removed, since may be hard to port to all architectures.
@@ -570,7 +531,7 @@ protected:
 
     static void linkJump(void* code, Jump jump, CodeLocationLabel target)
     {
-        AssemblerType::linkJump(code, jump.m_jmp, target.dataLocation());
+        AssemblerType::linkJump(code, jump.m_label, target.dataLocation());
     }
 
     static void linkPointer(void* code, AssemblerLabel label, void* value)
@@ -585,7 +546,7 @@ protected:
 
     static unsigned getLinkerCallReturnOffset(Call call)
     {
-        return AssemblerType::getCallReturnOffset(call.m_jmp);
+        return AssemblerType::getCallReturnOffset(call.m_label);
     }
 
     static void repatchJump(CodeLocationJump jump, CodeLocationLabel destination)

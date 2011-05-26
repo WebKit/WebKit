@@ -175,7 +175,7 @@ private:
 
     static void linkCall(void* code, Call call, FunctionPtr function)
     {
-        X86Assembler::linkCall(code, call.m_jmp, function.value());
+        X86Assembler::linkCall(code, call.m_label, function.value());
     }
 
     static void repatchCall(CodeLocationCall call, CodeLocationLabel destination)
