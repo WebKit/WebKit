@@ -1,3 +1,18 @@
+2011-05-25  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Rename ScrollbarOverlayUtilitiesMac to ScrollbarOverlayUtilitiesChromiumMac
+        https://bugs.webkit.org/show_bug.cgi?id=61401
+
+        ScrollbarOverlayUtilitiesMac.mm was being excluded from the WebCore project. Fix was to make sure the file name ended with ChromiumMac.
+
+        * WebCore.gypi:
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.h: Copied from Source/WebCore/platform/chromium/ScrollbarOverlayUtilitiesMac.h.
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.mm: Copied from Source/WebCore/platform/chromium/ScrollbarOverlayUtilitiesMac.mm.
+        * platform/chromium/ScrollbarOverlayUtilitiesMac.h: Removed.
+        * platform/chromium/ScrollbarOverlayUtilitiesMac.mm: Removed.
+
 2011-05-25  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Geoffrey Garen

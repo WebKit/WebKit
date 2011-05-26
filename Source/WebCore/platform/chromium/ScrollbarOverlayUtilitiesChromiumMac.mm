@@ -28,7 +28,7 @@
 
 #if USE(WK_SCROLLBAR_PAINTER)
 
-#include "ScrollbarOverlayUtilitiesMac.h"
+#include "ScrollbarOverlayUtilitiesChromiumMac.h"
 #include "ScrollTypes.h"
 #include <Cocoa/Cocoa.h>
 

@@ -24,8 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
-#ifndef ScrollbarOverlayUtilitiesMac_h
-#define ScrollbarOverlayUtilitiesMac_h
+#ifndef ScrollbarOverlayUtilitiesChromiumMac_h
+#define ScrollbarOverlayUtilitiesChromiumMac_h
 
 #if USE(WK_SCROLLBAR_PAINTER)
 
@@ -98,4 +98,4 @@ WKScrollbarPainterRef wkHorizontalScrollbarPainterForController(WKScrollbarPaint
 
 #endif // USE(WK_SCROLLBAR_PAINTER)
 
-#endif // ScrollbarOverlayUtilitiesMac_h
+#endif // ScrollbarOverlayUtilitiesChromiumMac_h
