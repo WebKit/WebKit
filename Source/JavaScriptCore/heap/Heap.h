@@ -193,6 +193,31 @@ namespace JSC {
         m_markedSpace.forEach(functor);
     }
 
+    inline void* Heap::allocate(size_t bytes)
+    {
+        ASSERT(isValidAllocation(bytes));
+
+        m_operationInProgress = Allocation;
+        void* result = m_markedSpace.allocate(bytes);
+        m_operationInProgress = NoOperation;
+        if (result)
+            return result;
+
+        return allocateSlowCase(bytes);
+    }
+
+    inline Heap* Heap::heap(JSValue v)
+    {
+        if (!v.isCell())
+            return 0;
+        return heap(v.asCell());
+    }
+
+    inline Heap* Heap::heap(JSCell* c)
+    {
+        return MarkedSpace::heap(c);
+    }
+
 } // namespace JSC
 
 #endif // Heap_h

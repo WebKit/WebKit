@@ -172,6 +172,20 @@ namespace JSC {
         m_highWaterMark = highWaterMark;
     }
 
+    inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t bytes)
+    {
+        ASSERT(bytes && bytes < maxCellSize);
+        if (bytes < preciseCutoff)
+            return m_preciseSizeClasses[(bytes - 1) / preciseStep];
+        return m_impreciseSizeClasses[(bytes - 1) / impreciseStep];
+    }
+
+    inline void* MarkedSpace::allocate(size_t bytes)
+    {
+        SizeClass& sizeClass = sizeClassFor(bytes);
+        return allocateFromSizeClass(sizeClass);
+    }
+    
     inline MarkedSpace::SizeClass::SizeClass()
         : nextBlock(0)
         , cellSize(0)

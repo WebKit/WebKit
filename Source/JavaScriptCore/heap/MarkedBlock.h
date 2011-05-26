@@ -36,6 +36,8 @@ namespace JSC {
     typedef uintptr_t Bits;
 
     static const size_t KB = 1024;
+    
+    void destructor(JSCell*); // Defined in JSCell.h.
 
     class MarkedBlock : public DoublyLinkedListNode<MarkedBlock> {
         friend class WTF::DoublyLinkedListNode<MarkedBlock>;
@@ -197,6 +199,21 @@ namespace JSC {
         }
     }
 
+    inline void* MarkedBlock::allocate()
+    {
+        while (m_nextAtom < m_endAtom) {
+            if (!m_marks.testAndSet(m_nextAtom)) {
+                JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[m_nextAtom]);
+                m_nextAtom += m_atomsPerCell;
+                destructor(cell);
+                return cell;
+            }
+            m_nextAtom += m_atomsPerCell;
+        }
+
+        return 0;
+    }
+    
 } // namespace JSC
 
 #endif // MarkedSpace_h

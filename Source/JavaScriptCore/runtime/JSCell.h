@@ -72,6 +72,8 @@ namespace JSC {
         friend class Structure;
         friend class StructureChain;
         friend class RegExp;
+        friend void destructor(JSCell*);
+
         enum CreatingEarlyCellTag { CreatingEarlyCell };
 
     protected:
@@ -345,66 +347,12 @@ namespace JSC {
         return isCell() ? asCell()->toThisObject(exec) : toThisObjectSlowCase(exec);
     }
 
-    inline Heap* Heap::heap(JSValue v)
-    {
-        if (!v.isCell())
-            return 0;
-        return heap(v.asCell());
-    }
-
-    inline Heap* Heap::heap(JSCell* c)
-    {
-        return MarkedSpace::heap(c);
-    }
-
 #if ENABLE(JSC_ZOMBIES)
     inline bool JSValue::isZombie() const
     {
         return isCell() && asCell()->isZombie();
     }
 #endif
-
-    inline void* MarkedBlock::allocate()
-    {
-        while (m_nextAtom < m_endAtom) {
-            if (!m_marks.testAndSet(m_nextAtom)) {
-                JSCell* cell = reinterpret_cast<JSCell*>(&atoms()[m_nextAtom]);
-                m_nextAtom += m_atomsPerCell;
-                cell->~JSCell();
-                return cell;
-            }
-            m_nextAtom += m_atomsPerCell;
-        }
-
-        return 0;
-    }
-    
-    inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t bytes)
-    {
-        ASSERT(bytes && bytes < maxCellSize);
-        if (bytes < preciseCutoff)
-            return m_preciseSizeClasses[(bytes - 1) / preciseStep];
-        return m_impreciseSizeClasses[(bytes - 1) / impreciseStep];
-    }
-
-    inline void* MarkedSpace::allocate(size_t bytes)
-    {
-        SizeClass& sizeClass = sizeClassFor(bytes);
-        return allocateFromSizeClass(sizeClass);
-    }
-    
-    inline void* Heap::allocate(size_t bytes)
-    {
-        ASSERT(isValidAllocation(bytes));
-
-        m_operationInProgress = Allocation;
-        void* result = m_markedSpace.allocate(bytes);
-        m_operationInProgress = NoOperation;
-        if (result)
-            return result;
-
-        return allocateSlowCase(bytes);
-    }
 
     inline void* JSCell::operator new(size_t size, JSGlobalData* globalData)
     {
@@ -414,6 +362,11 @@ namespace JSC {
     inline void* JSCell::operator new(size_t size, ExecState* exec)
     {
         return exec->heap()->allocate(size);
+    }
+    
+    inline void destructor(JSCell* cell)
+    {
+        cell->~JSCell();
     }
 
 } // namespace JSC
