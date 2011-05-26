@@ -4115,17 +4115,6 @@ BUGWK61370 LINUX : svg/W3C-SVG-1.1/fonts-glyph-04-t.svg = IMAGE
 // New tests added in r87274
 BUGCR83865 : fast/forms/color = FAIL PASS
 
-// New tests added in webkit r87284
-BUGCR83869 : svg/dynamic-updates/SVGTextElement-dom-dx-attr.html = IMAGE
-BUGCR83869 : svg/dynamic-updates/SVGTextElement-dom-dy-attr.html = IMAGE
-BUGCR83869 : svg/dynamic-updates/SVGTextElement-dom-rotate-attr.html = IMAGE
-BUGCR83869 : svg/dynamic-updates/SVGTextElement-dom-x-attr.html = IMAGE
-BUGCR83869 : svg/dynamic-updates/SVGTextElement-dom-y-attr.html = IMAGE
-BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-dx-prop.html = IMAGE
-BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-dy-prop.html = IMAGE
-BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-x-prop.html = IMAGE
-BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-y-prop.html = IMAGE
-
 BUGWK61486 DEBUG : http/tests/misc/drag-not-loaded-image.html = CRASH
 
 // New tests added in r87189

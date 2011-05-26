@@ -1,3 +1,45 @@
+2011-05-26  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed. Rebaselines for SVG tests added in r87284.
+
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGTextElement-dom-dx-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGTextElement-dom-dy-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGTextElement-dom-rotate-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGTextElement-dom-x-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGTextElement-dom-y-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGTextElement-svgdom-dx-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGTextElement-svgdom-dy-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGTextElement-svgdom-x-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGTextElement-svgdom-y-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-dom-dx-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-dom-dy-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-dom-rotate-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-dom-x-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-dom-y-attr-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-svgdom-dx-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-svgdom-dy-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-svgdom-x-prop-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGTextElement-svgdom-y-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-dom-dx-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-dom-dy-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-dom-rotate-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-dom-x-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-dom-y-attr-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-svgdom-dx-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-svgdom-dy-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-svgdom-x-prop-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGTextElement-svgdom-y-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-dom-dx-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-dom-dy-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-dom-rotate-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-dom-x-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-dom-y-attr-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-svgdom-dx-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-svgdom-dy-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-svgdom-x-prop-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-svgdom-y-prop-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         GTK & Qt rebaselines for r87400.
