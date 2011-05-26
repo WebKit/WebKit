@@ -1,0 +1,13 @@
+SVG 1.1 dynamic animation tests
+
+Test behavior of dynamically inserting animate without begin attribute
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rect.x.baseVal.value is 0
+PASS rect.x.baseVal.value is 90
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

@@ -182,7 +182,15 @@ void SVGSMILElement::insertedIntoDocument()
     m_timeContainer = owner->timeContainer();
     ASSERT(m_timeContainer);
     m_timeContainer->setDocumentOrderIndexesDirty();
-    reschedule();
+
+    // "If no attribute is present, the default begin value (an offset-value of 0) must be evaluated."
+    if (!hasAttribute(SVGNames::beginAttr))
+        m_beginTimes.append(0);
+
+    if (m_isWaitingForFirstInterval) {
+        resolveFirstInterval();
+        reschedule();
+    }
 }
 
 void SVGSMILElement::removedFromDocument()
@@ -203,20 +211,6 @@ void SVGSMILElement::removedFromDocument()
     SVGElement::removedFromDocument();
 }
    
-void SVGSMILElement::finishParsingChildren()
-{
-    SVGElement::finishParsingChildren();
-
-    // "If no attribute is present, the default begin value (an offset-value of 0) must be evaluated."
-    if (!hasAttribute(SVGNames::beginAttr))
-        m_beginTimes.append(0);
-
-    if (m_isWaitingForFirstInterval) {
-        resolveFirstInterval();
-        reschedule();
-    }
-}
-
 SMILTime SVGSMILElement::parseOffsetValue(const String& data)
 {
     bool ok;

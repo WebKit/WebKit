@@ -1,3 +1,20 @@
+2011-05-26  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Dynamically created <animate> elements do not animate upon document insertion as they should
+        https://bugs.webkit.org/show_bug.cgi?id=20028
+
+        Tests: svg/animations/animate-insert-begin.html
+               svg/animations/animate-insert-no-begin.html
+
+        Move animation initializing and rescheduling to insertedIntoDocument. This way animate elements
+        dynamicaly inserted into the document using js start as well.
+
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::insertedIntoDocument):
+        * svg/animation/SVGSMILElement.h:
+
 2011-05-26  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Benjamin Poulain.

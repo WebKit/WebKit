@@ -48,7 +48,6 @@ public:
     virtual void attributeChanged(Attribute*, bool preserveDecls);
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
-    virtual void finishParsingChildren();
     
     virtual bool hasValidAttributeType() const = 0;
 
