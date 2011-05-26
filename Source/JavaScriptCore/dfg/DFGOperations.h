@@ -30,11 +30,8 @@
 
 #include <dfg/DFGJITCompiler.h>
 
-namespace JSC {
-
-class Identifier;
-
-namespace DFG {
+namespace JSC { namespace DFG {
+extern "C" {
 
 // These typedefs provide typechecking when generating calls out to helper routines;
 // this helps prevent calling a helper routine with the wrong arguments!
@@ -54,6 +51,7 @@ EncodedJSValue operationConvertThis(ExecState*, EncodedJSValue encodedOp1);
 EncodedJSValue operationValueAdd(ExecState*, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2);
 EncodedJSValue operationGetByVal(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty);
 EncodedJSValue operationGetById(ExecState*, EncodedJSValue encodedBase, Identifier*);
+EncodedJSValue operationGetByIdOptimize(ExecState*, EncodedJSValue encodedBase, Identifier*);
 void operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
 void operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
 void operationPutByIdStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
@@ -84,6 +82,7 @@ double dfgConvertJSValueToNumber(ExecState*, EncodedJSValue);
 int32_t dfgConvertJSValueToInt32(ExecState*, EncodedJSValue);
 bool dfgConvertJSValueToBoolean(ExecState*, EncodedJSValue);
 
+} // extern "C"
 } } // namespace JSC::DFG
 
 #endif

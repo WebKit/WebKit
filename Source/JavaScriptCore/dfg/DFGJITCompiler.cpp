@@ -282,6 +282,7 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
     } else {
         // If compilation through the SpeculativeJIT failed, throw away the code we generated.
         m_calls.clear();
+        m_propertyAccesses.clear();
         rewindToLabel(speculativePathBegin);
 
         SpeculationCheckVector noChecks;
@@ -369,6 +370,14 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
                 m_codeBlock->callReturnIndexVector().append(CallReturnOffsetToBytecodeOffset(returnAddressOffset, exceptionInfo));
             }
         }
+    }
+
+    m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccesses.size());
+    for (unsigned i = 0; i < m_propertyAccesses.size(); ++i) {
+        StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
+        info.callReturnLocation = linkBuffer.locationOf(m_propertyAccesses[i].m_functionCall);
+        info.u.unset.deltaCheckToCall = m_propertyAccesses[i].m_deltaCheckToCall;
+        info.u.unset.deltaCallToLoad = m_propertyAccesses[i].m_deltaCallToLoad;
     }
 
     // FIXME: switch the register file check & arity check over to DFGOpertaion style calls, not JIT stubs.

@@ -29,12 +29,74 @@
 #if ENABLE(DFG_JIT)
 
 #include "CodeBlock.h"
+#include "DFGRepatch.h"
 #include "Interpreter.h"
 #include "JSByteArray.h"
 #include "JSGlobalData.h"
 #include "Operations.h"
 
+#define FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, register) \
+    asm( \
+    ".globl _" STRINGIZE(function) "\n" \
+    "_" STRINGIZE(function) ":" "\n" \
+        "mov (%rsp), %" STRINGIZE(register) "\n" \
+        "jmp _" STRINGIZE(function) "WithReturnAddress" "\n" \
+    );
+#define FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(function) FUNCTION_WRAPPER_WITH_RETURN_ADDRESS(function, rcx)
+
 namespace JSC { namespace DFG {
+
+template<bool strict>
+ALWAYS_INLINE static void operationPutByValInternal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+{
+    JSGlobalData* globalData = &exec->globalData();
+
+    JSValue baseValue = JSValue::decode(encodedBase);
+    JSValue property = JSValue::decode(encodedProperty);
+    JSValue value = JSValue::decode(encodedValue);
+
+    if (LIKELY(property.isUInt32())) {
+        uint32_t i = property.asUInt32();
+
+        if (isJSArray(globalData, baseValue)) {
+            JSArray* jsArray = asArray(baseValue);
+            if (jsArray->canSetIndex(i)) {
+                jsArray->setIndex(*globalData, i, value);
+                return;
+            }
+
+            jsArray->JSArray::put(exec, i, value);
+            return;
+        }
+
+        if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
+            JSByteArray* jsByteArray = asByteArray(baseValue);
+            // FIXME: the JITstub used to relink this to an optimized form!
+            if (value.isInt32()) {
+                jsByteArray->setIndex(i, value.asInt32());
+                return;
+            }
+
+            double dValue = 0;
+            if (value.getNumber(dValue)) {
+                jsByteArray->setIndex(i, dValue);
+                return;
+            }
+        }
+
+        baseValue.put(exec, i, value);
+        return;
+    }
+
+    // Don't put to an object if toString throws an exception.
+    Identifier ident(exec, property.toString(exec));
+    if (!globalData->exception) {
+        PutPropertySlot slot(strict);
+        baseValue.put(exec, ident, value, slot);
+    }
+}
+
+extern "C" {
 
 EncodedJSValue operationConvertThis(ExecState* exec, EncodedJSValue encodedOp)
 {
@@ -101,61 +163,28 @@ EncodedJSValue operationGetByVal(ExecState* exec, EncodedJSValue encodedBase, En
     return JSValue::encode(baseValue.get(exec, ident));
 }
 
-EncodedJSValue operationGetById(ExecState* exec, EncodedJSValue encodedBase, Identifier* identifier)
+EncodedJSValue operationGetById(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName)
 {
     JSValue baseValue = JSValue::decode(encodedBase);
     PropertySlot slot(baseValue);
-    return JSValue::encode(baseValue.get(exec, *identifier, slot));
+    return JSValue::encode(baseValue.get(exec, *propertyName, slot));
 }
 
-template<bool strict>
-ALWAYS_INLINE static void operationPutByValInternal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ExecState*, EncodedJSValue, Identifier*, ReturnAddressPtr);
+FUNCTION_WRAPPER_WITH_ARG4_RETURN_ADDRESS(operationGetByIdOptimize);
+EncodedJSValue operationGetByIdOptimizeWithReturnAddress(ExecState* exec, EncodedJSValue encodedBase, Identifier* propertyName, ReturnAddressPtr returnAddress)
 {
-    JSGlobalData* globalData = &exec->globalData();
-
     JSValue baseValue = JSValue::decode(encodedBase);
-    JSValue property = JSValue::decode(encodedProperty);
-    JSValue value = JSValue::decode(encodedValue);
+    PropertySlot slot(baseValue);
+    JSValue result = baseValue.get(exec, *propertyName, slot);
 
-    if (LIKELY(property.isUInt32())) {
-        uint32_t i = property.asUInt32();
+    StructureStubInfo& stubInfo = exec->codeBlock()->getStubInfo(returnAddress);
+    if (stubInfo.seen)
+        dfgRepatchGetByID(exec, baseValue, *propertyName, slot, stubInfo);
+    else
+        stubInfo.seen = true;
 
-        if (isJSArray(globalData, baseValue)) {
-            JSArray* jsArray = asArray(baseValue);
-            if (jsArray->canSetIndex(i)) {
-                jsArray->setIndex(*globalData, i, value);
-                return;
-            }
-
-            jsArray->JSArray::put(exec, i, value);
-            return;
-        }
-
-        if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
-            JSByteArray* jsByteArray = asByteArray(baseValue);
-            // FIXME: the JITstub used to relink this to an optimized form!
-            if (value.isInt32()) {
-                jsByteArray->setIndex(i, value.asInt32());
-                return;
-            }
-
-            double dValue = 0;
-            if (value.getNumber(dValue)) {
-                jsByteArray->setIndex(i, dValue);
-                return;
-            }
-        }
-
-        baseValue.put(exec, i, value);
-        return;
-    }
-
-    // Don't put to an object if toString throws an exception.
-    Identifier ident(exec, property.toString(exec));
-    if (!globalData->exception) {
-        PutPropertySlot slot(strict);
-        baseValue.put(exec, ident, value, slot);
-    }
+    return JSValue::encode(result);
 }
 
 void operationPutByValStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
@@ -168,28 +197,28 @@ void operationPutByValNonStrict(ExecState* exec, EncodedJSValue encodedBase, Enc
     operationPutByValInternal<false>(exec, encodedBase, encodedProperty, encodedValue);
 }
 
-void operationPutByIdStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* identifier)
+void operationPutByIdStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 {
     PutPropertySlot slot(true);
-    JSValue::decode(encodedBase).put(exec, *identifier, JSValue::decode(encodedValue), slot);
+    JSValue::decode(encodedBase).put(exec, *propertyName, JSValue::decode(encodedValue), slot);
 }
 
-void operationPutByIdNonStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* identifier)
+void operationPutByIdNonStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 {
     PutPropertySlot slot(false);
-    JSValue::decode(encodedBase).put(exec, *identifier, JSValue::decode(encodedValue), slot);
+    JSValue::decode(encodedBase).put(exec, *propertyName, JSValue::decode(encodedValue), slot);
 }
 
-void operationPutByIdDirectStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* identifier)
+void operationPutByIdDirectStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 {
     PutPropertySlot slot(true);
-    JSValue::decode(encodedBase).putDirect(exec, *identifier, JSValue::decode(encodedValue), slot);
+    JSValue::decode(encodedBase).putDirect(exec, *propertyName, JSValue::decode(encodedValue), slot);
 }
 
-void operationPutByIdDirectNonStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* identifier)
+void operationPutByIdDirectNonStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)
 {
     PutPropertySlot slot(false);
-    JSValue::decode(encodedBase).putDirect(exec, *identifier, JSValue::decode(encodedValue), slot);
+    JSValue::decode(encodedBase).putDirect(exec, *propertyName, JSValue::decode(encodedValue), slot);
 }
 
 bool operationCompareLess(ExecState* exec, EncodedJSValue encodedOp1, EncodedJSValue encodedOp2)
@@ -240,6 +269,7 @@ bool dfgConvertJSValueToBoolean(ExecState* exec, EncodedJSValue encodedOp)
     return JSValue::decode(encodedOp).toBoolean(exec);
 }
 
+} // extern "C"
 } } // namespace JSC::DFG
 
 #endif

@@ -1,3 +1,53 @@
+2011-05-26  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61508
+        DFG JIT - Add support for get by id self caching.
+
+        Change the call out to be an unexpected call (using silent spill/fill functions),
+        add a structure check & compact load to the JIT code, and add repatching mechanisms.
+        Since DFGOperations may want to be be implemented in asm, make these symbols be extern
+        "C". Add an asm wrapper to pass the return address to the optimizing get-by-id operation,
+        so that it can look up its StructureStubInfo.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+            - Added new files.
+        * bytecode/StructureStubInfo.h:
+            - Added 'unset' entries to union.
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::appendCallWithExceptionCheck):
+            - Return the call, we need this to populate the StructureStubInfo.
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::compileFunction):
+            - Populate the CodebBlock's StructureStubInfo Vector.
+        * dfg/DFGJITCompiler.h:
+        (JSC::DFG::JITCompiler::appendCallWithExceptionCheck):
+            - Return the call, we need this to populate the StructureStubInfo.
+        (JSC::DFG::JITCompiler::addPropertyAccess):
+        (JSC::DFG::JITCompiler::PropertyAccessRecord::PropertyAccessRecord):
+            - Add structures to record property access info during compilation.
+        * dfg/DFGOperations.cpp:
+            - Made all external methods extern "C".
+        (JSC::DFG::operationPutByValInternal):
+            - Moved outside of the extern "C" block.
+        * dfg/DFGOperations.h:
+            - Made all external methods extern "C".
+        * dfg/DFGRepatch.cpp: Added.
+        (JSC::DFG::dfgRepatchCall):
+            - repatch a call to link to a new callee function.
+        (JSC::DFG::dfgRepatchGetByIdSelf):
+            - Modify the JIT code to optimize self accesses.
+        (JSC::DFG::tryCacheGetByID):
+            - Internal implementation of dfgRepatchGetByID (factor out failing cases).
+        (JSC::DFG::dfgRepatchGetByID):
+            - Used to optimize 'operationGetByIdOptimize' - repatches to 'operationGetById', and tries to optimize self accesses!
+        * dfg/DFGRepatch.h: Added.
+            - Expose dfgRepatchGetByID.
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+            - Changed implementation of GetById ops.
+
 2011-05-26  Geoffrey Garen  <ggaren@apple.com>
 
         Rolled back in http://trac.webkit.org/changeset/87408 with Windows build fixed.

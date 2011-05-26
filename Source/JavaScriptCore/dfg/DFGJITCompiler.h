@@ -166,11 +166,12 @@ public:
     }
 
     // Add a call out from JIT code, with an exception check.
-    void appendCallWithExceptionCheck(const FunctionPtr& function, unsigned exceptionInfo)
+    Call appendCallWithExceptionCheck(const FunctionPtr& function, unsigned exceptionInfo)
     {
         Call functionCall = call();
         Jump exceptionCheck = branchTestPtr(NonZero, AbsoluteAddress(&globalData()->exception));
         m_calls.append(CallRecord(functionCall, function, exceptionCheck, exceptionInfo));
+        return functionCall;
     }
 
     // Helper methods to check nodes for constants.
@@ -232,6 +233,11 @@ public:
     void clearSamplingFlag(int32_t flag);
 #endif
 
+    void addPropertyAccess(JITCompiler::Call functionCall, intptr_t deltaCheckToCall, intptr_t deltaCallToLoad)
+    {
+        m_propertyAccesses.append(PropertyAccessRecord(functionCall, deltaCheckToCall, deltaCallToLoad));
+    }
+
 private:
     // These methods used in linking the speculative & non-speculative paths together.
     void fillNumericToDouble(NodeIndex, FPRReg, GPRReg temporary);
@@ -251,6 +257,21 @@ private:
 
     // Vector of calls out from JIT code, including exception handler information.
     Vector<CallRecord> m_calls;
+
+    struct PropertyAccessRecord {
+        PropertyAccessRecord(JITCompiler::Call functionCall, intptr_t deltaCheckToCall, intptr_t deltaCallToLoad)
+            : m_functionCall(functionCall)
+            , m_deltaCheckToCall(deltaCheckToCall)
+            , m_deltaCallToLoad(deltaCallToLoad)
+        {
+        }
+
+        JITCompiler::Call m_functionCall;
+        intptr_t m_deltaCheckToCall;
+        intptr_t m_deltaCallToLoad;
+    };
+
+    Vector<PropertyAccessRecord, 4> m_propertyAccesses;
 };
 
 } } // namespace JSC::DFG

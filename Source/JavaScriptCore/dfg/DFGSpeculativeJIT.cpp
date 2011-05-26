@@ -185,9 +185,9 @@ GPRReg SpeculativeJIT::fillSpeculateCell(NodeIndex nodeIndex)
         GPRReg gpr = allocate();
 
         if (node.isConstant()) {
-            m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
             JSValue jsValue = constantAsJSValue(nodeIndex);
             if (jsValue.isCell()) {
+                m_gprs.retain(gpr, virtualRegister, SpillOrderConstant);
                 m_jit.move(MacroAssembler::TrustedImmPtr(jsValue.asCell()), gpr);
                 info.fillJSValue(gpr, DataFormatJSCell);
                 return gpr;
@@ -805,13 +805,37 @@ void SpeculativeJIT::compile(Node& node)
     }
 
     case GetById: {
-        JSValueOperand base(this, node.child1);
-        GPRReg baseGPR = base.gpr();
-        flushRegisters();
+        SpeculateCellOperand base(this, node.child1);
+        GPRTemporary result(this, base);
 
-        GPRResult result(this);
-        callOperation(operationGetById, result.gpr(), baseGPR, identifier(node.identifierNumber()));
-        jsValueResult(result.gpr(), m_compileIndex);
+        GPRReg baseGPR = base.gpr();
+        GPRReg resultGPR = result.gpr();
+
+        JITCompiler::DataLabelPtr structureToCompare;
+        JITCompiler::Jump structureCheck = m_jit.branchPtrWithPatch(JITCompiler::Equal, JITCompiler::Address(baseGPR, JSCell::structureOffset()), structureToCompare, JITCompiler::TrustedImmPtr(reinterpret_cast<void*>(-1)));
+
+        silentSpillAllRegisters(resultGPR, baseGPR);
+        m_jit.move(baseGPR, GPRInfo::argumentGPR1);
+        m_jit.move(JITCompiler::ImmPtr(identifier(node.identifierNumber())), GPRInfo::argumentGPR2);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        JITCompiler::Call functionCall = appendCallWithExceptionCheck(operationGetByIdOptimize);
+        m_jit.move(GPRInfo::returnValueGPR, resultGPR);
+        silentFillAllRegisters(resultGPR);
+
+        JITCompiler::Jump handledByC = m_jit.jump();
+        structureCheck.link(&m_jit);
+
+        m_jit.loadPtr(JITCompiler::Address(baseGPR, JSObject::offsetOfPropertyStorage()), resultGPR);
+        JITCompiler::DataLabelCompact loadWithPatch = m_jit.loadPtrWithCompactAddressOffsetPatch(JITCompiler::Address(resultGPR, 0), resultGPR);
+
+        intptr_t checkToCall = m_jit.differenceBetween(structureToCompare, functionCall);
+        intptr_t callToLoad = m_jit.differenceBetween(functionCall, loadWithPatch);
+
+        handledByC.link(&m_jit);
+
+        m_jit.addPropertyAccess(functionCall, checkToCall, callToLoad);
+
+        jsValueResult(resultGPR, m_compileIndex);
         break;
     }
 

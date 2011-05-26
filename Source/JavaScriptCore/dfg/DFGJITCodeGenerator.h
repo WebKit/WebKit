@@ -161,7 +161,8 @@ protected:
     void silentSpillGPR(VirtualRegister spillMe, GPRReg exclude = InvalidGPRReg)
     {
         GenerationInfo& info = m_generationInfo[spillMe];
-        ASSERT(info.registerFormat() != DataFormatNone && info.registerFormat() != DataFormatDouble);
+        ASSERT(info.registerFormat() != DataFormatNone);
+        ASSERT(info.registerFormat() != DataFormatDouble);
 
         if (!info.needsSpill() || (info.gpr() == exclude))
             return;
@@ -196,7 +197,8 @@ protected:
 
         NodeIndex nodeIndex = info.nodeIndex();
         Node& node = m_jit.graph()[nodeIndex];
-        ASSERT(info.registerFormat() != DataFormatNone && info.registerFormat() != DataFormatDouble);
+        ASSERT(info.registerFormat() != DataFormatNone);
+        ASSERT(info.registerFormat() != DataFormatDouble);
         DataFormat registerFormat = info.registerFormat();
 
         if (registerFormat == DataFormatInteger) {
@@ -793,9 +795,9 @@ protected:
         m_jit.moveDouble(FPRInfo::returnValueFPR, result);
     }
 
-    void appendCallWithExceptionCheck(const FunctionPtr& function)
+    JITCompiler::Call appendCallWithExceptionCheck(const FunctionPtr& function)
     {
-        m_jit.appendCallWithExceptionCheck(function, m_jit.graph()[m_compileIndex].exceptionInfo);
+        return m_jit.appendCallWithExceptionCheck(function, m_jit.graph()[m_compileIndex].exceptionInfo);
     }
 
     void addBranch(const MacroAssembler::Jump& jump, BlockIndex destination)

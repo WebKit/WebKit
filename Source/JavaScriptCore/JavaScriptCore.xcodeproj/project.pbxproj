@@ -283,6 +283,8 @@
 		86B99AB9117E391E00DF5A90 /* RopeImpl.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B99AB7117E391E00DF5A90 /* RopeImpl.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86B99AE3117E578100DF5A90 /* StringBuffer.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B99AE1117E578100DF5A90 /* StringBuffer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		86B99AE4117E578100DF5A90 /* StringImplBase.h in Headers */ = {isa = PBXBuildFile; fileRef = 86B99AE2117E578100DF5A90 /* StringImplBase.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		86BB09C0138E381B0056702F /* DFGRepatch.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86BB09BE138E381B0056702F /* DFGRepatch.cpp */; };
+		86BB09C1138E381B0056702F /* DFGRepatch.h in Headers */ = {isa = PBXBuildFile; fileRef = 86BB09BF138E381B0056702F /* DFGRepatch.h */; };
 		86C36EEA0EE1289D00B3DF59 /* MacroAssembler.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */; };
 		86C568E011A213EE0007F7F0 /* MacroAssemblerARM.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 86C568DD11A213EE0007F7F0 /* MacroAssemblerARM.cpp */; };
 		86C568E111A213EE0007F7F0 /* MacroAssemblerMIPS.h in Headers */ = {isa = PBXBuildFile; fileRef = 86C568DE11A213EE0007F7F0 /* MacroAssemblerMIPS.h */; };
@@ -964,6 +966,8 @@
 		86B99AB7117E391E00DF5A90 /* RopeImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RopeImpl.h; sourceTree = "<group>"; };
 		86B99AE1117E578100DF5A90 /* StringBuffer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringBuffer.h; path = text/StringBuffer.h; sourceTree = "<group>"; };
 		86B99AE2117E578100DF5A90 /* StringImplBase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = StringImplBase.h; path = text/StringImplBase.h; sourceTree = "<group>"; };
+		86BB09BE138E381B0056702F /* DFGRepatch.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = DFGRepatch.cpp; path = dfg/DFGRepatch.cpp; sourceTree = "<group>"; };
+		86BB09BF138E381B0056702F /* DFGRepatch.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = DFGRepatch.h; path = dfg/DFGRepatch.h; sourceTree = "<group>"; };
 		86C36EE90EE1289D00B3DF59 /* MacroAssembler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssembler.h; sourceTree = "<group>"; };
 		86C568DD11A213EE0007F7F0 /* MacroAssemblerARM.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MacroAssemblerARM.cpp; sourceTree = "<group>"; };
 		86C568DE11A213EE0007F7F0 /* MacroAssemblerMIPS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MacroAssemblerMIPS.h; sourceTree = "<group>"; };
@@ -2060,6 +2064,8 @@
 				86EC9DBF1328DF82002B2AD7 /* DFGOperations.cpp */,
 				86EC9DC01328DF82002B2AD7 /* DFGOperations.h */,
 				86EC9DC11328DF82002B2AD7 /* DFGRegisterBank.h */,
+				86BB09BE138E381B0056702F /* DFGRepatch.cpp */,
+				86BB09BF138E381B0056702F /* DFGRepatch.h */,
 				86ECA3F9132DF25A002B2AD7 /* DFGScoreBoard.h */,
 				86EC9DC21328DF82002B2AD7 /* DFGSpeculativeJIT.cpp */,
 				86EC9DC31328DF82002B2AD7 /* DFGSpeculativeJIT.h */,
@@ -2540,6 +2546,7 @@
 				7934BB7F1361979400CB99A1 /* ParallelJobsOpenMP.h in Headers */,
 				651DCA04136A6FEF00F74194 /* PassTraits.h in Headers */,
 				14F97447138C853E00DA1C67 /* HeapRootVisitor.h in Headers */,
+				86BB09C1138E381B0056702F /* DFGRepatch.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2986,6 +2993,7 @@
 				142D6F1113539A4100B02E86 /* MarkStack.cpp in Sources */,
 				86AE64A8135E5E1C00963012 /* MacroAssemblerSH4.cpp in Sources */,
 				7934BB7C1361979400CB99A1 /* ParallelJobsGeneric.cpp in Sources */,
+				86BB09C0138E381B0056702F /* DFGRepatch.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
