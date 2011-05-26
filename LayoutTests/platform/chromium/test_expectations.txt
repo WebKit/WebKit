@@ -4142,4 +4142,4 @@ BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-dy-prop.html = IMAGE
 BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-x-prop.html = IMAGE
 BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-y-prop.html = IMAGE
 
-BUGWK61486 : http/tests/misc/drag-not-loaded-image.html = CRASH
+BUGWK61486 DEBUG : http/tests/misc/drag-not-loaded-image.html = CRASH
