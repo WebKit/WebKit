@@ -1076,57 +1076,30 @@ inline int adjustForAbsoluteZoom(int value, RenderObject* renderer)
     return adjustForAbsoluteZoom(value, renderer->style());
 }
 
-inline FloatPoint adjustFloatPointForAbsoluteZoom(const FloatPoint& point, RenderObject* renderer)
-{
-    // The result here is in floats, so we don't need the truncation hack from the integer version above.
-    float zoomFactor = renderer->style()->effectiveZoom();
-    if (zoomFactor == 1)
-        return point;
-    return FloatPoint(point.x() / zoomFactor, point.y() / zoomFactor);
-}
-
 inline void adjustFloatQuadForAbsoluteZoom(FloatQuad& quad, RenderObject* renderer)
 {
-    quad.setP1(adjustFloatPointForAbsoluteZoom(quad.p1(), renderer));
-    quad.setP2(adjustFloatPointForAbsoluteZoom(quad.p2(), renderer));
-    quad.setP3(adjustFloatPointForAbsoluteZoom(quad.p3(), renderer));
-    quad.setP4(adjustFloatPointForAbsoluteZoom(quad.p4(), renderer));
+    float zoom = renderer->style()->effectiveZoom();
+    if (zoom != 1)
+        quad.scale(1 / zoom, 1 / zoom);
 }
 
 inline void adjustFloatRectForAbsoluteZoom(FloatRect& rect, RenderObject* renderer)
 {
-    RenderStyle* style = renderer->style();
-    rect.setX(adjustFloatForAbsoluteZoom(rect.x(), style));
-    rect.setY(adjustFloatForAbsoluteZoom(rect.y(), style));
-    rect.setWidth(adjustFloatForAbsoluteZoom(rect.width(), style));
-    rect.setHeight(adjustFloatForAbsoluteZoom(rect.height(), style));
-}
-
-inline FloatPoint adjustFloatPointForPageScale(const FloatPoint& point, float pageScale)
-{
-    if (pageScale == 1)
-        return point;
-    return FloatPoint(point.x() / pageScale, point.y() / pageScale);
+    float zoom = renderer->style()->effectiveZoom();
+    if (zoom != 1)
+        rect.scale(1 / zoom, 1 / zoom);
 }
 
 inline void adjustFloatQuadForPageScale(FloatQuad& quad, float pageScale)
 {
-    if (pageScale == 1)
-        return;
-    quad.setP1(adjustFloatPointForPageScale(quad.p1(), pageScale));
-    quad.setP2(adjustFloatPointForPageScale(quad.p2(), pageScale));
-    quad.setP3(adjustFloatPointForPageScale(quad.p3(), pageScale));
-    quad.setP4(adjustFloatPointForPageScale(quad.p4(), pageScale));
+    if (pageScale != 1)
+        quad.scale(1 / pageScale, 1 / pageScale);
 }
 
 inline void adjustFloatRectForPageScale(FloatRect& rect, float pageScale)
 {
-    if (pageScale == 1)
-        return;
-    rect.setX(rect.x() / pageScale);
-    rect.setY(rect.y() / pageScale);
-    rect.setWidth(rect.width() / pageScale);
-    rect.setHeight(rect.height() / pageScale);
+    if (pageScale != 1)
+        rect.scale(1 / pageScale, 1 / pageScale);
 }
 
 } // namespace WebCore

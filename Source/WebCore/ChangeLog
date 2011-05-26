@@ -1,3 +1,20 @@
+2011-05-26  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Change RenderObject to use FloatPoint::scale and FloatQuad::scale
+        https://bugs.webkit.org/show_bug.cgi?id=61497
+
+        Covered by existing test.
+
+        * platform/graphics/FloatQuad.h:
+        (WebCore::FloatQuad::scale):
+        * rendering/RenderObject.h:
+        (WebCore::adjustFloatQuadForAbsoluteZoom):
+        (WebCore::adjustFloatRectForAbsoluteZoom):
+        (WebCore::adjustFloatQuadForPageScale):
+        (WebCore::adjustFloatRectForPageScale):
+
 2011-05-26  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed build fix for Qt and QuickTime backend.

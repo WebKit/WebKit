@@ -110,6 +110,14 @@ public:
         m_p4.move(dx, dy);
     }
 
+    void scale(float dx, float dy)
+    {
+        m_p1.scale(dx, dy);
+        m_p2.scale(dx, dy);
+        m_p3.scale(dx, dy);
+        m_p4.scale(dx, dy);
+    }
+
 private:
     FloatPoint m_p1;
     FloatPoint m_p2;
