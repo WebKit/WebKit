@@ -16,5 +16,7 @@
 	<string>WebKit2WebProcess</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleAllowMixedLocalizations</key>
+	<string>YES</string>
 </dict>
 </plist>

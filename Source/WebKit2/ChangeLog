@@ -4,6 +4,35 @@
 
         WebKit2 bundle missing localization subdirectories
         https://bugs.webkit.org/show_bug.cgi?id=61512
+        
+        Better fix for this. We just need to specify CFBundleAllowMixedLocalizations.
+
+        * win/WebKit2WebProcess.resources/English.lproj: Removed.
+        * win/WebKit2WebProcess.resources/Info.plist:
+        * win/WebKit2WebProcess.resources/da.lproj: Removed.
+        * win/WebKit2WebProcess.resources/de.lproj: Removed.
+        * win/WebKit2WebProcess.resources/es.lproj: Removed.
+        * win/WebKit2WebProcess.resources/fi.lproj: Removed.
+        * win/WebKit2WebProcess.resources/fr.lproj: Removed.
+        * win/WebKit2WebProcess.resources/it.lproj: Removed.
+        * win/WebKit2WebProcess.resources/ja.lproj: Removed.
+        * win/WebKit2WebProcess.resources/ko.lproj: Removed.
+        * win/WebKit2WebProcess.resources/nb.lproj: Removed.
+        * win/WebKit2WebProcess.resources/nl.lproj: Removed.
+        * win/WebKit2WebProcess.resources/pl.lproj: Removed.
+        * win/WebKit2WebProcess.resources/pt.lproj: Removed.
+        * win/WebKit2WebProcess.resources/pt_PT.lproj: Removed.
+        * win/WebKit2WebProcess.resources/ru.lproj: Removed.
+        * win/WebKit2WebProcess.resources/sv.lproj: Removed.
+        * win/WebKit2WebProcess.resources/zh_CN.lproj: Removed.
+        * win/WebKit2WebProcess.resources/zh_TW.lproj: Removed.
+
+2011-05-26  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2 bundle missing localization subdirectories
+        https://bugs.webkit.org/show_bug.cgi?id=61512
         <rdar://problem/9498607>
         
         These lproj directories are intentionally left empty.
