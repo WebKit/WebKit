@@ -9,6 +9,66 @@
 
         Reviewed by Sam Weinig.
 
+        Bug 61503 - Move population of CodeBlock::m_structureStubInfos into JIT
+
+        This data structure, used at runtime by the JIT, is currently unnecessarily populated
+        with default entries during byte compilation.
+
+        Aside from meaning that there is JIT specific code in the bytecompiler, this also ties
+        us to one entry per corresponding bytecode op, which may be undesirable. Instead,
+        populate this array from the JIT.
+
+        The type StructureStubInfo has two unused states, one for gets & one for puts. Unify
+        these, so that the class can have a default constructor (and to simply switch statements
+        in code walking over the table).
+
+        This change has ramification for the DFG JIT, in that the DFG JIT used this datastructure
+        to check for functions containing property access. Instead do so in the DFGByteCodeParser.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::printStructureStubInfo):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::setNumberOfStructureStubInfos):
+        (JSC::CodeBlock::numberOfStructureStubInfos):
+        * bytecode/StructureStubInfo.cpp:
+        (JSC::StructureStubInfo::deref):
+        (JSC::StructureStubInfo::visitAggregate):
+        * bytecode/StructureStubInfo.h:
+        (JSC::StructureStubInfo::StructureStubInfo):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::emitGetById):
+        (JSC::BytecodeGenerator::emitPutById):
+        (JSC::BytecodeGenerator::emitDirectPutById):
+        * dfg/DFGByteCodeParser.cpp:
+        (JSC::DFG::ByteCodeParser::parseBlock):
+        * jit/JIT.cpp:
+        (JSC::JIT::JIT):
+        (JSC::JIT::privateCompileMainPass):
+        (JSC::JIT::privateCompileSlowCases):
+        (JSC::JIT::privateCompile):
+        * jit/JIT.h:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_by_id):
+        (JSC::JIT::emitSlow_op_get_by_id):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::emitSlow_op_put_by_id):
+        (JSC::JIT::emit_op_method_check):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::compileGetByIdSlowCase):
+        * runtime/Executable.cpp:
+        (JSC::tryDFGCompile):
+
+2011-05-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Bug 61501 - Unify AbstractMacroAssembler::differenceBetween methods.
 
         * assembler/AbstractMacroAssembler.h:

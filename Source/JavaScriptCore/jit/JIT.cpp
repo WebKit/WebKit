@@ -74,7 +74,6 @@ JIT::JIT(JSGlobalData* globalData, CodeBlock* codeBlock)
     , m_globalData(globalData)
     , m_codeBlock(codeBlock)
     , m_labels(codeBlock ? codeBlock->instructions().size() : 0)
-    , m_propertyAccessCompilationInfo(codeBlock ? codeBlock->numberOfStructureStubInfos() : 0)
     , m_callStructureStubCompilationInfo(codeBlock ? codeBlock->numberOfCallLinkInfos() : 0)
     , m_bytecodeOffset((unsigned)-1)
 #if USE(JSVALUE32_64)
@@ -175,7 +174,6 @@ void JIT::privateCompileMainPass()
     Instruction* instructionsBegin = m_codeBlock->instructions().begin();
     unsigned instructionCount = m_codeBlock->instructions().size();
 
-    m_propertyAccessInstructionIndex = 0;
     m_globalResolveInfoIndex = 0;
     m_callLinkInfoIndex = 0;
 
@@ -348,7 +346,6 @@ void JIT::privateCompileMainPass()
         }
     }
 
-    ASSERT(m_propertyAccessInstructionIndex == m_codeBlock->numberOfStructureStubInfos());
     ASSERT(m_callLinkInfoIndex == m_codeBlock->numberOfCallLinkInfos());
 
 #ifndef NDEBUG
@@ -452,7 +449,7 @@ void JIT::privateCompileSlowCases()
     }
 
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-    ASSERT(m_propertyAccessInstructionIndex == m_codeBlock->numberOfStructureStubInfos());
+    ASSERT(m_propertyAccessInstructionIndex == m_propertyAccessCompilationInfo.size());
 #endif
     ASSERT(m_callLinkInfoIndex == m_codeBlock->numberOfCallLinkInfos());
 
@@ -573,7 +570,8 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
         patchBuffer.patch(iter->storeLocation, patchBuffer.locationOf(iter->target).executableAddress());
 
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-    for (unsigned i = 0; i < m_codeBlock->numberOfStructureStubInfos(); ++i) {
+    m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccessCompilationInfo.size());
+    for (unsigned i = 0; i < m_propertyAccessCompilationInfo.size(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
         info.callReturnLocation = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].hotPathBegin);

@@ -570,7 +570,7 @@ namespace JSC {
 #endif
 
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-        void compileGetByIdHotPath(int resultVReg, int baseVReg, Identifier* ident, unsigned propertyAccessInstructionIndex);
+        void compileGetByIdHotPath(int baseVReg, Identifier*);
         void compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident, Vector<SlowCaseEntry>::iterator& iter, bool isMethodCheck = false);
 #endif
         void compileGetDirectOffset(RegisterID base, RegisterID result, Structure* structure, size_t cachedOffset);

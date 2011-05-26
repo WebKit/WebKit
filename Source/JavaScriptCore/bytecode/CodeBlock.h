@@ -353,12 +353,8 @@ namespace JSC {
         bool hasGlobalResolveInstructionAtBytecodeOffset(unsigned bytecodeOffset);
 #endif
 #if ENABLE(JIT)
+        void setNumberOfStructureStubInfos(size_t size) { m_structureStubInfos.grow(size); }
         size_t numberOfStructureStubInfos() const { return m_structureStubInfos.size(); }
-        void addStructureStubInfo(const StructureStubInfo& stubInfo)
-        {
-            if (m_globalData->canUseJIT())
-                m_structureStubInfos.append(stubInfo);
-        }
         StructureStubInfo& structureStubInfo(int index) { return m_structureStubInfos[index]; }
 
         void addGlobalResolveInfo(unsigned globalResolveInstruction)

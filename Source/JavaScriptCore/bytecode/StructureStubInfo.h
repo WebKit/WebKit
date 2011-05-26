@@ -43,8 +43,7 @@ namespace JSC {
         access_get_by_id_proto_list,
         access_put_by_id_transition,
         access_put_by_id_replace,
-        access_get_by_id,
-        access_put_by_id,
+        access_unset,
         access_get_by_id_generic,
         access_put_by_id_generic,
         access_get_array_length,
@@ -52,8 +51,8 @@ namespace JSC {
     };
 
     struct StructureStubInfo {
-        StructureStubInfo(AccessType accessType)
-            : accessType(accessType)
+        StructureStubInfo()
+            : accessType(access_unset)
             , seen(false)
         {
         }

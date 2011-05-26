@@ -252,11 +252,8 @@ static void printStructureStubInfo(const StructureStubInfo& stubInfo, unsigned i
     case access_put_by_id_replace:
         printf("  [%4d] %s: %s\n", instructionOffset, "put_by_id_replace", pointerToSourceString(stubInfo.u.putByIdReplace.baseObjectStructure).utf8().data());
         return;
-    case access_get_by_id:
-        printf("  [%4d] %s\n", instructionOffset, "get_by_id");
-        return;
-    case access_put_by_id:
-        printf("  [%4d] %s\n", instructionOffset, "put_by_id");
+    case access_unset:
+        printf("  [%4d] %s\n", instructionOffset, "unset");
         return;
     case access_get_by_id_generic:
         printf("  [%4d] %s\n", instructionOffset, "op_get_by_id_generic");

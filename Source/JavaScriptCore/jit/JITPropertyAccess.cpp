@@ -278,8 +278,6 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
     stubCall.addArgument(regT0);
     stubCall.addArgument(TrustedImmPtr(ident));
     stubCall.call(resultVReg);
-
-    m_propertyAccessInstructionIndex++;
 }
 
 void JIT::emitSlow_op_get_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&)
@@ -301,8 +299,6 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     stubCall.addArgument(TrustedImmPtr(ident));
     stubCall.addArgument(regT1);
     stubCall.call();
-
-    m_propertyAccessInstructionIndex++;
 }
 
 void JIT::emitSlow_op_put_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&)
@@ -329,7 +325,7 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
     emitGetVirtualRegister(baseVReg, regT0);
 
     // Do the method check - check the object & its prototype's structure inline (this is the common case).
-    m_methodCallCompilationInfo.append(MethodCallCompilationInfo(m_propertyAccessInstructionIndex));
+    m_methodCallCompilationInfo.append(MethodCallCompilationInfo(m_propertyAccessCompilationInfo.size()));
     MethodCallCompilationInfo& info = m_methodCallCompilationInfo.last();
 
     Jump notCell = emitJumpIfNotJSCell(regT0);
@@ -358,7 +354,7 @@ void JIT::emit_op_method_check(Instruction* currentInstruction)
 
     // Do a regular(ish) get_by_id (the slow case will be link to
     // cti_op_get_by_id_method_check instead of cti_op_get_by_id.
-    compileGetByIdHotPath(resultVReg, baseVReg, ident, m_propertyAccessInstructionIndex++);
+    compileGetByIdHotPath(baseVReg, ident);
 
     match.link(this);
     emitPutVirtualRegister(resultVReg);
@@ -395,11 +391,11 @@ void JIT::emit_op_get_by_id(Instruction* currentInstruction)
     Identifier* ident = &(m_codeBlock->identifier(currentInstruction[3].u.operand));
 
     emitGetVirtualRegister(baseVReg, regT0);
-    compileGetByIdHotPath(resultVReg, baseVReg, ident, m_propertyAccessInstructionIndex++);
+    compileGetByIdHotPath(baseVReg, ident);
     emitPutVirtualRegister(resultVReg);
 }
 
-void JIT::compileGetByIdHotPath(int, int baseVReg, Identifier*, unsigned propertyAccessInstructionIndex)
+void JIT::compileGetByIdHotPath(int baseVReg, Identifier*)
 {
     // As for put_by_id, get_by_id requires the offset of the Structure and the offset of the access to be patched.
     // Additionally, for get_by_id we need patch the offset of the branch to the slow case (we patch this to jump
@@ -411,7 +407,8 @@ void JIT::compileGetByIdHotPath(int, int baseVReg, Identifier*, unsigned propert
     BEGIN_UNINTERRUPTED_SEQUENCE(sequenceGetByIdHotPath);
 
     Label hotPathBegin(this);
-    m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].hotPathBegin = hotPathBegin;
+    m_propertyAccessCompilationInfo.append(PropertyStubCompilationInfo());
+    m_propertyAccessCompilationInfo.last().hotPathBegin = hotPathBegin;
 
     DataLabelPtr structureToCompare;
     Jump structureCheck = branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure)));
@@ -465,16 +462,13 @@ void JIT::compileGetByIdSlowCase(int resultVReg, int baseVReg, Identifier* ident
     ASSERT_JIT_OFFSET(differenceBetween(coldPathBegin, call), patchOffsetGetByIdSlowCaseCall);
 
     // Track the location of the call; this will be used to recover patch information.
-    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex].callReturnLocation = call;
-    m_propertyAccessInstructionIndex++;
+    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].callReturnLocation = call;
 }
 
 void JIT::emit_op_put_by_id(Instruction* currentInstruction)
 {
     unsigned baseVReg = currentInstruction[1].u.operand;
     unsigned valueVReg = currentInstruction[3].u.operand;
-
-    unsigned propertyAccessInstructionIndex = m_propertyAccessInstructionIndex++;
 
     // In order to be able to patch both the Structure, and the object offset, we store one pointer,
     // to just after the arguments have been loaded into registers 'hotPathBegin', and we generate code
@@ -488,7 +482,8 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     BEGIN_UNINTERRUPTED_SEQUENCE(sequencePutById);
 
     Label hotPathBegin(this);
-    m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].hotPathBegin = hotPathBegin;
+    m_propertyAccessCompilationInfo.append(PropertyStubCompilationInfo());
+    m_propertyAccessCompilationInfo.last().hotPathBegin = hotPathBegin;
 
     // It is important that the following instruction plants a 32bit immediate, in order that it can be patched over.
     DataLabelPtr structureToCompare;
@@ -509,8 +504,6 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
     Identifier* ident = &(m_codeBlock->identifier(currentInstruction[2].u.operand));
     unsigned direct = currentInstruction[8].u.operand;
 
-    unsigned propertyAccessInstructionIndex = m_propertyAccessInstructionIndex++;
-
     linkSlowCaseIfNotJSCell(iter, baseVReg);
     linkSlowCase(iter);
 
@@ -521,7 +514,7 @@ void JIT::emitSlow_op_put_by_id(Instruction* currentInstruction, Vector<SlowCase
     Call call = stubCall.call();
 
     // Track the location of the call; this will be used to recover patch information.
-    m_propertyAccessCompilationInfo[propertyAccessInstructionIndex].callReturnLocation = call;
+    m_propertyAccessCompilationInfo[m_propertyAccessInstructionIndex++].callReturnLocation = call;
 }
 
 // Compile a store into an object's property storage.  May overwrite the

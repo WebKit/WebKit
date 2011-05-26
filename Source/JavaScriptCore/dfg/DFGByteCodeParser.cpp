@@ -36,9 +36,12 @@ namespace JSC { namespace DFG {
 
 #if ENABLE(DFG_JIT_RESTRICTIONS)
 // FIXME: Temporarily disable arithmetic, until we fix associated performance regressions.
+// FIXME: temporarily disable property accesses until we fix regressions.
 #define ARITHMETIC_OP() m_parseFailed = true
+#define PROPERTY_ACCESS_OP() m_parseFailed = true
 #else
 #define ARITHMETIC_OP() ((void)0)
+#define PROPERTY_ACCESS_OP() ((void)0)
 #endif
 
 // === ByteCodeParser ===
@@ -862,6 +865,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_get_by_id: {
+            PROPERTY_ACCESS_OP();
             NodeIndex base = get(currentInstruction[2].u.operand);
             unsigned identifier = currentInstruction[3].u.operand;
 
@@ -873,6 +877,7 @@ bool ByteCodeParser::parseBlock(unsigned limit)
         }
 
         case op_put_by_id: {
+            PROPERTY_ACCESS_OP();
             NodeIndex value = get(currentInstruction[3].u.operand);
             NodeIndex base = get(currentInstruction[1].u.operand);
             unsigned identifier = currentInstruction[2].u.operand;

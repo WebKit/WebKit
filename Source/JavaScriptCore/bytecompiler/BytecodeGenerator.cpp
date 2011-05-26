@@ -1387,10 +1387,6 @@ void BytecodeGenerator::emitMethodCheck()
 
 RegisterID* BytecodeGenerator::emitGetById(RegisterID* dst, RegisterID* base, const Identifier& property)
 {
-#if ENABLE(JIT)
-    m_codeBlock->addStructureStubInfo(StructureStubInfo(access_get_by_id));
-#endif
-    
 #if ENABLE(INTERPRETER)
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 #endif
@@ -1418,9 +1414,6 @@ RegisterID* BytecodeGenerator::emitGetArgumentsLength(RegisterID* dst, RegisterI
 
 RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& property, RegisterID* value)
 {
-#if ENABLE(JIT)
-    m_codeBlock->addStructureStubInfo(StructureStubInfo(access_put_by_id));
-#endif
 #if ENABLE(INTERPRETER)
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 #endif
@@ -1439,9 +1432,6 @@ RegisterID* BytecodeGenerator::emitPutById(RegisterID* base, const Identifier& p
 
 RegisterID* BytecodeGenerator::emitDirectPutById(RegisterID* base, const Identifier& property, RegisterID* value)
 {
-#if ENABLE(JIT)
-    m_codeBlock->addStructureStubInfo(StructureStubInfo(access_put_by_id));
-#endif
 #if ENABLE(INTERPRETER)
     m_codeBlock->addPropertyAccessInstruction(instructions().size());
 #endif

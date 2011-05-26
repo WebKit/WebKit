@@ -232,8 +232,7 @@ static bool tryDFGCompile(JSGlobalData* globalData, CodeBlock* codeBlock, JITCod
 #if ENABLE(DFG_JIT)
 #if ENABLE(DFG_JIT_RESTRICTIONS)
     // FIXME: No flow control yet supported, don't bother scanning the bytecode if there are any jump targets.
-    // FIXME: temporarily disable property accesses until we fix regressions.
-    if (codeBlock->numberOfJumpTargets() || codeBlock->numberOfStructureStubInfos())
+    if (codeBlock->numberOfJumpTargets())
         return false;
 #endif
 
