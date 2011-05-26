@@ -4146,6 +4146,3 @@ BUGCR84031 MAC LINUX : storage/domstorage/sessionstorage/delete-removal.html = T
 BUGCR84032 WIN : fast/dom/object-plugin-hides-properties.html = TIMEOUT PASS
 
 BUGWK61533 LINUX : inspector/profiler/cpu-profiler-profiling.html = CRASH PASS
-
-// New test added in r87387
-BUGCR84052 WIN LINUX : fast/borders/border-antialiasing.html = IMAGE+TEXT
