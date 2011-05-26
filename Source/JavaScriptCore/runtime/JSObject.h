@@ -245,7 +245,8 @@ namespace JSC {
         }
 
         static size_t offsetOfInlineStorage();
-        
+        static size_t offsetOfPropertyStorage();
+
         static JS_EXPORTDATA const ClassInfo s_info;
 
     protected:
@@ -379,6 +380,11 @@ inline size_t JSObject::offsetOfInlineStorage()
 {
     ASSERT(OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage) == OBJECT_OFFSETOF(JSNonFinalObject, m_inlineStorage));
     return OBJECT_OFFSETOF(JSFinalObject, m_inlineStorage);
+}
+
+inline size_t JSObject::offsetOfPropertyStorage()
+{
+    return OBJECT_OFFSETOF(JSObject, m_propertyStorage);
 }
 
 inline JSObject* constructEmptyObject(ExecState* exec, Structure* structure)

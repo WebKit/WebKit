@@ -434,7 +434,7 @@ void JIT::compileGetByIdHotPath()
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureToCompare), patchOffsetGetByIdStructure);
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureCheck), patchOffsetGetByIdBranchToSlowCase);
     
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), regT2);
+    loadPtr(Address(regT0, JSObject::offsetOfPropertyStorage()), regT2);
     DataLabelCompact displacementLabel1 = loadPtrWithCompactAddressOffsetPatch(Address(regT2, patchGetByIdDefaultOffset), regT0); // payload
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, displacementLabel1), patchOffsetGetByIdPropertyMapOffset1);
     DataLabelCompact displacementLabel2 = loadPtrWithCompactAddressOffsetPatch(Address(regT2, patchGetByIdDefaultOffset), regT1); // tag
@@ -508,7 +508,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     addSlowCase(branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure))));
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureToCompare), patchOffsetPutByIdStructure);
     
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), regT0);
+    loadPtr(Address(regT0, JSObject::offsetOfPropertyStorage()), regT0);
     DataLabel32 displacementLabel1 = storePtrWithAddressOffsetPatch(regT2, Address(regT0, patchPutByIdDefaultOffset)); // payload
     DataLabel32 displacementLabel2 = storePtrWithAddressOffsetPatch(regT3, Address(regT0, patchPutByIdDefaultOffset)); // tag
     
@@ -545,7 +545,7 @@ void JIT::compilePutDirectOffset(RegisterID base, RegisterID valueTag, RegisterI
     if (structure->isUsingInlineStorage())
         offset += JSObject::offsetOfInlineStorage() /  sizeof(Register);
     else
-        loadPtr(Address(base, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), base);
+        loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), base);
     emitStore(offset, valueTag, valuePayload, base);
 }
 
@@ -558,7 +558,7 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID resultTag, Register
         emitLoad(offset, resultTag, resultPayload, base);
     } else {
         RegisterID temp = resultPayload;
-        loadPtr(Address(base, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), temp);
+        loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), temp);
         emitLoad(offset, resultTag, resultPayload, temp);
     }
 }
@@ -1055,7 +1055,7 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID resultTag, Register
 {
     ASSERT(sizeof(JSValue) == 8);
     
-    loadPtr(Address(base, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), base);
+    loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), base);
     loadPtr(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), resultPayload);
     loadPtr(BaseIndex(base, offset, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), resultTag);
 }

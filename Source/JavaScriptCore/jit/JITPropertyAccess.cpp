@@ -140,7 +140,7 @@ void JIT::emitSlow_op_get_by_val(Instruction* currentInstruction, Vector<SlowCas
 
 void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, RegisterID offset, RegisterID scratch)
 {
-    loadPtr(Address(base, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), scratch);
+    loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), scratch);
     loadPtr(BaseIndex(scratch, offset, ScalePtr, 0), result);
 }
 
@@ -419,7 +419,7 @@ void JIT::compileGetByIdHotPath(int, int baseVReg, Identifier*, unsigned propert
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureToCompare), patchOffsetGetByIdStructure);
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureCheck), patchOffsetGetByIdBranchToSlowCase)
 
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), regT0);
+    loadPtr(Address(regT0, JSObject::offsetOfPropertyStorage()), regT0);
     DataLabelCompact displacementLabel = loadPtrWithCompactAddressOffsetPatch(Address(regT0, patchGetByIdDefaultOffset), regT0);
     ASSERT_JIT_OFFSET_UNUSED(displacementLabel, differenceBetween(hotPathBegin, displacementLabel), patchOffsetGetByIdPropertyMapOffset);
 
@@ -495,7 +495,7 @@ void JIT::emit_op_put_by_id(Instruction* currentInstruction)
     addSlowCase(branchPtrWithPatch(NotEqual, Address(regT0, JSCell::structureOffset()), structureToCompare, TrustedImmPtr(reinterpret_cast<void*>(patchGetByIdDefaultStructure))));
     ASSERT_JIT_OFFSET(differenceBetween(hotPathBegin, structureToCompare), patchOffsetPutByIdStructure);
 
-    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), regT0);
+    loadPtr(Address(regT0, JSObject::offsetOfPropertyStorage()), regT0);
     DataLabel32 displacementLabel = storePtrWithAddressOffsetPatch(regT1, Address(regT0, patchPutByIdDefaultOffset));
 
     END_UNINTERRUPTED_SEQUENCE(sequencePutById);
@@ -532,7 +532,7 @@ void JIT::compilePutDirectOffset(RegisterID base, RegisterID value, Structure* s
     if (structure->isUsingInlineStorage())
         offset += JSObject::offsetOfInlineStorage();
     else
-        loadPtr(Address(base, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), base);
+        loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), base);
     storePtr(value, Address(base, offset));
 }
 
@@ -544,7 +544,7 @@ void JIT::compileGetDirectOffset(RegisterID base, RegisterID result, Structure* 
         offset += JSObject::offsetOfInlineStorage();
         loadPtr(Address(base, offset), result);
     } else {
-        loadPtr(Address(base, OBJECT_OFFSETOF(JSObject, m_propertyStorage)), result);
+        loadPtr(Address(base, JSObject::offsetOfPropertyStorage()), result);
         loadPtr(Address(result, offset), result);
     }
 }

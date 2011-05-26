@@ -1,3 +1,23 @@
+2011-05-25  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61500
+        Add JSObject::offsetOfPropertyStorage
+
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::compileGetDirectOffset):
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::compilePutDirectOffset):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::compileGetByIdHotPath):
+        (JSC::JIT::emit_op_put_by_id):
+        (JSC::JIT::compilePutDirectOffset):
+        (JSC::JIT::compileGetDirectOffset):
+        * runtime/JSObject.h:
+        (JSC::JSObject::offsetOfPropertyStorage):
+
 2011-05-25  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
