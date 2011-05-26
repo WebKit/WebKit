@@ -43,14 +43,22 @@ WebInspector.ResourceView.prototype = {
 
 WebInspector.ResourceView.prototype.__proto__ = WebInspector.View.prototype;
 
-WebInspector.ResourceView.createResourceView = function(resource)
+WebInspector.ResourceView.hasTextContent = function(resource)
 {
     switch (resource.category) {
     case WebInspector.resourceCategories.documents:
     case WebInspector.resourceCategories.scripts:
     case WebInspector.resourceCategories.xhr:
     case WebInspector.resourceCategories.stylesheets:
-        return new WebInspector.ResourceSourceFrame(resource);
+        return true;
+    default:
+        return false;
+    }
+}
+
+WebInspector.ResourceView.nonSourceViewForResource = function(resource)
+{
+    switch (resource.category) {
     case WebInspector.resourceCategories.images:
         return new WebInspector.ImageView(resource);
     case WebInspector.resourceCategories.fonts:
@@ -60,65 +68,9 @@ WebInspector.ResourceView.createResourceView = function(resource)
     }
 }
 
-WebInspector.ResourceView.resourceViewTypeMatchesResource = function(resource)
-{
-    var resourceView = resource._resourceView;
-    switch (resource.category) {
-    case WebInspector.resourceCategories.documents:
-    case WebInspector.resourceCategories.scripts:
-    case WebInspector.resourceCategories.xhr:
-    case WebInspector.resourceCategories.stylesheets:
-        return resourceView.__proto__ === WebInspector.ResourceSourceFrame.prototype;
-    case WebInspector.resourceCategories.images:
-        return resourceView.__proto__ === WebInspector.ImageView.prototype;
-    case WebInspector.resourceCategories.fonts:
-        return resourceView.__proto__ === WebInspector.FontView.prototype;
-    default:
-        return resourceView.__proto__ === WebInspector.ResourceView.prototype;
-    }
-}
-
-WebInspector.ResourceView.resourceViewForResource = function(resource)
-{
-    if (!resource)
-        return null;
-    if (!resource._resourceView)
-        resource._resourceView = WebInspector.ResourceView.createResourceView(resource);
-    return resource._resourceView;
-}
-
-WebInspector.ResourceView.recreateResourceView = function(resource)
-{
-    var newView = WebInspector.ResourceView.createResourceView(resource);
-
-    var oldView = resource._resourceView;
-    var oldViewParentNode = oldView.visible ? oldView.element.parentNode : null;
-    var scrollTop = oldView.scrollTop;
-
-    resource._resourceView.detach();
-    delete resource._resourceView;
-
-    resource._resourceView = newView;
-
-    if (oldViewParentNode)
-        newView.show(oldViewParentNode);
-    if (scrollTop)
-        newView.scrollTop = scrollTop;
-
-    return newView;
-}
-
-WebInspector.ResourceView.existingResourceViewForResource = function(resource)
-{
-    if (!resource)
-        return null;
-    return resource._resourceView;
-}
-
-
 WebInspector.ResourceSourceFrame = function(resource)
 {
-    WebInspector.SourceFrame.call(this, new WebInspector.SourceFrameDelegate(), resource.url);
+    WebInspector.SourceFrame.call(this, new WebInspector.SourceFrameDelegate(resource), resource.url);
     this._resource = resource;
 }
 
@@ -130,15 +82,44 @@ WebInspector.ResourceSourceFrame.DefaultMIMETypeForResourceType = {
     4: "text/javascript"
 }
 
+WebInspector.ResourceSourceFrame.mimeTypeForResource = function(resource) {
+    return WebInspector.ResourceSourceFrame.DefaultMIMETypeForResourceType[resource.type] || resource.mimeType;
+}
+
 WebInspector.ResourceSourceFrame.prototype = {
     get resource()
     {
         return this._resource;
     },
 
+    requestContent: function(callback)
+    {
+        function contentLoaded(text)
+        {
+            var mimeType = WebInspector.ResourceSourceFrame.mimeTypeForResource(this.resource);
+            callback(mimeType, text);
+        }
+        
+        this.resource.requestContent(contentLoaded.bind(this));
+    },
+
+    suggestedFileName: function()
+    {
+        return this.resource.displayName;
+    }
+}
+
+WebInspector.ResourceSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;
+
+WebInspector.EditableResourceSourceFrame = function(resource)
+{
+    WebInspector.ResourceSourceFrame.call(this, resource);
+}
+
+WebInspector.EditableResourceSourceFrame.prototype = {
     doubleClick: function(lineNumber)
     {
-        if (!this._resource.isEditable())
+        if (!this.resource.isEditable())
             return;
 
         if (this._commitEditingInProgress)
@@ -152,14 +133,14 @@ WebInspector.ResourceSourceFrame.prototype = {
     {
         this._clearIncrementalUpdateTimer();
         var majorChange = true;
-        this._resource.setContent(newText, majorChange, callback);
+        this.resource.setContent(newText, majorChange, callback);
     },
 
     cancelEditing: function()
     {
         this._clearIncrementalUpdateTimer();
         const majorChange = false;
-        this._resource.setContent(this._viewerState.textModelContent, majorChange);
+        this.resource.setContent(this._viewerState.textModelContent, majorChange);
         WebInspector.SourceFrame.prototype.cancelEditing.call(this);
     },
 
@@ -168,7 +149,7 @@ WebInspector.ResourceSourceFrame.prototype = {
         function commitIncrementalEdit()
         {
             var majorChange = false;
-            this._resource.setContent(this._textModel.text, majorChange, function() {});
+            this.resource.setContent(this._textModel.text, majorChange, function() {});
         }
         const updateTimeout = 200;
         this._incrementalUpdateTimer = setTimeout(commitIncrementalEdit.bind(this), updateTimeout);
@@ -180,55 +161,32 @@ WebInspector.ResourceSourceFrame.prototype = {
             clearTimeout(this._incrementalUpdateTimer);
         delete this._incrementalUpdateTimer;
     },
-
-    requestContent: function(callback)
-    {
-        function contentLoaded(text)
-        {
-            var mimeType = WebInspector.ResourceSourceFrame.DefaultMIMETypeForResourceType[this._resource.type] || this._resource.mimeType;
-            callback(mimeType, text);
-        }
-        this._resource.requestContent(contentLoaded.bind(this));
-    },
-
-    suggestedFileName: function()
-    {
-        return this._resource.displayName;
-    }
 }
 
-WebInspector.ResourceSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;
+WebInspector.EditableResourceSourceFrame.prototype.__proto__ = WebInspector.ResourceSourceFrame.prototype;
 
-WebInspector.RevisionSourceFrame = function(revision)
+WebInspector.ResourceRevisionSourceFrame = function(revision)
 {
-    WebInspector.SourceFrame.call(this, new WebInspector.SourceFrameDelegate(), revision.resource.url);
+    WebInspector.ResourceSourceFrame.call(this, revision.resource);
     this._revision = revision;
 }
 
-WebInspector.RevisionSourceFrame.prototype = {
+WebInspector.ResourceRevisionSourceFrame.prototype = {
     get resource()
     {
         return this._revision.resource;
     },
 
-    doubleClick: function(lineNumber)
-    {
-    },
-
     requestContent: function(callback)
     {
         function contentLoaded(text)
         {
-            var mimeType = WebInspector.ResourceSourceFrame.DefaultMIMETypeForResourceType[this._revision.resource.type] || this._revision.resource.mimeType;
+            var mimeType = WebInspector.ResourceSourceFrame.mimeTypeForResource(this.resource);
             callback(mimeType, text);
         }
+
         this._revision.requestContent(contentLoaded.bind(this));
     },
-
-    suggestedFileName: function()
-    {
-        return this._revision.resource.displayName;
-    }
 }
 
-WebInspector.RevisionSourceFrame.prototype.__proto__ = WebInspector.SourceFrame.prototype;
+WebInspector.ResourceRevisionSourceFrame.prototype.__proto__ = WebInspector.ResourceSourceFrame.prototype;

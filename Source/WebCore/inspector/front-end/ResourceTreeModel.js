@@ -231,10 +231,7 @@ WebInspector.ResourceTreeModel.prototype = {
             resource.errors += msg.repeatDelta;
             break;
         }
-
-        var view = WebInspector.ResourceView.resourceViewForResource(resource);
-        if (view.addMessage && msg.isErrorOrWarning() && msg.message)
-            view.addMessage(msg);
+        resource.addMessage(msg);
     },
 
     _consoleCleared: function()

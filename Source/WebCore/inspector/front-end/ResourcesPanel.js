@@ -363,7 +363,7 @@ WebInspector.ResourcesPanel.prototype = {
         }
 
         if (line !== undefined) {
-            var view = WebInspector.ResourceView.resourceViewForResource(resource);
+            var view = this._resourceViewForResource(resource);
             if (view.highlightLine)
                 view.highlightLine(line);
         }
@@ -372,21 +372,39 @@ WebInspector.ResourcesPanel.prototype = {
 
     _showResourceView: function(resource)
     {
-        var view = WebInspector.ResourceView.resourceViewForResource(resource);
-        // FIXME: This could be removed once we stop caching SourceFrames.        
+        var view = this._resourceViewForResource(resource);
+        if (!view) {
+            this.visibleView.hide();
+            return;
+        }
         if (view.searchCanceled)
             view.searchCanceled();
         this._fetchAndApplyDiffMarkup(view, resource);
         this._innerShowView(view);
     },
 
+    _resourceViewForResource: function(resource)
+    {
+        if (WebInspector.ResourceView.hasTextContent(resource)) {
+            var treeElement = this._findTreeElementForResource(resource);
+            if (!treeElement)
+                return null;
+            return treeElement.sourceView();
+        }
+        return WebInspector.ResourceView.nonSourceViewForResource(resource);
+    },
+
     _showRevisionView: function(revision)
     {
-        if (!revision._view)
-            revision._view = new WebInspector.RevisionSourceFrame(revision);
-        var view = revision._view;
+        var view = this._sourceViewForRevision(revision);
         this._fetchAndApplyDiffMarkup(view, revision.resource, revision);
         this._innerShowView(view);
+    },
+
+    _sourceViewForRevision: function(revision)
+    {
+        var treeElement = this._findTreeElementForRevision(revision);
+        return treeElement.sourceView();
     },
 
     _fetchAndApplyDiffMarkup: function(view, resource, revision)
@@ -788,8 +806,14 @@ WebInspector.ResourcesPanel.prototype = {
 
     searchCanceled: function()
     {
+        function callback(resourceTreeElement)
+        {
+            resourceTreeElement._updateErrorsAndWarningsBubbles();
+        }
+
         WebInspector.searchController.updateSearchMatchesCount(0, this);
         this._resetSearchResults();
+        this._forAllResourceTreeElements(callback);
     },
 
     jumpToNextSearchResult: function()
@@ -834,6 +858,21 @@ WebInspector.ResourcesPanel.prototype = {
         }
 
         return this.sidebarTree.findTreeElement(resource, isAncestor, getParent);
+    },
+
+    _findTreeElementForRevision: function(revision)
+    {
+        function isAncestor(ancestor, object)
+        {
+            return false;
+        }
+
+        function getParent(object)
+        {
+            return null;
+        }
+
+        return this.sidebarTree.findTreeElement(revision, isAncestor, getParent);
     },
 
     showView: function(view)
@@ -1147,7 +1186,8 @@ WebInspector.FrameResourceTreeElement = function(storagePanel, resource)
 {
     WebInspector.BaseStorageTreeElement.call(this, storagePanel, resource, resource.displayName, ["resource-sidebar-tree-item", "resources-category-" + resource.category.name]);
     this._resource = resource;
-    this._resource.addEventListener("errors-warnings-updated", this._errorsWarningsUpdated, this);
+    this._resource.addEventListener("errors-warnings-cleared", this._errorsWarningsCleared, this);
+    this._resource.addEventListener("errors-warnings-message-added", this._errorsWarningsMessageAdded, this);
     this._resource.addEventListener(WebInspector.Resource.Events.RevisionAdded, this._revisionAdded, this);
     this.tooltip = resource.url;
 }
@@ -1191,6 +1231,8 @@ WebInspector.FrameResourceTreeElement.prototype = {
         this.listItemElement.draggable = true;
         this.listItemElement.addEventListener("dragstart", this._ondragstart.bind(this), false);
         this.listItemElement.addEventListener("contextmenu", this._handleContextMenuEvent.bind(this), true);
+
+        this._updateErrorsAndWarningsBubbles();
     },
 
     _ondragstart: function(event)
@@ -1277,15 +1319,8 @@ WebInspector.FrameResourceTreeElement.prototype = {
         }
     },
 
-    _errorsWarningsUpdated: function()
+    _updateErrorsAndWarningsBubbles: function()
     {
-        // FIXME: move to the SourceFrame.
-        if (!this._resource.warnings && !this._resource.errors) {
-            var view = WebInspector.ResourceView.existingResourceViewForResource(this._resource);
-            if (view && view.clearMessages)
-                view.clearMessages();
-        }
-
         if (this._storagePanel.currentQuery)
             return;
 
@@ -1299,6 +1334,25 @@ WebInspector.FrameResourceTreeElement.prototype = {
 
         if (this._resource.errors)
             this._bubbleElement.addStyleClass("error");
+    },
+    
+    _errorsWarningsCleared: function()
+    {
+        // FIXME: move to the SourceFrame.
+        if (this._sourceView)
+            this._sourceView.clearMessages();
+        
+        this._updateErrorsAndWarningsBubbles();
+    },
+    
+    _errorsWarningsMessageAdded: function(event)
+    {
+        var msg = event.data;
+
+        if (this._sourceView)
+            this._sourceView.addMessage(msg);
+        
+        this._updateErrorsAndWarningsBubbles();
     },
 
     _populateRevisions: function()
@@ -1315,13 +1369,50 @@ WebInspector.FrameResourceTreeElement.prototype = {
     _appendRevision: function(revision)
     {
         this.insertChild(new WebInspector.ResourceRevisionTreeElement(this._storagePanel, revision), 0);
-        var oldView = WebInspector.ResourceView.existingResourceViewForResource(this._resource);
+        var oldView = this._sourceView;
         if (oldView) {
-            var newView = WebInspector.ResourceView.recreateResourceView(this._resource);
+            // This is needed when resource content was changed from scripts panel.
+            var newView = this._recreateSourceView();
             if (oldView === this._storagePanel.visibleView)
                 this._storagePanel._showResourceView(this._resource);
         }
-    }
+    },
+
+    sourceView: function()
+    {
+        if (!this._sourceView) {
+            this._sourceView = this._createSourceView();
+            if (this._resource.messages) {
+                for (var i = 0; i < this._resource.messages.length; i++)
+                    this._sourceView.addMessage(this._resource.messages[i]);
+            }
+        }
+        return this._sourceView;
+    },
+
+    _createSourceView: function()
+    {
+        return new WebInspector.EditableResourceSourceFrame(this._resource);
+    },
+
+    _recreateSourceView: function()
+    {
+        var oldView = this._sourceView;
+        var newView = this._createSourceView();
+
+        var oldViewParentNode = oldView.visible ? oldView.element.parentNode : null;
+        var scrollTop = oldView.scrollTop;
+
+        this._sourceView.detach();
+        this._sourceView = newView;
+
+        if (oldViewParentNode)
+            newView.show(oldViewParentNode);
+        if (scrollTop)
+            newView.scrollTop = scrollTop;
+
+        return newView;
+    }    
 }
 
 WebInspector.FrameResourceTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
@@ -1451,7 +1542,7 @@ WebInspector.ApplicationCacheTreeElement.prototype.__proto__ = WebInspector.Base
 WebInspector.ResourceRevisionTreeElement = function(storagePanel, revision)
 {
     var title = revision.timestamp ? revision.timestamp.toLocaleTimeString() : WebInspector.UIString("(original)");
-    WebInspector.BaseStorageTreeElement.call(this, storagePanel, null, title, ["resource-sidebar-tree-item", "resources-category-" + revision.resource.category.name]);
+    WebInspector.BaseStorageTreeElement.call(this, storagePanel, revision, title, ["resource-sidebar-tree-item", "resources-category-" + revision.resource.category.name]);
     if (revision.timestamp)
         this.tooltip = revision.timestamp.toLocaleString();
     this._revision = revision;
@@ -1502,6 +1593,13 @@ WebInspector.ResourceRevisionTreeElement.prototype = {
         }
 
         contextMenu.show(event);
+    },
+
+    sourceView: function()
+    {
+        if (!this._sourceView)
+            this._sourceView = new WebInspector.ResourceRevisionSourceFrame(this._revision);
+        return this._sourceView;
     }
 }
 

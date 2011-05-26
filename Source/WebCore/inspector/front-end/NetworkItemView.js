@@ -35,17 +35,12 @@ WebInspector.NetworkItemView = function(resource)
     this.element.addStyleClass("network-item-view");
 
     this._headersView = new WebInspector.ResourceHeadersView(resource);
-    // Do not store reference to content view - it can be recreated.
-    var contentView = WebInspector.ResourceView.resourceViewForResource(resource);
-
     this._tabbedPane = new WebInspector.TabbedPane(this.element);
     this._tabbedPane.appendTab("headers", WebInspector.UIString("Headers"), this._headersView);
 
-    if (contentView.hasContent()) {
-        // Reusing this view, so hide it at first.
-        contentView.visible = false;
+    var contentView = WebInspector.NetworkItemView._contentViewForResource(resource);
+    if (contentView.hasContent())
         this._tabbedPane.appendTab("content", WebInspector.UIString("Content"), contentView);
-    }
 
     if (resource.type === WebInspector.Resource.Type.XHR && resource.content) {
         var parsedJSON = WebInspector.ResourceJSONView.parseJSON(resource.content);
@@ -66,6 +61,13 @@ WebInspector.NetworkItemView = function(resource)
     }
 
     this._tabbedPane.addEventListener("tab-selected", this._tabSelected, this);
+}
+
+WebInspector.NetworkItemView._contentViewForResource = function(resource)
+{
+    if (WebInspector.ResourceView.hasTextContent(resource))
+        return new WebInspector.ResourceSourceFrame(resource)
+    return WebInspector.ResourceView.nonSourceViewForResource(resource);
 }
 
 WebInspector.NetworkItemView.prototype = {

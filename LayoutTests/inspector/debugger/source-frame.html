@@ -33,7 +33,7 @@ function test()
 
         function testConsoleMessage(next)
         {
-              InspectorTest.addSniffer(WebInspector.SourceFrame.prototype, "addMessage", didAddMessage);
+              InspectorTest.addSniffer(WebInspector.Resource.prototype, "addMessage", didAddMessage);
               InspectorTest.evaluateInPage("addErrorToConsole()");
 
               function didAddMessage(message)

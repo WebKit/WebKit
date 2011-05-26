@@ -1,3 +1,12 @@
+2011-05-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Use different SourceFrame instances for ResourcesPanel and NetworkPanel
+        https://bugs.webkit.org/show_bug.cgi?id=59193
+
+        * inspector/debugger/source-frame.html:
+
 2011-05-26  Philippe Normand  <pnormand@igalia.com>
 
         Unreviewed, skip flaky test on GTK.

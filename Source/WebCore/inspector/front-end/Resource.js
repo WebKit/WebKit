@@ -693,6 +693,22 @@ WebInspector.Resource.prototype = {
         return size;
     },
 
+    get messages()
+    {
+        return this._messages || [];
+    },
+
+    addMessage: function(msg)
+    {
+        if (!msg.isErrorOrWarning() || !msg.message) 
+            return;
+
+        if (!this._messages)
+            this._messages = [];
+        this._messages.push(msg);
+        this.dispatchEventToListeners("errors-warnings-message-added", msg);
+    },
+
     get errors()
     {
         return this._errors || 0;
@@ -701,7 +717,6 @@ WebInspector.Resource.prototype = {
     set errors(x)
     {
         this._errors = x;
-        this.dispatchEventToListeners("errors-warnings-updated");
     },
 
     get warnings()
@@ -712,14 +727,14 @@ WebInspector.Resource.prototype = {
     set warnings(x)
     {
         this._warnings = x;
-        this.dispatchEventToListeners("errors-warnings-updated");
     },
 
     clearErrorsAndWarnings: function()
     {
+        this._messages = [];
         this._warnings = 0;
         this._errors = 0;
-        this.dispatchEventToListeners("errors-warnings-updated");
+        this.dispatchEventToListeners("errors-warnings-cleared");
     },
 
     _mimeTypeIsConsistentWithType: function()

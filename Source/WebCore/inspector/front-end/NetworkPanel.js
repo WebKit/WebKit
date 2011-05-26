@@ -791,17 +791,6 @@ WebInspector.NetworkPanel.prototype = {
     {
         this._staleResources.push(resource);
         this._scheduleRefresh();
-
-        var oldView = WebInspector.ResourceView.existingResourceViewForResource(resource);
-        if (!oldView)
-            return;
-
-        if (WebInspector.ResourceView.resourceViewTypeMatchesResource(resource))
-            return;
-
-        var newView = WebInspector.ResourceView.recreateResourceView(resource);
-        if (this.visibleView === oldView)
-            this.visibleView = newView;
     },
 
     clear: function()

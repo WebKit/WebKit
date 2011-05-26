@@ -1,3 +1,60 @@
+2011-05-26  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Use different SourceFrame instances for ResourcesPanel and NetworkPanel
+        https://bugs.webkit.org/show_bug.cgi?id=59193
+
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView):
+        (WebInspector.NetworkItemView._contentViewForResource):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._refreshResource):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.get messages):
+        (WebInspector.Resource.prototype.addMessage):
+        (WebInspector.Resource.prototype.set errors):
+        (WebInspector.Resource.prototype.set warnings):
+        (WebInspector.Resource.prototype.clearErrorsAndWarnings):
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._consoleMessageAdded):
+        * inspector/front-end/ResourceView.js:
+        (WebInspector.ResourceView.hasTextContent):
+        (WebInspector.ResourceView.nonSourceViewForResource):
+        (WebInspector.ResourceSourceFrame):
+        (WebInspector.ResourceSourceFrame.mimeTypeForResource):
+        (WebInspector.ResourceSourceFrame.prototype.requestContent):
+        (WebInspector.ResourceSourceFrame.prototype.suggestedFileName):
+        (WebInspector.EditableResourceSourceFrame):
+        (WebInspector.EditableResourceSourceFrame.prototype.doubleClick):
+        (WebInspector.EditableResourceSourceFrame.prototype.editContent):
+        (WebInspector.EditableResourceSourceFrame.prototype.cancelEditing):
+        (WebInspector.EditableResourceSourceFrame.prototype.afterTextChanged):
+        (WebInspector.EditableResourceSourceFrame.prototype._clearIncrementalUpdateTimer):
+        (WebInspector.ResourceRevisionSourceFrame):
+        (WebInspector.ResourceRevisionSourceFrame.prototype.requestContent):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.showResource):
+        (WebInspector.ResourcesPanel.prototype._showResourceView):
+        (WebInspector.ResourcesPanel.prototype._resourceViewForResource):
+        (WebInspector.ResourcesPanel.prototype._showRevisionView):
+        (WebInspector.ResourcesPanel.prototype._sourceViewForRevision):
+        (WebInspector.ResourcesPanel.prototype.searchCanceled):
+        (WebInspector.ResourcesPanel.prototype._findTreeElementForRevision):
+        (WebInspector.ResourcesPanel.prototype._findTreeElementForRevision.getParent):
+        (WebInspector.FrameResourceTreeElement):
+        (WebInspector.FrameResourceTreeElement.prototype.onattach):
+        (WebInspector.FrameResourceTreeElement.prototype._updateErrorsAndWarningsBubbles):
+        (WebInspector.FrameResourceTreeElement.prototype._errorsWarningsCleared):
+        (WebInspector.FrameResourceTreeElement.prototype._errorsWarningsMessageAdded):
+        (WebInspector.FrameResourceTreeElement.prototype._appendRevision):
+        (WebInspector.FrameResourceTreeElement.prototype.sourceView):
+        (WebInspector.FrameResourceTreeElement.prototype._createSourceView):
+        (WebInspector.FrameResourceTreeElement.prototype._recreateSourceView):
+        (WebInspector.ResourceRevisionTreeElement):
+        (WebInspector.ResourceRevisionTreeElement.prototype._handleContextMenuEvent):
+        (WebInspector.ResourceRevisionTreeElement.prototype.sourceView):
+
 2011-05-26  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Darin Adler.
