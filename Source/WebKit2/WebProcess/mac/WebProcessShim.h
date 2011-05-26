@@ -22,13 +22,10 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
-
 #ifndef WebProcessShim_h
 #define WebProcessShim_h
 
 namespace WebKit {
-
-#if !defined(BUILDING_ON_SNOW_LEOPARD)
 
 struct WebProcessSecItemShimCallbacks {
     OSStatus (*secItemCopyMatching)(CFDictionaryRef query, CFTypeRef *result);
@@ -39,8 +36,16 @@ struct WebProcessSecItemShimCallbacks {
 
 typedef void (*WebProcessSecItemShimInitializeFunc)(const WebProcessSecItemShimCallbacks& callbacks);
 
-#endif // BUILDING_ON_SNOW_LEOPARD
+struct WebProcessKeychainItemShimCallbacks {
+    OSStatus (*secKeychainItemCopyContent)(SecKeychainItemRef, SecItemClass*, SecKeychainAttributeList*, UInt32* length, void** outData);
+    OSStatus (*secKeychainItemCreateFromContent)(SecItemClass, SecKeychainAttributeList*, UInt32 length, const void* data, SecKeychainItemRef*);
+    OSStatus (*secKeychainItemModifyContent)(SecKeychainItemRef, const SecKeychainAttributeList*, UInt32 length, const void* data);
+    bool (*freeAttributeListContent)(SecKeychainAttributeList* attrList);
+    bool (*freeKeychainItemContentData)(void* data);
+};
 
-}
+typedef void (*WebProcessKeychainItemShimInitializeFunc)(const WebProcessKeychainItemShimCallbacks& callbacks);
+
+} // namespace WebKit
 
 #endif // WebProcessShim_h

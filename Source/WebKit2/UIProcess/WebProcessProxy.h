@@ -134,6 +134,9 @@ private:
     void secItemAdd(const SecItemRequestData&, SecItemResponseData&);
     void secItemUpdate(const SecItemRequestData&, SecItemResponseData&);
     void secItemDelete(const SecItemRequestData&, SecItemResponseData&);
+    void secKeychainItemCopyContent(const SecKeychainItemRequestData&, SecKeychainItemResponseData&);
+    void secKeychainItemCreateFromContent(const SecKeychainItemRequestData&, SecKeychainItemResponseData&);
+    void secKeychainItemModifyContent(const SecKeychainItemRequestData&, SecKeychainItemResponseData&);
 #endif
 
     // CoreIPC::Connection::Client
