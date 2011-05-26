@@ -1,3 +1,14 @@
+2011-05-25  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Adam Roben.
+
+        WebKit2: Status bar, toolbar, and menu bar checks should be in the injected bundle
+        https://bugs.webkit.org/show_bug.cgi?id=61474
+        <rdar://problem/9468337>
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage): Add empty entries in the WKBundlePageUIClient.
+
 2011-05-26  Andreas Kling  <kling@webkit.org>
 
         Unreviewed, correct address to webkit-committers mailing list.
