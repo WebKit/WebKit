@@ -1348,7 +1348,7 @@ void FrameLoaderClient::savePlatformDataToCachedFrame(CachedFrame* cachedFrame)
 {
 }
 
-static void postCommitFrameViewSetup(WebKitWebFrame *frame, FrameView *view, bool resetValues)
+static void postCommitFrameViewSetup(WebKitWebFrame *frame)
 {
     WebKitWebView* containingWindow = getViewFromFrame(frame);
     webkit_web_view_clear_resources(containingWindow);
@@ -1377,7 +1377,7 @@ void FrameLoaderClient::transitionToCommittedFromCachedFrame(CachedFrame* cached
     if (frame != frame->page()->mainFrame())
         return;
 
-    postCommitFrameViewSetup(m_frame, cachedFrame->view(), false);
+    postCommitFrameViewSetup(m_frame);
 }
 
 void FrameLoaderClient::transitionToCommittedForNewPage()
@@ -1401,7 +1401,7 @@ void FrameLoaderClient::transitionToCommittedForNewPage()
     if (frame != frame->page()->mainFrame())
         return;
 
-    postCommitFrameViewSetup(m_frame, frame->view(), true);
+    postCommitFrameViewSetup(m_frame);
 }
 
 void FrameLoaderClient::didSaveToPageCache()

@@ -1,3 +1,15 @@
+2011-05-26  Gustavo Noronha Silva  <gustavo.noronha@collabora.com>
+
+        Reviewed by Martin Robinson.
+
+        Cleanup postCommitFrameViewSetup parameters which are no longer
+        necessary after the adjustments handling refactoring.
+
+        * WebCoreSupport/FrameLoaderClientGtk.cpp:
+        (WebKit::postCommitFrameViewSetup):
+        (WebKit::FrameLoaderClient::transitionToCommittedFromCachedFrame):
+        (WebKit::FrameLoaderClient::transitionToCommittedForNewPage):
+
 2011-05-22  Adam Barth  <abarth@webkit.org>
 
         Build fix.  More public destructors needed to play nice with OwnPtr.
