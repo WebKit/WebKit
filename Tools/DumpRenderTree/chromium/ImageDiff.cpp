@@ -56,6 +56,14 @@ using namespace std;
 static const char optionPollStdin[] = "--use-stdin";
 static const char optionGenerateDiff[] = "--diff";
 
+// If --diff is passed, causes the app to output the image difference
+// metric (percentageDifferent()) on stdout.
+static const char optionWrite[] = "--write-image-diff-metrics";
+
+// Use weightedPercentageDifferent() instead of the default image
+// comparator proc.
+static const char optionWeightedIntensity[] = "--weighted-intensity";
+
 // Return codes used by this utility.
 static const int statusSame = 0;
 static const int statusDifferent = 1;
@@ -83,7 +91,7 @@ public:
 
     // Creates the image from stdin with the given data length. On success, it
     // will return true. On failure, no other methods should be accessed.
-    bool craeteFromStdin(size_t byteLength)
+    bool createFromStdin(size_t byteLength)
     {
         if (!byteLength)
             return false;
@@ -152,6 +160,8 @@ private:
     vector<unsigned char> m_data;
 };
 
+typedef float (*ImageComparisonProc) (const Image&, const Image&);
+
 float percentageDifferent(const Image& baseline, const Image& actual)
 {
     int w = min(baseline.width(), actual.width());
@@ -159,8 +169,8 @@ float percentageDifferent(const Image& baseline, const Image& actual)
 
     // Compute pixels different in the overlap
     int pixelsDifferent = 0;
-    for (int y = 0; y < h; y++) {
-        for (int x = 0; x < w; x++) {
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
             if (baseline.pixelAt(x, y) != actual.pixelAt(x, y))
                 pixelsDifferent++;
         }
@@ -184,6 +194,74 @@ float percentageDifferent(const Image& baseline, const Image& actual)
     return static_cast<float>(pixelsDifferent) / totalPixels * 100;
 }
 
+inline uint32_t maxOf3(uint32_t a, uint32_t b, uint32_t c)
+{
+    if (a < b)
+        return std::max(b, c);
+    return std::max(a, c);
+}
+
+inline uint32_t getRedComponent(uint32_t color)
+{
+    return (color << 24) >> 24;
+}
+
+inline uint32_t getGreenComponent(uint32_t color)
+{
+    return (color << 16) >> 24;
+}
+
+inline uint32_t getBlueComponent(uint32_t color)
+{
+    return (color << 8) >> 24;
+}
+
+/// Rank small-pixel-count high-intensity changes as more important than
+/// large-pixel-count low-intensity changes.
+float weightedPercentageDifferent(const Image& baseline, const Image& actual)
+{
+    int w = min(baseline.width(), actual.width());
+    int h = min(baseline.height(), actual.height());
+
+    float weightedPixelsDifferent = 0;
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
+            uint32_t actualColor = actual.pixelAt(x, y);
+            uint32_t baselineColor = baseline.pixelAt(x, y);
+            if (baselineColor != actualColor) {
+                uint32_t actualR = getRedComponent(actualColor);
+                uint32_t actualG = getGreenComponent(actualColor);
+                uint32_t actualB = getBlueComponent(actualColor);
+                uint32_t baselineR = getRedComponent(baselineColor);
+                uint32_t baselineG = getGreenComponent(baselineColor);
+                uint32_t baselineB = getBlueComponent(baselineColor);
+                uint32_t deltaR = std::max(actualR, baselineR)
+                    - std::min(actualR, baselineR);
+                uint32_t deltaG = std::max(actualG, baselineG)
+                    - std::min(actualG, baselineG);
+                uint32_t deltaB = std::max(actualB, baselineB)
+                    - std::min(actualB, baselineB);
+                weightedPixelsDifferent +=
+                    static_cast<float>(maxOf3(deltaR, deltaG, deltaB)) / 255;
+            }
+        }
+    }
+
+    int maxWidth = max(baseline.width(), actual.width());
+    int maxHeight = max(baseline.height(), actual.height());
+
+    weightedPixelsDifferent += (maxWidth - w) * h;
+
+    weightedPixelsDifferent += (maxHeight - h) * maxWidth;
+
+    float totalPixels = static_cast<float>(actual.width())
+        * static_cast<float>(actual.height());
+    if (!totalPixels)
+        return 100.0f;
+    return weightedPixelsDifferent / totalPixels * 100;
+}
+
+
 void printHelp()
 {
     fprintf(stderr,
@@ -195,7 +273,10 @@ void printHelp()
             "    and sending 0 to stdout when they are the same\n"
             "  ImageDiff --diff <compare file> <reference file> <output file>\n"
             "    Compares two files on disk, outputs an image that visualizes the"
-            "    difference to <output file>\n");
+            "    difference to <output file>\n"
+            "    --write-image-diff-metrics prints a difference metric to stdout\n"
+            "    --weighted-intensity weights the difference metric by intensity\n"
+            "      at each pixel\n");
     /* For unfinished webkit-like-mode (see below)
        "\n"
        "  ImageDiff -s\n"
@@ -206,7 +287,8 @@ void printHelp()
     */
 }
 
-int compareImages(const char* file1, const char* file2)
+int compareImages(const char* file1, const char* file2,
+                  ImageComparisonProc comparator)
 {
     Image actualImage;
     Image baselineImage;
@@ -220,7 +302,7 @@ int compareImages(const char* file1, const char* file2)
         return statusError;
     }
 
-    float percent = percentageDifferent(actualImage, baselineImage);
+    float percent = (*comparator)(actualImage, baselineImage);
     if (percent > 0.0) {
         // failure: The WebKit version also writes the difference image to
         // stdout, which seems excessive for our needs.
@@ -236,7 +318,7 @@ int compareImages(const char* file1, const char* file2)
 
 // Untested mode that acts like WebKit's image comparator. I wrote this but
 // decided it's too complicated. We may use it in the future if it looks useful.
-int untestedCompareImages()
+int untestedCompareImages(ImageComparisonProc comparator)
 {
     Image actualImage;
     Image baselineImage;
@@ -254,12 +336,12 @@ int untestedCompareImages()
 
             bool success = false;
             if (imageSize > 0 && !actualImage.hasImage()) {
-                if (!actualImage.craeteFromStdin(imageSize)) {
+                if (!actualImage.createFromStdin(imageSize)) {
                     fputs("Error, input image can't be decoded.\n", stderr);
                     return 1;
                 }
             } else if (imageSize > 0 && !baselineImage.hasImage()) {
-                if (!baselineImage.craeteFromStdin(imageSize)) {
+                if (!baselineImage.createFromStdin(imageSize)) {
                     fputs("Error, baseline image can't be decoded.\n", stderr);
                     return 1;
                 }
@@ -270,7 +352,7 @@ int untestedCompareImages()
         }
 
         if (actualImage.hasImage() && baselineImage.hasImage()) {
-            float percent = percentageDifferent(actualImage, baselineImage);
+            float percent = (*comparator)(actualImage, baselineImage);
             if (percent > 0.0) {
                 // failure: The WebKit version also writes the difference image to
                 // stdout, which seems excessive for our needs.
@@ -295,8 +377,8 @@ bool createImageDiff(const Image& image1, const Image& image2, Image* out)
     bool same = (image1.width() == image2.width()) && (image1.height() == image2.height());
 
     // FIXME: do something with the extra pixels if the image sizes are different.
-    for (int y = 0; y < h; y++) {
-        for (int x = 0; x < w; x++) {
+    for (int y = 0; y < h; ++y) {
+        for (int x = 0; x < w; ++x) {
             uint32_t basePixel = image1.pixelAt(x, y);
             if (basePixel != image2.pixelAt(x, y)) {
                 // Set differing pixels red.
@@ -330,7 +412,8 @@ static bool writeFile(const char* outFile, const unsigned char* data, size_t dat
     return true;
 }
 
-int diffImages(const char* file1, const char* file2, const char* outFile)
+int diffImages(const char* file1, const char* file2, const char* outFile,
+               bool shouldWritePercentages, ImageComparisonProc comparator)
 {
     Image actualImage;
     Image baselineImage;
@@ -354,6 +437,12 @@ int diffImages(const char* file1, const char* file2, const char* outFile)
                                   diffImage.width() * 4, &pngData);
     if (!writeFile(outFile, &pngData.front(), pngData.size()))
         return statusError;
+
+    if (shouldWritePercentages) {
+        float percent = (*comparator)(actualImage, baselineImage);
+        fprintf(stdout, "%.3f\n", percent);
+    }
+
     return statusDifferent;
 }
 
@@ -362,11 +451,17 @@ int main(int argc, const char* argv[])
     Vector<const char*> values;
     bool pollStdin = false;
     bool generateDiff = false;
+    bool shouldWritePercentages = false;
+    ImageComparisonProc comparator = percentageDifferent;
     for (int i = 1; i < argc; ++i) {
         if (!strcmp(argv[i], optionPollStdin))
             pollStdin = true;
         else if (!strcmp(argv[i], optionGenerateDiff))
             generateDiff = true;
+        else if (!strcmp(argv[i], optionWrite))
+            shouldWritePercentages = true;
+        else if (!strcmp(argv[i], optionWeightedIntensity))
+            comparator = weightedPercentageDifferent;
         else
             values.append(argv[i]);
     }
@@ -383,7 +478,8 @@ int main(int argc, const char* argv[])
 
             if (haveFirstName) {
                 // compareImages writes results to stdout unless an error occurred.
-                if (compareImages(firstName, stdinBuffer) == statusError)
+                if (compareImages(firstName, stdinBuffer,
+                                  comparator) == statusError)
                     printf("error\n");
                 fflush(stdout);
                 haveFirstName = false;
@@ -399,9 +495,10 @@ int main(int argc, const char* argv[])
 
     if (generateDiff) {
         if (values.size() == 3)
-            return diffImages(values[0], values[1], values[2]);
+            return diffImages(values[0], values[1], values[2],
+                              shouldWritePercentages, comparator);
     } else if (values.size() == 2)
-        return compareImages(argv[1], argv[2]);
+        return compareImages(argv[1], argv[2], comparator);
 
     printHelp();
     return statusError;

@@ -1,3 +1,25 @@
+2011-05-26  Tom Hudson  <tomhudson@google.com>
+
+        Reviewed by Tony Chang.
+
+        Add flags to Chromium ImageDiff to write image comparison metrics on
+        stdout.
+        https://bugs.webkit.org/show_bug.cgi?id=60569
+
+        * DumpRenderTree/chromium/ImageDiff.cpp:
+        (Image::createFromStdin): Fix spelling.
+        (maxOf3): New function to do 3-way maximum.
+        (getRedComponent): Extract red component from ABGR packed encoding.
+        (getGreenComponent): Extract green component from ABGR packed encoding.
+        (getBlueComponent): Extract blue component from ABGR packed encoding.
+        (weightedPercentageDifferent): Determine % of pixels different in two
+        images multiplied by intensity difference of each pixel.
+        (printHelp): Document new arguments.
+        (compareImages): Parameterize.
+        (untestedCompareImages): Parameterize.
+        (diffImages): Parameterize; write results on stdout if requested.
+        (main): Parse new arguments.
+
 2011-05-25  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Simon Hausmann.
