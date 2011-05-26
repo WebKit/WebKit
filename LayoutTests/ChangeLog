@@ -1,3 +1,12 @@
+2011-05-26  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed. Test expectations update/rebaseline.
+
+        * platform/chromium-linux-x86/fast/gradients/css3-repeating-linear-gradients2-expected.png: Added.
+        * platform/chromium-linux/fast/gradients/css3-repeating-linear-gradients2-expected.png: Added.
+        * platform/chromium-win-vista/fast/gradients/css3-repeating-linear-gradients2-expected.png: Added.
+        * platform/chromium/test_expectations.txt: BUGCR84052, border-antialiasing.html IMAGE+TEXT.
+
 2011-05-26  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Yury Semikhatsky.
