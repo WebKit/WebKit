@@ -50,6 +50,7 @@ void InitWebCoreSystemInterface(void)
     INIT(QTMovieMaxTimeSeekable);
     INIT(QTMovieGetType);
     INIT(QTMovieHasClosedCaptions);
+    INIT(QTMovieResolvedURL);
     INIT(QTMovieSetShowClosedCaptions);
     INIT(QTMovieSelectPreferredAlternates);
     INIT(QTMovieViewSetDrawSynchronously);

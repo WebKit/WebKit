@@ -39,11 +39,13 @@ typedef struct _NSRect NSRect;
 #ifdef __OBJC__
 @class NSArray;
 @class NSString;
+@class NSURL;
 @class QTMovie;
 @class QTMovieView;
 #else
 class NSArray;
 class NSString;
+class NSURL;
 class QTMovie;
 class QTMovieView;
 #endif
@@ -59,6 +61,7 @@ extern NSString *(*wkQTMovieMaxTimeLoadedChangeNotification)(void);
 extern float (*wkQTMovieMaxTimeSeekable)(QTMovie*);
 extern int (*wkQTMovieGetType)(QTMovie*);
 extern BOOL (*wkQTMovieHasClosedCaptions)(QTMovie*);
+extern NSURL *(*wkQTMovieResolvedURL)(QTMovie*);
 extern void (*wkQTMovieSetShowClosedCaptions)(QTMovie*, BOOL);
 extern void (*wkQTMovieSelectPreferredAlternates)(QTMovie*);
 extern void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);

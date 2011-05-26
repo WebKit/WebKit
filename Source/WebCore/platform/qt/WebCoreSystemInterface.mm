@@ -35,6 +35,7 @@ NSString *(*wkQTMovieMaxTimeLoadedChangeNotification)(void);
 float (*wkQTMovieMaxTimeSeekable)(QTMovie*);
 int (*wkQTMovieGetType)(QTMovie*);
 BOOL (*wkQTMovieHasClosedCaptions)(QTMovie*);
+NSURL *(*wkQTMovieResolvedURL)(QTMovie*);
 void (*wkQTMovieSetShowClosedCaptions)(QTMovie*, BOOL);
 void (*wkQTMovieSelectPreferredAlternates)(QTMovie*);
 void (*wkQTMovieViewSetDrawSynchronously)(QTMovieView*, BOOL);

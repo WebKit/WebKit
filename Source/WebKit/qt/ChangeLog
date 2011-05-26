@@ -1,3 +1,12 @@
+2011-05-26  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed build fix for Qt and QuickTime backend.
+
+        r87328 added a new system interface, we need to add it too.
+
+        * WebCoreSupport/WebSystemInterface.mm:
+        (InitWebCoreSystemInterface):
+
 2011-05-25  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Andreas Kling.

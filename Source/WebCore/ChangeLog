@@ -1,3 +1,12 @@
+2011-05-26  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Unreviewed build fix for Qt and QuickTime backend.
+
+        r87328 added a new system interface, we need to add it too.
+
+        * platform/qt/WebCoreSystemInterface.h:
+        * platform/qt/WebCoreSystemInterface.mm:
+
 2011-05-26  Andrey Kosyakov  <caseq@chromium.org>
 
         Unreviewed follow-up to r87395, added checks to avoid accessing undefined member for certain timeline events.
