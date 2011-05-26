@@ -369,6 +369,79 @@ private:
     }
 };
 
+template <typename T>
+class ApplyPropertyFont : public ApplyPropertyBase {
+public:
+    typedef T (FontDescription::*GetterFunction)() const;
+    typedef void (FontDescription::*SetterFunction)(T);
+
+    ApplyPropertyFont(GetterFunction getter, SetterFunction setter, T initial)
+        : m_getter(getter)
+        , m_setter(setter)
+        , m_initial(initial)
+    {
+    }
+
+private:
+    virtual void applyInheritValue(CSSStyleSelector* selector) const
+    {
+        FontDescription fontDescription = selector->fontDescription();
+        (fontDescription.*m_setter)((selector->parentFontDescription().*m_getter)());
+        selector->setFontDescription(fontDescription);
+    }
+
+    virtual void applyInitialValue(CSSStyleSelector* selector) const
+    {
+        FontDescription fontDescription = selector->fontDescription();
+        (fontDescription.*m_setter)(m_initial);
+        selector->setFontDescription(fontDescription);
+    }
+
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        if (!value->isPrimitiveValue())
+            return;
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        FontDescription fontDescription = selector->fontDescription();
+        (fontDescription.*m_setter)(*primitiveValue);
+        selector->setFontDescription(fontDescription);
+    }
+
+    GetterFunction m_getter;
+    SetterFunction m_setter;
+    T m_initial;
+};
+
+class ApplyPropertyFontWeight : public ApplyPropertyFont<FontWeight> {
+public:
+    ApplyPropertyFontWeight()
+        : ApplyPropertyFont<FontWeight>(&FontDescription::weight, &FontDescription::setWeight, FontWeightNormal)
+    {
+    }
+
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        if (!value->isPrimitiveValue())
+            return;
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        FontDescription fontDescription = selector->fontDescription();
+        switch (primitiveValue->getIdent()) {
+        case CSSValueInvalid:
+            ASSERT_NOT_REACHED();
+            break;
+        case CSSValueBolder:
+            fontDescription.setWeight(fontDescription.bolderWeight());
+            break;
+        case CSSValueLighter:
+            fontDescription.setWeight(fontDescription.lighterWeight());
+            break;
+        default:
+            fontDescription.setWeight(*primitiveValue);
+        }
+        selector->setFontDescription(fontDescription);
+    }
+};
+
 const CSSStyleApplyProperty& CSSStyleApplyProperty::sharedCSSStyleApplyProperty()
 {
     DEFINE_STATIC_LOCAL(CSSStyleApplyProperty, cssStyleApplyPropertyInstance, ());
@@ -468,6 +541,13 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyBorderWidth, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyBorderTopWidth), propertyHandler(CSSPropertyBorderRightWidth), propertyHandler(CSSPropertyBorderBottomWidth), propertyHandler(CSSPropertyBorderLeftWidth)));
     setPropertyHandler(CSSPropertyBorderColor, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyBorderTopColor), propertyHandler(CSSPropertyBorderRightColor), propertyHandler(CSSPropertyBorderBottomColor), propertyHandler(CSSPropertyBorderLeftColor)));
     setPropertyHandler(CSSPropertyBorder, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyBorderStyle), propertyHandler(CSSPropertyBorderWidth), propertyHandler(CSSPropertyBorderColor)));
+
+    setPropertyHandler(CSSPropertyFontStyle, new ApplyPropertyFont<FontItalic>(&FontDescription::italic, &FontDescription::setItalic, FontItalicOff));
+    setPropertyHandler(CSSPropertyFontVariant, new ApplyPropertyFont<FontSmallCaps>(&FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff));
+    setPropertyHandler(CSSPropertyTextRendering, new ApplyPropertyFont<TextRenderingMode>(&FontDescription::textRenderingMode, &FontDescription::setTextRenderingMode, AutoTextRendering));
+    setPropertyHandler(CSSPropertyWebkitFontSmoothing, new ApplyPropertyFont<FontSmoothingMode>(&FontDescription::fontSmoothing, &FontDescription::setFontSmoothing, AutoSmoothing));
+    setPropertyHandler(CSSPropertyWebkitTextOrientation, new ApplyPropertyFont<TextOrientation>(&FontDescription::textOrientation, &FontDescription::setTextOrientation, RenderStyle::initialTextOrientation()));
+    setPropertyHandler(CSSPropertyFontWeight, new ApplyPropertyFontWeight());
 
     setPropertyHandler(CSSPropertyOutlineColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::color));
 

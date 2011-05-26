@@ -1,3 +1,30 @@
+2011-05-25  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Implement various CSS font properties in CSSStyleApplyProperty.
+        https://bugs.webkit.org/show_bug.cgi?id=60603
+
+        No new tests - refactoring only.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::ApplyPropertyFont):
+        Added templated class to handle font properties
+        (WebCore::ApplyPropertyFontWeight):
+        Added class to handle font weight calculation
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Instantiate ApplyPropertyFont/ApplyPropertyFontWeight for appropriate properties.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove properties that are now implemented in CSSStyleApplyProperty
+        * css/CSSStyleSelector.h:
+        (WebCore::CSSStyleSelector::fontDescription):
+        Added getter for m_style->fontDescription()
+        (WebCore::CSSStyleSelector::parentFontDescription):
+        Added getter for m_parentStyle->fontDescription()
+        (WebCore::CSSStyleSelector::setFontDescription):
+        Added setter for m_style->setFontDescription() that automatically sets m_fontDirty
+
 2011-05-25  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Adam Barth.

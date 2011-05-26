@@ -3701,69 +3701,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyFloat:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(floating, Floating)
         return;
-    case CSSPropertyFontStyle:
-    {
-        FontDescription fontDescription = m_style->fontDescription();
-        if (isInherit)
-            fontDescription.setItalic(m_parentStyle->fontDescription().italic());
-        else if (isInitial)
-            fontDescription.setItalic(FontItalicOff);
-        else {
-            if (!primitiveValue)
-                return;
-            fontDescription.setItalic((FontItalic)*primitiveValue);
-        }
-        if (m_style->setFontDescription(fontDescription))
-            m_fontDirty = true;
-        return;
-    }
-
-    case CSSPropertyFontVariant:
-    {
-        FontDescription fontDescription = m_style->fontDescription();
-        if (isInherit) 
-            fontDescription.setSmallCaps(m_parentStyle->fontDescription().smallCaps());
-        else if (isInitial)
-            fontDescription.setSmallCaps(FontSmallCapsOff);
-        else {
-            if (!primitiveValue)
-                return;
-            fontDescription.setSmallCaps((FontSmallCaps)*primitiveValue);
-        }
-        if (m_style->setFontDescription(fontDescription))
-            m_fontDirty = true;
-        return;
-    }
-
-    case CSSPropertyFontWeight:
-    {
-        FontDescription fontDescription = m_style->fontDescription();
-        if (isInherit)
-            fontDescription.setWeight(m_parentStyle->fontDescription().weight());
-        else if (isInitial)
-            fontDescription.setWeight(FontWeightNormal);
-        else {
-            if (!primitiveValue)
-                return;
-            switch (primitiveValue->getIdent()) {
-            case CSSValueInvalid:
-                ASSERT_NOT_REACHED();
-                break;
-            case CSSValueBolder:
-                fontDescription.setWeight(fontDescription.bolderWeight());
-                break;
-            case CSSValueLighter:
-                fontDescription.setWeight(fontDescription.lighterWeight());
-                break;
-            default:
-                fontDescription.setWeight(*primitiveValue);
-            }
-        }
-        if (m_style->setFontDescription(fontDescription))
-            m_fontDirty = true;
-        return;
-    }
-        
     case CSSPropertyListStylePosition:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(listStylePosition, ListStylePosition)
         return;
@@ -3869,23 +3806,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         m_style->setListStyleImage(styleImage(CSSPropertyListStyleImage, value));
         return;
     }
-
-    case CSSPropertyWebkitFontSmoothing: {
-        FontDescription fontDescription = m_style->fontDescription();
-        if (isInherit) 
-            fontDescription.setFontSmoothing(m_parentStyle->fontDescription().fontSmoothing());
-        else if (isInitial)
-            fontDescription.setFontSmoothing(AutoSmoothing);
-        else {
-            if (!primitiveValue)
-                return;
-            fontDescription.setFontSmoothing(*primitiveValue);
-        }
-        if (m_style->setFontDescription(fontDescription))
-            m_fontDirty = true;
-        return;
-    }
-
     case CSSPropertyLetterSpacing:
     case CSSPropertyWordSpacing:
     {
@@ -4717,21 +4637,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             return;
         m_style->setImageRendering(*primitiveValue);
         return;
-    case CSSPropertyTextRendering: {
-        FontDescription fontDescription = m_style->fontDescription();
-        if (isInherit) 
-            fontDescription.setTextRenderingMode(m_parentStyle->fontDescription().textRenderingMode());
-        else if (isInitial)
-            fontDescription.setTextRenderingMode(AutoTextRendering);
-        else {
-            if (!primitiveValue)
-                return;
-            fontDescription.setTextRenderingMode(*primitiveValue);
-        }
-        if (m_style->setFontDescription(fontDescription))
-            m_fontDirty = true;
-        return;
-    }
     case CSSPropertyTextShadow:
     case CSSPropertyBoxShadow:
     case CSSPropertyWebkitBoxShadow: {
@@ -5482,28 +5387,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         }
 
         return;
-
-    case CSSPropertyWebkitTextOrientation: {
-        if (!isInherit && !isInitial && !primitiveValue)
-            return;
-        
-        TextOrientation result;
-        if (isInherit)
-            result = m_parentStyle->fontDescription().textOrientation();
-        else if (isInitial)
-            result = RenderStyle::initialTextOrientation();
-        else
-            result = *primitiveValue;
-        
-        FontDescription fontDescription = m_style->fontDescription();
-        if (fontDescription.textOrientation() != result) {
-            fontDescription.setTextOrientation(result);
-            if (m_style->setFontDescription(fontDescription))
-                m_fontDirty = true;
-        }
-        return;
-    }
-
     case CSSPropertyWebkitLineBoxContain: {
         HANDLE_INHERIT_AND_INITIAL(lineBoxContain, LineBoxContain)
         if (primitiveValue && primitiveValue->getIdent() == CSSValueNone) {
@@ -5558,6 +5441,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBorderRight:
     case CSSPropertyBorderBottom:
     case CSSPropertyBorderLeft:
+    case CSSPropertyFontStyle:
+    case CSSPropertyFontVariant:
+    case CSSPropertyTextRendering:
+    case CSSPropertyWebkitTextOrientation:
+    case CSSPropertyWebkitFontSmoothing:
+    case CSSPropertyFontWeight:
     case CSSPropertyOutlineWidth:
     case CSSPropertyWebkitColumnRuleWidth:
     case CSSPropertyOutlineColor:
