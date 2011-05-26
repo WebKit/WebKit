@@ -4143,3 +4143,13 @@ BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-x-prop.html = IMAGE
 BUGCR83869 : svg/dynamic-updates/SVGTextElement-svgdom-y-prop.html = IMAGE
 
 BUGWK61486 DEBUG : http/tests/misc/drag-not-loaded-image.html = CRASH
+
+// New tests added in r87189
+BUGCR83833 WIN : mhtml/multi_frames_ie.mht = MISSING
+BUGCR83833 WIN : mhtml/multi_frames_unmht.mht = MISSING
+BUGCR83833 WIN : mhtml/page_with_css_and_js_ie.mht = MISSING
+BUGCR83833 WIN : mhtml/page_with_css_and_js_unmht.mht = MISSING
+BUGCR83833 WIN : mhtml/page_with_image_ie.mht = MISSING
+BUGCR83833 WIN : mhtml/page_with_image_unmht.mht = MISSING
+BUGCR83833 WIN : mhtml/simple_page_ie.mht = MISSING
+BUGCR83833 WIN : mhtml/simple_page_unmht.mht = MISSING
