@@ -1,3 +1,15 @@
+2011-05-26  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [skia] Add area check to ImageBufferData::getImageData
+        https://bugs.webkit.org/show_bug.cgi?id=61375
+
+        No change in behavior, just a sanity check.
+
+        * platform/graphics/skia/ImageBufferSkia.cpp:
+        (WebCore::getImageData):
+
 2011-05-26  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.
