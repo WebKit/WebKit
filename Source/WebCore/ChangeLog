@@ -1,3 +1,18 @@
+2011-05-26  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        Fullscreen content is sometimes obscured by taskbar (which even covers up the "exit fullscreen" button)
+        https://bugs.webkit.org/show_bug.cgi?id=61569
+        <rdar://problem/9454315>
+
+        Normally, when the background fullscreen window is animated in, the Windows taskbar will be hidden, but this doesn't always work for some reason.
+        Workaround this issue by setting the real fullscreen window to be a topmost window.
+
+        * platform/graphics/win/FullScreenController.cpp:
+        (FullScreenController::Private::fullscreenClientWndProc): Exit fullscreen when m_fullScreenWindow is deactivated.
+        (FullScreenController::enterFullScreenRepaintCompleted): Make m_fullScreenWindow a topmost window before animating it in to ensure the taskbar is hidden.
+
 2011-05-26  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.
