@@ -1,3 +1,21 @@
+2011-05-26  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        JSC DOM bindings: ExecState::argumentCount() is size_t, not int.
+        https://bugs.webkit.org/show_bug.cgi?id=61530
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionOptionsObject):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionMethodWithNonOptionalArgAndTwoOptionalArgs):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod2):
+        (WebCore::jsTestObjPrototypeFunctionClassMethodWithOptional):
+
 2011-05-26  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Adam Roben.

@@ -1984,7 +1984,7 @@ sub GenerateImplementation
                         if ($parameter->extendedAttributes->{"Optional"} && !$parameter->extendedAttributes->{"Callback"}) {
                             # Generate early call if there are enough parameters.
                             if (!$hasOptionalArguments) {
-                                push(@implContent, "\n    int argsCount = exec->argumentCount();\n");
+                                push(@implContent, "\n    size_t argsCount = exec->argumentCount();\n");
                                 $hasOptionalArguments = 1;
                             }
                             push(@implContent, "    if (argsCount <= $argsIndex) {\n");

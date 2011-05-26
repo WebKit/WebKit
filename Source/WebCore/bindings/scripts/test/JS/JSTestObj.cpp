@@ -1094,7 +1094,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOptionsObject(ExecState* 
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    int argsCount = exec->argumentCount();
+    size_t argsCount = exec->argumentCount();
     if (argsCount <= 1) {
         imp->optionsObject(oo);
         return JSValue::encode(jsUndefined());
@@ -1244,7 +1244,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndOption
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    int argsCount = exec->argumentCount();
+    size_t argsCount = exec->argumentCount();
     if (argsCount <= 1) {
         imp->withDynamicFrameAndOptionalArg(dynamicFrame, intArg);
         return JSValue::encode(jsUndefined());
@@ -1292,7 +1292,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGe
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    int argsCount = exec->argumentCount();
+    size_t argsCount = exec->argumentCount();
     if (argsCount <= 1) {
         imp->withDynamicFrameAndUserGestureASAD(dynamicFrame, intArg);
         return JSValue::encode(jsUndefined());
@@ -1393,7 +1393,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithOptionalArg(Exe
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
 
-    int argsCount = exec->argumentCount();
+    size_t argsCount = exec->argumentCount();
     if (argsCount <= 0) {
         imp->methodWithOptionalArg();
         return JSValue::encode(jsUndefined());
@@ -1419,7 +1419,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    int argsCount = exec->argumentCount();
+    size_t argsCount = exec->argumentCount();
     if (argsCount <= 1) {
         imp->methodWithNonOptionalArgAndOptionalArg(nonOpt);
         return JSValue::encode(jsUndefined());
@@ -1445,7 +1445,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionMethodWithNonOptionalArgA
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    int argsCount = exec->argumentCount();
+    size_t argsCount = exec->argumentCount();
     if (argsCount <= 1) {
         imp->methodWithNonOptionalArgAndTwoOptionalArgs(nonOpt);
         return JSValue::encode(jsUndefined());
@@ -1553,7 +1553,7 @@ static EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionOverloadedMethod2(
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    int argsCount = exec->argumentCount();
+    size_t argsCount = exec->argumentCount();
     if (argsCount <= 1) {
         imp->overloadedMethod(objArg);
         return JSValue::encode(jsUndefined());
@@ -1654,7 +1654,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionClassMethodWithOptional(E
     ASSERT_GC_OBJECT_INHERITS(castedThis, &JSTestObj::s_info);
     TestObj* imp = static_cast<TestObj*>(castedThis->impl());
 
-    int argsCount = exec->argumentCount();
+    size_t argsCount = exec->argumentCount();
     if (argsCount <= 0) {
 
         JSC::JSValue result = jsNumber(imp->classMethodWithOptional());
