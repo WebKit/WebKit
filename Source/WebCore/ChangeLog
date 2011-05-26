@@ -1,3 +1,15 @@
+2011-05-26  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        JSC DOM bindings: Use isUndefinedOrNull() instead of (isNull() || isUndefined()).
+        https://bugs.webkit.org/show_bug.cgi?id=61472
+
+        * bindings/scripts/CodeGeneratorJS.pm:
+        * bindings/scripts/test/JS/JSTestObj.cpp: Rebaselined.
+        (WebCore::jsTestObjPrototypeFunctionMethodWithCallbackAndOptionalArg):
+        (WebCore::jsTestObjPrototypeFunctionOverloadedMethod):
+
 2011-05-26  Keishi Hattori  <keishi@webkit.org>
 
         Reviewed by Kent Tamura.

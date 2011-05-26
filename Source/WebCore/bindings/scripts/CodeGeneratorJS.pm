@@ -1151,7 +1151,7 @@ sub GenerateParametersCheckExpression
         # these are acceptable values for a DOMString argument (any Object can
         # be converted to a string via .toString).
         if ($codeGenerator->IsStringType($type)) {
-            push(@andExpression, "(${value}.isNull() || ${value}.isUndefined() || ${value}.isString() || ${value}.isObject())");
+            push(@andExpression, "(${value}.isUndefinedOrNull() || ${value}.isString() || ${value}.isObject())");
         } elsif ($parameter->extendedAttributes->{"Callback"}) {
             # For Callbacks only checks if the value is null or object.
             push(@andExpression, "(${value}.isNull() || ${value}.isObject())");
@@ -2009,7 +2009,7 @@ sub GenerateImplementation
                             $implIncludes{"$callbackClassName.h"} = 1;
                             if ($parameter->extendedAttributes->{"Optional"}) {
                                 push(@implContent, "    RefPtr<$argType> $name;\n");
-                                push(@implContent, "    if (exec->argumentCount() > $argsIndex && !exec->argument($argsIndex).isNull() && !exec->argument($argsIndex).isUndefined()) {\n");
+                                push(@implContent, "    if (exec->argumentCount() > $argsIndex && !exec->argument($argsIndex).isUndefinedOrNull()) {\n");
                                 push(@implContent, "        if (!exec->argument($argsIndex).isObject()) {\n");
                                 push(@implContent, "            setDOMException(exec, TYPE_MISMATCH_ERR);\n");
                                 push(@implContent, "            return JSValue::encode(jsUndefined());\n");
