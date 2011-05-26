@@ -4153,3 +4153,6 @@ BUGCR83833 WIN : mhtml/page_with_image_ie.mht = MISSING
 BUGCR83833 WIN : mhtml/page_with_image_unmht.mht = MISSING
 BUGCR83833 WIN : mhtml/simple_page_ie.mht = MISSING
 BUGCR83833 WIN : mhtml/simple_page_unmht.mht = MISSING
+
+// New test added in r87324
+BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html = CRASH

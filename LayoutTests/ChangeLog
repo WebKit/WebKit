@@ -1,5 +1,12 @@
 2011-05-25  Adam Klein  <adamk@chromium.org>
 
+        Unreviewed. Add Win/CRASH expectation for new crashy plugin test,
+        reported as http://crbug.com/83994.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-25  Adam Klein  <adamk@chromium.org>
+
         Unreviewed. Temporarily ignore MHTML test failures on Windows
         while we dig into it in http://crbug.com/83833.
 
