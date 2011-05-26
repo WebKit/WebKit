@@ -32,16 +32,16 @@ namespace WebCore {
 
 class TestSerializedScriptValueInterface;
 
-class JSTestSerializedScriptValueInterface : public DOMObjectWithGlobalPointer {
-    typedef DOMObjectWithGlobalPointer Base;
+class JSTestSerializedScriptValueInterface : public JSDOMWrapper {
+    typedef JSDOMWrapper Base;
 public:
-    JSTestSerializedScriptValueInterface(NonNullPassRefPtr<JSC::Structure>, JSDOMGlobalObject*, PassRefPtr<TestSerializedScriptValueInterface>);
+    JSTestSerializedScriptValueInterface(JSC::Structure*, JSDOMGlobalObject*, PassRefPtr<TestSerializedScriptValueInterface>);
     static JSC::JSObject* createPrototype(JSC::ExecState*, JSC::JSGlobalObject*);
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier& propertyName, JSC::PropertyDescriptor&);
     static const JSC::ClassInfo s_info;
 
-    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
     {
         return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
@@ -63,11 +63,11 @@ class JSTestSerializedScriptValueInterfacePrototype : public JSC::JSObjectWithGl
 public:
     static JSC::JSObject* self(JSC::ExecState*, JSC::JSGlobalObject*);
     static const JSC::ClassInfo s_info;
-    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
     {
         return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
-    JSTestSerializedScriptValueInterfacePrototype(JSC::JSGlobalObject* globalObject, NonNullPassRefPtr<JSC::Structure> structure) : JSC::JSObjectWithGlobalObject(globalObject, structure) { }
+    JSTestSerializedScriptValueInterfacePrototype(JSC::JSGlobalData& globalData, JSC::JSGlobalObject* globalObject, JSC::Structure* structure) : JSC::JSObjectWithGlobalObject(globalData, globalObject, structure) { }
 protected:
     static const unsigned StructureFlags = Base::StructureFlags;
 };

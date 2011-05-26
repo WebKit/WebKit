@@ -95,8 +95,13 @@ v8::Handle<v8::Object> V8TestMediaQueryListListener::wrapSlow(TestMediaQueryList
 
     impl->ref();
     v8::Persistent<v8::Object> wrapperHandle = v8::Persistent<v8::Object>::New(wrapper);
+#if !PLATFORM(QT)
+// FIXME: qtscript-staging's shipped V8 does not have the needed functionality yet.
+// https://bugs.webkit.org/show_bug.cgi?id=61291
+
     if (!hasDependentLifetime)
         wrapperHandle.MarkIndependent();
+#endif
     getDOMObjectMap().set(impl, wrapperHandle);
     return wrapper;
 }

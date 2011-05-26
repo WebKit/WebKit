@@ -64,12 +64,12 @@ static const HashTableValue JSTestInterfaceConstructorTableValues[1] =
 static JSC_CONST_HASHTABLE HashTable JSTestInterfaceConstructorTable = { 1, 0, JSTestInterfaceConstructorTableValues, 0 };
 class JSTestInterfaceConstructor : public DOMConstructorObject {
 public:
-    JSTestInterfaceConstructor(JSC::ExecState*, JSDOMGlobalObject*);
+    JSTestInterfaceConstructor(JSC::ExecState*, JSC::Structure*, JSDOMGlobalObject*);
 
     virtual bool getOwnPropertySlot(JSC::ExecState*, const JSC::Identifier&, JSC::PropertySlot&);
     virtual bool getOwnPropertyDescriptor(JSC::ExecState*, const JSC::Identifier&, JSC::PropertyDescriptor&);
     static const JSC::ClassInfo s_info;
-    static PassRefPtr<JSC::Structure> createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
+    static JSC::Structure* createStructure(JSC::JSGlobalData& globalData, JSC::JSValue prototype)
     {
         return JSC::Structure::create(globalData, prototype, JSC::TypeInfo(JSC::ObjectType, StructureFlags), AnonymousSlotCount, &s_info);
     }
@@ -81,8 +81,8 @@ protected:
 
 const ClassInfo JSTestInterfaceConstructor::s_info = { "TestInterfaceConstructor", &DOMConstructorObject::s_info, &JSTestInterfaceConstructorTable, 0 };
 
-JSTestInterfaceConstructor::JSTestInterfaceConstructor(ExecState* exec, JSDOMGlobalObject* globalObject)
-    : DOMConstructorObject(JSTestInterfaceConstructor::createStructure(globalObject->globalData(), globalObject->objectPrototype()), globalObject)
+JSTestInterfaceConstructor::JSTestInterfaceConstructor(ExecState* exec, Structure* structure, JSDOMGlobalObject* globalObject)
+    : DOMConstructorObject(structure, globalObject)
 {
     ASSERT(inherits(&s_info));
     putDirect(exec->globalData(), exec->propertyNames().prototype, JSTestInterfacePrototype::self(exec, globalObject), DontDelete | ReadOnly);
@@ -90,12 +90,12 @@ JSTestInterfaceConstructor::JSTestInterfaceConstructor(ExecState* exec, JSDOMGlo
 
 bool JSTestInterfaceConstructor::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
-    return getStaticValueSlot<JSTestInterfaceConstructor, DOMObject>(exec, &JSTestInterfaceConstructorTable, this, propertyName, slot);
+    return getStaticValueSlot<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, this, propertyName, slot);
 }
 
 bool JSTestInterfaceConstructor::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
-    return getStaticValueDescriptor<JSTestInterfaceConstructor, DOMObject>(exec, &JSTestInterfaceConstructorTable, this, propertyName, descriptor);
+    return getStaticValueDescriptor<JSTestInterfaceConstructor, JSDOMWrapper>(exec, &JSTestInterfaceConstructorTable, this, propertyName, descriptor);
 }
 
 EncodedJSValue JSC_HOST_CALL JSTestInterfaceConstructor::constructJSTestInterface(ExecState* exec)
@@ -133,10 +133,10 @@ JSObject* JSTestInterfacePrototype::self(ExecState* exec, JSGlobalObject* global
     return getDOMPrototype<JSTestInterface>(exec, globalObject);
 }
 
-const ClassInfo JSTestInterface::s_info = { "TestInterface", &DOMObjectWithGlobalPointer::s_info, &JSTestInterfaceTable, 0 };
+const ClassInfo JSTestInterface::s_info = { "TestInterface", &JSDOMWrapper::s_info, &JSTestInterfaceTable, 0 };
 
-JSTestInterface::JSTestInterface(NonNullPassRefPtr<Structure> structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestInterface> impl)
-    : DOMObjectWithGlobalPointer(structure, globalObject)
+JSTestInterface::JSTestInterface(Structure* structure, JSDOMGlobalObject* globalObject, PassRefPtr<TestInterface> impl)
+    : JSDOMWrapper(structure, globalObject)
     , m_impl(impl)
 {
     ASSERT(inherits(&s_info));
@@ -144,16 +144,18 @@ JSTestInterface::JSTestInterface(NonNullPassRefPtr<Structure> structure, JSDOMGl
 
 JSObject* JSTestInterface::createPrototype(ExecState* exec, JSGlobalObject* globalObject)
 {
-    return new (exec) JSTestInterfacePrototype(globalObject, JSTestInterfacePrototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));
+    return new (exec) JSTestInterfacePrototype(exec->globalData(), globalObject, JSTestInterfacePrototype::createStructure(globalObject->globalData(), globalObject->objectPrototype()));
 }
 
 bool JSTestInterface::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     return getStaticValueSlot<JSTestInterface, Base>(exec, &JSTestInterfaceTable, this, propertyName, slot);
 }
 
 bool JSTestInterface::getOwnPropertyDescriptor(ExecState* exec, const Identifier& propertyName, PropertyDescriptor& descriptor)
 {
+    ASSERT_GC_OBJECT_INHERITS(this, &s_info);
     return getStaticValueDescriptor<JSTestInterface, Base>(exec, &JSTestInterfaceTable, this, propertyName, descriptor);
 }
 
@@ -168,10 +170,11 @@ JSValue JSTestInterface::getConstructor(ExecState* exec, JSGlobalObject* globalO
     return getDOMConstructor<JSTestInterfaceConstructor>(exec, static_cast<JSDOMGlobalObject*>(globalObject));
 }
 
-JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestInterface* object)
+JSC::JSValue toJS(JSC::ExecState* exec, JSDOMGlobalObject* globalObject, TestInterface* impl)
 {
-    return getDOMObjectWrapper<JSTestInterface>(exec, globalObject, object);
+    return wrap<JSTestInterface>(exec, globalObject, impl);
 }
+
 TestInterface* toTestInterface(JSC::JSValue value)
 {
     return value.inherits(&JSTestInterface::s_info) ? static_cast<JSTestInterface*>(asObject(value))->impl() : 0;

@@ -85,7 +85,7 @@ bool JSTestCallback::callbackWithClass1Param(Class1* class1Param)
 
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS(exec, class1Param));
+    args.append(toJS(exec, m_data->globalObject(), class1Param));
 
     bool raisedException = false;
     m_data->invokeCallback(args, &raisedException);
@@ -103,7 +103,7 @@ bool JSTestCallback::callbackWithClass2Param(Class2* class2Param, const String& 
 
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS(exec, class2Param));
+    args.append(toJS(exec, m_data->globalObject(), class2Param));
     args.append(jsString(exec, strArg));
 
     bool raisedException = false;
@@ -122,7 +122,7 @@ bool JSTestCallback::callbackWithStringList(DOMStringList* listParam)
 
     ExecState* exec = m_data->globalObject()->globalExec();
     MarkedArgumentBuffer args;
-    args.append(toJS(exec, listParam));
+    args.append(toJS(exec, m_data->globalObject(), listParam));
 
     bool raisedException = false;
     m_data->invokeCallback(args, &raisedException);

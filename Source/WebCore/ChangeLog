@@ -1,3 +1,13 @@
+2011-05-25  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by David Levin.
+
+        Rebaseline run-bindings-tests.
+        https://bugs.webkit.org/show_bug.cgi?id=61469
+
+        * bindings/scripts/test/JS/:
+        * bindings/scripts/test/V8/:
+
 2011-05-25  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.
