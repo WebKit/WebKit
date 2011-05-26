@@ -41,6 +41,28 @@ namespace JSC {
 
 const size_t minBytesPerCycle = 512 * 1024;
 
+static inline bool isValidSharedInstanceThreadState()
+{
+    if (!JSLock::lockCount())
+        return false;
+
+    if (!JSLock::currentThreadIsHoldingLock())
+        return false;
+
+    return true;
+}
+
+static inline bool isValidThreadState(JSGlobalData* globalData)
+{
+    if (globalData->identifierTable != wtfThreadData().currentIdentifierTable())
+        return false;
+
+    if (globalData->isSharedInstance() && !isValidSharedInstanceThreadState())
+        return false;
+
+    return true;
+}
+
 Heap::Heap(JSGlobalData* globalData)
     : m_operationInProgress(NoOperation)
     , m_markedSpace(globalData)
@@ -193,27 +215,18 @@ inline RegisterFile& Heap::registerFile()
 
 void Heap::markRoots()
 {
-#ifndef NDEBUG
-    if (m_globalData->isSharedInstance()) {
-        ASSERT(JSLock::lockCount() > 0);
-        ASSERT(JSLock::currentThreadIsHoldingLock());
-    }
-#endif
+    ASSERT(isValidThreadState(m_globalData));
+    if (m_operationInProgress != NoOperation)
+        CRASH();
+    m_operationInProgress = Collection;
 
     void* dummy;
 
-    ASSERT(m_operationInProgress == NoOperation);
-    if (m_operationInProgress != NoOperation)
-        CRASH();
-
-    m_operationInProgress = Collection;
-
     MarkStack& visitor = m_markStack;
     HeapRootVisitor heapRootMarker(visitor);
-    
-    // We gather conservative roots before clearing mark bits because
-    // conservative gathering uses the mark bits from our last mark pass to
-    // determine whether a reference is valid.
+
+    // We gather conservative roots before clearing mark bits because conservative
+    // gathering uses the mark bits to determine whether a reference is valid.
     ConservativeRoots machineThreadRoots(this);
     m_machineThreads.gatherConservativeRoots(machineThreadRoots, &dummy);
 
@@ -430,6 +443,20 @@ void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
 GCActivityCallback* Heap::activityCallback()
 {
     return m_activityCallback.get();
+}
+
+bool Heap::isValidAllocation(size_t bytes)
+{
+    if (!isValidThreadState(m_globalData))
+        return false;
+
+    if (bytes > MarkedSpace::maxCellSize)
+        return false;
+
+    if (m_operationInProgress != NoOperation)
+        return false;
+    
+    return true;
 }
 
 } // namespace JSC

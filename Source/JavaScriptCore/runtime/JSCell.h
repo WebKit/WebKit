@@ -395,11 +395,7 @@ namespace JSC {
     
     inline void* Heap::allocate(size_t bytes)
     {
-        ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
-        ASSERT(JSLock::lockCount() > 0);
-        ASSERT(JSLock::currentThreadIsHoldingLock());
-        ASSERT(bytes <= MarkedSpace::maxCellSize);
-        ASSERT(m_operationInProgress == NoOperation);
+        ASSERT(isValidAllocation(bytes));
 
         m_operationInProgress = Allocation;
         void* result = m_markedSpace.allocate(bytes);
