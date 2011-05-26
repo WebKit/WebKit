@@ -863,7 +863,6 @@ void LauncherWindow::showUserAgentDialog()
 
     QDialog* dialog = new QDialog(this);
     dialog->resize(size().width() * 0.7, dialog->size().height());
-    dialog->setMaximumHeight(dialog->size().height());
     dialog->setWindowTitle("Change User Agent");
 
     QVBoxLayout* layout = new QVBoxLayout(dialog);

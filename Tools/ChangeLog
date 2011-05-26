@@ -1,3 +1,16 @@
+2011-05-26  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] QtTestBrowser "Switch User Agent" dialog is broken
+        https://bugs.webkit.org/show_bug.cgi?id=61527
+
+        The setMaximumHeight() call is unecessary and breaks the dialog at
+        least on my setup.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::showUserAgentDialog):
+
 2011-05-02  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Adam Roben.
