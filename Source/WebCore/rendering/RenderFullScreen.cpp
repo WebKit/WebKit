@@ -36,6 +36,16 @@
 
 using namespace WebCore;
 
+void RenderFullScreen::destroy()
+{
+    // RenderObjects are unretained, so notify the document (which holds a pointer to a RenderFullScreen)
+    // if it's RenderFullScreen is destroyed.
+    if (document() && document()->fullScreenRenderer() == this)
+        document()->fullScreenRendererDestroyed();
+
+    RenderFlexibleBox::destroy();
+}
+
 PassRefPtr<RenderStyle> RenderFullScreen::createFullScreenStyle()
 {
     RefPtr<RenderStyle> fullscreenStyle = RenderStyle::createDefaultStyle();

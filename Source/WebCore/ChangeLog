@@ -1,3 +1,32 @@
+2011-05-25  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Safari Web Content crashes while entering/exiting the full screen mode of the video content
+        https://bugs.webkit.org/show_bug.cgi?id=61498
+
+        No new tests, as DRT does not currently animate the full screen transition.
+
+        To guard against m_fullScreenRenderer being called after it has been deleted, add
+        code in RenderFullScreen which notifies the document when its full-screen renderer
+        will be destroyed.
+
+        Also, add some sanity checks when accessing the full-screen renderer's layer backing.
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitWillEnterFullScreenForElement): Guard against a missing
+            full-screen renderer layer.
+        (WebCore::Document::webkitWillExitFullScreenForElement): Ditto.
+        (WebCore::Document::setFullScreenRenderer): Added ASSERT.
+        (WebCore::Document::fullScreenRendererDestroyed): Added.
+        (WebCore::Document::setAnimatingFullScreen): Guard against the full-screen
+            element having been removed from the document.
+        * dom/Document.h:
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreen::destroy): Added.  Tell the Document that it's full-screen
+            renderer is about to be destroyed.
+        * rendering/RenderFullScreen.h:
+
 2011-05-26  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Geoffrey Garen.
