@@ -136,10 +136,6 @@ void WebPopupMenuImpl::close()
     deref();  // Balances ref() from WebWidget::Create
 }
 
-void WebPopupMenuImpl::willStartLiveResize()
-{
-}
-
 void WebPopupMenuImpl::resize(const WebSize& newSize)
 {
     if (m_size == newSize)
@@ -155,10 +151,6 @@ void WebPopupMenuImpl::resize(const WebSize& newSize)
         WebRect damagedRect(0, 0, m_size.width, m_size.height);
         m_client->didInvalidateRect(damagedRect);
     }
-}
-
-void WebPopupMenuImpl::willEndLiveResize()
-{
 }
 
 void WebPopupMenuImpl::animate()

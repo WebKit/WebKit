@@ -62,9 +62,7 @@ public:
     // WebWidget
     virtual void close();
     virtual WebSize size() { return m_size; }
-    virtual void willStartLiveResize();
     virtual void resize(const WebSize&);
-    virtual void willEndLiveResize();
     virtual void animate();
     virtual void layout();
     virtual void paint(WebCanvas* canvas, const WebRect& rect);

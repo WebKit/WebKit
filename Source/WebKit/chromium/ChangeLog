@@ -1,3 +1,18 @@
+2011-05-25  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87333.
+        http://trac.webkit.org/changeset/87333
+        https://bugs.webkit.org/show_bug.cgi?id=61488
+
+        Breaks Chromium build due to pure virtual methods. (Requested
+        by aklein on #webkit).
+
+        * public/WebWidget.h:
+        * src/WebPopupMenuImpl.cpp:
+        * src/WebPopupMenuImpl.h:
+        * src/WebViewImpl.cpp:
+        * src/WebViewImpl.h:
+
 2011-05-25  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Darin Fisher.
