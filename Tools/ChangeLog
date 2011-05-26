@@ -1,3 +1,17 @@
+2011-05-02  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [Qt] Allow popup windows from plugins when initiated by a user gesture
+
+        https://bugs.webkit.org/show_bug.cgi?id=41292
+
+        Support parameters introduced in plugin-initiate-popup-window.html
+
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp:
+        (webkit_test_plugin_new_instance):
+        (webkit_test_plugin_handle_event):
+
 2011-05-26  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

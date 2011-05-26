@@ -356,9 +356,6 @@ plugins/get-url-with-blank-target.html
 # ---- plugins rendered in incorrect position ?
 plugins/embed-attributes-style.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=41292
-plugins/plugin-initiate-popup-window.html
-
 # https://bugs.webkit.org/show_bug.cgi?id=60722
 http/tests/plugins/plugin-document-has-focus.html
 

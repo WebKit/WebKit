@@ -384,6 +384,14 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
     if (!m_plugin->pluginFuncs()->event)
         return false;
 
+    bool shouldPop = false;
+
+    if (m_plugin->pluginFuncs()->version < NPVERS_HAS_POPUPS_ENABLED_STATE
+        && (event.type == ButtonRelease || event.type == 3 /*KeyRelease*/)) {
+        pushPopupsEnabledState(true);
+        shouldPop = true;
+    }
+
     PluginView::setCurrentPluginView(this);
 #if USE(JSC)
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
@@ -392,6 +400,9 @@ bool PluginView::dispatchNPEvent(NPEvent& event)
     bool accepted = m_plugin->pluginFuncs()->event(m_instance, &event);
     setCallingPlugin(false);
     PluginView::setCurrentPluginView(0);
+
+    if (shouldPop)
+        popPopupsEnabledState();
 
     return accepted;
 }

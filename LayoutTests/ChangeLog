@@ -1,3 +1,16 @@
+2011-05-02  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [Qt] Allow popup windows from plugins when initiated by a user gesture
+
+        https://bugs.webkit.org/show_bug.cgi?id=41292
+
+        * platform/qt/Skipped: Unskip plugin-initiate-popup-window.html
+        * platform/qt/plugins/plugin-initiate-popup-window-expected.txt: Copied from LayoutTests/platform/mac/plugins/plugin-initiate-popup-window-expected.txt.
+        * plugins/plugin-initiate-popup-window.html: Plugins are only windowless
+                                                     by default on OSX, so make the plugins windowless explicitly.
+
 2011-05-26  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

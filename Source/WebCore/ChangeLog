@@ -1,3 +1,17 @@
+2011-05-02  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Adam Roben.
+
+        [Qt] Allow popup windows from plugins when initiated by a user gesture
+
+        https://bugs.webkit.org/show_bug.cgi?id=41292
+
+        If the event is from a user gesture and the plugin doesn't support
+        NPN_PushPopupsEnabledState() and NPN_PopPopupsEnabledState(), allow popups.
+
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::dispatchNPEvent):
+
 2011-05-26  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Dmitry Titov.

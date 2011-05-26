@@ -109,6 +109,17 @@ webkit_test_plugin_new_instance(NPMIMEType mimetype,
                 browser->setvalue(instance, NPPVpluginWindowBool, windowed);
             } else if (!strcasecmp(argn[i], "onPaintEvent") && !obj->onPaintEvent)
                 obj->onPaintEvent = strdup(argv[i]);
+            else if (!strcasecmp(argn[i], "evaluatescript")) {
+                char* script = argv[i];
+                if (script == strstr(script, "mouse::")) {
+                    obj->mouseDownForEvaluateScript = true;
+                    obj->evaluateScriptOnMouseDownOrKeyDown = strdup(script + sizeof("mouse::") - 1);
+                } else if (script == strstr(script, "key::"))
+                    obj->evaluateScriptOnMouseDownOrKeyDown = strdup(script + sizeof("key::") - 1);
+                // When testing evaluate script on mouse-down or key-down, allow event logging to handle events.
+                if (obj->evaluateScriptOnMouseDownOrKeyDown)
+                    obj->eventLogging = true;
+            }
         }
 
         browser->getvalue(instance, NPNVprivateModeBool, (void *)&obj->cachedPrivateBrowsingMode);
@@ -301,6 +312,8 @@ webkit_test_plugin_handle_event(NPP instance, void* event)
         case ButtonPress:
             if (obj->eventLogging)
                 pluginLog(instance, "mouseDown at (%d, %d)", evt->xbutton.x, evt->xbutton.y);
+           if (obj->evaluateScriptOnMouseDownOrKeyDown && obj->mouseDownForEvaluateScript)
+                executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
             break;
         case KeyRelease:
             if (obj->eventLogging)
@@ -309,6 +322,8 @@ webkit_test_plugin_handle_event(NPP instance, void* event)
         case KeyPress:
             if (obj->eventLogging)
                 pluginLog(instance, "keyDown '%c'", keyEventToChar(&evt->xkey));
+           if (obj->evaluateScriptOnMouseDownOrKeyDown && !obj->mouseDownForEvaluateScript)
+                executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
             break;
         case MotionNotify:
         case EnterNotify:
