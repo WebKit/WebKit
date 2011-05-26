@@ -347,7 +347,7 @@ WebInspector.TimelinePanel.prototype = {
 
         var children = record.children;
         var scriptDetails;
-        if (record.data.scriptName) {
+        if (record.data && record.data.scriptName) {
             scriptDetails = {
                 scriptName: record.data.scriptName,
                 scriptLine: record.data.scriptLine
@@ -860,7 +860,7 @@ WebInspector.TimelinePanel.FormattedRecord = function(record, parentRecord, pane
         this.stackTrace = record.stackTrace;
     this.totalHeapSize = record.totalHeapSize;
     this.usedHeapSize = record.usedHeapSize;
-    if (record.data.url)
+    if (record.data && record.data.url)
         this.url = record.data.url;
     if (scriptDetails) {
         this.scriptName = scriptDetails.scriptName;

@@ -1,3 +1,11 @@
+2011-05-26  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed follow-up to r87395, added checks to avoid accessing undefined member for certain timeline events.
+
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel.prototype._innerAddRecordToTimeline):
+        (WebInspector.TimelinePanel.FormattedRecord):
+
 2011-05-25  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Enrica Casucci.
