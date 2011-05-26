@@ -18,7 +18,7 @@ EXPORTS
     ??0MD5@WTF@@QAE@XZ
     ??0Mutex@WTF@@QAE@XZ
     ??0RefCountedLeakCounter@WTF@@QAE@PBD@Z
-    ??0RegExpObject@JSC@@QAE@PAVJSGlobalObject@1@PAVStructure@1@PAVRegExp@1@JSC@@@WTF@@@Z
+    ??0RegExpObject@JSC@@QAE@PAVJSGlobalObject@1@PAVStructure@1@PAVRegExp@1@@Z
     ??0SHA1@WTF@@QAE@XZ
     ??0StringObject@JSC@@QAE@PAVExecState@1@PAVStructure@1@ABVUString@1@@Z
     ??0Structure@JSC@@AAE@AAVJSGlobalData@1@VJSValue@1@ABVTypeInfo@1@IPBUClassInfo@1@@Z
@@ -36,7 +36,6 @@ EXPORTS
     ??1JSGlobalObject@JSC@@UAE@XZ
     ??1Mutex@WTF@@QAE@XZ
     ??1RefCountedLeakCounter@WTF@@QAE@XZ
-    ??1RegExp@JSC@@QAE@XZ
     ??1SourceProviderCache@JSC@@QAE@XZ
     ??1ThreadCondition@WTF@@QAE@XZ
     ??1WTFThreadData@WTF@@QAE@XZ
@@ -101,7 +100,7 @@ EXPORTS
     ?create@ByteArray@WTF@@SA?AV?$PassRefPtr@VByteArray@WTF@@@2@I@Z
     ?create@JSGlobalData@JSC@@SA?AV?$PassRefPtr@VJSGlobalData@JSC@@@WTF@@W4ThreadStackType@2@@Z
     ?create@OpaqueJSString@@SA?AV?$PassRefPtr@UOpaqueJSString@@@WTF@@ABVUString@JSC@@@Z
-    ?create@RegExp@JSC@@SA?AV?$PassRefPtr@VRegExp@JSC@@@WTF@@PAVJSGlobalData@2@ABVUString@2@W4RegExpFlags@2@@Z
+    ?create@RegExp@JSC@@SAPAV12@PAVJSGlobalData@2@ABVUString@2@W4RegExpFlags@2@@Z
     ?createEmptyString@SmallStrings@JSC@@AAEXPAVJSGlobalData@2@@Z
     ?createError@JSC@@YAPAVJSObject@1@PAVExecState@1@ABVUString@1@@Z
     ?createInterruptedExecutionException@JSC@@YAPAVJSObject@1@PAVJSGlobalData@1@@Z
