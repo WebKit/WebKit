@@ -1,3 +1,11 @@
+2011-05-26  Tony Chang  <tony@chromium.org>
+
+        Unreviewed, fixing the expected results for a test that had the
+        output duplicated.
+
+        * platform/chromium/test_expectations.txt:
+        * storage/indexeddb/mozilla/create-objectstore-null-name-expected.txt:
+
 2011-05-26  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Dirk Schulze.

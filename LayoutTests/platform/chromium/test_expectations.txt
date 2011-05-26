@@ -4083,9 +4083,6 @@ BUGCR83426 MAC : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-stitchTiles-p
 BUGCR83426 MAC : svg/dynamic-updates/SVGFETurbulenceElement-svgdom-type-prop.html = IMAGE PASS
 BUGCR83426 MAC : svg/filters/feLighting-crash.svg = IMAGE PASS
 
-// New test from WK r86970
-BUGCR83441 : storage/indexeddb/mozilla/create-objectstore-null-name.html = TEXT
-
 BUGCR83499 : fast/box-shadow/scaled-box-shadow.html = IMAGE IMAGE+TEXT PASS
 BUGCR83499 MAC : fast/box-shadow/box-shadow-transformed.html = IMAGE IMAGE+TEXT PASS
 
