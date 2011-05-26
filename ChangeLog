@@ -1,3 +1,15 @@
+2011-05-25  Gregg Tavares  <gman@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        Add 'noExtensions' option to Web/GraphicsContext3D attributes.
+        https://bugs.webkit.org/show_bug.cgi?id=61460
+
+        * Source/WebCore/html/canvas/WebGLRenderingContext.cpp:
+        * Source/WebCore/platform/graphics/GraphicsContext3D.h:
+        * Source/WebKit/chromium/public/WebGraphicsContext3D.h:
+        * Source/WebKit/chromium/src/GraphicsContext3DChromium.cpp:
+
 2011-05-24  Keishi Hattori  <keishi@webkit.org>
 
         Reviewed by Kent Tamura.

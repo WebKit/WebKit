@@ -427,6 +427,7 @@ public:
             , premultipliedAlpha(true)
             , canRecoverFromContextLoss(true)
             , preserveDrawingBuffer(false)
+            , noExtensions(false)
         {
         }
 
@@ -437,6 +438,7 @@ public:
         bool premultipliedAlpha;
         bool canRecoverFromContextLoss;
         bool preserveDrawingBuffer;
+        bool noExtensions;
     };
 
     enum RenderStyle {

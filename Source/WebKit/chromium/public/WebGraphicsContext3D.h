@@ -85,6 +85,7 @@ public:
             , antialias(true)
             , premultipliedAlpha(true)
             , canRecoverFromContextLoss(true)
+            , noExtensions(false)
         {
         }
 
@@ -94,6 +95,7 @@ public:
         bool antialias;
         bool premultipliedAlpha;
         bool canRecoverFromContextLoss;
+        bool noExtensions;
     };
 
     class WebGraphicsContextLostCallback {

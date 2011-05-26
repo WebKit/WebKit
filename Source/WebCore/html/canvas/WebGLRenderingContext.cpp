@@ -369,6 +369,7 @@ PassOwnPtr<WebGLRenderingContext> WebGLRenderingContext::create(HTMLCanvasElemen
             attributes.antialias = false;
     }
 
+    attributes.noExtensions = true;
     RefPtr<GraphicsContext3D> context(GraphicsContext3D::create(attributes, hostWindow));
 
     if (!context) {
