@@ -63,7 +63,7 @@ namespace JSC {
 
         StringImpl* singleCharacterStringRep(unsigned char character);
 
-        void visitChildren(HeapRootVisitor&);
+        void finalizeSmallStrings();
         void clear();
 
         unsigned count() const;

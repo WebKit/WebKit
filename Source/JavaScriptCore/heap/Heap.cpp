@@ -106,6 +106,7 @@ void Heap::destroy()
     m_markListSet = 0;
     m_markedSpace.clearMarks();
     m_handleHeap.finalizeWeakHandles();
+    m_globalData->smallStrings.finalizeSmallStrings();
     m_markedSpace.destroy();
 
     m_globalData = 0;
@@ -259,12 +260,6 @@ void Heap::markRoots()
     m_handleStack.mark(heapRootMarker);
     visitor.drain();
 
-    // Mark the small strings cache as late as possible, since it will clear
-    // itself if nothing else has marked it.
-    // FIXME: Change the small strings cache to use Weak<T>.
-    m_globalData->smallStrings.visitChildren(heapRootMarker);
-    visitor.drain();
-    
     // Weak handles must be marked last, because their owners use the set of
     // opaque roots to determine reachability.
     int lastOpaqueRootCount;
@@ -408,6 +403,7 @@ void Heap::reset(SweepToggle sweepToggle)
 
     markRoots();
     m_handleHeap.finalizeWeakHandles();
+    m_globalData->smallStrings.finalizeSmallStrings();
 
     JAVASCRIPTCORE_GC_MARKED();
 

@@ -1,3 +1,28 @@
+2011-05-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Removed some interdependency between Heap and SmallStrings by simplifying
+        the SmallStrings lifetime model
+        https://bugs.webkit.org/show_bug.cgi?id=61579
+        
+        SunSpider reports no change.
+        
+        Using Weak<T> could accomplish this too, but we're not sure it will give
+        us the performance we need. This is a first step, and it accomplishes
+        most of the value of using Weak<T>.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::destroy):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::reset): Finalize small strings just like other weak handles.
+
+        * runtime/SmallStrings.cpp:
+        (JSC::finalize):
+        (JSC::SmallStrings::finalizeSmallStrings):
+        * runtime/SmallStrings.h: Make all small strings trivially weak, instead
+        of having an "all for one, one for all" memory model.
+
 2011-05-26  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
