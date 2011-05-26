@@ -366,7 +366,7 @@ Structure* Structure::addPropertyTransition(JSGlobalData& globalData, Structure*
 
     if (structure->m_propertyTable) {
         if (structure->m_isPinnedPropertyTable)
-            transition->m_propertyTable = structure->m_propertyTable->copy(globalData, 0, structure->m_propertyTable->size() + 1);
+            transition->m_propertyTable = structure->m_propertyTable->copy(globalData, transition, structure->m_propertyTable->size() + 1);
         else
             transition->m_propertyTable = structure->m_propertyTable.release();
     } else {

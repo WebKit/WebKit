@@ -1,3 +1,16 @@
+2011-05-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Provide a real owner when copying a property table, for the sake of
+        write barriers.
+        https://bugs.webkit.org/show_bug.cgi?id=61547
+        
+        No test because we can't enable the writeBarrier() ASSERT just yet.
+
+        * runtime/Structure.cpp:
+        (JSC::Structure::addPropertyTransition):
+
 2011-05-26  Adam Roben  <aroben@apple.com>
 
         Windows build fix after r87346
