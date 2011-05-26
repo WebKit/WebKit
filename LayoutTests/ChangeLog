@@ -1,5 +1,11 @@
 2011-05-26  Adam Klein  <adamk@chromium.org>
 
+        Unreviewed. Remove test expectations for now-passing tests.
+
+        * platform/chromium/test_expectations.txt: Narrow some failures to Win/Linux; remove tests now passing due to rollout.
+
+2011-05-26  Adam Klein  <adamk@chromium.org>
+
         Unreviewed. Rebaselines for SVG tests added in r87284.
 
         * platform/chromium-linux-x86/svg/dynamic-updates/SVGTextElement-dom-dx-attr-expected.png: Added.
