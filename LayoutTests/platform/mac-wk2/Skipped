@@ -400,6 +400,7 @@ scrollbars/scrollbar-iframe-click-does-not-blur-content.html
 scrollbars/scrollbar-miss-mousemove-disabled.html
 scrollbars/scrollevent-iframe-no-scrolling-wheel.html
 
+# CONSOLE MESSAGE: line 0: SVG animation pause API missing!
 svg/animations/animVal-basics.html
 svg/animations/animate-calcMode-spline-by.html
 svg/animations/animate-calcMode-spline-from-by.html
@@ -414,6 +415,8 @@ svg/animations/animate-currentColor.html
 svg/animations/animate-dynamic-update-attributeName.html
 svg/animations/animate-gradient-transform.html
 svg/animations/animate-inherit-css-property.html
+svg/animations/animate-insert-begin.html
+svg/animations/animate-insert-no-begin.html
 svg/animations/animate-keySplines.html
 svg/animations/animate-number-calcMode-discrete.html
 svg/animations/animate-path-animation-Cc-Ss.html
@@ -426,6 +429,7 @@ svg/animations/animate-path-nested-transforms.html
 svg/animations/animate-path-to-animation.html
 svg/animations/animate-points.html
 svg/animations/animate-text-nested-transforms.html
+
 svg/custom/absolute-sized-content-with-resources.xhtml
 svg/custom/circle-move-invalidation.svg
 svg/custom/clip-path-child-changes.svg

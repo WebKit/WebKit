@@ -1715,10 +1715,6 @@ http/tests/loading/text-content-type-with-binary-extension.html
 
 # NOT YET TRACKED BY BUG REPORTS
 
-# Uncategorized
-svg/animations/animate-insert-begin.html
-svg/animations/animate-insert-no-begin.html
-
 # WebKitTestrunner needs layoutTestController.dumpSourceAsWebArchive
 webarchive/doctype.html
 webarchive/archive-empty-frame-source.html

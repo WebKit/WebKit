@@ -1,3 +1,10 @@
+2011-05-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] Skip new failing tests because of missing SVG animation pause API.
+
+        * platform/mac-wk2/Skipped: Add failing tests.
+        * platform/qt-wk2/Skipped: Remove tests, because they fail because of WK2 specific bug, not Qt-WK2 specific.
+
 2011-05-26  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Tony Chang.
