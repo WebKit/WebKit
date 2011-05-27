@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Skip a test that requires eventSender.beginDragWithFiles.
+
+        * platform/win/Skipped:
+
+2011-05-27  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed.
+
         Skip a test that is failing until investigated.
 
         * platform/gtk/Skipped:

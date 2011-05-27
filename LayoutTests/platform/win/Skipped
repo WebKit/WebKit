@@ -210,6 +210,7 @@ http/tests/security/clipboard/clipboard-file-access.html
 fast/events/drag-file-crash.html
 fast/dom/Window/window-postmessage-clone.html
 fast/dom/Window/window-postmessage-clone-frames.html
+fast/events/dropzone-004.html
 
 # File API is not supported yet
 fast/files
