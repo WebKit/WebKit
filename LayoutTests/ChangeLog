@@ -2,6 +2,49 @@
 
         Reviewed by Kent Tamura.
 
+        Convert smart-paste-001.html through smart-paste-003.html to dumpAsText tests
+        https://bugs.webkit.org/show_bug.cgi?id=61617
+
+        Converted smart-paste-001.html, smart-paste-002.html, and smart-paste-003.html to dumpAsText tests.
+
+        * editing/pasteboard/smart-paste-001-expected.txt: Added.
+        * editing/pasteboard/smart-paste-001.html:
+        * editing/pasteboard/smart-paste-002-expected.txt: Added.
+        * editing/pasteboard/smart-paste-002.html:
+        * editing/pasteboard/smart-paste-003-expected.txt: Added.
+        * editing/pasteboard/smart-paste-003.html:
+        * platform/chromium-linux/editing/pasteboard/smart-paste-001-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/smart-paste-002-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/smart-paste-003-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/smart-paste-003-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/smart-paste-001-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/smart-paste-001-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/smart-paste-002-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/smart-paste-002-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/smart-paste-003-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/smart-paste-003-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/smart-paste-001-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/smart-paste-001-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/smart-paste-002-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/smart-paste-002-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/smart-paste-003-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/smart-paste-003-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/smart-paste-001-expected.png: Removed.
+        * platform/mac/editing/pasteboard/smart-paste-001-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/smart-paste-002-expected.png: Removed.
+        * platform/mac/editing/pasteboard/smart-paste-002-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/smart-paste-003-expected.png: Removed.
+        * platform/mac/editing/pasteboard/smart-paste-003-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/smart-paste-001-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/smart-paste-002-expected.png: Removed.
+        * platform/qt/editing/pasteboard/smart-paste-002-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/smart-paste-003-expected.png: Removed.
+        * platform/qt/editing/pasteboard/smart-paste-003-expected.txt: Removed.
+
+2011-05-27  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Kent Tamura.
+
         Convert editing/pasteboard/paste-unrendered-select.html to a dump-as-markup test
         https://bugs.webkit.org/show_bug.cgi?id=61616
 

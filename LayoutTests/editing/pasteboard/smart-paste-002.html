@@ -1,6 +1,6 @@
-<html> 
+<!DOCTYPE html>
+<html>
 <head>
-
 <style>
 .editing { 
     border: 2px solid red; 
@@ -16,8 +16,29 @@
 .scenario:first-line { font-weight: bold; margin-bottom: 16px;}
 .expected-results:first-line { font-weight: bold }
 </style>
-<script src=../editing.js language="JavaScript" type="text/JavaScript" ></script>
+</head> 
+<body>
+<div class="explanation">
+<div class="scenario">
+Tests: 
+<br>
+Smart paste when pasting at the beginning of a line before a word.
+</div>
+<div class="expected-results">
+Expected Results:
+<br>
+A space should be added after the pasted word before the preexising word. It should like this:
+<BR>
+test test
+</div>
+</div>
 
+<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
+<div id="test" class="editing">
+test
+</div>
+</div>
+<script src="../editing.js"></script>
 <script>
 
 function editingTest() {
@@ -30,36 +51,7 @@ function editingTest() {
     pasteCommand();
 }
 
+runDumpAsTextEditingTest(true);
 </script>
-
-<title>Editing Test</title> 
-</head> 
-<body>
-
-<div class="explanation">
-<div class="scenario">
-Tests: 
-<br>
-Smart paste when pasting at the beginning of a line before a word.
-</div>
-<div class="expected-results">
-Expected Results:
-<br>
-A space should be added after the pasted word before the preexising word. It should like this this:
-<BR>
-test test
-</div>
-</div>
-
-<div contenteditable id="root" style="word-wrap: break-word; -khtml-nbsp-mode: space; -khtml-line-break: after-white-space;">
-<div id="test" class="editing">
-test
-</div>
-</div>
-
-<script>
-runEditingTest();
-</script>
-
 </body>
 </html>
