@@ -88,7 +88,7 @@ STRIP_INSTALLED_PRODUCT_debug = NO;
 // building the MiG bindings for WebKitPluginClient even when the functions that the bindings wrap are not built.
 DEAD_CODE_STRIPPING = YES;
 
-SECTORDER_FLAGS = -sectorder __TEXT __text mac/WebKit.order;
+SECTORDER_FLAGS = -W1,-order_file,mac/WebKit.order;
 
 // FIXME: Disable C++ exceptions in the LLVM Compiler once it supports enabling Obj-C exceptions without C++ exceptions.
 GCC_ENABLE_CPP_EXCEPTIONS = $(GCC_ENABLE_CPP_EXCEPTIONS_$(TARGET_GCC_VERSION));
