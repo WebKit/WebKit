@@ -31,7 +31,7 @@
 #ifndef WorkerFileSystemCallbacksBridge_h
 #define WorkerFileSystemCallbacksBridge_h
 
-#if ENABLE(FILE_SYSTEM)
+#if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"

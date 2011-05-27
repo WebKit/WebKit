@@ -1047,9 +1047,11 @@ bool PlatformBridge::popupsAllowed(NPP npp)
     return false;
 }
 
+#if ENABLE(WORKERS)
 WorkerContextProxy* WorkerContextProxy::create(Worker* worker)
 {
     return WebWorkerClientImpl::createWorkerContextProxy(worker);
 }
+#endif
 
 } // namespace WebCore

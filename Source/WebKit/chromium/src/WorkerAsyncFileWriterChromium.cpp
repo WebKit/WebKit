@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WorkerAsyncFileWriterChromium.h"
 
-#if ENABLE(FILE_SYSTEM)
+#if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
 #include "AsyncFileSystem.h"
 #include "Blob.h"

@@ -31,7 +31,7 @@
 #ifndef WorkerFileWriterCallbacksBridge_h
 #define WorkerFileWriterCallbacksBridge_h
 
-#if ENABLE(FILE_SYSTEM)
+#if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
 #include "WebFileError.h"
 #include "WebFileWriterClient.h"

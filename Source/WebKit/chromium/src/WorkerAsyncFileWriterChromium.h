@@ -31,7 +31,7 @@
 #ifndef WorkerAsyncFileWriterChromium_h
 #define WorkerAsyncFileWriterChromium_h
 
-#if ENABLE(FILE_SYSTEM)
+#if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
 #include "AsyncFileWriter.h"
 #include <wtf/PassOwnPtr.h>

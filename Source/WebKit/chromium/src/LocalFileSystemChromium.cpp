@@ -89,6 +89,7 @@ static void openFileSystemHelper(ScriptExecutionContext* context, AsyncFileSyste
         else
             webFrame->client()->openFileSystem(webFrame, static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type));
     } else {
+#if ENABLE(WORKERS)
         WorkerContext* workerContext = static_cast<WorkerContext*>(context);
         WorkerLoaderProxy* workerLoaderProxy = &workerContext->thread()->workerLoaderProxy();
         WebWorkerBase* webWorker = static_cast<WebWorkerBase*>(workerLoaderProxy);
@@ -96,6 +97,9 @@ static void openFileSystemHelper(ScriptExecutionContext* context, AsyncFileSyste
             allowed = false;
         else
             webWorker->openFileSystemForWorker(static_cast<WebFileSystem::Type>(type), size, create == CreateIfNotPresent, new WebFileSystemCallbacksImpl(callbacks, type, context, synchronous), synchronous);
+#else
+        ASSERT_NOT_REACHED();
+#endif
     }
 
     if (!allowed) {

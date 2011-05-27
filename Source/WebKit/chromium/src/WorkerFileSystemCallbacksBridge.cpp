@@ -31,7 +31,7 @@
 #include "config.h"
 #include "WorkerFileSystemCallbacksBridge.h"
 
-#if ENABLE(FILE_SYSTEM)
+#if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
 #include "CrossThreadTask.h"
 #include "WebCommonWorkerClient.h"
