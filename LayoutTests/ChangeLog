@@ -1,7 +1,7 @@
 2011-05-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip smart-paste-001.html through smart-paste-005.html because GTK doesn't support smart replace.
-        The feature is tracked by the bug 61630.
+        The feature is tracked by the bug 61661.
 
         * platform/gtk/Skipped:
 
