@@ -1,3 +1,18 @@
+2011-05-27  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by David Hyatt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61646
+        Duplicate Fonts Put in Font Cache on Mac Due to Duplicate CGFontRefs for Same Font
+
+        Change the platformIsEqual to just compare the m_font members if
+        either is not null.
+
+        No tests added - functionality unchanged, fixing memory abandonment.
+
+        * platform/graphics/cocoa/FontPlatformDataCocoa.mm:
+        (WebCore::FontPlatformData::platformIsEqual):
+
 2011-05-25  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dirk Schulze.
