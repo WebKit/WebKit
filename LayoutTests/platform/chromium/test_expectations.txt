@@ -2357,7 +2357,7 @@ BUGWEBGL GPU WIN DEBUG SLOW : fast/canvas/webgl/index-validation-with-resized-bu
 // These were not fixed by the Mesa 7.9 upgrade. Need to investigate.
 BUGCR60651 WIN : fast/canvas/webgl/gl-object-get-calls.html = TIMEOUT PASS TEXT
 // BUGCR60651 WIN : fast/canvas/webgl/glsl-conformance.html = TIMEOUT FAIL
-BUGCR60651 : fast/canvas/webgl/uniform-location.html = TEXT
+BUGCR60651 : fast/canvas/webgl/uniform-location.html = TIMEOUT TEXT
 
 BUG_AUTO DEBUG : animations/suspend-resume-animation.html = PASS TEXT
 BUG_AUTO WIN DEBUG : animations/multiple-keyframes.html = PASS TEXT
