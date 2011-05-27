@@ -213,6 +213,10 @@ fast/events/drag-file-crash.html
 fast/events/drag-in-frames.html
 fast/events/drag-parent-node.html
 fast/events/drag-to-navigate.html
+fast/events/dropzone-001.html
+fast/events/dropzone-002.html
+fast/events/dropzone-003.html
+fast/events/dropzone-004.html
 fast/events/event-input-contentEditable.html
 fast/events/focus-change-crash.html
 fast/events/focus-change-crash2.html
