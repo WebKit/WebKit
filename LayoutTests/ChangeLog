@@ -1,3 +1,60 @@
+2011-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Convert editing/pasteboard/interchange-newline-*.html to dump-as-markup tests.
+        https://bugs.webkit.org/show_bug.cgi?id=61605
+
+        Converted interchange-newline-1 thorugh 4 to dump-as-markup tests.
+        Also revised some test descriptions.
+
+        * editing/pasteboard/interchange-newline-1-expected.txt: Added.
+        * editing/pasteboard/interchange-newline-1.html:
+        * editing/pasteboard/interchange-newline-2-expected.txt: Added.
+        * editing/pasteboard/interchange-newline-2.html:
+        * editing/pasteboard/interchange-newline-3-expected.txt: Added.
+        * editing/pasteboard/interchange-newline-3.html:
+        * editing/pasteboard/interchange-newline-4-expected.txt: Added.
+        * editing/pasteboard/interchange-newline-4.html:
+        * platform/chromium-linux/editing/pasteboard/interchange-newline-1-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/interchange-newline-2-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/interchange-newline-3-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/interchange-newline-4-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/pasteboard/interchange-newline-1-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/interchange-newline-1-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/interchange-newline-1-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/interchange-newline-1-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/interchange-newline-2-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/interchange-newline-2-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/interchange-newline-3-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/interchange-newline-3-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/interchange-newline-4-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/interchange-newline-4-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/interchange-newline-1-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/interchange-newline-1-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/interchange-newline-2-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/interchange-newline-2-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/interchange-newline-3-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/interchange-newline-3-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/interchange-newline-4-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/interchange-newline-4-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/interchange-newline-1-expected.png: Removed.
+        * platform/mac-leopard/editing/pasteboard/interchange-newline-2-expected.png: Removed.
+        * platform/mac-leopard/editing/pasteboard/interchange-newline-3-expected.png: Removed.
+        * platform/mac-leopard/editing/pasteboard/interchange-newline-4-expected.png: Removed.
+        * platform/mac/editing/pasteboard/interchange-newline-1-expected.png: Removed.
+        * platform/mac/editing/pasteboard/interchange-newline-1-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/interchange-newline-2-expected.png: Removed.
+        * platform/mac/editing/pasteboard/interchange-newline-2-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/interchange-newline-3-expected.png: Removed.
+        * platform/mac/editing/pasteboard/interchange-newline-3-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/interchange-newline-4-expected.png: Removed.
+        * platform/mac/editing/pasteboard/interchange-newline-4-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/interchange-newline-1-expected.png: Removed.
+        * platform/qt/editing/pasteboard/interchange-newline-1-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/interchange-newline-3-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/interchange-newline-4-expected.txt: Removed.
+
 2011-05-26  Shane Stephens  <shanestephens@google.com>
 
         Reviewed by James Robinson.
