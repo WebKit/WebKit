@@ -305,6 +305,21 @@ void MediaControlRootElement::reset()
             m_toggleClosedCaptionsButton->hide();
     }
 
+#if ENABLE(FULLSCREEN_API)
+    if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == m_mediaElement) {
+        if (m_mediaElement->movieLoadType() == MediaPlayer::LiveStream) {
+            m_seekBackButton->hide();
+            m_seekForwardButton->hide();
+            m_rewindButton->show();
+            m_returnToRealTimeButton->show();
+        } else {
+            m_seekBackButton->show();
+            m_seekForwardButton->show();
+            m_rewindButton->hide();
+            m_returnToRealTimeButton->hide();
+        }
+    } else
+#endif
     if (m_mediaElement->movieLoadType() != MediaPlayer::LiveStream) {
         m_returnToRealTimeButton->hide();
         m_rewindButton->show();

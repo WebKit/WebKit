@@ -1,3 +1,16 @@
+2011-05-27  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        30 second rewind button obscured in fullscreen controller
+        https://bugs.webkit.org/show_bug.cgi?id=61663
+
+        If reset() is called while in full-screen mode, make sure to show and hide
+        the correct controls for that mode.
+
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::reset):
+
 2011-05-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Simon Fraser.
