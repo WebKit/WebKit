@@ -37,6 +37,7 @@
 #import "GraphicsContext.h"
 #import "KURL.h"
 #import "Logging.h"
+#import "SecurityOrigin.h"
 #import "SoftLinking.h"
 #import "TimeRanges.h"
 #import "WebCoreSystemInterface.h"
@@ -256,7 +257,7 @@ void MediaPlayerPrivateAVFoundationObjC::createAVAssetForURL(const String& url)
     setDelayCallbacks(true);
 
     NSDictionary *options = [NSDictionary dictionaryWithObjectsAndKeys:
-                        [NSNumber numberWithInt:AVAssetReferenceRestrictionForbidCrossSiteReference], AVURLAssetReferenceRestrictionsKey, 
+                        [NSNumber numberWithInt:AVAssetReferenceRestrictionForbidRemoteReferenceToLocal | AVAssetReferenceRestrictionForbidLocalReferenceToRemote], AVURLAssetReferenceRestrictionsKey, 
                         nil];
     NSURL *cocoaURL = KURL(ParsedURLString, url);
     m_avAsset.adoptNS([[AVURLAsset alloc] initWithURL:cocoaURL options:options]);
@@ -773,6 +774,16 @@ void MediaPlayerPrivateAVFoundationObjC::sizeChanged()
 
     // Cache the natural size (setNaturalSize will notify the player if it has changed).
     setNaturalSize(IntSize(naturalSize));
+}
+
+bool MediaPlayerPrivateAVFoundationObjC::hasSingleSecurityOrigin() const 
+{
+    if (!m_avAsset)
+        return false;
+    
+    RefPtr<SecurityOrigin> resolvedOrigin = SecurityOrigin::create(KURL(wkAVAssetResolvedURL(m_avAsset.get())));
+    RefPtr<SecurityOrigin> requestedOrigin = SecurityOrigin::createFromString(assetURL());
+    return resolvedOrigin->isSameSchemeHostPort(requestedOrigin.get());
 }
 
 NSArray* assetMetadataKeyNames()

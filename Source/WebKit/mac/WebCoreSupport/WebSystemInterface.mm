@@ -96,6 +96,7 @@ void InitWebCoreSystemInterface(void)
     INIT(QTMovieMaxTimeSeekable);
     INIT(QTMovieGetType);
     INIT(QTMovieHasClosedCaptions);
+    INIT(QTMovieResolvedURL);
     INIT(QTMovieSetShowClosedCaptions);
     INIT(QTMovieSelectPreferredAlternates);
     INIT(QTMovieViewSetDrawSynchronously);
@@ -153,6 +154,7 @@ void InitWebCoreSystemInterface(void)
     INIT(ScrollbarPainterUsesOverlayScrollers);
     INIT(ExecutableWasLinkedOnOrBeforeSnowLeopard);
     INIT(CopyDefaultSearchProviderDisplayName);
+    INIT(AVAssetResolvedURL);
 #endif
 
     INIT(GetAXTextMarkerTypeID);
