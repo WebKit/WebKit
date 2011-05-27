@@ -1,3 +1,24 @@
+2011-05-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed.
+
+        embedded SVG object doesn't scale right
+        https://bugs.webkit.org/show_bug.cgi?id=10526
+
+        Rebaseline some qt/win/leopard results.
+
+        * platform/mac-leopard/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt:
+        * platform/mac-leopard/svg/zoom/page/zoom-svg-through-object-with-text-expected.txt: Added.
+        * platform/qt/svg/in-html/by-reference-expected.txt:
+        * platform/qt/svg/zoom/page/relative-sized-document-scrollbars-expected.txt:
+        * platform/win/svg/zoom/page/object-sizing-explicit-width-height-expected.txt: Added.
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt: Added.
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt: Added.
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt: Added.
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt: Added.
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Added.
+        * platform/win/svg/zoom/page/zoom-svg-through-object-with-text-expected.txt: Added.
+
 2011-05-27  Nat Duca  <nduca@chromium.org>
 
         Unreviewed, landed by enne@google.com.
