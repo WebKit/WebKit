@@ -1,5 +1,17 @@
 2011-05-27  Mark Rowe  <mrowe@apple.com>
 
+        Merge r87580.
+
+    2011-05-27  Stephanie Lewis  <slewis@apple.com>
+
+        Unreviewed.
+
+        Fix a typo in the order_file flag.
+
+        * Configurations/Base.xcconfig:
+
+2011-05-27  Mark Rowe  <mrowe@apple.com>
+
         Merge r87520.
 
     2011-05-27  Stephanie Lewis  <slewis@apple.com>
