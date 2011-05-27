@@ -183,4 +183,11 @@ PassRefPtr<CSSMutableStyleDeclaration> CSSStyleDeclaration::copyPropertiesInSet(
     return CSSMutableStyleDeclaration::create(list);
 }
 
+#ifndef NDEBUG
+void CSSStyleDeclaration::showStyle()
+{
+    fprintf(stderr, "%s\n", cssText().ascii().data());
+}
+#endif
+
 } // namespace WebCore

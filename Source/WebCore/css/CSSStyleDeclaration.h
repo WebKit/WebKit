@@ -72,6 +72,10 @@ public:
 
     PassRefPtr<CSSMutableStyleDeclaration> copyPropertiesInSet(const int* set, unsigned length) const;
 
+#ifndef NDEBUG
+    void showStyle();
+#endif
+
 protected:
     CSSStyleDeclaration(CSSRule* parentRule = 0);
 

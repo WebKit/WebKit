@@ -1,3 +1,16 @@
+2011-05-26  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        [debug feature] CSSStyleDeclaration should have a way to print cssText
+        https://bugs.webkit.org/show_bug.cgi?id=61570
+
+        Adds a method to print the cssText to stderr for debugging.
+
+        * css/CSSStyleDeclaration.cpp:
+        (WebCore::CSSStyleDeclaration::showStyle): New method to print cssText to stderr
+        * css/CSSStyleDeclaration.h: New method declaration
+
 2011-05-26  Syed Idris Shah  <syed.idris-shah@nokia.com>
 
         Reviewed by Andreas Kling.
