@@ -1,3 +1,24 @@
+2011-05-26  Shane Stephens  <shanestephens@google.com>
+
+        Reviewed by James Robinson.
+
+        REGRESSION (r81992): layout triggered by position update fails to apply when transform is updated at same time
+        https://bugs.webkit.org/show_bug.cgi?id=60689
+
+        When a transform is modified in a style, we were upgrading our understanding
+        of the difference from PositionedMovementOnly to SimplifiedLayout.  However,
+        if the position of the style is independently changed at the same time, both
+        PositionedMovement and SimplifiedLayout passes are required.
+
+        Test: transforms/2d/set-transform-and-top.html
+
+        * rendering/RenderObject.cpp:
+        Added checks for SimplifiedLayoutAndPositionedMovement - when encountered,
+        set both PositionedMovement and SimplifiedLayout update flasgs. 
+        * rendering/style/RenderStyleConstants.h:
+        Added a new StyleDifference enum value (SimplifiedLayoutAndPositionedMovement) for 
+        cases when both PositionedMovement and SimplifiedLayout are required.
+
 2011-05-26  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Eric Seidel.
@@ -378,7 +399,6 @@
         (WebCore::RenderTextControlSingleLine::controlClipRect):
         * rendering/RenderTextControlSingleLine.h:
 
-<<<<<<< .mine
 2011-05-25  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.
@@ -412,7 +432,6 @@
         (WebCore::RenderTextControlSingleLine::controlClipRect):
         * rendering/RenderTextControlSingleLine.h:
 
-=======
 2011-05-26  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Steve Falkenburg.
@@ -428,7 +447,6 @@
         (FullScreenController::Private::fullscreenClientWndProc): Exit fullscreen when m_fullScreenWindow is deactivated.
         (FullScreenController::enterFullScreenRepaintCompleted): Make m_fullScreenWindow a topmost window before animating it in to ensure the taskbar is hidden.
 
->>>>>>> .r87442
 2011-05-26  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Darin Fisher.

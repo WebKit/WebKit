@@ -1554,10 +1554,14 @@ StyleDifference RenderObject::adjustStyleDifference(StyleDifference diff, unsign
         // hence the !isText() check.
         // FIXME: when transforms are taken into account for overflow, we will need to do a layout.
         if (!isText() && (!hasLayer() || !toRenderBoxModelObject(this)->layer()->isComposited())) {
+            // We need to set at least SimplifiedLayout, but if PositionedMovementOnly is already set
+            // then we actually need SimplifiedLayoutAndPositionedMovement.
             if (!hasLayer())
                 diff = StyleDifferenceLayout; // FIXME: Do this for now since SimplifiedLayout cannot handle updating floating objects lists.
-            else if (diff < StyleDifferenceSimplifiedLayout)
+            else if (diff < StyleDifferenceLayoutPositionedMovementOnly)
                 diff = StyleDifferenceSimplifiedLayout;
+            else if (diff < StyleDifferenceSimplifiedLayout)
+                diff = StyleDifferenceSimplifiedLayoutAndPositionedMovement;
         } else if (diff < StyleDifferenceRecompositeLayer)
             diff = StyleDifferenceRecompositeLayer;
     }
@@ -1637,7 +1641,10 @@ void RenderObject::setStyle(PassRefPtr<RenderStyle> style)
             setNeedsLayoutAndPrefWidthsRecalc();
         else if (updatedDiff == StyleDifferenceLayoutPositionedMovementOnly)
             setNeedsPositionedMovementLayout();
-        else if (updatedDiff == StyleDifferenceSimplifiedLayout)
+        else if (updatedDiff == StyleDifferenceSimplifiedLayoutAndPositionedMovement) {
+            setNeedsPositionedMovementLayout();
+            setNeedsSimplifiedNormalFlowLayout();
+        } else if (updatedDiff == StyleDifferenceSimplifiedLayout)
             setNeedsSimplifiedNormalFlowLayout();
     }
     
@@ -1767,6 +1774,9 @@ void RenderObject::styleDidChange(StyleDifference diff, const RenderStyle* oldSt
             setNeedsLayoutAndPrefWidthsRecalc();
         else
             setNeedsSimplifiedNormalFlowLayout();
+    } else if (diff == StyleDifferenceSimplifiedLayoutAndPositionedMovement) {
+        setNeedsPositionedMovementLayout();
+        setNeedsSimplifiedNormalFlowLayout();
     } else if (diff == StyleDifferenceLayoutPositionedMovementOnly)
         setNeedsPositionedMovementLayout();
 

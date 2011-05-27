@@ -42,7 +42,10 @@ namespace WebCore {
 // (2) StyleDifferenceRecompositeLayer - The layer needs its position and transform updated, but no repaint
 // (3) StyleDifferenceRepaint - The object just needs to be repainted.
 // (4) StyleDifferenceRepaintLayer - The layer and its descendant layers needs to be repainted.
-// (5) StyleDifferenceLayout - A layout is required.
+// (5) StyleDifferenceLayoutPositionedMovementOnly - Only the position of this positioned object has been updated
+// (6) StyleDifferenceSimplifiedLayout - Only overflow needs to be recomputed
+// (7) StyleDifferenceSimplifiedLayoutAndPositionedMovement - Both positioned movement and simplified layout updates are required.
+// (8) StyleDifferenceLayout - A full layout is required.
 enum StyleDifference {
     StyleDifferenceEqual,
 #if USE(ACCELERATED_COMPOSITING)
@@ -52,6 +55,7 @@ enum StyleDifference {
     StyleDifferenceRepaintLayer,
     StyleDifferenceLayoutPositionedMovementOnly,
     StyleDifferenceSimplifiedLayout,
+    StyleDifferenceSimplifiedLayoutAndPositionedMovement,
     StyleDifferenceLayout
 };
 
