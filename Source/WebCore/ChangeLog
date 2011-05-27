@@ -1,3 +1,39 @@
+2011-05-26  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Replace RenderLayer::x/y/width/height with location/size
+        https://bugs.webkit.org/show_bug.cgi?id=61414
+
+        Covered by existing tests.
+
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::computeRelativePosition):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeRectForRepaint):
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::maxLayoutOverflow):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::clippedOverflowRectForRepaint):
+        (WebCore::RenderInline::computeRectForRepaint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPosition):
+        (WebCore::RenderLayer::convertToLayerCoords):
+        (WebCore::RenderLayer::offsetFromResizeCorner):
+        (WebCore::RenderLayer::calculateRects):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::location):
+        (WebCore::RenderLayer::setSize):
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::computeRectForRepaint):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::write):
+        (WebCore::writeLayers):
+        (WebCore::externalRepresentation):
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::absoluteRects):
+        (WebCore::RenderView::absoluteQuads):
+
 2011-05-26  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Ryosuke Niwa.

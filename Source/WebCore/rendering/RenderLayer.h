@@ -211,19 +211,13 @@ public:
         return curr;
     }
     
-    int x() const { return m_topLeft.x(); }
-    int y() const { return m_topLeft.y(); }
-    void setLocation(int x, int y)
-    {
-        m_topLeft = IntPoint(x, y);
-    }
+    const IntPoint& location() const { return m_topLeft; }
+    void setLocation(int x, int y) { m_topLeft = IntPoint(x, y); }
 
-    int width() const { return m_layerSize.width(); }
-    int height() const { return m_layerSize.height(); }
     const IntSize& size() const { return m_layerSize; }
-    
-    void setWidth(int w) { m_layerSize.setWidth(w); }
-    void setHeight(int h) { m_layerSize.setHeight(h); }
+    void setSize(const IntSize& size) { m_layerSize = size; }
+
+    IntRect rect() const { return IntRect(location(), size()); }
 
     int scrollWidth();
     int scrollHeight();

@@ -989,7 +989,7 @@ IntRect RenderInline::clippedOverflowRectForRepaint(RenderBoxModelObject* repain
         IntRect repaintRect(r);
         repaintRect.move(-cb->layer()->scrolledContentOffset()); // For overflow:auto/scroll/hidden.
 
-        IntRect boxRect(0, 0, cb->layer()->width(), cb->layer()->height());
+        IntRect boxRect(IntPoint(), cb->layer()->size());
         r = intersection(repaintRect, boxRect);
     }
     
@@ -1079,7 +1079,7 @@ void RenderInline::computeRectForRepaint(RenderBoxModelObject* repaintContainer,
         topLeft -= containerBox->layer()->scrolledContentOffset(); // For overflow:auto/scroll/hidden.
 
         IntRect repaintRect(topLeft, rect.size());
-        IntRect boxRect(0, 0, containerBox->layer()->width(), containerBox->layer()->height());
+        IntRect boxRect(IntPoint(), containerBox->layer()->size());
         rect = intersection(repaintRect, boxRect);
         if (rect.isEmpty())
             return;

@@ -323,12 +323,12 @@ void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, I
 
 void RenderView::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
-    rects.append(IntRect(tx, ty, m_layer->width(), m_layer->height()));
+    rects.append(IntRect(IntPoint(tx, ty), m_layer->size()));
 }
 
 void RenderView::absoluteQuads(Vector<FloatQuad>& quads)
 {
-    quads.append(FloatRect(0, 0, m_layer->width(), m_layer->height()));
+    quads.append(FloatRect(FloatPoint(), m_layer->size()));
 }
 
 static RenderObject* rendererAfterPosition(RenderObject* object, unsigned offset)

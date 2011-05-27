@@ -651,13 +651,11 @@ void RenderLayer::updateLayerPosition()
     if (renderer()->isRenderInline()) {
         RenderInline* inlineFlow = toRenderInline(renderer());
         IntRect lineBox = inlineFlow->linesBoundingBox();
-        setWidth(lineBox.width());
-        setHeight(lineBox.height());
-        inlineBoundingBoxOffset = IntSize(lineBox.x(), lineBox.y());
+        setSize(lineBox.size());
+        inlineBoundingBoxOffset = toSize(lineBox.location());
         localPoint += inlineBoundingBoxOffset;
     } else if (RenderBox* box = renderBox()) {
-        setWidth(box->width());
-        setHeight(box->height());
+        setSize(box->size());
         localPoint += box->locationOffsetIncludingFlipping();
     }
 
@@ -1204,9 +1202,9 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& xPos, i
         return;
     
     parentLayer->convertToLayerCoords(ancestorLayer, xPos, yPos);
-    
-    xPos += x();
-    yPos += y();
+
+    xPos += m_topLeft.x();
+    yPos += m_topLeft.y();
 }
 
 static inline int adjustedScrollDelta(int beginningDelta) {
@@ -2006,7 +2004,8 @@ int RenderLayer::horizontalScrollbarHeight(OverlayScrollbarSizeRelevancy relevan
 IntSize RenderLayer::offsetFromResizeCorner(const IntPoint& absolutePoint) const
 {
     // Currently the resize corner is always the bottom right corner
-    IntPoint bottomRight(width(), height());
+    // FIXME: This assumes the location is 0, 0. Is this guaranteed to always be the case?
+    IntPoint bottomRight = toPoint(size());
     IntPoint localPoint = absoluteToContents(absolutePoint);
     return localPoint - bottomRight;
 }
@@ -3451,7 +3450,7 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
     int x = 0;
     int y = 0;
     convertToLayerCoords(rootLayer, x, y);
-    layerBounds = IntRect(x, y, width(), height());
+    layerBounds = IntRect(IntPoint(x, y), size());
     
     // Update the clip rects that will be passed to child layers.
     if (renderer()->hasOverflowClip() || renderer()->hasClip()) {

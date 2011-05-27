@@ -580,7 +580,7 @@ void write(TextStream& ts, const RenderObject& o, int indent, RenderAsTextBehavi
                 view->layout();
                 RenderLayer* l = root->layer();
                 if (l)
-                    writeLayers(ts, l, l, IntRect(l->x(), l->y(), l->width(), l->height()), indent + 1, behavior);
+                    writeLayers(ts, l, l, l->rect(), indent + 1, behavior);
             }
         }
     }
@@ -653,8 +653,7 @@ static void writeLayers(TextStream& ts, const RenderLayer* rootLayer, RenderLaye
     if (rootLayer == l) {
         paintDirtyRect.setWidth(max(paintDirtyRect.width(), rootLayer->renderBox()->maxXLayoutOverflow()));
         paintDirtyRect.setHeight(max(paintDirtyRect.height(), rootLayer->renderBox()->maxYLayoutOverflow()));
-        l->setWidth(max(l->width(), l->renderBox()->maxXLayoutOverflow()));
-        l->setHeight(max(l->height(), l->renderBox()->maxYLayoutOverflow()));
+        l->setSize(l->size().expandedTo(l->renderBox()->maxLayoutOverflow()));
     }
     
     // Calculate the clip rects we should use.
@@ -776,7 +775,7 @@ String externalRepresentation(Frame* frame, RenderAsTextBehavior behavior)
     TextStream ts;
     if (o->hasLayer()) {
         RenderLayer* l = toRenderBox(o)->layer();
-        writeLayers(ts, l, l, IntRect(l->x(), l->y(), l->width(), l->height()), 0, behavior);
+        writeLayers(ts, l, l, l->rect(), 0, behavior);
         writeSelection(ts, o);
     }
     return ts.release();

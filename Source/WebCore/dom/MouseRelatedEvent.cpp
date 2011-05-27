@@ -204,8 +204,9 @@ void MouseRelatedEvent::computeRelativePosition()
     if (n && (layer = n->renderer()->enclosingLayer())) {
         layer->updateLayerPosition();
         for (; layer; layer = layer->parent()) {
-            m_layerX -= layer->x();
-            m_layerY -= layer->y();
+            const IntPoint& location = layer->location();
+            m_layerX -= location.x();
+            m_layerY -= location.y();
         }
     }
 
