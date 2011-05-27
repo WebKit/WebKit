@@ -390,6 +390,10 @@
 			Name="Tests"
 			>
 			<File
+				RelativePath=".\CallJSThatDestroysPlugin.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\Tests\DocumentOpenInDestroyStream.cpp"
 				>
 			</File>
