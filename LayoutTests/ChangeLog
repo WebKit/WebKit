@@ -1,3 +1,13 @@
+2011-05-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Daily gardening.
+
+        * platform/qt-mac/Skipped:
+         - plugins/embed-attributes-setting.html was unskipped by r87306, but fails on Qt-Mac.
+         - plugins/plugin-initiate-popup-window.html unskipped by r87429, but fails on Qt-Mac.
+         - fast/css/disabled-author-styles unskipped by r87311, but fails on Qt-Mac.
+        * platform/qt-mac/editing/pasteboard/paste-code-in-pre-expected.txt: Added after r87468.
+
 2011-05-27  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed.

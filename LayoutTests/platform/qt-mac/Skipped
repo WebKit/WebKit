@@ -2598,6 +2598,7 @@ plugins/destroy-during-npp-new.html
 plugins/destroy-plugin-from-callback.html
 plugins/destroy-stream-twice.html
 plugins/document-open.html
+plugins/embed-attributes-setting.html:
 plugins/embed-inside-object.html
 plugins/evaluate-js-after-removing-plugin-element.html
 plugins/get-empty-url.html
@@ -2629,6 +2630,7 @@ plugins/open-and-close-window-with-plugin.html
 plugins/override-node-method.html
 plugins/pass-different-npp-struct.html
 plugins/plugin-document-back-forward.html
+plugins/plugin-initiate-popup-window.html
 plugins/plugin-remove-subframe.html
 plugins/reentrant-update-widget-positions.html
 plugins/reloadplugins-and-pages.html
@@ -4260,3 +4262,6 @@ transitions/move-after-transition.html
 # new test introduced in r87096, but fail on Qt-Mac platform
 fast/events/selectstart-by-double-triple-clicks.html
 fast/events/selectstart-by-drag.html
+
+# unskipped by r87311, but fail on Qt-Mac platform
+fast/css/disabled-author-styles
