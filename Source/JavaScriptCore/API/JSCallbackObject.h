@@ -174,6 +174,9 @@ private:
 
     virtual void visitChildren(SlotVisitor& visitor)
     {
+        ASSERT_GC_OBJECT_INHERITS((static_cast<Base*>(this)), &JSCallbackObject<Base>::s_info);
+        COMPILE_ASSERT(StructureFlags & OverridesVisitChildren, OverridesVisitChildrenWithoutSettingFlag);
+        ASSERT(Base::structure()->typeInfo().overridesVisitChildren());
         Base::visitChildren(visitor);
         m_callbackObjectData->visitChildren(visitor);
     }
