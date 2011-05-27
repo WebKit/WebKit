@@ -1,11 +1,15 @@
-<script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
-</script>
-<p>Pasting a paragraph or less into a selection that spans multiple blocks should insert content into the block containing the start of the selection.</p>
+<!DOCTYPE html>
+<html>
+<body>
 <div id="test" contenteditable="true"><div style="border: 1px solid red;">This x</div><div style="border: 1px solid blue;">x it.</div></div>
 
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
+if (window.layoutTestController)
+    layoutTestController.dumpEditingCallbacks();
+
+Markup.description('Pasting a paragraph or less into a selection that spans multiple blocks should insert content into the block containing the start of the selection.');
+
 var s = window.getSelection();
 var e = document.getElementById("test");
 
@@ -17,4 +21,9 @@ s.modify("extend", "forward", "word");
 s.modify("extend", "forward", "word");
 
 document.execCommand("InsertHTML", false, "<div><div>text should have a red border around</div></div>");
+
+Markup.dump('test');
+
 </script>
+</body>
+</html>

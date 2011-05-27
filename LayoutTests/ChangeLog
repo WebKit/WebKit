@@ -2,6 +2,75 @@
 
         Reviewed by Adam Barth.
 
+        Convert editing/pasteboard/merge-end-*.html to dump-as-markup tests
+        https://bugs.webkit.org/show_bug.cgi?id=61607
+
+        * editing/pasteboard/merge-end-1-expected.txt: Added.
+        * editing/pasteboard/merge-end-1.html:
+        * editing/pasteboard/merge-end-2-expected.txt: Added.
+        * editing/pasteboard/merge-end-2.html:
+        * editing/pasteboard/merge-end-3-expected.txt: Added.
+        * editing/pasteboard/merge-end-3.html:
+        * editing/pasteboard/merge-end-4-expected.txt: Added.
+        * editing/pasteboard/merge-end-4.html:
+        * editing/pasteboard/merge-end-5-expected.txt: Added.
+        * editing/pasteboard/merge-end-5.html:
+        * platform/chromium-linux/editing/pasteboard/merge-end-1-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/merge-end-2-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/merge-end-3-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/merge-end-4-expected.png: Removed.
+        * platform/chromium-linux/editing/pasteboard/merge-end-5-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/pasteboard/merge-end-4-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/merge-end-4-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/merge-end-1-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/merge-end-1-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/merge-end-2-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/merge-end-2-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/merge-end-3-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/merge-end-3-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/merge-end-4-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/merge-end-4-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/merge-end-5-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/merge-end-5-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/merge-end-1-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/merge-end-1-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/merge-end-2-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/merge-end-2-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/merge-end-3-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/merge-end-3-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/merge-end-4-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/merge-end-4-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/merge-end-5-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/merge-end-5-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/merge-end-1-expected.png: Removed.
+        * platform/mac-leopard/editing/pasteboard/merge-end-2-expected.png: Removed.
+        * platform/mac-leopard/editing/pasteboard/merge-end-3-expected.png: Removed.
+        * platform/mac-leopard/editing/pasteboard/merge-end-5-expected.png: Removed.
+        * platform/mac/editing/pasteboard/merge-end-1-expected.png: Removed.
+        * platform/mac/editing/pasteboard/merge-end-1-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/merge-end-2-expected.png: Removed.
+        * platform/mac/editing/pasteboard/merge-end-2-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/merge-end-3-expected.png: Removed.
+        * platform/mac/editing/pasteboard/merge-end-3-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/merge-end-4-expected.png: Removed.
+        * platform/mac/editing/pasteboard/merge-end-4-expected.txt: Removed.
+        * platform/mac/editing/pasteboard/merge-end-5-expected.png: Removed.
+        * platform/mac/editing/pasteboard/merge-end-5-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/merge-end-1-expected.png: Removed.
+        * platform/qt/editing/pasteboard/merge-end-1-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/merge-end-2-expected.png: Removed.
+        * platform/qt/editing/pasteboard/merge-end-2-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/merge-end-3-expected.png: Removed.
+        * platform/qt/editing/pasteboard/merge-end-3-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/merge-end-4-expected.png: Removed.
+        * platform/qt/editing/pasteboard/merge-end-4-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/merge-end-5-expected.png: Removed.
+        * platform/qt/editing/pasteboard/merge-end-5-expected.txt: Removed.
+
+2011-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Adam Barth.
+
         Convert editing/pasteboard/interchange-newline-*.html to dump-as-markup tests.
         https://bugs.webkit.org/show_bug.cgi?id=61605
 

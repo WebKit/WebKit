@@ -12,21 +12,11 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 36 of #text > DIV > DIV > BODY > HTML > #document to 36 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {P} at (0,0) size 784x44
-        RenderText {#text} at (0,0) size 783x44
-          text run at (0,0) width 783: "Pasting a paragraph or less into a selection that spans multiple blocks should insert content into the block containing"
-          text run at (0,22) width 163: "the start of the selection."
-      RenderBlock {DIV} at (0,60) size 784x24
-        RenderBlock {DIV} at (0,0) size 784x24 [border: (1px solid #FF0000)]
-          RenderText {#text} at (1,1) size 34x22
-            text run at (1,1) width 34: "This "
-          RenderText {#text} at (35,1) size 254x22
-            text run at (35,1) width 254: "text should have a red border around"
-          RenderText {#text} at (289,1) size 17x22
-            text run at (289,1) width 17: " it."
-caret: position 36 of child 1 {#text} of child 0 {DIV} of child 2 {DIV} of body
+EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: webViewDidEndEditing:WebViewDidEndEditingNotification
+Pasting a paragraph or less into a selection that spans multiple blocks should insert content into the block containing the start of the selection.
+| <div>
+|   style="border: 1px solid red;"
+|   "This "
+|   "text should have a red border around<#selection-caret>"
+|   " it."
