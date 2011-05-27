@@ -87,7 +87,7 @@ bool LevelDBTransaction::set(const LevelDBSlice& key, const Vector<char>& value,
     node->deleted = deleted;
 
     if (newNode)
-        resetIterators();
+        notifyIteratorsOfTreeChange();
     return true;
 }
 
@@ -222,23 +222,19 @@ bool LevelDBTransaction::TreeIterator::isDeleted() const
 
 void LevelDBTransaction::TreeIterator::reset()
 {
-    // FIXME: Be lazy: set a flag and do the actual reset next time we use the iterator.
-    if (isValid()) {
-        m_iterator.start_iter(*m_tree, m_key, TreeType::EQUAL);
-        ASSERT(isValid());
-    }
+    ASSERT(isValid());
+    m_iterator.start_iter(*m_tree, m_key, TreeType::EQUAL);
+    ASSERT(isValid());
 }
 
 LevelDBTransaction::TreeIterator::~TreeIterator()
 {
-    m_transaction->unregisterIterator(this);
 }
 
 LevelDBTransaction::TreeIterator::TreeIterator(LevelDBTransaction* transaction)
     : m_tree(&transaction->m_tree)
     , m_transaction(transaction)
 {
-    transaction->registerIterator(this);
 }
 
 PassOwnPtr<LevelDBTransaction::TransactionIterator> LevelDBTransaction::TransactionIterator::create(PassRefPtr<LevelDBTransaction> transaction)
@@ -253,7 +249,14 @@ LevelDBTransaction::TransactionIterator::TransactionIterator(PassRefPtr<LevelDBT
     , m_dbIterator(m_transaction->m_db->createIterator())
     , m_current(0)
     , m_direction(kForward)
+    , m_treeChanged(false)
 {
+    m_transaction->registerIterator(this);
+}
+
+LevelDBTransaction::TransactionIterator::~TransactionIterator()
+{
+    m_transaction->unregisterIterator(this);
 }
 
 bool LevelDBTransaction::TransactionIterator::isValid() const
@@ -284,6 +287,8 @@ void LevelDBTransaction::TransactionIterator::seek(const LevelDBSlice& target)
 void LevelDBTransaction::TransactionIterator::next()
 {
     ASSERT(isValid());
+    if (m_treeChanged)
+        refreshTreeIterator();
 
     if (m_direction != kForward) {
         // Ensure the non-current iterator is positioned after key().
@@ -307,6 +312,8 @@ void LevelDBTransaction::TransactionIterator::next()
 void LevelDBTransaction::TransactionIterator::prev()
 {
     ASSERT(isValid());
+    if (m_treeChanged)
+        refreshTreeIterator();
 
     if (m_direction != kReverse) {
         // Ensure the non-current iterator is positioned before key().
@@ -336,13 +343,53 @@ void LevelDBTransaction::TransactionIterator::prev()
 LevelDBSlice LevelDBTransaction::TransactionIterator::key() const
 {
     ASSERT(isValid());
+    if (m_treeChanged)
+        refreshTreeIterator();
     return m_current->key();
 }
 
 LevelDBSlice LevelDBTransaction::TransactionIterator::value() const
 {
     ASSERT(isValid());
+    if (m_treeChanged)
+        refreshTreeIterator();
     return m_current->value();
+}
+
+void LevelDBTransaction::TransactionIterator::treeChanged()
+{
+    m_treeChanged = true;
+}
+
+void LevelDBTransaction::TransactionIterator::refreshTreeIterator() const
+{
+    ASSERT(m_treeChanged);
+
+    if (m_treeIterator->isValid()) {
+        m_treeIterator->reset();
+        return;
+    }
+
+    if (m_dbIterator->isValid()) {
+        ASSERT(!m_treeIterator->isValid());
+
+        // There could be new nodes in the tree that we should iterate over.
+
+        if (m_direction == kForward) {
+            // Try to seek tree iterator to something greater than the db iterator.
+            m_treeIterator->seek(m_dbIterator->key());
+            if (m_treeIterator->isValid() && !m_comparator->compare(m_treeIterator->key(), m_dbIterator->key()))
+                m_treeIterator->next(); // If equal, take another step so the tree iterator is strictly greater.
+        } else {
+            // If going backward, seek to a key less than the db iterator.
+            ASSERT(m_direction == kReverse);
+            m_treeIterator->seek(m_dbIterator->key());
+            if (m_treeIterator->isValid())
+                m_treeIterator->prev();
+        }
+    }
+
+    m_treeChanged = false;
 }
 
 void LevelDBTransaction::TransactionIterator::handleConflictsAndDeletes()
@@ -402,23 +449,23 @@ void LevelDBTransaction::TransactionIterator::setCurrentIteratorToLargestKey()
     m_current = largest;
 }
 
-void LevelDBTransaction::registerIterator(TreeIterator* iterator)
+void LevelDBTransaction::registerIterator(TransactionIterator* iterator)
 {
-    ASSERT(!m_treeIterators.contains(iterator));
-    m_treeIterators.add(iterator);
+    ASSERT(!m_iterators.contains(iterator));
+    m_iterators.add(iterator);
 }
 
-void LevelDBTransaction::unregisterIterator(TreeIterator* iterator)
+void LevelDBTransaction::unregisterIterator(TransactionIterator* iterator)
 {
-    ASSERT(m_treeIterators.contains(iterator));
-    m_treeIterators.remove(iterator);
+    ASSERT(m_iterators.contains(iterator));
+    m_iterators.remove(iterator);
 }
 
-void LevelDBTransaction::resetIterators()
+void LevelDBTransaction::notifyIteratorsOfTreeChange()
 {
-    for (HashSet<TreeIterator*>::iterator i = m_treeIterators.begin(); i != m_treeIterators.end(); ++i) {
-        TreeIterator* treeIterator = *i;
-        treeIterator->reset();
+    for (HashSet<TransactionIterator*>::iterator i = m_iterators.begin(); i != m_iterators.end(); ++i) {
+        TransactionIterator* transactionIterator = *i;
+        transactionIterator->treeChanged();
     }
 }
 

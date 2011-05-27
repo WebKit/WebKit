@@ -121,7 +121,7 @@ private:
 
     class TransactionIterator : public LevelDBIterator {
     public:
-        ~TransactionIterator() { };
+        ~TransactionIterator();
         static PassOwnPtr<TransactionIterator> create(PassRefPtr<LevelDBTransaction>);
 
         virtual bool isValid() const;
@@ -131,16 +131,18 @@ private:
         virtual void prev();
         virtual LevelDBSlice key() const;
         virtual LevelDBSlice value() const;
+        void treeChanged();
 
     private:
         TransactionIterator(PassRefPtr<LevelDBTransaction>);
         void handleConflictsAndDeletes();
         void setCurrentIteratorToSmallestKey();
         void setCurrentIteratorToLargestKey();
+        void refreshTreeIterator() const;
 
         RefPtr<LevelDBTransaction> m_transaction;
         const LevelDBComparator* m_comparator;
-        OwnPtr<TreeIterator> m_treeIterator;
+        mutable OwnPtr<TreeIterator> m_treeIterator;
         OwnPtr<LevelDBIterator> m_dbIterator;
         LevelDBIterator* m_current;
 
@@ -149,19 +151,20 @@ private:
             kReverse
         };
         Direction m_direction;
+        mutable bool m_treeChanged;
     };
 
     bool set(const LevelDBSlice& key, const Vector<char>& value, bool deleted);
     void clearTree();
-    void registerIterator(TreeIterator*);
-    void unregisterIterator(TreeIterator*);
-    void resetIterators();
+    void registerIterator(TransactionIterator*);
+    void unregisterIterator(TransactionIterator*);
+    void notifyIteratorsOfTreeChange();
 
     LevelDBDatabase* m_db;
     const LevelDBComparator* m_comparator;
     TreeType m_tree;
     bool m_finished;
-    HashSet<TreeIterator*> m_treeIterators;
+    HashSet<TransactionIterator*> m_iterators;
 };
 
 }
