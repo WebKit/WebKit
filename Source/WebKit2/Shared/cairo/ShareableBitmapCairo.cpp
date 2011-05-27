@@ -50,11 +50,8 @@ void ShareableBitmap::paint(GraphicsContext& context, const IntPoint& dstPoint, 
                                                                                    CAIRO_FORMAT_ARGB32,
                                                                                    m_size.width(), m_size.height(),
                                                                                    m_size.width() * 4));
-
-    // This copy is not copy-on-write, so this is probably sub-optimal.
-    RefPtr<cairo_surface_t> surfaceCopy = copyCairoImageSurface(surface.get());
     FloatRect destRect(dstPoint, srcRect.size());
-    context.platformContext()->drawSurfaceToContext(surfaceCopy.get(), destRect, srcRect, &context);
+    context.platformContext()->drawSurfaceToContext(surface.get(), destRect, srcRect, &context);
 }
 
 PassRefPtr<cairo_surface_t> ShareableBitmap::createCairoSurface()

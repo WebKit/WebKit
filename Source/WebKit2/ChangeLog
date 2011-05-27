@@ -1,3 +1,16 @@
+2011-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [CAIRO] Don't copy the surface before drawing it into the context in ShareableBitmap::paint()
+        https://bugs.webkit.org/show_bug.cgi?id=60757
+
+        cairo_image_surface_create_for_data() is already a shallow copy of
+        the image, so we don't need to copy it again.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::paint):
+
 2011-05-26  Jeff Miller  <jeffm@apple.com>
 
         Reviewed by Alexey Proskuryakov.
