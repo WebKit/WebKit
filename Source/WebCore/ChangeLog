@@ -1,3 +1,21 @@
+2011-05-26  David Levin  <levin@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        WebKit's font notification has problems when the WebKit main thread != UI thread.
+        https://bugs.webkit.org/show_bug.cgi?id=61391
+
+        This doesn't happen in DumpRenderTree, so it needs a unit test which is taking me
+        some time to write correctly. In the meantime, this issues happens to be causing
+        some crashes in Chrome so here's the fix alone for the time being.
+
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::invalidateFontCache): Ensure that FontCache::invalidate is only called on WebKit's main thread.
+        (WebCore::fontCacheRegisteredFontsChangedNotificationCallback): Call common function for font cache invalidation.
+         Note that the call to fontCache() is fine since the singleton is initialized well before calling this function. Theoretically,
+         there could be a problem due to a lack of a memory barrier but that is highly unlikely and this is debug only code.
+        (WebCore::fontCacheATSNotificationCallback): Ditto.
+
 2011-05-26  Stephanie Lewis  <slewis@apple.com>
 
         Reviewed by Geoff Garen.

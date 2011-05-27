@@ -36,22 +36,33 @@
 #import "WebCoreSystemInterface.h"
 #import "WebFontCache.h"
 #import <AppKit/AppKit.h>
+#import <wtf/MainThread.h>
 #import <wtf/StdLibExtras.h>
 
 
 namespace WebCore {
+
+// The "void*" parameter makes the function match the prototype for callbacks from callOnMainThread.
+static void invalidateFontCache(void*)
+{
+    if (!isMainThread()) {
+        callOnMainThread(&invalidateFontCache, 0);
+        return;
+    }
+    fontCache()->invalidate();
+}
 
 #if !defined(BUILDING_ON_LEOPARD)
 static void fontCacheRegisteredFontsChangedNotificationCallback(CFNotificationCenterRef, void* observer, CFStringRef name, const void *, CFDictionaryRef)
 {
     ASSERT_UNUSED(observer, observer == fontCache());
     ASSERT_UNUSED(name, CFEqual(name, kCTFontManagerRegisteredFontsChangedNotification));
-    fontCache()->invalidate();
+    invalidateFontCache(0);
 }
 #else
 static void fontCacheATSNotificationCallback(ATSFontNotificationInfoRef, void*)
 {
-    fontCache()->invalidate();
+    invalidateFontCache(0);
 }
 #endif
 
