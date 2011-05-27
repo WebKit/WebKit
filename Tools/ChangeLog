@@ -1,3 +1,24 @@
+2011-05-27  Adam Roben  <aroben@apple.com>
+
+        Add links to TestFailures to easily file bugs about failing tests
+
+        Fixes <http://webkit.org/b/61636> <rdar://problem/9514886> TestFailures page should have
+        links to file bugs for failing tests
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/Builder.js:
+        (Builder.prototype.resultsPageURL): New helper function to return the URL to results.html
+        for a particular build.
+        (Builder.prototype._getFailingTests): Use resultsPageURL.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._displayBuilder): Add links to file bugs about each set of
+        failures.
+        (ViewController.prototype._domForBuildName): Use resultsPageURL.
+        (ViewController.prototype._domForNewBugLink): Added. Creates an element that represents the
+        new bug link. The bug has a title, description, and URL already filled in for you!
+
 2011-05-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87464.

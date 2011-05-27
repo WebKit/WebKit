@@ -49,17 +49,25 @@ ViewController.prototype = {
         builder.startFetchingBuildHistory(function(history) {
             var list = document.createElement('ol');
             Object.keys(history).forEach(function(buildName, buildIndex, buildNameArray) {
-                if (!Object.keys(history[buildName].tests).length)
+                var failingTestNames = Object.keys(history[buildName].tests);
+                if (!failingTestNames.length)
                     return;
+
+                var passingBuildName;
+                if (buildIndex + 1 < buildNameArray.length)
+                    passingBuildName = buildNameArray[buildIndex + 1];
+
                 var dlItems = [
                     [document.createTextNode('Failed'), self._domForBuildName(builder, buildName)],
                 ];
-                if (buildIndex + 1 < buildNameArray.length)
+                if (passingBuildName)
                     dlItems.push([document.createTextNode('Passed'), self._domForBuildName(builder, buildNameArray[buildIndex + 1])]);
 
                 var item = document.createElement('li');
                 item.appendChild(createDefinitionList(dlItems));
                 list.appendChild(item);
+
+                item.appendChild(self._domForNewBugLink(builder, buildName, passingBuildName, failingTestNames));
 
                 if (history[buildName].tooManyFailures) {
                     var p = document.createElement('p');
@@ -141,7 +149,7 @@ ViewController.prototype = {
         buildLink.appendChild(document.createTextNode(parsed.buildNumber));
 
         var resultsLink = document.createElement('a');
-        resultsLink.href = builder.resultsDirectoryURL(buildName) + 'results.html';
+        resultsLink.href = builder.resultsPageURL(buildName);
         resultsLink.appendChild(document.createTextNode('results.html'));
 
         var result = document.createDocumentFragment();
@@ -174,5 +182,65 @@ ViewController.prototype = {
         result.appendChild(document.createTextNode(')'));
 
         return result;
+    },
+
+    _domForNewBugLink: function(tester, failingBuildName, passingBuildName, failingTests) {
+        return document.createDocumentFragment();
+        var parsedFailingBuildName = this._buildbot.parseBuildName(failingBuildName);
+        var regressionRangeString = 'r' + parsedFailingBuildName.revision;
+        if (passingBuildName) {
+            var parsedPassingBuildName = this._buildbot.parseBuildName(passingBuildName);
+            if (parsedFailingBuildName.revision - parsedPassingBuildName.revision > 1)
+                regressionRangeString = 'r' + parsedPassingBuildName.revision + '-' + regressionRangeString;
+        }
+
+        var description = failingTests.join(', ')
+            + (failingTests.length > 1 ? ' have' : ' has') + ' been failing on ' + tester.name
+            + ' since r' + parsedFailingBuildName.revision + '.\n\n';
+
+        if (passingBuildName)
+            description += encodeURI(tester.resultsPageURL(passingBuildName)) + ' passed\n';
+        var failingResultsHTML = tester.resultsPageURL(failingBuildName);
+        description += encodeURI(failingResultsHTML) + ' failed\n';
+
+        // FIXME: When a newly-added test has been failing since its introduction, it isn't really a
+        // "regression". We should use a different title and keywords in that case.
+        // <http://webkit.org/b/61645>
+        var queryParameters = {
+            product: 'WebKit',
+            version: '528+ (Nightly build)',
+            component: 'Tools / Tests',
+            keywords: 'LayoutTestFailure, MakingBotsRed, Regression',
+            short_desc: 'REGRESSION (' + regressionRangeString + '): ' + failingTests.join(', ') + ' failing on ' + tester.name,
+            comment: description,
+            bug_file_loc: failingResultsHTML,
+        };
+
+        if (/Windows/.test(tester.name)) {
+            queryParameters.rep_platform = 'PC';
+            if (/Windows 7/.test(tester.name))
+                queryParameters.op_sys = 'Windows 7';
+            else if (/Windows XP/.test(tester.name))
+                queryParameters.op_sys = 'Windows XP';
+        } else if (/Leopard/.test(tester.name)) {
+            queryParameters.rep_platform = 'Macintosh';
+            if (/SnowLeopard/.test(tester.name))
+                queryParameters.op_sys = 'Mac OS X 10.6';
+            else
+                queryParameters.op_sys = 'Mac OS X 10.5';
+        }
+
+        var encodedParameters = Object.keys(queryParameters).map(function(key) {
+            return key + '=' + encodeURIComponent(queryParameters[key])
+        });
+
+        var link = document.createElement('a');
+        link.href = 'https://bugs.webkit.org/enter_bug.cgi?' + encodedParameters.join('&');
+        link.target = '_blank';
+        link.appendChild(document.createTextNode('File bug for ' + (failingTests.length > 1 ? 'these failures' : 'this failure')));
+
+        var p = document.createElement('p');
+        p.appendChild(link);
+        return p;
     },
 };

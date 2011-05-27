@@ -188,6 +188,10 @@ Builder.prototype = {
         return this.buildbot.resultsDirectoryURL(this.name, buildName);
     },
 
+    resultsPageURL: function(buildName) {
+        return this.resultsDirectoryURL(buildName) + 'results.html';
+    },
+
     _getBuildJSON: function(buildNumber, callback) {
         var cacheKey = 'getBuildJSON_' + buildNumber;
         if (cacheKey in this._cache) {
@@ -254,7 +258,7 @@ Builder.prototype = {
             }
 
             // Find out which tests failed.
-            getResource(self.resultsDirectoryURL(buildName) + 'results.html', function(xhr) {
+            getResource(self.resultsPageURL(buildName), function(xhr) {
                 var root = document.createElement('html');
                 root.innerHTML = xhr.responseText;
 
