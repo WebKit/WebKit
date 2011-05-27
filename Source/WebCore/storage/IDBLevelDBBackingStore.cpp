@@ -836,13 +836,14 @@ public:
     bool firstSeek();
 
 protected:
-    CursorImplCommon(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward)
+    CursorImplCommon(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
         : m_transaction(transaction)
         , m_lowKey(lowKey)
         , m_lowOpen(lowOpen)
         , m_highKey(highKey)
         , m_highOpen(highOpen)
         , m_forward(forward)
+        , m_unique(unique)
     {
     }
     virtual ~CursorImplCommon() {}
@@ -854,6 +855,7 @@ protected:
     Vector<char> m_highKey;
     bool m_highOpen;
     bool m_forward;
+    bool m_unique;
     RefPtr<IDBKey> m_currentKey;
 };
 
@@ -909,6 +911,7 @@ bool CursorImplCommon::firstSeek()
 bool CursorImplCommon::continueFunction(const IDBKey* key)
 {
     // FIXME: This shares a lot of code with firstSeek.
+    RefPtr<IDBKey> previousKey = m_currentKey;
 
     for (;;) {
         if (m_forward)
@@ -945,7 +948,8 @@ bool CursorImplCommon::continueFunction(const IDBKey* key)
             }
         }
 
-        // FIXME: Obey the uniqueness constraint (and test for it!)
+        if (m_unique && m_currentKey->isEqual(previousKey.get()))
+            continue;
 
         break;
     }
@@ -955,9 +959,9 @@ bool CursorImplCommon::continueFunction(const IDBKey* key)
 
 class ObjectStoreCursorImpl : public CursorImplCommon {
 public:
-    static PassRefPtr<ObjectStoreCursorImpl> create(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward)
+    static PassRefPtr<ObjectStoreCursorImpl> create(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
     {
-        return adoptRef(new ObjectStoreCursorImpl(transaction, lowKey, lowOpen, highKey, highOpen, forward));
+        return adoptRef(new ObjectStoreCursorImpl(transaction, lowKey, lowOpen, highKey, highOpen, forward, unique));
     }
 
     // CursorImplCommon
@@ -967,8 +971,8 @@ public:
     virtual bool loadCurrentRow();
 
 private:
-    ObjectStoreCursorImpl(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward)
-        : CursorImplCommon(transaction, lowKey, lowOpen, highKey, highOpen, forward)
+    ObjectStoreCursorImpl(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
+        : CursorImplCommon(transaction, lowKey, lowOpen, highKey, highOpen, forward, unique)
     {
     }
 
@@ -1002,9 +1006,9 @@ bool ObjectStoreCursorImpl::loadCurrentRow()
 
 class IndexKeyCursorImpl : public CursorImplCommon {
 public:
-    static PassRefPtr<IndexKeyCursorImpl> create(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward)
+    static PassRefPtr<IndexKeyCursorImpl> create(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
     {
-        return adoptRef(new IndexKeyCursorImpl(transaction, lowKey, lowOpen, highKey, highOpen, forward));
+        return adoptRef(new IndexKeyCursorImpl(transaction, lowKey, lowOpen, highKey, highOpen, forward, unique));
     }
 
     // CursorImplCommon
@@ -1015,8 +1019,8 @@ public:
     virtual bool loadCurrentRow();
 
 private:
-    IndexKeyCursorImpl(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward)
-        : CursorImplCommon(transaction, lowKey, lowOpen, highKey, highOpen, forward)
+    IndexKeyCursorImpl(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
+        : CursorImplCommon(transaction, lowKey, lowOpen, highKey, highOpen, forward, unique)
     {
     }
 
@@ -1065,9 +1069,9 @@ bool IndexKeyCursorImpl::loadCurrentRow()
 
 class IndexCursorImpl : public CursorImplCommon {
 public:
-    static PassRefPtr<IndexCursorImpl> create(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward)
+    static PassRefPtr<IndexCursorImpl> create(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
     {
-        return adoptRef(new IndexCursorImpl(transaction, lowKey, lowOpen, highKey, highOpen, forward));
+        return adoptRef(new IndexCursorImpl(transaction, lowKey, lowOpen, highKey, highOpen, forward, unique));
     }
 
     // CursorImplCommon
@@ -1078,8 +1082,8 @@ public:
     bool loadCurrentRow();
 
 private:
-    IndexCursorImpl(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward)
-        : CursorImplCommon(transaction, lowKey, lowOpen, highKey, highOpen, forward)
+    IndexCursorImpl(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
+        : CursorImplCommon(transaction, lowKey, lowOpen, highKey, highOpen, forward, unique)
     {
     }
 
@@ -1157,6 +1161,7 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openObjectStoreCurso
     bool lowerBound = range && range->lower();
     bool upperBound = range && range->upper();
     bool forward = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT);
+    bool unique = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE);
 
     bool lowerOpen, upperOpen;
     Vector<char> startKey, stopKey;
@@ -1183,7 +1188,7 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openObjectStoreCurso
         upperOpen = range->upperOpen();
     }
 
-    RefPtr<ObjectStoreCursorImpl> cursor = ObjectStoreCursorImpl::create(m_currentTransaction.get(), startKey, lowerOpen, stopKey, upperOpen, forward);
+    RefPtr<ObjectStoreCursorImpl> cursor = ObjectStoreCursorImpl::create(m_currentTransaction.get(), startKey, lowerOpen, stopKey, upperOpen, forward, unique);
     if (!cursor->firstSeek())
         return 0;
 
@@ -1196,6 +1201,7 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openIndexKeyCursor(i
     bool lowerBound = range && range->lower();
     bool upperBound = range && range->upper();
     bool forward = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT);
+    bool unique = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE);
 
     bool lowerOpen, upperOpen;
     Vector<char> startKey, stopKey;
@@ -1224,7 +1230,7 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openIndexKeyCursor(i
         upperOpen = range->upperOpen();
     }
 
-    RefPtr<IndexKeyCursorImpl> cursor = IndexKeyCursorImpl::create(m_currentTransaction.get(), startKey, lowerOpen, stopKey, upperOpen, forward);
+    RefPtr<IndexKeyCursorImpl> cursor = IndexKeyCursorImpl::create(m_currentTransaction.get(), startKey, lowerOpen, stopKey, upperOpen, forward, unique);
     if (!cursor->firstSeek())
         return 0;
 
@@ -1237,6 +1243,7 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openIndexCursor(int6
     bool lowerBound = range && range->lower();
     bool upperBound = range && range->upper();
     bool forward = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT);
+    bool unique = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE);
 
     bool lowerOpen, upperOpen;
     Vector<char> startKey, stopKey;
@@ -1265,7 +1272,7 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openIndexCursor(int6
         upperOpen = range->upperOpen();
     }
 
-    RefPtr<IndexCursorImpl> cursor = IndexCursorImpl::create(m_currentTransaction.get(), startKey, lowerOpen, stopKey, upperOpen, forward);
+    RefPtr<IndexCursorImpl> cursor = IndexCursorImpl::create(m_currentTransaction.get(), startKey, lowerOpen, stopKey, upperOpen, forward, unique);
     if (!cursor->firstSeek())
         return 0;
 
