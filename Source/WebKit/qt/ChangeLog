@@ -1,3 +1,15 @@
+2011-05-27  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Fix tst_QGraphicsWebView::setPalette(inactiveBG) autotest
+        https://bugs.webkit.org/show_bug.cgi?id=61044
+
+        Make sure to set the active window on the application too.
+
+        * tests/qgraphicswebview/tst_qgraphicswebview.cpp:
+        (tst_QGraphicsWebView::setPalette):
+
 2011-05-26  Alexis Menard  <alexis.menard@openbossa.org>
 
         Unreviewed build fix for Qt and QuickTime backend.

@@ -387,9 +387,11 @@ void tst_QGraphicsWebView::setPalette()
     if (!active) {
         controlView.show();
         QTest::qWaitForWindowShown(&controlView);
+        QApplication::setActiveWindow(&controlView);
         activeView = &controlView;
         controlView.activateWindow();
     } else {
+        QApplication::setActiveWindow(&view1);
         view1.activateWindow();
         activeView = &view1;
     }
@@ -440,9 +442,11 @@ void tst_QGraphicsWebView::setPalette()
     if (!active) {
         controlView.show();
         QTest::qWaitForWindowShown(&controlView);
+        QApplication::setActiveWindow(&controlView);
         activeView = &controlView;
         controlView.activateWindow();
     } else {
+        QApplication::setActiveWindow(&view2);
         view2.activateWindow();
         activeView = &view2;
     }
