@@ -1,3 +1,7 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../../../resources/dump-as-markup.js"></script>
 <style>
 blockquote {
     color: blue;
@@ -6,14 +10,20 @@ blockquote {
     padding: 0 0 0 20px;
 }
 </style>
-
-<p>This tests pasting a blockquote into an empty paragraph.</p>
+</head>
+<body>
 <div id="div" contenteditable="true"></div>
-
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
 var sel = window.getSelection();
 var div = document.getElementById("div");
 
 sel.setPosition(div, 0);
 document.execCommand("InsertHTML", false, "<blockquote type='cite'>This should be blockquoted.</blockquote>");
+
+Markup.description('This tests pasting a blockquote into an empty paragraph.');
+Markup.dump('div');
+
 </script>
+</body>
+</html>
