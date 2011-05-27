@@ -22,35 +22,13 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 4 of #text > DIV > DIV > BODY > HTML > #document to 4 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x242 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x66
-          RenderText {#text} at (0,0) size 67x33
-            text run at (0,0) width 67: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 680x33
-            text run at (0,33) width 680: "Smart paste when pasting between smart paste exempt characters."
-        RenderBlock {DIV} at (14,96) size 756x132
-          RenderText {#text} at (0,0) size 189x33
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,24) size 0x0
-          RenderText {#text} at (0,33) size 749x66
-            text run at (0,33) width 749: "No spaces should be added before or after the pasted word. It should look"
-            text run at (0,66) width 95: "like this: "
-          RenderBR {BR} at (95,90) size 0x0
-          RenderText {#text} at (0,99) size 52x33
-            text run at (0,99) width 52: "-test-"
-      RenderBlock {DIV} at (0,266) size 784x37
-        RenderBlock {DIV} at (0,0) size 784x37 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 8x33
-            text run at (2,2) width 8: "-"
-          RenderText {#text} at (10,2) size 36x33
-            text run at (10,2) width 36: "test"
-          RenderText {#text} at (46,2) size 8x33
-            text run at (46,2) width 8: "-"
-        RenderBlock (anonymous) at (0,37) size 784x0
-caret: position 4 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of body
+Tests: 
+Smart paste when pasting between smart paste exempt characters.
+Expected Results: 
+No spaces should be added before or after the pasted word. It should look like this: 
+-test-
+-test-
+execCutCommand: <div id="test" class="editing"><br></div>
+execTypeCharacterCommand: <div id="test" class="editing">-</div>
+execTypeCharacterCommand: <div id="test" class="editing">--</div>
+execPasteCommand: <div id="test" class="editing">-test-</div>

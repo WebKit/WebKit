@@ -14,35 +14,11 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 6 of #text > DIV > DIV > BODY > HTML > #document to 6 of #text > DIV > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-layer at (0,0) size 800x600
-  RenderView at (0,0) size 800x600
-layer at (0,0) size 800x600
-  RenderBlock {HTML} at (0,0) size 800x600
-    RenderBody {BODY} at (8,8) size 784x584
-      RenderBlock {DIV} at (0,0) size 784x242 [border: (2px solid #0000FF)]
-        RenderBlock {DIV} at (14,14) size 756x66
-          RenderText {#text} at (0,0) size 67x33
-            text run at (0,0) width 67: "Tests: "
-          RenderBR {BR} at (0,0) size 0x0
-          RenderText {#text} at (0,33) size 513x33
-            text run at (0,33) width 513: "Smart paste when pasting in the middle of a word."
-        RenderBlock {DIV} at (14,96) size 756x132
-          RenderText {#text} at (0,0) size 189x33
-            text run at (0,0) width 189: "Expected Results: "
-          RenderBR {BR} at (189,24) size 0x0
-          RenderText {#text} at (0,33) size 733x66
-            text run at (0,33) width 733: "Spaces should be added before and after the pasted word. It should look"
-            text run at (0,66) width 95: "like this: "
-          RenderBR {BR} at (95,90) size 0x0
-          RenderText {#text} at (0,99) size 84x33
-            text run at (0,99) width 84: "te test st"
-      RenderBlock {DIV} at (0,266) size 784x37
-        RenderBlock {DIV} at (0,0) size 784x37 [border: (2px solid #FF0000)]
-          RenderText {#text} at (2,2) size 19x33
-            text run at (2,2) width 19: "te"
-          RenderText {#text} at (21,2) size 48x33
-            text run at (21,2) width 48: " test "
-          RenderText {#text} at (69,2) size 17x33
-            text run at (69,2) width 17: "st"
-        RenderBlock (anonymous) at (0,37) size 784x0
-caret: position 6 of child 1 {#text} of child 1 {DIV} of child 3 {DIV} of body
+Tests: 
+Smart paste when pasting in the middle of a word.
+Expected Results: 
+Spaces should be added before and after the pasted word. It should look like this: 
+te test st
+te test st
+execCopyCommand: <div id="test" class="editing"> test </div>
+execPasteCommand: <div id="test" class="editing"> te&nbsp;test&nbsp;st</div>
