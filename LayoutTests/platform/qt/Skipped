@@ -179,6 +179,11 @@ fast/events/drag-and-drop.html
 fast/events/drag-and-drop-dataTransfer-types-nocrash.html
 fast/events/drag-and-drop-fire-drag-dragover.html
 fast/events/ondrop-text-html.html
+fast/events/dropzone-001.html
+fast/events/dropzone-002.html
+fast/events/dropzone-003.html
+fast/events/dropzone-004.html
+
 # caused by: http://trac.webkit.org/changeset/52192
 http/tests/misc/drag-over-iframe-invalid-source-crash.html
 

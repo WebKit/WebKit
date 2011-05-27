@@ -1,3 +1,11 @@
+2011-05-27  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed.
+
+        Skip new dropzone tests. Qt's DRT does not support drag 'n drop.
+
+        * platform/qt/Skipped:
+
 2011-05-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [WK2] Skip new failing tests because of missing SVG animation pause API.
