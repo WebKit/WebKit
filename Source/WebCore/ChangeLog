@@ -1,3 +1,15 @@
+2011-05-26  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement a whitelist for registerProtocolHandler
+        https://bugs.webkit.org/show_bug.cgi?id=60322
+
+        * page/Navigator.cpp:
+        (WebCore::initProtocolHandlerWhitelist):
+        (WebCore::isProtocolWhitelisted):
+        (WebCore::verifyProtocolHandlerScheme):
+
 2011-05-26  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Ryosuke Niwa.

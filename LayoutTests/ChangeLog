@@ -1,3 +1,16 @@
+2011-05-26  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement a whitelist for registerProtocolHandler.
+
+        Described in the thread here
+        http://lists.whatwg.org/htdig.cgi/whatwg-whatwg.org/2011-April/031220.html
+
+        https://bugs.webkit.org/show_bug.cgi?id=60322
+
+        * fast/dom/register-protocol-handler.html:
+
 2011-05-26  Adam Klein  <adamk@chromium.org>
 
         Unreviewed. Remove some passing tests from the test expectations.

@@ -36,7 +36,7 @@ var invalid_urls = ["", "%S"];
 invalid_urls.forEach(function (url) {
    var succeeded = false;
    try {
-        window.navigator.registerProtocolHandler('myprotocol', url, 'title');
+        window.navigator.registerProtocolHandler('web+myprotocol', url, 'title');
     } catch (e) {
         succeeded = 'SYNTAX_ERR' == e.name;
     }
@@ -50,7 +50,7 @@ invalid_urls.forEach(function (url) {
 // Test that the API has default no-op implementation.
 var succeeded = true;
 try {
-    window.navigator.registerProtocolHandler('myprotocol', "%s", "title");
+    window.navigator.registerProtocolHandler('web+myprotocol', "%s", "title");
 } catch (e) {
     succeeded = false;
 }

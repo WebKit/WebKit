@@ -44,6 +44,7 @@
 #include "PluginData.h"
 #include "Settings.h"
 #include "StorageNamespace.h"
+#include <wtf/HashSet.h>
 #include <wtf/StdLibExtras.h>
 
 namespace WebCore {
@@ -183,6 +184,22 @@ void Navigator::getStorageUpdates()
 #endif
 
 #if ENABLE(REGISTER_PROTOCOL_HANDLER)
+static HashSet<String>* protocolWhitelist;
+
+static void initProtocolHandlerWhitelist()
+{
+    protocolWhitelist = new HashSet<String>;
+    static const char* protocols[] = {
+        "mailto",
+        "mms",
+        "nntp",
+        "rtsp",
+        "webcal",
+    };
+    for (size_t i = 0; i < WTF_ARRAY_LENGTH(protocols); ++i)
+        protocolWhitelist->add(protocols[i]);
+}
+
 static bool verifyCustomHandlerURL(const String& baseURL, const String& url, ExceptionCode& ec)
 {
     // The specification requires that it is a SYNTAX_ERR if the "%s" token is
@@ -210,14 +227,26 @@ static bool verifyCustomHandlerURL(const String& baseURL, const String& url, Exc
     return true;
 }
 
+static bool isProtocolWhitelisted(const String& scheme)
+{
+    if (!protocolWhitelist)
+        initProtocolHandlerWhitelist();
+    return protocolWhitelist->contains(scheme);
+}
+
 static bool verifyProtocolHandlerScheme(const String& scheme, ExceptionCode& ec)
 {
-    // It is a SECURITY_ERR for these schemes to be handled by a custom handler.
-    if (equalIgnoringCase(scheme, "http") || equalIgnoringCase(scheme, "https") || equalIgnoringCase(scheme, "file")) {
+    if (scheme.startsWith("web+")) {
+        if (isValidProtocol(scheme))
+            return true;
         ec = SECURITY_ERR;
         return false;
     }
-    return true;
+
+    if (isProtocolWhitelisted(scheme))
+        return true;
+    ec = SECURITY_ERR;
+    return false;
 }
 
 void Navigator::registerProtocolHandler(const String& scheme, const String& url, const String& title, ExceptionCode& ec)
