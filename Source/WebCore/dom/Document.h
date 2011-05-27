@@ -569,8 +569,7 @@ public:
     void setVisuallyOrdered();
     bool visuallyOrdered() const { return m_visuallyOrdered; }
     
-    void setDocumentLoader(DocumentLoader* documentLoader) { m_documentLoader = documentLoader; }
-    DocumentLoader* loader() const { return m_documentLoader; }
+    DocumentLoader* loader() const;
 
     void open(Document* ownerDocument = 0);
     void implicitOpen();
@@ -1174,7 +1173,6 @@ private:
     mutable RefPtr<CSSPrimitiveValueCache> m_cssPrimitiveValueCache;
 
     Frame* m_frame;
-    DocumentLoader* m_documentLoader;
     OwnPtr<CachedResourceLoader> m_cachedResourceLoader;
     RefPtr<DocumentParser> m_parser;
     bool m_wellFormed;
