@@ -1,3 +1,26 @@
+2011-05-27  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        Update RGBA color serialization to match HTML5.
+        https://bugs.webkit.org/show_bug.cgi?id=61449
+
+        Update tests to reflect the new behavior.
+
+        * canvas/philip/tests/2d.fillStyle.get.transparent.html:
+        * canvas/philip/tests/2d.shadow.attributes.shadowColor.initial.html:
+        * canvas/philip/tests/2d.shadow.attributes.shadowColor.valid.html:
+        * editing/style/inline-style-container-expected.txt
+        * editing/style/script-tests/inline-style-container.js:
+        * fast/canvas/canvas-color-clamping-expected.txt:
+        * fast/canvas/canvas-color-serialization-expected.txt:
+        * fast/canvas/canvas-currentColor-expected.txt:
+        * fast/canvas/script-tests/canvas-color-clamping.js:
+        * fast/canvas/script-tests/canvas-color-serialization.js:
+        * fast/canvas/script-tests/canvas-currentColor.js:
+        * fast/dom/canvasContext2d-element-attribute-js-null-expected.txt:
+        * fast/dom/canvasContext2d-element-attribute-js-null.html:
+
 2011-05-27  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed.

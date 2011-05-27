@@ -182,46 +182,46 @@ function checkDefaultValue(value) {
 
 shouldBe("checkDefaultValue(ctx.strokeStyle)", "'#000000'");
 shouldBe("checkDefaultValue(ctx.fillStyle)", "'#000000'");
-shouldBe("checkDefaultValue(ctx.shadowColor)", "'rgba(0, 0, 0, 0.0)'");
+shouldBe("checkDefaultValue(ctx.shadowColor)", "'rgba(0, 0, 0, 0)'");
 
-trySettingColorWithOverrideAlpha("'red'", 0, "'rgba(255, 0, 0, 0.0)'");
+trySettingColorWithOverrideAlpha("'red'", 0, "'rgba(255, 0, 0, 0)'");
 trySettingColorWithOverrideAlpha("'black'", 1, "'#000000'");
 
-trySettingRGBA(0, 0, 0, 0.0, "'rgba(0, 0, 0, 0.0)'");
+trySettingRGBA(0, 0, 0, 0.0, "'rgba(0, 0, 0, 0)'");
 trySettingRGBA(255, 255, 255, 1.0, "'#ffffff'");
-trySettingRGBA(255, 0, 0, 0.0, "'rgba(255, 0, 0, 0.0)'");
-trySettingRGBA(255, 0, 0, 0.4, "'rgba(255, 0, 0, 0.40000)'");
+trySettingRGBA(255, 0, 0, 0.0, "'rgba(255, 0, 0, 0)'");
+trySettingRGBA(255, 0, 0, 0.4, "'rgba(255, 0, 0, 0.4)'");
 
-trySettingCMYKA(0, 0, 0, 0, 0.0, "'rgba(255, 255, 255, 0.0)'");
+trySettingCMYKA(0, 0, 0, 0, 0.0, "'rgba(255, 255, 255, 0)'");
 trySettingCMYKA(0, 0, 0, 0, 1.0, "'#ffffff'");
-trySettingCMYKA(0, 1, 0, 0, 0.0, "'rgba(255, 0, 255, 0.0)'");
+trySettingCMYKA(0, 1, 0, 0, 0.0, "'rgba(255, 0, 255, 0)'");
 trySettingCMYKA(0, 1, 0, 0, 1.0, "'#ff00ff'");
-trySettingCMYKA(0, 0, 0, 1, 0.0, "'rgba(0, 0, 0, 0.0)'");
+trySettingCMYKA(0, 0, 0, 1, 0.0, "'rgba(0, 0, 0, 0)'");
 trySettingCMYKA(0, 0, 0, 1, 1.0, "'#000000'");
 
 trySettingGrayLevel(0.0, "'#000000'");
 trySettingGrayLevel(0.5, "'#808080'");
 trySettingGrayLevel(1.0, "'#ffffff'");
 
-trySettingGrayLevelWithAlpha(0.0, 0.0, "'rgba(0, 0, 0, 0.0)'");
-trySettingGrayLevelWithAlpha(0.0, 0.4, "'rgba(0, 0, 0, 0.40000)'");
+trySettingGrayLevelWithAlpha(0.0, 0.0, "'rgba(0, 0, 0, 0)'");
+trySettingGrayLevelWithAlpha(0.0, 0.4, "'rgba(0, 0, 0, 0.4)'");
 trySettingGrayLevelWithAlpha(0.0, 1.0, "'#000000'");
-trySettingGrayLevelWithAlpha(0.5, 0.0, "'rgba(128, 128, 128, 0.0)'");
-trySettingGrayLevelWithAlpha(0.5, 0.4, "'rgba(128, 128, 128, 0.40000)'");
+trySettingGrayLevelWithAlpha(0.5, 0.0, "'rgba(128, 128, 128, 0)'");
+trySettingGrayLevelWithAlpha(0.5, 0.4, "'rgba(128, 128, 128, 0.4)'");
 trySettingGrayLevelWithAlpha(0.5, 1.0, "'#808080'");
-trySettingGrayLevelWithAlpha(1.0, 0.0, "'rgba(255, 255, 255, 0.0)'");
-trySettingGrayLevelWithAlpha(1.0, 0.4, "'rgba(255, 255, 255, 0.40000)'");
+trySettingGrayLevelWithAlpha(1.0, 0.0, "'rgba(255, 255, 255, 0)'");
+trySettingGrayLevelWithAlpha(1.0, 0.4, "'rgba(255, 255, 255, 0.4)'");
 trySettingGrayLevelWithAlpha(1.0, 1.0, "'#ffffff'");
 
-trySettingColor("'transparent'", "'rgba(0, 0, 0, 0.0)'");
+trySettingColor("'transparent'", "'rgba(0, 0, 0, 0)'");
 trySettingColor("'red'", "'#ff0000'");
 trySettingColor("'white'", "'#ffffff'");
 trySettingColor("''", "'#666666'");
-trySettingColor("'RGBA(0, 0, 0, 0)'", "'rgba(0, 0, 0, 0.0)'");
+trySettingColor("'RGBA(0, 0, 0, 0)'", "'rgba(0, 0, 0, 0)'");
 trySettingColor("'rgba(0,255,0,1.0)'", "'#00ff00'");
-trySettingColor("'rgba(1,2,3,0.4)'", "'rgba(1, 2, 3, 0.40000)'");
+trySettingColor("'rgba(1,2,3,0.4)'", "'rgba(1, 2, 3, 0.4)'");
 trySettingColor("'RgB(1,2,3)'", "'#010203'");
-trySettingColor("'rGbA(1,2,3,0)'", "'rgba(1, 2, 3, 0.0)'");
+trySettingColor("'rGbA(1,2,3,0)'", "'rgba(1, 2, 3, 0)'");
 trySettingColor("true", "'#666666'");
 trySettingColor("false", "'#666666'");
 trySettingColor("0", "'#666666'");
@@ -231,17 +231,17 @@ trySettingColor("NaN", "'#666666'");
 trySettingColor("Infinity", "'#666666'");
 trySettingColor("null", "'#666666'");
 
-trySettingColorWithSetter("'transparent'", "'rgba(0, 0, 0, 0.0)'");
+trySettingColorWithSetter("'transparent'", "'rgba(0, 0, 0, 0)'");
 trySettingColorWithSetter("'red'", "'#ff0000'");
 trySettingColorWithSetter("'white'", "'#ffffff'");
 trySettingColorWithSetter("''", "'#666666'");
-trySettingColorWithSetter("'RGBA(0, 0, 0, 0)'", "'rgba(0, 0, 0, 0.0)'");
+trySettingColorWithSetter("'RGBA(0, 0, 0, 0)'", "'rgba(0, 0, 0, 0)'");
 trySettingColorWithSetter("'rgba(0,255,0,1.0)'", "'#00ff00'");
-trySettingColorWithSetter("'rgba(1,2,3,0.4)'", "'rgba(1, 2, 3, 0.40000)'");
+trySettingColorWithSetter("'rgba(1,2,3,0.4)'", "'rgba(1, 2, 3, 0.4)'");
 trySettingColorWithSetter("'RgB(1,2,3)'", "'#010203'");
-trySettingColorWithSetter("'rGbA(1,2,3,0)'", "'rgba(1, 2, 3, 0.0)'");
+trySettingColorWithSetter("'rGbA(1,2,3,0)'", "'rgba(1, 2, 3, 0)'");
 
-shouldBe("tryClearShadowAfterSettingColor('red')", "'rgba(0, 0, 0, 0.0)'");
-shouldBe("tryClearShadowAfterSettingColor('rgba(0, 5, 10, 0.4)')", "'rgba(0, 0, 0, 0.0)'");
+shouldBe("tryClearShadowAfterSettingColor('red')", "'rgba(0, 0, 0, 0)'");
+shouldBe("tryClearShadowAfterSettingColor('rgba(0, 5, 10, 0.4)')", "'rgba(0, 0, 0, 0)'");
 
 var successfullyParsed = true;

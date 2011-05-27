@@ -28,6 +28,7 @@
 
 #include "HashTools.h"
 #include <wtf/Assertions.h>
+#include <wtf/DecimalNumber.h>
 #include <wtf/HexNumber.h>
 #include <wtf/MathExtras.h>
 #include <wtf/text/StringBuilder.h>
@@ -183,7 +184,6 @@ String Color::serialized() const
 {
     DEFINE_STATIC_LOCAL(const String, commaSpace, (", "));
     DEFINE_STATIC_LOCAL(const String, rgbaParen, ("rgba("));
-    DEFINE_STATIC_LOCAL(const String, zeroPointZero, ("0.0"));
 
     if (!hasAlpha()) {
         StringBuilder builder;
@@ -206,11 +206,13 @@ String Color::serialized() const
     appendNumber(result, blue());
     append(result, commaSpace);
 
-    // Match Gecko ("0.0" for zero, 5 decimals for anything else)
     if (!alpha())
-        append(result, zeroPointZero);
-    else
-        append(result, String::format("%.5f", alpha() / 255.0f));
+        result.append('0');
+    else {
+        NumberToStringBuffer buffer;
+        unsigned length = DecimalNumber(alpha() / 255.0).toStringDecimal(buffer, WTF::NumberToStringBufferLength);
+        result.append(buffer, length);
+    }
 
     result.append(')');
     return String::adopt(result);
