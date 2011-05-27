@@ -1071,6 +1071,7 @@ public:
     
     void setFullScreenRenderer(RenderFullScreen*);
     RenderFullScreen* fullScreenRenderer() const { return m_fullScreenRenderer; }
+    void fullScreenRendererDestroyed();
     
     void setFullScreenRendererSize(const IntSize&);
     void setFullScreenRendererBackgroundColor(Color);

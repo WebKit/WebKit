@@ -4884,7 +4884,7 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
         setAnimatingFullScreen(true);
 #if USE(ACCELERATED_COMPOSITING)
         view()->updateCompositingLayers();
-        if (m_fullScreenRenderer->layer()->isComposited())
+        if (m_fullScreenRenderer->layer() && m_fullScreenRenderer->layer()->isComposited())
             page()->chrome()->client()->setRootFullScreenLayer(m_fullScreenRenderer->layer()->backing()->graphicsLayer());
 #endif
     }
@@ -4915,7 +4915,7 @@ void Document::webkitWillExitFullScreenForElement(Element*)
         setAnimatingFullScreen(true);
 #if USE(ACCELERATED_COMPOSITING)
         view()->updateCompositingLayers();
-        if (m_fullScreenRenderer->layer()->isComposited())
+        if (m_fullScreenRenderer->layer() && m_fullScreenRenderer->layer()->isComposited())
             page()->chrome()->client()->setRootFullScreenLayer(m_fullScreenRenderer->layer()->backing()->graphicsLayer());
 #endif
     }
@@ -4949,13 +4949,23 @@ void Document::setFullScreenRenderer(RenderFullScreen* renderer)
 
     if (m_fullScreenRenderer)
         m_fullScreenRenderer->destroy();
+    ASSERT(!m_fullScreenRenderer);
+
     m_fullScreenRenderer = renderer;
     
     // This notification can come in after the page has been destroyed.
     if (page())
         page()->chrome()->client()->fullScreenRendererChanged(m_fullScreenRenderer);
 }
-    
+
+void Document::fullScreenRendererDestroyed()
+{
+    m_fullScreenRenderer = 0;
+
+    if (page())
+        page()->chrome()->client()->fullScreenRendererChanged(0);
+}
+
 void Document::setFullScreenRendererSize(const IntSize& size)
 {
     ASSERT(m_fullScreenRenderer);
@@ -5029,7 +5039,7 @@ void Document::setAnimatingFullScreen(bool flag)
         return;
     m_isAnimatingFullScreen = flag;
 
-    if (m_fullScreenElement) {
+    if (m_fullScreenElement && m_fullScreenElement->isDescendantOf(this)) {
         m_fullScreenElement->setNeedsStyleRecalc();
         scheduleStyleRecalc();
     }
