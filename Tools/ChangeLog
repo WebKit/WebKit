@@ -1,5 +1,20 @@
 2011-05-27  Adam Roben  <aroben@apple.com>
 
+        Always decode tester names from location.hash
+
+        When navigating directly to a tester-specific URL (e.g.,
+        <http://build.webkit.org/TestFailures/#/Windows%207%20Release%20(Tests)>), you could end up
+        with a URL-encoded tester name in the page, and then the encoded name could make its way
+        into Bugzilla bugs. Bad!
+
+        Reviewed by David Kilzer.
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype.parseHash): Pass the tester name we got from location.hash through
+        decodeURIComponent before trying to use it.
+
+2011-05-27  Adam Roben  <aroben@apple.com>
+
         Remove testing code that snuck into r87528
 
         * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:

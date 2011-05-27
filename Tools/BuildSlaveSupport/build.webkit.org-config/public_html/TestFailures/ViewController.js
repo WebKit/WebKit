@@ -39,7 +39,7 @@ ViewController.prototype = {
     parseHash: function(hash) {
         var match = /#\/(.*)/.exec(hash);
         if (match)
-            this._displayBuilder(this._buildbot.builderNamed(match[1]));
+            this._displayBuilder(this._buildbot.builderNamed(decodeURIComponent(match[1])));
         else
             this._displayTesters();
     },
