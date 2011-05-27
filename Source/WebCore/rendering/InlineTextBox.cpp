@@ -34,6 +34,7 @@
 #include "HitTestResult.h"
 #include "Page.h"
 #include "PaintInfo.h"
+#include "RenderedDocumentMarker.h"
 #include "RenderArena.h"
 #include "RenderBR.h"
 #include "RenderBlock.h"
@@ -969,7 +970,7 @@ static GraphicsContext::TextCheckingLineStyle textCheckingLineStyleForMarkerType
     }
 }
 
-void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, const FloatPoint& boxOrigin, const DocumentMarker& marker, RenderStyle* style, const Font& font, bool grammar)
+void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, const FloatPoint& boxOrigin, DocumentMarker* marker, RenderStyle* style, const Font& font, bool grammar)
 {
     // Never print spelling/grammar markers (5327887)
     if (textRenderer()->document()->printing())
@@ -983,16 +984,16 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, const Floa
 
     // Determine whether we need to measure text
     bool markerSpansWholeBox = true;
-    if (m_start <= (int)marker.startOffset())
+    if (m_start <= (int)marker->startOffset())
         markerSpansWholeBox = false;
-    if ((end() + 1) != marker.endOffset()) // end points at the last char, not past it
+    if ((end() + 1) != marker->endOffset()) // end points at the last char, not past it
         markerSpansWholeBox = false;
     if (m_truncation != cNoTruncation)
         markerSpansWholeBox = false;
 
     if (!markerSpansWholeBox || grammar) {
-        int startPosition = max<int>(marker.startOffset() - m_start, 0);
-        int endPosition = min<int>(marker.endOffset() - m_start, m_len);
+        int startPosition = max<int>(marker->startOffset() - m_start, 0);
+        int endPosition = min<int>(marker->endOffset() - m_start, m_len);
         
         if (m_truncation != cNoTruncation)
             endPosition = min<int>(endPosition, m_truncation);
@@ -1013,7 +1014,7 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, const Floa
         if (grammar) {
             markerRect.move(-boxOrigin.x(), -boxOrigin.y());
             markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
-            renderer()->document()->markers()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
+            toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
         }
     }
     
@@ -1034,27 +1035,28 @@ void InlineTextBox::paintSpellingOrGrammarMarker(GraphicsContext* pt, const Floa
         // In larger fonts, though, place the underline up near the baseline to prevent a big gap.
         underlineOffset = baseline + 2;
     }
-    pt->drawLineForTextChecking(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, textCheckingLineStyleForMarkerType(marker.type()));
+    pt->drawLineForTextChecking(FloatPoint(boxOrigin.x() + start, boxOrigin.y() + underlineOffset), width, textCheckingLineStyleForMarkerType(marker->type()));
 }
 
-void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& boxOrigin, const DocumentMarker& marker, RenderStyle* style, const Font& font)
+void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& boxOrigin, DocumentMarker* marker, RenderStyle* style, const Font& font)
 {
     // Use same y positioning and height as for selection, so that when the selection and this highlight are on
     // the same word there are no pieces sticking out.
     int deltaY = renderer()->style()->isFlippedLinesWritingMode() ? selectionBottom() - logicalBottom() : logicalTop() - selectionTop();
     int selHeight = selectionHeight();
 
-    int sPos = max(marker.startOffset() - m_start, (unsigned)0);
-    int ePos = min(marker.endOffset() - m_start, (unsigned)m_len);
+    int sPos = max(marker->startOffset() - m_start, (unsigned)0);
+    int ePos = min(marker->endOffset() - m_start, (unsigned)m_len);
     TextRun run = constructTextRun(style, font);
+
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, IntPoint(m_x, selectionTop()), selHeight, sPos, ePos));
     markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
-    renderer()->document()->markers()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
+    toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
     
     // Optionally highlight the text
     if (renderer()->frame()->editor()->markedTextMatchesAreHighlighted()) {
-        Color color = marker.activeMatch() ?
+        Color color = marker->activeMatch() ?
             renderer()->theme()->platformActiveTextSearchHighlightColor() :
             renderer()->theme()->platformInactiveTextSearchHighlightColor();
         GraphicsContextStateSaver stateSaver(*pt);
@@ -1064,22 +1066,21 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& 
     }
 }
 
-void InlineTextBox::computeRectForReplacementMarker(const DocumentMarker& marker, RenderStyle* style, const Font& font)
+void InlineTextBox::computeRectForReplacementMarker(DocumentMarker* marker, RenderStyle* style, const Font& font)
 {
     // Replacement markers are not actually drawn, but their rects need to be computed for hit testing.
     int y = selectionTop();
     int h = selectionHeight();
     
-
-    int sPos = max(marker.startOffset() - m_start, (unsigned)0);
-    int ePos = min(marker.endOffset() - m_start, (unsigned)m_len);
+    int sPos = max(marker->startOffset() - m_start, (unsigned)0);
+    int ePos = min(marker->endOffset() - m_start, (unsigned)m_len);
     TextRun run = constructTextRun(style, font);
     IntPoint startPoint = IntPoint(m_x, y);
     
     // Compute and store the rect associated with this marker.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, h, sPos, ePos));
     markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
-    renderer()->document()->markers()->setRenderedRectForMarker(renderer()->node(), marker, markerRect);
+    toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
 }
     
 void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& boxOrigin, RenderStyle* style, const Font& font, bool background)
@@ -1087,16 +1088,16 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
     if (!renderer()->node())
         return;
 
-    Vector<DocumentMarker> markers = renderer()->document()->markers()->markersForNode(renderer()->node());
-    Vector<DocumentMarker>::iterator markerIt = markers.begin();
+    Vector<DocumentMarker*> markers = renderer()->document()->markers()->markersFor(renderer()->node());
+    Vector<DocumentMarker*>::const_iterator markerIt = markers.begin();
 
     // Give any document markers that touch this run a chance to draw before the text has been drawn.
     // Note end() points at the last char, not one past it like endOffset and ranges do.
     for ( ; markerIt != markers.end(); markerIt++) {
-        const DocumentMarker& marker = *markerIt;
+        DocumentMarker* marker = *markerIt;
         
         // Paint either the background markers or the foreground markers, but not both
-        switch (marker.type()) {
+        switch (marker->type()) {
             case DocumentMarker::Grammar:
             case DocumentMarker::Spelling:
             case DocumentMarker::CorrectionIndicator:
@@ -1112,17 +1113,17 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
                 continue;
         }
 
-        if (marker.endOffset() <= start())
+        if (marker->endOffset() <= start())
             // marker is completely before this run.  This might be a marker that sits before the
             // first run we draw, or markers that were within runs we skipped due to truncation.
             continue;
         
-        if (marker.startOffset() > end())
+        if (marker->startOffset() > end())
             // marker is completely after this run, bail.  A later run will paint it.
             break;
         
         // marker intersects this run.  Paint it.
-        switch (marker.type()) {
+        switch (marker->type()) {
             case DocumentMarker::Spelling:
                 paintSpellingOrGrammarMarker(pt, boxOrigin, marker, style, font, false);
                 break;

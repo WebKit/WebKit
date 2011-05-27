@@ -72,14 +72,14 @@ static const Vector<DocumentMarker::MarkerType>& markerTypesForReplacement()
     return markerTypesForReplacement;
 }
 
-static bool markersHaveIdenticalDescription(const Vector<DocumentMarker>& markers)
+static bool markersHaveIdenticalDescription(const Vector<DocumentMarker*>& markers)
 {
     if (markers.isEmpty())
         return true;
 
-    const String& description = markers[0].description();
+    const String& description = markers[0]->description();
     for (size_t i = 1; i < markers.size(); ++i) {
-        if (description != markers[i].description())
+        if (description != markers[i]->description())
             return false;
     }
     return true;
@@ -403,23 +403,23 @@ void SpellingCorrectionController::respondToChangedSelection(const VisibleSelect
 
     Node* node = position.containerNode();
     int endOffset = position.offsetInContainerNode();
-    Vector<DocumentMarker> markers = node->document()->markers()->markersForNode(node);
+    Vector<DocumentMarker*> markers = node->document()->markers()->markersFor(node);
     size_t markerCount = markers.size();
     for (size_t i = 0; i < markerCount; ++i) {
-        const DocumentMarker& marker = markers[i];
+        const DocumentMarker* marker = markers[i];
         if (!shouldStartTimerFor(marker, endOffset))
             continue;
-        RefPtr<Range> wordRange = Range::create(m_frame->document(), node, marker.startOffset(), node, marker.endOffset());
+        RefPtr<Range> wordRange = Range::create(m_frame->document(), node, marker->startOffset(), node, marker->endOffset());
         String currentWord = plainText(wordRange.get());
         if (!currentWord.length())
             continue;
 
         m_correctionPanelInfo.rangeToBeReplaced = wordRange;
         m_correctionPanelInfo.replacedString = currentWord;
-        if (marker.type() == DocumentMarker::Spelling)
+        if (marker->type() == DocumentMarker::Spelling)
             startCorrectionPanelTimer(CorrectionPanelInfo::PanelTypeSpellingSuggestions);
         else {
-            m_correctionPanelInfo.replacementString = marker.description();
+            m_correctionPanelInfo.replacementString = marker->description();
             startCorrectionPanelTimer(CorrectionPanelInfo::PanelTypeReversion);
         }
 
@@ -494,13 +494,13 @@ void SpellingCorrectionController::recordSpellcheckerResponseForModifiedCorrecti
     if (!rangeOfCorrection)
         return;
     DocumentMarkerController* markers = rangeOfCorrection->startContainer()->document()->markers();
-    Vector<DocumentMarker> correctedOnceMarkers = markers->markersInRange(rangeOfCorrection, DocumentMarker::Autocorrected);
+    Vector<DocumentMarker*> correctedOnceMarkers = markers->markersInRange(rangeOfCorrection, DocumentMarker::Autocorrected);
     if (correctedOnceMarkers.isEmpty())
         return;
     
     // Spelling corrected text has been edited. We need to determine whether user has reverted it to original text or
     // edited it to something else, and notify spellchecker accordingly.
-    if (markersHaveIdenticalDescription(correctedOnceMarkers) && correctedOnceMarkers[0].description() == corrected)
+    if (markersHaveIdenticalDescription(correctedOnceMarkers) && correctedOnceMarkers[0]->description() == corrected)
         client()->recordAutocorrectionResponse(EditorClient::AutocorrectionReverted, corrected, correction);
     else
         client()->recordAutocorrectionResponse(EditorClient::AutocorrectionEdited, corrected, correction);
@@ -550,10 +550,10 @@ bool SpellingCorrectionController::processMarkersOnTextToBeReplacedByResult(cons
     Position precedingCharacterPosition = beginningOfRange.previous();
     RefPtr<Range> precedingCharacterRange = Range::create(m_frame->document(), precedingCharacterPosition, beginningOfRange);
 
-    Vector<DocumentMarker> markers = markerController->markersInRange(precedingCharacterRange.get(), DocumentMarker::DeletedAutocorrection);
+    Vector<DocumentMarker*> markers = markerController->markersInRange(precedingCharacterRange.get(), DocumentMarker::DeletedAutocorrection);
 
     for (size_t i = 0; i < markers.size(); ++i) {
-        if (markers[i].description() == stringToBeReplaced)
+        if (markers[i]->description() == stringToBeReplaced)
             return false;
     }
 

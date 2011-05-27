@@ -3199,10 +3199,10 @@ bool Editor::selectionStartHasMarkerFor(DocumentMarker::MarkerType markerType, i
 
     unsigned int startOffset = static_cast<unsigned int>(from);
     unsigned int endOffset = static_cast<unsigned int>(from + length);
-    Vector<DocumentMarker> markers = m_frame->document()->markers()->markersForNode(node);
+    Vector<DocumentMarker*> markers = m_frame->document()->markers()->markersFor(node);
     for (size_t i = 0; i < markers.size(); ++i) {
-        DocumentMarker marker = markers[i];
-        if (marker.startOffset() <= startOffset && endOffset <= marker.endOffset() && marker.type() == markerType)
+        DocumentMarker* marker = markers[i];
+        if (marker->startOffset() <= startOffset && endOffset <= marker->endOffset() && marker->type() == markerType)
             return true;
     }
 

@@ -116,10 +116,10 @@ public:
 private:
     void recordAutocorrectionResponseReversed(const String& replacedString, const String& replacementString);
 
-    bool shouldStartTimerFor(const DocumentMarker& marker, int endOffset) const
+    bool shouldStartTimerFor(const DocumentMarker* marker, int endOffset) const
     {
-        return (((marker.type() == DocumentMarker::Replacement && !marker.description().isNull()) 
-                 || marker.type() == DocumentMarker::Spelling) && static_cast<int>(marker.endOffset()) == endOffset);
+        return (((marker->type() == DocumentMarker::Replacement && !marker->description().isNull()) 
+                 || marker->type() == DocumentMarker::Spelling) && static_cast<int>(marker->endOffset()) == endOffset);
     }
 
     EditorClient* client();

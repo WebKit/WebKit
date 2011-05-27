@@ -64,15 +64,15 @@ public:
     void removeMarkers(DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
     void removeMarkers(Node*, DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
     void repaintMarkers(DocumentMarker::MarkerTypes = DocumentMarker::AllMarkers());
-    void setRenderedRectForMarker(Node*, const DocumentMarker&, const IntRect&);
     void invalidateRenderedRectsForMarkersInRect(const IntRect&);
     void shiftMarkers(Node*, unsigned startOffset, int delta);
     void setMarkersActive(Range*, bool);
     void setMarkersActive(Node*, unsigned startOffset, unsigned endOffset, bool);
 
     DocumentMarker* markerContainingPoint(const IntPoint&, DocumentMarker::MarkerType);
+    Vector<DocumentMarker*> markersFor(Node*);
+    Vector<DocumentMarker*> markersInRange(Range*, DocumentMarker::MarkerTypes);
     Vector<DocumentMarker> markersForNode(Node*);
-    Vector<DocumentMarker> markersInRange(Range*, DocumentMarker::MarkerTypes);
     Vector<IntRect> renderedRectsForMarkers(DocumentMarker::MarkerType);
     void clearDescriptionOnMarkersIntersectingRange(Range*, DocumentMarker::MarkerTypes);
 

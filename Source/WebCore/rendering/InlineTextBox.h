@@ -175,9 +175,9 @@ protected:
 private:
     void paintDecoration(GraphicsContext*, const FloatPoint& boxOrigin, int decoration, const ShadowData*);
     void paintSelection(GraphicsContext*, const FloatPoint& boxOrigin, RenderStyle*, const Font&);
-    void paintSpellingOrGrammarMarker(GraphicsContext*, const FloatPoint& boxOrigin, const DocumentMarker&, RenderStyle*, const Font&, bool grammar);
-    void paintTextMatchMarker(GraphicsContext*, const FloatPoint& boxOrigin, const DocumentMarker&, RenderStyle*, const Font&);
-    void computeRectForReplacementMarker(const DocumentMarker&, RenderStyle*, const Font&);
+    void paintSpellingOrGrammarMarker(GraphicsContext*, const FloatPoint& boxOrigin, DocumentMarker*, RenderStyle*, const Font&, bool grammar);
+    void paintTextMatchMarker(GraphicsContext*, const FloatPoint& boxOrigin, DocumentMarker*, RenderStyle*, const Font&);
+    void computeRectForReplacementMarker(DocumentMarker*, RenderStyle*, const Font&);
 
     TextRun::ExpansionBehavior expansionBehavior() const
     {

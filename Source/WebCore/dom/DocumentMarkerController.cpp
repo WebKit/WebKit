@@ -93,10 +93,8 @@ void DocumentMarkerController::addTextMatchMarker(Range* range, bool activeMatch
             // the whole purpose of tickmarks on the scrollbar is to show where
             // matches off-screen are (that haven't been painted yet).
             Node* node = textPiece->startContainer(exception);
-            Vector<DocumentMarker> markers = markersForNode(node);
-            setRenderedRectForMarker(textPiece->startContainer(exception),
-                                     markers[markers.size() - 1],
-                                     range->boundingBox());
+            Vector<DocumentMarker*> markers = markersFor(node);
+            static_cast<RenderedDocumentMarker*>(markers[markers.size() - 1])->setRenderedRect(range->boundingBox());
         }
     }
 }
@@ -316,6 +314,20 @@ DocumentMarker* DocumentMarkerController::markerContainingPoint(const IntPoint& 
     return 0;
 }
 
+Vector<DocumentMarker*> DocumentMarkerController::markersFor(Node* node)
+{
+    Vector<DocumentMarker*> result;
+    MarkerList* list = m_markers.get(node);
+    if (!list)
+        return result;
+
+    for (size_t i = 0; i < list->size(); ++i)
+        result.append(&(list->at(i)));
+
+    return result;
+}
+
+// FIXME: Should be removed after all relevant patches are landed
 Vector<DocumentMarker> DocumentMarkerController::markersForNode(Node* node)
 {
     Vector<DocumentMarker> result;
@@ -329,12 +341,12 @@ Vector<DocumentMarker> DocumentMarkerController::markersForNode(Node* node)
     return result;
 }
 
-Vector<DocumentMarker> DocumentMarkerController::markersInRange(Range* range, DocumentMarker::MarkerTypes markerTypes)
+Vector<DocumentMarker*> DocumentMarkerController::markersInRange(Range* range, DocumentMarker::MarkerTypes markerTypes)
 {
     if (!possiblyHasMarkers(markerTypes))
-        return Vector<DocumentMarker>();
+        return Vector<DocumentMarker*>();
 
-    Vector<DocumentMarker> foundMarkers;
+    Vector<DocumentMarker*> foundMarkers;
 
     Node* startContainer = range->startContainer();
     ASSERT(startContainer);
@@ -343,16 +355,17 @@ Vector<DocumentMarker> DocumentMarkerController::markersInRange(Range* range, Do
 
     Node* pastLastNode = range->pastLastNode();
     for (Node* node = range->firstNode(); node != pastLastNode; node = node->traverseNextNode()) {
-        Vector<DocumentMarker> markers = markersForNode(node);
-        Vector<DocumentMarker>::const_iterator end = markers.end();
-        for (Vector<DocumentMarker>::const_iterator it = markers.begin(); it != end; ++it) {
-            if (!markerTypes.contains(it->type()))
+        Vector<DocumentMarker*> markers = markersFor(node);
+        Vector<DocumentMarker*>::const_iterator end = markers.end();
+        for (Vector<DocumentMarker*>::const_iterator it = markers.begin(); it != end; ++it) {
+            DocumentMarker* marker = *it;
+            if (!markerTypes.contains(marker->type()))
                 continue;
-            if (node == startContainer && it->endOffset() <= static_cast<unsigned>(range->startOffset()))
+            if (node == startContainer && marker->endOffset() <= static_cast<unsigned>(range->startOffset()))
                 continue;
-            if (node == endContainer && it->startOffset() >= static_cast<unsigned>(range->endOffset()))
+            if (node == endContainer && marker->startOffset() >= static_cast<unsigned>(range->endOffset()))
                 continue;
-            foundMarkers.append(*it);
+            foundMarkers.append(marker);
         }
     }
     return foundMarkers;
@@ -490,26 +503,6 @@ void DocumentMarkerController::repaintMarkers(DocumentMarker::MarkerTypes marker
     }
 }
 
-void DocumentMarkerController::setRenderedRectForMarker(Node* node, const DocumentMarker& marker, const IntRect& r)
-{
-    MarkerList* list = m_markers.get(node);
-    if (!list) {
-        ASSERT_NOT_REACHED(); // shouldn't be trying to set the rect for a marker we don't already know about
-        return;
-    }
-
-    size_t markerCount = list->size();
-    for (size_t markerIndex = 0; markerIndex < markerCount; ++markerIndex) {
-        RenderedDocumentMarker& m = list->at(markerIndex);
-        if (m == marker) {
-            m.setRenderedRect(r);
-            return;
-        }
-    }
-
-    ASSERT_NOT_REACHED(); // shouldn't be trying to set the rect for a marker we don't already know about
-}
-
 void DocumentMarkerController::invalidateRenderedRectsForMarkersInRect(const IntRect& r)
 {
     // outer loop: process each markered node in the document
@@ -609,14 +602,15 @@ bool DocumentMarkerController::hasMarkers(Range* range, DocumentMarker::MarkerTy
 
     Node* pastLastNode = range->pastLastNode();
     for (Node* node = range->firstNode(); node != pastLastNode; node = node->traverseNextNode()) {
-        Vector<DocumentMarker> markers = markersForNode(node);
-        Vector<DocumentMarker>::const_iterator end = markers.end();
-        for (Vector<DocumentMarker>::const_iterator it = markers.begin(); it != end; ++it) {
-            if (!markerTypes.contains(it->type()))
+        Vector<DocumentMarker*> markers = markersFor(node);
+        Vector<DocumentMarker*>::const_iterator end = markers.end();
+        for (Vector<DocumentMarker*>::const_iterator it = markers.begin(); it != end; ++it) {
+            DocumentMarker* marker = *it;
+            if (!markerTypes.contains(marker->type()))
                 continue;
-            if (node == startContainer && it->endOffset() <= static_cast<unsigned>(range->startOffset()))
+            if (node == startContainer && marker->endOffset() <= static_cast<unsigned>(range->startOffset()))
                 continue;
-            if (node == endContainer && it->startOffset() >= static_cast<unsigned>(range->endOffset()))
+            if (node == endContainer && marker->startOffset() >= static_cast<unsigned>(range->endOffset()))
                 continue;
             return true;
         }

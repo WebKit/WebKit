@@ -1,3 +1,50 @@
+2011-05-23  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Tony Chang.
+
+        [Refactoring] DocumentMarker should be carried around as a pointer, not value.
+        https://bugs.webkit.org/show_bug.cgi?id=61262
+
+        - Changed return value of markersInRange() from Vector<DocumentMarker> to Vector<DocumentMarker*>.
+        - Introduced markersFor() that returns Vector<DocumentMarker*>
+        - Removed DocumentMarkerController::setRenderedRectForMarker() which now can be replaced by
+          RenderedDocumentMarker::setRenderedRect().
+        - This change didn't remove markersForNode() beucase there is patches on review which depends
+          markersForNode(). I'll remove its call after these patches are landed.
+        
+        No new tests. No behavior change.
+
+        * WebCore.exp.in:
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::addTextMatchMarker):
+        (WebCore::DocumentMarkerController::markersFor):
+        (WebCore::DocumentMarkerController::markersInRange):
+        (WebCore::DocumentMarkerController::hasMarkers):
+        * dom/DocumentMarkerController.h:
+        * dom/RenderedDocumentMarker.h:
+        (WebCore::toRenderedDocumentMarker):
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::replaceTextInNodePreservingMarkers):
+        * editing/DeleteSelectionCommand.cpp:
+        (WebCore::DeleteSelectionCommand::originalStringForAutocorrectionAtBeginningOfSelection):
+        * editing/Editor.cpp:
+        (WebCore::Editor::selectionStartHasMarkerFor):
+        * editing/SpellingCorrectionController.cpp:
+        (WebCore::markersHaveIdenticalDescription):
+        (WebCore::SpellingCorrectionController::respondToChangedSelection):
+        (WebCore::SpellingCorrectionController::recordSpellcheckerResponseForModifiedCorrection):
+        (WebCore::SpellingCorrectionController::processMarkersOnTextToBeReplacedByResult):
+        * editing/SpellingCorrectionController.h:
+        (WebCore::SpellingCorrectionController::shouldStartTimerFor):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paintSpellingOrGrammarMarker):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+        * rendering/InlineTextBox.h:
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer):
+
 2011-05-26  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

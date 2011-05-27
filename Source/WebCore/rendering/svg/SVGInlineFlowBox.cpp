@@ -27,6 +27,7 @@
 #include "DocumentMarkerController.h"
 #include "GraphicsContext.h"
 #include "RenderSVGInlineText.h"
+#include "RenderedDocumentMarker.h"
 #include "SVGInlineTextBox.h"
 #include "SVGRenderSupport.h"
 
@@ -92,14 +93,14 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
 
     AffineTransform fragmentTransform;
     Document* document = textRenderer->document();
-    Vector<DocumentMarker> markers = document->markers()->markersForNode(textRenderer->node());
+    Vector<DocumentMarker*> markers = document->markers()->markersFor(textRenderer->node());
 
-    Vector<DocumentMarker>::iterator markerEnd = markers.end();
-    for (Vector<DocumentMarker>::iterator markerIt = markers.begin(); markerIt != markerEnd; ++markerIt) {
-        const DocumentMarker& marker = *markerIt;
+    Vector<DocumentMarker*>::iterator markerEnd = markers.end();
+    for (Vector<DocumentMarker*>::iterator markerIt = markers.begin(); markerIt != markerEnd; ++markerIt) {
+        DocumentMarker* marker = *markerIt;
 
         // SVG is only interessted in the TextMatch marker, for now.
-        if (marker.type() != DocumentMarker::TextMatch)
+        if (marker->type() != DocumentMarker::TextMatch)
             continue;
 
         FloatRect markerRect;
@@ -109,8 +110,8 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
 
             SVGInlineTextBox* textBox = static_cast<SVGInlineTextBox*>(box);
 
-            int markerStartPosition = max<int>(marker.startOffset() - textBox->start(), 0);
-            int markerEndPosition = min<int>(marker.endOffset() - textBox->start(), textBox->len());
+            int markerStartPosition = max<int>(marker->startOffset() - textBox->start(), 0);
+            int markerEndPosition = min<int>(marker->endOffset() - textBox->start(), textBox->len());
 
             if (markerStartPosition >= markerEndPosition)
                 continue;
@@ -137,7 +138,7 @@ void SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(RenderSVGInlineText
             }
         }
 
-        document->markers()->setRenderedRectForMarker(node, marker, textRenderer->localToAbsoluteQuad(markerRect).enclosingBoundingBox());
+        toRenderedDocumentMarker(marker)->setRenderedRect(textRenderer->localToAbsoluteQuad(markerRect).enclosingBoundingBox());
     }
 }
 

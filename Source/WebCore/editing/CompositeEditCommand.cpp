@@ -342,14 +342,14 @@ void CompositeEditCommand::replaceTextInNodePreservingMarkers(PassRefPtr<Text> p
 {
     RefPtr<Text> node(prpNode);
     DocumentMarkerController* markerController = document()->markers();
-    Vector<DocumentMarker> markers = markerController->markersInRange(Range::create(document(), node, offset, node, offset + count).get(), DocumentMarker::AllMarkers());
+    Vector<DocumentMarker*> markers = markerController->markersInRange(Range::create(document(), node, offset, node, offset + count).get(), DocumentMarker::AllMarkers());
     replaceTextInNode(node, offset, count, replacementText);
     RefPtr<Range> newRange = Range::create(document(), node, offset, node, offset + replacementText.length());
     for (size_t i = 0; i < markers.size(); ++i) {
-        if (markers[i].hasDescription())
-            markerController->addMarker(newRange.get(), markers[i].type(), markers[i].description());
+        if (markers[i]->hasDescription())
+            markerController->addMarker(newRange.get(), markers[i]->type(), markers[i]->description());
         else
-            markerController->addMarker(newRange.get(), markers[i].type());
+            markerController->addMarker(newRange.get(), markers[i]->type());
     }
 }
 
