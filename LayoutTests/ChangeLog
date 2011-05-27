@@ -1,3 +1,9 @@
+2011-05-27  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt][WK2] Make the bot environmentally friendly.
+
+        * platform/qt-wk2/Skipped:
+
 2011-05-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.

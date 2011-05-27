@@ -97,6 +97,7 @@ editing/pasteboard/do-not-copy-unnecessary-styles.html
 editing/pasteboard/onpaste-text-html-types.html
 editing/pasteboard/paste-removing-iframe.html
 editing/pasteboard/preserve-underline-color.html
+editing/pasteboard/insert-div-text-into-text.html
 
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
@@ -1713,6 +1714,10 @@ http/tests/loading/text-content-type-with-binary-extension.html
 ########################################
 
 # NOT YET TRACKED BY BUG REPORTS
+
+# Uncategorized
+svg/animations/animate-insert-begin.html
+svg/animations/animate-insert-no-begin.html
 
 # WebKitTestrunner needs layoutTestController.dumpSourceAsWebArchive
 webarchive/doctype.html
