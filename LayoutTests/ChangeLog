@@ -1,3 +1,26 @@
+2011-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        editing/pasteboard/5027857.html should be renamed and converted to a dump-as-markup test
+        https://bugs.webkit.org/show_bug.cgi?id=61602
+
+        Renamed 5027857.html to paste-code-in-pre.html and converted it to a dump-as-markup test.
+
+        * editing/pasteboard/5027857.html: Removed.
+        * editing/pasteboard/paste-code-in-pre-expected.txt: Added.
+        * editing/pasteboard/paste-code-in-pre.html: Copied from LayoutTests/editing/pasteboard/5027857.html.
+        * platform/chromium-linux/editing/pasteboard/5027857-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/5027857-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/5027857-expected.txt: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-code-in-pre-expected.txt: Added.
+        * platform/gtk/editing/pasteboard/5027857-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/5027857-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/5027857-expected.png: Removed.
+        * platform/mac/editing/pasteboard/5027857-expected.png: Removed.
+        * platform/mac/editing/pasteboard/5027857-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/5027857-expected.txt: Removed.
+
 2011-05-26  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Ryosuke Niwa.
