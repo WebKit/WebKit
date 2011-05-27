@@ -134,6 +134,15 @@ video:-webkit-full-screen::-webkit-media-controls-seek-back-button {
     top: 13px;
 }
 
+video:-webkit-full-screen::-webkit-media-controls-return-to-realtime-button {
+    position: absolute;
+    display: -webkit-box;
+    width: 29px;
+    height: 16px;
+    left: 262px;
+    top: 13px;
+}
+
 video:-webkit-full-screen::-webkit-media-controls-seek-forward-button {
     position: absolute;
     display: -webkit-box;

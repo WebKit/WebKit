@@ -409,11 +409,17 @@ void MediaControlRootElement::changedVolume()
 
 void MediaControlRootElement::enteredFullscreen()
 {
-    if (m_mediaElement->movieLoadType() == MediaPlayer::LiveStream || m_mediaElement->movieLoadType() == MediaPlayer::StoredStream) {
+    if (m_mediaElement->movieLoadType() == MediaPlayer::LiveStream) {
         m_seekBackButton->hide();
         m_seekForwardButton->hide();
-    } else
+        m_rewindButton->show();
+        m_returnToRealTimeButton->show();
+    } else {
+        m_seekBackButton->show();
+        m_seekForwardButton->show();
         m_rewindButton->hide();
+        m_returnToRealTimeButton->hide();
+    }
 }
 
 void MediaControlRootElement::exitedFullscreen()
@@ -424,6 +430,7 @@ void MediaControlRootElement::exitedFullscreen()
     m_rewindButton->show();
     m_seekBackButton->show();
     m_seekForwardButton->show();
+    m_returnToRealTimeButton->show();
 }
 
 void MediaControlRootElement::showVolumeSlider()
