@@ -1106,7 +1106,6 @@
             'conditions': [
                 ['OS=="mac"', {
                     'mac_bundle': 1,
-                    'product_name': 'TestNetscapePlugIn',
                     'product_extension': 'plugin',
                     'link_settings': {
                         'libraries': [
@@ -1135,8 +1134,7 @@
                         '../../../Tools/DumpRenderTree/TestNetscapePlugIn/win/TestNetscapePlugin.rc',
                     ],
                     # The .rc file requires that the name of the dll is npTestNetscapePlugin.dll.
-                    # This adds the 'np' to the dll name.
-                    'product_prefix': 'np',
+                    'product_name': 'npTestNetscapePlugin',
                 }],
             ],
         },

@@ -1,3 +1,13 @@
+2011-05-26  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] simplify TestNetscapePlugIn naming logic
+        https://bugs.webkit.org/show_bug.cgi?id=61577
+
+        * WebKit.gyp: drop use of product_prefix, just use the name
+        needed directly.
+
 2011-05-26  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87444.
