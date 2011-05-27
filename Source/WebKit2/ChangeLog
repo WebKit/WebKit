@@ -1,3 +1,13 @@
+2011-05-27  Jeff Miller  <jeffm@apple.com>
+
+        Rubber-stamped by Steve Falkenburg.
+
+        <rdar://problem/9513401>
+        Add "allow file-issue-extension*" to the sandbox profile to let the user style sheet be added as an exception and subsequently loaded.
+        This patch is actually by Timothy Hatcher, I'm just landing it for him.
+
+        * WebProcess/com.apple.WebProcess.sb: Added (allow file-issue-extension*).
+
 2011-05-27  Stephanie Lewis  <slewis@apple.com>
 
         Rubber Stamped by Adam Roben.

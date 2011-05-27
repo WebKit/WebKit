@@ -18,6 +18,9 @@
 (define (home-literal home-relative-literal)
   (literal (string-append (param "HOME_DIR") home-relative-literal)))
 
+;; Needed only for loading the user stylesheet at this time
+(allow file-issue-extension*)
+
 ;; Read-only preferences and data
 (allow file-read*
        ;; Basic system paths
