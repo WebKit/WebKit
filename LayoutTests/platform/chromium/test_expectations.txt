@@ -4025,3 +4025,4 @@ BUGWK61613 WIN : http/tests/local/formdata/send-form-data.html = CRASH
 BUGWK61613 WIN : http/tests/local/formdata/upload-events.html = CRASH
 
 BUGWK61624 WIN : editing/pasteboard/smart-paste-003.html = TEXT
+BUGWK61624 WIN : editing/pasteboard/smart-paste-004.html = TEXT
