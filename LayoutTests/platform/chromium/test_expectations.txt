@@ -4038,6 +4038,3 @@ BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMA
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-text.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
-
-// Failing after r87526, probably just needs rebaselining.
-BUGADAMK WIN LINUX : svg/in-html/by-reference.html = TEXT

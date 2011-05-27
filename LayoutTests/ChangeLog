@@ -1,3 +1,13 @@
+2011-05-27  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed. More rebaselines after r87526.
+
+        * platform/chromium-linux-x86/svg/in-html/by-reference-expected.txt: Copied from LayoutTests/platform/chromium-linux/svg/in-html/by-reference-expected.txt.
+        * platform/chromium-linux/svg/in-html/by-reference-expected.txt:
+        * platform/chromium-win-vista/svg/in-html/by-reference-expected.txt: Copied from LayoutTests/platform/chromium-linux/svg/in-html/by-reference-expected.txt.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-foreignObject-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-05-27  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed. Adjust baselines for debug-only failing scrollbar test.
