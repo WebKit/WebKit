@@ -376,6 +376,7 @@ CachedResource* CachedResourceLoader::revalidateResource(CachedResource* resourc
     
     // Copy the URL out of the resource to be revalidated in case it gets deleted by the remove() call below.
     String url = resource->url();
+    bool urlProtocolIsData = resource->url().protocolIsData();
     CachedResource* newResource = createResource(resource->type(), resource->resourceRequest(), resource->encoding());
     
     LOG(ResourceLoading, "Resource %p created to revalidate %p", newResource, resource);
@@ -386,8 +387,9 @@ CachedResource* CachedResourceLoader::revalidateResource(CachedResource* resourc
     
     newResource->setLoadPriority(priority);
     newResource->load(this);
-    
-    m_validatedURLs.add(url);
+
+    if (!urlProtocolIsData)
+        m_validatedURLs.add(url);
     return newResource;
 }
 
@@ -423,7 +425,8 @@ CachedResource* CachedResourceLoader::loadResource(CachedResource::Type type, Re
         return 0;
     }
 
-    m_validatedURLs.add(request.url());
+    if (!request.url().protocolIsData())
+        m_validatedURLs.add(request.url());
     return resource;
 }
 

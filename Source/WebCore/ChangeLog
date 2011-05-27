@@ -1,3 +1,18 @@
+2011-05-27  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        CachedResourceLoader stores data: urls in validated URL set
+        https://bugs.webkit.org/show_bug.cgi?id=61604
+
+        CachedResourceLoader maintains a set of URLs that have been validated to avoid validating the same resource
+        multiple times for loads within the same document.  This doesn't make sense for data: URLs and just wastes
+        memory.
+
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::revalidateResource):
+        (WebCore::CachedResourceLoader::loadResource):
+
 2011-05-23  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Tony Chang.
