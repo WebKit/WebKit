@@ -1,5 +1,28 @@
 2011-05-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        editing/pasteboard/4700297.html should be renamed and converted to a dump-as-markup test
+        https://bugs.webkit.org/show_bug.cgi?id=61595
+
+        Renamed 4700297.html to insert-div-text-into-text.html and converted it into a dump-as-markup test.
+
+        * editing/pasteboard/4700297.html: Removed.
+        * editing/pasteboard/insert-div-text-into-text-expected.txt: Added.
+        * editing/pasteboard/insert-div-text-into-text.html: Copied from LayoutTests/editing/pasteboard/4700297.html.
+        * platform/chromium-linux/editing/pasteboard/4700297-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/4700297-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/4700297-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/4700297-expected.png: Removed.
+        * platform/gtk/editing/pasteboard/4700297-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/4700297-expected.png: Removed.
+        * platform/mac/editing/pasteboard/4700297-expected.png: Removed.
+        * platform/mac/editing/pasteboard/4700297-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/4700297-expected.png: Removed.
+        * platform/qt/editing/pasteboard/4700297-expected.txt: Removed.
+
+2011-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Hajime Morita.
 
         editing/pasteboard/5483567.html should be renamed and converted to a dump-as-markup test.
