@@ -159,9 +159,9 @@ namespace WebCore {
         // global scope, its own prototypes for intrinsic JavaScript objects (String,
         // Array, and so-on), and its own wrappers for all DOM nodes and DOM
         // constructors.
-        void evaluateInIsolatedWorld(int worldId, const Vector<ScriptSourceCode>& sources, int extensionGroup);
+        void evaluateInIsolatedWorld(int worldID, const Vector<ScriptSourceCode>& sources, int extensionGroup);
         
-        void setIsolatedWorldSecurityOrigin(int worldId, PassRefPtr<SecurityOrigin>);
+        void setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin>);
 
         // Returns true if the proxy is currently executing a script in V8.
         bool executingScript() const;

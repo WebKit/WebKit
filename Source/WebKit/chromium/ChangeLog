@@ -1,3 +1,24 @@
+2011-05-26  Mihai Parparita  <mihaip@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Fix worldID and destinationDomain argument names
+        https://bugs.webkit.org/show_bug.cgi?id=61571
+
+        As part of working on r87423, I noticed a couple of inconsistencies in
+        argument names:
+        - We would use worldId in .h files but worldID in .cpp files.
+          Standardize on the latter
+        - SecurityOrigin::addOriginAccessWhitelistEntry would take a
+          destinationDomains argument, even though the actual parameter was for
+          a single domain (renamed to be singular).
+
+        * public/WebFrame.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::executeScriptInIsolatedWorld):
+        (WebKit::WebFrameImpl::setIsolatedWorldSecurityOrigin):
+        * src/WebFrameImpl.h:
+
 2011-05-26  Leandro Gracia Gil  <leandrogracia@chromium.org>
 
         Reviewed by Dmitry Titov.

@@ -102,7 +102,7 @@ public:
     // Associates an isolated world (see above for description) with a security
     // origin. XMLHttpRequest instances used in that world will be considered
     // to come from that origin, not the frame's.
-    void setIsolatedWorldSecurityOrigin(int worldId, PassRefPtr<SecurityOrigin>);
+    void setIsolatedWorldSecurityOrigin(int worldID, PassRefPtr<SecurityOrigin>);
 
     // Masquerade 'this' as the windowShell.
     // This is a bit of a hack, but provides reasonable compatibility

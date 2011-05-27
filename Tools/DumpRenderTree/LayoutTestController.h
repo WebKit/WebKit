@@ -303,7 +303,7 @@ public:
     void closeWebInspector();
     void setTimelineProfilingEnabled(bool enabled);
     void evaluateInWebInspector(long callId, JSStringRef script);
-    void evaluateScriptInIsolatedWorld(unsigned worldId, JSObjectRef globalObject, JSStringRef script);
+    void evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script);
 
     void setPOSIXLocale(JSStringRef locale);
 

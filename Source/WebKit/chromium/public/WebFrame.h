@@ -250,14 +250,14 @@ public:
     // v8 extensions are loaded into the new context - see
     // WebKit::registerExtension for the corresponding specifier.
     virtual void executeScriptInIsolatedWorld(
-        int worldId, const WebScriptSource* sources, unsigned numSources,
+        int worldID, const WebScriptSource* sources, unsigned numSources,
         int extensionGroup) = 0;
 
     // Associates an isolated world (see above for description) with a security
     // origin. XMLHttpRequest instances used in that world will be considered
     // to come from that origin, not the frame's.
     virtual void setIsolatedWorldSecurityOrigin(
-        int worldId, const WebSecurityOrigin&) = 0;
+        int worldID, const WebSecurityOrigin&) = 0;
 
     // Logs to the console associated with this frame.
     virtual void addMessageToConsole(const WebConsoleMessage&) = 0;

@@ -455,7 +455,7 @@ void LayoutTestController::setTimelineProfilingEnabled(bool enabled)
 
 }
 
-void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldId, JSObjectRef globalObject, JSStringRef script)
+void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
 
 }

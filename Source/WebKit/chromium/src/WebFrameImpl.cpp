@@ -775,7 +775,7 @@ void WebFrameImpl::executeScript(const WebScriptSource& source)
 }
 
 void WebFrameImpl::executeScriptInIsolatedWorld(
-    int worldId, const WebScriptSource* sourcesIn, unsigned numSources,
+    int worldID, const WebScriptSource* sourcesIn, unsigned numSources,
     int extensionGroup)
 {
     Vector<ScriptSourceCode> sources;
@@ -786,12 +786,12 @@ void WebFrameImpl::executeScriptInIsolatedWorld(
             sourcesIn[i].code, sourcesIn[i].url, position));
     }
 
-    m_frame->script()->evaluateInIsolatedWorld(worldId, sources, extensionGroup);
+    m_frame->script()->evaluateInIsolatedWorld(worldID, sources, extensionGroup);
 }
 
-void WebFrameImpl::setIsolatedWorldSecurityOrigin(int worldId, const WebSecurityOrigin& securityOrigin)
+void WebFrameImpl::setIsolatedWorldSecurityOrigin(int worldID, const WebSecurityOrigin& securityOrigin)
 {
-    m_frame->script()->setIsolatedWorldSecurityOrigin(worldId, securityOrigin.get());
+    m_frame->script()->setIsolatedWorldSecurityOrigin(worldID, securityOrigin.get());
 }
 
 void WebFrameImpl::addMessageToConsole(const WebConsoleMessage& message)
