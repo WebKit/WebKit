@@ -32,6 +32,7 @@
 
 #import "FormDataStreamMac.h"
 #import "ResourceRequestCFNet.h"
+#import "RuntimeApplicationChecks.h"
 #import "WebCoreSystemInterface.h"
 
 #import <Foundation/Foundation.h>
@@ -174,6 +175,31 @@ void ResourceRequest::setStorageSession(CFURLStorageSessionRef storageSession)
 }
 
 #endif
+    
+static bool initQuickLookResourceCachingQuirks()
+{
+    if (applicationIsSafari())
+        return false;
+    
+    NSArray* frameworks = [NSBundle allFrameworks];
+    
+    if (!frameworks)
+        return false;
+    
+    for (unsigned int i = 0; i < [frameworks count]; i++) {
+        NSBundle* bundle = [frameworks objectAtIndex: i];
+        const char* bundleID = [[bundle bundleIdentifier] UTF8String];
+        if (bundleID && !strcasecmp(bundleID, "com.apple.QuickLookUIFramework"))
+            return true;
+    }
+    return false;
+}
+
+bool ResourceRequest::useQuickLookResourceCachingQuirks()
+{
+    static bool flag = initQuickLookResourceCachingQuirks();
+    return flag;
+}
 
 } // namespace WebCore
 

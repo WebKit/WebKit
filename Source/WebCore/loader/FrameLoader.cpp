@@ -2407,14 +2407,15 @@ CachePolicy FrameLoader::subresourceCachePolicy() const
         if (parentCachePolicy != CachePolicyVerify)
             return parentCachePolicy;
     }
-
-    const ResourceRequest& request(documentLoader()->request());
-    Settings* settings = m_frame->settings();
-    if (settings && settings->useQuickLookResourceCachingQuirks() && request.cachePolicy() == ReloadIgnoringCacheData && !equalIgnoringCase(request.httpMethod(), "post"))
-        return CachePolicyRevalidate;
-
+    
     if (m_loadType == FrameLoadTypeReload)
         return CachePolicyRevalidate;
+
+    const ResourceRequest& request(documentLoader()->request());
+#if PLATFORM(MAC)
+    if (request.cachePolicy() == ReloadIgnoringCacheData && !equalIgnoringCase(request.httpMethod(), "post") && ResourceRequest::useQuickLookResourceCachingQuirks())
+        return CachePolicyRevalidate;
+#endif
 
     if (request.cachePolicy() == ReturnCacheDataElseLoad)
         return CachePolicyHistoryBuffer;
