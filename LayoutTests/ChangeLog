@@ -1,3 +1,12 @@
+2011-05-27  Shishir Agrawal  <shishir@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Enable Page Visibility API in the chromium port.
+        https://bugs.webkit.org/show_bug.cgi?id=61397
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-27  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Kent Tamura.

@@ -3868,12 +3868,6 @@ BUGWK60351 DEBUG : http/tests/local/formdata/send-form-data-with-sliced-file.htm
 // The test is added at r85961.
 BUGWK60414 WIN : platform/win/plugins/visibility-hidden.html = CRASH
 
-// Page visibility API not turned on.
-BUGWK54181 : fast/events/page-visibility-iframe-delete-test.html = TIMEOUT
-BUGWK54181 : fast/events/page-visibility-iframe-move-test.html = TIMEOUT
-BUGWK54181 : fast/events/page-visibility-iframe-propagation-test.html = TIMEOUT
-BUGWK54181 : fast/events/page-visibility-transition-test.html = TIMEOUT
-
 BUGCR82281 : fast/xpath/xpath-iterator-result-should-mark-its-nodeset.html = TEXT
 BUGCR82281 : fast/xpath/xpath-other-nodeset-result-should-mark-its-nodeset.html = TEXT
 BUGCR82281 : fast/xpath/xpath-snapshot-result-should-mark-its-nodeset.html = TEXT
