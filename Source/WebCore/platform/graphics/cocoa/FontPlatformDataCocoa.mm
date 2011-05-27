@@ -106,8 +106,9 @@ const FontPlatformData& FontPlatformData::platformDataAssign(const FontPlatformD
 
 bool FontPlatformData::platformIsEqual(const FontPlatformData& other) const
 {
-    return m_font == other.m_font
-        && m_cgFont == other.m_cgFont;
+    if (m_font || other.m_font)
+        return m_font == other.m_font;
+    return m_cgFont == other.m_cgFont;
 }
 
 void FontPlatformData::setFont(NSFont *font)
