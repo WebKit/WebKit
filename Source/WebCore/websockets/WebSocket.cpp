@@ -164,7 +164,7 @@ bool WebSocket::send(const String& message, ExceptionCode& ec)
         return false;
     }
     // No exception is raised if the connection was once established but has subsequently been closed.
-    if (m_state == CLOSED) {
+    if (m_state == CLOSING || m_state == CLOSED) {
         m_bufferedAmountAfterClose += message.utf8().length() + 2; // 2 for frameing
         return false;
     }
@@ -176,9 +176,14 @@ bool WebSocket::send(const String& message, ExceptionCode& ec)
 void WebSocket::close()
 {
     LOG(Network, "WebSocket %p close", this);
-    if (m_state == CLOSED)
+    if (m_state == CLOSING || m_state == CLOSED)
         return;
-    m_state = CLOSED;
+    if (m_state == CONNECTING) {
+        m_state = CLOSING;
+        m_channel->fail("WebSocket is closed before the connection is established.");
+        return;
+    }
+    m_state = CLOSING;
     m_bufferedAmountAfterClose = m_channel->bufferedAmount();
     // didClose notification may be already queued, which we will inadvertently process while waiting for bufferedAmount() to return.
     // In this case m_channel will be set to null during didClose() call, thus we need to test validness of m_channel here.
@@ -200,6 +205,8 @@ unsigned long WebSocket::bufferedAmount() const
 {
     if (m_state == OPEN)
         return m_channel->bufferedAmount();
+    else if (m_state == CLOSING)
+        return m_channel->bufferedAmount() + m_bufferedAmountAfterClose;
     return m_bufferedAmountAfterClose;
 }
 
@@ -249,7 +256,7 @@ void WebSocket::didConnect()
 {
     LOG(Network, "WebSocket %p didConnect", this);
     if (m_state != CONNECTING) {
-        didClose(0);
+        didClose(0, ClosingHandshakeIncomplete);
         return;
     }
     ASSERT(scriptExecutionContext());
@@ -260,7 +267,7 @@ void WebSocket::didConnect()
 void WebSocket::didReceiveMessage(const String& msg)
 {
     LOG(Network, "WebSocket %p didReceiveMessage %s", this, msg.utf8().data());
-    if (m_state != OPEN)
+    if (m_state != OPEN && m_state != CLOSING)
         return;
     ASSERT(scriptExecutionContext());
     RefPtr<MessageEvent> evt = MessageEvent::create();
@@ -271,22 +278,29 @@ void WebSocket::didReceiveMessage(const String& msg)
 void WebSocket::didReceiveMessageError()
 {
     LOG(Network, "WebSocket %p didReceiveErrorMessage", this);
-    if (m_state != OPEN)
+    if (m_state != OPEN && m_state != CLOSING)
         return;
     ASSERT(scriptExecutionContext());
     dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
 
-void WebSocket::didClose(unsigned long unhandledBufferedAmount)
+void WebSocket::didStartClosingHandshake()
+{
+    LOG(Network, "WebSocket %p didStartClosingHandshake", this);
+    m_state = CLOSING;
+}
+
+void WebSocket::didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion)
 {
     LOG(Network, "WebSocket %p didClose", this);
     if (!m_channel)
         return;
+    bool wasClean = m_state == CLOSING && !unhandledBufferedAmount && closingHandshakeCompletion == ClosingHandshakeComplete;
     m_state = CLOSED;
     m_bufferedAmountAfterClose += unhandledBufferedAmount;
     ASSERT(scriptExecutionContext());
     RefPtr<CloseEvent> event = CloseEvent::create(false);
-    event->initCloseEvent(eventNames().closeEvent, false, false, false);
+    event->initCloseEvent(eventNames().closeEvent, false, false, wasClean);
     dispatchEvent(event);
     if (m_channel) {
         m_channel->disconnect();

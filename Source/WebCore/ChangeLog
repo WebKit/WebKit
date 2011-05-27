@@ -1,3 +1,79 @@
+2011-05-26  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket closing handshake
+        https://bugs.webkit.org/show_bug.cgi?id=35721
+
+        Implement WebSocket closing handshake based on Ian Hickson's
+        WebSocket protocol draft 76.
+
+        Tests: http/tests/websocket/tests/client-close.html
+               http/tests/websocket/tests/server-close.html
+
+        * platform/network/SocketStreamHandleBase.cpp:
+        (WebCore::SocketStreamHandleBase::send):
+        Do not send a message if we are in Closing state.
+        (WebCore::SocketStreamHandleBase::close):
+        Do not disconnect if we have pending data which have not been sent yet.
+        In this case, the actual disconnection will happen in sendPendingData().
+        (WebCore::SocketStreamHandleBase::disconnect):
+        Renamed from close(). Disconnect the connection immediately.
+        (WebCore::SocketStreamHandleBase::sendPendingData):
+        * platform/network/SocketStreamHandleBase.h:
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        Add didStartClosingHandshake(). Add a function argument (ClosingHandshakeCompletionStatus)
+        to didClose().
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshake):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didClose):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didCloseCallback):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * websockets/WebSocket.cpp:
+        (WebCore::WebSocket::send):
+        (WebCore::WebSocket::close):
+        Fail if close() is attempted before the connection is established.
+        Otherwise, set the state to CLOSING and start the closing handshake.
+        (WebCore::WebSocket::bufferedAmount):
+        If the state is CLOSING, we need to consider buffered data in m_channel and sent after close().
+        (WebCore::WebSocket::didConnect):
+        (WebCore::WebSocket::didReceiveMessage):
+        We need to invoke message event in CLOSING state as well as OPEN state.
+        (WebCore::WebSocket::didReceiveMessageError):
+        (WebCore::WebSocket::didStartClosingHandshake):
+        (WebCore::WebSocket::didClose):
+        * websockets/WebSocket.h:
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::WebSocketChannel):
+        (WebCore::WebSocketChannel::close):
+        Start the closing handshake.
+        (WebCore::WebSocketChannel::disconnect):
+        Disconnect the socket stream, instead of close.
+        (WebCore::WebSocketChannel::didClose):
+        (WebCore::WebSocketChannel::didReceiveData): Ditto.
+        (WebCore::WebSocketChannel::didFail): Ditto.
+        (WebCore::WebSocketChannel::processBuffer):
+        Ditto.
+        Handle 0xFF 0x00 byte sequence, and discard received data once the closing handshake has started.
+        (WebCore::WebSocketChannel::startClosingHandshake):
+        Send 0xFF 0x00 byte sequence.
+        (WebCore::WebSocketChannel::closingTimerFired):
+        Disconnect the socket stream if the closing handshake has timed out.
+        * websockets/WebSocketChannel.h:
+        m_closing is true if "the WebSocket closing handshake has started" (as stated in the protocol
+        specification).
+        * websockets/WebSocketChannelClient.h:
+        (WebCore::WebSocketChannelClient::didStartClosingHandshake): Added.
+        (WebCore::WebSocketChannelClient::didClose): Add closingHandshakeCompletion parameter.
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        Add closingHandshakeCompletion parameter to didClose(), and add didStartClosingHandshake().
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::close):
+        (WebCore::workerContextDidStartClosingHandshake):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake):
+        (WebCore::workerContextDidClose):
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::didClose):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+
 2011-05-26  David Levin  <levin@chromium.org>
 
         Reviewed by Dmitry Titov.

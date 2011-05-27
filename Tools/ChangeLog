@@ -1,3 +1,14 @@
+2011-05-26  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket closing handshake
+        https://bugs.webkit.org/show_bug.cgi?id=35721
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+        Pull in pywebsocket 0.6b1. We need to update pywebsocket
+        to get the right behavior of closing handshake.
+
 2011-05-26  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Andreas Kling.

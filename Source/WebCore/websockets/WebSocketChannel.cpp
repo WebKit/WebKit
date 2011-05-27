@@ -56,6 +56,8 @@
 
 namespace WebCore {
 
+const double TCPMaximumSegmentLifetime = 2 * 60.0;
+
 WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketChannelClient* client, const KURL& url, const String& protocol)
     : m_context(context)
     , m_client(client)
@@ -64,6 +66,9 @@ WebSocketChannel::WebSocketChannel(ScriptExecutionContext* context, WebSocketCha
     , m_bufferSize(0)
     , m_resumeTimer(this, &WebSocketChannel::resumeTimerFired)
     , m_suspended(false)
+    , m_closing(false)
+    , m_receivedClosingHandshake(false)
+    , m_closingTimer(this, &WebSocketChannel::closingTimerFired)
     , m_closed(false)
     , m_shouldDiscardReceivedData(false)
     , m_unhandledBufferedAmount(0)
@@ -117,8 +122,11 @@ void WebSocketChannel::close()
 {
     LOG(Network, "WebSocketChannel %p close", this);
     ASSERT(!m_suspended);
-    if (m_handle)
-        m_handle->close();  // will call didClose()
+    if (!m_handle)
+        return;
+    startClosingHandshake();
+    if (m_closing && !m_closingTimer.isActive())
+        m_closingTimer.startOneShot(2 * TCPMaximumSegmentLifetime);
 }
 
 void WebSocketChannel::fail(const String& reason)
@@ -140,7 +148,7 @@ void WebSocketChannel::disconnect()
     m_client = 0;
     m_context = 0;
     if (m_handle)
-        m_handle->close();
+        m_handle->disconnect();
 }
 
 void WebSocketChannel::suspend()
@@ -175,6 +183,8 @@ void WebSocketChannel::didClose(SocketStreamHandle* handle)
         InspectorInstrumentation::didCloseWebSocket(m_context, m_identifier);
     ASSERT_UNUSED(handle, handle == m_handle || !m_handle);
     m_closed = true;
+    if (m_closingTimer.isActive())
+        m_closingTimer.stop();
     if (m_handle) {
         m_unhandledBufferedAmount = m_handle->bufferedAmount();
         if (m_suspended)
@@ -184,7 +194,7 @@ void WebSocketChannel::didClose(SocketStreamHandle* handle)
         m_context = 0;
         m_handle = 0;
         if (client)
-            client->didClose(m_unhandledBufferedAmount);
+            client->didClose(m_unhandledBufferedAmount, m_receivedClosingHandshake ? WebSocketChannelClient::ClosingHandshakeComplete : WebSocketChannelClient::ClosingHandshakeIncomplete);
     }
     deref();
 }
@@ -197,9 +207,13 @@ void WebSocketChannel::didReceiveData(SocketStreamHandle* handle, const char* da
     if (!m_context) {
         return;
     }
+    if (len <= 0) {
+        handle->disconnect();
+        return;
+    }
     if (!m_client) {
         m_shouldDiscardReceivedData = true;
-        handle->close();
+        handle->disconnect();
         return;
     }
     if (m_shouldDiscardReceivedData)
@@ -233,7 +247,7 @@ void WebSocketChannel::didFail(SocketStreamHandle* handle, const SocketStreamErr
         m_context->addMessage(OtherMessageSource, NetworkErrorMessageType, ErrorMessageLevel, message, 0, failingURL, 0);
     }
     m_shouldDiscardReceivedData = true;
-    handle->close();
+    handle->disconnect();
 }
 
 void WebSocketChannel::didReceiveAuthenticationChallenge(SocketStreamHandle*, const AuthenticationChallenge&)
@@ -281,8 +295,17 @@ bool WebSocketChannel::processBuffer()
     ASSERT(!m_suspended);
     ASSERT(m_client);
     ASSERT(m_buffer);
+    LOG(Network, "WebSocketChannel %p processBuffer %lu", this, static_cast<unsigned long>(m_bufferSize));
+
     if (m_shouldDiscardReceivedData)
         return false;
+
+    if (m_receivedClosingHandshake) {
+        skipBuffer(m_bufferSize);
+        return false;
+    }
+
+    RefPtr<WebSocketChannel> protect(this); // The client can close the channel, potentially removing the last reference.
 
     if (m_handshake.mode() == WebSocketHandshake::Incomplete) {
         int headerLength = m_handshake.readServerHandshake(m_buffer, m_bufferSize);
@@ -311,7 +334,7 @@ bool WebSocketChannel::processBuffer()
         skipBuffer(headerLength);
         m_shouldDiscardReceivedData = true;
         if (!m_closed)
-            m_handle->close();
+            m_handle->disconnect();
         return false;
     }
     if (m_handshake.mode() != WebSocketHandshake::Connected)
@@ -362,12 +385,18 @@ bool WebSocketChannel::processBuffer()
             return false;
         }
         ASSERT(p + length >= p);
-        if (p + length < end) {
+        if (p + length <= end) {
             p += length;
             nextFrame = p;
             ASSERT(nextFrame > m_buffer);
             skipBuffer(nextFrame - m_buffer);
-            m_client->didReceiveMessageError();
+            if (frameByte == 0xff && !length) {
+                m_receivedClosingHandshake = true;
+                startClosingHandshake();
+                if (m_closing)
+                    m_handle->close(); // close after sending FF 00.
+            } else
+                m_client->didReceiveMessageError();
             return m_buffer;
         }
         return false;
@@ -403,6 +432,32 @@ void WebSocketChannel::resumeTimerFired(Timer<WebSocketChannel>* timer)
             break;
     if (!m_suspended && m_client && m_closed && m_handle)
         didClose(m_handle.get());
+}
+
+void WebSocketChannel::startClosingHandshake()
+{
+    LOG(Network, "WebSocketChannel %p closing %d %d", this, m_closing, m_receivedClosingHandshake);
+    if (m_closing)
+        return;
+    ASSERT(m_handle);
+    Vector<char> buf;
+    buf.append('\xff');
+    buf.append('\0');
+    if (!m_handle->send(buf.data(), buf.size())) {
+        m_handle->disconnect();
+        return;
+    }
+    m_closing = true;
+    if (m_client)
+        m_client->didStartClosingHandshake();
+}
+
+void WebSocketChannel::closingTimerFired(Timer<WebSocketChannel>* timer)
+{
+    LOG(Network, "WebSocketChannel %p closing timer", this);
+    ASSERT_UNUSED(timer, &m_closingTimer == timer);
+    if (m_handle)
+        m_handle->disconnect();
 }
 
 }  // namespace WebCore

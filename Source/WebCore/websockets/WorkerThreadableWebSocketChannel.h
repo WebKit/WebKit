@@ -99,7 +99,8 @@ private:
 
         virtual void didConnect();
         virtual void didReceiveMessage(const String& message);
-        virtual void didClose(unsigned long unhandledBufferedAmount);
+        virtual void didStartClosingHandshake();
+        virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus);
 
     private:
         Peer(RefPtr<ThreadableWebSocketChannelClientWrapper>, WorkerLoaderProxy&, ScriptExecutionContext*, const String& taskMode, const KURL&, const String& protocol);

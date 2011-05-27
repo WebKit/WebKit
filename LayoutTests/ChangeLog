@@ -1,3 +1,25 @@
+2011-05-26  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket closing handshake
+        https://bugs.webkit.org/show_bug.cgi?id=35721
+
+        * http/tests/websocket/tests/client-close-expected.txt: Added.
+        * http/tests/websocket/tests/client-close.html: Added. Test client-initiated close.
+        * http/tests/websocket/tests/client-close_wsh.py: Added.
+        * http/tests/websocket/tests/close-before-open-expected.txt: Add a new console message.
+        * http/tests/websocket/tests/close-event-expected.txt:
+        * http/tests/websocket/tests/close-event.html: Test if closeEvent.wasClean is true.
+        * http/tests/websocket/tests/close-unref-websocket-expected.txt: Add a new console message.
+        * http/tests/websocket/tests/frame-length-longer-than-buffer_wsh.py:
+        We need to stop pywebsocket from starting the closing handshake. Otherwise, pywebsocket
+        waits for a close frame to arrive and this test will time out.
+        * http/tests/websocket/tests/server-close-expected.txt: Added.
+        * http/tests/websocket/tests/server-close.html: Added. Test server-initiated close.
+        * http/tests/websocket/tests/server-close_wsh.py: Added.
+        * http/tests/websocket/tests/websocket-event-target-expected.txt: Add a new console message.
+
 2011-05-26  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectations update for <details>.

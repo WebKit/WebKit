@@ -110,9 +110,16 @@ void ThreadableWebSocketChannelClientWrapper::didReceiveMessage(const String& me
         processPendingTasks();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didClose(unsigned long unhandledBufferedAmount)
+void ThreadableWebSocketChannelClientWrapper::didStartClosingHandshake()
 {
-    m_pendingTasks.append(createCallbackTask(&ThreadableWebSocketChannelClientWrapper::didCloseCallback, AllowCrossThreadAccess(this), unhandledBufferedAmount));
+    m_pendingTasks.append(createCallbackTask(&ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback, AllowCrossThreadAccess(this)));
+    if (!m_suspended)
+        processPendingTasks();
+}
+
+void ThreadableWebSocketChannelClientWrapper::didClose(unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus closingHandshakeCompletion)
+{
+    m_pendingTasks.append(createCallbackTask(&ThreadableWebSocketChannelClientWrapper::didCloseCallback, AllowCrossThreadAccess(this), unhandledBufferedAmount, closingHandshakeCompletion));
     if (!m_suspended)
         processPendingTasks();
 }
@@ -151,11 +158,18 @@ void ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback(ScriptEx
         wrapper->m_client->didReceiveMessage(message);
 }
 
-void ThreadableWebSocketChannelClientWrapper::didCloseCallback(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, unsigned long unhandledBufferedAmount)
+void ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
 {
     ASSERT_UNUSED(context, !context);
     if (wrapper->m_client)
-        wrapper->m_client->didClose(unhandledBufferedAmount);
+        wrapper->m_client->didStartClosingHandshake();
+}
+
+void ThreadableWebSocketChannelClientWrapper::didCloseCallback(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus closingHandshakeCompletion)
+{
+    ASSERT_UNUSED(context, !context);
+    if (wrapper->m_client)
+        wrapper->m_client->didClose(unhandledBufferedAmount, closingHandshakeCompletion);
 }
 
 } // namespace WebCore

@@ -52,7 +52,7 @@ SocketStreamHandleBase::SocketStreamState SocketStreamHandleBase::state() const
 
 bool SocketStreamHandleBase::send(const char* data, int length)
 {
-    if (m_state == Connecting)
+    if (m_state == Connecting || m_state == Closing)
         return false;
     if (!m_buffer.isEmpty()) {
         if (m_buffer.size() + length > bufferSize) {
@@ -78,6 +78,16 @@ bool SocketStreamHandleBase::send(const char* data, int length)
 
 void SocketStreamHandleBase::close()
 {
+    if (m_state == Closed)
+        return;
+    m_state = Closing;
+    if (!m_buffer.isEmpty())
+        return;
+    disconnect();
+}
+
+void SocketStreamHandleBase::disconnect()
+{
     RefPtr<SocketStreamHandle> protect(static_cast<SocketStreamHandle*>(this)); // platformClose calls the client, which may make the handle get deallocated immediately.
 
     platformClose();
@@ -92,10 +102,16 @@ void SocketStreamHandleBase::setClient(SocketStreamHandleClient* client)
 
 bool SocketStreamHandleBase::sendPendingData()
 {
-    if (m_state != Open)
+    if (m_state != Open && m_state != Closing)
         return false;
-    if (m_buffer.isEmpty())
-        return false;
+    if (m_buffer.isEmpty()) {
+        if (m_state == Open)
+            return false;
+        if (m_state == Closing) {
+            disconnect();
+            return false;
+        }
+    }
     int bytesWritten = platformSend(m_buffer.data(), m_buffer.size());
     if (bytesWritten <= 0)
         return false;

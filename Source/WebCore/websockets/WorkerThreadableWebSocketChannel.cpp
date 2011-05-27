@@ -174,7 +174,6 @@ void WorkerThreadableWebSocketChannel::Peer::close()
     if (!m_mainWebSocketChannel)
         return;
     m_mainWebSocketChannel->close();
-    m_mainWebSocketChannel = 0;
 }
 
 void WorkerThreadableWebSocketChannel::Peer::fail(const String& reason)
@@ -234,17 +233,29 @@ void WorkerThreadableWebSocketChannel::Peer::didReceiveMessage(const String& mes
     m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidReceiveMessage, m_workerClientWrapper, message), m_taskMode);
 }
 
-static void workerContextDidClose(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, unsigned long unhandledBufferedAmount)
+static void workerContextDidStartClosingHandshake(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper)
 {
     ASSERT_UNUSED(context, context->isWorkerContext());
-    workerClientWrapper->didClose(unhandledBufferedAmount);
+    workerClientWrapper->didStartClosingHandshake();
 }
 
-void WorkerThreadableWebSocketChannel::Peer::didClose(unsigned long unhandledBufferedAmount)
+void WorkerThreadableWebSocketChannel::Peer::didStartClosingHandshake()
+{
+    ASSERT(isMainThread());
+    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidStartClosingHandshake, m_workerClientWrapper), m_taskMode);
+}
+
+static void workerContextDidClose(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus closingHandshakeCompletion)
+{
+    ASSERT_UNUSED(context, context->isWorkerContext());
+    workerClientWrapper->didClose(unhandledBufferedAmount, closingHandshakeCompletion);
+}
+
+void WorkerThreadableWebSocketChannel::Peer::didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus closingHandshakeCompletion)
 {
     ASSERT(isMainThread());
     m_mainWebSocketChannel = 0;
-    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidClose, m_workerClientWrapper, unhandledBufferedAmount), m_taskMode);
+    m_loaderProxy.postTaskForModeToWorkerContext(createCallbackTask(&workerContextDidClose, m_workerClientWrapper, unhandledBufferedAmount, closingHandshakeCompletion), m_taskMode);
 }
 
 void WorkerThreadableWebSocketChannel::Bridge::setWebSocketChannel(ScriptExecutionContext* context, Bridge* thisPtr, Peer* peer, RefPtr<ThreadableWebSocketChannelClientWrapper> workerClientWrapper)

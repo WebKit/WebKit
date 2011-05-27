@@ -95,7 +95,8 @@ namespace WebCore {
         virtual void didConnect();
         virtual void didReceiveMessage(const String& message);
         virtual void didReceiveMessageError();
-        virtual void didClose(unsigned long unhandledBufferedAmount);
+        virtual void didStartClosingHandshake();
+        virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus);
 
     private:
         WebSocket(ScriptExecutionContext*);
