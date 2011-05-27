@@ -4,14 +4,8 @@ layer at (0,0) size 800x585
   RenderBlock {HTML} at (0,0) size 800x585
     RenderBody {BODY} at (8,8) size 784x569
       RenderDetails {DETAILS} at (0,0) size 784x0
-        RenderBlock (anonymous) at (0,0) size 784x0
-        RenderBlock (anonymous) at (0,0) size 784x0
       RenderDetails {DETAILS} at (0,0) size 784x20
-        RenderBlock (anonymous) at (0,0) size 784x20
-        RenderBlock (anonymous) at (0,20) size 784x0
       RenderDetails {DETAILS} at (0,20) size 784x0
-        RenderBlock (anonymous) at (0,0) size 784x0
-        RenderBlock (anonymous) at (0,0) size 784x0
 layer at (50,150) size 45x20
   RenderSummary {SUMMARY} at (50,150) size 45x20
     RenderDetailsMarker {DIV} at (0,5) size 10x10: right
