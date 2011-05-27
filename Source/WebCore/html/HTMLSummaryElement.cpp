@@ -82,7 +82,7 @@ void HTMLSummaryElement::createShadowSubtree()
 
 HTMLDetailsElement* HTMLSummaryElement::detailsElement() const
 {
-    Element* mayDetails = toElement(const_cast<HTMLSummaryElement*>(this)->parentNodeForRenderingAndStyle());
+    Node* mayDetails = const_cast<HTMLSummaryElement*>(this)->parentNodeForRenderingAndStyle();
     if (!mayDetails || !mayDetails->hasTagName(detailsTag))
         return 0;
     return static_cast<HTMLDetailsElement*>(mayDetails);

@@ -1,3 +1,13 @@
+2011-05-26  MORITA Hajime <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        WebCore::HTMLSummaryElement::isMainSummary crashes
+        https://bugs.webkit.org/show_bug.cgi?id=61511
+
+        * fast/html/details-summary-document-child-expected.txt: Added.
+        * fast/html/details-summary-document-child.html: Added.
+
 2011-05-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Adam Barth.
