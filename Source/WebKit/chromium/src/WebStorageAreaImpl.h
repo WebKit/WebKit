@@ -45,7 +45,7 @@ public:
     virtual unsigned length();
     virtual WebString key(unsigned index);
     virtual WebString getItem(const WebString& key);
-    virtual void setItem(const WebString& key, const WebString& value, const WebURL& url, Result& result, WebString& oldValue, WebFrame*);
+    virtual void setItem(const WebString& key, const WebString& value, const WebURL&, Result&, WebString& oldValue);
     virtual void removeItem(const WebString& key, const WebURL& url, WebString& oldValue);
     virtual void clear(const WebURL& url, bool& somethingCleared);
 

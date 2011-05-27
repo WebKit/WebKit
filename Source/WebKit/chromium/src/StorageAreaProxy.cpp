@@ -87,7 +87,7 @@ String StorageAreaProxy::setItem(const String& key, const String& value, Excepti
     if (webView->permissionClient() && !webView->permissionClient()->allowStorage(webFrame, m_storageType == LocalStorage))
         ec = QUOTA_EXCEEDED_ERR;
     else {
-        m_storageArea->setItem(key, value, frame->document()->url(), result, oldValue, webFrame);
+        m_storageArea->setItem(key, value, frame->document()->url(), result, oldValue);
         ec = (result == WebKit::WebStorageArea::ResultOK) ? 0 : QUOTA_EXCEEDED_ERR;
         String oldValueString = oldValue;
         if (oldValueString != value && result == WebKit::WebStorageArea::ResultOK)

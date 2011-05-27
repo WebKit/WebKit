@@ -1,3 +1,17 @@
+2011-05-27  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] drop unused WebFrame parameter to WebStorageArea::setItem
+        https://bugs.webkit.org/show_bug.cgi?id=61583
+
+        * public/WebStorageArea.h:
+        * src/StorageAreaProxy.cpp:
+        (WebCore::StorageAreaProxy::setItem):
+        * src/WebStorageAreaImpl.cpp:
+        (WebKit::WebStorageAreaImpl::setItem):
+        * src/WebStorageAreaImpl.h:
+
 2011-05-27  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -66,7 +66,7 @@ WebString WebStorageAreaImpl::getItem(const WebString& key)
     return m_storageArea->getItem(key);
 }
 
-void WebStorageAreaImpl::setItem(const WebString& key, const WebString& value, const WebURL& url, Result& result, WebString& oldValue, WebFrame*)
+void WebStorageAreaImpl::setItem(const WebString& key, const WebString& value, const WebURL& url, Result& result, WebString& oldValue)
 {
     int exceptionCode = 0;
 
