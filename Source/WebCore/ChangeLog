@@ -1,5 +1,17 @@
 2011-05-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Rubber-stamped by Rob Buis.
+
+        embedded SVG object doesn't scale right
+        https://bugs.webkit.org/show_bug.cgi?id=10526
+
+        Fixes crash in svg/custom/immutable-properties.html, seen on the bots.
+
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::determineViewport): Oops forgot to merge-in a null check before landing.
+
+2011-05-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Rob Buis.
 
         embedded SVG object doesn't scale right

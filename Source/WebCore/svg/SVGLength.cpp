@@ -321,6 +321,9 @@ bool SVGLength::determineViewport(const SVGElement* context, float& width, float
     if (document->documentElement() == context) {
         if (context->isSVG()) {
             Frame* frame = context->document() ? context->document()->frame() : 0;
+            if (!frame)
+                return false;
+
             if (RenderPart* ownerRenderer = frame->ownerRenderer()) {
                 width = ownerRenderer->width();
                 height = ownerRenderer->height();
