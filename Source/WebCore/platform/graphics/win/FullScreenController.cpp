@@ -84,6 +84,11 @@ LRESULT FullScreenController::Private::fullscreenClientWndProc(HWND hwnd, UINT m
         if (m_client->fullScreenClientWindow())
             ::SetWindowPos(m_client->fullScreenClientWindow(), 0, 0, 0, m_fullScreenFrame.width(), m_fullScreenFrame.height(), SWP_NOREPOSITION  | SWP_NOMOVE);
         break;
+    case WM_ACTIVATE:
+        // Because m_fullScreenWindow is a topmost window, we need to exit full screen explicitly when it's deactivated.
+        if (!wParam && m_fullScreenWindow && (hwnd == m_fullScreenWindow->hwnd()))
+            m_controller->exitFullScreen();
+        break;
     case WM_KEYDOWN:
         if (wParam == VK_ESCAPE) {
             m_controller->exitFullScreen();
@@ -152,6 +157,9 @@ void FullScreenController::enterFullScreenRepaintCompleted()
         return;
     m_private->m_isEnteringFullScreen = false;
 
+    // Normally, when the background fullscreen window is animated in, the Windows taskbar will be hidden, but this doesn't always work for some reason.
+    // Setting the real fullscreen window to be a topmost window will force the taskbar to be hidden when we call AnimateWindow() below if it wasn't before.
+    ::SetWindowPos(m_private->m_fullScreenWindow->hwnd(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOACTIVATE);
     ::AnimateWindow(m_private->m_fullScreenWindow->hwnd(), kFullScreenAnimationDuration, AW_BLEND | AW_ACTIVATE);
 }
 
