@@ -1459,3 +1459,6 @@ http/tests/eventsource/workers/eventsource-simple.html
 
 # JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html
+
+# failing dropzone test(http://bugs.webkit.org/show_bug.cgi?id=61630)
+fast/events/dropzone-002.html

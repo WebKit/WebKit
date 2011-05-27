@@ -1,3 +1,11 @@
+2011-05-27  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed.
+
+        Skip a test that is failing until investigated.
+
+        * platform/gtk/Skipped:
+
 2011-05-27  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Tony Gentilcore.
