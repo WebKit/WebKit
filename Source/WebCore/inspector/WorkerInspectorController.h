@@ -42,7 +42,9 @@
 namespace WebCore {
 
 class InjectedScriptManager;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
 class InspectorDebuggerAgent;
+#endif
 class InspectorBackendDispatcher;
 class InspectorFrontend;
 class InspectorFrontendChannel;
@@ -68,7 +70,9 @@ private:
     OwnPtr<InspectorState> m_state;
     OwnPtr<InstrumentingAgents> m_instrumentingAgents;
     OwnPtr<InjectedScriptManager> m_injectedScriptManager;
+#if ENABLE(JAVASCRIPT_DEBUGGER)
     OwnPtr<InspectorDebuggerAgent> m_debuggerAgent;
+#endif
     OwnPtr<InspectorRuntimeAgent> m_runtimeAgent;
 
     OwnPtr<InspectorFrontendChannel> m_frontendChannel;

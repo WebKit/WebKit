@@ -1,3 +1,14 @@
+2011-05-27  Sujin Park  <sujjin.park@gmail.com>
+
+        Unreviewed, buildfix if --no-javascript-debugger.
+
+        Regression(R84125): Broke GTK build
+        https://bugs.webkit.org/show_bug.cgi?id=60698
+
+        No new tests since this doesn't change any behavior.
+
+        * inspector/WorkerInspectorController.h:
+
 2011-05-26  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Tony Chang.
