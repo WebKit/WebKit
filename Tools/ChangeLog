@@ -1,5 +1,12 @@
 2011-05-27  Adam Roben  <aroben@apple.com>
 
+        Remove testing code that snuck into r87528
+
+        * BuildSlaveSupport/build.webkit.org-config/public_html/TestFailures/ViewController.js:
+        (ViewController.prototype._domForNewBugLink): Remove a line I was using for some testing.
+
+2011-05-27  Adam Roben  <aroben@apple.com>
+
         Add links to TestFailures to easily file bugs about failing tests
 
         Fixes <http://webkit.org/b/61636> <rdar://problem/9514886> TestFailures page should have

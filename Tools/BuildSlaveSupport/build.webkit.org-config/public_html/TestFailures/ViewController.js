@@ -185,7 +185,6 @@ ViewController.prototype = {
     },
 
     _domForNewBugLink: function(tester, failingBuildName, passingBuildName, failingTests) {
-        return document.createDocumentFragment();
         var parsedFailingBuildName = this._buildbot.parseBuildName(failingBuildName);
         var regressionRangeString = 'r' + parsedFailingBuildName.revision;
         if (passingBuildName) {
