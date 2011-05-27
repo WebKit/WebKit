@@ -1,3 +1,9 @@
+2011-05-27  Alexey Proskuryakov  <ap@apple.com>
+
+        Added Douglas Davidson to contributors list for easier CC'ing.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-05-26  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.
