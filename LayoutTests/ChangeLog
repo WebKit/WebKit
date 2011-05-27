@@ -1,3 +1,81 @@
+2011-05-27  Adam Klein  <adamk@chromium.org>
+
+        Unreviewed. Rebaselines and test expectations updates after r87526.
+
+        * platform/chromium-linux-x86/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png: Added.
+        * platform/chromium-linux-x86/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-no-size-attributes-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-explicit-height-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-explicit-height-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-explicit-width-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-explicit-width-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-explicit-width-height-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-explicit-width-height-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-no-width-height-change-content-box-size-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-no-width-height-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-no-width-height-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/wicd/rightsizing-grid-expected.png: Added.
+        * platform/chromium-linux-x86/svg/wicd/rightsizing-grid-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/wicd/test-rightsizing-a-expected.png: Added.
+        * platform/chromium-linux-x86/svg/wicd/test-rightsizing-a-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/wicd/test-rightsizing-b-expected.png: Added.
+        * platform/chromium-linux-x86/svg/wicd/test-rightsizing-b-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-coords-viewattr-01-b-expected.png: Added.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt: Copied from LayoutTests/platform/chromium-linux/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt.
+        * platform/chromium-linux-x86/svg/zoom/page/zoom-foreignObject-expected.txt: Added.
+        * platform/chromium-linux/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png: Added.
+        * platform/chromium-linux/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-no-size-attributes-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-explicit-height-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-explicit-height-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-explicit-width-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-explicit-width-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-explicit-width-height-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-explicit-width-height-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-no-width-height-change-content-box-size-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-no-width-height-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-no-width-height-expected.txt: Added.
+        * platform/chromium-linux/svg/wicd/rightsizing-grid-expected.png: Added.
+        * platform/chromium-linux/svg/wicd/rightsizing-grid-expected.txt: Added.
+        * platform/chromium-linux/svg/wicd/test-rightsizing-a-expected.png: Added.
+        * platform/chromium-linux/svg/wicd/test-rightsizing-a-expected.txt: Added.
+        * platform/chromium-linux/svg/wicd/test-rightsizing-b-expected.png: Added.
+        * platform/chromium-linux/svg/wicd/test-rightsizing-b-expected.txt: Added.
+        * platform/chromium-linux/svg/zoom/page/zoom-coords-viewattr-01-b-expected.png:
+        * platform/chromium-linux/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt:
+        * platform/chromium-linux/svg/zoom/page/zoom-foreignObject-expected.txt: Added.
+        * platform/chromium-mac/svg/zoom/page/zoom-coords-viewattr-01-b-expected.png: Added.
+        * platform/chromium-mac/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt: Copied from LayoutTests/platform/chromium-linux/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt.
+        * platform/chromium-win-vista/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png: Added.
+        * platform/chromium-win-vista/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-no-size-attributes-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-explicit-height-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-explicit-height-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-explicit-width-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-explicit-width-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-explicit-width-height-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-explicit-width-height-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-no-width-height-change-content-box-size-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-no-width-height-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-no-width-height-expected.txt: Added.
+        * platform/chromium-win-vista/svg/wicd/rightsizing-grid-expected.png: Added.
+        * platform/chromium-win-vista/svg/wicd/rightsizing-grid-expected.txt: Added.
+        * platform/chromium-win-vista/svg/wicd/test-rightsizing-a-expected.png: Added.
+        * platform/chromium-win-vista/svg/wicd/test-rightsizing-a-expected.txt: Added.
+        * platform/chromium-win-vista/svg/wicd/test-rightsizing-b-expected.png: Added.
+        * platform/chromium-win-vista/svg/wicd/test-rightsizing-b-expected.txt: Added.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-coords-viewattr-01-b-expected.png: Added.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt: Copied from LayoutTests/platform/chromium-linux/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt.
+        * platform/chromium-win-vista/svg/zoom/page/zoom-foreignObject-expected.txt: Added.
+        * platform/chromium-win/svg/zoom/page/zoom-foreignObject-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-05-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Simon Fraser.

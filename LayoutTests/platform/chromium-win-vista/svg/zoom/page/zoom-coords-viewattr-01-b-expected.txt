@@ -17,8 +17,8 @@ layer at (0,0) size 1131x843
         RenderSVGText {text} at (10,102) size 41x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 41x11
             chunk 1 text run 1 at (10.00,110.00) startOffset 0 endOffset 10 width 40.57: "Viewport 1"
-        RenderSVGContainer {g} at (26,351) size 119x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
-          RenderSVGPath {rect} at (26,351) size 119x71 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
+        RenderSVGContainer {g} at (26,351) size 118x71 [transform={m=((1.00,0.00)(0.00,1.00)) t=(10.00,120.00)}]
+          RenderSVGPath {rect} at (26,351) size 118x71 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
         RenderSVGText {text} at (10,172) size 41x11 contains 1 chunk(s)
           RenderSVGInlineText {#text} at (0,0) size 41x11
             chunk 1 text run 1 at (10.00,180.00) startOffset 0 endOffset 10 width 40.57: "Viewport 2"
@@ -172,13 +172,13 @@ layer at (0,0) size 1131x843
                 RenderSVGPath {circle} at (907,517) size 20x20 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]
                 RenderSVGPath {circle} at (928,517) size 17x20 [fill={[type=SOLID] [color=#000000]}] [cx=17.00] [cy=12.00] [r=1.50]
                 RenderSVGPath {path} at (905,550) size 47x29 [stroke={[type=SOLID] [color=#000000] [stroke width=2.00]}] [fill={[type=SOLID] [color=#000000]}] [data="M 10 19 L 15 23 L 20 19"]
-          RenderSVGContainer {g} at (706,533) size 118x158 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
+          RenderSVGContainer {g} at (706,533) size 118x161 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,50.00)}]
             RenderSVGText {text} at (0,-13) size 27x11 contains 1 chunk(s)
               RenderSVGInlineText {#text} at (0,0) size 27x11
                 chunk 1 text run 1 at (0.00,-5.00) startOffset 0 endOffset 5 width 26.48: "*YMax"
             RenderSVGPath {rect} at (706,620) size 118x71 [stroke={[type=SOLID] [color=#0000FF]}] [x=0.50] [y=0.50] [width=49.00] [height=29.00]
-            RenderSVGViewportContainer {svg} at (706,533) size 118x158
-              RenderSVGPath {rect} at (706,533) size 118x158 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
+            RenderSVGViewportContainer {svg} at (706,533) size 118x161
+              RenderSVGPath {rect} at (706,533) size 118x161 [stroke={[type=SOLID] [color=#FF0000]}] [fill={[type=SOLID] [color=#000000]}] [x=0.50] [y=0.50] [width=29.00] [height=39.00]
               RenderSVGContainer {g} at (724,573) size 81x81 [transform={m=((1.00,0.00)(0.00,1.00)) t=(0.00,5.00)}]
                 RenderSVGPath {circle} at (724,573) size 81x81 [fill={[type=SOLID] [color=#FFFF00]}] [cx=15.00] [cy=15.00] [r=10.00]
                 RenderSVGPath {circle} at (743,592) size 20x17 [fill={[type=SOLID] [color=#000000]}] [cx=12.00] [cy=12.00] [r=1.50]

@@ -2967,7 +2967,6 @@ BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
 BUGWK54322 SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE
 BUGWK54322 SNOWLEOPARD : svg/custom/animate-path-discrete.svg = IMAGE
 BUGWK54322 SNOWLEOPARD : svg/W3C-SVG-1.1/coords-viewattr-01-b.svg = IMAGE+TEXT
-BUGWK54322 SNOWLEOPARD : svg/zoom/page/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : tables/mozilla_expected_failures/bugs/bug85016.html = IMAGE
 BUGWK54322 SNOWLEOPARD : tables/mozilla/core/bloomberg.html = IMAGE
@@ -3348,7 +3347,6 @@ BUGWK58193 WIN7 : svg/custom/js-late-gradient-and-object-creation.svg = IMAGE
 BUGWK58193 WIN7 : svg/custom/nested-pattern-boundingBoxModeContent.svg = IMAGE
 BUGWK58193 WIN7 : svg/dynamic-updates/SVGPatternElement-dom-patternContentUnits-attr.html = IMAGE
 BUGWK58193 WIN7 : svg/dynamic-updates/SVGPatternElement-svgdom-patternContentUnits-prop.html = IMAGE
-BUGWK58193 WIN7 : svg/zoom/page/zoom-foreignObject.svg = IMAGE
 BUGWK58193 WIN7 : svg/zoom/text/zoom-foreignObject.svg = IMAGE
 BUGWK58193 WIN7 : svg/custom/circular-marker-reference-1.svg = TEXT
 BUGWK58193 WIN7 : svg/custom/circular-marker-reference-3.svg = TEXT
@@ -4027,3 +4025,17 @@ BUGWK61625 : fast/events/dropzone-002.html = TEXT
 
 BUGWK61624 WIN : editing/pasteboard/smart-paste-003.html = TEXT
 BUGWK61624 WIN : editing/pasteboard/smart-paste-004.html = TEXT
+
+// Weird failures only on Mac10.6 debug bot after r87526.
+BUGADAMK SNOWLEOPARD DEBUG : svg/custom/object-sizing-explicit-height.xhtml = IMAGE+TEXT
+BUGADAMK SNOWLEOPARD DEBUG : svg/custom/object-sizing-explicit-width.xhtml = IMAGE+TEXT
+BUGADAMK SNOWLEOPARD DEBUG : svg/wicd/test-rightsizing-a.xhtml = IMAGE+TEXT
+
+// After r87256, these all have extra scrollbars where the platform/mac expectations do not.
+BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT
+BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT
+BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT
+BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT
+BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT
+BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-text.xhtml = IMAGE+TEXT
+BUGWK61664 : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
