@@ -1,7 +1,9 @@
 # [Qt]http/tests/security/xss-DENIED-xsl-document.xml fails with Qt 4.8
+# http://bugreports.qt.nokia.com/browse/QTBUG-19556
 # https://bugs.webkit.org/show_bug.cgi?id=60175
 http/tests/security/xss-DENIED-xsl-document.xml
 
 # [Qt]http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html fails with Qt 4.8
+# http://bugreports.qt.nokia.com/browse/QTBUG-19556
 # https://bugs.webkit.org/show_bug.cgi?id=60176
 http/tests/xmlhttprequest/xmlhttprequest-missing-file-exception.html
