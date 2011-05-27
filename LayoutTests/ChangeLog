@@ -2,6 +2,14 @@
 
         [Qt][Mac] Daily gardening.
 
+        Typo fix, and remove non-existent files from Skipped list.
+
+        * platform/qt-mac/Skipped:
+
+2011-05-27  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Daily gardening.
+
         * platform/qt-mac/Skipped:
          - plugins/embed-attributes-setting.html was unskipped by r87306, but fails on Qt-Mac.
          - plugins/plugin-initiate-popup-window.html unskipped by r87429, but fails on Qt-Mac.

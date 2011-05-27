@@ -807,26 +807,22 @@ editing/pasteboard/4076267-3.html
 editing/pasteboard/4242293.html
 editing/pasteboard/4631972.html
 editing/pasteboard/4641033.html
-editing/pasteboard/4700297.html
 editing/pasteboard/4922709.html
 editing/pasteboard/4944770-1.html
 editing/pasteboard/4944770-2.html
 editing/pasteboard/4989774.html
 editing/pasteboard/5006779.html
-editing/pasteboard/5027857.html
 editing/pasteboard/5028447.html
 editing/pasteboard/5032095.html
 editing/pasteboard/5065605.html
 editing/pasteboard/5071074-2.html
 editing/pasteboard/5071074.html
 editing/pasteboard/5075944.html
-editing/pasteboard/5089327.html
 editing/pasteboard/5134759.html
 editing/pasteboard/5156401-1.html
 editing/pasteboard/5247341.html
 editing/pasteboard/5368833.html
 editing/pasteboard/5478250.html
-editing/pasteboard/5483567.html
 editing/pasteboard/5601583-1.html
 editing/pasteboard/5761530-1.html
 editing/pasteboard/5780697-2.html
@@ -2598,7 +2594,7 @@ plugins/destroy-during-npp-new.html
 plugins/destroy-plugin-from-callback.html
 plugins/destroy-stream-twice.html
 plugins/document-open.html
-plugins/embed-attributes-setting.html:
+plugins/embed-attributes-setting.html
 plugins/embed-inside-object.html
 plugins/evaluate-js-after-removing-plugin-element.html
 plugins/get-empty-url.html
@@ -4264,4 +4260,4 @@ fast/events/selectstart-by-double-triple-clicks.html
 fast/events/selectstart-by-drag.html
 
 # unskipped by r87311, but fail on Qt-Mac platform
-fast/css/disabled-author-styles
+fast/css/disabled-author-styles.html
