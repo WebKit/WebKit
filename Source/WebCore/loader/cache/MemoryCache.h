@@ -141,8 +141,8 @@ public:
 
     void pruneToPercentage(float targetPercentLive)
     {
-        PruneDeadResourcesToPercentage(targetPercentLive); // Prune dead first, in case it was "borrowing" capacity from live.
-        PruneLiveResourcesToPercentage(targetPercentLive);
+        pruneDeadResourcesToPercentage(targetPercentLive); // Prune dead first, in case it was "borrowing" capacity from live.
+        pruneLiveResourcesToPercentage(targetPercentLive);
     }
 
     void setDeadDecodedDataDeletionInterval(double interval) { m_deadDecodedDataDeletionInterval = interval; }
@@ -193,8 +193,8 @@ private:
     // pruneLive*() - Flush decoded data from resources still referenced by Web pages.
     void pruneDeadResources(); // Automatically decide how much to prune.
     void pruneLiveResources();
-    void PruneDeadResourcesToPercentage(float prunePercentage);
-    void PruneLiveResourcesToPercentage(float prunePercentage);
+    void pruneDeadResourcesToPercentage(float prunePercentage); // Prune to % current size
+    void pruneLiveResourcesToPercentage(float prunePercentage);
     void pruneDeadResourcesToSize(unsigned targetSize);
     void pruneLiveResourcesToSize(unsigned targetSize);
 
