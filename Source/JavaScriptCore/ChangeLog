@@ -1,3 +1,10 @@
+2011-05-27  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Build fix for !ENABLE(ASSEMBLER) after r87527.
+
+        * runtime/JSGlobalData.cpp:
+        (JSGlobalData::JSGlobalData):
+
 2011-05-27  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
