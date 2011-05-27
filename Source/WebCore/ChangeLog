@@ -1,3 +1,13 @@
+2011-05-27  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [Chromium] Add support for showing URL of DOMWindow in heap profiles.
+        https://bugs.webkit.org/show_bug.cgi?id=61177
+
+        * inspector/front-end/HeapSnapshot.js:
+        (WebInspector.HeapSnapshotNode.prototype.get className):
+
 2011-05-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Rubber-stamped by Rob Buis.

@@ -492,8 +492,10 @@ WebInspector.HeapSnapshotNode.prototype = {
         switch (this.type) {
         case "hidden":
             return WebInspector.UIString("(system)");
-        case "object":
-            return this.name;
+        case "object": {
+            var commentPos = this.name.indexOf("/");
+            return commentPos !== -1 ? this.name.substring(0, commentPos).trimRight() : this.name;
+        }
         case "native": {
             var entitiesCountPos = this.name.indexOf("/");
             return entitiesCountPos !== -1 ? this.name.substring(0, entitiesCountPos).trimRight() : this.name;
