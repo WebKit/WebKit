@@ -355,6 +355,111 @@ static JSClassRef MyObject_class(JSContextRef context)
     return jsClass;
 }
 
+static JSValueRef PropertyCatchalls_getProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef* exception)
+{
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(propertyName);
+    UNUSED_PARAM(exception);
+
+    if (JSStringIsEqualToUTF8CString(propertyName, "x")) {
+        static size_t count;
+        if (count++ < 5)
+            return NULL;
+
+        // Swallow all .x gets after 5, returning null.
+        return JSValueMakeNull(context);
+    }
+
+    if (JSStringIsEqualToUTF8CString(propertyName, "y")) {
+        static size_t count;
+        if (count++ < 5)
+            return NULL;
+
+        // Swallow all .y gets after 5, returning null.
+        return JSValueMakeNull(context);
+    }
+    
+    if (JSStringIsEqualToUTF8CString(propertyName, "z")) {
+        static size_t count;
+        if (count++ < 5)
+            return NULL;
+
+        // Swallow all .y gets after 5, returning null.
+        return JSValueMakeNull(context);
+    }
+
+    return NULL;
+}
+
+static bool PropertyCatchalls_setProperty(JSContextRef context, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
+{
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(propertyName);
+    UNUSED_PARAM(value);
+    UNUSED_PARAM(exception);
+
+    if (JSStringIsEqualToUTF8CString(propertyName, "x")) {
+        static size_t count;
+        if (count++ < 5)
+            return false;
+
+        // Swallow all .x sets after 4.
+        return true;
+    }
+
+    return false;
+}
+
+static void PropertyCatchalls_getPropertyNames(JSContextRef context, JSObjectRef object, JSPropertyNameAccumulatorRef propertyNames)
+{
+    UNUSED_PARAM(context);
+    UNUSED_PARAM(object);
+
+    static size_t count;
+    static const char* numbers[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
+    
+    // Provide a property of a different name every time.
+    JSStringRef propertyName = JSStringCreateWithUTF8CString(numbers[count++ % 10]);
+    JSPropertyNameAccumulatorAddName(propertyNames, propertyName);
+    JSStringRelease(propertyName);
+}
+
+JSClassDefinition PropertyCatchalls_definition = {
+    0,
+    kJSClassAttributeNone,
+    
+    "PropertyCatchalls",
+    NULL,
+    
+    NULL,
+    NULL,
+    
+    NULL,
+    NULL,
+    NULL,
+    PropertyCatchalls_getProperty,
+    PropertyCatchalls_setProperty,
+    NULL,
+    PropertyCatchalls_getPropertyNames,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+};
+
+static JSClassRef PropertyCatchalls_class(JSContextRef context)
+{
+    UNUSED_PARAM(context);
+
+    static JSClassRef jsClass;
+    if (!jsClass)
+        jsClass = JSClassCreate(&PropertyCatchalls_definition);
+    
+    return jsClass;
+}
+
 static bool EvilExceptionObject_hasInstance(JSContextRef context, JSObjectRef constructor, JSValueRef possibleValue, JSValueRef* exception)
 {
     UNUSED_PARAM(context);
@@ -921,6 +1026,11 @@ int main(int argc, char* argv[])
     ASSERT(JSValueGetType(context, jsCFStringWithCharacters) == kJSTypeString);
     ASSERT(JSValueGetType(context, jsCFEmptyString) == kJSTypeString);
     ASSERT(JSValueGetType(context, jsCFEmptyStringWithCharacters) == kJSTypeString);
+
+    JSObjectRef propertyCatchalls = JSObjectMake(context, PropertyCatchalls_class(context), NULL);
+    JSStringRef propertyCatchallsString = JSStringCreateWithUTF8CString("PropertyCatchalls");
+    JSObjectSetProperty(context, globalObject, propertyCatchallsString, propertyCatchalls, kJSPropertyAttributeNone, NULL);
+    JSStringRelease(propertyCatchallsString);
 
     JSObjectRef myObject = JSObjectMake(context, MyObject_class(context), NULL);
     JSStringRef myObjectIString = JSStringCreateWithUTF8CString("MyObject");

@@ -819,7 +819,7 @@ NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* co
     JSCell* baseCell = baseValue.asCell();
     Structure* structure = baseCell->structure();
 
-    if (structure->isUncacheableDictionary()) {
+    if (structure->isUncacheableDictionary() || structure->typeInfo().prohibitsPropertyCaching()) {
         ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(direct ? cti_op_put_by_id_direct_generic : cti_op_put_by_id_generic));
         return;
     }
@@ -887,7 +887,7 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
     JSCell* baseCell = baseValue.asCell();
     Structure* structure = baseCell->structure();
 
-    if (structure->isUncacheableDictionary()) {
+    if (structure->isUncacheableDictionary() || structure->typeInfo().prohibitsPropertyCaching()) {
         ctiPatchCallByReturnAddress(codeBlock, returnAddress, FunctionPtr(cti_op_get_by_id_generic));
         return;
     }
@@ -1722,7 +1722,7 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_proto_list)
 
     CHECK_FOR_EXCEPTION();
 
-    if (!baseValue.isCell() || !slot.isCacheable() || baseValue.asCell()->structure()->isDictionary()) {
+    if (!baseValue.isCell() || !slot.isCacheable() || baseValue.asCell()->structure()->isDictionary() || baseValue.asCell()->structure()->typeInfo().prohibitsPropertyCaching()) {
         ctiPatchCallByReturnAddress(callFrame->codeBlock(), STUB_RETURN_ADDRESS, FunctionPtr(cti_op_get_by_id_proto_fail));
         return JSValue::encode(result);
     }

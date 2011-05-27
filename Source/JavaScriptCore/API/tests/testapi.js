@@ -246,6 +246,32 @@ shouldThrow("String(EvilExceptionObject)");
 
 shouldBe("EmptyObject", "[object CallbackObject]");
 
+for (var i = 0; i < 6; ++i)
+    PropertyCatchalls.x = i;
+shouldBe("PropertyCatchalls.x", 4);
+
+for (var i = 0; i < 6; ++i)
+    var x = PropertyCatchalls.x;
+shouldBe("x", null);
+
+for (var i = 0; i < 10; ++i) {
+    for (var p in PropertyCatchalls) {
+        if (p == "x")
+            continue;
+        shouldBe("p", i % 10);
+        break;
+    }
+}
+
+PropertyCatchalls.__proto__ = { y: 1 };
+for (var i = 0; i < 6; ++i)
+    var y = PropertyCatchalls.y;
+shouldBe("y", null);
+
+var o = { __proto__: PropertyCatchalls };
+for (var i = 0; i < 6; ++i)
+    var z = PropertyCatchalls.z;
+shouldBe("z", null);
+
 if (failed)
     throw "Some tests failed";
-

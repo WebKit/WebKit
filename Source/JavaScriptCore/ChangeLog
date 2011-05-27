@@ -1,3 +1,39 @@
+2011-05-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Property caching is too aggressive for API objects
+        https://bugs.webkit.org/show_bug.cgi?id=61677
+
+        * API/JSCallbackObject.h: Opt in to ProhibitsPropertyCaching, since our
+        callback APIs allow the client to change its mind about our propertis at
+        any time.
+
+        * API/tests/testapi.c:
+        (PropertyCatchalls_getProperty):
+        (PropertyCatchalls_setProperty):
+        (PropertyCatchalls_getPropertyNames):
+        (PropertyCatchalls_class):
+        (main):
+        * API/tests/testapi.js: Some tests for dynamic API objects.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::tryCachePutByID):
+        (JSC::Interpreter::tryCacheGetByID):
+        * jit/JITStubs.cpp:
+        (JSC::JITThunks::tryCachePutByID):
+        (JSC::JITThunks::tryCacheGetByID):
+        (JSC::DEFINE_STUB_FUNCTION): Opt out of property caching if the client
+        requires it.
+
+        * runtime/JSTypeInfo.h:
+        (JSC::TypeInfo::TypeInfo):
+        (JSC::TypeInfo::isFinal):
+        (JSC::TypeInfo::prohibitsPropertyCaching):
+        (JSC::TypeInfo::flags): Added a flag to track opting out of property
+        caching. Fixed an "&&" vs "&" typo that was previously harmless, but
+        is now harmful since m_flags2 can have more than one bit set.
+
 2011-05-27  Stephanie Lewis  <slewis@apple.com>
 
         Unreviewed.

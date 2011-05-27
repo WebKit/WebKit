@@ -149,7 +149,7 @@ public:
     }
 
 protected:
-    static const unsigned StructureFlags = OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
+    static const unsigned StructureFlags = ProhibitsPropertyCaching | OverridesGetOwnPropertySlot | ImplementsHasInstance | OverridesHasInstance | OverridesVisitChildren | OverridesGetPropertyNames | Base::StructureFlags;
 
 private:
     virtual UString className() const;

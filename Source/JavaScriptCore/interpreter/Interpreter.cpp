@@ -1239,7 +1239,7 @@ NEVER_INLINE void Interpreter::tryCachePutByID(CallFrame* callFrame, CodeBlock* 
     JSCell* baseCell = baseValue.asCell();
     Structure* structure = baseCell->structure();
 
-    if (structure->isUncacheableDictionary()) {
+    if (structure->isUncacheableDictionary() || structure->typeInfo().prohibitsPropertyCaching()) {
         vPC[0] = getOpcode(op_put_by_id_generic);
         return;
     }
@@ -1327,7 +1327,7 @@ NEVER_INLINE void Interpreter::tryCacheGetByID(CallFrame* callFrame, CodeBlock* 
 
     Structure* structure = baseValue.asCell()->structure();
 
-    if (structure->isUncacheableDictionary()) {
+    if (structure->isUncacheableDictionary() || structure->typeInfo().prohibitsPropertyCaching()) {
         vPC[0] = getOpcode(op_get_by_id_generic);
         return;
     }
