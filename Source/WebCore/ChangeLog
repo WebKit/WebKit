@@ -1,3 +1,48 @@
+2011-05-26  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61345
+        part of <rdar://problem/8675177>
+        Roll back in now that the Crashes are fixed.  ResourceResponseBase and ResourceResponse had two different definitions
+        for m_isNull.  ResourceResponse treats m_isNull as meaning there isn't any platform ResourceResponse. 
+        ResourceResponseBase treats m_isNull as meaning no fields have been initialized.  Consolidate calls into ResourceResponseBase meaning. 
+
+        Don't initialize ResourceResponse.m_suggestedFilename until we want to use it.  Initializing it requires reading in and parsing a plist.  
+        Add new initialization state CommonAndUncommonFields to ResourceResponse.  This will be for all the header fields.
+        Move suggestedFilename initialization to AllFields so it is never initialized unless we ask for it. 
+        Add "Content-Type" to common headers since it is looked for by every CSS sheet load.
+
+        No new functionality so no new tests.
+
+        * platform/network/ResourceResponseBase.cpp:
+        (WebCore::ResourceResponseBase::adopt):
+        (WebCore::ResourceResponseBase::suggestedFilename):
+        (WebCore::ResourceResponseBase::setSuggestedFilename):
+        (WebCore::ResourceResponseBase::httpStatusText):
+        (WebCore::ResourceResponseBase::setHTTPStatusText):
+        (WebCore::ResourceResponseBase::httpHeaderField):
+        (WebCore::ResourceResponseBase::setHTTPHeaderField):
+        (WebCore::ResourceResponseBase::httpHeaderFields):
+        (WebCore::ResourceResponseBase::isAttachment):
+        (WebCore::ResourceResponseBase::setLastModifiedDate):
+        (WebCore::ResourceResponseBase::lastModifiedDate):
+        (WebCore::ResourceResponseBase::wasCached):
+        (WebCore::ResourceResponseBase::connectionReused):
+        (WebCore::ResourceResponseBase::setConnectionReused):
+        (WebCore::ResourceResponseBase::connectionID):
+        (WebCore::ResourceResponseBase::setConnectionID):
+        (WebCore::ResourceResponseBase::resourceLoadTiming):
+        (WebCore::ResourceResponseBase::setResourceLoadTiming):
+        (WebCore::ResourceResponseBase::resourceLoadInfo):
+        (WebCore::ResourceResponseBase::setResourceLoadInfo):
+        * platform/network/ResourceResponseBase.h:
+        * platform/network/cf/ResourceResponse.h:
+        (WebCore::ResourceResponse::ResourceResponse):
+        * platform/network/cf/ResourceResponseCFNet.cpp:
+        (WebCore::ResourceResponse::platformLazyInit):
+        * platform/network/mac/ResourceResponseMac.mm:
+
 2011-05-26  James Kozianski  <koz@chromium.org>
 
         Reviewed by Eric Seidel.
