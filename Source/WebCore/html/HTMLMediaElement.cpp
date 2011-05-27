@@ -335,10 +335,8 @@ RenderObject* HTMLMediaElement::createRenderer(RenderArena* arena, RenderStyle*)
     if (m_proxyWidget) {
         mediaRenderer->setWidget(m_proxyWidget);
 
-        Frame* frame = document()->frame();
-        FrameLoader* loader = frame ? frame->loader() : 0;
-        if (loader)
-            loader->showMediaPlayerProxyPlugin(m_proxyWidget.get());
+        if (Frame* frame = document()->frame())
+            frame->loader()->showMediaPlayerProxyPlugin(m_proxyWidget.get());
     }
     return mediaRenderer;
 #else
@@ -378,10 +376,8 @@ void HTMLMediaElement::attach()
         renderer()->updateFromElement();
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
     else if (m_proxyWidget) {
-        Frame* frame = document()->frame();
-        FrameLoader* loader = frame ? frame->loader() : 0;
-        if (loader)
-            loader->hideMediaPlayerProxyPlugin(m_proxyWidget.get());
+        if (Frame* frame = document()->frame())
+            frame->loader()->hideMediaPlayerProxyPlugin(m_proxyWidget.get());
     }
 #endif
 }
@@ -689,12 +685,9 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     Frame* frame = document()->frame();
     if (!frame)
         return;
-    FrameLoader* loader = frame->loader();
-    if (!loader)
-        return;
 
-    KURL url(initialURL);
-    if (!loader->willLoadMediaElementURL(url))
+    KURL url = initialURL;
+    if (!frame->loader()->willLoadMediaElementURL(url))
         return;
 
     // The resource fetch algorithm 
@@ -2439,11 +2432,10 @@ void HTMLMediaElement::setMediaPlayerProxy(WebMediaPlayerProxy* proxy)
 void HTMLMediaElement::getPluginProxyParams(KURL& url, Vector<String>& names, Vector<String>& values)
 {
     Frame* frame = document()->frame();
-    FrameLoader* loader = frame ? frame->loader() : 0;
 
     if (isVideo()) {
         KURL posterURL = getNonEmptyURLAttribute(posterAttr);
-        if (!posterURL.isEmpty() && loader && loader->willLoadMediaElementURL(posterURL)) {
+        if (!posterURL.isEmpty() && frame && frame->loader()->willLoadMediaElementURL(posterURL)) {
             names.append("_media_element_poster_");
             values.append(posterURL.string());
         }
@@ -2459,7 +2451,7 @@ void HTMLMediaElement::getPluginProxyParams(KURL& url, Vector<String>& names, Ve
         url = selectNextSourceChild(0, DoNothing);
 
     m_currentSrc = url.string();
-    if (url.isValid() && loader && loader->willLoadMediaElementURL(url)) {
+    if (url.isValid() && frame && frame->loader()->willLoadMediaElementURL(url)) {
         names.append("_media_element_src_");
         values.append(m_currentSrc);
     }
@@ -2480,8 +2472,7 @@ void HTMLMediaElement::createMediaPlayerProxy()
         return;
 
     Frame* frame = document()->frame();
-    FrameLoader* loader = frame ? frame->loader() : 0;
-    if (!loader)
+    if (!frame)
         return;
 
     LOG(Media, "HTMLMediaElement::createMediaPlayerProxy");
@@ -2494,7 +2485,7 @@ void HTMLMediaElement::createMediaPlayerProxy()
     
     // Hang onto the proxy widget so it won't be destroyed if the plug-in is set to
     // display:none
-    m_proxyWidget = loader->subframeLoader()->loadMediaPlayerProxyPlugin(this, url, paramNames, paramValues);
+    m_proxyWidget = frame->loader()->subframeLoader()->loadMediaPlayerProxyPlugin(this, url, paramNames, paramValues);
     if (m_proxyWidget)
         m_needWidgetUpdate = false;
 }
@@ -2505,9 +2496,11 @@ void HTMLMediaElement::updateWidget(PluginCreationOption)
 
     Vector<String> paramNames;
     Vector<String> paramValues;
+    // FIXME: Rename kurl to something more sensible.
     KURL kurl;
-    
+
     mediaElement->getPluginProxyParams(kurl, paramNames, paramValues);
+    // FIXME: What if document()->frame() is 0?
     SubframeLoader* loader = document()->frame()->loader()->subframeLoader();
     loader->loadMediaPlayerProxyPlugin(mediaElement, kurl, paramNames, paramValues);
 }

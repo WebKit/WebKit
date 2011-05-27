@@ -1,3 +1,20 @@
+2011-05-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        FrameLoader cannot be null
+        https://bugs.webkit.org/show_bug.cgi?id=61609
+
+        This code has a bunch of cargo-cult null checking.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createRenderer):
+        (WebCore::HTMLMediaElement::attach):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::getPluginProxyParams):
+        (WebCore::HTMLMediaElement::createMediaPlayerProxy):
+        (WebCore::HTMLMediaElement::updateWidget):
+
 2011-05-26  Shane Stephens  <shanestephens@google.com>
 
         Reviewed by James Robinson.
