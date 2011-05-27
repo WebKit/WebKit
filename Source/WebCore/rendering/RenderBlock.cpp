@@ -2274,6 +2274,9 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
 
 void RenderBlock::paintColumnRules(PaintInfo& paintInfo, int tx, int ty)
 {
+    if (paintInfo.context->paintingDisabled())
+        return;
+
     const Color& ruleColor = style()->visitedDependentColor(CSSPropertyWebkitColumnRuleColor);
     bool ruleTransparent = style()->columnRuleIsTransparent();
     EBorderStyle ruleStyle = style()->columnRuleStyle();
@@ -2289,6 +2292,10 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, int tx, int ty)
     int currLogicalLeftOffset = style()->isLeftToRightDirection() ? 0 : contentLogicalWidth();
     int ruleAdd = logicalLeftOffsetForContent();
     int ruleLogicalLeft = style()->isLeftToRightDirection() ? 0 : contentLogicalWidth();
+
+    const AffineTransform& currentCTM = paintInfo.context->getCTM();
+    bool antialias = !currentCTM.isIdentityOrTranslationOrFlipped();
+
     for (unsigned i = 0; i < colCount; i++) {
         IntRect colRect = columnRectAt(colInfo, i);
 
@@ -2310,7 +2317,7 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, int tx, int ty)
             int ruleTop = isHorizontalWritingMode() ? ty + borderTop() + paddingTop() : ty + ruleLogicalLeft - ruleWidth / 2 + ruleAdd;
             int ruleBottom = isHorizontalWritingMode() ? ruleTop + contentHeight() : ruleTop + ruleWidth;
             drawLineForBoxSide(paintInfo.context, ruleLeft, ruleTop, ruleRight, ruleBottom,
-                               style()->isLeftToRightDirection() ? BSLeft : BSRight, ruleColor, ruleStyle, 0, 0);
+                               style()->isLeftToRightDirection() ? BSLeft : BSRight, ruleColor, ruleStyle, 0, 0, antialias);
         }
         
         ruleLogicalLeft = currLogicalLeftOffset;

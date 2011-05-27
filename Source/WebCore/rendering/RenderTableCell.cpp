@@ -914,7 +914,7 @@ void RenderTableCell::sortBorderStyles(CollapsedBorderStyles& borderStyles)
 
 void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, const IntRect& paintRect)
 {
-    if (!table()->currentBorderStyle())
+    if (!table()->currentBorderStyle() || graphicsContext->paintingDisabled())
         return;
     
     CollapsedBorderValue leftVal = collapsedLeftBorder();
@@ -950,11 +950,14 @@ void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, con
     borders.addBorder(bottomVal, BSBottom, renderBottom, x, y + h - bottomWidth, x + w, y + h, bottomStyle);
     borders.addBorder(leftVal, BSLeft, renderLeft, x, y, x + leftWidth, y + h, leftStyle);
     borders.addBorder(rightVal, BSRight, renderRight, x + w - rightWidth, y, x + w, y + h, rightStyle);
+
+    const AffineTransform& currentCTM = graphicsContext->getCTM();
+    bool antialias = !currentCTM.isIdentityOrTranslationOrFlipped();
     
     for (CollapsedBorder* border = borders.nextBorder(); border; border = borders.nextBorder()) {
         if (border->borderValue == *table()->currentBorderStyle())
             drawLineForBoxSide(graphicsContext, border->x1, border->y1, border->x2, border->y2, border->side, 
-                               border->borderValue.color(), border->style, 0, 0);
+                               border->borderValue.color(), border->style, 0, 0, antialias);
     }
 }
 
