@@ -69,9 +69,11 @@ void CanvasRenderingContext::checkOrigin(const HTMLImageElement* image)
 void CanvasRenderingContext::checkOrigin(const HTMLVideoElement* video)
 {
 #if ENABLE(VIDEO)
-    // FIXME: HTMLVideoElement::currentSrc() should return a KURL.
-    // https://bugs.webkit.org/show_bug.cgi?id=61578
-    checkOrigin(KURL(ParsedURLString, video->currentSrc()));
+    // FIXME: This check is likely wrong when a redirect is involved. We need
+    // to test the finalURL. Please be careful when fixing this issue not to
+    // make currentSrc be the final URL because then the
+    // HTMLMediaElement.currentSrc DOM API would leak redirect destinations!
+    checkOrigin(video->currentSrc());
     if (canvas()->originClean() && video && !video->hasSingleSecurityOrigin())
         canvas()->setOriginTainted();
 #endif

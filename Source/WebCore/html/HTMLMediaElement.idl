@@ -31,7 +31,7 @@ interface [Conditional=VIDEO] HTMLMediaElement : HTMLElement {
 
     // network state
     attribute [Reflect, URL] DOMString src;
-    readonly attribute DOMString currentSrc;
+    readonly attribute [URL] DOMString currentSrc;
     
     const unsigned short NETWORK_EMPTY = 0;
     const unsigned short NETWORK_IDLE = 1;

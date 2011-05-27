@@ -1,3 +1,32 @@
+2011-05-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        HTMLVideoElement::currentSrc() should return a KURL
+        https://bugs.webkit.org/show_bug.cgi?id=61578
+
+        I suspect we got into this mess because the author of this code didn't
+        know about the URL attribute in WebKit IDL, which is super useful!
+
+        Bad news: The line of code in question seems to have another bug, which
+        I've documented in a FIXME.  Let the yak shaving continue!
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::urlForLogging):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::isSafeToLoadURL):
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        (WebCore::HTMLMediaElement::getPluginProxyParams):
+        * html/HTMLMediaElement.h:
+        (WebCore::HTMLMediaElement::currentSrc):
+        (WebCore::HTMLMediaElement::currentURL):
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::checkOrigin):
+        * rendering/HitTestResult.cpp:
+        (WebCore::HitTestResult::absoluteMediaURL):
+            - This complete URL call was unnecessary because currentSrc is
+              already absolute.
+
 2011-05-27  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
