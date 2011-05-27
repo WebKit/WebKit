@@ -199,48 +199,10 @@ void WebFullScreenManagerMac::beginEnterFullScreenAnimation(float duration)
     m_element->document()->setFullScreenRendererSize(destinationFrame.size());
     m_rootLayer->syncCompositingState();
 
-    RenderLayer* layer = m_element->renderer() ? m_element->renderer()->enclosingLayer() : 0;
-    RenderLayerBacking* backing = layer ? layer->backing() : 0;
-    if (backing)
-        destinationFrame.setSize(backing->contentsBox().size());
-
     // FIXME: Once we gain the ability to do native WebKit animations of generated
     // content, this can change to use them.  Meanwhile, we'll have to animate the
-    // CALayer directly:
-    CALayer* caLayer = m_rootLayer->children().first()->platformLayer();
-
-    // Create a transformation matrix that will transform the renderer layer such that
-    // the fullscreen element appears to move from its starting position and size to its
-    // final one.
-    CGPoint destinationPosition = [caLayer position];
-    CGPoint layerAnchor = [caLayer anchorPoint];
-    CGPoint initialPosition = CGPointMake(
-        m_initialFrame.x() + m_initialFrame.width() * layerAnchor.x,
-        m_initialFrame.y() + m_initialFrame.height() * layerAnchor.y);
-    CATransform3D shrinkTransform = CATransform3DMakeScale(
-        static_cast<CGFloat>(m_initialFrame.width()) / destinationFrame.width(),
-        static_cast<CGFloat>(m_initialFrame.height()) / destinationFrame.height(), 1);
-    CATransform3D shiftTransform = CATransform3DMakeTranslation(
-        initialPosition.x - destinationPosition.x,
-        // Drawing is flipped here, and so much be the translation transformation
-        destinationPosition.y - initialPosition.y, 0);
-    CATransform3D finalTransform = CATransform3DConcat(shrinkTransform, shiftTransform);
-
-    // Use a CABasicAnimation here for the zoom effect. We want to be notified that the animation has
-    // completed by way of the CAAnimation delegate.
-    CABasicAnimation* zoomAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
-    [zoomAnimation setFromValue:[NSValue valueWithCATransform3D:finalTransform]];
-    [zoomAnimation setToValue:[NSValue valueWithCATransform3D:CATransform3DIdentity]];
-    [zoomAnimation setDelegate:m_enterFullScreenListener.get()];
-    [zoomAnimation setDuration:duration];
-    [zoomAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-    [zoomAnimation setFillMode:kCAFillModeForwards];
-
-    // Disable implicit animations and set the layer's transformation matrix to its final state.
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    [caLayer addAnimation:zoomAnimation forKey:@"zoom"];
-    [CATransaction commit];
+    // CALayer directly.
+    animateFullScreen(windowedCGTransform(), CATransform3DIdentity, duration, m_enterFullScreenListener.get());
 }
 
 void WebFullScreenManagerMac::beginExitFullScreenAnimation(float duration)
@@ -258,52 +220,82 @@ void WebFullScreenManagerMac::beginExitFullScreenAnimation(float duration)
     m_element->document()->setFullScreenRendererSize(destinationFrame.size());
     m_rootLayer->syncCompositingState();
 
-    RenderLayer* layer = m_element->renderer() ? m_element->renderer()->enclosingLayer() : 0;
-    RenderLayerBacking* backing = layer ? layer->backing() : 0;
-    if (backing)
-        destinationFrame.setSize(backing->contentsBox().size());
-
     // FIXME: Once we gain the ability to do native WebKit animations of generated
     // content, this can change to use them.  Meanwhile, we'll have to animate the
-    // CALayer directly:
+    // CALayer directly.
     CALayer* caLayer = m_rootLayer->children().first()->platformLayer();
     CALayer* presentationLayer = [caLayer presentationLayer] ? (CALayer*)[caLayer presentationLayer] : caLayer;
+    animateFullScreen([presentationLayer transform], windowedCGTransform(), duration, m_exitFullScreenListener.get());
+}
+
+void WebFullScreenManagerMac::animateFullScreen(const CATransform3D& startTransform, const CATransform3D& endTransform, float duration, id listener)
+{
+    // This is the full size of the screen.
+    IntRect fullScreenRect = getFullScreenRect();    
+    CALayer* caLayer = m_rootLayer->children().first()->platformLayer();
+
+    // This animation represents the zoom effect.
+    CABasicAnimation* zoomAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
+    [zoomAnimation setFromValue:[NSValue valueWithCATransform3D:startTransform]];
+    [zoomAnimation setToValue:[NSValue valueWithCATransform3D:endTransform]];
+    
+    // This animation provides a position correction to the CALayer, which might be offset based on the page's
+    // scroll position. We animate it instead of just setting the property because others might try to
+    // alter its position while the animation is playing.
+    CGPoint layerAnchor = [caLayer anchorPoint];
+    CGPoint fullScreenPosition = CGPointMake(
+        fullScreenRect.x() + fullScreenRect.width() * layerAnchor.x,
+        fullScreenRect.y() + fullScreenRect.height() * layerAnchor.y);
+    CABasicAnimation* positionCorrection = [CABasicAnimation animationWithKeyPath:@"position"];
+    [positionCorrection setFromValue:[NSValue valueWithPoint:NSPointFromCGPoint(fullScreenPosition)]];
+    [positionCorrection setToValue:[NSValue valueWithPoint:NSPointFromCGPoint(fullScreenPosition)]];
+    
+    // We want to be notified that the animation has completed by way of the CAAnimation delegate.
+    CAAnimationGroup* transitionAnimation = [CAAnimationGroup animation];
+    [transitionAnimation setAnimations:[NSArray arrayWithObjects:zoomAnimation, positionCorrection, nil]];
+    [transitionAnimation setDelegate:listener];
+    [transitionAnimation setDuration:duration];
+    [transitionAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
+    [transitionAnimation setFillMode:kCAFillModeForwards];
+    [transitionAnimation setRemovedOnCompletion:NO];
+    
+    // Disable implicit animations and set the layer's transformation matrix to its final state.
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
+    [caLayer addAnimation:transitionAnimation forKey:@"zoom"];
+    [CATransaction commit];
+}
+
+CATransform3D WebFullScreenManagerMac::windowedCGTransform()
+{
+    IntRect fullScreenRect = getFullScreenRect();
+    RenderLayer* layer = m_element->renderer() ? m_element->renderer()->enclosingLayer() : 0;
+    RenderLayerBacking* backing = layer ? layer->backing() : 0;
+    IntSize fullScreenSize = fullScreenRect.size();
+    if (backing)
+        fullScreenSize = backing->contentsBox().size();
+
+    CALayer* caLayer = m_rootLayer->children().first()->platformLayer();
 
     // Create a transformation matrix that will transform the renderer layer such that
     // the fullscreen element appears to move from its starting position and size to its
     // final one.
-    CGPoint destinationPosition = [presentationLayer position];
     CGPoint layerAnchor = [caLayer anchorPoint];
-    CGPoint initialPosition = CGPointMake(
+    CGPoint fullScreenPosition = CGPointMake(
+        fullScreenRect.x() + fullScreenRect.width() * layerAnchor.x,
+        fullScreenRect.y() + fullScreenRect.height() * layerAnchor.y); //[presentationLayer position];
+    CGPoint windowedPosition = CGPointMake(
         m_initialFrame.x() + m_initialFrame.width() * layerAnchor.x,
         m_initialFrame.y() + m_initialFrame.height() * layerAnchor.y);
     CATransform3D shrinkTransform = CATransform3DMakeScale(
-        static_cast<CGFloat>(m_initialFrame.width()) / destinationFrame.width(),
-        static_cast<CGFloat>(m_initialFrame.height()) / destinationFrame.height(), 1);
+        static_cast<CGFloat>(m_initialFrame.width()) / fullScreenSize.width(),
+        static_cast<CGFloat>(m_initialFrame.height()) / fullScreenSize.height(), 1);
     CATransform3D shiftTransform = CATransform3DMakeTranslation(
-        initialPosition.x - destinationPosition.x,
+        windowedPosition.x - fullScreenPosition.x,
         // Drawing is flipped here, and so must be the translation transformation
-        destinationPosition.y - initialPosition.y, 0);
-    CATransform3D finalTransform = CATransform3DConcat(shrinkTransform, shiftTransform);
-
-    CATransform3D initialTransform = [presentationLayer transform];
-
-    // Use a CABasicAnimation here for the zoom effect. We want to be notified that the animation has
-    // completed by way of the CAAnimation delegate.
-    CABasicAnimation* zoomAnimation = [CABasicAnimation animationWithKeyPath:@"transform"];
-    [zoomAnimation setFromValue:[NSValue valueWithCATransform3D:initialTransform]];
-    [zoomAnimation setToValue:[NSValue valueWithCATransform3D:finalTransform]];
-    [zoomAnimation setDelegate:m_exitFullScreenListener.get()];
-    [zoomAnimation setDuration:duration];
-    [zoomAnimation setTimingFunction:[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseInEaseOut]];
-    [zoomAnimation setFillMode:kCAFillModeForwards];
-
-    // Disable implicit animations and set the layer's transformation matrix to its final state.
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
-    [caLayer addAnimation:zoomAnimation forKey:@"zoom"];
-    [caLayer setTransform:finalTransform];
-    [CATransaction commit];
+        fullScreenPosition.y - windowedPosition.y, 0);
+    
+    return CATransform3DConcat(shrinkTransform, shiftTransform);
 }
 
 } // namespace WebKit

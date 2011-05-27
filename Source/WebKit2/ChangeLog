@@ -1,3 +1,26 @@
+2011-05-26  Jon Lee  <jonlee@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (5.0.5-Jazz): Transition to full screen video animates in wrong location when scrolled (61559)
+        https://bugs.webkit.org/show_bug.cgi?id=61559
+        <rdar://problem/9496054>
+
+        The CALayer that gets animated has a position that is offset by the scroll position of the web view. To
+        fix this, we set the destination location based on the rect of the full screen, and add a position
+        animation which keeps the position of the layer centered. This prevents glitches if others
+        are trying to change the layer position while the animation is running.
+
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.h: Refactor the calculation of the CALayer windowed
+        position into a private helper function, as well as the animation setup.
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::beginEnterFullScreenAnimation):
+        (WebKit::WebFullScreenManagerMac::beginExitFullScreenAnimation):
+        (WebKit::WebFullScreenManagerMac::animateFullScreen): Sets up the zoom animation, and the position offset
+        animation.
+        (WebKit::WebFullScreenManagerMac::windowedCGTransform): Calculates the placement of the windowed layer
+        in screen coordinates.
+
 2011-05-26  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Andreas Kling.

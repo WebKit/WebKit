@@ -53,6 +53,9 @@ private:
     virtual void beginEnterFullScreenAnimation(float duration);
     virtual void beginExitFullScreenAnimation(float duration);
 
+    void animateFullScreen(const CATransform3D& startTransform, const CATransform3D& endTransform, float duration, id listener);
+    CATransform3D windowedCGTransform();
+
     OwnPtr<WebCore::GraphicsLayer> m_rootLayer;
     LayerTreeContext m_layerTreeContext;
     RetainPtr<WKCARemoteLayerClientRef> m_remoteLayerClient;
