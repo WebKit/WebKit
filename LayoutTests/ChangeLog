@@ -1,5 +1,28 @@
 2011-05-26  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Reviewed by Hajime Morita.
+
+        editing/pasteboard/5483567.html should be renamed and converted to a dump-as-markup test.
+        https://bugs.webkit.org/show_bug.cgi?id=61599
+
+        Renamed 5483567.html to pasting-word-in-div-extra-line.html and converted it to
+        a dump-as-markup test.
+
+        * editing/pasteboard/5483567.html: Removed.
+        * editing/pasteboard/pasting-word-in-div-extra-line-expected.txt: Added.
+        * editing/pasteboard/pasting-word-in-div-extra-line.html: Copied from
+        LayoutTests/editing/pasteboard/5483567.html.
+        * platform/chromium-linux/editing/pasteboard/5483567-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/5483567-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/5483567-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/5483567-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/5483567-expected.png: Removed.
+        * platform/mac/editing/pasteboard/5483567-expected.png: Removed.
+        * platform/mac/editing/pasteboard/5483567-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/5483567-expected.txt: Removed.
+
+2011-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Eric Seidel.
 
         editing/pasteboard/5089327.html should be renamed and converted to a dump-as-markup test
