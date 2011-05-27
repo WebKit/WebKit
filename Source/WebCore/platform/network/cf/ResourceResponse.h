@@ -44,7 +44,7 @@ namespace WebCore {
 class ResourceResponse : public ResourceResponseBase {
 public:
     ResourceResponse()
-        : m_initLevel(AllFields)
+        : m_initLevel(CommonAndUncommonFields)
     {
     }
 
@@ -66,7 +66,7 @@ public:
 
     ResourceResponse(const KURL& url, const String& mimeType, long long expectedLength, const String& textEncodingName, const String& filename)
         : ResourceResponseBase(url, mimeType, expectedLength, textEncodingName, filename)
-        , m_initLevel(AllFields)
+        , m_initLevel(CommonAndUncommonFields)
     {
     }
 

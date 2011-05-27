@@ -44,7 +44,7 @@
 namespace WebCore {
 
 static NSString* const commonHeaderFields[] = {
-    @"Age", @"Cache-Control", @"Date", @"Etag", @"Expires", @"Last-Modified", @"Pragma"
+    @"Age", @"Cache-Control", @"Content-Type", @"Date", @"Etag", @"Expires", @"Last-Modified", @"Pragma"
 };
 static const int numCommonHeaderFields = sizeof(commonHeaderFields) / sizeof(AtomicString*);
 
@@ -69,11 +69,9 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
     if (m_initLevel >= initLevel)
         return;
 
-    if (m_isNull) {
-        ASSERT(!m_nsResponse);
+    if (m_isNull || !m_nsResponse)
         return;
-    }
-
+    
     if (m_initLevel < CommonFieldsOnly && initLevel >= CommonFieldsOnly) {
         NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
@@ -87,8 +85,6 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
         unsigned textEncodingNameLength = m_textEncodingName.length();
         if (textEncodingNameLength >= 2 && m_textEncodingName[0U] == '"' && m_textEncodingName[textEncodingNameLength - 1] == '"')
             m_textEncodingName = m_textEncodingName.substring(1, textEncodingNameLength - 2);
-
-        m_suggestedFilename = [m_nsResponse.get() suggestedFilename];
 
         if ([m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]]) {
             NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
@@ -107,24 +103,29 @@ void ResourceResponse::platformLazyInit(InitLevel initLevel)
         [pool drain];
     }
 
-    if (m_initLevel < AllFields && initLevel >= AllFields && [m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]]) {
-        NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
+    if (m_initLevel < CommonAndUncommonFields && initLevel >= CommonAndUncommonFields) {
+        if ([m_nsResponse.get() isKindOfClass:[NSHTTPURLResponse class]]) {
+            NSAutoreleasePool* pool = [[NSAutoreleasePool alloc] init];
 
-        NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
+            NSHTTPURLResponse *httpResponse = (NSHTTPURLResponse *)m_nsResponse.get();
 
-        RetainPtr<NSString> httpStatusLine(AdoptNS, wkCopyNSURLResponseStatusLine(m_nsResponse.get()));
-        if (httpStatusLine)
-            m_httpStatusText = extractReasonPhraseFromHTTPStatusLine(httpStatusLine.get());
-        else
-            m_httpStatusText = "OK";
+            RetainPtr<NSString> httpStatusLine(AdoptNS, wkCopyNSURLResponseStatusLine(m_nsResponse.get()));
+            if (httpStatusLine)
+                m_httpStatusText = extractReasonPhraseFromHTTPStatusLine(httpStatusLine.get());
+            else
+                m_httpStatusText = "OK";
 
-        NSDictionary *headers = [httpResponse allHeaderFields];
-        NSEnumerator *e = [headers keyEnumerator];
-        while (NSString *name = [e nextObject])
-            m_httpHeaderFields.set(name, [headers objectForKey:name]);
-        
-        [pool drain];
+            NSDictionary *headers = [httpResponse allHeaderFields];
+            NSEnumerator *e = [headers keyEnumerator];
+            while (NSString *name = [e nextObject])
+                m_httpHeaderFields.set(name, [headers objectForKey:name]);
+            
+            [pool drain];
+        }
     }
+     
+    if (m_initLevel < AllFields && initLevel >= AllFields)
+        m_suggestedFilename = [m_nsResponse.get() suggestedFilename];
 
     m_initLevel = initLevel;
 }
