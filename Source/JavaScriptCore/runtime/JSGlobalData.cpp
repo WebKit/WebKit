@@ -178,6 +178,8 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , identifierTable(globalDataType == Default ? wtfThreadData().currentIdentifierTable() : createIdentifierTable())
     , propertyNames(new CommonIdentifiers(this))
     , emptyList(new MarkedArgumentBuffer)
+    , executableAllocator(*this)
+    , regexAllocator(*this)
     , lexer(new Lexer(this))
     , parser(new Parser)
     , interpreter(0)
@@ -446,6 +448,18 @@ void JSGlobalData::recompileAllJSFunctions()
     
     Recompiler recompiler;
     heap.forEach(recompiler);
+}
+
+void JSGlobalData::releaseExecutableMemory()
+{
+    if (!dynamicGlobalObject)
+        recompileAllJSFunctions();
+    m_regExpCache->invalidateCode();
+}
+    
+void releaseExecutableMemory(JSGlobalData& globalData)
+{
+    globalData.releaseExecutableMemory();
 }
 
 #if ENABLE(REGEXP_TRACING)

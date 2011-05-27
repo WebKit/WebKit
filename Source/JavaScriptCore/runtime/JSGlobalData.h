@@ -281,6 +281,7 @@ namespace JSC {
         void clearBuiltinStructures();
 
         bool isCollectorBusy() { return heap.isBusy(); }
+        void releaseExecutableMemory();
 
     private:
         JSGlobalData(GlobalDataType, ThreadStackType);

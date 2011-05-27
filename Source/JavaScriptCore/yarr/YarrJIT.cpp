@@ -2353,7 +2353,7 @@ public:
         backtrack();
 
         // Link & finalize the code.
-        LinkBuffer linkBuffer(this, globalData->regexAllocator);
+        LinkBuffer linkBuffer(*globalData, this, globalData->regexAllocator);
         m_backtrackingState.linkDataLabels(linkBuffer);
         jitObject.set(linkBuffer.finalizeCode());
         jitObject.setFallBack(m_shouldFallBack);

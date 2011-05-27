@@ -128,12 +128,12 @@ namespace JSC {
             return AssemblerLabel(m_index);
         }
 
-        void* executableCopy(ExecutablePool* allocator)
+        void* executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
         {
             if (!m_index)
                 return 0;
 
-            void* result = allocator->alloc(m_index);
+            void* result = allocator->alloc(globalData, m_index);
 
             if (!result)
                 return 0;

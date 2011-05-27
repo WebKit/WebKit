@@ -343,14 +343,14 @@ void ARMAssembler::doubleTransfer(bool isLoad, FPRegisterID srcDst, RegisterID b
     fdtr_u(isLoad, srcDst, ARMRegisters::S0, 0);
 }
 
-void* ARMAssembler::executableCopy(ExecutablePool* allocator)
+void* ARMAssembler::executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
 {
     // 64-bit alignment is required for next constant pool and JIT code as well
     m_buffer.flushWithoutBarrier(true);
     if (!m_buffer.isAligned(8))
         bkpt(0);
 
-    char* data = reinterpret_cast<char*>(m_buffer.executableCopy(allocator));
+    char* data = reinterpret_cast<char*>(m_buffer.executableCopy(globalData, allocator));
 
     for (Jumps::Iterator iter = m_jumps.begin(); iter != m_jumps.end(); ++iter) {
         // The last bit is set if the constant must be placed on constant pool.

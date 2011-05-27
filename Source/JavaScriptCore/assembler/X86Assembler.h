@@ -1583,9 +1583,9 @@ public:
         return b.m_offset - a.m_offset;
     }
     
-    void* executableCopy(ExecutablePool* allocator)
+    void* executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
     {
-        return m_formatter.executableCopy(allocator);
+        return m_formatter.executableCopy(globalData, allocator);
     }
 
     void rewindToLabel(AssemblerLabel rewindTo) { m_formatter.rewindToLabel(rewindTo); }
@@ -1919,9 +1919,9 @@ private:
         bool isAligned(int alignment) const { return m_buffer.isAligned(alignment); }
         void* data() const { return m_buffer.data(); }
 
-        void* executableCopy(ExecutablePool* allocator)
+        void* executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
         {
-            return m_buffer.executableCopy(allocator);
+            return m_buffer.executableCopy(globalData, allocator);
         }
 
         void rewindToLabel(AssemblerLabel rewindTo) { m_buffer.rewindToLabel(rewindTo); }

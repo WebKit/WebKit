@@ -1474,9 +1474,9 @@ public:
         changePCrelativeAddress((*(reinterpret_cast<uint16_t*>(code)) & 0xff), reinterpret_cast<uint16_t*>(code), value);
     }
 
-    void* executableCopy(ExecutablePool* allocator)
+    void* executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
     {
-        return m_buffer.executableCopy(allocator);
+        return m_buffer.executableCopy(globalData, allocator);
     }
 
     void prefix(uint16_t pre)

@@ -452,6 +452,7 @@ inline void JSObject::setPrototype(JSGlobalData& globalData, JSValue prototype)
 
 inline void JSObject::setStructure(JSGlobalData& globalData, Structure* structure)
 {
+    ASSERT(structure->typeInfo().overridesVisitChildren() == m_structure->typeInfo().overridesVisitChildren());
     m_structure.set(globalData, this, structure);
 }
 

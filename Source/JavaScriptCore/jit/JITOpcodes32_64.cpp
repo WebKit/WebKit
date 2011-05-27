@@ -159,7 +159,7 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
 #endif
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(this, m_globalData->executableAllocator);
+    LinkBuffer patchBuffer(*m_globalData, this, m_globalData->executableAllocator);
 
 #if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     patchBuffer.link(string_failureCases1Call, FunctionPtr(cti_op_get_by_id_string_fail));
@@ -464,7 +464,7 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
     ret();
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
-    LinkBuffer patchBuffer(this, executablePool);
+    LinkBuffer patchBuffer(*m_globalData, this, executablePool);
 
     patchBuffer.link(nativeCall, FunctionPtr(func));
     patchBuffer.finalizeCode();

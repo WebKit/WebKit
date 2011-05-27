@@ -424,13 +424,13 @@ public:
         ASSERT(size);
 
         if (size >= FixedVMPoolPageTables::size())
-            CRASH();
+            return ExecutablePool::Allocation(0, 0);
         if (m_pages.isFull())
-            CRASH();
+            return ExecutablePool::Allocation(0, 0);
 
         size_t offset = m_pages.allocate(sizeClass);
         if (offset == notFound)
-            CRASH();
+            return ExecutablePool::Allocation(0, 0);
 
         void* pointer = offsetToPointer(offset);
         m_reservation.commit(pointer, size);

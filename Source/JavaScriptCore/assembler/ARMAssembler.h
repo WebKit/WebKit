@@ -686,7 +686,7 @@ namespace JSC {
             return loadBranchTarget(ARMRegisters::pc, cc, useConstantPool);
         }
 
-        void* executableCopy(ExecutablePool* allocator);
+        void* executableCopy(JSGlobalData&, ExecutablePool* allocator);
 
 #ifndef NDEBUG
         unsigned debugOffset() { return m_buffer.debugOffset(); }

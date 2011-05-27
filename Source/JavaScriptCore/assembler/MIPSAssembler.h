@@ -645,9 +645,9 @@ public:
         return m_buffer.codeSize();
     }
 
-    void* executableCopy(ExecutablePool* allocator)
+    void* executableCopy(JSGlobalData& globalData, ExecutablePool* allocator)
     {
-        void *result = m_buffer.executableCopy(allocator);
+        void *result = m_buffer.executableCopy(globalData, allocator);
         if (!result)
             return 0;
 

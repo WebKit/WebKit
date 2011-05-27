@@ -44,6 +44,7 @@ typedef HashMap<RegExpKey, Weak<RegExp> > RegExpCacheMap;
 
 public:
     RegExpCache(JSGlobalData* globalData);
+    void invalidateCode();
 
 private:
     
