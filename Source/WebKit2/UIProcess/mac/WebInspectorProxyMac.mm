@@ -154,9 +154,8 @@ void WebInspectorProxy::platformDidClose()
 
 void WebInspectorProxy::platformBringToFront()
 {
-    // FIXME: support bring to front in docked mode here.
-
-    [m_inspectorWindow.get() makeKeyAndOrderFront:nil];
+    // FIXME: this will not bring a background tab in Safari to the front, only its window.
+    [m_inspectorView.get().window makeKeyAndOrderFront:nil];
 }
 
 void WebInspectorProxy::platformInspectedURLChanged(const String& urlString)
