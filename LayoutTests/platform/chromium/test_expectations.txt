@@ -3632,7 +3632,6 @@ BUGWK60131 SLOW : fast/css/visited-link-hang.html = PASS
 
 // webkit roll : 84350:84431
 BUGDPRANKE MAC LINUX : transitions/interrupt-zero-duration.html = TEXT PASS
-BUGWK60132 BUGCR80771 : media/controls-css-overload.html = TIMEOUT PASS
 BUGDPRANKE WIN LINUX : animations/change-one-anim.html = TEXT PASS
 
 // pulled in from downstream during webkit roll 84350:84431

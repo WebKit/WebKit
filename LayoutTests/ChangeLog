@@ -1,3 +1,22 @@
+2011-05-27  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        The behaviour of controls-after-reload was causing
+        layoutTestController in DumpRenderTree to misbehave causing a reported
+        failure in the test run after it (controls-css-overload).
+
+        Effectively, notifyDone() ended up getting called again after the test
+        was being torn down.
+
+        This change removes the unneeded seek at the end of the test (as we
+        should have already seeked to 0.
+
+        https://bugs.webkit.org/show_bug.cgi?id=60132
+
+        * media/controls-after-reload.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-05-27  Adam Klein  <adamk@chromium.org>
 
         Unreviewed. More rebaselines after r87526.

@@ -3,21 +3,22 @@
     <script src=media-file.js></script>
     <script>
     var video;
-    var loadedCount = 0;
 
     if (window.layoutTestController)
         layoutTestController.waitUntilDone();
 
     function finish()
     {
-        video.pause();
-        video.currentTime = 0;
+        video.removeEventListener("seeked", finish);
+
         if (window.layoutTestController)
             layoutTestController.notifyDone();
     }
 
     function playing()
     {
+        video.removeEventListener("playing", playing);
+
         // Ensure that the frame is always the same in pixel result.
         video.addEventListener("seeked", finish);
         video.pause();
@@ -26,13 +27,11 @@
 
     function canplaythrough()
     {
-        if (!loadedCount) {
-            video.src = findMediaFile("video", "content/test");
-            video.load();
-            video.play();
-            video.addEventListener("playing", playing);
-        }
-        loadedCount++;
+        video.removeEventListener("canplaythrough", canplaythrough);
+
+        video.src = findMediaFile("video", "content/test");
+        video.addEventListener("playing", playing);
+        video.play();
     }
 
     function test()
@@ -41,7 +40,6 @@
         video.addEventListener("canplaythrough", canplaythrough);
         
         video.src = findMediaFile("video", "content/counting");
-        video.load();
     }
     </script>
 </head>
