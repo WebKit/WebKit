@@ -78,6 +78,8 @@ WK_EXPORT void WKBundleAddOriginAccessWhitelistEntry(WKBundleRef bundle, WKStrin
 WK_EXPORT void WKBundleRemoveOriginAccessWhitelistEntry(WKBundleRef bundle, WKStringRef, WKStringRef, WKStringRef, bool);
 WK_EXPORT void WKBundleResetOriginAccessWhitelists(WKBundleRef bundle);
 
+WK_EXPORT bool WKBundleIsProcessingUserGesture(WKBundleRef bundle);
+
 #ifdef __cplusplus
 }
 #endif

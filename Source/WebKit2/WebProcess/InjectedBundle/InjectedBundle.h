@@ -130,6 +130,8 @@ public:
 
     static void reportException(JSContextRef, JSValueRef exception);
 
+    static bool isProcessingUserGesture();
+
 private:
     InjectedBundle(const String&);
 
