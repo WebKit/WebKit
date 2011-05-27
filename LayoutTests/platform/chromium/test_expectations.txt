@@ -3704,10 +3704,6 @@ BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgd
 BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html = TIMEOUT
 BUGWK59166 WIN LINUX DEBUG CPU : svg/filters/feDropShadow.svg = TIMEOUT
 
-BUGWK59172 : fast/html/details-children-merge-crash.html = TEXT
-BUGWK59172 : fast/html/details-element-render-inline-crash.html = TEXT
-BUGWK59172 : fast/html/details-mouse-click.html = TEXT
-
 BUGCR80301 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 
 // roll up from r84685:r84721??
