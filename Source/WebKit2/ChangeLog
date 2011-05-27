@@ -1,3 +1,22 @@
+2011-05-26  Jeff Miller  <jeffm@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a key handling logging channel for WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=61588
+        
+        Added a new LogKeyHandling channel, and logged some key events in WebPageProxy.
+        I also fixed a misspelling of coalescing in a comment in WebPageProxy.cpp.
+
+        * Platform/Logging.cpp:
+        (WebKit::initializeLogChannelsIfNecessary): Initialize LogKeyHandling channel.
+        * Platform/Logging.h: Added LogKeyHandling channel.
+
+        * UIProcess/WebPageProxy.cpp: Fixed misspelling of coalescing in a comment.
+        (WebKit::webKeyboardEventTypeString): Added to support logging.
+        (WebKit::WebPageProxy::handleKeyboardEvent): Log the keyboard event.
+        (WebKit::WebPageProxy::didReceiveEvent): Log the keyboard event.
+
 2011-05-26  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.

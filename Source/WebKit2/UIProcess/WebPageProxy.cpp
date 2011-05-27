@@ -32,6 +32,7 @@
 #include "DownloadProxy.h"
 #include "DrawingAreaProxy.h"
 #include "FindIndicator.h"
+#include "Logging.h"
 #include "MessageID.h"
 #include "NativeWebKeyboardEvent.h"
 #include "NativeWebMouseEvent.h"
@@ -90,7 +91,7 @@
 #include <wtf/RefCountedLeakCounter.h>
 #endif
 
-// This controls what strategy we use for mouse wheel coalesing.
+// This controls what strategy we use for mouse wheel coalescing.
 #define MERGE_WHEEL_EVENTS 1
 
 #define MESSAGE_CHECK(assertion) MESSAGE_CHECK_BASE(assertion, process()->connection())
@@ -104,6 +105,29 @@ WKPageDebugPaintFlags WebPageProxy::s_debugPaintFlags = 0;
 #ifndef NDEBUG
 static WTF::RefCountedLeakCounter webPageProxyCounter("WebPageProxy");
 #endif
+
+#if !LOG_DISABLED
+static const char* webKeyboardEventTypeString(WebEvent::Type type)
+{
+    switch (type) {
+    case WebEvent::KeyDown:
+        return "KeyDown";
+    
+    case WebEvent::KeyUp:
+        return "KeyUp";
+    
+    case WebEvent::RawKeyDown:
+        return "RawKeyDown";
+    
+    case WebEvent::Char:
+        return "Char";
+    
+    default:
+        ASSERT_NOT_REACHED();
+        return "<unknown>";
+    }
+}
+#endif // !LOG_DISABLED
 
 PassRefPtr<WebPageProxy> WebPageProxy::create(PageClient* pageClient, PassRefPtr<WebProcessProxy> process, WebPageGroup* pageGroup, uint64_t pageID)
 {
@@ -901,6 +925,8 @@ void WebPageProxy::handleKeyboardEvent(const NativeWebKeyboardEvent& event)
 {
     if (!isValid())
         return;
+    
+    LOG(KeyHandling, "WebPageProxy::handleKeyboardEvent: %s", webKeyboardEventTypeString(event.type()));
 
     m_keyEventQueue.append(event);
 
@@ -2709,6 +2735,8 @@ void WebPageProxy::didReceiveEvent(uint32_t opaqueType, bool handled)
     case WebEvent::KeyUp:
     case WebEvent::RawKeyDown:
     case WebEvent::Char: {
+        LOG(KeyHandling, "WebPageProxy::didReceiveEvent: %s", webKeyboardEventTypeString(type));
+
         NativeWebKeyboardEvent event = m_keyEventQueue.first();
         MESSAGE_CHECK(type == event.type());
 

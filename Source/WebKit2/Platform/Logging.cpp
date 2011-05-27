@@ -35,6 +35,7 @@ WTFLogChannel LogContextMenu  = { 0x00000002, "WebKit2LogLevel", WTFLogChannelOf
 WTFLogChannel LogTextInput    = { 0x00000004, "WebKit2LogLevel", WTFLogChannelOff };
 WTFLogChannel LogView         = { 0x00000008, "WebKit2LogLevel", WTFLogChannelOff };
 WTFLogChannel LogIconDatabase = { 0x00000010, "WebKit2LogLevel", WTFLogChannelOff };
+WTFLogChannel LogKeyHandling  = { 0x00000020, "WebKit2LogLevel", WTFLogChannelOff };
 
 #if !PLATFORM(MAC)
 void initializeLogChannel(WTFLogChannel* channel)
@@ -52,6 +53,7 @@ void initializeLogChannelsIfNecessary()
 
     initializeLogChannel(&LogContextMenu);
     initializeLogChannel(&LogIconDatabase);
+    initializeLogChannel(&LogKeyHandling);
     initializeLogChannel(&LogSessionState);
     initializeLogChannel(&LogTextInput);
     initializeLogChannel(&LogView);
