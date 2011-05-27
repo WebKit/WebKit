@@ -1,3 +1,13 @@
+2011-05-27  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        GraphicsLayers for overflow controls on iframe without clipping layer left out of layer tree
+        https://bugs.webkit.org/show_bug.cgi?id=61590
+
+        * compositing/iframes/resizer-expected.txt: Added.
+        * compositing/iframes/resizer.html: Added.
+
 2011-05-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed.

@@ -1,3 +1,20 @@
+2011-05-27  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        GraphicsLayers for overflow controls on iframe without clipping layer left out of layer tree
+        https://bugs.webkit.org/show_bug.cgi?id=61590
+
+        Adds overflow control layers to the compositor tree for layers without clipping layers regardless of whether the
+        backing is parented.  This ensures that the scroll corner layer for an iframe without a clipping layer ends up
+        in the final layer tree.  We don't currently render resizers for iframes, but we will soon and this keeps the
+        graphics layer tree consistent.
+
+        Test: compositing/iframes/resizer.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::rebuildCompositingLayerTree):
+
 2011-05-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

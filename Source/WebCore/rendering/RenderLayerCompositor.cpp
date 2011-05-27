@@ -858,27 +858,27 @@ void RenderLayerCompositor::rebuildCompositingLayerTree(RenderLayer* layer, cons
         if (layer->renderer()->isRenderPart())
             parented = parentFrameContentLayers(toRenderPart(layer->renderer()));
 
+        if (!parented)
+            layerBacking->parentForSublayers()->setChildren(layerChildren);
+
         // If the layer has a clipping layer the overflow controls layers will be siblings of the clipping layer.
         // Otherwise, the overflow control layers are normal children.
         if (!layerBacking->hasClippingLayer()) {
             if (GraphicsLayer* overflowControlLayer = layerBacking->layerForHorizontalScrollbar()) {
                 overflowControlLayer->removeFromParent();
-                layerChildren.append(overflowControlLayer);
+                layerBacking->parentForSublayers()->addChild(overflowControlLayer);
             }
 
             if (GraphicsLayer* overflowControlLayer = layerBacking->layerForVerticalScrollbar()) {
                 overflowControlLayer->removeFromParent();
-                layerChildren.append(overflowControlLayer);
+                layerBacking->parentForSublayers()->addChild(overflowControlLayer);
             }
 
             if (GraphicsLayer* overflowControlLayer = layerBacking->layerForScrollCorner()) {
                 overflowControlLayer->removeFromParent();
-                layerChildren.append(overflowControlLayer);
+                layerBacking->parentForSublayers()->addChild(overflowControlLayer);
             }
         }
-
-        if (!parented)
-            layerBacking->parentForSublayers()->setChildren(layerChildren);
 
 #if ENABLE(FULLSCREEN_API)
         // For the sake of clients of the full screen renderer, don't reparent
