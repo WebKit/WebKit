@@ -581,6 +581,12 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyMarginLeft, new ApplyPropertyLength<AutoEnabled>(&RenderStyle::marginLeft, &RenderStyle::setMarginLeft, &RenderStyle::initialMargin));
     setPropertyHandler(CSSPropertyMargin, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyMarginTop), propertyHandler(CSSPropertyMarginRight), propertyHandler(CSSPropertyMarginBottom), propertyHandler(CSSPropertyMarginLeft)));
 
+    setPropertyHandler(CSSPropertyWebkitMarginBeforeCollapse, new ApplyPropertyDefault<EMarginCollapse>(&RenderStyle::marginBeforeCollapse, &RenderStyle::setMarginBeforeCollapse, &RenderStyle::initialMarginBeforeCollapse));
+    setPropertyHandler(CSSPropertyWebkitMarginAfterCollapse, new ApplyPropertyDefault<EMarginCollapse>(&RenderStyle::marginAfterCollapse, &RenderStyle::setMarginAfterCollapse, &RenderStyle::initialMarginAfterCollapse));
+    setPropertyHandler(CSSPropertyWebkitMarginTopCollapse, CSSPropertyWebkitMarginBeforeCollapse);
+    setPropertyHandler(CSSPropertyWebkitMarginBottomCollapse, CSSPropertyWebkitMarginAfterCollapse);
+    setPropertyHandler(CSSPropertyWebkitMarginCollapse, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyWebkitMarginBeforeCollapse), propertyHandler(CSSPropertyWebkitMarginAfterCollapse)));
+
     setPropertyHandler(CSSPropertyPaddingTop, new ApplyPropertyLength<>(&RenderStyle::paddingTop, &RenderStyle::setPaddingTop, &RenderStyle::initialPadding));
     setPropertyHandler(CSSPropertyPaddingRight, new ApplyPropertyLength<>(&RenderStyle::paddingRight, &RenderStyle::setPaddingRight, &RenderStyle::initialPadding));
     setPropertyHandler(CSSPropertyPaddingBottom, new ApplyPropertyLength<>(&RenderStyle::paddingBottom, &RenderStyle::setPaddingBottom, &RenderStyle::initialPadding));

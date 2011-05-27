@@ -1,3 +1,24 @@
+2011-05-26  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Implement webkit margin collapse CSS properties in CSSStyleApplyProperty
+        https://bugs.webkit.org/show_bug.cgi?id=61589
+
+        No new tests as no new functionality added.
+
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Add handlers for:
+          CSSPropertyWebkitMarginBeforeCollapse
+          CSSPropertyWebkitMarginAfterCollapse
+          CSSPropertyWebkitMarginTopCollapse
+          CSSPropertyWebkitMarginBottomCollapse
+          CSSPropertyWebkitMarginCollapse
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove cases that are no longer required.
+
 2011-05-26  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
