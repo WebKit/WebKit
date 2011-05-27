@@ -48,8 +48,7 @@ namespace WebCore {
         SocketStreamState state() const;
 
         bool send(const char* data, int length);
-        void close(); // Disconnect after all data in buffer are sent.
-        void disconnect();
+        void close();
         int bufferedAmount() const { return m_buffer.size(); }
 
         SocketStreamHandleClient* client() const { return m_client; }

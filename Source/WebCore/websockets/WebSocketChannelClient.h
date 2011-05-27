@@ -41,12 +41,7 @@ namespace WebCore {
         virtual void didConnect() { }
         virtual void didReceiveMessage(const String&) { }
         virtual void didReceiveMessageError() { }
-        virtual void didStartClosingHandshake() { }
-        enum ClosingHandshakeCompletionStatus {
-            ClosingHandshakeIncomplete,
-            ClosingHandshakeComplete
-        };
-        virtual void didClose(unsigned long /* unhandledBufferedAmount */, ClosingHandshakeCompletionStatus) { }
+        virtual void didClose(unsigned long /* unhandledBufferedAmount */) { }
 
     protected:
         WebSocketChannelClient() { }

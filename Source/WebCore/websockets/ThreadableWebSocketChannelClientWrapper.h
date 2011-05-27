@@ -35,7 +35,6 @@
 
 #include "PlatformString.h"
 #include "ScriptExecutionContext.h"
-#include "WebSocketChannelClient.h"
 #include <wtf/Forward.h>
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
@@ -63,8 +62,7 @@ public:
 
     void didConnect();
     void didReceiveMessage(const String& message);
-    void didStartClosingHandshake();
-    void didClose(unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus);
+    void didClose(unsigned long unhandledBufferedAmount);
 
     void suspend();
     void resume();
@@ -75,8 +73,7 @@ protected:
     void processPendingTasks();
     static void didConnectCallback(ScriptExecutionContext*, RefPtr<ThreadableWebSocketChannelClientWrapper>);
     static void didReceiveMessageCallback(ScriptExecutionContext*, RefPtr<ThreadableWebSocketChannelClientWrapper>, String message);
-    static void didStartClosingHandshakeCallback(ScriptExecutionContext*, RefPtr<ThreadableWebSocketChannelClientWrapper>);
-    static void didCloseCallback(ScriptExecutionContext*, RefPtr<ThreadableWebSocketChannelClientWrapper>, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus);
+    static void didCloseCallback(ScriptExecutionContext*, RefPtr<ThreadableWebSocketChannelClientWrapper>, unsigned long unhandledBufferedAmount);
 
     WebSocketChannelClient* m_client;
     bool m_syncMethodDone;

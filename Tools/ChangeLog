@@ -1,3 +1,14 @@
+2011-05-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87464.
+        http://trac.webkit.org/changeset/87464
+        https://bugs.webkit.org/show_bug.cgi?id=61643
+
+        client-close/server-close tests are flaky on Chromium Mac and
+        Windows (Requested by aklein on #webkit).
+
+        * Scripts/webkitpy/thirdparty/__init__.py:
+
 2011-05-27  Alexey Proskuryakov  <ap@apple.com>
 
         Added Douglas Davidson to contributors list for easier CC'ing.

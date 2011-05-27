@@ -7,7 +7,6 @@ Received: 'Hello from Simple WSH.'
 Closed
 PASS closeEventType is "close"
 PASS 'wasClean' in closeEvent is true
-PASS closeEvent.wasClean is true
 PASS Object.getPrototypeOf(closeEvent) === CloseEvent.prototype is true
 PASS Object.getPrototypeOf(closeEvent) !== Event.prototype is true
 PASS successfullyParsed is true

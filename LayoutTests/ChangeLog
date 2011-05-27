@@ -1,3 +1,25 @@
+2011-05-27  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87464.
+        http://trac.webkit.org/changeset/87464
+        https://bugs.webkit.org/show_bug.cgi?id=61643
+
+        client-close/server-close tests are flaky on Chromium Mac and
+        Windows (Requested by aklein on #webkit).
+
+        * http/tests/websocket/tests/client-close-expected.txt: Removed.
+        * http/tests/websocket/tests/client-close.html: Removed.
+        * http/tests/websocket/tests/client-close_wsh.py: Removed.
+        * http/tests/websocket/tests/close-before-open-expected.txt:
+        * http/tests/websocket/tests/close-event-expected.txt:
+        * http/tests/websocket/tests/close-event.html:
+        * http/tests/websocket/tests/close-unref-websocket-expected.txt:
+        * http/tests/websocket/tests/frame-length-longer-than-buffer_wsh.py:
+        * http/tests/websocket/tests/server-close-expected.txt: Removed.
+        * http/tests/websocket/tests/server-close.html: Removed.
+        * http/tests/websocket/tests/server-close_wsh.py: Removed.
+        * http/tests/websocket/tests/websocket-event-target-expected.txt:
+
 2011-05-27  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.

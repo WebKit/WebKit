@@ -57,7 +57,7 @@ namespace WebCore {
         virtual void connect();
         virtual bool send(const String& message);
         virtual unsigned long bufferedAmount() const;
-        virtual void close(); // Start closing handshake.
+        virtual void close();
         virtual void fail(const String& reason);
         virtual void disconnect();
 
@@ -85,8 +85,6 @@ namespace WebCore {
         void skipBuffer(size_t len);
         bool processBuffer();
         void resumeTimerFired(Timer<WebSocketChannel>* timer);
-        void startClosingHandshake();
-        void closingTimerFired(Timer<WebSocketChannel>*);
 
         ScriptExecutionContext* m_context;
         WebSocketChannelClient* m_client;
@@ -97,9 +95,6 @@ namespace WebCore {
 
         Timer<WebSocketChannel> m_resumeTimer;
         bool m_suspended;
-        bool m_closing;
-        bool m_receivedClosingHandshake;
-        Timer<WebSocketChannel> m_closingTimer;
         bool m_closed;
         bool m_shouldDiscardReceivedData;
         unsigned long m_unhandledBufferedAmount;

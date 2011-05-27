@@ -33,7 +33,6 @@ ws.onclose = function(event)
     closeEventType = closeEvent.type;
     shouldBe("closeEventType", '"close"')
     shouldBeTrue("'wasClean' in closeEvent");
-    shouldBeTrue("closeEvent.wasClean");
     shouldBeTrue("Object.getPrototypeOf(closeEvent) === CloseEvent.prototype");
     shouldBeTrue("Object.getPrototypeOf(closeEvent) !== Event.prototype");
     finishJSTest();
