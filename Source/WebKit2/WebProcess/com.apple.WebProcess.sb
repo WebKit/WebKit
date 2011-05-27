@@ -205,3 +205,7 @@
         (literal "/private/etc/krb5.conf")
         (literal "/private/etc/services")
         (literal "/private/etc/host"))
+
+;; FIXME: Should be removed after <rdar://problem/9422957> is fixed
+(deny file-read* file-write* (with no-log)
+      (home-literal "/Library/Caches/Cache.db"))
