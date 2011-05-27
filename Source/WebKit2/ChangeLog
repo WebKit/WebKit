@@ -1,3 +1,16 @@
+2011-05-26  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Safari's AXFocusedUIElement attribute returns WebArea object with AXSelectedTextMarkerRange of nil
+        https://bugs.webkit.org/show_bug.cgi?id=61492
+
+        The method for determining which WebPage is actually focused and foreground was faulty. More
+        extensive checks are required to check which WebPage should be returned as the focusable one.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::windowIsFocused):
+
 2011-05-26  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Darin Adler.
