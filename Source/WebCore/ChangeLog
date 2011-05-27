@@ -1,3 +1,29 @@
+2011-05-26  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        LevelDB: turn on paranoid checks and verify checksums, log errors
+        https://bugs.webkit.org/show_bug.cgi?id=61516
+
+        This allows for detection of corrupted databases.
+        Even if we can't recover from a corrupted database, discovering the
+        problem is a step in the right direction.
+
+        No new functionality, no new tests.
+
+        * platform/leveldb/LevelDBDatabase.cpp:
+        (WebCore::LevelDBDatabase::open):
+        (WebCore::LevelDBDatabase::put):
+        (WebCore::LevelDBDatabase::remove):
+        (WebCore::LevelDBDatabase::get):
+        (WebCore::LevelDBDatabase::write):
+        (WebCore::IteratorImpl::checkStatus):
+        (WebCore::IteratorImpl::seekToLast):
+        (WebCore::IteratorImpl::seek):
+        (WebCore::IteratorImpl::next):
+        (WebCore::IteratorImpl::prev):
+        (WebCore::LevelDBDatabase::createIterator):
+
 2011-05-27  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Adam Barth.

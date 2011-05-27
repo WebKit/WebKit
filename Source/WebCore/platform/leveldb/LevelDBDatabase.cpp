@@ -32,6 +32,7 @@
 #include "LevelDBIterator.h"
 #include "LevelDBSlice.h"
 #include "LevelDBWriteBatch.h"
+#include "Logging.h"
 #include <leveldb/comparator.h>
 #include <leveldb/db.h>
 #include <leveldb/slice.h>
@@ -98,17 +99,19 @@ PassOwnPtr<LevelDBDatabase> LevelDBDatabase::open(const String& fileName, const 
 {
     OwnPtr<ComparatorAdapter> comparatorAdapter = adoptPtr(new ComparatorAdapter(comparator));
 
-    OwnPtr<LevelDBDatabase> result = adoptPtr(new LevelDBDatabase);
-
     leveldb::Options options;
     options.comparator = comparatorAdapter.get();
     options.create_if_missing = true;
+    options.paranoid_checks = true;
     leveldb::DB* db;
-    leveldb::Status s = leveldb::DB::Open(options, fileName.utf8().data(), &db);
+    const leveldb::Status s = leveldb::DB::Open(options, fileName.utf8().data(), &db);
 
-    if (!s.ok())
+    if (!s.ok()) {
+        LOG_ERROR("Failed to open LevelDB database from %s: %s", fileName.ascii().data(), s.ToString().c_str());
         return nullptr;
+    }
 
+    OwnPtr<LevelDBDatabase> result = adoptPtr(new LevelDBDatabase);
     result->m_db = adoptPtr(db);
     result->m_comparatorAdapter = comparatorAdapter.release();
     result->m_comparator = comparator;
@@ -121,7 +124,11 @@ bool LevelDBDatabase::put(const LevelDBSlice& key, const Vector<char>& value)
     leveldb::WriteOptions writeOptions;
     writeOptions.sync = true;
 
-    return m_db->Put(writeOptions, makeSlice(key), makeSlice(value)).ok();
+    const leveldb::Status s = m_db->Put(writeOptions, makeSlice(key), makeSlice(value));
+    if (s.ok())
+        return true;
+    LOG_ERROR("LevelDB put failed: %s", s.ToString().c_str());
+    return false;
 }
 
 bool LevelDBDatabase::remove(const LevelDBSlice& key)
@@ -129,17 +136,30 @@ bool LevelDBDatabase::remove(const LevelDBSlice& key)
     leveldb::WriteOptions writeOptions;
     writeOptions.sync = true;
 
-    return m_db->Delete(writeOptions, makeSlice(key)).ok();
+    const leveldb::Status s = m_db->Delete(writeOptions, makeSlice(key));
+    if (s.ok())
+        return true;
+    if (s.IsNotFound())
+        return false;
+    LOG_ERROR("LevelDB remove failed: %s", s.ToString().c_str());
+    return false;
 }
 
 bool LevelDBDatabase::get(const LevelDBSlice& key, Vector<char>& value)
 {
     std::string result;
-    if (!m_db->Get(leveldb::ReadOptions(), makeSlice(key), &result).ok())
-        return false;
+    leveldb::ReadOptions readOptions;
+    readOptions.verify_checksums = true; // FIXME: Disable this if the performance impact is too great.
 
-    value = makeVector(result);
-    return true;
+    const leveldb::Status s = m_db->Get(readOptions, makeSlice(key), &result);
+    if (s.ok()) {
+        value = makeVector(result);
+        return true;
+    }
+    if (s.IsNotFound())
+        return false;
+    LOG_ERROR("LevelDB get failed: %s", s.ToString().c_str());
+    return false;
 }
 
 bool LevelDBDatabase::write(LevelDBWriteBatch& writeBatch)
@@ -147,7 +167,11 @@ bool LevelDBDatabase::write(LevelDBWriteBatch& writeBatch)
     leveldb::WriteOptions writeOptions;
     writeOptions.sync = true;
 
-    return m_db->Write(writeOptions, writeBatch.m_writeBatch.get()).ok();
+    const leveldb::Status s = m_db->Write(writeOptions, writeBatch.m_writeBatch.get());
+    if (s.ok())
+        return true;
+    LOG_ERROR("LevelDB write failed: %s", s.ToString().c_str());
+    return false;
 }
 
 namespace {
@@ -166,6 +190,7 @@ public:
 private:
     friend class WebCore::LevelDBDatabase;
     IteratorImpl(PassOwnPtr<leveldb::Iterator>);
+    void checkStatus();
 
     OwnPtr<leveldb::Iterator> m_iterator;
 };
@@ -176,6 +201,13 @@ IteratorImpl::IteratorImpl(PassOwnPtr<leveldb::Iterator> it)
 {
 }
 
+void IteratorImpl::checkStatus()
+{
+    const leveldb::Status s = m_iterator->status();
+    if (!s.ok())
+        LOG_ERROR("LevelDB iterator error: %s", s.ToString().c_str());
+}
+
 bool IteratorImpl::isValid() const
 {
     return m_iterator->Valid();
@@ -184,23 +216,27 @@ bool IteratorImpl::isValid() const
 void IteratorImpl::seekToLast()
 {
     m_iterator->SeekToLast();
+    checkStatus();
 }
 
 void IteratorImpl::seek(const LevelDBSlice& target)
 {
     m_iterator->Seek(makeSlice(target));
+    checkStatus();
 }
 
 void IteratorImpl::next()
 {
     ASSERT(isValid());
     m_iterator->Next();
+    checkStatus();
 }
 
 void IteratorImpl::prev()
 {
     ASSERT(isValid());
     m_iterator->Prev();
+    checkStatus();
 }
 
 LevelDBSlice IteratorImpl::key() const
@@ -217,7 +253,9 @@ LevelDBSlice IteratorImpl::value() const
 
 PassOwnPtr<LevelDBIterator> LevelDBDatabase::createIterator()
 {
-    OwnPtr<leveldb::Iterator> i = adoptPtr(m_db->NewIterator(leveldb::ReadOptions()));
+    leveldb::ReadOptions readOptions;
+    readOptions.verify_checksums = true; // FIXME: Disable this if the performance impact is too great.
+    OwnPtr<leveldb::Iterator> i = adoptPtr(m_db->NewIterator(readOptions));
     if (!i) // FIXME: Double check if we actually need to check this.
         return nullptr;
     return adoptPtr(new IteratorImpl(i.release()));
