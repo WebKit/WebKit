@@ -102,7 +102,7 @@ DEAD_CODE_STRIPPING_debug = NO;
 DEAD_CODE_STRIPPING_normal = YES;
 DEAD_CODE_STRIPPING = $(DEAD_CODE_STRIPPING_$(CURRENT_VARIANT));
 
-SECTORDER_FLAGS = -W1,-order_file,JavaScriptCore.order;
+SECTORDER_FLAGS = -Wl,-order_file,JavaScriptCore.order;
 
 // FIXME: Disable C++ exceptions in the LLVM Compiler once it supports enabling Obj-C exceptions without C++ exceptions.
 GCC_ENABLE_CPP_EXCEPTIONS = $(GCC_ENABLE_CPP_EXCEPTIONS_$(TARGET_GCC_VERSION));
