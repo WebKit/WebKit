@@ -24,6 +24,7 @@
 
 #include "CachedImage.h"
 #include "CachedResourceLoader.h"
+#include "CrossOriginAccessControl.h"
 #include "Document.h"
 #include "Element.h"
 #include "HTMLNames.h"
@@ -158,19 +159,24 @@ void ImageLoader::updateFromElement()
     // need (<rdar://problem/5994621>).
     CachedImage* newImage = 0;
     if (!(attr.isNull() || (attr.isEmpty() && document->baseURI().isLocalFile()))) {
+        ResourceRequest request = ResourceRequest(document->completeURL(sourceURI(attr)));
+
+        String crossOriginMode = m_element->fastGetAttribute(HTMLNames::crossoriginAttr);
+        if (!crossOriginMode.isNull()) {
+            bool allowCredentials = equalIgnoringCase(crossOriginMode, "use-credentials");
+            updateRequestForAccessControl(request, document->securityOrigin(), allowCredentials);
+        }
+
         if (m_loadManually) {
             bool autoLoadOtherImages = document->cachedResourceLoader()->autoLoadImages();
             document->cachedResourceLoader()->setAutoLoadImages(false);
-            ResourceRequest request = ResourceRequest(document->completeURL(sourceURI(attr)));
             newImage = new CachedImage(request);
             newImage->setLoading(true);
             newImage->setOwningCachedResourceLoader(document->cachedResourceLoader());
             document->cachedResourceLoader()->m_documentResources.set(newImage->url(), newImage);
             document->cachedResourceLoader()->setAutoLoadImages(autoLoadOtherImages);
-        } else {
-            ResourceRequest request(document->completeURL(sourceURI(attr)));
+        } else
             newImage = document->cachedResourceLoader()->requestImage(request);
-        }
 
         // If we do not have an image here, it means that a cross-site
         // violation occurred.

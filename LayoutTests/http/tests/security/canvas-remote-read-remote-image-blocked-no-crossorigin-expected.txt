@@ -1,0 +1,15 @@
+Untainted canvas:
+PASS: Calling getImageData() from an untainted canvas was allowed.
+PASS: Calling toDataURL() on an untainted canvas was allowed.
+
+
+Tainted canvas:
+PASS: Calling getImageData() from a canvas tainted by a remote image was not allowed - Threw error: Error: SECURITY_ERR: DOM Exception 18.
+PASS: Calling toDataURL() on a canvas tainted by a remote image was not allowed - Threw error: Error: SECURITY_ERR: DOM Exception 18.
+PASS: Calling getImageData() from a canvas tainted by a tained canvas was not allowed - Threw error: Error: SECURITY_ERR: DOM Exception 18.
+PASS: Calling toDataURL() on a canvas tainted by a tained canvas was not allowed - Threw error: Error: SECURITY_ERR: DOM Exception 18.
+PASS: Calling getImageData() from a canvas tainted by a remote image tainted pattern was not allowed - Threw error: Error: SECURITY_ERR: DOM Exception 18.
+PASS: Calling toDataURL() on a canvas tainted by a remote image tainted pattern was not allowed - Threw error: Error: SECURITY_ERR: DOM Exception 18.
+PASS: Calling getImageData() from a canvas tainted by a tainted canvas pattern was not allowed - Threw error: Error: SECURITY_ERR: DOM Exception 18.
+PASS: Calling toDataURL() on a canvas tainted by a tainted canvas pattern was not allowed - Threw error: Error: SECURITY_ERR: DOM Exception 18.
+

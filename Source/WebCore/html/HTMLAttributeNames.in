@@ -82,6 +82,7 @@ content
 contenteditable
 controls
 coords
+crossorigin
 data
 datetime
 declare

@@ -1,3 +1,36 @@
+2011-05-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Support cross-origin property for images
+        https://bugs.webkit.org/show_bug.cgi?id=61015
+
+        This patch add support for the crossorigin attribute of images and
+        teaches 2D canvas to respect that flag and not taint a canvas if the
+        image drawn on the canvas is allowed by CORS.
+
+        While I was editing this code, I couldn't resist a couple touch-up
+        changes.
+
+        Tests: http/tests/security/canvas-remote-read-remote-image-allowed-with-credentials.html
+               http/tests/security/canvas-remote-read-remote-image-allowed.html
+               http/tests/security/canvas-remote-read-remote-image-blocked-no-crossorigin.html
+
+        * html/HTMLAttributeNames.in:
+        * html/HTMLCanvasElement.cpp:
+        (WebCore::HTMLCanvasElement::securityOrigin):
+        * html/HTMLCanvasElement.h:
+        * html/HTMLImageElement.idl:
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::checkOrigin):
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::createPattern):
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageLoader::updateFromElement):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::passesAccessControlCheck):
+        * loader/cache/CachedResource.h:
+
 2011-05-26  Mihai Parparita  <mihaip@chromium.org>
 
         Reviewed by Adam Barth.

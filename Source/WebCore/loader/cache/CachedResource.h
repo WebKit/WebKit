@@ -47,6 +47,7 @@ class CachedResourceRequest;
 class Frame;
 class InspectorResource;
 class PurgeableBuffer;
+class SecurityOrigin;
 
 // A resource that is held in the cache. Classes who want to use this object should derive
 // from CachedResourceClient, to get the function calls in case the requested data has arrived.
@@ -148,6 +149,8 @@ public:
     // Computes the status of an object after loading.  
     // Updates the expire date on the cache entry file
     void finish();
+
+    bool passesAccessControlCheck(SecurityOrigin*);
 
     // Called by the cache if the object has been removed from the cache
     // while still being referenced. This means the object should delete itself

@@ -115,7 +115,7 @@ public:
     IntSize convertLogicalToDevice(const FloatSize&) const;
     IntSize convertToValidDeviceSize(float width, float height) const;
 
-    const SecurityOrigin& securityOrigin() const;
+    SecurityOrigin* securityOrigin() const;
     void setOriginTainted() { m_originClean = false; }
     bool originClean() const { return m_originClean; }
 

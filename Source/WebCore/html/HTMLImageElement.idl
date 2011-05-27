@@ -26,7 +26,8 @@ module html {
         attribute [Reflect] DOMString name;
         attribute [Reflect] DOMString align;
         attribute [Reflect] DOMString alt;
-        attribute [Reflect] DOMString border;        
+        attribute [Reflect] DOMString border;
+        attribute [Reflect] DOMString crossOrigin;
         attribute long height;
         attribute [Reflect] long hspace;
         attribute [Reflect] boolean isMap;

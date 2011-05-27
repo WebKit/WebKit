@@ -31,6 +31,7 @@
 #include "CachedResourceHandle.h"
 #include "CachedResourceLoader.h"
 #include "CachedResourceRequest.h"
+#include "CrossOriginAccessControl.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
 #include "KURL.h"
@@ -170,6 +171,12 @@ void CachedResource::error(CachedResource::Status status)
 void CachedResource::finish()
 {
     m_status = Cached;
+}
+
+bool CachedResource::passesAccessControlCheck(SecurityOrigin* securityOrigin)
+{
+    String errorDescription;
+    return WebCore::passesAccessControlCheck(m_response, resourceRequest().allowCookies(), securityOrigin, errorDescription);
 }
 
 bool CachedResource::isExpired() const

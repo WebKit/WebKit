@@ -1,3 +1,21 @@
+2011-05-26  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Support cross-origin property for images
+        https://bugs.webkit.org/show_bug.cgi?id=61015
+
+        Test various cases involving CORS requests and canvas tainting.
+
+        * http/tests/security/canvas-remote-read-remote-image-allowed-expected.txt: Added.
+        * http/tests/security/canvas-remote-read-remote-image-allowed-with-credentials-expected.txt: Added.
+        * http/tests/security/canvas-remote-read-remote-image-allowed-with-credentials.html: Added.
+        * http/tests/security/canvas-remote-read-remote-image-allowed.html: Added.
+        * http/tests/security/canvas-remote-read-remote-image-blocked-no-crossorigin-expected.txt: Added.
+        * http/tests/security/canvas-remote-read-remote-image-blocked-no-crossorigin.html: Added.
+        * http/tests/security/resources/abe-allow-credentials.php: Added.
+        * http/tests/security/resources/abe-allow-star.php: Added.
+
 2011-05-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

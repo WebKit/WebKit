@@ -89,6 +89,14 @@ using namespace HTMLNames;
 
 static const char* const defaultFont = "10px sans-serif";
 
+static bool isOriginClean(CachedImage* cachedImage, SecurityOrigin* securityOrigin)
+{
+    if (!cachedImage->image()->hasSingleSecurityOrigin())
+        return false;
+    if (cachedImage->passesAccessControlCheck(securityOrigin))
+        return true;
+    return !securityOrigin->taintsCanvas(cachedImage->response().url());
+}
 
 class CanvasStrokeStyleApplier : public StrokeStyleApplier {
 public:
@@ -1577,7 +1585,7 @@ PassRefPtr<CanvasPattern> CanvasRenderingContext2D::createPattern(HTMLImageEleme
     if (!cachedImage || !image->cachedImage()->image())
         return CanvasPattern::create(Image::nullImage(), repeatX, repeatY, true);
 
-    bool originClean = !canvas()->securityOrigin().taintsCanvas(KURL(KURL(), cachedImage->response().url())) && cachedImage->image()->hasSingleSecurityOrigin();
+    bool originClean = isOriginClean(cachedImage, canvas()->securityOrigin());
     return CanvasPattern::create(cachedImage->image(), repeatX, repeatY, originClean);
 }
 

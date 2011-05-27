@@ -59,7 +59,8 @@ void CanvasRenderingContext::checkOrigin(const HTMLImageElement* image)
         return;
 
     CachedImage* cachedImage = image->cachedImage();
-    checkOrigin(cachedImage->response().url());
+    if (!cachedImage->passesAccessControlCheck(canvas()->securityOrigin()))
+        checkOrigin(cachedImage->response().url());
 
     if (canvas()->originClean() && !cachedImage->image()->hasSingleSecurityOrigin())
         canvas()->setOriginTainted();
@@ -68,7 +69,9 @@ void CanvasRenderingContext::checkOrigin(const HTMLImageElement* image)
 void CanvasRenderingContext::checkOrigin(const HTMLVideoElement* video)
 {
 #if ENABLE(VIDEO)
-    checkOrigin(KURL(KURL(), video->currentSrc()));
+    // FIXME: HTMLVideoElement::currentSrc() should return a KURL.
+    // https://bugs.webkit.org/show_bug.cgi?id=61578
+    checkOrigin(KURL(ParsedURLString, video->currentSrc()));
     if (canvas()->originClean() && video && !video->hasSingleSecurityOrigin())
         canvas()->setOriginTainted();
 #endif
@@ -79,7 +82,7 @@ void CanvasRenderingContext::checkOrigin(const KURL& url)
     if (!canvas()->originClean() || m_cleanOrigins.contains(url.string()))
         return;
 
-    if (canvas()->securityOrigin().taintsCanvas(url))
+    if (canvas()->securityOrigin()->taintsCanvas(url))
         canvas()->setOriginTainted();
     else
         m_cleanOrigins.add(url.string());

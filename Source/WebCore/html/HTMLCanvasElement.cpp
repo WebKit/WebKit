@@ -406,9 +406,9 @@ IntSize HTMLCanvasElement::convertToValidDeviceSize(float width, float height) c
     return IntSize(width, height);
 }
 
-const SecurityOrigin& HTMLCanvasElement::securityOrigin() const
+SecurityOrigin* HTMLCanvasElement::securityOrigin() const
 {
-    return *document()->securityOrigin();
+    return document()->securityOrigin();
 }
 
 CSSStyleSelector* HTMLCanvasElement::styleSelector()
