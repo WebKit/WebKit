@@ -39,6 +39,7 @@ public:
     explicit RenderSVGRoot(SVGStyledElement*);
     virtual ~RenderSVGRoot();
 
+    FloatSize computeIntrinsicRatio() const;
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
@@ -47,6 +48,10 @@ public:
     virtual void setNeedsTransformUpdate() { m_needsBoundariesOrTransformUpdate = true; }
 
 private:
+    int computeIntrinsicWidth(int replacedWidth) const;
+    int computeIntrinsicHeight(int replacedHeight) const;
+    void negotiateSizeWithHostDocumentIfNeeded();
+
     virtual RenderObjectChildList* virtualChildren() { return children(); }
     virtual const RenderObjectChildList* virtualChildren() const { return children(); }
 
@@ -98,6 +103,7 @@ private:
     mutable AffineTransform m_localToParentTransform;
     bool m_isLayoutSizeChanged : 1;
     bool m_needsBoundariesOrTransformUpdate : 1;
+    bool m_didNegotiateSize : 1;
 };
 
 inline RenderSVGRoot* toRenderSVGRoot(RenderObject* object)

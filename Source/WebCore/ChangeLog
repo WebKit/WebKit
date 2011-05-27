@@ -1,3 +1,97 @@
+2011-05-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        embedded SVG object doesn't scale right
+        https://bugs.webkit.org/show_bug.cgi?id=10526
+
+        <object> tags should treat width/height on a referenced SVG as intrinsic width/height
+        https://bugs.webkit.org/show_bug.cgi?id=11976
+
+        Incorrect handling of percentage values for width/height on embedded elements
+        https://bugs.webkit.org/show_bug.cgi?id=14793
+
+        WebKit fails some WICD 1.0 core test cases
+        https://bugs.webkit.org/show_bug.cgi?id=15836 (partially fixed, all 'rightsizing' tests are fixed)
+
+        CSS 2.1: Support replaced elements with relative intrinsic sizes
+        https://bugs.webkit.org/show_bug.cgai?id=15849 (partially fixed)
+
+        SVG embedded as <object> doesn't respect width/height attributes
+        https://bugs.webkit.org/show_bug.cgi?id=34972
+
+        Explicit size of object tag ignored
+        https://bugs.webkit.org/show_bug.cgi?id=37086
+
+        Add partial support of CSS 2.1 replaced elements with intrinsic size. The feature itself is complete but has only
+        been implemented for RenderPart, to support SVG content document size negotiation. It serves as starting point for a generalization, in future.
+        The changes in RenderPart are a 1:1 transliteration of the spec (http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width/height, see code).
+
+        SVG 1.1 says:
+        The 'width' attribute on the outermost svg element establishes the viewport's width, unless the following conditions are met:
+        ...
+        and there are CSS-compatible positioning properties ([CSS2], section 9.3) specified on the referencing element (e.g., the 'object' element)
+        or on the containing document's outermost svg element that are sufficient to establish the width of the viewport. Under these conditions,
+        the positioning properties establish the viewport's width.
+
+        If an <object> carries width/height attributes, these specify the viewport size of the embedded SVG, instead of its own
+        width/height or viewBox properties. If an <object> has no width/height information, its intrinsic size needs to be calculated depending
+        on the intrinsic ratio (viewBox width divided by height ratio) and the width/height properties on the outermost referenced <svg> element.
+        This requires a negotiation between the host document and the embedded document.
+        (There are several more factors that need to be considered, the CSS spec covers this and the RenderPart::computeReplaced* code covers this.)
+
+        Fixes dozens of long-standing bug reports. The number one integration issue when using SVG through <object> is resolved: "right sizing".
+
+        Tests: http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml
+               svg/custom/object-no-size-attributes.xhtml (bug 11976, from Eric Seidel)
+               svg/custom/object-sizing-explicit-height.xhtml (bug 10526, from Ryan Cannon)
+               svg/custom/object-sizing-explicit-width-height.xhtml
+               svg/custom/object-sizing-explicit-width.xhtml (bug 14793, from Oliver Hunt)
+               svg/custom/object-sizing-no-width-height-change-content-box-size.xhtml
+               svg/custom/object-sizing-no-width-height.xhtml
+               svg/custom/object-sizing.xhtml (bug 37086, from Jeff Schiller)
+               svg/wicd/rightsizing-grid.xhtml (bug 15836, WICD rightsizing test now works)
+               svg/wicd/test-rightsizing-a.xhtml (ditto)
+               svg/wicd/test-rightsizing-b.xhtml (ditto)
+               svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml
+               svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml
+               svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml
+               svg/zoom/page/zoom-svg-through-object-with-override-size.html (bug 34972, from Andreas Kling)
+               svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml
+               svg/zoom/page/zoom-svg-through-object-with-text.xhtml
+
+        * platform/Length.h:
+        (WebCore::Length::isSpecified):
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::embeddedSVGContentRenderer):
+        (WebCore::RenderPart::computeEmbeddedDocumentReplacedWidth):
+        (WebCore::RenderPart::computeEmbeddedDocumentReplacedHeight):
+        (WebCore::RenderPart::computeReplacedLogicalWidth):
+        (WebCore::RenderPart::computeReplacedLogicalHeight):
+        (WebCore::RenderPart::layout):
+        * rendering/RenderPart.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::RenderSVGRoot):
+        (WebCore::RenderSVGRoot::computeIntrinsicRatio):
+        (WebCore::RenderSVGRoot::computeIntrinsicWidth):
+        (WebCore::RenderSVGRoot::computeIntrinsicHeight):
+        (WebCore::RenderSVGRoot::negotiateSizeWithHostDocumentIfNeeded):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight):
+        (WebCore::RenderSVGRoot::layout):
+        * rendering/svg/RenderSVGRoot.h:
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::determineViewport):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::currentScale):
+        (WebCore::SVGSVGElement::setCurrentScale):
+        (WebCore::SVGSVGElement::currentViewBoxRect):
+        (WebCore::SVGSVGElement::viewBoxToViewTransform):
+        * svg/SVGSVGElement.h:
+
 2011-05-27  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by David Hyatt.

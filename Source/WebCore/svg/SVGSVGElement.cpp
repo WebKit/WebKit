@@ -34,6 +34,7 @@
 #include "FloatConversion.h"
 #include "FloatRect.h"
 #include "Frame.h"
+#include "FrameTree.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
@@ -198,23 +199,47 @@ SVGViewSpec* SVGSVGElement::currentView() const
 
 float SVGSVGElement::currentScale() const
 {
-    // Only the page zoom factor is relevant for SVG
-    if (Frame* frame = document()->frame())
-        return frame->pageZoomFactor();
-    return m_scale;
+    if (!inDocument())
+        return 1;
+
+    Frame* frame = document()->frame();
+    if (!frame)
+        return 1;
+
+    FrameTree* frameTree = frame->tree();
+    ASSERT(frameTree);
+
+    // If we have a parent frame, only return the user-specified m_scale here.
+    if (frameTree->parent())
+        return m_scale;
+
+    return frame->pageZoomFactor();
 }
 
 void SVGSVGElement::setCurrentScale(float scale)
 {
-    if (Frame* frame = document()->frame()) {
-        // Calling setCurrentScale() on the outermost <svg> element in a standalone SVG document
-        // is allowed to change the page zoom factor, influencing the document size, scrollbars etc.
-        if (parentNode() == document())
-            frame->setPageZoomFactor(scale);
+    if (!inDocument())
+        return;
+
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+
+    FrameTree* frameTree = frame->tree();
+    ASSERT(frameTree);
+
+    bool hasFrameParent = frameTree->parent();
+
+    // Calling setCurrentScale() on the outermost <svg> element in a standalone SVG document
+    // is allowed to change the page zoom factor, influencing the document size, scrollbars etc.
+    if (!hasFrameParent && isOutermostSVG()) {
+        frame->setPageZoomFactor(scale);
+        m_scale = 1;
         return;
     }
 
     m_scale = scale;
+
     if (RenderObject* object = renderer())
         RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
 }
@@ -586,17 +611,20 @@ bool SVGSVGElement::isOutermostSVG() const
     return !parentNode()->isSVGElement();
 }
 
+FloatRect SVGSVGElement::currentViewBoxRect() const
+{
+    if (useCurrentView()) {
+        if (SVGViewSpec* view = currentView()) // what if we should use it but it is not set?
+            return view->viewBox();
+        return FloatRect();
+    }
+
+    return viewBox();
+}
+
 AffineTransform SVGSVGElement::viewBoxToViewTransform(float viewWidth, float viewHeight) const
 {
-    FloatRect viewBoxRect;
-    if (useCurrentView()) {
-        if (currentView()) // what if we should use it but it is not set?
-            viewBoxRect = currentView()->viewBox();
-    } else
-        viewBoxRect = viewBox();
-
-    AffineTransform ctm = SVGFitToViewBox::viewBoxToViewTransform(viewBoxRect, preserveAspectRatio(), viewWidth, viewHeight);
-
+    AffineTransform ctm = SVGFitToViewBox::viewBoxToViewTransform(currentViewBoxRect(), preserveAspectRatio(), viewWidth, viewHeight);
     if (useCurrentView() && currentView()) {
         AffineTransform transform;
         if (currentView()->transform().concatenate(transform))

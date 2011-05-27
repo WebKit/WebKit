@@ -1,3 +1,160 @@
+2011-05-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        embedded SVG object doesn't scale right
+        https://bugs.webkit.org/show_bug.cgi?id=10526
+
+        <object> tags should treat width/height on a referenced SVG as intrinsic width/height
+        https://bugs.webkit.org/show_bug.cgi?id=11976
+
+        Incorrect handling of percentage values for width/height on embedded elements
+        https://bugs.webkit.org/show_bug.cgi?id=14793
+
+        WebKit fails some WICD 1.0 core test cases
+        https://bugs.webkit.org/show_bug.cgi?id=15836 (partially fixed, all 'rightsizing' tests are fixed)
+
+        CSS 2.1: Support replaced elements with relative intrinsic sizes
+        https://bugs.webkit.org/show_bug.cgai?id=15849 (partially fixed)
+
+        SVG embedded as <object> doesn't respect width/height attributes
+        https://bugs.webkit.org/show_bug.cgi?id=34972
+
+        Explicit size of object tag ignored
+        https://bugs.webkit.org/show_bug.cgi?id=37086
+
+        * http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml: Added.
+        * http/tests/misc/resources/embedded.svg: Added.
+        * http/tests/misc/resources/svg-slow.pl: Added.
+        * platform/mac/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png: Added.
+        * platform/mac/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.txt: Added.
+        * platform/mac/svg/custom/object-no-size-attributes-expected.png: Added.
+        * platform/mac/svg/custom/object-no-size-attributes-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-explicit-height-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-explicit-height-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-explicit-width-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-explicit-width-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-explicit-width-height-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-explicit-width-height-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-no-width-height-change-content-box-size-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-no-width-height-change-content-box-size-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-no-width-height-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-no-width-height-expected.txt: Added.
+        * platform/mac/svg/hixie/text/003-expected.png:
+        * platform/mac/svg/hixie/text/003-expected.txt:
+        * platform/mac/svg/in-html/by-reference-expected.txt:
+        * platform/mac/svg/wicd: Added.
+        * platform/mac/svg/wicd/rightsizing-grid-expected.png: Added.
+        * platform/mac/svg/wicd/rightsizing-grid-expected.txt: Added.
+        * platform/mac/svg/wicd/test-rightsizing-a-expected.png: Added.
+        * platform/mac/svg/wicd/test-rightsizing-a-expected.txt: Added.
+        * platform/mac/svg/wicd/test-rightsizing-b-expected.png: Added.
+        * platform/mac/svg/wicd/test-rightsizing-b-expected.txt: Added.
+        * platform/mac/svg/zoom/page/relative-sized-document-scrollbars-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-foreignObject-expected.png:
+        * platform/mac/svg/zoom/page/zoom-foreignObject-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-no-width-height-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-no-width-height-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-text-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-text-expected.txt: Added.
+        * svg/custom/object-no-size-attributes.xhtml: Added.
+        * svg/custom/object-sizing-explicit-height.xhtml: Added.
+        * svg/custom/object-sizing-explicit-width-height.xhtml: Added.
+        * svg/custom/object-sizing-explicit-width.xhtml: Added.
+        * svg/custom/object-sizing-no-width-height-change-content-box-size.xhtml: Added.
+        * svg/custom/object-sizing-no-width-height.xhtml: Added.
+        * svg/custom/object-sizing.xhtml: Added.
+        * svg/custom/resources/embedded.svg: Added.
+        * svg/custom/resources/red-circle.svg: Added.
+        * svg/in-html/by-reference-expected.png:
+        * svg/wicd: Added.
+        * svg/wicd/resources: Added.
+        * svg/wicd/resources/a.svg: Added.
+        * svg/wicd/resources/bcde.svg: Added.
+        * svg/wicd/resources/empty1.svg: Added.
+        * svg/wicd/resources/empty2.svg: Added.
+        * svg/wicd/resources/empty3.svg: Added.
+        * svg/wicd/resources/f.svg: Added.
+        * svg/wicd/resources/g.svg: Added.
+        * svg/wicd/resources/h.svg: Added.
+        * svg/wicd/resources/i.svg: Added.
+        * svg/wicd/resources/j.svg: Added.
+        * svg/wicd/resources/k.svg: Added.
+        * svg/wicd/resources/l.svg: Added.
+        * svg/wicd/resources/main.css: Added.
+        (body,html):
+        (body):
+        (.buttons):
+        (h1):
+        (h2):
+        (h4):
+        (p):
+        (table):
+        (th):
+        (td,th):
+        (td a):
+        (a):
+        (a:hover):
+        (a:focus):
+        (a:visited):
+        (a.index):
+        (a.index:hover):
+        (a.index:focus):
+        (a.index:visited):
+        (ul):
+        (ol):
+        (.red):
+        (.navi):
+        (.navi a):
+        (.navi a:hover):
+        (.navi a:visited):
+        * svg/wicd/resources/mnop.svg: Added.
+        * svg/wicd/resources/q.svg: Added.
+        * svg/wicd/resources/r.svg: Added.
+        * svg/wicd/resources/s.svg: Added.
+        * svg/wicd/resources/t.svg: Added.
+        * svg/wicd/resources/test-rightsizing-a.css: Added.
+        (html,body):
+        (div.all):
+        (object.w100):
+        (object.h100):
+        * svg/wicd/resources/test-rightsizing-b.css: Added.
+        (html,body):
+        (object):
+        * svg/wicd/resources/test-svg-child-object-rightsizing.gif: Added.
+        * svg/wicd/resources/test-svg-child-object-rightsizing.png: Added.
+        * svg/wicd/resources/test-svg-child-object-rightsizing.svg: Added.
+        * svg/wicd/resources/test-svg-child-object-rightsizing1.svg: Added.
+        * svg/wicd/rightsizing-grid.xhtml: Added.
+        * svg/wicd/test-rightsizing-a.xhtml: Added.
+        * svg/wicd/test-rightsizing-b.xhtml: Added.
+        * svg/zoom/page/resources: Added.
+        * svg/zoom/page/resources/absolute-sized-svg.png: Added.
+        * svg/zoom/page/resources/absolute-sized-svg.svg: Added.
+        * svg/zoom/page/resources/huge-rect.svg: Added.
+        * svg/zoom/page/resources/percentage-sized-svg.png: Added.
+        * svg/zoom/page/resources/percentage-sized-svg.svg: Added.
+        * svg/zoom/page/resources/text.svg: Added.
+        * svg/zoom/page/resources/tux.svg: Added.
+        * svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml: Added.
+        * svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml: Added.
+        * svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml: Added.
+        * svg/zoom/page/zoom-svg-through-object-with-override-size.html: Added.
+        * svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml: Added.
+        * svg/zoom/page/zoom-svg-through-object-with-text.xhtml: Added.
+
 2011-05-25  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dirk Schulze.

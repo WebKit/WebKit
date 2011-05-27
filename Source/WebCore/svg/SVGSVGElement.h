@@ -77,6 +77,7 @@ public:
     void setUseCurrentView(bool currentView);
 
     SVGViewSpec* currentView() const;
+    FloatRect currentViewBoxRect() const;
 
     float currentScale() const;
     void setCurrentScale(float scale);

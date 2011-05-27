@@ -173,6 +173,7 @@ public:
     bool isPercent() const { return type() == Percent; }
     bool isFixed() const { return type() == Fixed; }
     bool isIntrinsicOrAuto() const { return type() == Auto || type() == MinIntrinsic || type() == Intrinsic; }
+    bool isSpecified() const { return type() == Fixed || type() == Percent; }
 
     Length blend(const Length& from, float progress) const
     {

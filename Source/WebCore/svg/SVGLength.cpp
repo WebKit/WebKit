@@ -26,8 +26,10 @@
 
 #include "CSSHelper.h"
 #include "FloatConversion.h"
+#include "Frame.h"
 #include "FrameView.h"
 #include "RenderObject.h"
+#include "RenderPart.h"
 #include "RenderView.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -317,16 +319,25 @@ bool SVGLength::determineViewport(const SVGElement* context, float& width, float
     // Take size from outermost <svg> element.
     Document* document = context->document();
     if (document->documentElement() == context) {
-        if (RenderView* view = toRenderView(document->renderer())) {
-            width = view->viewWidth();
-            height = view->viewHeight();
-            return true;
+        if (context->isSVG()) {
+            Frame* frame = context->document() ? context->document()->frame() : 0;
+            if (RenderPart* ownerRenderer = frame->ownerRenderer()) {
+                width = ownerRenderer->width();
+                height = ownerRenderer->height();
+                return true;
+            }
         }
 
-        return false;
+        RenderView* view = toRenderView(document->renderer());
+        if (!view)
+            return false;
+
+        width = view->viewWidth();
+        height = view->viewHeight();
+        return true;
     }
 
-    // Resolve value against nearest viewport element (common case: inner <svg> elements)
+    // Take size from nearest viewport element (common case: inner <svg> elements)
     SVGElement* viewportElement = context->viewportElement();
     if (viewportElement && viewportElement->isSVG()) {
         const SVGSVGElement* svg = static_cast<const SVGSVGElement*>(viewportElement);
@@ -341,7 +352,7 @@ bool SVGLength::determineViewport(const SVGElement* context, float& width, float
         return true;
     }
     
-    // Resolve value against enclosing non-SVG RenderBox
+    // Take size from enclosing non-SVG RenderBox (common case: inline SVG)
     if (!context->parentNode() || context->parentNode()->isSVGElement())
         return false;
 

@@ -191,16 +191,11 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
     return true;
 }
 
-static inline bool lengthIsSpecified(Length length)
-{
-    LengthType lengthType = length.type();
-    return lengthType == Fixed || lengthType == Percent;
-}
-
 int RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) const
 {
     int logicalWidth;
-    if (lengthIsSpecified(style()->width()))
+    // FIXME: Shouldn't this use style()->logicalWidth(), similar to what computeReplacedLogicalHeight() does?
+    if (style()->width().isSpecified())
         logicalWidth = computeReplacedLogicalWidthUsing(style()->logicalWidth());
     else if (m_hasIntrinsicSize)
         logicalWidth = calcAspectRatioLogicalWidth();
@@ -216,7 +211,7 @@ int RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) const
 int RenderReplaced::computeReplacedLogicalHeight() const
 {
     int logicalHeight;
-    if (lengthIsSpecified(style()->logicalHeight()))
+    if (style()->logicalHeight().isSpecified())
         logicalHeight = computeReplacedLogicalHeightUsing(style()->logicalHeight());
     else if (m_hasIntrinsicSize)
         logicalHeight = calcAspectRatioLogicalHeight();

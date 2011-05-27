@@ -3,6 +3,7 @@
  * Copyright (C) 2004, 2005, 2007, 2008, 2009 Rob Buis <buis@kde.org>
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2009 Google, Inc.
+ * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,8 +26,10 @@
 #if ENABLE(SVG)
 #include "RenderSVGRoot.h"
 
+#include "Frame.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
+#include "RenderPart.h"
 #include "RenderSVGContainer.h"
 #include "RenderSVGResource.h"
 #include "RenderView.h"
@@ -35,6 +38,7 @@
 #include "SVGResources.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledElement.h"
+#include "SVGViewSpec.h"
 #include "TransformState.h"
 
 #if ENABLE(FILTERS)
@@ -49,12 +53,35 @@ RenderSVGRoot::RenderSVGRoot(SVGStyledElement* node)
     : RenderBox(node)
     , m_isLayoutSizeChanged(false)
     , m_needsBoundariesOrTransformUpdate(true)
+    , m_didNegotiateSize(false)
 {
     setReplaced(true);
 }
 
 RenderSVGRoot::~RenderSVGRoot()
 {
+}
+
+FloatSize RenderSVGRoot::computeIntrinsicRatio() const
+{
+    // Spec: http://dev.w3.org/SVG/profiles/1.1F2/publish/coords.html#IntrinsicSizing
+    // The intrinsic aspect ratio of the viewport of SVG content is necessary for example, when including
+    // SVG from an ‘object’ element in HTML styled with CSS. It is possible (indeed, common) for an SVG
+    // graphic to have an intrinsic aspect ratio but not to have an intrinsic width or height.
+    // The intrinsic aspect ratio must be calculated based upon the following rules:
+    // The aspect ratio is calculated by dividing a width by a height.
+
+    // If the ‘width’ and ‘height’ of the rootmost ‘svg’ element are both specified with unit identifiers
+    // (in, mm, cm, pt, pc, px, em, ex) or in user units, then the aspect ratio is calculated from the
+    // ‘width’ and ‘height’ attributes after resolving both values to user units.
+    if (style()->width().isFixed() && style()->height().isFixed())
+        return FloatSize(width(), height());
+
+    // If either/both of the ‘width’ and ‘height’ of the rootmost ‘svg’ element are in percentage units (or omitted),
+    // the aspect ratio is calculated from the width and height values of the ‘viewBox’ specified for the current SVG
+    // document fragment. If the ‘viewBox’ is not correctly specified, or set to 'none', the intrinsic aspect ratio
+    // cannot be calculated and is considered unspecified.
+    return static_cast<SVGSVGElement*>(node())->currentViewBoxRect().size();
 }
 
 void RenderSVGRoot::computePreferredLogicalWidths()
@@ -76,26 +103,119 @@ void RenderSVGRoot::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
+int RenderSVGRoot::computeIntrinsicWidth(int replacedWidth) const
+{
+    if (!style()->width().isPercent())
+        return replacedWidth;
+
+    SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
+    return static_cast<int>(ceilf(replacedWidth * svg->currentScale()));
+}
+
+int RenderSVGRoot::computeIntrinsicHeight(int replacedHeight) const
+{
+    if (!style()->height().isPercent())
+        return replacedHeight;
+
+    const SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
+    return static_cast<int>(ceilf(replacedHeight * svg->currentScale()));
+}
+
+void RenderSVGRoot::negotiateSizeWithHostDocumentIfNeeded()
+{
+    if (m_didNegotiateSize)
+        return;
+
+    Frame* frame = node() && node()->document() ? node()->document()->frame() : 0;
+    if (!frame)
+        return;
+
+    // If our frame has an owner renderer, we're embedded through eg. object/embed.
+    // If we're embedded in a host document, we may be loaded after the host document
+    // has finished layout. If the <object> doesn't specifiy width/height attributes
+    // it has defaulted to 300x150 intrinsic size. If the SVG document has been loaded
+    // we notify the RenderPart about the potential size changes, now it can properly
+    // synchronize the intrinsic width/height/ratio, as defined in the SVG spec.
+    if (RenderPart* ownerRenderer = frame->ownerRenderer()) {
+        ownerRenderer->setNeedsLayoutAndPrefWidthsRecalc();
+        m_didNegotiateSize = true;
+    }
+}
+
 int RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) const
 {
     int replacedWidth = RenderBox::computeReplacedLogicalWidth(includeMaxWidth);
-    if (!style()->logicalWidth().isPercent())
-        return replacedWidth;
+    Frame* frame = node() && node()->document() ? node()->document()->frame() : 0;
+    if (!frame)
+        return computeIntrinsicWidth(replacedWidth);
 
-    // FIXME: Investigate in size rounding issues
-    SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
-    return static_cast<int>(roundf(replacedWidth * svg->currentScale()));
+    // If our frame has an owner renderer, we're embedded through eg. object/embed.
+    RenderPart* ownerRenderer = frame->ownerRenderer();
+    if (!ownerRenderer)
+        return computeIntrinsicWidth(replacedWidth);
+
+    RenderStyle* ownerRendererStyle = ownerRenderer->style();
+    ASSERT(ownerRendererStyle);
+    ASSERT(frame->contentRenderer());
+
+    Length ownerWidth = ownerRendererStyle->width();
+    if (ownerWidth.isAuto())
+        return computeIntrinsicWidth(replacedWidth);
+
+    // Spec: http://dev.w3.org/SVG/profiles/1.1F2/publish/coords.html#ViewportSpace
+    // The SVG user agent negotiates with its parent user agent to determine the viewport into which the SVG user agent can render
+    // the document. In some circumstances, SVG content will be embedded (by reference or inline) within a containing document.
+    // This containing document might include attributes, properties and/or other parameters (explicit or implicit) which specify
+    // or provide hints about the dimensions of the viewport for the SVG content. SVG content itself optionally can provide
+    // information about the appropriate viewport region for the content via the ‘width’ and ‘height’ XML attributes on the
+    // outermost svg element. The negotiation process uses any information provided by the containing document and the SVG
+    // content itself to choose the viewport location and size.
+
+    // The ‘width’ attribute on the outermost svg element establishes the viewport's width, unless the following conditions are met:
+    // * the SVG content is a separately stored resource that is embedded by reference (such as the ‘object’ element in XHTML [XHTML]),
+    //   or the SVG content is embedded inline within a containing document;
+    // * and the referencing element or containing document is styled using CSS [CSS2] or XSL [XSL];
+    // * and there are CSS-compatible positioning properties ([CSS2], section 9.3) specified on the referencing element
+    //   (e.g., the ‘object’ element) or on the containing document's outermost svg element that are sufficient to establish
+    //   the width of the viewport.
+    //
+    // Under these conditions, the positioning properties establish the viewport's width.
+    int logicalWidth = ownerRenderer->computeReplacedLogicalWidthUsing(ownerWidth);
+    int minLogicalWidth = ownerRenderer->computeReplacedLogicalWidthUsing(ownerRendererStyle->logicalMinWidth());
+    int maxLogicalWidth = !includeMaxWidth || ownerRendererStyle->logicalMaxWidth().isUndefined() ? logicalWidth : ownerRenderer->computeReplacedLogicalWidthUsing(ownerRendererStyle->logicalMaxWidth());
+    return max(minLogicalWidth, min(logicalWidth, maxLogicalWidth));
 }
 
 int RenderSVGRoot::computeReplacedLogicalHeight() const
 {
     int replacedHeight = RenderBox::computeReplacedLogicalHeight();
-    if (!style()->logicalHeight().isPercent())
-        return replacedHeight;
 
-    // FIXME: Investigate in size rounding issues
-    SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
-    return static_cast<int>(roundf(replacedHeight * svg->currentScale()));
+    Frame* frame = node() && node()->document() ? node()->document()->frame() : 0;
+    if (!frame)
+        return computeIntrinsicHeight(replacedHeight);
+
+    // If our frame has an owner renderer, we're embedded through eg. object/embed.
+    RenderPart* ownerRenderer = frame->ownerRenderer();
+    if (!ownerRenderer)
+        return computeIntrinsicHeight(replacedHeight);
+
+    RenderStyle* ownerRendererStyle = ownerRenderer->style();
+    ASSERT(ownerRendererStyle);
+    ASSERT(frame->contentRenderer());
+
+    Length ownerHeight = ownerRendererStyle->height();
+    if (ownerHeight.isAuto())
+        return computeIntrinsicHeight(replacedHeight);
+
+    // Spec: http://dev.w3.org/SVG/profiles/1.1F2/publish/coords.html#ViewportSpace
+    // See comment in RenderSVGRoot::computeReplacedLogicalWidth().
+    // Similarly, if there are positioning properties specified on the referencing element or on the outermost svg element that
+    // are sufficient to establish the height of the viewport, then these positioning properties establish the viewport's height;
+    // otherwise, the ‘height’ attribute on the outermost svg element establishes the viewport's height.
+    int logicalHeight = ownerRenderer->computeReplacedLogicalHeightUsing(ownerHeight);
+    int minLogicalHeight = ownerRenderer->computeReplacedLogicalHeightUsing(ownerRendererStyle->logicalMinHeight());
+    int maxLogicalHeight = ownerRendererStyle->logicalMaxHeight().isUndefined() ? logicalHeight : ownerRenderer->computeReplacedLogicalHeightUsing(ownerRendererStyle->logicalMaxHeight());
+    return max(minLogicalHeight, min(logicalHeight, maxLogicalHeight));
 }
 
 void RenderSVGRoot::layout()
@@ -109,6 +229,7 @@ void RenderSVGRoot::layout()
     LayoutRepainter repainter(*this, checkForRepaintDuringLayout() && needsLayout);
 
     IntSize oldSize(width(), height());
+    negotiateSizeWithHostDocumentIfNeeded();
     computeLogicalWidth();
     computeLogicalHeight();
     calcViewport();

@@ -1,7 +1,7 @@
-layer at (0,0) size 1130x842
+layer at (0,0) size 1131x843
   RenderView at (0,0) size 785x585
-layer at (0,0) size 1130x842
-  RenderSVGRoot {svg} at (12,12) size 1118x830
+layer at (0,0) size 1131x843
+  RenderSVGRoot {svg} at (12,12) size 1119x831
     RenderSVGForeignObject {foreignObject} at (10,10) size 580x380
       RenderBlock {xhtml:div} at (0,0) size 580x18
         RenderText {#text} at (0,0) size 78x18
