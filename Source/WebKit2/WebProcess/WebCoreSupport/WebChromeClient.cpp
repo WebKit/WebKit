@@ -198,6 +198,10 @@ void WebChromeClient::setToolbarsVisible(bool toolbarsAreVisible)
 
 bool WebChromeClient::toolbarsVisible()
 {
+    WKBundlePageUIElementVisibility toolbarsVisibility = m_page->injectedBundleUIClient().toolbarsAreVisible(m_page);
+    if (toolbarsVisibility != WKBundlePageUIElementVisibilityUnknown)
+        return toolbarsVisibility == WKBundlePageUIElementVisible;
+    
     bool toolbarsAreVisible = true;
     if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetToolbarsAreVisible(), Messages::WebPageProxy::GetToolbarsAreVisible::Reply(toolbarsAreVisible), m_page->pageID()))
         return true;
@@ -212,6 +216,10 @@ void WebChromeClient::setStatusbarVisible(bool statusBarIsVisible)
 
 bool WebChromeClient::statusbarVisible()
 {
+    WKBundlePageUIElementVisibility statusbarVisibility = m_page->injectedBundleUIClient().statusBarIsVisible(m_page);
+    if (statusbarVisibility != WKBundlePageUIElementVisibilityUnknown)
+        return statusbarVisibility == WKBundlePageUIElementVisible;
+
     bool statusBarIsVisible = true;
     if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetStatusBarIsVisible(), Messages::WebPageProxy::GetStatusBarIsVisible::Reply(statusBarIsVisible), m_page->pageID()))
         return true;
@@ -237,6 +245,10 @@ void WebChromeClient::setMenubarVisible(bool menuBarVisible)
 
 bool WebChromeClient::menubarVisible()
 {
+    WKBundlePageUIElementVisibility menubarVisibility = m_page->injectedBundleUIClient().menuBarIsVisible(m_page);
+    if (menubarVisibility != WKBundlePageUIElementVisibilityUnknown)
+        return menubarVisibility == WKBundlePageUIElementVisible;
+    
     bool menuBarIsVisible = true;
     if (!WebProcess::shared().connection()->sendSync(Messages::WebPageProxy::GetMenuBarIsVisible(), Messages::WebPageProxy::GetMenuBarIsVisible::Reply(menuBarIsVisible), m_page->pageID()))
         return true;

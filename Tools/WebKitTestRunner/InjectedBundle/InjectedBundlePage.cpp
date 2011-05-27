@@ -226,6 +226,9 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         0, /*shouldGenerateFileForUpload*/
         0, /*generateFileForUpload*/
         0, /*shouldRubberBandInDirection*/
+        0, /*statusBarIsVisible*/
+        0, /*menuBarIsVisible*/
+        0, /*toolbarsAreVisible*/
     };
     WKBundlePageSetUIClient(m_page, &uiClient);
 

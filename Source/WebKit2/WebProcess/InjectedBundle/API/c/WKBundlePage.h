@@ -171,6 +171,13 @@ struct WKBundlePageResourceLoadClient {
 };
 typedef struct WKBundlePageResourceLoadClient WKBundlePageResourceLoadClient;
 
+enum {
+    WKBundlePageUIElementVisibilityUnknown,
+    WKBundlePageUIElementVisible,
+    WKBundlePageUIElementHidden
+};
+typedef uint32_t WKBundlePageUIElementVisibility;
+    
 // UI Client
 typedef void (*WKBundlePageWillAddMessageToConsoleCallback)(WKBundlePageRef page, WKStringRef message, uint32_t lineNumber, const void *clientInfo);
 typedef void (*WKBundlePageWillSetStatusbarTextCallback)(WKBundlePageRef page, WKStringRef statusbarText, const void *clientInfo);
@@ -182,6 +189,9 @@ typedef void (*WKBundlePageDidScrollCallback)(WKBundlePageRef page, const void *
 typedef void (*WKBundlePagePaintCustomOverhangAreaCallback)(WKBundlePageRef page, WKGraphicsContextRef graphicsContext, WKRect horizontalOverhang, WKRect verticalOverhang, WKRect dirtyRect, const void* clientInfo);
 typedef WKStringRef (*WKBundlePageGenerateFileForUploadCallback)(WKBundlePageRef page, WKStringRef originalFilePath, const void* clientInfo);
 typedef bool (*WKBundlePageShouldRubberBandInDirectionCallback)(WKBundlePageRef page, WKScrollDirection scrollDirection, const void* clientInfo);
+typedef WKBundlePageUIElementVisibility (*WKBundlePageStatusBarIsVisible)(WKBundlePageRef page, const void *clientInfo);
+typedef WKBundlePageUIElementVisibility (*WKBundlePageMenuBarIsVisible)(WKBundlePageRef page, const void *clientInfo);
+typedef WKBundlePageUIElementVisibility (*WKBundlePageToolbarsAreVisible)(WKBundlePageRef page, const void *clientInfo);
     
 struct WKBundlePageUIClient {
     int                                                                 version;
@@ -197,6 +207,9 @@ struct WKBundlePageUIClient {
     WKBundlePageGenerateFileForUploadCallback                           shouldGenerateFileForUpload;
     WKBundlePageGenerateFileForUploadCallback                           generateFileForUpload;
     WKBundlePageShouldRubberBandInDirectionCallback                     shouldRubberBandInDirection;
+    WKBundlePageStatusBarIsVisible                                      statusBarIsVisible;
+    WKBundlePageMenuBarIsVisible                                        menuBarIsVisible;
+    WKBundlePageToolbarsAreVisible                                      toolbarsAreVisible;
 };
 typedef struct WKBundlePageUIClient WKBundlePageUIClient;
 

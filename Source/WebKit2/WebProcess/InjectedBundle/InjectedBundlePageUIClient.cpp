@@ -121,5 +121,29 @@ bool InjectedBundlePageUIClient::shouldRubberBandInDirection(WebPage* page, WKSc
         return true;
     return m_client.shouldRubberBandInDirection(toAPI(page), direction, m_client.clientInfo);
 }
+    
+WKBundlePageUIElementVisibility InjectedBundlePageUIClient::statusBarIsVisible(WebPage* page)
+{
+    if (!m_client.statusBarIsVisible)
+        return WKBundlePageUIElementVisibilityUnknown;
+    
+    return m_client.statusBarIsVisible(toAPI(page), m_client.clientInfo);
+}
+
+WKBundlePageUIElementVisibility InjectedBundlePageUIClient::menuBarIsVisible(WebPage* page)
+{
+    if (!m_client.menuBarIsVisible)
+        return WKBundlePageUIElementVisibilityUnknown;
+    
+    return m_client.menuBarIsVisible(toAPI(page), m_client.clientInfo);
+}
+
+WKBundlePageUIElementVisibility InjectedBundlePageUIClient::toolbarsAreVisible(WebPage* page)
+{
+    if (!m_client.toolbarsAreVisible)
+        return WKBundlePageUIElementVisibilityUnknown;
+    
+    return m_client.toolbarsAreVisible(toAPI(page), m_client.clientInfo);
+}
 
 } // namespace WebKit
