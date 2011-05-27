@@ -1,3 +1,40 @@
+2011-05-25  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [GTK][Cairo] Twitter rendering breaks
+        https://bugs.webkit.org/show_bug.cgi?id=60917
+
+        When instantiating a cairo_scaled_font_t font would put the font in an error state,
+        leave the m_scaledFont member of platform data as null. Rendering with scaled fonts
+        in the error state can later lead to corrupted rendering.
+
+        Due to this change, we must always null check cairo_scaled_font_t and the platform
+        data now carries the cairo_font_face_t object with it, so that it can be accessed later
+        if there is no cairo_scaled_font_t.
+
+        Test: platform/gtk/fonts/zero-pixel-sized-fonts.html
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::Font::drawGlyphs): If the scaled font is null, do not render.
+        * platform/graphics/freetype/FontPlatformData.h: Now include the cairo_font_face_t.
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Initialize the new member.
+        (WebCore::FontPlatformData::operator=): Carry over the new member.
+        (WebCore::FontPlatformData::operator==): Check equality with the new member.
+        (WebCore::FontPlatformData::initializeWithFontFace): If the initialization of m_scaledFont
+        put the font into an error state, then just free it and return.
+        (WebCore::FontPlatformData::hasCompatibleCharmap): The font always has a compatible charmap
+        when the scaled font is null, because rendering is always a no-op and the font data never
+        needs to be read.
+        * platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp:
+        (WebCore::GlyphPage::fill): Don't read font data when the scaled font is null.
+        * platform/graphics/freetype/SimpleFontDataFreeType.cpp:
+        (WebCore::SimpleFontData::platformInit): Return early when there's no scaled font.
+        (WebCore::SimpleFontData::scaledFontData): Use the new m_font member.
+        (WebCore::SimpleFontData::containsCharacters): Return early when there's no scaled font.
+        (WebCore::SimpleFontData::platformWidthForGlyph): Ditto.
+
 2011-05-27  David Levin  <levin@chromium.org>
 
         Reviewed by Darin Fisher.

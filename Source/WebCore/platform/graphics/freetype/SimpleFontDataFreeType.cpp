@@ -47,6 +47,9 @@ namespace WebCore {
 
 void SimpleFontData::platformInit()
 {
+    if (!m_platformData.scaledFont())
+        return;
+
     cairo_font_extents_t font_extents;
     cairo_text_extents_t text_extents;
     cairo_scaled_font_extents(m_platformData.scaledFont(), &font_extents);
@@ -88,9 +91,11 @@ void SimpleFontData::platformDestroy()
 
 PassOwnPtr<SimpleFontData> SimpleFontData::createScaledFontData(const FontDescription& fontDescription, float scaleFactor) const
 {
-    return adoptPtr(new SimpleFontData(FontPlatformData(cairo_scaled_font_get_font_face(m_platformData.scaledFont()),
-        scaleFactor * fontDescription.computedSize(), m_platformData.syntheticBold(), m_platformData.syntheticOblique()),
-        isCustomFont(), false));
+    return adoptPtr(new SimpleFontData(FontPlatformData(m_platformData.m_font.get(),
+                                                        scaleFactor * fontDescription.computedSize(),
+                                                        m_platformData.syntheticBold(),
+                                                        m_platformData.syntheticOblique()),
+                                       isCustomFont(), false));
 }
 
 SimpleFontData* SimpleFontData::smallCapsFontData(const FontDescription& fontDescription) const
@@ -116,8 +121,12 @@ SimpleFontData* SimpleFontData::emphasisMarkFontData(const FontDescription& font
 
 bool SimpleFontData::containsCharacters(const UChar* characters, int length) const
 {
-    FT_Face face = cairo_ft_scaled_font_lock_face(m_platformData.scaledFont());
+    // If this is a no-op font (zero size), then it should always contain the characters,
+    // since we never read from or render from this font.
+    if (!m_platformData.scaledFont())
+        return true;
 
+    FT_Face face = cairo_ft_scaled_font_lock_face(m_platformData.scaledFont());
     if (!face)
         return false;
 
@@ -129,7 +138,6 @@ bool SimpleFontData::containsCharacters(const UChar* characters, int length) con
     }
 
     cairo_ft_scaled_font_unlock_face(m_platformData.scaledFont());
-
     return true;
 }
 
@@ -145,7 +153,8 @@ FloatRect SimpleFontData::platformBoundsForGlyph(Glyph) const
 
 float SimpleFontData::platformWidthForGlyph(Glyph glyph) const
 {
-    ASSERT(m_platformData.scaledFont());
+    if (!m_platformData.scaledFont())
+        return 0;
 
     cairo_glyph_t cglyph = { glyph, 0, 0 };
     cairo_text_extents_t extents;

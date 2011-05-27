@@ -97,6 +97,7 @@ public:
     bool m_syntheticBold;
     bool m_syntheticOblique;
     bool m_fixedWidth;
+    RefPtr<cairo_font_face_t> m_font;
     cairo_scaled_font_t* m_scaledFont;
 
 private:
