@@ -58,6 +58,7 @@
 #include <WebCore/Language.h>
 #include <WebCore/Logging.h>
 #include <WebCore/MemoryCache.h>
+#include <WebCore/MemoryPressureHandler.h>
 #include <WebCore/Page.h>
 #include <WebCore/PageCache.h>
 #include <WebCore/PageGroup.h>
@@ -163,6 +164,8 @@ void WebProcess::initializeWebProcess(const WebProcessCreationParameters& parame
     ASSERT(m_pageMap.isEmpty());
 
     platformInitializeWebProcess(parameters, arguments);
+
+    memoryPressureHandler().install();
 
     RefPtr<APIObject> injectedBundleInitializationUserData;
     InjectedBundleUserMessageDecoder messageDecoder(injectedBundleInitializationUserData);

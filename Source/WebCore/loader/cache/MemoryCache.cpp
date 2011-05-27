@@ -172,6 +172,26 @@ void MemoryCache::pruneLiveResources()
         return;
 
     unsigned targetSize = static_cast<unsigned>(capacity * cTargetPrunePercentage); // Cut by a percentage to avoid immediately pruning again.
+
+    pruneLiveResourcesToSize(targetSize);
+}
+
+void MemoryCache::PruneLiveResourcesToPercentage(float prunePercentage)
+{
+    if (!m_pruneEnabled)
+        return;
+
+    if (prunePercentage < 0.0f  || prunePercentage > 0.95f)
+        return;
+
+    unsigned currentSize = m_liveSize + m_deadSize;
+    unsigned targetSize = static_cast<unsigned>(currentSize * prunePercentage);
+
+    pruneLiveResourcesToSize(targetSize);
+}
+
+void MemoryCache::pruneLiveResourcesToSize(unsigned targetSize)
+{
     double currentTime = FrameView::currentPaintTimeStamp();
     if (!currentTime) // In case prune is called directly, outside of a Frame paint.
         currentTime = WTF::currentTime();
@@ -216,8 +236,27 @@ void MemoryCache::pruneDeadResources()
         return;
 
     unsigned targetSize = static_cast<unsigned>(capacity * cTargetPrunePercentage); // Cut by a percentage to avoid immediately pruning again.
+    pruneDeadResourcesToSize(targetSize);
+}
+
+void MemoryCache::PruneDeadResourcesToPercentage(float prunePercentage)
+{
+    if (!m_pruneEnabled)
+        return;
+
+    if (prunePercentage < 0.0f  || prunePercentage > 0.95f)
+        return;
+
+    unsigned currentSize = m_liveSize + m_deadSize;
+    unsigned targetSize = static_cast<unsigned>(currentSize * prunePercentage);
+
+    pruneDeadResourcesToSize(targetSize);
+}
+
+void MemoryCache::pruneDeadResourcesToSize(unsigned targetSize)
+{ 
     int size = m_allResources.size();
-    
+ 
     if (!m_inPruneDeadResources) {
         // See if we have any purged resources we can evict.
         for (int i = 0; i < size; i++) {

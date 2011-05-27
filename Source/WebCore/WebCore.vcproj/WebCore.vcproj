@@ -25838,6 +25838,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\MemoryPressureHandler.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\MemoryPressureHandler.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\NotImplemented.h"
 				>
 			</File>
