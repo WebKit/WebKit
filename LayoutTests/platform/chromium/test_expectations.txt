@@ -3058,8 +3058,8 @@ BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TE
 //BUGWK58587 DEBUG GPU LINUX : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // Chromium GPU draws scrollbars slightly differently in debug vs. release.
-BUGWK58587 GPU LINUX : compositing/direct-image-compositing.html = IMAGE
-BUGWK58587 GPU LINUX : media/video-zoom.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : compositing/direct-image-compositing.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : media/video-zoom.html = IMAGE
 
 // WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)

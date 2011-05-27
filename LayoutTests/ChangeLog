@@ -1,3 +1,11 @@
+2011-05-27  Adrienne Walker  <enne@google.com>
+
+        [chromium] Unreviewed. Adjust baselines for debug-only failing scrollbar test.
+        https://bugs.webkit.org/show_bug.cgi?id=61652
+
+        * platform/chromium-gpu-linux/compositing/direct-image-compositing-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-05-27  Adam Klein  <adamk@chromium.org>
 
         Unreviewed. Rebaselines and test expectations updates after r87526.
