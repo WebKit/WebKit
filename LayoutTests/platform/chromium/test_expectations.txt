@@ -3651,7 +3651,7 @@ BUGDPRANKE LINUX RELEASE : http/tests/navigation/forward-to-fragment-fires-onloa
 BUGDPRANKE WIN DEBUG : perf/mouse-event.html = TEXT TIMEOUT PASS
 BUGDPRANKE WIN DEBUG : perf/typing-at-end-of-line.html = TEXT TIMEOUT PASS
 BUGDPRANKE DEBUG : fast/notifications/notifications-display-close-events.html = TIMEOUT PASS
-BUGDPRANKE WIN MAC DEBUG : fast/css-generated-content/table-row-group-to-inline.html = IMAGE+TEXT PASS
+BUGDPRANKE DEBUG : fast/css-generated-content/table-row-group-to-inline.html = IMAGE+TEXT PASS
 
 BUGWK60127 WIN LINUX : canvas/philip/tests/2d.gradient.radial.touch2.html = TEXT
 
