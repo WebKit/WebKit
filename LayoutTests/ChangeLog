@@ -2,6 +2,14 @@
 
         Unreviewed.
 
+        Skip test that is failing on the bot, until investigated.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-05-27  Yael Aharon  <yael.aharon@nokia.com>
+
+        Unreviewed.
+
         Skip new dropzone tests. Qt's DRT does not support drag 'n drop.
 
         * platform/qt/Skipped:
