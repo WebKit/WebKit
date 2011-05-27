@@ -212,8 +212,8 @@ void SVGAElement::defaultEventHandler(Event* event)
                 if (SVGSMILElement::isSMILElement(targetElement)) {
                     static_cast<SVGSMILElement*>(targetElement)->beginByLinkActivation();
                     event->setDefaultHandled();
-                    return;
                 }
+                return;
             }
 #endif
 

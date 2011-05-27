@@ -1,3 +1,18 @@
+2011-05-27  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        https://bugs.webkit.org/show_bug.cgi?id=19995
+        hixie.ch : anchor Link fails with fragment identifiers inside SVG fragments.
+
+        Remove 003-broken.xml and replace it with a 003.xml that is text-only.
+
+        * platform/mac/svg/hixie/links/003-broken-expected.png: Removed.
+        * platform/mac/svg/hixie/links/003-broken-expected.txt: Removed.
+        * svg/hixie/links/003-broken.xml: Removed.
+        * svg/hixie/links/003-expected.txt: Added.
+        * svg/hixie/links/003.xml: Added.
+
 2011-05-27  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed.
