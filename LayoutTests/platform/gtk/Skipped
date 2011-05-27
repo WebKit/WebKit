@@ -1462,3 +1462,11 @@ http/tests/security/isolatedWorld/cross-origin-xhr.html
 
 # failing dropzone test(http://bugs.webkit.org/show_bug.cgi?id=61630)
 fast/events/dropzone-002.html
+
+# GTK doesn't support smart replace
+# https://bugs.webkit.org/show_bug.cgi?id=61661
+editing/pasteboard/smart-paste-001.html
+editing/pasteboard/smart-paste-002.html
+editing/pasteboard/smart-paste-003.html
+editing/pasteboard/smart-paste-004.html
+editing/pasteboard/smart-paste-005.html
