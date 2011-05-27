@@ -90,6 +90,12 @@ static String truncatedStringForLookupMenuItem(const String& original)
 }
 #endif
 
+DefaultLocalizationStrategy& DefaultLocalizationStrategy::shared()
+{
+    DEFINE_STATIC_LOCAL(DefaultLocalizationStrategy, defaultLocalizationStrategy, ());
+    return defaultLocalizationStrategy;
+}
+
 DefaultLocalizationStrategy::DefaultLocalizationStrategy()
 {
 }

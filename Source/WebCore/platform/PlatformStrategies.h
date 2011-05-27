@@ -92,6 +92,7 @@ private:
 
 PlatformStrategies* platformStrategies();
 void setPlatformStrategies(PlatformStrategies*);
+bool hasPlatformStrategies();
     
 } // namespace WebCore
 

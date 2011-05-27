@@ -27,8 +27,8 @@
 #include "config.h"
 #include "LocalizedStrings.h"
 
+#include "DefaultLocalizationStrategy.h"
 #include "IntSize.h"
-#include "LocalizationStrategy.h"
 #include "PlatformStrategies.h"
 #include "PlatformString.h"
 
@@ -36,665 +36,673 @@ namespace WebCore {
 
 #if USE(PLATFORM_STRATEGIES)
 
+static inline LocalizationStrategy* localizationStrategy()
+{
+    if (hasPlatformStrategies())
+        return platformStrategies()->localizationStrategy();
+
+    return &DefaultLocalizationStrategy::shared();
+}
+
 String inputElementAltText()
 {
-    return platformStrategies()->localizationStrategy()->inputElementAltText();
+    return localizationStrategy()->inputElementAltText();
 }
 
 String resetButtonDefaultLabel()
 {
-    return platformStrategies()->localizationStrategy()->resetButtonDefaultLabel();
+    return localizationStrategy()->resetButtonDefaultLabel();
 }
 
 String searchableIndexIntroduction()
 {
-    return platformStrategies()->localizationStrategy()->searchableIndexIntroduction();
+    return localizationStrategy()->searchableIndexIntroduction();
 }
 
 String submitButtonDefaultLabel()
 {
-    return platformStrategies()->localizationStrategy()->submitButtonDefaultLabel();
+    return localizationStrategy()->submitButtonDefaultLabel();
 }
 
 String fileButtonChooseFileLabel()
 {
-    return platformStrategies()->localizationStrategy()->fileButtonChooseFileLabel();
+    return localizationStrategy()->fileButtonChooseFileLabel();
 }
 
 String fileButtonNoFileSelectedLabel()
 {
-    return platformStrategies()->localizationStrategy()->fileButtonNoFileSelectedLabel();
+    return localizationStrategy()->fileButtonNoFileSelectedLabel();
 }
 
 String defaultDetailsSummaryText()
 {
-    return platformStrategies()->localizationStrategy()->defaultDetailsSummaryText();
+    return localizationStrategy()->defaultDetailsSummaryText();
 }
 
 #if PLATFORM(MAC)
 String copyImageUnknownFileLabel()
 {
-    return platformStrategies()->localizationStrategy()->copyImageUnknownFileLabel();
+    return localizationStrategy()->copyImageUnknownFileLabel();
 }
 #endif
 
 #if ENABLE(CONTEXT_MENUS)
 String contextMenuItemTagOpenLinkInNewWindow()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagOpenLinkInNewWindow();
+    return localizationStrategy()->contextMenuItemTagOpenLinkInNewWindow();
 }
 
 String contextMenuItemTagDownloadLinkToDisk()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagDownloadLinkToDisk();
+    return localizationStrategy()->contextMenuItemTagDownloadLinkToDisk();
 }
 
 String contextMenuItemTagCopyLinkToClipboard()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagCopyLinkToClipboard();
+    return localizationStrategy()->contextMenuItemTagCopyLinkToClipboard();
 }
 
 String contextMenuItemTagOpenImageInNewWindow()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagOpenImageInNewWindow();
+    return localizationStrategy()->contextMenuItemTagOpenImageInNewWindow();
 }
 
 String contextMenuItemTagDownloadImageToDisk()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagDownloadImageToDisk();
+    return localizationStrategy()->contextMenuItemTagDownloadImageToDisk();
 }
 
 String contextMenuItemTagCopyImageToClipboard()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagCopyImageToClipboard();
+    return localizationStrategy()->contextMenuItemTagCopyImageToClipboard();
 }
 
 #if PLATFORM(QT) || PLATFORM(GTK)
 String contextMenuItemTagCopyImageUrlToClipboard()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagCopyImageUrlToClipboard();
+    return localizationStrategy()->contextMenuItemTagCopyImageUrlToClipboard();
 }
 #endif
 
 String contextMenuItemTagOpenFrameInNewWindow()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagOpenFrameInNewWindow();
+    return localizationStrategy()->contextMenuItemTagOpenFrameInNewWindow();
 }
 
 String contextMenuItemTagCopy()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagCopy();
+    return localizationStrategy()->contextMenuItemTagCopy();
 }
 
 String contextMenuItemTagGoBack()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagGoBack();
+    return localizationStrategy()->contextMenuItemTagGoBack();
 }
 
 String contextMenuItemTagGoForward()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagGoForward();
+    return localizationStrategy()->contextMenuItemTagGoForward();
 }
 
 String contextMenuItemTagStop()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagStop();
+    return localizationStrategy()->contextMenuItemTagStop();
 }
 
 String contextMenuItemTagReload()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagReload();
+    return localizationStrategy()->contextMenuItemTagReload();
 }
 
 String contextMenuItemTagCut()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagCut();
+    return localizationStrategy()->contextMenuItemTagCut();
 }
 
 String contextMenuItemTagPaste()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagPaste();
+    return localizationStrategy()->contextMenuItemTagPaste();
 }
 
 #if PLATFORM(QT)
 String contextMenuItemTagSelectAll()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagSelectAll();
+    return localizationStrategy()->contextMenuItemTagSelectAll();
 }
 #endif
 
 String contextMenuItemTagNoGuessesFound()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagNoGuessesFound();
+    return localizationStrategy()->contextMenuItemTagNoGuessesFound();
 }
 
 String contextMenuItemTagIgnoreSpelling()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagIgnoreSpelling();
+    return localizationStrategy()->contextMenuItemTagIgnoreSpelling();
 }
 
 String contextMenuItemTagLearnSpelling()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagLearnSpelling();
+    return localizationStrategy()->contextMenuItemTagLearnSpelling();
 }
 
 #if PLATFORM(MAC)
 String contextMenuItemTagSearchInSpotlight()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagSearchInSpotlight();
+    return localizationStrategy()->contextMenuItemTagSearchInSpotlight();
 }
 #endif
 
 String contextMenuItemTagSearchWeb()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagSearchWeb();
+    return localizationStrategy()->contextMenuItemTagSearchWeb();
 }
 
 String contextMenuItemTagLookUpInDictionary(const String& selectedString)
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagLookUpInDictionary(selectedString);
+    return localizationStrategy()->contextMenuItemTagLookUpInDictionary(selectedString);
 }
 
 String contextMenuItemTagOpenLink()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagOpenLink();
+    return localizationStrategy()->contextMenuItemTagOpenLink();
 }
 
 String contextMenuItemTagIgnoreGrammar()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagIgnoreGrammar();
+    return localizationStrategy()->contextMenuItemTagIgnoreGrammar();
 }
 
 String contextMenuItemTagSpellingMenu()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagSpellingMenu();
+    return localizationStrategy()->contextMenuItemTagSpellingMenu();
 }
 
 String contextMenuItemTagShowSpellingPanel(bool show)
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagShowSpellingPanel(show);
+    return localizationStrategy()->contextMenuItemTagShowSpellingPanel(show);
 }
 
 String contextMenuItemTagCheckSpelling()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagCheckSpelling();
+    return localizationStrategy()->contextMenuItemTagCheckSpelling();
 }
 
 String contextMenuItemTagCheckSpellingWhileTyping()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagCheckSpellingWhileTyping();
+    return localizationStrategy()->contextMenuItemTagCheckSpellingWhileTyping();
 }
 
 String contextMenuItemTagCheckGrammarWithSpelling()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagCheckGrammarWithSpelling();
+    return localizationStrategy()->contextMenuItemTagCheckGrammarWithSpelling();
 }
 
 String contextMenuItemTagFontMenu()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagFontMenu();
+    return localizationStrategy()->contextMenuItemTagFontMenu();
 }
 
 #if PLATFORM(MAC)
 String contextMenuItemTagShowFonts()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagShowFonts();
+    return localizationStrategy()->contextMenuItemTagShowFonts();
 }
 #endif
 
 String contextMenuItemTagBold()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagBold();
+    return localizationStrategy()->contextMenuItemTagBold();
 }
 
 String contextMenuItemTagItalic()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagItalic();
+    return localizationStrategy()->contextMenuItemTagItalic();
 }
 
 String contextMenuItemTagUnderline()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagUnderline();
+    return localizationStrategy()->contextMenuItemTagUnderline();
 }
 
 String contextMenuItemTagOutline()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagOutline();
+    return localizationStrategy()->contextMenuItemTagOutline();
 }
 
 #if PLATFORM(MAC)
 String contextMenuItemTagStyles()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagStyles();
+    return localizationStrategy()->contextMenuItemTagStyles();
 }
 
 String contextMenuItemTagShowColors()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagShowColors();
+    return localizationStrategy()->contextMenuItemTagShowColors();
 }
 
 String contextMenuItemTagSpeechMenu()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagSpeechMenu();
+    return localizationStrategy()->contextMenuItemTagSpeechMenu();
 }
 
 String contextMenuItemTagStartSpeaking()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagStartSpeaking();
+    return localizationStrategy()->contextMenuItemTagStartSpeaking();
 }
 
 String contextMenuItemTagStopSpeaking()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagStopSpeaking();
+    return localizationStrategy()->contextMenuItemTagStopSpeaking();
 }
 #endif
 
 String contextMenuItemTagWritingDirectionMenu()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagWritingDirectionMenu();
+    return localizationStrategy()->contextMenuItemTagWritingDirectionMenu();
 }
 
 String contextMenuItemTagTextDirectionMenu()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagTextDirectionMenu();
+    return localizationStrategy()->contextMenuItemTagTextDirectionMenu();
 }
 
 String contextMenuItemTagDefaultDirection()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagDefaultDirection();
+    return localizationStrategy()->contextMenuItemTagDefaultDirection();
 }
 
 String contextMenuItemTagLeftToRight()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagLeftToRight();
+    return localizationStrategy()->contextMenuItemTagLeftToRight();
 }
 
 String contextMenuItemTagRightToLeft()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagRightToLeft();
+    return localizationStrategy()->contextMenuItemTagRightToLeft();
 }
 
 #if PLATFORM(MAC)
 
 String contextMenuItemTagCorrectSpellingAutomatically()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagCorrectSpellingAutomatically();
+    return localizationStrategy()->contextMenuItemTagCorrectSpellingAutomatically();
 }
 
 String contextMenuItemTagSubstitutionsMenu()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagSubstitutionsMenu();
+    return localizationStrategy()->contextMenuItemTagSubstitutionsMenu();
 }
 
 String contextMenuItemTagShowSubstitutions(bool show)
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagShowSubstitutions(show);
+    return localizationStrategy()->contextMenuItemTagShowSubstitutions(show);
 }
 
 String contextMenuItemTagSmartCopyPaste()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagSmartCopyPaste();
+    return localizationStrategy()->contextMenuItemTagSmartCopyPaste();
 }
 
 String contextMenuItemTagSmartQuotes()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagSmartQuotes();
+    return localizationStrategy()->contextMenuItemTagSmartQuotes();
 }
 
 String contextMenuItemTagSmartDashes()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagSmartDashes();
+    return localizationStrategy()->contextMenuItemTagSmartDashes();
 }
 
 String contextMenuItemTagSmartLinks()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagSmartLinks();
+    return localizationStrategy()->contextMenuItemTagSmartLinks();
 }
 
 String contextMenuItemTagTextReplacement()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagTextReplacement();
+    return localizationStrategy()->contextMenuItemTagTextReplacement();
 }
 
 String contextMenuItemTagTransformationsMenu()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagTransformationsMenu();
+    return localizationStrategy()->contextMenuItemTagTransformationsMenu();
 }
 
 String contextMenuItemTagMakeUpperCase()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagMakeUpperCase();
+    return localizationStrategy()->contextMenuItemTagMakeUpperCase();
 }
 
 String contextMenuItemTagMakeLowerCase()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagMakeLowerCase();
+    return localizationStrategy()->contextMenuItemTagMakeLowerCase();
 }
 
 String contextMenuItemTagCapitalize()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagCapitalize();
+    return localizationStrategy()->contextMenuItemTagCapitalize();
 }
 
 String contextMenuItemTagChangeBack(const String& replacedString)
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagChangeBack(replacedString);
+    return localizationStrategy()->contextMenuItemTagChangeBack(replacedString);
 }
 
 #endif // PLATFORM(MAC)
 
 String contextMenuItemTagOpenVideoInNewWindow()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagOpenVideoInNewWindow();
+    return localizationStrategy()->contextMenuItemTagOpenVideoInNewWindow();
 }
 
 String contextMenuItemTagOpenAudioInNewWindow()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagOpenAudioInNewWindow();
+    return localizationStrategy()->contextMenuItemTagOpenAudioInNewWindow();
 }
 
 String contextMenuItemTagCopyVideoLinkToClipboard()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagCopyVideoLinkToClipboard();
+    return localizationStrategy()->contextMenuItemTagCopyVideoLinkToClipboard();
 }
 
 String contextMenuItemTagCopyAudioLinkToClipboard()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagCopyAudioLinkToClipboard();
+    return localizationStrategy()->contextMenuItemTagCopyAudioLinkToClipboard();
 }
 
 String contextMenuItemTagToggleMediaControls()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagToggleMediaControls();
+    return localizationStrategy()->contextMenuItemTagToggleMediaControls();
 }
 
 String contextMenuItemTagToggleMediaLoop()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagToggleMediaLoop();
+    return localizationStrategy()->contextMenuItemTagToggleMediaLoop();
 }
 
 String contextMenuItemTagEnterVideoFullscreen()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagEnterVideoFullscreen();
+    return localizationStrategy()->contextMenuItemTagEnterVideoFullscreen();
 }
 
 String contextMenuItemTagMediaPlay()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagMediaPlay();
+    return localizationStrategy()->contextMenuItemTagMediaPlay();
 }
 
 String contextMenuItemTagMediaPause()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagMediaPause();
+    return localizationStrategy()->contextMenuItemTagMediaPause();
 }
 
 String contextMenuItemTagMediaMute()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagMediaMute();
+    return localizationStrategy()->contextMenuItemTagMediaMute();
 }
     
 String contextMenuItemTagInspectElement()
 {
-    return platformStrategies()->localizationStrategy()->contextMenuItemTagInspectElement();
+    return localizationStrategy()->contextMenuItemTagInspectElement();
 }
 
 #endif // ENABLE(CONTEXT_MENUS)
 
 String searchMenuNoRecentSearchesText()
 {
-    return platformStrategies()->localizationStrategy()->searchMenuNoRecentSearchesText();
+    return localizationStrategy()->searchMenuNoRecentSearchesText();
 }
 
 String searchMenuRecentSearchesText ()
 {
-    return platformStrategies()->localizationStrategy()->searchMenuRecentSearchesText ();
+    return localizationStrategy()->searchMenuRecentSearchesText ();
 }
 
 String searchMenuClearRecentSearchesText()
 {
-    return platformStrategies()->localizationStrategy()->searchMenuClearRecentSearchesText();
+    return localizationStrategy()->searchMenuClearRecentSearchesText();
 }
 
 String AXWebAreaText()
 {
-    return platformStrategies()->localizationStrategy()->AXWebAreaText();
+    return localizationStrategy()->AXWebAreaText();
 }
 
 String AXLinkText()
 {
-    return platformStrategies()->localizationStrategy()->AXLinkText();
+    return localizationStrategy()->AXLinkText();
 }
 
 String AXListMarkerText()
 {
-    return platformStrategies()->localizationStrategy()->AXListMarkerText();
+    return localizationStrategy()->AXListMarkerText();
 }
 
 String AXImageMapText()
 {
-    return platformStrategies()->localizationStrategy()->AXImageMapText();
+    return localizationStrategy()->AXImageMapText();
 }
 
 String AXHeadingText()
 {
-    return platformStrategies()->localizationStrategy()->AXHeadingText();
+    return localizationStrategy()->AXHeadingText();
 }
 
 String AXDefinitionListTermText()
 {
-    return platformStrategies()->localizationStrategy()->AXDefinitionListTermText();
+    return localizationStrategy()->AXDefinitionListTermText();
 }
 
 String AXDefinitionListDefinitionText()
 {
-    return platformStrategies()->localizationStrategy()->AXDefinitionListDefinitionText();
+    return localizationStrategy()->AXDefinitionListDefinitionText();
 }
 
 #if PLATFORM(MAC)
 String AXARIAContentGroupText(const String& ariaType)
 {
-    return platformStrategies()->localizationStrategy()->AXARIAContentGroupText(ariaType);
+    return localizationStrategy()->AXARIAContentGroupText(ariaType);
 }
 #endif
     
 String AXButtonActionVerb()
 {
-    return platformStrategies()->localizationStrategy()->AXButtonActionVerb();
+    return localizationStrategy()->AXButtonActionVerb();
 }
 
 String AXRadioButtonActionVerb()
 {
-    return platformStrategies()->localizationStrategy()->AXRadioButtonActionVerb();
+    return localizationStrategy()->AXRadioButtonActionVerb();
 }
 
 String AXTextFieldActionVerb()
 {
-    return platformStrategies()->localizationStrategy()->AXTextFieldActionVerb();
+    return localizationStrategy()->AXTextFieldActionVerb();
 }
 
 String AXCheckedCheckBoxActionVerb()
 {
-    return platformStrategies()->localizationStrategy()->AXCheckedCheckBoxActionVerb();
+    return localizationStrategy()->AXCheckedCheckBoxActionVerb();
 }
 
 String AXUncheckedCheckBoxActionVerb()
 {
-    return platformStrategies()->localizationStrategy()->AXUncheckedCheckBoxActionVerb();
+    return localizationStrategy()->AXUncheckedCheckBoxActionVerb();
 }
 
 String AXLinkActionVerb()
 {
-    return platformStrategies()->localizationStrategy()->AXLinkActionVerb();
+    return localizationStrategy()->AXLinkActionVerb();
 }
 
 String AXMenuListPopupActionVerb()
 {
-    return platformStrategies()->localizationStrategy()->AXMenuListPopupActionVerb();
+    return localizationStrategy()->AXMenuListPopupActionVerb();
 }
 
 String AXMenuListActionVerb()
 {
-    return platformStrategies()->localizationStrategy()->AXMenuListActionVerb();
+    return localizationStrategy()->AXMenuListActionVerb();
 }
 
 String missingPluginText()
 {
-    return platformStrategies()->localizationStrategy()->missingPluginText();
+    return localizationStrategy()->missingPluginText();
 }
 
 String crashedPluginText()
 {
-    return platformStrategies()->localizationStrategy()->crashedPluginText();
+    return localizationStrategy()->crashedPluginText();
 }
 
 String multipleFileUploadText(unsigned numberOfFiles)
 {
-    return platformStrategies()->localizationStrategy()->multipleFileUploadText(numberOfFiles);
+    return localizationStrategy()->multipleFileUploadText(numberOfFiles);
 }
 
 String unknownFileSizeText()
 {
-    return platformStrategies()->localizationStrategy()->unknownFileSizeText();
+    return localizationStrategy()->unknownFileSizeText();
 }
 
 #if PLATFORM(WIN)
 String uploadFileText()
 {
-    return platformStrategies()->localizationStrategy()->uploadFileText();
+    return localizationStrategy()->uploadFileText();
 }
 
 String allFilesText()
 {
-    return platformStrategies()->localizationStrategy()->allFilesText();
+    return localizationStrategy()->allFilesText();
 }
 #endif
 
 #if PLATFORM(MAC)
 String keygenMenuItem512()
 {
-    return platformStrategies()->localizationStrategy()->keygenMenuItem512();
+    return localizationStrategy()->keygenMenuItem512();
 }
 
 String keygenMenuItem1024()
 {
-    return platformStrategies()->localizationStrategy()->keygenMenuItem1024();
+    return localizationStrategy()->keygenMenuItem1024();
 }
 
 String keygenMenuItem2048()
 {
-    return platformStrategies()->localizationStrategy()->keygenMenuItem2048();
+    return localizationStrategy()->keygenMenuItem2048();
 }
 
 String keygenKeychainItemName(const String& host)
 {
-    return platformStrategies()->localizationStrategy()->keygenKeychainItemName(host);
+    return localizationStrategy()->keygenKeychainItemName(host);
 }
 
 #endif
 
 String imageTitle(const String& filename, const IntSize& size)
 {
-    return platformStrategies()->localizationStrategy()->imageTitle(filename, size);
+    return localizationStrategy()->imageTitle(filename, size);
 }
 
 String mediaElementLoadingStateText()
 {
-    return platformStrategies()->localizationStrategy()->mediaElementLoadingStateText();
+    return localizationStrategy()->mediaElementLoadingStateText();
 }
 
 String mediaElementLiveBroadcastStateText()
 {
-    return platformStrategies()->localizationStrategy()->mediaElementLiveBroadcastStateText();
+    return localizationStrategy()->mediaElementLiveBroadcastStateText();
 }
 
 String localizedMediaControlElementString(const String& controlName)
 {
-    return platformStrategies()->localizationStrategy()->localizedMediaControlElementString(controlName);
+    return localizationStrategy()->localizedMediaControlElementString(controlName);
 }
 
 String localizedMediaControlElementHelpText(const String& controlName)
 {
-    return platformStrategies()->localizationStrategy()->localizedMediaControlElementHelpText(controlName);
+    return localizationStrategy()->localizedMediaControlElementHelpText(controlName);
 }
 
 String localizedMediaTimeDescription(float time)
 {
-    return platformStrategies()->localizationStrategy()->localizedMediaTimeDescription(time);
+    return localizationStrategy()->localizedMediaTimeDescription(time);
 }
 
 String validationMessageValueMissingText()
 {
-    return platformStrategies()->localizationStrategy()->validationMessageValueMissingText();
+    return localizationStrategy()->validationMessageValueMissingText();
 }
 
 String validationMessageValueMissingForCheckboxText()
 {
-    return platformStrategies()->localizationStrategy()->validationMessageValueMissingText();
+    return localizationStrategy()->validationMessageValueMissingText();
 }
 
 String validationMessageValueMissingForFileText()
 {
-    return platformStrategies()->localizationStrategy()->validationMessageValueMissingText();
+    return localizationStrategy()->validationMessageValueMissingText();
 }
 
 String validationMessageValueMissingForMultipleFileText()
 {
-    return platformStrategies()->localizationStrategy()->validationMessageValueMissingText();
+    return localizationStrategy()->validationMessageValueMissingText();
 }
 
 String validationMessageValueMissingForRadioText()
 {
-    return platformStrategies()->localizationStrategy()->validationMessageValueMissingText();
+    return localizationStrategy()->validationMessageValueMissingText();
 }
 
 String validationMessageValueMissingForSelectText()
 {
-    return platformStrategies()->localizationStrategy()->validationMessageValueMissingText();
+    return localizationStrategy()->validationMessageValueMissingText();
 }
 
 String validationMessageTypeMismatchText()
 {
-    return platformStrategies()->localizationStrategy()->validationMessageTypeMismatchText();
+    return localizationStrategy()->validationMessageTypeMismatchText();
 }
 
 String validationMessageTypeMismatchForEmailText()
 {
-    return platformStrategies()->localizationStrategy()->validationMessageTypeMismatchText();
+    return localizationStrategy()->validationMessageTypeMismatchText();
 }
 
 String validationMessageTypeMismatchForMultipleEmailText()
 {
-    return platformStrategies()->localizationStrategy()->validationMessageTypeMismatchText();
+    return localizationStrategy()->validationMessageTypeMismatchText();
 }
 
 String validationMessageTypeMismatchForURLText()
 {
-    return platformStrategies()->localizationStrategy()->validationMessageTypeMismatchText();
+    return localizationStrategy()->validationMessageTypeMismatchText();
 }
 
 String validationMessagePatternMismatchText()
 {
-    return platformStrategies()->localizationStrategy()->validationMessagePatternMismatchText();
+    return localizationStrategy()->validationMessagePatternMismatchText();
 }
 
 String validationMessageTooLongText(int, int)
 {
-    return platformStrategies()->localizationStrategy()->validationMessageTooLongText();
+    return localizationStrategy()->validationMessageTooLongText();
 }
 
 String validationMessageRangeUnderflowText(const String&)
 {
-    return platformStrategies()->localizationStrategy()->validationMessageRangeUnderflowText();
+    return localizationStrategy()->validationMessageRangeUnderflowText();
 }
 
 String validationMessageRangeOverflowText(const String&)
 {
-    return platformStrategies()->localizationStrategy()->validationMessageRangeOverflowText();
+    return localizationStrategy()->validationMessageRangeOverflowText();
 }
 
 String validationMessageStepMismatchText(const String&, const String&)
 {
-    return platformStrategies()->localizationStrategy()->validationMessageStepMismatchText();
+    return localizationStrategy()->validationMessageStepMismatchText();
 }
 
 #endif // USE(PLATFORM_STRATEGIES)
