@@ -1055,7 +1055,13 @@ public:
     bool webkitIsFullScreen() const { return m_fullScreenElement.get(); }
     bool webkitFullScreenKeyboardInputAllowed() const { return m_fullScreenElement.get() && m_areKeysEnabledInFullScreen; }
     Element* webkitCurrentFullScreenElement() const { return m_fullScreenElement.get(); }
-    void webkitRequestFullScreenForElement(Element*, unsigned short flags);
+    
+    enum FullScreenCheckType {
+        EnforceIFrameAllowFulScreenRequirement,
+        ExemptIFrameAllowFulScreenRequirement,
+    };
+
+    void requestFullScreenForElement(Element*, unsigned short flags, FullScreenCheckType);
     void webkitCancelFullScreen();
     
     void webkitWillEnterFullScreenForElement(Element*);

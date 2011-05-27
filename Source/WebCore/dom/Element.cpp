@@ -1884,7 +1884,7 @@ bool Element::childShouldCreateRenderer(Node* child) const
 #if ENABLE(FULLSCREEN_API)
 void Element::webkitRequestFullScreen(unsigned short flags)
 {
-    document()->webkitRequestFullScreenForElement(this, flags);
+    document()->requestFullScreenForElement(this, flags, Document::EnforceIFrameAllowFulScreenRequirement);
 }
 #endif    
 

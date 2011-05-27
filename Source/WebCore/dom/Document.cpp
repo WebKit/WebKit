@@ -4824,7 +4824,7 @@ bool Document::fullScreenIsAllowedForElement(Element* element) const
     return true;
 }
 
-void Document::webkitRequestFullScreenForElement(Element* element, unsigned short flags)
+void Document::requestFullScreenForElement(Element* element, unsigned short flags, FullScreenCheckType checkType)
 {
     if (!page() || !page()->settings()->fullScreenEnabled())
         return;
@@ -4832,7 +4832,7 @@ void Document::webkitRequestFullScreenForElement(Element* element, unsigned shor
     if (!element)
         element = documentElement();
     
-    if (!fullScreenIsAllowedForElement(element))
+    if (checkType == EnforceIFrameAllowFulScreenRequirement && !fullScreenIsAllowedForElement(element))
         return;
     
     if (!ScriptController::processingUserGesture())
