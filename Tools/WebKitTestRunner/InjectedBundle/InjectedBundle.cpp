@@ -180,6 +180,7 @@ void InjectedBundle::beginTesting()
     WKBundleSetAllowUniversalAccessFromFileURLs(m_bundle, m_pageGroup, true);
     WKBundleSetJavaScriptCanAccessClipboard(m_bundle, m_pageGroup, true);
     WKBundleSetPrivateBrowsingEnabled(m_bundle, m_pageGroup, false);
+    WKBundleSetAuthorAndUserStylesEnabled(m_bundle, m_pageGroup, true);
 
     WKBundleRemoveAllUserContent(m_bundle, m_pageGroup);
 

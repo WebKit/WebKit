@@ -1,3 +1,15 @@
+2011-05-26  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        WebKitTestRunner needs layoutTestController.setAuthorAndUserStylesEnabled
+        https://bugs.webkit.org/show_bug.cgi?id=42676
+
+        Implemented layoutTestController.setAuthorAndUserStylesEnabled for WebKitTestRunner.
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-05-26  Adam Klein  <adamk@chromium.org>
 
         Unreviewed.  Add Leopard rebaseline.
