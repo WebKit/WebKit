@@ -5,10 +5,7 @@ This tests dragging a selected table by mousing down on the contents of one of i
 |   contenteditable="true"
 |   id="source"
 |   style="border: 1px solid blue;"
-|   <span>
-|     class="Apple-style-span"
-|     style="-webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;"
-|     <br>
+|   <br>
 | "
 "
 | <div>

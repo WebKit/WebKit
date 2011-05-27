@@ -59,7 +59,7 @@ enum TriState { FalseTriState, TrueTriState, MixedTriState };
 class EditingStyle : public RefCounted<EditingStyle> {
 public:
 
-    enum PropertiesToInclude { AllProperties, OnlyInheritableProperties, InheritablePropertiesAndBackgroundColorInEffect };
+    enum PropertiesToInclude { AllProperties, OnlyEditingInheritableProperties, EditingInheritablePropertiesAndBackgroundColorInEffect };
     enum ShouldPreserveWritingDirection { PreserveWritingDirection, DoNotPreserveWritingDirection };
     enum ShouldExtractMatchingStyle { ExtractMatchingStyle, DoNotExtractMatchingStyle };
     static float NoFontDelta;
@@ -69,12 +69,12 @@ public:
         return adoptRef(new EditingStyle());
     }
 
-    static PassRefPtr<EditingStyle> create(Node* node, PropertiesToInclude propertiesToInclude = OnlyInheritableProperties)
+    static PassRefPtr<EditingStyle> create(Node* node, PropertiesToInclude propertiesToInclude = OnlyEditingInheritableProperties)
     {
         return adoptRef(new EditingStyle(node, propertiesToInclude));
     }
 
-    static PassRefPtr<EditingStyle> create(const Position& position, PropertiesToInclude propertiesToInclude = OnlyInheritableProperties)
+    static PassRefPtr<EditingStyle> create(const Position& position, PropertiesToInclude propertiesToInclude = OnlyEditingInheritableProperties)
     {
         return adoptRef(new EditingStyle(position, propertiesToInclude));
     }

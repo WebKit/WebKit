@@ -1,3 +1,33 @@
+2011-05-26  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Delete table in contentEditable/designMode produces odd contents
+        https://bugs.webkit.org/show_bug.cgi?id=57148
+
+        Add a test for the case given in the bug: deleting an unstyled table
+        should not leave behind a style span.
+
+        Rebaseline tests now that border-collapse, -webkit-border-horizontal-spacing,
+        and -webkit-border-vertical-spacing style spans are no longer added on
+        table and table cell deletion, and no longer applied when copying to the
+        clipboard.
+
+        * editing/deleting/5026848-2-expected.txt:
+        * editing/deleting/5026848-3-expected.txt:
+        * editing/deleting/5032066-expected.txt:
+        * editing/deleting/5115601-expected.txt:
+        * editing/deleting/5206311-2-expected.txt:
+        * editing/deleting/delete-block-table-expected.txt:
+        * editing/deleting/delete-last-char-in-table-expected.txt: Added.
+        * editing/deleting/delete-last-char-in-table.html: Added. New test for bug.
+        * editing/deleting/delete-select-all-001-expected.txt:
+        * editing/pasteboard/data-transfer-items-expected.txt:
+        * editing/pasteboard/onpaste-text-html-expected.txt:
+        * editing/selection/4895428-1-expected.txt:
+        * editing/selection/4895428-4-expected.txt:
+        * fast/events/ondrop-text-html-expected.txt:
+
 2011-05-26  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Simon Fraser.

@@ -16,10 +16,7 @@ This tests to see that selected non-editable nodes that are not in both the star
 |       <td>
 |         contenteditable="true"
 |         "Editable <#selection-caret>"
-|         <span>
-|           class="Apple-style-span"
-|           style="-webkit-border-horizontal-spacing: 0px; -webkit-border-vertical-spacing: 0px; "
-|           "content"
+|         "content"
 |       "
         "
 |       <td>

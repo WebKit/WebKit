@@ -1,3 +1,24 @@
+2011-05-26  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Delete table in contentEditable/designMode produces odd contents
+        https://bugs.webkit.org/show_bug.cgi?id=57148
+
+        Removes border-collapse, -webkit-border-horizontal-spacing, and
+        -webkit-border-vertical-spacing from the list of properties which
+        should be preserved during edit operations. Also renames this
+        list to editingInheritableProperties to be more clear about what
+        the list is for.
+
+        Test: editing/deleting/delete-last-char-in-table.html
+
+        * editing/EditingStyle.cpp: Removes border vertical/horizontal
+        spacing from editingStyleProperties.
+        * editing/EditingStyle.h: Renames OnlyInheritableProperties to
+        OnlyEditingInheritableProperties.
+        * editing/markup.cpp: Renames InheritablePropertiesAndBackgroundColorInEffect.
+
 2011-05-26  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.

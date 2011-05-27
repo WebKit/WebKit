@@ -10,7 +10,4 @@ This tests to make sure that after a deletion, merging can merge into an editabl
 |         <span>
 |           contenteditable="true"
 |           id="start"
-|           <span>
-|             class="Apple-style-span"
-|             style="-webkit-border-horizontal-spacing: 0px; -webkit-border-vertical-spacing: 0px; "
-|             "<#selection-caret>This sentence should be inside the editable cell."
+|           "<#selection-caret>This sentence should be inside the editable cell."

@@ -24,10 +24,7 @@ The second cell, which used to contain '5', is replaced with the 'world!' text, 
 |         "4"
 |       <td>
 |         class="start"
-|         <span>
-|           class="Apple-style-span"
-|           style="-webkit-border-horizontal-spacing: 0px; -webkit-border-vertical-spacing: 0px; "
-|           "<#selection-caret>world!"
+|         "<#selection-caret>world!"
 |         <br>
 |       <td>
 |         <br>

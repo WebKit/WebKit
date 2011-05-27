@@ -5,7 +5,4 @@ This tests deleting when the caret is at the start of a paragraph just after a t
 |     <tr>
 |       <td>
 |         "All the content in this editable region <#selection-caret>"
-|         <span>
-|           class="Apple-style-span"
-|           style="-webkit-border-horizontal-spacing: 0px; -webkit-border-vertical-spacing: 0px; "
-|           "should be in one table cell."
+|         "should be in one table cell."

@@ -7,10 +7,7 @@ This tests to see if an editable selection containing a focusable node is dragga
 |   style="border: 1px solid blue;"
 |   "
 "
-|   <span>
-|     class="Apple-style-span"
-|     style="-webkit-border-horizontal-spacing: 2px; -webkit-border-vertical-spacing: 2px;"
-|     <br>
+|   <br>
 |   "
 "
 | "

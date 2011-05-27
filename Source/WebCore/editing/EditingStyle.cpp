@@ -49,10 +49,8 @@ namespace WebCore {
 
 // Editing style properties must be preserved during editing operation.
 // e.g. when a user inserts a new paragraph, all properties listed here must be copied to the new paragraph.
-// FIXME: The current editingStyleProperties contains all inheritableProperties but we may not need to preserve all inheritable properties
-static const int editingStyleProperties[] = {
+static const int editingInheritableProperties[] = {
     // CSS inheritable properties
-    CSSPropertyBorderCollapse,
     CSSPropertyColor,
     CSSPropertyFontFamily,
     CSSPropertyFontSize,
@@ -68,19 +66,17 @@ static const int editingStyleProperties[] = {
     CSSPropertyWhiteSpace,
     CSSPropertyWidows,
     CSSPropertyWordSpacing,
-    CSSPropertyWebkitBorderHorizontalSpacing,
-    CSSPropertyWebkitBorderVerticalSpacing,
     CSSPropertyWebkitTextDecorationsInEffect,
     CSSPropertyWebkitTextFillColor,
     CSSPropertyWebkitTextSizeAdjust,
     CSSPropertyWebkitTextStrokeColor,
     CSSPropertyWebkitTextStrokeWidth,
 };
-size_t numEditingStyleProperties = WTF_ARRAY_LENGTH(editingStyleProperties);
+size_t numEditingInheritableProperties = WTF_ARRAY_LENGTH(editingInheritableProperties);
 
 static PassRefPtr<CSSMutableStyleDeclaration> copyEditingProperties(CSSStyleDeclaration* style)
 {
-    return style->copyPropertiesInSet(editingStyleProperties, numEditingStyleProperties);
+    return style->copyPropertiesInSet(editingInheritableProperties, numEditingInheritableProperties);
 }
 
 static PassRefPtr<CSSMutableStyleDeclaration> editingStyleFromComputedStyle(PassRefPtr<CSSComputedStyleDeclaration> style)
@@ -337,7 +333,7 @@ void EditingStyle::init(Node* node, PropertiesToInclude propertiesToInclude)
     RefPtr<CSSComputedStyleDeclaration> computedStyleAtPosition = computedStyle(node);
     m_mutableStyle = propertiesToInclude == AllProperties && computedStyleAtPosition ? computedStyleAtPosition->copy() : editingStyleFromComputedStyle(computedStyleAtPosition);
 
-    if (propertiesToInclude == InheritablePropertiesAndBackgroundColorInEffect) {
+    if (propertiesToInclude == EditingInheritablePropertiesAndBackgroundColorInEffect) {
         if (RefPtr<CSSValue> value = backgroundColorInEffect(node))
             m_mutableStyle->setProperty(CSSPropertyBackgroundColor, value->cssText());
     }
@@ -729,7 +725,7 @@ void EditingStyle::prepareToApplyAt(const Position& position, ShouldPreserveWrit
     // ReplaceSelectionCommand::handleStyleSpans() requires that this function only removes the editing style.
     // If this function was modified in the future to delete all redundant properties, then add a boolean value to indicate
     // which one of editingStyleAtPosition or computedStyle is called.
-    RefPtr<EditingStyle> style = EditingStyle::create(position, InheritablePropertiesAndBackgroundColorInEffect);
+    RefPtr<EditingStyle> style = EditingStyle::create(position, EditingInheritablePropertiesAndBackgroundColorInEffect);
 
     RefPtr<CSSValue> unicodeBidi;
     RefPtr<CSSValue> direction;
