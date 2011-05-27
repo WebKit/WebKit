@@ -4022,3 +4022,5 @@ BUGWK61533 LINUX : inspector/profiler/cpu-profiler-profiling.html = CRASH TIMEOU
 
 BUGCR84093 VISTA : http/tests/history/redirect-200-refresh-2-seconds.pl = TIMEOUT PASS
 BUGCR84095 VISTA : svg/custom/use-detach.svg = TIMEOUT PASS
+
+BUGWK61611 LINUX : editing/pasteboard/interchange-newline-2.html = TEXT
