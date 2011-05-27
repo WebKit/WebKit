@@ -1,3 +1,12 @@
+2011-05-27  Stephanie Lewis  <slewis@apple.com>
+
+        Rubber Stamped by Adam Roben.
+
+        Add Order File.  Use -order_file flag since it can order more of the binary.
+
+        * Configurations/Base.xcconfig:
+        * mac/WebKit2.order: Added.
+
 2011-05-27  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

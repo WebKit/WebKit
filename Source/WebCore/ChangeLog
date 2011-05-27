@@ -1,3 +1,12 @@
+2011-05-27  Stephanie Lewis  <slewis@apple.com>
+
+        Rubber Stamped by Adam Roben.
+
+        Update Order Files.  Use -order_file flag since it can order more of the binary.
+
+        * Configurations/Base.xcconfig:
+        * WebCore.order:
+
 2011-05-27  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87464.
