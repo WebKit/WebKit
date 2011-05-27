@@ -119,6 +119,7 @@ public:
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&) const;
     virtual PlatformPageClient platformPageClient() const { return 0; }
     virtual void contentsSizeChanged(WebCore::Frame*, const WebCore::IntSize&) const;
+    virtual void layoutUpdated(WebCore::Frame*) const;
     virtual void scrollRectIntoView(
         const WebCore::IntRect&, const WebCore::ScrollView*) const { }
     virtual void scrollbarsModeDidChange() const;

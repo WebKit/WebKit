@@ -1,3 +1,20 @@
+2011-05-27  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Need a callback for when the preferred rendered size may have changed.
+        https://bugs.webkit.org/show_bug.cgi?id=61309
+
+        No new tests needed since no new functionality is exposed.
+
+        * page/Chrome.cpp:
+        (WebCore::Chrome::layoutUpdated): Plumbed through the call.
+        * page/Chrome.h: Added the new method.
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::layoutUpdated): Ditto.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout): Added a callback for whem a layout has finished.
+
 2011-05-27  Stephanie Lewis  <slewis@apple.com>
 
         Rubber Stamped by Adam Roben.

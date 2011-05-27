@@ -1064,6 +1064,11 @@ void FrameView::layout(bool allowSubtree)
     InspectorInstrumentation::didLayout(cookie);
 
     m_nestedLayoutCount--;
+    if (!m_nestedLayoutCount) {
+        Page* page = frame() ? frame()->page() : 0;
+        if (page)
+            return page->chrome()->client()->layoutUpdated(frame());
+    }
 }
 
 void FrameView::addWidgetToUpdate(RenderEmbeddedObject* object)

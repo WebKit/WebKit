@@ -1,3 +1,16 @@
+2011-05-27  David Levin  <levin@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Need a callback for when the preferred rendered size may have changed.
+        https://bugs.webkit.org/show_bug.cgi?id=61309
+
+        * public/WebFrameClient.h:
+        (WebKit::WebFrameClient::didUpdateLayout): Added stub.
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::layoutUpdated): Plumbed through the call to WebFrameClient::didUpdateLayout.
+        * src/ChromeClientImpl.h: Added declaration.
+
 2011-05-27  Shishir Agrawal  <shishir@chromium.org>
 
         Reviewed by Tony Gentilcore.
