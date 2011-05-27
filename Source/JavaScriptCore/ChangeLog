@@ -1,5 +1,12 @@
 2011-05-27  Oliver Hunt  <oliver@apple.com>
 
+        Build fix
+
+        * runtime/RegExpCache.cpp:
+        (JSC::RegExpCache::invalidateCode):
+
+2011-05-27  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Geoffrey Garen.
 
         Try to release unused executable memory when the FixedVMPool allocator is under pressure

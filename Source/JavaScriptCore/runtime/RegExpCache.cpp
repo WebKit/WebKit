@@ -75,7 +75,7 @@ void RegExpCache::addToStrongCache(RegExp* regExp)
 
 void RegExpCache::invalidateCode()
 {
-    for (size_t i = 0; i < maxStrongCacheableEntries; i++)
+    for (int i = 0; i < maxStrongCacheableEntries; i++)
         m_strongCache[i].clear();
     m_nextEntryInStrongCache = 0;
     RegExpCacheMap::iterator end = m_weakCache.end();
