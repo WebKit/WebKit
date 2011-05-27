@@ -3760,7 +3760,6 @@ BUGDPRANKE WIN CPU DEBUG : svg/custom/getscreenctm-in-scrollable-div-area-nested
 
 // flakiness on canaries (noted ~ r85006)
 BUGDPRANKE CPU : svg/hixie/rendering-model/003.xhtml = IMAGE+TEXT PASS
-BUGDPRANKE CPU : svg/in-html/by-reference.html = IMAGE+TEXT PASS
 BUGDPRANKE CPU : fast/dom/HTMLFormElement/document-deactivation-callback-crash.html = PASS TEXT
 BUGDPRANKE LINUX DEBUG CPU : svg/custom/font-platformDestroy-crash.svg = PASS CRASH
 BUGDPRANKE CPU : fast/dom/HTMLObjectElement/object-as-frame.html = PASS TEXT
@@ -4031,7 +4030,7 @@ BUGADAMK SNOWLEOPARD DEBUG : svg/custom/object-sizing-explicit-height.xhtml = IM
 BUGADAMK SNOWLEOPARD DEBUG : svg/custom/object-sizing-explicit-width.xhtml = IMAGE+TEXT
 BUGADAMK SNOWLEOPARD DEBUG : svg/wicd/test-rightsizing-a.xhtml = IMAGE+TEXT
 
-// After r87256, these all have extra scrollbars where the platform/mac expectations do not.
+// After r87526, these all have extra scrollbars where the platform/mac expectations do not.
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT
@@ -4039,3 +4038,6 @@ BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMA
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-text.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
+
+// Failing after r87526, probably just needs rebaselining.
+BUGADAMK WIN LINUX : svg/in-html/by-reference.html = TEXT
