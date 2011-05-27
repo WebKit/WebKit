@@ -1,3 +1,15 @@
+2011-05-26  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        editing/pasteboard/style-from-rules.html is flaky on Mac bots
+        https://bugs.webkit.org/show_bug.cgi?id=61586
+
+        Don't attach an event listener to dump markup on paste when ran by DRT
+        because we manually dump markup in DRT.
+
+        * editing/pasteboard/style-from-rules.html:
+
 2011-05-26  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.

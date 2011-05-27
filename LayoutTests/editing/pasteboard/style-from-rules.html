@@ -17,7 +17,7 @@ Each element should have exact properties stated in its title attribute</p>
 <div id="copy" contenteditable><blockquote title="none">hello</blockquote>
 <p title="none"><span class="red" style="font-size: 1em; font-weight: bold;" title="font-size: 1em; font-weight: bold;">world</span>
 <em style="color: blue;" title="font-style: normal; font-weight: bold; color: blue;">WebKit</em></p></div>
-<div id="paste" onpaste="setTimeout(dump, 0)" contenteditable></div>
+<div id="paste" contenteditable></div>
 </section>
 <script src="../../resources/dump-as-markup.js"></script>
 <script>
@@ -36,7 +36,8 @@ if (window.layoutTestController) {
     document.execCommand('Paste', false, null);
     dump();
     document.getElementById('container').style.display = 'none';
-}
+} else
+    document.getElementById('paste').addEventListener('paste', function () { setTimeout(dump, 0); }, false);
 
 </script>
 </body>
