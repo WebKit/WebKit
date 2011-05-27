@@ -35,6 +35,7 @@ module html {
 
                  attribute long              tabIndex;
                  attribute boolean           draggable;
+                 attribute [Reflect] DOMString webkitdropzone;
                  attribute [Reflect] boolean hidden;
 
         // Extensions

@@ -27,6 +27,7 @@
 #include "Clipboard.h"
 
 #include "CachedImage.h"
+#include "FileList.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "Image.h"
@@ -125,6 +126,30 @@ void Clipboard::setDestinationOperation(DragOperation op)
     m_dropEffect = IEOpFromDragOp(op);
 }
 
+bool Clipboard::hasFileOfType(const String& type) const
+{
+    if (m_policy != ClipboardReadable && m_policy != ClipboardTypesReadable)
+        return false;
+    
+    RefPtr<FileList> fileList = files();
+    if (fileList->isEmpty())
+        return false;
+    
+    for (unsigned int f = 0; f < fileList->length(); f++) {
+        if (equalIgnoringCase(fileList->item(f)->type(), type))
+            return true;
+    }
+    return false;
+}
+
+bool Clipboard::hasStringOfType(const String& type) const
+{
+    if (m_policy != ClipboardReadable && m_policy != ClipboardTypesReadable)
+        return false;
+    
+    return types().contains(type); 
+}
+    
 void Clipboard::setDropEffect(const String &effect)
 {
     if (!isForDragAndDrop())
@@ -156,6 +181,46 @@ void Clipboard::setEffectAllowed(const String &effect)
 
     if (m_policy == ClipboardWritable)
         m_effectAllowed = effect;
+}
+    
+DragOperation convertDropZoneOperationToDragOperation(const String& dragOperation)
+{
+    if (dragOperation == "copy")
+        return DragOperationCopy;
+    if (dragOperation == "move")
+        return DragOperationMove;
+    if (dragOperation == "link")
+        return DragOperationLink;
+    return DragOperationNone;
+}
+
+String convertDragOperationToDropZoneOperation(DragOperation operation)
+{
+    switch (operation) {
+    case DragOperationCopy:
+        return String("copy");
+    case DragOperationMove:
+        return String("move");
+    case DragOperationLink:
+        return String("link");
+    default:
+        return String("copy");
+    }
+}
+
+bool Clipboard::hasDropZoneType(const String& keyword)
+{
+    if (keyword.length() < 3 || keyword[1] != ':')
+        return false;
+        
+    switch (keyword[0]) {
+    case 'f':
+        return hasFileOfType(keyword.substring(2));
+    case 's':
+        return hasStringOfType(keyword.substring(2));
+    default:
+        return false;
+    }
 }
 
 } // namespace WebCore

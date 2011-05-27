@@ -1,0 +1,10 @@
+This test checks that drag-and-drop support works with files.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+Received drop event when chosenDropEffect is copy
+Received drop event when chosenDropEffect is dummy
+
+TEST COMPLETE
+

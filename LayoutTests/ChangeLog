@@ -1,3 +1,20 @@
+2011-05-26  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Tony Chang.
+
+        webkit should implement the dropzone attribute
+        https://bugs.webkit.org/show_bug.cgi?id=58210
+
+        * fast/events/dropzone-001-expected.txt: Added.
+        * fast/events/dropzone-001.html: Added.
+        * fast/events/dropzone-002-expected.txt: Added.
+        * fast/events/dropzone-002.html: Added.
+        * fast/events/dropzone-003-expected.txt: Added.
+        * fast/events/dropzone-003.html: Added.
+        * fast/events/dropzone-004-expected.txt: Added.
+        * fast/events/dropzone-004.html: Added.
+        * fast/events/resources/dropzone.js: Added.
+
 2011-05-27  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt]http/tests/security/xss-DENIED-xsl-document.xml fails with Qt 4.8

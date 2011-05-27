@@ -1,3 +1,35 @@
+2011-05-26  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Tony Chang.
+
+        webkit should implement the dropzone attribute
+        https://bugs.webkit.org/show_bug.cgi?id=58210
+
+        Add support for dropzone attribute.
+        http://www.whatwg.org/specs/web-apps/current-work/multipage/dnd.html#the-dropzone-attribute
+        If a drag event was not canceled by JavaScript, look for an element with a dropzone attribute.
+        If there is such an element, and it matches the drag data store, set the action defined by that
+        element and continue processing the drag and drop operation.
+
+        Tests: fast/events/dropzone-001.html
+               fast/events/dropzone-002.html
+               fast/events/dropzone-003.html
+               fast/events/dropzone-004.html
+
+        * dom/Clipboard.cpp:
+        (WebCore::Clipboard::hasFileOfType):
+        (WebCore::Clipboard::hasStringOfType):
+        (WebCore::convertDropZoneOperationToDragOperation):
+        (WebCore::convertDragOperationToDropZoneOperation):
+        (WebCore::Clipboard::processDropZoneKeyword):
+        * dom/Clipboard.h:
+        * html/HTMLAttributeNames.in:
+        * html/HTMLElement.idl:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::findDropZone):
+        (WebCore::EventHandler::updateDragAndDrop):
+        * page/EventHandler.h:
+
 2011-05-27  Patrick Gansterer  <paroga@webkit.org>
 
         Unreviewed WinCE build fix for r87467.

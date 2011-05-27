@@ -1789,6 +1789,42 @@ bool EventHandler::canHandleDragAndDropForTarget(DragAndDropHandleType type, Nod
     return canHandle;
 }
 
+static bool findDropZone(Node* target, Clipboard* clipboard)
+{
+    Element* element = target->isElementNode() ? toElement(target) : target->parentElement();
+    for (; element; element = element->parentElement()) {
+        bool matched = false;
+        String dropZoneStr = element->fastGetAttribute(webkitdropzoneAttr);
+
+        if (dropZoneStr.isEmpty())
+            continue;
+        
+        dropZoneStr.makeLower();
+        
+        SpaceSplitString keywords(dropZoneStr, false);
+        if (keywords.isNull())
+            continue;
+        
+        DragOperation dragOperation = DragOperationNone;
+        for (unsigned int i = 0; i < keywords.size(); i++) {
+            DragOperation op = convertDropZoneOperationToDragOperation(keywords[i]);
+            if (op != DragOperationNone) {
+                if (dragOperation == DragOperationNone)
+                    dragOperation = op;
+            } else
+                matched = matched || clipboard->hasDropZoneType(keywords[i].string());
+
+            if (matched && dragOperation != DragOperationNone)
+                break;
+        }
+        if (matched) {
+            clipboard->setDropEffect(convertDragOperationToDropZoneOperation(dragOperation));
+            return true;
+        }
+    }
+    return false;
+}
+    
 bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
 {
     bool accept = false;
@@ -1819,6 +1855,8 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
                 dispatchDragSrcEvent(eventNames().dragEvent, event);
             }
             accept = dispatchDragEvent(eventNames().dragenterEvent, newTarget, event, clipboard);
+            if (!accept)
+                accept = findDropZone(newTarget, clipboard);
         }
 
         if (m_dragTarget && canHandleDragAndDropForTarget(UpdateDragAndDrop, m_dragTarget.get(), event, clipboard, &accept))
@@ -1837,6 +1875,8 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
                 dispatchDragSrcEvent(eventNames().dragEvent, event);
             }
             accept = dispatchDragEvent(eventNames().dragoverEvent, newTarget, event, clipboard);
+            if (!accept)
+                accept = findDropZone(newTarget, clipboard);
             m_shouldOnlyFireDragOverEvent = false;
         }
     }

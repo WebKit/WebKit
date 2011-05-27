@@ -92,6 +92,7 @@ dir
 direction
 disabled
 draggable
+webkitdropzone
 enctype
 end
 event
