@@ -1,3 +1,145 @@
+2011-05-27  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Always use the default localization strategy
+        https://bugs.webkit.org/show_bug.cgi?id=61670
+        <rdar://problem/9516130>
+
+        Always use the default localization strategy when there's no platform strategy.
+
+        * platform/DefaultLocalizationStrategy.cpp:
+        (WebCore::DefaultLocalizationStrategy::shared):
+        * platform/DefaultLocalizationStrategy.h:
+        * platform/LocalizedStrings.cpp:
+        (WebCore::inputElementAltText):
+        (WebCore::resetButtonDefaultLabel):
+        (WebCore::searchableIndexIntroduction):
+        (WebCore::submitButtonDefaultLabel):
+        (WebCore::fileButtonChooseFileLabel):
+        (WebCore::fileButtonNoFileSelectedLabel):
+        (WebCore::defaultDetailsSummaryText):
+        (WebCore::copyImageUnknownFileLabel):
+        (WebCore::contextMenuItemTagOpenLinkInNewWindow):
+        (WebCore::contextMenuItemTagDownloadLinkToDisk):
+        (WebCore::contextMenuItemTagCopyLinkToClipboard):
+        (WebCore::contextMenuItemTagOpenImageInNewWindow):
+        (WebCore::contextMenuItemTagDownloadImageToDisk):
+        (WebCore::contextMenuItemTagCopyImageToClipboard):
+        (WebCore::contextMenuItemTagCopyImageUrlToClipboard):
+        (WebCore::contextMenuItemTagOpenFrameInNewWindow):
+        (WebCore::contextMenuItemTagCopy):
+        (WebCore::contextMenuItemTagGoBack):
+        (WebCore::contextMenuItemTagGoForward):
+        (WebCore::contextMenuItemTagStop):
+        (WebCore::contextMenuItemTagReload):
+        (WebCore::contextMenuItemTagCut):
+        (WebCore::contextMenuItemTagPaste):
+        (WebCore::contextMenuItemTagSelectAll):
+        (WebCore::contextMenuItemTagNoGuessesFound):
+        (WebCore::contextMenuItemTagIgnoreSpelling):
+        (WebCore::contextMenuItemTagLearnSpelling):
+        (WebCore::contextMenuItemTagSearchInSpotlight):
+        (WebCore::contextMenuItemTagSearchWeb):
+        (WebCore::contextMenuItemTagLookUpInDictionary):
+        (WebCore::contextMenuItemTagOpenLink):
+        (WebCore::contextMenuItemTagIgnoreGrammar):
+        (WebCore::contextMenuItemTagSpellingMenu):
+        (WebCore::contextMenuItemTagShowSpellingPanel):
+        (WebCore::contextMenuItemTagCheckSpelling):
+        (WebCore::contextMenuItemTagCheckSpellingWhileTyping):
+        (WebCore::contextMenuItemTagCheckGrammarWithSpelling):
+        (WebCore::contextMenuItemTagFontMenu):
+        (WebCore::contextMenuItemTagShowFonts):
+        (WebCore::contextMenuItemTagBold):
+        (WebCore::contextMenuItemTagItalic):
+        (WebCore::contextMenuItemTagUnderline):
+        (WebCore::contextMenuItemTagOutline):
+        (WebCore::contextMenuItemTagStyles):
+        (WebCore::contextMenuItemTagShowColors):
+        (WebCore::contextMenuItemTagSpeechMenu):
+        (WebCore::contextMenuItemTagStartSpeaking):
+        (WebCore::contextMenuItemTagStopSpeaking):
+        (WebCore::contextMenuItemTagWritingDirectionMenu):
+        (WebCore::contextMenuItemTagTextDirectionMenu):
+        (WebCore::contextMenuItemTagDefaultDirection):
+        (WebCore::contextMenuItemTagLeftToRight):
+        (WebCore::contextMenuItemTagRightToLeft):
+        (WebCore::contextMenuItemTagCorrectSpellingAutomatically):
+        (WebCore::contextMenuItemTagSubstitutionsMenu):
+        (WebCore::contextMenuItemTagShowSubstitutions):
+        (WebCore::contextMenuItemTagSmartCopyPaste):
+        (WebCore::contextMenuItemTagSmartQuotes):
+        (WebCore::contextMenuItemTagSmartDashes):
+        (WebCore::contextMenuItemTagSmartLinks):
+        (WebCore::contextMenuItemTagTextReplacement):
+        (WebCore::contextMenuItemTagTransformationsMenu):
+        (WebCore::contextMenuItemTagMakeUpperCase):
+        (WebCore::contextMenuItemTagMakeLowerCase):
+        (WebCore::contextMenuItemTagCapitalize):
+        (WebCore::contextMenuItemTagChangeBack):
+        (WebCore::contextMenuItemTagOpenVideoInNewWindow):
+        (WebCore::contextMenuItemTagOpenAudioInNewWindow):
+        (WebCore::contextMenuItemTagCopyVideoLinkToClipboard):
+        (WebCore::contextMenuItemTagCopyAudioLinkToClipboard):
+        (WebCore::contextMenuItemTagToggleMediaControls):
+        (WebCore::contextMenuItemTagToggleMediaLoop):
+        (WebCore::contextMenuItemTagEnterVideoFullscreen):
+        (WebCore::contextMenuItemTagMediaPlay):
+        (WebCore::contextMenuItemTagMediaPause):
+        (WebCore::contextMenuItemTagMediaMute):
+        (WebCore::contextMenuItemTagInspectElement):
+        (WebCore::searchMenuNoRecentSearchesText):
+        (WebCore::searchMenuRecentSearchesText):
+        (WebCore::searchMenuClearRecentSearchesText):
+        (WebCore::AXWebAreaText):
+        (WebCore::AXLinkText):
+        (WebCore::AXListMarkerText):
+        (WebCore::AXImageMapText):
+        (WebCore::AXHeadingText):
+        (WebCore::AXDefinitionListTermText):
+        (WebCore::AXDefinitionListDefinitionText):
+        (WebCore::AXARIAContentGroupText):
+        (WebCore::AXButtonActionVerb):
+        (WebCore::AXRadioButtonActionVerb):
+        (WebCore::AXTextFieldActionVerb):
+        (WebCore::AXCheckedCheckBoxActionVerb):
+        (WebCore::AXUncheckedCheckBoxActionVerb):
+        (WebCore::AXLinkActionVerb):
+        (WebCore::AXMenuListPopupActionVerb):
+        (WebCore::AXMenuListActionVerb):
+        (WebCore::missingPluginText):
+        (WebCore::crashedPluginText):
+        (WebCore::multipleFileUploadText):
+        (WebCore::unknownFileSizeText):
+        (WebCore::uploadFileText):
+        (WebCore::allFilesText):
+        (WebCore::keygenMenuItem512):
+        (WebCore::keygenMenuItem1024):
+        (WebCore::keygenMenuItem2048):
+        (WebCore::keygenKeychainItemName):
+        (WebCore::imageTitle):
+        (WebCore::mediaElementLoadingStateText):
+        (WebCore::mediaElementLiveBroadcastStateText):
+        (WebCore::localizedMediaControlElementString):
+        (WebCore::localizedMediaControlElementHelpText):
+        (WebCore::localizedMediaTimeDescription):
+        (WebCore::validationMessageValueMissingText):
+        (WebCore::validationMessageValueMissingForCheckboxText):
+        (WebCore::validationMessageValueMissingForFileText):
+        (WebCore::validationMessageValueMissingForMultipleFileText):
+        (WebCore::validationMessageValueMissingForRadioText):
+        (WebCore::validationMessageValueMissingForSelectText):
+        (WebCore::validationMessageTypeMismatchText):
+        (WebCore::validationMessageTypeMismatchForEmailText):
+        (WebCore::validationMessageTypeMismatchForMultipleEmailText):
+        (WebCore::validationMessageTypeMismatchForURLText):
+        (WebCore::validationMessagePatternMismatchText):
+        (WebCore::validationMessageTooLongText):
+        (WebCore::validationMessageRangeUnderflowText):
+        (WebCore::validationMessageRangeOverflowText):
+        (WebCore::validationMessageStepMismatchText):
+
 2011-05-27  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

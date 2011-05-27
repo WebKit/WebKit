@@ -37,7 +37,8 @@ class DefaultLocalizationStrategy : public LocalizationStrategy {
 public:
     DefaultLocalizationStrategy();
 
-private:
+    static DefaultLocalizationStrategy& shared();
+
     virtual String inputElementAltText();
     virtual String resetButtonDefaultLabel();
     virtual String searchableIndexIntroduction();

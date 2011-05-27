@@ -54,6 +54,11 @@ void setPlatformStrategies(PlatformStrategies* platformStrategies)
     ASSERT(platformStrategies != s_platformStrategies);
 }
 
+bool hasPlatformStrategies()
+{
+    return s_platformStrategies;
+}
+
 LocalizationStrategy* PlatformStrategies::createLocalizationStrategy()
 {
     return new DefaultLocalizationStrategy;
