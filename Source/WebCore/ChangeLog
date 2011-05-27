@@ -1,3 +1,37 @@
+2011-05-27  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Darin Adler.
+
+        First swipe at resolving <rdar://problem/9125145> and https://bugs.webkit.org/show_bug.cgi?id=61494
+        
+        Make the Document be intelligent about returning its DocumentLoader, including the possibility that
+        the DocumentLoader will be null.
+
+        No new tests. No change in behavior.
+
+        Instead of storing the DocumentLoader at construction and never changing it,
+        always calculate it based on the FrameLoader's current DocumentLoader:
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::suggestedMIMEType):
+        (WebCore::Document::lastModified):
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::updateURLForPushOrReplaceState):
+        (WebCore::Document::loader):
+        * dom/Document.h:
+
+        Null-check or ASSERT that the DocumentLoader exists (or both) depending on the scenario:
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocument::replaceMediaElementTimerFired):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        * platform/mac/HTMLConverter.mm:
+        (fileWrapperForElement):
+
+        * WebCore.exp.in:
+
 2011-05-27  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

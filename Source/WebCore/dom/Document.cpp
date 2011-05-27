@@ -435,7 +435,6 @@ Document::Document(Frame* frame, const KURL& url, bool isXHTML, bool isHTML)
     m_ignoreAutofocus = false;
 
     m_frame = frame;
-    m_documentLoader = frame ? frame->loader()->activeDocumentLoader() : 0;
 
     // We depend on the url getting immediately set in subframes, but we
     // also depend on the url NOT getting immediately set in opened windows.
@@ -1106,7 +1105,9 @@ String Document::suggestedMIMEType() const
     if (m_document->isHTMLDocument())
         return "text/html";
 
-    return m_documentLoader->responseMIMEType();
+    if (DocumentLoader* documentLoader = loader())
+        return documentLoader->responseMIMEType();
+    return String();
 }
 
 // FIXME: We need to discuss the DOM API here at some point. Ideas:
@@ -3781,7 +3782,11 @@ String Document::lastModified() const
     DateComponents date;
     bool foundDate = false;
     if (m_frame) {
-        String httpLastModified = m_documentLoader->response().httpHeaderField("Last-Modified");
+        // Since we're still in a Frame, we should have a DocumentLoader.
+        ASSERT(loader());
+        String httpLastModified;
+        if (loader()) 
+            httpLastModified = loader()->response().httpHeaderField("Last-Modified");
         if (!httpLastModified.isEmpty()) {
             date.setMillisecondsSinceEpochForDateTime(parseDate(httpLastModified));
             foundDate = true;
@@ -4510,7 +4515,11 @@ void Document::initSecurityContext()
         // load local resources.  See https://bugs.webkit.org/show_bug.cgi?id=16756
         // and https://bugs.webkit.org/show_bug.cgi?id=19760 for further
         // discussion.
-        if (m_documentLoader->substituteData().isValid())
+        
+        DocumentLoader* documentLoader = loader();
+        // Since we're still in a Frame, we should have a DocumentLoader.
+        ASSERT(documentLoader);
+        if (documentLoader && documentLoader->substituteData().isValid())
             securityOrigin()->grantLoadLocalResources();
     }
 
@@ -4591,7 +4600,10 @@ void Document::updateURLForPushOrReplaceState(const KURL& url)
 
     setURL(url);
     f->loader()->setOutgoingReferrer(url);
-    m_documentLoader->replaceRequestURLForSameDocumentNavigation(url);
+    // Since we're still in a frame, we should have a DocumentLoader.
+    ASSERT(loader());
+    if (DocumentLoader* documentLoader = loader())
+        documentLoader->replaceRequestURLForSameDocumentNavigation(url);
 }
 
 void Document::statePopped(SerializedScriptValue* stateObject)
@@ -5140,6 +5152,21 @@ void Document::didRemoveWheelEventHandler()
     Frame* mainFrame = page() ? page()->mainFrame() : 0;
     if (mainFrame)
         mainFrame->notifyChromeClientWheelEventHandlerCountChanged();
+}
+
+DocumentLoader* Document::loader() const
+{
+    if (!m_frame)
+        return 0;
+    
+    DocumentLoader* loader = m_frame->loader()->activeDocumentLoader();
+    if (!loader)
+        return 0;
+    
+    if (m_frame->document() != this)
+        return 0;
+    
+    return loader;
 }
 
 } // namespace WebCore
