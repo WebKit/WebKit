@@ -52,9 +52,10 @@ namespace JSC {
 
         static Heap* heap(JSCell*);
 
-        static bool isMarked(const JSCell*);
-        static bool testAndSetMarked(const JSCell*);
-        static void setMarked(const JSCell*);
+        static bool isMarked(const void*);
+        static bool testAndSetMarked(const void*);
+        static bool testAndClearMarked(const void*);
+        static void setMarked(const void*);
 
         MarkedSpace(JSGlobalData*);
         void destroy();
@@ -123,17 +124,22 @@ namespace JSC {
         return MarkedBlock::blockFor(cell)->heap();
     }
 
-    inline bool MarkedSpace::isMarked(const JSCell* cell)
+    inline bool MarkedSpace::isMarked(const void* cell)
     {
         return MarkedBlock::blockFor(cell)->isMarked(cell);
     }
 
-    inline bool MarkedSpace::testAndSetMarked(const JSCell* cell)
+    inline bool MarkedSpace::testAndSetMarked(const void* cell)
     {
         return MarkedBlock::blockFor(cell)->testAndSetMarked(cell);
     }
 
-    inline void MarkedSpace::setMarked(const JSCell* cell)
+    inline bool MarkedSpace::testAndClearMarked(const void* cell)
+    {
+        return MarkedBlock::blockFor(cell)->testAndClearMarked(cell);
+    }
+
+    inline void MarkedSpace::setMarked(const void* cell)
     {
         MarkedBlock::blockFor(cell)->setMarked(cell);
     }
@@ -146,8 +152,8 @@ namespace JSC {
         MarkedBlock* block = MarkedBlock::blockFor(x);
         if (!block || !m_blocks.contains(block))
             return false;
-
-        return block->contains(x);
+            
+        return true;
     }
 
     template <typename Functor> inline void MarkedSpace::forEach(Functor& functor)

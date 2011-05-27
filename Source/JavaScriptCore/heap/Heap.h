@@ -58,9 +58,10 @@ namespace JSC {
         static Heap* heap(JSValue); // 0 for immediate values
         static Heap* heap(JSCell*);
 
-        static bool isMarked(const JSCell*);
-        static bool testAndSetMarked(const JSCell*);
-        static void setMarked(JSCell*);
+        static bool isMarked(const void*);
+        static bool testAndSetMarked(const void*);
+        static bool testAndClearMarked(const void*);
+        static void setMarked(const void*);
 
         static void writeBarrier(const JSCell*, JSValue);
         static void writeBarrier(const JSCell*, JSCell*);
@@ -154,17 +155,22 @@ namespace JSC {
         return m_operationInProgress != NoOperation;
     }
 
-    inline bool Heap::isMarked(const JSCell* cell)
+    inline bool Heap::isMarked(const void* cell)
     {
         return MarkedSpace::isMarked(cell);
     }
 
-    inline bool Heap::testAndSetMarked(const JSCell* cell)
+    inline bool Heap::testAndSetMarked(const void* cell)
     {
         return MarkedSpace::testAndSetMarked(cell);
     }
 
-    inline void Heap::setMarked(JSCell* cell)
+    inline bool Heap::testAndClearMarked(const void* cell)
+    {
+        return MarkedSpace::testAndClearMarked(cell);
+    }
+
+    inline void Heap::setMarked(const void* cell)
     {
         MarkedSpace::setMarked(cell);
     }

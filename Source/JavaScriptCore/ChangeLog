@@ -1,3 +1,37 @@
+2011-05-26  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Optimized ConservativeSet to avoid double-visiting objects
+        https://bugs.webkit.org/show_bug.cgi?id=61592
+        
+        SunSpider thinks this might be a 1% speedup
+
+        * heap/ConservativeRoots.h:
+        (JSC::ConservativeRoots::add): Use testAndClearMarked to avoid double-visiting
+        an object.
+
+        * heap/Heap.h:
+        (JSC::Heap::isMarked):
+        (JSC::Heap::testAndSetMarked):
+        (JSC::Heap::testAndClearMarked):
+        (JSC::Heap::setMarked): Added testAndClearMarked. Changed argument type
+        to void*, since clients want to ask questions about arbitrary pointers
+        into the heap, even when they aren't known to be JSCells.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::testAndClearMarked):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::isMarked):
+        (JSC::MarkedSpace::testAndSetMarked):
+        (JSC::MarkedSpace::testAndClearMarked):
+        (JSC::MarkedSpace::setMarked):
+        (JSC::MarkedSpace::contains): Ditto.
+
+        * wtf/Bitmap.h:
+        (WTF::::testAndClear): New function for ConservativeRoots's inverted
+        marking pass.
+
 2011-05-27  Stephanie Lewis  <slewis@apple.com>
 
         Rubber Stamped by Adam Roben.

@@ -37,6 +37,7 @@ public:
     bool get(size_t) const;
     void set(size_t);
     bool testAndSet(size_t);
+    bool testAndClear(size_t);
     size_t nextPossiblyUnset(size_t) const;
     void clear(size_t);
     void clearAll();
@@ -84,6 +85,16 @@ inline bool Bitmap<size>::testAndSet(size_t n)
     size_t index = n / wordSize;
     bool result = bits[index] & mask;
     bits[index] |= mask;
+    return result;
+}
+
+template<size_t size>
+inline bool Bitmap<size>::testAndClear(size_t n)
+{
+    WordType mask = one << (n % wordSize);
+    size_t index = n / wordSize;
+    bool result = bits[index] & mask;
+    bits[index] &= ~mask;
     return result;
 }
 

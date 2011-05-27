@@ -67,10 +67,10 @@ namespace JSC {
         size_t size();
         size_t capacity();
 
-        bool contains(const void*);
         size_t atomNumber(const void*);
         bool isMarked(const void*);
         bool testAndSetMarked(const void*);
+        bool testAndClearMarked(const void*);
         void setMarked(const void*);
         
         template <typename Functor> void forEach(Functor&);
@@ -160,16 +160,6 @@ namespace JSC {
         return m_allocation.size();
     }
 
-    inline bool MarkedBlock::contains(const void* p)
-    {
-        ASSERT(p && isAtomAligned(p) && atomNumber(p) < atomsPerBlock);
-
-        // Even though we physically contain p, we only logically contain p if p
-        // points to a live cell. (Claiming to contain a dead cell would trick the
-        // conservative garbage collector into resurrecting the cell in a zombie state.)
-        return isMarked(p);
-    }
-
     inline size_t MarkedBlock::atomNumber(const void* p)
     {
         return (reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(this)) / atomSize;
@@ -183,6 +173,11 @@ namespace JSC {
     inline bool MarkedBlock::testAndSetMarked(const void* p)
     {
         return m_marks.testAndSet(atomNumber(p));
+    }
+
+    inline bool MarkedBlock::testAndClearMarked(const void* p)
+    {
+        return m_marks.testAndClear(atomNumber(p));
     }
 
     inline void MarkedBlock::setMarked(const void* p)

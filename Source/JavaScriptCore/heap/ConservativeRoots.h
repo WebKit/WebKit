@@ -35,8 +35,6 @@ namespace JSC {
 class JSCell;
 class Heap;
 
-// May contain duplicates.
-
 class ConservativeRoots {
 public:
     ConservativeRoots(Heap*);
@@ -80,10 +78,16 @@ inline void ConservativeRoots::add(void* p)
     if (!m_heap->contains(p))
         return;
 
+    // The conservative set inverts the typical meaning of mark bits: We only
+    // visit marked pointers, and our visit clears the mark bit. This efficiently
+    // sifts out pointers to dead objects and duplicate pointers.
+    if (!m_heap->testAndClearMarked(p))
+        return;
+
     if (m_size == m_capacity)
         grow();
 
-    m_roots[m_size++] = reinterpret_cast<JSCell*>(p);
+    m_roots[m_size++] = static_cast<JSCell*>(p);
 }
 
 inline size_t ConservativeRoots::size()
