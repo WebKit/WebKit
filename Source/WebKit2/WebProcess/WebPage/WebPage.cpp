@@ -1958,12 +1958,16 @@ void WebPage::windowAndViewFramesChanged(const WebCore::IntRect& windowFrameInSc
 }
 
 #endif
-    
+
 bool WebPage::windowIsFocused() const
 {
-    return m_page->focusController()->isActive();
-}
-    
+#if PLATFORM(MAC)
+    if (!m_windowIsVisible)
+        return false;
+#endif
+    return m_page->focusController()->isFocused() && m_page->focusController()->isActive();
+}    
+
 void WebPage::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
     if (messageID.is<CoreIPC::MessageClassDrawingAreaLegacy>()) {
