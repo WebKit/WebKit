@@ -29,10 +29,6 @@
 
 """Unit tests for metered_stream.py."""
 
-import os
-import optparse
-import pdb
-import sys
 import unittest
 
 from webkitpy.common.array_stream import ArrayStream
@@ -42,13 +38,11 @@ from webkitpy.layout_tests.layout_package import metered_stream
 class TestMeteredStream(unittest.TestCase):
     def test_regular(self):
         a = ArrayStream()
-        m = metered_stream.MeteredStream(verbose=False, stream=a)
+        m = metered_stream.MeteredStream(stream=a)
         self.assertTrue(a.empty())
 
-        # basic test - note that the flush() is a no-op, but we include it
-        # for coverage.
+        # basic test
         m.write("foo")
-        m.flush()
         exp = ['foo']
         self.assertEquals(a.get(), exp)
 
@@ -69,14 +63,9 @@ class TestMeteredStream(unittest.TestCase):
         exp.append('foo')
         self.assertEquals(a.get(), exp)
 
-        m.progress("progress")
-        exp.append('\b\b\b   \b\b\b')
-        exp.append('progress')
-        self.assertEquals(a.get(), exp)
-
-        # now check that a write() does overwrite the progress bar
+        # now check that a write() does overwrite the update
         m.write("foo")
-        exp.append('\b\b\b\b\b\b\b\b        \b\b\b\b\b\b\b\b')
+        exp.append('\b\b\b   \b\b\b')
         exp.append('foo')
         self.assertEquals(a.get(), exp)
 
@@ -88,27 +77,6 @@ class TestMeteredStream(unittest.TestCase):
         m.update("foo\nbar")
         m.update("baz")
         self.assertEquals(a.get(), ['foo\nbar', '\b\b\b   \b\b\b', 'baz'])
-
-    def test_verbose(self):
-        a = ArrayStream()
-        m = metered_stream.MeteredStream(verbose=True, stream=a)
-        self.assertTrue(a.empty())
-        m.write("foo")
-        self.assertEquals(a.get(), ['foo'])
-
-        import logging
-        b = ArrayStream()
-        logger = logging.getLogger()
-        handler = logging.StreamHandler(b)
-        logger.addHandler(handler)
-        m.update("bar")
-        logger.handlers.remove(handler)
-        self.assertEquals(a.get(), ['foo'])
-        self.assertEquals(b.get(), ['bar\n'])
-
-        m.progress("dropped")
-        self.assertEquals(a.get(), ['foo'])
-        self.assertEquals(b.get(), ['bar\n'])
 
 
 if __name__ == '__main__':

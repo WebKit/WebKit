@@ -91,7 +91,7 @@ class TestUtilityFunctions(unittest.TestCase):
         test_switches([], printing.PRINT_DEFAULT)
 
         # test that verbose defaults to everything
-        test_switches([], printing.PRINT_EVERYTHING, verbose=True)
+        test_switches([], printing.PRINT_EVERYTHING.replace(',one-line-progress',''), verbose=True)
 
         # test that --print default does what it's supposed to
         test_switches(['--print', 'default'], printing.PRINT_DEFAULT)

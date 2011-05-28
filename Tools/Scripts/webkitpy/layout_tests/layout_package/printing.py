@@ -130,6 +130,7 @@ def parse_print_options(print_options, verbose):
         switches = set(print_options.split(','))
     elif verbose:
         switches = set(PRINT_EVERYTHING.split(','))
+        switches.discard('one-line-progress')
     else:
         switches = set(PRINT_DEFAULT.split(','))
 
@@ -207,10 +208,11 @@ class Printer(object):
         self._port = port
         self._stream = regular_output
 
-        self._meter = metered_stream.MeteredStream(options.verbose,
-                                                   regular_output)
-        self._logging_handler = None
-        if configure_logging:
+        self._meter = None
+        if options.verbose:
+            self._logging_handler = _configure_logging(regular_output, options.verbose)
+        else:
+            self._meter = metered_stream.MeteredStream(regular_output)
             self._logging_handler = _configure_logging(self._meter, options.verbose)
 
         self.switches = parse_print_options(options.print_options,
@@ -346,7 +348,7 @@ class Printer(object):
         action = "Testing"
         if retrying:
             action = "Retrying"
-        self._meter.progress("%s (%d%%): %d ran as expected, %d didn't,"
+        self._meter.update("%s (%d%%): %d ran as expected, %d didn't,"
             " %d left" % (action, percent_complete, result_summary.expected,
              result_summary.unexpected, result_summary.remaining))
 
@@ -439,7 +441,7 @@ class Printer(object):
     def print_update(self, msg):
         if self.disabled('updates'):
             return
-        self._meter.update(msg)
+        self._update(msg)
 
     def write(self, msg, option="misc"):
         if self.disabled(option):
@@ -447,10 +449,10 @@ class Printer(object):
         self._write(msg)
 
     def _write(self, msg):
-        # FIXME: we could probably get away with calling _log.info() all of
-        # the time, but there doesn't seem to be a good way to test the output
-        # from the logger :(.
-        if self._options.verbose:
-            _log.info(msg)
+        _log.info(msg)
+
+    def _update(self, msg):
+        if self._meter:
+            self._meter.update(msg)
         else:
-            self._meter.write("%s\n" % msg)
+            self._write(msg)

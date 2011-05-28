@@ -2,6 +2,25 @@
 
         Reviewed by Eric Seidel.
 
+        NRWT: clean up metered_stream code in preparation for 'nooverwriting' patch
+        https://bugs.webkit.org/show_bug.cgi?id=60326
+
+        This patch removes a lot of the complexity from the
+        metered_stream implementation that was unnecessary since there
+        was only one caller and the logic could be coordinated better.
+
+        There should be no functional changes in this patch, just code
+        getting deleted and cleaned up.
+
+        * Scripts/webkitpy/layout_tests/layout_package/metered_stream.py:
+        * Scripts/webkitpy/layout_tests/layout_package/metered_stream_unittest.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+
+2011-05-27  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         NRWT: minor cleanup in printing module
         https://bugs.webkit.org/show_bug.cgi?id=60329
 
