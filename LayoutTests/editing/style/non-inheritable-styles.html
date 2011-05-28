@@ -1,7 +1,6 @@
-<script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
-</script>
+<!DOCTYPE html>
+<html>
+<head>
 <style>
 div {
     border: 1px solid red;
@@ -13,16 +12,16 @@ div {
     border: 1px solid black;
 }
 </style>
+</head>
 
 <body>
-<p>This tests copy.  Non-inheritable styles should be brought down from stylesheets.</p>
 <span id="copy" style="display:block" contenteditable="true">
 This shouldn't have a border.
 <div class="class" id="id">This should have blue border when its pasted.</div>
 This shouldn't have a border.</span>
 <span id="paste" style="display:block" contenteditable="true"></span>
 
-</body>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
 var sel = window.getSelection();
 var copy = document.getElementById("copy");
@@ -37,5 +36,8 @@ for (var i = 0; i < len; i++)
 
 sel.setPosition(paste, 0);
 document.execCommand("Paste");
+Markup.description("This tests copy.  Non-inheritable styles should be brought down from stylesheets.");
+Markup.dump(document.getElementById("paste"));
 </script>
 </body>
+</html>

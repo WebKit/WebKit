@@ -1,3 +1,25 @@
+2011-05-28  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        editing/style/non-inheritable-styles should be dump-as-markup test
+        https://bugs.webkit.org/show_bug.cgi?id=61681
+
+        Converts the test to dump-as-markup and cleans up the HTML a bit.
+
+        * editing/style/non-inheritable-styles-expected.txt: Added.
+        * editing/style/non-inheritable-styles.html:
+        * platform/chromium-linux/editing/style/non-inheritable-styles-expected.png: Removed.
+        * platform/chromium-win/editing/style/non-inheritable-styles-expected.png: Removed.
+        * platform/chromium-win/editing/style/non-inheritable-styles-expected.txt: Removed.
+        * platform/gtk/editing/style/non-inheritable-styles-expected.png: Removed.
+        * platform/gtk/editing/style/non-inheritable-styles-expected.txt: Removed.
+        * platform/mac-leopard/editing/style/non-inheritable-styles-expected.png: Removed.
+        * platform/mac/editing/style/non-inheritable-styles-expected.png: Removed.
+        * platform/mac/editing/style/non-inheritable-styles-expected.txt: Removed.
+        * platform/qt/editing/style/non-inheritable-styles-expected.png: Removed.
+        * platform/qt/editing/style/non-inheritable-styles-expected.txt: Removed.
+
 2011-05-27  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Not reviewed, this just adds a new test.
