@@ -1,3 +1,13 @@
+2011-05-28  Kenichi Ishibashi  <bashi@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Add bashi as a committer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61685
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-05-27  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
