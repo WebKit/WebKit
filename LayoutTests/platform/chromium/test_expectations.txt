@@ -4041,4 +4041,4 @@ BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-text.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
 BUGWK61664 LEOPARD DEBUG : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT
 
-BUGCR84317 LINUX MAC DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
+BUGCR84317 DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
