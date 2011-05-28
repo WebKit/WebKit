@@ -1,3 +1,9 @@
+2011-05-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Skip a failing test and better classify some existing skipped tests.
+
+        * platform/gtk/Skipped: Update the skipped list.
+
 2011-05-28  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Adam Barth.

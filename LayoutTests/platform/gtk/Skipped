@@ -109,6 +109,10 @@ tables/mozilla_expected_failures/marvin/table_overflow_dirty_reflow_tbody.html
 # https://bugs.webkit.org/show_bug.cgi?id=56561
 svg/custom/clip-path-referencing-use2.svg
 
+# https://bugs.webkit.org/show_bug.cgi?id=59937
+# flaky on 64-bits Debug
+tables/mozilla_expected_failures/bugs/bug85016.html
+
 ###############################################################################
 # TESTS TIMING OUT
 ###############################################################################
@@ -192,6 +196,10 @@ storage/open-database-set-empty-version.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=60158
 fast/dom/Geolocation/argument-types.html
+
+# Crash related to 0 pixel fonts.
+# https://bugs.webkit.org/show_bug.cgi?id=61693
+fast/css/font-face-zero-hash-key.html
 
 ###############################################################################
 # EXPECTED FAILURES
@@ -330,6 +338,28 @@ http/tests/security/mixedContent/insecure-css-in-iframe.html
 
 # Animation API is disabled
 animations/animation-api-1.html
+
+# Quota API is not supported.
+storage/storageinfo-query-usage.html
+storage/storageinfo-request-quota.html
+
+# This platform does not support the Page Visibility API.
+fast/events/page-visibility-iframe-delete-test.html
+fast/events/page-visibility-iframe-move-test.html
+fast/events/page-visibility-iframe-propagation-test.html
+fast/events/page-visibility-transition-test.html
+
+# JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
+http/tests/security/isolatedWorld/cross-origin-xhr.html
+
+# GTK doesn't support smart replace
+# https://bugs.webkit.org/show_bug.cgi?id=61661
+editing/pasteboard/smart-drag-drop.html
+editing/pasteboard/smart-paste-001.html
+editing/pasteboard/smart-paste-002.html
+editing/pasteboard/smart-paste-003.html
+editing/pasteboard/smart-paste-004.html
+editing/pasteboard/smart-paste-005.html
 
 ###############################################################################
 # TESTS FAILING
@@ -1162,7 +1192,6 @@ fast/forms/validation-message-on-textarea.html
 # is enabled or assume platform-dependent sizing.
 http/tests/security/dataTransfer-set-data-file-url.html
 fast/events/ondragenter.html
-editing/pasteboard/smart-drag-drop.html
 editing/selection/drag-start-event-client-x-y.html
 
 # Fails because multiple clicks in a row in the same place
@@ -1394,10 +1423,6 @@ fast/forms/input-number-large-padding.html
 # https://bugs.webkit.org/show_bug.cgi?id=58309
 fast/canvas/DrawImageSinglePixelStretch.html
 
-# Quota API is not supported.
-storage/storageinfo-query-usage.html
-storage/storageinfo-request-quota.html
-
 # Expose title direction in WebKit API
 # https://bugs.webkit.org/show_bug.cgi?id=58845
 fast/dom/title-directionality.html
@@ -1419,22 +1444,12 @@ http/tests/inspector/resource-tree/resource-tree-frame-add.html
 http/tests/inspector/resource-tree/resource-tree-frame-navigate.html
 http/tests/inspector/resource-tree/resource-tree-reload.html
 
-# https://bugs.webkit.org/show_bug.cgi?id=59937
-# flaky on 64-bits Debug
-tables/mozilla_expected_failures/bugs/bug85016.html
-
 # HTTP 204 (No Content) should be ignored
 # https://bugs.webkit.org/show_bug.cgi?id=60206
 http/tests/navigation/response204.html
 
 # Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
 loader/navigation-while-deferring-loads.html
-
-# This platform does not support the Page Visibility API.
-fast/events/page-visibility-iframe-delete-test.html
-fast/events/page-visibility-iframe-move-test.html
-fast/events/page-visibility-iframe-propagation-test.html
-fast/events/page-visibility-transition-test.html
 
 # [Qt][GTK] plugins/get-url-with-javascript-url.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=60834
@@ -1458,16 +1473,6 @@ fast/events/scroll-in-scaled-page-with-overflow-hidden.html
 # https://bugs.webkit.org/show_bug.cgi?id=61523
 http/tests/eventsource/workers/eventsource-simple.html
 
-# JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
-http/tests/security/isolatedWorld/cross-origin-xhr.html
-
 # failing dropzone test(http://bugs.webkit.org/show_bug.cgi?id=61630)
 fast/events/dropzone-002.html
 
-# GTK doesn't support smart replace
-# https://bugs.webkit.org/show_bug.cgi?id=61661
-editing/pasteboard/smart-paste-001.html
-editing/pasteboard/smart-paste-002.html
-editing/pasteboard/smart-paste-003.html
-editing/pasteboard/smart-paste-004.html
-editing/pasteboard/smart-paste-005.html
