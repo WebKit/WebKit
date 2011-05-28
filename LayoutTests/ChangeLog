@@ -1,3 +1,20 @@
+2011-05-28  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        prevent HTMLLinkElement from watching multiple CachedResources
+        https://bugs.webkit.org/show_bug.cgi?id=61686
+
+        If we modify an existing link element, stop listening to the previous
+        cached resource, to prevent double notifications (which crash).
+
+        * fast/dom/HTMLLinkElement/prefetch-too-many-clients-expected.txt: Added.
+        * fast/dom/HTMLLinkElement/prefetch-too-many-clients.html: Added.
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-05-28  Tonis Tiigi  <tonistiigi@gmail.com>
 
         Reviewed by Pavel Feldman.
