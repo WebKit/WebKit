@@ -1,5 +1,11 @@
 2011-05-27  Adam Klein  <adamk@chromium.org>
 
+        Unreviewed. Hopefully last rebaseline from r87526.
+
+        * platform/chromium-mac-leopard/svg/hixie/text/003-expected.png: Added.
+
+2011-05-27  Adam Klein  <adamk@chromium.org>
+
         Unreviewed. Even more rebaselines after r87526.
 
         * platform/chromium-linux-x86/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png: Added.
