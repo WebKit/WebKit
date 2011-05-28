@@ -1,3 +1,15 @@
+2011-05-28  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] fast/events/backspace-nagivates-back fails on Qt bots (Mac and Linux)
+        https://bugs.webkit.org/show_bug.cgi?id=60311
+
+        If there is no editable text Qt interprets backspace as a navigation
+        command, regardless of platform.
+
+        * platform/qt/fast/events/backspace-navigates-back-expected.txt: Added.
+
 2011-05-28  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed. Test expectations update after r87605
