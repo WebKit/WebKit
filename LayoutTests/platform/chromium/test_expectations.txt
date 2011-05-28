@@ -998,8 +998,6 @@ BUGCR10322 SKIP : platform/win/accessibility = PASS FAIL
 // shadow rendering issues
 BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-shadow.html = TEXT
 
-BUGWK57547 LINUX GPU : fast/canvas/canvas-strokeRect-gradient-shadow.html = TEXT TIMEOUT
-
 // Flaky tests
 BUGCR81858 WIN LINUX GPU : fast/canvas/canvas-longlived-context.html = PASS TEXT
 
@@ -2543,9 +2541,6 @@ BUGCR61739 DEBUG : animations/suspend-resume-animation-events.html = CRASH TEXT 
 BUGWK52509 WIN LINUX : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
 BUGWK52509 LEOPARD : svg/css/rect-gradient-stroke-shadow.svg = IMAGE
 BUGCR63921 CPU LINUX WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
-BUGCR63921 GPU : fast/canvas/canvas-fillPath-alpha-shadow.html = TEXT TIMEOUT
-BUGCR63921 GPU : fast/canvas/canvas-strokeRect-alpha-shadow.html = TEXT TIMEOUT
-BUGCR63921 GPU : fast/canvas/canvas-strokePath-alpha-shadow.html = TEXT TIMEOUT
 
 // Mainly flaky with mac debug, but also intermittent crashes seen on linux and windows
 BUGCR64129 WIN MAC LINUX : fast/files/revoke-blob-url.html = CRASH PASS
