@@ -311,8 +311,19 @@ static JSValueRef MyObject_convertToType(JSContextRef context, JSObjectRef objec
     return JSValueMakeNull(context);
 }
 
+static bool MyObject_set_nullGetForwardSet(JSContextRef ctx, JSObjectRef object, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
+{
+    UNUSED_PARAM(ctx);
+    UNUSED_PARAM(object);
+    UNUSED_PARAM(propertyName);
+    UNUSED_PARAM(value);
+    UNUSED_PARAM(exception);
+    return false; // Forward to parent class.
+}
+
 static JSStaticValue evilStaticValues[] = {
     { "nullGetSet", 0, 0, kJSPropertyAttributeNone },
+    { "nullGetForwardSet", 0, MyObject_set_nullGetForwardSet, kJSPropertyAttributeNone },
     { 0, 0, 0, 0 }
 };
 

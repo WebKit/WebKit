@@ -2,6 +2,31 @@
 
         Reviewed by Oliver Hunt.
 
+        JS API is too aggressive about throwing exceptions for NULL get or set operations
+        https://bugs.webkit.org/show_bug.cgi?id=61678
+
+        * API/JSCallbackObject.h: Changed our staticValueGetter to a regular
+        function that returns a JSValue, so it can fail and still forward to
+        normal property lookup.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::getOwnPropertySlot): Don't throw an exception when failing to
+        access a static property -- just forward the access. This allows objects
+        to observe get/set operations but still let the JS object manage lifetime.
+
+        (JSC::::put): Ditto.
+
+        (JSC::::getStaticValue): Same as JSCallbackObject.h.
+
+        * API/tests/testapi.c:
+        (MyObject_set_nullGetForwardSet):
+        * API/tests/testapi.js: Updated tests to reflect slightly less strict
+        behavior, which matches headerdoc claims.
+
+2011-05-27  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Property caching is too aggressive for API objects
         https://bugs.webkit.org/show_bug.cgi?id=61677
 

@@ -94,6 +94,9 @@ shouldBe("MyObject('throwOnCall')", "an exception");
 shouldBe("new MyObject('throwOnConstruct')", "an exception");
 shouldBe("'throwOnHasInstance' instanceof MyObject", "an exception");
 
+MyObject.nullGetForwardSet = 1;
+shouldBe("MyObject.nullGetForwardSet", 1);
+
 var foundMyPropertyName = false;
 var foundRegularType = false;
 for (var p in MyObject) {
@@ -162,8 +165,8 @@ shouldBe("constructedObject.value", 1);
 shouldBe("myObject instanceof MyObject", true);
 shouldBe("(new Object()) instanceof MyObject", false);
 
-shouldThrow("MyObject.nullGetSet = 1");
-shouldThrow("MyObject.nullGetSet");
+MyObject.nullGetSet = 1;
+shouldBe("MyObject.nullGetSet", 1);
 shouldThrow("MyObject.nullCall()");
 shouldThrow("MyObject.hasPropertyLie");
 

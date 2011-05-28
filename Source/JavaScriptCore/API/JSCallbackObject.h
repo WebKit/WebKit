@@ -188,7 +188,7 @@ private:
     static EncodedJSValue JSC_HOST_CALL call(ExecState*);
     static EncodedJSValue JSC_HOST_CALL construct(ExecState*);
    
-    static JSValue staticValueGetter(ExecState*, JSValue, const Identifier&);
+    JSValue getStaticValue(ExecState*, const Identifier&);
     static JSValue staticFunctionGetter(ExecState*, JSValue, const Identifier&);
     static JSValue callbackGetter(ExecState*, JSValue, const Identifier&);
 
