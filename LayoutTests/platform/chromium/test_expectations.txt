@@ -277,7 +277,7 @@ WONTFIX : fast/canvas/canvas-gradient-addStop-error.html = FAIL
 // Chrome uses different keyboard accelerators from those used by Safari, so
 // these tests will always fail.
 // TODO(ericroman): can the following 2 tests be removed from this list, since they pass?
-WONTFIX : fast/events/keydown-1.html = FAIL TIMEOUT
+WONTFIX : fast/events/keydown-1.html = PASS FAIL TIMEOUT
 WONTFIX LINUX WIN : fast/events/option-tab.html = FAIL
 
 // Chrome does not support WebArchives.
@@ -3024,7 +3024,6 @@ BUGV8_1168 : fast/js/mozilla/strict/10.6.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/15.5.5.2.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/8.12.5.html = TEXT
 BUGV8_1168 : fast/js/mozilla/strict/B.1.2.html = TEXT
-BUGV8_1168 : fast/js/mozilla/strict/this-for-function-expression-recursion.html = TEXT
 
 BUGV8_1203 DEBUG : fast/canvas/webgl/gl-get-calls.html = PASS CRASH
 
@@ -4016,11 +4015,6 @@ BUGCR84095 VISTA : svg/custom/use-detach.svg = TIMEOUT PASS
 BUGADAMK VISTA : http/tests/history/redirect-301.html = TIMEOUT PASS
 
 BUGWK61611 LINUX WIN : editing/pasteboard/interchange-newline-2.html = TEXT
-
-BUGWK61613 WIN : http/tests/local/formdata/form-data-with-unknown-file-extension.html = CRASH
-BUGWK61613 WIN : http/tests/local/formdata/send-form-data-constructed-from-form.html = CRASH
-BUGWK61613 WIN : http/tests/local/formdata/send-form-data.html = CRASH
-BUGWK61613 WIN : http/tests/local/formdata/upload-events.html = CRASH
 
 BUGWK61625 : fast/events/dropzone-002.html = TEXT
 
