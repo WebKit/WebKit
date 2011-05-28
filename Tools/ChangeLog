@@ -1,3 +1,13 @@
+2011-05-27  Steve Lacey  <sjl@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add sjl@chromium.org as a committer.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61672
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-05-27  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.

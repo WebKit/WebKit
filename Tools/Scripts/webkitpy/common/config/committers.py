@@ -87,7 +87,6 @@ contributors_who_are_not_committers = [
     Contributor("Luke Macpherson", ["macpherson@chromium.org", "macpherson@google.com"], "macpherson"),
     Contributor("Naoki Takano", "takano.naoki@gmail.com", "honten"),
     Contributor("Nat Duca", ["nduca@chromium.org", "nduca@google.com"], "nduca"),
-    Contributor("Steve Lacey", "sjl@chromium.org", "stevela"),
 ]
 
 
@@ -240,6 +239,7 @@ committers_unable_to_review = [
     Committer("Satish Sampath", "satish@chromium.org"),
     Committer("Scott Violet", "sky@chromium.org", "sky"),
     Committer("Sergio Villar Senin", ["svillar@igalia.com", "sergio@webkit.org"], "svillar"),
+    Committer("Steve Lacey", "sjl@chromium.org", "stevela"),
     Committer("Trey Matteson", "trey@usa.net", "trey"),
     Committer("Tristan O'Tierney", ["tristan@otierney.net", "tristan@apple.com"]),
     Committer("Vangelis Kokkevis", "vangelis@chromium.org", "vangelis"),
