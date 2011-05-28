@@ -77,18 +77,14 @@ class TestUtilityFunctions(unittest.TestCase):
         self.assertTrue(options is not None)
 
     def test_parse_print_options(self):
-        def test_switches(args, expected_switches_str,
-                          verbose=False, child_processes=1,
-                          is_fully_parallel=False):
+        def test_switches(args, expected_switches_str, verbose=False):
             options, args = get_options(args)
             if expected_switches_str:
                 expected_switches = set(expected_switches_str.split(','))
             else:
                 expected_switches = set()
             switches = printing.parse_print_options(options.print_options,
-                                                    verbose,
-                                                    child_processes,
-                                                    is_fully_parallel)
+                                                    verbose)
             self.assertEqual(expected_switches, switches)
 
         # test that we default to the default set of switches
@@ -112,23 +108,18 @@ class TestUtilityFunctions(unittest.TestCase):
 
 
 class  Testprinter(unittest.TestCase):
-    def get_printer(self, args=None, single_threaded=False,
-                   is_fully_parallel=False):
+    def get_printer(self, args=None):
         args = args or []
         printing_options = printing.print_options()
         option_parser = optparse.OptionParser(option_list=printing_options)
         options, args = option_parser.parse_args(args)
         self._port = port.get('test', options)
         nproc = 2
-        if single_threaded:
-            nproc = 1
 
         regular_output = array_stream.ArrayStream()
         buildbot_output = array_stream.ArrayStream()
         printer = printing.Printer(self._port, options, regular_output,
-                                   buildbot_output, single_threaded,
-                                   is_fully_parallel,
-                                   configure_logging=True)
+                                   buildbot_output, configure_logging=True)
         return printer, regular_output, buildbot_output
 
     def get_result(self, test, result_type=test_expectations.PASS, run_time=0):
@@ -355,79 +346,6 @@ class  Testprinter(unittest.TestCase):
         self.assertTrue(out.empty())
         self.assertFalse(err.empty())
 
-        err.reset()
-        out.reset()
-        printer.print_progress(rs, True, paths)
-        self.assertFalse(err.empty())
-        self.assertTrue(out.empty())
-
-    def test_print_progress__detailed(self):
-        tests = ['passes/text.html', 'failures/expected/timeout.html',
-                 'failures/expected/crash.html']
-        expectations = 'BUGX : failures/expected/timeout.html = TIMEOUT'
-
-        # first, test that it is disabled properly
-        # should still print one-line-progress
-        printer, err, out = self.get_printer(
-            ['--print', 'detailed-progress'], single_threaded=False)
-        paths, rs, exp = self.get_result_summary(tests, expectations)
-        printer.print_progress(rs, False, paths)
-        self.assertFalse(err.empty())
-        self.assertTrue(out.empty())
-
-        # now test the enabled paths
-        printer, err, out = self.get_printer(
-            ['--print', 'detailed-progress'], single_threaded=True)
-        paths, rs, exp = self.get_result_summary(tests, expectations)
-        printer.print_progress(rs, False, paths)
-        self.assertFalse(err.empty())
-        self.assertTrue(out.empty())
-
-        err.reset()
-        out.reset()
-        printer.print_progress(rs, True, paths)
-        self.assertFalse(err.empty())
-        self.assertTrue(out.empty())
-
-        rs.add(self.get_result('passes/text.html', test_expectations.TIMEOUT), False)
-        rs.add(self.get_result('failures/expected/timeout.html'), True)
-        rs.add(self.get_result('failures/expected/crash.html', test_expectations.CRASH), True)
-        err.reset()
-        out.reset()
-        printer.print_progress(rs, False, paths)
-        self.assertFalse(err.empty())
-        self.assertTrue(out.empty())
-
-        # We only clear the meter when retrying w/ detailed-progress.
-        err.reset()
-        out.reset()
-        printer.print_progress(rs, True, paths)
-        self.assertFalse(err.empty())
-        self.assertTrue(out.empty())
-
-        printer, err, out = self.get_printer(
-            ['--print', 'detailed-progress,unexpected'], single_threaded=True)
-        paths, rs, exp = self.get_result_summary(tests, expectations)
-        printer.print_progress(rs, False, paths)
-        self.assertFalse(err.empty())
-        self.assertTrue(out.empty())
-
-        err.reset()
-        out.reset()
-        printer.print_progress(rs, True, paths)
-        self.assertFalse(err.empty())
-        self.assertTrue(out.empty())
-
-        rs.add(self.get_result('passes/text.html', test_expectations.TIMEOUT), False)
-        rs.add(self.get_result('failures/expected/timeout.html'), True)
-        rs.add(self.get_result('failures/expected/crash.html', test_expectations.CRASH), True)
-        err.reset()
-        out.reset()
-        printer.print_progress(rs, False, paths)
-        self.assertFalse(err.empty())
-        self.assertTrue(out.empty())
-
-        # We only clear the meter when retrying w/ detailed-progress.
         err.reset()
         out.reset()
         printer.print_progress(rs, True, paths)

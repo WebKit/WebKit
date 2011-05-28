@@ -57,8 +57,8 @@ Overall options:
     nothing             don't print anything. This overrides every other option
     default             include the default options. This is useful for logging
                         the default options plus additional settings.
-    everything          print everything (except the trace-* options and the
-                        detailed-progress option, see below for the full list )
+    everything          print (almost) everything (except the trace-* options,
+                        see below for the full list )
     misc                print miscellaneous things like blank lines
 
 At the beginning of the run:
@@ -67,7 +67,6 @@ At the beginning of the run:
                         (# passes, # failures, etc.)
 
 During the run:
-    detailed-progress   print one dot per test completed
     one-line-progress   print a one-line progress bar
     unexpected          print any unexpected results as they occur
     updates             print updates on which stage is executing
@@ -88,12 +87,6 @@ At the end of the run:
     one-line-summary    print a one-line summary of the run
 
 Notes:
-    - 'detailed-progress' can only be used if running in a single thread
-      (using --child-processes=1) or a single queue of tests (using
-       --experimental-fully-parallel). If these conditions aren't true,
-      'one-line-progress' will be used instead.
-    - If both 'detailed-progress' and 'one-line-progress' are specified (and
-      both are possible), 'detailed-progress' will be used.
     - If 'nothing' is specified, it overrides all of the other options.
     - Specifying --verbose is equivalent to --print everything plus it
       changes the format of the log messages to add timestamps and other
@@ -125,8 +118,7 @@ def print_options():
     ]
 
 
-def parse_print_options(print_options, verbose, child_processes,
-                        is_fully_parallel):
+def parse_print_options(print_options, verbose):
     """Parse the options provided to --print and dedup and rank them.
 
     Returns
@@ -143,15 +135,6 @@ def parse_print_options(print_options, verbose, child_processes,
     if 'nothing' in switches:
         return set()
 
-    if (child_processes != 1 and not is_fully_parallel and
-        'detailed-progress' in switches):
-        _log.warn("Can only print 'detailed-progress' if running "
-                  "with --child-processes=1 or "
-                  "with --experimental-fully-parallel. "
-                  "Using 'one-line-progress' instead.")
-        switches.discard('detailed-progress')
-        switches.add('one-line-progress')
-
     if 'everything' in switches:
         switches.discard('everything')
         switches.update(set(PRINT_EVERYTHING.split(',')))
@@ -160,11 +143,7 @@ def parse_print_options(print_options, verbose, child_processes,
         switches.discard('default')
         switches.update(set(PRINT_DEFAULT.split(',')))
 
-    if 'detailed-progress' in switches:
-        switches.discard('one-line-progress')
-
     if 'trace-everything' in switches:
-        switches.discard('detailed-progress')
         switches.discard('one-line-progress')
         switches.discard('trace-unexpected')
         switches.discard('unexpected')
@@ -210,7 +189,7 @@ class Printer(object):
     By default the buildbot-parsed code gets logged to stdout, and regular
     output gets logged to stderr."""
     def __init__(self, port, options, regular_output, buildbot_output,
-                 child_processes, is_fully_parallel, configure_logging):
+                 configure_logging):
         """
         Args
           port               interface to port-specific routines
@@ -219,29 +198,13 @@ class Printer(object):
                              should be written
           buildbot_output    stream to which output intended to be read by
                              the buildbots (and humans) should be written
-          child_processes    number of parallel threads running (usually
-                             controlled by --child-processes)
-          is_fully_parallel  are the tests running in a single queue, or
-                             in shards (usually controlled by
-                             --experimental-fully-parallel)
           configure_loggign  Whether a logging handler should be registered
 
-        Note that the fourth and fifth args are separate rather than bundled into
-        the options structure so that this object does not assume any flags
-        set in options that weren't returned from logging_options(), above.
-        The two are used to determine whether or not we can sensibly use
-        the 'detailed-progress' option, or can only use 'one-line-progress'.
         """
         self._buildbot_stream = buildbot_output
         self._options = options
         self._port = port
         self._stream = regular_output
-
-        # These are used for --print detailed-progress to track status by
-        # directory.
-        self._current_dir = None
-        self._current_progress_str = ""
-        self._current_test_number = 0
 
         self._meter = metered_stream.MeteredStream(options.verbose,
                                                    regular_output)
@@ -250,7 +213,7 @@ class Printer(object):
             self._logging_handler = _configure_logging(self._meter, options.verbose)
 
         self.switches = parse_print_options(options.print_options,
-            options.verbose, child_processes, is_fully_parallel)
+            options.verbose)
 
     def cleanup(self):
         """Restore logging configuration to its initial settings."""
@@ -334,10 +297,7 @@ class Printer(object):
         if (self.enabled('trace-everything') or
             self.enabled('trace-unexpected') and not expected):
             self._print_test_trace(result, exp_str, got_str)
-        elif (not expected and self.enabled('unexpected') and
-              self.disabled('detailed-progress')):
-            # Note: 'detailed-progress' handles unexpected results internally,
-            # so we skip it here.
+        elif not expected and self.enabled('unexpected'):
             self._print_unexpected_test_result(result)
 
     def _print_test_trace(self, result, exp_str, got_str):
@@ -377,9 +337,7 @@ class Printer(object):
 
     def print_progress(self, result_summary, retrying, test_list):
         """Print progress through the tests as determined by --print."""
-        if self.enabled('detailed-progress'):
-            self._print_detailed_progress(result_summary, test_list)
-        elif self.enabled('one-line-progress'):
+        if self.enabled('one-line-progress'):
             self._print_one_line_progress(result_summary, retrying)
         else:
             return
@@ -397,50 +355,6 @@ class Printer(object):
         self._meter.progress("%s (%d%%): %d ran as expected, %d didn't,"
             " %d left" % (action, percent_complete, result_summary.expected,
              result_summary.unexpected, result_summary.remaining))
-
-    def _print_detailed_progress(self, result_summary, test_list):
-        """Display detailed progress output where we print the directory name
-        and one dot for each completed test. This is triggered by
-        "--log detailed-progress"."""
-        if self._current_test_number == len(test_list):
-            return
-
-        next_test = test_list[self._current_test_number]
-        next_dir = self._port._filesystem.dirname(
-            self._port.relative_test_filename(next_test))
-        if self._current_progress_str == "":
-            self._current_progress_str = "%s: " % (next_dir)
-            self._current_dir = next_dir
-
-        while next_test in result_summary.results:
-            if next_dir != self._current_dir:
-                self._meter.write("%s\n" % (self._current_progress_str))
-                self._current_progress_str = "%s: ." % (next_dir)
-                self._current_dir = next_dir
-            else:
-                self._current_progress_str += "."
-
-            if (next_test in result_summary.unexpected_results and
-                self.enabled('unexpected')):
-                self._meter.write("%s\n" % self._current_progress_str)
-                test_result = result_summary.results[next_test]
-                self._print_unexpected_test_result(test_result)
-                self._current_progress_str = "%s: " % self._current_dir
-
-            self._current_test_number += 1
-            if self._current_test_number == len(test_list):
-                break
-
-            next_test = test_list[self._current_test_number]
-            next_dir = self._port._filesystem.dirname(
-                self._port.relative_test_filename(next_test))
-
-        if result_summary.remaining:
-            remain_str = " (%d)" % (result_summary.remaining)
-            self._meter.progress("%s%s" % (self._current_progress_str,
-                                           remain_str))
-        else:
-            self._meter.progress("%s" % (self._current_progress_str))
 
     def print_unexpected_results(self, unexpected_results):
         """Prints a list of the unexpected results to the buildbot stream."""

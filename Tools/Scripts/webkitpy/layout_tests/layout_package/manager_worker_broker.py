@@ -329,7 +329,6 @@ if multiprocessing:
             # somewhere other than sys.stderr and sys.stdout, but I'm not sure
             # if this will be an issue in practice.
             printer = printing.Printer(port_obj, options, sys.stderr, sys.stdout,
-                int(options.child_processes), options.experimental_fully_parallel,
                 configure_logging)
             self._client.run(port_obj)
             printer.cleanup()
