@@ -160,7 +160,7 @@ CGImageRef BitmapImage::getFirstCGImageRefOfSize(const IntSize& size)
     size_t count = frameCount();
     for (size_t i = 0; i < count; ++i) {
         CGImageRef cgImage = frameAtIndex(i);
-        if (IntSize(CGImageGetWidth(cgImage), CGImageGetHeight(cgImage)) == size)
+        if (cgImage && IntSize(CGImageGetWidth(cgImage), CGImageGetHeight(cgImage)) == size)
             return cgImage;
     }
 
@@ -175,9 +175,10 @@ RetainPtr<CFArrayRef> BitmapImage::getCGImageArray()
         return 0;
     
     CFMutableArrayRef array = CFArrayCreateMutable(NULL, count, &kCFTypeArrayCallBacks);
-    for (size_t i = 0; i < count; ++i)
-        CFArrayAppendValue(array, frameAtIndex(i));
-        
+    for (size_t i = 0; i < count; ++i) {
+        if (CGImageRef currFrame = frameAtIndex(i))
+            CFArrayAppendValue(array, currFrame);
+    }
     return RetainPtr<CFArrayRef>(AdoptCF, array);
 }
 
