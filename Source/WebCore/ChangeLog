@@ -1,3 +1,21 @@
+2011-05-27  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Jian Li.
+
+        Keep a reference to BlobResourceHandle before calling doNotifyFinish()
+        asynchronously to ensure it's still safe in the main thread.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61669
+
+        I triggered this crash in fast/files/file-reader-abort.html during a
+        refactor that changed timings slightly.
+
+        * platform/network/BlobResourceHandle.cpp:
+        (WebCore::doNotifyFinish):
+        (WebCore::BlobResourceHandle::notifyFinish):
+        * platform/network/BlobResourceHandle.h:
+        (WebCore::BlobResourceHandle::aborted):
+
 2011-05-27  Stephanie Lewis  <slewis@apple.com>
 
         Unreviewed.

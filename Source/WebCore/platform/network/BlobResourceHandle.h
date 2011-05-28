@@ -68,6 +68,8 @@ public:
     void start();
     int readSync(char*, int);
 
+    bool aborted() const { return m_aborted; }
+
 private:
     friend void delayedStartBlobResourceHandle(void*);
 

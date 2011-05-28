@@ -596,12 +596,18 @@ void BlobResourceHandle::notifyFail(int errorCode)
 static void doNotifyFinish(void* context)
 {
     BlobResourceHandle* handle = static_cast<BlobResourceHandle*>(context);
-    if (handle->client())
+    if (!handle->aborted() && handle->client())
         handle->client()->didFinishLoading(handle, 0);
+
+    // Balance the ref() in BlobResourceHandle::notfyFinish().
+    handle->deref();
 }
 
 void BlobResourceHandle::notifyFinish()
 {
+    // Balanced in doNotifyFinish().
+    ref();
+
     if (m_async) {
         // Schedule to notify the client from a standalone function because the client might dispose the handle immediately from the callback function
         // while we still have BlobResourceHandle calls in the stack.
