@@ -360,7 +360,7 @@ void ChromeClientEfl::mouseDidMoveOverElement(const HitTestResult& hit, unsigned
         if (!url.isEmpty() && url != m_hoveredLinkURL) {
             const char* link[2];
             TextDirection dir;
-            CString urlStr = url.prettyURL().utf8();
+            CString urlStr = url.string().utf8();
             CString titleStr = hit.title(dir).utf8();
             link[0] = urlStr.data();
             link[1] = titleStr.data();

@@ -1,3 +1,18 @@
+2011-05-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Audit all uses of KURL::prettyURL
+        https://bugs.webkit.org/show_bug.cgi?id=61201
+
+        Update callers of prettyURL to just call string.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::createPlugin):
+        * WebProcess/WebCoreSupport/qt/WebErrorsQt.cpp:
+        (WebKit::cancelledError):
+        (WebKit::blockedError):
+
 2011-05-27  Stephanie Lewis  <slewis@apple.com>
 
         Unreviewed.

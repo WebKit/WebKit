@@ -51,7 +51,7 @@ enum {
 
 ResourceError cancelledError(const ResourceRequest& request)
 {
-    ResourceError error = ResourceError("QtNetwork", QNetworkReply::OperationCanceledError, request.url().prettyURL(),
+    ResourceError error = ResourceError("QtNetwork", QNetworkReply::OperationCanceledError, request.url().string(),
                                         QCoreApplication::translate("QWebFrame", "Request cancelled", 0, QCoreApplication::UnicodeUTF8));
     error.setIsCancellation(true);
     return error;    
@@ -59,7 +59,7 @@ ResourceError cancelledError(const ResourceRequest& request)
 
 ResourceError blockedError(const ResourceRequest& request)
 {
-    return ResourceError("WebKit", WebKitErrorCannotUseRestrictedPort, request.url().prettyURL(),
+    return ResourceError("WebKit", WebKitErrorCannotUseRestrictedPort, request.url().string(),
                          QCoreApplication::translate("QWebFrame", "Request blocked", 0, QCoreApplication::UnicodeUTF8));
 }
 

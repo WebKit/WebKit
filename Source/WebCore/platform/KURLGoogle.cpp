@@ -772,7 +772,7 @@ void KURL::setPath(const String& path)
 // On Mac, this just seems to return the same URL, but with "/foo/bar" for
 // file: URLs instead of file:///foo/bar. We don't bother with any of this,
 // at least for now.
-String KURL::prettyURL() const
+String KURL::deprecatedString() const
 {
     if (!m_url.m_isValid)
         return String();

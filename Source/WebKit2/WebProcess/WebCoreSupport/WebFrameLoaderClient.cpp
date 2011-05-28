@@ -1198,12 +1198,6 @@ void WebFrameLoaderClient::transferLoadingResourceFromPage(unsigned long, Docume
     notImplemented();
 }
 
-static String documentURL(Frame* frame)
-{
-    const KURL& url = frame->document()->url();
-    return url.hasPath() ? url.prettyURL() : url.prettyURL() + "/";
-}
-
 PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugInElement* pluginElement, const KURL& url, const Vector<String>& paramNames, const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
     ASSERT(paramNames.size() == paramValues.size());
@@ -1217,14 +1211,14 @@ PassRefPtr<Widget> WebFrameLoaderClient::createPlugin(const IntSize&, HTMLPlugIn
     parameters.values = paramValues;
     parameters.mimeType = mimeType;
     parameters.loadManually = loadManually;
-    parameters.documentURL = documentURL(m_frame->coreFrame());
+    parameters.documentURL = m_frame->coreFrame()->document()->url().string();
 
     Frame* mainFrame = webPage->mainFrame()->coreFrame();
     if (m_frame->coreFrame() == mainFrame)
         parameters.toplevelDocumentURL = parameters.documentURL;
     else if (m_frame->coreFrame()->document()->securityOrigin()->canAccess(mainFrame->document()->securityOrigin())) {
         // We only want to set the toplevel document URL if the plug-in has access to it.
-        parameters.toplevelDocumentURL = documentURL(mainFrame);
+        parameters.toplevelDocumentURL = mainFrame->document()->url().string();
     }
 
     // <rdar://problem/8440903>: AppleConnect has a bug where it does not

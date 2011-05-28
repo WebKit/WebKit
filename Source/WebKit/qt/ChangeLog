@@ -1,3 +1,21 @@
+2011-05-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Audit all uses of KURL::prettyURL
+        https://bugs.webkit.org/show_bug.cgi?id=61201
+
+        Update callers of prettyURL to just call string.
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::mouseDidMoveOverElement):
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::updateGlobalHistory):
+        (WebCore::FrameLoaderClientQt::cancelledError):
+        (WebCore::FrameLoaderClientQt::blockedError):
+        (WebCore::FrameLoaderClientQt::objectContentType):
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2011-05-27  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Csaba Osztrogonác.

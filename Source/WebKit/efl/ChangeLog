@@ -1,3 +1,29 @@
+2011-05-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Audit all uses of KURL::prettyURL
+        https://bugs.webkit.org/show_bug.cgi?id=61201
+
+        Update callers of prettyURL to just call string.
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::mouseDidMoveOverElement):
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::dispatchWillSendRequest):
+        (WebCore::FrameLoaderClientEfl::assignIdentifierToInitialRequest):
+        (WebCore::FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction):
+        (WebCore::FrameLoaderClientEfl::download):
+        (WebCore::FrameLoaderClientEfl::cancelledError):
+        (WebCore::FrameLoaderClientEfl::blockedError):
+        * ewk/ewk_frame.cpp:
+        (ewk_frame_hit_test_new):
+        (ewk_frame_uri_changed):
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_frame_create):
+        (ewk_view_plugin_create):
+
 2011-05-16  Jon Lee  <jonlee@apple.com>
 
         Reviewed by Simon Fraser.

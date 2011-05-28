@@ -209,7 +209,7 @@ void FrameLoaderClientEfl::dispatchDidCancelAuthenticationChallenge(DocumentLoad
 
 void FrameLoaderClientEfl::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& coreRequest, const ResourceResponse& coreResponse)
 {
-    CString url = coreRequest.url().prettyURL().utf8();
+    CString url = coreRequest.url().string().utf8();
     DBG("Resource url=%s", url.data());
 
     Ewk_Frame_Resource_Request request = { 0, identifier };
@@ -236,7 +236,7 @@ bool FrameLoaderClientEfl::shouldUseCredentialStorage(DocumentLoader*, unsigned 
 
 void FrameLoaderClientEfl::assignIdentifierToInitialRequest(unsigned long identifier, DocumentLoader*, const ResourceRequest& coreRequest)
 {
-    CString url = coreRequest.url().prettyURL().utf8();
+    CString url = coreRequest.url().string().utf8();
     DBG("Resource url=%s", url.data());
 
     Ewk_Frame_Resource_Request request = { 0, identifier };
@@ -309,7 +309,7 @@ void FrameLoaderClientEfl::dispatchDecidePolicyForNavigationAction(FramePolicyFu
     ASSERT(m_frame);
     // if not acceptNavigationRequest - look at Qt -> PolicyIgnore;
     // FIXME: do proper check and only reset forms when on PolicyIgnore
-    char* url = strdup(resourceRequest.url().prettyURL().utf8().data());
+    char* url = strdup(resourceRequest.url().string().utf8().data());
     Ewk_Frame_Resource_Request request = { url, 0 };
     Eina_Bool ret = ewk_view_navigation_policy_decision(m_view, &request);
     free(url);
@@ -764,7 +764,7 @@ void FrameLoaderClientEfl::download(ResourceHandle*, const ResourceRequest& requ
     if (!m_view)
         return;
 
-    CString url = request.url().prettyURL().utf8();
+    CString url = request.url().string().utf8();
     Ewk_Download download;
 
     download.url = url.data();
@@ -784,7 +784,7 @@ enum {
 
 ResourceError FrameLoaderClientEfl::cancelledError(const ResourceRequest& request)
 {
-    ResourceError error("Error", -999, request.url().prettyURL(),
+    ResourceError error("Error", -999, request.url().string(),
                         "Request cancelled");
     error.setIsCancellation(true);
     return error;
@@ -792,7 +792,7 @@ ResourceError FrameLoaderClientEfl::cancelledError(const ResourceRequest& reques
 
 ResourceError FrameLoaderClientEfl::blockedError(const ResourceRequest& request)
 {
-    return ResourceError("Error", WebKitErrorCannotUseRestrictedPort, request.url().prettyURL(),
+    return ResourceError("Error", WebKitErrorCannotUseRestrictedPort, request.url().string(),
                          "Request blocked");
 }
 

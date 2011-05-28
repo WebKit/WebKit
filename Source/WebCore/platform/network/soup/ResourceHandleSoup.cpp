@@ -180,9 +180,9 @@ static void ensureSessionIsInitialized(SoupSession* session)
     g_object_set_data(G_OBJECT(session), "webkit-init", reinterpret_cast<void*>(0xdeadbeef));
 }
 
-void ResourceHandle::prepareForURL(const KURL &url)
+void ResourceHandle::prepareForURL(const KURL& url)
 {
-    GOwnPtr<SoupURI> soupURI(soup_uri_new(url.prettyURL().utf8().data()));
+    GOwnPtr<SoupURI> soupURI(soup_uri_new(url.string().utf8().data()));
     if (!soupURI)
         return;
     soup_session_prepare_for_uri(ResourceHandle::defaultSession(), soupURI.get());

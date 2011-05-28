@@ -1614,7 +1614,6 @@ __ZN7WebCore16jsStringSlowCaseEPN3JSC9ExecStateERN3WTF7HashMapIPNS3_10StringImpl
 __ZN7WebCore17HTMLPlugInElement11getNPObjectEv
 __ZNK7WebCore14SecurityOrigin9canAccessEPKS0_
 __ZNK7WebCore4KURL7hasPathEv
-__ZNK7WebCore4KURL9prettyURLEv
 #endif
 
 #if ENABLE(ORIENTATION_EVENTS)

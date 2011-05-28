@@ -1,3 +1,32 @@
+2011-05-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Audit all uses of KURL::prettyURL
+        https://bugs.webkit.org/show_bug.cgi?id=61201
+
+        As far as I can tell, all the callers of this API are confused.  There
+        seems to be a cargo cult of using the "pretty" version of a URL, but in
+        reality folks just want the URL itself.  The only case I'm unsure about
+        is location.href, which could have some compatibility constraints.
+        I've renamed prettyURL to deprecatedString to discourage folks from
+        further cargo-culting.
+
+        * WebCore.exp.in:
+        * page/Location.cpp:
+        (WebCore::Location::href):
+        (WebCore::Location::toString):
+        * platform/KURL.cpp:
+        (WebCore::KURL::deprecatedString):
+        * platform/KURL.h:
+        * platform/KURLGoogle.cpp:
+        (WebCore::KURL::deprecatedString):
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::ResourceHandle::prepareForURL):
+        * workers/WorkerLocation.cpp:
+        (WebCore::WorkerLocation::href):
+        (WebCore::WorkerLocation::toString):
+
 2011-05-28  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

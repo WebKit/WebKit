@@ -802,7 +802,7 @@ void FrameLoaderClientQt::updateGlobalHistory()
     QWebHistoryInterface* history = QWebHistoryInterface::defaultInterface();
     WebCore::DocumentLoader* loader = m_frame->loader()->documentLoader();
     if (history)
-        history->addHistoryEntry(loader->urlForHistory().prettyURL());
+        history->addHistoryEntry(loader->urlForHistory().string());
 
     if (dumpHistoryCallbacks) {
         printf("WebView navigated to url \"%s\" with title \"%s\" with HTTP equivalent method \"%s\".  The navigation was %s and was %s%s.\n",
@@ -926,7 +926,7 @@ void FrameLoaderClientQt::committedLoad(WebCore::DocumentLoader* loader, const c
 
 WebCore::ResourceError FrameLoaderClientQt::cancelledError(const WebCore::ResourceRequest& request)
 {
-    ResourceError error = ResourceError("QtNetwork", QNetworkReply::OperationCanceledError, request.url().prettyURL(),
+    ResourceError error = ResourceError("QtNetwork", QNetworkReply::OperationCanceledError, request.url().string(),
             QCoreApplication::translate("QWebFrame", "Request cancelled", 0, QCoreApplication::UnicodeUTF8));
     error.setIsCancellation(true);
     return error;
@@ -946,7 +946,7 @@ enum {
 
 WebCore::ResourceError FrameLoaderClientQt::blockedError(const WebCore::ResourceRequest& request)
 {
-    return ResourceError("WebKitErrorDomain", WebKitErrorCannotUseRestrictedPort, request.url().prettyURL(),
+    return ResourceError("WebKitErrorDomain", WebKitErrorCannotUseRestrictedPort, request.url().string(),
             QCoreApplication::translate("QWebFrame", "Request blocked", 0, QCoreApplication::UnicodeUTF8));
 }
 
@@ -1360,7 +1360,7 @@ void FrameLoaderClientQt::transferLoadingResourceFromPage(unsigned long, Documen
 
 ObjectContentType FrameLoaderClientQt::objectContentType(const KURL& url, const String& mimeTypeIn, bool shouldPreferPlugInsForImages)
 {
-    // qDebug()<<" ++++++++++++++++ url is "<<url.prettyURL()<<", mime = "<<mimeTypeIn;
+    // qDebug()<<" ++++++++++++++++ url is "<<url.string()<<", mime = "<<mimeTypeIn;
     QFileInfo fi(url.path());
     String extension = fi.suffix();
     if (mimeTypeIn == "application/x-qt-plugin" || mimeTypeIn == "application/x-qt-styled-widget")
@@ -1523,8 +1523,8 @@ private:
 PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, HTMLPlugInElement* element, const KURL& url, const Vector<String>& paramNames,
                                           const Vector<String>& paramValues, const String& mimeType, bool loadManually)
 {
-    // qDebug()<<"------ Creating plugin in FrameLoaderClientQt::createPlugin for "<<url.prettyURL() << mimeType;
-    // qDebug()<<"------\t url = "<<url.prettyURL();
+    // qDebug()<<"------ Creating plugin in FrameLoaderClientQt::createPlugin for "<<url.string() << mimeType;
+    // qDebug()<<"------\t url = "<<url.string();
 
     if (!m_webFrame)
         return 0;

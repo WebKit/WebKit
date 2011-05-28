@@ -1162,7 +1162,7 @@ Ewk_Hit_Test* ewk_frame_hit_test_new(const Evas_Object* o, int x, int y)
         hit_test->frame = kit(result.innerNonSharedNode()->document()->frame());
 
     hit_test->link.text = eina_stringshare_add(result.textContent().utf8().data());
-    hit_test->link.url = eina_stringshare_add(result.absoluteLinkURL().prettyURL().utf8().data());
+    hit_test->link.url = eina_stringshare_add(result.absoluteLinkURL().string().utf8().data());
     hit_test->link.title = eina_stringshare_add(result.titleDisplayString().utf8().data());
     hit_test->link.target_frame = kit(result.targetFrame());
 
@@ -2014,7 +2014,7 @@ Eina_Bool ewk_frame_uri_changed(Evas_Object* o)
 {
     EWK_FRAME_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->frame, EINA_FALSE);
-    WTF::CString uri(sd->frame->document()->url().prettyURL().utf8());
+    WTF::CString uri(sd->frame->document()->url().string().utf8());
 
     INF("uri=%s", uri.data());
     if (!uri.data()) {

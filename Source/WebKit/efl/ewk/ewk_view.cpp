@@ -577,7 +577,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->page_settings->setUsesEncodingDetector(true);
 
     url = priv->page_settings->userStyleSheetLocation();
-    priv->settings.user_stylesheet = eina_stringshare_add(url.prettyURL().utf8().data());
+    priv->settings.user_stylesheet = eina_stringshare_add(url.string().utf8().data());
 
     priv->settings.encoding_default = eina_stringshare_add
         (priv->page_settings->defaultTextEncodingName().utf8().data());
@@ -4037,7 +4037,7 @@ WTF::PassRefPtr<WebCore::Frame> ewk_view_frame_create(Evas_Object* o, Evas_Objec
 {
     DBG("o=%p, frame=%p, name=%s, ownerElement=%p, url=%s, referrer=%s",
         o, frame, name.utf8().data(), ownerElement,
-        url.prettyURL().utf8().data(), referrer.utf8().data());
+        url.string().utf8().data(), referrer.utf8().data());
 
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, 0);
@@ -4069,7 +4069,7 @@ WTF::PassRefPtr<WebCore::Widget> ewk_view_plugin_create(Evas_Object* o, Evas_Obj
 {
     DBG("o=%p, frame=%p, size=%dx%d, element=%p, url=%s, mimeType=%s",
         o, frame, pluginSize.width(), pluginSize.height(), element,
-        url.prettyURL().utf8().data(), mimeType.utf8().data());
+        url.string().utf8().data(), mimeType.utf8().data());
 
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, 0);
     sd->changed.frame_rect = EINA_TRUE;

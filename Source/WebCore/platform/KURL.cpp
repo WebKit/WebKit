@@ -876,7 +876,7 @@ void KURL::setPath(const String& s)
     parse(m_string.left(m_portEnd) + encodeWithURLEscapeSequences(path) + m_string.substring(m_pathEnd));
 }
 
-String KURL::prettyURL() const
+String KURL::deprecatedString() const
 {
     if (!m_isValid)
         return m_string;

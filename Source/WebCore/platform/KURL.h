@@ -150,7 +150,9 @@ public:
 
     String baseAsString() const;
 
-    String prettyURL() const;
+    // This function is only used by location.href. It's likely we shouldn't
+    // use it for that purpose, but more study is necessary before we remove it.
+    String deprecatedString() const;
     String fileSystemPath() const;
 
     // Returns true if the current URL's protocol is the same as the null-
