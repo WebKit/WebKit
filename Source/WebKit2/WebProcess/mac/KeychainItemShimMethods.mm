@@ -208,6 +208,7 @@ static void webSecKeychainItemCopyContentOnMainThread(void* voidContext)
 static OSStatus webSecKeychainItemCopyContent(SecKeychainItemRef item, SecItemClass* itemClass, SecKeychainAttributeList* attrList, UInt32* length, void** outData)
 {
     SecKeychainItemContext context;
+    memset(&context, 0, sizeof(SecKeychainItemContext));
     context.item = item;
     context.resultItemClass = itemClass;
     context.attributeList = attrList;
@@ -216,7 +217,9 @@ static OSStatus webSecKeychainItemCopyContent(SecKeychainItemRef item, SecItemCl
 
     callOnMainThreadAndWait(webSecKeychainItemCopyContentOnMainThread, &context);
 
-    return context.resultCode;
+    // FIXME: should return context.resultCode. Returning noErr is a workaround for <rdar://problem/9520886>;
+    // the authentication should fail anyway, since on error no data will be returned.
+    return noErr;
 }
 
 static void webSecKeychainItemCreateFromContentOnMainThread(void* voidContext)
@@ -239,6 +242,7 @@ static void webSecKeychainItemCreateFromContentOnMainThread(void* voidContext)
 static OSStatus webSecKeychainItemCreateFromContent(SecItemClass itemClass, SecKeychainAttributeList* attrList, UInt32 length, const void* data, SecKeychainItemRef *item)
 {
     SecKeychainItemContext context;
+    memset(&context, 0, sizeof(SecKeychainItemContext));
     context.initialItemClass = itemClass;
     context.attributeList = attrList;
     context.length = length;

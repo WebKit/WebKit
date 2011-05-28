@@ -1,3 +1,35 @@
+2011-05-28  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein, Maciej Stachowiak.
+
+        Denying access to your keychain on login crashes WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=61695
+        <rdar://problem/9520570>
+        
+        Fix two sources of crashes if you hit the Deny button when WebKit2 is
+        doing HTTP authentication.
+        
+        First, SecKeychainItemRequestData::attributeList() failed to initialize the
+        length and data members of SecKeychainAttributes in the list if there was no data.
+        This caused invalid memory reads later.
+        
+        Second, returning a non-zero error from the SecKeychainItemCopyContent shim method
+        would cause a later crash in a system framework, which is not set up to handle
+        errors. Instead, we always return noErr, and allow the authentication to fail.
+        
+        Finally, paranoically initialize the SecKeychainItemContext in two places
+        to avoid uninitialized data members, and initialize length and outData
+        to 0 in secKeychainItemCopyContent() in case SecKeychainItemCopyContent()
+        fails to set them on error.
+        
+        * Shared/mac/SecKeychainItemRequestData.cpp:
+        (WebKit::SecKeychainItemRequestData::attributeList):
+        * UIProcess/mac/WebProcessProxyMac.mm:
+        (WebKit::WebProcessProxy::secKeychainItemCopyContent): 
+        * WebProcess/mac/KeychainItemShimMethods.mm:
+        (WebKit::webSecKeychainItemCopyContent):
+        (WebKit::webSecKeychainItemCreateFromContent):
+
 2011-05-28  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
