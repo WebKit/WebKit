@@ -47,6 +47,7 @@
 #include "WebInputElement.h"
 #include "WebKit.h"
 #include "WebNotificationPresenter.h"
+#include "WebPermissions.h"
 #include "WebScriptSource.h"
 #include "WebSecurityPolicy.h"
 #include "WebSettings.h"
@@ -214,6 +215,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("deleteLocalStorageForOrigin", &LayoutTestController::deleteLocalStorageForOrigin);
     bindMethod("observeStorageTrackerNotifications", &LayoutTestController::observeStorageTrackerNotifications);
     bindMethod("syncLocalStorage", &LayoutTestController::syncLocalStorage);
+    bindMethod("setStorageAllowed", &LayoutTestController::setStorageAllowed);
     
     // The fallback method is called when an unknown method is invoked.
     bindFallbackMethod(&LayoutTestController::fallbackMethod);
@@ -1818,6 +1820,13 @@ void LayoutTestController::observeStorageTrackerNotifications(const CppArgumentL
 void LayoutTestController::syncLocalStorage(const CppArgumentList&, CppVariant*)
 {
     // Not Implemented
+}
+
+void LayoutTestController::setStorageAllowed(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_shell->webPermissions()->setStorageAllowed(arguments[0].toBoolean());
+    result->setNull();
 }
 
 void LayoutTestController::setPluginsEnabled(const CppArgumentList& arguments, CppVariant* result)

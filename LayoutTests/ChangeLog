@@ -1,3 +1,13 @@
+2011-05-27  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Check access policy on all storage operations
+        https://bugs.webkit.org/show_bug.cgi?id=61581
+
+        * platform/chromium/permissionclient/storage-permission-expected.txt: Added.
+        * platform/chromium/permissionclient/storage-permission.html: Added.
+
 2011-05-27  Adam Klein  <adamk@chromium.org>
 
         Unreviewed. Hopefully last rebaseline from r87526.

@@ -47,13 +47,14 @@ namespace WebCore {
         virtual ~StorageArea() { }
 
         // The HTML5 DOM Storage API
-        virtual unsigned length() const = 0;
-        virtual String key(unsigned index) const = 0;
-        virtual String getItem(const String& key) const = 0;
+        // FIXME: We should pass Document instead of Frame. Also, that parameter should go first.
+        virtual unsigned length(Frame* sourceFrame) const = 0;
+        virtual String key(unsigned index, Frame* sourceFrame) const = 0;
+        virtual String getItem(const String& key, Frame* sourceFrame) const = 0;
         virtual String setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame) = 0;
         virtual String removeItem(const String& key, Frame* sourceFrame) = 0;
         virtual bool clear(Frame* sourceFrame) = 0;
-        virtual bool contains(const String& key) const = 0;
+        virtual bool contains(const String& key, Frame* sourceFrame) const = 0;
     };
 
 } // namespace WebCore

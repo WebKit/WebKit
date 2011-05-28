@@ -43,16 +43,17 @@ public:
     virtual ~StorageAreaProxy();
 
     // The HTML5 DOM Storage API
-    virtual unsigned length() const;
-    virtual String key(unsigned index) const;
-    virtual String getItem(const String& key) const;
+    virtual unsigned length(Frame* sourceFrame) const;
+    virtual String key(unsigned index, Frame* sourceFrame) const;
+    virtual String getItem(const String& key, Frame* sourceFrame) const;
     virtual String setItem(const String& key, const String& value, ExceptionCode& ec, Frame* sourceFrame);
     virtual String removeItem(const String& key, Frame* sourceFrame);
     virtual bool clear(Frame* sourceFrame);
-    virtual bool contains(const String& key) const;
+    virtual bool contains(const String& key, Frame* sourceFrame) const;
 
 private:
     void storageEvent(const String& key, const String& oldValue, const String& newValue, StorageType, SecurityOrigin*, Frame* sourceFrame);
+    bool canAccessStorage(Frame*) const;
 
     OwnPtr<WebKit::WebStorageArea> m_storageArea;
     StorageType m_storageType;

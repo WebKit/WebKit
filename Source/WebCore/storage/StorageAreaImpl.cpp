@@ -107,7 +107,7 @@ static bool privateBrowsingEnabled(Frame* frame)
 #endif
 }
 
-unsigned StorageAreaImpl::length() const
+unsigned StorageAreaImpl::length(Frame*) const
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
@@ -115,7 +115,7 @@ unsigned StorageAreaImpl::length() const
     return m_storageMap->length();
 }
 
-String StorageAreaImpl::key(unsigned index) const
+String StorageAreaImpl::key(unsigned index, Frame*) const
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
@@ -123,7 +123,7 @@ String StorageAreaImpl::key(unsigned index) const
     return m_storageMap->key(index);
 }
 
-String StorageAreaImpl::getItem(const String& key) const
+String StorageAreaImpl::getItem(const String& key, Frame*) const
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();
@@ -204,7 +204,7 @@ bool StorageAreaImpl::clear(Frame* frame)
     return true;
 }
 
-bool StorageAreaImpl::contains(const String& key) const
+bool StorageAreaImpl::contains(const String& key, Frame*) const
 {
     ASSERT(!m_isShutdown);
     blockUntilImportComplete();

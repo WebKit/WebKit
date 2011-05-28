@@ -53,17 +53,17 @@ WebStorageAreaImpl::~WebStorageAreaImpl()
 
 unsigned WebStorageAreaImpl::length()
 {
-    return m_storageArea->length();
+    return m_storageArea->length(0);
 }
 
 WebString WebStorageAreaImpl::key(unsigned index)
 {
-    return m_storageArea->key(index);
+    return m_storageArea->key(index, 0);
 }
 
 WebString WebStorageAreaImpl::getItem(const WebString& key)
 {
-    return m_storageArea->getItem(key);
+    return m_storageArea->getItem(key, 0);
 }
 
 void WebStorageAreaImpl::setItem(const WebString& key, const WebString& value, const WebURL& url, Result& result, WebString& oldValue)

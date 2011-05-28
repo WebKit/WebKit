@@ -1,0 +1,64 @@
+<html>
+<head>
+<script src="resources/clearLocalStorage.js"></script>
+<script>
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function log(a)
+{
+    document.getElementById("logger").innerHTML += a + "<br>";
+}
+
+function runTest()
+{
+    if (!window.localStorage) {
+        log("window.localStorage DOES NOT exist");
+        return;
+    }
+
+    if (window.layoutTestController && layoutTestController.setStorageAllowed)
+        layoutTestController.setStorageAllowed(true);
+    else
+        log("This test requires layoutTestController.setStorageAllowed, so it be can't run in a browser.");
+    
+    log("Length is " + localStorage.length);
+    log("Value for FOO is " + localStorage.getItem("FOO"));
+
+    localStorage.setItem("FOO", "BAR");
+    
+    log("Length is " + localStorage.length);
+    log("Value for FOO is " + localStorage.getItem("FOO"));
+    log("Key for index 0 is " + localStorage.key(0));
+    
+    log("Disabling localStorage access.");
+    if (window.layoutTestController && layoutTestController.setStorageAllowed)
+        layoutTestController.setStorageAllowed(false);
+
+    log("Length is " + localStorage.length);
+    log("Value for FOO is " + localStorage.getItem("FOO"));
+
+    try {
+        localStorage.setItem("FOO", "BAZ");
+    } catch(e) {
+        log("Caught exception trying to change item: " + e);
+    }
+    
+    log("Length is " + localStorage.length);
+    log("Value for FOO is " + localStorage.getItem("FOO"));
+    log("Key for index 0 is " + localStorage.key(0));
+    
+    localStorage.removeItem("FOO");
+    
+    log("Length is " + localStorage.length);
+    log("Value for FOO is " + localStorage.getItem("FOO"));
+}
+
+</script>
+</head>
+<body onload="runTest();">
+This test verifies that all access to localStorage can be blocked<br>
+<div id="logger"></div>
+</body>
+</html>

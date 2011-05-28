@@ -58,6 +58,7 @@ class WebURL;
 class DRTDevToolsAgent;
 class DRTDevToolsCallArgs;
 class DRTDevToolsClient;
+class WebPermissions;
 
 struct TestParams {
     bool dumpTree;
@@ -95,6 +96,8 @@ public:
 
     WebPreferences* preferences() { return &m_prefs; }
     void applyPreferences() { m_prefs.applyTo(m_webView); }
+
+    WebPermissions* webPermissions() { return m_webPermissions.get(); }
 
     void bindJSObjectsToWindow(WebKit::WebFrame*);
     void runFileTest(const TestParams&);
@@ -191,6 +194,7 @@ private:
     bool m_testShellMode;
     WebViewHost* m_webViewHost;
     WebViewHost* m_devTools;
+    OwnPtr<WebPermissions> m_webPermissions;
     OwnPtr<DRTDevToolsAgent> m_drtDevToolsAgent;
     OwnPtr<DRTDevToolsClient> m_drtDevToolsClient;
     OwnPtr<AccessibilityController> m_accessibilityController;

@@ -59,7 +59,7 @@ unsigned Storage::length() const
     if (!m_frame || !m_frame->page() || m_frame->page()->settings()->privateBrowsingEnabled())
         return 0;
 
-    return m_storageArea->length();
+    return m_storageArea->length(m_frame);
 }
 
 String Storage::key(unsigned index) const
@@ -67,7 +67,7 @@ String Storage::key(unsigned index) const
     if (!m_frame || !m_frame->page() || m_frame->page()->settings()->privateBrowsingEnabled())
         return String();
 
-    return m_storageArea->key(index);
+    return m_storageArea->key(index, m_frame);
 }
 
 String Storage::getItem(const String& key) const
@@ -75,7 +75,7 @@ String Storage::getItem(const String& key) const
     if (!m_frame || !m_frame->page() || m_frame->page()->settings()->privateBrowsingEnabled())
         return String();
 
-    return m_storageArea->getItem(key);
+    return m_storageArea->getItem(key, m_frame);
 }
 
 void Storage::setItem(const String& key, const String& value, ExceptionCode& ec)
@@ -108,7 +108,7 @@ bool Storage::contains(const String& key) const
     if (!m_frame || !m_frame->page() || m_frame->page()->settings()->privateBrowsingEnabled())
         return false;
 
-    return m_storageArea->contains(key);
+    return m_storageArea->contains(key, m_frame);
 }
 
 }

@@ -40,6 +40,7 @@
 #include "WebFrame.h"
 #include "WebHistoryItem.h"
 #include "WebKit.h"
+#include "WebPermissions.h"
 #include "WebRuntimeFeatures.h"
 #include "WebScriptController.h"
 #include "WebSettings.h"
@@ -113,6 +114,7 @@ TestShell::TestShell(bool testShellMode)
     WebRuntimeFeatures::enableIndexedDatabase(true);
     WebRuntimeFeatures::enableFileSystem(true);
     WebRuntimeFeatures::enableJavaScriptI18NAPI(true);
+    m_webPermissions = adoptPtr(new WebPermissions());
     m_accessibilityController = adoptPtr(new AccessibilityController(this));
     m_layoutTestController = adoptPtr(new LayoutTestController(this));
     m_eventSender = adoptPtr(new EventSender(this));
@@ -242,6 +244,7 @@ void TestShell::resizeWindowForTest(WebViewHost* window, const WebURL& url)
 void TestShell::resetTestController()
 {
     resetWebSettings(*webView());
+    m_webPermissions->reset();
     m_accessibilityController->reset();
     m_layoutTestController->reset();
     m_eventSender->reset();
@@ -596,6 +599,7 @@ WebViewHost* TestShell::createNewWindow(const WebKit::WebURL& url, DRTDevToolsAg
 {
     WebViewHost* host = new WebViewHost(this);
     WebView* view = WebView::create(host);
+    view->setPermissionClient(webPermissions());
     view->setDevToolsAgentClient(devToolsAgent);
     host->setWebWidget(view);
     m_prefs.applyTo(view);
