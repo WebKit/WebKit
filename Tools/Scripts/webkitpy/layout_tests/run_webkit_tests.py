@@ -72,7 +72,8 @@ def run(port, options, args, regular_output=sys.stderr,
     warnings = _set_up_derived_options(port, options)
 
     printer = printing.Printer(port, options, regular_output, buildbot_output,
-        int(options.child_processes), options.experimental_fully_parallel)
+        int(options.child_processes), options.experimental_fully_parallel,
+        configure_logging=True)
     for w in warnings:
         _log.warning(w)
 

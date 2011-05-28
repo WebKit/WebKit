@@ -127,7 +127,8 @@ class  Testprinter(unittest.TestCase):
         buildbot_output = array_stream.ArrayStream()
         printer = printing.Printer(self._port, options, regular_output,
                                    buildbot_output, single_threaded,
-                                   is_fully_parallel)
+                                   is_fully_parallel,
+                                   configure_logging=True)
         return printer, regular_output, buildbot_output
 
     def get_result(self, test, result_type=test_expectations.PASS, run_time=0):

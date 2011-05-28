@@ -210,7 +210,7 @@ class Printer(object):
     By default the buildbot-parsed code gets logged to stdout, and regular
     output gets logged to stderr."""
     def __init__(self, port, options, regular_output, buildbot_output,
-                 child_processes, is_fully_parallel):
+                 child_processes, is_fully_parallel, configure_logging):
         """
         Args
           port               interface to port-specific routines
@@ -224,8 +224,9 @@ class Printer(object):
           is_fully_parallel  are the tests running in a single queue, or
                              in shards (usually controlled by
                              --experimental-fully-parallel)
+          configure_loggign  Whether a logging handler should be registered
 
-        Note that the last two args are separate rather than bundled into
+        Note that the fourth and fifth args are separate rather than bundled into
         the options structure so that this object does not assume any flags
         set in options that weren't returned from logging_options(), above.
         The two are used to determine whether or not we can sensibly use
@@ -244,8 +245,9 @@ class Printer(object):
 
         self._meter = metered_stream.MeteredStream(options.verbose,
                                                    regular_output)
-        self._logging_handler = _configure_logging(self._meter,
-            options.verbose)
+        self._logging_handler = None
+        if configure_logging:
+            self._logging_handler = _configure_logging(self._meter, options.verbose)
 
         self.switches = parse_print_options(options.print_options,
             options.verbose, child_processes, is_fully_parallel)

@@ -319,11 +319,18 @@ if multiprocessing:
         def run(self):
             options = self._options
             port_obj = port.get(self._platform_name, options)
+
+            # The unix multiprocessing implementation clones the
+            # log handler configuration into the child processes,
+            # but the win implementation doesn't.
+            configure_logging = (sys.platform == 'win32')
+
             # FIXME: this won't work if the calling process is logging
             # somewhere other than sys.stderr and sys.stdout, but I'm not sure
             # if this will be an issue in practice.
             printer = printing.Printer(port_obj, options, sys.stderr, sys.stdout,
-                int(options.child_processes), options.experimental_fully_parallel)
+                int(options.child_processes), options.experimental_fully_parallel,
+                configure_logging)
             self._client.run(port_obj)
             printer.cleanup()
 

@@ -1,3 +1,21 @@
+2011-05-27  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        NRWT: debug messages from the workers are being logged twice
+        https://bugs.webkit.org/show_bug.cgi?id=60428
+
+        It looks like when the workers are run in separate processes
+        we end up getting two copies of every log message they print.
+        This has to do with the multiprocessing module on UNIX cloning
+        the log configuration in a way I wasn't expecting, and so two
+        log handlers end up getting registered.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager_worker_broker.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/layout_package/printing_unittest.py:
+        * Scripts/webkitpy/layout_tests/run_webkit_tests.py:
+
 2011-05-27  Adam Roben  <aroben@apple.com>
 
         Always decode tester names from location.hash
