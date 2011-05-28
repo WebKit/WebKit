@@ -78,6 +78,9 @@ extern "C" __declspec(dllimport) void CacheRangeFlush(LPVOID pAddr, DWORD dwLeng
 
 namespace JSC {
 
+class JSGlobalData;
+void releaseExecutableMemory(JSGlobalData&);
+
 inline size_t roundUpAllocationSize(size_t request, size_t granularity)
 {
     if ((std::numeric_limits<size_t>::max() - granularity) <= request)
@@ -95,9 +98,6 @@ inline size_t roundUpAllocationSize(size_t request, size_t granularity)
 #if ENABLE(JIT) && ENABLE(ASSEMBLER)
 
 namespace JSC {
-
-class JSGlobalData;
-void releaseExecutableMemory(JSGlobalData&);
 
 class ExecutablePool : public RefCounted<ExecutablePool> {
 public:

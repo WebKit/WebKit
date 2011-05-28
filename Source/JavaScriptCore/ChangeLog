@@ -1,5 +1,18 @@
 2011-05-28  David Kilzer  <ddkilzer@apple.com>
 
+        BUILD FIX when building only the interpreter
+
+        Fixes the following compiler warning:
+
+            JavaScriptCore/runtime/JSGlobalData.cpp:462:6: error: no previous prototype for function 'releaseExecutableMemory' [-Werror,-Wmissing-prototypes,3]
+             void releaseExecutableMemory(JSGlobalData& globalData)
+                  ^
+
+        * jit/ExecutableAllocator.h: Moved declaration of
+        JSC::releaseExecutableMemory().
+
+2011-05-28  David Kilzer  <ddkilzer@apple.com>
+
         BUILD FIX after r87527 with ENABLE(BRANCH_COMPACTION)
 
         * assembler/LinkBuffer.h:
