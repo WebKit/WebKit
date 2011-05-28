@@ -323,7 +323,10 @@ bool PluginControllerProxy::tryToShortCircuitInvoke(NPObject* npObject, NPIdenti
     if (!strcmp(methodNameRep->string(), "__flash_getTopLocation")) {
         if (m_pluginCreationParameters->parameters.toplevelDocumentURL.isNull()) {
             // If the toplevel document is URL it means that the frame that the plug-in is in doesn't have access to the toplevel document.
-            returnValue = false;
+            // In this case, just pass the string "[object]" to Flash.
+            result.type = NPVariantType_String;
+            result.value.stringValue = createNPString("[object]");
+            returnValue = true;
             return true;
         }
 
