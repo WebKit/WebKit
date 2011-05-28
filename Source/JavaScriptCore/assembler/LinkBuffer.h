@@ -232,7 +232,7 @@ private:
         ASSERT(m_code);
 #else
         size_t initialSize = m_assembler->m_assembler.codeSize();
-        m_code = (uint8_t*)m_executablePool->alloc(initialSize);
+        m_code = (uint8_t*)m_executablePool->alloc(*m_globalData, initialSize);
         if (!m_code)
             return;
         ExecutableAllocator::makeWritable(m_code, initialSize);
