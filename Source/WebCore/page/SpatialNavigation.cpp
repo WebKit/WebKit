@@ -234,7 +234,6 @@ static bool areRectsPartiallyAligned(FocusDirection direction, const IntRect& a,
     //
     // ... and variants of the above cases.
     return ((bStart >= aStart && bStart <= aEnd)
-            || (bStart >= aStart && bStart <= aEnd)
             || (bEnd >= aStart && bEnd <= aEnd)
             || (bMiddle >= aStart && bMiddle <= aEnd)
             || (bEnd >= aStart && bEnd <= aEnd));

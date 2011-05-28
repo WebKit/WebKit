@@ -1,3 +1,17 @@
+2011-05-26  Antonio Gomes  <agomes@rim.com>
+
+        Reviewed by Andreas Kling.
+
+        Logic error in WebCore/Page/SpatialNavigation.cpp::areRectsPartiallyAligned
+        https://bugs.webkit.org/show_bug.cgi?id=61606
+
+        Removed duplicated statement within if condition.
+
+        No new tests. Obvious clean up patch.
+
+        * page/SpatialNavigation.cpp:
+        (WebCore::areRectsPartiallyAligned):
+
 2011-05-27  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
