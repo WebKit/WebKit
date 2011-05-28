@@ -1,3 +1,20 @@
+2011-05-28  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed. Test expectations update after r87605
+
+        * platform/chromium-linux-x86/svg/wicd/test-scalable-background-image1-expected.png: Added.
+        * platform/chromium-linux-x86/svg/wicd/test-scalable-background-image1-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/wicd/test-scalable-background-image2-expected.png: Added.
+        * platform/chromium-linux-x86/svg/wicd/test-scalable-background-image2-expected.txt: Added.
+        * platform/chromium-linux/svg/wicd/test-scalable-background-image1-expected.png: Added.
+        * platform/chromium-linux/svg/wicd/test-scalable-background-image1-expected.txt: Added.
+        * platform/chromium-linux/svg/wicd/test-scalable-background-image2-expected.png: Added.
+        * platform/chromium-linux/svg/wicd/test-scalable-background-image2-expected.txt: Added.
+        * platform/chromium-win-vista/svg/wicd/test-scalable-background-image1-expected.png: Added.
+        * platform/chromium-win-vista/svg/wicd/test-scalable-background-image1-expected.txt: Added.
+        * platform/chromium-win-vista/svg/wicd/test-scalable-background-image2-expected.png: Added.
+        * platform/chromium-win-vista/svg/wicd/test-scalable-background-image2-expected.txt: Added.
+
 2011-05-28  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Ryosuke Niwa.
