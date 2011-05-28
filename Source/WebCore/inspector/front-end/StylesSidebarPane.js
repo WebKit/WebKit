@@ -396,7 +396,7 @@ WebInspector.StylesSidebarPane.prototype = {
             var allProperties = style.allProperties;
             for (var j = 0; j < allProperties.length; ++j) {
                 var property = allProperties[j];
-                if (!property.isLive)
+                if (!property.isLive || !property.parsedOk)
                     continue;
                 var name = property.name;
 
@@ -1129,6 +1129,8 @@ WebInspector.ComputedStylePropertiesSection.prototype = {
                     treeElement.appendChild(childElement);
                     if (section.isPropertyOverloaded(property.name))
                         childElement.listItemElement.addStyleClass("overloaded");
+                    if (!property.parsedOk)
+                        childElement.listItemElement.addStyleClass("not-parsed-ok");
                 }
             }
         }

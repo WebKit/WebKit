@@ -1,3 +1,15 @@
+2011-05-28  Tonis Tiigi  <tonistiigi@gmail.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: there is a problem with computed style properties with wrong values
+        https://bugs.webkit.org/show_bug.cgi?id=60535
+
+        Adding cases that test invalid properties.
+
+        * inspector/styles/styles-computed-trace-expected.txt:
+        * inspector/styles/styles-computed-trace.html:
+
 2011-05-28  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Antonio Gomes.

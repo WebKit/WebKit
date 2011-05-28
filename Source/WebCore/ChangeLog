@@ -1,3 +1,14 @@
+2011-05-28  Tonis Tiigi  <tonistiigi@gmail.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: there is a problem with computed style properties with wrong values
+        https://bugs.webkit.org/show_bug.cgi?id=60535
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype._markUsedProperties):
+        (WebInspector.ComputedStylePropertiesSection.prototype.rebuildComputedTrace):
+
 2011-05-26  Antonio Gomes  <agomes@rim.com>
 
         Reviewed by Andreas Kling.

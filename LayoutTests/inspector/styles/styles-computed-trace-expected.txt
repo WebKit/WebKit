@@ -3,23 +3,25 @@ Tests that computed styles expand and allow tracing to style rules.
 ==== Computed style for ID1 ====
 [expanded]  ()
 background-attachment: scroll;
-    #id1 - initial styles-computed-trace.html:19
+    #id1 - initial styles-computed-trace.html:23
 background-clip: border-box;
-    #id1 - initial styles-computed-trace.html:19
+    #id1 - initial styles-computed-trace.html:23
 background-color: gray;
-    #id1 - gray styles-computed-trace.html:19
-    /-- overloaded --/ #id1 - black styles-computed-trace.html:14
-    /-- overloaded --/ #id1 - green styles-computed-trace.html:9
+    #id1 - gray styles-computed-trace.html:23
+    /-- overloaded --/ #id1 - black styles-computed-trace.html:18
+    /-- overloaded --/ #id1 - green styles-computed-trace.html:13
 background-image: none;
-    #id1 - initial styles-computed-trace.html:19
+    #id1 - initial styles-computed-trace.html:23
 background-origin: padding-box;
-    #id1 - initial styles-computed-trace.html:19
+    #id1 - initial styles-computed-trace.html:23
 display: block;
     div - block user agent stylesheet
 font-family: Courier;
-    #id1 - Courier styles-computed-trace.html:14
-    /-- overloaded --/ #id1 - Times styles-computed-trace.html:9
+    #id1 - Courier styles-computed-trace.html:18
+    /-- overloaded --/ #id1 - Times styles-computed-trace.html:13
     /-- overloaded --/ body - Arial styles-computed-trace.html:4
+text-decoration: underline;
+    div - underline styles-computed-trace.html:9
 
 [expanded] element.style { ()
 
@@ -27,14 +29,17 @@ font-family: Courier;
 ==== Computed style for ID2 ====
 [expanded]  ()
 background-color: blue;
-    #id2 - blue styles-computed-trace.html:23
+    #id2 - blue styles-computed-trace.html:27
 display: block;
     div - block user agent stylesheet
 font-family: Courier;
-    #id2 - Courier styles-computed-trace.html:23
-    /-- overloaded --/ #id1 - Courier styles-computed-trace.html:14
-    /-- overloaded --/ #id1 - Times styles-computed-trace.html:9
+    #id2 - Courier styles-computed-trace.html:27
+    /-- overloaded --/ #id1 - Courier styles-computed-trace.html:18
+    /-- overloaded --/ #id1 - Times styles-computed-trace.html:13
     /-- overloaded --/ body - Arial styles-computed-trace.html:4
+text-decoration: underline;
+    /-- overloaded --/ #id2 - invalidvalue styles-computed-trace.html:27
+    div - underline styles-computed-trace.html:9
 
 [expanded] element.style { ()
 
