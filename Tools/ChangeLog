@@ -1,3 +1,20 @@
+2011-05-27  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        When checking whether the tree is red, the EWS posts a link to the wrong log
+        https://bugs.webkit.org/show_bug.cgi?id=61072
+
+        We need to cache the original script error because that contains the
+        failure log we want to upload.  If we don't cache that script error,
+        self._script_error will get overwritten when we sanity check the clean
+        tree (and it also has test failures).
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+            - This testing approach is slightly goofy.  We'd like to use
+              assertRaisesRegexp, but that's not available until Python 2.7.
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+
 2011-05-27  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Adam Barth.

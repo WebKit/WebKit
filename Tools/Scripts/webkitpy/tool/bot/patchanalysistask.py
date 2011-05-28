@@ -184,6 +184,7 @@ class PatchAnalysisTask(object):
         # We could remove this dependency by building the layout_test_results from the archive.
         first_results = self._delegate.layout_test_results()
         first_results_archive = self._delegate.archive_last_layout_test_results(self._patch)
+        first_script_error = self._script_error
 
         if self._expected_failures.failures_were_expected(first_results):
             return True
@@ -209,7 +210,7 @@ class PatchAnalysisTask(object):
 
         if self._build_and_test_without_patch():
             # The error from the previous ._test() run is real, report it.
-            return self.report_failure(first_results_archive, first_results)
+            return self.report_failure(first_results_archive, first_results, first_script_error)
 
         clean_tree_results = self._delegate.layout_test_results()
         self._expected_failures.grow_expected_failures(clean_tree_results)
@@ -221,7 +222,7 @@ class PatchAnalysisTask(object):
         # Now that we have updated information about failing tests with a clean checkout, we can
         # tell if our original failures were unexpected and fail the patch if necessary.
         if self._expected_failures.unexpected_failures_observed(first_results):
-            return self.report_failure(first_results_archive, first_results)
+            return self.report_failure(first_results_archive, first_results, first_script_error)
 
         # We don't know what's going on.  The tree is likely very red (beyond our layout-test-results
         # failure limit), just keep retrying the patch. until someone fixes the tree.
@@ -235,12 +236,12 @@ class PatchAnalysisTask(object):
         assert(self._patch.id() == patch.id())  # PatchAnalysisTask is not currently re-useable.
         return self._results_from_patch_test_run
 
-    def report_failure(self, results_archive=None, results=None):
+    def report_failure(self, results_archive=None, results=None, script_error=None):
         if not self.validate():
             return False
         self._results_archive_from_patch_test_run = results_archive
         self._results_from_patch_test_run = results
-        raise self._script_error
+        raise script_error or self._script_error
 
     def validate(self):
         raise NotImplementedError("subclasses must implement")

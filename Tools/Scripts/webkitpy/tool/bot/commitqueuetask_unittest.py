@@ -106,6 +106,12 @@ class FailingTestCommitQueue(MockCommitQueue):
         return results
 
 
+# We use GoldenScriptError to make sure that the code under test throws the
+# correct (i.e., golden) exception.
+class GoldenScriptError(ScriptError):
+    pass
+
+
 class CommitQueueTaskTest(unittest.TestCase):
     def _run_through_task(self, commit_queue, expected_stderr, expected_exception=None, expect_retry=False):
         tool = MockTool(log_executive=True)
@@ -158,7 +164,7 @@ command_failed: failure_message='Unable to update working directory' script_erro
         commit_queue = MockCommitQueue([
             None,
             None,
-            ScriptError("MOCK apply failure"),
+            GoldenScriptError("MOCK apply failure"),
         ])
         expected_stderr = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='197'
@@ -167,14 +173,14 @@ command_passed: success_message='Updated working directory' patch='197'
 run_webkit_patch: ['apply-attachment', '--no-update', '--non-interactive', 197]
 command_failed: failure_message='Patch does not apply' script_error='MOCK apply failure' patch='197'
 """
-        self._run_through_task(commit_queue, expected_stderr, ScriptError)
+        self._run_through_task(commit_queue, expected_stderr, GoldenScriptError)
 
     def test_build_failure(self):
         commit_queue = MockCommitQueue([
             None,
             None,
             None,
-            ScriptError("MOCK build failure"),
+            GoldenScriptError("MOCK build failure"),
         ])
         expected_stderr = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='197'
@@ -187,7 +193,7 @@ command_failed: failure_message='Patch does not build' script_error='MOCK build 
 run_webkit_patch: ['build', '--force-clean', '--no-update', '--build-style=both']
 command_passed: success_message='Able to build without patch' patch='197'
 """
-        self._run_through_task(commit_queue, expected_stderr, ScriptError)
+        self._run_through_task(commit_queue, expected_stderr, GoldenScriptError)
 
     def test_red_build_failure(self):
         commit_queue = MockCommitQueue([
@@ -311,7 +317,7 @@ command_failed: failure_message='Patch does not pass tests' script_error='MOCK t
             None,
             None,
             None,
-            ScriptError("MOCK test failure"),
+            GoldenScriptError("MOCK test failure"),
             ScriptError("MOCK test failure again"),
         ])
         expected_stderr = """run_webkit_patch: ['clean']
@@ -331,7 +337,7 @@ archive_last_layout_test_results: patch='197'
 run_webkit_patch: ['build-and-test', '--force-clean', '--no-update', '--build', '--test', '--non-interactive']
 command_passed: success_message='Able to pass tests without patch' patch='197'
 """
-        self._run_through_task(commit_queue, expected_stderr, ScriptError)
+        self._run_through_task(commit_queue, expected_stderr, GoldenScriptError)
 
     def test_red_test_failure(self):
         commit_queue = FailingTestCommitQueue([
@@ -415,7 +421,7 @@ command_failed: failure_message='Unable to pass tests without patch (tree is red
             None,
             None,
             None,
-            ScriptError("MOCK test failure"),
+            GoldenScriptError("MOCK test failure"),
             ScriptError("MOCK test failure again"),
             ScriptError("MOCK clean test failure"),
         ], [
@@ -443,7 +449,7 @@ archive_last_layout_test_results: patch='197'
 run_webkit_patch: ['build-and-test', '--force-clean', '--no-update', '--build', '--test', '--non-interactive']
 command_failed: failure_message='Unable to pass tests without patch (tree is red?)' script_error='MOCK clean test failure' patch='197'
 """
-        task = self._run_through_task(commit_queue, expected_stderr, ScriptError)
+        task = self._run_through_task(commit_queue, expected_stderr, GoldenScriptError)
         self.assertEqual(task.results_from_patch_test_run(task._patch).failing_tests(), ["foo.html", "bar.html"])
 
     def test_land_failure(self):
@@ -453,7 +459,7 @@ command_failed: failure_message='Unable to pass tests without patch (tree is red
             None,
             None,
             None,
-            ScriptError("MOCK land failure"),
+            GoldenScriptError("MOCK land failure"),
         ])
         expected_stderr = """run_webkit_patch: ['clean']
 command_passed: success_message='Cleaned working directory' patch='197'
@@ -469,7 +475,7 @@ run_webkit_patch: ['land-attachment', '--force-clean', '--ignore-builders', '--n
 command_failed: failure_message='Unable to land patch' script_error='MOCK land failure' patch='197'
 """
         # FIXME: This should really be expect_retry=True for a better user experiance.
-        self._run_through_task(commit_queue, expected_stderr, ScriptError)
+        self._run_through_task(commit_queue, expected_stderr, GoldenScriptError)
 
     def _expect_validate(self, patch, is_valid):
         class MockDelegate(object):
