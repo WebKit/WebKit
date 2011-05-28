@@ -4034,6 +4034,6 @@ BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = 
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT
-BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-text.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
+BUGWK61664 LEOPARD DEBUG : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT
