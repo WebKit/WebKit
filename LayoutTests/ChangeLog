@@ -1,3 +1,23 @@
+2011-05-27  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Not reviewed, this just adds a new test.
+
+        WebKit fails WICD SVG background image tests
+        https://bugs.webkit.org/show_bug.cgi?id=16481
+
+        Add two WICD SVG background image tests, which pass just fine.
+
+        * svg/wicd/resources/test-scalable-background-image1.css: Added.
+        (html):
+        (body):
+        (p):
+        * svg/wicd/resources/test-scalable-background-image1.svg: Added.
+        * svg/wicd/resources/test-scalable-background-image2.css: Added.
+        (html):
+        * svg/wicd/resources/test-scalable-background-image2.svg: Added.
+        * svg/wicd/test-scalable-background-image1.xhtml: Added.
+        * svg/wicd/test-scalable-background-image2.xhtml: Added.
+
 2011-05-27  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Ryosuke Niwa.
