@@ -1,3 +1,12 @@
+2011-05-27  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        NRWT: minor cleanup in printing module
+        https://bugs.webkit.org/show_bug.cgi?id=60329
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+
 2011-05-27  Steve Lacey  <sjl@chromium.org>
 
         Reviewed by David Levin.

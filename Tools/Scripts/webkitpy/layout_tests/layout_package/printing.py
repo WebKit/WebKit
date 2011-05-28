@@ -36,6 +36,7 @@ from webkitpy.common.net import resultsjsonparser
 from webkitpy.layout_tests.layout_package import metered_stream
 from webkitpy.layout_tests.layout_package import test_expectations
 
+# FIXME: Change this to __file__ when we can fix test-webkitpy's logging configuration.
 _log = logging.getLogger("webkitpy.layout_tests.printer")
 
 TestExpectations = test_expectations.TestExpectations
@@ -337,16 +338,9 @@ class Printer(object):
 
     def print_progress(self, result_summary, retrying, test_list):
         """Print progress through the tests as determined by --print."""
-        if self.enabled('one-line-progress'):
-            self._print_one_line_progress(result_summary, retrying)
-        else:
+        if self.disabled('one-line-progress'):
             return
 
-        if result_summary.remaining == 0:
-            self._meter.update('')
-
-    def _print_one_line_progress(self, result_summary, retrying):
-        """Displays the progress through the test run."""
         percent_complete = 100 * (result_summary.expected +
             result_summary.unexpected) / result_summary.total
         action = "Testing"
@@ -355,6 +349,9 @@ class Printer(object):
         self._meter.progress("%s (%d%%): %d ran as expected, %d didn't,"
             " %d left" % (action, percent_complete, result_summary.expected,
              result_summary.unexpected, result_summary.remaining))
+
+        if result_summary.remaining == 0:
+            self._meter.update('')
 
     def print_unexpected_results(self, unexpected_results):
         """Prints a list of the unexpected results to the buildbot stream."""
@@ -365,27 +362,30 @@ class Printer(object):
         flaky = {}
         regressions = {}
 
-        def add_result(test, results):
+        def add_to_dict_of_lists(dict, key, value):
+            dict.setdefault(key, []).append(value)
+
+        def add_result(test, results, passes=passes, flaky=flaky, regressions=regressions):
             actual = results['actual'].split(" ")
             expected = results['expected'].split(" ")
             if actual == ['PASS']:
                 if 'CRASH' in expected:
-                    _add_to_dict_of_lists(passes,
-                                          'Expected to crash, but passed',
-                                          test)
+                    add_to_dict_of_lists(passes,
+                                         'Expected to crash, but passed',
+                                         test)
                 elif 'TIMEOUT' in expected:
-                    _add_to_dict_of_lists(passes,
-                                          'Expected to timeout, but passed',
-                                           test)
-                else:
-                    _add_to_dict_of_lists(passes,
-                                          'Expected to fail, but passed',
+                    add_to_dict_of_lists(passes,
+                                         'Expected to timeout, but passed',
                                           test)
+                else:
+                    add_to_dict_of_lists(passes,
+                                         'Expected to fail, but passed',
+                                         test)
             elif len(actual) > 1:
                 # We group flaky tests by the first actual result we got.
-                _add_to_dict_of_lists(flaky, actual[0], test)
+                add_to_dict_of_lists(flaky, actual[0], test)
             else:
-                _add_to_dict_of_lists(regressions, results['actual'], test)
+                add_to_dict_of_lists(regressions, results['actual'], test)
 
         resultsjsonparser.for_each_test(unexpected_results['tests'], add_result)
 
@@ -454,11 +454,3 @@ class Printer(object):
             _log.info(msg)
         else:
             self._meter.write("%s\n" % msg)
-
-#
-# Utility routines used by the Controller class
-#
-
-
-def _add_to_dict_of_lists(dict, key, value):
-    dict.setdefault(key, []).append(value)
