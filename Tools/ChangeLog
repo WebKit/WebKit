@@ -1,3 +1,22 @@
+2011-05-28  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        EWS builds patches that fail to build twice, which seems useless and slows down the bots
+        https://bugs.webkit.org/show_bug.cgi?id=55585
+
+        This patch switches all the early warning system bots over to the new
+        PatchAnalysisTask-based infrastructure.  This patch makes these bots
+        more efficient (in the case where patches fail to build) and paves the
+        way for running tests on these bots!
+
+        * Scripts/webkitpy/tool/bot/commitqueuetask_unittest.py:
+        * Scripts/webkitpy/tool/bot/earlywarningsystemtask.py:
+        * Scripts/webkitpy/tool/bot/patchanalysistask.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+        * Scripts/webkitpy/tool/commands/earlywarningsystem_unittest.py:
+        * Scripts/webkitpy/tool/commands/queues.py:
+
 2011-05-28  Kenichi Ishibashi  <bashi@chromium.org>
 
         Reviewed by Kent Tamura.

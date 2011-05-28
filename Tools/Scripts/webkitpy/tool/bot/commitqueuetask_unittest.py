@@ -81,6 +81,9 @@ class MockCommitQueue(CommitQueueTaskDelegate):
         archive.filename = "mock-archive-%s.zip" % patch.id()
         return archive
 
+    def build_style(self):
+        return "both"
+
 
 class FailingTestCommitQueue(MockCommitQueue):
     def __init__(self, error_plan, test_failure_plan):

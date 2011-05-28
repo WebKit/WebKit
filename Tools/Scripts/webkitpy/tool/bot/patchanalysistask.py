@@ -55,6 +55,9 @@ class PatchAnalysisTaskDelegate(object):
     def archive_last_layout_test_results(self, patch):
         raise NotImplementedError("subclasses must implement")
 
+    def build_style(self):
+        raise NotImplementedError("subclasses must implement")
+
     # We could make results_archive optional, but for now it's required.
     def report_flaky_tests(self, patch, flaky_tests, results_archive):
         raise NotImplementedError("subclasses must implement")
@@ -110,7 +113,7 @@ class PatchAnalysisTask(object):
             "build",
             "--no-clean",
             "--no-update",
-            "--build-style=both",
+            "--build-style=%s" % self._delegate.build_style(),
         ],
         "Built patch",
         "Patch does not build")
@@ -120,7 +123,7 @@ class PatchAnalysisTask(object):
             "build",
             "--force-clean",
             "--no-update",
-            "--build-style=both",
+            "--build-style=%s" % self._delegate.build_style(),
         ],
         "Able to build without patch",
         "Unable to build without patch")

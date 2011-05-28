@@ -37,54 +37,9 @@ from webkitpy.tool.mocktool import MockTool, MockOptions, MockPort
 
 
 class AbstractEarlyWarningSystemTest(QueuesTest):
-    # Needed to define port_name, used in AbstractEarlyWarningSystem.__init__
-    class TestEWS(AbstractEarlyWarningSystem):
-        name = "mock-ews"
-        port_name = "win"  # Needs to be a port which port/factory understands.
-
-    def test_can_build(self):
-        queue = self.TestEWS()
-        queue.bind_to_tool(MockTool(log_executive=True))
-        queue._options = MockOptions(port=None)
-        expected_stderr = "MOCK run_and_throw_if_fail: ['echo', '--status-host=example.com', 'build', '--port=win', '--build-style=release', '--force-clean', '--no-update']\n"
-        OutputCapture().assert_outputs(self, queue._can_build, [], expected_stderr=expected_stderr)
-
-        def mock_run_webkit_patch(args):
-            raise ScriptError("MOCK script error")
-
-        queue.run_webkit_patch = mock_run_webkit_patch
-        expected_stderr = "MOCK: update_status: mock-ews Unable to perform a build\n"
-        OutputCapture().assert_outputs(self, queue._can_build, [], expected_stderr=expected_stderr)
-
-    # FIXME: This belongs on an AbstractReviewQueueTest object in queues_unittest.py
-    def test_subprocess_handled_error(self):
-        queue = AbstractReviewQueue()
-        queue.bind_to_tool(MockTool())
-
-        def mock_review_patch(patch):
-            raise ScriptError('MOCK script error', exit_code=QueueEngine.handled_error_code)
-
-        queue.review_patch = mock_review_patch
-        mock_patch = queue._tool.bugs.fetch_attachment(197)
-        expected_stderr = "MOCK: release_work_item: None 197\n"
-        OutputCapture().assert_outputs(self, queue.process_work_item, [mock_patch], expected_stderr=expected_stderr, expected_exception=ScriptError)
-
-    def test_post_reject_message_on_bug(self):
-        tool = MockTool()
-        patch = tool.bugs.fetch_attachment(197)
-        expected_stderr = """MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Attachment 197 did not pass mock-ews (win):
-Output: http://dummy_url' and additional comment 'EXTRA'
-"""
-        OutputCapture().assert_outputs(self,
-            self.TestEWS._post_reject_message_on_bug,
-            kwargs={'tool': tool, 'patch': patch, 'status_id': 1, 'extra_message_text': "EXTRA"},
-            expected_stderr=expected_stderr)
-
-
-class AbstractTestingEWSTest(QueuesTest):
     def test_failing_tests_message(self):
         # Needed to define port_name, used in AbstractEarlyWarningSystem.__init__
-        class TestEWS(AbstractTestingEWS):
+        class TestEWS(AbstractEarlyWarningSystem):
             port_name = "win"  # Needs to be a port which port/factory understands.
 
         ews = TestEWS()
@@ -98,46 +53,30 @@ class AbstractTestingEWSTest(QueuesTest):
 
 
 class EarlyWarningSytemTest(QueuesTest):
-    def test_failed_builds(self):
-        ews = ChromiumWindowsEWS()
-        ews.bind_to_tool(MockTool())
-        ews._build = lambda patch, first_run=False: False
-        ews._can_build = lambda: True
-        mock_patch = ews._tool.bugs.fetch_attachment(197)
-        ews.review_patch(mock_patch)
-
     def _default_expected_stderr(self, ews):
         string_replacemnts = {
             "name": ews.name,
             "port": ews.port_name,
-            "watchers": ews.watchers,
         }
         expected_stderr = {
             "begin_work_queue": self._default_begin_work_queue_stderr(ews.name, ews._tool.scm().checkout_root),
             "handle_unexpected_error": "Mock error message\n",
             "next_work_item": "",
             "process_work_item": "MOCK: update_status: %(name)s Pass\nMOCK: release_work_item: %(name)s 197\n" % string_replacemnts,
-            "handle_script_error": """MOCK: update_status: %(name)s ScriptError error message
-MOCK setting flag 'commit-queue' to '-' on attachment '197' with comment 'Attachment 197 did not pass %(name)s (%(port)s):
-Output: http://dummy_url' and additional comment 'None'
-""" % string_replacemnts,
+            "handle_script_error": "ScriptError error message\n",
         }
         return expected_stderr
 
     def _test_builder_ews(self, ews):
         ews.bind_to_tool(MockTool())
-        expected_exceptions = {
-            "handle_script_error": SystemExit,
-        }
-        self.assert_queue_outputs(ews, expected_stderr=self._default_expected_stderr(ews), expected_exceptions=expected_exceptions)
+        self.assert_queue_outputs(ews, expected_stderr=self._default_expected_stderr(ews))
 
     def _test_committer_only_ews(self, ews):
         ews.bind_to_tool(MockTool())
         expected_stderr = self._default_expected_stderr(ews)
         string_replacemnts = {"name": ews.name}
         expected_stderr["process_work_item"] = "MOCK: update_status: %(name)s Error: %(name)s cannot process patches from non-committers :(\nMOCK: release_work_item: %(name)s 197\n" % string_replacemnts
-        expected_exceptions = {"handle_script_error": SystemExit}
-        self.assert_queue_outputs(ews, expected_stderr=expected_stderr, expected_exceptions=expected_exceptions)
+        self.assert_queue_outputs(ews, expected_stderr=expected_stderr)
 
     def _test_testing_ews(self, ews):
         ews.layout_test_results = lambda: None
