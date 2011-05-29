@@ -1,3 +1,56 @@
+2011-05-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        REGRESSION (r85375): Load event is sometimes lost when multiple image elements use the same URL
+        https://bugs.webkit.org/show_bug.cgi?id=61692
+        <rdar://problem/9488628>
+
+        Test: fast/dom/gc-image-element-2.html
+
+        Manually verified that tests from bug 59604 and from bug 40926 still pass.
+
+        The problem here was that HTMLImageElement::hasPendingActivity() could return false when
+        a load (or error) event was still expected to fire.
+
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::setRequest):
+        * loader/cache/CachedResource.h:
+        (WebCore::CachedResource::wasCanceled):
+        (WebCore::CachedResource::errorOccurred):
+        Track whether the load was canceled. We want to always notify clients of load outcome,
+        as that's the only way they could make intelligent decisions.
+
+        * dom/ScriptElement.cpp: (WebCore::ScriptElement::execute): Cached resource clients now
+        get a notifyFinished call on cancellation. Handle this case, where we don't need the
+        execute the script, but also don't need to fire an error event.
+
+        * html/HTMLImageElement.cpp: Moved hasPendingActivity() to header, since it's just a single
+        function call now.
+
+        * html/HTMLImageElement.h: (WebCore::HTMLImageElement::hasPendingActivity): There is a large
+        window between when CachedResource::isLoading() becomes false and events are queued.
+        ImageLoader::haveFiredLoadEvent() is a much better indication of whether we are expecting
+        an event to fire.
+
+        * html/HTMLLinkElement.cpp: (WebCore::HTMLLinkElement::onloadTimerFired): Again, don't do
+        anything on cancellation.
+
+        * loader/ImageLoader.cpp:
+        (WebCore::ImageEventSender::hasPendingEvents): Made it debug-only again, and fixed to
+        give an accurate result while looping over the list of events to dispatch.
+        (WebCore::ImageLoader::notifyFinished): Don't do anything when cancelled. We don't want to
+        switch to a broken image icon, or to dispatch events.
+        (WebCore::ImageEventSender::dispatchPendingEvents): Clear the current loader from dispatching
+        list, as the event is no longer pending when it's being dispatched.
+
+        * loader/ImageLoader.h: Removed unnecessary hasPendingLoadEvent(). We don't care whether one
+        is already pending, we only care if one is expected at some time in the future, and
+        !haveFiredLoadEvent() is our best idea of that.
+
+        * dom/XMLDocumentParser.cpp: (WebCore::XMLDocumentParser::notifyFinished): Another place to
+        handle cancellation.
+
 2011-05-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

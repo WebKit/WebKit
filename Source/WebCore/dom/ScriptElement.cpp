@@ -296,7 +296,7 @@ void ScriptElement::execute(CachedScript* cachedScript)
     ASSERT(cachedScript);
     if (cachedScript->errorOccurred())
         dispatchErrorEvent();
-    else {
+    else if (!cachedScript->wasCanceled()) {
         executeScript(ScriptSourceCode(cachedScript));
         dispatchLoadEvent();
     }

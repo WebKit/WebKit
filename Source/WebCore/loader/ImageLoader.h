@@ -58,7 +58,6 @@ public:
 
     bool haveFiredBeforeLoadEvent() const { return m_firedBeforeLoad; }
     bool haveFiredLoadEvent() const { return m_firedLoad; }
-    bool hasPendingLoadEvent();
 
     static void dispatchPendingBeforeLoadEvents();
     static void dispatchPendingLoadEvents();

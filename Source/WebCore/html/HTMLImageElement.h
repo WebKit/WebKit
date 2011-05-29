@@ -73,7 +73,7 @@ public:
     bool complete() const;
 
     bool haveFiredLoadEvent() const { return m_imageLoader.haveFiredLoadEvent(); }
-    bool hasPendingActivity();
+    bool hasPendingActivity() const { return !m_imageLoader.haveFiredLoadEvent(); }
 
     virtual bool canContainRangeEndPoint() const { return false; }
 

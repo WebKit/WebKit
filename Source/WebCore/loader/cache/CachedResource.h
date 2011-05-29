@@ -77,6 +77,7 @@ public:
         Unknown,      // let cache decide what to do with it
         Pending,      // only partially loaded
         Cached,       // regular case
+        Canceled,
         LoadError,
         DecodeError
     };
@@ -189,7 +190,8 @@ public:
     String accept() const { return m_accept; }
     void setAccept(const String& accept) { m_accept = accept; }
 
-    bool errorOccurred() const { return (status() == LoadError || status() == DecodeError); }
+    bool wasCanceled() const { return m_status == Canceled; }
+    bool errorOccurred() const { return (m_status == LoadError || m_status == DecodeError); }
 
     bool sendResourceLoadCallbacks() const { return m_sendResourceLoadCallbacks; }
     

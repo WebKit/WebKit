@@ -1,3 +1,14 @@
+2011-05-28  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        REGRESSION (r85375): Load event is sometimes lost when multiple image elements use the same URL
+        https://bugs.webkit.org/show_bug.cgi?id=61692
+        <rdar://problem/9488628>
+
+        * fast/dom/gc-image-element-2-expected.txt: Added.
+        * fast/dom/gc-image-element-2.html: Added.
+
 2011-05-28  Martin Robinson  <mrobinson@igalia.com>
 
         Skip a failing test and better classify some existing skipped tests.

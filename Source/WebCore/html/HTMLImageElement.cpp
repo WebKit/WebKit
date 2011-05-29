@@ -385,11 +385,6 @@ bool HTMLImageElement::complete() const
     return m_imageLoader.imageComplete();
 }
 
-bool HTMLImageElement::hasPendingActivity()
-{
-    return (cachedImage() && cachedImage()->isLoading()) || m_imageLoader.hasPendingLoadEvent();
-}
-
 void HTMLImageElement::addSubresourceAttributeURLs(ListHashSet<KURL>& urls) const
 {
     HTMLElement::addSubresourceAttributeURLs(urls);
