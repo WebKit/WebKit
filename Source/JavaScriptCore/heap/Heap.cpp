@@ -33,7 +33,7 @@
 #include "Tracing.h"
 #include <algorithm>
 
-#define COLLECT_ON_EVERY_SLOW_ALLOCATION 0
+#define COLLECT_ON_EVERY_ALLOCATION 0
 
 using namespace std;
 
@@ -65,7 +65,7 @@ static inline bool isValidThreadState(JSGlobalData* globalData)
 
 Heap::Heap(JSGlobalData* globalData)
     : m_operationInProgress(NoOperation)
-    , m_markedSpace(globalData)
+    , m_markedSpace(this)
     , m_markListSet(0)
     , m_activityCallback(DefaultGCActivityCallback::create(this))
     , m_globalData(globalData)
@@ -130,23 +130,21 @@ void Heap::reportExtraMemoryCostSlowCase(size_t cost)
     m_extraCost += cost;
 }
 
-void* Heap::allocateSlowCase(size_t bytes)
+void* Heap::allocate(MarkedSpace::SizeClass& sizeClass)
 {
-    ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
-    ASSERT(JSLock::lockCount() > 0);
-    ASSERT(JSLock::currentThreadIsHoldingLock());
-    ASSERT(bytes <= MarkedSpace::maxCellSize);
-    ASSERT(m_operationInProgress == NoOperation);
-
-#if COLLECT_ON_EVERY_SLOW_ALLOCATION
+#if COLLECT_ON_EVERY_ALLOCATION
     collectAllGarbage();
     ASSERT(m_operationInProgress == NoOperation);
 #endif
 
+    void* result = m_markedSpace.allocate(sizeClass);
+    if (result)
+        return result;
+
     reset(DoNotSweep);
 
     m_operationInProgress = Allocation;
-    void* result = m_markedSpace.allocate(bytes);
+    result = m_markedSpace.allocate(sizeClass);
     m_operationInProgress = NoOperation;
 
     ASSERT(result);

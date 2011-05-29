@@ -81,6 +81,7 @@ namespace JSC {
         inline bool isBusy();
 
         void* allocate(size_t);
+        void* allocate(MarkedSpace::SizeClass&);
         void collectAllGarbage();
 
         void reportExtraMemoryCost(size_t cost);
@@ -112,8 +113,6 @@ namespace JSC {
         HandleStack* handleStack() { return &m_handleStack; }
 
     private:
-        friend class JSGlobalData;
-
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
 
@@ -155,24 +154,36 @@ namespace JSC {
         return m_operationInProgress != NoOperation;
     }
 
+    inline Heap* Heap::heap(JSCell* cell)
+    {
+        return MarkedBlock::blockFor(cell)->heap();
+    }
+
+    inline Heap* Heap::heap(JSValue v)
+    {
+        if (!v.isCell())
+            return 0;
+        return heap(v.asCell());
+    }
+
     inline bool Heap::isMarked(const void* cell)
     {
-        return MarkedSpace::isMarked(cell);
+        return MarkedBlock::blockFor(cell)->isMarked(cell);
     }
 
     inline bool Heap::testAndSetMarked(const void* cell)
     {
-        return MarkedSpace::testAndSetMarked(cell);
+        return MarkedBlock::blockFor(cell)->testAndSetMarked(cell);
     }
 
     inline bool Heap::testAndClearMarked(const void* cell)
     {
-        return MarkedSpace::testAndClearMarked(cell);
+        return MarkedBlock::blockFor(cell)->testAndClearMarked(cell);
     }
 
     inline void Heap::setMarked(const void* cell)
     {
-        MarkedSpace::setMarked(cell);
+        MarkedBlock::blockFor(cell)->setMarked(cell);
     }
 
     inline void Heap::writeBarrier(const JSCell*, JSValue)
@@ -202,26 +213,8 @@ namespace JSC {
     inline void* Heap::allocate(size_t bytes)
     {
         ASSERT(isValidAllocation(bytes));
-
-        m_operationInProgress = Allocation;
-        void* result = m_markedSpace.allocate(bytes);
-        m_operationInProgress = NoOperation;
-        if (result)
-            return result;
-
-        return allocateSlowCase(bytes);
-    }
-
-    inline Heap* Heap::heap(JSValue v)
-    {
-        if (!v.isCell())
-            return 0;
-        return heap(v.asCell());
-    }
-
-    inline Heap* Heap::heap(JSCell* c)
-    {
-        return MarkedSpace::heap(c);
+        MarkedSpace::SizeClass& sizeClass = m_markedSpace.sizeClassFor(bytes);
+        return allocate(sizeClass);
     }
 
 } // namespace JSC

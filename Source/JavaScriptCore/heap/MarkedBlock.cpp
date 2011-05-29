@@ -33,12 +33,12 @@
 
 namespace JSC {
 
-MarkedBlock* MarkedBlock::create(JSGlobalData* globalData, size_t cellSize)
+MarkedBlock* MarkedBlock::create(Heap* heap, size_t cellSize)
 {
     PageAllocationAligned allocation = PageAllocationAligned::allocate(blockSize, blockSize, OSAllocator::JSGCHeapPages);
     if (!static_cast<bool>(allocation))
         CRASH();
-    return new (allocation.base()) MarkedBlock(allocation, globalData, cellSize);
+    return new (allocation.base()) MarkedBlock(allocation, heap, cellSize);
 }
 
 void MarkedBlock::destroy(MarkedBlock* block)
@@ -48,17 +48,17 @@ void MarkedBlock::destroy(MarkedBlock* block)
     block->m_allocation.deallocate();
 }
 
-MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, JSGlobalData* globalData, size_t cellSize)
+MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, Heap* heap, size_t cellSize)
     : m_nextAtom(firstAtom())
     , m_allocation(allocation)
-    , m_heap(&globalData->heap)
+    , m_heap(heap)
 {
     m_atomsPerCell = (cellSize + atomSize - 1) / atomSize;
     m_endAtom = atomsPerBlock - m_atomsPerCell + 1;
 
-    Structure* dummyMarkableCellStructure = globalData->dummyMarkableCellStructure.get();
+    Structure* dummyMarkableCellStructure = heap->globalData()->dummyMarkableCellStructure.get();
     for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell)
-        new (&atoms()[i]) JSCell(*globalData, dummyMarkableCellStructure, JSCell::CreatingEarlyCell);
+        new (&atoms()[i]) JSCell(*heap->globalData(), dummyMarkableCellStructure, JSCell::CreatingEarlyCell);
 }
 
 void MarkedBlock::sweep()

@@ -1,3 +1,45 @@
+2011-05-29  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Some heap refactoring
+        https://bugs.webkit.org/show_bug.cgi?id=61704
+        
+        SunSpider says no change.
+
+        * JavaScriptCore.exp: Export!
+
+        * heap/Heap.cpp: COLLECT_ON_EVERY_ALLOCATION can actually do so now.
+
+        (JSC::Heap::Heap): Changed Heap sub-objects to point to the heap.
+
+        (JSC::Heap::allocate): Changed inline allocation code to only select the
+        size class, since this can be optimized out at compile time -- everything
+        else is now inlined into this out-of-line function.
+        
+        No need to duplicate ASSERTs made in our caller.
+
+        * heap/Heap.h:
+        (JSC::Heap::heap):
+        (JSC::Heap::isMarked):
+        (JSC::Heap::testAndSetMarked):
+        (JSC::Heap::testAndClearMarked):
+        (JSC::Heap::setMarked): Call directly into MarkedBlock instead of adding
+        a layer of indirection through MarkedSpace.
+
+        (JSC::Heap::allocate): See above.
+
+        * heap/MarkedBlock.cpp:
+        (JSC::MarkedBlock::create):
+        (JSC::MarkedBlock::MarkedBlock):
+        * heap/MarkedBlock.h: Changed Heap sub-objects to point to the heap.
+
+        * heap/MarkedSpace.cpp:
+        (JSC::MarkedSpace::MarkedSpace):
+        (JSC::MarkedSpace::allocateBlock):
+        * heap/MarkedSpace.h:
+        (JSC::MarkedSpace::allocate): Updated to match changes above.
+
 2011-05-28  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX when building only the interpreter

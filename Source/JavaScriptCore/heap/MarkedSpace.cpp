@@ -23,7 +23,6 @@
 
 #include "JSGlobalObject.h"
 #include "JSCell.h"
-#include "JSGlobalData.h"
 #include "JSLock.h"
 #include "JSObject.h"
 #include "ScopeChain.h"
@@ -32,10 +31,10 @@ namespace JSC {
 
 class Structure;
 
-MarkedSpace::MarkedSpace(JSGlobalData* globalData)
+MarkedSpace::MarkedSpace(Heap* heap)
     : m_waterMark(0)
     , m_highWaterMark(0)
-    , m_globalData(globalData)
+    , m_heap(heap)
 {
     for (size_t cellSize = preciseStep; cellSize < preciseCutoff; cellSize += preciseStep)
         sizeClassFor(cellSize).cellSize = cellSize;
@@ -56,7 +55,7 @@ void MarkedSpace::destroy()
 
 MarkedBlock* MarkedSpace::allocateBlock(SizeClass& sizeClass)
 {
-    MarkedBlock* block = MarkedBlock::create(globalData(), sizeClass.cellSize);
+    MarkedBlock* block = MarkedBlock::create(m_heap, sizeClass.cellSize);
     sizeClass.blockList.append(block);
     sizeClass.nextBlock = block;
     m_blocks.add(block);
@@ -74,21 +73,6 @@ void MarkedSpace::freeBlocks(DoublyLinkedList<MarkedBlock>& blocks)
         m_blocks.remove(block);
         MarkedBlock::destroy(block);
     }
-}
-
-void* MarkedSpace::allocateFromSizeClass(SizeClass& sizeClass)
-{
-    for (MarkedBlock*& block = sizeClass.nextBlock ; block; block = block->next()) {
-        if (void* result = block->allocate())
-            return result;
-
-        m_waterMark += block->capacity();
-    }
-
-    if (m_waterMark < m_highWaterMark)
-        return allocateBlock(sizeClass)->allocate();
-
-    return 0;
 }
 
 void MarkedSpace::shrink()

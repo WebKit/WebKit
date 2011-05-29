@@ -31,7 +31,6 @@ namespace JSC {
 
     class Heap;
     class JSCell;
-    class JSGlobalData;
 
     typedef uintptr_t Bits;
 
@@ -44,7 +43,7 @@ namespace JSC {
     public:
         static const size_t atomSize = sizeof(double); // Ensures natural alignment for all built-in types.
 
-        static MarkedBlock* create(JSGlobalData*, size_t cellSize);
+        static MarkedBlock* create(Heap*, size_t cellSize);
         static void destroy(MarkedBlock*);
 
         static bool isAtomAligned(const void*);
@@ -85,7 +84,7 @@ namespace JSC {
 
         typedef char Atom[atomSize];
 
-        MarkedBlock(const PageAllocationAligned&, JSGlobalData*, size_t cellSize);
+        MarkedBlock(const PageAllocationAligned&, Heap*, size_t cellSize);
         Atom* atoms();
 
         size_t m_nextAtom;

@@ -38,7 +38,6 @@ namespace JSC {
 
     class Heap;
     class JSCell;
-    class JSGlobalData;
     class LiveObjectIterator;
     class MarkStack;
     class WeakGCHandle;
@@ -47,25 +46,25 @@ namespace JSC {
     class MarkedSpace {
         WTF_MAKE_NONCOPYABLE(MarkedSpace);
     public:
-        // Currently public for use in assertions.
         static const size_t maxCellSize = 1024;
 
-        static Heap* heap(JSCell*);
+        struct SizeClass {
+            SizeClass();
+            void reset();
 
-        static bool isMarked(const void*);
-        static bool testAndSetMarked(const void*);
-        static bool testAndClearMarked(const void*);
-        static void setMarked(const void*);
+            MarkedBlock* nextBlock;
+            DoublyLinkedList<MarkedBlock> blockList;
+            size_t cellSize;
+        };
 
-        MarkedSpace(JSGlobalData*);
+        MarkedSpace(Heap*);
         void destroy();
-
-        JSGlobalData* globalData();
 
         size_t highWaterMark();
         void setHighWaterMark(size_t);
 
-        void* allocate(size_t);
+        SizeClass& sizeClassFor(size_t);
+        void* allocate(SizeClass&);
 
         void clearMarks();
         void markRoots();
@@ -94,20 +93,8 @@ namespace JSC {
 
         typedef HashSet<MarkedBlock*>::iterator BlockIterator;
 
-        struct SizeClass {
-            SizeClass();
-            void reset();
-
-            MarkedBlock* nextBlock;
-            DoublyLinkedList<MarkedBlock> blockList;
-            size_t cellSize;
-        };
-
         MarkedBlock* allocateBlock(SizeClass&);
         void freeBlocks(DoublyLinkedList<MarkedBlock>&);
-
-        SizeClass& sizeClassFor(size_t);
-        void* allocateFromSizeClass(SizeClass&);
 
         void clearMarks(MarkedBlock*);
 
@@ -116,33 +103,8 @@ namespace JSC {
         HashSet<MarkedBlock*> m_blocks;
         size_t m_waterMark;
         size_t m_highWaterMark;
-        JSGlobalData* m_globalData;
+        Heap* m_heap;
     };
-
-    inline Heap* MarkedSpace::heap(JSCell* cell)
-    {
-        return MarkedBlock::blockFor(cell)->heap();
-    }
-
-    inline bool MarkedSpace::isMarked(const void* cell)
-    {
-        return MarkedBlock::blockFor(cell)->isMarked(cell);
-    }
-
-    inline bool MarkedSpace::testAndSetMarked(const void* cell)
-    {
-        return MarkedBlock::blockFor(cell)->testAndSetMarked(cell);
-    }
-
-    inline bool MarkedSpace::testAndClearMarked(const void* cell)
-    {
-        return MarkedBlock::blockFor(cell)->testAndClearMarked(cell);
-    }
-
-    inline void MarkedSpace::setMarked(const void* cell)
-    {
-        MarkedBlock::blockFor(cell)->setMarked(cell);
-    }
 
     inline bool MarkedSpace::contains(const void* x)
     {
@@ -163,11 +125,6 @@ namespace JSC {
             (*it)->forEach(functor);
     }
 
-    inline JSGlobalData* MarkedSpace::globalData()
-    {
-        return m_globalData;
-    }
-
     inline size_t MarkedSpace::highWaterMark()
     {
         return m_highWaterMark;
@@ -186,12 +143,21 @@ namespace JSC {
         return m_impreciseSizeClasses[(bytes - 1) / impreciseStep];
     }
 
-    inline void* MarkedSpace::allocate(size_t bytes)
+    inline void* MarkedSpace::allocate(SizeClass& sizeClass)
     {
-        SizeClass& sizeClass = sizeClassFor(bytes);
-        return allocateFromSizeClass(sizeClass);
+        for (MarkedBlock*& block = sizeClass.nextBlock ; block; block = block->next()) {
+            if (void* result = block->allocate())
+                return result;
+
+            m_waterMark += block->capacity();
+        }
+
+        if (m_waterMark < m_highWaterMark)
+            return allocateBlock(sizeClass)->allocate();
+
+        return 0;
     }
-    
+
     inline MarkedSpace::SizeClass::SizeClass()
         : nextBlock(0)
         , cellSize(0)
