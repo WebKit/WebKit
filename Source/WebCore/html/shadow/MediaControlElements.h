@@ -87,6 +87,7 @@ protected:
     MediaControlElement(HTMLMediaElement*);
 
 private:
+    virtual void *preDispatchEventHandler(Event*);
     virtual bool isMediaControlElement() const { return true; }
 
     HTMLMediaElement* m_mediaElement;   
@@ -126,7 +127,7 @@ public:
 private:
     MediaControlVolumeSliderContainerElement(HTMLMediaElement*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
-    virtual void defaultEventHandler(Event*);
+    virtual void *preDispatchEventHandler(Event*);
     virtual MediaControlElementType displayType() const;
     virtual const AtomicString& shadowPseudoId() const;
 };
@@ -182,7 +183,7 @@ public:
 
 protected:
     MediaControlMuteButtonElement(HTMLMediaElement*, MediaControlElementType);
-    virtual void defaultEventHandler(Event*);
+    virtual void *preDispatchEventHandler(Event*);
 
 
 private:
@@ -198,7 +199,7 @@ public:
 private:
     MediaControlPanelMuteButtonElement(HTMLMediaElement*, MediaControls*);
 
-    virtual void defaultEventHandler(Event*);
+    virtual void *preDispatchEventHandler(Event*);
     virtual const AtomicString& shadowPseudoId() const;
 
     MediaControls* m_controls;
@@ -223,7 +224,7 @@ class MediaControlPlayButtonElement : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlPlayButtonElement> create(HTMLMediaElement*);
 
-    virtual void defaultEventHandler(Event*);
+    virtual void *preDispatchEventHandler(Event*);
     virtual void updateDisplayType();
 
 private:
@@ -236,7 +237,7 @@ private:
 
 class MediaControlSeekButtonElement : public MediaControlInputElement {
 public:
-    virtual void defaultEventHandler(Event*);
+    virtual void *preDispatchEventHandler(Event*);
 
 protected:
     MediaControlSeekButtonElement(HTMLMediaElement*, MediaControlElementType);
@@ -284,7 +285,7 @@ class MediaControlRewindButtonElement : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlRewindButtonElement> create(HTMLMediaElement*);
 
-    virtual void defaultEventHandler(Event*);
+    virtual void *preDispatchEventHandler(Event*);
 
 private:
     MediaControlRewindButtonElement(HTMLMediaElement*);
@@ -298,7 +299,7 @@ class MediaControlReturnToRealtimeButtonElement : public MediaControlInputElemen
 public:
     static PassRefPtr<MediaControlReturnToRealtimeButtonElement> create(HTMLMediaElement*);
 
-    virtual void defaultEventHandler(Event*);
+    virtual void *preDispatchEventHandler(Event*);
 
 private:
     MediaControlReturnToRealtimeButtonElement(HTMLMediaElement*);
@@ -312,7 +313,7 @@ class MediaControlToggleClosedCaptionsButtonElement : public MediaControlInputEl
 public:
     static PassRefPtr<MediaControlToggleClosedCaptionsButtonElement> create(HTMLMediaElement*);
 
-    virtual void defaultEventHandler(Event*);
+    virtual void *preDispatchEventHandler(Event*);
     virtual void updateDisplayType();
 
 private:
@@ -327,7 +328,7 @@ class MediaControlTimelineElement : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlTimelineElement> create(HTMLMediaElement*, MediaControls*);
 
-    virtual void defaultEventHandler(Event*);
+    virtual void *preDispatchEventHandler(Event*);
     void setPosition(float);
     void setDuration(float);
 
@@ -345,7 +346,7 @@ class MediaControlVolumeSliderElement : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlVolumeSliderElement> create(HTMLMediaElement*);
 
-    virtual void defaultEventHandler(Event*);
+    virtual void *preDispatchEventHandler(Event*);
     void setVolume(float);
 
 protected:
@@ -361,7 +362,7 @@ class MediaControlFullscreenButtonElement : public MediaControlInputElement {
 public:
     static PassRefPtr<MediaControlFullscreenButtonElement> create(HTMLMediaElement*, MediaControls*);
 
-    virtual void defaultEventHandler(Event*);
+    virtual void *preDispatchEventHandler(Event*);
 
 private:
     MediaControlFullscreenButtonElement(HTMLMediaElement*, MediaControls*);
@@ -389,7 +390,7 @@ class MediaControlFullscreenVolumeMinButtonElement : public MediaControlInputEle
 public:
     static PassRefPtr<MediaControlFullscreenVolumeMinButtonElement> create(HTMLMediaElement*);
     
-    virtual void defaultEventHandler(Event*);
+    virtual void *preDispatchEventHandler(Event*);
     
 private:
     MediaControlFullscreenVolumeMinButtonElement(HTMLMediaElement*);
@@ -403,7 +404,7 @@ class MediaControlFullscreenVolumeMaxButtonElement : public MediaControlInputEle
 public:
     static PassRefPtr<MediaControlFullscreenVolumeMaxButtonElement> create(HTMLMediaElement*);
     
-    virtual void defaultEventHandler(Event*);
+    virtual void *preDispatchEventHandler(Event*);
     
 private:
     MediaControlFullscreenVolumeMaxButtonElement(HTMLMediaElement*);
