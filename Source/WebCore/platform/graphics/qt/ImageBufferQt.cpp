@@ -199,6 +199,10 @@ void ImageBuffer::platformTransformColorSpace(const Vector<int>& lookUpTable)
 template <Multiply multiplied>
 PassRefPtr<ByteArray> getImageData(const IntRect& rect, const ImageBufferData& imageData, const IntSize& size)
 {
+    float area = 4.0f * rect.width() * rect.height();
+    if (area > static_cast<float>(std::numeric_limits<int>::max()))
+        return 0;
+
     RefPtr<ByteArray> result = ByteArray::create(rect.width() * rect.height() * 4);
     unsigned char* data = result->data();
 
