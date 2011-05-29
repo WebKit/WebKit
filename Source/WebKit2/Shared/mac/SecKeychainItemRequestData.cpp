@@ -101,8 +101,11 @@ SecKeychainAttributeList* SecKeychainItemRequestData::attributeList() const
 
     for (size_t i = 0; i < m_attributeList->count; ++i) {
         m_attributeList->attr[i].tag = m_keychainAttributes[i].tag;
-        if (!m_keychainAttributes[i].data)
+        if (!m_keychainAttributes[i].data) {
+            m_attributeList->attr[i].length = 0;
+            m_attributeList->attr[i].data = 0;
             continue;
+        }
         
         m_attributeList->attr[i].length = CFDataGetLength(m_keychainAttributes[i].data.get());
         m_attributeList->attr[i].data = const_cast<void*>(static_cast<const void*>(CFDataGetBytePtr(m_keychainAttributes[i].data.get())));

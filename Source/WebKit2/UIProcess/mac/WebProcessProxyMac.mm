@@ -82,8 +82,8 @@ void WebProcessProxy::secKeychainItemCopyContent(const SecKeychainItemRequestDat
     SecKeychainItemRef item = request.keychainItem();
     SecItemClass itemClass;
     SecKeychainAttributeList* attrList = request.attributeList();    
-    UInt32 length;
-    void* outData;
+    UInt32 length = 0;
+    void* outData = 0;
 
     OSStatus resultCode = SecKeychainItemCopyContent(item, &itemClass, attrList, &length, &outData);
     
