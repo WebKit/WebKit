@@ -190,8 +190,10 @@ void WebFullScreenManagerMac::beginEnterFullScreenAnimation(float duration)
     
     if (!m_rootLayer || m_rootLayer->children().isEmpty()) {
         // If we don't have a root layer, we can't animate in and out of full screen
+        m_page->send(Messages::WebFullScreenManagerProxy::EnterAcceleratedCompositingMode(m_layerTreeContext));
         this->beganEnterFullScreenAnimation();
         this->finishedEnterFullScreenAnimation(true);
+        m_page->send(Messages::WebFullScreenManagerProxy::ExitAcceleratedCompositingMode());
         return;
     }
 
@@ -211,8 +213,10 @@ void WebFullScreenManagerMac::beginExitFullScreenAnimation(float duration)
     
     if (!m_rootLayer || m_rootLayer->children().isEmpty()) {
         // If we don't have a root layer, we can't animate in and out of full screen
+        m_page->send(Messages::WebFullScreenManagerProxy::EnterAcceleratedCompositingMode(m_layerTreeContext));
         this->beganExitFullScreenAnimation();
         this->finishedExitFullScreenAnimation(true);
+        m_page->send(Messages::WebFullScreenManagerProxy::ExitAcceleratedCompositingMode());
         return;
     }
 

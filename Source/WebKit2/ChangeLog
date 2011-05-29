@@ -1,3 +1,26 @@
+2011-05-29  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION (r86924): webkitRequestFullScreen does not work properly (black screen, can’t interact)
+        https://bugs.webkit.org/show_bug.cgi?id=61710
+
+        When taking the documentElement full screen, we don't create a RenderFullScreen 
+        object and thus never enter accelerated compositing mode for the animation. Tell
+        the WKFullScreenWindowController to enter accelerated compositing mode anyway 
+        (with an empty layer context) so as to fulfill its expectations and cause the 
+        full screen animation to complete.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]): Added a 
+            comment explaining when we expect the animation to complete.
+        (-[WKFullScreenWindowController enterAcceleratedCompositingMode:WebKit::]):
+            Remove an ASSERT which is no longer valid.
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::beginEnterFullScreenAnimation): Tell the UIProcess
+            to enter then exit full-screen mode.
+        (WebKit::WebFullScreenManagerMac::beginExitFullScreenAnimation): Ditto.
+
 2011-05-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

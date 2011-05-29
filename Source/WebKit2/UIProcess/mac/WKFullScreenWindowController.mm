@@ -272,6 +272,8 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
 #endif
         [self _manager]->didEnterFullScreen();
     }
+
+    // Complete the animation once -(void)exitCompositingMode is called.
 }
 
 - (void)exitFullScreen
@@ -362,8 +364,6 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
 {
     if (_layerHostingView)
         return;
-
-    ASSERT(!layerTreeContext.isEmpty());
     
     // Create an NSView that will host our layer tree.
     _layerHostingView.adoptNS([[NSView alloc] initWithFrame:[[self window] frame]]);
