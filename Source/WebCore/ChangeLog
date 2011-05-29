@@ -1,3 +1,18 @@
+2011-05-29  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Element: Micro-cleanup of scroll methods.
+        https://bugs.webkit.org/show_bug.cgi?id=61705
+
+        Do an early return without calculating element boundaries when asked
+        to scroll an element without a renderer().
+
+        * dom/Element.cpp:
+        (WebCore::Element::scrollIntoView):
+        (WebCore::Element::scrollIntoViewIfNeeded):
+        (WebCore::Element::scrollByUnits):
+
 2011-05-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.

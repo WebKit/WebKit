@@ -275,41 +275,48 @@ const AtomicString& Element::getAttribute(const QualifiedName& name) const
 void Element::scrollIntoView(bool alignToTop) 
 {
     document()->updateLayoutIgnorePendingStylesheets();
+
+    if (!renderer())
+        return;
+
     IntRect bounds = getRect();    
-    if (renderer()) {
-        // Align to the top / bottom and to the closest edge.
-        if (alignToTop)
-            renderer()->enclosingLayer()->scrollRectToVisible(bounds, false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways);
-        else
-            renderer()->enclosingLayer()->scrollRectToVisible(bounds, false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignBottomAlways);
-    }
+    // Align to the top / bottom and to the closest edge.
+    if (alignToTop)
+        renderer()->enclosingLayer()->scrollRectToVisible(bounds, false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignTopAlways);
+    else
+        renderer()->enclosingLayer()->scrollRectToVisible(bounds, false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignBottomAlways);
 }
 
 void Element::scrollIntoViewIfNeeded(bool centerIfNeeded)
 {
     document()->updateLayoutIgnorePendingStylesheets();
+
+    if (!renderer())
+        return;
+
     IntRect bounds = getRect();    
-    if (renderer()) {
-        if (centerIfNeeded)
-            renderer()->enclosingLayer()->scrollRectToVisible(bounds, false, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded);
-        else
-            renderer()->enclosingLayer()->scrollRectToVisible(bounds, false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
-    }
+    if (centerIfNeeded)
+        renderer()->enclosingLayer()->scrollRectToVisible(bounds, false, ScrollAlignment::alignCenterIfNeeded, ScrollAlignment::alignCenterIfNeeded);
+    else
+        renderer()->enclosingLayer()->scrollRectToVisible(bounds, false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
 }
 
 void Element::scrollByUnits(int units, ScrollGranularity granularity)
 {
     document()->updateLayoutIgnorePendingStylesheets();
-    if (RenderObject *rend = renderer()) {
-        if (rend->hasOverflowClip()) {
-            ScrollDirection direction = ScrollDown;
-            if (units < 0) {
-                direction = ScrollUp;
-                units = -units;
-            }
-            toRenderBox(rend)->layer()->scroll(direction, granularity, units);
-        }
+
+    if (!renderer())
+        return;
+
+    if (!renderer()->hasOverflowClip())
+        return;
+
+    ScrollDirection direction = ScrollDown;
+    if (units < 0) {
+        direction = ScrollUp;
+        units = -units;
     }
+    toRenderBox(renderer())->layer()->scroll(direction, granularity, units);
 }
 
 void Element::scrollByLines(int lines)
