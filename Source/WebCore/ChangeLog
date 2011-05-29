@@ -1,5 +1,16 @@
 2011-05-28  Alexey Proskuryakov  <ap@apple.com>
 
+        Suggested by Simon Fraser.
+
+        REGRESSION (r85375): Load event is sometimes lost when multiple image elements use the same URL
+        https://bugs.webkit.org/show_bug.cgi?id=61692
+        <rdar://problem/9488628>
+
+        * loader/ImageLoader.cpp: (WebCore::ImageLoader::notifyFinished): There was no need to use
+        ASSERT_UNUSED here.
+
+2011-05-28  Alexey Proskuryakov  <ap@apple.com>
+
         Reviewed by Geoff Garen.
 
         REGRESSION (r85375): Load event is sometimes lost when multiple image elements use the same URL
