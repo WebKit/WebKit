@@ -384,7 +384,7 @@ EXTRA_DIST += \
 	$(WebKit)/org.webkitgtk.gschema.xml.in
 
 # extra resource files
-resourcesdir = ${datadir}/webkit-@WEBKITGTK_API_VERSION@/resources
+resourcesdir = ${datadir}/webkitgtk-@WEBKITGTK_API_VERSION@/resources
 dist_resources_DATA = \
 	$(shell ls $(srcdir)/Source/WebKit/gtk/resources/*.html)
 
