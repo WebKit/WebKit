@@ -1,3 +1,19 @@
+2011-05-28  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Don't add sub-frames to global history when navigating via back/forward
+        https://bugs.webkit.org/show_bug.cgi?id=61701
+        <rdar://problem/9521222>
+
+        Instead of just checking whether the load is the first in the frame, we also need to
+        check to make sure we're loading in the main frame.
+
+        Not testable due to lack of global history infrastructure in DRT.
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+
 2011-05-28  Alexey Proskuryakov  <ap@apple.com>
 
         Suggested by Simon Fraser.
