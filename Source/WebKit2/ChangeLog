@@ -1,3 +1,18 @@
+2011-05-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson and Simon Fraser.
+
+        <rdar://problem/9519453>
+        When calling ForceRepaint on a page with accelerated compositing, we can get
+        a race condition where the UI process paints the old content, resulting in showing
+        the previous page. That happens because forceRepaint's callback waits for the next
+        repaint to happen, but nothing notifies UI process that the page is in accelerated
+        compositing mode.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::forceRepaint): Call layerHostDidFlushLayers instead of
+        just calling forceRepaint on the layer tree host.
+
 2011-05-28  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein, Maciej Stachowiak.
