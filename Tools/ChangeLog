@@ -1,3 +1,23 @@
+2011-05-29  Daniel Bates  <dbates@rim.com>
+
+        Reviewed by David Kilzer.
+
+        REGRESSION (r86515): svn-apply ignores diffs that omit line count in chunk range
+        https://bugs.webkit.org/show_bug.cgi?id=61162
+
+        Fixes an issue where svn-apply may ignore a diff that contains a chunk range line
+        that omits a line count. In particular, the chunk range regular expression does
+        not match a chunk range line that omits a line count. GNU diff(1) will omit the
+        line count in the chunk range if the line count is exactly 1. For example, appending
+        a new line to the end of an existing file F that contains exactly one line of text will
+        be represented in a diff with a chunk range line that omits the line count for F.
+
+        * Scripts/VCSUtils.pm:
+          (parseChunkRange): Added.
+        * Scripts/webkitperl/VCSUtils_unittest/parseChunkRange.pl: Added.
+        * Scripts/webkitperl/VCSUtils_unittest/parseDiff.pl:
+          - Added unit test "Git: Append new line to the end of an existing file".
+
 2011-05-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -994,6 +994,36 @@ END
 undef],
     expectedNextLine => undef,
 },
+{
+    # New test
+    diffName => "Git: Append new line to the end of an existing file",
+    inputText => <<'END',
+diff --git a/foo b/foo
+index 863339f..db418b2 100644
+--- a/foo
++++ b/foo
+@@ -1 +1,2 @@
+ Passed
++
+END
+    expectedReturn => [
+[{
+    svnConvertedText =>  <<'END',
+Index: foo
+index 863339f..db418b2 100644
+--- foo
++++ foo
+@@ -1 +1,2 @@
+ Passed
++
+END
+    indexPath => "foo",
+    isGit => 1,
+    numTextChunks => 1,
+}],
+undef],
+    expectedNextLine => undef,
+},
 {   # New test
     diffName => "Git: new file",
     inputText => <<'END',

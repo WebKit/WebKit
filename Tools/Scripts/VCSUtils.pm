@@ -68,6 +68,7 @@ BEGIN {
         &makeFilePathRelative
         &mergeChangeLogs
         &normalizePath
+        &parseChunkRange
         &parseFirstEOL
         &parsePatch
         &pathRelativeToSVNRepositoryRootForPath
@@ -98,7 +99,6 @@ my $svnVersion;
 # Project time zone for Cupertino, CA, US
 my $changeLogTimeZone = "PST8PDT";
 
-my $chunkRangeRegEx = qr#^\@\@ -(\d+),(\d+) \+\d+,(\d+) \@\@#; # e.g. "@@ -2,6 +2,18 @@" or "@@ -2,6 +2,18 @@ foo()"
 my $gitDiffStartRegEx = qr#^diff --git (\w/)?(.+) (\w/)?([^\r\n]+)#;
 my $svnDiffStartRegEx = qr#^Index: ([^\r\n]+)#;
 my $svnPropertiesStartRegEx = qr#^Property changes on: ([^\r\n]+)#; # $1 is normally the same as the index path.
@@ -483,6 +483,42 @@ sub firstEOLInFile($)
         close(FILE);
     }
     return $eol;
+}
+
+# Parses a chunk range line into its components.
+#
+# A chunk range line has the form: @@ -L_1,N_1 +L_2,N_2 @@, where the pairs (L_1, N_1),
+# (L_2, N_2) are ranges that represent the starting line number and line count in the
+# original file and new file, respectively.
+#
+# Note, some versions of GNU diff may omit the comma and trailing line count (e.g. N_1),
+# in which case the omitted line count defaults to 1. For example, GNU diff may output
+# @@ -1 +1 @@, which is equivalent to @@ -1,1 +1,1 @@.
+#
+# This subroutine returns undef if given an invalid or malformed chunk range.
+#
+# Args:
+#   $line: the line to parse.
+#
+# Returns $chunkRangeHashRef
+#   $chunkRangeHashRef: a hash reference representing the parts of a chunk range, as follows--
+#     startingLine: the starting line in the original file.
+#     lineCount: the line count in the original file.
+#     newStartingLine: the new starting line in the new file.
+#     newLineCount: the new line count in the new file.
+sub parseChunkRange($)
+{
+    my ($line) = @_;
+    my $chunkRangeRegEx = qr#^\@\@ -(\d+)(,(\d+))? \+(\d+)(,(\d+))? \@\@#;
+    if ($line !~ /$chunkRangeRegEx/) {
+        return;
+    }
+    my %chunkRange;
+    $chunkRange{startingLine} = $1;
+    $chunkRange{lineCount} = defined($2) ? $3 : 1;
+    $chunkRange{newStartingLine} = $4;
+    $chunkRange{newLineCount} = defined($5) ? $6 : 1;
+    return \%chunkRange;
 }
 
 sub svnStatus($)
@@ -905,8 +941,9 @@ sub parseDiff($$;$)
         }
         if ($line !~ $headerStartRegEx) {
             # Then we are in the body of the diff.
-            $numTextChunks += $line =~ /$chunkRangeRegEx/;
-            if ($indexPathEOL && $line !~ /$chunkRangeRegEx/) {
+            my $isChunkRange = defined(parseChunkRange($line));
+            $numTextChunks += 1 if $isChunkRange;
+            if ($indexPathEOL && !$isChunkRange) {
                 # The chunk range is part of the body of the diff, but its line endings should't be
                 # modified or patch(1) will complain. So, we only modify non-chunk range lines.
                 $line =~ s/\r\n|\r|\n/$indexPathEOL/g;
@@ -1500,15 +1537,16 @@ sub fixChangeLogPatch($)
     $deletedLineCount += $dateStartIndex - $chunkStartIndex;
 
     # Update the initial chunk range.
-    if ($lines[$chunkStartIndex - 1] !~ /$chunkRangeRegEx/) {
+    my $chunkRangeHashRef = parseChunkRange($lines[$chunkStartIndex - 1]);
+    if (!$chunkRangeHashRef) {
         # FIXME: Handle errors differently from ChangeLog files that
         # are okay but should not be altered. That way we can find out
         # if improvements to the script ever become necessary.
         $changeLogHashRef{patch} = $patch; # Error: unexpected patch string format.
         return \%changeLogHashRef;
     }
-    my $oldSourceLineCount = $2;
-    my $oldTargetLineCount = $3;
+    my $oldSourceLineCount = $chunkRangeHashRef->{lineCount};
+    my $oldTargetLineCount = $chunkRangeHashRef->{newLineCount};
 
     my $sourceLineCount = $oldSourceLineCount + @overlappingLines - $deletedLineCount;
     my $targetLineCount = $oldTargetLineCount + @overlappingLines - $deletedLineCount;
