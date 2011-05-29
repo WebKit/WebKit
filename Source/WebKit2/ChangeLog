@@ -1,3 +1,18 @@
+2011-05-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Race condition in full screen controller, which leads to problem when web process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=61707
+
+        Saw this while debugging a crash. We don't have a way to make regression tests for this
+        kind of issue at this time.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController exitAcceleratedCompositingMode]): Retain the controller
+        here since we are keeping a pointer to it.
+        (exitCompositedModeRepaintCompleted): Release the controller here.
+
 2011-05-29  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

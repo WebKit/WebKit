@@ -395,6 +395,7 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
         return;
 
     NSDisableScreenUpdates();
+    [self retain]; // Balanced by release in exitCompositedModeRepaintCompleted below.
     [self _page]->forceRepaint(VoidCallback::create(self, exitCompositedModeRepaintCompleted));
 }
 
@@ -414,7 +415,9 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
 
 static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context)
 {
-    [(WKFullScreenWindowController*)context exitCompositedModeRepaintCompleted];
+    WKFullScreenWindowController *controller = static_cast<WKFullScreenWindowController *>(context);
+    [controller exitCompositedModeRepaintCompleted];
+    [controller release]; // Balanced by retain in exitAcceleratedCompositingMode above.
 }
 
 - (WebCore::IntRect)getFullScreenRect
