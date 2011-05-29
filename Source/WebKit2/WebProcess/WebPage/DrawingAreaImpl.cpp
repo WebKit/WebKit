@@ -161,8 +161,12 @@ void DrawingAreaImpl::forceRepaint()
         // Consider refactoring and renaming it.
         if (m_compositingAccordingToProxyMessages)
             m_layerTreeHost->forceRepaint();
-        else
+        else {
+            // Call setShouldNotifyAfterNextScheduledLayerFlush(false) here to 
+            // prevent layerHostDidFlushLayers() from being called a second time.
+            m_layerTreeHost->setShouldNotifyAfterNextScheduledLayerFlush(false);
             layerHostDidFlushLayers();
+        }
         if (!m_layerTreeHost->participatesInDisplay())
             return;
     }

@@ -1,3 +1,16 @@
+2011-05-29  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        REGRESSION (r87637): nytimes.com freezes after going back to it
+        <rdar://problem/9521928>
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::forceRepaint):
+        Add call to setShouldNotifyAfterNextScheduledLayerFlush(false) to prevent a
+        redundant call to layerHostDidFlushLayers which would cause the layer state
+        to get out of sync with the UIProcess.
+
 2011-05-29  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.
