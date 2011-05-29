@@ -226,6 +226,8 @@ private:
     
     virtual void numWheelEventHandlersChanged(unsigned);
 
+    virtual void setRenderTreeSize(size_t);
+
     String m_cachedToolTip;
     mutable RefPtr<WebFrame> m_cachedFrameSetLargestFrame;
     mutable bool m_cachedMainFrameHasHorizontalScrollbar;

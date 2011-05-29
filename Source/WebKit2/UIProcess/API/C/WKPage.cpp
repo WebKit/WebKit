@@ -171,6 +171,11 @@ WKFrameRef WKPageGetFrameSetLargestFrame(WKPageRef pageRef)
     return toAPI(toImpl(pageRef)->frameSetLargestFrame());
 }
 
+uint64_t WKPageGetRenderTreeSize(WKPageRef page)
+{
+    return toImpl(page)->renderTreeSize();
+}
+
 #if defined(ENABLE_INSPECTOR) && ENABLE_INSPECTOR
 WKInspectorRef WKPageGetInspector(WKPageRef pageRef)
 {
