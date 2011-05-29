@@ -66,6 +66,8 @@ RenderArena::RenderArena(unsigned arenaSize)
 
     // Zero out the recyclers array
     memset(m_recyclers, 0, sizeof(m_recyclers));
+
+    m_totalSize = 0;
 }
 
 RenderArena::~RenderArena()
@@ -75,6 +77,8 @@ RenderArena::~RenderArena()
 
 void* RenderArena::allocate(size_t size)
 {
+    m_totalSize += size;
+
 #ifndef NDEBUG
     // Use standard malloc so that memory debugging tools work.
     ASSERT(this);
@@ -113,6 +117,8 @@ void* RenderArena::allocate(size_t size)
 
 void RenderArena::free(size_t size, void* ptr)
 {
+    m_totalSize -= size;
+
 #ifndef NDEBUG
     // Use standard free so that memory debugging tools work.
     void* block = static_cast<char*>(ptr) - debugHeaderSize;
