@@ -5054,7 +5054,7 @@ void Document::setAnimatingFullScreen(bool flag)
 
     if (m_fullScreenElement && m_fullScreenElement->isDescendantOf(this)) {
         m_fullScreenElement->setNeedsStyleRecalc();
-        scheduleStyleRecalc();
+        scheduleForcedStyleRecalc();
     }
 
 #if USE(ACCELERATED_COMPOSITING)

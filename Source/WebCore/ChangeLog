@@ -1,3 +1,17 @@
+2011-05-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fix assertion seen when entering full screen mode for standalone video
+        https://bugs.webkit.org/show_bug.cgi?id=61708
+
+        We don't currently have a way to make a regression test for this.
+
+        * dom/Document.cpp:
+        (WebCore::Document::setAnimatingFullScreen): Call scheduleForcedStyleRecalc,
+        because scheduleStyleRecalc is intended to only be called when the style
+        system itself detects recalc is needed.
+
 2011-05-27  Andreas Kling  <kling@webkit.org>
 
         Reviewed by James Robinson.
