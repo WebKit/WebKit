@@ -1,5 +1,25 @@
 2011-05-28  Mark Rowe  <mrowe@apple.com>
 
+        Merge r87598.
+
+    2011-05-27  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        CG BitmapImage needs to check for valid CGImage in a couple of places
+        https://bugs.webkit.org/show_bug.cgi?id=61684
+        <rdar://problem/9519348>
+
+        BitmapImage::getCGImageArray() can throw an exception if frameAtIndex()
+        returns null, which it may do if the image is corrupted or still
+        loading. Protect against that here and in getFirstCGImageRefOfSize().
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::getFirstCGImageRefOfSize):
+        (WebCore::BitmapImage::getCGImageArray):
+
+2011-05-28  Mark Rowe  <mrowe@apple.com>
+
         Merge r87331.
 
     2011-05-25  Jer Noble  <jer.noble@apple.com>
