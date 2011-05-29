@@ -41,6 +41,7 @@ messages -> WebPageProxy {
     TakeFocus(uint32_t direction)
     FocusedFrameChanged(uint64_t frameID)
     FrameSetLargestFrameChanged(uint64_t frameID)
+    SetRenderTreeSize(uint64_t treeSize)
     SetToolbarsAreVisible(bool toolbarsAreVisible)
     GetToolbarsAreVisible() -> (bool toolbarsAreVisible)
     SetMenuBarIsVisible(bool menuBarIsVisible);

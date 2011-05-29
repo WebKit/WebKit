@@ -530,6 +530,8 @@ public:
     // FIXME: This is in violation of the no synchronous messages to the Web Process policy and
     // should be removed as soon as possible.
     PassRefPtr<WebImage> createSnapshotOfVisibleContent();
+
+    uint64_t renderTreeSize() const { return m_renderTreeSize; }
  
 private:
     WebPageProxy(PageClient*, PassRefPtr<WebProcessProxy>, WebPageGroup*, uint64_t pageID);
@@ -755,6 +757,8 @@ private:
     void scheduleChildWindowGeometryUpdate(const WindowGeometry&);
 #endif
 
+    void setRenderTreeSize(uint64_t treeSize) { m_renderTreeSize = treeSize; }
+
     PageClient* m_pageClient;
     WebLoaderClient m_loaderClient;
     WebPolicyClient m_policyClient;
@@ -883,6 +887,8 @@ private:
     bool m_mainFrameIsPinnedToRightSide;
 
     WebCore::IntRect m_visibleScrollerThumbRect;
+
+    uint64_t m_renderTreeSize;
 
     static WKPageDebugPaintFlags s_debugPaintFlags;
 };
