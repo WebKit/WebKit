@@ -324,6 +324,7 @@ void XMLDocumentParser::notifyFinished(CachedResource* unusedResource)
 
     ScriptSourceCode sourceCode(m_pendingScript.get());
     bool errorOccurred = m_pendingScript->errorOccurred();
+    bool wasCanceled = m_pendingScript->wasCanceled();
 
     m_pendingScript->removeClient(this);
     m_pendingScript = 0;
@@ -339,7 +340,7 @@ void XMLDocumentParser::notifyFinished(CachedResource* unusedResource)
     
     if (errorOccurred)
         scriptElement->dispatchErrorEvent();
-    else {
+    else if (!wasCanceled) {
         scriptElement->executeScript(sourceCode);
         scriptElement->dispatchLoadEvent();
     }

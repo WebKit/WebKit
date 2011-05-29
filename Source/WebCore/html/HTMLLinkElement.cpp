@@ -432,7 +432,7 @@ void HTMLLinkElement::onloadTimerFired(Timer<HTMLLinkElement>* timer)
     ASSERT_UNUSED(timer, timer == &m_onloadTimer);
     if (m_cachedLinkResource->errorOccurred())
         dispatchEvent(Event::create(eventNames().errorEvent, false, false));
-    else
+    else if (!m_cachedLinkResource->wasCanceled())
         dispatchEvent(Event::create(eventNames().loadEvent, false, false));
 
     m_cachedLinkResource->removeClient(this);

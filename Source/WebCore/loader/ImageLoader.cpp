@@ -67,7 +67,12 @@ public:
 
     void dispatchPendingEvents();
 
-    bool hasPendingEvents(ImageLoader* loader) { return m_dispatchSoonList.find(loader) != notFound; }
+#ifndef NDEBUG
+    bool hasPendingEvents(ImageLoader* loader) const
+    {
+        return m_dispatchSoonList.find(loader) != notFound || m_dispatchingList.find(loader) != notFound;
+    }
+#endif
 
 private:
     void timerFired(Timer<ImageEventSender>*);
@@ -208,15 +213,19 @@ void ImageLoader::updateFromElementIgnoringPreviousError()
     updateFromElement();
 }
 
-void ImageLoader::notifyFinished(CachedResource*)
+void ImageLoader::notifyFinished(CachedResource* resource)
 {
     ASSERT(m_failedLoadURL.isEmpty());
+    ASSERT_UNUSED(m_image, resource == m_image.get());
 
     m_imageComplete = true;
     if (haveFiredBeforeLoadEvent())
         updateRenderer();
 
     if (m_firedLoad)
+        return;
+
+    if (resource->wasCanceled())
         return;
 
     loadEventSender().dispatchEventSoon(this);
@@ -310,11 +319,6 @@ void ImageLoader::elementWillMoveToNewOwnerDocument()
     setImage(0);
 }
 
-bool ImageLoader::hasPendingLoadEvent()
-{
-    return loadEventSender().hasPendingEvents(this);
-}
-
 ImageEventSender::ImageEventSender(const AtomicString& eventType)
     : m_eventType(eventType)
     , m_timer(this, &ImageEventSender::timerFired)
@@ -362,6 +366,7 @@ void ImageEventSender::dispatchPendingEvents()
     size_t size = m_dispatchingList.size();
     for (size_t i = 0; i < size; ++i) {
         if (ImageLoader* loader = m_dispatchingList[i]) {
+            m_dispatchingList[i] = 0;
             if (m_eventType == eventNames().beforeloadEvent)
                 loader->dispatchPendingBeforeLoadEvent();
             else
