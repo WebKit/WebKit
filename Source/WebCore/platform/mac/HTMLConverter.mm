@@ -1753,8 +1753,7 @@ static NSFileWrapper *fileWrapperForElement(Element* element)
     const AtomicString& attr = element->getAttribute(srcAttr);
     if (!attr.isEmpty()) {
         NSURL *URL = element->document()->completeURL(attr);
-        if (DocumentLoader* loader = element->document()->loader())
-            wrapper = fileWrapperForURL(loader, URL);
+        wrapper = fileWrapperForURL(element->document()->loader(), URL);
     }
     if (!wrapper) {
         RenderImage* renderer = toRenderImage(element->renderer());

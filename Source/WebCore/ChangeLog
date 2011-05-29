@@ -1,3 +1,31 @@
+2011-05-29  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87566.
+        http://trac.webkit.org/changeset/87566
+        https://bugs.webkit.org/show_bug.cgi?id=61702
+
+        It made all tests assert on Qt in debug mode (Requested by
+        Ossy_weekend on #webkit).
+
+        * WebCore.exp.in:
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * dom/Document.cpp:
+        (WebCore::Document::Document):
+        (WebCore::Document::suggestedMIMEType):
+        (WebCore::Document::lastModified):
+        (WebCore::Document::initSecurityContext):
+        (WebCore::Document::updateURLForPushOrReplaceState):
+        * dom/Document.h:
+        (WebCore::Document::setDocumentLoader):
+        (WebCore::Document::loader):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocument::replaceMediaElementTimerFired):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::createDocumentStructure):
+        * platform/mac/HTMLConverter.mm:
+        (fileWrapperForElement):
+
 2011-05-28  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Dan Bernstein.
