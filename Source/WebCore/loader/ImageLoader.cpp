@@ -216,7 +216,7 @@ void ImageLoader::updateFromElementIgnoringPreviousError()
 void ImageLoader::notifyFinished(CachedResource* resource)
 {
     ASSERT(m_failedLoadURL.isEmpty());
-    ASSERT_UNUSED(m_image, resource == m_image.get());
+    ASSERT(resource == m_image.get());
 
     m_imageComplete = true;
     if (haveFiredBeforeLoadEvent())
