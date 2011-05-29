@@ -156,7 +156,10 @@ void DrawingAreaImpl::forceRepaint()
     m_webPage->layoutIfNeeded();
 
     if (m_layerTreeHost) {
-        m_layerTreeHost->forceRepaint();
+        // FIXME: We need to do the same work as the layerHostDidFlushLayers function here,
+        // but clearly it doesn't make sense to call the function with that name.
+        // Consider renaming it.
+        layerHostDidFlushLayers();
         if (!m_layerTreeHost->participatesInDisplay())
             return;
     }
