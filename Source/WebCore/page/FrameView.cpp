@@ -50,6 +50,7 @@
 #include "HTMLPlugInImageElement.h"
 #include "InspectorInstrumentation.h"
 #include "OverflowEvent.h"
+#include "RenderArena.h"
 #include "RenderEmbeddedObject.h"
 #include "RenderFullScreen.h"
 #include "RenderLayer.h"
@@ -2061,6 +2062,11 @@ void FrameView::performPostLayoutTasks()
         m_lastZoomFactor = currentZoomFactor;
         if (resized)
             m_frame->eventHandler()->sendResizeEvent();
+
+        if (Page* page = m_frame->page()) {
+            if (m_frame->page()->mainFrame() == m_frame)
+                page->chrome()->client()->setRenderTreeSize(m_frame->document()->renderArena()->totalRenderArenaSize());
+        }
     }
 }
 
