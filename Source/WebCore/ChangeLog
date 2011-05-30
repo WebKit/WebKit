@@ -1,3 +1,15 @@
+2011-05-30  Ryan Sleevi  <rsleevi@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        FEConvolveMatrix::getPixelValue() fails to properly check if y is within bounds, causing it to fail to correctly apply the kernel and edge mode to the first targetY pixels
+        https://bugs.webkit.org/show_bug.cgi?id=61603
+
+        Test: svg/filters/feConvolveFilter-y-bounds.svg
+
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::getPixelValue):
+
 2011-05-30  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Antti Koivisto.

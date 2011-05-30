@@ -290,7 +290,7 @@ ALWAYS_INLINE void FEConvolveMatrix::fastSetInteriorPixels(PaintingData& paintin
 
 ALWAYS_INLINE int FEConvolveMatrix::getPixelValue(PaintingData& paintingData, int x, int y)
 {
-    if (x >= 0 && x < paintingData.width && x >= 0 && y < paintingData.height)
+    if (x >= 0 && x < paintingData.width && y >= 0 && y < paintingData.height)
         return (y * paintingData.width + x) << 2;
 
     switch (m_edgeMode) {
