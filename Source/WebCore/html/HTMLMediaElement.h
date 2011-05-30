@@ -146,6 +146,8 @@ public:
     void togglePlayState();
     void beginScrubbing();
     void endScrubbing();
+    
+    void stopHideFullscreenControlsTimer();
 
     bool canPlay() const;
 
@@ -270,8 +272,10 @@ private:
     void asyncEventTimerFired(Timer<HTMLMediaElement>*);
     void progressEventTimerFired(Timer<HTMLMediaElement>*);
     void playbackProgressTimerFired(Timer<HTMLMediaElement>*);
+    void hideFullscreenControlsTimerFired(Timer<HTMLMediaElement>*);
     void startPlaybackProgressTimer();
     void startProgressEventTimer();
+    void startHideFullscreenControlsTimer();
     void stopPeriodicTimers();
 
     void seek(float time, ExceptionCode&);
@@ -341,6 +345,7 @@ private:
     Timer<HTMLMediaElement> m_asyncEventTimer;
     Timer<HTMLMediaElement> m_progressEventTimer;
     Timer<HTMLMediaElement> m_playbackProgressTimer;
+    Timer<HTMLMediaElement> m_hideFullscreenControlsTimer;
     Vector<RefPtr<Event> > m_pendingEvents;
     RefPtr<TimeRanges> m_playedTimeRanges;
 

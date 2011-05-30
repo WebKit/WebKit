@@ -68,6 +68,8 @@ class MediaControls : public HTMLDivElement {
     virtual void updateTimeDisplay() = 0;
     virtual void updateStatusDisplay() = 0;
 
+    virtual bool shouldHideControls() = 0;
+
 protected:
     MediaControls(HTMLMediaElement*);
 

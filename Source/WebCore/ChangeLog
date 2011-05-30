@@ -1,3 +1,40 @@
+2011-05-29  Brian Weinstein  <bweinstein@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Controls never hide in full screen after user stops moving mouse
+        https://bugs.webkit.org/show_bug.cgi?id=61715
+        <rdar://problem/9522182>
+        
+        When we get a mouse move event in HTMLMediaElement::defaultEventHandler, and we are in full screen,
+        show the media controls, and then start a timer.
+        
+        The timer fires 3 seconds after the user's last mouse movement (timer is restarted on every mouse
+        move), and hides the controls.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Initialize our new timer.
+        (WebCore::HTMLMediaElement::play): If we are in full screen mode, start our timer to hide the full screen
+            controls. We don't want the user to have to move the mouse to hide them when they use the spacebar
+            to play.
+        (WebCore::HTMLMediaElement::startHideFullscreenControlsTimer): Starts a oneshot timer 3 seconds in the future
+            if we are in full screen.
+        (WebCore::HTMLMediaElement::hideFullscreenControlsTimerFired): Make sure that we are currently playing, and
+            we are in full screen, and hide the controls. We don't want to hide the controls if we are paused.
+        (WebCore::HTMLMediaElement::stopHideFullscreenControlsTimer): Stops the timer.
+        (WebCore::HTMLMediaElement::defaultEventHandler): If we get a mouse move event and are in full screen, show the
+            controls and start a timer to hide them.
+        (WebCore::HTMLMediaElement::enterFullscreen): Start a timer to hide the full screen controls. The user shouldn't
+            have the move the mouse once they enter full screen to hide the controls.
+        (WebCore::HTMLMediaElement::exitFullscreen): Stop the timer to hide the full screen controls.
+        * html/HTMLMediaElement.h:
+        * html/shadow/MediaControls.h: Added pure virtual shouldHideControls() method.
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::playbackStopped): Stop the timer to hide the full screen controls.
+        (WebCore::MediaControlRootElement::shouldHideControls): Added, only report that
+            the caller should hide the controls if the panel is not hovered.
+        * html/shadow/MediaControlRootElement.h:
+
 2011-05-29  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.

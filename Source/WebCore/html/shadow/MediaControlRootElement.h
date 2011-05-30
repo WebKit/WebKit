@@ -96,6 +96,7 @@ public:
     void updateTimeDisplay();
     void updateStatusDisplay();
 
+    virtual bool shouldHideControls();
 private:
     MediaControlRootElement(HTMLMediaElement*);
 

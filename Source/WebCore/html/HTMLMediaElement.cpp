@@ -123,6 +123,7 @@ HTMLMediaElement::HTMLMediaElement(const QualifiedName& tagName, Document* docum
     , m_asyncEventTimer(this, &HTMLMediaElement::asyncEventTimerFired)
     , m_progressEventTimer(this, &HTMLMediaElement::progressEventTimerFired)
     , m_playbackProgressTimer(this, &HTMLMediaElement::playbackProgressTimerFired)
+    , m_hideFullscreenControlsTimer(this, &HTMLMediaElement::hideFullscreenControlsTimerFired)
     , m_playedTimeRanges()
     , m_playbackRate(1.0f)
     , m_defaultPlaybackRate(1.0f)
@@ -1425,6 +1426,9 @@ void HTMLMediaElement::play(bool isUserGesture)
             return;
     }
     
+    if (isFullscreen())
+        startHideFullscreenControlsTimer();
+    
     playInternal();
 }
 
@@ -1610,6 +1614,8 @@ void HTMLMediaElement::endScrubbing()
 // "15 to 250ms", we choose the slowest frequency
 static const double maxTimeupdateEventFrequency = 0.25;
 
+static const double timeWithoutMouseMovementBeforeHidingControls = 3;
+
 void HTMLMediaElement::startPlaybackProgressTimer()
 {
     if (m_playbackProgressTimer.isActive())
@@ -1633,6 +1639,36 @@ void HTMLMediaElement::playbackProgressTimerFired(Timer<HTMLMediaElement>*)
         mediaControls()->playbackProgressed();
     }
     // FIXME: deal with cue ranges here
+}
+
+void HTMLMediaElement::startHideFullscreenControlsTimer()
+{
+    if (!isFullscreen())
+        return;
+    
+    m_hideFullscreenControlsTimer.startOneShot(timeWithoutMouseMovementBeforeHidingControls);
+}
+
+void HTMLMediaElement::hideFullscreenControlsTimerFired(Timer<HTMLMediaElement>*)
+{
+    if (!m_playing)
+        return;
+    
+    if (!isFullscreen())
+        return;
+    
+    if (!controls() || !hasMediaControls())
+        return;
+    
+    if (!mediaControls()->shouldHideControls())
+        return;
+        
+    mediaControls()->makeTransparent();
+}
+
+void HTMLMediaElement::stopHideFullscreenControlsTimer()
+{
+    m_hideFullscreenControlsTimer.stop();
 }
 
 void HTMLMediaElement::scheduleTimeupdateEvent(bool periodicEvent)
@@ -2378,10 +2414,24 @@ void HTMLMediaElement::defaultEventHandler(Event* event)
         if (mouseEvent->relatedTarget() != this) {
             if (event->type() == eventNames().mouseoverEvent) {
                 m_mouseOver = true;
-                if (hasMediaControls() && controls() && !canPlay())
+                if (hasMediaControls() && controls() && !canPlay()) {
                     mediaControls()->makeOpaque();
-            } else if (event->type() == eventNames().mouseoutEvent)
+                    if (mediaControls()->shouldHideControls())
+                        startHideFullscreenControlsTimer();
+                }
+            } else if (event->type() == eventNames().mouseoutEvent) {
                 m_mouseOver = false;
+                stopHideFullscreenControlsTimer();
+            } else if (event->type() == eventNames().mousemoveEvent) {
+                if (isFullscreen() && hasMediaControls() && controls()) {
+                    // When we get a mouse move in fullscreen mode, show the media controls, and start a timer
+                    // that will hide the media controls after a 3 seconds without a mouse move.
+                    mediaControls()->makeOpaque();
+                    if (mediaControls()->shouldHideControls())
+                        startHideFullscreenControlsTimer();
+                }
+            }
+    
         }
     }
 
@@ -2518,6 +2568,9 @@ bool HTMLMediaElement::isFullscreen() const
 void HTMLMediaElement::enterFullscreen()
 {
     LOG(Media, "HTMLMediaElement::enterFullscreen");
+    
+    startHideFullscreenControlsTimer();
+    
 #if ENABLE(FULLSCREEN_API)
     if (document() && document()->settings() && document()->settings()->fullScreenEnabled()) {
         document()->requestFullScreenForElement(this, 0, Document::ExemptIFrameAllowFulScreenRequirement);
@@ -2537,6 +2590,9 @@ void HTMLMediaElement::enterFullscreen()
 void HTMLMediaElement::exitFullscreen()
 {
     LOG(Media, "HTMLMediaElement::exitFullscreen");
+    
+    stopHideFullscreenControlsTimer();
+    
 #if ENABLE(FULLSCREEN_API)
     if (document() && document()->settings() && document()->settings()->fullScreenEnabled()) {
         if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == this)
