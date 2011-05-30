@@ -1,5 +1,22 @@
 2011-05-29  Mark Rowe  <mrowe@apple.com>
 
+        Merge r87642.
+
+    2011-05-29  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (87637): Entering WebKit Full Screen mode causes an assertion in DrawingAreaImpl::layerHostDidFlushLayers
+        https://bugs.webkit.org/show_bug.cgi?id=61706
+        <rdar://problem/9521970>
+
+        If we've already let the UI process know that we're in compositing mode, we just need to force a repaint.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::forceRepaint):
+
+2011-05-29  Mark Rowe  <mrowe@apple.com>
+
         Merge r87652.
 
     2011-05-29  Jer Noble  <jer.noble@apple.com>

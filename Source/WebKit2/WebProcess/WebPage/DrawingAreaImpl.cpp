@@ -158,8 +158,11 @@ void DrawingAreaImpl::forceRepaint()
     if (m_layerTreeHost) {
         // FIXME: We need to do the same work as the layerHostDidFlushLayers function here,
         // but clearly it doesn't make sense to call the function with that name.
-        // Consider renaming it.
-        layerHostDidFlushLayers();
+        // Consider refactoring and renaming it.
+        if (m_compositingAccordingToProxyMessages)
+            m_layerTreeHost->forceRepaint();
+        else
+            layerHostDidFlushLayers();
         if (!m_layerTreeHost->participatesInDisplay())
             return;
     }
