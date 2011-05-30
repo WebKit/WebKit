@@ -279,6 +279,9 @@ public:
     // Use Document::registerForPrivateBrowsingStateChangedCallbacks() to subscribe to this.
     virtual void privateBrowsingStateDidChange() { }
 
+    virtual void didBecomeFullscreenElement() { }
+    virtual void willStopBeingFullscreenElement() { }
+
     bool isFinishedParsingChildren() const { return isParsingChildrenFinished(); }
     virtual void finishParsingChildren();
     virtual void beginParsingChildren();
