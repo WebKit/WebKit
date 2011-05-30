@@ -1,3 +1,29 @@
+2011-05-29  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9515650> 30 second rewind button obscured in fullscreen controller when video uses custom inline controls
+        https://bugs.webkit.org/show_bug.cgi?id=61714
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitDidEnterFullScreenForElement): Call didBecomeFullscreenElement() on the
+        new full screen element.
+        (WebCore::Document::webkitWillExitFullScreenForElement): Call willStopBeingFullscreenElement() on
+        the full screen element.
+        * dom/Element.h:
+        (WebCore::Element::didBecomeFullscreenElement): Added with a default implementation that does nothing.
+        (WebCore::Element::willStopBeingFullscreenElement): Ditto.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::didBecomeFullscreenElement): Added this override, which calls
+        MediaControls::enteredFullscreen().
+        (WebCore::HTMLMediaElement::willStopBeingFullscreenElement): Added this override, which calls
+        MediaControls::exitedFullscreen().
+        * html/HTMLMediaElement.h:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlFullscreenButtonElement::preDispatchEventHandler): Removed calls to
+        enteredFullscreen() and exitedFullscreen() from here, since they are now called in response to
+        changes to the fullscreen-ness of the element.
+
 2011-05-29  Darin Adler  <darin@apple.com>
 
         Reviewed by Kevin Decker.

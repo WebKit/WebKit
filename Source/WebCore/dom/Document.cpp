@@ -4905,7 +4905,7 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     
 void Document::webkitDidEnterFullScreenForElement(Element*)
 {
-    ASSERT(m_fullScreenElement);
+    m_fullScreenElement->didBecomeFullscreenElement();
 
     if (m_fullScreenRenderer) {
 #if USE(ACCELERATED_COMPOSITING)
@@ -4924,6 +4924,8 @@ void Document::webkitWillExitFullScreenForElement(Element*)
 {
     setContainsFullScreenElementRecursively(ownerElement(), false);
     
+    m_fullScreenElement->willStopBeingFullscreenElement();
+
     if (m_fullScreenRenderer) {
         setAnimatingFullScreen(true);
 #if USE(ACCELERATED_COMPOSITING)

@@ -2556,6 +2556,18 @@ void HTMLMediaElement::exitFullscreen()
     }
 }
 
+void HTMLMediaElement::didBecomeFullscreenElement()
+{
+    if (hasMediaControls())
+        mediaControls()->enteredFullscreen();
+}
+
+void HTMLMediaElement::willStopBeingFullscreenElement()
+{
+    if (hasMediaControls())
+        mediaControls()->exitedFullscreen();
+}
+
 PlatformMedia HTMLMediaElement::platformMedia() const
 {
     return m_player ? m_player->platformMedia() : NoPlatformMedia;

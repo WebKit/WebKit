@@ -227,7 +227,10 @@ private:
     virtual void recalcStyle(StyleChange);
     
     virtual void defaultEventHandler(Event*);
-    
+
+    virtual void didBecomeFullscreenElement();
+    virtual void willStopBeingFullscreenElement();
+
     // ActiveDOMObject functions.
     virtual bool canSuspend() const;
     virtual void suspend(ReasonForSuspension);
