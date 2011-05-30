@@ -44,6 +44,7 @@
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
 #include <WebKit2/WKContext.h>
+#include <wtf/text/CString.h>
 
 using namespace WebKit;
 using namespace WebCore;
@@ -54,6 +55,7 @@ struct _WebKitWebViewBasePrivate {
     gboolean isPageActive;
     GtkIMContext* imContext;
     GtkClickCounter clickCounter;
+    CString tooltipText;
 };
 
 G_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
@@ -282,6 +284,27 @@ static gboolean webkitWebViewBaseMotionNotifyEvent(GtkWidget* widget, GdkEventMo
     return FALSE;
 }
 
+#if GTK_CHECK_VERSION(2, 12, 0)
+static gboolean webkitWebViewBaseQueryTooltip(GtkWidget* widget, gint x, gint y, gboolean keyboardMode, GtkTooltip* tooltip)
+{
+    WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
+
+    if (keyboardMode) {
+        // TODO: https://bugs.webkit.org/show_bug.cgi?id=61732.
+        notImplemented();
+        return FALSE;
+    }
+
+    if (priv->tooltipText.length() <= 0)
+        return FALSE;
+
+    // TODO: set the tip area when WKPageMouseDidMoveOverElementCallback
+    // receives a hit test result.
+    gtk_tooltip_set_text(tooltip, priv->tooltipText.data());
+    return TRUE;
+}
+#endif
+
 static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebViewBaseClass)
 {
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(webkitWebViewBaseClass);
@@ -300,6 +323,9 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     widgetClass->button_release_event = webkitWebViewBaseButtonReleaseEvent;
     widgetClass->scroll_event = webkitWebViewBaseScrollEvent;
     widgetClass->motion_notify_event = webkitWebViewBaseMotionNotifyEvent;
+#if GTK_CHECK_VERSION(2, 12, 0)
+    widgetClass->query_tooltip = webkitWebViewBaseQueryTooltip;
+#endif
 
     GObjectClass* gobjectClass = G_OBJECT_CLASS(webkitWebViewBaseClass);
     gobjectClass->finalize = webkitWebViewBaseFinalize;
@@ -327,4 +353,24 @@ GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase* webkitWebViewBase
 WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase* webkitWebViewBase)
 {
     return webkitWebViewBase->priv->pageProxy.get();
+}
+
+void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char* tooltip)
+{
+#if GTK_CHECK_VERSION(2, 12, 0)
+    WebKitWebViewBasePrivate* priv = webViewBase->priv;
+    if (tooltip && tooltip[0] != '\0') {
+        priv->tooltipText = tooltip;
+        gtk_widget_set_has_tooltip(GTK_WIDGET(webViewBase), TRUE);
+    } else {
+        priv->tooltipText = "";
+        gtk_widget_set_has_tooltip(GTK_WIDGET(webViewBase), FALSE);
+    }
+
+    gtk_widget_trigger_tooltip_query(GTK_WIDGET(webViewBase));
+#else
+    // TODO: Support older GTK+ versions
+    // See http://bugs.webkit.org/show_bug.cgi?id=15793
+    notImplemented();
+#endif
 }

@@ -41,6 +41,8 @@ GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
 
 WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
 
+void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
+
 G_END_DECLS
 
 #endif // WebKitWebViewBasePrivate_h
