@@ -1,3 +1,96 @@
+2011-05-30  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Unreviewed.
+        [Chromium] Rebaseline tests after r87680.
+
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-bias-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-divisor-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelMatrix-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelUnitLength-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-order-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-preserveAlpha-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/filters/feConvolveFilter-y-bounds-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-bias-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-divisor-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-in-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelMatrix-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelUnitLength-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-order-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-preserveAlpha-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop-expected.png:
+        * platform/chromium-linux/svg/filters/feConvolveFilter-y-bounds-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/filters-conv-01-f-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-bias-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-divisor-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-in-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelMatrix-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelUnitLength-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-order-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/filters-conv-01-f-expected.png: Added.
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-bias-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-divisor-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-in-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelMatrix-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelUnitLength-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-order-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop-expected.png:
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-bias-prop-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-divisor-prop-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edgeMode-prop-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-in-prop-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelMatrix-prop-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelUnitLength-prop-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-order-prop-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-preserveAlpha-prop-expected.png: Added.
+        * platform/chromium-win-vista/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop-expected.png: Added.
+        * platform/chromium-win-vista/svg/filters/feConvolveFilter-y-bounds-expected.png: Added.
+
 2011-05-30  Ryan Sleevi  <rsleevi@chromium.org>
 
         Reviewed by Darin Adler.
