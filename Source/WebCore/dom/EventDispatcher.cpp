@@ -34,6 +34,7 @@
 #include "ScopedEventQueue.h"
 #include "WindowEventContext.h"
 #include <wtf/RefPtr.h>
+#include <wtf/UnusedParam.h>
 
 #if ENABLE(SVG)
 #include "SVGElementInstance.h"
@@ -377,6 +378,8 @@ EventDispatchBehavior EventDispatcher::determineDispatchBehavior(Event* event, N
         if (element->isMediaElement() && shadowRoot && shadowRoot->shadowHost() == element)
             return StayInsideShadowDOM;
     }
+#else
+    UNUSED_PARAM(shadowRoot);
 #endif
 
     // Per XBL 2.0 spec, mutation events should never cross shadow DOM boundary:
