@@ -1,3 +1,24 @@
+2011-05-30  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [Chromium] Fix regression after r87628.
+        https://bugs.webkit.org/show_bug.cgi?id=61733
+
+        Having r87628 in place, Chrome reliability bot crashes in
+        WebCore::HTMLLinkElement::onloadTimerFired.
+
+        This is because the change makes WebCore::CachedResource::setRequest to
+        call checkNotify on request reset.  HTMLLinkElement registers itself as
+        CachedResource client via m_cachedSheet, which can happen even if
+        m_cachedLinkResource wasn't set.  As a result,
+        WebCore::HTMLLinkElement::notifyFinished is got called with unset
+        m_cachedLinkResource, which causes a crash in
+        HTMLLinkElement::onloadTimerFired
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::notifyFinished):
+
 2011-05-30  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler and Simon Fraser.

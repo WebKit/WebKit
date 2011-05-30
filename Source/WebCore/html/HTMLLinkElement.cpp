@@ -75,7 +75,7 @@ HTMLLinkElement::~HTMLLinkElement()
         m_sheet->clearOwnerNode();
 
     if (m_cachedSheet) {
-        m_cachedSheet->removeClient(this);    
+        m_cachedSheet->removeClient(this);
         removePendingSheet();
     }
     
@@ -457,8 +457,9 @@ void HTMLLinkElement::onloadTimerFired(Timer<HTMLLinkElement>* timer)
 
 void HTMLLinkElement::notifyFinished(CachedResource* resource)
 {
-    m_onloadTimer.startOneShot(0);
-    ASSERT(m_cachedLinkResource.get() == resource);
+    ASSERT(m_cachedLinkResource.get() == resource || m_cachedSheet.get() == resource);
+    if (m_cachedLinkResource.get() == resource)
+        m_onloadTimer.startOneShot(0);
 }
 #endif
 
