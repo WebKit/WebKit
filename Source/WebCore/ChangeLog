@@ -1,3 +1,77 @@
+2011-05-30  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler and Simon Fraser.
+
+        REGRESSION (r87622): Scrubbing a Vimeo movie when in fullscreen stops playback; no way to make it start again
+        https://bugs.webkit.org/show_bug.cgi?id=61717
+        rdar://problem/9522272
+
+        May be some good way to test this later. No immediate idea about the best way.
+
+        When a media element is taken into full-screen mode, stop events from propagating
+        outside the media element's shadow DOM, EventDispatcher::determineDispatchBehavior()
+        has been changed to take a shadow root node. In our full screen media element check,
+        we check to see if the passed shadow root is the shadow root of the full screen media
+        element, and if so, specify events should StayInsideShadowDOM. The end result is that
+        inside EventDispatcher::ensureEventAncestors, an ancestor chain is built up all the
+        way from the SliderThumb to the video element's shadow root, but no further.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::determineDispatchBehavior): Restrict events to the
+        shadow DOM when showing a full screen video.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::HTMLMediaElement): Removed code to manage full screen controls.
+        The events telling us about activity in the shadow DOM no longer bubble out so we need to
+        handle this inside the shadow DOM on the root element.
+        (WebCore::HTMLMediaElement::play): Ditto.
+        (WebCore::HTMLMediaElement::playbackProgressTimerFired): Ditto.
+        (WebCore::HTMLMediaElement::defaultEventHandler): Ditto.
+        (WebCore::HTMLMediaElement::enterFullscreen): Ditto.
+        (WebCore::HTMLMediaElement::exitFullscreen): Ditto.
+        * html/HTMLMediaElement.h: Added isPlaying function, removed things moved to the root element.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlVolumeSliderContainerElement::defaultEventHandler): Rolled out
+        changes that tried to make special rules for events using preDispatchEventHandler and such.
+        This rolls out both r87622 and r87655.
+        (WebCore::MediaControlMuteButtonElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlPanelMuteButtonElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlPlayButtonElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlSeekButtonElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlRewindButtonElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlReturnToRealtimeButtonElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlTimelineElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlVolumeSliderElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlFullscreenButtonElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::defaultEventHandler): Ditto.
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::defaultEventHandler): Ditto.
+        * html/shadow/MediaControlElements.h: Ditto.
+
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::MediaControlRootElement): Initialize new data members.
+        (WebCore::MediaControlRootElement::playbackStarted): Start the timer so we will consider
+        hiding the controls later.
+        (WebCore::MediaControlRootElement::playbackProgressed): Hide the controls if the mouse
+        is no longer over the controls.
+        (WebCore::MediaControlRootElement::playbackStopped): Stop the timer since we only hide
+        automatically if we're playing.
+        (WebCore::MediaControlRootElement::enteredFullscreen): Start the timer.
+        (WebCore::MediaControlRootElement::exitedFullscreen): Stop the timer since we only care
+        if we are full screen.
+        (WebCore::MediaControlRootElement::containsRelatedTarget): Added. Helper for next function.
+        (WebCore::MediaControlRootElement::defaultEventHandler): Do the hide/show and timer functions
+        as the mouse is moved in and out.
+        (WebCore::MediaControlRootElement::startHideFullscreenControlsTimer): Start the timer if
+        needed.
+        (WebCore::MediaControlRootElement::hideFullscreenControlsTimerFired): Hide if the conditions
+        are met.
+        (WebCore::MediaControlRootElement::stopHideFullscreenControlsTimer): Stop the timer.
+
+        * html/shadow/MediaControlRootElement.h: Added new functions and data members.
+
+
 2011-05-30  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Adam Barth.

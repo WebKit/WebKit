@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -30,12 +30,15 @@
 #include "MediaControlRootElement.h"
 
 #include "MediaControlElements.h"
+#include "MouseEvent.h"
 #include "Page.h"
 #include "RenderTheme.h"
 
 using namespace std;
 
 namespace WebCore {
+
+static const double timeWithoutMouseMovementBeforeHidingControls = 3;
 
 MediaControlRootElement::MediaControlRootElement(HTMLMediaElement* mediaElement)
     : MediaControls(mediaElement)
@@ -61,6 +64,8 @@ MediaControlRootElement::MediaControlRootElement(HTMLMediaElement* mediaElement)
     , m_fullScreenMaxVolumeButton(0)
     , m_panel(0)
     , m_opaque(true)
+    , m_isMouseOverControls(false)
+    , m_hideFullscreenControlsTimer(this, &MediaControlRootElement::hideFullscreenControlsTimerFired)
 {
 }
 
@@ -336,12 +341,18 @@ void MediaControlRootElement::playbackStarted()
     m_playButton->updateDisplayType();
     m_timeline->setPosition(m_mediaElement->currentTime());
     updateTimeDisplay();
+
+    if (m_mediaElement->isFullscreen())
+        startHideFullscreenControlsTimer();
 }
 
 void MediaControlRootElement::playbackProgressed()
 {
     m_timeline->setPosition(m_mediaElement->currentTime());
     updateTimeDisplay();
+    
+    if (!m_isMouseOverControls && m_mediaElement->hasVideo())
+        makeTransparent();
 }
 
 void MediaControlRootElement::playbackStopped()
@@ -351,7 +362,7 @@ void MediaControlRootElement::playbackStopped()
     updateTimeDisplay();
     makeOpaque();
     
-    m_mediaElement->stopHideFullscreenControlsTimer();
+    stopHideFullscreenControlsTimer();
 }
 
 void MediaControlRootElement::updateTimeDisplay()
@@ -437,6 +448,8 @@ void MediaControlRootElement::enteredFullscreen()
         m_rewindButton->hide();
         m_returnToRealTimeButton->hide();
     }
+
+    startHideFullscreenControlsTimer();
 }
 
 void MediaControlRootElement::exitedFullscreen()
@@ -448,6 +461,8 @@ void MediaControlRootElement::exitedFullscreen()
     m_seekBackButton->show();
     m_seekForwardButton->show();
     m_returnToRealTimeButton->show();
+
+    stopHideFullscreenControlsTimer();    
 }
 
 void MediaControlRootElement::showVolumeSlider()
@@ -462,6 +477,72 @@ void MediaControlRootElement::showVolumeSlider()
 bool MediaControlRootElement::shouldHideControls()
 {
     return !m_panel->hovered();
+}
+
+bool MediaControlRootElement::containsRelatedTarget(Event* event)
+{
+    if (!event->isMouseEvent())
+        return false;
+    EventTarget* relatedTarget = static_cast<MouseEvent*>(event)->relatedTarget();
+    if (!relatedTarget)
+        return false;
+    return contains(relatedTarget->toNode());
+}
+
+void MediaControlRootElement::defaultEventHandler(Event* event)
+{
+    MediaControls::defaultEventHandler(event);
+
+    if (event->type() == eventNames().mouseoverEvent) {
+        if (!containsRelatedTarget(event)) {
+            m_isMouseOverControls = true;
+            if (!m_mediaElement->canPlay()) {
+                makeOpaque();
+                if (shouldHideControls())
+                    startHideFullscreenControlsTimer();
+            }
+        }
+    } else if (event->type() == eventNames().mouseoutEvent) {
+        if (!containsRelatedTarget(event)) {
+            m_isMouseOverControls = false;
+            stopHideFullscreenControlsTimer();
+        }
+    } else if (event->type() == eventNames().mousemoveEvent) {
+        if (m_mediaElement->isFullscreen()) {
+            // When we get a mouse move in fullscreen mode, show the media controls, and start a timer
+            // that will hide the media controls after a 3 seconds without a mouse move.
+            makeOpaque();
+            if (shouldHideControls())
+                startHideFullscreenControlsTimer();
+        }
+    }
+}
+
+void MediaControlRootElement::startHideFullscreenControlsTimer()
+{
+    if (!m_mediaElement->isFullscreen())
+        return;
+    
+    m_hideFullscreenControlsTimer.startOneShot(timeWithoutMouseMovementBeforeHidingControls);
+}
+
+void MediaControlRootElement::hideFullscreenControlsTimerFired(Timer<MediaControlRootElement>*)
+{
+    if (!m_mediaElement->isPlaying())
+        return;
+    
+    if (!m_mediaElement->isFullscreen())
+        return;
+    
+    if (!shouldHideControls())
+        return;
+    
+    makeTransparent();
+}
+
+void MediaControlRootElement::stopHideFullscreenControlsTimer()
+{
+    m_hideFullscreenControlsTimer.stop();
 }
 
 const AtomicString& MediaControlRootElement::shadowPseudoId() const
