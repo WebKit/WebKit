@@ -84,6 +84,8 @@ public:
     void updateTimeDisplay();
     void updateStatusDisplay();
 
+    virtual bool shouldHideControls();
+
 private:
     MediaControlRootElementChromium(HTMLMediaElement*);
 

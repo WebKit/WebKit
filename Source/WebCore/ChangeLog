@@ -1,3 +1,11 @@
+2011-05-29  Adam Barth  <abarth@webkit.org>
+
+        Attempt to fix build by implementing pure virtual function.
+
+        * html/shadow/MediaControlRootElementChromium.cpp:
+        (WebCore::MediaControlRootElementChromium::shouldHideControls):
+        * html/shadow/MediaControlRootElementChromium.h:
+
 2011-05-29  Brian Weinstein  <bweinstein@apple.com>
 
         Reviewed by Darin Adler.

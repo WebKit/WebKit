@@ -249,6 +249,11 @@ void MediaControlRootElementChromium::updateStatusDisplay()
 {
 }
 
+bool MediaControlRootElementChromium::shouldHideControls()
+{
+    return !m_panel->hovered();
+}
+
 void MediaControlRootElementChromium::loadedMetadata()
 {
     reset();
