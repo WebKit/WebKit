@@ -37,6 +37,8 @@ public:
     };
     
     virtual ~TimingFunction() { }
+
+    TimingFunctionType type() const { return m_type; }
     
     bool isLinearTimingFunction() const { return m_type == LinearFunction; }
     bool isCubicBezierTimingFunction() const { return m_type == CubicBezierFunction; }

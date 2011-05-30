@@ -48,6 +48,7 @@
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/TextCheckerClient.h>
+#include <WebCore/TimingFunction.h>
 #include <WebCore/TransformationMatrix.h>
 #include <WebCore/ViewportArguments.h>
 #include <WebCore/WindowFeatures.h>
@@ -482,6 +483,79 @@ template<> struct ArgumentCoder<WebCore::TextCheckingResult> {
         if (!decoder->decode(result.replacement))
             return false;
         return true;
+    }
+};
+
+template<> struct ArgumentCoder<RefPtr<WebCore::TimingFunction> > {
+    static void encode(ArgumentEncoder* encoder, const RefPtr<WebCore::TimingFunction>& function)
+    {
+        // We don't want to encode null-references.
+        ASSERT(function);
+
+        WebCore::TimingFunction::TimingFunctionType type = function->type();
+        encoder->encodeInt32(type);
+        switch (type) {
+        case WebCore::TimingFunction::LinearFunction:
+            break;
+        case WebCore::TimingFunction::CubicBezierFunction: {
+            WebCore::CubicBezierTimingFunction* cubicFunction = static_cast<WebCore::CubicBezierTimingFunction*>(function.get());
+            encoder->encodeDouble(cubicFunction->x1());
+            encoder->encodeDouble(cubicFunction->y1());
+            encoder->encodeDouble(cubicFunction->x2());
+            encoder->encodeDouble(cubicFunction->y2());
+            break;
+        }
+        case WebCore::TimingFunction::StepsFunction: {
+            WebCore::StepsTimingFunction* stepsFunction = static_cast<WebCore::StepsTimingFunction*>(function.get());
+            encoder->encodeInt32(stepsFunction->numberOfSteps());
+            encoder->encodeBool(stepsFunction->stepAtStart());
+            break;
+        }
+        }
+    }
+
+    static bool decode(ArgumentDecoder* decoder, RefPtr<WebCore::TimingFunction>& function)
+    {
+        WebCore::TimingFunction::TimingFunctionType type;
+        int typeInt;
+        if (!decoder->decodeInt32(typeInt))
+            return false;
+
+        type = static_cast<WebCore::TimingFunction::TimingFunctionType>(typeInt);
+        switch (type) {
+        case WebCore::TimingFunction::LinearFunction:
+            function = WebCore::LinearTimingFunction::create();
+            return true;
+
+        case WebCore::TimingFunction::CubicBezierFunction: {
+            double x1, y1, x2, y2;
+            if (!decoder->decodeDouble(x1))
+                return false;
+            if (!decoder->decodeDouble(y1))
+                return false;
+            if (!decoder->decodeDouble(x2))
+                return false;
+            if (!decoder->decodeDouble(y2))
+                return false;
+            function = WebCore::CubicBezierTimingFunction::create(x1, y1, x2, y2);
+            return true;
+        }
+
+        case WebCore::TimingFunction::StepsFunction: {
+            int numSteps;
+            bool stepAtStart;
+            if (!decoder->decodeInt32(numSteps))
+                return false;
+            if (!decoder->decodeBool(stepAtStart))
+                return false;
+
+            function = WebCore::StepsTimingFunction::create(numSteps, stepAtStart);
+            return true;
+        }
+
+        }
+
+        return false;
     }
 };
 

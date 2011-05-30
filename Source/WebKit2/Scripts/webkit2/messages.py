@@ -258,6 +258,7 @@ def struct_or_class(namespace, type):
         'WebCore::Length',
         'WebCore::PluginInfo',
         'WebCore::PrintInfo',
+        'WebCore::TimingFunction',
         'WebCore::TransformationMatrix',
         'WebCore::ViewportArguments',
         'WebCore::WindowFeatures',

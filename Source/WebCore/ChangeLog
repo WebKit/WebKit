@@ -1,3 +1,17 @@
+2011-05-30  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        WebKit2: Enable serializing of data types needed for cross-process accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=61694
+
+        Added a public TimingFunction::type() method.
+
+        No new functionality, so no new tests.
+
+        * platform/animation/TimingFunction.h:
+        (WebCore::TimingFunction::type):
+
 2011-05-30  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         BUILD FIX for r87697 on Windows/Symbian
