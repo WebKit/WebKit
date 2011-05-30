@@ -42,14 +42,17 @@
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/KeyboardEvent.h>
+#include <WebCore/Length.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/TextCheckerClient.h>
+#include <WebCore/TransformationMatrix.h>
 #include <WebCore/ViewportArguments.h>
 #include <WebCore/WindowFeatures.h>
 #include <limits>
+
 
 namespace CoreIPC {
 
@@ -61,6 +64,8 @@ template<> struct ArgumentCoder<WebCore::ViewportArguments> : SimpleArgumentCode
 template<> struct ArgumentCoder<WebCore::FloatPoint> : SimpleArgumentCoder<WebCore::FloatPoint> { };
 template<> struct ArgumentCoder<WebCore::FloatSize> : SimpleArgumentCoder<WebCore::FloatSize> { };
 template<> struct ArgumentCoder<WebCore::FloatRect> : SimpleArgumentCoder<WebCore::FloatRect> { };
+template<> struct ArgumentCoder<WebCore::Length> : SimpleArgumentCoder<WebCore::Length> { };
+template<> struct ArgumentCoder<WebCore::TransformationMatrix> : SimpleArgumentCoder<WebCore::TransformationMatrix> { };
 
 template<> struct ArgumentCoder<WebCore::MimeClassInfo> {
     static void encode(ArgumentEncoder* encoder, const WebCore::MimeClassInfo& mimeClassInfo)
