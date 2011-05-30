@@ -52,9 +52,7 @@ function test()
     {
         InspectorTest.addResult("Link for a URI from CSS document:");
         dumpHref();
-        InspectorTest.selectNodeWithId("iframed");
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
-
+        InspectorTest.selectNodeWithId("iframed", step2);
     }
 
     function step2()

@@ -30,8 +30,7 @@ function test()
     {
         InspectorTest.addResult("Main frame style:");
         InspectorTest.dumpSelectedElementStyles(true, false, true);
-        InspectorTest.selectNodeWithId("iframeBody");
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
+        InspectorTest.selectNodeWithId("iframeBody", step2);
     }
 
     function step2()

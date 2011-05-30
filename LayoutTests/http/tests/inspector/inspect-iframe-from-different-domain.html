@@ -16,8 +16,7 @@ function onIFrameLoad()
 
 function test()
 {
-    InspectorTest.selectNodeWithId("iframe-body");
-    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
+    InspectorTest.selectNodeWithId("iframe-body", step1);
 
     function step1()
     {

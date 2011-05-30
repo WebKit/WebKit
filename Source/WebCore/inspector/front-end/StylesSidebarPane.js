@@ -235,21 +235,10 @@ WebInspector.StylesSidebarPane.prototype = {
                 this._refreshUpdate(node, computedStyle, editedSection);
         }
 
-        function reloadAllStyles()
-        {
-            delete this._reloadAllStylesTimer;
-            WebInspector.cssModel.getStylesAsync(this._allStylesNodeId, stylesCallback.bind(this))
-        }
-
         if (refresh)
             WebInspector.cssModel.getComputedStyleAsync(node.id, computedStyleCallback.bind(this));
-        else {
-            // Always refresh the node to request styles for.
-            this._allStylesNodeId = node.id;
-            if ("_reloadAllStylesTimer" in this)
-                return;
-            this._reloadAllStylesTimer = setTimeout(reloadAllStyles.bind(this), 0);
-        }
+        else
+            WebInspector.cssModel.getStylesAsync(node.id, stylesCallback.bind(this));
     },
 
     _refreshUpdate: function(node, computedStyle, editedSection)
