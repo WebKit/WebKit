@@ -1,3 +1,9 @@
+2011-05-29  Adam Barth  <abarth@webkit.org>
+
+        Slightly adjust the type of the expected failure.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-05-28  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Geoff Garen.
