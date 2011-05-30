@@ -28,15 +28,14 @@
 #include "Connection.h"
 
 #include "ArgumentEncoder.h"
-#include "ProcessLauncher.h"
 #include "WorkItem.h"
 #include "SharedMemory.h"
-#include "WebProcessProxy.h"
 #include <sys/socket.h>
 #include <unistd.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <wtf/Assertions.h>
+#include <wtf/OwnArrayPtr.h>
 
 #if PLATFORM(QT)
 #include <QApplication>

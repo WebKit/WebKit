@@ -29,7 +29,6 @@
 #include "JSNPObject.h"
 #include "NPRuntimeObjectMap.h"
 #include "NPRuntimeUtilities.h"
-#include "PluginView.h"
 #include <JavaScriptCore/JSLock.h>
 #include <JavaScriptCore/JSObject.h>
 #include <WebCore/Frame.h>  
