@@ -77,9 +77,10 @@ MediaControlElement::MediaControlElement(HTMLMediaElement* mediaElement)
 
 void* MediaControlElement::preDispatchEventHandler(Event* event)
 {
-    if (event->type() == eventNames().clickEvent)
+    if (event->type() == eventNames().clickEvent) {
+        event->preventDefault();
         event->stopPropagation();
-    
+    }
     return 0;
 }
 
@@ -333,6 +334,7 @@ void* MediaControlMuteButtonElement::preDispatchEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
         mediaElement()->setMuted(!mediaElement()->muted());
+        event->preventDefault();
         event->stopPropagation();
     }
 
@@ -419,6 +421,7 @@ void* MediaControlPlayButtonElement::preDispatchEventHandler(Event* event)
     if (event->type() == eventNames().clickEvent) {
         mediaElement()->togglePlayState();
         updateDisplayType();
+        event->preventDefault();
         event->stopPropagation();
     }
     return 0;
@@ -454,6 +457,7 @@ void* MediaControlSeekButtonElement::preDispatchEventHandler(Event* event)
         }
         mediaElement()->pause(event->fromUserGesture());
         m_seekTimer.startRepeating(cSeekRepeatDelay);
+        event->preventDefault();
         event->stopPropagation();
     } else if (event->type() == eventNames().mouseupEvent) {
         if (m_capturing)
@@ -469,6 +473,7 @@ void* MediaControlSeekButtonElement::preDispatchEventHandler(Event* event)
             }
             m_seekTimer.stop();
             m_seeking = false;
+            event->preventDefault();
             event->stopPropagation();
         }
     }
@@ -550,6 +555,7 @@ void* MediaControlRewindButtonElement::preDispatchEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
         mediaElement()->rewind(30);
+        event->preventDefault();
         event->stopPropagation();
     }    
     return 0;
@@ -580,6 +586,7 @@ void* MediaControlReturnToRealtimeButtonElement::preDispatchEventHandler(Event* 
 {
     if (event->type() == eventNames().clickEvent) {
         mediaElement()->returnToRealtime();
+        event->preventDefault();
         event->stopPropagation();
     }
     return 0;
@@ -612,6 +619,7 @@ void* MediaControlToggleClosedCaptionsButtonElement::preDispatchEventHandler(Eve
         mediaElement()->setClosedCaptionsVisible(!mediaElement()->closedCaptionsVisible());
         setChecked(mediaElement()->closedCaptionsVisible());
         updateDisplayType();
+        event->preventDefault();
         event->stopPropagation();
     }
 
@@ -810,6 +818,7 @@ void* MediaControlFullscreenButtonElement::preDispatchEventHandler(Event* event)
         } else
 #endif
             mediaElement()->enterFullscreen();
+        event->preventDefault();
         event->stopPropagation();
     }
     return 0;
@@ -840,6 +849,7 @@ void* MediaControlFullscreenVolumeMinButtonElement::preDispatchEventHandler(Even
     if (event->type() == eventNames().clickEvent) {
         ExceptionCode code = 0;
         mediaElement()->setVolume(0, code);
+        event->preventDefault();
         event->stopPropagation();
     }
     return 0;
@@ -870,6 +880,7 @@ void* MediaControlFullscreenVolumeMaxButtonElement::preDispatchEventHandler(Even
     if (event->type() == eventNames().clickEvent) {
         ExceptionCode code = 0;
         mediaElement()->setVolume(1, code);
+        event->preventDefault();
         event->stopPropagation();
     }
     return 0;

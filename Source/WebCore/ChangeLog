@@ -1,3 +1,28 @@
+2011-05-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Kevin Decker.
+
+        REGRESSION (r87622): In media documents, clicking the full screen button and the play button pauses the video
+        https://bugs.webkit.org/show_bug.cgi?id=61713
+
+        We need to come up with a way to regression-test these changes. Nothing at the moment.
+
+        The bug is that we removed calls to preventDefault, but we still do need to prevent
+        default handling of this event.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlElement::preDispatchEventHandler): Add back the preventDefault
+        that was in here before r87622 as well as the stopPropagation that was added in r87622.
+        (WebCore::MediaControlMuteButtonElement::preDispatchEventHandler): Ditto.
+        (WebCore::MediaControlPlayButtonElement::preDispatchEventHandler): Ditto.
+        (WebCore::MediaControlSeekButtonElement::preDispatchEventHandler): Ditto.
+        (WebCore::MediaControlRewindButtonElement::preDispatchEventHandler): Ditto.
+        (WebCore::MediaControlReturnToRealtimeButtonElement::preDispatchEventHandler): Ditto.
+        (WebCore::MediaControlToggleClosedCaptionsButtonElement::preDispatchEventHandler): Ditto.
+        (WebCore::MediaControlFullscreenButtonElement::preDispatchEventHandler): Ditto.
+        (WebCore::MediaControlFullscreenVolumeMinButtonElement::preDispatchEventHandler): Ditto.
+        (WebCore::MediaControlFullscreenVolumeMaxButtonElement::preDispatchEventHandler): Ditto.
+
 2011-05-29  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Kenneth Rohde Christiansen.
