@@ -4,7 +4,7 @@ include(../common.pri)
 include(features.pri)
 
 # We enable TextureMapper by default; remove this line to enable GraphicsLayerQt.
-CONFIG += texmap
+mac|unix:CONFIG += texmap
 
 QT *= network
 

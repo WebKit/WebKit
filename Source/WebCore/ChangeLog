@@ -1,3 +1,11 @@
+2011-05-30  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        BUILD FIX for r87697 on Windows/Symbian
+
+        For now enabling TextureMapper for Mac/Linux only.
+
+        * WebCore.pri:
+
 2011-05-30  David Kilzer  <ddkilzer@apple.com>
 
         BUILD FIX for r87692 with !ENABLE(FULLSCREEN_API)
