@@ -1,3 +1,23 @@
+2011-05-30  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement JavaScript dialogs in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=61725
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (WKStringGetCString): Helper function to get a UTF-8 c string from
+        a WKStringRef.
+        (WKURLGetCString): Helper function to get a UTF-8 c string from a
+        WKURLRef.
+        (browserWindowUpdateURL): Update to use WKURLGetCString.
+        (didReceiveTitleForFrame): Update to use WKStringGetCString.
+        (createMessageDialog): Create a GtkMessageDialog.
+        (runJavaScriptAlert):
+        (runJavaScriptConfirm):
+        (runJavaScriptPrompt):
+        (browserWindowUIClientInit):
+
 2011-05-29  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.

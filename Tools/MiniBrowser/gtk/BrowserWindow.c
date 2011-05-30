@@ -185,6 +185,22 @@ static void browser_window_class_init(BrowserWindowClass* klass)
                                                         G_PARAM_READWRITE | G_PARAM_CONSTRUCT_ONLY));
 }
 
+static char* WKStringGetCString(WKStringRef string)
+{
+    size_t length = WKStringGetMaximumUTF8CStringSize(string);
+    char *buffer = (char *) g_malloc(length);
+    WKStringGetUTF8CString(string, buffer, length);
+    return buffer;
+}
+
+static char* WKURLGetCString(WKURLRef url)
+{
+    WKStringRef urlString = WKURLCopyString(url);
+    char *urlText = WKStringGetCString(urlString);
+    WKRelease(urlString);
+    return urlText;
+}
+
 static void browserWindowUpdateTitle(BrowserWindow* window)
 {
     GString *string = g_string_new(window->title);
@@ -220,13 +236,9 @@ static void browserWindowUpdateURL(BrowserWindow* window, WKURLRef url)
         return;
     }
 
-    WKStringRef urlString = WKURLCopyString(url);
-    size_t length = WKStringGetMaximumUTF8CStringSize(urlString);
-    char* buffer = (char *)g_malloc(length * sizeof(char));
-    WKStringGetUTF8CString(urlString, buffer, length);
-    gtk_entry_set_text(GTK_ENTRY(window->uriEntry), buffer);
-    g_free(buffer);
-    WKRelease(urlString);
+    char *urlText = WKURLGetCString(url);
+    gtk_entry_set_text(GTK_ENTRY(window->uriEntry), urlText);
+    g_free(urlText);
 }
 
 // Loader client.
@@ -300,11 +312,9 @@ static void didReceiveTitleForFrame(WKPageRef page, WKStringRef title, WKFrameRe
     if (!WKFrameIsMainFrame(frame))
         return;
 
-    size_t length = WKStringGetMaximumUTF8CStringSize(title);
-    char* buffer = (char *)g_malloc(length * sizeof(char));
-    WKStringGetUTF8CString(title, buffer, length);
-    browserWindowSetTitle(BROWSER_WINDOW(clientInfo), buffer);
-    g_free(buffer);
+    char *titleText = WKStringGetCString(title);
+    browserWindowSetTitle(BROWSER_WINDOW(clientInfo), titleText);
+    g_free(titleText);
 }
 
 static void didFirstLayoutForFrame(WKPageRef page, WKFrameRef frame, WKTypeRef userData, const void* clientInfo)
@@ -400,8 +410,57 @@ static void closePage(WKPageRef page, const void *clientInfo)
     gtk_widget_destroy(GTK_WIDGET(clientInfo));
 }
 
+static GtkWidget* createMessageDialog(GtkWindow *parent, GtkMessageType type, GtkButtonsType buttons, gint defaultResponse, WKStringRef message, WKFrameRef frame)
+{
+    char *messageText = WKStringGetCString(message);
+    GtkWidget *dialog = gtk_message_dialog_new(parent, GTK_DIALOG_DESTROY_WITH_PARENT, type, buttons, "%s", messageText);
+    g_free(messageText);
+
+    WKURLRef url = WKFrameCopyURL(frame);
+    char *urlText = WKURLGetCString(url);
+    WKRelease(url);
+    gchar *title = g_strdup_printf("JavaScript - %s", urlText);
+    g_free(urlText);
+    gtk_window_set_title(GTK_WINDOW(dialog), title);
+    g_free(title);
+
+    gtk_dialog_set_default_response(GTK_DIALOG(dialog), defaultResponse);
+
+    return dialog;
+}
+
 static void runJavaScriptAlert(WKPageRef page, WKStringRef message, WKFrameRef frame, const void *clientInfo)
 {
+    GtkWidget *dialog = createMessageDialog(GTK_WINDOW(clientInfo), GTK_MESSAGE_WARNING, GTK_BUTTONS_CLOSE, GTK_RESPONSE_CLOSE, message, frame);
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
+static bool runJavaScriptConfirm(WKPageRef page, WKStringRef message, WKFrameRef frame, const void* clientInfo)
+{
+    GtkWidget *dialog = createMessageDialog(GTK_WINDOW(clientInfo), GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL, GTK_RESPONSE_OK, message, frame);
+    bool returnValue = (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK);
+    gtk_widget_destroy(dialog);
+
+    return returnValue;
+}
+
+static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKStringRef defaultValue, WKFrameRef frame, const void* clientInfo)
+{
+    GtkWidget *dialog = createMessageDialog(GTK_WINDOW(clientInfo), GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL, GTK_RESPONSE_OK, message, frame);
+
+    GtkWidget *entry = gtk_entry_new();
+    char *value = WKStringGetCString(defaultValue);
+    gtk_entry_set_text(GTK_ENTRY(entry), value);
+    g_free(value);
+    gtk_container_add(GTK_CONTAINER(gtk_dialog_get_content_area(GTK_DIALOG(dialog))), entry);
+    gtk_entry_set_activates_default(GTK_ENTRY(entry), TRUE);
+    gtk_widget_show(entry);
+
+    WKStringRef returnValue = (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_OK) ? WKStringCreateWithUTF8CString(gtk_entry_get_text(GTK_ENTRY(entry))) : 0;
+    gtk_widget_destroy(dialog);
+
+    return returnValue;
 }
 
 static void browserWindowUIClientInit(BrowserWindow *window)
@@ -416,8 +475,8 @@ static void browserWindowUIClientInit(BrowserWindow *window)
         0,      /* focus */
         0,      /* unfocus */
         runJavaScriptAlert,
-        0,      /* runJavaScriptConfirm */
-        0,      /* runJavaScriptPrompt */
+        runJavaScriptConfirm,
+        runJavaScriptPrompt,
         0,      /* setStatusText */
         0,      /* mouseDidMoveOverElement */
         0,      /* missingPluginButtonClicked */
