@@ -4866,17 +4866,12 @@ void Document::webkitCancelFullScreen()
     page()->chrome()->client()->exitFullScreenForElement(m_fullScreenElement.get());
 }
 
-static void setContainsFullScreenElementRecursively(Element* element, bool contains)
+void Document::setContainsFullScreenElementRecursively(Element* element, bool contains)
 {
-    if (!element)
-        return;
-
-    do {
-        if (!element->isFrameElementBase())
-            continue;
-        
-        static_cast<HTMLFrameElementBase*>(element)->setContainsFullScreenElement(contains);
-    } while ((element = element->document()->ownerElement()));
+    while (element) {
+        element->setContainsFullScreenElement(contains);
+        element = (element->parentElement() ? element->parentElement() : element->document()->ownerElement());
+    } 
 }
 
 void Document::webkitWillEnterFullScreenForElement(Element* element)
@@ -4889,7 +4884,7 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     if (m_fullScreenElement != documentElement())
         m_fullScreenElement->detach();
 
-    setContainsFullScreenElementRecursively(ownerElement(), true);
+    setContainsFullScreenElementRecursively(m_fullScreenElement->parentElement() ? m_fullScreenElement->parentElement() : ownerElement(), true);
     
     recalcStyle(Force);
     

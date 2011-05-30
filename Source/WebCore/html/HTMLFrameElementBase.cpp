@@ -52,9 +52,6 @@ HTMLFrameElementBase::HTMLFrameElementBase(const QualifiedName& tagName, Documen
     , m_checkInDocumentTimer(this, &HTMLFrameElementBase::checkInDocumentTimerFired)
     , m_viewSource(false)
     , m_remainsAliveOnRemovalFromTree(false)
-#if ENABLE(FULLSCREEN_API)
-    , m_containsFullScreenElement(false)
-#endif
 {
 }
 
@@ -287,12 +284,6 @@ void HTMLFrameElementBase::willRemove()
 bool HTMLFrameElementBase::allowFullScreen() const
 {
     return hasAttribute(webkitallowfullscreenAttr);
-}
-
-void HTMLFrameElementBase::setContainsFullScreenElement(bool contains)
-{
-    m_containsFullScreenElement = contains;
-    setNeedsStyleRecalc(SyntheticStyleChange);
 }
 #endif
 

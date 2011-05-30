@@ -149,8 +149,8 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return FULL_SCREEN;
     case PseudoFullScreenDocument:
         return FULL_SCREEN_DOCUMENT;
-    case PseudoFullScreenMediaDocument:
-        return FULL_SCREEN_MEDIA_DOCUMENT;
+    case PseudoFullScreenAncestor:
+        return FULL_SCREEN_ANCESTOR;
     case PseudoAnimatingFullScreenTransition:
         return ANIMATING_FULL_SCREEN_TRANSITION;
 #endif
@@ -298,7 +298,7 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 #if ENABLE(FULLSCREEN_API)
     DEFINE_STATIC_LOCAL(AtomicString, fullScreen, ("-webkit-full-screen"));
     DEFINE_STATIC_LOCAL(AtomicString, fullScreenDocument, ("-webkit-full-screen-document"));
-    DEFINE_STATIC_LOCAL(AtomicString, fullScreenMediaDocument, ("-webkit-full-screen-media-document"));
+    DEFINE_STATIC_LOCAL(AtomicString, fullScreenAncestor, ("-webkit-full-screen-ancestor"));
     DEFINE_STATIC_LOCAL(AtomicString, animatingFullScreenTransition, ("-webkit-animating-full-screen-transition"));
 #endif
     DEFINE_STATIC_LOCAL(AtomicString, inRange, ("in-range"));
@@ -378,7 +378,7 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
 #if ENABLE(FULLSCREEN_API)
         nameToPseudoType->set(fullScreen.impl(), CSSSelector::PseudoFullScreen);
         nameToPseudoType->set(fullScreenDocument.impl(), CSSSelector::PseudoFullScreenDocument);
-        nameToPseudoType->set(fullScreenMediaDocument.impl(), CSSSelector::PseudoFullScreenMediaDocument);
+        nameToPseudoType->set(fullScreenAncestor.impl(), CSSSelector::PseudoFullScreenAncestor);
         nameToPseudoType->set(animatingFullScreenTransition.impl(), CSSSelector::PseudoAnimatingFullScreenTransition);
 #endif
         nameToPseudoType->set(inRange.impl(), CSSSelector::PseudoInRange);
@@ -480,7 +480,7 @@ void CSSSelector::extractPseudoType() const
 #if ENABLE(FULLSCREEN_API)
     case PseudoFullScreen:
     case PseudoFullScreenDocument:
-    case PseudoFullScreenMediaDocument:
+    case PseudoFullScreenAncestor:
     case PseudoAnimatingFullScreenTransition:
 #endif
     case PseudoInRange:

@@ -941,6 +941,15 @@ void Element::setChangedSinceLastFormControlChangeEvent(bool)
 {
 }
 
+void Element::willRemove()
+{
+#if ENABLE(FULLSCREEN_API)
+    if (containsFullScreenElement() && parentElement())
+        document()->setContainsFullScreenElementRecursively(parentElement(), false);
+#endif
+    ContainerNode::willRemove();
+}
+
 void Element::insertedIntoDocument()
 {
     // need to do superclass processing first so inDocument() is true
@@ -980,6 +989,11 @@ void Element::insertedIntoTree(bool deep)
         return;
     if (ShadowRoot* shadow = shadowRoot())
         shadow->insertedIntoTree(true);
+
+#if ENABLE(FULLSCREEN_API)
+    if (parentElement() && containsFullScreenElement() && !parentElement()->containsFullScreenElement())
+        document()->setContainsFullScreenElementRecursively(parentElement(), true);
+#endif
 }
 
 void Element::removedFromTree(bool deep)
@@ -1897,6 +1911,17 @@ bool Element::childShouldCreateRenderer(Node* child) const
 void Element::webkitRequestFullScreen(unsigned short flags)
 {
     document()->requestFullScreenForElement(this, flags, Document::EnforceIFrameAllowFulScreenRequirement);
+}
+
+bool Element::containsFullScreenElement() const
+{
+    return hasRareData() ? rareData()->m_containsFullScreenElement : false;
+}
+
+void Element::setContainsFullScreenElement(bool flag)
+{
+    ensureRareData()->m_containsFullScreenElement = flag;
+    setNeedsStyleRecalc(SyntheticStyleChange);
 }
 #endif    
 

@@ -1082,6 +1082,7 @@ public:
     void removeFullScreenElementOfSubtree(Node*, bool amongChildrenOnly = false);
     bool isAnimatingFullScreen() const;
     void setAnimatingFullScreen(bool);
+    static void setContainsFullScreenElementRecursively(Element*, bool);
 #endif
 
     // Used to allow element that loads data without going through a FrameLoader to delay the 'load' event.

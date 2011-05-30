@@ -1,3 +1,55 @@
+2011-05-29  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Embedded Vimeo video, when taken fullscreen, is overlapped by content from the enclosing page
+        https://bugs.webkit.org/show_bug.cgi?id=61712
+
+        Tests: fullscreen/full-screen-iframe-zIndex.html
+
+        Walk up the ancestor chain for the full-screen element, marking them as full-screen
+        ancestors. Then, we apply a pseudo-class to those elements, which disable all their
+        stacking-context-creating styles.  Set the z-index of all full-screen elements (and
+        the iframes which contain them) to a large value, ensuring they appear above other
+        sibling elements.
+
+        This new behavior replaces the previous "-webkit-full-screen-media-document" behavior
+        and pesudo-class, so remove it and replace it with the new pseudo-class.
+
+        * css/CSSSelector.cpp:
+        (WebCore::nameToPseudoTypeMap): Add -webkit-full-screen-ancestor and remove
+            -webkit-full-screen-media-document.
+        (WebCore::CSSSelector::pseudoId): Add PseudoFullScreenAncestor and remove
+            PseudoFullScreenMediaDocument
+        (WebCore::CSSSelector::extractPseudoType): Ditto.
+        * css/CSSSelector.h: Ditto.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector): Remove the
+            PseudoFullScreenMediaDocument implementation and replace it with
+            PseudoFullScreenAncestor.
+        * css/fullscreen.css:
+        (:-webkit-full-screen): Add a z-index property.
+        (:-webkit-full-screen-ancestor:not(iframe)): Added.  Reset the z-index to
+            auto, and reset other stacking-context creating properties.
+        * dom/Document.cpp:
+        (WebCore::Document::setContainsFullScreenElementRecursively): Recurse up every element
+            instead of just the iframe elements.
+        (WebCore::Document::webkitWillEnterFullScreenForElement): Ditto.
+        * dom/Element.cpp:
+        (WebCore::Element::willRemove): Reset our parent's containsFullScreenElement property.
+        (WebCore::Element::insertedIntoTree): Ditto.
+        (WebCore::Element::containsFullScreenElement): Moved here from HTMLElementBase.
+        (WebCore::Element::setContainsFullScreenElement): Ditto.
+        * dom/Element.h:
+        * dom/ElementRareData.h:
+        (WebCore::ElementRareData::ElementRareData): Added ivar and initializer for 
+            m_containsFullScreenElement.
+        * html/HTMLFrameElementBase.cpp:
+        (WebCore::HTMLFrameElementBase::HTMLFrameElementBase): Removed ivar and initializer.
+        (WebCore::HTMLFrameElementBase::setContainsFullScreenElement): Moved into Element.
+        * html/HTMLFrameElementBase.h:
+        * rendering/style/RenderStyleConstants.h:
+
 2011-05-29  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

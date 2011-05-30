@@ -355,6 +355,8 @@ public:
     };
     
     void webkitRequestFullScreen(unsigned short flags);
+    virtual bool containsFullScreenElement() const;
+    virtual void setContainsFullScreenElement(bool);
 #endif
 
     virtual bool isSpellCheckingEnabled() const;
@@ -368,6 +370,7 @@ protected:
     {
     }
 
+    virtual void willRemove();
     virtual void insertedIntoDocument();
     virtual void removedFromDocument();
     virtual void insertedIntoTree(bool);

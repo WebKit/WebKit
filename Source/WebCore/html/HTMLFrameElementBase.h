@@ -45,8 +45,6 @@ public:
     void setRemainsAliveOnRemovalFromTree(bool);
 #if ENABLE(FULLSCREEN_API)
     virtual bool allowFullScreen() const;
-    virtual void setContainsFullScreenElement(bool);
-    virtual bool containsFullScreenElement() const { return m_containsFullScreenElement; };
 #endif
 
     virtual bool canContainRangeEndPoint() const { return false; }
@@ -98,10 +96,6 @@ private:
 
     bool m_viewSource;
     bool m_remainsAliveOnRemovalFromTree;
-
-#if ENABLE(FULLSCREEN_API)
-    bool m_containsFullScreenElement;
-#endif
 };
 
 } // namespace WebCore
