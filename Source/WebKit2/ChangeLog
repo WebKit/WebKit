@@ -1,3 +1,26 @@
+2011-05-29  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Race condition in full screen controller, which leads to problem when web process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=61707
+
+        Second try at this. First try could lead to a WKView leak.
+
+        * UIProcess/mac/WKFullScreenWindowController.h: Added _isExitingAcceleratedCompositingMode.
+        Needed to track whether we have retained so we don't leak if the page goes away before
+        we get the callback.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController exitAcceleratedCompositingMode]): Added code to set
+        the new variable to YES.
+        (-[WKFullScreenWindowController exitCompositedModeRepaintCompleted]): Added code to
+        deal with the new boolean and to release.
+        (exitCompositedModeRepaintCompleted): Removed the release that was here.
+        (-[WKFullScreenWindowController close]): Added a call to exitCompositedModeRepaintCompleted
+        here. We're as complete as we'll ever be when we're closed; we can't get the callback
+        after that point.
+
 2011-05-29  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

@@ -394,13 +394,23 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
     if (!_layerHostingView)
         return;
 
-    NSDisableScreenUpdates();
+    ASSERT(!_isExitingAcceleratedCompositingMode);
+    if (_isExitingAcceleratedCompositingMode)
+        return;
+
     [self retain]; // Balanced by release in exitCompositedModeRepaintCompleted below.
+    _isExitingAcceleratedCompositingMode = YES;
+
+    NSDisableScreenUpdates();
     [self _page]->forceRepaint(VoidCallback::create(self, exitCompositedModeRepaintCompleted));
 }
 
 - (void)exitCompositedModeRepaintCompleted
-{    
+{
+    ASSERT(_isExitingAcceleratedCompositingMode);
+    if (!_isExitingAcceleratedCompositingMode)
+        return;
+
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     [_layerHostingView.get() removeFromSuperview];
@@ -411,13 +421,14 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
     
     _layerHostingView = 0;
     NSEnableScreenUpdates();
+
+    _isExitingAcceleratedCompositingMode = NO;
+    [self release]; // Balanced by retain in exitAcceleratedCompositingMode above.
 }
 
 static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context)
 {
-    WKFullScreenWindowController *controller = static_cast<WKFullScreenWindowController *>(context);
-    [controller exitCompositedModeRepaintCompleted];
-    [controller release]; // Balanced by retain in exitAcceleratedCompositingMode above.
+    [static_cast<WKFullScreenWindowController *>(context) exitCompositedModeRepaintCompleted];
 }
 
 - (WebCore::IntRect)getFullScreenRect
@@ -438,6 +449,9 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context)
     
     if (_isExitingFullScreen)
         [self finishedExitFullScreenAnimation:YES];
+
+    if (_isExitingAcceleratedCompositingMode)
+        [self exitCompositedModeRepaintCompleted];
 
     [super close];
 }

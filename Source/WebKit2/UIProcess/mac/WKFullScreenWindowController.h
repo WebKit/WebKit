@@ -51,6 +51,7 @@ class IntRect;
     BOOL _isWindowLoaded;
     BOOL _forceDisableAnimation;
     BOOL _isPlaying;
+    BOOL _isExitingAcceleratedCompositingMode;
     CGRect _initialFrame;    
     uint32_t _idleDisplaySleepAssertion;
     uint32_t _idleSystemSleepAssertion;
