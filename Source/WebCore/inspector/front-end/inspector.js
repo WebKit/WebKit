@@ -973,7 +973,6 @@ WebInspector.startUserInitiatedDebugging = function()
 WebInspector.reset = function()
 {
     this.debuggerModel.reset();
-
     for (var panelName in this.panels) {
         var panel = this.panels[panelName];
         if ("reset" in panel)
@@ -1356,13 +1355,7 @@ WebInspector.addMainEventListeners = function(doc)
 
 WebInspector.frontendReused = function()
 {
-    ConsoleAgent.enable(this.console.setConsoleMessageExpiredCount.bind(this.console));
-    DatabaseAgent.enable();
-    DOMStorageAgent.enable();
-
-    this.networkManager.frontendReused();
     this.resourceTreeModel.frontendReused();
-    WebInspector.panels.network.clear();
     this.reset();
 }
 

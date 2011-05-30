@@ -73,7 +73,7 @@ WebInspector.ResourceTreeModel.prototype = {
         }
 
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.WillLoadCachedResources);
-        WebInspector.mainResource = this._addFramesRecursively(mainFramePayload);
+        this._addFramesRecursively(mainFramePayload);
         this._dispatchInspectedURLChanged(WebInspector.mainResource.url);
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.CachedResourcesLoaded);
         WebInspector.Resource.restoreRevisions();
@@ -101,11 +101,6 @@ WebInspector.ResourceTreeModel.prototype = {
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameAdded, frame);
     },
 
-    frames: function(parentFrameId)
-    {
-        return this._subframes[parentFrameId] || [];
-    },
-
     subframes: function(parentFrameId)
     {
         return this._subframes[parentFrameId] || [];
@@ -122,6 +117,13 @@ WebInspector.ResourceTreeModel.prototype = {
 
     _frameNavigated: function(frame, loaderId)
     {
+        var isMainFrame = !frame.parentId;
+
+        if (isMainFrame) {
+            this._cleanupFramesAfterNavigation(frame);
+            if (this.resourceForURL(frame.url))
+                WebInspector.mainResource = this.resourceForURL(frame.url);
+        }
         // Do nothing unless cached resource tree is processed - it will overwrite everything.
         if (!this._cachedResourcesProcessed)
             return;
@@ -129,12 +131,11 @@ WebInspector.ResourceTreeModel.prototype = {
         // Add frame in case it is seen for the first time, otherwise, do a within-frame cleanup.
         if (!this._frameIds[frame.id])
             this._addFrame(frame);
-        else
+        else {
             this._clearChildFramesAndResources(frame.id, loaderId);
-
-
-        var isMainFrame = !frame.parentId;
-
+            frame.parentId = frame.parentId || "";
+            this._frameIds[frame.id] = frame;
+        }
         // Dispatch frame navigated event to clients prior to filling it with the resources. 
         this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.FrameNavigated, { frame: frame, loaderId: loaderId, isMainFrame: isMainFrame });
 
@@ -145,10 +146,15 @@ WebInspector.ResourceTreeModel.prototype = {
                 this.dispatchEventToListeners(WebInspector.ResourceTreeModel.EventTypes.ResourceAdded, resourcesForFrame[url]);
         }
 
-        // Update main frame, issue top-level navigate events. 
-        if (isMainFrame && this.resourceForURL(frame.url)) {
-            WebInspector.mainResource = this.resourceForURL(frame.url);
+        if (isMainFrame)
             this._dispatchInspectedURLChanged(frame.url);
+    },
+
+    _cleanupFramesAfterNavigation: function(newMainFrame)
+    {
+        for (var frameId in this._frameIds) {
+            if (frameId !== newMainFrame.id)
+                this._frameDetached(frameId);
         }
     },
 
@@ -317,6 +323,8 @@ WebInspector.ResourceTreeModel.prototype = {
         frameResource.type = WebInspector.Resource.Type.Document;
         frameResource.finished = true;
 
+        if (!framePayload.parentId)
+            WebInspector.mainResource = frameResource;
         this._addFrame(framePayload);
         this._addResourceToFrame(frameResource);
 
@@ -334,7 +342,6 @@ WebInspector.ResourceTreeModel.prototype = {
             resource.finished = true;
             this._addResourceToFrame(resource);
         }
-        return frameResource;
     },
 
     _createResource: function(frame, url)

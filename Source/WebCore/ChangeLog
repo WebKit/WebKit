@@ -1,3 +1,38 @@
+2011-05-30  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: do not issue frontendReused for reload or navigation.
+        https://bugs.webkit.org/show_bug.cgi?id=61192
+
+       - only issue frontendReused when inspector is attached after main resource committed load
+       - upon committing loading main resource, reset agents before sending FrameNavigated to page agent
+       - Ensure main resource is set early so that abbreviations of URLs in resource tree are consistent after reload
+       - do not enable agents explicitly in frontendReused (this is done by backend when resotring state from cookie)
+
+        * inspector/InspectorAgent.cpp:
+        (WebCore::InspectorAgent::InspectorAgent):
+        (WebCore::InspectorAgent::restore):
+        (WebCore::InspectorAgent::clearFrontend):
+        (WebCore::InspectorAgent::didCommitLoad):
+        * inspector/InspectorAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        * inspector/front-end/NetworkManager.js:
+        * inspector/front-end/ResourceTreeModel.js:
+        (WebInspector.ResourceTreeModel.prototype._processCachedResources):
+        (WebInspector.ResourceTreeModel.prototype._frameNavigated):
+        (WebInspector.ResourceTreeModel.prototype._cleanupFramesAfterNavigation):
+        (WebInspector.ResourceTreeModel.prototype._addFramesRecursively):
+        * inspector/front-end/ResourcesPanel.js:
+        (WebInspector.ResourcesPanel.prototype.reset):
+        (WebInspector.ResourcesPanel.prototype._resetResourcesTree):
+        (WebInspector.DatabaseTreeElement.prototype.onpopulate):
+        (WebInspector.SearchResultsTreeElementsTraverser.prototype._lastTreeElement):
+        * inspector/front-end/inspector.js:
+        (WebInspector.reset):
+        (WebInspector.frontendReused):
+
 2011-05-30  Ryan Sleevi  <rsleevi@chromium.org>
 
         Reviewed by Darin Adler.

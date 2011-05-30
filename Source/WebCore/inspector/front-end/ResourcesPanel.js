@@ -130,7 +130,7 @@ WebInspector.ResourcesPanel.prototype = {
             this.showResource(WebInspector.mainResource);
     },
 
-    _reset: function()
+    reset: function()
     {
         delete this._initializedDefaultSelection;
         this._origins = {};
@@ -255,7 +255,7 @@ WebInspector.ResourcesPanel.prototype = {
     {
         this.resourcesListTreeElement.removeChildren();
         this._treeElementForFrameId = {};
-        this._reset();
+        this.reset();
     },
 
     _cachedResourcesLoaded: function()
@@ -1026,6 +1026,7 @@ WebInspector.StorageCategoryTreeElement.prototype = {
         WebInspector.settings[this._expandedSettingKey] = false;
     }
 }
+
 WebInspector.StorageCategoryTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
 WebInspector.FrameTreeElement = function(storagePanel, frame)
@@ -1454,8 +1455,8 @@ WebInspector.DatabaseTreeElement.prototype = {
         }
         this._database.getTableNames(tableNamesCallback.bind(this));
     }
-
 }
+
 WebInspector.DatabaseTreeElement.prototype.__proto__ = WebInspector.BaseStorageTreeElement.prototype;
 
 WebInspector.DatabaseTableTreeElement = function(storagePanel, database, tableName)
@@ -1729,5 +1730,5 @@ WebInspector.SearchResultsTreeElementsTraverser.prototype = {
         while (nextTreeElement = this._traverseNext(treeElement))
             treeElement = nextTreeElement;
         return treeElement;        
-    },
+    }
 }

@@ -42,11 +42,6 @@ WebInspector.NetworkManager.EventTypes = {
 }
 
 WebInspector.NetworkManager.prototype = {
-    frontendReused: function()
-    {
-        NetworkAgent.enable();
-    },
-
     requestContent: function(resource, base64Encode, callback)
     {
         function callbackWrapper(error, content)

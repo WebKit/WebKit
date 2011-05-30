@@ -124,6 +124,7 @@ private:
     WorkersMap m_workers;
 #endif
     bool m_canIssueEvaluateForTestInFrontend;
+    bool m_didCommitLoadFired;
 };
 
 } // namespace WebCore

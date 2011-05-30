@@ -67,6 +67,7 @@ InspectorAgent::InspectorAgent(Page* page, InjectedScriptManager* injectedScript
     , m_instrumentingAgents(instrumentingAgents)
     , m_injectedScriptManager(injectedScriptManager)
     , m_canIssueEvaluateForTestInFrontend(false)
+    , m_didCommitLoadFired(false)
 {
     ASSERT_ARG(page, page);
     m_instrumentingAgents->setInspectorAgent(this);
@@ -90,7 +91,8 @@ void InspectorAgent::inspectedPageDestroyed()
 
 void InspectorAgent::restore()
 {
-    m_frontend->inspector()->frontendReused();
+    if (m_didCommitLoadFired)
+        m_frontend->inspector()->frontendReused();
 }
 
 void InspectorAgent::didClearWindowObjectInWorld(Frame* frame, DOMWrapperWorld* world)
@@ -127,10 +129,12 @@ void InspectorAgent::clearFrontend()
     m_canIssueEvaluateForTestInFrontend = false;
     m_pendingEvaluateTestCommands.clear();
     m_frontend = 0;
+    m_didCommitLoadFired = false;
 }
 
 void InspectorAgent::didCommitLoad()
 {
+    m_didCommitLoadFired = true;
     if (m_frontend)
         m_frontend->inspector()->reset();
 

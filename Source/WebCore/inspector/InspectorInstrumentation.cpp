@@ -573,41 +573,39 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
     if (!inspectorAgent || !inspectorAgent->enabled())
         return;
 
-    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
-        pageAgent->frameNavigated(loader);
-
     Frame* mainFrame = page->mainFrame();
-    if (loader->frame() != mainFrame)
-        return;
-
-    if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
-        consoleAgent->reset();
+    if (loader->frame() == mainFrame) {
+        if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
+            consoleAgent->reset();
 #if ENABLE(JAVASCRIPT_DEBUGGER)
-    if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
-        KURL url = inspectorAgent->inspectedURLWithoutFragment();
-        debuggerAgent->inspectedURLChanged(url);
-    }
+        if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
+            KURL url = inspectorAgent->inspectedURLWithoutFragment();
+            debuggerAgent->inspectedURLChanged(url);
+        }
 #endif
 #if ENABLE(JAVASCRIPT_DEBUGGER) && USE(JSC)
-    if (InspectorProfilerAgent* profilerAgent = instrumentingAgents->inspectorProfilerAgent()) {
-        profilerAgent->stopUserInitiatedProfiling(true);
-        profilerAgent->resetState();
-    }
+        if (InspectorProfilerAgent* profilerAgent = instrumentingAgents->inspectorProfilerAgent()) {
+            profilerAgent->stopUserInitiatedProfiling(true);
+            profilerAgent->resetState();
+        }
 #endif
-    if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
-        cssAgent->reset();
+        if (InspectorCSSAgent* cssAgent = instrumentingAgents->inspectorCSSAgent())
+            cssAgent->reset();
 #if ENABLE(DATABASE)
-    if (InspectorDatabaseAgent* databaseAgent = instrumentingAgents->inspectorDatabaseAgent())
-        databaseAgent->clearResources();
+        if (InspectorDatabaseAgent* databaseAgent = instrumentingAgents->inspectorDatabaseAgent())
+            databaseAgent->clearResources();
 #endif
 #if ENABLE(DOM_STORAGE)
-    if (InspectorDOMStorageAgent* domStorageAgent = instrumentingAgents->inspectorDOMStorageAgent())
-        domStorageAgent->clearResources();
+        if (InspectorDOMStorageAgent* domStorageAgent = instrumentingAgents->inspectorDOMStorageAgent())
+            domStorageAgent->clearResources();
 #endif
-    if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
-        domAgent->setDocument(mainFrame->document());
+        if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
+            domAgent->setDocument(mainFrame->document());
 
-    inspectorAgent->didCommitLoad();
+        inspectorAgent->didCommitLoad();
+    }
+    if (InspectorPageAgent* pageAgent = instrumentingAgents->inspectorPageAgent())
+        pageAgent->frameNavigated(loader);
 }
 
 InspectorInstrumentationCookie InspectorInstrumentation::willWriteHTMLImpl(InstrumentingAgents* instrumentingAgents, unsigned int length, unsigned int startLine)
