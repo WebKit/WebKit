@@ -350,6 +350,8 @@ void MediaControlRootElement::playbackStopped()
     m_timeline->setPosition(m_mediaElement->currentTime());
     updateTimeDisplay();
     makeOpaque();
+    
+    m_mediaElement->stopHideFullscreenControlsTimer();
 }
 
 void MediaControlRootElement::updateTimeDisplay()
@@ -455,6 +457,11 @@ void MediaControlRootElement::showVolumeSlider()
 
     if (m_volumeSliderContainer)
         m_volumeSliderContainer->show();
+}
+
+bool MediaControlRootElement::shouldHideControls()
+{
+    return !m_panel->hovered();
 }
 
 const AtomicString& MediaControlRootElement::shadowPseudoId() const
