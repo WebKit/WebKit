@@ -1,3 +1,28 @@
+2011-05-30  Gabor Rapcsanyi  <rgabor@webkit.org>
+
+        Rubber-stamped by Csaba Osztrogonác.
+
+        [Qt] Remove passing tests from ARM Skipped list
+
+        * platform/qt-arm/Skipped:
+        * platform/qt-arm/fast: Removed.
+        * platform/qt-arm/fast/block: Removed.
+        * platform/qt-arm/fast/block/float: Removed.
+        * platform/qt-arm/fast/block/float/float-not-removed-from-next-sibling-expected.txt: Removed.
+        * platform/qt-arm/fast/block/float/float-not-removed-from-next-sibling2-expected.txt: Removed.
+        * platform/qt-arm/fast/block/float/float-not-removed-from-next-sibling3-expected.txt: Removed.
+        * platform/qt-arm/fast/block/float/float-not-removed-from-next-sibling4-expected.txt: Removed.
+        * platform/qt-arm/fast/transforms: Removed.
+        * platform/qt-arm/fast/transforms/transform-positioned-ancestor-expected.txt: Removed.
+        * platform/qt-arm/transforms: Removed.
+        * platform/qt-arm/transforms/2d: Removed.
+        * platform/qt-arm/transforms/2d/compound-transforms-vs-containers-expected.txt: Removed.
+        * platform/qt-arm/transforms/2d/transform-borderbox-expected.txt: Removed.
+        * platform/qt-arm/transforms/2d/transform-origin-borderbox-expected.txt: Removed.
+        * platform/qt-arm/transforms/2d/zoom-menulist-expected.txt: Removed.
+        * platform/qt-arm/transforms/no_transform_hit_testing-expected.txt: Removed.
+        * platform/qt-arm/transforms/svg-vs-css-expected.txt: Removed.
+
 2011-05-27  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
