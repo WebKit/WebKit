@@ -103,11 +103,11 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
 #if USE(TEXTURE_MAPPER)
     // whether accelerated rendering is supported by the media engine for the current media.
-    virtual bool supportsAcceleratedRendering() const { return true; }
+    virtual bool supportsAcceleratedRendering() const { return false; }
     // called when the rendering system flips the into or out of accelerated rendering mode.
     virtual void acceleratedRenderingStateChanged() { }
     // Const-casting here is safe, since all of TextureMapperPlatformLayer's functions are const.g
-    virtual PlatformLayer* platformLayer() const { return const_cast<MediaPlayerPrivateQt*>(this); }
+    virtual PlatformLayer* platformLayer() const { return 0; }
     virtual void paintToTextureMapper(TextureMapper*, const FloatRect& targetRect, const TransformationMatrix&, float opacity, BitmapTexture* mask) const;
 #else
     virtual bool supportsAcceleratedRendering() const { return false; }

@@ -1,3 +1,19 @@
+2011-05-30  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap][Qt] Disable accelerated plugins/media until they're working.
+        https://bugs.webkit.org/show_bug.cgi?id=61687
+
+        Until this works properly, we should indicate that our media implementation
+        in texture mapper doesn't support accelerated compositing.
+
+        This makes LayoutTests/compositing/video/* work again.
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.h:
+        (WebCore::MediaPlayerPrivateQt::supportsAcceleratedRendering):
+        (WebCore::MediaPlayerPrivateQt::platformLayer):
+
 2011-05-30  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Adam Barth.

@@ -172,9 +172,13 @@ void QWebSettingsPrivate::apply()
         value = attributes.value(QWebSettings::AcceleratedCompositingEnabled,
                                       global->attributes.value(QWebSettings::AcceleratedCompositingEnabled));
 
+        settings->setAcceleratedCompositingEnabled(value);
         settings->setAcceleratedCompositingFor3DTransformsEnabled(value);
         settings->setAcceleratedCompositingForAnimationEnabled(value);
-        settings->setAcceleratedCompositingForVideoEnabled(value);
+#if USE(TEXTURE_MAPPER)
+        settings->setAcceleratedCompositingForVideoEnabled(false);
+        settings->setAcceleratedCompositingForPluginsEnabled(false);
+#endif
 #endif
 #if ENABLE(WEBGL)
         value = attributes.value(QWebSettings::WebGLEnabled,
