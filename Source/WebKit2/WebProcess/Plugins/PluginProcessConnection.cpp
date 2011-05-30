@@ -100,13 +100,13 @@ void PluginProcessConnection::removePluginProxy(PluginProxy* plugin)
 
 void PluginProcessConnection::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
 {
-    if (arguments->destinationID()) {
-        if (PluginProxy* pluginProxy = m_plugins.get(arguments->destinationID()))
-            pluginProxy->didReceivePluginProxyMessage(connection, messageID, arguments);
-        return;
-    }
+    ASSERT(arguments->destinationID());
 
-    ASSERT_NOT_REACHED();
+    PluginProxy* pluginProxy = m_plugins.get(arguments->destinationID());
+    if (!pluginProxy)
+        return;
+
+    pluginProxy->didReceivePluginProxyMessage(connection, messageID, arguments);
 }
 
 void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connection, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments, OwnPtr<CoreIPC::ArgumentEncoder>& reply)
@@ -116,12 +116,13 @@ void PluginProcessConnection::didReceiveSyncMessage(CoreIPC::Connection* connect
         return;
     }
 
-    if (PluginProxy* pluginProxy = m_plugins.get(arguments->destinationID())) {
-        pluginProxy->didReceiveSyncPluginProxyMessage(connection, messageID, arguments, reply);
-        return;
-    }
+    ASSERT(arguments->destinationID());
 
-    ASSERT_NOT_REACHED();
+    PluginProxy* pluginProxy = m_plugins.get(arguments->destinationID());
+    if (!pluginProxy)
+        return;
+
+    pluginProxy->didReceiveSyncPluginProxyMessage(connection, messageID, arguments, reply);
 }
 
 void PluginProcessConnection::didClose(CoreIPC::Connection*)
