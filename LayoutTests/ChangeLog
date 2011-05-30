@@ -1,5 +1,11 @@
 2011-05-29  Adam Barth  <abarth@webkit.org>
 
+        Add expected result.
+
+        * platform/chromium-mac-leopard/svg/wicd/test-scalable-background-image2-expected.png: Added.
+
+2011-05-29  Adam Barth  <abarth@webkit.org>
+
         Slightly adjust the type of the expected failure.
 
         * platform/chromium/test_expectations.txt:
