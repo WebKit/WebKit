@@ -1,5 +1,11 @@
 2011-05-29  Adam Barth  <abarth@webkit.org>
 
+        More IMAGE results.
+
+        * platform/chromium-mac-leopard/svg/wicd/test-scalable-background-image1-expected.png: Added.
+
+2011-05-29  Adam Barth  <abarth@webkit.org>
+
         Add image baselines for all these beautiful platforms.
 
         * platform/chromium-linux-x86/fullscreen: Added.
