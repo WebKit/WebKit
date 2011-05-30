@@ -1,3 +1,16 @@
+2011-05-30  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Texmap][Qt] Enable TextureMapper by default
+        https://bugs.webkit.org/show_bug.cgi?id=61740
+
+        Make CONFIG+=texmap an opt-out instead of an opt-in.
+
+        No new functionality so no new tests.
+
+        * WebCore.pri:
+
 2011-05-30  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Xan Lopez.
