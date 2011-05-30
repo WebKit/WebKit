@@ -30,6 +30,7 @@
 #include "Node.h"
 #include "SVGElement.h"
 #include <wtf/ASCIICType.h>
+#include <wtf/text/CString.h>
 
 using namespace WTF;
 

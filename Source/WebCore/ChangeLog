@@ -1,3 +1,15 @@
+2011-05-30  Peter Varga  <pvarga@webkit.org>
+
+        Unreviewed build fix.
+
+        [Qt][V8] Fix debug build.
+
+        No new tests needed.
+
+        * css/CSSStyleDeclaration.cpp: Add missing header.
+        * dom/Text.cpp: Ditto.
+        * rendering/InlineTextBox.cpp: Ditto.
+
 2011-05-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87683.

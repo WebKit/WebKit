@@ -32,6 +32,8 @@
 #include "SVGNames.h"
 #endif
 
+#include <wtf/text/CString.h>
+
 using namespace std;
 
 namespace WebCore {
