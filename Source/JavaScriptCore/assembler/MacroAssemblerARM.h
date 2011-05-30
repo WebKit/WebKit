@@ -416,7 +416,7 @@ public:
             m_assembler.ldr_un_imm(ARMRegisters::S0, right.m_value);
             m_assembler.cmp_r(left, ARMRegisters::S0);
         } else {
-            ARMWord tmp = m_assembler.getOp2(-right.m_value);
+            ARMWord tmp = (right.m_value == 0x80000000) ? ARMAssembler::INVALID_IMM : m_assembler.getOp2(-right.m_value);
             if (tmp != ARMAssembler::INVALID_IMM)
                 m_assembler.cmn_r(left, tmp);
             else

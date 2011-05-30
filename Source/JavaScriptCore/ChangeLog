@@ -1,3 +1,15 @@
+2011-05-30  Hojong Han  <hojong.han@samsung.com>
+
+        Reviewed by Geoffrey Garen.
+
+        [JSC] malfunction during arithmetic condition check with negative number (-2147483648)
+        https://bugs.webkit.org/show_bug.cgi?id=61416
+
+        * assembler/MacroAssemblerARM.h:
+        (JSC::MacroAssemblerARM::branch32):
+        * tests/mozilla/ecma/Expressions/11.12-1.js:
+        (getTestCases):
+
 2011-05-29  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Sam Weinig.
