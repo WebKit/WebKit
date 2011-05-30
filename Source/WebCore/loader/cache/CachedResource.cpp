@@ -135,8 +135,10 @@ CachedResource::~CachedResource()
 void CachedResource::load(CachedResourceLoader* cachedResourceLoader, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
 {
     m_sendResourceLoadCallbacks = sendResourceLoadCallbacks;
-    cachedResourceLoader->load(this, incremental, securityCheck, sendResourceLoadCallbacks);
     m_loading = true;
+    RefPtr<CachedResourceRequest> request = CachedResourceRequest::load(cachedResourceLoader, this, incremental, securityCheck, sendResourceLoadCallbacks);
+    if (request)
+        cachedResourceLoader->loadStarted(this, request);
 }
 
 void CachedResource::checkNotify()

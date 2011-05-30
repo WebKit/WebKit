@@ -127,12 +127,9 @@ PassRefPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
     if (!loader || loader->reachedTerminalState()) {
         // FIXME: What if resources in other frames were waiting for this revalidation?
         LOG(ResourceLoading, "Cannot start loading '%s'", resource->url().string().latin1().data());
-        cachedResourceLoader->decrementRequestCount(resource);
-        cachedResourceLoader->loadFinishing();
         if (resource->resourceToRevalidate()) 
             memoryCache()->revalidationFailed(resource); 
         resource->error(CachedResource::LoadError);
-        cachedResourceLoader->loadDone(0);
         return 0;
     }
     request->m_loader = loader;

@@ -139,10 +139,8 @@ CachedImage* CachedResourceLoader::requestImage(ResourceRequest& request)
         }
     }
     CachedImage* resource = static_cast<CachedImage*>(requestResource(CachedResource::ImageResource, request, String()));
-    if (autoLoadImages() && resource && resource->stillNeedsLoad()) {
-        resource->setLoading(true);
-        load(resource, true);
-    }
+    if (autoLoadImages() && resource && resource->stillNeedsLoad())
+        resource->load(this);
     return resource;
 }
 
@@ -536,7 +534,7 @@ void CachedResourceLoader::setAutoLoadImages(bool enable)
             CachedImage* image = const_cast<CachedImage*>(static_cast<const CachedImage*>(resource));
 
             if (image->stillNeedsLoad())
-                load(image, true);
+                image->load(this);
         }
     }
 }
@@ -556,13 +554,11 @@ void CachedResourceLoader::removeCachedResource(CachedResource* resource) const
     m_documentResources.remove(resource->url());
 }
 
-void CachedResourceLoader::load(CachedResource* resource, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
+void CachedResourceLoader::loadStarted(CachedResource* resource, PassRefPtr<CachedResourceRequest> request)
 {
+    ASSERT(request);
     incrementRequestCount(resource);
-
-    RefPtr<CachedResourceRequest> request = CachedResourceRequest::load(this, resource, incremental, securityCheck, sendResourceLoadCallbacks);
-    if (request)
-        m_requests.add(request);
+    m_requests.add(request);
 }
 
 void CachedResourceLoader::loadDone(CachedResourceRequest* request)

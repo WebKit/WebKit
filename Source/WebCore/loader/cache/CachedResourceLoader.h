@@ -92,7 +92,7 @@ public:
 
     void removeCachedResource(CachedResource*) const;
 
-    void load(CachedResource*, bool incremental = false, SecurityCheckPolicy = DoSecurityCheck, bool sendResourceLoadCallbacks = true);
+    void loadStarted(CachedResource*, PassRefPtr<CachedResourceRequest>);
     void loadFinishing() { m_loadFinishing = true; }
     void loadDone(CachedResourceRequest*);
     void cancelRequests();

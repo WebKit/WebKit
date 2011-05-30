@@ -1,3 +1,23 @@
+2011-05-30  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        Refactor the CachedResourceLoader -> CachedResource -> CachedResourceRequest
+        flow so it's a little less circular.
+        https://bugs.webkit.org/show_bug.cgi?id=61666
+
+        * loader/cache/CachedFont.cpp:
+        (WebCore::CachedFont::beginLoadIfNeeded):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::load):
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::requestImage):
+        (WebCore::CachedResourceLoader::setAutoLoadImages):
+        (WebCore::CachedResourceLoader::loadStarted):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::load):
+
 2011-05-30  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87618.

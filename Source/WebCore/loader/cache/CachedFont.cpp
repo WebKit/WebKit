@@ -97,7 +97,7 @@ void CachedFont::beginLoadIfNeeded(CachedResourceLoader* dl)
 {
     if (!m_loadInitiated) {
         m_loadInitiated = true;
-        dl->load(this, false);
+        CachedResource::load(dl);
     }
 }
 
