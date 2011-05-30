@@ -1,3 +1,17 @@
+2011-05-29  Adam Barth  <abarth@webkit.org>
+
+        Add image baselines for all these beautiful platforms.
+
+        * platform/chromium-linux-x86/fullscreen: Added.
+        * platform/chromium-linux-x86/fullscreen/full-screen-iframe-zIndex-expected.png: Added.
+        * platform/chromium-linux/fullscreen/full-screen-iframe-zIndex-expected.png: Added.
+        * platform/chromium-mac-leopard/fullscreen: Added.
+        * platform/chromium-mac-leopard/fullscreen/full-screen-iframe-zIndex-expected.png: Added.
+        * platform/chromium-mac/fullscreen: Added.
+        * platform/chromium-mac/fullscreen/full-screen-iframe-zIndex-expected.png: Added.
+        * platform/chromium-win-vista/fullscreen: Added.
+        * platform/chromium-win-vista/fullscreen/full-screen-iframe-zIndex-expected.png: Added.
+
 2011-05-29  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.
