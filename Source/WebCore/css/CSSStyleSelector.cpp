@@ -2908,14 +2908,8 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
                 if (e != e->document()->webkitCurrentFullScreenElement())
                     return false;
                 return e->document()->isAnimatingFullScreen();
-            case CSSSelector::PseudoFullScreenMediaDocument:
-                if (!e->document()->webkitIsFullScreen())
-                    return false;
-#if ENABLE(VIDEO)
-                if (!e->document()->webkitCurrentFullScreenElement() || !e->document()->webkitCurrentFullScreenElement()->isMediaElement())
-                    return false;
-#endif
-                return true;
+            case CSSSelector::PseudoFullScreenAncestor:
+                return e->containsFullScreenElement();
             case CSSSelector::PseudoFullScreenDocument:
                 // While a Document is in the fullscreen state, the 'full-screen-document' pseudoclass applies 
                 // to all elements of that Document.
