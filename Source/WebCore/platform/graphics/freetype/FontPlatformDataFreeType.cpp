@@ -152,15 +152,18 @@ FontPlatformData::FontPlatformData(cairo_font_face_t* fontFace, float size, bool
     , m_size(size)
     , m_syntheticBold(bold)
     , m_syntheticOblique(italic)
+    , m_fixedWidth(false)
     , m_font(fontFace)
     , m_scaledFont(0)
 {
     initializeWithFontFace(fontFace);
 
-    FT_Face fontConfigFace = cairo_ft_scaled_font_lock_face(m_scaledFont);
-    if (fontConfigFace) {
-        m_fixedWidth = fontConfigFace->face_flags & FT_FACE_FLAG_FIXED_WIDTH;
-        cairo_ft_scaled_font_unlock_face(m_scaledFont);
+    if (m_scaledFont) {
+        FT_Face fontConfigFace = cairo_ft_scaled_font_lock_face(m_scaledFont);
+        if (fontConfigFace) {
+            m_fixedWidth = fontConfigFace->face_flags & FT_FACE_FLAG_FIXED_WIDTH;
+            cairo_ft_scaled_font_unlock_face(m_scaledFont);
+        }
     }
 }
 

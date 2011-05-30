@@ -1,3 +1,21 @@
+2011-05-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] fast/css/font-face-zero-hash-key.html is crashing on the bots
+        https://bugs.webkit.org/show_bug.cgi?id=61693
+
+        Do not try to read the FT_Face from m_scaledFont if it m_scaledFont is
+        null. A recent change fixing 0-pixel-size fonts means that m_scaledFont
+        may now be null.
+
+        No new tests. This change should cause fast/css/font-face-zero-hash-key.html
+        to stop crashing.
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::FontPlatformData): Do a null check before accessing
+        m_scaledFont.
+
 2011-05-30  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

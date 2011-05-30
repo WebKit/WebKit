@@ -197,10 +197,6 @@ storage/open-database-set-empty-version.html
 # https://bugs.webkit.org/show_bug.cgi?id=60158
 fast/dom/Geolocation/argument-types.html
 
-# Crash related to 0 pixel fonts.
-# https://bugs.webkit.org/show_bug.cgi?id=61693
-fast/css/font-face-zero-hash-key.html
-
 ###############################################################################
 # EXPECTED FAILURES
 ###############################################################################
