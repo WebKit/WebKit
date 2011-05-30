@@ -3134,8 +3134,10 @@ void tst_QWebFrame::scrollbarsOff()
                  "</body>");
 
 
+    QSignalSpy loadSpy(&view, SIGNAL(loadFinished(bool)));
     view.setHtml(html);
-    ::waitForSignal(&view, SIGNAL(loadFinished(bool)));
+    ::waitForSignal(&view, SIGNAL(loadFinished(bool)), 200);
+    QCOMPARE(loadSpy.count(), 1);
 
     mainFrame->evaluateJavaScript("checkScrollbar();");
     QCOMPARE(mainFrame->documentElement().findAll("span").at(0).toPlainText(), QString("SUCCESS"));

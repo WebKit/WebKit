@@ -1,3 +1,20 @@
+2011-05-30  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix unnecessary wait in API autotest tst_QWebFrame::scrollbarsOff
+        https://bugs.webkit.org/show_bug.cgi?id=61711
+
+        The loadFinished() signal was emitted directly inside the call for setHtml, so
+        the test was waiting the loadFinished() signal with a big timeout. Change this by
+        a very small timeout and a verification with signal spy.
+
+        In practice, setHtml() will either directly call loadFinished() or queue it to
+        the next event loop run, and test will work for both situations.
+
+        * tests/qwebframe/tst_qwebframe.cpp:
+        (tst_QWebFrame::scrollbarsOff):
+
 2011-05-30  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
