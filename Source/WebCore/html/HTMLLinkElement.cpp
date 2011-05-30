@@ -266,11 +266,6 @@ void HTMLLinkElement::process()
             type = CachedResource::LinkPrerender;
 
         ResourceRequest linkRequest(document()->completeURL(m_url));
-        
-        if (m_cachedLinkResource) {
-            m_cachedLinkResource->removeClient(this);
-            m_cachedLinkResource = 0;
-        }
         m_cachedLinkResource = document()->cachedResourceLoader()->requestLinkResource(type, linkRequest, priority);
         if (m_cachedLinkResource)
             m_cachedLinkResource->addClient(this);
