@@ -1,3 +1,12 @@
+2011-05-31  Adam Barth  <abarth@webkit.org>
+
+        Add chromium-mac-leopard image results for these SVG tests.
+
+        * platform/chromium-mac-leopard/svg/custom/invalid-fill-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/invalid-fill-hex-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/invalid-stroke-hex-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/invalid-uri-stroke-expected.png: Added.
+
 2011-05-31  Rob Buis  <rbuis@rim.com>
 
         RS=Dirk Schulze.
