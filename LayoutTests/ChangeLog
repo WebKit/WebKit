@@ -1,3 +1,9 @@
+2011-05-31  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed. Rebaseline Mac after JSC/Canvas bindings changes.
+
+        * platform/mac/canvas/philip/tests/2d.missingargs-expected.txt:
+
 2011-05-31  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dimitri Glazkov.
