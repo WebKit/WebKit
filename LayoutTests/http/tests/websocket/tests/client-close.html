@@ -14,6 +14,7 @@ window.jsTestIsAsync = true;
 
 var ws = new WebSocket("ws://127.0.0.1:8880/websocket/tests/client-close");
 var closeEvent;
+var receivedMessage;
 
 ws.onopen = function()
 {
@@ -24,12 +25,14 @@ ws.onopen = function()
 ws.onmessage = function(messageEvent)
 {
     debug("Received: " + messageEvent.data);
+    receivedMessage = messageEvent.data;
 };
 
 ws.onclose = function(event)
 {
     debug("Closed");
     closeEvent = event;
+    shouldBeEqualToString("receivedMessage", "close_frame='\\xff\\x00'");
     shouldBeTrue("closeEvent.wasClean");
     finishJSTest();
 };

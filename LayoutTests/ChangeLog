@@ -1,3 +1,15 @@
+2011-05-31  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: Make the output of client-close.html more verbose
+        https://bugs.webkit.org/show_bug.cgi?id=61770
+
+        * http/tests/websocket/tests/client-close-expected.txt:
+        * http/tests/websocket/tests/client-close.html:
+        * http/tests/websocket/tests/client-close_wsh.py:
+        Echo back the first two bytes received from the client.
+
 2011-05-31  Zoltan Horvath  <zoltan@webkit.org>
 
         [Qt][WK2] Ossyize editing/pasteboard/copy-standalone-image-crash.html since eventSender is not implemented.
