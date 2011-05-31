@@ -1,3 +1,26 @@
+2011-05-31  Mikhail Naganov  <mnaganov@chromium.org>
+
+        [Chromium] Unreviewed tests results rebaseline after r87721.
+
+        * platform/chromium-linux-x86/svg/custom/invalid-fill-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/invalid-fill-expected.txt: Copied from LayoutTests/platform/chromium-linux/svg/custom/invalid-fill-expected.txt.
+        * platform/chromium-linux-x86/svg/custom/invalid-fill-hex-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/invalid-stroke-hex-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/invalid-uri-stroke-expected.png: Added.
+        * platform/chromium-linux/svg/custom/invalid-fill-expected.png:
+        * platform/chromium-linux/svg/custom/invalid-fill-expected.txt:
+        * platform/chromium-linux/svg/custom/invalid-fill-hex-expected.png:
+        * platform/chromium-linux/svg/custom/invalid-stroke-hex-expected.png: Added.
+        * platform/chromium-linux/svg/custom/invalid-uri-stroke-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/invalid-fill-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/invalid-fill-expected.txt: Copied from LayoutTests/platform/chromium-linux/svg/custom/invalid-fill-expected.txt.
+        * platform/chromium-win-vista/svg/custom/invalid-fill-hex-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/invalid-fill-hex-expected.txt: Copied from LayoutTests/platform/chromium-linux/svg/custom/invalid-fill-expected.txt.
+        * platform/chromium-win-vista/svg/custom/invalid-stroke-hex-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/invalid-stroke-hex-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/invalid-uri-stroke-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/invalid-uri-stroke-expected.txt: Added.
+
 2011-05-31  Oliver Varga  <Varga.Oliver@stud.u-szeged.hu>
 
         Reviewed by Nikolas Zimmermann.
