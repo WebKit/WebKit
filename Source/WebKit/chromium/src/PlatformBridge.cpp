@@ -796,8 +796,13 @@ void PlatformBridge::paintScrollbarThumb(
     webThemeScrollbarInfo.visibleSize = scrollbarInfo.visibleSize;
     webThemeScrollbarInfo.totalSize = scrollbarInfo.totalSize;
 
+#if WEBKIT_USING_SKIA
+    WebKit::WebCanvas* webCanvas = gc->platformContext()->canvas();
+#else
+    WebKit::WebCanvas* webCanvas = gc->platformContext();
+#endif
     webKitClient()->themeEngine()->paintScrollbarThumb(
-        gc->platformContext(),
+        webCanvas,
         static_cast<WebThemeEngine::State>(state),
         static_cast<WebThemeEngine::Size>(size),
         rect,

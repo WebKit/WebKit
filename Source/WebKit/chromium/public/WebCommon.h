@@ -47,7 +47,7 @@
 #endif
 
 #if !defined(WEBKIT_USING_CG)
-    #if defined(__APPLE__)
+    #if defined(__APPLE__) && !WEBKIT_USING_SKIA
         #define WEBKIT_USING_CG 1
     #else
         #define WEBKIT_USING_CG 0
