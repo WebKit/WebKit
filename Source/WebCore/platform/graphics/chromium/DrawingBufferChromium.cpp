@@ -114,9 +114,6 @@ DrawingBuffer::~DrawingBuffer()
 
     if (!m_context)
         return;
-        
-    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
-    m_context->deleteTexture(m_colorBuffer);
 
     clear();
 }
