@@ -803,8 +803,16 @@ bool ApplicationCacheStorage::store(ApplicationCacheResource* resource, unsigned
         
         String flatFileDirectory = pathByAppendingComponent(m_cacheDirectory, flatFileSubdirectory);
         makeAllDirectories(flatFileDirectory);
+
+        String extension;
+        
+        String fileName = resource->response().suggestedFilename();
+        size_t dotIndex = fileName.reverseFind('.');
+        if (dotIndex != notFound && dotIndex < (fileName.length() - 1))
+            extension = fileName.substring(dotIndex);
+
         String path;
-        if (!writeDataToUniqueFileInDirectory(resource->data(), flatFileDirectory, path))
+        if (!writeDataToUniqueFileInDirectory(resource->data(), flatFileDirectory, path, extension))
             return false;
         
         fullPath = pathByAppendingComponent(flatFileDirectory, path);
@@ -1231,12 +1239,12 @@ bool ApplicationCacheStorage::shouldStoreResourceAsFlatFile(ApplicationCacheReso
         || resource->response().mimeType().startsWith("video/", false);
 }
     
-bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer* data, const String& directory, String& path)
+bool ApplicationCacheStorage::writeDataToUniqueFileInDirectory(SharedBuffer* data, const String& directory, String& path, const String& fileExtension)
 {
     String fullPath;
     
     do {
-        path = encodeForFileName(createCanonicalUUIDString());
+        path = encodeForFileName(createCanonicalUUIDString()) + fileExtension;
         // Guard against the above function being called on a platform which does not implement
         // createCanonicalUUIDString().
         ASSERT(!path.isEmpty());
