@@ -1,3 +1,15 @@
+2011-05-31  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by David Kilzer.
+
+        webkitpy should create zips with zip -9
+        https://bugs.webkit.org/show_bug.cgi?id=61789
+
+        Dave Kilzer suggested we add this to make zips uploaded to bugzilla smaller.
+
+        * Scripts/webkitpy/common/system/workspace.py:
+        * Scripts/webkitpy/common/system/workspace_unittest.py:
+
 2011-05-31  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.
