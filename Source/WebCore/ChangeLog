@@ -1,3 +1,12 @@
+2011-05-31  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Unreviewed build fix for Symbian.
+        Opt-out Symbian for TextureMapper.
+
+        No new tests: build fix.
+
+        * WebCore.pri:
+
 2011-05-31  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.
