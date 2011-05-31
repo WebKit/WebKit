@@ -165,6 +165,8 @@ webkitgtk_sources += \
 	Source/WebCore/bindings/gobject/GObjectEventListener.h \
 	Source/WebCore/bindings/gobject/WebKitDOMBinding.cpp \
 	Source/WebCore/bindings/gobject/WebKitDOMBinding.h \
+	Source/WebCore/bindings/gobject/WebKitDOMCustom.cpp \
+	Source/WebCore/bindings/gobject/WebKitDOMCustom.h \
 	Source/WebCore/bindings/gobject/WebKitDOMEventTarget.cpp \
 	Source/WebCore/bindings/gobject/WebKitDOMEventTarget.h \
 	Source/WebCore/bindings/gobject/WebKitDOMEventTargetPrivate.h \

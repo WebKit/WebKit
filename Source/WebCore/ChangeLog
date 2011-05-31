@@ -1,3 +1,16 @@
+2011-05-31  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Provide custom DOM bindings methods to check if input/textareas have been edited
+        https://bugs.webkit.org/show_bug.cgi?id=61791
+
+        * bindings/gobject/GNUmakefile.am: add new files.
+        * bindings/gobject/WebKitDOMCustom.cpp: Added.
+        (webkit_dom_html_text_area_element_is_edited):
+        (webkit_dom_html_input_element_is_edited):
+        * bindings/gobject/WebKitDOMCustom.h: Added.
+
 2011-05-31  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Unreviewed build fix for Symbian.

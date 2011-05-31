@@ -365,6 +365,7 @@ webkitgtk_built_h_api += \
 	DerivedSources/webkit/WebKitDOMDOMApplicationCache.h \
 	DerivedSources/webkit/WebKitDOMBarInfo.h \
 	DerivedSources/webkit/WebKitDOMConsole.h \
+	DerivedSources/webkit/WebKitDOMCustom.h \
 	DerivedSources/webkit/WebKitDOMDOMWindow.h \
 	DerivedSources/webkit/WebKitDOMDOMSelection.h \
 	DerivedSources/webkit/WebKitDOMEventTarget.h \
@@ -409,7 +410,7 @@ webkitgtk_gdom_built_sources += \
 endif
 
 gdom_class_list := $(subst WebKitDOM,, $(filter-out %Private, $(basename $(notdir $(webkitgtk_gdom_built_sources)))))
-gdom_class_list += Object EventTarget
+gdom_class_list += Custom EventTarget Object
 DerivedSources/webkit/webkitdom.h: $(WebCore)/bindings/scripts/gobject-generate-headers.pl $(WebCore)/bindings/gobject/GNUmakefile.am
 	$(AM_V_GEN)echo $(gdom_class_list) | $(PERL) $< gdom > $@
 
@@ -428,6 +429,9 @@ $(top_builddir)/DerivedSources/webkit/WebKitDOMEventTarget.h: $(WebCore)/binding
 	$(AM_V_GEN)cp -f $< $@
 
 $(top_builddir)/DerivedSources/webkit/WebKitDOMEventTargetPrivate.h: $(WebCore)/bindings/gobject/WebKitDOMEventTargetPrivate.h
+	$(AM_V_GEN)cp -f $< $@
+
+$(top_builddir)/DerivedSources/webkit/WebKitDOMCustom.h: $(WebCore)/bindings/gobject/WebKitDOMCustom.h
 	$(AM_V_GEN)cp -f $< $@
 
 # Filter out SVG for now
