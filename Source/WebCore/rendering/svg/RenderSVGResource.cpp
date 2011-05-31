@@ -32,6 +32,17 @@
 
 namespace WebCore {
 
+static inline bool inheritColorFromParentStyleIfNeeded(RenderObject* object, bool applyToFill, Color& color)
+{
+    if (color.isValid())
+        return true;
+    if (!object->parent() || !object->parent()->style())
+        return false;
+    const SVGRenderStyle* parentSVGStyle = object->parent()->style()->svgStyle();
+    color = applyToFill ? parentSVGStyle->fillPaintColor() : parentSVGStyle->strokePaintColor();
+    return true;
+}
+
 static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode mode, RenderObject* object, const RenderStyle* style, Color& fallbackColor)
 {
     ASSERT(object);
@@ -87,8 +98,7 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     // If the primary resource is just a color, return immediately.
     RenderSVGResourceSolidColor* colorResource = RenderSVGResource::sharedSolidPaintingResource();
     if (paintType < SVGPaint::SVG_PAINTTYPE_URI_NONE) {
-        // If an invalid fill color is specified, fallback to fill/stroke="none".
-        if (!color.isValid())
+        if (!inheritColorFromParentStyleIfNeeded(object, applyToFill, color))
             return 0;
 
         colorResource->setColor(color);
@@ -98,9 +108,8 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     // If no resources are associated with the given renderer, return the color resource.
     SVGResources* resources = SVGResourcesCache::cachedResourcesForRenderObject(object);
     if (!resources) {
-        // If a paint server is specified, and no or an invalid fallback color is given, default to fill/stroke="black".
-        if (!color.isValid())
-            color = Color::black;
+        if (!inheritColorFromParentStyleIfNeeded(object, applyToFill, color))
+            return 0;
 
         colorResource->setColor(color);
         return colorResource;
@@ -109,9 +118,8 @@ static inline RenderSVGResource* requestPaintingResource(RenderSVGResourceMode m
     // If the requested resource is not available, return the color resource.
     RenderSVGResource* uriResource = mode == ApplyToFillMode ? resources->fill() : resources->stroke();
     if (!uriResource) {
-        // If a paint server is specified, and no or an invalid fallback color is given, default to fill/stroke="black".
-        if (!color.isValid())
-            color = Color::black;
+        if (!inheritColorFromParentStyleIfNeeded(object, applyToFill, color))
+            return 0;
 
         colorResource->setColor(color);
         return colorResource;
@@ -162,3 +170,4 @@ void RenderSVGResource::markForLayoutAndParentResourceInvalidation(RenderObject*
 }
 
 #endif
+
