@@ -5,6 +5,20 @@
         [Qt] Implement find feature for QtTestBrowser
         https://bugs.webkit.org/show_bug.cgi?id=61425
 
+        Buildfix for --minimal and CONFIG+=qt_minimal build.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::LauncherWindow):
+        (LauncherWindow::createChrome):
+        * QtTestBrowser/launcherwindow.h:
+
+2011-05-31  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Implement find feature for QtTestBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=61425
+
         * QtTestBrowser/launcherwindow.cpp:
         (LauncherWindow::LauncherWindow):
         (LauncherWindow::createChrome):

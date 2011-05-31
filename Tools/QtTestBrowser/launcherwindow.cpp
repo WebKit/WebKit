@@ -46,7 +46,9 @@ LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
     , m_inspector(0)
     , m_formatMenuAction(0)
     , m_zoomAnimation(0)
+#ifndef QT_NO_LINEEDIT
     , m_findFlag(0)
+#endif
 {
     if (data)
         m_windowOptions = *data;
@@ -198,8 +200,10 @@ void LauncherWindow::createChrome()
     editMenu->addAction(page()->action(QWebPage::Copy));
     editMenu->addAction(page()->action(QWebPage::Paste));
     editMenu->addSeparator();
+#ifndef QT_NO_LINEEDIT
     editMenu->addAction("&Find", this, SLOT(showFindBar()), QKeySequence(Qt::CTRL | Qt::Key_F));
     editMenu->addSeparator();
+#endif
     QAction* setEditable = editMenu->addAction("Set Editable", this, SLOT(setEditable(bool)));
     setEditable->setCheckable(true);
 
@@ -410,7 +414,7 @@ void LauncherWindow::createChrome()
     QAction* toggleJavascriptCanOpenWindows = settingsMenu->addAction("Enable js popup windows", this, SLOT(toggleJavascriptCanOpenWindows(bool)));
     toggleJavascriptCanOpenWindows->setCheckable(true);
     toggleJavascriptCanOpenWindows->setChecked(false);
-
+#ifndef QT_NO_LINEEDIT
     m_findBar = new QToolBar("Find", this);
     addToolBar(Qt::BottomToolBarArea, m_findBar);
 
@@ -453,6 +457,7 @@ void LauncherWindow::createChrome()
     m_findBar->addWidget(findHighLightAll);
     m_findBar->setMovable(false);
     m_findBar->setVisible(false);
+#endif
 #endif
 }
 
@@ -1022,6 +1027,7 @@ LauncherWindow* LauncherWindow::cloneWindow()
     return mw;
 }
 
+#ifndef QT_NO_LINEEDIT
 void LauncherWindow::showFindBar()
 {
     if (!m_findBar->isVisible()) {
@@ -1057,3 +1063,4 @@ void LauncherWindow::find(int mode = s_findNormalFlag)
     if (m_findFlag & QWebPage::HighlightAllOccurrences)
         page()->findText(m_lineEdit->text(), QFlag(m_findFlag));
 }
+#endif
