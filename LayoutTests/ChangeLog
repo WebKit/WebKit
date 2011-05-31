@@ -1,5 +1,17 @@
 2011-05-31  Rob Buis  <rbuis@rim.com>
 
+        RS=Dirk Schulze.
+
+        run-webkit-tests on animate-path-nested-transform.html crashes
+        https://bugs.webkit.org/show_bug.cgi?id=61798
+
+        "Fix" the crashing test by choosing safer values.
+
+        * svg/animations/script-tests/animate-path-nested-transforms.js:
+        (executeTest):
+
+2011-05-31  Rob Buis  <rbuis@rim.com>
+
         Reviewed by Dirk Schulze.
 
         https://bugs.webkit.org/show_bug.cgi?id=34301

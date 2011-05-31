@@ -16,7 +16,7 @@ g.appendChild(rect)
 
 var animateMotion = createSVGElement("animateMotion")
 animateMotion.setAttribute("id", "animation")
-animateMotion.setAttribute("dur", "1s")
+animateMotion.setAttribute("dur", "4s")
 animateMotion.setAttribute("repeatCount", "1")
 animateMotion.setAttribute("rotate", "auto")
 animateMotion.setAttribute("path", "M 100,250 C 100,50 400,50 400,250")
@@ -45,8 +45,8 @@ function endSample() {
 
 function executeTest() {
     const expectedValues = [
-        ["animation", 0.01, "rect", startSample],
-        ["animation", 0.99, "rect", endSample]
+        ["animation", 0.02, "rect", startSample],
+        ["animation", 3.99, "rect", endSample]
     ];
     
     runAnimationTest(expectedValues);
