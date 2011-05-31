@@ -80,7 +80,7 @@ struct Ewk_Frame_Smart_Data {
 struct Eina_Iterator_Ewk_Frame {
     Eina_Iterator base;
     Evas_Object* obj;
-    WebCore::Frame* last;
+    unsigned currentIndex;
 };
 
 #ifndef EWK_TYPE_CHECK
@@ -161,17 +161,12 @@ static Eina_Bool _ewk_frame_children_iterator_next(Eina_Iterator_Ewk_Frame* it, 
     WebCore::FrameTree* tree = sd->frame->tree(); // check if it's still valid
     EINA_SAFETY_ON_NULL_RETURN_VAL(tree, EINA_FALSE);
 
-    WebCore::Frame* frame;
-    if (it->last)
-        frame = it->last->tree()->nextSibling();
-    else
-        frame = tree->firstChild();
+    if (it->currentIndex < tree->childCount()) {
+        *data = kit(tree->child(it->currentIndex++));
+        return EINA_TRUE;
+    }
 
-    if (!frame)
-        return EINA_FALSE;
-
-    *data = kit(frame);
-    return EINA_TRUE;
+    return EINA_FALSE;
 }
 
 static Evas_Object* _ewk_frame_children_iterator_get_container(Eina_Iterator_Ewk_Frame* it)
@@ -386,6 +381,7 @@ Eina_Iterator* ewk_frame_children_iterator_new(Evas_Object* o)
     it->base.get_container = FUNC_ITERATOR_GET_CONTAINER(_ewk_frame_children_iterator_get_container);
     it->base.free = FUNC_ITERATOR_FREE(free);
     it->obj = o;
+    it->currentIndex = 0;
     return &it->base;
 }
 

@@ -1,3 +1,18 @@
+2011-05-30  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Reviewed by Kent Tamura.
+
+        [efl] Fix _ewk_frame_children_iterator_next().
+        https://bugs.webkit.org/show_bug.cgi?id=61749
+
+        The iterator was returning always the first child, making tests like
+        fast/history/history-back-initial-vs-final-url.html to timeout and
+        eventually run out of memory.
+
+        * ewk/ewk_frame.cpp:
+        (_ewk_frame_children_iterator_next):
+        (ewk_frame_children_iterator_new):
+
 2011-05-28  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
