@@ -628,12 +628,15 @@ sub builtDylibPathForName
         return "$configurationProductDir/libwxwebkit.dylib";
     }
     if (isGtk()) {
-        my $libraryDir = "$configurationProductDir/.libs/";
-        my $extension = isDarwin() ? "dylib" : "so";
-        if (-e $libraryDir . "libwebkitgtk-3.0.$extension") {
-            return $libraryDir . "libwebkitgtk-3.0.$extension";
+        # WebKitGTK+ for GTK2, WebKitGTK+ for GTK3, and WebKit2 respectively.
+        my @libraries = ("libwebkitgtk-1.0", "libwebkitgtk-3.0", "libwebkit2gtk-1.0");
+        my $extension = isDarwin() ? ".dylib" : ".so";
+
+        foreach $libraryName (@libraries) {
+            my $libraryPath = "$configurationProductDir/.libs/" . $libraryName . $extension;
+            return $libraryPath if -e $libraryPath;
         }
-        return $libraryDir . "libwebkitgtk-1.0.$extension";
+        return "NotFound";
     }
     if (isEfl()) {
         return "$configurationProductDir/$libraryName/../WebKit/libewebkit.so";
@@ -1990,6 +1993,13 @@ sub runWebKitTestRunner
         } else {
             return system $webKitTestRunnerPath, @ARGV;
         }
+    } elsif (isGtk()) {
+        my $productDir = productDir();
+        my $injectedBundlePath = "$productDir/Libraries/.libs/libTestRunnerInjectedBundle";
+        print "Starting WebKitTestRunner with TEST_RUNNER_INJECTED_BUNDLE_FILENAME set to point to $injectedBundlePath.\n";
+        $ENV{TEST_RUNNER_INJECTED_BUNDLE_FILENAME} = $injectedBundlePath;
+        my @args = ("$productDir/Programs/WebKitTestRunner", @ARGV);
+        return system {$args[0] } @args;
     }
 
     return 1;

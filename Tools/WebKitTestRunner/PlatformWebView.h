@@ -46,6 +46,10 @@ typedef NSWindow* PlatformWindow;
 #elif defined(WIN32) || defined(_WIN32)
 typedef WKViewRef PlatformWKView;
 typedef HWND PlatformWindow;
+#elif defined(BUILDING_GTK__)
+typedef struct _GtkWidget GtkWidget;
+typedef WKViewRef PlatformWKView;
+typedef GtkWidget* PlatformWindow;
 #endif
 
 namespace WTR {

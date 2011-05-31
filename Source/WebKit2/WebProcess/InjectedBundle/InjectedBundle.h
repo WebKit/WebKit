@@ -39,6 +39,10 @@
 #include <QLibrary>
 #endif
 
+#if PLATFORM(GTK)
+typedef struct _GModule GModule;
+#endif
+
 namespace CoreIPC {
     class ArgumentDecoder;
     class Connection;
@@ -54,7 +58,7 @@ typedef HMODULE PlatformBundle;
 #elif PLATFORM(QT)
 typedef QLibrary PlatformBundle;
 #elif PLATFORM(GTK)
-typedef void* PlatformBundle;
+typedef ::GModule* PlatformBundle;
 #endif
 
 class ImmutableArray;

@@ -1,0 +1,121 @@
+BUILT_SOURCES += \
+	generate-webkittestrunner-forwarding-headers
+
+generate-webkittestrunner-forwarding-headers: $(WebKit2)/Scripts/generate-forwarding-headers.pl $(Programs_WebKitTestRunner_SOURCES)
+	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/WebKitTestRunner $(GENSOURCES_WEBKIT2)/include gtk
+	$(AM_V_GEN)$(PERL) $< $(srcdir)/Tools/WebKitTestRunner $(GENSOURCES_WEBKIT2)/include soup
+
+noinst_PROGRAMS += \
+	Programs/WebKitTestRunner
+
+Programs_WebKitTestRunner_SOURCES = \
+	Tools/WebKitTestRunner/gtk/main.cpp \
+	Tools/WebKitTestRunner/gtk/PlatformWebViewGtk.cpp \
+	Tools/WebKitTestRunner/gtk/TestControllerGtk.cpp \
+	Tools/WebKitTestRunner/gtk/TestInvocationGtk.cpp \
+	Tools/WebKitTestRunner/PlatformWebView.h \
+	Tools/WebKitTestRunner/StringFunctions.h \
+	Tools/WebKitTestRunner/TestController.cpp \
+	Tools/WebKitTestRunner/TestController.h \
+	Tools/WebKitTestRunner/TestInvocation.cpp \
+	Tools/WebKitTestRunner/TestInvocation.h
+
+Programs_WebKitTestRunner_CPPFLAGS = \
+	-include Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h \
+	-I$(srcdir)/Tools/WebKitTestRunner \
+	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags) \
+	$(GLOBALDEPS_CFLAGS) \
+	$(CAIRO_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
+Programs_WebKitTestRunner_CXXFLAGS = $(global_cxxflags)
+Programs_WebKitTestRunner_CFLAGS = $(global_cflags)
+
+Programs_WebKitTestRunner_LDADD = \
+	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(GLOBALDEPS_LIBS) \
+	$(CAIRO_LIBS) \
+	$(GTK_LIBS) \
+	$(GLIB_LIBS) \
+	$(LIBSOUP_LIBS) \
+	$(FREETYPE_LIBS) \
+	$(WINMM_LIBS)
+
+Programs_WebKitTestRunner_LDFLAGS = \
+	-no-fast-install \
+	-no-install
+
+# The InjectedBundle library allows the render process to load harness code.
+noinst_LTLIBRARIES += Libraries/libTestRunnerInjectedBundle.la
+
+injected_bundle_built_sources = \
+	DerivedSources/InjectedBundle/JSEventSendingController.cpp \
+	DerivedSources/InjectedBundle/JSGCController.cpp \
+	DerivedSources/InjectedBundle/JSLayoutTestController.cpp
+BUILT_SOURCES += $(injected_bundle_built_sources)
+
+Libraries_libTestRunnerInjectedBundle_la_SOURCES = \
+	$(injected_bundle_built_sources) \
+	Tools/WebKitTestRunner/InjectedBundle/ActivateFonts.h \
+	Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrappable.h \
+	Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/Bindings/JSWrapper.h \
+	Tools/WebKitTestRunner/InjectedBundle/EventSendingController.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/EventSendingController.h \
+	Tools/WebKitTestRunner/InjectedBundle/GCController.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/GCController.h \
+	Tools/WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/gtk/InjectedBundleGtk.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/gtk/LayoutTestControllerGtk.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/InjectedBundle.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/InjectedBundle.h \
+	Tools/WebKitTestRunner/InjectedBundle/InjectedBundleMain.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/InjectedBundlePage.h \
+	Tools/WebKitTestRunner/InjectedBundle/LayoutTestController.cpp \
+	Tools/WebKitTestRunner/InjectedBundle/LayoutTestController.h
+
+Libraries_libTestRunnerInjectedBundle_la_LDFLAGS = \
+	-rpath ${shell pwd}/$(top_builddir)/../unix/TestNetscapePlugin/.libs \
+	$(no_undefined) \
+	-avoid-version \
+	-module
+
+Libraries_libTestRunnerInjectedBundle_la_CPPFLAGS = \
+	-DFONTS_CONF_DIR=\"${shell pwd}/${srcdir}/Tools/DumpRenderTree/gtk/fonts\" \
+	-include Tools/WebKitTestRunner/WebKitTestRunnerPrefix.h \
+	-I$(srcdir)/Tools/WebKitTestRunner \
+	-I$(srcdir)/Tools/WebKitTestRunner/InjectedBundle \
+	-I$(srcdir)/Tools/WebKitTestRunner/InjectedBundle/Bindings \
+	-I$(top_builddir)/DerivedSources/InjectedBundle \
+	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags) \
+	$(GLOBALDEPS_CFLAGS) \
+	$(CAIRO_CFLAGS) \
+	$(GLIB_CFLAGS) \
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
+Libraries_libTestRunnerInjectedBundle_la_CXXFLAGS = $(global_cxxflags)
+Libraries_libTestRunnerInjectedBundle_la_CFLAGS = $(global_cflags)
+
+code_generation_dependencies = \
+	Tools/WebKitTestRunner/InjectedBundle/Bindings/CodeGeneratorTestRunner.pm \
+	Source/WebCore/bindings/scripts/CodeGenerator.pm \
+	Source/WebCore/bindings/scripts/IDLParser.pm \
+	Source/WebCore/bindings/scripts/IDLStructure.pm \
+	Source/WebCore/bindings/scripts/InFilesParser.pm \
+	Source/WebCore/bindings/scripts/generate-bindings.pl
+
+DerivedSources/InjectedBundle/JS%.cpp: Tools/WebKitTestRunner/InjectedBundle/Bindings/%.idl $(code_generation_dependencies)
+	$(AM_V_GEN)$(PERL) \
+		-I $(srcdir)/Source/WebCore/bindings/scripts \
+		-I $(srcdir)/Tools/WebKitTestRunner/InjectedBundle/Bindings \
+		$(srcdir)/Source/WebCore/bindings/scripts/generate-bindings.pl \
+		--defines \"\" --generator TestRunner \
+		--include $(srcdir)/Tools/InjectedBundle/Bindings \
+		--outputDir $(top_builddir)/DerivedSources/InjectedBundle \
+		$<

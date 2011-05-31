@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,35 +27,23 @@
 #include "config.h"
 #include "InjectedBundle.h"
 
-#include "WKBundleAPICast.h"
-#include "WKBundleInitialize.h"
-#include <WebCore/FileSystem.h>
-#include <wtf/text/CString.h>
+#include <cstdio>
+#include <glib.h>
 
-using namespace WebCore;
+namespace WTR {
 
-namespace WebKit {
-
-bool InjectedBundle::load(APIObject* initializationUserData)
+static void logHandler(const gchar* domain, GLogLevelFlags level, const gchar* message, gpointer data)
 {
-    m_platformBundle = g_module_open(fileSystemRepresentation(m_path).data(), G_MODULE_BIND_LOCAL);
-    if (!m_platformBundle) {
-        g_warning("Error loading the injected bundle (%s): %s", m_path.utf8().data(), g_module_error());
-        return false;
-    }
-
-    WKBundleInitializeFunctionPtr initializeFunction = 0;
-    if (!g_module_symbol(m_platformBundle, "WKBundleInitialize", reinterpret_cast<void**>(&initializeFunction)) || !initializeFunction) {
-        g_warning("Error loading WKBundleInitialize symbol from injected bundle.");
-        return false;
-    }
-
-    initializeFunction(toAPI(this), toAPI(initializationUserData));
-    return true;
+    if (level < G_LOG_LEVEL_DEBUG)
+        fprintf(stderr, "%s\n", message);
 }
 
-void InjectedBundle::activateMacFontAscentHack()
+void InjectedBundle::platformInitialize(WKTypeRef)
 {
+    // Some plugins might try to use the GLib logger for printing debug messages. This
+    // will cause tests to fail because of unexpected output. We squelch all debug
+    // messages sent to the logger.
+    g_log_set_default_handler(logHandler, 0);
 }
 
-} // namespace WebKit
+} // namespace WTR

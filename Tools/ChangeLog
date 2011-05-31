@@ -1,3 +1,29 @@
+2011-03-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Adam Roben.
+
+        [GTK] [WebKit2] Implement a basic WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=57068
+
+        Add an implementation of WebKitTestRunner for GTK+.
+
+        * Scripts/build-webkittestrunner: Added knowledge of GTK+ TestRunner.
+        * Scripts/old-run-webkit-tests: Ditto.
+        * Scripts/run-launcher: Ditto.
+        * Scripts/webkitdirs.pm: Ditto.
+        * WebKitTestRunner/GNUmakefile.am: Added.
+        * WebKitTestRunner/InjectedBundle/LayoutTestController.h:
+        * WebKitTestRunner/InjectedBundle/gtk/ActivateFontsGtk.cpp: Added.
+        * WebKitTestRunner/InjectedBundle/gtk/InjectedBundleGtk.cpp: Copied from Source/WebKit2/WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp.
+        * WebKitTestRunner/InjectedBundle/gtk/LayoutTestControllerGtk.cpp: Copied from Source/WebKit2/WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp.
+        * WebKitTestRunner/PlatformWebView.h:
+        * WebKitTestRunner/gtk/PlatformWebViewGtk.cpp: Added.
+        * WebKitTestRunner/gtk/TestControllerGtk.cpp: Added.
+        * WebKitTestRunner/gtk/TestInvocationGtk.cpp: Copied from Source/WebKit2/WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp.
+        (WTR::TestInvocation::dumpPixelsAndCompareWithExpected):
+        * WebKitTestRunner/gtk/main.cpp: Copied from Source/WebKit2/WebProcess/InjectedBundle/gtk/InjectedBundleGtk.cpp.
+        (main): Added.
+
 2011-05-31  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

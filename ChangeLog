@@ -1,3 +1,12 @@
+2011-03-30  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Adam Roben.
+
+        [GTK] [WebKit2] Implement a basic WebKitTestRunner
+        https://bugs.webkit.org/show_bug.cgi?id=57068
+
+        * GNUmakefile.am: Added reference to WebKitTestRunner GNUmakefile.
+
 2011-05-31  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

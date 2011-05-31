@@ -388,6 +388,9 @@ if ($useWebKitTestRunner) {
     } elsif (isQt()) {
         $realPlatform = $platform;
         $platform = "qt-wk2";
+    } elsif (isGtk()) {
+        $realPlatform = $platform;
+        $platform = "gtk-wk2";
     }
 }
 
@@ -1174,6 +1177,7 @@ close HTML;
 my @configurationArgs = argumentsForConfiguration();
 
 if (isGtk()) {
+  push(@configurationArgs, '-2') if $useWebKitTestRunner;
   system "Tools/Scripts/run-launcher", @configurationArgs, "file://".$testResults if $launchSafari;
 } elsif (isQt()) {
   unshift @configurationArgs, qw(-graphicssystem raster -style windows);
@@ -1476,6 +1480,11 @@ sub openDumpTool()
         $CLEAN_ENV{LIBOVERLAY_SCROLLBAR} = "0";
         $CLEAN_ENV{GTK_MODULES} = "gail";
         $CLEAN_ENV{WEBKIT_INSPECTOR_PATH} = "$productDir/resources/inspector";
+
+        if ($useWebKitTestRunner) {
+            my $injectedBundlePath = productDir() . "/Libraries/.libs/libTestRunnerInjectedBundle";
+            $CLEAN_ENV{TEST_RUNNER_INJECTED_BUNDLE_FILENAME} = $injectedBundlePath;
+        }
     }
 
     if (isQt()) {
@@ -2134,6 +2143,9 @@ sub buildPlatformResultHierarchy()
     } elsif ($platform =~ /^qt-/) {
         push @platforms, $platform;
         push @platforms, "qt";
+    } elsif ($platform =~ /^gtk-/) {
+        push @platforms, $platform;
+        push @platforms, "gtk";
     } else {
         @platforms = $platform;
     }

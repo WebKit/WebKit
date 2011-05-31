@@ -41,6 +41,8 @@ typedef UINT_PTR PlatformTimerRef;
 #elif PLATFORM(QT)
 #include <QTimer>
 typedef QTimer PlatformTimerRef;
+#elif PLATFORM(GTK)
+typedef unsigned int PlatformTimerRef;
 #endif
 
 namespace WTR {

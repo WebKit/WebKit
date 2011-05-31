@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
+ * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -25,37 +24,13 @@
  */
 
 #include "config.h"
-#include "InjectedBundle.h"
 
-#include "WKBundleAPICast.h"
-#include "WKBundleInitialize.h"
-#include <WebCore/FileSystem.h>
-#include <wtf/text/CString.h>
+#include "TestController.h"
+#include <gtk/gtk.h>
 
-using namespace WebCore;
-
-namespace WebKit {
-
-bool InjectedBundle::load(APIObject* initializationUserData)
+int main(int argc, char** argv)
 {
-    m_platformBundle = g_module_open(fileSystemRepresentation(m_path).data(), G_MODULE_BIND_LOCAL);
-    if (!m_platformBundle) {
-        g_warning("Error loading the injected bundle (%s): %s", m_path.utf8().data(), g_module_error());
-        return false;
-    }
-
-    WKBundleInitializeFunctionPtr initializeFunction = 0;
-    if (!g_module_symbol(m_platformBundle, "WKBundleInitialize", reinterpret_cast<void**>(&initializeFunction)) || !initializeFunction) {
-        g_warning("Error loading WKBundleInitialize symbol from injected bundle.");
-        return false;
-    }
-
-    initializeFunction(toAPI(this), toAPI(initializationUserData));
-    return true;
+    gtk_init(&argc, &argv);
+    WTR::TestController controller(argc, const_cast<const char**>(argv));
+    return 0;
 }
-
-void InjectedBundle::activateMacFontAscentHack()
-{
-}
-
-} // namespace WebKit
