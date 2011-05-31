@@ -95,26 +95,6 @@ void JSCanvasRenderingContext2D::setFillStyle(ExecState* exec, JSValue value)
     context->setFillStyle(toHTMLCanvasStyle(exec, value));
 }
 
-JSValue JSCanvasRenderingContext2D::drawImageFromRect(ExecState* exec)
-{ 
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-    
-    JSValue value = exec->argument(0);
-    if (!value.isObject())
-        return throwTypeError(exec);
-    JSObject* o = asObject(value);
-    
-    if (!o->inherits(&JSHTMLImageElement::s_info))
-        return throwTypeError(exec);
-    context->drawImageFromRect(static_cast<HTMLImageElement*>(static_cast<JSHTMLElement*>(o)->impl()),
-                               exec->argument(1).toFloat(exec), exec->argument(2).toFloat(exec),
-                               exec->argument(3).toFloat(exec), exec->argument(4).toFloat(exec),
-                               exec->argument(5).toFloat(exec), exec->argument(6).toFloat(exec),
-                               exec->argument(7).toFloat(exec), exec->argument(8).toFloat(exec),
-                               ustringToString(exec->argument(9).toString(exec)));    
-    return jsUndefined();    
-}
-
 JSValue JSCanvasRenderingContext2D::setShadow(ExecState* exec)
 { 
     CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());

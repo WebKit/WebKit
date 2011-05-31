@@ -2,6 +2,20 @@
 
         Reviewed by Antti Koivisto.
 
+        Canvas/JSC: Auto-generate overloads for drawImageFromRect()
+        https://bugs.webkit.org/show_bug.cgi?id=61709
+
+        Add a test to verify the behavior of drawImageFromRect() when called
+        with different numbers of arguments.
+
+        * fast/canvas/canvas-overloads-drawImageFromRect-expected.txt: Added.
+        * fast/canvas/canvas-overloads-drawImageFromRect.html: Added.
+        * fast/canvas/script-tests/canvas-overloads-drawImageFromRect.js: Added.
+
+2011-05-31  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
         Canvas/JSC: Auto-generate overloads for drawImage()
         https://bugs.webkit.org/show_bug.cgi?id=61703
 

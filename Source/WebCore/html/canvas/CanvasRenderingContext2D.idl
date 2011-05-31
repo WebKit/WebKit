@@ -135,10 +135,12 @@ module html {
             raises (DOMException);
 #endif
 
+        [RequiresAllArguments=Raise] void drawImageFromRect(in HTMLImageElement image,
+                                                            in [Optional] float sx, in [Optional] float sy, in [Optional] float sw, in [Optional] float sh,
+                                                            in [Optional] float dx, in [Optional] float dy, in [Optional] float dw, in [Optional] float dh,
+                                                            in [Optional] DOMString compositeOperation);
+
 #if defined(V8_BINDING) && V8_BINDING
-        void drawImageFromRect(in HTMLImageElement image,
-                               in float sx, in float sy, in float sw, in float sh,
-                               in float dx, in float dy, in float dw, in float dh, in DOMString compositeOperation);
 
         void setShadow(in float width, in float height, in float blur, in [Optional] DOMString color, in [Optional] float alpha);
         void setShadow(in float width, in float height, in float blur, in float grayLevel, in [Optional] float alpha);
@@ -157,7 +159,6 @@ module html {
             raises (DOMException);
 #else
         // FIXME: Remove 'else' once JSC supports overloads too.
-        [Custom] void drawImageFromRect(/* 10 */);
         [Custom] void setShadow(/* 3 */);
         [Custom] void createPattern(/* 2 */);
         [Custom] void putImageData(/* in ImageData imagedata, in float dx, in float dy [, in float dirtyX, in float dirtyY, in float dirtyWidth, in float dirtyHeight] */);

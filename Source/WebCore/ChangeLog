@@ -2,6 +2,24 @@
 
         Reviewed by Antti Koivisto.
 
+        Canvas/JSC: Auto-generate overloads for drawImageFromRect()
+        https://bugs.webkit.org/show_bug.cgi?id=61709
+
+        Move CanvasRenderingContext2D.drawImageFromRect() to auto-generated JSC bindings.
+        Make it [RequiresAllArguments=Raise] to match the old behavior.
+        Side effect: calling drawImageFromRect() with zero arguments will now raise
+        SyntaxError instead of TypeError.
+
+        Test: fast/canvas/canvas-overloads-drawImageFromRect.html
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        * html/canvas/CanvasRenderingContext2D.h:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
+2011-05-31  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
         Canvas/JSC: Auto-generate overloads for drawImage()
         https://bugs.webkit.org/show_bug.cgi?id=61703
 
