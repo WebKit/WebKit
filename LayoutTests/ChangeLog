@@ -1,3 +1,14 @@
+2011-05-31  Berend-Jan Wever  <skylined@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add test to make sure an error in requestFileSystem or resolveLocalFileSystemURI
+        when no error callback is supplied does not cause a NULL ptr.
+        https://bugs.webkit.org/show_bug.cgi?id=49539
+
+        * fast/filesystem/filesystem-no-callback-null-ptr-crash.html: Added.
+        * fast/filesystem/filesystem-no-callback-null-ptr-crash-expected.txt: Added.
+
 2011-05-31  Hao Zheng  <zhenghao@chromium.org>
 
         Reviewed by Tony Chang.

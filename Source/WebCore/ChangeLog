@@ -1,3 +1,17 @@
+2011-05-31  B.J. Wever  <skylined@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        requestFileSystem and resolveLocalFileSystemURI are not checking if
+        errorCallback is NULL before scheduling a callback on error.
+        https://bugs.webkit.org/show_bug.cgi?id=49539
+
+        Test: fast/filesystem/filesystem-no-callback-null-ptr-crash.html
+
+        * fileapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::scheduleCallback): Only call callback if
+          one is supplied.
+
 2011-05-31  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Darin Adler.

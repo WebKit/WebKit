@@ -101,8 +101,8 @@ template <typename CB, typename CBArg>
 void DOMFileSystem::scheduleCallback(ScriptExecutionContext* scriptExecutionContext, PassRefPtr<CB> callback, PassRefPtr<CBArg> arg)
 {
     ASSERT(scriptExecutionContext->isContextThread());
-    ASSERT(callback);
-    scriptExecutionContext->postTask(adoptPtr(new DispatchCallbackTask<CB, CBArg>(callback, arg)));
+    if (callback)
+        scriptExecutionContext->postTask(adoptPtr(new DispatchCallbackTask<CB, CBArg>(callback, arg)));
 }
 
 } // namespace
