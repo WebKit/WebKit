@@ -1,3 +1,9 @@
+2011-05-31  Zoltan Horvath  <zoltan@webkit.org>
+
+        [Qt][WK2] Ossyize editing/pasteboard/copy-standalone-image-crash.html since eventSender is not implemented.
+
+        * platform/qt-wk2/Skipped:
+
 2011-05-31  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed. Update Chromium test expectation for http/tests/websocket/tests/client-close.html.
