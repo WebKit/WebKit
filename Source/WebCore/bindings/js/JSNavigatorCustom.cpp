@@ -50,7 +50,7 @@ JSValue JSNavigator::webkitGetUserMedia(ExecState* exec)
     if (exec->hadException())
         return jsUndefined();
 
-    ExceptionCode ec;
+    ExceptionCode ec = 0;
     m_impl->webkitGetUserMedia(options, successCallback.release(), errorCallback.release(), ec);
 
     if (ec)

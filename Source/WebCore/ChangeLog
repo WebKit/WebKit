@@ -1,3 +1,17 @@
+2011-05-31  Tommy Widenflycht  <tommyw@google.com>
+
+        Reviewed by Tony Gentilcore.
+
+        Fix getUserMedia callback bindings for JSC.
+        https://bugs.webkit.org/show_bug.cgi?id=60174
+
+        This patch initializes the exception code variable to 0.
+
+        Test: fast/dom/MediaStream/argument-types.html
+
+        * bindings/js/JSNavigatorCustom.cpp:
+        (WebCore::JSNavigator::webkitGetUserMedia):
+
 2011-05-31  Oleg Romashin  <oleg.romashin@nokia.com>
 
         Reviewed by Benjamin Poulain.
