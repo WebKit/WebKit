@@ -31,6 +31,7 @@
 #include "ArgumentEncoder.h"
 #include "Arguments.h"
 #include "ShareableBitmap.h"
+#include <WebCore/Animation.h>
 #include <WebCore/AuthenticationChallenge.h>
 #include <WebCore/BitmapImage.h>
 #include <WebCore/Credential.h>
@@ -556,6 +557,122 @@ template<> struct ArgumentCoder<RefPtr<WebCore::TimingFunction> > {
         }
 
         return false;
+    }
+};
+
+template<> struct ArgumentCoder<WebCore::Animation> {
+    static bool encodeBoolAndReturnValue(ArgumentEncoder* encoder, bool value)
+    {
+        encoder->encodeBool(value);
+        return value;
+    }
+
+    template<typename T>
+    static void encodeBoolAndValue(ArgumentEncoder* encoder, bool isSet, const T& value)
+    {
+        if (encodeBoolAndReturnValue(encoder, isSet))
+            encoder->encode<T>(value);
+    }
+
+    static bool decodeBoolAndValue(ArgumentDecoder* decoder, bool& isSet, double& value)
+    {
+        if (!decoder->decodeBool(isSet))
+            return false;
+        if (!isSet)
+            return true;
+
+        return decoder->decodeDouble(value);
+    }
+
+    template<class T>
+    static bool decodeBoolAndValue(ArgumentDecoder* decoder, bool& isSet, T& value)
+    {
+        if (!decoder->decodeBool(isSet))
+            return false;
+        if (!isSet)
+            return true;
+
+        return ArgumentCoder<T>::decode(decoder, value);
+    }
+
+    static bool decodeBoolAndValue(ArgumentDecoder* decoder, bool& isSet, int& value)
+    {
+        if (!decoder->decodeBool(isSet))
+            return false;
+        if (!isSet)
+            return true;
+
+        return decoder->decodeInt32(value);
+    }
+
+    static void encode(ArgumentEncoder* encoder, const WebCore::Animation& animation)
+    {
+        encodeBoolAndValue(encoder, animation.isDelaySet(), animation.delay());
+        encodeBoolAndValue<int>(encoder, animation.isDirectionSet(), animation.direction());
+        encodeBoolAndValue(encoder, animation.isDurationSet(), animation.duration());
+        encodeBoolAndValue(encoder, animation.isFillModeSet(), animation.fillMode());
+        encodeBoolAndValue(encoder, animation.isIterationCountSet(), animation.iterationCount());
+
+        if (encodeBoolAndReturnValue(encoder, animation.isNameSet()))
+            ArgumentCoder<String>::encode(encoder, animation.name());
+
+        encodeBoolAndValue<int>(encoder, animation.isPlayStateSet(), animation.playState());
+        encodeBoolAndValue(encoder, animation.isPropertySet(), animation.property());
+
+        if (encodeBoolAndReturnValue(encoder, animation.isTimingFunctionSet()))
+            ArgumentCoder<RefPtr<WebCore::TimingFunction> >::encode(encoder, animation.timingFunction());
+        encoder->encodeBool(animation.isNoneAnimation());
+    }
+
+    static bool decode(ArgumentDecoder* decoder, WebCore::Animation& animation)
+    {
+        bool isDelaySet, isDirectionSet, isDurationSet, isFillModeSet, isIterationCountSet, isNameSet, isPlayStateSet, isPropertySet, isTimingFunctionSet;
+        int property, iterationCount, direction, fillMode, playState;
+        double delay, duration;
+        RefPtr<WebCore::TimingFunction> timingFunction;
+        String name;
+
+        animation.clearAll();
+
+        if (!decodeBoolAndValue(decoder, isDelaySet, delay))
+            return false;
+        if (!decodeBoolAndValue(decoder, isDirectionSet, direction))
+            return false;
+        if (!decodeBoolAndValue(decoder, isDurationSet, duration))
+            return false;
+        if (!decodeBoolAndValue(decoder, isFillModeSet, fillMode))
+            return false;
+        if (!decodeBoolAndValue(decoder, isIterationCountSet, iterationCount))
+            return false;
+        if (!decodeBoolAndValue<String>(decoder, isNameSet, name))
+            return false;
+        if (!decodeBoolAndValue(decoder, isPlayStateSet, playState))
+            return false;
+        if (!decodeBoolAndValue(decoder, isPropertySet, property))
+            return false;
+        if (!decodeBoolAndValue<RefPtr<WebCore::TimingFunction> >(decoder, isTimingFunctionSet, timingFunction))
+            return false;
+
+        if (isDelaySet)
+            animation.setDelay(delay);
+        if (isDirectionSet)
+            animation.setDirection(static_cast<WebCore::Animation::AnimationDirection>(direction));
+        if (isDurationSet)
+            animation.setDuration(duration);
+        if (isFillModeSet)
+            animation.setFillMode(fillMode);
+        if (isIterationCountSet)
+            animation.setIterationCount(iterationCount);
+        if (isNameSet)
+            animation.setName(name);
+        if (isPlayStateSet)
+            animation.setPlayState(static_cast<WebCore::EAnimPlayState>(playState));
+        if (isPropertySet)
+            animation.setProperty(property);
+        if (isTimingFunctionSet)
+            animation.setTimingFunction(timingFunction);
+
+        return true;
     }
 };
 

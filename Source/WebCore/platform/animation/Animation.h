@@ -81,6 +81,19 @@ public:
     void clearProperty() { m_propertySet = false; }
     void clearTimingFunction() { m_timingFunctionSet = false; }
 
+    void clearAll()
+    {
+        clearDelay();
+        clearDirection();
+        clearDuration();
+        clearFillMode();
+        clearIterationCount();
+        clearName();
+        clearPlayState();
+        clearProperty();
+        clearTimingFunction();
+    }
+
     double delay() const { return m_delay; }
 
     enum AnimationDirection { AnimationDirectionNormal, AnimationDirectionAlternate };

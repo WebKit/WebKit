@@ -251,6 +251,7 @@ def message_to_struct_declaration(message):
 
 def struct_or_class(namespace, type):
     structs = frozenset([
+        'WebCore::Animation',
         'WebCore::EditorCommandsForKeyEvent',
         'WebCore::CompositionUnderline',
         'WebCore::GrammarDetail',

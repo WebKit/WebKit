@@ -1,3 +1,17 @@
+2011-05-30  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        WebKit2: Enable serializing of data types needed for cross-process accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=61694
+
+        Expose a public clearAll() function to reset WebCore::Animation.
+
+        No new functionality, so no new tests.
+
+        * platform/animation/Animation.h:
+        (WebCore::Animation::clearAll):
+
 2011-05-30  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Alexey Proskuryakov.
