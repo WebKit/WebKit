@@ -409,24 +409,6 @@ JSValue JSCanvasRenderingContext2D::putImageData(ExecState* exec)
     return jsUndefined();
 }
 
-JSValue JSCanvasRenderingContext2D::fillText(ExecState* exec)
-{ 
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-
-    // string arg = text to draw
-    // number arg = x
-    // number arg = y
-    // optional number arg = maxWidth
-    if (exec->argumentCount() < 3 || exec->argumentCount() > 4)
-        return throwSyntaxError(exec);
-    
-    if (exec->argumentCount() == 4)
-        context->fillText(ustringToString(exec->argument(0).toString(exec)), exec->argument(1).toFloat(exec), exec->argument(2).toFloat(exec), exec->argument(3).toFloat(exec));
-    else
-        context->fillText(ustringToString(exec->argument(0).toString(exec)), exec->argument(1).toFloat(exec), exec->argument(2).toFloat(exec));
-    return jsUndefined();
-}
-
 JSValue JSCanvasRenderingContext2D::strokeText(ExecState* exec)
 { 
     CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());

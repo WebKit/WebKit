@@ -1,3 +1,19 @@
+2011-05-31  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Canvas/JSC: Auto-generate overloads for fillText()
+        https://bugs.webkit.org/show_bug.cgi?id=61623
+
+        Move CanvasRenderingContext2D.fillText() to auto-generated JSC bindings.
+        Make it [RequiresAllArguments=Raise] to match the old behavior.
+        This has the side-effect of aligning the behaviors of JSC and V8.
+
+        Test: fast/canvas/canvas-overloads-fillText.html
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
 2011-05-31  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

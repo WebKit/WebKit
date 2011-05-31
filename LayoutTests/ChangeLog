@@ -1,3 +1,21 @@
+2011-05-31  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
+        Canvas/JSC: Auto-generate overloads for fillText()
+        https://bugs.webkit.org/show_bug.cgi?id=61623
+
+        Add a test to verify the behavior of fillText() when called with different
+        numbers of arguments. There are two differences to the previous behavior:
+
+        - SyntaxError exceptions are now raised with the message "Not enough arguments."
+        - Calling fillText() with superfluous arguments now lets the call through
+          instead of raising a SyntaxError. This matches both Gecko and Presto.
+
+        * fast/canvas/canvas-overloads-fillText-expected.txt: Added.
+        * fast/canvas/canvas-overloads-fillText.html: Added.
+        * fast/canvas/script-tests/canvas-overloads-fillText.js: Added.
+
 2011-05-31  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Kenneth Rohde Christiansen.
