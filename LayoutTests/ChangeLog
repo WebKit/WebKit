@@ -1,3 +1,23 @@
+2011-05-31  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        https://bugs.webkit.org/show_bug.cgi?id=34301
+        Creating <animateMotion> elements via javascript do not execute
+
+        https://bugs.webkit.org/show_bug.cgi?id=17043
+        SVG missing some .idl files
+
+        Verify that adding mpath via javascript works.
+
+        * svg/animations/animate-mpath-insert-expected.txt: Added.
+        * svg/animations/animate-mpath-insert.html: Added.
+        * svg/animations/script-tests/animate-mpath-insert.js: Added.
+        (mpath.setAttributeNS.animateMotion.appendChild.g.appendChild.rootSVGElement.appendChild.passIfCloseEnough):
+        (startSample):
+        (endSample):
+        (executeTest):
+
 2011-05-31  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -1781,6 +1781,7 @@ IF (ENABLE_SVG)
         svg/SVGAltGlyphElement.idl
         svg/SVGAngle.idl
         svg/SVGAnimateColorElement.idl
+        svg/SVGAnimateMotionElement.idl
         svg/SVGAnimateElement.idl
         svg/SVGAnimateTransformElement.idl
         svg/SVGAnimatedAngle.idl
@@ -1856,6 +1857,7 @@ IF (ENABLE_SVG)
         svg/SVGMatrix.idl
         svg/SVGMetadataElement.idl
         svg/SVGMissingGlyphElement.idl
+        svg/SVGMPathElement.idl
         svg/SVGNumber.idl
         svg/SVGNumberList.idl
         svg/SVGPaint.idl

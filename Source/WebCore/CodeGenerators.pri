@@ -389,6 +389,7 @@ IDL_BINDINGS += \
     svg/SVGAltGlyphElement.idl \
     svg/SVGAngle.idl \
     svg/SVGAnimateColorElement.idl \
+    svg/SVGAnimateMotionElement.idl \
     svg/SVGAnimatedAngle.idl \
     svg/SVGAnimatedBoolean.idl \
     svg/SVGAnimatedEnumeration.idl \
@@ -464,6 +465,7 @@ IDL_BINDINGS += \
     svg/SVGMatrix.idl \
     svg/SVGMetadataElement.idl \
     svg/SVGMissingGlyphElement.idl \
+    svg/SVGMPathElement.idl \
     svg/SVGNumber.idl \
     svg/SVGNumberList.idl \
     svg/SVGPaint.idl \
