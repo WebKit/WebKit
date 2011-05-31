@@ -100,10 +100,9 @@ module html {
         void clearShadow();
 
         [RequiresAllArguments=Raise] void fillText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
+        [RequiresAllArguments=Raise] void strokeText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
 
 #if defined(V8_BINDING) && V8_BINDING
-        void strokeText(in DOMString text, in float x, in float y, in [Optional] float maxWidth);
-
         void setStrokeColor(in DOMString color, in [Optional] float alpha);
         void setStrokeColor(in float grayLevel, in [Optional] float alpha);
         void setStrokeColor(in float r, in float g, in float b, in float a);
@@ -157,7 +156,6 @@ module html {
             raises (DOMException);
 #else
         // FIXME: Remove 'else' once JSC supports overloads too.
-        [Custom] void strokeText(/* 4 */);
         [Custom] void setStrokeColor(/* 1  */);
         [Custom] void setFillColor(/* 1 */);
         [Custom] void strokeRect(/* 4 */);
