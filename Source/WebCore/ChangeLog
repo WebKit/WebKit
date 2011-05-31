@@ -1,3 +1,22 @@
+2011-05-27  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Fix crash from empty reflections with masks
+        https://bugs.webkit.org/show_bug.cgi?id=61654
+
+        Change the iteration for updateCompositorResources to match that being
+        done in the paint and draw steps.  This mismatch of iteration style
+        was causing layers with replica masks to correctly get skipped while
+        painting but not get skipped during texture upload.
+
+        Test: compositing/reflections/empty-reflection-with-mask.html
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::updateCompositorResources):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+
 2011-05-31  B.J. Wever  <skylined@chromium.org>
 
         Reviewed by Adam Barth.

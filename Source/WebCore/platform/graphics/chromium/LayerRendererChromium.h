@@ -167,7 +167,8 @@ private:
     void updatePropertiesAndRenderSurfaces(CCLayerImpl*, const TransformationMatrix& parentMatrix, LayerList& renderSurfaceLayerList, LayerList& layers);
 
     void paintLayerContents(const LayerList&);
-    void updateCompositorResourcesRecursive(LayerChromium*);
+    void updateCompositorResources(const LayerList& renderSurfaceLayerList);
+    void updateCompositorResources(CCLayerImpl*);
 
     void drawLayers(const LayerList& renderSurfaceLayerList);
     void drawLayer(CCLayerImpl*, RenderSurfaceChromium*);

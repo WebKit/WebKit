@@ -1,3 +1,13 @@
+2011-05-27  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Fix crash from empty reflections with masks
+        https://bugs.webkit.org/show_bug.cgi?id=61654
+
+        * compositing/reflections/empty-reflection-with-mask-expected.txt: Added.
+        * compositing/reflections/empty-reflection-with-mask.html: Added.
+
 2011-05-31  Berend-Jan Wever  <skylined@chromium.org>
 
         Reviewed by Adam Barth.

@@ -330,10 +330,10 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
     s_inPaintLayerContents = false;
 #endif
 
-    // FIXME: Before updateCompositorResourcesRecursive, when the compositor runs in
+    // FIXME: Before updateCompositorResources, when the compositor runs in
     // its own thread, and when the copyTexImage2D bug is fixed, insert
     // a glWaitLatch(Compositor->Offscreen) on all child contexts here instead
-    // of after updateCompositorResourcesRecursive.
+    // of after updateCompositorResources.
     // Also uncomment the glSetLatch(Compositor->Offscreen) code in addChildContext.
 //  if (hardwareCompositing() && m_contextSupportsLatch) {
 //      // For each child context:
@@ -347,11 +347,11 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
 //      }
 //  }
 
-    updateCompositorResourcesRecursive(m_rootLayer.get());
+    updateCompositorResources(renderSurfaceLayerList);
     // Update compositor resources for root layer.
     m_rootLayerContentTiler->updateRect();
 
-    // After updateCompositorResourcesRecursive, set/wait latches for all child
+    // After updateCompositorResources, set/wait latches for all child
     // contexts. This will prevent the compositor from using any of the child
     // parent textures while WebGL commands are executing from javascript *and*
     // while the final parent texture is being blit'd. copyTexImage2D
@@ -854,26 +854,44 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer
         m_layerSorter.sort(&descendants.at(thisLayerIndex), descendants.end());
 }
 
-void LayerRendererChromium::updateCompositorResourcesRecursive(LayerChromium* layer)
+void LayerRendererChromium::updateCompositorResources(const LayerList& renderSurfaceLayerList)
 {
-    const Vector<RefPtr<LayerChromium> >& children = layer->children();
-    for (size_t i = 0; i < children.size(); ++i)
-        updateCompositorResourcesRecursive(children[i].get());
+    for (int surfaceIndex = renderSurfaceLayerList.size() - 1; surfaceIndex >= 0 ; --surfaceIndex) {
+        CCLayerImpl* renderSurfaceLayer = renderSurfaceLayerList[surfaceIndex].get();
+        RenderSurfaceChromium* renderSurface = renderSurfaceLayer->renderSurface();
+        ASSERT(renderSurface);
+
+        if (!renderSurface->m_layerList.size())
+            continue;
+
+        LayerList& layerList = renderSurface->m_layerList;
+        ASSERT(layerList.size());
+        for (unsigned layerIndex = 0; layerIndex < layerList.size(); ++layerIndex) {
+            CCLayerImpl* ccLayerImpl = layerList[layerIndex].get();
+            if (ccLayerImpl->renderSurface() && ccLayerImpl->renderSurface() != renderSurface)
+                continue;
+
+            updateCompositorResources(ccLayerImpl);
+        }
+    }
+}
+
+void LayerRendererChromium::updateCompositorResources(CCLayerImpl* ccLayerImpl)
+{
+    LayerChromium* layer = ccLayerImpl->owner();
 
     if (layer->bounds().isEmpty())
         return;
 
     if (layer->maskLayer())
-        updateCompositorResourcesRecursive(layer->maskLayer());
+        updateCompositorResources(ccLayerImpl->maskLayer());
     if (layer->replicaLayer())
-        updateCompositorResourcesRecursive(layer->replicaLayer());
+        updateCompositorResources(ccLayerImpl->replicaLayer());
 
-    CCLayerImpl* drawLayer = layer->ccLayerImpl();
+    if (ccLayerImpl->drawsContent())
+        ccLayerImpl->updateCompositorResources();
 
-    if (drawLayer->drawsContent())
-        drawLayer->updateCompositorResources();
-
-    layer->pushPropertiesTo(drawLayer);
+    layer->pushPropertiesTo(ccLayerImpl);
 }
 
 void LayerRendererChromium::setCompositeOffscreen(bool compositeOffscreen)
