@@ -1,3 +1,17 @@
+2011-05-30  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Play/Pause button in wrong state when entering full screen on Vimeo
+        https://bugs.webkit.org/show_bug.cgi?id=61754
+
+        Update the play/pause button inside reset().  This ensures the button is in
+        the correct state when the controls are created after playback has already
+        started.
+
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::reset):
+
 2011-05-30  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Simon Hausmann.
