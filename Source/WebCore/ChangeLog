@@ -1,3 +1,22 @@
+2011-05-31  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Improve hasMediaControls logic to check that node has
+        media controls. This can be false when cloning nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=61765
+
+        Test: media/media-controls-clone-crash.html
+
+        * dom/Node.h:
+        (WebCore::Node::isMediaControls):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::mediaControls):
+        (WebCore::HTMLMediaElement::hasMediaControls):
+        * html/shadow/MediaControls.h:
+        (WebCore::MediaControls::isMediaControls):
+        (WebCore::toMediaControls):
+
 2011-05-31  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

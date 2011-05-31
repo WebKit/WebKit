@@ -2680,17 +2680,16 @@ void HTMLMediaElement::privateBrowsingStateDidChange()
 
 MediaControls* HTMLMediaElement::mediaControls()
 {
-    if (!shadowRoot())
-        return 0;
-
-    Node* node = shadowRoot()->firstChild();
-    ASSERT(node->isHTMLElement());
-    return static_cast<MediaControls*>(node);
+    return toMediaControls(shadowRoot()->firstChild());
 }
 
 bool HTMLMediaElement::hasMediaControls()
 {
-    return shadowRoot();
+    if (!shadowRoot())
+        return false;
+
+    Node* node = shadowRoot()->firstChild();
+    return node && node->isMediaControls();
 }
 
 void HTMLMediaElement::ensureMediaControls()

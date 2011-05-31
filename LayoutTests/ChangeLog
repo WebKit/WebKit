@@ -1,3 +1,14 @@
+2011-05-31  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Tests that cloning an audio element with media controls does
+        not result in crash.
+        https://bugs.webkit.org/show_bug.cgi?id=61765
+
+        * media/media-controls-clone-crash-expected.txt: Added.
+        * media/media-controls-clone-crash.html: Added.
+
 2011-05-31  Andreas Kling  <kling@webkit.org>
 
         Unreviewed. Rebaseline Mac after JSC/Canvas bindings changes.
