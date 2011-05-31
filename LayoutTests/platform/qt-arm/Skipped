@@ -36,3 +36,6 @@ svg/W3C-SVG-1.1/render-elems-03-t.svg
 svg/W3C-SVG-1.1/shapes-rect-01-t.svg
 svg/W3C-SVG-1.1/text-path-01-b.svg
 svg/W3C-SVG-1.1/text-text-03-b.svg
+
+# Crashed test after r87691-r87693
+http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
