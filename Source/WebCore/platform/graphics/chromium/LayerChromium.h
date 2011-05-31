@@ -215,6 +215,7 @@ protected:
     static const unsigned s_texCoordAttribLocation;
 
     friend class TreeSynchronizer;
+    friend class CCLayerImpl;
     // Constructs a CCLayerImpl of the correct runtime type for this LayerChromium type.
     virtual PassRefPtr<CCLayerImpl> createCCLayerImpl();
     // FIXME: Remove when https://bugs.webkit.org/show_bug.cgi?id=58830 is fixed.

@@ -81,6 +81,8 @@ CCLayerImpl::CCLayerImpl(LayerChromium* owner, int id)
 
 CCLayerImpl::~CCLayerImpl()
 {
+    if (m_owner)
+        m_owner->setCCLayerImpl(0);
 }
 
 void CCLayerImpl::addChild(PassRefPtr<CCLayerImpl> child)
