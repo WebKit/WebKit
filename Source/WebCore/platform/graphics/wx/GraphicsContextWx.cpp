@@ -112,6 +112,7 @@ public:
     wxWindowDC* context;
 #endif
     int mswDCStateID;
+    FloatSize currentScale;
     wxRegion gtkCurrentClipRgn;
     wxRegion gtkPaintClipRgn;
 };
@@ -120,7 +121,8 @@ GraphicsContextPlatformPrivate::GraphicsContextPlatformPrivate() :
     context(0),
     mswDCStateID(0),
     gtkCurrentClipRgn(wxRegion()),
-    gtkPaintClipRgn(wxRegion())
+    gtkPaintClipRgn(wxRegion()),
+    currentScale(1.0, 1.0)
 {
 }
 
@@ -216,8 +218,10 @@ void GraphicsContext::drawRect(const IntRect& rect)
     if (paintingDisabled())
         return;
 
+    save();
     m_data->context->SetPen(wxPen(strokeColor(), strokeThickness(), strokeStyleToWxPenStyle(strokeStyle())));
     m_data->context->DrawRectangle(rect.x(), rect.y(), rect.width(), rect.height());
+    restore();
 }
 
 // This is only used to draw borders.
@@ -229,8 +233,10 @@ void GraphicsContext::drawLine(const IntPoint& point1, const IntPoint& point2)
     FloatPoint p1 = point1;
     FloatPoint p2 = point2;
     
+    save();
     m_data->context->SetPen(wxPen(strokeColor(), strokeThickness(), strokeStyleToWxPenStyle(strokeStyle())));
     m_data->context->DrawLine(point1.x(), point1.y(), point2.x(), point2.y());
+    restore();
 }
 
 // This method is only used to draw the little circles used in lists.
@@ -239,8 +245,10 @@ void GraphicsContext::drawEllipse(const IntRect& rect)
     if (paintingDisabled())
         return;
 
+    save();
     m_data->context->SetPen(wxPen(strokeColor(), strokeThickness(), strokeStyleToWxPenStyle(strokeStyle())));
     m_data->context->DrawEllipse(rect.x(), rect.y(), rect.width(), rect.height());
+    restore();
 }
 
 void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSpan)
@@ -248,8 +256,10 @@ void GraphicsContext::strokeArc(const IntRect& rect, int startAngle, int angleSp
     if (paintingDisabled())
         return;
     
+    save();
     m_data->context->SetPen(wxPen(strokeColor(), strokeThickness(), strokeStyleToWxPenStyle(strokeStyle())));
     m_data->context->DrawEllipticArc(rect.x(), rect.y(), rect.width(), rect.height(), startAngle, startAngle + angleSpan);
+    restore();
 }
 
 void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points, bool shouldAntialias)
@@ -260,12 +270,14 @@ void GraphicsContext::drawConvexPolygon(size_t npoints, const FloatPoint* points
     if (npoints <= 1)
         return;
 
+    save();
     wxPoint* polygon = new wxPoint[npoints];
     for (size_t i = 0; i < npoints; i++)
         polygon[i] = wxPoint(points[i].x(), points[i].y());
     m_data->context->SetPen(wxPen(strokeColor(), strokeThickness(), strokeStyleToWxPenStyle(strokeStyle())));
     m_data->context->DrawPolygon((int)npoints, polygon);
     delete [] polygon;
+    restore();
 }
 
 void GraphicsContext::clipConvexPolygon(size_t numPoints, const FloatPoint* points, bool antialiased)
@@ -284,13 +296,13 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     if (paintingDisabled())
         return;
 
-    savePlatformState();
+    save();
 
     m_data->context->SetPen(*wxTRANSPARENT_PEN);
     m_data->context->SetBrush(wxBrush(color));
     m_data->context->DrawRectangle(rect.x(), rect.y(), rect.width(), rect.height());
 
-    restorePlatformState();
+    restore();
 }
 
 void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color& color, ColorSpace colorSpace)
@@ -400,9 +412,11 @@ void GraphicsContext::drawLineForText(const FloatPoint& origin, float width, boo
     if (paintingDisabled())
         return;
 
+    save();
     FloatPoint endPoint = origin + FloatSize(width, 0);
     m_data->context->SetPen(wxPen(strokeColor(), strokeThickness(), wxSOLID));
     m_data->context->DrawLine(origin.x(), origin.y(), endPoint.x(), endPoint.y());
+    restore();
 }
 
 void GraphicsContext::drawLineForTextChecking(const FloatPoint& origin, float width, TextCheckingLineStyle style)
@@ -473,16 +487,20 @@ void GraphicsContext::rotate(float angle)
 }
 
 void GraphicsContext::scale(const FloatSize& scale) 
-{ 
+{
 #if USE(WXGC)
     if (m_data->context) {
         wxGraphicsContext* gc = m_data->context->GetGraphicsContext();
         gc->Scale(scale.width(), scale.height());
+        m_data->currentScale = scale;
     }
 #endif
 }
 
-
+FloatSize GraphicsContext::currentScale()
+{
+    return m_data->currentScale;
+}
 FloatRect GraphicsContext::roundToDevicePixels(const FloatRect& frect, RoundingMode)
 {
     FloatRect result;

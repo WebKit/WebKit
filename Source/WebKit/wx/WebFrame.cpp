@@ -29,15 +29,18 @@
 #include "Editor.h"
 #include "Element.h"
 #include "EventHandler.h"
+#include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
+#include "GraphicsContext.h"
 #include "HitTestResult.h"
 #include "HostWindow.h"
 #include "HTMLFrameOwnerElement.h"
 #include "markup.h"
 #include "Page.h"
 #include "PlatformString.h"
+#include "PrintContext.h"
 #include "RenderTreeAsText.h"
 #include "RenderObject.h"
 #include "RenderView.h"
@@ -67,13 +70,110 @@
 #include "WebFramePrivate.h"
 #include "WebViewPrivate.h"
 
+#include <algorithm>
+
 #include <wx/defs.h>
+#include <wx/dc.h>
 #include <wx/dcbuffer.h>
+#include <wx/dcgraph.h>
+#include <wx/graphics.h>
+#include <wx/print.h>
+#include <wx/printdlg.h>
 
 // Match Safari's min/max zoom sizes by default
 #define MinimumTextSizeMultiplier       0.5f
 #define MaximumTextSizeMultiplier       3.0f
 #define TextSizeMultiplierRatio         1.2f
+
+using namespace std;
+
+// we need wxGraphicsContext and wxPrinterDC to work together, 
+// which requires wx 2.9.x.
+#if wxCHECK_VERSION(2, 9, 1)
+class wxWebFramePrintout : public wxPrintout {
+public:
+    wxWebFramePrintout(WebCore::Frame* frame) :
+        m_frame(frame),
+        m_printContext(frame),
+        m_pageWidth(0.0),
+        m_fromPage(1),
+        m_toPage(1)
+    {
+    }
+
+    int GetPageCount() { return m_printContext.pageCount(); }
+    void SetFirstPage(int page) { m_fromPage = page; }
+    void SetLastPage(int page) { m_toPage = page; }
+
+    void InitializeWithPageSize(wxRect pageRect)
+    {
+        double mmToPixelsX = (double)wxGetDisplaySize().GetWidth() /
+                                (double)wxGetDisplaySizeMM().GetWidth();
+        double mmToPixelsY = (double)wxGetDisplaySize().GetHeight() /
+                                (double)wxGetDisplaySizeMM().GetHeight();
+        // convert mm to pixels
+        pageRect.x = pageRect.x * mmToPixelsX;
+        pageRect.y = pageRect.y * mmToPixelsY;
+        pageRect.width = pageRect.width * mmToPixelsX;
+        pageRect.height = pageRect.height * mmToPixelsY;
+
+        m_pageWidth = pageRect.width;
+        m_printContext.begin(m_pageWidth);
+        
+        float pageHeight = pageRect.height;
+        m_printContext.computePageRects(WebCore::FloatRect(pageRect), /* headerHeight */ 0, /* footerHeight */ 0, /* userScaleFactor */ 1.0, pageHeight);
+    }
+    
+    void OnBeginPrinting()
+    {
+        wxPrinterDC* pdc = dynamic_cast<wxPrinterDC*>(GetDC());
+        pdc->SetMapMode(wxMM_POINTS);
+    }
+    
+    void GetPageInfo(int *minPage, int *maxPage, int *pageFrom, int *pageTo)
+    {
+        if (minPage)
+            *minPage = 1;
+        if (maxPage)
+            *maxPage = m_printContext.pageCount();
+        if (pageFrom)
+            *pageFrom = m_fromPage;
+        if (pageTo)
+            *pageTo = m_toPage;
+    }
+    
+    bool HasPage(int pageNum)
+    {
+        return pageNum <= m_printContext.pageCount() && pageNum >= m_fromPage && pageNum <= m_toPage;
+    }
+    
+    bool OnPrintPage(int pageNum)
+    {
+        wxPrinterDC* pdc = dynamic_cast<wxPrinterDC*>(GetDC());
+        
+        wxGCDC gcdc(*pdc);
+        if (!gcdc.IsOk())
+            return false;
+
+        WebCore::GraphicsContext ctx(&gcdc);
+        m_printContext.spoolPage(ctx, pageNum - 1, m_pageWidth);
+        
+        return true;
+    }
+    
+    void OnEndPrinting()
+    {
+        m_printContext.end();   
+    }
+    
+private:
+    float m_pageWidth;
+    int m_fromPage;
+    int m_toPage;
+    WebCore::Frame *m_frame;
+    WebCore::PrintContext m_printContext;
+};
+#endif
 
 wxWebFrame::wxWebFrame(wxWebView* container, wxWebFrame* parent, WebViewFrameData* data) :
     m_textMagnifier(1.0),
@@ -454,6 +554,47 @@ void wxWebFrame::Paste()
     if (CanPaste())
         m_impl->frame->editor()->paste();
 
+}
+
+void wxWebFrame::Print()
+{
+#if wxCHECK_VERSION(2, 9, 1)
+    if (!m_impl->frame)
+        return;
+    
+    wxPrintDialogData printdata;
+    printdata.GetPrintData().SetPrintMode(wxPRINT_MODE_PRINTER);
+    printdata.GetPrintData().SetPaperId(wxPAPER_LETTER);
+    printdata.GetPrintData().SetNoCopies(1);
+        
+    wxPageSetupDialogData pageSetup(printdata.GetPrintData());
+
+    wxRect paperSize = pageSetup.GetPaperSize();
+#ifdef __WXMSW__
+    // On Windows, the paper size apparently includes the non-printable areas of the page.
+    // Guesstimate the printable page margins until we find a better solution.
+    paperSize.Deflate(15, 15);
+#endif
+    wxWebFramePrintout* printout = new wxWebFramePrintout(m_impl->frame);
+    printout->InitializeWithPageSize(paperSize);
+    
+    printdata.SetMinPage(1);
+    printdata.SetMaxPage(printout->GetPageCount());
+    printdata.SetFromPage(1);
+    printdata.SetToPage(printout->GetPageCount());
+
+    wxPrintDialog dialog(0, &printdata);
+    if (dialog.ShowModal() == wxID_OK) {    
+        wxPrintDialogData data(dialog.GetPrintDialogData());
+        printout->SetFirstPage(data.GetFromPage());
+        printout->SetLastPage(data.GetToPage());
+        wxPrinter printer(&data);
+        
+        printer.Print(0, printout, false);
+    }
+#else
+    wxFAIL_MSG(wxT("Printing is only supported in wxWidgets 2.9.1 and above."));
+#endif
 }
 
 wxWebViewDOMElementInfo wxWebFrame::HitTest(const wxPoint& pos) const

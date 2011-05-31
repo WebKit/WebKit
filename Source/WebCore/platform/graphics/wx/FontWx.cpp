@@ -77,7 +77,9 @@ void Font::drawGlyphs(GraphicsContext* graphicsContext, const SimpleFontData* fo
     // so we've created a function with platform dependent drawing implementations that
     // will hopefully be folded into wx once the API has solidified.
     // see platform/wx/wxcode/<platform> for the implementations.
+    graphicsContext->save();
     drawTextWithSpacing(graphicsContext, font, color, glyphBuffer, from, numGlyphs, point);
+    graphicsContext->restore();
 }
 
 FloatRect Font::selectionRectForComplexText(const TextRun& run, const FloatPoint& point, int h, int from, int to) const

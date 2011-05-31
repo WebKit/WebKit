@@ -72,6 +72,7 @@ protected:
     void OnReload(wxCommandEvent& event);
     void OnBrowse(wxCommandEvent& event);
     void OnEdit(wxCommandEvent& event);
+    void OnPrint(wxCommandEvent& myEvent);
     
     void OnMakeTextLarger(wxCommandEvent& event);
     void OnMakeTextSmaller(wxCommandEvent& event);

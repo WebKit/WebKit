@@ -115,6 +115,7 @@ public:
     bool GoForward();
     void Stop();
     void Reload();
+    void Print();
     
     bool CanGoBack();
     bool CanGoForward();

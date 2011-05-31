@@ -93,6 +93,7 @@ BEGIN_EVENT_TABLE(wxWebBrowserShell, wxFrame)
     EVT_MENU(ID_RUN_SCRIPT, wxWebBrowserShell::OnRunScript)
     EVT_MENU(ID_EDIT_COMMAND, wxWebBrowserShell::OnEditCommand)
     EVT_MENU(ID_GET_EDIT_COMMAND_STATE, wxWebBrowserShell::OnGetEditCommandState)
+    EVT_MENU(wxID_PRINT, wxWebBrowserShell::OnPrint)
 END_EVENT_TABLE()
 
 
@@ -100,19 +101,20 @@ wxWebBrowserShell::wxWebBrowserShell(const wxString& title) :
         wxFrame(NULL, wxID_ANY, title, wxDefaultPosition, wxSize(600, 500)),
         m_checkBeforeLoad(false)
 {
-
     // create a menu bar
     wxMenu *fileMenu = new wxMenu;
     fileMenu->Append(ID_NEW_WINDOW, _T("New Window\tCTRL+N"));
     fileMenu->Append(ID_LOADFILE, _T("Open File...\tCTRL+O"));
     fileMenu->Append(ID_LOADURL, _("Open Location...\tCTRL+L"));
+    fileMenu->AppendSeparator();
+    fileMenu->Append(wxID_PRINT, _("Print..."));
     fileMenu->Append(wxID_EXIT, _T("E&xit\tAlt-X"), _T("Quit this program"));
     
     wxMenu *editMenu = new wxMenu;
     editMenu->Append(wxID_CUT, _T("Cut\tCTRL+X"));
     editMenu->Append(wxID_COPY, _T("Copy\tCTRL+C"));
     editMenu->Append(wxID_PASTE, _T("Paste\tCTRL+V"));
-    
+
     wxMenu* viewMenu = new wxMenu;
     viewMenu->AppendRadioItem(ID_BROWSE, _("Browse"));
     viewMenu->AppendRadioItem(ID_EDIT, _("Edit"));
@@ -395,4 +397,10 @@ void wxWebBrowserShell::OnGetEditCommandState(wxCommandEvent& myEvent)
         }
         dialog->Destroy();
     }
+}
+
+void wxWebBrowserShell::OnPrint(wxCommandEvent& myEvent)
+{
+    if (webview && webview->GetMainFrame())
+        webview->GetMainFrame()->Print();
 }

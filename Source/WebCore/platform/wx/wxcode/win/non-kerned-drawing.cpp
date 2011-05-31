@@ -24,6 +24,8 @@
  */
 
 #include "config.h"
+
+#include "AffineTransform.h"
 #include "GlyphBuffer.h"
 #include "GraphicsContext.h"
 #include "SimpleFontData.h"
@@ -82,6 +84,7 @@ void drawTextWithSpacing(GraphicsContext* graphicsContext, const SimpleFontData*
     float y = point.y() - font->fontMetrics().ascent();
     float x = point.x();
 
+
 #if USE(WXGC)
     // when going from GdiPlus -> Gdi, any GdiPlus transformations are lost
     // so we need to alter the coordinates to reflect their transformed point.
@@ -96,11 +99,25 @@ void drawTextWithSpacing(GraphicsContext* graphicsContext, const SimpleFontData*
         hdc = g->GetHDC();
     }
     x += (int)xtrans;
-    y += (int)ytrans;    
+    y += (int)ytrans;
 #else
     hdc = static_cast<HDC>(dc->GetHDC());
 #endif
 
+    // if the context has been scaled, we must manually re-apply that scale
+    // to the HDC.
+    FloatSize scale = graphicsContext->currentScale();
+    if (scale != FloatSize(1.0, 1.0)) {
+        SetGraphicsMode(hdc, GM_ADVANCED);
+        XFORM xForm;
+        xForm.eM11 = scale.width();
+        xForm.eM12 = 0.0;
+        xForm.eM21 = 0.0;
+        xForm.eM22 = scale.height();
+        xForm.eDx = 0.0;
+        xForm.eDy = 0.0;
+        SetWorldTransform(hdc, &xForm);
+    }
     // ExtTextOut wants the offsets as an array of ints, so extract them
     // from the glyph buffer
     const GlyphBufferGlyph*   glyphs   = glyphBuffer.glyphs(from);

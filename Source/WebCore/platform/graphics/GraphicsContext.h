@@ -472,6 +472,9 @@ namespace WebCore {
 #endif
 
 #if PLATFORM(WX)
+        // This is needed because of a bug whereby getting an HDC from a GDI+ context
+        // loses the scale operations applied to the context.
+        FloatSize currentScale(); 
         bool inTransparencyLayer() const { return false; }
 #endif
 
