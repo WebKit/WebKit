@@ -191,6 +191,8 @@ protected slots:
     void toggleOfflineWebApplicationCache(bool toggle);
     void setOfflineStorageDefaultQuota();
 
+    void showFindBar();
+    void find(int mode);
 #if defined(QT_CONFIGURED_WITH_OPENGL)
     void toggleQGLWidgetViewport(bool enable);
 #endif
@@ -239,6 +241,11 @@ private:
     bool m_touchMocking;
 
     QString m_inputUrl;
+
+    QToolBar* m_findBar;
+    QLineEdit* m_lineEdit;
+    int m_findFlag;
+    static const int s_findNormalFlag = 0;
 };
 
 #endif

@@ -1,5 +1,7 @@
 /*
  * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2011 University of Szeged
+ * Copyright (C) 2011 Kristof Kosztyo <Kosztyo.Kristof@stud.u-szeged.hu>
  * Copyright (C) 2009 Girish Ramakrishnan <girish@forwardbias.in>
  * Copyright (C) 2006 George Staikos <staikos@kde.org>
  * Copyright (C) 2006 Dirk Mueller <mueller@kde.org>
@@ -44,6 +46,7 @@ LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
     , m_inspector(0)
     , m_formatMenuAction(0)
     , m_zoomAnimation(0)
+    , m_findFlag(0)
 {
     if (data)
         m_windowOptions = *data;
@@ -194,6 +197,8 @@ void LauncherWindow::createChrome()
     editMenu->addAction(page()->action(QWebPage::Cut));
     editMenu->addAction(page()->action(QWebPage::Copy));
     editMenu->addAction(page()->action(QWebPage::Paste));
+    editMenu->addSeparator();
+    editMenu->addAction("&Find", this, SLOT(showFindBar()), QKeySequence(Qt::CTRL | Qt::Key_F));
     editMenu->addSeparator();
     QAction* setEditable = editMenu->addAction("Set Editable", this, SLOT(setEditable(bool)));
     setEditable->setCheckable(true);
@@ -406,6 +411,48 @@ void LauncherWindow::createChrome()
     toggleJavascriptCanOpenWindows->setCheckable(true);
     toggleJavascriptCanOpenWindows->setChecked(false);
 
+    m_findBar = new QToolBar("Find", this);
+    addToolBar(Qt::BottomToolBarArea, m_findBar);
+
+    QToolButton* findClose = new QToolButton(m_findBar);
+    findClose->setText("X");
+    m_lineEdit = new QLineEdit(m_findBar);
+    m_lineEdit->setMaximumWidth(200);
+    QToolButton* findPrevious = new QToolButton(m_findBar);
+    findPrevious->setArrowType(Qt::LeftArrow);
+    QToolButton* findNext = new QToolButton(m_findBar);
+    findNext->setArrowType(Qt::RightArrow);
+    QCheckBox* findCaseSensitive = new QCheckBox("Case Sensitive", m_findBar);
+    QCheckBox* findWrapAround = new QCheckBox("Wrap Around", m_findBar);
+    QCheckBox* findHighLightAll = new QCheckBox("HighLight All", m_findBar);
+
+    QSignalMapper* findSignalMapper = new QSignalMapper(m_findBar);
+    findSignalMapper->setMapping(m_lineEdit, s_findNormalFlag);
+    findSignalMapper->setMapping(findPrevious, QWebPage::FindBackward);
+    findSignalMapper->setMapping(findNext, s_findNormalFlag);
+    findSignalMapper->setMapping(findCaseSensitive, QWebPage::FindCaseSensitively);
+    findSignalMapper->setMapping(findWrapAround, QWebPage::FindWrapsAroundDocument);
+    findSignalMapper->setMapping(findHighLightAll, QWebPage::HighlightAllOccurrences);
+
+    connect(findClose, SIGNAL(clicked()), this, SLOT(showFindBar()));
+    connect(m_lineEdit, SIGNAL(textChanged(const QString &)), findSignalMapper, SLOT(map()));
+    connect(findPrevious, SIGNAL(pressed()), findSignalMapper, SLOT(map()));
+    connect(findNext, SIGNAL(pressed()), findSignalMapper, SLOT(map()));
+    connect(findCaseSensitive, SIGNAL(stateChanged(int)), findSignalMapper, SLOT(map()));
+    connect(findWrapAround, SIGNAL(stateChanged(int)), findSignalMapper, SLOT(map()));
+    connect(findHighLightAll, SIGNAL(stateChanged(int)), findSignalMapper, SLOT(map()));
+
+    connect(findSignalMapper, SIGNAL(mapped(int)), this, SLOT(find(int)));
+
+    m_findBar->addWidget(findClose);
+    m_findBar->addWidget(m_lineEdit);
+    m_findBar->addWidget(findPrevious);
+    m_findBar->addWidget(findNext);
+    m_findBar->addWidget(findCaseSensitive);
+    m_findBar->addWidget(findWrapAround);
+    m_findBar->addWidget(findHighLightAll);
+    m_findBar->setMovable(false);
+    m_findBar->setVisible(false);
 #endif
 }
 
@@ -975,3 +1022,38 @@ LauncherWindow* LauncherWindow::cloneWindow()
     return mw;
 }
 
+void LauncherWindow::showFindBar()
+{
+    if (!m_findBar->isVisible()) {
+        m_findBar->setVisible(true);
+        m_lineEdit->setText(page()->selectedText());
+        m_lineEdit->setFocus(Qt::PopupFocusReason);
+    } else {
+        m_findBar->setVisible(false);
+        page()->findText("", QWebPage::HighlightAllOccurrences);
+    }
+}
+
+void LauncherWindow::find(int mode = s_findNormalFlag)
+{
+    QPalette palette;
+    bool found;
+    palette.setColor(m_lineEdit->backgroundRole(), Qt::white);
+    page()->findText("", QFlag(QWebPage::HighlightAllOccurrences));
+
+    m_findFlag = m_findFlag ^ mode;
+    if (mode == s_findNormalFlag || mode == QWebPage::FindBackward) {
+        found = page()->findText(m_lineEdit->text(), QFlag(m_findFlag & ~QWebPage::HighlightAllOccurrences));
+        m_findFlag = m_findFlag ^ mode;
+
+        if (found || m_lineEdit->text().isEmpty())
+            m_lineEdit->setPalette(palette);
+        else {
+            palette.setColor(m_lineEdit->backgroundRole(), QColor(255, 0, 0, 127));
+            m_lineEdit->setPalette(palette);
+        }
+    }
+
+    if (m_findFlag & QWebPage::HighlightAllOccurrences)
+        page()->findText(m_lineEdit->text(), QFlag(m_findFlag));
+}

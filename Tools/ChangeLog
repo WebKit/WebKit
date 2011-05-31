@@ -1,3 +1,17 @@
+2011-05-31  Kristóf Kosztyó  <Kosztyo.Kristof@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Implement find feature for QtTestBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=61425
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::LauncherWindow):
+        (LauncherWindow::createChrome):
+        (LauncherWindow::showFindBar):
+        (LauncherWindow::find):
+        * QtTestBrowser/launcherwindow.h:
+
 2011-05-30  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
