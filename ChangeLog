@@ -1,3 +1,11 @@
+2011-05-31  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Bump version to 1.5.1.
+
+        * configure.ac:
+
 2011-05-25  Gregg Tavares  <gman@chromium.org>
 
         Reviewed by Kenneth Russell.
