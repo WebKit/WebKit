@@ -2,6 +2,22 @@
 
         Reviewed by Antti Koivisto.
 
+        Canvas/JSC: Auto-generate overloads for strokeRect()
+        https://bugs.webkit.org/show_bug.cgi?id=61641
+
+        Move CanvasRenderingContext2D.setStrokeColor() to auto-generated JSC bindings.
+
+        No behavioral change.
+
+        Test: fast/canvas/canvas-overloads-strokeRect.html
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
+2011-05-31  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
         Canvas/JSC: Auto-generate overloads for setFillColor()
         https://bugs.webkit.org/show_bug.cgi?id=61635
 

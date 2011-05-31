@@ -95,20 +95,6 @@ void JSCanvasRenderingContext2D::setFillStyle(ExecState* exec, JSValue value)
     context->setFillStyle(toHTMLCanvasStyle(exec, value));
 }
 
-JSValue JSCanvasRenderingContext2D::strokeRect(ExecState* exec)
-{ 
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-    
-    if (exec->argumentCount() <= 4)
-        context->strokeRect(exec->argument(0).toFloat(exec), exec->argument(1).toFloat(exec),
-                            exec->argument(2).toFloat(exec), exec->argument(3).toFloat(exec));
-    else
-        context->strokeRect(exec->argument(0).toFloat(exec), exec->argument(1).toFloat(exec),
-                            exec->argument(2).toFloat(exec), exec->argument(3).toFloat(exec), exec->argument(4).toFloat(exec));
-
-    return jsUndefined();    
-}
-
 JSValue JSCanvasRenderingContext2D::drawImage(ExecState* exec)
 { 
     CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());

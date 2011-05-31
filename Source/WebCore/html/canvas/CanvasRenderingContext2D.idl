@@ -112,9 +112,9 @@ module html {
         void setFillColor(in float r, in float g, in float b, in float a);
         void setFillColor(in float c, in float m, in float y, in float k, in float a);
 
-#if defined(V8_BINDING) && V8_BINDING
         void strokeRect(in float x, in float y, in float width, in float height, in [Optional] float lineWidth);
 
+#if defined(V8_BINDING) && V8_BINDING
         void drawImage(in HTMLImageElement image, in float x, in float y)
             raises (DOMException);
         void drawImage(in HTMLImageElement image, in float x, in float y, in float width, in float height)
@@ -156,7 +156,6 @@ module html {
             raises (DOMException);
 #else
         // FIXME: Remove 'else' once JSC supports overloads too.
-        [Custom] void strokeRect(/* 4 */);
         [Custom] void drawImage(/* 3 */);
         [Custom] void drawImageFromRect(/* 10 */);
         [Custom] void setShadow(/* 3 */);
