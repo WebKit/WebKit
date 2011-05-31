@@ -997,10 +997,10 @@ void RenderObject::drawArcForBoxSide(GraphicsContext* graphicsContext, int x, in
 }
 #endif
     
-void RenderObject::paintFocusRing(GraphicsContext* context, int tx, int ty, RenderStyle* style)
+void RenderObject::paintFocusRing(GraphicsContext* context, const IntPoint& paintOffset, RenderStyle* style)
 {
     Vector<IntRect> focusRingRects;
-    addFocusRingRects(focusRingRects, IntPoint(tx, ty));
+    addFocusRingRects(focusRingRects, paintOffset);
     if (style->outlineStyleIsAuto())
         context->drawFocusRing(focusRingRects, style->outlineWidth(), style->outlineOffset(), style->visitedDependentColor(CSSPropertyOutlineColor));
     else
@@ -1036,7 +1036,7 @@ void RenderObject::paintOutline(GraphicsContext* graphicsContext, const IntRect&
     if (styleToUse->outlineStyleIsAuto() || hasOutlineAnnotation()) {
         if (!theme()->supportsFocusRing(styleToUse)) {
             // Only paint the focus ring by hand if the theme isn't able to draw the focus ring.
-            paintFocusRing(graphicsContext, paintRect.x(), paintRect.y(), styleToUse);
+            paintFocusRing(graphicsContext, paintRect.location(), styleToUse);
         }
     }
 

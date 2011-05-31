@@ -1375,7 +1375,7 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     if (styleToUse->outlineStyleIsAuto() || hasOutlineAnnotation()) {
         if (!theme()->supportsFocusRing(styleToUse)) {
             // Only paint the focus ring by hand if the theme isn't able to draw the focus ring.
-            paintFocusRing(graphicsContext, tx, ty, styleToUse);
+            paintFocusRing(graphicsContext, IntPoint(tx, ty), styleToUse);
         }
     }
 
