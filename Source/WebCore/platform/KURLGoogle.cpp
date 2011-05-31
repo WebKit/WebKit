@@ -130,7 +130,7 @@ static inline bool isSchemeFirstChar(char c)
 
 static inline bool isSchemeChar(char c)
 {
-    return isSchemeFirstChar(c) || (c >= '0' && c <= '9') || c == '.' || c == '-' || c == '*';
+    return isSchemeFirstChar(c) || (c >= '0' && c <= '9') || c == '.' || c == '-' || c == '+';
 }
 
 bool isValidProtocol(const String& protocol)

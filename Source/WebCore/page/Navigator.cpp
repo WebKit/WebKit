@@ -251,9 +251,6 @@ static bool verifyProtocolHandlerScheme(const String& scheme, ExceptionCode& ec)
 
 void Navigator::registerProtocolHandler(const String& scheme, const String& url, const String& title, ExceptionCode& ec)
 {
-    if (!verifyProtocolHandlerScheme(scheme, ec))
-        return;
-
     if (!m_frame)
         return;
 
@@ -264,6 +261,9 @@ void Navigator::registerProtocolHandler(const String& scheme, const String& url,
     String baseURL = document->baseURL().baseAsString();
 
     if (!verifyCustomHandlerURL(baseURL, url, ec))
+        return;
+
+    if (!verifyProtocolHandlerScheme(scheme, ec))
         return;
 
     Page* page = m_frame->page();

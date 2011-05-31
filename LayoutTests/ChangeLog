@@ -1,3 +1,13 @@
+2011-05-30  James Kozianski  <koz@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Make isValidProtocol() accept protocols with '+'.
+        https://bugs.webkit.org/show_bug.cgi?id=61759
+
+        * platform/chromium/fast/dom/navigator-detached-no-crash-expected.txt: Added.
+        * platform/chromium/fast/dom/register-protocol-handler-expected.txt: Added.
+
 2011-05-30  Andrey Petrov  <andrey.petrov@gmail.com>
 
         Reviewed by Hajime Morita.
