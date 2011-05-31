@@ -95,52 +95,6 @@ void JSCanvasRenderingContext2D::setFillStyle(ExecState* exec, JSValue value)
     context->setFillStyle(toHTMLCanvasStyle(exec, value));
 }
 
-JSValue JSCanvasRenderingContext2D::setShadow(ExecState* exec)
-{ 
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-
-    switch (exec->argumentCount()) {
-        case 3:
-            context->setShadow(exec->argument(0).toFloat(exec), exec->argument(1).toFloat(exec),
-                               exec->argument(2).toFloat(exec));
-            break;
-        case 4:
-            if (exec->argument(3).isString())
-                context->setShadow(exec->argument(0).toFloat(exec), exec->argument(1).toFloat(exec),
-                                   exec->argument(2).toFloat(exec), ustringToString(asString(exec->argument(3))->value(exec)));
-            else
-                context->setShadow(exec->argument(0).toFloat(exec), exec->argument(1).toFloat(exec),
-                                   exec->argument(2).toFloat(exec), exec->argument(3).toFloat(exec));
-            break;
-        case 5:
-            if (exec->argument(3).isString())
-                context->setShadow(exec->argument(0).toFloat(exec), exec->argument(1).toFloat(exec),
-                                   exec->argument(2).toFloat(exec), ustringToString(asString(exec->argument(3))->value(exec)),
-                                   exec->argument(4).toFloat(exec));
-            else
-                context->setShadow(exec->argument(0).toFloat(exec), exec->argument(1).toFloat(exec),
-                                   exec->argument(2).toFloat(exec), exec->argument(3).toFloat(exec),
-                                   exec->argument(4).toFloat(exec));
-            break;
-        case 7:
-            context->setShadow(exec->argument(0).toFloat(exec), exec->argument(1).toFloat(exec),
-                               exec->argument(2).toFloat(exec), exec->argument(3).toFloat(exec),
-                               exec->argument(4).toFloat(exec), exec->argument(5).toFloat(exec),
-                               exec->argument(6).toFloat(exec));
-            break;
-        case 8:
-            context->setShadow(exec->argument(0).toFloat(exec), exec->argument(1).toFloat(exec),
-                               exec->argument(2).toFloat(exec), exec->argument(3).toFloat(exec),
-                               exec->argument(4).toFloat(exec), exec->argument(5).toFloat(exec),
-                               exec->argument(6).toFloat(exec), exec->argument(7).toFloat(exec));
-            break;
-        default:
-            return throwSyntaxError(exec);
-    }
-    
-    return jsUndefined();    
-}
-
 JSValue JSCanvasRenderingContext2D::createPattern(ExecState* exec)
 { 
     CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
