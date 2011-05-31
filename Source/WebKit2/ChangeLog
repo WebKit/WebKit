@@ -1,3 +1,43 @@
+2011-05-31  ChangeLog  <james.cooley@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Qt port needs test content for QWKHistory
+        https://bugs.webkit.org/show_bug.cgi?id=57850
+
+        Created data-driven QTestLib tests for existing QWKHistory APIs.
+
+        This walks through loading four simple pages, navigating
+        backwards and forwards.
+
+        We check the results at each action by creating expected forward/back
+        lists and comparing those lists in count and membership to those kept by
+        WebKit and retrieved via the QWKHistory APIs.
+
+        * UIProcess/API/qt/tests/html/a.htm: Added.
+        * UIProcess/API/qt/tests/html/b.htm: Added.
+        * UIProcess/API/qt/tests/html/c.htm: Added.
+        * UIProcess/API/qt/tests/html/d.htm: Added.
+        Four added simple pages
+
+        * UIProcess/API/qt/tests/qwkhistory: Added.
+        * UIProcess/API/qt/tests/qwkhistory/qwkhistory.pro: Added.
+        Created qwkhistory folder and pro
+
+        * UIProcess/API/qt/tests/qwkhistory/tst_qwkhistory.cpp: Added.
+        (TestHistoryItem::title):
+        (TestHistoryItem::url):
+        (TestHistoryItem::TestHistoryItem):
+        Utility class to hold expected url,title for test
+
+        (tst_QWKHistory::initTestCase):
+        (tst_QWKHistory::historyFBTest_data):
+        (tst_QWKHistory::historyFBTest):
+        init, data, and data-driven test case
+
+        * UIProcess/API/qt/tests/tests.pro:
+        Included qwkhistory in tests.pro
+
 2011-05-30  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Simon Hausmann.
