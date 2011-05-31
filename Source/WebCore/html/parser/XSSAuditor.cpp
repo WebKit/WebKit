@@ -24,7 +24,7 @@
  */
 
 #include "config.h"
-#include "XSSFilter.h"
+#include "XSSAuditor.h"
 
 #include "Console.h"
 #include "DOMWindow.h"
@@ -127,7 +127,7 @@ static String decodeURL(const String& string, const TextEncoding& encoding)
     return canonicalize(decodedString);
 }
 
-XSSFilter::XSSFilter(HTMLDocumentParser* parser)
+XSSAuditor::XSSAuditor(HTMLDocumentParser* parser)
     : m_parser(parser)
     , m_isEnabled(false)
     , m_xssProtection(XSSProtectionEnabled)
@@ -142,7 +142,7 @@ XSSFilter::XSSFilter(HTMLDocumentParser* parser)
     // we want to reference might not all have been constructed yet.
 }
 
-void XSSFilter::init()
+void XSSAuditor::init()
 {
     const size_t miniumLengthForSuffixTree = 512; // FIXME: Tune this parameter.
     const int suffixTreeDepth = 5;
@@ -154,7 +154,7 @@ void XSSFilter::init()
         return;
     
     // In theory, the Document could have detached from the Frame after the
-    // XSSFilter was constructed.
+    // XSSAuditor was constructed.
     if (!m_parser->document()->frame()) {
         m_isEnabled = false;
         return;
@@ -191,7 +191,7 @@ void XSSFilter::init()
         m_isEnabled = false;
 }
 
-void XSSFilter::filterToken(HTMLToken& token)
+void XSSAuditor::filterToken(HTMLToken& token)
 {
     if (m_state == Uninitialized) {
         init();
@@ -230,7 +230,7 @@ void XSSFilter::filterToken(HTMLToken& token)
     }
 }
 
-bool XSSFilter::filterTokenInitial(HTMLToken& token)
+bool XSSAuditor::filterTokenInitial(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
 
@@ -261,7 +261,7 @@ bool XSSFilter::filterTokenInitial(HTMLToken& token)
     return didBlockScript;
 }
 
-bool XSSFilter::filterTokenAfterScriptStartTag(HTMLToken& token)
+bool XSSAuditor::filterTokenAfterScriptStartTag(HTMLToken& token)
 {
     ASSERT(m_state == AfterScriptStartTag);
     m_state = Initial;
@@ -283,7 +283,7 @@ bool XSSFilter::filterTokenAfterScriptStartTag(HTMLToken& token)
     return false;
 }
 
-bool XSSFilter::filterScriptToken(HTMLToken& token)
+bool XSSAuditor::filterScriptToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
@@ -297,7 +297,7 @@ bool XSSFilter::filterScriptToken(HTMLToken& token)
     return false;
 }
 
-bool XSSFilter::filterObjectToken(HTMLToken& token)
+bool XSSAuditor::filterObjectToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
@@ -312,7 +312,7 @@ bool XSSFilter::filterObjectToken(HTMLToken& token)
     return didBlockScript;
 }
 
-bool XSSFilter::filterParamToken(HTMLToken& token)
+bool XSSAuditor::filterParamToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
@@ -331,7 +331,7 @@ bool XSSFilter::filterParamToken(HTMLToken& token)
     return eraseAttributeIfInjected(token, valueAttr, blankURL().string());
 }
 
-bool XSSFilter::filterEmbedToken(HTMLToken& token)
+bool XSSAuditor::filterEmbedToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
@@ -345,7 +345,7 @@ bool XSSFilter::filterEmbedToken(HTMLToken& token)
     return didBlockScript;
 }
 
-bool XSSFilter::filterAppletToken(HTMLToken& token)
+bool XSSAuditor::filterAppletToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
@@ -359,7 +359,7 @@ bool XSSFilter::filterAppletToken(HTMLToken& token)
     return didBlockScript;
 }
 
-bool XSSFilter::filterIframeToken(HTMLToken& token)
+bool XSSAuditor::filterIframeToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
@@ -368,7 +368,7 @@ bool XSSFilter::filterIframeToken(HTMLToken& token)
     return eraseAttributeIfInjected(token, srcAttr);
 }
 
-bool XSSFilter::filterMetaToken(HTMLToken& token)
+bool XSSAuditor::filterMetaToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
@@ -377,7 +377,7 @@ bool XSSFilter::filterMetaToken(HTMLToken& token)
     return eraseAttributeIfInjected(token, http_equivAttr);
 }
 
-bool XSSFilter::filterBaseToken(HTMLToken& token)
+bool XSSAuditor::filterBaseToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
@@ -386,7 +386,7 @@ bool XSSFilter::filterBaseToken(HTMLToken& token)
     return eraseAttributeIfInjected(token, hrefAttr);
 }
 
-bool XSSFilter::filterFormToken(HTMLToken& token)
+bool XSSAuditor::filterFormToken(HTMLToken& token)
 {
     ASSERT(m_state == Initial);
     ASSERT(token.type() == HTMLToken::StartTag);
@@ -395,7 +395,7 @@ bool XSSFilter::filterFormToken(HTMLToken& token)
     return eraseAttributeIfInjected(token, actionAttr);
 }
 
-bool XSSFilter::eraseDangerousAttributesIfInjected(HTMLToken& token)
+bool XSSAuditor::eraseDangerousAttributesIfInjected(HTMLToken& token)
 {
     DEFINE_STATIC_LOCAL(String, safeJavaScriptURL, ("javascript:void(0)"));
 
@@ -416,7 +416,7 @@ bool XSSFilter::eraseDangerousAttributesIfInjected(HTMLToken& token)
     return didBlockScript;
 }
 
-bool XSSFilter::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName& attributeName, const String& replacementValue)
+bool XSSAuditor::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName& attributeName, const String& replacementValue)
 {
     size_t indexOfAttribute;
     if (findAttributeWithName(token, attributeName, indexOfAttribute)) {
@@ -435,14 +435,14 @@ bool XSSFilter::eraseAttributeIfInjected(HTMLToken& token, const QualifiedName& 
     return false;
 }
 
-String XSSFilter::snippetForRange(const HTMLToken& token, int start, int end)
+String XSSAuditor::snippetForRange(const HTMLToken& token, int start, int end)
 {
     // FIXME: There's an extra allocation here that we could save by
     //        passing the range to the parser.
     return m_parser->sourceForToken(token).substring(start, end - start);
 }
 
-String XSSFilter::snippetForAttribute(const HTMLToken& token, const HTMLToken::Attribute& attribute)
+String XSSAuditor::snippetForAttribute(const HTMLToken& token, const HTMLToken::Attribute& attribute)
 {
     // FIXME: We should grab one character before the name also.
     int start = attribute.m_nameRange.m_start - token.startIndex();
@@ -451,7 +451,7 @@ String XSSFilter::snippetForAttribute(const HTMLToken& token, const HTMLToken::A
     return snippetForRange(token, start, end);
 }
 
-bool XSSFilter::isContainedInRequest(const String& snippet)
+bool XSSAuditor::isContainedInRequest(const String& snippet)
 {
     ASSERT(!snippet.isEmpty());
     String canonicalizedSnippet = canonicalize(snippet);
@@ -463,7 +463,7 @@ bool XSSFilter::isContainedInRequest(const String& snippet)
     return m_decodedHTTPBody.find(canonicalizedSnippet, 0, false) != notFound;
 }
 
-bool XSSFilter::isSameOriginResource(const String& url)
+bool XSSAuditor::isSameOriginResource(const String& url)
 {
     // If the resource is loaded from the same URL as the enclosing page, it's
     // probably not an XSS attack, so we reduce false positives by allowing the

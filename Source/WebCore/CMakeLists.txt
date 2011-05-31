@@ -881,7 +881,7 @@ SET(WebCore_SOURCES
     html/parser/HTMLViewSourceParser.cpp
     html/parser/TextDocumentParser.cpp
     html/parser/TextViewSourceParser.cpp
-    html/parser/XSSFilter.cpp
+    html/parser/XSSAuditor.cpp
 
     html/shadow/ElementWithPseudoId.cpp
     html/shadow/DetailsMarkerControl.cpp

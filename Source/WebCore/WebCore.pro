@@ -798,7 +798,7 @@ SOURCES += \
     html/parser/HTMLViewSourceParser.cpp \
     html/parser/TextDocumentParser.cpp \
     html/parser/TextViewSourceParser.cpp \
-    html/parser/XSSFilter.cpp \
+    html/parser/XSSAuditor.cpp \
     html/shadow/ElementWithPseudoId.cpp \
     html/shadow/DetailsMarkerControl.cpp \
     html/shadow/MediaControls.cpp \
@@ -1747,7 +1747,7 @@ HEADERS += \
     html/parser/HTMLTokenizer.h \
     html/parser/HTMLTreeBuilder.h \
     html/parser/HTMLViewSourceParser.h \
-    html/parser/XSSFilter.h \
+    html/parser/XSSAuditor.h \
     html/shadow/MediaControlElements.h \
     html/shadow/DetailsMarkerControl.h \
     html/shadow/ElementWithPseudoId.h \

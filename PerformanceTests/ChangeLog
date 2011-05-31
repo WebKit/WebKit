@@ -1,3 +1,22 @@
+2011-05-30  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Rename XSSFilter to XSSAuditor
+        https://bugs.webkit.org/show_bug.cgi?id=61718
+
+        Currently we use the names XSSFilter and XSSAuditor throughout the project.
+        Instead, we should choose one name for consistency.
+
+        No functionality was changed. So, no new tests.
+
+        * XSSAuditor: Copied from PerformanceTests/XSSFilter.
+        * XSSFilter: Removed.
+        * XSSFilter/large-post-many-events.html: Removed.
+        * XSSFilter/large-post-many-inline-scripts-and-events.html: Removed.
+        * XSSFilter/resources: Removed.
+        * XSSFilter/resources/target-for-large-post-many-inline-scripts-and-events.html: Removed.
+
 2011-03-25  Leo Yang  <leo.yang@torchmobile.com.cn>
 
         Reviewed by Dirk Schulze.

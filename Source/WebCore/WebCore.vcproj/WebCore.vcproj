@@ -57197,11 +57197,11 @@
 					>
 				</File>
 				<File
-					RelativePath="..\html\parser\XSSFilter.cpp"
+					RelativePath="..\html\parser\XSSAuditor.cpp"
 					>
 				</File>
 				<File
-					RelativePath="..\html\parser\XSSFilter.h"
+					RelativePath="..\html\parser\XSSAuditor.h"
 					>
 				</File>
 			</Filter>

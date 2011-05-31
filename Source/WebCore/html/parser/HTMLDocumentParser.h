@@ -35,7 +35,7 @@
 #include "ScriptableDocumentParser.h"
 #include "SegmentedString.h"
 #include "Timer.h"
-#include "XSSFilter.h"
+#include "XSSAuditor.h"
 #include <wtf/OwnPtr.h>
 
 namespace WebCore {
@@ -151,7 +151,7 @@ private:
     OwnPtr<HTMLPreloadScanner> m_preloadScanner;
     OwnPtr<HTMLParserScheduler> m_parserScheduler;
     HTMLSourceTracker m_sourceTracker;
-    XSSFilter m_xssFilter;
+    XSSAuditor m_xssAuditor;
 
     bool m_endWasDelayed;
     unsigned m_pumpSessionNestingLevel;

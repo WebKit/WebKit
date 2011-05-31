@@ -3119,8 +3119,8 @@
 		977B387A122883E900B81FF8 /* HTMLViewSourceParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 977B3861122883E900B81FF8 /* HTMLViewSourceParser.h */; };
 		977E2DCD12F0E28300C13379 /* HTMLSourceTracker.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977E2DCB12F0E28300C13379 /* HTMLSourceTracker.cpp */; };
 		977E2DCE12F0E28300C13379 /* HTMLSourceTracker.h in Headers */ = {isa = PBXBuildFile; fileRef = 977E2DCC12F0E28300C13379 /* HTMLSourceTracker.h */; };
-		977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977E2E0B12F0FC9C00C13379 /* XSSFilter.cpp */; };
-		977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */ = {isa = PBXBuildFile; fileRef = 977E2E0C12F0FC9C00C13379 /* XSSFilter.h */; };
+		977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 977E2E0B12F0FC9C00C13379 /* XSSAuditor.cpp */; };
+		977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */ = {isa = PBXBuildFile; fileRef = 977E2E0C12F0FC9C00C13379 /* XSSAuditor.h */; };
 		979F43D31075E44A0000F83B /* NavigationScheduler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 979F43D11075E44A0000F83B /* NavigationScheduler.cpp */; };
 		979F43D41075E44A0000F83B /* NavigationScheduler.h in Headers */ = {isa = PBXBuildFile; fileRef = 979F43D21075E44A0000F83B /* NavigationScheduler.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97BC84831236FD93000C6161 /* TextDocumentParser.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97BC84811236FD93000C6161 /* TextDocumentParser.cpp */; };
@@ -9682,8 +9682,8 @@
 		977B3861122883E900B81FF8 /* HTMLViewSourceParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLViewSourceParser.h; path = parser/HTMLViewSourceParser.h; sourceTree = "<group>"; };
 		977E2DCB12F0E28300C13379 /* HTMLSourceTracker.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = HTMLSourceTracker.cpp; path = parser/HTMLSourceTracker.cpp; sourceTree = "<group>"; };
 		977E2DCC12F0E28300C13379 /* HTMLSourceTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = HTMLSourceTracker.h; path = parser/HTMLSourceTracker.h; sourceTree = "<group>"; };
-		977E2E0B12F0FC9C00C13379 /* XSSFilter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XSSFilter.cpp; path = parser/XSSFilter.cpp; sourceTree = "<group>"; };
-		977E2E0C12F0FC9C00C13379 /* XSSFilter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XSSFilter.h; path = parser/XSSFilter.h; sourceTree = "<group>"; };
+		977E2E0B12F0FC9C00C13379 /* XSSAuditor.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = XSSAuditor.cpp; path = parser/XSSAuditor.cpp; sourceTree = "<group>"; };
+		977E2E0C12F0FC9C00C13379 /* XSSAuditor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = XSSAuditor.h; path = parser/XSSAuditor.h; sourceTree = "<group>"; };
 		979F43D11075E44A0000F83B /* NavigationScheduler.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NavigationScheduler.cpp; sourceTree = "<group>"; };
 		979F43D21075E44A0000F83B /* NavigationScheduler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavigationScheduler.h; sourceTree = "<group>"; };
 		97BC84811236FD93000C6161 /* TextDocumentParser.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TextDocumentParser.cpp; path = parser/TextDocumentParser.cpp; sourceTree = "<group>"; };
@@ -16285,8 +16285,8 @@
 				97BC84821236FD93000C6161 /* TextDocumentParser.h */,
 				97BC84A212370DC7000C6161 /* TextViewSourceParser.cpp */,
 				97BC84A312370DC8000C6161 /* TextViewSourceParser.h */,
-				977E2E0B12F0FC9C00C13379 /* XSSFilter.cpp */,
-				977E2E0C12F0FC9C00C13379 /* XSSFilter.h */,
+				977E2E0B12F0FC9C00C13379 /* XSSAuditor.cpp */,
+				977E2E0C12F0FC9C00C13379 /* XSSAuditor.h */,
 			);
 			name = parser;
 			sourceTree = "<group>";
@@ -22998,7 +22998,7 @@
 				E1F1E8300C3C2BB9006DB391 /* XSLTExtensions.h in Headers */,
 				93F199ED08245E59001E9ABC /* XSLTProcessor.h in Headers */,
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
-				977E2E0F12F0FC9C00C13379 /* XSSFilter.h in Headers */,
+				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
 				B12D233F13560282002A28D4 /* ExclusiveTrackList.h in Headers */,
 				B12D234213560282002A28D4 /* MultipleTrackList.h in Headers */,
@@ -25694,7 +25694,7 @@
 				93F19B0408245E59001E9ABC /* XSLTProcessor.cpp in Sources */,
 				93F19B0508245E59001E9ABC /* XSLTProcessorLibxslt.cpp in Sources */,
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
-				977E2E0E12F0FC9C00C13379 /* XSSFilter.cpp in Sources */,
+				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
 				B12D233E13560282002A28D4 /* ExclusiveTrackList.cpp in Sources */,
 				B12D234113560282002A28D4 /* MultipleTrackList.cpp in Sources */,

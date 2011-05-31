@@ -23,8 +23,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef XSSFilter_h
-#define XSSFilter_h
+#ifndef XSSAuditor_h
+#define XSSAuditor_h
 
 #include "HTMLToken.h"
 #include "HTTPParsers.h"
@@ -34,10 +34,10 @@ namespace WebCore {
 
 class HTMLDocumentParser;
 
-class XSSFilter {
-    WTF_MAKE_NONCOPYABLE(XSSFilter);
+class XSSAuditor {
+    WTF_MAKE_NONCOPYABLE(XSSAuditor);
 public:
-    explicit XSSFilter(HTMLDocumentParser*);
+    explicit XSSAuditor(HTMLDocumentParser*);
 
     void filterToken(HTMLToken&);
 
