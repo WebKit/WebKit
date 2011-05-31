@@ -145,7 +145,7 @@ inline void FELighting::platformApplyNeon(LightingData& data, LightSource::Paint
         if (spotLightSource->specularExponent() == 1)
             neonData.flags |= FLAG_CONE_EXPONENT_IS_1;
     } else {
-        ASSERT(m_lightSource.type == LS_DISTANT);
+        ASSERT(m_lightSource->type() == LS_DISTANT);
         floatArguments.lightX = paintingData.lightVector.x();
         floatArguments.lightY = paintingData.lightVector.y();
         floatArguments.lightZ = paintingData.lightVector.z();

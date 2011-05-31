@@ -1,3 +1,13 @@
+2011-05-31  Oleg Romashin  <oleg.romashin@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        Fix compilation with debug enabled, m_lightSource.type is not valid anymore
+        https://bugs.webkit.org/show_bug.cgi?id=61719
+
+        * platform/graphics/filters/arm/FELightingNEON.h:
+        (WebCore::FELighting::platformApplyNeon):
+
 2011-05-31  Oliver Varga  <Varga.Oliver@stud.u-szeged.hu>
 
         Reviewed by Nikolas Zimmermann.
