@@ -1,3 +1,17 @@
+2011-05-31  Hao Zheng  <zhenghao@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Flush output buffer of php.
+        https://bugs.webkit.org/show_bug.cgi?id=56060
+
+        On Lucid, the output buffer is enabled by default, but it's not
+        enabled on Hardy. Fix test http/tests/loading/preload-slow-loading.php
+        http://www.php.net/manual/en/function.ob-flush.php
+
+        * http/tests/loading/preload-slow-loading.php:
+        * platform/chromium/test_expectations.txt:
+
 2011-05-31  Adam Barth  <abarth@webkit.org>
 
         Add chromium-mac-leopard image results for these SVG tests.

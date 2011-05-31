@@ -13,6 +13,7 @@ if (window.layoutTestController) {
 </script>
 <script src="non-existant-1"></script>
 <?php
+ob_flush();
 flush();
 sleep(1);
 ?>
