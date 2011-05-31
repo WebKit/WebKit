@@ -2,6 +2,20 @@
 
         Reviewed by Antti Koivisto.
 
+        Canvas/JSC: Auto-generate overloads for setStrokeColor()
+        https://bugs.webkit.org/show_bug.cgi?id=61629
+
+        Add a test to verify the behavior of setStrokeColor() when called with
+        different numbers of arguments.
+
+        * fast/canvas/canvas-overloads-setStrokeColor-expected.txt: Added.
+        * fast/canvas/canvas-overloads-setStrokeColor.html: Added.
+        * fast/canvas/script-tests/canvas-overloads-setStrokeColor.js: Added.
+
+2011-05-31  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
         Canvas/JSC: Auto-generate overloads for strokeText()
         https://bugs.webkit.org/show_bug.cgi?id=61626
 
