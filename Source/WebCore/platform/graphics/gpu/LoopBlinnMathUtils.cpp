@@ -25,7 +25,7 @@
 
 #include "config.h"
 
-#if ENABLE(ACCELERATED_2D_CANVAS)
+#if USE(ACCELERATED_COMPOSITING) || ENABLE(ACCELERATED_2D_CANVAS)
 
 #include "LoopBlinnMathUtils.h"
 

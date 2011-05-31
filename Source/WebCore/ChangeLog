@@ -1,3 +1,29 @@
+2011-05-31  Justin Novosad  <junov@chromium.org>
+
+        Reviewed by Stephen White.
+
+        [Chromium] Build fails when ACCELERATED_2D_CANVAS is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=61790
+        Changing the build guards in these two files that are required
+        by the accelerated compositing feature.
+
+        * platform/graphics/gpu/LoopBlinnMathUtils.cpp:
+        * platform/graphics/gpu/TilingData.cpp:
+
+<<<<<<< .mine
+2011-05-31  Justin Novosad  <junov@chromium.org>
+
+        Reviewed by Stephen White.
+
+        [Chromium] Build fails when ACCELERATED_2D_CANVAS is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=61790
+        Changing the build guards in these two files that are required
+        by the accelerated compositing feature.
+
+        * platform/graphics/gpu/LoopBlinnMathUtils.cpp:
+        * platform/graphics/gpu/TilingData.cpp:
+
+=======
 2011-05-31  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Dirk Schulze.
@@ -128,6 +154,7 @@
         * dom/XMLDocumentParser.cpp:
         (WebCore::XMLDocumentParser::insertErrorMessageBlock):
 
+>>>>>>> .r87747
 2011-05-31  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Antti Koivisto.
