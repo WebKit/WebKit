@@ -50,8 +50,11 @@ if __name__ == '__main__':
         env['PYTHONPATH'] = script_dir
     module_path = os.path.join(script_dir, 'webkitpy', 'layout_tests', 'run_webkit_tests.py')
     cmd = [sys.executable, module_path] + sys.argv[1:]
+    proc = subprocess.Popen(cmd, env=env)
     try:
-        sys.exit(subprocess.call(cmd, env=env))
+        proc.wait()
     except KeyboardInterrupt:
-        # this mirrors what the shell normally does
-        sys.exit(signal.SIGINT + 128)
+        # We need a second wait in order to make sure the subprocess exits fully.
+        # FIXME: It would be nice if we could put a timeout on this.
+        proc.wait()
+    sys.exit(proc.returncode)

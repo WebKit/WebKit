@@ -1,3 +1,12 @@
+2011-05-31  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: doesn't wait for children if it gets a ctrl-c
+        https://bugs.webkit.org/show_bug.cgi?id=60241
+
+        * Scripts/new-run-webkit-tests:
+
 2011-05-31  Eric Seidel  <eric@webkit.org>
 
         Reviewed by David Kilzer.
