@@ -2,6 +2,24 @@
 
         Reviewed by Antti Koivisto.
 
+        Canvas/JSC: Auto-generate overloads for drawImage()
+        https://bugs.webkit.org/show_bug.cgi?id=61703
+
+        Move CanvasRenderingContext2D.drawImage() to auto-generated JSC bindings.
+
+        There is a subtle difference to the previous behavior: invalid numbers of
+        arguments now raise TypeError instead of SyntaxError. This is in accordance
+        with Web IDL, and matches the existing V8 bindings.
+
+        Test: fast/canvas/canvas-overloads-drawImage.html
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
+2011-05-31  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
         Canvas/JSC: Auto-generate overloads for strokeRect()
         https://bugs.webkit.org/show_bug.cgi?id=61641
 

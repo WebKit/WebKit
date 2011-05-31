@@ -114,27 +114,28 @@ module html {
 
         void strokeRect(in float x, in float y, in float width, in float height, in [Optional] float lineWidth);
 
-#if defined(V8_BINDING) && V8_BINDING
-        void drawImage(in HTMLImageElement image, in float x, in float y)
+        [RequiresAllArguments=Raise] void drawImage(in HTMLImageElement image, in float x, in float y)
             raises (DOMException);
-        void drawImage(in HTMLImageElement image, in float x, in float y, in float width, in float height)
+        [RequiresAllArguments=Raise] void drawImage(in HTMLImageElement image, in float x, in float y, in float width, in float height)
             raises (DOMException);
-        void drawImage(in HTMLImageElement image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+        [RequiresAllArguments=Raise] void drawImage(in HTMLImageElement image, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
             raises (DOMException);
-        void drawImage(in HTMLCanvasElement canvas, in float x, in float y)
+        [RequiresAllArguments=Raise] void drawImage(in HTMLCanvasElement canvas, in float x, in float y)
             raises (DOMException);
-        void drawImage(in HTMLCanvasElement canvas, in float x, in float y, in float width, in float height)
+        [RequiresAllArguments=Raise] void drawImage(in HTMLCanvasElement canvas, in float x, in float y, in float width, in float height)
             raises (DOMException);
-        void drawImage(in HTMLCanvasElement canvas, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+        [RequiresAllArguments=Raise] void drawImage(in HTMLCanvasElement canvas, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
             raises (DOMException);
 #if defined(ENABLE_VIDEO) && ENABLE_VIDEO
-        void drawImage(in HTMLVideoElement video, in float x, in float y)
+        [RequiresAllArguments=Raise] void drawImage(in HTMLVideoElement video, in float x, in float y)
             raises (DOMException);
-        void drawImage(in HTMLVideoElement video, in float x, in float y, in float width, in float height)
+        [RequiresAllArguments=Raise] void drawImage(in HTMLVideoElement video, in float x, in float y, in float width, in float height)
             raises (DOMException);
-        void drawImage(in HTMLVideoElement video, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
+        [RequiresAllArguments=Raise] void drawImage(in HTMLVideoElement video, in float sx, in float sy, in float sw, in float sh, in float dx, in float dy, in float dw, in float dh)
             raises (DOMException);
 #endif
+
+#if defined(V8_BINDING) && V8_BINDING
         void drawImageFromRect(in HTMLImageElement image,
                                in float sx, in float sy, in float sw, in float sh,
                                in float dx, in float dy, in float dw, in float dh, in DOMString compositeOperation);
@@ -156,7 +157,6 @@ module html {
             raises (DOMException);
 #else
         // FIXME: Remove 'else' once JSC supports overloads too.
-        [Custom] void drawImage(/* 3 */);
         [Custom] void drawImageFromRect(/* 10 */);
         [Custom] void setShadow(/* 3 */);
         [Custom] void createPattern(/* 2 */);
