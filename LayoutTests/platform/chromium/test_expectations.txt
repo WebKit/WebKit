@@ -4031,3 +4031,5 @@ BUGWK61664 : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
 BUGWK61664 LEOPARD DEBUG : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = IMAGE+TEXT
 
 BUGCR84317 DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
+
+BUGWK61767 WIN DEBUG : http/tests/websocket/tests/client-close.html = PASS TEXT
