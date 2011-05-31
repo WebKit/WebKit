@@ -1,3 +1,12 @@
+2011-05-31  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; build fix.
+
+        Silence some warnings on the Safari/Mac release build.
+
+        * platform/graphics/gpu/TilingData.h:
+        (WebCore::TilingData::assertTile):
+
 2011-05-31  Justin Novosad  <junov@chromium.org>
 
         Reviewed by Stephen White.
