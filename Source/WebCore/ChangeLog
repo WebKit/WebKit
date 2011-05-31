@@ -2,6 +2,24 @@
 
         Reviewed by Antti Koivisto.
 
+        Canvas/JSC: Auto-generate overloads for setFillColor()
+        https://bugs.webkit.org/show_bug.cgi?id=61635
+
+        Move CanvasRenderingContext2D.setStrokeColor() to auto-generated JSC bindings.
+
+        There is a subtle difference to the previous behavior: invalid numbers of
+        arguments now raise TypeError instead of SyntaxError. This is in accordance
+        with Web IDL, but doesn't matter much anyway since this method is WebKit-only.
+
+        Test: fast/canvas/canvas-overloads-setFillColor.html
+
+        * bindings/js/JSCanvasRenderingContext2DCustom.cpp:
+        * html/canvas/CanvasRenderingContext2D.idl:
+
+2011-05-31  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Antti Koivisto.
+
         Canvas/JSC: Auto-generate overloads for setStrokeColor()
         https://bugs.webkit.org/show_bug.cgi?id=61629
 

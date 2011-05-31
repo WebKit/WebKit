@@ -95,43 +95,6 @@ void JSCanvasRenderingContext2D::setFillStyle(ExecState* exec, JSValue value)
     context->setFillStyle(toHTMLCanvasStyle(exec, value));
 }
 
-JSValue JSCanvasRenderingContext2D::setFillColor(ExecState* exec)
-{
-    CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
-
-    // string arg = named color
-    // number arg = gray color
-    // string arg, number arg = named color, alpha
-    // number arg, number arg = gray color, alpha
-    // 4 args = r, g, b, a
-    // 5 args = c, m, y, k, a
-    switch (exec->argumentCount()) {
-        case 1:
-            if (exec->argument(0).isString())
-                context->setFillColor(ustringToString(asString(exec->argument(0))->value(exec)));
-            else
-                context->setFillColor(exec->argument(0).toFloat(exec));
-            break;
-        case 2:
-            if (exec->argument(0).isString())
-                context->setFillColor(ustringToString(asString(exec->argument(0))->value(exec)), exec->argument(1).toFloat(exec));
-            else
-                context->setFillColor(exec->argument(0).toFloat(exec), exec->argument(1).toFloat(exec));
-            break;
-        case 4:
-            context->setFillColor(exec->argument(0).toFloat(exec), exec->argument(1).toFloat(exec),
-                                  exec->argument(2).toFloat(exec), exec->argument(3).toFloat(exec));
-            break;
-        case 5:
-            context->setFillColor(exec->argument(0).toFloat(exec), exec->argument(1).toFloat(exec),
-                                  exec->argument(2).toFloat(exec), exec->argument(3).toFloat(exec), exec->argument(4).toFloat(exec));
-            break;
-        default:
-            return throwSyntaxError(exec);
-    }
-    return jsUndefined();
-}    
-
 JSValue JSCanvasRenderingContext2D::strokeRect(ExecState* exec)
 { 
     CanvasRenderingContext2D* context = static_cast<CanvasRenderingContext2D*>(impl());
