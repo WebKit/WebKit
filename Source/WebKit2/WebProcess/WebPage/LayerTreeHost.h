@@ -50,6 +50,7 @@ public:
 
     virtual const LayerTreeContext& layerTreeContext() = 0;
     virtual void scheduleLayerFlush() = 0;
+    virtual void setLayerFlushSchedulingEnabled(bool) = 0;
     virtual void setShouldNotifyAfterNextScheduledLayerFlush(bool) = 0;
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*) = 0;
     virtual void invalidate() = 0;

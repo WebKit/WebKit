@@ -42,6 +42,7 @@ namespace WebKit {
 
 LayerTreeHostCA::LayerTreeHostCA(WebPage* webPage)
     : LayerTreeHost(webPage)
+    , m_layerFlushSchedulingEnabled(true)
     , m_isValid(true)
     , m_notifyAfterScheduledLayerFlush(false)
 {

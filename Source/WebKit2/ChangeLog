@@ -1,3 +1,55 @@
+2011-05-31  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        <rdar://problem/9523192> REGRESSION (5.0.5-ToT, WebKit2): Flash to white when navigating between pages on wsj.com, other sites (when navigating away from composited page)
+        https://bugs.webkit.org/show_bug.cgi?id=61808
+
+        WebKit1 has a mechanism to prevent the stale bits from the outgoing page from being erased
+        until the incoming page has layout. Adapt this in WebKit2 to prevent the composited layer tree
+        of the outgoing page from being torn down or updated until the incoming page has layout.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidFirstLayout): Unfreeze the layer tree state.
+        (WebKit::WebFrameLoaderClient::frameLoadCompleted): Ditto.
+        (WebKit::WebFrameLoaderClient::provisionalLoadStarted): Freeze the layer tree state.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setLayerTreeStateIsFrozen): Added.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl): Initialize new member variables.
+        (WebKit::DrawingAreaImpl::setLayerTreeStateIsFrozen): Added. When freezing, sets the flag and
+        disables layer flush scheduling and exiting accelerated compositing mode. When unfreezing,
+        clears the flag and exits compositing mode if needed.
+        (WebKit::DrawingAreaImpl::setRootCompositingLayer): Reset m_wantsToExitAcceleratedCompositingMode.
+        (WebKit::DrawingAreaImpl::enterAcceleratedCompositingMode): Ditto.
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingMode): Ditto.
+        (WebKit::DrawingAreaImpl::exitAcceleratedCompositingModeSoon): If the layer tree state is frozen,
+        bail out but set m_wantsToExitAcceleratedCompositingMode.
+
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/LayerTreeHost.h:
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.cpp:
+        (WebKit::LayerTreeHostCA::LayerTreeHostCA): Initialize m_layerFlushSchedulingEnabled.
+
+        * WebProcess/WebPage/ca/LayerTreeHostCA.h:
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.h:
+
+        * WebProcess/WebPage/ca/mac/LayerTreeHostCAMac.mm:
+        (WebKit::LayerTreeHostCAMac::scheduleLayerFlush): Bail out if scheduling is not enabled.
+        (WebKit::LayerTreeHostCAMac::setLayerFlushSchedulingEnabled): Added. Sets the flag. If disabling
+        flushing, cancels the pending flush.
+        (WebKit::LayerTreeHostCAMac::flushPendingLayerChangesRunLoopObserverCallback): Added an assertion.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.cpp:
+        (WebKit::LayerTreeHostCAWin::scheduleLayerFlush): Bail out if scheduling is not enabled.
+        (WebKit::LayerTreeHostCAWin::setLayerFlushSchedulingEnabled): Added. Sets the flag. If disabling
+        flushing, cancels the pending flush.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.h:
+
 2011-05-31  ChangeLog  <james.cooley@nokia.com>
 
         Reviewed by Andreas Kling.

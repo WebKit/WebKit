@@ -136,7 +136,23 @@ void LayerTreeHostCAWin::invalidate()
 
 void LayerTreeHostCAWin::scheduleLayerFlush()
 {
+    if (!m_layerFlushSchedulingEnabled)
+        return;
+
     LayerChangesFlusher::shared().flushPendingLayerChangesSoon(this);
+}
+
+void LayerTreeHostCAWin::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
+{
+    if (m_layerFlushSchedulingEnabled == layerFlushingEnabled)
+        return;
+
+    m_layerFlushSchedulingEnabled = layerFlushingEnabled;
+
+    if (m_layerFlushSchedulingEnabled)
+        return;
+
+    LayerChangesFlusher::shared().cancelPendingFlush(thus);
 }
 
 bool LayerTreeHostCAWin::participatesInDisplay()
