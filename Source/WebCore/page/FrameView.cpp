@@ -1039,13 +1039,17 @@ void FrameView::layout(bool allowSubtree)
                              layoutHeight() < contentsHeight());
 
     if (!m_hasPendingPostLayoutTasks) {
-        if (!m_inSynchronousPostLayout && !inSubframeLayoutWithFrameFlattening) {
-            m_inSynchronousPostLayout = true;
-            // Calls resumeScheduledEvents()
-            performPostLayoutTasks();
-            m_inSynchronousPostLayout = false;
+        if (!m_inSynchronousPostLayout) {
+            if (inSubframeLayoutWithFrameFlattening)
+                m_frame->contentRenderer()->updateWidgetPositions();
+            else {
+                m_inSynchronousPostLayout = true;
+                // Calls resumeScheduledEvents()
+                performPostLayoutTasks();
+                m_inSynchronousPostLayout = false;
+            }
         }
-
+        
         if (!m_hasPendingPostLayoutTasks && (needsLayout() || m_inSynchronousPostLayout || inSubframeLayoutWithFrameFlattening)) {
             // If we need layout or are already in a synchronous call to postLayoutTasks(), 
             // defer widget updates and event dispatch until after we return. postLayoutTasks()

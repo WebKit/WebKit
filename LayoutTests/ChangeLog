@@ -1,3 +1,16 @@
+2011-05-31  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Frame flattening is broken with nested frames
+        https://bugs.webkit.org/show_bug.cgi?id=61491
+
+        * fast/frames/flattening/iframe-flattening-nested.html: Added.
+        * fast/frames/flattening/resources/inner-frame.html: Added.
+        * fast/frames/flattening/resources/intermediate-frame.html: Added.
+        * platform/mac/fast/frames/flattening/iframe-flattening-nested-expected.png: Added.
+        * platform/mac/fast/frames/flattening/iframe-flattening-nested-expected.txt: Added.
+
 2011-05-31  Mikhail Naganov  <mnaganov@chromium.org>
 
         [Chromium] Unreviewed tests results rebaseline after r87721.
