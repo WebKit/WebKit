@@ -501,6 +501,7 @@ public:
     void showNode(const char* prefix = "") const;
     void showTreeForThis() const;
     void showTreeAndMark(const Node* markedNode1, const char* markedLabel1, const Node* markedNode2 = 0, const char* markedLabel2 = 0) const;
+    void showTreeForThisAcrossFrame() const;
 #endif
 
     void removeNodeListCacheIfPossible();

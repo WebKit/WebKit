@@ -57,6 +57,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "InspectorInstrumentation.h"
 #include "KeyboardEvent.h"
@@ -2373,6 +2374,47 @@ void Node::formatForDebugger(char* buffer, unsigned length) const
         result += s;
           
     strncpy(buffer, result.utf8().data(), length - 1);
+}
+
+static ContainerNode* parentOrHostOrFrameOwner(Node* node)
+{
+    ContainerNode* parent = node->parentOrHostNode();
+    if (!parent && node->document() && node->document()->frame())
+        parent = node->document()->frame()->ownerElement();
+    return parent;
+}
+
+static Node* traverseNextNodeAcrossFrame(Node* node)
+{
+    if (node->isFrameOwnerElement())
+        return static_cast<HTMLFrameOwnerElement*>(node)->contentDocument();
+    if (ShadowRoot* shadow = shadowRoot(node))
+        return traverseNextNodeAcrossFrame(shadow);
+    if (node->firstChild())
+        return node->firstChild();
+    if (node->nextSibling())
+        return node->nextSibling();
+    while (node && !node->nextSibling())
+        node = parentOrHostOrFrameOwner(node);
+    if (node)
+        return node->nextSibling();
+    return 0;
+}
+
+void Node::showTreeForThisAcrossFrame() const
+{
+    Node* rootNode = const_cast<Node*>(this);
+    while (parentOrHostOrFrameOwner(rootNode))
+        rootNode = parentOrHostOrFrameOwner(rootNode);
+    for (Node* node = rootNode; node; node = traverseNextNodeAcrossFrame(node)) {
+        if (node == this)
+            fputs("*", stderr);
+        String indent;
+        for (Node* tmpNode = node; tmpNode && tmpNode != rootNode; tmpNode = parentOrHostOrFrameOwner(tmpNode))
+            indent += "\t";
+        fputs(indent.utf8().data(), stderr);
+        node->showNode();
+    }
 }
 
 #endif
