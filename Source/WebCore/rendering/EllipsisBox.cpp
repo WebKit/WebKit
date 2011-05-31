@@ -30,7 +30,7 @@
 
 namespace WebCore {
 
-void EllipsisBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int lineBottom)
+void EllipsisBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int lineTop, int lineBottom)
 {
     GraphicsContext* context = paintInfo.context;
     RenderStyle* style = m_renderer->style(m_firstLine);
@@ -46,7 +46,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int l
 
     const Font& font = style->font();
     if (selectionState() != RenderObject::SelectionNone) {
-        paintSelection(context, tx, ty, style, font);
+        paintSelection(context, paintOffset.x(), paintOffset.y(), style, font);
 
         // Select the correct color for painting the text.
         Color foreground = paintInfo.forceBlackText ? Color::black : renderer()->selectionForegroundColor();
@@ -55,7 +55,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int l
     }
 
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(m_x + tx, m_y + ty + style->fontMetrics().ascent()));
+    context->drawText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(m_x + paintOffset.x(), m_y + paintOffset.y() + style->fontMetrics().ascent()));
 
     // Restore the regular fill color.
     if (textColor != context->fillColor())
@@ -66,9 +66,10 @@ void EllipsisBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int l
 
     if (m_markupBox) {
         // Paint the markup box
-        tx += m_x + m_logicalWidth - m_markupBox->x();
-        ty += m_y + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->fontMetrics().ascent());
-        m_markupBox->paint(paintInfo, tx, ty, lineTop, lineBottom);
+        IntPoint adjustedPaintOffset = paintOffset;
+        adjustedPaintOffset.move(m_x + m_logicalWidth - m_markupBox->x(),
+            m_y + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->fontMetrics().ascent()));
+        m_markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
     }
 }
 

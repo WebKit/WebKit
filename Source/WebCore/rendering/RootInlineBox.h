@@ -83,7 +83,7 @@ public:
 
     EllipsisBox* ellipsisBox() const;
 
-    void paintEllipsisBox(PaintInfo&, int tx, int ty, int lineTop, int lineBottom) const;
+    void paintEllipsisBox(PaintInfo&, const IntPoint&, int lineTop, int lineBottom) const;
 
     virtual void clearTruncation();
 
@@ -95,7 +95,7 @@ public:
     void paintCustomHighlight(PaintInfo&, int tx, int ty, const AtomicString& highlightType);
 #endif
 
-    virtual void paint(PaintInfo&, int tx, int ty, int lineTop, int lineBottom);
+    virtual void paint(PaintInfo&, const IntPoint&, int lineTop, int lineBottom);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, int lineTop, int lineBottom);
 
     bool hasSelectedChildren() const { return m_hasSelectedChildrenOrCanHaveLeadingExpansion; }

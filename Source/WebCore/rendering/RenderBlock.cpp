@@ -2608,7 +2608,7 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
             yPos = ty + curr->y();
             h = curr->logicalHeight();
             if (curr->ellipsisBox() && yPos < paintInfo.rect.maxY() && yPos + h > paintInfo.rect.y())
-                curr->paintEllipsisBox(paintInfo, tx, ty, curr->lineTop(), curr->lineBottom());
+                curr->paintEllipsisBox(paintInfo, IntPoint(tx, ty), curr->lineTop(), curr->lineBottom());
         }
     }
 }

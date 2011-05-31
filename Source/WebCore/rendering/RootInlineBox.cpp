@@ -133,11 +133,11 @@ float RootInlineBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float block
     return result;
 }
 
-void RootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, int tx, int ty, int lineTop, int lineBottom) const
+void RootInlineBox::paintEllipsisBox(PaintInfo& paintInfo, const IntPoint& paintOffset, int lineTop, int lineBottom) const
 {
     if (hasEllipsisBox() && paintInfo.shouldPaintWithinRoot(renderer()) && renderer()->style()->visibility() == VISIBLE
             && paintInfo.phase == PaintPhaseForeground)
-        ellipsisBox()->paint(paintInfo, tx, ty, lineTop, lineBottom);
+        ellipsisBox()->paint(paintInfo, paintOffset, lineTop, lineBottom);
 }
 
 #if PLATFORM(MAC)
@@ -178,14 +178,14 @@ void RootInlineBox::paintCustomHighlight(PaintInfo& paintInfo, int tx, int ty, c
 
 #endif
 
-void RootInlineBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int lineBottom)
+void RootInlineBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int lineTop, int lineBottom)
 {
-    InlineFlowBox::paint(paintInfo, tx, ty, lineTop, lineBottom);
-    paintEllipsisBox(paintInfo, tx, ty, lineTop, lineBottom);
+    InlineFlowBox::paint(paintInfo, paintOffset, lineTop, lineBottom);
+    paintEllipsisBox(paintInfo, paintOffset, lineTop, lineBottom);
 #if PLATFORM(MAC)
     RenderStyle* styleToUse = renderer()->style(m_firstLine);
     if (styleToUse->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-        paintCustomHighlight(paintInfo, tx, ty, styleToUse->highlight());
+        paintCustomHighlight(paintInfo, paintOffset.x(), paintOffset.y(), styleToUse->highlight());
 #endif
 }
 

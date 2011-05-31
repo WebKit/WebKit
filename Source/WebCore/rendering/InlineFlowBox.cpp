@@ -946,12 +946,12 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
-void InlineFlowBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int lineBottom)
+void InlineFlowBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int lineTop, int lineBottom)
 {
     IntRect overflowRect(visualOverflowRect(lineTop, lineBottom));
     overflowRect.inflate(renderer()->maximalOutlineSize(paintInfo.phase));
     flipForWritingMode(overflowRect);
-    overflowRect.move(tx, ty);
+    overflowRect.move(paintOffset);
     
     if (!paintInfo.rect.intersects(overflowRect))
         return;
@@ -991,11 +991,11 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int
                     paintInfo.outlineObjects->add(inlineFlow);
             }
         } else if (paintInfo.phase == PaintPhaseMask) {
-            paintMask(paintInfo, tx, ty);
+            paintMask(paintInfo, paintOffset.x(), paintOffset.y());
             return;
         } else {
             // Paint our background, border and box-shadow.
-            paintBoxDecorations(paintInfo, tx, ty);
+            paintBoxDecorations(paintInfo, paintOffset.x(), paintOffset.y());
         }
     }
 
@@ -1011,7 +1011,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, int tx, int ty, int lineTop, int
     if (paintPhase != PaintPhaseSelfOutline) {
         for (InlineBox* curr = firstChild(); curr; curr = curr->nextOnLine()) {
             if (curr->renderer()->isText() || !curr->boxModelObject()->hasSelfPaintingLayer())
-                curr->paint(childInfo, tx, ty, lineTop, lineBottom);
+                curr->paint(childInfo, paintOffset, lineTop, lineBottom);
         }
     }
 }

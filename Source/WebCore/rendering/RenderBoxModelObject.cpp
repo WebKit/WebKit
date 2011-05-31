@@ -694,7 +694,7 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         PaintInfo info(maskImageContext, maskRect, PaintPhaseTextClip, true, 0, 0);
         if (box) {
             RootInlineBox* root = box->root();
-            box->paint(info, scrolledPaintRect.x() - box->x(), scrolledPaintRect.y() - box->y(), root->lineTop(), root->lineBottom());
+            box->paint(info, IntPoint(scrolledPaintRect.x() - box->x(), scrolledPaintRect.y() - box->y()), root->lineTop(), root->lineBottom());
         } else {
             int x = isBox() ? toRenderBox(this)->x() : 0;
             int y = isBox() ? toRenderBox(this)->y() : 0;

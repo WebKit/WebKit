@@ -36,7 +36,7 @@
 
 namespace WebCore {
 
-void SVGRootInlineBox::paint(PaintInfo& paintInfo, int, int, int, int)
+void SVGRootInlineBox::paint(PaintInfo& paintInfo, const IntPoint&, int, int)
 {
     ASSERT(paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection);
     ASSERT(!paintInfo.context->paintingDisabled());
@@ -64,7 +64,7 @@ void SVGRootInlineBox::paint(PaintInfo& paintInfo, int, int, int, int)
             if (child->isSVGInlineTextBox())
                 SVGInlineFlowBox::computeTextMatchMarkerRectForRenderer(toRenderSVGInlineText(static_cast<SVGInlineTextBox*>(child)->textRenderer()));
 
-            child->paint(childPaintInfo, 0, 0, 0, 0);
+            child->paint(childPaintInfo, IntPoint(), 0, 0);
         }
     }
 

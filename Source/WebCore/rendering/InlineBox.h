@@ -129,7 +129,7 @@ public:
             adjustPosition(delta, 0);
     }
 
-    virtual void paint(PaintInfo&, int tx, int ty, int lineTop, int lineBottom);
+    virtual void paint(PaintInfo&, const IntPoint&, int lineTop, int lineBottom);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, int lineTop, int lineBottom);
 
     InlineBox* next() const { return m_next; }

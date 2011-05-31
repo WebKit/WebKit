@@ -39,7 +39,7 @@ public:
     {
     }
 
-    virtual void paint(PaintInfo&, int tx, int ty, int lineTop, int lineBottom);
+    virtual void paint(PaintInfo&, const IntPoint&, int lineTop, int lineBottom);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, int lineTop, int lineBottom);
     void setSelectionState(RenderObject::SelectionState s) { m_selectionState = s; }
     IntRect selectionRect(int tx, int ty);

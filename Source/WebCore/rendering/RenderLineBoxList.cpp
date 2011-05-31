@@ -259,7 +259,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
 
         if (lineIntersectsDirtyRect(renderer, curr, info, tx, ty)) {
             RootInlineBox* root = curr->root();
-            curr->paint(info, tx, ty, root->lineTop(), root->lineBottom());
+            curr->paint(info, IntPoint(tx, ty), root->lineTop(), root->lineBottom());
         }
     }
 

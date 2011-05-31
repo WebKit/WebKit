@@ -193,12 +193,12 @@ void InlineBox::adjustPosition(float dx, float dy)
         toRenderBox(m_renderer)->move(dx, dy); 
 }
 
-void InlineBox::paint(PaintInfo& paintInfo, int tx, int ty, int /* lineTop */, int /*lineBottom*/)
+void InlineBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int /* lineTop */, int /*lineBottom*/)
 {
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection))
         return;
 
-    IntPoint childPoint = IntPoint(tx, ty);
+    IntPoint childPoint = paintOffset;
     if (parent()->renderer()->style()->isFlippedBlocksWritingMode()) // Faster than calling containingBlock().
         childPoint = renderer()->containingBlock()->flipForWritingMode(toRenderBox(renderer()), childPoint, RenderBox::ParentToChildFlippingAdjustment);
     

@@ -463,7 +463,7 @@ static inline AffineTransform rotation(const FloatRect& boxRect, RotationDirecti
         : AffineTransform(0, -1, 1, 0, boxRect.x() - boxRect.maxY(), boxRect.x() + boxRect.maxY());
 }
 
-void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/, int /*lineBottom*/)
+void InlineTextBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int /*lineTop*/, int /*lineBottom*/)
 {
     if (isLineBreak() || !paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE ||
         m_truncation == cFullTruncation || paintInfo.phase == PaintPhaseOutline || !m_len)
@@ -473,11 +473,13 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/,
 
     int logicalLeftSide = logicalLeftVisualOverflow();
     int logicalRightSide = logicalRightVisualOverflow();
-    int logicalStart = logicalLeftSide + (isHorizontal() ? tx : ty);
+    int logicalStart = logicalLeftSide + (isHorizontal() ? paintOffset.x() : paintOffset.y());
     int logicalExtent = logicalRightSide - logicalLeftSide;
     
     int paintEnd = isHorizontal() ? paintInfo.rect.maxX() : paintInfo.rect.maxY();
     int paintStart = isHorizontal() ? paintInfo.rect.x() : paintInfo.rect.y();
+    
+    IntPoint adjustedPaintOffset = paintOffset;
     
     if (logicalStart >= paintEnd || logicalStart + logicalExtent <= paintStart)
         return;
@@ -503,10 +505,8 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/,
             int widthOfVisibleText = toRenderText(renderer())->width(m_start, m_truncation, textPos(), m_firstLine);
             int widthOfHiddenText = m_logicalWidth - widthOfVisibleText;
             // FIXME: The hit testing logic also needs to take this translation int account.
-            if (isHorizontal())
-                tx += isLeftToRightDirection() ? widthOfHiddenText : -widthOfHiddenText;
-            else
-                ty += isLeftToRightDirection() ? widthOfHiddenText : -widthOfHiddenText;
+            IntSize truncationOffset(isLeftToRightDirection() ? widthOfHiddenText : -widthOfHiddenText, 0);
+            adjustedPaintOffset.move(isHorizontal() ? truncationOffset : truncationOffset.transposedSize());
         }
     }
 
@@ -514,10 +514,10 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/,
 
     RenderStyle* styleToUse = renderer()->style(m_firstLine);
     
-    ty -= styleToUse->isHorizontalWritingMode() ? 0 : logicalHeight();
+    adjustedPaintOffset.move(0, styleToUse->isHorizontalWritingMode() ? 0 : -logicalHeight());
 
     FloatPoint boxOrigin = locationIncludingFlipping();
-    boxOrigin.move(tx, ty);    
+    boxOrigin.move(adjustedPaintOffset.x(), adjustedPaintOffset.y());
     FloatRect boxRect(boxOrigin, IntSize(logicalWidth(), logicalHeight()));
 
     RenderCombineText* combinedText = styleToUse->hasTextCombine() && textRenderer()->isCombineText() && toRenderCombineText(textRenderer())->isCombined() ? toRenderCombineText(textRenderer()) : 0;
@@ -544,7 +544,7 @@ void InlineTextBox::paint(PaintInfo& paintInfo, int tx, int ty, int /*lineTop*/,
 #if PLATFORM(MAC)
         // Custom highlighters go behind everything else.
         if (styleToUse->highlight() != nullAtom && !context->paintingDisabled())
-            paintCustomHighlight(tx, ty, styleToUse->highlight());
+            paintCustomHighlight(adjustedPaintOffset.x(), adjustedPaintOffset.y(), styleToUse->highlight());
 #endif
 
         if (containsComposition && !useCustomUnderlines)

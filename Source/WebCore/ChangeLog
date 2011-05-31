@@ -1,3 +1,47 @@
+2011-05-31  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Change InlineBox::paint and its overloaded variants to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=61804
+
+        Changing InlineBox::paint, its 7 overloaded variants, and RootInlineBox::paintEllipsisBox
+        to use IntPoint for their paint offset instead of a pair of ints.
+
+        No new tests since this is just a refactoring.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        * rendering/EllipsisBox.h:
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::paint):
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintEllipsisBoxes):
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paintEllipsisBox):
+        (WebCore::RootInlineBox::paint):
+        * rendering/RootInlineBox.h:
+        * rendering/svg/SVGInlineFlowBox.cpp:
+        (WebCore::SVGInlineFlowBox::paint):
+        * rendering/svg/SVGInlineFlowBox.h:
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::paint):
+        * rendering/svg/SVGInlineTextBox.h:
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::paint):
+        * rendering/svg/SVGRootInlineBox.h:
+
 2011-05-31  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
