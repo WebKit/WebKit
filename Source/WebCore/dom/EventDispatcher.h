@@ -61,7 +61,7 @@ private:
     EventDispatcher(Node*);
 
     PassRefPtr<EventTarget> adjustToShadowBoundaries(PassRefPtr<Node> relatedTarget, const Vector<Node*> relatedTargetAncestors);
-    EventDispatchBehavior determineDispatchBehavior(Event*);
+    EventDispatchBehavior determineDispatchBehavior(Event*, Node* shadowRoot);
     void ensureEventAncestors(Event*);
     const EventContext* topEventContext();
 

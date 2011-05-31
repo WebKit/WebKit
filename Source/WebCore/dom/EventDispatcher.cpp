@@ -2,7 +2,7 @@
  * Copyright (C) 1999 Lars Knoll (knoll@kde.org)
  *           (C) 1999 Antti Koivisto (koivisto@kde.org)
  *           (C) 2001 Dirk Mueller (mueller@kde.org)
- * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Nokia Corporation and/or its subsidiary(-ies)
  * Copyright (C) 2009 Torch Mobile Inc. All rights reserved. (http://www.torchmobile.com/)
  * Copyright (C) 2011 Google Inc. All rights reserved.
@@ -26,27 +26,20 @@
 #include "config.h"
 #include "EventDispatcher.h"
 
-#include "Element.h"
-#include "Event.h"
 #include "EventContext.h"
-#include "EventTarget.h"
 #include "FrameView.h"
+#include "HTMLMediaElement.h"
 #include "InspectorInstrumentation.h"
 #include "MouseEvent.h"
-#include "Node.h"
 #include "ScopedEventQueue.h"
+#include "WindowEventContext.h"
+#include <wtf/RefPtr.h>
 
 #if ENABLE(SVG)
 #include "SVGElementInstance.h"
 #include "SVGNames.h"
 #include "SVGUseElement.h"
 #endif
-
-#include "UIEvent.h"
-#include "UIEventWithKeyState.h"
-#include "WindowEventContext.h"
-
-#include <wtf/RefPtr.h>
 
 namespace WebCore {
 
@@ -235,8 +228,6 @@ EventDispatcher::EventDispatcher(Node* node)
 
 void EventDispatcher::ensureEventAncestors(Event* event)
 {
-    EventDispatchBehavior behavior = determineDispatchBehavior(event);
-
     if (!m_node->inDocument())
         return;
 
@@ -251,7 +242,7 @@ void EventDispatcher::ensureEventAncestors(Event* event)
     while (true) {
         bool isSVGShadowRoot = ancestor->isSVGShadowRoot();
         if (isSVGShadowRoot || ancestor->isShadowRoot()) {
-            if (behavior == StayInsideShadowDOM)
+            if (determineDispatchBehavior(event, ancestor) == StayInsideShadowDOM)
                 return;
 #if ENABLE(SVG)
             ancestor = isSVGShadowRoot ? ancestor->svgShadowHost() : ancestor->shadowHost();
@@ -375,8 +366,19 @@ const EventContext* EventDispatcher::topEventContext()
     return m_ancestors.isEmpty() ? 0 : &m_ancestors.last();
 }
 
-EventDispatchBehavior EventDispatcher::determineDispatchBehavior(Event* event)
+EventDispatchBehavior EventDispatcher::determineDispatchBehavior(Event* event, Node* shadowRoot)
 {
+#if ENABLE(FULLSCREEN_API)
+    // Video-only full screen is a mode where we use the shadow DOM as an implementation
+    // detail that should not be detectable by the web content.
+    if (Element* element = m_node->document()->webkitCurrentFullScreenElement()) {
+        // FIXME: We assume that if the full screen element is a media element that it's
+        // the video-only full screen. Both here and elsewhere. But that is probably wrong.
+        if (element->isMediaElement() && shadowRoot && shadowRoot->shadowHost() == element)
+            return StayInsideShadowDOM;
+    }
+#endif
+
     // Per XBL 2.0 spec, mutation events should never cross shadow DOM boundary:
     // http://dev.w3.org/2006/xbl2/#event-flow-and-targeting-across-shadow-s
     if (event->isMutationEvent())

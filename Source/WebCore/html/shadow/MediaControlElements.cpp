@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -73,15 +73,6 @@ MediaControlElement::MediaControlElement(HTMLMediaElement* mediaElement)
     : HTMLDivElement(divTag, mediaElement->document())
     , m_mediaElement(mediaElement)
 {
-}
-
-void* MediaControlElement::preDispatchEventHandler(Event* event)
-{
-    if (event->type() == eventNames().clickEvent) {
-        event->preventDefault();
-        event->stopPropagation();
-    }
-    return 0;
 }
 
 static const String& displayString()
@@ -204,21 +195,20 @@ RenderObject* MediaControlVolumeSliderContainerElement::createRenderer(RenderAre
     return new (arena) RenderMediaVolumeSliderContainer(this);
 }
 
-void* MediaControlVolumeSliderContainerElement::preDispatchEventHandler(Event* event)
+void MediaControlVolumeSliderContainerElement::defaultEventHandler(Event* event)
 {
     if (!event->isMouseEvent() || event->type() != eventNames().mouseoutEvent)
-        return 0;
+        return;
 
     // Poor man's mouseleave event detection.
     MouseEvent* mouseEvent = static_cast<MouseEvent*>(event);
     if (!mouseEvent->relatedTarget() || !mouseEvent->relatedTarget()->toNode())
-        return 0;
+        return;
 
     if (this->containsIncludingShadowDOM(mouseEvent->relatedTarget()->toNode()))
-        return 0;
+        return;
 
     hide();
-    return 0;
 }
 
 
@@ -334,15 +324,14 @@ inline MediaControlMuteButtonElement::MediaControlMuteButtonElement(HTMLMediaEle
 {
 }
 
-void* MediaControlMuteButtonElement::preDispatchEventHandler(Event* event)
+void MediaControlMuteButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
         mediaElement()->setMuted(!mediaElement()->muted());
-        event->preventDefault();
-        event->stopPropagation();
+        event->setDefaultHandled();
     }
 
-    return 0;
+    HTMLInputElement::defaultEventHandler(event);
 }
 
 void MediaControlMuteButtonElement::changedMute()
@@ -372,12 +361,12 @@ PassRefPtr<MediaControlPanelMuteButtonElement> MediaControlPanelMuteButtonElemen
     return button.release();
 }
 
-void* MediaControlPanelMuteButtonElement::preDispatchEventHandler(Event* event)
+void MediaControlPanelMuteButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().mouseoverEvent)
         m_controls->showVolumeSlider();
 
-    return 0;
+    MediaControlMuteButtonElement::defaultEventHandler(event);
 }
 
 const AtomicString& MediaControlPanelMuteButtonElement::shadowPseudoId() const
@@ -420,15 +409,14 @@ PassRefPtr<MediaControlPlayButtonElement> MediaControlPlayButtonElement::create(
     return button.release();
 }
 
-void* MediaControlPlayButtonElement::preDispatchEventHandler(Event* event)
+void MediaControlPlayButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
         mediaElement()->togglePlayState();
         updateDisplayType();
-        event->preventDefault();
-        event->stopPropagation();
+        event->setDefaultHandled();
     }
-    return 0;
+    HTMLInputElement::defaultEventHandler(event);
 }
 
 void MediaControlPlayButtonElement::updateDisplayType()
@@ -452,7 +440,7 @@ inline MediaControlSeekButtonElement::MediaControlSeekButtonElement(HTMLMediaEle
 {
 }
 
-void* MediaControlSeekButtonElement::preDispatchEventHandler(Event* event)
+void MediaControlSeekButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().mousedownEvent) {
         if (Frame* frame = document()->frame()) {
@@ -461,8 +449,7 @@ void* MediaControlSeekButtonElement::preDispatchEventHandler(Event* event)
         }
         mediaElement()->pause(event->fromUserGesture());
         m_seekTimer.startRepeating(cSeekRepeatDelay);
-        event->preventDefault();
-        event->stopPropagation();
+        event->setDefaultHandled();
     } else if (event->type() == eventNames().mouseupEvent) {
         if (m_capturing)
             if (Frame* frame = document()->frame()) {
@@ -477,11 +464,10 @@ void* MediaControlSeekButtonElement::preDispatchEventHandler(Event* event)
             }
             m_seekTimer.stop();
             m_seeking = false;
-            event->preventDefault();
-            event->stopPropagation();
+            event->setDefaultHandled();
         }
     }
-    return 0;
+    HTMLInputElement::defaultEventHandler(event);
 }
 
 void MediaControlSeekButtonElement::seekTimerFired(Timer<MediaControlSeekButtonElement>*)
@@ -555,14 +541,13 @@ PassRefPtr<MediaControlRewindButtonElement> MediaControlRewindButtonElement::cre
     return button.release();
 }
 
-void* MediaControlRewindButtonElement::preDispatchEventHandler(Event* event)
+void MediaControlRewindButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
         mediaElement()->rewind(30);
-        event->preventDefault();
-        event->stopPropagation();
+        event->setDefaultHandled();
     }    
-    return 0;
+    HTMLInputElement::defaultEventHandler(event);
 }
 
 const AtomicString& MediaControlRewindButtonElement::shadowPseudoId() const
@@ -586,14 +571,13 @@ PassRefPtr<MediaControlReturnToRealtimeButtonElement> MediaControlReturnToRealti
     return button.release();
 }
 
-void* MediaControlReturnToRealtimeButtonElement::preDispatchEventHandler(Event* event)
+void MediaControlReturnToRealtimeButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
         mediaElement()->returnToRealtime();
-        event->preventDefault();
-        event->stopPropagation();
+        event->setDefaultHandled();
     }
-    return 0;
+    HTMLInputElement::defaultEventHandler(event);
 }
 
 const AtomicString& MediaControlReturnToRealtimeButtonElement::shadowPseudoId() const
@@ -617,17 +601,16 @@ PassRefPtr<MediaControlToggleClosedCaptionsButtonElement> MediaControlToggleClos
     return button.release();
 }
 
-void* MediaControlToggleClosedCaptionsButtonElement::preDispatchEventHandler(Event* event)
+void MediaControlToggleClosedCaptionsButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
         mediaElement()->setClosedCaptionsVisible(!mediaElement()->closedCaptionsVisible());
         setChecked(mediaElement()->closedCaptionsVisible());
         updateDisplayType();
-        event->preventDefault();
-        event->stopPropagation();
+        event->setDefaultHandled();
     }
 
-    return 0;
+    HTMLInputElement::defaultEventHandler(event);
 }
 
 void MediaControlToggleClosedCaptionsButtonElement::updateDisplayType()
@@ -659,22 +642,25 @@ PassRefPtr<MediaControlTimelineElement> MediaControlTimelineElement::create(HTML
     return timeline.release();
 }
 
-void* MediaControlTimelineElement::preDispatchEventHandler(Event* event)
+void MediaControlTimelineElement::defaultEventHandler(Event* event)
 {
     // Left button is 0. Rejects mouse events not from left button.
     if (event->isMouseEvent() && static_cast<MouseEvent*>(event)->button())
-        return 0;
+        return;
 
     if (!attached())
-        return 0;
+        return;
 
     if (event->type() == eventNames().mousedownEvent)
         mediaElement()->beginScrubbing();
 
+    if (event->type() == eventNames().mouseupEvent)
+        mediaElement()->endScrubbing();
+
     MediaControlInputElement::defaultEventHandler(event);
 
     if (event->type() == eventNames().mouseoverEvent || event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mousemoveEvent)
-        return 0;
+        return;
 
     float time = narrowPrecisionToFloat(value().toDouble());
     if (time != mediaElement()->currentTime()) {
@@ -686,10 +672,6 @@ void* MediaControlTimelineElement::preDispatchEventHandler(Event* event)
     RenderSlider* slider = toRenderSlider(renderer());
     if (slider && slider->inDragMode())
         m_controls->updateTimeDisplay();
-
-    if (event->type() == eventNames().mouseupEvent)
-        mediaElement()->endScrubbing();
-    return 0;
 }
 
 void MediaControlTimelineElement::setPosition(float currentTime) 
@@ -726,19 +708,19 @@ PassRefPtr<MediaControlVolumeSliderElement> MediaControlVolumeSliderElement::cre
     return slider.release();
 }
 
-void* MediaControlVolumeSliderElement::preDispatchEventHandler(Event* event)
+void MediaControlVolumeSliderElement::defaultEventHandler(Event* event)
 {
     // Left button is 0. Rejects mouse events not from left button.
     if (event->isMouseEvent() && static_cast<MouseEvent*>(event)->button())
-        return 0;
+        return;
 
     if (!attached())
-        return 0;
+        return;
 
     MediaControlInputElement::defaultEventHandler(event);
 
     if (event->type() == eventNames().mouseoverEvent || event->type() == eventNames().mouseoutEvent || event->type() == eventNames().mousemoveEvent)
-        return 0;
+        return;
 
     float volume = narrowPrecisionToFloat(value().toDouble());
     if (volume != mediaElement()->volume()) {
@@ -746,7 +728,6 @@ void* MediaControlVolumeSliderElement::preDispatchEventHandler(Event* event)
         mediaElement()->setVolume(volume, ec);
         ASSERT(!ec);
     }
-    return 0;
 }
 
 void MediaControlVolumeSliderElement::setVolume(float volume)
@@ -802,7 +783,7 @@ PassRefPtr<MediaControlFullscreenButtonElement> MediaControlFullscreenButtonElem
     return button.release();
 }
 
-void* MediaControlFullscreenButtonElement::preDispatchEventHandler(Event* event)
+void MediaControlFullscreenButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
 #if ENABLE(FULLSCREEN_API)
@@ -819,10 +800,9 @@ void* MediaControlFullscreenButtonElement::preDispatchEventHandler(Event* event)
         } else
 #endif
             mediaElement()->enterFullscreen();
-        event->preventDefault();
-        event->stopPropagation();
+        event->setDefaultHandled();
     }
-    return 0;
+    HTMLInputElement::defaultEventHandler(event);
 }
 
 const AtomicString& MediaControlFullscreenButtonElement::shadowPseudoId() const
@@ -845,15 +825,14 @@ PassRefPtr<MediaControlFullscreenVolumeMinButtonElement> MediaControlFullscreenV
     return button.release();
 }
 
-void* MediaControlFullscreenVolumeMinButtonElement::preDispatchEventHandler(Event* event)
+void MediaControlFullscreenVolumeMinButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
         ExceptionCode code = 0;
         mediaElement()->setVolume(0, code);
-        event->preventDefault();
-        event->stopPropagation();
+        event->setDefaultHandled();
     }
-    return 0;
+    HTMLInputElement::defaultEventHandler(event);
 }
 
 const AtomicString& MediaControlFullscreenVolumeMinButtonElement::shadowPseudoId() const
@@ -876,15 +855,14 @@ PassRefPtr<MediaControlFullscreenVolumeMaxButtonElement> MediaControlFullscreenV
     return button.release();
 }
 
-void* MediaControlFullscreenVolumeMaxButtonElement::preDispatchEventHandler(Event* event)
+void MediaControlFullscreenVolumeMaxButtonElement::defaultEventHandler(Event* event)
 {
     if (event->type() == eventNames().clickEvent) {
         ExceptionCode code = 0;
         mediaElement()->setVolume(1, code);
-        event->preventDefault();
-        event->stopPropagation();
+        event->setDefaultHandled();
     }
-    return 0;
+    HTMLInputElement::defaultEventHandler(event);
 }
 
 const AtomicString& MediaControlFullscreenVolumeMaxButtonElement::shadowPseudoId() const
