@@ -1,3 +1,14 @@
+2011-05-31  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Test that we do not crash when a DOMNodeInsertedIntoDocument event
+        is fired while generating a error message block in xml parsing.
+        https://bugs.webkit.org/show_bug.cgi?id=61688
+
+        * fast/dom/xml-parser-error-message-crash-expected.txt: Added.
+        * fast/dom/xml-parser-error-message-crash.svg: Added.
+
 2011-05-31  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Antti Koivisto.
