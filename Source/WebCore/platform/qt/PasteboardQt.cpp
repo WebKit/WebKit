@@ -152,7 +152,10 @@ void Pasteboard::writeURL(const KURL& url, const String&, Frame*)
 
 void Pasteboard::writeImage(Node* node, const KURL&, const String&)
 {
-    ASSERT(node && node->renderer() && node->renderer()->isImage());
+    ASSERT(node);
+
+    if (!(node->renderer() && node->renderer()->isImage()))
+        return;
 
 #ifndef QT_NO_CLIPBOARD
     CachedImage* cachedImage = toRenderImage(node->renderer())->cachedImage();

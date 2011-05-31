@@ -291,12 +291,15 @@ void Pasteboard::writeFileWrapperAsRTFDAttachment(NSFileWrapper* wrapper)
 void Pasteboard::writeImage(Node* node, const KURL& url, const String& title)
 {
     ASSERT(node);
+
+    if (!(node->renderer() && node->renderer()->isImage()))
+        return;
+
     Frame* frame = node->document()->frame();
 
     NSURL *cocoaURL = url;
     ASSERT(cocoaURL);
 
-    ASSERT(node->renderer() && node->renderer()->isImage());
     RenderImage* renderer = toRenderImage(node->renderer());
     CachedImage* cachedImage = renderer->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())

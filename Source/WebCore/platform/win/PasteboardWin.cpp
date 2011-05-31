@@ -208,7 +208,11 @@ void Pasteboard::writeURL(const KURL& url, const String& titleStr, Frame* frame)
 
 void Pasteboard::writeImage(Node* node, const KURL&, const String&)
 {
-    ASSERT(node && node->renderer() && node->renderer()->isImage());
+    ASSERT(node);
+
+    if (!(node->renderer() && node->renderer()->isImage()))
+        return;
+
     RenderImage* renderer = toRenderImage(node->renderer());
     CachedImage* cachedImage = renderer->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())

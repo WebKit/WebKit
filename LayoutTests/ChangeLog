@@ -1,3 +1,13 @@
+2011-05-30  Andrey Petrov  <andrey.petrov@gmail.com>
+
+        Reviewed by Hajime Morita.
+
+        Using jQuery to show/hide IMG elements crashes WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=31721
+
+        * editing/pasteboard/copy-standalone-image-crash-expected.txt: Added.
+        * editing/pasteboard/copy-standalone-image-crash.html: Added.
+
 2011-05-30  Kent Tamura  <tkent@chromium.org>
 
         [Mac] Skip a flaky test: svg/zoom/page/zoom-svg-through-object-with-text.xhtml

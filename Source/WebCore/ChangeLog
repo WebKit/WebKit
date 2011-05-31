@@ -1,3 +1,33 @@
+2011-05-30  Andrey Petrov  <andrey.petrov@gmail.com>
+
+        Reviewed by Hajime Morita.
+
+        Using jQuery to show/hide IMG elements crashes WebKit
+        https://bugs.webkit.org/show_bug.cgi?id=31721
+
+        For platform code, do not assert nodes always have renderer at
+        the time context menu action is invoked.
+        Renderer can actually be empty for a given node if it was hidden
+        or removed from domtree by some non-user generated event (e.g timeout) 
+        after the popup menu had been created.
+
+        Changing Chromium, Gtk, Mac, Qt, Win and WinCE.
+
+        Test: editing/pasteboard/copy-standalone-image-crash.html
+
+        * platform/chromium/PasteboardChromium.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/mac/PasteboardMac.mm:
+        (WebCore::Pasteboard::writeImage):
+        * platform/qt/PasteboardQt.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/win/PasteboardWin.cpp:
+        (WebCore::Pasteboard::writeImage):
+        * platform/wince/PasteboardWinCE.cpp:
+        (WebCore::Pasteboard::writeImage):
+
 2011-05-30  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Adam Barth.

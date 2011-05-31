@@ -118,7 +118,10 @@ static KURL getURLForImageNode(Node* node)
 void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
 {
     ASSERT(node);
-    ASSERT(node->renderer());
+
+    if (!(node->renderer() && node->renderer()->isImage()))
+        return;
+
     RenderImage* renderer = toRenderImage(node->renderer());
     CachedImage* cachedImage = renderer->cachedImage();
     if (!cachedImage || cachedImage->errorOccurred())
