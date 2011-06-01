@@ -28,29 +28,40 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebPermissions_h
-#define WebPermissions_h
+#include "config.h"
+#include "WebPermissions.h"
 
-#include "WebPermissionClient.h"
+WebPermissions::WebPermissions()
+{
+    reset();
+}
 
-class WebPermissions : public WebKit::WebPermissionClient {
-public:
-    WebPermissions();
-    virtual ~WebPermissions();
+WebPermissions::~WebPermissions()
+{
+}
 
-    virtual bool allowImages(WebKit::WebFrame*, bool enabledPerSettings);
-    virtual bool allowStorage(WebKit::WebFrame*, bool local);
+bool WebPermissions::allowImages(WebKit::WebFrame*, bool enabledPerSettings)
+{
+    return enabledPerSettings && m_imagesAllowed;
+}
 
-    // Sets the different policies.
-    void setImagesAllowed(bool);
-    void setStorageAllowed(bool);
+bool WebPermissions::allowStorage(WebKit::WebFrame*, bool)
+{
+    return m_storageAllowed;
+}
 
-    // Resets the policy to allow all access.
-    void reset();
+void WebPermissions::setImagesAllowed(bool imagesAllowed)
+{
+    m_imagesAllowed = imagesAllowed;
+}
 
-private:
-    bool m_imagesAllowed;
-    bool m_storageAllowed;
-};
+void WebPermissions::setStorageAllowed(bool storageAllowed)
+{
+    m_storageAllowed = storageAllowed;
+}
 
-#endif
+void WebPermissions::reset()
+{
+    m_imagesAllowed = true;
+    m_storageAllowed = true;
+}

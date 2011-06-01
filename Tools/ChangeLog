@@ -1,3 +1,26 @@
+2011-06-01  Jochen Eisinger  <jochen@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Implement layoutTestController.setImagesAllowed for controlling the respective behavior of the WebPermissionClient
+        https://bugs.webkit.org/show_bug.cgi?id=34314
+
+        * DumpRenderTree/DumpRenderTree.gypi:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::setImagesAllowed):
+        (LayoutTestController::setStorageAllowed):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/chromium/WebPermissions.cpp: Copied from Tools/DumpRenderTree/chromium/WebPermissions.h.
+        (WebPermissions::WebPermissions):
+        (WebPermissions::~WebPermissions):
+        (WebPermissions::allowImages):
+        (WebPermissions::allowStorage):
+        (WebPermissions::setImagesAllowed):
+        (WebPermissions::setStorageAllowed):
+        (WebPermissions::reset):
+        * DumpRenderTree/chromium/WebPermissions.h:
+
 2011-06-01  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Tony Chang.

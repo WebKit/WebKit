@@ -191,6 +191,8 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("waitUntilDone", &LayoutTestController::waitUntilDone);
     bindMethod("windowCount", &LayoutTestController::windowCount);
     bindMethod("setTextDirection", &LayoutTestController::setTextDirection);
+    bindMethod("setImagesAllowed", &LayoutTestController::setImagesAllowed);
+    bindMethod("setStorageAllowed", &LayoutTestController::setStorageAllowed);
 
     // The following are stubs.
     bindMethod("abortModal", &LayoutTestController::abortModal);
@@ -216,7 +218,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("deleteLocalStorageForOrigin", &LayoutTestController::deleteLocalStorageForOrigin);
     bindMethod("observeStorageTrackerNotifications", &LayoutTestController::observeStorageTrackerNotifications);
     bindMethod("syncLocalStorage", &LayoutTestController::syncLocalStorage);
-    bindMethod("setStorageAllowed", &LayoutTestController::setStorageAllowed);
     
     // The fallback method is called when an unknown method is invoked.
     bindFallbackMethod(&LayoutTestController::fallbackMethod);
@@ -818,6 +819,20 @@ void LayoutTestController::setPopupBlockingEnabled(const CppArgumentList& argume
         m_shell->preferences()->javaScriptCanOpenWindowsAutomatically = !blockPopups;
         m_shell->applyPreferences();
     }
+    result->setNull();
+}
+
+void LayoutTestController::setImagesAllowed(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_shell->webPermissions()->setImagesAllowed(arguments[0].toBoolean());
+    result->setNull();
+}
+
+void LayoutTestController::setStorageAllowed(const CppArgumentList& arguments, CppVariant* result)
+{
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_shell->webPermissions()->setStorageAllowed(arguments[0].toBoolean());
     result->setNull();
 }
 
@@ -1821,13 +1836,6 @@ void LayoutTestController::observeStorageTrackerNotifications(const CppArgumentL
 void LayoutTestController::syncLocalStorage(const CppArgumentList&, CppVariant*)
 {
     // Not Implemented
-}
-
-void LayoutTestController::setStorageAllowed(const CppArgumentList& arguments, CppVariant* result)
-{
-    if (arguments.size() > 0 && arguments[0].isBool())
-        m_shell->webPermissions()->setStorageAllowed(arguments[0].toBoolean());
-    result->setNull();
 }
 
 void LayoutTestController::setPluginsEnabled(const CppArgumentList& arguments, CppVariant* result)

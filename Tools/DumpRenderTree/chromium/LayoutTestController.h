@@ -369,6 +369,9 @@ public:
     void localStorageDiskUsageForOrigin(const CppArgumentList&, CppVariant*);
     void observeStorageTrackerNotifications(const CppArgumentList&, CppVariant*);
     void syncLocalStorage(const CppArgumentList&, CppVariant*);
+
+    // WebPermissionClient related.
+    void setImagesAllowed(const CppArgumentList&, CppVariant*);
     void setStorageAllowed(const CppArgumentList&, CppVariant*);
 
     // Enable or disable plugins.
