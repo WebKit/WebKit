@@ -1,3 +1,10 @@
+2011-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip editing/pasteboard/drag-drop-list.html on GTK after r87778
+        since smart paste isn't supported by GTK (tracked by the bug 61661).
+
+        * platform/gtk/Skipped:
+
 2011-06-01  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Ryosuke Niwa.
