@@ -1,3 +1,20 @@
+2011-06-01  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Utility methods for UA spellchecking
+        https://bugs.webkit.org/show_bug.cgi?id=61788
+
+        Adds a couple of utility methods needed to implement some aspects
+        of spell checking support in a browser.
+
+        * webkit/webkitwebframe.cpp:
+        (webkit_web_frame_replace_selection): method to replace the current
+        selection with a string of text.
+        (webkit_web_frame_get_range_for_word_around_caret): returns the DOM
+        range for the word where the caret/selection currently is.
+        * webkit/webkitwebframe.h: declare new methods.
+
 2011-05-31  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

@@ -31,10 +31,12 @@
 #include "AccessibilityObjectWrapperAtk.h"
 #include "AnimationController.h"
 #include "DOMObjectCache.h"
+#include "DocumentFragment.h"
 #include "DocumentLoader.h"
 #include "DocumentLoaderGtk.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientGtk.h"
+#include "FrameSelection.h"
 #include "FrameTree.h"
 #include "FrameView.h"
 #include "GCController.h"
@@ -49,8 +51,12 @@
 #include "RenderListItem.h"
 #include "RenderTreeAsText.h"
 #include "RenderView.h"
+#include "ReplaceSelectionCommand.h"
 #include "ScriptController.h"
 #include "SubstituteData.h"
+#include "TextIterator.h"
+#include "markup.h"
+#include "webkit/WebKitDOMRangePrivate.h"
 #include "webkitenumtypes.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
@@ -972,6 +978,51 @@ WebKitNetworkResponse* webkit_web_frame_get_network_response(WebKitWebFrame* fra
         return 0;
 
     return kitNew(loader->response());
+}
+
+/**
+ * webkit_web_frame_replace_selection:
+ * @frame: a #WebKitWeFrame
+ * @text: the text to insert in place of the current selection
+ *
+ * Replaces the current selection in @frame, if any, with @text.
+ *
+ * Since: 1.5.1
+ **/
+void webkit_web_frame_replace_selection(WebKitWebFrame* frame, const char* text)
+{
+    Frame* coreFrame = core(frame);
+    RefPtr<DocumentFragment> fragment = createFragmentFromText(
+        coreFrame->selection()->toNormalizedRange().get(), text);
+    applyCommand(ReplaceSelectionCommand::create(coreFrame->document(), fragment.get(),
+                                                 ReplaceSelectionCommand::SmartReplace | ReplaceSelectionCommand::MatchStyle | ReplaceSelectionCommand::PreventNesting));
+}
+
+/**
+ * webkit_web_frame_get_range_for_word_around_caret:
+ * @frame: a #WebKitWebFrame
+ *
+ * Returns a #WebKitDOMRange for the word where the caret is currently
+ * positioned.
+ *
+ * Returns: a #WebKitDOMRange spanning the word where the caret
+ * currently is positioned. If there is no caret %NULL will be
+ * returned.
+ *
+ * Since: 1.5.1.
+ **/
+WebKitDOMRange* webkit_web_frame_get_range_for_word_around_caret(WebKitWebFrame* frame)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
+
+    Frame* coreFrame = core(frame);
+    FrameSelection* selection = coreFrame->selection();
+    if (selection->isNone() || selection->isRange())
+        return 0;
+    VisibleSelection visibleSelection(selection->selection().visibleStart());
+    visibleSelection.expandUsingGranularity(WordGranularity);
+
+    return kit(visibleSelection.firstRange().get());
 }
 
 namespace WebKit {
