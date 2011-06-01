@@ -241,7 +241,7 @@ GSList* webkit_web_plugin_get_mimetypes(WebKitWebPlugin* plugin)
         mimeType->description = g_strdup(it->second.utf8().data());
 
         Vector<String> extensions = priv->corePlugin->mimeToExtensions().get(it->first);
-        mimeType->extensions = static_cast<gchar**>(g_malloc0(extensions.size() + 1));
+        mimeType->extensions = static_cast<gchar**>(g_malloc0(sizeof(char*) * (extensions.size() + 1)));
         for (unsigned i = 0; i < extensions.size(); i++)
             mimeType->extensions[i] = g_strdup(extensions[i].utf8().data());
 

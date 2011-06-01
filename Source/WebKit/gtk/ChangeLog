@@ -2,6 +2,16 @@
 
         Reviewed by Martin Robinson.
 
+        Explictly request the size of a pointer in malloc. Otherwise this
+        explodes in 64bit architectures, at least.
+
+        * webkit/webkitwebplugin.cpp:
+        (webkit_web_plugin_get_mimetypes): ditto.
+
+2011-06-01  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Utility methods for UA spellchecking
         https://bugs.webkit.org/show_bug.cgi?id=61788
 
