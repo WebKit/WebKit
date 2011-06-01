@@ -43,6 +43,8 @@
 #include <QUrl>
 #include <qobject.h>
 #include <wtf/Forward.h>
+
+class QNetworkReply;
 class QWebFrame;
 
 namespace WebCore {
@@ -68,6 +70,7 @@ signals:
     void loadProgress(int d);
     void loadFinished(bool);
     void titleChanged(const QString& title);
+    void unsupportedContent(QNetworkReply*);
 
 public:
     FrameLoaderClientQt();

@@ -238,6 +238,12 @@ void FrameLoaderClientQt::setFrame(QWebFrame* webFrame, Frame* frame)
             m_webFrame->page(), SIGNAL(loadProgress(int)));
     connect(this, SIGNAL(loadFinished(bool)),
             m_webFrame->page(), SIGNAL(loadFinished(bool)));
+
+    // FIXME: The queued connection here is needed because of a problem with QNetworkAccessManager.
+    //        See http://bugreports.qt.nokia.com/browse/QTBUG-18718
+    connect(this, SIGNAL(unsupportedContent(QNetworkReply*)),
+            m_webFrame->page(), SIGNAL(unsupportedContent(QNetworkReply*)), Qt::QueuedConnection);
+
     connect(this, SIGNAL(loadFinished(bool)),
             m_webFrame, SIGNAL(loadFinished(bool)));
     connect(this, SIGNAL(titleChanged(QString)),
@@ -1017,7 +1023,7 @@ void FrameLoaderClientQt::download(WebCore::ResourceHandle* handle, const WebCor
     if (reply) {
         QWebPage* page = m_webFrame->page();
         if (page->forwardUnsupportedContent())
-            emit page->unsupportedContent(reply);
+            emit unsupportedContent(reply);
         else
             reply->abort();
     }
