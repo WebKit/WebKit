@@ -1,5 +1,14 @@
 2011-06-01  Adam Barth  <abarth@webkit.org>
 
+        Image baselines for this test.  More to follow once the bots catch up.
+
+        * platform/chromium-linux-x86/svg/custom/embedding-external-svgs-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/embedding-external-svgs-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/embedding-external-svgs-expected.png: Added.
+        * platform/chromium-linux/svg/custom/embedding-external-svgs-expected.txt: Added.
+
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
         Image baselines for these platforms.
 
         * platform/chromium-linux-x86/svg/as-image/svg-as-background-with-relative-size-expected.png: Added.
