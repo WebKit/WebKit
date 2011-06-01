@@ -1,3 +1,9 @@
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
+        ... and finally Windows.
+
+        * platform/chromium-win-vista/fullscreen/full-screen-zIndex-after-expected.png: Added.
+
 2011-06-01  David Carson  <dacarson@apple.com>
 
         Reviewed by Antti Koivisto.
