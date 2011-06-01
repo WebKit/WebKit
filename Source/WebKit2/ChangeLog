@@ -1,3 +1,12 @@
+2011-06-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Non-users need access to the mds caches for SSL support.
+        <rdar://problem/9471799>
+
+        * WebProcess/com.apple.WebProcess.sb:
+
 2011-06-01  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

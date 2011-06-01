@@ -103,6 +103,10 @@
        ;; FIXME: This should be removed when <rdar://problem/9276430> is fixed.
        (home-literal "/Library/Preferences"))
 
+;; Non-user Security mds caches
+(allow file*
+    (subpath "/private/var/db/mds/system"))
+
 ;; Darwin temporary files and Security mds caches, if present
 (if (positive? (string-length (param "DARWIN_USER_CACHE_DIR")))
     (allow file* (subpath (string-append (param "DARWIN_USER_CACHE_DIR") "/mds"))))
