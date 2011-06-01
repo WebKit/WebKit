@@ -1,3 +1,35 @@
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
+        Update image baselines for these drop shadows.  They differ from each
+        other only by minor rendering differences in the shadow.
+
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.png: Added.
+        * platform/chromium-linux-x86/svg/filters/feDropShadow-expected.png: Added.
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.png:
+        * platform/chromium-linux/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.png:
+        * platform/chromium-linux/svg/filters/feDropShadow-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.png:
+        * platform/chromium-mac-leopard/svg/filters/feDropShadow-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.png:
+        * platform/chromium-mac/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.png:
+        * platform/chromium-mac/svg/filters/feDropShadow-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop-expected.png:
+        * platform/chromium-win/svg/filters/feDropShadow-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-01  Jochen Eisinger  <jochen@chromium.org>
 
         Reviewed by Adam Barth.

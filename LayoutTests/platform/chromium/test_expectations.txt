@@ -3792,11 +3792,6 @@ BUGDPRANKE WIN DEBUG : fast/css/getComputedStyle/counterIncrement-without-counte
 BUGWK60105 DEBUG : fast/css/empty-pseudo-class.html = PASS TEXT
 
 BUGWK59782 WIN LINUX : fast/box-shadow/single-pixel-shadow.html = IMAGE
-BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html = IMAGE
-BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr.html = IMAGE
-BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html = IMAGE
-BUGWK59782 WIN MAC LINUX RELEASE : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = IMAGE
-BUGWK59782 WIN MAC LINUX RELEASE : svg/filters/feDropShadow.svg = IMAGE
 
 // New test added in r85303.
 BUG_HCLAM : compositing/masks/layer-mask-placement.html = IMAGE
