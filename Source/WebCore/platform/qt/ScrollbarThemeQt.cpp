@@ -163,13 +163,12 @@ bool ScrollbarThemeQt::paint(Scrollbar* scrollbar, GraphicsContext* graphicsCont
     else
 #endif
     {
-        const QPoint topLeft = opt->rect.topLeft();
-        p.painter->translate(topLeft);
-        opt->rect.moveTo(QPoint(0, 0));
-
         // The QStyle expects the background to be already filled.
         p.painter->fillRect(opt->rect, opt->palette.background());
 
+        const QPoint topLeft = opt->rect.topLeft();
+        p.painter->translate(topLeft);
+        opt->rect.moveTo(QPoint(0, 0));
         p.drawComplexControl(QStyle::CC_ScrollBar, *opt);
         opt->rect.moveTo(topLeft);
     }

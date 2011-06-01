@@ -637,7 +637,7 @@ private slots:
     void baseUrl_data();
     void baseUrl();
     void hasSetFocus();
-    void render();
+    void renderGeometry();
     void renderHints();
     void scrollPosition();
     void scrollToAnchor();
@@ -2881,7 +2881,7 @@ void tst_QWebFrame::hasSetFocus()
     QTRY_VERIFY(m_page->mainFrame()->hasFocus());
 }
 
-void tst_QWebFrame::render()
+void tst_QWebFrame::renderGeometry()
 {
     QString html("<html>" \
                     "<head><style>" \
@@ -2897,6 +2897,7 @@ void tst_QWebFrame::render()
     QWebFrame *frame = frames.at(0);
     QString innerHtml("<body style='margin: 0px;'><img src='qrc:/image.png'/></body>");
     frame->setHtml(innerHtml);
+    waitForSignal(frame, SIGNAL(loadFinished(bool)), 200);
 
     QPicture picture;
 
