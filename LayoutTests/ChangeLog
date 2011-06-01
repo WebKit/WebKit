@@ -1,3 +1,14 @@
+2011-06-01  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Tests setting document.body to non body elements, elements in other
+        documents.
+        https://bugs.webkit.org/show_bug.cgi?id=60831
+
+        * fast/dom/document-set-body-expected.txt: Added.
+        * fast/dom/document-set-body.html: Added.
+
 2011-06-01  Adam Barth  <abarth@webkit.org>
 
         Add Windows baseline for this new test.

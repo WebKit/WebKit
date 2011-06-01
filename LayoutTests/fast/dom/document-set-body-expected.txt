@@ -1,0 +1,11 @@
+Tests setting document.body
+
+PASS document1.body = iframe1 threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
+PASS iframe1.parentNode is document.body
+PASS document1.body = document1.createElement('iframe') threw exception Error: HIERARCHY_REQUEST_ERR: DOM Exception 3.
+PASS document1.body != document.body is true
+PASS document1.body is body1
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

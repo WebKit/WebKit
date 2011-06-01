@@ -2031,9 +2031,19 @@ HTMLElement* Document::body() const
 
 void Document::setBody(PassRefPtr<HTMLElement> newBody, ExceptionCode& ec)
 {
-    if (!newBody || !documentElement()) { 
+    ec = 0;
+
+    if (!newBody || !documentElement() || !newBody->hasTagName(bodyTag)) { 
         ec = HIERARCHY_REQUEST_ERR;
         return;
+    }
+
+    if (newBody->document() && newBody->document() != this) {
+        RefPtr<Node> node = importNode(newBody.get(), true, ec);
+        if (ec)
+            return;
+        
+        newBody = toHTMLElement(node.get());
     }
 
     HTMLElement* b = body();

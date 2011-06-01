@@ -1,3 +1,18 @@
+2011-06-01  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Fix setting of document.body
+        https://bugs.webkit.org/show_bug.cgi?id=60831
+
+        1. Only allowing setting to an element if it has a body tag.
+        2. If element is from another document, import it.
+
+        Test: fast/dom/document-set-body.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::setBody):
+
 2011-06-01  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
