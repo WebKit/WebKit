@@ -1922,7 +1922,6 @@ fast/html/listing.html
 fast/html/marquee-scroll.html
 fast/html/marquee-scrollamount.html
 fast/images/animated-gif-with-offsets.html
-fast/images/animated-svg-as-image.html
 fast/images/image-in-map.html
 fast/images/image-map-anchor-children.html
 fast/images/imagemap-case.html
@@ -1931,10 +1930,11 @@ fast/images/imagemap-focus-ring-outline-color-not-inherited-from-map.html
 fast/images/imagemap-focus-ring-outline-color.html
 fast/images/imagemap-focus-ring-zoom.html
 fast/images/imagemap-focus-ring.html
-fast/images/svg-as-background.html
-fast/images/svg-as-tiled-background.html
-fast/images/svg-background-partial-redraw.html
-fast/images/svg-width-100p-as-background.html
+svg/as-image/animated-svg-as-image.html
+svg/as-image/svg-as-background.html
+svg/as-image/svg-as-tiled-background.html
+svg/as-image/svg-background-partial-redraw.html
+svg/as-image/svg-width-100p-as-background.html
 fast/inline-block/002.html
 fast/inline-block/003.html
 fast/inline-block/006.html

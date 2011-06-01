@@ -1405,7 +1405,7 @@ BUGWK39966 : fast/repaint/table-cell-collapsed-border.html = IMAGE
 BUGCR23471 LEOPARD : fast/text/stroking.html = IMAGE
 
 // Failing on the bots but not locally; need investigation
-BUGCR23560 MAC : fast/images/animated-svg-as-image.html = IMAGE PASS
+BUGCR23560 MAC : svg/as-image/animated-svg-as-image.html = IMAGE PASS
 
 // -----------------------------------------------------------------
 // END MAC PORT TESTS

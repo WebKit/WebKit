@@ -169,7 +169,7 @@ editing/pasteboard/data-transfer-items.html
 # Missing drag & drop functionality in DRT
 editing/pasteboard/drop-inputtext-acquires-style.html
 fast/css/user-drag-none.html
-fast/images/drag-svg-as-image.html
+svg/as-image/drag-svg-as-image.html
 fast/forms/slider-delete-while-dragging-thumb.html
 
 # ------- missing drag-and-drop support

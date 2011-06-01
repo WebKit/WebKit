@@ -474,7 +474,7 @@ fast/frames/take-focus-from-iframe.html
 fast/history/history_reload.html
 fast/history/window-open.html
 fast/images/drag-pdf-as-image.html
-fast/images/drag-svg-as-image.html
+svg/as-image/drag-svg-as-image.html
 fast/images/image-map-zoom.html
 fast/images/imagemap-case.html
 fast/inline-block/14498-positionForCoordinates.html

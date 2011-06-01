@@ -1,5 +1,174 @@
 2011-06-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
+        Reviewed by Adam Barth.
+
+        Move fast/images/*svg* to svg/as-image/
+        https://bugs.webkit.org/show_bug.cgi?id=61840
+
+        The SVG crowd regulary runs pixel tests, and we'd like to also include the SVG-as-image tests in our daily runs.
+        Also it makes more sense to have these tests in a single place, just like eg. svg/in-html (html5+svg).
+
+        * fast/images/animated-svg-as-image.html: Removed.
+        * fast/images/drag-svg-as-image-expected.txt: Removed.
+        * fast/images/drag-svg-as-image.html: Removed.
+        * fast/images/resources/animated-rect-fixed-size.svg: Removed.
+        * fast/images/resources/animated-rect-relative-size.svg: Removed.
+        * fast/images/resources/butterfly.svg: Removed.
+        * fast/images/resources/circle.svg: Removed.
+        * fast/images/resources/green-fixed-size-rect.svg: Removed.
+        * fast/images/resources/green-relative-size-rect.svg: Removed.
+        * fast/images/resources/load-script.html: Removed.
+        * fast/images/resources/width-100-percent.svg: Removed.
+        * fast/images/svg-as-background.html: Removed.
+        * fast/images/svg-as-image.html: Removed.
+        * fast/images/svg-as-relative-image.html: Removed.
+        * fast/images/svg-as-tiled-background.html: Removed.
+        * fast/images/svg-background-crash-on-refresh.html-disabled: Removed.
+        * fast/images/svg-background-partial-redraw.html: Removed.
+        * fast/images/svg-image-leak-loader-expected.txt: Removed.
+        * fast/images/svg-image-leak-loader.html: Removed.
+        * fast/images/svg-nested-expected.txt: Removed.
+        * fast/images/svg-nested.html: Removed.
+        * fast/images/svg-width-100p-as-background.html: Removed.
+        * platform/chromium-linux/fast/images/animated-svg-as-image-expected.png: Removed.
+        * platform/chromium-linux/fast/images/svg-background-partial-redraw-expected.png: Removed.
+        * platform/chromium-linux/svg/as-image: Added.
+        * platform/chromium-linux/svg/as-image/animated-svg-as-image-expected.png: Copied from platform/chromium-linux/fast/images/animated-svg-as-image-expected.png.
+        * platform/chromium-linux/svg/as-image/svg-background-partial-redraw-expected.png: Copied from platform/chromium-linux/fast/images/svg-background-partial-redraw-expected.png.
+        * platform/chromium-mac-leopard/fast/images/svg-background-partial-redraw-expected.png: Removed.
+        * platform/chromium-mac-leopard/svg/as-image: Added.
+        * platform/chromium-mac-leopard/svg/as-image/svg-background-partial-redraw-expected.png: Copied from platform/chromium-mac-leopard/fast/images/svg-background-partial-redraw-expected.png.
+        * platform/chromium-mac/fast/images/svg-background-partial-redraw-expected.png: Removed.
+        * platform/chromium-mac/svg/as-image: Added.
+        * platform/chromium-mac/svg/as-image/svg-background-partial-redraw-expected.png: Copied from platform/chromium-mac/fast/images/svg-background-partial-redraw-expected.png.
+        * platform/chromium-win/fast/images/animated-svg-as-image-expected.png: Removed.
+        * platform/chromium-win/fast/images/animated-svg-as-image-expected.txt: Removed.
+        * platform/chromium-win/fast/images/svg-as-background-expected.txt: Removed.
+        * platform/chromium-win/fast/images/svg-as-tiled-background-expected.txt: Removed.
+        * platform/chromium-win/fast/images/svg-background-partial-redraw-expected.png: Removed.
+        * platform/chromium-win/fast/images/svg-background-partial-redraw-expected.txt: Removed.
+        * platform/chromium-win/fast/images/svg-width-100p-as-background-expected.txt: Removed.
+        * platform/chromium-win/svg/as-image: Added.
+        * platform/chromium-win/svg/as-image/animated-svg-as-image-expected.png: Copied from platform/chromium-win/fast/images/animated-svg-as-image-expected.png.
+        * platform/chromium-win/svg/as-image/animated-svg-as-image-expected.txt: Copied from platform/chromium-win/fast/images/animated-svg-as-image-expected.txt.
+        * platform/chromium-win/svg/as-image/svg-as-background-expected.txt: Copied from platform/chromium-win/fast/images/svg-as-background-expected.txt.
+        * platform/chromium-win/svg/as-image/svg-as-tiled-background-expected.txt: Copied from platform/chromium-win/fast/images/svg-as-tiled-background-expected.txt.
+        * platform/chromium-win/svg/as-image/svg-background-partial-redraw-expected.png: Copied from platform/chromium-win/fast/images/svg-background-partial-redraw-expected.png.
+        * platform/chromium-win/svg/as-image/svg-background-partial-redraw-expected.txt: Copied from platform/chromium-win/fast/images/svg-background-partial-redraw-expected.txt.
+        * platform/chromium-win/svg/as-image/svg-width-100p-as-background-expected.txt: Copied from platform/chromium-win/fast/images/svg-width-100p-as-background-expected.txt.
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/fast/images/animated-svg-as-image-expected.png: Removed.
+        * platform/gtk/fast/images/animated-svg-as-image-expected.txt: Removed.
+        * platform/gtk/fast/images/svg-as-background-expected.png: Removed.
+        * platform/gtk/fast/images/svg-as-background-expected.txt: Removed.
+        * platform/gtk/fast/images/svg-as-image-expected.png: Removed.
+        * platform/gtk/fast/images/svg-as-image-expected.txt: Removed.
+        * platform/gtk/fast/images/svg-as-relative-image-expected.png: Removed.
+        * platform/gtk/fast/images/svg-as-relative-image-expected.txt: Removed.
+        * platform/gtk/fast/images/svg-as-tiled-background-expected.png: Removed.
+        * platform/gtk/fast/images/svg-as-tiled-background-expected.txt: Removed.
+        * platform/gtk/fast/images/svg-background-partial-redraw-expected.txt: Removed.
+        * platform/gtk/fast/images/svg-width-100p-as-background-expected.png: Removed.
+        * platform/gtk/fast/images/svg-width-100p-as-background-expected.txt: Removed.
+        * platform/gtk/svg/as-image: Added.
+        * platform/gtk/svg/as-image/animated-svg-as-image-expected.png: Copied from platform/gtk/fast/images/animated-svg-as-image-expected.png.
+        * platform/gtk/svg/as-image/animated-svg-as-image-expected.txt: Copied from platform/gtk/fast/images/animated-svg-as-image-expected.txt.
+        * platform/gtk/svg/as-image/svg-as-background-expected.png: Copied from platform/gtk/fast/images/svg-as-background-expected.png.
+        * platform/gtk/svg/as-image/svg-as-background-expected.txt: Copied from platform/gtk/fast/images/svg-as-background-expected.txt.
+        * platform/gtk/svg/as-image/svg-as-image-expected.png: Copied from platform/gtk/fast/images/svg-as-image-expected.png.
+        * platform/gtk/svg/as-image/svg-as-image-expected.txt: Copied from platform/gtk/fast/images/svg-as-image-expected.txt.
+        * platform/gtk/svg/as-image/svg-as-relative-image-expected.png: Copied from platform/gtk/fast/images/svg-as-relative-image-expected.png.
+        * platform/gtk/svg/as-image/svg-as-relative-image-expected.txt: Copied from platform/gtk/fast/images/svg-as-relative-image-expected.txt.
+        * platform/gtk/svg/as-image/svg-as-tiled-background-expected.png: Copied from platform/gtk/fast/images/svg-as-tiled-background-expected.png.
+        * platform/gtk/svg/as-image/svg-as-tiled-background-expected.txt: Copied from platform/gtk/fast/images/svg-as-tiled-background-expected.txt.
+        * platform/gtk/svg/as-image/svg-background-partial-redraw-expected.txt: Copied from platform/gtk/fast/images/svg-background-partial-redraw-expected.txt.
+        * platform/gtk/svg/as-image/svg-width-100p-as-background-expected.png: Copied from platform/gtk/fast/images/svg-width-100p-as-background-expected.png.
+        * platform/gtk/svg/as-image/svg-width-100p-as-background-expected.txt: Copied from platform/gtk/fast/images/svg-width-100p-as-background-expected.txt.
+        * platform/mac-leopard/fast/images/animated-svg-as-image-expected.png: Removed.
+        * platform/mac-leopard/fast/images/svg-background-partial-redraw-expected.png: Removed.
+        * platform/mac-leopard/svg/as-image: Added.
+        * platform/mac-leopard/svg/as-image/animated-svg-as-image-expected.png: Copied from platform/mac-leopard/fast/images/animated-svg-as-image-expected.png.
+        * platform/mac-leopard/svg/as-image/svg-background-partial-redraw-expected.png: Copied from platform/mac-leopard/fast/images/svg-background-partial-redraw-expected.png.
+        * platform/mac/fast/images/animated-svg-as-image-expected.png: Removed.
+        * platform/mac/fast/images/animated-svg-as-image-expected.txt: Removed.
+        * platform/mac/fast/images/svg-as-background-expected.png: Removed.
+        * platform/mac/fast/images/svg-as-background-expected.txt: Removed.
+        * platform/mac/fast/images/svg-as-image-expected.png: Removed.
+        * platform/mac/fast/images/svg-as-image-expected.txt: Removed.
+        * platform/mac/fast/images/svg-as-relative-image-expected.png: Removed.
+        * platform/mac/fast/images/svg-as-relative-image-expected.txt: Removed.
+        * platform/mac/fast/images/svg-as-tiled-background-expected.png: Removed.
+        * platform/mac/fast/images/svg-as-tiled-background-expected.txt: Removed.
+        * platform/mac/fast/images/svg-background-crash-on-refresh-expected.png: Removed.
+        * platform/mac/fast/images/svg-background-crash-on-refresh-expected.txt: Removed.
+        * platform/mac/fast/images/svg-background-partial-redraw-expected.png: Removed.
+        * platform/mac/fast/images/svg-background-partial-redraw-expected.txt: Removed.
+        * platform/mac/fast/images/svg-width-100p-as-background-expected.png: Removed.
+        * platform/mac/fast/images/svg-width-100p-as-background-expected.txt: Removed.
+        * platform/mac/svg/as-image: Added.
+        * platform/mac/svg/as-image/animated-svg-as-image-expected.png: Copied from platform/mac/fast/images/animated-svg-as-image-expected.png.
+        * platform/mac/svg/as-image/animated-svg-as-image-expected.txt: Copied from platform/mac/fast/images/animated-svg-as-image-expected.txt.
+        * platform/mac/svg/as-image/svg-as-background-expected.png: Copied from platform/mac/fast/images/svg-as-background-expected.png.
+        * platform/mac/svg/as-image/svg-as-background-expected.txt: Copied from platform/mac/fast/images/svg-as-background-expected.txt.
+        * platform/mac/svg/as-image/svg-as-image-expected.png: Copied from platform/mac/fast/images/svg-as-image-expected.png.
+        * platform/mac/svg/as-image/svg-as-image-expected.txt: Copied from platform/mac/fast/images/svg-as-image-expected.txt.
+        * platform/mac/svg/as-image/svg-as-relative-image-expected.png: Copied from platform/mac/fast/images/svg-as-relative-image-expected.png.
+        * platform/mac/svg/as-image/svg-as-relative-image-expected.txt: Copied from platform/mac/fast/images/svg-as-relative-image-expected.txt.
+        * platform/mac/svg/as-image/svg-as-tiled-background-expected.png: Copied from platform/mac/fast/images/svg-as-tiled-background-expected.png.
+        * platform/mac/svg/as-image/svg-as-tiled-background-expected.txt: Copied from platform/mac/fast/images/svg-as-tiled-background-expected.txt.
+        * platform/mac/svg/as-image/svg-background-crash-on-refresh-expected.png: Copied from platform/mac/fast/images/svg-background-crash-on-refresh-expected.png.
+        * platform/mac/svg/as-image/svg-background-crash-on-refresh-expected.txt: Copied from platform/mac/fast/images/svg-background-crash-on-refresh-expected.txt.
+        * platform/mac/svg/as-image/svg-background-partial-redraw-expected.png: Copied from platform/mac/fast/images/svg-background-partial-redraw-expected.png.
+        * platform/mac/svg/as-image/svg-background-partial-redraw-expected.txt: Copied from platform/mac/fast/images/svg-background-partial-redraw-expected.txt.
+        * platform/mac/svg/as-image/svg-width-100p-as-background-expected.png: Copied from platform/mac/fast/images/svg-width-100p-as-background-expected.png.
+        * platform/mac/svg/as-image/svg-width-100p-as-background-expected.txt: Copied from platform/mac/fast/images/svg-width-100p-as-background-expected.txt.
+        * platform/qt-mac/Skipped:
+        * platform/qt-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/qt/fast/images/animated-svg-as-image-expected.txt: Removed.
+        * platform/qt/fast/images/svg-as-background-expected.txt: Removed.
+        * platform/qt/fast/images/svg-as-image-expected.txt: Removed.
+        * platform/qt/fast/images/svg-as-relative-image-expected.txt: Removed.
+        * platform/qt/fast/images/svg-as-tiled-background-expected.txt: Removed.
+        * platform/qt/fast/images/svg-background-partial-redraw-expected.png: Removed.
+        * platform/qt/fast/images/svg-background-partial-redraw-expected.txt: Removed.
+        * platform/qt/fast/images/svg-width-100p-as-background-expected.txt: Removed.
+        * platform/qt/svg/as-image: Added.
+        * platform/qt/svg/as-image/animated-svg-as-image-expected.txt: Copied from platform/qt/fast/images/animated-svg-as-image-expected.txt.
+        * platform/qt/svg/as-image/svg-as-background-expected.txt: Copied from platform/qt/fast/images/svg-as-background-expected.txt.
+        * platform/qt/svg/as-image/svg-as-image-expected.txt: Copied from platform/qt/fast/images/svg-as-image-expected.txt.
+        * platform/qt/svg/as-image/svg-as-relative-image-expected.txt: Copied from platform/qt/fast/images/svg-as-relative-image-expected.txt.
+        * platform/qt/svg/as-image/svg-as-tiled-background-expected.txt: Copied from platform/qt/fast/images/svg-as-tiled-background-expected.txt.
+        * platform/qt/svg/as-image/svg-background-partial-redraw-expected.png: Copied from platform/qt/fast/images/svg-background-partial-redraw-expected.png.
+        * platform/qt/svg/as-image/svg-background-partial-redraw-expected.txt: Copied from platform/qt/fast/images/svg-background-partial-redraw-expected.txt.
+        * platform/qt/svg/as-image/svg-width-100p-as-background-expected.txt: Copied from platform/qt/fast/images/svg-width-100p-as-background-expected.txt.
+        * svg/as-image: Added.
+        * svg/as-image/animated-svg-as-image.html: Copied from fast/images/animated-svg-as-image.html.
+        * svg/as-image/drag-svg-as-image-expected.txt: Copied from fast/images/drag-svg-as-image-expected.txt.
+        * svg/as-image/drag-svg-as-image.html: Copied from fast/images/drag-svg-as-image.html.
+        * svg/as-image/resources: Added.
+        * svg/as-image/resources/animated-rect-fixed-size.svg: Copied from fast/images/resources/animated-rect-fixed-size.svg.
+        * svg/as-image/resources/animated-rect-relative-size.svg: Copied from fast/images/resources/animated-rect-relative-size.svg.
+        * svg/as-image/resources/butterfly.svg: Copied from fast/images/resources/butterfly.svg.
+        * svg/as-image/resources/circle.svg: Copied from fast/images/resources/circle.svg.
+        * svg/as-image/resources/green-fixed-size-rect.svg: Copied from fast/images/resources/green-fixed-size-rect.svg.
+        * svg/as-image/resources/green-relative-size-rect.svg: Copied from fast/images/resources/green-relative-size-rect.svg.
+        * svg/as-image/resources/load-script.html: Copied from fast/images/resources/load-script.html.
+        * svg/as-image/resources/width-100-percent.svg: Copied from fast/images/resources/width-100-percent.svg.
+        * svg/as-image/svg-as-background.html: Copied from fast/images/svg-as-background.html.
+        * svg/as-image/svg-as-image.html: Copied from fast/images/svg-as-image.html.
+        * svg/as-image/svg-as-relative-image.html: Copied from fast/images/svg-as-relative-image.html.
+        * svg/as-image/svg-as-tiled-background.html: Copied from fast/images/svg-as-tiled-background.html.
+        * svg/as-image/svg-background-crash-on-refresh.html-disabled: Copied from fast/images/svg-background-crash-on-refresh.html-disabled.
+        * svg/as-image/svg-background-partial-redraw.html: Copied from fast/images/svg-background-partial-redraw.html.
+        * svg/as-image/svg-image-leak-loader-expected.txt: Copied from fast/images/svg-image-leak-loader-expected.txt.
+        * svg/as-image/svg-image-leak-loader.html: Copied from fast/images/svg-image-leak-loader.html.
+        * svg/as-image/svg-nested-expected.txt: Copied from fast/images/svg-nested-expected.txt.
+        * svg/as-image/svg-nested.html: Copied from fast/images/svg-nested.html.
+        * svg/as-image/svg-width-100p-as-background.html: Copied from fast/images/svg-width-100p-as-background.html.
+
+2011-06-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
         Reviewed by Rob Buis.
 
         SVG fails all 3 of Hixie's CSS intrinsic sizing tests
