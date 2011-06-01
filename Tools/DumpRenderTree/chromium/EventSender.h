@@ -62,6 +62,9 @@ public:
     // Simulate drag&drop system call.
     void doDragDrop(const WebKit::WebDragData&, WebKit::WebDragOperationsMask);
 
+    // Test helper for dragging out images.
+    void dumpFilenameBeingDragged(const CppArgumentList&, CppVariant*);
+
     // JS callback methods.
     void mouseDown(const CppArgumentList&, CppVariant*);
     void mouseUp(const CppArgumentList&, CppVariant*);

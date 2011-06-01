@@ -224,19 +224,25 @@ static void writeImageToDataObject(ChromiumDataObject* dataObject, Element* elem
 
     dataObject->setFileContent(imageBuffer);
 
-    // Determine the filename for the file contents of the image.  We try to
-    // use the alt tag if one exists, otherwise we fall back on the suggested
-    // filename in the http header, and finally we resort to using the filename
-    // in the URL.
+    // Determine the filename for the file contents of the image.
+    String filename = cachedImage->response().suggestedFilename();
+    if (filename.isEmpty())
+        filename = url.lastPathComponent();
+    if (filename.isEmpty())
+        filename = element->getAttribute(altAttr);
+    else {
+        // Strip any existing extension. Assume that alt text is usually not a filename.
+        int extensionIndex = filename.reverseFind('.');
+        if (extensionIndex != -1)
+            filename.truncate(extensionIndex);
+    }
+    filename = ClipboardChromium::validateFileName(filename, dataObject);
+
     String extension = MIMETypeRegistry::getPreferredExtensionForMIMEType(
         cachedImage->response().mimeType());
     dataObject->setFileExtension(extension.isEmpty() ? emptyString() : "." + extension);
-    String title = element->getAttribute(altAttr);
-    if (title.isEmpty())
-        title = cachedImage->response().suggestedFilename();
 
-    title = ClipboardChromium::validateFileName(title, dataObject);
-    dataObject->setFileContentFilename(title + dataObject->fileExtension());
+    dataObject->setFileContentFilename(filename + dataObject->fileExtension());
 }
 
 void ClipboardChromium::declareAndWriteDragImage(Element* element, const KURL& url, const String& title, Frame* frame)

@@ -1,3 +1,24 @@
+2011-06-01  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Use correct file name for dragging out images.
+        https://bugs.webkit.org/show_bug.cgi?id=24887
+
+        We try to guess an appropriate filename when dragging out images. In order, we try to use:
+        - The filename suggested in the HTTP header.
+        - The last path component of the source URL.
+        - The alt text.
+        This matches the behavior of the other WebKit ports.
+
+        Test: fast/events/drag-image-filename.html
+
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::writeImageToDataObject):
+        * platform/chromium/ClipboardChromiumMac.cpp:
+        (WebCore::isInvalidFileCharacter):
+        (WebCore::ClipboardChromium::validateFileName):
+
 2011-06-01  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.
@@ -649,7 +670,6 @@
         * platform/graphics/gpu/LoopBlinnMathUtils.cpp:
         * platform/graphics/gpu/TilingData.cpp:
 
-<<<<<<< .mine
 2011-05-31  Justin Novosad  <junov@chromium.org>
 
         Reviewed by Stephen White.
@@ -662,7 +682,6 @@
         * platform/graphics/gpu/LoopBlinnMathUtils.cpp:
         * platform/graphics/gpu/TilingData.cpp:
 
-=======
 2011-05-31  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Dirk Schulze.

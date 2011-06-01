@@ -1148,6 +1148,10 @@ http/tests/xmlhttprequest/remember-bad-password.html
 fast/css/user-drag-none.html
 fast/events/5056619.html
 
+# EventSender::dumpFilenameBeingDragged not implemented.
+# https://bugs.webkit.org/show_bug.cgi?id=61826
+fast/events/drag-image-filename.html
+
 # Tests that fail because they assume a certain number of mouse
 # movements during drags or fail only in Xvfb
 http/tests/local/drag-over-remote-content.html

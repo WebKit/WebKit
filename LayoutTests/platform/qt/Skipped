@@ -172,6 +172,10 @@ fast/css/user-drag-none.html
 svg/as-image/drag-svg-as-image.html
 fast/forms/slider-delete-while-dragging-thumb.html
 
+# EventSender::dumpFilenameBeingDragged not implemented.
+# https://bugs.webkit.org/show_bug.cgi?id=61828
+fast/events/drag-image-filename.html
+
 # ------- missing drag-and-drop support
 # See bug https://bugs.webkit.org/show_bug.cgi?id=31332
 fast/events/drag-parent-node.html

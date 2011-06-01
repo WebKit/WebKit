@@ -126,6 +126,10 @@ fast/events/drag-in-frames.html
 fast/events/standalone-image-drag-to-editable.html
 http/tests/security/drag-drop-same-unique-origin.html
 
+# EventSender::dumpFilenameBeingDragged not implemented.
+# https://bugs.webkit.org/show_bug.cgi?id=61829
+fast/events/drag-image-filename.html
+
 # <rdar://problem/5643675> window.scrollTo scrolls a window with no scrollbars
 fast/events/attempt-scroll-with-no-scrollbars.html
 

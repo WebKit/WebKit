@@ -1,3 +1,15 @@
+2011-06-01  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Use correct file name for dragging out images.
+        https://bugs.webkit.org/show_bug.cgi?id=24887
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::EventSender):
+        (EventSender::dumpFilenameBeingDragged):
+        * DumpRenderTree/chromium/EventSender.h:
+
 2011-06-01  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

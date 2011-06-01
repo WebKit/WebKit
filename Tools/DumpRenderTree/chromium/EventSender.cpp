@@ -259,6 +259,7 @@ EventSender::EventSender(TestShell* shell)
     bindMethod("contextClick", &EventSender::contextClick);
     bindMethod("continuousMouseScrollBy", &EventSender::continuousMouseScrollBy);
     bindMethod("dispatchMessage", &EventSender::dispatchMessage);
+    bindMethod("dumpFilenameBeingDragged", &EventSender::dumpFilenameBeingDragged);
     bindMethod("enableDOMUIEventLogging", &EventSender::enableDOMUIEventLogging);
     bindMethod("fireKeyboardEventsToElement", &EventSender::fireKeyboardEventsToElement);
     bindMethod("keyDown", &EventSender::keyDown);
@@ -342,6 +343,11 @@ void EventSender::doDragDrop(const WebDragData& dragData, WebDragOperationsMask 
 
     // Finish processing events.
     replaySavedEvents();
+}
+
+void EventSender::dumpFilenameBeingDragged(const CppArgumentList&, CppVariant*)
+{
+    printf("Filename being dragged: %s\n", currentDragData.fileContentFilename().utf8().data());
 }
 
 WebMouseEvent::Button EventSender::getButtonTypeFromButtonNumber(int buttonCode)
