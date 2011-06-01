@@ -1,3 +1,21 @@
+2011-06-01  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Page layout messed up after exiting full screen at Apple trailers page
+        https://bugs.webkit.org/show_bug.cgi?id=61755
+        <rdar://problem/9525277>
+
+        Test: fullscreen/full-screen-zIndex-after.html
+
+        Fix the incomplete implementation of r87660. Make parameters to
+        setContainsFullScreenElementRecursively() in webkitWillExitFullScreenForElement() match those
+        in webkitWillEnterFullScreenForElement(), so the ancestors' flags do not become
+        inconsistent..
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitWillExitFullScreenForElement):
+
 2011-06-01  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

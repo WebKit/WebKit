@@ -1,3 +1,14 @@
+2011-06-01  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Page layout messed up after exiting full screen at Apple trailers page
+        https://bugs.webkit.org/show_bug.cgi?id=61755
+
+        * fullscreen/full-screen-zIndex-after-expected.txt: Added.
+        * fullscreen/full-screen-zIndex-after.html: Added.
+        * platform/mac/fullscreen/full-screen-zIndex-after-expected.png: Added.
+
 2011-06-01  Adam Barth  <abarth@webkit.org>
 
         Image baselines for this test.  More to follow once the bots catch up.
