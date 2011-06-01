@@ -1,3 +1,25 @@
+2011-06-01  Cary Clark  <caryclark@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Ready Chromium port for Skia on Mac
+        https://bugs.webkit.org/show_bug.cgi?id=61800
+
+        Skia on Mac is not enabled. The executing
+        code is unchanged, so there are no new tests.
+
+        * platform/chromium/DragImageRef.h:
+        Use Skia for DragImageRef instead of CG.
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+        Get the total matrix from Skia for the scrollbar.
+        Convert the SkCanvas into a CGContext to draw.
+
+        * platform/chromium/ThemeChromiumMac.mm:
+        (WebCore::paintStepper):
+        Ditto.
+
 2011-06-01  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

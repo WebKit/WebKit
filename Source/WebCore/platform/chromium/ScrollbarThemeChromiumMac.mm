@@ -36,6 +36,10 @@
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
 
+#if USE(SKIA)
+#include "PlatformContextSkia.h"
+#include "skia/ext/skia_utils_mac.h"
+#endif
 
 // FIXME: There are repainting problems due to Aqua scroll bar buttons' visual overflow.
 
@@ -404,7 +408,12 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
         trackInfo.enableState = kThemeTrackNothingToScroll;
     trackInfo.trackInfo.scrollbar.pressState = scrollbarPartToHIPressedState(scrollbar->pressedPart());
 
+#if USE(SKIA)
+    SkCanvas* canvas = context->platformContext()->canvas();
+    CGAffineTransform currentCTM = gfx::SkMatrixToCGAffineTransform(canvas->getTotalMatrix());
+#else
     CGAffineTransform currentCTM = CGContextGetCTM(context->platformContext());
+#endif
 
     // The Aqua scrollbar is buggy when rotated and scaled.  We will just draw into a bitmap if we detect a scale or rotation.
     bool canDrawDirectly = currentCTM.a == 1.0f && currentCTM.b == 0.0f && currentCTM.c == 0.0f && (currentCTM.d == 1.0f || currentCTM.d == -1.0f);
@@ -425,7 +434,13 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
     }
 
     // Draw thumbless.
-    HIThemeDrawTrack(&trackInfo, 0, drawingContext->platformContext(), kHIThemeOrientationNormal);
+#if USE(SKIA)
+    gfx::SkiaBitLocker bitLocker(drawingContext->platformContext()->canvas());
+    CGContextRef cgContext = bitLocker.cgContext();
+#else
+    CGContextRef cgContext = drawingContext->platformContext();
+#endif
+    HIThemeDrawTrack(&trackInfo, 0, cgContext, kHIThemeOrientationNormal);
 
     Vector<IntRect> tickmarks;
     scrollbar->scrollableArea()->getTickmarks(tickmarks);
