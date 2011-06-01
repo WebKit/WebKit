@@ -45,6 +45,8 @@ public:
 
 #if PLATFORM(MAC)
     uint32_t contextID;
+#elif PLATFORM(WIN)
+    HWND window;
 #endif
 };
 

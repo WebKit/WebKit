@@ -280,6 +280,10 @@ private:
 #if ENABLE(FULLSCREEN_API)
     OwnPtr<WebCore::FullScreenController> m_fullScreenController;
 #endif
+
+#if USE(ACCELERATED_COMPOSITING)
+    HWND m_layerHostWindow;
+#endif
 };
 
 } // namespace WebKit

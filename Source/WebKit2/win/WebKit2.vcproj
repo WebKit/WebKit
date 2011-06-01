@@ -2047,6 +2047,14 @@
 							RelativePath="..\WebProcess\WebPage\ca\win\LayerTreeHostCAWin.h"
 							>
 						</File>
+						<File
+							RelativePath="..\WebProcess\WebPage\ca\win\WKCACFViewWindow.cpp"
+							>
+						</File>
+						<File
+							RelativePath="..\WebProcess\WebPage\ca\win\WKCACFViewWindow.h"
+							>
+						</File>
 					</Filter>
 				</Filter>
 			</Filter>

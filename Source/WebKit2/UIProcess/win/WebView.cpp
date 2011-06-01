@@ -35,6 +35,7 @@
 #include "Region.h"
 #include "RunLoop.h"
 #include "WKAPICast.h"
+#include "WKCACFViewWindow.h"
 #include "WebContext.h"
 #include "WebContextMenuProxyWin.h"
 #include "WebEditCommandProxy.h"
@@ -276,6 +277,9 @@ WebView::WebView(RECT rect, WebContext* context, WebPageGroup* pageGroup, HWND p
     , m_lastPanY(0)
     , m_overPanY(0)
     , m_gestureReachedScrollingLimit(false)
+#if USE(ACCELERATED_COMPOSITING)
+    , m_layerHostWindow(0)
+#endif
 {
     registerWebViewWindowClass();
 
@@ -728,6 +732,11 @@ LRESULT WebView::onSizeEvent(HWND, UINT, WPARAM, LPARAM lParam, bool& handled)
         m_page->drawingArea()->setSize(IntSize(width, height), m_nextResizeScrollOffset);
         m_nextResizeScrollOffset = IntSize();
     }
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_layerHostWindow)
+        ::MoveWindow(m_layerHostWindow, 0, 0, width, height, FALSE);
+#endif
 
     handled = true;
     return 0;
@@ -1509,16 +1518,25 @@ void WebView::setIsVisible(bool isVisible)
 
 #if USE(ACCELERATED_COMPOSITING)
 
-void WebView::enterAcceleratedCompositingMode(const LayerTreeContext&)
+void WebView::enterAcceleratedCompositingMode(const LayerTreeContext& context)
 {
-    // FIXME: Implement.
-    ASSERT_NOT_REACHED();
+    ASSERT(!context.isEmpty());
+
+    m_layerHostWindow = context.window;
+
+    IntSize size = viewSize();
+    // Ensure the layer host window is behind all other child windows (since otherwise it would obscure them).
+    ::SetWindowPos(m_layerHostWindow, HWND_BOTTOM, 0, 0, size.width(), size.height(), SWP_SHOWWINDOW | SWP_NOACTIVATE);
 }
 
 void WebView::exitAcceleratedCompositingMode()
 {
-    // FIXME: Implement.
-    ASSERT_NOT_REACHED();
+    ASSERT(m_layerHostWindow);
+
+    // Tell the WKCACFViewWindow to destroy itself. We can't call ::DestroyWindow directly because
+    // the window is owned by another thread.
+    ::PostMessageW(m_layerHostWindow, WKCACFViewWindow::customDestroyMessage, 0, 0);
+    m_layerHostWindow = 0;
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)
@@ -1535,7 +1553,7 @@ void WebView::scheduleChildWindowGeometryUpdate(const WindowGeometry& geometry)
 
 void WebView::updateChildWindowGeometries()
 {
-    m_geometriesUpdater.updateGeometries();
+    m_geometriesUpdater.updateGeometries(DoNotBringToTop);
 }
 
 // WebCore::WindowMessageListener

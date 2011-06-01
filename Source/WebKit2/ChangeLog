@@ -1,5 +1,106 @@
 2011-06-01  Adam Roben  <aroben@apple.com>
 
+        Render accelerated content into a web process-owned child HWND
+
+        This allows us to use WKCACFView's far more efficient kWKCACFViewDrawingDestinationWindow
+        mode, which gives us asynchronous rendering on a background thread and doesn't require us to
+        read bits off the GPU back into system memory.
+
+        A new class, WKCACFViewWindow, represents the child HWND. The child HWND is placed at the
+        bottom of the z-order so it won't obscure any other child HWNDs (i.e., windowed plugins).
+        The child HWND is made transparent to mouse events so that WKView will continue to receive
+        mouse events even though it is obscured by the child HWND.
+
+        There is now a bunch of dead code in DrawingAreaImpl to handle our old rendering model. I'll
+        remove that in a future patch.
+
+        Fixes <http://webkit.org/b/58054> <rdar://problem/9249839> REGRESSION (WebKit2): Accelerated
+        CSS animations have a lower framerate than in WebKit1
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/LayerTreeContext.h: Added HWND member on Windows.
+
+        * Shared/win/CoalescedWindowGeometriesUpdater.cpp:
+        (WebKit::CoalescedWindowGeometriesUpdater::updateGeometries):
+        * Shared/win/CoalescedWindowGeometriesUpdater.h:
+        Added new BringToTopOrNot argument. Allows the caller to specify that all windows being
+        updated should also be brought to the top of the z-order.
+
+        * Shared/win/LayerTreeContextWin.cpp:
+        (WebKit::LayerTreeContext::LayerTreeContext):
+        (WebKit::LayerTreeContext::~LayerTreeContext):
+        (WebKit::LayerTreeContext::encode):
+        (WebKit::LayerTreeContext::decode):
+        (WebKit::LayerTreeContext::isEmpty):
+        (WebKit::operator==):
+        Implemented based on new window member.
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::WebView): Initialize new member.
+        (WebKit::WebView::onSizeEvent): Resize the layer host window to cover our entire view, if we
+        have one.
+        (WebKit::WebView::enterAcceleratedCompositingMode): Store, position, and show the layer host
+        window.
+        (WebKit::WebView::exitAcceleratedCompositingMode): Destroy the layer host window.
+        (WebKit::WebView::updateChildWindowGeometries): Updated for change to
+        CoalescedWindowGeometriesUpdater.
+
+        * UIProcess/win/WebView.h: Added m_layerHostWindow member.
+
+        * WebProcess/WebPage/LayerTreeHost.h: Added scheduleChildWindowGeometryUpdate.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.cpp:
+        (WebKit::LayerTreeHostCAWin::supportsAcceleratedCompositing): Simplified by using
+        WKCACFViewWindow.
+
+        (WebKit::LayerTreeHostCAWin::LayerTreeHostCAWin): Removed initialization of a removed
+        member.
+        (WebKit::LayerTreeHostCAWin::platformInitialize): Changed to use WKCACFViewWindow,
+        kWKCACFViewDrawingDestinationWindow, and to initialize the LayerTreeContext.
+        (WebKit::LayerTreeHostCAWin::invalidate): Leak our window and tell it to clean up after
+        itself. The UI process will take care of destroying the window when it finishes switching
+        out of accelerated compositing mode. Removed a WKCACFViewUpdate call that is now handled by
+        WKCACFViewWindow.
+        (WebKit::LayerTreeHostCAWin::scheduleChildWindowGeometryUpdate): Added. Calls through to
+        m_geometriesUpdater.
+        (WebKit::LayerTreeHostCAWin::sizeDidChange): Updated to use WKCACFViewWindow.
+        (WebKit::LayerTreeHostCAWin::contextDidChange): Update child window geometries now to keep
+        them (almost) in sync with the accelerated content. <http://webkit.org/b/61867> covers the
+        slight asynchrony that still exists.
+        (WebKit::LayerTreeHostCAWin::setRootCompositingLayer): Don't flush any changes when we don't
+        have a root layer. This prevents a flash of white when switching out of compositing mode.
+
+        * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.h: Added m_window and m_geometriesUpdater.
+        Removed code related to the old, synchronous display model.
+
+        * WebProcess/WebPage/ca/win/WKCACFViewWindow.cpp: Added.
+        (WebKit::WKCACFViewWindow::WKCACFViewWindow): Initialize members and create our window.
+        (WebKit::WKCACFViewWindow::~WKCACFViewWindow): Destroy our window if needed.
+        (WebKit::WKCACFViewWindow::onCustomDestroy): Just call ::DestroyWindow.
+        (WebKit::WKCACFViewWindow::onDestroy): Tell our view not to render into our window anymore.
+        (WebKit::WKCACFViewWindow::onEraseBackground): Tell Windows not to erase us.
+        (WebKit::WKCACFViewWindow::onNCDestroy): Clear out m_window since it's now pointing to a
+        destroy window, and destroy ourselves if requested.
+        (WebKit::WKCACFViewWindow::onPaint): Tell the view to draw, then clear our invalid region.
+        (WebKit::WKCACFViewWindow::onPrintClient): Tell our view to draw into the given HDC.
+        (WebKit::WKCACFViewWindow::registerClass): Register our class (duh).
+        (WebKit::WKCACFViewWindow::staticWndProc): Get the WKCACFViewWindow pointer, or store the
+        pointer if needed, then call through to wndProc.
+        (WebKit::WKCACFViewWindow::wndProc): Call out to the appropriate handler function.
+
+        * WebProcess/WebPage/ca/win/WKCACFViewWindow.h: Added.
+        (WebKit::WKCACFViewWindow::setDeletesSelfWhenWindowDestroyed): Simple setter.
+        (WebKit::WKCACFViewWindow::window): Simple getter.
+
+        * WebProcess/WebPage/win/DrawingAreaImplWin.cpp:
+        (WebKit::DrawingAreaImpl::scheduleChildWindowGeometryUpdate): Let the LayerTreeHost handle
+        the geometry update, if we have one.
+
+        * win/WebKit2.vcproj: Added WKCACFViewWindow files.
+
+2011-06-01  Adam Roben  <aroben@apple.com>
+
         Route plugin window geometry updates through the DrawingArea
 
         This will allow the geometry updates to be handled by the LayerTreeHost in compositing mode

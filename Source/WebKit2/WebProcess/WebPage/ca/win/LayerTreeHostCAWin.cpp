@@ -31,8 +31,8 @@
 #include "DrawingAreaImpl.h"
 #include "ShareableBitmap.h"
 #include "UpdateInfo.h"
+#include "WKCACFViewWindow.h"
 #include "WebPage.h"
-#include <WebCore/DefWndProcWindowClass.h>
 #include <WebCore/GraphicsLayerCA.h>
 #include <WebCore/LayerChangesFlusher.h>
 #include <WebCore/PlatformCALayer.h>
@@ -52,15 +52,6 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static HWND dummyWindow;
-static size_t validLayerTreeHostCount;
-
-// This window is never shown. It is only needed so that D3D can determine the display mode, etc.
-static HWND createDummyWindow()
-{
-    return ::CreateWindowW(defWndProcWindowClassName(), 0, WS_POPUP, 0, 0, 10, 10, 0, 0, instanceHandle(), 0);
-}
-
 bool LayerTreeHostCAWin::supportsAcceleratedCompositing()
 {
     static bool initialized;
@@ -69,17 +60,14 @@ bool LayerTreeHostCAWin::supportsAcceleratedCompositing()
         return supportsAcceleratedCompositing;
     initialized = true;
 
-    ASSERT(!dummyWindow);
-    dummyWindow = createDummyWindow();
-    RetainPtr<WKCACFViewRef> view(AdoptCF, WKCACFViewCreate(kWKCACFViewDrawingDestinationImage));
+    RetainPtr<WKCACFViewRef> view(AdoptCF, WKCACFViewCreate(kWKCACFViewDrawingDestinationWindow));
+    WKCACFViewWindow dummyWindow(view.get(), 0, 0);
     CGRect fakeBounds = CGRectMake(0, 0, 10, 10);
-    WKCACFViewUpdate(view.get(), dummyWindow, &fakeBounds);
+    WKCACFViewUpdate(view.get(), dummyWindow.window(), &fakeBounds);
 
     supportsAcceleratedCompositing = WKCACFViewCanDraw(view.get());
 
     WKCACFViewUpdate(view.get(), 0, 0);
-    ::DestroyWindow(dummyWindow);
-    dummyWindow = 0;
 
     return supportsAcceleratedCompositing;
 }
@@ -94,7 +82,6 @@ PassRefPtr<LayerTreeHostCAWin> LayerTreeHostCAWin::create(WebPage* webPage)
 LayerTreeHostCAWin::LayerTreeHostCAWin(WebPage* webPage)
     : LayerTreeHostCA(webPage)
     , m_isFlushingLayerChanges(false)
-    , m_nextDisplayTime(0)
 {
 }
 
@@ -102,36 +89,43 @@ LayerTreeHostCAWin::~LayerTreeHostCAWin()
 {
 }
 
-void LayerTreeHostCAWin::platformInitialize(LayerTreeContext&)
+void LayerTreeHostCAWin::platformInitialize(LayerTreeContext& context)
 {
-    ++validLayerTreeHostCount;
-    if (!dummyWindow)
-        dummyWindow = createDummyWindow();
-
-    m_view.adoptCF(WKCACFViewCreate(kWKCACFViewDrawingDestinationImage));
+    m_view.adoptCF(WKCACFViewCreate(kWKCACFViewDrawingDestinationWindow));
     WKCACFViewSetContextUserData(m_view.get(), static_cast<AbstractCACFLayerTreeHost*>(this));
     WKCACFViewSetLayer(m_view.get(), rootLayer()->platformLayer());
     WKCACFViewSetContextDidChangeCallback(m_view.get(), contextDidChangeCallback, this);
 
+    // Passing WS_DISABLED makes the window invisible to mouse events, which lets WKView's normal
+    // event handling mechanism work even when this window is obscuring the entire WKView HWND.
+    // Note that m_webPage->nativeWindow() is owned by the UI process, so this creates a cross-
+    // process window hierarchy (and thus implicitly attaches the input queues of the UI and web
+    // processes' main threads).
+    m_window = adoptPtr(new WKCACFViewWindow(m_view.get(), m_webPage->nativeWindow(), WS_DISABLED));
+
     CGRect bounds = m_webPage->bounds();
-    WKCACFViewUpdate(m_view.get(), dummyWindow, &bounds);
+    WKCACFViewUpdate(m_view.get(), m_window->window(), &bounds);
+
+    context.window = m_window->window();
 }
 
 void LayerTreeHostCAWin::invalidate()
 {
     LayerChangesFlusher::shared().cancelPendingFlush(this);
 
-    WKCACFViewUpdate(m_view.get(), 0, 0);
     WKCACFViewSetContextUserData(m_view.get(), 0);
     WKCACFViewSetLayer(m_view.get(), 0);
     WKCACFViewSetContextDidChangeCallback(m_view.get(), 0, 0);
 
-    LayerTreeHostCA::invalidate();
+    // The UI process will destroy m_window's HWND when it gets the message to switch out of
+    // accelerated compositing mode. We don't want to destroy the HWND before then or we will get a
+    // flash of white before the UI process has a chance to display the non-composited content.
+    // Since the HWND needs to outlive us, we leak m_window here and tell it to clean itself up
+    // when its HWND is destroyed.
+    WKCACFViewWindow* window = m_window.leakPtr();
+    window->setDeletesSelfWhenWindowDestroyed(true);
 
-    if (--validLayerTreeHostCount)
-        return;
-    ::DestroyWindow(dummyWindow);
-    dummyWindow = 0;
+    LayerTreeHostCA::invalidate();
 }
 
 void LayerTreeHostCAWin::scheduleLayerFlush()
@@ -155,65 +149,16 @@ void LayerTreeHostCAWin::setLayerFlushSchedulingEnabled(bool layerFlushingEnable
     LayerChangesFlusher::shared().cancelPendingFlush(this);
 }
 
-bool LayerTreeHostCAWin::participatesInDisplay()
+void LayerTreeHostCAWin::scheduleChildWindowGeometryUpdate(const WindowGeometry& geometry)
 {
-    return true;
-}
-
-bool LayerTreeHostCAWin::needsDisplay()
-{
-    return timeUntilNextDisplay() <= 0;
-}
-
-double LayerTreeHostCAWin::timeUntilNextDisplay()
-{
-    return m_nextDisplayTime - currentTime();
-}
-
-static IntSize size(WKCACFImageRef image)
-{
-    return IntSize(WKCACFImageGetWidth(image), WKCACFImageGetHeight(image));
-}
-
-static PassRefPtr<ShareableBitmap> toShareableBitmap(WKCACFImageRef image)
-{
-    size_t fileMappingSize;
-    HANDLE mapping = WKCACFImageCopyFileMapping(image, &fileMappingSize);
-    if (!mapping)
-        return 0;
-
-    RefPtr<SharedMemory> sharedMemory = SharedMemory::adopt(mapping, fileMappingSize, SharedMemory::ReadWrite);
-    if (!sharedMemory) {
-        ::CloseHandle(mapping);
-        return 0;
-    }
-
-    // WKCACFImage never has an alpha channel.
-    return ShareableBitmap::create(size(image), 0, sharedMemory.release());
-}
-
-void LayerTreeHostCAWin::display(UpdateInfo& updateInfo)
-{
-    CGPoint imageOrigin;
-    CFTimeInterval nextDrawTime;
-    RetainPtr<WKCACFImageRef> image(AdoptCF, WKCACFViewCopyDrawnImage(m_view.get(), &imageOrigin, &nextDrawTime));
-    m_nextDisplayTime = nextDrawTime - CACurrentMediaTime() + currentTime();
-    if (!image)
-        return;
-    RefPtr<ShareableBitmap> bitmap = toShareableBitmap(image.get());
-    if (!bitmap)
-        return;
-    if (!bitmap->createHandle(updateInfo.bitmapHandle))
-        return;
-    updateInfo.updateRectBounds = IntRect(IntPoint(imageOrigin.x, m_webPage->size().height() - imageOrigin.y - bitmap->size().height()), bitmap->size());
-    updateInfo.updateRects.append(updateInfo.updateRectBounds);
+    m_geometriesUpdater.addPendingUpdate(geometry);
 }
 
 void LayerTreeHostCAWin::sizeDidChange(const IntSize& newSize)
 {
     LayerTreeHostCA::sizeDidChange(newSize);
     CGRect bounds = CGRectMake(0, 0, newSize.width(), newSize.height());
-    WKCACFViewUpdate(m_view.get(), dummyWindow, &bounds);
+    WKCACFViewUpdate(m_view.get(), m_window->window(), &bounds);
     WKCACFViewFlushContext(m_view.get());
 }
 
@@ -249,8 +194,11 @@ void LayerTreeHostCAWin::contextDidChange()
 
     m_pendingAnimatedLayers.clear();
 
-    m_nextDisplayTime = 0;
-    static_cast<DrawingAreaImpl*>(m_webPage->drawingArea())->setLayerHostNeedsDisplay();
+    // Update child window geometries now so that they stay mostly in sync with the accelerated content.
+    // FIXME: We should really be doing this when the changes we just flushed appear on screen. <http://webkit.org/b/61867>
+    // We also bring the child windows (i.e., plugins) to the top of the z-order to ensure they are above m_window.
+    // FIXME: We could do this just once per window when it is first shown. Maybe that would be more efficient?
+    m_geometriesUpdater.updateGeometries(BringToTop);
 }
 
 PlatformCALayer* LayerTreeHostCAWin::rootLayer() const
@@ -295,7 +243,11 @@ void LayerTreeHostCAWin::flushPendingLayerChangesNow()
 }
 
 void LayerTreeHostCAWin::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
-{    
+{
+    // Don't flush any changes when we don't have a root layer. This will prevent flashes of white
+    // when switching out of compositing mode.
+    setLayerFlushSchedulingEnabled(graphicsLayer);
+
     // Resubmit all existing animations. CACF does not remember running animations
     // When the layer tree is removed and then added back to the hierarchy
     if (graphicsLayer)

@@ -30,6 +30,7 @@
 
 #if HAVE(WKQCA)
 
+#include "CoalescedWindowGeometriesUpdater.h"
 #include "LayerTreeHostCA.h"
 #include <WebCore/AbstractCACFLayerTreeHost.h>
 #include <wtf/HashSet.h>
@@ -38,6 +39,8 @@
 typedef struct _WKCACFView* WKCACFViewRef;
 
 namespace WebKit {
+
+class WKCACFViewWindow;
 
 class LayerTreeHostCAWin : public LayerTreeHostCA, private WebCore::AbstractCACFLayerTreeHost {
 public:
@@ -58,10 +61,7 @@ private:
     virtual void sizeDidChange(const WebCore::IntSize& newSize);
     virtual void scheduleLayerFlush();
     virtual void setLayerFlushSchedulingEnabled(bool);
-    virtual bool participatesInDisplay();
-    virtual bool needsDisplay();
-    virtual double timeUntilNextDisplay();
-    virtual void display(UpdateInfo&);
+    virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&);
 
     // LayerTreeHostCA
     virtual void platformInitialize(LayerTreeContext&);
@@ -73,10 +73,11 @@ private:
     virtual void layerTreeDidChange();
     virtual void flushPendingLayerChangesNow();
 
+    OwnPtr<WKCACFViewWindow> m_window;
     RetainPtr<WKCACFViewRef> m_view;
     HashSet<RefPtr<WebCore::PlatformCALayer> > m_pendingAnimatedLayers;
     bool m_isFlushingLayerChanges;
-    double m_nextDisplayTime;
+    CoalescedWindowGeometriesUpdater m_geometriesUpdater;
 };
 
 } // namespace WebKit

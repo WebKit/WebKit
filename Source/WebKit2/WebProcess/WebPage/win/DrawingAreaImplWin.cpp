@@ -34,6 +34,13 @@ namespace WebKit {
 
 void DrawingAreaImpl::scheduleChildWindowGeometryUpdate(const WindowGeometry& geometry)
 {
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_layerTreeHost) {
+        m_layerTreeHost->scheduleChildWindowGeometryUpdate(geometry);
+        return;
+    }
+#endif
+
     // FIXME: This should be a Messages::DrawingAreaProxy, and DrawingAreaProxy should pass the
     // data off to the WebPageProxy.
     m_webPage->send(Messages::WebPageProxy::ScheduleChildWindowGeometryUpdate(geometry));
