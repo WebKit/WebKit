@@ -84,7 +84,6 @@ public:
 
     bool isEmpty() const { return !size(); }
 
-    void append(SharedBuffer*);
     void append(const char*, unsigned);
     void clear();
     const char* platformData() const;
