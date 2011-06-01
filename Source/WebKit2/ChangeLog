@@ -1,3 +1,19 @@
+2011-05-31  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Flash of black at the end of full screen transition at apple.com product videos
+        https://bugs.webkit.org/show_bug.cgi?id=61756
+
+        The @"WebKitLayerHostChanged" notification is causing the QTMovie to tear down its layer
+        (which is good) at the wrong time (which is bad).  Send this notification only after 
+        the dragImage snapshot is taken.  This exposed another problem, that the snapshot has
+        a white background.  Set the default background color and transparency for the view (making
+        sure to reset them afterwards) to transparent.
+
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::setRootFullScreenLayer):
+
 2011-03-30  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Adam Roben.
