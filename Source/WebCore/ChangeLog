@@ -1,3 +1,23 @@
+2011-06-01  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintOverflowControls to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=61884
+
+        Switching paintOverflowControls to use an IntPoint instead of a pair of ints.
+
+        No new tests since this is simple refactoring.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::RenderLayer::paintLayer):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintIntoLayer):
+
 2011-06-01  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Alexey Proskuryakov.

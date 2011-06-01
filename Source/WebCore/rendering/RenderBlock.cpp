@@ -2268,7 +2268,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
     // z-index.  We paint after we painted the background/border, so that the scrollbars will
     // sit above the background/border.
     if (hasOverflowClip() && style()->visibility() == VISIBLE && (phase == PaintPhaseBlockBackground || phase == PaintPhaseChildBlockBackground) && paintInfo.shouldPaintWithinRoot(this))
-        layer()->paintOverflowControls(paintInfo.context, tx, ty, paintInfo.rect);
+        layer()->paintOverflowControls(paintInfo.context, IntPoint(tx, ty), paintInfo.rect);
 }
 
 void RenderBlock::paintColumnRules(PaintInfo& paintInfo, int tx, int ty)

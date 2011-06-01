@@ -1100,11 +1100,9 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     // Calculate the clip rects we should use.
     IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
     m_owningLayer->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
-    
-    int x = layerBounds.x();        // layerBounds is computed relative to rootLayer
-    int y = layerBounds.y();
-    int tx = x - m_owningLayer->renderBoxX();
-    int ty = y - m_owningLayer->renderBoxY();
+
+    int tx = layerBounds.x() - m_owningLayer->renderBoxX();
+    int ty = layerBounds.y() - m_owningLayer->renderBoxY();
 
     // If this layer's renderer is a child of the paintingRoot, we render unconditionally, which
     // is done by passing a nil paintingRoot down to our renderer (as if no paintingRoot was ever set).
@@ -1127,7 +1125,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
         // z-index.  We paint after we painted the background/border, so that the scrollbars will
         // sit above the background/border.
-        m_owningLayer->paintOverflowControls(context, x, y, damageRect);
+        m_owningLayer->paintOverflowControls(context, layerBounds.location(), damageRect);
         
         // Restore the clip.
         restoreClip(context, paintDirtyRect, damageRect);
