@@ -1,5 +1,44 @@
 2011-06-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed, added new baselines for GTK after r87526.
+
+        * platform/gtk/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png: Added.
+        * platform/gtk/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.txt: Added.
+        * platform/gtk/svg/custom/object-no-size-attributes-expected.png: Added.
+        * platform/gtk/svg/custom/object-no-size-attributes-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-explicit-height-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-explicit-height-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-explicit-width-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-explicit-width-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-explicit-width-height-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-explicit-width-height-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-no-width-height-change-content-box-size-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-no-width-height-change-content-box-size-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-no-width-height-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-no-width-height-expected.txt: Added.
+        * platform/gtk/svg/wicd/rightsizing-grid-expected.png: Added.
+        * platform/gtk/svg/wicd/rightsizing-grid-expected.txt: Added.
+        * platform/gtk/svg/wicd/test-rightsizing-a-expected.png: Added.
+        * platform/gtk/svg/wicd/test-rightsizing-a-expected.txt: Added.
+        * platform/gtk/svg/wicd/test-rightsizing-b-expected.png: Added.
+        * platform/gtk/svg/wicd/test-rightsizing-b-expected.txt: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.png: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-huge-size-expected.txt: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.png: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-override-size-expected.txt: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.png: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-percentage-size-expected.txt: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-text-expected.png: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-text-expected.txt: Added.
+
+2011-06-01  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Unreviewed, added new baseline for GTK after r87387.
 
         * platform/gtk/fast/borders/border-antialiasing-expected.txt: Added.
