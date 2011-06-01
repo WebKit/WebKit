@@ -1,3 +1,14 @@
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
+        Add new results for this new test.  Our results are different by one
+        pixel.  Mac results likely to follow once those bots catch up.
+
+        * platform/chromium-linux-x86/svg/as-image: Added.
+        * platform/chromium-linux-x86/svg/as-image/svg-as-background-with-viewBox-expected.txt: Added.
+        * platform/chromium-linux/svg/as-image/svg-as-background-with-viewBox-expected.txt: Added.
+        * platform/chromium-win-vista/svg/as-image: Added.
+        * platform/chromium-win-vista/svg/as-image/svg-as-background-with-viewBox-expected.txt: Added.
+
 2011-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip editing/pasteboard/drag-drop-list.html on GTK after r87778
