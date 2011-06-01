@@ -810,9 +810,6 @@ BUGCR20226 : fast/forms/input-selectedoption.html = FAIL
 // Timing out.
 BUGCR78376 : http/tests/media/video-play-stall-seek.html = TIMEOUT
 
-// video.seekable returning unexpected results.
-BUGCR78375 : http/tests/media/video-seekable-stall.html = TIMEOUT
-
 // canplaythrough event is sent too early.
 BUGCR73609 : http/tests/media/video-play-stall.html = TEXT
 

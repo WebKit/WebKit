@@ -1,3 +1,4 @@
+
 # Welcome to the GTK+ Skipped list! This list is divided into several sections
 # to make it easy for us to triage and close issues.
 
@@ -556,7 +557,6 @@ http/tests/loading/text-content-type-with-binary-extension.html
 
 http/tests/media/video-play-stall-seek.html
 http/tests/media/video-play-stall.html
-http/tests/media/video-seekable-stall.html
 
 # QuickTime reference movie not supported.
 http/tests/media/video-cross-site.html
