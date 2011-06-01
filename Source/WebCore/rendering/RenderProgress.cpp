@@ -28,7 +28,6 @@
 #include "HTMLProgressElement.h"
 #include "PaintInfo.h"
 #include "RenderTheme.h"
-#include "ShadowElement.h"
 #include <wtf/CurrentTime.h>
 #include <wtf/RefPtr.h>
 

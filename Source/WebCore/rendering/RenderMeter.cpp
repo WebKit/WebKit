@@ -27,7 +27,6 @@
 #include "HTMLMeterElement.h"
 #include "HTMLNames.h"
 #include "RenderTheme.h"
-#include "ShadowElement.h"
 
 using namespace std;
 

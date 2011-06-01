@@ -28,7 +28,6 @@
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
-#include "ShadowElement.h"
 #include "Icon.h"
 #include "LocalizedStrings.h"
 #include "Page.h"
@@ -52,6 +51,32 @@ const int iconWidth = 16;
 const int iconFilenameSpacing = 2;
 const int defaultWidthNumChars = 34;
 const int buttonShadowHeight = 2;
+
+class UploadButton : public HTMLInputElement {
+public:
+    static PassRefPtr<UploadButton> create(HTMLInputElement*);
+    virtual void detach();
+
+private:
+    UploadButton(HTMLInputElement*);
+};
+
+PassRefPtr<UploadButton> UploadButton::create(HTMLInputElement* shadowParent)
+{
+    return adoptRef(new UploadButton(shadowParent));
+}
+
+void UploadButton::detach()
+{
+    HTMLInputElement::detach();
+    setShadowHost(0);
+}
+
+UploadButton::UploadButton(HTMLInputElement* shadowParent)
+    : HTMLInputElement(inputTag, shadowParent->document(), 0, false)
+{
+    setShadowHost(shadowParent);
+}
 
 RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
     : RenderBlock(input)
@@ -154,7 +179,7 @@ void RenderFileUploadControl::updateFromElement()
     ASSERT(inputElement->isFileUpload());
     
     if (!m_button) {
-        m_button = ShadowInputElement::create(inputElement);
+        m_button = UploadButton::create(inputElement);
         m_button->setType("button");
         m_button->setValue(fileButtonChooseFileLabel());
         RefPtr<RenderStyle> buttonStyle = createButtonStyle(style());

@@ -5357,8 +5357,6 @@
             'rendering/RenderingAllInOne.cpp',
             'rendering/RootInlineBox.cpp',
             'rendering/ScrollBehavior.cpp',
-            'rendering/ShadowElement.cpp',
-            'rendering/ShadowElement.h',
             'rendering/TableLayout.h',
             'rendering/TrailingFloatsRootInlineBox.h',
             'rendering/TransformState.cpp',

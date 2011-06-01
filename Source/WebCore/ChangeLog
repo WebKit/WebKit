@@ -1,3 +1,32 @@
+2011-06-01  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Remove ShadowElement and compact remaining used bits into RenderFileUploadControl.
+        https://bugs.webkit.org/show_bug.cgi?id=61816
+
+        This is a near-mechanical move-and-rename of ShadowElement, which is now only
+        used by input[type=file]. Next step -- switch it over to new shadow DOM.
+
+        Refactoring, no change in behavior.
+
+        * CMakeLists.txt: Removed ShadowElement.cpp and ShadowElement.h.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore/WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * WebCore/rendering/RenderingAllInOne.cpp: Ditto.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::UploadButton::create): Moved from ShadowElement, renamed as UploadButton.
+        (WebCore::UploadButton::detach): Ditto.
+        (WebCore::UploadButton::UploadButton): Ditto.
+        (WebCore::RenderFileUploadControl::updateFromElement): Changed to use UploadButton.
+        * rendering/RenderMeter.cpp: Removed ShadowElement.h include, which is no longer used.
+        * rendering/RenderProgress.cpp: Ditto.
+        * rendering/ShadowElement.cpp: Removed.
+        * rendering/ShadowElement.h: Removed.
+
 2011-06-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Rob Buis.
