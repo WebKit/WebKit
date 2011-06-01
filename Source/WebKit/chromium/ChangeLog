@@ -1,3 +1,15 @@
+2011-06-01  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87781.
+        http://trac.webkit.org/changeset/87781
+        https://bugs.webkit.org/show_bug.cgi?id=61842
+
+        breaks chromium linux release (Requested by mnaganov on
+        #webkit).
+
+        * WebKit.gyp:
+        * scripts/generate_devtools_zip.py:
+
 2011-05-31  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.

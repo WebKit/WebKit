@@ -827,12 +827,6 @@
                 'action_name': 'generate_devtools_zip',
                 'script_name': 'scripts/generate_devtools_zip.py',
                 'inspector_html': '../../WebCore/inspector/front-end/inspector.html',
-                'workers_files': [
-                    '../../WebCore/inspector/front-end/HeapSnapshotWorker.js',
-                    '../../WebCore/inspector/front-end/JavaScriptFormatter.js',
-                    '../../WebCore/inspector/front-end/ScriptFormatterWorker.js',
-                    '<@(webinspector_uglifyjs_files)'
-                ],
                 'inputs': [
                     '<@(_script_name)',
                     'scripts/generate_devtools_html.py',
@@ -840,7 +834,6 @@
                     '<@(devtools_files)',
                     '<@(webinspector_files)',
                     '<(SHARED_INTERMEDIATE_DIR)/webcore/InspectorBackendStub.js',
-                    '<@(_workers_files)',
                     '<@(webinspector_image_files)',
                     '<@(devtools_image_files)',
                 ],
@@ -856,7 +849,6 @@
                 'outputs': ['<(PRODUCT_DIR)/devtools_frontend.zip'],
                 'action': ['python', '<@(_script_name)', '<@(_inspector_html)',
                                      '--devtools-files', '<@(devtools_files)',
-                                     '--workers-files', '<@(_workers_files)',
                                      '--search-path', '<@(_search_path)',
                                      '--image-search-path', '<@(_image_search_path)',
                                      '--output', '<@(_outputs)'],
