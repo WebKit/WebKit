@@ -1,3 +1,9 @@
+2011-06-01  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] Skip new failing test because of missing SVG animation pause API.
+
+        * platform/mac-wk2/Skipped:
+
 2011-06-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skipping flaky test on GTK 64-bit bot.
