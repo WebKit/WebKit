@@ -47,10 +47,11 @@ import generate_devtools_html
 
 
 class ParsedArgs:
-    def __init__(self, inspector_html, devtools_files, search_dirs,
-                 image_search_dirs, output_filename):
+    def __init__(self, inspector_html, devtools_files, workers_files,
+                 search_dirs, image_search_dirs, output_filename):
         self.inspector_html = inspector_html
         self.devtools_files = devtools_files
+        self.workers_files = workers_files
         self.search_dirs = search_dirs
         self.image_search_dirs = image_search_dirs
         self.output_filename = output_filename
@@ -60,16 +61,18 @@ def parse_args(argv):
     inspector_html = argv[0]
 
     devtools_files_position = argv.index('--devtools-files')
+    workers_files_position = argv.index('--workers-files')
     search_path_position = argv.index('--search-path')
     image_search_path_position = argv.index('--image-search-path')
     output_position = argv.index('--output')
 
-    devtools_files = argv[devtools_files_position + 1:search_path_position]
+    devtools_files = argv[devtools_files_position + 1:workers_files_position]
+    workers_files = argv[workers_files_position + 1:search_path_position]
     search_dirs = argv[search_path_position + 1:image_search_path_position]
     image_search_dirs = argv[image_search_path_position + 1:output_position]
 
-    return ParsedArgs(inspector_html, devtools_files, search_dirs,
-                      image_search_dirs, argv[output_position + 1])
+    return ParsedArgs(inspector_html, devtools_files, workers_files,
+                      search_dirs, image_search_dirs, argv[output_position + 1])
 
 
 def main(argv):
@@ -97,6 +100,24 @@ def main(argv):
                             'check source tree for consistency' %
                             (input_file_name, 'devtools.html'))
         zip.write(full_path, os.path.basename(full_path))
+
+    front_end_path = 'front-end'
+    for dirname in parsed_args.search_dirs:
+        if dirname.find(front_end_path):
+            front_end_path = dirname
+            break
+
+    for input_file_name in set(parsed_args.workers_files):
+        # We assume that workers-related files reside in the 'front-end'
+        # directory
+        relpath = os.path.relpath(os.path.dirname(input_file_name),
+                                  front_end_path)
+        if relpath == '.':
+            relpath = ''
+        else:
+            relpath += '/'
+        zip.write(input_file_name,
+                  relpath + os.path.basename(input_file_name))
 
     for dirname in parsed_args.image_search_dirs:
         for filename in os.listdir(dirname):

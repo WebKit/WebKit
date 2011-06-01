@@ -1,3 +1,13 @@
+2011-05-31  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector [Chromium]: Put worker scripts into devtools_frontend.zip.
+        https://bugs.webkit.org/show_bug.cgi?id=61803
+
+        * WebKit.gyp:
+        * scripts/generate_devtools_zip.py:
+
 2011-05-31  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Kent Tamura.
