@@ -5,22 +5,22 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 Main Page:
 PASS document.webkitVisibilityState is "visible"
-PASS document.webkitIsVisible is true
+PASS document.webkitHidden is false
 Child Frame:
 PASS childFrame.contentDocument.webkitVisibilityState is "visible"
-PASS childFrame.contentDocument.webkitIsVisible is true
+PASS childFrame.contentDocument.webkitHidden is false
 Main Page:
 PASS document.webkitVisibilityState is "hidden"
-PASS document.webkitIsVisible is false
+PASS document.webkitHidden is true
 Child Frame:
 PASS childFrame.contentDocument.webkitVisibilityState is "hidden"
-PASS childFrame.contentDocument.webkitIsVisible is false
+PASS childFrame.contentDocument.webkitHidden is true
 Main Page:
 PASS document.webkitVisibilityState is "visible"
-PASS document.webkitIsVisible is true
+PASS document.webkitHidden is false
 Child Frame:
 PASS childFrame.contentDocument.webkitVisibilityState is "visible"
-PASS childFrame.contentDocument.webkitIsVisible is true
+PASS childFrame.contentDocument.webkitHidden is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

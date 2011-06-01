@@ -1,3 +1,23 @@
+2011-06-01  Shishir Agrawal  <shishir@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Renaming the Page Visibility attributes as per the modified spec draft.
+        https://bugs.webkit.org/show_bug.cgi?id=61825
+
+        Spec draft:
+        http://dvcs.w3.org/hg/webperf/raw-file/tip/specs/PageVisibility/Overview.html
+
+        - Event needs to be webkitVisibilityChange from webkitVisibilityStateChange
+        - The attribute webkitIsVisible needs to change to webkitHidden
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitHidden):
+        (WebCore::Document::dispatchVisibilityStateChangeEvent):
+        * dom/Document.h:
+        * dom/Document.idl:
+        * dom/EventNames.h:
+
 2011-06-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Rob Buis.

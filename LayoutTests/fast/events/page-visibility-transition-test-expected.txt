@@ -4,13 +4,13 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS document.webkitVisibilityState is "visible"
-PASS document.webkitIsVisible is true
+PASS document.webkitHidden is false
 PASS document.webkitVisibilityState is "hidden"
-PASS document.webkitIsVisible is false
+PASS document.webkitHidden is true
 PASS document.webkitVisibilityState is "hidden"
-PASS document.webkitIsVisible is false
+PASS document.webkitHidden is true
 PASS document.webkitVisibilityState is "visible"
-PASS document.webkitIsVisible is true
+PASS document.webkitHidden is false
 PASS successfullyParsed is true
 
 TEST COMPLETE

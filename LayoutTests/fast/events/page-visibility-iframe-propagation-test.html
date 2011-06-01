@@ -25,27 +25,27 @@ function makePageHidden() {
 function checkIsPageVisible() {
     debug("Main Page:");
     shouldBeEqualToString("document.webkitVisibilityState", "visible");
-    shouldBeTrue("document.webkitIsVisible");
+    shouldBeFalse("document.webkitHidden");
 }
 
 function checkIsPageHidden() {
     debug("Main Page:");
     shouldBeEqualToString("document.webkitVisibilityState", "hidden");
-    shouldBeFalse("document.webkitIsVisible");
+    shouldBeTrue("document.webkitHidden");
 }
 
 function checkIsChildFrameVisible() {
     debug("Child Frame:");
     shouldBeEqualToString("childFrame.contentDocument.webkitVisibilityState",
                           "visible");
-    shouldBeTrue("childFrame.contentDocument.webkitIsVisible");
+    shouldBeFalse("childFrame.contentDocument.webkitHidden");
 }
 
 function checkIsChildFrameHidden() {
     debug("Child Frame:");
     shouldBeEqualToString("childFrame.contentDocument.webkitVisibilityState",
                           "hidden");
-    shouldBeFalse("childFrame.contentDocument.webkitIsVisible");
+    shouldBeTrue("childFrame.contentDocument.webkitHidden");
 }
 
 // We will try to change the visibility states as:
@@ -59,8 +59,8 @@ var childFrame;
 function startTest() {
     childFrame = document.getElementById("childFrame");
     childFrame.contentDocument.addEventListener(
-        "webkitvisibilitystatechange", onChildFrameVisibilityChange, false);
-    document.addEventListener("webkitvisibilitystatechange",
+        "webkitvisibilitychange", onChildFrameVisibilityChange, false);
+    document.addEventListener("webkitvisibilitychange",
                               onVisibilityChange, false);
 
     checkIsPageVisible();

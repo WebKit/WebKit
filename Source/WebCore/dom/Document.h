@@ -309,7 +309,7 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitfullscreenchange);
 #endif
 #if ENABLE(PAGE_VISIBILITY_API)
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitvisibilitystatechange);
+    DEFINE_ATTRIBUTE_EVENT_LISTENER(webkitvisibilitychange);
 #endif
 
     ViewportArguments viewportArguments() const { return m_viewportArguments; }
@@ -388,7 +388,7 @@ public:
 
 #if ENABLE(PAGE_VISIBILITY_API)
     String webkitVisibilityState() const;
-    bool webkitIsVisible() const;
+    bool webkitHidden() const;
     void dispatchVisibilityStateChangeEvent();
 #endif
 

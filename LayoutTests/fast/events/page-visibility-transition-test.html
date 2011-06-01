@@ -24,12 +24,12 @@ function makePageHidden() {
 
 function checkIsPageVisible() {
     shouldBeEqualToString("document.webkitVisibilityState", "visible");
-    shouldBeTrue("document.webkitIsVisible");
+    shouldBeFalse("document.webkitHidden");
 }
 
 function checkIsPageHidden() {
     shouldBeEqualToString("document.webkitVisibilityState", "hidden");
-    shouldBeFalse("document.webkitIsVisible");
+    shouldBeTrue("document.webkitHidden");
 }
 
 // We will try to change the visibility states as:
@@ -41,7 +41,7 @@ var numVisibilityChanges = 0;
 
 function startTest() {
     document.addEventListener(
-        "webkitvisibilitystatechange", onVisibilityChange, false);
+        "webkitvisibilitychange", onVisibilityChange, false);
     checkIsPageVisible();
     numVisibilityChanges++;
     makePageHidden();

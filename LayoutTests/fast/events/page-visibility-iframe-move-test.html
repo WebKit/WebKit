@@ -20,9 +20,9 @@ function window2Loaded() {
 
     iframe = window2.document.getElementById("iframe");
 
-    shouldBeTrue("window.document.webkitIsVisible");
-    shouldBeTrue("window2.document.webkitIsVisible");
-    shouldBeTrue("iframe.contentDocument.webkitIsVisible");
+    shouldBeFalse("window.document.webkitHidden");
+    shouldBeFalse("window2.document.webkitHidden");
+    shouldBeFalse("iframe.contentDocument.webkitHidden");
 
     // Change the visibility of the current page to invisible.
     if (window.layoutTestController) {
@@ -32,17 +32,17 @@ function window2Loaded() {
 }
 
 function onVisibilityChange() {
-    shouldBeFalse("window.document.webkitIsVisible");
-    shouldBeTrue("window2.document.webkitIsVisible");
-    shouldBeTrue("iframe.contentDocument.webkitIsVisible");
+    shouldBeTrue("window.document.webkitHidden");
+    shouldBeFalse("window2.document.webkitHidden");
+    shouldBeFalse("iframe.contentDocument.webkitHidden");
 
     window.document.adoptNode(iframe);
     window.document.body.appendChild(iframe);
     debug("Adopted iframe to Window 1");
 
-    shouldBeFalse("window.document.webkitIsVisible");
-    shouldBeTrue("window2.document.webkitIsVisible");
-    shouldBeFalse("iframe.contentDocument.webkitIsVisible");
+    shouldBeTrue("window.document.webkitHidden");
+    shouldBeFalse("window2.document.webkitHidden");
+    shouldBeTrue("iframe.contentDocument.webkitHidden");
 
     window2.close();
 
@@ -56,7 +56,7 @@ function startTest() {
     }
 
     debug("Window 1 Loaded");
-    document.addEventListener("webkitvisibilitystatechange",
+    document.addEventListener("webkitvisibilitychange",
                               onVisibilityChange, false);
 
     window2 = window.open("resources/page-visibility-iframe-move-new-page.html");

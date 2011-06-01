@@ -1375,14 +1375,14 @@ String Document::webkitVisibilityState() const
     return pageVisibilityStateString(visibilityState());
 }
 
-bool Document::webkitIsVisible() const
+bool Document::webkitHidden() const
 {
-    return visibilityState() == PageVisibilityStateVisible;
+    return visibilityState() != PageVisibilityStateVisible;
 }
 
 void Document::dispatchVisibilityStateChangeEvent()
 {
-    dispatchEvent(Event::create(eventNames().webkitvisibilitystatechangeEvent, false, false));
+    dispatchEvent(Event::create(eventNames().webkitvisibilitychangeEvent, false, false));
 }
 #endif
 
