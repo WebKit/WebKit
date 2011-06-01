@@ -39,3 +39,9 @@ svg/W3C-SVG-1.1/text-text-03-b.svg
 
 # Crashed test after r87691-r87693
 http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
+
+# Flakey tests
+svg/animations/animate-mpath-insert.html
+
+# Flakey timed out tests
+fast/js/nested-object-gc.html
