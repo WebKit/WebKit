@@ -1,3 +1,12 @@
+2011-05-31  Hao Zheng  <zhenghao@chromium.org>
+
+        Reviewed by Dirk Pranke.
+
+        Fix exception in verbose printing mode.
+        https://bugs.webkit.org/show_bug.cgi?id=61723
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+
 2011-05-31  Yong Li  <yoli@rim.com>
 
         Reviewed by Eric Seidel.

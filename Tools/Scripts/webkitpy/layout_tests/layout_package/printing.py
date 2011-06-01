@@ -348,12 +348,12 @@ class Printer(object):
         action = "Testing"
         if retrying:
             action = "Retrying"
-        self._meter.update("%s (%d%%): %d ran as expected, %d didn't,"
+        self._update("%s (%d%%): %d ran as expected, %d didn't,"
             " %d left" % (action, percent_complete, result_summary.expected,
              result_summary.unexpected, result_summary.remaining))
 
         if result_summary.remaining == 0:
-            self._meter.update('')
+            self._update('')
 
     def print_unexpected_results(self, unexpected_results):
         """Prints a list of the unexpected results to the buildbot stream."""
