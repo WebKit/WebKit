@@ -1,3 +1,18 @@
+2011-05-31  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] webkitStorageInfo methods (for quota API) should not crash when error callback is not given.
+        https://bugs.webkit.org/show_bug.cgi?id=61823
+
+        Fixed assertion on errorCallback parameter.
+
+        Test: storage/quotainfo-no-callbacks.html
+
+        * src/StorageInfoChromium.cpp:
+        (WebCore::StorageInfo::queryUsageAndQuota):
+        (WebCore::StorageInfo::requestQuota):
+
 2011-05-31  Daniel Erat  <derat@chromium.org>
 
         Reviewed by Tony Chang.

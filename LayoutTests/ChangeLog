@@ -1,3 +1,20 @@
+2011-05-31  Kinuko Yasuda  <kinuko@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] webkitStorageInfo methods (for quota API) should not crash when error callback is not given.
+        https://bugs.webkit.org/show_bug.cgi?id=61823
+
+        Added a new test for the fix marked the new test 'skipped' on unsupported platforms.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+        * storage/storageinfo-no-callbacks-expected.txt: Added.
+        * storage/storageinfo-no-callbacks.html: Added.
+
 2011-05-31  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Eric Seidel.

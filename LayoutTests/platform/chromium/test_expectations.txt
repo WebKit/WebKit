@@ -200,9 +200,10 @@ WONTFIX SKIP : java/lc3 = TEXT
 // TODO: move to platform/chromium-linux/.
 WONTFIX SKIP MAC WIN : platform/chromium/fast/text/chromium-linux-fontconfig-renderstyle.html = FAIL
 
-// Quota API is not yet enabled by default.
-BUGCR61676 SKIP : storage/storageinfo-query-usage.html = FAIL
-BUGCR61676 SKIP : storage/storageinfo-request-quota.html = FAIL
+// Quota API is not supported in DRT yet.
+BUGCR84572 SKIP : storage/storageinfo-query-usage.html = FAIL
+BUGCR84572 SKIP : storage/storageinfo-request-quota.html = FAIL
+BUGCR84572 SKIP : storage/storageinfo-no-callbacks.html = FAIL
 
 // Animation API is disabled
 WONTFIX SKIP : animations/animation-api-1.html = FAIL

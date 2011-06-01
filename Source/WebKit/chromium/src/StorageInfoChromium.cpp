@@ -52,7 +52,8 @@ namespace WebCore {
 namespace {
 void fireStorageInfoErrorCallback(PassRefPtr<StorageInfoErrorCallback> errorCallback, ExceptionCode ec)
 {
-    ASSERT(errorCallback);
+    if (!errorCallback)
+        return;
     ExceptionCodeDescription description;
     getExceptionCodeDescription(ec, description);
     errorCallback->handleEvent(DOMCoreException::create(description).get());
@@ -71,7 +72,7 @@ void StorageInfo::queryUsageAndQuota(ScriptExecutionContext* context, int storag
         Document* document = static_cast<Document*>(context);
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
         webFrame->client()->queryStorageUsageAndQuota(webFrame, static_cast<WebStorageQuotaType>(storageType), new WebStorageQuotaCallbacksImpl(successCallback, errorCallback));
-    } else if (errorCallback) {
+    } else {
         // FIXME: calling this on worker is not yet supported.
         fireStorageInfoErrorCallback(errorCallback, NOT_SUPPORTED_ERR);
     }
@@ -89,7 +90,7 @@ void StorageInfo::requestQuota(ScriptExecutionContext* context, int storageType,
         Document* document = static_cast<Document*>(context);
         WebFrameImpl* webFrame = WebFrameImpl::fromFrame(document->frame());
         webFrame->client()->requestStorageQuota(webFrame, static_cast<WebStorageQuotaType>(storageType), newQuotaInBytes, new WebStorageQuotaCallbacksImpl(successCallback, errorCallback));
-    } else if (errorCallback) {
+    } else {
         // FIXME: calling this on worker is not yet supported.
         fireStorageInfoErrorCallback(errorCallback, NOT_SUPPORTED_ERR);
     }
