@@ -1,3 +1,12 @@
+2011-06-01  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed. Test rebaselines for GTK after revision 87526.
+
+        * platform/gtk/svg/hixie/text/003-expected.png:
+        * platform/gtk/svg/hixie/text/003-expected.txt:
+        * platform/gtk/svg/in-html/by-reference-expected.txt:
+        * platform/gtk/svg/zoom/page/relative-sized-document-scrollbars-expected.txt:
+
 2011-06-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Andreas Kling.
