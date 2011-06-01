@@ -1433,7 +1433,14 @@ sub autogenArgumentsHaveChanged($@)
     chomp(my $previousArguments = <AUTOTOOLS_ARGUMENTS>);
     close(AUTOTOOLS_ARGUMENTS);
 
-    return $previousArguments ne join(" ", @currentArguments);
+    my $joinedCurrentArguments = join(" ", @currentArguments);
+    if ($previousArguments ne $joinedCurrentArguments) {
+        print "Previous autogen arguments were: $previousArguments\n\n";
+        print "New autogen arguments are: $joinedCurrentArguments\n";
+        return 1;
+    }
+
+    return 0;
 }
 
 sub buildAutotoolsProject($@)

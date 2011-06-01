@@ -1,3 +1,13 @@
+2011-06-01  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Print out autogen arguments when they differ from the last set, to help
+        with debugging build issues.
+
+        * Scripts/webkitdirs.pm: Print out previous and current build arguments
+        when they differ.
+
 2011-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
