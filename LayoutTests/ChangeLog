@@ -1,5 +1,12 @@
 2011-06-01  Adam Barth  <abarth@webkit.org>
 
+        Add Windows baseline for this new test.
+
+        * platform/chromium-win-vista/svg/text/scaling-font-with-geometric-precision-expected.png: Added.
+        * platform/chromium-win-vista/svg/text/scaling-font-with-geometric-precision-expected.txt: Added.
+
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
         Update image baselines for these drop shadows.  They differ from each
         other only by minor rendering differences in the shadow.
 
