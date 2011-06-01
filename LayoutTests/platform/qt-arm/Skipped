@@ -40,6 +40,9 @@ svg/W3C-SVG-1.1/text-text-03-b.svg
 # Crashed test after r87691-r87693
 http/tests/xmlhttprequest/simple-cross-origin-progress-events.html
 
+# Flakey crashed tests
+fast/workers/wrapper-map-gc.html
+
 # Flakey tests
 svg/animations/animate-mpath-insert.html
 
