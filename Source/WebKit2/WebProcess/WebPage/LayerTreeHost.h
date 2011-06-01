@@ -71,13 +71,6 @@ public:
     virtual void pauseRendering() { }
     virtual void resumeRendering() { }
 
-    // If a derived class overrides this function to return true, the derived class must also
-    // override the functions beneath it.
-    virtual bool participatesInDisplay() { return false; }
-    virtual bool needsDisplay() { ASSERT_NOT_REACHED(); return false; }
-    virtual double timeUntilNextDisplay() { ASSERT_NOT_REACHED(); return 0; }
-    virtual void display(UpdateInfo&) { ASSERT_NOT_REACHED(); }
-
 #if PLATFORM(WIN)
     virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&) = 0;
 #endif
