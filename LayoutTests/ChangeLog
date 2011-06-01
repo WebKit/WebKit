@@ -1,3 +1,14 @@
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
+        Image baselines for these platforms.
+
+        * platform/chromium-linux-x86/svg/as-image/svg-as-background-with-relative-size-expected.png: Added.
+        * platform/chromium-linux-x86/svg/as-image/svg-as-background-with-relative-size-expected.txt: Added.
+        * platform/chromium-linux/svg/as-image/svg-as-background-with-relative-size-expected.png: Added.
+        * platform/chromium-linux/svg/as-image/svg-as-background-with-relative-size-expected.txt: Added.
+        * platform/chromium-win-vista/svg/as-image/svg-as-background-with-relative-size-expected.png: Added.
+        * platform/chromium-win-vista/svg/as-image/svg-as-background-with-relative-size-expected.txt: Added.
+
 2011-06-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Rob Buis.
