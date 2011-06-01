@@ -237,7 +237,7 @@ void RenderListBox::computeLogicalHeight()
     if (m_vBar) {
         bool enabled = numVisibleItems() < numItems();
         m_vBar->setEnabled(enabled);
-        m_vBar->setSteps(1, min(1, numVisibleItems() - 1), itemHeight);
+        m_vBar->setSteps(1, max(1, numVisibleItems() - 1), itemHeight);
         m_vBar->setProportion(numVisibleItems(), numItems());
         if (!enabled)
             m_indexOffset = 0;

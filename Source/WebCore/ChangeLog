@@ -1,3 +1,16 @@
+2011-05-31  Keishi Hattori  <keishi@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Fix to enable page scroll of select element
+        https://bugs.webkit.org/show_bug.cgi?id=53628
+
+        Manual test: select-page-scroll.html
+
+        * manual-tests/select-page-scroll.html: Added.
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::computeLogicalHeight): Fix min to max.
+
 2011-05-31  Yong Li  <yoli@rim.com>
 
         Reviewed by Eric Seidel.
