@@ -121,6 +121,7 @@ public:
     const TransformationMatrix& projectionMatrix() const { return m_projectionMatrix; }
 
     bool checkTextureSize(const IntSize&);
+    int maxTextureSize() const { return m_maxTextureSize; }
 
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
     const LayerChromium::BorderProgram* borderProgram() const { return m_borderProgram.get(); }

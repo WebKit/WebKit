@@ -1,3 +1,22 @@
+2011-05-19  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Don't split long, narrow layers into multiple tiles.
+        https://bugs.webkit.org/show_bug.cgi?id=60821
+
+        This changes the heuristic for when we tile layers to be less bad
+        about wasting texture space.  Long, narrow layers that are tiled with
+        a large tile size waste texture space.  Now layers are only tiled if
+        they are above 512px in one dimension and extend into a second tile in
+        the other.  If they are not tiled, their layer texture will exactly
+        fit their layer bounds.  In particular, this will help scrollbars.
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::updateLayerSize):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        (WebCore::LayerRendererChromium::maxTextureSize):
+
 2011-06-01  Cary Clark  <caryclark@google.com>
 
         Reviewed by Eric Seidel.

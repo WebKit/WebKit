@@ -1,3 +1,16 @@
+2011-05-19  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Don't split long, narrow layers into multiple tiles.
+        https://bugs.webkit.org/show_bug.cgi?id=60821
+
+        These tests have imperceptible pixel changes on horizontal scrollbars
+        as a result of this patch.  Marking them as failing temporarily so
+        that they can be rebaselined.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-01  Steve Lacey  <sjl@chromium.org>
 
         Reviewed by Eric Carlson.

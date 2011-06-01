@@ -46,9 +46,9 @@
 #include "TextStream.h"
 #include <wtf/CurrentTime.h>
 
-// Maximum size the width or height of this layer can be before enabling tiling
-// when m_tilingOption == AutoTile.
+// Start tiling when the width and height of a layer are larger than this size.
 static int maxUntiledSize = 512;
+
 // When tiling is enabled, use tiles of this dimension squared.
 static int defaultTileSize = 256;
 
@@ -186,7 +186,13 @@ void ContentLayerChromium::updateLayerSize(const IntSize& layerSize)
         return;
 
     const IntSize tileSize(min(defaultTileSize, layerSize.width()), min(defaultTileSize, layerSize.height()));
-    const bool autoTiled = layerSize.width() > maxUntiledSize || layerSize.height() > maxUntiledSize;
+
+    // Tile if both dimensions large, or any one dimension large and the other
+    // extends into a second tile. This heuristic allows for long skinny layers
+    // (e.g. scrollbars) that are Nx1 tiles to minimize wasted texture space.
+    const bool anyDimensionLarge = layerSize.width() > maxUntiledSize || layerSize.height() > maxUntiledSize;
+    const bool anyDimensionOneTile = layerSize.width() <= defaultTileSize || layerSize.height() <= defaultTileSize;
+    const bool autoTiled = anyDimensionLarge && !anyDimensionOneTile;
 
     bool isTiled;
     if (m_tilingOption == AlwaysTile)
@@ -196,7 +202,10 @@ void ContentLayerChromium::updateLayerSize(const IntSize& layerSize)
     else
         isTiled = autoTiled;
 
-    m_tiler->setTileSize(isTiled ? tileSize : layerSize);
+    IntSize requestedSize = isTiled ? tileSize : layerSize;
+    const int maxSize = layerRenderer()->maxTextureSize();
+    IntSize clampedSize = requestedSize.shrunkTo(IntSize(maxSize, maxSize));
+    m_tiler->setTileSize(clampedSize);
 }
 
 void ContentLayerChromium::draw(const IntRect& targetSurfaceRect)
