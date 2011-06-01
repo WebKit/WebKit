@@ -314,22 +314,20 @@ class Printer(object):
         filename = result.filename
         test_name = self._port.relative_test_filename(filename)
         self._write('trace: %s' % test_name)
-        txt_file = self._port.expected_filename(filename, '.txt')
-        if self._port.path_exists(txt_file):
-            self._write('  txt: %s' %
-                        self._port.relative_test_filename(txt_file))
-        else:
-            self._write('  txt: <none>')
-        png_file = self._port.expected_filename(filename, '.png')
-        if self._port.path_exists(png_file):
-            self._write('  png: %s' %
-                        self._port.relative_test_filename(png_file))
-        else:
-            self._write('  png: <none>')
+        for extension in ('.txt', '.wav', '.png'):
+            self._print_baseline(filename, extension)
         self._write('  exp: %s' % exp_str)
         self._write('  got: %s' % got_str)
         self._write(' took: %-.3f' % result.test_run_time)
         self._write('')
+
+    def _print_baseline(self, filename, extension):
+        baseline = self._port.expected_filename(filename, extension)
+        if self._port.path_exists(baseline):
+            relpath = self._port.relative_test_filename(baseline)
+        else:
+            relpath = '<none>'
+        self._write('  %s: %s' % (extension[1:], relpath))
 
     def _print_unexpected_test_result(self, result):
         """Prints one unexpected test result line."""

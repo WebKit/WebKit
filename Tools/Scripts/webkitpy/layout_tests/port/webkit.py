@@ -471,9 +471,13 @@ class WebKitDriver(base.Driver):
         content = ''
         timeout = deadline - time.time()
         line = self._server_process.read_line(timeout)
-        while (not self._server_process.timed_out
-               and not self._server_process.crashed
-               and line.rstrip() != "#EOF"):
+        eof = False
+        while (not self._server_process.timed_out and not self._server_process.crashed and not eof):
+            chomped_line = line.rstrip()
+            if chomped_line.endswith("#EOF"):
+                eof = True
+                line = chomped_line[:-4]
+
             if line.startswith(TYPE_HEADER) and content_type is None:
                 content_type = line.split()[1]
             elif line.startswith(ENCODING_HEADER) and encoding is None:
@@ -486,10 +490,11 @@ class WebKitDriver(base.Driver):
                 content = self._server_process.read(timeout, content_length)
             elif line.startswith(HASH_HEADER):
                 content_hash = line.split()[1]
-            else:
+            elif line:
                 content += line
-            line = self._server_process.read_line(timeout)
-            timeout = deadline - time.time()
+            if not eof:
+                line = self._server_process.read_line(timeout)
+                timeout = deadline - time.time()
         return ContentBlock(content_type, encoding, content_hash, content)
 
     def stop(self):

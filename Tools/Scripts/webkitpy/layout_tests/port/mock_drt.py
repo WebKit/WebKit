@@ -216,7 +216,6 @@ class MockDRT(object):
             self._stdout.write('Content-Type: audio/wav\n')
             self._stdout.write('Content-Transfer-Encoding: base64\n')
             output = base64.b64encode(actual_audio)
-            self._stdout.write('Content-Length: %s\n' % len(output))
             self._stdout.write(output)
         else:
             self._stdout.write('Content-Type: text/plain\n')

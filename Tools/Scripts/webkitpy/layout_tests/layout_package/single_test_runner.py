@@ -148,10 +148,9 @@ class SingleTestRunner:
         # DumpRenderTree may not output utf-8 text (e.g. webarchives).
         self._save_baseline_data(driver_output.text, ".txt",
                                  generate_new_baseline=self._options.new_baseline)
-        if driver_output.audio:
-            self._save_baseline_data(driver_output.audio, '.wav',
-                                     generate_new_baseline=self._options.new_baseline)
-        if self._options.pixel_tests and driver_output.image:
+        self._save_baseline_data(driver_output.audio, '.wav',
+                                 generate_new_baseline=self._options.new_baseline)
+        if self._options.pixel_tests:
             self._save_baseline_data(driver_output.image, ".png",
                                      generate_new_baseline=self._options.new_baseline)
 
@@ -167,7 +166,8 @@ class SingleTestRunner:
           generate_new_baseline: whether to enerate a new, platform-specific
             baseline, or update the existing one
         """
-        assert data is not None
+        if data is None:
+            return
         port = self._port
         fs = port._filesystem
         if generate_new_baseline:
