@@ -140,7 +140,7 @@ http/tests/local/formdata
 
 editing/pasteboard/drag-image-in-about-blank-frame.html
 editing/pasteboard/files-during-page-drags.html
-editing/pasteboard/4861080.html
+editing/pasteboard/drag-drop-list.html
 editing/pasteboard/4947130.html
 editing/pasteboard/copy-standalone-image.html
 editing/pasteboard/drag-drop-dead-frame.html
