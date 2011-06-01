@@ -2323,19 +2323,19 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, int tx, int ty
 
     // We fill our scroll corner with white if we have a scrollbar that doesn't run all the way up to the
     // edge of the box.
-    paintScrollCorner(context, offsetX, offsetY, damageRect);
+    paintScrollCorner(context, IntPoint(offsetX, offsetY), damageRect);
     
     // Paint our resizer last, since it sits on top of the scroll corner.
     paintResizer(context, offsetX, offsetY, damageRect);
 }
 
-void RenderLayer::paintScrollCorner(GraphicsContext* context, int tx, int ty, const IntRect& damageRect)
+void RenderLayer::paintScrollCorner(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& damageRect)
 {
     RenderBox* box = renderBox();
     ASSERT(box);
 
-    IntRect cornerRect = scrollCornerRect();
-    IntRect absRect = IntRect(cornerRect.x() + tx, cornerRect.y() + ty, cornerRect.width(), cornerRect.height());
+    IntRect absRect = scrollCornerRect();
+    absRect.move(paintOffset);
     if (!absRect.intersects(damageRect))
         return;
 
@@ -2345,7 +2345,7 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, int tx, int ty, co
     }
 
     if (m_scrollCorner) {
-        m_scrollCorner->paintIntoRect(context, tx, ty, absRect);
+        m_scrollCorner->paintIntoRect(context, paintOffset.x(), paintOffset.y(), absRect);
         return;
     }
 
