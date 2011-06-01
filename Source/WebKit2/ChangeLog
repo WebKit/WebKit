@@ -1,5 +1,33 @@
 2011-06-01  Adam Roben  <aroben@apple.com>
 
+        Route plugin window geometry updates through the DrawingArea
+
+        This will allow the geometry updates to be handled by the LayerTreeHost in compositing mode
+        in the future.
+
+        More rep work for <http://webkit.org/b/58054> <rdar://problem/9249839> REGRESSION (WebKit2):
+        Accelerated CSS animations have a lower framerate than in WebKit1
+
+        Reviewed by Anders Carlsson.
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::scheduleWindowedPluginGeometryUpdate): Tell the DrawingArea, not the
+        WebPage, about the geometry update.
+
+        * WebProcess/WebPage/DrawingArea.h:
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/win/DrawingAreaImplWin.cpp: Added.
+        (WebKit::DrawingAreaImpl::scheduleChildWindowGeometryUpdate):
+        Moved code here...
+
+        * WebProcess/WebPage/WebPage.h:
+        * WebProcess/WebPage/win/WebPageWin.cpp:
+        ...from here.
+
+        * win/WebKit2.vcproj: Added DrawingAreaImplWin.cpp.
+
+2011-06-01  Adam Roben  <aroben@apple.com>
+
         Move WebView's window geometry updating code to a new class
 
         This will allow us to share this code with LayerTreeHostCAWin.

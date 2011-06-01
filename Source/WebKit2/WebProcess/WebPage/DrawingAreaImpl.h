@@ -61,6 +61,10 @@ private:
     virtual void syncCompositingLayers();
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
+#if PLATFORM(WIN)
+    virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&);
+#endif
+
     // CoreIPC message handlers.
     virtual void updateBackingStoreState(uint64_t backingStoreStateID, bool respondImmediately, const WebCore::IntSize&, const WebCore::IntSize& scrollOffset);
     virtual void didUpdate();

@@ -32,7 +32,6 @@
 #include "WebPageProxyMessages.h"
 #include "WebPreferencesStore.h"
 #include "WebProcess.h"
-#include "WindowGeometry.h"
 #include <WebCore/FocusController.h>
 #include <WebCore/FontRenderingMode.h>
 #include <WebCore/Frame.h>
@@ -464,11 +463,6 @@ void WebPage::gestureDidScroll(const IntSize& size)
 void WebPage::gestureDidEnd()
 {
     m_gestureTargetNode = nullptr;
-}
-
-void WebPage::scheduleChildWindowGeometryUpdate(const WindowGeometry& geometry)
-{
-    WebProcess::shared().connection()->send(Messages::WebPageProxy::ScheduleChildWindowGeometryUpdate(geometry), m_pageID);
 }
 
 } // namespace WebKit
