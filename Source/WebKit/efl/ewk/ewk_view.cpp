@@ -112,6 +112,7 @@ struct _Ewk_View_Private_Data {
         Eina_Bool auto_load_images:1;
         Eina_Bool auto_shrink_images:1;
         Eina_Bool enable_auto_resize_window:1;
+        Eina_Bool enable_developer_extras:1;
         Eina_Bool enable_scripts:1;
         Eina_Bool enable_plugins:1;
         Eina_Bool enable_frame_flattening:1;
@@ -607,6 +608,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->settings.auto_load_images = priv->page_settings->loadsImagesAutomatically();
     priv->settings.auto_shrink_images = priv->page_settings->shrinksStandaloneImagesToFit();
     priv->settings.enable_auto_resize_window = EINA_TRUE;
+    priv->settings.enable_developer_extras = priv->page_settings->developerExtrasEnabled();
     priv->settings.enable_scripts = priv->page_settings->isJavaScriptEnabled();
     priv->settings.enable_plugins = priv->page_settings->arePluginsEnabled();
     priv->settings.enable_frame_flattening = priv->page_settings->frameFlatteningEnabled();
@@ -2676,6 +2678,47 @@ Eina_Bool ewk_view_setting_encoding_detector_get(Evas_Object* o)
     EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
     EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
     return priv->settings.encoding_detector;
+}
+
+/**
+ * Returns whether developer extensions are enabled for the given view.
+ *
+ * Currently, this is used to know whether the Web Inspector is enabled for a
+ * given view.
+ *
+ * @param o view object to check.
+ *
+ * @return @c EINA_TRUE if developer extensions are enabled, @c EINA_FALSE
+ *         otherwise.
+ */
+Eina_Bool ewk_view_setting_enable_developer_extras_get(Evas_Object* o)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    return priv->settings.enable_developer_extras;
+}
+
+/**
+ * Enables/disables developer extensions for the given view.
+ *
+ * This currently controls whether the Web Inspector should be enabled.
+ *
+ * @param o The view whose setting will be changed.
+ * @param enable @c EINA_TRUE to enable developer extras, @c EINA_FALSE to
+ *               disable.
+ *
+ * @return @c EINA_TRUE on success, @EINA_FALSE on failure.
+ */
+Eina_Bool ewk_view_setting_enable_developer_extras_set(Evas_Object* o, Eina_Bool enable)
+{
+    EWK_VIEW_SD_GET_OR_RETURN(o, sd, EINA_FALSE);
+    EWK_VIEW_PRIV_GET_OR_RETURN(sd, priv, EINA_FALSE);
+    enable = !!enable;
+    if (priv->settings.enable_developer_extras != enable) {
+        priv->page_settings->setDeveloperExtrasEnabled(enable);
+        priv->settings.enable_developer_extras = enable;
+    }
+    return EINA_TRUE;
 }
 
 int ewk_view_setting_font_minimum_size_get(const Evas_Object* o)

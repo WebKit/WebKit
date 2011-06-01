@@ -1,3 +1,20 @@
+2011-05-31  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Reviewed by Adam Barth.
+
+        [efl] Add ewk API to enable/disable developer extras.
+        https://bugs.webkit.org/show_bug.cgi?id=61746
+
+        Add ewk_view_setting_enable_developer_extras_{get,set}, which is used
+        to enable or disable developer extras (currently, the Web Inspector)
+        in a given view.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+        (ewk_view_setting_enable_developer_extras_get):
+        (ewk_view_setting_enable_developer_extras_set):
+        * ewk/ewk_view.h:
+
 2011-05-30  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         Reviewed by Kent Tamura.
