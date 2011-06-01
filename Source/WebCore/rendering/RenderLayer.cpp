@@ -2326,7 +2326,7 @@ void RenderLayer::paintOverflowControls(GraphicsContext* context, int tx, int ty
     paintScrollCorner(context, IntPoint(offsetX, offsetY), damageRect);
     
     // Paint our resizer last, since it sits on top of the scroll corner.
-    paintResizer(context, offsetX, offsetY, damageRect);
+    paintResizer(context, IntPoint(offsetX, offsetY), damageRect);
 }
 
 void RenderLayer::paintScrollCorner(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& damageRect)
@@ -2355,7 +2355,7 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, const IntPoint& pa
         context->fillRect(absRect, Color::white, box->style()->colorSpace());
 }
 
-void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const IntRect& damageRect)
+void RenderLayer::paintResizer(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& damageRect)
 {
     if (renderer()->style()->resize() == RESIZE_NONE)
         return;
@@ -2363,8 +2363,8 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
     RenderBox* box = renderBox();
     ASSERT(box);
 
-    IntRect cornerRect = resizerCornerRect(this, box->borderBoxRect());
-    IntRect absRect = IntRect(cornerRect.x() + tx, cornerRect.y() + ty, cornerRect.width(), cornerRect.height());
+    IntRect absRect = resizerCornerRect(this, box->borderBoxRect());
+    absRect.move(paintOffset);
     if (!absRect.intersects(damageRect))
         return;
 
@@ -2374,7 +2374,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, int tx, int ty, const I
     }
     
     if (m_resizer) {
-        m_resizer->paintIntoRect(context, tx, ty, absRect);
+        m_resizer->paintIntoRect(context, paintOffset.x(), paintOffset.y(), absRect);
         return;
     }
 

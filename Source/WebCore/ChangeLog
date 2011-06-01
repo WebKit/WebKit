@@ -1,3 +1,21 @@
+2011-06-01  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintResizer to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=61883
+
+        Switch paintResizer to take an IntPoint instead of a pair of ints.
+
+        No new tests as this is simple refactoring.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::paintOverflowControls):
+        (WebCore::RenderLayer::paintResizer):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::paintContents):
+
 2011-06-01  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

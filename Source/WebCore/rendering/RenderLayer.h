@@ -263,7 +263,7 @@ public:
 
     void paintOverflowControls(GraphicsContext*, int tx, int ty, const IntRect& damageRect, bool paintingOverlayControls = false);
     void paintScrollCorner(GraphicsContext*, const IntPoint&, const IntRect& damageRect);
-    void paintResizer(GraphicsContext*, int tx, int ty, const IntRect& damageRect);
+    void paintResizer(GraphicsContext*, const IntPoint&, const IntRect& damageRect);
 
     void updateScrollInfoAfterLayout();
 
