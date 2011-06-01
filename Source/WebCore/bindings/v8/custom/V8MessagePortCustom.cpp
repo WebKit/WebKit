@@ -89,7 +89,7 @@ bool getMessagePortArray(v8::Local<v8::Value> value, MessagePortArray& portArray
 
     // Validate the passed array of ports.
     for (unsigned int i = 0; i < length; ++i) {
-        v8::Local<v8::Value> port = ports->Get(v8::Integer::New(i));
+        v8::Local<v8::Value> port = ports->Get(i);
         // Validation of non-null objects, per HTML5 spec 8.3.3.
         if (isUndefinedOrNull(port)) {
             throwError(INVALID_STATE_ERR);

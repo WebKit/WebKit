@@ -83,7 +83,7 @@ v8::Handle<v8::Value> V8InspectorFrontendHost::showContextMenuCallback(const v8:
     Vector<ContextMenuItem*> items;
 
     for (size_t i = 0; i < array->Length(); ++i) {
-        v8::Local<v8::Object> item = v8::Local<v8::Object>::Cast(array->Get(v8::Integer::New(i)));
+        v8::Local<v8::Object> item = v8::Local<v8::Object>::Cast(array->Get(i));
         v8::Local<v8::Value> type = item->Get(v8::String::New("type"));
         v8::Local<v8::Value> id = item->Get(v8::String::New("id"));
         v8::Local<v8::Value> label = item->Get(v8::String::New("label"));

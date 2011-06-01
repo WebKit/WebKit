@@ -149,7 +149,7 @@ v8::Handle<v8::Value> constructWebGLArray(const v8::Arguments& args, WrapperType
     if (!srcArray.IsEmpty()) {
         // Need to copy the incoming array into the newly created ArrayBufferView.
         for (unsigned i = 0; i < len; i++) {
-            v8::Local<v8::Value> val = srcArray->Get(v8::Integer::NewFromUnsigned(i));
+            v8::Local<v8::Value> val = srcArray->Get(i);
             array->set(i, val->NumberValue());
         }
     }
@@ -196,7 +196,7 @@ v8::Handle<v8::Value> setWebGLArrayHelper(const v8::Arguments& args)
             V8Proxy::setDOMException(INDEX_SIZE_ERR);
         else
             for (uint32_t i = 0; i < length; i++)
-                impl->set(offset + i, array->Get(v8::Integer::NewFromUnsigned(i))->NumberValue());
+                impl->set(offset + i, array->Get(i)->NumberValue());
 
         return v8::Undefined();
     }

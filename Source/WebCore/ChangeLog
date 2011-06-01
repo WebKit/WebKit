@@ -1,3 +1,25 @@
+2011-06-01  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Nate Chapin.
+
+        [V8] Optimize fetches of indexed properties in custom bindings
+        https://bugs.webkit.org/show_bug.cgi?id=61821
+
+        Avoid allocating garbage in affected custom bindings. This speeds
+        up one test case by at least a factor of two. No new tests;
+        covered by existing layout tests (typed array and otherwise).
+
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore::constructWebGLArray):
+        (WebCore::setWebGLArrayHelper):
+        * bindings/v8/custom/V8InspectorFrontendHostCustom.cpp:
+        (WebCore::V8InspectorFrontendHost::showContextMenuCallback):
+        * bindings/v8/custom/V8MessagePortCustom.cpp:
+        (WebCore::getMessagePortArray):
+        * bindings/v8/custom/V8WebGLRenderingContextCustom.cpp:
+        (WebCore::jsArrayToFloatArray):
+        (WebCore::jsArrayToIntArray):
+
 2011-06-01  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
