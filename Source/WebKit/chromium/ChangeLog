@@ -1,3 +1,14 @@
+2011-05-31  Daniel Erat  <derat@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Make WebScreenInfoFactory return fresh screen dimensions.
+        https://bugs.webkit.org/show_bug.cgi?id=61679
+
+        * public/x11/WebScreenInfoFactory.h:
+        * src/x11/WebScreenInfoFactory.cpp:
+        (WebKit::WebScreenInfoFactory::screenInfo):
+
 2011-05-31  Cary Clark  <caryclark@google.com>
 
         Reviewed by Eric Seidel.

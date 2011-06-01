@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 Google Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -37,22 +37,29 @@
 
 namespace WebKit {
 
+// FIXME: Take an X window and use XRandR to find the dimensions of the monitor
+// that it's on (probably using XRRGetScreenInfo() and XRRConfigSizes() from
+// X11/extensions/Xrandr.h). GDK provides a gdk_screen_get_monitor_geometry()
+// function, but it appears to return stale data after the screen is resized.
 WebScreenInfo WebScreenInfoFactory::screenInfo(Display* display, int screenNumber)
 {
+    // XDisplayWidth() and XDisplayHeight() return cached values. To ensure that
+    // we return the correct dimensions after the screen is resized, query the
+    // root window's geometry each time.
+    Window root = RootWindow(display, screenNumber);
+    Window rootRet;
+    int x, y;
+    unsigned int width, height, border, depth;
+    XGetGeometry(
+        display, root, &rootRet, &x, &y, &width, &height, &border, &depth);
+
     WebScreenInfo results;
-    // FIXME: not all screens with use 8bpp.
+    // FIXME: Not all screens use 8bpp.
     results.depthPerComponent = 8;
-
-    int displayWidth = XDisplayWidth(display, screenNumber);
-    int displayHeight = XDisplayHeight(display, screenNumber);
-    results.depth = XDisplayPlanes(display, screenNumber);
-    results.isMonochrome = results.depth == 1;
-
-    results.rect = WebRect(0, 0, displayWidth, displayHeight);
-
-    // I don't know of a way to query the "maximize" size of the window (e.g.
-    // screen size less sidebars etc) since this is something which only the
-    // window manager knows.
+    results.depth = depth;
+    results.isMonochrome = depth == 1;
+    results.rect = WebRect(x, y, width, height);
+    // FIXME: Query the _NET_WORKAREA property from EWMH.
     results.availableRect = results.rect;
 
     return results;
