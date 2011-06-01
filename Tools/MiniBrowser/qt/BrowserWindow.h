@@ -77,6 +77,7 @@ protected slots:
 
     void toggleAutoLoadImages(bool);
     void toggleDisableJavaScript(bool);
+    void toggleGLViewport(bool);
 
 private:
     void updateUserAgentList();

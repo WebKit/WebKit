@@ -42,6 +42,9 @@ struct WindowOptions {
 #else
         , startMaximized(false)
 #endif
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+        , useQGLWidgetViewport(false)
+#endif
     {
     }
 
@@ -49,6 +52,9 @@ struct WindowOptions {
     bool useSeparateWebProcessPerWindow;
     bool printLoadedUrls;
     bool startMaximized;
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+    bool useQGLWidgetViewport;
+#endif
 };
 
 class MiniBrowserApplication : public QApplication {

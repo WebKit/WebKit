@@ -62,6 +62,9 @@ void MiniBrowserApplication::handleUserOptions()
              << "[-chunked-drawing-area]"
              <<  "[-separate-web-process-per-window]"
              << "[-print-loaded-urls]"
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+             << "[-gl-viewport]"
+#endif
              << "URLs";
         appQuit(0);
     }
@@ -100,4 +103,9 @@ void MiniBrowserApplication::handleUserOptions()
 
     if (args.contains("-print-loaded-urls"))
         m_windowOptions.printLoadedUrls = true;
+
+#if defined(QT_CONFIGURED_WITH_OPENGL)
+    if (args.contains("-gl-viewport"))
+        m_windowOptions.useQGLWidgetViewport = true;
+#endif
 }
