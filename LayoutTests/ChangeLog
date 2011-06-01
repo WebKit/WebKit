@@ -1,3 +1,21 @@
+2011-06-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Andreas Kling.
+
+        REGRESSION: fast/images/svg-background-crash-on-refresh.html hangs
+        https://bugs.webkit.org/show_bug.cgi?id=15483
+
+        The regression seems gone, I can't reproduce it anymore, reenable svg-background-crash-on-refresh.html.
+        Convert the test to use dumpAsText() and actually execute the refreshing twice, including forced gc
+        to see whether we crash on referesh or not, before it didn't actually reload. If a crash happened,
+        it happened somewhen after executing this test, which is probably why it was flakey.
+
+        * platform/mac/svg/as-image/svg-background-crash-on-refresh-expected.png: Removed.
+        * platform/mac/svg/as-image/svg-background-crash-on-refresh-expected.txt: Removed.
+        * svg/as-image/svg-background-crash-on-refresh-expected.txt: Copied from platform/mac/svg/as-image/svg-background-crash-on-refresh-expected.txt.
+        * svg/as-image/svg-background-crash-on-refresh.html: Copied from svg/as-image/svg-background-crash-on-refresh.html-disabled.
+        * svg/as-image/svg-background-crash-on-refresh.html-disabled: Removed.
+
 2011-06-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed. Test rebaselines for GTK after revision 87721.

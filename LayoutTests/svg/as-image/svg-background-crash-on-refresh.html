@@ -1,0 +1,31 @@
+<html>
+<body>
+<div id="status">FAIL</div>
+<div>http://bugs.webkit.org/show_bug.cgi?id=12310</div>
+<div style="width: 200px; height: 200px; background-image: url(resources/butterfly.svg)"></div>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+    gc = function() { window.GCController.collect() };
+} else if (!window.gc)
+    gc = function() { };
+
+window.onload = function() {
+    if (location.hash != "#2") {
+        if (location.hash)
+            location.hash = "#" + (parseInt(location.hash.slice(1)) + 1).toString();
+        else
+            location.hash = "#1";
+
+        gc();
+        setTimeout(function() { location.reload() }, 0);
+    } else {
+        document.getElementById('status').innerHTML = "PASS";
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
+}
+</script>
+</body>
+</html>
