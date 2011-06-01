@@ -1,3 +1,10 @@
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
+        ... and now Windows results.
+
+        * platform/chromium-win-vista/svg/custom/embedding-external-svgs-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/embedding-external-svgs-expected.txt: Added.
+
 2011-06-01  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.
