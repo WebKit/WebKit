@@ -1,3 +1,9 @@
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
+        Update expected results to match V8 rather than JSC.
+
+        * platform/chromium-mac/fast/js/property-getters-and-setters-expected.txt:
+
 2011-06-01  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Tony Chang.
