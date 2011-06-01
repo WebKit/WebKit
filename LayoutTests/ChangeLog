@@ -1,5 +1,15 @@
 2011-06-01  Adam Barth  <abarth@webkit.org>
 
+        Linux image baselines for this new test.  Leviw confirms that this results are correct.
+
+        * platform/chromium-linux-x86/svg/text: Added.
+        * platform/chromium-linux-x86/svg/text/scaling-font-with-geometric-precision-expected.png: Added.
+        * platform/chromium-linux-x86/svg/text/scaling-font-with-geometric-precision-expected.txt: Added.
+        * platform/chromium-linux/svg/text/scaling-font-with-geometric-precision-expected.png: Added.
+        * platform/chromium-linux/svg/text/scaling-font-with-geometric-precision-expected.txt: Added.
+
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
         Image baselines for this new test.
 
         * platform/chromium-linux-x86/fullscreen/full-screen-zIndex-after-expected.png: Added.
