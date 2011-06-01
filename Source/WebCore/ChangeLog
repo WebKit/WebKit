@@ -1,3 +1,15 @@
+2011-06-01  Joseph Pecoraro  <joepeck@webkit.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: [JSC] JSLock ASSERTs Seen Under eventListenerHandlerBody
+        https://bugs.webkit.org/show_bug.cgi?id=61835
+
+        Add a JSLock call before possible allocations in jsFunction and toString.
+
+        * bindings/js/ScriptEventListener.cpp:
+        (WebCore::eventListenerHandlerBody):
+
 2011-06-01  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Adam Barth.

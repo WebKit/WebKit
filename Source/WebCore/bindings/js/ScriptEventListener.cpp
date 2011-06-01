@@ -99,6 +99,7 @@ String eventListenerHandlerBody(Document* document, EventListener* eventListener
     const JSEventListener* jsListener = JSEventListener::cast(eventListener);
     if (!jsListener)
         return "";
+    JSLock lock(SilenceAssertionsOnly);
     JSC::JSObject* jsFunction = jsListener->jsFunction(document);
     if (!jsFunction)
         return "";
