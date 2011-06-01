@@ -65,7 +65,14 @@ if (isQt()) {
 } else {
 
     if (isGtk()) {
-        $launcherPath = catdir($launcherPath, "Programs", "GtkLauncher");
+        if (isWK2()) {
+            $launcherPath = catdir($launcherPath, "Programs", "MiniBrowser");
+
+            # isWK2() removes the -2 option from @ARGV, but not @args. We do not want to pass -2 to MiniBrowser.
+            @args = @ARGV;
+        } else {
+            $launcherPath = catdir($launcherPath, "Programs", "GtkLauncher");
+        }
     }
     
     if (isEfl()) {

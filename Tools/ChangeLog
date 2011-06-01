@@ -1,3 +1,13 @@
+2011-06-01  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] run-launcher should run MiniBrowser in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=61858
+
+        * Scripts/run-launcher: Check whether -2 command line option has
+        been passed and run MiniBrowser instead of GtkLauncher.
+
 2011-05-31  Hao Zheng  <zhenghao@chromium.org>
 
         Reviewed by Dirk Pranke.
