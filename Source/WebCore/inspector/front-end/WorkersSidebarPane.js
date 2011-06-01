@@ -31,7 +31,7 @@
 WebInspector.WorkersSidebarPane = function()
 {
     WebInspector.SidebarPane.call(this, WebInspector.UIString("Workers"));
-    
+
     this._workers = {};
 
     this._enableWorkersCheckbox = new WebInspector.Checkbox(
@@ -53,7 +53,7 @@ WebInspector.WorkersSidebarPane = function()
 WebInspector.WorkersSidebarPane.prototype = {
     addWorker: function(id, url, isShared)
     {
-        if (id in this._workers) 
+        if (id in this._workers)
             return;
         var worker = new WebInspector.Worker(id, url, isShared);
         this._workers[id] = worker;
@@ -100,3 +100,75 @@ WebInspector.Worker = function(id, url, shared)
     this.url = url;
     this.shared = shared;
 }
+
+
+
+WebInspector.WorkerListSidebarPane = function(workerManager)
+{
+    WebInspector.SidebarPane.call(this, WebInspector.UIString("Worker inspectors"));
+
+    this._workerListElement = document.createElement("ol");
+    this._workerListElement.tabIndex = 0;
+    this._workerListElement.addStyleClass("properties-tree");
+    this._workerListTreeOutline = new TreeOutline(this._workerListElement);
+    this.bodyElement.appendChild(this._workerListElement);
+
+    this._idToWorkerItem = {};
+    this._workerManager = workerManager;
+
+    workerManager.addEventListener(WebInspector.WorkerManager.Events.WorkerAdded, this._workerAdded, this);
+    workerManager.addEventListener(WebInspector.WorkerManager.Events.WorkerRemoved, this._workerRemoved, this);
+    workerManager.addEventListener(WebInspector.WorkerManager.Events.WorkerInspectorClosed, this._workerInspectorClosed, this);
+}
+
+WebInspector.WorkerListSidebarPane.prototype = {
+    _workerAdded: function(event)
+    {
+        this._addWorker(event.data.workerId, event.data.url);
+    },
+
+    _workerRemoved: function(event)
+    {
+        var workerItem = this._idToWorkerItem[event.data];
+        workerItem.element.parentElement.removeChild(workerItem.element);
+    },
+
+    _workerInspectorClosed: function(event)
+    {
+        var workerItem = this._idToWorkerItem[event.data];
+        workerItem.checkbox.checked = false;
+    },
+
+    _addWorker: function(workerId, url)
+    {
+        var workerItem = {};
+        workerItem.workerId = workerId;
+        workerItem.element = new TreeElement(url);
+        this._workerListTreeOutline.appendChild(workerItem.element);
+        workerItem.element.selectable = true;
+
+        workerItem.checkbox = this._createCheckbox(workerItem.element);
+        workerItem.checkbox.addEventListener("click", this._workerItemClicked.bind(this, workerItem), true);
+
+        this._idToWorkerItem[workerId] = workerItem;
+    },
+
+    _createCheckbox: function(treeElement)
+    {
+        var checkbox = document.createElement("input");
+        checkbox.className = "checkbox-elem";
+        checkbox.type = "checkbox";
+        treeElement.listItemElement.insertBefore(checkbox, treeElement.listItemElement.firstChild);
+        return checkbox;
+    },
+
+    _workerItemClicked: function(workerItem, event)
+    {
+        if (event.target.checked)
+            this._workerManager.openWorkerInspector(workerItem.workerId);
+        else
+            this._workerManager.closeWorkerInspector(workerItem.workerId);
+    }
+}
+
+WebInspector.WorkerListSidebarPane.prototype.__proto__ = WebInspector.SidebarPane.prototype;

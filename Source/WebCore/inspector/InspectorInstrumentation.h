@@ -161,7 +161,7 @@ public:
 
 #if ENABLE(WORKERS)
     static bool willStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*);
-    static void didStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*, bool paused);
+    static void didStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*, bool paused, const KURL&);
     static void didCreateWorker(ScriptExecutionContext*, intptr_t id, const String& url, bool isSharedWorker);
     static void didDestroyWorker(ScriptExecutionContext*, intptr_t id);
 #endif
@@ -283,7 +283,7 @@ private:
 #endif
 
 #if ENABLE(WORKERS)
-    static void didStartWorkerContextImpl(InstrumentingAgents*, WorkerContextProxy*);
+    static void didStartWorkerContextImpl(InstrumentingAgents*, WorkerContextProxy*, const KURL&);
     static void didCreateWorkerImpl(InstrumentingAgents*, intptr_t id, const String& url, bool isSharedWorker);
     static void didDestroyWorkerImpl(InstrumentingAgents*, intptr_t id);
 #endif
@@ -856,14 +856,14 @@ inline bool InspectorInstrumentation::willStartWorkerContext(ScriptExecutionCont
     return false;
 }
 
-inline void InspectorInstrumentation::didStartWorkerContext(ScriptExecutionContext* context, WorkerContextProxy* proxy, bool paused)
+inline void InspectorInstrumentation::didStartWorkerContext(ScriptExecutionContext* context, WorkerContextProxy* proxy, bool paused, const KURL& url)
 {
 #if ENABLE(INSPECTOR)
     if (!paused)
         return;
     FAST_RETURN_IF_NO_FRONTENDS(void());
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        didStartWorkerContextImpl(instrumentingAgents, proxy);
+        didStartWorkerContextImpl(instrumentingAgents, proxy, url);
 #endif
 }
 

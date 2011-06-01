@@ -716,10 +716,10 @@ void InspectorInstrumentation::didUseDOMStorageImpl(InstrumentingAgents* instrum
 #endif
 
 #if ENABLE(WORKERS)
-void InspectorInstrumentation::didStartWorkerContextImpl(InstrumentingAgents* instrumentingAgents, WorkerContextProxy* workerContextProxy)
+void InspectorInstrumentation::didStartWorkerContextImpl(InstrumentingAgents* instrumentingAgents, WorkerContextProxy* workerContextProxy, const KURL& url)
 {
     if (InspectorWorkerAgent* workerAgent = instrumentingAgents->inspectorWorkerAgent())
-        workerAgent->didStartWorkerContext(workerContextProxy);
+        workerAgent->didStartWorkerContext(workerContextProxy, url);
 }
 
 void InspectorInstrumentation::didCreateWorkerImpl(InstrumentingAgents* instrumentingAgents, intptr_t id, const String& url, bool isSharedWorker)

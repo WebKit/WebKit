@@ -1726,13 +1726,26 @@
                     { "name": "workerId", "type": "integer" },
                     { "name": "message", "type": "object" }
                 ]
+            },
+            {
+                "name": "connectToWorker",
+                "parameters": [
+                    { "name": "workerId", "type": "integer" }
+                ]
+            },
+            {
+                "name": "disconnectFromWorker",
+                "parameters": [
+                    { "name": "workerId", "type": "integer" }
+                ]
             }
         ],
         "events": [
             {
                 "name": "workerCreated",
                 "parameters": [
-                    { "name": "workerId", "type": "integer" }
+                    { "name": "workerId", "type": "integer" },
+                    { "name": "url", "type": "string" }
                 ]
             },
             {

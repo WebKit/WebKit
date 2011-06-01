@@ -38,6 +38,7 @@
 #include "InspectorFrontendChannel.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
+#include "KURL.h"
 #include "WorkerContextProxy.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>
@@ -50,12 +51,32 @@ public:
         : m_frontend(frontend)
         , m_proxy(proxy)
         , m_id(s_nextId++)
+        , m_connected(false)
     {
     }
-    virtual ~WorkerFrontendChannel() { }
+    virtual ~WorkerFrontendChannel()
+    {
+        disconnectFromWorkerContext();
+    }
 
     int id() const { return m_id; }
     WorkerContextProxy* proxy() const { return m_proxy; }
+
+    void connectToWorkerContext()
+    {
+        if (m_connected)
+            return;
+        m_connected = true;
+        m_proxy->connectToInspector(this);
+    }
+
+    void disconnectFromWorkerContext()
+    {
+        if (!m_connected)
+            return;
+        m_connected = false;
+        m_proxy->disconnectFromInspector();
+    }
 
 private:
     // WorkerContextProxy::PageInspector implementation
@@ -73,6 +94,7 @@ private:
     InspectorFrontend* m_frontend;
     WorkerContextProxy* m_proxy;
     int m_id;
+    bool m_connected;
     static int s_nextId;
 };
 
@@ -104,6 +126,26 @@ void InspectorWorkerAgent::clearFrontend()
 {
     m_inspectorFrontend = 0;
     m_instrumentingAgents->setInspectorWorkerAgent(0);
+    deleteAllValues(m_idToChannel);
+    m_idToChannel.clear();
+}
+
+void InspectorWorkerAgent::connectToWorker(ErrorString* error, int workerId)
+{
+    WorkerFrontendChannel* channel = m_idToChannel.get(workerId);
+    if (channel)
+        channel->connectToWorkerContext();
+    else
+        *error = "Worker is gone";
+}
+
+void InspectorWorkerAgent::disconnectFromWorker(ErrorString* error, int workerId)
+{
+    WorkerFrontendChannel* channel = m_idToChannel.get(workerId);
+    if (channel)
+        channel->disconnectFromWorkerContext();
+    else
+        *error = "Worker is gone";
 }
 
 void InspectorWorkerAgent::sendMessageToWorker(ErrorString* error, int workerId, PassRefPtr<InspectorObject> message)
@@ -115,14 +157,13 @@ void InspectorWorkerAgent::sendMessageToWorker(ErrorString* error, int workerId,
         *error = "Worker is gone";
 }
 
-void InspectorWorkerAgent::didStartWorkerContext(WorkerContextProxy* workerContextProxy)
+void InspectorWorkerAgent::didStartWorkerContext(WorkerContextProxy* workerContextProxy, const KURL& url)
 {
     WorkerFrontendChannel* channel = new WorkerFrontendChannel(m_inspectorFrontend, workerContextProxy);
     m_idToChannel.set(channel->id(), channel);
 
-    workerContextProxy->connectToInspector(channel);
-    if (m_inspectorFrontend)
-        m_inspectorFrontend->worker()->workerCreated(channel->id());
+    ASSERT(m_inspectorFrontend);
+    m_inspectorFrontend->worker()->workerCreated(channel->id(), url.string());
 }
 
 } // namespace WebCore

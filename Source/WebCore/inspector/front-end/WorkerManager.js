@@ -30,6 +30,8 @@
 
 WebInspector.WorkerManager = function()
 {
+    this._workerIdToWindow = {};
+    InspectorBackend.registerDomainDispatcher("Worker", new WebInspector.WorkerMessageForwarder(this));
 }
 
 WebInspector.WorkerManager.isWorkerFrontend = function()
@@ -41,10 +43,9 @@ WebInspector.WorkerManager.loaded = function()
 {
     var workerId = WebInspector.queryParamsObject["workerId"];
     if (!workerId) {
-        InspectorBackend.registerDomainDispatcher("Worker", new WebInspector.WorkerMessageForwarder());
+        WebInspector.workerManager = new WebInspector.WorkerManager();
         return;
     }
-
 
     function receiveMessage(event)
     {
@@ -65,11 +66,56 @@ WebInspector.WorkerManager.loaded = function()
     }
 }
 
+WebInspector.WorkerManager.Events = {
+    WorkerAdded: "worker-added",
+    WorkerRemoved: "worker-removed",
+    WorkerInspectorClosed: "worker-inspector-closed"
+}
 
-WebInspector.WorkerMessageForwarder = function()
+WebInspector.WorkerManager.prototype = {
+    _workerCreated: function(workerId, url)
+    {
+        this.dispatchEventToListeners(WebInspector.WorkerManager.Events.WorkerAdded, {workerId: workerId, url: url});
+    },
+
+    _sendMessageToWorkerInspector: function(workerId, message)
+    {
+        var workerInspectorWindow = this._workerIdToWindow[workerId];
+        if (workerInspectorWindow)
+            workerInspectorWindow.postMessage(message, "*");
+    },
+
+    openWorkerInspector: function(workerId)
+    {
+        var url = location.href + "&workerId=" + workerId;
+        url = url.replace("docked=true&", "");
+        var workerInspectorWindow = window.open(url);
+        this._workerIdToWindow[workerId] = workerInspectorWindow;
+        workerInspectorWindow.addEventListener("beforeunload", this._workerInspectorClosing.bind(this, workerId), true);
+        WorkerAgent.connectToWorker(workerId);
+    },
+
+    closeWorkerInspector: function(workerId)
+    {
+        var workerInspectorWindow = this._workerIdToWindow[workerId];
+        if (workerInspectorWindow)
+            workerInspectorWindow.close();
+    },
+
+    _workerInspectorClosing: function(workerId, event)
+    {
+        delete this._workerIdToWindow[workerId];
+        WorkerAgent.disconnectFromWorker(workerId);
+        this.dispatchEventToListeners(WebInspector.WorkerManager.Events.WorkerInspectorClosed, workerId);
+    }
+}
+
+WebInspector.WorkerManager.prototype.__proto__ = WebInspector.Object.prototype;
+
+WebInspector.WorkerMessageForwarder = function(workerManager)
 {
+    this._workerManager = workerManager;
     window.addEventListener("message", this._receiveMessage.bind(this), true);
-    this._workerIdToWindow = {};
 }
 
 WebInspector.WorkerMessageForwarder.prototype = {
@@ -84,17 +130,13 @@ WebInspector.WorkerMessageForwarder.prototype = {
             WorkerAgent.sendMessageToWorker(workerId, message);
     },
 
-    workerCreated: function(workerId)
+    workerCreated: function(workerId, url)
     {
-        var url = location.href + "&workerId=" + workerId;
-        url = url.replace("docked=true&", "");
-        this._workerIdToWindow[workerId] = window.open(url);
+        this._workerManager._workerCreated(workerId, url);
     },
 
     dispatchMessageFromWorker: function(workerId, message)
     {
-        var win = this._workerIdToWindow[workerId];
-        if (win)
-            win.postMessage(message, "*");
+        this._workerManager._sendMessageToWorkerInspector(workerId, message);
     }
 }

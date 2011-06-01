@@ -40,6 +40,7 @@ namespace WebCore {
 class InspectorFrontend;
 class InspectorObject;
 class InstrumentingAgents;
+class KURL;
 class WorkerContextProxy;
 
 typedef String ErrorString;
@@ -53,9 +54,11 @@ public:
     void clearFrontend();
 
     // Called from InspectorInstrumentation
-    void didStartWorkerContext(WorkerContextProxy*);
+    void didStartWorkerContext(WorkerContextProxy*, const KURL&);
 
     // Called from InspectorBackendDispatcher
+    void connectToWorker(ErrorString*, int workerId);
+    void disconnectFromWorker(ErrorString*, int workerId);
     void sendMessageToWorker(ErrorString*, int workerId, PassRefPtr<InspectorObject> message);
 
 private:

@@ -107,6 +107,9 @@ WebInspector.ScriptsPanel = function()
     }
 
     this.sidebarPanes.workers = new WebInspector.WorkersSidebarPane();
+    if (Preferences.canInspectWorkers && WebInspector.workerManager)
+        this.sidebarPanes.workerList = new WebInspector.WorkerListSidebarPane(WebInspector.workerManager);
+
 
     for (var pane in this.sidebarPanes)
         this.sidebarElement.appendChild(this.sidebarPanes[pane].element);

@@ -51,7 +51,8 @@ var Preferences = {
     heapProfilerPresent: false,
     detailedHeapProfiles: false,
     saveAsAvailable: false,
-    useLowerCaseMenuTitlesOnWindows: false
+    useLowerCaseMenuTitlesOnWindows: false,
+    canInspectWorkers: false,
 }
 
 WebInspector.Settings = function()
