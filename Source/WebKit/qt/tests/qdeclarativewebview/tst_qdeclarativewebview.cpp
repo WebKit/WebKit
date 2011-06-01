@@ -272,17 +272,21 @@ void tst_QDeclarativeWebView::loadError()
 
 void tst_QDeclarativeWebView::multipleWindows()
 {
-    QSKIP("Rework this test to not depend on QDeclarativeGrid", SkipAll);
     QDeclarativeEngine engine;
     QDeclarativeComponent component(&engine, QUrl("qrc:///resources/newwindows.qml"));
     checkNoErrors(component);
 
-//    QDeclarativeGrid *grid = qobject_cast<QDeclarativeGrid*>(component.create());
-//    QVERIFY(grid != 0);
-//    QTRY_COMPARE(grid->children().count(), 2+4); // Component, Loader (with 1 WebView), 4 new-window WebViews
-//    QDeclarativeItem* popup = qobject_cast<QDeclarativeItem*>(grid->children().at(2)); // first popup after Component and Loader.
-//    QVERIFY(popup != 0);
-//    QTRY_COMPARE(popup->x(), 150.0);
+    QDeclarativeItem* rootItem = qobject_cast<QDeclarativeItem*>(component.create());
+    QVERIFY(rootItem);
+
+    QTRY_COMPARE(rootItem->property("pagesOpened").toInt(), 4);
+
+    QDeclarativeProperty prop(rootItem, "firstPageOpened");
+    QObject* firstPageOpened = qvariant_cast<QObject*>(prop.read());
+    QVERIFY(firstPageOpened);
+
+    QDeclarativeProperty xProp(firstPageOpened, "x");
+    QTRY_COMPARE(xProp.read().toReal(), qreal(150.0));
 }
 
 void tst_QDeclarativeWebView::newWindowComponent()

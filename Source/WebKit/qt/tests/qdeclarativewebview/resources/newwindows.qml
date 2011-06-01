@@ -7,28 +7,45 @@ Grid {
     columns: 3
     id: pages
     height: 300; width: 600
-    property int total: 0
+    property int pagesOpened: 0
+    property Item firstPageOpened: null
 
     Component {
         id: webViewPage
         Rectangle {
-            width: webView.width
-            height: webView.height
-            border.color: "gray"
+            id: thisPage
+            width: 150
+            height: 150
+            property WebView webView: wv
 
             WebView {
-                id: webView
-                width: 150 // force predictable for test
+                id: wv
+                anchors.fill: parent
                 newWindowComponent: webViewPage
                 newWindowParent: pages
                 url: "newwindows.html"
-                Timer {
-                    interval: 10; running: total<4; repeat: false;
-                    onTriggered: { if (webView.status==WebView.Ready) { total++; webView.evaluateJavaScript("clickTheLink()") } }
+                Component.onCompleted: {
+                    if (pagesOpened == 1) {
+                        pages.firstPageOpened = thisPage;
+                    }
                 }
             }
         }
     }
 
-    Loader { sourceComponent: webViewPage }
+    Loader {
+        id: originalPage
+        sourceComponent: webViewPage
+        property bool ready: status == Loader.Ready && item.webView.status == WebView.Ready
+    }
+
+    Timer {
+        interval: 10
+        running: originalPage.ready && pagesOpened < 4
+        repeat: true
+        onTriggered: {
+            pagesOpened++;
+            originalPage.item.webView.evaluateJavaScript("clickTheLink()");
+        }
+    }
 }
