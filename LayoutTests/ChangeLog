@@ -1,3 +1,23 @@
+2011-05-31  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Convert editing/pasteboard/paste-blockquote-into-blockquote-2.html to dump-as-markup
+        https://bugs.webkit.org/show_bug.cgi?id=61682
+
+        Convert test to dump-as-markup and clean up HTML. Also update test description.
+
+        * editing/pasteboard/paste-blockquote-into-blockquote-2-expected.txt: Added.
+        * editing/pasteboard/paste-blockquote-into-blockquote-2.html:
+        * platform/chromium-linux/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.txt: Removed.
+        * platform/gtk/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.txt: Removed.
+        * platform/mac-leopard/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.txt: Removed.
+        * platform/qt/editing/pasteboard/paste-blockquote-into-blockquote-2-expected.txt: Removed.
+
 2011-05-31  Kinuko Yasuda  <kinuko@chromium.org>
 
         Reviewed by Kent Tamura.
