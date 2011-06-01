@@ -1,3 +1,24 @@
+2011-06-01  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch RenderLineBoxList intersection functions to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=61794
+
+        Switching rangeIntersectsRect, anyLineIntersectsRect, and lineIntersectsDirtyRect
+        to take IntPoint instead of a tx/ty to represent the offset to be applied match
+        the rect and lines' coordinates.
+
+        No new tests since this is merely refactoring.
+
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::rangeIntersectsRect):
+        (WebCore::RenderLineBoxList::anyLineIntersectsRect):
+        (WebCore::RenderLineBoxList::lineIntersectsDirtyRect):
+        (WebCore::RenderLineBoxList::paint):
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderLineBoxList.h:
+
 2011-05-19  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

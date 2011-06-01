@@ -146,7 +146,7 @@ void RenderLineBoxList::dirtyLineBoxes()
         curr->dirtyLineBoxes();
 }
 
-bool RenderLineBoxList::rangeIntersectsRect(RenderBoxModelObject* renderer, int logicalTop, int logicalBottom, const IntRect& rect, int tx, int ty) const
+bool RenderLineBoxList::rangeIntersectsRect(RenderBoxModelObject* renderer, int logicalTop, int logicalBottom, const IntRect& rect, const IntPoint& offset) const
 {
     RenderBox* block;
     if (renderer->isBox())
@@ -159,11 +159,11 @@ bool RenderLineBoxList::rangeIntersectsRect(RenderBoxModelObject* renderer, int 
     physicalStart = min(physicalStart, physicalEnd);
     
     if (renderer->style()->isHorizontalWritingMode()) {
-        physicalStart += ty;
+        physicalStart += offset.y();
         if (physicalStart >= rect.maxY() || physicalStart + physicalExtent <= rect.y())
             return false;
     } else {
-        physicalStart += tx;
+        physicalStart += offset.x();
         if (physicalStart >= rect.maxX() || physicalStart + physicalExtent <= rect.x())
             return false;
     }
@@ -171,7 +171,7 @@ bool RenderLineBoxList::rangeIntersectsRect(RenderBoxModelObject* renderer, int 
     return true;
 }
 
-bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, const IntRect& rect, int tx, int ty, bool usePrintRect, int outlineSize) const
+bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, const IntRect& rect, const IntPoint& offset, bool usePrintRect, int outlineSize) const
 {
     // We can check the first box and last box and avoid painting/hit testing if we don't
     // intersect.  This is a quick short-circuit that we can take to avoid walking any lines.
@@ -188,16 +188,16 @@ bool RenderLineBoxList::anyLineIntersectsRect(RenderBoxModelObject* renderer, co
     int logicalTop = firstLineTop - outlineSize;
     int logicalBottom = outlineSize + lastLineBottom;
     
-    return rangeIntersectsRect(renderer, logicalTop, logicalBottom, rect, tx, ty);
+    return rangeIntersectsRect(renderer, logicalTop, logicalBottom, rect, offset);
 }
 
-bool RenderLineBoxList::lineIntersectsDirtyRect(RenderBoxModelObject* renderer, InlineFlowBox* box, const PaintInfo& paintInfo, int tx, int ty) const
+bool RenderLineBoxList::lineIntersectsDirtyRect(RenderBoxModelObject* renderer, InlineFlowBox* box, const PaintInfo& paintInfo, const IntPoint& offset) const
 {
     RootInlineBox* root = box->root();
     int logicalTop = min(box->logicalTopVisualOverflow(root->lineTop()), root->selectionTop()) - renderer->maximalOutlineSize(paintInfo.phase);
     int logicalBottom = box->logicalBottomVisualOverflow(root->lineBottom()) + renderer->maximalOutlineSize(paintInfo.phase);
     
-    return rangeIntersectsRect(renderer, logicalTop, logicalBottom, paintInfo.rect, tx, ty);
+    return rangeIntersectsRect(renderer, logicalTop, logicalBottom, paintInfo.rect, offset);
 }
 
 void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintInfo, int tx, int ty) const
@@ -219,7 +219,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
     RenderView* v = renderer->view();
     bool usePrintRect = !v->printRect().isEmpty();
     int outlineSize = renderer->maximalOutlineSize(paintInfo.phase);
-    if (!anyLineIntersectsRect(renderer, paintInfo.rect, tx, ty, usePrintRect, outlineSize))
+    if (!anyLineIntersectsRect(renderer, paintInfo.rect, IntPoint(tx, ty), usePrintRect, outlineSize))
         return;
 
     PaintInfo info(paintInfo);
@@ -257,7 +257,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
             }
         }
 
-        if (lineIntersectsDirtyRect(renderer, curr, info, tx, ty)) {
+        if (lineIntersectsDirtyRect(renderer, curr, info, IntPoint(tx, ty))) {
             RootInlineBox* root = curr->root();
             curr->paint(info, IntPoint(tx, ty), root->lineTop(), root->lineBottom());
         }
@@ -289,7 +289,7 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
         IntRect(pointInContainer.x(), pointInContainer.y() - result.topPadding(), 1, result.topPadding() + result.bottomPadding() + 1) :
         IntRect(pointInContainer.x() - result.leftPadding(), pointInContainer.y(), result.rightPadding() + result.leftPadding() + 1, 1);
 
-    if (!anyLineIntersectsRect(renderer, rect, tx, ty))
+    if (!anyLineIntersectsRect(renderer, rect, IntPoint(tx, ty)))
         return false;
 
     // See if our root lines contain the point.  If so, then we hit test
@@ -297,7 +297,7 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     // based off positions of our first line box or our last line box.
     for (InlineFlowBox* curr = lastLineBox(); curr; curr = curr->prevLineBox()) {
         RootInlineBox* root = curr->root();
-        if (rangeIntersectsRect(renderer, curr->logicalTopVisualOverflow(root->lineTop()), curr->logicalBottomVisualOverflow(root->lineBottom()), rect, tx, ty)) {
+        if (rangeIntersectsRect(renderer, curr->logicalTopVisualOverflow(root->lineTop()), curr->logicalBottomVisualOverflow(root->lineBottom()), rect, IntPoint(tx, ty))) {
             bool inside = curr->nodeAtPoint(request, result, pointInContainer, tx, ty, root->lineTop(), root->lineBottom());
             if (inside) {
                 renderer->updateHitTestResult(result, pointInContainer - IntSize(tx, ty));
