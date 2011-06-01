@@ -1,3 +1,17 @@
+2011-06-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        SVGs with a viewbox specified do not seem to work as SVGImages
+        https://bugs.webkit.org/show_bug.cgi?id=16517
+
+        SVGs with a viewBox work as background image nowadays, add a testcase covering it, originally from Beth Dakin.
+
+        * platform/mac/svg/as-image/svg-as-background-with-viewBox-expected.png: Added.
+        * platform/mac/svg/as-image/svg-as-background-with-viewBox-expected.txt: Added.
+        * svg/as-image/resources/green-relative-size-rect-with-viewBox.svg: Added.
+        * svg/as-image/svg-as-background-with-viewBox.html: Added.
+
 2011-06-01  Shishir Agrawal  <shishir@chromium.org>
 
         Reviewed by Tony Gentilcore.
