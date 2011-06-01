@@ -127,8 +127,8 @@ namespace JSC {
             seen = true;
         }
 
-        int accessType : 31;
-        int seen : 1;
+        signed accessType : 31;
+        unsigned seen : 1;
 
         union {
             struct {

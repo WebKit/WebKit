@@ -2919,6 +2919,14 @@ def check_language(filename, clean_lines, line_number, file_extension, include_s
               'http://google-styleguide.googlecode.com/svn/trunk/cppguide.xml#Namespaces'
               ' for more information.')
 
+    # Check for plain bitfields declared without either "singed" or "unsigned".
+    # Most compilers treat such bitfields as signed, but there are still compilers like
+    # RVCT 4.0 that use unsigned by default.
+    matched = re.match(r'\s*((const|mutable)\s+)?(char|(short(\s+int)?)|int|long(\s+(long|int))?)\s+.+\s*:\s*\d+\s*;', line)
+    if matched:
+        error(line_number, 'runtime/bitfields', 5,
+              'Please declare integral type bitfields with either signed or unsigned.')
+
     check_identifier_name_in_declaration(filename, line_number, line, file_state, error)
 
 
@@ -3452,6 +3460,7 @@ class CppChecker(object):
         'readability/utf8',
         'readability/webkit_api',
         'runtime/arrays',
+        'runtime/bitfields',
         'runtime/casting',
         'runtime/explicit',
         'runtime/init',

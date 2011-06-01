@@ -828,7 +828,7 @@ private:
     RenderObjectChildList m_children;
     RenderLineBoxList m_lineBoxes;   // All of the root line boxes created for this block flow.  For example, <div>Hello<br>world.</div> will have two total lines for the <div>.
 
-    mutable int m_lineHeight : 31;
+    mutable signed m_lineHeight : 31;
     bool m_beingDestroyed : 1;
 
     // RenderRubyBase objects need to be able to split and merge, moving their children around

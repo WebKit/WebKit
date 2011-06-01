@@ -1,3 +1,20 @@
+2011-05-31  Yong Li  <yoli@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        https://bugs.webkit.org/show_bug.cgi?id=54807
+        We have been assuming plain bitfields (like "int a : 31") are always signed integers.
+        However some compilers can treat them as unsigned. For example, RVCT 4.0 states plain
+        bitfields (declared without either signed or unsigned qualifiers) are treats as unsigned.
+        http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dui0348c/Babjddhe.html
+        Although we can use "--signed-bitfields" flag to make RVCT 4.0 behave as most other compilers,
+        always using "signed"/"unsigned" qualifier to declare integral type bitfields is still a good
+        rule we should have in order to make our code independent from compilers and compiler flags.
+
+        No new test added because this change is not known to fix any issue.
+
+        * bytecode/StructureStubInfo.h:
+
 2011-05-30  Hojong Han  <hojong.han@samsung.com>
 
         Reviewed by Geoffrey Garen.

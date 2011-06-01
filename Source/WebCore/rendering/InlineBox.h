@@ -365,7 +365,7 @@ protected:
     mutable bool m_determinedIfPrevOnLineExists : 1;
     mutable bool m_nextOnLineExists : 1;
     mutable bool m_prevOnLineExists : 1;
-    int m_expansion : 11; // for justified text
+    signed m_expansion : 11; // for justified text
 
 #ifndef NDEBUG
 private:

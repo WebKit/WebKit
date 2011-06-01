@@ -225,7 +225,7 @@ private:
 
     virtual unsigned short cssValueType() const;
 
-    int m_type : 31;
+    signed m_type : 31;
     mutable unsigned m_hasCachedCSSText : 1;
     union {
         int ident;

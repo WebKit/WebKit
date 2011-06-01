@@ -2373,6 +2373,14 @@ class CppStyleTest(CppStyleTestBase):
                          'Changing pointer instead of value (or unused value of '
                          'operator*).  [runtime/invalid_increment] [5]')
 
+    # Integral bitfields must be declared with either signed or unsigned keyword.
+    def test_plain_integral_bitfields(self):
+        errmsg = ('Please declare integral type bitfields with either signed or unsigned.  [runtime/bitfields] [5]')
+
+        self.assert_lint('int a : 30;', errmsg)
+        self.assert_lint('mutable short a : 14;', errmsg)
+        self.assert_lint('const char a : 6;', errmsg)
+        self.assert_lint('long int a : 30;', errmsg)
 
 class CleansedLinesTest(unittest.TestCase):
     def test_init(self):
