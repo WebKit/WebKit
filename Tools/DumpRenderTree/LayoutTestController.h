@@ -345,6 +345,8 @@ public:
 
     void setMinimumTimerInterval(double);
 
+    void setTextDirection(JSStringRef);
+
 private:
     LayoutTestController(const std::string& testPathOrURL, const std::string& expectedPixelHash);
 

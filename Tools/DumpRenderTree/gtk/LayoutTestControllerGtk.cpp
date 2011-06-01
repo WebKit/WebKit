@@ -1000,3 +1000,8 @@ void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
     WebKitWebView* webView = webkit_web_frame_get_web_view(mainFrame);
     DumpRenderTreeSupportGtk::setMinimumTimerInterval(webView, minimumTimerInterval);
 }
+
+void LayoutTestController::setTextDirection(JSStringRef direction)
+{
+    // FIXME: Implement.
+}

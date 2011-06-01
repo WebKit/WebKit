@@ -1153,3 +1153,15 @@ void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
 {
     [[mainFrame webView] _setMinimumTimerInterval:minimumTimerInterval];
 }
+
+void LayoutTestController::setTextDirection(JSStringRef directionName)
+{
+#if !defined(BUILDING_ON_TIGER) && !defined(BUILDING_ON_LEOPARD)
+    if (JSStringIsEqualToUTF8CString(directionName, "ltr"))
+        [[mainFrame webView] makeBaseWritingDirectionLeftToRight:0];
+    else if (JSStringIsEqualToUTF8CString(directionName, "rtl"))
+        [[mainFrame webView] makeBaseWritingDirectionRightToLeft:0];
+    else
+        ASSERT_NOT_REACHED();
+#endif
+}

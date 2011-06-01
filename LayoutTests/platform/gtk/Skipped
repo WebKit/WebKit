@@ -1409,6 +1409,9 @@ fast/overflow/horizontal-scroll-after-back.html
 # textInputController.hasGrammarMarker() is not implemented.
 editing/spelling/grammar.html
 
+# layoutTestController::setTextDirection() is not implemented.
+fast/html/set-text-direction.html
+
 # https://bugs.webkit.org/show_bug.cgi?id=57160 
 # [GTK] layoutTestController.overridePreference("WebKitDefaultFontSize"...) does not take into account screen DPI
 fast/harness/override-preferences-2.html

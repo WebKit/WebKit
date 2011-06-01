@@ -1,3 +1,21 @@
+2011-05-31  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Send an input event when we change the text direction.
+        https://bugs.webkit.org/show_bug.cgi?id=50952
+
+        Both Safari and Chrome call Editor::setBaseWritingDirection() to change
+        the text direction of an editable element with their UIs. This change
+        calls dispatchInputEvent() to send an input event when the function
+        actually changes the "dir" attribute so we can send an input event as
+        written in the HTML5 spec.
+
+        Test: fast/html/set-text-direction.html
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::setBaseWritingDirection):
+
 2011-05-31  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

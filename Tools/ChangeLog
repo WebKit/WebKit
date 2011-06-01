@@ -1,3 +1,29 @@
+2011-05-31  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Add a JavaScript function layoutTestController.setTextDirection().
+        https://bugs.webkit.org/show_bug.cgi?id=50952
+
+        This change adds a new JavaScript function setTextDirection() to the
+        LayoutTestController class of Safari and Chrome to write layout tests
+        that changes the text direction of an editable element.
+
+        * DumpRenderTree/LayoutTestController.cpp:
+        (setTextDirectionCallback):
+        (LayoutTestController::staticFunctions):
+        * DumpRenderTree/LayoutTestController.h:
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::setTextDirection):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setTextDirection):
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::setTextDirection):
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::setTextDirection):
+
 2011-05-31  Ademar de Souza Reis Jr  <ademar.reis@openbossa.org>
 
         Reviewed by Simon Hausmann.

@@ -190,6 +190,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("waitForPolicyDelegate", &LayoutTestController::waitForPolicyDelegate);
     bindMethod("waitUntilDone", &LayoutTestController::waitUntilDone);
     bindMethod("windowCount", &LayoutTestController::windowCount);
+    bindMethod("setTextDirection", &LayoutTestController::setTextDirection);
 
     // The following are stubs.
     bindMethod("abortModal", &LayoutTestController::abortModal);
@@ -1852,4 +1853,25 @@ void LayoutTestController::setPageVisibility(const CppArgumentList& arguments, C
         else if (newVisibility == "hidden")
             m_shell->webView()->setVisibilityState(WebPageVisibilityStateHidden, false);
     }
+}
+
+void LayoutTestController::setTextDirection(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() != 1 || !arguments[0].isString())
+        return;
+
+    // Map a direction name to a WebTextDirection value.
+    std::string directionName = arguments[0].toString();
+    WebKit::WebTextDirection direction;
+    if (directionName == "auto")
+        direction = WebKit::WebTextDirectionDefault;
+    else if (directionName == "rtl")
+        direction = WebKit::WebTextDirectionRightToLeft;
+    else if (directionName == "ltr")
+        direction = WebKit::WebTextDirectionLeftToRight;
+    else
+        return;
+
+    m_shell->webView()->setTextDirection(direction);
 }

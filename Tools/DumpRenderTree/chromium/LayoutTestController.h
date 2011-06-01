@@ -378,6 +378,9 @@ public:
     void setPageVisibility(const CppArgumentList&, CppVariant*);
     void resetPageVisibility(const CppArgumentList&, CppVariant*);
 
+    // Changes the direction of the focused element.
+    void setTextDirection(const CppArgumentList&, CppVariant*);
+
 public:
     // The following methods are not exposed to JavaScript.
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }

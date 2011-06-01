@@ -1447,6 +1447,7 @@ void Editor::setBaseWritingDirection(WritingDirection direction)
         if (direction == NaturalWritingDirection)
             return;
         toHTMLElement(focusedNode)->setAttribute(dirAttr, direction == LeftToRightWritingDirection ? "ltr" : "rtl");
+        focusedNode->dispatchInputEvent();
         frame()->document()->updateStyleIfNeeded();
         return;
     }

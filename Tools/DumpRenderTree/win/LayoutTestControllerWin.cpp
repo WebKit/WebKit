@@ -1577,4 +1577,7 @@ void LayoutTestController::setMinimumTimerInterval(double minimumTimerInterval)
     viewPrivate->setMinimumTimerInterval(minimumTimerInterval);
 }
 
-
+void LayoutTestController::setTextDirection(JSStringRef direction)
+{
+    // FIXME: Implement.
+}

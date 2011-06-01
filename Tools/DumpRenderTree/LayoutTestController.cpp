@@ -2213,6 +2213,17 @@ static JSValueRef setMinimumTimerIntervalCallback(JSContextRef context, JSObject
     return JSValueMakeUndefined(context);
 }
 
+static JSValueRef setTextDirectionCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    if (argumentCount == 1) {
+        JSRetainPtr<JSStringRef> direction(Adopt, JSValueToStringCopy(context, arguments[0], exception));
+        LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+        controller->setTextDirection(direction.get());
+    }
+
+    return JSValueMakeUndefined(context);
+}
+
 static void layoutTestControllerObjectFinalize(JSObjectRef object)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(object));
@@ -2422,6 +2433,7 @@ JSStaticFunction* LayoutTestController::staticFunctions()
         { "localStorageDiskUsageForOrigin", localStorageDiskUsageForOriginCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "originsWithLocalStorage", originsWithLocalStorageCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "setShouldPaintBrokenImage", setShouldPaintBrokenImageCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+        { "setTextDirection", setTextDirectionCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "shadowPseudoId", shadowPseudoIdCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { 0, 0, 0 }
     };
