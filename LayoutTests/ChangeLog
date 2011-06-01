@@ -1,5 +1,12 @@
 2011-06-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed, added new baseline for GTK after r87680.
+
+        * platform/gtk/svg/filters/feConvolveFilter-y-bounds-expected.txt: Added.
+        * platform/gtk/svg/filters/feConvolveFilter-y-bounds-expected.png: Added.
+
+2011-06-01  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Unreviewed, added new baseline for GTK after r87605.
 
         * platform/gtk/svg/wicd/test-scalable-background-image2-expected.txt: Added.
