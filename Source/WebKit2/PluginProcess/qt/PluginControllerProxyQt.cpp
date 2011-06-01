@@ -45,7 +45,7 @@ void PluginControllerProxy::platformDestroy()
     notImplemented();
 }
 
-void PluginControllerProxy::platformGeometryDidChange(const IntRect& frameRect, const IntRect&)
+void PluginControllerProxy::platformGeometryDidChange()
 {
     notImplemented();
 }

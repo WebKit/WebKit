@@ -1,3 +1,14 @@
+2011-06-01  Oleg Romashin  <romaxa@gmail.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        platformGeometryDidChange function definition was changed everywhere except Qt.
+        This is fix for Qt WK2 plugins compilation
+        https://bugs.webkit.org/show_bug.cgi?id=61832
+
+        * PluginProcess/qt/PluginControllerProxyQt.cpp:
+        (WebKit::PluginControllerProxy::platformGeometryDidChange):
+
 2011-05-31  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
