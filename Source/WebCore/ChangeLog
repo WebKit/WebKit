@@ -1,3 +1,25 @@
+2011-05-31  Tonis Tiigi  <tonistiigi@gmail.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Timeline panel improvements for managing current selection
+        https://bugs.webkit.org/show_bug.cgi?id=61468
+
+        Enables X-axis dragging of the selected area.
+        Double click zoom-out.
+        Fixes slightly wrong selection area position.
+
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane):
+        (WebInspector.TimelineOverviewPane.prototype._dragWindow):
+        (WebInspector.TimelineOverviewPane.prototype._endWindowSelectorDragging):
+        (WebInspector.TimelineOverviewPane.prototype._resizeWindowRight):
+        (WebInspector.TimelineOverviewPane.prototype._resizeWindowMaximum):
+        (WebInspector.TimelineOverviewPane.prototype.scrollWindow):
+        (WebInspector.TimelineOverviewPane.prototype._createTimelineCategoryStatusBarCheckbox):
+        * inspector/front-end/TimelinePanel.js:
+        (WebInspector.TimelinePanel):
+
 2011-05-31  Keishi Hattori  <keishi@webkit.org>
 
         Reviewed by Kent Tamura.
