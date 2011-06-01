@@ -342,6 +342,9 @@ bool EditorClientEfl::handleEditingKeyboardEvent(KeyboardEvent* event)
     if (!keyEvent)
         return false;
 
+    if (!frame->settings())
+        return false;
+
     bool caretBrowsing = frame->settings()->caretBrowsingEnabled();
     if (caretBrowsing) {
         switch (keyEvent->windowsVirtualKeyCode()) {
