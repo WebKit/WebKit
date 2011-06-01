@@ -1,3 +1,83 @@
+2011-06-01  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
+        [Chromium] Add in baselines for new SVG tests following https://bugs.webkit.org/show_bug.cgi?id=15473
+        https://bugs.webkit.org/show_bug.cgi?id=61849
+
+        * platform/chromium-linux-x86/svg/custom/object-sizing-height-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-height-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/hixie/intrinsic/001-expected.png: Added.
+        * platform/chromium-linux-x86/svg/hixie/intrinsic/001-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/hixie/intrinsic/002-expected.png: Added.
+        * platform/chromium-linux-x86/svg/hixie/intrinsic/002-expected.txt: Added.
+        * platform/chromium-linux-x86/svg/hixie/intrinsic/003-expected.png: Added.
+        * platform/chromium-linux-x86/svg/hixie/intrinsic/003-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-height-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-height-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-linux/svg/hixie/intrinsic/001-expected.png: Added.
+        * platform/chromium-linux/svg/hixie/intrinsic/001-expected.txt: Added.
+        * platform/chromium-linux/svg/hixie/intrinsic/002-expected.png: Added.
+        * platform/chromium-linux/svg/hixie/intrinsic/002-expected.txt: Added.
+        * platform/chromium-linux/svg/hixie/intrinsic/003-expected.png: Added.
+        * platform/chromium-linux/svg/hixie/intrinsic/003-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-height-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-height-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-win-vista/svg/hixie/intrinsic/001-expected.png: Added.
+        * platform/chromium-win-vista/svg/hixie/intrinsic/001-expected.txt: Added.
+        * platform/chromium-win-vista/svg/hixie/intrinsic/002-expected.png: Added.
+        * platform/chromium-win-vista/svg/hixie/intrinsic/002-expected.txt: Added.
+        * platform/chromium-win-vista/svg/hixie/intrinsic/003-expected.png: Added.
+        * platform/chromium-win-vista/svg/hixie/intrinsic/003-expected.txt: Added.
+
 2011-06-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed. Test rebaselines for GTK after revision 87526.
