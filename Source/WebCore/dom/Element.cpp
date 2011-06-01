@@ -90,7 +90,13 @@ public:
 
         if (!m_pushedStyleSelector)
             return;
+
+        // This tells us that our pushed style selector is in a bad state,
+        // so we should just bail out in that scenario.
         ASSERT(m_pushedStyleSelector == m_parent->document()->styleSelector());
+        if (m_pushedStyleSelector != m_parent->document()->styleSelector())
+            return;
+
         m_pushedStyleSelector->popParent(m_parent); 
     }
 

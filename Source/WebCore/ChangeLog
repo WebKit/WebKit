@@ -1,3 +1,15 @@
+2011-06-01  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        Do not use the pushed style selector if it is not equal to the
+        parent document's style selector. It usually means that it is
+        in a bad state, e.g. already cleared.
+        https://bugs.webkit.org/show_bug.cgi?id=61737
+
+        * dom/Element.cpp:
+        (WebCore::StyleSelectorParentPusher::~StyleSelectorParentPusher):
+
 2011-06-01  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.
