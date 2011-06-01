@@ -350,17 +350,21 @@ void MediaPlayerPrivatePhonon::setMuted(bool muted)
 
 MediaPlayer::NetworkState MediaPlayerPrivatePhonon::networkState() const
 {
+#if !LOG_DISABLED
     const QMetaObject* metaObj = this->metaObject();
     QMetaEnum networkStates = metaObj->enumerator(metaObj->indexOfEnumerator("NetworkState"));
     LOG(Media, "MediaPlayerPrivatePhonon::networkState() --> %s", networkStates.valueToKey(m_networkState));
+#endif
     return m_networkState;
 }
 
 MediaPlayer::ReadyState MediaPlayerPrivatePhonon::readyState() const
 {
+#if !LOG_DISABLED
     const QMetaObject* metaObj = this->metaObject();
     QMetaEnum readyStates = metaObj->enumerator(metaObj->indexOfEnumerator("ReadyState"));
     LOG(Media, "MediaPlayerPrivatePhonon::readyState() --> %s", readyStates.valueToKey(m_readyState));
+#endif
     return m_readyState;
 }
 
@@ -394,20 +398,24 @@ void MediaPlayerPrivatePhonon::updateStates()
         m_readyState = MediaPlayer::HaveNothing;
 
     if (m_networkState != oldNetworkState) {
+#if !LOG_DISABLED
         const QMetaObject* metaObj = this->metaObject();
         QMetaEnum networkStates = metaObj->enumerator(metaObj->indexOfEnumerator("NetworkState"));
         LOG(Media, "Network state changed from '%s' to '%s'",
                 networkStates.valueToKey(oldNetworkState),
                 networkStates.valueToKey(m_networkState));
+#endif
         m_player->networkStateChanged();
     }
 
     if (m_readyState != oldReadyState) {
+#if !LOG_DISABLED
         const QMetaObject* metaObj = this->metaObject();
         QMetaEnum readyStates = metaObj->enumerator(metaObj->indexOfEnumerator("ReadyState"));
         LOG(Media, "Ready state changed from '%s' to '%s'",
                 readyStates.valueToKey(oldReadyState),
                 readyStates.valueToKey(m_readyState));
+#endif
         m_player->readyStateChanged();
     }
 }
@@ -483,10 +491,12 @@ void MediaPlayerPrivatePhonon::paint(GraphicsContext* graphicsContect, const Int
 
 void MediaPlayerPrivatePhonon::stateChanged(Phonon::State newState, Phonon::State oldState)
 {
+#if !LOG_DISABLED
     const QMetaObject* metaObj = this->metaObject();
     QMetaEnum phononStates = metaObj->enumerator(metaObj->indexOfEnumerator("PhononState"));
     LOG(Media, "MediaPlayerPrivatePhonon::stateChanged(newState=%s, oldState=%s)",
             phononStates.valueToKey(newState), phononStates.valueToKey(oldState));
+#endif
 
     updateStates();
 }

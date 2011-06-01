@@ -1,3 +1,18 @@
+2011-06-01  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Fix the Phonon build when logging is disabled
+        https://bugs.webkit.org/show_bug.cgi?id=61869
+
+        No new tests needed.
+
+        * platform/graphics/qt/MediaPlayerPrivatePhonon.cpp: Add missing guards.
+        (WebCore::MediaPlayerPrivatePhonon::networkState):
+        (WebCore::MediaPlayerPrivatePhonon::readyState):
+        (WebCore::MediaPlayerPrivatePhonon::updateStates):
+        (WebCore::MediaPlayerPrivatePhonon::stateChanged):
+
 2011-06-01  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Antti Koivisto.
