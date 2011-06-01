@@ -1,3 +1,24 @@
+2011-05-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Freezing a function and its prototype causes browser to crash.
+        https://bugs.webkit.org/show_bug.cgi?id=61758
+
+        Make JSObject::preventExtensions virtual so that we can override it
+        and instantiate all lazy
+
+        * JavaScriptCore.exp:
+        * runtime/JSFunction.cpp:
+        (JSC::createPrototypeProperty):
+        (JSC::JSFunction::preventExtensions):
+        (JSC::JSFunction::getOwnPropertySlot):
+        * runtime/JSFunction.h:
+        * runtime/JSObject.h:
+        * runtime/JSObject.cpp:
+        (JSC::JSObject::seal):
+        (JSC::JSObject::seal):
+
 2011-06-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87788.

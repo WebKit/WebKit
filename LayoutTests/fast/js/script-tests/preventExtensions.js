@@ -43,6 +43,23 @@ function preventExtensions(obj)
     return obj;
 }
 
+function inextensible(){}
+function sealed(){}
+function frozen(){};
+preventExtensions(inextensible);
+seal(sealed);
+freeze(frozen);
+new inextensible;
+new sealed;
+new frozen;
+inextensible.prototype.prototypeExists = true;
+sealed.prototype.prototypeExists = true;
+frozen.prototype.prototypeExists = true;
+
+shouldBeTrue("(new inextensible).prototypeExists");
+shouldBeTrue("(new sealed).prototypeExists");
+shouldBeTrue("(new frozen).prototypeExists");
+
 shouldBe('test(obj())', '"(b:4)(c:3)E"'); // extensible, can delete a, can modify b, and can add c
 shouldBe('test(preventExtensions(obj()))', '"(b:4)"'); // <nothing>, can delete a, can modify b, and CANNOT add c
 shouldBe('test(seal(obj()))', '"(a:1)(b:4)S"'); // sealed, CANNOT delete a, can modify b, and CANNOT add c

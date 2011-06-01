@@ -1,3 +1,16 @@
+2011-05-31  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Freezing a function and its prototype causes browser to crash.
+        https://bugs.webkit.org/show_bug.cgi?id=61758
+
+        Add test to ensure correct behaviour
+
+        * fast/js/preventExtensions-expected.txt:
+        * fast/js/script-tests/preventExtensions.js:
+        (f):
+
 2011-05-19  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

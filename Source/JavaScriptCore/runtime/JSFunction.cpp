@@ -177,6 +177,23 @@ JSValue JSFunction::lengthGetter(ExecState*, JSValue slotBase, const Identifier&
     return jsNumber(thisObj->jsExecutable()->parameterCount());
 }
 
+static inline WriteBarrierBase<Unknown>* createPrototypeProperty(JSGlobalData& globalData, JSGlobalObject* globalObject, JSFunction* function)
+{
+    ExecState* exec = globalObject->globalExec();
+    if (WriteBarrierBase<Unknown>* location = function->getDirectLocation(globalData, exec->propertyNames().prototype))
+        return location;
+    JSObject* prototype = constructEmptyObject(exec, globalObject->emptyObjectStructure());
+    prototype->putDirect(globalData, exec->propertyNames().constructor, function, DontEnum);
+    function->putDirect(globalData, exec->propertyNames().prototype, prototype, DontDelete | DontEnum);
+    return function->getDirectLocation(exec->globalData(), exec->propertyNames().prototype);
+}
+
+void JSFunction::preventExtensions(JSGlobalData& globalData)
+{
+    createPrototypeProperty(globalData, scope()->globalObject.get(), this);
+    JSObject::preventExtensions(globalData);
+}
+
 bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyName, PropertySlot& slot)
 {
     if (isHostFunction())
@@ -185,12 +202,8 @@ bool JSFunction::getOwnPropertySlot(ExecState* exec, const Identifier& propertyN
     if (propertyName == exec->propertyNames().prototype) {
         WriteBarrierBase<Unknown>* location = getDirectLocation(exec->globalData(), propertyName);
 
-        if (!location) {
-            JSObject* prototype = constructEmptyObject(exec, scope()->globalObject->emptyObjectStructure());
-            prototype->putDirect(exec->globalData(), exec->propertyNames().constructor, this, DontEnum);
-            putDirect(exec->globalData(), exec->propertyNames().prototype, prototype, DontDelete | DontEnum);
-            location = getDirectLocation(exec->globalData(), propertyName);
-        }
+        if (!location)
+            location = createPrototypeProperty(exec->globalData(), scope()->globalObject.get(), this);
 
         slot.setValue(this, location->get(), offsetForLocation(location));
     }
