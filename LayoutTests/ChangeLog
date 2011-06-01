@@ -1,3 +1,15 @@
+2011-06-01  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        LayoutTests/editing/pasteboard/drag-drop-list fails on webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=61871
+
+        Renames editing/pasteboard/4861080.html to drag-drop-list.html, since it was renamed in r87778. 
+
+        * platform/mac-wk2/Skipped:
+        * platform/qt-wk2/Skipped:
+
 2011-06-01  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Eric Seidel.
