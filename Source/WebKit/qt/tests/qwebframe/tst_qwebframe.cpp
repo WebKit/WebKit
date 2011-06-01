@@ -3456,18 +3456,17 @@ void tst_QWebFrame::setUrlToInvalid()
     QWebPage page;
     QWebFrame* frame = page.mainFrame();
 
-    const QUrl invalidUrl("http://strange;hostname/here");
+    const QUrl invalidUrl("http:/example.com");
     QVERIFY(!invalidUrl.isEmpty());
     QVERIFY(!invalidUrl.isValid());
     QVERIFY(invalidUrl != QUrl());
 
+    // QWebFrame will do its best to accept the URL, possible converting it to a valid equivalent URL.
+    const QUrl validUrl("http://example.com/");
     frame->setUrl(invalidUrl);
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=59345", Continue);
-    QCOMPARE(frame->url(), invalidUrl);
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=59345", Continue);
-    QCOMPARE(frame->requestedUrl(), invalidUrl);
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=59345", Continue);
-    QCOMPARE(frame->baseUrl(), invalidUrl);
+    QCOMPARE(frame->url(), validUrl);
+    QCOMPARE(frame->requestedUrl(), validUrl);
+    QCOMPARE(frame->baseUrl(), validUrl);
 
     // QUrls equivalent to QUrl() will be treated as such.
     const QUrl aboutBlank("about:blank");
