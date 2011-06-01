@@ -3678,22 +3678,6 @@ BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS
 
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = TEXT PASS
 
-// these tests were introduced in r58522. Needed new baselines, but I'm
-// not sure why debug is timing out.
-BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr.html = TIMEOUT
-BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr.html = TIMEOUT
-BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr.html = TIMEOUT
-BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html = TIMEOUT
-BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr.html = TIMEOUT
-BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html = TIMEOUT
-BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop.html = TIMEOUT
-BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop.html = TIMEOUT
-BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop.html = TIMEOUT
-BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html = TIMEOUT
-BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = TIMEOUT
-BUGWK59166 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html = TIMEOUT
-BUGWK59166 WIN LINUX DEBUG CPU : svg/filters/feDropShadow.svg = TIMEOUT
-
 BUGCR80301 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
 
 // roll up from r84685:r84721??

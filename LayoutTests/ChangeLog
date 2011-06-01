@@ -1,5 +1,11 @@
 2011-06-01  Adam Barth  <abarth@webkit.org>
 
+        These tests no longer time out.  Yay!
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
         Update expected results to match V8 rather than JSC.
 
         * platform/chromium-mac/fast/js/property-getters-and-setters-expected.txt:
