@@ -1,3 +1,17 @@
+2011-06-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Eric Seidel.
+
+        Permanent red background when SVG is used as a background image (DEBUG ONLY)
+        https://bugs.webkit.org/show_bug.cgi?id=16518
+
+        The problem seems gone, I can't reproduce it anymore, add Beths test to svg/as-image.
+
+        * platform/mac/svg/as-image/svg-as-background-with-relative-size-expected.png: Added.
+        * platform/mac/svg/as-image/svg-as-background-with-relative-size-expected.txt: Added.
+        * svg/as-image/resources/svg-as-background-with-relative-size.svg: Added.
+        * svg/as-image/svg-as-background-with-relative-size.html: Added.
+
 2011-05-31  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
