@@ -49,8 +49,8 @@ protected:
 
 #if ENABLE(SVG)
     RenderSVGRoot* embeddedSVGContentRenderer() const;
-    int computeEmbeddedDocumentReplacedWidth(bool includeMaxWidth, RenderStyle* contentRenderStyle) const;
-    int computeEmbeddedDocumentReplacedHeight(RenderStyle* contentRenderStyle) const;
+    int computeEmbeddedDocumentReplacedWidth(RenderSVGRoot* contentRenderer, bool includeMaxWidth) const;
+    int computeEmbeddedDocumentReplacedHeight(RenderSVGRoot* contentRenderer) const;
     virtual int computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
     virtual int computeReplacedLogicalHeight() const;
     virtual void layout();

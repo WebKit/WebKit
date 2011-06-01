@@ -190,10 +190,7 @@ int RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) const
     //   the width of the viewport.
     //
     // Under these conditions, the positioning properties establish the viewport's width.
-    int logicalWidth = ownerRenderer->computeReplacedLogicalWidthUsing(ownerWidth);
-    int minLogicalWidth = ownerRenderer->computeReplacedLogicalWidthUsing(ownerRendererStyle->logicalMinWidth());
-    int maxLogicalWidth = !includeMaxWidth || ownerRendererStyle->logicalMaxWidth().isUndefined() ? logicalWidth : ownerRenderer->computeReplacedLogicalWidthUsing(ownerRendererStyle->logicalMaxWidth());
-    return max(minLogicalWidth, min(logicalWidth, maxLogicalWidth));
+    return ownerRenderer->computeReplacedLogicalWidthRespectingMinMaxWidth(ownerRenderer->computeReplacedLogicalWidthUsing(ownerWidth), includeMaxWidth);
 }
 
 int RenderSVGRoot::computeReplacedLogicalHeight() const
@@ -222,10 +219,7 @@ int RenderSVGRoot::computeReplacedLogicalHeight() const
     // Similarly, if there are positioning properties specified on the referencing element or on the outermost svg element that
     // are sufficient to establish the height of the viewport, then these positioning properties establish the viewport's height;
     // otherwise, the ‘height’ attribute on the outermost svg element establishes the viewport's height.
-    int logicalHeight = ownerRenderer->computeReplacedLogicalHeightUsing(ownerHeight);
-    int minLogicalHeight = ownerRenderer->computeReplacedLogicalHeightUsing(ownerRendererStyle->logicalMinHeight());
-    int maxLogicalHeight = ownerRendererStyle->logicalMaxHeight().isUndefined() ? logicalHeight : ownerRenderer->computeReplacedLogicalHeightUsing(ownerRendererStyle->logicalMaxHeight());
-    return max(minLogicalHeight, min(logicalHeight, maxLogicalHeight));
+    return ownerRenderer->computeReplacedLogicalHeightRespectingMinMaxHeight(ownerRenderer->computeReplacedLogicalHeightUsing(ownerHeight));
 }
 
 void RenderSVGRoot::layout()

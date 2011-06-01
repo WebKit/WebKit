@@ -202,10 +202,7 @@ int RenderReplaced::computeReplacedLogicalWidth(bool includeMaxWidth) const
     else
         logicalWidth = intrinsicLogicalWidth();
 
-    int minLogicalWidth = computeReplacedLogicalWidthUsing(style()->logicalMinWidth());
-    int maxLogicalWidth = !includeMaxWidth || style()->logicalMaxWidth().isUndefined() ? logicalWidth : computeReplacedLogicalWidthUsing(style()->logicalMaxWidth());
-
-    return max(minLogicalWidth, min(logicalWidth, maxLogicalWidth));
+    return computeReplacedLogicalWidthRespectingMinMaxWidth(logicalWidth, includeMaxWidth);
 }
 
 int RenderReplaced::computeReplacedLogicalHeight() const
@@ -218,10 +215,7 @@ int RenderReplaced::computeReplacedLogicalHeight() const
     else
         logicalHeight = intrinsicLogicalHeight();
 
-    int minLogicalHeight = computeReplacedLogicalHeightUsing(style()->logicalMinHeight());
-    int maxLogicalHeight = style()->logicalMaxHeight().isUndefined() ? logicalHeight : computeReplacedLogicalHeightUsing(style()->logicalMaxHeight());
-
-    return max(minLogicalHeight, min(logicalHeight, maxLogicalHeight));
+    return computeReplacedLogicalHeightRespectingMinMaxHeight(logicalHeight);
 }
 
 int RenderReplaced::calcAspectRatioLogicalWidth() const

@@ -1945,10 +1945,13 @@ int RenderBox::computePercentageLogicalHeight(const Length& height)
 
 int RenderBox::computeReplacedLogicalWidth(bool includeMaxWidth) const
 {
-    int logicalWidth = computeReplacedLogicalWidthUsing(style()->logicalWidth());
+    return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(style()->logicalWidth()), includeMaxWidth);
+}
+
+int RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth(int logicalWidth, bool includeMaxWidth) const
+{
     int minLogicalWidth = computeReplacedLogicalWidthUsing(style()->logicalMinWidth());
     int maxLogicalWidth = !includeMaxWidth || style()->logicalMaxWidth().isUndefined() ? logicalWidth : computeReplacedLogicalWidthUsing(style()->logicalMaxWidth());
-
     return max(minLogicalWidth, min(logicalWidth, maxLogicalWidth));
 }
 
@@ -1973,10 +1976,13 @@ int RenderBox::computeReplacedLogicalWidthUsing(Length logicalWidth) const
 
 int RenderBox::computeReplacedLogicalHeight() const
 {
-    int logicalHeight = computeReplacedLogicalHeightUsing(style()->logicalHeight());
+    return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(style()->logicalHeight()));
+}
+
+int RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight(int logicalHeight) const
+{
     int minLogicalHeight = computeReplacedLogicalHeightUsing(style()->logicalMinHeight());
     int maxLogicalHeight = style()->logicalMaxHeight().isUndefined() ? logicalHeight : computeReplacedLogicalHeightUsing(style()->logicalMaxHeight());
-
     return max(minLogicalHeight, min(logicalHeight, maxLogicalHeight));
 }
 

@@ -112,22 +112,18 @@ RenderSVGRoot* RenderPart::embeddedSVGContentRenderer() const
     return toRenderSVGRoot(svgRootRenderer);
 }
 
-int RenderPart::computeEmbeddedDocumentReplacedWidth(bool includeMaxWidth, RenderStyle* contentRenderStyle) const
+int RenderPart::computeEmbeddedDocumentReplacedWidth(RenderSVGRoot* contentRenderer, bool includeMaxWidth) const
 {
-    int logicalWidth = computeReplacedLogicalWidthUsing(contentRenderStyle->logicalWidth());
-    int minLogicalWidth = computeReplacedLogicalWidthUsing(contentRenderStyle->logicalMinWidth());
-    int maxLogicalWidth = !includeMaxWidth || contentRenderStyle->logicalMaxWidth().isUndefined() ? logicalWidth : computeReplacedLogicalWidthUsing(contentRenderStyle->logicalMaxWidth());
-    int width = max(minLogicalWidth, min(logicalWidth, maxLogicalWidth));
-    return width;
+    ASSERT(contentRenderer);
+    ASSERT(contentRenderer->style());
+    return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(contentRenderer->style()->logicalWidth()), includeMaxWidth);
 }
 
-int RenderPart::computeEmbeddedDocumentReplacedHeight(RenderStyle* contentRenderStyle) const
+int RenderPart::computeEmbeddedDocumentReplacedHeight(RenderSVGRoot* contentRenderer) const
 {
-    int logicalHeight = computeReplacedLogicalHeightUsing(contentRenderStyle->logicalHeight());
-    int minLogicalHeight = computeReplacedLogicalHeightUsing(contentRenderStyle->logicalMinHeight());
-    int maxLogicalHeight = contentRenderStyle->logicalMaxHeight().isUndefined() ? logicalHeight : computeReplacedLogicalHeightUsing(contentRenderStyle->logicalMaxHeight());
-    int height = max(minLogicalHeight, min(logicalHeight, maxLogicalHeight));
-    return height;
+    ASSERT(contentRenderer);
+    ASSERT(contentRenderer->style());
+    return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(contentRenderer->style()->logicalHeight()));
 }
 
 int RenderPart::computeReplacedLogicalWidth(bool includeMaxWidth) const
@@ -149,7 +145,7 @@ int RenderPart::computeReplacedLogicalWidth(bool includeMaxWidth) const
 
         // If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic width, then that intrinsic width is the used value of 'width'.
         if (heightIsAuto && hasIntrinsicWidth)
-            return computeEmbeddedDocumentReplacedWidth(includeMaxWidth, contentRenderStyle);
+            return computeEmbeddedDocumentReplacedWidth(contentRenderer, includeMaxWidth);
     
         bool hasIntrinsicHeight = contentRenderStyle->height().isFixed();
         if (!intrinsicRatio.isEmpty()) {
@@ -175,7 +171,7 @@ int RenderPart::computeReplacedLogicalWidth(bool includeMaxWidth) const
 
         // Otherwise, if 'width' has a computed value of 'auto', and the element has an intrinsic width, then that intrinsic width is the used value of 'width'.
         if (hasIntrinsicWidth)
-            return computeEmbeddedDocumentReplacedWidth(includeMaxWidth, contentRenderStyle);
+            return computeEmbeddedDocumentReplacedWidth(contentRenderer, includeMaxWidth);
     }
 
     // Otherwise, if 'width' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'width' becomes 300px. If 300px is too
@@ -202,7 +198,7 @@ int RenderPart::computeReplacedLogicalHeight() const
 
         // If 'height' and 'width' both have computed values of 'auto' and the element also has an intrinsic height, then that intrinsic height is the used value of 'height'.
         if (widthIsAuto && hasIntrinsicHeight)
-            return computeEmbeddedDocumentReplacedHeight(contentRenderStyle);
+            return computeEmbeddedDocumentReplacedHeight(contentRenderer);
     
         // Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic ratio then the used value of 'height' is:
         // (used width) / (intrinsic ratio)
@@ -213,7 +209,7 @@ int RenderPart::computeReplacedLogicalHeight() const
 
         // Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic height, then that intrinsic height is the used value of 'height'.
         if (hasIntrinsicHeight)
-            return computeEmbeddedDocumentReplacedHeight(contentRenderStyle);
+            return computeEmbeddedDocumentReplacedHeight(contentRenderer);
     }
 
     // Otherwise, if 'height' has a computed value of 'auto', but none of the conditions above are met, then the used value of 'height' must be set to the height

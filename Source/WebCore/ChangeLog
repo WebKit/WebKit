@@ -1,3 +1,44 @@
+2011-06-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        Remove duplicated code in various computeReplacedLogical*() functions
+        https://bugs.webkit.org/show_bug.cgi?id=61860
+
+        Centralize this calculation in RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth:
+        int minLogicalWidth = computeReplacedLogicalWidthUsing(style()->logicalMinWidth());
+        int maxLogicalWidth = !includeMaxWidth || style()->logicalMaxWidth().isUndefined() ? logicalWidth : computeReplacedLogicalWidthUsing(style()->logicalMaxWidth());
+        return max(minLogicalWidth, min(logicalWidth, maxLogicalWidth));
+
+        Centralize this calculation in RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight:
+        int minLogicalHeight = computeReplacedLogicalHeightUsing(style()->logicalMinHeight());
+        int maxLogicalHeight = style()->logicalMaxHeight().isUndefined() ? logicalHeight : computeReplacedLogicalHeightUsing(style()->logicalMaxHeight());
+        return max(minLogicalHeight, min(logicalHeight, maxLogicalHeight));
+
+        Use the new helper methods where possible, deduplicating lots of code.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::computeReplacedLogicalWidth):
+        (WebCore::RenderBox::computeReplacedLogicalWidthRespectingMinMaxWidth):
+        (WebCore::RenderBox::computeReplacedLogicalHeight):
+        (WebCore::RenderBox::computeReplacedLogicalHeightRespectingMinMaxHeight):
+        * rendering/RenderBox.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::computeReplacedLogicalWidth):
+        (WebCore::RenderImage::computeReplacedLogicalHeight):
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::computeEmbeddedDocumentReplacedWidth):
+        (WebCore::RenderPart::computeEmbeddedDocumentReplacedHeight):
+        (WebCore::RenderPart::computeReplacedLogicalWidth):
+        (WebCore::RenderPart::computeReplacedLogicalHeight):
+        * rendering/RenderPart.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth):
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth):
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight):
+
 2011-06-01  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87788.

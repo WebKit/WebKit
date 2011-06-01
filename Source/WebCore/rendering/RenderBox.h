@@ -308,7 +308,9 @@ public:
     int computeLogicalWidthUsing(LogicalWidthType, int availableLogicalWidth);
     int computeLogicalHeightUsing(const Length& height);
     int computeReplacedLogicalWidthUsing(Length width) const;
+    int computeReplacedLogicalWidthRespectingMinMaxWidth(int logicalWidth, bool includeMaxWidth = true) const;
     int computeReplacedLogicalHeightUsing(Length height) const;
+    int computeReplacedLogicalHeightRespectingMinMaxHeight(int logicalHeight) const;
 
     virtual int computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
     virtual int computeReplacedLogicalHeight() const;
