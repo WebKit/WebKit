@@ -52,6 +52,7 @@ private:
 
     virtual void beginEnterFullScreenAnimation(float duration);
     virtual void beginExitFullScreenAnimation(float duration);
+    virtual void disposeOfLayerClient();
 
     void animateFullScreen(const CATransform3D& startTransform, const CATransform3D& endTransform, float duration, id listener);
     CATransform3D windowedCGTransform();

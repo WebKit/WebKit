@@ -422,6 +422,7 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
     _layerHostingView = 0;
     NSEnableScreenUpdates();
 
+    [self _manager]->disposeOfLayerClient();
     _isExitingAcceleratedCompositingMode = NO;
     [self release]; // Balanced by retain in exitAcceleratedCompositingMode above.
 }

@@ -28,5 +28,6 @@ messages -> WebFullScreenManager {
     DidExitFullScreen()
     BeginEnterFullScreenAnimation(float duration)
     BeginExitFullScreenAnimation(float duration)
+    DisposeOfLayerClient()
 }
 #endif

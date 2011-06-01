@@ -1,3 +1,27 @@
+2011-06-01  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Flash of old video frame at the end of full screen transition
+        https://bugs.webkit.org/show_bug.cgi?id=61752
+
+        Add a new method and message, DisposeOfLayerClient, which will invalidate and release
+        the WKRemoteLayerClient used during the full-screen animation.  This ensures that 
+        the root layer used for the full-screen animation will be in a clean state at the start
+        of the next transition.
+
+        * UIProcess/WebFullScreenManagerProxy.cpp:
+        (WebKit::WebFullScreenManagerProxy::disposeOfLayerClient): Added.
+        * UIProcess/WebFullScreenManagerProxy.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController exitCompositedModeRepaintCompleted]): Call disposeOfLayerClient.
+        * WebProcess/FullScreen/WebFullScreenManager.h:
+        (WebKit::WebFullScreenManager::disposeOfLayerClient): Added.
+        * WebProcess/FullScreen/WebFullScreenManager.messages.in: Added DisposeOfLayerClient.
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.h:
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::disposeOfLayerClient): Added, invalidates and clears m_rootLayerClient.
+
 2011-06-01  Adam Roben  <aroben@apple.com>
 
         Build fix after r87831

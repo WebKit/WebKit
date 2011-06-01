@@ -75,6 +75,7 @@ protected:
 
     virtual void beginEnterFullScreenAnimation(float duration) = 0;
     virtual void beginExitFullScreenAnimation(float duration) = 0;
+    virtual void disposeOfLayerClient() { }
     WebCore::IntRect getFullScreenRect();
 
     void didReceiveWebFullScreenManagerMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);

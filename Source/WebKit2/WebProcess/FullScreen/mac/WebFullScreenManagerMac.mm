@@ -193,6 +193,15 @@ void WebFullScreenManagerMac::setRootFullScreenLayer(WebCore::GraphicsLayer* lay
     [[NSNotificationCenter defaultCenter] postNotificationName:@"WebKitLayerHostChanged" object:m_rootLayer->platformLayer() userInfo:nil];
 }
 
+void WebFullScreenManagerMac::disposeOfLayerClient()
+{
+    if (!m_remoteLayerClient)
+        return;
+    WKCARemoteLayerClientSetLayer(m_remoteLayerClient.get(), 0);
+    WKCARemoteLayerClientInvalidate(m_remoteLayerClient.get());
+    m_remoteLayerClient = nullptr;
+}
+
 void WebFullScreenManagerMac::beginEnterFullScreenAnimation(float duration)
 {
     ASSERT(m_element);
