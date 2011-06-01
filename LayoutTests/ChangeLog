@@ -1,5 +1,13 @@
 2011-06-01  Adam Barth  <abarth@webkit.org>
 
+        Image baselines for this new test.
+
+        * platform/chromium-linux-x86/fullscreen/full-screen-zIndex-after-expected.png: Added.
+        * platform/chromium-linux/fullscreen/full-screen-zIndex-after-expected.png: Added.
+        * platform/chromium-mac/fullscreen/full-screen-zIndex-after-expected.png: Added.
+
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
         ... and now Windows results.
 
         * platform/chromium-win-vista/svg/custom/embedding-external-svgs-expected.png: Added.
