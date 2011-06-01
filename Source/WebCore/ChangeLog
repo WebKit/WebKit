@@ -1,3 +1,27 @@
+2011-06-01  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Safari always crashes on http://bbc.co.uk when VoiceOver enabled
+        https://bugs.webkit.org/show_bug.cgi?id=61886
+
+        This crash can happen on webpages that remove an element from the DOM when the element receives focus.
+        When AppKit goes to post a notification to inform VoiceOver the focus has changed, it asks for the AXFocusedUIElement.
+        However by posting that notification, a render tree update is performed. This causes the element to disappear, but
+        AppKit still has a handle to it and continues to try to reference it. When the autorelease pool pops, the reference goes bad.
+
+        To fix, the root element, the AccessibilityScrollView, needs to implement updateBackingStore(), otherwise this method 
+        will not be called in time.
+
+        No test could be created because to cause it depends on an internal AppKit mechanism
+        that is only triggered remotely through the accessibility runtime.
+
+        * accessibility/AccessibilityObject.cpp:
+        (WebCore::AccessibilityObject::updateBackingStore):
+        * accessibility/AccessibilityObject.h:
+        * accessibility/AccessibilityRenderObject.cpp:
+        * accessibility/AccessibilityRenderObject.h:
+
 2011-06-01  David Carson  <dacarson@apple.com>
 
         Reviewed by Antti Koivisto.

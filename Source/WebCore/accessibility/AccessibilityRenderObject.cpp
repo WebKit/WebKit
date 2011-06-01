@@ -3630,15 +3630,6 @@ void AccessibilityRenderObject::setAccessibleName(String& name)
         static_cast<Element*>(domNode)->setAttribute(aria_labelAttr, name);
 }
     
-void AccessibilityRenderObject::updateBackingStore()
-{
-    if (!m_renderer)
-        return;
-
-    // Updating layout may delete m_renderer and this object.
-    m_renderer->document()->updateLayoutIgnorePendingStylesheets();
-}
-
 static bool isLinkable(const AccessibilityRenderObject& object)
 {
     if (!object.renderer())

@@ -245,8 +245,6 @@ public:
     virtual String doAXStringForRange(const PlainTextRange&) const;
     virtual IntRect doAXBoundsForRange(const PlainTextRange&) const;
     
-    virtual void updateBackingStore();
-
     virtual String stringValueForMSAA() const;
     virtual String stringRoleForMSAA() const;
     virtual String nameForMSAA() const;
