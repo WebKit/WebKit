@@ -1,9 +1,13 @@
-<p>This tests dropping content into the unwanted space above a list items content when the content is wrapped in a span.  You should see 'DragMe DropAboveMe'.</p>
-<div contenteditable="true">
+<!DOCTYPE HTML>
+<html>
+<body>
+<div contenteditable="true" id="editable">
 <li id="li" style="border: 1px solid black;"><span><div id="contents" style="border: 1px solid red;">DropAboveMe</div></span></li>
 <div><span id="drag">DragMe</span></div>
 </div>
+
 <ul id="console"></ul>
+<script src="../../resources/dump-as-markup.js"></script>
 <script>
 function log(str) {
     var li = document.createElement("li");
@@ -36,14 +40,19 @@ function runTest() {
 
     var li = document.getElementById("li");
     
-    var dropx = li.offsetParent.offsetLeft + li.offsetLeft + li.offsetWidth / 2;
-    var dropy = li.offsetParent.offsetTop + li.offsetTop + 15;
+    var dropx = li.offsetLeft + li.offsetWidth / 2;
+    var dropy = li.offsetTop + 15;
 
     eventSender.mouseMoveTo(dropx, dropy);
     eventSender.mouseUp();
     
     window.layoutTestController.notifyDone();
+    Markup.description("This tests dropping content onto a list items content when the content is wrapped in a span.  You should see 'DropAboveMe DragMe'. "
+        + "See <rdar://4861080>, but note that the expected behavior is different than what's described there, since the rendering bug <rdar://4907469> has been fixed.");
+    Markup.dump(editable);
 }
 
 runTest();
 </script>
+</body>
+</html>
