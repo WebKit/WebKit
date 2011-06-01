@@ -235,15 +235,15 @@ void RenderSVGInlineText::computeNewScaledFontForStyle(RenderObject* renderer, c
 
     Document* document = renderer->document();
     ASSERT(document);
-
+    
     CSSStyleSelector* styleSelector = document->styleSelector();
     ASSERT(styleSelector);
 
-    // Alter font-size to the right on-screen value, to avoid scaling the glyphs themselves.
+    // Alter font-size to the right on-screen value to avoid scaling the glyphs themselves, except when GeometricPrecision is specified
     AffineTransform ctm;
     SVGImageBufferTools::calculateTransformationToOutermostSVGCoordinateSystem(renderer, ctm);
     scalingFactor = narrowPrecisionToFloat(sqrt((pow(ctm.xScale(), 2) + pow(ctm.yScale(), 2)) / 2));
-    if (scalingFactor == 1 || !scalingFactor) {
+    if (scalingFactor == 1 || !scalingFactor || style->fontDescription().textRenderingMode() == GeometricPrecision) {
         scalingFactor = 1;
         scaledFont = style->font();
         return;
