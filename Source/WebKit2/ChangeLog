@@ -1,5 +1,35 @@
 2011-06-01  Adam Roben  <aroben@apple.com>
 
+        Move WebView's window geometry updating code to a new class
+
+        This will allow us to share this code with LayerTreeHostCAWin.
+
+        Prep work for <http://webkit.org/b/58054> <rdar://problem/9249839> REGRESSION (WebKit2):
+        Accelerated CSS animations have a lower framerate than in WebKit1
+
+        Reviewed by Anders Carlsson.
+
+        * Shared/win/CoalescedWindowGeometriesUpdater.cpp: Added.
+        (WebKit::CoalescedWindowGeometriesUpdater::CoalescedWindowGeometriesUpdater):
+        (WebKit::CoalescedWindowGeometriesUpdater::~CoalescedWindowGeometriesUpdater):
+        Simple constructor/destructor.
+
+        (WebKit::CoalescedWindowGeometriesUpdater::addPendingUpdate):
+        (WebKit::setWindowRegion):
+        (WebKit::CoalescedWindowGeometriesUpdater::updateGeometries):
+        * Shared/win/CoalescedWindowGeometriesUpdater.h: Added.
+        Moved code here...
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::scheduleChildWindowGeometryUpdate):
+        (WebKit::WebView::updateChildWindowGeometries):
+        * UIProcess/win/WebView.h:
+        ...from here.
+
+        * win/WebKit2.vcproj: Added new files.
+
+2011-06-01  Adam Roben  <aroben@apple.com>
+
         Windows build fix after r87755
 
         * WebProcess/WebPage/ca/win/LayerTreeHostCAWin.cpp:

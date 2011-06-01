@@ -41,7 +41,6 @@
 #include "WebEventFactory.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxyWin.h"
-#include "WindowGeometry.h"
 #include <Commctrl.h>
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Cursor.h>
@@ -1531,45 +1530,12 @@ HWND WebView::nativeWindow()
 
 void WebView::scheduleChildWindowGeometryUpdate(const WindowGeometry& geometry)
 {
-    m_childWindowGeometriesToUpdate.set(geometry.window, geometry);
-}
-
-static void setWindowRegion(HWND window, PassOwnPtr<HRGN> popRegion)
-{
-    OwnPtr<HRGN> region = popRegion;
-
-    if (!::SetWindowRgn(window, region.get(), TRUE))
-        return;
-
-    // Windows owns the region now.
-    region.leakPtr();
+    m_geometriesUpdater.addPendingUpdate(geometry);
 }
 
 void WebView::updateChildWindowGeometries()
 {
-    HashMap<HWND, WindowGeometry> geometriesToUpdate;
-    geometriesToUpdate.swap(m_childWindowGeometriesToUpdate);
-
-    HDWP deferWindowPos = ::BeginDeferWindowPos(geometriesToUpdate.size());
-
-    for (HashMap<HWND, WindowGeometry>::const_iterator::Values it = geometriesToUpdate.begin().values(), end = geometriesToUpdate.end().values(); it != end; ++it) {
-        const WindowGeometry& geometry = *it;
-
-        if (!::IsWindow(geometry.window))
-            continue;
-
-        UINT flags = SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOZORDER;
-        if (geometry.visible)
-            flags |= SWP_SHOWWINDOW;
-        else
-            flags |= SWP_HIDEWINDOW;
-
-        deferWindowPos = ::DeferWindowPos(deferWindowPos, geometry.window, 0, geometry.frame.x(), geometry.frame.y(), geometry.frame.width(), geometry.frame.height(), flags);
-
-        setWindowRegion(geometry.window, adoptPtr(::CreateRectRgn(geometry.clipRect.x(), geometry.clipRect.y(), geometry.clipRect.maxX(), geometry.clipRect.maxY())));
-    }
-
-    ::EndDeferWindowPos(deferWindowPos);
+    m_geometriesUpdater.updateGeometries();
 }
 
 // WebCore::WindowMessageListener
