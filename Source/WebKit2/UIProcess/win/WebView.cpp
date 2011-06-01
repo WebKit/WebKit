@@ -1520,6 +1520,7 @@ void WebView::setIsVisible(bool isVisible)
 
 void WebView::enterAcceleratedCompositingMode(const LayerTreeContext& context)
 {
+#if HAVE(WKQCA)
     ASSERT(!context.isEmpty());
 
     m_layerHostWindow = context.window;
@@ -1527,16 +1528,23 @@ void WebView::enterAcceleratedCompositingMode(const LayerTreeContext& context)
     IntSize size = viewSize();
     // Ensure the layer host window is behind all other child windows (since otherwise it would obscure them).
     ::SetWindowPos(m_layerHostWindow, HWND_BOTTOM, 0, 0, size.width(), size.height(), SWP_SHOWWINDOW | SWP_NOACTIVATE);
+#else
+    ASSERT_NOT_REACHED();
+#endif
 }
 
 void WebView::exitAcceleratedCompositingMode()
 {
+#if HAVE(WKQCA)
     ASSERT(m_layerHostWindow);
 
     // Tell the WKCACFViewWindow to destroy itself. We can't call ::DestroyWindow directly because
     // the window is owned by another thread.
     ::PostMessageW(m_layerHostWindow, WKCACFViewWindow::customDestroyMessage, 0, 0);
     m_layerHostWindow = 0;
+#else
+    ASSERT_NOT_REACHED();
+#endif
 }
 
 #endif // USE(ACCELERATED_COMPOSITING)

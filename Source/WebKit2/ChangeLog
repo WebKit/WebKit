@@ -1,5 +1,14 @@
 2011-06-01  Adam Roben  <aroben@apple.com>
 
+        Build fix after r87831
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::enterAcceleratedCompositingMode):
+        (WebKit::WebView::exitAcceleratedCompositingMode):
+        Added some HAVE(WKQCA) guards.
+
+2011-06-01  Adam Roben  <aroben@apple.com>
+
         Delete a bunch of dead code in DrawingAreaImpl
 
         LayerTreeHost::participatesInDisplay always returns false now, which means a bunch of code
