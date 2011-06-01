@@ -1,3 +1,32 @@
+2011-06-01  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, added new baselines for GTK after r87779.
+
+        * platform/gtk/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-height-50p-on-target-svg-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-height-50p-on-target-svg-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-width-50p-on-target-svg-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-width-50p-on-target-svg-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/gtk/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.png: Added.
+        * platform/gtk/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/gtk/svg/hixie/intrinsic/001-expected.png: Added.
+        * platform/gtk/svg/hixie/intrinsic/001-expected.txt: Added.
+        * platform/gtk/svg/hixie/intrinsic/003-expected.png: Added.
+        * platform/gtk/svg/hixie/intrinsic/003-expected.txt: Added.
+
 2011-06-01  Adam Barth  <abarth@webkit.org>
 
         Add baselines for these tests.
