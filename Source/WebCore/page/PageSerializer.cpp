@@ -206,8 +206,12 @@ void PageSerializer::serializeFrame(Frame* frame)
 
     Vector<Node*> nodes;
     SerializerMarkupAccumulator accumulator(this, document, &nodes);
-    TextEncoding textEncoding(TextEncoding(document->charset()));
-    ASSERT(textEncoding.isValid());
+    TextEncoding textEncoding(document->charset());
+    CString data;
+    if (!textEncoding.isValid()) {
+        // FIXME: iframes used as images trigger this. We should deal with them correctly.
+        return;
+    }
     String text = accumulator.serializeNodes(document->documentElement(), 0, IncludeNode);
     CString frameHTML = textEncoding.encode(text.characters(), text.length(), EntitiesForUnencodables);
     m_resources->append(Resource(url, document->suggestedMIMEType(), SharedBuffer::create(frameHTML.data(), frameHTML.length())));
@@ -274,7 +278,7 @@ void PageSerializer::serializeCSSStyleSheet(CSSStyleSheet* styleSheet, const KUR
 
     if (url.isValid() && !m_resourceURLs.contains(url)) {
         // FIXME: We should check whether a charset has been specified and if none was found add one.
-        TextEncoding textEncoding = TextEncoding(styleSheet->charset());
+        TextEncoding textEncoding(styleSheet->charset());
         ASSERT(textEncoding.isValid());
         String textString = cssText.toString();
         CString text = textEncoding.encode(textString.characters(), textString.length(), EntitiesForUnencodables);

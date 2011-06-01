@@ -33,10 +33,56 @@
 #if ENABLE(MHTML)
 #include "MHTMLArchive.h"
 
+#include "Base64.h"
+#include "CryptographicallyRandomNumber.h"
+#include "DateMath.h"
+#include "Document.h"
+#include "Frame.h"
 #include "MHTMLParser.h"
-#include "MIMEHeader.h"
+#include "MIMETypeRegistry.h"
+#include "Page.h"
+#include "PageSerializer.h"
+#include "QuotedPrintable.h"
+#include "SharedBuffer.h"
+#include <sys/time.h>
+#include <wtf/StdLibExtras.h>
+#include <wtf/text/StringBuilder.h>
 
 namespace WebCore {
+
+const char* const quotedPrintable = "quoted-printable";
+const char* const base64 = "base64";
+
+static String generateRandomBoundary()
+{
+    // Trying to generate random boundaries similar to IE/UnMHT (ex: ----=_NextPart_000_001B_01CC157B.96F808A0).
+    const size_t randomValuesLength = 10;
+    char randomValues[randomValuesLength];
+    cryptographicallyRandomValues(&randomValues, randomValuesLength);
+    StringBuilder stringBuilder;
+    stringBuilder.append("----=_NextPart_000_");
+    for (size_t i = 0; i < randomValuesLength; ++i) {
+        if (i == 2)
+            stringBuilder.append('_');
+        else if (i == 6)
+            stringBuilder.append('.');
+        stringBuilder.append(lowerNibbleToASCIIHexDigit(randomValues[i]));
+        stringBuilder.append(upperNibbleToASCIIHexDigit(randomValues[i]));
+    }
+    return stringBuilder.toString();
+}
+
+static String replaceNonPrintableCharacters(const String& text)
+{
+    StringBuilder stringBuilder;
+    for (size_t i = 0; i < text.length(); ++i) {
+      if (isASCIIPrintable(text[i]))
+        stringBuilder.append(text[i]);
+      else
+        stringBuilder.append('?');
+    }
+    return stringBuilder.toString();
+}
 
 MHTMLArchive::MHTMLArchive()
 {
@@ -69,6 +115,98 @@ PassRefPtr<MHTMLArchive> MHTMLArchive::create(const KURL& url, SharedBuffer* dat
             archive->addSubresource(parser.subResourceAt(j));
     }
     return mainArchive.release();
+}
+
+PassRefPtr<SharedBuffer> MHTMLArchive::generateMHTMLData(Page* page)
+{
+    Vector<PageSerializer::Resource> resources;
+    PageSerializer pageSerializer(&resources);
+    pageSerializer.serialize(page);
+
+    String boundary = generateRandomBoundary();
+    String endOfResourceBoundary = makeString("--", boundary, "\r\n");
+
+    String dateString;
+    timeval timeValue = { 0 };
+    if (!gettimeofday(&timeValue, 0)) {
+        tm timeAndDate = { 0 };
+        if (localtime_r(&(timeValue.tv_sec), &timeAndDate))
+            dateString = makeRFC2822DateString(timeAndDate.tm_wday, timeAndDate.tm_mday, timeAndDate.tm_mon, 1900 + timeAndDate.tm_year, timeAndDate.tm_hour, timeAndDate.tm_min, timeAndDate.tm_sec, calculateUTCOffset() / (1000 * 60));
+        else
+            ASSERT_NOT_REACHED();
+    } else
+        ASSERT_NOT_REACHED();
+
+    StringBuilder stringBuilder;
+    stringBuilder.append("From: <Saved by WebKit>\r\n");
+    stringBuilder.append("Subject: ");
+    // We replace non ASCII characters with '?' characters to match IE's behavior.
+    stringBuilder.append(replaceNonPrintableCharacters(page->mainFrame()->document()->title()));
+    if (!dateString.isEmpty()) {
+        stringBuilder.append("\r\nDate: ");
+        stringBuilder.append(dateString);
+    }
+    stringBuilder.append("\r\nMIME-Version: 1.0\r\n");
+    stringBuilder.append("Content-Type: multipart/related;\r\n");
+    stringBuilder.append("\ttype=\"");
+    stringBuilder.append(page->mainFrame()->document()->suggestedMIMEType());
+    stringBuilder.append("\";\r\n");
+    stringBuilder.append("\tboundary=\"");
+    stringBuilder.append(boundary);
+    stringBuilder.append("\"\r\n\r\n");
+
+    // We use utf8() below instead of ascii() as ascii() replaces CRLFs with ?? (we still only have put ASCII characters in it).
+    ASSERT(stringBuilder.toString().containsOnlyASCII());
+    CString asciiString = stringBuilder.toString().utf8();
+    RefPtr<SharedBuffer> mhtmlData = SharedBuffer::create();
+    mhtmlData->append(asciiString.data(), asciiString.length());
+
+    for (size_t i = 0; i < resources.size(); ++i) {
+        const PageSerializer::Resource& resource = resources[i];
+
+        stringBuilder.clear();
+        stringBuilder.append(endOfResourceBoundary);
+        stringBuilder.append("Content-Type: ");
+        stringBuilder.append(resource.mimeType);
+
+        const char* contentEncoding = MIMETypeRegistry::isSupportedJavaScriptMIMEType(resource.mimeType) || MIMETypeRegistry::isSupportedNonImageMIMEType(resource.mimeType) ? quotedPrintable : base64;
+        stringBuilder.append("\r\nContent-Transfer-Encoding: ");
+        stringBuilder.append(contentEncoding);
+        stringBuilder.append("\r\nContent-Location: ");
+        stringBuilder.append(resource.url);
+        stringBuilder.append("\r\n\r\n");
+
+        asciiString = stringBuilder.toString().utf8();
+        mhtmlData->append(asciiString.data(), asciiString.length());
+
+        // FIXME: ideally we would encode the content as a stream without having to fetch it all.
+        const char* data = resource.data->data();
+        size_t dataLength = resource.data->size();
+        Vector<char> encodedData;
+        if (!strcmp(contentEncoding, quotedPrintable)) {
+            quotedPrintableEncode(data, dataLength, encodedData);
+            mhtmlData->append(encodedData.data(), encodedData.size());
+            mhtmlData->append("\r\n", 2);
+        } else {
+            ASSERT(!strcmp(contentEncoding, base64));
+            // We are not specifying insertLFs = true below as it would cut the lines with LFs and MHTML requires CRLFs.
+            base64Encode(data, dataLength, encodedData);
+            const size_t maximumLineLength = 76;
+            size_t index = 0;
+            size_t encodedDataLength = encodedData.size();
+            do {
+                size_t lineLength = std::min(encodedDataLength - index, maximumLineLength);
+                mhtmlData->append(encodedData.data() + index, lineLength);
+                mhtmlData->append("\r\n", 2);
+                index += maximumLineLength;
+            } while (index < encodedDataLength);
+        }
+    }
+
+    asciiString = makeString("--", boundary, "--\r\n").utf8();
+    mhtmlData->append(asciiString.data(), asciiString.length());
+
+    return mhtmlData.release();
 }
 
 }

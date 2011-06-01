@@ -39,6 +39,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "KURL.h"
+#include "MHTMLArchive.h"
 #include "PageSerializer.h"
 #include "Vector.h"
 
@@ -198,6 +199,13 @@ void WebPageSerializer::serialize(WebView* view, WebVector<WebPageSerializer::Re
     }
 
     *resourcesParam = result;         
+}
+
+WebCString WebPageSerializer::serializeToMHTML(WebView* view)
+{
+    RefPtr<SharedBuffer> mhtml = MHTMLArchive::generateMHTMLData(static_cast<WebViewImpl*>(view)->page());
+    // FIXME: we are copying all the data here. Idealy we would have a WebSharedData().
+    return WebCString(mhtml->data(), mhtml->size());
 }
 
 bool WebPageSerializer::serialize(WebFrame* frame,
