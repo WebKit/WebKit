@@ -1,5 +1,12 @@
 2011-06-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed, added new baseline for GTK after r87726.
+
+        * platform/gtk/fast/frames/flattening/iframe-flattening-nested-expected.txt: Added.
+        * platform/gtk/fast/frames/flattening/iframe-flattening-nested-expected.png: Added.
+
+2011-06-01  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Unreviewed, added new baselines for GTK after r87721.
 
         * platform/gtk/svg/custom/invalid-stroke-hex-expected.txt: Added.
