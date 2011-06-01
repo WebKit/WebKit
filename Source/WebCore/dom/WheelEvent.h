@@ -24,6 +24,7 @@
 #ifndef WheelEvent_h
 #define WheelEvent_h
 
+#include "FloatPoint.h"
 #include "MouseRelatedEvent.h"
 
 namespace WebCore {
@@ -37,14 +38,13 @@ namespace WebCore {
         {
             return adoptRef(new WheelEvent);
         }
-        static PassRefPtr<WheelEvent> create(float wheelTicksX, float wheelTicksY,
-            float rawDeltaX, float rawDeltaY, Granularity granularity, PassRefPtr<AbstractView> view,
-            int screenX, int screenY, int pageX, int pageY,
+        static PassRefPtr<WheelEvent> create(const FloatPoint& wheelTicks,
+            const FloatPoint& rawDelta, Granularity granularity, PassRefPtr<AbstractView> view,
+            const IntPoint& screenLocation, const IntPoint& pageLocation,
             bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
         {
-            return adoptRef(new WheelEvent(wheelTicksX, wheelTicksY, rawDeltaX, rawDeltaY,
-                granularity, view, screenX, screenY, pageX, pageY,
-                ctrlKey, altKey, shiftKey, metaKey));
+            return adoptRef(new WheelEvent(wheelTicks, rawDelta, granularity, view,
+                screenLocation, pageLocation, ctrlKey, altKey, shiftKey, metaKey));
         }
 
         void initWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<AbstractView>,
@@ -55,30 +55,27 @@ namespace WebCore {
                                   int screenX, int screenY, int pageX, int pageY,
                                   bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
-        int wheelDelta() const { if (m_wheelDeltaY == 0) return m_wheelDeltaX; return m_wheelDeltaY; }
-        int wheelDeltaX() const { return m_wheelDeltaX; }
-        int wheelDeltaY() const { return m_wheelDeltaY; }
-        int rawDeltaX() const { return m_rawDeltaX; }
-        int rawDeltaY() const { return m_rawDeltaY; }
+        int wheelDelta() const { return m_wheelDelta.y() ? m_wheelDelta.y() : m_wheelDelta.x(); }
+        int wheelDeltaX() const { return m_wheelDelta.x(); }
+        int wheelDeltaY() const { return m_wheelDelta.y(); }
+        int rawDeltaX() const { return m_rawDelta.x(); }
+        int rawDeltaY() const { return m_rawDelta.y(); }
         Granularity granularity() const { return m_granularity; }
 
         // Needed for Objective-C legacy support
-        bool isHorizontal() const { return m_wheelDeltaX; }
+        bool isHorizontal() const { return m_wheelDelta.x(); }
 
     private:
         WheelEvent();
-        WheelEvent(float wheelTicksX, float wheelTicksY, float rawDeltaX, float rawDeltaY,
+        WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta,
                    Granularity granularity, PassRefPtr<AbstractView>,
-                   int screenX, int screenY, int pageX, int pageY,
+                   const IntPoint& screenLocation, const IntPoint& pageLocation,
                    bool ctrlKey, bool altKey, bool shiftKey, bool metaKey);
 
         virtual bool isWheelEvent() const;
-        
-        int m_wheelDeltaX;
-        int m_wheelDeltaY;
 
-        int m_rawDeltaX;
-        int m_rawDeltaY;
+        IntPoint m_wheelDelta;
+        IntPoint m_rawDelta;
         Granularity m_granularity;
     };
 

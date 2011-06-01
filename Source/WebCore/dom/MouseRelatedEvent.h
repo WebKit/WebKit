@@ -34,10 +34,12 @@ namespace WebCore {
     public:
         // Note that these values are adjusted to counter the effects of zoom, so that values
         // exposed via DOM APIs are invariant under zooming.
-        int screenX() const { return m_screenX; }
-        int screenY() const { return m_screenY; }
-        int clientX() const { return m_clientX; }
-        int clientY() const { return m_clientY; }
+        int screenX() const { return m_screenLocation.x(); }
+        int screenY() const { return m_screenLocation.y(); }
+        const IntPoint& screenLocation() const { return m_screenLocation; }
+        int clientX() const { return m_clientLocation.x(); }
+        int clientY() const { return m_clientLocation.y(); }
+        const IntPoint& clientLocation() const { return m_clientLocation; }
         int layerX();
         int layerY();
         int offsetX();
@@ -45,40 +47,36 @@ namespace WebCore {
         bool isSimulated() const { return m_isSimulated; }
         virtual int pageX() const;
         virtual int pageY() const;
+        virtual const IntPoint& pageLocation() const;
         int x() const;
         int y() const;
 
         // Page point in "absolute" coordinates (i.e. post-zoomed, page-relative coords,
         // usable with RenderObject::absoluteToLocal).
-        IntPoint absoluteLocation() const { return m_absoluteLocation; }
+        const IntPoint& absoluteLocation() const { return m_absoluteLocation; }
         void setAbsoluteLocation(const IntPoint& p) { m_absoluteLocation = p; }
     
     protected:
         MouseRelatedEvent();
         MouseRelatedEvent(const AtomicString& type, bool canBubble, bool cancelable, PassRefPtr<AbstractView>,
-                          int detail, int screenX, int screenY, int pageX, int pageY,
+                          int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
                           bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated = false);
 
         void initCoordinates();
-        void initCoordinates(int clientX, int clientY);
+        void initCoordinates(const IntPoint& clientLocation);
         virtual void receivedTarget();
 
         void computePageLocation();
         void computeRelativePosition();
         
         // Expose these so MouseEvent::initMouseEvent can set them.
-        int m_screenX;
-        int m_screenY;
-        int m_clientX;
-        int m_clientY;
+        IntPoint m_screenLocation;
+        IntPoint m_clientLocation;
 
     private:
-        int m_pageX;
-        int m_pageY;
-        int m_layerX;
-        int m_layerY;
-        int m_offsetX;
-        int m_offsetY;
+        IntPoint m_pageLocation;
+        IntPoint m_layerLocation;
+        IntPoint m_offsetLocation;
         IntPoint m_absoluteLocation;
         bool m_isSimulated;
         bool m_hasCachedRelativePosition;

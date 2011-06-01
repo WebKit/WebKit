@@ -1,3 +1,56 @@
+2011-06-01  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch MouseRelatedEvent to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=61574
+
+        Covered by existing tests.
+
+        * dom/MouseEvent.cpp:
+        (WebCore::MouseEvent::MouseEvent):
+        (WebCore::MouseEvent::initMouseEvent):
+        (WebCore::SimulatedMouseEvent::SimulatedMouseEvent):
+        * dom/MouseRelatedEvent.cpp:
+        (WebCore::MouseRelatedEvent::MouseRelatedEvent):
+        (WebCore::contentsScrollOffset):
+        (WebCore::MouseRelatedEvent::initCoordinates):
+        (WebCore::MouseRelatedEvent::computeRelativePosition):
+        (WebCore::MouseRelatedEvent::layerX):
+        (WebCore::MouseRelatedEvent::layerY):
+        (WebCore::MouseRelatedEvent::offsetX):
+        (WebCore::MouseRelatedEvent::offsetY):
+        (WebCore::MouseRelatedEvent::pageX):
+        (WebCore::MouseRelatedEvent::pageY):
+        (WebCore::MouseRelatedEvent::pageLocation):
+        (WebCore::MouseRelatedEvent::x):
+        (WebCore::MouseRelatedEvent::y):
+        * dom/MouseRelatedEvent.h:
+        (WebCore::MouseRelatedEvent::screenX):
+        (WebCore::MouseRelatedEvent::screenY):
+        (WebCore::MouseRelatedEvent::screenLocation):
+        (WebCore::MouseRelatedEvent::clientX):
+        (WebCore::MouseRelatedEvent::clientY):
+        (WebCore::MouseRelatedEvent::clientLocation):
+        (WebCore::MouseRelatedEvent::absoluteLocation):
+        * dom/TouchEvent.cpp:
+        (WebCore::TouchEvent::TouchEvent):
+        (WebCore::TouchEvent::initTouchEvent):
+        * dom/WheelEvent.cpp:
+        (WebCore::WheelEvent::WheelEvent):
+        (WebCore::WheelEvent::initWheelEvent):
+        (WebCore::WheelEventDispatchMediator::WheelEventDispatchMediator):
+        * dom/WheelEvent.h:
+        (WebCore::WheelEvent::create):
+        (WebCore::WheelEvent::wheelDelta):
+        (WebCore::WheelEvent::wheelDeltaX):
+        (WebCore::WheelEvent::wheelDeltaY):
+        (WebCore::WheelEvent::rawDeltaX):
+        (WebCore::WheelEvent::rawDeltaY):
+        (WebCore::WheelEvent::isHorizontal):
+        * platform/graphics/IntPoint.h:
+        (WebCore::IntPoint::scale):
+
 2011-06-01  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -54,8 +54,8 @@ MouseEvent::MouseEvent(const AtomicString& eventType, bool canBubble, bool cance
                        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey,
                        unsigned short button, PassRefPtr<EventTarget> relatedTarget,
                        PassRefPtr<Clipboard> clipboard, bool isSimulated)
-    : MouseRelatedEvent(eventType, canBubble, cancelable, view, detail, screenX, screenY,
-                        pageX, pageY, ctrlKey, altKey, shiftKey, metaKey, isSimulated)
+    : MouseRelatedEvent(eventType, canBubble, cancelable, view, detail, IntPoint(screenX, screenY),
+                        IntPoint(pageX, pageY), ctrlKey, altKey, shiftKey, metaKey, isSimulated)
     , m_button(button == (unsigned short)-1 ? 0 : button)
     , m_buttonDown(button != (unsigned short)-1)
     , m_relatedTarget(relatedTarget)
@@ -77,8 +77,7 @@ void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool c
 
     initUIEvent(type, canBubble, cancelable, view, detail);
 
-    m_screenX = screenX;
-    m_screenY = screenY;
+    m_screenLocation = IntPoint(screenX, screenY);
     m_ctrlKey = ctrlKey;
     m_altKey = altKey;
     m_shiftKey = shiftKey;
@@ -87,7 +86,7 @@ void MouseEvent::initMouseEvent(const AtomicString& type, bool canBubble, bool c
     m_buttonDown = button != (unsigned short)-1;
     m_relatedTarget = relatedTarget;
 
-    initCoordinates(clientX, clientY);
+    initCoordinates(IntPoint(clientX, clientY));
 
     // FIXME: m_isSimulated is not set to false here.
     // FIXME: m_clipboard is not set to 0 here.
@@ -153,9 +152,8 @@ SimulatedMouseEvent::SimulatedMouseEvent(const AtomicString& eventType, PassRefP
 
     if (this->underlyingEvent() && this->underlyingEvent()->isMouseEvent()) {
         MouseEvent* mouseEvent = static_cast<MouseEvent*>(this->underlyingEvent());
-        m_screenX = mouseEvent->screenX();
-        m_screenY = mouseEvent->screenY();
-        initCoordinates(mouseEvent->clientX(), mouseEvent->clientY());
+        m_screenLocation = mouseEvent->screenLocation();
+        initCoordinates(mouseEvent->clientLocation());
     }
 }
 

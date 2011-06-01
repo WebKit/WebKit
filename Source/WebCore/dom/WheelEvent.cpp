@@ -32,25 +32,19 @@
 namespace WebCore {
 
 WheelEvent::WheelEvent()
-    : m_wheelDeltaX(0)
-    , m_wheelDeltaY(0)
-    , m_rawDeltaX(0)
-    , m_rawDeltaY(0)
-    , m_granularity(Pixel)
+    : m_granularity(Pixel)
 {
 }
 
-WheelEvent::WheelEvent(float wheelTicksX, float wheelTicksY, float rawDeltaX, float rawDeltaY,
+WheelEvent::WheelEvent(const FloatPoint& wheelTicks, const FloatPoint& rawDelta,
                        Granularity granularity, PassRefPtr<AbstractView> view,
-                       int screenX, int screenY, int pageX, int pageY,
+                       const IntPoint& screenLocation, const IntPoint& pageLocation,
                        bool ctrlKey, bool altKey, bool shiftKey, bool metaKey)
     : MouseRelatedEvent(eventNames().mousewheelEvent,
-                        true, true, view, 0, screenX, screenY, pageX, pageY,
+                        true, true, view, 0, screenLocation, pageLocation,
                         ctrlKey, altKey, shiftKey, metaKey)
-    , m_wheelDeltaX(lroundf(wheelTicksX * 120))
-    , m_wheelDeltaY(lroundf(wheelTicksY * 120)) // Normalize to the Windows 120 multiple
-    , m_rawDeltaX(rawDeltaX)
-    , m_rawDeltaY(rawDeltaY)
+    , m_wheelDelta(IntPoint(static_cast<int>(wheelTicks.x() * 120), static_cast<int>(wheelTicks.y() * 120)))
+    , m_rawDelta(roundedIntPoint(rawDelta))
     , m_granularity(granularity)
 {
 }
@@ -64,22 +58,19 @@ void WheelEvent::initWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<Abstrac
     
     initUIEvent(eventNames().mousewheelEvent, true, true, view, 0);
     
-    m_screenX = screenX;
-    m_screenY = screenY;
+    m_screenLocation = IntPoint(screenX, screenY);
     m_ctrlKey = ctrlKey;
     m_altKey = altKey;
     m_shiftKey = shiftKey;
     m_metaKey = metaKey;
     
     // Normalize to the Windows 120 multiple
-    m_wheelDeltaX = rawDeltaX * 120;
-    m_wheelDeltaY = rawDeltaY * 120;
+    m_wheelDelta = IntPoint(rawDeltaX * 120, rawDeltaY * 120);
     
-    m_rawDeltaX = rawDeltaX;
-    m_rawDeltaY = rawDeltaY;
+    m_rawDelta = IntPoint(rawDeltaX, rawDeltaY);
     m_granularity = Pixel;
     
-    initCoordinates(pageX, pageY);
+    initCoordinates(IntPoint(pageX, pageY));
 }
 
 void WheelEvent::initWebKitWheelEvent(int rawDeltaX, int rawDeltaY, PassRefPtr<AbstractView> view,
@@ -105,8 +96,8 @@ WheelEventDispatchMediator::WheelEventDispatchMediator(const PlatformWheelEvent&
     if (!(event.deltaX() || event.deltaY()))
         return;
 
-    setEvent(WheelEvent::create(event.wheelTicksX(), event.wheelTicksY(), event.deltaX(), event.deltaY(), granularity(event),
-        view, event.globalX(), event.globalY(), event.x(), event.y(), event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey()));
+    setEvent(WheelEvent::create(FloatPoint(event.wheelTicksX(), event.wheelTicksY()), FloatPoint(event.deltaX(), event.deltaY()), granularity(event),
+        view, IntPoint(event.globalX(), event.globalY()), IntPoint(event.x(), event.y()), event.ctrlKey(), event.altKey(), event.shiftKey(), event.metaKey()));
 
 }
 

@@ -33,57 +33,30 @@
 namespace WebCore {
 
 MouseRelatedEvent::MouseRelatedEvent()
-    : m_screenX(0)
-    , m_screenY(0)
-    , m_clientX(0)
-    , m_clientY(0)
-    , m_pageX(0)
-    , m_pageY(0)
-    , m_layerX(0)
-    , m_layerY(0)
-    , m_offsetX(0)
-    , m_offsetY(0)
-    , m_isSimulated(false)
+    : m_isSimulated(false)
     , m_hasCachedRelativePosition(false)
 {
 }
 
-static int contentsX(AbstractView* abstractView)
+static IntSize contentsScrollOffset(AbstractView* abstractView)
 {
     if (!abstractView)
-        return 0;
+        return IntSize();
     Frame* frame = abstractView->frame();
     if (!frame)
-        return 0;
+        return IntSize();
     FrameView* frameView = frame->view();
     if (!frameView)
-        return 0;
-    return frameView->scrollX() / frame->pageZoomFactor();
-}
-
-static int contentsY(AbstractView* abstractView)
-{
-    if (!abstractView)
-        return 0;
-    Frame* frame = abstractView->frame();
-    if (!frame)
-        return 0;
-    FrameView* frameView = frame->view();
-    if (!frameView)
-        return 0;
-    return frameView->scrollY() / frame->pageZoomFactor();
+        return IntSize();
+    return IntSize(frameView->scrollX() / frame->pageZoomFactor(),
+        frameView->scrollY() / frame->pageZoomFactor());
 }
 
 MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubble, bool cancelable, PassRefPtr<AbstractView> abstractView,
-                                     int detail, int screenX, int screenY, int windowX, int windowY,
+                                     int detail, const IntPoint& screenLocation, const IntPoint& windowLocation,
                                      bool ctrlKey, bool altKey, bool shiftKey, bool metaKey, bool isSimulated)
     : UIEventWithKeyState(eventType, canBubble, cancelable, abstractView, detail, ctrlKey, altKey, shiftKey, metaKey)
-    , m_screenX(screenX)
-    , m_screenY(screenY)
-    , m_clientX(0)
-    , m_clientY(0)
-    , m_pageX(0)
-    , m_pageY(0)
+    , m_screenLocation(screenLocation)
     , m_isSimulated(isSimulated)
 {
     IntPoint adjustedPageLocation;
@@ -93,23 +66,22 @@ MouseRelatedEvent::MouseRelatedEvent(const AtomicString& eventType, bool canBubb
     if (frame && !isSimulated) {
         if (FrameView* frameView = frame->view()) {
             scrollPosition = frameView->scrollPosition();
-            adjustedPageLocation = frameView->windowToContents(IntPoint(windowX, windowY));
+            adjustedPageLocation = frameView->windowToContents(windowLocation);
             float pageZoom = frame->pageZoomFactor();
             if (pageZoom != 1.0f) {
                 // Adjust our pageX and pageY to account for the page zoom.
-                adjustedPageLocation.setX(lroundf(adjustedPageLocation.x() / pageZoom));
-                adjustedPageLocation.setY(lroundf(adjustedPageLocation.y() / pageZoom));
+                adjustedPageLocation.scale(1 / pageZoom, 1 / pageZoom);
+
+                // FIXME: Change this to use float math and proper rounding (or
+                // better yet, use IntPoint::scale).
                 scrollPosition.setX(scrollPosition.x() / pageZoom);
                 scrollPosition.setY(scrollPosition.y() / pageZoom);
             }
         }
     }
 
-    IntPoint clientLocation(adjustedPageLocation - scrollPosition);
-    m_clientX = clientLocation.x();
-    m_clientY = clientLocation.y();
-    m_pageX = adjustedPageLocation.x();
-    m_pageY = adjustedPageLocation.y();
+    m_clientLocation = adjustedPageLocation - toSize(scrollPosition);
+    m_pageLocation = adjustedPageLocation;
 
     initCoordinates();
 }
@@ -118,27 +90,22 @@ void MouseRelatedEvent::initCoordinates()
 {
     // Set up initial values for coordinates.
     // Correct values are computed lazily, see computeRelativePosition.
-    m_layerX = m_pageX;
-    m_layerY = m_pageY;
-    m_offsetX = m_pageX;
-    m_offsetY = m_pageY;
+    m_layerLocation = m_pageLocation;
+    m_offsetLocation = m_pageLocation;
 
     computePageLocation();
     m_hasCachedRelativePosition = false;
 }
 
-void MouseRelatedEvent::initCoordinates(int clientX, int clientY)
+void MouseRelatedEvent::initCoordinates(const IntPoint& clientLocation)
 {
     // Set up initial values for coordinates.
     // Correct values are computed lazily, see computeRelativePosition.
-    m_clientX = clientX;
-    m_clientY = clientY;
-    m_pageX = clientX + contentsX(view());
-    m_pageY = clientY + contentsY(view());
-    m_layerX = m_pageX;
-    m_layerY = m_pageY;
-    m_offsetX = m_pageX;
-    m_offsetY = m_pageY;
+    m_clientLocation = clientLocation;
+    m_pageLocation = clientLocation + contentsScrollOffset(view());
+
+    m_layerLocation = m_pageLocation;
+    m_offsetLocation = m_pageLocation;
 
     computePageLocation();
     m_hasCachedRelativePosition = false;
@@ -173,25 +140,24 @@ void MouseRelatedEvent::computeRelativePosition()
         return;
 
     // Compute coordinates that are based on the target.
-    m_layerX = m_pageX;
-    m_layerY = m_pageY;
-    m_offsetX = m_pageX;
-    m_offsetY = m_pageY;
+    m_layerLocation = m_pageLocation;
+    m_offsetLocation = m_pageLocation;
 
     // Must have an updated render tree for this math to work correctly.
     targetNode->document()->updateStyleIfNeeded();
 
-    // Adjust offsetX/Y to be relative to the target's position.
+    // Adjust offsetLocation to be relative to the target's position.
     if (!isSimulated()) {
         if (RenderObject* r = targetNode->renderer()) {
             FloatPoint localPos = r->absoluteToLocal(absoluteLocation(), false, true);
-            float zoomFactor = pageZoomFactor(this);
-            m_offsetX = lroundf(localPos.x() / zoomFactor);
-            m_offsetY = lroundf(localPos.y() / zoomFactor);
+            m_offsetLocation = roundedIntPoint(localPos);
+            float scaleFactor = 1 / pageZoomFactor(this);
+            if (scaleFactor != 1.0f)
+                m_offsetLocation.scale(scaleFactor, scaleFactor);
         }
     }
 
-    // Adjust layerX/Y to be relative to the layer.
+    // Adjust layerLocation to be relative to the layer.
     // FIXME: We're pretty sure this is the wrong definition of "layer."
     // Our RenderLayer is a more modern concept, and layerX/Y is some
     // other notion about groups of elements (left over from the Netscape 4 days?);
@@ -204,9 +170,7 @@ void MouseRelatedEvent::computeRelativePosition()
     if (n && (layer = n->renderer()->enclosingLayer())) {
         layer->updateLayerPosition();
         for (; layer; layer = layer->parent()) {
-            const IntPoint& location = layer->location();
-            m_layerX -= location.x();
-            m_layerY -= location.y();
+            m_layerLocation -= toSize(layer->location());
         }
     }
 
@@ -217,52 +181,57 @@ int MouseRelatedEvent::layerX()
 {
     if (!m_hasCachedRelativePosition)
         computeRelativePosition();
-    return m_layerX;
+    return m_layerLocation.x();
 }
 
 int MouseRelatedEvent::layerY()
 {
     if (!m_hasCachedRelativePosition)
         computeRelativePosition();
-    return m_layerY;
+    return m_layerLocation.y();
 }
 
 int MouseRelatedEvent::offsetX()
 {
     if (!m_hasCachedRelativePosition)
         computeRelativePosition();
-    return m_offsetX;
+    return m_offsetLocation.x();
 }
 
 int MouseRelatedEvent::offsetY()
 {
     if (!m_hasCachedRelativePosition)
         computeRelativePosition();
-    return m_offsetY;
+    return m_offsetLocation.y();
 }
 
 int MouseRelatedEvent::pageX() const
 {
-    return m_pageX;
+    return m_pageLocation.x();
 }
 
 int MouseRelatedEvent::pageY() const
 {
-    return m_pageY;
+    return m_pageLocation.y();
+}
+
+const IntPoint& MouseRelatedEvent::pageLocation() const
+{
+    return m_pageLocation;
 }
 
 int MouseRelatedEvent::x() const
 {
     // FIXME: This is not correct.
     // See Microsoft documentation and <http://www.quirksmode.org/dom/w3c_events.html>.
-    return m_clientX;
+    return m_clientLocation.x();
 }
 
 int MouseRelatedEvent::y() const
 {
     // FIXME: This is not correct.
     // See Microsoft documentation and <http://www.quirksmode.org/dom/w3c_events.html>.
-    return m_clientY;
+    return m_clientLocation.y();
 }
 
 } // namespace WebCore

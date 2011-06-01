@@ -27,6 +27,7 @@
 #define IntPoint_h
 
 #include "IntSize.h"
+#include <wtf/MathExtras.h>
 
 #if PLATFORM(QT)
 #include <QDataStream>
@@ -92,6 +93,11 @@ public:
     void move(const IntSize& s) { move(s.width(), s.height()); } 
     void move(const IntPoint& offset) { move(offset.x(), offset.y()); }
     void move(int dx, int dy) { m_x += dx; m_y += dy; }
+    void scale(float sx, float sy)
+    {
+        m_x = lroundf(static_cast<float>(m_x * sx));
+        m_y = lroundf(static_cast<float>(m_y * sy));
+    }
     
     IntPoint expandedTo(const IntPoint& other) const
     {
