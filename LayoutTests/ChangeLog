@@ -1,3 +1,14 @@
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
+        Add baselines for these tests.
+
+        * platform/chromium-linux-x86/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-linux/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-win-vista/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.txt: Added.
+
 2011-06-01  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, added new baseline for GTK after r87726.
