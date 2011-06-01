@@ -1,3 +1,16 @@
+2011-06-01  David Carson  <dacarson@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61831
+        If width and height of an iframe is fixed and should not be visible, then
+        it shouldn't be flattened.
+
+        Test: fast/frames/flattening/iframe-flattening-fixed-width-and-height-zero-size.html
+
+        * rendering/RenderIFrame.cpp:
+        (WebCore::RenderIFrame::flattenFrame): add a check for a zero width or height
+
 2011-06-01  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.

@@ -1,3 +1,17 @@
+2011-06-01  David Carson  <dacarson@apple.com>
+
+        Reviewed by Antti Koivisto.
+
+        Don't flatten frames that have a zero size.
+        https://bugs.webkit.org/show_bug.cgi?id=61831
+
+        This tests creates an iframe that has a width and height of zero
+        and ensures that the iframe is not flattened to the size of the
+        containing content.
+
+        * fast/frames/flattening/iframe-flattening-fixed-width-and-height-zero-size.html: Added.
+        * fast/frames/flattening/iframe-flattening-fixed-width-and-height-zero-size-expected.txt: Added.
+
 2011-06-01  Adam Barth  <abarth@webkit.org>
 
         Linux image baselines for this new test.  Leviw confirms that this results are correct.

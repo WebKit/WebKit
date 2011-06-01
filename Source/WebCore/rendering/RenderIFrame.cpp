@@ -87,9 +87,12 @@ bool RenderIFrame::flattenFrame()
     HTMLIFrameElement* element = static_cast<HTMLIFrameElement*>(node());
     bool isScrollable = element->scrollingMode() != ScrollbarAlwaysOff;
 
-    if (!isScrollable && style()->width().isFixed()
-        && style()->height().isFixed())
-        return false;
+    if (style()->width().isFixed() && style()->height().isFixed()) {
+        if (!isScrollable)
+            return false;
+        if (style()->width().value() <= 0 || style()->height().value() <= 0)
+            return false;
+    }
 
     Frame* frame = element->document()->frame();
     bool enabled = frame && frame->settings()->frameFlatteningEnabled();
