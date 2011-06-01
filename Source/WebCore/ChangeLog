@@ -1,3 +1,39 @@
+2011-06-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        SVG fails all 3 of Hixie's CSS intrinsic sizing tests
+        https://bugs.webkit.org/show_bug.cgi?id=15473
+
+        Hixies CSS intrinsic sizing tests cover percentage sizes specified on the target SVG document as width/height attributes
+        and using width: auto / height: auto on the <object> that hosts the SVG document. Take percentage sizes of the outermost
+        SVGs width/height attributes into account when determining the intrinsic size of the <object>.
+
+        Added several other testcases demonstrating several scenarios. All tests work exactly the same in WebKit and Firefox now.
+        The *on-target-svg-absolute.xhtml tests look equal to WebKit/FF but Opera fails them, likely a relict of the different
+        interpretation of the intrinsic size of a SVG document in SVG Tiny 1.2.
+
+        Tests: svg/custom/object-sizing-height-50p-on-target-svg-absolute.xhtml
+               svg/custom/object-sizing-height-50p-on-target-svg.xhtml
+               svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute.xhtml
+               svg/custom/object-sizing-width-50p-height-50p-on-target-svg.xhtml
+               svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute.xhtml
+               svg/custom/object-sizing-width-50p-height-75p-on-target-svg.xhtml
+               svg/custom/object-sizing-width-50p-on-target-svg-absolute.xhtml
+               svg/custom/object-sizing-width-50p-on-target-svg.xhtml
+               svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute.xhtml
+               svg/custom/object-sizing-width-75p-height-50p-on-target-svg.xhtml
+               svg/hixie/intrinsic/001.html
+               svg/hixie/intrinsic/002.html
+               svg/hixie/intrinsic/003.html
+
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::computeReplacedLogicalWidth):
+        (WebCore::RenderPart::computeReplacedLogicalHeight):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeIntrinsicRatio):
+        * rendering/svg/RenderSVGRoot.h:
+
 2011-05-31  Tonis Tiigi  <tonistiigi@gmail.com>
 
         Reviewed by Pavel Feldman.
@@ -386,7 +422,6 @@
         * dom/XMLDocumentParser.cpp:
         (WebCore::XMLDocumentParser::insertErrorMessageBlock):
 
->>>>>>> .r87747
 2011-05-31  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Antti Koivisto.
@@ -631,6 +666,7 @@
         (WebCore::isSchemeChar):
         Include '+' in the list of valid characters.
 
+>>>>>>> .r87778
 2011-05-30  Andrey Petrov  <andrey.petrov@gmail.com>
 
         Reviewed by Hajime Morita.

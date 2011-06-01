@@ -62,7 +62,7 @@ RenderSVGRoot::~RenderSVGRoot()
 {
 }
 
-FloatSize RenderSVGRoot::computeIntrinsicRatio() const
+void RenderSVGRoot::computeIntrinsicRatioInformation(FloatSize& intrinsicRatio, bool& isPercentageIntrinsicSize) const
 {
     // Spec: http://dev.w3.org/SVG/profiles/1.1F2/publish/coords.html#IntrinsicSizing
     // The intrinsic aspect ratio of the viewport of SVG content is necessary for example, when including
@@ -74,14 +74,24 @@ FloatSize RenderSVGRoot::computeIntrinsicRatio() const
     // If the ‘width’ and ‘height’ of the rootmost ‘svg’ element are both specified with unit identifiers
     // (in, mm, cm, pt, pc, px, em, ex) or in user units, then the aspect ratio is calculated from the
     // ‘width’ and ‘height’ attributes after resolving both values to user units.
-    if (style()->width().isFixed() && style()->height().isFixed())
-        return FloatSize(width(), height());
+    isPercentageIntrinsicSize = false;
+    if (style()->width().isFixed() && style()->height().isFixed()) {
+        intrinsicRatio = FloatSize(width(), height());
+        return;
+    }
 
     // If either/both of the ‘width’ and ‘height’ of the rootmost ‘svg’ element are in percentage units (or omitted),
     // the aspect ratio is calculated from the width and height values of the ‘viewBox’ specified for the current SVG
     // document fragment. If the ‘viewBox’ is not correctly specified, or set to 'none', the intrinsic aspect ratio
     // cannot be calculated and is considered unspecified.
-    return static_cast<SVGSVGElement*>(node())->currentViewBoxRect().size();
+    intrinsicRatio = static_cast<SVGSVGElement*>(node())->currentViewBoxRect().size();
+
+    // Compatibility with authors expectations and Firefox/Opera: when percentage units are used, take them into
+    // account for certain cases of the intrinsic width/height calculation in RenderPart::computeReplacedLogicalWidth/Height.
+    if (intrinsicRatio.isEmpty() && style()->width().isPercent() && style()->height().isPercent()) {
+        isPercentageIntrinsicSize = true;
+        intrinsicRatio = FloatSize(style()->width().percent(), style()->height().percent());
+    }
 }
 
 void RenderSVGRoot::computePreferredLogicalWidths()

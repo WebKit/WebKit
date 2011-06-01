@@ -139,6 +139,10 @@ int RenderPart::computeReplacedLogicalWidth(bool includeMaxWidth) const
         return RenderWidget::computeReplacedLogicalWidth(includeMaxWidth);
 
     // 10.3.2 Inline, replaced elements: http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width
+    bool isPercentageIntrinsicSize = false;
+    FloatSize intrinsicRatio;
+    contentRenderer->computeIntrinsicRatioInformation(intrinsicRatio, isPercentageIntrinsicSize);
+
     if (style()->width().isAuto()) {
         bool heightIsAuto = style()->height().isAuto();
         bool hasIntrinsicWidth = contentRenderStyle->width().isFixed();
@@ -148,7 +152,6 @@ int RenderPart::computeReplacedLogicalWidth(bool includeMaxWidth) const
             return computeEmbeddedDocumentReplacedWidth(includeMaxWidth, contentRenderStyle);
     
         bool hasIntrinsicHeight = contentRenderStyle->height().isFixed();
-        FloatSize intrinsicRatio = contentRenderer->computeIntrinsicRatio();
         if (!intrinsicRatio.isEmpty()) {
             // If 'height' and 'width' both have computed values of 'auto' and the element has no intrinsic width, but does have an intrinsic height and intrinsic ratio;
             // or if 'width' has a computed value of 'auto', 'height' has some other computed value, and the element does have an intrinsic ratio; then the used value
@@ -163,8 +166,11 @@ int RenderPart::computeReplacedLogicalWidth(bool includeMaxWidth) const
             // the used value of 'width' is calculated from the constraint equation used for block-level, non-replaced elements in normal flow.
             // FIXME: Don't ignore padding/margin/border here.
             RenderBlock* containingBlock = this->containingBlock();
-            if (heightIsAuto && !hasIntrinsicWidth && !hasIntrinsicHeight && containingBlock)
+            if (heightIsAuto && !hasIntrinsicWidth && !hasIntrinsicHeight && containingBlock) {
+                if (isPercentageIntrinsicSize)
+                    return static_cast<int>(ceilf(containingBlock->width() * intrinsicRatio.width() / 100));
                 return containingBlock->width();
+            }
         }
 
         // Otherwise, if 'width' has a computed value of 'auto', and the element has an intrinsic width, then that intrinsic width is the used value of 'width'.
@@ -186,6 +192,10 @@ int RenderPart::computeReplacedLogicalHeight() const
         return RenderWidget::computeReplacedLogicalHeight();
 
     // 10.6.2 Inline, replaced elements: http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-height
+    bool isPercentageIntrinsicSize = false;
+    FloatSize intrinsicRatio;
+    contentRenderer->computeIntrinsicRatioInformation(intrinsicRatio, isPercentageIntrinsicSize);
+
     if (style()->height().isAuto()) {
         bool widthIsAuto = style()->width().isAuto();
         bool hasIntrinsicHeight = contentRenderStyle->height().isFixed();
@@ -196,8 +206,7 @@ int RenderPart::computeReplacedLogicalHeight() const
     
         // Otherwise, if 'height' has a computed value of 'auto', and the element has an intrinsic ratio then the used value of 'height' is:
         // (used width) / (intrinsic ratio)
-        FloatSize intrinsicRatio = contentRenderer->computeIntrinsicRatio();
-        if (!intrinsicRatio.isEmpty()) {
+        if (!intrinsicRatio.isEmpty() && !isPercentageIntrinsicSize) {
             int logicalWidth = computeReplacedLogicalWidthUsing(widthIsAuto ? contentRenderStyle->logicalWidth() : style()->logicalWidth());
             return static_cast<int>(ceilf(logicalWidth * intrinsicRatio.height() / intrinsicRatio.width()));
         }

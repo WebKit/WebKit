@@ -1,3 +1,73 @@
+2011-06-01  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        SVG fails all 3 of Hixie's CSS intrinsic sizing tests
+        https://bugs.webkit.org/show_bug.cgi?id=15473
+
+        Hixies CSS intrinsic sizing tests cover percentage sizes specified on the target SVG document as width/height attributes
+        and using width: auto / height: auto on the <object> that hosts the SVG document. Take percentage sizes of the outermost
+        SVGs width/height attributes into account when determining the intrinsic size of the <object>.
+
+        Added several other testcases demonstrating several scenarios. All tests work exactly the same in WebKit and Firefox now.
+        The *on-target-svg-absolute.xhtml tests look equal to WebKit/FF but Opera fails them, likely a relict of the different
+        interpretation of the intrinsic size of a SVG document in SVG Tiny 1.2.
+
+        * platform/mac/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-height-50p-on-target-svg-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-height-50p-on-target-svg-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-on-target-svg-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-width-50p-on-target-svg-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/mac/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.png: Added.
+        * platform/mac/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/mac/svg/hixie/intrinsic: Added.
+        * platform/mac/svg/hixie/intrinsic/001-expected.png: Added.
+        * platform/mac/svg/hixie/intrinsic/001-expected.txt: Added.
+        * platform/mac/svg/hixie/intrinsic/002-expected.png: Added.
+        * platform/mac/svg/hixie/intrinsic/002-expected.txt: Added.
+        * platform/mac/svg/hixie/intrinsic/003-expected.png: Added.
+        * platform/mac/svg/hixie/intrinsic/003-expected.txt: Added.
+        * svg/custom/object-sizing-height-50p-on-target-svg-absolute.xhtml: Added.
+        * svg/custom/object-sizing-height-50p-on-target-svg.xhtml: Added.
+        * svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute.xhtml: Added.
+        * svg/custom/object-sizing-width-50p-height-50p-on-target-svg.xhtml: Added.
+        * svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute.xhtml: Added.
+        * svg/custom/object-sizing-width-50p-height-75p-on-target-svg.xhtml: Added.
+        * svg/custom/object-sizing-width-50p-on-target-svg-absolute.xhtml: Added.
+        * svg/custom/object-sizing-width-50p-on-target-svg.xhtml: Added.
+        * svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute.xhtml: Added.
+        * svg/custom/object-sizing-width-75p-height-50p-on-target-svg.xhtml: Added.
+        * svg/custom/resources/object-sizing-height-50p.svg: Added.
+        * svg/custom/resources/object-sizing-width-50p-height-50p.svg: Added.
+        * svg/custom/resources/object-sizing-width-50p-height-75p.svg: Added.
+        * svg/custom/resources/object-sizing-width-50p.svg: Added.
+        * svg/custom/resources/object-sizing-width-75p-height-50p.svg: Added.
+        * svg/hixie/intrinsic: Added.
+        * svg/hixie/intrinsic/001.html: Added.
+        * svg/hixie/intrinsic/002.html: Added.
+        * svg/hixie/intrinsic/003.html: Added.
+        * svg/hixie/intrinsic/resources: Added.
+        * svg/hixie/intrinsic/resources/001.svg: Added.
+        * svg/hixie/intrinsic/resources/002.svg: Added.
+        * svg/hixie/intrinsic/resources/003.svg: Added.
+        * svg/hixie/intrinsic/resources/test-bl: Added.
+        * svg/hixie/intrinsic/resources/test-br: Added.
+        * svg/hixie/intrinsic/resources/test-tl: Added.
+        * svg/hixie/intrinsic/resources/test-tr: Added.
+
 2011-06-01  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Ryosuke Niwa.

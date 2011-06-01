@@ -39,7 +39,7 @@ public:
     explicit RenderSVGRoot(SVGStyledElement*);
     virtual ~RenderSVGRoot();
 
-    FloatSize computeIntrinsicRatio() const;
+    void computeIntrinsicRatioInformation(FloatSize& intrinsicRatio, bool& isPercentageIntrinsicSize) const;
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
