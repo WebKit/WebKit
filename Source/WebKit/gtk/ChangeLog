@@ -1,3 +1,13 @@
+2011-05-31  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] gtkdoc run produces many warnings about missing declarations
+        https://bugs.webkit.org/show_bug.cgi?id=61797
+
+        * docs/webkitgtk-sections.txt: Remove inexistent symbols from this file
+        to reduce the number of gtkdoc warnings.
+
 2011-05-31  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

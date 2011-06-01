@@ -118,7 +118,6 @@ WEBKIT_WEB_FRAME_CLASS
 WEBKIT_IS_WEB_FRAME_CLASS
 WEBKIT_WEB_FRAME_GET_CLASS
 <SUBSECTION Private>
-WEBKIT_WEB_FRAME_GET_PRIVATE
 WebKitWebFramePrivate
 webkit_web_frame_get_type
 WebKitWebFrame
@@ -132,7 +131,6 @@ WebKitDownloadStatus
 <TITLE>WebKitDownload</TITLE>
 WebKitDownload
 webkit_download_cancel
-webkit_download_error_get_type
 webkit_download_get_current_size
 webkit_download_get_destination_uri
 webkit_download_get_elapsed_time
@@ -146,7 +144,6 @@ webkit_download_get_uri
 webkit_download_new
 webkit_download_set_destination_uri
 webkit_download_start
-webkit_download_status_get_type
 <SUBSECTION Standard>
 WEBKIT_DOWNLOAD
 WEBKIT_DOWNLOAD_CLASS
@@ -154,8 +151,6 @@ WEBKIT_DOWNLOAD_GET_CLASS
 WEBKIT_IS_DOWNLOAD
 WEBKIT_IS_DOWNLOAD_CLASS
 WEBKIT_TYPE_DOWNLOAD
-WEBKIT_TYPE_DOWNLOAD_ERROR
-WEBKIT_TYPE_DOWNLOAD_STATUS
 <SUBSECTION Private>
 webkit_download_get_type
 WebKitDownload
@@ -315,12 +310,10 @@ webkit_web_navigation_action_get_target_frame
 webkit_web_navigation_action_get_type
 webkit_web_navigation_action_set_original_uri
 webkit_web_navigation_action_set_reason
-webkit_web_navigation_reason_get_type
 <SUBSECTION Standard>
 WEBKIT_IS_WEB_NAVIGATION_ACTION
 WEBKIT_IS_WEB_NAVIGATION_ACTION_CLASS
 WEBKIT_TYPE_WEB_NAVIGATION_ACTION
-WEBKIT_TYPE_WEB_NAVIGATION_REASON
 WEBKIT_WEB_NAVIGATION_ACTION
 WEBKIT_WEB_NAVIGATION_ACTION_CLASS
 WEBKIT_WEB_NAVIGATION_ACTION_GET_CLASS
@@ -488,7 +481,6 @@ webkit_web_view_set_view_mode
 webkit_web_view_set_view_source_mode
 webkit_web_view_set_zoom_level
 webkit_web_view_stop_loading
-webkit_web_view_target_info_get_type
 webkit_web_view_undo
 webkit_web_view_unmark_text_matches
 webkit_web_view_zoom_in
@@ -502,7 +494,6 @@ WEBKIT_WEB_VIEW_CLASS
 WEBKIT_IS_WEB_VIEW_CLASS
 WEBKIT_WEB_VIEW_GET_CLASS
 <SUBSECTION Private>
-webkit_web_view_set_window_features
 webkit_web_view_get_type
 WebKitWebViewPrivate
 WebKitWebView
@@ -533,7 +524,6 @@ WebKitWebWindowFeaturesPrivate
 <SECTION>
 <FILE>webkit</FILE>
 <TITLE>Global functions</TITLE>
-webkit_init
 webkit_get_default_session
 webkit_get_default_web_database_quota
 webkit_get_web_database_directory_path
@@ -545,7 +535,6 @@ webkit_set_web_database_directory_path
 WebKitCacheModel
 webkit_get_cache_model
 webkit_set_cache_model
-</SUBSECTION>
 </SECTION>
 
 <SECTION>
@@ -638,36 +627,11 @@ webkit_web_plugin_database_get_type
 </SECTION>
 
 <SECTION>
-<FILE>soup-cache</FILE>
-<TITLE>WebKitSoupCache</TITLE>
-webkit_soup_cache_new
-webkit_soup_cache_flush
-webkit_soup_cache_clear
-webkit_soup_cache_dump
-webkit_soup_cache_load
-webkit_soup_cache_set_max_size
-webkit_soup_cache_get_max_size
-<SUBSECTION Standard>
-WEBKIT_IS_SOUP_CACHE
-WEBKIT_IS_SOUP_CACHE_CLASS
-WEBKIT_TYPE_SOUP_CACHE
-WEBKIT_SOUP_CACHE
-WEBKIT_SOUP_CACHE_CLASS
-WEBKIT_SOUP_CACHE_GET_CLASS
-<SUBSECTION Private>
-webkit_soup_cache_get_type
-WebKitSoupCachePrivate
-WebKitSoupCache
-WebKitSoupCacheClass
-</SECTION>
-
-<SECTION>
 <FILE>webkitprivate</FILE>
 getViewFromFrame
 kit
 WEBKIT_PARAM_READABLE
 WEBKIT_PARAM_READWRITE
-webkit_web_frame_init_with_web_view
 webkit_web_history_item_new_with_core_item
 webkit_web_inspector_set_inspector_client
 webkit_web_inspector_set_web_view
@@ -690,14 +654,11 @@ webkit_policy_error_quark
 <SECTION>
 <FILE>webkitdefines</FILE>
 WEBKIT_API
-webkit_navigation_response_get_type
 WEBKIT_OBSOLETE_API
 WEBKIT_CHECK_VERSION
 WEBKIT_MAJOR_VERSION
 WEBKIT_MICRO_VERSION
 WEBKIT_MINOR_VERSION
-WEBKIT_TYPE_NAVIGATION_RESPONSE
-WEBKIT_TYPE_WEB_VIEW_TARGET_INFO
 webkit_check_version
 webkit_major_version
 webkit_micro_version
