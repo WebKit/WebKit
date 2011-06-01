@@ -762,7 +762,7 @@ BUGCR10351 MAC : plugins/inner-html-display-none.html = FAIL
 BUGWK48164 MAC LINUX WIN : plugins/invalid-mime-with-valid-extension-shows-missing-plugin.html = TEXT
 // Need to implement NPP_HandleEvent in the layout_test_plugin
 // WIN started failing during webkit roll 62670 -> 62844.
-BUGCR38353 : plugins/keyboard-events.html = TEXT
+BUGCR38353 MAC LINUX: plugins/keyboard-events.html = TEXT
 BUGCR10351 MAC : plugins/mouse-events.html = FAIL
 BUGCR32864 MAC LINUX : plugins/mouse-events-fixedpos.html = TEXT
 BUGCR35822 : plugins/npruntime/browser-object-identity.html = TEXT
@@ -783,7 +783,6 @@ BUGCR38353 : http/tests/plugins/plugin-document-has-focus.html = TEXT TIMEOUT
 // switch.
 BUG_TONY WIN : plugins/geturlnotify-during-document-teardown.html = CRASH
 BUGWK48655 : plugins/js-from-destroy.html = CRASH PASS
-BUG_TONY WIN : plugins/mouse-events.html = TEXT
 BUG_TONY WIN : plugins/plugin-initiate-popup-window.html = TIMEOUT
 // This test is failing because the plugin has changed names on Windows to
 // match the name of the plugin upstream.

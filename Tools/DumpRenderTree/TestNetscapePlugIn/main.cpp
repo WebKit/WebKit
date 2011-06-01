@@ -688,6 +688,45 @@ static int16_t handleEventWin(NPP instance, PluginObject* obj, NPEvent* event)
         if (obj->onPaintEvent)
             executeScript(obj, obj->onPaintEvent);
         return 1;
+    case WM_KEYDOWN:
+        if (obj->eventLogging)
+            pluginLog(instance, "keyDown '%c'", event->wParam);
+        if (obj->evaluateScriptOnMouseDownOrKeyDown && !obj->mouseDownForEvaluateScript)
+            executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
+        return 1;
+    case WM_CHAR:
+        return 1;
+    case WM_KEYUP:
+        if (obj->eventLogging)
+            pluginLog(instance, "keyUp '%c'", event->wParam);
+        if (obj->testKeyboardFocusForPlugins) {
+            obj->eventLogging = false;
+            obj->testKeyboardFocusForPlugins = FALSE;
+            executeScript(obj, "layoutTestController.notifyDone();");
+        }
+        return 1;
+    case WM_LBUTTONDOWN:
+    case WM_MBUTTONDOWN:
+    case WM_RBUTTONDOWN:
+        if (obj->eventLogging)
+            pluginLog(instance, "mouseDown at (%d, %d)", LOWORD(event->lParam), HIWORD(event->lParam));
+        if (obj->evaluateScriptOnMouseDownOrKeyDown && obj->mouseDownForEvaluateScript)
+            executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
+        return 1;
+    case WM_LBUTTONUP:
+    case WM_MBUTTONUP:
+    case WM_RBUTTONUP:
+        if (obj->eventLogging)
+            pluginLog(instance, "mouseUp at (%d, %d)", LOWORD(event->lParam), HIWORD(event->lParam));
+        return 1;
+    case WM_SETFOCUS:
+        if (obj->eventLogging)
+            pluginLog(instance, "getFocusEvent");
+        return 1;
+    case WM_KILLFOCUS:
+        if (obj->eventLogging)
+            pluginLog(instance, "loseFocusEvent");
+        return 1;
     }
     return 0;
 }
