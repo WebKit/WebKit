@@ -4018,3 +4018,6 @@ BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-shad
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
+
+// Register protocol handler doesn't seem to be enabled on Mac.
+BUGCR84161 MAC : fast/dom/register-protocol-handler.html = TEXT

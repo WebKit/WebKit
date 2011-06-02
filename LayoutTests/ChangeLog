@@ -1,5 +1,17 @@
 2011-06-01  Adam Barth  <abarth@webkit.org>
 
+        There seems to be something odd about registerProtocolHandler on Mac.
+        The "no-crash" seems to "pass" because the test does not crash, where
+        as the "register-protocol-handler" test fails, apparently due to the
+        API being disabled.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac-leopard/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
+        * platform/mac/fast/dom/navigator-detached-no-crash-expected.txt: Copied from LayoutTests/platform/mac-leopard/fast/dom/navigator-detached-no-crash-expected.txt.
+            - This expectation file is misplaced.
+
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
         Now that this test doesn't time out, we can see that it fails.  That's
         progress, of a sort.
 
