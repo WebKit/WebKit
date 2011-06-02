@@ -283,6 +283,7 @@ public:
 
     // For <link> and <style> elements.
     virtual bool sheetLoaded() { return true; }
+    virtual void startLoadingDynamicSheet() { ASSERT_NOT_REACHED(); }
 
     bool hasID() const { return getFlag(HasIDFlag); }
     bool hasClass() const { return getFlag(HasClassFlag); }

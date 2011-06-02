@@ -182,4 +182,10 @@ bool StyleElement::sheetLoaded(Document* document)
     return true;
 }
 
+void StyleElement::startLoadingDynamicSheet(Document* document)
+{
+    ASSERT(document);
+    document->addPendingSheet();
+}
+
 }

@@ -86,6 +86,7 @@ public:
     virtual bool isLoading();
 
     virtual void checkLoaded();
+    void startLoadingDynamicSheet();
 
     Document* document();
 

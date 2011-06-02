@@ -1,3 +1,49 @@
+2011-06-01  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Simon Fraser.
+
+        CSSStyleSheet#insertRule doesn't work well with imported stylesheets
+        https://bugs.webkit.org/show_bug.cgi?id=56981
+
+        Test: fast/css/import-and-insert-rule-no-update.html
+
+        The bug arises from the fact that <link> element did not know about a programmatically
+        loading sheet (using insertRule and @import) and would thus never call removePendingSheet.
+        This is needed to make sure our style selector contains an up-to-date list of stylesheets.
+
+        The gist of the patch adds a way for style sheet owner element to know if we are
+        programmatically loading a style sheet. This is needed as <link> keeps the information
+        about that last loaded stylesheet.
+
+        * css/CSSImportRule.cpp:
+        (WebCore::CSSImportRule::insertedIntoParent): Call startLoadingDynamicSheet
+        on our parent style sheet instead of directly adding a pending style sheet.
+
+        * css/CSSStyleSheet.cpp:
+        (WebCore::CSSStyleSheet::startLoadingDynamicSheet): Call startLoadingDynamicSheet
+        on our owner element if we have one.
+
+        * css/CSSStyleSheet.h:
+        * dom/Node.h:
+        (WebCore::Node::startLoadingDynamicSheet): Added common implementation of
+        startLoadingDynamicSheet, which should never be called.
+
+        * dom/StyleElement.cpp:
+        (WebCore::StyleElement::startLoadingDynamicSheet):
+        * dom/StyleElement.h:
+        Common implementation of startLoadingDynamicSheet for style elements.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::startLoadingDynamicSheet):
+        * html/HTMLLinkElement.h:
+        Use the HTMLLinkElement plumbing to make sure we call addRemovePendingSheet.
+
+        * html/HTMLStyleElement.h:
+        (WebCore::HTMLStyleElement::startLoadingDynamicSheet):
+        * svg/SVGStyleElement.h:
+        (WebCore::SVGStyleElement::startLoadingDynamicSheet):
+        Forward the call to StyleElement.
+
 2011-06-01  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

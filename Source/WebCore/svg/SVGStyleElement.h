@@ -59,6 +59,7 @@ private:
 
     virtual bool isLoading() const { return StyleElement::isLoading(); }
     virtual bool sheetLoaded() { return StyleElement::sheetLoaded(document()); }
+    virtual void startLoadingDynamicSheet() { StyleElement::startLoadingDynamicSheet(document()); }
 };
 
 } // namespace WebCore

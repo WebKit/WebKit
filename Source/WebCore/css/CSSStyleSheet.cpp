@@ -230,6 +230,12 @@ void CSSStyleSheet::checkLoaded()
     m_loadCompleted = ownerNode() ? ownerNode()->sheetLoaded() : true;
 }
 
+void CSSStyleSheet::startLoadingDynamicSheet()
+{
+    if (Node* owner = ownerNode())
+        owner->startLoadingDynamicSheet();
+}
+
 Document* CSSStyleSheet::document()
 {
     StyleBase* styleObject = this;

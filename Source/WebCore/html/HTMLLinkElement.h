@@ -101,6 +101,7 @@ private:
     virtual void notifyFinished(CachedResource*);
 #endif
     virtual bool sheetLoaded();
+    virtual void startLoadingDynamicSheet();
 
     bool isAlternate() const { return m_disabledState == Unset && m_relAttribute.m_isAlternate; }
     

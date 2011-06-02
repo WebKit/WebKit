@@ -41,6 +41,7 @@ protected:
 
     bool isLoading() const;
     bool sheetLoaded(Document*);
+    void startLoadingDynamicSheet(Document*);
 
     void insertedIntoDocument(Document*, Element*);
     void removedFromDocument(Document*, Element*);

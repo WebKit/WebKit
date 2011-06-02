@@ -472,6 +472,13 @@ bool HTMLLinkElement::sheetLoaded()
     return false;
 }
 
+void HTMLLinkElement::startLoadingDynamicSheet()
+{
+    // We don't support multiple blocking sheets.
+    ASSERT(m_pendingSheetType < Blocking);
+    addPendingSheet(Blocking);
+}
+
 bool HTMLLinkElement::isURLAttribute(Attribute *attr) const
 {
     return attr->name() == hrefAttr;

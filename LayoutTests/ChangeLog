@@ -1,3 +1,18 @@
+2011-06-01  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Simon Fraser.
+
+        CSSStyleSheet#insertRule doesn't work well with imported stylesheets
+        https://bugs.webkit.org/show_bug.cgi?id=56981
+
+        Test that a combination of insertRule and @import works properly.
+
+        * fast/css/import-and-insert-rule-no-update-expected.txt: Added.
+        * fast/css/import-and-insert-rule-no-update.html: Added.
+        * fast/css/resources/red.css: Added.
+        (div):
+        * fast/css/resources/redimport.css: Added.
+
 2011-06-01  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Alexey Proskuryakov.
