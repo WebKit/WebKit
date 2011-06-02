@@ -1,5 +1,30 @@
 2011-06-02  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Reviewed by Enrica Casucci.
+
+        ApplyStyleCommand shouldn't call collapseTextDecorationProperties
+        https://bugs.webkit.org/show_bug.cgi?id=61887
+
+        Removed the call to collapseTextDecorationProperties in ApplyStyleCommand::applyInlineStyle.
+
+        No new tests because this is a code refactoring.
+
+        * editing/ApplyStyleCommand.cpp:
+        (WebCore::ApplyStyleCommand::applyInlineStyle): No loner calls collapseTextDecorationProperties.
+        (WebCore::ApplyStyleCommand::pushDownInlineStyleAroundNode): Updated comment.
+        * editing/EditingStyle.cpp:
+        (WebCore::HTMLElementEquivalent::propertyExistsInStyle): Added to check both text-decoration
+        and -webkit-text-decorations-in-effect.
+        (WebCore::HTMLTextDecorationEquivalent::HTMLTextDecorationEquivalent): Added a comment.
+        (WebCore::HTMLTextDecorationEquivalent::propertyExistsInStyle): Checks both text-decoration
+        and -webkit-text-decorations-in-effect.
+        (WebCore::HTMLTextDecorationEquivalent::valueIsPresentInStyle): Checks if a text decoration
+        is present in -webkit-text-decorations-in-effect or text-decoration preferring the former.
+        (WebCore::EditingStyle::conflictsWithInlineStyleOfElement): Merged loops for when conflictingProperties
+        is false and true. Added a support for -webkit-text-decorations-in-effect.
+
+2011-06-02  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Make more functions static local in EventHandlers.cpp

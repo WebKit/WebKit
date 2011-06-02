@@ -98,7 +98,7 @@ public:
     virtual ~HTMLElementEquivalent() { }
     virtual bool matches(Element* element) const { return !m_tagName || element->hasTagName(*m_tagName); }
     virtual bool hasAttribute() const { return false; }
-    bool propertyExistsInStyle(CSSStyleDeclaration* style) const { return style->getPropertyCSSValue(m_propertyID); }
+    virtual bool propertyExistsInStyle(CSSStyleDeclaration* style) const { return style->getPropertyCSSValue(m_propertyID); }
     virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
     virtual void addToStyle(Element*, EditingStyle*) const;
 
@@ -148,6 +148,7 @@ public:
     {
         return adoptPtr(new HTMLTextDecorationEquivalent(primitiveValue, tagName));
     }
+    virtual bool propertyExistsInStyle(CSSStyleDeclaration*) const;
     virtual bool valueIsPresentInStyle(Element*, CSSStyleDeclaration*) const;
 
 private:
@@ -156,12 +157,20 @@ private:
 
 HTMLTextDecorationEquivalent::HTMLTextDecorationEquivalent(int primitiveValue, const QualifiedName& tagName)
     : HTMLElementEquivalent(CSSPropertyTextDecoration, primitiveValue, tagName)
+    // m_propertyID is used in HTMLElementEquivalent::addToStyle
 {
+}
+
+bool HTMLTextDecorationEquivalent::propertyExistsInStyle(CSSStyleDeclaration* style) const
+{
+    return style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect) || style->getPropertyCSSValue(CSSPropertyTextDecoration);
 }
 
 bool HTMLTextDecorationEquivalent::valueIsPresentInStyle(Element* element, CSSStyleDeclaration* style) const
 {
-    RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(m_propertyID);
+    RefPtr<CSSValue> styleValue = style->getPropertyCSSValue(CSSPropertyWebkitTextDecorationsInEffect);
+    if (!styleValue)
+        styleValue = style->getPropertyCSSValue(CSSPropertyTextDecoration);
     return matches(element) && styleValue && styleValue->isValueList() && static_cast<CSSValueList*>(styleValue.get())->hasValue(m_primitiveValue.get());
 }
 
@@ -583,40 +592,44 @@ bool EditingStyle::conflictsWithInlineStyleOfElement(StyledElement* element, Edi
     if (!m_mutableStyle || !inlineStyle)
         return false;
 
-    if (!conflictingProperties) {
-        CSSMutableStyleDeclaration::const_iterator end = m_mutableStyle->end();
-        for (CSSMutableStyleDeclaration::const_iterator it = m_mutableStyle->begin(); it != end; ++it) {
-            CSSPropertyID propertyID = static_cast<CSSPropertyID>(it->id());
-
-            // We don't override whitespace property of a tab span because that would collapse the tab into a space.
-            if (propertyID == CSSPropertyWhiteSpace && isTabSpanNode(element))
-                continue;
-
-            if (inlineStyle->getPropertyCSSValue(propertyID))
-                return true;
-        }
-
-        return false;
-    }
-
     CSSMutableStyleDeclaration::const_iterator end = m_mutableStyle->end();
     for (CSSMutableStyleDeclaration::const_iterator it = m_mutableStyle->begin(); it != end; ++it) {
         CSSPropertyID propertyID = static_cast<CSSPropertyID>(it->id());
-        if ((propertyID == CSSPropertyWhiteSpace && isTabSpanNode(element)) || !inlineStyle->getPropertyCSSValue(propertyID))
+
+        // We don't override whitespace property of a tab span because that would collapse the tab into a space.
+        if (propertyID == CSSPropertyWhiteSpace && isTabSpanNode(element))
+            continue;
+
+        if (propertyID == CSSPropertyWebkitTextDecorationsInEffect && inlineStyle->getPropertyCSSValue(CSSPropertyTextDecoration)) {
+            if (!conflictingProperties)
+                return true;
+            conflictingProperties->append(CSSPropertyTextDecoration);
+            if (extractedStyle)
+                extractedStyle->setProperty(CSSPropertyTextDecoration, inlineStyle->getPropertyValue(CSSPropertyTextDecoration), inlineStyle->getPropertyPriority(CSSPropertyTextDecoration));
+            continue;
+        }
+
+        if (!inlineStyle->getPropertyCSSValue(propertyID))
             continue;
 
         if (propertyID == CSSPropertyUnicodeBidi && inlineStyle->getPropertyCSSValue(CSSPropertyDirection)) {
+            if (!conflictingProperties)
+                return true;
+            conflictingProperties->append(CSSPropertyDirection);
             if (extractedStyle)
                 extractedStyle->setProperty(propertyID, inlineStyle->getPropertyValue(propertyID), inlineStyle->getPropertyPriority(propertyID));
-            conflictingProperties->append(CSSPropertyDirection);
         }
 
+        if (!conflictingProperties)
+            return true;
+
         conflictingProperties->append(propertyID);
+
         if (extractedStyle)
             extractedStyle->setProperty(propertyID, inlineStyle->getPropertyValue(propertyID), inlineStyle->getPropertyPriority(propertyID));
     }
 
-    return !conflictingProperties->isEmpty();
+    return conflictingProperties && !conflictingProperties->isEmpty();
 }
 
 bool EditingStyle::conflictsWithImplicitStyleOfElement(HTMLElement* element, EditingStyle* extractedStyle, ShouldExtractMatchingStyle shouldExtractMatchingStyle) const

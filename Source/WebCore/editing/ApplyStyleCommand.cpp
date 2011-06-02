@@ -531,8 +531,6 @@ void ApplyStyleCommand::applyInlineStyle(EditingStyle* style)
     Node* startDummySpanAncestor = 0;
     Node* endDummySpanAncestor = 0;
 
-    style->collapseTextDecorationProperties();
-
     // update document layout once before removing styles
     // so that we avoid the expense of updating before each and every call
     // to check a computed style
@@ -1006,7 +1004,7 @@ void ApplyStyleCommand::pushDownInlineStyleAroundNode(EditingStyle* style, Node*
                 }
             }
 
-            // Apply text decoration to all nodes containing targetNode and their siblings but NOT to targetNode
+            // Apply style to all nodes containing targetNode and their siblings but NOT to targetNode
             // But if we've removed styledElement then go ahead and always apply the style.
             if (child != targetNode || styledElement)
                 applyInlineStyleToPushDown(child, styleToPushDown.get());
