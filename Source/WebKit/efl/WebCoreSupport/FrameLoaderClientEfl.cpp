@@ -434,7 +434,9 @@ void FrameLoaderClientEfl::setMainFrameDocumentReady(bool)
 
 bool FrameLoaderClientEfl::hasWebView() const
 {
-    // notImplemented();
+    if (!m_view)
+        return false;
+
     return true;
 }
 
