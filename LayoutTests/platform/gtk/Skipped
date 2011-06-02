@@ -223,9 +223,18 @@ fast/dom/Geolocation/argument-types.html
 editing/pasteboard/drop-file-svg.html
 http/tests/fileapi/create-blob-url-from-data-url.html
 http/tests/misc/SVGFont-delayed-load.html
+svg/custom/frame-getSVGDocument.html
 svg/custom/object-sizing-height-50p-on-target-svg-absolute.xhtml
+svg/custom/object-sizing-height-50p-on-target-svg.xhtml
+svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute.xhtml
+svg/custom/object-sizing-width-50p-height-50p-on-target-svg.xhtml
 svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute.xhtml
+svg/custom/object-sizing-width-50p-height-75p-on-target-svg.xhtml
+svg/custom/object-sizing-width-50p-on-target-svg-absolute.xhtml
 svg/custom/object-sizing-width-50p-on-target-svg.xhtml
+svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute.xhtml
+svg/custom/object-sizing-width-75p-height-50p-on-target-svg.xhtml
+svg/custom/object-sizing.xhtml
 svg/hixie/intrinsic/002.html
 
 ###############################################################################
