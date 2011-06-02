@@ -886,6 +886,7 @@ inspector/styles/styles-source-lines-inline.html
 # https://bugs.webkit.org/show_bug.cgi?id=61928
 inspector/audits/audits-panel-functional.html
 inspector/extensions/extensions-resources.html
+http/tests/inspector/extensions-resources-redirect.html
 
 #https://bugs.webkit.org/show_bug.cgi?id=37537
 plugins/npruntime/round-trip-npobject.html

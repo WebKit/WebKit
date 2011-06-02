@@ -1,3 +1,9 @@
+2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skipping another failing test in GTK after r87901.
+
+        * platform/gtk/Skipped: Skipped test.
+
 2011-06-02  Jessie Berlin  <jberlin@apple.com>
 
         WebKitTestRunner needs an implementation of eventSender.
