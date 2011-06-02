@@ -3887,10 +3887,6 @@ BUGCR82950 WIN : http/tests/navigation/post-301-response.html = TEXT
 BUGCR82950 WIN : http/tests/navigation/post-302-response.html = TEXT
 BUGCR82950 WIN : http/tests/navigation/post-303-response.html = TEXT
 
-BUGENNE GPU : compositing/geometry/fixed-position.html = FAIL
-BUGENNE GPU : compositing/geometry/vertical-scroll-composited.html = FAIL
-BUGENNE GPU : compositing/overflow/fixed-position-ancestor-clip.html = FAIL
-
 // Fails after details element turned on in Chrome r85744
 // See also BUGWK59172
 BUGWK61087 WIN MAC LINUX : fast/multicol/span/clone-anonymous-block-non-inline-child-crash.html = TEXT
