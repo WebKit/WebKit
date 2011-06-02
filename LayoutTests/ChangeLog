@@ -1,3 +1,17 @@
+2011-06-02  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        LayoutTests/svg/animations/animate-path-nested-transforms.html causes assertion in debug mode. 
+        https://bugs.webkit.org/show_bug.cgi?id=49045
+
+        Fix mistake in id part of expected values.
+
+        * svg/animations/script-tests/animate-mpath-insert.js:
+        (executeTest):
+        * svg/animations/script-tests/animate-path-nested-transforms.js:
+        (executeTest):
+
 2011-06-02  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Update spinbutton expectations.

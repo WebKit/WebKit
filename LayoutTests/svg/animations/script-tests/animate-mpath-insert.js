@@ -11,6 +11,7 @@ defs.appendChild(path)
 rootSVGElement.appendChild(defs)
 
 var g = createSVGElement("g")
+g.setAttribute("id", "g")
 
 var rect = createSVGElement("rect")
 rect.setAttribute("id", "rect")
@@ -45,8 +46,8 @@ function endSample() {
 
 function executeTest() {
     const expectedValues = [
-        ["animation", 0.02, "rect", startSample],
-        ["animation", 3.99, "rect", endSample]
+        ["animation", 0.01, "g", startSample],
+        ["animation", 3.99, "g", endSample]
     ];
     
     runAnimationTest(expectedValues);

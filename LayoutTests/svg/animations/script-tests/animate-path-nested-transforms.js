@@ -4,6 +4,7 @@ createSVGTestCase();
 rootSVGElement.setAttribute("width", 800)
 
 var g = createSVGElement("g")
+g.setAttribute("id", "g");
 g.setAttribute("transform", "translate(300, 30)")
 
 var rect = createSVGElement("rect")
@@ -45,8 +46,8 @@ function endSample() {
 
 function executeTest() {
     const expectedValues = [
-        ["animation", 0.02, "rect", startSample],
-        ["animation", 3.99, "rect", endSample]
+        ["animation", 0.01, "g", startSample],
+        ["animation", 3.99, "g", endSample]
     ];
     
     runAnimationTest(expectedValues);
