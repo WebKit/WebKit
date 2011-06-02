@@ -1,5 +1,11 @@
 2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed, skipped SVG tests randomly failing with 16px diff.
+
+        * platform/gtk/Skipped: Skipped tests.
+
+2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Update GTK expectations because the position of steppers are moved.
 
         * platform/gtk/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
