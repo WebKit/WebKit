@@ -82,6 +82,10 @@ editing/selection/extend-by-character-005.html
 # https://bugs.webkit.org/show_bug.cgi?id=53074
 editing/selection/extend-selection-bidi.html
 
+# This test is randomly failing on the GTK 32-bit Debug bot
+# https://bugs.webkit.org/show_bug.cgi?id=61932
+jquery/manipulation.html
+
 # Still working out flakiness issues with the perf tests.
 # https://bugs.webkit.org/show_bug.cgi?id=44199
 perf/

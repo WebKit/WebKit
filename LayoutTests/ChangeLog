@@ -1,3 +1,9 @@
+2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skiping flaky test on GTK 32-bit Debug bot.
+
+        * platform/gtk/Skipped: Skipped test.
+
 2011-06-02  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Reviewed by Eric Seidel.
