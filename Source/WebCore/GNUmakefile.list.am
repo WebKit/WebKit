@@ -3796,6 +3796,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/GRefPtrGtk.h \
 	Source/WebCore/platform/gtk/GtkPluginWidget.cpp \
 	Source/WebCore/platform/gtk/GtkPluginWidget.h \
+	Source/WebCore/platform/gtk/GtkPopupMenu.cpp \
+	Source/WebCore/platform/gtk/GtkPopupMenu.h \
 	Source/WebCore/platform/gtk/GtkVersioning.c \
 	Source/WebCore/platform/gtk/GtkVersioning.h \
 	Source/WebCore/platform/gtk/KeyBindingTranslator.cpp \

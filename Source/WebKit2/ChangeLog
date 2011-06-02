@@ -1,3 +1,26 @@
+2011-06-02  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement popup menus in Webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=61854
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createPopupMenuProxy): Create a new
+        WebPopupMenuProxy.
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp: Added.
+        (WebKit::WebPopupMenuProxyGtk::WebPopupMenuProxyGtk):
+        (WebKit::WebPopupMenuProxyGtk::~WebPopupMenuProxyGtk):
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu):
+        (WebKit::WebPopupMenuProxyGtk::hidePopupMenu):
+        (WebKit::WebPopupMenuProxyGtk::shutdownRunLoop):
+        (WebKit::WebPopupMenuProxyGtk::menuItemActivated):
+        (WebKit::WebPopupMenuProxyGtk::menuUnmapped):
+        * UIProcess/gtk/WebPopupMenuProxyGtk.h: Added.
+        (WebKit::WebPopupMenuProxyGtk::create):
+        (WebKit::WebPopupMenuProxyGtk::setActiveItem):
+
 2011-06-01  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

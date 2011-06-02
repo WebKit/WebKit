@@ -37,6 +37,7 @@
 #include "WebEventFactory.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
+#include "WebPopupMenuProxyGtk.h"
 #include <WebCore/GtkUtilities.h>
 #include <wtf/text/WTFString.h>
 
@@ -204,10 +205,9 @@ void PageClientImpl::didNotHandleWheelEvent(const NativeWebWheelEvent&)
     notImplemented();
 }
 
-PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy*)
+PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy* page)
 {
-    notImplemented();
-    return 0;
+    return WebPopupMenuProxyGtk::create(m_viewWidget, page);
 }
 
 PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy*)

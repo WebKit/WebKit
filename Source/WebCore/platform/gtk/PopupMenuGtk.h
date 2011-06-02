@@ -20,15 +20,10 @@
 #ifndef PopupMenuGtk_h
 #define PopupMenuGtk_h
 
-#include "GRefPtrGtk.h"
+#include "GtkPopupMenu.h"
 #include "IntRect.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
-#include <wtf/HashMap.h>
-#include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
-
-typedef struct _GdkEventKey GdkEventKey;
 
 namespace WebCore {
 
@@ -44,27 +39,16 @@ public:
     virtual void hide();
     virtual void updateFromElement();
     virtual void disconnectClient();
-    bool typeAheadFind(GdkEventKey*);
 
 private:
     PopupMenuClient* client() const { return m_popupClient; }
-    void resetTypeAheadFindState();
+    GtkAction* createGtkActionForMenuItem(int itemIndex);
 
-    static void menuItemActivated(GtkMenuItem* item, PopupMenuGtk*);
     static void menuUnmapped(GtkWidget*, PopupMenuGtk*);
-    static void menuPositionFunction(GtkMenu*, gint*, gint*, gboolean*, PopupMenuGtk*);
-    static void menuRemoveItem(GtkWidget*, PopupMenuGtk*);
-    static int selectItemCallback(GtkMenuItem*, PopupMenuGtk*);
-    static int keyPressEventCallback(GtkWidget*, GdkEventKey*, PopupMenuGtk*);
+    static void menuItemActivated(GtkAction*, PopupMenuGtk*);
 
     PopupMenuClient* m_popupClient;
-    IntPoint m_menuPosition;
-    GRefPtr<GtkMenu> m_popup;
-    HashMap<GtkWidget*, int> m_indexMap;
-    String m_currentSearchString;
-    uint32_t m_previousKeyEventTimestamp;
-    unsigned int m_previousKeyEventCharacter;
-    GtkWidget* m_currentlySelectedMenuItem;
+    OwnPtr<GtkPopupMenu> m_popup;
 };
 
 }
