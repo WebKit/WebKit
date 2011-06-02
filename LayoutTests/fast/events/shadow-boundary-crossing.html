@@ -114,6 +114,28 @@ var tests = {
         document.body.removeEventListener('mouseout', countEventDispatch, false);
         fileInput.parentNode.removeChild(fileInput);
     },
+    relatedTargetAsHost: function()
+    {
+        var count = 0;
+        var relatedTarget = document.createElement('div');
+        relatedTarget.style.cssText = 'width: 50px; height: 50px; padding-left: 50px;';
+        document.body.appendChild(relatedTarget);
+        var target = document.createElement('div');
+        target.style.cssText = 'width: 50px; height: 50px';
+        layoutTestController.ensureShadowRoot(relatedTarget).appendChild(target);
+        moveOverLeftQuarterOf(relatedTarget);
+        var countEventDispatch = function()
+        {
+            count++;
+        }
+        relatedTarget.addEventListener('mouseover', countEventDispatch, false)
+        moveOverRightQuarterOf(relatedTarget);
+
+        log("The mouseover event in a shadow subtree, where related target is the tree host should not escape out of shadow DOM", count == 0);
+
+        relatedTarget.removeEventListener('mouseover', countEventDispatch, false);
+        document.body.removeChild(relatedTarget);
+    },
     mouseOverOnHost: function()
     {
         var count = 0;

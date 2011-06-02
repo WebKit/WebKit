@@ -1,3 +1,16 @@
+2011-06-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Stop event propagation for cases where relatedTarget is both ancestor of the target and at shadow boundary.
+        https://bugs.webkit.org/show_bug.cgi?id=61892
+
+        In the cases where the relatedTarget of an event is an ancestor of the target, and the relatedTarget is
+        a shadow host, we should not allow events to escape out of the hosted shadow DOM subtree.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::adjustToShadowBoundaries): Added a check that is valid for both new and old shadow DOM.
+
 2011-06-02  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Tony Gentilcore.

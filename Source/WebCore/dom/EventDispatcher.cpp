@@ -125,6 +125,11 @@ static inline bool isShadowRootOrSVGShadowRoot(const Node* node)
     return node->isShadowRoot() || node->isSVGShadowRoot();
 }
 
+static inline bool isShadowHost(Node* node)
+{
+    return node->isElementNode() && toElement(node)->shadowRoot();
+}
+
 PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Node> relatedTarget, const Vector<Node*> relatedTargetAncestors)
 {
     Vector<EventContext>::const_iterator lowestCommonBoundary = m_ancestors.end();
@@ -159,7 +164,8 @@ PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Nod
 
     if (!diverged) {
         // The relatedTarget is an ancestor or shadowHost of the target.
-        if (m_node->shadowHost() == relatedTarget.get())
+        // FIXME: Remove the first check once conversion to new shadow DOM is complete <http://webkit.org/b/48698>
+        if (m_node->shadowHost() == relatedTarget.get() || isShadowHost(relatedTarget.get()))
             lowestCommonBoundary = m_ancestors.begin();
     } else if ((*firstDivergentBoundary) == m_node.get()) {
         // Since ancestors does not contain target itself, we must account

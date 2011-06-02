@@ -1,3 +1,13 @@
+2011-06-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Stop event propagation for cases where relatedTarget is both ancestor of the target and at shadow boundary.
+        https://bugs.webkit.org/show_bug.cgi?id=61892
+
+        * fast/events/shadow-boundary-crossing.html: Added a test that uses new shadow DOM testing machinery.
+        * fast/events/shadow-boundary-crossing-expected.txt: Updated expectations.
+
 2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skipping failing tests in GTK after r87901.
