@@ -1,5 +1,18 @@
 2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
 
+	Unreviewed, new GTK baselines after r87807, r87829, r87840 and r87846.
+
+        * platform/gtk/svg/as-image/svg-as-background-with-relative-size-expected.png: Added.
+        * platform/gtk/svg/as-image/svg-as-background-with-relative-size-expected.txt: Added.
+        * platform/gtk/svg/as-image/svg-as-background-with-viewBox-expected.png: Added.
+        * platform/gtk/svg/as-image/svg-as-background-with-viewBox-expected.txt: Added.
+        * platform/gtk/svg/custom/embedding-external-svgs-expected.png: Added.
+        * platform/gtk/svg/custom/embedding-external-svgs-expected.txt: Added.
+        * platform/gtk/svg/text/scaling-font-with-geometric-precision-expected.png: Added.
+        * platform/gtk/svg/text/scaling-font-with-geometric-precision-expected.txt: Added.
+
+2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Unreviewed, skipped SVG tests randomly failing with 16px diff.
 
         * platform/gtk/Skipped: Skipped tests.
