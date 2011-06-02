@@ -1,3 +1,9 @@
+2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skipping failing tests in GTK after r87901.
+
+        * platform/gtk/Skipped: Skipped 2 tests.
+
 2011-06-02  John Knottenbelt  <jknotten@chromium.org>
 
         Unreviewed.
