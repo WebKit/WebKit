@@ -117,7 +117,10 @@ bool ScriptController::executeIfJavaScriptURL(const KURL& url, ShouldReplaceDocu
     if (shouldReplaceDocumentIfJavaScriptURL == ReplaceDocumentIfJavaScriptURL) {
         // We're still in a frame, so there should be a DocumentLoader.
         ASSERT(m_frame->document()->loader());
-        if (DocumentLoader* loader = m_frame->document()->loader())
+        
+        // DocumentWriter::replaceDocument can cause the DocumentLoader to get deref'ed and possible destroyed,
+        // so protect it with a RefPtr.
+        if (RefPtr<DocumentLoader> loader = m_frame->document()->loader())
             loader->writer()->replaceDocument(scriptResult);
     }
     return true;

@@ -1,3 +1,14 @@
+2011-06-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/9539920> and https://bugs.webkit.org/show_bug.cgi?id=61950
+        Repro crash loading certain webarchives after r87566.
+
+        * webarchive/loading/javascript-url-iframe-crash-expected.txt: Added.
+        * webarchive/loading/javascript-url-iframe-crash.html: Added.
+        * webarchive/loading/resources/javascript-url-iframe-crash.webarchive: Added.
+
 2011-06-02  Tony Chang  <tony@chromium.org>
 
         [chromium] mark media/audio-delete-while-slider-thumb-clicked.html as passing

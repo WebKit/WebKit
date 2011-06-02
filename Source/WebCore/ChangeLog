@@ -1,3 +1,16 @@
+2011-06-02  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        <rdar://problem/9539920> and https://bugs.webkit.org/show_bug.cgi?id=61950
+        Repro crash loading certain webarchives after r87566.
+
+        Test: webarchive/loading/javascript-url-iframe-crash.html
+
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeIfJavaScriptURL): DocumentWriter::replaceDocument can
+          cause the DocumentLoader to be destroyed, so protect it with a Ref here.
+
 2011-06-02  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Adam Barth.
