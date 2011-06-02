@@ -1,3 +1,19 @@
+2011-06-02  Ian Henderson  <ianh@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        [CG] GraphicsContext::fillRoundedRect() ignores the gradient fill the CGContextFillEllipseInRect() code path
+        https://bugs.webkit.org/show_bug.cgi?id=61882
+
+        If we have a gradient or pattern fill set, take the slow path, which
+        handles these cases properly.
+
+        No new tests, since we never try to fill a rounded rect with a
+        gradient or pattern.
+
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::fillRoundedRect):
+
 2011-06-02  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Kent Tamura.

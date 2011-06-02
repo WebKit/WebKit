@@ -770,7 +770,8 @@ void GraphicsContext::fillRoundedRect(const IntRect& rect, const IntSize& topLef
 
     bool equalWidths = (topLeft.width() == topRight.width() && topRight.width() == bottomLeft.width() && bottomLeft.width() == bottomRight.width());
     bool equalHeights = (topLeft.height() == bottomLeft.height() && bottomLeft.height() == topRight.height() && topRight.height() == bottomRight.height());
-    if (equalWidths && equalHeights && topLeft.width() * 2 == rect.width() && topLeft.height() * 2 == rect.height())
+    bool hasCustomFill = m_state.fillGradient || m_state.fillPattern;
+    if (!hasCustomFill && equalWidths && equalHeights && topLeft.width() * 2 == rect.width() && topLeft.height() * 2 == rect.height())
         CGContextFillEllipseInRect(context, rect);
     else {
         Path path;
