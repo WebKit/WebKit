@@ -1,5 +1,21 @@
 2011-06-02  Adam Barth  <abarth@webkit.org>
 
+        First cut at updating test expectations for Win 7.
+
+        * platform/chromium-win/fast/dom/HTMLAnchorElement/set-href-attribute-hash-expected.txt: Removed.
+        * platform/chromium-win/fullscreen/full-screen-zIndex-after-expected.png: Added.
+        * platform/chromium-win/http/tests/security/aboutBlank/xss-DENIED-set-opener-expected.txt: Removed.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/types-dom-05-b-expected.txt: Removed.
+        * platform/chromium-win/svg/wicd/test-rightsizing-b-expected.png: Added.
+        * platform/chromium-win/svg/wicd/test-rightsizing-b-expected.txt: Added.
+        * platform/chromium-win/svg/wicd/test-scalable-background-image2-expected.png: Added.
+        * platform/chromium-win/svg/wicd/test-scalable-background-image2-expected.txt: Added.
+        * platform/chromium-win/svg/zoom/page/zoom-coords-viewattr-01-b-expected.png:
+        * platform/chromium-win/svg/zoom/page/zoom-coords-viewattr-01-b-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
+2011-06-02  Adam Barth  <abarth@webkit.org>
+
         These differ only by the scroll bar.
 
         * platform/chromium-linux-x86/fast/css: Added.
