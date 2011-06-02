@@ -1,3 +1,14 @@
+2011-06-01  Abhishek Arya  <inferno@chromium.org>
+
+        Unreviewed.
+
+        Coding style nit. Move ec=0 initialization, change
+        recommended by Alexey in bug.
+        https://bugs.webkit.org/show_bug.cgi?id=60831
+
+        * dom/Document.cpp:
+        (WebCore::Document::setBody):
+
 2011-06-01  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Kent Tamura.
