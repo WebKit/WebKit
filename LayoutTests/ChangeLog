@@ -1,3 +1,81 @@
+2011-06-02  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
+        [Chromium] Update baselines for Windows 7 platform.
+        https://bugs.webkit.org/show_bug.cgi?id=61916
+
+        * platform/chromium-win/fast/borders/border-antialiasing-expected.png: Added.
+        * platform/chromium-win/fast/borders/border-antialiasing-expected.txt: Added.
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.txt:
+        * platform/chromium-win/fast/gradients/css3-linear-right-angle-gradients-expected.png: Added.
+        * platform/chromium-win/fast/gradients/css3-repeating-linear-gradients2-expected.png: Added.
+        * platform/chromium-win/fullscreen/full-screen-iframe-zIndex-expected.png: Added.
+        * platform/chromium-win/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png: Added.
+        * platform/chromium-win/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt: Added.
+        * platform/chromium-win/svg/as-image/svg-as-background-with-relative-size-expected.png: Added.
+        * platform/chromium-win/svg/as-image/svg-as-background-with-relative-size-expected.txt: Added.
+        * platform/chromium-win/svg/custom/embedding-external-svgs-expected.png: Added.
+        * platform/chromium-win/svg/custom/embedding-external-svgs-expected.txt: Added.
+        * platform/chromium-win/svg/custom/invalid-fill-expected.png:
+        * platform/chromium-win/svg/custom/invalid-fill-expected.txt:
+        * platform/chromium-win/svg/custom/invalid-fill-hex-expected.png:
+        * platform/chromium-win/svg/custom/invalid-fill-hex-expected.txt:
+        * platform/chromium-win/svg/custom/invalid-stroke-hex-expected.png: Added.
+        * platform/chromium-win/svg/custom/invalid-stroke-hex-expected.txt: Added.
+        * platform/chromium-win/svg/custom/invalid-uri-stroke-expected.png: Added.
+        * platform/chromium-win/svg/custom/invalid-uri-stroke-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-no-size-attributes-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-explicit-width-height-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-explicit-width-height-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-height-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-height-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-no-width-height-change-content-box-size-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-no-width-height-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-no-width-height-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/chromium-win/svg/custom/small-rect-scale-expected.png: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-bias-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-divisor-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-edgeMode-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-in-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelMatrix-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-kernelUnitLength-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-order-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-targetX-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-bias-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-divisor-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-in-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelMatrix-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-kernelUnitLength-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-order-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-targetX-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGTextElement-svgdom-lengthAdjust-prop-expected.png:
+        * platform/chromium-win/svg/filters/feBlend-invalid-mode-expected.txt: Added.
+        * platform/chromium-win/svg/filters/feConvolveFilter-y-bounds-expected.png: Added.
+
 2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skipped test with 1px different results in GTK bots.
