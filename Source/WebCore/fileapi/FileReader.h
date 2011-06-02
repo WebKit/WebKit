@@ -35,6 +35,7 @@
 
 #include "ActiveDOMObject.h"
 #include "EventTarget.h"
+#include "ExceptionCode.h"
 #include "FileError.h"
 #include "FileReaderLoader.h"
 #include "FileReaderLoaderClient.h"
@@ -63,16 +64,16 @@ public:
         DONE = 2
     };
 
-    void readAsArrayBuffer(Blob*);
-    void readAsBinaryString(Blob*);
-    void readAsText(Blob*, const String& encoding = "");
-    void readAsDataURL(Blob*);
+    void readAsArrayBuffer(Blob*, ExceptionCode&);
+    void readAsBinaryString(Blob*, ExceptionCode&);
+    void readAsText(Blob*, const String& encoding, ExceptionCode&);
+    void readAsText(Blob*, ExceptionCode&);
+    void readAsDataURL(Blob*, ExceptionCode&);
     void abort();
 
-    void start();
     void doAbort();
 
-    ReadyState readyState() const;
+    ReadyState readyState() const { return m_state; }
     PassRefPtr<FileError> error() { return m_error; }
     FileReaderLoader::ReadType readType() const { return m_readType; }
     PassRefPtr<ArrayBuffer> arrayBufferResult() const;
@@ -104,15 +105,6 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(loadend);
 
 private:
-    enum InternalState {
-        None,
-        Starting,
-        Opening,
-        Reading,
-        Aborting,
-        Completed
-    };
-
     FileReader(ScriptExecutionContext*);
 
     // EventTarget
@@ -122,11 +114,12 @@ private:
     virtual EventTargetData* ensureEventTargetData() { return &m_eventTargetData; }
 
     void terminate();
-    void readInternal(Blob*, FileReaderLoader::ReadType);
+    void readInternal(Blob*, FileReaderLoader::ReadType, ExceptionCode&);
     void fireErrorEvent(int httpStatusCode);
     void fireEvent(const AtomicString& type);
 
-    InternalState m_state;
+    ReadyState m_state;
+    bool m_aborting;
     EventTargetData m_eventTargetData;
 
     RefPtr<Blob> m_blob;

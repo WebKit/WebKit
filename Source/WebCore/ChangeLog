@@ -1,3 +1,54 @@
+2011-06-02  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Update the behavior of multiple reads for FileReader
+        https://bugs.webkit.org/show_bug.cgi?id=61793
+
+        Changed to throw an OperationNotAllowedException with the NOT_ALLOWED_ERR
+        status code on any of the read methods that occur when readyState = LOADING.
+        Otherwise, calling any of the read methods should work. 
+
+        Test: fast/files/read-file-async.html
+
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMBinding.cpp:
+        (WebCore::setDOMException):
+        * bindings/v8/V8Proxy.cpp:
+        (WebCore::V8Proxy::setDOMException):
+        * dom/ExceptionCode.cpp:
+        (WebCore::getExceptionCodeDescription):
+        * dom/ExceptionCode.h:
+        * fileapi/FileReader.cpp:
+        (WebCore::FileReader::FileReader):
+        (WebCore::FileReader::hasPendingActivity):
+        (WebCore::FileReader::readAsArrayBuffer):
+        (WebCore::FileReader::readAsBinaryString):
+        (WebCore::FileReader::readAsText):
+        (WebCore::FileReader::readAsDataURL):
+        (WebCore::FileReader::readInternal):
+        (WebCore::FileReader::abort):
+        (WebCore::FileReader::doAbort):
+        (WebCore::FileReader::terminate):
+        (WebCore::FileReader::start):
+        (WebCore::FileReader::didStartLoading):
+        (WebCore::FileReader::didFinishLoading):
+        (WebCore::FileReader::didFail):
+        * fileapi/FileReader.h:
+        (WebCore::FileReader::readyState):
+        * fileapi/FileReader.idl:
+        * fileapi/OperationNotAllowedException.h: Added.
+        (WebCore::OperationNotAllowedException::create):
+        (WebCore::OperationNotAllowedException::OperationNotAllowedException):
+        * fileapi/OperationNotAllowedException.idl: Added.
+
 2011-06-02  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2010 Google Inc.  All rights reserved.
- * Copyright (C) 2011 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are
@@ -29,44 +28,38 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-module html {
-    interface [
-        Conditional=BLOB,
-        ActiveDOMObject,
-        CanBeConstructed,
-        CallWith=ScriptExecutionContext,
-        EventTarget,
-        NoStaticTables,
-        V8CustomConstructor
-    ] FileReader {
-        // ready states
-        const unsigned short EMPTY = 0;
-        const unsigned short LOADING = 1;
-        const unsigned short DONE = 2;
-        readonly attribute unsigned short readyState;
+#ifndef OperationNotAllowedException_h
+#define OperationNotAllowedException_h
 
-        // async read methods
-        void readAsArrayBuffer(in Blob blob)
-            raises(OperationNotAllowedException);
-        void readAsBinaryString(in Blob blob)
-            raises(OperationNotAllowedException);
-        void readAsText(in Blob blob, in [Optional] DOMString encoding)
-            raises(OperationNotAllowedException);
-        void readAsDataURL(in Blob blob)
-            raises(OperationNotAllowedException);
+#if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 
-        void abort();
+#include "ExceptionBase.h"
 
-        // file data
-        readonly attribute [Custom] DOMObject result;
+namespace WebCore {
 
-        readonly attribute FileError error;
+class OperationNotAllowedException : public ExceptionBase {
+public:
+    static PassRefPtr<OperationNotAllowedException> create(const ExceptionCodeDescription& description)
+    {
+        return adoptRef(new OperationNotAllowedException(description));
+    }
 
-        attribute EventListener onloadstart;
-        attribute EventListener onprogress;
-        attribute EventListener onload;
-        attribute EventListener onabort;
-        attribute EventListener onerror;
-        attribute EventListener onloadend;
+    static const int OperationNotAllowedExceptionOffset = 1300;
+    static const int OperationNotAllowedExceptionMax = 1399;
+
+    enum OperationNotAllowedExceptionCode {
+        NOT_ALLOWED_ERR = OperationNotAllowedExceptionOffset + 1,
     };
-}
+
+private:
+    OperationNotAllowedException(const ExceptionCodeDescription& description)
+        : ExceptionBase(description)
+    {
+    }
+};
+
+} // namespace WebCore
+
+#endif // ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
+
+#endif // OperationNotAllowedException_h

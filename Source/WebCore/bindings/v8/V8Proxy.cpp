@@ -60,6 +60,7 @@
 #include "V8FileException.h"
 #include "V8HiddenPropertyName.h"
 #include "V8IsolatedContext.h"
+#include "V8OperationNotAllowedException.h"
 #include "V8RangeException.h"
 #include "V8SQLException.h"
 #include "V8XMLHttpRequestException.h"
@@ -691,6 +692,9 @@ void V8Proxy::setDOMException(int exceptionCode)
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
     case FileExceptionType:
         exception = toV8(FileException::create(description));
+        break;
+    case OperationNotAllowedExceptionType:
+        exception = toV8(OperationNotAllowedException::create(description));
         break;
 #endif
 #if ENABLE(INDEXED_DATABASE)

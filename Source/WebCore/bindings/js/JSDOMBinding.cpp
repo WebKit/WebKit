@@ -35,6 +35,7 @@
 #include "JSExceptionBase.h"
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 #include "JSFileException.h"
+#include "JSOperationNotAllowedException.h"
 #endif
 #include "JSRangeException.h"
 #include "JSSQLException.h"
@@ -45,6 +46,7 @@
 #if ENABLE(XPATH)
 #include "JSXPathException.h"
 #endif
+#include "OperationNotAllowedException.h"
 #include "RangeException.h"
 #include "SQLException.h"
 #include "SVGException.h"
@@ -241,6 +243,9 @@ void setDOMException(ExecState* exec, ExceptionCode ec)
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
         case FileExceptionType:
             errorObject = toJS(exec, globalObject, FileException::create(description));
+            break;
+        case OperationNotAllowedExceptionType:
+            errorObject = toJS(exec, globalObject, OperationNotAllowedException::create(description));
             break;
 #endif
 #if ENABLE(INDEXED_DATABASE)

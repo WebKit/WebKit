@@ -634,6 +634,9 @@
 		2E0888D41148848A00AF4265 /* JSDOMFormData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */; };
 		2E0888D51148848A00AF4265 /* JSDOMFormData.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E0888D31148848A00AF4265 /* JSDOMFormData.h */; };
 		2E0888E6114884E200AF4265 /* JSDOMFormDataCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E0888E5114884E200AF4265 /* JSDOMFormDataCustom.cpp */; };
+		2E2445F71395893A004B6C19 /* OperationNotAllowedException.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E2445F51395893A004B6C19 /* OperationNotAllowedException.h */; };
+		2E24476813959173004B6C19 /* JSOperationNotAllowedException.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E24476613959173004B6C19 /* JSOperationNotAllowedException.cpp */; };
+		2E24476913959173004B6C19 /* JSOperationNotAllowedException.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E24476713959173004B6C19 /* JSOperationNotAllowedException.h */; };
 		2E2D99CD10E2BBDA00496337 /* JSBlob.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2E2D99CB10E2BBDA00496337 /* JSBlob.cpp */; };
 		2E2D99CE10E2BBDA00496337 /* JSBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E2D99CC10E2BBDA00496337 /* JSBlob.h */; };
 		2E2D99E710E2BC1C00496337 /* DOMBlob.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E2D99E510E2BC1C00496337 /* DOMBlob.h */; };
@@ -7158,6 +7161,10 @@
 		2E0888D21148848A00AF4265 /* JSDOMFormData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMFormData.cpp; sourceTree = "<group>"; };
 		2E0888D31148848A00AF4265 /* JSDOMFormData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDOMFormData.h; sourceTree = "<group>"; };
 		2E0888E5114884E200AF4265 /* JSDOMFormDataCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSDOMFormDataCustom.cpp; sourceTree = "<group>"; };
+		2E2445F51395893A004B6C19 /* OperationNotAllowedException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = OperationNotAllowedException.h; path = fileapi/OperationNotAllowedException.h; sourceTree = "<group>"; };
+		2E2445F61395893A004B6C19 /* OperationNotAllowedException.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = OperationNotAllowedException.idl; path = fileapi/OperationNotAllowedException.idl; sourceTree = "<group>"; };
+		2E24476613959173004B6C19 /* JSOperationNotAllowedException.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOperationNotAllowedException.cpp; sourceTree = "<group>"; };
+		2E24476713959173004B6C19 /* JSOperationNotAllowedException.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOperationNotAllowedException.h; sourceTree = "<group>"; };
 		2E2D99CB10E2BBDA00496337 /* JSBlob.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBlob.cpp; sourceTree = "<group>"; };
 		2E2D99CC10E2BBDA00496337 /* JSBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBlob.h; sourceTree = "<group>"; };
 		2E2D99E510E2BC1C00496337 /* DOMBlob.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DOMBlob.h; sourceTree = "<group>"; };
@@ -15686,6 +15693,8 @@
 				898785A1122CA2A7003AABDA /* JSMetadata.h */,
 				898785A2122CA2A7003AABDA /* JSMetadataCallback.cpp */,
 				898785A3122CA2A7003AABDA /* JSMetadataCallback.h */,
+				2E24476613959173004B6C19 /* JSOperationNotAllowedException.cpp */,
+				2E24476713959173004B6C19 /* JSOperationNotAllowedException.h */,
 				89CD029111C85B870070B791 /* JSWebKitBlobBuilder.cpp */,
 				89CD029211C85B870070B791 /* JSWebKitBlobBuilder.h */,
 				8987859E122CA2A7003AABDA /* JSWebKitFlags.cpp */,
@@ -16321,6 +16330,8 @@
 				8987854F122CA064003AABDA /* LocalFileSystem.h */,
 				89878550122CA064003AABDA /* Metadata.h */,
 				89878551122CA064003AABDA /* MetadataCallback.h */,
+				2E2445F51395893A004B6C19 /* OperationNotAllowedException.h */,
+				2E2445F61395893A004B6C19 /* OperationNotAllowedException.idl */,
 				976D6C75122B8A3D001FD1F7 /* ThreadableBlobRegistry.cpp */,
 				976D6C76122B8A3D001FD1F7 /* ThreadableBlobRegistry.h */,
 				976D6C5C122B8A3D001FD1F7 /* WebKitBlobBuilder.cpp */,
@@ -23107,6 +23118,8 @@
 				B12D236E1356034D002A28D4 /* JSMultipleTrackList.h in Headers */,
 				8C0E334D138A92C7008DA94F /* LevelDBTransaction.h in Headers */,
 				8C0E334F138A92C7008DA94F /* LevelDBWriteBatch.h in Headers */,
+				2E2445F71395893A004B6C19 /* OperationNotAllowedException.h in Headers */,
+				2E24476913959173004B6C19 /* JSOperationNotAllowedException.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25832,6 +25845,7 @@
 				B12D236D1356034D002A28D4 /* JSMultipleTrackList.cpp in Sources */,
 				8C0E334C138A92C7008DA94F /* LevelDBTransaction.cpp in Sources */,
 				8C0E334E138A92C7008DA94F /* LevelDBWriteBatch.cpp in Sources */,
+				2E24476813959173004B6C19 /* JSOperationNotAllowedException.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

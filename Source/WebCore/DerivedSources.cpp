@@ -253,6 +253,7 @@
 #include "JSNotation.cpp"
 #include "JSNotificationCenter.cpp"
 #include "JSNotification.cpp"
+#include "JSOperationNotAllowedException.cpp"
 #include "JSOverflowEvent.cpp"
 #include "JSPageTransitionEvent.cpp"
 #include "JSPerformance.cpp"

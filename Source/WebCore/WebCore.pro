@@ -1603,6 +1603,7 @@ HEADERS += \
     fileapi/FileStreamProxy.h \
     fileapi/FileThread.h \
     fileapi/FileThreadTask.h \
+    fileapi/OperationNotAllowedException.h \
     fileapi/WebKitBlobBuilder.h \
     history/BackForwardController.h \
     history/BackForwardListImpl.h \

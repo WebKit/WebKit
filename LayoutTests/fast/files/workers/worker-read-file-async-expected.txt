@@ -168,8 +168,47 @@ readyState: 2
 result size: 31
 result: data:text/plain;base64,SGVsbG8=
 Received loadend event
-Test calling multiple read methods and only last one is processed
+Test calling multiple concurrent read methods
 readyState: 0
+Received exception 1: NOT_ALLOWED_ERR
+Received exception 1: NOT_ALLOWED_ERR
+Received exception 1: NOT_ALLOWED_ERR
+Received exception 1: NOT_ALLOWED_ERR
+Received loadstart event
+readyState: 1
+Received load event
+readyState: 2
+result size: 31
+result: data:text/plain;base64,SGVsbG8=
+Received loadend event
+Test reading again after successful read
+readyState: 0
+Received loadstart event
+readyState: 1
+Received load event
+readyState: 2
+result size: 5
+result: Hello
+Received loadend event
+readyState after recalling read method: 1
+result after recalling read method: 
+error after recalling read method: null
+Received loadstart event
+readyState: 1
+Received load event
+readyState: 2
+result size: 31
+result: data:text/plain;base64,SGVsbG8=
+Received loadend event
+Test reading again after failed read
+readyState: 0
+Received error event
+readyState: 2
+error code: 1
+Received loadend event
+readyState after recalling read method: 1
+result after recalling read method: 
+error after recalling read method: null
 Received loadstart event
 readyState: 1
 Received load event

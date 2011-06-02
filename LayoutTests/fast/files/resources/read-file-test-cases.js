@@ -19,12 +19,29 @@ var testCases = [
     "testReadingUTF16BEBOMEncodedFileAsTextWithUTF8Encoding",
     "testReadingUTF16BEBOMEncodedFileAsTextWithInvalidEncoding",
     "testReadingUTF8EncodedFileAsDataURL",
+];
+var asyncTestCases = [
     "testMultipleReads",
+    "testReadAgainAfterSuccessfulReadStep1",
+    "testReadAgainAfterSuccessfulReadStep2",
+    "testReadAgainAfterFailedReadStep1",
+    "testReadAgainAfterFailedReadStep2"
 ];
 var testIndex = 0;
+var initialized = false;
+
+function ensureInitialized()
+{
+    if (initialized)
+        return;
+    initialized = true;
+    if (isReadAsAsync())
+        testCases = testCases.concat(asyncTestCases);
+}
 
 function runNextTest(testFiles)
 {
+    ensureInitialized();
     if (testIndex < testCases.length) {
         testIndex++;
         self[testCases[testIndex - 1]](testFiles);
@@ -155,16 +172,61 @@ function testReadingUTF8EncodedFileAsDataURL(testFiles)
 
 function testMultipleReads(testFiles)
 {
-    // This test case is only available for async reading.
-    if (!isReadAsAsync()) {
-        runNextTest(testFiles);
-        return;
-    }
-
-    log("Test calling multiple read methods and only last one is processed");
-    var reader = createReaderAsync();
-    reader.readAsArrayBuffer(testFiles['UTF8-file']);
-    reader.readAsBinaryString(testFiles['UTF8-file']);
-    reader.readAsText(testFiles['UTF8-file']);
+    log("Test calling multiple concurrent read methods");
+    var reader = createReaderAsync(testFiles);
     reader.readAsDataURL(testFiles['UTF8-file']);
+    try {
+        reader.readAsArrayBuffer(testFiles['UTF8-file']);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+    try {
+        reader.readAsBinaryString(testFiles['UTF8-file']);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+    try {
+        reader.readAsText(testFiles['UTF8-file']);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
+    try {
+        reader.readAsDataURL(testFiles['UTF8-file']);
+    } catch (error) {
+        log("Received exception " + error.code + ": " + error.name);
+    }
 }
+
+var readerToTestReread;
+
+function testReadAgainAfterSuccessfulReadStep1(testFiles)
+{
+    log("Test reading again after successful read");
+    readerToTestReread = createReaderAsync(testFiles);
+    readerToTestReread.readAsBinaryString(testFiles['UTF8-file']);
+}
+
+function testReadAgainAfterSuccessfulReadStep2(testFiles)
+{
+    readerToTestReread.readAsDataURL(testFiles['UTF8-file']);
+    log("readyState after recalling read method: " + readerToTestReread.readyState);
+    log("result after recalling read method: " + readerToTestReread.result);
+    log("error after recalling read method: " + readerToTestReread.error);
+}
+
+function testReadAgainAfterFailedReadStep1(testFiles)
+{
+    log("Test reading again after failed read");
+    readerToTestReread = createReaderAsync(testFiles);
+    readerToTestReread.readAsBinaryString(testFiles['non-existent']);
+}
+
+function testReadAgainAfterFailedReadStep2(testFiles)
+{
+    readerToTestReread.readAsDataURL(testFiles['UTF8-file']);
+    log("readyState after recalling read method: " + readerToTestReread.readyState);
+    log("result after recalling read method: " + readerToTestReread.result);
+    log("error after recalling read method: " + readerToTestReread.error);
+}
+
+

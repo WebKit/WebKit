@@ -38,6 +38,7 @@
 #include "CrossThreadTask.h"
 #include "File.h"
 #include "Logging.h"
+#include "OperationNotAllowedException.h"
 #include "ProgressEvent.h"
 #include "ScriptExecutionContext.h"
 #include <wtf/CurrentTime.h>
@@ -49,7 +50,8 @@ static const double progressNotificationIntervalMS = 50;
 
 FileReader::FileReader(ScriptExecutionContext* context)
     : ActiveDOMObject(context, this)
-    , m_state(None)
+    , m_state(EMPTY)
+    , m_aborting(false)
     , m_readType(FileReaderLoader::ReadAsBinaryString)
     , m_lastProgressNotificationTimeMS(0)
 {
@@ -62,7 +64,7 @@ FileReader::~FileReader()
 
 bool FileReader::hasPendingActivity() const
 {
-    return (m_state != None && m_state != Completed) || ActiveDOMObject::hasPendingActivity();
+    return m_state == LOADING || ActiveDOMObject::hasPendingActivity();
 }
 
 bool FileReader::canSuspend() const
@@ -76,27 +78,27 @@ void FileReader::stop()
     terminate();
 }
 
-void FileReader::readAsArrayBuffer(Blob* blob)
+void FileReader::readAsArrayBuffer(Blob* blob, ExceptionCode& ec)
 {
     if (!blob)
         return;
 
     LOG(FileAPI, "FileReader: reading as array buffer: %s %s\n", blob->url().string().utf8().data(), blob->isFile() ? static_cast<File*>(blob)->path().utf8().data() : "");
 
-    readInternal(blob, FileReaderLoader::ReadAsArrayBuffer);
+    readInternal(blob, FileReaderLoader::ReadAsArrayBuffer, ec);
 }
 
-void FileReader::readAsBinaryString(Blob* blob)
+void FileReader::readAsBinaryString(Blob* blob, ExceptionCode& ec)
 {
     if (!blob)
         return;
 
     LOG(FileAPI, "FileReader: reading as binary: %s %s\n", blob->url().string().utf8().data(), blob->isFile() ? static_cast<File*>(blob)->path().utf8().data() : "");
 
-    readInternal(blob, FileReaderLoader::ReadAsBinaryString);
+    readInternal(blob, FileReaderLoader::ReadAsBinaryString, ec);
 }
 
-void FileReader::readAsText(Blob* blob, const String& encoding)
+void FileReader::readAsText(Blob* blob, const String& encoding, ExceptionCode& ec)
 {
     if (!blob)
         return;
@@ -104,36 +106,41 @@ void FileReader::readAsText(Blob* blob, const String& encoding)
     LOG(FileAPI, "FileReader: reading as text: %s %s\n", blob->url().string().utf8().data(), blob->isFile() ? static_cast<File*>(blob)->path().utf8().data() : "");
 
     m_encoding = encoding;
-    readInternal(blob, FileReaderLoader::ReadAsText);
+    readInternal(blob, FileReaderLoader::ReadAsText, ec);
 }
 
-void FileReader::readAsDataURL(Blob* blob)
+void FileReader::readAsText(Blob* blob, ExceptionCode& ec)
+{
+    readAsText(blob, String(), ec);
+}
+
+void FileReader::readAsDataURL(Blob* blob, ExceptionCode& ec)
 {
     if (!blob)
         return;
 
     LOG(FileAPI, "FileReader: reading as data URL: %s %s\n", blob->url().string().utf8().data(), blob->isFile() ? static_cast<File*>(blob)->path().utf8().data() : "");
 
-    readInternal(blob, FileReaderLoader::ReadAsDataURL);
+    readInternal(blob, FileReaderLoader::ReadAsDataURL, ec);
 }
 
-static void delayedStart(ScriptExecutionContext*, FileReader* reader)
+void FileReader::readInternal(Blob* blob, FileReaderLoader::ReadType type, ExceptionCode& ec)
 {
-    reader->start();
-}
-
-void FileReader::readInternal(Blob* blob, FileReaderLoader::ReadType type)
-{
-    // readAs*** methods() can be called multiple times. Only the last call before the actual reading happens is processed.
-    if (m_state != None && m_state != Starting)
+    // If multiple concurrent read methods are called on the same FileReader, OperationNotAllowedException should be thrown when the state is LOADING.
+    if (m_state == LOADING) {
+        ec = OperationNotAllowedException::NOT_ALLOWED_ERR;
         return;
-
-    if (m_state == None)
-        scriptExecutionContext()->postTask(createCallbackTask(&delayedStart, AllowAccessLater(this)));
+    }
 
     m_blob = blob;
     m_readType = type;
-    m_state = Starting;
+    m_state = LOADING;
+    m_error = 0;
+
+    m_loader = adoptPtr(new FileReaderLoader(m_readType, this));
+    m_loader->setEncoding(m_encoding);
+    m_loader->setDataType(m_blob->type());
+    m_loader->start(scriptExecutionContext(), m_blob.get());
 }
 
 static void delayedAbort(ScriptExecutionContext*, FileReader* reader)
@@ -145,9 +152,9 @@ void FileReader::abort()
 {
     LOG(FileAPI, "FileReader: aborting\n");
 
-    if (m_state == Aborting)
+    if (m_aborting)
         return;
-    m_state = Aborting;
+    m_aborting = true;
 
     // Schedule to have the abort done later since abort() might be called from the event handler and we do not want the resource loading code to be in the stack.
     scriptExecutionContext()->postTask(
@@ -157,6 +164,7 @@ void FileReader::abort()
 void FileReader::doAbort()
 {
     terminate();
+    m_aborting = false;
 
     m_error = FileError::create(FileError::ABORT_ERR);
 
@@ -171,22 +179,11 @@ void FileReader::terminate()
         m_loader->cancel();
         m_loader = nullptr;
     }
-    m_state = Completed;
-}
-
-void FileReader::start()
-{
-    m_state = Opening;
-
-    m_loader = adoptPtr(new FileReaderLoader(m_readType, this));
-    m_loader->setEncoding(m_encoding);
-    m_loader->setDataType(m_blob->type());
-    m_loader->start(scriptExecutionContext(), m_blob.get());
+    m_state = DONE;
 }
 
 void FileReader::didStartLoading()
 {
-    m_state = Reading;
     fireEvent(eventNames().loadstartEvent);
 }
 
@@ -204,7 +201,7 @@ void FileReader::didReceiveData()
 
 void FileReader::didFinishLoading()
 {
-    m_state = Completed;
+    m_state = DONE;
 
     fireEvent(eventNames().loadEvent);
     fireEvent(eventNames().loadendEvent);
@@ -213,10 +210,10 @@ void FileReader::didFinishLoading()
 void FileReader::didFail(int errorCode)
 {
     // If we're aborting, do not proceed with normal error handling since it is covered in aborting code.
-    if (m_state == Aborting)
+    if (m_aborting)
         return;
 
-    m_state = Completed;
+    m_state = DONE;
 
     m_error = FileError::create(static_cast<FileError::ErrorCode>(errorCode));
     fireEvent(eventNames().errorEvent);
@@ -226,23 +223,6 @@ void FileReader::didFail(int errorCode)
 void FileReader::fireEvent(const AtomicString& type)
 {
     dispatchEvent(ProgressEvent::create(type, true, m_loader ? m_loader->bytesLoaded() : 0, m_loader ? m_loader->totalBytes() : 0));
-}
-
-FileReader::ReadyState FileReader::readyState() const
-{
-    switch (m_state) {
-    case None:
-    case Starting:
-        return EMPTY;
-    case Opening:
-    case Reading:
-    case Aborting:
-        return LOADING;
-    case Completed:
-        return DONE;
-    }
-    ASSERT_NOT_REACHED();
-    return EMPTY;
 }
 
 PassRefPtr<ArrayBuffer> FileReader::arrayBufferResult() const

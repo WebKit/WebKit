@@ -45,6 +45,7 @@
 
 #if ENABLE(BLOB) || ENABLE(FILE_SYSTEM)
 #include "FileException.h"
+#include "OperationNotAllowedException.h"
 #endif
 
 namespace WebCore {
@@ -208,6 +209,14 @@ static const char* const fileExceptionDescriptions[] = {
     "The path supplied exists, but was not an entry of requested type.",
     "An attempt was made to create a file or directory where an element already exists."
 };
+
+static const char* const operationNotAllowedExceptionNames[] = {
+    "NOT_ALLOWED_ERR"
+};
+
+static const char* const operationNotAllowedExceptionDescriptions[] = {
+    "A read method was called while the object was in the LOADING state due to a previous read call."
+};
 #endif
 
 #if ENABLE(INDEXED_DATABASE)
@@ -321,6 +330,14 @@ void getExceptionCodeDescription(ExceptionCode ec, ExceptionCodeDescription& des
         descriptionTable = fileExceptionDescriptions;
         nameTableSize = WTF_ARRAY_LENGTH(fileExceptionNames);
         nameTableOffset = FileException::NOT_FOUND_ERR;
+    } else if (code >= OperationNotAllowedException::OperationNotAllowedExceptionOffset && code <= OperationNotAllowedException::OperationNotAllowedExceptionMax) {
+        type = OperationNotAllowedExceptionType;
+        typeName = "DOM OperationNotAllowed";
+        code -= OperationNotAllowedException::OperationNotAllowedExceptionOffset;
+        nameTable = operationNotAllowedExceptionNames;
+        descriptionTable = operationNotAllowedExceptionDescriptions;
+        nameTableSize = WTF_ARRAY_LENGTH(operationNotAllowedExceptionNames);
+        nameTableOffset = OperationNotAllowedException::NOT_ALLOWED_ERR;
 #endif
 #if ENABLE(INDEXED_DATABASE)
     } else if (code >= IDBDatabaseException::IDBDatabaseExceptionOffset && code <= IDBDatabaseException::IDBDatabaseExceptionMax) {

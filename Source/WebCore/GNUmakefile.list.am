@@ -401,6 +401,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSOESTextureFloat.h \
 	DerivedSources/WebCore/JSOESVertexArrayObject.cpp \
 	DerivedSources/WebCore/JSOESVertexArrayObject.h \
+	DerivedSources/WebCore/JSOperationNotAllowedException.cpp \
+	DerivedSources/WebCore/JSOperationNotAllowedException.h \
 	DerivedSources/WebCore/JSOverflowEvent.cpp \
 	DerivedSources/WebCore/JSOverflowEvent.h \
 	DerivedSources/WebCore/JSPageTransitionEvent.cpp \
@@ -1503,6 +1505,7 @@ webcore_sources += \
 	Source/WebCore/fileapi/LocalFileSystem.h \
 	Source/WebCore/fileapi/MetadataCallback.h \
 	Source/WebCore/fileapi/Metadata.h \
+	Source/WebCore/fileapi/OperationNotAllowedException.h \
 	Source/WebCore/fileapi/ThreadableBlobRegistry.cpp \
 	Source/WebCore/fileapi/ThreadableBlobRegistry.h \
 	Source/WebCore/fileapi/WebKitBlobBuilder.cpp \

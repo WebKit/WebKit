@@ -324,6 +324,7 @@ DOM_CLASSES = \
     OESTextureFloat \
      OESVertexArrayObject \
      WebGLVertexArrayObjectOES \
+    OperationNotAllowedException \
     OverflowEvent \
     PageTransitionEvent \
     Performance \
