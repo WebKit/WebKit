@@ -1,3 +1,18 @@
+2011-06-02  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Fix LevelDBTransaction::clearTree()
+        https://bugs.webkit.org/show_bug.cgi?id=61917
+
+        This was broken in the code I copied it from; we can't delete and walk
+        the tree at the same time.
+
+        No new functionality, no new tests.
+
+        * platform/leveldb/LevelDBTransaction.cpp:
+        (WebCore::LevelDBTransaction::clearTree):
+
 2011-06-02  Andreas Kling  <kling@webkit.org>
 
         Rubber-stamped by Simon Hausmann.

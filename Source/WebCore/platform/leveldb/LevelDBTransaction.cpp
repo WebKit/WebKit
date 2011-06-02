@@ -53,11 +53,16 @@ void LevelDBTransaction::clearTree()
     TreeType::Iterator iterator;
     iterator.start_iter_least(m_tree);
 
+    Vector<AVLTreeNode*> nodes;
+
     while (*iterator) {
-        delete *iterator;
+        nodes.append(*iterator);
         ++iterator;
     }
     m_tree.purge();
+
+    for (size_t i = 0; i < nodes.size(); ++i)
+        delete(nodes[i]);
 }
 
 LevelDBTransaction::~LevelDBTransaction()
