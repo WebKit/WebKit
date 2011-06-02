@@ -4030,3 +4030,4 @@ BUGCR84161 MAC : fast/dom/register-protocol-handler.html = TEXT
 
 // Regression
 BUGWK61921 : fast/events/onload-after-document-close-with-subresource.html = TEXT
+
