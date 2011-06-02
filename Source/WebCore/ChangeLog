@@ -1,3 +1,25 @@
+2011-06-02  Naiem Shaik  <naiem.shaik@gmail.com>
+
+        Reviewed by Kent Tamura.
+        
+        Fixing invalid value being returned for default checkbox and radio state
+        https://bugs.webkit.org/show_bug.cgi?id=61674
+
+        As per http://www.w3.org/TR/html5/number-state.html#checkbox-state and
+        http://www.w3.org/TR/html5/number-state.html#radio-button-state:
+        The value IDL attribute is in mode default/on: 
+        If the element has a value attribute, it must return that attribute's 
+        value; otherwise, it must return the string "on".  
+        Currently default value is empty string;Default value of Radio button 
+        and checkbox should be "on".Changed fallbackValue function to return the same
+        This works as per spec in IE9,Firefox and Opera
+
+        Tests: fast/forms/checkbox-default-value.html
+               fast/forms/radio-default-value.html
+
+        * html/BaseCheckableInputType.cpp:
+        (WebCore::BaseCheckableInputType::fallbackValue):
+
 2011-06-02  Kent Tamura  <tkent@chromium.org>
 
         [Chromium/Mac] Fix a wrong merge for r87881

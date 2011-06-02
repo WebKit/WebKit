@@ -94,7 +94,7 @@ void BaseCheckableInputType::accessKeyAction(bool sendToAnyElement)
 
 String BaseCheckableInputType::fallbackValue()
 {
-    return element()->checked() ? "on" : "";
+    return "on";
 }
 
 bool BaseCheckableInputType::storesValueSeparateFromAttribute()
