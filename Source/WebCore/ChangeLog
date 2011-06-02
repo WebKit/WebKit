@@ -1,3 +1,12 @@
+2011-06-02  Piroska András  <Piroska.Andras@stud.u-szeged.hu>
+
+        Rubber-stamped by Gabor Loki.
+
+        Trivial buildfix for the ParallelJobs part of FEConvolveMatrix.
+
+        * platform/graphics/filters/FEConvolveMatrix.cpp:
+        (WebCore::FEConvolveMatrix::apply): Rename variable i to job
+
 2011-06-02  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.

@@ -455,7 +455,7 @@ void FEConvolveMatrix::apply()
                 param.clipRight = clipRight;
                 param.clipBottom = clipBottom;
                 param.yStart = startY;
-                if (i < numOfThreads - 1) {
+                if (job < numOfThreads - 1) {
                     startY += heightPerThread;
                     param.yEnd = startY - 1;
                 } else
