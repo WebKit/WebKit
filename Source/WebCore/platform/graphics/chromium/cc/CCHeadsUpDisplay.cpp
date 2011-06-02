@@ -110,13 +110,21 @@ void CCHeadsUpDisplay::draw()
         PlatformCanvas::AutoLocker locker(&canvas);
 
         m_hudTexture->bindTexture();
+        bool uploadedViaMap = false;
         if (m_useMapSubForUploads) {
             Extensions3DChromium* extensions = static_cast<Extensions3DChromium*>(context->getExtensions());
             uint8_t* pixelDest = static_cast<uint8_t*>(extensions->mapTexSubImage2DCHROMIUM(GraphicsContext3D::TEXTURE_2D, 0, 0, 0, hudSize.width(), hudSize.height(), GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, Extensions3DChromium::WRITE_ONLY));
-            memcpy(pixelDest, locker.pixels(), hudSize.width() * hudSize.height() * 4);
-            extensions->unmapTexSubImage2DCHROMIUM(pixelDest);
-        } else
+
+            if (pixelDest) {
+                uploadedViaMap = true;
+                memcpy(pixelDest, locker.pixels(), hudSize.width() * hudSize.height() * 4);
+                extensions->unmapTexSubImage2DCHROMIUM(pixelDest);
+            }
+        }
+
+        if (!uploadedViaMap) {
             GLC(context, context->texImage2D(GraphicsContext3D::TEXTURE_2D, 0, GraphicsContext3D::RGBA, canvas.size().width(), canvas.size().height(), 0, GraphicsContext3D::RGBA, GraphicsContext3D::UNSIGNED_BYTE, locker.pixels()));
+        }
     }
 
     // Draw the HUD onto the default render surface.

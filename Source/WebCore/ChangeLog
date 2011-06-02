@@ -1,3 +1,13 @@
+2011-06-02  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Compositor HUD should respect mapTexSubImage2D returning NULL
+        https://bugs.webkit.org/show_bug.cgi?id=61954
+
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::draw):
+
 2011-06-02  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Oliver Hunt.
