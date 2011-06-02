@@ -1,3 +1,31 @@
+2011-06-01  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Move {Next,Previous}FocusableNode functions from Document to FocusController.
+        https://bugs.webkit.org/show_bug.cgi?id=61839
+
+        There are some member functions in Document which use 'this'
+        pointer, but we should use TreeScope instead of Document in some
+        places to handle focus issues nicely. We have to move these
+        functions out of Document class so that we can give the TreeScope
+        as a parameter.
+
+        No new tests since no functionality was changed.
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * page/FocusController.cpp:
+        (WebCore::FocusController::deepFocusableNode):
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        (WebCore::nextNodeWithExactTabIndex):
+        (WebCore::previousNodeWithExactTabIndex):
+        (WebCore::nextNodeWithGreaterTabIndex):
+        (WebCore::previousNodeWithLowerTabIndex):
+        (WebCore::FocusController::nextFocusableNode):
+        (WebCore::FocusController::previousFocusableNode):
+        * page/FocusController.h:
+
 2011-06-01  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

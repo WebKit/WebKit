@@ -767,32 +767,6 @@ public:
 
     CSSStyleDeclaration* getOverrideStyle(Element*, const String& pseudoElt);
 
-    /**
-     * Searches through the document, starting from fromNode, for the next selectable element that comes after fromNode.
-     * The order followed is as specified in section 17.11.1 of the HTML4 spec, which is elements with tab indexes
-     * first (from lowest to highest), and then elements without tab indexes (in document order).
-     *
-     * @param fromNode The node from which to start searching. The node after this will be focused. May be null.
-     *
-     * @return The focus node that comes after fromNode
-     *
-     * See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
-     */
-    Node* nextFocusableNode(Node* start, KeyboardEvent*);
-
-    /**
-     * Searches through the document, starting from fromNode, for the previous selectable element (that comes _before_)
-     * fromNode. The order followed is as specified in section 17.11.1 of the HTML4 spec, which is elements with tab
-     * indexes first (from lowest to highest), and then elements without tab indexes (in document order).
-     *
-     * @param fromNode The node from which to start searching. The node before this will be focused. May be null.
-     *
-     * @return The focus node that comes before fromNode
-     *
-     * See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
-     */
-    Node* previousFocusableNode(Node* start, KeyboardEvent*);
-
     int nodeAbsIndex(Node*);
     Node* nodeWithAbsIndex(int absIndex);
 

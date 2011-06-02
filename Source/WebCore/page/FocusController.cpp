@@ -56,6 +56,7 @@
 #include "SpatialNavigation.h"
 #include "Widget.h"
 #include "htmlediting.h" // For firstPositionInOrBeforeNode
+#include <limits>
 
 namespace WebCore {
 
@@ -144,7 +145,7 @@ void FocusController::setFocused(bool focused)
     }
 }
 
-static Node* deepFocusableNode(FocusDirection direction, Node* node, KeyboardEvent* event)
+Node* FocusController::deepFocusableNode(FocusDirection direction, Node* node, KeyboardEvent* event)
 {
     // The node we found might be a HTMLFrameOwnerElement, so descend down the frame tree until we find either:
     // 1) a focusable node, or
@@ -157,8 +158,8 @@ static Node* deepFocusableNode(FocusDirection direction, Node* node, KeyboardEve
         Document* document = owner->contentFrame()->document();
 
         node = (direction == FocusDirectionForward)
-            ? document->nextFocusableNode(0, event)
-            : document->previousFocusableNode(0, event);
+            ? nextFocusableNode(document, 0, event)
+            : previousFocusableNode(document, 0, event);
         if (!node) {
             node = owner;
             break;
@@ -215,8 +216,8 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
     document->updateLayoutIgnorePendingStylesheets();
 
     Node* node = (direction == FocusDirectionForward)
-        ? document->nextFocusableNode(currentNode, event)
-        : document->previousFocusableNode(currentNode, event);
+        ? nextFocusableNode(document, currentNode, event)
+        : previousFocusableNode(document, currentNode, event);
             
     // If there's no focusable node to advance to, move up the frame tree until we find one.
     while (!node && frame) {
@@ -231,8 +232,8 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
             break;
 
         node = (direction == FocusDirectionForward)
-            ? parentDocument->nextFocusableNode(owner, event)
-            : parentDocument->previousFocusableNode(owner, event);
+            ? nextFocusableNode(parentDocument, owner, event)
+            : previousFocusableNode(parentDocument, owner, event);
 
         frame = parentFrame;
     }
@@ -251,8 +252,8 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
         // Chrome doesn't want focus, so we should wrap focus.
         Document* d = m_page->mainFrame()->document();
         node = (direction == FocusDirectionForward)
-            ? d->nextFocusableNode(0, event)
-            : d->previousFocusableNode(0, event);
+            ? nextFocusableNode(d, 0, event)
+            : previousFocusableNode(d, 0, event);
 
         node = deepFocusableNode(direction, node, event);
 
@@ -304,6 +305,118 @@ bool FocusController::advanceFocusInDocumentOrder(FocusDirection direction, Keyb
 
     static_cast<Element*>(node)->focus(false);
     return true;
+}
+
+static Node* nextNodeWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
+{
+    // Search is inclusive of start
+    for (Node* node = start; node; node = node->traverseNextNode())
+        if (node->isKeyboardFocusable(event) && node->tabIndex() == tabIndex)
+            return node;
+
+    return 0;
+}
+
+static Node* previousNodeWithExactTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
+{
+    // Search is inclusive of start
+    for (Node* n = start; n; n = n->traversePreviousNode())
+        if (n->isKeyboardFocusable(event) && n->tabIndex() == tabIndex)
+            return n;
+
+    return 0;
+}
+
+static Node* nextNodeWithGreaterTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
+{
+    // Search is inclusive of start
+    int winningTabIndex = std::numeric_limits<short>::max() + 1;
+    Node* winner = 0;
+    for (Node* n = start; n; n = n->traverseNextNode())
+        if (n->isKeyboardFocusable(event) && n->tabIndex() > tabIndex && n->tabIndex() < winningTabIndex) {
+            winner = n;
+            winningTabIndex = n->tabIndex();
+        }
+
+    return winner;
+}
+
+static Node* previousNodeWithLowerTabIndex(Node* start, int tabIndex, KeyboardEvent* event)
+{
+    // Search is inclusive of start
+    int winningTabIndex = 0;
+    Node* winner = 0;
+    for (Node* n = start; n; n = n->traversePreviousNode())
+        if (n->isKeyboardFocusable(event) && n->tabIndex() < tabIndex && n->tabIndex() > winningTabIndex) {
+            winner = n;
+            winningTabIndex = n->tabIndex();
+        }
+
+    return winner;
+}
+
+Node* FocusController::nextFocusableNode(TreeScope* within, Node* start, KeyboardEvent* event)
+{
+    if (start) {
+        // If a node is excluded from the normal tabbing cycle, the next focusable node is determined by tree order
+        if (start->tabIndex() < 0) {
+            for (Node* n = start->traverseNextNode(); n; n = n->traverseNextNode())
+                if (n->isKeyboardFocusable(event) && n->tabIndex() >= 0)
+                    return n;
+        }
+
+        // First try to find a node with the same tabindex as start that comes after start in the tree scope.
+        if (Node* winner = nextNodeWithExactTabIndex(start->traverseNextNode(), start->tabIndex(), event))
+            return winner;
+
+        if (!start->tabIndex())
+            // We've reached the last node in the document with a tabindex of 0. This is the end of the tabbing order.
+            return 0;
+    }
+
+    // Look for the first node in the tree scope that:
+    // 1) has the lowest tabindex that is higher than start's tabindex (or 0, if start is null), and
+    // 2) comes first in the tree scope, if there's a tie.
+    if (Node* winner = nextNodeWithGreaterTabIndex(within, start ? start->tabIndex() : 0, event))
+        return winner;
+
+    // There are no nodes with a tabindex greater than start's tabindex,
+    // so find the first node with a tabindex of 0.
+    return nextNodeWithExactTabIndex(within, 0, event);
+}
+
+Node* FocusController::previousFocusableNode(TreeScope* within, Node* start, KeyboardEvent* event)
+{
+    Node* last;
+    for (last = within; last->lastChild(); last = last->lastChild()) { }
+
+    // First try to find the last node in the tree scope that comes before start and has the same tabindex as start.
+    // If start is null, find the last node in the tree scope with a tabindex of 0.
+    Node* startingNode;
+    int startingTabIndex;
+    if (start) {
+        startingNode = start->traversePreviousNode();
+        startingTabIndex = start->tabIndex();
+    } else {
+        startingNode = last;
+        startingTabIndex = 0;
+    }
+
+    // However, if a node is excluded from the normal tabbing cycle, the previous focusable node is determined by tree order
+    if (startingTabIndex < 0) {
+        for (Node* n = startingNode; n; n = n->traversePreviousNode())
+            if (n->isKeyboardFocusable(event) && n->tabIndex() >= 0)
+                return n;
+    }
+
+    if (Node* winner = previousNodeWithExactTabIndex(startingNode, startingTabIndex, event))
+        return winner;
+
+    // There are no nodes before start with the same tabindex as start, so look for a node that:
+    // 1) has the highest non-zero tabindex (that is less than start's tabindex), and
+    // 2) comes last in the tree scope, if there's a tie.
+    startingTabIndex = (start && start->tabIndex()) ? start->tabIndex() : std::numeric_limits<short>::max();
+    return previousNodeWithLowerTabIndex(last, startingTabIndex, event);
 }
 
 static bool relinquishesEditingFocus(Node *node)
