@@ -97,8 +97,13 @@ linux-g++* {
     greaterThan(QT_GCC_MAJOR_VERSION, 3):greaterThan(QT_GCC_MINOR_VERSION, 5) {
         if (!contains(QMAKE_CXXFLAGS, -std=c++0x) && !contains(QMAKE_CXXFLAGS, -std=gnu++0x)) {
             # We need to deactivate those warnings because some names conflicts with upcoming c++0x types (e.g.nullptr).
-            QMAKE_CFLAGS += -Wno-c++0x-compat
-            QMAKE_CXXFLAGS += -Wno-c++0x-compat
+            CONFIG(QTDIR_build) {
+                QMAKE_CFLAGS_WARN_ON = -Wno-c++0x-compat
+                QMAKE_CXXFLAGS_WARN_ON = -Wno-c++0x-compat
+            } else {
+                QMAKE_CFLAGS += -Wno-c++0x-compat
+                QMAKE_CXXFLAGS += -Wno-c++0x-compat
+            }
         }
     }
 }
