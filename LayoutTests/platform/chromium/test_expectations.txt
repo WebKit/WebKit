@@ -3692,7 +3692,7 @@ BUGWK60115 WIN : transitions/svg-text-shadow-transition.html = IMAGE
 BUGWK60115 WIN : svg/css/composite-shadow-text.svg = IMAGE
 BUGWK60115 WIN : svg/css/shadow-changes.svg = IMAGE
 
-BUGWK60119 SNOWLEOPARD DEBUG : http/tests/local/stylesheet-and-script-load-order.html = CRASH PASS
+BUGWK60119 LINUX SNOWLEOPARD DEBUG : http/tests/local/stylesheet-and-script-load-order.html = CRASH PASS
 BUGWK56702 WIN DEBUG : http/tests/navigation/ping-cross-origin-from-https.html = TIMEOUT PASS
 
 BUGWK60120 DEBUG : editing/execCommand/append-node-under-document.html = TEXT PASS
@@ -4023,3 +4023,6 @@ BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
 
 // Register protocol handler doesn't seem to be enabled on Mac.
 BUGCR84161 MAC : fast/dom/register-protocol-handler.html = TEXT
+
+// Regression
+BUGWK61921 : fast/events/onload-after-document-close-with-subresource.html = TEXT
