@@ -825,8 +825,7 @@ void DragController::doImageDrag(Element* element, const IntPoint& dragOrigin, c
             origin = IntPoint(DragIconRightInset - dragImageSize(dragImage).width(), DragIconBottomInset);
     }
 
-    dragImageOffset.setX(mouseDownPoint.x() + origin.x());
-    dragImageOffset.setY(mouseDownPoint.y() + origin.y());
+    dragImageOffset = mouseDownPoint + origin;
     doSystemDrag(dragImage, dragImageOffset, dragOrigin, clipboard, frame, false);
 
     deleteDragImage(dragImage);
