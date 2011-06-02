@@ -1,5 +1,14 @@
 2011-06-01  Adam Barth  <abarth@webkit.org>
 
+        Move expected result to the correct location.  The script put it in the
+        wrong location.
+
+        * platform/chromium-mac/fast/js/property-getters-and-setters-expected.txt: Removed.
+        * platform/chromium-win/fast/js/property-getters-and-setters-expected.txt: Removed.
+        * platform/chromium/fast/js/property-getters-and-setters-expected.txt: Copied from LayoutTests/platform/chromium-mac/fast/js/property-getters-and-setters-expected.txt.
+
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
         These test time out on debug, probably because drop shadows are slow in debug skia.
 
         * platform/chromium/test_expectations.txt:
