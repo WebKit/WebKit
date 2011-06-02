@@ -48,6 +48,10 @@ public:
     }
 
 protected:
+    // An inline function cannot be the first non-abstract virtual function declared
+    // in the class as it results in the vtable being generated as a weak symbol.
+    virtual void virtualFunctionToPreventWeakVtable();
+
     explicit JSDOMWrapper(JSC::Structure* structure, JSC::JSGlobalObject* globalObject) 
         : JSObjectWithGlobalObject(globalObject, structure)
     {
@@ -56,10 +60,6 @@ protected:
         // needing to reach through the frame to get to the Document*.  See bug 27640.
         // ASSERT(globalObject->scriptExecutionContext());
     }
-
-#ifndef NDEBUG
-    virtual ~JSDOMWrapper();
-#endif
 };
 
 } // namespace WebCore

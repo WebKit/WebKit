@@ -41,6 +41,7 @@
 #import "ObjCPluginFunction.h"
 #import "PlainTextController.h"
 #import "TextInputController.h"
+#import "WebCoreTestSupport.h"
 #import "WorkQueue.h"
 #import "WorkQueueItem.h"
 #import <JavaScriptCore/JavaScriptCore.h>
@@ -265,6 +266,8 @@
 
     accessibilityController->makeWindowObject(context, globalObject, &exception);
     ASSERT(!exception);
+
+    WebCoreTestSupport::injectInternalsObject(context);
 
     // Make Old-Style controllers
 

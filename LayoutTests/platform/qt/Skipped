@@ -2527,3 +2527,6 @@ fast/html/set-text-direction.html
 
 # JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html
+
+# https://bugs.webkit.org/show_bug.cgi?id=61074
+fast/harness/internals-object.html
