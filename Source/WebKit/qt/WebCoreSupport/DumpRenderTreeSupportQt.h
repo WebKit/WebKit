@@ -46,12 +46,14 @@ class QtDRTNodeRuntime;
 }
 #endif
 
+QT_BEGIN_NAMESPACE
 class QWebElement;
 class QWebFrame;
 class QWebPage;
 class QWebHistoryItem;
 class QWebScriptWorld;
 class QUrl;
+QT_END_NAMESPACE
 
 extern QMap<int, QWebScriptWorld*> m_worldMap;
 

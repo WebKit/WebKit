@@ -1,3 +1,12 @@
+2011-06-02  Andreas Kling  <kling@webkit.org>
+
+        Unreviewed build fix.
+
+        To support building namespaced Qt, we require that forward-declarations
+        of Qt classes be wrapped in QT_BEGIN_NAMESPACE and QT_END_NAMESPACE.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+
 2011-06-01  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.
