@@ -63,6 +63,7 @@ namespace WebCore {
 class AffineTransform;
 class TransformationMatrix;
 class IntPoint;
+class IntSize;
 
 class FloatPoint {
 public:
@@ -205,6 +206,11 @@ inline IntPoint roundedIntPoint(const FloatPoint& p)
 inline IntPoint flooredIntPoint(const FloatPoint& p)
 {
     return IntPoint(static_cast<int>(p.x()), static_cast<int>(p.y()));
+}
+
+inline IntSize flooredIntSize(const FloatPoint& p)
+{
+    return IntSize(static_cast<int>(p.x()), static_cast<int>(p.y()));
 }
 
 float findSlope(const FloatPoint& p1, const FloatPoint& p2, float& c);

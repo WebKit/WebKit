@@ -275,29 +275,24 @@ void RenderLayer::updateLayerPositions(UpdateLayerPositionsFlags flags, IntPoint
             if (!m_parent || m_parent->renderer() == renderer()->containingBlock())
                 cachedOffset->move(m_topLeft.x(), m_topLeft.y()); // Fast case
             else {
-                int x = 0;
-                int y = 0;
-                convertToLayerCoords(root(), x, y);
-                *cachedOffset = IntPoint(x, y);
+                IntPoint offset;
+                convertToLayerCoords(root(), offset);
+                *cachedOffset = offset;
             }
         }
     }
 
-    int x = 0;
-    int y = 0;
+    IntPoint offset;
     if (cachedOffset) {
-        x += cachedOffset->x();
-        y += cachedOffset->y();
+        offset = *cachedOffset;
 #ifndef NDEBUG
-        int nonCachedX = 0;
-        int nonCachedY = 0;
-        convertToLayerCoords(root(), nonCachedX, nonCachedY);
-        ASSERT(x == nonCachedX);
-        ASSERT(y == nonCachedY);
+        IntPoint nonCachedOffset;
+        convertToLayerCoords(root(), nonCachedOffset);
+        ASSERT(offset == nonCachedOffset);
 #endif
     } else
-        convertToLayerCoords(root(), x, y);
-    positionOverflowControls(IntSize(x, y));
+        convertToLayerCoords(root(), offset);
+    positionOverflowControls(toSize(offset));
 
     updateVisibilityStatus();
 
@@ -901,12 +896,11 @@ static void expandClipRectForDescendantsAndReflection(IntRect& clipRect, const R
     // FIXME: Accelerated compositing will eventually want to do something smart here to avoid incorporating this
     // size into the parent layer.
     if (l->renderer()->hasReflection()) {
-        int deltaX = 0;
-        int deltaY = 0;
-        l->convertToLayerCoords(rootLayer, deltaX, deltaY);
-        clipRect.move(-deltaX, -deltaY);
+        IntPoint delta;
+        l->convertToLayerCoords(rootLayer, delta);
+        clipRect.move(-delta.x(), -delta.y());
         clipRect.unite(l->renderBox()->reflectedRect(clipRect));
-        clipRect.move(deltaX, deltaY);
+        clipRect.move(delta);
     }
 }
 
@@ -919,12 +913,11 @@ static IntRect transparencyClipBox(const RenderLayer* l, const RenderLayer* root
     if (rootLayer != l && l->paintsWithTransform(paintBehavior)) {
         // The best we can do here is to use enclosed bounding boxes to establish a "fuzzy" enough clip to encompass
         // the transformed layer and all of its children.
-        int x = 0;
-        int y = 0;
-        l->convertToLayerCoords(rootLayer, x, y);
+        IntPoint delta;
+        l->convertToLayerCoords(rootLayer, delta);
 
         TransformationMatrix transform;
-        transform.translate(x, y);
+        transform.translate(delta.x(), delta.y());
         transform = transform * *l->transform();
 
         IntRect clipRect = l->boundingBox(l);
@@ -1112,7 +1105,7 @@ void RenderLayer::insertOnlyThisLayer()
 }
 
 void 
-RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& xPos, int& yPos) const
+RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, IntPoint& location) const
 {
     if (ancestorLayer == this)
         return;
@@ -1122,8 +1115,7 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& xPos, i
         // If the fixed layer's container is the root, just add in the offset of the view. We can obtain this by calling
         // localToAbsolute() on the RenderView.
         FloatPoint absPos = renderer()->localToAbsolute(FloatPoint(), true);
-        xPos += absPos.x();
-        yPos += absPos.y();
+        location += flooredIntSize(absPos);
         return;
     }
  
@@ -1147,16 +1139,13 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& xPos, i
         ASSERT(fixedPositionContainerLayer); // We should have hit the RenderView's layer at least.
 
         if (fixedPositionContainerLayer != ancestorLayer) {
-            int fixedContainerX = 0;
-            int fixedContainerY = 0;
-            convertToLayerCoords(fixedPositionContainerLayer, fixedContainerX, fixedContainerY);
-            
-            int ancestorX = 0;
-            int ancestorY = 0;
-            ancestorLayer->convertToLayerCoords(fixedPositionContainerLayer, ancestorX, ancestorY);
-        
-            xPos += (fixedContainerX - ancestorX);
-            yPos += (fixedContainerY - ancestorY);
+            IntPoint fixedContainerCoords;
+            convertToLayerCoords(fixedPositionContainerLayer, fixedContainerCoords);
+
+            IntPoint ancestorCoords;
+            ancestorLayer->convertToLayerCoords(fixedPositionContainerLayer, ancestorCoords);
+
+            location += (fixedContainerCoords - ancestorCoords);
             return;
         }
     }
@@ -1183,16 +1172,13 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& xPos, i
             // to enclosingPositionedAncestor and subtract.
             RenderLayer* positionedAncestor = parentLayer->enclosingPositionedAncestor();
 
-            int thisX = 0;
-            int thisY = 0;
-            convertToLayerCoords(positionedAncestor, thisX, thisY);
+            IntPoint thisCoords;
+            convertToLayerCoords(positionedAncestor, thisCoords);
             
-            int ancestorX = 0;
-            int ancestorY = 0;
-            ancestorLayer->convertToLayerCoords(positionedAncestor, ancestorX, ancestorY);
-        
-            xPos += (thisX - ancestorX);
-            yPos += (thisY - ancestorY);
+            IntPoint ancestorCoords;
+            ancestorLayer->convertToLayerCoords(positionedAncestor, ancestorCoords);
+
+            location += (thisCoords - ancestorCoords);
             return;
         }
     } else
@@ -1200,11 +1186,18 @@ RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, int& xPos, i
     
     if (!parentLayer)
         return;
-    
-    parentLayer->convertToLayerCoords(ancestorLayer, xPos, yPos);
 
-    xPos += m_topLeft.x();
-    yPos += m_topLeft.y();
+    parentLayer->convertToLayerCoords(ancestorLayer, location);
+
+    location += toSize(m_topLeft);
+}
+
+void
+RenderLayer::convertToLayerCoords(const RenderLayer* ancestorLayer, IntRect& rect) const
+{
+    IntPoint delta;
+    convertToLayerCoords(ancestorLayer, delta);
+    rect.move(-delta.x(), -delta.y());
 }
 
 static inline int adjustedScrollDelta(int beginningDelta) {
@@ -2571,11 +2564,10 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
 
         // Adjust the transform such that the renderer's upper left corner will paint at (0,0) in user space.
         // This involves subtracting out the position of the layer in our current coordinate space.
-        int x = 0;
-        int y = 0;
-        convertToLayerCoords(rootLayer, x, y);
+        IntPoint delta;
+        convertToLayerCoords(rootLayer, delta);
         TransformationMatrix transform(layerTransform);
-        transform.translateRight(x, y);
+        transform.translateRight(delta.x(), delta.y());
         
         // Apply the transform.
         {
@@ -2765,9 +2757,8 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
     if (!columnBlock || !columnBlock->hasColumns())
         return;
     
-    int layerX = 0;
-    int layerY = 0;
-    columnBlock->layer()->convertToLayerCoords(rootLayer, layerX, layerY);
+    IntPoint layerOffset;
+    columnBlock->layer()->convertToLayerCoords(rootLayer, layerOffset);
     
     bool isHorizontal = columnBlock->style()->isHorizontalWritingMode();
 
@@ -2781,7 +2772,7 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
         int logicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - columnBlock->logicalLeftOffsetForContent();
         IntSize offset = isHorizontal ? IntSize(logicalLeftOffset, currLogicalTopOffset) : IntSize(currLogicalTopOffset, logicalLeftOffset);
 
-        colRect.move(layerX, layerY);
+        colRect.move(layerOffset);
 
         IntRect localDirtyRect(paintDirtyRect);
         localDirtyRect.intersect(colRect);
@@ -2811,11 +2802,10 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
             } else {
                 // Adjust the transform such that the renderer's upper left corner will paint at (0,0) in user space.
                 // This involves subtracting out the position of the layer in our current coordinate space.
-                int childX = 0;
-                int childY = 0;
-                columnLayers[colIndex - 1]->convertToLayerCoords(rootLayer, childX, childY);
+                IntPoint childOffset;
+                columnLayers[colIndex - 1]->convertToLayerCoords(rootLayer, childOffset);
                 TransformationMatrix transform;
-                transform.translateRight(childX + offset.width(), childY + offset.height());
+                transform.translateRight(childOffset.x() + offset.width(), childOffset.y() + offset.height());
                 
                 // Apply the transform.
                 context->concatCTM(transform.toAffineTransform());
@@ -2909,26 +2899,25 @@ PassRefPtr<HitTestingTransformState> RenderLayer::createLocalTransformState(Rend
                                         const HitTestingTransformState* containerTransformState) const
 {
     RefPtr<HitTestingTransformState> transformState;
-    int offsetX = 0;
-    int offsetY = 0;
+    IntPoint offset;
     if (containerTransformState) {
         // If we're already computing transform state, then it's relative to the container (which we know is non-null).
         transformState = HitTestingTransformState::create(*containerTransformState);
-        convertToLayerCoords(containerLayer, offsetX, offsetY);
+        convertToLayerCoords(containerLayer, offset);
     } else {
         // If this is the first time we need to make transform state, then base it off of hitTestPoint,
         // which is relative to rootLayer.
         transformState = HitTestingTransformState::create(hitTestPoint, FloatQuad(hitTestRect));
-        convertToLayerCoords(rootLayer, offsetX, offsetY);
+        convertToLayerCoords(rootLayer, offset);
     }
     
     RenderObject* containerRenderer = containerLayer ? containerLayer->renderer() : 0;
     if (renderer()->shouldUseTransformFromContainer(containerRenderer)) {
         TransformationMatrix containerTransform;
-        renderer()->getTransformFromContainer(containerRenderer, IntSize(offsetX, offsetY), containerTransform);
+        renderer()->getTransformFromContainer(containerRenderer, toSize(offset), containerTransform);
         transformState->applyTransform(containerTransform, HitTestingTransformState::AccumulateTransform);
     } else {
-        transformState->translate(offsetX, offsetY, HitTestingTransformState::AccumulateTransform);
+        transformState->translate(offset.x(), offset.y(), HitTestingTransformState::AccumulateTransform);
     }
     
     return transformState;
@@ -3237,10 +3226,9 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
     ASSERT(columnBlock && columnBlock->hasColumns());
     if (!columnBlock || !columnBlock->hasColumns())
         return 0;
-    
-    int layerX = 0;
-    int layerY = 0;
-    columnBlock->layer()->convertToLayerCoords(rootLayer, layerX, layerY);
+
+    IntPoint layerOffset;
+    columnBlock->layer()->convertToLayerCoords(rootLayer, layerOffset);
     
     ColumnInfo* colInfo = columnBlock->columnInfo();
     int colCount = columnBlock->columnCount(colInfo);
@@ -3268,7 +3256,7 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
             currLogicalTopOffset -= blockDelta;
         else
             currLogicalTopOffset += blockDelta;
-        colRect.move(layerX, layerY);
+        colRect.move(layerOffset);
 
         IntRect localClipRect(hitTestRect);
         localClipRect.intersect(colRect);
@@ -3377,24 +3365,22 @@ void RenderLayer::calculateClipRects(const RenderLayer* rootLayer, ClipRects& cl
     // Update the clip rects that will be passed to child layers.
     if (renderer()->hasOverflowClip() || renderer()->hasClip()) {
         // This layer establishes a clip of some kind.
-        int x = 0;
-        int y = 0;
-        convertToLayerCoords(rootLayer, x, y);
+        IntPoint offset;
+        convertToLayerCoords(rootLayer, offset);
         RenderView* view = renderer()->view();
         ASSERT(view);
         if (view && clipRects.fixed() && rootLayer->renderer() == view) {
-            x -= view->frameView()->scrollXForFixedPosition();
-            y -= view->frameView()->scrollYForFixedPosition();
+            offset -= view->frameView()->scrollOffsetForFixedPosition();
         }
         
         if (renderer()->hasOverflowClip()) {
-            IntRect newOverflowClip = toRenderBox(renderer())->overflowClipRect(x, y, relevancy);
+            IntRect newOverflowClip = toRenderBox(renderer())->overflowClipRect(offset.x(), offset.y(), relevancy);
             clipRects.setOverflowClipRect(intersection(newOverflowClip, clipRects.overflowClipRect()));
             if (renderer()->isPositioned() || renderer()->isRelPositioned())
                 clipRects.setPosClipRect(intersection(newOverflowClip, clipRects.posClipRect()));
         }
         if (renderer()->hasClip()) {
-            IntRect newPosClip = toRenderBox(renderer())->clipRect(x, y);
+            IntRect newPosClip = toRenderBox(renderer())->clipRect(offset.x(), offset.y());
             clipRects.setPosClipRect(intersection(newPosClip, clipRects.posClipRect()));
             clipRects.setOverflowClipRect(intersection(newPosClip, clipRects.overflowClipRect()));
             clipRects.setFixedClipRect(intersection(newPosClip, clipRects.fixedClipRect()));
@@ -3444,19 +3430,18 @@ void RenderLayer::calculateRects(const RenderLayer* rootLayer, const IntRect& pa
     foregroundRect = backgroundRect;
     outlineRect = backgroundRect;
     
-    int x = 0;
-    int y = 0;
-    convertToLayerCoords(rootLayer, x, y);
-    layerBounds = IntRect(IntPoint(x, y), size());
+    IntPoint offset;
+    convertToLayerCoords(rootLayer, offset);
+    layerBounds = IntRect(offset, size());
     
     // Update the clip rects that will be passed to child layers.
     if (renderer()->hasOverflowClip() || renderer()->hasClip()) {
         // This layer establishes a clip of some kind.
         if (renderer()->hasOverflowClip())
-            foregroundRect.intersect(toRenderBox(renderer())->overflowClipRect(x, y, relevancy));
+            foregroundRect.intersect(toRenderBox(renderer())->overflowClipRect(offset.x(), offset.y(), relevancy));
         if (renderer()->hasClip()) {
             // Clip applies to *us* as well, so go ahead and update the damageRect.
-            IntRect newPosClip = toRenderBox(renderer())->clipRect(x, y);
+            IntRect newPosClip = toRenderBox(renderer())->clipRect(offset.x(), offset.y());
             backgroundRect.intersect(newPosClip);
             foregroundRect.intersect(newPosClip);
             outlineRect.intersect(newPosClip);
@@ -3610,9 +3595,9 @@ IntRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer) const
         renderBox()->flipForWritingMode(result);
     else
         renderer()->containingBlock()->flipForWritingMode(result);
-    int deltaX = 0, deltaY = 0;
-    convertToLayerCoords(ancestorLayer, deltaX, deltaY);
-    result.move(deltaX, deltaY);
+    IntPoint delta;
+    convertToLayerCoords(ancestorLayer, delta);
+    result.move(delta);
     return result;
 }
 
@@ -3947,10 +3932,9 @@ void RenderLayer::setBackingNeedsRepaintInRect(const IntRect& r)
         // If we're trying to repaint the placeholder document layer, propagate the
         // repaint to the native view system.
         IntRect absRect(r);
-        int x = 0;
-        int y = 0;
-        convertToLayerCoords(root(), x, y);
-        absRect.move(x, y);
+        IntPoint delta;
+        convertToLayerCoords(root(), delta);
+        absRect.move(delta);
 
         RenderView* view = renderer()->view();
         if (view)

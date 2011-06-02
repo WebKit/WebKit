@@ -1,3 +1,36 @@
+2011-06-01  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch RenderLayer::convertToLayerCoords to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=61818
+
+        Covered by existing tests.
+
+        * platform/graphics/FloatPoint.h:
+        (WebCore::flooredIntSize):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::updateLayerPositions):
+        (WebCore::expandClipRectForDescendantsAndReflection):
+        (WebCore::transparencyClipBox):
+        (WebCore::RenderLayer::convertToLayerCoords):
+        (WebCore::RenderLayer::paintLayer):
+        (WebCore::RenderLayer::paintChildLayerIntoColumns):
+        (WebCore::RenderLayer::createLocalTransformState):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        (WebCore::RenderLayer::boundingBox):
+        (WebCore::RenderLayer::setBackingNeedsRepaintInRect):
+        * rendering/RenderLayer.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateCompositedBounds):
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        (WebCore::RenderLayerCompositor::layerWillBeRemoved):
+        (WebCore::RenderLayerCompositor::recursiveRepaintLayerRect):
+
 2011-06-01  Roland Steiner  <rolandsteiner@chromium.org>
 
         Reviewed by Kent Tamura.

@@ -203,10 +203,9 @@ void RenderLayerBacking::updateCompositedBounds()
         if (m_owningLayer != rootLayer)
             clippingBounds.intersect(m_owningLayer->backgroundClipRect(rootLayer, true));
 
-        int deltaX = 0;
-        int deltaY = 0;
-        m_owningLayer->convertToLayerCoords(rootLayer, deltaX, deltaY);
-        clippingBounds.move(-deltaX, -deltaY);
+        IntPoint delta;
+        m_owningLayer->convertToLayerCoords(rootLayer, delta);
+        clippingBounds.move(-delta.x(), -delta.y());
 
         layerBounds.intersect(clippingBounds);
     }
@@ -356,9 +355,9 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     IntRect localCompositingBounds = compositedBounds();
 
     IntRect relativeCompositingBounds(localCompositingBounds);
-    int deltaX = 0, deltaY = 0;
-    m_owningLayer->convertToLayerCoords(compAncestor, deltaX, deltaY);
-    relativeCompositingBounds.move(deltaX, deltaY);
+    IntPoint delta;
+    m_owningLayer->convertToLayerCoords(compAncestor, delta);
+    relativeCompositingBounds.move(delta);
 
     IntPoint graphicsLayerParentLocation;
     if (compAncestor && compAncestor->backing()->hasClippingLayer()) {
@@ -379,8 +378,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         m_ancestorClippingLayer->setSize(parentClipRect.size());
 
         // backgroundRect is relative to compAncestor, so subtract deltaX/deltaY to get back to local coords.
-        IntSize rendererOffset(parentClipRect.location().x() - deltaX, parentClipRect.location().y() - deltaY);
-        m_ancestorClippingLayer->setOffsetFromRenderer(rendererOffset);
+        m_ancestorClippingLayer->setOffsetFromRenderer(parentClipRect.location() - delta);
 
         // The primary layer is then parented in, and positioned relative to this clipping layer.
         graphicsLayerParentLocation = parentClipRect.location();
@@ -427,7 +425,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
         const IntRect borderBox = toRenderBox(renderer())->borderBoxRect();
 
         // Get layout bounds in the coords of compAncestor to match relativeCompositingBounds.
-        IntRect layerBounds = IntRect(deltaX, deltaY, borderBox.width(), borderBox.height());
+        IntRect layerBounds = IntRect(delta, borderBox.size());
 
         // Update properties that depend on layer dimensions
         FloatPoint3D transformOrigin = computeTransformOrigin(borderBox);

@@ -347,7 +347,8 @@ public:
     RenderLayer* ancestorCompositingLayer() const { return enclosingCompositingLayer(false); }
 #endif
 
-    void convertToLayerCoords(const RenderLayer* ancestorLayer, int& x, int& y) const;
+    void convertToLayerCoords(const RenderLayer* ancestorLayer, IntPoint& location) const;
+    void convertToLayerCoords(const RenderLayer* ancestorLayer, IntRect& rect) const;
 
     bool hasAutoZIndex() const { return renderer()->style()->hasAutoZIndex(); }
     int zIndex() const { return renderer()->style()->zIndex(); }

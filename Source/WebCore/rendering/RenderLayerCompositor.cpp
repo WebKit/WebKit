@@ -449,9 +449,9 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
     IntRect unionBounds = boundingBoxRect;
     
     if (layer->renderer()->hasOverflowClip() || layer->renderer()->hasMask()) {
-        int ancestorRelX = 0, ancestorRelY = 0;
-        layer->convertToLayerCoords(ancestorLayer, ancestorRelX, ancestorRelY);
-        boundingBoxRect.move(ancestorRelX, ancestorRelY);
+        IntPoint ancestorRelOffset;
+        layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
+        boundingBoxRect.move(ancestorRelOffset);
         return boundingBoxRect;
     }
 
@@ -503,9 +503,9 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
         unionBounds = affineTrans->mapRect(unionBounds);
     }
 
-    int ancestorRelX = 0, ancestorRelY = 0;
-    layer->convertToLayerCoords(ancestorLayer, ancestorRelX, ancestorRelY);
-    unionBounds.move(ancestorRelX, ancestorRelY);
+    IntPoint ancestorRelOffset;
+    layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
+    unionBounds.move(ancestorRelOffset);
 
     return unionBounds;
 }
@@ -527,9 +527,9 @@ void RenderLayerCompositor::layerWillBeRemoved(RenderLayer* parent, RenderLayer*
         ASSERT(compLayer->backing());
         IntRect compBounds = child->backing()->compositedBounds();
 
-        int offsetX = 0, offsetY = 0;
-        child->convertToLayerCoords(compLayer, offsetX, offsetY);
-        compBounds.move(offsetX, offsetY);
+        IntPoint offset;
+        child->convertToLayerCoords(compLayer, offset);
+        compBounds.move(offset);
 
         compLayer->setBackingNeedsRepaintInRect(compBounds);
 
@@ -1071,11 +1071,8 @@ void RenderLayerCompositor::recursiveRepaintLayerRect(RenderLayer* layer, const 
             size_t listSize = negZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = negZOrderList->at(i);
-                int x = 0;
-                int y = 0;
-                curLayer->convertToLayerCoords(layer, x, y);
                 IntRect childRect(rect);
-                childRect.move(-x, -y);
+                curLayer->convertToLayerCoords(layer, childRect);
                 recursiveRepaintLayerRect(curLayer, childRect);
             }
         }
@@ -1084,11 +1081,8 @@ void RenderLayerCompositor::recursiveRepaintLayerRect(RenderLayer* layer, const 
             size_t listSize = posZOrderList->size();
             for (size_t i = 0; i < listSize; ++i) {
                 RenderLayer* curLayer = posZOrderList->at(i);
-                int x = 0;
-                int y = 0;
-                curLayer->convertToLayerCoords(layer, x, y);
                 IntRect childRect(rect);
-                childRect.move(-x, -y);
+                curLayer->convertToLayerCoords(layer, childRect);
                 recursiveRepaintLayerRect(curLayer, childRect);
             }
         }
@@ -1097,11 +1091,8 @@ void RenderLayerCompositor::recursiveRepaintLayerRect(RenderLayer* layer, const 
         size_t listSize = normalFlowList->size();
         for (size_t i = 0; i < listSize; ++i) {
             RenderLayer* curLayer = normalFlowList->at(i);
-            int x = 0;
-            int y = 0;
-            curLayer->convertToLayerCoords(layer, x, y);
             IntRect childRect(rect);
-            childRect.move(-x, -y);
+            curLayer->convertToLayerCoords(layer, childRect);
             recursiveRepaintLayerRect(curLayer, childRect);
         }
     }
