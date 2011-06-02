@@ -1,5 +1,12 @@
 2011-06-01  Adam Barth  <abarth@webkit.org>
 
+        Now that this test doesn't time out, we can see that it fails.  That's
+        progress, of a sort.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
         Move expected result to the correct location.  The script put it in the
         wrong location.
 

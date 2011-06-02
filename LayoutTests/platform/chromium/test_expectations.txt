@@ -783,7 +783,7 @@ BUGCR38353 : http/tests/plugins/plugin-document-has-focus.html = TEXT TIMEOUT
 // switch.
 BUG_TONY WIN : plugins/geturlnotify-during-document-teardown.html = CRASH
 BUGWK48655 : plugins/js-from-destroy.html = CRASH PASS
-BUG_TONY WIN : plugins/plugin-initiate-popup-window.html = TIMEOUT
+BUG_TONY WIN : plugins/plugin-initiate-popup-window.html = TEXT
 // This test is failing because the plugin has changed names on Windows to
 // match the name of the plugin upstream.
 BUG_TONY WIN : plugins/plugin-javascript-access.html = TEXT
