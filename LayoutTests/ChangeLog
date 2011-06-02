@@ -1,3 +1,26 @@
+2011-06-02  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
+        Rebaseline SVG tests.
+        https://bugs.webkit.org/show_bug.cgi?id=61927
+
+        * platform/chromium-mac-leopard/svg/hixie/intrinsic/001-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/hixie/intrinsic/002-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/hixie/intrinsic/003-expected.png: Added.
+        * platform/chromium-win/svg/as-image/svg-as-background-with-viewBox-expected.txt: Added.
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-edgeMode-prop-expected.png:
+        * platform/chromium-win/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-preserveAlpha-prop-expected.png:
+        * platform/chromium-win/svg/hixie/intrinsic/001-expected.png: Added.
+        * platform/chromium-win/svg/hixie/intrinsic/001-expected.txt: Added.
+        * platform/chromium-win/svg/hixie/intrinsic/002-expected.png: Added.
+        * platform/chromium-win/svg/hixie/intrinsic/002-expected.txt: Added.
+        * platform/chromium-win/svg/hixie/intrinsic/003-expected.png: Added.
+        * platform/chromium-win/svg/hixie/intrinsic/003-expected.txt: Added.
+        * platform/chromium-win/svg/in-html/by-reference-expected.txt:
+        * platform/chromium-win/svg/zoom/page/zoom-foreignObject-expected.txt:
+
 2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skipped tests crashing on GTK debug bots.
