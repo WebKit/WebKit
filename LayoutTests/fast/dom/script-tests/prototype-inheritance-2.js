@@ -12,7 +12,6 @@ var skippedProperties = [
     "objCController", "textInputController", "navigationController",
     "eventSender", "objCPlugin", "objCPluginFunction",
     "appleScriptController", "plainText", "accessibilityController",
-    "internals",
     // Skip our test property
     "isInner",
     // Ignore fooConstructor.prototype, fooInstance.__proto__ is more likely to fail.

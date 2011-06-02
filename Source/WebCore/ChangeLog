@@ -1,3 +1,29 @@
+2011-06-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r87926.
+        http://trac.webkit.org/changeset/87926
+        https://bugs.webkit.org/show_bug.cgi?id=60313
+
+        Fails to find WebCoreTestSupport.dylib on bots.
+
+        * Configurations/WebCore.xcconfig:
+        * Configurations/WebCoreTestSupport.xcconfig: Removed.
+        * DerivedSources.make:
+        * WebCore.exp.in:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSDOMWrapper.cpp:
+        (WebCore::JSDOMWrapper::~JSDOMWrapper):
+        * bindings/js/JSDOMWrapper.h:
+        * testing/Internals.cpp: Removed.
+        * testing/Internals.h: Removed.
+        * testing/Internals.idl: Removed.
+        * testing/js/WebCoreTestSupport.cpp: Removed.
+        * testing/js/WebCoreTestSupport.h: Removed.
+        * testing/v8/WebCoreTestSupport.cpp: Removed.
+        * testing/v8/WebCoreTestSupport.h: Removed.
+
 2011-06-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

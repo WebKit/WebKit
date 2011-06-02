@@ -1,3 +1,22 @@
+2011-06-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r87926.
+        http://trac.webkit.org/changeset/87926
+        https://bugs.webkit.org/show_bug.cgi?id=60313
+
+        Fails to find WebCoreTestSupport.dylib on bots.
+
+        * fast/dom/Window/script-tests/window-property-descriptors.js:
+        * fast/dom/Window/window-properties.html:
+        * fast/dom/script-tests/prototype-inheritance-2.js:
+        * fast/dom/script-tests/prototype-inheritance.js:
+        * fast/harness/internals-object-expected.txt: Removed.
+        * fast/harness/internals-object.html: Removed.
+        * platform/gtk/Skipped:
+        * platform/mac-wk2/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-06-02  Adam Barth  <abarth@webkit.org>
 
         More examples of SVG tests timing out in debug with Skia.

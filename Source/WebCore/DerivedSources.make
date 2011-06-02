@@ -46,7 +46,6 @@ VPATH = \
     $(WebCore)/webaudio \
     $(WebCore)/workers \
     $(WebCore)/svg \
-    $(WebCore)/testing \
     $(WebCore)/websockets \
 #
 
@@ -292,7 +291,6 @@ DOM_CLASSES = \
     ImageData \
     InjectedScriptHost \
     InspectorFrontendHost \
-    Internals \
     KeyboardEvent \
     Location \
     MediaError \
