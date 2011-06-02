@@ -418,6 +418,9 @@ void NetscapePluginModule::determineQuirks()
 
         // We can short circuit some NPRuntime calls during initialization.
         m_pluginQuirks.add(PluginQuirks::CanShortCircuitSomeNPRuntimeCallsDuringInitialization);
+
+        // Flash returns a retained Core Animation layer.
+        m_pluginQuirks.add(PluginQuirks::ReturnsRetainedCoreAnimationLayer);
     }
 
     if (plugin.bundleIdentifier == "com.microsoft.SilverlightPlugin") {

@@ -1,3 +1,37 @@
+2011-06-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Add quirk for plug-ins that return a retained CALayer
+        https://bugs.webkit.org/show_bug.cgi?id=61948
+        <rdar://problem/9530390>
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        Set the ReturnsRetainedCoreAnimationLayer quirk for Flash.
+
+        * Shared/Plugins/PluginQuirks.h:
+        Add ReturnsRetainedCoreAnimationLayer quirk.
+
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue):
+        Handle WKNVExpectsNonretainedLayer by always returning true, and also
+        call NetscapePlugin::setPluginReturnsNonretainedLayer(true) to add a way
+        for plug-ins to opt into returning non-retained layers even if they have
+        the quirk specified.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::NetscapePlugin):
+        Initialize m_pluginReturnsNonretainedLayer to true.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.h:
+        (WebKit::NetscapePlugin::setPluginReturnsNonretainedLayer):
+        Add setter.
+
+        * WebProcess/Plugins/Netscape/mac/NetscapePluginMac.mm:
+        (WebKit::NetscapePlugin::platformPostInitialize):
+        If m_pluginReturnsNonretainedLayer is false, adopt the layer.
+
 2011-06-02  Brent Fulgham  <bfulgham@webkit.org>
 
         Unreviewed WinCairo build correction.

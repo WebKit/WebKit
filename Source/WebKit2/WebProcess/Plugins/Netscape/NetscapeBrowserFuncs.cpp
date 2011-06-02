@@ -408,8 +408,11 @@ static NPError NPN_PostURLNotify(NPP npp, const char* url, const char* target, u
 }
 
 #if PLATFORM(MAC)
-// true if the browser supports hardware compositing of Core Animation plug-ins.
+// Whether the browser supports compositing of Core Animation plug-ins.
 static const unsigned WKNVSupportsCompositingCoreAnimationPluginsBool = 74656;
+
+// Whether the browser expects a non-retained Core Animation layer.
+static const unsigned WKNVExpectsNonretainedLayer = 74657;
 
 // The Core Animation render server port.
 static const unsigned WKNVCALayerRenderServerPort = 71879;
@@ -468,7 +471,16 @@ static NPError NPN_GetValue(NPP npp, NPNVariable variable, void *value)
             *(mach_port_t*)value = plugin->compositingRenderServerPort();
             break;
         }
-        
+
+        case WKNVExpectsNonretainedLayer: {
+            RefPtr<NetscapePlugin> plugin = NetscapePlugin::fromNPP(npp);
+
+            // Asking for this will make us expect a non-retained layer from the plug-in.
+            plugin->setPluginReturnsNonretainedLayer(true);
+            *(NPBool*)value = true;
+            break;
+        }
+
 #ifndef NP_NO_QUICKDRAW
         case NPNVsupportsQuickDrawBool:
             // We don't support the QuickDraw drawing model.

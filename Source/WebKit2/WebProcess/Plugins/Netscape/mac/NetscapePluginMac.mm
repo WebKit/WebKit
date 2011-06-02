@@ -233,7 +233,20 @@ bool NetscapePlugin::platformPostInitialize()
         // Get the Core Animation layer.
         if (NPP_GetValue(NPPVpluginCoreAnimationLayer, &value) == NPERR_NO_ERROR && value) {
             ASSERT(!m_pluginLayer);
-            m_pluginLayer = reinterpret_cast<CALayer *>(value);
+
+            // The original Core Animation drawing model required that plug-ins pass a retained layer
+            // to the browser, which the browser would then adopt. However, the final spec changed this
+            // (See https://wiki.mozilla.org/NPAPI:CoreAnimationDrawingModel for more information)
+            // after a version of WebKit1 with the original implementation had shipped, but that now means
+            // that any plug-ins that expect the WebKit1 behavior would leak the CALayer.
+            // For plug-ins that we know return retained layers, we have the ReturnsRetainedCoreAnimationLayer 
+            // plug-in quirk. Plug-ins can also check for whether the browser expects a non-retained layer to
+            // be returned by using NPN_GetValue and pass the WKNVExpectsNonretainedLayer parameter.
+            // https://bugs.webkit.org/show_bug.cgi?id=58282 describes the bug where WebKit expects retained layers.
+            if (m_pluginReturnsNonretainedLayer)
+                m_pluginLayer = reinterpret_cast<CALayer *>(value);
+            else
+                m_pluginLayer.adoptNS(reinterpret_cast<CALayer *>(value));
         }
     }
 

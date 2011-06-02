@@ -54,6 +54,11 @@ public:
         // we can return the right values without having to do sync IPC back into the web process.
         CanShortCircuitSomeNPRuntimeCallsDuringInitialization,
 
+        // Whether calling NPP_GetValue with NPPVpluginCoreAnimationLayer returns a retained Core Animation
+        // layer or not. According to the NPAPI specifications, plug-in shouldn't return a retained layer but
+        // WebKit1 expects a retained plug-in layer. We use this for Flash to avoid leaking OpenGL layers.
+        ReturnsRetainedCoreAnimationLayer,
+
 #ifndef NP_NO_QUICKDRAW
         // Allow the plug-in to use the QuickDraw drawing model, since we know that the plug-in
         // will never paint or receive events. Used by the AppleConnect plug-in.
