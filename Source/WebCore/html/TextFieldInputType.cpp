@@ -51,7 +51,6 @@ TextFieldInputType::TextFieldInputType(HTMLInputElement* element)
     : InputType(element)
     , m_innerText(0)
     , m_innerSpinButton(0)
-    , m_outerSpinButton(0)
 #if ENABLE(INPUT_SPEECH)
     , m_speechButton(0)
 #endif
@@ -134,7 +133,6 @@ void TextFieldInputType::createShadowSubtree()
 {
     ASSERT(!m_innerText);
     ASSERT(!m_innerSpinButton);
-    ASSERT(!m_outerSpinButton);
 
     bool shouldHaveSpinButton = RenderTheme::themeForPage(element()->document()->page())->shouldHaveSpinButton(element());
     bool hasDecorations = shouldHaveSpinButton;
@@ -161,12 +159,9 @@ void TextFieldInputType::createShadowSubtree()
 #endif
 
     if (shouldHaveSpinButton) {
-        RefPtr<HTMLElement> inner = SpinButtonElement::createInner(document);
-        RefPtr<HTMLElement> outer = SpinButtonElement::createOuter(document);
+        RefPtr<HTMLElement> inner = SpinButtonElement::create(document);
         m_innerSpinButton = inner.get();
-        m_outerSpinButton = outer.get();
         element()->ensureShadowRoot()->appendChild(inner.release(), ec);
-        element()->ensureShadowRoot()->appendChild(outer.release(), ec);
     }
 }
 
@@ -178,7 +173,6 @@ void TextFieldInputType::destroyShadowSubtree()
     m_speechButton = 0;
 #endif
     m_innerSpinButton = 0;
-    m_outerSpinButton = 0;
 }
 
 bool TextFieldInputType::shouldUseInputMethod() const

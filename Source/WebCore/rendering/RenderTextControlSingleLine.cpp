@@ -103,11 +103,6 @@ inline HTMLElement* RenderTextControlSingleLine::innerSpinButtonElement() const
     return inputElement()->innerSpinButtonElement();
 }
 
-inline HTMLElement* RenderTextControlSingleLine::outerSpinButtonElement() const
-{
-    return inputElement()->outerSpinButtonElement();
-}
-
 inline HTMLElement* RenderTextControlSingleLine::resultsButtonElement() const
 {
     return inputElement()->resultsButtonElement();
@@ -256,18 +251,6 @@ void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
-void RenderTextControlSingleLine::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
-{
-    paintBoxDecorationsWithSize(paintInfo, IntRect(tx, ty, width() - decorationWidthRight(), height()));
-}
-
-void RenderTextControlSingleLine::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& additionalOffset)
-{
-    int w = width() - decorationWidthRight();
-    if (w && height())
-        rects.append(IntRect(additionalOffset, IntSize(w, height())));
-}
-
 void RenderTextControlSingleLine::layout()
 {
     int oldHeight = height();
@@ -332,9 +315,6 @@ void RenderTextControlSingleLine::layout()
             button->setLocation(IntPoint(x, y));
         } else {
             int x = width() - borderRight() - paddingRight() - button->width();
-            if (outerSpinButtonElement() && outerSpinButtonElement()->renderBox())
-                x -= outerSpinButtonElement()->renderBox()->width();
-
             RenderBox* spinBox = innerSpinButtonElement() ? innerSpinButtonElement()->renderBox() : 0;
             if (style()->isLeftToRightDirection())
                 x -= spinBox ? spinBox->width() : 0;
@@ -345,19 +325,6 @@ void RenderTextControlSingleLine::layout()
         }
     }
 #endif
-
-    // Center the spin button vertically, and move it to the right by
-    // padding + border of the text fields.
-    HTMLElement* outerSpinButton = outerSpinButtonElement();
-    if (RenderBox* spinBox = outerSpinButton ? outerSpinButton->renderBox() : 0) {
-        int diff = height() - spinBox->height();
-        // If the diff is odd, the top area over the spin button takes the
-        // remaining one pixel. It's good for Mac NSStepper because it has
-        // shadow at the bottom.
-        int y = (diff / 2) + (diff % 2);
-        int x = width() - borderRight() - paddingRight() - spinBox->width();
-        spinBox->setLocation(IntPoint(x, y));
-    }
 }
 
 bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction)
@@ -380,9 +347,6 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     // If we found a spin button, we're done.
     HTMLElement* innerSpinButton = innerSpinButtonElement();
     if (innerSpinButton && result.innerNode() == innerSpinButton)
-        return true;
-    HTMLElement* outerSpinButton = outerSpinButtonElement();
-    if (outerSpinButton && result.innerNode() == outerSpinButton)
         return true;
 #if ENABLE(INPUT_SPEECH)
     HTMLElement* speechButton = speechButtonElement();
@@ -558,22 +522,9 @@ int RenderTextControlSingleLine::textBlockWidth() const
     }
 #endif
 
-    return width - decorationWidthRight();
-}
-
-int RenderTextControlSingleLine::decorationWidthRight() const
-{
-    int width = 0;
-    HTMLElement* outerSpinButton = outerSpinButtonElement();
-    if (RenderBox* spinRenderer = outerSpinButton ? outerSpinButton->renderBox() : 0) {
-        spinRenderer->computeLogicalWidth();
-        width += spinRenderer->width() + spinRenderer->marginLeft() + spinRenderer->marginRight();
-    }
-    if (width > 0)
-        width += paddingRight() + borderRight();
     return width;
 }
-    
+
 float RenderTextControlSingleLine::getAvgCharWidth(AtomicString family)
 {
     // Since Lucida Grande is the default font, we want this to match the width
@@ -627,19 +578,6 @@ int RenderTextControlSingleLine::preferredContentWidth(float charWidth) const
     }
 #endif
     return result;
-}
-
-int RenderTextControlSingleLine::preferredDecorationWidthRight() const
-{
-    int width = 0;
-    HTMLElement* outerSpinButton = outerSpinButtonElement();
-    if (RenderBox* spinRenderer = outerSpinButton ? outerSpinButton->renderBox() : 0) {
-        spinRenderer->computeLogicalWidth();
-        width += spinRenderer->minPreferredLogicalWidth() + spinRenderer->marginLeft() + spinRenderer->marginRight();
-    }
-    if (width > 0)
-        width += paddingRight() + borderRight();
-    return width;
 }
 
 void RenderTextControlSingleLine::adjustControlHeightBasedOnLineHeight(int lineHeight)

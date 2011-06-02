@@ -223,9 +223,8 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 
 // ----------------------------
 
-inline SpinButtonElement::SpinButtonElement(Document* document, bool isInner)
+inline SpinButtonElement::SpinButtonElement(Document* document)
     : HTMLDivElement(divTag, document)
-    , m_isInner(isInner)
     , m_capturing(false)
     , m_upDownState(Indeterminate)
     , m_pressStartingState(Indeterminate)
@@ -233,21 +232,15 @@ inline SpinButtonElement::SpinButtonElement(Document* document, bool isInner)
 {
 }
 
-PassRefPtr<SpinButtonElement> SpinButtonElement::createInner(Document* document)
+PassRefPtr<SpinButtonElement> SpinButtonElement::create(Document* document)
 {
-    return adoptRef(new SpinButtonElement(document, true));
-}
-
-PassRefPtr<SpinButtonElement> SpinButtonElement::createOuter(Document* document)
-{
-    return adoptRef(new SpinButtonElement(document, false));
+    return adoptRef(new SpinButtonElement(document));
 }
 
 const AtomicString& SpinButtonElement::shadowPseudoId() const
 {
     DEFINE_STATIC_LOCAL(AtomicString, innerPseudoId, ("-webkit-inner-spin-button"));
-    DEFINE_STATIC_LOCAL(AtomicString, outerPseudoId, ("-webkit-outer-spin-button"));
-    return m_isInner ? innerPseudoId : outerPseudoId;
+    return innerPseudoId;
 }
 
 void SpinButtonElement::detach()

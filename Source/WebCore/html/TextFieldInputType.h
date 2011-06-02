@@ -47,7 +47,6 @@ protected:
 
     virtual HTMLElement* innerTextElement() const { return m_innerText; }
     virtual HTMLElement* innerSpinButtonElement() const { return m_innerSpinButton; }
-    virtual HTMLElement* outerSpinButtonElement() const { return m_outerSpinButton; }
 #if ENABLE(INPUT_SPEECH)
     virtual HTMLElement* speechButtonElement() const { return m_speechButton; }
 #endif
@@ -73,7 +72,6 @@ private:
 
     HTMLElement* m_innerText;
     HTMLElement* m_innerSpinButton;
-    HTMLElement* m_outerSpinButton;
 #if ENABLE(INPUT_SPEECH)
     HTMLElement* m_speechButton;
 #endif

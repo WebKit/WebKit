@@ -8,9 +8,9 @@ layer at (0,0) size 800x39
         text run at (129,2) width 4: " "
       RenderTextControl {INPUT} at (135,2) size 125x19 [bgcolor=#FFFFFF] [border: (2px inset #000000)]
       RenderText {#text} at (0,0) size 0x0
-layer at (13,13) size 101x13
-  RenderBlock {DIV} at (3,3) size 101x13
-layer at (146,13) size 101x13
-  RenderBlock {DIV} at (3,3) size 101x13
-layer at (119,12) size 13x15
-  RenderBlock (relative positioned) {DIV} at (109,2) size 13x15
+layer at (13,13) size 106x13
+  RenderBlock {DIV} at (3,3) size 106x13
+layer at (146,13) size 106x13
+  RenderBlock {DIV} at (3,3) size 106x13
+layer at (120,12) size 13x15
+  RenderBlock (relative positioned) {DIV} at (110,2) size 13x15

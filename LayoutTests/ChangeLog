@@ -1,3 +1,24 @@
+2011-06-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove outer-spin-button
+        https://bugs.webkit.org/show_bug.cgi?id=61845
+
+        Update Mac expectations because the position of steppers are moved.
+
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.png:
+        * platform/mac/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-expected.png:
+        * platform/mac/fast/forms/input-appearance-spinbutton-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-layer-expected.png:
+        * platform/mac/fast/forms/input-appearance-spinbutton-layer-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-up-expected.png:
+        * platform/mac/fast/forms/input-appearance-spinbutton-up-expected.txt:
+        * platform/mac/fast/forms/input-appearance-spinbutton-visibility-expected.png:
+        * platform/mac/fast/forms/input-appearance-spinbutton-visibility-expected.txt:
+
 2011-06-01  Adam Barth  <abarth@webkit.org>
 
         There seems to be something odd about registerProtocolHandler on Mac.

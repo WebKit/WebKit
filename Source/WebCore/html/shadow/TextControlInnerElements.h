@@ -96,12 +96,11 @@ public:
         Up,
     };
 
-    static PassRefPtr<SpinButtonElement> createInner(Document*);
-    static PassRefPtr<SpinButtonElement> createOuter(Document*);
+    static PassRefPtr<SpinButtonElement> create(Document*);
     UpDownState upDownState() const { return m_upDownState; }
 
 private:
-    SpinButtonElement(Document*, bool isInner);
+    SpinButtonElement(Document*);
 
     virtual const AtomicString& shadowPseudoId() const;
     virtual void detach();
@@ -115,7 +114,6 @@ private:
     virtual void setHovered(bool = true);
     virtual bool isMouseFocusable() const { return false; }
 
-    bool m_isInner;
     bool m_capturing;
     UpDownState m_upDownState;
     UpDownState m_pressStartingState;

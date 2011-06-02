@@ -143,11 +143,6 @@ HTMLElement* HTMLInputElement::innerSpinButtonElement() const
     return m_inputType->innerSpinButtonElement();
 }
 
-HTMLElement* HTMLInputElement::outerSpinButtonElement() const
-{
-    return m_inputType->outerSpinButtonElement();
-}
-
 HTMLElement* HTMLInputElement::resultsButtonElement() const
 {
     return m_inputType->resultsButtonElement();

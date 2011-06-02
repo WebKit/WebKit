@@ -650,19 +650,21 @@ static void paintStepper(ControlStates states, GraphicsContext* context, const I
         context->translate(-rect.x(), -rect.y());
     }
     CGRect bounds(rect);
-    // Adjust 'bounds' so that HIThemeDrawButton(bounds,...) draws exactly on 'rect'.
     CGRect backgroundBounds;
     HIThemeGetButtonBackgroundBounds(&bounds, &drawInfo, &backgroundBounds);
-    if (bounds.origin.x != backgroundBounds.origin.x)
-        bounds.origin.x += bounds.origin.x - backgroundBounds.origin.x;
-    if (bounds.origin.y != backgroundBounds.origin.y)
-        bounds.origin.y += bounds.origin.y - backgroundBounds.origin.y;
+    // Center the stepper rectangle in the specified area.
+    backgroundBounds.origin.x = bounds.origin.x + (bounds.size.width - backgroundBounds.size.width) / 2;
+    if (backgroundBounds.size.height < bounds.size.height) {
+        int heightDiff = clampToInteger(bounds.size.height - backgroundBounds.size.height);
+        backgroundBounds.origin.y = bounds.origin.y + (heightDiff / 2) + 1;
+    }
 #if USE(SKIA)
     gfx::SkiaBitLocker bitLocker(context->platformContext()->canvas());
     CGContextRef cgContext = bitLocker.cgContext();
 #else
     CGContextRef cgContext = context->platformContext();
 #endif
+    HIThemeDrawButton(&backgroundBounds, &drawInfo, context->platformContext(), kHIThemeOrientationNormal, 0);
     HIThemeDrawButton(&bounds, &drawInfo, cgContext, kHIThemeOrientationNormal, 0);
     context->restore();
 }
@@ -710,9 +712,6 @@ LengthSize ThemeChromiumMac::controlSize(ControlPart part, const Font& font, con
             return sizeFromFont(font, LengthSize(zoomedSize.width(), Length()), zoomFactor, listButtonSizes());
 #endif
         case InnerSpinButtonPart:
-            // We don't use inner spin buttons on Mac.
-            return LengthSize(Length(Fixed), Length(Fixed));
-        case OuterSpinButtonPart:
             if (!zoomedSize.width().isIntrinsicOrAuto() && !zoomedSize.height().isIntrinsicOrAuto())
                 return zoomedSize;
             return sizeFromNSControlSize(stepperControlSizeForFont(font), zoomedSize, zoomFactor, stepperSizes());
@@ -729,10 +728,7 @@ LengthSize ThemeChromiumMac::minimumControlSize(ControlPart part, const Font& fo
         case ButtonPart:
         case ListButtonPart:
             return LengthSize(Length(0, Fixed), Length(static_cast<int>(15 * zoomFactor), Fixed));
-        case InnerSpinButtonPart:
-            // We don't use inner spin buttons on Mac.
-            return LengthSize(Length(Fixed), Length(Fixed));
-        case OuterSpinButtonPart: {
+        case InnerSpinButtonPart: {
             IntSize base = stepperSizes()[NSMiniControlSize];
             return LengthSize(Length(static_cast<int>(base.width() * zoomFactor), Fixed),
                               Length(static_cast<int>(base.height() * zoomFactor), Fixed));
@@ -813,7 +809,7 @@ void ThemeChromiumMac::inflateControlPaintRect(ControlPart part, ControlStates s
             }
             break;
         }
-        case OuterSpinButtonPart: {
+        case InnerSpinButtonPart: {
             static const int stepperMargin[4] = { 0, 0, 0, 0 };
             ControlSize controlSize = controlSizeFromPixelSize(stepperSizes(), zoomedRect.size(), zoomFactor);
             IntSize zoomedSize = stepperSizes()[controlSize];
@@ -844,7 +840,7 @@ void ThemeChromiumMac::paint(ControlPart part, ControlStates states, GraphicsCon
         case ListButtonPart:
             paintButton(part, states, context, zoomedRect, zoomFactor, scrollView);
             break;
-        case OuterSpinButtonPart:
+        case InnerSpinButtonPart:
             paintStepper(states, context, zoomedRect, zoomFactor, scrollView);
             break;
         default:

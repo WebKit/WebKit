@@ -1,3 +1,65 @@
+2011-06-01  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Remove outer-spin-button
+        https://bugs.webkit.org/show_bug.cgi?id=61845
+
+        Remove outer-spin-button, and render steppers as inner-spin-button.
+        Outer-spin-button have never worked well with padding and border of
+        <input>, and the layout code is very tricky and very hard to maintain it.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        * css/CSSValueKeywords.in:
+        * css/html.css:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::innerSpinButtonElement):
+        * html/HTMLInputElement.h:
+        * html/InputType.h:
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::TextFieldInputType):
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::destroyShadowSubtree):
+        * html/TextFieldInputType.h:
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::SpinButtonElement::SpinButtonElement):
+        (WebCore::SpinButtonElement::create):
+        (WebCore::SpinButtonElement::shadowPseudoId):
+        * html/shadow/TextControlInnerElements.h:
+        * platform/ThemeTypes.h:
+        * platform/chromium/ThemeChromiumMac.mm:
+        (WebCore::paintStepper):
+         Center the stepper drawing area because the specified area can be
+         larger than the NSStepper sizes.
+        (WebCore::ThemeChromiumMac::controlSize):
+        (WebCore::ThemeChromiumMac::minimumControlSize):
+        (WebCore::ThemeChromiumMac::inflateControlPaintRect):
+        (WebCore::ThemeChromiumMac::paint):
+        * platform/mac/ThemeMac.mm:
+        (WebCore::paintStepper):
+         Center the stepper drawing area because the specified area can be
+         larger than the NSStepper sizes.
+        (WebCore::ThemeMac::controlSize):
+        (WebCore::ThemeMac::minimumControlSize):
+        (WebCore::ThemeMac::inflateControlPaintRect):
+        (WebCore::ThemeMac::paint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+        * rendering/RenderBox.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::layout):
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        (WebCore::RenderTextControlSingleLine::textBlockWidth):
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustStyle):
+        (WebCore::RenderTheme::paint):
+        (WebCore::RenderTheme::adjustInnerSpinButtonStyle):
+        * rendering/RenderTheme.h:
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::adjustRepaintRect):
+
 2011-06-01  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

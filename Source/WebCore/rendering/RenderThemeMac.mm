@@ -507,7 +507,7 @@ void RenderThemeMac::adjustRepaintRect(const RenderObject* o, IntRect& r)
         case ListButtonPart:
         case DefaultButtonPart:
         case ButtonPart:
-        case OuterSpinButtonPart:
+        case InnerSpinButtonPart:
             return RenderTheme::adjustRepaintRect(o, r);
         default:
             break;

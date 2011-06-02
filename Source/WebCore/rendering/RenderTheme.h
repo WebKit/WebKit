@@ -235,8 +235,6 @@ protected:
 
     virtual void adjustInnerSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintInnerSpinButton(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
-    virtual void adjustOuterSpinButtonStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
-    virtual bool paintOuterSpinButton(RenderObject*, const PaintInfo&, const IntRect&) { return true; }
 #endif
 
     virtual void adjustTextFieldStyle(CSSStyleSelector*, RenderStyle*, Element*) const;

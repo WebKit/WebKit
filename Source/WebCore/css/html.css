@@ -454,16 +454,6 @@ input::-webkit-inner-spin-button {
     -webkit-user-select: none;
 }
 
-input::-webkit-outer-spin-button {
-    -webkit-appearance: outer-spin-button;
-    display: inline-block;
-    position: relative;
-    cursor: default;
-    margin-left: 2px;
-    vertical-align: top;
-    -webkit-user-select: none;
-}
-
 #if defined(ENABLE_INPUT_SPEECH) && ENABLE_INPUT_SPEECH
 input::-webkit-input-speech-button {
     -webkit-appearance: -webkit-input-speech-button;

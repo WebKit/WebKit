@@ -55,19 +55,13 @@ public:
 
     void capsLockStateMayHaveChanged();
 
-    // Decoration width outside of the text field.
-    int decorationWidthRight() const;
-
 private:
-    int preferredDecorationWidthRight() const;
     virtual bool hasControlClip() const;
     virtual IntRect controlClipRect(const IntPoint&) const;
     virtual bool isTextField() const { return true; }
 
     virtual void subtreeHasChanged();
     virtual void paint(PaintInfo&, int tx, int ty);
-    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
-    virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&);
     virtual void layout();
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);
@@ -140,7 +134,6 @@ private:
     virtual HTMLElement* innerTextElement() const;
     HTMLElement* innerBlockElement() const;
     HTMLElement* innerSpinButtonElement() const;
-    HTMLElement* outerSpinButtonElement() const;
     HTMLElement* resultsButtonElement() const;
     HTMLElement* cancelButtonElement() const;
 #if ENABLE(INPUT_SPEECH)

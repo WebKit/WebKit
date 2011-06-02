@@ -301,9 +301,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ControlPart e)
         case RatingLevelIndicatorPart:
             m_value.ident = CSSValueRatingLevelIndicator;
             break;
-        case OuterSpinButtonPart:
-            m_value.ident = CSSValueOuterSpinButton;
-            break;
         case ProgressBarPart:
 #if ENABLE(PROGRESS_TAG)
             m_value.ident = CSSValueProgressBar;

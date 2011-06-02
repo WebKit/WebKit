@@ -191,7 +191,6 @@ public:
     virtual HTMLElement* innerBlockElement() const { return 0; }
     virtual HTMLElement* innerTextElement() const { return 0; }
     virtual HTMLElement* innerSpinButtonElement() const { return 0; }
-    virtual HTMLElement* outerSpinButtonElement() const { return 0; }
     virtual HTMLElement* resultsButtonElement() const { return 0; }
     virtual HTMLElement* cancelButtonElement() const { return 0; }
 #if ENABLE(INPUT_SPEECH)

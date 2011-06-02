@@ -802,12 +802,6 @@ void RenderBox::paintRootBoxFillLayers(const PaintInfo& paintInfo)
     paintFillLayers(paintInfo, bgColor, bgLayer, view()->documentRect(), BackgroundBleedNone, CompositeSourceOver, bodyObject);
 }
 
-void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
-{
-    if (paintInfo.shouldPaintWithinRoot(this))
-        paintBoxDecorationsWithSize(paintInfo, IntRect(tx, ty, width(), height()));
-}
-
 BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsContext* context) const
 {
     if (context->paintingDisabled())
@@ -831,8 +825,12 @@ BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsCo
     return BackgroundBleedUseTransparencyLayer;
 }
 
-void RenderBox::paintBoxDecorationsWithSize(PaintInfo& paintInfo, IntRect paintRect)
+void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
 {
+    if (!paintInfo.shouldPaintWithinRoot(this))
+        return;
+    IntRect paintRect(tx, ty, width(), height());
+
     // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
     // balloon layout is an example of this).
     borderFitAdjust(paintRect);
