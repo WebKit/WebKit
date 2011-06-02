@@ -1,3 +1,33 @@
+2011-06-01  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintCustomHighlight to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=61562
+
+        Switching paintCustomHighlight to use an IntPoint for
+        its paint offset instead of a pair of ints.
+
+        No new tests since this is refactoring.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::paint):
+        (WebCore::InlineTextBox::paintCustomHighlight):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintCustomHighlight):
+        * rendering/RenderBox.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::paintCustomHighlight):
+        (WebCore::RootInlineBox::paint):
+        * rendering/RootInlineBox.h:
+
 2011-06-01  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

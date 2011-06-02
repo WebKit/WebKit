@@ -1127,7 +1127,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     if (isImage()) {
 #if PLATFORM(MAC)
         if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-            paintCustomHighlight(tx, ty, style()->highlight(), true);
+            paintCustomHighlight(IntPoint(tx, ty), style()->highlight(), true);
 #endif
         context->drawImage(m_image->image(this, marker.size()).get(), style()->colorSpace(), marker);
         if (selectionState() != SelectionNone) {
@@ -1141,7 +1141,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 #if PLATFORM(MAC)
     // FIXME: paint gap between marker and list item proper
     if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-        paintCustomHighlight(tx, ty, style()->highlight(), true);
+        paintCustomHighlight(IntPoint(tx, ty), style()->highlight(), true);
 #endif
 
     if (selectionState() != SelectionNone) {

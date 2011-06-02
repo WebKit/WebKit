@@ -169,7 +169,7 @@ protected:
     void paintDocumentMarkers(GraphicsContext*, const FloatPoint& boxOrigin, RenderStyle*, const Font&, bool background);
     void paintCompositionUnderline(GraphicsContext*, const FloatPoint& boxOrigin, const CompositionUnderline&);
 #if PLATFORM(MAC)
-    void paintCustomHighlight(int tx, int ty, const AtomicString& type);
+    void paintCustomHighlight(const IntPoint&, const AtomicString& type);
 #endif
 
 private:
