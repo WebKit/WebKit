@@ -1,3 +1,21 @@
+2011-06-02  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r87920.
+        http://trac.webkit.org/changeset/87920
+        https://bugs.webkit.org/show_bug.cgi?id=61943
+
+        This patch does not build in Win Builder (dbg)(shared)
+        downstream (Requested by abarth|gardener on #webkit).
+
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TestPopupMenuClient::TestPopupMenuClient):
+        (WebKit::TestPopupMenuClient::valueChanged):
+        (WebKit::TestPopupMenuClient::itemIsEnabled):
+        (WebKit::SelectPopupMenuTest::TearDown):
+        * tests/data/popup/select_event.html: Removed.
+        * tests/data/popup/select_event_remove_on_change.html: Removed.
+        * tests/data/popup/select_event_remove_on_click.html: Removed.
+
 2011-06-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r87926.

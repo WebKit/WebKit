@@ -188,8 +188,8 @@ private:
     void selectIndex(int index);
 
     // Accepts the selected index as the value to be displayed in the <select> widget on
-    // the web page, and closes the popup. Returns true if index is accepted.
-    bool acceptIndex(int index);
+    // the web page, and closes the popup.
+    void acceptIndex(int index);
 
     // Clears the selection (so no row appears selected).
     void clearSelection();
@@ -277,9 +277,6 @@ private:
 
     // If width exeeds screen width, we have to clip it.
     int m_maxWindowWidth;
-
-    // To forward last mouse release event.
-    RefPtr<Node> m_focusedNode;
 };
 
 static PlatformMouseEvent constructRelativeMouseEvent(const PlatformMouseEvent& e,
@@ -410,7 +407,6 @@ IntRect PopupContainer::layoutAndCalculateWidgetRect(int targetControlHeight, co
 void PopupContainer::showPopup(FrameView* view)
 {
     m_frameView = view;
-    listBox()->m_focusedNode = m_frameView->frame()->document()->focusedNode();
 
     ChromeClientChromium* chromeClient = chromeClientChromium();
     if (chromeClient) {
@@ -676,16 +672,7 @@ bool PopupListBox::handleMouseReleaseEvent(const PlatformMouseEvent& event)
     if (!isPointInBounds(event.pos()))
         return true;
 
-    // Need to check before calling acceptIndex(), because m_popupClient might be removed in acceptIndex() calling because of event handler.
-    bool isSelectPopup = m_popupClient->menuStyle().menuType() == PopupMenuStyle::SelectPopup;
-    if (acceptIndex(pointToRowIndex(event.pos())) && m_focusedNode && isSelectPopup) {
-        m_focusedNode->dispatchMouseEvent(event, eventNames().mouseupEvent);
-        m_focusedNode->dispatchMouseEvent(event, eventNames().clickEvent);
-
-        // Clear m_focusedNode here, because we cannot clear in hidePopup() which is called before dispatchMouseEvent() is called.
-        m_focusedNode = 0;
-    }
-
+    acceptIndex(pointToRowIndex(event.pos()));
     return true;
 }
 
@@ -1081,21 +1068,21 @@ int PopupListBox::pointToRowIndex(const IntPoint& point)
     return -1;
 }
 
-bool PopupListBox::acceptIndex(int index)
+void PopupListBox::acceptIndex(int index)
 {
     // Clear m_acceptedIndexOnAbandon once user accepts the selected index.
     if (m_acceptedIndexOnAbandon >= 0)
         m_acceptedIndexOnAbandon = -1;
 
     if (index >= numItems())
-        return false;
+        return;
 
     if (index < 0) {
         if (m_popupClient) {
             // Enter pressed with no selection, just close the popup.
             hidePopup();
         }
-        return false;
+        return;
     }
 
     if (isSelectableItem(index)) {
@@ -1106,11 +1093,7 @@ bool PopupListBox::acceptIndex(int index)
 
         // Tell the <select> PopupMenuClient what index was selected.
         m_popupClient->valueChanged(index);
-
-        return true;
     }
-
-    return false;
 }
 
 void PopupListBox::selectIndex(int index)
