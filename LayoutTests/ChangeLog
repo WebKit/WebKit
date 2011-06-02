@@ -1,5 +1,17 @@
 2011-06-02  Adam Barth  <abarth@webkit.org>
 
+        More housekeep w.r.t. border-radius-clip.html.  These new image results
+        look correct.  The "replaced" version is the one with the failure.
+
+        * platform/chromium-linux-x86/fast/overflow/border-radius-clipping-expected.png: Added.
+        * platform/chromium-linux/fast/overflow/border-radius-clipping-expected.png:
+        * platform/chromium-mac-leopard/fast/overflow/border-radius-clipping-expected.png:
+        * platform/chromium-mac/fast/overflow/border-radius-clipping-expected.png: Removed.
+        * platform/chromium-win/fast/overflow/border-radius-clipping-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-06-02  Adam Barth  <abarth@webkit.org>
+
         First cut at updating test expectations for Win 7.
 
         * platform/chromium-win/fast/dom/HTMLAnchorElement/set-href-attribute-hash-expected.txt: Removed.
