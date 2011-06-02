@@ -1,3 +1,9 @@
+2011-06-01  Adam Barth  <abarth@webkit.org>
+
+        These test time out on debug, probably because drop shadows are slow in debug skia.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-01  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Simon Fraser.

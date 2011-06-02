@@ -4012,3 +4012,9 @@ BUGWK61664 LEOPARD DEBUG : svg/zoom/page/zoom-svg-through-object-with-percentage
 BUGCR84317 DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
 
 BUGWK61767 WIN DEBUG : http/tests/websocket/tests/client-close.html = PASS TEXT
+
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
