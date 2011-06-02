@@ -1,3 +1,14 @@
+2011-06-02  Aaron Colwell  <acolwell@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Bring gyp_webkit up to date with changes made to
+        gyp_chromium so chromium_rev can be advanced past
+        revision 87140.
+        https://bugs.webkit.org/show_bug.cgi?id=61881
+
+        * gyp_webkit:
+
 2011-05-21  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

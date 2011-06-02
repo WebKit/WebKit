@@ -36,9 +36,13 @@ import shlex
 import sys
 
 script_dir = os.path.dirname(__file__)
+chrome_src = os.path.abspath(script_dir)
 
-sys.path.append(os.path.join(script_dir, 'tools', 'gyp', 'pylib'))
+sys.path.insert(0, os.path.join(chrome_src, 'tools', 'gyp', 'pylib'))
 import gyp
+
+# Add tools/grit so that pymod_do_main(grit_info ...) can find grit_info.py.
+sys.path.insert(1, os.path.join(chrome_src, 'tools', 'grit'))
 
 def additional_include_files(args=[]):
   """
