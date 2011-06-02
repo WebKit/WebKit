@@ -136,7 +136,7 @@ void WebSocketChannel::fail(const String& reason)
     if (m_context)
         m_context->addMessage(JSMessageSource, LogMessageType, ErrorMessageLevel, reason, 0, m_handshake.clientOrigin(), 0);
     if (m_handle && !m_closed)
-        m_handle->close(); // Will call didClose().
+        m_handle->disconnect(); // Will call didClose().
 }
 
 void WebSocketChannel::disconnect()

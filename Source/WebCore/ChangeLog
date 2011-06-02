@@ -1,3 +1,23 @@
+2011-06-01  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: WebSocketChannel::fail() should close the connection immediately
+        https://bugs.webkit.org/show_bug.cgi?id=61851
+
+        The effect of this change is almost unobservable. The difference between m_handle->close() and
+        m_handle->disconnect() is that the former does not close the connection if the handle has
+        unsent data while the latter immediately closes the connection regardless of unsent data.
+        Usually a socket stream handle does not have unsent data, and even if it has any, it is hard
+        for user scripts to observe the difference between close() and disconnect() (it should take some time
+        for onclose() to be called if there are any unsent data, but there ought to be no other difference
+        in user scripts' perspective).
+
+        No new tests are added, because writing a test for this issue is not feasible due to the above reason.
+
+        * websockets/WebSocketChannel.cpp:
+        (WebCore::WebSocketChannel::fail): Use m_handle->disconnect() instead of m_handle->close().
+
 2011-06-01  Abhishek Arya  <inferno@chromium.org>
 
         Unreviewed.
