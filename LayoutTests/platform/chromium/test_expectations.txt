@@ -3223,12 +3223,17 @@ BUGWK57754 WIN DEBUG : inspector/debugger/xhr-breakpoints.html = CRASH PASS TIME
 BUGCR78326 : fast/filesystem/filesystem-reference.html = CRASH PASS
 
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-disabled-readonly.html = TEXT PASS
-BUGWK50661 MAC : fast/forms/input-appearance-spinbutton-disabled-readonly.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-layer.html = IMAGE+TEXT TEXT PASS
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-visibility.html = TEXT PASS
-BUGWK50661 MAC : fast/forms/input-appearance-spinbutton-visibility.html = IMAGE+TEXT PASS
 //BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
+
+// Needs rebaseline
+BUG_TKENT LEOPARD : platform/mac/fast/forms/input-appearance-spinbutton.html = IMAGE
+BUG_TKENT LEOPARD : platform/mac/fast/forms/input-appearance-spinbutton-up.html= IMAGE
+BUG_TKENT LEOPARD : fast/forms/input-appearance-spinbutton-disabled-readonly.html = IMAGE
+BUG_TKENT LEOPARD : fast/forms/input-appearance-spinbutton-visibility.html = IMAGE
+BUG_TKENT LEOPARD : fast/forms/input-appearance-spinbutton-layer.html= IMAGE
 
 // Need expectations
 BUGWK59281 WIN LINUX : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE+TEXT
