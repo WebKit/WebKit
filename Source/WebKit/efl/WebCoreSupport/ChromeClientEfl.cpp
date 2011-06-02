@@ -495,6 +495,9 @@ void ChromeClientEfl::invalidateWindow(const IntRect& updateRect, bool immediate
 
 void ChromeClientEfl::invalidateContentsAndWindow(const IntRect& updateRect, bool immediate)
 {
+    if (updateRect.isEmpty())
+        return;
+
     Evas_Coord x, y, w, h;
 
     x = updateRect.x();
