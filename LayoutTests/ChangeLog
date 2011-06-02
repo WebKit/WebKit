@@ -1,5 +1,12 @@
 2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed, added missing new baselines for GTK after r87779.
+
+        * platform/gtk/svg/hixie/intrinsic/002-expected.png: Added.
+        * platform/gtk/svg/hixie/intrinsic/002-expected.txt: Added.
+
+2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
+
 	Unreviewed, new GTK baselines after r87807, r87829, r87840 and r87846.
 
         * platform/gtk/svg/as-image/svg-as-background-with-relative-size-expected.png: Added.
