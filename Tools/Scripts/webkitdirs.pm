@@ -1421,6 +1421,29 @@ sub autotoolsFlag($$)
     return $prefix . '-' . $feature;
 }
 
+sub runAutogenForAutotoolsProject($@)
+{
+    my ($dir, $prefix, $sourceDir, $saveArguments, $argumentsFile, @buildArgs) = @_;
+
+    print "Calling autogen.sh in " . $dir . "\n\n";
+    print "Installation prefix directory: $prefix\n" if(defined($prefix));
+
+    if ($saveArguments) {
+        # Write autogen.sh arguments to a file so that we can detect
+        # when they change and automatically re-run it.
+        open(AUTOTOOLS_ARGUMENTS, ">$argumentsFile");
+        print AUTOTOOLS_ARGUMENTS join(" ", @buildArgs);
+        close(AUTOTOOLS_ARGUMENTS);
+    }
+
+    # Make the path relative since it will appear in all -I compiler flags.
+    # Long argument lists cause bizarre slowdowns in libtool.
+    my $relSourceDir = File::Spec->abs2rel($sourceDir) || ".";
+    if (system("$relSourceDir/autogen.sh", @buildArgs) ne 0) {
+        die "Calling autogen.sh failed!\n";
+    }
+}
+
 sub autogenArgumentsHaveChanged($@)
 {
     my ($filename, @currentArguments) = @_;
@@ -1500,38 +1523,25 @@ sub buildAutotoolsProject($@)
         return 0;
     }
 
-    # If GNUmakefile exists, don't run autogen.sh. The makefile should be
-    # smart enough to track autotools dependencies and re-run autogen.sh
-    # when build files change.
+    # If GNUmakefile exists, don't run autogen.sh unless its arguments
+    # have changed. The makefile should be smart enough to track autotools
+    # dependencies and re-run autogen.sh when build files change.
     my $autogenArgumentsFile = "previous-autogen-arguments.txt";
-    my $result;
-    if (!(-e "GNUmakefile") or autogenArgumentsHaveChanged($autogenArgumentsFile, @buildArgs)) {
-
-        # Write autogen.sh arguments to a file so that we can detect
-        # when they change and automatically re-run it.
-        open(AUTOTOOLS_ARGUMENTS, ">$autogenArgumentsFile");
-        print AUTOTOOLS_ARGUMENTS  join(" ", @buildArgs);
-        close(AUTOTOOLS_ARGUMENTS);
-
-        print "Calling configure in " . $dir . "\n\n";
-        print "Installation prefix directory: $prefix\n" if(defined($prefix));
-
-        # Make the path relative since it will appear in all -I compiler flags.
-        # Long argument lists cause bizarre slowdowns in libtool.
-        my $relSourceDir = File::Spec->abs2rel($sourceDir) || ".";
-        $result = system "$relSourceDir/autogen.sh", @buildArgs;
-        if ($result ne 0) {
-            die "Failed to setup build environment using 'autotools'!\n";
-        }
+    my $saveAutogenArguments = $project eq "WebKit";
+    if (!(-e "GNUmakefile")) {
+        runAutogenForAutotoolsProject($dir, $prefix, $sourceDir, $saveAutogenArguments, $autogenArgumentsFile, @buildArgs);
     }
 
-    $result = system "$make $makeArgs";
-    if ($result ne 0) {
+    if ($saveAutogenArguments and autogenArgumentsHaveChanged($autogenArgumentsFile, @buildArgs)) {
+        runAutogenForAutotoolsProject($dir, $prefix, $sourceDir, $saveAutogenArguments, $autogenArgumentsFile, @buildArgs);
+    }
+
+    if (system("$make $makeArgs") ne 0) {
         die "\nFailed to build WebKit using '$make'!\n";
     }
 
     chdir ".." or die;
-    return $result;
+    return 0;
 }
 
 sub generateBuildSystemFromCMakeProject
