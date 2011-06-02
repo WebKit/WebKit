@@ -1,3 +1,76 @@
+2011-06-02  Adam Barth  <abarth@webkit.org>
+
+        New baselines for these tests.  These only differ from the existing baselines by a handful of pixels.
+
+        * platform/chromium-linux-x86/fast/borders/border-radius-huge-assert-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusAllStylesAllCorners-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusArcs01-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusDashed02-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusDashed03-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusDotted01-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusDouble01-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusDouble02-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusDouble03-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusGroove01-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusGroove02-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusInset01-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusInvalidColor-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusOutset01-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusRidge01-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusSolid01-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusSolid02-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusSolid03-expected.png: Added.
+        * platform/chromium-linux-x86/fast/box-shadow: Added.
+        * platform/chromium-linux-x86/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png: Added.
+        * platform/chromium-linux-x86/fast/overflow: Added.
+        * platform/chromium-linux-x86/fast/repaint/border-radius-repaint-expected.png: Added.
+        * platform/chromium-linux-x86/fast/replaced: Added.
+        * platform/chromium-linux/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDashed02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDashed03-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDotted01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDouble01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDouble02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusInset01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusOutset01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusRidge01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid03-expected.png:
+        * platform/chromium-linux/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png:
+        * platform/chromium-linux/fast/repaint/border-radius-repaint-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-mac/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png: Removed.
+        * platform/chromium-win/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDashed02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDashed03-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDotted01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDouble01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDouble02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusInset01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusOutset01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusRidge01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid03-expected.png:
+        * platform/chromium-win/fast/repaint/border-radius-repaint-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-02  Andreas Kling  <kling@webkit.org>
 
         Reviewed by James Robinson.
