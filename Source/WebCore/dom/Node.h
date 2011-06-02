@@ -434,8 +434,6 @@ public:
     // Integration with rendering tree
 
     RenderObject* renderer() const { return m_renderer; }
-    RenderObject* nextRenderer();
-    RenderObject* previousRenderer();
     void setRenderer(RenderObject* renderer) { m_renderer = renderer; }
     
     // Use these two methods with caution.

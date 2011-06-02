@@ -99,37 +99,52 @@ PassRefPtr<RenderStyle> NodeRenderingContext::releaseStyle()
 
 RenderObject* NodeRenderingContext::nextRenderer() const
 {
-    if (RenderObject* renderer = m_node->renderer()) {
-        ASSERT(m_location == LocationUndetermined);
+    ASSERT(m_node->renderer() || m_location != LocationUndetermined);
+    if (RenderObject* renderer = m_node->renderer())
         return renderer->nextSibling();
+
+    if (m_phase == AttachContentForwarded) {
+        // Returns 0 here to insert renderer at the end of child list.
+        // We assume content children are always attached in tree order and
+        // there is no partial render tree creation.
+        return 0;
     }
 
-    ASSERT(m_location != LocationUndetermined);
+    // Avoid an O(n^2) problem with this function by not checking for
+    // nextRenderer() when the parent element hasn't attached yet.
+    if (m_node->parentOrHostNode() && !m_node->parentOrHostNode()->attached())
+        return 0;
 
-    if (m_phase != AttachContentForwarded)
-        return m_node->nextRenderer();
-    // Returns 0 here to insert renderer at the end of child list.
-    // We assume content children are always attached in tree order and
-    // there is no partial render tree creation.
+    for (Node* node = m_node->nextSibling(); node; node = node->nextSibling()) {
+        if (node->renderer())
+            return node->renderer();
+    }
+
     return 0;
 }
 
 RenderObject* NodeRenderingContext::previousRenderer() const
 {
-    if (RenderObject* renderer = m_node->renderer()) {
-        ASSERT(m_location == LocationUndetermined);
+    ASSERT(m_node->renderer() || m_location != LocationUndetermined);
+    if (RenderObject* renderer = m_node->renderer())
         return renderer->previousSibling();
+
+    if (m_phase == AttachContentForwarded) {
+        // Returns lastChild() here to insert renderer at the end of child list.
+        // We assume content children are always attached in tree order and
+        // there is no partial render tree creation.
+        if (RenderObject* parent = parentRenderer())
+            return parent->lastChild();
+        return 0;
     }
 
-    ASSERT(m_location != LocationUndetermined);
+    // FIXME: We should have the same O(N^2) avoidance as nextRenderer does
+    // however, when I tried adding it, several tests failed.
+    for (Node* node = m_node->previousSibling(); node; node = node->previousSibling()) {
+        if (node->renderer())
+            return node->renderer();
+    }
 
-    if (m_phase != AttachContentForwarded)
-        return m_node->previousRenderer();
-    // Returns lastChild() here to insert renderer at the end of child list.
-    // We assume content children are always attached in tree order and
-    // there is no partial render tree creation.
-    if (RenderObject* parent = parentRenderer())
-        return parent->lastChild();
     return 0;
 }
 

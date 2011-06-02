@@ -1381,31 +1381,6 @@ void Node::detach()
     clearFlag(InDetachFlag);
 }
 
-RenderObject* Node::previousRenderer()
-{
-    // FIXME: We should have the same O(N^2) avoidance as nextRenderer does
-    // however, when I tried adding it, several tests failed.
-    for (Node* n = previousSibling(); n; n = n->previousSibling()) {
-        if (n->renderer())
-            return n->renderer();
-    }
-    return 0;
-}
-
-RenderObject* Node::nextRenderer()
-{
-    // Avoid an O(n^2) problem with this function by not checking for
-    // nextRenderer() when the parent element hasn't attached yet.
-    if (parentOrHostNode() && !parentOrHostNode()->attached())
-        return 0;
-
-    for (Node* n = nextSibling(); n; n = n->nextSibling()) {
-        if (n->renderer())
-            return n->renderer();
-    }
-    return 0;
-}
-
 // FIXME: This code is used by editing.  Seems like it could move over there and not pollute Node.
 Node *Node::previousNodeConsideringAtomicNodes() const
 {
