@@ -91,7 +91,6 @@ public:
 private:
     void deleteFrameBuffer();
     bool createFrameBuffer();
-    void clearFrameBuffer();
 
     GrContext* m_skiaContext; // SKIA graphics context.
 

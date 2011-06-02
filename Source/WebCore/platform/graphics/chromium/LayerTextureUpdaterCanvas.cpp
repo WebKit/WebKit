@@ -137,15 +137,14 @@ void LayerTextureUpdaterSkPicture::updateTextureRect(LayerTexture* texture, cons
     texture->framebufferTexture2D();
     ASSERT(context()->checkFramebufferStatus(GraphicsContext3D::FRAMEBUFFER) == GraphicsContext3D::FRAMEBUFFER_COMPLETE);
 
-    context()->viewport(0, 0, m_bufferSize.width(), m_bufferSize.height());
-    clearFrameBuffer();
-
     // Notify SKIA to sync its internal GL state.
     m_skiaContext->resetContext();
-    // Offset from source rectangle to this destination rectangle.
-    IntPoint offset(sourceRect.x() - contentRect().x(), sourceRect.y() - contentRect().y());
     m_canvas->save();
-    m_canvas->translate(-offset.x(), -offset.y());
+    m_canvas->clipRect(SkRect(destRect));
+    // Translate the origin of contentRect to that of destRect.
+    // Note that destRect is defined relative to sourceRect.
+    m_canvas->translate(contentRect().x() - sourceRect.x() + destRect.x(),
+                        contentRect().y() - sourceRect.y() + destRect.y());
     m_canvas->drawPicture(m_picture);
     m_canvas->restore();
     // Flush SKIA context so that all the rendered stuff appears on the texture.
@@ -210,8 +209,7 @@ bool LayerTextureUpdaterSkPicture::createFrameBuffer()
     }
     context()->bindRenderbuffer(GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
     context()->renderbufferStorage(GraphicsContext3D::RENDERBUFFER, Extensions3D::DEPTH24_STENCIL8, m_bufferSize.width(), m_bufferSize.height());
-    context()->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
-    context()->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
+    context()->framebufferRenderbuffer(GraphicsContext3D::FRAMEBUFFER, GraphicsContext3D::DEPTH_STENCIL_ATTACHMENT, GraphicsContext3D::RENDERBUFFER, m_depthStencilBuffer);
 
     // Create a skia gpu canvas.
     GrPlatformSurfaceDesc targetDesc;
@@ -231,15 +229,6 @@ bool LayerTextureUpdaterSkPicture::createFrameBuffer()
 
     context()->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, 0);
     return true;
-}
-
-void LayerTextureUpdaterSkPicture::clearFrameBuffer()
-{
-#ifndef NDEBUG
-    // Clear to green to make it easier to spot unrendered regions.
-    context()->clearColor(0, 1, 0, 1);
-    context()->clear(GraphicsContext3D::COLOR_BUFFER_BIT | GraphicsContext3D::STENCIL_BUFFER_BIT);
-#endif
 }
 #endif // SKIA
 
