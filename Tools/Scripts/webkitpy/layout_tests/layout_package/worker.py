@@ -110,7 +110,6 @@ class Worker(manager_worker_broker.AbstractWorker):
                 self._worker_connection.post_message('exception',
                     (exception_type, exception_value, None))
             self._worker_connection.post_message('done')
-            self.cleanup()
 
     def handle_test_list(self, src, list_name, test_list):
         if list_name == "tests_to_http_lock":
@@ -145,7 +144,6 @@ class Worker(manager_worker_broker.AbstractWorker):
         self.clean_up_after_test(test_input, result)
 
     def cleanup(self):
-        _log.debug("Cleaning up %s" % self._name)
         if self._driver:
             self.kill_driver()
         if self._has_http_lock:
