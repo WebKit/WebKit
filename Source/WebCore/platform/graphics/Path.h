@@ -148,6 +148,8 @@ namespace WebCore {
         void transform(const AffineTransform&);
 
     private:
+        void addBeziersForRoundedRect(const FloatRect&, const FloatSize& topLeftRadius, const FloatSize& topRightRadius, const FloatSize& bottomLeftRadius, const FloatSize& bottomRightRadius);
+
         PlatformPathPtr m_path;
     };
 

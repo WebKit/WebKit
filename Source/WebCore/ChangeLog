@@ -1,3 +1,23 @@
+2011-06-02  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Andreas Kling.
+
+        Share Path code that uses beziers to construct a rounded rect
+        https://bugs.webkit.org/show_bug.cgi?id=61960
+
+        Have two methods in Path that construct beziers for rounded
+        rects to share the same code.
+        
+        Make gCircleControlPoint a little more precise, and add
+        a comment describing its derivation.
+        
+        Make use of FloatRect::maxX() and maxY().
+
+        * platform/graphics/Path.cpp:
+        (WebCore::Path::addRoundedRect):
+        (WebCore::Path::addBeziersForRoundedRect):
+        * platform/graphics/Path.h:
+
 2011-06-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Enrica Casucci.
