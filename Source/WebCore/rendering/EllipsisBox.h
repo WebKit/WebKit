@@ -31,7 +31,7 @@ class EllipsisBox : public InlineBox {
 public:
     EllipsisBox(RenderObject* obj, const AtomicString& ellipsisStr, InlineFlowBox* parent,
                 int width, int height, int y, bool firstLine, bool isVertical, InlineBox* markupBox)
-        : InlineBox(obj, 0, y, width, firstLine, true, false, false, isVertical, 0, 0, parent)
+        : InlineBox(obj, FloatPoint(0, y), width, firstLine, true, false, false, isVertical, 0, 0, parent)
         , m_height(height)
         , m_str(ellipsisStr)
         , m_markupBox(markupBox)

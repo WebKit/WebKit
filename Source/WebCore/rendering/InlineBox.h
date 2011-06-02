@@ -39,8 +39,6 @@ public:
         , m_prev(0)
         , m_parent(0)
         , m_renderer(obj)
-        , m_x(0)
-        , m_y(0)
         , m_logicalWidth(0)
         , m_firstLine(false)
         , m_constructed(false)
@@ -68,14 +66,13 @@ public:
     {
     }
 
-    InlineBox(RenderObject* obj, float x, float y, float logicalWidth, bool firstLine, bool constructed,
+    InlineBox(RenderObject* obj, FloatPoint topLeft, float logicalWidth, bool firstLine, bool constructed,
               bool dirty, bool extracted, bool isHorizontal, InlineBox* next, InlineBox* prev, InlineFlowBox* parent)
         : m_next(next)
         , m_prev(prev)
         , m_parent(parent)
         , m_renderer(obj)
-        , m_x(x)
-        , m_y(y)
+        , m_topLeft(topLeft)
         , m_logicalWidth(logicalWidth)
         , m_firstLine(firstLine)
         , m_constructed(constructed)
@@ -226,38 +223,44 @@ public:
     RootInlineBox* root();
 
     // x() is the left side of the box in the containing block's coordinate system.
-    void setX(float x) { m_x = x; }
-    float x() const { return m_x; }
+    void setX(float x) { m_topLeft.setX(x); }
+    float x() const { return m_topLeft.x(); }
+    float left() const { return m_topLeft.x(); }
 
     // y() is the top side of the box in the containing block's coordinate system.
-    void setY(float y) { m_y = y; }
-    float y() const { return m_y; }
+    void setY(float y) { m_topLeft.setY(y); }
+    float y() const { return m_topLeft.y(); }
+    float top() const { return m_topLeft.y(); }
+
+    const FloatPoint& topLeft() const { return m_topLeft; }
 
     float width() const { return isHorizontal() ? logicalWidth() : logicalHeight(); }
     float height() const { return isHorizontal() ? logicalHeight() : logicalWidth(); }
+    float right() const { return left() + width(); }
+    float bottom() const { return top() + height(); }
 
     // The logicalLeft position is the left edge of the line box in a horizontal line and the top edge in a vertical line.
-    float logicalLeft() const { return isHorizontal() ? m_x : m_y; }
+    float logicalLeft() const { return isHorizontal() ? m_topLeft.x() : m_topLeft.y(); }
     float logicalRight() const { return logicalLeft() + logicalWidth(); }
     void setLogicalLeft(float left)
     {
         if (isHorizontal())
-            m_x = left;
+            setX(left);
         else
-            m_y = left;
+            setY(left);
     }
     int pixelSnappedLogicalLeft() const { return logicalLeft(); }
     int pixelSnappedLogicalRight() const { return ceilf(logicalRight()); }
 
     // The logicalTop[ position is the top edge of the line box in a horizontal line and the left edge in a vertical line.
-    int logicalTop() const { return isHorizontal() ? m_y : m_x; }
+    int logicalTop() const { return isHorizontal() ? m_topLeft.y() : m_topLeft.x(); }
     int logicalBottom() const { return logicalTop() + logicalHeight(); }
     void setLogicalTop(int top)
     {
         if (isHorizontal())
-            m_y = top;
+            setY(top);
         else
-            m_x = top;
+            setX(top);
     }
 
     // The logical width is our extent in the line's overall inline direction, i.e., width for horizontal text and height for vertical text.
@@ -267,7 +270,7 @@ public:
     // The logical height is our extent in the block flow direction, i.e., height for horizontal text and width for vertical text.
     int logicalHeight() const;
 
-    FloatRect logicalFrameRect() const { return isHorizontal() ? IntRect(m_x, m_y, m_logicalWidth, logicalHeight()) : IntRect(m_y, m_x, m_logicalWidth, logicalHeight()); }
+    FloatRect logicalFrameRect() const { return isHorizontal() ? IntRect(m_topLeft.x(), m_topLeft.y(), m_logicalWidth, logicalHeight()) : IntRect(m_topLeft.y(), m_topLeft.x(), m_logicalWidth, logicalHeight()); }
 
     virtual int baselinePosition(FontBaseline baselineType) const { return boxModelObject()->baselinePosition(baselineType, m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine); }
     virtual int lineHeight() const { return boxModelObject()->lineHeight(m_firstLine, isHorizontal() ? HorizontalLine : VerticalLine, PositionOnContainingLine); }
@@ -330,8 +333,7 @@ private:
 public:
     RenderObject* m_renderer;
 
-    float m_x;
-    float m_y;
+    FloatPoint m_topLeft;
     float m_logicalWidth;
     
     // Some of these bits are actually for subclasses and moved here to compact the structures.

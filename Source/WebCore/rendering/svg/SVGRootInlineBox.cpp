@@ -209,13 +209,13 @@ InlineBox* SVGRootInlineBox::closestLeafChildForPosition(const IntPoint& point)
     for (InlineBox* leaf = firstLeaf; leaf; leaf = leaf->nextLeafChild()) {
         if (!leaf->isSVGInlineTextBox())
             continue;
-        if (point.y() < leaf->m_y)
+        if (point.y() < leaf->y())
             continue;
-        if (point.y() > leaf->m_y + leaf->virtualLogicalHeight())
+        if (point.y() > leaf->y() + leaf->virtualLogicalHeight())
             continue;
 
         closestLeaf = leaf;
-        if (point.x() < leaf->m_x + leaf->m_logicalWidth)
+        if (point.x() < leaf->left() + leaf->logicalWidth())
             return leaf;
     }
 

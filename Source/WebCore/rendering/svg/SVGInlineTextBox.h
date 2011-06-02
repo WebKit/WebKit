@@ -40,7 +40,7 @@ public:
     virtual int virtualLogicalHeight() const { return m_logicalHeight; }
     void setLogicalHeight(int height) { m_logicalHeight = height; }
 
-    virtual int selectionTop() { return m_y; }
+    virtual int selectionTop() { return top(); }
     virtual int selectionHeight() { return m_logicalHeight; }
     virtual int offsetForPosition(float x, bool includePartialGlyphs = true) const;
     virtual float positionForOffset(int offset) const;

@@ -55,7 +55,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int l
     }
 
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(m_x + paintOffset.x(), m_y + paintOffset.y() + style->fontMetrics().ascent()));
+    context->drawText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x() + paintOffset.x(), y() + paintOffset.y() + style->fontMetrics().ascent()));
 
     // Restore the regular fill color.
     if (textColor != context->fillColor())
@@ -67,8 +67,8 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int l
     if (m_markupBox) {
         // Paint the markup box
         IntPoint adjustedPaintOffset = paintOffset;
-        adjustedPaintOffset.move(m_x + m_logicalWidth - m_markupBox->x(),
-            m_y + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->fontMetrics().ascent()));
+        adjustedPaintOffset.move(x() + m_logicalWidth - m_markupBox->x(),
+            y() + style->fontMetrics().ascent() - (m_markupBox->y() + m_markupBox->renderer()->style(m_firstLine)->fontMetrics().ascent()));
         m_markupBox->paint(paintInfo, adjustedPaintOffset, lineTop, lineBottom);
     }
 }
@@ -78,7 +78,7 @@ IntRect EllipsisBox::selectionRect(int tx, int ty)
     RenderStyle* style = m_renderer->style(m_firstLine);
     const Font& font = style->font();
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(m_x + tx, m_y + ty + root()->selectionTop()), root()->selectionHeight()));
+    return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x() + tx, y() + ty + root()->selectionTop()), root()->selectionHeight()));
 }
 
 void EllipsisBox::paintSelection(GraphicsContext* context, int tx, int ty, RenderStyle* style, const Font& font)
@@ -94,17 +94,17 @@ void EllipsisBox::paintSelection(GraphicsContext* context, int tx, int ty, Rende
         c = Color(0xff - c.red(), 0xff - c.green(), 0xff - c.blue());
 
     GraphicsContextStateSaver stateSaver(*context);
-    int y = root()->selectionTop();
+    int top = root()->selectionTop();
     int h = root()->selectionHeight();
-    context->clip(IntRect(m_x + tx, y + ty, m_logicalWidth, h));
+    context->clip(IntRect(x() + tx, top + ty, m_logicalWidth, h));
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawHighlightForText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(m_x + tx, m_y + ty + y), h, c, style->colorSpace());
+    context->drawHighlightForText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x() + tx, y() + ty + top), h, c, style->colorSpace());
 }
 
 bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, int lineTop, int lineBottom)
 {
-    tx += m_x;
-    ty += m_y;
+    tx += x();
+    ty += y();
 
     // Hit test the markup box.
     if (m_markupBox) {

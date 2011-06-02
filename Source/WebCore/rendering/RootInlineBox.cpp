@@ -114,7 +114,7 @@ void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, fl
 
     // FIXME: Do we need an RTL version of this?
     if (ltr && (x() + logicalWidth() + ellipsisWidth) <= blockRightEdge) {
-        ellipsisBox->m_x = x() + logicalWidth();
+        ellipsisBox->setX(x() + logicalWidth());
         return;
     }
 
@@ -122,7 +122,7 @@ void RootInlineBox::placeEllipsis(const AtomicString& ellipsisStr,  bool ltr, fl
     // of that glyph.  Mark all of the objects that intersect the ellipsis box as not painting (as being
     // truncated).
     bool foundBox = false;
-    ellipsisBox->m_x = placeEllipsisBox(ltr, blockLeftEdge, blockRightEdge, ellipsisWidth, foundBox);
+    ellipsisBox->setX(placeEllipsisBox(ltr, blockLeftEdge, blockRightEdge, ellipsisWidth, foundBox));
 }
 
 float RootInlineBox::placeEllipsisBox(bool ltr, float blockLeftEdge, float blockRightEdge, float ellipsisWidth, bool& foundBox)

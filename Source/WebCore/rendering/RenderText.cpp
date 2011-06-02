@@ -980,12 +980,12 @@ FloatPoint RenderText::firstRunOrigin() const
 
 float RenderText::firstRunX() const
 {
-    return m_firstTextBox ? m_firstTextBox->m_x : 0;
+    return m_firstTextBox ? m_firstTextBox->x() : 0;
 }
 
 float RenderText::firstRunY() const
 {
-    return m_firstTextBox ? m_firstTextBox->m_y : 0;
+    return m_firstTextBox ? m_firstTextBox->y() : 0;
 }
     
 void RenderText::setSelectionState(SelectionState state)

@@ -1,3 +1,67 @@
+2011-06-02  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Teach InlineBox about FloatPoint
+        https://bugs.webkit.org/show_bug.cgi?id=44412
+
+        Original patch by Eric Seidel. Updated by me.
+
+        This is another step towards more point/size
+        usage throughout the rendering tree.
+
+        Added left(), right(), top(), and bottom() methods
+        to InlineBox. Removed m_x, and m_y and replaced them
+        with a single m_topLeft member.
+
+        No new tests since this is just a refactoring.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::paint):
+        (WebCore::EllipsisBox::selectionRect):
+        (WebCore::EllipsisBox::paintSelection):
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        (WebCore::EllipsisBox::EllipsisBox):
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::adjustPosition):
+        (WebCore::InlineBox::canAccommodateEllipsis):
+        * rendering/InlineBox.h:
+        (WebCore::InlineBox::InlineBox):
+        (WebCore::InlineBox::setX):
+        (WebCore::InlineBox::x):
+        (WebCore::InlineBox::left):
+        (WebCore::InlineBox::setY):
+        (WebCore::InlineBox::y):
+        (WebCore::InlineBox::top):
+        (WebCore::InlineBox::topLeft):
+        (WebCore::InlineBox::right):
+        (WebCore::InlineBox::bottom):
+        (WebCore::InlineBox::logicalLeft):
+        (WebCore::InlineBox::setLogicalLeft):
+        (WebCore::InlineBox::logicalTop):
+        (WebCore::InlineBox::setLogicalTop):
+        (WebCore::InlineBox::logicalFrameRect):
+        * rendering/InlineFlowBox.h:
+        (WebCore::InlineFlowBox::frameRectIncludingLineHeight):
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::placeEllipsisBox):
+        (WebCore::InlineTextBox::paintTextMatchMarker):
+        (WebCore::InlineTextBox::computeRectForReplacementMarker):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::firstRunX):
+        (WebCore::RenderText::firstRunY):
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::writeTextRun):
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::placeEllipsis):
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::positionForPoint):
+        * rendering/svg/SVGInlineTextBox.h:
+        (WebCore::SVGInlineTextBox::selectionTop):
+        * rendering/svg/SVGRootInlineBox.cpp:
+        (WebCore::SVGRootInlineBox::closestLeafChildForPosition):
+
 2011-06-02  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.

@@ -221,7 +221,7 @@ VisiblePosition RenderSVGText::positionForPoint(const IntPoint& pointInContents)
     if (!closestBox)
         return createVisiblePosition(0, DOWNSTREAM);
 
-    return closestBox->renderer()->positionForPoint(IntPoint(pointInContents.x(), closestBox->m_y));
+    return closestBox->renderer()->positionForPoint(IntPoint(pointInContents.x(), closestBox->y()));
 }
 
 void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads)

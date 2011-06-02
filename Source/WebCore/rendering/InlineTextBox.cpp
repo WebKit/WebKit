@@ -242,8 +242,8 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
     // Criteria for full truncation:
     // LTR: the left edge of the ellipsis is to the left of our text run.
     // RTL: the right edge of the ellipsis is to the right of our text run.
-    bool ltrFullTruncation = flowIsLTR && ellipsisX <= m_x;
-    bool rtlFullTruncation = !flowIsLTR && ellipsisX >= (m_x + m_logicalWidth);
+    bool ltrFullTruncation = flowIsLTR && ellipsisX <= left();
+    bool rtlFullTruncation = !flowIsLTR && ellipsisX >= left() + logicalWidth();
     if (ltrFullTruncation || rtlFullTruncation) {
         // Too far.  Just set full truncation, but return -1 and let the ellipsis just be placed at the edge of the box.
         m_truncation = cFullTruncation;
@@ -251,8 +251,8 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
         return -1;
     }
 
-    bool ltrEllipsisWithinBox = flowIsLTR && (ellipsisX < m_x + m_logicalWidth);
-    bool rtlEllipsisWithinBox = !flowIsLTR && (ellipsisX > m_x);
+    bool ltrEllipsisWithinBox = flowIsLTR && (ellipsisX < right());
+    bool rtlEllipsisWithinBox = !flowIsLTR && (ellipsisX > left());
     if (ltrEllipsisWithinBox || rtlEllipsisWithinBox) {
         foundBox = true;
 
@@ -263,7 +263,7 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
         if (ltr != flowIsLTR) {
           // Width in pixels of the visible portion of the box, excluding the ellipsis.
           int visibleBoxWidth = visibleRightEdge - visibleLeftEdge  - ellipsisWidth;
-          ellipsisX = ltr ? m_x + visibleBoxWidth : m_x + m_logicalWidth - visibleBoxWidth;
+          ellipsisX = ltr ? left() + visibleBoxWidth : right() - visibleBoxWidth;
         }
 
         int offset = offsetForPosition(ellipsisX, false);
@@ -271,7 +271,7 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
             // No characters should be rendered.  Set ourselves to full truncation and place the ellipsis at the min of our start
             // and the ellipsis edge.
             m_truncation = cFullTruncation;
-            return min(ellipsisX, m_x);
+            return min(ellipsisX, x());
         }
 
         // Set the truncation index on the text run.
@@ -287,9 +287,9 @@ float InlineTextBox::placeEllipsisBox(bool flowIsLTR, float visibleLeftEdge, flo
         // e.g. In the case of an LTR inline box truncated in an RTL flow then we can
         // have a situation such as |Hello| -> |...He|
         if (flowIsLTR)
-            return m_x + widthOfVisibleText;
+            return left() + widthOfVisibleText;
         else
-            return (m_x + m_logicalWidth) - widthOfVisibleText - ellipsisWidth;
+            return right() - widthOfVisibleText - ellipsisWidth;
     }
     return -1;
 }
@@ -1051,7 +1051,7 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& 
     TextRun run = constructTextRun(style, font);
 
     // Always compute and store the rect associated with this marker. The computed rect is in absolute coordinates.
-    IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, IntPoint(m_x, selectionTop()), selHeight, sPos, ePos));
+    IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, IntPoint(x(), selectionTop()), selHeight, sPos, ePos));
     markerRect = renderer()->localToAbsoluteQuad(FloatRect(markerRect)).enclosingBoundingBox();
     toRenderedDocumentMarker(marker)->setRenderedRect(markerRect);
     
@@ -1070,13 +1070,13 @@ void InlineTextBox::paintTextMatchMarker(GraphicsContext* pt, const FloatPoint& 
 void InlineTextBox::computeRectForReplacementMarker(DocumentMarker* marker, RenderStyle* style, const Font& font)
 {
     // Replacement markers are not actually drawn, but their rects need to be computed for hit testing.
-    int y = selectionTop();
+    int top = selectionTop();
     int h = selectionHeight();
     
     int sPos = max(marker->startOffset() - m_start, (unsigned)0);
     int ePos = min(marker->endOffset() - m_start, (unsigned)m_len);
     TextRun run = constructTextRun(style, font);
-    IntPoint startPoint = IntPoint(m_x, y);
+    IntPoint startPoint = IntPoint(x(), top);
     
     // Compute and store the rect associated with this marker.
     IntRect markerRect = enclosingIntRect(font.selectionRectForText(run, startPoint, h, sPos, ePos));

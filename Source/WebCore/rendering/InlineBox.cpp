@@ -186,8 +186,7 @@ void InlineBox::attachLine()
 
 void InlineBox::adjustPosition(float dx, float dy)
 {
-    m_x += dx;
-    m_y += dy;
+    m_topLeft.move(dx, dy);
 
     if (m_renderer->isReplaced()) 
         toRenderBox(m_renderer)->move(dx, dy); 
@@ -306,7 +305,7 @@ bool InlineBox::canAccommodateEllipsis(bool ltr, int blockEdge, int ellipsisWidt
     if (!m_renderer || !m_renderer->isReplaced())
         return true;
     
-    IntRect boxRect(m_x, 0, m_logicalWidth, 10);
+    IntRect boxRect(left(), 0, m_logicalWidth, 10);
     IntRect ellipsisRect(ltr ? blockEdge - ellipsisWidth : blockEdge, 0, ellipsisWidth, 10);
     return !(boxRect.intersects(ellipsisRect));
 }

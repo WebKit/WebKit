@@ -255,8 +255,8 @@ public:
     FloatRect frameRectIncludingLineHeight(int lineTop, int lineBottom) const
     {
         if (isHorizontal())
-            return FloatRect(m_x, lineTop, width(), lineBottom - lineTop);
-        return FloatRect(lineTop, m_y, lineBottom - lineTop, height());
+            return FloatRect(m_topLeft.x(), lineTop, width(), lineBottom - lineTop);
+        return FloatRect(lineTop, m_topLeft.y(), lineBottom - lineTop, height());
     }
     
     FloatRect logicalFrameRectIncludingLineHeight(int lineTop, int lineBottom) const

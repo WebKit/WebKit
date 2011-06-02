@@ -494,9 +494,9 @@ static void writeTextRun(TextStream& ts, const RenderText& o, const InlineTextBo
 {
     // FIXME: For now use an "enclosingIntRect" model for x, y and logicalWidth, although this makes it harder
     // to detect any changes caused by the conversion to floating point. :(
-    int x = run.m_x;
-    int y = run.m_y;
-    int logicalWidth = ceilf(run.m_x + run.m_logicalWidth) - x;
+    int x = run.x();
+    int y = run.y();
+    int logicalWidth = ceilf(run.left() + run.logicalWidth()) - x;
 
     // FIXME: Table cell adjustment is temporary until results can be updated.
     if (o.containingBlock()->isTableCell())
