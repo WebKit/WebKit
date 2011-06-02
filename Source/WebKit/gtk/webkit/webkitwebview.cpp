@@ -3201,7 +3201,8 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
         enableUniversalAccessFromFileURI, enableFileAccessFromFileURI,
         enableDOMPaste, tabKeyCyclesThroughElements, enableWebGL,
         enableSiteSpecificQuirks, usePageCache, enableJavaApplet,
-        enableHyperlinkAuditing, enableFullscreen, enableDNSPrefetching;
+        enableHyperlinkAuditing, enableFullscreen, enableDNSPrefetching,
+        enableSpellChecking;
 
     WebKitEditingBehavior editingBehavior;
 
@@ -3240,6 +3241,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
                  "enable-page-cache", &usePageCache,
                  "enable-java-applet", &enableJavaApplet,
                  "enable-hyperlink-auditing", &enableHyperlinkAuditing,
+                 "enable-spell-checking", &enableSpellChecking,
                  "spell-checking-languages", &defaultSpellCheckingLanguages,
                  "enable-fullscreen", &enableFullscreen,
                  "enable-dns-prefetching", &enableDNSPrefetching,
@@ -3288,8 +3290,10 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
 #endif
 
 #if ENABLE(SPELLCHECK)
-    WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
-    static_cast<WebKit::TextCheckerClientEnchant*>(client->textChecker())->updateSpellCheckingLanguage(defaultSpellCheckingLanguages);
+    if (enableSpellChecking) {
+        WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
+        static_cast<WebKit::TextCheckerClientEnchant*>(client->textChecker())->updateSpellCheckingLanguage(defaultSpellCheckingLanguages);
+    }
 #endif
 
 #if ENABLE(WEBGL)
@@ -3415,8 +3419,12 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
 
 #if ENABLE(SPELLCHECK)
     else if (name == g_intern_string("spell-checking-languages")) {
-        WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
-        static_cast<WebKit::TextCheckerClientEnchant*>(client->textChecker())->updateSpellCheckingLanguage(g_value_get_string(&value));
+        gboolean enableSpellChecking;
+        g_object_get(G_OBJECT(webSettings), "enable-spell-checking", &enableSpellChecking, NULL);
+        if (enableSpellChecking) {
+            WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
+            static_cast<WebKit::TextCheckerClientEnchant*>(client->textChecker())->updateSpellCheckingLanguage(g_value_get_string(&value));
+        }
     }
 #endif
 
