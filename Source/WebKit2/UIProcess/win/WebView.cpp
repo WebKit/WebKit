@@ -35,7 +35,9 @@
 #include "Region.h"
 #include "RunLoop.h"
 #include "WKAPICast.h"
+#if USE(CG)
 #include "WKCACFViewWindow.h"
+#endif
 #include "WebContext.h"
 #include "WebContextMenuProxyWin.h"
 #include "WebEditCommandProxy.h"

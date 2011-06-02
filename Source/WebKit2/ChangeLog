@@ -1,3 +1,10 @@
+2011-06-02  Brent Fulgham  <bfulgham@webkit.org>
+
+        Unreviewed WinCairo build correction.
+
+        * UIProcess/win/WebView.cpp: Don't include CG file header
+        when building without CoreGraphics support.
+
 2011-06-02  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
