@@ -1,3 +1,15 @@
+2011-06-02  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by Andreas Kling.
+
+        Fix layout test compositing/images/direct-svg-image.html.
+        https://bugs.webkit.org/show_bug.cgi?id=61966
+        
+        Change this test to get SVG resources from their new, post-r87782
+        location (svg/as-image).
+
+        * compositing/images/direct-svg-image.html:
+
 2011-06-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
