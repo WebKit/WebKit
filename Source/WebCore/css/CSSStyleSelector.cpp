@@ -558,9 +558,11 @@ static void loadFullDefaultStyle()
 {
     if (simpleDefaultStyleSheet) {
         ASSERT(defaultStyle);
+        ASSERT(defaultPrintStyle == defaultStyle);
         delete defaultStyle;
         simpleDefaultStyleSheet->deref();
         defaultStyle = new RuleSet;
+        defaultPrintStyle = new RuleSet;
         simpleDefaultStyleSheet = 0;
     } else {
         ASSERT(!defaultStyle);
@@ -587,7 +589,8 @@ static void loadSimpleDefaultStyle()
     ASSERT(!simpleDefaultStyleSheet);
     
     defaultStyle = new RuleSet;
-    defaultPrintStyle = new RuleSet;
+    // There are no media-specific rules in the simple default style.
+    defaultPrintStyle = defaultStyle;
     defaultQuirksStyle = new RuleSet;
 
     simpleDefaultStyleSheet = parseUASheet(simpleUserAgentStyleSheet, strlen(simpleUserAgentStyleSheet));

@@ -1,3 +1,19 @@
+2011-06-01  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Incorrect UA style when printing a simple document
+        https://bugs.webkit.org/show_bug.cgi?id=61900
+
+        This is not testable in run-webkit-tests because unless the test is the first to run in an instance
+        of DumpRenderTree, it is not guaranteed that the full default style sheet has not been initialized.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::loadFullDefaultStyle): Replace the simple default print style, which is now equal to the
+        simple default style, with a new RuleSet before adding the style rules from the full default sheet.
+        (WebCore::loadSimpleDefaultStyle): Set defaultPrintStyle to point to the default style. They are
+        equal in the simple case.
+
 2011-06-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
