@@ -1,3 +1,15 @@
+2011-06-01  Roland Steiner  <rolandsteiner@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Remove superfluous renderer() test
+        https://bugs.webkit.org/show_bug.cgi?id=61907
+
+        No new tests. (trivial)
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyle):
+
 2011-06-01  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Hajime Morita.

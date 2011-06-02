@@ -1524,7 +1524,7 @@ void Document::recalcStyle(StyleChange change)
         
         RefPtr<RenderStyle> documentStyle = CSSStyleSelector::styleForDocument(this);
         StyleChange ch = diff(documentStyle.get(), renderer()->style());
-        if (renderer() && ch != NoChange)
+        if (ch != NoChange)
             renderer()->setStyle(documentStyle.release());
     }
 
