@@ -1,3 +1,10 @@
+2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skipped tests crashing on GTK debug bots.
+
+        * platform/gtk/Skipped: Skipped 2 more tests crashing on GTK debug
+        bots because of the same reason than before (see WK bug 61924).
+
 2011-06-02  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.
