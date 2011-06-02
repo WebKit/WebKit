@@ -3141,20 +3141,29 @@ void FrameLoader::loadedResourceFromMemoryCache(const CachedResource* resource)
     if (!page)
         return;
 
-    if (!resource->sendResourceLoadCallbacks() || m_documentLoader->haveToldClientAboutLoad(resource->url()))
+    if (!resource->sendResourceLoadCallbacks())
         return;
+
+#if PLATFORM(MAC)
+    if (m_documentLoader->haveToldClientAboutLoad(resource->url()))
+        return;
+#endif
 
     if (!page->areMemoryCacheClientCallsEnabled()) {
         InspectorInstrumentation::didLoadResourceFromMemoryCache(page, m_documentLoader.get(), resource);
         m_documentLoader->recordMemoryCacheLoadForFutureClientNotification(resource->url());
+#if PLATFORM(MAC)
         m_documentLoader->didTellClientAboutLoad(resource->url());
+#endif
         return;
     }
 
     ResourceRequest request(resource->url());
     if (m_client->dispatchDidLoadResourceFromMemoryCache(m_documentLoader.get(), request, resource->response(), resource->encodedSize())) {
         InspectorInstrumentation::didLoadResourceFromMemoryCache(page, m_documentLoader.get(), resource);
+#if PLATFORM(MAC)
         m_documentLoader->didTellClientAboutLoad(resource->url());
+#endif
         return;
     }
 

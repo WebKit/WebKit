@@ -224,12 +224,18 @@ namespace WebCore {
         void setDeferMainResourceDataLoad(bool defer) { m_deferMainResourceDataLoad = defer; }
         bool deferMainResourceDataLoad() const { return m_deferMainResourceDataLoad; }
         
+#if PLATFORM(MAC)
         void didTellClientAboutLoad(const String& url)
-        { 
+        {
             if (!url.isEmpty())
                 m_resourcesClientKnowsAbout.add(url);
         }
-        bool haveToldClientAboutLoad(const String& url) { return m_resourcesClientKnowsAbout.contains(url); }
+        bool haveToldClientAboutLoad(const String& url)
+        {
+            return m_resourcesClientKnowsAbout.contains(url);
+        }
+#endif
+
         void recordMemoryCacheLoadForFutureClientNotification(const String& url);
         void takeMemoryCacheLoadsForClientNotification(Vector<String>& loads);
 
@@ -328,7 +334,9 @@ namespace WebCore {
         RefPtr<SharedBuffer> m_parsedArchiveData;
 #endif
 
+#if PLATFORM(MAC)
         HashSet<String> m_resourcesClientKnowsAbout;
+#endif
         Vector<String> m_resourcesLoadedFromMemoryCacheForClientNotification;
         
         String m_clientRedirectSourceForHistory;
