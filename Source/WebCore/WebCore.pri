@@ -22,8 +22,6 @@ else: WEBCORE_DESTDIR = release
 
 CONFIG(standalone_package) {
     isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$PWD/../WebCore/generated
-
-    PRECOMPILED_HEADER = $$PWD/../WebKit/qt/WebKit_pch.h
 } else {
     isEmpty(WC_GENERATED_SOURCES_DIR):WC_GENERATED_SOURCES_DIR = $$OUTPUT_DIR/WebCore/generated
 }

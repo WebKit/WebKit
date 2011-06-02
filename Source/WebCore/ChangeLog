@@ -1,3 +1,12 @@
+2011-06-02  Andreas Kling  <kling@webkit.org>
+
+        Rubber-stamped by Simon Hausmann.
+
+        Remove Qt's precompiled header hack as it was broken, and was not even
+        used unless building WebKit inside a Qt tree.
+
+        * WebCore.pri:
+
 2011-06-02  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Brady Eidson.

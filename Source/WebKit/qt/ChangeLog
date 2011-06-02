@@ -1,5 +1,14 @@
 2011-06-02  Andreas Kling  <kling@webkit.org>
 
+        Rubber-stamped by Simon Hausmann.
+
+        Remove Qt's precompiled header hack as it was broken, and was not even
+        used unless building WebKit inside a Qt tree.
+
+        * WebKit_pch.h: Removed.
+
+2011-06-02  Andreas Kling  <kling@webkit.org>
+
         Unreviewed build fix.
 
         To support building namespaced Qt, we require that forward-declarations
