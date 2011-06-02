@@ -457,6 +457,7 @@
 
         # idl rules
         '<@(bindings_idl_files)',
+        '<@(webcore_test_support_idl_files)',
       ],
       'actions': [
         # Actions to build derived sources.
@@ -846,6 +847,7 @@
               '--include', '../plugins',
               '--include', '../storage',
               '--include', '../svg',
+              '--include', '../testing',
               '--include', '../webaudio',
               '--include', '../websockets',
               '--include', '../workers',
@@ -1725,6 +1727,30 @@
             'webcore_svg',
           ],
         }],
+      ],
+    },
+    {
+      'target_name': 'webcore_test_support',
+      'type': 'static_library',
+      'dependencies': [
+        'webcore',
+      ],
+      'include_dirs': [
+        '<(INTERMEDIATE_DIR)',
+        '<(SHARED_INTERMEDIATE_DIR)/webcore',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings',
+        '<@(webcore_include_dirs)',
+        '../testing',
+        '../testing/v8',
+      ],
+      'sources': [
+        '<@(webcore_test_support_files)',
+        '<(SHARED_INTERMEDIATE_DIR)/webcore/bindings/V8Internals.cpp',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit/bindings/V8Internals.h',
+      ],
+      'sources/': [
+        ['exclude', 'testing/js'],
       ],
     },
   ],  # targets
