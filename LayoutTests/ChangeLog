@@ -1,3 +1,16 @@
+2011-06-02  Tony Chang  <tony@chromium.org>
+
+        [chromium] mark media/audio-delete-while-slider-thumb-clicked.html as passing
+        https://bugs.webkit.org/show_bug.cgi?id=61967
+
+        This test is passing now that we get proper click events on the
+        slider and we no longer use absolute positions on the slider.  The
+        test was updated in r78562 while it was disabled, so the chromium
+        results were stale (thus I'm deleting them).
+
+        * platform/chromium-win/media/audio-delete-while-slider-thumb-clicked-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-02  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Andreas Kling.

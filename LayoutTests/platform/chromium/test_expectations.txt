@@ -819,10 +819,6 @@ BUGCR59635 SKIP : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
 BUGCR49165 SKIP : http/tests/media/video-buffered.html = PASS
 
 // Failing because we sometimes emit additional timeupdate events.
-// Test may need to be rewritten or only log the first timeupdate event.
-// BUGCR59399 LINUX MAC : media/audio-delete-while-slider-thumb-clicked.html = PASS FAIL
-
-// Failing because we sometimes emit additional timeupdate events.
 // Test might be WONTFIX because we don't export a step button in the first place.
 BUGCR25375 BUGCR59399 SKIP : media/audio-delete-while-step-button-clicked.html = FAIL
 
@@ -2984,10 +2980,6 @@ BUGCR72861 : fast/css/test-setting-canvas-color.html = TEXT
 // Release definitely renders wrong; debug differences from reference may just
 // need rebaseline.
 BUGWK54499 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
-
-// This is skipped since we do not support mac-specific clicking tests
-// (BUGCR59399).
-BUGWK54472 BUGCR59399 SKIP : media/audio-delete-while-slider-thumb-clicked.html = TEXT TIMEOUT
 
 // Flaky
 BUGCR73080 LINUX DEBUG : fast/forms/form-attribute-elements-order.html = PASS TIMEOUT
