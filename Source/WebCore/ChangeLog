@@ -1,3 +1,22 @@
+2011-06-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Make more functions static local in EventHandlers.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=58503
+
+        Removed canHandleDragAndDropForTarget and made focusDirectionForKey local to EventHandler.cpp.
+
+        * page/EventHandler.cpp:
+        (WebCore::targetIsFrame): Extracted from canHandleDragAndDropForTarget.
+        (WebCore::EventHandler::updateDragAndDrop): Calls contentFrameForTarget instead of canHandleDragAndDropForTarget.
+        (WebCore::EventHandler::cancelDragAndDrop): Ditto.
+        (WebCore::EventHandler::performDragAndDrop): Ditto.
+        (WebCore::focusDirectionForKey): No longer a member function of EventHandler class.
+        (WebCore::handleKeyboardSelectionMovement): No longer a member function of EventHandler class; also calls
+        focusDirectionForKey instead of manually comparing.
+        * page/EventHandler.h:
+
 2011-06-02  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by James Robinson.

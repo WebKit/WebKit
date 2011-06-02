@@ -131,7 +131,7 @@ public:
 #if ENABLE(DRAG_SUPPORT)
     bool updateDragAndDrop(const PlatformMouseEvent&, Clipboard*);
     void cancelDragAndDrop(const PlatformMouseEvent&, Clipboard*);
-    bool performDragAndDrop(const PlatformMouseEvent&, Clipboard*);
+    void performDragAndDrop(const PlatformMouseEvent&, Clipboard*);
 #endif
 
     void scheduleHoverStateUpdate();
@@ -217,16 +217,8 @@ public:
 
 private:
 #if ENABLE(DRAG_SUPPORT)
-    enum DragAndDropHandleType {
-        UpdateDragAndDrop,
-        CancelDragAndDrop,
-        PerformDragAndDrop
-    };
-
     static DragState& dragState();
     static const double TextDragDelay;
-
-    bool canHandleDragAndDropForTarget(DragAndDropHandleType, Node* target, const PlatformMouseEvent&, Clipboard*, bool* accepted = 0);
     
     PassRefPtr<Clipboard> createDraggingClipboard() const;
 #endif // ENABLE(DRAG_SUPPORT)
@@ -250,8 +242,6 @@ private:
 #endif
     bool handleMouseReleaseEvent(const MouseEventWithHitTestResults&);
 
-    void handleKeyboardSelectionMovement(KeyboardEvent*);
-    
     Cursor selectCursor(const MouseEventWithHitTestResults&, Scrollbar*);
 #if ENABLE(PAN_SCROLLING)
     void updatePanScrollState();
@@ -338,8 +328,6 @@ private:
     void updateLastScrollbarUnderMouse(Scrollbar*, bool);
     
     void setFrameWasScrolledByUser();
-
-    FocusDirection focusDirectionForKey(const AtomicString&) const;
 
     bool capturesDragging() const { return m_capturesDragging; }
 

@@ -1760,33 +1760,17 @@ bool EventHandler::dispatchDragEvent(const AtomicString& eventType, Node* dragTa
     return me->defaultPrevented();
 }
 
-bool EventHandler::canHandleDragAndDropForTarget(DragAndDropHandleType type, Node* target, const PlatformMouseEvent& event, Clipboard* clipboard, bool* accepted)
+static bool targetIsFrame(Node* target, Frame*& frame)
 {
-    bool canHandle = false;
-    bool wasAccepted = false;
+    if (!target)
+        return false;
 
-    if (target->hasTagName(frameTag) || target->hasTagName(iframeTag)) {
-        Frame* frame = static_cast<HTMLFrameElementBase*>(target)->contentFrame();
-        if (frame) {
-            switch (type) {
-            case UpdateDragAndDrop:
-                wasAccepted = frame->eventHandler()->updateDragAndDrop(event, clipboard);
-                break;
-            case CancelDragAndDrop:
-                frame->eventHandler()->cancelDragAndDrop(event, clipboard);
-                break;
-            case PerformDragAndDrop:
-                wasAccepted = frame->eventHandler()->performDragAndDrop(event, clipboard);
-                break;
-            }
-        }
-    } else
-        canHandle = true;
+    if (!target->hasTagName(frameTag) && !target->hasTagName(iframeTag))
+        return false;
 
-    if (accepted)
-        *accepted = wasAccepted;
+    frame = static_cast<HTMLFrameElementBase*>(target)->contentFrame();
 
-    return canHandle;
+    return true;
 }
 
 static bool findDropZone(Node* target, Clipboard* clipboard)
@@ -1848,7 +1832,11 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
         // LayoutTests/fast/events/drag-in-frames.html.
         //
         // Moreover, this ordering conforms to section 7.9.4 of the HTML 5 spec. <http://dev.w3.org/html5/spec/Overview.html#drag-and-drop-processing-model>.
-        if (newTarget && canHandleDragAndDropForTarget(UpdateDragAndDrop, newTarget, event, clipboard, &accept)) {
+        Frame* targetFrame;
+        if (targetIsFrame(newTarget, targetFrame)) {
+            if (targetFrame)
+                accept = targetFrame->eventHandler()->updateDragAndDrop(event, clipboard);
+        } else if (newTarget) {
             // As per section 7.9.4 of the HTML 5 spec., we must always fire a drag event before firing a dragenter, dragleave, or dragover event.
             if (dragState().m_dragSrc && dragState().shouldDispatchEvents()) {
                 // for now we don't care if event handler cancels default behavior, since there is none
@@ -1859,16 +1847,23 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
                 accept = findDropZone(newTarget, clipboard);
         }
 
-        if (m_dragTarget && canHandleDragAndDropForTarget(UpdateDragAndDrop, m_dragTarget.get(), event, clipboard, &accept))
+        if (targetIsFrame(m_dragTarget.get(), targetFrame)) {
+            if (targetFrame)
+                accept = targetFrame->eventHandler()->updateDragAndDrop(event, clipboard);
+        } else if (m_dragTarget)
             dispatchDragEvent(eventNames().dragleaveEvent, m_dragTarget.get(), event, clipboard);
-        
+
         if (newTarget) {
             // We do not explicitly call dispatchDragEvent here because it could ultimately result in the appearance that
             // two dragover events fired. So, we mark that we should only fire a dragover event on the next call to this function.
             m_shouldOnlyFireDragOverEvent = true;
         }
     } else {
-        if (newTarget && canHandleDragAndDropForTarget(UpdateDragAndDrop, newTarget, event, clipboard, &accept)) {
+        Frame* targetFrame;
+        if (targetIsFrame(newTarget, targetFrame)) {
+            if (targetFrame)
+                accept = targetFrame->eventHandler()->updateDragAndDrop(event, clipboard);
+        } else if (newTarget) {
             // Note, when dealing with sub-frames, we may need to fire only a dragover event as a drag event may have been fired earlier.
             if (!m_shouldOnlyFireDragOverEvent && dragState().m_dragSrc && dragState().shouldDispatchEvents()) {
                 // for now we don't care if event handler cancels default behavior, since there is none
@@ -1887,7 +1882,11 @@ bool EventHandler::updateDragAndDrop(const PlatformMouseEvent& event, Clipboard*
 
 void EventHandler::cancelDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
 {
-    if (m_dragTarget && canHandleDragAndDropForTarget(CancelDragAndDrop, m_dragTarget.get(), event, clipboard)) {
+    Frame* targetFrame;
+    if (targetIsFrame(m_dragTarget.get(), targetFrame)) {
+        if (targetFrame)
+            targetFrame->eventHandler()->cancelDragAndDrop(event, clipboard);
+    } else if (m_dragTarget.get()) {
         if (dragState().m_dragSrc && dragState().shouldDispatchEvents())
             dispatchDragSrcEvent(eventNames().dragEvent, event);
         dispatchDragEvent(eventNames().dragleaveEvent, m_dragTarget.get(), event, clipboard);
@@ -1895,13 +1894,15 @@ void EventHandler::cancelDragAndDrop(const PlatformMouseEvent& event, Clipboard*
     clearDragState();
 }
 
-bool EventHandler::performDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
+void EventHandler::performDragAndDrop(const PlatformMouseEvent& event, Clipboard* clipboard)
 {
-    bool accept = false;
-    if (m_dragTarget && canHandleDragAndDropForTarget(PerformDragAndDrop, m_dragTarget.get(), event, clipboard, &accept))
+    Frame* targetFrame;
+    if (targetIsFrame(m_dragTarget.get(), targetFrame)) {
+        if (targetFrame)
+            targetFrame->eventHandler()->performDragAndDrop(event, clipboard);
+    } else if (m_dragTarget.get())
         dispatchDragEvent(eventNames().dropEvent, m_dragTarget.get(), event, clipboard);
     clearDragState();
-    return accept;
 }
 
 void EventHandler::clearDragState()
@@ -2588,29 +2589,66 @@ bool EventHandler::keyEvent(const PlatformKeyboardEvent& initialKeyEvent)
     return keydownResult || keypress->defaultPrevented() || keypress->defaultHandled();
 }
 
-void EventHandler::handleKeyboardSelectionMovement(KeyboardEvent* event)
+static FocusDirection focusDirectionForKey(const AtomicString& keyIdentifier)
+{
+    DEFINE_STATIC_LOCAL(AtomicString, Down, ("Down"));
+    DEFINE_STATIC_LOCAL(AtomicString, Up, ("Up"));
+    DEFINE_STATIC_LOCAL(AtomicString, Left, ("Left"));
+    DEFINE_STATIC_LOCAL(AtomicString, Right, ("Right"));
+
+    FocusDirection retVal = FocusDirectionNone;
+
+    if (keyIdentifier == Down)
+        retVal = FocusDirectionDown;
+    else if (keyIdentifier == Up)
+        retVal = FocusDirectionUp;
+    else if (keyIdentifier == Left)
+        retVal = FocusDirectionLeft;
+    else if (keyIdentifier == Right)
+        retVal = FocusDirectionRight;
+
+    return retVal;
+}
+
+static void handleKeyboardSelectionMovement(FrameSelection* selection, KeyboardEvent* event)
 {
     if (!event)
         return;
-    
-    const String& key = event->keyIdentifier();
-    bool isShifted = event->getModifierState("Shift");
+
     bool isOptioned = event->getModifierState("Alt");
     bool isCommanded = event->getModifierState("Meta");
-    
-    if (key == "Up") {
-        m_frame->selection()->modify((isShifted) ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove, DirectionBackward, (isCommanded) ? DocumentBoundary : LineGranularity, true);
-        event->setDefaultHandled();
-    } else if (key == "Down") {
-        m_frame->selection()->modify((isShifted) ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove, DirectionForward, (isCommanded) ? DocumentBoundary : LineGranularity, true);
-        event->setDefaultHandled();
-    } else if (key == "Left") {
-        m_frame->selection()->modify((isShifted) ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove, DirectionLeft, (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity, true);
-        event->setDefaultHandled();
-    } else if (key == "Right") {
-        m_frame->selection()->modify((isShifted) ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove, DirectionRight, (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity, true);
-        event->setDefaultHandled();
-    }    
+
+    SelectionDirection direction = DirectionForward;
+    TextGranularity granularity = CharacterGranularity;
+
+    switch (focusDirectionForKey(event->keyIdentifier())) {
+    case FocusDirectionNone:
+        return;
+    case FocusDirectionForward:
+    case FocusDirectionBackward:
+        ASSERT_NOT_REACHED();
+        return;
+    case FocusDirectionUp:
+        direction = DirectionBackward;
+        granularity = isCommanded ? DocumentBoundary : LineGranularity;
+        break;
+    case FocusDirectionDown:
+        direction = DirectionForward;
+        granularity = isCommanded ? DocumentBoundary : LineGranularity;
+        break;
+    case FocusDirectionLeft:
+        direction = DirectionLeft;
+        granularity = (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity;
+        break;
+    case FocusDirectionRight:
+        direction = DirectionRight;
+        granularity = (isCommanded) ? LineBoundary : (isOptioned) ? WordGranularity : CharacterGranularity;
+        break;
+    }
+
+    FrameSelection::EAlteration alternation = event->getModifierState("Shift") ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove;
+    selection->modify(alternation, direction, granularity, true);
+    event->setDefaultHandled();
 }
     
 void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
@@ -2631,7 +2669,7 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
 
         // provides KB navigation and selection for enhanced accessibility users
         if (AXObjectCache::accessibilityEnhancedUserInterfaceEnabled())
-            handleKeyboardSelectionMovement(event);
+            handleKeyboardSelectionMovement(m_frame->selection(), event);
     }
     if (event->type() == eventNames().keypressEvent) {
         m_frame->editor()->handleKeyboardEvent(event);
@@ -2640,27 +2678,6 @@ void EventHandler::defaultKeyboardEventHandler(KeyboardEvent* event)
         if (event->charCode() == ' ')
             defaultSpaceEventHandler(event);
     }
-}
-
-FocusDirection EventHandler::focusDirectionForKey(const AtomicString& keyIdentifier) const
-{
-    DEFINE_STATIC_LOCAL(AtomicString, Down, ("Down"));
-    DEFINE_STATIC_LOCAL(AtomicString, Up, ("Up"));
-    DEFINE_STATIC_LOCAL(AtomicString, Left, ("Left"));
-    DEFINE_STATIC_LOCAL(AtomicString, Right, ("Right"));
-
-    FocusDirection retVal = FocusDirectionNone;
-
-    if (keyIdentifier == Down)
-        retVal = FocusDirectionDown;
-    else if (keyIdentifier == Up)
-        retVal = FocusDirectionUp;
-    else if (keyIdentifier == Left)
-        retVal = FocusDirectionLeft;
-    else if (keyIdentifier == Right)
-        retVal = FocusDirectionRight;
-
-    return retVal;
 }
 
 #if ENABLE(DRAG_SUPPORT)
