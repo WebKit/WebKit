@@ -1,3 +1,12 @@
+2011-06-02  Adam Barth  <abarth@webkit.org>
+
+        These differ only by the scroll bar.
+
+        * platform/chromium-linux-x86/fast/css: Added.
+        * platform/chromium-linux-x86/fast/css/last-of-type-pseudo-class-expected.png: Added.
+        * platform/chromium-linux/fast/css/last-of-type-pseudo-class-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

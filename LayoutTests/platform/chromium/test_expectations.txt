@@ -1626,9 +1626,6 @@ BUGCR22554 SKIP : mathml = FAIL
 BUGCR23956 WIN LINUX : fast/dom/Range/getClientRects.html = FAIL
 BUGCR24126 : fast/dom/HTMLInputElement/size-attribute.html = FAIL
 
-// Started happening somewhere around http://trac.webkit.org/changeset/48989.
-BUGCR23955 LINUX : fast/css/last-of-type-pseudo-class.html = IMAGE
-
 // Started failing for no apparent reason at r28124, and IMAGE+TEXT diffs started at r51875
 
 // Flaky timeouts first appearing at r27764 (webkit 48947)
