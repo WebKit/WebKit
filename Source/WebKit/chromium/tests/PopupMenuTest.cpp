@@ -31,19 +31,33 @@
 #include "config.h"
 
 #include <gtest/gtest.h>
+#include <webkit/support/webkit_support.h>
 
 #include "Color.h"
+#include "Element.h"
+#include "FrameView.h"
 #include "KeyboardCodes.h"
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
 #include "PopupMenuChromium.h"
+#include "SelectElement.h"
+#include "WebDocument.h"
+#include "WebElement.h"
+#include "WebFrame.h"
 #include "WebFrameClient.h"
 #include "WebFrameImpl.h"
 #include "WebInputEvent.h"
 #include "WebPopupMenuImpl.h"
 #include "WebScreenInfo.h"
+#include "WebSettings.h"
+#include "WebString.h"
+#include "WebURL.h"
+#include "WebURLRequest.h"
+#include "WebURLResponse.h"
+#include "WebView.h"
 #include "WebViewClient.h"
 #include "WebViewImpl.h"
+#include "v8.h"
 
 using namespace WebCore;
 using namespace WebKit;
@@ -53,11 +67,15 @@ namespace {
 class TestPopupMenuClient : public PopupMenuClient {
 public:
     // Item at index 0 is selected by default.
-    TestPopupMenuClient() : m_selectIndex(0) { }
+    TestPopupMenuClient() : m_selectIndex(0), m_node(0) { }
     virtual ~TestPopupMenuClient() {}
     virtual void valueChanged(unsigned listIndex, bool fireEvents = true)
     {
         m_selectIndex = listIndex;
+        if (m_node) {
+            SelectElement* select = toSelectElement(static_cast<Element*>(m_node));
+            select->setSelectedIndexByUser(select->listToOptionIndex(listIndex), true, fireEvents);
+        }
     }
     virtual void selectionChanged(unsigned, bool) {}
     virtual void selectionCleared() {}
@@ -72,7 +90,7 @@ public:
     virtual String itemIcon(unsigned) const { return String(); }
     virtual String itemToolTip(unsigned listIndex) const { return itemText(listIndex); }
     virtual String itemAccessibilityText(unsigned listIndex) const { return itemText(listIndex); }
-    virtual bool itemIsEnabled(unsigned listIndex) const { return true; }
+    virtual bool itemIsEnabled(unsigned listIndex) const { return m_disabledIndexSet.find(listIndex) == m_disabledIndexSet.end(); }
     virtual PopupMenuStyle itemStyle(unsigned listIndex) const
     {
         Font font(FontPlatformData(12.0, false, false), false);
@@ -92,14 +110,19 @@ public:
     virtual bool shouldPopOver() const { return false; }
     virtual bool valueShouldChangeOnHotTrack() const { return false; }
     virtual void setTextFromItem(unsigned listIndex) { }
-    
+
     virtual FontSelector* fontSelector() const { return 0; }
     virtual HostWindow* hostWindow() const { return 0; }
-    
+
     virtual PassRefPtr<Scrollbar> createScrollbar(ScrollableArea*, ScrollbarOrientation, ScrollbarControlSize) { return 0; }
+
+    void setDisabledIndex(unsigned index) { m_disabledIndexSet.insert(index); }
+    void setFocusedNode(Node* node) { m_node = node; }
 
 private:
     unsigned m_selectIndex;
+    std::set<unsigned> m_disabledIndexSet;
+    Node* m_node;
 };
 
 class TestWebWidgetClient : public WebWidgetClient {
@@ -150,6 +173,7 @@ public:
 class SelectPopupMenuTest : public testing::Test {
 public:
     SelectPopupMenuTest()
+        : baseURL("http://www.test.com/")
     {
     }
 
@@ -165,6 +189,7 @@ protected:
     {
         m_popupMenu = 0;
         m_webView->close();
+        webkit_support::UnregisterAllMockedURLs();
     }
 
     // Returns true if there currently is a select popup in the WebView.
@@ -220,12 +245,39 @@ protected:
         m_webView->selectPopup()->handleMouseReleaseEvent(mouseEvent);
     }
 
+    void registerMockedURLLoad(const std::string& fileName)
+    {
+        WebURLResponse response;
+        response.initialize();
+        response.setMIMEType("text/html");
+
+        std::string filePath = webkit_support::GetWebKitRootDir().utf8();
+        filePath += "/Source/WebKit/chromium/tests/data/popup/";
+        filePath += fileName;
+
+        webkit_support::RegisterMockedURL(WebURL(GURL(baseURL + fileName)), response, WebString::fromUTF8(filePath));
+    }
+
+    void serveRequests()
+    {
+        webkit_support::ServeAsynchronousMockedRequests();
+    }
+
+    void loadFrame(WebFrame* frame, const std::string& fileName)
+    {
+        WebURLRequest urlRequest;
+        urlRequest.initialize();
+        urlRequest.setURL(WebURL(GURL(baseURL + fileName)));
+        frame->loadRequest(urlRequest);
+    }
+
 protected:
     TestWebViewClient m_webviewClient;
     WebViewImpl* m_webView;
     TestWebFrameClient m_webFrameClient;
     TestPopupMenuClient m_popupMenuClient;
     RefPtr<PopupMenu> m_popupMenu;
+    std::string baseURL;
 };
 
 // Tests that show/hide and repeats.  Select popups are reused in web pages when
@@ -348,6 +400,116 @@ TEST_F(SelectPopupMenuTest, SelectItemWithKeyboardItemClickOutside)
     // Popup should have closed and the item should have been selected.
     EXPECT_FALSE(popupOpen());
     EXPECT_EQ(2, selectedIndex());
+}
+
+TEST_F(SelectPopupMenuTest, SelectItemEventFire)
+{
+    registerMockedURLLoad("select_event.html");
+    m_webView->settings()->setJavaScriptEnabled(true);
+    loadFrame(m_webView->mainFrame(), "select_event.html");
+    serveRequests();
+
+    m_popupMenuClient.setFocusedNode(static_cast<WebFrameImpl*>(m_webView->mainFrame())->frameView()->frame()->document()->focusedNode());
+
+    showPopup();
+
+    int menuHeight = m_webView->selectPopup()->menuItemHeight();
+    // menuHeight * 0.5 means the Y position on the item at index 0.
+    IntPoint row1Point(2, menuHeight * 0.5);
+    simulateLeftMouseDownEvent(row1Point);
+    simulateLeftMouseUpEvent(row1Point);
+
+    WebElement element = m_webView->mainFrame()->document().getElementById("message");
+
+    // mousedown event is held by select node, and we don't simulate the event for the node.
+    // So we can only see mouseup and click event.
+    EXPECT_STREQ("upclick", std::string(element.innerText().utf8()).c_str());
+
+    // Disable the item at index 1.
+    m_popupMenuClient.setDisabledIndex(1);
+
+    showPopup();
+    // menuHeight * 1.5 means the Y position on the item at index 1.
+    row1Point.setY(menuHeight * 1.5);
+    simulateLeftMouseDownEvent(row1Point);
+    simulateLeftMouseUpEvent(row1Point);
+
+    // The item at index 1 is disabled, so the text should not be changed.
+    EXPECT_STREQ("upclick", std::string(element.innerText().utf8()).c_str());
+
+    showPopup();
+    // menuHeight * 2.5 means the Y position on the item at index 2.
+    row1Point.setY(menuHeight * 2.5);
+    simulateLeftMouseDownEvent(row1Point);
+    simulateLeftMouseUpEvent(row1Point);
+
+    // The item is changed to the item at index 2, from index 0, so change event is fired.
+    EXPECT_STREQ("upclickchangeupclick", std::string(element.innerText().utf8()).c_str());
+}
+
+TEST_F(SelectPopupMenuTest, SelectItemKeyEvent)
+{
+    registerMockedURLLoad("select_event.html");
+    m_webView->settings()->setJavaScriptEnabled(true);
+    loadFrame(m_webView->mainFrame(), "select_event.html");
+    serveRequests();
+
+    m_popupMenuClient.setFocusedNode(static_cast<WebFrameImpl*>(m_webView->mainFrame())->frameView()->frame()->document()->focusedNode());
+
+    showPopup();
+
+    // Siumulate to choose the item at index 1 with keyboard.
+    simulateKeyDownEvent(VKEY_DOWN);
+    simulateKeyDownEvent(VKEY_DOWN);
+    simulateKeyDownEvent(VKEY_RETURN);
+
+    WebElement element = m_webView->mainFrame()->document().getElementById("message");
+    // We only can see change event but no other mouse related events.
+    EXPECT_STREQ("change", std::string(element.innerText().utf8()).c_str());
+}
+
+TEST_F(SelectPopupMenuTest, SelectItemRemoveSelectOnChange)
+{
+    // Make sure no crash, even if select node is removed on 'change' event handler.
+    registerMockedURLLoad("select_event_remove_on_change.html");
+    m_webView->settings()->setJavaScriptEnabled(true);
+    loadFrame(m_webView->mainFrame(), "select_event_remove_on_change.html");
+    serveRequests();
+
+    m_popupMenuClient.setFocusedNode(static_cast<WebFrameImpl*>(m_webView->mainFrame())->frameView()->frame()->document()->focusedNode());
+
+    showPopup();
+
+    int menuHeight = m_webView->selectPopup()->menuItemHeight();
+    // menuHeight * 1.5 means the Y position on the item at index 1.
+    IntPoint row1Point(2, menuHeight * 1.5);
+    simulateLeftMouseDownEvent(row1Point);
+    simulateLeftMouseUpEvent(row1Point);
+
+    WebElement element = m_webView->mainFrame()->document().getElementById("message");
+    EXPECT_STREQ("change", std::string(element.innerText().utf8()).c_str());
+}
+
+TEST_F(SelectPopupMenuTest, SelectItemRemoveSelectOnClick)
+{
+    // Make sure no crash, even if select node is removed on 'click' event handler.
+    registerMockedURLLoad("select_event_remove_on_click.html");
+    m_webView->settings()->setJavaScriptEnabled(true);
+    loadFrame(m_webView->mainFrame(), "select_event_remove_on_click.html");
+    serveRequests();
+
+    m_popupMenuClient.setFocusedNode(static_cast<WebFrameImpl*>(m_webView->mainFrame())->frameView()->frame()->document()->focusedNode());
+
+    showPopup();
+
+    int menuHeight = m_webView->selectPopup()->menuItemHeight();
+    // menuHeight * 1.5 means the Y position on the item at index 1.
+    IntPoint row1Point(2, menuHeight * 1.5);
+    simulateLeftMouseDownEvent(row1Point);
+    simulateLeftMouseUpEvent(row1Point);
+
+    WebElement element = m_webView->mainFrame()->document().getElementById("message");
+    EXPECT_STREQ("click", std::string(element.innerText().utf8()).c_str());
 }
 
 } // namespace
