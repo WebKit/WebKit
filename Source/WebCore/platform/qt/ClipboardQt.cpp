@@ -298,11 +298,10 @@ void ClipboardQt::declareAndWriteDragImage(Element* element, const KURL& url, co
 
     QList<QUrl> urls;
     urls.append(url);
-    urls.append(fullURL);
 
     m_writableData->setText(title);
     m_writableData->setUrls(urls);
-    m_writableData->setHtml(createMarkup(element, IncludeNode, 0, AbsoluteURLs));
+    m_writableData->setHtml(imageToMarkup(fullURL, element));
 #ifndef QT_NO_CLIPBOARD
     if (isForCopyAndPaste())
         QApplication::clipboard()->setMimeData(m_writableData);

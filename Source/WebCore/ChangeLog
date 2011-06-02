@@ -1,3 +1,17 @@
+2011-06-02  Aparna Nandyal  <aparna.nand@wipro.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Multiple drop events when doing DnD of images.
+        https://bugs.webkit.org/show_bug.cgi?id=61504
+
+        Duplicate entries of the url were getting added into drag data
+        which is removed. The duplicate entries were causing the same image
+        url to be copied twice. The code changes now match other webkit ports.
+
+        * platform/qt/ClipboardQt.cpp:
+        (WebCore::ClipboardQt::declareAndWriteDragImage):
+
 2011-06-02  Naiem Shaik  <naiem.shaik@gmail.com>
 
         Reviewed by Kent Tamura.
