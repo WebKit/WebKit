@@ -282,8 +282,22 @@ TEST(TreeSynchronizerTest, syncMaskReplicaAndReplicaMaskLayers)
     RefPtr<CCLayerImpl> ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), 0);
 
     expectTreesAreIdentical(layerTreeRoot.get(), ccLayerTreeRoot.get());
+
+    // Remove the mask layer.
+    layerTreeRoot->children()[0]->setMaskLayer(0);
+    ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), ccLayerTreeRoot.get());
+    expectTreesAreIdentical(layerTreeRoot.get(), ccLayerTreeRoot.get());
+
+    // Remove the replica layer.
+    layerTreeRoot->children()[1]->setReplicaLayer(0);
+    ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), ccLayerTreeRoot.get());
+    expectTreesAreIdentical(layerTreeRoot.get(), ccLayerTreeRoot.get());
+
+    // Remove the replica mask.
+    replicaLayerWithMask->setMaskLayer(0);
+    ccLayerTreeRoot = TreeSynchronizer::synchronizeTrees(layerTreeRoot.get(), ccLayerTreeRoot.get());
+    expectTreesAreIdentical(layerTreeRoot.get(), ccLayerTreeRoot.get());
 }
 
 
 } // namespace
-

@@ -66,9 +66,13 @@ PassRefPtr<CCLayerImpl> TreeSynchronizer::synchronizeTreeRecursive(LayerChromium
 
     if (LayerChromium* maskLayer = layer->maskLayer())
         ccLayerImpl->setMaskLayer(synchronizeTreeRecursive(maskLayer, map));
+    else
+        ccLayerImpl->setMaskLayer(0);
 
     if (LayerChromium* replicaLayer = layer->replicaLayer())
         ccLayerImpl->setReplicaLayer(synchronizeTreeRecursive(replicaLayer, map));
+    else
+        ccLayerImpl->setReplicaLayer(0);
 
     layer->setCCLayerImpl(ccLayerImpl.get());
 
@@ -91,5 +95,3 @@ PassRefPtr<CCLayerImpl> TreeSynchronizer::synchronizeTrees(LayerChromium* layerC
 }
 
 } // namespace WebCore
-
-
