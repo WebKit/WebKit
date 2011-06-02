@@ -1,5 +1,11 @@
 2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed, skipped test timing out for GTK since r87605.
+
+        * platform/gtk/Skipped: Skipped test.
+
+2011-06-02  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Unreviewed, added missing new baselines for GTK after r87779.
 
         * platform/gtk/svg/hixie/intrinsic/002-expected.png: Added.
