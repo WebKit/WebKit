@@ -1,3 +1,16 @@
+2011-06-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION: inline style is lost when deleting line break between paragraphs with same style
+        https://bugs.webkit.org/show_bug.cgi?id=61899
+
+        Added a regression test to ensure WebKit preserves font family for a paragraph being merged
+        to the previous paragraph when deleting a line break between two paragraphs with the same style.
+
+        * editing/deleting/delete-line-break-between-paragraphs-with-same-style-expected.txt: Added.
+        * editing/deleting/delete-line-break-between-paragraphs-with-same-style.html: Added.
+
 2011-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Simon Fraser.

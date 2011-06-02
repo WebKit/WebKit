@@ -1,3 +1,20 @@
+2011-06-02  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        REGRESSION: inline style is lost when deleting line break between paragraphs with same style
+        https://bugs.webkit.org/show_bug.cgi?id=61899
+
+        The bug was caused by ReplaceSelectionCommand::doApply's calling handleStyleSpansBeforeInsertion
+        before insertionPos is adjusted by positionAvoidingPrecedingNodes and positionOutsideTabSpan.
+
+        Fixed the bug by calling handleStyleSpansBeforeInsertion after the calls to these two functions.
+
+        Test: editing/deleting/delete-line-break-between-paragraphs-with-same-style.html
+
+        * editing/ReplaceSelectionCommand.cpp:
+        (WebCore::ReplaceSelectionCommand::doApply):
+
 2011-06-01  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Simon Fraser.
