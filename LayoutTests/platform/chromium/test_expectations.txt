@@ -2771,7 +2771,6 @@ BUGCR69639 : http/tests/loading/cross-origin-XHR-willLoadRequest.html = TEXT
 
 // Behavior changed in http://trac.webkit.org/changeset/76180,
 // need to investigate
-BUGDIMICH : fast/loader/stateobjects/pushstate-object-types.html = TEXT
 BUGDIMICH : fast/regex/cross-frame-callable.html = TEXT
 
 BUGCR75238 WIN : fast/text/large-text-composed-char.html = FAIL
@@ -4002,9 +4001,9 @@ BUGWK61625 : fast/events/dropzone-002.html = TEXT
 BUGWK61624 WIN : editing/pasteboard/smart-paste-003.html = TEXT
 BUGWK61624 WIN : editing/pasteboard/smart-paste-004.html = TEXT
 
-// Weird failures only on Mac10.6 debug bot after r87526.
-BUGADAMK SNOWLEOPARD DEBUG : svg/custom/object-sizing-explicit-height.xhtml = IMAGE+TEXT
-BUGADAMK SNOWLEOPARD DEBUG : svg/custom/object-sizing-explicit-width.xhtml = IMAGE+TEXT
+// Weird failures only on debug bots after r87526.
+BUGADAMK DEBUG : svg/custom/object-sizing-explicit-height.xhtml = IMAGE+TEXT
+BUGADAMK DEBUG : svg/custom/object-sizing-explicit-width.xhtml = IMAGE+TEXT
 BUGADAMK SNOWLEOPARD DEBUG : svg/wicd/test-rightsizing-a.xhtml = IMAGE+TEXT
 
 // After r87526, these all have extra scrollbars where the platform/mac expectations do not.
