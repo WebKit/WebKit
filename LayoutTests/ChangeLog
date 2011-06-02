@@ -1,3 +1,12 @@
+2011-06-02  John Knottenbelt  <jknotten@chromium.org>
+
+        Unreviewed.
+
+        [Chromium] Adjust test expectations.
+        https://bugs.webkit.org/show_bug.cgi?id=61938
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-02  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, rebaseline tests after r87822
