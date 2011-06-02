@@ -65,6 +65,7 @@ use FindBin;
 use Getopt::Long;
 use IPC::Open2;
 use IPC::Open3;
+use MIME::Base64;
 use Time::HiRes qw(time usleep);
 
 use List::Util 'shuffle';
@@ -2250,6 +2251,8 @@ sub extensionForMimeType($)
         return "webarchive";
     } elsif ($mimeType eq "application/pdf") {
         return "pdf";
+    } elsif ($mimeType eq "audio/wav") {
+        return "wav";
     }
     return "txt";
 }
@@ -2271,9 +2274,11 @@ sub readFromDumpToolWithTimer(**)
     my @error = ();
     my $status = "success";
     my $mimeType = "text/plain";
+    my $encoding = "";
     # We don't have a very good way to know when the "headers" stop
     # and the content starts, so we use this as a hack:
     my $haveSeenContentType = 0;
+    my $haveSeenContentTransferEncoding = 0;
     my $haveSeenEofIn = 0;
     my $haveSeenEofError = 0;
 
@@ -2305,7 +2310,13 @@ sub readFromDumpToolWithTimer(**)
             if (!$haveSeenContentType && $lineIn =~ /^Content-Type: (\S+)$/) {
                 $mimeType = $1;
                 $haveSeenContentType = 1;
-            } elsif ($lineIn =~ /#EOF/) {
+            } elsif (!$haveSeenContentTransferEncoding && $lineIn =~ /^Content-Transfer-Encoding: (\S+)$/) {
+                $encoding = $1;
+                $haveSeenContentTransferEncoding = 1;
+            } elsif ($lineIn =~ /(.*)#EOF$/) {
+                if ($1 ne "") {
+                    push @output, $1;
+                }
                 $haveSeenEofIn = 1;
             } else {
                 push @output, $lineIn;
@@ -2330,8 +2341,12 @@ sub readFromDumpToolWithTimer(**)
 
     setFileHandleNonBlocking($fhIn, 0);
     setFileHandleNonBlocking($fhError, 0);
+    my $joined_output = join("", @output);
+    if ($encoding eq "base64") {
+        $joined_output = decode_base64($joined_output);
+    }
     return {
-        output => join("", @output),
+        output => $joined_output,
         error => join("", @error),
         status => $status,
         mimeType => $mimeType,
