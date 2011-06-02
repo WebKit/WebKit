@@ -2056,7 +2056,6 @@ fast/viewport/viewport-58.html
 # https://bugs.webkit.org/show_bug.cgi?id=46093
 svg/custom/use-font-face-crash.svg
 svg/zoom/text/zoom-coords-viewattr-01-b.svg
-tables/mozilla/bugs/bug196870.html
 http/tests/misc/slow-loading-image-in-pattern.html
 
 # Pre-HMTL5 parser quirks only apply to the mac port for now.

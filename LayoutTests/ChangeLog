@@ -1,3 +1,16 @@
+2011-06-02  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Rebaseline tables/mozilla/bugs/bug196870.html test after r73385
+        https://bugs.webkit.org/show_bug.cgi?id=61781
+
+        Rebaseline tables/mozilla/bugs/bug196870.html test after r73385.
+        See bug #49220
+
+        * platform/qt/Skipped:
+        * platform/qt/tables/mozilla/bugs/bug196870-expected.txt:
+
 2011-06-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
