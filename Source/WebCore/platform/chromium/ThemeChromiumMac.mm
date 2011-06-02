@@ -664,8 +664,7 @@ static void paintStepper(ControlStates states, GraphicsContext* context, const I
 #else
     CGContextRef cgContext = context->platformContext();
 #endif
-    HIThemeDrawButton(&backgroundBounds, &drawInfo, context->platformContext(), kHIThemeOrientationNormal, 0);
-    HIThemeDrawButton(&bounds, &drawInfo, cgContext, kHIThemeOrientationNormal, 0);
+    HIThemeDrawButton(&backgroundBounds, &drawInfo, cgContext, kHIThemeOrientationNormal, 0);
     context->restore();
 }
 

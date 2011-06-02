@@ -1,3 +1,11 @@
+2011-06-02  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium/Mac] Fix a wrong merge for r87881
+        https://bugs.webkit.org/show_bug.cgi?id=61845
+
+        * platform/chromium/ThemeChromiumMac.mm:
+        (WebCore::paintStepper):
+
 2011-06-02  Ian Henderson  <ianh@apple.com>
 
         Reviewed by Simon Fraser.
