@@ -404,6 +404,10 @@ scrollbars/scrollbar-iframe-click-does-not-blur-content.html
 scrollbars/scrollbar-miss-mousemove-disabled.html
 scrollbars/scrollevent-iframe-no-scrolling-wheel.html
 
+# WebKitTestRunner needs an implementation of setTextDirection.
+# <https://bugs.webkit.org/show_bug.cgi?id=61931>
+fast/html/set-text-direction.html
+
 # CONSOLE MESSAGE: line 0: SVG animation pause API missing!
 svg/animations/animVal-basics.html
 svg/animations/animate-calcMode-spline-by.html
