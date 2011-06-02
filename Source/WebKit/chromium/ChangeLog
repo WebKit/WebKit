@@ -1,3 +1,12 @@
+2011-06-02  Aaron Colwell  <acolwell@chromium.org>
+
+        Reviewed by David Levin.
+
+        Update chromium version
+        https://bugs.webkit.org/show_bug.cgi?id=61555
+
+        * DEPS:
+
 2011-06-02  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r87920.
