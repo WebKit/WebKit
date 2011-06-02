@@ -330,11 +330,11 @@ bool WebSocketChannel::processBuffer()
             LOG(Network, "remaining in read buf %lu", static_cast<unsigned long>(m_bufferSize));
             return m_buffer;
         }
+        ASSERT(m_handshake.mode() == WebSocketHandshake::Failed);
         LOG(Network, "WebSocketChannel %p connection failed", this);
         skipBuffer(headerLength);
         m_shouldDiscardReceivedData = true;
-        if (!m_closed)
-            m_handle->disconnect();
+        fail(m_handshake.failureReason());
         return false;
     }
     if (m_handshake.mode() != WebSocketHandshake::Connected)

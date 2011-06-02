@@ -1,3 +1,13 @@
+2011-06-02  Yuta Kitamura  <yutak@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        WebSocket: Call WebSocketChannel::fail() when WebSocketHandshake has failed
+        https://bugs.webkit.org/show_bug.cgi?id=61841
+
+        * http/tests/websocket/tests/bad-handshake-crash-expected.txt:
+        Now the error message starts with a capital letter.
+
 2011-06-01  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

@@ -71,6 +71,7 @@ namespace WebCore {
 
         int readServerHandshake(const char* header, size_t len);
         Mode mode() const;
+        String failureReason() const; // Returns a string indicating the reason of failure if mode() == Failed.
 
         String serverWebSocketOrigin() const;
         String serverWebSocketLocation() const;
@@ -105,6 +106,8 @@ namespace WebCore {
         unsigned char m_expectedChallengeResponse[16];
 
         WebSocketHandshakeResponse m_response;
+
+        String m_failureReason;
     };
 
 } // namespace WebCore
