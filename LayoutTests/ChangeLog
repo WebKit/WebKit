@@ -1,3 +1,210 @@
+2011-06-02  Adam Barth  <abarth@webkit.org>
+
+        First round of baseline updates after
+        http://trac.webkit.org/changeset/87955 changed some floating point
+        calculations for borders.  Visually, these appear to all be fine.
+
+        * platform/chromium-gpu-linux/media/video-zoom-controls-expected.png:
+        * platform/chromium-gpu-mac/media/video-zoom-controls-expected.png:
+        * platform/chromium-gpu-win/media/video-zoom-controls-expected.png:
+        * platform/chromium-linux-x86/fast/backgrounds: Added.
+        * platform/chromium-linux-x86/fast/backgrounds/border-radius-split-background-expected.png: Added.
+        * platform/chromium-linux-x86/fast/backgrounds/border-radius-split-background-image-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/border-radius-constraints-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/border-radius-split-inline-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusDashed02-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusDashed03-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusDotted01-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusDouble01-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusDouble02-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusInset01-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusOutset01-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusRidge01-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusSolid03-expected.png:
+        * platform/chromium-linux-x86/fast/borders/borderRadiusSolid04-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/different-color-borders-expected.png: Added.
+        * platform/chromium-linux-x86/fast/borders/fieldsetBorderRadius-expected.png: Added.
+        * platform/chromium-linux-x86/fast/box-shadow/inset-box-shadows-expected.png: Added.
+        * platform/chromium-linux-x86/fast/box-shadow/inset-expected.png: Added.
+        * platform/chromium-linux-x86/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png:
+        * platform/chromium-linux-x86/fast/box-shadow/spread-multiple-inset-expected.png: Added.
+        * platform/chromium-linux-x86/fast/clip: Added.
+        * platform/chromium-linux-x86/fast/clip/overflow-border-radius-clip-expected.png: Added.
+        * platform/chromium-linux-x86/fast/css/nested-rounded-corners-expected.png: Added.
+        * platform/chromium-linux-x86/fast/repaint/border-radius-repaint-expected.png:
+        * platform/chromium-linux-x86/fast/transforms: Added.
+        * platform/chromium-linux-x86/fast/transforms/shadows-expected.png: Added.
+        * platform/chromium-linux-x86/media: Added.
+        * platform/chromium-linux-x86/media/video-zoom-controls-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/animate-elem-52-t-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/shapes-rect-01-t-expected.png: Added.
+        * platform/chromium-linux-x86/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/dasharrayOrigin-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/fractional-rects-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/gradient-rotated-bbox-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/rounded-rects-expected.png: Added.
+        * platform/chromium-linux-x86/svg/custom/svg-fonts-in-html-expected.png: Added.
+        * platform/chromium-linux-x86/svg/hixie/perf/001-expected.png:
+        * platform/chromium-linux-x86/svg/hixie/perf/002-expected.png:
+        * platform/chromium-linux-x86/svg/wicd/rightsizing-grid-expected.png:
+        * platform/chromium-linux-x86/svg/wicd/test-scalable-background-image1-expected.png:
+        * platform/chromium-linux/fast/backgrounds/border-radius-split-background-expected.png:
+        * platform/chromium-linux/fast/backgrounds/border-radius-split-background-image-expected.png:
+        * platform/chromium-linux/fast/backgrounds/gradient-background-leakage-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-linux/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDashed02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDashed03-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDotted01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDouble01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDouble02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusInset01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusOutset01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusRidge01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid03-expected.png:
+        * platform/chromium-linux/fast/borders/borderRadiusSolid04-expected.png:
+        * platform/chromium-linux/fast/borders/different-color-borders-expected.png:
+        * platform/chromium-linux/fast/borders/fieldsetBorderRadius-expected.png:
+        * platform/chromium-linux/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-linux/fast/box-shadow/inset-expected.png:
+        * platform/chromium-linux/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png:
+        * platform/chromium-linux/fast/box-shadow/spread-multiple-inset-expected.png:
+        * platform/chromium-linux/fast/clip/overflow-border-radius-clip-expected.png:
+        * platform/chromium-linux/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium-linux/fast/repaint/border-radius-repaint-expected.png:
+        * platform/chromium-linux/fast/transforms/shadows-expected.png:
+        * platform/chromium-linux/media/video-zoom-controls-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/animate-elem-52-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/shapes-rect-01-t-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.png:
+        * platform/chromium-linux/svg/custom/dasharrayOrigin-expected.png:
+        * platform/chromium-linux/svg/custom/fractional-rects-expected.png:
+        * platform/chromium-linux/svg/custom/gradient-rotated-bbox-expected.png:
+        * platform/chromium-linux/svg/custom/rounded-rects-expected.png:
+        * platform/chromium-linux/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-linux/svg/hixie/perf/001-expected.png:
+        * platform/chromium-linux/svg/hixie/perf/002-expected.png:
+        * platform/chromium-linux/svg/wicd/rightsizing-grid-expected.png:
+        * platform/chromium-linux/svg/wicd/test-scalable-background-image1-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/border-radius-split-inline-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/repaint/border-radius-repaint-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/transforms/shadows-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/hixie/perf: Added.
+        * platform/chromium-mac-leopard/svg/hixie/perf/001-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/hixie/perf/002-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/border-radius-split-background-expected.png:
+        * platform/chromium-mac/fast/backgrounds/border-radius-split-background-image-expected.png:
+        * platform/chromium-mac/fast/backgrounds/gradient-background-leakage-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-constraints-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusArcs01-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDashed02-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDashed03-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDotted01-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDouble01-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDouble02-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDouble03-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusGroove01-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusGroove02-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusInset01-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusOutset01-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusRidge01-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusSolid01-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusSolid02-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusSolid03-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusSolid04-expected.png: Added.
+        * platform/chromium-mac/fast/borders/different-color-borders-expected.png: Added.
+        * platform/chromium-mac/fast/borders/fieldsetBorderRadius-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-mac/fast/box-shadow/inset-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/spread-multiple-inset-expected.png:
+        * platform/chromium-mac/fast/clip: Added.
+        * platform/chromium-mac/fast/clip/overflow-border-radius-clip-expected.png: Added.
+        * platform/chromium-mac/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium-mac/fast/repaint/border-radius-repaint-expected.png: Added.
+        * platform/chromium-mac/fast/transforms/shadows-expected.png:
+        * platform/chromium-mac/media/video-zoom-controls-expected.png:
+        * platform/chromium-mac/svg/W3C-SVG-1.1/animate-elem-52-t-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/shapes-rect-01-t-expected.png: Added.
+        * platform/chromium-mac/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.png: Added.
+        * platform/chromium-mac/svg/custom/dasharrayOrigin-expected.png:
+        * platform/chromium-mac/svg/custom/fractional-rects-expected.png: Added.
+        * platform/chromium-mac/svg/custom/gradient-rotated-bbox-expected.png:
+        * platform/chromium-mac/svg/custom/rounded-rects-expected.png: Added.
+        * platform/chromium-mac/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-mac/svg/hixie/perf/001-expected.png:
+        * platform/chromium-mac/svg/hixie/perf/002-expected.png:
+        * platform/chromium-mac/svg/wicd: Added.
+        * platform/chromium-mac/svg/wicd/rightsizing-grid-expected.png: Added.
+        * platform/chromium-mac/svg/wicd/test-scalable-background-image1-expected.png: Added.
+        * platform/chromium-win-vista/svg/W3C-SVG-1.1/animate-elem-52-t-expected.png:
+        * platform/chromium-win-vista/svg/wicd/rightsizing-grid-expected.png: Removed.
+        * platform/chromium-win-vista/svg/wicd/test-scalable-background-image1-expected.png: Removed.
+        * platform/chromium-win-xp/fast/transforms/shadows-expected.png: Removed.
+        * platform/chromium-win/fast/backgrounds/border-radius-split-background-expected.png:
+        * platform/chromium-win/fast/backgrounds/border-radius-split-background-image-expected.png:
+        * platform/chromium-win/fast/backgrounds/gradient-background-leakage-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-win/fast/borders/border-radius-split-inline-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusArcs01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDashed02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDashed03-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDotted01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDouble01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDouble02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusDouble03-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusGroove01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusGroove02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusInset01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusOutset01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusRidge01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid01-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid02-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid03-expected.png:
+        * platform/chromium-win/fast/borders/borderRadiusSolid04-expected.png:
+        * platform/chromium-win/fast/borders/different-color-borders-expected.png:
+        * platform/chromium-win/fast/borders/fieldsetBorderRadius-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-box-shadows-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-expected.png:
+        * platform/chromium-win/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png:
+        * platform/chromium-win/fast/box-shadow/spread-multiple-inset-expected.png:
+        * platform/chromium-win/fast/clip/overflow-border-radius-clip-expected.png:
+        * platform/chromium-win/fast/css/nested-rounded-corners-expected.png:
+        * platform/chromium-win/fast/repaint/border-radius-repaint-expected.png:
+        * platform/chromium-win/fast/transforms/shadows-expected.png:
+        * platform/chromium-win/media/video-zoom-controls-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/animate-elem-52-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/shapes-rect-01-t-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/shapes-rect-02-t-expected.png:
+        * platform/chromium-win/svg/custom/dasharrayOrigin-expected.png:
+        * platform/chromium-win/svg/custom/fractional-rects-expected.png:
+        * platform/chromium-win/svg/custom/gradient-rotated-bbox-expected.png:
+        * platform/chromium-win/svg/custom/rounded-rects-expected.png:
+        * platform/chromium-win/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/chromium-win/svg/hixie/perf/001-expected.png:
+        * platform/chromium-win/svg/hixie/perf/002-expected.png:
+        * platform/chromium-win/svg/wicd/rightsizing-grid-expected.png:
+        * platform/chromium-win/svg/wicd/test-scalable-background-image1-expected.png: Added.
+        * platform/chromium-win/svg/wicd/test-scalable-background-image1-expected.txt: Added.
+
 2011-06-02  Jian Li  <jianli@chromium.org>
 
         Reviewed by David Levin.
