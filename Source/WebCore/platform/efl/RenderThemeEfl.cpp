@@ -925,6 +925,16 @@ bool RenderThemeEfl::paintMenuList(RenderObject* object, const PaintInfo& info, 
     return paintThemePart(object, ComboBox, info, rect);
 }
 
+void RenderThemeEfl::adjustMenuListButtonStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
+{
+    adjustMenuListStyle(selector, style, element);
+}
+
+bool RenderThemeEfl::paintMenuListButton(RenderObject* object, const PaintInfo& info, const IntRect& rect)
+{
+    return paintMenuList(object, info, rect);
+}
+
 void RenderThemeEfl::adjustTextFieldStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
     if (!m_page && element && element->document()->page()) {

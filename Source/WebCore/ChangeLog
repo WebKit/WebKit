@@ -1,3 +1,17 @@
+2011-06-01  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Add adjustMenuListButtonStyle and paintMenuListButton functions
+        https://bugs.webkit.org/show_bug.cgi?id=61836
+
+        Add functions for rendering drop-down list when style attributes are applied.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::adjustMenuListButtonStyle):
+        (WebCore::RenderThemeEfl::paintMenuListButton):
+        * platform/efl/RenderThemeEfl.h:
+
 2011-06-01  Yuta Kitamura  <yutak@chromium.org>
 
         Reviewed by Kent Tamura.
