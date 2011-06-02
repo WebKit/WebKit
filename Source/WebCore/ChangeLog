@@ -1,3 +1,17 @@
+2011-06-01  Adrienne Walker  <enne@google.com>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] LayerChromium should use a RefPtr for replica layer
+        https://bugs.webkit.org/show_bug.cgi?id=61898
+
+        Having this member variable be a raw pointer is brittle and assumes
+        that the GraphicsLayer tree keeps this in sync.  There aren't any
+        known bugs caused by this, but it seems like good sense to do this.
+
+        * platform/graphics/chromium/LayerChromium.h:
+        (WebCore::LayerChromium::replicaLayer):
+
 2011-06-02  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

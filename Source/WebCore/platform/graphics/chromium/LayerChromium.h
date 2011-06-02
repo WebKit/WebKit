@@ -148,7 +148,7 @@ public:
     void setOwner(GraphicsLayerChromium* owner) { m_owner = owner; }
 
     void setReplicaLayer(LayerChromium* layer) { m_replicaLayer = layer; }
-    LayerChromium* replicaLayer() { return m_replicaLayer; }
+    LayerChromium* replicaLayer() { return m_replicaLayer.get(); }
 
     // These methods typically need to be overwritten by derived classes.
     virtual bool drawsContent() const { return false; }
@@ -271,7 +271,7 @@ private:
     FloatRect m_frame;
 
     // Replica layer used for reflections.
-    LayerChromium* m_replicaLayer;
+    RefPtr<LayerChromium> m_replicaLayer;
 
     String m_name;
 };
