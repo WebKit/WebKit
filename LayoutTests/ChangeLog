@@ -1,5 +1,11 @@
 2011-06-02  Adam Barth  <abarth@webkit.org>
 
+        This test actually fails as IMAGE not as IMAGE+TEXT.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-02  Adam Barth  <abarth@webkit.org>
+
         New baselines for these tests.  These only differ from the existing baselines by a handful of pixels.
 
         * platform/chromium-linux-x86/fast/borders/border-radius-huge-assert-expected.png: Added.

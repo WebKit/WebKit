@@ -1457,7 +1457,7 @@ BUGCR27486 WIN LINUX : fast/forms/slider-zoomed.html = TEXT
 
 // See WebKit 41948
 // Regressed further at 57820, jamesr investigating
-BUGCR10468 MAC SKIP : fast/replaced/border-radius-clip.html = IMAGE+TEXT
+BUGCR10468 MAC SKIP : fast/replaced/border-radius-clip.html = IMAGE
 
 // Mac flaky failures.
 BUGCR10472 MAC DEBUG : svg/css/glyph-orientation-rounding-test.xhtml = FAIL PASS
