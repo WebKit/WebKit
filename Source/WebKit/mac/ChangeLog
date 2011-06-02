@@ -1,3 +1,20 @@
+2011-06-02  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Need a way to install the memory pressure handler without initializing WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=61975
+
+        Add a WebInstallMemoryPressureHandler function which will install the memory pressure handler.
+        -[WebView WebView _commonInitializationWithFrameName:groupName:usesDocumentViews:] will do this,
+        but we'd like to be able to install a memory pressure handler without creating a WebView or even
+        calling any WebView method since that will call +[WebView initialize].
+
+        * WebKit.exp:
+        * WebView/WebView.mm:
+        (WebInstallMemoryPressureHandler):
+        * WebView/WebViewPrivate.h:
+
 2011-05-27  Stephanie Lewis  <slewis@apple.com>
 
         Unreviewed.

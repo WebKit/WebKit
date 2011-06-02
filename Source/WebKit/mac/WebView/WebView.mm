@@ -6393,6 +6393,11 @@ static void glibContextIterationCallback(CFRunLoopObserverRef, CFRunLoopActivity
 
 @end
 
+void WebInstallMemoryPressureHandler(void)
+{
+    memoryPressureHandler().install();
+}
+
 #ifdef BUILDING_ON_LEOPARD
 
 static IMP originalRecursivelyRemoveMailAttributesImp;
