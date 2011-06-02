@@ -58,6 +58,9 @@ public:
     // Note that this also strips-out any script tag or link to JavaScript.
     WEBKIT_API static void serialize(WebView*, WebVector<Resource>*);
 
+    // Serializes the WebView contents to a MHTML representation.
+    WEBKIT_API static WebCString serializeToMHTML(WebView*);
+
     // IMPORTANT:
     // The API below is an older implementation of a pageserialization that
     // will be removed soon.

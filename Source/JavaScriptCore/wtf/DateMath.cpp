@@ -90,7 +90,7 @@
 #include <limits>
 #include <stdint.h>
 #include <time.h>
-
+#include <wtf/text/StringBuilder.h>
 
 #if HAVE(ERRNO_H)
 #include <errno.h>
@@ -178,6 +178,14 @@ static inline double daysFrom1970ToYear(int year)
 static inline double msToDays(double ms)
 {
     return floor(ms / msPerDay);
+}
+
+static String twoDigitStringFromNumber(int number)
+{
+    ASSERT(number >= 0 && number < 100);
+    if (number > 9)
+        return String::number(number);
+    return makeString("0", String::number(number));
 }
 
 int msToYear(double ms)
@@ -1027,6 +1035,34 @@ double timeClip(double t)
     if (fabs(t) > maxECMAScriptTime)
         return NaN;
     return trunc(t);
+}
+
+// See http://tools.ietf.org/html/rfc2822#section-3.3 for more information.
+String makeRFC2822DateString(unsigned dayOfWeek, unsigned day, unsigned month, unsigned year, unsigned hours, unsigned minutes, unsigned seconds, int utcOffset)
+{
+    StringBuilder stringBuilder;
+    stringBuilder.append(weekdayName[dayOfWeek]);
+    stringBuilder.append(", ");
+    stringBuilder.append(String::number(day));
+    stringBuilder.append(" ");
+    stringBuilder.append(monthName[month]);
+    stringBuilder.append(" ");
+    stringBuilder.append(String::number(year));
+    stringBuilder.append(" ");
+
+    stringBuilder.append(twoDigitStringFromNumber(hours));
+    stringBuilder.append(':');
+    stringBuilder.append(twoDigitStringFromNumber(minutes));
+    stringBuilder.append(':');
+    stringBuilder.append(twoDigitStringFromNumber(seconds));
+    stringBuilder.append(' ');
+
+    stringBuilder.append(utcOffset > 0 ? "+" : "-");
+    int absoluteUTCOffset = abs(utcOffset);
+    stringBuilder.append(twoDigitStringFromNumber(absoluteUTCOffset / 60));
+    stringBuilder.append(twoDigitStringFromNumber(absoluteUTCOffset % 60));
+
+    return stringBuilder.toString();
 }
 } // namespace WTF
 

@@ -117,6 +117,16 @@ const char* SharedBuffer::data() const
     return buffer().data();
 }
 
+void SharedBuffer::append(SharedBuffer* data)
+{
+    const char* segment;
+    size_t position = 0;
+    while (size_t length = data->getSomeData(segment, position)) {
+        append(segment, length);
+        position += length;
+    }
+}
+
 void SharedBuffer::append(const char* data, unsigned length)
 {
     ASSERT(!m_purgeableBuffer);

@@ -38,6 +38,8 @@
 namespace WebCore {
 
 class MHTMLParser;
+class Page;
+class SharedBuffer;
 
 class MHTMLArchive : public Archive {
 public:
@@ -45,6 +47,8 @@ public:
 
     static PassRefPtr<MHTMLArchive> create();
     static PassRefPtr<MHTMLArchive> create(const KURL&, SharedBuffer*);
+
+    static PassRefPtr<SharedBuffer> generateMHTMLData(Page*);
 
 private:
     friend class MHTMLParser;
