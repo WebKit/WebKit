@@ -1,3 +1,24 @@
+2011-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION: Text selection broken for text with line-height applied
+        https://bugs.webkit.org/show_bug.cgi?id=54929
+
+        The bug was caused by RenderText::positionForPoint's not considering the case where a point is
+        above selectionTop and below lineTop of the first root inline box. Fixed the bug by considering
+        any point between selectionTop and lineTop to be inside a root inline box. This condition is
+        consistent with the condition we use to determine the bottom of a line.
+
+        Test: editing/selection/hit-test-on-text-with-line-height.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::positionForPointWithInlineChildren): Fixed a condition to determine whether
+        or not a point is above the first root line box. We need to check both selectionTop and logicalTop
+        for the same reason explained above.
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::positionForPoint): See above.
+
 2011-06-02  Andreas Kling  <kling@webkit.org>
 
         Reviewed by James Robinson.

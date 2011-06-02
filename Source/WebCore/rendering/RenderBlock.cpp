@@ -4138,7 +4138,8 @@ VisiblePosition RenderBlock::positionForPointWithInlineChildren(const IntPoint& 
     }
 
     if (closestBox) {
-        if (moveCaretToBoundary && pointInLogicalContents.y() < firstRootBoxWithChildren->selectionTop()) {
+        if (moveCaretToBoundary && pointInLogicalContents.y() < firstRootBoxWithChildren->selectionTop()
+            && pointInLogicalContents.y() < firstRootBoxWithChildren->logicalTop()) {
             // y coordinate is above first root line box, so return the start of the first
             return VisiblePosition(positionForBox(firstRootBoxWithChildren->firstLeafChild(), true), DOWNSTREAM);
         }

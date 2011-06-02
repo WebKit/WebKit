@@ -1,3 +1,16 @@
+2011-06-01  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION: Text selection broken for text with line-height applied
+        https://bugs.webkit.org/show_bug.cgi?id=54929
+
+        Added a test to ensure WebKit can place caret in text with a line-height smaller than
+        the height of the text.
+
+        * editing/selection/hit-test-on-text-with-line-height-expected.txt: Added.
+        * editing/selection/hit-test-on-text-with-line-height.html: Added.
+
 2011-06-02  Adam Barth  <abarth@webkit.org>
 
         This test actually fails as IMAGE not as IMAGE+TEXT.
