@@ -2008,7 +2008,6 @@ BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.image.source-out.html = 
 BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.pattern.copy.html = TEXT
 BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.pattern.destination-atop.html = TEXT
 BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html = TEXT
-BUGWK39168 : canvas/philip/tests/2d.fillStyle.parse.system.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.pattern.image.undefined.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.bottom.html = TEXT
 BUGWK45991 : canvas/philip/tests/2d.text.draw.baseline.hanging.html = TEXT
