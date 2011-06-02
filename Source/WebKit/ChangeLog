@@ -1,3 +1,14 @@
+2011-06-02  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Update svn:ignore property on Source/WebKit/chromium
+        https://bugs.webkit.org/show_bug.cgi?id=61952
+
+        Add some more generated files and directories mapped in using DEPS to svn:ignore.
+
+        * chromium: Modified property svn:ignore.
+
 2011-05-20  Andy Estes  <aestes@apple.com>
 
         Reviewed by Darin Adler.
