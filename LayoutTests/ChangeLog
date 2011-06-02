@@ -1,3 +1,9 @@
+2011-06-02  Adam Barth  <abarth@webkit.org>
+
+        More examples of SVG tests timing out in debug with Skia.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-02  Adrienne Walker  <enne@google.com>
 
         [chromium] Unreviewed, rebaseline tests after r87822

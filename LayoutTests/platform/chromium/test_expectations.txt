@@ -4015,10 +4015,18 @@ BUGCR84317 DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
 
 BUGWK61767 WIN DEBUG : http/tests/websocket/tests/client-close.html = PASS TEXT
 
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
 
 // Register protocol handler doesn't seem to be enabled on Mac.
