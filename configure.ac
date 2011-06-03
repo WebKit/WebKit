@@ -103,7 +103,7 @@ fi
 # cleanly with that.
 if test "$CXX" = "g++"; then
    CXX_VERSION=`$CXX -dumpversion`
-   AX_COMPARE_VERSION([4.6.0],[ge],[$CXX_VERSION],CXXFLAGS="$CXXFLAGS -Wno-c++0x-compat")
+   AX_COMPARE_VERSION([$CXX_VERSION],[ge],[4.6.0],CXXFLAGS="$CXXFLAGS -Wno-c++0x-compat")
 fi
 
 # pthread (not needed on Windows)

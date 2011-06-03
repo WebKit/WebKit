@@ -1,5 +1,13 @@
 2011-05-09  Xan Lopez  <xlopez@igalia.com>
 
+        Reviewed by Gustavo Noronha.
+
+        Fix logic in GCC version detection, it was reversed.
+
+        * configure.ac:
+
+2011-05-09  Xan Lopez  <xlopez@igalia.com>
+
         Reviewed by Martin Robinson.
 
         [GTK] Remove C++0x compat mode warnings for GCC >= 4.6.0
