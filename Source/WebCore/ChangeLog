@@ -1,3 +1,13 @@
+2011-06-02  Andrey Kosyakov  <caseq@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: ResourceCookiesView.resize() is missing
+        https://bugs.webkit.org/show_bug.cgi?id=61868
+
+        * inspector/front-end/ResourceCookiesView.js:
+        (WebInspector.ResourceCookiesView.prototype.resize):
+
 2011-06-02  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

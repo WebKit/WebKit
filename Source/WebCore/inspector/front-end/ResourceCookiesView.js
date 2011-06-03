@@ -59,6 +59,12 @@ WebInspector.ResourceCookiesView.prototype = {
         this._cookiesTable.updateWidths();
     },
 
+    resize: function()
+    {
+        if (this._cookiesTable)
+            this._cookiesTable.updateWidths();
+    },
+
     get _gotCookies()
     {
         return !!(this._resource.requestCookies || this._resource.responseCookies);
