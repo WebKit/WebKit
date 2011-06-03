@@ -310,6 +310,8 @@ void MediaControlRootElement::reset()
             m_toggleClosedCaptionsButton->hide();
     }
 
+    m_playButton->updateDisplayType();
+
 #if ENABLE(FULLSCREEN_API)
     if (document()->webkitIsFullScreen() && document()->webkitCurrentFullScreenElement() == m_mediaElement) {
         if (m_mediaElement->movieLoadType() == MediaPlayer::LiveStream) {
