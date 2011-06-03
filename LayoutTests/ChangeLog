@@ -1,3 +1,9 @@
+2011-06-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed. Test rebaseline for GTK after revision 87936.
+
+        * platform/gtk/fast/repaint/repaint-across-writing-mode-boundary-expected.txt:
+
 2011-06-03  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Kent Tamura.
