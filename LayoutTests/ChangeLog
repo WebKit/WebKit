@@ -1,5 +1,16 @@
 2011-06-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed, new baselines for GTK after r88007 and r8009.
+
+        * platform/gtk/svg/as-image/img-preserveAspectRatio-support-2-expected.png: Added.
+        * platform/gtk/svg/as-image/img-preserveAspectRatio-support-2-expected.txt: Added.
+        * platform/gtk/svg/as-object/object-box-sizing-no-width-height-expected.png: Added.
+        * platform/gtk/svg/as-object/object-box-sizing-no-width-height-expected.txt: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png: Added.
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Added.
+
+2011-06-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Unreviewed, new baselines for GTK after r88011.
 
         * platform/gtk/fast/frames/flattening/iframe-flattening-out-of-view-and-scroll-expected.png: Added.
