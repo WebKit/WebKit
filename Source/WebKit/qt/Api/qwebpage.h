@@ -105,7 +105,6 @@ public:
         OpenImageInNewWindow,
         DownloadImageToDisk,
         CopyImageToClipboard,
-        CopyImageUrlToClipboard,
 
         Back,
         Forward,
@@ -178,6 +177,8 @@ public:
         AlignRight,
 
         StopScheduledPageRefresh,
+
+        CopyImageUrlToClipboard,
 
         WebActionCount
     };

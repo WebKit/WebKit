@@ -1,3 +1,18 @@
+2011-06-02  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix enum order in qwebpage.h public API header
+        https://bugs.webkit.org/show_bug.cgi?id=61959
+
+        Since qwebpage.h is a public header, we can't change the values of
+        the enumerations. This patch moves the new enumeration to the end
+        of the list. As a bonus, adds a missing entry in
+        editorCommandWebActions table.
+
+        * Api/qwebpage.cpp:
+        * Api/qwebpage.h:
+
 2011-06-02  Andreas Kling  <kling@webkit.org>
 
         Rubber-stamped by Simon Hausmann.
