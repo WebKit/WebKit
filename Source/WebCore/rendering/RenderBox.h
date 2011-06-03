@@ -353,7 +353,7 @@ public:
     void popContentsClip(PaintInfo&, PaintPhase originalPhase, int tx, int ty);
 
     virtual void paintObject(PaintInfo&, int /*tx*/, int /*ty*/) { ASSERT_NOT_REACHED(); }
-    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
+    virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
     virtual void paintMask(PaintInfo&, IntSize);
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 

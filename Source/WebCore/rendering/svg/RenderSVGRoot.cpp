@@ -272,7 +272,7 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
     IntPoint borderBoxOriginInContainer = parentOriginInContainer + parentOriginToBorderBox();
 
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseChildBlockBackground) && isVisible)
-        paintBoxDecorations(paintInfo, borderBoxOriginInContainer.x(), borderBoxOriginInContainer.y());
+        paintBoxDecorations(paintInfo, borderBoxOriginInContainer);
 
     if (paintInfo.phase == PaintPhaseBlockBackground)
         return;

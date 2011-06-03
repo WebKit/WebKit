@@ -1001,7 +1001,7 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, int tx, i
     }
 }
 
-void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
+void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(this))
         return;
@@ -1010,11 +1010,11 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     if (!tableElt->collapseBorders() && style()->emptyCells() == HIDE && !firstChild())
         return;
 
-    IntRect paintRect = IntRect(IntPoint(tx, ty), size());
+    IntRect paintRect = IntRect(paintOffset, size());
     paintBoxShadow(paintInfo.context, paintRect, style(), Normal);
     
     // Paint our cell background.
-    paintBackgroundsBehindCell(paintInfo, tx, ty, this);
+    paintBackgroundsBehindCell(paintInfo, paintOffset.x(), paintOffset.y(), this);
 
     paintBoxShadow(paintInfo.context, paintRect, style(), Inset);
 

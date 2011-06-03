@@ -995,7 +995,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int
             return;
         } else {
             // Paint our background, border and box-shadow.
-            paintBoxDecorations(paintInfo, paintOffset.x(), paintOffset.y());
+            paintBoxDecorations(paintInfo, paintOffset);
         }
     }
 
@@ -1074,34 +1074,40 @@ void InlineFlowBox::paintBoxShadow(GraphicsContext* context, RenderStyle* s, Sha
     }
 }
 
-void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
+void InlineFlowBox::constrainToLineTopAndBottomIfNeeded(IntRect& rect) const
+{
+    bool noQuirksMode = renderer()->document()->inNoQuirksMode();
+    if (!noQuirksMode && !hasTextChildren() && !(descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
+        const RootInlineBox* rootBox = root();
+        int logicalTop = isHorizontal() ? rect.y() : rect.x();
+        int logicalHeight = isHorizontal() ? rect.height() : rect.width();
+        int bottom = min(rootBox->lineBottom(), logicalTop + logicalHeight);
+        logicalTop = max(rootBox->lineTop(), logicalTop);
+        logicalHeight = bottom - logicalTop;
+        if (isHorizontal()) {
+            rect.setY(logicalTop);
+            rect.setHeight(logicalHeight);
+        } else {
+            rect.setX(logicalTop);
+            rect.setWidth(logicalHeight);
+        }
+    }
+}
+
+void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(renderer()) || renderer()->style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseForeground)
         return;
 
     // Pixel snap background/border painting.
     IntRect frameRect = roundedFrameRect();
-    int x = frameRect.x();
-    int y = frameRect.y();
-    int w = frameRect.width();
-    int h = frameRect.height();
 
-    // Constrain our background/border painting to the line top and bottom if necessary.
-    bool noQuirksMode = renderer()->document()->inNoQuirksMode();
-    if (!noQuirksMode && !hasTextChildren() && !(descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
-        RootInlineBox* rootBox = root();
-        int& top = isHorizontal() ? y : x;
-        int& logicalHeight = isHorizontal() ? h : w;
-        int bottom = min(rootBox->lineBottom(), top + logicalHeight);
-        top = max(rootBox->lineTop(), top);
-        logicalHeight = bottom - top;
-    }
+    constrainToLineTopAndBottomIfNeeded(frameRect);
     
     // Move x/y to our coordinates.
-    IntRect localRect(x, y, w, h);
+    IntRect localRect(frameRect);
     flipForWritingMode(localRect);
-    tx += localRect.x();
-    ty += localRect.y();
+    IntPoint adjustedPaintoffset = paintOffset + localRect.location();
     
     GraphicsContext* context = paintInfo.context;
     
@@ -1109,7 +1115,7 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     // a line may actually have to paint a background.
     RenderStyle* styleToUse = renderer()->style(m_firstLine);
     if ((!parent() && m_firstLine && styleToUse != renderer()->style()) || (parent() && renderer()->hasBoxDecorations())) {
-        IntRect paintRect = IntRect(tx, ty, w, h);
+        IntRect paintRect = IntRect(adjustedPaintoffset, frameRect.size());
         // Shadow comes first and is behind the background and border.
         paintBoxShadow(context, styleToUse, Normal, paintRect);
 
@@ -1144,13 +1150,13 @@ void InlineFlowBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
                 int totalLogicalWidth = logicalOffsetOnLine;
                 for (InlineFlowBox* curr = this; curr; curr = curr->nextLineBox())
                     totalLogicalWidth += curr->logicalWidth();
-                int stripX = tx - (isHorizontal() ? logicalOffsetOnLine : 0);
-                int stripY = ty - (isHorizontal() ? 0 : logicalOffsetOnLine);
-                int stripWidth = isHorizontal() ? totalLogicalWidth : w;
-                int stripHeight = isHorizontal() ? h : totalLogicalWidth;
+                int stripX = adjustedPaintoffset.x() - (isHorizontal() ? logicalOffsetOnLine : 0);
+                int stripY = adjustedPaintoffset.y() - (isHorizontal() ? 0 : logicalOffsetOnLine);
+                int stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
+                int stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
 
                 GraphicsContextStateSaver stateSaver(*context);
-                context->clip(IntRect(tx, ty, w, h));
+                context->clip(paintRect);
                 boxModelObject()->paintBorder(context, IntRect(stripX, stripY, stripWidth, stripHeight), renderer()->style());
             }
         }
@@ -1164,24 +1170,11 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
 
     // Pixel snap mask painting.
     IntRect frameRect = roundedFrameRect();
-    int x = frameRect.x();
-    int y = frameRect.y();
-    int w = frameRect.width();
-    int h = frameRect.height();
 
-    // Constrain our background/border painting to the line top and bottom if necessary.
-    bool noQuirksMode = renderer()->document()->inNoQuirksMode();
-    if (!noQuirksMode && !hasTextChildren() && !(descendantsHaveSameLineHeightAndBaseline() && hasTextDescendants())) {
-        RootInlineBox* rootBox = root();
-        int& top = isHorizontal() ? y : x;
-        int& logicalHeight = isHorizontal() ? h : w;
-        int bottom = min(rootBox->lineBottom(), top + logicalHeight);
-        top = max(rootBox->lineTop(), top);
-        logicalHeight = bottom - top;
-    }
+    constrainToLineTopAndBottomIfNeeded(frameRect);
     
     // Move x/y to our coordinates.
-    IntRect localRect(x, y, w, h);
+    IntRect localRect(frameRect);
     flipForWritingMode(localRect);
     tx += localRect.x();
     ty += localRect.y();
@@ -1205,7 +1198,8 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
         }
     }
 
-    paintFillLayers(paintInfo, Color(), renderer()->style()->maskLayers(), IntRect(tx, ty, w, h), compositeOp);
+    IntRect paintRect = IntRect(IntPoint(tx, ty), frameRect.size());
+    paintFillLayers(paintInfo, Color(), renderer()->style()->maskLayers(), paintRect, compositeOp);
     
     bool hasBoxImage = maskBoxImage && maskBoxImage->canRender(renderer()->style()->effectiveZoom());
     if (!hasBoxImage || !maskBoxImage->isLoaded())
@@ -1214,7 +1208,7 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
     // The simple case is where we are the only box for this object.  In those
     // cases only a single call to draw is required.
     if (!prevLineBox() && !nextLineBox()) {
-        boxModelObject()->paintNinePieceImage(paintInfo.context, IntRect(tx, ty, w, h), renderer()->style(), maskNinePieceImage, compositeOp);
+        boxModelObject()->paintNinePieceImage(paintInfo.context, IntRect(IntPoint(tx, ty), frameRect.size()), renderer()->style(), maskNinePieceImage, compositeOp);
     } else {
         // We have a mask image that spans multiple lines.
         // We need to adjust _tx and _ty by the width of all previous lines.
@@ -1226,11 +1220,11 @@ void InlineFlowBox::paintMask(PaintInfo& paintInfo, int tx, int ty)
             totalLogicalWidth += curr->logicalWidth();
         int stripX = tx - (isHorizontal() ? logicalOffsetOnLine : 0);
         int stripY = ty - (isHorizontal() ? 0 : logicalOffsetOnLine);
-        int stripWidth = isHorizontal() ? totalLogicalWidth : w;
-        int stripHeight = isHorizontal() ? h : totalLogicalWidth;
+        int stripWidth = isHorizontal() ? totalLogicalWidth : frameRect.width();
+        int stripHeight = isHorizontal() ? frameRect.height() : totalLogicalWidth;
 
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
-        paintInfo.context->clip(IntRect(tx, ty, w, h));
+        paintInfo.context->clip(paintRect);
         boxModelObject()->paintNinePieceImage(paintInfo.context, IntRect(stripX, stripY, stripWidth, stripHeight), renderer()->style(), maskNinePieceImage, compositeOp);
     }
     

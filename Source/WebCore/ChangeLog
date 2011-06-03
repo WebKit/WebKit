@@ -1,3 +1,49 @@
+2011-06-03  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintBoxDecorations to IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=61968
+
+        Switching paintBoxDecorations to take an IntPoint representing
+        the paint offset instead of a pair of ints. Also cleaning up
+        some duplicated code in InlineFlowBox related to constraining
+        the paint rect to the linetop and linebottom.
+
+        No new tests since this is just refactoring.
+
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        (WebCore::InlineFlowBox::constrainToLineTopAndBottomIfNeeded): Added
+        to remove duplicate code in paintBoxDecorations and paintMask.
+        (WebCore::InlineFlowBox::paintBoxDecorations):
+        (WebCore::InlineFlowBox::paintMask):
+        * rendering/InlineFlowBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::paintBoxDecorations):
+        * rendering/RenderBox.h:
+        * rendering/RenderFieldset.cpp:
+        (WebCore::RenderFieldset::paintBoxDecorations):
+        * rendering/RenderFieldset.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paintObject):
+        (WebCore::RenderTable::paintBoxDecorations):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBoxDecorations):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::paintBoxDecorations):
+        * rendering/RenderView.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+
 2011-06-03  Doreen Jiang  <doreen.jiang@nokia.com>
 
         Reviewed by Benjamin Poulain.

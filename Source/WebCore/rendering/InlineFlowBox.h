@@ -103,7 +103,7 @@ public:
 
     IntRect roundedFrameRect() const;
     
-    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
+    virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
     virtual void paintMask(PaintInfo&, int tx, int ty);
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, const IntRect&, CompositeOperator = CompositeSourceOver);
     void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, const IntRect&, CompositeOperator = CompositeSourceOver);
@@ -276,6 +276,7 @@ private:
     void addBoxShadowVisualOverflow(IntRect& logicalVisualOverflow);
     void addTextBoxVisualOverflow(InlineTextBox*, GlyphOverflowAndFallbackFontsMap&, IntRect& logicalVisualOverflow);
     void addReplacedChildOverflow(const InlineBox*, IntRect& logicalLayoutOverflow, IntRect& logicalVisualOverflow);
+    void constrainToLineTopAndBottomIfNeeded(IntRect&) const;
 
 protected:
     OwnPtr<RenderOverflow> m_overflow;

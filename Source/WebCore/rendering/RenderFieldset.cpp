@@ -118,31 +118,28 @@ RenderBox* RenderFieldset::findLegend() const
     return 0;
 }
 
-void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
+void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(this))
         return;
 
-    int w = width();
-    int h = height();
+    IntRect paintRect(paintOffset, size());
     RenderBox* legend = findLegend();
     if (!legend)
-        return RenderBlock::paintBoxDecorations(paintInfo, tx, ty);
+        return RenderBlock::paintBoxDecorations(paintInfo, paintOffset);
 
     // FIXME: We need to work with "rl" and "bt" block flow directions.  In those
     // cases the legend is embedded in the right and bottom borders respectively.
     // https://bugs.webkit.org/show_bug.cgi?id=47236
     if (style()->isHorizontalWritingMode()) {
         int yOff = (legend->y() > 0) ? 0 : (legend->height() - borderTop()) / 2;
-        h -= yOff;
-        ty += yOff;
+        paintRect.setHeight(paintRect.height() - yOff);
+        paintRect.setY(paintRect.y() + yOff);
     } else {
         int xOff = (legend->x() > 0) ? 0 : (legend->width() - borderLeft()) / 2;
-        w -= xOff;
-        tx += xOff;
+        paintRect.setWidth(paintRect.width() - xOff);
+        paintRect.setX(paintRect.x() + xOff);
     }
-
-    IntRect paintRect = IntRect(tx, ty, w, h);
     
     paintBoxShadow(paintInfo.context, paintRect, style(), Normal);
     paintFillLayers(paintInfo, style()->visitedDependentColor(CSSPropertyBackgroundColor), style()->backgroundLayers(), paintRect);
@@ -159,13 +156,13 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
     // cases the legend is embedded in the right and bottom borders respectively.
     // https://bugs.webkit.org/show_bug.cgi?id=47236
     if (style()->isHorizontalWritingMode()) {
-        int clipTop = ty;
+        int clipTop = paintRect.y();
         int clipHeight = max(static_cast<int>(style()->borderTopWidth()), legend->height());
-        graphicsContext->clipOut(IntRect(tx + legend->x(), clipTop, legend->width(), clipHeight));
+        graphicsContext->clipOut(IntRect(paintRect.x() + legend->x(), clipTop, legend->width(), clipHeight));
     } else {
-        int clipLeft = tx;
+        int clipLeft = paintRect.x();
         int clipWidth = max(static_cast<int>(style()->borderLeftWidth()), legend->width());
-        graphicsContext->clipOut(IntRect(clipLeft, ty + legend->y(), clipWidth, legend->height()));
+        graphicsContext->clipOut(IntRect(clipLeft, paintRect.y() + legend->y(), clipWidth, legend->height()));
     }
 
     paintBorder(paintInfo.context, paintRect, style());

@@ -184,7 +184,7 @@ static inline bool rendererObscuresBackground(RenderObject* object)
         && !isComposited(object);
 }
     
-void RenderView::paintBoxDecorations(PaintInfo& paintInfo, int, int)
+void RenderView::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint&)
 {
     // Check to see if we are enclosed by a layer that requires complex painting rules.  If so, we cannot blit
     // when scrolling, and we need to use slow repaints.  Examples of layers that require this are transparent layers,

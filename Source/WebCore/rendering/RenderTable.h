@@ -216,7 +216,7 @@ private:
 
     virtual void paint(PaintInfo&, int tx, int ty);
     virtual void paintObject(PaintInfo&, int tx, int ty);
-    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
+    virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
     virtual void paintMask(PaintInfo&, IntSize);
     virtual void layout();
     virtual void computePreferredLogicalWidths();

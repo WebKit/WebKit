@@ -2464,7 +2464,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
     // 1. paint background, borders etc
     if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && style()->visibility() == VISIBLE) {
         if (hasBoxDecorations())
-            paintBoxDecorations(paintInfo, tx, ty);
+            paintBoxDecorations(paintInfo, IntPoint(tx, ty));
         if (hasColumns())
             paintColumnRules(paintInfo, tx, ty);
     }

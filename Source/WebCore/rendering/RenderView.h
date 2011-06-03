@@ -70,7 +70,7 @@ public:
     virtual void repaintRectangleInViewAndCompositedLayers(const IntRect&, bool immediate = false);
 
     virtual void paint(PaintInfo&, int tx, int ty);
-    virtual void paintBoxDecorations(PaintInfo&, int tx, int ty);
+    virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
 
     enum SelectionRepaintMode { RepaintNewXOROld, RepaintNewMinusOld };
     void setSelection(RenderObject* start, int startPos, RenderObject* end, int endPos, SelectionRepaintMode = RepaintNewXOROld);

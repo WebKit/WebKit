@@ -825,11 +825,11 @@ BackgroundBleedAvoidance RenderBox::determineBackgroundBleedAvoidance(GraphicsCo
     return BackgroundBleedUseTransparencyLayer;
 }
 
-void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, int tx, int ty)
+void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(this))
         return;
-    IntRect paintRect(tx, ty, width(), height());
+    IntRect paintRect(paintOffset, size());
 
     // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
     // balloon layout is an example of this).
