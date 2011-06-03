@@ -914,9 +914,9 @@ static inline bool compareCellPositions(RenderTableCell* elem1, RenderTableCell*
     return elem1->row() < elem2->row();
 }
 
-void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, int tx, int ty)
+void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
-    IntPoint cellPoint = flipForWritingMode(cell, IntPoint(tx, ty), ParentToChildFlippingAdjustment);
+    IntPoint cellPoint = flipForWritingMode(cell, paintOffset, ParentToChildFlippingAdjustment);
     PaintPhase paintPhase = paintInfo.phase;
     RenderTableRow* row = toRenderTableRow(cell->parent());
 
@@ -1018,7 +1018,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
                     RenderTableCell* cell = current.primaryCell();
                     if (!cell || (r > startrow && primaryCellAt(r - 1, c) == cell) || (c > startcol && primaryCellAt(r, c - 1) == cell))
                         continue;
-                    paintCell(cell, paintInfo, tx, ty);
+                    paintCell(cell, paintInfo, IntPoint(tx, ty));
                 }
             }
         } else {
@@ -1045,7 +1045,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
             int size = cells.size();
             // Paint the cells.
             for (int i = 0; i < size; ++i)
-                paintCell(cells[i], paintInfo, tx, ty);
+                paintCell(cells[i], paintInfo, IntPoint(tx, ty));
         }
     }
 }
