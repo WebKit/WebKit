@@ -2364,7 +2364,7 @@ static Node* traverseNextNodeAcrossFrame(Node* node)
     if (node->isFrameOwnerElement())
         return static_cast<HTMLFrameOwnerElement*>(node)->contentDocument();
     if (ShadowRoot* shadow = shadowRoot(node))
-        return traverseNextNodeAcrossFrame(shadow);
+        return shadow;
     if (node->firstChild())
         return node->firstChild();
     if (node->nextSibling())

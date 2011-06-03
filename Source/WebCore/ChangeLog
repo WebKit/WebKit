@@ -1,3 +1,18 @@
+2011-06-02  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Show a shadow root node itself in Node::traverseNextNodeAcrossFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=61992
+
+        It's better to show a shadow root node itself for debugging.
+        Skipping it didn't add any values.
+
+        No new tests since the function is only available in debug builds.
+
+        * dom/Node.cpp:
+        (WebCore::traverseNextNodeAcrossFrame):
+
 2011-06-02  James Robinson  <jamesr@chromium.org>
 
         Unreviewed, rolling out r87901.
