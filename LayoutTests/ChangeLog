@@ -1,3 +1,13 @@
+2011-06-03  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Unreviewed, pixel baselines for selectlist-minsize.html.
+
+        * platform/chromium-linux/fast/forms/selectlist-minsize-expected.png: Added.
+        * platform/chromium-linux/fast/forms/selectlist-minsize-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/selectlist-minsize-expected.png: Added.
+        * platform/chromium-win/fast/forms/selectlist-minsize-expected.png: Added.
+        * platform/chromium-win/fast/forms/selectlist-minsize-expected.txt: Added.
+
 2011-06-03  Doreen Jiang  <doreen.jiang@nokia.com>
 
         Reviewed by Benjamin Poulain.
