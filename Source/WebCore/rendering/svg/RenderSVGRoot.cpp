@@ -117,18 +117,14 @@ int RenderSVGRoot::computeIntrinsicWidth(int replacedWidth) const
 {
     if (!style()->width().isPercent())
         return replacedWidth;
-
-    SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
-    return static_cast<int>(ceilf(replacedWidth * svg->currentScale()));
+    return static_cast<int>(ceilf(replacedWidth * style()->effectiveZoom()));
 }
 
 int RenderSVGRoot::computeIntrinsicHeight(int replacedHeight) const
 {
     if (!style()->height().isPercent())
         return replacedHeight;
-
-    const SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
-    return static_cast<int>(ceilf(replacedHeight * svg->currentScale()));
+    return static_cast<int>(ceilf(replacedHeight * style()->effectiveZoom()));
 }
 
 void RenderSVGRoot::negotiateSizeWithHostDocumentIfNeeded()
@@ -367,7 +363,7 @@ AffineTransform RenderSVGRoot::localToBorderBoxTransform() const
 {
     IntSize borderAndPadding = borderOriginToContentBox();
     SVGSVGElement* svg = static_cast<SVGSVGElement*>(node());
-    float scale = svg->currentScale();
+    float scale = style()->effectiveZoom();
     FloatPoint translate = svg->currentTranslate();
     AffineTransform ctm(scale, 0, 0, scale, borderAndPadding.width() + translate.x(), borderAndPadding.height() + translate.y());
     return ctm * svg->viewBoxToViewTransform(width() / scale, height() / scale);

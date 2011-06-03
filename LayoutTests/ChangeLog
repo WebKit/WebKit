@@ -1,3 +1,22 @@
+2011-06-03  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Andreas Kling.
+
+        Zooming <object style="width/height: auto" data="foo.svg"/> doesn't work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=62005
+
+        Zooming an object with auto size, that references a svg with fixed size was broken. The svg size stayed the same.
+        Added new tests covering this zooming.
+
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.png:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-2-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.png:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-absolute-size-expected.txt:
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png: Added.
+        * platform/mac/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.txt: Added.
+        * svg/zoom/page/resources/circle.svg: Added.
+        * svg/zoom/page/zoom-svg-through-object-with-auto-size.html: Added.
+
 2011-06-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] Update platform specific expected file after r87873.

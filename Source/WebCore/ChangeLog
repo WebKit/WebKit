@@ -1,3 +1,29 @@
+2011-06-03  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Andreas Kling.
+
+        Zooming <object style="width/height: auto" data="foo.svg"/> doesn't work as expected
+        https://bugs.webkit.org/show_bug.cgi?id=62005
+
+        Zooming an object with auto size, that references a svg with fixed size was broken. The svg size stayed the same.
+        Get rid of the dependency between RenderSVGRoot and SVGSVGElement::currentScale(), always ask for the effective
+        zoom in the RenderStyle instead of asking SVGSVGElement.
+
+        The SVGSVGElement::currentScale()/setCurrentScale() methods are now only used when called from the bindings (eg. JS).
+        They only take effect on the outermost <svg> element in standalone documents, otherwhise they are no-ops.
+
+        Test: svg/zoom/page/zoom-svg-through-object-with-auto-size.html
+
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeIntrinsicWidth):
+        (WebCore::RenderSVGRoot::computeIntrinsicHeight):
+        (WebCore::RenderSVGRoot::localToBorderBoxTransform):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::SVGSVGElement):
+        (WebCore::SVGSVGElement::currentScale):
+        (WebCore::SVGSVGElement::setCurrentScale):
+        * svg/SVGSVGElement.h:
+
 2011-06-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.

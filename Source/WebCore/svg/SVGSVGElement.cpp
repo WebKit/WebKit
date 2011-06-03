@@ -73,7 +73,6 @@ inline SVGSVGElement::SVGSVGElement(const QualifiedName& tagName, Document* doc)
     , m_height(LengthModeHeight, "100%") 
     , m_useCurrentView(false)
     , m_timeContainer(SMILTimeContainer::create(this))
-    , m_scale(1)
     , m_containerSize(300, 150)
     , m_hasSetContainerSize(false)
 {
@@ -199,7 +198,7 @@ SVGViewSpec* SVGSVGElement::currentView() const
 
 float SVGSVGElement::currentScale() const
 {
-    if (!inDocument())
+    if (!inDocument() || !isOutermostSVG())
         return 1;
 
     Frame* frame = document()->frame();
@@ -209,16 +208,15 @@ float SVGSVGElement::currentScale() const
     FrameTree* frameTree = frame->tree();
     ASSERT(frameTree);
 
-    // If we have a parent frame, only return the user-specified m_scale here.
-    if (frameTree->parent())
-        return m_scale;
-
-    return frame->pageZoomFactor();
+    // The behaviour of currentScale() is undefined, when we're dealing with non-standalone SVG documents.
+    // If the svg is embedded, the scaling is handled by the host renderer, so when asking from inside
+    // the SVG document, a scale value of 1 seems reasonable, as it doesn't know anything about the parent scale.
+    return frameTree->parent() ? 1 : frame->pageZoomFactor();
 }
 
 void SVGSVGElement::setCurrentScale(float scale)
 {
-    if (!inDocument())
+    if (!inDocument() || !isOutermostSVG())
         return;
 
     Frame* frame = document()->frame();
@@ -228,20 +226,13 @@ void SVGSVGElement::setCurrentScale(float scale)
     FrameTree* frameTree = frame->tree();
     ASSERT(frameTree);
 
-    bool hasFrameParent = frameTree->parent();
-
-    // Calling setCurrentScale() on the outermost <svg> element in a standalone SVG document
-    // is allowed to change the page zoom factor, influencing the document size, scrollbars etc.
-    if (!hasFrameParent && isOutermostSVG()) {
-        frame->setPageZoomFactor(scale);
-        m_scale = 1;
+    // The behaviour of setCurrentScale() is undefined, when we're dealing with non-standalone SVG documents.
+    // We choose the ignore this call, it's pretty useless to support calling setCurrentScale() from within
+    // an embedded SVG document, for the same reasons as in currentScale() - needs resolution by SVG WG.
+    if (frameTree->parent())
         return;
-    }
 
-    m_scale = scale;
-
-    if (RenderObject* object = renderer())
-        RenderSVGResource::markForLayoutAndParentResourceInvalidation(object);
+    frame->setPageZoomFactor(scale);
 }
 
 void SVGSVGElement::setCurrentTranslate(const FloatPoint& translation)
