@@ -102,7 +102,7 @@ class Worker(manager_worker_broker.AbstractWorker):
         except:
             exception_msg = ", exception raised"
         finally:
-            _log.debug("%s done%s" % (self._name, exception_msg))
+            _log.debug("%s done with message loop%s" % (self._name, exception_msg))
             if exception_msg:
                 exception_type, exception_value, exception_traceback = sys.exc_info()
                 stack_utils.log_traceback(_log.debug, exception_traceback)
@@ -111,6 +111,7 @@ class Worker(manager_worker_broker.AbstractWorker):
                     (exception_type, exception_value, None))
             self._worker_connection.post_message('done')
             self.cleanup()
+            _log.debug("%s exiting" % self._name)
 
     def handle_test_list(self, src, list_name, test_list):
         if list_name == "tests_to_http_lock":
@@ -126,8 +127,7 @@ class Worker(manager_worker_broker.AbstractWorker):
         elapsed_time = time.time() - start_time
         self._worker_connection.post_message('finished_list', list_name, num_tests, elapsed_time)
 
-        if self._has_http_lock:
-            self.stop_servers_with_lock()
+        self.stop_servers_with_lock()
 
     def handle_stop(self, src):
         self._done = True
@@ -145,13 +145,12 @@ class Worker(manager_worker_broker.AbstractWorker):
         self.clean_up_after_test(test_input, result)
 
     def cleanup(self):
-        _log.debug("cleaning up")
+        _log.debug("%s cleaning up" % self._name)
         self.kill_driver()
         self.stop_servers_with_lock()
         if self._tests_run_file:
             self._tests_run_file.close()
             self._tests_run_file = None
-        _log.debug("done cleaning up")
 
     def timeout(self, test_input):
         """Compute the appropriate timeout value for a test."""

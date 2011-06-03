@@ -1,3 +1,13 @@
+2011-06-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: minor logging, code cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=62055
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker.py:
+
 2011-06-03  Martin Robinson  <mrobinson@igalia.com>
 
         Try to fix the build failure on the GTK+ 32-bit Release bot.

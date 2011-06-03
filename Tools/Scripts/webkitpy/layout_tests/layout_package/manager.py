@@ -677,7 +677,7 @@ class Manager:
                     _log.debug('Waiting for worker %d to exit' % worker_state.number)
                     worker_state.worker_connection.join(5.0)
                     if worker_state.worker_connection.is_alive():
-                        _log.error('Worked %d did not exit in time.' % worker_state.number)
+                        _log.error('Worker %d did not exit in time.' % worker_state.number)
 
         except KeyboardInterrupt:
             _log.info("Interrupted, exiting")
