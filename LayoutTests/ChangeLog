@@ -1,5 +1,11 @@
 2011-06-02  Adam Barth  <abarth@webkit.org>
 
+        This process is converging (hopefully).
+
+        * platform/chromium-mac/fast/backgrounds/svg-as-mask-expected.png: Added.
+
+2011-06-02  Adam Barth  <abarth@webkit.org>
+
         Some more fallout from http://trac.webkit.org/changeset/87955, this time on Windows.
 
         * platform/chromium-win-vista/fast/forms/validation-message-appearance-expected.png: Removed.
