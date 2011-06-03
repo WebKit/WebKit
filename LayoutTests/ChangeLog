@@ -1,5 +1,76 @@
 2011-06-02  Adam Barth  <abarth@webkit.org>
 
+        The next round of updated baselines after
+        http://trac.webkit.org/changeset/87955.  Again, these all look fine to
+        visual inspection.
+
+        * platform/chromium-mac-leopard/fast/css/shadow-multiple-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/background-leakage-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/background-leakage-transforms-expected.png: Added.
+        * platform/chromium-mac/fast/backgrounds/svg-as-background-1-expected.png:
+        * platform/chromium-mac/fast/backgrounds/svg-as-mask-expected.png: Removed.
+        * platform/chromium-mac/fast/blockflow/border-radius-clipping-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/blockflow/border-styles-vertical-lr-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/border-styles-vertical-rl-expected.png: Added.
+        * platform/chromium-mac/fast/blockflow/border-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/blockflow/box-shadow-horizontal-bt-expected.png:
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-lr-expected.png:
+        * platform/chromium-mac/fast/blockflow/box-shadow-vertical-rl-expected.png:
+        * platform/chromium-mac/fast/borders/border-radius-circle-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-different-width-001-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-groove-01-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-groove-02-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-groove-03-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-huge-assert-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-inline-flow-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-inset-outset-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-wide-border-02-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-wide-border-03-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-radius-wide-border-04-expected.png: Added.
+        * platform/chromium-mac/fast/borders/border-styles-split-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDashed01-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusDashed04-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusDashed05-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDashed06-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDotted02-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDotted03-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDotted04-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDotted05-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDotted06-expected.png:
+        * platform/chromium-mac/fast/borders/borderRadiusDouble04-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDouble05-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDouble06-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDouble07-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDouble08-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusDouble09-expected.png: Added.
+        * platform/chromium-mac/fast/borders/borderRadiusInvalidColor-expected.png: Added.
+        * platform/chromium-mac/fast/borders/mixed-border-styles-radius-expected.png: Added.
+        * platform/chromium-mac/fast/borders/mixed-border-styles-radius2-expected.png: Added.
+        * platform/chromium-mac/fast/borders/webkit-border-radius-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-mac/fast/box-shadow/shadow-tiling-artifact-expected.png: Added.
+        * platform/chromium-mac/fast/box-shadow/spread-expected.png:
+        * platform/chromium-mac/fast/css/border-radius-non-negative-expected.png: Added.
+        * platform/chromium-mac/fast/css/box-shadow-and-border-radius-expected.png: Added.
+        * platform/chromium-mac/fast/css/shadow-multiple-expected.png: Added.
+        * platform/chromium-mac/fast/forms/basic-selects-expected.png: Added.
+        * platform/chromium-mac/fast/forms/menulist-clip-expected.png: Added.
+        * platform/chromium-mac/fast/forms/menulist-option-wrap-expected.png: Added.
+        * platform/chromium-mac/fast/forms/menulist-restrict-line-height-expected.png: Added.
+        * platform/chromium-mac/fast/forms/menulist-separator-painting-expected.png: Added.
+        * platform/chromium-mac/fast/forms/menulist-style-color-expected.png: Added.
+        * platform/chromium-mac/fast/forms/select-background-none-expected.png:
+        * platform/chromium-mac/fast/forms/select-baseline-expected.png: Added.
+        * platform/chromium-mac/fast/forms/select-empty-option-height-expected.png: Added.
+        * platform/chromium-mac/fast/forms/validation-message-appearance-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-horizontal-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-horizontal-expected.png:
+        * platform/chromium-mac/fast/repaint/shadow-multiple-strict-vertical-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/shadow-multiple-vertical-expected.png: Added.
+        * platform/chromium-mac/svg/carto.net/button-expected.png: Added.
+
+2011-06-02  Adam Barth  <abarth@webkit.org>
+
         First round of baseline updates after
         http://trac.webkit.org/changeset/87955 changed some floating point
         calculations for borders.  Visually, these appear to all be fine.
