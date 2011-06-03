@@ -4916,7 +4916,7 @@ void Document::webkitDidEnterFullScreenForElement(Element*)
 
 void Document::webkitWillExitFullScreenForElement(Element*)
 {
-    setContainsFullScreenElementRecursively(ownerElement(), false);
+    setContainsFullScreenElementRecursively(m_fullScreenElement->parentElement() ? m_fullScreenElement->parentElement() : ownerElement(), false);
     
     m_fullScreenElement->willStopBeingFullscreenElement();
 
