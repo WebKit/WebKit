@@ -134,8 +134,10 @@ void TiledDrawingAreaTile::incorporateUpdate(const UpdateInfo& updateInfo, float
 
     const QSize tileSize = m_proxy->tileSize();
 
-    if (m_backBuffer.size() != tileSize)
+    if (m_backBuffer.size() != tileSize) {
         m_backBuffer = QPixmap(tileSize);
+        m_backBuffer.fill(Qt::transparent);
+    }
 
     QPainter painter(&m_backBuffer);
     painter.drawPixmap(0, 0, m_buffer);

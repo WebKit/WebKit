@@ -1,3 +1,13 @@
+2011-06-03  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] TiledDrawingArea: Initialize tiles to transparent.
+
+        * UIProcess/qt/TiledDrawingAreaTileQt.cpp:
+        (WebKit::TiledDrawingAreaTile::incorporateUpdate): When constructing new
+        back buffers, fill them with transparent pixels.
+
 2011-06-03  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Andreas Kling.
