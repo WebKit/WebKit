@@ -80,6 +80,8 @@ private:
 #if PLATFORM(QT)
     QPixmap m_buffer;
     QPixmap m_backBuffer;
+    bool m_isBackBufferValid;
+    bool m_isFrontBufferValid;
     QRegion m_dirtyRegion;
 #endif
 };

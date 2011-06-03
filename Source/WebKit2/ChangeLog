@@ -1,3 +1,26 @@
+2011-06-03  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt][WK2] Make tiling on WebKit2 more responsive.
+        https://bugs.webkit.org/show_bug.cgi?id=50064
+
+        Instead of creating and destroying pixmaps, and copying them using QPixmap::copy()
+        or relying on the implicit sharing functionality, we keep the QPixmaps alive
+        and just make sure their content is synchronized.
+
+        This seems to improve responsiveness noticably, as now the UI process doesn't deal
+        with allocating/deallocating pixmaps, and the copies are done with the optimized
+        path (QPainter) vs the unoptimized ones (QPixmap::copy().)
+
+        * UIProcess/TiledDrawingAreaTile.h:
+        * UIProcess/qt/TiledDrawingAreaTileQt.cpp:
+        (WebKit::TiledDrawingAreaTile::TiledDrawingAreaTile):
+        (WebKit::TiledDrawingAreaTile::isReadyToPaint):
+        (WebKit::TiledDrawingAreaTile::hasReadyBackBuffer):
+        (WebKit::TiledDrawingAreaTile::swapBackBufferToFront):
+        (WebKit::TiledDrawingAreaTile::incorporateUpdate):
+
 2011-06-03  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

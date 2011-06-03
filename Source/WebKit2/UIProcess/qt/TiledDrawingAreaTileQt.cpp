@@ -47,6 +47,8 @@ TiledDrawingAreaTile::TiledDrawingAreaTile(TiledDrawingAreaProxy* proxy, const C
     , m_coordinate(tileCoordinate)
     , m_rect(proxy->tileRectForCoordinate(tileCoordinate))
     , m_hasUpdatePending(false)
+    , m_isBackBufferValid(false)
+    , m_isFrontBufferValid(false)
     , m_dirtyRegion(m_rect)
 {
     static int id = 0;
@@ -70,12 +72,12 @@ bool TiledDrawingAreaTile::isDirty() const
 
 bool TiledDrawingAreaTile::isReadyToPaint() const
 {
-    return !m_buffer.isNull();
+    return m_isFrontBufferValid;
 }
 
 bool TiledDrawingAreaTile::hasReadyBackBuffer() const
 {
-    return !m_backBuffer.isNull() && !m_hasUpdatePending;
+    return m_isBackBufferValid && !m_hasUpdatePending;
 }
 
 void TiledDrawingAreaTile::invalidate(const IntRect& dirtyRect)
@@ -101,8 +103,11 @@ void TiledDrawingAreaTile::swapBackBufferToFront()
 {
     ASSERT(!m_backBuffer.isNull());
 
+    const QPixmap swap = m_buffer;
     m_buffer = m_backBuffer;
-    m_backBuffer = QPixmap();
+    m_isFrontBufferValid = m_isBackBufferValid;
+    m_isBackBufferValid = false;
+    m_backBuffer = swap;
 }
 
 void TiledDrawingAreaTile::paint(GraphicsContext* context, const IntRect& rect)
@@ -120,24 +125,22 @@ void TiledDrawingAreaTile::paint(GraphicsContext* context, const IntRect& rect)
 
 void TiledDrawingAreaTile::incorporateUpdate(const UpdateInfo& updateInfo, float)
 {
+    m_isBackBufferValid = true;
+    m_hasUpdatePending = false;
+
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(updateInfo.bitmapHandle);
     QImage image(bitmap->createQImage());
     const IntRect& updateChunkRect = updateInfo.updateRectBounds;
 
-#ifdef TILE_DEBUG_LOG
-    qDebug() << "tile updated id=" << ID() << " rect=" << QRect(updateChunkRect);
-#endif
-    if (updateChunkRect.size() == m_proxy->tileSize()) {
-        // Make a deep copy of the image since it's in shared memory.
-        m_backBuffer = QPixmap::fromImage(image.copy());
-    } else {
-        if (m_backBuffer.isNull())
-            m_backBuffer = m_buffer.isNull() ? QPixmap(m_proxy->tileSize()) : m_buffer;
-        QPainter painter(&m_backBuffer);
-        IntSize drawPoint = updateChunkRect.location() - m_rect.location();
-        painter.drawImage(QPoint(drawPoint.width(), drawPoint.height()), image);
-    }
-    m_hasUpdatePending = false;
+    const QSize tileSize = m_proxy->tileSize();
+
+    if (m_backBuffer.size() != tileSize)
+        m_backBuffer = QPixmap(tileSize);
+
+    QPainter painter(&m_backBuffer);
+    painter.drawPixmap(0, 0, m_buffer);
+    IntSize drawPoint = updateChunkRect.location() - m_rect.location();
+    painter.drawImage(QPoint(drawPoint.width(), drawPoint.height()), image);
 }
 
 void TiledDrawingAreaTile::updateBackBuffer()
