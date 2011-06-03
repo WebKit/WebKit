@@ -1,3 +1,16 @@
+2011-06-03  Robert Kroeger  <rjkroege@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Modified addTouchPoint to correctly re-use touchPoint id values starting
+        from the lowest not-un-use touchPoint id as is done by the embedder
+        APIs. (Fixes BUGCR36415)
+
+        https://bugs.webkit.org/show_bug.cgi?id=62016
+
+        * DumpRenderTree/chromium/EventSender.cpp:
+        (EventSender::addTouchPoint):
+
 2011-06-03  Cary Clark  <caryclark@google.com>
 
         Reviewed by Eric Seidel.

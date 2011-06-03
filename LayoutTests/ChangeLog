@@ -1,3 +1,12 @@
+2011-06-03  Robert Kroeger  <rjkroege@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Removed test_expectations failure entry for BUGCR36415 as is fixed
+        with patch in https://bugs.webkit.org/show_bug.cgi?id=62016
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-03  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, pixel baselines for selectlist-minsize.html.

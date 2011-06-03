@@ -1854,11 +1854,6 @@ BUGCR37962 LINUX DEBUG : fast/forms/multiple-form-submission-protection-mouse.ht
 // Flaky test
 BUG_JIANLI MAC : fast/forms/select-style.html = IMAGE PASS
 
-// The touch targeting logic was recently changed.
-// TIMEOUT added for WebKit roll 74534:74557
-// FAIL added because of differing failure modes on different platforms
-BUGCR36415 : fast/events/touch/touch-target.html = FAIL TIMEOUT
-
 // One pixel changes from gray 0x83 to gray 0x81. Valgrind is clean.
 BUGCR38534 LINUX : tables/mozilla/bugs/bug20804.html = IMAGE PASS
 
