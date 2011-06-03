@@ -1,3 +1,15 @@
+2011-06-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Benjamin Poulain.
+
+        Some warning fixes. Values in switch not handled, and
+        a comparison between a signed and an unsigned.
+
+        * Api/qwebpage.cpp:
+        (QWebPagePrivate::inputMethodEvent):
+        (QWebPagePrivate::dynamicPropertyChangeEvent):
+        (QWebPage::action):
+
 2011-06-02  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Andreas Kling.

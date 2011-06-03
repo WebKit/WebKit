@@ -1112,6 +1112,8 @@ void QWebPagePrivate::inputMethodEvent(QInputMethodEvent *ev)
             }
             break;
         }
+        default:
+            break;
         }
     }
 
@@ -1175,7 +1177,7 @@ void QWebPagePrivate::dynamicPropertyChangeEvent(QDynamicPropertyChangeEvent* ev
         };
 
         QString p = q->property("_q_RepaintThrottlingPreset").toString();
-        for(int i = 0; i < sizeof(presets) / sizeof(presets[0]); i++) {
+        for (size_t i = 0; i < sizeof(presets) / sizeof(presets[0]); i++) {
             if (p == QLatin1String(presets[i].name)) {
                 FrameView::setRepaintThrottlingDeferredRepaintDelay(
                         presets[i].deferredRepaintDelay);
@@ -2967,9 +2969,10 @@ QAction *QWebPage::action(WebAction action) const
         case AlignRight:
             text = tr("Align Right");
             break;
-
         case NoWebAction:
             return 0;
+        default:
+            break;
     }
 
     if (text.isEmpty())
