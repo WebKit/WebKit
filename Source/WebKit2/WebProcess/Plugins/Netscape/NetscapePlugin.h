@@ -57,6 +57,8 @@ public:
     NPBool convertPoint(double sourceX, double sourceY, NPCoordinateSpace sourceSpace, double& destX, double& destY, NPCoordinateSpace destSpace);
     NPError popUpContextMenu(NPMenu*);
 
+    void setPluginReturnsNonretainedLayer(bool pluginReturnsNonretainedLayer) { m_pluginReturnsNonretainedLayer = pluginReturnsNonretainedLayer; }
+
     mach_port_t compositingRenderServerPort();
 
 #ifndef NP_NO_CARBON
@@ -225,7 +227,9 @@ private:
 #if PLUGIN_ARCHITECTURE(MAC)
     NPDrawingModel m_drawingModel;
     NPEventModel m_eventModel;
+
     RetainPtr<PlatformLayer> m_pluginLayer;
+    bool m_pluginReturnsNonretainedLayer;
 
     NPCocoaEvent* m_currentMouseEvent;
 
