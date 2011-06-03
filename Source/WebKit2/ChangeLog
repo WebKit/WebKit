@@ -1,5 +1,18 @@
 2011-06-02  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 87857.
+
+    2011-06-01  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Non-users need access to the mds caches for SSL support.
+        <rdar://problem/9471799>
+
+        * WebProcess/com.apple.WebProcess.sb:
+
+2011-06-02  Lucas Forschler  <lforschler@apple.com>
+
     Merged 87768.
 
     2011-05-31  Jer Noble  <jer.noble@apple.com>
