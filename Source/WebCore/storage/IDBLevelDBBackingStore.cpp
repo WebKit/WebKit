@@ -41,11 +41,6 @@
 #include "LevelDBTransaction.h"
 #include "SecurityOrigin.h"
 
-#ifndef INT64_MAX
-// FIXME: We shouldn't need to rely on these macros.
-#define INT64_MAX 0x7fffffffffffffffLL
-#endif
-
 namespace WebCore {
 
 using namespace IDBLevelDBCoding;
@@ -183,7 +178,7 @@ bool IDBLevelDBBackingStore::extractIDBDatabaseMetaData(const String& name, Stri
 static int64_t getNewDatabaseId(LevelDBDatabase* db)
 {
     const Vector<char> freeListStartKey = DatabaseFreeListKey::encode(0);
-    const Vector<char> freeListStopKey = DatabaseFreeListKey::encode(INT64_MAX);
+    const Vector<char> freeListStopKey = DatabaseFreeListKey::encodeMaxKey();
 
     OwnPtr<LevelDBIterator> it = db->createIterator();
     for (it->seek(freeListStartKey); it->isValid() && compareKeys(it->key(), freeListStopKey) < 0; it->next()) {
@@ -234,7 +229,7 @@ bool IDBLevelDBBackingStore::setIDBDatabaseMetaData(const String& name, const St
 void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>& foundIds, Vector<String>& foundNames, Vector<String>& foundKeyPaths, Vector<bool>& foundAutoIncrementFlags)
 {
     const Vector<char> startKey = ObjectStoreMetaDataKey::encode(databaseId, 1, 0);
-    const Vector<char> stopKey = ObjectStoreMetaDataKey::encode(databaseId, INT64_MAX, 0);
+    const Vector<char> stopKey = ObjectStoreMetaDataKey::encodeMaxKey(databaseId);
 
     OwnPtr<LevelDBIterator> it = m_db->createIterator();
     for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {
@@ -291,7 +286,7 @@ void IDBLevelDBBackingStore::getObjectStores(int64_t databaseId, Vector<int64_t>
 static int64_t getNewObjectStoreId(LevelDBTransaction* transaction, int64_t databaseId)
 {
     const Vector<char> freeListStartKey = ObjectStoreFreeListKey::encode(databaseId, 0);
-    const Vector<char> freeListStopKey = ObjectStoreFreeListKey::encode(databaseId, INT64_MAX);
+    const Vector<char> freeListStopKey = ObjectStoreFreeListKey::encodeMaxKey(databaseId);
 
     OwnPtr<LevelDBIterator> it = transaction->createIterator();
     for (it->seek(freeListStartKey); it->isValid() && compareKeys(it->key(), freeListStopKey) < 0; it->next()) {
@@ -406,9 +401,9 @@ void IDBLevelDBBackingStore::deleteObjectStore(int64_t databaseId, int64_t objec
     putString(m_currentTransaction.get(), ObjectStoreFreeListKey::encode(databaseId, objectStoreId), "");
     m_currentTransaction->remove(ObjectStoreNamesKey::encode(databaseId, objectStoreName));
 
-    if (!deleteRange(m_currentTransaction.get(), IndexFreeListKey::encode(databaseId, objectStoreId, 0), IndexFreeListKey::encode(databaseId, objectStoreId, INT64_MAX)))
+    if (!deleteRange(m_currentTransaction.get(), IndexFreeListKey::encode(databaseId, objectStoreId, 0), IndexFreeListKey::encodeMaxKey(databaseId, objectStoreId)))
         return; // FIXME: Report error.
-    if (!deleteRange(m_currentTransaction.get(), IndexMetaDataKey::encode(databaseId, objectStoreId, 0, 0), IndexMetaDataKey::encode(databaseId, objectStoreId, INT64_MAX, 0)))
+    if (!deleteRange(m_currentTransaction.get(), IndexMetaDataKey::encode(databaseId, objectStoreId, 0, 0), IndexMetaDataKey::encodeMaxKey(databaseId, objectStoreId)))
         return; // FIXME: Report error.
 
     clearObjectStore(databaseId, objectStoreId);
@@ -639,7 +634,7 @@ void IDBLevelDBBackingStore::getIndexes(int64_t databaseId, int64_t objectStoreI
 static int64_t getNewIndexId(LevelDBTransaction* transaction, int64_t databaseId, int64_t objectStoreId)
 {
     const Vector<char> startKey = IndexFreeListKey::encode(databaseId, objectStoreId, 0);
-    const Vector<char> stopKey = IndexFreeListKey::encode(databaseId, objectStoreId, INT64_MAX);
+    const Vector<char> stopKey = IndexFreeListKey::encodeMaxKey(databaseId, objectStoreId);
 
     OwnPtr<LevelDBIterator> it = transaction->createIterator();
     for (it->seek(startKey); it->isValid() && compareKeys(it->key(), stopKey) < 0; it->next()) {

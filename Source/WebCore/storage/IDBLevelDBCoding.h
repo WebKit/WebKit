@@ -104,6 +104,7 @@ public:
     DatabaseFreeListKey();
     static const char* decode(const char* start, const char* limit, DatabaseFreeListKey* result);
     static Vector<char> encode(int64_t databaseId);
+    static Vector<char> encodeMaxKey();
     int64_t databaseId() const;
     int compare(const DatabaseFreeListKey& other) const;
 
@@ -141,6 +142,7 @@ public:
     ObjectStoreMetaDataKey();
     static const char* decode(const char* start, const char* limit, ObjectStoreMetaDataKey* result);
     static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, int64_t metaDataType);
+    static Vector<char> encodeMaxKey(int64_t databaseId);
     int64_t objectStoreId() const;
     int64_t metaDataType() const;
     int compare(const ObjectStoreMetaDataKey& other);
@@ -155,6 +157,7 @@ public:
     IndexMetaDataKey();
     static const char* decode(const char* start, const char* limit, IndexMetaDataKey* result);
     static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, int64_t indexId, unsigned char metaDataType);
+    static Vector<char> encodeMaxKey(int64_t databaseId, int64_t objectStoreId);
     int compare(const IndexMetaDataKey& other);
     int64_t indexId() const;
     unsigned char metaDataType() const { return m_metaDataType; }
@@ -170,6 +173,7 @@ public:
     ObjectStoreFreeListKey();
     static const char* decode(const char* start, const char* limit, ObjectStoreFreeListKey* result);
     static Vector<char> encode(int64_t databaseId, int64_t objectStoreId);
+    static Vector<char> encodeMaxKey(int64_t databaseId);
     int64_t objectStoreId() const;
     int compare(const ObjectStoreFreeListKey& other);
 
@@ -182,6 +186,7 @@ public:
     IndexFreeListKey();
     static const char* decode(const char* start, const char* limit, IndexFreeListKey* result);
     static Vector<char> encode(int64_t databaseId, int64_t objectStoreId, int64_t indexId);
+    static Vector<char> encodeMaxKey(int64_t databaseId, int64_t objectStoreId);
     int compare(const IndexFreeListKey& other);
     int64_t objectStoreId() const;
     int64_t indexId() const;

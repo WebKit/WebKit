@@ -1,3 +1,28 @@
+2011-06-03  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Steve Block.
+
+        IndexedDB: Clean-up use of INT64_MAX in LevelDB back-end
+        https://bugs.webkit.org/show_bug.cgi?id=62009
+
+        This constant should only be needed inside IDBLevelDBCoding.cpp.
+
+        No new functionality, no new tests.
+
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::getNewDatabaseId):
+        (WebCore::IDBLevelDBBackingStore::getObjectStores):
+        (WebCore::getNewObjectStoreId):
+        (WebCore::IDBLevelDBBackingStore::deleteObjectStore):
+        (WebCore::getNewIndexId):
+        * storage/IDBLevelDBCoding.cpp:
+        (WebCore::IDBLevelDBCoding::DatabaseFreeListKey::encodeMaxKey):
+        (WebCore::IDBLevelDBCoding::ObjectStoreMetaDataKey::encodeMaxKey):
+        (WebCore::IDBLevelDBCoding::IndexMetaDataKey::encodeMaxKey):
+        (WebCore::IDBLevelDBCoding::ObjectStoreFreeListKey::encodeMaxKey):
+        (WebCore::IDBLevelDBCoding::IndexFreeListKey::encodeMaxKey):
+        * storage/IDBLevelDBCoding.h:
+
 2011-06-03  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Benjamin Poulain.

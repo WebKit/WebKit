@@ -145,7 +145,6 @@ static const unsigned char kObjectStoreNamesTypeByte = 200;
 static const unsigned char kIndexNamesKeyTypeByte = 201;
 
 #ifndef INT64_MAX
-// FIXME: We shouldn't need to rely on these macros.
 #define INT64_MAX 0x7fffffffffffffffLL
 #endif
 #ifndef INT32_MAX
@@ -750,6 +749,11 @@ Vector<char> DatabaseFreeListKey::encode(int64_t databaseId)
     return ret;
 }
 
+Vector<char> DatabaseFreeListKey::encodeMaxKey()
+{
+    return encode(INT64_MAX);
+}
+
 int64_t DatabaseFreeListKey::databaseId() const
 {
     ASSERT(m_databaseId >= 0);
@@ -848,6 +852,11 @@ Vector<char> ObjectStoreMetaDataKey::encode(int64_t databaseId, int64_t objectSt
     return ret;
 }
 
+Vector<char> ObjectStoreMetaDataKey::encodeMaxKey(int64_t databaseId)
+{
+    return encode(databaseId, INT64_MAX, INT64_MAX);
+}
+
 int64_t ObjectStoreMetaDataKey::objectStoreId() const
 {
     ASSERT(m_objectStoreId >= 0);
@@ -913,6 +922,11 @@ Vector<char> IndexMetaDataKey::encode(int64_t databaseId, int64_t objectStoreId,
     return ret;
 }
 
+Vector<char> IndexMetaDataKey::encodeMaxKey(int64_t databaseId, int64_t objectStoreId)
+{
+    return encode(databaseId, objectStoreId, INT64_MAX, 255);
+}
+
 int IndexMetaDataKey::compare(const IndexMetaDataKey& other)
 {
     ASSERT(m_objectStoreId >= 0);
@@ -961,6 +975,11 @@ Vector<char> ObjectStoreFreeListKey::encode(int64_t databaseId, int64_t objectSt
     ret.append(encodeByte(kObjectStoreFreeListTypeByte));
     ret.append(encodeVarInt(objectStoreId));
     return ret;
+}
+
+Vector<char> ObjectStoreFreeListKey::encodeMaxKey(int64_t databaseId)
+{
+    return encode(databaseId, INT64_MAX);
 }
 
 int64_t ObjectStoreFreeListKey::objectStoreId() const
@@ -1013,6 +1032,11 @@ Vector<char> IndexFreeListKey::encode(int64_t databaseId, int64_t objectStoreId,
     ret.append(encodeVarInt(objectStoreId));
     ret.append(encodeVarInt(indexId));
     return ret;
+}
+
+Vector<char> IndexFreeListKey::encodeMaxKey(int64_t databaseId, int64_t objectStoreId)
+{
+    return encode(databaseId, objectStoreId, INT64_MAX);
 }
 
 int IndexFreeListKey::compare(const IndexFreeListKey& other)

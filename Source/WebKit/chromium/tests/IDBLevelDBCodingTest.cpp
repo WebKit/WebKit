@@ -34,11 +34,6 @@
 #include <gtest/gtest.h>
 #include <wtf/Vector.h>
 
-#ifndef INT64_MAX
-// FIXME: We shouldn't need to rely on these macros.
-#define INT64_MAX 0x7fffffffffffffffLL
-#endif
-
 using namespace WebCore;
 using namespace IDBLevelDBCoding;
 
@@ -345,42 +340,38 @@ TEST(IDBLevelDBCodingTest, ComparisonTest)
     keys.append(SchemaVersionKey::encode());
     keys.append(MaxDatabaseIdKey::encode());
     keys.append(DatabaseFreeListKey::encode(0));
-    keys.append(DatabaseFreeListKey::encode(INT64_MAX));
+    keys.append(DatabaseFreeListKey::encodeMaxKey());
     keys.append(DatabaseNameKey::encode("", ""));
     keys.append(DatabaseNameKey::encode("", "a"));
     keys.append(DatabaseNameKey::encode("a", "a"));
     keys.append(DatabaseMetaDataKey::encode(1, DatabaseMetaDataKey::kOriginName));
     keys.append(ObjectStoreMetaDataKey::encode(1, 1, 0));
-    keys.append(ObjectStoreMetaDataKey::encode(1, INT64_MAX, 0));
+    keys.append(ObjectStoreMetaDataKey::encodeMaxKey(1));
     keys.append(IndexMetaDataKey::encode(1, 1, 30, 0));
-    keys.append(IndexMetaDataKey::encode(1, 1, INT64_MAX, 0));
+    keys.append(IndexMetaDataKey::encode(1, 1, 31, 0));
+    keys.append(IndexMetaDataKey::encode(1, 1, 31, 1));
     keys.append(ObjectStoreFreeListKey::encode(1, 1));
-    keys.append(ObjectStoreFreeListKey::encode(1, INT64_MAX));
-    keys.append(IndexFreeListKey::encode(1, 1, 30));
-    keys.append(IndexFreeListKey::encode(1, 1, INT64_MAX));
-    keys.append(IndexFreeListKey::encode(1, INT64_MAX, 30));
-    keys.append(IndexFreeListKey::encode(1, INT64_MAX, INT64_MAX));
+    keys.append(ObjectStoreFreeListKey::encodeMaxKey(1));
+    keys.append(IndexFreeListKey::encode(1, 1, kMinimumIndexId));
+    keys.append(IndexFreeListKey::encodeMaxKey(1, 1));
+    keys.append(IndexFreeListKey::encode(1, 2, kMinimumIndexId));
+    keys.append(IndexFreeListKey::encodeMaxKey(1, 2));
     keys.append(ObjectStoreNamesKey::encode(1, ""));
     keys.append(ObjectStoreNamesKey::encode(1, "a"));
     keys.append(IndexNamesKey::encode(1, 1, ""));
     keys.append(IndexNamesKey::encode(1, 1, "a"));
-    keys.append(IndexNamesKey::encode(1, INT64_MAX, "a"));
+    keys.append(IndexNamesKey::encode(1, 2, "a"));
     keys.append(ObjectStoreDataKey::encode(1, 1, minIDBKey()));
     keys.append(ObjectStoreDataKey::encode(1, 1, maxIDBKey()));
     keys.append(ExistsEntryKey::encode(1, 1, minIDBKey()));
     keys.append(ExistsEntryKey::encode(1, 1, maxIDBKey()));
     keys.append(IndexDataKey::encode(1, 1, 30, minIDBKey(), 0));
-    keys.append(IndexDataKey::encode(1, 1, 30, minIDBKey(), INT64_MAX));
+    keys.append(IndexDataKey::encode(1, 1, 30, minIDBKey(), 1));
     keys.append(IndexDataKey::encode(1, 1, 30, maxIDBKey(), 0));
-    keys.append(IndexDataKey::encode(1, 1, 30, maxIDBKey(), INT64_MAX));
+    keys.append(IndexDataKey::encode(1, 1, 30, maxIDBKey(), 1));
     keys.append(IndexDataKey::encode(1, 1, 31, minIDBKey(), 0));
     keys.append(IndexDataKey::encode(1, 2, 30, minIDBKey(), 0));
     keys.append(IndexDataKey::encodeMaxKey(1, 2));
-    keys.append(ObjectStoreDataKey::encode(1, INT64_MAX, minIDBKey()));
-    keys.append(ExistsEntryKey::encode(1, INT64_MAX, maxIDBKey()));
-    keys.append(IndexDataKey::encodeMaxKey(1, INT64_MAX));
-    keys.append(DatabaseMetaDataKey::encode(INT64_MAX, DatabaseMetaDataKey::kOriginName));
-    keys.append(IndexDataKey::encodeMaxKey(INT64_MAX, INT64_MAX));
 
     for (size_t i = 0; i < keys.size(); ++i) {
         const LevelDBSlice keyA(keys[i]);
