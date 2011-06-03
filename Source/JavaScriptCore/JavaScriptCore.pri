@@ -57,10 +57,13 @@ win32-*: DEFINES += _HAS_TR1=0
 
 DEFINES += BUILDING_JavaScriptCore BUILDING_WTF
 
-# CONFIG += text_breaking_with_icu
-
-contains (CONFIG, text_breaking_with_icu) {
-    DEFINES += WTF_USE_QT_ICU_TEXT_BREAKING=1
+contains(CONFIG, use_system_icu) {
+    DEFINES += WTF_USE_ICU_UNICODE=1
+    DEFINES -= WTF_USE_QT4_UNICODE
+    LIBS += -licuuc -licui18n
+} else {
+    DEFINES += WTF_USE_QT4_UNICODE=1
+    DEFINES -= WTF_USE_ICU_UNICODE
 }
 
 wince* {

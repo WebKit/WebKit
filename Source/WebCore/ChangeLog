@@ -1,3 +1,30 @@
+2011-06-03  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Build flag for experimental ICU library support
+        https://bugs.webkit.org/show_bug.cgi?id=60786
+
+        Adds a build-time flag (CONFIG+=use_system_icu) that enables experimental 
+        ICU powered Unicode support. 
+
+        No new tests as no new features added.
+
+        * WebCore.pri: Removed text_breaking_with_icu CONFIG flag. 
+        * WebCore.pro: Added TextCodecICU.cpp and qt/TextBreakIteratorInternalICUQt.cpp.
+        * editing/qt/SmartReplaceQt.cpp:
+        * features.pri: Support for use_system_icu CONFIG flag.
+        * platform/text/TextCodecICU.cpp: Guard with USE(ICU_UNICODE). 
+        * platform/text/qt/TextBreakIteratorInternalICUQt.cpp: Added.
+        (WebCore::Q_GLOBAL_STATIC_WITH_INITIALIZER):
+        (WebCore::currentSearchLocaleID):
+        (WebCore::currentTextBreakLocaleID):
+        * platform/text/qt/TextBreakIteratorQt.cpp: Moved out currentTextBreakLocaleID(). 
+        (WebCore::isTextBreak):
+        * platform/text/qt/TextCodecQt.cpp: Guard with USE(QT4_UNICODE). 
+        (WebCore::TextCodecQt::registerEncodingNames):
+        (WebCore::TextCodecQt::registerCodecs):
+
 2011-06-03  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

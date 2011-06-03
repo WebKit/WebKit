@@ -31,7 +31,7 @@
 #include <config.h>
 
 #include <stdint.h>
-#if USE(QT_ICU_TEXT_BREAKING)
+#if USE(ICU_UNICODE)
 #include <unicode/ubrk.h>
 #endif
 
@@ -67,7 +67,7 @@ typedef wchar_t UChar;
 typedef uint16_t UChar;
 #endif
 
-#if !USE(QT_ICU_TEXT_BREAKING)
+#if !USE(ICU_UNICODE)
 typedef uint32_t UChar32;
 #endif
 

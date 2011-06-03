@@ -28,7 +28,9 @@
  */
 
 #include "config.h"
+#if USE(QT4_UNICODE)
 #include "SmartReplace.h"
+#include <QChar>
 
 namespace WebCore {
 
@@ -64,3 +66,4 @@ bool isCharacterSmartReplaceExempt(UChar32 c, bool isPreviousCharacter)
 }
 
 }
+#endif

@@ -295,10 +295,6 @@ contains(CONFIG, texmap) {
     CONFIG += no_debug_info
 }
 
-contains (CONFIG, text_breaking_with_icu) {
-    LIBS += -licuuc
-}
-
 !CONFIG(QTDIR_build) {
     win32-*|wince* {
         DLLDESTDIR = $$OUTPUT_DIR/bin

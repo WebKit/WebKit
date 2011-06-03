@@ -1,3 +1,16 @@
+2011-06-03  Siddharth Mathur  <siddharth.mathur@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Build flag for experimental ICU library support
+        https://bugs.webkit.org/show_bug.cgi?id=60786
+
+        Adds a build-time flag (CONFIG+=use_system_icu) that enables experimental 
+        ICU powered Unicode support. 
+
+        * JavaScriptCore.pri: Support for use_system_icu CONFIG flag.
+        * wtf/unicode/qt4/UnicodeQt4.h: Guard an include file with USE(ICU_UNICODE). 
+
 2011-06-03  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Benjamin Poulain.

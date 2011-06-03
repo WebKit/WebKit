@@ -25,6 +25,7 @@
  */
 
 #include "config.h"
+#if USE(QT4_UNICODE)
 #include "TextCodecQt.h"
 #include "PlatformString.h"
 #include <wtf/text/CString.h>
@@ -46,17 +47,14 @@ static const char *getAtomicName(const QByteArray &name)
 void TextCodecQt::registerEncodingNames(EncodingNameRegistrar registrar)
 {
     QList<int> mibs = QTextCodec::availableMibs();
-//     qDebug() << ">>>>>>>>> registerEncodingNames";
 
     for (int i = 0; i < mibs.size(); ++i) {
         QTextCodec *c = QTextCodec::codecForMib(mibs.at(i));
         const char *name = getAtomicName(c->name());
         registrar(name, name);
-//         qDebug() << "    " << name << name;
         QList<QByteArray> aliases = c->aliases();
         for (int i = 0; i < aliases.size(); ++i) {
             const char *a = getAtomicName(aliases.at(i));
-//             qDebug() << "     (a) " << a << name;
             registrar(a, name);
         }
     }
@@ -70,12 +68,10 @@ static PassOwnPtr<TextCodec> newTextCodecQt(const TextEncoding& encoding, const 
 void TextCodecQt::registerCodecs(TextCodecRegistrar registrar)
 {
     QList<int> mibs = QTextCodec::availableMibs();
-//     qDebug() << ">>>>>>>>> registerCodecs";
 
     for (int i = 0; i < mibs.size(); ++i) {
         QTextCodec *c = QTextCodec::codecForMib(mibs.at(i));
         const char *name = getAtomicName(c->name());
-//         qDebug() << "    " << name;
         registrar(name, newTextCodecQt, 0);
     }
 }
@@ -164,3 +160,4 @@ CString TextCodecQt::encode(const UChar* characters, size_t length, UnencodableH
 
 
 } // namespace WebCore
+#endif

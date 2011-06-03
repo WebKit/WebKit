@@ -1063,6 +1063,7 @@ SOURCES += \
     platform/text/TextCodecUserDefined.cpp \
     platform/text/TextCodecUTF16.cpp \
     platform/text/TextCodecUTF8.cpp \
+    platform/text/TextCodecICU.cpp \
     platform/text/TextEncoding.cpp \
     platform/text/TextEncodingDetectorNone.cpp \
     platform/text/TextEncodingRegistry.cpp \
@@ -2554,6 +2555,7 @@ SOURCES += \
     platform/qt/TemporaryLinkStubsQt.cpp \
     platform/text/qt/TextBoundariesQt.cpp \
     platform/text/qt/TextBreakIteratorQt.cpp \
+    platform/text/qt/TextBreakIteratorInternalICUQt.cpp \
     platform/text/qt/TextCodecQt.cpp \
     platform/qt/WheelEventQt.cpp \
     platform/qt/WidgetQt.cpp
@@ -2585,7 +2587,7 @@ mac {
         platform/text/cf/StringImplCF.cpp
 }
 
-contains (CONFIG, text_breaking_with_icu) {
+contains (CONFIG, use_system_icu) {
     SOURCES += platform/text/TextBreakIteratorICU.cpp
 }
 
