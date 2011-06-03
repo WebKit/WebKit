@@ -152,7 +152,7 @@ void LayerTreeHostCAWin::setLayerFlushSchedulingEnabled(bool layerFlushingEnable
     if (m_layerFlushSchedulingEnabled)
         return;
 
-    LayerChangesFlusher::shared().cancelPendingFlush(thus);
+    LayerChangesFlusher::shared().cancelPendingFlush(this);
 }
 
 bool LayerTreeHostCAWin::participatesInDisplay()
