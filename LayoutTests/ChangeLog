@@ -1,3 +1,9 @@
+2011-06-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, unskipping tests, now passing after reverting r87901.
+
+        * platform/gtk/Skipped: Unskipped 3 tests.
+
 2011-06-02  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
