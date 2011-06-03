@@ -113,8 +113,6 @@ public:
 #endif
 
 #if PLATFORM(GTK)
-    void setHelper(PasteboardHelper*);
-    PasteboardHelper* helper();
     ~Pasteboard();
 #endif
 
@@ -138,10 +136,6 @@ private:
 
 #if PLATFORM(CHROMIUM)
     PasteboardPrivate p;
-#endif
-
-#if PLATFORM(GTK)
-    PasteboardHelper* m_helper;
 #endif
 };
 

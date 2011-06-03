@@ -52,31 +52,16 @@ Pasteboard* Pasteboard::generalPasteboard()
 
 Pasteboard::Pasteboard()
 {
-    notImplemented();
-}
-
-Pasteboard::~Pasteboard()
-{
-    delete m_helper;
-}
-
-PasteboardHelper* Pasteboard::helper()
-{
-    return m_helper;
-}
-
-void Pasteboard::setHelper(PasteboardHelper* helper)
-{
-    m_helper = helper;
 }
 
 void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete, Frame* frame)
 {
-    GtkClipboard* clipboard = m_helper->getClipboard(frame);
+    PasteboardHelper* helper = PasteboardHelper::defaultPasteboardHelper();
+    GtkClipboard* clipboard = helper->getClipboard(frame);
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     dataObject->setText(frame->editor()->selectedText());
     dataObject->setMarkup(createMarkup(selectedRange, 0, AnnotateForInterchange, false, AbsoluteURLs));
-    m_helper->writeClipboardContents(clipboard);
+    helper->writeClipboardContents(clipboard);
 }
 
 void Pasteboard::writePlainText(const String& text)
@@ -84,7 +69,7 @@ void Pasteboard::writePlainText(const String& text)
     GtkClipboard* clipboard = gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD);
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     dataObject->setText(text);
-    m_helper->writeClipboardContents(clipboard);
+    PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(clipboard);
 }
 
 void Pasteboard::writeURL(const KURL& url, const String& label, Frame* frame)
@@ -92,10 +77,11 @@ void Pasteboard::writeURL(const KURL& url, const String& label, Frame* frame)
     if (url.isEmpty())
         return;
 
-    GtkClipboard* clipboard = m_helper->getClipboard(frame);
+    PasteboardHelper* helper = PasteboardHelper::defaultPasteboardHelper();
+    GtkClipboard* clipboard = helper->getClipboard(frame);
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     dataObject->setURL(url, label);
-    m_helper->writeClipboardContents(clipboard);
+    helper->writeClipboardContents(clipboard);
 }
 
 static KURL getURLForImageNode(Node* node)
@@ -146,7 +132,7 @@ void Pasteboard::writeImage(Node* node, const KURL&, const String& title)
     GRefPtr<GdkPixbuf> pixbuf = adoptGRef(image->getGdkPixbuf());
     dataObject->setImage(pixbuf.get());
 
-    m_helper->writeClipboardContents(clipboard);
+    PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(clipboard);
 }
 
 void Pasteboard::clear()
@@ -163,9 +149,10 @@ bool Pasteboard::canSmartReplace()
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context,
                                                           bool allowPlainText, bool& chosePlainText)
 {
-    GtkClipboard* clipboard = m_helper->getCurrentClipboard(frame);
+    PasteboardHelper* helper = PasteboardHelper::defaultPasteboardHelper();
+    GtkClipboard* clipboard = helper->getCurrentClipboard(frame);
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
-    m_helper->getClipboardContents(clipboard);
+    helper->getClipboardContents(clipboard);
 
     chosePlainText = false;
 
@@ -190,10 +177,11 @@ PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefP
 
 String Pasteboard::plainText(Frame* frame)
 {
-    GtkClipboard* clipboard = m_helper->getCurrentClipboard(frame);
+    PasteboardHelper* helper = PasteboardHelper::defaultPasteboardHelper();
+    GtkClipboard* clipboard = helper->getCurrentClipboard(frame);
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
 
-    m_helper->getClipboardContents(clipboard);
+    helper->getClipboardContents(clipboard);
     return dataObject->text();
 }
 

@@ -1,3 +1,38 @@
+2011-05-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Remove PasteboardHelperGtk
+        https://bugs.webkit.org/show_bug.cgi?id=61690
+
+        Remove the virtual methods from PasteboardHelper, so that PasteboardHelperGtk
+        can be removed. Since the GtkClipboard IDs are verified to be the same between
+        WebKit and WebCore we no longer need to communicate from WebCore to WebKit to
+        get them.
+
+        No new tests. This is just a code refactor.
+
+        * platform/Pasteboard.h: Remove GTK+ specific methods. They are no longer needed.
+        * platform/gtk/ClipboardGtk.cpp: Remove the m_helper member and access the
+        PasteboardHelper singleton directly.
+        * platform/gtk/ClipboardGtk.h: Ditto.
+        * platform/gtk/PasteboardGtk.cpp: Ditto.
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::removeMarkupPrefix): Remove an extra line.
+        (WebCore::PasteboardHelper::defaultPasteboardHelper): Added this static getter
+        for the singleton.
+        (WebCore::PasteboardHelper::PasteboardHelper): Moved the contents of initTargetList here.
+        (WebCore::PasteboardHelper::getCurrentClipboard): Instead of talking with WebKit to determine
+        whether or not to use the primary selection clipboard, just use our new member.
+        (WebCore::PasteboardHelper::fillSelectionData): Use our local enum to get the ID.
+        (WebCore::PasteboardHelper::targetListForDataObject): Ditto.
+        (WebCore::PasteboardHelper::dropAtomsForContext): Ditto.
+        (WebCore::getClipboardContentsCallback): Ditto.
+        * platform/gtk/PasteboardHelper.h: PasteboardHelper now keeps track of whether or
+        not to use the primary selection clipboard internally.
+        (WebCore::PasteboardHelper::setUsePrimarySelectionClipboard): Added.
+        (WebCore::PasteboardHelper::usePrimarySelectionClipboard): Added.
+
 2011-06-02  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

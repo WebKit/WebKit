@@ -1,3 +1,35 @@
+2011-05-28  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Remove PastboardHelperGtk
+        https://bugs.webkit.org/show_bug.cgi?id=61690
+
+        Remove PasteboardHelperGtk and talk directly to WebCore for pasteboard
+        activity. This change moves the PasteboardHelper singleton from WebKit
+        to WebCore.
+
+        * GNUmakefile.am: Remove PasteboardHelperGtk from the source list.
+        * WebCoreSupport/AssertMatchingEnums.cpp: Added assertions verifying that the
+        WebCore versions of the GtkClipboard enums match those in the WebKit API.
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::startDrag): Access the pasteboard helper via a static method.
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::setSelectionPrimaryClipboardIfNeeded): Ditto. Call into the helper to specify
+        that the current clipboard is selection primary now.
+        * WebCoreSupport/PasteboardHelperGtk.cpp: Removed.
+        * webkit/webkitglobals.cpp: Remove function to set and get the pasteboard helper.
+        * webkit/webkitglobalsprivate.h: Ditto.
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_button_press_event): Access the pasteboard helper via a static method.
+        (webkit_web_view_drag_data_get): Ditto.
+        (webkit_web_view_drag_motion): Ditto.
+        (webkit_web_view_drag_data_received): Ditto.
+        (webkit_web_view_init): Ditto.
+        (webkit_web_view_get_copy_target_list): Ditto.
+        (webkit_web_view_get_paste_target_list): Ditto.
+        * webkit/webkitwebviewprivate.h: Ditto.
+
 2011-06-02  Joone Hur  <joone.hur@collabora.co.uk>
 
         Reviewed by Martin Robinson.

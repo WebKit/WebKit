@@ -74,7 +74,6 @@ namespace WebCore {
 
         virtual bool hasData();
 
-        PasteboardHelper* helper() { return m_helper; }
         PassRefPtr<DataObjectGtk> dataObject() { return m_dataObject; }
 
     private:
@@ -83,7 +82,6 @@ namespace WebCore {
 
         RefPtr<DataObjectGtk> m_dataObject;
         GtkClipboard* m_clipboard;
-        PasteboardHelper* m_helper;
         Frame* m_frame;
     };
 }

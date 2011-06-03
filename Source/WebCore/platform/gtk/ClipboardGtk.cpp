@@ -60,7 +60,6 @@ ClipboardGtk::ClipboardGtk(ClipboardAccessPolicy policy, GtkClipboard* clipboard
     : Clipboard(policy, CopyAndPaste)
     , m_dataObject(DataObjectGtk::forClipboard(clipboard))
     , m_clipboard(clipboard)
-    , m_helper(Pasteboard::generalPasteboard()->helper())
     , m_frame(frame)
 {
 }
@@ -69,7 +68,6 @@ ClipboardGtk::ClipboardGtk(ClipboardAccessPolicy policy, PassRefPtr<DataObjectGt
     : Clipboard(policy, clipboardType)
     , m_dataObject(dataObject)
     , m_clipboard(0)
-    , m_helper(Pasteboard::generalPasteboard()->helper())
     , m_frame(frame)
 {
 }
@@ -124,7 +122,7 @@ void ClipboardGtk::clearData(const String& typeString)
     }
 
     if (m_clipboard)
-        m_helper->writeClipboardContents(m_clipboard);
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_clipboard);
 }
 
 
@@ -136,7 +134,7 @@ void ClipboardGtk::clearAllData()
     m_dataObject->clear();
 
     if (m_clipboard)
-        m_helper->writeClipboardContents(m_clipboard);
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_clipboard);
 }
 
 String ClipboardGtk::getData(const String& typeString, bool& success) const
@@ -150,7 +148,7 @@ String ClipboardGtk::getData(const String& typeString, bool& success) const
         return String();
 
     if (m_clipboard)
-        m_helper->getClipboardContents(m_clipboard);
+        PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_clipboard);
 
     ClipboardDataType type = dataObjectTypeFromHTMLClipboardType(typeString);
     if (type == ClipboardDataTypeURIList)
@@ -184,7 +182,7 @@ bool ClipboardGtk::setData(const String& typeString, const String& data)
     }
 
     if (success && m_clipboard)
-        m_helper->writeClipboardContents(m_clipboard);
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_clipboard);
 
     return success;
 }
@@ -195,7 +193,7 @@ HashSet<String> ClipboardGtk::types() const
         return HashSet<String>();
 
     if (m_clipboard)
-        m_helper->getClipboardContents(m_clipboard);
+        PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_clipboard);
 
     HashSet<String> types;
     if (m_dataObject->hasText()) {
@@ -224,7 +222,7 @@ PassRefPtr<FileList> ClipboardGtk::files() const
         return FileList::create();
 
     if (m_clipboard)
-        m_helper->getClipboardContents(m_clipboard);
+        PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_clipboard);
 
     RefPtr<FileList> fileList = FileList::create();
     const Vector<String>& filenames = m_dataObject->filenames();
@@ -302,7 +300,7 @@ void ClipboardGtk::writeURL(const KURL& url, const String& label, Frame*)
 {
     m_dataObject->setURL(url, label);
     if (m_clipboard)
-        m_helper->writeClipboardContents(m_clipboard);
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_clipboard);
 }
 
 void ClipboardGtk::writeRange(Range* range, Frame* frame)
@@ -313,7 +311,7 @@ void ClipboardGtk::writeRange(Range* range, Frame* frame)
     m_dataObject->setMarkup(createMarkup(range, 0, AnnotateForInterchange, false, AbsoluteURLs));
 
     if (m_clipboard)
-        m_helper->writeClipboardContents(m_clipboard);
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_clipboard);
 }
 
 void ClipboardGtk::writePlainText(const String& text)
@@ -321,13 +319,13 @@ void ClipboardGtk::writePlainText(const String& text)
     m_dataObject->setText(text);
 
     if (m_clipboard)
-        m_helper->writeClipboardContents(m_clipboard);
+        PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(m_clipboard);
 }
 
 bool ClipboardGtk::hasData()
 {
     if (m_clipboard)
-        m_helper->getClipboardContents(m_clipboard);
+        PasteboardHelper::defaultPasteboardHelper()->getClipboardContents(m_clipboard);
 
     return m_dataObject->hasText() || m_dataObject->hasMarkup()
         || m_dataObject->hasURIList() || m_dataObject->hasImage();

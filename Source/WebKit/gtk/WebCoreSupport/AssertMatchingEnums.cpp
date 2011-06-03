@@ -25,8 +25,10 @@
 #include "EditingBehaviorTypes.h"
 #include "FindOptions.h"
 #include "FrameLoaderTypes.h"
+#include "PasteboardHelper.h"
 #include "webkitwebnavigationaction.h"
 #include "webkitwebsettings.h"
+#include "webkitwebview.h"
 #include <wtf/Assertions.h>
 
 #define COMPILE_ASSERT_MATCHING_ENUM(webkit_name, webcore_name) \
@@ -48,3 +50,9 @@ COMPILE_ASSERT_MATCHING_ENUM(WebKit::WebFindOptionsTreatMedialCapitalAsWordStart
 COMPILE_ASSERT_MATCHING_ENUM(WebKit::WebFindOptionsBackwards, Backwards);
 COMPILE_ASSERT_MATCHING_ENUM(WebKit::WebFindOptionsWrapAround, WrapAround);
 COMPILE_ASSERT_MATCHING_ENUM(WebKit::WebFindOptionsStartInSelection, StartInSelection);
+
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_WEB_VIEW_TARGET_INFO_HTML, PasteboardHelper::TargetTypeMarkup);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_WEB_VIEW_TARGET_INFO_TEXT, PasteboardHelper::TargetTypeText);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_WEB_VIEW_TARGET_INFO_IMAGE, PasteboardHelper::TargetTypeImage);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_WEB_VIEW_TARGET_INFO_URI_LIST, PasteboardHelper::TargetTypeURIList);
+COMPILE_ASSERT_MATCHING_ENUM(WEBKIT_WEB_VIEW_TARGET_INFO_NETSCAPE_URL, PasteboardHelper::TargetTypeNetscapeURL);

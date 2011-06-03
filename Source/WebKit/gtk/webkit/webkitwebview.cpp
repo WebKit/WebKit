@@ -69,7 +69,6 @@
 #include "PageCache.h"
 #include "Pasteboard.h"
 #include "PasteboardHelper.h"
-#include "PasteboardHelperGtk.h"
 #include "PlatformKeyboardEvent.h"
 #include "PlatformWheelEvent.h"
 #include "ProgressTracker.h"
@@ -140,11 +139,11 @@
  * </programlisting>
  */
 
-static const double defaultDPI = 96.0;
-static IntPoint globalPointForClientPoint(GdkWindow* window, const IntPoint& clientPoint);
-
 using namespace WebKit;
 using namespace WebCore;
+
+static const double defaultDPI = 96.0;
+static IntPoint globalPointForClientPoint(GdkWindow* window, const IntPoint& clientPoint);
 
 enum {
     /* normal signals */
@@ -782,14 +781,15 @@ static gboolean webkit_web_view_button_press_event(GtkWidget* widget, GdkEventBu
 #if PLATFORM(X11)
     /* Copy selection to the X11 selection clipboard */
     if (event->button == 2) {
-        bool primary = webView->priv->usePrimaryForPaste;
-        webView->priv->usePrimaryForPaste = true;
+        PasteboardHelper* helper = PasteboardHelper::defaultPasteboardHelper();
+        bool wasUsingPrimary = helper->usePrimarySelectionClipboard();
+        helper->setUsePrimarySelectionClipboard(true);
 
         Editor* editor = webView->priv->corePage->focusController()->focusedOrMainFrame()->editor();
         result = result || editor->canPaste() || editor->canDHTMLPaste();
         editor->paste();
 
-        webView->priv->usePrimaryForPaste = primary;
+        helper->setUsePrimarySelectionClipboard(wasUsingPrimary);
     }
 #endif
 
@@ -1498,7 +1498,7 @@ static void webkit_web_view_drag_data_get(GtkWidget* widget, GdkDragContext* con
     if (!priv->draggingDataObjects.contains(context))
         return;
 
-    pasteboardHelperInstance()->fillSelectionData(selectionData, info, priv->draggingDataObjects.get(context).get());
+    PasteboardHelper::defaultPasteboardHelper()->fillSelectionData(selectionData, info, priv->draggingDataObjects.get(context).get());
 }
 
 static gboolean doDragLeaveLater(DroppingContext* context)
@@ -1558,7 +1558,7 @@ static gboolean webkit_web_view_drag_motion(GtkWidget* widget, GdkDragContext* c
         droppingContext->lastMotionPosition = position;
         priv->droppingContexts.set(context, droppingContext);
 
-        Vector<GdkAtom> acceptableTargets(pasteboardHelperInstance()->dropAtomsForContext(widget, context));
+        Vector<GdkAtom> acceptableTargets(PasteboardHelper::defaultPasteboardHelper()->dropAtomsForContext(widget, context));
         droppingContext->pendingDataRequests = acceptableTargets.size();
         for (size_t i = 0; i < acceptableTargets.size(); i++)
             gtk_drag_get_data(widget, context, acceptableTargets.at(i), time);
@@ -1591,7 +1591,7 @@ static void webkit_web_view_drag_data_received(GtkWidget* widget, GdkDragContext
 
     DroppingContext* droppingContext = priv->droppingContexts.get(context);
     droppingContext->pendingDataRequests--;
-    pasteboardHelperInstance()->fillDataObjectFromDropData(selectionData, info, droppingContext->dataObject.get());
+    PasteboardHelper::defaultPasteboardHelper()->fillDataObjectFromDropData(selectionData, info, droppingContext->dataObject.get());
 
     if (droppingContext->pendingDataRequests)
         return;
@@ -3491,7 +3491,7 @@ static void webkit_web_view_init(WebKitWebView* webView)
     priv->subResources = adoptGRef(g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_object_unref));
 
     gtk_drag_dest_set(GTK_WIDGET(webView), static_cast<GtkDestDefaults>(0), 0, 0, static_cast<GdkDragAction>(GDK_ACTION_COPY | GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE));
-    gtk_drag_dest_set_target_list(GTK_WIDGET(webView), pasteboardHelperInstance()->targetList());
+    gtk_drag_dest_set_target_list(GTK_WIDGET(webView), PasteboardHelper::defaultPasteboardHelper()->targetList());
 }
 
 GtkWidget* webkit_web_view_new(void)
@@ -3534,11 +3534,6 @@ void webkit_web_view_request_download(WebKitWebView* webView, WebKitNetworkReque
         may be handled asynchronously by the application. */
     if (webkit_download_get_destination_uri(download))
         webkit_download_start(download);
-}
-
-bool webkit_web_view_use_primary_for_paste(WebKitWebView* webView)
-{
-    return webView->priv->usePrimaryForPaste;
 }
 
 /**
@@ -4324,7 +4319,7 @@ void webkit_web_view_set_editable(WebKitWebView* webView, gboolean flag)
  **/
 GtkTargetList* webkit_web_view_get_copy_target_list(WebKitWebView* webView)
 {
-    return pasteboardHelperInstance()->targetList();
+    return PasteboardHelper::defaultPasteboardHelper()->targetList();
 }
 
 /**
@@ -4341,7 +4336,7 @@ GtkTargetList* webkit_web_view_get_copy_target_list(WebKitWebView* webView)
  **/
 GtkTargetList* webkit_web_view_get_paste_target_list(WebKitWebView* webView)
 {
-    return pasteboardHelperInstance()->targetList();
+    return PasteboardHelper::defaultPasteboardHelper()->targetList();
 }
 
 /**

@@ -36,7 +36,7 @@
 #include "markup.h"
 #include "NotImplemented.h"
 #include "Page.h"
-#include "PasteboardHelperGtk.h"
+#include "PasteboardHelper.h"
 #include "PlatformKeyboardEvent.h"
 #include "WebKitDOMBinding.h"
 #include "WebKitDOMCSSStyleDeclarationPrivate.h"
@@ -295,7 +295,7 @@ static void setSelectionPrimaryClipboardIfNeeded(WebKitWebView* webView)
     viewSettingClipboard = webView;
     GClosure* callback = g_cclosure_new_object(G_CALLBACK(collapseSelection), G_OBJECT(webView));
     g_closure_set_marshal(callback, g_cclosure_marshal_VOID__VOID);
-    pasteboardHelperInstance()->writeClipboardContents(clipboard, callback);
+    PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(clipboard, callback);
     viewSettingClipboard = 0;
 }
 #endif

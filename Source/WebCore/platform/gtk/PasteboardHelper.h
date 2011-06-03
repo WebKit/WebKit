@@ -25,11 +25,6 @@
 #ifndef PasteboardHelper_h
 #define PasteboardHelper_h
 
-/*
- * FIXME: this is for WebCore support and must be removed once
- * a better solution is found
- */
-
 #include "Frame.h"
 
 namespace WebCore {
@@ -40,6 +35,10 @@ class PasteboardHelper {
 public:
     PasteboardHelper();
     virtual ~PasteboardHelper();
+    static PasteboardHelper* defaultPasteboardHelper();
+
+    void setUsePrimarySelectionClipboard(bool usePrimary) { m_usePrimarySelectionClipboard = usePrimary; }
+    bool usePrimarySelectionClipboard() { return m_usePrimarySelectionClipboard; }
 
     GtkClipboard* getCurrentClipboard(Frame*);
     GtkClipboard* getClipboard(Frame*) const;
@@ -52,15 +51,11 @@ public:
     void writeClipboardContents(GtkClipboard*, GClosure* closure = 0);
     void getClipboardContents(GtkClipboard*);
 
-    enum PasteboardTargetType { TargetTypeText, TargetTypeMarkup, TargetTypeURIList, TargetTypeNetscapeURL, TargetTypeImage, TargetTypeUnknown };
-    virtual guint getIdForTargetType(PasteboardTargetType) = 0;
-
-protected:
-    void initializeTargetList();
-    virtual bool usePrimarySelectionClipboard(GtkWidget*) = 0;
+    enum PasteboardTargetType { TargetTypeMarkup, TargetTypeText, TargetTypeImage, TargetTypeURIList, TargetTypeNetscapeURL, TargetTypeUnknown };
 
 private:
     GtkTargetList* m_targetList;
+    bool m_usePrimarySelectionClipboard;
 };
 
 }

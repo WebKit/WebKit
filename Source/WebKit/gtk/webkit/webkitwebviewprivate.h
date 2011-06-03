@@ -86,7 +86,6 @@ struct _WebKitWebViewPrivate {
     CString iconURI;
 
     gboolean disposing;
-    gboolean usePrimaryForPaste;
 
 #if ENABLE(VIDEO)
     FullscreenVideoController* fullscreenVideoController;
@@ -121,7 +120,6 @@ void webkit_web_view_set_tooltip_text(WebKitWebView*, const char*);
 GtkMenu* webkit_web_view_get_context_menu(WebKitWebView*);
 
 WEBKIT_API gchar* webkit_web_view_get_selected_text(WebKitWebView*);
-bool webkit_web_view_use_primary_for_paste(WebKitWebView*);
 
 void webViewEnterFullscreen(WebKitWebView* webView, WebCore::Node*);
 void webViewExitFullscreen(WebKitWebView* webView);

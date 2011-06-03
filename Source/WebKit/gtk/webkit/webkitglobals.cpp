@@ -273,7 +273,6 @@ void webkitInit()
 
     PageGroup::setShouldTrackVisitedLinks(true);
 
-    Pasteboard::generalPasteboard()->setHelper(WebKit::pasteboardHelperInstance());
     GOwnPtr<gchar> iconDatabasePath(g_build_filename(g_get_user_data_dir(), "webkit", "icondatabase", NULL));
     webkit_icon_database_set_path(webkit_get_icon_database(), iconDatabasePath.get());
 
@@ -292,12 +291,6 @@ void webkitInit()
 }
 
 namespace WebKit {
-
-PasteboardHelperGtk* pasteboardHelperInstance()
-{
-    static PasteboardHelperGtk* helper = new PasteboardHelperGtk();
-    return helper;
-}
 
 } /** end namespace WebKit */
 
