@@ -66,6 +66,9 @@ AudioBufferSourceNode::AudioBufferSourceNode(AudioContext* context, double sampl
 
     m_gain = AudioGain::create("gain", 1.0, 0.0, 1.0);
     m_playbackRate = AudioParam::create("playbackRate", 1.0, 0.0, AudioResampler::MaxRate);
+    
+    m_gain->setContext(context);
+    m_playbackRate->setContext(context);
 
     // Default to mono.  A call to setBuffer() will set the number of output channels to that of the buffer.
     addOutput(adoptPtr(new AudioNodeOutput(this, 1)));

@@ -2,6 +2,30 @@
 
         Reviewed by Kenneth Russell.
 
+        Allow existing AudioParams to use scheduled parameter changes
+        https://bugs.webkit.org/show_bug.cgi?id=62046
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/AudioBus.cpp:
+        (WebCore::AudioBus::processWithGainFrom):
+        (WebCore::AudioBus::copyWithSampleAccurateGainValuesFrom):
+        * platform/audio/AudioBus.h:
+        * webaudio/AudioBufferSourceNode.cpp:
+        (WebCore::AudioBufferSourceNode::AudioBufferSourceNode):
+        * webaudio/AudioGainNode.cpp:
+        (WebCore::AudioGainNode::AudioGainNode):
+        (WebCore::AudioGainNode::process):
+        * webaudio/AudioGainNode.h:
+        * webaudio/HighPass2FilterNode.cpp:
+        (WebCore::HighPass2FilterNode::HighPass2FilterNode):
+        * webaudio/LowPass2FilterNode.cpp:
+        (WebCore::LowPass2FilterNode::LowPass2FilterNode):
+
+2011-06-03  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
         Biquad filter coefficient naming is incorrect
         https://bugs.webkit.org/show_bug.cgi?id=62053
 

@@ -336,8 +336,10 @@ void AudioBus::processWithGainFrom(const AudioBus &sourceBus, double* lastMixGai
 {
     // Make sure we're summing from same type of bus.
     // We *are* able to sum from mono -> stereo
-    if (sourceBus.numberOfChannels() != 1 && !topologyMatches(sourceBus))
+    if (sourceBus.numberOfChannels() != 1 && !topologyMatches(sourceBus)) {
+        ASSERT_NOT_REACHED();
         return;
+    }
 
     // Dispatch for different channel layouts
     switch (numberOfChannels()) {
@@ -350,6 +352,32 @@ void AudioBus::processWithGainFrom(const AudioBus &sourceBus, double* lastMixGai
     default:
         ASSERT_NOT_REACHED();
         break;
+    }
+}
+
+void AudioBus::copyWithSampleAccurateGainValuesFrom(const AudioBus &sourceBus, float* gainValues, unsigned numberOfGainValues)
+{
+    // Make sure we're processing from the same type of bus.
+    // We *are* able to process from mono -> stereo
+    if (sourceBus.numberOfChannels() != 1 && !topologyMatches(sourceBus)) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    if (!gainValues || numberOfGainValues > sourceBus.length()) {
+        ASSERT_NOT_REACHED();
+        return;
+    }
+
+    // FIXME: this can potentially use SIMD optimizations with vector libraries.
+    // We handle both the 1 -> N and N -> N case here.
+    const float* source = sourceBus.channel(0)->data();
+    for (unsigned channelIndex = 0; channelIndex < numberOfChannels(); ++channelIndex) {
+        if (sourceBus.numberOfChannels() == numberOfChannels())
+            source = sourceBus.channel(channelIndex)->data();
+        float* destination = channel(channelIndex)->data();
+        for (unsigned i = 0; i < numberOfGainValues; ++i)
+            destination[i] = source[i] * gainValues[i];
     }
 }
 

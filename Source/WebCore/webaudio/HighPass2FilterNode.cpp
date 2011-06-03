@@ -34,6 +34,9 @@ HighPass2FilterNode::HighPass2FilterNode(AudioContext* context, double sampleRat
     : AudioBasicProcessorNode(context, sampleRate)
 {
     m_processor = adoptPtr(new BiquadProcessor(BiquadProcessor::HighPass2, sampleRate, 1, false));
+    biquadProcessor()->parameter1()->setContext(context);
+    biquadProcessor()->parameter2()->setContext(context);
+    biquadProcessor()->parameter3()->setContext(context);
     setType(NodeTypeHighPass2Filter);
 }
 

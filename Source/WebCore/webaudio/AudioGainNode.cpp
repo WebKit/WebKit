@@ -37,8 +37,10 @@ namespace WebCore {
 AudioGainNode::AudioGainNode(AudioContext* context, double sampleRate)
     : AudioNode(context, sampleRate)
     , m_lastGain(1.0)
+    , m_sampleAccurateGainValues(AudioNode::ProcessingSizeInFrames) // FIXME: can probably share temp buffer in context
 {
     m_gain = AudioGain::create("gain", 1.0, 0.0, 1.0);
+    m_gain->setContext(context);
 
     addInput(adoptPtr(new AudioNodeInput(this)));
     addOutput(adoptPtr(new AudioNodeOutput(this, 1)));
@@ -48,9 +50,9 @@ AudioGainNode::AudioGainNode(AudioContext* context, double sampleRate)
     initialize();
 }
 
-void AudioGainNode::process(size_t /*framesToProcess*/)
+void AudioGainNode::process(size_t framesToProcess)
 {
-    // FIXME: there is a nice optimization to avoid processing here, and let the gain change
+    // FIXME: for some cases there is a nice optimization to avoid processing here, and let the gain change
     // happen in the summing junction input of the AudioNode we're connected to.
     // Then we can avoid all of the following:
 
@@ -64,8 +66,18 @@ void AudioGainNode::process(size_t /*framesToProcess*/)
         else {
             AudioBus* inputBus = input(0)->bus();
 
-            // Apply the gain with de-zippering into the output bus.
-            outputBus->copyWithGainFrom(*inputBus, &m_lastGain, gain()->value());
+            if (gain()->hasTimelineValues()) {
+                // Apply sample-accurate gain scaling for precise envelopes, grain windows, etc.
+                ASSERT(framesToProcess <= m_sampleAccurateGainValues.size());
+                if (framesToProcess <= m_sampleAccurateGainValues.size()) {
+                    float* gainValues = m_sampleAccurateGainValues.data();
+                    gain()->calculateSampleAccurateValues(gainValues, framesToProcess);
+                    outputBus->copyWithSampleAccurateGainValuesFrom(*inputBus, gainValues, framesToProcess);
+                }
+            } else {
+                // Apply the gain with de-zippering into the output bus.
+                outputBus->copyWithGainFrom(*inputBus, &m_lastGain, gain()->value());
+            }
         }
 
         m_processLock.unlock();
