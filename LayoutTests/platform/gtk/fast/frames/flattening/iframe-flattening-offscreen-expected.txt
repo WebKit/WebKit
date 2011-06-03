@@ -22,12 +22,12 @@ layer at (8,200) size 792x159
     RenderBlock {P} at (0,124) size 792x19
       RenderText {#text} at (0,0) size 462x19
         text run at (0,0) width 462: "NOTE: The test only works in the DRT or with frame flattening enabled."
-layer at (-100,-100) size 200x200 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
-  RenderPartObject {IFRAME} at (-100,-100) size 200x200
+layer at (-100,-100) size 300x300 backgroundClip at (0,0) size 800x600 clip at (0,0) size 800x600 outlineClip at (0,0) size 800x600
+  RenderPartObject {IFRAME} at (-100,-100) size 300x300
     layer at (0,0) size 300x300
-      RenderView at (0,0) size 200x200
-    layer at (0,0) size 200x200
-      RenderBlock {HTML} at (0,0) size 200x200
-        RenderBody {BODY} at (8,8) size 184x184 [bgcolor=#008000]
+      RenderView at (0,0) size 300x300
+    layer at (0,0) size 300x300
+      RenderBlock {HTML} at (0,0) size 300x300
+        RenderBody {BODY} at (8,8) size 284x284 [bgcolor=#008000]
     layer at (0,0) size 300x300
       RenderBlock (positioned) {DIV} at (0,0) size 300x300

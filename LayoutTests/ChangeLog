@@ -1,3 +1,18 @@
+2011-06-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, tests rebaselines for GTK after r88011.
+
+        * platform/gtk/fast/frames/flattening/iframe-flattening-fixed-height-expected.txt:
+        * platform/gtk/fast/frames/flattening/iframe-flattening-fixed-height-expected.png: Added.
+        * platform/gtk/fast/frames/flattening/iframe-flattening-fixed-width-and-height-expected.txt:
+        * platform/gtk/fast/frames/flattening/iframe-flattening-fixed-width-and-height-expected.png: Added.
+        * platform/gtk/fast/frames/flattening/iframe-flattening-fixed-width-expected.txt:
+        * platform/gtk/fast/frames/flattening/iframe-flattening-fixed-width-expected.png: Added.
+        * platform/gtk/fast/frames/flattening/iframe-flattening-offscreen-expected.txt:
+        * platform/gtk/fast/frames/flattening/iframe-flattening-offscreen-expected.png: Added.
+        * platform/gtk/fast/frames/flattening/iframe-flattening-simple-expected.txt:
+        * platform/gtk/fast/frames/flattening/iframe-flattening-simple-expected.png: Added.
+
 2011-06-03  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.
