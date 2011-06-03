@@ -1,3 +1,15 @@
+2011-06-03  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Cloned range input sliders should be SliderThumbElements, not divs.
+        https://bugs.webkit.org/show_bug.cgi?id=61982
+
+        Test: fast/html/clone-range.html
+
+        * html/shadow/SliderThumbElement.h:
+        (WebCore::SliderThumbElement::cloneElementWithoutAttributesAndChildren): Create a SliderThumbElement when being cloned.
+
 2011-06-02  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.

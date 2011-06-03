@@ -60,12 +60,12 @@ public:
 private:
     SliderThumbElement(Document*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
     void startDragging();
     void stopDragging();
     void setPositionFromPoint(const IntPoint&);
     HTMLInputElement* hostInput();
 
-    FloatPoint m_offsetToThumb;
     bool m_inDragMode;
 };
 
@@ -78,6 +78,11 @@ inline SliderThumbElement::SliderThumbElement(Document* document)
 inline PassRefPtr<SliderThumbElement> SliderThumbElement::create(Document* document)
 {
     return adoptRef(new SliderThumbElement(document));
+}
+
+inline PassRefPtr<Element> SliderThumbElement::cloneElementWithoutAttributesAndChildren() const
+{
+    return create(document());
 }
 
 inline SliderThumbElement* toSliderThumbElement(Node* node)

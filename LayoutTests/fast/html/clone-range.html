@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+</head>
+<body>
+<p>
+Tests that a range input's slider is cloned along with its host. There
+should be a second range input in the document and it should have a
+slider positioned at zero.
+</p>
+<input type="range" id="sheep" style="display: block; width: 100px;">
+<div id="console"></div>
+<script>
+var sheep = document.querySelector('#sheep');
+var dolly = sheep.cloneNode();
+
+sheep.insertAdjacentElement('afterEnd', dolly);
+
+// Cloned element should be the same size. Having zero height is one
+// symptom of a broken clone.
+shouldBe('dolly.clientHeight', 'sheep.clientHeight');
+
+if (window.layoutTestController) {
+    var sheepShadow = layoutTestController.shadowRoot(sheep);
+    var dollyShadow = layoutTestController.shadowRoot(dolly);
+    shouldBe('layoutTestController.shadowPseudoId(dollyShadow.firstChild)',
+             'layoutTestController.shadowPseudoId(sheepShadow.firstChild)');
+}
+
+dolly.value = 0;
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>

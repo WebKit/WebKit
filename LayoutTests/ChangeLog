@@ -1,3 +1,14 @@
+2011-06-03  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Adds a test that range input clones have the right kind of slider.
+        https://bugs.webkit.org/show_bug.cgi?id=61982
+
+        * fast/html/clone-range-expected.txt: Added.
+        * fast/html/clone-range.html: Added.
+        * platform/win/Skipped: Test needs DRT functionality not in this port.
+
 2011-06-03  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Csaba Osztrogonác.
