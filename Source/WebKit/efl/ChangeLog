@@ -1,3 +1,14 @@
+2011-06-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r88014.
+        http://trac.webkit.org/changeset/88014
+        https://bugs.webkit.org/show_bug.cgi?id=62017
+
+        Broken EFL build (Requested by tonikitoo on #webkit).
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::startDownload):
+
 2011-06-03  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.
