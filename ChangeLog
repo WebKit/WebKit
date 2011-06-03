@@ -1,3 +1,18 @@
+2011-06-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Build fix of QtWebKit 2.2 when inside Qt tree with GCC 4.6.
+        https://bugs.webkit.org/show_bug.cgi?id=61957
+
+        When building inside the Qt source tree, qmake always append the mkspecs
+        defines after ours. We have to workaround and make sure that we append
+        our flags after the qmake variable used inside Qt. This workaround was provided
+        by our qmake folks. We need to append in both case because qmake behave differently
+        when called with -spec or via SUBDIR+=.
+
+        * Source/WebKit.pri:
+
 2011-06-02  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.
