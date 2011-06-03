@@ -707,7 +707,7 @@ bool DragController::startDrag(Frame* src, Clipboard* clipboard, DragOperation s
     Node* node = dragSource.innerNonSharedNode();
 
     Image* image = getImage(static_cast<Element*>(node));
-    if (!imageURL.isEmpty() && node && node->isElementNode() && image
+    if (!imageURL.isEmpty() && node && node->isElementNode() && image && !image->isNull()
             && (m_dragSourceAction & DragSourceActionImage)) {
         // We shouldn't be starting a drag for an image that can't provide an extension.
         // This is an early detection for problems encountered later upon drop.
