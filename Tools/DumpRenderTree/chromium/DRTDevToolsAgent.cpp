@@ -127,6 +127,15 @@ void DRTDevToolsAgent::frontendLoaded()
     postTask(new DelayedFrontendLoadedTask(this));
 }
 
+bool DRTDevToolsAgent::setJavaScriptProfilingEnabled(bool enabled)
+{
+    WebDevToolsAgent* agent = webDevToolsAgent();
+    if (!agent)
+        return false;
+    agent->setJavaScriptProfilingEnabled(enabled);
+    return true;
+}
+
 bool DRTDevToolsAgent::setTimelineProfilingEnabled(bool enabled)
 {
     WebDevToolsAgent* agent = webDevToolsAgent();

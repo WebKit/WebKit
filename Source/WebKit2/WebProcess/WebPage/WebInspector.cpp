@@ -146,6 +146,16 @@ void WebInspector::stopJavaScriptDebugging()
 #endif
 }
 
+void WebInspector::setJavaScriptProfilingEnabled(bool enabled)
+{
+#if ENABLE(JAVASCRIPT_DEBUGGER)
+    if (enabled)
+        m_page->corePage()->inspectorController()->enableProfiler();
+    else
+        m_page->corePage()->inspectorController()->disableProfiler();        
+#endif
+}
+
 void WebInspector::startJavaScriptProfiling()
 {
 #if ENABLE(JAVASCRIPT_DEBUGGER)

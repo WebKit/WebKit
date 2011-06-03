@@ -55,6 +55,11 @@ void WKBundleInspectorEvaluateScriptForTest(WKBundleInspectorRef inspectorRef, l
     return toImpl(inspectorRef)->evaluateScriptForTest(callID, toImpl(script)->string());
 }
 
+void WKBundleInspectorSetJavaScriptProfilingEnabled(WKBundleInspectorRef inspectorRef, bool enabled)
+{
+    toImpl(inspectorRef)->setJavaScriptProfilingEnabled(enabled);
+}
+
 void WKBundleInspectorSetPageProfilingEnabled(WKBundleInspectorRef inspectorRef, bool enabled)
 {
     if (enabled)

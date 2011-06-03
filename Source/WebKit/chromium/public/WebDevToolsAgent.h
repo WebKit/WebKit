@@ -62,6 +62,7 @@ public:
 
     // Exposed for LayoutTestController.
     virtual void evaluateInWebInspector(long callId, const WebString& script) = 0;
+    virtual void setJavaScriptProfilingEnabled(bool) = 0;
     virtual void setTimelineProfilingEnabled(bool enabled) = 0;
 
     // Asynchronously executes debugger command in the render thread.

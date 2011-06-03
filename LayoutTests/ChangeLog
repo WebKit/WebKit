@@ -1,3 +1,16 @@
+2011-06-03  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [Chromium] cpu-profiler-profiling layout test is flaky on Linux Debug.
+        https://bugs.webkit.org/show_bug.cgi?id=61533
+
+        Skip cpu-profiler-profiling in debug, implement a fast headless alternative.
+
+        * inspector/profiler/cpu-profiler-profiling-without-inspector-expected.txt: Added.
+        * inspector/profiler/cpu-profiler-profiling-without-inspector.html: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-03  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Andreas Kling.

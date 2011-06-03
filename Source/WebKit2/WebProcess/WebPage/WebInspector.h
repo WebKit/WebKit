@@ -56,6 +56,7 @@ public:
 
     void evaluateScriptForTest(long callID, const String& script);
 
+    void setJavaScriptProfilingEnabled(bool);
     void startPageProfiling();
     void stopPageProfiling();
 

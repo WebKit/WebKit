@@ -492,6 +492,11 @@ void LayoutTestController::evaluateInWebInspector(long callID, JSStringRef scrip
     WKBundleInspectorEvaluateScriptForTest(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), callID, scriptWK.get());
 }
 
+void LayoutTestController::setJavaScriptProfilingEnabled(bool enabled)
+{
+    WKBundleInspectorSetJavaScriptProfilingEnabled(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), enabled);
+}
+
 void LayoutTestController::setTimelineProfilingEnabled(bool enabled)
 {
     WKBundleInspectorSetPageProfilingEnabled(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), enabled);

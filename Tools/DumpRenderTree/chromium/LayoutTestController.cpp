@@ -157,6 +157,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setGeolocationPermission", &LayoutTestController::setGeolocationPermission);
     bindMethod("setIconDatabaseEnabled", &LayoutTestController::setIconDatabaseEnabled);
     bindMethod("setJavaScriptCanAccessClipboard", &LayoutTestController::setJavaScriptCanAccessClipboard);
+    bindMethod("setJavaScriptProfilingEnabled", &LayoutTestController::setJavaScriptProfilingEnabled);
     bindMethod("setMinimumTimerInterval", &LayoutTestController::setMinimumTimerInterval);
     bindMethod("setMockDeviceOrientation", &LayoutTestController::setMockDeviceOrientation);
     bindMethod("setMockGeolocationError", &LayoutTestController::setMockGeolocationError);
@@ -1628,6 +1629,14 @@ void LayoutTestController::logErrorToConsole(const std::string& text)
     m_shell->webViewHost()->didAddMessageToConsole(
         WebConsoleMessage(WebConsoleMessage::LevelError, WebString::fromUTF8(text)),
         WebString(), 0);
+}
+
+void LayoutTestController::setJavaScriptProfilingEnabled(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 1 || !arguments[0].isBool())
+        return;
+    m_shell->drtDevToolsAgent()->setJavaScriptProfilingEnabled(arguments[0].toBoolean());
 }
 
 void LayoutTestController::setTimelineProfilingEnabled(const CppArgumentList& arguments, CppVariant* result)

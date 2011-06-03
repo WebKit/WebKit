@@ -450,6 +450,11 @@ void LayoutTestController::removeAllVisitedLinks()
     // FIXME: Implement this.
 }
 
+void LayoutTestController::setJavaScriptProfilingEnabled(bool enabled)
+{
+
+}
+
 void LayoutTestController::setTimelineProfilingEnabled(bool enabled)
 {
 

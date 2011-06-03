@@ -70,6 +70,7 @@ public:
     void frontendLoaded();
 
     bool evaluateInWebInspector(long callID, const std::string& script);
+    bool setJavaScriptProfilingEnabled(bool);
     bool setTimelineProfilingEnabled(bool);
     TaskList* taskList() { return &m_taskList; }
 
