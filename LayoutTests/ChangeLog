@@ -1,3 +1,9 @@
+2011-06-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Update platform specific expected file after r87873.
+
+        * platform/qt-wk2/fast/events/overflow-viewport-renderer-deleted-expected.txt: Added.
+
 2011-06-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Martin Robinson.
