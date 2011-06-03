@@ -48,6 +48,7 @@ libWebCoreInternals_la_SOURCES = \
 nodist_libWebCoreInternals_la_SOURCES = \
 	DerivedSources/WebCore/JSInternals.cpp \
 	DerivedSources/WebCore/JSInternals.h
+BUILT_SOURCES += $(nodist_libWebCoreInternals_la_SOURCES)
 
 libWebCoreInternals_la_CPPFLAGS = \
 	$(global_cppflags) \

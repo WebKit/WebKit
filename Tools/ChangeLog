@@ -1,3 +1,9 @@
+2011-06-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the build failure on the GTK+ 32-bit Release bot.
+
+        * GNUmakefile.am: Add JSInternal.{cpp,h} to the BUILT_SOURCES list.
+
 2011-05-31  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Ryosuke Niwa.
