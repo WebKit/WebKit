@@ -29,12 +29,28 @@
 
 #include "AudioParam.h"
 
+#include "AudioNode.h"
+#include "AudioUtilities.h"
 #include <wtf/MathExtras.h>
 
 namespace WebCore {
 
 const double AudioParam::DefaultSmoothingConstant = 0.05;
 const double AudioParam::SnapThreshold = 0.001;
+
+float AudioParam::value()
+{
+    // Update value for timeline.
+    if (context() && context()->isAudioThread()) {
+        bool hasValue;
+        float timelineValue = m_timeline.valueForContextTime(context(), m_value, hasValue);
+
+        if (hasValue)
+            m_value = timelineValue;
+    }
+
+    return static_cast<float>(m_value);
+}
 
 void AudioParam::setValue(float value)
 {
@@ -44,21 +60,54 @@ void AudioParam::setValue(float value)
         m_value = value;
 }
 
+float AudioParam::smoothedValue()
+{
+    return static_cast<float>(m_smoothedValue);
+}
+
 bool AudioParam::smooth()
 {
+    // If values have been explicitly scheduled on the timeline, then use the exact value.
+    // Smoothing effectively is performed by the timeline.
+    bool useTimelineValue = false;
+    if (context())
+        m_value = m_timeline.valueForContextTime(context(), m_value, useTimelineValue);
+    
     if (m_smoothedValue == m_value) {
         // Smoothed value has already approached and snapped to value.
         return true;
     }
-
-    // Exponential approach
-    m_smoothedValue += (m_value - m_smoothedValue) * m_smoothingConstant;
-
-    // If we get close enough then snap to actual value.
-    if (fabs(m_smoothedValue - m_value) < SnapThreshold) // FIXME: the threshold needs to be adjustable depending on range - but this is OK general purpose value.
+    
+    if (useTimelineValue)
         m_smoothedValue = m_value;
+    else {
+        // Dezipper - exponential approach.
+        m_smoothedValue += (m_value - m_smoothedValue) * m_smoothingConstant;
+
+        // If we get close enough then snap to actual value.
+        if (fabs(m_smoothedValue - m_value) < SnapThreshold) // FIXME: the threshold needs to be adjustable depending on range - but this is OK general purpose value.
+            m_smoothedValue = m_value;
+    }
 
     return false;
+}
+
+void AudioParam::calculateSampleAccurateValues(float* values, unsigned numberOfValues)
+{
+    bool isSafe = context() && context()->isAudioThread() && values;
+    ASSERT(isSafe);
+    if (!isSafe)
+        return;
+
+    // Calculate values for this render quantum.
+    // Normally numberOfValues will equal AudioNode::ProcessingSizeInFrames (the render quantum size).
+    float sampleRate = context()->sampleRate();
+    float startTime = context()->currentTime();
+    float endTime = startTime + numberOfValues / sampleRate;
+
+    // Note we're running control rate at the sample-rate.
+    // Pass in the current value as default value.
+    m_value = m_timeline.valuesForTimeRange(startTime, endTime, m_value, values, numberOfValues, sampleRate, sampleRate);
 }
 
 } // namespace WebCore

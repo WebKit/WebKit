@@ -5980,6 +5980,8 @@
             'webaudio/AudioPannerNode.h',
             'webaudio/AudioParam.cpp',
             'webaudio/AudioParam.h',
+            'webaudio/AudioParamTimeline.cpp',
+            'webaudio/AudioParamTimeline.h',
             'webaudio/AudioProcessingEvent.cpp',
             'webaudio/AudioProcessingEvent.h',
             'webaudio/AudioSourceNode.h',

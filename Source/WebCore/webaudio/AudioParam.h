@@ -29,6 +29,9 @@
 #ifndef AudioParam_h
 #define AudioParam_h
 
+#include "AudioContext.h"
+#include "AudioParamTimeline.h"
+#include "Float32Array.h"
 #include "PlatformString.h"
 #include <sys/types.h>
 #include <wtf/PassRefPtr.h>
@@ -57,8 +60,11 @@ public:
         , m_smoothingConstant(DefaultSmoothingConstant)
     {
     }
+    
+    void setContext(AudioContext* context) { m_context = context; }
+    AudioContext* context() { return m_context.get(); }
 
-    float value() const { return static_cast<float>(m_value); }
+    float value();
     
     void setValue(float);
 
@@ -73,7 +79,7 @@ public:
 
     // When a new value is set with setValue(), in our internal use of the parameter we don't immediately jump to it.
     // Instead we smoothly approach this value to avoid glitching.
-    float smoothedValue() const { return static_cast<float>(m_smoothedValue); }
+    float smoothedValue();
 
     // Smoothly exponentially approaches to (de-zippers) the desired value.
     // Returns true if smoothed value has already snapped exactly to value.
@@ -82,7 +88,22 @@ public:
     void resetSmoothedValue() { m_smoothedValue = m_value; }
     void setSmoothingConstant(double k) { m_smoothingConstant = k; }
 
+    // Parameter automation.    
+    void setValueAtTime(float value, float time) { m_timeline.setValueAtTime(value, time); }
+    void linearRampToValueAtTime(float value, float time) { m_timeline.linearRampToValueAtTime(value, time); }
+    void exponentialRampToValueAtTime(float value, float time) { m_timeline.exponentialRampToValueAtTime(value, time); }
+    void setTargetValueAtTime(float targetValue, float time, float timeConstant) { m_timeline.setTargetValueAtTime(targetValue, time, timeConstant); }
+    void setValueCurveAtTime(Float32Array* curve, float time, float duration) { m_timeline.setValueCurveAtTime(curve, time, duration); }
+    void cancelScheduledValues(float startTime) { m_timeline.cancelScheduledValues(startTime); }
+
+    bool hasTimelineValues() { return m_timeline.hasValues(); }
+    
+    // Calculates numberOfValues parameter values starting at the context's current time.
+    // Must be called in the context's render thread.
+    void calculateSampleAccurateValues(float* values, unsigned numberOfValues);
+
 private:
+    RefPtr<AudioContext> m_context;
     String m_name;
     double m_value;
     double m_defaultValue;
@@ -93,6 +114,8 @@ private:
     // Smoothing (de-zippering)
     double m_smoothedValue;
     double m_smoothingConstant;
+    
+    AudioParamTimeline m_timeline;
 };
 
 } // namespace WebCore

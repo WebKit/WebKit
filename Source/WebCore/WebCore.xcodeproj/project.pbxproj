@@ -5939,6 +5939,8 @@
 		FD3160BE12B0272A00C1A359 /* AudioFileReaderMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD3160B812B0272A00C1A359 /* AudioFileReaderMac.cpp */; };
 		FD3160BF12B0272A00C1A359 /* AudioFileReaderMac.h in Headers */ = {isa = PBXBuildFile; fileRef = FD3160B912B0272A00C1A359 /* AudioFileReaderMac.h */; };
 		FD3160C012B0272A00C1A359 /* FFTFrameMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD3160BA12B0272A00C1A359 /* FFTFrameMac.cpp */; };
+		FD35918F138DB22000E1EBEC /* AudioParamTimeline.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD35918D138DB22000E1EBEC /* AudioParamTimeline.cpp */; };
+		FD359190138DB22000E1EBEC /* AudioParamTimeline.h in Headers */ = {isa = PBXBuildFile; fileRef = FD35918E138DB22000E1EBEC /* AudioParamTimeline.h */; };
 		FD537352137B651800008DCE /* ZeroPole.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD537350137B651800008DCE /* ZeroPole.cpp */; };
 		FD537353137B651800008DCE /* ZeroPole.h in Headers */ = {isa = PBXBuildFile; fileRef = FD537351137B651800008DCE /* ZeroPole.h */; };
 		FD537356137B653B00008DCE /* DynamicsCompressorKernel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FD537354137B653B00008DCE /* DynamicsCompressorKernel.cpp */; };
@@ -12571,6 +12573,8 @@
 		FD3160B812B0272A00C1A359 /* AudioFileReaderMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioFileReaderMac.cpp; sourceTree = "<group>"; };
 		FD3160B912B0272A00C1A359 /* AudioFileReaderMac.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioFileReaderMac.h; sourceTree = "<group>"; };
 		FD3160BA12B0272A00C1A359 /* FFTFrameMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FFTFrameMac.cpp; sourceTree = "<group>"; };
+		FD35918D138DB22000E1EBEC /* AudioParamTimeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = AudioParamTimeline.cpp; sourceTree = "<group>"; };
+		FD35918E138DB22000E1EBEC /* AudioParamTimeline.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AudioParamTimeline.h; sourceTree = "<group>"; };
 		FD537350137B651800008DCE /* ZeroPole.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ZeroPole.cpp; sourceTree = "<group>"; };
 		FD537351137B651800008DCE /* ZeroPole.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZeroPole.h; sourceTree = "<group>"; };
 		FD537354137B653B00008DCE /* DynamicsCompressorKernel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DynamicsCompressorKernel.cpp; sourceTree = "<group>"; };
@@ -19822,6 +19826,8 @@
 				FD315FD212B0267500C1A359 /* AudioParam.cpp */,
 				FD315FD312B0267500C1A359 /* AudioParam.h */,
 				FD315FD412B0267500C1A359 /* AudioParam.idl */,
+				FD35918D138DB22000E1EBEC /* AudioParamTimeline.cpp */,
+				FD35918E138DB22000E1EBEC /* AudioParamTimeline.h */,
 				FD315FD512B0267600C1A359 /* AudioProcessingEvent.cpp */,
 				FD315FD612B0267600C1A359 /* AudioProcessingEvent.h */,
 				FD315FD712B0267600C1A359 /* AudioProcessingEvent.idl */,
@@ -23130,6 +23136,7 @@
 				B12D236E1356034D002A28D4 /* JSMultipleTrackList.h in Headers */,
 				8C0E334D138A92C7008DA94F /* LevelDBTransaction.h in Headers */,
 				8C0E334F138A92C7008DA94F /* LevelDBWriteBatch.h in Headers */,
+				FD359190138DB22000E1EBEC /* AudioParamTimeline.h in Headers */,
 				4496E39E1398136C003EE32A /* JSSVGAnimateMotionElement.h in Headers */,
 				4496E3A0139813A5003EE32A /* JSSVGMPathElement.h in Headers */,
 				2E2445F71395893A004B6C19 /* OperationNotAllowedException.h in Headers */,
@@ -25859,6 +25866,7 @@
 				B12D236D1356034D002A28D4 /* JSMultipleTrackList.cpp in Sources */,
 				8C0E334C138A92C7008DA94F /* LevelDBTransaction.cpp in Sources */,
 				8C0E334E138A92C7008DA94F /* LevelDBWriteBatch.cpp in Sources */,
+				FD35918F138DB22000E1EBEC /* AudioParamTimeline.cpp in Sources */,
 				4496E39D1398136C003EE32A /* JSSVGAnimateMotionElement.cpp in Sources */,
 				4496E3A2139813CB003EE32A /* JSSVGMPathElement.cpp in Sources */,
 				2E24476813959173004B6C19 /* JSOperationNotAllowedException.cpp in Sources */,
