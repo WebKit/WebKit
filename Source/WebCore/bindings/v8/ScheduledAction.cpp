@@ -34,7 +34,10 @@
 #include "Document.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"
+
+#if PLATFORM(CHROMIUM)
 #include "TraceEvent.h"
+#endif
 
 #include "V8Binding.h"
 #include "V8Proxy.h"
@@ -111,7 +114,9 @@ void ScheduledAction::execute(V8Proxy* proxy)
     if (v8Context.IsEmpty())
         return; // JS may not be enabled.
 
+#if PLATFORM(CHROMIUM)
     TRACE_EVENT("ScheduledAction::execute", this, 0);
+#endif
 
     v8::Context::Scope scope(v8Context);
 
