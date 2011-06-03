@@ -115,7 +115,7 @@ private:
     bool ensureOriginRecord(const SecurityOrigin*);
     bool shouldStoreResourceAsFlatFile(ApplicationCacheResource*);
     void deleteTables();
-    bool writeDataToUniqueFileInDirectory(SharedBuffer*, const String& directory, String& outFilename);
+    bool writeDataToUniqueFileInDirectory(SharedBuffer*, const String& directory, String& outFilename, const String& fileExtension);
 
     void loadManifestHostHashes();
     
