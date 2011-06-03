@@ -1,3 +1,19 @@
+2011-06-02  James Robinson  <jamesr@chromium.org>
+
+        Unreviewed, rolling out r87901.
+        http://trac.webkit.org/changeset/87901
+        https://bugs.webkit.org/show_bug.cgi?id=61894
+
+        Might be responsible for performance regression on Chromium page cyclers, reverting to see...
+
+        * loader/DocumentLoader.h:
+        (WebCore::DocumentLoader::didTellClientAboutLoad):
+        (WebCore::DocumentLoader::haveToldClientAboutLoad):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::loadedResourceFromMemoryCache):
+        * loader/ResourceLoadNotifier.cpp:
+        (WebCore::ResourceLoadNotifier::dispatchWillSendRequest):
+
 2011-06-02  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

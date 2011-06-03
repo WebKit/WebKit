@@ -107,18 +107,14 @@ void ResourceLoadNotifier::assignIdentifierToInitialRequest(unsigned long identi
 
 void ResourceLoadNotifier::dispatchWillSendRequest(DocumentLoader* loader, unsigned long identifier, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-#if PLATFORM(MAC)
     StringImpl* oldRequestURL = request.url().string().impl();
     m_frame->loader()->documentLoader()->didTellClientAboutLoad(request.url());
-#endif
 
     m_frame->loader()->client()->dispatchWillSendRequest(loader, identifier, request, redirectResponse);
 
-#if PLATFORM(MAC)
     // If the URL changed, then we want to put that new URL in the "did tell client" set too.
     if (!request.isNull() && oldRequestURL != request.url().string().impl())
         m_frame->loader()->documentLoader()->didTellClientAboutLoad(request.url());
-#endif
 
     InspectorInstrumentation::willSendRequest(m_frame, identifier, loader, request, redirectResponse);
 
