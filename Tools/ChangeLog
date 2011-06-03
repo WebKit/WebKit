@@ -1,3 +1,19 @@
+2011-05-31  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        [GTK] Support smart replace for the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=61734
+
+        Call into the DumpRenderTreeSupportGtk hooks to toggle smart replace.
+        This is required to produce consistent test results.
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (resetDefaultsToConsistentValues): Set the smart replace setting to on by default.
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::setSmartInsertDeleteEnabled): Added an implementation of this
+        methods which calls into DumpRenderTreeSupportGtk.
+
 2011-06-03  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dimitri Glazkov.

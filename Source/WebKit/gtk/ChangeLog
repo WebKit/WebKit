@@ -1,3 +1,25 @@
+2011-05-31  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        [GTK] Support smart replace for the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=61734
+
+        Add the EditorClient and DumpRenderTreeSupportGtk hooks for enabling
+        smart replace in the tests.
+
+        * WebCoreSupport/DragClientGtk.cpp:
+        (WebKit::DragClient::startDrag): targeListForDataObject now takes another
+        parameter determining whether or not to add smart paste support. Add it here.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setSmartInsertDeleteEnabled): Added.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h: Add new method definition.
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::toggleSmartInsertDelete): Added implementation.
+        (WebKit::EditorClient::smartInsertDeleteEnabled): Added.
+        (WebKit::EditorClient::EditorClient):
+        * WebCoreSupport/EditorClientGtk.h: Add new method definition.
+
 2011-06-03  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Martin Robinson.

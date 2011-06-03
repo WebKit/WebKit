@@ -40,18 +40,21 @@ public:
     void setUsePrimarySelectionClipboard(bool usePrimary) { m_usePrimarySelectionClipboard = usePrimary; }
     bool usePrimarySelectionClipboard() { return m_usePrimarySelectionClipboard; }
 
+    enum SmartPasteInclusion { IncludeSmartPaste, DoNotIncludeSmartPaste };
+
     GtkClipboard* getCurrentClipboard(Frame*);
     GtkClipboard* getClipboard(Frame*) const;
     GtkClipboard* getPrimarySelectionClipboard(Frame*) const;
     GtkTargetList* targetList() const;
-    GtkTargetList* targetListForDataObject(DataObjectGtk*);
+    GtkTargetList* targetListForDataObject(DataObjectGtk*, SmartPasteInclusion = DoNotIncludeSmartPaste);
     void fillSelectionData(GtkSelectionData*, guint, DataObjectGtk*);
     void fillDataObjectFromDropData(GtkSelectionData*, guint, DataObjectGtk*);
     Vector<GdkAtom> dropAtomsForContext(GtkWidget*, GdkDragContext*);
-    void writeClipboardContents(GtkClipboard*, GClosure* closure = 0);
+    void writeClipboardContents(GtkClipboard*, SmartPasteInclusion = DoNotIncludeSmartPaste, GClosure* = 0);
     void getClipboardContents(GtkClipboard*);
 
-    enum PasteboardTargetType { TargetTypeMarkup, TargetTypeText, TargetTypeImage, TargetTypeURIList, TargetTypeNetscapeURL, TargetTypeUnknown };
+    enum PasteboardTargetType { TargetTypeMarkup, TargetTypeText, TargetTypeImage, TargetTypeURIList, TargetTypeNetscapeURL, TargetTypeSmartPaste, TargetTypeUnknown };
+    bool clipboardContentSupportsSmartReplace(GtkClipboard*);
 
 private:
     GtkTargetList* m_targetList;

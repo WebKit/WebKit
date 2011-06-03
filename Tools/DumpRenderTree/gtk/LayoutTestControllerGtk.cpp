@@ -365,7 +365,7 @@ void LayoutTestController::setWindowIsKey(bool windowIsKey)
 
 void LayoutTestController::setSmartInsertDeleteEnabled(bool flag)
 {
-    // FIXME: implement
+    DumpRenderTreeSupportGtk::setSmartInsertDeleteEnabled(webkit_web_frame_get_web_view(mainFrame), flag);
 }
 
 static gboolean waitToDumpWatchdogFired(void*)

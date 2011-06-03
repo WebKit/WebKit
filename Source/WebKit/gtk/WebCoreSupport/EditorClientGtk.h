@@ -80,6 +80,7 @@ class EditorClient : public WebCore::EditorClient {
         virtual bool shouldDeleteRange(WebCore::Range*);
         virtual bool shouldShowDeleteInterface(WebCore::HTMLElement*);
         virtual bool smartInsertDeleteEnabled();
+        void setSmartInsertDeleteEnabled(bool);
         virtual bool isSelectTrailingWhitespaceEnabled();
         virtual bool isContinuousSpellCheckingEnabled();
         virtual void toggleContinuousSpellChecking();
@@ -149,6 +150,8 @@ class EditorClient : public WebCore::EditorClient {
 
         WebCore::KeyBindingTranslator m_keyBindingTranslator;
         Vector<WTF::String> m_pendingEditorCommands;
+
+        bool m_smartInsertDeleteEnabled;
     };
 }
 

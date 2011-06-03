@@ -61,7 +61,7 @@ void Pasteboard::writeSelection(Range* selectedRange, bool canSmartCopyOrDelete,
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
     dataObject->setText(frame->editor()->selectedText());
     dataObject->setMarkup(createMarkup(selectedRange, 0, AnnotateForInterchange, false, AbsoluteURLs));
-    helper->writeClipboardContents(clipboard);
+    helper->writeClipboardContents(clipboard, canSmartCopyOrDelete ? PasteboardHelper::IncludeSmartPaste : PasteboardHelper::DoNotIncludeSmartPaste);
 }
 
 void Pasteboard::writePlainText(const String& text)
@@ -142,8 +142,8 @@ void Pasteboard::clear()
 
 bool Pasteboard::canSmartReplace()
 {
-    notImplemented();
-    return false;
+    return PasteboardHelper::defaultPasteboardHelper()->clipboardContentSupportsSmartReplace(
+        gtk_clipboard_get_for_display(gdk_display_get_default(), GDK_SELECTION_CLIPBOARD));
 }
 
 PassRefPtr<DocumentFragment> Pasteboard::documentFragment(Frame* frame, PassRefPtr<Range> context,

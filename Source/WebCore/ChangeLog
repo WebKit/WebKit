@@ -1,3 +1,28 @@
+2011-05-31  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        [GTK] Support smart replace for the pasteboard
+        https://bugs.webkit.org/show_bug.cgi?id=61734
+
+        Add smart replace support to WebCore and add hooks for it in WebKit
+        via DumpRenderTreeSupportGtk. When a platform supports smart replace,
+        WebCore will remove extra spaces that appear when pasting text. Eventually
+        WebKitGTK+ may want to expose this in the public API.
+
+        * platform/gtk/PasteboardGtk.cpp:
+        (WebCore::Pasteboard::writeSelection): Now pass whether or not to use smart replace
+        when calling writeSelection.
+        (WebCore::Pasteboard::canSmartReplace): Added an implementation that checks the clipboard
+        for whether or not it supports smart paste.
+        * platform/gtk/PasteboardHelper.cpp:
+        (WebCore::initGdkAtoms): Added initialization for smart replace atom.
+        (WebCore::PasteboardHelper::fillSelectionData): Added no-op handler for smart replace atom.
+        (WebCore::PasteboardHelper::targetListForDataObject): Properly handle new smart replace parameter.
+        (WebCore::PasteboardHelper::writeClipboardContents): Properly handle new smart replace parameter.
+        (WebCore::PasteboardHelper::clipboardContentSupportsSmartReplace): Added helper for Pasteboard.
+        * platform/gtk/PasteboardHelper.h: Add new method definition.
+
 2011-06-03  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

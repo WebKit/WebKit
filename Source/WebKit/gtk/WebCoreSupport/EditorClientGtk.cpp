@@ -295,7 +295,7 @@ static void setSelectionPrimaryClipboardIfNeeded(WebKitWebView* webView)
     viewSettingClipboard = webView;
     GClosure* callback = g_cclosure_new_object(G_CALLBACK(collapseSelection), G_OBJECT(webView));
     g_closure_set_marshal(callback, g_cclosure_marshal_VOID__VOID);
-    PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(clipboard, callback);
+    PasteboardHelper::defaultPasteboardHelper()->writeClipboardContents(clipboard, PasteboardHelper::DoNotIncludeSmartPaste, callback);
     viewSettingClipboard = 0;
 }
 #endif
@@ -423,10 +423,14 @@ void EditorClient::pageDestroyed()
     delete this;
 }
 
+void EditorClient::setSmartInsertDeleteEnabled(bool enabled)
+{
+    m_smartInsertDeleteEnabled = enabled;
+}
+
 bool EditorClient::smartInsertDeleteEnabled()
 {
-    notImplemented();
-    return false;
+    return m_smartInsertDeleteEnabled;
 }
 
 bool EditorClient::isSelectTrailingWhitespaceEnabled()
@@ -626,6 +630,7 @@ EditorClient::EditorClient(WebKitWebView* webView)
     , m_webView(webView)
     , m_preventNextCompositionCommit(false)
     , m_treatContextCommitAsKeyEvent(false)
+    , m_smartInsertDeleteEnabled(false)
 {
     WebKitWebViewPrivate* priv = m_webView->priv;
     g_signal_connect(priv->imContext.get(), "commit", G_CALLBACK(imContextCommitted), this);

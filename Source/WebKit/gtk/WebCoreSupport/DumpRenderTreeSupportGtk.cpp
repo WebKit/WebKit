@@ -28,6 +28,7 @@
 #include "AnimationController.h"
 #include "DOMWrapperWorld.h"
 #include "Document.h"
+#include "EditorClientGtk.h"
 #include "Element.h"
 #include "FocusController.h"
 #include "FrameLoaderClientGtk.h"
@@ -605,6 +606,15 @@ bool DumpRenderTreeSupportGtk::selectedRange(WebKitWebView* webView, int* start,
     *end = TextIterator::rangeLength(testRange.get());
 
     return true;
+}
+
+void DumpRenderTreeSupportGtk::setSmartInsertDeleteEnabled(WebKitWebView* webView, bool enabled)
+{
+    g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
+    g_return_if_fail(webView);
+
+    WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
+    client->setSmartInsertDeleteEnabled(enabled);
 }
 
 void DumpRenderTreeSupportGtk::whiteListAccessFromOrigin(const gchar* sourceOrigin, const gchar* destinationProtocol, const gchar* destinationHost, bool allowDestinationSubdomains)

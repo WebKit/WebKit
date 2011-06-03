@@ -38,6 +38,7 @@ static GdkAtom textPlainAtom;
 static GdkAtom markupAtom;
 static GdkAtom netscapeURLAtom;
 static GdkAtom uriListAtom;
+static GdkAtom smartPasteAtom;
 static String gMarkupPrefix;
 
 static void removeMarkupPrefix(String& markup)
@@ -61,6 +62,7 @@ static void initGdkAtoms()
     markupAtom = gdk_atom_intern("text/html", FALSE);
     netscapeURLAtom = gdk_atom_intern("_NETSCAPE_URL", FALSE);
     uriListAtom = gdk_atom_intern("text/uri-list", FALSE);
+    smartPasteAtom = gdk_atom_intern("application/vnd.webkitgtk.smartpaste", FALSE);
     gMarkupPrefix = "<meta http-equiv=\"content-type\" content=\"text/html; charset=utf-8\">";
 }
 
@@ -190,9 +192,12 @@ void PasteboardHelper::fillSelectionData(GtkSelectionData* selectionData, guint 
 
     } else if (info == TargetTypeImage)
         gtk_selection_data_set_pixbuf(selectionData, dataObject->image());
+
+    else if (info == TargetTypeSmartPaste)
+        gtk_selection_data_set_text(selectionData, "", -1);
 }
 
-GtkTargetList* PasteboardHelper::targetListForDataObject(DataObjectGtk* dataObject)
+GtkTargetList* PasteboardHelper::targetListForDataObject(DataObjectGtk* dataObject, SmartPasteInclusion shouldInludeSmartPaste)
 {
     GtkTargetList* list = gtk_target_list_new(0, 0);
 
@@ -209,6 +214,9 @@ GtkTargetList* PasteboardHelper::targetListForDataObject(DataObjectGtk* dataObje
 
     if (dataObject->hasImage())
         gtk_target_list_add_image_targets(list, TargetTypeImage, TRUE);
+
+    if (shouldInludeSmartPaste == IncludeSmartPaste)
+        gtk_target_list_add(list, smartPasteAtom, 0, TargetTypeSmartPaste);
 
     return list;
 }
@@ -289,10 +297,10 @@ static void clearClipboardContentsCallback(GtkClipboard* clipboard, gpointer dat
     g_closure_unref(callback);
 }
 
-void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, GClosure* callback)
+void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, SmartPasteInclusion includeSmartPaste, GClosure* callback)
 {
     DataObjectGtk* dataObject = DataObjectGtk::forClipboard(clipboard);
-    GtkTargetList* list = targetListForDataObject(dataObject);
+    GtkTargetList* list = targetListForDataObject(dataObject, includeSmartPaste);
 
     int numberOfTargets;
     GtkTargetEntry* table = gtk_target_table_new_from_list(list, &numberOfTargets);
@@ -312,6 +320,11 @@ void PasteboardHelper::writeClipboardContents(GtkClipboard* clipboard, GClosure*
     if (table)
         gtk_target_table_free(table, numberOfTargets);
     gtk_target_list_unref(list);
+}
+
+bool PasteboardHelper::clipboardContentSupportsSmartReplace(GtkClipboard* clipboard)
+{
+    return gtk_clipboard_wait_is_target_available(clipboard, smartPasteAtom);
 }
 
 }

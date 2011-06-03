@@ -105,6 +105,7 @@ public:
     static void setMinimumTimerInterval(WebKitWebView*, double);
     static void rectangleForSelection(WebKitWebFrame*, GdkRectangle*);
     static void scalePageBy(WebKitWebView*, float, float, float);
+    static void setSmartInsertDeleteEnabled(WebKitWebView*, bool);
 
     // Accessibility
     static void incrementAccessibilityValue(AtkObject*);

@@ -6,6 +6,7 @@ EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 5 of #text > DIV > BOD
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: shouldDeleteDOMRange:range from 4 of #text > DIV > BODY > HTML > #document to 1 of #text > DIV > BODY > HTML > #document
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
+EDITING DELEGATE: shouldChangeSelectedDOMRange:(null) toDOMRange:range from 3 of #text > DIV > BODY > HTML > #document to 3 of #text > DIV > BODY > HTML > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
 layer at (0,0) size 800x600
@@ -20,8 +21,8 @@ layer at (0,0) size 800x600
           text run at (0,19) width 45: "delete. "
           text run at (45,19) width 159: "You should see 'foo baz'."
       RenderBlock {DIV} at (0,54) size 784x19
-        RenderText {#text} at (0,0) size 25x19
-          text run at (0,0) width 25: "foo "
-        RenderText {#text} at (25,0) size 26x19
-          text run at (25,0) width 26: " baz"
-caret: position 4 of child 0 {#text} of child 2 {DIV} of body
+        RenderText {#text} at (0,0) size 21x19
+          text run at (0,0) width 21: "foo"
+        RenderText {#text} at (21,0) size 26x19
+          text run at (21,0) width 26: " baz"
+caret: position 3 of child 0 {#text} of child 2 {DIV} of body
