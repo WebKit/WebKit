@@ -244,6 +244,11 @@ WebKitIconDatabase* webkit_get_icon_database()
     return database;
 }
 
+static void webkitExit()
+{
+    g_object_unref(webkit_get_default_session());
+}
+
 void webkitInit()
 {
     static bool isInitialized = false;
@@ -288,6 +293,8 @@ void webkitInit()
     g_object_unref(sniffer);
 
     soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
+
+    atexit(webkitExit);
 }
 
 namespace WebKit {

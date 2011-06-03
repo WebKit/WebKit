@@ -1,3 +1,17 @@
+2011-06-03  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Unref the SoupSession used by WebKitGtk+ at exit
+        https://bugs.webkit.org/show_bug.cgi?id=60165
+
+        WebKitGtk+ creates a SoupSession instance to handle network stuff
+        that is never freed. We should unref that object at exit time.
+
+        * webkit/webkitglobals.cpp:
+        (webkitExit):
+        (webkitInit):
+
 2011-05-28  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
