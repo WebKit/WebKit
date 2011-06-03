@@ -167,6 +167,9 @@ public:
 
     PopupType popupType() const { return m_popupType; }
 
+    // While hovering popup menu window, we want to show tool tip message.
+    String getSelectedItemToolTip();
+
 private:
     friend class WTF::RefCounted<PopupContainer>;
 

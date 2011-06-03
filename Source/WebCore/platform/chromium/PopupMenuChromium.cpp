@@ -616,6 +616,13 @@ const WTF::Vector<PopupItem*>& PopupContainer:: popupData() const
     return m_listBox->items();
 }
 
+String PopupContainer::getSelectedItemToolTip()
+{
+    // We cannot use m_popupClient->selectedIndex() to choose tooltip message,
+    // because the selectedIndex() might return final selected index, not hovering selection.
+    return listBox()->m_popupClient->itemToolTip(listBox()->m_selectedIndex);
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // PopupListBox implementation
 

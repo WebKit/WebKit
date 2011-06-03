@@ -1,3 +1,18 @@
+2011-06-03  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        [Chromium] Call setToolTipText() in WebPopupMenuImpl mouse move handler to show tool tip in select popup window.
+        https://bugs.webkit.org/show_bug.cgi?id=61260
+        http://code.google.com/p/chromium/issues/detail?id=12721
+
+        Manual test: select-popup-tooltip-test.html
+
+        * manual-tests/select-popup-tooltip-test.html: Added.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::getSelectedItemToolTip): Get selected item tooltip string according to hovering mouse position.
+        * platform/chromium/PopupMenuChromium.h: Add getSelectedItemToolTip() declaration.
+
 2011-06-03  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.

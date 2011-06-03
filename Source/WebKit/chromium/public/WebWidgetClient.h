@@ -38,6 +38,7 @@
 
 namespace WebKit {
 
+class WebString;
 class WebWidget;
 struct WebCursorInfo;
 
@@ -80,6 +81,9 @@ public:
     // Called to get/set the position of the widget in screen coordinates.
     virtual WebRect windowRect() { return WebRect(); }
     virtual void setWindowRect(const WebRect&) { }
+
+    // Called when a tooltip should be shown at the current cursor position.
+    virtual void setToolTipText(const WebString&, WebTextDirection hint) { }
 
     // Called to get the position of the resizer rect in window coordinates.
     virtual WebRect windowResizerRect() { return WebRect(); }

@@ -40,12 +40,14 @@
 #include "PlatformKeyboardEvent.h"
 #include "PlatformMouseEvent.h"
 #include "PlatformWheelEvent.h"
+#include "PopupMenuChromium.h"
 #include "SkiaUtils.h"
 
 #include "WebInputEvent.h"
 #include "WebInputEventConversion.h"
 #include "WebRange.h"
 #include "WebRect.h"
+#include "WebViewClient.h"
 #include "WebWidgetClient.h"
 
 #include <skia/ext/platform_canvas.h>
@@ -95,6 +97,10 @@ void WebPopupMenuImpl::MouseMove(const WebMouseEvent& event)
     if (event.x != m_lastMousePosition.x || event.y != m_lastMousePosition.y) {
         m_lastMousePosition = WebPoint(event.x, event.y);
         m_widget->handleMouseMoveEvent(PlatformMouseEventBuilder(m_widget, event));
+
+        // We cannot call setToolTipText() in PopupContainer, because PopupContainer is in WebCore, and we cannot refer to WebKit from Webcore.
+        WebCore::PopupContainer* container = static_cast<WebCore::PopupContainer*>(m_widget);
+        client()->setToolTipText(container->getSelectedItemToolTip(), container->menuStyle().textDirection() == WebCore::RTL ? WebTextDirectionRightToLeft : WebTextDirectionLeftToRight);
     }
 }
 

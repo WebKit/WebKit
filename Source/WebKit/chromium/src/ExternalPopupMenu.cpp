@@ -133,6 +133,7 @@ void ExternalPopupMenu::getPopupMenuInfo(WebPopupMenuInfo* info)
     for (int i = 0; i < itemCount; ++i) {
         WebMenuItemInfo& popupItem = items[i];
         popupItem.label = m_popupMenuClient->itemText(i);
+        popupItem.toolTip = m_popupMenuClient->itemToolTip(i);
         if (m_popupMenuClient->itemIsSeparator(i))
             popupItem.type = WebMenuItemInfo::Separator;
         else if (m_popupMenuClient->itemIsLabel(i))

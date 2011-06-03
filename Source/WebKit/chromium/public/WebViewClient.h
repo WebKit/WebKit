@@ -227,9 +227,6 @@ public:
     // Called when keyboard focus switches to an anchor with the given URL.
     virtual void setKeyboardFocusURL(const WebURL&) { }
 
-    // Called when a tooltip should be shown at the current cursor position.
-    virtual void setToolTipText(const WebString&, WebTextDirection hint) { }
-
     // Shows a context menu with commands relevant to a specific element on
     // the given frame. Additional context data is supplied.
     virtual void showContextMenu(WebFrame*, const WebContextMenuData&) { }

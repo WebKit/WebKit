@@ -57,6 +57,7 @@ struct WebMenuItemInfo {
     }
 
     WebString label;
+    WebString toolTip;
     Type type;
     unsigned action;
     WebTextDirection textDirection;
