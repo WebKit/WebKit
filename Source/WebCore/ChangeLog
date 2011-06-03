@@ -1,3 +1,22 @@
+2011-06-03  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Andreas Kling.
+
+        Incorrect embedded document replaced size calculation for box-sizing: border-box
+        https://bugs.webkit.org/show_bug.cgi?id=62007
+
+        When using <object style="box-sizing: border-box" data="foo.svg"/> to embed foo.svg
+        which has an intrinsic width/height, the embedded document intrinsic size is incorrect.
+
+        RenderPart::computeEmbeddedDocumentReplacedWidth/Height has to ask the content renderer for the replaced width/height not ourselves.
+
+        Tests: svg/as-image/img-preserveAspectRatio-support-2.html
+               svg/as-object/object-box-sizing-no-width-height.html
+
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::computeEmbeddedDocumentReplacedWidth):
+        (WebCore::RenderPart::computeEmbeddedDocumentReplacedHeight):
+
 2011-06-03  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r88004.

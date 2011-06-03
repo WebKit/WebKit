@@ -116,14 +116,14 @@ int RenderPart::computeEmbeddedDocumentReplacedWidth(RenderSVGRoot* contentRende
 {
     ASSERT(contentRenderer);
     ASSERT(contentRenderer->style());
-    return computeReplacedLogicalWidthRespectingMinMaxWidth(computeReplacedLogicalWidthUsing(contentRenderer->style()->logicalWidth()), includeMaxWidth);
+    return contentRenderer->computeReplacedLogicalWidthRespectingMinMaxWidth(contentRenderer->computeReplacedLogicalWidthUsing(contentRenderer->style()->logicalWidth()), includeMaxWidth);
 }
 
 int RenderPart::computeEmbeddedDocumentReplacedHeight(RenderSVGRoot* contentRenderer) const
 {
     ASSERT(contentRenderer);
     ASSERT(contentRenderer->style());
-    return computeReplacedLogicalHeightRespectingMinMaxHeight(computeReplacedLogicalHeightUsing(contentRenderer->style()->logicalHeight()));
+    return contentRenderer->computeReplacedLogicalHeightRespectingMinMaxHeight(contentRenderer->computeReplacedLogicalHeightUsing(contentRenderer->style()->logicalHeight()));
 }
 
 int RenderPart::computeReplacedLogicalWidth(bool includeMaxWidth) const
