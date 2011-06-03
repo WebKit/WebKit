@@ -1,5 +1,16 @@
 2011-06-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed, new baselines for GTK after r88011.
+
+        * platform/gtk/fast/frames/flattening/iframe-flattening-out-of-view-and-scroll-expected.png: Added.
+        * platform/gtk/fast/frames/flattening/iframe-flattening-out-of-view-and-scroll-expected.txt: Added.
+        * platform/gtk/fast/frames/flattening/iframe-flattening-out-of-view-expected.png: Added.
+        * platform/gtk/fast/frames/flattening/iframe-flattening-out-of-view-expected.txt: Added.
+        * platform/gtk/fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout-expected.png: Added.
+        * platform/gtk/fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout-expected.txt: Added.
+
+2011-06-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Unreviewed, tests rebaselines for GTK after r88011.
 
         * platform/gtk/fast/frames/flattening/iframe-flattening-fixed-height-expected.txt:
