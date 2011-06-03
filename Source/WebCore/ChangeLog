@@ -1,3 +1,19 @@
+2011-06-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Prevent event dispatch for events with related target when host is the target.
+        https://bugs.webkit.org/show_bug.cgi?id=61979
+
+        Turns out, even if we trim the ancestor chain to 0, the event is still dispatched during AT_TARGET.
+        So might as well be explicit about what we are trying to do and add a flag to prevent dispatch in these cases.
+
+        * dom/EventDispatcher.cpp:
+        (WebCore::EventDispatcher::adjustToShadowBoundaries): Added preventing dispatch when the ancestor chain is trimmed to nothing.
+        (WebCore::EventDispatcher::EventDispatcher): Added initializer.
+        (WebCore::EventDispatcher::dispatchEvent): Added a check to prevent dispatch.
+        * dom/EventDispatcher.h: Added a def.
+
 2011-06-03  Dan Bernstein  <mitz@apple.com>
 
         Mac build fix.

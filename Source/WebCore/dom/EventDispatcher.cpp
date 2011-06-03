@@ -175,9 +175,11 @@ PassRefPtr<EventTarget> EventDispatcher::adjustToShadowBoundaries(PassRefPtr<Nod
         lowestCommonBoundary = m_ancestors.begin();
     }
 
-    // Trim ancestors to lowestCommonBoundary to keep events inside of the common shadow DOM subtree.
-    if (lowestCommonBoundary != m_ancestors.end())
+    if (lowestCommonBoundary != m_ancestors.end()) {
+        // Trim ancestors to lowestCommonBoundary to keep events inside of the common shadow DOM subtree.
         m_ancestors.shrink(lowestCommonBoundary - m_ancestors.begin());
+        m_shouldPreventDispatch = !m_ancestors.size();
+    }
     // Set event's related target to the first encountered shadow DOM boundary in the divergent subtree.
     return firstDivergentBoundary != relatedTargetAncestors.begin() ? *firstDivergentBoundary : relatedTarget;
 }
@@ -228,6 +230,7 @@ PassRefPtr<EventTarget> EventDispatcher::adjustRelatedTarget(Event* event, PassR
 EventDispatcher::EventDispatcher(Node* node)
     : m_node(node)
     , m_ancestorsInitialized(false)
+    , m_shouldPreventDispatch(false)
 {
     ASSERT(node);
     m_view = node->document()->view();
@@ -292,7 +295,7 @@ bool EventDispatcher::dispatchEvent(PassRefPtr<Event> event)
 
     // Give the target node a chance to do some work before DOM event handlers get a crack.
     void* data = m_node->preDispatchEventHandler(event.get());
-    if (event->propagationStopped())
+    if (m_shouldPreventDispatch || event->propagationStopped())
         goto doneDispatching;
 
     // Trigger capturing event handlers, starting at the top and working our way down.

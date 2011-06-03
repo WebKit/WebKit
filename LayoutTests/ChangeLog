@@ -1,3 +1,13 @@
+2011-06-02  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Prevent event dispatch for events with related target when host is the target.
+        https://bugs.webkit.org/show_bug.cgi?id=61979
+
+        * fast/events/shadow-boundary-crossing-expected.txt: Added test.
+        * fast/events/shadow-boundary-crossing.html: Added expectations.
+
 2011-06-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, new baselines for GTK after r88007 and r8009.
