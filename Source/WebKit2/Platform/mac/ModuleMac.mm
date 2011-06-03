@@ -48,7 +48,8 @@ bool Module::load()
 
 void Module::unload()
 {
-    ASSERT(m_bundle);
+    if (!m_bundle)
+        return;
 
 #if !defined(__LP64__)
     if (m_bundleResourceMap != -1)

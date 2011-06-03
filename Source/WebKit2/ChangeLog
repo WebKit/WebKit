@@ -1,5 +1,17 @@
 2011-06-02  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Mark Rowe.
+
+        Assert when trying to unload a module that failed to load
+        https://bugs.webkit.org/show_bug.cgi?id=61980
+
+        Remove an invalid ASSERT; it's OK for m_bundle to be null if the bundle failed to load.
+
+        * Platform/mac/ModuleMac.mm:
+        (WebKit::Module::unload):
+
+2011-06-02  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Simon Fraser.
 
         Add quirk for plug-ins that return a retained CALayer
