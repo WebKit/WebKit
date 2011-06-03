@@ -46,13 +46,6 @@
 
 namespace WebCore {
 
-struct DrawingBufferInternal {
-    unsigned offscreenColorTexture;
-#if USE(ACCELERATED_COMPOSITING)
-    RefPtr<Canvas2DLayerChromium> platformLayer;
-#endif
-};
-
 static unsigned generateColorTexture(GraphicsContext3D* context, const IntSize& size)
 {
     unsigned offscreenColorTexture = context->createTexture();
@@ -86,7 +79,6 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
     , m_stencilBuffer(0)
     , m_multisampleFBO(0)
     , m_multisampleColorBuffer(0)
-    , m_internal(adoptPtr(new DrawingBufferInternal))
 #if USE(SKIA)
     , m_grContext(0)
 #endif
@@ -108,8 +100,8 @@ DrawingBuffer::DrawingBuffer(GraphicsContext3D* context,
 DrawingBuffer::~DrawingBuffer()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_internal->platformLayer)
-        m_internal->platformLayer->setDrawingBuffer(0);
+    if (m_platformLayer)
+        m_platformLayer->setDrawingBuffer(0);
 #endif
 
     if (!m_context)
@@ -128,12 +120,11 @@ void DrawingBuffer::publishToPlatformLayer()
         m_callback->willPublish();
     if (multisample())
         commit();
-    unsigned parentTexture = m_internal->platformLayer->textureId();
-    // FIXME: We do the copy in the canvas' (child) context so that it executes in the correct order relative to
-    // other commands in the child context.  This ensures that the parent texture always contains a complete
-    // frame and not some intermediate result.  However, there is no synchronization to ensure that this copy
-    // happens before the compositor draws.  This means we might draw stale frames sometimes.  Ideally this
-    // would insert a fence into the child command stream that the compositor could wait for.
+    unsigned parentTexture = m_platformLayer->textureId();
+    // We do the copy in the canvas' (child) context so that it executes in the correct order relative to
+    // other commands in the child context. This ensures that the parent texture always contains a complete
+    // frame and not some intermediate result. LayerRendererChromium uses glSetLatch to make sure the child
+    // context completes before the parent context consumes the texture.
     m_context->makeContextCurrent();
 #if USE(SKIA)
     if (m_grContext)
@@ -147,17 +138,17 @@ void DrawingBuffer::publishToPlatformLayer()
 void DrawingBuffer::didReset()
 {
 #if USE(ACCELERATED_COMPOSITING)
-    if (m_internal->platformLayer)
-        m_internal->platformLayer->setTextureChanged();
+    if (m_platformLayer)
+        m_platformLayer->setTextureChanged();
 #endif
 }
 
 #if USE(ACCELERATED_COMPOSITING)
 PlatformLayer* DrawingBuffer::platformLayer()
 {
-    if (!m_internal->platformLayer)
-        m_internal->platformLayer = Canvas2DLayerChromium::create(this, 0);
-    return m_internal->platformLayer.get();
+    if (!m_platformLayer)
+        m_platformLayer = Canvas2DLayerChromium::create(this, 0);
+    return m_platformLayer.get();
 }
 #endif
 

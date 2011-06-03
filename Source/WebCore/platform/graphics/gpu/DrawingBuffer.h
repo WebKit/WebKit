@@ -49,8 +49,8 @@ struct GrPlatformSurfaceDesc;
 
 namespace WebCore {
 
-#if PLATFORM(CHROMIUM)
-struct DrawingBufferInternal;
+#if PLATFORM(CHROMIUM) && USE(ACCELERATED_COMPOSITING)
+class Canvas2DLayerChromium;
 #endif
 
 // Manages a rendering target (framebuffer + attachment) for a canvas.  Can publish its rendering
@@ -138,7 +138,9 @@ private:
 
 #if PLATFORM(CHROMIUM)
     OwnPtr<WillPublishCallback> m_callback;
-    OwnPtr<DrawingBufferInternal> m_internal;
+#if USE(ACCELERATED_COMPOSITING)
+    RefPtr<Canvas2DLayerChromium> m_platformLayer;
+#endif
 #endif
 
 #if PLATFORM(MAC)
