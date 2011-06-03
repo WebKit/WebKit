@@ -294,6 +294,7 @@ Never found SVGAltGlyphElement
 Never found SVGAngle
 Never found SVGAnimateColorElement
 Never found SVGAnimateElement
+Never found SVGAnimateMotionElement
 Never found SVGAnimateTransformElement
 Never found SVGAnimatedAngle
 Never found SVGAnimatedBoolean
@@ -361,6 +362,7 @@ Never found SVGLength
 Never found SVGLengthList
 Never found SVGLineElement
 Never found SVGLinearGradientElement
+Never found SVGMPathElement
 Never found SVGMarkerElement
 Never found SVGMaskElement
 Never found SVGMatrix

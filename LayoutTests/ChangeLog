@@ -1,3 +1,19 @@
+2011-06-03  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Creating <animateMotion> elements via javascript do not execute
+        https://bugs.webkit.org/show_bug.cgi?id=34301
+
+        Update test results.
+
+        * fast/dom/Window/window-properties-expected.txt:
+        * fast/dom/Window/window-property-descriptors-expected.txt:
+        * fast/dom/prototype-inheritance-2-expected.txt:
+        * fast/dom/prototype-inheritance-expected.txt:
+        * fast/js/global-constructors-expected.txt:
+        * svg/custom/global-constructors-expected.txt:
+
 2011-06-03  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Unreviewed rebaseline.

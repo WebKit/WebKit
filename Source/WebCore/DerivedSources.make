@@ -371,6 +371,7 @@ DOM_CLASSES = \
     SVGAngle \
     SVGAnimateColorElement \
     SVGAnimateElement \
+    SVGAnimateMotionElement \
     SVGAnimateTransformElement \
     SVGAnimatedAngle \
     SVGAnimatedBoolean \
@@ -450,6 +451,7 @@ DOM_CLASSES = \
     SVGMatrix \
     SVGMetadataElement \
     SVGMissingGlyphElement \
+    SVGMPathElement \
     SVGNumber \
     SVGNumberList \
     SVGPaint \

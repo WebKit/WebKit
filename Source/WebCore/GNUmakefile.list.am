@@ -4155,6 +4155,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSVGAnimatedTransformList.h \
 	DerivedSources/WebCore/JSSVGAnimateElement.cpp \
 	DerivedSources/WebCore/JSSVGAnimateElement.h \
+	DerivedSources/WebCore/JSSVGAnimateMotionElement.cpp \
+	DerivedSources/WebCore/JSSVGAnimateMotionElement.h \
 	DerivedSources/WebCore/JSSVGAnimateTransformElement.cpp \
 	DerivedSources/WebCore/JSSVGAnimateTransformElement.h \
 	DerivedSources/WebCore/JSSVGAnimationElement.cpp \
@@ -4273,6 +4275,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSSVGLineElement.cpp \
 	DerivedSources/WebCore/JSSVGLineElement.h \
 	DerivedSources/WebCore/JSSVGLocatable.h \
+	DerivedSources/WebCore/JSSVGMPathElement.cpp \
+	DerivedSources/WebCore/JSSVGMPathElement.h \
 	DerivedSources/WebCore/JSSVGMarkerElement.cpp \
 	DerivedSources/WebCore/JSSVGMarkerElement.h \
 	DerivedSources/WebCore/JSSVGMaskElement.cpp \

@@ -1,3 +1,20 @@
+2011-06-03  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Creating <animateMotion> elements via javascript do not execute
+        https://bugs.webkit.org/show_bug.cgi?id=34301
+
+        Enable constructors for SVGMPathElement and SVGAnimateMotionElement.
+
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * page/DOMWindow.idl:
+
 2011-06-03  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Steve Block.
@@ -2597,7 +2614,6 @@
         (WebCore::isSchemeChar):
         Include '+' in the list of valid characters.
 
->>>>>>> .r87778
 2011-05-30  Andrey Petrov  <andrey.petrov@gmail.com>
 
         Reviewed by Hajime Morita.

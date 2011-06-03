@@ -1002,6 +1002,10 @@
 		448A29BF0A46D9CB0030759F /* JSHTMLOptionsCollection.h in Headers */ = {isa = PBXBuildFile; fileRef = 448A29BD0A46D9CB0030759F /* JSHTMLOptionsCollection.h */; };
 		448A29C00A46D9CB0030759F /* JSHTMLOptionsCollection.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */; };
 		448AD27C0A48137A0023D179 /* JSHTMLOptionsCollectionCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */; };
+		4496E39D1398136C003EE32A /* JSSVGAnimateMotionElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4496E39B1398136C003EE32A /* JSSVGAnimateMotionElement.cpp */; };
+		4496E39E1398136C003EE32A /* JSSVGAnimateMotionElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4496E39C1398136C003EE32A /* JSSVGAnimateMotionElement.h */; };
+		4496E3A0139813A5003EE32A /* JSSVGMPathElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4496E39F139813A5003EE32A /* JSSVGMPathElement.h */; };
+		4496E3A2139813CB003EE32A /* JSSVGMPathElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4496E3A1139813CB003EE32A /* JSSVGMPathElement.cpp */; };
 		449B19F50FA72ECE0015CA4A /* HTMLParserQuirks.h in Headers */ = {isa = PBXBuildFile; fileRef = 449B19F30FA72ECE0015CA4A /* HTMLParserQuirks.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		44A28AAC12DFB8AC00AE923B /* MathMLElementFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A28AAB12DFB8AC00AE923B /* MathMLElementFactory.h */; };
 		44A28AAF12DFB8BF00AE923B /* MathMLNames.h in Headers */ = {isa = PBXBuildFile; fileRef = 44A28AAE12DFB8BF00AE923B /* MathMLNames.h */; };
@@ -7579,6 +7583,10 @@
 		448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollectionCustom.cpp; sourceTree = "<group>"; };
 		449098B10F8F82520076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
+		4496E39B1398136C003EE32A /* JSSVGAnimateMotionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGAnimateMotionElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGAnimateMotionElement.cpp; sourceTree = SOURCE_ROOT; };
+		4496E39C1398136C003EE32A /* JSSVGAnimateMotionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSSVGAnimateMotionElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGAnimateMotionElement.h; sourceTree = SOURCE_ROOT; };
+		4496E39F139813A5003EE32A /* JSSVGMPathElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSSVGMPathElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGMPathElement.h; sourceTree = SOURCE_ROOT; };
+		4496E3A1139813CB003EE32A /* JSSVGMPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGMPathElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGMPathElement.cpp; sourceTree = SOURCE_ROOT; };
 		449B19F30FA72ECE0015CA4A /* HTMLParserQuirks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLParserQuirks.h; sourceTree = "<group>"; };
 		44A28AAB12DFB8AC00AE923B /* MathMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLElementFactory.h; sourceTree = "<group>"; };
 		44A28AAE12DFB8BF00AE923B /* MathMLNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLNames.h; sourceTree = "<group>"; };
@@ -16701,6 +16709,10 @@
 		A83B790A0CCAFF47000B0825 /* SVG */ = {
 			isa = PBXGroup;
 			children = (
+				4496E3A1139813CB003EE32A /* JSSVGMPathElement.cpp */,
+				4496E39F139813A5003EE32A /* JSSVGMPathElement.h */,
+				4496E39B1398136C003EE32A /* JSSVGAnimateMotionElement.cpp */,
+				4496E39C1398136C003EE32A /* JSSVGAnimateMotionElement.h */,
 				B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */,
 				B20111060AB7740500DB0E68 /* JSSVGAElement.h */,
 				6515EC8F0D9723FF0063D49A /* JSSVGAltGlyphElement.cpp */,
@@ -23118,6 +23130,8 @@
 				B12D236E1356034D002A28D4 /* JSMultipleTrackList.h in Headers */,
 				8C0E334D138A92C7008DA94F /* LevelDBTransaction.h in Headers */,
 				8C0E334F138A92C7008DA94F /* LevelDBWriteBatch.h in Headers */,
+				4496E39E1398136C003EE32A /* JSSVGAnimateMotionElement.h in Headers */,
+				4496E3A0139813A5003EE32A /* JSSVGMPathElement.h in Headers */,
 				2E2445F71395893A004B6C19 /* OperationNotAllowedException.h in Headers */,
 				2E24476913959173004B6C19 /* JSOperationNotAllowedException.h in Headers */,
 			);
@@ -25845,6 +25859,8 @@
 				B12D236D1356034D002A28D4 /* JSMultipleTrackList.cpp in Sources */,
 				8C0E334C138A92C7008DA94F /* LevelDBTransaction.cpp in Sources */,
 				8C0E334E138A92C7008DA94F /* LevelDBWriteBatch.cpp in Sources */,
+				4496E39D1398136C003EE32A /* JSSVGAnimateMotionElement.cpp in Sources */,
+				4496E3A2139813CB003EE32A /* JSSVGMPathElement.cpp in Sources */,
 				2E24476813959173004B6C19 /* JSOperationNotAllowedException.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

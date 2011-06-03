@@ -716,9 +716,9 @@ module window {
 #if defined(ENABLE_SVG_ANIMATION) && ENABLE_SVG_ANIMATION
         attribute SVGAnimateColorElementConstructor SVGAnimateColorElement;
         attribute SVGAnimateElementConstructor SVGAnimateElement;
-//      attribute SVGAnimateMotionElementConstructor SVGAnimateMotionElement;
+        attribute SVGAnimateMotionElementConstructor SVGAnimateMotionElement;
         attribute SVGAnimateTransformElementConstructor SVGAnimateTransformElement;
-//      attribute SVGMPathElementConstructor SVGMPathElement;
+        attribute SVGMPathElementConstructor SVGMPathElement;
         attribute SVGSetElementConstructor SVGSetElement;
 #endif
 

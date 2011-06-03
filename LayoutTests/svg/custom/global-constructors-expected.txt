@@ -143,8 +143,8 @@ PASS SVGZoomEvent.toString() is '[object SVGZoomEventConstructor]'
 FAIL SVGAnimationElement.toString() should be [object SVGAnimationElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGAnimationElement
 PASS SVGAnimateElement.toString() is '[object SVGAnimateElementConstructor]'
 PASS SVGSetElement.toString() is '[object SVGSetElementConstructor]'
-FAIL SVGAnimateMotionElement.toString() should be [object SVGAnimateMotionElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGAnimateMotionElement
-FAIL SVGMPathElement.toString() should be [object SVGMPathElementConstructor]. Threw exception ReferenceError: Can't find variable: SVGMPathElement
+PASS SVGAnimateMotionElement.toString() is '[object SVGAnimateMotionElementConstructor]'
+PASS SVGMPathElement.toString() is '[object SVGMPathElementConstructor]'
 PASS SVGAnimateColorElement.toString() is '[object SVGAnimateColorElementConstructor]'
 PASS SVGAnimateTransformElement.toString() is '[object SVGAnimateTransformElementConstructor]'
 PASS SVGFontElement.toString() is '[object SVGFontElementConstructor]'
