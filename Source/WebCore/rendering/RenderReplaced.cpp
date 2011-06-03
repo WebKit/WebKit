@@ -141,7 +141,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
     }
 
     if (!completelyClippedOut) {
-        paintReplaced(paintInfo, tx, ty);
+        paintReplaced(paintInfo, IntPoint(tx, ty));
 
         if (style()->hasBorderRadius())
             paintInfo.context->restore();

@@ -2163,7 +2163,7 @@ void FrameView::invalidateScrollbarRect(Scrollbar* scrollbar, const IntRect& rec
 {
     // Add in our offset within the FrameView.
     IntRect dirtyRect = rect;
-    dirtyRect.move(scrollbar->location());
+    dirtyRect.moveBy(scrollbar->location());
     invalidateRect(dirtyRect);
 }
 
@@ -2627,7 +2627,7 @@ IntRect FrameView::convertFromRenderer(const RenderObject* renderer, const IntRe
     IntRect rect = renderer->localToAbsoluteQuad(FloatRect(rendererRect)).enclosingBoundingBox();
 
     // Convert from page ("absolute") to FrameView coordinates.
-    rect.move(-scrollPosition());
+    rect.moveBy(-scrollPosition());
 
     return rect;
 }
@@ -2637,7 +2637,7 @@ IntRect FrameView::convertToRenderer(const RenderObject* renderer, const IntRect
     IntRect rect = viewRect;
     
     // Convert from FrameView coords into page ("absolute") coordinates.
-    rect.move(scrollPosition());
+    rect.moveBy(scrollPosition());
 
     // FIXME: we don't have a way to map an absolute rect down to a local quad, so just
     // move the rect for now.

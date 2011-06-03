@@ -273,7 +273,7 @@ void RenderView::repaintViewRectangle(const IntRect& ur, bool immediate)
         
         // Subtract out the contentsX and contentsY offsets to get our coords within the viewing
         // rectangle.
-        r.move(-vr.location());
+        r.moveBy(-vr.location());
         
         // FIXME: Hardcoded offsets here are not good.
         r.move(obj->borderLeft() + obj->paddingLeft(),

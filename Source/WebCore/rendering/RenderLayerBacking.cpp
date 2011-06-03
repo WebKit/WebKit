@@ -357,7 +357,7 @@ void RenderLayerBacking::updateGraphicsLayerGeometry()
     IntRect relativeCompositingBounds(localCompositingBounds);
     IntPoint delta;
     m_owningLayer->convertToLayerCoords(compAncestor, delta);
-    relativeCompositingBounds.move(delta);
+    relativeCompositingBounds.moveBy(delta);
 
     IntPoint graphicsLayerParentLocation;
     if (compAncestor && compAncestor->backing()->hasClippingLayer()) {
@@ -1197,7 +1197,7 @@ static void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const
     const IntRect& scrollbarRect = scrollbar->frameRect();
     context.translate(-scrollbarRect.x(), -scrollbarRect.y());
     IntRect transformedClip = clip;
-    transformedClip.move(scrollbarRect.location());
+    transformedClip.moveBy(scrollbarRect.location());
     scrollbar->paint(&context, transformedClip);
     context.restore();
 }
@@ -1231,7 +1231,7 @@ void RenderLayerBacking::paintContents(const GraphicsLayer* graphicsLayer, Graph
         context.save();
         context.translate(-scrollCornerAndResizer.x(), -scrollCornerAndResizer.y());
         IntRect transformedClip = clip;
-        transformedClip.move(scrollCornerAndResizer.location());
+        transformedClip.moveBy(scrollCornerAndResizer.location());
         m_owningLayer->paintScrollCorner(&context, IntPoint(), transformedClip);
         m_owningLayer->paintResizer(&context, IntPoint(), transformedClip);
         context.restore();

@@ -66,7 +66,7 @@ private:
     virtual bool requiresLayer() const { return true; }
     virtual bool isVideo() const { return true; }
 
-    virtual void paintReplaced(PaintInfo&, int tx, int ty);
+    virtual void paintReplaced(PaintInfo&, const IntPoint&);
 
     virtual void layout();
 

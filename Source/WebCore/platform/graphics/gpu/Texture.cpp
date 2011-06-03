@@ -176,7 +176,7 @@ void Texture::updateSubRect(void* pixels, const IntRect& updateRect)
         updateRectIntersected.intersect(tileBoundsWithBorder);
 
         IntRect dstRect = updateRectIntersected;
-        dstRect.move(-tileBoundsWithBorder.location());
+        dstRect.moveBy(-tileBoundsWithBorder.location());
 
         if (updateRectIntersected.isEmpty())
             continue;

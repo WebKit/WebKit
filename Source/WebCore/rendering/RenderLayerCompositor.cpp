@@ -451,7 +451,7 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
     if (layer->renderer()->hasOverflowClip() || layer->renderer()->hasMask()) {
         IntPoint ancestorRelOffset;
         layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
-        boundingBoxRect.move(ancestorRelOffset);
+        boundingBoxRect.moveBy(ancestorRelOffset);
         return boundingBoxRect;
     }
 
@@ -505,7 +505,7 @@ IntRect RenderLayerCompositor::calculateCompositedBounds(const RenderLayer* laye
 
     IntPoint ancestorRelOffset;
     layer->convertToLayerCoords(ancestorLayer, ancestorRelOffset);
-    unionBounds.move(ancestorRelOffset);
+    unionBounds.moveBy(ancestorRelOffset);
 
     return unionBounds;
 }
@@ -529,7 +529,7 @@ void RenderLayerCompositor::layerWillBeRemoved(RenderLayer* parent, RenderLayer*
 
         IntPoint offset;
         child->convertToLayerCoords(compLayer, offset);
-        compBounds.move(offset);
+        compBounds.moveBy(offset);
 
         compLayer->setBackingNeedsRepaintInRect(compBounds);
 
@@ -1436,7 +1436,7 @@ static void paintScrollbar(Scrollbar* scrollbar, GraphicsContext& context, const
     const IntRect& scrollbarRect = scrollbar->frameRect();
     context.translate(-scrollbarRect.x(), -scrollbarRect.y());
     IntRect transformedClip = clip;
-    transformedClip.move(scrollbarRect.location());
+    transformedClip.moveBy(scrollbarRect.location());
     scrollbar->paint(&context, transformedClip);
     context.restore();
 }
@@ -1452,7 +1452,7 @@ void RenderLayerCompositor::paintContents(const GraphicsLayer* graphicsLayer, Gr
         context.save();
         context.translate(-scrollCorner.x(), -scrollCorner.y());
         IntRect transformedClip = clip;
-        transformedClip.move(scrollCorner.location());
+        transformedClip.moveBy(scrollCorner.location());
         m_renderView->frameView()->paintScrollCorner(&context, transformedClip);
         context.restore();
     }

@@ -338,7 +338,7 @@ void RenderListItem::positionListMarker()
                     propagateLayoutOverflow = false;
                 if (o->hasSelfPaintingLayer())
                     propagateVisualOverflow = false;
-                markerRect.move(-o->location());
+                markerRect.moveBy(-o->location());
             } while (o != this && propagateVisualOverflow && propagateLayoutOverflow);
         }
     }

@@ -1008,11 +1008,11 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
         GraphicsContextStateSaver stateSaver(*context);
 
         context->translate(x(), y());
-        documentDirtyRect.move(-location());
+        documentDirtyRect.moveBy(-location());
 
         if (!paintsEntireContents()) {
             context->translate(-scrollX(), -scrollY());
-            documentDirtyRect.move(scrollPosition());
+            documentDirtyRect.moveBy(scrollPosition());
 
             context->clip(visibleContentRect());
         }
@@ -1033,7 +1033,7 @@ void ScrollView::paint(GraphicsContext* context, const IntRect& rect)
         IntRect scrollViewDirtyRect = rect;
         scrollViewDirtyRect.intersect(frameRect());
         context->translate(x(), y());
-        scrollViewDirtyRect.move(-location());
+        scrollViewDirtyRect.moveBy(-location());
 
         paintScrollbars(context, scrollViewDirtyRect);
     }
@@ -1127,7 +1127,7 @@ IntRect ScrollView::convertFromScrollbarToContainingView(const Scrollbar* scroll
 {
     // Scrollbars won't be transformed within us
     IntRect newRect = localRect;
-    newRect.move(scrollbar->location());
+    newRect.moveBy(scrollbar->location());
     return newRect;
 }
 
@@ -1135,7 +1135,7 @@ IntRect ScrollView::convertFromContainingViewToScrollbar(const Scrollbar* scroll
 {
     IntRect newRect = parentRect;
     // Scrollbars won't be transformed within us
-    newRect.move(-scrollbar->location());
+    newRect.moveBy(-scrollbar->location());
     return newRect;
 }
 

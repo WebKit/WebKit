@@ -184,7 +184,7 @@ bool RenderVideo::shouldDisplayVideo() const
     return !videoElement()->shouldDisplayPosterImage();
 }
 
-void RenderVideo::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
+void RenderVideo::paintReplaced(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     MediaPlayer* mediaPlayer = mediaElement()->player();
     bool displayingPoster = videoElement()->shouldDisplayPosterImage();
@@ -198,7 +198,7 @@ void RenderVideo::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
     IntRect rect = videoBox();
     if (rect.isEmpty())
         return;
-    rect.move(tx, ty);
+    rect.moveBy(paintOffset);
 
     if (displayingPoster)
         paintIntoRect(paintInfo.context, rect);

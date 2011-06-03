@@ -690,7 +690,7 @@ bool RenderListBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
 IntRect RenderListBox::controlClipRect(const IntPoint& additionalOffset) const
 {
     IntRect clipRect = contentBoxRect();
-    clipRect.move(additionalOffset);
+    clipRect.moveBy(additionalOffset);
     return clipRect;
 }
 

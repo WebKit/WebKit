@@ -65,7 +65,7 @@ private:
     int calcAspectRatioLogicalWidth() const;
     int calcAspectRatioLogicalHeight() const;
 
-    virtual void paintReplaced(PaintInfo&, int /*tx*/, int /*ty*/) { }
+    virtual void paintReplaced(PaintInfo&, const IntPoint&) { }
 
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject* repaintContainer);
 

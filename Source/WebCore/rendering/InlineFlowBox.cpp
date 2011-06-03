@@ -951,7 +951,7 @@ void InlineFlowBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int
     IntRect overflowRect(visualOverflowRect(lineTop, lineBottom));
     overflowRect.inflate(renderer()->maximalOutlineSize(paintInfo.phase));
     flipForWritingMode(overflowRect);
-    overflowRect.move(paintOffset);
+    overflowRect.moveBy(paintOffset);
     
     if (!paintInfo.rect.intersects(overflowRect))
         return;

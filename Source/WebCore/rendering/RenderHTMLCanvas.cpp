@@ -54,10 +54,10 @@ bool RenderHTMLCanvas::requiresLayer() const
     return canvas && canvas->renderingContext() && canvas->renderingContext()->isAccelerated();
 }
 
-void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
+void RenderHTMLCanvas::paintReplaced(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     IntRect rect = contentBoxRect();
-    rect.move(tx, ty);
+    rect.moveBy(paintOffset);
     bool useLowQualityScale = style()->imageRendering() == ImageRenderingOptimizeContrast;
     static_cast<HTMLCanvasElement*>(node())->paint(paintInfo.context, rect, useLowQualityScale);
 }

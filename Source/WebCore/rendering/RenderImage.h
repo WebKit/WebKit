@@ -76,7 +76,7 @@ private:
     virtual bool isImage() const { return true; }
     virtual bool isRenderImage() const { return true; }
 
-    virtual void paintReplaced(PaintInfo&, int tx, int ty);
+    virtual void paintReplaced(PaintInfo&, const IntPoint&);
 
     virtual int minimumReplacedHeight() const;
 

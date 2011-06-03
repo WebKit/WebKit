@@ -145,7 +145,7 @@ void RenderEmbeddedObject::paint(PaintInfo& paintInfo, int tx, int ty)
     RenderPart::paint(paintInfo, tx, ty);
 }
 
-void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
+void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (!pluginCrashedOrWasMissing())
         return;
@@ -163,7 +163,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, int tx, int ty)
     Font font;
     TextRun run("");
     float textWidth;
-    if (!getReplacementTextGeometry(tx, ty, contentRect, path, replacementTextRect, font, run, textWidth))
+    if (!getReplacementTextGeometry(paintOffset.x(), paintOffset.y(), contentRect, path, replacementTextRect, font, run, textWidth))
         return;
     
     GraphicsContextStateSaver stateSaver(*context);

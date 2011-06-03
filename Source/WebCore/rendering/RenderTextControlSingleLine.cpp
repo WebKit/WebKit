@@ -488,7 +488,7 @@ IntRect RenderTextControlSingleLine::controlClipRect(const IntPoint& additionalO
     ASSERT(hasControlClip());
 
     IntRect clipRect = IntRect(innerBlockElement()->renderBox()->frameRect());
-    clipRect.move(additionalOffset);
+    clipRect.moveBy(additionalOffset);
     return clipRect;
 }
 

@@ -900,7 +900,7 @@ static void expandClipRectForDescendantsAndReflection(IntRect& clipRect, const R
         l->convertToLayerCoords(rootLayer, delta);
         clipRect.move(-delta.x(), -delta.y());
         clipRect.unite(l->renderBox()->reflectedRect(clipRect));
-        clipRect.move(delta);
+        clipRect.moveBy(delta);
     }
 }
 
@@ -2325,7 +2325,7 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, const IntPoint& pa
     ASSERT(box);
 
     IntRect absRect = scrollCornerRect();
-    absRect.move(paintOffset);
+    absRect.moveBy(paintOffset);
     if (!absRect.intersects(damageRect))
         return;
 
@@ -2354,7 +2354,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, const IntPoint& paintOf
     ASSERT(box);
 
     IntRect absRect = resizerCornerRect(this, box->borderBoxRect());
-    absRect.move(paintOffset);
+    absRect.moveBy(paintOffset);
     if (!absRect.intersects(damageRect))
         return;
 
@@ -2772,7 +2772,7 @@ void RenderLayer::paintChildLayerIntoColumns(RenderLayer* childLayer, RenderLaye
         int logicalLeftOffset = (isHorizontal ? colRect.x() : colRect.y()) - columnBlock->logicalLeftOffsetForContent();
         IntSize offset = isHorizontal ? IntSize(logicalLeftOffset, currLogicalTopOffset) : IntSize(currLogicalTopOffset, logicalLeftOffset);
 
-        colRect.move(layerOffset);
+        colRect.moveBy(layerOffset);
 
         IntRect localDirtyRect(paintDirtyRect);
         localDirtyRect.intersect(colRect);
@@ -3256,7 +3256,7 @@ RenderLayer* RenderLayer::hitTestChildLayerColumns(RenderLayer* childLayer, Rend
             currLogicalTopOffset -= blockDelta;
         else
             currLogicalTopOffset += blockDelta;
-        colRect.move(layerOffset);
+        colRect.moveBy(layerOffset);
 
         IntRect localClipRect(hitTestRect);
         localClipRect.intersect(colRect);
@@ -3597,7 +3597,7 @@ IntRect RenderLayer::boundingBox(const RenderLayer* ancestorLayer) const
         renderer()->containingBlock()->flipForWritingMode(result);
     IntPoint delta;
     convertToLayerCoords(ancestorLayer, delta);
-    result.move(delta);
+    result.moveBy(delta);
     return result;
 }
 
@@ -3934,7 +3934,7 @@ void RenderLayer::setBackingNeedsRepaintInRect(const IntRect& r)
         IntRect absRect(r);
         IntPoint delta;
         convertToLayerCoords(root(), delta);
-        absRect.move(delta);
+        absRect.moveBy(delta);
 
         RenderView* view = renderer()->view();
         if (view)

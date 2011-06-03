@@ -1,3 +1,92 @@
+2011-06-02  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintReplaced to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=61891
+
+        Switching paintReplaced to use IntPoint to represent the paint offset instead
+        of a pair of ints.
+
+        Also renaming the IntPoint flavor of IntRect::move to moveBy to clear up the
+        fact that the IntPoint is added as an offset as opposed to being relocated
+        to that point.
+
+        No tests because this is just a refactoring.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::invalidateScrollbarRect):
+        (WebCore::FrameView::convertFromRenderer):
+        (WebCore::FrameView::convertToRenderer):
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::wheelEvent):
+        * platform/ScrollbarThemeComposite.cpp:
+        (WebCore::ScrollbarThemeComposite::invalidatePart):
+        * platform/graphics/gpu/Texture.cpp
+        (WebCore::Texture::updateSubRect)
+        * platform/graphics/IntRect.h:
+        (WebCore::IntRect::moveBy):
+        * platform/mac/WidgetMac.mm:
+        (WebCore::Widget::paint):
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::paint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::logicalRectToPhysicalRect):
+        (WebCore::RenderBlock::selectionGaps):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::offsetFromContainer):
+        (WebCore::RenderBox::computeRectForRepaint):
+        (WebCore::RenderBox::localCaretRect):
+        * rendering/RenderDetailsMarker.cpp:
+        (WebCore::RenderDetailsMarker::paint):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+        * rendering/RenderEmbeddedObject.h:
+        * rendering/RenderHTMLCanvas.cpp:
+        (WebCore::RenderHTMLCanvas::paintReplaced):
+        * rendering/RenderHTMLCanvas.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::paintReplaced):
+        * rendering/RenderImage.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::culledInlineVisualOverflowBoundingBox):
+        * rendering/RenderLayer.cpp:
+        (WebCore::expandClipRectForDescendantsAndReflection):
+        (WebCore::RenderLayer::paintScrollCorner):
+        (WebCore::RenderLayer::paintResizer):
+        (WebCore::RenderLayer::paintChildLayerIntoColumns):
+        (WebCore::RenderLayer::hitTestChildLayerColumns):
+        (WebCore::RenderLayer::boundingBox):
+        (WebCore::RenderLayer::setBackingNeedsRepaintInRect):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerGeometry):
+        (WebCore::paintScrollbar):
+        (WebCore::RenderLayerBacking::paintContents):
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::calculateCompositedBounds):
+        (WebCore::RenderLayerCompositor::layerWillBeRemoved):
+        (WebCore::paintScrollbar):
+        (WebCore::RenderLayerCompositor::paintContents):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::controlClipRect):
+        * rendering/RenderListItem.cpp:
+        (WebCore::RenderListItem::positionListMarker):
+        * rendering/RenderListMarker.cpp:
+        (WebCore::RenderListMarker::paint):
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        * rendering/RenderReplaced.h:
+        (WebCore::RenderReplaced::paintReplaced):
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::computeRectForRepaint):
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::controlClipRect):
+        * rendering/RenderVideo.cpp:
+        (WebCore::RenderVideo::paintReplaced):
+        * rendering/RenderVideo.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::repaintViewRectangle):
+
 2011-06-02  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Dimitri Glazkov.
