@@ -47,6 +47,7 @@ BEGIN {
    $VERSION     = 1.00;
    @ISA         = qw(Exporter);
    @EXPORT      = qw(&getHTTPDPath
+                     &hasHTTPD
                      &getHTTPDConfigPathForTestDirectory
                      &getDefaultConfigForTestDirectory
                      &openHTTPD
@@ -84,6 +85,12 @@ sub getHTTPDPath
         $httpdPath = "/usr/sbin/httpd";
     }
     return $httpdPath;
+}
+
+sub hasHTTPD
+{
+    my @command = (getHTTPDPath(), "-v");
+    return system(@command) == 0;
 }
 
 sub getDefaultConfigForTestDirectory

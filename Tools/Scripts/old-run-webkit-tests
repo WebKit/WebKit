@@ -525,7 +525,11 @@ if (checkWebCoreFeatureSupport("SVG", 0)) {
 if (!$testHTTP) {
     $ignoredDirectories{'http'} = 1;
     $ignoredDirectories{'websocket'} = 1;
+} elsif (!hasHTTPD()) {
+    print "\nNo httpd found. Cannot run http tests.\nPlease use --no-http if you do not want to run http tests.\n"
+    exit 1;
 }
+
 if (!$testWebSocket) {
     $ignoredDirectories{'websocket'} = 1;
 }
