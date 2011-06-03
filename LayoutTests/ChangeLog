@@ -18,6 +18,12 @@
 
 2011-06-03  Andrew Scherkus  <scherkus@chromium.org>
 
+        Unreviewed, updating media/video-display-aspect-ratio.html expectations for Chromium.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-03  Andrew Scherkus  <scherkus@chromium.org>
+
         Unreviewed, adding Ogg Theora version of media/content/test-par-16-9.mp4.
 
         * media/content/test-par-16-9.ogv: Added.

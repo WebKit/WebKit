@@ -812,9 +812,6 @@ BUGCR78376 : http/tests/media/video-play-stall-seek.html = TIMEOUT
 // canplaythrough event is sent too early.
 BUGCR73609 : http/tests/media/video-play-stall.html = TEXT
 
-// UNIMPLEMENTED : * we don't have test-par-16-9.ogv generated in WebKit * we don't handle aspect ratio correctly.
-BUGCR59635 SKIP : media/video-display-aspect-ratio.html = PASS FAIL TIMEOUT
-
 // video.buffered multiple TimeRanges support.
 BUGCR49165 SKIP : http/tests/media/video-buffered.html = PASS
 
