@@ -39,8 +39,9 @@ class ArrayStream(object):
     concatenates all of the writes together.
     """
 
-    def __init__(self):
+    def __init__(self, tty=False):
         self._contents = []
+        self._tty = tty
 
     def write(self, msg):
         """Implement stream.write() by appending to the stream's contents."""
@@ -64,3 +65,6 @@ class ArrayStream(object):
 
     def __repr__(self):
         return '<ArrayStream: ' + str(self._contents) + '>'
+
+    def isatty(self):
+        return self._tty

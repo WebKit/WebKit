@@ -31,6 +31,7 @@
 
 import logging
 import optparse
+import time
 
 from webkitpy.common.net import resultsjsonparser
 from webkitpy.layout_tests.layout_package import metered_stream
@@ -42,6 +43,8 @@ _log = logging.getLogger("webkitpy.layout_tests.printer")
 TestExpectations = test_expectations.TestExpectations
 
 NUM_SLOW_TESTS_TO_LOG = 10
+FAST_UPDATES_SECONDS = 0.03
+SLOW_UPDATES_SECONDS = 10.0
 
 PRINT_DEFAULT = ("misc,one-line-progress,one-line-summary,unexpected,"
                  "unexpected-results,updates")
@@ -68,7 +71,7 @@ At the beginning of the run:
                         (# passes, # failures, etc.)
 
 During the run:
-    one-line-progress   print a one-line progress bar
+    one-line-progress   print a one-line progress message or bar
     unexpected          print any unexpected results as they occur
     updates             print updates on which stage is executing
     trace-everything    print detailed info on every test's results
@@ -116,7 +119,7 @@ def print_options():
             help="show detailed help on controlling print output"),
         optparse.make_option("-v", "--verbose", action="store_true",
             default=False, help="include debug-level logging"),
-    ]
+   ]
 
 
 def parse_print_options(print_options, verbose):
@@ -130,7 +133,6 @@ def parse_print_options(print_options, verbose):
         switches = set(print_options.split(','))
     elif verbose:
         switches = set(PRINT_EVERYTHING.split(','))
-        switches.discard('one-line-progress')
     else:
         switches = set(PRINT_DEFAULT.split(','))
 
@@ -206,17 +208,22 @@ class Printer(object):
         self._buildbot_stream = buildbot_output
         self._options = options
         self._port = port
+        self._meter = None
         self._stream = regular_output
 
-        self._meter = None
-        if options.verbose:
-            self._logging_handler = _configure_logging(regular_output, options.verbose)
-        else:
-            self._meter = metered_stream.MeteredStream(regular_output)
-            self._logging_handler = _configure_logging(self._meter, options.verbose)
+        # These are used for --print one-line-progress
+        self._last_remaining = None
+        self._last_update_time = None
 
-        self.switches = parse_print_options(options.print_options,
-            options.verbose)
+        self.switches = parse_print_options(options.print_options, options.verbose)
+
+        if self._stream.isatty() and not options.verbose:
+            self._update_interval_seconds = FAST_UPDATES_SECONDS
+            self._meter = metered_stream.MeteredStream(self._stream)
+            self._logging_handler = _configure_logging(self._meter, options.verbose)
+        else:
+            self._logging_handler = _configure_logging(self._stream, options.verbose)
+            self._update_interval_seconds = SLOW_UPDATES_SECONDS
 
     def cleanup(self):
         """Restore logging configuration to its initial settings."""
@@ -341,14 +348,24 @@ class Printer(object):
         if self.disabled('one-line-progress'):
             return
 
+        now = time.time()
+        if self._last_update_time is None:
+            self._last_update_time = now
+
+        time_since_last_update = now - self._last_update_time
+        if time_since_last_update <= self._update_interval_seconds:
+            return
+
+        self._last_update_time = now
+
         percent_complete = 100 * (result_summary.expected +
             result_summary.unexpected) / result_summary.total
         action = "Testing"
         if retrying:
             action = "Retrying"
-        self._update("%s (%d%%): %d ran as expected, %d didn't,"
-            " %d left" % (action, percent_complete, result_summary.expected,
-             result_summary.unexpected, result_summary.remaining))
+        self._update("%s (%d%%): %d ran as expected, %d didn't, %d left" %
+                     (action, percent_complete, result_summary.expected,
+                      result_summary.unexpected, result_summary.remaining))
 
         if result_summary.remaining == 0:
             self._update('')

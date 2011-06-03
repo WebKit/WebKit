@@ -29,9 +29,10 @@
 
 """Unit tests for printing.py."""
 
-import optparse
-import unittest
 import logging
+import optparse
+import time
+import unittest
 
 from webkitpy.common import array_stream
 from webkitpy.common.system import logtesting
@@ -91,7 +92,7 @@ class TestUtilityFunctions(unittest.TestCase):
         test_switches([], printing.PRINT_DEFAULT)
 
         # test that verbose defaults to everything
-        test_switches([], printing.PRINT_EVERYTHING.replace(',one-line-progress',''), verbose=True)
+        test_switches([], printing.PRINT_EVERYTHING, verbose=True)
 
         # test that --print default does what it's supposed to
         test_switches(['--print', 'default'], printing.PRINT_DEFAULT)
@@ -108,7 +109,7 @@ class TestUtilityFunctions(unittest.TestCase):
 
 
 class  Testprinter(unittest.TestCase):
-    def get_printer(self, args=None):
+    def get_printer(self, args=None, tty=False):
         args = args or []
         printing_options = printing.print_options()
         option_parser = optparse.OptionParser(option_list=printing_options)
@@ -116,7 +117,7 @@ class  Testprinter(unittest.TestCase):
         self._port = port.get('test', options)
         nproc = 2
 
-        regular_output = array_stream.ArrayStream()
+        regular_output = array_stream.ArrayStream(tty=tty)
         buildbot_output = array_stream.ArrayStream()
         printer = printing.Printer(self._port, options, regular_output,
                                    buildbot_output, configure_logging=True)
@@ -157,7 +158,7 @@ class  Testprinter(unittest.TestCase):
     def do_switch_tests(self, method_name, switch, to_buildbot,
                         message='hello', exp_err=None, exp_bot=None):
         def do_helper(method_name, switch, message, exp_err, exp_bot):
-            printer, err, bot = self.get_printer(['--print', switch])
+            printer, err, bot = self.get_printer(['--print', switch], tty=True)
             getattr(printer, method_name)(message)
             self.assertEqual(err.get(), exp_err)
             self.assertEqual(bot.get(), exp_bot)
@@ -325,12 +326,12 @@ class  Testprinter(unittest.TestCase):
     def test_print_progress(self):
         expectations = ''
 
-        # test that we print nothing
         printer, err, out = self.get_printer(['--print', 'nothing'])
         tests = ['passes/text.html', 'failures/expected/timeout.html',
                  'failures/expected/crash.html']
         paths, rs, exp = self.get_result_summary(tests, expectations)
 
+        # First, test that we print nothing.
         printer.print_progress(rs, False, paths)
         self.assertTrue(out.empty())
         self.assertTrue(err.empty())
@@ -339,18 +340,55 @@ class  Testprinter(unittest.TestCase):
         self.assertTrue(out.empty())
         self.assertTrue(err.empty())
 
-        # test regular functionality
-        printer, err, out = self.get_printer(['--print',
-                                              'one-line-progress'])
-        printer.print_progress(rs, False, paths)
-        self.assertTrue(out.empty())
-        self.assertFalse(err.empty())
+        self.times = [1, 2, 12, 13, 14, 23, 33]
 
-        err.reset()
-        out.reset()
-        printer.print_progress(rs, True, paths)
-        self.assertFalse(err.empty())
-        self.assertTrue(out.empty())
+        def mock_time():
+            return self.times.pop(0)
+
+        orig_time = time.time
+        try:
+            time.time = mock_time
+
+            # Test printing progress updates to a file.
+            printer, err, out = self.get_printer(['--print', 'one-line-progress'])
+            printer.print_progress(rs, False, paths)
+            printer.print_progress(rs, False, paths)
+            self.assertTrue(out.empty())
+            self.assertTrue(err.empty())
+
+            printer.print_progress(rs, False, paths)
+            self.assertTrue(out.empty())
+            self.assertFalse(err.empty())
+
+            err.reset()
+            out.reset()
+            printer.print_progress(rs, True, paths)
+            self.assertTrue(out.empty())
+            self.assertTrue(err.empty())
+
+            printer.print_progress(rs, True, paths)
+            self.assertTrue(out.empty())
+            self.assertFalse(err.empty())
+
+            # Now reconfigure the printer to test printing to a TTY instead of a file.
+            self.times = [1, 1.01, 2, 3]
+            printer, err, out = self.get_printer(['--print', 'one-line-progress'], tty=True)
+            printer.print_progress(rs, False, paths)
+            printer.print_progress(rs, False, paths)
+            self.assertTrue(out.empty())
+            self.assertTrue(err.empty())
+
+            printer.print_progress(rs, False, paths)
+            self.assertTrue(out.empty())
+            self.assertFalse(err.empty())
+
+            err.reset()
+            out.reset()
+            printer.print_progress(rs, True, paths)
+            self.assertTrue(out.empty())
+            self.assertFalse(err.empty())
+        finally:
+            time.time = orig_time
 
     def test_write_nothing(self):
         printer, err, out = self.get_printer(['--print', 'nothing'])

@@ -855,6 +855,7 @@ class Manager:
             try:
                 result = test_results.TestResult.loads(self._result_queue.get_nowait())
             except Queue.Empty:
+                self._printer.print_progress(result_summary, self._retrying, self._test_files_list)
                 return
 
             self._update_summary_with_result(result_summary, result)
