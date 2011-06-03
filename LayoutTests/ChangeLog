@@ -1,3 +1,12 @@
+2011-06-03  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] Enable ArrayBuffer passing tests as ArrayBuffer is enabled by default
+        https://bugs.webkit.org/show_bug.cgi?id=62025
+
+        * platform/qt/Skipped:
+
 2011-06-03  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, adding Ogg Theora version of media/content/test-par-16-9.mp4.
