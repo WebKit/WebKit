@@ -1,3 +1,9 @@
+2011-06-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skipping test with different results in 32-bit and 64-bit.
+
+        * platform/gtk/Skipped: Skipped test.
+
 2011-06-03  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Update platform specific expected files after r87873.
