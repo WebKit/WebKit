@@ -1,3 +1,10 @@
+2011-06-03  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Update platform specific expected files after r87873.
+
+        * platform/qt/fast/events/overflow-viewport-renderer-deleted-expected.txt: Added.
+        * platform/qt/plugins/document-open-expected.txt: Added.
+
 2011-06-03  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed. Test rebaseline for GTK after revision 87936.

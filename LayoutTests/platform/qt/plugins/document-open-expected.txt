@@ -1,0 +1,2 @@
+CONSOLE MESSAGE: line 0: PLUGIN: DOCUMENT OPEN SUCCESS
+ERROR: nil result from [documentElement innerText]
