@@ -1,0 +1,9 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (0,0) size 800x38
+  RenderBlock {HTML} at (0,0) size 800x38
+    RenderBody {BODY} at (8,8) size 784x22
+      RenderMenuList {SELECT} at (2,2) size 36x18 [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (0,0) size 36x18
+          RenderBR at (8,2) size 0x13 [bgcolor=#FFFFFF]
+      RenderText {#text} at (0,0) size 0x0

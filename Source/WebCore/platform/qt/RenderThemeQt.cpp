@@ -447,7 +447,7 @@ Color RenderThemeQt::systemColor(int cssValueId) const
 int RenderThemeQt::minimumMenuListSize(RenderStyle*) const
 {
     const QFontMetrics &fm = QApplication::fontMetrics();
-    return 7 * fm.width(QLatin1Char('x'));
+    return fm.width(QLatin1Char('x'));
 }
 
 void RenderThemeQt::computeSizeBasedOnStyle(RenderStyle* renderStyle) const

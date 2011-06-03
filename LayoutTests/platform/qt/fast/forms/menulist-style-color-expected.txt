@@ -9,19 +9,19 @@ layer at (0,0) size 800x600
             text run at (0,0) width 50: "Default"
       RenderText {#text} at (82,5) size 4x22
         text run at (82,5) width 4: " "
-      RenderMenuList {SELECT} at (88,3) size 70x27 [color=#FF0000] [bgcolor=#FFFFFF]
-        RenderBlock (anonymous) at (4,2) size 42x22
+      RenderMenuList {SELECT} at (88,3) size 56x27 [color=#FF0000] [bgcolor=#FFFFFF]
+        RenderBlock (anonymous) at (4,2) size 28x22
           RenderText at (0,0) size 28x22
             text run at (0,0) width 28: "Red"
-      RenderText {#text} at (160,5) size 4x22
-        text run at (160,5) width 4: " "
-      RenderMenuList {SELECT} at (166,2) size 143x28 [bgcolor=#008000] [border: (1px solid #000000)]
+      RenderText {#text} at (146,5) size 4x22
+        text run at (146,5) width 4: " "
+      RenderMenuList {SELECT} at (152,2) size 143x28 [bgcolor=#008000] [border: (1px solid #000000)]
         RenderBlock (anonymous) at (5,3) size 113x22
           RenderText at (0,0) size 113x22
             text run at (0,0) width 113: "Default on green"
-      RenderText {#text} at (311,5) size 4x22
-        text run at (311,5) width 4: " "
-      RenderMenuList {SELECT} at (317,2) size 121x28 [color=#FF0000] [bgcolor=#008000] [border: (1px solid #FF0000)]
+      RenderText {#text} at (297,5) size 4x22
+        text run at (297,5) width 4: " "
+      RenderMenuList {SELECT} at (303,2) size 121x28 [color=#FF0000] [bgcolor=#008000] [border: (1px solid #FF0000)]
         RenderBlock (anonymous) at (5,3) size 91x22
           RenderText at (0,0) size 91x22
             text run at (0,0) width 91: "Red on green"

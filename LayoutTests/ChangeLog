@@ -1,3 +1,43 @@
+2011-06-03  Doreen Jiang  <doreen.jiang@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt]The minimum size of the select menu list is incorrect for qtwebkit
+        https://bugs.webkit.org/show_bug.cgi?id=56752
+
+        The test is to get the render tree of select menu lists with varying widths based on content.
+        Some select list based tests are rebaselined because minimum width of RenderMenuList changes
+        based on the content with this fix.
+
+        * fast/forms/selectlist-minsize.html: Added.
+        * platform/mac/fast/forms/selectlist-minsize-expected.txt: Added.
+        * platform/qt/editing/pasteboard/4641033-expected.txt:
+        * platform/qt/editing/pasteboard/4944770-1-expected.txt:
+        * platform/qt/editing/pasteboard/4944770-2-expected.txt:
+        * platform/qt/editing/selection/caret-before-select-expected.txt:
+        * platform/qt/fast/forms/003-expected.txt:
+        * platform/qt/fast/forms/004-expected.txt:
+        * platform/qt/fast/forms/HTMLOptionElement_label06-expected.txt:
+        * platform/qt/fast/forms/HTMLOptionElement_label07-expected.txt:
+        * platform/qt/fast/forms/basic-selects-expected.txt:
+        * platform/qt/fast/forms/menulist-deselect-update-expected.txt:
+        * platform/qt/fast/forms/menulist-separator-painting-expected.txt:
+        * platform/qt/fast/forms/menulist-style-color-expected.txt:
+        * platform/qt/fast/forms/option-script-expected.txt:
+        * platform/qt/fast/forms/select-background-none-expected.txt:
+        * platform/qt/fast/forms/select-baseline-expected.txt:
+        * platform/qt/fast/forms/select-dirty-parent-pref-widths-expected.txt:
+        * platform/qt/fast/forms/select-empty-option-height-expected.txt:
+        * platform/qt/fast/forms/select-size-expected.txt:
+        * platform/qt/fast/forms/select-style-expected.txt:
+        * platform/qt/fast/forms/selectlist-minsize-expected.txt: Added.
+        * platform/qt/fast/invalid/014-expected.txt:
+        * platform/qt/fast/replaced/replaced-breaking-expected.txt:
+        * platform/qt/fast/replaced/replaced-breaking-mixture-expected.txt:
+        * platform/qt/fast/replaced/three-selects-break-expected.txt:
+        * platform/qt/tables/mozilla/bugs/bug29326-expected.txt:
+        * platform/qt/tables/mozilla/core/margins-expected.txt:
+
 2011-06-03  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Unreviewed rebaseline.

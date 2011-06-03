@@ -1,3 +1,19 @@
+2011-06-03  Doreen Jiang  <doreen.jiang@nokia.com>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt]The minimum size of the select menu list is incorrect for qtwebkit
+        https://bugs.webkit.org/show_bug.cgi?id=56752
+
+        The minimum width of the select-box is calculated to be as small as possible 
+        instead of hardcoded value (width of 7 characters) in minimumMenuListSize() function
+        This will avoid overapping the select lists in popular websites.
+
+        Test: fast/forms/selectlist-minsize.html
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::minimumMenuListSize):
+
 2011-06-02  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
