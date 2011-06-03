@@ -1,3 +1,43 @@
+2011-06-03  Andrew Scherkus  <scherkus@chromium.org>
+
+        Unreviewed, rebaselining Chromium GPU media pixel results after Chromium commit 87830.
+
+        * platform/chromium-gpu-linux/media/controls-after-reload-expected.png:
+        * platform/chromium-gpu-linux/media/controls-strict-expected.png:
+        * platform/chromium-gpu-linux/media/controls-styling-expected.png:
+        * platform/chromium-gpu-linux/media/controls-without-preload-expected.png:
+        * platform/chromium-gpu-linux/media/video-aspect-ratio-expected.png:
+        * platform/chromium-gpu-linux/media/video-canvas-alpha-expected.png:
+        * platform/chromium-gpu-linux/media/video-display-toggle-expected.png:
+        * platform/chromium-gpu-linux/media/video-layer-crash-expected.png:
+        * platform/chromium-gpu-linux/media/video-no-audio-expected.png:
+        * platform/chromium-gpu-linux/media/video-transformed-expected.png:
+        * platform/chromium-gpu-linux/media/video-volume-slider-expected.png:
+        * platform/chromium-gpu-linux/media/video-zoom-controls-expected.png:
+        * platform/chromium-gpu-mac/media/controls-after-reload-expected.png:
+        * platform/chromium-gpu-mac/media/controls-strict-expected.png:
+        * platform/chromium-gpu-mac/media/controls-styling-expected.png:
+        * platform/chromium-gpu-mac/media/controls-without-preload-expected.png:
+        * platform/chromium-gpu-mac/media/video-aspect-ratio-expected.png:
+        * platform/chromium-gpu-mac/media/video-display-toggle-expected.png:
+        * platform/chromium-gpu-mac/media/video-layer-crash-expected.png:
+        * platform/chromium-gpu-mac/media/video-no-audio-expected.png:
+        * platform/chromium-gpu-mac/media/video-transformed-expected.png:
+        * platform/chromium-gpu-mac/media/video-volume-slider-expected.png:
+        * platform/chromium-gpu-mac/media/video-zoom-controls-expected.png:
+        * platform/chromium-gpu-win/media/controls-after-reload-expected.png:
+        * platform/chromium-gpu-win/media/controls-strict-expected.png:
+        * platform/chromium-gpu-win/media/controls-styling-expected.png:
+        * platform/chromium-gpu-win/media/controls-without-preload-expected.png:
+        * platform/chromium-gpu-win/media/video-aspect-ratio-expected.png:
+        * platform/chromium-gpu-win/media/video-canvas-alpha-expected.png:
+        * platform/chromium-gpu-win/media/video-display-toggle-expected.png:
+        * platform/chromium-gpu-win/media/video-layer-crash-expected.png:
+        * platform/chromium-gpu-win/media/video-no-audio-expected.png:
+        * platform/chromium-gpu-win/media/video-transformed-expected.png:
+        * platform/chromium-gpu-win/media/video-volume-slider-expected.png:
+        * platform/chromium-gpu-win/media/video-zoom-controls-expected.png:
+
 2011-06-03  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, merge in downstream lines from Chromium as part of
