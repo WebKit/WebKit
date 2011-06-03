@@ -1,5 +1,13 @@
 2011-06-03  Andras Becsi  <abecsi@webkit.org>
 
+        Unreviewed build fix.
+
+        Fix typo.
+
+        * Scripts/old-run-webkit-tests:
+
+2011-06-03  Andras Becsi  <abecsi@webkit.org>
+
         Reviewed by Csaba Osztrogonác.
 
         Print error message when there is no httpd present on the system
