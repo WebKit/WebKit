@@ -2,6 +2,16 @@
 
         Reviewed by Andreas Kling.
 
+        [Qt] Warning fixes on comparisons between a signed and an unsigned.
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::computedStyleIncludingVisitedInfo):
+        (DumpRenderTreeSupportQt::nodesFromRect):
+
+2011-06-03  Alexis Menard  <alexis.menard@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
         To support building namespaced Qt, we require that forward-declarations
         of Qt classes be wrapped in QT_BEGIN_NAMESPACE and QT_END_NAMESPACE.
 
