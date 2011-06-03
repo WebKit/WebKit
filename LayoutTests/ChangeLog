@@ -1,3 +1,9 @@
+2011-06-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, expectations change. Fix conflict in expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-01  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Simon Fraser.
