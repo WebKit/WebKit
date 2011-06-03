@@ -3998,3 +3998,4 @@ BUGCR84161 MAC : fast/dom/register-protocol-handler.html = TEXT
 BUGWK61921 : fast/events/onload-after-document-close-with-subresource.html = TEXT
 
 BUGWK61936 : fast/filesystem/filesystem-no-callback-null-ptr-crash.html = CRASH PASS
+BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = IMAGE PASS

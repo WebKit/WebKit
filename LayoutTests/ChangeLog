@@ -1,5 +1,11 @@
 2011-06-02  Adam Barth  <abarth@webkit.org>
 
+        This test is flaky on Linux.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-02  Adam Barth  <abarth@webkit.org>
+
         The next round of updated baselines after
         http://trac.webkit.org/changeset/87955.  Again, these all look fine to
         visual inspection.
