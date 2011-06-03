@@ -40,6 +40,8 @@ Programs_GtkLauncher_LDFLAGS = \
 # to prefer the WebCore config.h over the DumpRenderTree config.h
 noinst_LTLIBRARIES += libWebCoreInternals.la
 libWebCoreInternals_la_SOURCES = \
+	Source/WebCore/bindings/js/JSDOMWrapper.cpp \
+	Source/WebCore/bindings/js/JSDOMWrapper.h \
 	Source/WebCore/testing/Internals.cpp \
 	Source/WebCore/testing/Internals.h \
 	Source/WebCore/testing/js/WebCoreTestSupport.cpp \

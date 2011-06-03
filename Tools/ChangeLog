@@ -1,3 +1,10 @@
+2011-06-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the GTK+ bulid.
+
+        * GNUmakefile.am: Add JSDOMWrapper.cpp to the libWebCoreInternals
+        source list.
+
 2011-06-03  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Adam Barth.

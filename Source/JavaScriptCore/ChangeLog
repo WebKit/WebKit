@@ -1,3 +1,11 @@
+2011-06-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Try to fix the GTK+ build.
+
+        * GNUmakefile.am: Clean up some spaces that should be tabs.
+        * GNUmakefile.list.am: Add KeywordLookup.h to the source list
+        and clean up some spaces that should be tabs.
+
 2011-06-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.
