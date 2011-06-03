@@ -38,6 +38,10 @@
 #import <AppKit/NSWindow.h>
 #include <Carbon/Carbon.h>
 
+#if WEBKIT_USING_SKIA
+#include "skia/ext/skia_utils_mac.h"
+#endif
+
 using WebKit::WebCanvas;
 using WebKit::WebRect;
 using WebKit::WebThemeEngine;
@@ -140,7 +144,13 @@ void WebThemeEngineDRTMac::paintHIThemeScrollbarThumb(
     trackInfo.trackInfo.scrollbar.pressState =
         state == WebThemeEngine::StatePressed ? kThemeThumbPressed : 0;
     trackInfo.attributes |= (kThemeTrackShowThumb | kThemeTrackHideTrack);
-    HIThemeDrawTrack(&trackInfo, 0, canvas, kHIThemeOrientationNormal);
+#if WEBKIT_USING_SKIA
+    gfx::SkiaBitLocker bitLocker(canvas);
+    CGContextRef cgContext = bitLocker.cgContext();
+#else
+    CGContextRef cgContext = canvas;
+#endif
+    HIThemeDrawTrack(&trackInfo, 0, cgContext, kHIThemeOrientationNormal);
 }
 
 void WebThemeEngineDRTMac::paintNSScrollerScrollbarThumb(
