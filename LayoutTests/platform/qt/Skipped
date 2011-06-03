@@ -12,7 +12,7 @@
 # List of Categories:
 #
 # - Permanently Skipped Tests.
-# - No Support for Feature planned.
+# - Disabled features.
 # - Feature not supported yet.
 # - Drag and Drop Support in DRT.
 # - Failing HTTP tests.
@@ -63,19 +63,83 @@ editing/pasteboard/paste-TIFF.html
 fast/loader/stop-provisional-loads.html
 
 # =========================================================================== #
-#       No Support for Feature planned.                                       #
+#       Disabled features.                                                    #
 # =========================================================================== #
-# ----- webarchive format not supported
+
+# ENABLE(FULLSCREEN_API) is disabled.
+fullscreen
+
+# ENABLE(INPUT_COLOR) is disabled.
+fast/forms/color
+
+# ENABLE(INPUT_SPEECH) is disabled.
+fast/speech
+
+# ENABLE(MEDIA_STREAM) is disabled.
+fast/dom/MediaStream
+
+# ENABLE(DIRECTORY_UPLOAD) is disabled.
+fast/forms/input-file-directory-upload.html
+
+# ENABLE(INDEXED_DATABASE) is disabled.
+storage/indexeddb
+
+# ENABLE(REQUEST_ANIMATION_FRAME) is disabled.
+fast/animation
+
+# ENABLE(ANIMATION_API) is disabled.
+animations/animation-api-1.html
+
+# ENABLE(WEB_ARCHIVE) is disabled.
 svg/custom/image-with-prefix-in-webarchive.svg
 http/tests/webarchive
 webarchive
 svg/webarchive
 
+# ENABLE(FILE_SYSTEM) is disabled.
+fast/filesystem
+http/tests/filesystem
+http/tests/security/filesystem-iframe-from-remote.html
+
+# ENABLE(QUOTA) is disabled.
+storage/storageinfo-query-usage.html
+storage/storageinfo-request-quota.html
+storage/storageinfo-no-callbacks.html
+
+# ENABLE(WEBGL) is disabled.
+http/tests/canvas/webgl
+compositing/webgl
+
+# ENABLE(LINK_PREFETCH) is disabled.
+fast/dom/HTMLLinkElement/link-and-subresource-test.html
+fast/dom/HTMLLinkElement/prefetch.html
+fast/dom/HTMLLinkElement/prefetch-beforeload.html
+fast/dom/HTMLLinkElement/prefetch-onerror.html
+fast/dom/HTMLLinkElement/prefetch-onload.html
+fast/dom/HTMLLinkElement/prefetch-too-many-clients.html
+fast/dom/HTMLLinkElement/prerender.html
+fast/dom/HTMLLinkElement/subresource.html
+http/tests/misc/link-rel-prefetch-and-subresource.html
+http/tests/misc/prefetch-purpose.html
+
+# ENABLE(DASHBOARD_SUPPORT) is disabled
+http/tests/xmlhttprequest/default-content-type-dashboard.html
+http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
+svg/custom/embedded-svg-disallowed-in-dashboard.xml
+svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
+svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
+svg/custom/svg-disallowed-in-dashboard-object.html
+
+# USE(V8)
+
+# v8 i18n extension.
+fast/js/i18n-bindings-locale.html
+
+# JSC does not support setIsolatedWorldSecurityOrigin, (http://webkit.org/b/61540)
+http/tests/security/isolatedWorld/cross-origin-xhr.html
+
 # This test is for clients that choose to make the missing plugin indicator a button
 plugins/clicking-missing-plugin-fires-delegate.html
-
-# IndexedDB is not yet enabled.
-storage/indexeddb
 
 # StorageTracker is not enabled.
 storage/domstorage/localstorage/storagetracker
@@ -108,9 +172,6 @@ inspector/debugger/xhr-breakpoints.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=40300
 inspector/debugger/live-edit.html
-
-# This port doesn't support v8 i18n extension.
-fast/js/i18n-bindings-locale.html
 
 # scalePage is currently Mac-specific WebKit API.
 fast/dom/Element/scale-page-bounding-client-rect.html
@@ -616,10 +677,6 @@ editing/text-iterator/findString.html
 # Missing layoutTestController.setAlwaysAcceptCookies()
 http/tests/xmlhttprequest/access-control-basic-allow-preflight-cache-timeout.html
 
-# Missing layoutTestController.setUseDashboardCompatibilityMode()
-http/tests/xmlhttprequest/default-content-type-dashboard.html
-http/tests/xmlhttprequest/svg-created-by-xhr-disallowed-in-dashboard.html
-
 # Missing layoutTestController.testRepaint()
 fast/repaint/table-writing-modes-h.html
 fast/repaint/table-writing-modes-v.html
@@ -721,7 +778,6 @@ svg/batik/text/xmlSpace.svg
 svg/custom/group-opacity.svg
 svg/custom/hit-test-with-br.xhtml
 svg/custom/text-linking.svg
-svg/custom/embedded-svg-disallowed-in-dashboard.xml
 svg/custom/feComponentTransfer-Discrete.svg
 svg/custom/feComponentTransfer-Gamma.svg
 svg/custom/feComponentTransfer-Linear.svg
@@ -734,13 +790,10 @@ svg/custom/js-late-clipPath-creation.svg
 svg/custom/js-late-pattern-and-object-creation.svg
 svg/custom/js-late-pattern-creation.svg
 svg/custom/junk-data.svg
-svg/custom/manually-parsed-embedded-svg-disallowed-in-dashboard.html
-svg/custom/manually-parsed-svg-disallowed-in-dashboard.html
 svg/custom/missing-xlink.svg
 svg/custom/path-bad-data.svg
 svg/custom/percentage-rect.svg
 svg/custom/pointer-events-image.svg
-svg/custom/svg-disallowed-in-dashboard-object.html
 svg/custom/visibility-override-filter.svg
 svg/custom/stroke-width-click.svg
 svg/css/css-box-min-width.html
@@ -1946,18 +1999,6 @@ media/video-delay-load-event.html
 # new skipped tests yet to be sorted
 # ============================================================================= #
 
-# Link prefetch is disabled by default
-fast/dom/HTMLLinkElement/link-and-subresource-test.html
-fast/dom/HTMLLinkElement/prefetch.html
-fast/dom/HTMLLinkElement/prefetch-beforeload.html
-fast/dom/HTMLLinkElement/prefetch-onerror.html
-fast/dom/HTMLLinkElement/prefetch-onload.html
-fast/dom/HTMLLinkElement/prefetch-too-many-clients.html
-fast/dom/HTMLLinkElement/prerender.html
-fast/dom/HTMLLinkElement/subresource.html
-http/tests/misc/link-rel-prefetch-and-subresource.html
-http/tests/misc/prefetch-purpose.html
-
 # [Qt] fast/text/bidi-explicit-embedding-past-end.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=41241
 fast/text/bidi-explicit-embedding-past-end.html
@@ -1969,21 +2010,10 @@ fast/forms/input-number-events.html
 fast/forms/input-spinbutton-capturing.html
 fast/forms/input-number-large-padding.html
 
-# Color input is not yet enabled.
-fast/forms/color
-
-# Speech input is not yet enabled.
-fast/speech
-
-# Media Stream API is not yet enabled.
-fast/dom/MediaStream
-
 # [Qt] fast/dom/beforeload/script-before-load-dynamic.html is crashy-flakey
 # https://bugs.webkit.org/show_bug.cgi?id=41452
 fast/dom/beforeload/remove-video-in-beforeload-listener.html
 
-# Directory upload is not enabled.
-fast/forms/input-file-directory-upload.html
 # Need setPrinting. See https://bugs.webkit.org/show_bug.cgi?id=20011
 printing/setPrinting.html
 
@@ -2033,9 +2063,6 @@ perf/
 # BlodBuilder is not enabled
 http/tests/local/blob/send-data-blob.html
 
-# Full Screen support is not yet enabled.
-fullscreen/
-
 # https://bugs.webkit.org/show_bug.cgi?id=45194
 fast/text/decomposed-after-stacked-diacritics.html
 
@@ -2060,15 +2087,6 @@ http/tests/misc/slow-loading-image-in-pattern.html
 
 # Pre-HMTL5 parser quirks only apply to the mac port for now.
 fast/parser/pre-html5-parser-quirks.html
-
-# FileSystem API is not supported.
-fast/filesystem
-http/tests/filesystem
-http/tests/security/filesystem-iframe-from-remote.html
-
-# It fails, because 3D canvas is disabled by default.
-http/tests/canvas/webgl/origin-clean-conformance.html
-
 
 # https://bugs.webkit.org/show_bug.cgi?id=46966
 # [Qt] fast/media/color-does-not-include-alpha.html fails
@@ -2114,9 +2132,6 @@ editing/selection/caret-bidi-first-and-last-letters.html
 # [Qt] fast/text/emphasis-avoid-ruby.html fails
 # https://bugs.webkit.org/show_bug.cgi?id=52155
 fast/text/emphasis-avoid-ruby.html
-
-# Requires requestAnimationFrame support
-fast/animation/
 
 # https://bugs.webkit.org/show_bug.cgi?id=42578
 # [Qt] DRT sideeffect revealed by r63657 and r75305
@@ -2455,11 +2470,6 @@ fast/css/font-face-repeated-url.html
 # will not be in the output.
 http/tests/misc/redirect-to-external-url.html
 
-# Quota API is not yet supported.
-storage/storageinfo-query-usage.html
-storage/storageinfo-request-quota.html
-storage/storageinfo-no-callbacks.html
-
 # Expose title direction in WebKit API
 # https://bugs.webkit.org/show_bug.cgi?id=58845
 fast/dom/title-directionality.html
@@ -2489,9 +2499,6 @@ svg/W3C-SVG-1.1/struct-image-06-t.svg
 http/tests/loading/preload-slow-loading.php
 http/tests/security/contentSecurityPolicy/media-src-allowed.html
 http/tests/security/contentSecurityPolicy/media-src-blocked.html
-
-# Animation API is disabled by default
-animations/animation-api-1.html
 
 # This platform does not support the Page Visibility API.
 fast/events/page-visibility-iframe-delete-test.html
