@@ -1,7 +1,11 @@
+2011-06-02  MORITA Hajime  <morrita@google.com>
+        
+        Unreviewed ChangeLog fix.
+        
 2011-06-03  Peter Varga  <pvarga@webkit.org>
 
-        Rubber-stamped by Csaba Osztrogon·c.
-
+        Rubber-stamped by Csaba Osztrogon√°c.
+        
         [Qt][V8] Buildfix after r87988.
 
         No new tests needed.
