@@ -7583,10 +7583,10 @@
 		448A29BE0A46D9CB0030759F /* JSHTMLOptionsCollection.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollection.cpp; sourceTree = "<group>"; };
 		448AD27A0A4813790023D179 /* JSHTMLOptionsCollectionCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSHTMLOptionsCollectionCustom.cpp; sourceTree = "<group>"; };
 		449098B10F8F82520076A327 /* FeatureDefines.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = FeatureDefines.xcconfig; sourceTree = "<group>"; };
-		4496E39B1398136C003EE32A /* JSSVGAnimateMotionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGAnimateMotionElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGAnimateMotionElement.cpp; sourceTree = SOURCE_ROOT; };
-		4496E39C1398136C003EE32A /* JSSVGAnimateMotionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSSVGAnimateMotionElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGAnimateMotionElement.h; sourceTree = SOURCE_ROOT; };
-		4496E39F139813A5003EE32A /* JSSVGMPathElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JSSVGMPathElement.h; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGMPathElement.h; sourceTree = SOURCE_ROOT; };
-		4496E3A1139813CB003EE32A /* JSSVGMPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = JSSVGMPathElement.cpp; path = ../../WebKitBuild/Release/DerivedSources/WebCore/JSSVGMPathElement.cpp; sourceTree = SOURCE_ROOT; };
+		4496E39B1398136C003EE32A /* JSSVGAnimateMotionElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGAnimateMotionElement.cpp; sourceTree = "<group>"; };
+		4496E39C1398136C003EE32A /* JSSVGAnimateMotionElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGAnimateMotionElement.h; sourceTree = "<group>"; };
+		4496E39F139813A5003EE32A /* JSSVGMPathElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSSVGMPathElement.h; sourceTree = "<group>"; };
+		4496E3A1139813CB003EE32A /* JSSVGMPathElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSSVGMPathElement.cpp; sourceTree = "<group>"; };
 		449B19F30FA72ECE0015CA4A /* HTMLParserQuirks.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HTMLParserQuirks.h; sourceTree = "<group>"; };
 		44A28AAB12DFB8AC00AE923B /* MathMLElementFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLElementFactory.h; sourceTree = "<group>"; };
 		44A28AAE12DFB8BF00AE923B /* MathMLNames.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MathMLNames.h; sourceTree = "<group>"; };
@@ -16709,22 +16709,18 @@
 		A83B790A0CCAFF47000B0825 /* SVG */ = {
 			isa = PBXGroup;
 			children = (
-				4496E3A1139813CB003EE32A /* JSSVGMPathElement.cpp */,
-				4496E39F139813A5003EE32A /* JSSVGMPathElement.h */,
-				4496E39B1398136C003EE32A /* JSSVGAnimateMotionElement.cpp */,
-				4496E39C1398136C003EE32A /* JSSVGAnimateMotionElement.h */,
 				B20111050AB7740500DB0E68 /* JSSVGAElement.cpp */,
 				B20111060AB7740500DB0E68 /* JSSVGAElement.h */,
 				6515EC8F0D9723FF0063D49A /* JSSVGAltGlyphElement.cpp */,
 				6515EC900D9723FF0063D49A /* JSSVGAltGlyphElement.h */,
 				B222F6960AB771950022EFAD /* JSSVGAngle.cpp */,
 				B222F6970AB771950022EFAD /* JSSVGAngle.h */,
-				B2FA3C4E0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.cpp */,
-				B2FA3C4F0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.h */,
 				B2FA3C500AB75A6E000E5AC4 /* JSSVGAnimatedAngle.cpp */,
 				B2FA3C510AB75A6E000E5AC4 /* JSSVGAnimatedAngle.h */,
 				B2FA3C520AB75A6E000E5AC4 /* JSSVGAnimatedBoolean.cpp */,
 				B2FA3C530AB75A6E000E5AC4 /* JSSVGAnimatedBoolean.h */,
+				B2FA3C4E0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.cpp */,
+				B2FA3C4F0AB75A6E000E5AC4 /* JSSVGAnimateColorElement.h */,
 				B2FA3C540AB75A6E000E5AC4 /* JSSVGAnimatedEnumeration.cpp */,
 				B2FA3C550AB75A6E000E5AC4 /* JSSVGAnimatedEnumeration.h */,
 				B2FA3C560AB75A6E000E5AC4 /* JSSVGAnimatedInteger.cpp */,
@@ -16733,6 +16729,8 @@
 				B2FA3C590AB75A6E000E5AC4 /* JSSVGAnimatedLength.h */,
 				B2FA3C5A0AB75A6E000E5AC4 /* JSSVGAnimatedLengthList.cpp */,
 				B2FA3C5B0AB75A6E000E5AC4 /* JSSVGAnimatedLengthList.h */,
+				4496E39B1398136C003EE32A /* JSSVGAnimateMotionElement.cpp */,
+				4496E39C1398136C003EE32A /* JSSVGAnimateMotionElement.h */,
 				B2FA3C5C0AB75A6E000E5AC4 /* JSSVGAnimatedNumber.cpp */,
 				B2FA3C5D0AB75A6E000E5AC4 /* JSSVGAnimatedNumber.h */,
 				B2FA3C5E0AB75A6E000E5AC4 /* JSSVGAnimatedNumberList.cpp */,
@@ -16861,6 +16859,8 @@
 				B2FA3CBD0AB75A6E000E5AC4 /* JSSVGLinearGradientElement.h */,
 				B2FA3CBE0AB75A6E000E5AC4 /* JSSVGLineElement.cpp */,
 				B2FA3CBF0AB75A6E000E5AC4 /* JSSVGLineElement.h */,
+				4496E3A1139813CB003EE32A /* JSSVGMPathElement.cpp */,
+				4496E39F139813A5003EE32A /* JSSVGMPathElement.h */,
 				B2FA3CC00AB75A6E000E5AC4 /* JSSVGMarkerElement.cpp */,
 				B2FA3CC10AB75A6E000E5AC4 /* JSSVGMarkerElement.h */,
 				B2FA3CC20AB75A6E000E5AC4 /* JSSVGMaskElement.cpp */,

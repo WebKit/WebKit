@@ -1,3 +1,9 @@
+2011-06-03  Dan Bernstein  <mitz@apple.com>
+
+        Mac build fix.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-06-03  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Eric Seidel.
