@@ -1,5 +1,11 @@
 2011-06-02  Adam Barth  <abarth@webkit.org>
 
+        Tweaks to which kind of failure we expect.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-02  Adam Barth  <abarth@webkit.org>
+
         This process is converging (hopefully).
 
         * platform/chromium-mac/fast/backgrounds/svg-as-mask-expected.png: Added.
