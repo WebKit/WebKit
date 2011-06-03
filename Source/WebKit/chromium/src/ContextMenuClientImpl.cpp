@@ -41,11 +41,14 @@
 #include "EventHandler.h"
 #include "FrameLoader.h"
 #include "FrameView.h"
-#include "HistoryItem.h"
-#include "HitTestResult.h"
+#include "HTMLFormElement.h"
+#include "HTMLInputElement.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
 #include "HTMLPlugInImageElement.h"
+
+#include "HistoryItem.h"
+#include "HitTestResult.h"
 #include "KURL.h"
 #include "MediaError.h"
 #include "Page.h"
@@ -56,11 +59,13 @@
 
 #include "WebContextMenuData.h"
 #include "WebDataSourceImpl.h"
+#include "WebFormElement.h"
 #include "WebFrameImpl.h"
 #include "WebMenuItemInfo.h"
 #include "WebPlugin.h"
 #include "WebPluginContainerImpl.h"
 #include "WebPoint.h"
+#include "WebSearchableFormData.h"
 #include "WebSpellCheckClient.h"
 #include "WebString.h"
 #include "WebURL.h"
@@ -267,6 +272,15 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
                     if (!misspelledLength)
                         data.misspelledWord.reset();
                 }
+            }
+        }
+        HTMLFormElement* form = selectedFrame->selection()->currentForm();
+        if (form && form->checkValidity() && r.innerNonSharedNode()->hasTagName(HTMLNames::inputTag)) {
+            HTMLInputElement* selectedElement = static_cast<HTMLInputElement*>(r.innerNonSharedNode());
+            if (selectedElement) {
+                WebSearchableFormData ws = WebSearchableFormData(WebFormElement(form), WebInputElement(selectedElement));
+                if (ws.url().isValid())
+                    data.keywordURL = ws.url();
             }
         }
     }

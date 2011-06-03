@@ -45,6 +45,7 @@
 #include "HTMLSelectElement.h"
 #include "TextEncoding.h"
 #include "WebFormElement.h"
+#include "WebInputElement.h"
 
 using namespace WebCore;
 using namespace HTMLNames;
@@ -141,98 +142,132 @@ bool IsInDefaultState(const HTMLFormControlElement* formElement)
     return true;
 }
 
-// If form has only one text input element, return true. If a valid input
-// element is not found, return false. Additionally, the form data for all
-// elements is added to enc_string and the encoding used is set in
-// encoding_name.
-bool HasSuitableTextElement(const HTMLFormElement* form, Vector<char>* encodedString, String* encodingName)
+// Look for a suitable search text field in a given HTMLFormElement 
+// Return nothing if one of those items are found:
+//  - A text area field
+//  - A file upload field 
+//  - A Password field
+//  - More than one text field
+HTMLInputElement* findSuitableSearchInputElement(const HTMLFormElement* form)
 {
-    TextEncoding encoding;
-    GetFormEncoding(form, &encoding);
-    if (!encoding.isValid()) {
-        // Need a valid encoding to encode the form elements.
-        // If the encoding isn't found webkit ends up replacing the params with
-        // empty strings. So, we don't try to do anything here.
-        return 0;
-    }
-    *encodingName = encoding.name();
-
     HTMLInputElement* textElement = 0;
     // FIXME: Consider refactoring this code so that we don't call form->associatedElements() twice.
     for (Vector<FormAssociatedElement*>::const_iterator i(form->associatedElements().begin()); i != form->associatedElements().end(); ++i) {
         if (!(*i)->isFormControlElement())
             continue;
+
         HTMLFormControlElement* formElement = static_cast<HTMLFormControlElement*>(*i);
+
         if (formElement->disabled() || formElement->name().isNull())
             continue;
 
         if (!IsInDefaultState(formElement) || formElement->hasTagName(HTMLNames::textareaTag))
             return 0;
 
-        bool isTextElement = false;
-        if (formElement->hasTagName(HTMLNames::inputTag)) {
+        if (formElement->hasTagName(HTMLNames::inputTag) && formElement->willValidate()) {
             const HTMLInputElement* input = static_cast<const HTMLInputElement*>(formElement);
-            if (input->isFileUpload()) {
-                // Too big, don't try to index this.
+
+            // Return nothing if a file upload field or a password field are found.
+            if (input->isFileUpload() || input->isPasswordField())
                 return 0;
+
+            if (input->isTextField()) {
+                if (textElement) {
+                    // The auto-complete bar only knows how to fill in one value.
+                    // This form has multiple fields; don't treat it as searchable.
+                    return 0;
+                }
+                textElement = static_cast<HTMLInputElement*>(formElement);
             }
-
-            if (input->isPasswordField()) {
-                // Don't store passwords! This is most likely an https anyway.
-                return 0;
-            }
-
-            if (input->isTextField())
-                isTextElement = true;
-      }
-
-      FormDataList dataList(encoding);
-      if (!formElement->appendFormData(dataList, false))
-          continue;
-
-      const Vector<FormDataList::Item>& items = dataList.items();
-      if (isTextElement && !items.isEmpty()) {
-          if (textElement) {
-              // The auto-complete bar only knows how to fill in one value.
-              // This form has multiple fields; don't treat it as searchable.
-              return false;
-          }
-          textElement = static_cast<HTMLInputElement*>(formElement);
-      }
-      for (Vector<FormDataList::Item>::const_iterator j(items.begin()); j != items.end(); ++j) {
-          // Handle ISINDEX / <input name=isindex> specially, but only if it's
-          // the first entry.
-          if (!encodedString->isEmpty() || j->data() != "isindex") {
-              if (!encodedString->isEmpty())
-                  encodedString->append('&');
-              FormDataBuilder::encodeStringAsFormData(*encodedString, j->data());
-              encodedString->append('=');
-          }
-          ++j;
-          if (formElement == textElement)
-              encodedString->append("{searchTerms}", 13);
-          else
-              FormDataBuilder::encodeStringAsFormData(*encodedString, j->data());
-      }
+        }
     }
-
     return textElement;
 }
 
+// Build a search string based on a given HTMLFormElement and HTMLInputElement
+// 
+// Search string output example from www.google.com:
+// "hl=en&source=hp&biw=1085&bih=854&q={searchTerms}&btnG=Google+Search&aq=f&aqi=&aql=&oq="
+// 
+// Return false if the provided HTMLInputElement is not found in the form
+bool buildSearchString(const HTMLFormElement* form, Vector<char>* encodedString, TextEncoding* encoding, const HTMLInputElement* textElement)
+{
+    bool isElementFound = false;   
+
+    // FIXME: Consider refactoring this code so that we don't call form->associatedElements() twice.
+    for (Vector<FormAssociatedElement*>::const_iterator i(form->associatedElements().begin()); i != form->associatedElements().end(); ++i) {
+        if (!(*i)->isFormControlElement())
+            continue;
+
+        HTMLFormControlElement* formElement = static_cast<HTMLFormControlElement*>(*i);
+
+        if (formElement->disabled() || formElement->name().isNull())
+            continue;
+
+        FormDataList dataList(*encoding);
+        if (!formElement->appendFormData(dataList, false))
+            continue;
+
+        const Vector<FormDataList::Item>& items = dataList.items();
+
+        for (Vector<FormDataList::Item>::const_iterator j(items.begin()); j != items.end(); ++j) {
+            // Handle ISINDEX / <input name=isindex> specially, but only if it's
+            // the first entry.
+            if (!encodedString->isEmpty() || j->data() != "isindex") {
+                if (!encodedString->isEmpty())
+                    encodedString->append('&');
+                FormDataBuilder::encodeStringAsFormData(*encodedString, j->data());
+                encodedString->append('=');
+            }
+            ++j;
+            if (formElement == textElement) {
+                encodedString->append("{searchTerms}", 13);
+                isElementFound = true;
+            } else
+                FormDataBuilder::encodeStringAsFormData(*encodedString, j->data());
+        }
+    }
+    return isElementFound;
+}
 } // namespace
 
 namespace WebKit {
 
-WebSearchableFormData::WebSearchableFormData(const WebFormElement& form)
+WebSearchableFormData::WebSearchableFormData(const WebFormElement& form, const WebInputElement& selectedInputElement)
 {
     RefPtr<HTMLFormElement> formElement = form.operator PassRefPtr<HTMLFormElement>();
     const Frame* frame = formElement->document()->frame();
     if (!frame)
         return;
 
-    // Only consider forms that GET data and the action targets an http page.
-    if (equalIgnoringCase(formElement->getAttribute(HTMLNames::methodAttr), "post") || !IsHTTPFormSubmit(formElement.get()))
+    HTMLInputElement* inputElement = selectedInputElement.operator PassRefPtr<HTMLInputElement>().get();
+
+    // Only consider forms that GET data.
+    // Allow HTTPS only when an input element is provided. 
+    if (equalIgnoringCase(formElement->getAttribute(methodAttr), "post") 
+        || (!IsHTTPFormSubmit(formElement.get()) && !inputElement))
         return;
+
+    Vector<char> encodedString;
+    TextEncoding encoding;
+
+    GetFormEncoding(formElement.get(), &encoding);
+    if (!encoding.isValid()) {
+        // Need a valid encoding to encode the form elements.
+        // If the encoding isn't found webkit ends up replacing the params with
+        // empty strings. So, we don't try to do anything here.
+        return;
+    } 
+
+    // Look for a suitable search text field in the form when a 
+    // selectedInputElement is not provided.
+    if (!inputElement) {
+        inputElement = findSuitableSearchInputElement(formElement.get());
+
+        // Return if no suitable text element has been found.
+        if (!inputElement)
+            return;
+    }
 
     HTMLFormControlElement* firstSubmitButton = GetButtonToActivate(formElement.get());
     if (firstSubmitButton) {
@@ -241,22 +276,22 @@ WebSearchableFormData::WebSearchableFormData(const WebFormElement& form)
         // name of the submit button.
         firstSubmitButton->setActivatedSubmit(true);
     }
-    Vector<char> encodedString;
-    String encoding;
-    bool hasElement = HasSuitableTextElement(formElement.get(), &encodedString, &encoding);
+
+    bool isValidSearchString = buildSearchString(formElement.get(), &encodedString, &encoding, inputElement);
+
     if (firstSubmitButton)
         firstSubmitButton->setActivatedSubmit(false);
-    if (!hasElement) {
-        // Not a searchable form.
+
+    // Return if the search string is not valid. 
+    if (!isValidSearchString)
         return;
-    }
 
     String action(formElement->action());
     KURL url(frame->loader()->completeURL(action.isNull() ? "" : action));
     RefPtr<FormData> formData = FormData::create(encodedString);
     url.setQuery(formData->flattenToString());
     m_url = url;
-    m_encoding = encoding;
+    m_encoding = String(encoding.name()); 
 }
 
 } // namespace WebKit

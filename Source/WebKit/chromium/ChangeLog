@@ -1,3 +1,17 @@
+2011-06-03  Philippe Beauchamp  <philippe.beauchamp@gmail.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add the feature "Add as search engine..." in a search text field context menu for chromium
+        https://bugs.webkit.org/show_bug.cgi?id=47980
+
+        * public/WebContextMenuData.h:
+        * public/WebSearchableFormData.h:
+        * src/ContextMenuClientImpl.cpp:
+        (WebKit::ContextMenuClientImpl::getCustomMenuFromDefaultItems):
+        * src/WebSearchableFormData.cpp:
+        (WebKit::WebSearchableFormData::WebSearchableFormData):
+
 2011-06-03  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Eric Seidel.

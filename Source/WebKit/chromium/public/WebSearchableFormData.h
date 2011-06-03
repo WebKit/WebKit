@@ -31,6 +31,7 @@
 #ifndef WebSearchableFormData_h
 #define WebSearchableFormData_h
 
+#include "WebInputElement.h"
 #include "WebString.h"
 #include "WebURL.h"
 
@@ -43,7 +44,7 @@ class WebSearchableFormData {
 public:
     // If the provided form is suitable for automated searching, isValid()
     // will return false.
-    WEBKIT_API WebSearchableFormData(const WebFormElement&);
+    WEBKIT_API WebSearchableFormData(const WebFormElement&, const WebInputElement& selectedInputElement = WebInputElement());
 
     bool isValid() { return m_url.isValid(); }
 
