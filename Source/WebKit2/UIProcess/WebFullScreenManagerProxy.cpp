@@ -94,6 +94,11 @@ void WebFullScreenManagerProxy::beginExitFullScreenAnimation(float duration)
     m_page->process()->send(Messages::WebFullScreenManager::BeginExitFullScreenAnimation(duration), m_page->pageID());
 }
 
+void WebFullScreenManagerProxy::disposeOfLayerClient()
+{
+    m_page->process()->send(Messages::WebFullScreenManager::DisposeOfLayerClient(), m_page->pageID());
+}
+
 void WebFullScreenManagerProxy::supportsFullScreen(bool withKeyboard, bool& supports)
 {
     if (withKeyboard)

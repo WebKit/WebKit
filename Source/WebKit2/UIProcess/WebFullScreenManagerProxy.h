@@ -81,6 +81,7 @@ public:
     void didExitFullScreen();
     void beginEnterFullScreenAnimation(float duration);
     void beginExitFullScreenAnimation(float duration);
+    void disposeOfLayerClient();
 
 private:
     WebFullScreenManagerProxy(WebPageProxy*);
