@@ -139,20 +139,29 @@ void WebFullScreenManagerMac::setRootFullScreenLayer(WebCore::GraphicsLayer* lay
 
     if (!layer) {
         m_page->send(Messages::WebFullScreenManagerProxy::ExitAcceleratedCompositingMode());
-        [[NSNotificationCenter defaultCenter] postNotificationName:@"WebKitLayerHostChanged" object:m_rootLayer->platformLayer() userInfo:nil];
 
         Frame* frame = m_element->document()->frame();
-        DragImageRef dragImage = frame ? frame->nodeImage(m_element.get()) : 0;
-
-        if (m_rootLayer) {
-            [CATransaction begin];
-            PlatformLayer* rootPlatformLayer = m_rootLayer->platformLayer();
-            m_rootLayer->removeAllChildren();
-            m_rootLayer->syncCompositingStateForThisLayerOnly();
-            m_rootLayer = nullptr;
-            [rootPlatformLayer setContents:dragImage.get()];
-            [CATransaction commit];
+        FrameView* view = frame ? frame->view() : 0;
+        DragImageRef dragImage = 0;
+        if (view) {
+            Color savedBackgroundColor = view->baseBackgroundColor();
+            bool savedIsTransparent = view->isTransparent();
+            view->setBaseBackgroundColor(Color::transparent);
+            view->setTransparent(true);
+            dragImage = frame->nodeImage(m_element.get());
+            view->setBaseBackgroundColor(savedBackgroundColor);
+            view->setTransparent(savedIsTransparent);
         }
+
+        [CATransaction begin];
+        PlatformLayer* rootPlatformLayer = m_rootLayer->platformLayer();
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"WebKitLayerHostChanged" object:rootPlatformLayer userInfo:nil];
+
+        m_rootLayer->removeAllChildren();
+        m_rootLayer->syncCompositingStateForThisLayerOnly();
+        m_rootLayer = nullptr;
+        [rootPlatformLayer setContents:dragImage.get()];
+        [CATransaction commit];
         
         return;
     }

@@ -1,5 +1,20 @@
 2011-06-02  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 87768.
+
+    2011-05-31  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Flash of black at the end of full screen transition at apple.com product videos
+        https://bugs.webkit.org/show_bug.cgi?id=61756
+
+        Added two new entries to the WebCore exports list.
+
+        * WebCore.exp.in:
+
+2011-06-02  Lucas Forschler  <lforschler@apple.com>
+
     Merged 87704.
 
     2011-05-30  Eric Carlson  <eric.carlson@apple.com>
