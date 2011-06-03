@@ -1,0 +1,50 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../../../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<p><a id="link" href="#anchor">A link pointing to an anchor at the end of the document</a></p>
+<p>A paragraph with a some text in the middle</p>
+<p><a id="anchor" name="anchor">The Anchor</a></p>
+<p id="text">A paragraph with a some text right after the anchor</p>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This tests that the caret position is properly updated when following anchor links.");
+
+if (window.layoutTestController) {
+    layoutTestController.overridePreference("WebKitEnableCaretBrowsing", true);
+    layoutTestController.dumpAsText();
+
+    if (window.accessibilityController) {
+        var link = document.getElementById("link");
+        var anchor = document.getElementById("anchor");
+        var textAfterAnchor = document.getElementById("text");
+
+        // Focus on the link and check state
+         link.focus();
+        var axLink = accessibilityController.focusedElement;
+        shouldBe("axLink.role", "'AXRole: link'");
+        shouldBe("axLink.isFocused", "true");
+
+        // Execute action and check state.
+        axLink.press()
+        shouldBe("axLink.isFocused", "false");
+        shouldBe("getSelection().anchorNode.nodeValue", "'The Anchor'");
+
+        // Press down arrow and check state.
+        eventSender.keyDown("downArrow");
+        shouldBe("getSelection().anchorNode.nodeValue", "'A paragraph with a some text right after the anchor'");
+    }
+}
+
+successfullyParsed = true;
+</script>
+<script src="../../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

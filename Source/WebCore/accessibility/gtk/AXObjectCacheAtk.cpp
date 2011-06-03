@@ -23,11 +23,15 @@
 #include "AccessibilityObject.h"
 #include "AccessibilityObjectWrapperAtk.h"
 #include "Document.h"
+#include "Frame.h"
+#include "FrameSelection.h"
 #include "Element.h"
 #include "GOwnPtr.h"
 #include "Range.h"
 #include "SelectElement.h"
+#include "TextAffinity.h"
 #include "TextIterator.h"
+#include "htmlediting.h"
 
 namespace WebCore {
 
@@ -205,8 +209,23 @@ void AXObjectCache::handleFocusedUIElementChanged(RenderObject* oldFocusedRender
     }
 }
 
-void AXObjectCache::handleScrolledToAnchor(const Node*)
+void AXObjectCache::handleScrolledToAnchor(const Node* node)
 {
+    // Make sure the caret position is set to the anchor position, so
+    // further use of arrow keys work as expected.
+    Document* document = node->document();
+    if (!document)
+        return;
+
+    Frame* frame = document->frame();
+    if (!frame)
+        return;
+
+    FrameSelection* selection = frame->selection();
+    if (!selection)
+        return;
+
+    selection->moveTo(firstPositionInOrBeforeNode(const_cast<Node*>(node)), DOWNSTREAM);
 }
 
 } // namespace WebCore

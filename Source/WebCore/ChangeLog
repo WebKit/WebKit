@@ -1,3 +1,21 @@
+2011-06-03  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Focus and caret position should be updated when same-page links are followed
+        https://bugs.webkit.org/show_bug.cgi?id=59737
+
+        Update the caret position to the anchor's position after scrolling.
+
+        This behavior is specific to the Gtk port and requested because of
+        accessibility needs, that's why it's implemented in AXObjectCache.
+
+        Test: platform/gtk/accessibility/caret-browsing-anchor-followed.html
+
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::handleScrolledToAnchor): Make sure the
+        caret is updated to be in the anchor's position after scrolling.
+
 2011-06-03  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Kent Tamura.
