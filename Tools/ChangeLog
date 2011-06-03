@@ -1,3 +1,16 @@
+2011-06-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Teach Gtk build about window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=61071
+
+        * DumpRenderTree/gtk/DumpRenderTree.cpp:
+        (webViewWindowObjectCleared): Inject the new internals object when the
+        window object clears.
+        * GNUmakefile.am: Add new source files and includes necessary for window.internals.
+        Also do a little bit of cleanup.
+
 2011-06-03  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

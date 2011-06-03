@@ -26,6 +26,9 @@ _ZN3WTF7CStringC2EPKcm;
 _ZN3WTF7CStringD1Ev;
 _ZN3WTF7CStringaSERKS0_;
 _ZN24DumpRenderTreeSupportGtk*;
+_ZN7WebCore21getCachedDOMStructureEPNS_17JSDOMGlobalObjectEPKN3JSC9ClassInfoE;
+_ZN7WebCore17cacheDOMStructureEPNS_17JSDOMGlobalObjectEPN3JSC9StructureEPKNS2_9ClassInfoE;
+_ZN7WebCore12JSDOMWrapper34virtualFunctionToPreventWeakVtableEv;
 local:
 _Z*;
 cti*;

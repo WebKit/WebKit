@@ -76,6 +76,8 @@ webcore_cppflags += \
 	-I$(srcdir)/Source/WebCore/svg/graphics \
 	-I$(srcdir)/Source/WebCore/svg/graphics/filters \
 	-I$(srcdir)/Source/WebCore/svg/properties \
+	-I$(srcdir)/Source/WebCore/testing \
+	-I$(srcdir)/Source/WebCore/testing/js \
 	-I$(srcdir)/Source/WebCore/webaudio \
 	-I$(srcdir)/Source/WebCore/websockets \
 	-I$(srcdir)/Source/WebCore/workers \
@@ -707,6 +709,7 @@ IDL_PATH := \
     $(WebCore)/plugins \
     $(WebCore)/storage \
     $(WebCore)/svg \
+    $(WebCore)/testing \
     $(WebCore)/webaudio \
     $(WebCore)/websockets \
     $(WebCore)/workers \
@@ -780,6 +783,7 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/plugins/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/storage/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/svg/*.idl) \
+	$(shell ls $(srcdir)/Source/WebCore/testing/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/webaudio/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/websockets/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/workers/*.idl) \

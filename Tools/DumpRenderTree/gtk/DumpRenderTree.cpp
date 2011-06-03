@@ -42,6 +42,7 @@
 #include "PlainTextController.h"
 #include "TextInputController.h"
 #include "WebCoreSupport/DumpRenderTreeSupportGtk.h"
+#include "WebCoreTestSupport.h"
 #include "WorkQueue.h"
 #include "WorkQueueItem.h"
 #include <JavaScriptCore/JavaScript.h>
@@ -840,6 +841,7 @@ static void webViewWindowObjectCleared(WebKitWebView* view, WebKitWebFrame* fram
     addControllerToWindow(context, windowObject, "eventSender", makeEventSender(context, !webkit_web_frame_get_parent(frame)));
     addControllerToWindow(context, windowObject, "plainText", makePlainTextController(context));
     addControllerToWindow(context, windowObject, "textInputController", makeTextInputController(context));
+    WebCoreTestSupport::injectInternalsObject(context);
 }
 
 static gboolean webViewConsoleMessage(WebKitWebView* view, const gchar* message, unsigned int line, const gchar* sourceId, gpointer data)
