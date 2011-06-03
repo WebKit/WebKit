@@ -266,7 +266,7 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
     if (paintInfo.phase == PaintPhaseForeground) {
         int index = m_indexOffset;
         while (index < listItemsSize && index <= m_indexOffset + numVisibleItems()) {
-            paintItemForeground(paintInfo, tx, ty, index);
+            paintItemForeground(paintInfo, IntPoint(tx, ty), index);
             index++;
         }
     }
@@ -289,7 +289,7 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
     case PaintPhaseChildBlockBackgrounds: {
         int index = m_indexOffset;
         while (index < listItemsSize && index <= m_indexOffset + numVisibleItems()) {
-            paintItemBackground(paintInfo, tx, ty, index);
+            paintItemBackground(paintInfo, IntPoint(tx, ty), index);
             index++;
         }
         break;
@@ -356,7 +356,7 @@ static IntSize itemOffsetForAlignment(TextRun textRun, RenderStyle* itemStyle, F
     return offset;
 }
 
-void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, int listIndex)
+void RenderListBox::paintItemForeground(PaintInfo& paintInfo, const IntPoint& paintOffset, int listIndex)
 {
     SelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
@@ -392,7 +392,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
     const UChar* string = itemText.characters();
     TextRun textRun(string, length, false, 0, 0, TextRun::AllowTrailingExpansion, itemStyle->direction(), itemStyle->unicodeBidi() == Override);
     Font itemFont = style()->font();
-    IntRect r = itemBoundingBoxRect(IntPoint(tx, ty), listIndex);
+    IntRect r = itemBoundingBoxRect(paintOffset, listIndex);
     r.move(itemOffsetForAlignment(textRun, itemStyle, itemFont, r));
 
     if (isOptionGroupElement(element)) {
@@ -407,7 +407,7 @@ void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, in
         paintInfo.context->drawBidiText(itemFont, textRun, r.location());
 }
 
-void RenderListBox::paintItemBackground(PaintInfo& paintInfo, int tx, int ty, int listIndex)
+void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const IntPoint& paintOffset, int listIndex)
 {
     SelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
@@ -426,8 +426,8 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, int tx, int ty, in
     // Draw the background for this list box item
     if (!element->renderStyle() || element->renderStyle()->visibility() != HIDDEN) {
         ColorSpace colorSpace = element->renderStyle() ? element->renderStyle()->colorSpace() : style()->colorSpace();
-        IntRect itemRect = itemBoundingBoxRect(IntPoint(tx, ty), listIndex);
-        itemRect.intersect(controlClipRect(IntPoint(tx, ty)));
+        IntRect itemRect = itemBoundingBoxRect(paintOffset, listIndex);
+        itemRect.intersect(controlClipRect(paintOffset));
         paintInfo.context->fillRect(itemRect, backColor, colorSpace);
     }
 }

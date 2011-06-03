@@ -1,3 +1,20 @@
+2011-06-03  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintItemForeground and paintItemForeground to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62035
+
+        Switching paintItemFore/Background to use IntPoint instead of a pair of ints.
+
+        No new tests since this is simple refactoring.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintObject):
+        (WebCore::RenderListBox::paintItemForeground):
+        (WebCore::RenderListBox::paintItemBackground):
+        * rendering/RenderListBox.h:
+
 2011-06-03  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.
