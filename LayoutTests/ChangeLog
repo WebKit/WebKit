@@ -1,3 +1,13 @@
+2011-06-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        REGRESSION(r87014): Cloned text <input> doesn't work well.
+        https://bugs.webkit.org/show_bug.cgi?id=61909
+
+        * fast/forms/textfield-clone-expected.txt: Added.
+        * fast/forms/textfield-clone.html: Added.
+
 2011-06-02  Adam Barth  <abarth@webkit.org>
 
         Tweaks to which kind of failure we expect.

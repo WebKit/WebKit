@@ -1,3 +1,58 @@
+2011-06-02  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        REGRESSION(r87014): Cloned text <input> doesn't work well.
+        https://bugs.webkit.org/show_bug.cgi?id=61909
+
+        The default implementation of Element::cloneNode() creates a clone
+        node by Document::createElement(). So, if a customized class is used for
+        shadow nodes, cloneNode() doesn't create a node of the correct class.
+        Such custom classes need to override Element::
+        cloneElementWithoutAttributesAndChildren().
+
+        TextFieldInputType and SearchInputType had references to shadow nodes
+        initialized in createShadowSubtree(). However createShadowSubtree() is
+        not called if the host node is cloned. The accessors for shadow nodes
+        should search a shadow tree.
+
+        Test: fast/forms/textfield-clone.html
+
+        * html/SearchInputType.cpp:
+          Remove data members for shadow nodes, and the accessors search the
+          shadow tree for the requested node by TreeScope::getElementById().
+        (WebCore::SearchInputType::SearchInputType):
+        (WebCore::innerBlockId):
+        (WebCore::resultButtonId):
+        (WebCore::cancelButtonId):
+        (WebCore::SearchInputType::createShadowSubtree):
+        (WebCore::SearchInputType::innerBlockElement):
+        (WebCore::SearchInputType::resultsButtonElement):
+        (WebCore::SearchInputType::cancelButtonElement):
+        * html/SearchInputType.h:
+        * html/TextFieldInputType.cpp: ditto.
+        (WebCore::TextFieldInputType::TextFieldInputType):
+        (WebCore::TextFieldInputType::innerTextId):
+        (WebCore::spinButtonId):
+        (WebCore::TextFieldInputType::speechButtonId):
+        (WebCore::TextFieldInputType::appendChildAndSetId):
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::getShadowElementById):
+        (WebCore::TextFieldInputType::innerTextElement):
+        (WebCore::TextFieldInputType::innerSpinButtonElement):
+        (WebCore::TextFieldInputType::speechButtonElement):
+        * html/TextFieldInputType.h:
+        * html/shadow/TextControlInnerElements.cpp:
+          Overrides cloneElementWithoutAttributesAndChildren() in order that cloneNode()
+          produces an instance of the correct class.
+        (WebCore::TextControlInnerElement::cloneElementWithoutAttributesAndChildren):
+        (WebCore::TextControlInnerTextElement::cloneElementWithoutAttributesAndChildren):
+        (WebCore::SearchFieldResultsButtonElement::cloneElementWithoutAttributesAndChildren):
+        (WebCore::SearchFieldCancelButtonElement::cloneElementWithoutAttributesAndChildren):
+        (WebCore::SpinButtonElement::cloneElementWithoutAttributesAndChildren):
+        (WebCore::InputFieldSpeechButtonElement::cloneElementWithoutAttributesAndChildren):
+        * html/shadow/TextControlInnerElements.h:
+
 2011-05-28  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

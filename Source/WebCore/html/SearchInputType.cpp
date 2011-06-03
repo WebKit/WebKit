@@ -40,9 +40,6 @@ namespace WebCore {
 
 inline SearchInputType::SearchInputType(HTMLInputElement* element)
     : BaseTextInputType(element)
-    , m_innerBlock(0)
-    , m_resultsButton(0)
-    , m_cancelButton(0)
 {
 }
 
@@ -66,47 +63,54 @@ bool SearchInputType::isSearchField() const
     return true;
 }
 
+static const AtomicString& innerBlockId()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, id, ("innerBlock"));
+    return id;
+}
+
+static const AtomicString& resultButtonId()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, id, ("resultButton"));
+    return id;
+}
+
+static const AtomicString& cancelButtonId()
+{
+    DEFINE_STATIC_LOCAL(AtomicString, id, ("cancelButton"));
+    return id;
+}
+
 void SearchInputType::createShadowSubtree()
 {
-    ASSERT(!m_innerBlock);
-    ASSERT(!innerTextElement());
-    ASSERT(!m_resultsButton);
-    ASSERT(!m_cancelButton);
-
-    ExceptionCode ec = 0;
     Document* document = element()->document();
     RefPtr<HTMLElement> inner = TextControlInnerElement::create(document);
-    m_innerBlock = inner.get();
-    element()->ensureShadowRoot()->appendChild(inner.release(), ec);
+    HTMLElement* innerBlock = inner.get();
+    appendChildAndSetId(element()->ensureShadowRoot(), inner.release(), innerBlockId());
 
 #if ENABLE(INPUT_SPEECH)
-    if (element()->isSpeechEnabled()) {
-        RefPtr<HTMLElement> speech = InputFieldSpeechButtonElement::create(document);
-        setSpeechButtonElement(speech.get());
-        element()->ensureShadowRoot()->appendChild(speech.release(), ec);
-    }
+    if (element()->isSpeechEnabled())
+        appendChildAndSetId(element()->ensureShadowRoot(), InputFieldSpeechButtonElement::create(document), speechButtonId());
 #endif
 
-    RefPtr<HTMLElement> results = SearchFieldResultsButtonElement::create(document);
-    m_resultsButton = results.get();
-    m_innerBlock->appendChild(results.release(), ec);
-
-    RefPtr<HTMLElement> innerText = TextControlInnerTextElement::create(document);
-    setInnerTextElement(innerText.get());
-    m_innerBlock->appendChild(innerText.release(), ec);
-
-    RefPtr<HTMLElement> cancel = SearchFieldCancelButtonElement::create(element()->document());
-    m_cancelButton = cancel.get();
-    m_innerBlock->appendChild(cancel.release(), ec);
+    appendChildAndSetId(innerBlock, SearchFieldResultsButtonElement::create(document), resultButtonId());
+    appendChildAndSetId(innerBlock, TextControlInnerTextElement::create(document), innerTextId());
+    appendChildAndSetId(innerBlock, SearchFieldCancelButtonElement::create(document), cancelButtonId());
 }
 
-void SearchInputType::destroyShadowSubtree()
+HTMLElement* SearchInputType::innerBlockElement() const
 {
-    TextFieldInputType::destroyShadowSubtree();
-    m_innerBlock = 0;
-    m_resultsButton = 0;
-    m_cancelButton = 0;
+    return getShadowElementById(innerBlockId());
 }
 
+HTMLElement* SearchInputType::resultsButtonElement() const
+{
+    return getShadowElementById(resultButtonId());
+}
+
+HTMLElement* SearchInputType::cancelButtonElement() const
+{
+    return getShadowElementById(cancelButtonId());
+}
 
 } // namespace WebCore
