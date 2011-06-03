@@ -2,6 +2,24 @@
 
         Reviewed by Tony Chang.
 
+        Worker may not be stopped after LT.
+        https://bugs.webkit.org/show_bug.cgi?id=61847
+
+        Re-submit a variant of the first fix for this bug. It's possible
+        that actually calling cleanup() in the worker threads was taking
+        too long and we triggered the assertions in the manager thread.
+
+        I've bumped up the timeout in the manager and added better
+        diagnostics. I also cleaned up the cleanup() code a bit because
+        there was some unnecessary if-checks.
+
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/worker.py:
+
+2011-06-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
         nrwt: fix duplicate logging regression
         https://bugs.webkit.org/show_bug.cgi?id=61981
 

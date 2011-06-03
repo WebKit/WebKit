@@ -674,8 +674,10 @@ class Manager:
             # Make sure all of the workers have shut down (if possible).
             for worker_state in self._worker_states.values():
                 if not worker_state.wedged and worker_state.worker_connection.is_alive():
-                    worker_state.worker_connection.join(0.5)
-                    assert not worker_state.worker_connection.is_alive()
+                    _log.debug('Waiting for worker %d to exit' % worker_state.number)
+                    worker_state.worker_connection.join(5.0)
+                    if worker_state.worker_connection.is_alive():
+                        _log.error('Worked %d did not exit in time.' % worker_state.number)
 
         except KeyboardInterrupt:
             _log.info("Interrupted, exiting")

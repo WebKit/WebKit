@@ -110,6 +110,7 @@ class Worker(manager_worker_broker.AbstractWorker):
                 self._worker_connection.post_message('exception',
                     (exception_type, exception_value, None))
             self._worker_connection.post_message('done')
+            self.cleanup()
 
     def handle_test_list(self, src, list_name, test_list):
         if list_name == "tests_to_http_lock":
@@ -144,13 +145,13 @@ class Worker(manager_worker_broker.AbstractWorker):
         self.clean_up_after_test(test_input, result)
 
     def cleanup(self):
-        if self._driver:
-            self.kill_driver()
-        if self._has_http_lock:
-            self.stop_servers_with_lock()
+        _log.debug("cleaning up")
+        self.kill_driver()
+        self.stop_servers_with_lock()
         if self._tests_run_file:
             self._tests_run_file.close()
             self._tests_run_file = None
+        _log.debug("done cleaning up")
 
     def timeout(self, test_input):
         """Compute the appropriate timeout value for a test."""
