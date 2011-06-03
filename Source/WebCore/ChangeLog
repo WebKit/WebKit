@@ -1,3 +1,21 @@
+2011-06-03  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        Cleanup member variable usage in svg/animation classes
+        https://bugs.webkit.org/show_bug.cgi?id=62029
+
+        Cleanup member variables.
+
+        * svg/animation/SMILTimeContainer.cpp:
+        (WebCore::SMILTimeContainer::SMILTimeContainer):
+        (WebCore::SMILTimeContainer::sampleAnimationAtTime):
+        (WebCore::SMILTimeContainer::updateAnimations):
+        * svg/animation/SMILTimeContainer.h:
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::SVGSMILElement):
+        * svg/animation/SVGSMILElement.h:
+
 2011-06-03  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

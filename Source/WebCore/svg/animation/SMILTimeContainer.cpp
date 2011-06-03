@@ -46,7 +46,6 @@ SMILTimeContainer::SMILTimeContainer(SVGSVGElement* owner)
     : m_beginTime(0)
     , m_pauseTime(0)
     , m_accumulatedPauseTime(0)
-    , m_nextManualSampleTime(0)
     , m_documentOrderIndexesDirty(false)
     , m_timer(this, &SMILTimeContainer::timerFired)
     , m_ownerSVGElement(owner)
@@ -216,20 +215,18 @@ void SMILTimeContainer::sampleAnimationAtTime(const String& elementId, double ne
 
     // Fast-forward to the time DRT wants to sample
     m_timer.stop();
-    m_nextSamplingTarget = elementId;
-    m_nextManualSampleTime = newTime;
 
-    updateAnimations(elapsed());
+    updateAnimations(elapsed(), newTime, elementId);
 }
 
-void SMILTimeContainer::updateAnimations(SMILTime elapsed)
+void SMILTimeContainer::updateAnimations(SMILTime elapsed, double nextManualSampleTime, String nextSamplingTarget)
 {
     SMILTime earliersFireTime = SMILTime::unresolved();
 
     Vector<SVGSMILElement*> toAnimate;
     copyToVector(m_scheduledAnimations, toAnimate);
 
-    if (m_nextManualSampleTime) {
+    if (nextManualSampleTime) {
         SMILTime samplingDiff;
         for (unsigned n = 0; n < toAnimate.size(); ++n) {
             SVGSMILElement* animation = toAnimate[n];
@@ -237,15 +234,14 @@ void SMILTimeContainer::updateAnimations(SMILTime elapsed)
 
             SVGElement* targetElement = animation->targetElement();
             // FIXME: This should probably be using getIdAttribute instead of idForStyleResolution.
-            if (!targetElement || !targetElement->hasID() || targetElement->idForStyleResolution() != m_nextSamplingTarget)
+            if (!targetElement || !targetElement->hasID() || targetElement->idForStyleResolution() != nextSamplingTarget)
                 continue;
 
             samplingDiff = animation->intervalBegin();
             break;
         }
 
-        elapsed = SMILTime(m_nextManualSampleTime) + samplingDiff;
-        m_nextManualSampleTime = 0;
+        elapsed = SMILTime(nextManualSampleTime) + samplingDiff;
     }
 
     // Sort according to priority. Elements with later begin time have higher priority.

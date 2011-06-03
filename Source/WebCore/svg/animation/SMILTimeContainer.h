@@ -70,7 +70,7 @@ private:
     
     void timerFired(Timer<SMILTimeContainer>*);
     void startTimer(SMILTime fireTime, SMILTime minimumDelay = 0);
-    void updateAnimations(SMILTime elapsed);
+    void updateAnimations(SMILTime elapsed, double nextManualSampleTime = 0, String nextSamplingTarget = String());
     
     void updateDocumentOrderIndexes();
     void sortByPriority(Vector<SVGSMILElement*>& smilElements, SMILTime elapsed);
@@ -81,8 +81,6 @@ private:
     double m_beginTime;
     double m_pauseTime;
     double m_accumulatedPauseTime;
-    double m_nextManualSampleTime;
-    String m_nextSamplingTarget;
 
     bool m_documentOrderIndexesDirty;
     

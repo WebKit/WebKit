@@ -191,6 +191,8 @@ private:
     bool m_conditionsConnected;
     bool m_hasEndEventConditions;     
 
+    bool m_isWaitingForFirstInterval;
+
     typedef HashSet<SVGSMILElement*> TimeDependentSet;
     TimeDependentSet m_timeDependents;
 
@@ -203,8 +205,6 @@ private:
     SMILTime m_intervalEnd;
 
     SMILTime m_previousIntervalBegin;
-
-    bool m_isWaitingForFirstInterval;
 
     ActiveState m_activeState;
     float m_lastPercent;
