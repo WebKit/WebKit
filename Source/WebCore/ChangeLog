@@ -1,3 +1,51 @@
+2011-06-02  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add an option for automatically attaching to new workers
+        https://bugs.webkit.org/show_bug.cgi?id=61930
+
+        Worker list is extended with a checkbox that makes inspector attach to each
+        new worker. Whenever a new worker context starts a new inspector window will
+        be opened for it.
+
+        Also worker agent and worker list will be updated when worker context is terminated.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorController.cpp:
+        (WebCore::InspectorController::InspectorController):
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::workerContextTerminatedImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::workerContextTerminated):
+        * inspector/InspectorWorkerAgent.cpp:
+        (WebCore::InspectorWorkerAgent::WorkerFrontendChannel::~WorkerFrontendChannel):
+        (WebCore::InspectorWorkerAgent::create):
+        (WebCore::InspectorWorkerAgent::InspectorWorkerAgent):
+        (WebCore::InspectorWorkerAgent::clearFrontend):
+        (WebCore::InspectorWorkerAgent::setAutoconnectToWorkers):
+        (WebCore::InspectorWorkerAgent::didStartWorkerContext):
+        (WebCore::InspectorWorkerAgent::workerContextTerminated):
+        * inspector/InspectorWorkerAgent.h:
+        * inspector/front-end/WorkerManager.js:
+        (WebInspector.WorkerManager.prototype._workerCreated):
+        (WebInspector.WorkerManager.prototype._workerTerminated):
+        (WebInspector.WorkerManager.prototype.openWorkerInspector):
+        (WebInspector.WorkerManager.prototype._openInspectorWindow):
+        (WebInspector.WorkerManager.prototype.reset):
+        (WebInspector.WorkerMessageForwarder.prototype.workerCreated):
+        (WebInspector.WorkerMessageForwarder.prototype.workerTerminated):
+        * inspector/front-end/WorkersSidebarPane.js:
+        (WebInspector.WorkerListSidebarPane):
+        (WebInspector.WorkerListSidebarPane.prototype._workerAdded):
+        (WebInspector.WorkerListSidebarPane.prototype._workerRemoved):
+        (WebInspector.WorkerListSidebarPane.prototype._workersCleared):
+        (WebInspector.WorkerListSidebarPane.prototype._addWorker):
+        (WebInspector.WorkerListSidebarPane.prototype._workerItemClicked):
+        (WebInspector.WorkerListSidebarPane.prototype._autoattachToWorkersClicked):
+        * inspector/front-end/inspector.js:
+        (WebInspector.reset):
+
 2011-06-02  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Ryosuke Niwa.

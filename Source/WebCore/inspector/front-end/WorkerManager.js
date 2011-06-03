@@ -69,14 +69,23 @@ WebInspector.WorkerManager.loaded = function()
 WebInspector.WorkerManager.Events = {
     WorkerAdded: "worker-added",
     WorkerRemoved: "worker-removed",
+    WorkersCleared: "workers-cleared",
     WorkerInspectorClosed: "worker-inspector-closed"
 }
 
 WebInspector.WorkerManager.prototype = {
-    _workerCreated: function(workerId, url)
-    {
-        this.dispatchEventToListeners(WebInspector.WorkerManager.Events.WorkerAdded, {workerId: workerId, url: url});
-    },
+    _workerCreated: function(workerId, url, inspectorConnected)
+     {
+        if (inspectorConnected)
+            this._openInspectorWindow(workerId);
+        this.dispatchEventToListeners(WebInspector.WorkerManager.Events.WorkerAdded, {workerId: workerId, url: url, inspectorConnected: inspectorConnected});
+     },
+
+    _workerTerminated: function(workerId)
+     {
+        this.closeWorkerInspector(workerId);
+        this.dispatchEventToListeners(WebInspector.WorkerManager.Events.WorkerRemoved, workerId);
+     },
 
     _sendMessageToWorkerInspector: function(workerId, message)
     {
@@ -87,12 +96,17 @@ WebInspector.WorkerManager.prototype = {
 
     openWorkerInspector: function(workerId)
     {
+        this._openInspectorWindow(workerId);
+        WorkerAgent.connectToWorker(workerId);
+    },
+
+    _openInspectorWindow: function(workerId)
+    {
         var url = location.href + "&workerId=" + workerId;
         url = url.replace("docked=true&", "");
         var workerInspectorWindow = window.open(url);
         this._workerIdToWindow[workerId] = workerInspectorWindow;
         workerInspectorWindow.addEventListener("beforeunload", this._workerInspectorClosing.bind(this, workerId), true);
-        WorkerAgent.connectToWorker(workerId);
     },
 
     closeWorkerInspector: function(workerId)
@@ -100,6 +114,13 @@ WebInspector.WorkerManager.prototype = {
         var workerInspectorWindow = this._workerIdToWindow[workerId];
         if (workerInspectorWindow)
             workerInspectorWindow.close();
+    },
+
+    reset: function()
+    {
+        for (var workerId in this._workerIdToWindow)
+            this.closeWorkerInspector(workerId);
+        this.dispatchEventToListeners(WebInspector.WorkerManager.Events.WorkersCleared);
     },
 
     _workerInspectorClosing: function(workerId, event)
@@ -130,9 +151,14 @@ WebInspector.WorkerMessageForwarder.prototype = {
             WorkerAgent.sendMessageToWorker(workerId, message);
     },
 
-    workerCreated: function(workerId, url)
+    workerCreated: function(workerId, url, inspectorConnected)
     {
-        this._workerManager._workerCreated(workerId, url);
+        this._workerManager._workerCreated(workerId, url, inspectorConnected);
+    },
+
+    workerTerminated: function(workerId)
+    {
+        this._workerManager._workerTerminated(workerId);
     },
 
     dispatchMessageFromWorker: function(workerId, message)

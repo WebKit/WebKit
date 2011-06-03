@@ -1738,14 +1738,28 @@
                 "parameters": [
                     { "name": "workerId", "type": "integer" }
                 ]
+            },
+            {
+                "name": "setAutoconnectToWorkers",
+                "parameters": [
+                    { "name": "value", "type": "boolean" }
+                ]
             }
+
         ],
         "events": [
             {
                 "name": "workerCreated",
                 "parameters": [
                     { "name": "workerId", "type": "integer" },
-                    { "name": "url", "type": "string" }
+                    { "name": "url", "type": "string" },
+                    { "name": "inspectorConnected", "type": "boolean" }
+                ]
+            },
+            {
+                "name": "workerTerminated",
+                "parameters": [
+                    { "name": "workerId", "type": "integer" }
                 ]
             },
             {

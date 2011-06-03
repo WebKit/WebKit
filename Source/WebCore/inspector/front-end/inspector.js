@@ -984,6 +984,8 @@ WebInspector.reset = function()
 
     this.console.clearMessages();
     this.extensionServer.notifyInspectorReset();
+    if (this.workerManager)
+        this.workerManager.reset();
 }
 
 WebInspector.bringToFront = function()

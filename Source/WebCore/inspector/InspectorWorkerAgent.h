@@ -39,6 +39,7 @@
 namespace WebCore {
 class InspectorFrontend;
 class InspectorObject;
+class InspectorState;
 class InstrumentingAgents;
 class KURL;
 class WorkerContextProxy;
@@ -47,7 +48,7 @@ typedef String ErrorString;
 
 class InspectorWorkerAgent {
 public:
-    static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*);
+    static PassOwnPtr<InspectorWorkerAgent> create(InstrumentingAgents*, InspectorState*);
     ~InspectorWorkerAgent();
 
     void setFrontend(InspectorFrontend*);
@@ -55,20 +56,24 @@ public:
 
     // Called from InspectorInstrumentation
     void didStartWorkerContext(WorkerContextProxy*, const KURL&);
+    void workerContextTerminated(WorkerContextProxy*);
 
     // Called from InspectorBackendDispatcher
     void connectToWorker(ErrorString*, int workerId);
     void disconnectFromWorker(ErrorString*, int workerId);
     void sendMessageToWorker(ErrorString*, int workerId, PassRefPtr<InspectorObject> message);
+    void setAutoconnectToWorkers(ErrorString*, bool value);
 
 private:
-    explicit InspectorWorkerAgent(InstrumentingAgents*);
+    InspectorWorkerAgent(InstrumentingAgents*, InspectorState*);
 
     InstrumentingAgents* m_instrumentingAgents;
     InspectorFrontend* m_inspectorFrontend;
+    InspectorState* m_inspectorState;
 
     class WorkerFrontendChannel;
-    HashMap<int, WorkerFrontendChannel*> m_idToChannel;
+    typedef HashMap<int, WorkerFrontendChannel*> WorkerChannels;
+    WorkerChannels m_idToChannel;
 };
 
 } // namespace WebCore

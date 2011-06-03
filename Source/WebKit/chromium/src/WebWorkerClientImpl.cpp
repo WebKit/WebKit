@@ -39,6 +39,7 @@
 #include "ErrorEvent.h"
 #include "Frame.h"
 #include "FrameLoaderClient.h"
+#include "InspectorInstrumentation.h"
 #include "MessageEvent.h"
 #include "MessagePort.h"
 #include "MessagePortChannel.h"
@@ -163,6 +164,7 @@ void WebWorkerClientImpl::terminateWorkerContext()
         return;
     }
     m_webWorker->terminateWorkerContext();
+    InspectorInstrumentation::workerContextTerminated(m_scriptExecutionContext.get(), this);
 }
 
 void WebWorkerClientImpl::postMessageToWorkerContext(
@@ -217,7 +219,8 @@ void WebWorkerClientImpl::connectToInspector(WorkerContextProxy::PageInspector* 
 
 void WebWorkerClientImpl::disconnectFromInspector()
 {
-    m_webWorker->detachDevTools();
+    if (!m_askedToTerminate)
+        m_webWorker->detachDevTools();
     m_pageInspector = 0;
 }
 
@@ -328,6 +331,7 @@ void WebWorkerClientImpl::reportPendingActivity(bool hasPendingActivity)
 
 void WebWorkerClientImpl::workerContextDestroyed()
 {
+    InspectorInstrumentation::workerContextTerminated(m_scriptExecutionContext.get(), this);
 }
 
 void WebWorkerClientImpl::workerContextClosed()

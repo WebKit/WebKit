@@ -164,6 +164,7 @@ public:
     static void didStartWorkerContext(ScriptExecutionContext*, WorkerContextProxy*, bool paused, const KURL&);
     static void didCreateWorker(ScriptExecutionContext*, intptr_t id, const String& url, bool isSharedWorker);
     static void didDestroyWorker(ScriptExecutionContext*, intptr_t id);
+    static void workerContextTerminated(ScriptExecutionContext*, WorkerContextProxy*);
 #endif
 
 #if ENABLE(WEB_SOCKETS)
@@ -286,6 +287,7 @@ private:
     static void didStartWorkerContextImpl(InstrumentingAgents*, WorkerContextProxy*, const KURL&);
     static void didCreateWorkerImpl(InstrumentingAgents*, intptr_t id, const String& url, bool isSharedWorker);
     static void didDestroyWorkerImpl(InstrumentingAgents*, intptr_t id);
+    static void workerContextTerminatedImpl(InstrumentingAgents*, WorkerContextProxy*);
 #endif
 
 #if ENABLE(WEB_SOCKETS)
@@ -884,6 +886,15 @@ inline void InspectorInstrumentation::didDestroyWorker(ScriptExecutionContext* c
         didDestroyWorkerImpl(instrumentingAgents, id);
 #endif
 }
+
+inline void InspectorInstrumentation::workerContextTerminated(ScriptExecutionContext* context, WorkerContextProxy* proxy)
+{
+#if ENABLE(INSPECTOR)
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
+        workerContextTerminatedImpl(instrumentingAgents, proxy);
+#endif
+}
+
 #endif
 
 

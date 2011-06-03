@@ -36,6 +36,7 @@
 
 #include "InspectorFrontend.h"
 #include "InspectorFrontendChannel.h"
+#include "InspectorState.h"
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "KURL.h"
@@ -44,6 +45,10 @@
 #include <wtf/RefPtr.h>
 
 namespace WebCore {
+
+namespace WorkerAgentState {
+static const char autoconnectToWorkers[] = "autoconnectToWorkers";
+};
 
 class InspectorWorkerAgent::WorkerFrontendChannel : public WorkerContextProxy::PageInspector {
 public:
@@ -56,7 +61,6 @@ public:
     }
     virtual ~WorkerFrontendChannel()
     {
-        disconnectFromWorkerContext();
     }
 
     int id() const { return m_id; }
@@ -100,14 +104,15 @@ private:
 
 int InspectorWorkerAgent::WorkerFrontendChannel::s_nextId = 1;
 
-PassOwnPtr<InspectorWorkerAgent> InspectorWorkerAgent::create(InstrumentingAgents* instrumentingAgents)
+PassOwnPtr<InspectorWorkerAgent> InspectorWorkerAgent::create(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState)
 {
-    return adoptPtr(new InspectorWorkerAgent(instrumentingAgents));
+    return adoptPtr(new InspectorWorkerAgent(instrumentingAgents, inspectorState));
 }
 
-InspectorWorkerAgent::InspectorWorkerAgent(InstrumentingAgents* instrumentingAgents)
+InspectorWorkerAgent::InspectorWorkerAgent(InstrumentingAgents* instrumentingAgents, InspectorState* inspectorState)
     : m_instrumentingAgents(instrumentingAgents)
     , m_inspectorFrontend(0)
+    , m_inspectorState(inspectorState)
 {
 }
 
@@ -126,7 +131,11 @@ void InspectorWorkerAgent::clearFrontend()
 {
     m_inspectorFrontend = 0;
     m_instrumentingAgents->setInspectorWorkerAgent(0);
-    deleteAllValues(m_idToChannel);
+    m_inspectorState->setBoolean(WorkerAgentState::autoconnectToWorkers, false);
+    for (WorkerChannels::iterator it = m_idToChannel.begin(); it != m_idToChannel.end(); ++it) {
+        it->second->disconnectFromWorkerContext();
+        delete it->second;
+    }
     m_idToChannel.clear();
 }
 
@@ -157,13 +166,33 @@ void InspectorWorkerAgent::sendMessageToWorker(ErrorString* error, int workerId,
         *error = "Worker is gone";
 }
 
+void InspectorWorkerAgent::setAutoconnectToWorkers(ErrorString*, bool value)
+{
+    m_inspectorState->setBoolean(WorkerAgentState::autoconnectToWorkers, value);
+}
+
 void InspectorWorkerAgent::didStartWorkerContext(WorkerContextProxy* workerContextProxy, const KURL& url)
 {
     WorkerFrontendChannel* channel = new WorkerFrontendChannel(m_inspectorFrontend, workerContextProxy);
     m_idToChannel.set(channel->id(), channel);
 
     ASSERT(m_inspectorFrontend);
-    m_inspectorFrontend->worker()->workerCreated(channel->id(), url.string());
+    bool autoconnectToWorkers = m_inspectorState->getBoolean(WorkerAgentState::autoconnectToWorkers);
+    if (autoconnectToWorkers)
+        channel->connectToWorkerContext();
+    m_inspectorFrontend->worker()->workerCreated(channel->id(), url.string(), autoconnectToWorkers);
+}
+
+void InspectorWorkerAgent::workerContextTerminated(WorkerContextProxy* proxy)
+{
+    for (WorkerChannels::iterator it = m_idToChannel.begin(); it != m_idToChannel.end(); ++it) {
+        if (proxy == it->second->proxy()) {
+            m_inspectorFrontend->worker()->workerTerminated(it->first);
+            delete it->second;
+            m_idToChannel.remove(it);
+            return;
+        }
+    }
 }
 
 } // namespace WebCore

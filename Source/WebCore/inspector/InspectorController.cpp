@@ -110,7 +110,7 @@ InspectorController::InspectorController(Page* page, InspectorClient* inspectorC
     , m_profilerAgent(InspectorProfilerAgent::create(m_instrumentingAgents.get(), m_consoleAgent.get(), page, m_state.get()))
 #endif
 #if ENABLE(WORKERS)
-    , m_workerAgent(InspectorWorkerAgent::create(m_instrumentingAgents.get()))
+    , m_workerAgent(InspectorWorkerAgent::create(m_instrumentingAgents.get(), m_state.get()))
 #endif
     , m_page(page)
     , m_inspectorClient(inspectorClient)

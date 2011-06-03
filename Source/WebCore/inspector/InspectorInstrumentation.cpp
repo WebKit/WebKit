@@ -733,6 +733,12 @@ void InspectorInstrumentation::didDestroyWorkerImpl(InstrumentingAgents* instrum
     if (InspectorAgent* inspectorAgent = instrumentingAgents->inspectorAgent())
         inspectorAgent->didDestroyWorker(id);
 }
+
+void InspectorInstrumentation::workerContextTerminatedImpl(InstrumentingAgents* instrumentingAgents, WorkerContextProxy* proxy)
+{
+    if (InspectorWorkerAgent* workerAgent = instrumentingAgents->inspectorWorkerAgent())
+        workerAgent->workerContextTerminated(proxy);
+}
 #endif
 
 #if ENABLE(WEB_SOCKETS)
