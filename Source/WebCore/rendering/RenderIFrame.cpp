@@ -104,8 +104,9 @@ bool RenderIFrame::flattenFrame()
     if (!view)
         return false;
 
-    // Do not flatten offscreen inner frames during frame flattening.
-    return absoluteBoundingBoxRect().intersects(IntRect(IntPoint(0, 0), view->contentsSize()));
+    // Do not flatten offscreen inner frames during frame flattening, as flattening might make them visible.
+    IntRect boundingRect = absoluteBoundingBoxRect();
+    return boundingRect.maxX() > 0 && boundingRect.maxY() > 0;
 }
 
 void RenderIFrame::layout()
