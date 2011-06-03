@@ -1,3 +1,15 @@
+2011-06-03  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r88004.
+        http://trac.webkit.org/changeset/88004
+        https://bugs.webkit.org/show_bug.cgi?id=62008
+
+        This patch broke 4 tests in the GTK bots (Requested by
+        msanchez on #webkit).
+
+        * accessibility/gtk/AXObjectCacheAtk.cpp:
+        (WebCore::AXObjectCache::handleScrolledToAnchor):
+
 2011-06-03  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Andreas Kling.
