@@ -60,6 +60,12 @@ protected:
         : HTMLSelectElement(selectTag, document, 0)
     {
     }
+
+private:
+    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const
+    {
+        return create(document());
+    }
 };
 
 inline HTMLKeygenElement::HTMLKeygenElement(const QualifiedName& tagName, Document* document, HTMLFormElement* form)

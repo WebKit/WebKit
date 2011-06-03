@@ -1,3 +1,19 @@
+2011-06-03  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Cloned keygen shadows should have -webkit-keygen-select pseudoclass.
+        https://bugs.webkit.org/show_bug.cgi?id=61984
+
+        When cloneNode's tag name-based cloning algorithm clones the
+        KeygenSelectElements of a keygen shadow as select elements. These
+        lack the -webkit-keygen-select pseudoclass.
+
+        Test: fast/html/clone-keygen.html
+
+        * html/HTMLKeygenElement.cpp:
+        (WebCore::KeygenSelectElement::cloneElementWithoutAttributesAndChildren): Create a KeygenSelectElement when being cloned.
+
 2011-06-02  MORITA Hajime  <morrita@google.com>
         
         Unreviewed ChangeLog fix.

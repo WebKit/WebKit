@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script src="../js/resources/js-test-pre.js"></script>
+<link rel="stylesheet" href="../js/resources/js-test-style.css">
+<style type="text/css">
+*::-webkit-keygen-select {
+  color: purple;
+  zoom: 1.5;  /* to work around bug 57966 */
+}
+</style>
+</head>
+<body>
+<p>
+Tests that a cloned keygen has the right shadow pseudo ID. You should
+see two big keygens with purple text (they should look the same.)
+</p>
+<keygen id="k" style="display: block;">
+<div id="console"></div>
+<script>
+var k = document.querySelector('#k');
+var specialK = k.cloneNode();
+
+k.insertAdjacentElement('afterEnd', specialK);
+
+shouldBe('specialK.clientHeight', 'k.clientHeight');
+
+if (window.layoutTestController) {
+    var kShadow = layoutTestController.shadowRoot(k);
+    var cloneShadow = layoutTestController.shadowRoot(specialK);
+    shouldBe('layoutTestController.shadowPseudoId(cloneShadow.firstChild)',
+             'layoutTestController.shadowPseudoId(kShadow.firstChild)');
+}
+
+var successfullyParsed = true;
+</script>
+<script src="../js/resources/js-test-post.js"></script>
+</body>
+</html>
