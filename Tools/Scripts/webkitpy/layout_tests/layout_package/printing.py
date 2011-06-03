@@ -217,13 +217,16 @@ class Printer(object):
 
         self.switches = parse_print_options(options.print_options, options.verbose)
 
+        self._logging_handler = None
         if self._stream.isatty() and not options.verbose:
             self._update_interval_seconds = FAST_UPDATES_SECONDS
             self._meter = metered_stream.MeteredStream(self._stream)
-            self._logging_handler = _configure_logging(self._meter, options.verbose)
+            if configure_logging:
+                self._logging_handler = _configure_logging(self._meter, options.verbose)
         else:
-            self._logging_handler = _configure_logging(self._stream, options.verbose)
             self._update_interval_seconds = SLOW_UPDATES_SECONDS
+            if configure_logging:
+                self._logging_handler = _configure_logging(self._stream, options.verbose)
 
     def cleanup(self):
         """Restore logging configuration to its initial settings."""

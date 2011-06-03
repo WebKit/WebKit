@@ -1,3 +1,12 @@
+2011-06-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        nrwt: fix duplicate logging regression
+        https://bugs.webkit.org/show_bug.cgi?id=61981
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+
 2011-06-03  Robert Kroeger  <rjkroege@chromium.org>
 
         Reviewed by Adam Barth.
