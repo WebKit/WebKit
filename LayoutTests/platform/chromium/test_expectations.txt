@@ -3973,6 +3973,7 @@ BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMA
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-text.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE+TEXT
+BUGWK61664:  svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT
 
 BUGCR84317 DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
 
