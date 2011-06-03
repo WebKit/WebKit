@@ -31,6 +31,7 @@
 #include "config.h"
 #include "V8EventListener.h"
 
+#include "TraceEvent.h"
 #include "V8Proxy.h"
 
 namespace WebCore {
@@ -72,6 +73,8 @@ v8::Local<v8::Value> V8EventListener::callListenerFunction(ScriptExecutionContex
         return v8::Local<v8::Value>();
 
     v8::Handle<v8::Value> parameters[1] = { jsEvent };
+
+    TRACE_EVENT("V8EventListener::callListenerFunction", this, 0);
 
     if (V8Proxy* proxy = V8Proxy::retrieve(context))
         return proxy->callFunction(handlerFunction, receiver, 1, parameters);

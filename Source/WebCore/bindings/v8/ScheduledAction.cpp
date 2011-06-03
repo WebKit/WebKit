@@ -34,6 +34,7 @@
 #include "Document.h"
 #include "ScriptExecutionContext.h"
 #include "ScriptSourceCode.h"
+#include "TraceEvent.h"
 
 #include "V8Binding.h"
 #include "V8Proxy.h"
@@ -109,6 +110,8 @@ void ScheduledAction::execute(V8Proxy* proxy)
     v8::Handle<v8::Context> v8Context = v8::Local<v8::Context>::New(m_context.get());
     if (v8Context.IsEmpty())
         return; // JS may not be enabled.
+
+    TRACE_EVENT("ScheduledAction::execute", this, 0);
 
     v8::Context::Scope scope(v8Context);
 

@@ -1,3 +1,20 @@
+2011-06-02  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium][V8] Add trace events for timer fires and event listener dispatches
+        https://bugs.webkit.org/show_bug.cgi?id=61977
+
+        Adds TRACE_EVENT macro around timer and event listener dispatches.  When tracing (a chromium feature) is
+        enabled, this allows correlating these events with painting, compositing, and everything else in chromium that
+        is traced.  When tracing is disabled, this macro does nothing useful.  Trace points are very cheap when tracing
+        is disabled so this should have no performance impact for non-developers.
+
+        * bindings/v8/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/v8/V8EventListener.cpp:
+        (WebCore::V8EventListener::callListenerFunction):
+
 2011-06-02  John Bates  <jbates@google.com>
 
         Reviewed by James Robinson.
