@@ -1,3 +1,15 @@
+2011-06-02  Aaron Colwell  <acolwell@chromium.org>
+
+        Reviewed by David Levin.
+
+        Add mediaTimeForTimeValue() implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=61555
+
+        * public/WebMediaPlayer.h:
+        * src/WebMediaPlayerClientImpl.cpp:
+        (WebKit::WebMediaPlayerClientImpl::mediaTimeForTimeValue):
+        * src/WebMediaPlayerClientImpl.h:
+
 2011-06-02  Jay Civelli  <jcivelli@chromium.org>
 
         Reviewed by Adam Barth.

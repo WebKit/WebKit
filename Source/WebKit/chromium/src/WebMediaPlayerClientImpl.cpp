@@ -485,6 +485,13 @@ MediaPlayer::MovieLoadType WebMediaPlayerClientImpl::movieLoadType() const
     return MediaPlayer::Unknown;
 }
 
+float WebMediaPlayerClientImpl::mediaTimeForTimeValue(float timeValue) const
+{
+    if (m_webMediaPlayer.get())
+        return m_webMediaPlayer->mediaTimeForTimeValue(timeValue);
+    return timeValue;
+}
+
 unsigned WebMediaPlayerClientImpl::decodedFrameCount() const
 {
     if (m_webMediaPlayer.get())

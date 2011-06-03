@@ -117,6 +117,7 @@ public:
     virtual void setPreload(WebCore::MediaPlayer::Preload);
     virtual bool hasSingleSecurityOrigin() const;
     virtual WebCore::MediaPlayer::MovieLoadType movieLoadType() const;
+    virtual float mediaTimeForTimeValue(float timeValue) const;
     virtual unsigned decodedFrameCount() const;
     virtual unsigned droppedFrameCount() const;
     virtual unsigned audioDecodedByteCount() const;

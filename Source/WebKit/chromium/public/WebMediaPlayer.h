@@ -135,6 +135,8 @@ public:
     virtual bool hasSingleSecurityOrigin() const = 0;
     virtual MovieLoadType movieLoadType() const = 0;
 
+    virtual float mediaTimeForTimeValue(float timeValue) const = 0;
+
     virtual unsigned decodedFrameCount() const = 0;
     virtual unsigned droppedFrameCount() const = 0;
     virtual unsigned audioDecodedByteCount() const = 0;
