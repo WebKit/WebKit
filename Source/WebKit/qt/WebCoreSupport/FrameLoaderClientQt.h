@@ -44,7 +44,10 @@
 #include <qobject.h>
 #include <wtf/Forward.h>
 
+QT_BEGIN_NAMESPACE
 class QNetworkReply;
+QT_END_NAMESPACE
+
 class QWebFrame;
 
 namespace WebCore {

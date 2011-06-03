@@ -23,7 +23,9 @@
 #include "MIMESniffing.h"
 #include <QObject>
 
+QT_BEGIN_NAMESPACE
 class QNetworkReply;
+QT_END_NAMESPACE
 
 class QtMIMETypeSniffer : public QObject {
     Q_OBJECT
