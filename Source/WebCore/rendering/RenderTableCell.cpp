@@ -961,7 +961,7 @@ void RenderTableCell::paintCollapsedBorder(GraphicsContext* graphicsContext, con
     }
 }
 
-void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, int tx, int ty, RenderObject* backgroundObject)
+void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, const IntPoint& paintOffset, RenderObject* backgroundObject)
 {
     if (!paintInfo.shouldPaintWithinRoot(this))
         return;
@@ -976,13 +976,9 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, int tx, i
     if (!tableElt->collapseBorders() && style()->emptyCells() == HIDE && !firstChild())
         return;
 
-    if (backgroundObject != this) {
-        tx += x();
-        ty += y();
-    }
-
-    int w = width();
-    int h = height();
+    IntPoint adjustedPaintOffset = paintOffset;
+    if (backgroundObject != this)
+        adjustedPaintOffset.move(location());
 
     Color c = backgroundObject->style()->visitedDependentColor(CSSPropertyBackgroundColor);
     const FillLayer* bgLayer = backgroundObject->style()->backgroundLayers();
@@ -993,11 +989,11 @@ void RenderTableCell::paintBackgroundsBehindCell(PaintInfo& paintInfo, int tx, i
         bool shouldClip = backgroundObject->hasLayer() && (backgroundObject == this || backgroundObject == parent()) && tableElt->collapseBorders();
         GraphicsContextStateSaver stateSaver(*paintInfo.context, shouldClip);
         if (shouldClip) {
-            IntRect clipRect(tx + borderLeft(), ty + borderTop(),
-                w - borderLeft() - borderRight(), h - borderTop() - borderBottom());
+            IntRect clipRect(adjustedPaintOffset.x() + borderLeft(), adjustedPaintOffset.y() + borderTop(),
+                width() - borderLeft() - borderRight(), height() - borderTop() - borderBottom());
             paintInfo.context->clip(clipRect);
         }
-        paintFillLayers(paintInfo, c, bgLayer, IntRect(tx, ty, w, h), BackgroundBleedNone, CompositeSourceOver, backgroundObject);
+        paintFillLayers(paintInfo, c, bgLayer, IntRect(adjustedPaintOffset, size()), BackgroundBleedNone, CompositeSourceOver, backgroundObject);
     }
 }
 
@@ -1014,7 +1010,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& 
     paintBoxShadow(paintInfo.context, paintRect, style(), Normal);
     
     // Paint our cell background.
-    paintBackgroundsBehindCell(paintInfo, paintOffset.x(), paintOffset.y(), this);
+    paintBackgroundsBehindCell(paintInfo, paintOffset, this);
 
     paintBoxShadow(paintInfo.context, paintRect, style(), Inset);
 

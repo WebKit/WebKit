@@ -218,7 +218,7 @@ void RenderTableRow::paint(PaintInfo& paintInfo, int tx, int ty)
             // Paint the row background behind the cell.
             if (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseChildBlockBackground) {
                 RenderTableCell* cell = toRenderTableCell(child);
-                cell->paintBackgroundsBehindCell(paintInfo, tx, ty, this);
+                cell->paintBackgroundsBehindCell(paintInfo, IntPoint(tx, ty), this);
             }
             if (!toRenderBox(child)->hasSelfPaintingLayer())
                 child->paint(paintInfo, tx, ty);

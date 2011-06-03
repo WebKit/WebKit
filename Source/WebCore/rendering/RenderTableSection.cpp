@@ -933,16 +933,16 @@ void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, 
         // the stack, since we have already opened a transparency layer (potentially) for the table row group.
         // Note that we deliberately ignore whether or not the cell has a layer, since these backgrounds paint "behind" the
         // cell.
-        cell->paintBackgroundsBehindCell(paintInfo, cellPoint.x(), cellPoint.y(), colGroup);
-        cell->paintBackgroundsBehindCell(paintInfo, cellPoint.x(), cellPoint.y(), col);
+        cell->paintBackgroundsBehindCell(paintInfo, cellPoint, colGroup);
+        cell->paintBackgroundsBehindCell(paintInfo, cellPoint, col);
 
         // Paint the row group next.
-        cell->paintBackgroundsBehindCell(paintInfo, cellPoint.x(), cellPoint.y(), this);
+        cell->paintBackgroundsBehindCell(paintInfo, cellPoint, this);
 
         // Paint the row next, but only if it doesn't have a layer.  If a row has a layer, it will be responsible for
         // painting the row background for the cell.
         if (!row->hasSelfPaintingLayer())
-            cell->paintBackgroundsBehindCell(paintInfo, cellPoint.x(), cellPoint.y(), row);
+            cell->paintBackgroundsBehindCell(paintInfo, cellPoint, row);
     }
     if ((!cell->hasSelfPaintingLayer() && !row->hasSelfPaintingLayer()) || paintInfo.phase == PaintPhaseCollapsedTableBorders)
         cell->paint(paintInfo, cellPoint.x(), cellPoint.y());

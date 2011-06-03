@@ -96,7 +96,7 @@ public:
 
     virtual void paint(PaintInfo&, int tx, int ty);
 
-    void paintBackgroundsBehindCell(PaintInfo&, int tx, int ty, RenderObject* backgroundObject);
+    void paintBackgroundsBehindCell(PaintInfo&, const IntPoint&, RenderObject* backgroundObject);
 
     int cellBaselinePosition() const;
 

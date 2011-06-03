@@ -2,6 +2,27 @@
 
         Reviewed by Eric Seidel.
 
+        Switch paintBackgroundsBehindCell to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62031
+
+        Switching paintBackgroundsBehindCell to take an IntPoint representing
+        the paint offset instead of a pair of ints.
+
+        No new tests as this is simple refactoring.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintBackgroundsBehindCell):
+        (WebCore::RenderTableCell::paintBoxDecorations):
+        * rendering/RenderTableCell.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::paint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paintCell):
+
+2011-06-03  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Switch paintCaret and paintDragCaret to use IntPoint
         https://bugs.webkit.org/show_bug.cgi?id=62037
 
