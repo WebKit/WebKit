@@ -119,6 +119,7 @@ private slots:
     void protectBindingsRuntimeObjectsFromCollector();
     void localURLSchemes();
     void testOptionalJSObjects();
+    void testLocalStorageVisibility();
     void testEnablePersistentStorage();
     void consoleOutput();
     void inputMethods_data();
@@ -2328,8 +2329,8 @@ void tst_QWebPage::testOptionalJSObjects()
     QWebPage webPage1;
     QWebPage webPage2;
 
-    webPage1.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl());
-    webPage2.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl());
+    webPage1.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("http://www.example.com/"));
+    webPage2.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("http://www.example.com/"));
 
     QEXPECT_FAIL("","Feature enabled/disabled checking problem. Look at bugs.webkit.org/show_bug.cgi?id=29867", Continue);
     QCOMPARE(testFlag(webPage1, QWebSettings::OfflineWebApplicationCacheEnabled, "applicationCache", false), false);
@@ -2339,11 +2340,81 @@ void tst_QWebPage::testOptionalJSObjects()
     QCOMPARE(testFlag(webPage2, QWebSettings::OfflineWebApplicationCacheEnabled, "applicationCache", false), true);
 
     QCOMPARE(testFlag(webPage1, QWebSettings::LocalStorageEnabled, "localStorage", false), false);
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=61045", Continue);
     QCOMPARE(testFlag(webPage2, QWebSettings::LocalStorageEnabled, "localStorage", true),  true);
     QCOMPARE(testFlag(webPage1, QWebSettings::LocalStorageEnabled, "localStorage", false), false);
-    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=61045", Continue);
     QCOMPARE(testFlag(webPage2, QWebSettings::LocalStorageEnabled, "localStorage", false), true);
+}
+
+static inline bool checkLocalStorageVisibility(QWebPage& webPage, bool localStorageEnabled)
+{
+    webPage.settings()->setAttribute(QWebSettings::LocalStorageEnabled, localStorageEnabled);
+    return webPage.mainFrame()->evaluateJavaScript(QString("(window.localStorage != undefined)")).toBool();
+}
+
+void tst_QWebPage::testLocalStorageVisibility()
+{
+    // Local storage's visibility depends on its security origin, which depends on base url.
+    // Initially, it will test it with base urls that get a globally unique origin, which may not
+    // be able to use local storage even if the feature is enabled. Then later the same test is
+    // done but with urls that would get a valid origin, so local storage could be used.
+    // Before every test case it checks if local storage is not already visible.
+
+    QWebPage webPage;
+
+    webPage.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl());
+
+    QCOMPARE(checkLocalStorageVisibility(webPage, false), false);
+    QCOMPARE(checkLocalStorageVisibility(webPage, true), false);
+
+    webPage.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("invalid"));
+
+    QCOMPARE(checkLocalStorageVisibility(webPage, false), false);
+    QCOMPARE(checkLocalStorageVisibility(webPage, true), false);
+
+    webPage.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("://misparsed.com"));
+
+    QCOMPARE(checkLocalStorageVisibility(webPage, false), false);
+    QCOMPARE(checkLocalStorageVisibility(webPage, true), false);
+
+    webPage.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("http://"));
+
+    QCOMPARE(checkLocalStorageVisibility(webPage, false), false);
+    QCOMPARE(checkLocalStorageVisibility(webPage, true), false);
+
+    webPage.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("about:blank"));
+
+    QCOMPARE(checkLocalStorageVisibility(webPage, false), false);
+    QCOMPARE(checkLocalStorageVisibility(webPage, true), false);
+
+    webPage.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("data:text/html,test"));
+
+    QCOMPARE(checkLocalStorageVisibility(webPage, false), false);
+    QCOMPARE(checkLocalStorageVisibility(webPage, true), false);
+
+    webPage.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("file:///"));
+
+    QCOMPARE(checkLocalStorageVisibility(webPage, false), false);
+    QCOMPARE(checkLocalStorageVisibility(webPage, true), false);
+
+    webPage.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("http://www.example.com"));
+
+    QCOMPARE(checkLocalStorageVisibility(webPage, false), false);
+    QCOMPARE(checkLocalStorageVisibility(webPage, true), true);
+
+    webPage.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("https://www.example.com"));
+
+    QCOMPARE(checkLocalStorageVisibility(webPage, false), false);
+    QCOMPARE(checkLocalStorageVisibility(webPage, true), true);
+
+    webPage.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("ftp://files.example.com"));
+
+    QCOMPARE(checkLocalStorageVisibility(webPage, false), false);
+    QCOMPARE(checkLocalStorageVisibility(webPage, true), true);
+
+    webPage.currentFrame()->setHtml(QString("<html><body>test</body></html>"), QUrl("file:///path/to/index.html"));
+
+    QCOMPARE(checkLocalStorageVisibility(webPage, false), false);
+    QCOMPARE(checkLocalStorageVisibility(webPage, true), true);
 }
 
 void tst_QWebPage::testEnablePersistentStorage()

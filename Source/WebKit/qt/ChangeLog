@@ -1,3 +1,19 @@
+2011-06-03  Rafael Brandao  <rafael.lobo@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] It made two Qt API tests fail
+        https://bugs.webkit.org/show_bug.cgi?id=58847
+
+        Modified failing test's base url so it could get a valid origin
+        and make use of local storage. Also added another test that checks
+        local storage visibility in both scenarios.
+
+        * tests/qwebpage/tst_qwebpage.cpp:
+        (tst_QWebPage::testOptionalJSObjects):
+        (checkLocalStorageVisibility):
+        (tst_QWebPage::testLocalStorageVisibility):
+
 2011-06-03  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.
