@@ -1,3 +1,33 @@
+2011-06-01  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Flash of broken page when exiting full screen at jerryseinfeld.com
+        https://bugs.webkit.org/show_bug.cgi?id=61897
+        <rdar://problem/9522985>
+
+        Test: fullscreen/full-screen-placeholder.html
+
+        Entering full-screen mode is causing the page layout to change because the full-screen
+        element is taken out of the normal flow.  To counteract this effect, insert a placeholder
+        block as a parent of the full-screen renderer with the same size and style as the full-screen
+        element pre-full-screen.
+
+        Only create a placeholder for block-level elements; the technique required for inline elements
+        would be vastly more complicated.
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitWillEnterFullScreenForElement): Create a placeholder
+            based on the size and style of the full-screen element.
+        (WebCore::Document::setFullScreenRenderer): Persist the placeholder size and 
+            style across new renderers.
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreen::RenderFullScreen): Added ivar.
+        (RenderFullScreen::destroy): Make sure to safely destroy our placeholder.
+        (RenderFullScreen::createPlaceholder): Added.
+        * rendering/RenderFullScreen.h:
+        (WebCore::RenderFullScreen::placeholder): Ivar accessor.
+
 2011-06-03  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

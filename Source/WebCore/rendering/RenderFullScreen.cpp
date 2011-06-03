@@ -36,8 +36,22 @@
 
 using namespace WebCore;
 
+RenderFullScreen::RenderFullScreen(Node* node) 
+    : RenderFlexibleBox(node) 
+    , m_placeholder(0)
+{ 
+    setReplaced(false); 
+}
+
 void RenderFullScreen::destroy()
 {
+    if (m_placeholder) {
+        remove();
+        if (!m_placeholder->beingDestroyed())
+            m_placeholder->destroy();
+        m_placeholder = 0;
+    }
+
     // RenderObjects are unretained, so notify the document (which holds a pointer to a RenderFullScreen)
     // if it's RenderFullScreen is destroyed.
     if (document() && document()->fullScreenRenderer() == this)
@@ -70,6 +84,26 @@ PassRefPtr<RenderStyle> RenderFullScreen::createFullScreenStyle()
     fullscreenStyle->setBackgroundColor(Color::black);
     
     return fullscreenStyle.release();
+}
+
+void RenderFullScreen::createPlaceholder(PassRefPtr<RenderStyle> style, const IntRect& frameRect)
+{
+    if (style->width().isAuto())
+        style->setWidth(Length(frameRect.width(), Fixed));
+    if (style->height().isAuto())
+        style->setHeight(Length(frameRect.height(), Fixed));
+
+    if (!m_placeholder) {
+        m_placeholder = new (document()->renderArena()) RenderBlock(document());
+        m_placeholder->setStyle(style);
+        m_placeholder->setIsAnonymous(false);
+        if (parent()) {
+            parent()->addChild(m_placeholder, this);
+            remove();
+        }
+        m_placeholder->addChild(this);
+    } else
+        m_placeholder->setStyle(style);
 }
 
 #endif

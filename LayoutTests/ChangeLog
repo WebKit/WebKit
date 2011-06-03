@@ -1,3 +1,14 @@
+2011-06-01  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        Flash of broken page when exiting full screen at jerryseinfeld.com
+        https://bugs.webkit.org/show_bug.cgi?id=61897
+        <rdar://problem/9522985>
+
+        * fullscreen/full-screen-placeholder-expected.txt: Added.
+        * fullscreen/full-screen-placeholder.html: Added.
+
 2011-06-03  Robert Kroeger  <rjkroege@chromium.org>
 
         Reviewed by Adam Barth.

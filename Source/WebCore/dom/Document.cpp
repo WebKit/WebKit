@@ -4784,7 +4784,18 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     ASSERT(page() && page()->settings()->fullScreenEnabled());
 
     m_fullScreenElement = element;
-    
+
+    // Create a placeholder block for a the full-screen element, to keep the page from reflowing
+    // when the element is removed from the normal flow.  Only do this for a RenderBox, as only 
+    // a box will have a frameRect.  The placeholder will be created in setFullScreenRenderer()
+    // during layout.
+    RenderObject* renderer = m_fullScreenElement->renderer();
+    bool shouldCreatePlaceholder = m_fullScreenElement->renderer()->isBox();
+    if (shouldCreatePlaceholder) {
+        m_savedPlaceholderFrameRect = toRenderBox(renderer)->frameRect();
+        m_savedPlaceholderRenderStyle = RenderStyle::clone(renderer->style());
+    }
+
     if (m_fullScreenElement != documentElement())
         m_fullScreenElement->detach();
 
@@ -4860,6 +4871,13 @@ void Document::setFullScreenRenderer(RenderFullScreen* renderer)
 {
     if (renderer == m_fullScreenRenderer)
         return;
+
+    if (renderer && m_savedPlaceholderRenderStyle) 
+        renderer->createPlaceholder(m_savedPlaceholderRenderStyle.release(), m_savedPlaceholderFrameRect);
+    else if (renderer && m_fullScreenRenderer && m_fullScreenRenderer->placeholder()) {
+        RenderBlock* placeholder = m_fullScreenRenderer->placeholder();
+        renderer->createPlaceholder(RenderStyle::clone(placeholder->style()), placeholder->frameRect());
+    }
 
     if (m_fullScreenRenderer)
         m_fullScreenRenderer->destroy();

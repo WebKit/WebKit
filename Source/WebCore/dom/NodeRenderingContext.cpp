@@ -228,7 +228,7 @@ RenderObject* NodeRendererFactory::createRendererAndStyle()
 }
 
 #if ENABLE(FULLSCREEN_API)
-static RenderFullScreen* wrapWithRenderFullScreen(RenderObject* object, Document* document)
+static RenderObject* wrapWithRenderFullScreen(RenderObject* object, Document* document)
 {
     RenderFullScreen* fullscreenRenderer = new (document->renderArena()) RenderFullScreen(document);
     fullscreenRenderer->setStyle(RenderFullScreen::createFullScreenStyle());
@@ -237,6 +237,8 @@ static RenderFullScreen* wrapWithRenderFullScreen(RenderObject* object, Document
     if (object)
         fullscreenRenderer->addChild(object);
     document->setFullScreenRenderer(fullscreenRenderer);
+    if (fullscreenRenderer->placeholder())
+        return fullscreenRenderer->placeholder();
     return fullscreenRenderer;
 }
 #endif
