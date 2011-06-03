@@ -717,6 +717,13 @@ unsigned AccessibilityObject::doAXLineForIndex(unsigned index)
     return lineForPosition(visiblePositionForIndex(index, false));
 }
     
+void AccessibilityObject::updateBackingStore()
+{
+    // Updating the layout may delete this object.
+    if (Document* document = this->document())
+        document->updateLayoutIgnorePendingStylesheets();
+}
+
 Document* AccessibilityObject::document() const
 {
     FrameView* frameView = documentFrameView();
