@@ -69,6 +69,9 @@ void LayerTreeHostCAMac::platformInitialize(LayerTreeContext& layerTreeContext)
 
 void LayerTreeHostCAMac::scheduleLayerFlush()
 {
+    if (!m_layerFlushSchedulingEnabled)
+        return;
+
     CFRunLoopRef currentRunLoop = CFRunLoopGetCurrent();
     
     // Make sure we wake up the loop or the observer could be delayed until some other source fires.
@@ -83,6 +86,23 @@ void LayerTreeHostCAMac::scheduleLayerFlush()
     m_flushPendingLayerChangesRunLoopObserver.adoptCF(CFRunLoopObserverCreate(0, kCFRunLoopBeforeWaiting | kCFRunLoopExit, true, runLoopOrder, flushPendingLayerChangesRunLoopObserverCallback, &context));
 
     CFRunLoopAddObserver(currentRunLoop, m_flushPendingLayerChangesRunLoopObserver.get(), kCFRunLoopCommonModes);
+}
+
+void LayerTreeHostCAMac::setLayerFlushSchedulingEnabled(bool layerFlushingEnabled)
+{
+    if (m_layerFlushSchedulingEnabled == layerFlushingEnabled)
+        return;
+
+    m_layerFlushSchedulingEnabled = layerFlushingEnabled;
+
+    if (m_layerFlushSchedulingEnabled)
+        return;
+
+    if (!m_flushPendingLayerChangesRunLoopObserver)
+        return;
+
+    CFRunLoopObserverInvalidate(m_flushPendingLayerChangesRunLoopObserver.get());
+    m_flushPendingLayerChangesRunLoopObserver = nullptr;
 }
 
 void LayerTreeHostCAMac::invalidate()
@@ -128,9 +148,13 @@ void LayerTreeHostCAMac::resumeRendering()
 
 void LayerTreeHostCAMac::flushPendingLayerChangesRunLoopObserverCallback(CFRunLoopObserverRef, CFRunLoopActivity, void* context)
 {
+    LayerTreeHostCAMac* layerTreeHost = static_cast<LayerTreeHostCAMac*>(context);
+
+    ASSERT(layerTreeHost->m_layerFlushSchedulingEnabled);
+
     // This gets called outside of the normal event loop so wrap in an autorelease pool
     NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-    static_cast<LayerTreeHostCAMac*>(context)->performScheduledLayerFlush();
+    layerTreeHost->performScheduledLayerFlush();
     [pool drain];
 }
 

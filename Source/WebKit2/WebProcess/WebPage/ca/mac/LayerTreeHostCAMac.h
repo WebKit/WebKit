@@ -43,6 +43,7 @@ private:
 
     // LayerTreeHost.
     virtual void scheduleLayerFlush();
+    virtual void setLayerFlushSchedulingEnabled(bool);
     virtual void invalidate();
     virtual void sizeDidChange(const WebCore::IntSize& newSize);
     virtual void forceRepaint();

@@ -49,6 +49,7 @@ private:
     // DrawingArea
     virtual void setNeedsDisplay(const WebCore::IntRect&);
     virtual void scroll(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
+    virtual void setLayerTreeStateIsFrozen(bool);
     virtual void forceRepaint();
 
     virtual void didInstallPageOverlay();
@@ -97,6 +98,14 @@ private:
     
     // True between sending the 'enter compositing' messages, and the 'exit compositing' message.
     bool m_compositingAccordingToProxyMessages;
+
+    // When true, we maintain the layer tree in its current state by not leaving accelerated compositing mode
+    // and not scheduling layer flushes.
+    bool m_layerTreeStateIsFrozen;
+
+    // True when we were asked to exit accelerated compositing mode but couldn't because layer tree
+    // state was frozen.
+    bool m_wantsToExitAcceleratedCompositingMode;
 
     // Whether painting is suspended. We'll still keep track of the dirty region but we 
     // won't paint until painting has resumed again.

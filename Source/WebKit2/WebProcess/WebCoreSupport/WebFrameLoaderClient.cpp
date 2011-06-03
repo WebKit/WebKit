@@ -535,6 +535,9 @@ void WebFrameLoaderClient::dispatchDidFirstLayout()
 
     // Notify the UIProcess.
     webPage->send(Messages::WebPageProxy::DidFirstLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
+
+    if (m_frame == m_frame->page()->mainFrame())
+        webPage->drawingArea()->setLayerTreeStateIsFrozen(false);
 }
 
 void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
@@ -1020,7 +1023,12 @@ String WebFrameLoaderClient::generatedMIMETypeForURLScheme(const String& URLSche
 
 void WebFrameLoaderClient::frameLoadCompleted()
 {
-    notImplemented();
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    if (m_frame == m_frame->page()->mainFrame())
+        webPage->drawingArea()->setLayerTreeStateIsFrozen(false);
 }
 
 void WebFrameLoaderClient::saveViewStateToItem(HistoryItem*)
@@ -1042,7 +1050,12 @@ void WebFrameLoaderClient::restoreViewState()
 
 void WebFrameLoaderClient::provisionalLoadStarted()
 {
-    notImplemented();
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    if (m_frame == m_frame->page()->mainFrame())
+        webPage->drawingArea()->setLayerTreeStateIsFrozen(true);
 }
 
 void WebFrameLoaderClient::didFinishLoad()

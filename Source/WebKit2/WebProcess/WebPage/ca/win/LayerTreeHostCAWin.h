@@ -57,6 +57,7 @@ private:
     virtual void forceRepaint();
     virtual void sizeDidChange(const WebCore::IntSize& newSize);
     virtual void scheduleLayerFlush();
+    virtual void setLayerFlushSchedulingEnabled(bool);
     virtual bool participatesInDisplay();
     virtual bool needsDisplay();
     virtual double timeUntilNextDisplay();

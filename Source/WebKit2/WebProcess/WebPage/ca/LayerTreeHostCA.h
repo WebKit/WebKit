@@ -54,6 +54,8 @@ protected:
     // LayerTreeHostCA
     virtual void didPerformScheduledLayerFlush();
 
+    bool m_layerFlushSchedulingEnabled;
+
 private:
     // LayerTreeHost.
     virtual const LayerTreeContext& layerTreeContext();

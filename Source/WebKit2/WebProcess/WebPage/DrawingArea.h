@@ -61,6 +61,7 @@ public:
     // FIXME: These should be pure virtual.
     virtual void pageBackgroundTransparencyChanged() { }
     virtual void forceRepaint() { }
+    virtual void setLayerTreeStateIsFrozen(bool) { }
 
     virtual void didInstallPageOverlay() { }
     virtual void didUninstallPageOverlay() { }

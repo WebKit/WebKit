@@ -60,6 +60,8 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
     , m_shouldSendDidUpdateBackingStoreState(false)
     , m_isWaitingForDidUpdate(false)
     , m_compositingAccordingToProxyMessages(false)
+    , m_layerTreeStateIsFrozen(false)
+    , m_wantsToExitAcceleratedCompositingMode(false)
     , m_isPaintingSuspended(!parameters.isVisible)
     , m_alwaysUseCompositing(false)
     , m_lastDisplayTime(0)
@@ -147,6 +149,22 @@ void DrawingAreaImpl::scroll(const IntRect& scrollRect, const IntSize& scrollOff
 
     m_scrollRect = scrollRect;
     m_scrollOffset += scrollOffset;
+}
+
+void DrawingAreaImpl::setLayerTreeStateIsFrozen(bool isFrozen)
+{
+    if (m_layerTreeStateIsFrozen == isFrozen)
+        return;
+
+    m_layerTreeStateIsFrozen = isFrozen;
+
+    if (m_layerTreeHost)
+        m_layerTreeHost->setLayerFlushSchedulingEnabled(!isFrozen);
+
+    if (isFrozen)
+        m_exitCompositingTimer.stop();
+    else if (m_wantsToExitAcceleratedCompositingMode)
+        exitAcceleratedCompositingModeSoon();
 }
 
 void DrawingAreaImpl::forceRepaint()
@@ -247,6 +265,7 @@ void DrawingAreaImpl::setRootCompositingLayer(GraphicsLayer* graphicsLayer)
             // We're already in accelerated compositing mode, but the root compositing layer changed.
 
             m_exitCompositingTimer.stop();
+            m_wantsToExitAcceleratedCompositingMode = false;
 
             // If we haven't sent the EnterAcceleratedCompositingMode message, make sure that the
             // layer tree host calls us back after the next layer flush so we can send it then.
@@ -404,6 +423,7 @@ void DrawingAreaImpl::resumePainting()
 void DrawingAreaImpl::enterAcceleratedCompositingMode(GraphicsLayer* graphicsLayer)
 {
     m_exitCompositingTimer.stop();
+    m_wantsToExitAcceleratedCompositingMode = false;
 
     ASSERT(!m_layerTreeHost);
 
@@ -429,7 +449,10 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
     if (m_alwaysUseCompositing)
         return;
 
+    ASSERT(!m_layerTreeStateIsFrozen);
+
     m_exitCompositingTimer.stop();
+    m_wantsToExitAcceleratedCompositingMode = false;
 
     ASSERT(m_layerTreeHost);
 
@@ -476,6 +499,11 @@ void DrawingAreaImpl::exitAcceleratedCompositingMode()
 
 void DrawingAreaImpl::exitAcceleratedCompositingModeSoon()
 {
+    if (m_layerTreeStateIsFrozen) {
+        m_wantsToExitAcceleratedCompositingMode = true;
+        return;
+    }
+
     if (exitAcceleratedCompositingModePending())
         return;
 
