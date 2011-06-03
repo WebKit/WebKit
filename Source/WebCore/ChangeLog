@@ -1,3 +1,19 @@
+2011-06-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        DOMWindow::setLocation doesn't understand that DOMWindow can be inactive
+        https://bugs.webkit.org/show_bug.cgi?id=62057
+
+        This code gets confused when dealing with inactive DOMWindows.  We
+        should just block inactive DOMWindows because there's no compatibility
+        reason to support them in this code path.
+
+        Test: http/tests/security/xss-DENIED-contentWindow-eval.html
+
+        * page/DOMWindow.cpp:
+        (WebCore::DOMWindow::isInsecureScriptAccess):
+
 2011-05-31  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Ryosuke Niwa.

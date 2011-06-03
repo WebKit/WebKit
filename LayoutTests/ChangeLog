@@ -1,3 +1,16 @@
+2011-06-03  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        DOMWindow::setLocation doesn't understand that DOMWindow can be inactive
+        https://bugs.webkit.org/show_bug.cgi?id=62057
+
+        Test that some esoteric combination of eval, load, and Location don't
+        do something goofy.
+
+        * http/tests/security/xss-DENIED-contentWindow-eval-expected.txt: Added.
+        * http/tests/security/xss-DENIED-contentWindow-eval.html: Added.
+
 2011-06-03  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, baseline for full-screen-placeholder. More flakiness for svg/zoom and navigator.

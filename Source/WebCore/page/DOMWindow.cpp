@@ -1713,14 +1713,21 @@ bool DOMWindow::isInsecureScriptAccess(DOMWindow* activeWindow, const String& ur
     if (!protocolIsJavaScript(urlString))
         return false;
 
-    // FIXME: Is there some way to eliminate the need for a separate "activeWindow == this" check?
-    if (activeWindow == this)
-        return false;
+    // If m_frame->domWindow() != this, then |this| isn't the DOMWindow that's
+    // currently active in the frame and there's no way we should allow the
+    // access.
+    // FIXME: Remove this check if we're able to disconnect DOMWindow from
+    // Frame on navigation: https://bugs.webkit.org/show_bug.cgi?id=62054
+    if (m_frame->domWindow() == this) {
+        // FIXME: Is there some way to eliminate the need for a separate "activeWindow == this" check?
+        if (activeWindow == this)
+            return false;
 
-    // FIXME: The name canAccess seems to be a roundabout way to ask "can execute script".
-    // Can we name the SecurityOrigin function better to make this more clear?
-    if (activeWindow->securityOrigin()->canAccess(securityOrigin()))
-        return false;
+        // FIXME: The name canAccess seems to be a roundabout way to ask "can execute script".
+        // Can we name the SecurityOrigin function better to make this more clear?
+        if (activeWindow->securityOrigin()->canAccess(securityOrigin()))
+            return false;
+    }
 
     printErrorMessage(crossDomainAccessErrorMessage(activeWindow));
     return true;
