@@ -327,6 +327,8 @@ PASS inner.SVGAnimateColorElement.isInner is true
 PASS inner.SVGAnimateColorElement.constructor.isInner is true
 PASS inner.SVGAnimateElement.isInner is true
 PASS inner.SVGAnimateElement.constructor.isInner is true
+PASS inner.SVGAnimateMotionElement.isInner is true
+PASS inner.SVGAnimateMotionElement.constructor.isInner is true
 PASS inner.SVGAnimateTransformElement.isInner is true
 PASS inner.SVGAnimateTransformElement.constructor.isInner is true
 PASS inner.SVGAnimatedAngle.isInner is true
@@ -463,6 +465,8 @@ PASS inner.SVGLineElement.isInner is true
 PASS inner.SVGLineElement.constructor.isInner is true
 PASS inner.SVGLinearGradientElement.isInner is true
 PASS inner.SVGLinearGradientElement.constructor.isInner is true
+PASS inner.SVGMPathElement.isInner is true
+PASS inner.SVGMPathElement.constructor.isInner is true
 PASS inner.SVGMarkerElement.isInner is true
 PASS inner.SVGMarkerElement.constructor.isInner is true
 PASS inner.SVGMaskElement.isInner is true
