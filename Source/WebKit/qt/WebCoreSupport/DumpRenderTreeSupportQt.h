@@ -46,12 +46,13 @@ class QtDRTNodeRuntime;
 }
 #endif
 
-QT_BEGIN_NAMESPACE
 class QWebElement;
 class QWebFrame;
 class QWebPage;
 class QWebHistoryItem;
 class QWebScriptWorld;
+
+QT_BEGIN_NAMESPACE
 class QUrl;
 QT_END_NAMESPACE
 
