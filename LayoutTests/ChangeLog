@@ -1,5 +1,13 @@
 2011-06-02  Adam Barth  <abarth@webkit.org>
 
+        Some more fallout from http://trac.webkit.org/changeset/87955, this time on Windows.
+
+        * platform/chromium-win-vista/fast/forms/validation-message-appearance-expected.png: Removed.
+        * platform/chromium-win/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-win/fast/forms/validation-message-appearance-expected.png:
+
+2011-06-02  Adam Barth  <abarth@webkit.org>
+
         This test is flaky on Linux.
 
         * platform/chromium/test_expectations.txt:
