@@ -1259,13 +1259,13 @@ void CaretBase::invalidateCaretRect(Node* node, bool caretRectChanged)
     }
 }
 
-void FrameSelection::paintCaret(GraphicsContext* context, int tx, int ty, const IntRect& clipRect)
+void FrameSelection::paintCaret(GraphicsContext* context, const IntPoint& paintOffset, const IntRect& clipRect)
 {
     if (m_selection.isCaret() && m_caretPaint)
-        CaretBase::paintCaret(m_selection.start().deprecatedNode(), context, tx, ty, clipRect);
+        CaretBase::paintCaret(m_selection.start().deprecatedNode(), context, paintOffset, clipRect);
 }
 
-void CaretBase::paintCaret(Node* node, GraphicsContext* context, int tx, int ty, const IntRect& clipRect) const
+void CaretBase::paintCaret(Node* node, GraphicsContext* context, const IntPoint& paintOffset, const IntRect& clipRect) const
 {
 #if ENABLE(TEXT_CARET)
     if (m_caretVisibility == Hidden)
@@ -1275,7 +1275,7 @@ void CaretBase::paintCaret(Node* node, GraphicsContext* context, int tx, int ty,
     RenderObject* renderer = caretRenderer(node);
     if (renderer && renderer->isBox())
         toRenderBox(renderer)->flipForWritingMode(drawingRect);
-    drawingRect.move(tx, ty);
+    drawingRect.moveBy(paintOffset);
     IntRect caret = intersection(drawingRect, clipRect);
     if (caret.isEmpty())
         return;
@@ -1292,8 +1292,7 @@ void CaretBase::paintCaret(Node* node, GraphicsContext* context, int tx, int ty,
 #else
     UNUSED_PARAM(node);
     UNUSED_PARAM(context);
-    UNUSED_PARAM(tx);
-    UNUSED_PARAM(ty);
+    UNUSED_PARAM(paintOffset);
     UNUSED_PARAM(clipRect);
 #endif
 }
@@ -1768,16 +1767,15 @@ void FrameSelection::setFocusedNodeIfNeeded()
         m_frame->page()->focusController()->setFocusedNode(0, m_frame);
 }
 
-void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext* p, int tx, int ty, const IntRect& clipRect) const
+void DragCaretController::paintDragCaret(Frame* frame, GraphicsContext* p, const IntPoint& paintOffset, const IntRect& clipRect) const
 {
 #if ENABLE(TEXT_CARET)
     if (m_position.deepEquivalent().deprecatedNode()->document()->frame() == frame)
-        paintCaret(m_position.deepEquivalent().deprecatedNode(), p, tx, ty, clipRect);
+        paintCaret(m_position.deepEquivalent().deprecatedNode(), p, paintOffset, clipRect);
 #else
     UNUSED_PARAM(frame);
     UNUSED_PARAM(p);
-    UNUSED_PARAM(tx);
-    UNUSED_PARAM(ty);
+    UNUSED_PARAM(paintOffset);
     UNUSED_PARAM(clipRect);
 #endif
 }

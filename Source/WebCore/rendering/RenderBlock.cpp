@@ -2431,7 +2431,7 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
-void RenderBlock::paintCaret(PaintInfo& paintInfo, int tx, int ty, CaretType type)
+void RenderBlock::paintCaret(PaintInfo& paintInfo, const IntPoint& paintOffset, CaretType type)
 {
     // Paint the caret if the FrameSelection says so or if caret browsing is enabled
     bool caretBrowsing = frame()->settings() && frame()->settings()->caretBrowsingEnabled();
@@ -2448,12 +2448,13 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, int tx, int ty, CaretType typ
     if (caretPainter == this && (isContentEditable || caretBrowsing)) {
         // Convert the painting offset into the local coordinate system of this renderer,
         // to match the localCaretRect computed by the FrameSelection
-        offsetForContents(tx, ty);
+        IntPoint adjustedPaintOffset = paintOffset;
+        offsetForContents(adjustedPaintOffset);
 
         if (type == CursorCaret)
-            frame()->selection()->paintCaret(paintInfo.context, tx, ty, paintInfo.rect);
+            frame()->selection()->paintCaret(paintInfo.context, adjustedPaintOffset, paintInfo.rect);
         else
-            frame()->page()->dragCaretController()->paintDragCaret(frame(), paintInfo.context, tx, ty, paintInfo.rect);
+            frame()->page()->dragCaretController()->paintDragCaret(frame(), paintInfo.context, adjustedPaintOffset, paintInfo.rect);
     }
 }
 
@@ -2541,8 +2542,8 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
     // If the caret's node's render object's containing block is this block, and the paint action is PaintPhaseForeground,
     // then paint the caret.
     if (paintPhase == PaintPhaseForeground) {        
-        paintCaret(paintInfo, scrolledX, scrolledY, CursorCaret);
-        paintCaret(paintInfo, scrolledX, scrolledY, DragCaret);
+        paintCaret(paintInfo, IntPoint(scrolledX, scrolledY), CursorCaret);
+        paintCaret(paintInfo, IntPoint(scrolledX, scrolledY), DragCaret);
     }
 }
 
@@ -4188,10 +4189,8 @@ VisiblePosition RenderBlock::positionForPoint(const IntPoint& point)
             return createVisiblePosition(caretMaxOffset(), DOWNSTREAM);
     } 
 
-    int contentsX = point.x();
-    int contentsY = point.y();
-    offsetForContents(contentsX, contentsY);
-    IntPoint pointInContents(contentsX, contentsY);
+    IntPoint pointInContents = point;
+    offsetForContents(pointInContents);
     IntPoint pointInLogicalContents(pointInContents);
     if (!isHorizontalWritingMode())
         pointInLogicalContents = pointInLogicalContents.transposedPoint();
@@ -4216,18 +4215,13 @@ VisiblePosition RenderBlock::positionForPoint(const IntPoint& point)
     return RenderBox::positionForPoint(point);
 }
 
-void RenderBlock::offsetForContents(int& tx, int& ty) const
+void RenderBlock::offsetForContents(IntPoint& offset) const
 {
-    IntPoint contentsPoint(tx, ty);
-
     if (hasOverflowClip())
-        contentsPoint += layer()->scrolledContentOffset();
+        offset += layer()->scrolledContentOffset();
 
     if (hasColumns())
-        adjustPointToColumnContents(contentsPoint);
-
-    tx = contentsPoint.x();
-    ty = contentsPoint.y();
+        adjustPointToColumnContents(offset);
 }
 
 int RenderBlock::availableLogicalWidth() const

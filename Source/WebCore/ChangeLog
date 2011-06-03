@@ -2,6 +2,30 @@
 
         Reviewed by Eric Seidel.
 
+        Switch paintCaret and paintDragCaret to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62037
+
+        Switching paintCaret and paintDragCaret to use an IntPoint representing
+        the paint offset instead of a pair of ints.
+
+        No new tests since this is simple refactoring.
+
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::paintCaret):
+        (WebCore::CaretBase::paintCaret):
+        (WebCore::DragCaretController::paintDragCaret):
+        * editing/FrameSelection.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintCaret):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::positionForPoint):
+        (WebCore::RenderBlock::offsetForContents):
+        * rendering/RenderBlock.h:
+
+2011-06-03  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Switch paintItemForeground and paintItemForeground to use IntPoint
         https://bugs.webkit.org/show_bug.cgi?id=62035
 

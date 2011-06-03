@@ -566,7 +566,7 @@ private:
     void paintChildren(PaintInfo&, int tx, int ty);
     void paintEllipsisBoxes(PaintInfo&, int tx, int ty);
     void paintSelection(PaintInfo&, int tx, int ty);
-    void paintCaret(PaintInfo&, int tx, int ty, CaretType);
+    void paintCaret(PaintInfo&, const IntPoint&, CaretType);
 
     FloatingObject* insertFloatingObject(RenderBox*);
     void removeFloatingObject(RenderBox*);
@@ -646,8 +646,8 @@ private:
     Position positionForBox(InlineBox*, bool start = true) const;
     VisiblePosition positionForPointWithInlineChildren(const IntPoint&);
 
-    // Adjust tx and ty from painting offsets to the local coords of this renderer
-    void offsetForContents(int& tx, int& ty) const;
+    // Adjust from painting offsets to the local coords of this renderer
+    void offsetForContents(IntPoint&) const;
 
     void calcColumnWidth();
     bool layoutColumns(bool hasSpecifiedPageLogicalHeight, int pageLogicalHeight, LayoutStateMaintainer&);

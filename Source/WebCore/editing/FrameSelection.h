@@ -61,7 +61,7 @@ protected:
     IntRect absoluteBoundsForLocalRect(Node*, const IntRect&) const;
     IntRect caretRepaintRect(Node*) const;
     bool shouldRepaintCaret(const RenderView*, bool isContentEditable) const;
-    void paintCaret(Node*, GraphicsContext*, int tx, int ty, const IntRect& clipRect) const;
+    void paintCaret(Node*, GraphicsContext*, const IntPoint&, const IntRect& clipRect) const;
     RenderObject* caretRenderer(Node*) const;
 
     const IntRect& localCaretRectWithoutUpdate() const { return m_caretLocalRect; }
@@ -86,7 +86,7 @@ public:
     DragCaretController();
 
     RenderObject* caretRenderer() const;
-    void paintDragCaret(Frame*, GraphicsContext*, int tx, int ty, const IntRect& clipRect) const;
+    void paintDragCaret(Frame*, GraphicsContext*, const IntPoint&, const IntRect& clipRect) const;
 
     bool isContentEditable() const { return m_position.rootEditableElement(); }
     bool isContentRichlyEditable() const;
@@ -193,7 +193,7 @@ public:
     void clearCaretRectIfNeeded();
     bool recomputeCaretRect();
     void invalidateCaretRect();
-    void paintCaret(GraphicsContext*, int tx, int ty, const IntRect& clipRect);
+    void paintCaret(GraphicsContext*, const IntPoint&, const IntRect& clipRect);
 
     // Used to suspend caret blinking while the mouse is down.
     void setCaretBlinkingSuspended(bool suspended) { m_isCaretBlinkingSuspended = suspended; }
@@ -220,7 +220,7 @@ public:
     void setFocusedNodeIfNeeded();
     void notifyRendererOfSelectionChange(bool userTriggered);
 
-    void paintDragCaret(GraphicsContext*, int tx, int ty, const IntRect& clipRect) const;
+    void paintDragCaret(GraphicsContext*, const IntPoint&, const IntRect& clipRect) const;
 
     EditingStyle* typingStyle() const;
     PassRefPtr<CSSMutableStyleDeclaration> copyTypingStyle() const;
