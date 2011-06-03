@@ -1,3 +1,14 @@
+2011-06-03  Brady Eidson  <beidson@apple.com>
+
+        Reviewed by Steve Falkenburg.
+
+        <rdar://problem/9553645> and https://bugs.webkit.org/show_bug.cgi?id=62064
+        WebBackForwardListItem::setBackForwardData actually appends data
+
+        * Shared/WebBackForwardListItem.cpp:
+        (WebKit::WebBackForwardListItem::setBackForwardData): Clear the Vector out before appending
+          the replacement data.
+
 2011-06-03  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Brady Eidson.
