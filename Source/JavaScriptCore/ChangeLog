@@ -1,3 +1,31 @@
+2011-06-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Improve keyword lookup
+        https://bugs.webkit.org/show_bug.cgi?id=61913
+
+        Rather than doing multiple hash lookups as we currently
+        do when trying to identify keywords we now use an 
+        automatically generated decision tree (essentially it's
+        a hard coded patricia trie).  We still use the regular
+        lookup table for the last few characters of an input as
+        this allows us to completely skip all bounds checks.
+
+        * CMakeLists.txt:
+        * DerivedSources.make:
+        * DerivedSources.pro:
+        * GNUmakefile.am:
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * KeywordLookupGenerator.py: Added.
+        * make-generated-sources.sh:
+        * parser/Lexer.cpp:
+        (JSC::Lexer::internalShift):
+        (JSC::Lexer::shift):
+        (JSC::Lexer::parseIdentifier):
+        * parser/Lexer.h:
+
 2011-06-03  Siddharth Mathur  <siddharth.mathur@nokia.com>
 
         Reviewed by Benjamin Poulain.

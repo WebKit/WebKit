@@ -214,6 +214,19 @@
           ],
           'action': ['python', '<@(_inputs)', '<@(_arguments)', '<@(_outputs)'],
         },
+        {
+          'action_name': 'klgen',
+          'inputs': [
+            '../KeywordLookupGenerator.py',
+            '../parser/Keywords.table'
+          ],
+          'arguments': [
+          ],
+          'outputs': [
+            '<(INTERMEDIATE_DIR)/KeywordLookup.h',
+          ],
+          'action': ['python', '<@(_inputs)', '<@(_arguments)', '<@(_outputs)'],
+        },
       ],
       'include_dirs': [
         '<(INTERMEDIATE_DIR)',

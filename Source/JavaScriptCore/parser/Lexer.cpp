@@ -40,6 +40,7 @@ using namespace WTF;
 using namespace Unicode;
 
 #include "JSParser.h"
+#include "KeywordLookup.h"
 #include "Lookup.h"
 #include "Lexer.lut.h"
 
@@ -271,14 +272,24 @@ void Lexer::setCode(const SourceCode& source, ParserArena& arena)
     ASSERT(currentOffset() == source.startOffset());
 }
 
+template <int shiftAmount, Lexer::ShiftType shouldBoundsCheck> ALWAYS_INLINE void Lexer::internalShift()
+{
+    if (shouldBoundsCheck == DoBoundsCheck) {
+        // Faster than an if-else sequence
+        ASSERT(m_current != -1);
+        m_current = -1;
+        m_code += shiftAmount;
+        if (LIKELY(m_code < m_codeEnd))
+            m_current = *m_code;
+    } else {
+        m_code += shiftAmount;
+        m_current = *m_code;
+    }
+}
+
 ALWAYS_INLINE void Lexer::shift()
 {
-    // Faster than an if-else sequence
-    ASSERT(m_current != -1);
-    m_current = -1;
-    ++m_code;
-    if (LIKELY(m_code < m_codeEnd))
-        m_current = *m_code;
+    internalShift<1, DoBoundsCheck>();
 }
 
 ALWAYS_INLINE int Lexer::peek(int offset)
@@ -401,9 +412,14 @@ inline void Lexer::record16(int c)
 
 template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIdentifier(JSTokenData* lvalp, unsigned lexType)
 {
-    bool bufferRequired = false;
+    static const ptrdiff_t remaining = m_codeEnd - m_code;
+    if ((remaining >= maxTokenLength) && !(lexType & IgnoreReservedWords)) {
+        JSTokenType keyword = parseKeyword();
+        if (keyword != IDENT)
+            return keyword;
+    }
     const UChar* identifierStart = currentCharacter();
-    int identifierLength;
+    bool bufferRequired = false;
 
     while (true) {
         if (LIKELY(isIdentPart(m_current))) {
@@ -430,7 +446,8 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIde
             record16(character);
         identifierStart = currentCharacter();
     }
-
+    
+    int identifierLength;
     const Identifier* ident = 0;
     if (shouldCreateIdentifier) {
         if (!bufferRequired)
@@ -452,8 +469,12 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIde
     if (LIKELY(!bufferRequired && !(lexType & IgnoreReservedWords))) {
         ASSERT(shouldCreateIdentifier);
         // Keywords must not be recognized if there was an \uXXXX in the identifier.
-        const HashEntry* entry = m_keywordTable.entry(m_globalData, *ident);
-        return entry ? static_cast<JSTokenType>(entry->lexerValue()) : IDENT;
+        if (remaining < maxTokenLength) {
+            const HashEntry* entry = m_keywordTable.entry(m_globalData, *ident);
+            ASSERT((remaining < maxTokenLength) || !entry);
+            return entry ? static_cast<JSTokenType>(entry->lexerValue()) : IDENT;
+        }
+        return IDENT;
     }
 
     m_buffer16.resize(0);

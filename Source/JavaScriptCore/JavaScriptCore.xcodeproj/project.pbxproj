@@ -381,6 +381,7 @@
 		A72701B90DADE94900E548D7 /* ExceptionHelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = A72701B30DADE94900E548D7 /* ExceptionHelpers.h */; };
 		A727FF6B0DA3092200E548D7 /* JSPropertyNameIterator.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A727FF660DA3053B00E548D7 /* JSPropertyNameIterator.cpp */; };
 		A7280A2811557E3000D56957 /* JSObjectRefPrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = A79EDB0811531CD60019E912 /* JSObjectRefPrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		A72FFD64139985A800E5365A /* KeywordLookup.h in Headers */ = {isa = PBXBuildFile; fileRef = A7C225CD1399849C00FF1662 /* KeywordLookup.h */; };
 		A730B6121250068F009D25B1 /* StrictEvalActivation.h in Headers */ = {isa = PBXBuildFile; fileRef = A730B6101250068F009D25B1 /* StrictEvalActivation.h */; };
 		A730B6131250068F009D25B1 /* StrictEvalActivation.cpp in Sources */ = {isa = PBXBuildFile; fileRef = A730B6111250068F009D25B1 /* StrictEvalActivation.cpp */; };
 		A731B25A130093880040A7FA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 51F0EB6105C86C6B00E6DF1B /* Foundation.framework */; };
@@ -1119,6 +1120,8 @@
 		A7B48DB50EE74CFC00DCBDB6 /* ExecutableAllocator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ExecutableAllocator.h; sourceTree = "<group>"; };
 		A7B48DB60EE74CFC00DCBDB6 /* ExecutableAllocator.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ExecutableAllocator.cpp; sourceTree = "<group>"; };
 		A7C1E8C8112E701C00A37F98 /* JITPropertyAccess32_64.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JITPropertyAccess32_64.cpp; sourceTree = "<group>"; };
+		A7C225CC139981F100FF1662 /* KeywordLookupGenerator.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = KeywordLookupGenerator.py; sourceTree = "<group>"; };
+		A7C225CD1399849C00FF1662 /* KeywordLookup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = KeywordLookup.h; sourceTree = "<group>"; };
 		A7C40C07130B057D00D002A1 /* BlockStack.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BlockStack.h; sourceTree = "<group>"; };
 		A7C40C08130B057D00D002A1 /* SentinelLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SentinelLinkedList.h; sourceTree = "<group>"; };
 		A7C40C09130B057D00D002A1 /* SinglyLinkedList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SinglyLinkedList.h; sourceTree = "<group>"; };
@@ -1374,6 +1377,7 @@
 			children = (
 				A718F8211178EB4B002465A7 /* create_regex_tables */,
 				937B63CC09E766D200A671DD /* DerivedSources.make */,
+				A7C225CC139981F100FF1662 /* KeywordLookupGenerator.py */,
 				F692A8540255597D01FF60F7 /* create_hash_table */,
 				14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */,
 				867FC35F11B763950025105E /* JavaScriptCore.JSVALUE32_64only.exp */,
@@ -1608,6 +1612,7 @@
 				BCD203E70E1718F4002C7E82 /* DatePrototype.lut.h */,
 				BC8149AF12F89F53007B2C32 /* HeaderDetection.h */,
 				BC87CDB810712ACA000614CF /* JSONObject.lut.h */,
+				A7C225CD1399849C00FF1662 /* KeywordLookup.h */,
 				BC18C52D0E16FCE100B34460 /* Lexer.lut.h */,
 				BC18C5290E16FCC200B34460 /* MathObject.lut.h */,
 				BC2680E60E16D52300A06E92 /* NumberConstructor.lut.h */,
@@ -2547,6 +2552,7 @@
 				651DCA04136A6FEF00F74194 /* PassTraits.h in Headers */,
 				14F97447138C853E00DA1C67 /* HeapRootVisitor.h in Headers */,
 				86BB09C1138E381B0056702F /* DFGRepatch.h in Headers */,
+				A72FFD64139985A800E5365A /* KeywordLookup.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

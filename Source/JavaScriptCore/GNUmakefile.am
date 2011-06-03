@@ -79,6 +79,9 @@ Source/JavaScriptCore/%.lut.h: $(srcdir)/Source/JavaScriptCore/create_hash_table
 Source/JavaScriptCore/RegExpJitTables.h: $(srcdir)/Source/JavaScriptCore/create_regex_tables
 	$(AM_V_GEN)$(PYTHON) $^ > $@
 
+Source/JavaScriptCore/KeywordLookup.h: $(srcdir)/Source/JavaScriptCore/KeywordLookupGenerator.py $(srcdir)/Source/JavaScriptCore/parser/Keywords.table
+	$(AM_V_GEN)$(PYTHON) $^ > $@
+
 jsc: $(javascriptcore_built_nosources) Programs/jsc$(EXEEXT)
 
 bin_PROGRAMS += \
