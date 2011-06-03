@@ -1,5 +1,15 @@
 2011-06-03  Dirk Pranke  <dpranke@chromium.org>
 
+        Reviewed by Adam Barth.
+
+        nrwt: should skip chromium test expectation overrides on upstream bots
+        https://bugs.webkit.org/show_bug.cgi?id=61888
+
+        * Scripts/webkitpy/layout_tests/port/chromium.py:
+        * Scripts/webkitpy/layout_tests/port/chromium_unittest.py:
+
+2011-06-03  Dirk Pranke  <dpranke@chromium.org>
+
         Reviewed by Ojan Vafai.
 
         new-run-webkit-tests: minor logging, code cleanup

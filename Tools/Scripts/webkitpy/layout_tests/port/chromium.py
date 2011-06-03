@@ -262,6 +262,12 @@ class ChromiumPort(base.Port):
         return self._filesystem.read_text_file(expectations_path)
 
     def test_expectations_overrides(self):
+        # FIXME: It seems bad that run_webkit_tests.py uses a hardcoded dummy
+        # builder string instead of just using None.
+        builder_name = self.get_option('builder_name', 'DUMMY_BUILDER_NAME')
+        if builder_name != 'DUMMY_BUILDER_NAME' and not '(deps)' in builder_name:
+            return None
+
         try:
             overrides_path = self.path_from_chromium_base('webkit', 'tools',
                 'layout_tests', 'test_expectations.txt')

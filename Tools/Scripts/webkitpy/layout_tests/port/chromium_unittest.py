@@ -228,6 +228,28 @@ LINUX WIN : fast/js/very-good.js = TIMEOUT PASS"""
             exception_raised = True
         self.assertFalse(exception_raised)
 
+    def test_overrides_and_builder_names(self):
+        port = self.make_port()
+        if not port:
+            return
+
+        filesystem = filesystem_mock.MockFileSystem()
+        port._filesystem = filesystem
+        port.path_from_chromium_base = lambda *comps: '/' + '/'.join(comps)
+
+        overrides_path = port.path_from_chromium_base('webkit', 'tools', 'layout_tests', 'test_expectations.txt')
+        OVERRIDES = 'foo'
+        filesystem.files[overrides_path] = OVERRIDES
+
+        port._options.builder_name = 'DUMMY_BUILDER_NAME'
+        self.assertEquals(port.test_expectations_overrides(), OVERRIDES)
+
+        port._options.builder_name = 'builder (deps)'
+        self.assertEquals(port.test_expectations_overrides(), OVERRIDES)
+
+        port._options.builder_name = 'builder'
+        self.assertEquals(port.test_expectations_overrides(), None)
+
 
 class ChromiumPortLoggingTest(logtesting.LoggingTestCase):
     def test_check_sys_deps(self):

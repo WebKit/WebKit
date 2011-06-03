@@ -1,3 +1,10 @@
+2011-06-03  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, merge in downstream lines from Chromium as part of
+        landing the fix for bug 61888.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
