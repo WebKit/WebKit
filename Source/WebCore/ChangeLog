@@ -1,3 +1,22 @@
+2011-06-03  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Biquad filter coefficient naming is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=62053
+
+        No new tests since audio API is not yet implemented.
+
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::Biquad):
+        (WebCore::Biquad::process):
+        (WebCore::Biquad::processFast):
+        (WebCore::Biquad::setLowpassParams):
+        (WebCore::Biquad::setHighpassParams):
+        (WebCore::Biquad::setLowShelfParams):
+        (WebCore::Biquad::setZeroPolePairs):
+        * platform/audio/Biquad.h:
+
 2011-06-03  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

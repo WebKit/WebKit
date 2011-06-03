@@ -53,13 +53,11 @@ Biquad::Biquad()
 #endif
 
     // Initialize as pass-thru (straight-wire, no filter effect)
-    m_a0 = 1.0;
-    m_a1 = 0.0;
-    m_a2 = 0.0;
+    m_b0 = 1.0;
     m_b1 = 0.0;
     m_b2 = 0.0;
-
-    m_g = 1.0;
+    m_a1 = 0.0;
+    m_a2 = 0.0;
 
     reset(); // clear filter memory
 }
@@ -78,18 +76,16 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
     double y1 = m_y1;
     double y2 = m_y2;
 
-    double a0 = m_a0;
-    double a1 = m_a1;
-    double a2 = m_a2;
+    double b0 = m_b0;
     double b1 = m_b1;
     double b2 = m_b2;
+    double a1 = m_a1;
+    double a2 = m_a2;
 
     while (n--) {
         // FIXME: this can be optimized by pipelining the multiply adds...
         float x = *sourceP++;
-        float y = a0*x + a1*x1 + a2*x2 - b1*y1 - b2*y2;
-
-        y *= m_g;
+        float y = b0*x + b1*x1 + b2*x2 - a1*y1 - a2*y2;
 
         *destP++ = y;
 
@@ -106,11 +102,11 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
     m_y1 = y1;
     m_y2 = y2;
 
-    m_a0 = a0;
-    m_a1 = a1;
-    m_a2 = a2;
+    m_b0 = b0;
     m_b1 = b1;
     m_b2 = b2;
+    m_a1 = a1;
+    m_a2 = a2;
 #endif
 }
 
@@ -120,13 +116,12 @@ void Biquad::process(const float* sourceP, float* destP, size_t framesToProcess)
 
 void Biquad::processFast(const float* sourceP, float* destP, size_t framesToProcess)
 {
-    // Filter coefficients
-    double B[5];
-    B[0] = m_a0;
-    B[1] = m_a1;
-    B[2] = m_a2;
-    B[3] = m_b1;
-    B[4] = m_b2;
+    double filterCoefficients[5];
+    filterCoefficients[0] = m_b0;
+    filterCoefficients[1] = m_b1;
+    filterCoefficients[2] = m_b2;
+    filterCoefficients[3] = m_a1;
+    filterCoefficients[4] = m_a2;
 
     double* inputP = m_inputBuffer.data();
     double* outputP = m_outputBuffer.data();
@@ -145,7 +140,7 @@ void Biquad::processFast(const float* sourceP, float* destP, size_t framesToProc
         for (int i = 0; i < framesThisTime; ++i)
             input2P[i] = *sourceP++;
 
-        processSliceFast(inputP, outputP, B, framesThisTime);
+        processSliceFast(inputP, outputP, filterCoefficients, framesThisTime);
 
         // Copy output buffer to output (converts float -> double).
         for (int i = 0; i < framesThisTime; ++i)
@@ -202,11 +197,11 @@ void Biquad::setLowpassParams(double cutoff, double resonance)
     double gamma = (0.5 + beta) * cos(theta);
     double alpha = 0.25 * (0.5 + beta - gamma);
 
-    m_a0 = 2.0 * alpha;
-    m_a1 = 2.0 * 2.0*alpha;
-    m_a2 = 2.0 * alpha;
-    m_b1 = 2.0 * -gamma;
-    m_b2 = 2.0 * beta;
+    m_b0 = 2.0 * alpha;
+    m_b1 = 2.0 * 2.0*alpha;
+    m_b2 = 2.0 * alpha;
+    m_a1 = 2.0 * -gamma;
+    m_a2 = 2.0 * beta;
 }
 
 void Biquad::setHighpassParams(double cutoff, double resonance)
@@ -223,11 +218,11 @@ void Biquad::setHighpassParams(double cutoff, double resonance)
     double gamma = (0.5 + beta) * cos(theta);
     double alpha = 0.25 * (0.5 + beta + gamma);
 
-    m_a0 = 2.0 * alpha;
-    m_a1 = 2.0 * -2.0*alpha;
-    m_a2 = 2.0 * alpha;
-    m_b1 = 2.0 * -gamma;
-    m_b2 = 2.0 * beta;
+    m_b0 = 2.0 * alpha;
+    m_b1 = 2.0 * -2.0*alpha;
+    m_b2 = 2.0 * alpha;
+    m_a1 = 2.0 * -gamma;
+    m_a2 = 2.0 * beta;
 }
 
 void Biquad::setLowShelfParams(double cutoff, double dbGain)
@@ -250,25 +245,25 @@ void Biquad::setLowShelfParams(double cutoff, double dbGain)
 
     double a0Inverse = 1.0 / a0;
     
-    m_a0 = b0 * a0Inverse;
-    m_a1 = b1 * a0Inverse;
-    m_a2 = b2 * a0Inverse;
-    m_b1 = a1 * a0Inverse;
-    m_b2 = a2 * a0Inverse;
+    m_b0 = b0 * a0Inverse;
+    m_b1 = b1 * a0Inverse;
+    m_b2 = b2 * a0Inverse;
+    m_a1 = a1 * a0Inverse;
+    m_a2 = a2 * a0Inverse;
 }
 
 void Biquad::setZeroPolePairs(const Complex &zero, const Complex &pole)
 {
-    m_a0 = 1.0;
-    m_a1 = -2.0 * zero.real();
+    m_b0 = 1.0;
+    m_b1 = -2.0 * zero.real();
 
     double zeroMag = abs(zero);
-    m_a2 = zeroMag * zeroMag;
+    m_b2 = zeroMag * zeroMag;
 
-    m_b1 = -2.0 * pole.real();
+    m_a1 = -2.0 * pole.real();
 
     double poleMag = abs(pole);
-    m_b2 = poleMag * poleMag;
+    m_a2 = poleMag * poleMag;
 }
 
 void Biquad::setAllpassPole(const Complex &pole)
