@@ -517,9 +517,15 @@ input[type="radio"], input[type="checkbox"] {
     border: initial;
 }
 
-input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button {
+input[type="button"], input[type="submit"], input[type="reset"] {
     -webkit-appearance: push-button;
     white-space: pre
+}
+
+input[type="file"]::-webkit-file-upload-button {
+    -webkit-appearance: push-button;
+    white-space: nowrap;
+    margin: 0;
 }
 
 input[type="button"], input[type="submit"], input[type="reset"], input[type="file"]::-webkit-file-upload-button, button {

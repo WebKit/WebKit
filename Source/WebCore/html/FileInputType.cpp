@@ -31,12 +31,43 @@
 #include "HTMLNames.h"
 #include "LocalizedStrings.h"
 #include "RenderFileUploadControl.h"
+#include "ShadowRoot.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/text/WTFString.h>
 
 namespace WebCore {
 
 using namespace HTMLNames;
+
+class UploadButtonElement : public HTMLInputElement {
+public:
+    static PassRefPtr<UploadButtonElement> create(Document*);
+
+private:
+    UploadButtonElement(Document*);
+
+    virtual const AtomicString& shadowPseudoId() const;
+};
+
+PassRefPtr<UploadButtonElement> UploadButtonElement::create(Document* document)
+{
+    RefPtr<UploadButtonElement> button = adoptRef(new UploadButtonElement(document));
+    button->setType("button");
+    button->setValue(fileButtonChooseFileLabel());
+    return button.release();
+}
+
+
+UploadButtonElement::UploadButtonElement(Document* document)
+    : HTMLInputElement(inputTag, document, 0, false)
+{
+}
+
+const AtomicString& UploadButtonElement::shadowPseudoId() const
+{
+    DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-file-upload-button"));
+    return pseudoId;
+}
 
 inline FileInputType::FileInputType(HTMLInputElement* element)
     : BaseButtonInputType(element)
@@ -191,6 +222,12 @@ void FileInputType::setFileList(const Vector<String>& paths)
 bool FileInputType::isFileUpload() const
 {
     return true;
+}
+
+void FileInputType::createShadowSubtree()
+{
+    ExceptionCode ec = 0;
+    element()->ensureShadowRoot()->appendChild(UploadButtonElement::create(element()->document()), ec);
 }
 
 } // namespace WebCore

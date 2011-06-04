@@ -54,8 +54,6 @@ private:
     virtual void computePreferredLogicalWidths();
     virtual void paintObject(PaintInfo&, const IntPoint&);
 
-    virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
-
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
     // FileChooserClient methods.
@@ -75,7 +73,8 @@ private:
     
     virtual VisiblePosition positionForPoint(const IntPoint&);
 
-    RefPtr<HTMLInputElement> m_button;
+    HTMLInputElement* uploadButton() const;
+
     RefPtr<FileChooser> m_fileChooser;
 };
 

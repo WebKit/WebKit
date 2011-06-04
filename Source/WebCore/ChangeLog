@@ -1,3 +1,39 @@
+2011-06-03  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Convert file <input> to use the new shadow DOM model
+        https://bugs.webkit.org/show_bug.cgi?id=59005
+
+        Refactoring, covered by existing tests.
+
+        * css/CSSSelector.cpp:
+        (WebCore::CSSSelector::pseudoId): Removed FILE_UPLOAD_BUTTON pseudoId and all references to it.
+        (WebCore::nameToPseudoTypeMap): Ditto.
+        (WebCore::CSSSelector::extractPseudoType): Ditto.
+        * css/CSSSelector.h: Ditto.
+        * css/html.css:
+        (input[type="button"], input[type="submit"], input[type="reset"]): Moved -webkit-file-upload-button to its own rule.
+        (input[type="file"]::-webkit-file-upload-button): Added and moved all previously hard-coded properties there.
+        * html/FileInputType.cpp:
+        (WebCore::UploadButtonElement::create): Added.
+        (WebCore::UploadButtonElement::UploadButtonElement): Added.
+        (WebCore::UploadButtonElement::shadowPseudoId): Added.
+        (WebCore::FileInputType::createShadowSubtree): Added.
+        * html/FileInputType.h: Added createShadowSubtree decl.
+        * page/DragController.cpp:
+        (WebCore::asFileInput): Changed the logic to use new shadow DOM.
+        * rendering/RenderFileUploadControl.cpp: Removed UploadButton class.
+        (WebCore::RenderFileUploadControl::~RenderFileUploadControl): Removed initializer for m_button.
+        (WebCore::RenderFileUploadControl::updateFromElement): Removed attachment logic that's no longer necessary.
+        (WebCore::nodeWidth): Added a helper.
+        (WebCore::RenderFileUploadControl::maxFilenameWidth): Changed to use uploadButton and nodeWidth.
+        (WebCore::RenderFileUploadControl::paintObject): Ditto.
+        (WebCore::RenderFileUploadControl::uploadButton): Added a helper to retrieve the button.
+        (WebCore::RenderFileUploadControl::buttonValue): Changed to use uploadButton.
+        * rendering/RenderFileUploadControl.h: Changed decls.
+        * rendering/style/RenderStyleConstants.h: Removed FILE_UPLOAD_BUTTON decls.
+
 2011-06-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.

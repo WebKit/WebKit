@@ -36,6 +36,7 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "ShadowRoot.h"
 #include "TextRun.h"
 #include <math.h>
 
@@ -52,32 +53,6 @@ const int iconFilenameSpacing = 2;
 const int defaultWidthNumChars = 34;
 const int buttonShadowHeight = 2;
 
-class UploadButton : public HTMLInputElement {
-public:
-    static PassRefPtr<UploadButton> create(HTMLInputElement*);
-    virtual void detach();
-
-private:
-    UploadButton(HTMLInputElement*);
-};
-
-PassRefPtr<UploadButton> UploadButton::create(HTMLInputElement* shadowParent)
-{
-    return adoptRef(new UploadButton(shadowParent));
-}
-
-void UploadButton::detach()
-{
-    HTMLInputElement::detach();
-    setShadowHost(0);
-}
-
-UploadButton::UploadButton(HTMLInputElement* shadowParent)
-    : HTMLInputElement(inputTag, shadowParent->document(), 0, false)
-{
-    setShadowHost(shadowParent);
-}
-
 RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
     : RenderBlock(input)
 {
@@ -91,16 +66,7 @@ RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
 
 RenderFileUploadControl::~RenderFileUploadControl()
 {
-    if (m_button)
-        m_button->detach();
     m_fileChooser->disconnectClient();
-}
-
-void RenderFileUploadControl::styleDidChange(StyleDifference diff, const RenderStyle* oldStyle)
-{
-    RenderBlock::styleDidChange(diff, oldStyle);
-    if (m_button)
-        m_button->renderer()->setStyle(createButtonStyle(style()));
 }
 
 void RenderFileUploadControl::valueChanged()
@@ -177,23 +143,10 @@ void RenderFileUploadControl::updateFromElement()
 {
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node());
     ASSERT(inputElement->isFileUpload());
-    
-    if (!m_button) {
-        m_button = UploadButton::create(inputElement);
-        m_button->setType("button");
-        m_button->setValue(fileButtonChooseFileLabel());
-        RefPtr<RenderStyle> buttonStyle = createButtonStyle(style());
-        RenderObject* renderer = m_button->createRenderer(renderArena(), buttonStyle.get());
-        m_button->setRenderer(renderer);
-        renderer->setStyle(buttonStyle.release());
-        renderer->updateFromElement();
-        m_button->setAttached();
-        m_button->setInDocument();
 
-        addChild(renderer);
-    }
 
-    m_button->setDisabled(!theme()->isEnabled(this));
+    if (HTMLInputElement* button = uploadButton())
+        button->setDisabled(!theme()->isEnabled(this));
 
     // This only supports clearing out the files, but that's OK because for
     // security reasons that's the only change the DOM is allowed to make.
@@ -205,26 +158,15 @@ void RenderFileUploadControl::updateFromElement()
     }
 }
 
-int RenderFileUploadControl::maxFilenameWidth() const
+static int nodeWidth(Node* node)
 {
-    return max(0, contentWidth() - m_button->renderBox()->width() - afterButtonSpacing
-        - (m_fileChooser->icon() ? iconWidth + iconFilenameSpacing : 0));
+    return node ? node->renderBox()->width() : 0;
 }
 
-PassRefPtr<RenderStyle> RenderFileUploadControl::createButtonStyle(const RenderStyle* parentStyle) const
+int RenderFileUploadControl::maxFilenameWidth() const
 {
-    RefPtr<RenderStyle> style = getCachedPseudoStyle(FILE_UPLOAD_BUTTON);
-    if (!style) {
-        style = RenderStyle::create();
-        if (parentStyle)
-            style->inheritFrom(parentStyle);
-    }
-
-    // Button text will wrap on file upload controls with widths smaller than the intrinsic button width
-    // without this setWhiteSpace.
-    style->setWhiteSpace(NOWRAP);
-
-    return style.release();
+    return max(0, contentWidth() - nodeWidth(uploadButton()) - afterButtonSpacing
+        - (m_fileChooser->icon() ? iconWidth + iconFilenameSpacing : 0));
 }
 
 void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
@@ -251,7 +193,12 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& 
 
         // Determine where the filename should be placed
         int contentLeft = paintOffset.x() + borderLeft() + paddingLeft();
-        int buttonAndIconWidth = m_button->renderBox()->width() + afterButtonSpacing
+        HTMLInputElement* button = uploadButton();
+        if (!button)
+            return;
+
+        int buttonWidth = nodeWidth(button);
+        int buttonAndIconWidth = buttonWidth + afterButtonSpacing
             + (m_fileChooser->icon() ? iconWidth + iconFilenameSpacing : 0);
         int textX;
         if (style()->isLeftToRightDirection())
@@ -259,7 +206,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& 
         else
             textX = contentLeft + contentWidth() - buttonAndIconWidth - font.width(textRun);
         // We want to match the button's baseline
-        RenderButton* buttonRenderer = toRenderButton(m_button->renderer());
+        RenderButton* buttonRenderer = toRenderButton(button->renderer());
         int textY = buttonRenderer->absoluteBoundingBoxRect().y()
             + buttonRenderer->marginTop() + buttonRenderer->borderTop() + buttonRenderer->paddingTop()
             + buttonRenderer->baselinePosition(AlphabeticBaseline, true, HorizontalLine, PositionOnContainingLine);
@@ -274,9 +221,9 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& 
             int iconY = paintOffset.y() + borderTop() + paddingTop() + (contentHeight() - iconHeight) / 2;
             int iconX;
             if (style()->isLeftToRightDirection())
-                iconX = contentLeft + m_button->renderBox()->width() + afterButtonSpacing;
+                iconX = contentLeft + buttonWidth + afterButtonSpacing;
             else
-                iconX = contentLeft + contentWidth() - m_button->renderBox()->width() - afterButtonSpacing - iconWidth;
+                iconX = contentLeft + contentWidth() - buttonWidth - afterButtonSpacing - iconWidth;
 
             // Draw the file icon
             m_fileChooser->icon()->paint(paintInfo.context, IntRect(iconX, iconY, iconWidth, iconHeight));
@@ -333,6 +280,16 @@ VisiblePosition RenderFileUploadControl::positionForPoint(const IntPoint&)
     return VisiblePosition();
 }
 
+HTMLInputElement* RenderFileUploadControl::uploadButton() const
+{
+    HTMLInputElement* input = static_cast<HTMLInputElement*>(node());
+
+    ASSERT(input->shadowRoot());
+
+    Node* buttonNode = input->shadowRoot()->firstChild();
+    return buttonNode && buttonNode->isHTMLElement() && buttonNode->hasTagName(inputTag) ? static_cast<HTMLInputElement*>(buttonNode) : 0;
+}
+
 void RenderFileUploadControl::receiveDroppedFiles(const Vector<String>& paths)
 {
 #if ENABLE(DIRECTORY_UPLOAD)
@@ -350,10 +307,10 @@ void RenderFileUploadControl::receiveDroppedFiles(const Vector<String>& paths)
 
 String RenderFileUploadControl::buttonValue()
 {
-    if (!m_button)
-        return String();
+    if (HTMLInputElement* button = uploadButton())
+        return button->value();
     
-    return m_button->value();
+    return String();
 }
 
 String RenderFileUploadControl::fileTextValue() const

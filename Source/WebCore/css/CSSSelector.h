@@ -172,7 +172,6 @@ namespace WebCore {
             PseudoSingleButton,
             PseudoNoButton,
             PseudoSelection,
-            PseudoFileUploadButton,
             PseudoInputListButton,
             PseudoLeftPage,
             PseudoRightPage,

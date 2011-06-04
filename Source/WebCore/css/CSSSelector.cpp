@@ -126,8 +126,6 @@ PseudoId CSSSelector::pseudoId(PseudoType type)
         return BEFORE;
     case PseudoAfter:
         return AFTER;
-    case PseudoFileUploadButton:
-        return FILE_UPLOAD_BUTTON;
     case PseudoInputPlaceholder:
         return INPUT_PLACEHOLDER;
     case PseudoScrollbar:
@@ -233,7 +231,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
     DEFINE_STATIC_LOCAL(AtomicString, autofill, ("-webkit-autofill"));
     DEFINE_STATIC_LOCAL(AtomicString, before, ("before"));
     DEFINE_STATIC_LOCAL(AtomicString, checked, ("checked"));
-    DEFINE_STATIC_LOCAL(AtomicString, fileUploadButton, ("-webkit-file-upload-button"));
     DEFINE_STATIC_LOCAL(AtomicString, defaultString, ("default"));
     DEFINE_STATIC_LOCAL(AtomicString, disabled, ("disabled"));
     DEFINE_STATIC_LOCAL(AtomicString, readOnly, ("read-only"));
@@ -314,7 +311,6 @@ static HashMap<AtomicStringImpl*, CSSSelector::PseudoType>* nameToPseudoTypeMap(
         nameToPseudoType->set(autofill.impl(), CSSSelector::PseudoAutofill);
         nameToPseudoType->set(before.impl(), CSSSelector::PseudoBefore);
         nameToPseudoType->set(checked.impl(), CSSSelector::PseudoChecked);
-        nameToPseudoType->set(fileUploadButton.impl(), CSSSelector::PseudoFileUploadButton);
         nameToPseudoType->set(defaultString.impl(), CSSSelector::PseudoDefault);
         nameToPseudoType->set(disabled.impl(), CSSSelector::PseudoDisabled);
         nameToPseudoType->set(readOnly.impl(), CSSSelector::PseudoReadOnly);
@@ -413,7 +409,6 @@ void CSSSelector::extractPseudoType() const
     case PseudoFirstLetter:
     case PseudoFirstLine:
         compat = true;
-    case PseudoFileUploadButton:
     case PseudoInputListButton:
     case PseudoInputPlaceholder:
     case PseudoResizer:

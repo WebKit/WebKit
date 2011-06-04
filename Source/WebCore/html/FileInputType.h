@@ -59,6 +59,7 @@ private:
     virtual bool storesValueSeparateFromAttribute();
     virtual void setFileList(const Vector<String>& paths);
     virtual bool isFileUpload() const;
+    virtual void createShadowSubtree();
 
     RefPtr<FileList> m_fileList;
 };

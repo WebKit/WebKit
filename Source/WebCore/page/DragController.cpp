@@ -253,20 +253,13 @@ static HTMLInputElement* asFileInput(Node* node)
 {
     ASSERT(node);
 
-    // The button for a FILE input is a sub element with no set input type
-    // In order to get around this problem we assume any non-FILE input element
-    // is this internal button, and try querying the shadow parent node.
-    if (node->hasTagName(HTMLNames::inputTag) && node->isShadowRoot() && !static_cast<HTMLInputElement*>(node)->isFileUpload())
-        node = node->shadowHost();
+    HTMLInputElement* inputElement = node->toInputElement();
 
-    if (!node || !node->hasTagName(HTMLNames::inputTag))
-        return 0;
+    // If this is a button inside of the a file input, move up to the file input.
+    if (inputElement && inputElement->isTextButton() && inputElement->treeScope()->isShadowBoundary())
+        inputElement = inputElement->treeScope()->shadowHost()->toInputElement();
 
-    HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node);
-    if (!inputElement->isFileUpload())
-        return 0;
-
-    return inputElement;
+    return inputElement && inputElement->isFileUpload() ? inputElement : 0;
 }
 
 // This can return null if an empty document is loaded.
