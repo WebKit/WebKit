@@ -1,3 +1,17 @@
+2011-06-04  Jeffrey Pfau  <jpfau@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Crash in WebCore::RenderMathMLSubSup::baselinePosition()
+        https://bugs.webkit.org/show_bug.cgi?id=57897
+
+        Simple patch adding NULL checks in each function.
+        Test: mathml/msubsup-remove-children.xhtml
+
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::stretchToHeight):
+        (WebCore::RenderMathMLSubSup::baselinePosition):
+
 2011-06-04  Nico Weber  <thakis@chromium.org>
 
         Reviewed by James Robinson.
