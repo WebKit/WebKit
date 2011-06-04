@@ -33,6 +33,10 @@ typedef struct CGFont* CGFontRef;
 typedef UInt32 ATSFontContainerRef;
 typedef UInt32 ATSFontRef;
 
+#if USE(SKIA_ON_MAC_CHROME)
+struct SkTypeface;
+#endif
+
 namespace WebCore {
 
 class FontPlatformData;
@@ -44,6 +48,9 @@ public:
     FontCustomPlatformData(ATSFontContainerRef container, CGFontRef cgFont)
         : m_atsContainer(container)
         , m_cgFont(cgFont)
+#if USE(SKIA_ON_MAC_CHROME)
+        , m_typeface(0)
+#endif
     {
     }
 
@@ -55,6 +62,9 @@ public:
 
     ATSFontContainerRef m_atsContainer;
     CGFontRef m_cgFont;
+#if USE(SKIA_ON_MAC_CHROME)
+    SkTypeface* m_typeface;
+#endif
 };
 
 FontCustomPlatformData* createFontCustomPlatformData(SharedBuffer*);

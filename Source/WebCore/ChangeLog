@@ -1,3 +1,40 @@
+2011-06-03  Cary Clark  <caryclark@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Support FontCustomPlatformData on Skia-Mac-Chrome variant
+        https://bugs.webkit.org/show_bug.cgi?id=62040
+
+        Canvas text is only recognized by Skia if it is registered
+        by creating a new SkTypeface. Skia uses CGFont to measure
+        and render the glyphs, then takes care of managing the glyph
+        cache.
+
+        Skia on Mac Chrome is not yet enabled, so this change
+        does not affect existing code, and requires no new tests.
+
+        * platform/graphics/mac/FontCustomPlatformData.cpp:
+        (WebCore::RemoteFontStream::RemoteFontStream):
+        (WebCore::RemoteFontStream::~RemoteFontStream):
+        (WebCore::RemoteFontStream::rewind):
+        (WebCore::RemoteFontStream::read):
+        Turn the buffer into a stream. This is identical to
+        the implementation in skia/FontCustomPlatformData.cpp.
+        While that file could be modified instead of this one,
+        it was simpler to add SkTypeface streaming to this instead
+        of adding all CGFont support to the skia platform file.
+
+        (WebCore::FontCustomPlatformData::~FontCustomPlatformData):
+        Release the SkTypeface reference.
+
+        (WebCore::createFontCustomPlatformData):
+        Associate the buffer stream with a SkTypeface so Skia
+        can find the custom font data.
+
+        * platform/graphics/mac/FontCustomPlatformData.h:
+        (WebCore::FontCustomPlatformData::FontCustomPlatformData):
+        Add a slot to hold the SkTypeface.
+
 2011-06-03  Steve Falkenburg  <sfalken@apple.com>
 
         Reviewed by Brian Weinstein.
