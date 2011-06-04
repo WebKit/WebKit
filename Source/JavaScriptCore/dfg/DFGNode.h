@@ -38,6 +38,8 @@
 #define DFG_JIT_BREAK_ON_EVERY_BLOCK 0
 // Emit a breakpoint into the head of every generated node, to aid debugging in GDB.
 #define DFG_JIT_BREAK_ON_EVERY_NODE 0
+// Emit a breakpoint into the speculation failure code.
+#define DFG_JIT_BREAK_ON_SPECULATION_FAILURE 0
 // Disable the DFG JIT without having to touch Platform.h!
 #define DFG_DEBUG_LOCAL_DISBALE 0
 // Disable the SpeculativeJIT without having to touch Platform.h!

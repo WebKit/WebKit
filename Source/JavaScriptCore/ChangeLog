@@ -2,6 +2,17 @@
 
         Reviewed by Sam Weinig.
 
+        Add debug code to break on speculation failures.
+
+        * dfg/DFGJITCompiler.cpp:
+        (JSC::DFG::JITCompiler::jumpFromSpeculativeToNonSpeculative):
+        (JSC::DFG::JITCompiler::compileFunction):
+        * dfg/DFGNode.h:
+
+2011-06-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
         https://bugs.webkit.org/show_bug.cgi?id=62082
         DFG JIT - bug passing arguments that need swap
 

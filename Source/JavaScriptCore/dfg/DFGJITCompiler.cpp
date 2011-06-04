@@ -109,6 +109,13 @@ void JITCompiler::jumpFromSpeculativeToNonSpeculative(const SpeculationCheck& ch
     // Link the jump from the Speculative path to here.
     check.m_check.link(this);
 
+#if DFG_DEBUG_VERBOSE
+    fprintf(stderr, "Speculation failure for Node @%d at JIT offset 0x%x\n", (int)check.m_nodeIndex, debugOffset());
+#endif
+#if DFG_JIT_BREAK_ON_SPECULATION_FAILURE
+    breakpoint();
+#endif
+
     // Does this speculation check require any additional recovery to be performed,
     // to restore any state that has been overwritten before we enter back in to the
     // non-speculative path.
@@ -280,6 +287,10 @@ void JITCompiler::compileFunction(JITCode& entry, MacroAssemblerCodePtr& entryWi
         // Link the bail-outs from the speculative path to the corresponding entry points into the non-speculative one.
         linkSpeculationChecks(speculative, nonSpeculative);
     } else {
+#if DFG_DEBUG_VERBOSE
+        fprintf(stderr, "SpeculativeJIT was terminated.\n");
+#endif
+
         // If compilation through the SpeculativeJIT failed, throw away the code we generated.
         m_calls.clear();
         m_propertyAccesses.clear();
