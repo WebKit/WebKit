@@ -121,7 +121,6 @@ ScriptController::ScriptController(Frame* frame)
 
 ScriptController::~ScriptController()
 {
-    m_proxy->disconnectFrame();
 }
 
 void ScriptController::clearScriptObjects()

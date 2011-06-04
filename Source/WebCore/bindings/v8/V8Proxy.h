@@ -149,10 +149,6 @@ namespace WebCore {
         bool timerCallback() const { return m_timerCallback; }
         void setTimerCallback(bool value) { m_timerCallback = value; }
 
-        // Disconnects the proxy from its owner frame,
-        // and clears all timeouts on the DOM window.
-        void disconnectFrame();
-
         void finishedWithEvent(Event*) { }
 
         // Evaluate JavaScript in a new isolated world. The script gets its own

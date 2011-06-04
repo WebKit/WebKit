@@ -606,10 +606,6 @@ V8Proxy* V8Proxy::retrieve(ScriptExecutionContext* context)
     return retrieve(static_cast<Document*>(context)->frame());
 }
 
-void V8Proxy::disconnectFrame()
-{
-}
-
 void V8Proxy::didLeaveScriptContext()
 {
     Page* page = m_frame->page();
