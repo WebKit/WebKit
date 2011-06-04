@@ -1,3 +1,10 @@
+2011-06-03  Oliver Hunt  <oliver@apple.com>
+
+        Whoops, fix last minute bug.
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::parseIdentifier):
+
 2011-06-03  Martin Robinson  <mrobinson@igalia.com>
 
         Try to fix the GTK+ build.

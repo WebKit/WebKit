@@ -412,7 +412,7 @@ inline void Lexer::record16(int c)
 
 template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIdentifier(JSTokenData* lvalp, unsigned lexType)
 {
-    static const ptrdiff_t remaining = m_codeEnd - m_code;
+    const ptrdiff_t remaining = m_codeEnd - m_code;
     if ((remaining >= maxTokenLength) && !(lexType & IgnoreReservedWords)) {
         JSTokenType keyword = parseKeyword();
         if (keyword != IDENT)
