@@ -46,6 +46,8 @@ public:
     {
     }
 
+    virtual ~WebTextCheckingCompletionImpl() { }
+
     virtual void didFinishCheckingText(const WebVector<WebTextCheckingResult>&);
 
 private:
