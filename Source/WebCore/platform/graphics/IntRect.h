@@ -111,7 +111,7 @@ public:
     void moveBy(const IntPoint& offset) { m_location.move(offset.x(), offset.y()); }
     void move(int dx, int dy) { m_location.move(dx, dy); } 
 
-    void expand(const IntSize& size) { m_location += size; }
+    void expand(const IntSize& size) { m_size += size; }
     void expand(int dw, int dh) { m_size.expand(dw, dh); }
 
     void shiftXEdgeTo(int edge)
