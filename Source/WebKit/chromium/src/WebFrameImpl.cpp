@@ -306,6 +306,8 @@ public:
     {
     }
 
+    virtual ~ChromePrintContext() { }
+
     virtual void begin(float width, float height)
     {
         ASSERT(!m_printedPageWidth);
@@ -375,6 +377,8 @@ public:
         : ChromePrintContext(frame), m_plugin(plugin), m_pageCount(0), m_printerDPI(printerDPI)
     {
     }
+
+    virtual ~ChromePluginPrintContext() { }
 
     virtual void begin(float width, float height)
     {

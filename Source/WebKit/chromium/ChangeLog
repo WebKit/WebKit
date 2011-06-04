@@ -2,6 +2,21 @@
 
         Reviewed by James Robinson.
 
+        [chromium] Make ChromePrintContext's destructor virtual
+        https://bugs.webkit.org/show_bug.cgi?id=62076
+
+        Since WebFrameImpl's m_printContext is a OnwPtr<ChromePrintContext>
+        that is dynamically set to either a ChromePrintContext or a
+        ChromePluginPrintContext, this fixes an actual bug.
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::ChromePrintContext::~ChromePrintContext):
+        (WebKit::ChromePluginPrintContext::~ChromePluginPrintContext):
+
+2011-06-04  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by James Robinson.
+
         [chromium] Make WebTextCheckingCompletionImpl's destructor virtual
         https://bugs.webkit.org/show_bug.cgi?id=62074
 
