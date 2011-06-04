@@ -62,6 +62,8 @@ public:
     {
     }
 
+    virtual ~ResourceHandleInternal() { }
+
     void start();
     void cancel();
     void setDefersLoading(bool);
