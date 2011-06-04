@@ -228,7 +228,7 @@ float AudioParamTimeline::valuesForTimeRangeImpl(float startTime,
         unsigned fillToFrame = timeToSampleFrame(fillToTime - startTime, sampleRate);
         fillToFrame = min(fillToFrame, numberOfValues);
 
-        int nextEventType = nextEvent ? nextEvent->type() : -1 /* unknown */;
+        ParamEvent::Type nextEventType = nextEvent ? nextEvent->type() : ParamEvent::LastType /* unknown */;
 
         // First handle linear and exponential ramps which require looking ahead to the next event.
         if (nextEventType == ParamEvent::LinearRampToValue) {
