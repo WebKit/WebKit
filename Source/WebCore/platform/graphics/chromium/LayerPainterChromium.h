@@ -36,6 +36,7 @@ class IntRect;
 
 class LayerPainterChromium {
 public:
+    virtual ~LayerPainterChromium() { }
     virtual void paint(GraphicsContext&, const IntRect& contentRect) = 0;
 };
 
