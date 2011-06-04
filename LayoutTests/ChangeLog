@@ -1,3 +1,9 @@
+2011-06-03  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Mark GPU-only expectations as GPU.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-03  Andrew Scherkus  <scherkus@chromium.org>
 
         Unreviewed, rebaselining Chromium GPU media pixel results after Chromium commit 87830.
