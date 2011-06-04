@@ -1,3 +1,21 @@
+2011-06-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 needs to know when a scroll is happening due to the ScrollAnimator
+        https://bugs.webkit.org/show_bug.cgi?id=62093
+
+        Stub out new ChromeClient functions regarding the start and end of ScrollAnimator
+        animated scrolls, and update logic for rubber-band ending to check for main frame
+        now that it is called for all frames.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didStartRubberBandForFrame):
+        (WebKit::WebChromeClient::didCompleteRubberBandForFrame):
+        (WebKit::WebChromeClient::didStartAnimatedScroll):
+        (WebKit::WebChromeClient::didCompleteAnimatedScroll):
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+
 2011-06-03  Brady Eidson  <beidson@apple.com>
 
         Reviewed by Steve Falkenburg.

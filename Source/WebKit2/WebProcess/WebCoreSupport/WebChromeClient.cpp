@@ -768,11 +768,25 @@ void WebChromeClient::dispatchViewportDataDidChange(const ViewportArguments& arg
     m_page->send(Messages::WebPageProxy::DidChangeViewportData(args));
 }
 
-void WebChromeClient::didCompleteRubberBandForMainFrame(const IntSize& initialOverhang) const
+void WebChromeClient::didStartRubberBandForFrame(Frame*, const IntSize&) const
 {
+}
+
+void WebChromeClient::didCompleteRubberBandForFrame(Frame* frame, const IntSize& initialOverhang) const
+{
+    if (frame != frame->page()->mainFrame())
+        return;
     m_page->send(Messages::WebPageProxy::DidCompleteRubberBandForMainFrame(initialOverhang));
 }
 
+void WebChromeClient::didStartAnimatedScroll() const
+{
+}
+
+void WebChromeClient::didCompleteAnimatedScroll() const
+{
+}
+    
 void WebChromeClient::notifyScrollerThumbIsVisibleInRect(const IntRect& scrollerThumb)
 {
     m_page->send(Messages::WebPageProxy::NotifyScrollerThumbIsVisibleInRect(scrollerThumb));

@@ -1,3 +1,36 @@
+2011-06-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2 needs to know when a scroll is happening due to the ScrollAnimator
+        https://bugs.webkit.org/show_bug.cgi?id=62093
+
+        Add additional ChromeClient functions to indicate the beginning and end of
+        the various ScrollAnimator animations. Change existing notification that a
+        rubber-band has completed for the main frame to be triggered for all frames.
+
+        * page/ChromeClient.h:
+        (WebCore::ChromeClient::didStartRubberBandForFrame):
+        (WebCore::ChromeClient::didCompleteRubberBandForFrame):
+        (WebCore::ChromeClient::didStartAnimatedScroll):
+        (WebCore::ChromeClient::didCompleteAnimatedScroll):
+        * page/FrameView.cpp:
+        (WebCore::FrameView::didStartRubberBand):
+        (WebCore::FrameView::didCompleteRubberBand):
+        (WebCore::FrameView::didStartAnimatedScroll):
+        (WebCore::FrameView::didCompleteAnimatedScroll):
+        * page/FrameView.h:
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::didStartRubberBand):
+        (WebCore::ScrollableArea::didStartAnimatedScroll):
+        (WebCore::ScrollableArea::didCompleteAnimatedScroll):
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (-[ScrollAnimationHelperDelegate _immediateScrollToPoint:]):
+        (WebCore::ScrollAnimatorMac::scroll):
+        (WebCore::ScrollAnimatorMac::immediateScrollToPointForScrollAnimation):
+        (WebCore::ScrollAnimatorMac::snapRubberBandTimerFired):
+
 2011-06-04  Martin Robinson  <mrobinson@igalia.com>
 
         Touch a file to try to fix the GTK+ build on the 32-bit bot.

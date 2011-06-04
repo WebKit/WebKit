@@ -127,7 +127,12 @@ public:
     virtual IntSize contentsSize() const { ASSERT_NOT_REACHED(); return IntSize(); }
     virtual IntSize overhangAmount() const { ASSERT_NOT_REACHED(); return IntSize(); }
     virtual IntPoint currentMousePosition() const { return IntPoint(); }
+
+    virtual void didStartRubberBand(const IntSize&) const { ASSERT_NOT_REACHED(); }
     virtual void didCompleteRubberBand(const IntSize&) const { ASSERT_NOT_REACHED(); }
+    virtual void didStartAnimatedScroll() const { }
+    virtual void didCompleteAnimatedScroll() const { }
+    
     virtual bool shouldSuspendScrollAnimations() const { return true; }
     virtual void scrollbarStyleChanged() { }
     virtual void setVisibleScrollerThumbRect(const IntRect&) { }

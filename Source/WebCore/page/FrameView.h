@@ -323,7 +323,10 @@ private:
     virtual bool isActive() const;
     virtual void getTickmarks(Vector<IntRect>&) const;
     virtual void scrollTo(const IntSize&);
+    virtual void didStartRubberBand(const IntSize&) const;
     virtual void didCompleteRubberBand(const IntSize&) const;
+    virtual void didStartAnimatedScroll() const;
+    virtual void didCompleteAnimatedScroll() const;
     virtual void scrollbarStyleChanged();
     virtual void setVisibleScrollerThumbRect(const IntRect&);
 #if USE(ACCELERATED_COMPOSITING)

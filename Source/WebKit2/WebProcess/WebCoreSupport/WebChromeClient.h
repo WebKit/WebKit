@@ -220,7 +220,11 @@ private:
     
     virtual void dispatchViewportDataDidChange(const WebCore::ViewportArguments&) const;
 
-    virtual void didCompleteRubberBandForMainFrame(const WebCore::IntSize&) const;
+    virtual void didStartRubberBandForFrame(WebCore::Frame*, const WebCore::IntSize&) const;
+    virtual void didCompleteRubberBandForFrame(WebCore::Frame*, const WebCore::IntSize&) const;
+    virtual void didStartAnimatedScroll() const;
+    virtual void didCompleteAnimatedScroll() const;
+
     virtual void notifyScrollerThumbIsVisibleInRect(const WebCore::IntRect&);
     virtual bool shouldRubberBandInDirection(WebCore::ScrollDirection) const;
     

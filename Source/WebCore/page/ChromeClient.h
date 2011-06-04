@@ -311,7 +311,11 @@ namespace WebCore {
 
         virtual void postAccessibilityNotification(AccessibilityObject*, AXObjectCache::AXNotification) { }
 
-        virtual void didCompleteRubberBandForMainFrame(const IntSize&) const { }
+        virtual void didStartRubberBandForFrame(Frame*, const IntSize&) const { }
+        virtual void didCompleteRubberBandForFrame(Frame*, const IntSize&) const { }
+        virtual void didStartAnimatedScroll() const { }
+        virtual void didCompleteAnimatedScroll() const { }
+        
         virtual void notifyScrollerThumbIsVisibleInRect(const IntRect&) { }
 
         enum DialogType {
