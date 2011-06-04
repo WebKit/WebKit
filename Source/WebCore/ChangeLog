@@ -1,5 +1,11 @@
 2011-06-04  Martin Robinson  <mrobinson@igalia.com>
 
+        Touch a file to try to fix the GTK+ build on the 32-bit bot.
+
+        * testing/Internals.idl: Touch this IDL file in an effort to fix the build.
+
+2011-06-04  Martin Robinson  <mrobinson@igalia.com>
+
         Fix the GTK+ build.
 
         * bindings/gobject/GNUmakefile.am: Make the GObject build less noisy.

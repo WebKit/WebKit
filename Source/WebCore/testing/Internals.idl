@@ -27,3 +27,4 @@ module window {
     interface [OmitConstructor] Internals {
     };
 }
+
