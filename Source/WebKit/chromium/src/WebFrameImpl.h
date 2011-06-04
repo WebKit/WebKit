@@ -212,7 +212,7 @@ public:
     virtual WebString layerTreeAsText(bool showDebugInfo = false) const;
 
     static PassRefPtr<WebFrameImpl> create(WebFrameClient* client);
-    ~WebFrameImpl();
+    virtual ~WebFrameImpl();
 
     // Called by the WebViewImpl to initialize its main frame:
     void initializeAsMainFrame(WebViewImpl*);
