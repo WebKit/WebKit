@@ -1,3 +1,31 @@
+2011-06-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        [Mac WebKit2] REGRESSION (r86692): Synchronous XMLHttpRequest hangs in credential shim (affects Netgear ReadyNAS admin page)
+        https://bugs.webkit.org/show_bug.cgi?id=62094
+        rdar://problem/9539204
+
+        * WebKit2.xcodeproj/project.pbxproj: Added new source files.
+        * WebProcess/mac/CoreIPCClientRunLoop.h: Added.
+        * WebProcess/mac/CoreIPCClientRunLoop.mm: Added.
+        (-[WKFunctionAdapter perform]): Added.
+        (WebKit::createCoreIPCRunLoopModesArray): Added.
+        (WebKit::coreIPCRunLoopModesArray): Added.
+        (WebKit::callOnCoreIPCClientRunLoopAndWait): Added.
+
+        * WebProcess/mac/KeychainItemShimMethods.mm:
+        (WebKit::webFreeAttributeListContent): Use callOnCoreIPCClientRunLoopAndWait.
+        (WebKit::webFreeKeychainItemContent): Ditto.
+        (WebKit::webSecKeychainItemCopyContent): Ditto.
+        (WebKit::webSecKeychainItemCreateFromContent): Ditto.
+        (WebKit::webSecKeychainItemModifyContent): Ditto.
+        * WebProcess/mac/SecItemShimMethods.mm:
+        (WebKit::webSecItemCopyMatching): Ditto.
+        (WebKit::webSecItemAdd): Ditto.
+        (WebKit::webSecItemUpdate): Ditto.
+        (WebKit::webSecItemDelete): Ditto.
+
 2011-06-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

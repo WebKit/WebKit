@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006 Apple Computer, Inc.  All rights reserved.
+ * Copyright (C) 2004, 2006, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -48,7 +48,6 @@ typedef void* LPVOID;
 typedef LPVOID HINTERNET;
 #endif
 
-
 #if PLATFORM(MAC)
 #include <wtf/RetainPtr.h>
 #ifdef __OBJC__
@@ -79,7 +78,6 @@ namespace WebCore {
 
 class AuthenticationChallenge;
 class Credential;
-class FormData;
 class Frame;
 class KURL;
 class ProtectionSpace;
@@ -206,6 +204,10 @@ public:
 
     using RefCounted<ResourceHandle>::ref;
     using RefCounted<ResourceHandle>::deref;
+
+#if PLATFORM(MAC) || USE(CFNETWORK)
+    static CFStringRef synchronousLoadRunLoopMode();
+#endif
 
 protected:
     ResourceHandle(const ResourceRequest&, ResourceHandleClient*, bool defersLoading, bool shouldContentSniff);

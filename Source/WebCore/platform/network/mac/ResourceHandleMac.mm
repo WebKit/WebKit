@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2006, 2007, 2008, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -54,7 +54,6 @@
 #import <wtf/text/CString.h>
 #import <wtf/UnusedParam.h>
 
-
 using namespace WebCore;
 
 @interface WebCoreResourceHandleAsDelegate : NSObject <NSURLConnectionDelegate> {
@@ -82,7 +81,6 @@ using namespace WebCore;
 @interface NSURLRequest (Details)
 - (id)_propertyForKey:(NSString *)key;
 @end
-
 
 class WebCoreSynchronousLoaderClient : public ResourceHandleClient {
 public:
@@ -127,11 +125,7 @@ private:
     bool m_isDone;
 };
 
-static NSString *WebCoreSynchronousLoaderRunLoopMode = @"WebCoreSynchronousLoaderRunLoopMode";
-
-
 namespace WebCore {
-
 
 #ifndef NDEBUG
 static bool isInitializingConnection;
@@ -423,6 +417,11 @@ bool ResourceHandle::willLoadFromCache(ResourceRequest& request, Frame*)
     return nsURLResponse;
 }
 
+CFStringRef ResourceHandle::synchronousLoadRunLoopMode()
+{
+    return CFSTR("WebCoreSynchronousLoaderRunLoopMode");
+}
+
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& data)
 {
     LOG(Network, "ResourceHandle::loadResourceSynchronously:%@ allowStoredCredentials:%u", request.nsURLRequest(), storedCredentials);
@@ -454,11 +453,11 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
         storedCredentials == AllowStoredCredentials,
         handle->shouldContentSniff() || (context && context->localFileContentSniffingEnabled()));
 
-    [handle->connection() scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:WebCoreSynchronousLoaderRunLoopMode];
+    [handle->connection() scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:(NSString *)synchronousLoadRunLoopMode()];
     [handle->connection() start];
     
     while (!client->isDone())
-        [[NSRunLoop currentRunLoop] runMode:WebCoreSynchronousLoaderRunLoopMode beforeDate:[NSDate distantFuture]];
+        [[NSRunLoop currentRunLoop] runMode:(NSString *)synchronousLoadRunLoopMode() beforeDate:[NSDate distantFuture]];
 
     result = client->data();
     nsURLResponse = client->response();

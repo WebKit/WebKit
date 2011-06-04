@@ -22,18 +22,19 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import "config.h"
 #import "KeychainItemShimMethods.h"
 
 #if defined(BUILDING_ON_SNOW_LEOPARD)
 
+#import "CoreIPCClientRunLoop.h"
 #import "SecKeychainItemRequestData.h"
 #import "SecKeychainItemResponseData.h"
 #import "WebProcess.h"
 #import "WebProcessProxyMessages.h"
 #import "WebProcessShim.h"
 #import <dlfcn.h>
-#import <wtf/Threading.h>
 
 namespace WebKit {
 
@@ -137,7 +138,7 @@ static bool webFreeAttributeListContent(SecKeychainAttributeList* attrList)
     FreeAttributeListContext context;
     context.attrList = attrList;
     
-    callOnMainThreadAndWait(webFreeAttributeListContentOnMainThread, &context);
+    callOnCoreIPCClientRunLoopAndWait(webFreeAttributeListContentOnMainThread, &context);
 
     return context.freed;
 }
@@ -166,7 +167,7 @@ static bool webFreeKeychainItemContent(void* data)
     FreeKeychainItemDataContext context;
     context.data = data;
     
-    callOnMainThreadAndWait(webFreeKeychainItemContentOnMainThread, &context);
+    callOnCoreIPCClientRunLoopAndWait(webFreeKeychainItemContentOnMainThread, &context);
 
     return context.freed;
 }
@@ -215,7 +216,7 @@ static OSStatus webSecKeychainItemCopyContent(SecKeychainItemRef item, SecItemCl
     context.resultLength = length;
     context.resultData = outData;
 
-    callOnMainThreadAndWait(webSecKeychainItemCopyContentOnMainThread, &context);
+    callOnCoreIPCClientRunLoopAndWait(webSecKeychainItemCopyContentOnMainThread, &context);
 
     // FIXME: should return context.resultCode. Returning noErr is a workaround for <rdar://problem/9520886>;
     // the authentication should fail anyway, since on error no data will be returned.
@@ -248,7 +249,7 @@ static OSStatus webSecKeychainItemCreateFromContent(SecItemClass itemClass, SecK
     context.length = length;
     context.data = data;
     
-    callOnMainThreadAndWait(webSecKeychainItemCreateFromContentOnMainThread, &context);
+    callOnCoreIPCClientRunLoopAndWait(webSecKeychainItemCreateFromContentOnMainThread, &context);
     
     if (item)
         *item = context.item;
@@ -281,7 +282,7 @@ static OSStatus webSecKeychainItemModifyContent(SecKeychainItemRef itemRef, cons
     context.length = length;
     context.data = data;
     
-    callOnMainThreadAndWait(webSecKeychainItemModifyContentOnMainThread, &context);
+    callOnCoreIPCClientRunLoopAndWait(webSecKeychainItemModifyContentOnMainThread, &context);
     
     return context.resultCode;
 }

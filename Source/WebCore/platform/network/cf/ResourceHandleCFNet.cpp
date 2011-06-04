@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2004, 2005, 2006, 2007, 2009 Apple Inc. All rights reserved.
+ * Copyright (C) 2004, 2005, 2006, 2007, 2009, 2010, 2011 Apple Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,8 +27,6 @@
 
 #if USE(CFNETWORK)
 
-#include "ResourceHandle.h"
-#include "ResourceHandleClient.h"
 #include "ResourceHandleInternal.h"
 
 #include "AuthenticationCF.h"
@@ -44,6 +42,7 @@
 #include "Logging.h"
 #include "MIMETypeRegistry.h"
 #include "ResourceError.h"
+#include "ResourceHandleClient.h"
 #include "ResourceResponse.h"
 #include "SharedBuffer.h"
 #include <CFNetwork/CFNetwork.h>
@@ -65,8 +64,6 @@ __declspec(dllimport) CFURLConnectionRef CFURLConnectionCreateWithProperties(
 }
 
 namespace WebCore {
-
-static CFStringRef WebCoreSynchronousLoaderRunLoopMode = CFSTR("WebCoreSynchronousLoaderRunLoopMode");
 
 class WebCoreSynchronousLoaderClient : public ResourceHandleClient {
 public:
@@ -621,6 +618,11 @@ CFURLConnectionRef ResourceHandle::releaseConnectionForDownload()
     return d->m_connection.releaseRef();
 }
 
+CFStringRef ResourceHandle::synchronousLoadRunLoopMode()
+{
+    return CFSTR("WebCoreSynchronousLoaderRunLoopMode");
+}
+
 void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const ResourceRequest& request, StoredCredentials storedCredentials, ResourceError& error, ResourceResponse& response, Vector<char>& vector)
 {
     LOG(Network, "ResourceHandle::loadResourceSynchronously:%s allowStoredCredentials:%u", request.url().string().utf8().data(), storedCredentials);
@@ -644,12 +646,12 @@ void ResourceHandle::loadResourceSynchronously(NetworkingContext* context, const
 
     handle->createCFURLConnection(storedCredentials == AllowStoredCredentials, ResourceHandle::shouldContentSniffURL(request.url()));
 
-    CFURLConnectionScheduleWithRunLoop(handle->connection(), CFRunLoopGetCurrent(), WebCoreSynchronousLoaderRunLoopMode);
-    CFURLConnectionScheduleDownloadWithRunLoop(handle->connection(), CFRunLoopGetCurrent(), WebCoreSynchronousLoaderRunLoopMode);
+    CFURLConnectionScheduleWithRunLoop(handle->connection(), CFRunLoopGetCurrent(), synchronousLoadRunLoopMode());
+    CFURLConnectionScheduleDownloadWithRunLoop(handle->connection(), CFRunLoopGetCurrent(), synchronousLoadRunLoopMode());
     CFURLConnectionStart(handle->connection());
 
     while (!client->isDone())
-        CFRunLoopRunInMode(WebCoreSynchronousLoaderRunLoopMode, UINT_MAX, true);
+        CFRunLoopRunInMode(synchronousLoadRunLoopMode(), UINT_MAX, true);
 
     CFURLConnectionCancel(handle->connection());
     

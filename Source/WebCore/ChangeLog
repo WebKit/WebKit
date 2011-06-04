@@ -1,3 +1,20 @@
+2011-06-04  Darin Adler  <darin@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        [Mac WebKit2] REGRESSION (r86692): Synchronous XMLHttpRequest hangs in credential shim (affects Netgear ReadyNAS admin page)
+        https://bugs.webkit.org/show_bug.cgi?id=62094
+        rdar://problem/9539204
+
+        * WebCore.exp.in: Export ResourceHandle::synchronousLoadRunLoopMode.
+        * platform/network/ResourceHandle.h: Add synchronousLoadRunLoopMode.
+        * platform/network/cf/ResourceHandleCFNet.cpp:
+        (WebCore::ResourceHandle::synchronousLoadRunLoopMode): Added.
+        (WebCore::ResourceHandle::loadResourceSynchronously): Call synchronousLoadRunLoopMode.
+        * platform/network/mac/ResourceHandleMac.mm:
+        (WebCore::ResourceHandle::synchronousLoadRunLoopMode): Added.
+        (WebCore::ResourceHandle::loadResourceSynchronously): Call synchronousLoadRunLoopMode.
+
 2011-06-04  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

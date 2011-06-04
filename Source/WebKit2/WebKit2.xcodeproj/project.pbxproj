@@ -410,6 +410,8 @@
 		9391F2CB121B67AD00EBF7E8 /* WebFrameNetworkingContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 9391F283121B38F500EBF7E8 /* WebFrameNetworkingContext.h */; };
 		939AE7661316E99C00AE06A6 /* WebCoreArgumentCoders.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939AE7651316E99C00AE06A6 /* WebCoreArgumentCoders.cpp */; };
 		939AE7681316E9AD00AE06A6 /* WebCoreArgumentCodersCG.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 939AE7671316E9AD00AE06A6 /* WebCoreArgumentCodersCG.cpp */; };
+		93C01DAC139AC91700ED51D7 /* CoreIPCClientRunLoop.h in Headers */ = {isa = PBXBuildFile; fileRef = 93C01DAA139AC91700ED51D7 /* CoreIPCClientRunLoop.h */; };
+		93C01DAD139AC91700ED51D7 /* CoreIPCClientRunLoop.mm in Sources */ = {isa = PBXBuildFile; fileRef = 93C01DAB139AC91700ED51D7 /* CoreIPCClientRunLoop.mm */; };
 		93FC67BD12D3CCF200A60610 /* DecoderAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93FC679D12D3CC7400A60610 /* DecoderAdapter.cpp */; };
 		93FC67BE12D3CCF200A60610 /* DecoderAdapter.h in Headers */ = {isa = PBXBuildFile; fileRef = 93FC679E12D3CC7400A60610 /* DecoderAdapter.h */; };
 		93FC67BF12D3CCF200A60610 /* EncoderAdapter.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 93FC679F12D3CC7400A60610 /* EncoderAdapter.cpp */; };
@@ -1346,6 +1348,8 @@
 		9391F284121B38F500EBF7E8 /* WebFrameNetworkingContext.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebFrameNetworkingContext.mm; sourceTree = "<group>"; };
 		939AE7651316E99C00AE06A6 /* WebCoreArgumentCoders.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreArgumentCoders.cpp; sourceTree = "<group>"; };
 		939AE7671316E9AD00AE06A6 /* WebCoreArgumentCodersCG.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebCoreArgumentCodersCG.cpp; sourceTree = "<group>"; };
+		93C01DAA139AC91700ED51D7 /* CoreIPCClientRunLoop.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CoreIPCClientRunLoop.h; sourceTree = "<group>"; };
+		93C01DAB139AC91700ED51D7 /* CoreIPCClientRunLoop.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = CoreIPCClientRunLoop.mm; sourceTree = "<group>"; };
 		93FC679D12D3CC7400A60610 /* DecoderAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DecoderAdapter.cpp; sourceTree = "<group>"; };
 		93FC679E12D3CC7400A60610 /* DecoderAdapter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DecoderAdapter.h; sourceTree = "<group>"; };
 		93FC679F12D3CC7400A60610 /* EncoderAdapter.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EncoderAdapter.cpp; sourceTree = "<group>"; };
@@ -2028,6 +2032,8 @@
 		1A6FA01C11E1526300DB1371 /* mac */ = {
 			isa = PBXGroup;
 			children = (
+				93C01DAA139AC91700ED51D7 /* CoreIPCClientRunLoop.h */,
+				93C01DAB139AC91700ED51D7 /* CoreIPCClientRunLoop.mm */,
 				E1BB1688132018BA00F49431 /* FullKeyboardAccessWatcher.h */,
 				E1BB1689132018BA00F49431 /* FullKeyboardAccessWatcher.mm */,
 				512DF6D6138C181A00A22FC6 /* KeychainItemShimMethods.h */,
@@ -3818,6 +3824,7 @@
 				512DF6FF138C254600A22FC6 /* SecKeychainItemRequestData.h in Headers */,
 				512DF701138C254600A22FC6 /* SecKeychainItemResponseData.h in Headers */,
 				512DF70B138C26C700A22FC6 /* KeychainAttribute.h in Headers */,
+				93C01DAC139AC91700ED51D7 /* CoreIPCClientRunLoop.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4485,6 +4492,7 @@
 				512DF6FE138C254600A22FC6 /* SecKeychainItemRequestData.cpp in Sources */,
 				512DF700138C254600A22FC6 /* SecKeychainItemResponseData.cpp in Sources */,
 				512DF70A138C26C700A22FC6 /* KeychainAttribute.cpp in Sources */,
+				93C01DAD139AC91700ED51D7 /* CoreIPCClientRunLoop.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
