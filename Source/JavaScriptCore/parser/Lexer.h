@@ -154,12 +154,12 @@ namespace JSC {
         const HashTable m_keywordTable;
     };
 
-    inline bool Lexer::isWhiteSpace(int ch)
+    ALWAYS_INLINE bool Lexer::isWhiteSpace(int ch)
     {
         return isASCII(ch) ? (ch == ' ' || ch == '\t' || ch == 0xB || ch == 0xC) : (WTF::Unicode::isSeparatorSpace(ch) || ch == 0xFEFF);
     }
 
-    inline bool Lexer::isLineTerminator(int ch)
+    ALWAYS_INLINE bool Lexer::isLineTerminator(int ch)
     {
         return ch == '\r' || ch == '\n' || (ch & ~1) == 0x2028;
     }
