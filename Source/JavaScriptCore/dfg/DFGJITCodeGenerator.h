@@ -602,7 +602,7 @@ protected:
             m_jit.move(srcB, destB);
             m_jit.move(srcA, destA);
         } else
-            m_jit.swap(destB, destB);
+            m_jit.swap(destA, destB);
     }
     template<FPRReg destA, FPRReg destB>
     void setupTwoStubArgs(FPRReg srcA, FPRReg srcB)

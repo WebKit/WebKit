@@ -1,3 +1,22 @@
+2011-06-03  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62082
+        DFG JIT - bug passing arguments that need swap
+
+        This is really just a typo.
+        When setting up the arguments for a call out to a C operation, we'll
+        fail to swap arguments where this is necessary. For example, in the
+        case of 2 arg calls, where the first argument is in %rdx & the second
+        is in %rsi we should swap (exec will be passed in %rdi), but we don't.
+
+        This can also affect function calls passing three arguments.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::setupTwoStubArgs):
+            - Call swap with the correct arguments.
+
 2011-06-03  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
