@@ -113,6 +113,8 @@ public:
 
     void expand(const IntSize& size) { m_size += size; }
     void expand(int dw, int dh) { m_size.expand(dw, dh); }
+    void contract(const IntSize& size) { m_size -= size; }
+    void contract(int dw, int dh) { m_size.expand(-dw, -dh); }
 
     void shiftXEdgeTo(int edge)
     {

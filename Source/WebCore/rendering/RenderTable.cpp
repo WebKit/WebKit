@@ -1171,9 +1171,9 @@ int RenderTable::firstLineBoxBaseline() const
     return firstNonEmptySection->logicalTop() + firstNonEmptySection->firstLineBoxBaseline();
 }
 
-IntRect RenderTable::overflowClipRect(int tx, int ty, OverlayScrollbarSizeRelevancy relevancy)
+IntRect RenderTable::overflowClipRect(const IntPoint& location, OverlayScrollbarSizeRelevancy relevancy)
 {
-    IntRect rect = RenderBlock::overflowClipRect(tx, ty, relevancy);
+    IntRect rect = RenderBlock::overflowClipRect(location, relevancy);
     
     // If we have a caption, expand the clip to include the caption.
     // FIXME: Technically this is wrong, but it's virtually impossible to fix this
@@ -1184,10 +1184,10 @@ IntRect RenderTable::overflowClipRect(int tx, int ty, OverlayScrollbarSizeReleva
     if (m_caption) {
         if (style()->isHorizontalWritingMode()) {
             rect.setHeight(height());
-            rect.setY(ty);
+            rect.setY(location.y());
         } else {
             rect.setWidth(width());
-            rect.setX(tx);
+            rect.setX(location.x());
         }
     }
 
@@ -1200,7 +1200,7 @@ bool RenderTable::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     ty += y();
 
     // Check kids first.
-    if (!hasOverflowClip() || overflowClipRect(tx, ty).intersects(result.rectForPoint(pointInContainer))) {
+    if (!hasOverflowClip() || overflowClipRect(IntPoint(tx, ty)).intersects(result.rectForPoint(pointInContainer))) {
         for (RenderObject* child = lastChild(); child; child = child->previousSibling()) {
             if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child == m_caption)) {
                 IntPoint childPoint = flipForWritingMode(toRenderBox(child), IntPoint(tx, ty), ParentToChildFlippingAdjustment);

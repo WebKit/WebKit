@@ -316,7 +316,7 @@ static IntRect clipBox(RenderBox* renderer)
 {
     IntRect result = PaintInfo::infiniteRect();
     if (renderer->hasOverflowClip())
-        result = renderer->overflowClipRect(0, 0);
+        result = renderer->overflowClipRect(IntPoint());
 
     if (renderer->hasClip())
         result.intersect(renderer->clipRect(0, 0));

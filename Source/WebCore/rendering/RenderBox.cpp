@@ -1114,7 +1114,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, int tx, int ty)
         paintObject(paintInfo, IntPoint(tx, ty));
         paintInfo.phase = PaintPhaseChildBlockBackgrounds;
     }
-    IntRect clipRect(isControlClip ? controlClipRect(IntPoint(tx, ty)) : overflowClipRect(tx, ty));
+    IntRect clipRect(isControlClip ? controlClipRect(IntPoint(tx, ty)) : overflowClipRect(IntPoint(tx, ty)));
     paintInfo.context->save();
     if (style()->hasBorderRadius())
         paintInfo.context->addRoundedRectClip(style()->getRoundedBorderFor(IntRect(tx, ty, width(), height())));
@@ -1135,26 +1135,18 @@ void RenderBox::popContentsClip(PaintInfo& paintInfo, PaintPhase originalPhase, 
         paintInfo.phase = originalPhase;
 }
 
-IntRect RenderBox::overflowClipRect(int tx, int ty, OverlayScrollbarSizeRelevancy relevancy)
+IntRect RenderBox::overflowClipRect(const IntPoint& location, OverlayScrollbarSizeRelevancy relevancy)
 {
     // FIXME: When overflow-clip (CSS3) is implemented, we'll obtain the property
     // here.
-
-    int bLeft = borderLeft();
-    int bTop = borderTop();
-
-    int clipX = tx + bLeft;
-    int clipY = ty + bTop;
-    int clipWidth = width() - bLeft - borderRight();
-    int clipHeight = height() - bTop - borderBottom();
+    IntRect clipRect(location + IntSize(borderLeft(), borderTop()),
+        size() - IntSize(borderLeft() + borderRight(), borderTop() + borderBottom()));
 
     // Subtract out scrollbars if we have them.
-    if (layer()) {
-        clipWidth -= layer()->verticalScrollbarWidth(relevancy);
-        clipHeight -= layer()->horizontalScrollbarHeight(relevancy);
-    }
+    if (layer())
+        clipRect.contract(layer()->verticalScrollbarWidth(relevancy), layer()->horizontalScrollbarHeight(relevancy));
 
-    return IntRect(clipX, clipY, clipWidth, clipHeight);
+    return clipRect;
 }
 
 IntRect RenderBox::clipRect(int tx, int ty)

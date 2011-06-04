@@ -1153,7 +1153,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
     tx += x();
     ty += y();
 
-    if (hasOverflowClip() && !overflowClipRect(tx, ty).intersects(result.rectForPoint(pointInContainer)))
+    if (hasOverflowClip() && !overflowClipRect(IntPoint(tx, ty)).intersects(result.rectForPoint(pointInContainer)))
         return false;
 
     if (m_hasOverflowingCell) {

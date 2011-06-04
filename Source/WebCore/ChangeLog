@@ -1,3 +1,39 @@
+2011-06-04  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Convert RenderBox::overflowClipRect to IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62032
+
+        Covered by existing tests.
+
+        * editing/Editor.cpp:
+        (WebCore::Editor::insideVisibleArea):
+        * platform/graphics/IntRect.h:
+        (WebCore::IntRect::contract):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::pushContentsClip):
+        (WebCore::RenderBox::overflowClipRect):
+        * rendering/RenderBox.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        (WebCore::RenderLayer::repaintBlockSelectionGaps):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::clipBox):
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::overflowClipRect):
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::paint):
+
 2011-06-04  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

@@ -231,7 +231,7 @@ private:
 
     virtual void computeLogicalWidth();
 
-    virtual IntRect overflowClipRect(int tx, int ty, OverlayScrollbarSizeRelevancy relevancy = IgnoreOverlayScrollbarSize);
+    virtual IntRect overflowClipRect(const IntPoint& location, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize);
 
     virtual void addOverflowFromChildren();
 
