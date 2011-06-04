@@ -1,3 +1,17 @@
+2011-06-03  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        ResourceHandleMac should always respond to an authentication challenge
+        https://bugs.webkit.org/show_bug.cgi?id=61667
+
+        I don't know if this can actually happen in practice, so no new tests.
+
+        * platform/network/mac/ResourceHandleMac.mm:
+        (-[WebCoreResourceHandleAsDelegate connection:didReceiveAuthenticationChallenge:]):
+        Cancel authentication challenge if we don't have a client. We must always respond to the
+        challenge to release the connection, and there is nothing else to do in this state anyway.
+
 2011-06-03  Dan Bernstein  <mitz@apple.com>
 
         Try to fix the Apple LLVM Compiler build after r88087.

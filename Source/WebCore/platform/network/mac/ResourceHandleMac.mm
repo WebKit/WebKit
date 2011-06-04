@@ -747,8 +747,10 @@ String ResourceHandle::privateBrowsingStorageSessionIdentifierDefaultBase()
 
     LOG(Network, "Handle %p delegate connection:%p didReceiveAuthenticationChallenge:%p", m_handle, connection, challenge);
 
-    if (!m_handle)
+    if (!m_handle) {
+        [[challenge sender] cancelAuthenticationChallenge:challenge];
         return;
+    }
     m_handle->didReceiveAuthenticationChallenge(core(challenge));
 }
 
