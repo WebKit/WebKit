@@ -1,3 +1,17 @@
+2011-06-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        [GTK][Cairo] Twitter rendering breaks
+        https://bugs.webkit.org/show_bug.cgi?id=60917
+
+        Added a GTK+ specific test that verifies that zero pixel sized
+        fonts do not corrupt the Cairo context.
+
+        * platform/gtk/fonts/zero-pixel-sized-fonts-expected.png: Added.
+        * platform/gtk/fonts/zero-pixel-sized-fonts-expected.txt: Added.
+        * platform/gtk/fonts/zero-pixel-sized-fonts.html: Added.
+
 2011-04-28  Arno Renevier  <arno@renevier.net>
 
         Reviewed by Gustavo Noronha Silva.
