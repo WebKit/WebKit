@@ -1,3 +1,12 @@
+2011-06-03  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Unreviewed. Fixes test expectatations.
+
+        [chromium] Fixing redefinitions of test_expectations entries
+        for chrome gpu tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-03  James Robinson  <jamesr@chromium.org>
 
         [chromium] Mark GPU-only expectations as GPU.

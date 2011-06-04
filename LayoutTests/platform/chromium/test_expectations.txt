@@ -2428,8 +2428,7 @@ BUGJAMESR LEOPARD : fast/text/international/vertical-text-glyph-test.html = IMAG
 BUGJAMESR WIN LINUX : fast/text/international/vertical-text-metrics-test.html = TEXT
 
 // Added in WebKit r69755, failed immediately.
-BUGCR81837 WIN : fast/canvas/canvas-currentColor.html = TEXT
-BUGCR81837 LINUX CPU : fast/canvas/canvas-currentColor.html = TEXT
+BUGCR81837 WIN LINUX CPU : fast/canvas/canvas-currentColor.html = TEXT
 
 // Added in Webkit r69707 without expected results.
 // Expected result file added in r83450. Still no match.
@@ -2881,8 +2880,6 @@ BUGCR60965 GPU WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMA
 BUGNONE SLOW GPU DEBUG WIN : fast/canvas/canvas-getImageData.html = PASS
 
 BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH
-
-BUGCR74979 GPU MAC: media/video-canvas-alpha.html = IMAGE
 
 // This test needs completely new baselines.
 BUGWK55718 BUGCR75354 : media/media-document-audio-repaint.html = PASS FAIL
@@ -3934,7 +3931,7 @@ BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html 
 
 BUGWK61519 WIN LINUX : inspector/debugger/scripts-panel.html = TEXT TIMEOUT PASS
 BUGCR84031 MAC LINUX : storage/domstorage/sessionstorage/delete-removal.html = TIMEOUT PASS
-BUGCR84032 WIN : fast/dom/object-plugin-hides-properties.html = TIMEOUT PASS
+BUGCR84032 WIN CPU : fast/dom/object-plugin-hides-properties.html = TIMEOUT PASS
 
 // Works slowly, we have an equivalent test that doesn't open Inspector and runs fast.
 BUGWK61533 LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = CRASH TIMEOUT PASS
@@ -3976,14 +3973,14 @@ BUGWK61767 WIN DEBUG : http/tests/websocket/tests/client-close.html = PASS TEXT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html = TIMEOUT
+BUGWK59782 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
 
@@ -4007,7 +4004,7 @@ BUGCR84157 GPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-
 BUGCR84157 GPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = IMAGE
 BUGCR84157 GPU : fast/dom/object-plugin-hides-properties.html = TEXT
 BUGCR84157 GPU : fast/js/property-getters-and-setters.html = TEXT
-BUGCR84157 GPU : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
+BUGCR84157 WIN LINUX GPU : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
 BUGCR84157 GPU : fast/canvas/canvas-as-image.html = IMAGE
 BUGCR84157 GPU : fast/canvas/canvas-bg-zoom.html = IMAGE
 BUGCR84157 GPU : fast/canvas/canvas-bg.html = IMAGE
@@ -4015,5 +4012,5 @@ BUGCR84157 GPU : fast/canvas/canvas-currentColor.html = TEXT
 BUGCR84157 GPU : fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUGCR84157 GPU : fast/canvas/canvas-transform-skewed.html = IMAGE
 BUGCR84157 GPU : fast/canvas/zero-size-fill-rect.html = IMAGE
-BUGCR84157 GPU : media/video-canvas-alpha.html = IMAGE
+BUGCR84157 BUGCR74979 GPU : media/video-canvas-alpha.html = IMAGE
 
