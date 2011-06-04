@@ -414,9 +414,11 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIde
 {
     const ptrdiff_t remaining = m_codeEnd - m_code;
     if ((remaining >= maxTokenLength) && !(lexType & IgnoreReservedWords)) {
-        JSTokenType keyword = parseKeyword();
-        if (keyword != IDENT)
+        JSTokenType keyword = parseKeyword<shouldCreateIdentifier>(lvalp);
+        if (keyword != IDENT) {
+            ASSERT((!shouldCreateIdentifier) || lvalp->ident);
             return keyword;
+        }
     }
     const UChar* identifierStart = currentCharacter();
     bool bufferRequired = false;

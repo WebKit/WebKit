@@ -127,6 +127,8 @@ class Trie:
         if self.value != None:
             print(str + "if (!isIdentPart(code[%d])) {" % (len(self.fullPrefix)))
             print(str + "    internalShift<%d, DoNotBoundsCheck>();" % len(self.fullPrefix))
+            print(str + "    if (shouldCreateIdentifier)")
+            print(str + ("        data->ident = &m_globalData->propertyNames->%sKeyword;" % self.fullPrefix))
             print(str + "    return " + self.value + ";")
             print(str + "}")
         rootIndex = len(self.fullPrefix)
@@ -166,7 +168,7 @@ class Trie:
         print("static ALWAYS_INLINE bool isIdentPart(int c);")
         # max length + 1 so we don't need to do any bounds checking at all
         print("static const int maxTokenLength = %d;" % (self.maxLength() + 1))
-        print("ALWAYS_INLINE JSTokenType Lexer::parseKeyword() {")
+        print("template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseKeyword(JSTokenData* data) {")
         print("    ASSERT(m_codeEnd - m_code >= maxTokenLength);")
         print("    const UChar* code = m_code;")
         self.printSubTreeAsC(4)

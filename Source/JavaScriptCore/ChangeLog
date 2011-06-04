@@ -1,3 +1,23 @@
+2011-06-03  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        Lexer needs to provide Identifier for reserved words
+        https://bugs.webkit.org/show_bug.cgi?id=62086
+
+        Alas it is necessary to provide an Identifier reference for keywords
+        so that we can do the right thing when they're used in object literals.
+        We now keep Identifiers for all reserved words in the CommonIdentifiers
+        structure so that we can access them without a hash lookup.
+
+        * KeywordLookupGenerator.py:
+        * parser/Lexer.cpp:
+        (JSC::Lexer::parseIdentifier):
+        * parser/Lexer.h:
+        * runtime/CommonIdentifiers.cpp:
+        (JSC::CommonIdentifiers::CommonIdentifiers):
+        * runtime/CommonIdentifiers.h:
+
 2011-06-03  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
