@@ -2,6 +2,25 @@
 
         Reviewed by James Robinson.
 
+        Make the destructors of DataTransferItem and DataTransferItems virtual
+        https://bugs.webkit.org/show_bug.cgi?id=62052
+
+        Clang has grown a new warning that warns on |delete ptr| if ptr's
+        class is non-final, has virtual methods, but no virtual destructor.
+        This warning finds real bugs, so we want to keep it enabled. However,
+        it also warns about DataTransferItem[s]. Since these are subclassed,
+        they can't be made final, so make their destructors virtual. (Maybe
+        clang's warning even points out an actual bug here.)
+
+        * dom/DataTransferItem.h:
+        (WebCore::DataTransferItem::~DataTransferItem):
+        * dom/DataTransferItems.h:
+        (WebCore::DataTransferItems::~DataTransferItems):
+
+2011-06-04  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by James Robinson.
+
         [chromium] Make LayerPainterChromium destructor virtual
         https://bugs.webkit.org/show_bug.cgi?id=62056
 

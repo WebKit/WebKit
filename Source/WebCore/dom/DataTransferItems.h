@@ -45,7 +45,7 @@ typedef int ExceptionCode;
 
 class DataTransferItems : public RefCounted<DataTransferItems> {
 public:
-    ~DataTransferItems() {}
+    virtual ~DataTransferItems() { }
 
     virtual size_t length() const;
     virtual PassRefPtr<DataTransferItem> item(unsigned long index);

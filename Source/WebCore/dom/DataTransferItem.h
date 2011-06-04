@@ -46,7 +46,7 @@ class ScriptExecutionContext;
 
 class DataTransferItem : public RefCounted<DataTransferItem> {
 public:
-    ~DataTransferItem() {}
+    virtual ~DataTransferItem() { }
 
     static PassRefPtr<DataTransferItem> create(PassRefPtr<Clipboard> owner, ScriptExecutionContext*, const String& data, const String& type);
 
