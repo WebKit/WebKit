@@ -352,9 +352,9 @@ public:
     bool pushContentsClip(PaintInfo&, int tx, int ty);
     void popContentsClip(PaintInfo&, PaintPhase originalPhase, int tx, int ty);
 
-    virtual void paintObject(PaintInfo&, int /*tx*/, int /*ty*/) { ASSERT_NOT_REACHED(); }
+    virtual void paintObject(PaintInfo&, const IntPoint&) { ASSERT_NOT_REACHED(); }
     virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
-    virtual void paintMask(PaintInfo&, IntSize);
+    virtual void paintMask(PaintInfo&, const IntPoint&);
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     // Called when a positioned object moves but doesn't necessarily change size.  A simplified layout is attempted

@@ -599,12 +599,12 @@ void RenderTextControl::updatePlaceholderVisibility(bool placeholderShouldBeVisi
         repaint();
 }
 
-void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, int tx, int ty)
+void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (style()->visibility() != VISIBLE)
         return;
     
-    IntRect clipRect(tx + borderLeft(), ty + borderTop(), width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
+    IntRect clipRect(paintOffset.x() + borderLeft(), paintOffset.y() + borderTop(), width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop());
     if (clipRect.isEmpty())
         return;
     
@@ -623,23 +623,23 @@ void RenderTextControl::paintPlaceholder(PaintInfo& paintInfo, int tx, int ty)
     RenderBox* textRenderer = innerTextElement() ? innerTextElement()->renderBox() : 0;
     if (textRenderer) {
         IntPoint textPoint;
-        textPoint.setY(ty + textBlockInsetTop() + placeholderStyle->fontMetrics().ascent());
+        textPoint.setY(paintOffset.y() + textBlockInsetTop() + placeholderStyle->fontMetrics().ascent());
         int styleTextIndent = placeholderStyle->textIndent().isFixed() ? placeholderStyle->textIndent().calcMinValue(0) : 0;
         if (placeholderStyle->isLeftToRightDirection())
-            textPoint.setX(tx + styleTextIndent + textBlockInsetLeft());
+            textPoint.setX(paintOffset.x() + styleTextIndent + textBlockInsetLeft());
         else
-            textPoint.setX(tx + width() - textBlockInsetRight() - styleTextIndent - style()->font().width(textRun));
+            textPoint.setX(paintOffset.x() + width() - textBlockInsetRight() - styleTextIndent - style()->font().width(textRun));
         
         paintInfo.context->drawBidiText(placeholderStyle->font(), textRun, textPoint);
     }
 }
 
-void RenderTextControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
+void RenderTextControl::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {    
     if (m_placeholderVisible && paintInfo.phase == PaintPhaseForeground)
-        paintPlaceholder(paintInfo, tx, ty);
+        paintPlaceholder(paintInfo, paintOffset);
     
-    RenderBlock::paintObject(paintInfo, tx, ty);
+    RenderBlock::paintObject(paintInfo, paintOffset);
 }
 
 } // namespace WebCore

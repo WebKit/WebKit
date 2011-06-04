@@ -2260,7 +2260,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
     }
 
     bool pushedClip = pushContentsClip(paintInfo, tx, ty);
-    paintObject(paintInfo, tx, ty);
+    paintObject(paintInfo, IntPoint(tx, ty));
     if (pushedClip)
         popContentsClip(paintInfo, phase, tx, ty);
 
@@ -2458,20 +2458,20 @@ void RenderBlock::paintCaret(PaintInfo& paintInfo, const IntPoint& paintOffset, 
     }
 }
 
-void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
+void RenderBlock::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     PaintPhase paintPhase = paintInfo.phase;
 
     // 1. paint background, borders etc
     if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && style()->visibility() == VISIBLE) {
         if (hasBoxDecorations())
-            paintBoxDecorations(paintInfo, IntPoint(tx, ty));
+            paintBoxDecorations(paintInfo, paintOffset);
         if (hasColumns())
-            paintColumnRules(paintInfo, tx, ty);
+            paintColumnRules(paintInfo, paintOffset.x(), paintOffset.y());
     }
 
     if (paintPhase == PaintPhaseMask && style()->visibility() == VISIBLE) {
-        paintMask(paintInfo, IntSize(tx, ty));
+        paintMask(paintInfo, paintOffset);
         return;
     }
 
@@ -2480,39 +2480,35 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
         return;
 
     // Adjust our painting position if we're inside a scrolled layer (e.g., an overflow:auto div).
-    int scrolledX = tx;
-    int scrolledY = ty;
-    if (hasOverflowClip()) {
-        IntSize offset = layer()->scrolledContentOffset();
-        scrolledX -= offset.width();
-        scrolledY -= offset.height();
-    }
+    IntPoint scrolledOffset = paintOffset;
+    if (hasOverflowClip())
+        scrolledOffset.move(-layer()->scrolledContentOffset());
 
     // 2. paint contents
     if (paintPhase != PaintPhaseSelfOutline) {
         if (hasColumns())
-            paintColumnContents(paintInfo, scrolledX, scrolledY);
+            paintColumnContents(paintInfo, scrolledOffset.x(), scrolledOffset.y());
         else
-            paintContents(paintInfo, scrolledX, scrolledY);
+            paintContents(paintInfo, scrolledOffset.x(), scrolledOffset.y());
     }
 
     // 3. paint selection
     // FIXME: Make this work with multi column layouts.  For now don't fill gaps.
     bool isPrinting = document()->printing();
     if (!isPrinting && !hasColumns())
-        paintSelection(paintInfo, scrolledX, scrolledY); // Fill in gaps in selection on lines and between blocks.
+        paintSelection(paintInfo, scrolledOffset.x(), scrolledOffset.y()); // Fill in gaps in selection on lines and between blocks.
 
     // 4. paint floats.
     if (paintPhase == PaintPhaseFloat || paintPhase == PaintPhaseSelection || paintPhase == PaintPhaseTextClip) {
         if (hasColumns())
-            paintColumnContents(paintInfo, scrolledX, scrolledY, true);
+            paintColumnContents(paintInfo, scrolledOffset.x(), scrolledOffset.y(), true);
         else
-            paintFloats(paintInfo, scrolledX, scrolledY, paintPhase == PaintPhaseSelection || paintPhase == PaintPhaseTextClip);
+            paintFloats(paintInfo, scrolledOffset.x(), scrolledOffset.y(), paintPhase == PaintPhaseSelection || paintPhase == PaintPhaseTextClip);
     }
 
     // 5. paint outline.
     if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) && hasOutline() && style()->visibility() == VISIBLE)
-        paintOutline(paintInfo.context, IntRect(tx, ty, width(), height()));
+        paintOutline(paintInfo.context, IntRect(paintOffset, size()));
 
     // 6. paint continuation outlines.
     if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseChildOutlines)) {
@@ -2532,18 +2528,18 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, int tx, int ty)
             if (!inlineEnclosedInSelfPaintingLayer)
                 cb->addContinuationWithOutline(inlineRenderer);
             else if (!inlineRenderer->firstLineBox())
-                inlineRenderer->paintOutline(paintInfo.context, tx - x() + inlineRenderer->containingBlock()->x(),
-                                             ty - y() + inlineRenderer->containingBlock()->y());
+                inlineRenderer->paintOutline(paintInfo.context, paintOffset.x() - x() + inlineRenderer->containingBlock()->x(),
+                                             paintOffset.y() - y() + inlineRenderer->containingBlock()->y());
         }
-        paintContinuationOutlines(paintInfo, tx, ty);
+        paintContinuationOutlines(paintInfo, paintOffset.x(), paintOffset.y());
     }
 
     // 7. paint caret.
     // If the caret's node's render object's containing block is this block, and the paint action is PaintPhaseForeground,
     // then paint the caret.
     if (paintPhase == PaintPhaseForeground) {        
-        paintCaret(paintInfo, IntPoint(scrolledX, scrolledY), CursorCaret);
-        paintCaret(paintInfo, IntPoint(scrolledX, scrolledY), DragCaret);
+        paintCaret(paintInfo, scrolledOffset, CursorCaret);
+        paintCaret(paintInfo, scrolledOffset, DragCaret);
     }
 }
 

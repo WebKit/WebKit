@@ -52,7 +52,7 @@ private:
 
     virtual void updateFromElement();
     virtual void computePreferredLogicalWidths();
-    virtual void paintObject(PaintInfo&, int tx, int ty);
+    virtual void paintObject(PaintInfo&, const IntPoint&);
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 

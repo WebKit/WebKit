@@ -876,12 +876,12 @@ void RenderBox::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& paintO
         paintInfo.context->endTransparencyLayer();
 }
 
-void RenderBox::paintMask(PaintInfo& paintInfo, IntSize paintOffset)
+void RenderBox::paintMask(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(this) || style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask || paintInfo.context->paintingDisabled())
         return;
 
-    IntRect paintRect = IntRect(toPoint(paintOffset), size());
+    IntRect paintRect = IntRect(paintOffset, size());
 
     // border-fit can adjust where we paint our border and background.  If set, we snugly fit our line box descendants.  (The iChat
     // balloon layout is an example of this).
@@ -1111,7 +1111,7 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, int tx, int ty)
         paintInfo.phase = PaintPhaseChildOutlines;
     else if (paintInfo.phase == PaintPhaseChildBlockBackground) {
         paintInfo.phase = PaintPhaseBlockBackground;
-        paintObject(paintInfo, tx, ty);
+        paintObject(paintInfo, IntPoint(tx, ty));
         paintInfo.phase = PaintPhaseChildBlockBackgrounds;
     }
     IntRect clipRect(isControlClip ? controlClipRect(IntPoint(tx, ty)) : overflowClipRect(tx, ty));
@@ -1129,7 +1129,7 @@ void RenderBox::popContentsClip(PaintInfo& paintInfo, PaintPhase originalPhase, 
     paintInfo.context->restore();
     if (originalPhase == PaintPhaseOutline) {
         paintInfo.phase = PaintPhaseSelfOutline;
-        paintObject(paintInfo, tx, ty);
+        paintObject(paintInfo, IntPoint(tx, ty));
         paintInfo.phase = originalPhase;
     } else if (originalPhase == PaintPhaseChildBlockBackground)
         paintInfo.phase = originalPhase;

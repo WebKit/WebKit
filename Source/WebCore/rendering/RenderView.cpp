@@ -168,7 +168,7 @@ void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)
 {
     // If we ever require layout but receive a paint anyway, something has gone horribly wrong.
     ASSERT(!needsLayout());
-    paintObject(paintInfo, tx, ty);
+    paintObject(paintInfo, IntPoint(tx, ty));
 }
 
 static inline bool isComposited(RenderObject* object)

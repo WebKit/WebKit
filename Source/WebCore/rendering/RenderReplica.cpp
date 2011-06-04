@@ -76,7 +76,7 @@ void RenderReplica::paint(PaintInfo& paintInfo, int tx, int ty)
                                       PaintBehaviorNormal, 0, 0,
                                       RenderLayer::PaintLayerHaveTransparency | RenderLayer::PaintLayerAppliedTransform | RenderLayer::PaintLayerTemporaryClipRects | RenderLayer::PaintLayerPaintingReflection);
     else if (paintInfo.phase == PaintPhaseMask)
-        paintMask(paintInfo, IntSize(tx, ty));
+        paintMask(paintInfo, IntPoint(tx, ty));
 }
 
 } // namespace WebCore

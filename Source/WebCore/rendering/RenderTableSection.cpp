@@ -904,7 +904,7 @@ void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
 
     PaintPhase phase = paintInfo.phase;
     bool pushedClip = pushContentsClip(paintInfo, tx, ty);
-    paintObject(paintInfo, tx, ty);
+    paintObject(paintInfo, IntPoint(tx, ty));
     if (pushedClip)
         popContentsClip(paintInfo, phase, tx, ty);
 }
@@ -948,7 +948,7 @@ void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, 
         cell->paint(paintInfo, cellPoint.x(), cellPoint.y());
 }
 
-void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
+void RenderTableSection::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     // Check which rows and cols are visible and only paint these.
     // FIXME: Could use a binary search here.
@@ -962,7 +962,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
     unsigned endrow = totalRows;
 
     IntRect localRepaintRect = paintInfo.rect;
-    localRepaintRect.move(-tx, -ty);
+    localRepaintRect.moveBy(-paintOffset);
     if (style()->isFlippedBlocksWritingMode()) {
         if (style()->isHorizontalWritingMode())
             localRepaintRect.setY(height() - localRepaintRect.maxY());
@@ -1018,7 +1018,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
                     RenderTableCell* cell = current.primaryCell();
                     if (!cell || (r > startrow && primaryCellAt(r - 1, c) == cell) || (c > startcol && primaryCellAt(r, c - 1) == cell))
                         continue;
-                    paintCell(cell, paintInfo, IntPoint(tx, ty));
+                    paintCell(cell, paintInfo, paintOffset);
                 }
             }
         } else {
@@ -1045,7 +1045,7 @@ void RenderTableSection::paintObject(PaintInfo& paintInfo, int tx, int ty)
             int size = cells.size();
             // Paint the cells.
             for (int i = 0; i < size; ++i)
-                paintCell(cells[i], paintInfo, IntPoint(tx, ty));
+                paintCell(cells[i], paintInfo, paintOffset);
         }
     }
 }

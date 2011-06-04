@@ -215,9 +215,9 @@ private:
     virtual void removeChild(RenderObject* oldChild);
 
     virtual void paint(PaintInfo&, int tx, int ty);
-    virtual void paintObject(PaintInfo&, int tx, int ty);
+    virtual void paintObject(PaintInfo&, const IntPoint&);
     virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
-    virtual void paintMask(PaintInfo&, IntSize);
+    virtual void paintMask(PaintInfo&, const IntPoint&);
     virtual void layout();
     virtual void computePreferredLogicalWidths();
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);

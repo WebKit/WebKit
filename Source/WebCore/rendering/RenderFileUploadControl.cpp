@@ -227,7 +227,7 @@ PassRefPtr<RenderStyle> RenderFileUploadControl::createButtonStyle(const RenderS
     return style.release();
 }
 
-void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
+void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (style()->visibility() != VISIBLE)
         return;
@@ -236,7 +236,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
     // Push a clip.
     GraphicsContextStateSaver stateSaver(*paintInfo.context, false);
     if (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseChildBlockBackgrounds) {
-        IntRect clipRect(tx + borderLeft(), ty + borderTop(),
+        IntRect clipRect(paintOffset.x() + borderLeft(), paintOffset.y() + borderTop(),
                          width() - borderLeft() - borderRight(), height() - borderBottom() - borderTop() + buttonShadowHeight);
         if (clipRect.isEmpty())
             return;
@@ -250,7 +250,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
         TextRun textRun = constructTextRun(this, font, displayedFilename, style(), TextRun::AllowTrailingExpansion, RespectDirection | RespectDirectionOverride);
 
         // Determine where the filename should be placed
-        int contentLeft = tx + borderLeft() + paddingLeft();
+        int contentLeft = paintOffset.x() + borderLeft() + paddingLeft();
         int buttonAndIconWidth = m_button->renderBox()->width() + afterButtonSpacing
             + (m_fileChooser->icon() ? iconWidth + iconFilenameSpacing : 0);
         int textX;
@@ -271,7 +271,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
         
         if (m_fileChooser->icon()) {
             // Determine where the icon should be placed
-            int iconY = ty + borderTop() + paddingTop() + (contentHeight() - iconHeight) / 2;
+            int iconY = paintOffset.y() + borderTop() + paddingTop() + (contentHeight() - iconHeight) / 2;
             int iconX;
             if (style()->isLeftToRightDirection())
                 iconX = contentLeft + m_button->renderBox()->width() + afterButtonSpacing;
@@ -284,7 +284,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, int tx, int ty)
     }
 
     // Paint the children.
-    RenderBlock::paintObject(paintInfo, tx, ty);
+    RenderBlock::paintObject(paintInfo, paintOffset);
 }
 
 void RenderFileUploadControl::computePreferredLogicalWidths()

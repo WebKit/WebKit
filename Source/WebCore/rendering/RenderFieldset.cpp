@@ -168,12 +168,12 @@ void RenderFieldset::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& p
     paintBorder(paintInfo.context, paintRect, style());
 }
 
-void RenderFieldset::paintMask(PaintInfo& paintInfo, IntSize paintOffset)
+void RenderFieldset::paintMask(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
-    IntRect paintRect = IntRect(toPoint(paintOffset), size());
+    IntRect paintRect = IntRect(paintOffset, size());
     RenderBox* legend = findLegend();
     if (!legend)
         return RenderBlock::paintMask(paintInfo, paintOffset);

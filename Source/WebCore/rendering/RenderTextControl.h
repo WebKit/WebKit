@@ -90,7 +90,7 @@ private:
     virtual void removeLeftoverAnonymousBlock(RenderBlock*) { }
     virtual bool canHaveChildren() const { return false; }
     virtual bool avoidsFloats() const { return true; }
-    virtual void paintObject(PaintInfo&, int tx, int ty);
+    virtual void paintObject(PaintInfo&, const IntPoint&);
     
     virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&);
 
@@ -108,7 +108,7 @@ private:
     virtual int textBlockInsetRight() const = 0;
     virtual int textBlockInsetTop() const = 0;
 
-    void paintPlaceholder(PaintInfo&, int tx, int ty);
+    void paintPlaceholder(PaintInfo&, const IntPoint&);
 
     bool m_lastChangeWasUserEdit;
 };

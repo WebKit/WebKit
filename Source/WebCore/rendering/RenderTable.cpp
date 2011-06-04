@@ -468,19 +468,19 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
     }
 
     bool pushedClip = pushContentsClip(paintInfo, tx, ty);    
-    paintObject(paintInfo, tx, ty);
+    paintObject(paintInfo, IntPoint(tx, ty));
     if (pushedClip)
         popContentsClip(paintInfo, paintPhase, tx, ty);
 }
 
-void RenderTable::paintObject(PaintInfo& paintInfo, int tx, int ty)
+void RenderTable::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     PaintPhase paintPhase = paintInfo.phase;
     if ((paintPhase == PaintPhaseBlockBackground || paintPhase == PaintPhaseChildBlockBackground) && hasBoxDecorations() && style()->visibility() == VISIBLE)
-        paintBoxDecorations(paintInfo, IntPoint(tx, ty));
+        paintBoxDecorations(paintInfo, paintOffset);
 
     if (paintPhase == PaintPhaseMask) {
-        paintMask(paintInfo, IntSize(tx, ty));
+        paintMask(paintInfo, paintOffset);
         return;
     }
 
@@ -498,7 +498,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child == m_caption)) {
-            IntPoint childPoint = flipForWritingMode(toRenderBox(child), IntPoint(tx, ty), ParentToChildFlippingAdjustment);
+            IntPoint childPoint = flipForWritingMode(toRenderBox(child), paintOffset, ParentToChildFlippingAdjustment);
             child->paint(info, childPoint.x(), childPoint.y());
         }
     }
@@ -520,7 +520,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, int tx, int ty)
             m_currentBorder = &borderStyles[i];
             for (RenderObject* child = firstChild(); child; child = child->nextSibling())
                 if (child->isTableSection()) {
-                    IntPoint childPoint = flipForWritingMode(toRenderTableSection(child), IntPoint(tx, ty), ParentToChildFlippingAdjustment);
+                    IntPoint childPoint = flipForWritingMode(toRenderTableSection(child), paintOffset, ParentToChildFlippingAdjustment);
                     child->paint(info, childPoint.x(), childPoint.y());
                 }
         }
@@ -529,7 +529,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, int tx, int ty)
 
     // Paint outline.
     if ((paintPhase == PaintPhaseOutline || paintPhase == PaintPhaseSelfOutline) && hasOutline() && style()->visibility() == VISIBLE)
-        paintOutline(paintInfo.context, IntRect(IntPoint(tx, ty), size()));
+        paintOutline(paintInfo.context, IntRect(paintOffset, size()));
 }
 
 void RenderTable::subtractCaptionRect(IntRect& rect) const
@@ -573,12 +573,12 @@ void RenderTable::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& pain
         paintBorder(paintInfo.context, rect, style());
 }
 
-void RenderTable::paintMask(PaintInfo& paintInfo, IntSize paintOffset)
+void RenderTable::paintMask(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
 
-    IntRect rect(toPoint(paintOffset), size());
+    IntRect rect(paintOffset, size());
     subtractCaptionRect(rect);
 
     paintMaskImages(paintInfo, rect);

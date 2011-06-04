@@ -256,7 +256,7 @@ IntRect RenderListBox::itemBoundingBoxRect(const IntPoint& additionalOffset, int
                    contentWidth(), itemHeight());
 }
     
-void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
+void RenderListBox::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (style()->visibility() != VISIBLE)
         return;
@@ -266,30 +266,30 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, int tx, int ty)
     if (paintInfo.phase == PaintPhaseForeground) {
         int index = m_indexOffset;
         while (index < listItemsSize && index <= m_indexOffset + numVisibleItems()) {
-            paintItemForeground(paintInfo, IntPoint(tx, ty), index);
+            paintItemForeground(paintInfo, paintOffset, index);
             index++;
         }
     }
 
     // Paint the children.
-    RenderBlock::paintObject(paintInfo, tx, ty);
+    RenderBlock::paintObject(paintInfo, paintOffset);
 
     switch (paintInfo.phase) {
     // Depending on whether we have overlay scrollbars they
     // get rendered in the foreground or background phases
     case PaintPhaseForeground:
         if (m_vBar->isOverlayScrollbar())
-            paintScrollbar(paintInfo, tx, ty);
+            paintScrollbar(paintInfo, paintOffset.x(), paintOffset.y());
         break;
     case PaintPhaseBlockBackground:
         if (!m_vBar->isOverlayScrollbar())
-            paintScrollbar(paintInfo, tx, ty);
+            paintScrollbar(paintInfo, paintOffset.x(), paintOffset.y());
         break;
     case PaintPhaseChildBlockBackground:
     case PaintPhaseChildBlockBackgrounds: {
         int index = m_indexOffset;
         while (index < listItemsSize && index <= m_indexOffset + numVisibleItems()) {
-            paintItemBackground(paintInfo, IntPoint(tx, ty), index);
+            paintItemBackground(paintInfo, paintOffset, index);
             index++;
         }
         break;
