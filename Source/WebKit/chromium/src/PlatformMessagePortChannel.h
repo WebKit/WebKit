@@ -65,7 +65,7 @@ public:
     // Releases ownership of the contained web channel.
     WebKit::WebMessagePortChannel* webChannelRelease();
 
-    ~PlatformMessagePortChannel();
+    virtual ~PlatformMessagePortChannel();
 
 private:
     PlatformMessagePortChannel();
