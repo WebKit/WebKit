@@ -1,5 +1,28 @@
 2011-06-03  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Gavin Barraclough.
+
+        GCC not inlining some functions that it really should be
+        https://bugs.webkit.org/show_bug.cgi?id=62075
+
+        Add ALWAYS_INLINE to a number of parsing and lexing functions
+        that should always be inlined.  This gets us ~1.4% on my ad hoc
+        parser test.
+
+        * KeywordLookupGenerator.py:
+        * parser/JSParser.cpp:
+        (JSC::JSParser::next):
+        (JSC::JSParser::nextTokenIsColon):
+        (JSC::JSParser::consume):
+        (JSC::JSParser::match):
+        (JSC::JSParser::tokenStart):
+        (JSC::JSParser::tokenLine):
+        (JSC::JSParser::tokenEnd):
+        * parser/Lexer.cpp:
+        (JSC::isIdentPart):
+
+2011-06-03  Oliver Hunt  <oliver@apple.com>
+
         Whoops, fix last minute bug.
 
         * parser/Lexer.cpp:

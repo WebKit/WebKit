@@ -357,7 +357,7 @@ static NEVER_INLINE bool isNonASCIIIdentPart(int c)
         | Mark_NonSpacing | Mark_SpacingCombining | Number_DecimalDigit | Punctuation_Connector);
 }
 
-static inline bool isIdentPart(int c)
+static ALWAYS_INLINE bool isIdentPart(int c)
 {
     // Character types are divided into two groups depending on whether they can be part of an
     // identifier or not. Those whose type value is less or equal than CharacterNumber can be

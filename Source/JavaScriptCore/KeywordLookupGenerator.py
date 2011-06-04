@@ -163,7 +163,7 @@ class Trie:
 
     def printAsC(self):
         print("namespace JSC {")
-        print("static inline bool isIdentPart(int c);")
+        print("static ALWAYS_INLINE bool isIdentPart(int c);")
         # max length + 1 so we don't need to do any bounds checking at all
         print("static const int maxTokenLength = %d;" % (self.maxLength() + 1))
         print("ALWAYS_INLINE JSTokenType Lexer::parseKeyword() {")

@@ -99,7 +99,7 @@ private:
         bool m_isLoop;
     };
     
-    void next(unsigned lexType = 0)
+    ALWAYS_INLINE void next(unsigned lexType = 0)
     {
         m_lastLine = m_token.m_info.line;
         m_lastTokenEnd = m_token.m_info.endOffset;
@@ -107,12 +107,12 @@ private:
         m_token.m_type = m_lexer->lex(&m_token.m_data, &m_token.m_info, lexType, strictMode());
     }
     
-    bool nextTokenIsColon()
+    ALWAYS_INLINE bool nextTokenIsColon()
     {
         return m_lexer->nextTokenIsColon();
     }
 
-    bool consume(JSTokenType expected, unsigned flags = 0)
+    ALWAYS_INLINE bool consume(JSTokenType expected, unsigned flags = 0)
     {
         bool result = m_token.m_type == expected;
         failIfFalse(result);
@@ -120,22 +120,22 @@ private:
         return result;
     }
 
-    bool match(JSTokenType expected)
+    ALWAYS_INLINE bool match(JSTokenType expected)
     {
         return m_token.m_type == expected;
     }
 
-    int tokenStart()
+    ALWAYS_INLINE int tokenStart()
     {
         return m_token.m_info.startOffset;
     }
 
-    int tokenLine()
+    ALWAYS_INLINE int tokenLine()
     {
         return m_token.m_info.line;
     }
 
-    int tokenEnd()
+    ALWAYS_INLINE int tokenEnd()
     {
         return m_token.m_info.endOffset;
     }
