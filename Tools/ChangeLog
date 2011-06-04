@@ -1,3 +1,9 @@
+2011-06-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Fix the GTK+ build.
+
+        * GNUmakefile.am: Add some missing newline escape.
+
 2011-06-03  Martin Robinson  <mrobinson@igalia.com>
 
         Try to fix the GTK+ bulid.
