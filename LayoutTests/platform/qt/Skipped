@@ -199,6 +199,17 @@ http/tests/local/blob/send-hybrid-blob.html
 http/tests/local/blob/send-sliced-data-blob.html
 http/tests/local/formdata
 
+fast/files/apply-blob-url-to-img.html
+fast/files/apply-blob-url-to-xhr.html
+fast/files/file-reader-abort.html
+fast/files/read-blob-async.html
+fast/files/read-file-async.html
+fast/files/workers/worker-apply-blob-url-to-xhr.html
+fast/files/workers/worker-read-blob-async.html
+fast/files/workers/worker-read-blob-sync.html
+fast/files/workers/worker-read-file-async.html
+fast/files/workers/worker-read-file-sync.html
+
 editing/pasteboard/drag-image-in-about-blank-frame.html
 editing/pasteboard/files-during-page-drags.html
 editing/pasteboard/drag-drop-list.html
@@ -310,16 +321,6 @@ http/tests/security/dataURL/xss-DENIED-to-data-url-sub-frame-uppercase.html
 
 # Disabled HTTP subdirs for now, needs investigation.
 http/tests/media
-
-# drag n drop support again
-http/tests/local/drag-over-remote-content.html
-http/tests/local/fileapi
-http/tests/security/drag-drop-same-unique-origin.html
-
-# CONSOLE MESSAGE: line 72: TypeError: Result of expression 'eventSender.beginDragWithFiles' [undefined] is not a function.
-http/tests/local/blob/send-hybrid-blob.html
-http/tests/local/blob/send-sliced-data-blob.html
-http/tests/local/formdata
 
 # --- Failing navigation tests
 #CONSOLE MESSAGE: line 1: ReferenceError: Can't find variable: fillTestForm
@@ -680,10 +681,6 @@ fast/repaint/text-emphasis-v.html
 http/tests/security/isolatedWorld/didClearWindowObject.html
 # This needs more investigation
 http/tests/security/isolatedWorld/world-reuse.html
-
-# File API is not supported yet
-fast/files
-http/tests/fileapi
 
 # Missing layoutTestController.dumpWillCacheResponse
 http/tests/misc/willCacheResponse-delegate-callback.html

@@ -1,3 +1,15 @@
+2011-06-04  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Enable passing File API tests
+        https://bugs.webkit.org/show_bug.cgi?id=62020
+
+        File API has been enabled for QtWebKit in r74115,
+        let's also enable the passing related tests.
+
+        * platform/qt/Skipped:
+
 2011-06-04  Alexey Proskuryakov  <ap@apple.com>
 
         Reviewed by Darin Adler.
