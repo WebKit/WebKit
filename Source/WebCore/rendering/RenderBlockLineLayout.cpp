@@ -1148,11 +1148,10 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
 
     if (firstChild()) {
         // layout replaced elements
-        bool endOfInline = false;
-        RenderObject* o = bidiFirstNotSkippingInlines(this);
         Vector<FloatWithRect> floats;
         bool hasInlineChild = false;
-        while (o) {
+        for (InlineWalker walker(this); !walker.atEnd(); walker.advance()) {
+            RenderObject* o = walker.current();
             if (!hasInlineChild && o->isInline())
                 hasInlineChild = true;
 
@@ -1175,14 +1174,13 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                     toRenderBox(o)->dirtyLineBoxes(layoutState.isFullLayout());
                     o->layoutIfNeeded();
                 }
-            } else if (o->isText() || (o->isRenderInline() && !endOfInline)) {
+            } else if (o->isText() || (o->isRenderInline() && !walker.atEndOfInline())) {
                 if (!o->isText())
                     toRenderInline(o)->updateAlwaysCreateLineBoxes();
                 if (layoutState.isFullLayout() || o->selfNeedsLayout())
                     dirtyLineBoxesForRenderer(o, layoutState.isFullLayout());
                 o->setNeedsLayout(false);
             }
-            o = bidiNext(this, o, 0, false, &endOfInline);
         }
 
         layoutRunsAndFloats(layoutState, hasInlineChild, floats);

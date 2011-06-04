@@ -246,6 +246,38 @@ inline void InlineIterator::fastIncrementInTextNode()
     m_pos++;
 }
 
+class InlineWalker {
+public:
+    InlineWalker(RenderObject* root)
+        : m_root(root)
+        , m_current(0)
+        , m_atEndOfInline(false)
+    {
+        // FIXME: This class should be taught how to do the skipInlines codepath as well.
+        m_current = bidiFirstNotSkippingInlines(m_root);
+    }
+
+    RenderObject* root() { return m_root; }
+    RenderObject* current() { return m_current; }
+
+    bool atEndOfInline() { return m_atEndOfInline; }
+    bool atEnd() const { return !m_current; }
+
+    RenderObject* advance()
+    {
+        // FIXME: Eventually skipInlines and observer will be a members.
+        bool skipInlines = false;
+        InlineBidiResolver* observer = 0;
+        m_current = bidiNext(m_root, m_current, observer, skipInlines, &m_atEndOfInline);
+        return m_current;
+    }
+private:
+    RenderObject* m_root;
+    RenderObject* m_current;
+    bool m_skipInlines;
+    bool m_atEndOfInline;
+};
+
 inline void InlineIterator::increment(InlineBidiResolver* resolver)
 {
     if (!m_obj)

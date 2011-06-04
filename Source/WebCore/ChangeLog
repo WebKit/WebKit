@@ -1,3 +1,28 @@
+2011-06-04  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Add InlineWalker class to hold state for repeated calls to bidiNext
+        https://bugs.webkit.org/show_bug.cgi?id=60724
+
+        This is one more little step towards removing (naked) bidiNext usage.
+        More refactoring is required before all callers of bidiNext can move
+        onto using an InlineWalker instead of bidiNext directly.
+
+        No change in behavior, thus no tests.
+
+        * rendering/InlineIterator.h:
+        (WebCore::InlineWalker::InlineWalker):
+        (WebCore::InlineWalker::root):
+        (WebCore::InlineWalker::current):
+        (WebCore::InlineWalker::atEndOfInline):
+        (WebCore::InlineWalker::atEnd):
+        (WebCore::InlineWalker::advance):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::simplifiedNormalFlowLayout):
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren):
+
 2011-06-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

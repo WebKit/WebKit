@@ -2093,18 +2093,16 @@ void RenderBlock::simplifiedNormalFlowLayout()
 {
     if (childrenInline()) {
         ListHashSet<RootInlineBox*> lineBoxes;
-        bool endOfInline = false;
-        RenderObject* o = bidiFirstNotSkippingInlines(this);
-        while (o) {
+        for (InlineWalker walker(this); !walker.atEnd(); walker.advance()) {
+            RenderObject* o = walker.current();
             if (!o->isPositioned() && (o->isReplaced() || o->isFloating())) {
                 o->layoutIfNeeded();
                 if (toRenderBox(o)->inlineBoxWrapper()) {
                     RootInlineBox* box = toRenderBox(o)->inlineBoxWrapper()->root();
                     lineBoxes.add(box);
                 }
-            } else if (o->isText() || (o->isRenderInline() && !endOfInline))
+            } else if (o->isText() || (o->isRenderInline() && !walker.atEndOfInline()))
                 o->setNeedsLayout(false);
-            o = bidiNext(this, o, 0, false, &endOfInline);
         }
 
         // FIXME: Glyph overflow will get lost in this case, but not really a big deal.
