@@ -1,3 +1,11 @@
+2011-06-03  Dan Bernstein  <mitz@apple.com>
+
+        Try to fix the Apple LLVM Compiler build after r88087.
+
+        * rendering/RenderTableCell.cpp:
+        (WebCore::RenderTableCell::paintMask):
+        * rendering/RenderTableCell.h:
+
 2011-06-03  Chris Rogers  <crogers@google.com>
 
         Unreviewed build fix.

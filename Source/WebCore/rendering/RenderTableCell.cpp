@@ -1020,7 +1020,7 @@ void RenderTableCell::paintBoxDecorations(PaintInfo& paintInfo, const IntPoint& 
     paintBorder(paintInfo.context, paintRect, style());
 }
 
-void RenderTableCell::paintMask(PaintInfo& paintInfo, IntSize paintOffset)
+void RenderTableCell::paintMask(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (style()->visibility() != VISIBLE || paintInfo.phase != PaintPhaseMask)
         return;
@@ -1029,7 +1029,7 @@ void RenderTableCell::paintMask(PaintInfo& paintInfo, IntSize paintOffset)
     if (!tableElt->collapseBorders() && style()->emptyCells() == HIDE && !firstChild())
         return;
    
-    paintMaskImages(paintInfo, IntRect(toPoint(paintOffset), size()));
+    paintMaskImages(paintInfo, IntRect(paintOffset, size()));
 }
 
 void RenderTableCell::scrollbarsChanged(bool horizontalScrollbarChanged, bool verticalScrollbarChanged)
