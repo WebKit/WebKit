@@ -1,3 +1,21 @@
+2011-06-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Input value sanitization for text fields is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=62061
+        <rdar://problem/9553273>
+
+        Newline characters should be removed according to HTML5, not replaced with spaces.
+        This also matches Safari 5 behavior.
+
+        * html/TextFieldInputType.cpp:
+        (WebCore::isASCIILineBreak): A functor for removeCharacters().
+        (WebCore::limitLength): Do one thing at once.
+        (WebCore::TextFieldInputType::sanitizeValue): Sanitization removes newlines.
+        (WebCore::TextFieldInputType::handleBeforeTextInsertedEvent): Moved (somewhat surprising)
+        code that replaces newlines with spaces here.
+
 2011-06-04  Jeffrey Pfau  <jpfau@apple.com>
 
         Reviewed by Beth Dakin.

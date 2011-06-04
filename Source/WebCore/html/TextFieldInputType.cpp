@@ -208,13 +208,13 @@ bool TextFieldInputType::shouldUseInputMethod() const
     return true;
 }
 
-static String replaceEOLAndLimitLength(const String& proposedValue, int maxLength)
+static bool isASCIILineBreak(UChar c)
 {
-    String string = proposedValue;
-    string.replace("\r\n", " ");
-    string.replace('\r', ' ');
-    string.replace('\n', ' ');
+    return c == '\r' || c == '\n';
+}
 
+static String limitLength(const String& string, int maxLength)
+{
     unsigned newLength = numCharactersInGraphemeClusters(string, maxLength);
     for (unsigned i = 0; i < newLength; ++i) {
         const UChar current = string[i];
@@ -235,7 +235,7 @@ String TextFieldInputType::sanitizeValue(const String& proposedValue)
         return String();
     }
 #endif
-    return replaceEOLAndLimitLength(proposedValue, HTMLInputElement::maximumLength);
+    return limitLength(proposedValue.removeCharacters(isASCIILineBreak), HTMLInputElement::maximumLength);
 }
 
 void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* event)
@@ -273,7 +273,13 @@ void TextFieldInputType::handleBeforeTextInsertedEvent(BeforeTextInsertedEvent* 
         return;
     }
 #endif
-    event->setText(replaceEOLAndLimitLength(event->text(), appendableLength));
+
+    String eventText = event->text();
+    eventText.replace("\r\n", " ");
+    eventText.replace('\r', ' ');
+    eventText.replace('\n', ' ');
+
+    event->setText(limitLength(eventText, appendableLength));
 }
 
 bool TextFieldInputType::shouldRespectListAttribute()

@@ -1,3 +1,16 @@
+2011-06-04  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Input value sanitization for text fields is incorrect
+        https://bugs.webkit.org/show_bug.cgi?id=62061
+        <rdar://problem/9553273>
+
+        * fast/forms/input-value-sanitization-expected.txt:
+        * fast/forms/input-value-sanitization.html:
+        * fast/forms/paste-multiline-text-input.html:
+        * fast/forms/script-tests/input-value-sanitization.js: Removed.
+
 2011-06-04  Jeffrey Pfau  <jpfau@apple.com>
 
         Reviewed by Beth Dakin.
