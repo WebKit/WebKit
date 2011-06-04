@@ -1,3 +1,8 @@
+2011-06-04  Adam Barth  <abarth@webkit.org>
+
+        * glu: Added property svn:ignore.
+            - For glu.xcodeproj, which is generated from glu.gyp.
+
 2011-05-24  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by Kenneth Russell.
