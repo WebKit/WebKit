@@ -56,6 +56,8 @@ public:
     {
     }
 
+    virtual ~VoidCallbackClient() { }
+
     virtual void permissionRequestComplete()
     {
         if (m_callback)
