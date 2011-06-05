@@ -66,18 +66,19 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/assembler/AssemblerBufferWithConstantPool.h \
 	Source/JavaScriptCore/assembler/CodeLocation.h \
 	Source/JavaScriptCore/assembler/LinkBuffer.h \
+	Source/JavaScriptCore/assembler/MacroAssembler.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerARM.cpp \
 	Source/JavaScriptCore/assembler/MacroAssemblerARM.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerARMv7.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerCodeRef.h \
-	Source/JavaScriptCore/assembler/MacroAssembler.h \
-	Source/JavaScriptCore/assembler/MacroAssemblerX86_64.h \
-	Source/JavaScriptCore/assembler/MacroAssemblerX86Common.h \
-	Source/JavaScriptCore/assembler/MacroAssemblerX86.h \
-	Source/JavaScriptCore/assembler/MacroAssemblerSH4.h \
+	Source/JavaScriptCore/assembler/MacroAssemblerMIPS.h \
 	Source/JavaScriptCore/assembler/MacroAssemblerSH4.cpp \
-	Source/JavaScriptCore/assembler/SH4Assembler.h \
+	Source/JavaScriptCore/assembler/MacroAssemblerSH4.h \
+	Source/JavaScriptCore/assembler/MacroAssemblerX86.h \
+	Source/JavaScriptCore/assembler/MacroAssemblerX86Common.h \
+	Source/JavaScriptCore/assembler/MacroAssemblerX86_64.h \
 	Source/JavaScriptCore/assembler/RepatchBuffer.h \
+	Source/JavaScriptCore/assembler/SH4Assembler.h \
 	Source/JavaScriptCore/assembler/X86Assembler.h \
 	Source/JavaScriptCore/bytecode/CodeBlock.cpp \
 	Source/JavaScriptCore/bytecode/CodeBlock.h \

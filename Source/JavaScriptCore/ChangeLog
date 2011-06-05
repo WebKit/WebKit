@@ -1,3 +1,14 @@
+2011-06-04  Gustavo Noronha Silva  <gns@gnome.org>
+
+        Unreviewed, MIPS build fix.
+
+        WebKitGTK+ tarball fails to build on MIPS.
+        https://buildd.debian.org/status/fetch.php?pkg=webkitgtk%2B&arch=mips&ver=1.4.0-1&stamp=1304786691
+
+        * GNUmakefile.list.am: Add missing MIPS-related file to the list
+        of files that are added to the tarball on make dist, and fix
+        sorting.
+
 2011-06-04  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.
