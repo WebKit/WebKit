@@ -1,1 +1,14 @@
+2011-06-05  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        fast/viewport/viewport-45.html fails in GTK+/Qt
+        https://bugs.webkit.org/show_bug.cgi?id=47481
+
+        computeViewportAttributes does many math operations with float point arithmetic
+        and in some cases there is loss of precision making tests have incorrect values.
+
+        * dom/ViewportArguments.cpp:
+        (WebCore::computeViewportAttributes):
+
 == Rolled over to ChangeLog-2011-06-04 ==

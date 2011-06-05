@@ -164,8 +164,8 @@ ViewportAttributes computeViewportAttributes(ViewportArguments args, int desktop
     // Extend width and height to fill the visual viewport for the resolved initial-scale.
     width = max(width, availableWidth / result.initialScale);
     height = max(height, availableHeight / result.initialScale);
-    result.layoutSize.setWidth(width);
-    result.layoutSize.setHeight(height);
+    result.layoutSize.setWidth(static_cast<int>(roundf(width)));
+    result.layoutSize.setHeight(static_cast<int>(roundf(height)));
 
     // Update minimum scale factor, to never allow zooming out more than viewport
     result.minimumScale = max(result.minimumScale, max(availableWidth / width, availableHeight / height));
