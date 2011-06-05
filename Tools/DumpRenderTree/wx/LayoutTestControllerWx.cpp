@@ -450,11 +450,6 @@ void LayoutTestController::removeAllVisitedLinks()
     // FIXME: Implement this.
 }
 
-void LayoutTestController::setJavaScriptProfilingEnabled(bool enabled)
-{
-
-}
-
 void LayoutTestController::setTimelineProfilingEnabled(bool enabled)
 {
 
@@ -661,4 +656,9 @@ JSValueRef LayoutTestController::ensureShadowRoot(JSContextRef context, JSValueR
 void LayoutTestController::removeShadowRoot(JSContextRef context, JSValueRef jsElement)
 {
     // FIXME: Implement this.
+}
+
+void LayoutTestController::setTextDirection(JSStringRef direction)
+{
+    // FIXME: Implement.
 }

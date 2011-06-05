@@ -153,6 +153,7 @@ webcore_dirs_common = [
     'Source/WebCore/svg/graphics',
     'Source/WebCore/svg/graphics/filters',
     'Source/WebCore/svg/properties',
+    'Source/WebCore/testing',
     'Source/WebCore/websockets',
     'Source/WebCore/xml',
 ]
