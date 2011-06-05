@@ -1,4 +1,29 @@
 =================
+WebKitGTK+ 1.4.1
+=================
+
+This is a maintenance release which includes several noteworthy fixes:
+
+    - Allow building with newer versions of GCC
+    - Fix rendering problems on pages that have 0-pixel sized fonts
+    - Plug a memory leak in the networking layer
+
+Bug fixes since 1.4.0:
+
+Bug 61693 - [GTK] fast/css/font-face-zero-hash-key.html is crashing on the bots
+Bug 60917 - [GTK][Cairo] Twitter rendering breaks
+Bug 59697 - [Soup] does not load css stylesheets without content-type
+No bug    - Fix logic in GCC version detection, it was reversed.
+Bug 61480 - drag-not-loaded-image.html test crashes when WebKit is built with debug option
+Bug 60155 - REGRESSION (r65868): createContextualFragment does not work with <style>
+Bug 85984 - [Soup] ResourceHandles are leaked on 304 responses
+Bug 57644 - [GTK] Flash in divs with overflow: auto is not positioned and clipped properly
+No bug    - Fix build with GCC 4.6.
+Bug 59585 - Webkit-gtk build failure, no type/member 'Page' in namespace 'WebCore'
+Bug 59718 - [GTK] Remove C++0x compat mode warnings for GCC >= 4.6.0
+Bug 59799 - [Gtk+] Crash when navigating back
+
+=================
 WebKitGTK+ 1.4.0
 =================
 

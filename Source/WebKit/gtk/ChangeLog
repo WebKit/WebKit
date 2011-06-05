@@ -1,3 +1,11 @@
+2011-06-04  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez
+
+        Update the news file for the 1.4.1 release.
+
+        * NEWS: Update news.
+
 2011-05-09  ojab  <ojab@ojab.ru>
 
         Reviewed by Martin Robinson.
