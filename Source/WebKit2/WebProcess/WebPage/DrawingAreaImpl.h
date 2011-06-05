@@ -51,6 +51,9 @@ private:
     virtual void setLayerTreeStateIsFrozen(bool);
     virtual void forceRepaint();
 
+    virtual void enableDisplayThrottling();
+    virtual void disableDisplayThrottling();
+
     virtual void didInstallPageOverlay();
     virtual void didUninstallPageOverlay();
     virtual void setPageOverlayNeedsDisplay(const WebCore::IntRect&);
@@ -114,6 +117,9 @@ private:
     // won't paint until painting has resumed again.
     bool m_isPaintingSuspended;
     bool m_alwaysUseCompositing;
+
+    // Whether we should throttle displays to a set update rate on the WebProcess side.
+    bool m_shouldThrottleDisplay;
 
     double m_lastDisplayTime;
 

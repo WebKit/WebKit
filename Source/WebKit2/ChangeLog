@@ -1,3 +1,32 @@
+2011-06-04  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Disable WebProcess side display throttling when in a user scroll
+        <rdar://problem/9517175>
+        https://bugs.webkit.org/show_bug.cgi?id=62095
+
+        Add the ability to disable WebProcess side display throttling that
+        takes place in DrawingAreaImpl::displayTimerFired. Disable the throttling
+        when in a user or animated scroll.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        (WebKit::WebChromeClient::didStartRubberBandForFrame):
+        (WebKit::WebChromeClient::didCompleteRubberBandForFrame):
+        (WebKit::WebChromeClient::didStartAnimatedScroll):
+        (WebKit::WebChromeClient::didCompleteAnimatedScroll):
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::enableDisplayThrottling):
+        (WebKit::DrawingArea::disableDisplayThrottling):
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::DrawingAreaImpl):
+        (WebKit::DrawingAreaImpl::enableDisplayThrottling):
+        (WebKit::DrawingAreaImpl::disableDisplayThrottling):
+        (WebKit::DrawingAreaImpl::displayTimerFired):
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::wheelEvent):
+
 2011-06-04  Darin Adler  <darin@apple.com>
 
         Reviewed by Anders Carlsson.
