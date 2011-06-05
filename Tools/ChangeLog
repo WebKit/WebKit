@@ -1,5 +1,13 @@
 2011-06-04  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Unreviewed build fix. Restore the PPC build and allow users to specify architectures
+        to build on Mac.
+
+        * waf/build/settings.py:
+        * wx/install-unix-extras:
+
+2011-06-04  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Unreviewed build fixes for recent trunk changes.
 
         * DumpRenderTree/wx/LayoutTestControllerWx.cpp:

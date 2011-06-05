@@ -48,6 +48,10 @@ fi
 mkdir -p $DL_DIR
 mkdir -p $DEPS_PREFIX
 
+mkdir -p $DEPS_PREFIX/bin
+mkdir -p $DEPS_PREFIX/lib
+mkdir -p $DEPS_PREFIX/include
+ 
 ICU_VERSION="3.4.1"
 ICU_TARBALL="icu-$ICU_VERSION.tgz"
 ICU_URL="ftp://ftp.software.ibm.com/software/globalization/icu/$ICU_VERSION/$ICU_TARBALL"
@@ -116,28 +120,6 @@ if [ `which icu-config >/dev/null 2>&1` ]; then
   fi
   cd $DL_DIR
   rm -rf icu
-fi
-
-# TODO: What would be a good way to test for this?
-if [ ! -f $DEPS_PREFIX/lib/libiconv.$DLLEXT ]; then
-  $DL_CMD -o $DL_DIR/$ICONV_TARBALL $ICONV_URL
-
-  tar xzvf $DL_DIR/$ICONV_TARBALL
-  cd $DL_DIR/libiconv-$ICONV_VERSION
-
-  if [ "${OSTYPE:0:6}" == "darwin" ]; then  
-    ./configure --prefix=$DEPS_PREFIX --disable-dependency-tracking
-    make CFLAGS="-O -g -isysroot $SDK $ARCH_FLAGS" \
-    LDFLAGS="$ARCH_FLAGS"
-    make install
-  else
-    ./configure --prefix=$DEPS_PREFIX
-  
-    make
-    make install
-  fi
-  cd $DL_DIR
-  rm -rf $DL_DIR/libiconv-$ICONV_VERSION
 fi
 
 if [ ! -f $DEPS_PREFIX/lib/libjpeg.a ]; then

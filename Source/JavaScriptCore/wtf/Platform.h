@@ -710,7 +710,10 @@
 #endif
 
 #if PLATFORM(WX)
+#if !CPU(PPC)
 #define ENABLE_ASSEMBLER 1
+#define ENABLE_JIT 1
+#endif
 #define ENABLE_GLOBAL_FASTMALLOC_NEW 0
 #if OS(DARWIN)
 #define WTF_USE_CF 1

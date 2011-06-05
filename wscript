@@ -187,7 +187,6 @@ def build(bld):
                    'Source/WebCore/platform/graphics/mac/SimpleFontDataATSUI.mm',
                    'Source/WebCore/platform/graphics/mac/SimpleFontDataCoreText.cpp',
                    'Source/WebCore/platform/graphics/wx/FontPlatformDataWxMac.mm',
-                   'Source/WebCore/platform/text/mac/ShapeArabic.c',
                    'Source/WebCore/platform/wx/wxcode/mac/carbon/fontprops.mm',
                    'Source/WebCore/plugins/mac/PluginPackageMac.cpp',
                    'Source/WebCore/plugins/mac/PluginViewMac.mm'

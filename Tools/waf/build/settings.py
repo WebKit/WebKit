@@ -221,6 +221,8 @@ def common_set_options(opt):
                    help='Specify a different compiler prefix (do this if you used COMPILER_PREFIX when building wx itself)')
     opt.add_option('--macosx-version', action='store', default='', help="Version of OS X to build for.")
     opt.add_option('--msvc-version', action='store', default='', help="MSVC version to use to build. Use 8 for 2005, 9 for 2008")
+    opt.add_option('--mac_universal_binary', action='store_true', default=False, help='Build Mac as universal (i386, x86_64, ppc) binary.')
+    opt.add_option('--mac_archs', action='store', default='', help='Comma separated list of architectures (i386, x86_64, ppc) to build on Mac.')
 
 
 def common_configure(conf):
@@ -235,15 +237,13 @@ def common_configure(conf):
     feature_defines = ['ENABLE_DATABASE', 'ENABLE_XSLT', 'ENABLE_JAVASCRIPT_DEBUGGER',
                     'ENABLE_SVG', 'ENABLE_SVG_USE', 'ENABLE_FILTERS', 'ENABLE_SVG_FONTS',
                     'ENABLE_SVG_ANIMATION', 'ENABLE_SVG_AS_IMAGE', 'ENABLE_SVG_FOREIGN_OBJECT',
-                    'ENABLE_JIT', 'ENABLE_DOM_STORAGE', 'BUILDING_%s' % build_port.upper()]
+                    'ENABLE_DOM_STORAGE', 'BUILDING_%s' % build_port.upper()]
 
     conf.env["FEATURE_DEFINES"] = ' '.join(feature_defines)
 
     if Options.options.msvc_version and Options.options.msvc_version != '':
-        print "msvc version = %s" % Options.options.msvc_version
         conf.env['MSVC_VERSIONS'] = ['msvc %s.0' % Options.options.msvc_version]
     else:
-        print "msvc not set!"
         conf.env['MSVC_VERSIONS'] = ['msvc 9.0', 'msvc 8.0']
 
     if sys.platform.startswith('cygwin'):
@@ -345,13 +345,27 @@ def common_configure(conf):
             conf.env.append_value('LIB_WKINTERFACE', ['WebKitSystemInterfaceLeopard'])
 
         # match WebKit Mac's default here unless we're building on platforms that won't support 64-bit.
-        global arch
-        is_cocoa = "__WXOSX_COCOA__" in conf.env["CXXDEFINES_WX"]
-        if min_version == "10.4" or not is_cocoa:
-            arch = "i386"
+        archs = []
+        
+        if Options.options.mac_archs != '':
+            arch_list = Options.options.mac_archs.replace("'", '').replace('"', '').split(",")
+            for arch in arch_list:
+                if arch.strip() != '':
+                    archs.append(arch.strip())
+        elif Options.options.mac_universal_binary:
+            archs = ['i386', 'x86_64', 'ppc']
+        else:
+            is_cocoa = "__WXOSX_COCOA__" in conf.env["CXXDEFINES_WX"]
+            if min_version == "10.4" or not is_cocoa:
+                archs = ["i386"]
+            else:
+                global arch
+                archs = [arch]
 
         sdkroot = '/Developer/SDKs/MacOSX%s.sdk' % sdk_version
-        sdkflags = ['-arch', arch, '-isysroot', sdkroot]
+        sdkflags = ['-isysroot', sdkroot]
+        for arch in archs:
+            sdkflags.extend(['-arch', arch])
 
         conf.env.append_value('CPPFLAGS', sdkflags)
         conf.env.append_value('LINKFLAGS', sdkflags)
