@@ -987,10 +987,9 @@ WebCore::ResourceError FrameLoaderClientQt::pluginWillHandleLoadError(const WebC
                          QCoreApplication::translate("QWebFrame", "Loading is handled by the media engine", 0, QCoreApplication::UnicodeUTF8));
 }
 
-bool FrameLoaderClientQt::shouldFallBack(const WebCore::ResourceError&)
+bool FrameLoaderClientQt::shouldFallBack(const WebCore::ResourceError& error)
 {
-    notImplemented();
-    return false;
+    return !(error.isCancellation() || (error.errorCode() == WebKitErrorFrameLoadInterruptedByPolicyChange));
 }
 
 WTF::PassRefPtr<WebCore::DocumentLoader> FrameLoaderClientQt::createDocumentLoader(const WebCore::ResourceRequest& request, const SubstituteData& substituteData)

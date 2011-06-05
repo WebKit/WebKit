@@ -1,3 +1,26 @@
+2011-06-05  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix and unskip acid2
+        https://bugs.webkit.org/show_bug.cgi?id=62089
+
+        We're unskipping acid2.html event though it's just a landing
+        page for the acid2 test. Some elements of the test are loaded by
+        the landing page so it is testing something, but acid2-pixel covers the same
+        ground.
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/css/acid2-expected.txt: Updated
+        * platform/qt/fast/css/acid2-pixel-expected.png: Added.
+        * platform/qt/fast/css/acid2-pixel-expected.txt: Added.
+        * platform/qt/fast/overflow/overflow-height-float-not-removed-crash-expected.txt: Removed.
+        * platform/qt/fast/overflow/overflow-height-float-not-removed-crash3-expected.txt: Removed.
+        * platform/qt/http/tests/misc/acid2-expected.png: Added.
+        * platform/qt/http/tests/misc/acid2-expected.txt: Added.
+        * platform/qt/http/tests/misc/acid2-pixel-expected.png: Added.
+        * platform/qt/http/tests/misc/acid2-pixel-expected.txt: Added
+
 2011-06-05  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

@@ -283,8 +283,6 @@ http/tests/security/clipboard/clipboard-file-access.html
 # =========================================================================== #
 
 # no expected results
-http/tests/misc/acid2-pixel.html
-http/tests/misc/acid2.html
 http/tests/misc/favicon-as-image.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=34004
@@ -1311,7 +1309,6 @@ fast/url/host.html
 
 # -- fail with --platform mac --ignore-metrics
 fast/box-sizing/percentage-height.html
-fast/css/acid2-pixel.html
 fast/dom/focus-contenteditable.html
 fast/dom/isindex-002.html
 # seems to trigger some bugs/missing features in QTextCodec
