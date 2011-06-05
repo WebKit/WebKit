@@ -160,7 +160,10 @@ webcore_dirs_common = [
 
 config = get_config(wk_root)
 arch = get_arch(wk_root)
-config_dir = config + git_branch_name()
+config_dir = config
+git_branch = git_branch_name()
+if git_branch != "":
+    config_dir = os.path.join(git_branch, config_dir)
 
 output_dir = os.path.join(wk_root, 'WebKitBuild', config_dir)
 
@@ -223,7 +226,6 @@ def common_set_options(opt):
     opt.add_option('--msvc-version', action='store', default='', help="MSVC version to use to build. Use 8 for 2005, 9 for 2008")
     opt.add_option('--mac_universal_binary', action='store_true', default=False, help='Build Mac as universal (i386, x86_64, ppc) binary.')
     opt.add_option('--mac_archs', action='store', default='', help='Comma separated list of architectures (i386, x86_64, ppc) to build on Mac.')
-
 
 def common_configure(conf):
     """

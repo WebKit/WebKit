@@ -168,15 +168,22 @@ def git_branch_name():
         branches = commands.getoutput("git branch --no-color")
         match = re.search('^\* (.*)', branches, re.MULTILINE)
         if match:
-            return ".%s" % match.group(1)
+            return "%s" % match.group(1)
     except:
         pass
 
     return ""
 
+def get_base_product_dir(wk_root):
+    build_dir = os.path.join(wk_root, 'WebKitBuild')
+    git_branch = git_branch_name()
+    if git_branch != "":
+        build_dir = os.path.join(build_dir, git_branch)
+        
+    return build_dir
 
 def get_config(wk_root):
-    config_file = os.path.join(wk_root, 'WebKitBuild', 'Configuration')
+    config_file = os.path.join(get_base_product_dir(wk_root), 'Configuration')
     config = 'Debug'
 
     if os.path.exists(config_file):
@@ -186,7 +193,7 @@ def get_config(wk_root):
 
 
 def get_arch(wk_root):
-    arch_file = os.path.join(wk_root, 'WebKitBuild', 'Architecture')
+    arch_file = os.path.join(get_base_product_dir(wk_root), 'Architecture')
     arch = 'x86_64'
 
     if os.path.exists(arch_file):

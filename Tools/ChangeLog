@@ -1,5 +1,13 @@
 2011-06-04  Kevin Ollivier  <kevino@theolliviers.com>
 
+        [wx] Unreviewed build fix. Update git branch build dir handling to match what other
+        WebKit scripts expect, so other scripts work properly with wx.
+
+        * waf/build/build_utils.py:
+        * waf/build/settings.py:
+
+2011-06-04  Kevin Ollivier  <kevino@theolliviers.com>
+
         [wx] Unreviewed build fix. Restore the PPC build and allow users to specify architectures
         to build on Mac.
 
