@@ -4304,3 +4304,27 @@ svg/wicd/test-rightsizing-a.xhtml
 svg/wicd/test-rightsizing-b.xhtml
 svg/wicd/test-scalable-background-image1.xhtml
 svg/wicd/test-scalable-background-image2.xhtml
+
+# unskipped by r88163, but fail on Qt-Mac platform
+fast/frames/flattening/iframe-flattening-nested.html
+fast/frames/flattening/iframe-flattening-out-of-view-and-scroll.html
+fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout.html
+fast/frames/flattening/iframe-flattening-out-of-view.html
+svg/as-image/img-preserveAspectRatio-support-2.html
+svg/as-image/svg-as-background-with-relative-size.html
+svg/as-image/svg-as-background-with-viewBox.html
+svg/custom/embedding-external-svgs.xhtml
+svg/custom/object-sizing-height-50p-on-target-svg-absolute.xhtml
+svg/custom/object-sizing-height-50p-on-target-svg.xhtml
+svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute.xhtml
+svg/custom/object-sizing-width-50p-height-50p-on-target-svg.xhtml
+svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute.xhtml
+svg/custom/object-sizing-width-50p-height-75p-on-target-svg.xhtml
+svg/custom/object-sizing-width-50p-on-target-svg-absolute.xhtml
+svg/custom/object-sizing-width-50p-on-target-svg.xhtml
+svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute.xhtml
+svg/custom/object-sizing-width-75p-height-50p-on-target-svg.xhtml
+svg/hixie/intrinsic/001.html
+svg/hixie/intrinsic/002.html
+svg/hixie/intrinsic/003.html
+svg/text/scaling-font-with-geometric-precision.html
