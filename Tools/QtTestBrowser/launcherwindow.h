@@ -206,6 +206,8 @@ protected slots:
     void showUserAgentDialog();
 
     void printURL(const QUrl&);
+    void downloadRequest(const QNetworkRequest&);
+    void fileDownloadFinished();
 
 public slots:
     LauncherWindow* newWindow();
@@ -238,6 +240,7 @@ private:
     QAction* m_formatMenuAction;
 
     QPropertyAnimation* m_zoomAnimation;
+    QNetworkReply* m_reply;
     QList<QTouchEvent::TouchPoint> m_touchPoints;
     bool m_touchMocking;
 

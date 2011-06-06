@@ -34,6 +34,10 @@
 
 #include "launcherwindow.h"
 #include "urlloader.h"
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QMessageBox>
+#include <QNetworkReply>
 
 const int gExitClickArea = 80;
 QVector<int> LauncherWindow::m_zoomLevels;
@@ -46,6 +50,7 @@ LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
     , m_inspector(0)
     , m_formatMenuAction(0)
     , m_zoomAnimation(0)
+    , m_reply(0)
 #ifndef QT_NO_LINEEDIT
     , m_findFlag(0)
 #endif
@@ -58,6 +63,8 @@ LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
         static_cast<QGraphicsView*>(m_view)->setScene(sharedScene);
 
     createChrome();
+
+    connect(page(), SIGNAL(downloadRequested(const QNetworkRequest&)), this, SLOT(downloadRequest(const QNetworkRequest&)));
 }
 
 LauncherWindow::~LauncherWindow()
@@ -966,6 +973,32 @@ void LauncherWindow::printURL(const QUrl& url)
 {
     QTextStream output(stdout);
     output << "Loaded: " << url.toString() << endl;
+}
+
+void LauncherWindow::downloadRequest(const QNetworkRequest &request)
+{
+    QNetworkAccessManager* manager = new QNetworkAccessManager(this);
+    m_reply = manager->get(request);
+    connect(m_reply, SIGNAL(finished()), this, SLOT(fileDownloadFinished()));
+}
+
+void LauncherWindow::fileDownloadFinished()
+{
+    QFileInfo fileInf(m_reply->request().url().toString());
+    QString requestFileName = QDir::homePath() + "/" + fileInf.fileName();
+    QString fileName = QFileDialog::getSaveFileName(this, "Save as...", requestFileName, "All Files (*)");
+
+    if (fileName.isEmpty())
+        return;
+    if (m_reply->error() != QNetworkReply::NoError)
+        QMessageBox::critical(this, QString("Download"), QString("Download failed."));
+    else {
+        QFile file(fileName);
+        file.open(QIODevice::WriteOnly);
+        file.write(m_reply->readAll());
+        file.close();
+        QMessageBox::information(this, QString("Download"), fileName + QString(" downloaded successfully."));
+    }
 }
 
 void LauncherWindow::updateFPS(int fps)
