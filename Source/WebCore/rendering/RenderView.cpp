@@ -321,9 +321,9 @@ void RenderView::computeRectForRepaint(RenderBoxModelObject* repaintContainer, I
         rect = m_layer->transform()->mapRect(rect);
 }
 
-void RenderView::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderView::absoluteRects(Vector<IntRect>& rects, const IntPoint& accumulatedOffset)
 {
-    rects.append(IntRect(IntPoint(tx, ty), m_layer->size()));
+    rects.append(IntRect(accumulatedOffset, m_layer->size()));
 }
 
 void RenderView::absoluteQuads(Vector<FloatQuad>& quads)

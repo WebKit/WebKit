@@ -236,6 +236,7 @@ public:
 
     float width() const { return isHorizontal() ? logicalWidth() : logicalHeight(); }
     float height() const { return isHorizontal() ? logicalHeight() : logicalWidth(); }
+    FloatSize size() const { return IntSize(width(), height()); }
     float right() const { return left() + width(); }
     float bottom() const { return top() + height(); }
 

@@ -1,3 +1,34 @@
+2011-06-06  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Convert RenderBox::absoluteRects to IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62130
+
+        Covered by existing tests.
+
+        * dom/Node.cpp:
+        (WebCore::Node::hasNonEmptyBoundingBox):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::absoluteRects):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteRects):
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteRects):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteBoundingBoxRect):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::absoluteRects):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRects):
+        * rendering/RenderText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::absoluteRects):
+        * rendering/RenderView.h:
+
 2011-06-06  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.
