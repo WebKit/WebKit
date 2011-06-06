@@ -3624,6 +3624,7 @@ BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = TEXT PASS
 
 BUGCR80301 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
+BUGCR80301 WIN LINUX : fast/canvas/canvas-largedraws.html = CRASH
 
 // roll up from r84685:r84721??
 BUGWK84665 : fast/dom/dataset-gc.html = TEXT
@@ -4003,4 +4004,3 @@ BUGCR84157 GPU : fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUGCR84157 GPU : fast/canvas/canvas-transform-skewed.html = IMAGE
 BUGCR84157 GPU : fast/canvas/zero-size-fill-rect.html = IMAGE
 BUGCR84157 BUGCR74979 GPU : media/video-canvas-alpha.html = IMAGE
-

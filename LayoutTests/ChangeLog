@@ -20,6 +20,16 @@
 
         Reviewed by Unreviewed rebaseline.
 
+        [chromium] Unreviewed, missing baselines following r88153
+        https://bugs.webkit.org/show_bug.cgi?id=62121
+
+        * platform/chromium-gpu-linux/compositing/geometry/video-fixed-scrolling-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-06-06  Marcus Bulach  <bulach@chromium.org>
+
+        Reviewed by Unreviewed rebaseline.
+
         [chromium] Unreviewed, further rebaseline for Chromium GPU media pixel tests following r88077
         https://bugs.webkit.org/show_bug.cgi?id=62115
 
