@@ -1,5 +1,11 @@
 2011-06-05  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed trivial fix.
+
+        * platform/qt/Skipped: Remove svg/hixie/links/003-broken.xml, because it was deleted by r87518.
+
+2011-06-05  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][Mac] Unreviewed. Skip new failing tests.
 
         * platform/qt-mac/Skipped:
