@@ -1284,6 +1284,8 @@ fast/images/animated-gif-restored-from-bfcache.html
 
 # Windows DRT needs an implementation of shadowRoot
 # https://bugs.webkit.org/show_bug.cgi?id=59081
+fast/dom/HTMLMeterElement/meter-clone.html
+fast/dom/HTMLProgressElement/progress-clone.html
 fast/dom/shadow
 fast/html/clone-keygen.html
 fast/html/clone-range.html

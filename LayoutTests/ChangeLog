@@ -1,3 +1,12 @@
+2011-06-06  Jessie Berlin  <jberlin@apple.com>
+
+        Windows DRT needs an implementation of shadowRoot.
+        https://bugs.webkit.org/show_bug.cgi?id=59081
+
+        Skip more tests on Windows that use the Shadow DOM to get the bots green.
+
+        * platform/win/Skipped:
+
 2011-06-06  Anna Cavender  <annacc@chromium.org>
 
         Reviewed by David Levin.
