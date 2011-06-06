@@ -1,3 +1,12 @@
+2011-06-05  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed. Update platform specific expected files after r88020.
+
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.txt:
+
 2011-06-05  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
