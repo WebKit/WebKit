@@ -1,3 +1,9 @@
+2011-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the GTK+ build.
+
+        * GNUmakefile.am: Add javascriptcore_cflags variable.
+
 2011-06-04  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix. Restore the PPC build and allow users to specify architectures

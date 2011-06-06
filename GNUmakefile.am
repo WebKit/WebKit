@@ -53,6 +53,7 @@ POFILES :=
 MOFILES :=
 javascriptcore_h_api :=
 javascriptcore_cppflags:=
+javascriptcore_cflags :=
 javascriptcore_sources :=
 javascriptcore_built_sources :=
 javascriptcore_built_nosources :=

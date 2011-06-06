@@ -1,3 +1,9 @@
+2011-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Fix the GTK+ build.
+
+        * GNUmakefile.am: Use javascriptcore_cflags when building libWebCoreInternals.
+
 2011-06-05  Alexey Proskuryakov  <ap@apple.com>
 
         Add an e-mail address for Cameron McCormack that matches Bugzilla (so that auto-completion

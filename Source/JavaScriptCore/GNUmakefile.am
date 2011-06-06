@@ -35,9 +35,7 @@ libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@
 libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CFLAGS = \
 	-fstrict-aliasing \
 	-O3 \
-	$(global_cflags) \
-	$(GLIB_CFLAGS) \
-	$(UNICODE_CFLAGS)
+	$(javascriptcore_cflags)
 
 libjavascriptcoregtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_CPPFLAGS = \
 	$(global_cppflags) \
@@ -69,6 +67,11 @@ javascriptcore_cppflags += \
 	-I$(top_builddir)/Source/JavaScriptCore \
 	-I$(top_builddir)/Source/JavaScriptCore/parser \
 	-I$(top_builddir)/Source/JavaScriptCore/runtime
+
+javascriptcore_cflags += \
+	$(global_cflags) \
+	$(GLIB_CFLAGS) \
+	$(UNICODE_CFLAGS)
 
 Source/JavaScriptCore/Lexer.lut.h: $(srcdir)/Source/JavaScriptCore/create_hash_table $(srcdir)/Source/JavaScriptCore/parser/Keywords.table
 	$(AM_V_GEN)$(PERL) $^ > $@
