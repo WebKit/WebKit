@@ -1,3 +1,19 @@
+2011-06-06  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        Inline elements are wrapped prematurely with non-zero border, margin or padding.
+        https://bugs.webkit.org/show_bug.cgi?id=60459
+
+        When an inline element has a right border/margin/padding and it has more than one descendant with no siblings,
+        the width of the right border/margin/padding should be included in line breaking calculation only once,
+        and not for each descendant.
+
+        Test: fast/inline/inline-wrap-with-parent-padding.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::LineBreaker::nextLineBreak):
+
 2011-06-06  Shishir Agrawal  <shishir@chromium.org>
 
         Reviewed by Tony Gentilcore.

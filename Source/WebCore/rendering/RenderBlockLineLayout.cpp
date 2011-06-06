@@ -1843,6 +1843,7 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
     ASSERT(resolver.position().root() == m_block);
 
     bool appliedStartWidth = resolver.position().m_pos > 0;
+    bool includeEndWidth = true;
     LineMidpointState& lineMidpointState = resolver.midpointState();
 
     LineWidth width(m_block, lineInfo.isFirstLine());
@@ -1887,6 +1888,8 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
     EWhiteSpace lastWS = currWS;
     while (current.m_obj) {
         RenderObject* next = bidiNext(m_block, current.m_obj);
+        if (next && next->parent() && !next->parent()->isDescendantOf(current.m_obj->parent()))
+            includeEndWidth = true;
 
         currWS = current.m_obj->isReplaced() ? current.m_obj->parent()->style()->whiteSpace() : current.m_obj->style()->whiteSpace();
         lastWS = last->isReplaced() ? last->parent()->style()->whiteSpace() : last->style()->whiteSpace();
@@ -2264,7 +2267,8 @@ InlineIterator RenderBlock::LineBreaker::nextLineBreak(InlineBidiResolver& resol
 
             // IMPORTANT: current.m_pos is > length here!
             float additionalTmpW = ignoringSpaces ? 0 : textWidth(t, lastSpace, current.m_pos - lastSpace, f, width.currentWidth(), isFixedPitch, collapseWhiteSpace) + lastSpaceWordSpacing;
-            width.addUncommittedWidth(additionalTmpW + inlineLogicalWidth(current.m_obj, !appliedStartWidth, true));
+            width.addUncommittedWidth(additionalTmpW + inlineLogicalWidth(current.m_obj, !appliedStartWidth, includeEndWidth));
+            includeEndWidth = false;
 
             if (!width.fitsOnLine()) {
                 if (canHyphenate)
