@@ -992,7 +992,7 @@ BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-shadow.html = TEXT
 BUGCR81858 WIN LINUX GPU : fast/canvas/canvas-longlived-context.html = PASS TEXT
 
 // Misc. render failures
-BUGCR81718 WIN LINUX GPU : compositing/tiling/huge-layer-img.html = CRASH
+BUGWK62138 WIN LINUX GPU : compositing/tiling/huge-layer-img.html = TEXT
 BUGCR81606 WIN LINUX GPU : fast/canvas/drawImage-with-globalAlpha.html = IMAGE
 
 // fillRect failures

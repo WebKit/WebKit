@@ -1,3 +1,11 @@
+2011-06-06  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Unreviewed. Layout test expectations fix.
+
+        [chromium] Adjusting expectations for failing huge-layer-img.html
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-06  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Eric Seidel.
