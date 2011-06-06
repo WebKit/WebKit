@@ -337,9 +337,12 @@ private:
 #elif USE(UNIX_DOMAIN_SOCKETS) || OS(SYMBIAN)
     // Called on the connection queue.
     void readyReadHandler();
+    bool processMessage();
 
     Vector<uint8_t> m_readBuffer;
-    size_t m_currentMessageSize;
+    size_t m_readBufferSize;
+    Vector<int> m_fileDescriptors;
+    size_t m_fileDescriptorsSize;
     int m_socketDescriptor;
 
 #if PLATFORM(QT)

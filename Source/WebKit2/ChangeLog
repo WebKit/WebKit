@@ -1,1 +1,24 @@
+2011-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Anders Carlsson.
+
+        [UNIX] SOCK_DGRAM sockets are not notified when the other end closes the connection
+        https://bugs.webkit.org/show_bug.cgi?id=61538
+
+        Use SOCK_STREAM instead of SOCK_DGRAM sockets. Rework the message
+        receiver code to support stream sockets, since it requires to
+        handle message boundaries. The same code works for DGRAM sockets,
+        so this change shouldn't break other ports using DGRAM.
+
+        * Platform/CoreIPC/Connection.h:
+        * Platform/CoreIPC/unix/ConnectionUnix.cpp:
+        (CoreIPC::Connection::platformInitialize):
+        (CoreIPC::Connection::processMessage): Process messages from data
+        already received.
+        (CoreIPC::readBytesFromSocket): Read from socket using recvmsg().
+        (CoreIPC::Connection::readyReadHandler):
+        * UIProcess/Launcher/gtk/ProcessLauncherGtk.cpp:
+        (WebKit::ProcessLauncher::launchProcess): Use SOCK_DGRAM in
+        socketpair().
+
 == Rolled over to ChangeLog-2011-06-04 ==

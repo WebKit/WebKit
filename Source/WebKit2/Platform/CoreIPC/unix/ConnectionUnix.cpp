@@ -93,7 +93,9 @@ void Connection::platformInitialize(Identifier identifier)
 {
     m_socketDescriptor = identifier;
     m_readBuffer.resize(messageMaxSize);
-    m_currentMessageSize = 0;
+    m_readBufferSize = 0;
+    m_fileDescriptors.resize(attachmentMaxAmount);
+    m_fileDescriptorsSize = 0;
 
 #if PLATFORM(QT)
     m_socketNotifier = 0;
@@ -157,106 +159,59 @@ private:
     T& m_attachments;
 };
 
-void Connection::readyReadHandler()
+bool Connection::processMessage()
 {
-    Deque<Attachment> attachments;
-#if PLATFORM(QT)
-    SocketNotifierResourceGuard socketNotifierEnabler(m_socketNotifier);
-#endif
-    AttachmentResourceGuard<Deque<Attachment>, Deque<Attachment>::iterator> attachementDisposer(attachments);
+    if (m_readBufferSize < sizeof(MessageInfo))
+        return false;
 
-    OwnArrayPtr<char> attachmentDescriptorBuffer = adoptArrayPtr(new char[CMSG_SPACE(sizeof(int) * (attachmentMaxAmount))]);
-    struct msghdr message;
-    memset(&message, 0, sizeof(message));
-
-    struct iovec iov[1];
-    memset(&iov, 0, sizeof(iov));
-
-    message.msg_control = attachmentDescriptorBuffer.get();
-    message.msg_controllen = CMSG_SPACE(sizeof(int) * (attachmentMaxAmount));
-
-    iov[0].iov_base = m_readBuffer.data();
-    iov[0].iov_len = m_readBuffer.size();
-
-    message.msg_iov = iov;
-    message.msg_iovlen = 1;
-
-
-    int messageLength = 0;
-    while ((messageLength = recvmsg(m_socketDescriptor, &message, 0)) == -1) {
-        if (errno != EINTR)
-            return;
-    }
-
-    struct cmsghdr* controlMessage = CMSG_FIRSTHDR(&message);
-
+    uint8_t* messageData = m_readBuffer.data();
     MessageInfo messageInfo;
-    unsigned char* messageData = m_readBuffer.data();
-
     memcpy(&messageInfo, messageData, sizeof(messageInfo));
-    ASSERT(messageLength == sizeof(messageInfo) + messageInfo.attachmentCount() * sizeof(size_t) + (messageInfo.isMessageBodyOOL() ? 0 : messageInfo.bodySize()));
-
     messageData += sizeof(messageInfo);
 
+    size_t messageLength = sizeof(MessageInfo) + messageInfo.attachmentCount() * sizeof(size_t) + (messageInfo.isMessageBodyOOL() ? 0 : messageInfo.bodySize());
+    if (m_readBufferSize < messageLength)
+        return false;
+
+    Deque<Attachment> attachments;
+    AttachmentResourceGuard<Deque<Attachment>, Deque<Attachment>::iterator> attachementDisposer(attachments);
     RefPtr<WebKit::SharedMemory> oolMessageBody;
 
-    if (messageInfo.attachmentCount()) {
-        if (controlMessage && controlMessage->cmsg_level == SOL_SOCKET && controlMessage->cmsg_type == SCM_RIGHTS) {
-            OwnArrayPtr<size_t> attachmentSizes = adoptArrayPtr(new size_t[messageInfo.attachmentCount()]);
-            memcpy(attachmentSizes.get(), messageData, sizeof(size_t) * messageInfo.attachmentCount());
+    int attachmentCount = messageInfo.attachmentCount();
+    if (attachmentCount) {
+        OwnArrayPtr<size_t> attachmentSizes = adoptArrayPtr(new size_t[attachmentCount]);
+        memcpy(attachmentSizes.get(), messageData, sizeof(size_t) * attachmentCount);
+        messageData += sizeof(size_t) * attachmentCount;
 
-            messageData += sizeof(attachmentSizes);
+        if (messageInfo.isMessageBodyOOL())
+            attachmentCount--;
 
-            OwnArrayPtr<int> fileDescriptors = adoptArrayPtr(new int[messageInfo.attachmentCount()]);
-            memcpy(fileDescriptors.get(), CMSG_DATA(controlMessage), sizeof(int) * messageInfo.attachmentCount());
+        for (int i = 0; i < attachmentCount; ++i)
+            attachments.append(Attachment(m_fileDescriptors[i], attachmentSizes[i]));
 
-            int attachmentCount = messageInfo.attachmentCount();
+        if (messageInfo.isMessageBodyOOL()) {
+            ASSERT(messageInfo.bodySize());
 
-            if (messageInfo.isMessageBodyOOL())
-                attachmentCount--;
-
-            for (int i = 0; i < attachmentCount; ++i) {
-                while (fcntl(fileDescriptors[i], F_SETFL, FD_CLOEXEC) == -1) {
-                    if (errno != EINTR) {
-                        ASSERT_NOT_REACHED();
-                        return;
-                    }
-                }
+            WebKit::SharedMemory::Handle handle;
+            handle.adoptFromAttachment(m_fileDescriptors[attachmentCount], attachmentSizes[attachmentCount]);
+            if (handle.isNull()) {
+                ASSERT_NOT_REACHED();
+                return false;
             }
 
-            for (int i = 0; i < attachmentCount; ++i)
-                attachments.append(Attachment(fileDescriptors[i], attachmentSizes[i]));
-
-            if (messageInfo.isMessageBodyOOL()) {
-                ASSERT(messageInfo.bodySize());
-
-                WebKit::SharedMemory::Handle handle;
-                handle.adoptFromAttachment(fileDescriptors[attachmentCount], attachmentSizes[attachmentCount]);
-                if (handle.isNull()) {
-                    ASSERT_NOT_REACHED();
-                    return;
-                }
-
-                oolMessageBody = WebKit::SharedMemory::create(handle, WebKit::SharedMemory::ReadOnly);
-                if (!oolMessageBody) {
-                    ASSERT_NOT_REACHED();
-                    return;
-                }
+            oolMessageBody = WebKit::SharedMemory::create(handle, WebKit::SharedMemory::ReadOnly);
+            if (!oolMessageBody) {
+                ASSERT_NOT_REACHED();
+                return false;
             }
-
-            controlMessage = CMSG_NXTHDR(&message, controlMessage);
-        } else {
-            ASSERT_NOT_REACHED();
-            return;
         }
     }
 
     ASSERT(attachments.size() == messageInfo.isMessageBodyOOL() ? messageInfo.attachmentCount() - 1 : messageInfo.attachmentCount());
 
-    unsigned char* messageBody = messageData;
-
+    uint8_t* messageBody = messageData;
     if (messageInfo.isMessageBodyOOL())
-        messageBody = reinterpret_cast<unsigned char*>(oolMessageBody->data());
+        messageBody = reinterpret_cast<uint8_t*>(oolMessageBody->data());
 
     ArgumentDecoder* argumentDecoder;
     if (attachments.isEmpty())
@@ -266,7 +221,119 @@ void Connection::readyReadHandler()
 
     processIncomingMessage(messageInfo.messageID(), adoptPtr(argumentDecoder));
 
-    ASSERT(!controlMessage);
+    if (m_readBufferSize > messageLength) {
+        memmove(m_readBuffer.data(), m_readBuffer.data() + messageLength, m_readBufferSize - messageLength);
+        m_readBufferSize -= messageLength;
+    } else
+        m_readBufferSize = 0;
+
+    if (messageInfo.attachmentCount()) {
+        if (m_fileDescriptorsSize > messageInfo.attachmentCount()) {
+            size_t fileDescriptorsLength = messageInfo.attachmentCount() * sizeof(int);
+            memmove(m_fileDescriptors.data(), m_fileDescriptors.data() + fileDescriptorsLength, m_fileDescriptorsSize - fileDescriptorsLength);
+            m_fileDescriptorsSize -= fileDescriptorsLength;
+        } else
+            m_fileDescriptorsSize = 0;
+    }
+
+
+    return true;
+}
+
+static ssize_t readBytesFromSocket(int socketDescriptor, uint8_t* buffer, int count, int* fileDescriptors, size_t* fileDescriptorsCount)
+{
+    struct msghdr message;
+    memset(&message, 0, sizeof(message));
+
+    struct iovec iov[1];
+    memset(&iov, 0, sizeof(iov));
+
+    message.msg_controllen = CMSG_SPACE(sizeof(int) * attachmentMaxAmount);
+    OwnArrayPtr<char> attachmentDescriptorBuffer = adoptArrayPtr(new char[message.msg_controllen]);
+    memset(attachmentDescriptorBuffer.get(), 0, message.msg_controllen);
+    message.msg_control = attachmentDescriptorBuffer.get();
+
+    iov[0].iov_base = buffer;
+    iov[0].iov_len = count;
+
+    message.msg_iov = iov;
+    message.msg_iovlen = 1;
+
+    while (true) {
+        ssize_t bytesRead = recvmsg(socketDescriptor, &message, 0);
+
+        if (bytesRead < 0) {
+            if (errno == EINTR)
+                continue;
+
+            return -1;
+        }
+
+        bool found = false;
+        struct cmsghdr* controlMessage;
+        for (controlMessage = CMSG_FIRSTHDR(&message); controlMessage; controlMessage = CMSG_NXTHDR(&message, controlMessage)) {
+            if (controlMessage->cmsg_level == SOL_SOCKET && controlMessage->cmsg_type == SCM_RIGHTS) {
+                *fileDescriptorsCount = (controlMessage->cmsg_len - CMSG_LEN(0)) / sizeof(int);
+                memcpy(fileDescriptors, CMSG_DATA(controlMessage), sizeof(int) * *fileDescriptorsCount);
+
+                for (size_t i = 0; i < *fileDescriptorsCount; ++i) {
+                    while (fcntl(fileDescriptors[i], F_SETFL, FD_CLOEXEC) == -1) {
+                        if (errno != EINTR) {
+                            ASSERT_NOT_REACHED();
+                            break;
+                        }
+                    }
+                }
+
+                found = true;
+                break;
+            }
+        }
+
+        if (!found)
+            *fileDescriptorsCount = 0;
+
+        return bytesRead;
+    }
+
+    return -1;
+}
+
+void Connection::readyReadHandler()
+{
+#if PLATFORM(QT)
+    SocketNotifierResourceGuard socketNotifierEnabler(m_socketNotifier);
+#endif
+
+    while (true) {
+        size_t fileDescriptorsCount = 0;
+        size_t bytesToRead = m_readBuffer.size() - m_readBufferSize;
+        ssize_t bytesRead = readBytesFromSocket(m_socketDescriptor, m_readBuffer.data() + m_readBufferSize, bytesToRead,
+                                                m_fileDescriptors.data() + m_fileDescriptorsSize, &fileDescriptorsCount);
+
+        if (bytesRead < 0) {
+            // EINTR was already handled by readBytesFromSocket.
+            if (errno == EAGAIN || errno == EWOULDBLOCK)
+                return;
+
+            // FIXME: Handle other errors here?
+            return;
+        }
+
+        m_readBufferSize += bytesRead;
+        m_fileDescriptorsSize += fileDescriptorsCount;
+
+        if (!bytesRead) {
+            connectionDidClose();
+            return;
+        }
+
+        // Process messages from data received.
+        while (true) {
+            if (!processMessage())
+                break;
+        }
+    }
 }
 
 bool Connection::open()
