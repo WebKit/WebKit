@@ -73,6 +73,7 @@ webkitgtk_gdom_built_sources :=
 webkitgtk_built_sources :=
 webkitgtk_built_nosources :=
 webkit2_built_sources :=
+libwebcoreinternals_built_sources :=
 global_cppflags :=
 global_cflags :=
 global_cxxflags :=

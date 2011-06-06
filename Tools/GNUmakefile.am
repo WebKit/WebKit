@@ -47,10 +47,11 @@ libWebCoreInternals_la_SOURCES = \
 	Source/WebCore/testing/js/WebCoreTestSupport.cpp \
 	Source/WebCore/testing/js/WebCoreTestSupport.h
 
-nodist_libWebCoreInternals_la_SOURCES = \
+libwebcoreinternals_built_sources += \
 	DerivedSources/WebCore/JSInternals.cpp \
 	DerivedSources/WebCore/JSInternals.h
-BUILT_SOURCES += $(nodist_libWebCoreInternals_la_SOURCES)
+nodist_libWebCoreInternals_la_SOURCES = $(libwebcoreinternals_built_sources)
+BUILT_SOURCES += $(libwebcoreinternals_built_sources)
 
 libWebCoreInternals_la_CPPFLAGS = \
 	$(global_cppflags) \
