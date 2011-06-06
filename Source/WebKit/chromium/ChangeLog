@@ -1,3 +1,17 @@
+2011-06-06  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        webkit/glue/webmediaplayer_impl.cc deletes an object of type
+        WebVideoFrame, which means this patch fixes a real bug, not just
+        a theoretical one.
+
+        [chromium] Give WebVideoFrame a virtual destructor
+        https://bugs.webkit.org/show_bug.cgi?id=61742
+
+        * public/WebVideoFrame.h:
+        (WebKit::WebVideoFrame::~WebVideoFrame):
+
 2011-06-04  Nico Weber  <thakis@chromium.org>
 
         Reviewed by James Robinson.

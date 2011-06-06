@@ -56,6 +56,7 @@ public:
         SurfaceTypeTexture,
     };
 
+    virtual ~WebVideoFrame() { }
     virtual SurfaceType surfaceType() const = 0;
     virtual Format format() const = 0;
     virtual unsigned width() const = 0;
