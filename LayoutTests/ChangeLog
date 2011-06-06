@@ -1,3 +1,10 @@
+2011-06-06  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Unreviewed, added baseline for inline-wrap-with-parent-padding.html
+
+        * platform/chromium-win/fast/inline/inline-wrap-with-parent-padding-expected.png: Added.
+        * platform/chromium-win/fast/inline/inline-wrap-with-parent-padding-expected.txt: Added.
+
 2011-06-06  Paul Kinlan  <paulkinlan@google.com>
 
         Reviewed by Jeremy Orlow.
