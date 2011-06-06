@@ -46,7 +46,7 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int l
 
     const Font& font = style->font();
     if (selectionState() != RenderObject::SelectionNone) {
-        paintSelection(context, paintOffset.x(), paintOffset.y(), style, font);
+        paintSelection(context, paintOffset, style, font);
 
         // Select the correct color for painting the text.
         Color foreground = paintInfo.forceBlackText ? Color::black : renderer()->selectionForegroundColor();
@@ -81,7 +81,7 @@ IntRect EllipsisBox::selectionRect(int tx, int ty)
     return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x() + tx, y() + ty + root()->selectionTop()), root()->selectionHeight()));
 }
 
-void EllipsisBox::paintSelection(GraphicsContext* context, int tx, int ty, RenderStyle* style, const Font& font)
+void EllipsisBox::paintSelection(GraphicsContext* context, const IntPoint& paintOffset, RenderStyle* style, const Font& font)
 {
     Color textColor = style->visitedDependentColor(CSSPropertyColor);
     Color c = m_renderer->selectionBackgroundColor();
@@ -96,9 +96,9 @@ void EllipsisBox::paintSelection(GraphicsContext* context, int tx, int ty, Rende
     GraphicsContextStateSaver stateSaver(*context);
     int top = root()->selectionTop();
     int h = root()->selectionHeight();
-    context->clip(IntRect(x() + tx, top + ty, m_logicalWidth, h));
+    context->clip(IntRect(x() + paintOffset.x(), top + paintOffset.y(), m_logicalWidth, h));
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    context->drawHighlightForText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x() + tx, y() + ty + top), h, c, style->colorSpace());
+    context->drawHighlightForText(font, RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x() + paintOffset.x(), y() + paintOffset.y() + top), h, c, style->colorSpace());
 }
 
 bool EllipsisBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, int lineTop, int lineBottom)

@@ -47,7 +47,7 @@ public:
 private:
     virtual int height() const { return m_height; }
     virtual RenderObject::SelectionState selectionState() { return m_selectionState; }
-    void paintSelection(GraphicsContext*, int tx, int ty, RenderStyle*, const Font&);
+    void paintSelection(GraphicsContext*, const IntPoint&, RenderStyle*, const Font&);
 
     int m_height;
     AtomicString m_str;
