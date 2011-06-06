@@ -1,3 +1,17 @@
+2011-06-06  Cary Clark  <caryclark@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Fix typo in CachedFont.cpp #define
+        https://bugs.webkit.org/show_bug.cgi?id=62127
+
+        No new tests. The define typo in question is
+        not yet enabled, so this change has no functional
+        impact.
+
+        * loader/cache/CachedFont.cpp:
+        change SKIA_MAC_ON_CHROME to SKIA_ON_MAC_CHROME
+
 2011-06-03  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.
