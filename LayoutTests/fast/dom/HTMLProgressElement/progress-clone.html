@@ -1,0 +1,37 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../js/resources/js-test-style.css">
+<script src="../../js/resources/js-test-pre.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<progress id="target" min="0" max="100" value="50" style="-webkit-appearance: none;" ></progress>
+<script>
+(function() {
+    target = document.getElementById("target");
+    cloned = target.cloneNode();
+    document.body.insertBefore(cloned, target.nextSibling);
+    
+    if (!window.layoutTestController) {
+        debug("You need layoutTestController to run this test.");
+        return;
+    }
+
+    targetShadowRoot = layoutTestController.shadowRoot(target);
+    clonedShadowRoot = layoutTestController.shadowRoot(cloned);
+    
+    shouldBe("cloned.value", "target.value");
+    shouldBe("layoutTestController.shadowPseudoId(clonedShadowRoot.firstChild)", "layoutTestController.shadowPseudoId(targetShadowRoot.firstChild)");
+    shouldBe("layoutTestController.shadowPseudoId(clonedShadowRoot.firstChild.firstChild)", "layoutTestController.shadowPseudoId(targetShadowRoot.firstChild.firstChild)");
+    
+    cloned.value = 70;
+    shouldBe("clonedShadowRoot.firstChild.firstChild.style.width", '"70%"');
+    shouldBe("targetShadowRoot.firstChild.firstChild.style.width", '"50%"');
+    
+})();
+var successfullyParsed = true;
+</script>
+<script src="../../js/resources/js-test-post.js"></script>
+</body>
+</html>

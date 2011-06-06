@@ -1,3 +1,15 @@
+2011-06-02  MORITA Hajime  <morrita@google.com>
+
+        Verify cloning <meter> and <progress> works
+        https://bugs.webkit.org/show_bug.cgi?id=61986
+        
+        Added test cases for cloning <meter> and <progress>
+
+        * fast/dom/HTMLMeterElement/meter-clone-expected.txt: Added.
+        * fast/dom/HTMLMeterElement/meter-clone.html: Added.
+        * fast/dom/HTMLProgressElement/progress-clone-expected.txt: Added.
+        * fast/dom/HTMLProgressElement/progress-clone.html: Added.
+
 2011-06-06  Mustafizur Rahaman  <mustaf.here@gmail.com>
 
         Reviewed by Darin Adler.
