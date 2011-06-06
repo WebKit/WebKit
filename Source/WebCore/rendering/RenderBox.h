@@ -350,7 +350,7 @@ public:
     virtual bool hasControlClip() const { return false; }
     virtual IntRect controlClipRect(const IntPoint&) const { return IntRect(); }
     bool pushContentsClip(PaintInfo&, int tx, int ty);
-    void popContentsClip(PaintInfo&, PaintPhase originalPhase, int tx, int ty);
+    void popContentsClip(PaintInfo&, PaintPhase originalPhase, const IntPoint& accumulatedOffset);
 
     virtual void paintObject(PaintInfo&, const IntPoint&) { ASSERT_NOT_REACHED(); }
     virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);

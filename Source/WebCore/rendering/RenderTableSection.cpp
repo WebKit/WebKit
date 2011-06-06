@@ -906,7 +906,7 @@ void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
     bool pushedClip = pushContentsClip(paintInfo, tx, ty);
     paintObject(paintInfo, IntPoint(tx, ty));
     if (pushedClip)
-        popContentsClip(paintInfo, phase, tx, ty);
+        popContentsClip(paintInfo, phase, IntPoint(tx, ty));
 }
 
 static inline bool compareCellPositions(RenderTableCell* elem1, RenderTableCell* elem2)

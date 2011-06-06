@@ -1,3 +1,22 @@
+2011-06-06  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Convert RenderBox::popContentsClip to IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62132
+
+        Covered by existing tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::popContentsClip):
+        * rendering/RenderBox.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::paint):
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::paint):
+
 2011-06-06  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

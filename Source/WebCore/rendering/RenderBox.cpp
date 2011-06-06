@@ -1122,14 +1122,14 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, int tx, int ty)
     return true;
 }
 
-void RenderBox::popContentsClip(PaintInfo& paintInfo, PaintPhase originalPhase, int tx, int ty)
+void RenderBox::popContentsClip(PaintInfo& paintInfo, PaintPhase originalPhase, const IntPoint& accumulatedOffset)
 {
     ASSERT(hasControlClip() || (hasOverflowClip() && !layer()->isSelfPaintingLayer()));
 
     paintInfo.context->restore();
     if (originalPhase == PaintPhaseOutline) {
         paintInfo.phase = PaintPhaseSelfOutline;
-        paintObject(paintInfo, IntPoint(tx, ty));
+        paintObject(paintInfo, accumulatedOffset);
         paintInfo.phase = originalPhase;
     } else if (originalPhase == PaintPhaseChildBlockBackground)
         paintInfo.phase = originalPhase;
