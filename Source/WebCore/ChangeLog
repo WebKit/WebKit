@@ -1,3 +1,16 @@
+2011-06-05  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Rolling out r84528.
+        http://trac.webkit.org/changeset/84528
+        https://bugs.webkit.org/show_bug.cgi?id=62100
+
+        It made several problems on elements with new shadow DOM.
+
+        * dom/Element.cpp:
+        (WebCore::Element::copyNonAttributeProperties):
+
 2011-06-05  Igor Oliveira  <igor.oliveira@openbossa.org>
 
         Reviewed by Kenneth Rohde Christiansen.

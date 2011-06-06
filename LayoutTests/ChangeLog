@@ -1,3 +1,14 @@
+2011-06-05  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Rolling out r84528.
+        http://trac.webkit.org/changeset/84528
+        https://bugs.webkit.org/show_bug.cgi?id=62100
+
+        * fast/dom/shadow/import-shadowroot-expected.txt: Removed.
+        * fast/dom/shadow/import-shadowroot.html: Removed.
+
 2011-06-05  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
