@@ -1,3 +1,13 @@
+2011-06-06  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Add monotonicallyIncreasingTime() to get monotonically increasing time
+        https://bugs.webkit.org/show_bug.cgi?id=37743
+
+        * platform/chromium/SystemTimeChromium.cpp:
+        (WebCore::monotonicallyIncreasingTime): Add primitive monotonicallyIncreasingTime() which just wraps currentTime().
+
 2011-06-06  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

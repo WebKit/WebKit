@@ -1,3 +1,14 @@
+2011-06-06  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Add monotonicallyIncreasingTime() to get monotonically increasing time
+        https://bugs.webkit.org/show_bug.cgi?id=37743
+
+        * wtf/CurrentTime.cpp: Add monotonicallyIncreasingTime() for mac and a fallback implementation that just wraps currentTime().
+        (WTF::monotonicallyIncreasingTime):
+        * wtf/CurrentTime.h: Add monotonicallyIncreasingTime().
+
 2011-06-06  Alexandru Chiculita  <achicu@adobe.com>
 
         Reviewed by Kent Tamura.

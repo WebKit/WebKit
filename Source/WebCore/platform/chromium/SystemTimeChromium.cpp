@@ -33,6 +33,7 @@
 
 #include "NotImplemented.h"
 #include "PlatformBridge.h"
+#include <wtf/CurrentTime.h>
 
 namespace WebCore {
 
@@ -40,6 +41,16 @@ namespace WebCore {
 double currentTime()
 {
     return PlatformBridge::currentTime();
+}
+
+double monotonicallyIncreasingTime()
+{
+    static double lastTime = 0;
+    double currentTimeNow = currentTime();
+    if (currentTimeNow < lastTime)
+        return lastTime;
+    lastTime = currentTimeNow;
+    return currentTimeNow;
 }
 
 float userIdleTime()
