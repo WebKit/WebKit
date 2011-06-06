@@ -1,5 +1,11 @@
 2011-06-06  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][WK2] Remove previously deleted tests from the Skipped list.
+
+        * platform/qt-wk2/Skipped:
+
+2011-06-06  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][WK2] Skip failing tests.
 
         * platform/qt-wk2/Skipped:

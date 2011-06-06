@@ -836,7 +836,6 @@ svg/zoom/text/zoom-coords-viewattr-01-b.svg
 # Qt WebKit2 needs plugins support
 fast/css/acid2-pixel.html
 fast/css/acid2.html
-fast/dom/object-embed-plugin-scripting.html
 fast/events/tabindex-focus-blur-all.html
 fast/loader/loadInProgress.html
 http/tests/misc/acid2-pixel.html
@@ -963,11 +962,9 @@ editing/pasteboard/4922709.html
 editing/pasteboard/4944770-1.html
 editing/pasteboard/4989774.html
 editing/pasteboard/5006779.html
-editing/pasteboard/5027857.html
 editing/pasteboard/5028447.html
 editing/pasteboard/5065605.html
 editing/pasteboard/5071074.html
-editing/pasteboard/5075944-2.html
 editing/pasteboard/5075944.html
 editing/pasteboard/5247341.html
 editing/pasteboard/5368833.html
@@ -1284,7 +1281,6 @@ editing/inserting/typing-003.html
 editing/inserting/typing-around-br-001.html
 editing/inserting/typing-around-image-001.html
 editing/pasteboard/4631972.html
-editing/pasteboard/4700297.html
 editing/pasteboard/4744008.html
 editing/pasteboard/8145-1.html
 editing/pasteboard/8145-2.html
@@ -3341,10 +3337,6 @@ fast/dom/shadow/gc-shadow.html
 # [Qt][WK2] Incorrect line number dumping
 # https://bugs.webkit.org/show_bug.cgi?id=60074
 http/tests/security/contentSecurityPolicy/eval-blocked.html
-
-# [Qt][WK2] editing/pasteboard/do-not-copy-body-color.html fails
-# https://bugs.webkit.org/show_bug.cgi?id=60076
-editing/pasteboard/do-not-copy-body-color.html
 
 # New test introduced in http://trac.webkit.org/changeset/85818
 editing/pasteboard/paste-placeholder-input.html
