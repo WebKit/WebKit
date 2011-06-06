@@ -1,3 +1,14 @@
+2011-06-06  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Implement download feature for QtTestBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=61865
+
+        Buildfix for --minimal and CONFIG+=qt_minimal build after r88161.
+
+        * QtTestBrowser/launcherwindow.cpp:
+        (LauncherWindow::LauncherWindow):
+        * QtTestBrowser/launcherwindow.h:
+
 2011-06-06  Barát Tibor  <Barat.Tibor@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.

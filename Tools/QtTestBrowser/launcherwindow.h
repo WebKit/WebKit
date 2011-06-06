@@ -206,8 +206,10 @@ protected slots:
     void showUserAgentDialog();
 
     void printURL(const QUrl&);
+#if !defined(QT_NO_FILEDIALOG) && !defined(QT_NO_MESSAGEBOX)
     void downloadRequest(const QNetworkRequest&);
     void fileDownloadFinished();
+#endif
 
 public slots:
     LauncherWindow* newWindow();
@@ -240,7 +242,9 @@ private:
     QAction* m_formatMenuAction;
 
     QPropertyAnimation* m_zoomAnimation;
+#if !defined(QT_NO_FILEDIALOG) && !defined(QT_NO_MESSAGEBOX)
     QNetworkReply* m_reply;
+#endif
     QList<QTouchEvent::TouchPoint> m_touchPoints;
     bool m_touchMocking;
 

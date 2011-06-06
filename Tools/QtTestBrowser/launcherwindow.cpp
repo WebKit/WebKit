@@ -34,10 +34,13 @@
 
 #include "launcherwindow.h"
 #include "urlloader.h"
+
+#if !defined(QT_NO_FILEDIALOG) && !defined(QT_NO_MESSAGEBOX)
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QNetworkReply>
+#endif
 
 const int gExitClickArea = 80;
 QVector<int> LauncherWindow::m_zoomLevels;
@@ -50,7 +53,9 @@ LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
     , m_inspector(0)
     , m_formatMenuAction(0)
     , m_zoomAnimation(0)
+#if !defined(QT_NO_FILEDIALOG) && !defined(QT_NO_MESSAGEBOX)
     , m_reply(0)
+#endif
 #ifndef QT_NO_LINEEDIT
     , m_findFlag(0)
 #endif
@@ -63,8 +68,9 @@ LauncherWindow::LauncherWindow(WindowOptions* data, QGraphicsScene* sharedScene)
         static_cast<QGraphicsView*>(m_view)->setScene(sharedScene);
 
     createChrome();
-
+#if !defined(QT_NO_FILEDIALOG) && !defined(QT_NO_MESSAGEBOX)
     connect(page(), SIGNAL(downloadRequested(const QNetworkRequest&)), this, SLOT(downloadRequest(const QNetworkRequest&)));
+#endif
 }
 
 LauncherWindow::~LauncherWindow()
@@ -975,6 +981,7 @@ void LauncherWindow::printURL(const QUrl& url)
     output << "Loaded: " << url.toString() << endl;
 }
 
+#if !defined(QT_NO_FILEDIALOG) && !defined(QT_NO_MESSAGEBOX)
 void LauncherWindow::downloadRequest(const QNetworkRequest &request)
 {
     QNetworkAccessManager* manager = new QNetworkAccessManager(this);
@@ -1000,6 +1007,7 @@ void LauncherWindow::fileDownloadFinished()
         QMessageBox::information(this, QString("Download"), fileName + QString(" downloaded successfully."));
     }
 }
+#endif
 
 void LauncherWindow::updateFPS(int fps)
 {
