@@ -1,3 +1,11 @@
+2011-06-06  Gabor Loki  <loki@webkit.org>
+
+        Rubber-stamped by Csaba Osztrogonác
+
+        Skip a flakey test on ARM.
+
+        * platform/qt-arm/Skipped:
+
 2011-06-04  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.
