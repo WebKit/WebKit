@@ -1,5 +1,12 @@
 2011-06-06  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] 6 tests have different results on 64 bit compared to 32 bit
+        https://bugs.webkit.org/show_bug.cgi?id=52812
+
+        * platform/qt/Skipped: Add svg/custom/embedding-external-svgs.xhtml.
+
+2011-06-06  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][Mac] Skip failing tests.
 
         * platform/qt-mac/Skipped:
