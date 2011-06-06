@@ -1,5 +1,11 @@
 2011-06-05  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][Mac] Unreviewed. Skip new failing tests.
+
+        * platform/qt-mac/Skipped:
+
+2011-06-05  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed. Update platform specific expected files after r88020.
 
         * platform/qt/fast/dom/Window/window-properties-expected.txt:

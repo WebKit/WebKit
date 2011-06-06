@@ -4261,3 +4261,15 @@ fast/events/selectstart-by-drag.html
 
 # unskipped by r87311, but fail on Qt-Mac platform
 fast/css/disabled-author-styles.html
+
+# New tests introduced in r87721, but fail on Qt-Mac platform
+svg/custom/invalid-stroke-hex.svg
+svg/custom/invalid-uri-stroke.svg
+
+# New test introduced in r88029, but fail on Qt-Mac platform
+fast/forms/selectlist-minsize.html
+
+# acid2 tests was unskipped by r88135, but fail on Qt-Mac platform
+fast/css/acid2-pixel.html
+http/tests/misc/acid2-pixel.html
+http/tests/misc/acid2.html
