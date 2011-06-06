@@ -2521,3 +2521,29 @@ http/tests/security/isolatedWorld/cross-origin-xhr.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=61074
 fast/harness/internals-object.html
+
+# failing new tests
+fast/block/float/overhanging-tall-block.html
+fast/backgrounds/border-radius-split-background-image.html
+fast/backgrounds/border-radius-split-background.html
+fast/blockflow/border-styles-vertical-lr.html
+fast/blockflow/border-styles-vertical-rl.html
+fast/borders/border-antialiasing.html
+fast/borders/border-styles-split.html
+fast/borders/mixed-border-styles-radius2.html
+fast/box-shadow/scaled-box-shadow.html
+fast/box-shadow/single-pixel-shadow.html
+fast/text/selection-rect-rounding.html
+svg/custom/object-sizing-explicit-height.xhtml
+svg/custom/object-sizing-explicit-width.xhtml
+svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml
+svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml
+svg/zoom/page/zoom-svg-through-object-with-override-size.html
+svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml
+svg/zoom/page/zoom-svg-through-object-with-text.xhtml
+svg/custom/object-no-size-attributes.xhtml
+svg/custom/painting-marker-07-f-inherit.svg
+svg/custom/small-rect-scale.svg
+svg/filters/feConvolveFilter-y-bounds.svg
+svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml
+http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml

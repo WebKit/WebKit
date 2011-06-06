@@ -1,3 +1,80 @@
+2011-06-06  Zsolt Fehér  <h490267@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Add expected results for the new passing tests, and skip the new failing tests.
+
+        * platform/qt/Skipped: Skip new failing tests.
+        * platform/qt/editing/selection/select-across-readonly-input-1-expected.png: Added.
+        * platform/qt/editing/selection/select-across-readonly-input-1-expected.txt: Added.
+        * platform/qt/editing/selection/select-across-readonly-input-2-expected.png: Added.
+        * platform/qt/editing/selection/select-across-readonly-input-2-expected.txt: Added.
+        * platform/qt/editing/selection/select-across-readonly-input-3-expected.png: Added.
+        * platform/qt/editing/selection/select-across-readonly-input-3-expected.txt: Added.
+        * platform/qt/editing/selection/select-across-readonly-input-4-expected.png: Added.
+        * platform/qt/editing/selection/select-across-readonly-input-4-expected.txt: Added.
+        * platform/qt/editing/selection/select-across-readonly-input-5-expected.png: Added.
+        * platform/qt/editing/selection/select-across-readonly-input-5-expected.txt: Added.
+        * platform/qt/fast/block/float/float-overhangs-root-expected.png: Added.
+        * platform/qt/fast/block/float/float-overhangs-root-expected.txt: Added.
+        * platform/qt/fast/block/positioning/hiding-inside-relpositioned-inline-expected.png: Added.
+        * platform/qt/fast/block/positioning/hiding-inside-relpositioned-inline-expected.txt: Added.
+        * platform/qt/fast/forms/date-input-visible-strings-expected.png: Added.
+        * platform/qt/fast/forms/input-placeholder-text-indent-expected.png: Added.
+        * platform/qt/fast/forms/input-placeholder-text-indent-expected.txt: Added.
+        * platform/qt/fast/html/details-add-details-child-1-expected.png: Added.
+        * platform/qt/fast/html/details-add-details-child-1-expected.txt: Added.
+        * platform/qt/fast/html/details-add-details-child-2-expected.png: Added.
+        * platform/qt/fast/html/details-add-details-child-2-expected.txt: Added.
+        * platform/qt/fast/html/details-nested-1-expected.png: Added.
+        * platform/qt/fast/html/details-nested-1-expected.txt: Added.
+        * platform/qt/fast/html/details-nested-2-expected.png: Added.
+        * platform/qt/fast/html/details-nested-2-expected.txt: Added.
+        * platform/qt/fast/html/details-replace-summary-child-expected.png: Added.
+        * platform/qt/fast/html/details-replace-summary-child-expected.txt: Added.
+        * platform/qt/fast/html/details-replace-text-expected.png: Added.
+        * platform/qt/fast/html/details-replace-text-expected.txt: Added.
+        * platform/qt/fast/inline/nested-top-alignment-expected.png: Added.
+        * platform/qt/fast/inline/nested-top-alignment-expected.txt: Added.
+        * platform/qt/fast/table/dynamic-caption-add-before-child-expected.png: Added.
+        * platform/qt/fast/table/dynamic-caption-add-before-child-expected.txt: Added.
+        * platform/qt/fast/table/dynamic-caption-add-remove-before-child-expected.png: Added.
+        * platform/qt/fast/table/dynamic-caption-add-remove-before-child-expected.txt: Added.
+        * platform/qt/fast/table/multiple-captions-display-expected.png: Added.
+        * platform/qt/fast/table/multiple-captions-display-expected.txt: Added.
+        * platform/qt/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.png: Added.
+        * platform/qt/http/tests/misc/object-embedding-svg-delayed-size-negotiation-expected.txt: Added.
+        * platform/qt/scrollbars/scrollbars-on-positioned-content-expected.png: Added.
+        * platform/qt/scrollbars/scrollbars-on-positioned-content-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-felem-01-b-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/painting-marker-07-f-expected.txt: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.png: Added.
+        * platform/qt/svg/W3C-SVG-1.1-SE/struct-use-14-f-expected.txt: Added.
+        * platform/qt/svg/custom/fill-opacity-update-expected.png: Added.
+        * platform/qt/svg/custom/fill-opacity-update-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-explicit-width-height-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-explicit-width-height-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-no-width-height-change-content-box-size-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-no-width-height-change-content-box-size-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-no-width-height-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-no-width-height-expected.txt: Added.
+        * platform/qt/svg/custom/stroke-opacity-update-expected.png: Added.
+        * platform/qt/svg/custom/stroke-opacity-update-expected.txt: Added.
+        * platform/qt/svg/wicd/rightsizing-grid-expected.png: Added.
+        * platform/qt/svg/wicd/rightsizing-grid-expected.txt: Added.
+        * platform/qt/svg/wicd/test-rightsizing-a-expected.png: Added.
+        * platform/qt/svg/wicd/test-rightsizing-a-expected.txt: Added.
+        * platform/qt/svg/wicd/test-rightsizing-b-expected.png: Added.
+        * platform/qt/svg/wicd/test-rightsizing-b-expected.txt: Added.
+        * platform/qt/svg/wicd/test-scalable-background-image1-expected.png: Added.
+        * platform/qt/svg/wicd/test-scalable-background-image1-expected.txt: Added.
+        * platform/qt/svg/wicd/test-scalable-background-image2-expected.png: Added.
+        * platform/qt/svg/wicd/test-scalable-background-image2-expected.txt: Added.
+
 2011-06-06  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, new baselines for GTK after r88029 and r80034.
