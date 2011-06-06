@@ -72,6 +72,7 @@ my (
     $channelMessagingSupport,
     $clientBasedGeolocationSupport,
     $coverageSupport,
+    $cssRegionsSupport,
     $databaseSupport,
     $datalistSupport,
     $dataTransferItemsSupport,
@@ -149,6 +150,9 @@ my @features = (
 
     { option => "client-based-geolocation", desc => "Toggle client-based Geolocation support",
       define => "ENABLE_CLIENT_BASED_GEOLOCATION", default => isAppleWebKit(), value => \$clientBasedGeolocationSupport },
+
+    { option => "css-regions", desc => "Toggle CSS Regions support",
+      define => "ENABLE_CSS_REGIONS", default => 0, value => \$cssRegionsSupport },
 
     { option => "coverage", desc => "Toggle code coverage support",
       define => "", default => 0, value => \$coverageSupport },
