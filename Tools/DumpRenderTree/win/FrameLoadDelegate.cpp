@@ -35,6 +35,7 @@
 #include "EventSender.h"
 #include "GCController.h"
 #include "LayoutTestController.h"
+#include "WebCoreTestSupport.h"
 #include "WorkQueueItem.h"
 #include "WorkQueue.h"
 #include <WebCore/COMPtr.h>
@@ -370,6 +371,8 @@ void FrameLoadDelegate::didClearWindowObjectForFrameInStandardWorld(IWebFrame* f
     JSValueRef eventSender = makeEventSender(context, !parentFrame);
     JSObjectSetProperty(context, windowObject, eventSenderStr, eventSender, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete, 0);
     JSStringRelease(eventSenderStr);
+
+    WebCoreTestSupport::injectInternalsObject(context);
 }
 
 HRESULT STDMETHODCALLTYPE FrameLoadDelegate::didFinishDocumentLoadForFrame( 

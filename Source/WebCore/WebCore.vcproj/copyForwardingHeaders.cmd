@@ -14,6 +14,7 @@ mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\wtf\text"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\wtf\unicode"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\wtf\unicode\icu"
 mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\yarr"
+mkdir 2>NUL "%CONFIGURATIONBUILDDIR%\include\WebCoreTestSupport"
 
 xcopy /y /d "%ProjectDir%..\config.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
 xcopy /y /d "%CONFIGURATIONBUILDDIR%\obj\WebCore\DerivedSources\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore"
@@ -83,5 +84,7 @@ xcopy /y /d "%ProjectDir%..\ForwardingHeaders\wtf\text\*.h" "%CONFIGURATIONBUILD
 xcopy /y /d "%ProjectDir%..\ForwardingHeaders\wtf\unicode\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\wtf\unicode"
 xcopy /y /d "%ProjectDir%..\ForwardingHeaders\wtf\unicode\icu\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\wtf\unicode\icu"
 xcopy /y /d "%ProjectDir%..\ForwardingHeaders\yarr\*.h" "%CONFIGURATIONBUILDDIR%\include\WebCore\ForwardingHeaders\yarr"
+
+xcopy /y /d "%ProjectDir%..\testing\js\WebCoreTestSupport.h" "%CONFIGURATIONBUILDDIR%\include\WebCoreTestSupport"
 
 if exist "%CONFIGURATIONBUILDDIR%\buildfailed" del "%CONFIGURATIONBUILDDIR%\buildfailed"

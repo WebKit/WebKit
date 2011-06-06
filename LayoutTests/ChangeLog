@@ -1,3 +1,12 @@
+2011-06-04  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Unskip window.internals test on Windows.
+        https://bugs.webkit.org/show_bug.cgi?id=61076
+
+        * platform/win/Skipped:
+
 2011-06-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] 6 tests have different results on 64 bit compared to 32 bit

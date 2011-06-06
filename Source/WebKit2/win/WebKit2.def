@@ -111,6 +111,7 @@ EXPORTS
         ??0Mutex@WTF@@QAE@XZ
         ??0ThreadCondition@WTF@@QAE@XZ
         ??1Mutex@WTF@@QAE@XZ
+        ??1StringImpl@WTF@@QAE@XZ
         ??1ThreadCondition@WTF@@QAE@XZ
         ?broadcast@ThreadCondition@WTF@@QAEXXZ
         ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
@@ -132,3 +133,8 @@ EXPORTS
         ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
         ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z
         ?createThread@WTF@@YAIP6APAXPAX@Z0@Z
+
+        ; Re-exports from WebCore for WebCoreTestSupport
+        ?getCachedDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PBUClassInfo@3@@Z
+        ?cacheDOMStructure@WebCore@@YAPAVStructure@JSC@@PAVJSDOMGlobalObject@1@PAV23@PBUClassInfo@3@@Z
+        ?virtualFunctionToPreventWeakVtable@JSDOMWrapper@WebCore@@MAEXXZ

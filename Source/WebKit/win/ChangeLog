@@ -1,3 +1,12 @@
+2011-06-04  Dominic Cooney  <dominicc@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add WebCoreTestSupport project containing window.internals.
+        https://bugs.webkit.org/show_bug.cgi?id=61076
+
+        * WebKit.vcproj/WebKit.sln:
+
 2011-05-18  Anthony Johnson <anthony.johnson@flexsim.com>
 
         Reviewed by Brent Fulgham.
