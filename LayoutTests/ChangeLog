@@ -1,3 +1,55 @@
+2011-06-06  Zsolt Fehér  <h490267@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        [Qt] Add expected results for the new passing tests, and skip the new failing tests.
+
+        * platform/qt/Skipped: Skip new failing tests.
+        * platform/qt/fast/frames/flattening/iframe-flattening-nested-expected.png: Added.
+        * platform/qt/fast/frames/flattening/iframe-flattening-nested-expected.txt: Added.
+        * platform/qt/fast/frames/flattening/iframe-flattening-out-of-view-and-scroll-expected.png: Added.
+        * platform/qt/fast/frames/flattening/iframe-flattening-out-of-view-and-scroll-expected.txt: Added.
+        * platform/qt/fast/frames/flattening/iframe-flattening-out-of-view-expected.png: Added.
+        * platform/qt/fast/frames/flattening/iframe-flattening-out-of-view-expected.txt: Added.
+        * platform/qt/fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout-expected.png: Added.
+        * platform/qt/fast/frames/flattening/iframe-flattening-out-of-view-scroll-and-relayout-expected.txt: Added.
+        * platform/qt/svg/as-image/img-preserveAspectRatio-support-2-expected.png: Added.
+        * platform/qt/svg/as-image/img-preserveAspectRatio-support-2-expected.txt: Added.
+        * platform/qt/svg/as-image/svg-as-background-with-relative-size-expected.png: Added.
+        * platform/qt/svg/as-image/svg-as-background-with-relative-size-expected.txt: Added.
+        * platform/qt/svg/as-image/svg-as-background-with-viewBox-expected.png: Added.
+        * platform/qt/svg/as-image/svg-as-background-with-viewBox-expected.txt: Added.
+        * platform/qt/svg/custom/embedding-external-svgs-expected.png: Added.
+        * platform/qt/svg/custom/embedding-external-svgs-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-height-50p-on-target-svg-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-height-50p-on-target-svg-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-width-50p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-absolute-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-width-50p-height-75p-on-target-svg-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-width-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-width-50p-on-target-svg-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-width-50p-on-target-svg-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-absolute-expected.txt: Added.
+        * platform/qt/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.png: Added.
+        * platform/qt/svg/custom/object-sizing-width-75p-height-50p-on-target-svg-expected.txt: Added.
+        * platform/qt/svg/hixie/intrinsic/001-expected.png: Added.
+        * platform/qt/svg/hixie/intrinsic/001-expected.txt: Added.
+        * platform/qt/svg/hixie/intrinsic/002-expected.png: Added.
+        * platform/qt/svg/hixie/intrinsic/002-expected.txt: Added.
+        * platform/qt/svg/hixie/intrinsic/003-expected.png: Added.
+        * platform/qt/svg/hixie/intrinsic/003-expected.txt: Added.
+        * platform/qt/svg/text/scaling-font-with-geometric-precision-expected.png: Added.
+        * platform/qt/svg/text/scaling-font-with-geometric-precision-expected.txt: Added.
+
 2011-06-06  Marcus Bulach  <bulach@chromium.org>
 
         Reviewed by Unreviewed rebaseline.

@@ -2535,6 +2535,7 @@ fast/borders/mixed-border-styles-radius2.html
 fast/box-shadow/scaled-box-shadow.html
 fast/box-shadow/single-pixel-shadow.html
 fast/text/selection-rect-rounding.html
+svg/as-object/object-box-sizing-no-width-height.html
 svg/custom/object-sizing-explicit-height.xhtml
 svg/custom/object-sizing-explicit-width.xhtml
 svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml
@@ -2547,4 +2548,5 @@ svg/custom/painting-marker-07-f-inherit.svg
 svg/custom/small-rect-scale.svg
 svg/filters/feConvolveFilter-y-bounds.svg
 svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml
+svg/zoom/page/zoom-svg-through-object-with-auto-size.html
 http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml
