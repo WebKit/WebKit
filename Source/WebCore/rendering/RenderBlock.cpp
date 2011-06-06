@@ -2526,10 +2526,9 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
             if (!inlineEnclosedInSelfPaintingLayer)
                 cb->addContinuationWithOutline(inlineRenderer);
             else if (!inlineRenderer->firstLineBox())
-                inlineRenderer->paintOutline(paintInfo.context, paintOffset.x() - x() + inlineRenderer->containingBlock()->x(),
-                                             paintOffset.y() - y() + inlineRenderer->containingBlock()->y());
+                inlineRenderer->paintOutline(paintInfo.context, paintOffset - locationOffset() + inlineRenderer->containingBlock()->location());
         }
-        paintContinuationOutlines(paintInfo, paintOffset.x(), paintOffset.y());
+        paintContinuationOutlines(paintInfo, paintOffset);
     }
 
     // 7. paint caret.
@@ -2660,7 +2659,7 @@ bool RenderBlock::paintsContinuationOutline(RenderInline* flow)
     return continuations->contains(flow);
 }
 
-void RenderBlock::paintContinuationOutlines(PaintInfo& info, int tx, int ty)
+void RenderBlock::paintContinuationOutlines(PaintInfo& info, const IntPoint& paintOffset)
 {
     ContinuationOutlineTableMap* table = continuationOutlineTable();
     if (table->isEmpty())
@@ -2669,19 +2668,18 @@ void RenderBlock::paintContinuationOutlines(PaintInfo& info, int tx, int ty)
     ListHashSet<RenderInline*>* continuations = table->get(this);
     if (!continuations)
         return;
-        
+
+    IntPoint accumulatedPaintOffset = paintOffset;
     // Paint each continuation outline.
     ListHashSet<RenderInline*>::iterator end = continuations->end();
     for (ListHashSet<RenderInline*>::iterator it = continuations->begin(); it != end; ++it) {
         // Need to add in the coordinates of the intervening blocks.
         RenderInline* flow = *it;
         RenderBlock* block = flow->containingBlock();
-        for ( ; block && block != this; block = block->containingBlock()) {
-            tx += block->x();
-            ty += block->y();
-        }
+        for ( ; block && block != this; block = block->containingBlock())
+            accumulatedPaintOffset.move(block->location());
         ASSERT(block);   
-        flow->paintOutline(info.context, tx, ty);
+        flow->paintOutline(info.context, accumulatedPaintOffset);
     }
     
     // Delete

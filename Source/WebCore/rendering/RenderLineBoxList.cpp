@@ -267,7 +267,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
         ListHashSet<RenderInline*>::iterator end = info.outlineObjects->end();
         for (ListHashSet<RenderInline*>::iterator it = info.outlineObjects->begin(); it != end; ++it) {
             RenderInline* flow = *it;
-            flow->paintOutline(info.context, tx, ty);
+            flow->paintOutline(info.context, IntPoint(tx, ty));
         }
         info.outlineObjects->clear();
     }

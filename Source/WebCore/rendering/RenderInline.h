@@ -76,7 +76,7 @@ public:
     IntSize relativePositionedInlineOffset(const RenderBox* child) const;
 
     virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&);
-    void paintOutline(GraphicsContext*, int tx, int ty);
+    void paintOutline(GraphicsContext*, const IntPoint&);
 
     using RenderBoxModelObject::continuation;
     using RenderBoxModelObject::setContinuation;
@@ -162,7 +162,7 @@ private:
     
     static RenderInline* cloneInline(RenderInline* src);
 
-    void paintOutlineForLine(GraphicsContext*, int tx, int ty, const IntRect& prevLine, const IntRect& thisLine,
+    void paintOutlineForLine(GraphicsContext*, const IntPoint&, const IntRect& prevLine, const IntRect& thisLine,
                              const IntRect& nextLine, const Color);
     RenderBoxModelObject* continuationBefore(RenderObject* beforeChild);
 

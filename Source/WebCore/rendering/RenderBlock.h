@@ -632,7 +632,7 @@ private:
     unsigned desiredColumnCount() const;
     void setDesiredColumnCountAndWidth(int count, int width);
 
-    void paintContinuationOutlines(PaintInfo&, int tx, int ty);
+    void paintContinuationOutlines(PaintInfo&, const IntPoint&);
 
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 

@@ -1366,7 +1366,7 @@ void RenderInline::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& add
     }
 }
 
-void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty)
+void RenderInline::paintOutline(GraphicsContext* graphicsContext, const IntPoint& paintOffset)
 {
     if (!hasOutline())
         return;
@@ -1375,7 +1375,7 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
     if (styleToUse->outlineStyleIsAuto() || hasOutlineAnnotation()) {
         if (!theme()->supportsFocusRing(styleToUse)) {
             // Only paint the focus ring by hand if the theme isn't able to draw the focus ring.
-            paintFocusRing(graphicsContext, IntPoint(tx, ty), styleToUse);
+            paintFocusRing(graphicsContext, paintOffset, styleToUse);
         }
     }
 
@@ -1408,7 +1408,7 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
 #endif
 
     for (unsigned i = 1; i < rects.size() - 1; i++)
-        paintOutlineForLine(graphicsContext, tx, ty, rects.at(i - 1), rects.at(i), rects.at(i + 1), outlineColor);
+        paintOutlineForLine(graphicsContext, paintOffset, rects.at(i - 1), rects.at(i), rects.at(i + 1), outlineColor);
 
 // FIXME: Using a transparency layer for rgba outlines exacerbates an existing SKIA bug. The #if
 // below prevents this; it should be removed when https://bugs.webkit.org/show_bug.cgi?id=60342 is fixed.
@@ -1418,7 +1418,7 @@ void RenderInline::paintOutline(GraphicsContext* graphicsContext, int tx, int ty
 #endif
 }
 
-void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx, int ty,
+void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, const IntPoint& paintOffset,
                                        const IntRect& lastline, const IntRect& thisline, const IntRect& nextline,
                                        const Color outlineColor)
 {
@@ -1431,10 +1431,10 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
 
     int offset = style()->outlineOffset();
 
-    int t = ty + thisline.y() - offset;
-    int l = tx + thisline.x() - offset;
-    int b = ty + thisline.maxY() + offset;
-    int r = tx + thisline.maxX() + offset;
+    int t = paintOffset.y() + thisline.y() - offset;
+    int l = paintOffset.x() + thisline.x() - offset;
+    int b = paintOffset.y() + thisline.maxY() + offset;
+    int r = paintOffset.x() + thisline.maxX() + offset;
     
     // left edge
     drawLineForBoxSide(graphicsContext,
@@ -1464,21 +1464,21 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
         drawLineForBoxSide(graphicsContext,
                    l - ow,
                    t - ow,
-                   min(r+ow, (lastline.isEmpty() ? 1000000 : tx + lastline.x())),
+                   min(r+ow, (lastline.isEmpty() ? 1000000 : paintOffset.x() + lastline.x())),
                    t,
                    BSTop, outlineColor, os,
                    ow,
-                   (!lastline.isEmpty() && tx + lastline.x() + 1 < r + ow) ? -ow : ow,
+                   (!lastline.isEmpty() && paintOffset.x() + lastline.x() + 1 < r + ow) ? -ow : ow,
                    antialias);
     
     if (lastline.maxX() < thisline.maxX())
         drawLineForBoxSide(graphicsContext,
-                   max(lastline.isEmpty() ? -1000000 : tx + lastline.maxX(), l - ow),
+                   max(lastline.isEmpty() ? -1000000 : paintOffset.x() + lastline.maxX(), l - ow),
                    t - ow,
                    r + ow,
                    t,
                    BSTop, outlineColor, os,
-                   (!lastline.isEmpty() && l - ow < tx + lastline.maxX()) ? -ow : ow,
+                   (!lastline.isEmpty() && l - ow < paintOffset.x() + lastline.maxX()) ? -ow : ow,
                    ow, antialias);
     
     // lower edge
@@ -1486,21 +1486,21 @@ void RenderInline::paintOutlineForLine(GraphicsContext* graphicsContext, int tx,
         drawLineForBoxSide(graphicsContext,
                    l - ow,
                    b,
-                   min(r + ow, !nextline.isEmpty() ? tx + nextline.x() + 1 : 1000000),
+                   min(r + ow, !nextline.isEmpty() ? paintOffset.x() + nextline.x() + 1 : 1000000),
                    b + ow,
                    BSBottom, outlineColor, os,
                    ow,
-                   (!nextline.isEmpty() && tx + nextline.x() + 1 < r + ow) ? -ow : ow,
+                   (!nextline.isEmpty() && paintOffset.x() + nextline.x() + 1 < r + ow) ? -ow : ow,
                    antialias);
     
     if (nextline.maxX() < thisline.maxX())
         drawLineForBoxSide(graphicsContext,
-                   max(!nextline.isEmpty() ? tx + nextline.maxX() : -1000000, l - ow),
+                   max(!nextline.isEmpty() ? paintOffset.x() + nextline.maxX() : -1000000, l - ow),
                    b,
                    r + ow,
                    b + ow,
                    BSBottom, outlineColor, os,
-                   (!nextline.isEmpty() && l - ow < tx + nextline.maxX()) ? -ow : ow,
+                   (!nextline.isEmpty() && l - ow < paintOffset.x() + nextline.maxX()) ? -ow : ow,
                    ow, antialias);
 }
 

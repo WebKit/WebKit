@@ -1,3 +1,26 @@
+2011-06-06  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintOutline, paintContinuationOutlines, and paintOutlineForLine to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62137
+
+        Switching paintOutline, paintContinuationOutlines, and paintOutlineForLine to take an IntPoint
+        representing the paint offset instead of a pair of ints.
+
+        No new tests as this is simple refactoring.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::paintContinuationOutlines):
+        * rendering/RenderBlock.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::paintOutline):
+        (WebCore::RenderInline::paintOutlineForLine):
+        * rendering/RenderInline.h:
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::paint):
+
 2011-06-06  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.
