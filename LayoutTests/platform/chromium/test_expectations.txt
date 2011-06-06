@@ -4004,3 +4004,5 @@ BUGCR84157 GPU : fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUGCR84157 GPU : fast/canvas/canvas-transform-skewed.html = IMAGE
 BUGCR84157 GPU : fast/canvas/zero-size-fill-rect.html = IMAGE
 BUGCR84157 BUGCR74979 GPU : media/video-canvas-alpha.html = IMAGE
+
+BUGCR85051 WIN GPU : canvas/philip/tests/2d.composite.canvas.source-over.html = TEXT
