@@ -1,3 +1,13 @@
+2011-06-06  Shishir Agrawal  <shishir@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Add a "prerender" state for page visibility.
+        https://bugs.webkit.org/show_bug.cgi?id=62062
+
+        * fast/events/page-visibility-transition-test-expected.txt:
+        * fast/events/page-visibility-transition-test.html:
+
 2011-06-06  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] 6 tests have different results on 64 bit compared to 32 bit

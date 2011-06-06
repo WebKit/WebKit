@@ -1,3 +1,15 @@
+2011-06-06  Shishir Agrawal  <shishir@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Add a "prerender" state for page visibility.
+        https://bugs.webkit.org/show_bug.cgi?id=62062
+
+        * public/WebPageVisibilityState.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setVisibilityState):
+
 2011-06-06  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Dimitri Glazkov.

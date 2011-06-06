@@ -1,3 +1,14 @@
+2011-06-06  Shishir Agrawal  <shishir@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Add a "prerender" state for page visibility.
+        https://bugs.webkit.org/show_bug.cgi?id=62062
+
+        * page/PageVisibilityState.cpp:
+        (WebCore::pageVisibilityStateString):
+        * page/PageVisibilityState.h:
+
 2011-06-06  Cary Clark  <caryclark@google.com>
 
         Reviewed by Eric Seidel.
