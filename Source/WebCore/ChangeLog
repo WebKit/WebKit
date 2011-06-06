@@ -1,3 +1,29 @@
+2011-06-03  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        IndexedDB: Clean-up function prototypes in IDBLevelDBBackingStore.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=62013
+
+        Clean up the prototypes for cursor open functions by introducing the
+        CursorOptions struct.
+
+        Just clean-up, no new functionality so no new tests.
+
+        * storage/IDBLevelDBBackingStore.cpp:
+        (WebCore::CursorOptions::CursorImplCommon::CursorImplCommon):
+        (WebCore::CursorOptions::CursorImplCommon::firstSeek):
+        (WebCore::CursorOptions::CursorImplCommon::continueFunction):
+        (WebCore::CursorOptions::ObjectStoreCursorImpl::create):
+        (WebCore::CursorOptions::ObjectStoreCursorImpl::ObjectStoreCursorImpl):
+        (WebCore::CursorOptions::IndexKeyCursorImpl::create):
+        (WebCore::CursorOptions::IndexKeyCursorImpl::IndexKeyCursorImpl):
+        (WebCore::CursorOptions::IndexCursorImpl::create):
+        (WebCore::CursorOptions::IndexCursorImpl::IndexCursorImpl):
+        (WebCore::IDBLevelDBBackingStore::openObjectStoreCursor):
+        (WebCore::IDBLevelDBBackingStore::openIndexKeyCursor):
+        (WebCore::IDBLevelDBBackingStore::openIndexCursor):
+
 2011-06-06  Mustafizur Rahaman  <mustaf.here@gmail.com>
 
         Reviewed by Darin Adler.

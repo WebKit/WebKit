@@ -816,6 +816,16 @@ bool IDBLevelDBBackingStore::keyExistsInIndex(int64_t databaseId, int64_t object
 }
 
 namespace {
+
+struct CursorOptions {
+    Vector<char> lowKey;
+    bool lowOpen;
+    Vector<char> highKey;
+    bool highOpen;
+    bool forward;
+    bool unique;
+};
+
 class CursorImplCommon : public IDBBackingStore::Cursor {
 public:
     // IDBBackingStore::Cursor
@@ -831,26 +841,16 @@ public:
     bool firstSeek();
 
 protected:
-    CursorImplCommon(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
+    CursorImplCommon(LevelDBTransaction* transaction, const CursorOptions& cursorOptions)
         : m_transaction(transaction)
-        , m_lowKey(lowKey)
-        , m_lowOpen(lowOpen)
-        , m_highKey(highKey)
-        , m_highOpen(highOpen)
-        , m_forward(forward)
-        , m_unique(unique)
+        , m_cursorOptions(cursorOptions)
     {
     }
     virtual ~CursorImplCommon() {}
 
     LevelDBTransaction* m_transaction;
+    CursorOptions m_cursorOptions;
     OwnPtr<LevelDBIterator> m_iterator;
-    Vector<char> m_lowKey;
-    bool m_lowOpen;
-    Vector<char> m_highKey;
-    bool m_highOpen;
-    bool m_forward;
-    bool m_unique;
     RefPtr<IDBKey> m_currentKey;
 };
 
@@ -858,41 +858,41 @@ bool CursorImplCommon::firstSeek()
 {
     m_iterator = m_transaction->createIterator();
 
-    if (m_forward)
-        m_iterator->seek(m_lowKey);
+    if (m_cursorOptions.forward)
+        m_iterator->seek(m_cursorOptions.lowKey);
     else
-        m_iterator->seek(m_highKey);
+        m_iterator->seek(m_cursorOptions.highKey);
 
     for (;;) {
         if (!m_iterator->isValid())
             return false;
 
-        if (m_forward && m_highOpen && compareIndexKeys(m_iterator->key(), m_highKey) >= 0)
+        if (m_cursorOptions.forward && m_cursorOptions.highOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) >= 0)
             return false;
-        if (m_forward && !m_highOpen && compareIndexKeys(m_iterator->key(), m_highKey) > 0)
+        if (m_cursorOptions.forward && !m_cursorOptions.highOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) > 0)
             return false;
-        if (!m_forward && m_lowOpen && compareIndexKeys(m_iterator->key(), m_lowKey) <= 0)
+        if (!m_cursorOptions.forward && m_cursorOptions.lowOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) <= 0)
             return false;
-        if (!m_forward && !m_lowOpen && compareIndexKeys(m_iterator->key(), m_lowKey) < 0)
+        if (!m_cursorOptions.forward && !m_cursorOptions.lowOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) < 0)
             return false;
 
-        if (m_forward && m_lowOpen) {
+        if (m_cursorOptions.forward && m_cursorOptions.lowOpen) {
             // lowKey not included in the range.
-            if (compareIndexKeys(m_iterator->key(), m_lowKey) <= 0) {
+            if (compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) <= 0) {
                 m_iterator->next();
                 continue;
             }
         }
-        if (!m_forward && m_highOpen) {
+        if (!m_cursorOptions.forward && m_cursorOptions.highOpen) {
             // highKey not included in the range.
-            if (compareIndexKeys(m_iterator->key(), m_highKey) >= 0) {
+            if (compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) >= 0) {
                 m_iterator->prev();
                 continue;
             }
         }
 
         if (!loadCurrentRow()) {
-            if (m_forward)
+            if (m_cursorOptions.forward)
                 m_iterator->next();
             else
                 m_iterator->prev();
@@ -909,7 +909,7 @@ bool CursorImplCommon::continueFunction(const IDBKey* key)
     RefPtr<IDBKey> previousKey = m_currentKey;
 
     for (;;) {
-        if (m_forward)
+        if (m_cursorOptions.forward)
             m_iterator->next();
         else
             m_iterator->prev();
@@ -921,20 +921,20 @@ bool CursorImplCommon::continueFunction(const IDBKey* key)
         if (!m_transaction->get(m_iterator->key(), trash))
              continue;
 
-        if (m_forward && m_highOpen && compareIndexKeys(m_iterator->key(), m_highKey) >= 0) // high key not included in range
+        if (m_cursorOptions.forward && m_cursorOptions.highOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) >= 0) // high key not included in range
             return false;
-        if (m_forward && !m_highOpen && compareIndexKeys(m_iterator->key(), m_highKey) > 0)
+        if (m_cursorOptions.forward && !m_cursorOptions.highOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.highKey) > 0)
             return false;
-        if (!m_forward && m_lowOpen && compareIndexKeys(m_iterator->key(), m_lowKey) <= 0) // low key not included in range
+        if (!m_cursorOptions.forward && m_cursorOptions.lowOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) <= 0) // low key not included in range
             return false;
-        if (!m_forward && !m_lowOpen && compareIndexKeys(m_iterator->key(), m_lowKey) < 0)
+        if (!m_cursorOptions.forward && !m_cursorOptions.lowOpen && compareIndexKeys(m_iterator->key(), m_cursorOptions.lowKey) < 0)
             return false;
 
         if (!loadCurrentRow())
             continue;
 
         if (key) {
-            if (m_forward) {
+            if (m_cursorOptions.forward) {
                 if (m_currentKey->isLessThan(key))
                     continue;
             } else {
@@ -943,7 +943,7 @@ bool CursorImplCommon::continueFunction(const IDBKey* key)
             }
         }
 
-        if (m_unique && m_currentKey->isEqual(previousKey.get()))
+        if (m_cursorOptions.unique && m_currentKey->isEqual(previousKey.get()))
             continue;
 
         break;
@@ -954,9 +954,9 @@ bool CursorImplCommon::continueFunction(const IDBKey* key)
 
 class ObjectStoreCursorImpl : public CursorImplCommon {
 public:
-    static PassRefPtr<ObjectStoreCursorImpl> create(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
+    static PassRefPtr<ObjectStoreCursorImpl> create(LevelDBTransaction* transaction, const CursorOptions& cursorOptions)
     {
-        return adoptRef(new ObjectStoreCursorImpl(transaction, lowKey, lowOpen, highKey, highOpen, forward, unique));
+        return adoptRef(new ObjectStoreCursorImpl(transaction, cursorOptions));
     }
 
     // CursorImplCommon
@@ -966,8 +966,8 @@ public:
     virtual bool loadCurrentRow();
 
 private:
-    ObjectStoreCursorImpl(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
-        : CursorImplCommon(transaction, lowKey, lowOpen, highKey, highOpen, forward, unique)
+    ObjectStoreCursorImpl(LevelDBTransaction* transaction, const CursorOptions& cursorOptions)
+        : CursorImplCommon(transaction, cursorOptions)
     {
     }
 
@@ -1001,9 +1001,9 @@ bool ObjectStoreCursorImpl::loadCurrentRow()
 
 class IndexKeyCursorImpl : public CursorImplCommon {
 public:
-    static PassRefPtr<IndexKeyCursorImpl> create(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
+    static PassRefPtr<IndexKeyCursorImpl> create(LevelDBTransaction* transaction, const CursorOptions& cursorOptions)
     {
-        return adoptRef(new IndexKeyCursorImpl(transaction, lowKey, lowOpen, highKey, highOpen, forward, unique));
+        return adoptRef(new IndexKeyCursorImpl(transaction, cursorOptions));
     }
 
     // CursorImplCommon
@@ -1014,8 +1014,8 @@ public:
     virtual bool loadCurrentRow();
 
 private:
-    IndexKeyCursorImpl(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
-        : CursorImplCommon(transaction, lowKey, lowOpen, highKey, highOpen, forward, unique)
+    IndexKeyCursorImpl(LevelDBTransaction* transaction, const CursorOptions& cursorOptions)
+        : CursorImplCommon(transaction, cursorOptions)
     {
     }
 
@@ -1064,9 +1064,9 @@ bool IndexKeyCursorImpl::loadCurrentRow()
 
 class IndexCursorImpl : public CursorImplCommon {
 public:
-    static PassRefPtr<IndexCursorImpl> create(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
+    static PassRefPtr<IndexCursorImpl> create(LevelDBTransaction* transaction, const CursorOptions& cursorOptions)
     {
-        return adoptRef(new IndexCursorImpl(transaction, lowKey, lowOpen, highKey, highOpen, forward, unique));
+        return adoptRef(new IndexCursorImpl(transaction, cursorOptions));
     }
 
     // CursorImplCommon
@@ -1077,8 +1077,8 @@ public:
     bool loadCurrentRow();
 
 private:
-    IndexCursorImpl(LevelDBTransaction* transaction, const Vector<char>& lowKey, bool lowOpen, const Vector<char>& highKey, bool highOpen, bool forward, bool unique)
-        : CursorImplCommon(transaction, lowKey, lowOpen, highKey, highOpen, forward, unique)
+    IndexCursorImpl(LevelDBTransaction* transaction, const CursorOptions& cursorOptions)
+        : CursorImplCommon(transaction, cursorOptions)
     {
     }
 
@@ -1153,37 +1153,36 @@ static bool findLastIndexKeyEqualTo(LevelDBTransaction* transaction, const Vecto
 PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openObjectStoreCursor(int64_t databaseId, int64_t objectStoreId, const IDBKeyRange* range, IDBCursor::Direction direction)
 {
     ASSERT(m_currentTransaction);
+    CursorOptions cursorOptions;
+
     bool lowerBound = range && range->lower();
     bool upperBound = range && range->upper();
-    bool forward = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT);
-    bool unique = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE);
-
-    bool lowerOpen, upperOpen;
-    Vector<char> startKey, stopKey;
+    cursorOptions.forward = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT);
+    cursorOptions.unique = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE);
 
     if (!lowerBound) {
-        startKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, minIDBKey());
-        lowerOpen = true; // Not included.
+        cursorOptions.lowKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, minIDBKey());
+        cursorOptions.lowOpen = true; // Not included.
     } else {
-        startKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, *range->lower());
-        lowerOpen = range->lowerOpen();
+        cursorOptions.lowKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, *range->lower());
+        cursorOptions.lowOpen = range->lowerOpen();
     }
 
     if (!upperBound) {
-        stopKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, maxIDBKey());
-        upperOpen = true; // Not included.
+        cursorOptions.highKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, maxIDBKey());
+        cursorOptions.highOpen = true; // Not included.
 
-        if (!forward) { // We need a key that exists.
-            if (!findGreatestKeyLessThan(m_currentTransaction.get(), stopKey, stopKey))
+        if (!cursorOptions.forward) { // We need a key that exists.
+            if (!findGreatestKeyLessThan(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey))
                 return 0;
-            upperOpen = false;
+            cursorOptions.highOpen = false;
         }
     } else {
-        stopKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, *range->upper());
-        upperOpen = range->upperOpen();
+        cursorOptions.highKey = ObjectStoreDataKey::encode(databaseId, objectStoreId, *range->upper());
+        cursorOptions.highOpen = range->upperOpen();
     }
 
-    RefPtr<ObjectStoreCursorImpl> cursor = ObjectStoreCursorImpl::create(m_currentTransaction.get(), startKey, lowerOpen, stopKey, upperOpen, forward, unique);
+    RefPtr<ObjectStoreCursorImpl> cursor = ObjectStoreCursorImpl::create(m_currentTransaction.get(), cursorOptions);
     if (!cursor->firstSeek())
         return 0;
 
@@ -1193,39 +1192,37 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openObjectStoreCurso
 PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openIndexKeyCursor(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IDBCursor::Direction direction)
 {
     ASSERT(m_currentTransaction);
+    CursorOptions cursorOptions;
     bool lowerBound = range && range->lower();
     bool upperBound = range && range->upper();
-    bool forward = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT);
-    bool unique = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE);
-
-    bool lowerOpen, upperOpen;
-    Vector<char> startKey, stopKey;
+    cursorOptions.forward = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT);
+    cursorOptions.unique = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE);
 
     if (!lowerBound) {
-        startKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, minIDBKey(), 0);
-        lowerOpen = false; // Included.
+        cursorOptions.lowKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, minIDBKey(), 0);
+        cursorOptions.lowOpen = false; // Included.
     } else {
-        startKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->lower(), 0);
-        lowerOpen = range->lowerOpen();
+        cursorOptions.lowKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->lower(), 0);
+        cursorOptions.lowOpen = range->lowerOpen();
     }
 
     if (!upperBound) {
-        stopKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, maxIDBKey(), 0);
-        upperOpen = false; // Included.
+        cursorOptions.highKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, maxIDBKey(), 0);
+        cursorOptions.highOpen = false; // Included.
 
-        if (!forward) { // We need a key that exists.
-            if (!findGreatestKeyLessThan(m_currentTransaction.get(), stopKey, stopKey))
+        if (!cursorOptions.forward) { // We need a key that exists.
+            if (!findGreatestKeyLessThan(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey))
                 return 0;
-            upperOpen = false;
+            cursorOptions.highOpen = false;
         }
     } else {
-        stopKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->upper(), 0);
-        if (!findLastIndexKeyEqualTo(m_currentTransaction.get(), stopKey, stopKey)) // Seek to the *last* key in the set of non-unique keys.
+        cursorOptions.highKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->upper(), 0);
+        if (!findLastIndexKeyEqualTo(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey)) // Seek to the *last* key in the set of non-unique keys.
             return 0;
-        upperOpen = range->upperOpen();
+        cursorOptions.highOpen = range->upperOpen();
     }
 
-    RefPtr<IndexKeyCursorImpl> cursor = IndexKeyCursorImpl::create(m_currentTransaction.get(), startKey, lowerOpen, stopKey, upperOpen, forward, unique);
+    RefPtr<IndexKeyCursorImpl> cursor = IndexKeyCursorImpl::create(m_currentTransaction.get(), cursorOptions);
     if (!cursor->firstSeek())
         return 0;
 
@@ -1235,39 +1232,37 @@ PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openIndexKeyCursor(i
 PassRefPtr<IDBBackingStore::Cursor> IDBLevelDBBackingStore::openIndexCursor(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange* range, IDBCursor::Direction direction)
 {
     ASSERT(m_currentTransaction);
+    CursorOptions cursorOptions;
     bool lowerBound = range && range->lower();
     bool upperBound = range && range->upper();
-    bool forward = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT);
-    bool unique = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE);
-
-    bool lowerOpen, upperOpen;
-    Vector<char> startKey, stopKey;
+    cursorOptions.forward = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::NEXT);
+    cursorOptions.unique = (direction == IDBCursor::NEXT_NO_DUPLICATE || direction == IDBCursor::PREV_NO_DUPLICATE);
 
     if (!lowerBound) {
-        startKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, minIDBKey(), 0);
-        lowerOpen = false; // Included.
+        cursorOptions.lowKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, minIDBKey(), 0);
+        cursorOptions.lowOpen = false; // Included.
     } else {
-        startKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->lower(), 0);
-        lowerOpen = range->lowerOpen();
+        cursorOptions.lowKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->lower(), 0);
+        cursorOptions.lowOpen = range->lowerOpen();
     }
 
     if (!upperBound) {
-        stopKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, maxIDBKey(), 0);
-        upperOpen = false; // Included.
+        cursorOptions.highKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, maxIDBKey(), 0);
+        cursorOptions.highOpen = false; // Included.
 
-        if (!forward) { // We need a key that exists.
-            if (!findGreatestKeyLessThan(m_currentTransaction.get(), stopKey, stopKey))
+        if (!cursorOptions.forward) { // We need a key that exists.
+            if (!findGreatestKeyLessThan(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey))
                 return 0;
-            upperOpen = false;
+            cursorOptions.highOpen = false;
         }
     } else {
-        stopKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->upper(), 0);
-        if (!findLastIndexKeyEqualTo(m_currentTransaction.get(), stopKey, stopKey)) // Seek to the *last* key in the set of non-unique keys.
+        cursorOptions.highKey = IndexDataKey::encode(databaseId, objectStoreId, indexId, *range->upper(), 0);
+        if (!findLastIndexKeyEqualTo(m_currentTransaction.get(), cursorOptions.highKey, cursorOptions.highKey)) // Seek to the *last* key in the set of non-unique keys.
             return 0;
-        upperOpen = range->upperOpen();
+        cursorOptions.highOpen = range->upperOpen();
     }
 
-    RefPtr<IndexCursorImpl> cursor = IndexCursorImpl::create(m_currentTransaction.get(), startKey, lowerOpen, stopKey, upperOpen, forward, unique);
+    RefPtr<IndexCursorImpl> cursor = IndexCursorImpl::create(m_currentTransaction.get(), cursorOptions);
     if (!cursor->firstSeek())
         return 0;
 
