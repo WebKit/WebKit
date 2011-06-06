@@ -1,3 +1,13 @@
+2011-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Anders Carlsson.
+
+        Do not use NPRuntimeObjectMap in NetscapePlugin::setException when plug-in is running out of process
+        https://bugs.webkit.org/show_bug.cgi?id=62124
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::setException):
+
 2011-06-06  Dominic Cooney  <dominicc@chromium.org>
 
         Unreviewed WinCairo build fix after r88159.

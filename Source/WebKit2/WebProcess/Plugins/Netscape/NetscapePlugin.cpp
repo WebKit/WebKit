@@ -213,9 +213,12 @@ void NetscapePlugin::setStatusbarText(const String& statusbarText)
 
 void NetscapePlugin::setException(const String& exceptionString)
 {
+#if ENABLE(PLUGIN_PROCESS)
     // FIXME: If the plug-in is running in its own process, this needs to send a CoreIPC message instead of
     // calling the runtime object map directly.
+#else
     NPRuntimeObjectMap::setGlobalException(exceptionString);
+#endif
 }
 
 bool NetscapePlugin::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result)
