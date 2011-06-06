@@ -1,3 +1,11 @@
+2011-06-06  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, new baselines for GTK after r88029 and r80034.
+
+        * platform/gtk/fast/forms/selectlist-minsize-expected.png: Added.
+        * platform/gtk/fast/forms/selectlist-minsize-expected.txt: Added.
+        * platform/gtk/fullscreen/full-screen-placeholder-expected.txt: Added.
+
 2011-06-02  MORITA Hajime  <morrita@google.com>
 
         Verify cloning <meter> and <progress> works
