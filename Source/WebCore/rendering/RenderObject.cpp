@@ -2142,25 +2142,25 @@ void RenderObject::updateDragState(bool dragOn)
         curr->updateDragState(dragOn);
 }
 
-bool RenderObject::hitTest(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestFilter hitTestFilter)
+bool RenderObject::hitTest(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestFilter hitTestFilter)
 {
     bool inside = false;
     if (hitTestFilter != HitTestSelf) {
         // First test the foreground layer (lines and inlines).
-        inside = nodeAtPoint(request, result, pointInContainer, tx, ty, HitTestForeground);
+        inside = nodeAtPoint(request, result, pointInContainer, accumulatedOffset.x(), accumulatedOffset.y(), HitTestForeground);
 
         // Test floats next.
         if (!inside)
-            inside = nodeAtPoint(request, result, pointInContainer, tx, ty, HitTestFloat);
+            inside = nodeAtPoint(request, result, pointInContainer, accumulatedOffset.x(), accumulatedOffset.y(), HitTestFloat);
 
         // Finally test to see if the mouse is in the background (within a child block's background).
         if (!inside)
-            inside = nodeAtPoint(request, result, pointInContainer, tx, ty, HitTestChildBlockBackgrounds);
+            inside = nodeAtPoint(request, result, pointInContainer, accumulatedOffset.x(), accumulatedOffset.y(), HitTestChildBlockBackgrounds);
     }
 
     // See if the mouse is inside us but not any of our descendants
     if (hitTestFilter != HitTestDescendants && !inside)
-        inside = nodeAtPoint(request, result, pointInContainer, tx, ty, HitTestBlockBackground);
+        inside = nodeAtPoint(request, result, pointInContainer, accumulatedOffset.x(), accumulatedOffset.y(), HitTestBlockBackground);
 
     return inside;
 }

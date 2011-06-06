@@ -3973,7 +3973,7 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
             int xOffset = xPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->x();
             int yOffset = yPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->y();
             IntPoint childPoint = flipFloatForWritingMode(floatingObject, IntPoint(tx + xOffset, ty + yOffset));
-            if (floatingObject->m_renderer->hitTest(request, result, pointInContainer, childPoint.x(), childPoint.y())) {
+            if (floatingObject->m_renderer->hitTest(request, result, pointInContainer, childPoint)) {
                 updateHitTestResult(result, pointInContainer - toSize(childPoint));
                 return true;
             }
@@ -4034,7 +4034,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
 {
     if (childrenInline() && !isTable()) {
         // We have to hit-test our line boxes.
-        if (m_lineBoxes.hitTest(this, request, result, pointInContainer, tx, ty, hitTestAction))
+        if (m_lineBoxes.hitTest(this, request, result, pointInContainer, IntPoint(tx, ty), hitTestAction))
             return true;
     } else {
         // Hit test our children.

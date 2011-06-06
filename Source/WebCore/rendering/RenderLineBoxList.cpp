@@ -274,7 +274,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
 }
 
 
-bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction) const
+bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction hitTestAction) const
 {
     if (hitTestAction != HitTestForeground)
         return false;
@@ -289,7 +289,7 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
         IntRect(pointInContainer.x(), pointInContainer.y() - result.topPadding(), 1, result.topPadding() + result.bottomPadding() + 1) :
         IntRect(pointInContainer.x() - result.leftPadding(), pointInContainer.y(), result.rightPadding() + result.leftPadding() + 1, 1);
 
-    if (!anyLineIntersectsRect(renderer, rect, IntPoint(tx, ty)))
+    if (!anyLineIntersectsRect(renderer, rect, accumulatedOffset))
         return false;
 
     // See if our root lines contain the point.  If so, then we hit test
@@ -297,10 +297,10 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     // based off positions of our first line box or our last line box.
     for (InlineFlowBox* curr = lastLineBox(); curr; curr = curr->prevLineBox()) {
         RootInlineBox* root = curr->root();
-        if (rangeIntersectsRect(renderer, curr->logicalTopVisualOverflow(root->lineTop()), curr->logicalBottomVisualOverflow(root->lineBottom()), rect, IntPoint(tx, ty))) {
-            bool inside = curr->nodeAtPoint(request, result, pointInContainer, tx, ty, root->lineTop(), root->lineBottom());
+        if (rangeIntersectsRect(renderer, curr->logicalTopVisualOverflow(root->lineTop()), curr->logicalBottomVisualOverflow(root->lineBottom()), rect, accumulatedOffset)) {
+            bool inside = curr->nodeAtPoint(request, result, pointInContainer, accumulatedOffset.x(), accumulatedOffset.y(), root->lineTop(), root->lineBottom());
             if (inside) {
-                renderer->updateHitTestResult(result, pointInContainer - IntSize(tx, ty));
+                renderer->updateHitTestResult(result, toPoint(pointInContainer - accumulatedOffset));
                 return true;
             }
         }

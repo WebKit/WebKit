@@ -1,3 +1,32 @@
+2011-06-06  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Convert hitTest to IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62144
+
+        Covered by existing tests.
+
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nodeAtPoint):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::hitTestFloats):
+        (WebCore::RenderBlock::hitTestContents):
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::nodeAtPoint):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::hitTestContents):
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::renderBoxLocation):
+        (WebCore::RenderLayer::renderBoxX):
+        (WebCore::RenderLayer::renderBoxY):
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderLineBoxList.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::hitTest):
+        * rendering/RenderObject.h:
+
 2011-06-06  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

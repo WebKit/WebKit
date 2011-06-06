@@ -459,8 +459,9 @@ private:
     void setFirstChild(RenderLayer* first) { m_first = first; }
     void setLastChild(RenderLayer* last) { m_last = last; }
 
-    int renderBoxX() const { return renderer()->isBox() ? toRenderBox(renderer())->x() : 0; }
-    int renderBoxY() const { return renderer()->isBox() ? toRenderBox(renderer())->y() : 0; }
+    IntPoint renderBoxLocation() const { return renderer()->isBox() ? toRenderBox(renderer())->location() : IntPoint(); }
+    int renderBoxX() const { return renderBoxLocation().x(); }
+    int renderBoxY() const { return renderBoxLocation().y(); }
 
     void collectLayers(Vector<RenderLayer*>*&, Vector<RenderLayer*>*&);
 
