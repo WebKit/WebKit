@@ -1,3 +1,24 @@
+2011-06-03  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintFloats, paintChildren, and paintEllipsisBoxes to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62058
+
+        Switching paintFloats, paintChildren, and paintEllipsisBoxes to take IntPoints representing
+        their paint offsets instead of pairs of ints.
+
+        No new tests since this is simple refactoring.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnContents):
+        (WebCore::RenderBlock::paintContents):
+        (WebCore::RenderBlock::paintChildren):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::paintFloats):
+        (WebCore::RenderBlock::paintEllipsisBoxes):
+        * rendering/RenderBlock.h:
+
 2011-06-06  Steve Block  <steveblock@google.com>
 
         Reviewed by Yury Semikhatsky.

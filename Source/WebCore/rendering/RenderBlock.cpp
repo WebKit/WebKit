@@ -2351,7 +2351,7 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, int tx, int ty, bool
             int finalX = tx + offset.width();
             int finalY = ty + offset.height();
             if (paintingFloats)
-                paintFloats(info, finalX, finalY, paintInfo.phase == PaintPhaseSelection || paintInfo.phase == PaintPhaseTextClip);
+                paintFloats(info, IntPoint(finalX, finalY), paintInfo.phase == PaintPhaseSelection || paintInfo.phase == PaintPhaseTextClip);
             else
                 paintContents(info, finalX, finalY);
         }
@@ -2375,10 +2375,10 @@ void RenderBlock::paintContents(PaintInfo& paintInfo, int tx, int ty)
     if (childrenInline())
         m_lineBoxes.paint(this, paintInfo, tx, ty);
     else
-        paintChildren(paintInfo, tx, ty);
+        paintChildren(paintInfo, IntPoint(tx, ty));
 }
 
-void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
+void RenderBlock::paintChildren(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     PaintPhase newPhase = (paintInfo.phase == PaintPhaseChildOutlines) ? PaintPhaseOutline : paintInfo.phase;
     newPhase = (newPhase == PaintPhaseChildBlockBackgrounds) ? PaintPhaseChildBlockBackground : newPhase;
@@ -2396,34 +2396,35 @@ void RenderBlock::paintChildren(PaintInfo& paintInfo, int tx, int ty)
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {        
         // Check for page-break-before: always, and if it's set, break and bail.
         bool checkBeforeAlways = !childrenInline() && (usePrintRect && child->style()->pageBreakBefore() == PBALWAYS);
+        int absoluteChildY = paintOffset.y() + child->y();
         if (checkBeforeAlways
-            && (ty + child->y()) > paintInfo.rect.y()
-            && (ty + child->y()) < paintInfo.rect.maxY()) {
-            view()->setBestTruncatedAt(ty + child->y(), this, true);
+            && absoluteChildY > paintInfo.rect.y()
+            && absoluteChildY < paintInfo.rect.maxY()) {
+            view()->setBestTruncatedAt(absoluteChildY, this, true);
             return;
         }
 
         if (!child->isFloating() && child->isReplaced() && usePrintRect && child->height() <= renderView->printRect().height()) {
             // Paginate block-level replaced elements.
-            if (ty + child->y() + child->height() > renderView->printRect().maxY()) {
-                if (ty + child->y() < renderView->truncatedAt())
-                    renderView->setBestTruncatedAt(ty + child->y(), child);
+            if (absoluteChildY + child->height() > renderView->printRect().maxY()) {
+                if (absoluteChildY < renderView->truncatedAt())
+                    renderView->setBestTruncatedAt(absoluteChildY, child);
                 // If we were able to truncate, don't paint.
-                if (ty + child->y() >= renderView->truncatedAt())
+                if (absoluteChildY >= renderView->truncatedAt())
                     break;
             }
         }
 
-        IntPoint childPoint = flipForWritingMode(child, IntPoint(tx, ty), ParentToChildFlippingAdjustment);
+        IntPoint childPoint = flipForWritingMode(child, paintOffset, ParentToChildFlippingAdjustment);
         if (!child->hasSelfPaintingLayer() && !child->isFloating())
             child->paint(info, childPoint.x(), childPoint.y());
 
         // Check for page-break-after: always, and if it's set, break and bail.
         bool checkAfterAlways = !childrenInline() && (usePrintRect && child->style()->pageBreakAfter() == PBALWAYS);
         if (checkAfterAlways
-            && (ty + child->y() + child->height()) > paintInfo.rect.y()
-            && (ty + child->y() + child->height()) < paintInfo.rect.maxY()) {
-            view()->setBestTruncatedAt(ty + child->y() + child->height() + max(0, child->collapsedMarginAfter()), this, true);
+            && (absoluteChildY + child->height()) > paintInfo.rect.y()
+            && (absoluteChildY + child->height()) < paintInfo.rect.maxY()) {
+            view()->setBestTruncatedAt(absoluteChildY + child->height() + max(0, child->collapsedMarginAfter()), this, true);
             return;
         }
     }
@@ -2501,7 +2502,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
         if (hasColumns())
             paintColumnContents(paintInfo, scrolledOffset.x(), scrolledOffset.y(), true);
         else
-            paintFloats(paintInfo, scrolledOffset.x(), scrolledOffset.y(), paintPhase == PaintPhaseSelection || paintPhase == PaintPhaseTextClip);
+            paintFloats(paintInfo, scrolledOffset, paintPhase == PaintPhaseSelection || paintPhase == PaintPhaseTextClip);
     }
 
     // 5. paint outline.
@@ -2554,7 +2555,7 @@ IntPoint RenderBlock::flipFloatForWritingMode(const FloatingObject* child, const
     return IntPoint(point.x() + width() - child->width() - 2 * xPositionForFloatIncludingMargin(child), point.y());
 }
 
-void RenderBlock::paintFloats(PaintInfo& paintInfo, int tx, int ty, bool preservePhase)
+void RenderBlock::paintFloats(PaintInfo& paintInfo, const IntPoint& paintOffset, bool preservePhase)
 {
     if (!m_floatingObjects)
         return;
@@ -2567,7 +2568,7 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, int tx, int ty, bool preserv
         if (r->m_shouldPaint && !r->m_renderer->hasSelfPaintingLayer()) {
             PaintInfo currentPaintInfo(paintInfo);
             currentPaintInfo.phase = preservePhase ? paintInfo.phase : PaintPhaseBlockBackground;
-            IntPoint childPoint = flipFloatForWritingMode(r, IntPoint(tx + xPositionForFloatIncludingMargin(r) - r->m_renderer->x(), ty + yPositionForFloatIncludingMargin(r) - r->m_renderer->y()));
+            IntPoint childPoint = flipFloatForWritingMode(r, IntPoint(paintOffset.x() + xPositionForFloatIncludingMargin(r) - r->m_renderer->x(), paintOffset.y() + yPositionForFloatIncludingMargin(r) - r->m_renderer->y()));
             r->m_renderer->paint(currentPaintInfo, childPoint.x(), childPoint.y());
             if (!preservePhase) {
                 currentPaintInfo.phase = PaintPhaseChildBlockBackgrounds;
@@ -2583,7 +2584,7 @@ void RenderBlock::paintFloats(PaintInfo& paintInfo, int tx, int ty, bool preserv
     }
 }
 
-void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
+void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (!paintInfo.shouldPaintWithinRoot(this) || !firstLineBox())
         return;
@@ -2591,7 +2592,7 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
     if (style()->visibility() == VISIBLE && paintInfo.phase == PaintPhaseForeground) {
         // We can check the first box and last box and avoid painting if we don't
         // intersect.
-        int yPos = ty + firstLineBox()->y();
+        int yPos = paintOffset.y() + firstLineBox()->y();
         int h = lastLineBox()->y() + lastLineBox()->logicalHeight() - firstLineBox()->y();
         if (yPos >= paintInfo.rect.maxY() || yPos + h <= paintInfo.rect.y())
             return;
@@ -2600,10 +2601,10 @@ void RenderBlock::paintEllipsisBoxes(PaintInfo& paintInfo, int tx, int ty)
         // them.  Note that boxes can easily overlap, so we can't make any assumptions
         // based off positions of our first line box or our last line box.
         for (RootInlineBox* curr = firstRootBox(); curr; curr = curr->nextRootBox()) {
-            yPos = ty + curr->y();
+            yPos = paintOffset.y() + curr->y();
             h = curr->logicalHeight();
             if (curr->ellipsisBox() && yPos < paintInfo.rect.maxY() && yPos + h > paintInfo.rect.y())
-                curr->paintEllipsisBox(paintInfo, IntPoint(tx, ty), curr->lineTop(), curr->lineBottom());
+                curr->paintEllipsisBox(paintInfo, paintOffset, curr->lineTop(), curr->lineBottom());
         }
     }
 }

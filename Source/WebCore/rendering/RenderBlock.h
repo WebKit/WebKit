@@ -559,12 +559,12 @@ private:
 
     // End of functions defined in RenderBlockLineLayout.cpp.
 
-    void paintFloats(PaintInfo&, int tx, int ty, bool preservePhase = false);
+    void paintFloats(PaintInfo&, const IntPoint&, bool preservePhase = false);
     void paintContents(PaintInfo&, int tx, int ty);
     void paintColumnContents(PaintInfo&, int tx, int ty, bool paintFloats = false);
     void paintColumnRules(PaintInfo&, int tx, int ty);
-    void paintChildren(PaintInfo&, int tx, int ty);
-    void paintEllipsisBoxes(PaintInfo&, int tx, int ty);
+    void paintChildren(PaintInfo&, const IntPoint&);
+    void paintEllipsisBoxes(PaintInfo&, const IntPoint&);
     void paintSelection(PaintInfo&, int tx, int ty);
     void paintCaret(PaintInfo&, const IntPoint&, CaretType);
 
