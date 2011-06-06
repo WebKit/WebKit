@@ -467,7 +467,7 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
             return;
     }
 
-    bool pushedClip = pushContentsClip(paintInfo, tx, ty);    
+    bool pushedClip = pushContentsClip(paintInfo, IntPoint(tx, ty));
     paintObject(paintInfo, IntPoint(tx, ty));
     if (pushedClip)
         popContentsClip(paintInfo, paintPhase, IntPoint(tx, ty));

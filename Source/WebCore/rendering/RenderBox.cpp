@@ -1096,7 +1096,7 @@ void RenderBox::paintCustomHighlight(const IntPoint& paintOffset, const AtomicSt
 
 #endif
 
-bool RenderBox::pushContentsClip(PaintInfo& paintInfo, int tx, int ty)
+bool RenderBox::pushContentsClip(PaintInfo& paintInfo, const IntPoint& accumulatedOffset)
 {
     if (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseSelfOutline || paintInfo.phase == PaintPhaseMask)
         return false;
@@ -1111,13 +1111,13 @@ bool RenderBox::pushContentsClip(PaintInfo& paintInfo, int tx, int ty)
         paintInfo.phase = PaintPhaseChildOutlines;
     else if (paintInfo.phase == PaintPhaseChildBlockBackground) {
         paintInfo.phase = PaintPhaseBlockBackground;
-        paintObject(paintInfo, IntPoint(tx, ty));
+        paintObject(paintInfo, accumulatedOffset);
         paintInfo.phase = PaintPhaseChildBlockBackgrounds;
     }
-    IntRect clipRect(isControlClip ? controlClipRect(IntPoint(tx, ty)) : overflowClipRect(IntPoint(tx, ty)));
+    IntRect clipRect(isControlClip ? controlClipRect(accumulatedOffset) : overflowClipRect(accumulatedOffset));
     paintInfo.context->save();
     if (style()->hasBorderRadius())
-        paintInfo.context->addRoundedRectClip(style()->getRoundedBorderFor(IntRect(tx, ty, width(), height())));
+        paintInfo.context->addRoundedRectClip(style()->getRoundedBorderFor(IntRect(accumulatedOffset, size())));
     paintInfo.context->clip(clipRect);
     return true;
 }

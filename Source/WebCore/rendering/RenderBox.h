@@ -349,7 +349,7 @@ public:
     IntRect clipRect(const IntPoint& location);
     virtual bool hasControlClip() const { return false; }
     virtual IntRect controlClipRect(const IntPoint&) const { return IntRect(); }
-    bool pushContentsClip(PaintInfo&, int tx, int ty);
+    bool pushContentsClip(PaintInfo&, const IntPoint& accumulatedOffset);
     void popContentsClip(PaintInfo&, PaintPhase originalPhase, const IntPoint& accumulatedOffset);
 
     virtual void paintObject(PaintInfo&, const IntPoint&) { ASSERT_NOT_REACHED(); }
