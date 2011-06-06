@@ -1,3 +1,13 @@
+2011-06-06  Paul Kinlan  <paulkinlan@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Adds a test for firing popstate, using window.dispatchEvent.
+        https://bugs.webkit.org/show_bug.cgi?id=62099
+
+        * fast/events/fire-popstate-event-expected.txt: Added.
+        * fast/events/fire-popstate-event.html: Added.
+
 2011-06-06  Jessie Berlin  <jberlin@apple.com>
 
         Update the Windows-specific results after r88020 in order to get the bots green.

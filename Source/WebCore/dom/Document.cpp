@@ -3465,6 +3465,8 @@ PassRefPtr<Event> Document::createEvent(const String& eventType, ExceptionCode& 
         event = OverflowEvent::create();
     else if (eventType == "PageTransitionEvent")
         event = PageTransitionEvent::create();
+    else if (eventType == "PopStateEvent")
+        event = PopStateEvent::create(); 
     else if (eventType == "ProgressEvent")
         event = ProgressEvent::create();
 #if ENABLE(DOM_STORAGE)

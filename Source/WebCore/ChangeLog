@@ -1,3 +1,15 @@
+2011-06-06  Paul Kinlan  <paulkinlan@google.com>
+
+        Reviewed by Jeremy Orlow.
+
+        Let developers call createEvent("PopStateEvent"), previously it wasn't
+        exposed and threw an exeception. 
+        https://bugs.webkit.org/show_bug.cgi?id=62099
+
+        * WebCore/dom/Document.cpp:
+        * WebCore/dom/PopStateEvent.cpp:
+        * WebCore/dom/PopStateEvent.h:
+
 2011-06-03  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.
