@@ -1,3 +1,23 @@
+2011-06-06  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintContents, paintColumnContents, paintColumnRules, and paintSelection to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62134
+
+        Switching paintContents, paintColumnContents, paintColumnRules, and paintSelection to take an
+        IntPoint representing the paint offset instead of a pair of ints.
+
+        No new tests as this simple refactoring.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paintColumnRules):
+        (WebCore::RenderBlock::paintColumnContents):
+        (WebCore::RenderBlock::paintContents):
+        (WebCore::RenderBlock::paintObject):
+        (WebCore::RenderBlock::paintSelection):
+        * rendering/RenderBlock.h:
+
 2011-06-06  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Eric Seidel.

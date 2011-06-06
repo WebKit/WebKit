@@ -2269,7 +2269,7 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
         layer()->paintOverflowControls(paintInfo.context, IntPoint(tx, ty), paintInfo.rect);
 }
 
-void RenderBlock::paintColumnRules(PaintInfo& paintInfo, int tx, int ty)
+void RenderBlock::paintColumnRules(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (paintInfo.context->paintingDisabled())
         return;
@@ -2309,9 +2309,9 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, int tx, int ty)
        
         // Now paint the column rule.
         if (i < colCount - 1) {
-            int ruleLeft = isHorizontalWritingMode() ? tx + ruleLogicalLeft - ruleWidth / 2 + ruleAdd : tx + borderBefore() + paddingBefore();
+            int ruleLeft = isHorizontalWritingMode() ? paintOffset.x() + ruleLogicalLeft - ruleWidth / 2 + ruleAdd : paintOffset.x() + borderBefore() + paddingBefore();
             int ruleRight = isHorizontalWritingMode() ? ruleLeft + ruleWidth : ruleLeft + contentWidth();
-            int ruleTop = isHorizontalWritingMode() ? ty + borderTop() + paddingTop() : ty + ruleLogicalLeft - ruleWidth / 2 + ruleAdd;
+            int ruleTop = isHorizontalWritingMode() ? paintOffset.y() + borderTop() + paddingTop() : paintOffset.y() + ruleLogicalLeft - ruleWidth / 2 + ruleAdd;
             int ruleBottom = isHorizontalWritingMode() ? ruleTop + contentHeight() : ruleTop + ruleWidth;
             drawLineForBoxSide(paintInfo.context, ruleLeft, ruleTop, ruleRight, ruleBottom,
                                style()->isLeftToRightDirection() ? BSLeft : BSRight, ruleColor, ruleStyle, 0, 0, antialias);
@@ -2321,7 +2321,7 @@ void RenderBlock::paintColumnRules(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
-void RenderBlock::paintColumnContents(PaintInfo& paintInfo, int tx, int ty, bool paintingFloats)
+void RenderBlock::paintColumnContents(PaintInfo& paintInfo, const IntPoint& paintOffset, bool paintingFloats)
 {
     // We need to do multiple passes, breaking up our child painting into strips.
     GraphicsContext* context = paintInfo.context;
@@ -2336,7 +2336,7 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, int tx, int ty, bool
         flipForWritingMode(colRect);
         int logicalLeftOffset = (isHorizontalWritingMode() ? colRect.x() : colRect.y()) - logicalLeftOffsetForContent();
         IntSize offset = isHorizontalWritingMode() ? IntSize(logicalLeftOffset, currLogicalTopOffset) : IntSize(currLogicalTopOffset, logicalLeftOffset);
-        colRect.move(tx, ty);
+        colRect.moveBy(paintOffset);
         PaintInfo info(paintInfo);
         info.rect.intersect(colRect);
         
@@ -2348,12 +2348,11 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, int tx, int ty, bool
             context->clip(colRect);
 
             // Adjust our x and y when painting.
-            int finalX = tx + offset.width();
-            int finalY = ty + offset.height();
+            IntPoint adjustedPaintOffset = paintOffset + offset;
             if (paintingFloats)
-                paintFloats(info, IntPoint(finalX, finalY), paintInfo.phase == PaintPhaseSelection || paintInfo.phase == PaintPhaseTextClip);
+                paintFloats(info, adjustedPaintOffset, paintInfo.phase == PaintPhaseSelection || paintInfo.phase == PaintPhaseTextClip);
             else
-                paintContents(info, finalX, finalY);
+                paintContents(info, adjustedPaintOffset);
         }
 
         int blockDelta = (isHorizontalWritingMode() ? colRect.height() : colRect.width());
@@ -2364,7 +2363,7 @@ void RenderBlock::paintColumnContents(PaintInfo& paintInfo, int tx, int ty, bool
     }
 }
 
-void RenderBlock::paintContents(PaintInfo& paintInfo, int tx, int ty)
+void RenderBlock::paintContents(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     // Avoid painting descendants of the root element when stylesheets haven't loaded.  This eliminates FOUC.
     // It's ok not to draw, because later on, when all the stylesheets do load, updateStyleSelector on the Document
@@ -2373,9 +2372,9 @@ void RenderBlock::paintContents(PaintInfo& paintInfo, int tx, int ty)
         return;
 
     if (childrenInline())
-        m_lineBoxes.paint(this, paintInfo, tx, ty);
+        m_lineBoxes.paint(this, paintInfo, paintOffset.x(), paintOffset.y());
     else
-        paintChildren(paintInfo, IntPoint(tx, ty));
+        paintChildren(paintInfo, paintOffset);
 }
 
 void RenderBlock::paintChildren(PaintInfo& paintInfo, const IntPoint& paintOffset)
@@ -2466,7 +2465,7 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
         if (hasBoxDecorations())
             paintBoxDecorations(paintInfo, paintOffset);
         if (hasColumns())
-            paintColumnRules(paintInfo, paintOffset.x(), paintOffset.y());
+            paintColumnRules(paintInfo, paintOffset);
     }
 
     if (paintPhase == PaintPhaseMask && style()->visibility() == VISIBLE) {
@@ -2486,21 +2485,21 @@ void RenderBlock::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
     // 2. paint contents
     if (paintPhase != PaintPhaseSelfOutline) {
         if (hasColumns())
-            paintColumnContents(paintInfo, scrolledOffset.x(), scrolledOffset.y());
+            paintColumnContents(paintInfo, scrolledOffset);
         else
-            paintContents(paintInfo, scrolledOffset.x(), scrolledOffset.y());
+            paintContents(paintInfo, scrolledOffset);
     }
 
     // 3. paint selection
     // FIXME: Make this work with multi column layouts.  For now don't fill gaps.
     bool isPrinting = document()->printing();
     if (!isPrinting && !hasColumns())
-        paintSelection(paintInfo, scrolledOffset.x(), scrolledOffset.y()); // Fill in gaps in selection on lines and between blocks.
+        paintSelection(paintInfo, scrolledOffset); // Fill in gaps in selection on lines and between blocks.
 
     // 4. paint floats.
     if (paintPhase == PaintPhaseFloat || paintPhase == PaintPhaseSelection || paintPhase == PaintPhaseTextClip) {
         if (hasColumns())
-            paintColumnContents(paintInfo, scrolledOffset.x(), scrolledOffset.y(), true);
+            paintColumnContents(paintInfo, scrolledOffset, true);
         else
             paintFloats(paintInfo, scrolledOffset, paintPhase == PaintPhaseSelection || paintPhase == PaintPhaseTextClip);
     }
@@ -2740,7 +2739,7 @@ GapRects RenderBlock::selectionGapRectsForRepaint(RenderBoxModelObject* repaintC
     return selectionGaps(this, offsetFromRepaintContainer, IntSize(), lastTop, lastLeft, lastRight);
 }
 
-void RenderBlock::paintSelection(PaintInfo& paintInfo, int tx, int ty)
+void RenderBlock::paintSelection(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (shouldPaintSelectionGaps() && paintInfo.phase == PaintPhaseForeground) {
         int lastTop = 0;
@@ -2748,10 +2747,10 @@ void RenderBlock::paintSelection(PaintInfo& paintInfo, int tx, int ty)
         int lastRight = logicalRightSelectionOffset(this, lastTop);
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
-        IntRect gapRectsBounds = selectionGaps(this, IntPoint(tx, ty), IntSize(), lastTop, lastLeft, lastRight, &paintInfo);
+        IntRect gapRectsBounds = selectionGaps(this, paintOffset, IntSize(), lastTop, lastLeft, lastRight, &paintInfo);
         if (!gapRectsBounds.isEmpty()) {
             if (RenderLayer* layer = enclosingLayer()) {
-                gapRectsBounds.move(IntSize(-tx, -ty));
+                gapRectsBounds.moveBy(-paintOffset);
                 if (!hasLayer()) {
                     IntRect localBounds(gapRectsBounds);
                     flipForWritingMode(localBounds);
