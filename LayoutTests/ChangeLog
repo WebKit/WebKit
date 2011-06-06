@@ -1,5 +1,12 @@
 2011-06-05  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][WK2] Unreviewed. Update platform specific expected files after r88020.
+
+        * platform/qt-wk2/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt-wk2/fast/dom/Window/window-property-descriptors-expected.txt:
+
+2011-06-05  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed trivial fix.
 
         * platform/qt/Skipped: Remove svg/hixie/links/003-broken.xml, because it was deleted by r87518.
