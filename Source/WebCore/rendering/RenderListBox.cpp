@@ -279,11 +279,11 @@ void RenderListBox::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffse
     // get rendered in the foreground or background phases
     case PaintPhaseForeground:
         if (m_vBar->isOverlayScrollbar())
-            paintScrollbar(paintInfo, paintOffset.x(), paintOffset.y());
+            paintScrollbar(paintInfo, paintOffset);
         break;
     case PaintPhaseBlockBackground:
         if (!m_vBar->isOverlayScrollbar())
-            paintScrollbar(paintInfo, paintOffset.x(), paintOffset.y());
+            paintScrollbar(paintInfo, paintOffset);
         break;
     case PaintPhaseChildBlockBackground:
     case PaintPhaseChildBlockBackgrounds: {
@@ -325,11 +325,11 @@ void RenderListBox::addFocusRingRects(Vector<IntRect>& rects, const IntPoint& ad
     }
 }
 
-void RenderListBox::paintScrollbar(PaintInfo& paintInfo, int tx, int ty)
+void RenderListBox::paintScrollbar(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (m_vBar) {
-        IntRect scrollRect(tx + width() - borderRight() - m_vBar->width(),
-                           ty + borderTop(),
+        IntRect scrollRect(paintOffset.x() + width() - borderRight() - m_vBar->width(),
+                           paintOffset.y() + borderTop(),
                            m_vBar->width(),
                            height() - (borderTop() + borderBottom()));
         m_vBar->setFrameRect(scrollRect);

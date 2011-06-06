@@ -132,7 +132,7 @@ private:
     int numVisibleItems() const;
     int numItems() const;
     int listHeight() const;
-    void paintScrollbar(PaintInfo&, int tx, int ty);
+    void paintScrollbar(PaintInfo&, const IntPoint&);
     void paintItemForeground(PaintInfo&, const IntPoint&, int listIndex);
     void paintItemBackground(PaintInfo&, const IntPoint&, int listIndex);
     void scrollToRevealSelection();

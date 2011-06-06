@@ -1,3 +1,19 @@
+2011-06-06  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch paintScrollbar to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62151
+
+        Switching paintScrollbar to use IntPoint instead of a pair of ints.
+
+        No new tests since this is simple refactoring.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::paintObject):
+        (WebCore::RenderListBox::paintScrollbar):
+        * rendering/RenderListBox.h:
+
 2011-06-06  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.
