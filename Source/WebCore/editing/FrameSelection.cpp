@@ -1881,7 +1881,7 @@ void FrameSelection::revealSelection(const ScrollAlignment& alignment, bool reve
         // the selection rect could intersect more than just that.
         // See <rdar://problem/4799899>.
         if (RenderLayer* layer = start.deprecatedNode()->renderer()->enclosingLayer()) {
-            layer->scrollRectToVisible(rect, false, alignment, alignment);
+            layer->scrollRectToVisible(rect, alignment, alignment);
             updateAppearance();
         }
     }

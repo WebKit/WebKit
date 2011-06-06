@@ -333,7 +333,7 @@ public:
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
     virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
     bool canBeScrolledAndHasScrollableArea() const;
-    virtual bool canBeProgramaticallyScrolled(bool) const;
+    virtual bool canBeProgramaticallyScrolled() const;
     virtual void autoscroll();
     virtual void stopAutoscroll() { }
     virtual void panScroll(const IntPoint&);

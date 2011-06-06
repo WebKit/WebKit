@@ -519,7 +519,7 @@ bool EventHandler::handleMousePressEvent(const MouseEventWithHitTestResults& eve
         swallowEvent = handleMousePressEventSingleClick(event);
     
     m_mouseDownMayStartAutoscroll = m_mouseDownMayStartSelect
-        || (m_mousePressNode && m_mousePressNode->renderBox() && m_mousePressNode->renderBox()->canBeProgramaticallyScrolled(true));
+        || (m_mousePressNode && m_mousePressNode->renderBox() && m_mousePressNode->renderBox()->canBeProgramaticallyScrolled());
 
     return swallowEvent;
 }

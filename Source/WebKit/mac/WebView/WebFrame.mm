@@ -643,7 +643,7 @@ static inline WebDataSource *dataSource(DocumentLoader* loader)
     if (startNode && startNode->renderer()) {
         RenderLayer *layer = startNode->renderer()->enclosingLayer();
         if (layer)
-            layer->scrollRectToVisible(enclosingIntRect(rangeRect), false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
+            layer->scrollRectToVisible(enclosingIntRect(rangeRect), ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
     }
 }
 

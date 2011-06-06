@@ -81,7 +81,7 @@ private:
 
     virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&);
 
-    virtual bool canBeProgramaticallyScrolled(bool) const { return true; }
+    virtual bool canBeProgramaticallyScrolled() const { return true; }
     virtual void autoscroll();
     virtual void stopAutoscroll();
 

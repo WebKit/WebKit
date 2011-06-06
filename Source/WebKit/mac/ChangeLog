@@ -1,3 +1,13 @@
+2011-06-06  Peter Kasting  <pkasting@google.com>
+
+        Reviewed by Antonio Gomes.
+
+        Remove unnecessary args from scroll functions.
+        https://bugs.webkit.org/show_bug.cgi?id=61648
+
+        * WebView/WebFrame.mm:
+        (-[WebFrame _scrollDOMRangeToVisible:]):
+
 2011-06-06  Alexandru Chiculita  <achicu@adobe.com>
 
         Reviewed by Kent Tamura.

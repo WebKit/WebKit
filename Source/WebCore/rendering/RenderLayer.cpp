@@ -1378,11 +1378,10 @@ void RenderLayer::scrollTo(int x, int y)
     renderer()->node()->document()->eventQueue()->enqueueOrDispatchScrollEvent(renderer()->node(), EventQueue::ScrollEventElementTarget);
 }
 
-void RenderLayer::scrollRectToVisible(const IntRect& rect, bool scrollToAnchor, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
+void RenderLayer::scrollRectToVisible(const IntRect& rect, const ScrollAlignment& alignX, const ScrollAlignment& alignY)
 {
     RenderLayer* parentLayer = 0;
     IntRect newRect = rect;
-    int xOffset = 0, yOffset = 0;
 
     // We may end up propagating a scroll event. It is important that we suspend events until 
     // the end of the function since they could delete the layer or the layer's renderer().
@@ -1408,8 +1407,8 @@ void RenderLayer::scrollRectToVisible(const IntRect& rect, bool scrollToAnchor, 
         IntRect exposeRect = IntRect(rect.x() + scrollXOffset(), rect.y() + scrollYOffset(), rect.width(), rect.height());
         IntRect r = getRectToExpose(layerBounds, exposeRect, alignX, alignY);
         
-        xOffset = r.x() - absPos.x();
-        yOffset = r.y() - absPos.y();
+        int xOffset = r.x() - absPos.x();
+        int yOffset = r.y() - absPos.y();
         // Adjust offsets if they're outside of the allowable range.
         xOffset = max(0, min(scrollWidth() - layerBounds.width(), xOffset));
         yOffset = max(0, min(scrollHeight() - layerBounds.height(), yOffset));
@@ -1423,14 +1422,14 @@ void RenderLayer::scrollRectToVisible(const IntRect& rect, bool scrollToAnchor, 
             newRect.setX(rect.x() - diffX);
             newRect.setY(rect.y() - diffY);
         }
-    } else if (!parentLayer && renderer()->isBox() && renderBox()->canBeProgramaticallyScrolled(scrollToAnchor)) {
+    } else if (!parentLayer && renderer()->isBox() && renderBox()->canBeProgramaticallyScrolled()) {
         if (frameView) {
             if (renderer()->document() && renderer()->document()->ownerElement() && renderer()->document()->ownerElement()->renderer()) {
                 IntRect viewRect = frameView->visibleContentRect();
                 IntRect r = getRectToExpose(viewRect, rect, alignX, alignY);
                 
-                xOffset = r.x();
-                yOffset = r.y();
+                int xOffset = r.x();
+                int yOffset = r.y();
                 // Adjust offsets if they're outside of the allowable range.
                 xOffset = max(0, min(frameView->contentsWidth(), xOffset));
                 yOffset = max(0, min(frameView->contentsHeight(), yOffset));
@@ -1459,7 +1458,7 @@ void RenderLayer::scrollRectToVisible(const IntRect& rect, bool scrollToAnchor, 
     }
     
     if (parentLayer)
-        parentLayer->scrollRectToVisible(newRect, scrollToAnchor, alignX, alignY);
+        parentLayer->scrollRectToVisible(newRect, alignX, alignY);
 
     if (frameView)
         frameView->resumeScheduledEvents();
@@ -1553,7 +1552,7 @@ void RenderLayer::autoscroll()
 #endif
 
     IntPoint currentDocumentPosition = frameView->windowToContents(frame->eventHandler()->currentMousePosition());
-    scrollRectToVisible(IntRect(currentDocumentPosition, IntSize(1, 1)), false, ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
+    scrollRectToVisible(IntRect(currentDocumentPosition, IntSize(1, 1)), ScrollAlignment::alignToEdgeIfNeeded, ScrollAlignment::alignToEdgeIfNeeded);
 }
 
 void RenderLayer::resize(const PlatformMouseEvent& evt, const IntSize& oldOffset)

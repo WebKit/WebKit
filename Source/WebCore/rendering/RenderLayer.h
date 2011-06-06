@@ -236,7 +236,7 @@ public:
     void scrollToOffset(int x, int y);
     void scrollToXOffset(int x) { scrollToOffset(x, scrollYOffset()); }
     void scrollToYOffset(int y) { scrollToOffset(scrollXOffset(), y); }
-    void scrollRectToVisible(const IntRect&, bool scrollToAnchor = false, const ScrollAlignment& alignX = ScrollAlignment::alignCenterIfNeeded, const ScrollAlignment& alignY = ScrollAlignment::alignCenterIfNeeded);
+    void scrollRectToVisible(const IntRect&, const ScrollAlignment& alignX = ScrollAlignment::alignCenterIfNeeded, const ScrollAlignment& alignY = ScrollAlignment::alignCenterIfNeeded);
 
     IntRect getRectToExpose(const IntRect& visibleRect, const IntRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY);
 
