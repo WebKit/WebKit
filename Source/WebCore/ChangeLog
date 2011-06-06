@@ -1,3 +1,22 @@
+2011-06-06  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Switch shouldPaint to use IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62158
+
+        Switching shouldPaint to take an IntPoint representing the paint offset instead
+        of a pair of ints.
+
+        No new tests as this is simple refactoring.
+
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::paint):
+        (WebCore::RenderReplaced::shouldPaint):
+        * rendering/RenderReplaced.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint):
+
 2011-06-06  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by James Robinson.

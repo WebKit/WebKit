@@ -52,7 +52,7 @@ protected:
     void setHasIntrinsicSize() { m_hasIntrinsicSize = true; }
 
     virtual void paint(PaintInfo&, int tx, int ty);
-    bool shouldPaint(PaintInfo&, int& tx, int& ty);
+    bool shouldPaint(PaintInfo&, const IntPoint&);
     IntRect localSelectionRect(bool checkWhetherSelected = true) const; // This is in local coordinates, but it's a physical rect (so the top left corner is physical top left).
 
 private:

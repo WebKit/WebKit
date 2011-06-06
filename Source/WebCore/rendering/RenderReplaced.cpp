@@ -96,7 +96,7 @@ void RenderReplaced::intrinsicSizeChanged()
 
 void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!shouldPaint(paintInfo, tx, ty))
+    if (!shouldPaint(paintInfo, IntPoint(tx, ty)))
         return;
     
     tx += x();
@@ -156,7 +156,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
     }
 }
 
-bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
+bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseOutline && paintInfo.phase != PaintPhaseSelfOutline 
             && paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseMask)
@@ -169,21 +169,20 @@ bool RenderReplaced::shouldPaint(PaintInfo& paintInfo, int& tx, int& ty)
     if (style()->visibility() != VISIBLE)
         return false;
 
-    int currentTX = tx + x();
-    int currentTY = ty + y();
+    IntPoint adjustedPaintOffset = paintOffset + location();
 
     // Early exit if the element touches the edges.
-    int top = currentTY + minYVisualOverflow();
-    int bottom = currentTY + maxYVisualOverflow();
+    int top = adjustedPaintOffset.y() + minYVisualOverflow();
+    int bottom = adjustedPaintOffset.y() + maxYVisualOverflow();
     if (isSelected() && m_inlineBoxWrapper) {
-        int selTop = ty + m_inlineBoxWrapper->root()->selectionTop();
-        int selBottom = ty + selTop + m_inlineBoxWrapper->root()->selectionHeight();
+        int selTop = paintOffset.y() + m_inlineBoxWrapper->root()->selectionTop();
+        int selBottom = paintOffset.y() + selTop + m_inlineBoxWrapper->root()->selectionHeight();
         top = min(selTop, top);
         bottom = max(selBottom, bottom);
     }
     
     int os = 2 * maximalOutlineSize(paintInfo.phase);
-    if (currentTX + minXVisualOverflow() >= paintInfo.rect.maxX() + os || currentTX + maxXVisualOverflow() <= paintInfo.rect.x() - os)
+    if (adjustedPaintOffset.x() + minXVisualOverflow() >= paintInfo.rect.maxX() + os || adjustedPaintOffset.x() + maxXVisualOverflow() <= paintInfo.rect.x() - os)
         return false;
     if (top >= paintInfo.rect.maxY() + os || bottom <= paintInfo.rect.y() - os)
         return false;

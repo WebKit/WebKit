@@ -249,7 +249,7 @@ void RenderWidget::notifyWidget(WidgetNotification notification)
 
 void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    if (!shouldPaint(paintInfo, tx, ty))
+    if (!shouldPaint(paintInfo, IntPoint(tx, ty)))
         return;
 
     tx += x();
