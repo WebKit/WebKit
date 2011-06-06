@@ -335,7 +335,6 @@ void SharedGraphicsContext3D::applyCompositeOperator(CompositeOperator op)
         m_context->blendFunc(GraphicsContext3D::ONE_MINUS_DST_ALPHA, GraphicsContext3D::ONE_MINUS_SRC_ALPHA);
         break;
     case CompositePlusDarker:
-    case CompositeHighlight:
         // unsupported
         m_context->disable(GraphicsContext3D::BLEND);
         break;

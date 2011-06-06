@@ -44,7 +44,6 @@ static const char* const compositeOperatorNames[] = {
     "destination-atop",
     "xor",
     "darker",
-    "highlight",
     "lighter"
 };
 const int numCompositeOperatorNames = WTF_ARRAY_LENGTH(compositeOperatorNames);

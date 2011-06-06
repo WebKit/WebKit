@@ -111,9 +111,6 @@ cairo_operator_t toCairoOperator(CompositeOperator op)
 #else
         return CAIRO_OPERATOR_SATURATE;
 #endif
-    case CompositeHighlight:
-        // There is no Cairo equivalent for CompositeHighlight.
-        return CAIRO_OPERATOR_OVER;
     case CompositePlusLighter:
         return CAIRO_OPERATOR_ADD;
     default:

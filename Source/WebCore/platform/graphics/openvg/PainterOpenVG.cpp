@@ -279,9 +279,6 @@ struct PlatformPainterState {
         case CompositePlusDarker:
             blendMode = VG_BLEND_DARKEN;
             break;
-        case CompositeHighlight:
-            notImplemented();
-            break;
         case CompositePlusLighter:
             blendMode = VG_BLEND_LIGHTEN;
             break;

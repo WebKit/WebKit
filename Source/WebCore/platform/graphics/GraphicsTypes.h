@@ -46,7 +46,6 @@ namespace WebCore {
         CompositeDestinationAtop,
         CompositeXOR,
         CompositePlusDarker,
-        CompositeHighlight,
         CompositePlusLighter
     };
 

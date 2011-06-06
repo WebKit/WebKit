@@ -153,7 +153,6 @@ canvas/philip/tests/2d.composite.operation.clear.html
 #  drawing model being different than the spec's current model. There is a current
 #  effort out to change the spec to the webkit canvas model.
 canvas/philip/tests/2d.composite.operation.darker.html
-canvas/philip/tests/2d.composite.operation.highlight.html
 canvas/philip/tests/2d.composite.uncovered.fill.copy.html
 canvas/philip/tests/2d.composite.uncovered.fill.destination-atop.html
 canvas/philip/tests/2d.composite.uncovered.fill.destination-in.html

@@ -1,3 +1,34 @@
+2011-06-06  Mustafizur Rahaman  <mustaf.here@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        Fix LayoutTests/canvas/philip/tests/2d.composite.operation.highlight.html
+        https://bugs.webkit.org/show_bug.cgi?id=48290
+        
+        "highlight" is not a valid globalComposite operation
+        as per http://www.w3.org/TR/2011/WD-2dcontext-20110525/#compositing
+        Therefore, removed the option from the source code.
+        
+        Tests: No new tests required.
+        LayoutTests\canvas\philip\tests\2d.composite.operation.highlight.html can be used for testing.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator CompositeOperator):
+        * platform/graphics/GraphicsTypes.cpp:
+        * platform/graphics/GraphicsTypes.h:
+        * platform/graphics/cairo/CairoUtilities.cpp:
+        (WebCore::toCairoOperator):
+        * platform/graphics/cg/GraphicsContextCG.cpp:
+        (WebCore::GraphicsContext::setPlatformCompositeOperation):
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::applyCompositeOperator):
+        * platform/graphics/openvg/PainterOpenVG.cpp:
+        (WebCore::PlatformPainterState::applyBlending):
+        * platform/graphics/qt/GraphicsContextQt.cpp:
+        (WebCore::toQtCompositionMode):
+        * platform/graphics/skia/SkiaUtils.cpp:
+
 2011-06-04  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Kent Tamura.

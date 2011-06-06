@@ -131,9 +131,6 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CompositeOperator e)
         case CompositePlusDarker:
             m_value.ident = CSSValuePlusDarker;
             break;
-        case CompositeHighlight:
-            m_value.ident = CSSValueHighlight;
-            break;
         case CompositePlusLighter:
             m_value.ident = CSSValuePlusLighter;
             break;
@@ -167,8 +164,6 @@ template<> inline CSSPrimitiveValue::operator CompositeOperator() const
             return CompositeXOR;
         case CSSValuePlusDarker:
             return CompositePlusDarker;
-        case CSSValueHighlight:
-            return CompositeHighlight;
         case CSSValuePlusLighter:
             return CompositePlusLighter;
         default:

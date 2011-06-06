@@ -1857,7 +1857,6 @@ tables/mozilla/bugs/bug99948.html
 # ============================================================================= #
 canvas/philip/tests/2d.composite.operation.clear.html
 canvas/philip/tests/2d.composite.operation.darker.html
-canvas/philip/tests/2d.composite.operation.highlight.html
 canvas/philip/tests/2d.composite.uncovered.fill.copy.html
 canvas/philip/tests/2d.composite.uncovered.fill.destination-atop.html
 canvas/philip/tests/2d.composite.uncovered.fill.destination-in.html

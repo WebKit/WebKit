@@ -1977,7 +1977,6 @@ BUGCR62301 : canvas/philip/tests/2d.pattern.image.incomplete.omitted.html = TEXT
 
 BUGWK48288 : canvas/philip/tests/2d.composite.operation.clear.html = TEXT
 BUGWK48289 : canvas/philip/tests/2d.composite.operation.darker.html = TEXT
-BUGWK48290 : canvas/philip/tests/2d.composite.operation.highlight.html = TEXT
 BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.fill.copy.html = TEXT
 BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.fill.destination-atop.html = TEXT
 BUGWK39177 : canvas/philip/tests/2d.composite.uncovered.fill.destination-in.html = TEXT

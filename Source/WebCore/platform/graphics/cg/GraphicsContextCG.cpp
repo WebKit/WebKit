@@ -1501,9 +1501,6 @@ void GraphicsContext::setPlatformCompositeOperation(CompositeOperator mode)
     case CompositePlusDarker:
         target = kCGBlendModePlusDarker;
         break;
-    case CompositeHighlight:
-        // currently unsupported
-        break;
     case CompositePlusLighter:
         target = kCGBlendModePlusLighter;
         break;

@@ -1070,7 +1070,6 @@ canvas/philip/tests/2d.drawImage.broken.html
 #without our vendor prefix since it was around in canvas before the spec was written.
 canvas/philip/tests/2d.composite.operation.clear.html
 canvas/philip/tests/2d.composite.operation.darker.html
-canvas/philip/tests/2d.composite.operation.highlight.html
 canvas/philip/tests/2d.composite.uncovered.fill.copy.html
 canvas/philip/tests/2d.composite.uncovered.fill.destination-atop.html
 canvas/philip/tests/2d.composite.uncovered.fill.destination-in.html
