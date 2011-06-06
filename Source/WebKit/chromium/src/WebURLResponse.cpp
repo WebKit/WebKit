@@ -62,6 +62,8 @@ public:
         m_resourceResponse = &m_resourceResponseAllocation;
     }
 
+    virtual ~WebURLResponsePrivateImpl() { }
+
     virtual void dispose() { delete this; }
 
     ResourceResponse m_resourceResponseAllocation;

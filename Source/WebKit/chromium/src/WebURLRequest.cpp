@@ -79,6 +79,8 @@ public:
         m_allowStoredCredentials = p->m_allowStoredCredentials;
     }
 
+    virtual ~WebURLRequestPrivateImpl() { }
+
     virtual void dispose() { delete this; }
 
     ResourceRequest m_resourceRequestAllocation;

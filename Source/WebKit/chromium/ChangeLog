@@ -1,3 +1,20 @@
+2011-06-06  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Make WebURLRequestPrivateImpl's and WebURLResponsePrivateImpl's destructors virtual
+        https://bugs.webkit.org/show_bug.cgi?id=62148
+
+        This is _not_ to fix a real bug, just to make clang's
+        -Wdelete-non-virtual-dtor happy. As discussed at
+        http://codereview.chromium.org/7094005/, we prefer making leaf class
+        destructors virtual over making the leaf classes final.
+
+        * src/WebURLRequest.cpp:
+        (WebKit::WebURLRequestPrivateImpl::~WebURLRequestPrivateImpl):
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponsePrivateImpl::~WebURLResponsePrivateImpl):
+
 2011-06-06  Shishir Agrawal  <shishir@chromium.org>
 
         Reviewed by Tony Gentilcore.
