@@ -104,7 +104,7 @@ public:
     IntRect roundedFrameRect() const;
     
     virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
-    virtual void paintMask(PaintInfo&, int tx, int ty);
+    virtual void paintMask(PaintInfo&, const IntPoint&);
     void paintFillLayers(const PaintInfo&, const Color&, const FillLayer*, const IntRect&, CompositeOperator = CompositeSourceOver);
     void paintFillLayer(const PaintInfo&, const Color&, const FillLayer*, const IntRect&, CompositeOperator = CompositeSourceOver);
     void paintBoxShadow(GraphicsContext*, RenderStyle*, ShadowStyle, const IntRect&);
