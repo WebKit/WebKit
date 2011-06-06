@@ -1,3 +1,20 @@
+2011-06-06  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [chromium] Delete dead clipboard code.
+        https://bugs.webkit.org/show_bug.cgi?id=62113
+
+        No new tests since this change only deleted unused code.
+
+        * WebCore.gypi:
+        * platform/chromium/ChromiumDataObjectLegacy.cpp: Removed.
+        * platform/chromium/ChromiumDataObjectLegacy.h: Removed.
+        * platform/chromium/ReadableDataObject.cpp: Removed.
+        * platform/chromium/ReadableDataObject.h: Removed.
+        * platform/chromium/WritableDataObject.cpp: Removed.
+        * platform/chromium/WritableDataObject.h: Removed.
+
 2011-06-06  Levi Weintraub  <leviw@chromium.org>
 
         Reviewed by Eric Seidel.

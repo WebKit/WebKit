@@ -32,7 +32,6 @@
 #include "WebDragData.h"
 
 #include "ChromiumDataObject.h"
-#include "ChromiumDataObjectLegacy.h"
 #include "ClipboardMimeTypes.h"
 #include "WebData.h"
 #include "WebString.h"
