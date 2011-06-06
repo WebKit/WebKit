@@ -1,5 +1,12 @@
 2011-06-06  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] 6 tests have different results on 64 bit compared to 32 bit
+        https://bugs.webkit.org/show_bug.cgi?id=52812
+
+        * platform/qt/Skipped: Add svg/custom/object-sizing-explicit-width-height.xhtml.
+
+2011-06-06  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt][WK2] Remove previously deleted tests from the Skipped list.
 
         * platform/qt-wk2/Skipped:

@@ -2412,6 +2412,7 @@ svg/custom/circular-marker-reference-4.svg
 svg/custom/empty-merge.svg
 svg/custom/non-circular-marker-reference.svg
 svg/custom/non-scaling-stroke-markers.svg
+svg/custom/object-sizing-explicit-width-height.xhtml
 svg/custom/recursive-filter.svg
 svg/custom/relative-sized-inner-svg.xhtml
 svg/custom/relative-sized-use-on-symbol.xhtml
