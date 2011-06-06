@@ -1149,32 +1149,28 @@ IntRect RenderBox::overflowClipRect(const IntPoint& location, OverlayScrollbarSi
     return clipRect;
 }
 
-IntRect RenderBox::clipRect(int tx, int ty)
+IntRect RenderBox::clipRect(const IntPoint& location)
 {
-    int clipX = tx;
-    int clipY = ty;
-    int clipWidth = width();
-    int clipHeight = height();
-
+    IntRect clipRect(location, size());
     if (!style()->clipLeft().isAuto()) {
         int c = style()->clipLeft().calcValue(width());
-        clipX += c;
-        clipWidth -= c;
+        clipRect.move(c, 0);
+        clipRect.contract(c, 0);
     }
 
     if (!style()->clipRight().isAuto())
-        clipWidth -= width() - style()->clipRight().calcValue(width());
+        clipRect.contract(width() - style()->clipRight().calcValue(width()), 0);
 
     if (!style()->clipTop().isAuto()) {
         int c = style()->clipTop().calcValue(height());
-        clipY += c;
-        clipHeight -= c;
+        clipRect.move(0, c);
+        clipRect.contract(0, c);
     }
 
     if (!style()->clipBottom().isAuto())
-        clipHeight -= height() - style()->clipBottom().calcValue(height());
+        clipRect.contract(0, height() - style()->clipBottom().calcValue(height()));
 
-    return IntRect(clipX, clipY, clipWidth, clipHeight);
+    return clipRect;
 }
 
 int RenderBox::containingBlockLogicalWidthForContent() const

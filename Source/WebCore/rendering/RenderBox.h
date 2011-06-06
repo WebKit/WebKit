@@ -346,7 +346,7 @@ public:
     virtual IntRect localCaretRect(InlineBox*, int caretOffset, int* extraWidthToEndOfLine = 0);
 
     virtual IntRect overflowClipRect(const IntPoint& location, OverlayScrollbarSizeRelevancy = IgnoreOverlayScrollbarSize);
-    IntRect clipRect(int tx, int ty);
+    IntRect clipRect(const IntPoint& location);
     virtual bool hasControlClip() const { return false; }
     virtual IntRect controlClipRect(const IntPoint&) const { return IntRect(); }
     bool pushContentsClip(PaintInfo&, int tx, int ty);

@@ -319,7 +319,7 @@ static IntRect clipBox(RenderBox* renderer)
         result = renderer->overflowClipRect(IntPoint());
 
     if (renderer->hasClip())
-        result.intersect(renderer->clipRect(0, 0));
+        result.intersect(renderer->clipRect(IntPoint()));
 
     return result;
 }

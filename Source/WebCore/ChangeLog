@@ -1,3 +1,22 @@
+2011-06-06  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Convert RenderBox::clipRect to IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62045
+
+        Covered by existing tests.
+
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::clipRect):
+        * rendering/RenderBox.h:
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::calculateClipRects):
+        (WebCore::RenderLayer::calculateRects):
+        (WebCore::RenderLayer::repaintBlockSelectionGaps):
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::clipBox):
+
 2011-06-06  Peter Kasting  <pkasting@google.com>
 
         Reviewed by Antonio Gomes.
