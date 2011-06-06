@@ -2381,6 +2381,7 @@ class CppStyleTest(CppStyleTestBase):
         self.assert_lint('mutable short a : 14;', errmsg)
         self.assert_lint('const char a : 6;', errmsg)
         self.assert_lint('long int a : 30;', errmsg)
+        self.assert_lint('int a = 1 ? 0 : 30;', '')
 
 class CleansedLinesTest(unittest.TestCase):
     def test_init(self):
