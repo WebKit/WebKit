@@ -103,3 +103,20 @@ class GtkPort(WebKitPort):
 
     def _is_redhat_based(self):
         return self._filesystem.exists(self._filesystem.join('/etc', 'redhat-release'))
+
+    def _path_to_webcore_library(self):
+        gtk_library_names = [
+            "libwebkitgtk-1.0.so",
+            "libwebkitgtk-3.0.so",
+            "libwebkit2gtk-1.0.so",
+        ]
+
+        for library in gtk_library_names:
+            full_library = self._build_path(".libs", library)
+            if os.path.isfile(full_library):
+                return full_library
+
+        return None
+
+    def _runtime_feature_list(self):
+        return None

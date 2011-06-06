@@ -1,3 +1,16 @@
+2011-06-06  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Enable feature/symbol detection in NWRT/GTK
+        https://bugs.webkit.org/show_bug.cgi?id=62136
+
+        Disable feature detection through DRT, since we don't support it,
+        and set the libwebcore patch correctly so that symbol detection
+        through 'nm' works.
+
+        * Scripts/webkitpy/layout_tests/port/gtk.py:
+
 2011-06-06  Shishir Agrawal  <shishir@chromium.org>
 
         Reviewed by Tony Gentilcore.
