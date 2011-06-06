@@ -1,3 +1,17 @@
+2011-06-06  Steve Block  <steveblock@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Use of ENABLE(INSPECTOR) is inconsistent
+        https://bugs.webkit.org/show_bug.cgi?id=62118
+
+        Correctly guard implementation of ScriptProfiler.
+
+        No new tests, build fix only.
+
+        * bindings/v8/ScriptProfiler.cpp:
+        (WebCore::ScriptProfiler::initialize):
+
 2011-06-04  Dominic Cooney  <dominicc@chromium.org>
 
         Reviewed by Dimitri Glazkov.
