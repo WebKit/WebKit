@@ -173,11 +173,7 @@ inspector/debugger/xhr-breakpoints.html
 # https://bugs.webkit.org/show_bug.cgi?id=40300
 inspector/debugger/live-edit.html
 
-# scalePage is currently Mac-specific WebKit API.
-fast/dom/Element/scale-page-bounding-client-rect.html
-fast/dom/Element/scale-page-client-rects.html
-fast/dom/Range/scale-page-bounding-client-rect.html
-fast/dom/Range/scale-page-client-rects.html
+# Needs rebaseline
 fast/repaint/scale-page-shrink.html
 
 # =========================================================================== #
