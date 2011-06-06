@@ -1,3 +1,31 @@
+2011-06-06  Levi Weintraub  <leviw@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove tx/ty offset from selectionRect
+        https://bugs.webkit.org/show_bug.cgi?id=62146
+
+        Removing unused offset parameters from selectionRect.
+
+        No new tests since this is just cleanup.
+
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::selectionRect):
+        * rendering/EllipsisBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRectsForRange):
+        (WebCore::ellipsisRectForBox):
+        (WebCore::RenderText::absoluteQuadsForRange):
+        (WebCore::RenderText::selectionRectForRepaint):
+        * rendering/svg/RenderSVGInlineText.cpp:
+        (WebCore::RenderSVGInlineText::localCaretRect):
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::selectionRect):
+        * rendering/svg/SVGInlineTextBox.h:
+
 2011-06-06  Paul Kinlan  <paulkinlan@google.com>
 
         Reviewed by Jeremy Orlow.

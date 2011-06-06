@@ -292,7 +292,7 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
         if (start <= box->start() && box->end() < end) {
             IntRect r = box->calculateBoundaries();
             if (useSelectionHeight) {
-                IntRect selectionRect = box->selectionRect(0, 0, start, end);
+                IntRect selectionRect = box->selectionRect(start, end);
                 if (box->isHorizontal()) {
                     r.setHeight(selectionRect.height());
                     r.setY(selectionRect.y());
@@ -304,7 +304,7 @@ void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, u
             rects.append(localToAbsoluteQuad(FloatQuad(r)).enclosingBoundingBox());
         } else {
             unsigned realEnd = min(box->end() + 1, end);
-            IntRect r = box->selectionRect(0, 0, start, realEnd);
+            IntRect r = box->selectionRect(start, realEnd);
             if (!r.isEmpty()) {
                 if (!useSelectionHeight) {
                     // change the height and y position because selectionRect uses selection-specific values
@@ -340,7 +340,7 @@ static IntRect ellipsisRectForBox(InlineTextBox* box, unsigned startPos, unsigne
         // the selection is past the beginning of the truncation and the
         // beginning of the selection is before or at the beginning of the truncation.
         if (ellipsisEndPosition >= truncation && ellipsisStartPosition <= truncation)
-            return ellipsis->selectionRect(0, 0);
+            return ellipsis->selectionRect();
     }
     
     return IntRect();
@@ -385,7 +385,7 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
         if (start <= box->start() && box->end() < end) {
             IntRect r(box->calculateBoundaries());
             if (useSelectionHeight) {
-                IntRect selectionRect = box->selectionRect(0, 0, start, end);
+                IntRect selectionRect = box->selectionRect(start, end);
                 if (box->isHorizontal()) {
                     r.setHeight(selectionRect.height());
                     r.setY(selectionRect.y());
@@ -397,7 +397,7 @@ void RenderText::absoluteQuadsForRange(Vector<FloatQuad>& quads, unsigned start,
             quads.append(localToAbsoluteQuad(FloatRect(r)));
         } else {
             unsigned realEnd = min(box->end() + 1, end);
-            IntRect r = box->selectionRect(0, 0, start, realEnd);
+            IntRect r = box->selectionRect(start, realEnd);
             if (r.height()) {
                 if (!useSelectionHeight) {
                     // change the height and y position because selectionRect uses selection-specific values
@@ -1397,7 +1397,7 @@ IntRect RenderText::selectionRectForRepaint(RenderBoxModelObject* repaintContain
 
     IntRect rect;
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox()) {
-        rect.unite(box->selectionRect(0, 0, startPos, endPos));
+        rect.unite(box->selectionRect(startPos, endPos));
         rect.unite(ellipsisRectForBox(box, startPos, endPos));
     }
 

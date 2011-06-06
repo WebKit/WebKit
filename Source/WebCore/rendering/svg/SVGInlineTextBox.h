@@ -47,7 +47,7 @@ public:
 
     void paintSelectionBackground(PaintInfo&);
     virtual void paint(PaintInfo&, const IntPoint&, int lineTop, int lineBottom);
-    virtual IntRect selectionRect(int absx, int absy, int startPosition, int endPosition);
+    virtual IntRect selectionRect(int startPosition, int endPosition);
 
     bool mapStartEndPositionsIntoFragmentCoordinates(const SVGTextFragment&, int& startPosition, int& endPosition) const;
 

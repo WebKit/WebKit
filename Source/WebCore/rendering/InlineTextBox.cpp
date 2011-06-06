@@ -172,7 +172,7 @@ static void adjustCharactersAndLengthForHyphen(BufferForAppendingHyphen& charact
     length += hyphenString.length();
 }
 
-IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
+IntRect InlineTextBox::selectionRect(int startPos, int endPos)
 {
     int sPos = max(startPos - m_start, 0);
     int ePos = min(endPos - m_start, (int)m_len);
@@ -200,7 +200,7 @@ IntRect InlineTextBox::selectionRect(int tx, int ty, int startPos, int endPos)
     else if (r.maxX() > logicalRight())
         logicalWidth = logicalRight() - r.x();
 
-    IntPoint topPoint = isHorizontal() ? IntPoint(r.x(), ty + selTop) : IntPoint(tx + selTop, r.x());
+    IntPoint topPoint = isHorizontal() ? IntPoint(r.x(), selTop) : IntPoint(selTop, r.x());
     int width = isHorizontal() ? logicalWidth : selHeight;
     int height = isHorizontal() ? selHeight : logicalWidth;
 

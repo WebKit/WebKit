@@ -73,12 +73,12 @@ void EllipsisBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int l
     }
 }
 
-IntRect EllipsisBox::selectionRect(int tx, int ty)
+IntRect EllipsisBox::selectionRect()
 {
     RenderStyle* style = m_renderer->style(m_firstLine);
     const Font& font = style->font();
     // FIXME: Why is this always LTR? Fix by passing correct text run flags below.
-    return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x() + tx, y() + ty + root()->selectionTop()), root()->selectionHeight()));
+    return enclosingIntRect(font.selectionRectForText(RenderBlock::constructTextRun(renderer(), font, m_str, style, TextRun::AllowTrailingExpansion), IntPoint(x(), y() + root()->selectionTop()), root()->selectionHeight()));
 }
 
 void EllipsisBox::paintSelection(GraphicsContext* context, const IntPoint& paintOffset, RenderStyle* style, const Font& font)
