@@ -1,3 +1,16 @@
+2011-06-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r88259 and r88263.
+        http://trac.webkit.org/changeset/88259
+        http://trac.webkit.org/changeset/88263
+        https://bugs.webkit.org/show_bug.cgi?id=62228
+
+        broke builds (Requested by rniwa on #webkit).
+
+        * platform/mac/WebCoreSystemInterface.h:
+        * platform/network/ResourceHandle.h:
+        * platform/network/cf/ResourceRequest.h:
+
 2011-06-07  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

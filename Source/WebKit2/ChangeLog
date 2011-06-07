@@ -1,3 +1,14 @@
+2011-06-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r88259 and r88263.
+        http://trac.webkit.org/changeset/88259
+        http://trac.webkit.org/changeset/88263
+        https://bugs.webkit.org/show_bug.cgi?id=62228
+
+        broke builds (Requested by rniwa on #webkit).
+
+        * PluginProcess/mac/PluginProcessShim.mm:
+
 2011-06-07  Tim Horton  <timothy_horton@apple.com>
 
         Reviewed by Alexey Proskuryakov.
