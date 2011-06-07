@@ -1,3 +1,11 @@
+2011-06-07  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skip test crashing in GTK bots because of an ASSERT.
+
+        Actually, it's the same problem observed before (see bug 61937).
+
+        * platform/gtk/Skipped: Skipped test.
+
 2011-06-07  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.
