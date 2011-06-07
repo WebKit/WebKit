@@ -90,7 +90,6 @@ class TimingFunction;
 // represent values for properties being animated via the GraphicsLayer,
 // without pulling in style-related data from outside of the platform directory.
 class AnimationValue {
-    WTF_MAKE_NONCOPYABLE(AnimationValue); WTF_MAKE_FAST_ALLOCATED;
 public:
     AnimationValue(float keyTime, PassRefPtr<TimingFunction> timingFunction = 0)
         : m_keyTime(keyTime)
@@ -103,6 +102,7 @@ public:
 
     float keyTime() const { return m_keyTime; }
     const TimingFunction* timingFunction() const { return m_timingFunction.get(); }
+    virtual AnimationValue* clone() const = 0;
 
 private:
     float m_keyTime;
@@ -117,6 +117,7 @@ public:
         , m_value(value)
     {
     }
+    virtual AnimationValue* clone() const { return new FloatAnimationValue(*this); }
 
     float value() const { return m_value; }
 
@@ -131,26 +132,33 @@ public:
         : AnimationValue(keyTime, timingFunction)
     {
         if (value)
-            m_value = adoptPtr(new TransformOperations(*value));
+            m_value = *value;
     }
+    virtual AnimationValue* clone() const { return new TransformAnimationValue(*this); }
 
-    const TransformOperations* value() const { return m_value.get(); }
+    const TransformOperations* value() const { return &m_value; }
 
 private:
-    OwnPtr<TransformOperations> m_value;
+    TransformOperations m_value;
 };
 
 // Used to store a series of values in a keyframe list. Values will all be of the same type,
 // which can be inferred from the property.
 class KeyframeValueList {
-    WTF_MAKE_NONCOPYABLE(KeyframeValueList); WTF_MAKE_FAST_ALLOCATED;
 public:
 
     KeyframeValueList(AnimatedPropertyID property)
         : m_property(property)
     {
     }
-    
+
+    KeyframeValueList(const KeyframeValueList& other)
+        : m_property(other.property())
+    {
+        for (size_t i = 0; i < other.m_values.size(); ++i)
+            m_values.append(other.m_values[i]->clone());
+    }
+
     ~KeyframeValueList()
     {
         deleteAllValues(m_values);

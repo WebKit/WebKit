@@ -1,3 +1,21 @@
+2011-06-06  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Simon Fraser.
+
+        Allow copying of KeyframeValueList.
+        https://bugs.webkit.org/show_bug.cgi?id=62171
+
+        Make a deep copy of KeyframeValueList, copying each of the keyframes with a virtual clone() function.
+
+        No new functionality so no new tests.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::FloatAnimationValue::clone):
+        (WebCore::TransformAnimationValue::TransformAnimationValue):
+        (WebCore::TransformAnimationValue::clone):
+        (WebCore::TransformAnimationValue::value):
+        (WebCore::KeyframeValueList::KeyframeValueList):
+
 2011-06-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
