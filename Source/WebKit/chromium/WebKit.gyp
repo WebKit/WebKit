@@ -647,6 +647,7 @@
                                 'tests/WebFrameTest.cpp',
                                 'tests/WebPageNewSerializerTest.cpp',
                                 'tests/WebPageSerializerTest.cpp',
+                                'tests/PopupMenuTest.cpp',
                             ],
                             'conditions': [
                                 ['OS=="win" or OS=="mac"', {

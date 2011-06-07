@@ -1,3 +1,27 @@
+2011-06-07  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Click event is not fired for a menulist <select>
+        https://bugs.webkit.org/show_bug.cgi?id=60563
+
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TestPopupMenuClient::TestPopupMenuClient): Initialize m_node.
+        (WebKit::TestPopupMenuClient::valueChanged): To fire 'change' event, forward the event like RenderMenuList.
+        (WebKit::TestPopupMenuClient::itemIsEnabled): Change to return true or false according to disabled item or not.
+        (WebKit::TestPopupMenuClient::setDisabledIndex): Set disabled index to simulate disabled item.
+        (WebKit::TestPopupMenuClient::setFocusedNode): Set focused node to dispatch the event.
+        (WebKit::SelectPopupMenuTest::SelectPopupMenuTest): Add baseURL.
+        (WebKit::SelectPopupMenuTest::TearDown): Add UnregisterAllMockedURLs() call.
+        (WebKit::SelectPopupMenuTest::registerMockedURLLoad): To simulate html load, call RegisterMockedURL().
+        (WebKit::SelectPopupMenuTest::serveRequests): Call ServeAsynchronousMockedRequests().
+        (WebKit::SelectPopupMenuTest::loadFrame): Simulate load frame with url string.
+        (WebKit::TEST_F): Implement SelectItemEventFire, SelectItemKeyEvent, SelectItemRemoveSelectOnChange and SelectItemRemoveSelectOnChange.
+        * tests/data/select_event.html: Added for SelectItemEventFire and SelectItemKeyEvent.
+        * tests/data/select_event_remove_on_change.html: Added SelectItemRemoveSelectOnChange.
+        * tests/data/select_event_remove_on_click.html: Added SelectItemRemoveSelectOnChange.
+        * WebKit.gyp: Added PopupMenuTest.cpp. Because webkit_support dependency is added, we can't build PopupMenuTest.cpp with Chromium-win (shared) configuration.
+
 2011-06-06  Nico Weber  <thakis@chromium.org>
 
         Reviewed by James Robinson.

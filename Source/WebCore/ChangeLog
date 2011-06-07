@@ -1,3 +1,17 @@
+2011-06-07  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Click event is not fired for a menulist <select>
+        https://bugs.webkit.org/show_bug.cgi?id=60563
+
+        Tests: SelectItemEventFire, SelectItemKeyEvent, SelectItemRemoveSelectOnChange and SelectItemRemoveSelectOnChange in webkit_unit_tests.
+
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupContainer::showPopup): Set m_focusedNode from m_frameView.
+        (WebCore::PopupListBox::handleMouseReleaseEvent): Call dispatchMouseEvent to forward the event only if select popup.
+        (WebCore::PopupListBox::acceptIndex): Change to return accepted or not.
+
 2011-06-07  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Yury Semikhatsky.
