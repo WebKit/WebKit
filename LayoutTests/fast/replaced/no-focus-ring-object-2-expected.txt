@@ -1,3 +1,0 @@
-
-Click the orange border, a focus ring should not appear. 
-OBJECT Event: focus PASS

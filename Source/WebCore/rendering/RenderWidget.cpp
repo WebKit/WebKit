@@ -263,10 +263,7 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
         return;
     }
 
-    if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && hasOutline())
-        paintOutline(paintInfo.context, IntRect(tx, ty, width(), height()));
-
-    if (!m_frameView || paintInfo.phase != PaintPhaseForeground)
+    if (!m_frameView || paintInfo.phase != PaintPhaseForeground || style()->visibility() != VISIBLE)
         return;
 
 #if PLATFORM(MAC)

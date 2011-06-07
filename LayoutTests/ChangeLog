@@ -1,3 +1,27 @@
+2011-06-07  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, rolling out r88212 and r88219.
+        http://trac.webkit.org/changeset/88212
+        http://trac.webkit.org/changeset/88219
+        https://bugs.webkit.org/show_bug.cgi?id=57439
+
+        Tests get timeout on Snow Leopard
+
+        * fast/replaced/no-focus-ring-embed-1-expected.txt: Removed.
+        * fast/replaced/no-focus-ring-embed-1.html: Removed.
+        * fast/replaced/no-focus-ring-embed-2-expected.txt: Removed.
+        * fast/replaced/no-focus-ring-embed-2.html: Removed.
+        * fast/replaced/no-focus-ring-iframe-expected.txt: Removed.
+        * fast/replaced/no-focus-ring-iframe.html: Removed.
+        * fast/replaced/no-focus-ring-object-1-expected.txt: Removed.
+        * fast/replaced/no-focus-ring-object-1.html: Removed.
+        * fast/replaced/no-focus-ring-object-2-expected.txt: Removed.
+        * fast/replaced/no-focus-ring-object-2.html: Removed.
+        * fast/replaced/outline-replaced-elements-expected.txt: Removed.
+        * fast/replaced/outline-replaced-elements.html: Removed.
+        * fast/replaced/resources/focus-test.js: Removed.
+        * platform/mac/fast/replaced/outline-replaced-elements-expected.png: Removed.
+
 2011-06-07  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, added new baseline for GTK after r88175.
