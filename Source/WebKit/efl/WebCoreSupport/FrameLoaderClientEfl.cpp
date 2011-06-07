@@ -872,7 +872,7 @@ void FrameLoaderClientEfl::startDownload(const ResourceRequest& request)
     if (!m_view)
         return;
 
-    CString url = request.url().prettyURL().utf8();
+    CString url = request.url().string().utf8();
     Ewk_Download download;
 
     download.url = url.data();

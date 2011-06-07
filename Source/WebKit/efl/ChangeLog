@@ -1,5 +1,12 @@
 2011-06-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
+        Unreviewed build fix.
+
+        * WebCoreSupport/FrameLoaderClientEfl.cpp:
+        (WebCore::FrameLoaderClientEfl::startDownload): Change prettyURL() with string().
+
+2011-06-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
         Reviewed by Antonio Gomes.
 
         [EFL] Implement startDownload() in FrameLoaderClientEfl
