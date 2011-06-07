@@ -4137,6 +4137,19 @@ class WebKitStyleTest(CppStyleTestBase):
         self.assert_lint(
             'if (othertrue == fontType)',
             '')
+        self.assert_lint(
+            'if (LIKELY(foo == 0))',
+            '')
+        self.assert_lint(
+            'if (UNLIKELY(foo == 0))',
+            '')
+        self.assert_lint(
+            'if (LIKELY(foo == NULL))',
+            'Use 0 instead of NULL.  [readability/null] [5]')
+        self.assert_lint(
+            'if (UNLIKELY(foo == NULL))',
+            'Use 0 instead of NULL.  [readability/null] [5]')
+
 
     def test_using_std(self):
         self.assert_lint(
