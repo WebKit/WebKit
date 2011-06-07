@@ -26,6 +26,7 @@
 #include "Logging.h"
 #include "PageCache.h"
 #include "PageGroup.h"
+#include "ScriptController.h"
 #include "ewk_private.h"
 #include "ewk_settings.h"
 #include "runtime/InitializeThreading.h"
@@ -174,8 +175,7 @@ Eina_Bool _ewk_init_body(void)
             "work (ie: Adobe Flash)");
 #endif
 
-    JSC::initializeThreading();
-    WTF::initializeMainThread();
+    WebCore::ScriptController::initializeThreading();
     WebCore::InitializeLoggingChannelsIfNecessary();
 
     // Page cache capacity (in pages). Comment from Mac port:

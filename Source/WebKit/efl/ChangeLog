@@ -1,3 +1,17 @@
+2011-06-07  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove JSC dependency from WebKit/efl
+        https://bugs.webkit.org/show_bug.cgi?id=62173
+
+        Change JSC::initializeThreading() and WTF::initializeMainThread() to
+        WebCore::ScriptController::initializeThreading() which contains these
+        functions and remove JSC dependency to build webkit/efl with v8.
+
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body):
+
 2011-06-06  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed build fix.
