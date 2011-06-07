@@ -103,6 +103,8 @@ def run_command(*args, **kwargs):
 
 
 class Executive(object):
+    PIPE = subprocess.PIPE
+    STDOUT = subprocess.STDOUT
 
     def _should_close_fds(self):
         # We need to pass close_fds=True to work around Python bug #2320
@@ -116,10 +118,10 @@ class Executive(object):
         args = map(unicode, args)  # Popen will throw an exception if args are non-strings (like int())
         args = map(self._encode_argument_if_needed, args)
 
-        child_process = subprocess.Popen(args,
-                                         stdout=subprocess.PIPE,
-                                         stderr=subprocess.STDOUT,
-                                         close_fds=self._should_close_fds())
+        child_process = self.popen(args,
+                                   stdout=self.PIPE,
+                                   stderr=self.STDOUT,
+                                   close_fds=self._should_close_fds())
 
         # Use our own custom wait loop because Popen ignores a tee'd
         # stderr/stdout.
@@ -340,7 +342,7 @@ class Executive(object):
         # FIXME: We may need to encode differently on different platforms.
         if isinstance(input, unicode):
             input = input.encode(self._child_process_encoding())
-        return (subprocess.PIPE, input)
+        return (self.PIPE, input)
 
     def _command_for_printing(self, args):
         """Returns a print-ready string representing command args.
@@ -370,14 +372,14 @@ class Executive(object):
         args = map(self._encode_argument_if_needed, args)
 
         stdin, string_to_communicate = self._compute_stdin(input)
-        stderr = subprocess.STDOUT if return_stderr else None
+        stderr = self.STDOUT if return_stderr else None
 
-        process = subprocess.Popen(args,
-                                   stdin=stdin,
-                                   stdout=subprocess.PIPE,
-                                   stderr=stderr,
-                                   cwd=cwd,
-                                   close_fds=self._should_close_fds())
+        process = self.popen(args,
+                             stdin=stdin,
+                             stdout=self.PIPE,
+                             stderr=stderr,
+                             cwd=cwd,
+                             close_fds=self._should_close_fds())
         output = process.communicate(string_to_communicate)[0]
 
         # run_command automatically decodes to unicode() unless explicitly told not to.
@@ -431,3 +433,6 @@ class Executive(object):
         if not self._should_encode_child_process_arguments():
             return argument
         return argument.encode(self._child_process_encoding())
+
+    def popen(self, *args, **kwargs):
+        return subprocess.Popen(*args, **kwargs)

@@ -1,3 +1,18 @@
+2011-06-07  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        webkitpy: add a popen() call to executive
+        https://bugs.webkit.org/show_bug.cgi?id=62179
+
+        This change adds a popen() wrapper call to the Executive object.
+        This will allow other webkitpy scripts that currently call
+        subprocess directly to use Executive, instead.
+
+        No additional tests are necessary (the existing tests cover the code).
+
+        * Scripts/webkitpy/common/system/executive.py:
+
 2011-06-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.
