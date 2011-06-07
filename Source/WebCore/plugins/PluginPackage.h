@@ -58,6 +58,7 @@ namespace WebCore {
         const String& path() const { return m_path; }
         const String& fileName() const { return m_fileName; }
         const String& parentDirectory() const { return m_parentDirectory; }
+        PlatformModule module() const { return m_module; }
         uint16_t NPVersion() const;
         time_t lastModified() const { return m_lastModified; }
 

@@ -141,6 +141,9 @@ void PluginView::updatePluginWidget()
     if (m_windowRect == oldWindowRect && m_clipRect == oldClipRect)
         return;
 
+    if (m_status != PluginStatusLoadedSuccessfully)
+        return;
+
 #if defined(XP_UNIX)
     if (!m_isWindowed) {
         Display* display = GDK_DISPLAY_XDISPLAY(gdk_display_get_default());
@@ -177,7 +180,7 @@ void PluginView::hide()
 
 void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 {
-    if (!m_isStarted) {
+    if (!m_isStarted || m_status != PluginStatusLoadedSuccessfully) {
         paintMissingPluginIcon(context, rect);
         return;
     }
@@ -271,7 +274,7 @@ void PluginView::handleKeyboardEvent(KeyboardEvent* event)
 {
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
 
-    if (m_isWindowed)
+    if (!m_isStarted || m_status != PluginStatusLoadedSuccessfully)
         return;
 
     if (event->type() != eventNames().keydownEvent && event->type() != eventNames().keyupEvent)
@@ -401,7 +404,7 @@ void PluginView::handleMouseEvent(MouseEvent* event)
 {
     JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
 
-    if (m_isWindowed)
+    if (!m_isStarted || m_status != PluginStatusLoadedSuccessfully)
         return;
 
     if (event->type() == eventNames().mousedownEvent) {
@@ -439,6 +442,9 @@ void PluginView::handleMouseEvent(MouseEvent* event)
 #if defined(XP_UNIX)
 void PluginView::handleFocusInEvent()
 {
+    if (!m_isStarted || m_status != PluginStatusLoadedSuccessfully)
+        return;
+
     XEvent npEvent;
     initXEvent(&npEvent);
 
@@ -452,6 +458,9 @@ void PluginView::handleFocusInEvent()
 
 void PluginView::handleFocusOutEvent()
 {
+    if (!m_isStarted || m_status != PluginStatusLoadedSuccessfully)
+        return;
+
     XEvent npEvent;
     initXEvent(&npEvent);
 
@@ -799,10 +808,25 @@ void PluginView::plugAddedCallback(GtkSocket* socket, PluginView* view)
     view->updateWidgetAllocationAndClip();
 }
 
+static bool moduleMixesGtkSymbols(GModule* module)
+{
+    gpointer symbol;
+#ifdef GTK_API_VERSION_2
+    return g_module_symbol(module, "gtk_application_get_type", &symbol);
+#else
+    return g_module_symbol(module, "gtk_object_get_type", &symbol);
+#endif
+}
+
 bool PluginView::platformStart()
 {
     ASSERT(m_isStarted);
     ASSERT(m_status == PluginStatusLoadedSuccessfully);
+
+    if (moduleMixesGtkSymbols(m_plugin->module())) {
+        LOG(Plugins, "Module '%s' mixes GTK+ 2 and GTK+ 3 symbols, ignoring plugin.\n", m_plugin->path().utf8().data());
+        return false;
+    }
 
 #if defined(XP_UNIX)
     if (m_plugin->pluginFuncs()->getvalue) {
