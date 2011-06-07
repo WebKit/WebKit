@@ -1150,6 +1150,10 @@
               'ScrollbarPrefsObserver=ChromiumWebCoreObjCScrollbarPrefsObserver',
               'WebCoreRenderThemeNotificationObserver=ChromiumWebCoreObjCWebCoreRenderThemeNotificationObserver',
               'WebFontCache=ChromiumWebCoreObjCWebFontCache',
+              'ScrollAnimationHelperDelegate=ChromiumWebCoreObjCScrollAnimationHelperDelegate',
+              'ScrollbarPainterControllerDelegate=ChromiumWebCoreObjCScrollbarPainterControllerDelegate',
+              'ScrollbarPainterDelegate=ChromiumWebCoreObjCScrollbarPainterDelegate',
+              'ScrollbarPartAnimation=ChromiumWebCoreObjCScrollbarPartAnimation',
             ],
             'include_dirs': [
               '../../../WebKitLibraries',
@@ -1368,6 +1372,7 @@
             ['include', 'platform/graphics/mac/FloatSizeMac\\.mm$'],
             ['include', 'platform/graphics/mac/GlyphPageTreeNodeMac\\.cpp$'],
             ['include', 'platform/graphics/mac/GraphicsContextMac\\.mm$'],
+            ['include', 'platform/graphics/mac/IntPointMac\\.mm$'],
             ['include', 'platform/graphics/mac/IntRectMac\\.mm$'],
             ['include', 'platform/mac/BlockExceptions\\.mm$'],
             ['include', 'platform/mac/KillRingMac\\.mm$'],

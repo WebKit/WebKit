@@ -3832,6 +3832,8 @@
             'platform/chromium/PopupMenuChromium.h',
             'platform/chromium/PopupMenuPrivate.h',
             'platform/chromium/SSLKeyGeneratorChromium.cpp',
+            'platform/chromium/ScrollAnimatorChromiumMac.h',
+            'platform/chromium/ScrollAnimatorChromiumMac.mm',
             'platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.h',
             'platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.mm',
             'platform/chromium/ScrollbarThemeChromium.cpp',
