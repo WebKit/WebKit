@@ -266,8 +266,10 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
         case CSSPropertyStrokeDasharray:
         {
             HANDLE_INHERIT_AND_INITIAL(strokeDashArray, StrokeDashArray)
-            if (!value->isValueList())
+            if (!value->isValueList()) {
+                svgstyle->setStrokeDashArray(SVGRenderStyle::initialStrokeDashArray());
                 break;
+            }
 
             CSSValueList* dashes = static_cast<CSSValueList*>(value);
 

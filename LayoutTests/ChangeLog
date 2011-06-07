@@ -1,3 +1,21 @@
+2011-06-07  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        stroke-dasharray does not handle "none"
+        https://bugs.webkit.org/show_bug.cgi?id=62203
+
+        Test stroke-dasharray=none as well as invalid syntaxes.
+
+        * platform/mac/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png: Added.
+        * platform/mac/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt: Added.
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-04-f-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/styling-css-04-f-expected.txt:
+        * platform/mac/svg/custom/invalid-dasharray-expected.png: Added.
+        * platform/mac/svg/custom/invalid-dasharray-expected.txt: Added.
+        * svg/W3C-SVG-1.1-SE/styling-css-04-f.svg: Added.
+        * svg/custom/invalid-dasharray.svg: Added.
+
 2011-06-07  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skip test crashing in GTK bots because of an ASSERT.
