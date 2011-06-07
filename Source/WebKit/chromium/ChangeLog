@@ -1,3 +1,16 @@
+2011-06-07  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Synchronize features.gypi and features_override.gypi in preparation for removing features_override.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=62135
+
+        After this patch is rolled into Chromium, we should be able to delete
+        features_override.gyp downstream.  Once we do that, we can simplify
+        this file somewhat by removing at least on level of nesting.
+
+        * features.gypi:
+
 2011-06-03  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
