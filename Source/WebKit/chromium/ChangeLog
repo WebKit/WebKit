@@ -1,5 +1,11 @@
 2011-06-07  Adam Barth  <abarth@webkit.org>
 
+        Attempt to fix the cr-win build.
+
+        * features.gypi:
+
+2011-06-07  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Dimitri Glazkov.
 
         Synchronize features.gypi and features_override.gypi in preparation for removing features_override.gypi

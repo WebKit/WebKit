@@ -42,6 +42,7 @@
         'use_accelerated_compositing%': 1,
         'use_skia_gpu%': 0,
         'use_threaded_compositing%': 0,
+        'branding%': 'WebKit',
       },
 
       # We have to nest variables inside variables as a hack for variables
@@ -127,6 +128,7 @@
       'use_accelerated_compositing%': '<(use_accelerated_compositing)',
       'use_skia_gpu%': '<(use_skia_gpu)',
       'use_threaded_compositing%': '<(use_threaded_compositing)',
+      'branding%': '<(branding)',
 
       'conditions': [
         ['use_accelerated_compositing==1', {
