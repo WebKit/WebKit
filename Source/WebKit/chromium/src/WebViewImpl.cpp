@@ -1036,11 +1036,6 @@ void WebViewImpl::animate()
 void WebViewImpl::layout()
 {
     TRACE_EVENT("WebViewImpl::layout", this, 0);
-#if USE(ACCELERATED_COMPOSITING)
-    // FIXME: RTL style not supported by the compositor yet.
-    if (isAcceleratedCompositingActive() && pageHasRTLStyle())
-        setIsAcceleratedCompositingActive(false);
-#endif
 
     WebFrameImpl* webframe = mainFrameImpl();
     if (webframe) {
@@ -2379,8 +2374,7 @@ bool WebViewImpl::pageHasRTLStyle() const
 
 void WebViewImpl::setRootGraphicsLayer(WebCore::PlatformLayer* layer)
 {
-    // FIXME: RTL style not supported by the compositor yet.
-    setIsAcceleratedCompositingActive(layer && !pageHasRTLStyle() ? true : false);
+    setIsAcceleratedCompositingActive(layer);
     if (m_layerRenderer)
         m_layerRenderer->setRootLayer(layer);
 

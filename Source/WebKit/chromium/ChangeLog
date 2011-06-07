@@ -1,3 +1,17 @@
+2011-06-07  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Disable compositing for RTL pages in the RenderLayerCompositor rather
+        than later on in the WebViewImpl.
+        https://bugs.webkit.org/show_bug.cgi?id=62246
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::allowedCompositingTriggers):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::layout):
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+
 2011-06-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r88254, r88262, and r88268.

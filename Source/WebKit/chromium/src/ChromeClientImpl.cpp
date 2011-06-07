@@ -846,7 +846,8 @@ void ChromeClientImpl::scheduleCompositingLayerSync()
 
 ChromeClient::CompositingTriggerFlags ChromeClientImpl::allowedCompositingTriggers() const
 {
-    if (!m_webView->allowsAcceleratedCompositing())
+    // FIXME: RTL style not supported by the compositor yet.
+    if (!m_webView->allowsAcceleratedCompositing() || m_webView->pageHasRTLStyle())
         return 0;
 
     CompositingTriggerFlags flags = 0;

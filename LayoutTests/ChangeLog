@@ -1,3 +1,15 @@
+2011-06-07  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Add a test to verify that RTL pages that trigger the compositor
+        render correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=62246
+
+        * compositing/geometry/rtl-composited-expected.png: Added.
+        * compositing/geometry/rtl-composited-expected.txt: Added.
+        * compositing/geometry/rtl-composited.html: Added.
+
 2011-06-07  Ryosuke Niwa  <rniwa@webkit.org>
 
         Gtk rebaseline after r88266.
