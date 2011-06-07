@@ -88,11 +88,9 @@ v8 {
         bindings/v8/custom/V8Uint16ArrayCustom.cpp \
         bindings/v8/custom/V8Uint32ArrayCustom.cpp \
         \
-        bindings/v8/ChildThreadDOMData.cpp \
         bindings/v8/DateExtension.cpp \
         bindings/v8/DOMData.cpp \
         bindings/v8/DOMDataStore.cpp \
-        bindings/v8/MainThreadDOMData.cpp \
         bindings/v8/NPV8Object.cpp \
         bindings/v8/PageScriptDebugServer.cpp \
         bindings/v8/RetainedDOMInfo.cpp \
@@ -1226,13 +1224,11 @@ v8 {
         bindings/v8/custom/V8MessagePortCustom.h \
         bindings/v8/custom/V8NamedNodesCollection.h \
         \
-        bindings/v8/ChildThreadDOMData.h \
         bindings/v8/DateExtension.h \
         bindings/v8/DOMData.h \
         bindings/v8/DOMDataStore.h \
         bindings/v8/DOMWrapperWorld.h \
         bindings/v8/IsolatedWorld.h \
-        bindings/v8/MainThreadDOMData.h \
         bindings/v8/npruntime_impl.h \
         bindings/v8/npruntime_internal.h \
         bindings/v8/npruntime_priv.h \

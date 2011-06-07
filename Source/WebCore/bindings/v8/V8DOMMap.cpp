@@ -83,7 +83,7 @@ DOMWrapperMap<SVGElementInstance>& getDOMSVGElementInstanceMap()
 
 #endif // ENABLE(SVG)
 
-void removeAllDOMObjectsInCurrentThread()
+void removeAllDOMObjects()
 {
     DOMDataStore& store = getDOMDataStore();
 
