@@ -634,7 +634,7 @@ SMILTime SVGSMILElement::findInstanceTime(BeginOrEnd beginOrEnd, SMILTime minimu
         } else if (time > minimumTime)
             return time;
     }
-    return SMILTime::unresolved();
+    return beginOrEnd == Begin ? SMILTime::unresolved() : SMILTime::indefinite();
 }
 
 SMILTime SVGSMILElement::repeatingDuration() const
