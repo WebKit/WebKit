@@ -1,3 +1,12 @@
+2011-06-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Sammy Weinig.
+
+        Remove some unnecessary includes from AnimationBase.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=62183
+
+        * page/animation/AnimationBase.cpp:
+
 2011-06-06  Kent Tamura  <tkent@chromium.org>
 
         Unreviewed, a crash fix by a roll out.
