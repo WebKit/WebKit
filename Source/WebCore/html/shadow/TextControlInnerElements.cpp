@@ -63,11 +63,6 @@ PassRefPtr<RenderStyle> TextControlInnerElement::styleForRenderer()
     return parentRenderer->createInnerBlockStyle(parentRenderer->style());
 }
 
-PassRefPtr<Element> TextControlInnerElement::cloneElementWithoutAttributesAndChildren() const
-{
-    return create(document());
-}
-
 // ----------------------------
 
 inline TextControlInnerTextElement::TextControlInnerTextElement(Document* document)
@@ -112,11 +107,6 @@ PassRefPtr<RenderStyle> TextControlInnerTextElement::styleForRenderer()
 {
     RenderTextControl* parentRenderer = toRenderTextControl(shadowAncestorNode()->renderer());
     return parentRenderer->createInnerTextStyle(parentRenderer->style());
-}
-
-PassRefPtr<Element> TextControlInnerTextElement::cloneElementWithoutAttributesAndChildren() const
-{
-    return create(document());
 }
 
 // ----------------------------
@@ -166,11 +156,6 @@ void SearchFieldResultsButtonElement::defaultEventHandler(Event* event)
 
     if (!event->defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
-}
-
-PassRefPtr<Element> SearchFieldResultsButtonElement::cloneElementWithoutAttributesAndChildren() const
-{
-    return create(document());
 }
 
 // ----------------------------
@@ -234,11 +219,6 @@ void SearchFieldCancelButtonElement::defaultEventHandler(Event* event)
 
     if (!event->defaultHandled())
         HTMLDivElement::defaultEventHandler(event);
-}
-
-PassRefPtr<Element> SearchFieldCancelButtonElement::cloneElementWithoutAttributesAndChildren() const
-{
-    return create(document());
 }
 
 // ----------------------------
@@ -377,10 +357,6 @@ void SpinButtonElement::setHovered(bool flag)
     HTMLDivElement::setHovered(flag);
 }
 
-PassRefPtr<Element> SpinButtonElement::cloneElementWithoutAttributesAndChildren() const
-{
-    return create(document());
-}
 
 // ----------------------------
 
@@ -547,11 +523,6 @@ const AtomicString& InputFieldSpeechButtonElement::shadowPseudoId() const
 {
     DEFINE_STATIC_LOCAL(AtomicString, pseudoId, ("-webkit-input-speech-button"));
     return pseudoId;
-}
-
-PassRefPtr<Element> InputFieldSpeechButtonElement::cloneElementWithoutAttributesAndChildren() const
-{
-    return create(document());
 }
 
 #endif // ENABLE(INPUT_SPEECH)

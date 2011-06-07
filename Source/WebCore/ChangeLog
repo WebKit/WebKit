@@ -1,3 +1,33 @@
+2011-06-06  Kent Tamura  <tkent@chromium.org>
+
+        Unreviewed, a crash fix by a roll out.
+
+        REGRESSION(r87980): Null pointer dereference in RenderTextControl::setInnerText()
+        https://bugs.webkit.org/show_bug.cgi?id=62116
+
+        Roll out the WebCore part of r87980.
+
+        * html/SearchInputType.cpp:
+        (WebCore::SearchInputType::SearchInputType):
+        (WebCore::SearchInputType::createShadowSubtree):
+        (WebCore::SearchInputType::destroyShadowSubtree):
+        * html/SearchInputType.h:
+        (WebCore::SearchInputType::innerBlockElement):
+        (WebCore::SearchInputType::resultsButtonElement):
+        (WebCore::SearchInputType::cancelButtonElement):
+        * html/TextFieldInputType.cpp:
+        (WebCore::TextFieldInputType::TextFieldInputType):
+        (WebCore::TextFieldInputType::createShadowSubtree):
+        (WebCore::TextFieldInputType::destroyShadowSubtree):
+        * html/TextFieldInputType.h:
+        (WebCore::TextFieldInputType::innerTextElement):
+        (WebCore::TextFieldInputType::innerSpinButtonElement):
+        (WebCore::TextFieldInputType::speechButtonElement):
+        (WebCore::TextFieldInputType::setInnerTextElement):
+        (WebCore::TextFieldInputType::setSpeechButtonElement):
+        * html/shadow/TextControlInnerElements.cpp:
+        * html/shadow/TextControlInnerElements.h:
+
 2011-06-06  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Simon Fraser.

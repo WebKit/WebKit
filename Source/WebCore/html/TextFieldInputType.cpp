@@ -35,7 +35,6 @@
 #include "BeforeTextInsertedEvent.h"
 #include "Frame.h"
 #include "HTMLInputElement.h"
-#include "HTMLNames.h"
 #include "KeyboardEvent.h"
 #include "RenderTextControlSingleLine.h"
 #include "RenderTheme.h"
@@ -48,10 +47,13 @@
 
 namespace WebCore {
 
-using namespace HTMLNames;
-
 TextFieldInputType::TextFieldInputType(HTMLInputElement* element)
     : InputType(element)
+    , m_innerText(0)
+    , m_innerSpinButton(0)
+#if ENABLE(INPUT_SPEECH)
+    , m_speechButton(0)
+#endif
 {
 }
 
@@ -127,81 +129,51 @@ RenderObject* TextFieldInputType::createRenderer(RenderArena* arena, RenderStyle
     return new (arena) RenderTextControlSingleLine(element(), element()->placeholderShouldBeVisible());
 }
 
-const AtomicString& TextFieldInputType::innerTextId() const
-{
-    DEFINE_STATIC_LOCAL(AtomicString, id, ("innerText"));
-    return id;
-}
-
-static const AtomicString& spinButtonId()
-{
-    DEFINE_STATIC_LOCAL(AtomicString, id, ("spinButton"));
-    return id;
-}
-
-#if ENABLE(INPUT_SPEECH)
-const AtomicString& TextFieldInputType::speechButtonId() const
-{
-    DEFINE_STATIC_LOCAL(AtomicString, id, ("speechButton"));
-    return id;
-}
-#endif
-
-void TextFieldInputType::appendChildAndSetId(ContainerNode* parent, PassRefPtr<HTMLElement> child, const AtomicString& id)
-{
-    ExceptionCode ec = 0;
-    child->setAttribute(idAttr, id);
-    parent->appendChild(child, ec);
-}
-
 void TextFieldInputType::createShadowSubtree()
 {
-    Document* document = element()->document();
-    bool shouldHaveSpinButton = RenderTheme::themeForPage(document->page())->shouldHaveSpinButton(element());
+    ASSERT(!m_innerText);
+    ASSERT(!m_innerSpinButton);
+
+    bool shouldHaveSpinButton = RenderTheme::themeForPage(element()->document()->page())->shouldHaveSpinButton(element());
     bool hasDecorations = shouldHaveSpinButton;
 #if ENABLE(INPUT_SPEECH)
     if (element()->isSpeechEnabled())
         hasDecorations = true;
 #endif
 
-    ShadowRoot* shadowRoot = element()->ensureShadowRoot();
-    appendChildAndSetId(shadowRoot, TextControlInnerTextElement::create(document), innerTextId());
+    ExceptionCode ec = 0;
+    Document* document = element()->document();
+    RefPtr<HTMLElement> innerText = TextControlInnerTextElement::create(document);
+    m_innerText = innerText.get();
+    element()->ensureShadowRoot()->appendChild(innerText.release(), ec);
     if (!hasDecorations)
         return;
 
 #if ENABLE(INPUT_SPEECH)
-    if (element()->isSpeechEnabled())
-        appendChildAndSetId(shadowRoot, InputFieldSpeechButtonElement::create(document), speechButtonId());
+    ASSERT(!m_speechButton);
+    if (element()->isSpeechEnabled()) {
+        RefPtr<HTMLElement> speech = InputFieldSpeechButtonElement::create(document);
+        m_speechButton = speech.get();
+        element()->ensureShadowRoot()->appendChild(speech.release(), ec);
+    }
 #endif
 
-    if (shouldHaveSpinButton)
-        appendChildAndSetId(shadowRoot, SpinButtonElement::create(document), spinButtonId());
+    if (shouldHaveSpinButton) {
+        RefPtr<HTMLElement> inner = SpinButtonElement::create(document);
+        m_innerSpinButton = inner.get();
+        element()->ensureShadowRoot()->appendChild(inner.release(), ec);
+    }
 }
 
-HTMLElement* TextFieldInputType::getShadowElementById(const AtomicString& id) const
+void TextFieldInputType::destroyShadowSubtree()
 {
-    if (!element()->shadowRoot())
-        return 0;
-    Element* shadow = element()->shadowRoot()->getElementById(id);
-    return shadow ? static_cast<HTMLElement*>(shadow) : 0;
-}
-
-HTMLElement* TextFieldInputType::innerTextElement() const
-{
-    return getShadowElementById(innerTextId());
-}
-
-HTMLElement* TextFieldInputType::innerSpinButtonElement() const
-{
-    return getShadowElementById(spinButtonId());
-}
-
+    InputType::destroyShadowSubtree();
+    m_innerText = 0;
 #if ENABLE(INPUT_SPEECH)
-HTMLElement* TextFieldInputType::speechButtonElement() const
-{
-    return getShadowElementById(speechButtonId());
-}
+    m_speechButton = 0;
 #endif
+    m_innerSpinButton = 0;
+}
 
 bool TextFieldInputType::shouldUseInputMethod() const
 {

@@ -46,7 +46,6 @@ protected:
 
 private:
     virtual bool isMouseFocusable() const { return false; }
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
 };
 
 class TextControlInnerTextElement : public HTMLDivElement {
@@ -60,7 +59,6 @@ private:
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual PassRefPtr<RenderStyle> styleForRenderer();
     virtual bool isMouseFocusable() const { return false; }
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
 };
 
 class SearchFieldResultsButtonElement : public HTMLDivElement {
@@ -73,7 +71,6 @@ private:
     SearchFieldResultsButtonElement(Document*);
     virtual const AtomicString& shadowPseudoId() const;
     virtual bool isMouseFocusable() const { return false; }
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
 };
 
 class SearchFieldCancelButtonElement : public HTMLDivElement {
@@ -87,7 +84,6 @@ private:
     virtual const AtomicString& shadowPseudoId() const;
     virtual void detach();
     virtual bool isMouseFocusable() const { return false; }
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
 
     bool m_capturing;
 };
@@ -117,7 +113,6 @@ private:
     void repeatingTimerFired(Timer<SpinButtonElement>*);
     virtual void setHovered(bool = true);
     virtual bool isMouseFocusable() const { return false; }
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
 
     bool m_capturing;
     UpDownState m_upDownState;
@@ -157,7 +152,6 @@ private:
     virtual const AtomicString& shadowPseudoId() const;
     virtual bool isMouseFocusable() const { return false; }
     virtual void attach();
-    virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
 
     bool m_capturing;
     SpeechInputState m_state;

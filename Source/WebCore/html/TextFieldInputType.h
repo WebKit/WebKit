@@ -35,8 +35,6 @@
 
 namespace WebCore {
 
-class ContainerNode;
-
 // The class represents types of which UI contain text fields.
 // It supports not only the types for BaseTextInputType but also type=number.
 class TextFieldInputType : public InputType {
@@ -47,20 +45,19 @@ protected:
     void handleKeydownEventForSpinButton(KeyboardEvent*);
     void handleWheelEventForSpinButton(WheelEvent*);
 
-    virtual HTMLElement* innerTextElement() const;
-    virtual HTMLElement* innerSpinButtonElement() const;
+    virtual HTMLElement* innerTextElement() const { return m_innerText; }
+    virtual HTMLElement* innerSpinButtonElement() const { return m_innerSpinButton; }
 #if ENABLE(INPUT_SPEECH)
-    virtual HTMLElement* speechButtonElement() const;
+    virtual HTMLElement* speechButtonElement() const { return m_speechButton; }
 #endif
 
 protected:
-    const AtomicString& innerTextId() const;
-#if ENABLE(INPUT_SPEECH)
-    const AtomicString& speechButtonId() const;
-#endif
-    static void appendChildAndSetId(ContainerNode*, PassRefPtr<HTMLElement>, const AtomicString&);
     virtual void createShadowSubtree();
-    HTMLElement* getShadowElementById(const AtomicString&) const;
+    virtual void destroyShadowSubtree();
+    void setInnerTextElement(HTMLElement* element) { m_innerText = element; }
+#if ENABLE(INPUT_SPEECH)
+    void setSpeechButtonElement(HTMLElement* element) { m_speechButton = element; }
+#endif
 
 private:
     virtual bool isTextField() const;
@@ -72,6 +69,12 @@ private:
     virtual bool shouldUseInputMethod() const;
     virtual String sanitizeValue(const String&);
     virtual bool shouldRespectListAttribute();
+
+    HTMLElement* m_innerText;
+    HTMLElement* m_innerSpinButton;
+#if ENABLE(INPUT_SPEECH)
+    HTMLElement* m_speechButton;
+#endif
 };
 
 } // namespace WebCore
