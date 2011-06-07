@@ -1,3 +1,18 @@
+2011-06-07  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Remove Ecore_X bits from PlatformScreenEfl
+        https://bugs.webkit.org/show_bug.cgi?id=61649
+
+        Remove the need for Ecore_X and some X calls by always using
+        new functions available in EFL to get the screen size.
+
+        No new tests since the same functionality are done inside EFL now.
+
+        * platform/efl/PlatformScreenEfl.cpp:
+        (WebCore::screenRect):
+
 2011-06-07  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

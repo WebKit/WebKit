@@ -34,15 +34,11 @@
 #include "config.h"
 #include "PlatformScreen.h"
 
+#include <Ecore_Evas.h>
 #include "NotImplemented.h"
 #include "PlatformString.h"
 #include "Widget.h"
 #include <wtf/text/CString.h>
-
-#ifdef HAVE_ECORE_X
-#include <Ecore_X.h>
-#include <X11/Xlib.h>
-#endif
 
 namespace WebCore {
 
@@ -66,17 +62,10 @@ bool screenIsMonochrome(Widget*)
 
 FloatRect screenRect(Widget* widget)
 {
-    int x = 0, y = 0, w = 0, h = 0;
+    int x, y, w, h;
+    Evas* e = widget->evas();
 
-#ifdef HAVE_ECORE_X
-    Ecore_X_Display* display = ecore_x_display_get();
-    int def = DefaultScreen(display);
-    Screen* screen = ScreenOfDisplay(display, def);
-    x = 0;
-    y = 0;
-    w = screen->width;
-    h = screen->height;
-#endif
+    ecore_evas_screen_geometry_get(ecore_evas_ecore_evas_get(e), &x, &y, &w, &h);
 
     return FloatRect(x, y, w, h);
 }

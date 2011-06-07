@@ -6,9 +6,9 @@ PKG_CHECK_MODULES (ECORE_EVAS REQUIRED ecore-evas>=1.0.0)
 PKG_CHECK_MODULES (EFLDEPS REQUIRED
   eina>=1.0.0
   evas>=1.0.0
-  ecore>=1.0.0
+  ecore>=1.0.999.59763
   ecore-file>=1.0.0
-  ecore-evas>=1.0.0
+  ecore-evas>=1.0.999.59763
   edje>=1.0.0)
 PKG_CHECK_MODULES (EINA REQUIRED eina>=1.0.0)
 PKG_CHECK_MODULES (ECORE_X ecore-x>=1.0.0)
