@@ -41,6 +41,9 @@
 #include "CachedPage.h"
 #include "CachedResourceLoader.h"
 #include "Chrome.h"
+#if ENABLE(TOUCH_EVENTS)
+#include "ChromeClient.h"
+#endif
 #include "Console.h"
 #include "ContentSecurityPolicy.h"
 #include "DOMImplementation.h"
@@ -2066,6 +2069,11 @@ void FrameLoader::transitionToCommitted(PassRefPtr<CachedPage> cachedPage)
     setDocumentLoader(m_provisionalDocumentLoader.get());
     setProvisionalDocumentLoader(0);
     setState(FrameStateCommittedPage);
+
+#if ENABLE(TOUCH_EVENTS)
+    if (isLoadingMainFrame())
+        m_frame->page()->chrome()->client()->needTouchEvents(false);
+#endif
 
     // Handle adding the URL to the back/forward list.
     DocumentLoader* dl = m_documentLoader.get();

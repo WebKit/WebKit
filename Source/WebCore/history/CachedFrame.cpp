@@ -183,10 +183,6 @@ CachedFrame::CachedFrame(Frame* frame)
         LOG(PageCache, "Finished creating CachedFrame for child frame with url '%s' and DocumentLoader %p\n", m_url.string().utf8().data(), m_documentLoader.get());
 #endif
 
-#if ENABLE(TOUCH_EVENTS)
-    if (m_document->hasListenerType(Document::TOUCH_LISTENER))
-        m_document->page()->chrome()->client()->needTouchEvents(false);
-#endif
 }
 
 void CachedFrame::open()

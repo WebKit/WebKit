@@ -1,3 +1,21 @@
+2011-06-07  Dinu Jacob  <dinu.jacob@nokia.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Inform ChromeClient touch events are not needed by the webpage when navigating away from the page instead of in both Document:detach/CachedFrame
+        https://bugs.webkit.org/show_bug.cgi?id=61543
+
+        Inform chrome client that touch events are not needed by the webpage 
+        when navigating away from the page only once to avoid the flag being 
+        overwritten later if a page is removed from the page cache
+
+        * dom/Document.cpp:
+        (WebCore::Document::detach):
+        * history/CachedFrame.cpp:
+        (WebCore::CachedFrame::CachedFrame):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::transitionToCommitted):
+
 2011-06-07  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
