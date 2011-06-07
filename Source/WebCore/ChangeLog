@@ -2,6 +2,18 @@
 
         Reviewed by Eric Seidel.
 
+        Update RenderBlock::paint to use IntPoint internally
+        https://bugs.webkit.org/show_bug.cgi?id=62140
+
+        Covered by existing tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::paint):
+
+2011-06-06  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Convert RenderBox::absoluteRects to IntPoint
         https://bugs.webkit.org/show_bug.cgi?id=62130
 

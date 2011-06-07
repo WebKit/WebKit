@@ -2240,8 +2240,7 @@ void RenderBlock::repaintOverhangingFloats(bool paintAllDescendants)
  
 void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
 {
-    tx += x();
-    ty += y();
+    IntPoint adjustedOffset = location() + IntSize(tx, ty);
     
     PaintPhase phase = paintInfo.phase;
 
@@ -2252,21 +2251,21 @@ void RenderBlock::paint(PaintInfo& paintInfo, int tx, int ty)
         IntRect overflowBox = visualOverflowRect();
         flipForWritingMode(overflowBox);
         overflowBox.inflate(maximalOutlineSize(paintInfo.phase));
-        overflowBox.move(tx, ty);
+        overflowBox.moveBy(adjustedOffset);
         if (!overflowBox.intersects(paintInfo.rect))
             return;
     }
 
-    bool pushedClip = pushContentsClip(paintInfo, IntPoint(tx, ty));
-    paintObject(paintInfo, IntPoint(tx, ty));
+    bool pushedClip = pushContentsClip(paintInfo, adjustedOffset);
+    paintObject(paintInfo, adjustedOffset);
     if (pushedClip)
-        popContentsClip(paintInfo, phase, IntPoint(tx, ty));
+        popContentsClip(paintInfo, phase, adjustedOffset);
 
     // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
     // z-index.  We paint after we painted the background/border, so that the scrollbars will
     // sit above the background/border.
     if (hasOverflowClip() && style()->visibility() == VISIBLE && (phase == PaintPhaseBlockBackground || phase == PaintPhaseChildBlockBackground) && paintInfo.shouldPaintWithinRoot(this))
-        layer()->paintOverflowControls(paintInfo.context, IntPoint(tx, ty), paintInfo.rect);
+        layer()->paintOverflowControls(paintInfo.context, adjustedOffset, paintInfo.rect);
 }
 
 void RenderBlock::paintColumnRules(PaintInfo& paintInfo, const IntPoint& paintOffset)
