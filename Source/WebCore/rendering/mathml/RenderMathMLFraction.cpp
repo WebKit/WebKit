@@ -131,9 +131,9 @@ void RenderMathMLFraction::layout()
 
 }
 
-void RenderMathMLFraction::paint(PaintInfo& info, int tx, int ty)
+void RenderMathMLFraction::paint(PaintInfo& info, const IntPoint& paintOffset)
 {
-    RenderMathMLBlock::paint(info, tx, ty);
+    RenderMathMLBlock::paint(info, paintOffset);
     if (info.context->paintingDisabled() || info.phase != PaintPhaseForeground)
         return;
     
@@ -153,8 +153,8 @@ void RenderMathMLFraction::paint(PaintInfo& info, int tx, int ty)
             verticalOffset = numerator->offsetHeight();        
     }
     
-    tx += x();
-    ty += y() + verticalOffset;
+    IntPoint adjustedPaintOffset = paintOffset + location();
+    adjustedPaintOffset.setY(adjustedPaintOffset.y() + verticalOffset);
     
     GraphicsContextStateSaver stateSaver(*info.context);
     
@@ -162,7 +162,7 @@ void RenderMathMLFraction::paint(PaintInfo& info, int tx, int ty)
     info.context->setStrokeStyle(SolidStroke);
     info.context->setStrokeColor(style()->visitedDependentColor(CSSPropertyColor), ColorSpaceSRGB);
     
-    info.context->drawLine(IntPoint(tx, ty), IntPoint(tx + offsetWidth(), ty));
+    info.context->drawLine(adjustedPaintOffset, IntPoint(adjustedPaintOffset.x() + offsetWidth(), adjustedPaintOffset.y()));
 }
 
 int RenderMathMLFraction::baselinePosition(FontBaseline, bool firstLine, LineDirectionMode lineDirection, LinePositionMode linePositionMode) const

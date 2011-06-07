@@ -120,14 +120,14 @@ Path RenderDetailsMarker::getPath(const IntPoint& origin) const
     return result;
 }
 
-void RenderDetailsMarker::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderDetailsMarker::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhaseForeground || style()->visibility() != VISIBLE) {
-        RenderBlock::paint(paintInfo, tx, ty);
+        RenderBlock::paint(paintInfo, paintOffset);
         return;
     }
 
-    IntPoint boxOrigin(tx + x(), ty + y());
+    IntPoint boxOrigin(paintOffset + location());
     IntRect overflowRect(visualOverflowRect());
     overflowRect.moveBy(boxOrigin);
     overflowRect.inflate(maximalOutlineSize(paintInfo.phase));

@@ -44,7 +44,7 @@ RenderSVGForeignObject::~RenderSVGForeignObject()
 {
 }
 
-void RenderSVGForeignObject::paint(PaintInfo& paintInfo, int, int)
+void RenderSVGForeignObject::paint(PaintInfo& paintInfo, const IntPoint&)
 {
     if (paintInfo.context->paintingDisabled())
         return;
@@ -60,7 +60,7 @@ void RenderSVGForeignObject::paint(PaintInfo& paintInfo, int, int)
     if (opacity < 1.0f)
         childPaintInfo.context->beginTransparencyLayer(opacity);
 
-    RenderBlock::paint(childPaintInfo, 0, 0);
+    RenderBlock::paint(childPaintInfo, IntPoint());
 
     if (opacity < 1.0f)
         childPaintInfo.context->endTransparencyLayer();

@@ -39,7 +39,7 @@ public:
     const RenderObjectChildList* children() const { return &m_children; }
     RenderObjectChildList* children() { return &m_children; }
 
-    virtual void paint(PaintInfo&, int parentX, int parentY);
+    virtual void paint(PaintInfo&, const IntPoint&);
     virtual void setNeedsBoundariesUpdate() { m_needsBoundariesUpdate = true; }
 
 protected:

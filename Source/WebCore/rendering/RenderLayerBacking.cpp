@@ -1099,8 +1099,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
     IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
     m_owningLayer->calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect);
 
-    int tx = layerBounds.x() - m_owningLayer->renderBoxX();
-    int ty = layerBounds.y() - m_owningLayer->renderBoxY();
+    IntPoint paintOffset = toPoint(layerBounds.location() - m_owningLayer->renderBoxLocation());
 
     // If this layer's renderer is a child of the paintingRoot, we render unconditionally, which
     // is done by passing a nil paintingRoot down to our renderer (as if no paintingRoot was ever set).
@@ -1118,7 +1117,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         setClip(context, paintDirtyRect, damageRect);
         
         PaintInfo info(context, damageRect, PaintPhaseBlockBackground, false, paintingRootForRenderer, 0);
-        renderer()->paint(info, tx, ty);
+        renderer()->paint(info, paintOffset);
 
         // Our scrollbar widgets paint exactly when we tell them to, so that they work properly with
         // z-index.  We paint after we painted the background/border, so that the scrollbars will
@@ -1141,17 +1140,17 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
         PaintInfo paintInfo(context, clipRectToApply, 
                                           selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
                                           forceBlackText, paintingRootForRenderer, 0);
-        renderer()->paint(paintInfo, tx, ty);
+        renderer()->paint(paintInfo, paintOffset);
 
         if (!selectionOnly) {
             paintInfo.phase = PaintPhaseFloat;
-            renderer()->paint(paintInfo, tx, ty);
+            renderer()->paint(paintInfo, paintOffset);
 
             paintInfo.phase = PaintPhaseForeground;
-            renderer()->paint(paintInfo, tx, ty);
+            renderer()->paint(paintInfo, paintOffset);
 
             paintInfo.phase = PaintPhaseChildOutlines;
-            renderer()->paint(paintInfo, tx, ty);
+            renderer()->paint(paintInfo, paintOffset);
         }
 
         // Now restore our clip.
@@ -1161,7 +1160,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
             // Paint our own outline
             PaintInfo paintInfo(context, outlineRect, PaintPhaseSelfOutline, false, paintingRootForRenderer, 0);
             setClip(context, paintDirtyRect, outlineRect);
-            renderer()->paint(paintInfo, tx, ty);
+            renderer()->paint(paintInfo, paintOffset);
             restoreClip(context, paintDirtyRect, outlineRect);
         }
 
@@ -1178,7 +1177,7 @@ void RenderLayerBacking::paintIntoLayer(RenderLayer* rootLayer, GraphicsContext*
 
             // Paint the mask.
             PaintInfo paintInfo(context, damageRect, PaintPhaseMask, false, paintingRootForRenderer, 0);
-            renderer()->paint(paintInfo, tx, ty);
+            renderer()->paint(paintInfo, paintOffset);
             
             // Restore the clip.
             restoreClip(context, paintDirtyRect, damageRect);

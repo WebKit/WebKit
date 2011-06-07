@@ -62,7 +62,7 @@ private:
     virtual void imageChanged(WrappedImagePtr, const IntRect* = 0);
 
     virtual void layout();
-    virtual void paint(PaintInfo&, int parentX, int parentY);
+    virtual void paint(PaintInfo&, const IntPoint&);
 
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
 

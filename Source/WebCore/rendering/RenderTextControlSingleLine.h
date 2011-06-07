@@ -61,7 +61,7 @@ private:
     virtual bool isTextField() const { return true; }
 
     virtual void subtreeHasChanged();
-    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paint(PaintInfo&, const IntPoint&);
     virtual void layout();
 
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);

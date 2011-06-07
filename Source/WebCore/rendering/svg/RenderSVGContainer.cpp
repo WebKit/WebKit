@@ -91,7 +91,7 @@ bool RenderSVGContainer::selfWillPaint()
 #endif
 }
 
-void RenderSVGContainer::paint(PaintInfo& paintInfo, int, int)
+void RenderSVGContainer::paint(PaintInfo& paintInfo, const IntPoint&)
 {
     if (paintInfo.context->paintingDisabled())
         return;
@@ -120,7 +120,7 @@ void RenderSVGContainer::paint(PaintInfo& paintInfo, int, int)
         if (continueRendering) {
             childPaintInfo.updatePaintingRootForChildren(this);
             for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-                child->paint(childPaintInfo, 0, 0);
+                child->paint(childPaintInfo, IntPoint());
         }
 
         if (paintInfo.phase == PaintPhaseForeground)

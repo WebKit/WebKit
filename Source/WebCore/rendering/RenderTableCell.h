@@ -94,7 +94,7 @@ public:
 
     virtual void layout();
 
-    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paint(PaintInfo&, const IntPoint&);
 
     void paintBackgroundsBehindCell(PaintInfo&, const IntPoint&, RenderObject* backgroundObject);
 

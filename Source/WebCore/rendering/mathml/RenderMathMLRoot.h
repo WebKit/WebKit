@@ -36,7 +36,7 @@ class RenderMathMLRoot : public RenderMathMLBlock {
 public:
     RenderMathMLRoot(Node* fraction);
     virtual void addChild(RenderObject* child, RenderObject* beforeChild = 0);
-    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paint(PaintInfo&, const IntPoint&);
 protected:
     virtual void layout();
 };

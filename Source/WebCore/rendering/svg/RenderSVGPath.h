@@ -60,7 +60,7 @@ private:
     virtual const char* renderName() const { return "RenderSVGPath"; }
 
     virtual void layout();
-    virtual void paint(PaintInfo&, int parentX, int parentY);
+    virtual void paint(PaintInfo&, const IntPoint&);
     virtual void addFocusRingRects(Vector<IntRect>&, const IntPoint&);
 
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);

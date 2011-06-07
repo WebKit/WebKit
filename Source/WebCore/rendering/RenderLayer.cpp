@@ -2334,7 +2334,7 @@ void RenderLayer::paintScrollCorner(GraphicsContext* context, const IntPoint& pa
     }
 
     if (m_scrollCorner) {
-        m_scrollCorner->paintIntoRect(context, paintOffset.x(), paintOffset.y(), absRect);
+        m_scrollCorner->paintIntoRect(context, paintOffset, absRect);
         return;
     }
 
@@ -2363,7 +2363,7 @@ void RenderLayer::paintResizer(GraphicsContext* context, const IntPoint& paintOf
     }
     
     if (m_resizer) {
-        m_resizer->paintIntoRect(context, paintOffset.x(), paintOffset.y(), absRect);
+        m_resizer->paintIntoRect(context, paintOffset, absRect);
         return;
     }
 
@@ -2597,10 +2597,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
     // Calculate the clip rects we should use.
     IntRect layerBounds, damageRect, clipRectToApply, outlineRect;
     calculateRects(rootLayer, paintDirtyRect, layerBounds, damageRect, clipRectToApply, outlineRect, localPaintFlags & PaintLayerTemporaryClipRects);
-    int x = layerBounds.x();
-    int y = layerBounds.y();
-    int tx = x - renderBoxX();
-    int ty = y - renderBoxY();
+    IntPoint paintOffset = toPoint(layerBounds.location() - renderBoxLocation());
                              
     // Ensure our lists are up-to-date.
     updateCompositingAndLayerListsIfNeeded();
@@ -2634,7 +2631,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
 
         // Paint the background.
         PaintInfo paintInfo(p, damageRect, PaintPhaseBlockBackground, false, paintingRootForRenderer, 0);
-        renderer()->paint(paintInfo, tx, ty);
+        renderer()->paint(paintInfo, paintOffset);
 
         // Restore the clip.
         restoreClip(p, paintDirtyRect, damageRect);
@@ -2654,15 +2651,15 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         PaintInfo paintInfo(p, clipRectToApply, 
                                           selectionOnly ? PaintPhaseSelection : PaintPhaseChildBlockBackgrounds,
                                           forceBlackText, paintingRootForRenderer, 0);
-        renderer()->paint(paintInfo, tx, ty);
+        renderer()->paint(paintInfo, paintOffset);
         if (!selectionOnly) {
             paintInfo.phase = PaintPhaseFloat;
-            renderer()->paint(paintInfo, tx, ty);
+            renderer()->paint(paintInfo, paintOffset);
             paintInfo.phase = PaintPhaseForeground;
             paintInfo.overlapTestRequests = overlapTestRequests;
-            renderer()->paint(paintInfo, tx, ty);
+            renderer()->paint(paintInfo, paintOffset);
             paintInfo.phase = PaintPhaseChildOutlines;
-            renderer()->paint(paintInfo, tx, ty);
+            renderer()->paint(paintInfo, paintOffset);
         }
 
         // Now restore our clip.
@@ -2673,7 +2670,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
         // Paint our own outline
         PaintInfo paintInfo(p, outlineRect, PaintPhaseSelfOutline, false, paintingRootForRenderer, 0);
         setClip(p, paintDirtyRect, outlineRect);
-        renderer()->paint(paintInfo, tx, ty);
+        renderer()->paint(paintInfo, paintOffset);
         restoreClip(p, paintDirtyRect, outlineRect);
     }
     
@@ -2688,7 +2685,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
 
         // Paint the mask.
         PaintInfo paintInfo(p, damageRect, PaintPhaseMask, false, paintingRootForRenderer, 0);
-        renderer()->paint(paintInfo, tx, ty);
+        renderer()->paint(paintInfo, paintOffset);
         
         // Restore the clip.
         restoreClip(p, paintDirtyRect, damageRect);
@@ -2696,7 +2693,7 @@ void RenderLayer::paintLayer(RenderLayer* rootLayer, GraphicsContext* p,
 
     if (paintingOverlayScrollbars) {
         setClip(p, paintDirtyRect, damageRect);
-        paintOverflowControls(p, IntPoint(tx, ty), damageRect, true);
+        paintOverflowControls(p, paintOffset, damageRect, true);
         restoreClip(p, paintDirtyRect, damageRect);
     }
 

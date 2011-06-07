@@ -292,7 +292,7 @@ protected:
 
     void layoutPositionedObjects(bool relayoutChildren);
 
-    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paint(PaintInfo&, const IntPoint&);
     virtual void paintObject(PaintInfo&, const IntPoint&);
 
     int logicalRightOffsetForLine(int position, int fixedOffset, bool applyTextIndent = true, int* logicalHeightRemaining = 0) const;

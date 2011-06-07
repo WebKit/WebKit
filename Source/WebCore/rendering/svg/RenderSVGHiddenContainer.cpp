@@ -39,7 +39,7 @@ void RenderSVGHiddenContainer::layout()
     setNeedsLayout(false);    
 }
 
-void RenderSVGHiddenContainer::paint(PaintInfo&, int, int)
+void RenderSVGHiddenContainer::paint(PaintInfo&, const IntPoint&)
 {
     // This subtree does not paint.
 }

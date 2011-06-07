@@ -801,22 +801,21 @@ int RenderTableCell::borderHalfAfter(bool outer) const
     return 0;
 }
 
-void RenderTableCell::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderTableCell::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (paintInfo.phase == PaintPhaseCollapsedTableBorders && style()->visibility() == VISIBLE) {
         if (!paintInfo.shouldPaintWithinRoot(this))
             return;
 
-        tx += x();
-        ty += y();
+        IntPoint adjustedPaintOffset = paintOffset + location();
         int os = 2 * maximalOutlineSize(paintInfo.phase);
-        if (ty - table()->outerBorderTop() < paintInfo.rect.maxY() + os
-            && ty + height() + table()->outerBorderBottom() > paintInfo.rect.y() - os)
-            paintCollapsedBorder(paintInfo.context, IntRect(tx, ty, width(), height()));
+        if (adjustedPaintOffset.y() - table()->outerBorderTop() < paintInfo.rect.maxY() + os
+            && adjustedPaintOffset.y() + height() + table()->outerBorderBottom() > paintInfo.rect.y() - os)
+            paintCollapsedBorder(paintInfo.context, IntRect(adjustedPaintOffset, size()));
         return;
     } 
     
-    RenderBlock::paint(paintInfo, tx, ty);
+    RenderBlock::paint(paintInfo, paintOffset);
 }
 
 static EBorderStyle collapsedBorderStyle(EBorderStyle style)

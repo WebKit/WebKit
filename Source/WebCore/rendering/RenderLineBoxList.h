@@ -63,7 +63,7 @@ public:
     void dirtyLineBoxes();
     void dirtyLinesFromChangedChild(RenderObject* parent, RenderObject* child);
 
-    void paint(RenderBoxModelObject*, PaintInfo&, int x, int y) const;
+    void paint(RenderBoxModelObject*, PaintInfo&, const IntPoint&) const;
     bool hitTest(RenderBoxModelObject*, const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction) const;
     
 private:

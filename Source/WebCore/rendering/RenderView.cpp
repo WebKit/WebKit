@@ -164,11 +164,11 @@ void RenderView::mapAbsoluteToLocalPoint(bool fixed, bool useTransforms, Transfo
     }
 }
 
-void RenderView::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderView::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     // If we ever require layout but receive a paint anyway, something has gone horribly wrong.
     ASSERT(!needsLayout());
-    paintObject(paintInfo, IntPoint(tx, ty));
+    paintObject(paintInfo, paintOffset);
 }
 
 static inline bool isComposited(RenderObject* object)

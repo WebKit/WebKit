@@ -1101,7 +1101,7 @@ IntRect RenderListMarker::localSelectionRect()
     return IntRect(newLogicalTop, 0, root->selectionHeight(), height());
 }
 
-void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderListMarker::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhaseForeground)
         return;
@@ -1109,7 +1109,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     if (style()->visibility() != VISIBLE)
         return;
 
-    IntPoint boxOrigin(tx + x(), ty + y());
+    IntPoint boxOrigin(paintOffset + location());
     IntRect overflowRect(visualOverflowRect());
     overflowRect.moveBy(boxOrigin);
     overflowRect.inflate(maximalOutlineSize(paintInfo.phase));
@@ -1127,7 +1127,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
     if (isImage()) {
 #if PLATFORM(MAC)
         if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-            paintCustomHighlight(IntPoint(tx, ty), style()->highlight(), true);
+            paintCustomHighlight(paintOffset, style()->highlight(), true);
 #endif
         context->drawImage(m_image->image(this, marker.size()).get(), style()->colorSpace(), marker);
         if (selectionState() != SelectionNone) {
@@ -1141,7 +1141,7 @@ void RenderListMarker::paint(PaintInfo& paintInfo, int tx, int ty)
 #if PLATFORM(MAC)
     // FIXME: paint gap between marker and list item proper
     if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-        paintCustomHighlight(IntPoint(tx, ty), style()->highlight(), true);
+        paintCustomHighlight(paintOffset, style()->highlight(), true);
 #endif
 
     if (selectionState() != SelectionNone) {

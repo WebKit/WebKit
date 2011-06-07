@@ -885,7 +885,7 @@ int RenderTableSection::firstLineBoxBaseline() const
     return firstLineBaseline;
 }
 
-void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderTableSection::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     // put this back in when all layout tests can handle it
     // ASSERT(!needsLayout());
@@ -899,14 +899,13 @@ void RenderTableSection::paint(PaintInfo& paintInfo, int tx, int ty)
     if (!totalRows || !totalCols)
         return;
 
-    tx += x();
-    ty += y();
+    IntPoint adjustedPaintOffset = paintOffset + location();
 
     PaintPhase phase = paintInfo.phase;
-    bool pushedClip = pushContentsClip(paintInfo, IntPoint(tx, ty));
-    paintObject(paintInfo, IntPoint(tx, ty));
+    bool pushedClip = pushContentsClip(paintInfo, adjustedPaintOffset);
+    paintObject(paintInfo, adjustedPaintOffset);
     if (pushedClip)
-        popContentsClip(paintInfo, phase, IntPoint(tx, ty));
+        popContentsClip(paintInfo, phase, adjustedPaintOffset);
 }
 
 static inline bool compareCellPositions(RenderTableCell* elem1, RenderTableCell* elem2)
@@ -945,7 +944,7 @@ void RenderTableSection::paintCell(RenderTableCell* cell, PaintInfo& paintInfo, 
             cell->paintBackgroundsBehindCell(paintInfo, cellPoint, row);
     }
     if ((!cell->hasSelfPaintingLayer() && !row->hasSelfPaintingLayer()) || paintInfo.phase == PaintPhaseCollapsedTableBorders)
-        cell->paint(paintInfo, cellPoint.x(), cellPoint.y());
+        cell->paint(paintInfo, cellPoint);
 }
 
 void RenderTableSection::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)

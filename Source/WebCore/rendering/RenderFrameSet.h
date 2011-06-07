@@ -97,7 +97,7 @@ private:
 
     virtual void layout();
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);
-    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paint(PaintInfo&, const IntPoint&);
     virtual bool isChildAllowed(RenderObject*, RenderStyle*) const;
 
     inline HTMLFrameSetElement* frameSet() const;

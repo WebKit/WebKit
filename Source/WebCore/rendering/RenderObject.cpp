@@ -1145,7 +1145,7 @@ IntRect RenderObject::paintingRootRect(IntRect& topLevelRect)
     return result;
 }
 
-void RenderObject::paint(PaintInfo& /*paintInfo*/, int /*tx*/, int /*ty*/)
+void RenderObject::paint(PaintInfo&, const IntPoint&)
 {
 }
 

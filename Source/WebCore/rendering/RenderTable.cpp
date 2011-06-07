@@ -451,10 +451,9 @@ void RenderTable::setCellLogicalWidths()
     }
 }
 
-void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderTable::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
-    tx += x();
-    ty += y();
+    IntPoint adjustedPaintOffset = paintOffset + location();
 
     PaintPhase paintPhase = paintInfo.phase;
 
@@ -462,15 +461,15 @@ void RenderTable::paint(PaintInfo& paintInfo, int tx, int ty)
         IntRect overflowBox = visualOverflowRect();
         flipForWritingMode(overflowBox);
         overflowBox.inflate(maximalOutlineSize(paintInfo.phase));
-        overflowBox.move(tx, ty);
+        overflowBox.moveBy(adjustedPaintOffset);
         if (!overflowBox.intersects(paintInfo.rect))
             return;
     }
 
-    bool pushedClip = pushContentsClip(paintInfo, IntPoint(tx, ty));
-    paintObject(paintInfo, IntPoint(tx, ty));
+    bool pushedClip = pushContentsClip(paintInfo, adjustedPaintOffset);
+    paintObject(paintInfo, adjustedPaintOffset);
     if (pushedClip)
-        popContentsClip(paintInfo, paintPhase, IntPoint(tx, ty));
+        popContentsClip(paintInfo, paintPhase, adjustedPaintOffset);
 }
 
 void RenderTable::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
@@ -499,7 +498,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
     for (RenderObject* child = firstChild(); child; child = child->nextSibling()) {
         if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer() && (child->isTableSection() || child == m_caption)) {
             IntPoint childPoint = flipForWritingMode(toRenderBox(child), paintOffset, ParentToChildFlippingAdjustment);
-            child->paint(info, childPoint.x(), childPoint.y());
+            child->paint(info, childPoint);
         }
     }
     
@@ -521,7 +520,7 @@ void RenderTable::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
             for (RenderObject* child = firstChild(); child; child = child->nextSibling())
                 if (child->isTableSection()) {
                     IntPoint childPoint = flipForWritingMode(toRenderTableSection(child), paintOffset, ParentToChildFlippingAdjustment);
-                    child->paint(info, childPoint.x(), childPoint.y());
+                    child->paint(info, childPoint);
                 }
         }
         m_currentBorder = 0;

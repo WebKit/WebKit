@@ -118,7 +118,7 @@ void RenderFrameSet::paintRowBorder(const PaintInfo& paintInfo, const IntRect& b
     }
 }
 
-void RenderFrameSet::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderFrameSet::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (paintInfo.phase != PaintPhaseForeground)
         return;
@@ -127,9 +127,7 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, int tx, int ty)
     if (!child)
         return;
 
-    // Add in our offsets.
-    tx += x();
-    ty += y();
+    IntPoint adjustedPaintOffset = paintOffset + location();
 
     int rows = frameSet()->totalRows();
     int cols = frameSet()->totalCols();
@@ -139,10 +137,10 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, int tx, int ty)
     for (int r = 0; r < rows; r++) {
         int xPos = 0;
         for (int c = 0; c < cols; c++) {
-            child->paint(paintInfo, tx, ty);
+            child->paint(paintInfo, adjustedPaintOffset);
             xPos += m_cols.m_sizes[c];
             if (borderThickness && m_cols.m_allowBorder[c + 1]) {
-                paintColumnBorder(paintInfo, IntRect(tx + xPos, ty + yPos, borderThickness, height()));
+                paintColumnBorder(paintInfo, IntRect(adjustedPaintOffset.x() + xPos, adjustedPaintOffset.y() + yPos, borderThickness, height()));
                 xPos += borderThickness;
             }
             child = child->nextSibling();
@@ -151,7 +149,7 @@ void RenderFrameSet::paint(PaintInfo& paintInfo, int tx, int ty)
         }
         yPos += m_rows.m_sizes[r];
         if (borderThickness && m_rows.m_allowBorder[r + 1]) {
-            paintRowBorder(paintInfo, IntRect(tx, ty + yPos, width(), borderThickness));
+            paintRowBorder(paintInfo, IntRect(adjustedPaintOffset.x(), adjustedPaintOffset.y() + yPos, width(), borderThickness));
             yPos += borderThickness;
         }
     }

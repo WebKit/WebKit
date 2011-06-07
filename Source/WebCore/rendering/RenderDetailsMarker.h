@@ -40,7 +40,7 @@ public:
 private:
     virtual const char* renderName() const { return "RenderDetailsMarker"; }
     virtual bool isDetailsMarker() const { return true; }
-    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paint(PaintInfo&, const IntPoint&);
 
     bool isOpen() const;
     Path getCanonicalPath() const;

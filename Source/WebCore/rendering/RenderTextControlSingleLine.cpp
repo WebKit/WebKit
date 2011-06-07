@@ -235,9 +235,9 @@ void RenderTextControlSingleLine::subtreeHasChanged()
     }
 }
 
-void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
-    RenderTextControl::paint(paintInfo, tx, ty);
+    RenderTextControl::paint(paintInfo, paintOffset);
 
     if (paintInfo.phase == PaintPhaseBlockBackground && m_shouldDrawCapsLockIndicator) {
         IntRect contentsRect = contentBoxRect();
@@ -246,7 +246,7 @@ void RenderTextControlSingleLine::paint(PaintInfo& paintInfo, int tx, int ty)
         contentsRect.setY((height() - contentsRect.height()) / 2);
 
         // Convert the rect into the coords used for painting the content
-        contentsRect.move(tx + x(), ty + y());
+        contentsRect.moveBy(paintOffset + location());
         theme()->paintCapsLockIndicator(this, paintInfo, contentsRect);
     }
 }

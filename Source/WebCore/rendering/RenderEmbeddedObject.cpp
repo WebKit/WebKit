@@ -135,14 +135,14 @@ void RenderEmbeddedObject::setMissingPluginIndicatorIsPressed(bool pressed)
     repaint();
 }
 
-void RenderEmbeddedObject::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderEmbeddedObject::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (pluginCrashedOrWasMissing()) {
-        RenderReplaced::paint(paintInfo, tx, ty);
+        RenderReplaced::paint(paintInfo, paintOffset);
         return;
     }
     
-    RenderPart::paint(paintInfo, tx, ty);
+    RenderPart::paint(paintInfo, paintOffset);
 }
 
 void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const IntPoint& paintOffset)

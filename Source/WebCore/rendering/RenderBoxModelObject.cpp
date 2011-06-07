@@ -696,9 +696,8 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
             RootInlineBox* root = box->root();
             box->paint(info, IntPoint(scrolledPaintRect.x() - box->x(), scrolledPaintRect.y() - box->y()), root->lineTop(), root->lineBottom());
         } else {
-            int x = isBox() ? toRenderBox(this)->x() : 0;
-            int y = isBox() ? toRenderBox(this)->y() : 0;
-            paint(info, scrolledPaintRect.x() - x, scrolledPaintRect.y() - y);
+            IntSize localOffset = isBox() ? toRenderBox(this)->locationOffset() : IntSize();
+            paint(info, scrolledPaintRect.location() - localOffset);
         }
         
         // The mask has been created.  Now we just need to clip to it.

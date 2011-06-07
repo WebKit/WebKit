@@ -460,9 +460,9 @@ void RenderInline::addChildToContinuation(RenderObject* newChild, RenderObject* 
     }
 }
 
-void RenderInline::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderInline::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
-    m_lineBoxes.paint(this, paintInfo, tx, ty);
+    m_lineBoxes.paint(this, paintInfo, paintOffset);
 }
 
 void RenderInline::absoluteRects(Vector<IntRect>& rects, int tx, int ty)

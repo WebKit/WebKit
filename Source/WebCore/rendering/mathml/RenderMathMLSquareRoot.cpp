@@ -66,15 +66,14 @@ RenderMathMLSquareRoot::RenderMathMLSquareRoot(Node *expression)
 {
 }
 
-void RenderMathMLSquareRoot::paint(PaintInfo& info, int tx, int ty)
+void RenderMathMLSquareRoot::paint(PaintInfo& info, const IntPoint& paintOffset)
 {
-    RenderMathMLBlock::paint(info, tx, ty);
+    RenderMathMLBlock::paint(info, paintOffset);
    
     if (info.context->paintingDisabled())
         return;
     
-    tx += x();
-    ty += y();
+    IntPoint adjustedPaintOffset = paintOffset + location();
 
     int maxHeight = 0;
     int width = 0;
@@ -109,10 +108,10 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, int tx, int ty)
     
     width += topStartShift;
     
-    FloatPoint topStart(tx + frontWidth - topStartShift, ty);
-    FloatPoint bottomLeft(tx + frontWidth * gRadicalBottomPointXPos , ty + maxHeight + gRadicalBasePad);
-    FloatPoint topLeft(tx + frontWidth * gRadicalTopLeftPointXPos , ty + gRadicalTopLeftPointYPos * maxHeight);
-    FloatPoint leftEnd(tx , topLeft.y() + gRadicalLeftEndYShift * style()->fontSize());
+    FloatPoint topStart(adjustedPaintOffset.x() + frontWidth - topStartShift, adjustedPaintOffset.y());
+    FloatPoint bottomLeft(adjustedPaintOffset.x() + frontWidth * gRadicalBottomPointXPos , adjustedPaintOffset.y() + maxHeight + gRadicalBasePad);
+    FloatPoint topLeft(adjustedPaintOffset.x() + frontWidth * gRadicalTopLeftPointXPos , adjustedPaintOffset.y() + gRadicalTopLeftPointYPos * maxHeight);
+    FloatPoint leftEnd(adjustedPaintOffset.x() , topLeft.y() + gRadicalLeftEndYShift * style()->fontSize());
     
     GraphicsContextStateSaver stateSaver(*info.context);
     
@@ -124,7 +123,7 @@ void RenderMathMLSquareRoot::paint(PaintInfo& info, int tx, int ty)
     
     Path root;
     
-    root.moveTo(FloatPoint(topStart.x() + width , ty));
+    root.moveTo(FloatPoint(topStart.x() + width , adjustedPaintOffset.y()));
     // draw top
     root.addLineTo(topStart);
     // draw from top left corner to bottom point of radical

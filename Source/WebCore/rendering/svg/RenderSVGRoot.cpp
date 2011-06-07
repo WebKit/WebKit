@@ -262,14 +262,13 @@ bool RenderSVGRoot::selfWillPaint()
 #endif
 }
 
-void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
+void RenderSVGRoot::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (paintInfo.context->paintingDisabled())
         return;
 
     bool isVisible = style()->visibility() == VISIBLE;
-    IntPoint parentOriginInContainer(parentX, parentY);
-    IntPoint borderBoxOriginInContainer = parentOriginInContainer + parentOriginToBorderBox();
+    IntPoint borderBoxOriginInContainer = paintOffset + parentOriginToBorderBox();
 
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseChildBlockBackground) && isVisible)
         paintBoxDecorations(paintInfo, borderBoxOriginInContainer);
@@ -294,14 +293,14 @@ void RenderSVGRoot::paint(PaintInfo& paintInfo, int parentX, int parentY)
 
     // Convert from container offsets (html renderers) to a relative transform (svg renderers).
     // Transform from our paint container's coordinate system to our local coords.
-    childPaintInfo.applyTransform(localToRepaintContainerTransform(parentOriginInContainer));
+    childPaintInfo.applyTransform(localToRepaintContainerTransform(paintOffset));
 
     bool continueRendering = true;
     if (childPaintInfo.phase == PaintPhaseForeground)
         continueRendering = SVGRenderSupport::prepareToRenderSVGContent(this, childPaintInfo);
 
     if (continueRendering)
-        RenderBox::paint(childPaintInfo, 0, 0);
+        RenderBox::paint(childPaintInfo, IntPoint());
 
     if (childPaintInfo.phase == PaintPhaseForeground)
         SVGRenderSupport::finishRenderSVGContent(this, childPaintInfo, paintInfo.context);

@@ -94,23 +94,22 @@ void RenderReplaced::intrinsicSizeChanged()
     setNeedsLayoutAndPrefWidthsRecalc();
 }
 
-void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderReplaced::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
-    if (!shouldPaint(paintInfo, IntPoint(tx, ty)))
+    if (!shouldPaint(paintInfo, paintOffset))
         return;
     
-    tx += x();
-    ty += y();
+    IntPoint adjustedPaintOffset = paintOffset + location();
     
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection)) 
-        paintBoxDecorations(paintInfo, IntPoint(tx, ty));
+        paintBoxDecorations(paintInfo, adjustedPaintOffset);
     
     if (paintInfo.phase == PaintPhaseMask) {
-        paintMask(paintInfo, IntPoint(tx, ty));
+        paintMask(paintInfo, adjustedPaintOffset);
         return;
     }
 
-    IntRect paintRect = IntRect(IntPoint(tx, ty), size());
+    IntRect paintRect = IntRect(adjustedPaintOffset, size());
     if ((paintInfo.phase == PaintPhaseOutline || paintInfo.phase == PaintPhaseSelfOutline) && style()->outlineWidth())
         paintOutline(paintInfo.context, paintRect);
     
@@ -129,7 +128,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
 
     bool completelyClippedOut = false;
     if (style()->hasBorderRadius()) {
-        IntRect borderRect = IntRect(tx, ty, width(), height());
+        IntRect borderRect = IntRect(adjustedPaintOffset, size());
 
         if (borderRect.isEmpty())
             completelyClippedOut = true;
@@ -141,7 +140,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
     }
 
     if (!completelyClippedOut) {
-        paintReplaced(paintInfo, IntPoint(tx, ty));
+        paintReplaced(paintInfo, adjustedPaintOffset);
 
         if (style()->hasBorderRadius())
             paintInfo.context->restore();
@@ -151,7 +150,7 @@ void RenderReplaced::paint(PaintInfo& paintInfo, int tx, int ty)
     // surrounding content.
     if (drawSelectionTint) {
         IntRect selectionPaintingRect = localSelectionRect();
-        selectionPaintingRect.move(tx, ty);
+        selectionPaintingRect.moveBy(adjustedPaintOffset);
         paintInfo.context->fillRect(selectionPaintingRect, selectionBackgroundColor(), style()->colorSpace());
     }
 }

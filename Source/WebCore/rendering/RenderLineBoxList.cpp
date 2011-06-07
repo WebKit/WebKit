@@ -200,7 +200,7 @@ bool RenderLineBoxList::lineIntersectsDirtyRect(RenderBoxModelObject* renderer, 
     return rangeIntersectsRect(renderer, logicalTop, logicalBottom, paintInfo.rect, offset);
 }
 
-void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintInfo, int tx, int ty) const
+void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintInfo, const IntPoint& paintOffset) const
 {
     // Only paint during the foreground/selection phases.
     if (paintInfo.phase != PaintPhaseForeground && paintInfo.phase != PaintPhaseSelection && paintInfo.phase != PaintPhaseOutline 
@@ -219,7 +219,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
     RenderView* v = renderer->view();
     bool usePrintRect = !v->printRect().isEmpty();
     int outlineSize = renderer->maximalOutlineSize(paintInfo.phase);
-    if (!anyLineIntersectsRect(renderer, paintInfo.rect, IntPoint(tx, ty), usePrintRect, outlineSize))
+    if (!anyLineIntersectsRect(renderer, paintInfo.rect, paintOffset, usePrintRect, outlineSize))
         return;
 
     PaintInfo info(paintInfo);
@@ -243,23 +243,23 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
                 bottomForPaginationCheck = max(bottomForPaginationCheck, root->lineBottom());
             }
             if (bottomForPaginationCheck - topForPaginationCheck <= v->printRect().height()) {
-                if (ty + bottomForPaginationCheck > v->printRect().maxY()) {
+                if (paintOffset.y() + bottomForPaginationCheck > v->printRect().maxY()) {
                     if (RootInlineBox* nextRootBox = curr->root()->nextRootBox())
                         bottomForPaginationCheck = min(bottomForPaginationCheck, min(nextRootBox->logicalTopVisualOverflow(), nextRootBox->lineTop()));
                 }
-                if (ty + bottomForPaginationCheck > v->printRect().maxY()) {
-                    if (ty + topForPaginationCheck < v->truncatedAt())
-                        v->setBestTruncatedAt(ty + topForPaginationCheck, renderer);
+                if (paintOffset.y() + bottomForPaginationCheck > v->printRect().maxY()) {
+                    if (paintOffset.y() + topForPaginationCheck < v->truncatedAt())
+                        v->setBestTruncatedAt(paintOffset.y() + topForPaginationCheck, renderer);
                     // If we were able to truncate, don't paint.
-                    if (ty + topForPaginationCheck >= v->truncatedAt())
+                    if (paintOffset.y() + topForPaginationCheck >= v->truncatedAt())
                         break;
                 }
             }
         }
 
-        if (lineIntersectsDirtyRect(renderer, curr, info, IntPoint(tx, ty))) {
+        if (lineIntersectsDirtyRect(renderer, curr, info, paintOffset)) {
             RootInlineBox* root = curr->root();
-            curr->paint(info, IntPoint(tx, ty), root->lineTop(), root->lineBottom());
+            curr->paint(info, paintOffset, root->lineTop(), root->lineBottom());
         }
     }
 
@@ -267,7 +267,7 @@ void RenderLineBoxList::paint(RenderBoxModelObject* renderer, PaintInfo& paintIn
         ListHashSet<RenderInline*>::iterator end = info.outlineObjects->end();
         for (ListHashSet<RenderInline*>::iterator it = info.outlineObjects->begin(); it != end; ++it) {
             RenderInline* flow = *it;
-            flow->paintOutline(info.context, IntPoint(tx, ty));
+            flow->paintOutline(info.context, paintOffset);
         }
         info.outlineObjects->clear();
     }

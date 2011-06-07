@@ -344,12 +344,12 @@ void RenderListItem::positionListMarker()
     }
 }
 
-void RenderListItem::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderListItem::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (!logicalHeight())
         return;
 
-    RenderBlock::paint(paintInfo, tx, ty);
+    RenderBlock::paint(paintInfo, paintOffset);
 }
 
 const String& RenderListItem::markerText() const

@@ -229,7 +229,7 @@ void RenderSVGText::absoluteQuads(Vector<FloatQuad>& quads)
     quads.append(localToAbsoluteQuad(strokeBoundingBox()));
 }
 
-void RenderSVGText::paint(PaintInfo& paintInfo, int, int)
+void RenderSVGText::paint(PaintInfo& paintInfo, const IntPoint&)
 {
     if (paintInfo.context->paintingDisabled())
         return;
@@ -242,7 +242,7 @@ void RenderSVGText::paint(PaintInfo& paintInfo, int, int)
     PaintInfo blockInfo(paintInfo);
     GraphicsContextStateSaver stateSaver(*blockInfo.context);
     blockInfo.applyTransform(localToParentTransform());
-    RenderBlock::paint(blockInfo, 0, 0);
+    RenderBlock::paint(blockInfo, IntPoint());
 }
 
 FloatRect RenderSVGText::strokeBoundingBox() const

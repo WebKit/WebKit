@@ -247,19 +247,18 @@ void RenderWidget::notifyWidget(WidgetNotification notification)
         m_widget->notifyWidget(notification);
 }
 
-void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderWidget::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
-    if (!shouldPaint(paintInfo, IntPoint(tx, ty)))
+    if (!shouldPaint(paintInfo, paintOffset))
         return;
 
-    tx += x();
-    ty += y();
+    IntPoint adjustedPaintOffset = paintOffset + location();
 
     if (hasBoxDecorations() && (paintInfo.phase == PaintPhaseForeground || paintInfo.phase == PaintPhaseSelection))
-        paintBoxDecorations(paintInfo, IntPoint(tx, ty));
+        paintBoxDecorations(paintInfo, adjustedPaintOffset);
 
     if (paintInfo.phase == PaintPhaseMask) {
-        paintMask(paintInfo, IntPoint(tx, ty));
+        paintMask(paintInfo, adjustedPaintOffset);
         return;
     }
 
@@ -268,11 +267,11 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
 
 #if PLATFORM(MAC)
     if (style()->highlight() != nullAtom && !paintInfo.context->paintingDisabled())
-        paintCustomHighlight(IntPoint(tx - x(), ty - y()), style()->highlight(), true);
+        paintCustomHighlight(paintOffset, style()->highlight(), true);
 #endif
 
     if (style()->hasBorderRadius()) {
-        IntRect borderRect = IntRect(tx, ty, width(), height());
+        IntRect borderRect = IntRect(adjustedPaintOffset, size());
 
         if (borderRect.isEmpty())
             return;
@@ -289,20 +288,20 @@ void RenderWidget::paint(PaintInfo& paintInfo, int tx, int ty)
             paintInfo.context->drawImage(m_substituteImage.get(), style()->colorSpace(), m_widget->frameRect());
         else {
             IntPoint widgetLocation = m_widget->frameRect().location();
-            IntPoint paintLocation(tx + borderLeft() + paddingLeft(), ty + borderTop() + paddingTop());
+            IntPoint paintLocation(adjustedPaintOffset.x() + borderLeft() + paddingLeft(), adjustedPaintOffset.y() + borderTop() + paddingTop());
             IntRect paintRect = paintInfo.rect;
 
-            IntSize paintOffset = paintLocation - widgetLocation;
+            IntSize widgetPaintOffset = paintLocation - widgetLocation;
             // When painting widgets into compositing layers, tx and ty are relative to the enclosing compositing layer,
             // not the root. In this case, shift the CTM and adjust the paintRect to be root-relative to fix plug-in drawing.
-            if (!paintOffset.isZero()) {
-                paintInfo.context->translate(paintOffset);
-                paintRect.move(-paintOffset);
+            if (!widgetPaintOffset.isZero()) {
+                paintInfo.context->translate(widgetPaintOffset);
+                paintRect.move(-widgetPaintOffset);
             }
             m_widget->paint(paintInfo.context, paintRect);
 
-            if (!paintOffset.isZero())
-                paintInfo.context->translate(-paintOffset);
+            if (!widgetPaintOffset.isZero())
+                paintInfo.context->translate(-widgetPaintOffset);
         }
 
         if (m_widget->isFrameView()) {

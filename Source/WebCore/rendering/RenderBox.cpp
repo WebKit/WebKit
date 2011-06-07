@@ -767,16 +767,14 @@ bool RenderBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result
 
 // --------------------- painting stuff -------------------------------
 
-void RenderBox::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
-    tx += x();
-    ty += y();
-
+    IntPoint adjustedPaintOffset = paintOffset + location();
     // default implementation. Just pass paint through to the children
     PaintInfo childInfo(paintInfo);
     childInfo.updatePaintingRootForChildren(this);
     for (RenderObject* child = firstChild(); child; child = child->nextSibling())
-        child->paint(childInfo, tx, ty);
+        child->paint(childInfo, adjustedPaintOffset);
 }
 
 void RenderBox::paintRootBoxFillLayers(const PaintInfo& paintInfo)

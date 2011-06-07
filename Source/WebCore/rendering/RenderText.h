@@ -147,7 +147,7 @@ private:
     // callers with a RenderObject* can continue to use length().
     virtual unsigned length() const { return textLength(); }
 
-    virtual void paint(PaintInfo&, int, int) { ASSERT_NOT_REACHED(); }
+    virtual void paint(PaintInfo&, const IntPoint&) { ASSERT_NOT_REACHED(); }
     virtual void layout() { ASSERT_NOT_REACHED(); }
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint&, int, int, HitTestAction) { ASSERT_NOT_REACHED(); return false; }
 

@@ -208,7 +208,7 @@ bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
     return false;
 }
 
-void RenderTableRow::paint(PaintInfo& paintInfo, int tx, int ty)
+void RenderTableRow::paint(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     ASSERT(hasSelfPaintingLayer());
     if (!layer())
@@ -218,10 +218,10 @@ void RenderTableRow::paint(PaintInfo& paintInfo, int tx, int ty)
             // Paint the row background behind the cell.
             if (paintInfo.phase == PaintPhaseBlockBackground || paintInfo.phase == PaintPhaseChildBlockBackground) {
                 RenderTableCell* cell = toRenderTableCell(child);
-                cell->paintBackgroundsBehindCell(paintInfo, IntPoint(tx, ty), this);
+                cell->paintBackgroundsBehindCell(paintInfo, paintOffset, this);
             }
             if (!toRenderBox(child)->hasSelfPaintingLayer())
-                child->paint(paintInfo, tx, ty);
+                child->paint(paintInfo, paintOffset);
         }
     }
 }

@@ -197,7 +197,7 @@ void RenderSVGPath::fillAndStrokePath(GraphicsContext* context)
     }
 }
 
-void RenderSVGPath::paint(PaintInfo& paintInfo, int, int)
+void RenderSVGPath::paint(PaintInfo& paintInfo, const IntPoint&)
 {
     if (paintInfo.context->paintingDisabled() || style()->visibility() == HIDDEN || m_path.isEmpty())
         return;

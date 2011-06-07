@@ -69,7 +69,7 @@ public:
     // FIXME: ideally we'd never have to do this, if all repaints are container-relative.
     virtual void repaintRectangleInViewAndCompositedLayers(const IntRect&, bool immediate = false);
 
-    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paint(PaintInfo&, const IntPoint&);
     virtual void paintBoxDecorations(PaintInfo&, const IntPoint&);
 
     enum SelectionRepaintMode { RepaintNewXOROld, RepaintNewMinusOld };

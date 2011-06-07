@@ -45,7 +45,7 @@ public:
     virtual void layout();
     virtual void computePreferredLogicalWidths();
     
-    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paint(PaintInfo&, const IntPoint&);
 
 private:
     virtual bool isReplica() const { return true; }

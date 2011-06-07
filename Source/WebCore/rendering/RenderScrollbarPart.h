@@ -45,7 +45,7 @@ public:
     virtual void layout();
     virtual void computePreferredLogicalWidths();
     
-    void paintIntoRect(GraphicsContext*, int tx, int ty, const IntRect&);
+    void paintIntoRect(GraphicsContext*, const IntPoint&, const IntRect&);
     
 protected:
     virtual void styleWillChange(StyleDifference diff, const RenderStyle* newStyle);

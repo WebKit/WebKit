@@ -41,7 +41,7 @@ protected:
 private:
     virtual bool isSVGHiddenContainer() const { return true; }
 
-    virtual void paint(PaintInfo&, int parentX, int parentY);
+    virtual void paint(PaintInfo&, const IntPoint&);
     
     virtual IntRect clippedOverflowRectForRepaint(RenderBoxModelObject*) { return IntRect(); }
     virtual void absoluteQuads(Vector<FloatQuad>&);

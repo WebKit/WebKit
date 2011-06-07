@@ -52,7 +52,7 @@ private:
     virtual const char* renderName() const { return "RenderSVGText"; }
     virtual bool isSVGText() const { return true; }
 
-    virtual void paint(PaintInfo&, int tx, int ty);
+    virtual void paint(PaintInfo&, const IntPoint&);
     virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);
     virtual bool nodeAtFloatPoint(const HitTestRequest&, HitTestResult&, const FloatPoint& pointInParent, HitTestAction);
     virtual VisiblePosition positionForPoint(const IntPoint&);
