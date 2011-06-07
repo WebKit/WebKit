@@ -1,3 +1,9 @@
+2011-06-06  James Kozianski  <koz@chromium.org>
+
+        [Chromium] Unreviewed, update test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-06  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

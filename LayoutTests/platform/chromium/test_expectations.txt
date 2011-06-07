@@ -2966,8 +2966,6 @@ BUGWK54322 SNOWLEOPARD : storage/indexeddb/data-corruption.html = TIMEOUT PASS
 BUGWK54322 SNOWLEOPARD : svg/custom/acid3-test-77.html = TIMEOUT PASS
 BUGWK54322 SNOWLEOPARD : transitions/transition-end-event-rendering.html = PASS TEXT
 
-BUGCR72861 : fast/css/test-setting-canvas-color.html = TEXT
-
 // Release definitely renders wrong; debug differences from reference may just
 // need rebaseline.
 BUGWK54499 LINUX : svg/transforms/text-with-pattern-with-svg-transform.svg = IMAGE
@@ -3234,7 +3232,7 @@ BUGWK58193 WIN7 : fast/forms/search-styled.html = IMAGE+TEXT
 BUGWK58193 WIN7 : fast/text/backslash-to-yen-sign-euc.html = IMAGE+TEXT
 BUGWK58193 WIN7 : fast/text/backslash-to-yen-sign.html = IMAGE+TEXT
 BUGWK58193 WIN7 : fast/text/international/bidi-mirror-he-ar.html = IMAGE+TEXT
-BUGWK58193  : fast/text/international/hindi-whitespace.html = IMAGE+TEXT
+BUGWK58193 LINUX WIN7 : fast/text/international/hindi-whitespace.html = IMAGE+TEXT
 BUGWK58193 WIN7 : fast/text/international/khmer-selection.html = IMAGE+TEXT
 BUGWK58193 WIN7 : fast/text/international/plane2.html = IMAGE+TEXT
 BUGWK58193 WIN7 : svg/W3C-I18N/g-dirLTR-ubNone.svg = IMAGE+TEXT
@@ -3389,9 +3387,6 @@ BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEX
 
 // Regression caused by r83669. Seems to be V8 related.
 BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
-
-// Need to be re-baselined BUGCR79770
-BUGCR79770 WIN : fast/box-shadow/inset-with-extraordinary-radii-and-border.html = IMAGE
 
 // Need rebaselining
 
@@ -3627,7 +3622,6 @@ BUGDPRANKE : fast/dom/Document/document-reopen.html = TEXT PASS
 BUGDPRANKE : fast/parser/javascript-url-compat-mode.html = TEXT PASS
 
 BUGCR80301 LEOPARD : fast/canvas/canvas-largedraws.html = TIMEOUT
-BUGCR80301 WIN LINUX : fast/canvas/canvas-largedraws.html = CRASH
 
 // roll up from r84685:r84721??
 BUGWK84665 : fast/dom/dataset-gc.html = TEXT
@@ -3635,7 +3629,7 @@ BUGWK84665 : fast/dom/dataset-gc.html = TEXT
 BUGWK60115 WIN LINUX : fast/multicol/shadow-breaking.html = IMAGE
 BUGWK60115 WIN : fast/text/shadow-translucent-fill.html = IMAGE
 BUGWK60115 LEOPARD : fast/text/shadow-translucent-fill.html = IMAGE
-BUGWK60115 WIN MAC : fast/transforms/shadows.html = IMAGE
+BUGWK60115 MAC : fast/transforms/shadows.html = IMAGE PASS
 BUGWK60115 WIN : svg/css/group-with-shadow.svg = IMAGE
 BUGWK60115 WIN : transitions/svg-text-shadow-transition.html = IMAGE
 BUGWK60115 WIN : svg/css/composite-shadow-text.svg = IMAGE
@@ -3727,7 +3721,7 @@ BUGKBR WIN LINUX : http/tests/inspector/resource-tree/resource-tree-frame-naviga
 
 BUGWK60112 : fast/css/epub-properties.html = TEXT
 
-BUGWK60136 WIN : http/tests/xmlviewer/dumpAsText/xmlviewer.xml = TEXT
+BUGWK60136 WIN : http/tests/xmlviewer/dumpAsText/xmlviewer.xml = TEXT PASS
 
 // Flakiness on canaries (noted ~ r85280)
 BUGDPRANKE SNOWLEOPARD DEBUG : svg/dom/vkern-element-crash.html = CRASH PASS
