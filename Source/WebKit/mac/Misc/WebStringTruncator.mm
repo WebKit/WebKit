@@ -30,6 +30,7 @@
 
 #import "WebSystemInterface.h"
 #import <WebCore/Font.h>
+#import <WebCore/FontCache.h>
 #import <WebCore/FontPlatformData.h>
 #import <WebCore/PlatformString.h>
 #import <WebCore/StringTruncator.h>
@@ -72,21 +73,25 @@ static Font& fontFromNSFont(NSFont *font)
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth
 {
+    FontCachePurgePreventer fontCachePurgePreventer;
     return StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(defaultMenuFont()));
 }
 
 + (NSString *)centerTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
 {
+    FontCachePurgePreventer fontCachePurgePreventer;
     return StringTruncator::centerTruncate(string, maxWidth, fontFromNSFont(font));
 }
 
 + (NSString *)rightTruncateString:(NSString *)string toWidth:(float)maxWidth withFont:(NSFont *)font
 {
+    FontCachePurgePreventer fontCachePurgePreventer;
     return StringTruncator::rightTruncate(string, maxWidth, fontFromNSFont(font));
 }
 
 + (float)widthOfString:(NSString *)string font:(NSFont *)font
 {
+    FontCachePurgePreventer fontCachePurgePreventer;
     return StringTruncator::width(string, fontFromNSFont(font));
 }
 

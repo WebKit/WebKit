@@ -152,7 +152,8 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
         !font.isPlatformFont() && isAppKitFontWeightBold(weight) && !isAppKitFontWeightBold(substituteFontWeight),
         !font.isPlatformFont() && (traits & NSFontItalicTrait) && !(substituteFontTraits & NSFontItalicTrait),
         platformData.m_orientation);
-    return getCachedFontData(&alternateFont);
+
+    return getCachedFontData(&alternateFont, DoNotRetain);
 }
 
 SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)

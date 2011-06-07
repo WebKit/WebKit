@@ -89,7 +89,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     RefPtr<FcPattern> fallbackPattern = adoptRef(findBestFontGivenFallbacks(fontData, pattern.get()));
     if (fallbackPattern) {
         FontPlatformData alternateFontData(fallbackPattern.get(), font.fontDescription());
-        return getCachedFontData(&alternateFontData);
+        return getCachedFontData(&alternateFontData, DoNotRetain);
     }
 
     FcResult fontConfigResult;
@@ -97,7 +97,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     if (!resultPattern)
         return 0;
     FontPlatformData alternateFontData(resultPattern.get(), font.fontDescription());
-    return getCachedFontData(&alternateFontData);
+    return getCachedFontData(&alternateFontData, DoNotRetain);
 }
 
 SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)

@@ -285,7 +285,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
         if (!familyName.isEmpty()) {
             FontPlatformData* result = getCachedFontPlatformData(font.fontDescription(), familyName);
             if (result)
-                fontData = getCachedFontData(result);
+                fontData = getCachedFontData(result, false);
         }
 
         SelectObject(hdc, oldFont);

@@ -37,6 +37,7 @@
 #include "EventHandler.h"
 #include "FloatRect.h"
 #include "FocusController.h"
+#include "FontCache.h"
 #include "Frame.h"
 #include "FrameActionScheduler.h"
 #include "FrameLoader.h"
@@ -895,6 +896,8 @@ void FrameView::layout(bool allowSubtree)
         m_layoutSchedulingEnabled = true;
         return;
     }
+
+    FontCachePurgePreventer fontCachePurgePreventer;
 
     m_nestedLayoutCount++;
 
@@ -2444,6 +2447,8 @@ void FrameView::paintContents(GraphicsContext* p, const IntRect& rect)
     ASSERT(!needsLayout());
     if (needsLayout())
         return;
+
+    FontCachePurgePreventer fontCachePurgePreventer;
 
 #if USE(ACCELERATED_COMPOSITING)
     if (!p->paintingDisabled())

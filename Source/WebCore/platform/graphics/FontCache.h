@@ -51,17 +51,20 @@ class FontSelector;
 class SimpleFontData;
 
 class FontCache {
+    friend class FontCachePurgePreventer;
+
+    enum ShouldRetain { Retain, DoNotRetain };
+
     WTF_MAKE_NONCOPYABLE(FontCache); WTF_MAKE_FAST_ALLOCATED;
 public:
     friend FontCache* fontCache();
 
     const FontData* getFontData(const Font&, int& familyIndex, FontSelector*);
     void releaseFontData(const SimpleFontData*);
-    
+
     // This method is implemented by the platform.
-    // FIXME: Font data returned by this method never go inactive because callers don't track and release them.
     const SimpleFontData* getFontDataForCharacters(const Font&, const UChar* characters, int length);
-    
+
     // Also implemented by the platform.
     void platformInit();
 
@@ -80,7 +83,7 @@ public:
 
     void getTraitsInFamily(const AtomicString&, Vector<unsigned>&);
 
-    SimpleFontData* getCachedFontData(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName = false);
+    SimpleFontData* getCachedFontData(const FontDescription&, const AtomicString&, bool checkingAlternateName = false, ShouldRetain = Retain);
     SimpleFontData* getLastResortFallbackFont(const FontDescription&);
 
     void addClient(FontSelector*);
@@ -97,6 +100,16 @@ private:
     FontCache();
     ~FontCache();
 
+    void disablePurging() { m_purgePreventCount++; }
+    void enablePurging()
+    {
+        ASSERT(m_purgePreventCount);
+        if (!--m_purgePreventCount)
+            purgeInactiveFontDataIfNeeded();
+    }
+
+    void purgeInactiveFontDataIfNeeded();
+
     // FIXME: This method should eventually be removed.
     FontPlatformData* getCachedFontPlatformData(const FontDescription&, const AtomicString& family, bool checkingAlternateName = false);
 
@@ -104,7 +117,10 @@ private:
     SimpleFontData* getSimilarFontPlatformData(const Font&);
     FontPlatformData* createFontPlatformData(const FontDescription&, const AtomicString& family);
 
-    SimpleFontData* getCachedFontData(const FontPlatformData*);
+    SimpleFontData* getCachedFontData(const FontPlatformData*, ShouldRetain = Retain);
+
+    // Don't purge if this count is > 0;
+    int m_purgePreventCount;
 
     friend class SimpleFontData; // For getCachedFontData(const FontPlatformData*)
     friend class FontFallbackList;
@@ -112,6 +128,12 @@ private:
 
 // Get the global fontCache.
 FontCache* fontCache();
+
+class FontCachePurgePreventer {
+public:
+    FontCachePurgePreventer() { fontCache()->disablePurging(); }
+    ~FontCachePurgePreventer() { fontCache()->enablePurging(); }
+};
 
 }
 

@@ -24,6 +24,7 @@
 
 #if ENABLE(SVG)
 #include "FloatConversion.h"
+#include "FontCache.h"
 #include "GraphicsContext.h"
 #include "InlineFlowBox.h"
 #include "RenderBlock.h"
@@ -89,6 +90,8 @@ FloatRect SVGInlineTextBox::selectionRectForTextFragment(const SVGTextFragment& 
 {
     ASSERT(startPosition < endPosition);
     ASSERT(style);
+
+    FontCachePurgePreventer fontCachePurgePreventer;
 
     RenderSVGInlineText* textRenderer = toRenderSVGInlineText(this->textRenderer());
     ASSERT(textRenderer);

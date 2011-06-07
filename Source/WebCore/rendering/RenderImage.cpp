@@ -27,6 +27,7 @@
 #include "config.h"
 #include "RenderImage.h"
 
+#include "FontCache.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "GraphicsContext.h"
@@ -102,6 +103,8 @@ bool RenderImage::setImageSizeForAltText(CachedImage* newImage /* = 0 */)
 
     // we have an alt and the user meant it (its not a text we invented)
     if (!m_altText.isEmpty()) {
+        FontCachePurgePreventer fontCachePurgePreventer;
+
         const Font& font = style()->font();
         IntSize textSize(min(font.width(RenderBlock::constructTextRun(this, font, m_altText, style())), maxAltTextWidth), min(font.fontMetrics().height(), maxAltTextHeight));
         imageSize = imageSize.expandedTo(textSize);

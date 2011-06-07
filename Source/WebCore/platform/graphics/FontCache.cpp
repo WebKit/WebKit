@@ -34,6 +34,7 @@
 #include "FontFallbackList.h"
 #include "FontPlatformData.h"
 #include "FontSelector.h"
+#include "GlyphPageTreeNode.h"
 #include <wtf/HashMap.h>
 #include <wtf/ListHashSet.h>
 #include <wtf/StdLibExtras.h>
@@ -50,6 +51,7 @@ FontCache* fontCache()
 }
 
 FontCache::FontCache()
+    : m_purgePreventCount(0)
 {
 }
 
@@ -249,38 +251,54 @@ typedef HashMap<FontPlatformData, pair<SimpleFontData*, unsigned>, FontDataCache
 
 static FontDataCache* gFontDataCache = 0;
 
-const int cMaxInactiveFontData = 120;  // Pretty Low Threshold
-const int cTargetInactiveFontData = 100;
+const int cMaxInactiveFontData = 50; // Pretty Low Threshold
+const int cTargetInactiveFontData = 30;
 static ListHashSet<const SimpleFontData*>* gInactiveFontData = 0;
 
-SimpleFontData* FontCache::getCachedFontData(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName)
+SimpleFontData* FontCache::getCachedFontData(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName, ShouldRetain shouldRetain)
 {
     FontPlatformData* platformData = getCachedFontPlatformData(fontDescription, family, checkingAlternateName);
     if (!platformData)
         return 0;
 
-    return getCachedFontData(platformData);
+    return getCachedFontData(platformData, shouldRetain);
 }
 
-SimpleFontData* FontCache::getCachedFontData(const FontPlatformData* platformData)
+SimpleFontData* FontCache::getCachedFontData(const FontPlatformData* platformData, ShouldRetain shouldRetain)
 {
     if (!platformData)
         return 0;
+
+#if !ASSERT_DISABLED
+    if (shouldRetain == DoNotRetain)
+        ASSERT(m_purgePreventCount);
+#endif
 
     if (!gFontDataCache) {
         gFontDataCache = new FontDataCache;
         gInactiveFontData = new ListHashSet<const SimpleFontData*>;
     }
-    
+
     FontDataCache::iterator result = gFontDataCache->find(*platformData);
     if (result == gFontDataCache->end()) {
-        pair<SimpleFontData*, unsigned> newValue(new SimpleFontData(*platformData), 1);
+        pair<SimpleFontData*, unsigned> newValue(new SimpleFontData(*platformData), shouldRetain == Retain ? 1 : 0);
         gFontDataCache->set(*platformData, newValue);
+        if (shouldRetain == DoNotRetain)
+            gInactiveFontData->add(newValue.first);
         return newValue.first;
     }
-    if (!result.get()->second.second++) {
+
+    if (!result.get()->second.second) {
         ASSERT(gInactiveFontData->contains(result.get()->second.first));
         gInactiveFontData->remove(result.get()->second.first);
+    }
+
+    if (shouldRetain == Retain)
+        result.get()->second.second++;
+    else if (!result.get()->second.second) {
+        // If shouldRetain is DoNotRetain and count is 0, we want to remove the fontData from 
+        // gInactiveFontData (above) and re-add here to update LRU position.
+        gInactiveFontData->add(result.get()->second.first);
     }
 
     return result.get()->second.first;
@@ -294,16 +312,20 @@ void FontCache::releaseFontData(const SimpleFontData* fontData)
     FontDataCache::iterator it = gFontDataCache->find(fontData->platformData());
     ASSERT(it != gFontDataCache->end());
 
-    if (!--it->second.second) {
+    ASSERT(it->second.second);
+    if (!--it->second.second)
         gInactiveFontData->add(fontData);
-        if (gInactiveFontData->size() > cMaxInactiveFontData)
-            purgeInactiveFontData(gInactiveFontData->size() - cTargetInactiveFontData);
-    }
+}
+
+void FontCache::purgeInactiveFontDataIfNeeded()
+{
+    if (gInactiveFontData && !m_purgePreventCount && gInactiveFontData->size() > cMaxInactiveFontData)
+        purgeInactiveFontData(gInactiveFontData->size() - cTargetInactiveFontData);
 }
 
 void FontCache::purgeInactiveFontData(int count)
 {
-    if (!gInactiveFontData)
+    if (!gInactiveFontData || m_purgePreventCount)
         return;
 
     static bool isPurging;  // Guard against reentry when e.g. a deleted FontData releases its small caps FontData.

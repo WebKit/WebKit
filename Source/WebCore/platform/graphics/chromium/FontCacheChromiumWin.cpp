@@ -506,8 +506,8 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     // last font in the array covers the character, |i| will be numFonts.
     // So, we have to use '<=" rather than '<' to see if we found a font
     // covering the character.
-    if (i <= numFonts) 
-       return getCachedFontData(data);
+    if (i <= numFonts)
+        return getCachedFontData(data, DoNotRetain);
 
     return 0;
 

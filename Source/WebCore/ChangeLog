@@ -1,3 +1,126 @@
+2011-06-07  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Fonts returned by FontCache::getFontDataForCharacters() are never released
+        https://bugs.webkit.org/show_bug.cgi?id=61875
+
+        This change allows fonts allocated as system fallback fonts to be 
+        released.  Previously, the reference counts for these fonts grew 
+        without bound.  This is implemented as an auto release class that wraps
+        accesses to the cache for system fallback fonts. All such accesses are
+        via the method FontCache::getFontDataForCharacters. The new class is
+        called FontCachePurgePreventer. When such an object exists, it protects
+        these fonts from deletion.
+
+        Most accesses to the font cache still use the reference counting
+        implemented by FontCache::getCacheFontData() and 
+        FontCache::releaseFontData() and that operation is not affected by
+        this change.
+
+        Added local scoped instance of FontCachePurgePreventer to wrap code
+        that directly or indirectly accesses fonts via getFontDataForCharacters.
+        Did a few other miscellaneous bug fixes and changes to allow system
+        fallback fonts to be pruned from the GlyphPageTree. Changed the
+        calls to getFontData in the platform specific versions of
+        Fontcache::getFontDataForCharacters to not increment the reference
+        count.  Moved the purge font check
+        outside of FontCache::getCachedFontData() into a separate method, 
+        purgeInactiveFontDataIfNeeded() since almost all calls to 
+        getCachedFontData() now happen when purging is not allowed.
+        purgeInactiveFontDataIfNeeded is invoked in enablePurging() when
+        m_purgePreventCount is 0.
+
+        No new test as the functionality has not changed. Improved font life
+        cycle management.
+
+        * WebCore.exp.in: Added FontCache::purgeInactiveFontDataIfNeeded().
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::measureText):
+        (WebCore::CanvasRenderingContext2D::drawTextInternal):
+        Wrapped code accessing fallback fonts with local 
+        FontCachePurgePreventer in these methods.
+
+        * page/FrameView.cpp:
+        (WebCore::FrameView::layout):
+        (WebCore::FrameView::paintContents):
+        Wrapped code accessing fallback fonts with local 
+        FontCachePurgePreventer in these methods.
+
+        * platform/graphics/FontCache.cpp:
+        (WebCore::FontCache::FontCache):
+        (WebCore::FontCache::getCachedFontData):
+        Moved purge check to new method since it likely can't happen here.
+        (WebCore::FontCache::releaseFontData):
+        (WebCore::FontCache::purgeInactiveFontDataIfNeeded):
+        (WebCore::FontCache::purgeInactiveFontData):
+        Made purging conditional on m_purgePreventCount.  Now some fonts
+        in the cache are reference counted while other can be purged 
+        outside of code wrapped by in scope FontCachePurgePreventer objects.
+
+        * platform/graphics/FontCache.h:
+        (WebCore::FontCache::disablePurging):
+        (WebCore::FontCache::enablePurging):
+        (WebCore::FontCachePurgePreventer::FontCachePurgePreventer):
+        (WebCore::FontCachePurgePreventer::~FontCachePurgePreventer):
+        Added new simple purge prevention wrapper class and methods
+        that it calls in FontCache actually prevent purging.  The
+        simple methods inlined to reduce overhead.
+
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter): Update level in 
+        glyph page tree for system fallback fonts so pruning works.
+
+        * platform/graphics/GlyphPage.h:
+        (WebCore::GlyphPage::clearForFontData): New method used for pruning
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::GlyphPageTreeNode::pruneFontData):
+        Now we prune system fallback fonts.
+
+        * platform/graphics/chromium/FontCacheChromiumWin.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/freetype/FontCacheFreeType.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/haiku/FontCacheHaiku.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/mac/FontCacheMac.mm:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/qt/FontCacheQt.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/win/FontCacheWin.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        * platform/graphics/wince/FontCacheWinCE.cpp:
+        * platform/graphics/wx/FontCacheWx.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+        Changed the calls to getFontData() to not increment the reference
+        count. The caller of this getFontDataForCharacters() (currently only
+        Font::glyphDataForCharacter() in fontFastPath.cpp) and it's callers
+        don't attempt to release the returned fonts so we use the purge
+        protection described above.
+
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::selectionRect):
+        (WebCore::InlineTextBox::offsetForPosition):
+        (WebCore::InlineTextBox::positionForOffset):
+        Wrapped code accessing fallback fonts with local
+        FontCachePurgePreventer in these methods.
+
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::setImageSizeForAltText):
+        Wrapped code accessing fallback fonts with local
+        FontCachePurgePreventer in this method.
+
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::updateFromElement):
+        (WebCore::RenderListBox::paintItemForeground):
+        Wrapped code accessing fallback fonts with local
+        FontCachePurgePreventer in these methods
+
+        * rendering/svg/SVGInlineTextBox.cpp:
+        (WebCore::SVGInlineTextBox::selectionRectForTextFragment):
+        Wrapped code accessing fallback fonts with local
+        FontCachePurgePreventer in this method.
+
 2011-06-07  Tim Horton  <timothy_horton@apple.com>
 
         Reviewed by Alexey Proskuryakov.
