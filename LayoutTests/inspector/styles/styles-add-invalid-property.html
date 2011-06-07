@@ -7,7 +7,8 @@
 function test()
 {
     WebInspector.showPanel("elements");
-    InspectorTest.selectNodeWithId("inspected", step0);
+    InspectorTest.selectNodeWithId("inspected");
+    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step0);
 
     var treeElement;
     var section;
@@ -45,12 +46,14 @@ function test()
 
     function step3()
     {
-        InspectorTest.selectNodeWithId("other", step4);
+        InspectorTest.selectNodeWithId("other");
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step4);
     }
 
     function step4()
     {
-        InspectorTest.selectNodeWithId("inspected", step5);
+        InspectorTest.selectNodeWithId("inspected");
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step5);
     }
 
     function step5()

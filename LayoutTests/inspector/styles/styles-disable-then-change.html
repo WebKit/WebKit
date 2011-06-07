@@ -6,7 +6,8 @@
 
 function test()
 {
-    InspectorTest.selectNodeWithId("container", step1);
+    InspectorTest.selectNodeWithId("container");
+    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
 
     function step1()
     {

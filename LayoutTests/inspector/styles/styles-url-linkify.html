@@ -46,13 +46,16 @@ function test()
         InspectorTest.addResult(output.join("/"));
     }
 
-    InspectorTest.selectNodeWithId("local", step1);
+    InspectorTest.selectNodeWithId("local");
+    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
 
     function step1()
     {
         InspectorTest.addResult("Link for a URI from CSS document:");
         dumpHref();
-        InspectorTest.selectNodeWithId("iframed", step2);
+        InspectorTest.selectNodeWithId("iframed");
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
+
     }
 
     function step2()

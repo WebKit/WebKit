@@ -7,14 +7,15 @@
 function test()
 {
     WebInspector.showPanel("elements");
-    InspectorTest.selectNodeWithId("inspected", step1);
+    InspectorTest.selectNodeWithId("inspected");
+    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
 
     function step1(node)
     {
         InspectorTest.addResult("Before style property removal:");
         InspectorTest.dumpSelectedElementStyles(true);
         node.removeAttribute("style");
-        InspectorTest.runAfterPendingDispatches(step2);
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
     }
 
     function step2()

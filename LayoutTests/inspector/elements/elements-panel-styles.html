@@ -8,7 +8,8 @@
 
 function test()
 {
-    InspectorTest.selectNodeWithId("foo", step1);
+    InspectorTest.selectNodeWithId("foo");
+    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
 
     function step1()
     {
