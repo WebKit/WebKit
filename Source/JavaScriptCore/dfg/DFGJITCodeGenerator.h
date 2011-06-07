@@ -158,7 +158,7 @@ protected:
     // they spill all live values to the appropriate
     // slots in the RegisterFile without changing any state
     // in the GenerationInfo.
-    void silentSpillGPR(VirtualRegister spillMe, GPRReg exclude = InvalidGPRReg)
+    void silentSpillGPR(VirtualRegister spillMe, GPRReg canTrample, GPRReg exclude = InvalidGPRReg)
     {
         GenerationInfo& info = m_generationInfo[spillMe];
         ASSERT(info.registerFormat() != DataFormatNone);
@@ -170,8 +170,8 @@ protected:
         DataFormat registerFormat = info.registerFormat();
 
         if (registerFormat == DataFormatInteger) {
-            m_jit.orPtr(GPRInfo::tagTypeNumberRegister, info.gpr());
-            m_jit.storePtr(info.gpr(), JITCompiler::addressFor(spillMe));
+            m_jit.orPtr(GPRInfo::tagTypeNumberRegister, info.gpr(), canTrample);
+            m_jit.storePtr(canTrample, JITCompiler::addressFor(spillMe));
         } else {
             ASSERT(registerFormat & DataFormatJS || registerFormat == DataFormatCell);
             m_jit.storePtr(info.gpr(), JITCompiler::addressFor(spillMe));
@@ -203,8 +203,8 @@ protected:
 
         if (registerFormat == DataFormatInteger) {
             if (node.isConstant()) {
-                ASSERT(isInt32Constant(nodeIndex));
-                m_jit.move(Imm32(valueOfInt32Constant(nodeIndex)), info.gpr());
+                ASSERT(isIntegerConstant(nodeIndex));
+                m_jit.move(Imm32(valueOfIntegerConstant(nodeIndex)), info.gpr());
             } else
                 m_jit.load32(JITCompiler::addressFor(spillMe), info.gpr());
             return;
@@ -235,15 +235,21 @@ protected:
         }
     }
 
-    void silentSpillAllRegisters(GPRReg exclude, GPRReg preserve = InvalidGPRReg)
+    void silentSpillAllRegisters(GPRReg exclude, GPRReg preserve1 = InvalidGPRReg, GPRReg preserve2 = InvalidGPRReg, GPRReg preserve3 = InvalidGPRReg)
     {
         GPRReg canTrample = GPRInfo::regT0;
-        if (preserve == GPRInfo::regT0)
+        if (preserve1 != GPRInfo::regT0 && preserve2 != GPRInfo::regT0 && preserve3 != GPRInfo::regT0)
+            canTrample = GPRInfo::regT0;
+        else if (preserve1 != GPRInfo::regT1 && preserve2 != GPRInfo::regT1 && preserve3 != GPRInfo::regT1)
             canTrample = GPRInfo::regT1;
+        else if (preserve1 != GPRInfo::regT2 && preserve2 != GPRInfo::regT2 && preserve3 != GPRInfo::regT2)
+            canTrample = GPRInfo::regT2;
+        else
+            canTrample = GPRInfo::regT3;
         
         for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
             if (iter.name() != InvalidVirtualRegister)
-                silentSpillGPR(iter.name(), exclude);
+                silentSpillGPR(iter.name(), canTrample, exclude);
         }
         for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
             if (iter.name() != InvalidVirtualRegister)
@@ -258,7 +264,7 @@ protected:
         
         for (gpr_iterator iter = m_gprs.begin(); iter != m_gprs.end(); ++iter) {
             if (iter.name() != InvalidVirtualRegister)
-                silentSpillGPR(iter.name());
+                silentSpillGPR(iter.name(), canTrample);
         }
         for (fpr_iterator iter = m_fprs.begin(); iter != m_fprs.end(); ++iter) {
             if (iter.name() != InvalidVirtualRegister)
@@ -381,6 +387,56 @@ protected:
     int32_t valueOfInt32Constant(NodeIndex nodeIndex) { return m_jit.valueOfInt32Constant(nodeIndex); }
     double valueOfDoubleConstant(NodeIndex nodeIndex) { return m_jit.valueOfDoubleConstant(nodeIndex); }
     JSValue valueOfJSConstant(NodeIndex nodeIndex) { return m_jit.valueOfJSConstant(nodeIndex); }
+
+    bool isDoubleConstantWithInt32Value(NodeIndex nodeIndex, int32_t& out)
+    {
+        if (!m_jit.isDoubleConstant(nodeIndex))
+            return false;
+        double value = m_jit.valueOfDoubleConstant(nodeIndex);
+
+        int32_t asInt32 = static_cast<int32_t>(value);
+        if (value != asInt32)
+            return false;
+        if (!asInt32 && signbit(value))
+            return false;
+
+        out = asInt32;
+        return true;
+    }
+
+    bool isJSConstantWithInt32Value(NodeIndex nodeIndex, int32_t& out)
+    {
+        if (!m_jit.isJSConstant(nodeIndex))
+            return false;
+        JSValue value = m_jit.valueOfJSConstant(nodeIndex);
+
+        if (!value.isInt32())
+            return false;
+        
+        out = value.asInt32();
+        return true;
+    }
+
+    bool isIntegerConstant(NodeIndex nodeIndex)
+    {
+        int32_t unused;
+        return isInt32Constant(nodeIndex)
+            || isDoubleConstantWithInt32Value(nodeIndex, unused)
+            || isJSConstantWithInt32Value(nodeIndex, unused);
+    }
+
+    int32_t valueOfIntegerConstant(NodeIndex nodeIndex)
+    {
+        if (isInt32Constant(nodeIndex))
+            return valueOfInt32Constant(nodeIndex);
+        int32_t result = 0;
+        bool okay = isDoubleConstantWithInt32Value(nodeIndex, result);
+        if (okay)
+            return result;
+        okay = isJSConstantWithInt32Value(nodeIndex, result);
+        ASSERT_UNUSED(okay, okay);
+        return result;
+    }
 
     Identifier* identifier(unsigned index)
     {

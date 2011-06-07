@@ -54,6 +54,7 @@ EncodedJSValue operationGetById(ExecState*, EncodedJSValue encodedBase, Identifi
 EncodedJSValue operationGetByIdOptimize(ExecState*, EncodedJSValue encodedBase, Identifier*);
 void operationPutByValStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
 void operationPutByValNonStrict(ExecState*, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue);
+void operationPutByValBeyondArrayBounds(ExecState*, JSArray*, int32_t index, EncodedJSValue encodedValue);
 void operationPutByIdStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
 void operationPutByIdNonStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);
 void operationPutByIdDirectStrict(ExecState*, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier*);

@@ -56,35 +56,35 @@ ALWAYS_INLINE static void operationPutByValInternal(ExecState* exec, EncodedJSVa
     JSValue value = JSValue::decode(encodedValue);
 
     if (LIKELY(property.isUInt32())) {
-        uint32_t i = property.asUInt32();
+        uint32_t index = property.asUInt32();
 
         if (isJSArray(globalData, baseValue)) {
-            JSArray* jsArray = asArray(baseValue);
-            if (jsArray->canSetIndex(i)) {
-                jsArray->setIndex(*globalData, i, value);
+            JSArray* array = asArray(baseValue);
+            if (array->canSetIndex(index)) {
+                array->setIndex(*globalData, index, value);
                 return;
             }
 
-            jsArray->JSArray::put(exec, i, value);
+            array->JSArray::put(exec, index, value);
             return;
         }
 
-        if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(i)) {
-            JSByteArray* jsByteArray = asByteArray(baseValue);
+        if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(index)) {
+            JSByteArray* byteArray = asByteArray(baseValue);
             // FIXME: the JITstub used to relink this to an optimized form!
             if (value.isInt32()) {
-                jsByteArray->setIndex(i, value.asInt32());
+                byteArray->setIndex(index, value.asInt32());
                 return;
             }
 
             double dValue = 0;
             if (value.getNumber(dValue)) {
-                jsByteArray->setIndex(i, dValue);
+                byteArray->setIndex(index, dValue);
                 return;
             }
         }
 
-        baseValue.put(exec, i, value);
+        baseValue.put(exec, index, value);
         return;
     }
 
@@ -134,21 +134,21 @@ EncodedJSValue operationGetByVal(ExecState* exec, EncodedJSValue encodedBase, En
 
         if (property.isUInt32()) {
             JSGlobalData* globalData = &exec->globalData();
-            uint32_t i = property.asUInt32();
+            uint32_t index = property.asUInt32();
 
             // FIXME: the JIT used to handle these in compiled code!
-            if (isJSArray(globalData, base) && asArray(base)->canGetIndex(i))
-                return JSValue::encode(asArray(base)->getIndex(i));
+            if (isJSArray(globalData, base) && asArray(base)->canGetIndex(index))
+                return JSValue::encode(asArray(base)->getIndex(index));
 
             // FIXME: the JITstub used to relink this to an optimized form!
-            if (isJSString(globalData, base) && asString(base)->canGetIndex(i))
-                return JSValue::encode(asString(base)->getIndex(exec, i));
+            if (isJSString(globalData, base) && asString(base)->canGetIndex(index))
+                return JSValue::encode(asString(base)->getIndex(exec, index));
 
             // FIXME: the JITstub used to relink this to an optimized form!
-            if (isJSByteArray(globalData, base) && asByteArray(base)->canAccessIndex(i))
-                return JSValue::encode(asByteArray(base)->getIndex(exec, i));
+            if (isJSByteArray(globalData, base) && asByteArray(base)->canAccessIndex(index))
+                return JSValue::encode(asByteArray(base)->getIndex(exec, index));
 
-            return JSValue::encode(baseValue.get(exec, i));
+            return JSValue::encode(baseValue.get(exec, index));
         }
 
         if (property.isString()) {
@@ -195,6 +195,13 @@ void operationPutByValStrict(ExecState* exec, EncodedJSValue encodedBase, Encode
 void operationPutByValNonStrict(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
 {
     operationPutByValInternal<false>(exec, encodedBase, encodedProperty, encodedValue);
+}
+
+void operationPutByValBeyondArrayBounds(ExecState* exec, JSArray* array, int32_t index, EncodedJSValue encodedValue)
+{
+    // We should only get here if index is outside the existing vector.
+    ASSERT(!array->canSetIndex(index));
+    array->JSArray::put(exec, index, JSValue::decode(encodedValue));
 }
 
 void operationPutByIdStrict(ExecState* exec, EncodedJSValue encodedValue, EncodedJSValue encodedBase, Identifier* propertyName)

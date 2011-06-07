@@ -687,7 +687,17 @@ void SpeculativeJIT::compile(Node& node)
         Node& baseNode = m_jit.graph()[node.child1];
         if (baseNode.op != GetLocal || m_jit.graph().getPrediction(baseNode.local()) != PredictArray)
             speculationCheck(m_jit.branchPtr(MacroAssembler::NotEqual, MacroAssembler::Address(baseReg), MacroAssembler::TrustedImmPtr(m_jit.globalData()->jsArrayVPtr)));
-        speculationCheck(m_jit.branch32(MacroAssembler::AboveOrEqual, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset())));
+        MacroAssembler::Jump withinArrayBounds = m_jit.branch32(MacroAssembler::Below, propertyReg, MacroAssembler::Address(baseReg, JSArray::vectorLengthOffset()));
+
+        // Code to handle put beyond array bounds.
+        silentSpillAllRegisters(storageReg, baseReg, propertyReg, valueReg);
+        setupStubArguments(baseReg, propertyReg, valueReg);
+        m_jit.move(GPRInfo::callFrameRegister, GPRInfo::argumentGPR0);
+        JITCompiler::Call functionCall = appendCallWithExceptionCheck(operationPutByValBeyondArrayBounds);
+        silentFillAllRegisters(storageReg);
+        JITCompiler::Jump wasBeyondArrayBounds = m_jit.jump();
+
+        withinArrayBounds.link(&m_jit);
 
         // Get the array storage.
         m_jit.loadPtr(MacroAssembler::Address(baseReg, JSArray::storageOffset()), storageReg);
@@ -707,6 +717,8 @@ void SpeculativeJIT::compile(Node& node)
 
         // Store the value to the array.
         m_jit.storePtr(valueReg, MacroAssembler::BaseIndex(storageReg, propertyReg, MacroAssembler::ScalePtr, OBJECT_OFFSETOF(ArrayStorage, m_vector[0])));
+
+        wasBeyondArrayBounds.link(&m_jit);
 
         noResult(m_compileIndex);
         break;

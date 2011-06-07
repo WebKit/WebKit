@@ -138,35 +138,6 @@ private:
     void checkArgumentTypes();
     void initializeVariableTypes();
 
-    bool isDoubleConstantWithInt32Value(NodeIndex nodeIndex, int32_t& out)
-    {
-        if (!m_jit.isDoubleConstant(nodeIndex))
-            return false;
-        double value = m_jit.valueOfDoubleConstant(nodeIndex);
-
-        int32_t asInt32 = static_cast<int32_t>(value);
-        if (value != asInt32)
-            return false;
-        if (!asInt32 && signbit(value))
-            return false;
-
-        out = asInt32;
-        return true;
-    }
-
-    bool isJSConstantWithInt32Value(NodeIndex nodeIndex, int32_t& out)
-    {
-        if (!m_jit.isJSConstant(nodeIndex))
-            return false;
-        JSValue value = m_jit.valueOfJSConstant(nodeIndex);
-
-        if (!value.isInt32())
-            return false;
-        
-        out = value.asInt32();
-        return true;
-    }
-
     bool detectPeepHoleBranch()
     {
         // Check if the block contains precisely one more node.

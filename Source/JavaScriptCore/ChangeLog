@@ -1,3 +1,29 @@
+2011-06-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62240
+        DFG JIT - add support for for-loop array initialization.
+
+        Support put by val beyond vector length.
+        Add a operationPutByValBeyondArrayBounds operation, make
+        PutValVal call this if the vector length check fails.
+
+        * dfg/DFGJITCodeGenerator.h:
+        (JSC::DFG::JITCodeGenerator::silentSpillGPR):
+        (JSC::DFG::JITCodeGenerator::silentFillGPR):
+        (JSC::DFG::JITCodeGenerator::silentSpillAllRegisters):
+        (JSC::DFG::JITCodeGenerator::isDoubleConstantWithInt32Value):
+        (JSC::DFG::JITCodeGenerator::isJSConstantWithInt32Value):
+        (JSC::DFG::JITCodeGenerator::isIntegerConstant):
+        (JSC::DFG::JITCodeGenerator::valueOfIntegerConstant):
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::operationPutByValInternal):
+        * dfg/DFGOperations.h:
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compile):
+        * dfg/DFGSpeculativeJIT.h:
+
 2011-06-06  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by James Robinson.
