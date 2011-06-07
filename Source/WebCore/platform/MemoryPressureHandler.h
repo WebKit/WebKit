@@ -41,6 +41,8 @@ private:
     ~MemoryPressureHandler();
 
     void respondToMemoryPressure();
+
+    bool m_installed;
 };
  
 // Function to obtain the global memory pressure object.

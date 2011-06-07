@@ -27,6 +27,7 @@
 #import "MemoryPressureHandler.h"
 
 #import <WebCore/GCController.h>
+#import <WebCore/FontCache.h>
 #import <WebCore/MemoryCache.h>
 #import <WebCore/PageCache.h>
 #import <wtf/FastMalloc.h>
@@ -58,30 +59,31 @@ static dispatch_source_t _cache_event_source2 = 0;
 
 void MemoryPressureHandler::install()
 {
-    if (!_cache_event_source) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            _cache_event_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_VM, 0, DISPATCH_VM_PRESSURE, dispatch_get_main_queue());
-            if (_cache_event_source) {
-                dispatch_set_context(_cache_event_source, this);
-                dispatch_source_set_event_handler(_cache_event_source, ^{ memoryPressureHandler().respondToMemoryPressure();});
-                dispatch_resume(_cache_event_source);
-            }
-        });
-    }
+    if (m_installed)
+        return;
+
+    dispatch_async(dispatch_get_main_queue(), ^{
+        _cache_event_source = dispatch_source_create(DISPATCH_SOURCE_TYPE_VM, 0, DISPATCH_VM_PRESSURE, dispatch_get_main_queue());
+        if (_cache_event_source) {
+            dispatch_set_context(_cache_event_source, this);
+            dispatch_source_set_event_handler(_cache_event_source, ^{ memoryPressureHandler().respondToMemoryPressure();});
+            dispatch_resume(_cache_event_source);
+        }
+    });
 
 #ifndef NDEBUG
-    if (!_cache_event_source2) {
-        dispatch_async(dispatch_get_main_queue(), ^{
-            _cache_event_source2 = dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGUSR2, 0, dispatch_get_main_queue());
-            if (_cache_event_source2) {
-                dispatch_set_context(_cache_event_source2, this);
-                dispatch_source_set_event_handler(_cache_event_source2, ^{ memoryPressureHandler().respondToMemoryPressure();});
-                dispatch_resume(_cache_event_source2);
-                signal((int)SIGUSR2, SIG_IGN);
-            }
-        });
-    }
+    dispatch_async(dispatch_get_main_queue(), ^{
+        _cache_event_source2 = dispatch_source_create(DISPATCH_SOURCE_TYPE_SIGNAL, SIGUSR2, 0, dispatch_get_main_queue());
+        if (_cache_event_source2) {
+            dispatch_set_context(_cache_event_source2, this);
+            dispatch_source_set_event_handler(_cache_event_source2, ^{ memoryPressureHandler().respondToMemoryPressure();});
+            dispatch_resume(_cache_event_source2);
+            signal((int)SIGUSR2, SIG_IGN);
+        }
+    });
 #endif
+
+    m_installed = true;
 }
 
 void MemoryPressureHandler::respondToMemoryPressure()
@@ -96,6 +98,8 @@ void MemoryPressureHandler::respondToMemoryPressure()
     [nsurlCache setMemoryCapacity:[nsurlCache currentMemoryUsage]/2];
     [nsurlCache setMemoryCapacity:savedNsurlCacheMemoryCapacity];
  
+    fontCache()->purgeInactiveFontData();
+
     memoryCache()->pruneToPercentage(0.5f);
 
     gcController().garbageCollectNow();

@@ -2,6 +2,27 @@
 
         Reviewed by Geoffrey Garen.
 
+        Need to enable font cache purging in MemoryPressureHandler
+        https://bugs.webkit.org/show_bug.cgi?id=62060
+
+        Improve memory usage under pressure.
+        Added call to fontCache()->purgeInactiveFontData() in 
+        MemoryPressureHandler::respondToMemoryPressure().  Added protection to 
+        MemoryPressureHandler::install() being called multiple times.
+
+        No new tests as funtionality wasn't changed.
+
+        * platform/MemoryPressureHandler.cpp:
+        (WebCore::MemoryPressureHandler::MemoryPressureHandler):
+        * platform/MemoryPressureHandler.h:
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::install):
+        (WebCore::MemoryPressureHandler::respondToMemoryPressure):
+
+2011-06-07  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
         Fonts returned by FontCache::getFontDataForCharacters() are never released
         https://bugs.webkit.org/show_bug.cgi?id=61875
 
