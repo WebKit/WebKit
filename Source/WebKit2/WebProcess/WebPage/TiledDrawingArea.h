@@ -69,6 +69,7 @@ private:
     // Platform overrides
     void paintIntoBitmap(ShareableBitmap*, const WebCore::IntRect& tileRect, float scale);
 
+    void scheduleTileUpdate();
     void tileUpdateTimerFired();
 
     WebCore::IntRect m_dirtyRect;

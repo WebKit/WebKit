@@ -116,6 +116,7 @@ void TiledDrawingArea::suspendPainting()
 
     m_shouldPaint = false;
     m_displayTimer.stop();
+    m_tileUpdateTimer.stop();
 }
 
 void TiledDrawingArea::resumePainting()
@@ -126,6 +127,8 @@ void TiledDrawingArea::resumePainting()
 
     // Display if needed.
     display();
+    if (!m_pendingUpdates.isEmpty())
+        scheduleTileUpdate();
 }
 
 void TiledDrawingArea::didUpdate()
@@ -148,6 +151,17 @@ void TiledDrawingArea::updateTile(int tileID, const IntRect& dirtyRect, float sc
     WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::TileUpdated, m_webPage->pageID(), CoreIPC::In(tileID, updateInfo, scale, pendingUpdateCount));
 }
 
+void TiledDrawingArea::scheduleTileUpdate()
+{
+    if (!m_shouldPaint)
+        return;
+
+    if (m_tileUpdateTimer.isActive())
+        return;
+
+    m_tileUpdateTimer.startOneShot(0);
+}
+
 void TiledDrawingArea::tileUpdateTimerFired()
 {
     ASSERT(!m_pendingUpdates.isEmpty());
@@ -161,7 +175,7 @@ void TiledDrawingArea::tileUpdateTimerFired()
     if (m_pendingUpdates.isEmpty())
         WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::AllTileUpdatesProcessed, m_webPage->pageID(), CoreIPC::In());
     else
-        m_tileUpdateTimer.startOneShot(0.001);
+        scheduleTileUpdate();
 }
 
 void TiledDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
@@ -204,8 +218,7 @@ void TiledDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageI
             it->second.dirtyRect.unite(update.dirtyRect);
         else {
             m_pendingUpdates.add(update.tileID, update);
-            if (!m_tileUpdateTimer.isActive())
-                m_tileUpdateTimer.startOneShot(0);
+            scheduleTileUpdate();
         }
         break;
     }

@@ -179,6 +179,12 @@ void TiledDrawingAreaProxy::requestTileUpdate(int tileID, const IntRect& dirtyRe
 
 void TiledDrawingAreaProxy::waitUntilUpdatesComplete()
 {
+    // Do not block when the drawing area is not visible.
+    // The web process side is not going to send tile updates
+    // because the painting is suspended.
+    if (!m_isVisible)
+        return;
+
     while (hasPendingUpdates()) {
         int tileID;
         UpdateInfo updateInfo;

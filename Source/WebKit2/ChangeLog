@@ -1,3 +1,24 @@
+2011-06-07  Zalan Bujtas  <zbujtas@gmail.com>
+
+        Reviewed by Andreas Kling.
+
+        TiledDrawingArea: Delay serving tile requests when the drawing area is suspended.
+
+        Do not paint tiles when painting is disabled (suspended) on the web process side.
+        Buffer up the tile requests and paint them, when the drawing area gets resumed.
+        On the UI process side, do not block on tile updates, when the tiled area is
+        not visible (painting is disabled on the web process side).
+
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::waitUntilUpdatesComplete):
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::suspendPainting):
+        (WebKit::TiledDrawingArea::resumePainting):
+        (WebKit::TiledDrawingArea::scheduleTileUpdate):
+        (WebKit::TiledDrawingArea::tileUpdateTimerFired):
+        (WebKit::TiledDrawingArea::didReceiveMessage):
+        * WebProcess/WebPage/TiledDrawingArea.h:
+
 2011-06-07  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r88259 and r88263.
