@@ -43,6 +43,7 @@
 #include "SerializedScriptValue.h"
 #include "SubstituteData.h"
 #include "WorkerInspectorController.h"
+#include "WorkerScriptDebugServer.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/Threading.h>
 
@@ -166,7 +167,7 @@ static void disconnectFromWorkerContextInspectorTask(ScriptExecutionContext* con
 
 void WebWorkerImpl::detachDevTools()
 {
-    workerThread()->runLoop().postTask(createCallbackTask(disconnectFromWorkerContextInspectorTask, true));
+    workerThread()->runLoop().postTaskForMode(createCallbackTask(disconnectFromWorkerContextInspectorTask, true), WorkerScriptDebugServer::debuggerTaskMode);
 }
 
 static void dispatchOnInspectorBackendTask(ScriptExecutionContext* context, const String& message)
@@ -177,7 +178,7 @@ static void dispatchOnInspectorBackendTask(ScriptExecutionContext* context, cons
 
 void WebWorkerImpl::dispatchDevToolsMessage(const WebString& message)
 {
-    workerThread()->runLoop().postTaskForMode(createCallbackTask(dispatchOnInspectorBackendTask, String(message)), "debugger");
+    workerThread()->runLoop().postTaskForMode(createCallbackTask(dispatchOnInspectorBackendTask, String(message)), WorkerScriptDebugServer::debuggerTaskMode);
 }
 
 #else

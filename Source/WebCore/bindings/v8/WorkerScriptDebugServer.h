@@ -48,6 +48,8 @@ public:
     void addListener(ScriptDebugListener*, WorkerContext*);
     void removeListener(ScriptDebugListener*, WorkerContext*);
 
+    static const char* debuggerTaskMode;
+
 private:
     virtual ScriptDebugListener* getDebugListenerForContext(v8::Handle<v8::Context>);
     virtual void runMessageLoopOnPause(v8::Handle<v8::Context>);

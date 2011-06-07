@@ -1,3 +1,17 @@
+2011-06-03  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        [Chromium] Web Inspector: correctly handle disconnect from worker when script execution is paused
+        https://bugs.webkit.org/show_bug.cgi?id=62019
+
+        Dispatch disconnecFrontend message in debugger task mode to make sure
+        it is processed even if execution is paused.
+
+        * src/WebWorkerImpl.cpp:
+        (WebKit::WebWorkerImpl::detachDevTools):
+        (WebKit::WebWorkerImpl::dispatchDevToolsMessage):
+
 2011-06-07  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Kent Tamura.

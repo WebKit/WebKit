@@ -65,6 +65,8 @@ static WorkerContext* retrieveWorkerContext(v8::Handle<v8::Context> context)
     return 0;
 }
 
+const char* WorkerScriptDebugServer::debuggerTaskMode = "debugger";
+
 WorkerScriptDebugServer::WorkerScriptDebugServer()
     : ScriptDebugServer()
     , m_pausedWorkerContext(0)
@@ -132,7 +134,7 @@ void WorkerScriptDebugServer::runMessageLoopOnPause(v8::Handle<v8::Context> cont
 
     MessageQueueWaitResult result;
     do {
-        result = workerThread->runLoop().runInMode(workerContext, "debugger");
+        result = workerThread->runLoop().runInMode(workerContext, debuggerTaskMode);
     // Keep waiting until execution is resumed.
     } while (result == MessageQueueMessageReceived && isPaused());
     m_pausedWorkerContext = 0;
@@ -144,7 +146,7 @@ void WorkerScriptDebugServer::runMessageLoopOnPause(v8::Handle<v8::Context> cont
 
 void WorkerScriptDebugServer::quitMessageLoopOnPause()
 {
-    // FIXME: do exit nested loop when listener is removed on pause.
+    // Nothing to do here in case of workers since runMessageLoopOnPause will check for paused state after each debugger command.
 }
 
 } // namespace WebCore
