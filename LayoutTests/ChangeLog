@@ -1,5 +1,12 @@
 2011-06-07  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed, added new baseline for GTK after r88175.
+
+        * platform/gtk/fast/inline/inline-wrap-with-parent-padding-expected.png: Added.
+        * platform/gtk/fast/inline/inline-wrap-with-parent-padding-expected.txt: Added.
+
+2011-06-07  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Unreviewed, skip tests crashing in GTK bots because of an ASSERT.
 
         Also relocated one skipped test into its right category, together
