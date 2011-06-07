@@ -1,3 +1,16 @@
+2011-06-07  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Yury Semikhatsky.
+ 
+        REGRESSION(r88221): "Chromium debug compilation broken".
+        https://bugs.webkit.org/show_bug.cgi?id=62197
+
+        No new tests needed.
+
+        * bindings/v8/V8GCController.cpp: Also rename call-sites.
+        (WebCore::V8GCController::gcPrologue):
+        (WebCore::V8GCController::gcEpilogue):
+
 2011-06-07  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r88212 and r88219.

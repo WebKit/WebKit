@@ -452,7 +452,7 @@ void V8GCController::gcPrologue()
 
 #ifndef NDEBUG
     DOMObjectVisitor domObjectVisitor;
-    visitDOMObjectsInCurrentThread(&domObjectVisitor);
+    visitDOMObjects(&domObjectVisitor);
 #endif
 
     // Run through all objects with possible pending activity making their
@@ -536,7 +536,7 @@ void V8GCController::gcEpilogue()
 #ifndef NDEBUG
     // Check all survivals are weak.
     DOMObjectVisitor domObjectVisitor;
-    visitDOMObjectsInCurrentThread(&domObjectVisitor);
+    visitDOMObjects(&domObjectVisitor);
 
     EnsureWeakDOMNodeVisitor weakDOMNodeVisitor;
     visitDOMNodes(&weakDOMNodeVisitor);
