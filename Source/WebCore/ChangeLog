@@ -1,3 +1,19 @@
+2011-06-07  James Simonsen  <simonjam@chromium.org>
+
+        Unreviewed, build fix, missing files from r88274.
+
+        * bindings/v8/ChildThreadDOMData.cpp: Added.
+        (WebCore::ChildThreadDOMData::ChildThreadDOMData):
+        (WebCore::ChildThreadDOMData::getStore):
+        * bindings/v8/ChildThreadDOMData.h: Added.
+        * bindings/v8/MainThreadDOMData.cpp: Added.
+        (WebCore::MainThreadDOMData::MainThreadDOMData):
+        (WebCore::MainThreadDOMData::getCurrent):
+        (WebCore::MainThreadDOMData::getMainThreadStore):
+        (WebCore::MainThreadDOMData::getCurrentMainThreadStore):
+        * bindings/v8/MainThreadDOMData.h: Added.
+        (WebCore::MainThreadDOMData::getStore):
+
 2011-06-07  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dan Bernstein.
