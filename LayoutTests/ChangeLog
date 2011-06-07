@@ -1,3 +1,13 @@
+2011-06-06  MORITA Hajime <morrita@google.com>
+
+        Reviewed by Kent Tamura.
+
+        Verify cloning <details> and <summary> works.
+        https://bugs.webkit.org/show_bug.cgi?id=61985
+
+        * fast/html/details-clone-expected.txt: Added.
+        * fast/html/details-clone.html: Added.
+
 2011-06-06  MORITA Hajime  <morrita@google.com>
 
         Unreviewed attempt to fix flakiness on Snow Leopard.
