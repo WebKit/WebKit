@@ -382,7 +382,7 @@ private:
     };
 
     WebViewImpl(WebViewClient*);
-    ~WebViewImpl();
+    virtual ~WebViewImpl();
 
     // Returns true if the event was actually processed.
     bool keyEventDefault(const WebKeyboardEvent&);

@@ -1,3 +1,17 @@
+2011-06-06  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Make WebViewImpl's destructor virtual
+        https://bugs.webkit.org/show_bug.cgi?id=62155
+
+        This is _not_ to fix a real bug, just to make clang's
+        -Wdelete-non-virtual-dtor happy. As discussed at
+        http://codereview.chromium.org/7094005/, we prefer making leaf class
+        destructors virtual over making the leaf classes final.
+
+        * src/WebViewImpl.h:
+
 2011-06-06  Daniel Cheng  <dcheng@chromium.org>
 
         Reviewed by Tony Chang.
