@@ -63,7 +63,7 @@ protected:
 
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);
 
-    void hitInnerTextElement(HitTestResult&, const IntPoint& pointInContainer, int tx, int ty);
+    void hitInnerTextElement(HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset);
     void forwardEvent(Event*);
 
     int textBlockWidth() const;

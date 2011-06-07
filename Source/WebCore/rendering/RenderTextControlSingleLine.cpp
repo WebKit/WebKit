@@ -342,7 +342,7 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     // and if we hit our node (e.g. we're over the border or padding), also say that we hit the
     // inner text element so that it gains focus.
     if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == node())
-        hitInnerTextElement(result, pointInContainer, tx, ty);
+        hitInnerTextElement(result, pointInContainer, IntPoint(tx, ty));
 
     // If we found a spin button, we're done.
     HTMLElement* innerSpinButton = innerSpinButtonElement();

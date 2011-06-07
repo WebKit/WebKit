@@ -449,13 +449,13 @@ void RenderTextControl::computeLogicalHeight()
     RenderBlock::computeLogicalHeight();
 }
 
-void RenderTextControl::hitInnerTextElement(HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty)
+void RenderTextControl::hitInnerTextElement(HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset)
 {
+    IntPoint adjustedLocation = accumulatedOffset + location();
     HTMLElement* innerText = innerTextElement();
     result.setInnerNode(innerText);
     result.setInnerNonSharedNode(innerText);
-    result.setLocalPoint(pointInContainer -
-        IntSize(tx + x() + innerText->renderBox()->x(), ty + y() + innerText->renderBox()->y()));
+    result.setLocalPoint(pointInContainer - toSize(adjustedLocation + innerText->renderBox()->location()));
 }
 
 void RenderTextControl::forwardEvent(Event* event)
