@@ -1,3 +1,12 @@
+2011-06-07  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skip tests crashing in GTK bots because of an ASSERT.
+
+        Also relocated one skipped test into its right category, together
+        with the new one being skipped now.
+
+        * platform/gtk/Skipped: SKipped test
+
 2011-06-06  MORITA Hajime <morrita@google.com>
 
         Reviewed by Kent Tamura.
