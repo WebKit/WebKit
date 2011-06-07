@@ -48,7 +48,7 @@ public:
     virtual int marginStart() const;
     virtual int marginEnd() const;
 
-    virtual void absoluteRects(Vector<IntRect>&, const IntPoint& accumulatedOffset);
+    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&);
 
     virtual IntSize offsetFromContainer(RenderObject*, const IntPoint&) const;

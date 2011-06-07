@@ -269,10 +269,10 @@ PassRefPtr<StringImpl> RenderText::originalText() const
     return (e && e->isTextNode()) ? static_cast<Text*>(e)->dataImpl() : 0;
 }
 
-void RenderText::absoluteRects(Vector<IntRect>& rects, const IntPoint& accumulatedOffset)
+void RenderText::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
     for (InlineTextBox* box = firstTextBox(); box; box = box->nextTextBox())
-        rects.append(enclosingIntRect(FloatRect(accumulatedOffset + box->topLeft(), box->size())));
+        rects.append(enclosingIntRect(FloatRect(tx + box->x(), ty + box->y(), box->width(), box->height())));
 }
 
 void RenderText::absoluteRectsForRange(Vector<IntRect>& rects, unsigned start, unsigned end, bool useSelectionHeight)

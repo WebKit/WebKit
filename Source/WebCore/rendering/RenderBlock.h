@@ -625,7 +625,7 @@ private:
     int logicalLeftSelectionOffset(RenderBlock* rootBlock, int position);
     int logicalRightSelectionOffset(RenderBlock* rootBlock, int position);
     
-    virtual void absoluteRects(Vector<IntRect>&, const IntPoint& accumulatedOffset);
+    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
     virtual void absoluteQuads(Vector<FloatQuad>&);
 
     int desiredColumnWidth() const;

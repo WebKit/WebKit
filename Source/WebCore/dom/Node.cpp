@@ -839,7 +839,7 @@ bool Node::hasNonEmptyBoundingBox() const
 
     Vector<IntRect> rects;
     FloatPoint absPos = renderer()->localToAbsolute();
-    renderer()->absoluteRects(rects, flooredIntPoint(absPos));
+    renderer()->absoluteRects(rects, absPos.x(), absPos.y());
     size_t n = rects.size();
     for (size_t i = 0; i < n; ++i)
         if (!rects[i].isEmpty())

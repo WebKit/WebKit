@@ -5664,7 +5664,7 @@ void RenderBlock::setPageLogicalOffset(int logicalOffset)
     m_rareData->m_pageLogicalOffset = logicalOffset;
 }
 
-void RenderBlock::absoluteRects(Vector<IntRect>& rects, const IntPoint& accumulatedOffset)
+void RenderBlock::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
 {
     // For blocks inside inlines, we go ahead and include margins so that we run right up to the
     // inline boxes above and below us (thus getting merged with them to form a single irregular
@@ -5672,12 +5672,13 @@ void RenderBlock::absoluteRects(Vector<IntRect>& rects, const IntPoint& accumula
     if (isAnonymousBlockContinuation()) {
         // FIXME: This is wrong for block-flows that are horizontal.
         // https://bugs.webkit.org/show_bug.cgi?id=46781
-        rects.append(IntRect(accumulatedOffset.x(), accumulatedOffset.y() - collapsedMarginBefore(),
+        rects.append(IntRect(tx, ty - collapsedMarginBefore(),
                              width(), height() + collapsedMarginBefore() + collapsedMarginAfter()));
-        continuation()->absoluteRects(rects, accumulatedOffset - toSize(location() +
-                inlineElementContinuation()->containingBlock()->location()));
+        continuation()->absoluteRects(rects,
+                                      tx - x() + inlineElementContinuation()->containingBlock()->x(),
+                                      ty - y() + inlineElementContinuation()->containingBlock()->y());
     } else
-        rects.append(IntRect(accumulatedOffset, size()));
+        rects.append(IntRect(tx, ty, width(), height()));
 }
 
 void RenderBlock::absoluteQuads(Vector<FloatQuad>& quads)

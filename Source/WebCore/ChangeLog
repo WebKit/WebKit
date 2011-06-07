@@ -1,3 +1,34 @@
+2011-06-06  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r88202.
+        http://trac.webkit.org/changeset/88202
+        https://bugs.webkit.org/show_bug.cgi?id=62182
+
+        This broke the mac clang bot (Requested by koz__ on #webkit).
+
+        * dom/Node.cpp:
+        (WebCore::Node::hasNonEmptyBoundingBox):
+        * rendering/InlineBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::absoluteRects):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::absoluteRects):
+        * rendering/RenderBox.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::absoluteRects):
+        * rendering/RenderInline.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::absoluteBoundingBoxRect):
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::absoluteRects):
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::absoluteRects):
+        * rendering/RenderText.h:
+        * rendering/RenderView.cpp:
+        (WebCore::RenderView::absoluteRects):
+        * rendering/RenderView.h:
+
 2011-06-06  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Hajime Morita.
