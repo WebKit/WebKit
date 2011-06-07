@@ -1,3 +1,27 @@
+2011-06-07  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] -Wdelete-non-virtual-dtor pass for DumpRenderTree
+        https://bugs.webkit.org/show_bug.cgi?id=62210
+
+        The change to TestEventPrinter fixes a latent bug, because
+        objects are deleted through the TestEventPrinter type, but none
+        of the subclasses have destructors or non-POD members.
+
+        The changes to NotificationPresenter and WebViewHost do _not_ to fix a
+        real bug, they just make clang's -Wdelete-non-virtual-dtor happy. As
+        discussed at http://codereview.chromium.org/7094005/, we prefer making
+        leaf class destructors virtual over making the leaf classes final.
+
+        * DumpRenderTree/chromium/NotificationPresenter.cpp:
+        (NotificationPresenter::~NotificationPresenter):
+        * DumpRenderTree/chromium/NotificationPresenter.h:
+        * DumpRenderTree/chromium/TestEventPrinter.cpp:
+        (TestEventPrinter::~TestEventPrinter):
+        * DumpRenderTree/chromium/TestEventPrinter.h:
+        * DumpRenderTree/chromium/WebViewHost.h:
+
 2011-06-06  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Dirk Pranke.

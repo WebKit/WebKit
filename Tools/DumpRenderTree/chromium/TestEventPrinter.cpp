@@ -59,6 +59,10 @@ public:
     void handleTestFooter(bool dumpedAnything) const;
 };
 
+TestEventPrinter::~TestEventPrinter()
+{
+}
+
 PassOwnPtr<TestEventPrinter> TestEventPrinter::createDRTPrinter()
 {
     return adoptPtr(new DRTPrinter);

@@ -67,7 +67,7 @@ struct WebWindowFeatures;
 class WebViewHost : public WebKit::WebSpellCheckClient, public WebKit::WebViewClient, public WebKit::WebFrameClient, public NavigationHost {
  public:
     WebViewHost(TestShell*);
-    ~WebViewHost();
+    virtual ~WebViewHost();
     void setWebWidget(WebKit::WebWidget*);
     WebKit::WebView* webView() const;
     WebKit::WebWidget* webWidget() const;

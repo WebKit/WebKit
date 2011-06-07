@@ -44,6 +44,7 @@ class TestShell;
 class NotificationPresenter : public WebKit::WebNotificationPresenter {
 public:
     explicit NotificationPresenter(TestShell* shell) : m_shell(shell) { }
+    virtual ~NotificationPresenter();
 
     // Called by the LayoutTestController to simulate a user granting permission.
     void grantPermission(const WebKit::WebString& origin);

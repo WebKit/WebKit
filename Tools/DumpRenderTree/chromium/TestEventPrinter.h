@@ -38,6 +38,7 @@ public:
     static PassOwnPtr<TestEventPrinter> createDRTPrinter();
     static PassOwnPtr<TestEventPrinter> createTestShellPrinter();
 
+    virtual ~TestEventPrinter();
     virtual void handleTestHeader(const char* url) const = 0;
     virtual void handleTimedOut() const = 0;
     virtual void handleTextHeader() const = 0;

@@ -58,6 +58,10 @@ static void deferredDisplayDispatch(void* context)
     delete notification;
 }
 
+NotificationPresenter::~NotificationPresenter()
+{
+}
+
 void NotificationPresenter::grantPermission(const WebString& origin)
 {
     // Make sure it's in the form of an origin.
