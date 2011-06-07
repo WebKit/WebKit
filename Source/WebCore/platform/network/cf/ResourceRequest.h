@@ -84,7 +84,7 @@ namespace WebCore {
         NSURLRequest* nsURLRequest() const;
 #endif
 
-#if USE(CFURLSTORAGESESSIONS)
+#if USE(CFURLSTORAGESESSIONS) && defined(BUILDING_ON_SNOW_LEOPARD)
         void setStorageSession(CFURLStorageSessionRef);
 #endif
 
