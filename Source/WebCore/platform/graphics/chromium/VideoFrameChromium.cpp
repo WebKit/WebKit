@@ -42,6 +42,8 @@ const unsigned VideoFrameChromium::yPlane = 0;
 const unsigned VideoFrameChromium::uPlane = 1;
 const unsigned VideoFrameChromium::vPlane = 2;
 
+VideoFrameChromium::~VideoFrameChromium() { }
+
 } // namespace WebCore
 
 

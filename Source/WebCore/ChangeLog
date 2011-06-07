@@ -1,3 +1,20 @@
+2011-06-06  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] Make VideoFrameChromium's destructor virtual
+        https://bugs.webkit.org/show_bug.cgi?id=62186
+
+        This fixes a real bug, since WebMediaPlayerClientImpl::putCurrentFrame
+        deletes a VideoFrameChromium subclass type through this interface
+        class, causing ~VideoFrameChromiumImpl's destructor not to run.
+        (VideoFrameChroimumImpl happens to not have a destructor or any
+        non-POD member variables, so it's more a latent bug.)
+
+        * platform/graphics/chromium/VideoFrameChromium.cpp:
+        (WebCore::VideoFrameChromium::~VideoFrameChromium):
+        * platform/graphics/chromium/VideoFrameChromium.h:
+
 2011-06-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Sammy Weinig.
