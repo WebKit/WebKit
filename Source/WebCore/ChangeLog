@@ -1,3 +1,18 @@
+2011-06-07  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Video with poster attribute will not display new frames when scrubbing.
+        https://bugs.webkit.org/show_bug.cgi?id=62036
+
+        Remove our "detection" about the end of a scrub now that there is an explicit seek completion
+        handler available in AVFoundation.  Move what we used to do upon detection in timeChanged()
+        into seekCompleted().
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundation.cpp:
+        (WebCore::MediaPlayerPrivateAVFoundation::timeChanged): 
+        (WebCore::MediaPlayerPrivateAVFoundation::seekCompleted):
+
 2011-06-07  James Simonsen  <simonjam@chromium.org>
 
         Unreviewed, build fix, missing files from r88274.

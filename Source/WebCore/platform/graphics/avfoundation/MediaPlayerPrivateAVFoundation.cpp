@@ -551,29 +551,15 @@ void MediaPlayerPrivateAVFoundation::seekableTimeRangesChanged()
 void MediaPlayerPrivateAVFoundation::timeChanged(double time)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::timeChanged(%p) - time = %f", this, time);
-
-    if (m_seekTo == invalidTime())
-        return;
-
-    // AVFoundation may call our observer more than once during a seek, and we can't currently tell
-    // if we will be able to seek to an exact time, so assume that we are done seeking if we are
-    // "close enough" to the seek time.
-    const double smallSeekDelta = 1.0 / 100;
-
-    float currentRate = rate();
-    if ((currentRate > 0 && time >= m_seekTo) || (currentRate < 0 && time <= m_seekTo) || (abs(m_seekTo - time) <= smallSeekDelta)) {
-        m_seekTo = invalidTime();
-        updateStates();
-        m_player->timeChanged();
-    }
 }
 
 void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
 {
     LOG(Media, "MediaPlayerPrivateAVFoundation::seekCompleted(%p) - finished = %d", this, finished);
     
-    if (finished)
-        m_seekTo = invalidTime();
+    m_seekTo = invalidTime();
+    updateStates();
+    m_player->timeChanged();
 }
 
 void MediaPlayerPrivateAVFoundation::didEnd()
