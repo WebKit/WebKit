@@ -70,8 +70,8 @@ typedef int CFHTTPCookieStorageAcceptPolicy;
 typedef struct OpaqueCFHTTPCookieStorage* CFHTTPCookieStorageRef;
 #endif
 
-#if USE(CFURLSTORAGESESSIONS)
-typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
+#if USE(CFURLSTORAGESESSIONS) && defined(BUILDING_ON_SNOW_LEOPARD)
+typedef struct __CFURLStorageSession* CFURLStorageSessionRef;
 #endif
 
 namespace WebCore {
