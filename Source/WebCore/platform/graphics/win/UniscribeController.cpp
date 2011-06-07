@@ -101,12 +101,12 @@ void UniscribeController::advance(unsigned offset, GlyphBuffer* glyphBuffer)
     if (static_cast<int>(offset) > m_end)
         offset = m_end;
 
-    // Itemize the string.
-    const UChar* cp = m_run.data(m_currentCharacter);
     int length = offset - m_currentCharacter;
     if (length <= 0)
         return;
 
+    // Itemize the string.
+    const UChar* cp = m_run.data(m_currentCharacter);
     unsigned baseCharacter = m_currentCharacter;
 
     // We break up itemization of the string by fontData and (if needed) the use of small caps.
