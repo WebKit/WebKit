@@ -726,5 +726,16 @@ Could be worth adding to the API.
 - (NSCachedURLResponse *)webView:(WebView *)sender resource:(id)identifier willCacheResponse:(NSCachedURLResponse *)response fromDataSource:(WebDataSource *)dataSource;
 @end
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+// This is a C function to avoid calling +[WebView initialize].
+void WebInstallMemoryPressureHandler(void);
+
+#ifdef __cplusplus
+}
+#endif
+
 #undef WebNSInteger
 #undef WebNSUInteger
