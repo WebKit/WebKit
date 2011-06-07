@@ -653,9 +653,9 @@ void TextureMapperNode::syncCompositingStateSelf(GraphicsLayerTextureMapper* gra
     if (!m_currentContent.needsDisplay)
         m_currentContent.needsDisplayRect.unite(pendingContent.needsDisplayRect);
 
-    if (!hasRunningOpacityAnimation())
+    if (!hasOpacityAnimation())
         m_opacity = m_state.opacity;
-    if (!hasRunningTransformAnimation())
+    if (!hasTransformAnimation())
         m_transforms.base = m_state.transform;
 }
 
@@ -815,21 +815,21 @@ void TextureMapperNode::applyAnimation(const TextureMapperAnimation& animation, 
     }
 }
 
-bool TextureMapperNode::hasRunningOpacityAnimation() const
+bool TextureMapperNode::hasOpacityAnimation() const
 {
     for (size_t i = 0; i < m_animations.size(); ++i) {
         const TextureMapperAnimation& animation = *m_animations[i].get();
-        if (!animation.paused && animation.keyframes.property() == AnimatedPropertyOpacity)
+        if (animation.keyframes.property() == AnimatedPropertyOpacity)
             return true;
     }
     return false;
 }
 
-bool TextureMapperNode::hasRunningTransformAnimation() const
+bool TextureMapperNode::hasTransformAnimation() const
 {
     for (size_t i = 0; i < m_animations.size(); ++i) {
         const TextureMapperAnimation& animation = *m_animations[i].get();
-        if (!animation.paused && animation.keyframes.property() == AnimatedPropertyWebkitTransform)
+        if (animation.keyframes.property() == AnimatedPropertyWebkitTransform)
             return true;
     }
     return false;

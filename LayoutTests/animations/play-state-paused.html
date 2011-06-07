@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <title>Test of -webkit-animation-play-state</title>
+  <style type="text/css" media="screen">
+    body {
+      margin: 0;
+    }
+
+    #box {
+      position: absolute;
+      left: 0px;
+      top: 100px;
+      height: 100px;
+      width: 100px;
+      background-color: red;
+      margin: 0;
+      -webkit-animation-duration: 2s;
+      -webkit-animation-timing-function: linear;
+      -webkit-animation-name: "move1";
+      -webkit-animation-play-state: running;
+    }
+    #safezone {
+      position: absolute;
+      top: 100px;
+      height: 100px;
+      width: 200px;
+      left: 100px;
+      background-color: green;
+    }
+    @-webkit-keyframes "move1" {
+      from { -webkit-transform: translateX(0px); }
+      to   { -webkit-transform: translateX(300px); }
+    }
+    #result {
+      color: white; /* hide from pixel results */
+    }
+  </style>
+  <script src="resources/animation-test-helpers.js" type="text/javascript" charset="utf-8"></script>
+  <script type="text/javascript" charset="utf-8">
+    const expectedValues = [
+      // [animation-name, time, element-id, property, expected-value, tolerance]
+      ["move1", 0.5, "box", "webkitTransform", [1,0,0,1,75,0], 20],
+      ["move1", 1.0, "box", "webkitTransform", [1,0,0,1,150,0], 20],
+      ["move1", 2.5, "box", "webkitTransform", [1,0,0,1,150,0], 20],
+    ];
+
+    function pauseAnimation()
+    {
+        document.getElementById("box").style.webkitAnimationPlayState = "paused";
+    }
+
+    function setTimers()
+    {
+        setTimeout(pauseAnimation, 1000);
+    }
+
+    runAnimationTest(expectedValues, setTimers, null, true);
+
+  </script>
+</head>
+<body>
+<!-- This tests the operation of -webkit-animation-play-state. After 1 second the red boxes should be hidden by the green boxes. You should see no red boxes. -->
+<div id="box"></div>
+<div id="safezone"></div>
+<div id="result"></div>
+</div>
+</body>
+</html>

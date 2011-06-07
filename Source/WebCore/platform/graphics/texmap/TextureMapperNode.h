@@ -177,8 +177,8 @@ private:
     void applyAnimationFrame(const TextureMapperAnimation&, const AnimationValue* from, const AnimationValue* to, float progress);
     void applyOpacityAnimation(float fromOpacity, float toOpacity, double);
     void applyTransformAnimation(const TextureMapperAnimation&, const TransformOperations* start, const TransformOperations* end, double);
-    bool hasRunningOpacityAnimation() const;
-    bool hasRunningTransformAnimation() const;
+    bool hasOpacityAnimation() const;
+    bool hasTransformAnimation() const;
 
     struct TransformData {
         TransformationMatrix target;
