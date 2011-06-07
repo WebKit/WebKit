@@ -2284,9 +2284,6 @@ BUGCR54331 MAC : fast/forms/input-number-events.html = TEXT PASS
 BUGCR54333 WIN LINUX : fast/replaced/embed-display-none.html = PASS TIMEOUT
 BUGCR54348 LINUX : http/tests/security/xssAuditor/dom-write-innerHTML.html = PASS TEXT
 
-// Rebaseline WIN/LINUX image results when bug http://webkit.org/b/57439 rolls.
-BUGWK57439 WIN LINUX : fast/replaced/outline-replaced-elements.html = IMAGE+TEXT
-
 // WebKit r67068
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html = IMAGE
 BUGWK45450 WIN LINUX : svg/dynamic-updates/SVGFEDistantLightElement-dom-elevation-attr.html = IMAGE

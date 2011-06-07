@@ -1,3 +1,13 @@
+2011-06-06  James Kozianski  <koz@chromium.org>
+
+        [Chromium] Unreviewed. Rebaseline outline-replaced-elements windows/linux image results.
+        https://bugs.webkit.org/show_bug.cgi?id=57439
+
+        * platform/chromium-linux-x86/fast/replaced/outline-replaced-elements-expected.png: Added.
+        * platform/chromium-linux/fast/replaced/outline-replaced-elements-expected.png: Added.
+        * platform/chromium-win/fast/replaced/outline-replaced-elements-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-06  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
