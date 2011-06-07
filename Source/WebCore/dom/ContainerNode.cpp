@@ -878,7 +878,7 @@ bool ContainerNode::getUpperLeftCorner(FloatPoint& point) const
                            toRenderText(o)->firstTextBox()->root()->lineTop());
             } else if (o->isBox()) {
                 RenderBox* box = toRenderBox(o);
-                point.move(box->x(), box->y());
+                point.moveBy(box->location());
             }
             point = o->container()->localToAbsolute(point, false, true);
             return true;
@@ -904,7 +904,7 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
     if (!o->isInline() || o->isReplaced()) {
         RenderBox* box = toRenderBox(o);
         point = o->localToAbsolute(FloatPoint(), false, true);
-        point.move(box->width(), box->height());
+        point.move(box->size());
         return true;
     }
 
@@ -930,12 +930,12 @@ bool ContainerNode::getLowerRightCorner(FloatPoint& point) const
             if (o->isText()) {
                 RenderText* text = toRenderText(o);
                 IntRect linesBox = text->linesBoundingBox();
-                if (!linesBox.x() && !linesBox.width() && !linesBox.y() && !linesBox.height())
+                if (!linesBox.maxX() && !linesBox.maxY())
                     continue;
-                point.move(linesBox.x() + linesBox.width(), linesBox.y() + linesBox.height());
+                point.moveBy(linesBox.maxXMaxYCorner());
             } else {
                 RenderBox* box = toRenderBox(o);
-                point.move(box->x() + box->width(), box->y() + box->height());
+                point.moveBy(box->frameRect().maxXMaxYCorner());
             }
             point = o->container()->localToAbsolute(point, false, true);
             return true;
@@ -959,10 +959,7 @@ IntRect ContainerNode::getRect() const
             upperLeft = lowerRight;
     } 
 
-    lowerRight.setX(max(upperLeft.x(), lowerRight.x()));
-    lowerRight.setY(max(upperLeft.y(), lowerRight.y()));
-    
-    return enclosingIntRect(FloatRect(upperLeft, lowerRight - upperLeft));
+    return enclosingIntRect(FloatRect(upperLeft, lowerRight.expandedTo(upperLeft) - upperLeft));
 }
 
 void ContainerNode::setFocus(bool received)

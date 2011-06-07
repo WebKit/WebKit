@@ -91,6 +91,16 @@ public:
         m_x += dx;
         m_y += dy;
     }
+    void move(const IntSize& a)
+    {
+        m_x += a.width();
+        m_y += a.height();
+    }
+    void moveBy(const IntPoint& a)
+    {
+        m_x += a.x();
+        m_y += a.y();
+    }
     void scale(float sx, float sy)
     {
         m_x *= sx;
@@ -109,6 +119,11 @@ public:
     {
         return m_x * m_x + m_y * m_y;
     }
+
+    FloatPoint expandedTo(const FloatPoint& other) const
+    {
+        return FloatPoint(std::max(m_x, other.m_x), std::max(m_y, other.m_y));
+    }   
 
 #if USE(CG) || USE(SKIA_ON_MAC_CHROME)
     FloatPoint(const CGPoint&);
