@@ -43,7 +43,8 @@ function runTest()
     var doc = frames[0].document;
     doc.open();
     doc.write("<body onload=\"parent.afterOnload()\">");
-    doc.write("<img src=\"resources/onload-image.png\">");
+    // Append a random query string to force a non-cached load.
+    doc.write("<img src=\"resources/onload-image.png?" + Math.random() + "\">");
     doc.write("<script\>parent.beforeOnload();</script\>");
     doc.write("</body>");
     doc.close();

@@ -1,3 +1,15 @@
+2011-06-07  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        [Chromium] REGRESSION fast/events/onload-after-document-close-with-subresource.html
+        https://bugs.webkit.org/show_bug.cgi?id=61921
+
+        Force a non-cached load of onload-image.png.
+
+        * fast/events/onload-after-document-close-with-subresource.html:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-07  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Unreviewed.  Test expectations fix.

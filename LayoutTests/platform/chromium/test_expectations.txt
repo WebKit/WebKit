@@ -3975,9 +3975,6 @@ BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
 // Register protocol handler doesn't seem to be enabled on Mac.
 BUGCR84161 MAC : fast/dom/register-protocol-handler.html = TEXT
 
-// Regression
-BUGWK61921 : fast/events/onload-after-document-close-with-subresource.html = TEXT
-
 BUGWK61936 : fast/filesystem/filesystem-no-callback-null-ptr-crash.html = CRASH PASS
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = IMAGE PASS
 
