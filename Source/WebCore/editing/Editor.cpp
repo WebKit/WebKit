@@ -1855,7 +1855,10 @@ bool Editor::isSelectionUngrammatical()
 {
 #if USE(GRAMMAR_CHECKING)
     Vector<String> ignoredGuesses;
-    return TextCheckingHelper(client(), frame()->selection()->toNormalizedRange()).isUngrammatical(ignoredGuesses);
+    RefPtr<Range> range = frame()->selection()->toNormalizedRange();
+    if (!range)
+        return false;
+    return TextCheckingHelper(client(), range).isUngrammatical(ignoredGuesses);
 #else
     return false;
 #endif
@@ -1865,8 +1868,11 @@ Vector<String> Editor::guessesForUngrammaticalSelection()
 {
 #if USE(GRAMMAR_CHECKING)
     Vector<String> guesses;
+    RefPtr<Range> range = frame()->selection()->toNormalizedRange();
+    if (!range)
+        return guesses;
     // Ignore the result of isUngrammatical; we just want the guesses, whether or not there are any
-    TextCheckingHelper(client(), frame()->selection()->toNormalizedRange()).isUngrammatical(guesses);
+    TextCheckingHelper(client(), range).isUngrammatical(guesses);
     return guesses;
 #else
     return Vector<String>();
@@ -1887,7 +1893,10 @@ Vector<String> Editor::guessesForMisspelledSelection()
 Vector<String> Editor::guessesForMisspelledOrUngrammaticalSelection(bool& misspelled, bool& ungrammatical)
 {
 #if USE(UNIFIED_TEXT_CHECKING)
-    return TextCheckingHelper(client(), frame()->selection()->toNormalizedRange()).guessesForMisspelledOrUngrammaticalRange(isGrammarCheckingEnabled(), misspelled, ungrammatical);
+    RefPtr<Range> range = frame()->selection()->toNormalizedRange();
+    if (!range)
+        return Vector<String>();
+    return TextCheckingHelper(client(), range).guessesForMisspelledOrUngrammaticalRange(isGrammarCheckingEnabled(), misspelled, ungrammatical);
 #else
     misspelled = isSelectionMisspelled();
     if (misspelled) {

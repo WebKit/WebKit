@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+var clicked = false;
+
+function handleClicked()
+{
+    clicked = true;
+}
+
+function test()
+{
+    description("This test passes if it doesn't crash and the context menu is shown for the search input");
+    if (!window.eventSender)
+        return;
+    var target = document.getElementById("target");
+    var clickX = target.offsetLeft + target.offsetWidth - 2;
+    var clickY = target.offsetTop + target.offsetHeight / 2;
+    eventSender.mouseMoveTo(clickX, clickY);
+    eventSender.contextClick();
+    shouldBe("clicked", "true");
+}
+var successfullyParsed = true;
+</script>
+</head>
+<body onload="test();">
+<p id="description"></p>
+<div id="console"></div>
+<input id="target" type="search" oncontextmenu="handleClicked()">
+<script src="../../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
