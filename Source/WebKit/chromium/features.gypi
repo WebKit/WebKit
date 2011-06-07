@@ -42,7 +42,6 @@
         'use_accelerated_compositing%': 1,
         'use_skia_gpu%': 0,
         'use_threaded_compositing%': 0,
-        'branding%': 'WebKit',
       },
 
       # We have to nest variables inside variables as a hack for variables
@@ -128,47 +127,7 @@
       'use_accelerated_compositing%': '<(use_accelerated_compositing)',
       'use_skia_gpu%': '<(use_skia_gpu)',
       'use_threaded_compositing%': '<(use_threaded_compositing)',
-      'branding%': '<(branding)',
 
-      'conditions': [
-        ['use_accelerated_compositing==1', {
-          'feature_defines': [
-            'WTF_USE_ACCELERATED_COMPOSITING=1',
-            'ENABLE_3D_RENDERING=1',
-          ],
-        }],
-        ['use_accelerated_compositing==1 and OS!="mac"', {
-          'feature_defines': [
-            'ENABLE_ACCELERATED_2D_CANVAS=1',
-          ],
-        }],
-        ['use_accelerated_compositing==1 and use_threaded_compositing==1', {
-          'feature_defines': [
-            'WTF_USE_THREADED_COMPOSITING=1',
-          ],
-        }],
-        ['touchui==1', {
-          'enable_touch_icon_loading': 1,
-        }],
-        # FIXME: For the moment Windows is only enabled for Google-branded
-        # build, since the FFmpeg DLLs need to be re-built for chromium.
-        ['OS=="mac" or OS=="linux" or (OS=="win" and branding=="Chrome")', {
-          'feature_defines': [
-            'ENABLE_WEB_AUDIO=1',
-          ],
-        }],
-        # Mac OS X uses Accelerate.framework FFT by default instead of FFmpeg.
-        ['OS!="mac"', {
-          'feature_defines': [
-            'WTF_USE_WEBAUDIO_FFMPEG=1',
-          ],
-        }],
-        ['enable_register_protocol_handler==1', {
-          'feature_defines': [
-            'ENABLE_REGISTER_PROTOCOL_HANDLER=1',
-          ],
-        }],
-      ],
     },
 
     'feature_defines%': '<(feature_defines)',
@@ -180,5 +139,45 @@
     'use_accelerated_compositing%': '<(use_accelerated_compositing)',
     'use_skia_gpu%': '<(use_skia_gpu)',
     'use_threaded_compositing%': '<(use_threaded_compositing)',
+
+    'conditions': [
+      ['use_accelerated_compositing==1', {
+        'feature_defines': [
+          'WTF_USE_ACCELERATED_COMPOSITING=1',
+          'ENABLE_3D_RENDERING=1',
+        ],
+      }],
+      ['use_accelerated_compositing==1 and OS!="mac"', {
+        'feature_defines': [
+          'ENABLE_ACCELERATED_2D_CANVAS=1',
+        ],
+      }],
+      ['use_accelerated_compositing==1 and use_threaded_compositing==1', {
+        'feature_defines': [
+          'WTF_USE_THREADED_COMPOSITING=1',
+        ],
+      }],
+      ['touchui==1', {
+        'enable_touch_icon_loading': 1,
+      }],
+      # FIXME: For the moment Windows is only enabled for Google-branded
+      # build, since the FFmpeg DLLs need to be re-built for chromium.
+      ['OS=="mac" or OS=="linux" or (OS=="win" and branding=="Chrome")', {
+        'feature_defines': [
+          'ENABLE_WEB_AUDIO=1',
+        ],
+      }],
+      # Mac OS X uses Accelerate.framework FFT by default instead of FFmpeg.
+      ['OS!="mac"', {
+        'feature_defines': [
+          'WTF_USE_WEBAUDIO_FFMPEG=1',
+        ],
+      }],
+      ['enable_register_protocol_handler==1', {
+        'feature_defines': [
+          'ENABLE_REGISTER_PROTOCOL_HANDLER=1',
+        ],
+      }],
+    ],
   },
 }

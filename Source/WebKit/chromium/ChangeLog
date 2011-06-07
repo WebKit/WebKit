@@ -1,5 +1,18 @@
 2011-06-07  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Tony Chang.
+
+        Fix "branding" issue in features.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=62229
+
+        Apparently we need to move the conditional block further out of the
+        nesting in order to see the branding variable.  This patch also remove
+        the dummy branding variable I added to get the buildbot building again.
+
+        * features.gypi:
+
+2011-06-07  Adam Barth  <abarth@webkit.org>
+
         Attempt to fix the cr-win build.
 
         * features.gypi:
