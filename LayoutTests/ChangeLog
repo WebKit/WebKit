@@ -1,3 +1,14 @@
+2011-06-07  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Unreviewed, rebaseline after r88266.
+
+        * platform/chromium-linux/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png: Added.
+        * platform/chromium-linux/svg/W3C-SVG-1.1/styling-css-04-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt: Added.
+        * platform/chromium-win/svg/W3C-SVG-1.1/styling-css-04-f-expected.png:
+        * platform/chromium-win/svg/W3C-SVG-1.1/styling-css-04-f-expected.txt:
+
 2011-06-07  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Dirk Schulze.
