@@ -609,13 +609,19 @@ void PDFViewController::findString(const String& string, FindOptions options, un
     BOOL wrapFlag = options & FindOptionsWrapAround;
 
     PDFSelection *selection = [m_wkPDFView.get() _nextMatchFor:string direction:forward caseSensitive:caseFlag wrap:wrapFlag fromSelection:[m_pdfView currentSelection] startInSelection:NO];
-    NSUInteger matchCount = [m_wkPDFView.get() _countMatches:string caseSensitive:caseFlag];
-    if (matchCount > maxMatchCount)
-        matchCount = maxMatchCount;
-
     if (!selection) {
         page()->didFailToFindString(string);
         return;
+    }
+
+    NSUInteger matchCount;
+    if (!maxMatchCount) {
+        // If the max was zero, any result means we exceeded the max. We can skip computing the actual count.
+        matchCount = static_cast<unsigned>(kWKMoreThanMaximumMatchCount);
+    } else {
+        matchCount = [m_wkPDFView.get() _countMatches:string caseSensitive:caseFlag];
+        if (matchCount > maxMatchCount)
+            matchCount = static_cast<unsigned>(kWKMoreThanMaximumMatchCount);
     }
 
     [m_pdfView setCurrentSelection:selection];

@@ -1,3 +1,17 @@
+2011-06-06  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=62165>
+        <rdar://problem/9555835>
+        WebKit2 find-on-page callback doesn’t handle kWKMoreThanMaximumMatchCount on PDF pages
+
+        * UIProcess/API/mac/PDFViewController.mm:
+        (WebKit::PDFViewController::findString):
+        Return kWKMoreThanMaximumMatchCount when appropriate, a la FindController::countStringMatches().
+        Also, skip counting all the matches if maxMatchCount is 0, to avoid (perhaps slowly) computing a
+        number that would be ignored.
+
 2011-06-06  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Anders Carlsson.
