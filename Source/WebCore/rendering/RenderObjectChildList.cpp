@@ -422,7 +422,7 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
             case CONTENT_NONE:
                 break;
             case CONTENT_TEXT:
-                renderer = new (owner->renderArena()) RenderTextFragment(owner->document() /* anonymous object */, content->text());
+                renderer = new (owner->renderArena()) RenderTextFragment(owner->document() /* anonymous object */, static_cast<const TextContentData*>(content)->text().impl());
                 renderer->setStyle(pseudoElementStyle);
                 break;
             case CONTENT_OBJECT: {
@@ -430,19 +430,19 @@ void RenderObjectChildList::updateBeforeAfterContent(RenderObject* owner, Pseudo
                 RefPtr<RenderStyle> style = RenderStyle::create();
                 style->inheritFrom(pseudoElementStyle);
                 image->setStyle(style.release());
-                if (StyleImage* styleImage = content->image())
-                    image->setImageResource(RenderImageResourceStyleImage::create(styleImage));
+                if (const StyleImage* styleImage = static_cast<const ImageContentData*>(content)->image())
+                    image->setImageResource(RenderImageResourceStyleImage::create(const_cast<StyleImage*>(styleImage)));
                 else
                     image->setImageResource(RenderImageResource::create());
                 renderer = image;
                 break;
             }
         case CONTENT_COUNTER:
-            renderer = new (owner->renderArena()) RenderCounter(owner->document(), *content->counter());
+            renderer = new (owner->renderArena()) RenderCounter(owner->document(), *static_cast<const CounterContentData*>(content)->counter());
             renderer->setStyle(pseudoElementStyle);
             break;
         case CONTENT_QUOTE:
-            renderer = new (owner->renderArena()) RenderQuote(owner->document(), content->quote());
+            renderer = new (owner->renderArena()) RenderQuote(owner->document(), static_cast<const QuoteContentData*>(content)->quote());
             renderer->setStyle(pseudoElementStyle);
             break;
         }

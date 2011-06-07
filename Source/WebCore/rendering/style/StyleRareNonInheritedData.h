@@ -47,7 +47,7 @@ class StyleMultiColData;
 class StyleReflection;
 class StyleTransformData;
 
-struct ContentData;
+class ContentData;
 struct LengthSize;
 
 #if ENABLE(DASHBOARD_SUPPORT)

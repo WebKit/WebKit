@@ -101,7 +101,7 @@ class ShadowData;
 class StyleImage;
 class TransformationMatrix;
 
-struct ContentData;
+class ContentData;
 
 typedef Vector<RefPtr<RenderStyle>, 4> PseudoStyleCache;
 
@@ -1145,10 +1145,11 @@ public:
     void setFloodOpacity(float f) { accessSVGStyle()->setFloodOpacity(f); }
 #endif
 
+    bool hasContent() const { return contentData(); }
     const ContentData* contentData() const { return rareNonInheritedData->m_content.get(); }
     bool contentDataEquivalent(const RenderStyle* otherStyle) const { return const_cast<RenderStyle*>(this)->rareNonInheritedData->contentDataEquivalent(*const_cast<RenderStyle*>(otherStyle)->rareNonInheritedData); }
     void clearContent();
-    void setContent(PassRefPtr<StringImpl>, bool add = false);
+    void setContent(const String&, bool add = false);
     void setContent(PassRefPtr<StyleImage>, bool add = false);
     void setContent(PassOwnPtr<CounterContent>, bool add = false);
     void setContent(QuoteType, bool add = false);
@@ -1358,9 +1359,9 @@ private:
     const Color& textFillColor() const { return rareInheritedData->textFillColor; }
     const Color& textStrokeColor() const { return rareInheritedData->textStrokeColor; }
     
-    const Color colorIncludingFallback(int colorProperty, EBorderStyle borderStyle) const;
+    const Color colorIncludingFallback(int colorProperty, EBorderStyle) const;
 
-    ContentData* prepareToSetContent(StringImpl*, bool add);
+    void appendContent(PassOwnPtr<ContentData>);
 };
 
 inline int adjustForAbsoluteZoom(int value, const RenderStyle* style)

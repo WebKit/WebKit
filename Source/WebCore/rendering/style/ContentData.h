@@ -33,93 +33,104 @@ namespace WebCore {
 
 class StyleImage;
 
-struct ContentData {
-    WTF_MAKE_NONCOPYABLE(ContentData); WTF_MAKE_FAST_ALLOCATED;
+class ContentData {
+    WTF_MAKE_FAST_ALLOCATED;
 public:
-    ContentData()
-        : m_type(CONTENT_NONE)
-    {
-    }
+    static PassOwnPtr<ContentData> create(PassRefPtr<StyleImage>);
+    static PassOwnPtr<ContentData> create(const String&);
+    static PassOwnPtr<ContentData> create(PassOwnPtr<CounterContent>);
+    static PassOwnPtr<ContentData> create(QuoteType);
+    
+    virtual ~ContentData() { }
 
-    ~ContentData()
-    {
-        clear();
-    }
+    virtual bool isCounter() const { return false; }
+    virtual bool isImage() const { return false; }
+    virtual bool isQuote() const { return false; }
+    virtual bool isText() const { return false; }
 
-    void clear();
+    virtual StyleContentType type() const = 0;
 
-    bool isCounter() const { return m_type == CONTENT_COUNTER; }
-    bool isImage() const { return m_type == CONTENT_OBJECT; }
-    bool isNone() const { return m_type == CONTENT_NONE; }
-    bool isQuote() const { return m_type == CONTENT_QUOTE; }
-    bool isText() const { return m_type == CONTENT_TEXT; }
-
-    StyleContentType type() const { return m_type; }
-
-    bool dataEquivalent(const ContentData&) const;
-
-    StyleImage* image() const
-    {
-        ASSERT(isImage());
-        return m_content.m_image;
-    }
-    void setImage(PassRefPtr<StyleImage> image)
-    {
-        deleteContent();
-        m_type = CONTENT_OBJECT;
-        m_content.m_image = image.leakRef();
-    }
-
-    StringImpl* text() const
-    {
-        ASSERT(isText());
-        return m_content.m_text;
-    }
-    void setText(PassRefPtr<StringImpl> text)
-    {
-        deleteContent();
-        m_type = CONTENT_TEXT;
-        m_content.m_text = text.leakRef();
-    }
-
-    CounterContent* counter() const
-    {
-        ASSERT(isCounter());
-        return m_content.m_counter;
-    }
-    void setCounter(PassOwnPtr<CounterContent> counter)
-    {
-        deleteContent();
-        m_type = CONTENT_COUNTER;
-        m_content.m_counter = counter.leakPtr();
-    }
-
-    QuoteType quote() const
-    {
-        ASSERT(isQuote());
-        return m_content.m_quote;
-    }
-    void setQuote(QuoteType type)
-    {
-        deleteContent();
-        m_type = CONTENT_QUOTE;
-        m_content.m_quote = type;
-    }
+    friend bool operator==(const ContentData&, const ContentData&);
+    friend bool operator!=(const ContentData&, const ContentData&);
 
     ContentData* next() const { return m_next.get(); }
     void setNext(PassOwnPtr<ContentData> next) { m_next = next; }
 
 private:
-    void deleteContent();
-
-    StyleContentType m_type;
-    union {
-        StyleImage* m_image;
-        StringImpl* m_text;
-        CounterContent* m_counter;
-        QuoteType m_quote;
-    } m_content;
     OwnPtr<ContentData> m_next;
+};
+
+class ImageContentData : public ContentData {
+    friend class ContentData;
+public:
+    const StyleImage* image() const { return m_image.get(); }
+    StyleImage* image() { return m_image.get(); }
+    void setImage(PassRefPtr<StyleImage> image) { m_image = image; }
+
+private:
+    ImageContentData(PassRefPtr<StyleImage> image)
+        : m_image(image)
+    {
+    }
+
+    virtual StyleContentType type() const { return CONTENT_OBJECT; }
+    virtual bool isImage() const { return true; }
+
+    RefPtr<StyleImage> m_image;
+};
+
+class TextContentData : public ContentData {
+    friend class ContentData;
+public:
+    const String& text() const { return m_text; }
+    void setText(const String& text) { m_text = text; }
+
+private:
+    TextContentData(const String& text)
+        : m_text(text)
+    {
+    }
+
+    virtual StyleContentType type() const { return CONTENT_TEXT; }
+    virtual bool isText() const { return true; }
+
+    String m_text;
+};
+
+class CounterContentData : public ContentData {
+    friend class ContentData;
+public:
+    const CounterContent* counter() const { return m_counter.get(); }
+    void setCounter(PassOwnPtr<CounterContent> counter) { m_counter = counter; }
+
+private:
+    CounterContentData(PassOwnPtr<CounterContent> counter)
+        : m_counter(counter)
+    {
+    }
+
+    virtual StyleContentType type() const { return CONTENT_COUNTER; }
+    virtual bool isCounter() const { return true; }
+
+    OwnPtr<CounterContent> m_counter;
+};
+
+class QuoteContentData : public ContentData {
+    friend class ContentData;
+public:
+    QuoteType quote() const { return m_quote; }
+    void setQuote(QuoteType quote) { m_quote = quote; }
+
+private:
+    QuoteContentData(QuoteType quote)
+        : m_quote(quote)
+    {
+    }
+
+    virtual StyleContentType type() const { return CONTENT_QUOTE; }
+    virtual bool isQuote() const { return true; }
+
+    QuoteType m_quote;
 };
 
 } // namespace WebCore

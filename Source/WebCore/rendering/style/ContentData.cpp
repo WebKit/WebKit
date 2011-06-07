@@ -23,61 +23,53 @@
 #include "ContentData.h"
 
 #include "StyleImage.h"
-#include <wtf/text/StringImpl.h>
 
 namespace WebCore {
 
-void ContentData::clear()
+PassOwnPtr<ContentData> ContentData::create(PassRefPtr<StyleImage> image)
 {
-    deleteContent();
-
-    // Delete the singly-linked list without recursing.
-    for (OwnPtr<ContentData> next = m_next.release(); next; next = next->m_next.release()) { }
+    return adoptPtr(new ImageContentData(image));
 }
 
-// FIXME: Why isn't this just operator==?
-// FIXME: This is not a good name for a boolean-returning function.
-bool ContentData::dataEquivalent(const ContentData& other) const
+PassOwnPtr<ContentData> ContentData::create(const String& text)
 {
-    if (type() != other.type())
+    return adoptPtr(new TextContentData(text));
+}
+
+PassOwnPtr<ContentData> ContentData::create(PassOwnPtr<CounterContent> counter)
+{
+    return adoptPtr(new CounterContentData(counter));
+}
+
+PassOwnPtr<ContentData> ContentData::create(QuoteType quote)
+{
+    return adoptPtr(new QuoteContentData(quote));
+}
+
+bool operator==(const ContentData& a, const ContentData& b)
+{
+    if (a.type() != b.type())
         return false;
 
-    switch (type()) {
+    switch (a.type()) {
     case CONTENT_NONE:
         return true;
-    case CONTENT_TEXT:
-        return equal(text(), other.text());
     case CONTENT_OBJECT:
-        return StyleImage::imagesEquivalent(image(), other.image());
+        return static_cast<const ImageContentData*>(&a)->image() == static_cast<const ImageContentData*>(&b)->image();
+    case CONTENT_TEXT:
+        return static_cast<const TextContentData*>(&a)->text() == static_cast<const TextContentData*>(&b)->text();
     case CONTENT_COUNTER:
-        return *counter() == *other.counter();
+        return static_cast<const CounterContentData*>(&a)->counter() == static_cast<const CounterContentData*>(&b)->counter();
     case CONTENT_QUOTE:
-        return quote() == other.quote();
+        return static_cast<const QuoteContentData*>(&a)->quote() == static_cast<const QuoteContentData*>(&b)->quote();
     }
-
     ASSERT_NOT_REACHED();
     return false;
 }
 
-void ContentData::deleteContent()
+bool operator!=(const ContentData& a, const ContentData& b)
 {
-    switch (m_type) {
-    case CONTENT_NONE:
-        break;
-    case CONTENT_OBJECT:
-        m_content.m_image->deref();
-        break;
-    case CONTENT_TEXT:
-        m_content.m_text->deref();
-        break;
-    case CONTENT_COUNTER:
-        delete m_content.m_counter;
-        break;
-    case CONTENT_QUOTE:
-        break;
-    }
-
-    m_type = CONTENT_NONE;
+    return !(a == b);
 }
 
 } // namespace WebCore

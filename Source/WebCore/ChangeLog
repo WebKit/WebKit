@@ -1,3 +1,87 @@
+2011-06-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Clean up ContentData
+        https://bugs.webkit.org/show_bug.cgi?id=62185
+
+        ContentData did manual ref()/deref() and had a lot of awkward
+        code from using a union to store data.
+        
+        Clean this up by adding ContentData subclasses for different
+        content types, which are then able to use RefPtr and OwnPtr
+        as appropriate.
+
+        * css/CSSComputedStyleDeclaration.cpp:
+        (WebCore::contentToCSSValue): Cast to different ContentData types as
+        appropriate.
+
+        * css/CSSStyleSelector.cpp: 
+        (WebCore::CSSStyleSelector::loadPendingImages): Cast to ImageContentData, and do some
+        const gyrations.
+
+        * html/HTMLBRElement.cpp:
+        (WebCore::HTMLBRElement::createRenderer): Use hasContent().
+        * html/HTMLFrameSetElement.cpp:
+        (WebCore::HTMLFrameSetElement::createRenderer): Ditto
+        * html/HTMLImageElement.cpp:
+        (WebCore::HTMLImageElement::createRenderer): Ditto
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject): Cast to ImageContentData.
+        * rendering/RenderObjectChildList.cpp:
+        (WebCore::RenderObjectChildList::updateBeforeAfterContent): Cast to different ContentData types as
+        appropriate.
+
+        * rendering/style/ContentData.h:
+        (WebCore::ContentData::~ContentData):
+        (WebCore::ContentData::isCounter):
+        (WebCore::ContentData::isImage):
+        (WebCore::ContentData::isQuote):
+        (WebCore::ContentData::isText):
+        (WebCore::ContentData::next):
+        (WebCore::ContentData::setNext):
+        (WebCore::ImageContentData::image):
+        (WebCore::ImageContentData::setImage):
+        (WebCore::ImageContentData::ImageContentData):
+        (WebCore::ImageContentData::type):
+        (WebCore::ImageContentData::isImage):
+        (WebCore::TextContentData::text):
+        (WebCore::TextContentData::setText):
+        (WebCore::TextContentData::TextContentData):
+        (WebCore::TextContentData::type):
+        (WebCore::TextContentData::isText):
+        (WebCore::CounterContentData::counter):
+        (WebCore::CounterContentData::setCounter):
+        (WebCore::CounterContentData::CounterContentData):
+        (WebCore::CounterContentData::type):
+        (WebCore::CounterContentData::isCounter):
+        (WebCore::QuoteContentData::quote):
+        (WebCore::QuoteContentData::setQuote):
+        (WebCore::QuoteContentData::QuoteContentData):
+        (WebCore::QuoteContentData::type):
+        (WebCore::QuoteContentData::isQuote):
+        Add subclasses for different content types, which are created
+        via overloaded create() methods on the base class.
+
+        * rendering/style/ContentData.cpp:
+        (WebCore::ContentData::create):
+        (WebCore::operator==): Test for type equality, followed by comparing data.
+        (WebCore::operator!=):
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::clearContent):
+        (WebCore::RenderStyle::appendContent): 
+        (WebCore::RenderStyle::setContent): Replace the overly complex prepareToSetContent()
+        code with code that either appends, or replaces the content.
+        This loses an optimization where the existing ContentData object could get reused,
+        but this seems to be rarely hit in practice.
+        * rendering/style/RenderStyle.h:
+        (WebCore::InheritedFlags::hasContent): Convenience method.
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::contentDataEquivalent): Test
+        that the pointers are non-null, then use the != operator.
+        * rendering/style/StyleRareNonInheritedData.h: ContentData is a class now.
+
 2011-06-07  Brian Weinstein  <bweinstein@apple.com>
 
         Build fix after r88260.

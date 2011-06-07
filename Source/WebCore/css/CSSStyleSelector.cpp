@@ -6775,10 +6775,13 @@ void CSSStyleSelector::loadPendingImages()
 
             case CSSPropertyContent: {
                 for (ContentData* contentData = const_cast<ContentData*>(m_style->contentData()); contentData; contentData = contentData->next()) {
-                    if (contentData->isImage() && contentData->image()->isPendingImage()) {
-                        CSSImageValue* imageValue = static_cast<StylePendingImage*>(contentData->image())->cssImageValue();
-                        if (StyleCachedImage* cachedImage = imageValue->cachedImage(cachedResourceLoader))
-                            contentData->setImage(cachedImage);
+                    if (contentData->isImage()) {
+                        const StyleImage* image = static_cast<ImageContentData*>(contentData)->image();
+                        if (image->isPendingImage()) {
+                            CSSImageValue* imageValue = static_cast<const StylePendingImage*>(image)->cssImageValue();
+                            if (StyleCachedImage* cachedImage = imageValue->cachedImage(cachedResourceLoader))
+                                static_cast<ImageContentData*>(contentData)->setImage(cachedImage);
+                        }
                     }
                 }
                 break;
