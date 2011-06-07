@@ -1,3 +1,9 @@
+2011-06-07  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Qt rebaseline after r88266.
+
+        * platform/qt/svg/W3C-SVG-1.1/styling-css-04-f-expected.txt:
+
 2011-06-07  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, rebaseline after r88266.

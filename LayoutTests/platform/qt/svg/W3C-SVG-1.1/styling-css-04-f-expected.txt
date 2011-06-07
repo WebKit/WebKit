@@ -39,8 +39,8 @@ layer at (0,0) size 480x360
       RenderSVGContainer {g} at (29,209) size 349x69
         RenderSVGPath {rect} at (29,209) size 69x69 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#0000FF]}] [x=30.00] [y=210.00] [width=67.50] [height=67.50]
         RenderSVGPath {rect} at (99,209) size 69x69 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#008000]}] [x=100.00] [y=210.00] [width=67.50] [height=67.50]
-        RenderSVGPath {rect} at (169,209) size 69x69 [stroke={[type=SOLID] [color=#000000] [dash array={5.00, 3.14}]}] [fill={[type=SOLID] [color=#FFA500]}] [x=170.00] [y=210.00] [width=67.50] [height=67.50]
-        RenderSVGPath {rect} at (239,209) size 69x69 [stroke={[type=SOLID] [color=#000000] [dash array={3.14, 8.00}]}] [fill={[type=SOLID] [color=#FFD700]}] [x=240.00] [y=210.00] [width=67.50] [height=67.50]
+        RenderSVGPath {rect} at (169,209) size 69x69 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFA500]}] [x=170.00] [y=210.00] [width=67.50] [height=67.50]
+        RenderSVGPath {rect} at (239,209) size 69x69 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FFD700]}] [x=240.00] [y=210.00] [width=67.50] [height=67.50]
         RenderSVGPath {rect} at (309,209) size 69x69 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#800080]}] [x=310.00] [y=210.00] [width=67.50] [height=67.50]
       RenderSVGContainer {g} at (379,209) size 69x69
         RenderSVGPath {rect} at (379,209) size 69x69 [stroke={[type=SOLID] [color=#000000]}] [fill={[type=SOLID] [color=#FF0000]}] [x=380.00] [y=210.00] [width=67.50] [height=67.50]
