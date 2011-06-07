@@ -41,31 +41,19 @@
 #include <WebCore/EditorClient.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/IdentityTransformOperation.h>
 #include <WebCore/IntRect.h>
 #include <WebCore/KeyboardEvent.h>
 #include <WebCore/Length.h>
-#include <WebCore/Matrix3DTransformOperation.h>
-#include <WebCore/MatrixTransformOperation.h>
-#include <WebCore/PerspectiveTransformOperation.h>
 #include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
-#include <WebCore/RotateTransformOperation.h>
-#include <WebCore/ScaleTransformOperation.h>
-#include <WebCore/SkewTransformOperation.h>
 #include <WebCore/TextCheckerClient.h>
 #include <WebCore/TimingFunction.h>
-#include <WebCore/TransformOperation.h>
-#include <WebCore/TransformOperations.h>
 #include <WebCore/TransformationMatrix.h>
-#include <WebCore/TranslateTransformOperation.h>
 #include <WebCore/ViewportArguments.h>
 #include <WebCore/WindowFeatures.h>
 #include <limits>
-
-
 
 
 namespace CoreIPC {
@@ -80,14 +68,6 @@ template<> struct ArgumentCoder<WebCore::FloatSize> : SimpleArgumentCoder<WebCor
 template<> struct ArgumentCoder<WebCore::FloatRect> : SimpleArgumentCoder<WebCore::FloatRect> { };
 template<> struct ArgumentCoder<WebCore::Length> : SimpleArgumentCoder<WebCore::Length> { };
 template<> struct ArgumentCoder<WebCore::TransformationMatrix> : SimpleArgumentCoder<WebCore::TransformationMatrix> { };
-
-template<> struct ArgumentCoder<WebCore::MatrixTransformOperation> : SimpleArgumentCoder<WebCore::MatrixTransformOperation> { };
-template<> struct ArgumentCoder<WebCore::Matrix3DTransformOperation> : SimpleArgumentCoder<WebCore::Matrix3DTransformOperation> { };
-template<> struct ArgumentCoder<WebCore::PerspectiveTransformOperation> : SimpleArgumentCoder<WebCore::PerspectiveTransformOperation> { };
-template<> struct ArgumentCoder<WebCore::RotateTransformOperation> : SimpleArgumentCoder<WebCore::RotateTransformOperation> { };
-template<> struct ArgumentCoder<WebCore::ScaleTransformOperation> : SimpleArgumentCoder<WebCore::ScaleTransformOperation> { };
-template<> struct ArgumentCoder<WebCore::SkewTransformOperation> : SimpleArgumentCoder<WebCore::SkewTransformOperation> { };
-template<> struct ArgumentCoder<WebCore::TranslateTransformOperation> : SimpleArgumentCoder<WebCore::TranslateTransformOperation> { };
 
 template<> struct ArgumentCoder<WebCore::MimeClassInfo> {
     static void encode(ArgumentEncoder* encoder, const WebCore::MimeClassInfo& mimeClassInfo)
@@ -579,160 +559,6 @@ template<> struct ArgumentCoder<RefPtr<WebCore::TimingFunction> > {
         return false;
     }
 };
-
-template<> struct ArgumentCoder<RefPtr<WebCore::TransformOperation> > {
-    template<class T>
-    static bool decodeOperation(ArgumentDecoder* decoder, RefPtr<WebCore::TransformOperation>& operation, PassRefPtr<T> newOperation)
-    {
-        if (!ArgumentCoder<T>::decode(decoder, *newOperation.get()))
-            return false;
-        operation = newOperation.get();
-        return true;
-    }
-
-    template<class T>
-    static void encodeOperation(ArgumentEncoder* encoder, const WebCore::TransformOperation* operation)
-    {
-        ArgumentCoder<T>::encode(encoder, *static_cast<const T*>(operation));
-    }
-
-    static void encode(ArgumentEncoder* encoder, const RefPtr<WebCore::TransformOperation>& operation)
-    {
-        // We don't want to encode null-references.
-        ASSERT(operation);
-
-        WebCore::TransformOperation::OperationType type = operation->getOperationType();
-        encoder->encodeInt32(type);
-        switch (type) {
-        case WebCore::TransformOperation::SCALE:
-        case WebCore::TransformOperation::SCALE_X:
-        case WebCore::TransformOperation::SCALE_Y:
-        case WebCore::TransformOperation::SCALE_Z:
-        case WebCore::TransformOperation::SCALE_3D:
-            encodeOperation<WebCore::ScaleTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::TRANSLATE:
-        case WebCore::TransformOperation::TRANSLATE_X:
-        case WebCore::TransformOperation::TRANSLATE_Y:
-        case WebCore::TransformOperation::TRANSLATE_Z:
-        case WebCore::TransformOperation::TRANSLATE_3D:
-            encodeOperation<WebCore::TranslateTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::ROTATE:
-        case WebCore::TransformOperation::ROTATE_X:
-        case WebCore::TransformOperation::ROTATE_Y:
-        case WebCore::TransformOperation::ROTATE_3D:
-            encodeOperation<WebCore::RotateTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::SKEW:
-        case WebCore::TransformOperation::SKEW_X:
-        case WebCore::TransformOperation::SKEW_Y:
-            encodeOperation<WebCore::SkewTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::MATRIX:
-            encodeOperation<WebCore::MatrixTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::MATRIX_3D:
-            encodeOperation<WebCore::Matrix3DTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::PERSPECTIVE:
-            encodeOperation<WebCore::PerspectiveTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::IDENTITY:
-        case WebCore::TransformOperation::NONE:
-            return;
-        }
-    }
-
-    static bool decode(ArgumentDecoder* decoder, RefPtr<WebCore::TransformOperation>& operation)
-    {
-        WebCore::TransformOperation::OperationType type;
-        int typeInt;
-        if (!decoder->decodeInt32(typeInt))
-            return false;
-        type = static_cast<WebCore::TransformOperation::OperationType>(typeInt);
-        switch (type) {
-        case WebCore::TransformOperation::SCALE:
-        case WebCore::TransformOperation::SCALE_X:
-        case WebCore::TransformOperation::SCALE_Y:
-        case WebCore::TransformOperation::SCALE_Z:
-        case WebCore::TransformOperation::SCALE_3D:
-            return decodeOperation<WebCore::ScaleTransformOperation>(decoder, operation, WebCore::ScaleTransformOperation::create(1.0, 1.0, type));
-
-        case WebCore::TransformOperation::TRANSLATE:
-        case WebCore::TransformOperation::TRANSLATE_X:
-        case WebCore::TransformOperation::TRANSLATE_Y:
-        case WebCore::TransformOperation::TRANSLATE_Z:
-        case WebCore::TransformOperation::TRANSLATE_3D:
-            return decodeOperation<WebCore::TranslateTransformOperation>(decoder, operation, WebCore::TranslateTransformOperation::create(WebCore::Length(0, WebCore::Fixed), WebCore::Length(0, WebCore::Fixed), type));
-
-        case WebCore::TransformOperation::ROTATE:
-        case WebCore::TransformOperation::ROTATE_X:
-        case WebCore::TransformOperation::ROTATE_Y:
-        case WebCore::TransformOperation::ROTATE_3D:
-            return decodeOperation<WebCore::RotateTransformOperation>(decoder, operation, WebCore::RotateTransformOperation::create(0.0, type));
-
-        case WebCore::TransformOperation::SKEW:
-        case WebCore::TransformOperation::SKEW_X:
-        case WebCore::TransformOperation::SKEW_Y:
-            return decodeOperation<WebCore::SkewTransformOperation>(decoder, operation, WebCore::SkewTransformOperation::create(0.0, 0.0, type));
-
-        case WebCore::TransformOperation::MATRIX:
-            return decodeOperation<WebCore::MatrixTransformOperation>(decoder, operation, WebCore::MatrixTransformOperation::create(WebCore::TransformationMatrix()));
-
-        case WebCore::TransformOperation::MATRIX_3D:
-            return decodeOperation<WebCore::Matrix3DTransformOperation>(decoder, operation, WebCore::Matrix3DTransformOperation::create(WebCore::TransformationMatrix()));
-
-        case WebCore::TransformOperation::PERSPECTIVE:
-            return decodeOperation<WebCore::PerspectiveTransformOperation>(decoder, operation, WebCore::PerspectiveTransformOperation::create(WebCore::Length(0, WebCore::Fixed)));
-
-        case WebCore::TransformOperation::IDENTITY:
-        case WebCore::TransformOperation::NONE:
-            operation = WebCore::IdentityTransformOperation::create();
-            return true;
-        }
-
-        return false;
-    }
-};
-
-template<> struct ArgumentCoder<WebCore::TransformOperations> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::TransformOperations& operations)
-    {
-        WTF::Vector<RefPtr<WebCore::TransformOperation> > operationsVector = operations.operations();
-        int size = operationsVector.size();
-        encoder->encodeInt32(size);
-        for (int i = 0; i < size; ++i)
-            ArgumentCoder<RefPtr<WebCore::TransformOperation> >::encode(encoder, operationsVector[i]);
-    }
-
-    static bool decode(ArgumentDecoder* decoder, WebCore::TransformOperations& operations)
-    {
-        int size;
-        if (!decoder->decodeInt32(size))
-            return false;
-
-        WTF::Vector<RefPtr<WebCore::TransformOperation> >& operationVector = operations.operations();
-        operationVector.clear();
-        operationVector.resize(size);
-        for (int i = 0; i < size; ++i) {
-            RefPtr<WebCore::TransformOperation> operation;
-            if (!ArgumentCoder<RefPtr<WebCore::TransformOperation> >::decode(decoder, operation))
-                return false;
-            operationVector[i] = operation;
-        }
-
-        return true;
-    }
-};
-
 
 template<> struct ArgumentCoder<WebCore::Animation> {
     static bool encodeBoolAndReturnValue(ArgumentEncoder* encoder, bool value)
