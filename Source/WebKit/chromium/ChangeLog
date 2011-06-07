@@ -1,3 +1,16 @@
+2011-06-07  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r88254, r88262, and r88268.
+        http://trac.webkit.org/changeset/88254
+        http://trac.webkit.org/changeset/88262
+        http://trac.webkit.org/changeset/88268
+        https://bugs.webkit.org/show_bug.cgi?id=62234
+
+        I fail at changing features.gypi (Requested by abarth on
+        #webkit).
+
+        * features.gypi:
+
 2011-06-07  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Tony Chang.
