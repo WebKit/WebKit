@@ -1,3 +1,11 @@
+2011-06-07  Vangelis Kokkevis  <vangelis@chromium.org>
+
+        Unreviewed.  Test expectations fix.
+
+        [chromium] Fixing test expectations error for chromium-gpu.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-07  Young Han Lee  <joybro@company100.net>
 
         Reviewed by Kenneth Rohde Christiansen.
