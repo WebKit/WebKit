@@ -1,3 +1,13 @@
+2011-06-07  Adam Barth  <abarth@webkit.org>
+
+        Rubber-stamped by Eric Seidel.
+
+        Enable tests on the mac-ews
+
+        When we bring the mac-ews back up, we're going to try running tests!
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+
 2011-06-07  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by David Levin.
