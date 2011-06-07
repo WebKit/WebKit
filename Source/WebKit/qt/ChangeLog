@@ -1,3 +1,21 @@
+2011-06-07  Aravind Akella  <aravind.akella@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt][Symbian] API test failure qdeclarativewebview
+        https://bugs.webkit.org/show_bug.cgi?id=59481
+
+        QML files cannot be loaded on Symbian due to difference 
+        in capabilities between qmlwebkitplugin.dll and Qtwebkit.dll.  
+        A PlatSec error that Qtwebkit.dll has "DRM AllFiles" capabilities 
+        missing is observed when dynamically loading the QML plugin. 
+
+        * declarative/declarative.pro: Match capabilities in QtWebKit.pro.
+        * symbian/platformplugin/platformplugin.pro: Match capabilities with the other 2 DLLs. 
+        Also remove TARGET.VID from platformplugin, as it's not used in any other Qt WebKit DLL,
+        and causes build warnings about undefined VENDOR_VID. 
+        * tests/tests.pri: Add WriteDeviceData capability for API tests. 
+
 2011-06-04  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

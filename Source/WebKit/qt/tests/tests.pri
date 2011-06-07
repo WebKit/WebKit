@@ -26,7 +26,7 @@ contains(QT_CONFIG, declarative): QT += declarative
 QMAKE_RPATHDIR = $$OUTPUT_DIR/lib $$QMAKE_RPATHDIR
 
 symbian {
-    TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices
+    TARGET.CAPABILITY = ReadUserData WriteUserData NetworkServices WriteDeviceData
 }
 
 # Use the Qt Mobile theme if it is in the CONFIG

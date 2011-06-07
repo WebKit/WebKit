@@ -48,11 +48,14 @@ HEADERS += \
 DESTDIR = $$OUTPUT_DIR/plugins/$$TARGETPATH
 
 symbian: {
-# EPOCALLOWDLLDATA have to set true because Qt macros has initialised global data
     TARGET.EPOCALLOWDLLDATA=1
-    TARGET.CAPABILITY = All -Tcb
+    CONFIG(production) {
+        TARGET.CAPABILITY = All -Tcb
+    } else {
+        TARGET.CAPABILITY = All -Tcb -DRM -AllFiles
+    }
+
     TARGET.UID3 = 0x2002E674
-    TARGET.VID = VID_DEFAULT
     TARGET = $$TARGET$${QT_LIBINFIX}
 
     LIBS += -lcone -leikcore -lavkon

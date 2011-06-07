@@ -28,7 +28,11 @@ wince*:LIBS += $$QMAKE_LIBS_GUI
 
 symbian: {
     TARGET.EPOCALLOWDLLDATA=1
-    TARGET.CAPABILITY = All -Tcb
+    CONFIG(production) {
+        TARGET.CAPABILITY = All -Tcb
+    } else {
+        TARGET.CAPABILITY = All -Tcb -DRM -AllFiles
+    }
     load(armcc_warnings)
     TARGET = $$TARGET$${QT_LIBINFIX}
 }
