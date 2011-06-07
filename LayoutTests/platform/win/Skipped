@@ -1289,6 +1289,7 @@ fast/dom/HTMLProgressElement/progress-clone.html
 fast/dom/shadow
 fast/html/clone-keygen.html
 fast/html/clone-range.html
+fast/html/details-clone.html
 inspector/elements/shadow-dom.html
 media/audio-controls-do-not-fade-out.html
 media/video-controls-visible-audio-only.html

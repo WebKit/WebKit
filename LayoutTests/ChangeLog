@@ -1,3 +1,9 @@
+2011-06-07  MORITA Hajime <morrita@google.com>
+
+        Unreviewed Skipped entry addition following r88225.
+
+        * platform/win/Skipped:
+
 2011-06-07  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r88212 and r88219.
