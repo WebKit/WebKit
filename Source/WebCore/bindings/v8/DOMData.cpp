@@ -30,16 +30,17 @@
 
 #include "config.h"
 #include "DOMData.h"
-#include "V8IsolatedContext.h"
+
+#include "ChildThreadDOMData.h"
+#include "MainThreadDOMData.h"
 #include "WebGLContextAttributes.h"
 #include "WebGLUniformLocation.h"
 
 namespace WebCore {
 
 DOMData::DOMData()
-    : m_defaultStore(this)
+    : m_owningThread(WTF::currentThread())
 {
-    ASSERT(WTF::isMainThread());
 }
 
 DOMData::~DOMData()
@@ -48,28 +49,16 @@ DOMData::~DOMData()
 
 DOMData* DOMData::getCurrent()
 {
-    ASSERT(WTF::isMainThread());
-    DEFINE_STATIC_LOCAL(DOMData, mainThreadDOMData, ());
-    return &mainThreadDOMData;
-}
+    if (WTF::isMainThread())
+        return MainThreadDOMData::getCurrent();
 
-DOMDataStore& DOMData::getMainThreadStore()
-{
-    // This is broken out as a separate non-virtual method from getStore()
-    // so that it can be inlined by getCurrentMainThreadStore, which is
-    // a hot spot in Dromaeo DOM tests.
-    ASSERT(WTF::isMainThread());
-    V8IsolatedContext* context = V8IsolatedContext::getEntered();
-    if (UNLIKELY(context != 0))
-        return *context->world()->domDataStore();
-    return m_defaultStore;
+    DEFINE_STATIC_LOCAL(WTF::ThreadSpecific<ChildThreadDOMData>, childThreadDOMData, ());
+    return childThreadDOMData;
 }
 
 void DOMData::derefObject(WrapperTypeInfo* type, void* domObject)
 {
     type->derefObject(domObject);
 }
-
-
 
 } // namespace WebCore

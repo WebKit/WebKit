@@ -158,23 +158,23 @@ namespace WebCore {
 
     // A map from DOM node to its JS wrapper.
     DOMNodeMapping& getDOMNodeMap();
-    void visitDOMNodes(DOMWrapperMap<Node>::Visitor*);
+    void visitDOMNodesInCurrentThread(DOMWrapperMap<Node>::Visitor*);
 
     // A map from a DOM object (non-node) to its JS wrapper. This map does not contain the DOM objects which can have pending activity (active dom objects).
     DOMWrapperMap<void>& getDOMObjectMap();
-    void visitDOMObjects(DOMWrapperMap<void>::Visitor*);
+    void visitDOMObjectsInCurrentThread(DOMWrapperMap<void>::Visitor*);
 
     // A map from a DOM object to its JS wrapper for DOM objects which can have pending activity.
     DOMWrapperMap<void>& getActiveDOMObjectMap();
-    void visitActiveDOMObjects(DOMWrapperMap<void>::Visitor*);
+    void visitActiveDOMObjectsInCurrentThread(DOMWrapperMap<void>::Visitor*);
 
     // This should be called to remove all DOM objects associated with the current thread when it is tearing down.
-    void removeAllDOMObjects();
+    void removeAllDOMObjectsInCurrentThread();
 
 #if ENABLE(SVG)
     // A map for SVGElementInstances to its JS wrapper.
     DOMWrapperMap<SVGElementInstance>& getDOMSVGElementInstanceMap();
-    void visitSVGElementInstances(DOMWrapperMap<SVGElementInstance>::Visitor*);
+    void visitSVGElementInstancesInCurrentThread(DOMWrapperMap<SVGElementInstance>::Visitor*);
 #endif
 
     void enableFasterDOMStoreAccess();

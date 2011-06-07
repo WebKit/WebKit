@@ -452,18 +452,18 @@ void V8GCController::gcPrologue()
 
 #ifndef NDEBUG
     DOMObjectVisitor domObjectVisitor;
-    visitDOMObjects(&domObjectVisitor);
+    visitDOMObjectsInCurrentThread(&domObjectVisitor);
 #endif
 
     // Run through all objects with possible pending activity making their
     // wrappers non weak if there is pending activity.
     GCPrologueVisitor prologueVisitor;
-    visitActiveDOMObjects(&prologueVisitor);
+    visitActiveDOMObjectsInCurrentThread(&prologueVisitor);
 
     // Create object groups.
     GrouperVisitor grouperVisitor;
-    visitDOMNodes(&grouperVisitor);
-    visitDOMObjects(&grouperVisitor);
+    visitDOMNodesInCurrentThread(&grouperVisitor);
+    visitDOMObjectsInCurrentThread(&grouperVisitor);
     grouperVisitor.applyGrouping();
 
     // Clean single element cache for string conversions.
@@ -529,17 +529,17 @@ void V8GCController::gcEpilogue()
     // Run through all objects with pending activity making their wrappers weak
     // again.
     GCEpilogueVisitor epilogueVisitor;
-    visitActiveDOMObjects(&epilogueVisitor);
+    visitActiveDOMObjectsInCurrentThread(&epilogueVisitor);
 
     workingSetEstimateMB = getActualMemoryUsageInMB();
 
 #ifndef NDEBUG
     // Check all survivals are weak.
     DOMObjectVisitor domObjectVisitor;
-    visitDOMObjects(&domObjectVisitor);
+    visitDOMObjectsInCurrentThread(&domObjectVisitor);
 
     EnsureWeakDOMNodeVisitor weakDOMNodeVisitor;
-    visitDOMNodes(&weakDOMNodeVisitor);
+    visitDOMNodesInCurrentThread(&weakDOMNodeVisitor);
 
     enumerateGlobalHandles();
 #endif
