@@ -1,3 +1,17 @@
+2011-06-06  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Incorrect rounding of color values during transitions
+        https://bugs.webkit.org/show_bug.cgi?id=62141
+        
+        When blending integers, round to the nearest integer, instead of always rounding down.
+
+        Test: transitions/color-transition-rounding.html
+
+        * page/animation/AnimationBase.cpp:
+        (WebCore::blendFunc):
+
 2011-06-06  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r88202.

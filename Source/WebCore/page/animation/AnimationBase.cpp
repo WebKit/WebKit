@@ -79,7 +79,7 @@ static inline double solveStepsFunction(int numSteps, bool stepAtStart, double t
 
 static inline int blendFunc(const AnimationBase*, int from, int to, double progress)
 {  
-    return int(from + (to - from) * progress);
+    return lround(from + (to - from) * progress);
 }
 
 static inline double blendFunc(const AnimationBase*, double from, double to, double progress)
