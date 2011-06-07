@@ -22,37 +22,54 @@ function modifyParsedAttributes()
 
 function test()
 {
-    var sniffCount = 0;
+    InspectorTest.runTestSuite([
 
-    InspectorTest.selectNodeWithId("container");
-    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", selectCallback);
+        function testInit(next)
+        {
+            InspectorTest.selectNodeWithId("container", next);
+        },
 
-    function selectCallback()
-    {
-        InspectorTest.evaluateInPage("modifyStyleAttribute()");
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", snifferCallback, true);
-    }
+        function testSetStyleAttribute(next)
+        {
+            var updateCount = 0;
+            function callback()
+            {
+                // Expect two updates while setting attribute.
+                if (++updateCount === 2) {
+                    dumpAttributeAndStyles();
+                    next();
+                }
+            }
+            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", callback, true);
+            InspectorTest.evaluateInPage("modifyStyleAttribute()");
+        },
 
-    function snifferCallback()
-    {
-        switch (++sniffCount) {
-            case 1:
-                InspectorTest.addResult("Modified \"style\" attribute");
+        function testSetStyleCSSText(next)
+        {
+            var updateCount = 0;
+            function callback()
+            {
+                // Expect two updates while setting css text.
+                if (++updateCount === 2) {
+                    dumpAttributeAndStyles();
+                    next();
+                }
+            }
+            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", callback, true);
+            InspectorTest.evaluateInPage("modifyCSSText()", callback);
+        },
+
+        function testSetViaParsedAttributes(next)
+        {
+            function callback()
+            {
                 dumpAttributeAndStyles();
-                InspectorTest.evaluateInPage("modifyCSSText()");
-                break;
-            case 2:
-                InspectorTest.addResult("Modified cssText");
-                dumpAttributeAndStyles();
-                InspectorTest.evaluateInPage("modifyParsedAttributes()");
-                break;
-            case 3:
-                InspectorTest.addResult("Modified parsed attributes");
-                dumpAttributeAndStyles();
-                InspectorTest.completeTest();
-                break;
+                next();
+            }
+            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", callback);
+            InspectorTest.evaluateInPage("modifyParsedAttributes()");
         }
-    }
+    ]);
 
     function dumpAttributeAndStyles()
     {
