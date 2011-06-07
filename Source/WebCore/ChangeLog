@@ -1,3 +1,15 @@
+2011-06-07  Alok Priyadarshi  <alokp@chromium.org>
+
+        Reviewed by Stephen White.
+
+        [chromium] PlatformContextSkia leaks SkDeviceFactory
+        https://bugs.webkit.org/show_bug.cgi?id=62163
+
+        Valgrind tests should have caught this.
+
+        * platform/graphics/skia/PlatformContextSkia.cpp:
+        (WebCore::PlatformContextSkia::setSharedGraphicsContext3D):
+
 2011-06-07  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

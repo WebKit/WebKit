@@ -750,7 +750,7 @@ void PlatformContextSkia::setSharedGraphicsContext3D(SharedGraphicsContext3D* co
             SkDevice* device = factory->newDevice(m_canvas, SkBitmap::kARGB_8888_Config, drawingBuffer->size().width(), drawingBuffer->size().height(), false, false);
             // FIXME: This should use a smart pointer.
             m_canvas->setDevice(device)->unref();
-            m_canvas->setDeviceFactory(factory);
+            m_canvas->setDeviceFactory(factory)->unref();
         } else
             m_accelerationMode = GPU;
     } else {
