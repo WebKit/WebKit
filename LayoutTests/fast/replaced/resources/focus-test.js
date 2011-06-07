@@ -23,6 +23,8 @@ element.onfocus = function() { setTimeout(checkNoFocusRing, 50, element, event) 
 
 if (window.layoutTestController) {
     eventSender.mouseMoveTo(element.offsetLeft + 5, element.offsetTop + 5);
+    eventSender.leapForward(200);
     eventSender.mouseDown();
+    eventSender.leapForward(200);
     eventSender.mouseUp();
 }

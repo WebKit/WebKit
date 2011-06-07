@@ -1,3 +1,9 @@
+2011-06-06  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed attempt to fix flakiness on Snow Leopard.
+        
+        * fast/replaced/resources/focus-test.js:
+
 2011-06-06  James Kozianski  <koz@chromium.org>
 
         [Chromium] Unreviewed. Rebaseline outline-replaced-elements windows/linux image results.
