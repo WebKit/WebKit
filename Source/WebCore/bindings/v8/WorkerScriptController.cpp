@@ -58,7 +58,7 @@ WorkerScriptController::WorkerScriptController(WorkerContext* workerContext)
 
 WorkerScriptController::~WorkerScriptController()
 {
-    removeAllDOMObjectsInCurrentThread();
+    removeAllDOMObjects();
 }
 
 ScriptValue WorkerScriptController::evaluate(const ScriptSourceCode& sourceCode)

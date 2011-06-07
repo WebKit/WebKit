@@ -1,3 +1,47 @@
+2011-06-06  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62164
+        Remove "multi-threaded" logic in V8 DOMData, DOMDataStore and friends
+        This functionality is untested and unused:
+        This is an old code from Lockers-based implementation of WebWorkers in
+        V8 bindings, to make sure that DOM objects are released on the right thread
+        even though GC could have happened on any thread. It is currently unused (since
+        current model is one worker per process) and is being removed because new implementation
+        of WebWorkers will be using V8 isolates.
+
+        * WebCore.gypi:
+        * bindings/v8/ChildThreadDOMData.cpp: Removed.
+        * bindings/v8/ChildThreadDOMData.h: Removed.
+        * bindings/v8/DOMData.cpp:
+        (WebCore::DOMData::DOMData):
+        (WebCore::DOMData::getCurrent):
+        (WebCore::DOMData::getMainThreadStore):
+        * bindings/v8/DOMData.h:
+        (WebCore::DOMData::getStore):
+        (WebCore::DOMData::getCurrentMainThreadStore):
+        (WebCore::DOMData::handleWeakObject):
+        * bindings/v8/DOMDataStore.cpp:
+        (WebCore::DOMDataStore::DOMDataStore):
+        (WebCore::DOMDataStore::~DOMDataStore):
+        (WebCore::DOMDataStore::weakNodeCallback):
+        * bindings/v8/DOMDataStore.h:
+        * bindings/v8/MainThreadDOMData.cpp: Removed.
+        * bindings/v8/MainThreadDOMData.h: Removed.
+        * bindings/v8/V8DOMMap.cpp:
+        (WebCore::getDOMDataStore):
+        (WebCore::visitDOMNodes):
+        (WebCore::visitDOMObjects):
+        (WebCore::visitActiveDOMObjects):
+        (WebCore::visitDOMSVGElementInstances):
+        * bindings/v8/V8DOMMap.h:
+        * bindings/v8/V8GCController.cpp:
+        (WebCore::V8GCController::gcPrologue):
+        (WebCore::V8GCController::gcEpilogue):
+        * bindings/v8/WorkerScriptController.cpp:
+        (WebCore::WorkerScriptController::~WorkerScriptController):
+
 2011-06-06  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Adam Barth.

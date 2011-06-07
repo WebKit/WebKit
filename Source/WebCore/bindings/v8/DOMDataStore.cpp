@@ -61,26 +61,9 @@ namespace WebCore {
 // object groups in GC prologue callbacks. The mark-compact
 // collector will remove these groups after each GC.
 //
-// DOM objects should be deref-ed from the owning thread, not the GC thread
-// that does not own them. In V8, GC can kick in from any thread. To ensure
-// that DOM objects are always deref-ed from the owning thread when running
-// V8 in multi-threading environment, we do following:
-// 1. Maintain a thread specific DOM wrapper map for each object map.
-//    (We're using TLS support from WTF instead of base since V8Bindings
-//     does not depend on base. We further assume that all child threads
-//     running V8 instances are created by WTF and thus a destructor will
-//     be called to clean up all thread specific data.)
-// 2. When GC happens:
-//    2.1. If the dead object is in GC thread's map, remove the JS reference
-//         and deref the DOM object.
-//    2.2. Otherwise, go through all thread maps to find the owning thread.
-//         Remove the JS reference from the owning thread's map and move the
-//         DOM object to a delayed queue. Post a task to the owning thread
-//         to have it deref-ed from the owning thread at later time.
-// 3. When a thread is tearing down, invoke a cleanup routine to go through
-//    all objects in the delayed queue and the thread map and deref all of
-//    them.
-
+// DOM objects are accessed and deref-ed from the main thread. All V8 accesses
+// to DOM objects happen on the main thread.
+// When GC happens, we remove the JS reference and deref the DOM object.
 
 DOMDataStore::DOMDataStore(DOMData* domData)
     : m_domNodeMap(0)
@@ -91,13 +74,13 @@ DOMDataStore::DOMDataStore(DOMData* domData)
 #endif
     , m_domData(domData)
 {
-    WTF::MutexLocker locker(DOMDataStore::allStoresMutex());
+    ASSERT(WTF::isMainThread());
     DOMDataStore::allStores().append(this);
 }
 
 DOMDataStore::~DOMDataStore()
 {
-    WTF::MutexLocker locker(DOMDataStore::allStoresMutex());
+    ASSERT(WTF::isMainThread());
     DOMDataStore::allStores().remove(DOMDataStore::allStores().find(this));
 }
 
@@ -105,12 +88,6 @@ DOMDataList& DOMDataStore::allStores()
 {
   DEFINE_STATIC_LOCAL(DOMDataList, staticDOMDataList, ());
   return staticDOMDataList;
-}
-
-WTF::Mutex& DOMDataStore::allStoresMutex()
-{
-    DEFINE_STATIC_LOCAL(WTF::Mutex, staticDOMDataListMutex, ());
-    return staticDOMDataListMutex;
 }
 
 void* DOMDataStore::getDOMWrapperMap(DOMWrapperMapType type)
@@ -156,12 +133,10 @@ void DOMDataStore::weakNodeCallback(v8::Persistent<v8::Value> value, void* domOb
     // Node wrappers must be JS objects.
     v8::Persistent<v8::Object> v8Object = v8::Persistent<v8::Object>::Cast(value);
 
-    WTF::MutexLocker locker(DOMDataStore::allStoresMutex());
     DOMDataList& list = DOMDataStore::allStores();
     for (size_t i = 0; i < list.size(); ++i) {
         DOMDataStore* store = list[i];
         if (store->domNodeMap().removeIfPresent(node, v8Object)) {
-            ASSERT(store->domData()->owningThread() == WTF::currentThread());
             node->deref(); // Nobody overrides Node::deref so it's safe
             return; // There might be at most one wrapper for the node in world's maps
         }

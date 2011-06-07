@@ -32,6 +32,7 @@
 #define DOMData_h
 
 #include "DOMDataStore.h"
+#include "StaticDOMDataStore.h"
 #include "V8DOMWrapper.h"
 
 namespace WebCore {
@@ -50,7 +51,7 @@ namespace WebCore {
         virtual ~DOMData();
 
         static DOMData* getCurrent();
-        virtual DOMDataStore& getStore() = 0;
+        DOMDataStore& getStore() { return getMainThreadStore(); }
 
         template<typename T>
         static void handleWeakObject(DOMDataStore::DOMWrapperMapType, v8::Persistent<v8::Object>, T* domObject);
@@ -58,7 +59,7 @@ namespace WebCore {
         template<typename T>
         static void removeObjectsFromWrapperMap(DOMDataStore* store, AbstractWeakReferenceMap<T, v8::Object>& domMap);
 
-        ThreadIdentifier owningThread() const { return m_owningThread; }
+        static DOMDataStore& getCurrentMainThreadStore() { return getCurrent()->getMainThreadStore(); }
 
     private:
         static void derefObject(WrapperTypeInfo* type, void* domObject);
@@ -74,18 +75,19 @@ namespace WebCore {
             }
         };
 
-        ThreadIdentifier m_owningThread;
+        DOMDataStore& getMainThreadStore();
+        StaticDOMDataStore m_defaultStore;
     };
 
     template<typename T>
     void DOMData::handleWeakObject(DOMDataStore::DOMWrapperMapType mapType, v8::Persistent<v8::Object> v8Object, T* domObject)
     {
+        ASSERT(WTF::isMainThread());
         WrapperTypeInfo* type = V8DOMWrapper::domWrapperType(v8Object);
         DOMDataList& list = DOMDataStore::allStores();
         bool found = false;
         for (size_t i = 0; i < list.size(); ++i) {
             DOMDataStore* store = list[i];
-            ASSERT(store->domData()->owningThread() == WTF::currentThread());
 
             DOMWrapperMap<T>* domMap = static_cast<DOMWrapperMap<T>*>(store->getDOMWrapperMap(mapType));
             if (domMap->removeIfPresent(domObject, v8Object)) {
