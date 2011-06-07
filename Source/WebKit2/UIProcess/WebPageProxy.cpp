@@ -178,6 +178,7 @@ WebPageProxy::WebPageProxy(PageClient* pageClient, PassRefPtr<WebProcessProxy> p
     , m_mainFrameHasVerticalScrollbar(false)
     , m_mainFrameIsPinnedToLeftSide(false)
     , m_mainFrameIsPinnedToRightSide(false)
+    , m_renderTreeSize(0)
 {
 #ifndef NDEBUG
     webPageProxyCounter.increment();

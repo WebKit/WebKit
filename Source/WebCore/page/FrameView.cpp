@@ -2048,6 +2048,8 @@ void FrameView::performPostLayoutTasks()
         }
     }
 
+    m_frame->loader()->client()->dispatchDidLayout();
+
     RenderView* root = m_frame->contentRenderer();
 
     root->updateWidgetPositions();
@@ -2069,11 +2071,6 @@ void FrameView::performPostLayoutTasks()
         m_lastZoomFactor = currentZoomFactor;
         if (resized)
             m_frame->eventHandler()->sendResizeEvent();
-
-        if (Page* page = m_frame->page()) {
-            if (m_frame->page()->mainFrame() == m_frame)
-                page->chrome()->client()->setRenderTreeSize(m_frame->document()->renderArena()->totalRenderArenaSize());
-        }
     }
 }
 

@@ -815,9 +815,4 @@ void WebChromeClient::numWheelEventHandlersChanged(unsigned count)
     m_page->send(Messages::WebPageProxy::NumWheelEventHandlersChanged(count));
 }
 
-void WebChromeClient::setRenderTreeSize(size_t treeSize)
-{
-    m_page->send(Messages::WebPageProxy::SetRenderTreeSize(treeSize));
-}
-
 } // namespace WebKit

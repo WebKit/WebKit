@@ -1,3 +1,14 @@
+2011-06-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Remove repeated IPC traffic from SetRenderTreeSize message
+        https://bugs.webkit.org/show_bug.cgi?id=62244
+
+        * WebKitTestRunner/InjectedBundle/InjectedBundlePage.cpp:
+        (WTR::InjectedBundlePage::InjectedBundlePage):
+        Add stub for didLayoutForFrame.
+
 2011-06-07  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

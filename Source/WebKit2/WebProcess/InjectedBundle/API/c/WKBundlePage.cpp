@@ -281,3 +281,8 @@ void WKBundlePageSimulateMouseMotion(WKBundlePageRef page, WKPoint position, dou
 {
     toImpl(page)->simulateMouseMotion(toIntPoint(position), time);
 }
+
+uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef pageRef)
+{
+    return toImpl(pageRef)->renderTreeSize();
+}

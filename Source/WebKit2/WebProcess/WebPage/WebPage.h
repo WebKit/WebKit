@@ -222,6 +222,8 @@ public:
     EditorState editorState() const;
 
     String renderTreeExternalRepresentation() const;
+    uint64_t renderTreeSize() const;
+
     void executeEditingCommand(const String& commandName, const String& argument);
     bool isEditingCommandEnabled(const String& commandName);
     void clearMainFrameName();

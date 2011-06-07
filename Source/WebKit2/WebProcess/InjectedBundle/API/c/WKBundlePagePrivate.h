@@ -53,6 +53,8 @@ WK_EXPORT void WKBundlePageSimulateMouseDown(WKBundlePageRef page, int button, W
 WK_EXPORT void WKBundlePageSimulateMouseUp(WKBundlePageRef page, int button, WKPoint position, int clickCount, WKEventModifiers modifiers, double time);
 WK_EXPORT void WKBundlePageSimulateMouseMotion(WKBundlePageRef page, WKPoint position, double time);
 
+WK_EXPORT uint64_t WKBundlePageGetRenderTreeSize(WKBundlePageRef page);
+
 #ifdef __cplusplus
 }
 #endif

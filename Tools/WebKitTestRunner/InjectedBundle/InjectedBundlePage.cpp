@@ -178,15 +178,16 @@ InjectedBundlePage::InjectedBundlePage(WKBundlePageRef page)
         didFailLoadWithErrorForFrame,
         didSameDocumentNavigationForFrame,
         didReceiveTitleForFrame,
-        0,
-        0,
-        0,
+        0, // didFirstLayoutForFrame
+        0, // didFirstVisuallyNonEmptyLayoutForFrame
+        0, // didRemoveFrameFromHierarchy
         didDisplayInsecureContentForFrame,
         didRunInsecureContentForFrame,
         didClearWindowForFrame,
         didCancelClientRedirectForFrame,
         willPerformClientRedirectForFrame,
         didHandleOnloadEventsForFrame,
+        0, // didLayoutForFrame
     };
     WKBundlePageSetPageLoaderClient(m_page, &loaderClient);
 

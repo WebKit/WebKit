@@ -126,26 +126,6 @@ void InjectedBundlePageLoaderClient::didReceiveTitleForFrame(WebPage* page, cons
     userData = adoptRef(toImpl(userDataToPass));
 }
 
-void InjectedBundlePageLoaderClient::didFirstLayoutForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
-{
-    if (!m_client.didFirstLayoutForFrame)
-        return;
-
-    WKTypeRef userDataToPass = 0;
-    m_client.didFirstLayoutForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
-    userData = adoptRef(toImpl(userDataToPass));
-}
-
-void InjectedBundlePageLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
-{
-    if (!m_client.didFirstVisuallyNonEmptyLayoutForFrame)
-        return;
-
-    WKTypeRef userDataToPass = 0;
-    m_client.didFirstVisuallyNonEmptyLayoutForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
-    userData = adoptRef(toImpl(userDataToPass));
-}
-
 void InjectedBundlePageLoaderClient::didRemoveFrameFromHierarchy(WebPage* page , WebFrame* frame, RefPtr<APIObject>& userData)
 {
     if (!m_client.didRemoveFrameFromHierarchy)
@@ -174,6 +154,35 @@ void InjectedBundlePageLoaderClient::didRunInsecureContentForFrame(WebPage* page
     WKTypeRef userDataToPass = 0;
     m_client.didRunInsecureContentForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
     userData = adoptRef(toImpl(userDataToPass));
+}
+
+void InjectedBundlePageLoaderClient::didFirstLayoutForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
+{
+    if (!m_client.didFirstLayoutForFrame)
+        return;
+
+    WKTypeRef userDataToPass = 0;
+    m_client.didFirstLayoutForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
+}
+
+void InjectedBundlePageLoaderClient::didFirstVisuallyNonEmptyLayoutForFrame(WebPage* page, WebFrame* frame, RefPtr<APIObject>& userData)
+{
+    if (!m_client.didFirstVisuallyNonEmptyLayoutForFrame)
+        return;
+
+    WKTypeRef userDataToPass = 0;
+    m_client.didFirstVisuallyNonEmptyLayoutForFrame(toAPI(page), toAPI(frame), &userDataToPass, m_client.clientInfo);
+    userData = adoptRef(toImpl(userDataToPass));
+}
+
+
+void InjectedBundlePageLoaderClient::didLayoutForFrame(WebPage* page, WebFrame* frame)
+{
+    if (!m_client.didLayoutForFrame)
+        return;
+
+    m_client.didLayoutForFrame(toAPI(page), toAPI(frame), m_client.clientInfo);
 }
 
 void InjectedBundlePageLoaderClient::didClearWindowObjectForFrame(WebPage* page, WebFrame* frame, DOMWrapperWorld* world)

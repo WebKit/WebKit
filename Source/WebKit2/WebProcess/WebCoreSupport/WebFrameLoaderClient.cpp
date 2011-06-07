@@ -555,6 +555,23 @@ void WebFrameLoaderClient::dispatchDidFirstVisuallyNonEmptyLayout()
     webPage->send(Messages::WebPageProxy::DidFirstVisuallyNonEmptyLayoutForFrame(m_frame->frameID(), InjectedBundleUserMessageEncoder(userData.get())));
 }
 
+void WebFrameLoaderClient::dispatchDidLayout()
+{
+    WebPage* webPage = m_frame->page();
+    if (!webPage)
+        return;
+
+    // Notify the bundle client.
+    webPage->injectedBundleLoaderClient().didLayoutForFrame(webPage, m_frame);
+
+    // NOTE: Unlike the other layout notifications, this does not notify the
+    // the UIProcess for every call.
+
+    // FIXME: Remove at the soonest possible time.
+    if (m_frame == m_frame->page()->mainFrame())
+        webPage->send(Messages::WebPageProxy::SetRenderTreeSize(webPage->renderTreeSize()));
+}
+
 Frame* WebFrameLoaderClient::dispatchCreatePage(const NavigationAction& navigationAction)
 {
     WebPage* webPage = m_frame->page();

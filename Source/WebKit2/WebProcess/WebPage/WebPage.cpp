@@ -92,6 +92,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PlatformKeyboardEvent.h>
 #include <WebCore/PrintContext.h>
+#include <WebCore/RenderArena.h>
 #include <WebCore/RenderLayer.h>
 #include <WebCore/RenderTreeAsText.h>
 #include <WebCore/RenderView.h>
@@ -360,6 +361,22 @@ EditorState WebPage::editorState() const
 String WebPage::renderTreeExternalRepresentation() const
 {
     return externalRepresentation(m_mainFrame->coreFrame(), RenderAsTextBehaviorNormal);
+}
+
+uint64_t WebPage::renderTreeSize() const
+{
+    if (!m_page)
+        return 0;
+
+    Frame* mainFrame = m_page->mainFrame();
+    if (!mainFrame)
+        return 0;
+
+    uint64_t size = 0;
+    for (Frame* coreFrame = mainFrame; coreFrame; coreFrame = coreFrame->tree()->traverseNext())
+        size += coreFrame->document()->renderArena()->totalRenderArenaSize();
+
+    return size;
 }
 
 void WebPage::executeEditingCommand(const String& commandName, const String& argument)

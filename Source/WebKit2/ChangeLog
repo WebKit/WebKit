@@ -1,3 +1,38 @@
+2011-06-07  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        Remove repeated IPC traffic from SetRenderTreeSize message
+        https://bugs.webkit.org/show_bug.cgi?id=62244
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.h:
+        Add didLayoutForFrame callback.
+
+        * WebProcess/InjectedBundle/API/c/WKBundlePage.cpp:
+        (WKBundlePageGetRenderTreeSize):
+        * WebProcess/InjectedBundle/API/c/WKBundlePagePrivate.h:
+        Add render tree size getter in WebProcess.
+
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.cpp:
+        (WebKit::InjectedBundlePageLoaderClient::didLayoutForFrame):
+        * WebProcess/InjectedBundle/InjectedBundlePageLoaderClient.h:
+        Added.
+
+        * WebProcess/WebCoreSupport/WebChromeClient.cpp:
+        * WebProcess/WebCoreSupport/WebChromeClient.h:
+        Removed setRenderTreeSize.
+
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp:
+        (WebKit::WebFrameLoaderClient::dispatchDidLayout):
+        * WebProcess/WebCoreSupport/WebFrameLoaderClient.h:
+        Call the new didLayoutForFrame client function.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::renderTreeSize):
+        * WebProcess/WebPage/WebPage.h:
+        Add iterative implementation to compute the total size of the render tree
+        for a page.
+
 2011-06-07  Zalan Bujtas  <zbujtas@gmail.com>
 
         Reviewed by Andreas Kling.

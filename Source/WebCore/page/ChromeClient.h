@@ -328,8 +328,6 @@ namespace WebCore {
         virtual void willRunModalDialogDuringPageDismissal(const DialogType&) const { }
 
         virtual void numWheelEventHandlersChanged(unsigned) = 0;
-
-        virtual void setRenderTreeSize(size_t) { }
         
     protected:
         virtual ~ChromeClient() { }

@@ -89,12 +89,12 @@ typedef void (*WKBundlePageDidFinishDocumentLoadForFrameCallback)(WKBundlePageRe
 typedef void (*WKBundlePageDidFailLoadWithErrorForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKErrorRef error, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidSameDocumentNavigationForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKSameDocumentNavigationType type, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidReceiveTitleForFrameCallback)(WKBundlePageRef page, WKStringRef title, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
-typedef void (*WKBundlePageDidFirstLayoutForFrame)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
-typedef void (*WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrame)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidRemoveFrameFromHierarchyCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidDisplayInsecureContentForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
 typedef void (*WKBundlePageDidRunInsecureContentForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
-// FIXME: There are no WKPage equivilent of these functions yet.
+typedef void (*WKBundlePageDidFirstLayoutForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
+typedef void (*WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKTypeRef* userData, const void *clientInfo);
+typedef void (*WKBundlePageDidLayoutForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void* clientInfo);
 typedef void (*WKBundlePageDidClearWindowObjectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKBundleScriptWorldRef world, const void *clientInfo);
 typedef void (*WKBundlePageDidCancelClientRedirectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, const void *clientInfo);
 typedef void (*WKBundlePageWillPerformClientRedirectForFrameCallback)(WKBundlePageRef page, WKBundleFrameRef frame, WKURLRef url, double delay, double date, const void *clientInfo);
@@ -112,17 +112,16 @@ struct WKBundlePageLoaderClient {
     WKBundlePageDidFailLoadWithErrorForFrameCallback                    didFailLoadWithErrorForFrame;
     WKBundlePageDidSameDocumentNavigationForFrameCallback               didSameDocumentNavigationForFrame;
     WKBundlePageDidReceiveTitleForFrameCallback                         didReceiveTitleForFrame;
-    WKBundlePageDidFirstLayoutForFrame                                  didFirstLayoutForFrame;
-    WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrame                  didFirstVisuallyNonEmptyLayoutForFrame;
+    WKBundlePageDidFirstLayoutForFrameCallback                          didFirstLayoutForFrame;
+    WKBundlePageDidFirstVisuallyNonEmptyLayoutForFrameCallback          didFirstVisuallyNonEmptyLayoutForFrame;
     WKBundlePageDidRemoveFrameFromHierarchyCallback                     didRemoveFrameFromHierarchy;
     WKBundlePageDidDisplayInsecureContentForFrameCallback               didDisplayInsecureContentForFrame;
     WKBundlePageDidRunInsecureContentForFrameCallback                   didRunInsecureContentForFrame;
-
-    // FIXME: There are no WKPage equivilent of these functions yet.
     WKBundlePageDidClearWindowObjectForFrameCallback                    didClearWindowObjectForFrame;
     WKBundlePageDidCancelClientRedirectForFrameCallback                 didCancelClientRedirectForFrame;
     WKBundlePageWillPerformClientRedirectForFrameCallback               willPerformClientRedirectForFrame;
     WKBundlePageDidHandleOnloadEventsForFrameCallback                   didHandleOnloadEventsForFrame;
+    WKBundlePageDidLayoutForFrameCallback                               didLayoutForFrame;
 };
 typedef struct WKBundlePageLoaderClient WKBundlePageLoaderClient;
 
@@ -189,10 +188,10 @@ typedef void (*WKBundlePageDidScrollCallback)(WKBundlePageRef page, const void *
 typedef void (*WKBundlePagePaintCustomOverhangAreaCallback)(WKBundlePageRef page, WKGraphicsContextRef graphicsContext, WKRect horizontalOverhang, WKRect verticalOverhang, WKRect dirtyRect, const void* clientInfo);
 typedef WKStringRef (*WKBundlePageGenerateFileForUploadCallback)(WKBundlePageRef page, WKStringRef originalFilePath, const void* clientInfo);
 typedef bool (*WKBundlePageShouldRubberBandInDirectionCallback)(WKBundlePageRef page, WKScrollDirection scrollDirection, const void* clientInfo);
-typedef WKBundlePageUIElementVisibility (*WKBundlePageStatusBarIsVisible)(WKBundlePageRef page, const void *clientInfo);
-typedef WKBundlePageUIElementVisibility (*WKBundlePageMenuBarIsVisible)(WKBundlePageRef page, const void *clientInfo);
-typedef WKBundlePageUIElementVisibility (*WKBundlePageToolbarsAreVisible)(WKBundlePageRef page, const void *clientInfo);
-    
+typedef WKBundlePageUIElementVisibility (*WKBundlePageStatusBarIsVisibleCallback)(WKBundlePageRef page, const void *clientInfo);
+typedef WKBundlePageUIElementVisibility (*WKBundlePageMenuBarIsVisibleCallback)(WKBundlePageRef page, const void *clientInfo);
+typedef WKBundlePageUIElementVisibility (*WKBundlePageToolbarsAreVisibleCallback)(WKBundlePageRef page, const void *clientInfo);
+
 struct WKBundlePageUIClient {
     int                                                                 version;
     const void *                                                        clientInfo;
@@ -207,9 +206,9 @@ struct WKBundlePageUIClient {
     WKBundlePageGenerateFileForUploadCallback                           shouldGenerateFileForUpload;
     WKBundlePageGenerateFileForUploadCallback                           generateFileForUpload;
     WKBundlePageShouldRubberBandInDirectionCallback                     shouldRubberBandInDirection;
-    WKBundlePageStatusBarIsVisible                                      statusBarIsVisible;
-    WKBundlePageMenuBarIsVisible                                        menuBarIsVisible;
-    WKBundlePageToolbarsAreVisible                                      toolbarsAreVisible;
+    WKBundlePageStatusBarIsVisibleCallback                              statusBarIsVisible;
+    WKBundlePageMenuBarIsVisibleCallback                                menuBarIsVisible;
+    WKBundlePageToolbarsAreVisibleCallback                              toolbarsAreVisible;
 };
 typedef struct WKBundlePageUIClient WKBundlePageUIClient;
 
