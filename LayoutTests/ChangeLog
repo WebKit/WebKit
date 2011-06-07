@@ -1,3 +1,9 @@
+2011-06-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] Unreviewed. Skip failing tests because of unimplemented features.
+
+        * platform/mac-wk2/Skipped:
+
 2011-06-07  Felician Marton  <marton.felician.zoltan@stud.u-szeged.hu>
 
         Reviewed by Nikolas Zimmermann.
