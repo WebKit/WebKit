@@ -3928,7 +3928,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
         // Hit test contents if we don't have columns.
         if (!hasColumns()) {
-            if (hitTestContents(request, result, pointInContainer, scrolledOffset.width(), scrolledOffset.height(), hitTestAction)) {
+            if (hitTestContents(request, result, pointInContainer, toPoint(scrolledOffset), hitTestAction)) {
                 updateHitTestResult(result, pointInContainer - localOffset);
                 return true;
             }
@@ -4020,20 +4020,20 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
             int finalX = tx + offset.width();
             int finalY = ty + offset.height();
             if (result.isRectBasedTest() && !colRect.contains(result.rectForPoint(pointInContainer)))
-                hitTestContents(request, result, pointInContainer, finalX, finalY, hitTestAction);
+                hitTestContents(request, result, pointInContainer, IntPoint(finalX, finalY), hitTestAction);
             else
-                return hitTestContents(request, result, pointInContainer, finalX, finalY, hitTestAction) || (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer, finalX, finalY));
+                return hitTestContents(request, result, pointInContainer, IntPoint(finalX, finalY), hitTestAction) || (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer, finalX, finalY));
         }
     }
 
     return false;
 }
 
-bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction)
+bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     if (childrenInline() && !isTable()) {
         // We have to hit-test our line boxes.
-        if (m_lineBoxes.hitTest(this, request, result, pointInContainer, IntPoint(tx, ty), hitTestAction))
+        if (m_lineBoxes.hitTest(this, request, result, pointInContainer, accumulatedOffset, hitTestAction))
             return true;
     } else {
         // Hit test our children.
@@ -4041,7 +4041,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
         if (hitTestAction == HitTestChildBlockBackgrounds)
             childHitTest = HitTestChildBlockBackground;
         for (RenderBox* child = lastChildBox(); child; child = child->previousSiblingBox()) {
-            IntPoint childPoint = flipForWritingMode(child, IntPoint(tx, ty), ParentToChildFlippingAdjustment);
+            IntPoint childPoint = flipForWritingMode(child, accumulatedOffset, ParentToChildFlippingAdjustment);
             if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, pointInContainer, childPoint.x(), childPoint.y(), childHitTest))
                 return true;
         }

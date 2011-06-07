@@ -589,7 +589,7 @@ private:
     int nextFloatLogicalBottomBelow(int) const;
     
     virtual bool hitTestColumns(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);
-    virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);
+    virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
     bool hitTestFloats(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty);
 
     virtual bool isPointInOverflowControl(HitTestResult&, const IntPoint& pointInContainer, int tx, int ty);
