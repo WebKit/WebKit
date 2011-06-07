@@ -43,12 +43,6 @@ def main():
         parser.error("Action is required")
 
     layoutTestResultsDir = os.path.abspath(os.path.join(sourceRootDirectory, "layout-test-results"))
-    if options.platform == 'chromium':
-        # See results_directory() in webkitpy/layout_tests/port/chromium.py.
-        layoutTestResultsDir = os.path.abspath(os.path.join(sourceRootDirectory,
-            "Source", "WebKit", "chromium", "webkit", options.configuration.capitalize(),
-            "layout-test-results"))
-
     return archiveTestResults(options.configuration, options.platform, layoutTestResultsDir)
 
 def archiveTestResults(configuration, platform, layoutTestResultsDir):
