@@ -107,10 +107,13 @@ linux-g++* {
 
 symbian|*-armcc {
     # Enable GNU compiler extensions to the ARM compiler for all Qt ports using RVCT
-    RVCT_COMMON_CFLAGS = --gnu --diag_suppress 68,111,177,368,830,1293 --signed_bitfields
+    RVCT_COMMON_CFLAGS = --gnu --diag_suppress 68,111,177,368,830,1293
     RVCT_COMMON_CXXFLAGS = $$RVCT_COMMON_CFLAGS --no_parse_templates
     # Make debug symbols leaner in RVCT4.x. Ignored by compiler for release builds
     QMAKE_CXXFLAGS.ARMCC_4_0 += --remove_unneeded_entities
+    # Match other compilers' (GCC, MSVC, WINSCW...) behavior regarding bitfield signedness.
+    # This flag is not needed for RVCT 2.x.
+    QMAKE_CXXFLAGS.ARMCC_4_0 += --signed_bitfields
 }
 
 *-armcc {
