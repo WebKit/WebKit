@@ -867,9 +867,16 @@ void FrameLoaderClientEfl::setMainDocumentError(DocumentLoader* loader, const Re
     m_hasSentResponseToPlugin = false;
 }
 
-void FrameLoaderClientEfl::startDownload(const ResourceRequest&)
+void FrameLoaderClientEfl::startDownload(const ResourceRequest& request)
 {
-    notImplemented();
+    if (!m_view)
+        return;
+
+    CString url = request.url().prettyURL().utf8();
+    Ewk_Download download;
+
+    download.url = url.data();
+    ewk_view_download_request(m_view, &download);
 }
 
 void FrameLoaderClientEfl::updateGlobalHistory()
