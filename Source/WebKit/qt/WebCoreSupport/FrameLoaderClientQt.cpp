@@ -1625,7 +1625,7 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
             const bool isQWebView = client && qobject_cast<QWidget*>(client->pluginParent());
 #if defined(MOZ_PLATFORM_MAEMO) && (MOZ_PLATFORM_MAEMO >= 5)
             size_t wmodeIndex = params.find("wmode");
-            if (wmodeIndex == -1) {
+            if (wmodeIndex == WTF::notFound) {
                 // Disable XEmbed mode and force it to opaque mode.
                 params.append("wmode");
                 values.append("opaque");
@@ -1637,7 +1637,7 @@ PassRefPtr<Widget> FrameLoaderClientQt::createPlugin(const IntSize& pluginSize, 
             if (!isQWebView) {
                 // Inject wmode=opaque when there is no client or the client is not a QWebView.
                 size_t wmodeIndex = params.find("wmode");
-                if (wmodeIndex == -1) {
+                if (wmodeIndex == WTF::notFound) {
                     params.append("wmode");
                     values.append("opaque");
                 } else if (equalIgnoringCase(values[wmodeIndex], "window"))

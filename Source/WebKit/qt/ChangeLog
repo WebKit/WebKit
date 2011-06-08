@@ -1,3 +1,16 @@
+2011-06-08  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] FrameLoaderClient: Check Vector::find() return value for WTF::notFound.
+        https://bugs.webkit.org/show_bug.cgi?id=62274
+
+        Vector::find() returns size_t (which is unsigned), so we should check
+        for WTF::notFound instead of -1.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::createPlugin):
+
 2011-06-07  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Andreas Kling.
