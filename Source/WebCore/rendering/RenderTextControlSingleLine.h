@@ -64,7 +64,7 @@ private:
     virtual void paint(PaintInfo&, const IntPoint&);
     virtual void layout();
 
-    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, int tx, int ty, HitTestAction);
+    virtual bool nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
 
     virtual void autoscroll();
 

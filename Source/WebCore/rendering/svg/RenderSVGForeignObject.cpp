@@ -149,10 +149,10 @@ bool RenderSVGForeignObject::nodeAtFloatPoint(const HitTestRequest& request, Hit
         return false;
 
     IntPoint roundedLocalPoint = roundedIntPoint(localPoint);
-    return RenderBlock::nodeAtPoint(request, result, roundedLocalPoint, 0, 0, hitTestAction);
+    return RenderBlock::nodeAtPoint(request, result, roundedLocalPoint, IntPoint(), hitTestAction);
 }
 
-bool RenderSVGForeignObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint&, int, int, HitTestAction)
+bool RenderSVGForeignObject::nodeAtPoint(const HitTestRequest&, HitTestResult&, const IntPoint&, const IntPoint&, HitTestAction)
 {
     ASSERT_NOT_REACHED();
     return false;

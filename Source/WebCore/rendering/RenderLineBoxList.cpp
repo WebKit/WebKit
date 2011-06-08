@@ -298,7 +298,7 @@ bool RenderLineBoxList::hitTest(RenderBoxModelObject* renderer, const HitTestReq
     for (InlineFlowBox* curr = lastLineBox(); curr; curr = curr->prevLineBox()) {
         RootInlineBox* root = curr->root();
         if (rangeIntersectsRect(renderer, curr->logicalTopVisualOverflow(root->lineTop()), curr->logicalBottomVisualOverflow(root->lineBottom()), rect, accumulatedOffset)) {
-            bool inside = curr->nodeAtPoint(request, result, pointInContainer, accumulatedOffset.x(), accumulatedOffset.y(), root->lineTop(), root->lineBottom());
+            bool inside = curr->nodeAtPoint(request, result, pointInContainer, accumulatedOffset, root->lineTop(), root->lineBottom());
             if (inside) {
                 renderer->updateHitTestResult(result, toPoint(pointInContainer - accumulatedOffset));
                 return true;

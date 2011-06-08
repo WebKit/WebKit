@@ -3895,14 +3895,15 @@ bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const IntPoint
     return layer()->hitTestOverflowControls(result, pointInContainer - IntSize(tx, ty));
 }
 
-bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction)
+bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
-    IntSize localOffset(tx + x(), ty + y());
+    IntPoint adjustedLocation(accumulatedOffset + location());
+    IntSize localOffset = toSize(adjustedLocation);
 
     if (!isRenderView()) {
         // Check if we need to do anything at all.
         IntRect overflowBox = visualOverflowRect();
-        overflowBox.move(localOffset);
+        overflowBox.moveBy(adjustedLocation);
         if (!overflowBox.intersects(result.rectForPoint(pointInContainer)))
             return false;
     }
@@ -3918,7 +3919,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     bool useOverflowClip = hasOverflowClip() && !hasSelfPaintingLayer();
     bool useClip = (hasControlClip() || useOverflowClip);
     IntRect hitTestArea(result.rectForPoint(pointInContainer));
-    bool checkChildren = !useClip || (hasControlClip() ? controlClipRect(toPoint(localOffset)).intersects(hitTestArea) : overflowClipRect(toPoint(localOffset), IncludeOverlayScrollbarSize).intersects(hitTestArea));
+    bool checkChildren = !useClip || (hasControlClip() ? controlClipRect(adjustedLocation).intersects(hitTestArea) : overflowClipRect(adjustedLocation, IncludeOverlayScrollbarSize).intersects(hitTestArea));
     if (checkChildren) {
         // Hit test descendants first.
         IntSize scrolledOffset(localOffset);
@@ -3942,7 +3943,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
 
     // Now hit test our background
     if (hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) {
-        IntRect boundsRect(localOffset.width(), localOffset.height(), width(), height());
+        IntRect boundsRect(adjustedLocation, size());
         if (visibleToHitTesting() && boundsRect.intersects(result.rectForPoint(pointInContainer))) {
             updateHitTestResult(result, flipForWritingMode(pointInContainer - localOffset));
             if (!result.addNodeToRectBasedTestResult(node(), pointInContainer, boundsRect))
@@ -4041,7 +4042,7 @@ bool RenderBlock::hitTestContents(const HitTestRequest& request, HitTestResult& 
             childHitTest = HitTestChildBlockBackground;
         for (RenderBox* child = lastChildBox(); child; child = child->previousSiblingBox()) {
             IntPoint childPoint = flipForWritingMode(child, accumulatedOffset, ParentToChildFlippingAdjustment);
-            if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, pointInContainer, childPoint.x(), childPoint.y(), childHitTest))
+            if (!child->hasSelfPaintingLayer() && !child->isFloating() && child->nodeAtPoint(request, result, pointInContainer, childPoint, childHitTest))
                 return true;
         }
     }

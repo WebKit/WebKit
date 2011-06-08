@@ -189,15 +189,15 @@ void RootInlineBox::paint(PaintInfo& paintInfo, const IntPoint& paintOffset, int
 #endif
 }
 
-bool RootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, int lineTop, int lineBottom)
+bool RootInlineBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, int lineTop, int lineBottom)
 {
     if (hasEllipsisBox() && visibleToHitTesting()) {
-        if (ellipsisBox()->nodeAtPoint(request, result, pointInContainer, tx, ty, lineTop, lineBottom)) {
-            renderer()->updateHitTestResult(result, pointInContainer - IntSize(tx, ty));
+        if (ellipsisBox()->nodeAtPoint(request, result, pointInContainer, accumulatedOffset, lineTop, lineBottom)) {
+            renderer()->updateHitTestResult(result, pointInContainer - toSize(accumulatedOffset));
             return true;
         }
     }
-    return InlineFlowBox::nodeAtPoint(request, result, pointInContainer, tx, ty, lineTop, lineBottom);
+    return InlineFlowBox::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, lineTop, lineBottom);
 }
 
 void RootInlineBox::adjustPosition(float dx, float dy)

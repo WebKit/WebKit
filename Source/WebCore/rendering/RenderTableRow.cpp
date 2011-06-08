@@ -187,7 +187,7 @@ IntRect RenderTableRow::clippedOverflowRectForRepaint(RenderBoxModelObject* repa
 }
 
 // Hit Testing
-bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction action)
+bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction action)
 {
     // Table rows cannot ever be hit tested.  Effectively they do not exist.
     // Just forward to our children always.
@@ -197,9 +197,9 @@ bool RenderTableRow::nodeAtPoint(const HitTestRequest& request, HitTestResult& r
         // table-specific hit-test method (which we should do for performance reasons anyway),
         // then we can remove this check.
         if (child->isTableCell() && !toRenderBox(child)->hasSelfPaintingLayer()) {
-            IntPoint cellPoint = flipForWritingMode(toRenderTableCell(child), IntPoint(tx, ty), ParentToChildFlippingAdjustment);
-            if (child->nodeAtPoint(request, result, pointInContainer, cellPoint.x(), cellPoint.y(), action)) {
-                updateHitTestResult(result, pointInContainer - IntSize(cellPoint.x(), cellPoint.y()));
+            IntPoint cellPoint = flipForWritingMode(toRenderTableCell(child), accumulatedOffset, ParentToChildFlippingAdjustment);
+            if (child->nodeAtPoint(request, result, pointInContainer, cellPoint, action)) {
+                updateHitTestResult(result, pointInContainer - toSize(cellPoint));
                 return true;
             }
         }

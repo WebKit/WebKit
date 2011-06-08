@@ -327,7 +327,7 @@ void RenderTextControlSingleLine::layout()
 #endif
 }
 
-bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction)
+bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     // If we're within the text control, we want to act as if we've hit the inner text block element, in case the point
     // was on the control but not on the inner element (see Radar 4617841).
@@ -335,14 +335,14 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     // In a search field, we want to act as if we've hit the results block if we're to the left of the inner text block,
     // and act as if we've hit the close block if we're to the right of the inner text block.
 
-    if (!RenderTextControl::nodeAtPoint(request, result, pointInContainer, tx, ty, hitTestAction))
+    if (!RenderTextControl::nodeAtPoint(request, result, pointInContainer, accumulatedOffset, hitTestAction))
         return false;
 
     // If we hit a node inside the inner text element, say that we hit that element,
     // and if we hit our node (e.g. we're over the border or padding), also say that we hit the
     // inner text element so that it gains focus.
     if (result.innerNode()->isDescendantOf(innerTextElement()) || result.innerNode() == node())
-        hitInnerTextElement(result, pointInContainer, IntPoint(tx, ty));
+        hitInnerTextElement(result, pointInContainer, accumulatedOffset);
 
     // If we found a spin button, we're done.
     HTMLElement* innerSpinButton = innerSpinButtonElement();
@@ -367,13 +367,13 @@ bool RenderTextControlSingleLine::nodeAtPoint(const HitTestRequest& request, Hit
     IntPoint localPoint = result.localPoint();
     localPoint.move(-innerBlockRenderer->location());
 
-    int textLeft = tx + x() + innerBlockRenderer->x() + innerTextRenderer->x();
+    int textLeft = accumulatedOffset.x() + x() + innerBlockRenderer->x() + innerTextRenderer->x();
     if (resultsButton && resultsButton->renderer() && pointInContainer.x() < textLeft)
         innerNode = resultsButton;
 
 #if ENABLE(INPUT_SPEECH)
     if (!innerNode && speechButtonElement() && speechButtonElement()->renderer()) {
-        int buttonLeft = tx + x() + innerBlockRenderer->x() + innerBlockRenderer->width() - speechButtonElement()->renderBox()->width();
+        int buttonLeft = accumulatedOffset.x() + x() + innerBlockRenderer->x() + innerBlockRenderer->width() - speechButtonElement()->renderBox()->width();
         if (pointInContainer.x() >= buttonLeft)
             innerNode = speechButtonElement();
     }

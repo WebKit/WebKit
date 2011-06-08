@@ -1,3 +1,93 @@
+2011-06-07  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Convert nodeAtPoint to IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62145
+
+        Convert nodeAtPoint to take an IntPoint instead of a pair of ints for the
+        accumulated offset.
+
+        Covered by existing tests.
+
+        * platform/graphics/FloatPoint.h:
+        (WebCore::FloatPoint::moveBy):
+        Add moveBy(IntPoint) method
+        
+        * rendering/EllipsisBox.cpp:
+        (WebCore::EllipsisBox::nodeAtPoint):
+        * rendering/EllipsisBox.h:
+        * rendering/InlineBox.cpp:
+        (WebCore::InlineBox::nodeAtPoint):
+        * rendering/InlineBox.h:
+        * rendering/InlineFlowBox.cpp:
+        (WebCore::InlineFlowBox::nodeAtPoint):
+        * rendering/InlineFlowBox.h:
+        * rendering/InlineTextBox.cpp:
+        (WebCore::InlineTextBox::nodeAtPoint):
+        * rendering/InlineTextBox.h:
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::nodeAtPoint):
+        (WebCore::RenderBlock::hitTestContents):
+        * rendering/RenderBlock.h:
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::nodeAtPoint):
+        * rendering/RenderBox.h:
+        * rendering/RenderFrameSet.cpp:
+        (WebCore::RenderFrameSet::nodeAtPoint):
+        * rendering/RenderFrameSet.h:
+        * rendering/RenderImage.cpp:
+        (WebCore::RenderImage::nodeAtPoint):
+        * rendering/RenderImage.h:
+        * rendering/RenderInline.cpp:
+        (WebCore::RenderInline::nodeAtPoint):
+        * rendering/RenderInline.h:
+        * rendering/RenderLineBoxList.cpp:
+        (WebCore::RenderLineBoxList::hitTest):
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::nodeAtPoint):
+        * rendering/RenderListBox.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::hitTest):
+        * rendering/RenderObject.h:
+        * rendering/RenderTable.cpp:
+        (WebCore::RenderTable::nodeAtPoint):
+        * rendering/RenderTable.h:
+        * rendering/RenderTableRow.cpp:
+        (WebCore::RenderTableRow::nodeAtPoint):
+        * rendering/RenderTableRow.h:
+        * rendering/RenderTableSection.cpp:
+        (WebCore::RenderTableSection::nodeAtPoint):
+        * rendering/RenderTableSection.h:
+        * rendering/RenderText.h:
+        (WebCore::RenderText::nodeAtPoint):
+        * rendering/RenderTextControlMultiLine.cpp:
+        (WebCore::RenderTextControlMultiLine::nodeAtPoint):
+        * rendering/RenderTextControlMultiLine.h:
+        * rendering/RenderTextControlSingleLine.cpp:
+        (WebCore::RenderTextControlSingleLine::nodeAtPoint):
+        * rendering/RenderTextControlSingleLine.h:
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::nodeAtPoint):
+        * rendering/RenderWidget.h:
+        * rendering/RootInlineBox.cpp:
+        (WebCore::RootInlineBox::nodeAtPoint):
+        * rendering/RootInlineBox.h:
+        * rendering/svg/RenderSVGForeignObject.cpp:
+        (WebCore::RenderSVGForeignObject::nodeAtFloatPoint):
+        (WebCore::RenderSVGForeignObject::nodeAtPoint):
+        * rendering/svg/RenderSVGForeignObject.h:
+        * rendering/svg/RenderSVGModelObject.cpp:
+        (WebCore::RenderSVGModelObject::nodeAtPoint):
+        * rendering/svg/RenderSVGModelObject.h:
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::nodeAtPoint):
+        * rendering/svg/RenderSVGRoot.h:
+        * rendering/svg/RenderSVGText.cpp:
+        (WebCore::RenderSVGText::nodeAtFloatPoint):
+        (WebCore::RenderSVGText::nodeAtPoint):
+        * rendering/svg/RenderSVGText.h:
+
 2011-06-07  Yi Shen  <yi.4.shen@nokia.com>
 
         Reviewed by Simon Hausmann.

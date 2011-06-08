@@ -1141,7 +1141,7 @@ void RenderTableSection::splitColumn(int pos, int first)
 }
 
 // Hit Testing
-bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction action)
+bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction action)
 {
     // If we have no children then we have nothing to do.
     if (!firstChild())
@@ -1149,10 +1149,9 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
 
     // Table sections cannot ever be hit tested.  Effectively they do not exist.
     // Just forward to our children always.
-    tx += x();
-    ty += y();
+    IntPoint adjustedLocation = accumulatedOffset + location();
 
-    if (hasOverflowClip() && !overflowClipRect(IntPoint(tx, ty)).intersects(result.rectForPoint(pointInContainer)))
+    if (hasOverflowClip() && !overflowClipRect(adjustedLocation).intersects(result.rectForPoint(pointInContainer)))
         return false;
 
     if (m_hasOverflowingCell) {
@@ -1162,8 +1161,8 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
             // table-specific hit-test method (which we should do for performance reasons anyway),
             // then we can remove this check.
             if (child->isBox() && !toRenderBox(child)->hasSelfPaintingLayer()) {
-                IntPoint childPoint = flipForWritingMode(toRenderBox(child), IntPoint(tx, ty), ParentToChildFlippingAdjustment);
-                if (child->nodeAtPoint(request, result, pointInContainer, childPoint.x(), childPoint.y(), action)) {
+                IntPoint childPoint = flipForWritingMode(toRenderBox(child), adjustedLocation, ParentToChildFlippingAdjustment);
+                if (child->nodeAtPoint(request, result, pointInContainer, childPoint, action)) {
                     updateHitTestResult(result, toPoint(pointInContainer - childPoint));
                     return true;
                 }
@@ -1172,7 +1171,7 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
         return false;
     }
 
-    IntPoint location = pointInContainer - IntSize(tx, ty);
+    IntPoint location = pointInContainer - toSize(adjustedLocation);
     if (style()->isFlippedBlocksWritingMode()) {
         if (style()->isHorizontalWritingMode())
             location.setY(height() - location.y());
@@ -1206,8 +1205,8 @@ bool RenderTableSection::nodeAtPoint(const HitTestRequest& request, HitTestResul
 
     for (int i = current.cells.size() - 1; i >= 0; --i) {
         RenderTableCell* cell = current.cells[i];
-        IntPoint cellPoint = flipForWritingMode(cell, IntPoint(tx, ty), ParentToChildFlippingAdjustment);
-        if (static_cast<RenderObject*>(cell)->nodeAtPoint(request, result, pointInContainer, cellPoint.x(), cellPoint.y(), action)) {
+        IntPoint cellPoint = flipForWritingMode(cell, adjustedLocation, ParentToChildFlippingAdjustment);
+        if (static_cast<RenderObject*>(cell)->nodeAtPoint(request, result, pointInContainer, cellPoint, action)) {
             updateHitTestResult(result, toPoint(pointInContainer - cellPoint));
             return true;
         }

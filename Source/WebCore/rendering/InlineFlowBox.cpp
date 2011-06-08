@@ -898,18 +898,18 @@ void InlineFlowBox::setOverflowFromLogicalRects(const IntRect& logicalLayoutOver
     setVisualOverflow(visualOverflow, lineTop, lineBottom);
 }
 
-bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, int lineTop, int lineBottom)
+bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, int lineTop, int lineBottom)
 {
     IntRect overflowRect(visualOverflowRect(lineTop, lineBottom));
     flipForWritingMode(overflowRect);
-    overflowRect.move(tx, ty);
+    overflowRect.moveBy(accumulatedOffset);
     if (!overflowRect.intersects(result.rectForPoint(pointInContainer)))
         return false;
 
     // Check children first.
     for (InlineBox* curr = lastChild(); curr; curr = curr->prevOnLine()) {
-        if ((curr->renderer()->isText() || !curr->boxModelObject()->hasSelfPaintingLayer()) && curr->nodeAtPoint(request, result, pointInContainer, tx, ty, lineTop, lineBottom)) {
-            renderer()->updateHitTestResult(result, pointInContainer - IntSize(tx, ty));
+        if ((curr->renderer()->isText() || !curr->boxModelObject()->hasSelfPaintingLayer()) && curr->nodeAtPoint(request, result, pointInContainer, accumulatedOffset, lineTop, lineBottom)) {
+            renderer()->updateHitTestResult(result, pointInContainer - toSize(accumulatedOffset));
             return true;
         }
     }
@@ -935,10 +935,10 @@ bool InlineFlowBox::nodeAtPoint(const HitTestRequest& request, HitTestResult& re
     // Move x/y to our coordinates.
     IntRect rect(minX, minY, width, height);
     flipForWritingMode(rect);
-    rect.move(tx, ty);
+    rect.moveBy(accumulatedOffset);
 
     if (visibleToHitTesting() && rect.intersects(result.rectForPoint(pointInContainer))) {
-        renderer()->updateHitTestResult(result, flipForWritingMode(pointInContainer - IntSize(tx, ty))); // Don't add in m_x or m_y here, we want coords in the containing block's space.
+        renderer()->updateHitTestResult(result, flipForWritingMode(pointInContainer - toSize(accumulatedOffset))); // Don't add in m_x or m_y here, we want coords in the containing block's space.
         if (!result.addNodeToRectBasedTestResult(renderer()->node(), pointInContainer, rect))
             return true;
     }
