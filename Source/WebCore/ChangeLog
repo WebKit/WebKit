@@ -1,3 +1,34 @@
+2011-06-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Opacity transition doesn't work while content property is set.
+        https://bugs.webkit.org/show_bug.cgi?id=59301
+        
+        StyleRareNonInheritedData's copy constructor omitted to copy
+        the m_content data, which caused us to detach and re-attach the renderer
+        at the start of the transition, thereby killing the transition.
+        
+        Fix by making StyleRareNonInheritedData's copy ctor do the right thing.
+
+        Test: transitions/transition-on-element-with-content.html
+
+        * rendering/style/ContentData.h:
+        * rendering/style/ContentData.cpp:
+        (WebCore::ContentData::clone): New method to do a deep clone. (Can't use a copy
+        ctor because of the subclasses.)
+        * rendering/style/CounterDirectives.h: Pack the data members to save space.
+        Add a clone() function for the HashMap.
+        * rendering/style/CounterDirectives.cpp:
+        (WebCore::clone): Make a new HashMap and copy the contents over.
+        * rendering/style/StyleRareNonInheritedData.cpp:
+        (WebCore::StyleRareNonInheritedData::StyleRareNonInheritedData): Copy
+        the content and counter directives over.
+        (WebCore::StyleRareNonInheritedData::operator==): Rather than just comparing
+        for pointer equality, do a correct check for m_counterDirectives equality.
+        (WebCore::StyleRareNonInheritedData::counterDataEquivalent):
+        * rendering/style/StyleRareNonInheritedData.h:
+
 2011-06-07  Robert Kroeger  <rjkroege@chromium.org>
 
         Reviewed by Adam Barth.

@@ -1,3 +1,15 @@
+2011-06-07  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Opacity transition doesn't work while content property is set.
+        https://bugs.webkit.org/show_bug.cgi?id=59301
+        
+        Testcase for opacity transition on element with 'content' style.
+
+        * transitions/transition-on-element-with-content-expected.txt: Added.
+        * transitions/transition-on-element-with-content.html: Added.
+
 2011-06-07  Robert Kroeger  <rjkroege@chromium.org>
 
         Reviewed by Adam Barth.

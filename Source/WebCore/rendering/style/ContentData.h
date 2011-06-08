@@ -53,10 +53,14 @@ public:
     friend bool operator==(const ContentData&, const ContentData&);
     friend bool operator!=(const ContentData&, const ContentData&);
 
+    virtual PassOwnPtr<ContentData> clone() const;
+
     ContentData* next() const { return m_next.get(); }
     void setNext(PassOwnPtr<ContentData> next) { m_next = next; }
 
 private:
+    virtual PassOwnPtr<ContentData> cloneInternal() const = 0;
+
     OwnPtr<ContentData> m_next;
 };
 
@@ -75,6 +79,11 @@ private:
 
     virtual StyleContentType type() const { return CONTENT_OBJECT; }
     virtual bool isImage() const { return true; }
+    virtual PassOwnPtr<ContentData> cloneInternal() const
+    {
+        RefPtr<StyleImage> image = const_cast<StyleImage*>(this->image());
+        return create(image.release());
+    }
 
     RefPtr<StyleImage> m_image;
 };
@@ -93,6 +102,7 @@ private:
 
     virtual StyleContentType type() const { return CONTENT_TEXT; }
     virtual bool isText() const { return true; }
+    virtual PassOwnPtr<ContentData> cloneInternal() const { return create(text()); }
 
     String m_text;
 };
@@ -111,6 +121,11 @@ private:
 
     virtual StyleContentType type() const { return CONTENT_COUNTER; }
     virtual bool isCounter() const { return true; }
+    virtual PassOwnPtr<ContentData> cloneInternal() const
+    {
+        OwnPtr<CounterContent> counterData = adoptPtr(new CounterContent(*counter()));
+        return create(counterData.release());
+    }
 
     OwnPtr<CounterContent> m_counter;
 };
@@ -129,6 +144,7 @@ private:
 
     virtual StyleContentType type() const { return CONTENT_QUOTE; }
     virtual bool isQuote() const { return true; }
+    virtual PassOwnPtr<ContentData> cloneInternal() const { return create(quote()); }
 
     QuoteType m_quote;
 };

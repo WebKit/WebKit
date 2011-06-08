@@ -21,6 +21,7 @@
 
 #include "config.h"
 #include "CounterDirectives.h"
+#include <wtf/PassOwnPtr.h>
 
 namespace WebCore {
 
@@ -33,6 +34,13 @@ bool operator==(const CounterDirectives& a, const CounterDirectives& b)
     if (a.m_increment && a.m_incrementValue != b.m_incrementValue)
         return false;
     return true;
+}
+
+PassOwnPtr<CounterDirectiveMap> clone(const CounterDirectiveMap& counterDirectives)
+{
+    OwnPtr<CounterDirectiveMap> result = adoptPtr(new CounterDirectiveMap);
+    *result = counterDirectives;
+    return result.release();
 }
 
 } // namespace WebCore

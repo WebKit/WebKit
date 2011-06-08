@@ -46,6 +46,20 @@ PassOwnPtr<ContentData> ContentData::create(QuoteType quote)
     return adoptPtr(new QuoteContentData(quote));
 }
 
+PassOwnPtr<ContentData> ContentData::clone() const
+{
+    OwnPtr<ContentData> result = cloneInternal();
+    
+    ContentData* lastNewData = result.get();
+    for (const ContentData* contentData = next(); contentData; contentData = contentData->next()) {
+        OwnPtr<ContentData> newData = contentData->cloneInternal();
+        lastNewData->setNext(newData.release());
+        lastNewData = lastNewData->next();
+    }
+        
+    return result.release();
+}
+
 bool operator==(const ContentData& a, const ContentData& b)
 {
     if (a.type() != b.type())

@@ -66,6 +66,8 @@ StyleRareNonInheritedData::StyleRareNonInheritedData(const StyleRareNonInherited
     , marquee(o.marquee)
     , m_multiCol(o.m_multiCol)
     , m_transform(o.m_transform)
+    , m_content(o.m_content ? o.m_content->clone() : nullptr)
+    , m_counterDirectives(o.m_counterDirectives ? clone(*o.m_counterDirectives) : nullptr)
     , userDrag(o.userDrag)
     , textOverflow(o.textOverflow)
     , marginBeforeCollapse(o.marginBeforeCollapse)
@@ -111,7 +113,7 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
         && m_multiCol == o.m_multiCol
         && m_transform == o.m_transform
         && contentDataEquivalent(o)
-        && m_counterDirectives == o.m_counterDirectives
+        && counterDataEquivalent(o)
         && userDrag == o.userDrag
         && textOverflow == o.textOverflow
         && marginBeforeCollapse == o.marginBeforeCollapse
@@ -143,11 +145,24 @@ bool StyleRareNonInheritedData::operator==(const StyleRareNonInheritedData& o) c
 
 bool StyleRareNonInheritedData::contentDataEquivalent(const StyleRareNonInheritedData& o) const
 {
-    if ((!m_content && o.m_content) || (m_content && !o.m_content))
-        return false;
-    if (m_content && o.m_content && (*m_content != *o.m_content))
-        return false;
-    return true;
+    if (m_content.get() == o.m_content.get())
+        return true;
+        
+    if (m_content && o.m_content && *m_content == *o.m_content)
+        return true;
+
+    return false;
+}
+
+bool StyleRareNonInheritedData::counterDataEquivalent(const StyleRareNonInheritedData& o) const
+{
+    if (m_counterDirectives.get() == o.m_counterDirectives.get())
+        return true;
+        
+    if (m_counterDirectives && o.m_counterDirectives && *m_counterDirectives == *o.m_counterDirectives)
+        return true;
+
+    return false;
 }
 
 bool StyleRareNonInheritedData::shadowDataEquivalent(const StyleRareNonInheritedData& o) const
@@ -167,7 +182,6 @@ bool StyleRareNonInheritedData::reflectionDataEquivalent(const StyleRareNonInher
         return *m_boxReflect == *o.m_boxReflect;
     }
     return true;
-
 }
 
 bool StyleRareNonInheritedData::animationDataEquivalent(const StyleRareNonInheritedData& o) const
