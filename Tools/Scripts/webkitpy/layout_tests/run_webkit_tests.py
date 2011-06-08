@@ -394,7 +394,7 @@ def parse_args(args=None):
         optparse.make_option("--worker-model", action="store",
             default=None, help=("controls worker model. Valid values are "
                                 "'inline', 'threads', and 'processes'.")),
-        optparse.make_option("--experimental-fully-parallel",
+        optparse.make_option("-f", "--experimental-fully-parallel",
             action="store_true", default=False,
             help="run all tests in parallel"),
         optparse.make_option("--exit-after-n-failures", type="int", default=500,
