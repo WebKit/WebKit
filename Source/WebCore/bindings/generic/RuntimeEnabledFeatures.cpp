@@ -146,4 +146,8 @@ bool RuntimeEnabledFeatures::openDatabaseSyncEnabled()
 bool RuntimeEnabledFeatures::isQuotaEnabled = false;
 #endif
 
+#if ENABLE(SPELLCHECK_API)
+bool RuntimeEnabledFeatures::isSpellCheckAPIEnabled = false;
+#endif
+
 } // namespace WebCore

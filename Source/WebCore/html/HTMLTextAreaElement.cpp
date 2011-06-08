@@ -31,7 +31,9 @@
 #include "CSSValueKeywords.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
+#include "DOMStringList.h"
 #include "Document.h"
+#include "DocumentMarkerController.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -44,6 +46,8 @@
 #include "RenderTextControlMultiLine.h"
 #include "ScriptEventListener.h"
 #include "ShadowRoot.h"
+#include "SpellcheckRange.h"
+#include "SpellcheckRangeList.h"
 #include "Text.h"
 #include "TextControlInnerElements.h"
 #include "TextIterator.h"
@@ -439,5 +443,27 @@ bool HTMLTextAreaElement::shouldUseInputMethod() const
 {
     return true;
 }
+
+#if ENABLE(SPELLCHECK_API)
+PassRefPtr<SpellcheckRangeList> HTMLTextAreaElement::spellcheckRanges()
+{
+    return document()->markers()->userSpellingMarkersForNode(this);
+}
+
+void HTMLTextAreaElement::addSpellcheckRange(unsigned long start, unsigned long length)
+{
+    addSpellcheckRange(start, length, DOMStringList::create(), 0);
+}
+
+void HTMLTextAreaElement::addSpellcheckRange(unsigned long start, unsigned long length, RefPtr<DOMStringList> suggestions, unsigned short options)
+{
+    document()->markers()->addUserSpellingMarker(this, start, length, suggestions, options);
+}
+
+void HTMLTextAreaElement::removeSpellcheckRange(RefPtr<SpellcheckRange> range)
+{
+    document()->markers()->removeUserSpellingMarker(this, range->start(), range->length());
+}
+#endif
 
 } // namespace

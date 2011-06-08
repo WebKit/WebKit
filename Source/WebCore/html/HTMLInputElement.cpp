@@ -34,7 +34,9 @@
 #include "Chrome.h"
 #include "ChromeClient.h"
 #include "CSSPropertyNames.h"
+#include "DOMStringList.h"
 #include "Document.h"
+#include "DocumentMarkerController.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
 #include "FileList.h"
@@ -55,6 +57,8 @@
 #include "RenderTheme.h"
 #include "RuntimeEnabledFeatures.h"
 #include "ScriptEventListener.h"
+#include "SpellcheckRange.h"
+#include "SpellcheckRangeList.h"
 #include "WheelEvent.h"
 #include <wtf/MathExtras.h>
 #include <wtf/StdLibExtras.h>
@@ -1838,5 +1842,27 @@ void HTMLInputElement::updateValueIfNeeded()
     if (newValue != m_valueIfDirty)
         setValue(newValue);
 }
+
+#if ENABLE(SPELLCHECK_API)
+PassRefPtr<SpellcheckRangeList> HTMLInputElement::spellcheckRanges()
+{
+    return document()->markers()->userSpellingMarkersForNode(this);
+}
+
+void HTMLInputElement::addSpellcheckRange(unsigned long start, unsigned long length)
+{
+    addSpellcheckRange(start, length, DOMStringList::create(), 0);
+}
+
+void HTMLInputElement::addSpellcheckRange(unsigned long start, unsigned long length, RefPtr<DOMStringList> suggestions, unsigned short options)
+{
+    document()->markers()->addUserSpellingMarker(this, start, length, suggestions, options);
+}
+
+void HTMLInputElement::removeSpellcheckRange(RefPtr<SpellcheckRange> range)
+{
+    document()->markers()->removeUserSpellingMarker(this, range->start(), range->length());
+}
+#endif
 
 } // namespace

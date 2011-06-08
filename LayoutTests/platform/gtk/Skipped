@@ -395,6 +395,10 @@ storage/storageinfo-query-usage.html
 storage/storageinfo-request-quota.html
 storage/storageinfo-no-callbacks.html
 
+# Spellcheck API is not implemented.
+editing/spelling/spellcheck-api.html
+editing/spelling/spellcheck-api-pixel.html
+
 # This platform does not support the Page Visibility API.
 fast/events/page-visibility-iframe-delete-test.html
 fast/events/page-visibility-iframe-move-test.html

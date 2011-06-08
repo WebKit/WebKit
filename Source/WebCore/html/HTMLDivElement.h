@@ -27,10 +27,23 @@
 
 namespace WebCore {
 
+#if ENABLE(SPELLCHECK_API)
+class DOMStringList;
+class SpellcheckRange;
+class SpellcheckRangeList;
+#endif
+
 class HTMLDivElement : public HTMLElement {
 public:
     static PassRefPtr<HTMLDivElement> create(Document*);
     static PassRefPtr<HTMLDivElement> create(const QualifiedName&, Document*);
+
+#if ENABLE(SPELLCHECK_API)
+    PassRefPtr<SpellcheckRangeList> spellcheckRanges();
+    void addSpellcheckRange(unsigned long start, unsigned long length);
+    void addSpellcheckRange(unsigned long start, unsigned long length, RefPtr<DOMStringList>, unsigned short options = 0);
+    void removeSpellcheckRange(RefPtr<SpellcheckRange>);
+#endif
 
 protected:
     HTMLDivElement(const QualifiedName&, Document*);

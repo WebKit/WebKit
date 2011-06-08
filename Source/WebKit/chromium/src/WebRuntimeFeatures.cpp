@@ -336,4 +336,22 @@ bool WebRuntimeFeatures::isQuotaEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableSpellCheckAPI(bool enable)
+{
+#if ENABLE(SPELLCHECK_API)
+    RuntimeEnabledFeatures::setSpellCheckAPIEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isSpellCheckAPIEnabled()
+{
+#if ENABLE(SPELLCHECK_API)
+    return RuntimeEnabledFeatures::spellCheckAPIEnabled();
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

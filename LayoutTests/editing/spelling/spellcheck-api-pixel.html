@@ -1,0 +1,21 @@
+<html>
+<head>
+<title></title>
+<script language="javascript" type="text/javascript">
+function RunTest() {
+    var suggestions = ['welcome'];
+    for (var i = 0; i < 3; i++) {
+        var node = document.getElementById('test' + i);
+        node.addSpellcheckRange(0, 8, suggestions, 0);
+    }
+}
+</script>
+</head>
+<body onload="RunTest()">
+<p id="description">This tests SpellCheck API can add misspelled underlines to words. If this test succeeds, we can see misspelled underlines under the word "wellcome" below.</p>
+<div id="console"></div>
+<input id="test0" type="text" value="wellcome"/><br/>
+<textarea id="test1" rows="5" cols="80">wellcome</textarea><br/>
+<div id="test2" contenteditable="true">wellcome</div><br/>
+</body>
+</html>

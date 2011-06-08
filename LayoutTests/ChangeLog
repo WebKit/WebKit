@@ -1,3 +1,23 @@
+2011-06-08  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Brent Fulgham.
+
+        Add SpellCheck API
+        https://bugs.webkit.org/show_bug.cgi?id=59693
+
+        This change adds two SpellCheck API functions (addSpellcheckRange and
+        removeSpellcheckRange) and one attribute (spellcheckRange) discussed in
+        the public-webapps ML. This change is currently available only on Chromium.
+
+        * editing/spelling/spellcheck-api-expected.txt: Added.
+        * editing/spelling/spellcheck-api-pixel.html: Added.
+        * editing/spelling/spellcheck-api.html: Added.
+        * platform/chromium/test_expectations.txt:        
+        * platform/gtk/Skipped:
+        * platform/mac/Skipped:
+        * platform/qt/Skipped:
+        * platform/win/Skipped:
+
 2011-06-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

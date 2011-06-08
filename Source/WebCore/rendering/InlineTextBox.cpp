@@ -963,6 +963,7 @@ static GraphicsContext::TextCheckingLineStyle textCheckingLineStyleForMarkerType
 {
     switch (markerType) {
     case DocumentMarker::Spelling:
+    case DocumentMarker::UserSpelling:
         return GraphicsContext::TextCheckingSpellingLineStyle;
     case DocumentMarker::Grammar:
         return GraphicsContext::TextCheckingGrammarLineStyle;
@@ -1104,6 +1105,7 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
         switch (marker->type()) {
             case DocumentMarker::Grammar:
             case DocumentMarker::Spelling:
+            case DocumentMarker::UserSpelling:
             case DocumentMarker::CorrectionIndicator:
             case DocumentMarker::Replacement:
                 if (background)
@@ -1129,6 +1131,7 @@ void InlineTextBox::paintDocumentMarkers(GraphicsContext* pt, const FloatPoint& 
         // marker intersects this run.  Paint it.
         switch (marker->type()) {
             case DocumentMarker::Spelling:
+            case DocumentMarker::UserSpelling:
                 paintSpellingOrGrammarMarker(pt, boxOrigin, marker, style, font, false);
                 break;
             case DocumentMarker::Grammar:

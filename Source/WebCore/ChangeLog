@@ -1,3 +1,74 @@
+2011-06-08  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Brent Fulgham.
+
+        Add SpellCheck API
+        https://bugs.webkit.org/show_bug.cgi?id=59693
+
+        This change adds two SpellCheck API functions (addSpellcheckRange and
+        removeSpellcheckRange) and one attribute (spellcheckRange) discussed in
+        the public-webapps ML. This change is currently available only on Chromium.
+
+        Tests: editing/spelling/spellcheck-api-pixel.html
+               editing/spelling/spellcheck-api.html
+
+        * WebCore.gypi:
+        * bindings/generic/RuntimeEnabledFeatures.cpp:
+        * bindings/generic/RuntimeEnabledFeatures.h:
+        (WebCore::RuntimeEnabledFeatures::spellCheckAPIEnabled):
+        (WebCore::RuntimeEnabledFeatures::setSpellCheckAPIEnabled):
+        * dom/DocumentMarker.h:
+        (WebCore::DocumentMarker::length):
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::userSpellingMarkersForNode):
+        (WebCore::DocumentMarkerController::addUserSpellingMarker):
+        (WebCore::DocumentMarkerController::removeUserSpellingMarker):
+        (WebCore::DocumentMarkerController::userSpellingNode):
+        * dom/DocumentMarkerController.h:
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::spellcheckRanges):
+        (WebCore::HTMLDivElement::addSpellcheckRange):
+        (WebCore::HTMLDivElement::removeSpellcheckRange):
+        * html/HTMLDivElement.h:
+        * html/HTMLDivElement.idl:
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::spellcheckRanges):
+        (WebCore::HTMLInputElement::addSpellcheckRange):
+        (WebCore::HTMLInputElement::removeSpellcheckRange):
+        * html/HTMLInputElement.h:
+        * html/HTMLInputElement.idl:
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::spellcheckRanges):
+        (WebCore::HTMLTextAreaElement::addSpellcheckRange):
+        (WebCore::HTMLTextAreaElement::removeSpellcheckRange):
+        * html/HTMLTextAreaElement.h:
+        * html/HTMLTextAreaElement.idl:
+        * html/SpellcheckRange.cpp: Added.
+        (WebCore::SpellcheckRange::SpellcheckRange):
+        (WebCore::SpellcheckRange::~SpellcheckRange):
+        * html/SpellcheckRange.h: Added.
+        (WebCore::SpellcheckRange::create):
+        (WebCore::SpellcheckRange::start):
+        (WebCore::SpellcheckRange::length):
+        (WebCore::SpellcheckRange::suggestions):
+        (WebCore::SpellcheckRange::options):
+        * html/SpellcheckRange.idl: Added.
+        * html/SpellcheckRangeList.cpp: Added.
+        (WebCore::SpellcheckRangeList::SpellcheckRangeList):
+        (WebCore::SpellcheckRangeList::~SpellcheckRangeList):
+        (WebCore::SpellcheckRangeList::item):
+        * html/SpellcheckRangeList.h: Added.
+        (WebCore::SpellcheckRangeList::create):
+        (WebCore::SpellcheckRangeList::isEmpty):
+        (WebCore::SpellcheckRangeList::clear):
+        (WebCore::SpellcheckRangeList::append):
+        (WebCore::SpellcheckRangeList::remove):
+        (WebCore::SpellcheckRangeList::length):
+        * html/SpellcheckRangeList.idl: Added.
+        * rendering/InlineTextBox.cpp:
+        (WebCore::textCheckingLineStyleForMarkerType):
+        (WebCore::InlineTextBox::paintDocumentMarkers):
+
 2011-06-07  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.

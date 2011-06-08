@@ -37,6 +37,7 @@
 #include "ContextMenuController.h"
 #include "Document.h"
 #include "DocumentLoader.h"
+#include "DocumentMarkerController.h"
 #include "Editor.h"
 #include "EventHandler.h"
 #include "FrameLoader.h"
@@ -259,7 +260,21 @@ PlatformMenuDescription ContextMenuClientImpl::getCustomMenuFromDefaultItems(
 
     if (r.isContentEditable()) {
         data.isEditable = true;
-        if (m_webView->focusedWebCoreFrame()->editor()->isContinuousSpellCheckingEnabled()) {
+        // If the selected text has markers added by Spellcheck API, use their description as suggestions.
+        RefPtr<Range> range = selectedFrame->selection()->toNormalizedRange();
+        Vector<DocumentMarker*> markers = selectedFrame->document()->markers()->markersInRange(range.get(), DocumentMarker::UserSpelling);
+        if (!markers.isEmpty()) {
+            Vector<String> suggestions;
+            for (size_t i = 0; i < markers.size(); ++i) {
+                if (markers[i]->hasDescription()) {
+                    Vector<String> descriptions;
+                    markers[i]->description().split('\n', descriptions);
+                    suggestions.append(descriptions);
+                }
+            }
+            data.dictionarySuggestions = suggestions;
+            data.misspelledWord = range->text();
+        } else if (m_webView->focusedWebCoreFrame()->editor()->isContinuousSpellCheckingEnabled()) {
             data.isSpellCheckingEnabled = true;
             // Spellchecking might be enabled for the field, but could be disabled on the node.
             if (m_webView->focusedWebCoreFrame()->editor()->isSpellCheckingEnabledInFocusedNode()) {

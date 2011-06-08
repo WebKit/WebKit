@@ -59,7 +59,12 @@ public:
         // range that bears this marker. In some platforms, if the user later inserts the same original
         // word again at this position, it will not be autocorrected again. The description of this
         // marker is the original word before autocorrection was applied.
-        DeletedAutocorrection = 1 << 8
+        DeletedAutocorrection = 1 << 8,
+        // A misspelled marker added by users with the SpellCheck API. (Even though
+        // this marker is almost identical to the above Spelling marker, we need
+        // another type for user-added markers because it raises privacy concerns
+        // to provide a list of system-added markers.)
+        UserSpelling = 1 << 9,
     };
 
     class MarkerTypes {
@@ -97,6 +102,11 @@ public:
     const String& description() const { return m_description; }
     bool hasDescription() const { return !m_description.isEmpty(); }
     bool activeMatch() const { return m_activeMatch; }
+    unsigned length() const
+    {
+        ASSERT(m_endOffset >= m_startOffset);
+        return m_endOffset - m_startOffset;
+    }
 
     void setActiveMatch(bool);
     void clearDescription() { m_description = String(); }

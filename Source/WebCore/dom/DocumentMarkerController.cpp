@@ -31,6 +31,8 @@
 #include "Range.h"
 #include "RenderObject.h"
 #include "RenderedDocumentMarker.h"
+#include "SpellcheckRange.h"
+#include "SpellcheckRangeList.h"
 #include "TextIterator.h"
 
 namespace WebCore {
@@ -652,6 +654,73 @@ void DocumentMarkerController::clearDescriptionOnMarkersIntersectingRange(Range*
         }
     }
 }
+
+#if ENABLE(SPELLCHECK_API)
+PassRefPtr<SpellcheckRangeList> DocumentMarkerController::userSpellingMarkersForNode(Node* node) const
+{
+    RefPtr<SpellcheckRangeList> result = SpellcheckRangeList::create();
+
+    MarkerList* list = m_markers.get(userSpellingNode(node));
+    if (!list)
+        return result;
+
+    for (size_t i = 0; i < list->size(); ++i) {
+        const DocumentMarker& marker = list->at(i);
+        if (marker.length() > 0) {
+            RefPtr<DOMStringList> suggestions = DOMStringList::create();
+            Vector<String> descriptions;
+            marker.description().split('\n', descriptions);
+            for (size_t j = 0; j < descriptions.size(); ++j)
+                suggestions->append(descriptions[j]);
+            result->append(SpellcheckRange::create(marker.startOffset(), marker.length(), suggestions.release(), 0));
+        }
+    }
+
+    return result;
+}
+
+bool DocumentMarkerController::addUserSpellingMarker(Node* node, unsigned start, unsigned length, RefPtr<DOMStringList> suggestions, unsigned options)
+{
+    if (!node || !length)
+        return false;
+
+    Node* spellingNode = userSpellingNode(node);
+    if (!spellingNode)
+        return false;
+
+    // Serialize the suggestions into text until the DocumentMarker class supports multiple descriptions.
+    String description;
+    for (size_t i = 0; i < suggestions->length(); i++) {
+        description += suggestions->item(i);
+        description.append('\n');
+    }
+    addMarker(spellingNode, DocumentMarker(DocumentMarker::UserSpelling, start, start + length, description));
+
+    UNUSED_PARAM(options);
+    return true;
+}
+
+void DocumentMarkerController::removeUserSpellingMarker(Node* node, unsigned start, unsigned length)
+{
+    if (!node || !length)
+        return;
+
+    Node* spellingNode = userSpellingNode(node);
+    if (!spellingNode)
+        return;
+
+    removeMarkers(spellingNode, start, length, DocumentMarker::UserSpelling, DoNotRemovePartiallyOverlappingMarker);
+}
+
+Node* DocumentMarkerController::userSpellingNode(Node* node) const
+{
+    for (const RenderObject* renderer = node->renderer(); renderer; renderer = renderer->childAt(0)) {
+        if (renderer->isText())
+            return renderer->node();
+    }
+    return 0;
+}
+#endif
 
 #ifndef NDEBUG
 void DocumentMarkerController::showMarkers() const

@@ -39,6 +39,11 @@ class Node;
 class Range;
 class RenderedDocumentMarker;
 
+#if ENABLE(SPELLCHECK_API)
+class DOMStringList;
+class SpellcheckRangeList;
+#endif
+
 class DocumentMarkerController {
     WTF_MAKE_NONCOPYABLE(DocumentMarkerController); WTF_MAKE_FAST_ALLOCATED;
 public:
@@ -76,12 +81,22 @@ public:
     Vector<IntRect> renderedRectsForMarkers(DocumentMarker::MarkerType);
     void clearDescriptionOnMarkersIntersectingRange(Range*, DocumentMarker::MarkerTypes);
 
+#if ENABLE(SPELLCHECK_API)
+    PassRefPtr<SpellcheckRangeList> userSpellingMarkersForNode(Node*) const;
+    bool addUserSpellingMarker(Node*, unsigned startOffset, unsigned length, RefPtr<DOMStringList>, unsigned option);
+    void removeUserSpellingMarker(Node*, unsigned startOffset, unsigned length);
+#endif
+
 #ifndef NDEBUG
     void showMarkers() const;
 #endif
 
 private:
     void addMarker(Node*, const DocumentMarker&);
+
+#if ENABLE(SPELLCHECK_API)
+    Node* userSpellingNode(Node*) const;
+#endif
 
     typedef Vector<RenderedDocumentMarker> MarkerList;
     typedef HashMap<RefPtr<Node>, MarkerList*> MarkerMap;
