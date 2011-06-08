@@ -3173,6 +3173,7 @@ BUGWK60094 : fast/encoding/parser-tests-50.html = TIMEOUT PASS
 BUGWK60094 : fast/encoding/parser-tests-60.html = TIMEOUT PASS
 BUGWK60094 : fast/encoding/parser-tests-70.html = TIMEOUT PASS
 BUGWK60094 : fast/encoding/parser-tests-80.html = TIMEOUT PASS
+BUGWK60094 : fast/encoding/parser-tests-90.html = TIMEOUT PASS
 BUGWK60094 : fast/encoding/parser-tests-100.html = TIMEOUT PASS
 BUGWK60094 : fast/encoding/parser-tests-110.html = TIMEOUT PASS
 BUGWK60094 : fast/encoding/parser-tests-120.html = TIMEOUT PASS
@@ -3999,3 +4000,5 @@ BUGCR84157 GPU : fast/canvas/zero-size-fill-rect.html = IMAGE
 BUGCR84157 BUGCR74979 WIN LINUX GPU : media/video-canvas-alpha.html = IMAGE
 
 BUGCR85051 WIN GPU : canvas/philip/tests/2d.composite.canvas.source-over.html = TEXT
+
+BUGWK62255 : animations/animation-iteration-event-destroy-renderer.html = TIMEOUT PASS

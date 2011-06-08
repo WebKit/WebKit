@@ -1,3 +1,9 @@
+2011-06-07  James Kozianski  <koz@chromium.org>
+
+        [Chromium] Unreviewed. Update expectations for tests that are timing out.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-07  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.
