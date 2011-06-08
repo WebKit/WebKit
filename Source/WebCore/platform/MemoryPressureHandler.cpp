@@ -36,7 +36,10 @@ MemoryPressureHandler& memoryPressureHandler()
     return staticMemoryPressureHandler;
 }
 
-MemoryPressureHandler::MemoryPressureHandler() { }
+MemoryPressureHandler::MemoryPressureHandler() 
+    : m_installed(false)
+{
+}
 
 #if !PLATFORM(MAC) || defined(BUILDING_ON_LEOPARD) || defined(BUILDING_ON_SNOW_LEOPARD)
 void MemoryPressureHandler::install() { }
