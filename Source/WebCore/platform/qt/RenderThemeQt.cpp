@@ -1465,22 +1465,20 @@ bool RenderThemeQt::paintMediaSliderThumb(RenderObject* o, const PaintInfo& pain
 
 void RenderThemeQt::adjustSliderThumbSize(RenderObject* o) const
 {
+    // timelineThumbHeight should match the height property of -webkit-media-controls-timeline in mediaControlsQt.css.
+    const int timelineThumbHeight = 12;
+    const int timelineThumbWidth = timelineThumbHeight / 3;
+    // volumeThumbWidth should match the width property of -webkit-media-controls-volume-slider in mediaControlsQt.css.
+    const int volumeThumbWidth = 12;
+    const int volumeThumbHeight = volumeThumbWidth / 3;
     ControlPart part = o->style()->appearance();
 
     if (part == MediaSliderThumbPart) {
-        RenderStyle* parentStyle = o->parent()->style();
-        Q_ASSERT(parentStyle);
-
-        int parentHeight = parentStyle->height().value();
-        o->style()->setWidth(Length(parentHeight / 3, Fixed));
-        o->style()->setHeight(Length(parentHeight, Fixed));
+        o->style()->setWidth(Length(timelineThumbWidth, Fixed));
+        o->style()->setHeight(Length(timelineThumbHeight, Fixed));
     } else if (part == MediaVolumeSliderThumbPart) {
-        RenderStyle* parentStyle = o->parent()->style();
-        Q_ASSERT(parentStyle);
-
-        int parentWidth = parentStyle->width().value();
-        o->style()->setHeight(Length(parentWidth / 3, Fixed));
-        o->style()->setWidth(Length(parentWidth, Fixed));
+        o->style()->setHeight(Length(volumeThumbHeight, Fixed));
+        o->style()->setWidth(Length(volumeThumbWidth, Fixed));
     } else if (part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart) {
         QStyleOptionSlider option;
         if (part == SliderThumbVerticalPart)

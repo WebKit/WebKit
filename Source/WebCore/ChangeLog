@@ -1,3 +1,18 @@
+2011-06-07  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] RenderThemeQt::adjustSliderThumbSize() should not refer to the parent style.
+        https://bugs.webkit.org/show_bug.cgi?id=62207
+
+        * css/mediaControlsQt.css: Add comments.
+        (audio::-webkit-media-controls-timeline):
+        (video::-webkit-media-controls-timeline):
+        (audio::-webkit-media-controls-volume-slider):
+        (video::-webkit-media-controls-volume-slider):
+        * platform/qt/RenderThemeQt.cpp: Use fixed values to avoid referring to o->parent().
+        (WebCore::RenderThemeQt::adjustSliderThumbSize):
+
 2011-06-07  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Mihai Parparita.
