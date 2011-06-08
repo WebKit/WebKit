@@ -241,7 +241,8 @@ void BitmapImage::draw(GraphicsContext* ctxt, const FloatRect& destRect, const F
             adjustedDestRect.setSize(FloatSize(selfSize.width() / xScale, selfSize.height() / yScale));
         }
 
-        CGContextClipToRect(context, destRect);
+        if (!destRect.contains(adjustedDestRect))
+            CGContextClipToRect(context, destRect);
     }
 
     // If the image is only partially loaded, then shrink the destination rect that we're drawing into accordingly.

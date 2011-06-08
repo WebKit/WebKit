@@ -1,3 +1,17 @@
+2011-06-07  Ian Henderson  <ianh@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        (CG) Sub-image drawing clips unnecessarily
+        https://bugs.webkit.org/show_bug.cgi?id=62258
+
+        If destRect completely encompasses the adjustedDestRect into which we
+        draw, clipping to destRect will do nothing.  Skip the call to
+        CGContextClipToRect in this case.
+
+        * platform/graphics/cg/ImageCG.cpp:
+        (WebCore::BitmapImage::draw):
+
 2011-06-07  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.
