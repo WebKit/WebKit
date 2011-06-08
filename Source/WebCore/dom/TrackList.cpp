@@ -103,7 +103,15 @@ const String& TrackList::getLanguage(unsigned long index, ExceptionCode& ec) con
 
 void TrackList::clear()
 {
+#if ENABLE(MEDIA_STREAM)
+    m_associatedStreamLabel = String();
+#endif
+
+    if (m_tracks.isEmpty())
+        return;
+
     m_tracks.clear();
+
     postChangeEvent();
 }
 
@@ -123,6 +131,26 @@ void TrackList::dispatchChangeEvent(int)
     dispatchEvent(Event::create(eventNames().changeEvent, false, false));
 }
 
+#if ENABLE(MEDIA_STREAM)
+void TrackList::associateStream(const String& label)
+{
+    ASSERT(m_associatedStreamLabel.isNull());
+    m_associatedStreamLabel = label;
+}
+
+const String& TrackList::associatedStreamLabel() const
+{
+    return m_associatedStreamLabel;
+}
+
+void TrackList::trackFailed(unsigned long index)
+{
+    ASSERT(index < length());
+    m_tracks.remove(index);
+    postChangeEvent();
+}
+#endif
+
 TrackList* TrackList::toTrackList()
 {
     return this;
@@ -130,9 +158,13 @@ TrackList* TrackList::toTrackList()
 
 ScriptExecutionContext* TrackList::scriptExecutionContext() const
 {
-    // FIXME: provide an script execution context for HTML Media Element and MediaStream API use cases.
-    // For the MediaStream API: https://bugs.webkit.org/show_bug.cgi?id=60205
-    // For the HTML Media Element: https://bugs.webkit.org/show_bug.cgi?id=61127
+#if ENABLE(MEDIA_STREAM)
+    if (mediaStreamFrameController())
+        return mediaStreamFrameController()->scriptExecutionContext();
+#endif
+
+    // FIXME: provide an script execution context for HTML Media Element use case.
+    // https://bugs.webkit.org/show_bug.cgi?id=61127
     return 0;
 }
 

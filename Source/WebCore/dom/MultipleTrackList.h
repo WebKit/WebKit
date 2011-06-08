@@ -45,6 +45,10 @@ public:
 
     virtual void clear();
 
+#if ENABLE(MEDIA_STREAM)
+    virtual void trackFailed(unsigned long index);
+#endif
+
     // EventTarget implementation.
     virtual MultipleTrackList* toMultipleTrackList();
 

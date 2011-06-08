@@ -29,7 +29,9 @@
 
 #include "Event.h"
 #include "EventNames.h"
+#include "ExclusiveTrackList.h"
 #include "MediaStreamFrameController.h"
+#include "MultipleTrackList.h"
 #include "ScriptExecutionContext.h"
 
 namespace WebCore {
@@ -57,14 +59,20 @@ public:
     Callback m_callback;
 };
 
-PassRefPtr<GeneratedStream> GeneratedStream::create(MediaStreamFrameController* frameController, const String& label)
+PassRefPtr<GeneratedStream> GeneratedStream::create(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks)
 {
-    return adoptRef(new GeneratedStream(frameController, label));
+    return adoptRef(new GeneratedStream(frameController, label, audioTracks, videoTracks));
 }
 
-GeneratedStream::GeneratedStream(MediaStreamFrameController* frameController, const String& label)
+GeneratedStream::GeneratedStream(MediaStreamFrameController* frameController, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks)
     : Stream(frameController, label, true)
+    , m_audioTracks(audioTracks)
+    , m_videoTracks(videoTracks)
 {
+    ASSERT(m_audioTracks);
+    ASSERT(m_videoTracks);
+    m_audioTracks->associateStream(label);
+    m_videoTracks->associateStream(label);
 }
 
 GeneratedStream::~GeneratedStream()
@@ -84,12 +92,32 @@ void GeneratedStream::detachEmbedder()
     Stream::detachEmbedder();
 }
 
+void GeneratedStream::streamEnded()
+{
+    m_audioTracks->clear();
+    m_videoTracks->clear();
+
+    Stream::streamEnded();
+}
+
+PassRefPtr<MultipleTrackList> GeneratedStream::audioTracks() const
+{
+    return m_audioTracks;
+}
+
+PassRefPtr<ExclusiveTrackList> GeneratedStream::videoTracks() const
+{
+    return m_videoTracks;
+}
+
 void GeneratedStream::stop()
 {
     if (!mediaStreamFrameController() || m_readyState == ENDED)
         return;
 
     mediaStreamFrameController()->stopGeneratedStream(label());
+    m_audioTracks->clear();
+    m_videoTracks->clear();
 
     m_readyState = ENDED;
 

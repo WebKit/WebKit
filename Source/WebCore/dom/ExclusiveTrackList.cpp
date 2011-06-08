@@ -60,8 +60,24 @@ void ExclusiveTrackList::select(long index, ExceptionCode& ec)
         return;
 
     m_selectedIndex = index;
+
+#if ENABLE(MEDIA_STREAM)
+    if (mediaStreamFrameController())
+        mediaStreamFrameController()->selectVideoTrack(associatedStreamLabel(), index);
+#endif
+
     postChangeEvent();
 }
+
+#if ENABLE(MEDIA_STREAM)
+void ExclusiveTrackList::trackFailed(unsigned long index)
+{
+    if (m_selectedIndex == static_cast<long>(index))
+        m_selectedIndex = NoSelection;
+
+    TrackList::trackFailed(index);
+}
+#endif
 
 ExclusiveTrackList* ExclusiveTrackList::toExclusiveTrackList()
 {

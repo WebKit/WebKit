@@ -52,7 +52,6 @@ public:
 
     // FIXME: implement the record method when StreamRecorder is available.
 
-    DEFINE_ATTRIBUTE_EVENT_LISTENER(readystatechange);
     DEFINE_ATTRIBUTE_EVENT_LISTENER(ended);
 
     unsigned short readyState() const { return m_readyState; }

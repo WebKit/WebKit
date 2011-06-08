@@ -52,6 +52,13 @@ public:
     // Stop a generated stream.
     virtual void stopGeneratedStream(const String& streamLabel) = 0;
 
+    // Enable/disable an audio track in a generated stream.
+    virtual void enableAudioTrack(const String& streamLabel, unsigned long index) = 0;
+    virtual void disableAudioTrack(const String& streamLabel, unsigned long index) = 0;
+
+    // Select a video track in a generated stream.
+    virtual void selectVideoTrack(const String& streamLabel, long index) = 0;
+
 protected:
     virtual ~MediaStreamClient() { }
 };

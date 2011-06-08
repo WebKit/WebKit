@@ -54,6 +54,14 @@ void MultipleTrackList::clear()
     TrackList::clear();
 }
 
+#if ENABLE(MEDIA_STREAM)
+void MultipleTrackList::trackFailed(unsigned long index)
+{
+    TrackList::trackFailed(index);
+    m_isEnabled.remove(index);
+}
+#endif
+
 bool MultipleTrackList::isEnabled(unsigned long index, ExceptionCode& ec) const
 {
     return checkIndex(index, ec) ? m_isEnabled[index] : false;
@@ -65,6 +73,12 @@ void MultipleTrackList::enable(unsigned long index, ExceptionCode& ec)
         return;
 
     m_isEnabled[index] = true;
+
+#if ENABLE(MEDIA_STREAM)
+    if (mediaStreamFrameController())
+        mediaStreamFrameController()->enableAudioTrack(associatedStreamLabel(), index);
+#endif
+
     postChangeEvent();
 }
 
@@ -74,6 +88,12 @@ void MultipleTrackList::disable(unsigned long index, ExceptionCode& ec)
         return;
 
     m_isEnabled[index] = false;
+
+#if ENABLE(MEDIA_STREAM)
+    if (mediaStreamFrameController())
+        mediaStreamFrameController()->disableAudioTrack(associatedStreamLabel(), index);
+#endif
+
     postChangeEvent();
 }
 

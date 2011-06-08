@@ -32,26 +32,35 @@
 
 namespace WebCore {
 
+class ExclusiveTrackList;
+class MultipleTrackList;
+
 class GeneratedStream : public Stream {
 public:
-    // FIXME: add audio and video tracks when available.
-    static PassRefPtr<GeneratedStream> create(MediaStreamFrameController*, const String& label);
+    static PassRefPtr<GeneratedStream> create(MediaStreamFrameController*, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks);
     virtual ~GeneratedStream();
 
     void stop();
 
+    PassRefPtr<MultipleTrackList> audioTracks() const;
+    PassRefPtr<ExclusiveTrackList> videoTracks() const;
+
     // MediaStreamFrameController::StreamClient implementation.
     virtual void detachEmbedder();
+    virtual void streamEnded();
 
     // EventTarget.
     virtual GeneratedStream* toGeneratedStream();
 
 private:
-    GeneratedStream(MediaStreamFrameController*, const String& label);
+    GeneratedStream(MediaStreamFrameController*, const String& label, PassRefPtr<MultipleTrackList> audioTracks, PassRefPtr<ExclusiveTrackList> videoTracks);
     class DispatchUpdateTask;
     friend class DispatchUpdateTask;
 
     void onStop();
+
+    RefPtr<MultipleTrackList> m_audioTracks;
+    RefPtr<ExclusiveTrackList> m_videoTracks;
 };
 
 } // namespace WebCore

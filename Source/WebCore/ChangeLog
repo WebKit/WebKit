@@ -1,3 +1,64 @@
+2011-06-08  Tommy Widenflycht  <tommyw@google.com>
+
+        Reviewed by Tony Gentilcore.
+
+        Media Stream API: integrate the Track List objects into the existing code.
+        https://bugs.webkit.org/show_bug.cgi?id=60205
+
+        Tests for the Media Stream API will be provided by the bug 56587.
+
+        * dom/ExclusiveTrackList.cpp:
+        (WebCore::ExclusiveTrackList::select):
+        (WebCore::ExclusiveTrackList::trackFailed):
+        * dom/ExclusiveTrackList.h:
+        * dom/GeneratedStream.cpp:
+        (WebCore::GeneratedStream::create):
+        (WebCore::GeneratedStream::GeneratedStream):
+        (WebCore::GeneratedStream::streamEnded):
+        (WebCore::GeneratedStream::audioTracks):
+        (WebCore::GeneratedStream::videoTracks):
+        (WebCore::GeneratedStream::stop):
+        * dom/GeneratedStream.h:
+        * dom/GeneratedStream.idl:
+        * dom/MultipleTrackList.cpp:
+        (WebCore::MultipleTrackList::trackFailed):
+        (WebCore::MultipleTrackList::enable):
+        (WebCore::MultipleTrackList::disable):
+        * dom/MultipleTrackList.h:
+        * dom/Stream.h:
+        * dom/TrackList.cpp:
+        (WebCore::TrackList::clear):
+        (WebCore::TrackList::associateStream):
+        (WebCore::TrackList::associatedStreamLabel):
+        (WebCore::TrackList::trackFailed):
+        (WebCore::TrackList::scriptExecutionContext):
+        * dom/TrackList.h:
+        * page/MediaStreamClient.h:
+        * page/MediaStreamController.cpp:
+        (WebCore::MediaStreamController::enableAudioTrack):
+        (WebCore::MediaStreamController::disableAudioTrack):
+        (WebCore::MediaStreamController::selectVideoTrack):
+        (WebCore::MediaStreamController::streamGenerated):
+        (WebCore::MediaStreamController::audioTrackFailed):
+        (WebCore::MediaStreamController::videoTrackFailed):
+        * page/MediaStreamController.h:
+        * page/MediaStreamFrameController.cpp:
+        (WebCore::MediaStreamFrameController::unregister):
+        (WebCore::MediaStreamFrameController::enterDetachedState):
+        (WebCore::MediaStreamFrameController::disconnectFrame):
+        (WebCore::MediaStreamFrameController::enableAudioTrack):
+        (WebCore::MediaStreamFrameController::disableAudioTrack):
+        (WebCore::MediaStreamFrameController::selectVideoTrack):
+        (WebCore::MediaStreamFrameController::streamGenerated):
+        (WebCore::MediaStreamFrameController::audioTrackFailed):
+        (WebCore::MediaStreamFrameController::videoTrackFailed):
+        * page/MediaStreamFrameController.h:
+        (WebCore::MediaStreamFrameController::ClientBase::isGenericClient):
+        (WebCore::MediaStreamFrameController::GenericClient::GenericClient):
+        (WebCore::MediaStreamFrameController::GenericClient::~GenericClient):
+        (WebCore::MediaStreamFrameController::GenericClient::isGenericClient):
+        (WebCore::MediaStreamFrameController::GenericClient::unregister):
+
 2011-06-08  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

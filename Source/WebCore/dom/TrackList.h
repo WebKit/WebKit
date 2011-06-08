@@ -58,6 +58,9 @@ private:
 typedef Vector<RefPtr<Track> > TrackVector;
 
 class TrackList : public RefCounted<TrackList>,
+#if ENABLE(MEDIA_STREAM)
+                  public MediaStreamFrameController::GenericClient,
+#endif
                   public EventTarget {
 public:
     static PassRefPtr<TrackList> create(const TrackVector&);
@@ -72,6 +75,12 @@ public:
     DEFINE_ATTRIBUTE_EVENT_LISTENER(change);
 
     virtual void clear();
+
+#if ENABLE(MEDIA_STREAM)
+    void associateStream(const String& streamLabel);
+    const String& associatedStreamLabel() const;
+    virtual void trackFailed(unsigned long index);
+#endif
 
     // EventTarget implementation.
     virtual TrackList* toTrackList();
@@ -124,6 +133,10 @@ private:
 
     EventTargetData m_eventTargetData;
     TrackVector m_tracks;
+
+#if ENABLE(MEDIA_STREAM)
+    String m_associatedStreamLabel;
+#endif
 };
 
 } // namespace WebCore

@@ -29,9 +29,11 @@
 
 #include "DOMWindow.h"
 #include "Document.h"
+#include "ExclusiveTrackList.h"
 #include "Frame.h"
 #include "GeneratedStream.h"
 #include "MediaStreamController.h"
+#include "MultipleTrackList.h"
 #include "NavigatorUserMediaErrorCallback.h"
 #include "NavigatorUserMediaSuccessCallback.h"
 #include "Page.h"
@@ -172,6 +174,12 @@ void MediaStreamFrameController::unregister(StreamClient* client)
     m_streams.remove(client->clientId());
 }
 
+void MediaStreamFrameController::unregister(GenericClient* client)
+{
+    ASSERT(m_clients.contains(client->clientId()));
+    m_clients.remove(client->clientId());
+}
+
 Stream* MediaStreamFrameController::getStreamFromLabel(const String& label) const
 {
     ASSERT(m_streams.contains(label));
@@ -188,6 +196,7 @@ void MediaStreamFrameController::enterDetachedState()
 
     m_requests.abortAll();
     m_streams.detachEmbedder();
+    m_clients.detachEmbedder();
     m_isInDetachedState = true;
 }
 
@@ -216,6 +225,7 @@ void MediaStreamFrameController::disconnectFrame()
 
     ASSERT(m_requests.isEmpty());
     m_streams.unregisterAll();
+    m_clients.unregisterAll();
 
     m_frame = 0;
 }
@@ -297,7 +307,37 @@ void MediaStreamFrameController::stopGeneratedStream(const String& streamLabel)
         pageController()->stopGeneratedStream(streamLabel);
 }
 
-void MediaStreamFrameController::streamGenerated(int requestId, const String& label)
+void MediaStreamFrameController::enableAudioTrack(const String& streamLabel, unsigned long index)
+{
+    // Don't assert since the audio tracks don't necessarily keep alive their associated generated stream object.
+    if (!m_streams.contains(streamLabel))
+        return;
+
+    if (isClientAvailable())
+        pageController()->enableAudioTrack(streamLabel, index);
+}
+
+void MediaStreamFrameController::disableAudioTrack(const String& streamLabel, unsigned long index)
+{
+    // Don't assert since the audio tracks don't necessarily keep alive their associated generated stream object.
+    if (!m_streams.contains(streamLabel))
+        return;
+
+    if (isClientAvailable())
+        pageController()->disableAudioTrack(streamLabel, index);
+}
+
+void MediaStreamFrameController::selectVideoTrack(const String& streamLabel, long index)
+{
+    // Don't assert since the audio tracks don't necessarily keep alive their associated generated stream object.
+    if (!m_streams.contains(streamLabel))
+        return;
+
+    if (isClientAvailable())
+        pageController()->selectVideoTrack(streamLabel, index);
+}
+
+void MediaStreamFrameController::streamGenerated(int requestId, const String& label, PassRefPtr<MultipleTrackList> audioTracksParam, PassRefPtr<ExclusiveTrackList> videoTracksParam)
 {
     // Don't assert since the request can have been aborted as a result of embedder detachment.
     if (!m_requests.contains(requestId))
@@ -305,9 +345,22 @@ void MediaStreamFrameController::streamGenerated(int requestId, const String& la
 
     ASSERT(m_requests.get(requestId)->isGenerateStreamRequest());
     ASSERT(!label.isNull());
+    ASSERT(audioTracksParam);
+    ASSERT(videoTracksParam);
+
+    RefPtr<MultipleTrackList> audioTracks = audioTracksParam;
+    RefPtr<ExclusiveTrackList> videoTracks = videoTracksParam;
+
+    int audioTracksClientId = m_clients.getNextId();
+    audioTracks->associateFrameController(this, audioTracksClientId);
+    m_clients.add(audioTracksClientId, audioTracks.get());
+
+    int videoTracksClientId = m_clients.getNextId();
+    videoTracks->associateFrameController(this, videoTracksClientId);
+    m_clients.add(videoTracksClientId, videoTracks.get());
 
     RefPtr<GenerateStreamRequest> streamRequest = static_cast<GenerateStreamRequest*>(m_requests.get(requestId).get());
-    RefPtr<GeneratedStream> generatedStream = GeneratedStream::create(this, label);
+    RefPtr<GeneratedStream> generatedStream = GeneratedStream::create(this, label, audioTracks.release(), videoTracks.release());
     m_streams.add(label, generatedStream.get());
     m_requests.remove(requestId);
     streamRequest->successCallback()->handleEvent(generatedStream.get());
@@ -335,6 +388,19 @@ void MediaStreamFrameController::streamFailed(const String& label)
     getStreamFromLabel(label)->streamEnded();
 }
 
+void MediaStreamFrameController::audioTrackFailed(const String& label, unsigned long index)
+{
+    Stream* stream = getStreamFromLabel(label);
+    ASSERT(stream->isGeneratedStream());
+    static_cast<GeneratedStream*>(stream)->audioTracks()->trackFailed(index);
+}
+
+void MediaStreamFrameController::videoTrackFailed(const String& label, unsigned long index)
+{
+    Stream* stream = getStreamFromLabel(label);
+    ASSERT(stream->isGeneratedStream());
+    static_cast<GeneratedStream*>(stream)->videoTracks()->trackFailed(index);
+}
 
 } // namespace WebCore
 
