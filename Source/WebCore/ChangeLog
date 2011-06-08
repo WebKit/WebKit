@@ -1,3 +1,15 @@
+2011-06-08  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Fix clang issue, virtual function const mismatch
+        https://bugs.webkit.org/show_bug.cgi?id=62307
+
+        No new tests. Built with clang & ran layout tests.
+
+        * page/MediaStreamFrameController.h:
+        (WebCore::MediaStreamFrameController::GenericClient::isGenericClient):
+
 2011-06-08  Chris Rogers  <crogers@google.com>
 
         Reviewed by Kenneth Russell.

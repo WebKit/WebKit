@@ -132,7 +132,7 @@ public:
         GenericClient() { }
         GenericClient(MediaStreamFrameController* frameController, int id) : ClientBase<int>(frameController, id) { }
         virtual ~GenericClient() { unregister(); }
-        virtual bool isGenericClient() { return true; }
+        virtual bool isGenericClient() const { return true; }
 
     private:
         virtual void unregister() { unregisterClient(this); }
