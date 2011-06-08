@@ -58,27 +58,18 @@ namespace JSC {
         };
 
         NewSpace(Heap*);
-        void destroy();
-
-        size_t highWaterMark();
-        void setHighWaterMark(size_t);
 
         SizeClass& sizeClassFor(size_t);
         void* allocate(SizeClass&);
 
-        void clearMarks();
-        void markRoots();
+        void addBlock(SizeClass&, MarkedBlock*);
+        void removeBlock(MarkedBlock*);
+
+        size_t waterMark();
+        size_t highWaterMark();
+        void setHighWaterMark(size_t);
+
         void resetAllocator();
-        void sweep();
-        void shrink();
-
-        size_t size() const;
-        size_t capacity() const;
-        size_t objectCount() const;
-
-        bool contains(const void*);
-
-        template<typename Functor> void forEach(Functor&);
 
     private:
         // [ 8, 16... 128 )
@@ -91,38 +82,16 @@ namespace JSC {
         static const size_t impreciseCutoff = maxCellSize;
         static const size_t impreciseCount = impreciseCutoff / impreciseStep - 1;
 
-        typedef HashSet<MarkedBlock*>::iterator BlockIterator;
-
-        MarkedBlock* allocateBlock(SizeClass&);
-        void freeBlocks(DoublyLinkedList<MarkedBlock>&);
-
-        void clearMarks(MarkedBlock*);
-
         SizeClass m_preciseSizeClasses[preciseCount];
         SizeClass m_impreciseSizeClasses[impreciseCount];
-        HashSet<MarkedBlock*> m_blocks;
         size_t m_waterMark;
         size_t m_highWaterMark;
         Heap* m_heap;
     };
 
-    inline bool NewSpace::contains(const void* x)
+    inline size_t NewSpace::waterMark()
     {
-        if (!MarkedBlock::isAtomAligned(x))
-            return false;
-
-        MarkedBlock* block = MarkedBlock::blockFor(x);
-        if (!block || !m_blocks.contains(block))
-            return false;
-            
-        return true;
-    }
-
-    template <typename Functor> inline void NewSpace::forEach(Functor& functor)
-    {
-        BlockIterator end = m_blocks.end();
-        for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-            (*it)->forEach(functor);
+        return m_waterMark;
     }
 
     inline size_t NewSpace::highWaterMark()
@@ -151,9 +120,6 @@ namespace JSC {
 
             m_waterMark += block->capacity();
         }
-
-        if (m_waterMark < m_highWaterMark)
-            return allocateBlock(sizeClass)->allocate();
 
         return 0;
     }

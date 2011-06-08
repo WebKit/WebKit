@@ -43,97 +43,17 @@ NewSpace::NewSpace(Heap* heap)
         sizeClassFor(cellSize).cellSize = cellSize;
 }
 
-void NewSpace::destroy()
+void NewSpace::addBlock(SizeClass& sizeClass, MarkedBlock* block)
 {
-    /* Keep our precious zombies! */
-#if !ENABLE(JSC_ZOMBIES)
-    clearMarks();
-    shrink();
-    ASSERT(!size());
-#endif
-}
-
-MarkedBlock* NewSpace::allocateBlock(SizeClass& sizeClass)
-{
-    MarkedBlock* block = MarkedBlock::create(m_heap, sizeClass.cellSize);
-    sizeClass.blockList.append(block);
     sizeClass.nextBlock = block;
-    m_blocks.add(block);
-
-    return block;
+    sizeClass.blockList.append(block);
 }
 
-void NewSpace::freeBlocks(DoublyLinkedList<MarkedBlock>& blocks)
+void NewSpace::removeBlock(MarkedBlock* block)
 {
-    MarkedBlock* next;
-    for (MarkedBlock* block = blocks.head(); block; block = next) {
-        next = block->next();
-
-        blocks.remove(block);
-        m_blocks.remove(block);
-        MarkedBlock::destroy(block);
-    }
-}
-
-void NewSpace::shrink()
-{
-    // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
-    DoublyLinkedList<MarkedBlock> empties;
-
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it) {
-        MarkedBlock* block = *it;
-        if (block->isEmpty()) {
-            SizeClass& sizeClass = sizeClassFor(block->cellSize());
-            sizeClass.blockList.remove(block);
-            sizeClass.nextBlock = sizeClass.blockList.head();
-            empties.append(block);
-        }
-    }
-    
-    freeBlocks(empties);
-    ASSERT(empties.isEmpty());
-}
-
-void NewSpace::clearMarks()
-{
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-        (*it)->clearMarks();
-}
-
-void NewSpace::sweep()
-{
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-        (*it)->sweep();
-}
-
-size_t NewSpace::objectCount() const
-{
-    size_t result = 0;
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-        result += (*it)->markCount();
-    return result;
-}
-
-size_t NewSpace::size() const
-{
-    size_t result = 0;
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-        result += (*it)->size();
-    return result;
-}
-
-size_t NewSpace::capacity() const
-{
-    size_t result = 0;
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-        result += (*it)->capacity();
-    return result;
+    SizeClass& sizeClass = sizeClassFor(block->cellSize());
+    sizeClass.nextBlock = block->next();
+    sizeClass.blockList.remove(block);
 }
 
 void NewSpace::resetAllocator()
@@ -145,10 +65,6 @@ void NewSpace::resetAllocator()
 
     for (size_t cellSize = impreciseStep; cellSize < impreciseCutoff; cellSize += impreciseStep)
         sizeClassFor(cellSize).resetAllocator();
-
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-        (*it)->resetAllocator();
 }
 
 } // namespace JSC

@@ -66,13 +66,13 @@ static inline bool isValidThreadState(JSGlobalData* globalData)
 Heap::Heap(JSGlobalData* globalData)
     : m_operationInProgress(NoOperation)
     , m_newSpace(this)
+    , m_extraCost(0)
     , m_markListSet(0)
     , m_activityCallback(DefaultGCActivityCallback::create(this))
-    , m_globalData(globalData)
     , m_machineThreads(this)
     , m_markStack(globalData->jsArrayVPtr)
     , m_handleHeap(globalData)
-    , m_extraCost(0)
+    , m_globalData(globalData)
 {
     m_newSpace.setHighWaterMark(minBytesPerCycle);
     (*m_activityCallback)();
@@ -104,10 +104,15 @@ void Heap::destroy()
 
     delete m_markListSet;
     m_markListSet = 0;
-    m_newSpace.clearMarks();
+
+    clearMarks();
     m_handleHeap.finalizeWeakHandles();
     m_globalData->smallStrings.finalizeSmallStrings();
-    m_newSpace.destroy();
+
+#if !ENABLE(JSC_ZOMBIES)
+    shrink();
+    ASSERT(!size());
+#endif
 
     m_globalData = 0;
 }
@@ -137,18 +142,20 @@ void* Heap::allocate(NewSpace::SizeClass& sizeClass)
     ASSERT(m_operationInProgress == NoOperation);
 #endif
 
+    m_operationInProgress = Allocation;
     void* result = m_newSpace.allocate(sizeClass);
+    m_operationInProgress = NoOperation;
+
     if (result)
         return result;
 
+    if (m_newSpace.waterMark() < m_newSpace.highWaterMark()) {
+        m_newSpace.addBlock(sizeClass, allocateBlock(sizeClass.cellSize));
+        return allocate(sizeClass);
+    }
+
     collect(DoNotSweep);
-
-    m_operationInProgress = Allocation;
-    result = m_newSpace.allocate(sizeClass);
-    m_operationInProgress = NoOperation;
-
-    ASSERT(result);
-    return result;
+    return allocate(sizeClass);
 }
 
 void Heap::protect(JSValue k)
@@ -232,7 +239,7 @@ void Heap::markRoots()
     ConservativeRoots registerFileRoots(this);
     registerFile().gatherConservativeRoots(registerFileRoots);
 
-    m_newSpace.clearMarks();
+    clearMarks();
 
     visitor.append(machineThreadRoots);
     visitor.drain();
@@ -273,19 +280,45 @@ void Heap::markRoots()
     m_operationInProgress = NoOperation;
 }
 
+void Heap::clearMarks()
+{
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        (*it)->clearMarks();
+}
+
+void Heap::sweep()
+{
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        (*it)->sweep();
+}
+
 size_t Heap::objectCount() const
 {
-    return m_newSpace.objectCount();
+    size_t result = 0;
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        result += (*it)->markCount();
+    return result;
 }
 
 size_t Heap::size() const
 {
-    return m_newSpace.size();
+    size_t result = 0;
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        result += (*it)->size();
+    return result;
 }
 
 size_t Heap::capacity() const
 {
-    return m_newSpace.capacity();
+    size_t result = 0;
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        result += (*it)->capacity();
+    return result;
 }
 
 size_t Heap::globalObjectCount()
@@ -404,29 +437,39 @@ void Heap::collect(SweepToggle sweepToggle)
     m_globalData->smallStrings.finalizeSmallStrings();
 
     JAVASCRIPTCORE_GC_MARKED();
-
-    m_newSpace.resetAllocator();
-    m_extraCost = 0;
+    
+    resetAllocator();
 
 #if ENABLE(JSC_ZOMBIES)
     sweepToggle = DoSweep;
 #endif
 
     if (sweepToggle == DoSweep) {
-        m_newSpace.sweep();
-        m_newSpace.shrink();
+        sweep();
+        shrink();
     }
 
     // To avoid pathological GC churn in large heaps, we set the allocation high
     // water mark to be proportional to the current size of the heap. The exact
     // proportion is a bit arbitrary. A 2X multiplier gives a 1:1 (heap size :
     // new bytes allocated) proportion, and seems to work well in benchmarks.
-    size_t proportionalBytes = 2 * m_newSpace.size();
+    size_t proportionalBytes = 2 * size();
     m_newSpace.setHighWaterMark(max(proportionalBytes, minBytesPerCycle));
 
     JAVASCRIPTCORE_GC_END();
 
     (*m_activityCallback)();
+}
+
+void Heap::resetAllocator()
+{
+    m_newSpace.resetAllocator();
+
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        (*it)->resetAllocator();
+
+    m_extraCost = 0;
 }
 
 void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
@@ -451,6 +494,43 @@ bool Heap::isValidAllocation(size_t bytes)
         return false;
     
     return true;
+}
+
+MarkedBlock* Heap::allocateBlock(size_t cellSize)
+{
+    MarkedBlock* block = MarkedBlock::create(this, cellSize);
+    m_blocks.add(block);
+
+    return block;
+}
+
+void Heap::freeBlocks(DoublyLinkedList<MarkedBlock>& blocks)
+{
+    MarkedBlock* next;
+    for (MarkedBlock* block = blocks.head(); block; block = next) {
+        next = block->next();
+
+        m_blocks.remove(block);
+        MarkedBlock::destroy(block);
+    }
+}
+
+void Heap::shrink()
+{
+    // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
+    DoublyLinkedList<MarkedBlock> empties;
+
+    BlockIterator end = m_blocks.end();
+    for (BlockIterator it = m_blocks.begin(); it != end; ++it) {
+        MarkedBlock* block = *it;
+        if (!block->isEmpty())
+            continue;
+
+        m_newSpace.removeBlock(block);
+        empties.append(block);
+    }
+    
+    freeBlocks(empties);
 }
 
 } // namespace JSC

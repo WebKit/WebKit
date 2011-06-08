@@ -89,7 +89,7 @@ namespace JSC {
         void protect(JSValue);
         bool unprotect(JSValue); // True when the protect count drops to 0.
 
-        bool contains(void*);
+        bool contains(const void*);
 
         size_t size() const;
         size_t capacity() const;
@@ -113,40 +113,49 @@ namespace JSC {
         HandleStack* handleStack() { return &m_handleStack; }
 
     private:
+        typedef HashSet<MarkedBlock*>::iterator BlockIterator;
+
         static const size_t minExtraCost = 256;
         static const size_t maxExtraCost = 1024 * 1024;
 
         bool isValidAllocation(size_t);
         void* allocateSlowCase(size_t);
         void reportExtraMemoryCostSlowCase(size_t);
+        void resetAllocator();
 
+        MarkedBlock* allocateBlock(size_t cellSize);
+        void freeBlocks(DoublyLinkedList<MarkedBlock>&);
+
+        void clearMarks();
         void markRoots();
         void markProtectedObjects(HeapRootVisitor&);
         void markTempSortVectors(HeapRootVisitor&);
 
         enum SweepToggle { DoNotSweep, DoSweep };
         void collect(SweepToggle);
+        void shrink();
+        void sweep();
 
         RegisterFile& registerFile();
 
         OperationInProgress m_operationInProgress;
         NewSpace m_newSpace;
+        HashSet<MarkedBlock*> m_blocks;
+
+        size_t m_extraCost;
 
         ProtectCountSet m_protectedValues;
         Vector<Vector<ValueStringPair>* > m_tempSortingVectors;
-
         HashSet<MarkedArgumentBuffer*>* m_markListSet;
 
         OwnPtr<GCActivityCallback> m_activityCallback;
-
-        JSGlobalData* m_globalData;
         
         MachineThreads m_machineThreads;
         MarkStack m_markStack;
         HandleHeap m_handleHeap;
         HandleStack m_handleStack;
 
-        size_t m_extraCost;
+        JSGlobalData* m_globalData;
     };
 
     bool Heap::isBusy()
@@ -194,9 +203,16 @@ namespace JSC {
     {
     }
 
-    inline bool Heap::contains(void* p)
+    inline bool Heap::contains(const void* x)
     {
-        return m_newSpace.contains(p);
+        if (!MarkedBlock::isAtomAligned(x))
+            return false;
+
+        MarkedBlock* block = MarkedBlock::blockFor(x);
+        if (!block || !m_blocks.contains(block))
+            return false;
+            
+        return true;
     }
 
     inline void Heap::reportExtraMemoryCost(size_t cost)
@@ -207,7 +223,9 @@ namespace JSC {
 
     template <typename Functor> inline void Heap::forEach(Functor& functor)
     {
-        m_newSpace.forEach(functor);
+        BlockIterator end = m_blocks.end();
+        for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+            (*it)->forEach(functor);
     }
 
     inline void* Heap::allocate(size_t bytes)

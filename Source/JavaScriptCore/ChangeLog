@@ -2,6 +2,53 @@
 
         Reviewed by Oliver Hunt.
 
+        Took some responsibilities away from NewSpace
+        https://bugs.webkit.org/show_bug.cgi?id=62325
+        
+        NewSpace is basically just an allocator now.
+        
+        Heap acts as a controller, responsible for managing the set of all
+        MarkedBlocks.
+        
+        This is in preparation for moving parts of the controller logic into
+        separate helper classes that can act on arbitrary sets of MarkedBlocks
+        that may or may not be in NewSpace.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::destroy):
+        (JSC::Heap::allocate):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::clearMarks):
+        (JSC::Heap::sweep):
+        (JSC::Heap::objectCount):
+        (JSC::Heap::size):
+        (JSC::Heap::capacity):
+        (JSC::Heap::collect):
+        (JSC::Heap::resetAllocator):
+        (JSC::Heap::allocateBlock):
+        (JSC::Heap::freeBlocks):
+        (JSC::Heap::shrink): Moved the set of MarkedBlocks from NewSpace to Heap,
+        along with all functions that operate on the set of MarkedBlocks. Also
+        moved responsibility for deciding whether to allocate a new MarkedBlock,
+        and for allocating it.
+
+        * heap/Heap.h:
+        (JSC::Heap::contains):
+        (JSC::Heap::forEach): Ditto.
+
+        * heap/NewSpace.cpp:
+        (JSC::NewSpace::addBlock):
+        (JSC::NewSpace::removeBlock):
+        (JSC::NewSpace::resetAllocator):
+        * heap/NewSpace.h:
+        (JSC::NewSpace::waterMark):
+        (JSC::NewSpace::allocate): Ditto.
+
+2011-06-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         Some more MarkedSpace => NewSpace renaming
         https://bugs.webkit.org/show_bug.cgi?id=62305
 
