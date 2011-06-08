@@ -211,7 +211,11 @@ NSURL *WKQTMovieResolvedURL(QTMovie* movie);
 
 CFStringRef WKCopyFoundationCacheDirectory(void);
 
+#if defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LEOPARD)
+typedef struct __CFURLStorageSession* CFURLStorageSessionRef;
+#else
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
+#endif
 CFURLStorageSessionRef WKCreatePrivateStorageSession(CFStringRef);
 NSURLRequest *WKCopyRequestWithStorageSession(CFURLStorageSessionRef, NSURLRequest*);
 NSCachedURLResponse *WKCachedResponseForRequest(CFURLStorageSessionRef, NSURLRequest*);

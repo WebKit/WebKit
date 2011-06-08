@@ -281,7 +281,11 @@ extern CFTypeRef (*wkCreateAXTextMarker)(const void *bytes, size_t len);
 extern BOOL (*wkGetBytesFromAXTextMarker)(CFTypeRef textMarker, void *bytes, size_t length);
 extern AXUIElementRef (*wkCreateAXUIElementRef)(id element);
 
+#if defined(BUILDING_ON_SNOW_LEOPARD) || defined(BUILDING_ON_LEOPARD)
+typedef struct __CFURLStorageSession* CFURLStorageSessionRef;
+#else
 typedef const struct __CFURLStorageSession* CFURLStorageSessionRef;
+#endif
 extern CFURLStorageSessionRef (*wkCreatePrivateStorageSession)(CFStringRef);
 extern NSURLRequest* (*wkCopyRequestWithStorageSession)(CFURLStorageSessionRef, NSURLRequest*);
 
