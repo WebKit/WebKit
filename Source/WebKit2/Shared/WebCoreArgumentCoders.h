@@ -39,6 +39,7 @@
 #include <WebCore/DatabaseDetails.h>
 #include <WebCore/Editor.h>
 #include <WebCore/EditorClient.h>
+#include <WebCore/FloatPoint3D.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/GraphicsContext.h>
 #include <WebCore/IdentityTransformOperation.h>
@@ -74,6 +75,7 @@ template<> struct ArgumentCoder<WebCore::IntRect> : SimpleArgumentCoder<WebCore:
 template<> struct ArgumentCoder<WebCore::ViewportArguments> : SimpleArgumentCoder<WebCore::ViewportArguments> { };
 
 template<> struct ArgumentCoder<WebCore::FloatPoint> : SimpleArgumentCoder<WebCore::FloatPoint> { };
+template<> struct ArgumentCoder<WebCore::FloatPoint3D> : SimpleArgumentCoder<WebCore::FloatPoint3D> { };
 template<> struct ArgumentCoder<WebCore::FloatSize> : SimpleArgumentCoder<WebCore::FloatSize> { };
 template<> struct ArgumentCoder<WebCore::FloatRect> : SimpleArgumentCoder<WebCore::FloatRect> { };
 template<> struct ArgumentCoder<WebCore::Length> : SimpleArgumentCoder<WebCore::Length> { };

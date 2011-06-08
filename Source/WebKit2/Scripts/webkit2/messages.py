@@ -254,6 +254,7 @@ def struct_or_class(namespace, type):
         'WebCore::Animation',
         'WebCore::EditorCommandsForKeyEvent',
         'WebCore::CompositionUnderline',
+        'WebCore::FloatPoint3D',
         'WebCore::GrammarDetail',
         'WebCore::IdentityTransformOperation',
         'WebCore::KeypressCommand',
