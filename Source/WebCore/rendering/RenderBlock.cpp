@@ -3932,7 +3932,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
                 updateHitTestResult(result, pointInContainer - localOffset);
                 return true;
             }
-            if (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer, scrolledOffset.width(), scrolledOffset.height()))
+            if (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer, toPoint(scrolledOffset)))
                 return true;
         } else if (hitTestColumns(request, result, pointInContainer, toPoint(scrolledOffset), hitTestAction)) {
             updateHitTestResult(result, pointInContainer - localOffset);
@@ -3953,14 +3953,14 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
     return false;
 }
 
-bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty)
+bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset)
 {
     if (!m_floatingObjects)
         return false;
 
+    IntPoint adjustedLocation = accumulatedOffset;
     if (isRenderView()) {
-        tx += toRenderView(this)->frameView()->scrollX();
-        ty += toRenderView(this)->frameView()->scrollY();
+        adjustedLocation += toSize(toRenderView(this)->frameView()->scrollPosition());
     }
 
     FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
@@ -3971,7 +3971,7 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
         if (floatingObject->m_shouldPaint && !floatingObject->m_renderer->hasSelfPaintingLayer()) {
             int xOffset = xPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->x();
             int yOffset = yPositionForFloatIncludingMargin(floatingObject) - floatingObject->m_renderer->y();
-            IntPoint childPoint = flipFloatForWritingMode(floatingObject, IntPoint(tx + xOffset, ty + yOffset));
+            IntPoint childPoint = flipFloatForWritingMode(floatingObject, adjustedLocation + IntSize(xOffset, yOffset));
             if (floatingObject->m_renderer->hitTest(request, result, pointInContainer, childPoint)) {
                 updateHitTestResult(result, pointInContainer - toSize(childPoint));
                 return true;
@@ -4021,7 +4021,7 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
             if (result.isRectBasedTest() && !colRect.contains(result.rectForPoint(pointInContainer)))
                 hitTestContents(request, result, pointInContainer, finalLocation, hitTestAction);
             else
-                return hitTestContents(request, result, pointInContainer, finalLocation, hitTestAction) || (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer, finalLocation.x(), finalLocation.y()));
+                return hitTestContents(request, result, pointInContainer, finalLocation, hitTestAction) || (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer, finalLocation));
         }
     }
 
