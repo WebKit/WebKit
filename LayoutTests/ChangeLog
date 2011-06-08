@@ -1,3 +1,9 @@
+2011-06-07  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Skip new failing tests.
+
+        * platform/qt/Skipped:
+
 2011-06-07  James Kozianski  <koz@chromium.org>
 
         [Chromium] Unreviewed. Update more snowleopard baselines after r88321.
