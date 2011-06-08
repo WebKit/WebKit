@@ -336,9 +336,6 @@ sputnik/Conformance/11_Expressions/11.7_Bitwise_Shift_Operators/11.7.3_The_Unsig
 # Sometimes fails https://webkit.org/b/49412
 inspector/timeline/timeline-network-resource.html
 
-# Times out all the time: http://webkit.org/b/60195
-inspector/elements/shadow-dom.html
-
 # Sometimes fails http://webkit.org/b/46998
 svg/dom/SVGScriptElement/script-load-and-error-events.svg
 
@@ -1290,7 +1287,6 @@ fast/dom/shadow
 fast/html/clone-keygen.html
 fast/html/clone-range.html
 fast/html/details-clone.html
-inspector/elements/shadow-dom.html
 media/audio-controls-do-not-fade-out.html
 media/video-controls-visible-audio-only.html
 fast/events/shadow-boundary-crossing.html

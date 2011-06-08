@@ -300,7 +300,7 @@ WebInspector.ElementsTreeOutline.prototype.__proto__ = TreeOutline.prototype;
 WebInspector.ElementsTreeElement = function(node, elementCloseTag)
 {
     this._elementCloseTag = elementCloseTag;
-    var hasChildrenOverride = !elementCloseTag && (node.hasChildNodes() || node.shadowRoot) && !this._showInlineText(node);
+    var hasChildrenOverride = !elementCloseTag && node.hasChildNodes() && !this._showInlineText(node);
 
     // The title will be updated in onattach.
     TreeElement.call(this, "", node, hasChildrenOverride);
@@ -609,15 +609,6 @@ WebInspector.ElementsTreeElement.prototype = {
                 child = child.nextSibling;
                 ++treeChildIndex;
             }
-            // If we ever had shadow root child, it's going to be second to last (before closing tag)
-            var shadowRootChild = treeElement.children[treeElement.children.length - 2];
-            if (shadowRootChild && shadowRootChild.representedObject.nodeType() === Node.SHADOW_ROOT_NODE) {
-            if (!node.shadowRoot)
-                treeElement.removeChild(shadowRootChild);
-            else
-                treeElement.representedObject = node.shadowRoot;
-            } else if (node.shadowRoot)
-                treeElement.insertChildElement(node.shadowRoot, treeChildIndex);
         }
 
         // Remove any tree elements that no longer have this node (or this node's contentDocument) as their parent.
@@ -1262,19 +1253,16 @@ WebInspector.ElementsTreeElement.prototype = {
             attrSpanElement.appendChild(document.createTextNode("\""));
     },
 
-    _buildTagDOM: function(parentElement, tagName, isClosingTag, isDistinctTreeElement, linkify, isShadow)
+    _buildTagDOM: function(parentElement, tagName, isClosingTag, isDistinctTreeElement, linkify)
     {
         var node = this.representedObject;
         var classes = [ "webkit-html-tag" ];
         if (isClosingTag && isDistinctTreeElement)
             classes.push("close");
-        if (isShadow)
-            classes.push("shadow");
         var tagElement = parentElement.createChild("span", classes.join(" "));
         tagElement.appendChild(document.createTextNode("<"));
         var tagNameElement = tagElement.createChild("span", isClosingTag ? "" : "webkit-html-tag-name");
         tagNameElement.textContent = (isClosingTag ? "/" : "") + tagName;
-
         if (!isClosingTag && node.hasAttributes()) {
             var attributes = node.attributes();
             for (var i = 0; i < attributes.length; ++i) {
@@ -1309,12 +1297,12 @@ WebInspector.ElementsTreeElement.prototype = {
             case Node.ELEMENT_NODE:
                 var tagName = this.treeOutline.nodeNameToCorrectCase(node.nodeName()).escapeHTML();
                 if (this._elementCloseTag) {
-                    this._buildTagDOM(info.titleDOM, tagName, true, true, false, node.inShadowTree());
+                    this._buildTagDOM(info.titleDOM, tagName, true, true);
                     info.hasChildren = false;
                     break;
                 }
 
-                this._buildTagDOM(info.titleDOM, tagName, false, false, linkify, node.inShadowTree());
+                this._buildTagDOM(info.titleDOM, tagName, false, false, linkify);
 
                 var textChild = this._singleTextChild(node);
                 var showInlineText = textChild && textChild.nodeValue().length < Preferences.maxInlineTextChildLength;
@@ -1325,7 +1313,7 @@ WebInspector.ElementsTreeElement.prototype = {
                         textNodeElement.textContent = "\u2026";
                         info.titleDOM.appendChild(document.createTextNode("\u200B"));
                     }
-                    this._buildTagDOM(info.titleDOM, tagName, true, false, false, node.inShadowTree());
+                    this._buildTagDOM(info.titleDOM, tagName, true, false, false);
                 }
 
                 // If this element only has a single child that is a text node,
@@ -1335,7 +1323,7 @@ WebInspector.ElementsTreeElement.prototype = {
                     var textNodeElement = info.titleDOM.createChild("span", "webkit-html-text-node");
                     textNodeElement.textContent = textChild.nodeValue().escapeHTML();
                     info.titleDOM.appendChild(document.createTextNode("\u200B"));
-                    this._buildTagDOM(info.titleDOM, tagName, true, false, node.inShadowTree());
+                    this._buildTagDOM(info.titleDOM, tagName, true, false);
                     info.hasChildren = false;
                 }
                 break;
@@ -1390,12 +1378,6 @@ WebInspector.ElementsTreeElement.prototype = {
                 var cdataElement = info.titleDOM.createChild("span", "webkit-html-text-node");
                 cdataElement.appendChild(document.createTextNode("<![CDATA[" + node.nodeValue().escapeHTML() + "]]>"));
                 break;
-
-            case Node.SHADOW_ROOT_NODE:
-                var cdataElement = info.titleDOM.createChild("span", "dom-shadow-root");
-                cdataElement.appendChild(document.createTextNode("(shadow)"));
-                break;
-
             default:
                 var defaultElement = info.titleDOM.appendChild(document.createTextNode(this.treeOutline.nodeNameToCorrectCase(node.nodeName()).collapseWhitespace().escapeHTML()));
         }
@@ -1405,7 +1387,7 @@ WebInspector.ElementsTreeElement.prototype = {
 
     _singleTextChild: function(node)
     {
-        if (!node || node.shadowRoot)
+        if (!node)
             return null;
 
         var firstChild = node.firstChild;

@@ -1202,13 +1202,11 @@ ShadowRoot* Element::ensureShadowRoot()
 
     RefPtr<ShadowRoot> newRoot = ShadowRoot::create(document());
     ensureRareData()->m_shadowRoot = newRoot.get();
-    InspectorInstrumentation::willInsertDOMNode(document(), newRoot.get(), this);
     newRoot->setShadowHost(this);
     if (inDocument())
         newRoot->insertedIntoDocument();
     if (attached())
         newRoot->lazyAttach();
-    InspectorInstrumentation::didInsertDOMNode(document(), newRoot.get());
     return newRoot.get();
 }
 
@@ -1219,7 +1217,6 @@ void Element::removeShadowRoot()
 
     ElementRareData* data = rareData();
     if (RefPtr<Node> oldRoot = data->m_shadowRoot) {
-        InspectorInstrumentation::willRemoveDOMNode(document(), oldRoot.get());
         data->m_shadowRoot = 0;
         document()->removeFocusedNodeOfSubtree(oldRoot.get());
 

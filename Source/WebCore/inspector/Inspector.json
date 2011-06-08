@@ -1035,14 +1035,6 @@
                     { "name": "nodeIds", "type": "array", "items": { "type": "integer" }, "description": "Ids of the search result nodes." }
                 ],
                 "description": "Pushes search results initiated using <code>performSearch</code> to the client."
-            },
-            {
-                "name": "shadowRootUpdated",
-                "parameters": [
-                    { "name": "hostId", "type": "integer", "description": "Id of the host node that had shadow root changed." },
-                    { "name": "shadowRoot", "$ref": "DOMNode", "description": "Data for new shadow root (null if shadow root removed)." }
-                ],
-                "description": "Fired when shadow root is added or removed from a node."
             }
         ]
     },

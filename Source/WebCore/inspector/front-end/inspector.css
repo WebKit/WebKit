@@ -1056,10 +1056,6 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     display: inline-block;
 }
 
-#elements-content .dom-shadow-root {
-    color: rgb(90, 90, 90);
-}
-
 #elements-sidebar {
     position: absolute;
     top: 0;
@@ -1234,10 +1230,6 @@ body.platform-linux .monospace, body.platform-linux .source-code {
 
 .outline-disclosure li.parent {
     text-indent: -12px
-}
-
-.outline-disclosure li .webkit-html-tag.shadow {
-    opacity: 0.7;
 }
 
 .outline-disclosure li .webkit-html-tag.close {
