@@ -89,6 +89,7 @@ defineTest(prependWebKit2Lib) {
 
     # The following line is to prevent qmake from adding webkit2 to libQtWebKit's prl dependencies.
     CONFIG -= explicitlib
+    CONFIG -= staticlib
 
     export(QMAKE_LIBDIR)
     export(POST_TARGETDEPS)

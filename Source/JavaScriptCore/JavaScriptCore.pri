@@ -102,6 +102,7 @@ defineTest(prependJavaScriptCoreLib) {
     # The compromise we have to accept by disabling explicitlib is to drop support to link QtWebKit and QtScript
     # statically in applications (which isn't used often because, among other things, of licensing obstacles).
     CONFIG -= explicitlib
+    CONFIG -= staticlib
 
     export(QMAKE_LIBDIR)
     export(LIBS)
