@@ -1,3 +1,9 @@
+2011-06-08  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Unreviewed, skip two failing tests. Bugs filed.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-08  Alexander Pavlov  <apavlov@chromium.org>
 
         [Qt] Unreviewed, skip failing tests
