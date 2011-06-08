@@ -34,7 +34,7 @@ namespace JSC {
     class SourceProvider;
     class UString;
 
-    class Debugger {
+    class JS_EXPORT_PRIVATE Debugger {
     public:
         virtual ~Debugger();
 

@@ -51,10 +51,10 @@ namespace JSC {
         JSGlobalObject* dynamicGlobalObject() const { return m_callFrame->dynamicGlobalObject(); }
         ScopeChainNode* scopeChain() const { return m_callFrame->scopeChain(); }
         const UString* functionName() const;
-        UString calculatedFunctionName() const;
-        Type type() const;
-        JSObject* thisObject() const;
-        JSValue evaluate(const UString&, JSValue& exception) const;
+        JS_EXPORT_PRIVATE UString calculatedFunctionName() const;
+        JS_EXPORT_PRIVATE Type type() const;
+        JS_EXPORT_PRIVATE JSObject* thisObject() const;
+        JS_EXPORT_PRIVATE JSValue evaluate(const UString&, JSValue& exception) const;
         JSValue exception() const { return m_exception; }
 
     private:
