@@ -81,7 +81,6 @@ static RefCountedLeakCounter cachedResourceLeakCounter("CachedResource");
 
 CachedResource::CachedResource(const ResourceRequest& request, Type type)
     : m_resourceRequest(request)
-    , m_request(0)
     , m_loadPriority(defaultPriorityForResourceType(type))
     , m_responseTimestamp(currentTime())
     , m_lastDecodedAccessTime(0)
@@ -136,9 +135,11 @@ void CachedResource::load(CachedResourceLoader* cachedResourceLoader, bool incre
 {
     m_sendResourceLoadCallbacks = sendResourceLoadCallbacks;
     m_loading = true;
-    RefPtr<CachedResourceRequest> request = CachedResourceRequest::load(cachedResourceLoader, this, incremental, securityCheck, sendResourceLoadCallbacks);
-    if (request)
-        cachedResourceLoader->loadStarted(this, request);
+    m_request = CachedResourceRequest::load(cachedResourceLoader, this, incremental, securityCheck, sendResourceLoadCallbacks);
+    if (m_request) {
+        m_status = Pending;
+        cachedResourceLoader->incrementRequestCount(this);
+    }
 }
 
 void CachedResource::checkNotify()
@@ -257,16 +258,15 @@ CachedMetadata* CachedResource::cachedMetadata(unsigned dataTypeID) const
     return m_cachedMetadata.get();
 }
 
-void CachedResource::setRequest(CachedResourceRequest* request)
+void CachedResource::stopLoading()
 {
-    if (request && !m_request)
-        m_status = Pending;
-    m_request = request;
+    ASSERT(m_request);            
+    m_request.clear();
 
     // All loads finish with data(allDataReceived = true) or error(), except for
     // canceled loads, which silently set our request to 0. Be sure to notify our
     // client in that case, so we don't seem to continue loading forever.
-    if (!m_request && isLoading()) {
+    if (isLoading()) {
         setLoading(false);
         setStatus(Canceled);
         checkNotify();

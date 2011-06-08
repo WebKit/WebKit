@@ -433,9 +433,6 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
         // http://www.w3.org/Bugs/Public/show_bug.cgi?id=10537
         doc->setReadyState(Document::Complete);
 
-        if (CachedResourceLoader* cachedResourceLoader = doc->cachedResourceLoader())
-            cachedResourceLoader->cancelRequests();
-
 #if ENABLE(DATABASE)
         doc->stopDatabases(0);
 #endif

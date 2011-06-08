@@ -86,7 +86,6 @@ static CachedResource* createResource(CachedResource::Type type, ResourceRequest
 CachedResourceLoader::CachedResourceLoader(Document* document)
     : m_document(document)
     , m_requestCount(0)
-    , m_loadDoneActionTimer(this, &CachedResourceLoader::loadDoneActionTimerFired)
     , m_autoLoadImages(true)
     , m_loadFinishing(false)
     , m_allowStaleResources(false)
@@ -97,7 +96,6 @@ CachedResourceLoader::~CachedResourceLoader()
 {
     m_document = 0;
 
-    cancelRequests();
     clearPreloads();
     DocumentResourceMap::iterator end = m_documentResources.end();
     for (DocumentResourceMap::iterator it = m_documentResources.begin(); it != end; ++it)
@@ -554,35 +552,11 @@ void CachedResourceLoader::removeCachedResource(CachedResource* resource) const
     m_documentResources.remove(resource->url());
 }
 
-void CachedResourceLoader::loadStarted(CachedResource* resource, PassRefPtr<CachedResourceRequest> request)
-{
-    ASSERT(request);
-    incrementRequestCount(resource);
-    m_requests.add(request);
-}
-
-void CachedResourceLoader::loadDone(CachedResourceRequest* request)
+void CachedResourceLoader::loadDone()
 {
     m_loadFinishing = false;
-    RefPtr<CachedResourceRequest> protect(request);
-    if (request)
-        m_requests.remove(request);
     if (frame())
         frame()->loader()->loadDone();
-
-    if (!request) {
-        // If the request passed to this function is null, loadDone finished synchronously from when
-        // the load was started, so we want to kick off our next set of loads (via checkForPendingPreloads
-        // and servePendingRequests) asynchronously.
-        m_loadDoneActionTimer.startOneShot(0);
-        return;
-    }
-
-    performPostLoadActions();
-}
-
-void CachedResourceLoader::loadDoneActionTimerFired(Timer<CachedResourceLoader>*)
-{
     performPostLoadActions();
 }
 
@@ -590,18 +564,6 @@ void CachedResourceLoader::performPostLoadActions()
 {
     checkForPendingPreloads();
     resourceLoadScheduler()->servePendingRequests();
-}
-
-void CachedResourceLoader::cancelRequests()
-{
-    clearPendingPreloads();
-    Vector<CachedResourceRequest*, 256> requestsToCancel;
-    RequestSet::iterator end = m_requests.end();
-    for (RequestSet::iterator i = m_requests.begin(); i != end; ++i)
-        requestsToCancel.append((*i).get());
-
-    for (unsigned i = 0; i < requestsToCancel.size(); ++i)
-        requestsToCancel[i]->didFail(true);
 }
 
 void CachedResourceLoader::notifyLoadedFromMemoryCache(CachedResource* resource)

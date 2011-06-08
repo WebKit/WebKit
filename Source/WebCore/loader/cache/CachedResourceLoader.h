@@ -30,7 +30,6 @@
 #include "CachedResourceHandle.h"
 #include "CachePolicy.h"
 #include "ResourceLoadPriority.h"
-#include "Timer.h"
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
@@ -42,7 +41,6 @@ namespace WebCore {
 class CachedCSSStyleSheet;
 class CachedFont;
 class CachedImage;
-class CachedResourceRequest;
 class CachedScript;
 class CachedXSLStyleSheet;
 class Document;
@@ -92,10 +90,8 @@ public:
 
     void removeCachedResource(CachedResource*) const;
 
-    void loadStarted(CachedResource*, PassRefPtr<CachedResourceRequest>);
     void loadFinishing() { m_loadFinishing = true; }
-    void loadDone(CachedResourceRequest*);
-    void cancelRequests();
+    void loadDone();
     
     void incrementRequestCount(const CachedResource*);
     void decrementRequestCount(const CachedResource*);
@@ -119,16 +115,11 @@ private:
     void notifyLoadedFromMemoryCache(CachedResource*);
     bool canRequest(CachedResource::Type, const KURL&, bool forPreload = false);
 
-    void loadDoneActionTimerFired(Timer<CachedResourceLoader>*);
-
     void performPostLoadActions();
     
     HashSet<String> m_validatedURLs;
     mutable DocumentResourceMap m_documentResources;
     Document* m_document;
-
-    typedef HashSet<RefPtr<CachedResourceRequest> > RequestSet;
-    RequestSet m_requests;
     
     int m_requestCount;
     
@@ -139,8 +130,6 @@ private:
         String m_charset;
     };
     Deque<PendingPreload> m_pendingPreloads;
-
-    Timer<CachedResourceLoader> m_loadDoneActionTimer;
     
     //29 bits left
     bool m_autoLoadImages : 1;

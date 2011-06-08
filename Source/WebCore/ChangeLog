@@ -1,3 +1,36 @@
+2011-06-06  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Remove all knowledge of CachedResourceRequests from
+        CachedResourceLoader. This puts the full burden of
+        canceling these requests on DocumentLoader (via
+        SubresourceLoader), and makes a CachedResourceRequest
+        an OwnPtr in CachedResource.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62308
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stopLoading):
+        * loader/cache/CachedResource.cpp:
+        (WebCore::CachedResource::CachedResource):
+        (WebCore::CachedResource::load):
+        (WebCore::CachedResource::stopLoading):
+        * loader/cache/CachedResource.h:
+        * loader/cache/CachedResourceLoader.cpp:
+        (WebCore::CachedResourceLoader::~CachedResourceLoader):
+        (WebCore::CachedResourceLoader::loadDone):
+        * loader/cache/CachedResourceLoader.h:
+        * loader/cache/CachedResourceRequest.cpp:
+        (WebCore::CachedResourceRequest::CachedResourceRequest):
+        (WebCore::CachedResourceRequest::~CachedResourceRequest):
+        (WebCore::CachedResourceRequest::load):
+        (WebCore::CachedResourceRequest::didFinishLoading):
+        (WebCore::CachedResourceRequest::didFail):
+        (WebCore::CachedResourceRequest::didReceiveResponse):
+        (WebCore::CachedResourceRequest::end):
+        * loader/cache/CachedResourceRequest.h:
+
 2011-06-08  Mike Reed  <reed@google.com>
 
         Reviewed by James Robinson.

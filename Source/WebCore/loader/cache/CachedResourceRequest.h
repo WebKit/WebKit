@@ -26,6 +26,7 @@
 #include "SubresourceLoaderClient.h"
 #include <wtf/HashMap.h>
 #include <wtf/Noncopyable.h>
+#include <wtf/PassOwnPtr.h>
 #include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 
@@ -38,11 +39,10 @@ namespace WebCore {
     class ResourceResponse;
     class SubresourceLoader;
 
-    class CachedResourceRequest : public RefCounted<CachedResourceRequest>, private SubresourceLoaderClient {
+    class CachedResourceRequest : private SubresourceLoaderClient {
     public:
-        static PassRefPtr<CachedResourceRequest> load(CachedResourceLoader*, CachedResource*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);
+        static PassOwnPtr<CachedResourceRequest> load(CachedResourceLoader*, CachedResource*, bool incremental, SecurityCheckPolicy, bool sendResourceLoadCallbacks);
         ~CachedResourceRequest();
-        void didFail(bool cancelled = false);
 
         CachedResourceLoader* cachedResourceLoader() const { return m_cachedResourceLoader; }
 
@@ -54,6 +54,7 @@ namespace WebCore {
         virtual void didReceiveCachedMetadata(SubresourceLoader*, const char*, int);
         virtual void didFinishLoading(SubresourceLoader*, double);
         virtual void didFail(SubresourceLoader*, const ResourceError&);
+        void end();
 
         RefPtr<SubresourceLoader> m_loader;
         CachedResourceLoader* m_cachedResourceLoader;

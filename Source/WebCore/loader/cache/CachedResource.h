@@ -163,7 +163,7 @@ public:
     void setInLiveDecodedResourcesList(bool b) { m_inLiveDecodedResourcesList = b; }
     bool inLiveDecodedResourcesList() { return m_inLiveDecodedResourcesList; }
     
-    void setRequest(CachedResourceRequest*);
+    void stopLoading();
 
     SharedBuffer* data() const { ASSERT(!m_purgeableData); return m_data.get(); }
 
@@ -238,7 +238,7 @@ protected:
 
     ResourceRequest m_resourceRequest;
     String m_accept;
-    CachedResourceRequest* m_request;
+    OwnPtr<CachedResourceRequest> m_request;
     ResourceLoadPriority m_loadPriority;
 
     ResourceResponse m_response;

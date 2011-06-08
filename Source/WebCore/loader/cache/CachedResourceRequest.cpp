@@ -79,17 +79,15 @@ CachedResourceRequest::CachedResourceRequest(CachedResourceLoader* cachedResourc
     , m_multipart(false)
     , m_finishing(false)
 {
-    m_resource->setRequest(this);
 }
 
 CachedResourceRequest::~CachedResourceRequest()
 {
-    m_resource->setRequest(0);
 }
 
-PassRefPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
+PassOwnPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoader* cachedResourceLoader, CachedResource* resource, bool incremental, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks)
 {
-    RefPtr<CachedResourceRequest> request = adoptRef(new CachedResourceRequest(cachedResourceLoader, resource, incremental));
+    OwnPtr<CachedResourceRequest> request = adoptPtr(new CachedResourceRequest(cachedResourceLoader, resource, incremental));
 
     ResourceRequest resourceRequest = resource->resourceRequest();
     resourceRequest.setTargetType(cachedResourceTypeToTargetType(resource->type()));
@@ -130,7 +128,7 @@ PassRefPtr<CachedResourceRequest> CachedResourceRequest::load(CachedResourceLoad
         if (resource->resourceToRevalidate()) 
             memoryCache()->revalidationFailed(resource); 
         resource->error(CachedResource::LoadError);
-        return 0;
+        return PassOwnPtr<CachedResourceRequest>(nullptr);
     }
     request->m_loader = loader;
     return request.release();
@@ -165,21 +163,15 @@ void CachedResourceRequest::didFinishLoading(SubresourceLoader* loader, double)
         if (!m_resource->errorOccurred())
             m_resource->finish();
     }
-    m_cachedResourceLoader->loadDone(this);
+    end();
 }
 
-void CachedResourceRequest::didFail(SubresourceLoader*, const ResourceError&)
+void CachedResourceRequest::didFail(SubresourceLoader*, const ResourceError& error)
 {
-    if (!m_loader)
-        return;
-    didFail();
-}
-
-void CachedResourceRequest::didFail(bool cancelled)
-{
-    if (m_finishing)
+    if (m_finishing || !m_loader)
         return;
 
+    bool cancelled = error.isCancellation();
     LOG(ResourceLoading, "Failed to load '%s' (cancelled=%d).\n", m_resource->url().string().latin1().data(), cancelled);
 
     // Prevent the document from being destroyed before we are done with
@@ -201,7 +193,7 @@ void CachedResourceRequest::didFail(bool cancelled)
     if (cancelled || !m_resource->isPreloaded())
         memoryCache()->remove(m_resource);
     
-    m_cachedResourceLoader->loadDone(this);
+    end();
 }
 
 void CachedResourceRequest::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
@@ -221,7 +213,7 @@ void CachedResourceRequest::didReceiveResponse(SubresourceLoader* loader, const 
             if (m_cachedResourceLoader->frame())
                 m_cachedResourceLoader->frame()->loader()->checkCompleted();
 
-            m_cachedResourceLoader->loadDone(this);
+            end();
             return;
         } 
         // Did not get 304 response, continue as a regular resource load.
@@ -280,6 +272,12 @@ void CachedResourceRequest::didReceiveCachedMetadata(SubresourceLoader*, const c
 {
     ASSERT(!m_resource->isCacheValidator());
     m_resource->setSerializedCachedMetadata(data, size);
+}
+    
+void CachedResourceRequest::end()
+{
+    m_cachedResourceLoader->loadDone();
+    m_resource->stopLoading();
 }
 
 } //namespace WebCore
