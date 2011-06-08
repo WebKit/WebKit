@@ -31,6 +31,8 @@
 #include "IDBBackingStore.h"
 
 namespace WebCore {
+    
+class IDBFactoryBackendImpl;
 
 class IDBSQLiteBackingStore : public IDBBackingStore {
 public:
@@ -67,6 +69,9 @@ public:
     virtual PassRefPtr<Cursor> openIndexCursor(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction);
 
     virtual PassRefPtr<Transaction> createTransaction();
+    virtual IDBFactoryBackendInterface::BackingStoreType backingStoreType() const { return IDBFactoryBackendInterface::SQLiteBackingStore; }
+
+    static bool backingStoreExists(SecurityOrigin*, const String& pathBase);
 
 private:
     IDBSQLiteBackingStore(String identifier, IDBFactoryBackendImpl*);

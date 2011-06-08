@@ -53,7 +53,8 @@ public:
 
     enum BackingStoreType {
         DefaultBackingStore,
-        LevelDBBackingStore
+        LevelDBBackingStore,
+        SQLiteBackingStore
     };
 
     virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType) = 0;

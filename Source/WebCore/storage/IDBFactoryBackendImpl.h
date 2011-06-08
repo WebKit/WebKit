@@ -59,6 +59,7 @@ public:
 
 private:
     IDBFactoryBackendImpl();
+    bool migrate(const String& name, SecurityOrigin*, const String& dataDir, int64_t maximumSize);
 
     typedef HashMap<String, IDBDatabaseBackendImpl*> IDBDatabaseBackendMap;
     IDBDatabaseBackendMap m_databaseBackendMap;

@@ -37,6 +37,7 @@ namespace WebCore {
 class LevelDBComparator;
 class LevelDBDatabase;
 class LevelDBTransaction;
+class IDBFactoryBackendImpl;
 
 class IDBLevelDBBackingStore : public IDBBackingStore {
 public:
@@ -73,6 +74,9 @@ public:
     virtual PassRefPtr<Cursor> openIndexCursor(int64_t databaseId, int64_t objectStoreId, int64_t indexId, const IDBKeyRange*, IDBCursor::Direction);
 
     virtual PassRefPtr<Transaction> createTransaction();
+    virtual IDBFactoryBackendInterface::BackingStoreType backingStoreType() const { return IDBFactoryBackendInterface::LevelDBBackingStore; }
+
+    static bool backingStoreExists(SecurityOrigin*, const String& pathBase);
 
 private:
     IDBLevelDBBackingStore(String identifier, IDBFactoryBackendImpl*, PassOwnPtr<LevelDBDatabase>);

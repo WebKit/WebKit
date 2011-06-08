@@ -1,3 +1,17 @@
+2011-06-08  Greg Simon  <gregsimon@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Control Indexeddb backends from LayoutTestController
+        https://bugs.webkit.org/show_bug.cgi?id=61000
+
+        * public/WebIDBFactory.h:
+        * src/AssertMatchingEnums.cpp:
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactory::setOverrideBackingStoreType):
+        (WebKit::WebIDBFactory::setTemporaryDatabaseFolder):
+        (WebKit::WebIDBFactoryImpl::open):
+
 2011-06-08  Dominic Mazzoni  <dmazzoni@google.com>
 
         Reviewed by Dimitri Glazkov.

@@ -1,3 +1,14 @@
+2011-06-08  Greg Simon  <gregsimon@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Test migration from sqlite to leveldb for IndexedDB
+        backend.
+        https://bugs.webkit.org/show_bug.cgi?id=61000
+
+        * storage/indexeddb/migrate-basics-expected.txt: Added.
+        * storage/indexeddb/migrate-basics.html: Added.
+
 2011-06-08  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, skip two failing tests. Bugs filed.

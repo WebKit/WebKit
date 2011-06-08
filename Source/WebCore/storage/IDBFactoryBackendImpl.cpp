@@ -72,8 +72,7 @@ void IDBFactoryBackendImpl::removeIDBBackingStore(const String& uniqueIdentifier
 
 void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> callbacks, PassRefPtr<SecurityOrigin> securityOrigin, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType backingStoreType)
 {
-    String fileIdentifier = securityOrigin->databaseIdentifier();
-    String uniqueIdentifier = fileIdentifier + "@" + name;
+    String uniqueIdentifier = securityOrigin->databaseIdentifier() + "@" + name + String::format("@%d", (int)backingStoreType);
     IDBDatabaseBackendMap::iterator it = m_databaseBackendMap.find(uniqueIdentifier);
     if (it != m_databaseBackendMap.end()) {
         callbacks->onSuccess(it->second);
@@ -83,15 +82,30 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
     // FIXME: Everything from now on should be done on another thread.
 
     RefPtr<IDBBackingStore> backingStore;
-    IDBBackingStoreMap::iterator it2 = m_backingStoreMap.find(fileIdentifier);
-    if (it2 != m_backingStoreMap.end())
+    IDBBackingStoreMap::iterator it2 = m_backingStoreMap.find(uniqueIdentifier);
+    if (it2 != m_backingStoreMap.end() && (backingStoreType == it2->second->backingStoreType()))
         backingStore = it2->second;
     else {
-        if (backingStoreType == DefaultBackingStore)
-            backingStore = IDBSQLiteBackingStore::open(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
+#if ENABLE(LEVELDB)
+        // Should we migrate this backing store?
+        bool hasSQLBackingStore = IDBSQLiteBackingStore::backingStoreExists(securityOrigin.get(), dataDir);
+        bool hasLevelDBBackingStore = IDBLevelDBBackingStore::backingStoreExists(securityOrigin.get(), dataDir);
+
+        if (hasSQLBackingStore && hasLevelDBBackingStore)
+            backingStoreType = LevelDBBackingStore;
+
+        // Migration: if the database exists and is SQLite we want to migrate it to LevelDB.
+        if (hasSQLBackingStore && !hasLevelDBBackingStore) {
+            if (migrate(name, securityOrigin.get(), dataDir, maximumSize))
+                backingStoreType = LevelDBBackingStore;
+        }
+#endif
+
+        if (backingStoreType == DefaultBackingStore || backingStoreType == SQLiteBackingStore)
+            backingStore = IDBSQLiteBackingStore::open(securityOrigin.get(), dataDir, maximumSize, uniqueIdentifier, this);
 #if ENABLE(LEVELDB)
         else if (backingStoreType == LevelDBBackingStore)
-            backingStore = IDBLevelDBBackingStore::open(securityOrigin.get(), dataDir, maximumSize, fileIdentifier, this);
+            backingStore = IDBLevelDBBackingStore::open(securityOrigin.get(), dataDir, maximumSize, uniqueIdentifier, this);
 #endif
         if (!backingStore) {
             callbacks->onError(IDBDatabaseError::create(IDBDatabaseException::UNKNOWN_ERR, "Internal error."));
@@ -102,6 +116,11 @@ void IDBFactoryBackendImpl::open(const String& name, PassRefPtr<IDBCallbacks> ca
     RefPtr<IDBDatabaseBackendImpl> databaseBackend = IDBDatabaseBackendImpl::create(name, backingStore.get(), m_transactionCoordinator.get(), this, uniqueIdentifier);
     callbacks->onSuccess(databaseBackend.get());
     m_databaseBackendMap.set(uniqueIdentifier, databaseBackend.get());
+}
+
+bool IDBFactoryBackendImpl::migrate(const String& name, SecurityOrigin* securityOrigin, const String& dataDir, int64_t maximumSize)
+{
+    return false;
 }
 
 } // namespace WebCore
