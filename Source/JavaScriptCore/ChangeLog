@@ -1,3 +1,24 @@
+2011-06-08  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        Webkit on SPARC Solaris has wrong endian
+        https://bugs.webkit.org/show_bug.cgi?id=29407
+
+        Bug 57256 fixed one crash on misaligned reads on sparc/solaris, but
+        there are more ocurrences of the same code pattern in webkit.
+
+        This patch includes the check on these other parts of the code.
+
+        This is a speculative fix, I don't have a sparc machine to test and
+        don't know which kind of test would trigger a crash (but it's quite
+        obvious that it's the same code duplicated in different files).
+
+        * runtime/UString.h:
+        (JSC::UStringHash::equal):
+        * wtf/text/StringHash.h:
+        (WTF::StringHash::equal):
+
 2011-06-08  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Andreas Kling.
