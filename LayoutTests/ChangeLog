@@ -1,4 +1,9 @@
 2011-06-07  James Kozianski  <koz@chromium.org>
+        [Chromium] Update expectations for flaky tests.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-07  James Kozianski  <koz@chromium.org>
 
         [Chromium] Unreviewed. Update expectations for registerProtocolHandler
         test.
