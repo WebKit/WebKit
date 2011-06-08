@@ -308,7 +308,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
 
         FontPlatformData* result = getCachedFontPlatformData(fontDescription, familyName);
         if (result && result->hash() != origFont.hash()) {
-            if (SimpleFontData* fontData = getCachedFontData(result, false))
+            if (SimpleFontData* fontData = getCachedFontData(result, DoNotRetain))
                 return fontData;
         }
     }
