@@ -1099,7 +1099,7 @@ IntRect RenderObject::absoluteBoundingBoxRect(bool useTransforms)
 
     FloatPoint absPos = localToAbsolute();
     Vector<IntRect> rects;
-    absoluteRects(rects, absPos.x(), absPos.y());
+    absoluteRects(rects, flooredIntPoint(absPos));
 
     size_t n = rects.size();
     if (!n)

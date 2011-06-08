@@ -82,7 +82,7 @@ public:
 
     bool printing() const;
 
-    virtual void absoluteRects(Vector<IntRect>&, int tx, int ty);
+    virtual void absoluteRects(Vector<IntRect>&, const IntPoint& accumulatedOffset);
     virtual void absoluteQuads(Vector<FloatQuad>&);
 
 #if USE(ACCELERATED_COMPOSITING)

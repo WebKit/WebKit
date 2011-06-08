@@ -455,9 +455,9 @@ void RenderBox::setScrollTop(int newTop)
         layer()->scrollToYOffset(newTop);
 }
 
-void RenderBox::absoluteRects(Vector<IntRect>& rects, int tx, int ty)
+void RenderBox::absoluteRects(Vector<IntRect>& rects, const IntPoint& accumulatedOffset)
 {
-    rects.append(IntRect(tx, ty, width(), height()));
+    rects.append(IntRect(accumulatedOffset, size()));
 }
 
 void RenderBox::absoluteQuads(Vector<FloatQuad>& quads)
