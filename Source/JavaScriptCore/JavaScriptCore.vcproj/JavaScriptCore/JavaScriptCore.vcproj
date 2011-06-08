@@ -1898,11 +1898,11 @@
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\MarkedSpace.cpp"
+                                    RelativePath="..\..\heap\NewSpace.cpp"
                                     >
                             </File>
                             <File
-                                    RelativePath="..\..\heap\MarkedSpace.h"
+                                    RelativePath="..\..\heap\NewSpace.h"
                                     >
                             </File>
                             <File

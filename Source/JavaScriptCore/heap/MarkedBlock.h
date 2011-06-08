@@ -210,4 +210,4 @@ namespace JSC {
     
 } // namespace JSC
 
-#endif // MarkedSpace_h
+#endif // MarkedBlock_h

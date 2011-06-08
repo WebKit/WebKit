@@ -19,7 +19,7 @@
  */
 
 #include "config.h"
-#include "MarkedSpace.h"
+#include "NewSpace.h"
 
 #include "JSGlobalObject.h"
 #include "JSCell.h"

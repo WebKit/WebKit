@@ -1,3 +1,23 @@
+2011-06-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Moved MarkedSpace.* to NewSpace.* in preparation for more renaming
+        https://bugs.webkit.org/show_bug.cgi?id=62268
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.pro:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.vcproj:
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * heap/Heap.h:
+        * heap/MarkedBlock.h:
+        * heap/MarkedSpace.cpp: Removed.
+        * heap/MarkedSpace.h: Removed.
+        * heap/NewSpace.cpp: Copied from Source/JavaScriptCore/heap/MarkedSpace.cpp.
+        * heap/NewSpace.h: Copied from Source/JavaScriptCore/heap/MarkedSpace.h.
+
 2011-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r88365.

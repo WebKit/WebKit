@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MarkedSpace_h
-#define MarkedSpace_h
+#ifndef NewSpace_h
+#define NewSpace_h
 
 #include "MachineStackMarker.h"
 #include "MarkedBlock.h"
@@ -171,4 +171,4 @@ namespace JSC {
 
 } // namespace JSC
 
-#endif // MarkedSpace_h
+#endif // NewSpace_h

@@ -25,7 +25,7 @@
 #include "HandleHeap.h"
 #include "HandleStack.h"
 #include "MarkStack.h"
-#include "MarkedSpace.h"
+#include "NewSpace.h"
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
 #include <wtf/HashSet.h>
