@@ -2032,7 +2032,7 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 - (void)_resendKeyDownEvent:(NSEvent *)event
 {
     // resending the event may destroy this WKView
-    RetainPtr<WKView> protect(self);
+    RetainPtr<WKView> protector(self);
 
     ASSERT(!_data->_keyDownEventBeingResent);
     _data->_keyDownEventBeingResent = event;
@@ -2337,6 +2337,10 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
         return;
     
     _data->_dragHasStarted = YES;
+    
+    // The call to super could release this WKView.
+    RetainPtr<WKView> protector(self);
+    
     [super dragImage:image
                   at:clientPoint
               offset:NSZeroSize
