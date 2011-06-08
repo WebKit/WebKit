@@ -84,12 +84,10 @@ void DrawingBuffer::clear()
     }
     
     if (m_multisampleFBO) {
-        m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_multisampleFBO);
         m_context->deleteFramebuffer(m_multisampleFBO);
         m_multisampleFBO = 0;
     }
         
-    m_context->bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_fbo);
     m_context->deleteFramebuffer(m_fbo);
     m_fbo = 0;
 }

@@ -1,3 +1,17 @@
+2011-06-08  Brian Salomon  <bsalomon@google.com>
+
+        Reviewed by James Robinson.
+
+        Avoid always binding FBO 0 implicitly when deleting FBO in DrawingBuffer code because it invalidates Ganesh's cache of the current FBO.
+        https://bugs.webkit.org/show_bug.cgi?id=62318
+
+        Chromium-only crash
+        Failures takes multiple seconds to occur, relying on JS garbage-collection to occur 
+        http://www.hotbazooka.com/privatejoe-large
+
+        * platform/graphics/gpu/DrawingBuffer.cpp:
+        (WebCore::DrawingBuffer::clear):
+
 2011-06-08  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.
