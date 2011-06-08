@@ -81,7 +81,7 @@ WebInspector.Settings = function()
     this._migrateSettings();
 }
 
-WebInspector.Settings.version = 1;
+WebInspector.Settings.version = "1";
 
 WebInspector.Settings.prototype = {
     installApplicationSetting: function(key, defaultValue)
