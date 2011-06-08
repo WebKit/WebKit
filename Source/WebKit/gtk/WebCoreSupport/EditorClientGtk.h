@@ -40,7 +40,7 @@
 #include <wtf/gobject/GRefPtr.h>
 
 #if ENABLE(SPELLCHECK)
-#include "TextCheckerClientEnchant.h"
+#include "TextCheckerClientGtk.h"
 #else
 #include "EmptyClients.h"
 #endif
@@ -139,7 +139,7 @@ class EditorClient : public WebCore::EditorClient {
 
     private:
 #if ENABLE(SPELLCHECK)
-        TextCheckerClientEnchant m_textCheckerClient;
+        TextCheckerClientGtk m_textCheckerClient;
 #else
         WebCore::EmptyTextCheckerClient m_textCheckerClient;
 #endif

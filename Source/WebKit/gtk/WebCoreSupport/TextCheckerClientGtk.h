@@ -28,21 +28,20 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef TextCheckerClientEnchant_h
-#define TextCheckerClientEnchant_h
+#ifndef TextCheckerClientGtk_h
+#define TextCheckerClientGtk_h
 
+#include "GRefPtr.h"
 #include "TextCheckerClient.h"
 
-typedef struct _GSList GSList;
-typedef struct _WebKitWebView WebKitWebView;
-typedef struct str_enchant_broker EnchantBroker;
+typedef struct _WebKitSpellChecker WebKitSpellChecker;
 
 namespace WebKit {
 
-class TextCheckerClientEnchant : public WebCore::TextCheckerClient {
+class TextCheckerClientGtk : public WebCore::TextCheckerClient {
     public:
-        TextCheckerClientEnchant(WebKitWebView*);
-        ~TextCheckerClientEnchant();
+        TextCheckerClientGtk(WebKitSpellChecker*);
+        ~TextCheckerClientGtk();
         virtual void ignoreWordInSpellDocument(const WTF::String&);
         virtual void learnWord(const WTF::String&);
         virtual void checkSpellingOfString(const UChar*, int length, int* misspellingLocation, int* misspellingLength);
@@ -52,11 +51,8 @@ class TextCheckerClientEnchant : public WebCore::TextCheckerClient {
         virtual void requestCheckingOfString(WebCore::SpellChecker*, int, WebCore::TextCheckingTypeMask, const WTF::String&) {}
 
         void updateSpellCheckingLanguage(const char*);
-        static void freeSpellCheckingLanguage(gpointer, gpointer);
     private:
-        WebKitWebView* m_webView;
-        GSList* m_enchantDicts;
-        static EnchantBroker* broker;
+        GRefPtr<WebKitSpellChecker> m_spellChecker;
     };
 }
 #endif

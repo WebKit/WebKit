@@ -3292,7 +3292,7 @@ static void webkit_web_view_update_settings(WebKitWebView* webView)
 #if ENABLE(SPELLCHECK)
     if (enableSpellChecking) {
         WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
-        static_cast<WebKit::TextCheckerClientEnchant*>(client->textChecker())->updateSpellCheckingLanguage(defaultSpellCheckingLanguages);
+        static_cast<WebKit::TextCheckerClientGtk*>(client->textChecker())->updateSpellCheckingLanguage(defaultSpellCheckingLanguages);
     }
 #endif
 
@@ -3423,7 +3423,7 @@ static void webkit_web_view_settings_notify(WebKitWebSettings* webSettings, GPar
         g_object_get(G_OBJECT(webSettings), "enable-spell-checking", &enableSpellChecking, NULL);
         if (enableSpellChecking) {
             WebKit::EditorClient* client = static_cast<WebKit::EditorClient*>(core(webView)->editorClient());
-            static_cast<WebKit::TextCheckerClientEnchant*>(client->textChecker())->updateSpellCheckingLanguage(g_value_get_string(&value));
+            static_cast<WebKit::TextCheckerClientGtk*>(client->textChecker())->updateSpellCheckingLanguage(g_value_get_string(&value));
         }
     }
 #endif

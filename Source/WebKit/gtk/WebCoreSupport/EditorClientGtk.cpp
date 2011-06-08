@@ -44,8 +44,10 @@
 #include "WebKitDOMNodePrivate.h"
 #include "WebKitDOMRangePrivate.h"
 #include "WindowsKeyboardCodes.h"
+#include "webkitglobals.h"
 #include "webkitglobalsprivate.h"
 #include "webkitmarshal.h"
+#include "webkitspellchecker.h"
 #include "webkitwebsettingsprivate.h"
 #include "webkitwebviewprivate.h"
 #include <wtf/text/CString.h>
@@ -625,7 +627,7 @@ void EditorClient::handleInputMethodMousePress()
 EditorClient::EditorClient(WebKitWebView* webView)
     : m_isInRedo(false)
 #if ENABLE(SPELLCHECK)
-    , m_textCheckerClient(webView)
+    , m_textCheckerClient(WEBKIT_SPELL_CHECKER(webkit_get_text_checker()))
 #endif
     , m_webView(webView)
     , m_preventNextCompositionCommit(false)

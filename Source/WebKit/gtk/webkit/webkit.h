@@ -35,6 +35,7 @@
 #include <webkit/webkitnetworkresponse.h>
 #include <webkit/webkitsecurityorigin.h>
 #include <webkit/webkitsoupauthdialog.h>
+#include <webkit/webkitspellchecker.h>
 #include <webkit/webkitviewportattributes.h>
 #include <webkit/webkitwebbackforwardlist.h>
 #include <webkit/webkitwebdatabase.h>

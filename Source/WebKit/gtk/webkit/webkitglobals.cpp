@@ -25,6 +25,7 @@
 #include "Chrome.h"
 #include "FrameNetworkingContextGtk.h"
 #include "GOwnPtr.h"
+#include "GRefPtr.h"
 #include "IconDatabase.h"
 #include "Logging.h"
 #include "MemoryCache.h"
@@ -42,6 +43,8 @@
 #include "webkitglobalsprivate.h"
 #include "webkiticondatabase.h"
 #include "webkitsoupauthdialog.h"
+#include "webkitspellchecker.h"
+#include "webkitspellcheckerenchant.h"
 #include "webkitwebdatabase.h"
 #include "webkitwebplugindatabaseprivate.h"
 #include <libintl.h>
@@ -244,9 +247,54 @@ WebKitIconDatabase* webkit_get_icon_database()
     return database;
 }
 
+static GRefPtr<WebKitSpellChecker> textChecker = 0;
+
 static void webkitExit()
 {
     g_object_unref(webkit_get_default_session());
+    textChecker = 0;
+}
+
+/**
+ * webkit_get_text_checker:
+ *
+ * Returns: the #WebKitSpellChecker used by WebKit, or %NULL if spell
+ * checking is not enabled
+ *
+ * Since: 1.5.1
+ **/
+GObject* webkit_get_text_checker()
+{
+    webkitInit();
+
+#if ENABLE(SPELLCHECK)
+    if (!textChecker)
+        textChecker = adoptGRef(WEBKIT_SPELL_CHECKER(g_object_new(WEBKIT_TYPE_SPELL_CHECKER_ENCHANT, NULL)));
+#endif
+
+    return G_OBJECT(textChecker.get());
+}
+
+/**
+ * webkit_set_text_checker:
+ * @checker: a #WebKitSpellChecker or %NULL
+ *
+ * Sets @checker as the spell checker to be used by WebKit. The API
+ * accepts GObject since in the future we might accept objects
+ * implementing multiple interfaces (for example, spell checking and
+ * grammar checking).
+ *
+ * Since: 1.5.1
+ **/
+void webkit_set_text_checker(GObject* checker)
+{
+    g_return_if_fail(!checker || WEBKIT_IS_SPELL_CHECKER(checker));
+
+    webkitInit();
+
+    // We need to do this because we need the cast, and casting NULL
+    // is not kosher.
+    textChecker = checker ? WEBKIT_SPELL_CHECKER(checker) : 0;
 }
 
 void webkitInit()

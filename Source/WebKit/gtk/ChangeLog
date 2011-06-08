@@ -1,3 +1,46 @@
+2011-06-08  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add WebKitSpellChecker interface and implementations
+        https://bugs.webkit.org/show_bug.cgi?id=61787
+
+        Expose the spell checking functionality to the UAs through a
+        generic interface, and provide a default Enchant-based
+        implementation. On top of allowing UAs to use this functionality
+        this makes it possible to change the spell checking backend at
+        runtime.
+
+        * GNUmakefile.am: add new files.
+        * WebCoreSupport/EditorClientGtk.cpp:
+        (WebKit::EditorClient::EditorClient): set the spell checker using
+        the new classes.
+        * WebCoreSupport/TextCheckerClientEnchant.cpp: Removed.
+        * WebCoreSupport/TextCheckerClientGtk.cpp: Added
+        (WebKit::TextCheckerClientGtk::TextCheckerClientGtk): just
+        chain up to the WebKitSpellChecker.
+        (WebKit::TextCheckerClientGtk::~TextCheckerClientGtk): ditto.
+        (WebKit::TextCheckerClientGtk::ignoreWordInSpellDocument): ditto.
+        (WebKit::TextCheckerClientGtk::learnWord): ditto.
+        (WebKit::TextCheckerClientGtk::checkSpellingOfString): ditto.
+        (WebKit::TextCheckerClientGtk::getAutoCorrectSuggestionForMisspelledWord): ditto.
+        (WebKit::TextCheckerClientGtk::getGuessesForWord): ditto.
+        (WebKit::TextCheckerClientGtk::updateSpellCheckingLanguage): ditto.
+        * WebCoreSupport/TextCheckerClientGtk.h: store a reference to
+        the WebKitSpellChecker.
+        * webkit/webkit.h: the webkitspellchecker.h header is public.
+        * webkit/webkitdefines.h: defines for spell checker interface.
+        * webkit/webkitglobals.cpp: Add APIs to get and set the global
+        spell checker.
+        (webkit_get_spell_checker): get API.
+        (webkit_set_spell_checker): set API.
+        * webkit/webkitglobals.h:
+        * webkit/webkitspellchecker.cpp: Added. Spell checking interface.
+        * webkit/webkitspellchecker.h: Added.
+        * webkit/webkitspellcheckerenchant.cpp: Added. Default
+        implemention, uses Enchant library.
+        * webkit/webkitspellcheckerenchant.h: Added.
+
 2011-06-07  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

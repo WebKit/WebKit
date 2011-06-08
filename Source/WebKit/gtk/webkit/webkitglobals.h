@@ -67,6 +67,12 @@ webkit_set_cache_model                          (WebKitCacheModel     cache_mode
 WEBKIT_API WebKitCacheModel
 webkit_get_cache_model                          (void);
 
+WEBKIT_API GObject*
+webkit_get_text_checker                        (void);
+
+WEBKIT_API void
+webkit_set_text_checker                        (GObject*  checker);
+
 G_END_DECLS
 
 #endif
