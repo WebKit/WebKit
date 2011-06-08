@@ -46,6 +46,7 @@ var testsByDirectory = {};
 var selectedTests = [];
 var loupe;
 var queue;
+var shouldSortTestsByMetric = false;
 
 function main()
 {
@@ -56,6 +57,7 @@ function main()
     $('previous-test').addEventListener('click', previousTest);
 
     $('toggle-log').addEventListener('click', function() { toggle('log'); });
+    disableSorting();
 
     loupe = new Loupe();
     queue = new RebaselineQueue();
@@ -144,6 +146,23 @@ function displayResults()
     document.body.className = '';
 }
 
+function enableSorting()
+{
+    $('toggle-sort').onclick = function() {
+        shouldSortTestsByMetric = !shouldSortTestsByMetric;
+        // Regenerates the list of tests; this alphabetizes, and
+        // then re-sorts if we turned sorting on.
+        selectDirectory();
+    }
+    $('toggle-sort').classList.remove('disabled-control');
+}
+
+function disableSorting()
+{
+    $('toggle-sort').onclick = function() { return false; }
+    $('toggle-sort').classList.add('disabled-control');
+}
+
 /**
  * For a given failure type, gets all the tests and groups them by directory
  * (populating the directory selector with them).
@@ -226,6 +245,21 @@ function selectDirectory()
 
     var testSelector = $('test-selector');
     testSelector.innerHTML = '';
+
+    var selectedFailureType = getSelectValue('failure-type-selector');
+    var sampleSelectedTest = testsByFailureType[selectedFailureType][0];
+    var selectedTypeIsSortable = 'metric' in results.tests[sampleSelectedTest];
+    if (selectedTypeIsSortable) {
+        enableSorting();
+        if (shouldSortTestsByMetric) {
+            for (var state in testsByState) {
+                testsByState[state].sort(function(a, b) {
+                    return results.tests[b].metric - results.tests[a].metric
+                })
+            }
+        }
+    } else
+        disableSorting();
 
     for (var state in testsByState) {
         var stateOption = document.createElement('option');

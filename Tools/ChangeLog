@@ -1,3 +1,20 @@
+2011-06-08  Tom Hudson  <tomhudson@google.com>
+
+        Reviewed by Mihai Parparita.
+
+        Allow sorting in RebaselineServer based on 'metric' field in unexpected_results.json
+        https://bugs.webkit.org/show_bug.cgi?id=60964
+
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/index.html:
+        Add 'Sort tests by metric' link.
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.js:
+        (disableSorting): Activate 'Sort tests by metric' link.
+        (enableSorting): Deactivate 'Sort tests by metric' link.
+        (selectDirectory): Call enableSorting()/disableSorting() depending
+        on currently selected failure type, and sort tests if requested.
+        * Scripts/webkitpy/tool/commands/data/rebaselineserver/main.css:
+        New .disabled-control class for deactivated links.
+
 2011-06-08  Tom Sepez  <tsepez@chromium.org>
 
         Reviewed by Adam Barth.

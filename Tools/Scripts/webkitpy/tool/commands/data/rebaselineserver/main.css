@@ -138,6 +138,10 @@ a, .link {
   float: right;
 }
 
+.disabled-control {
+  color: #888;
+}
+
 #test-output {
   border-spacing: 0;
   border-collapse: collapse;
