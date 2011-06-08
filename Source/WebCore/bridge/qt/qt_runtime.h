@@ -73,28 +73,6 @@ private:
 };
 
 
-class QtMethod : public Method
-{
-public:
-    QtMethod(const QMetaObject *mo, int i, const QByteArray &ident, int numParameters)
-        : m_metaObject(mo),
-          m_index(i),
-          m_identifier(ident),
-          m_nParams(numParameters)
-        { }
-
-    virtual const char* name() const { return m_identifier.constData(); }
-    virtual int numParameters() const { return m_nParams; }
-
-private:
-    friend class QtInstance;
-    const QMetaObject *m_metaObject;
-    int m_index;
-    QByteArray m_identifier;
-    int m_nParams;
-};
-
-
 template <typename T> class QtArray : public Array
 {
 public:

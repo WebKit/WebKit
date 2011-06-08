@@ -98,7 +98,6 @@ private:
     QObject* m_hashkey;
     mutable QHash<QByteArray, WriteBarrier<JSObject> > m_methods;
     mutable QHash<QString, QtField*> m_fields;
-    mutable WriteBarrier<QtRuntimeMetaMethod> m_defaultMethod;
     QScriptEngine::ValueOwnership m_ownership;
 };
 

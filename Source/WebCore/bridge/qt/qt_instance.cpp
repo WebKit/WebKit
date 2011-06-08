@@ -151,9 +151,6 @@ void QtInstance::put(JSObject* object, ExecState* exec, const Identifier& proper
 
 void QtInstance::removeCachedMethod(JSObject* method)
 {
-    if (m_defaultMethod.get() == method)
-        m_defaultMethod.clear();
-
     for (QHash<QByteArray, WriteBarrier<JSObject> >::Iterator it = m_methods.begin(), end = m_methods.end(); it != end; ++it) {
         if (it.value().get() == method) {
             m_methods.erase(it);
@@ -190,8 +187,6 @@ RuntimeObject* QtInstance::newRuntimeObject(ExecState* exec)
 
 void QtInstance::visitAggregate(SlotVisitor& visitor)
 {
-    if (m_defaultMethod)
-        visitor.append(&m_defaultMethod);
     for (QHash<QByteArray, WriteBarrier<JSObject> >::Iterator it = m_methods.begin(), end = m_methods.end(); it != end; ++it)
         visitor.append(&it.value());
 }
