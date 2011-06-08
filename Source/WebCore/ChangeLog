@@ -1,3 +1,10 @@
+2011-06-08  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Build fix after introduction of FontCache::ShouldRetain
+
+        * platform/graphics/wx/FontCacheWx.cpp:
+        (WebCore::FontCache::getFontDataForCharacters):
+
 2011-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r88365.

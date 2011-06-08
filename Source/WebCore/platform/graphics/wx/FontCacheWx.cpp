@@ -42,7 +42,7 @@ void FontCache::platformInit()
 const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, const UChar* characters, int length)
 {
     SimpleFontData* fontData = 0;
-    fontData = getCachedFontData(font.fontDescription(), font.family().family(), false, false);
+    fontData = getCachedFontData(font.fontDescription(), font.family().family(), false, DoNotRetain);
     if (!fontData->containsCharacters(characters, length))
         fontData = getSimilarFontPlatformData(font);
     if (!fontData->containsCharacters(characters, length))
