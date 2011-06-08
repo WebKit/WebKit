@@ -1,3 +1,13 @@
+2011-06-08  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB test: key paths as arrays
+        https://bugs.webkit.org/show_bug.cgi?id=62291
+
+        * storage/indexeddb/keypath-as-array-expected.txt: Added.
+        * storage/indexeddb/keypath-as-array.html: Added.
+
 2011-05-25  Xiaomei Ji  <xji@chromium.org>
 
         Reviewed by Ryosuke Niwa.
