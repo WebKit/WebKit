@@ -1,3 +1,18 @@
+2011-06-08  Mikołaj Małecki  <m.malecki@samsung.com>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Crash by buffer overrun crash when serializing inspector object tree.
+        https://bugs.webkit.org/show_bug.cgi?id=52791
+
+        No new tests. The problem can be reproduced by trying to create InspectorValue
+        from 1.0e-100 and call ->toJSONString() on this.
+
+        * inspector/InspectorValues.cpp:
+        (WebCore::InspectorBasicValue::writeJSON):
+        Added checking the predicted buffer size and choosing exponential format, or
+        eventually "NaN" if the buffer is too small for decimal format.
+
 2011-06-08  Nico Weber  <thakis@chromium.org>
 
         Reviewed by Darin Adler.
