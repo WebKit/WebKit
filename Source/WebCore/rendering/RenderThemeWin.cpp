@@ -833,19 +833,19 @@ bool RenderThemeWin::paintSliderThumb(RenderObject* o, const PaintInfo& i, const
 const int sliderThumbWidth = 7;
 const int sliderThumbHeight = 15;
 
-void RenderThemeWin::adjustSliderThumbSize(RenderObject* o) const
+void RenderThemeWin::adjustSliderThumbSize(RenderStyle* style) const
 {
-    ControlPart part = o->style()->appearance();
+    ControlPart part = style->appearance();
     if (part == SliderThumbVerticalPart) {
-        o->style()->setWidth(Length(sliderThumbHeight, Fixed));
-        o->style()->setHeight(Length(sliderThumbWidth, Fixed));
+        style->setWidth(Length(sliderThumbHeight, Fixed));
+        style->setHeight(Length(sliderThumbWidth, Fixed));
     } else if (part == SliderThumbHorizontalPart) {
-        o->style()->setWidth(Length(sliderThumbWidth, Fixed));
-        o->style()->setHeight(Length(sliderThumbHeight, Fixed));
+        style->setWidth(Length(sliderThumbWidth, Fixed));
+        style->setHeight(Length(sliderThumbHeight, Fixed));
     }
 #if ENABLE(VIDEO)
     else if (part == MediaSliderThumbPart || part == MediaVolumeSliderThumbPart) 
-        RenderMediaControls::adjustMediaSliderThumbSize(o);
+        RenderMediaControls::adjustMediaSliderThumbSize(style);
 #endif
 }
 

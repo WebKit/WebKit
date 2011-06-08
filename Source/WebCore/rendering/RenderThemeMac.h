@@ -71,7 +71,7 @@ public:
 
     virtual int minimumMenuListSize(RenderStyle*) const;
 
-    virtual void adjustSliderThumbSize(RenderObject*) const;
+    virtual void adjustSliderThumbSize(RenderStyle*) const;
     
     virtual int popupInternalPaddingLeft(RenderStyle*) const;
     virtual int popupInternalPaddingRight(RenderStyle*) const;
@@ -170,7 +170,7 @@ protected:
     virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const;
     virtual bool usesMediaControlStatusDisplay();
     virtual bool usesMediaControlVolumeSlider() const;
-    virtual void adjustMediaSliderThumbSize(RenderObject*) const;
+    virtual void adjustMediaSliderThumbSize(RenderStyle*) const;
     virtual IntPoint volumeSliderOffsetFromMuteButton(RenderBox*, const IntSize&) const;
 #endif
     

@@ -75,10 +75,8 @@ void RenderSliderThumb::layout()
     else if (parentStyle->appearance() == MediaVolumeSliderPart)
         style()->setAppearance(MediaVolumeSliderThumbPart);
 
-    if (style()->hasAppearance()) {
-        // FIXME: This should pass the style, not the renderer, to the theme.
-        theme()->adjustSliderThumbSize(this);
-    }
+    if (style()->hasAppearance())
+        theme()->adjustSliderThumbSize(style());
     RenderBlock::layout();
 }
 

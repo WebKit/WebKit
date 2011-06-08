@@ -88,19 +88,18 @@ static FloatRect getUnzoomedRectAndAdjustCurrentContext(RenderObject* o, const P
 static const int mediaSliderThumbWidth = 13;
 static const int mediaSliderThumbHeight = 14;
 
-void RenderMediaControls::adjustMediaSliderThumbSize(RenderObject* o)
+void RenderMediaControls::adjustMediaSliderThumbSize(RenderStyle* style)
 {
-    ControlPart part = o->style()->appearance();
-
+    ControlPart part = style->appearance();
     if (part != MediaSliderThumbPart && part != MediaVolumeSliderThumbPart)
         return;
 
     CGSize size;
     wkMeasureMediaUIPart(part == MediaSliderThumbPart ? MediaSliderThumb : MediaVolumeSliderThumb, WKMediaControllerThemeQuickTime, 0, &size);
 
-    float zoomLevel = o->style()->effectiveZoom();
-    o->style()->setWidth(Length(static_cast<int>(size.width * zoomLevel), Fixed));
-    o->style()->setHeight(Length(static_cast<int>(size.height * zoomLevel), Fixed));
+    float zoomLevel = style->effectiveZoom();
+    style->setWidth(Length(static_cast<int>(size.width * zoomLevel), Fixed));
+    style->setHeight(Length(static_cast<int>(size.height * zoomLevel), Fixed));
 }
 
 bool RenderMediaControls::paintMediaControlsPart(MediaControlElementType part, RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)

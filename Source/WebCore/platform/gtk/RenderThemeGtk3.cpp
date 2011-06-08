@@ -663,12 +663,12 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* renderObject, const PaintInf
     return false;
 }
 
-void RenderThemeGtk::adjustSliderThumbSize(RenderObject* renderObject) const
+void RenderThemeGtk::adjustSliderThumbSize(RenderStyle* style) const
 {
-    ControlPart part = renderObject->style()->appearance();
+    ControlPart part = style->appearance();
 #if ENABLE(VIDEO)
     if (part == MediaSliderThumbPart) {
-        adjustMediaSliderThumbSize(renderObject);
+        adjustMediaSliderThumbSize(style);
         return;
     }
 #endif
@@ -679,13 +679,13 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderObject* renderObject) const
                                 "slider-length", &sliderLength,
                                 NULL);
     if (part == SliderThumbHorizontalPart) {
-        renderObject->style()->setWidth(Length(sliderLength, Fixed));
-        renderObject->style()->setHeight(Length(sliderWidth, Fixed));
+        style->setWidth(Length(sliderLength, Fixed));
+        style->setHeight(Length(sliderWidth, Fixed));
         return;
     }
     ASSERT(part == SliderThumbVerticalPart || part == MediaVolumeSliderThumbPart);
-    renderObject->style()->setWidth(Length(sliderWidth, Fixed));
-    renderObject->style()->setHeight(Length(sliderLength, Fixed));
+    style->setWidth(Length(sliderWidth, Fixed));
+    style->setHeight(Length(sliderLength, Fixed));
 }
 
 #if ENABLE(PROGRESS_TAG)

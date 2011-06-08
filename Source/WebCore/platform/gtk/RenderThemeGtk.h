@@ -142,12 +142,12 @@ protected:
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
     virtual void adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
 
-    virtual void adjustSliderThumbSize(RenderObject* object) const;
+    virtual void adjustSliderThumbSize(RenderStyle*) const;
 
 #if ENABLE(VIDEO)
     void initMediaColors();
     void initMediaButtons();
-    void adjustMediaSliderThumbSize(RenderObject*) const;
+    void adjustMediaSliderThumbSize(RenderStyle*) const;
     virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const { return true; }
     virtual bool paintMediaFullscreenButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);

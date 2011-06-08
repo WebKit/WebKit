@@ -969,9 +969,10 @@ void RenderTheme::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle*, Elemen
 
 void RenderTheme::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle*, Element*) const
 {
+    // FIXME: Should call adjustSliderThumbSize().
 }
 
-void RenderTheme::adjustSliderThumbSize(RenderObject*) const
+void RenderTheme::adjustSliderThumbSize(RenderStyle*) const
 {
 }
 

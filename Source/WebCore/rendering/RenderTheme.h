@@ -160,7 +160,7 @@ public:
 
     virtual int minimumMenuListSize(RenderStyle*) const { return 0; }
 
-    virtual void adjustSliderThumbSize(RenderObject*) const;
+    virtual void adjustSliderThumbSize(RenderStyle*) const;
 
     virtual int popupInternalPaddingLeft(RenderStyle*) const { return 0; }
     virtual int popupInternalPaddingRight(RenderStyle*) const { return 0; }

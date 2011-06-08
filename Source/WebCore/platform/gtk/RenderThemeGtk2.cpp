@@ -524,12 +524,12 @@ bool RenderThemeGtk::paintSliderThumb(RenderObject* object, const PaintInfo& inf
     return false;
 }
 
-void RenderThemeGtk::adjustSliderThumbSize(RenderObject* o) const
+void RenderThemeGtk::adjustSliderThumbSize(RenderStyle* style) const
 {
-    ControlPart part = o->style()->appearance();
+    ControlPart part = style->appearance();
 #if ENABLE(VIDEO)
     if (part == MediaSliderThumbPart) {
-        adjustMediaSliderThumbSize(o);
+        adjustMediaSliderThumbSize(style);
         return;
     }
 #endif
@@ -542,13 +542,13 @@ void RenderThemeGtk::adjustSliderThumbSize(RenderObject* o) const
                          NULL);
 
     if (part == SliderThumbHorizontalPart) {
-        o->style()->setWidth(Length(length, Fixed));
-        o->style()->setHeight(Length(width, Fixed));
+        style->setWidth(Length(length, Fixed));
+        style->setHeight(Length(width, Fixed));
         return;
     }
     ASSERT(part == SliderThumbVerticalPart || part == MediaVolumeSliderThumbPart);
-    o->style()->setWidth(Length(width, Fixed));
-    o->style()->setHeight(Length(length, Fixed));
+    style->setWidth(Length(width, Fixed));
+    style->setHeight(Length(length, Fixed));
 }
 
 #if ENABLE(PROGRESS_TAG)

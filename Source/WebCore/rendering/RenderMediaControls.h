@@ -40,7 +40,7 @@ public:
 
 #if PLATFORM(WIN)
     static bool paintMediaControlsPart(MediaControlElementType, RenderObject*, const PaintInfo&, const IntRect&);
-    static void adjustMediaSliderThumbSize(RenderObject*);
+    static void adjustMediaSliderThumbSize(RenderStyle*);
 #endif
     static IntPoint volumeSliderOffsetFromMuteButton(RenderBox*, const IntSize&);
 };

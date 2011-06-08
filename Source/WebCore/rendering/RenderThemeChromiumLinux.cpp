@@ -143,18 +143,18 @@ Color RenderThemeChromiumLinux::platformInactiveSelectionForegroundColor() const
     return m_inactiveSelectionForegroundColor;
 }
 
-void RenderThemeChromiumLinux::adjustSliderThumbSize(RenderObject* o) const
+void RenderThemeChromiumLinux::adjustSliderThumbSize(RenderStyle* style) const
 {
     IntSize size = PlatformBridge::getThemePartSize(PlatformBridge::PartSliderThumb);
 
-    if (o->style()->appearance() == SliderThumbHorizontalPart) {
-        o->style()->setWidth(Length(size.width(), Fixed));
-        o->style()->setHeight(Length(size.height(), Fixed));
-    } else if (o->style()->appearance() == SliderThumbVerticalPart) {
-        o->style()->setWidth(Length(size.height(), Fixed));
-        o->style()->setHeight(Length(size.width(), Fixed));
+    if (style->appearance() == SliderThumbHorizontalPart) {
+        style->setWidth(Length(size.width(), Fixed));
+        style->setHeight(Length(size.height(), Fixed));
+    } else if (style->appearance() == SliderThumbVerticalPart) {
+        style->setWidth(Length(size.height(), Fixed));
+        style->setHeight(Length(size.width(), Fixed));
     } else
-        RenderThemeChromiumSkia::adjustSliderThumbSize(o);
+        RenderThemeChromiumSkia::adjustSliderThumbSize(style);
 }
 
 bool RenderThemeChromiumLinux::supportsControlTints() const

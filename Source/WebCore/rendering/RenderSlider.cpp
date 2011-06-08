@@ -136,10 +136,8 @@ void RenderSlider::layout()
 
     if (thumb) {
         // Allow the theme to set the size of the thumb.
-        if (thumb->style()->hasAppearance()) {
-            // FIXME: This should pass the style, not the renderer, to the theme.
-            theme()->adjustSliderThumbSize(thumb);
-        }
+        if (thumb->style()->hasAppearance())
+            theme()->adjustSliderThumbSize(thumb->style());
 
         baseSize.expand(thumb->style()->width().calcMinValue(0), thumb->style()->height().calcMinValue(0));
     }

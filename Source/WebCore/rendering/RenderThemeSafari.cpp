@@ -990,6 +990,7 @@ bool RenderThemeSafari::paintSliderTrack(RenderObject* o, const PaintInfo& paint
 
 void RenderThemeSafari::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* e) const 
 { 
+    RenderTheme::adjustSliderThumbStyle(selector, style, e);
     style->setBoxShadow(nullptr); 
 } 
 
@@ -1014,15 +1015,15 @@ bool RenderThemeSafari::paintSliderThumb(RenderObject* o, const PaintInfo& paint
 const int sliderThumbWidth = 15;
 const int sliderThumbHeight = 15;
 
-void RenderThemeSafari::adjustSliderThumbSize(RenderObject* o) const
+void RenderThemeSafari::adjustSliderThumbSize(RenderStyle* style) const
 {
-    if (o->style()->appearance() == SliderThumbHorizontalPart || o->style()->appearance() == SliderThumbVerticalPart) {
-        o->style()->setWidth(Length(sliderThumbWidth, Fixed));
-        o->style()->setHeight(Length(sliderThumbHeight, Fixed));
+    if (style->appearance() == SliderThumbHorizontalPart || style->appearance() == SliderThumbVerticalPart) {
+        style->setWidth(Length(sliderThumbWidth, Fixed));
+        style->setHeight(Length(sliderThumbHeight, Fixed));
     } 
 #if ENABLE(VIDEO)
-    else if (o->style()->appearance() == MediaSliderThumbPart) 
-        RenderMediaControls::adjustMediaSliderThumbSize(o);
+    else if (style->appearance() == MediaSliderThumbPart) 
+        RenderMediaControls::adjustMediaSliderThumbSize(style);
 #endif
 }
 

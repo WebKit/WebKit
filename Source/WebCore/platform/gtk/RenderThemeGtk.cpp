@@ -396,8 +396,9 @@ void RenderThemeGtk::adjustSliderTrackStyle(CSSStyleSelector*, RenderStyle* styl
     style->setBoxShadow(nullptr);
 }
 
-void RenderThemeGtk::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeGtk::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
+    RenderTheme::adjustSliderThumbStyle(selector, style, element);
     style->setBoxShadow(nullptr);
 }
 
@@ -472,11 +473,11 @@ String RenderThemeGtk::extraMediaControlsStyleSheet()
     return String(mediaControlsGtkUserAgentStyleSheet, sizeof(mediaControlsGtkUserAgentStyleSheet));
 }
 
-void RenderThemeGtk::adjustMediaSliderThumbSize(RenderObject* renderObject) const
+void RenderThemeGtk::adjustMediaSliderThumbSize(RenderStyle* style) const
 {
-    ASSERT(renderObject->style()->appearance() == MediaSliderThumbPart);
-    renderObject->style()->setWidth(Length(m_mediaSliderThumbWidth, Fixed));
-    renderObject->style()->setHeight(Length(m_mediaSliderThumbHeight, Fixed));
+    ASSERT(style->appearance() == MediaSliderThumbPart);
+    style->setWidth(Length(m_mediaSliderThumbWidth, Fixed));
+    style->setHeight(Length(m_mediaSliderThumbHeight, Fixed));
 }
 
 bool RenderThemeGtk::paintMediaButton(RenderObject* renderObject, GraphicsContext* context, const IntRect& rect, const char* iconName)

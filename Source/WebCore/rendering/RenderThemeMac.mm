@@ -1289,8 +1289,9 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInf
     return false;
 }
 
-void RenderThemeMac::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeMac::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
+    RenderTheme::adjustSliderThumbStyle(selector, style, element);
     style->setBoxShadow(nullptr);
 }
 
@@ -1643,40 +1644,40 @@ const int sliderThumbHeight = 15;
 const int mediaSliderThumbWidth = 13;
 const int mediaSliderThumbHeight = 14;
 
-void RenderThemeMac::adjustSliderThumbSize(RenderObject* o) const
+void RenderThemeMac::adjustSliderThumbSize(RenderStyle* style) const
 {
-    float zoomLevel = o->style()->effectiveZoom();
-    if (o->style()->appearance() == SliderThumbHorizontalPart || o->style()->appearance() == SliderThumbVerticalPart) {
-        o->style()->setWidth(Length(static_cast<int>(sliderThumbWidth * zoomLevel), Fixed));
-        o->style()->setHeight(Length(static_cast<int>(sliderThumbHeight * zoomLevel), Fixed));
+    float zoomLevel = style->effectiveZoom();
+    if (style->appearance() == SliderThumbHorizontalPart || style->appearance() == SliderThumbVerticalPart) {
+        style->setWidth(Length(static_cast<int>(sliderThumbWidth * zoomLevel), Fixed));
+        style->setHeight(Length(static_cast<int>(sliderThumbHeight * zoomLevel), Fixed));
     } 
 
 #if ENABLE(VIDEO)
-    adjustMediaSliderThumbSize(o);
+    adjustMediaSliderThumbSize(style);
 #endif
 }
 
 #if ENABLE(VIDEO)
 
-void RenderThemeMac::adjustMediaSliderThumbSize(RenderObject* o) const
+void RenderThemeMac::adjustMediaSliderThumbSize(RenderStyle* style) const
 {
-    ControlPart part = o->style()->appearance();
+    ControlPart part = style->appearance();
 
     if (part == MediaSliderThumbPart || part == MediaVolumeSliderThumbPart) {
         int width = mediaSliderThumbWidth;
         int height = mediaSliderThumbHeight;
         
         if (mediaControllerTheme() == MediaControllerThemeQuickTime) {
-            CGSize  size;
+            CGSize size;
             
             wkMeasureMediaUIPart(part == MediaSliderThumbPart ? MediaSliderThumb : MediaVolumeSliderThumb, MediaControllerThemeQuickTime, NULL, &size);
             width = size.width;
             height = size.height;
         }
 
-        float zoomLevel = o->style()->effectiveZoom();
-        o->style()->setWidth(Length(static_cast<int>(width * zoomLevel), Fixed));
-        o->style()->setHeight(Length(static_cast<int>(height * zoomLevel), Fixed));
+        float zoomLevel = style->effectiveZoom();
+        style->setWidth(Length(static_cast<int>(width * zoomLevel), Fixed));
+        style->setHeight(Length(static_cast<int>(height * zoomLevel), Fixed));
     }
 }
 

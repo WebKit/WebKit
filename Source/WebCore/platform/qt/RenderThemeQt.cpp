@@ -961,8 +961,9 @@ bool RenderThemeQt::paintSliderThumb(RenderObject* o, const PaintInfo& pi,
     return false;
 }
 
-void RenderThemeQt::adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle* style, Element*) const
+void RenderThemeQt::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
+    RenderTheme::adjustSliderThumbStyle(selector, style, element);
     style->setBoxShadow(nullptr);
 }
 
@@ -1463,7 +1464,7 @@ bool RenderThemeQt::paintMediaSliderThumb(RenderObject* o, const PaintInfo& pain
 }
 #endif
 
-void RenderThemeQt::adjustSliderThumbSize(RenderObject* o) const
+void RenderThemeQt::adjustSliderThumbSize(RenderStyle* style) const
 {
     // timelineThumbHeight should match the height property of -webkit-media-controls-timeline in mediaControlsQt.css.
     const int timelineThumbHeight = 12;
@@ -1471,25 +1472,25 @@ void RenderThemeQt::adjustSliderThumbSize(RenderObject* o) const
     // volumeThumbWidth should match the width property of -webkit-media-controls-volume-slider in mediaControlsQt.css.
     const int volumeThumbWidth = 12;
     const int volumeThumbHeight = volumeThumbWidth / 3;
-    ControlPart part = o->style()->appearance();
+    ControlPart part = style->appearance();
 
     if (part == MediaSliderThumbPart) {
-        o->style()->setWidth(Length(timelineThumbWidth, Fixed));
-        o->style()->setHeight(Length(timelineThumbHeight, Fixed));
+        style->setWidth(Length(timelineThumbWidth, Fixed));
+        style->setHeight(Length(timelineThumbHeight, Fixed));
     } else if (part == MediaVolumeSliderThumbPart) {
-        o->style()->setHeight(Length(volumeThumbHeight, Fixed));
-        o->style()->setWidth(Length(volumeThumbWidth, Fixed));
+        style->setHeight(Length(volumeThumbHeight, Fixed));
+        style->setWidth(Length(volumeThumbWidth, Fixed));
     } else if (part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart) {
         QStyleOptionSlider option;
         if (part == SliderThumbVerticalPart)
             option.orientation = Qt::Vertical;
 
-        QStyle* style = qStyle();
+        QStyle* qstyle = qStyle();
 
-        int width = style->pixelMetric(QStyle::PM_SliderLength, &option);
-        int height = style->pixelMetric(QStyle::PM_SliderThickness, &option);
-        o->style()->setWidth(Length(width, Fixed));
-        o->style()->setHeight(Length(height, Fixed));
+        int width = qstyle->pixelMetric(QStyle::PM_SliderLength, &option);
+        int height = qstyle->pixelMetric(QStyle::PM_SliderThickness, &option);
+        style->setWidth(Length(width, Fixed));
+        style->setHeight(Length(height, Fixed));
     }
 }
 

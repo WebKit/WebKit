@@ -122,9 +122,9 @@ void RenderThemeChromiumMac::updateActiveState(NSCell* cell, const RenderObject*
 
 #if ENABLE(VIDEO)
 
-void RenderThemeChromiumMac::adjustMediaSliderThumbSize(RenderObject* o) const
+void RenderThemeChromiumMac::adjustMediaSliderThumbSize(RenderStyle* style) const
 {
-    RenderMediaControlsChromium::adjustMediaSliderThumbSize(o);
+    RenderMediaControlsChromium::adjustMediaSliderThumbSize(style);
 }
 
 bool RenderThemeChromiumMac::paintMediaPlayButton(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)

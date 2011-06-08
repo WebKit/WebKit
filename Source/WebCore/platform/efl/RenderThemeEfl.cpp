@@ -834,6 +834,7 @@ void RenderThemeEfl::adjustSliderTrackStyle(CSSStyleSelector* selector, RenderSt
 
 void RenderThemeEfl::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
+    RenderTheme::adjustSliderThumbStyle(selector, style, element);
     adjustSliderTrackStyle(selector, style, element);
 }
 

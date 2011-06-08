@@ -91,7 +91,7 @@ class RenderThemeChromiumSkia : public RenderTheme {
         virtual bool paintMediaControlsBackground(RenderObject*, const PaintInfo&, const IntRect&);
         virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
         virtual bool paintMediaVolumeSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
-        virtual void adjustSliderThumbSize(RenderObject*) const;
+        virtual void adjustSliderThumbSize(RenderStyle*) const;
         virtual bool paintMediaSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
         virtual bool paintMediaVolumeSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
         virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);

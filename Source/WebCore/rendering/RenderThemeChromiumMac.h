@@ -33,7 +33,7 @@ public:
     static PassRefPtr<RenderTheme> create();
 protected:
 #if ENABLE(VIDEO)
-    virtual void adjustMediaSliderThumbSize(RenderObject*) const;
+    virtual void adjustMediaSliderThumbSize(RenderStyle*) const;
     virtual bool paintMediaPlayButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaMuteButton(RenderObject*, const PaintInfo&, const IntRect&);
     virtual bool paintMediaSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);

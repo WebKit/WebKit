@@ -37,7 +37,7 @@ class HTMLMediaElement;
 class RenderMediaControlsChromium {
 public:
     static bool paintMediaControlsPart(MediaControlElementType, RenderObject*, const PaintInfo&, const IntRect&);
-    static void adjustMediaSliderThumbSize(RenderObject*);
+    static void adjustMediaSliderThumbSize(RenderStyle*);
 };
 
 } // namespace WebCore

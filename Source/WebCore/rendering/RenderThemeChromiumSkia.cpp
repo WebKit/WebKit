@@ -407,12 +407,12 @@ bool RenderThemeChromiumSkia::paintMediaVolumeSliderTrack(RenderObject* object, 
 #endif
 }
 
-void RenderThemeChromiumSkia::adjustSliderThumbSize(RenderObject* object) const
+void RenderThemeChromiumSkia::adjustSliderThumbSize(RenderStyle* style) const
 {
 #if ENABLE(VIDEO)
-    RenderMediaControlsChromium::adjustMediaSliderThumbSize(object);
+    RenderMediaControlsChromium::adjustMediaSliderThumbSize(style);
 #else
-    UNUSED_PARAM(object);
+    UNUSED_PARAM(style);
 #endif
 }
 

@@ -331,14 +331,14 @@ Color RenderThemeWinCE::systemColor(int cssValueId) const
 const int sliderThumbWidth = 7;
 const int sliderThumbHeight = 15;
 
-void RenderThemeWinCE::adjustSliderThumbSize(RenderObject* o) const
+void RenderThemeWinCE::adjustSliderThumbSize(RenderStyle* style) const
 {
-    if (o->style()->appearance() == SliderThumbVerticalPart) {
-        o->style()->setWidth(Length(sliderThumbHeight, Fixed));
-        o->style()->setHeight(Length(sliderThumbWidth, Fixed));
-    } else if (o->style()->appearance() == SliderThumbHorizontalPart) {
-        o->style()->setWidth(Length(sliderThumbWidth, Fixed));
-        o->style()->setHeight(Length(sliderThumbHeight, Fixed));
+    if (style->appearance() == SliderThumbVerticalPart) {
+        style->setWidth(Length(sliderThumbHeight, Fixed));
+        style->setHeight(Length(sliderThumbWidth, Fixed));
+    } else if (style->appearance() == SliderThumbHorizontalPart) {
+        style->setWidth(Length(sliderThumbWidth, Fixed));
+        style->setHeight(Length(sliderThumbHeight, Fixed));
     }
 }
 

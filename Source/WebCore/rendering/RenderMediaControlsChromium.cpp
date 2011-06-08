@@ -280,21 +280,21 @@ bool RenderMediaControlsChromium::paintMediaControlsPart(MediaControlElementType
     return false;
 }
 
-void RenderMediaControlsChromium::adjustMediaSliderThumbSize(RenderObject* object)
+void RenderMediaControlsChromium::adjustMediaSliderThumbSize(RenderStyle* style)
 {
     static Image* mediaSliderThumb = platformResource("mediaSliderThumb");
     static Image* mediaVolumeSliderThumb = platformResource("mediaVolumeSliderThumb");
 
     Image* thumbImage = 0;
-    if (object->style()->appearance() == MediaSliderThumbPart)
+    if (style->appearance() == MediaSliderThumbPart)
         thumbImage = mediaSliderThumb;
-    else if (object->style()->appearance() == MediaVolumeSliderThumbPart)
+    else if (style->appearance() == MediaVolumeSliderThumbPart)
         thumbImage = mediaVolumeSliderThumb;
 
-    float zoomLevel = object->style()->effectiveZoom();
+    float zoomLevel = style->effectiveZoom();
     if (thumbImage) {
-        object->style()->setWidth(Length(static_cast<int>(thumbImage->width() * zoomLevel), Fixed));
-        object->style()->setHeight(Length(static_cast<int>(thumbImage->height() * zoomLevel), Fixed));
+        style->setWidth(Length(static_cast<int>(thumbImage->width() * zoomLevel), Fixed));
+        style->setHeight(Length(static_cast<int>(thumbImage->height() * zoomLevel), Fixed));
     }
 }
 
