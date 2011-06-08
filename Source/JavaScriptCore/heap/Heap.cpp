@@ -65,7 +65,7 @@ static inline bool isValidThreadState(JSGlobalData* globalData)
 
 Heap::Heap(JSGlobalData* globalData)
     : m_operationInProgress(NoOperation)
-    , m_markedSpace(this)
+    , m_newSpace(this)
     , m_markListSet(0)
     , m_activityCallback(DefaultGCActivityCallback::create(this))
     , m_globalData(globalData)
@@ -74,7 +74,7 @@ Heap::Heap(JSGlobalData* globalData)
     , m_handleHeap(globalData)
     , m_extraCost(0)
 {
-    m_markedSpace.setHighWaterMark(minBytesPerCycle);
+    m_newSpace.setHighWaterMark(minBytesPerCycle);
     (*m_activityCallback)();
 }
 
@@ -104,10 +104,10 @@ void Heap::destroy()
 
     delete m_markListSet;
     m_markListSet = 0;
-    m_markedSpace.clearMarks();
+    m_newSpace.clearMarks();
     m_handleHeap.finalizeWeakHandles();
     m_globalData->smallStrings.finalizeSmallStrings();
-    m_markedSpace.destroy();
+    m_newSpace.destroy();
 
     m_globalData = 0;
 }
@@ -125,26 +125,26 @@ void Heap::reportExtraMemoryCostSlowCase(size_t cost)
     // if a large value survives one garbage collection, there is not much point to
     // collecting more frequently as long as it stays alive.
 
-    if (m_extraCost > maxExtraCost && m_extraCost > m_markedSpace.highWaterMark() / 2)
+    if (m_extraCost > maxExtraCost && m_extraCost > m_newSpace.highWaterMark() / 2)
         collectAllGarbage();
     m_extraCost += cost;
 }
 
-void* Heap::allocate(MarkedSpace::SizeClass& sizeClass)
+void* Heap::allocate(NewSpace::SizeClass& sizeClass)
 {
 #if COLLECT_ON_EVERY_ALLOCATION
     collectAllGarbage();
     ASSERT(m_operationInProgress == NoOperation);
 #endif
 
-    void* result = m_markedSpace.allocate(sizeClass);
+    void* result = m_newSpace.allocate(sizeClass);
     if (result)
         return result;
 
     collect(DoNotSweep);
 
     m_operationInProgress = Allocation;
-    result = m_markedSpace.allocate(sizeClass);
+    result = m_newSpace.allocate(sizeClass);
     m_operationInProgress = NoOperation;
 
     ASSERT(result);
@@ -232,7 +232,7 @@ void Heap::markRoots()
     ConservativeRoots registerFileRoots(this);
     registerFile().gatherConservativeRoots(registerFileRoots);
 
-    m_markedSpace.clearMarks();
+    m_newSpace.clearMarks();
 
     visitor.append(machineThreadRoots);
     visitor.drain();
@@ -275,17 +275,17 @@ void Heap::markRoots()
 
 size_t Heap::objectCount() const
 {
-    return m_markedSpace.objectCount();
+    return m_newSpace.objectCount();
 }
 
 size_t Heap::size() const
 {
-    return m_markedSpace.size();
+    return m_newSpace.size();
 }
 
 size_t Heap::capacity() const
 {
-    return m_markedSpace.capacity();
+    return m_newSpace.capacity();
 }
 
 size_t Heap::globalObjectCount()
@@ -405,7 +405,7 @@ void Heap::collect(SweepToggle sweepToggle)
 
     JAVASCRIPTCORE_GC_MARKED();
 
-    m_markedSpace.resetAllocator();
+    m_newSpace.resetAllocator();
     m_extraCost = 0;
 
 #if ENABLE(JSC_ZOMBIES)
@@ -413,16 +413,16 @@ void Heap::collect(SweepToggle sweepToggle)
 #endif
 
     if (sweepToggle == DoSweep) {
-        m_markedSpace.sweep();
-        m_markedSpace.shrink();
+        m_newSpace.sweep();
+        m_newSpace.shrink();
     }
 
     // To avoid pathological GC churn in large heaps, we set the allocation high
     // water mark to be proportional to the current size of the heap. The exact
     // proportion is a bit arbitrary. A 2X multiplier gives a 1:1 (heap size :
     // new bytes allocated) proportion, and seems to work well in benchmarks.
-    size_t proportionalBytes = 2 * m_markedSpace.size();
-    m_markedSpace.setHighWaterMark(max(proportionalBytes, minBytesPerCycle));
+    size_t proportionalBytes = 2 * m_newSpace.size();
+    m_newSpace.setHighWaterMark(max(proportionalBytes, minBytesPerCycle));
 
     JAVASCRIPTCORE_GC_END();
 
@@ -444,7 +444,7 @@ bool Heap::isValidAllocation(size_t bytes)
     if (!isValidThreadState(m_globalData))
         return false;
 
-    if (bytes > MarkedSpace::maxCellSize)
+    if (bytes > NewSpace::maxCellSize)
         return false;
 
     if (m_operationInProgress != NoOperation)

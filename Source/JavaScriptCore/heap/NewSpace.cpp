@@ -31,7 +31,7 @@ namespace JSC {
 
 class Structure;
 
-MarkedSpace::MarkedSpace(Heap* heap)
+NewSpace::NewSpace(Heap* heap)
     : m_waterMark(0)
     , m_highWaterMark(0)
     , m_heap(heap)
@@ -43,7 +43,7 @@ MarkedSpace::MarkedSpace(Heap* heap)
         sizeClassFor(cellSize).cellSize = cellSize;
 }
 
-void MarkedSpace::destroy()
+void NewSpace::destroy()
 {
     /* Keep our precious zombies! */
 #if !ENABLE(JSC_ZOMBIES)
@@ -53,7 +53,7 @@ void MarkedSpace::destroy()
 #endif
 }
 
-MarkedBlock* MarkedSpace::allocateBlock(SizeClass& sizeClass)
+MarkedBlock* NewSpace::allocateBlock(SizeClass& sizeClass)
 {
     MarkedBlock* block = MarkedBlock::create(m_heap, sizeClass.cellSize);
     sizeClass.blockList.append(block);
@@ -63,7 +63,7 @@ MarkedBlock* MarkedSpace::allocateBlock(SizeClass& sizeClass)
     return block;
 }
 
-void MarkedSpace::freeBlocks(DoublyLinkedList<MarkedBlock>& blocks)
+void NewSpace::freeBlocks(DoublyLinkedList<MarkedBlock>& blocks)
 {
     MarkedBlock* next;
     for (MarkedBlock* block = blocks.head(); block; block = next) {
@@ -75,7 +75,7 @@ void MarkedSpace::freeBlocks(DoublyLinkedList<MarkedBlock>& blocks)
     }
 }
 
-void MarkedSpace::shrink()
+void NewSpace::shrink()
 {
     // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
     DoublyLinkedList<MarkedBlock> empties;
@@ -95,21 +95,21 @@ void MarkedSpace::shrink()
     ASSERT(empties.isEmpty());
 }
 
-void MarkedSpace::clearMarks()
+void NewSpace::clearMarks()
 {
     BlockIterator end = m_blocks.end();
     for (BlockIterator it = m_blocks.begin(); it != end; ++it)
         (*it)->clearMarks();
 }
 
-void MarkedSpace::sweep()
+void NewSpace::sweep()
 {
     BlockIterator end = m_blocks.end();
     for (BlockIterator it = m_blocks.begin(); it != end; ++it)
         (*it)->sweep();
 }
 
-size_t MarkedSpace::objectCount() const
+size_t NewSpace::objectCount() const
 {
     size_t result = 0;
     BlockIterator end = m_blocks.end();
@@ -118,7 +118,7 @@ size_t MarkedSpace::objectCount() const
     return result;
 }
 
-size_t MarkedSpace::size() const
+size_t NewSpace::size() const
 {
     size_t result = 0;
     BlockIterator end = m_blocks.end();
@@ -127,7 +127,7 @@ size_t MarkedSpace::size() const
     return result;
 }
 
-size_t MarkedSpace::capacity() const
+size_t NewSpace::capacity() const
 {
     size_t result = 0;
     BlockIterator end = m_blocks.end();
@@ -136,7 +136,7 @@ size_t MarkedSpace::capacity() const
     return result;
 }
 
-void MarkedSpace::resetAllocator()
+void NewSpace::resetAllocator()
 {
     m_waterMark = 0;
 

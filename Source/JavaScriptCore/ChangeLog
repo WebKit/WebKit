@@ -1,3 +1,31 @@
+2011-06-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Some more MarkedSpace => NewSpace renaming
+        https://bugs.webkit.org/show_bug.cgi?id=62305
+
+        * JavaScriptCore.exp:
+        * JavaScriptCore.order:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::destroy):
+        (JSC::Heap::reportExtraMemoryCostSlowCase):
+        (JSC::Heap::allocate):
+        (JSC::Heap::markRoots):
+        (JSC::Heap::objectCount):
+        (JSC::Heap::size):
+        (JSC::Heap::capacity):
+        (JSC::Heap::collect):
+        (JSC::Heap::isValidAllocation):
+        * heap/Heap.h:
+        (JSC::Heap::markedSpace):
+        (JSC::Heap::contains):
+        (JSC::Heap::forEach):
+        (JSC::Heap::allocate):
+        * runtime/JSCell.h:
+
 2011-06-08  Kevin Ollivier  <kevino@theolliviers.com>
 
         Reviewed by Eric Seidel.

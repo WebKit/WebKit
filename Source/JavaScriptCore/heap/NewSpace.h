@@ -32,7 +32,7 @@
 #include <wtf/Noncopyable.h>
 #include <wtf/Vector.h>
 
-#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) < MarkedSpace::maxCellSize, class_fits_in_cell)
+#define ASSERT_CLASS_FITS_IN_CELL(class) COMPILE_ASSERT(sizeof(class) < NewSpace::maxCellSize, class_fits_in_cell)
 
 namespace JSC {
 
@@ -43,8 +43,8 @@ namespace JSC {
     class WeakGCHandle;
     typedef MarkStack SlotVisitor;
 
-    class MarkedSpace {
-        WTF_MAKE_NONCOPYABLE(MarkedSpace);
+    class NewSpace {
+        WTF_MAKE_NONCOPYABLE(NewSpace);
     public:
         static const size_t maxCellSize = 1024;
 
@@ -57,7 +57,7 @@ namespace JSC {
             size_t cellSize;
         };
 
-        MarkedSpace(Heap*);
+        NewSpace(Heap*);
         void destroy();
 
         size_t highWaterMark();
@@ -106,7 +106,7 @@ namespace JSC {
         Heap* m_heap;
     };
 
-    inline bool MarkedSpace::contains(const void* x)
+    inline bool NewSpace::contains(const void* x)
     {
         if (!MarkedBlock::isAtomAligned(x))
             return false;
@@ -118,24 +118,24 @@ namespace JSC {
         return true;
     }
 
-    template <typename Functor> inline void MarkedSpace::forEach(Functor& functor)
+    template <typename Functor> inline void NewSpace::forEach(Functor& functor)
     {
         BlockIterator end = m_blocks.end();
         for (BlockIterator it = m_blocks.begin(); it != end; ++it)
             (*it)->forEach(functor);
     }
 
-    inline size_t MarkedSpace::highWaterMark()
+    inline size_t NewSpace::highWaterMark()
     {
         return m_highWaterMark;
     }
 
-    inline void MarkedSpace::setHighWaterMark(size_t highWaterMark)
+    inline void NewSpace::setHighWaterMark(size_t highWaterMark)
     {
         m_highWaterMark = highWaterMark;
     }
 
-    inline MarkedSpace::SizeClass& MarkedSpace::sizeClassFor(size_t bytes)
+    inline NewSpace::SizeClass& NewSpace::sizeClassFor(size_t bytes)
     {
         ASSERT(bytes && bytes < maxCellSize);
         if (bytes < preciseCutoff)
@@ -143,7 +143,7 @@ namespace JSC {
         return m_impreciseSizeClasses[(bytes - 1) / impreciseStep];
     }
 
-    inline void* MarkedSpace::allocate(SizeClass& sizeClass)
+    inline void* NewSpace::allocate(SizeClass& sizeClass)
     {
         for (MarkedBlock*& block = sizeClass.nextBlock ; block; block = block->next()) {
             if (void* result = block->allocate())
@@ -158,13 +158,13 @@ namespace JSC {
         return 0;
     }
 
-    inline MarkedSpace::SizeClass::SizeClass()
+    inline NewSpace::SizeClass::SizeClass()
         : nextBlock(0)
         , cellSize(0)
     {
     }
 
-    inline void MarkedSpace::SizeClass::resetAllocator()
+    inline void NewSpace::SizeClass::resetAllocator()
     {
         nextBlock = blockList.head();
     }

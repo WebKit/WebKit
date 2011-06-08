@@ -71,7 +71,7 @@ namespace JSC {
         void destroy(); // JSGlobalData must call destroy() before ~Heap().
 
         JSGlobalData* globalData() const { return m_globalData; }
-        MarkedSpace& markedSpace() { return m_markedSpace; }
+        NewSpace& markedSpace() { return m_newSpace; }
         MachineThreads& machineThreads() { return m_machineThreads; }
 
         GCActivityCallback* activityCallback();
@@ -81,7 +81,7 @@ namespace JSC {
         inline bool isBusy();
 
         void* allocate(size_t);
-        void* allocate(MarkedSpace::SizeClass&);
+        void* allocate(NewSpace::SizeClass&);
         void collectAllGarbage();
 
         void reportExtraMemoryCost(size_t cost);
@@ -130,7 +130,7 @@ namespace JSC {
         RegisterFile& registerFile();
 
         OperationInProgress m_operationInProgress;
-        MarkedSpace m_markedSpace;
+        NewSpace m_newSpace;
 
         ProtectCountSet m_protectedValues;
         Vector<Vector<ValueStringPair>* > m_tempSortingVectors;
@@ -196,7 +196,7 @@ namespace JSC {
 
     inline bool Heap::contains(void* p)
     {
-        return m_markedSpace.contains(p);
+        return m_newSpace.contains(p);
     }
 
     inline void Heap::reportExtraMemoryCost(size_t cost)
@@ -207,13 +207,13 @@ namespace JSC {
 
     template <typename Functor> inline void Heap::forEach(Functor& functor)
     {
-        m_markedSpace.forEach(functor);
+        m_newSpace.forEach(functor);
     }
 
     inline void* Heap::allocate(size_t bytes)
     {
         ASSERT(isValidAllocation(bytes));
-        MarkedSpace::SizeClass& sizeClass = m_markedSpace.sizeClassFor(bytes);
+        NewSpace::SizeClass& sizeClass = m_newSpace.sizeClassFor(bytes);
         return allocate(sizeClass);
     }
 
