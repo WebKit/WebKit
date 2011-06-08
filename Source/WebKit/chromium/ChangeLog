@@ -1,3 +1,11 @@
+2011-06-07  James Kozianski  <koz@chromium.org>
+
+        [Chromium] Unreviewed. Disable SelectItemEvenFire that fails on
+        chromium canaries.
+
+        * tests/PopupMenuTest.cpp:
+        (WebKit::TEST_F):
+
 2011-06-07  Robert Kroeger  <rjkroege@chromium.org>
 
         Reviewed by Adam Barth.

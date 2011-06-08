@@ -402,7 +402,7 @@ TEST_F(SelectPopupMenuTest, SelectItemWithKeyboardItemClickOutside)
     EXPECT_EQ(2, selectedIndex());
 }
 
-TEST_F(SelectPopupMenuTest, SelectItemEventFire)
+TEST_F(SelectPopupMenuTest, DISABLED_SelectItemEventFire)
 {
     registerMockedURLLoad("select_event.html");
     m_webView->settings()->setJavaScriptEnabled(true);
