@@ -63,15 +63,22 @@ public:
 
 protected:
     CanvasRenderingContext(HTMLCanvasElement*);
-    void checkOrigin(const CanvasPattern*);
-    void checkOrigin(const HTMLCanvasElement*);
-    void checkOrigin(const HTMLImageElement*);
-    void checkOrigin(const HTMLVideoElement*);
+    bool wouldTaintOrigin(const CanvasPattern*);
+    bool wouldTaintOrigin(const HTMLCanvasElement*);
+    bool wouldTaintOrigin(const HTMLImageElement*);
+    bool wouldTaintOrigin(const HTMLVideoElement*);
+    bool wouldTaintOrigin(const KURL&);
+
+    template<class T> void checkOrigin(const T* arg)
+    {
+        if (wouldTaintOrigin(arg))
+            canvas()->setOriginTainted();
+    }
     void checkOrigin(const KURL&);
 
 private:
     HTMLCanvasElement* m_canvas;
-    HashSet<String> m_cleanOrigins;
+    HashSet<String> m_cleanURLs;
 };
 
 } // namespace WebCore

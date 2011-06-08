@@ -1,0 +1,103 @@
+<pre id="console"></pre>
+<script>
+if (window.layoutTestController) {
+    layoutTestController.overridePreference("WebKitWebGLEnabled", "1");
+    layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
+
+log = function(msg)
+{
+    document.getElementById('console').appendChild(document.createTextNode(msg + "\n"));
+}
+
+testTexImage2D = function(gl, source, description)
+{
+    description = "Calling texImage2D() with a tainted " + description;
+    try {
+        gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, source);
+        log("FAIL: " + description + " was allowed");
+    } catch (e) {
+        log("PASS: " + description + " was not allowed: Threw error: " + e + ".");
+    }
+}
+
+testReadPixels = function(gl, description)
+{
+    description = "Calling readPixels() on a canvas where tainting was attempted by a " + description;
+    try {
+        var pixels = new Uint8Array(4);
+        gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        log("PASS: " + description + " was allowed.");
+    } catch (e) {
+        log("FAIL: " + description + " was not allowed - Threw error: " + e + ".");
+    }
+}
+
+testToDataURL = function(canvas, description)
+{
+    description = "Calling toDataURL() on a canvas where tainting was attempted by a " + description;
+    try {
+        var dataURL = canvas.toDataURL();
+        log("PASS: " + description + " was allowed.");
+    } catch (e) {
+        log("FAIL: " + description + " was not allowed - Threw error: " + e + ".");
+    }
+}
+
+test = function(canvas, description)
+{
+    testReadPixels(canvas.getContext("experimental-webgl"), description);
+    testToDataURL(canvas, description);
+}
+
+var image = new Image();
+image.onload = function() {
+    var canvas = document.createElement("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+    var gl = canvas.getContext("experimental-webgl");
+
+    // Control tests
+    log("Untainted canvas:");
+    try {
+        var pixels = new Uint8Array(4);
+        gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, pixels);
+        log("PASS: Calling readPixels() from an untainted canvas was allowed.");
+    } catch (e) {
+        log("FAIL: Calling readPixels() from an untainted canvas was not allowed: Threw error: " + e + ".");
+    }
+    try {
+        var dataURL = canvas.toDataURL();
+        log("PASS: Calling toDataURL() on an untainted canvas was allowed.");
+    } catch (e) {
+        log("FAIL: Calling toDataURL() on an untainted canvas was not allowed: Threw error: " + e + ".");
+    }
+
+    log("\n");
+    log("Tainted canvas:");
+    // Test reading from a canvas after uploading a remote image as a texture
+    var texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    testTexImage2D(gl, image, "image");
+
+    test(canvas, "remote image");
+
+    var dirtyCanvas = canvas;
+
+    // Now test reading from a canvas after drawing a tainted canvas onto it
+    var dirtyCanvas = document.createElement("canvas");
+    dirtyCanvas.width = 100;
+    dirtyCanvas.height = 100;
+    var dirtyContext = dirtyCanvas.getContext("2d");
+    dirtyContext.drawImage(image, 0, 0, 100, 100);
+    testTexImage2D(gl, dirtyCanvas, "canvas");
+
+    test(canvas, "tainted canvas");
+
+    if (window.layoutTestController)
+        layoutTestController.notifyDone();
+}
+// Notice that we forget to set the image.crossOrigin property!
+image.src = "http://localhost:8000/security/resources/abe-allow-star.php";
+</script>

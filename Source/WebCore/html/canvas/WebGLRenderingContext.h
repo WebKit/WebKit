@@ -344,7 +344,7 @@ public:
     bool validateWebGLObject(WebGLObject*);
 
 #if ENABLE(VIDEO)
-    PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*);
+    PassRefPtr<Image> videoFrameToImage(HTMLVideoElement*, ExceptionCode&);
 #endif
 
     RefPtr<GraphicsContext3D> m_context;

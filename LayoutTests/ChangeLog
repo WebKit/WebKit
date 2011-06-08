@@ -1,3 +1,27 @@
+2011-06-08  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Adam Barth.
+
+        Disallow use of cross-domain media (images, video) in WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=62257
+
+        Updated origin-clean-conformance.html to track upstream version in
+        Khronos repository. Added new layout tests mirroring those added
+        in bug 61015 which verify that new CORS support for images is
+        working in the context of WebGL.
+
+        Verified new tests in WebKit and Chromium.
+
+        * http/tests/canvas/webgl/origin-clean-conformance-expected.txt:
+        * http/tests/canvas/webgl/origin-clean-conformance.html:
+        * http/tests/security/webgl-remote-read-remote-image-allowed-expected.txt: Added.
+        * http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials-expected.txt: Added.
+        * http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html: Added.
+        * http/tests/security/webgl-remote-read-remote-image-allowed.html: Added.
+        * http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin-expected.txt: Added.
+        * http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html: Added.
+        * platform/mac-wk2/Skipped:
+
 2011-06-08  John Bauman  <jbauman@chromium.org>
 
         Reviewed by James Robinson.
