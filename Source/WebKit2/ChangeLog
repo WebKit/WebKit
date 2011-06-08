@@ -1,3 +1,20 @@
+2011-06-07  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=62248>
+        <rdar://problem/9568516>
+        WKResponderChainSink mechanism isn't robust against some types of responder chain manipulation
+
+        * UIProcess/API/mac/WKView.mm:
+        (-[WKResponderChainSink detach]):
+        This method formerly blindly assumed that since -initWithResponderChain: put self at the
+        end of the responder chain, after _lastResponderInChain, then self is still at the end
+        of the responder chain and still immediately after _lastResponderInChain. Made this function
+        robust against some kinds of responder chain manipulations, though it can't be robust against
+        some other kinds (e.g., manipulations that removed self from this chain and put it into some
+        other chain).
+
 2011-06-07  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

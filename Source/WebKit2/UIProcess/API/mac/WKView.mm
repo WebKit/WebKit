@@ -2521,7 +2521,20 @@ static void drawPageBackground(CGContextRef context, WebPageProxy* page, const I
 
 - (void)detach
 {
-    [_lastResponderInChain setNextResponder:nil];
+    // This assumes that the responder chain was either unmodified since
+    // -initWithResponderChain: was called, or was modified in such a way
+    // that _lastResponderInChain is still in the chain, and self was not
+    // moved earlier in the chain than _lastResponderInChain.
+    NSResponder *responderBeforeSelf = _lastResponderInChain;    
+    NSResponder *next = [responderBeforeSelf nextResponder];
+    for (; next && next != self; next = [next nextResponder])
+        responderBeforeSelf = next;
+    
+    // Nothing to be done if we are no longer in the responder chain.
+    if (next != self)
+        return;
+    
+    [responderBeforeSelf setNextResponder:[self nextResponder]];
     _lastResponderInChain = nil;
 }
 
