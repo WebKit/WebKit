@@ -1,3 +1,10 @@
+2011-06-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Unreviewed. Fix style error.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        * platform/efl/RenderThemeEfl.h:
+
 2011-06-08  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Brent Fulgham.

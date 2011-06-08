@@ -32,19 +32,19 @@
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "NotImplemented.h"
-#include "PaintInfo.h"
 #include "Page.h"
+#include "PaintInfo.h"
 #include "PlatformContextCairo.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
 #include "RenderProgress.h"
 #include "RenderSlider.h"
 #include "UserAgentStyleSheets.h"
-#include <wtf/text/CString.h>
-#include <wtf/text/WTFString.h>
 
 #include <Ecore_Evas.h>
 #include <Edje.h>
+#include <wtf/text/CString.h>
+#include <wtf/text/WTFString.h>
 
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
