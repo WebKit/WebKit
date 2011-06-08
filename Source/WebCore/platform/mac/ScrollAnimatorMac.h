@@ -76,6 +76,8 @@ public:
     void immediateScrollByDeltaX(float deltaX);
     void immediateScrollByDeltaY(float deltaY);
 
+    void immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition);
+
     void setIsDrawingIntoLayer(bool b) { m_drawingIntoLayer = b; }
     bool isDrawingIntoLayer() const { return m_drawingIntoLayer; }
 
