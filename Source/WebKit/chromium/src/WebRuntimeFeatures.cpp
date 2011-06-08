@@ -36,6 +36,8 @@
 #include "WebMediaPlayerClientImpl.h"
 #include "WebSocket.h"
 
+#include <wtf/UnusedParam.h>
+
 using namespace WebCore;
 
 namespace WebKit {

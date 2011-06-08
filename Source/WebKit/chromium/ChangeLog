@@ -1,3 +1,9 @@
+2011-06-08  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Unreviewed chromium build fix for r88332.
+
+        * src/WebRuntimeFeatures.cpp:
+
 2011-06-08  Hironori Bono  <hbono@chromium.org>
 
         Reviewed by Brent Fulgham.
