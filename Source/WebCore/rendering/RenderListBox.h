@@ -68,7 +68,7 @@ private:
     virtual void paintObject(PaintInfo&, const IntPoint&);
     virtual IntRect controlClipRect(const IntPoint&) const;
 
-    virtual bool isPointInOverflowControl(HitTestResult&, const IntPoint& pointInContainer, int tx, int ty);
+    virtual bool isPointInOverflowControl(HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset);
 
     virtual bool scroll(ScrollDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);
     virtual bool logicalScroll(ScrollLogicalDirection, ScrollGranularity, float multiplier = 1, Node** stopNode = 0);

@@ -3887,12 +3887,12 @@ int RenderBlock::getClearDelta(RenderBox* child, int yPos)
     return result;
 }
 
-bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty)
+bool RenderBlock::isPointInOverflowControl(HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset)
 {
     if (!scrollsOverflow())
         return false;
 
-    return layer()->hitTestOverflowControls(result, pointInContainer - IntSize(tx, ty));
+    return layer()->hitTestOverflowControls(result, pointInContainer - toSize(accumulatedOffset));
 }
 
 bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction hitTestAction)
@@ -3908,7 +3908,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
             return false;
     }
 
-    if ((hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) && isPointInOverflowControl(result, pointInContainer, localOffset.width(), localOffset.height())) {
+    if ((hitTestAction == HitTestBlockBackground || hitTestAction == HitTestChildBlockBackground) && isPointInOverflowControl(result, pointInContainer, adjustedLocation)) {
         updateHitTestResult(result, pointInContainer - localOffset);
         // FIXME: isPointInOverflowControl() doesn't handle rect-based tests yet.
         if (!result.addNodeToRectBasedTestResult(node(), pointInContainer))

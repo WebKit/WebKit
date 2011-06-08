@@ -1,3 +1,20 @@
+2011-06-08  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Convert RenderBlock::isPointInOverflowControl to IntPoint
+        https://bugs.webkit.org/show_bug.cgi?id=62312
+
+        Covered by existing tests.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::isPointInOverflowControl):
+        (WebCore::RenderBlock::nodeAtPoint):
+        * rendering/RenderBlock.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isPointInOverflowControl):
+        * rendering/RenderListBox.h:
+
 2011-06-08  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Tony Gentilcore.

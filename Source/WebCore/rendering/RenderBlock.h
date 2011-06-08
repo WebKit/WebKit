@@ -592,7 +592,7 @@ private:
     virtual bool hitTestContents(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction);
     bool hitTestFloats(const HitTestRequest&, HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset);
 
-    virtual bool isPointInOverflowControl(HitTestResult&, const IntPoint& pointInContainer, int tx, int ty);
+    virtual bool isPointInOverflowControl(HitTestResult&, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset);
 
     void computeInlinePreferredLogicalWidths();
     void computeBlockPreferredLogicalWidths();

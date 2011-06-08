@@ -437,13 +437,13 @@ void RenderListBox::paintItemBackground(PaintInfo& paintInfo, const IntPoint& pa
     }
 }
 
-bool RenderListBox::isPointInOverflowControl(HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty)
+bool RenderListBox::isPointInOverflowControl(HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset)
 {
     if (!m_vBar)
         return false;
 
-    IntRect vertRect(tx + width() - borderRight() - m_vBar->width(),
-                     ty + borderTop(),
+    IntRect vertRect(accumulatedOffset.x() + width() - borderRight() - m_vBar->width(),
+                     accumulatedOffset.y() + borderTop(),
                      m_vBar->width(),
                      height() - borderTop() - borderBottom());
 
