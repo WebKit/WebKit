@@ -125,7 +125,7 @@ namespace JSC {
         void markTempSortVectors(HeapRootVisitor&);
 
         enum SweepToggle { DoNotSweep, DoSweep };
-        void reset(SweepToggle);
+        void collect(SweepToggle);
 
         RegisterFile& registerFile();
 

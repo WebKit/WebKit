@@ -136,19 +136,19 @@ size_t MarkedSpace::capacity() const
     return result;
 }
 
-void MarkedSpace::reset()
+void MarkedSpace::resetAllocator()
 {
     m_waterMark = 0;
 
     for (size_t cellSize = preciseStep; cellSize < preciseCutoff; cellSize += preciseStep)
-        sizeClassFor(cellSize).reset();
+        sizeClassFor(cellSize).resetAllocator();
 
     for (size_t cellSize = impreciseStep; cellSize < impreciseCutoff; cellSize += impreciseStep)
-        sizeClassFor(cellSize).reset();
+        sizeClassFor(cellSize).resetAllocator();
 
     BlockIterator end = m_blocks.end();
     for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-        (*it)->reset();
+        (*it)->resetAllocator();
 }
 
 } // namespace JSC

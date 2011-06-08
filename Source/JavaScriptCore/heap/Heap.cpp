@@ -141,7 +141,7 @@ void* Heap::allocate(MarkedSpace::SizeClass& sizeClass)
     if (result)
         return result;
 
-    reset(DoNotSweep);
+    collect(DoNotSweep);
 
     m_operationInProgress = Allocation;
     result = m_markedSpace.allocate(sizeClass);
@@ -391,10 +391,10 @@ void Heap::collectAllGarbage()
     if (!m_globalData->dynamicGlobalObject)
         m_globalData->recompileAllJSFunctions();
 
-    reset(DoSweep);
+    collect(DoSweep);
 }
 
-void Heap::reset(SweepToggle sweepToggle)
+void Heap::collect(SweepToggle sweepToggle)
 {
     ASSERT(globalData()->identifierTable == wtfThreadData().currentIdentifierTable());
     JAVASCRIPTCORE_GC_BEGIN();
@@ -405,7 +405,7 @@ void Heap::reset(SweepToggle sweepToggle)
 
     JAVASCRIPTCORE_GC_MARKED();
 
-    m_markedSpace.reset();
+    m_markedSpace.resetAllocator();
     m_extraCost = 0;
 
 #if ENABLE(JSC_ZOMBIES)

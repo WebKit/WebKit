@@ -50,7 +50,7 @@ namespace JSC {
 
         struct SizeClass {
             SizeClass();
-            void reset();
+            void resetAllocator();
 
             MarkedBlock* nextBlock;
             DoublyLinkedList<MarkedBlock> blockList;
@@ -68,7 +68,7 @@ namespace JSC {
 
         void clearMarks();
         void markRoots();
-        void reset();
+        void resetAllocator();
         void sweep();
         void shrink();
 
@@ -164,7 +164,7 @@ namespace JSC {
     {
     }
 
-    inline void MarkedSpace::SizeClass::reset()
+    inline void MarkedSpace::SizeClass::resetAllocator()
     {
         nextBlock = blockList.head();
     }

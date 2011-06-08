@@ -53,7 +53,7 @@ namespace JSC {
         Heap* heap() const;
 
         void* allocate();
-        void reset();
+        void resetAllocator();
         void sweep();
         
         bool isEmpty();
@@ -122,7 +122,7 @@ namespace JSC {
         return m_heap;
     }
 
-    inline void MarkedBlock::reset()
+    inline void MarkedBlock::resetAllocator()
     {
         m_nextAtom = firstAtom();
     }
