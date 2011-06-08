@@ -53,11 +53,11 @@ namespace JSC {
             return &s_sharedEnabledProfilerReference;
         }
 
-        static Profiler* profiler(); 
+        JS_EXPORT_PRIVATE static Profiler* profiler(); 
         static CallIdentifier createCallIdentifier(ExecState* exec, JSValue, const UString& sourceURL, int lineNumber);
 
-        void startProfiling(ExecState*, const UString& title);
-        PassRefPtr<Profile> stopProfiling(ExecState*, const UString& title);
+        JS_EXPORT_PRIVATE void startProfiling(ExecState*, const UString& title);
+        JS_EXPORT_PRIVATE PassRefPtr<Profile> stopProfiling(ExecState*, const UString& title);
         void stopProfiling(JSGlobalObject*);
 
         void willExecute(ExecState* callerCallFrame, JSValue function);
