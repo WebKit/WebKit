@@ -1,3 +1,13 @@
+2011-06-08  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB test: key sort order for Date objects
+        https://bugs.webkit.org/show_bug.cgi?id=62300
+
+        * storage/indexeddb/key-sort-order-date-expected.txt: Added.
+        * storage/indexeddb/key-sort-order-date.html: Added.
+
 2011-06-08  Xiaomei Ji  <xji@chromium.org>
 
         Split move-by-word-visually.html into 2 tests since the test is continuing growing and caused
