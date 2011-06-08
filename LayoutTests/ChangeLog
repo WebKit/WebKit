@@ -1,5 +1,14 @@
 2011-06-08  Alexander Pavlov  <apavlov@chromium.org>
 
+        [Qt, Chromium] Unreviewed attempt to fix tests on Qt and Chromium.
+
+        * inspector/styles/styles-disable-then-change.html:
+        * inspector/styles/styles-disable-then-enable.html:
+        * inspector/styles/styles-update-from-js.html:
+        * inspector/styles/up-down-numerics-and-colors.html:
+
+2011-06-08  Alexander Pavlov  <apavlov@chromium.org>
+
         [Qt] Unreviewed, attempt to make test pass on Qt.
 
         * inspector/styles/styles-update-from-js.html:

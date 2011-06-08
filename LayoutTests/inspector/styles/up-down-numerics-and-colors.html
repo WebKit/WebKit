@@ -20,7 +20,8 @@ function test()
     InspectorTest.runTestSuite([
         function testInit1(next)
         {
-            InspectorTest.selectNodeWithId("inspected", next);
+            InspectorTest.selectNodeWithId("inspected");
+            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", next);
         },
 
         function testInit2(next)

@@ -26,7 +26,7 @@ function test()
 
         var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
         treeItem.applyStyleText("color: green", true);
-        InspectorTest.runAfterPendingDispatches(step3);
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step3);
     }
 
     function step3()

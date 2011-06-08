@@ -16,7 +16,7 @@ function test()
         InspectorTest.dumpStyleTreeItem(treeItem, "");
 
         treeItem.toggleEnabled({ target: { checked: false } });
-        InspectorTest.runAfterPendingDispatches(step2);
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
     }
 
     function step2()
@@ -26,7 +26,7 @@ function test()
         InspectorTest.dumpStyleTreeItem(treeItem, "");
 
         treeItem.toggleEnabled({ target: { checked: true } });
-        InspectorTest.runAfterPendingDispatches(step3);
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step3);
     }
 
     function step3()

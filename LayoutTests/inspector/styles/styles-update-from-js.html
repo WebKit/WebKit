@@ -29,26 +29,31 @@ function test()
 
     function snifferCallback()
     {
-        switch (sniffCount++) {
-            case 0:
-                InspectorTest.evaluateInPage("modifyStyleAttribute()");
-                break;
-            case 1:
-                InspectorTest.addResult("Modified \"style\" attribute");
-                dumpAttributeAndStyles();
-                InspectorTest.evaluateInPage("modifyCSSText()");
-                break;
-            case 2:
-                InspectorTest.addResult("Modified cssText");
-                dumpAttributeAndStyles();
-                InspectorTest.evaluateInPage("modifyParsedAttributes()");
-                break;
-            case 3:
-                InspectorTest.addResult("Modified parsed attributes");
-                dumpAttributeAndStyles();
-                InspectorTest.completeTest();
-                break;
+        function innerCallback()
+        {
+            switch (sniffCount++) {
+                case 0:
+                    InspectorTest.evaluateInPage("modifyStyleAttribute()");
+                    break;
+                case 1:
+                    InspectorTest.addResult("Modified \"style\" attribute");
+                    dumpAttributeAndStyles();
+                    InspectorTest.evaluateInPage("modifyCSSText()");
+                    break;
+                case 2:
+                    InspectorTest.addResult("Modified cssText");
+                    dumpAttributeAndStyles();
+                    InspectorTest.evaluateInPage("modifyParsedAttributes()");
+                    break;
+                case 3:
+                    InspectorTest.addResult("Modified parsed attributes");
+                    dumpAttributeAndStyles();
+                    InspectorTest.completeTest();
+                    break;
+            }
         }
+
+        InspectorTest.runAfterPendingDispatches(innerCallback);
     }
 
     function dumpAttributeAndStyles()
