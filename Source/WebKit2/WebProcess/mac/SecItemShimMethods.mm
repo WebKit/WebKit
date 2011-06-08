@@ -22,11 +22,13 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
+
 #import "config.h"
 #import "SecItemShimMethods.h"
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
 
+#import "CoreIPCClientRunLoop.h"
 #import "SecItemRequestData.h"
 #import "SecItemResponseData.h"
 #import "WebProcess.h"
@@ -34,7 +36,6 @@
 #import "WebProcessShim.h"
 #import <Security/SecItem.h>
 #import <dlfcn.h>
-#import <wtf/Threading.h>
 
 namespace WebKit {
 
@@ -70,7 +71,7 @@ static OSStatus webSecItemCopyMatching(CFDictionaryRef query, CFTypeRef* result)
     SecItemAPIContext context;
     context.query = query;
     
-    callOnMainThreadAndWait(webSecItemCopyMatchingMainThread, &context);
+    callOnCoreIPCClientRunLoopAndWait(webSecItemCopyMatchingMainThread, &context);
     
     if (result)
         *result = context.resultObject;
@@ -98,7 +99,7 @@ static OSStatus webSecItemAdd(CFDictionaryRef query, CFTypeRef* result)
     SecItemAPIContext context;
     context.query = query;
     
-    callOnMainThreadAndWait(webSecItemAddOnMainThread, &context);
+    callOnCoreIPCClientRunLoopAndWait(webSecItemAddOnMainThread, &context);
     
     if (result)
         *result = context.resultObject;
@@ -126,7 +127,7 @@ static OSStatus webSecItemUpdate(CFDictionaryRef query, CFDictionaryRef attribut
     context.query = query;
     context.attributesToUpdate = attributesToUpdate;
     
-    callOnMainThreadAndWait(webSecItemUpdateOnMainThread, &context);
+    callOnCoreIPCClientRunLoopAndWait(webSecItemUpdateOnMainThread, &context);
     
     return context.resultCode;
 }
@@ -151,7 +152,7 @@ static OSStatus webSecItemDelete(CFDictionaryRef query)
     SecItemAPIContext context;
     context.query = query;
     
-    callOnMainThreadAndWait(webSecItemDeleteOnMainThread, &context);
+    callOnCoreIPCClientRunLoopAndWait(webSecItemDeleteOnMainThread, &context);
 
     return context.resultCode;
 }
