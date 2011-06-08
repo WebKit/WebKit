@@ -1,5 +1,23 @@
 2011-06-07  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 88080.
+
+    2011-06-03  Steve Falkenburg  <sfalken@apple.com>
+
+        Reviewed by Brian Weinstein.
+
+        HistoryItem children persist across page loads
+        https://bugs.webkit.org/show_bug.cgi?id=62071
+        <rdar://problem/9552129>
+        
+        Not testable since there's no way to check for the presence/absence
+        of children for a HistoryItem.
+
+        * history/HistoryItem.cpp:
+        (WebCore::HistoryItem::reset): Call clearChildren when we're reusing a HistoryItem.
+
+2011-06-07  Lucas Forschler  <lforschler@apple.com>
+
     Merged 88034.
     Note: The original change applied to trunk was refactored from Node.cpp into NodeRenderingContext.cpp.
     The branch was taken before refactoring, thus this patch was manually applied to Node.cpp.

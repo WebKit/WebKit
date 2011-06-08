@@ -208,6 +208,8 @@ void HistoryItem::reset()
 
     m_formData = 0;
     m_formContentType = String();
+
+    clearChildren();
 }
 
 const String& HistoryItem::urlString() const
