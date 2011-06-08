@@ -1,3 +1,15 @@
+2011-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: don't turn the tree red when there are new passes
+        https://bugs.webkit.org/show_bug.cgi?id=62311
+
+        Look for "new passes" instead of "passed unexpectedly" in evaluateCommand
+        to match commandComplete.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg:
+
 2011-06-08  Tom Hudson  <tomhudson@google.com>
 
         Reviewed by Mihai Parparita.
