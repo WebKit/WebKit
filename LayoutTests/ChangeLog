@@ -1,5 +1,11 @@
 2011-06-08  Alexander Pavlov  <apavlov@chromium.org>
 
+        [Qt] Unreviewed, attempt to make test pass on Qt.
+
+        * inspector/styles/styles-update-from-js.html:
+
+2011-06-08  Alexander Pavlov  <apavlov@chromium.org>
+
         Reviewed by Yury Semikhatsky.
 
         Web Inspector: node selection is slow in the Elements panel.

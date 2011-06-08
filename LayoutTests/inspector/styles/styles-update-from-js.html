@@ -25,17 +25,14 @@ function test()
     var sniffCount = 0;
 
     InspectorTest.selectNodeWithId("container");
-    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", selectCallback);
-
-    function selectCallback()
-    {
-        InspectorTest.evaluateInPage("modifyStyleAttribute()");
-        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", snifferCallback, true);
-    }
+    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", snifferCallback, true);
 
     function snifferCallback()
     {
-        switch (++sniffCount) {
+        switch (sniffCount++) {
+            case 0:
+                InspectorTest.evaluateInPage("modifyStyleAttribute()");
+                break;
             case 1:
                 InspectorTest.addResult("Modified \"style\" attribute");
                 dumpAttributeAndStyles();
