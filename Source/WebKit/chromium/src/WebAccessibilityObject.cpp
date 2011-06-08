@@ -543,6 +543,27 @@ bool WebAccessibilityObject::accessibilityIsIgnored() const
     return m_private->accessibilityIsIgnored();
 }
 
+bool WebAccessibilityObject::lineBreaks(WebVector<int>& result) const
+{
+    m_private->updateBackingStore();
+    int textLength = m_private->textLength();
+    if (!textLength)
+        return false;
+
+    VisiblePosition pos = m_private->visiblePositionForIndex(textLength);
+    int lineBreakCount = m_private->lineForPosition(pos);
+    if (!lineBreakCount)
+        return false;
+
+    WebVector<int> lineBreaks(static_cast<size_t>(lineBreakCount));
+    for (int i = 0; i < lineBreakCount; i++) {
+        PlainTextRange range = m_private->doAXRangeForLine(i);
+        lineBreaks[i] = range.start + range.length;
+    }
+    result.swap(lineBreaks);
+    return true;
+}
+
 WebAccessibilityObject::WebAccessibilityObject(const WTF::PassRefPtr<WebCore::AccessibilityObject>& object)
     : m_private(static_cast<WebAccessibilityObjectPrivate*>(object.releaseRef()))
 {

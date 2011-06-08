@@ -33,6 +33,7 @@
 
 #include "WebAccessibilityRole.h"
 #include "WebCommon.h"
+#include "WebVector.h"
 
 #if WEBKIT_IMPLEMENTATION
 namespace WebCore { class AccessibilityObject; }
@@ -119,6 +120,7 @@ public:
     WEBKIT_API bool hasComputedStyle() const;
     WEBKIT_API WebString computedStyleDisplay() const;
     WEBKIT_API bool accessibilityIsIgnored() const;
+    WEBKIT_API bool lineBreaks(WebVector<int>&) const;
 
 #if WEBKIT_IMPLEMENTATION
     WebAccessibilityObject(const WTF::PassRefPtr<WebCore::AccessibilityObject>&);

@@ -1,3 +1,15 @@
+2011-06-08  Dominic Mazzoni  <dmazzoni@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        Add a method to return the line breaks for any element with
+        multiline text content.
+        https://bugs.webkit.org/show_bug.cgi?id=62236
+
+        * public/WebAccessibilityObject.h:
+        * src/WebAccessibilityObject.cpp:
+        (WebKit::WebAccessibilityObject::lineBreaks):
+
 2011-06-08  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Unreviewed chromium build fix for r88332.
