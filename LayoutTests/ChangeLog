@@ -2,6 +2,16 @@
 
         Reviewed by Tony Chang.
 
+        IndexedDB test: key sort order across types
+        https://bugs.webkit.org/show_bug.cgi?id=62299
+
+        * storage/indexeddb/key-sort-order-across-types-expected.txt: Added.
+        * storage/indexeddb/key-sort-order-across-types.html: Added.
+
+2011-06-08  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
         IndexedDB test: key sort order for Date objects
         https://bugs.webkit.org/show_bug.cgi?id=62300
 
