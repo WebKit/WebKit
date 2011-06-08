@@ -1,3 +1,12 @@
+2011-06-08  Mike Reed  <reed@google.com>
+
+        Reviewed by James Robinson.
+
+        [Skia] check for null-shader from gradient factory
+        https://bugs.webkit.org/show_bug.cgi?id=62319
+
+        * platform/chromium-linux/fast/gradients/crash-on-degenerate-gradient-expected.txt: Added.
+
 2011-06-08  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Adam Barth.

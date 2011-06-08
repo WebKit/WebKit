@@ -34,6 +34,7 @@
 #include "CSSParser.h"
 #include "GraphicsContext.h"
 
+#include "SkColorShader.h"
 #include "SkGradientShader.h"
 #include "SkiaUtils.h"
 
@@ -41,8 +42,7 @@ namespace WebCore {
 
 void Gradient::platformDestroy()
 {
-    if (m_gradient)
-        SkSafeUnref(m_gradient);
+    SkSafeUnref(m_gradient);
     m_gradient = 0;
 }
 
@@ -146,11 +146,7 @@ SkShader* Gradient::platformGradient()
         // Since the two-point radial gradient is slower than the plain radial,
         // only use it if we have to.
         if (m_p0 == m_p1 && m_r0 <= 0.0f) {
-            // The radius we give to Skia must be positive (and non-zero).  If
-            // we're given a zero radius, just ask for a very small radius so
-            // Skia will still return an object.
-            SkScalar radius = m_r1 > 0 ? WebCoreFloatToSkScalar(m_r1) : SK_ScalarMin;
-            m_gradient = SkGradientShader::CreateRadial(m_p1, radius, colors, pos, static_cast<int>(countUsed), tile);
+            m_gradient = SkGradientShader::CreateRadial(m_p1, m_r1, colors, pos, static_cast<int>(countUsed), tile);
         } else {
             // The radii we give to Skia must be positive.  If we're given a 
             // negative radius, ask for zero instead.
@@ -172,9 +168,11 @@ SkShader* Gradient::platformGradient()
         m_gradient = SkGradientShader::CreateLinear(pts, colors, pos, static_cast<int>(countUsed), tile);
     }
 
-    ASSERT(m_gradient);
-    SkMatrix matrix = m_gradientSpaceTransformation;
-    m_gradient->setLocalMatrix(matrix);
+    if (!m_gradient)
+        // use last color, since our "geometry" was degenerate (e.g. radius==0)
+        m_gradient = new SkColorShader(colors[countUsed - 1]);
+    else
+        m_gradient->setLocalMatrix(m_gradientSpaceTransformation);
     return m_gradient;
 }
 
