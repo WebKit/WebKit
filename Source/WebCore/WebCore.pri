@@ -4,7 +4,7 @@ include(../common.pri)
 include(features.pri)
 
 # We enable TextureMapper by default; remove this line to enable GraphicsLayerQt.
-mac|unix:!symbian:CONFIG += texmap
+CONFIG += texmap
 
 QT *= network
 
@@ -284,7 +284,8 @@ contains(DEFINES, ENABLE_WEBGL=1) {
 
 contains(CONFIG, texmap) {
     DEFINES += WTF_USE_TEXTURE_MAPPER=1
-    contains(QT_CONFIG, opengl) {
+    !symbian:!win32-*:contains(QT_CONFIG, opengl) {
+        DEFINES += WTF_USE_TEXTURE_MAPPER_GL
         QT *= opengl
     }
 }

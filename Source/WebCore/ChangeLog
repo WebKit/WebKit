@@ -1,3 +1,21 @@
+2011-06-07  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Texmap][Qt] Enable TextureMapper by default
+        https://bugs.webkit.org/show_bug.cgi?id=61740
+
+        Enable TextureMapper on Windows+Symbian, disabling the direct OpenGL path. This would mean that
+        for now QtWebKit on Windows/Symbian would use the Qt backend for TextureMapper.
+
+        No new functionality so no new tests.
+
+        * WebCore.pri:
+        * WebCore.pro:
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        * platform/graphics/qt/TextureMapperQt.cpp:
+        (WebCore::TextureMapper::create):
+
 2011-06-07  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

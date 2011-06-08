@@ -24,7 +24,7 @@
 #include <QtGui/qpaintengine.h>
 #include <QtGui/qpixmap.h>
 
-#ifdef QT_OPENGL_LIB
+#if USE(TEXTURE_MAPPER_GL)
 # include "opengl/TextureMapperGL.h"
 #endif
 
@@ -185,7 +185,7 @@ void TextureMapperQt::drawTexture(const BitmapTexture& texture, const FloatRect&
 
 PassOwnPtr<TextureMapper> TextureMapper::create(GraphicsContext* context)
 {
-#ifdef QT_OPENGL_LIB
+#if USE(TEXTURE_MAPPER_GL)
     if (context && context->platformContext()->paintEngine()->type() == QPaintEngine::OpenGL2)
         return adoptPtr(new TextureMapperGL);
 #endif
@@ -213,7 +213,7 @@ void TextureMapperQt::endPainting()
     m_painter->restore();
 }
 
-#ifdef QT_OPENGL_LIB
+#if USE(TEXTURE_MAPPER_GL)
 class RGBA32PremultimpliedBufferQt : public RGBA32PremultimpliedBuffer {
 public:
     virtual PlatformGraphicsContext* beginPaint(const IntRect& rect, bool opaque)

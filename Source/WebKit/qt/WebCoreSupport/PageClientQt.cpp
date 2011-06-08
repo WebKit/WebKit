@@ -31,7 +31,7 @@
 #include "TextureMapperQt.h"
 #include "texmap/TextureMapperNode.h"
 
-#ifdef QT_OPENGL_LIB
+#if USE(TEXTURE_MAPPER_GL)
 #include "opengl/TextureMapperGL.h"
 #endif
 #endif
@@ -265,7 +265,7 @@ void PageClientQGraphicsWidget::setRootGraphicsLayer(GraphicsLayer* layer)
 {
     if (layer) {
         textureMapperNodeClient = adoptPtr(new TextureMapperNodeClientQt(page->mainFrame(), layer));
-#ifdef QT_OPENGL_LIB
+#if USE(TEXTURE_MAPPER_GL)
         QGraphicsView* graphicsView = view->scene()->views()[0];
         if (graphicsView && graphicsView->viewport() && graphicsView->viewport()->inherits("QGLWidget")) {
             textureMapperNodeClient->setTextureMapper(TextureMapperGL::create());

@@ -3565,7 +3565,7 @@ contains(CONFIG, texmap) {
         platform/graphics/texmap/TextureMapperNode.cpp \
         platform/graphics/texmap/GraphicsLayerTextureMapper.cpp
 
-    contains(QT_CONFIG, opengl) {
+    !symbian:!win32-*:contains(QT_CONFIG, opengl) {
         HEADERS += platform/graphics/opengl/TextureMapperGL.h
         SOURCES += platform/graphics/opengl/TextureMapperGL.cpp
     }
