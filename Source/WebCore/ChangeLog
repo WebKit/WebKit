@@ -1,3 +1,24 @@
+2011-06-07  Keishi Hattori  <keishi@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Rename HTMLInputElement::m_value to m_valueIfDirty
+        https://bugs.webkit.org/show_bug.cgi?id=61990
+
+        No new tests because no behavior change.
+
+        * html/HTMLInputElement.cpp: Replaced m_value with m_valueIfDirty.
+        (WebCore::HTMLInputElement::tooLong):
+        (WebCore::HTMLInputElement::updateType):
+        (WebCore::HTMLInputElement::parseMappedAttribute):
+        (WebCore::HTMLInputElement::copyNonAttributeProperties):
+        (WebCore::HTMLInputElement::value):
+        (WebCore::HTMLInputElement::setValue):
+        (WebCore::HTMLInputElement::setValueFromRenderer):
+        (WebCore::HTMLInputElement::updateValueIfNeeded):
+        * html/HTMLInputElement.h: Renamed m_value to m_valueIfDirty.
+        (WebCore::HTMLInputElement::hasDirtyValue): Added. Returns the dirty value flag.
+
 2011-06-07  Ian Henderson  <ianh@apple.com>
 
         Reviewed by Dan Bernstein.

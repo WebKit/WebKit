@@ -138,6 +138,7 @@ public:
     // Checks if the specified string would be a valid value.
     // We should not call this for types with no string value such as CHECKBOX and RADIO.
     bool isValidValue(const String&) const;
+    bool hasDirtyValue() const { return !m_valueIfDirty.isNull(); };
 
     String sanitizeValue(const String&) const;
 
@@ -326,7 +327,7 @@ private:
 #endif
 
     AtomicString m_name;
-    String m_value;
+    String m_valueIfDirty;
     String m_suggestedValue;
     int m_size;
     int m_maxLength;

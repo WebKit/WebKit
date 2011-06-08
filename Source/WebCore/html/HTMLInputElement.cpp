@@ -260,8 +260,7 @@ bool HTMLInputElement::tooLong(const String& value, NeedsToCheckDirtyFlag check)
     if (check == CheckDirtyFlag) {
         // Return false for the default value or a value set by a script even if
         // it is longer than maxLength.
-        bool dirty = !m_value.isNull();
-        if (!dirty || !m_wasModifiedByUser)
+        if (!hasDirtyValue() || !m_wasModifiedByUser)
             return false;
     }
     return numGraphemeClusters(value) > static_cast<unsigned>(max);
@@ -555,12 +554,12 @@ void HTMLInputElement::updateType()
 
     bool willStoreValue = m_inputType->storesValueSeparateFromAttribute();
 
-    if (didStoreValue && !willStoreValue && !m_value.isNull()) {
-        setAttribute(valueAttr, m_value);
-        m_value = String();
+    if (didStoreValue && !willStoreValue && hasDirtyValue()) {
+        setAttribute(valueAttr, m_valueIfDirty);
+        m_valueIfDirty = String();
     }
     if (!didStoreValue && willStoreValue)
-        m_value = sanitizeValue(fastGetAttribute(valueAttr));
+        m_valueIfDirty = sanitizeValue(fastGetAttribute(valueAttr));
     else
         updateValueIfNeeded();
     m_wasModifiedByUser = false;
@@ -672,7 +671,7 @@ void HTMLInputElement::parseMappedAttribute(Attribute* attr)
         updateType();
     } else if (attr->name() == valueAttr) {
         // We only need to setChanged if the form is looking at the default value right now.
-        if (m_value.isNull())
+        if (!hasDirtyValue())
             setNeedsStyleRecalc();
         setFormControlValueMatchesRenderer(false);
         setNeedsValidityCheck();
@@ -913,7 +912,7 @@ void HTMLInputElement::copyNonAttributeProperties(const Element* source)
 {
     const HTMLInputElement* sourceElement = static_cast<const HTMLInputElement*>(source);
 
-    m_value = sourceElement->m_value;
+    m_valueIfDirty = sourceElement->m_valueIfDirty;
     m_wasModifiedByUser = false;
     setChecked(sourceElement->m_isChecked);
     m_reflectsCheckedAttribute = sourceElement->m_reflectsCheckedAttribute;
@@ -928,7 +927,7 @@ String HTMLInputElement::value() const
     if (m_inputType->getTypeSpecificValue(value))
         return value;
 
-    value = m_value;
+    value = m_valueIfDirty;
     if (!value.isNull())
         return value;
 
@@ -981,7 +980,7 @@ void HTMLInputElement::setValue(const String& value, bool sendChangeEvent)
         if (files())
             files()->clear();
         else {
-            m_value = sanitizeValue(value);
+            m_valueIfDirty = sanitizeValue(value);
             m_wasModifiedByUser = sendChangeEvent;
             if (isTextField())
                 updatePlaceholderVisibility(false);
@@ -1069,7 +1068,7 @@ void HTMLInputElement::setValueFromRenderer(const String& value)
     // Workaround for bug where trailing \n is included in the result of textContent.
     // The assert macro above may also be simplified to: value == constrainValue(value)
     // http://bugs.webkit.org/show_bug.cgi?id=9661
-    m_value = value == "\n" ? String("") : value;
+    m_valueIfDirty = value == "\n" ? String("") : value;
 
     setFormControlValueMatchesRenderer(true);
     m_wasModifiedByUser = true;
@@ -1835,8 +1834,8 @@ void HTMLInputElement::parseMaxLengthAttribute(Attribute* attribute)
 
 void HTMLInputElement::updateValueIfNeeded()
 {
-    String newValue = sanitizeValue(m_value);
-    if (newValue != m_value)
+    String newValue = sanitizeValue(m_valueIfDirty);
+    if (newValue != m_valueIfDirty)
         setValue(newValue);
 }
 
