@@ -1,3 +1,16 @@
+2011-06-07  Juan C. Montemayor  <jmont@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Make JSStaticFunction and JSStaticValue less "const"
+        https://bugs.webkit.org/show_bug.cgi?id=62222
+
+        * API/JSObjectRef.h:
+        * API/tests/testapi.c:
+        (checkConstnessInJSObjectNames):
+        (main):
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
 2011-06-07  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

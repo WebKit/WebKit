@@ -937,6 +937,14 @@ static bool checkForCycleInPrototypeChain()
     return result;
 }
 
+static void checkConstnessInJSObjectNames()
+{
+    JSStaticFunction fun;
+    fun.name = "something";
+    JSStaticValue val;
+    val.name = "something";
+}
+
 int main(int argc, char* argv[])
 {
 #if OS(WINDOWS)
@@ -1253,6 +1261,8 @@ int main(int argc, char* argv[])
     assertEqualsAsUTF8String(jsCFStringWithCharacters, "A");
     assertEqualsAsUTF8String(jsCFEmptyString, "");
     assertEqualsAsUTF8String(jsCFEmptyStringWithCharacters, "");
+    
+    checkConstnessInJSObjectNames();
     
     ASSERT(JSValueIsStrictEqual(context, jsTrue, jsTrue));
     ASSERT(!JSValueIsStrictEqual(context, jsOne, jsOneString));
