@@ -696,6 +696,9 @@ BUGWK60109 SLOW LINUX WIN DEBUG : inspector/elements/edit-dom-actions.html = TEX
 
 BUGWK62309 WIN : inspector/styles/styles-disable-then-change.html = PASS TEXT
 BUGWK62309 WIN : inspector/styles/styles-source-lines-inline.html = PASS TEXT
+BUGWK62309 WIN : inspector/styles/styles-iframe.html = PASS TEXT
+BUGWK62309 WIN : inspector/styles/parse-utf8-bom.html = PASS TEXT
+BUGWK62309 WIN : inspector/styles/styles-source-lines.html = PASS TEXT
 
 // -----------------------------------------------------------------
 // Other

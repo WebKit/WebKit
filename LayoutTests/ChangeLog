@@ -1,5 +1,11 @@
 2011-06-08  James Simonsen  <simonjam@chromium.org>
 
+        [Chromium] Unreviewed, more inspector flakiness.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-08  James Simonsen  <simonjam@chromium.org>
+
         Unreviewed, move generic test expectation to right place.
 
         * fast/gradients/crash-on-degenerate-gradient-expected.txt: Renamed from LayoutTests/platform/chromium-linux/fast/gradients/crash-on-degenerate-gradient-expected.txt.
