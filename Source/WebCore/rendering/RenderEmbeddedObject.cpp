@@ -163,7 +163,7 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const IntPoint& p
     Font font;
     TextRun run("");
     float textWidth;
-    if (!getReplacementTextGeometry(paintOffset.x(), paintOffset.y(), contentRect, path, replacementTextRect, font, run, textWidth))
+    if (!getReplacementTextGeometry(paintOffset, contentRect, path, replacementTextRect, font, run, textWidth))
         return;
     
     GraphicsContextStateSaver stateSaver(*context);
@@ -180,10 +180,10 @@ void RenderEmbeddedObject::paintReplaced(PaintInfo& paintInfo, const IntPoint& p
     context->drawBidiText(font, run, FloatPoint(labelX, labelY));
 }
 
-bool RenderEmbeddedObject::getReplacementTextGeometry(int tx, int ty, FloatRect& contentRect, Path& path, FloatRect& replacementTextRect, Font& font, TextRun& run, float& textWidth)
+bool RenderEmbeddedObject::getReplacementTextGeometry(const IntPoint& accumulatedOffset, FloatRect& contentRect, Path& path, FloatRect& replacementTextRect, Font& font, TextRun& run, float& textWidth)
 {
     contentRect = contentBoxRect();
-    contentRect.move(tx, ty);
+    contentRect.moveBy(accumulatedOffset);
     
     FontDescription fontDescription;
     RenderTheme::defaultTheme()->systemFont(CSSValueWebkitSmallControl, fontDescription);
@@ -257,7 +257,7 @@ bool RenderEmbeddedObject::isInMissingPluginIndicator(MouseEvent* event)
     Font font;
     TextRun run("");
     float textWidth;
-    if (!getReplacementTextGeometry(0, 0, contentRect, path, replacementTextRect, font, run, textWidth))
+    if (!getReplacementTextGeometry(IntPoint(), contentRect, path, replacementTextRect, font, run, textWidth))
         return false;
     
     return path.contains(absoluteToLocal(event->absoluteLocation(), false, true));

@@ -68,7 +68,7 @@ private:
     
     void setMissingPluginIndicatorIsPressed(bool);
     bool isInMissingPluginIndicator(MouseEvent*);
-    bool getReplacementTextGeometry(int tx, int ty, FloatRect& contentRect, Path&, FloatRect& replacementTextRect, Font&, TextRun&, float& textWidth);
+    bool getReplacementTextGeometry(const IntPoint& accumulatedOffset, FloatRect& contentRect, Path&, FloatRect& replacementTextRect, Font&, TextRun&, float& textWidth);
 
     String m_replacementText;
     bool m_hasFallbackContent; // FIXME: This belongs on HTMLObjectElement.

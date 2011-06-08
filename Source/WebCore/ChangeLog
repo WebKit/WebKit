@@ -1,3 +1,23 @@
+2011-06-08  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        RenderEmbeddedObject::getReplacementTextGeometry
+        https://bugs.webkit.org/show_bug.cgi?id=62313
+
+        Replace the last use of tx, ty with IntPoint.
+
+        Covered by existing tests.
+
+        * platform/graphics/FloatRect.h:
+        (WebCore::FloatRect::move):
+        (WebCore::FloatRect::moveBy):
+        * rendering/RenderEmbeddedObject.cpp:
+        (WebCore::RenderEmbeddedObject::paintReplaced):
+        (WebCore::RenderEmbeddedObject::getReplacementTextGeometry):
+        (WebCore::RenderEmbeddedObject::isInMissingPluginIndicator):
+        * rendering/RenderEmbeddedObject.h:
+
 2011-06-08  Tim Horton  <timothy_horton@apple.com>
 
         Reviewed by Ryosuke Niwa.

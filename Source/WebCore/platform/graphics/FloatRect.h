@@ -70,6 +70,7 @@ class VGRect;
 #endif
 
 class IntRect;
+class IntPoint;
 
 class FloatRect {
 public:
@@ -105,7 +106,8 @@ public:
     FloatPoint center() const { return FloatPoint(x() + width() / 2, y() + height() / 2); }
 
     void move(const FloatSize& delta) { m_location += delta; } 
-    void move(float dx, float dy) { m_location.move(dx, dy); } 
+    void move(float dx, float dy) { m_location.move(dx, dy); }
+    void moveBy(const FloatPoint& delta) { m_location.move(delta.x(), delta.y()); }
 
     bool intersects(const FloatRect&) const;
     bool contains(const FloatRect&) const;
