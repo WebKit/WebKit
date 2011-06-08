@@ -1,3 +1,18 @@
+2011-06-08  Syed Idris Shah  <syed.idris-shah@nokia.com>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] GL_POINT_SPRITE and GL_VERTEX_PROGRAM_POINT_SIZE should be enabled for desktop WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=61945
+
+        For OpenGL ES we do not need these features. 
+        These features are available via shaders in OpenGL ES. But for desktop WebGL using QtWebKit they should be enabled.
+
+        LayoutTests/fast/canvas/webgl/point-size.html
+
+        * platform/graphics/qt/GraphicsContext3DQt.cpp:
+        (WebCore::GraphicsContext3DInternal::GraphicsContext3DInternal):
+
 2011-06-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Unreviewed. Fix style error.

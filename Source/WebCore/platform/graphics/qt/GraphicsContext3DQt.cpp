@@ -456,6 +456,11 @@ GraphicsContext3DInternal::GraphicsContext3DInternal(GraphicsContext3D::Attribut
     if (m_attrs.depth)
         genRenderbuffers(/* count */ 1, &m_depthBuffer);
 
+#if !defined(QT_OPENGL_ES_2)
+    glEnable(GL_POINT_SPRITE);
+    glEnable(GL_VERTEX_PROGRAM_POINT_SIZE);
+#endif
+
     // Bind canvas FBO and set initial clear color to black.
     m_currentFbo = m_canvasFbo;
     bindFramebuffer(GraphicsContext3D::FRAMEBUFFER, m_canvasFbo);
