@@ -1,3 +1,21 @@
+2011-06-08  Andreas Kling  <andreas.kling@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Symbian] Float{32,64}Array and Int16Array fail to build.
+        https://bugs.webkit.org/show_bug.cgi?id=62219
+
+        For some reason, RVCT 2.x is moaning about "class member designated by
+        a using-declaration must be visible in a direct base class".
+        Apply same fix as r69122 and r76592.
+
+        * html/canvas/Float32Array.h:
+        (WebCore::Float32Array::set):
+        * html/canvas/Float64Array.h:
+        (WebCore::Float64Array::set):
+        * html/canvas/Int16Array.h:
+        (WebCore::Int16Array::set):
+
 2011-06-08  Syed Idris Shah  <syed.idris-shah@nokia.com>
 
         Reviewed by Andreas Kling.

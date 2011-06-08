@@ -38,8 +38,9 @@ public:
     static PassRefPtr<Int16Array> create(short* array, unsigned length);
     static PassRefPtr<Int16Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
 
-    using TypedArrayBase<short>::set;
-    using IntegralTypedArrayBase<short>::set;
+    // Can’t use "using" here due to a bug in the RVCT compiler.
+    void set(TypedArrayBase<short>* array, unsigned offset, ExceptionCode& ec) { TypedArrayBase<short>::set(array, offset, ec); }
+    void set(unsigned index, double value) { IntegralTypedArrayBase<short>::set(index, value); }
 
     PassRefPtr<Int16Array> subarray(int start) const;
     PassRefPtr<Int16Array> subarray(int start, int end) const;

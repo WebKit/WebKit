@@ -38,7 +38,8 @@ public:
     static PassRefPtr<Float32Array> create(const float* array, unsigned length);
     static PassRefPtr<Float32Array> create(PassRefPtr<ArrayBuffer> buffer, unsigned byteOffset, unsigned length);
 
-    using TypedArrayBase<float>::set;
+    // Can’t use "using" here due to a bug in the RVCT compiler.
+    void set(TypedArrayBase<float>* array, unsigned offset, ExceptionCode& ec) { return TypedArrayBase<float>::set(array, offset, ec); }
 
     void set(unsigned index, double value)
     {
