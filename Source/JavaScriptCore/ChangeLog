@@ -1,3 +1,20 @@
+2011-06-08  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Add faster lookup cache for multi character identifiers
+        https://bugs.webkit.org/show_bug.cgi?id=62327
+
+        Add a non-hash lookup for mutiple character identifiers.  This saves us from
+        adding repeated identifiers to the ParserArena's identifier list as people
+        tend to not start all their variables and properties with the same character
+        and happily identifier locality works in our favour.
+
+        * parser/ParserArena.h:
+        (JSC::IdentifierArena::isEmpty):
+        (JSC::IdentifierArena::clear):
+        (JSC::IdentifierArena::makeIdentifier):
+
 2011-06-08  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.
