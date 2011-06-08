@@ -1,3 +1,12 @@
+2011-06-08  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        webkitpy: fix typo causing us to skip the port unit tests in chromium_linux
+        https://bugs.webkit.org/show_bug.cgi?id=62259
+
+        * Scripts/webkitpy/layout_tests/port/chromium_linux_unittest.py:
+
 2011-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Tony Chang.
