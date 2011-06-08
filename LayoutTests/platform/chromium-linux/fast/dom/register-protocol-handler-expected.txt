@@ -1,0 +1,10 @@
+This test makes sure that navigator.registerProtocolHandler throws the proper exceptions and has no-op default implementation.
+
+Fail: window.navigator.registerProtocolHandler is not defined.
+Fail: Invalid protocol "http" allowed.
+Fail: Invalid protocol "https" allowed.
+Fail: Invalid protocol "file" allowed.
+Fail: Invalid url "" allowed.
+Fail: Invalid url "%S" allowed.
+Fail: Invalid call did not succeed.
+
