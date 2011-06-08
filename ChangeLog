@@ -1,3 +1,23 @@
+2011-06-08  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [CMAKE] Never let a WTF_FEATURE defined to nothing
+        https://bugs.webkit.org/show_bug.cgi?id=60820
+
+        If a port doesn't want to give the user some configure options,
+        nevertheless it would have to define this feature as OFF. Otherwise
+        there's a build error because the generated cmakeconfig.h is not
+        parsed correctly by ENABLE macro, which expects each feature to be
+        either undefined or defined to TRUE/FALSE.
+
+        * Source/cmake/WebKitFeatures.cmake: Use a variable with the same name
+        of the feature, which allows CONFIGURE_FILE() to replace it in the new
+        cmakeconfig.h.cmake.
+        * Source/cmakeconfig.h.cmake: use #cmakedefine01 instead of #define
+        with another variable. This way the feature will always be 0 or 1 and
+        it will never be left undefined.
+
 2011-06-07  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Antonio Gomes.
