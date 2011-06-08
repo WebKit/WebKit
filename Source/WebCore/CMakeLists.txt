@@ -1957,6 +1957,7 @@ IF (ENABLE_MEDIA_STREAM)
         bindings/js/JSNavigatorCustom.cpp
         dom/GeneratedStream.cpp
         dom/Stream.cpp
+        dom/StreamEvent.cpp
         page/MediaStreamController.cpp
         page/MediaStreamFrameController.cpp
     )
@@ -1964,6 +1965,7 @@ IF (ENABLE_MEDIA_STREAM)
     LIST(APPEND WebCore_IDL_FILES
         dom/GeneratedStream.idl
         dom/Stream.idl
+        dom/StreamEvent.idl
         page/NavigatorUserMediaError.idl
     )
 ENDIF ()

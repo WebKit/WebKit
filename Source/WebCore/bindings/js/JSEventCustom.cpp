@@ -110,6 +110,11 @@
 #include "JSCloseEvent.h"
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+#include "JSStreamEvent.h"
+#include "StreamEvent.h"
+#endif
+
 using namespace JSC;
 
 namespace WebCore {
@@ -207,6 +212,10 @@ JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Event* event)
 #if ENABLE(WEB_SOCKETS)
     else if (event->isCloseEvent())
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, CloseEvent, event);
+#endif
+#if ENABLE(MEDIA_STREAM)
+    else if (event->isStreamEvent())
+        wrapper = CREATE_DOM_WRAPPER(exec, globalObject, StreamEvent, event);
 #endif
     else
         wrapper = CREATE_DOM_WRAPPER(exec, globalObject, Event, event);

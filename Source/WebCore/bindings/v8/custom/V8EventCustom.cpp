@@ -57,6 +57,7 @@
 #include "V8Proxy.h"
 #include "V8SpeechInputEvent.h"
 #include "V8StorageEvent.h"
+#include "V8StreamEvent.h"
 #include "V8TextEvent.h"
 #include "V8TouchEvent.h"
 #include "V8UIEvent.h"
@@ -183,6 +184,10 @@ v8::Handle<v8::Value> toV8(Event* impl)
 #if ENABLE(WEB_SOCKETS)
     if (impl->isCloseEvent())
         return toV8(static_cast<CloseEvent*>(impl));
+#endif
+#if ENABLE(MEDIA_STREAM)
+    if (impl->isStreamEvent())
+        return toV8(static_cast<StreamEvent*>(impl));
 #endif
     return V8Event::wrap(impl);
 }

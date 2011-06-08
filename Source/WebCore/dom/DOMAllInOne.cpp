@@ -119,6 +119,7 @@
 #include "StaticHashSetNodeList.cpp"
 #include "StaticNodeList.cpp"
 #include "Stream.cpp"
+#include "StreamEvent.cpp"
 #include "StyleElement.cpp"
 #include "StyledElement.cpp"
 #include "TagNodeList.cpp"

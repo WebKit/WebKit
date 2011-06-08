@@ -156,6 +156,7 @@ IDL_BINDINGS += \
     dom/RangeException.idl \
     dom/Range.idl \
     dom/Stream.idl \
+    dom/StreamEvent.idl \
     dom/StringCallback.idl \
     dom/Text.idl \
     dom/TextEvent.idl \

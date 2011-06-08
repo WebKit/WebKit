@@ -461,6 +461,8 @@ webcore_built_sources += \
 	DerivedSources/WebCore/JSStorageInfoUsageCallback.h \
 	DerivedSources/WebCore/JSStream.cpp \
 	DerivedSources/WebCore/JSStream.h \
+	DerivedSources/WebCore/JSStreamEvent.cpp \
+	DerivedSources/WebCore/JSStreamEvent.h \
 	DerivedSources/WebCore/JSStyleMedia.cpp \
 	DerivedSources/WebCore/JSStyleMedia.h \
 	DerivedSources/WebCore/JSStyleSheet.cpp \
@@ -1272,6 +1274,8 @@ webcore_sources += \
 	Source/WebCore/dom/StaticNodeList.h \
 	Source/WebCore/dom/Stream.cpp \
 	Source/WebCore/dom/Stream.h \
+	Source/WebCore/dom/StreamEvent.cpp \
+	Source/WebCore/dom/Streamevent.h \
 	Source/WebCore/dom/StyledElement.cpp \
 	Source/WebCore/dom/StyledElement.h \
 	Source/WebCore/dom/StyleElement.cpp \

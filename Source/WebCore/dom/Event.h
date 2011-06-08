@@ -147,6 +147,9 @@ namespace WebCore {
 #if ENABLE(WEB_SOCKETS)
         virtual bool isCloseEvent() const;
 #endif
+#if ENABLE(MEDIA_STREAM)
+        virtual bool isStreamEvent() const;
+#endif
         bool fromUserGesture();
         
         bool propagationStopped() const { return m_propagationStopped || m_immediatePropagationStopped; }

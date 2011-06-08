@@ -250,6 +250,13 @@ bool Event::isCloseEvent() const
 }
 #endif
 
+#if ENABLE(MEDIA_STREAM)
+bool Event::isStreamEvent() const
+{
+    return false;
+}
+#endif
+
 bool Event::fromUserGesture()
 {
     if (!UserGestureIndicator::processingUserGesture())

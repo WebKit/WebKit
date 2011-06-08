@@ -2,6 +2,44 @@
 
         Reviewed by Tony Gentilcore.
 
+        StreamEvent
+
+        Media Stream PeerConnection API: adding StreamEvent class
+        https://bugs.webkit.org/show_bug.cgi?id=61537
+
+        Tests for the Media Stream API will be provided by the bug 56587.
+
+        * CMakeLists.txt:
+        * CodeGenerators.pri:
+        * DerivedSources.cpp:
+        * DerivedSources.make:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * bindings/js/JSEventCustom.cpp:
+        (WebCore::toJS):
+        * bindings/v8/custom/V8EventCustom.cpp:
+        (WebCore::toV8):
+        * dom/DOMAllInOne.cpp:
+        * dom/Event.cpp:
+        (WebCore::Event::isStreamEvent):
+        * dom/Event.h:
+        * dom/StreamEvent.cpp: Added.
+        (WebCore::StreamEvent::create):
+        (WebCore::StreamEvent::StreamEvent):
+        (WebCore::StreamEvent::~StreamEvent):
+        (WebCore::StreamEvent::initStreamEvent):
+        (WebCore::StreamEvent::stream):
+        * dom/StreamEvent.h: Added.
+        (WebCore::StreamEvent::isStreamEvent):
+        * dom/StreamEvent.idl: Added.
+
+2011-06-08  Tommy Widenflycht  <tommyw@google.com>
+
+        Reviewed by Tony Gentilcore.
+
         Media Stream API: integrate the Track List objects into the existing code.
         https://bugs.webkit.org/show_bug.cgi?id=60205
 

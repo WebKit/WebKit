@@ -3150,6 +3150,7 @@ contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
     HEADERS += \
         dom/GeneratedStream.h \
         dom/Stream.h \
+        dom/StreamEvent.h \
         page/CallbackTask.h \
         page/MediaStreamClient.h \
         page/MediaStreamController.h \
@@ -3161,6 +3162,7 @@ contains(DEFINES, ENABLE_MEDIA_STREAM=1) {
     SOURCES += \
         dom/GeneratedStream.cpp \
         dom/Stream.cpp \
+        dom/StreamEvent.cpp \
         page/MediaStreamController.cpp \
         page/MediaStreamFrameController.cpp
 
