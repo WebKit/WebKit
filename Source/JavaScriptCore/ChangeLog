@@ -1,3 +1,13 @@
+2011-06-08  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r88404.
+        http://trac.webkit.org/changeset/88404
+        https://bugs.webkit.org/show_bug.cgi?id=62342
+
+        broke win and mac build (Requested by tony^work on #webkit).
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+
 2011-06-08  Evan Martin  <evan@chromium.org>
 
         Reviewed by Adam Barth.
