@@ -245,9 +245,9 @@ IntRect ScrollbarThemeChromiumMac::backButtonRect(Scrollbar* scrollbar, Scrollba
     bool outerButton = part == BackButtonStartPart && (buttonsPlacement() == ScrollbarButtonsDoubleStart || buttonsPlacement() == ScrollbarButtonsDoubleBoth);
     if (outerButton) {
         if (scrollbar->orientation() == HorizontalScrollbar)
-            result = IntRect(scrollbar->x(), scrollbar->y(), cOuterButtonLength[scrollbar->controlSize()] + painting ? cOuterButtonOverlap : 0, thickness);
+            result = IntRect(scrollbar->x(), scrollbar->y(), cOuterButtonLength[scrollbar->controlSize()] + (painting ? cOuterButtonOverlap : 0), thickness);
         else
-            result = IntRect(scrollbar->x(), scrollbar->y(), thickness, cOuterButtonLength[scrollbar->controlSize()] + painting ? cOuterButtonOverlap : 0);
+            result = IntRect(scrollbar->x(), scrollbar->y(), thickness, cOuterButtonLength[scrollbar->controlSize()] + (painting ? cOuterButtonOverlap : 0));
         return result;
     }
 

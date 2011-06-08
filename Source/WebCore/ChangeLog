@@ -1,3 +1,17 @@
+2011-06-08  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Fix a ?: precedence error in ScrollbarThemeMac and ScrollbarThemeChromium
+        https://bugs.webkit.org/show_bug.cgi?id=62295
+
+        This was found by a new warning recently added to clang's -Wparentheses
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::backButtonRect):
+        * platform/mac/ScrollbarThemeMac.mm:
+        (WebCore::ScrollbarThemeMac::backButtonRect):
+
 2011-06-08  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Andreas Kling.
