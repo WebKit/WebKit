@@ -202,6 +202,24 @@ bool FrameLoaderClientImpl::allowImages(bool enabledPerSettings)
     return enabledPerSettings;
 }
 
+bool FrameLoaderClientImpl::allowDisplayingInsecureContent(bool enabledPerSettings, SecurityOrigin* context, const KURL& url)
+{
+    WebViewImpl* webview = m_webFrame->viewImpl();
+    if (webview && webview->permissionClient())
+        return webview->permissionClient()->allowDisplayingInsecureContent(m_webFrame, enabledPerSettings, WebSecurityOrigin(context), WebURL(url));
+
+    return enabledPerSettings;
+}
+
+bool FrameLoaderClientImpl::allowRunningInsecureContent(bool enabledPerSettings, SecurityOrigin* context, const KURL& url)
+{
+    WebViewImpl* webview = m_webFrame->viewImpl();
+    if (webview && webview->permissionClient())
+        return webview->permissionClient()->allowRunningInsecureContent(m_webFrame, enabledPerSettings, WebSecurityOrigin(context), WebURL(url));
+
+    return enabledPerSettings;
+}
+
 void FrameLoaderClientImpl::didNotAllowScript()
 {
     WebViewImpl* webview = m_webFrame->viewImpl();

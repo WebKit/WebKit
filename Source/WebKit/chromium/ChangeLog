@@ -1,3 +1,18 @@
+2011-06-08  Tom Sepez  <tsepez@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add new permission callbacks for mixed content blocking.
+        https://bugs.webkit.org/show_bug.cgi?id=61946
+
+        * public/WebPermissionClient.h:
+        (WebKit::WebPermissionClient::allowDisplayingInsecureContent):
+        (WebKit::WebPermissionClient::allowRunningInsecureContent):
+        * src/FrameLoaderClientImpl.cpp:
+        (WebKit::FrameLoaderClientImpl::allowDisplayingInsecureContent):
+        (WebKit::FrameLoaderClientImpl::allowRunningInsecureContent):
+        * src/FrameLoaderClientImpl.h:
+
 2011-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Added new entries for skia/third_party/glu.

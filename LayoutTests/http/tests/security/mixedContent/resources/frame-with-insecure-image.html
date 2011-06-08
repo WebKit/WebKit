@@ -1,8 +1,11 @@
+<html>
+<body onload="frameLoaded()">
 <script>
-function imgLoaded() {
+function frameLoaded() {
   if (window.opener)
     window.opener.postMessage('done', '*');
 }
 </script>
-<img onload="imgLoaded()"
-     src="http://127.0.0.1:8080/security/resources/compass.jpg">
+<img src="http://127.0.0.1:8080/security/resources/compass.jpg">
+</body>
+</html>

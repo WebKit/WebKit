@@ -1,3 +1,21 @@
+2011-06-08  Tom Sepez  <tsepez@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Cause checks for insecure content blocking policy to callback to client.
+        https://bugs.webkit.org/show_bug.cgi?id=61946
+        Tests: platform/chromium/http/tests/security/mixedContent/insecure-image-in-main-frame-allowed.html
+               platform/chromium/http/tests/security/mixedContent/insecure-image-in-main-frame-blocked.html
+               platform/chromium/http/tests/security/mixedContent/insecure-script-in-main-frame-allowed.html
+               platform/chromium/http/tests/security/mixedContent/insecure-script-in-main-frame-blocked.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::checkIfDisplayInsecureContent):
+        (WebCore::FrameLoader::checkIfRunInsecureContent):
+        * loader/FrameLoaderClient.h:
+        (WebCore::FrameLoaderClient::allowDisplayingInsecureContent):
+        (WebCore::FrameLoaderClient::allowRunningInsecureContent):
+
 2011-06-08  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Build fix after introduction of FontCache::ShouldRetain

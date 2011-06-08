@@ -1,3 +1,22 @@
+2011-06-08  Tom Sepez  <tsepez@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Add web permissions callbacks for mixed content blocking.
+        https://bugs.webkit.org/show_bug.cgi?id=61946
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::setAllowDisplayOfInsecureContent):
+        (LayoutTestController::setAllowRunningOfInsecureContent):
+        (LayoutTestController::overridePreference):
+        * DumpRenderTree/chromium/WebPermissions.cpp:
+        (WebPermissions::allowDisplayingInsecureContent):
+        (WebPermissions::allowRunningInsecureContent):
+        (WebPermissions::setDisplayingInsecureContentAllowed):
+        (WebPermissions::setRunningInsecureContentAllowed):
+        (WebPermissions::reset):
+        * DumpRenderTree/chromium/WebPermissions.h:
+
 2011-06-08  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.

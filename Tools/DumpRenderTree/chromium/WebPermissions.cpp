@@ -50,6 +50,18 @@ bool WebPermissions::allowStorage(WebKit::WebFrame*, bool)
     return m_storageAllowed;
 }
 
+bool WebPermissions::allowDisplayingInsecureContent(WebKit::WebFrame*, bool enabledPerSettings,
+                                                    const WebKit::WebSecurityOrigin&, const WebKit::WebURL&)
+{
+    return enabledPerSettings || m_displayingInsecureContentAllowed;
+}
+ 
+bool WebPermissions::allowRunningInsecureContent(WebKit::WebFrame*, bool enabledPerSettings,
+                                                 const WebKit::WebSecurityOrigin&, const WebKit::WebURL&)
+{
+    return enabledPerSettings || m_runningInsecureContentAllowed;
+}
+
 void WebPermissions::setImagesAllowed(bool imagesAllowed)
 {
     m_imagesAllowed = imagesAllowed;
@@ -60,8 +72,20 @@ void WebPermissions::setStorageAllowed(bool storageAllowed)
     m_storageAllowed = storageAllowed;
 }
 
+void WebPermissions::setDisplayingInsecureContentAllowed(bool allowed)
+{
+    m_displayingInsecureContentAllowed = allowed;
+}
+
+void WebPermissions::setRunningInsecureContentAllowed(bool allowed)
+{
+    m_runningInsecureContentAllowed = allowed;
+}
+
 void WebPermissions::reset()
 {
     m_imagesAllowed = true;
     m_storageAllowed = true;
+    m_displayingInsecureContentAllowed = false;
+    m_runningInsecureContentAllowed = false;
 }

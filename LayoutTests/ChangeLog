@@ -1,3 +1,23 @@
+2011-06-08  Tom Sepez  <tsepez@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Chromium mixed content blocking, ensure that both preferences and web permissions
+        control the outcome.  Ensure notify callback gets invoked even with insecure content.
+        https://bugs.webkit.org/show_bug.cgi?id=61946
+        
+        * http/tests/security/mixedContent/resources/frame-with-insecure-image.html:
+        * http/tests/security/mixedContent/resources/frame-with-insecure-script.html:
+        * platform/chromium/http/tests/security/mixedContent: Added.
+        * platform/chromium/http/tests/security/mixedContent/insecure-image-in-main-frame-allowed-expected.txt: Added.
+        * platform/chromium/http/tests/security/mixedContent/insecure-image-in-main-frame-allowed.html: Added.
+        * platform/chromium/http/tests/security/mixedContent/insecure-image-in-main-frame-blocked-expected.txt: Added.
+        * platform/chromium/http/tests/security/mixedContent/insecure-image-in-main-frame-blocked.html: Added.
+        * platform/chromium/http/tests/security/mixedContent/insecure-script-in-main-frame-allowed-expected.txt: Added.
+        * platform/chromium/http/tests/security/mixedContent/insecure-script-in-main-frame-allowed.html: Added.
+        * platform/chromium/http/tests/security/mixedContent/insecure-script-in-main-frame-blocked-expected.txt: Added.
+        * platform/chromium/http/tests/security/mixedContent/insecure-script-in-main-frame-blocked.html: Added.
+
 2011-06-08  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, mark two flaky tests. Bug filed.

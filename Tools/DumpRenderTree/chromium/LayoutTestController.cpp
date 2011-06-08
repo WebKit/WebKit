@@ -1355,10 +1355,9 @@ void LayoutTestController::setAllowUniversalAccessFromFileURLs(const CppArgument
 
 void LayoutTestController::setAllowDisplayOfInsecureContent(const CppArgumentList& arguments, CppVariant* result)
 {
-    if (arguments.size() > 0 && arguments[0].isBool()) {
-        m_shell->preferences()->allowDisplayOfInsecureContent = arguments[0].value.boolValue;
-        m_shell->applyPreferences();
-    }
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_shell->webPermissions()->setDisplayingInsecureContentAllowed(arguments[0].toBoolean());
+
     result->setNull();
 }
 
@@ -1373,10 +1372,9 @@ void LayoutTestController::setAllowFileAccessFromFileURLs(const CppArgumentList&
 
 void LayoutTestController::setAllowRunningOfInsecureContent(const CppArgumentList& arguments, CppVariant* result)
 {
-    if (arguments.size() > 0 && arguments[0].isBool()) {
-        m_shell->preferences()->allowRunningOfInsecureContent = arguments[0].value.boolValue;
-        m_shell->applyPreferences();
-    }
+    if (arguments.size() > 0 && arguments[0].isBool())
+        m_shell->webPermissions()->setRunningInsecureContentAllowed(arguments[0].value.boolValue);
+
     result->setNull();
 }
 
@@ -1493,6 +1491,10 @@ void LayoutTestController::overridePreference(const CppArgumentList& arguments, 
         prefs->hyperlinkAuditingEnabled = cppVariantToBool(value);
     else if (key == "WebKitEnableCaretBrowsing")
         prefs->caretBrowsingEnabled = cppVariantToBool(value);
+    else if (key == "WebKitAllowDisplayingInsecureContent")
+        prefs->allowDisplayOfInsecureContent = cppVariantToBool(value);
+    else if (key == "WebKitAllowRunningInsecureContent")
+        prefs->allowRunningOfInsecureContent = cppVariantToBool(value);
     else {
         string message("Invalid name for preference: ");
         message.append(key);

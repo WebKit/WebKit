@@ -36,6 +36,7 @@ namespace WebKit {
 class WebFrame;
 class WebSecurityOrigin;
 class WebString;
+class WebURL;
 
 class WebPermissionClient {
 public:
@@ -56,6 +57,12 @@ public:
 
     // Controls whether scripts are allowed to execute for this frame.
     virtual bool allowScript(WebFrame*, bool enabledPerSettings) { return enabledPerSettings; }
+
+    // Controls whether insecrure content is allowed to display for this frame.
+    virtual bool allowDisplayingInsecureContent(WebFrame*, bool enabledPerSettings, const WebSecurityOrigin&, const WebURL&) { return enabledPerSettings; }
+
+    // Controls whether insecrure scripts are allowed to execute for this frame.
+    virtual bool allowRunningInsecureContent(WebFrame*, bool enabledPerSettings, const WebSecurityOrigin&, const WebURL&) { return enabledPerSettings; }
 
     // Controls whether the given script extension should run in a new script
     // context in this frame. If extensionGroup is 0, the script context is the

@@ -38,19 +38,28 @@ public:
     WebPermissions();
     virtual ~WebPermissions();
 
+    // Override WebPermissionClient methods.
     virtual bool allowImages(WebKit::WebFrame*, bool enabledPerSettings);
     virtual bool allowStorage(WebKit::WebFrame*, bool local);
+    virtual bool allowDisplayingInsecureContent(WebKit::WebFrame*, bool enabledPerSettings,
+                                                const WebKit::WebSecurityOrigin&, const WebKit::WebURL&);
+    virtual bool allowRunningInsecureContent(WebKit::WebFrame*, bool enabledPerSettings,
+                                             const WebKit::WebSecurityOrigin&, const WebKit::WebURL&);
 
-    // Sets the different policies.
+    // Hooks to set the different policies.
     void setImagesAllowed(bool);
     void setStorageAllowed(bool);
+    void setDisplayingInsecureContentAllowed(bool);
+    void setRunningInsecureContentAllowed(bool);
 
-    // Resets the policy to allow all access.
+    // Resets the policy to allow images, storage, displaying insecure, but not running insecure.
     void reset();
 
 private:
     bool m_imagesAllowed;
     bool m_storageAllowed;
+    bool m_displayingInsecureContentAllowed;
+    bool m_runningInsecureContentAllowed;
 };
 
 #endif

@@ -1118,11 +1118,15 @@ bool FrameLoader::checkIfDisplayInsecureContent(SecurityOrigin* context, const K
         return true;
 
     Settings* settings = m_frame->settings();
-    bool allowed = settings && settings->allowDisplayOfInsecureContent();
-    String message = (allowed ? emptyString() : "[blocked] ") + "The page at " + m_frame->document()->url().string() + " displayed insecure content from " + url.string() + ".\n";
+    bool allowed = m_client->allowDisplayingInsecureContent(settings && settings->allowDisplayOfInsecureContent(), context, url);
+    String message = (allowed ? emptyString() : "[blocked] ") + "The page at " +
+        m_frame->document()->url().string() + " displayed insecure content from " + url.string() + ".\n";
+        
     m_frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message, 1, String());
 
-    m_client->didDisplayInsecureContent();
+    if (allowed)
+        m_client->didDisplayInsecureContent();
+
     return allowed;
 }
 
@@ -1132,11 +1136,15 @@ bool FrameLoader::checkIfRunInsecureContent(SecurityOrigin* context, const KURL&
         return true;
 
     Settings* settings = m_frame->settings();
-    bool allowed = settings && settings->allowRunningOfInsecureContent();
-    String message = (allowed ? emptyString() : "[blocked] ") + "The page at " + m_frame->document()->url().string() + " ran insecure content from " + url.string() + ".\n";
+    bool allowed = m_client->allowRunningInsecureContent(settings && settings->allowRunningOfInsecureContent(), context, url);
+    String message = (allowed ? emptyString() : "[blocked] ") + "The page at " +
+        m_frame->document()->url().string() + " ran insecure content from " + url.string() + ".\n";
+       
     m_frame->domWindow()->console()->addMessage(HTMLMessageSource, LogMessageType, WarningMessageLevel, message, 1, String());
 
-    m_client->didRunInsecureContent(context, url);
+    if (allowed)
+        m_client->didRunInsecureContent(context, url);
+
     return allowed;
 }
 
