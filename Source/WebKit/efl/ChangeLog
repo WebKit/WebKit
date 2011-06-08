@@ -1,3 +1,19 @@
+2011-06-08  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] remove adjusting codes for zoom's center coordinate
+        https://bugs.webkit.org/show_bug.cgi?id=62266
+
+        It is possible that the application developers don't want to limit
+        zoom's center coordinate to the viewport for implementing some effects
+        and center coordinate out of the viewport does not affect to the zoom operation.
+        So, It is better to leave zoom's center coordinate freely.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_zoom_set):
+        (ewk_view_zoom_weak_set):
+
 2011-06-07  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Antonio Gomes.

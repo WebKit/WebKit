@@ -1871,14 +1871,6 @@ Eina_Bool ewk_view_zoom_set(Evas_Object* o, float zoom, Evas_Coord cx, Evas_Coor
         return EINA_FALSE;
     }
 
-    if (cx >= sd->view.w)
-        cx = sd->view.w - 1;
-    if (cy >= sd->view.h)
-        cy = sd->view.h - 1;
-    if (cx < 0)
-        cx = 0;
-    if (cy < 0)
-        cy = 0;
     _ewk_view_zoom_animated_mark_stop(sd);
     return sd->api->zoom_set(sd, zoom, cx, cy);
 }
@@ -1948,15 +1940,6 @@ Eina_Bool ewk_view_zoom_weak_set(Evas_Object* o, float zoom, Evas_Coord cx, Evas
         WRN("zoom level is > %f : %f", (double)priv->settings.zoom_range.max_scale, (double)zoom);
         return EINA_FALSE;
     }
-
-    if (cx >= sd->view.w)
-        cx = sd->view.w - 1;
-    if (cy >= sd->view.h)
-        cy = sd->view.h - 1;
-    if (cx < 0)
-        cx = 0;
-    if (cy < 0)
-        cy = 0;
 
     sd->animated_zoom.zoom.start = ewk_frame_zoom_get(sd->main_frame);
     sd->animated_zoom.zoom.end = zoom;
