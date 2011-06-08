@@ -61,7 +61,7 @@
       # This target sets up defines and includes that are required by WTF and
       # its dependents.
       'target_name': 'wtf_config',
-      'type': 'none',
+      'type': 'settings',
       'msvs_guid': '2E2D3301-2EC4-4C0F-B889-87073B30F673',
       'direct_dependent_settings': {
         'defines': [

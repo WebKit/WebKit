@@ -1,3 +1,16 @@
+2011-06-08  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] use gyp 'settings' type for settings target
+        https://bugs.webkit.org/show_bug.cgi?id=62323
+
+        The 'settings' gyp target type is for targets that exist solely
+        for their settings (no build rules).  The comment above this target
+        says it's for this, but it incorrectly uses 'none'.
+
+        * JavaScriptCore.gyp/JavaScriptCore.gyp:
+
 2011-06-08  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Mihai Parparita.
