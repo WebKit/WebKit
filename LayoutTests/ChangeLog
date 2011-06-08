@@ -1,3 +1,32 @@
+2011-06-08  Xiaomei Ji  <xji@chromium.org>
+
+        Split move-by-word-visually.html into 2 tests since the test is continuing growing and caused
+        time-out in Snowleopard Intel Leaks.
+
+        We will need to do profiling to improve hot code path performance later.
+
+        * editing/selection/move-by-word-visually-expected.txt: Removed.
+        * editing/selection/move-by-word-visually-others-expected.txt: Added.
+        * editing/selection/move-by-word-visually-others.html: Added.
+        * editing/selection/move-by-word-visually-single-space-sigle-line-expected.txt: Copied from LayoutTests/editing/selection/move-by-word-visually-expected.txt.
+        * editing/selection/move-by-word-visually-single-space-sigle-line.html: Copied from LayoutTests/editing/selection/move-by-word-visually.html.
+        * editing/selection/move-by-word-visually.html: Removed.
+        * editing/selection/resources/move-by-word-visually.js: Added.
+        ():
+        (flushLog):
+        (fold):
+        (logPositions):
+        (nodeOfWordBreak):
+        (logWordBreak):
+        (positionEqualToWordBreak):
+        (validateData):
+        (collectWordBreaks):
+        (setPosition):
+        (moveByWord):
+        (moveByWordOnEveryChar):
+        (moveByWordForEveryPosition):
+        (runMoveLeftRight):
+
 2011-06-08  Mike Reed  <reed@google.com>
 
         Reviewed by James Robinson.
