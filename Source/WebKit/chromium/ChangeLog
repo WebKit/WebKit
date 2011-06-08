@@ -1,5 +1,11 @@
 2011-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Added new entries for skia/third_party/glu.
+
+        * DEPS:
+
+2011-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
         Rolled DEPS.
 
         * DEPS:
