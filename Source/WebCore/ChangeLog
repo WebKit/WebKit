@@ -1,3 +1,14 @@
+2011-06-08  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        WebKit2: Enable serializing of data types needed for cross-process accelerated compositing
+        https://bugs.webkit.org/show_bug.cgi?id=61694
+
+        No new tests, code path is not activated yet.
+
+        * WebCore.xcodeproj/project.pbxproj: Changed the TransformOperation subclassed from "project" to "private"
+
 2011-06-08  Tom Sepez  <tsepez@chromium.org>
 
         Reviewed by Adam Barth.

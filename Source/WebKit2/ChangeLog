@@ -1,3 +1,16 @@
+2011-06-08  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+         Reviewed by Kenneth Rohde Christiansen.
+
+         WebKit2: Enable serializing of data types needed for cross-process accelerated compositing
+         https://bugs.webkit.org/show_bug.cgi?id=61694
+
+         Add ArgumentCoders for TransformOperation, including all the subclasses,
+         and TransformOperations.
+
+         * Scripts/webkit2/messages.py:
+         * Shared/WebCoreArgumentCoders.h:
+
 2011-06-08  Yael Aharon  <yael.aharon@nokia.com>
 
         Reviewed by Andreas Kling.
