@@ -31,6 +31,25 @@
 #include "BiquadDSPKernel.h"
 
 namespace WebCore {
+    
+BiquadProcessor::BiquadProcessor(double sampleRate, size_t numberOfChannels, bool autoInitialize)
+    : AudioDSPKernelProcessor(sampleRate, numberOfChannels)
+    , m_type(LowPass)
+    , m_parameter1(0)
+    , m_parameter2(0)
+    , m_parameter3(0)
+    , m_filterCoefficientsDirty(true)
+{
+    double nyquist = 0.5 * this->sampleRate();
+
+    // Create parameters for BiquadFilterNode.
+    m_parameter1 = AudioParam::create("frequency", 350.0, 10.0, nyquist);
+    m_parameter2 = AudioParam::create("Q", 1, 0.0001, 1000.0);
+    m_parameter3 = AudioParam::create("gain", 0.0, -40, 40);
+
+    if (autoInitialize)
+        initialize();
+}
 
 BiquadProcessor::BiquadProcessor(FilterType type, double sampleRate, size_t numberOfChannels, bool autoInitialize)
     : AudioDSPKernelProcessor(sampleRate, numberOfChannels)
@@ -42,35 +61,18 @@ BiquadProcessor::BiquadProcessor(FilterType type, double sampleRate, size_t numb
 {
     double nyquist = 0.5 * this->sampleRate();
     
+    // Handle the deprecated LowPass2FilterNode and HighPass2FilterNode.
     switch (type) {
     // Highpass and lowpass share the same parameters and only differ in filter type.
-    case LowPass2:
-    case HighPass2:
+    case LowPass:
+    case HighPass:
         m_parameter1 = AudioParam::create("frequency", 350.0, 20.0, nyquist);
         m_parameter2 = AudioParam::create("resonance", 0.0, -20.0, 20.0);
         m_parameter3 = AudioParam::create("unused", 0.0, 0.0, 1.0);
         break;
 
-    case Peaking:
-        m_parameter1 = AudioParam::create("frequency", 2500.0, 20.0, nyquist);
-        m_parameter2 = AudioParam::create("gain", 0.0, -20.0, 20.0);
-        m_parameter3 = AudioParam::create("Q", 0.5, 0.0, 1000.0);
-        break;
-    case Allpass:
-        m_parameter1 = AudioParam::create("frequency", 2500.0, 20.0, nyquist);
-        m_parameter2 = AudioParam::create("Q", 0.5, 0.0, 1000.0);
-        m_parameter3 = AudioParam::create("unused", 0.0, 0.0, 1.0);
-        break;
-    case LowShelf:
-        m_parameter1 = AudioParam::create("frequency", 80.0, 20.0, nyquist);
-        m_parameter2 = AudioParam::create("gain", 0.0, 0.0, 1.0);
-        m_parameter3 = AudioParam::create("unused", 0.0, 0.0, 1.0);
-        break;
-    case HighShelf:
-        m_parameter1 = AudioParam::create("frequency", 10000.0, 20.0, nyquist);
-        m_parameter2 = AudioParam::create("gain", 0.0, 0.0, 1.0);
-        m_parameter3 = AudioParam::create("unused", 0.0, 0.0, 1.0);
-        break;
+    default:
+        ASSERT_NOT_REACHED();
     }
 
     if (autoInitialize)

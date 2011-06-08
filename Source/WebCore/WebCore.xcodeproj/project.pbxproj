@@ -5999,11 +5999,15 @@
 		FDA3E95A134A49EF008D4B5A /* OfflineAudioCompletionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA3E956134A49EF008D4B5A /* OfflineAudioCompletionEvent.h */; };
 		FDA3E95B134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDA3E957134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp */; };
 		FDA3E95C134A49EF008D4B5A /* OfflineAudioDestinationNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDA3E958134A49EF008D4B5A /* OfflineAudioDestinationNode.h */; };
+		FDC54F041399B0DA008D9117 /* BiquadFilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */; };
+		FDC54F051399B0DA008D9117 /* BiquadFilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDC54F021399B0DA008D9117 /* BiquadFilterNode.h */; };
 		FDEAAAF312B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */; };
 		FDEAAAF412B02EE400DCF33B /* JSAudioContextCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */; };
 		FDEAAAF512B02EE400DCF33B /* JSAudioNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAF112B02EE400DCF33B /* JSAudioNodeCustom.cpp */; };
 		FDEAAAF612B02EE400DCF33B /* JSConvolverNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAF212B02EE400DCF33B /* JSConvolverNodeCustom.cpp */; };
 		FDEAAAFE12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDEAAAFD12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp */; };
+		FDF09DC81399B62200688E5B /* JSBiquadFilterNode.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDF09DC61399B62200688E5B /* JSBiquadFilterNode.cpp */; };
+		FDF09DC91399B62200688E5B /* JSBiquadFilterNode.h in Headers */ = {isa = PBXBuildFile; fileRef = FDF09DC71399B62200688E5B /* JSBiquadFilterNode.h */; };
 		FDF6BAF8134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp in Sources */ = {isa = PBXBuildFile; fileRef = FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */; };
 		FDF6BAF9134A4C9800822920 /* JSOfflineAudioCompletionEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */; };
 		FE6FD4880F676E5700092873 /* Coordinates.h in Headers */ = {isa = PBXBuildFile; fileRef = FE6FD4850F676E5700092873 /* Coordinates.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -12640,11 +12644,16 @@
 		FDA3E957134A49EF008D4B5A /* OfflineAudioDestinationNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OfflineAudioDestinationNode.cpp; sourceTree = "<group>"; };
 		FDA3E958134A49EF008D4B5A /* OfflineAudioDestinationNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OfflineAudioDestinationNode.h; sourceTree = "<group>"; };
 		FDA3E95D134A49FF008D4B5A /* OfflineAudioCompletionEvent.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OfflineAudioCompletionEvent.idl; sourceTree = "<group>"; };
+		FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = BiquadFilterNode.cpp; sourceTree = "<group>"; };
+		FDC54F021399B0DA008D9117 /* BiquadFilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BiquadFilterNode.h; sourceTree = "<group>"; };
+		FDC54F031399B0DA008D9117 /* BiquadFilterNode.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = BiquadFilterNode.idl; sourceTree = "<group>"; };
 		FDEAAAEF12B02EE400DCF33B /* JSAudioBufferSourceNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioBufferSourceNodeCustom.cpp; sourceTree = "<group>"; };
 		FDEAAAF012B02EE400DCF33B /* JSAudioContextCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioContextCustom.cpp; sourceTree = "<group>"; };
 		FDEAAAF112B02EE400DCF33B /* JSAudioNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSAudioNodeCustom.cpp; sourceTree = "<group>"; };
 		FDEAAAF212B02EE400DCF33B /* JSConvolverNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSConvolverNodeCustom.cpp; sourceTree = "<group>"; };
 		FDEAAAFD12B02F4900DCF33B /* JSJavaScriptAudioNodeCustom.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSJavaScriptAudioNodeCustom.cpp; sourceTree = "<group>"; };
+		FDF09DC61399B62200688E5B /* JSBiquadFilterNode.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSBiquadFilterNode.cpp; sourceTree = "<group>"; };
+		FDF09DC71399B62200688E5B /* JSBiquadFilterNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSBiquadFilterNode.h; sourceTree = "<group>"; };
 		FDF6BAF6134A4C9800822920 /* JSOfflineAudioCompletionEvent.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSOfflineAudioCompletionEvent.cpp; sourceTree = "<group>"; };
 		FDF6BAF7134A4C9800822920 /* JSOfflineAudioCompletionEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSOfflineAudioCompletionEvent.h; sourceTree = "<group>"; };
 		FE49EF970DC51462004266E1 /* DashboardSupportCSSPropertyNames.in */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = DashboardSupportCSSPropertyNames.in; sourceTree = "<group>"; };
@@ -19849,6 +19858,9 @@
 				FD315FD912B0267600C1A359 /* AudioSourceNode.idl */,
 				FD315FDA12B0267600C1A359 /* BiquadDSPKernel.cpp */,
 				FD315FDB12B0267600C1A359 /* BiquadDSPKernel.h */,
+				FDC54F011399B0DA008D9117 /* BiquadFilterNode.cpp */,
+				FDC54F021399B0DA008D9117 /* BiquadFilterNode.h */,
+				FDC54F031399B0DA008D9117 /* BiquadFilterNode.idl */,
 				FD315FDC12B0267600C1A359 /* BiquadProcessor.cpp */,
 				FD315FDD12B0267600C1A359 /* BiquadProcessor.h */,
 				FD315FDE12B0267600C1A359 /* ConvolverNode.cpp */,
@@ -20002,6 +20014,8 @@
 				FDA15E9A12B03EE1003A583A /* JSAudioProcessingEvent.h */,
 				FDA15E9B12B03EE1003A583A /* JSAudioSourceNode.cpp */,
 				FDA15E9C12B03EE1003A583A /* JSAudioSourceNode.h */,
+				FDF09DC61399B62200688E5B /* JSBiquadFilterNode.cpp */,
+				FDF09DC71399B62200688E5B /* JSBiquadFilterNode.h */,
 				FDA15EBB12B03F0B003A583A /* JSConvolverNode.cpp */,
 				FDA15EBC12B03F0B003A583A /* JSConvolverNode.h */,
 				FDA15ECF12B03F94003A583A /* JSDelayNode.cpp */,
@@ -23155,6 +23169,8 @@
 				4496E3A0139813A5003EE32A /* JSSVGMPathElement.h in Headers */,
 				2E2445F71395893A004B6C19 /* OperationNotAllowedException.h in Headers */,
 				2E24476913959173004B6C19 /* JSOperationNotAllowedException.h in Headers */,
+				FDC54F051399B0DA008D9117 /* BiquadFilterNode.h in Headers */,
+				FDF09DC91399B62200688E5B /* JSBiquadFilterNode.h in Headers */,
 				49A85B6C138D573A00ECB7B3 /* StreamEvent.h in Headers */,
 				49A85B78138D58EE00ECB7B3 /* JSStreamEvent.h in Headers */,
 			);
@@ -25886,6 +25902,8 @@
 				4496E39D1398136C003EE32A /* JSSVGAnimateMotionElement.cpp in Sources */,
 				4496E3A2139813CB003EE32A /* JSSVGMPathElement.cpp in Sources */,
 				2E24476813959173004B6C19 /* JSOperationNotAllowedException.cpp in Sources */,
+				FDC54F041399B0DA008D9117 /* BiquadFilterNode.cpp in Sources */,
+				FDF09DC81399B62200688E5B /* JSBiquadFilterNode.cpp in Sources */,
 				49A85B6B138D573A00ECB7B3 /* StreamEvent.cpp in Sources */,
 				49A85B77138D58EE00ECB7B3 /* JSStreamEvent.cpp in Sources */,
 			);

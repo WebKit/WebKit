@@ -48,15 +48,16 @@ public:
 
     void process(const float* sourceP, float* destP, size_t framesToProcess);
 
-    // cutoff is 0-1 normalized, resonance is in dB >= 0.0
-    void setLowpassParams(double cutoff, double resonance);
-    void setHighpassParams(double cutoff, double resonance);
-
-    void setLowShelfParams(double cutoff, double dbGain);
-
-    // FIXME: need to implement a few more common filters
-    // void setHighShelfParams(double cutoff, double dbGain);
-    // void setParametricEQParams(double cutoff, double resonance);
+    // frequency is 0 - 1 normalized, resonance and dbGain are in decibels.
+    // Q is a unitless quality factor.
+    void setLowpassParams(double frequency, double resonance);
+    void setHighpassParams(double frequency, double resonance);
+    void setBandpassParams(double frequency, double Q);
+    void setLowShelfParams(double frequency, double dbGain);
+    void setHighShelfParams(double frequency, double dbGain);
+    void setPeakingParams(double frequency, double Q, double dbGain);
+    void setAllpassParams(double frequency, double Q);
+    void setNotchParams(double frequency, double Q);
 
     // Set the biquad coefficients given a single zero (other zero will be conjugate)
     // and a single pole (other pole will be conjugate)
@@ -70,6 +71,8 @@ public:
     void reset();
 
 private:
+    void setNormalizedCoefficients(double b0, double b1, double b2, double a0, double a1, double a2);
+
     // Filter coefficients
     double m_b0;
     double m_b1;

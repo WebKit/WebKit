@@ -53,11 +53,11 @@ Biquad::Biquad()
 #endif
 
     // Initialize as pass-thru (straight-wire, no filter effect)
-    m_b0 = 1.0;
-    m_b1 = 0.0;
-    m_b2 = 0.0;
-    m_a1 = 0.0;
-    m_a2 = 0.0;
+    m_b0 = 1;
+    m_b1 = 0;
+    m_b2 = 0;
+    m_a1 = 0;
+    m_a2 = 0;
 
     reset(); // clear filter memory
 }
@@ -169,17 +169,17 @@ void Biquad::processSliceFast(double* sourceP, double* destP, double* coefficien
 
 void Biquad::reset()
 {
-    m_x1 = m_x2 = m_y1 = m_y2 = 0.0;
+    m_x1 = m_x2 = m_y1 = m_y2 = 0;
 
 #if OS(DARWIN)
     // Two extra samples for filter history
     double* inputP = m_inputBuffer.data();
-    inputP[0] = 0.0;
-    inputP[1] = 0.0;
+    inputP[0] = 0;
+    inputP[1] = 0;
 
     double* outputP = m_outputBuffer.data();
-    outputP[0] = 0.0;
-    outputP[1] = 0.0;
+    outputP[0] = 0;
+    outputP[1] = 0;
 #endif
 }
 
@@ -188,20 +188,20 @@ void Biquad::setLowpassParams(double cutoff, double resonance)
     resonance = std::max(0.0, resonance); // can't go negative
 
     double g = pow(10.0, 0.05 * resonance);
-    double d = sqrt((4.0 - sqrt(16.0 - 16.0 / (g * g))) / 2.0);
+    double d = sqrt((4 - sqrt(16 - 16 / (g * g))) / 2);
 
     // Compute biquad coefficients for lopass filter
     double theta = piDouble * cutoff;
     double sn = 0.5 * d * sin(theta);
-    double beta = 0.5 * (1.0 - sn) / (1.0 + sn);
+    double beta = 0.5 * (1 - sn) / (1 + sn);
     double gamma = (0.5 + beta) * cos(theta);
     double alpha = 0.25 * (0.5 + beta - gamma);
 
-    m_b0 = 2.0 * alpha;
-    m_b1 = 2.0 * 2.0*alpha;
-    m_b2 = 2.0 * alpha;
-    m_a1 = 2.0 * -gamma;
-    m_a2 = 2.0 * beta;
+    m_b0 = 2 * alpha;
+    m_b1 = 2 * 2 * alpha;
+    m_b2 = 2 * alpha;
+    m_a1 = 2 * -gamma;
+    m_a2 = 2 * beta;
 }
 
 void Biquad::setHighpassParams(double cutoff, double resonance)
@@ -209,41 +209,25 @@ void Biquad::setHighpassParams(double cutoff, double resonance)
     resonance = std::max(0.0, resonance); // can't go negative
 
     double g = pow(10.0, 0.05 * resonance);
-    double d = sqrt((4.0 - sqrt(16.0 - 16.0 / (g * g))) / 2.0);
+    double d = sqrt((4 - sqrt(16 - 16 / (g * g))) / 2);
 
     // Compute biquad coefficients for highpass filter
     double theta = piDouble * cutoff;
     double sn = 0.5 * d * sin(theta);
-    double beta = 0.5 * (1.0 - sn) / (1.0 + sn);
+    double beta = 0.5 * (1 - sn) / (1 + sn);
     double gamma = (0.5 + beta) * cos(theta);
     double alpha = 0.25 * (0.5 + beta + gamma);
 
-    m_b0 = 2.0 * alpha;
-    m_b1 = 2.0 * -2.0*alpha;
-    m_b2 = 2.0 * alpha;
-    m_a1 = 2.0 * -gamma;
-    m_a2 = 2.0 * beta;
+    m_b0 = 2 * alpha;
+    m_b1 = 2 * -2 * alpha;
+    m_b2 = 2 * alpha;
+    m_a1 = 2 * -gamma;
+    m_a2 = 2 * beta;
 }
 
-void Biquad::setLowShelfParams(double cutoff, double dbGain)
+void Biquad::setNormalizedCoefficients(double b0, double b1, double b2, double a0, double a1, double a2)
 {
-    double theta = piDouble * cutoff;
-
-    double A = pow(10.0, dbGain / 40.0);
-    double S = 1.0; // filter slope (1.0 is max value)
-    double alpha = 0.5 * sin(theta) * sqrt((A + 1.0 / A) * (1.0 / S - 1.0) + 2.0);
-
-    double k = cos(theta);
-    double k2 = 2.0 * sqrt(A) * alpha;
-
-    double b0 = A * ((A + 1.0) - (A - 1.0) * k + k2);
-    double b1 = 2.0 * A * ((A - 1.0) - (A + 1.0) * k);
-    double b2 = A * ((A + 1.0) - (A - 1.0) * k - k2);
-    double a0 = (A + 1.0) + (A - 1.0) * k + k2;
-    double a1 = -2.0 * ((A - 1.0) + (A + 1.0) * k);
-    double a2 = (A + 1.0) + (A - 1.0) * k - k2;
-
-    double a0Inverse = 1.0 / a0;
+    double a0Inverse = 1 / a0;
     
     m_b0 = b0 * a0Inverse;
     m_b1 = b1 * a0Inverse;
@@ -252,15 +236,132 @@ void Biquad::setLowShelfParams(double cutoff, double dbGain)
     m_a2 = a2 * a0Inverse;
 }
 
+void Biquad::setLowShelfParams(double frequency, double dbGain)
+{
+    double w0 = piDouble * frequency;
+
+    double A = pow(10.0, dbGain / 40);
+    double S = 1; // filter slope (1 is max value)
+    double alpha = 0.5 * sin(w0) * sqrt((A + 1 / A) * (1 / S - 1) + 2);
+
+    double k = cos(w0);
+    double k2 = 2 * sqrt(A) * alpha;
+
+    double aPlusOne = A + 1;
+    double aMinusOne = A - 1;
+    
+    double b0 = A * (aPlusOne - aMinusOne * k + k2);
+    double b1 = 2 * A * (aMinusOne - aPlusOne * k);
+    double b2 = A * (aPlusOne - aMinusOne * k - k2);
+    double a0 = aPlusOne + aMinusOne * k + k2;
+    double a1 = -2 * (aMinusOne + aPlusOne * k);
+    double a2 = aPlusOne + aMinusOne * k - k2;
+
+    setNormalizedCoefficients(b0, b1, b2, a0, a1, a2);
+}
+
+void Biquad::setHighShelfParams(double frequency, double dbGain)
+{
+    double w0 = piDouble * frequency;
+
+    double A = pow(10.0, dbGain / 40);
+    double S = 1; // filter slope (1 is max value)
+    double alpha = 0.5 * sin(w0) * sqrt((A + 1 / A) * (1 / S - 1) + 2);
+
+    double k = cos(w0);
+    double k2 = 2 * sqrt(A) * alpha;
+
+    double aPlusOne = A + 1;
+    double aMinusOne = A - 1;
+    
+    double b0 = A * (aPlusOne + aMinusOne * k + k2);
+    double b1 = -2 * A * (aMinusOne + aPlusOne * k);
+    double b2 = A * (aPlusOne + aMinusOne * k - k2);
+    double a0 = aPlusOne - aMinusOne * k + k2;
+    double a1 = 2 * (aMinusOne - aPlusOne * k);
+    double a2 = aPlusOne - aMinusOne * k - k2;
+
+    setNormalizedCoefficients(b0, b1, b2, a0, a1, a2);
+}
+
+void Biquad::setPeakingParams(double frequency, double Q, double dbGain)
+{
+    double w0 = piDouble * frequency;
+    double alpha = sin(w0) / (2 * Q);
+    double A = pow(10.0, dbGain / 40);
+
+    double k = cos(w0);
+
+    double b0 = 1 + alpha * A;
+    double b1 = -2 * k;
+    double b2 = 1 - alpha * A;
+    double a0 = 1 + alpha / A;
+    double a1 = -2 * k;
+    double a2 = 1 - alpha / A;
+
+    setNormalizedCoefficients(b0, b1, b2, a0, a1, a2);
+}
+
+void Biquad::setAllpassParams(double frequency, double Q)
+{
+    double w0 = piDouble * frequency;
+    double alpha = sin(w0) / (2 * Q);
+
+    double k = cos(w0);
+
+    double b0 = 1 - alpha;
+    double b1 = -2 * k;
+    double b2 = 1 + alpha;
+    double a0 = 1 + alpha;
+    double a1 = -2 * k;
+    double a2 = 1 - alpha;
+
+    setNormalizedCoefficients(b0, b1, b2, a0, a1, a2);
+}
+
+void Biquad::setNotchParams(double frequency, double Q)
+{
+    double w0 = piDouble * frequency;
+    double alpha = sin(w0) / (2 * Q);
+
+    double k = cos(w0);
+
+    double b0 = 1;
+    double b1 = -2 * k;
+    double b2 = 1;
+    double a0 = 1 + alpha;
+    double a1 = -2 * k;
+    double a2 = 1 - alpha;
+
+    setNormalizedCoefficients(b0, b1, b2, a0, a1, a2);
+}
+
+void Biquad::setBandpassParams(double frequency, double Q)
+{
+    double w0 = piDouble * frequency;
+    double alpha = sin(w0) / (2 * Q);
+
+    double k = cos(w0);
+    
+    double b0 = alpha;
+    double b1 = 0;
+    double b2 = -alpha;
+    double a0 = 1 + alpha;
+    double a1 = -2 * k;
+    double a2 = 1 - alpha;
+
+    setNormalizedCoefficients(b0, b1, b2, a0, a1, a2);
+}
+
 void Biquad::setZeroPolePairs(const Complex &zero, const Complex &pole)
 {
-    m_b0 = 1.0;
-    m_b1 = -2.0 * zero.real();
+    m_b0 = 1;
+    m_b1 = -2 * zero.real();
 
     double zeroMag = abs(zero);
     m_b2 = zeroMag * zeroMag;
 
-    m_a1 = -2.0 * pole.real();
+    m_a1 = -2 * pole.real();
 
     double poleMag = abs(pole);
     m_a2 = poleMag * poleMag;
@@ -268,7 +369,7 @@ void Biquad::setZeroPolePairs(const Complex &zero, const Complex &pole)
 
 void Biquad::setAllpassPole(const Complex &pole)
 {
-    Complex zero = Complex(1.0, 0.0) / pole;
+    Complex zero = Complex(1, 0) / pole;
     setZeroPolePairs(zero, pole);
 }
 

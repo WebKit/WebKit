@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2011, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -22,24 +22,48 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
+#ifndef BiquadFilterNode_h
+#define BiquadFilterNode_h
 
-#if ENABLE(WEB_AUDIO)
-
-#include "HighPass2FilterNode.h"
+#include "AudioBasicProcessorNode.h"
+#include "BiquadProcessor.h"
 
 namespace WebCore {
 
-HighPass2FilterNode::HighPass2FilterNode(AudioContext* context, double sampleRate)
-    : AudioBasicProcessorNode(context, sampleRate)
-{
-    m_processor = adoptPtr(new BiquadProcessor(BiquadProcessor::HighPass, sampleRate, 1, false));
-    biquadProcessor()->parameter1()->setContext(context);
-    biquadProcessor()->parameter2()->setContext(context);
-    biquadProcessor()->parameter3()->setContext(context);
-    setType(NodeTypeHighPass2Filter);
-}
+class AudioParam;
+    
+class BiquadFilterNode : public AudioBasicProcessorNode {
+public:
+    // These must be defined as in the .idl file and must match those in the BiquadProcessor class.
+    enum {
+        LOWPASS = 0,
+        HIGHPASS = 1,
+        BANDPASS = 2,
+        LOWSHELF = 3,
+        HIGHSHELF = 4,
+        PEAKING = 5,
+        NOTCH = 6,
+        ALLPASS = 7
+    };
+
+    static PassRefPtr<BiquadFilterNode> create(AudioContext* context, double sampleRate)
+    {
+        return adoptRef(new BiquadFilterNode(context, sampleRate));      
+    }
+    
+    unsigned short type() { return biquadProcessor()->type(); }
+    void setType(unsigned short type) { biquadProcessor()->setType(static_cast<BiquadProcessor::FilterType>(type)); }
+
+    AudioParam* frequency() { return biquadProcessor()->parameter1(); }
+    AudioParam* q() { return biquadProcessor()->parameter2(); }
+    AudioParam* gain() { return biquadProcessor()->parameter3(); }
+    
+private:
+    BiquadFilterNode(AudioContext*, double sampleRate);
+
+    BiquadProcessor* biquadProcessor() { return static_cast<BiquadProcessor*>(processor()); }
+};
 
 } // namespace WebCore
 
-#endif // ENABLE(WEB_AUDIO)
+#endif // BiquadFilterNode_h

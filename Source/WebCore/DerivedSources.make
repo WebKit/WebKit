@@ -68,6 +68,7 @@ DOM_CLASSES = \
     AudioParam \
     AudioProcessingEvent \
     AudioSourceNode \
+    BiquadFilterNode \
     ConvolverNode \
     DelayNode \
     DynamicsCompressorNode \

@@ -42,29 +42,44 @@ void BiquadDSPKernel::process(const float* source, float* destination, size_t fr
     if (biquadProcessor()->filterCoefficientsDirty()) {
         double value1 = biquadProcessor()->parameter1()->smoothedValue();
         double value2 = biquadProcessor()->parameter2()->smoothedValue();
+        double gain = biquadProcessor()->parameter3()->smoothedValue();
         
         // Convert from Hertz to normalized frequency 0 -> 1.
         double nyquist = this->nyquist();
-        double normalizedValue1 = value1 / nyquist;
+        double normalizedFrequency = value1 / nyquist;
 
         // Configure the biquad with the new filter parameters for the appropriate type of filter.
         switch (biquadProcessor()->type()) {
-        case BiquadProcessor::LowPass2:
-            m_biquad.setLowpassParams(normalizedValue1, value2);
+        case BiquadProcessor::LowPass:
+            m_biquad.setLowpassParams(normalizedFrequency, value2);
             break;
 
-        case BiquadProcessor::HighPass2:
-            m_biquad.setHighpassParams(normalizedValue1, value2);
+        case BiquadProcessor::HighPass:
+            m_biquad.setHighpassParams(normalizedFrequency, value2);
+            break;
+
+        case BiquadProcessor::BandPass:
+            m_biquad.setBandpassParams(normalizedFrequency, value2);
             break;
 
         case BiquadProcessor::LowShelf:
-            m_biquad.setLowShelfParams(normalizedValue1, value2);
+            m_biquad.setLowShelfParams(normalizedFrequency, gain);
             break;
 
-        // FIXME: add other biquad filter types...
-        case BiquadProcessor::Peaking:
-        case BiquadProcessor::Allpass:
         case BiquadProcessor::HighShelf:
+            m_biquad.setHighShelfParams(normalizedFrequency, gain);
+            break;
+
+        case BiquadProcessor::Peaking:
+            m_biquad.setPeakingParams(normalizedFrequency, value2, gain);
+            break;
+
+        case BiquadProcessor::Notch:
+            m_biquad.setNotchParams(normalizedFrequency, value2);
+            break;
+
+        case BiquadProcessor::Allpass:
+            m_biquad.setAllpassParams(normalizedFrequency, value2);
             break;
         }
     }

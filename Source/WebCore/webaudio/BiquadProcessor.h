@@ -39,15 +39,21 @@ namespace WebCore {
 class BiquadProcessor : public AudioDSPKernelProcessor {
 public:
     enum FilterType {
-        LowPass2,
-        HighPass2,
-        Peaking,
-        Allpass,
-        LowShelf,
-        HighShelf
+        LowPass = 0,
+        HighPass = 1,
+        BandPass = 2,
+        LowShelf = 3,
+        HighShelf = 4,
+        Peaking = 5,
+        Notch = 6,
+        Allpass = 7
     };
-    
+
+    BiquadProcessor(double sampleRate, size_t numberOfChannels, bool autoInitialize);
+
+    // Old constructor used by deprecated LowPass2FilterNode and HighPass2FilterNode
     BiquadProcessor(FilterType, double sampleRate, size_t numberOfChannels, bool autoInitialize = true);
+
     virtual ~BiquadProcessor();
     
     virtual PassOwnPtr<AudioDSPKernel> createKernel();
@@ -61,6 +67,7 @@ public:
     AudioParam* parameter3() { return m_parameter3.get(); }
 
     FilterType type() const { return m_type; }
+    void setType(FilterType type) { m_type = type; }
 
 private:
     FilterType m_type;

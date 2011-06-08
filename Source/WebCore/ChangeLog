@@ -1,3 +1,59 @@
+2011-06-08  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Kenneth Russell.
+
+        Implement BiquadFilterNode for filter types: LOWPASS, HIGHPASS, BANDPASS, LOWSHELF, HIGHSHELF, PEAKING, NOTCH, ALLPASS
+        https://bugs.webkit.org/show_bug.cgi?id=62078
+
+        No new tests since audio API is not yet implemented.
+
+        * DerivedSources.make:
+        * WebCore.gypi:
+        * WebCore.xcodeproj/project.pbxproj:
+        * platform/audio/Biquad.cpp:
+        (WebCore::Biquad::Biquad):
+        (WebCore::Biquad::reset):
+        (WebCore::Biquad::setLowpassParams):
+        (WebCore::Biquad::setHighpassParams):
+        (WebCore::Biquad::setNormalizedCoefficients):
+        (WebCore::Biquad::setLowShelfParams):
+        (WebCore::Biquad::setHighShelfParams):
+        (WebCore::Biquad::setPeakingParams):
+        (WebCore::Biquad::setAllpassParams):
+        (WebCore::Biquad::setNotchParams):
+        (WebCore::Biquad::setBandpassParams):
+        (WebCore::Biquad::setZeroPolePairs):
+        (WebCore::Biquad::setAllpassPole):
+        * platform/audio/Biquad.h:
+        * webaudio/AudioContext.cpp:
+        (WebCore::AudioContext::createBiquadFilter):
+        (WebCore::AudioContext::createLowPass2Filter):
+        (WebCore::AudioContext::createHighPass2Filter):
+        * webaudio/AudioContext.h:
+        * webaudio/AudioContext.idl:
+        * webaudio/AudioNode.h:
+        * webaudio/BiquadDSPKernel.cpp:
+        (WebCore::BiquadDSPKernel::process):
+        * webaudio/BiquadFilterNode.cpp: Added.
+        (WebCore::BiquadFilterNode::BiquadFilterNode):
+        * webaudio/BiquadFilterNode.h: Added.
+        (WebCore::BiquadFilterNode::create):
+        (WebCore::BiquadFilterNode::type):
+        (WebCore::BiquadFilterNode::setType):
+        (WebCore::BiquadFilterNode::frequency):
+        (WebCore::BiquadFilterNode::q):
+        (WebCore::BiquadFilterNode::gain):
+        (WebCore::BiquadFilterNode::biquadProcessor):
+        * webaudio/BiquadFilterNode.idl: Added.
+        * webaudio/BiquadProcessor.cpp:
+        (WebCore::BiquadProcessor::BiquadProcessor):
+        * webaudio/BiquadProcessor.h:
+        (WebCore::BiquadProcessor::setType):
+        * webaudio/HighPass2FilterNode.cpp:
+        (WebCore::HighPass2FilterNode::HighPass2FilterNode):
+        * webaudio/LowPass2FilterNode.cpp:
+        (WebCore::LowPass2FilterNode::LowPass2FilterNode):
+
 2011-06-08  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

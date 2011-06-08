@@ -50,6 +50,7 @@ class AudioChannelSplitter;
 class AudioGainNode;
 class AudioPannerNode;
 class AudioListener;
+class BiquadFilterNode;
 class DelayNode;
 class Document;
 class LowPass2FilterNode;
@@ -100,6 +101,7 @@ public:
     // The AudioNode create methods are called on the main thread (from JavaScript).
     PassRefPtr<AudioBufferSourceNode> createBufferSource();
     PassRefPtr<AudioGainNode> createGainNode();
+    PassRefPtr<BiquadFilterNode> createBiquadFilter();
     PassRefPtr<DelayNode> createDelayNode();
     PassRefPtr<LowPass2FilterNode> createLowPass2Filter();
     PassRefPtr<HighPass2FilterNode> createHighPass2Filter();

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010, Google Inc. All rights reserved.
+ * Copyright (C) 2011, Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -26,18 +26,19 @@
 
 #if ENABLE(WEB_AUDIO)
 
-#include "HighPass2FilterNode.h"
+#include "BiquadFilterNode.h"
 
 namespace WebCore {
 
-HighPass2FilterNode::HighPass2FilterNode(AudioContext* context, double sampleRate)
+BiquadFilterNode::BiquadFilterNode(AudioContext* context, double sampleRate)
     : AudioBasicProcessorNode(context, sampleRate)
 {
-    m_processor = adoptPtr(new BiquadProcessor(BiquadProcessor::HighPass, sampleRate, 1, false));
+    // Initially setup as lowpass filter.
+    m_processor = adoptPtr(new BiquadProcessor(BiquadProcessor::LowPass, sampleRate, 1, false));
     biquadProcessor()->parameter1()->setContext(context);
     biquadProcessor()->parameter2()->setContext(context);
     biquadProcessor()->parameter3()->setContext(context);
-    setType(NodeTypeHighPass2Filter);
+    setType(NodeTypeBiquadFilter);
 }
 
 } // namespace WebCore

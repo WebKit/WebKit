@@ -58,6 +58,7 @@ public:
         NodeTypeDestination,
         NodeTypeAudioBufferSource,
         NodeTypeJavaScript,
+        NodeTypeBiquadFilter,
         NodeTypeLowPass2Filter,
         NodeTypeHighPass2Filter,
         NodeTypePanner,

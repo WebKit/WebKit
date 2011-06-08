@@ -38,6 +38,7 @@
 #include "AudioNodeInput.h"
 #include "AudioNodeOutput.h"
 #include "AudioPannerNode.h"
+#include "BiquadFilterNode.h"
 #include "ConvolverNode.h"
 #include "DefaultAudioDestinationNode.h"
 #include "DelayNode.h"
@@ -53,6 +54,7 @@
 #include "OfflineAudioDestinationNode.h"
 #include "PlatformString.h"
 #include "RealtimeAnalyserNode.h"
+#include "ScriptCallStack.h"
 
 #if DEBUG_AUDIONODE_REFERENCES
 #include <stdio.h>
@@ -264,10 +266,20 @@ PassRefPtr<JavaScriptAudioNode> AudioContext::createJavaScriptNode(size_t buffer
     return node;
 }
 
+PassRefPtr<BiquadFilterNode> AudioContext::createBiquadFilter()
+{
+    ASSERT(isMainThread());
+    lazyInitialize();
+    return BiquadFilterNode::create(this, m_destinationNode->sampleRate());
+}
+
 PassRefPtr<LowPass2FilterNode> AudioContext::createLowPass2Filter()
 {
     ASSERT(isMainThread());
     lazyInitialize();
+    if (document())
+        document()->addMessage(JSMessageSource, LogMessageType, WarningMessageLevel, "createLowPass2Filter() is deprecated.  Use createBiquadFilter() instead.", 1, String(), 0);
+        
     return LowPass2FilterNode::create(this, m_destinationNode->sampleRate());
 }
 
@@ -275,6 +287,9 @@ PassRefPtr<HighPass2FilterNode> AudioContext::createHighPass2Filter()
 {
     ASSERT(isMainThread());
     lazyInitialize();
+    if (document())
+        document()->addMessage(JSMessageSource, LogMessageType, WarningMessageLevel, "createHighPass2Filter() is deprecated.  Use createBiquadFilter() instead.", 1, String(), 0);
+
     return HighPass2FilterNode::create(this, m_destinationNode->sampleRate());
 }
 
