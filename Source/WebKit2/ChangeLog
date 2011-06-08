@@ -1,3 +1,18 @@
+2011-06-07  Lucas Forschler  <lforschler@apple.com>
+
+    Merged 88048.
+
+    2011-06-03  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Brady Eidson.
+
+        Disable the sync message timeout for the Microsoft SharePoint plug-in
+        https://bugs.webkit.org/show_bug.cgi?id=62043
+        <rdar://problem/9536303>
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::defaultSyncMessageTimeout):
+
 2011-06-03  Lucas Forschler  <lforschler@apple.com>
 
     Merged 87839.

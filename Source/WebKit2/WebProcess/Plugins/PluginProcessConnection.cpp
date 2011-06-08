@@ -44,11 +44,21 @@ static const double syncMessageTimeout = 45;
 
 static double defaultSyncMessageTimeout(const String& pluginPath)
 {
-    // We don't want a message timeout for the AppleConnect plug-in.
     // FIXME: We should key this off something other than the path.
+
+    // We don't want a message timeout for the AppleConnect plug-in.
     if (pathGetFileName(pluginPath) == "AppleConnect.plugin")
         return CoreIPC::Connection::NoTimeout;
 
+    // We don't want a message timeout for the Microsoft SharePoint plug-in
+    // since it can spin a nested run loop in response to an NPN_Invoke, making it seem like
+    // the plug-in process is hung. See <rdar://problem/9536303>.
+    // FIXME: Instead of changing the default sync message timeout, CoreIPC could send an
+    // asynchronous message which the other process would have to reply to on the main thread.
+    // This way we could check if the plug-in process is actually hung or not.
+    if (pathGetFileName(pluginPath) == "SharePointBrowserPlugin.plugin")
+        return CoreIPC::Connection::NoTimeout;
+    
     return syncMessageTimeout;
 }
 
