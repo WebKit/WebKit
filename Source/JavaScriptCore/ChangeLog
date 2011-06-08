@@ -1,3 +1,14 @@
+2011-06-07  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig
+
+        https://bugs.webkit.org/show_bug.cgi?id=55537
+        Functions claim to have 'callee' which they actually don't (and shouldn't)
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+        * runtime/JSFunction.cpp:
+        (JSC::JSFunction::getOwnPropertyNames):
+
 2011-06-07  Juan C. Montemayor  <jmont@apple.com>
 
         Reviewed by Darin Adler.

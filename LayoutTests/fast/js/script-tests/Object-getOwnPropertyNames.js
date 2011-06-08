@@ -12,8 +12,8 @@ var expectedPropertyNamesSet = {
     "Object.create({}, { 'a': { 'value': 1, 'enumerable': false } })": "['a']",
     "Object.create([1,2,3], { 'a': { 'value': 1, 'enumerable': false } })": "['a']",
 // Function objects
-    "new Function()": "['arguments', 'callee', 'caller', 'length', 'name', 'prototype']",
-    "(function(){var x=new Function();x.__proto__=[1,2,3];return x;})()": "['arguments', 'callee', 'caller', 'length', 'name', 'prototype']",
+    "new Function()": "['arguments', 'caller', 'length', 'name', 'prototype']",
+    "(function(){var x=new Function();x.__proto__=[1,2,3];return x;})()": "['arguments', 'caller', 'length', 'name', 'prototype']",
 // String objects
     "new String('')": "['length']",
     "new String('a')": "['0', 'length']",

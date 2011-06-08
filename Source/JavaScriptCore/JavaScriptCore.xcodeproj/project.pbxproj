@@ -786,7 +786,6 @@
 		1482B78A0A4305AB00517CFC /* APICast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APICast.h; sourceTree = "<group>"; };
 		1482B7E10A43076000517CFC /* JSObjectRef.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSObjectRef.h; sourceTree = "<group>"; };
 		1482B7E20A43076000517CFC /* JSObjectRef.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSObjectRef.cpp; sourceTree = "<group>"; };
-		1483B589099BC1950016E4F0 /* JSImmediate.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSImmediate.h; sourceTree = "<group>"; };
 		148A1626095D16BB00666D0D /* ListRefPtr.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = ListRefPtr.h; sourceTree = "<group>"; };
 		148A1ECD0D10C23B0069A47C /* RefPtrHashMap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RefPtrHashMap.h; sourceTree = "<group>"; };
 		148CD1D7108CF902008163C6 /* JSContextRefPrivate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSContextRefPrivate.h; sourceTree = "<group>"; };
@@ -1890,7 +1889,6 @@
 				A8E894330CD0603F00367179 /* JSGlobalObject.h */,
 				BC756FC60E2031B200DE7D12 /* JSGlobalObjectFunctions.cpp */,
 				BC756FC70E2031B200DE7D12 /* JSGlobalObjectFunctions.h */,
-				1483B589099BC1950016E4F0 /* JSImmediate.h */,
 				65EA4C99092AF9E20093D800 /* JSLock.cpp */,
 				65EA4C9A092AF9E20093D800 /* JSLock.h */,
 				A72700780DAC605600E548D7 /* JSNotAnObject.cpp */,

@@ -280,7 +280,6 @@ void JSFunction::getOwnPropertyNames(ExecState* exec, PropertyNameArray& propert
         getOwnPropertySlot(exec, exec->propertyNames().prototype, slot);
 
         propertyNames.add(exec->propertyNames().arguments);
-        propertyNames.add(exec->propertyNames().callee);
         propertyNames.add(exec->propertyNames().caller);
         propertyNames.add(exec->propertyNames().length);
     }
