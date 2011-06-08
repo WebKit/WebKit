@@ -88,11 +88,9 @@ v8 {
         bindings/v8/custom/V8Uint16ArrayCustom.cpp \
         bindings/v8/custom/V8Uint32ArrayCustom.cpp \
         \
-        bindings/v8/ChildThreadDOMData.cpp \
         bindings/v8/DateExtension.cpp \
         bindings/v8/DOMData.cpp \
         bindings/v8/DOMDataStore.cpp \
-        bindings/v8/MainThreadDOMData.cpp \
         bindings/v8/NPV8Object.cpp \
         bindings/v8/PageScriptDebugServer.cpp \
         bindings/v8/RetainedDOMInfo.cpp \
