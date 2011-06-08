@@ -52,7 +52,7 @@ public:
 
     HandleSlot push();
 
-    void mark(HeapRootVisitor&);
+    void visit(HeapRootVisitor&);
 
 private:
     void grow();

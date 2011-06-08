@@ -62,8 +62,8 @@ public:
     void makeWeak(HandleSlot, WeakHandleOwner* = 0, void* context = 0);
     HandleSlot copyWeak(HandleSlot);
 
-    void markStrongHandles(HeapRootVisitor&);
-    void markWeakHandles(HeapRootVisitor&);
+    void visitStrongHandles(HeapRootVisitor&);
+    void visitWeakHandles(HeapRootVisitor&);
     void finalizeWeakHandles();
 
     void writeBarrier(HandleSlot, const JSValue&);

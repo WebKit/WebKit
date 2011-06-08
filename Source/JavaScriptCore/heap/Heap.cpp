@@ -177,7 +177,7 @@ void Heap::markProtectedObjects(HeapRootVisitor& heapRootVisitor)
 {
     ProtectCountSet::iterator end = m_protectedValues.end();
     for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
-        heapRootVisitor.mark(&it->first);
+        heapRootVisitor.visit(&it->first);
 }
 
 void Heap::pushTempSortVector(Vector<ValueStringPair>* tempVector)
@@ -202,7 +202,7 @@ void Heap::markTempSortVectors(HeapRootVisitor& heapRootVisitor)
         Vector<ValueStringPair>::iterator vectorEnd = tempSortingVector->end();
         for (Vector<ValueStringPair>::iterator vectorIt = tempSortingVector->begin(); vectorIt != vectorEnd; ++vectorIt) {
             if (vectorIt->first)
-                heapRootVisitor.mark(&vectorIt->first);
+                heapRootVisitor.visit(&vectorIt->first);
         }
     }
 }
@@ -249,13 +249,13 @@ void Heap::markRoots()
     if (m_markListSet && m_markListSet->size())
         MarkedArgumentBuffer::markLists(heapRootVisitor, *m_markListSet);
     if (m_globalData->exception)
-        heapRootVisitor.mark(&m_globalData->exception);
+        heapRootVisitor.visit(&m_globalData->exception);
     visitor.drain();
 
-    m_handleHeap.markStrongHandles(heapRootVisitor);
+    m_handleHeap.visitStrongHandles(heapRootVisitor);
     visitor.drain();
 
-    m_handleStack.mark(heapRootVisitor);
+    m_handleStack.visit(heapRootVisitor);
     visitor.drain();
 
     // Weak handles must be marked last, because their owners use the set of
@@ -263,7 +263,7 @@ void Heap::markRoots()
     int lastOpaqueRootCount;
     do {
         lastOpaqueRootCount = visitor.opaqueRootCount();
-        m_handleHeap.markWeakHandles(heapRootVisitor);
+        m_handleHeap.visitWeakHandles(heapRootVisitor);
         visitor.drain();
     // If the set of opaque roots has grown, more weak handles may have become reachable.
     } while (lastOpaqueRootCount != visitor.opaqueRootCount());

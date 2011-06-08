@@ -61,14 +61,14 @@ void HandleHeap::grow()
     }
 }
 
-void HandleHeap::markStrongHandles(HeapRootVisitor& heapRootMarker)
+void HandleHeap::visitStrongHandles(HeapRootVisitor& heapRootVisitor)
 {
     Node* end = m_strongList.end();
     for (Node* node = m_strongList.begin(); node != end; node = node->next())
-        heapRootMarker.mark(node->slot());
+        heapRootVisitor.visit(node->slot());
 }
 
-void HandleHeap::markWeakHandles(HeapRootVisitor& heapRootVisitor)
+void HandleHeap::visitWeakHandles(HeapRootVisitor& heapRootVisitor)
 {
     SlotVisitor& visitor = heapRootVisitor.visitor();
 
@@ -86,7 +86,7 @@ void HandleHeap::markWeakHandles(HeapRootVisitor& heapRootVisitor)
         if (!weakOwner->isReachableFromOpaqueRoots(Handle<Unknown>::wrapSlot(node->slot()), node->weakOwnerContext(), visitor))
             continue;
 
-        heapRootVisitor.mark(node->slot());
+        heapRootVisitor.visit(node->slot());
     }
 }
 

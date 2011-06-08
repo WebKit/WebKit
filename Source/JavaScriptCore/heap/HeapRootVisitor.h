@@ -40,10 +40,10 @@ namespace JSC {
         HeapRootVisitor(SlotVisitor&);
 
     public:
-        void mark(JSValue*);
-        void mark(JSValue*, size_t);
-        void mark(JSString**);
-        void mark(JSCell**);
+        void visit(JSValue*);
+        void visit(JSValue*, size_t);
+        void visit(JSString**);
+        void visit(JSCell**);
         
         SlotVisitor& visitor();
 
@@ -56,22 +56,22 @@ namespace JSC {
     {
     }
 
-    inline void HeapRootVisitor::mark(JSValue* slot)
+    inline void HeapRootVisitor::visit(JSValue* slot)
     {
         m_visitor.append(slot);
     }
 
-    inline void HeapRootVisitor::mark(JSValue* slot, size_t count)
+    inline void HeapRootVisitor::visit(JSValue* slot, size_t count)
     {
         m_visitor.append(slot, count);
     }
 
-    inline void HeapRootVisitor::mark(JSString** slot)
+    inline void HeapRootVisitor::visit(JSString** slot)
     {
         m_visitor.append(reinterpret_cast<JSCell**>(slot));
     }
 
-    inline void HeapRootVisitor::mark(JSCell** slot)
+    inline void HeapRootVisitor::visit(JSCell** slot)
     {
         m_visitor.append(slot);
     }
