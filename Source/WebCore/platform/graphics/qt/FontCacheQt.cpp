@@ -80,7 +80,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font, cons
     if (!computedFont.isValid())
         return 0;
     FontPlatformData alternateFont(computedFont);
-    return getCachedFontData(&alternateFont);
+    return getCachedFontData(&alternateFont, DoNotRetain);
 #else
     Q_UNUSED(font);
     Q_UNUSED(characters);

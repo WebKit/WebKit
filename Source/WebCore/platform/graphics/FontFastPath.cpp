@@ -37,6 +37,7 @@
 
 using namespace WTF;
 using namespace Unicode;
+using namespace std;
 
 namespace WebCore {
 
@@ -214,9 +215,11 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant va
             // display the character, probably because the font package is not installed correctly.
             // So we just always set the glyph to be same as the character, and let GDI solve it.
             page->setGlyphDataForCharacter(c, c, characterFontData);
+            characterFontData->setMaxGlyphPageTreeLevel(max(characterFontData->maxGlyphPageTreeLevel(), node->level()));
             return page->glyphDataForCharacter(c);
 #else
             page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
+            data.fontData->setMaxGlyphPageTreeLevel(max(data.fontData->maxGlyphPageTreeLevel(), node->level()));
 #endif
         }
         return data;
@@ -229,9 +232,11 @@ GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant va
 #if OS(WINCE)
         // See comment about WINCE GDI handling near setGlyphDataForCharacter above.
         page->setGlyphDataForCharacter(c, c, data.fontData);
+        data.fontData->setMaxGlyphPageTreeLevel(max(data.fontData->maxGlyphPageTreeLevel(), node->level()));
         return page->glyphDataForCharacter(c);
 #else
         page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
+        data.fontData->setMaxGlyphPageTreeLevel(max(data.fontData->maxGlyphPageTreeLevel(), node->level()));
 #endif
     }
     return data;

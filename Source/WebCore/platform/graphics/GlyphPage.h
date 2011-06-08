@@ -121,7 +121,17 @@ public:
         memset(m_glyphs, 0, sizeof(m_glyphs));
         memset(m_glyphFontData, 0, sizeof(m_glyphFontData));
     }
-    
+
+    void clearForFontData(const SimpleFontData* fontData)
+    {
+        for (size_t i = 0; i < size; ++i) {
+            if (m_glyphFontData[i] == fontData) {
+                m_glyphs[i] = 0;
+                m_glyphFontData[i] = 0;
+            }
+        }
+    }
+
     GlyphPageTreeNode* owner() const { return m_owner; }
 
     // Implemented by the platform.

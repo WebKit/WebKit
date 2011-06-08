@@ -29,6 +29,7 @@
 #import "WebKitNSStringExtras.h"
 
 #import <WebCore/Font.h>
+#import <WebCore/FontCache.h>
 #import <WebCore/GraphicsContext.h>
 #import <WebCore/TextRun.h>
 #import <WebCore/WebCoreNSStringExtras.h>
@@ -89,6 +90,8 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
         if (!flipped)
             CGContextScaleCTM(cgContext, 1, -1);
 
+        FontCachePurgePreventer fontCachePurgePreventer;
+
         Font webCoreFont(FontPlatformData(font, [font pointSize]), ![nsContext isDrawingToScreen], fontSmoothingIsAllowed ? AutoSmoothing : Antialiased);
         TextRun run(buffer.data(), length);
 
@@ -134,6 +137,8 @@ static BOOL canUseFastRenderer(const UniChar *buffer, unsigned length)
     [self getCharacters:buffer.data()];
 
     if (canUseFastRenderer(buffer.data(), length)) {
+        FontCachePurgePreventer fontCachePurgePreventer;
+
         Font webCoreFont(FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
         TextRun run(buffer.data(), length);
         return webCoreFont.width(run);

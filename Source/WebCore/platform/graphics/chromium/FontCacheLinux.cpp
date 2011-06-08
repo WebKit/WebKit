@@ -64,7 +64,7 @@ const SimpleFontData* FontCache::getFontDataForCharacters(const Font& font,
         return 0;
 
     AtomicString atomicFamily(family);
-    return getCachedFontData(getCachedFontPlatformData(font.fontDescription(), atomicFamily, false));
+    return getCachedFontData(getCachedFontPlatformData(font.fontDescription(), atomicFamily, DoNotRetain));
 }
 
 SimpleFontData* FontCache::getSimilarFontPlatformData(const Font& font)

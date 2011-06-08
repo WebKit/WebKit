@@ -43,6 +43,7 @@
 #include "CanvasStyle.h"
 #include "ExceptionCode.h"
 #include "FloatConversion.h"
+#include "FontCache.h"
 #include "GraphicsContext.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
@@ -1829,6 +1830,8 @@ void CanvasRenderingContext2D::strokeText(const String& text, float x, float y, 
 
 PassRefPtr<TextMetrics> CanvasRenderingContext2D::measureText(const String& text)
 {
+    FontCachePurgePreventer fontCachePurgePreventer;
+
     RefPtr<TextMetrics> metrics = TextMetrics::create();
 
 #if PLATFORM(QT)
@@ -1855,6 +1858,8 @@ void CanvasRenderingContext2D::drawTextInternal(const String& text, float x, flo
         return;
     if (!isfinite(x) | !isfinite(y))
         return;
+
+    FontCachePurgePreventer fontCachePurgePreventer;
 
     const Font& font = accessFont();
     const FontMetrics& fontMetrics = font.fontMetrics();

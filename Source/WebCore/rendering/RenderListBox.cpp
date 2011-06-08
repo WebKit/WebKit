@@ -37,6 +37,7 @@
 #include "EventHandler.h"
 #include "EventQueue.h"
 #include "FocusController.h"
+#include "FontCache.h"
 #include "Frame.h"
 #include "FrameSelection.h"
 #include "FrameView.h"
@@ -99,6 +100,8 @@ RenderListBox::~RenderListBox()
 
 void RenderListBox::updateFromElement()
 {
+    FontCachePurgePreventer fontCachePurgePreventer;
+
     if (m_optionsChanged) {
         const Vector<Element*>& listItems = toSelectElement(static_cast<Element*>(node()))->listItems();
         int size = numItems();
@@ -360,6 +363,8 @@ static IntSize itemOffsetForAlignment(TextRun textRun, RenderStyle* itemStyle, F
 
 void RenderListBox::paintItemForeground(PaintInfo& paintInfo, int tx, int ty, int listIndex)
 {
+    FontCachePurgePreventer fontCachePurgePreventer;
+
     SelectElement* select = toSelectElement(static_cast<Element*>(node()));
     const Vector<Element*>& listItems = select->listItems();
     Element* element = listItems[listIndex];
