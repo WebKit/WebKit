@@ -1,3 +1,50 @@
+2011-06-07  James Simonsen  <simonjam@chromium.org>
+
+        [Chromium] Unreviewed, rebaseline leopard and win7 tests due to:
+          - r87955.
+          - New fast/forms/select-baseline.html.
+          - New fullscreen/full-screen-zIndex-after.html
+
+        * platform/chromium-mac-leopard/fast/backgrounds/svg-as-background-1-expected.png:
+        * platform/chromium-mac-leopard/fast/blockflow/border-vertical-lr-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/border-radius-constraints-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/border-radius-huge-assert-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/border-radius-inline-flow-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/borderRadiusAllStylesAllCorners-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/borderRadiusInvalidColor-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/different-color-borders-expected.png:
+        * platform/chromium-mac-leopard/fast/box-shadow/basic-shadows-expected.png:
+        * platform/chromium-mac-leopard/fast/box-shadow/inset-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/box-shadow/inset-with-extraordinary-radii-and-border-expected.png: Removed.
+        * platform/chromium-mac-leopard/fast/box-shadow/spread-multiple-inset-expected.png:
+        * platform/chromium-mac-leopard/fast/clip/overflow-border-radius-clip-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/forms/basic-selects-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/menulist-clip-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/menulist-option-wrap-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/menulist-restrict-line-height-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/menulist-style-color-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/select-baseline-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/selectlist-minsize-expected.png: Renamed from LayoutTests/platform/chromium-mac-leopard/fast/forms/menulist-separator-painting-expected.png.
+        * platform/chromium-mac-leopard/fast/forms/validation-message-appearance-expected.png:
+        * platform/chromium-mac-leopard/fullscreen/full-screen-zIndex-after-expected.png: Added.
+        * platform/chromium-mac-leopard/media/video-zoom-controls-expected.png:
+        * platform/chromium-mac-leopard/svg/W3C-SVG-1.1/animate-elem-52-t-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/carto.net/button-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/embedding-external-svgs-expected.png: Added.
+        * platform/chromium-mac-leopard/svg/custom/gradient-rotated-bbox-expected.png:
+        * platform/chromium-mac-leopard/svg/wicd/rightsizing-grid-expected.png:
+        * platform/chromium-mac-leopard/svg/wicd/test-scalable-background-image1-expected.png:
+        * platform/chromium-win/http/tests/appcache/manifest-redirect-expected.txt: Added.
+        * platform/chromium-win/http/tests/appcache/resource-redirect-2-expected.txt: Added.
+        * platform/chromium-win/http/tests/appcache/resource-redirect-expected.txt: Added.
+        * platform/chromium-win/http/tests/appcache/wrong-content-type-expected.txt: Added.
+        * platform/chromium-win/http/tests/appcache/wrong-signature-2-expected.txt: Added.
+        * platform/chromium-win/http/tests/appcache/wrong-signature-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-explicit-height-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-explicit-height-expected.txt: Added.
+        * platform/chromium-win/svg/custom/object-sizing-explicit-width-expected.png: Added.
+        * platform/chromium-win/svg/custom/object-sizing-explicit-width-expected.txt: Added.
+
 2011-06-07  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by James Robinson.
