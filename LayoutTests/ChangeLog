@@ -1,3 +1,11 @@
+2011-06-07  James Kozianski  <koz@chromium.org>
+
+        [Chromium] Unreviewed. Fix expectations for registerProtocolHandler tests.
+
+        * platform/chromium-linux/fast/dom/navigator-detached-no-crash-expected.txt: Added.
+        * platform/chromium-mac-leopard/fast/dom/navigator-detached-no-crash-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-07  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Ryosuke Niwa.
