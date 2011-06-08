@@ -64,6 +64,7 @@ DrawingAreaImpl::DrawingAreaImpl(WebPage* webPage, const WebPageCreationParamete
     , m_wantsToExitAcceleratedCompositingMode(false)
     , m_isPaintingSuspended(!parameters.isVisible)
     , m_alwaysUseCompositing(false)
+    , m_shouldThrottleDisplay(true)
     , m_lastDisplayTime(0)
     , m_displayTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::displayTimerFired)
     , m_exitCompositingTimer(WebProcess::shared().runLoop(), this, &DrawingAreaImpl::exitAcceleratedCompositingMode)
@@ -191,6 +192,16 @@ void DrawingAreaImpl::forceRepaint()
 
     m_isWaitingForDidUpdate = false;
     display();
+}
+
+void DrawingAreaImpl::enableDisplayThrottling()
+{
+    m_shouldThrottleDisplay = true;
+}
+
+void DrawingAreaImpl::disableDisplayThrottling()
+{
+    m_shouldThrottleDisplay = false;
 }
 
 void DrawingAreaImpl::didInstallPageOverlay()
@@ -541,13 +552,15 @@ void DrawingAreaImpl::displayTimerFired()
     static const double minimumFrameInterval = 1.0 / 60.0;
 #endif
 
-    double timeSinceLastDisplay = currentTime() - m_lastDisplayTime;
-    double timeUntilLayerTreeHostNeedsDisplay = m_layerTreeHost && m_layerTreeHost->participatesInDisplay() ? m_layerTreeHost->timeUntilNextDisplay() : 0;
-    double timeUntilNextDisplay = max(minimumFrameInterval - timeSinceLastDisplay, timeUntilLayerTreeHostNeedsDisplay);
+    if (m_shouldThrottleDisplay) {
+        double timeSinceLastDisplay = currentTime() - m_lastDisplayTime;
+        double timeUntilLayerTreeHostNeedsDisplay = m_layerTreeHost && m_layerTreeHost->participatesInDisplay() ? m_layerTreeHost->timeUntilNextDisplay() : 0;
+        double timeUntilNextDisplay = max(minimumFrameInterval - timeSinceLastDisplay, timeUntilLayerTreeHostNeedsDisplay);
 
-    if (timeUntilNextDisplay > 0) {
-        m_displayTimer.startOneShot(timeUntilNextDisplay);
-        return;
+        if (timeUntilNextDisplay > 0) {
+            m_displayTimer.startOneShot(timeUntilNextDisplay);
+            return;
+        }
     }
 
     display();
