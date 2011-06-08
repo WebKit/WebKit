@@ -1,3 +1,31 @@
+2011-06-07  Robert Kroeger  <rjkroege@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] Add a basic gesture recognizer to the Chromium platform
+        https://bugs.webkit.org/show_bug.cgi?id=54417
+
+        Added unit tests for the basic chromium platform gesture recognizer.
+
+        * tests/InnerGestureRecognizerTest.cpp: Added.
+        (WebCore::InspectableInnerGestureRecognizer::InspectableInnerGestureRecognizer):
+        (WebCore::InspectableInnerGestureRecognizer::signature):
+        (WebCore::InspectableInnerGestureRecognizer::firstTouchPosition):
+        (WebCore::InspectableInnerGestureRecognizer::setFirstTouchTime):
+        (WebCore::InspectableInnerGestureRecognizer::firstTouchTime):
+        (WebCore::InspectableInnerGestureRecognizer::setLastTouchTime):
+        (WebCore::InspectableInnerGestureRecognizer::lastTouchTime):
+        (WebCore::InspectableInnerGestureRecognizer::edgeFunction):
+        (WebCore::InspectableInnerGestureRecognizer::updateValues):
+        (WebCore::InspectableInnerGestureRecognizer::addEdgeFunction):
+        (WebCore::BuildablePlatformTouchPoint::setX):
+        (WebCore::BuildablePlatformTouchPoint::setY):
+        (WebCore::BuildablePlatformTouchPoint::BuildablePlatformTouchPoint):
+        (WebCore::TestGestureRecognizer::TestGestureRecognizer):
+        (WebCore::TestGestureRecognizer::SetUp):
+        (WebCore::TestGestureRecognizer::TearDown):
+        (WebCore::TEST_F):
+
 2011-06-07  Vangelis Kokkevis  <vangelis@chromium.org>
 
         Reviewed by James Robinson.

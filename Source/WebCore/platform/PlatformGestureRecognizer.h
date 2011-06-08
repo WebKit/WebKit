@@ -57,6 +57,9 @@ public:
     // specifies if the |event| was actually handled by |source| (by the JavaScript)
     // Returns true if the event resulted in firing a synthetic event.
     virtual bool processTouchEventForGesture(const PlatformTouchEvent&, EventHandler*, bool handled) = 0;
+
+    // Clears the GestureRecognizer to its initial state.
+    virtual void reset() = 0;
 };
 
 } // namespace WebCore

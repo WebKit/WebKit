@@ -106,6 +106,28 @@ namespace WebCore {
         {
         }
 
+        PlatformWheelEvent(IntPoint position, IntPoint globalPosition, float deltaX, float deltaY, float wheelTicksX, float wheelTicksY, PlatformWheelEventGranularity granularity, bool isAccepted, bool shiftKey, bool ctrlKey, bool altKey, bool metaKey)
+            : m_position(position)
+            , m_globalPosition(globalPosition)
+            , m_deltaX(deltaX)
+            , m_deltaY(deltaY)
+            , m_wheelTicksX(wheelTicksX)
+            , m_wheelTicksY(wheelTicksY)
+            , m_granularity(granularity)
+            , m_isAccepted(isAccepted)
+            , m_shiftKey(shiftKey)
+            , m_ctrlKey(ctrlKey)
+            , m_altKey(altKey)
+            , m_metaKey(metaKey)
+#if PLATFORM(MAC)
+            , m_hasPreciseScrollingDeltas(false)
+            , m_phase(PlatformWheelEventPhaseNone)
+            , m_momentumPhase(PlatformWheelEventPhaseNone)
+            , m_timestamp(0)
+#endif
+        {
+        }
+
         const IntPoint& pos() const { return m_position; } // PlatformWindow coordinates.
         const IntPoint& globalPos() const { return m_globalPosition; } // Screen coordinates.
 

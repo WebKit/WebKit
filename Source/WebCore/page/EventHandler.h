@@ -166,6 +166,10 @@ public:
     bool handleGestureEvent(const PlatformGestureEvent&);
 #endif
 
+#if ENABLE(GESTURE_RECOGNIZER)
+    void resetGestureRecognizer();
+#endif
+
 #if ENABLE(CONTEXT_MENUS)
     bool sendContextMenuEvent(const PlatformMouseEvent&);
     bool sendContextMenuEventForKey();

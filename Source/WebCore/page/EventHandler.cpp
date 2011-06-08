@@ -3292,6 +3292,16 @@ bool EventHandler::handleTouchEvent(const PlatformTouchEvent& event)
 
     return defaultPrevented;
 }
+
+#if ENABLE(GESTURE_RECOGNIZER)
+void EventHandler::resetGestureRecognizer()
+{
+    if (m_gestureRecognizer)
+        m_gestureRecognizer->reset();
+}
+#endif
+
+
 #endif
 
 }

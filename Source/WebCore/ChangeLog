@@ -1,3 +1,61 @@
+2011-06-07  Robert Kroeger  <rjkroege@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [chromium] Add a basic gesture recognizer to the Chromium platform
+        https://bugs.webkit.org/show_bug.cgi?id=54417
+
+        Adds a basic gesture recognizer to the Chromium platform. Adds an entry
+        point to the GestureRecognizer to reset any internal state on a page reset.
+        Resetting the gesture recognizer on page load is necesary for reliable
+        layout test execution and improves gesture recognizer operational
+        robustness.
+
+        Added an additional constructor to permit building a synthetic
+        PlatformWheelEvent.
+
+        Small modifications to the PlatformGestureRecognizer as required to
+        implement the simple Chromium platform gesture recognizer.
+
+        Tests: fast/events/touch/touch-gesture-click.html
+
+        * WebCore.gypi:
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::resetGestureRecognizer):
+        * page/EventHandler.h:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::reset):
+        * platform/PlatformGestureRecognizer.h:
+        * platform/PlatformWheelEvent.h:
+        (WebCore::PlatformWheelEvent::PlatformWheelEvent):
+        * platform/chromium/GestureRecognizerChromium.cpp: Added.
+        (WebCore::InnerGestureRecognizer::InnerGestureRecognizer):
+        (WebCore::InnerGestureRecognizer::reset):
+        (WebCore::InnerGestureRecognizer::~InnerGestureRecognizer):
+        (WebCore::InnerGestureRecognizer::addEdgeFunction):
+        (WebCore::InnerGestureRecognizer::isInClickTimeWindow):
+        (WebCore::InnerGestureRecognizer::isInsideManhattanSquare):
+        (WebCore::InnerGestureRecognizer::dispatchSyntheticClick):
+        (WebCore::InnerGestureRecognizer::processTouchEventForGesture):
+        (WebCore::InnerGestureRecognizer::scrollViaTouchMotion):
+        (WebCore::InnerGestureRecognizer::updateValues):
+        (WebCore::InnerGestureRecognizer::signature):
+        (WebCore::touchDown):
+        (WebCore::noGesture):
+        (WebCore::click):
+        (WebCore::isClickOrScroll):
+        (WebCore::inScroll):
+        (WebCore::PlatformGestureRecognizer::create):
+        (WebCore::PlatformGestureRecognizer::PlatformGestureRecognizer):
+        (WebCore::PlatformGestureRecognizer::~PlatformGestureRecognizer):
+        (WebCore::GestureRecognizerChromium::GestureRecognizerChromium):
+        (WebCore::GestureRecognizerChromium::~GestureRecognizerChromium):
+        * platform/chromium/GestureRecognizerChromium.h: Added.
+        (WebCore::InnerGestureRecognizer::setState):
+        (WebCore::InnerGestureRecognizer::state):
+        (WebCore::GestureRecognizerChromium::reset):
+        (WebCore::GestureRecognizerChromium::processTouchEventForGesture):
+
 2011-06-07  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Andreas Kling.
