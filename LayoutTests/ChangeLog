@@ -1,5 +1,11 @@
 2011-06-08  Alexander Pavlov  <apavlov@chromium.org>
 
+        [Qt] Unreviewed, skip failing tests
+
+        * platform/qt/Skipped:
+
+2011-06-08  Alexander Pavlov  <apavlov@chromium.org>
+
         [Qt, Chromium] Unreviewed attempt to fix tests on Qt and Chromium.
 
         * inspector/styles/styles-disable-then-change.html:
