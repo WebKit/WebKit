@@ -16,13 +16,16 @@ function onIFrameLoad()
 
 function test()
 {
-    InspectorTest.selectNodeWithId("iframe-body", step1);
+    InspectorTest.selectNodeWithId("iframe-body");
+    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1, true);
 
-    function step1()
+    function step1(node)
     {
-        var treeItem = InspectorTest.getElementStylePropertyTreeItem("background");
-        InspectorTest.dumpStyleTreeItem(treeItem, "");
-        InspectorTest.completeTest();
+        if (node && node.getAttribute("id") === "iframe-body") {
+            var treeItem = InspectorTest.getElementStylePropertyTreeItem("background");
+            InspectorTest.dumpStyleTreeItem(treeItem, "");
+            InspectorTest.completeTest();
+        }
     }
 }
 

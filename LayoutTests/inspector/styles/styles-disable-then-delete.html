@@ -6,7 +6,8 @@
 
 function test()
 {
-    InspectorTest.selectNodeWithId("container", step1);
+    InspectorTest.selectNodeWithId("container");
+    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1);
 
     function step1()
     {
@@ -34,15 +35,17 @@ function test()
 
     function step3()
     {
-        InspectorTest.selectNodeWithId("other", step4);
+        InspectorTest.selectNodeWithId("other");
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step4);
     }
 
     function step4()
     {
-        InspectorTest.selectNodeWithId("container", step5);
+        InspectorTest.selectNodeWithId("container");
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step5);
     }
 
-    function step5(node)
+    function step5()
     {
         InspectorTest.addResult("After delete");
         InspectorTest.dumpSelectedElementStyles(true, true);

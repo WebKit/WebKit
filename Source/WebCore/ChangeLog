@@ -1,3 +1,16 @@
+2011-06-08  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: node selection is slow in the Elements panel.
+        https://bugs.webkit.org/show_bug.cgi?id=60813
+
+        Schedule full style updates rather than request all node styles from the backend immediately.
+
+        * inspector/front-end/StylesSidebarPane.js:
+        (WebInspector.StylesSidebarPane.prototype.update.reloadAllStyles):
+        (WebInspector.StylesSidebarPane.prototype.update):
+
 2011-06-08  Andreas Kling  <andreas.kling@nokia.com>
 
         Reviewed by Laszlo Gombos.

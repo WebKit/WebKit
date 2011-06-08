@@ -8,12 +8,15 @@
 
 function test()
 {
-    InspectorTest.selectNodeWithId("foo", step1);
+    InspectorTest.selectNodeWithId("foo");
+    InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step1, true);
 
-    function step1()
+    function step1(node)
     {
-        InspectorTest.dumpSelectedElementStyles(false, false);
-        InspectorTest.completeTest();
+        if (node && node.getAttribute("id") === "foo") {
+            InspectorTest.dumpSelectedElementStyles(false, false);
+            InspectorTest.completeTest();
+        }
     }
 }
 
