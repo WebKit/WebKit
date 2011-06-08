@@ -80,7 +80,20 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
     sourceFileForScriptURL: function(scriptURL)
     {
-        return this._sourceFiles[scriptURL];
+        return this._sourceFiles[this._createSourceFileId(scriptURL)];
+    },
+
+    scriptLocationToUILocation: function(sourceURL, sourceId, lineNumber, columnNumber, callback)
+    {
+        var sourceFile = this._sourceFileForScript(sourceURL, sourceId);
+        var scriptLocation = { lineNumber: lineNumber, columnNumber: columnNumber };
+
+        function didRequestSourceMapping(mapping)
+        {
+            var lineNumber = mapping.scriptLocationToSourceLine(scriptLocation);
+            callback(sourceFile.id, lineNumber);
+        }
+        sourceFile.requestSourceMapping(didRequestSourceMapping);
     },
 
     requestSourceFileContent: function(sourceFileId, callback)

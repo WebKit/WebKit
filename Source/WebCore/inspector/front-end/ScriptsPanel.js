@@ -511,18 +511,18 @@ WebInspector.ScriptsPanel.prototype = {
 
     showAnchorLocation: function(anchor)
     {
-        var sourceFile = this._presentationModel.sourceFileForScriptURL(anchor.href);
         var anchorLineNumber = parseInt(anchor.getAttribute("line_number"));
-        if (anchorLineNumber !== NaN) {
-            function didRequestSourceMapping(mapping)
-            {
-                var lineNumber = mapping.scriptLocationToSourceLine({ lineNumber: anchorLineNumber - 1, columnNumber: 0 });
-                this._showSourceLine(sourceFile.id, lineNumber);
-            }
-            sourceFile.requestSourceMapping(didRequestSourceMapping.bind(this));
-            return;
+        var hasAnchorLineNumber = anchorLineNumber !== NaN;
+        var lineNumber = hasAnchorLineNumber ? anchorLineNumber - 1 : 0;
+
+        function didGetUILocation(sourceFileId, lineNumber)
+        {
+            if (hasAnchorLineNumber)
+                this._showSourceLine(sourceFileId, lineNumber);
+            else
+                this._showSourceFrameAndAddToHistory(sourceFileId);
         }
-        this._showSourceFrameAndAddToHistory(sourceFile.id);
+        this._presentationModel.scriptLocationToUILocation(anchor.href, null, lineNumber, 0, didGetUILocation.bind(this));
     },
 
     _showSourceLine: function(sourceFileId, lineNumber)

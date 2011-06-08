@@ -1,3 +1,18 @@
+2011-05-18  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: hide script location to ui location conversion details from ScriptsPanel.
+        https://bugs.webkit.org/show_bug.cgi?id=61035
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype.sourceFileForScriptURL):
+        (WebInspector.DebuggerPresentationModel.prototype.scriptLocationToUILocation.didRequestSourceMapping):
+        (WebInspector.DebuggerPresentationModel.prototype.scriptLocationToUILocation):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype.showAnchorLocation.didGetUILocation):
+        (WebInspector.ScriptsPanel.prototype.showAnchorLocation):
+
 2011-06-08  Tommy Widenflycht  <tommyw@google.com>
 
         Reviewed by Tony Gentilcore.
