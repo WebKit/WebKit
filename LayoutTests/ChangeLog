@@ -1,3 +1,15 @@
+2011-05-25  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        --webkit-visual-word does not work well in words separated by multiple spaces
+        https://bugs.webkit.org/show_bug.cgi?id=61324
+
+        Add test cases for preserving white spaces and test case for words not separated by space.
+
+        * editing/selection/move-by-word-visually-expected.txt:
+        * editing/selection/move-by-word-visually.html:
+
 2011-06-08  Greg Simon  <gregsimon@chromium.org>
 
         Reviewed by Dimitri Glazkov.

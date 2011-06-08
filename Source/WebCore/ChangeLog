@@ -1,3 +1,38 @@
+2011-05-25  Xiaomei Ji  <xji@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        --webkit-visual-word does not work well in words separated by multiple spaces
+        https://bugs.webkit.org/show_bug.cgi?id=61324
+
+        Remove positionBeforeNextWord and positionAfterPreviousWord short-cuts. They try to find the
+        right word boundary (before the space or after the space) by using previousWordPosition and
+        nextWordPosition. But they assume words are separated by single space and are not correct 
+        for words separated by multiple spaces and words not separated by space.
+
+        Consider positionBeforeNextWord() for example, 
+
+        First, it checks whether the current position is after the current word by checking current
+        position's previousWordPosition's nextWordPosition is the same as current position, which is
+        wrong for words separated by multiple spaces. For example, given words A and B separated by 
+        3 continuous spaces "A   B", position "A|", "A |", and "A  |" should all be considered as 
+        position after current word. But for position "A |", its previousWordPosition's 
+        nextWordPosition is position "A|", which is different from its current position, so the
+        current position is not considered as a position after current word, consequently,
+        instead of returning the right position as "A   |B", positionBeforeNextWord returns the
+        position before next next word, as "A   B |C". Similar happens for position "A  |".
+
+        Second, given 3 Chinese words "ABC" that are not segmented by space, when cursor is at 
+        "A|BC", positionBeforeNextWord() returns the same position after calling current position's
+        nextWordPosition's previousWordPosition. It should returns position "AB|C".
+
+        For those cases, we will have to collect all the word breaks inside the box and look for
+        the one at left or right of current position.
+
+        * editing/visible_units.cpp:
+        (WebCore::leftWordPosition):
+        (WebCore::rightWordPosition):
+
 2011-06-08  Greg Simon  <gregsimon@chromium.org>
 
         Reviewed by Dimitri Glazkov.
