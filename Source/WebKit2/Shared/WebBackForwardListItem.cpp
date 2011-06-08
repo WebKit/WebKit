@@ -56,6 +56,7 @@ uint64_t WebBackForwardListItem::highedUsedItemID()
 
 void WebBackForwardListItem::setBackForwardData(const uint8_t* data, size_t size)
 {
+    m_backForwardData.clear();
     m_backForwardData.reserveCapacity(size);
     m_backForwardData.append(data, size);
 }
