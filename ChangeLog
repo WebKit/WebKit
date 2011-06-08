@@ -1,3 +1,12 @@
+2011-06-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Antonio Gomes.
+
+        [EFL] Enable PROGRESS_TAG feature
+        https://bugs.webkit.org/show_bug.cgi?id=62212
+
+        * Source/cmake/OptionsEfl.cmake: Turn on PROGRESS_TAG by default.
+
 2011-06-08  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
