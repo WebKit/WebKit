@@ -4548,3 +4548,8 @@ a.worker-item:hover {
 .resource-view.json {
     padding: 5px;
 }
+
+.resource-view.html iframe {
+    width: 100%;
+    height: 100%;
+}

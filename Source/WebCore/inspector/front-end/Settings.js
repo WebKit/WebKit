@@ -69,7 +69,7 @@ WebInspector.Settings = function()
     this.installApplicationSetting("pauseOnExceptionStateString", WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions);
     this.installApplicationSetting("resourcesLargeRows", true);
     this.installApplicationSetting("resourcesSortOptions", {timeOption: "responseTime", sizeOption: "transferSize"});
-    this.installApplicationSetting("resourceViewTab", "content");
+    this.installApplicationSetting("resourceViewTab", "preview");
     this.installApplicationSetting("showInheritedComputedStyleProperties", false);
     this.installApplicationSetting("showUserAgentStyles", true);
     this.installApplicationSetting("watchExpressions", []);

@@ -1,3 +1,38 @@
+2011-06-08  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Render non-document HTML resources as HTML
+        https://bugs.webkit.org/show_bug.cgi?id=58886
+
+        * English.lproj/localizedStrings.js:
+        * WebCore.gypi:
+        * WebCore.vcproj/WebCore.vcproj:
+        * inspector/front-end/NetworkItemView.js:
+        (WebInspector.NetworkItemView):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype._mimeTypeIsConsistentWithType):
+        (WebInspector.Resource.prototype.hasErrorStatusCode):
+        * inspector/front-end/ResourceHTMLView.js: Added.
+        (WebInspector.ResourceHTMLView):
+        (WebInspector.ResourceHTMLView.prototype.hasContent):
+        (WebInspector.ResourceHTMLView.prototype.show):
+        (WebInspector.ResourceHTMLView.prototype.hide):
+        (WebInspector.ResourceHTMLView.prototype._createIFrame):
+        * inspector/front-end/ResourcePreviewView.js: Added.
+        (WebInspector.ResourcePreviewView):
+        (WebInspector.ResourcePreviewView.prototype.hasContent):
+        (WebInspector.ResourcePreviewView.prototype.show):
+        (WebInspector.ResourcePreviewView.prototype._ensureInnerViewShown.callback):
+        (WebInspector.ResourcePreviewView.prototype._ensureInnerViewShown):
+        (WebInspector.ResourcePreviewView.prototype._createInnerView):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        * inspector/front-end/WebKit.qrc:
+        * inspector/front-end/inspector.css:
+        (.resource-view.html iframe):
+        * inspector/front-end/inspector.html:
+
 2011-05-18  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

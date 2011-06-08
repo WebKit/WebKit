@@ -745,7 +745,7 @@ WebInspector.Resource.prototype = {
         // Also, if a URL like http://localhost/wiki/load.php?debug=true&lang=en produces text/css and gets reloaded,
         // it is 304 Not Modified and its guessed mime-type is text/php, which is wrong.
         // Don't check for mime-types in 304-resources.
-        if (this.statusCode >= 400 || this.statusCode === 304)
+        if (this.hasErrorStatusCode() || this.statusCode === 304)
             return true;
 
         if (typeof this.type === "undefined"
@@ -879,7 +879,7 @@ WebInspector.Resource.prototype = {
     {
         return this.url.match(/^data:/i);
     },
-    
+
     requestContentType: function()
     {
         return this.requestHeaderValue("Content-Type");
@@ -889,7 +889,12 @@ WebInspector.Resource.prototype = {
     {
         return "text/ping" === this.requestContentType();
     },
-    
+
+    hasErrorStatusCode: function()
+    {
+        return this.statusCode >= 400;
+    },
+
     _contentURL: function()
     {
         const maxDataUrlSize = 1024 * 1024;

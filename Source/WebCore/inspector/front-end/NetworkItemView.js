@@ -33,22 +33,16 @@ WebInspector.NetworkItemView = function(resource)
     WebInspector.View.call(this);
 
     this.element.addStyleClass("network-item-view");
-
-    this._headersView = new WebInspector.ResourceHeadersView(resource);
     this._tabbedPane = new WebInspector.TabbedPane(this.element);
-    this._tabbedPane.appendTab("headers", WebInspector.UIString("Headers"), this._headersView);
 
-    var contentView = WebInspector.NetworkItemView._contentViewForResource(resource);
-    if (contentView.hasContent())
-        this._tabbedPane.appendTab("content", WebInspector.UIString("Content"), contentView);
+    var headersView = new WebInspector.ResourceHeadersView(resource);
+    this._tabbedPane.appendTab("headers", WebInspector.UIString("Headers"), headersView);
 
-    if (resource.type === WebInspector.Resource.Type.XHR && resource.content) {
-        var parsedJSON = WebInspector.ResourceJSONView.parseJSON(resource.content);
-        if (parsedJSON) {
-            var jsonView = new WebInspector.ResourceJSONView(resource, parsedJSON);
-            this._tabbedPane.appendTab("json", WebInspector.UIString("JSON"), jsonView);
-        }
-    }
+    var responseView = new WebInspector.ResourceSourceFrame(resource);
+    var previewView = new WebInspector.ResourcePreviewView(resource, responseView);
+
+    this._tabbedPane.appendTab("preview", WebInspector.UIString("Preview"), previewView);
+    this._tabbedPane.appendTab("response", WebInspector.UIString("Response"), responseView);
 
     if (Preferences.showCookiesTab) {
         this._cookiesView = new WebInspector.ResourceCookiesView(resource);
@@ -61,13 +55,6 @@ WebInspector.NetworkItemView = function(resource)
     }
 
     this._tabbedPane.addEventListener("tab-selected", this._tabSelected, this);
-}
-
-WebInspector.NetworkItemView._contentViewForResource = function(resource)
-{
-    if (WebInspector.ResourceView.hasTextContent(resource))
-        return new WebInspector.ResourceSourceFrame(resource)
-    return WebInspector.ResourceView.nonSourceViewForResource(resource);
 }
 
 WebInspector.NetworkItemView.prototype = {

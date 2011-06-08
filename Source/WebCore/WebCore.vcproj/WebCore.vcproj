@@ -68009,6 +68009,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\ResourceHTMLView.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\ResourceHeadersView.js"
 					>
 				</File>
@@ -68018,6 +68022,10 @@
 				</File>
 				<File
 					RelativePath="..\inspector\front-end\ResourcesPanel.js"
+					>
+				</File>
+				<File
+					RelativePath="..\inspector\front-end\ResourcePreviewView.js"
 					>
 				</File>
 				<File
