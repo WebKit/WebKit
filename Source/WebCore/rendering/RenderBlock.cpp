@@ -3934,7 +3934,7 @@ bool RenderBlock::nodeAtPoint(const HitTestRequest& request, HitTestResult& resu
             }
             if (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer, scrolledOffset.width(), scrolledOffset.height()))
                 return true;
-        } else if (hitTestColumns(request, result, pointInContainer, scrolledOffset.width(), scrolledOffset.height(), hitTestAction)) {
+        } else if (hitTestColumns(request, result, pointInContainer, toPoint(scrolledOffset), hitTestAction)) {
             updateHitTestResult(result, pointInContainer - localOffset);
             return true;
         }
@@ -3982,7 +3982,7 @@ bool RenderBlock::hitTestFloats(const HitTestRequest& request, HitTestResult& re
     return false;
 }
 
-bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, int tx, int ty, HitTestAction hitTestAction)
+bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& result, const IntPoint& pointInContainer, const IntPoint& accumulatedOffset, HitTestAction hitTestAction)
 {
     // We need to do multiple passes, breaking up our hit testing into strips.
     ColumnInfo* colInfo = columnInfo();
@@ -4010,19 +4010,18 @@ bool RenderBlock::hitTestColumns(const HitTestRequest& request, HitTestResult& r
             currLogicalTopOffset -= blockDelta;
         else
             currLogicalTopOffset += blockDelta;
-        colRect.move(tx, ty);
+        colRect.moveBy(accumulatedOffset);
         
         if (colRect.intersects(result.rectForPoint(pointInContainer))) {
             // The point is inside this column.
-            // Adjust tx and ty to change where we hit test.
+            // Adjust accumulatedOffset to change where we hit test.
         
             IntSize offset = isHorizontal ? IntSize(currLogicalLeftOffset, currLogicalTopOffset) : IntSize(currLogicalTopOffset, currLogicalLeftOffset);
-            int finalX = tx + offset.width();
-            int finalY = ty + offset.height();
+            IntPoint finalLocation = accumulatedOffset + offset;
             if (result.isRectBasedTest() && !colRect.contains(result.rectForPoint(pointInContainer)))
-                hitTestContents(request, result, pointInContainer, IntPoint(finalX, finalY), hitTestAction);
+                hitTestContents(request, result, pointInContainer, finalLocation, hitTestAction);
             else
-                return hitTestContents(request, result, pointInContainer, IntPoint(finalX, finalY), hitTestAction) || (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer, finalX, finalY));
+                return hitTestContents(request, result, pointInContainer, finalLocation, hitTestAction) || (hitTestAction == HitTestFloat && hitTestFloats(request, result, pointInContainer, finalLocation.x(), finalLocation.y()));
         }
     }
 
