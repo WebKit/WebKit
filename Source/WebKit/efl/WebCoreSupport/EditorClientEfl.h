@@ -36,6 +36,7 @@
 #include "EditorClient.h"
 #include "TextCheckerClient.h"
 
+#include <wtf/Deque.h>
 #include <wtf/Forward.h>
 
 typedef struct _Evas_Object Evas_Object;
@@ -44,6 +45,9 @@ namespace WebCore {
 class Page;
 
 class EditorClientEfl : public EditorClient, public TextCheckerClient {
+protected:
+    WTF::Deque<WTF::RefPtr<WebCore::EditCommand> > undoStack;
+
 public:
     EditorClientEfl(Evas_Object *view);
     ~EditorClientEfl();
