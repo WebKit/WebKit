@@ -86,6 +86,7 @@ contributors_who_are_not_committers = [
     Contributor("Luke Macpherson", ["macpherson@chromium.org", "macpherson@google.com"], "macpherson"),
     Contributor("Naoki Takano", "takano.naoki@gmail.com", "honten"),
     Contributor("Nat Duca", ["nduca@chromium.org", "nduca@google.com"], "nduca"),
+    Contributor("Pierre Rossi", "pierre.rossi@gmail.com", "elproxy"),
 ]
 
 

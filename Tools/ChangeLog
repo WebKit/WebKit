@@ -1,3 +1,9 @@
+2011-06-08  Andreas Kling  <kling@webkit.org>
+
+        Add Pierre Rossi to contributors list for EZ-CC.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-06-08  Ilya Sherman  <isherman@chromium.org>
 
         Reviewed by Andreas Kling.
