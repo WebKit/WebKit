@@ -1,3 +1,14 @@
+2011-06-08  Ryan Sleevi  <rsleevi@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        Suppress C++0x compat warnings when compiling Chromium port with GCC 4.6
+
+        Compiling Chromium port under GCC 4.6 produces warnings about nullptr
+        https://bugs.webkit.org/show_bug.cgi?id=62242
+
+        * WebKit.gyp:
+
 2011-06-08  Greg Simon  <gregsimon@chromium.org>
 
         Reviewed by Dimitri Glazkov.

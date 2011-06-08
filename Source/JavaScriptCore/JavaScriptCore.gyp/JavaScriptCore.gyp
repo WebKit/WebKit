@@ -47,6 +47,15 @@
       }],
     ],
   },
+  'conditions': [
+    ['os_posix == 1 and OS != "mac" and gcc_version==46', {
+      'target_defaults': {
+        # Disable warnings about c++0x compatibility, as some names (such as nullptr) conflict
+        # with upcoming c++0x types.
+        'cflags_cc': ['-Wno-c++0x-compat'],
+      },
+    }],
+  ],
   'targets': [
     {
       # This target sets up defines and includes that are required by WTF and
@@ -236,3 +245,9 @@
     },
   ], # targets
 }
+
+# Local Variables:
+# tab-width:2
+# indent-tabs-mode:nil
+# End:
+# vim: set expandtab tabstop=2 shiftwidth=2:
