@@ -490,7 +490,7 @@ void MediaPlayerPrivateQt::updateStates()
 
     if (currentError != QMediaPlayer::NoError) {
         m_readyState = MediaPlayer::HaveNothing;
-        if (currentError == QMediaPlayer::FormatError)
+        if (currentError == QMediaPlayer::FormatError || currentError == QMediaPlayer::ResourceError)
             m_networkState = MediaPlayer::FormatError;
         else
             m_networkState = MediaPlayer::NetworkError;
@@ -515,7 +515,7 @@ void MediaPlayerPrivateQt::updateStates()
         m_networkState = MediaPlayer::Loaded;
         m_readyState = MediaPlayer::HaveEnoughData;
     } else if (currentStatus == QMediaPlayer::InvalidMedia) {
-        m_networkState = MediaPlayer::NetworkError;
+        m_networkState = MediaPlayer::FormatError;
         m_readyState = MediaPlayer::HaveNothing;
     }
 

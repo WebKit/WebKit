@@ -1,3 +1,14 @@
+2011-06-07  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix the error code for media resource failures when using QtMobility
+        https://bugs.webkit.org/show_bug.cgi?id=55901
+
+        Unskip the tests which are now passing.
+
+        * platform/qt/Skipped:
+
 2011-06-07  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.

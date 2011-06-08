@@ -1,3 +1,17 @@
+2011-06-07  Yi Shen  <yi.4.shen@nokia.com>
+
+        Reviewed by Simon Hausmann.
+
+        [Qt] Fix the error code for media resource failures when using QtMobility
+        https://bugs.webkit.org/show_bug.cgi?id=55901
+
+        To indicate the media resource failures, set the network state to
+        MediaPlayer::FormatError when receives QMediaPlayer::InvalidMedia or
+        QMediaPlayer::ResourceError.
+
+        * platform/graphics/qt/MediaPlayerPrivateQt.cpp:
+        (WebCore::MediaPlayerPrivateQt::updateStates):
+
 2011-06-07  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

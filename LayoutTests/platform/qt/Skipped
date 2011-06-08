@@ -585,7 +585,6 @@ media/video-document-types.html
 media/video-duration-known-after-eos.html
 media/video-element-other-namespace-crash.html
 media/video-empty-source.html
-media/video-error-does-not-exist.html
 media/video-layer-crash.html
 media/video-load-networkState.html
 media/video-loop.html
@@ -607,10 +606,6 @@ media/video-source-error.html
 media/video-source-error-no-candidate.html
 media/video-source-type.html
 media/video-source-type-params.html
-media/video-src-change.html
-media/video-src-invalid-remove.html
-media/video-src-none.html
-media/video-src-plus-source.html
 media/video-timeupdate-during-playback.html
 media/video-timeupdate-reverse-play.html
 media/video-transformed.html
