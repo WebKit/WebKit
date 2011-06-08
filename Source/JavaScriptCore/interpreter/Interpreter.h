@@ -100,8 +100,8 @@ namespace JSC {
         JSValue execute(EvalExecutable* evalNode, CallFrame* exec, JSObject* thisObj, ScopeChainNode* scopeChain);
 
         JSValue retrieveArguments(CallFrame*, JSFunction*) const;
-        JSValue retrieveCaller(CallFrame*, JSFunction*) const;
-        void retrieveLastCaller(CallFrame*, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValue& function) const;
+        JS_EXPORT_PRIVATE JSValue retrieveCaller(CallFrame*, JSFunction*) const;
+        JS_EXPORT_PRIVATE void retrieveLastCaller(CallFrame*, int& lineNumber, intptr_t& sourceID, UString& sourceURL, JSValue& function) const;
         
         void getArgumentsData(CallFrame*, JSFunction*&, ptrdiff_t& firstParameterIndex, Register*& argv, int& argc);
         
