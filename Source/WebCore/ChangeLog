@@ -1,3 +1,16 @@
+2011-06-08  Tim Horton  <timothy_horton@apple.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        Use correct CFURLStorageSessionRef definition on Leopard, as
+        we created an inconsistency in const-ness between
+        WebCoreSystemInterface.h and these two files in the case
+        of Leopard only.
+        https://bugs.webkit.org/show_bug.cgi?id=62223
+
+        * platform/network/ResourceHandle.h:
+        * platform/network/cf/ResourceRequest.h:
+
 2011-06-08  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Mihai Parparita.
