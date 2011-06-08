@@ -1,3 +1,22 @@
+2011-06-07  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Convert fast/forms/thumbslider-crash.html to dumpAsText
+        https://bugs.webkit.org/show_bug.cgi?id=62195
+
+        * fast/forms/thumbslider-crash-expected.txt: Added.
+        * fast/forms/thumbslider-crash.html:
+        * platform/chromium-linux/fast/forms/thumbslider-crash-expected.png: Removed.
+        * platform/chromium-win/fast/forms/thumbslider-crash-expected.png: Removed.
+        * platform/chromium-win/fast/forms/thumbslider-crash-expected.txt: Removed.
+        * platform/gtk/fast/forms/thumbslider-crash-expected.png: Removed.
+        * platform/gtk/fast/forms/thumbslider-crash-expected.txt: Removed.
+        * platform/mac-leopard/fast/forms/thumbslider-crash-expected.png: Removed.
+        * platform/mac/fast/forms/thumbslider-crash-expected.png: Removed.
+        * platform/mac/fast/forms/thumbslider-crash-expected.txt: Removed.
+        * platform/qt/fast/forms/thumbslider-crash-expected.txt: Removed.
+
 2011-06-07  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, rebaseline leopard and win7 tests due to:
