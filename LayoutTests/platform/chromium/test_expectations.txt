@@ -3550,6 +3550,9 @@ BUGWK60099 DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH P
 BUGWK60096 DEBUG : fast/css/last-child-pseudo-class.html = TEXT PASS
 BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEXT PASS
 
+// Needs rebaseline
+BUGWK62243 GPU : compositing/geometry/vertical-scroll-composited.html = IMAGE
+
 BUGWK60102 LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
 BUGWK60102 LINUX DEBUG GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/geometry/tall-page-composited.html = IMAGE

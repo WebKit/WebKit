@@ -1,3 +1,15 @@
+2011-06-08  John Bauman  <jbauman@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Only draw portions of tiles in contentRect
+        https://bugs.webkit.org/show_bug.cgi?id=62243
+
+        * platform/chromium/test_expectations.txt:
+        * compositing/repaint/shrink-layer.html: Added.
+        * compositing/repaint/shrink-layer-expected.png: Added.
+        * compositing/repaint/shrink-layer-expected.txt: Added.
+
 2011-06-08  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

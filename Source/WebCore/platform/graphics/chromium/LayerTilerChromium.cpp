@@ -346,6 +346,7 @@ void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMa
 
     int left, top, right, bottom;
     contentRectToTileIndices(contentRect, left, top, right, bottom);
+    IntRect layerRect = contentRectToLayerRect(contentRect);
     for (int j = top; j <= bottom; ++j) {
         for (int i = left; i <= right; ++i) {
             Tile* tile = tileAt(i, j);
@@ -359,10 +360,15 @@ void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMa
             // Don't use tileContentRect here, as that contains the full
             // rect with border texels which shouldn't be drawn.
             IntRect tileRect = m_tilingData.tileBounds(m_tilingData.tileIndex(tile->i(), tile->j()));
+            IntRect displayRect = tileRect;
+            tileRect.intersect(layerRect);
+            // Keep track of how the top left has moved, so the texture can be
+            // offset the same amount.
+            IntSize offset = tileRect.minXMinYCorner() - displayRect.minXMinYCorner();
             tileRect.move(m_layerPosition.x(), m_layerPosition.y());
             tileMatrix.translate3d(tileRect.x() + tileRect.width() / 2.0, tileRect.y() + tileRect.height() / 2.0, 0);
 
-            IntPoint texOffset = m_tilingData.textureOffset(tile->i(), tile->j());
+            IntPoint texOffset = m_tilingData.textureOffset(tile->i(), tile->j()) + offset;
             float tileWidth = static_cast<float>(m_tileSize.width());
             float tileHeight = static_cast<float>(m_tileSize.height());
             float texTranslateX = texOffset.x() / tileWidth;
