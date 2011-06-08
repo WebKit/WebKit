@@ -60,6 +60,7 @@
 @property CGFloat knobAlpha;
 @property CGFloat trackAlpha;
 @property CGFloat knobProportion;
+@property NSInteger knobStyle;
 @property(getter=isEnabled) BOOL enabled;
 @property(getter=isHorizontal) BOOL horizontal;
 @property double doubleValue;
@@ -75,6 +76,7 @@
 - (void)setOverlayScrollerState:(NSScrollerStyle)state
                forceImmediately:(BOOL)flag;
 - (void)setDelegate:(id)delegate;
+- (NSRect)rectForPart:(NSUInteger)arg1;
 
 @end
 
@@ -122,6 +124,11 @@ static NSControlSize scrollbarControlSizeToNSControlSize(int controlSize)
 
 static NSScrollerStyle preferredScrollerStyle()
 {
+    // TODO(sail): Disable overlay scrollbars for now until the following issues are fixed:
+    // #1: Invalidation issues causes the scrollbar to leave trailing artifacts.
+    // #2: Find tick marks need to be drawn on the scrollbar track.
+    return NSScrollerStyleLegacy;
+
     if ([NSScroller respondsToSelector:@selector(preferredScrollerStyle)])
         return [NSScroller preferredScrollerStyle];
     return NSScrollerStyleLegacy;
@@ -159,6 +166,7 @@ void wkScrollbarPainterPaint(WKScrollbarPainterRef painter, bool enabled, double
         frameRect.size.height = [painter trackWidth];
     else
         frameRect.size.width = [painter trackWidth];
+    frameRect.origin = NSZeroPoint;
 
     [painter drawKnobSlotInRect:frameRect highlight:NO];
     [painter drawKnob];
@@ -230,7 +238,7 @@ void wkSetScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef painte
 
 CGRect wkScrollbarPainterKnobRect(WKScrollbarPainterRef painter)
 {
-    return NSRectToCGRect(NSZeroRect);
+    return NSRectToCGRect([painter rectForPart:NSScrollerKnob]);
 }
 
 void wkSetScrollbarPainterKnobAlpha(WKScrollbarPainterRef painter, CGFloat alpha)
@@ -245,7 +253,7 @@ void wkSetScrollbarPainterTrackAlpha(WKScrollbarPainterRef painter, CGFloat alph
 
 void wkSetScrollbarPainterKnobStyle(WKScrollbarPainterRef painter, wkScrollerKnobStyle style)
 {
-    // TODO(sail): A knob style API doesn't exist in the seeds currently available. 
+    [painter setKnobStyle:style];
 }
 
 WKScrollbarPainterControllerRef wkMakeScrollbarPainterController(id painterControllerDelegate)
@@ -325,13 +333,6 @@ void wkScrollbarPainterForceFlashScrollers(WKScrollbarPainterControllerRef contr
 
 bool isScrollbarOverlayAPIAvailable()
 {
-    // TODO(sail): Disable overlay scrollbars for now until the following issues are fixed:
-    // #1: Invalidation issues causes the scrollbar to leave trailing artifacts.
-    // #2: Various messages such as live resize started/ended need to be piped from the UI.
-    // #3: Find tick marks need to be drawn on the scrollbar track.
-    // #4: Need to have the theme engine draw the thumb.
-    return false;
-
     static bool apiAvailable = [lookUpNSScrollerImpClass() respondsToSelector:@selector(scrollerImpWithStyle:controlSize:horizontal:replacingScrollerImp:)] &&
                                [lookUpNSScrollerImpPairClass() instancesRespondToSelector:@selector(scrollerStyle)];
     return apiAvailable;

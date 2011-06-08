@@ -1,3 +1,14 @@
+2011-06-08  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Chromium Mac: Enable overlay scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=59756
+
+        Enable WTF_USE_WK_SCROLLBAR_PAINTER for Chromium Mac. This allows us to use overlay scrollbars on future versions of Mac OS X.
+
+        * wtf/Platform.h:
+
 2011-06-08  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

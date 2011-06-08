@@ -516,21 +516,21 @@ ScrollAnimatorChromiumMac::ScrollAnimatorChromiumMac(ScrollableArea* scrollableA
     m_scrollAnimationHelperDelegate.adoptNS([[ScrollAnimationHelperDelegate alloc] initWithScrollAnimator:this]);
     m_scrollAnimationHelper.adoptNS([[NSClassFromString(@"NSScrollAnimationHelper") alloc] initWithDelegate:m_scrollAnimationHelperDelegate.get()]);
 
-#if USE(WK_SCROLLBAR_PAINTER)
-    m_scrollbarPainterControllerDelegate.adoptNS([[ScrollbarPainterControllerDelegate alloc] initWithScrollAnimator:this]);
-    m_scrollbarPainterController = wkMakeScrollbarPainterController(m_scrollbarPainterControllerDelegate.get());
-    m_scrollbarPainterDelegate.adoptNS([[ScrollbarPainterDelegate alloc] initWithScrollAnimator:this]);
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        m_scrollbarPainterControllerDelegate.adoptNS([[ScrollbarPainterControllerDelegate alloc] initWithScrollAnimator:this]);
+        m_scrollbarPainterController = wkMakeScrollbarPainterController(m_scrollbarPainterControllerDelegate.get());
+        m_scrollbarPainterDelegate.adoptNS([[ScrollbarPainterDelegate alloc] initWithScrollAnimator:this]);
+    }
 }
 
 ScrollAnimatorChromiumMac::~ScrollAnimatorChromiumMac()
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    [m_scrollbarPainterControllerDelegate.get() scrollAnimatorDestroyed];
-    [(id)m_scrollbarPainterController.get() setDelegate:nil];
-    [m_scrollbarPainterDelegate.get() scrollAnimatorDestroyed];
-    [m_scrollAnimationHelperDelegate.get() scrollAnimatorDestroyed];
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        [m_scrollbarPainterControllerDelegate.get() scrollAnimatorDestroyed];
+        [(id)m_scrollbarPainterController.get() setDelegate:nil];
+        [m_scrollbarPainterDelegate.get() scrollAnimatorDestroyed];
+        [m_scrollAnimationHelperDelegate.get() scrollAnimatorDestroyed];
+    }
 }
 
 bool ScrollAnimatorChromiumMac::scroll(ScrollbarOrientation orientation, ScrollGranularity granularity, float step, float multiplier)
@@ -632,146 +632,126 @@ void ScrollAnimatorChromiumMac::immediateScrollByDeltaY(float deltaY)
 
 void ScrollAnimatorChromiumMac::notityPositionChanged()
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    wkContentAreaScrolled(m_scrollbarPainterController.get());
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        wkContentAreaScrolled(m_scrollbarPainterController.get());
     ScrollAnimator::notityPositionChanged();
 }
 
 void ScrollAnimatorChromiumMac::contentAreaWillPaint() const
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    wkContentAreaWillPaint(m_scrollbarPainterController.get());
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        wkContentAreaWillPaint(m_scrollbarPainterController.get());
 }
 
 void ScrollAnimatorChromiumMac::mouseEnteredContentArea() const
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    wkMouseEnteredContentArea(m_scrollbarPainterController.get());
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        wkMouseEnteredContentArea(m_scrollbarPainterController.get());
 }
 
 void ScrollAnimatorChromiumMac::mouseExitedContentArea() const
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    wkMouseExitedContentArea(m_scrollbarPainterController.get());
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        wkMouseExitedContentArea(m_scrollbarPainterController.get());
 }
 
 void ScrollAnimatorChromiumMac::mouseMovedInContentArea() const
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    wkMouseMovedInContentArea(m_scrollbarPainterController.get());
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        wkMouseMovedInContentArea(m_scrollbarPainterController.get());
 }
 
 void ScrollAnimatorChromiumMac::willStartLiveResize()
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    wkWillStartLiveResize(m_scrollbarPainterController.get());
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        wkWillStartLiveResize(m_scrollbarPainterController.get());
 }
 
 void ScrollAnimatorChromiumMac::contentsResized() const
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    wkContentAreaResized(m_scrollbarPainterController.get());
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        wkContentAreaResized(m_scrollbarPainterController.get());
 }
 
 void ScrollAnimatorChromiumMac::willEndLiveResize()
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    wkWillEndLiveResize(m_scrollbarPainterController.get());
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        wkWillEndLiveResize(m_scrollbarPainterController.get());
 }
 
 void ScrollAnimatorChromiumMac::contentAreaDidShow() const
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    wkContentAreaDidShow(m_scrollbarPainterController.get());
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        wkContentAreaDidShow(m_scrollbarPainterController.get());
 }
 
 void ScrollAnimatorChromiumMac::contentAreaDidHide() const
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    wkContentAreaDidHide(m_scrollbarPainterController.get());
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        wkContentAreaDidHide(m_scrollbarPainterController.get());
 }
 
 void ScrollAnimatorChromiumMac::didBeginScrollGesture() const
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    wkDidBeginScrollGesture(m_scrollbarPainterController.get());
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        wkDidBeginScrollGesture(m_scrollbarPainterController.get());
 }
 
 void ScrollAnimatorChromiumMac::didEndScrollGesture() const
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    wkDidEndScrollGesture(m_scrollbarPainterController.get());
-#endif
+    if (isScrollbarOverlayAPIAvailable())
+        wkDidEndScrollGesture(m_scrollbarPainterController.get());
 }
 
 void ScrollAnimatorChromiumMac::didAddVerticalScrollbar(Scrollbar* scrollbar)
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeChromiumMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
-    wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
-    wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, false);
-    if (scrollableArea()->inLiveResize())
-        wkSetScrollbarPainterKnobAlpha(painter, 1);
-#else
-    UNUSED_PARAM(scrollbar);
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeChromiumMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
+        wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
+        wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, false);
+        if (scrollableArea()->inLiveResize())
+            wkSetScrollbarPainterKnobAlpha(painter, 1);
+    }
 }
 
 void ScrollAnimatorChromiumMac::willRemoveVerticalScrollbar(Scrollbar* scrollbar)
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeChromiumMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
-    wkScrollbarPainterSetDelegate(painter, nil);
-    wkSetPainterForPainterController(m_scrollbarPainterController.get(), nil, false);
-#else
-    UNUSED_PARAM(scrollbar);
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeChromiumMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
+        wkScrollbarPainterSetDelegate(painter, nil);
+        wkSetPainterForPainterController(m_scrollbarPainterController.get(), nil, false);
+    }
 }
 
 void ScrollAnimatorChromiumMac::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeChromiumMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
-    wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
-    wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, true);
-    if (scrollableArea()->inLiveResize())
-        wkSetScrollbarPainterKnobAlpha(painter, 1);
-#else
-    UNUSED_PARAM(scrollbar);
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeChromiumMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
+        wkScrollbarPainterSetDelegate(painter, m_scrollbarPainterDelegate.get());
+        wkSetPainterForPainterController(m_scrollbarPainterController.get(), painter, true);
+        if (scrollableArea()->inLiveResize())
+            wkSetScrollbarPainterKnobAlpha(painter, 1);
+    }
 }
 
 void ScrollAnimatorChromiumMac::willRemoveHorizontalScrollbar(Scrollbar* scrollbar)
 {
-#if USE(WK_SCROLLBAR_PAINTER)
-    WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeChromiumMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
-    wkScrollbarPainterSetDelegate(painter, nil);
-    wkSetPainterForPainterController(m_scrollbarPainterController.get(), nil, true);
-#else
-    UNUSED_PARAM(scrollbar);
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        WKScrollbarPainterRef painter = static_cast<WebCore::ScrollbarThemeChromiumMac*>(WebCore::ScrollbarTheme::nativeTheme())->painterForScrollbar(scrollbar);
+        wkScrollbarPainterSetDelegate(painter, nil);
+        wkSetPainterForPainterController(m_scrollbarPainterController.get(), nil, true);
+    }
 }
 
 void ScrollAnimatorChromiumMac::cancelAnimations()
 {
     m_haveScrolledSincePageLoad = false;
 
-#if USE(WK_SCROLLBAR_PAINTER)
-    if (scrollbarPaintTimerIsActive())
-        stopScrollbarPaintTimer();
-    [m_scrollbarPainterDelegate.get() cancelAnimations];
-#endif
+    if (isScrollbarOverlayAPIAvailable()) {
+        if (scrollbarPaintTimerIsActive())
+            stopScrollbarPaintTimer();
+        [m_scrollbarPainterDelegate.get() cancelAnimations];
+    }
 }
 
 #if ENABLE(RUBBER_BANDING)

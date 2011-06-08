@@ -27,6 +27,7 @@
 #ifndef ScrollbarThemeChromiumMac_h
 #define ScrollbarThemeChromiumMac_h
 
+#include "ScrollbarOverlayUtilitiesChromiumMac.h"
 #include "ScrollbarThemeComposite.h"
 
 // This file (and its associated .mm file) is a clone of ScrollbarThemeMac.h.
@@ -44,6 +45,7 @@ public:
     virtual int scrollbarThickness(ScrollbarControlSize = RegularScrollbar);
 
     virtual bool supportsControlTints() const { return true; }
+    virtual bool usesOverlayScrollbars() const;
 
     virtual double initialAutoscrollTimerDelay();
     virtual double autoscrollTimerDelay();
@@ -52,6 +54,9 @@ public:
 
     virtual void registerScrollbar(Scrollbar*);
     virtual void unregisterScrollbar(Scrollbar*);
+
+    void setNewPainterForScrollbar(Scrollbar*, WKScrollbarPainterRef);
+    WKScrollbarPainterRef painterForScrollbar(Scrollbar*);
 
 protected:
     virtual bool hasButtons(Scrollbar*);
@@ -64,6 +69,7 @@ protected:
     virtual int minimumThumbLength(Scrollbar*);
 
     virtual bool shouldCenterOnThumb(Scrollbar*, const PlatformMouseEvent&);
+    virtual bool shouldDragDocumentInsteadOfThumb(Scrollbar*, const PlatformMouseEvent&);
 
 public:
     void preferencesChanged();

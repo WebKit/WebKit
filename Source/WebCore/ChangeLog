@@ -1,3 +1,59 @@
+2011-06-08  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        Chromium Mac: Enable overlay scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=59756
+
+        Sync ScrollbarThemeChromiumMac.mm/.h with ScrollbarThemeMac.mm to pick up support for overlay scrollbars. The only changes are renaming ScrollbarThemeMac to ScrollbarThemeChromiumMac and using runtime checks instead of #ifdef's.
+
+        No new tests, since this code is only enabled on future versions of Mac OS X.
+
+        * platform/chromium/ScrollAnimatorChromiumMac.mm: All changes to this file except in scroll() were to swap #if USE(WK_SCROLLBAR_PAINTER) with runtime checks.
+        (WebCore::ScrollAnimatorChromiumMac::ScrollAnimatorChromiumMac):
+        (WebCore::ScrollAnimatorChromiumMac::~ScrollAnimatorChromiumMac):
+        (WebCore::ScrollAnimatorChromiumMac::notityPositionChanged):
+        (WebCore::ScrollAnimatorChromiumMac::contentAreaWillPaint):
+        (WebCore::ScrollAnimatorChromiumMac::mouseEnteredContentArea):
+        (WebCore::ScrollAnimatorChromiumMac::mouseExitedContentArea):
+        (WebCore::ScrollAnimatorChromiumMac::mouseMovedInContentArea):
+        (WebCore::ScrollAnimatorChromiumMac::willStartLiveResize):
+        (WebCore::ScrollAnimatorChromiumMac::contentsResized):
+        (WebCore::ScrollAnimatorChromiumMac::willEndLiveResize):
+        (WebCore::ScrollAnimatorChromiumMac::contentAreaDidShow):
+        (WebCore::ScrollAnimatorChromiumMac::contentAreaDidHide):
+        (WebCore::ScrollAnimatorChromiumMac::didBeginScrollGesture):
+        (WebCore::ScrollAnimatorChromiumMac::didEndScrollGesture):
+        (WebCore::ScrollAnimatorChromiumMac::didAddVerticalScrollbar):
+        (WebCore::ScrollAnimatorChromiumMac::willRemoveVerticalScrollbar):
+        (WebCore::ScrollAnimatorChromiumMac::didAddHorizontalScrollbar):
+        (WebCore::ScrollAnimatorChromiumMac::willRemoveHorizontalScrollbar):
+        (WebCore::ScrollAnimatorChromiumMac::cancelAnimations):
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.mm:
+        (preferredScrollerStyle): Disabled overlay scrollbar styles due to trailing artifacts.
+        (wkScrollbarPainterPaint): Fixed a problem where the scrollbar track wasn't being drawn.
+        (wkScrollbarPainterKnobRect): Implemented a previously unimplemented function.
+        (wkSetScrollbarPainterKnobStyle): Implemented a function that's now supported by the latest Mac OS X seeds.
+        (isScrollbarOverlayAPIAvailable): Enabled new scrollbar code.
+        * platform/chromium/ScrollbarThemeChromiumMac.h:
+        * platform/chromium/ScrollbarThemeChromiumMac.mm: Sync with ScrollbarThemeMac.mm.
+        (WebCore::scrollbarMap):
+        (+[ScrollbarPrefsObserver appearancePrefsChanged:]):
+        (WebCore::updateArrowPlacement):
+        (WebCore::ScrollbarThemeChromiumMac::registerScrollbar):
+        (WebCore::ScrollbarThemeChromiumMac::unregisterScrollbar):
+        (WebCore::ScrollbarThemeChromiumMac::setNewPainterForScrollbar):
+        (WebCore::ScrollbarThemeChromiumMac::painterForScrollbar):
+        (WebCore::ScrollbarThemeChromiumMac::scrollbarThickness):
+        (WebCore::ScrollbarThemeChromiumMac::usesOverlayScrollbars):
+        (WebCore::ScrollbarThemeChromiumMac::hasButtons):
+        (WebCore::ScrollbarThemeChromiumMac::hasThumb):
+        (WebCore::buttonRepaintRect):
+        (WebCore::ScrollbarThemeChromiumMac::minimumThumbLength):
+        (WebCore::ScrollbarThemeChromiumMac::shouldDragDocumentInsteadOfThumb):
+        (WebCore::toScrollbarPainterKnobStyle):
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+
 2011-06-06  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
