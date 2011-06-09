@@ -1,3 +1,9 @@
+2011-06-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] eventSender.keyDown is unimplemented
+
+        * platform/mac-wk2/Skipped: Add fast/dom/shadow/tab-order-iframe-and-shadow.html.
+
 2011-06-09  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by Kent Tamura.
