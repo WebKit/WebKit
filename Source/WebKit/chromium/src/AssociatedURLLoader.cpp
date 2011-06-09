@@ -34,6 +34,7 @@
 #include "DocumentThreadableLoader.h"
 #include "DocumentThreadableLoaderClient.h"
 #include "SubresourceLoader.h"
+#include "Timer.h"
 #include "WebApplicationCacheHost.h"
 #include "WebDataSource.h"
 #include "WebFrameImpl.h"
@@ -54,6 +55,7 @@ namespace WebKit {
 // This class bridges the interface differences between WebCore and WebKit loader clients.
 // It forwards its ThreadableLoaderClient notifications to a WebURLLoaderClient.
 class AssociatedURLLoader::ClientAdapter : public DocumentThreadableLoaderClient {
+    WTF_MAKE_NONCOPYABLE(ClientAdapter);
 public:
     static PassOwnPtr<ClientAdapter> create(AssociatedURLLoader*, WebURLLoaderClient*, bool /*downloadToFile*/);
 
@@ -68,16 +70,27 @@ public:
 
     virtual bool isDocumentThreadableLoaderClient() { return true; }
 
-    // This method stops loading and releases the DocumentThreadableLoader as early as possible.
-    void clearClient() { m_client = 0; }
+    // Enables forwarding of error notifications to the WebURLLoaderClient. These must be
+    // deferred until after the call to AssociatedURLLoader::loadAsynchronously() completes.
+    void enableErrorNotifications();
+
+    // Stops loading and releases the DocumentThreadableLoader as early as possible.
+    void clearClient() { m_client = 0; } 
 
 private:
     ClientAdapter(AssociatedURLLoader*, WebURLLoaderClient*, bool /*downloadToFile*/);
 
+    void notifyError(Timer<ClientAdapter>*);
+
     AssociatedURLLoader* m_loader;
     WebURLLoaderClient* m_client;
+    WebURLError m_error;
+
+    Timer<ClientAdapter> m_errorTimer;
     unsigned long m_downloadLength;
     bool m_downloadToFile;
+    bool m_enableErrorNotifications;
+    bool m_didFail;
 };
 
 PassOwnPtr<AssociatedURLLoader::ClientAdapter> AssociatedURLLoader::ClientAdapter::create(AssociatedURLLoader* loader, WebURLLoaderClient* client, bool downloadToFile)
@@ -88,8 +101,11 @@ PassOwnPtr<AssociatedURLLoader::ClientAdapter> AssociatedURLLoader::ClientAdapte
 AssociatedURLLoader::ClientAdapter::ClientAdapter(AssociatedURLLoader* loader, WebURLLoaderClient* client, bool downloadToFile)
     : m_loader(loader)
     , m_client(client)
+    , m_errorTimer(this, &ClientAdapter::notifyError)
     , m_downloadLength(0)
     , m_downloadToFile(downloadToFile)
+    , m_enableErrorNotifications(false)
+    , m_didFail(false)
 {
     ASSERT(m_loader);
     ASSERT(m_client);
@@ -144,7 +160,7 @@ void AssociatedURLLoader::ClientAdapter::didFinishLoading(unsigned long identifi
     if (m_downloadToFile) {
         int downloadLength = m_downloadLength <= INT_MAX ? m_downloadLength : INT_MAX;
         m_client->didDownloadData(m_loader, downloadLength);
-        // While the client could have cancelled, continue, since the load finished. 
+        // While the client could have canceled, continue, since the load finished.
     }
 
     m_client->didFinishLoading(m_loader, finishTime);
@@ -155,8 +171,26 @@ void AssociatedURLLoader::ClientAdapter::didFail(const ResourceError& error)
     if (!m_client)
         return;
 
-    WebURLError webError(error);
-    m_client->didFail(m_loader, webError);
+    m_didFail = true;
+    m_error = WebURLError(error);
+    if (m_enableErrorNotifications)
+        notifyError(&m_errorTimer);
+}
+
+void AssociatedURLLoader::ClientAdapter::enableErrorNotifications()
+{
+    m_enableErrorNotifications = true;
+    // If an error has already been received, start a timer to report it to the client
+    // after AssociatedURLLoader::loadAsynchronously has returned to the caller.
+    if (m_didFail)
+        m_errorTimer.startOneShot(0);
+}
+
+void AssociatedURLLoader::ClientAdapter::notifyError(Timer<ClientAdapter>* timer)
+{
+    ASSERT_UNUSED(timer, timer == &m_errorTimer);
+
+    m_client->didFail(m_loader, m_error);
 }
 
 AssociatedURLLoader::AssociatedURLLoader(PassRefPtr<WebFrameImpl> frameImpl)
@@ -215,8 +249,8 @@ void AssociatedURLLoader::loadAsynchronously(const WebURLRequest& request, WebUR
     const ResourceRequest& webcoreRequest = request.toResourceRequest();
     Document* webcoreDocument = m_frameImpl->frame()->document();
     m_clientAdapter = ClientAdapter::create(this, m_client, request.downloadToFile());
-
     m_loader = DocumentThreadableLoader::create(webcoreDocument, m_clientAdapter.get(), webcoreRequest, options);
+    m_clientAdapter->enableErrorNotifications();
 }
 
 void AssociatedURLLoader::cancel()
