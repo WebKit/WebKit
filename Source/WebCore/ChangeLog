@@ -1,3 +1,15 @@
+2011-06-09  Dave Tapuska  <dtapuska@rim.com>
+
+        Reviewed by Daniel Bates.
+
+        PingLoader destructor could dereference 0 if the Resource
+        Handle creation failed.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62304
+
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::~PingLoader):
+
 2011-06-08  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Ryosuke Niwa.

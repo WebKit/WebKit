@@ -127,7 +127,8 @@ PingLoader::PingLoader(Frame* frame, ResourceRequest& request)
 
 PingLoader::~PingLoader()
 {
-    m_handle->cancel();
+    if (m_handle)
+        m_handle->cancel();
 }
 
 }
