@@ -1,3 +1,19 @@
+2011-06-09  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crashes in RenderLayerBacking::paintingGoesToWindow
+        https://bugs.webkit.org/show_bug.cgi?id=61159
+
+        Speculative fix for unreproducible crash that can occur when RenderObject::repaintUsingContainer()
+        finds a repaintContainer that is not the RenderView, but that is also not
+        composited (for unknown reasons), by checking to see if the layer is
+        compositing before using backing(). An assertion remains to try to catch
+        this in debug builds.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::setBackingNeedsRepaintInRect):
+
 2011-06-09  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

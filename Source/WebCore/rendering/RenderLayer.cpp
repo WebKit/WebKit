@@ -3922,8 +3922,10 @@ void RenderLayer::setBackingNeedsRepaint()
 
 void RenderLayer::setBackingNeedsRepaintInRect(const IntRect& r)
 {
+    // https://bugs.webkit.org/show_bug.cgi?id=61159 describes an unreproducible crash here,
+    // so assert but check that the layer is composited.
     ASSERT(isComposited());
-    if (backing()->paintingGoesToWindow()) {
+    if (!isComposited() || backing()->paintingGoesToWindow()) {
         // If we're trying to repaint the placeholder document layer, propagate the
         // repaint to the native view system.
         IntRect absRect(r);
