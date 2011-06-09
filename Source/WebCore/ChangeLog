@@ -1,3 +1,19 @@
+2011-06-08  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        REGRESSION(88260): 10-50% performance regression across many page cyclers
+        https://bugs.webkit.org/show_bug.cgi?id=62349
+
+        r88260 fixed a font cache resource leak and lowered the inactive font cache threshold.  The latter caused a
+        significant performance regression across many chromium page cyclers, for example
+        http://build.chromium.org/f/chromium/perf/linux-release-webkit-latest/moz/report.html?history=50&rev=88279.
+
+        This restores the previous inactive font size thresholds to their previous values, but retains the font cleanup
+        logic.
+
+        * platform/graphics/FontCache.cpp:
+
 2011-06-08  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Dimitri Glazkov.
