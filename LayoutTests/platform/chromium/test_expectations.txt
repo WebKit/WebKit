@@ -3703,11 +3703,11 @@ BUGKBR WIN DEBUG : animations/animation-controller-drt-api.html = PASS TEXT
 BUGWK59642 WIN : editing/input/scroll-viewport-page-up-down.html = PASS TEXT
 
 // These seem to be minor debug-only differences.
-BUGWK60135 SNOWLEOPARD DEBUG CPU : css2.1/t1508-c527-font-05-b.html = IMAGE+TEXT
-BUGWK60135 SNOWLEOPARD DEBUG CPU : css2.1/t1508-c527-font-10-c.html = IMAGE+TEXT
+BUGWK60135 SNOWLEOPARD CPU : css2.1/t1508-c527-font-05-b.html = IMAGE+TEXT PASS
+BUGWK60135 SNOWLEOPARD CPU : css2.1/t1508-c527-font-10-c.html = IMAGE+TEXT PASS
 BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-line-breaks.html = IMAGE
 BUGWK60135 SNOWLEOPARD DEBUG CPU : fast/text/international/thai-baht-space.html = IMAGE+TEXT
-BUGWK60135 SNOWLEOPARD DEBUG : css1/font_properties/font.html = IMAGE+TEXT
+BUGWK60135 SNOWLEOPARD : css1/font_properties/font.html = IMAGE+TEXT PASS
 
 BUGWK60133 DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = TIMEOUT PASS
 
