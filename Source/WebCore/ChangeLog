@@ -1,3 +1,30 @@
+2011-06-02  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Maciej Stachowiak.
+
+        REGRESSION: Page layout messed up after exiting full screen after video ends at jerryseinfeld.com
+        https://bugs.webkit.org/show_bug.cgi?id=61911
+        <rdar://problem/9523017>
+
+        Test: fullscreen/full-screen-video-offset.html
+
+        When the video element is taken full-screen in the new element full-screen API, return the
+        offset width and height of the placeholder renderer which is filling in for the full-screen
+        element.  To do so, override offsetWidth, Height, Left, and Top from Element.  These are
+        non-virtual functions, so make them virtual.
+
+        * dom/Element.cpp:
+        (WebCore::Element::adjustForLocalZoom): Made into a class-static function.
+        * dom/Element.h: Made offset functions virtual.
+        * html/HTMLMediaElement.cpp:
+        (WebCore::elementPlaceholder): Added; utility function.
+        (WebCore::HTMLMediaElement::offsetLeft): Added; virtual override of the 
+            Element function. Will be called directly via javascript.
+        (WebCore::HTMLMediaElement::offsetTop): Ditto.
+        (WebCore::HTMLMediaElement::offsetWidth): Ditto.
+        (WebCore::HTMLMediaElement::offsetHeight): Ditto.
+        * html/HTMLMediaElement.h:
+
 2011-06-09  Dave Tapuska  <dtapuska@rim.com>
 
         Reviewed by Daniel Bates.
