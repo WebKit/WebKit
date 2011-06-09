@@ -1,3 +1,15 @@
+2011-06-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Andreas Kling.
+
+        [GTK] [Qt] Eliminate duplicate TestNetscapePlugin implementation
+        https://bugs.webkit.org/show_bug.cgi?id=62385
+
+        Remove a cr-linux expectation that no longer differs from the default
+        expectation.
+
+        * platform/chromium-linux/plugins/mouse-events-expected.txt: Removed.
+
 2011-06-02  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.

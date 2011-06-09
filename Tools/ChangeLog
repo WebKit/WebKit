@@ -1,3 +1,24 @@
+2011-06-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Andreas Kling.
+
+        [GTK] [Qt] Eliminate duplicate TestNetscapePlugin implementation
+        https://bugs.webkit.org/show_bug.cgi?id=62385
+
+        Remove duplicate TestNetscapePlugIn implementation. Having two copies
+        of this code makes keeping it in sync much more difficult. The files are
+        almost identical and this change ports the X11 changes to main.cpp.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (keyEventToChar): Added this helper which converts a X11 keycode into a char.
+        (handleEventX11): Use the handler to properly convert the keycode. Do not print
+        adjustCursorEvent output. The tests currently do not trigger this for Cocoa and thus
+        it should not be in the results.
+        (NPP_GetValue): Properly handle NPPVpluginNeedsXEmbed.
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro: Update source list.
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp: Removed.
+        * GNUmakefile.am: Update source list.
+
 2011-06-09  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Tony Chang.

@@ -216,7 +216,6 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npapi.h \
 	Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npfunctions.h \
 	Tools/DumpRenderTree/unix/TestNetscapePlugin/ForwardingHeaders/WebKit/npruntime.h \
-	Tools/DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/DocumentOpenInDestroyStream.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/EvaluateJSAfterRemovingPluginElement.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/Tests/GetURLNotifyWithURLThatFailsToLoad.cpp \
@@ -235,7 +234,8 @@ TestNetscapePlugin_libtestnetscapeplugin_la_SOURCES = \
 	Tools/DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp \
 	Tools/DumpRenderTree/TestNetscapePlugIn/PluginObject.h \
 	Tools/DumpRenderTree/TestNetscapePlugIn/TestObject.cpp \
-	Tools/DumpRenderTree/TestNetscapePlugIn/TestObject.h
+	Tools/DumpRenderTree/TestNetscapePlugIn/TestObject.h \
+	Tools/DumpRenderTree/TestNetscapePlugIn/main.cpp
 
 TestNetscapePlugin_libtestnetscapeplugin_la_LDFLAGS = \
 	-rpath ${shell pwd}/$(top_builddir)/../unix/TestNetscapePlugin/.libs \
