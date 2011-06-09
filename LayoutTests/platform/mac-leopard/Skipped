@@ -209,6 +209,11 @@ plugins/destroy-on-setwindow.html
 # https://bugs.webkit.org/show_bug.cgi?id=58327
 fast/events/tabindex-focus-blur-all.html
 
+# WebGL is disabled on Leopard
+http/tests/security/webgl-remote-read-remote-image-allowed.html
+http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
+http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
+
 ##########################################################
 # Tests below this point are failing only on some slaves.
 # http://webkit.org/b/56551 covers the general issue.

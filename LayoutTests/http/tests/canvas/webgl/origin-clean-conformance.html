@@ -82,6 +82,8 @@ function causedException(func) {
   return hadException;
 }
 
+var testVideo = false;
+
 function init() {
   var video = document.getElementById("video");
 
@@ -108,6 +110,7 @@ function init() {
     video.src = videoFile;
     video.addEventListener("playing", runTests);
     video.play();
+    testVideo = true;
   } else {
     // Still run the other tests, even if the video failed.
     runTests();
@@ -115,9 +118,21 @@ function init() {
 }
 
 function runTests() {
-  description("This test ensures WebGL implementations follow proper origin restrictions.");
+  description("This test ensures WebGL implementations follow proper same-origin restrictions.");
   var img = document.getElementById("img");
   assertMsg(img.width > 0 && img.height > 0, "img was loaded");
+
+  function makeTexImage2D(gl, src) {
+    return function() {
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, src);
+    };
+  }
+
+  function makeTexSubImage2D(gl, src) {
+    return function() {
+      gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, gl.RGBA, gl.UNSIGNED_BYTE, src);
+    };
+  }
 
   function makeReadPixels(gl) {
     return function() {
@@ -132,70 +147,56 @@ function runTests() {
     }
   }
 
-  debug("");
-  debug("check that copying an img from another origin clears the origin-clean flag.");
   var canvas1 = document.getElementById("canvas1");
-  var gl1 = create3DContext(canvas1);
-  assertMsg(!causedException(makeReadPixels(gl1)),
-            "should not throw exception by readPixels for origin clean canvas.");
-  assertMsg(!causedException(makeToDataURL(canvas1)),
-            "should not throw exception by toDataURL for origin clean canvas.");
-
-  var tex = gl1.createTexture();
-  gl1.bindTexture(gl1.TEXTURE_2D, tex);
-  gl1.texImage2D(gl1.TEXTURE_2D, 0, gl1.RGBA, gl1.RGBA, gl1.UNSIGNED_BYTE, img);
-
-  assertMsg(causedException(makeReadPixels(gl1)),
-            "should throw exception by readPixels for NON origin clean canvas.");
-  assertMsg(causedException(makeToDataURL(canvas1)),
-            "should throw exception by toDataURL for NON origin clean canvas.");
+  var gl = create3DContext(canvas1);
 
   debug("");
-  debug("check that copying from 1 unclean 3d canvas to another clears the origin-clean flag on the second canvas.");
+  debug("check that an attempt to upload an image from another origin throws an exception.");
+  var tex = gl.createTexture();
+  gl.bindTexture(gl.TEXTURE_2D, tex);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 256, 256, 0, gl.RGBA, gl.UNSIGNED_BYTE, null);
+  assertMsg(causedException(makeTexImage2D(gl, img)),
+            "texImage2D with cross-origin image should throw exception.");
+  assertMsg(causedException(makeTexSubImage2D(gl, img)),
+            "texSubImage2D with cross-origin image should throw exception.");
+
+  debug("check that readPixels and toDataURL continue to work against this canvas.");
+  assertMsg(!causedException(makeReadPixels(gl)),
+            "readPixels should never throw exception -- not possible to dirty origin of WebGL canvas.");
+  assertMsg(!causedException(makeToDataURL(canvas1)),
+            "should not throw exception by toDataURL for WebGL canvas, which should stay origin clean.");
+
+  debug("check that an attempt to upload a tainted canvas throws an exception.");
   var canvas2 = document.getElementById("canvas2");
-  var gl2 = create3DContext(canvas2);
-
-  assertMsg(!causedException(makeReadPixels(gl2)),
-            "should not throw exception by readPixels for origin clean canvas.");
-  assertMsg(!causedException(makeToDataURL(canvas2)),
-            "should not throw exception by toDataURL for origin clean canvas.");
-
-  var tex = gl2.createTexture();
-  gl2.bindTexture(gl2.TEXTURE_2D, tex);
-  gl2.texImage2D(
-     gl2.TEXTURE_2D, 0, gl2.RGBA, gl2.RGBA, gl2.UNSIGNED_BYTE, canvas1);
-
-  assertMsg(causedException(makeReadPixels(gl2)),
-            "should throw exception by readPixels for NON origin clean canvas.");
+  var ctx2d = canvas2.getContext("2d");
+  ctx2d.drawImage(img, 0, 0);
   assertMsg(causedException(makeToDataURL(canvas2)),
             "should throw exception by toDataURL for NON origin clean canvas.");
+  assertMsg(causedException(makeTexImage2D(gl, canvas2)),
+            "texImage2D with NON origin clean canvas should throw exception.");
+  assertMsg(causedException(makeTexSubImage2D(gl, canvas2)),
+            "texSubImage2D with NON origin clean canvas should throw exception.");
 
-  debug("");
-  debug("check that copying from 1 unclean 3d canvas to a 2d canvas clears the origin-clean flag on the 2d canvas.");
-  var canvas3 = document.getElementById("canvas3");
-  var ctx2d = canvas3.getContext("2d");
-  assertMsg(!causedException(makeToDataURL(canvas3)),
-            "should not throw exception by toDataURL for origin clean canvas.");
-  ctx2d.drawImage(canvas2, 0, 0);
-  assertMsg(causedException(makeToDataURL(canvas3)),
-            "should throw exception by toDataURL for NON origin clean canvas.");
+  debug("check that readPixels and toDataURL continue to work against this canvas.");
+  assertMsg(!causedException(makeReadPixels(gl)),
+            "readPixels should never throw exception -- not possible to dirty origin of WebGL canvas.");
+  assertMsg(!causedException(makeToDataURL(canvas1)),
+            "should not throw exception by toDataURL for WebGL canvas, which should stay origin clean.");
 
-  debug("");
-  debug("check that copying a video from another origin clears the origin-clean flag.");
-  var canvas4 = document.getElementById("canvas4");
-  var gl4 = create3DContext(canvas4);
-  assertMsg(!causedException(makeReadPixels(gl4)),
-            "should not throw exception by readPixels for origin clean canvas.");
-  assertMsg(!causedException(makeToDataURL(canvas4)),
-            "should not throw exception by toDataURL for origin clean canvas.");
-  var tex4 = gl4.createTexture();
-  gl4.bindTexture(gl4.TEXTURE_2D, tex4);
-  gl4.texImage2D(
-      gl4.TEXTURE_2D, 0, gl4.RGBA, gl4.RGBA, gl4.UNSIGNED_BYTE, video);
-  assertMsg(causedException(makeReadPixels(gl4)),
-            "should throw exception by readPixels for NON origin clean canvas.");
-  assertMsg(causedException(makeToDataURL(canvas4)),
-            "should throw exception by toDataURL for NON origin clean canvas.");
+  if (testVideo) {
+    debug("check that an attempt to upload a video from another origin throws an exception.");
+    var video = document.getElementById("video");
+    assertMsg(causedException(makeTexImage2D(gl, video)),
+              "texImage2D with cross-origin video should throw exception.");
+    assertMsg(causedException(makeTexSubImage2D(gl, video)),
+              "texSubImage2D with cross-origin video should throw exception.");
+
+    debug("check that readPixels and toDataURL continue to work against this canvas.");
+    assertMsg(!causedException(makeReadPixels(gl)),
+              "readPixels should never throw exception -- not possible to dirty origin of WebGL canvas.");
+    assertMsg(!causedException(makeToDataURL(canvas1)),
+              "should not throw exception by toDataURL for WebGL canvas, which should stay origin clean.");
+  }
 
   debug('<br /><span class="pass">TEST COMPLETE</span>');
   if (window.layoutTestController)
@@ -211,8 +212,6 @@ function runTests() {
 <div id="console"></div>
 <canvas id="canvas1"></canvas>
 <canvas id="canvas2"></canvas>
-<canvas id="canvas3"></canvas>
-<canvas id="canvas4"></canvas>
 <img id="img" src="http://localhost:8000/local/resources/abe.png" style="display:none;">
 <video id="video" style="display:none;"/>
 </body>

@@ -109,6 +109,9 @@ storage/storageinfo-no-callbacks.html
 # ENABLE(WEBGL) is disabled.
 http/tests/canvas/webgl
 compositing/webgl
+http/tests/security/webgl-remote-read-remote-image-allowed.html
+http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
+http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
 
 # ENABLE(LINK_PREFETCH) is disabled.
 fast/dom/HTMLLinkElement/link-and-subresource-test.html

@@ -1,3 +1,28 @@
+2011-06-09  Kenneth Russell  <kbr@google.com>
+
+        Reviewed by Adam Barth.
+
+        Disallow use of cross-domain media (images, video) in WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=62257
+
+        Updated WebGL implementation to track recent spec updates in this area.
+
+        Tests: http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
+               http/tests/security/webgl-remote-read-remote-image-allowed.html
+               http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
+
+        * html/canvas/CanvasRenderingContext.cpp:
+        (WebCore::CanvasRenderingContext::wouldTaintOrigin):
+        (WebCore::CanvasRenderingContext::checkOrigin):
+        * html/canvas/CanvasRenderingContext.h:
+        (WebCore::CanvasRenderingContext::checkOrigin):
+        * html/canvas/WebGLRenderingContext.cpp:
+        (WebCore::WebGLRenderingContext::readPixels):
+        (WebCore::WebGLRenderingContext::texImage2D):
+        (WebCore::WebGLRenderingContext::videoFrameToImage):
+        (WebCore::WebGLRenderingContext::texSubImage2D):
+        * html/canvas/WebGLRenderingContext.h:
+
 2011-06-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
