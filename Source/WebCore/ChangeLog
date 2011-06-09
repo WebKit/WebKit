@@ -1,3 +1,33 @@
+2011-06-09  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Kenneth Russell.
+
+        [chromium] Scissor rect not set for clipping layers set offscreen
+        https://bugs.webkit.org/show_bug.cgi?id=62339
+
+        We set a scissorRect on each layer, but only layers with masksToBounds and their descendants should actually set
+        a scissor.  Layers that didn't need to scissor had empty scissorRects.  Unfortunately layers with masksToBounds
+        and their descendants that are scrolled offscreen also end up with an empty clipped scissor rect.
+
+        This patch sets an explicit bit on each layer that should scissor and then checks that bit instead of checking
+        for an empty scissor rect at draw time.  RenderSurfaceChromiums have different requirements for
+        setScissorToRect, so the old behavior is still available with a flag.  This can probably be cleaned up more.
+
+        Test: platform/chromium/compositing/scissor-out-of-viewport.html
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updatePropertiesAndRenderSurfaces):
+        (WebCore::LayerRendererChromium::drawLayer):
+        (WebCore::LayerRendererChromium::setScissorToRect):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/RenderSurfaceChromium.cpp:
+        (WebCore::RenderSurfaceChromium::draw):
+        * platform/graphics/chromium/cc/CCLayerImpl.cpp:
+        (WebCore::CCLayerImpl::CCLayerImpl):
+        * platform/graphics/chromium/cc/CCLayerImpl.h:
+        (WebCore::CCLayerImpl::setUsesLayerScissor):
+        (WebCore::CCLayerImpl::usesLayerScissor):
+
 2011-06-09  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r88468.

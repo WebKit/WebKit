@@ -658,6 +658,9 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer
     FloatRect layerRect(-0.5 * layer->bounds().width(), -0.5 * layer->bounds().height(), layer->bounds().width(), layer->bounds().height());
     IntRect transformedLayerRect;
 
+    // FIXME: This seems like the wrong place to set this
+    layer->setUsesLayerScissor(false);
+
     // The layer and its descendants render on a new RenderSurface if any of
     // these conditions hold:
     // 1. The layer clips its descendants and its transform is not a simple translation.
@@ -694,7 +697,6 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer
         TransformationMatrix layerOriginTransform = combinedTransform;
         layerOriginTransform.translate3d(-0.5 * bounds.width(), -0.5 * bounds.height(), 0);
         renderSurface->m_originTransform = layerOriginTransform;
-        layer->setScissorRect(IntRect());
 
         // The render surface scissor rect is the scissor rect that needs to
         // be applied before drawing the render surface onto its containing
@@ -726,6 +728,8 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer
 
             // Layers inherit the scissor rect from their parent.
             layer->setScissorRect(layer->parent()->scissorRect());
+            if (layer->parent()->usesLayerScissor())
+                layer->setUsesLayerScissor(true);
 
             layer->setTargetRenderSurface(layer->parent()->targetRenderSurface());
         }
@@ -738,6 +742,7 @@ void LayerRendererChromium::updatePropertiesAndRenderSurfaces(CCLayerImpl* layer
             if (!layer->scissorRect().isEmpty())
                 scissor.intersect(layer->scissorRect());
             layer->setScissorRect(scissor);
+            layer->setUsesLayerScissor(true);
         }
     }
 
@@ -973,12 +978,11 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
         return;
     }
 
-    setScissorToRect(layer->scissorRect());
-
+    if (layer->usesLayerScissor())
+        setScissorToRect(layer->scissorRect());
+    else
+        GLC(m_context.get(), m_context->disable(GraphicsContext3D::SCISSOR_TEST));
     IntRect targetSurfaceRect = m_currentRenderSurface ? m_currentRenderSurface->contentRect() : m_defaultRenderSurface->contentRect();
-    IntRect scissorRect = layer->scissorRect();
-    if (!scissorRect.isEmpty())
-        targetSurfaceRect.intersect(scissorRect);
 
     // Check if the layer falls within the visible bounds of the page.
     IntRect layerRect = layer->getDrawRect();
@@ -1014,11 +1018,11 @@ void LayerRendererChromium::drawLayer(CCLayerImpl* layer, RenderSurfaceChromium*
 
 // Sets the scissor region to the given rectangle. The coordinate system for the
 // scissorRect has its origin at the top left corner of the current visible rect.
-void LayerRendererChromium::setScissorToRect(const IntRect& requestedScissor)
+void LayerRendererChromium::setScissorToRect(const IntRect& scissorRect)
 {
     IntRect contentRect = (m_currentRenderSurface ? m_currentRenderSurface->m_contentRect : m_defaultRenderSurface->m_contentRect);
 
-    const IntRect scissorRect = requestedScissor.isEmpty() ? contentRect : requestedScissor;
+    GLC(m_context.get(), m_context->enable(GraphicsContext3D::SCISSOR_TEST));
 
     // The scissor coordinates must be supplied in viewport space so we need to offset
     // by the relative position of the top left corner of the current render surface.

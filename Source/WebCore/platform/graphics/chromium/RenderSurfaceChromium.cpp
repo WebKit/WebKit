@@ -152,7 +152,11 @@ void RenderSurfaceChromium::draw(const IntRect&)
     if (!m_maskLayer && m_owningLayer->replicaLayer())
         replicaMaskLayer = m_owningLayer->replicaLayer()->maskLayer();
 
-    layerRenderer()->setScissorToRect(m_scissorRect);
+    if (m_owningLayer->parent() && m_owningLayer->parent()->usesLayerScissor())
+        layerRenderer()->setScissorToRect(m_scissorRect);
+    else
+        GLC(layerRenderer()->context(), layerRenderer()->context()->disable(GraphicsContext3D::SCISSOR_TEST));
+
 
     // Reflection draws before the layer.
     if (m_owningLayer->replicaLayer()) 

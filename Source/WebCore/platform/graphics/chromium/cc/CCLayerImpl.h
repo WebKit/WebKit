@@ -100,6 +100,9 @@ public:
     void setPreserves3D(bool preserves3D) { m_preserves3D = preserves3D; }
     bool preserves3D() const { return m_preserves3D; }
 
+    void setUsesLayerScissor(bool usesLayerScissor) { m_usesLayerScissor = usesLayerScissor; }
+    bool usesLayerScissor() const { return m_usesLayerScissor; }
+
     void setSublayerTransform(const TransformationMatrix& sublayerTransform) { m_sublayerTransform = sublayerTransform; }
     const TransformationMatrix& sublayerTransform() const { return m_sublayerTransform; }
 
@@ -183,6 +186,7 @@ private:
     bool m_preserves3D;
     TransformationMatrix m_sublayerTransform;
     TransformationMatrix m_transform;
+    bool m_usesLayerScissor;
 
     // Properties owned exclusively by this CCLayerImpl.
     // Debugging.
