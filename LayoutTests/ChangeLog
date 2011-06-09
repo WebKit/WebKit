@@ -1,3 +1,12 @@
+2011-06-08  Kent Tamura  <tkent@chromium.org>
+
+        [Mac][GTK][Qt] Rebaseline for r88415, and remove old images.
+
+        * platform/gtk/fast/forms/thumbslider-no-parent-slider-expected.png: Removed.
+        * platform/gtk/fast/forms/thumbslider-no-parent-slider-expected.txt:
+        * platform/mac-leopard/fast/forms/thumbslider-no-parent-slider-expected.png: Removed.
+        * platform/qt/fast/forms/thumbslider-no-parent-slider-expected.txt:
+
 2011-06-08  James Kozianski  <koz@chromium.org>
 
         [Chromium] Unreviewed. Add TIMEOUT to styles-disable-then-change.html.

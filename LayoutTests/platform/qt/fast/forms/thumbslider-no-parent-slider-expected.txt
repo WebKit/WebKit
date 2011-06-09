@@ -3,15 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderText {#text} at (0,0) size 629x22
-        text run at (0,0) width 629: "There should be no thumbsliders below, you should only see the words \"Hello World\" twice. "
-      RenderBR {BR} at (0,0) size 0x0
-      RenderBR {BR} at (0,22) size 0x22
-      RenderBlock {SPAN} at (0,44) size 83x22
-        RenderText {#text} at (0,0) size 83x22
-          text run at (0,0) width 83: "Hello World"
-      RenderBR {BR} at (83,60) size 0x0
-      RenderBlock {SPAN} at (0,66) size 83x22
-        RenderText {#text} at (0,0) size 83x22
-          text run at (0,0) width 83: "Hello World"
+      RenderBlock {SPAN} at (0,0) size 20x20
+      RenderBR {BR} at (20,20) size 0x0
+      RenderBlock {SPAN} at (0,20) size 20x20
       RenderText {#text} at (0,0) size 0x0
