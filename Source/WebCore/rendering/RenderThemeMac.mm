@@ -721,7 +721,7 @@ bool RenderThemeMac::paintCapsLockIndicator(RenderObject*, const PaintInfo& pain
         return true;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawCapsLockIndicator(paintInfo.context->platformContext(), r);
+    wkDrawCapsLockIndicator(localContext.cgContext(), r);
     
     return false;
 }
@@ -944,7 +944,9 @@ bool RenderThemeMac::paintProgressBar(RenderObject* renderObject, const PaintInf
     if (!imageBuffer)
         return true;
 
-    HIThemeDrawTrack(&trackInfo, 0, imageBuffer->context()->platformContext(), kHIThemeOrientationNormal);
+    ContextContainer cgContextContainer(imageBuffer->context());
+    CGContextRef cgContext = cgContextContainer.context();
+    HIThemeDrawTrack(&trackInfo, 0, cgContext, kHIThemeOrientationNormal);
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
@@ -1015,7 +1017,8 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
     if (r.isEmpty())
         return;
 
-    CGContextRef context = paintInfo.context->platformContext();
+    ContextContainer cgContextContainer(paintInfo.context);
+    CGContextRef context = cgContextContainer.context();
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
 
@@ -1046,6 +1049,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, r);
         paintInfo.context->addRoundedRectClip(border);
+        context = cgContextContainer.context();
         CGContextDrawShading(context, mainShading.get());
     }
     
@@ -1053,6 +1057,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, topGradient);
         paintInfo.context->addRoundedRectClip(RoundedIntRect(enclosingIntRect(topGradient), border.radii().topLeft(), border.radii().topRight(), IntSize(), IntSize()));
+        context = cgContextContainer.context();
         CGContextDrawShading(context, topShading.get());
     }
     
@@ -1060,6 +1065,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, bottomGradient);
         paintInfo.context->addRoundedRectClip(RoundedIntRect(enclosingIntRect(bottomGradient), IntSize(), IntSize(), border.radii().bottomLeft(), border.radii().bottomRight()));
+        context = cgContextContainer.context();
         CGContextDrawShading(context, bottomShading.get());
     }
 
@@ -1067,6 +1073,7 @@ void RenderThemeMac::paintMenuListButtonGradients(RenderObject* o, const PaintIn
         GraphicsContextStateSaver stateSaver(*paintInfo.context);
         CGContextClipToRect(context, r);
         paintInfo.context->addRoundedRectClip(border);
+        context = cgContextContainer.context();
         CGContextDrawShading(context, leftShading.get());
         CGContextDrawShading(context, rightShading.get());
     }
@@ -1268,7 +1275,7 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInf
     }
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    CGContextRef context = paintInfo.context->platformContext();
+    CGContextRef context = localContext.cgContext();
     CGColorSpaceRef cspace = deviceRGBColorSpaceRef();
 
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
@@ -1284,6 +1291,7 @@ bool RenderThemeMac::paintSliderTrack(RenderObject* o, const PaintInfo& paintInf
 
     IntSize radius(trackRadius, trackRadius);
     paintInfo.context->addRoundedRectClip(RoundedIntRect(bounds, radius, radius, radius, radius));
+    context = localContext.cgContext();
     CGContextDrawShading(context, mainShading.get());
     
     return false;
@@ -1719,7 +1727,7 @@ bool RenderThemeMac::paintMediaFullscreenButton(RenderObject* o, const PaintInfo
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaFullscreenButton, mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaFullscreenButton, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -1732,7 +1740,7 @@ bool RenderThemeMac::paintMediaMuteButton(RenderObject* o, const PaintInfo& pain
 
     if (MediaControlMuteButtonElement* btn = static_cast<MediaControlMuteButtonElement*>(node)) {
         LocalCurrentGraphicsContext localContext(paintInfo.context);
-        wkDrawMediaUIPart(btn->displayType(), mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+        wkDrawMediaUIPart(btn->displayType(), mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
 
     }
     return false;
@@ -1747,7 +1755,7 @@ bool RenderThemeMac::paintMediaPlayButton(RenderObject* o, const PaintInfo& pain
 
     if (MediaControlPlayButtonElement* btn = static_cast<MediaControlPlayButtonElement*>(node)) {
         LocalCurrentGraphicsContext localContext(paintInfo.context);
-        wkDrawMediaUIPart(btn->displayType(), mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+        wkDrawMediaUIPart(btn->displayType(), mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     }
     return false;
 }
@@ -1759,7 +1767,7 @@ bool RenderThemeMac::paintMediaSeekBackButton(RenderObject* o, const PaintInfo& 
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaSeekBackButton, mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaSeekBackButton, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -1770,7 +1778,7 @@ bool RenderThemeMac::paintMediaSeekForwardButton(RenderObject* o, const PaintInf
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaSeekForwardButton, mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaSeekForwardButton, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -1793,9 +1801,11 @@ bool RenderThemeMac::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pai
     if (isnan(duration))
         duration = 0;
  
+    ContextContainer cgContextContainer(paintInfo.context);
+    CGContextRef context = cgContextContainer.context();
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
-    wkDrawMediaSliderTrack(mediaControllerTheme(), paintInfo.context->platformContext(), unzoomedRect, 
+    wkDrawMediaSliderTrack(mediaControllerTheme(), context, unzoomedRect, 
         timeLoaded, currentTime, duration, getMediaUIPartStateFlags(node));
     return false;
 }
@@ -1807,7 +1817,7 @@ bool RenderThemeMac::paintMediaSliderThumb(RenderObject* o, const PaintInfo& pai
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaSliderThumb, mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaSliderThumb, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
     
@@ -1818,7 +1828,7 @@ bool RenderThemeMac::paintMediaRewindButton(RenderObject* o, const PaintInfo& pa
         return false;
     
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaRewindButton, mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaRewindButton, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -1829,7 +1839,7 @@ bool RenderThemeMac::paintMediaReturnToRealtimeButton(RenderObject* o, const Pai
         return false;
     
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaReturnToRealtimeButton, mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaReturnToRealtimeButton, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -1844,7 +1854,7 @@ bool RenderThemeMac::paintMediaToggleClosedCaptionsButton(RenderObject* o, const
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(btn->displayType(), mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(btn->displayType(), mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
 
     return false;
 }
@@ -1856,7 +1866,7 @@ bool RenderThemeMac::paintMediaControlsBackground(RenderObject* o, const PaintIn
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaTimelineContainer, mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaTimelineContainer, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -1866,9 +1876,10 @@ bool RenderThemeMac::paintMediaCurrentTime(RenderObject* o, const PaintInfo& pai
     if (!node)
         return false;
 
+    ContextContainer cgContextContainer(paintInfo.context);
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
-    wkDrawMediaUIPart(MediaCurrentTimeDisplay, mediaControllerTheme(), paintInfo.context->platformContext(), unzoomedRect, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaCurrentTimeDisplay, mediaControllerTheme(), cgContextContainer.context(), unzoomedRect, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -1878,9 +1889,10 @@ bool RenderThemeMac::paintMediaTimeRemaining(RenderObject* o, const PaintInfo& p
     if (!node)
         return false;
 
+    ContextContainer cgContextContainer(paintInfo.context);
     GraphicsContextStateSaver stateSaver(*paintInfo.context);
     FloatRect unzoomedRect = getUnzoomedRectAndAdjustCurrentContext(o, paintInfo, r);
-    wkDrawMediaUIPart(MediaTimeRemainingDisplay, mediaControllerTheme(), paintInfo.context->platformContext(), unzoomedRect, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaTimeRemainingDisplay, mediaControllerTheme(), cgContextContainer.context(), unzoomedRect, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -1891,7 +1903,7 @@ bool RenderThemeMac::paintMediaVolumeSliderContainer(RenderObject* o, const Pain
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaVolumeSliderContainer, mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaVolumeSliderContainer, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
 
@@ -1902,7 +1914,7 @@ bool RenderThemeMac::paintMediaVolumeSliderTrack(RenderObject* o, const PaintInf
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaVolumeSlider, mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaVolumeSlider, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
     
@@ -1913,7 +1925,7 @@ bool RenderThemeMac::paintMediaVolumeSliderThumb(RenderObject* o, const PaintInf
         return false;
 
     LocalCurrentGraphicsContext localContext(paintInfo.context);
-    wkDrawMediaUIPart(MediaVolumeSliderThumb, mediaControllerTheme(), paintInfo.context->platformContext(), r, getMediaUIPartStateFlags(node));
+    wkDrawMediaUIPart(MediaVolumeSliderThumb, mediaControllerTheme(), localContext.cgContext(), r, getMediaUIPartStateFlags(node));
     return false;
 }
     

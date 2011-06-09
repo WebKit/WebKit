@@ -1,3 +1,58 @@
+2011-06-09  Cary Clark  <caryclark@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Create local CG context for Mac UI elements when Skia is renderer
+        https://bugs.webkit.org/show_bug.cgi?id=62213
+
+        When building Mac Chrome using Skia as the WebKit renderer,
+        add state to LocalCurrentGraphicsContext to convert the SkCanvas
+        context passed by WebKit into the CGContext needed by UI
+        rendering.
+
+        No new tests.  The define typo in question is
+        not yet enabled, so this change has no functional
+        impact.
+
+        * platform/mac/LocalCurrentGraphicsContext.h:
+        Add SkiaBitLocker to create and release the converted CGContext.
+        Add ContextContainer, a class for Skia to create and release
+        the converted CGContext. If Skia is not used, the class has no effect.
+
+        * platform/mac/LocalCurrentGraphicsContext.mm:
+        (WebCore::LocalCurrentGraphicsContext::LocalCurrentGraphicsContext):
+        When building with Skia, create the CGContext before passing it on.
+
+        (WebCore::LocalCurrentGraphicsContext::cgContext):
+        Get the CGContext from the SkiaBitLocker, or the saved context,
+        as appropriate.
+
+        * rendering/RenderThemeMac.mm:
+        Get the CGContext from Skia conversion or native, as appropriate.
+        Use the LocalCurrentGraphicsContext if there is one. Otherwise,
+        add a ContextContainer to house the SkCanvas to CGContext conversion.
+
+        (WebCore::RenderThemeMac::paintCapsLockIndicator):
+        (WebCore::RenderThemeMac::paintProgressBar):
+        (WebCore::RenderThemeMac::paintMenuListButtonGradients):
+        (WebCore::RenderThemeMac::paintSliderTrack):
+        (WebCore::RenderThemeMac::paintMediaFullscreenButton):
+        (WebCore::RenderThemeMac::paintMediaMuteButton):
+        (WebCore::RenderThemeMac::paintMediaPlayButton):
+        (WebCore::RenderThemeMac::paintMediaSeekBackButton):
+        (WebCore::RenderThemeMac::paintMediaSeekForwardButton):
+        (WebCore::RenderThemeMac::paintMediaSliderTrack):
+        (WebCore::RenderThemeMac::paintMediaSliderThumb):
+        (WebCore::RenderThemeMac::paintMediaRewindButton):
+        (WebCore::RenderThemeMac::paintMediaReturnToRealtimeButton):
+        (WebCore::RenderThemeMac::paintMediaToggleClosedCaptionsButton):
+        (WebCore::RenderThemeMac::paintMediaControlsBackground):
+        (WebCore::RenderThemeMac::paintMediaCurrentTime):
+        (WebCore::RenderThemeMac::paintMediaTimeRemaining):
+        (WebCore::RenderThemeMac::paintMediaVolumeSliderContainer):
+        (WebCore::RenderThemeMac::paintMediaVolumeSliderTrack):
+        (WebCore::RenderThemeMac::paintMediaVolumeSliderThumb):
+
 2011-06-02  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Maciej Stachowiak.
