@@ -76,29 +76,6 @@ compositing/tiling/huge-layer-with-layer-children.html
 compositing/tiling/huge-layer.html
 compositing/video/video-poster.html
 
-# Uncategorized editing failures
-editing/deleting/delete-by-word-001.html
-editing/deleting/delete-by-word-002.html
-editing/deleting/delete-ligature-001.html
-editing/deleting/delete-ligature-002.html
-editing/deleting/delete-ligature-003.html
-editing/execCommand/find-after-replace.html
-editing/input/emacs-ctrl-o.html
-editing/inserting/break-blockquote-after-delete.html
-editing/inserting/insert-3786362-fix.html
-editing/inserting/insert-3907422-fix.html
-editing/selection/contenteditable-click-inside.html
-editing/style/non-inheritable-styles.html
-editing/style/smoosh-styles-001.html
-editing/style/smoosh-styles-003.html
-editing/style/style-boundary-005.html
-editing/pasteboard/do-not-copy-unnecessary-styles-2.html
-editing/pasteboard/do-not-copy-unnecessary-styles.html
-editing/pasteboard/onpaste-text-html-types.html
-editing/pasteboard/paste-removing-iframe.html
-editing/pasteboard/preserve-underline-color.html
-editing/pasteboard/insert-div-text-into-text.html
-
 # WebKitTestRunner needs an implementation of eventSender
 # <https://bugs.webkit.org/show_bug.cgi?id=42194>
 svg/dynamic-updates/SVGFEDistantLightElement-dom-azimuth-attr.html
@@ -125,6 +102,7 @@ editing/deleting/smart-delete-002.html
 editing/deleting/smart-delete-003.html
 editing/deleting/smart-delete-004.html
 editing/execCommand/findString-2.html
+editing/input/emacs-ctrl-o.html
 editing/input/option-page-up-down.html
 editing/input/page-up-down-scrolls.html
 editing/input/scroll-viewport-page-up-down.html
@@ -2519,67 +2497,7 @@ editing/execCommand/indent-pre.html
 editing/inserting/insert-br-quoted-007.html
 editing/pasteboard/copy-null-characters.html
 editing/pasteboard/paste-text-with-style.html
-editing/selection/3690703-2.html
-editing/selection/3690703.html
-editing/selection/3690719.html
-editing/selection/4889598.html
-editing/selection/4932260-2.html
-editing/selection/4932260-3.html
-editing/selection/4947387.html
-editing/selection/after-line-wrap.html
 editing/selection/caret-mode-paragraph-keys-navigation.html
-editing/selection/context-menu-on-text.html
-editing/selection/context-menu-text-selection.html
-editing/selection/drag-select-rapidly.html
-editing/selection/extend-by-character-001.html
-editing/selection/extend-by-character-002.html
-editing/selection/extend-by-character-003.html
-editing/selection/extend-by-character-004.html
-editing/selection/extend-by-character-005.html
-editing/selection/extend-by-character-006.html
-editing/selection/extend-by-sentence-001.html
-editing/selection/extend-by-word-001.html
-editing/selection/extend-by-word-002.html
-editing/selection/focus_editable_html.html
-editing/selection/inline-table.html
-editing/selection/leave-requested-block.html
-editing/selection/mixed-editability-3.html
-editing/selection/mixed-editability-4.html
-editing/selection/mixed-editability-5.html
-editing/selection/mixed-editability-8.html
-editing/selection/mixed-editability-9.html
-editing/selection/move-3875618-fix.html
-editing/selection/move-3875641-fix.html
-editing/selection/move-backwords-by-word-001.html
-editing/selection/move-between-blocks-yes-001.html
-editing/selection/move-by-character-001.html
-editing/selection/move-by-character-002.html
-editing/selection/move-by-character-003.html
-editing/selection/move-by-character-004.html
-editing/selection/move-by-character-005.html
-editing/selection/move-by-line-001.html
-editing/selection/move-by-line-002.html
-editing/selection/move-by-sentence-001.html
-editing/selection/move-by-word-001.html
-editing/selection/previous-line-position.html
-editing/selection/replaced-boundaries-1.html
-editing/selection/replaced-boundaries-2.html
-editing/selection/replaced-boundaries-3.html
-editing/selection/select-all-004.html
-editing/selection/selection-3748164-fix.html
-editing/selection/select-missing-image.html
-editing/selection/table-caret-1.html
-editing/selection/table-caret-2.html
-editing/selection/table-caret-3.html
-editing/selection/unrendered-001.html
-editing/selection/unrendered-002.html
-editing/selection/unrendered-003.html
-editing/selection/unrendered-004.html
-editing/selection/unrendered-005.html
-editing/selection/unrendered-space.html
-editing/style/iframe-onload-crash-mac.html
-editing/style/iframe-onload-crash-unix.html
-editing/style/iframe-onload-crash-win.html
 editing/style/stylewithcss-without-selection.html
 fast/block/positioning/vertical-rl/fixed-positioning.html
 fast/css/bidi-override-in-anonymous-block.html
@@ -3113,30 +3031,6 @@ http/tests/uri/css-href.php
 
 # new test inroduced in r86725, but fail
 http/tests/loading/nested_bad_objects.php
-
-# unskipped by r86834, but fail on Qt-WK2 platform
-editing/style/create-block-for-style-001.html
-editing/style/create-block-for-style-002.html
-editing/style/create-block-for-style-003.html
-editing/style/create-block-for-style-004.html
-editing/style/create-block-for-style-005.html
-editing/style/create-block-for-style-006.html
-editing/style/create-block-for-style-007.html
-editing/style/create-block-for-style-008.html
-editing/style/create-block-for-style-009.html
-editing/style/create-block-for-style-010.html
-editing/style/create-block-for-style-011.html
-editing/style/create-block-for-style-012.html
-editing/style/create-block-for-style-013.html
-editing/style/relative-font-size-change-001.html
-editing/style/relative-font-size-change-002.html
-editing/style/relative-font-size-change-003.html
-editing/style/relative-font-size-change-004.html
-editing/style/style-3690704-fix.html
-editing/style/style-3998892-fix.html
-editing/style/style-boundary-001.html
-editing/style/style-boundary-004.html
-editing/style/table-selection.html
 
 # regression caused by http://trac.webkit.org/changeset/87007
 fast/replaced/object-with-non-empty-classid-triggers-fallback.html
