@@ -1,3 +1,12 @@
+2011-06-08  Mike Lawther  <mikelawther@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Add mikelawther to committers.py
+        https://bugs.webkit.org/show_bug.cgi?id=62354
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-06-08  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Fix a typo.
