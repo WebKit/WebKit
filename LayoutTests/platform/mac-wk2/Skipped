@@ -984,9 +984,6 @@ http/tests/inspector/network/ping.html
 http/tests/navigation/ping-cross-origin-from-https.html
 http/tests/navigation/ping-cross-origin.html
 http/tests/navigation/ping-same-origin.html
-http/tests/security/webgl-remote-read-remote-image-allowed.html
-http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
-http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
 loader/go-back-to-different-window-size.html
 media/restore-from-page-cache.html
 java/embedding-java-with-object.html
