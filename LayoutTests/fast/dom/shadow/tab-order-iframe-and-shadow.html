@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<body>
+<p>This tests that pressing Tab key should traverse into iframe and shadow tree, and pressing Shift-Tab should reverse the order.
+ Makes sure that a shadow host element should act like a iframe element.</p>
+<pre id="console"></pre>
+<script>
+function log(msg) {
+    document.querySelector('#console').textContent += (msg + '\n');
+}
+
+function description(element) {
+   var msg = '';
+    if (element.id) {
+      msg += 'id:' + element.id;
+    }
+    msg += '(tabIndex=' + element.tabIndex + ')';
+    return msg;
+}
+
+function onFocus(event) {
+    log(description(event.target) + ' is focused.');
+}
+
+function addFocusEventListener(element) {
+    element.addEventListener('focus', onFocus, false);
+}
+
+function createTextInputElement(doc, id, tabIndex) {
+    var input = doc.createElement('input');
+    input.type = 'text';
+    input.id = id;
+    input.tabIndex = tabIndex;
+    addFocusEventListener(input);
+    return input;
+}
+
+if (window.layoutTestController) {
+    layoutTestController.dumpAsText();
+    var doc = document;
+
+    doc.body.appendChild(createTextInputElement(doc, 'input-01', 1));
+    doc.body.appendChild(createTextInputElement(doc, 'input-02', 0));
+
+    function addShadowHost(doc) {
+        var shadowHost = doc.createElement('p');
+        shadowHost.tabIndex = -1;  // This shadow host (and a shadow tree in that) should be skipped.
+        var shadow = layoutTestController.ensureShadowRoot(shadowHost);
+        doc.body.appendChild(shadowHost);
+        shadow.appendChild(createTextInputElement(doc, 'shadow-input-03', 0));
+    }
+    addShadowHost(doc);
+
+    doc.body.appendChild(createTextInputElement(doc, 'input-04', 0));
+
+    function addIframe(doc) {
+        var iframe = doc.createElement('iframe');
+        doc.body.appendChild(iframe);
+        doc = iframe.contentDocument;
+
+        doc.body.appendChild(createTextInputElement(doc, 'iframe-input-05', 0));
+        doc.body.appendChild(createTextInputElement(doc, 'iframe-input-06', 1));
+        doc.body.appendChild(createTextInputElement(doc, 'iframe-input-07', -1));
+
+        function addShadowHost(doc) {
+            var shadowHost = doc.createElement('p');
+            shadowHost.tabIndex = 1;
+            var shadow = layoutTestController.ensureShadowRoot(shadowHost);
+            doc.body.appendChild(shadowHost);
+
+            shadow.appendChild(createTextInputElement(doc, 'iframe-shadow-input-08', 0));
+            shadow.appendChild(createTextInputElement(doc, 'iframe-shadow-input-09', 1));
+            shadow.appendChild(createTextInputElement(doc, 'iframe-shadow-input-10', -1));
+        }
+        addShadowHost(doc);
+
+        doc.body.appendChild(createTextInputElement(doc, 'iframe-input-11', 2));
+        doc.body.appendChild(createTextInputElement(doc, 'iframe-input-12', 1));
+    }
+    addIframe(doc);
+
+    doc.body.appendChild(createTextInputElement(doc, 'input-13', 1));
+    doc.body.appendChild(createTextInputElement(doc, 'input-14', 0));
+    doc.body.appendChild(createTextInputElement(doc, 'input-15', 2));
+
+    log('Focus input-01.');
+    doc.getElementById('input-01').focus();
+
+    if (window.eventSender) {
+        var pressed = 11;
+        log('\nPress Tab ' + pressed + ' times.');
+        for (var i = 0; i < pressed; ++i) {
+            eventSender.keyDown('\t');
+        }
+        log('\nPress Shift-Tab ' + pressed + ' times.');
+        for (var i = 0; i < pressed; ++i) {
+            eventSender.keyDown('\t', ['shiftKey']);
+        }
+   }
+   log('\nTest finished.');
+}
+</script>
+</body>
+</html>

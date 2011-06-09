@@ -1,5 +1,37 @@
 2011-06-08  Hayato Ito  <hayato@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        A forward/backward tab traversal now visits focusable elements in a shadow root.
+        https://bugs.webkit.org/show_bug.cgi?id=61410
+
+        Test: fast/dom/shadow/tab-order-iframe-and-shadow.html
+
+        Like a iframe element, a shadow host becomes a scope of
+        tabindex. That means all descendant elements in a shadow root are
+        skipped if the host node of the shadow root is not focusable.
+
+        The patch doesn't affect HTMLInputElement and HTMLTextAreaElement,
+        which uses a shadow root and do extra works in their focus()
+        method.
+
+        A shadow root's <content> is not considered in this patch.
+        That will be addressed in a following patch.
+
+        * page/FocusController.cpp:
+        (WebCore::shadowRoot):
+        (WebCore::isTreeScopeOwner):
+        (WebCore::FocusController::deepFocusableNode):
+        (WebCore::FocusController::advanceFocusInDocumentOrder):
+        (WebCore::FocusController::findFocusableNodeAcrossTreeScope):
+        (WebCore::FocusController::findFocusableNode):
+        (WebCore::FocusController::nextFocusableNode):
+        (WebCore::FocusController::previousFocusableNode):
+        (WebCore::FocusController::ownerOfTreeScope):
+        * page/FocusController.h:
+
+2011-06-08  Hayato Ito  <hayato@chromium.org>
+
         Reviewed by Hajime Morita.
 
         Makes sure that document.activeElement won't be an element in shadow root.

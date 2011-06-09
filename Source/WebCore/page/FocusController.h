@@ -65,7 +65,23 @@ private:
     bool advanceFocusDirectionally(FocusDirection, KeyboardEvent*);
     bool advanceFocusInDocumentOrder(FocusDirection, KeyboardEvent*, bool initialFocus);
 
+    Node* findFocusableNodeAcrossTreeScope(FocusDirection, TreeScope* startScope, Node* start, KeyboardEvent*);
     Node* deepFocusableNode(FocusDirection, Node*, KeyboardEvent*);
+    Node* ownerOfTreeScope(TreeScope*);
+
+    // Searches through the given tree scope, starting from start node, for the next/previous selectable element that comes after/before start node.
+    // The order followed is as specified in section 17.11.1 of the HTML4 spec, which is elements with tab indexes
+    // first (from lowest to highest), and then elements without tab indexes (in document order).
+    //
+    // @param start The node from which to start searching. The node after this will be focused. May be null.
+    //
+    // @return The focus node that comes after/before start node.
+    //
+    // See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
+    inline Node* findFocusableNode(FocusDirection, TreeScope*, Node* start, KeyboardEvent*);
+
+    Node* nextFocusableNode(TreeScope*, Node* start, KeyboardEvent*);
+    Node* previousFocusableNode(TreeScope*, Node* start, KeyboardEvent*);
 
     bool advanceFocusDirectionallyInContainer(Node* container, const IntRect& startingRect, FocusDirection, KeyboardEvent*);
     void findFocusCandidateInContainer(Node* container, const IntRect& startingRect, FocusDirection, KeyboardEvent*, FocusCandidate& closest);
@@ -76,29 +92,6 @@ private:
     bool m_isFocused;
     bool m_isChangingFocusedFrame;
 
-    // Searches through the document, starting from start node, for the next selectable element that comes after start node.
-    // The order followed is as specified in section 17.11.1 of the HTML4 spec, which is elements with tab indexes
-    // first (from lowest to highest), and then elements without tab indexes (in document order).
-    //
-    // @param within The tree scope where a search is executed.
-    // @param start The node from which to start searching. The node before this will be focused. May be null.
-    //
-    // @return The focus node that comes after start node.
-    //
-    // See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
-    Node* nextFocusableNode(TreeScope* within, Node* start, KeyboardEvent*);
-
-    // Searches through the document, starting from start node, for the previous selectable element that comes before start node.
-    // The order followed is as specified in section 17.11.1 of the HTML4 spec, which is elements with tab indexes
-    // first (from lowest to highest), and then elements without tab indexes (in document order).
-    //
-    // @param within The tree scope where a search is executed.
-    // @param start The node from which to start searching. The node before this will be focused. May be null.
-    //
-    // @return The focus node that comes before start node.
-    //
-    // See http://www.w3.org/TR/html4/interact/forms.html#h-17.11.1
-    Node* previousFocusableNode(TreeScope* within, Node* start, KeyboardEvent*);
 };
 
 } // namespace WebCore
