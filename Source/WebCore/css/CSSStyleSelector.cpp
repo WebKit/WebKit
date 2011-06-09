@@ -1317,8 +1317,11 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForElement(Element* e, RenderStyl
 
     if (m_parentStyle)
         m_style->inheritFrom(m_parentStyle);
-    else
+    else {
         m_parentStyle = style();
+        // Make sure our fonts are initialized if we don't inherit them from our parent style.
+        m_style->font().update(0);
+    }
 
     if (e->isLink()) {
         m_style->setIsLink(true);

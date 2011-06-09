@@ -1,3 +1,15 @@
+2011-06-09  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by David Hyatt.
+
+        Test for chrome.dll!WebCore::RenderStyle::fontMetrics ReadAV@NULL (two crashes)
+        https://bugs.webkit.org/show_bug.cgi?id=57756
+
+        * fast/css/fontMetric-border-radius-null-crash-expected.txt: Added.
+        * fast/css/fontMetric-border-radius-null-crash.html: Added.
+        * fast/css/fontMetric-webkit-border-end-width-null-crash-expected.txt: Added.
+        * fast/css/fontMetric-webkit-border-end-width-null-crash.html: Added.
+
 2011-06-09  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Andreas Kling.

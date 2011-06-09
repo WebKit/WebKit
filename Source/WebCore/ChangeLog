@@ -1,3 +1,18 @@
+2011-06-09  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by David Hyatt.
+
+        chrome.dll!WebCore::RenderStyle::fontMetrics ReadAV@NULL (two crashes)
+        https://bugs.webkit.org/show_bug.cgi?id=57756
+
+        Tests: fast/css/fontMetric-border-radius-null-crash.html
+               fast/css/fontMetric-webkit-border-end-width-null-crash.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForElement): Added a call to Font::update
+        so that our FontFallbackList is allocated if we ever need it when applying our
+        style rules.
+
 2011-06-09  Cary Clark  <caryclark@google.com>
 
         Reviewed by Eric Seidel.
