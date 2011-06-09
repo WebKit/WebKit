@@ -1,3 +1,17 @@
+2011-06-09  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Antti Koivisto.
+
+        REGRESSION(84329): Stylesheets on some pages do not load
+        https://bugs.webkit.org/show_bug.cgi?id=61400
+
+        Adding test to cover the regression. The test actually uncovered
+        a bug in the way we handle alternate stylesheet and thus is
+        failing some parts.
+
+        * fast/css/link-disabled-attr-expected.txt: Added.
+        * fast/css/link-disabled-attr.html: Added.
+
 2011-06-09  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

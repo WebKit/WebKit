@@ -1,0 +1,27 @@
+Series of tests to validate behavior of getting/setting link.disabled and link.sheet.disabled.
+Test for bug 61400: REGRESSION(84329): Stylesheets on some pages do not load
+
+notsheet
+PASS link.sheet is null
+PASS link.disabled is false
+sheet
+PASS link.sheet is non-null.
+PASS link.disabled is true
+PASS link.sheet.disabled is true
+PASS getComputedStyle(console).whiteSpace is 'normal'
+PASS link.disabled is false
+PASS link.sheet.disabled is false
+PASS getComputedStyle(console).whiteSpace is 'pre-wrap'
+altsheet
+FAIL link.disabled should be true. Was false.
+PASS link.sheet is non-null.
+FAIL getComputedStyle(console).backgroundColor should be rgb(0, 128, 0). Was rgba(0, 0, 0, 0).
+FAIL link.disabled should be true. Was false.
+PASS getComputedStyle(console).backgroundColor is originalBG
+PASS link.disabled is false
+FAIL getComputedStyle(console).backgroundColor should be rgb(0, 128, 0). Was rgba(0, 0, 0, 0).
+PASS getComputedStyle(console).backgroundColor is originalBG
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

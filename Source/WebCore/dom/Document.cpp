@@ -2967,7 +2967,7 @@ void Document::recalcStyleSelector()
             if (e->hasLocalName(linkTag)) {
                 // <LINK> element
                 HTMLLinkElement* linkElement = static_cast<HTMLLinkElement*>(n);
-                if (linkElement->isDisabled())
+                if (linkElement->disabled())
                     continue;
                 enabledViaScript = linkElement->isEnabledViaScript();
                 if (linkElement->isLoading()) {

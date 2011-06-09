@@ -1,3 +1,37 @@
+2011-06-09  Julien Chaffraix  <jchaffraix@codeaurora.org>
+
+        Reviewed by Antti Koivisto.
+
+        REGRESSION(84329): Stylesheets on some pages do not load
+        https://bugs.webkit.org/show_bug.cgi?id=61400
+
+        Test: fast/css/link-disabled-attr.html
+
+        Fixed r84329: the change did not take into account the fact
+        that HTMLLinkElement did already contain the disabled information
+        and the 2 information were not linked as they should have!
+
+        The new logic pushes the information to the stylesheet as this
+        is what the spec mandates and what FF is doing. Also it keeps
+        one bit of information (that JS enabled the stylesheet) as it
+        is needed for the recalcStyleSelector logic.
+
+        * dom/Document.cpp:
+        (WebCore::Document::recalcStyleSelector): s/isDisabled/disabled.
+
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement): Removed m_disabledState,
+        replaced by m_isEnabledViaScript.
+        (WebCore::HTMLLinkElement::setDisabled): Updated the logic after
+        m_disabledState removal. It also matches the spec by forwarding
+        the disabled state to our stylesheet if we have one.
+        (WebCore::HTMLLinkElement::parseMappedAttribute): Removed harmful
+        handling of the disabledAttr.
+        (WebCore::HTMLLinkElement::process): Updated after m_disabledState removal.
+        * html/HTMLLinkElement.h:
+        (WebCore::HTMLLinkElement::isEnabledViaScript): Ditto.
+        (WebCore::HTMLLinkElement::isAlternate): Ditto.
+
 2011-06-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

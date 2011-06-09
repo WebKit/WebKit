@@ -55,8 +55,8 @@ inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document* 
 #if ENABLE(LINK_PREFETCH)
     , m_onloadTimer(this, &HTMLLinkElement::onloadTimerFired)
 #endif
-    , m_disabledState(Unset)
     , m_loading(false)
+    , m_isEnabledViaScript(false)
     , m_createdByParser(createdByParser)
     , m_isInShadowTree(false)
     , m_pendingSheetType(None)
@@ -85,40 +85,43 @@ HTMLLinkElement::~HTMLLinkElement()
 #endif
 }
 
-void HTMLLinkElement::setDisabledState(bool _disabled)
+void HTMLLinkElement::setDisabled(bool disabled)
 {
-    DisabledState oldDisabledState = m_disabledState;
-    m_disabledState = _disabled ? Disabled : EnabledViaScript;
-    if (oldDisabledState != m_disabledState) {
-        // If we change the disabled state while the sheet is still loading, then we have to
-        // perform three checks:
-        if (isLoading()) {
-            // Check #1: The sheet becomes disabled while loading.
-            if (m_disabledState == Disabled)
-                removePendingSheet();
+    if (!m_sheet)
+        return;
 
-            // Check #2: An alternate sheet becomes enabled while it is still loading.
-            if (m_relAttribute.m_isAlternate && m_disabledState == EnabledViaScript)
-                addPendingSheet(Blocking);
+    bool wasDisabled = m_sheet->disabled();
+    if (wasDisabled == disabled)
+        return;
 
-            // Check #3: A main sheet becomes enabled while it was still loading and
-            // after it was disabled via script.  It takes really terrible code to make this
-            // happen (a double toggle for no reason essentially).  This happens on
-            // virtualplastic.net, which manages to do about 12 enable/disables on only 3
-            // sheets. :)
-            if (!m_relAttribute.m_isAlternate && m_disabledState == EnabledViaScript && oldDisabledState == Disabled)
-                addPendingSheet(Blocking);
+    m_sheet->setDisabled(disabled);
+    m_isEnabledViaScript = !disabled;
 
-            // If the sheet is already loading just bail.
-            return;
-        }
+    // If we change the disabled state while the sheet is still loading, then we have to
+    // perform three checks:
+    if (isLoading()) {
+        // Check #1: The sheet becomes disabled while loading.
+        if (disabled)
+            removePendingSheet();
 
-        // Load the sheet, since it's never been loaded before.
-        if (!m_sheet && m_disabledState == EnabledViaScript)
-            process();
-        else
-            document()->styleSelectorChanged(DeferRecalcStyle); // Update the style selector.
+        // Check #2: An alternate sheet becomes enabled while it is still loading.
+        if (m_relAttribute.m_isAlternate && !disabled)
+            addPendingSheet(Blocking);
+
+        // Check #3: A main sheet becomes enabled while it was still loading and
+        // after it was disabled via script. It takes really terrible code to make this
+        // happen (a double toggle for no reason essentially). This happens on
+        // virtualplastic.net, which manages to do about 12 enable/disables on only 3
+        // sheets. :)
+        if (!m_relAttribute.m_isAlternate && !disabled && wasDisabled)
+            addPendingSheet(Blocking);
+
+        // If the sheet is already loading just bail.
+        return;
     }
+
+    if (!disabled)
+        process();
 }
 
 StyleSheet* HTMLLinkElement::sheet() const
@@ -140,9 +143,7 @@ void HTMLLinkElement::parseMappedAttribute(Attribute* attr)
     } else if (attr->name() == mediaAttr) {
         m_media = attr->value().string().lower();
         process();
-    } else if (attr->name() == disabledAttr)
-        setDisabledState(!attr->isNull());
-    else if (attr->name() == onbeforeloadAttr)
+    } else if (attr->name() == onbeforeloadAttr)
         setAttributeEventListener(eventNames().beforeloadEvent, createAttributeEventListener(this, attr));
 #if ENABLE(LINK_PREFETCH)
     else if (attr->name() == onloadAttr)
@@ -279,7 +280,7 @@ void HTMLLinkElement::process()
 
     bool acceptIfTypeContainsTextCSS = document()->page() && document()->page()->settings() && document()->page()->settings()->treatsAnyTextCSSLinkAsStylesheet();
     
-    if (m_disabledState != Disabled && (m_relAttribute.m_isStyleSheet || (acceptIfTypeContainsTextCSS && type.contains("text/css"))) 
+    if (!disabled() && (m_relAttribute.m_isStyleSheet || (acceptIfTypeContainsTextCSS && type.contains("text/css")))
         && document()->frame() && m_url.isValid()) {
         
         String charset = getAttribute(charsetAttr);
@@ -552,13 +553,6 @@ void HTMLLinkElement::removePendingSheet()
 bool HTMLLinkElement::disabled() const
 {
     return m_sheet && m_sheet->disabled();
-}
-
-void HTMLLinkElement::setDisabled(bool disabled)
-{
-    if (!m_sheet)
-        return;
-    m_sheet->setDisabled(disabled);
 }
 
 }
