@@ -1,5 +1,12 @@
 2011-06-08  James Kozianski  <koz@chromium.org>
 
+        [Chromium] Unreviewed. Revert r88412 because it introduced syntax
+        errors into test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-08  James Kozianski  <koz@chromium.org>
+
         [Chromium] Unreviewed. Fix expectations for
         styles-disable-then-change.html.
 
