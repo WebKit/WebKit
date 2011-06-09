@@ -1,3 +1,13 @@
+2011-06-09  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB test: behavior of undefined value in record
+        https://bugs.webkit.org/show_bug.cgi?id=62371
+
+        * storage/indexeddb/value-undefined-expected.txt: Added.
+        * storage/indexeddb/value-undefined.html: Added.
+
 2011-06-09  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Andreas Kling.

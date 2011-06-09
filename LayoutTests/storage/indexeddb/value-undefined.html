@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB undefined as record value");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    shouldBeFalse("indexedDB == null");
+    IDBDatabaseException = evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
+    shouldBeFalse("IDBDatabaseException == null");
+    IDBCursor = evalAndLog("IDBCursor = window.IDBCursor || window.webkitIDBCursor;");
+    shouldBeFalse("IDBCursor == null");
+    IDBKeyRange = evalAndLog("IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;");
+    shouldBeFalse("IDBKeyRange == null");
+
+    name = window.location.pathname;
+    description = "My Test Database";
+    request = evalAndLog("indexedDB.open(name, description)");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    db = evalAndLog("db = event.target.result");
+
+    request = evalAndLog("request = db.setVersion('1')");
+    request.onsuccess = createAndPopulateObjectStore;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function createAndPopulateObjectStore()
+{
+    deleteAllObjectStores(db);
+
+    objectStore = evalAndLog("objectStore = db.createObjectStore('foo');");
+    result = evalAndLog("result = objectStore.add(undefined, Infinity);");
+    result.onerror = unexpectedErrorCallback;
+    result.onsuccess = getValue;
+}
+
+function getValue()
+{
+    result = evalAndLog("result = objectStore.get(Infinity);");
+    result.onerror = unexpectedErrorCallback;
+    result.onsuccess = checkValue;
+}
+
+function checkValue()
+{
+    value = evalAndLog("value = event.target.result;");
+    shouldBe("value", "undefined");
+    result = evalAndLog("result = objectStore.openCursor();");
+    result.onerror = unexpectedErrorCallback;
+    result.onsuccess = checkCursor;
+}
+
+function checkCursor()
+{
+    cursor = evalAndLog("cursor = event.target.result;");
+    if (cursor) {
+        shouldBe("cursor.key", "Infinity");
+        shouldBe("cursor.value", "undefined");
+    } else {
+        testFailed("cursor is null");
+    }
+    done();
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>
