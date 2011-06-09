@@ -2557,3 +2557,8 @@ inspector/styles/styles-update-from-js.html
 inspector/profiler/detailed-heapshots-comparison-expansion-preserved-when-sorting.html
 inspector/debugger/source-frame.html
 inspector/profiler/detailed-heapshots-comparison-show-all.html
+
+# REGRESSION(r88393): Tests fail on Qt platform
+# https://bugs.webkit.org/show_bug.cgi?id=62374
+editing/selection/move-by-word-visually-others.html
+editing/selection/move-by-word-visually-single-space-sigle-line.html
