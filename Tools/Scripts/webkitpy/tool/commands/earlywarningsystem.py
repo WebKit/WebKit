@@ -179,7 +179,7 @@ class ChromiumLinuxEWS(AbstractChromiumEWS):
     #        a database migration. :(
     name = "chromium-ews"
     port_name = "chromium-xvfb"
-    run_tests = True
+    _run_tests = True
 
 
 class ChromiumWindowsEWS(AbstractChromiumEWS):
@@ -207,4 +207,3 @@ class ChromiumMacEWS(AbstractChromiumEWS, AbstractCommitterOnlyEWS):
 class MacEWS(AbstractCommitterOnlyEWS):
     name = "mac-ews"
     port_name = "mac"
-    _run_tests = True

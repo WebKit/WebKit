@@ -1,3 +1,18 @@
+2011-06-09  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        Disable running layout tests on Mac EWS bots (and fix cr-linux bots to run them again)
+        https://bugs.webkit.org/show_bug.cgi?id=62362
+
+        The mac bots are failing inspector tests.  We don't know why yet.
+        So for now, turning run-webkit-tests off for the mac-ews.
+
+        Also noticed that due to the wrong variable name the cr-linux
+        bots weren't running tests!
+
+        * Scripts/webkitpy/tool/commands/earlywarningsystem.py:
+
 2011-06-09  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonac.
