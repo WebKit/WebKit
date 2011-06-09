@@ -499,9 +499,6 @@ WONTFIX SKIP : http/tests/media/video-cross-site.html = PASS FAIL TIMEOUT
 // Pre-HTML5 parser quirks only apply to the mac port for now.
 WONTFIX SKIP : fast/parser/pre-html5-parser-quirks.html = FAIL
 
-// The test depends on metrics on non-Mac.
-WONTFIX MAC : fast/forms/input-number-large-padding.html = TEXT
-
 // -----------------------------------------------------------------
 // CHROME REWRITTEN TESTS
 // -----------------------------------------------------------------
@@ -1305,7 +1302,7 @@ BUGCR23473 MAC : fast/repaint/block-selection-gap-in-composited-layer.html = IMA
 BUGCR23473 MAC : fast/repaint/block-selection-gap-in-table-cell.html = IMAGE
 BUGCR23473 MAC : fast/repaint/body-background-image.html = IMAGE
 BUGCR23473 MAC : fast/repaint/border-fit-lines.html = IMAGE
-BUGCR23473 MAC : fast/repaint/border-radius-repaint.html = IMAGE
+BUGCR23473 LEOPARD : fast/repaint/border-radius-repaint.html = IMAGE
 BUGCR23473 MAC : fast/repaint/border-repaint-glitch.html = IMAGE
 BUGCR23473 MAC : fast/repaint/box-shadow-dynamic.html = IMAGE
 BUGCR23473 MAC : fast/repaint/bugzilla-3509.html = IMAGE
@@ -2786,9 +2783,7 @@ BUGCR71022 LEOPARD : fast/text/justify-ideograph-vertical.html = IMAGE
 
 BUGWK53347 WIN LINUX DEBUG : fast/repaint/4774354.html = PASS TIMEOUT
 
-BUGCR71418 MAC : fast/borders/border-radius-split-inline.html = IMAGE
-//BUGCR71418 MAC : fast/repaint/box-shadow-h.html = IMAGE PASS
-//BUGCR71418 MAC : fast/repaint/box-shadow-v.html = IMAGE PASS
+BUGCR71418 LEOPARD : fast/borders/border-radius-split-inline.html = IMAGE
 
 BUGWK53446 DEBUG : http/tests/navigation/forward-and-cancel.html = PASS TEXT
 BUGWK53446 LINUX RELEASE : http/tests/navigation/forward-and-cancel.html = PASS TEXT
@@ -3048,7 +3043,6 @@ BUGWK56072 VISTA : fast/blockflow/vertical-align-table-baseline.html = IMAGE
 BUGWK56072 VISTA : fast/blockflow/vertical-baseline-alignment.html = IMAGE
 BUGWK56072 VISTA : fast/repaint/japanese-rl-selection-clear.html = IMAGE
 BUGWK56072 VISTA : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
-BUGWK56072 MAC : fast/repaint/japanese-rl-selection-repaint.html = IMAGE
 BUGWK56072 VISTA : fast/repaint/repaint-across-writing-mode-boundary.html = IMAGE
 BUGWK56072 VISTA : fast/ruby/base-shorter-than-text.html = FAIL
 
@@ -3956,7 +3950,7 @@ BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IM
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-text.xhtml = IMAGE+TEXT
-BUGWK61664 : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
+BUGWK61664 LINUX : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE+TEXT IMAGE
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT
 

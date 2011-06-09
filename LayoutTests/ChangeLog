@@ -1,5 +1,11 @@
 2011-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
+        More Chromium Mac test expectation updates.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-09  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium Mac test expectation updates.
 
         * platform/chromium/test_expectations.txt:
