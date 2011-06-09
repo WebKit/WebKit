@@ -1,3 +1,9 @@
+2011-06-09  Kenneth Russell  <kbr@google.com>
+
+        Skipped new tests from r88489 on WebKit Win, since WebGL is not yet enabled.
+
+        * platform/win/Skipped:
+
 2011-06-09  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.
