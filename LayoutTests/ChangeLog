@@ -1,3 +1,10 @@
+2011-06-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Update expectations.
+
+        * platform/chromium-linux/plugins/mouse-events-expected.txt: Added.
+        * platform/chromium-win/fullscreen/full-screen-video-offset-expected.txt: Added.
+
 2011-06-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by James Robinson.

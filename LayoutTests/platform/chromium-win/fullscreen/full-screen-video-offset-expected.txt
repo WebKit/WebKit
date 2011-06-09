@@ -1,0 +1,9 @@
+This layout test checks that the offset size and position of a video element does not change when the it enters full-screen mode. Press go full-screen to begin.
+EVENT(webkitfullscreenchange)
+EXPECTED (document.webkitCurrentFullScreenElement == '[object HTMLVideoElement]') OK
+EXPECTED (video.offsetLeft == '8') OK
+EXPECTED (video.offsetTop == '54') OK
+EXPECTED (video.offsetWidth == '300') OK
+EXPECTED (video.offsetHeight == '150') OK
+END OF TEST
+
