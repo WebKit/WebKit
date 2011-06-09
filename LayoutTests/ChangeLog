@@ -1,3 +1,9 @@
+2011-06-09  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Leopard rebaseline for thumbslider-no-parent-slider.html.
+
+        * platform/chromium-mac-leopard/fast/forms/thumbslider-no-parent-slider-expected.png: Added.
+
 2011-06-09  Ryosuke Niwa  <rniwa@webkit.org>
 
         More Chromium Mac test expectation updates.
