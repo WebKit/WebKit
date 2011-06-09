@@ -1,3 +1,14 @@
+2011-06-09  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonac.
+
+        [Qt][WK2] Canvas tests make css2.1 ones failing
+        https://bugs.webkit.org/show_bug.cgi?id=53427
+
+        Unskipping canvas tests for WebKit2-Qt.
+
+        * platform/qt-wk2/Skipped:
+
 2011-06-09  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

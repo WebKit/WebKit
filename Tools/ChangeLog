@@ -1,3 +1,18 @@
+2011-06-09  Zoltan Herczeg  <zherczeg@inf.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonac.
+
+        [Qt][WK2] Canvas tests make css2.1 ones failing
+        https://bugs.webkit.org/show_bug.cgi?id=53427
+
+        Adding a workaround for this issue by mimicing the behaviour of DumpRenderTree.
+        Since the Qt port should eventually go to QRawFont, this issue will be resolved
+        in the future. Both clearMemoryCaches() and removeAllApplicationFonts() are
+        needed for the workaround.
+
+        * WebKitTestRunner/InjectedBundle/qt/LayoutTestControllerQt.cpp:
+        (WTR::LayoutTestController::platformInitialize):
+
 2011-06-09  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

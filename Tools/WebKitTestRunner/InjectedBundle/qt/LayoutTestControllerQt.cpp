@@ -27,9 +27,12 @@
 #include "config.h"
 #include "LayoutTestController.h"
 
+#include "ActivateFonts.h"
 #include "InjectedBundle.h"
 #include <QDir>
+#include <QFontDatabase>
 #include <QObject>
+#include <qwebsettings.h>
 
 namespace WTR {
 
@@ -55,6 +58,15 @@ private:
 
 void LayoutTestController::platformInitialize()
 {
+    // Make WebKit2 mimic the behaviour of DumpRenderTree, which is incorrect,
+    // but tests are successfully passed. On the long run, Qt will move to QRawFont,
+    // which makes the use of QFontDatabase unnecessary.
+    // See https://bugs.webkit.org/show_bug.cgi?id=53427
+    QWebSettings::clearMemoryCaches();
+#if !(defined(Q_OS_SYMBIAN) && QT_VERSION <= QT_VERSION_CHECK(4, 6, 2))
+    QFontDatabase::removeAllApplicationFonts();
+#endif
+    activateFonts();
     QObject::connect(&m_waitToDumpWatchdogTimer, SIGNAL(timeout()), WatchdogTimerHelper::instance(), SLOT(timerFired()));
 }
 

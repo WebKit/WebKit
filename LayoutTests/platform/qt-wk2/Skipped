@@ -2270,9 +2270,6 @@ http/tests/history/popstate-fires-with-pending-requests.html
 # requires video.buffered to be able to return multiple timeranges
 http/tests/media/video-buffered.html
 
-# canvas tests pass, but break ~100 css2.1 tests, it might be a bug in WebKitTestRunner
-canvas
-
 # These tests always fail (with and without --singly). It needs investigation.
 animations/animation-controller-drt-api.html
 dom/xhtml/level2/html/HTMLDocument17.xhtml
