@@ -1,3 +1,16 @@
+2011-06-09  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Web Inspector: Inspector layout tests - extract method for sending XHR
+        https://bugs.webkit.org/show_bug.cgi?id=62391
+
+        * http/tests/inspector/console-xhr-logging.html:
+        * http/tests/inspector/network-test.js:
+        (doXHR.xhr.onreadystatechange):
+        (doXHR):
+        * http/tests/inspector/network/network-size-sync.html:
+
 2011-06-09  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Antti Koivisto.

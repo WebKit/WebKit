@@ -24,3 +24,18 @@ InspectorTest.dumpNetworkResources = function()
 }
 
 };
+
+function doXHR(method, url, async, callback)
+{
+    var xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function()
+    {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (typeof(callback) === "function")
+                callback();
+        }
+    };
+    xhr.open(method, url, async);
+    xhr.send(null);
+}
+

@@ -2,15 +2,13 @@
 <head>
 <script src="inspector-test.js"></script>
 <script src="console-test.js"></script>
+<script src="network-test.js"></script>
 <script>
-
 function requestHelper(method, url)
 {
     // Make synchronous requests for simplicity.
     console.log("sending a %s request to %s", method, url);
-    var xhr = new XMLHttpRequest();
-    xhr.open(method, url, false);
-    xhr.send();
+    doXHR(method, url, false);
 }
 
 function makeRequests()

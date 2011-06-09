@@ -1,17 +1,11 @@
 <html>
 <head>
 <script src="../inspector-test.js"></script>
+<script src="../network-test.js"></script>
 <script>
 function loadData()
 {
-    var xhr = new XMLHttpRequest();
-    xhr.onreadystatechange = function()
-    {
-        if (xhr.readyState  == 4)
-            resourceLoaded();
-    };
-    xhr.open('GET', 'resources/resource.php?type=image&size=500&gzip=true&chunked=true', false);
-    xhr.send(null);
+    doXHR("GET", "resources/resource.php?type=image&size=500&gzip=true&chunked=true", false, resourceLoaded);
 }
 
 function resourceLoaded()
