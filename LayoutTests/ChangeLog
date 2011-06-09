@@ -1,3 +1,14 @@
+2011-06-08  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        Makes sure that document.activeElement won't be an element in shadow root.
+
+        https://bugs.webkit.org/show_bug.cgi?id=61413
+
+        * fast/dom/shadow/activeelement-should-be-shadowhost-expected.txt: Added.
+        * fast/dom/shadow/activeelement-should-be-shadowhost.html: Added.
+
 2011-06-08  Kent Tamura  <tkent@chromium.org>
 
         [Mac][GTK][Qt] Rebaseline for r88415, and remove old images.
