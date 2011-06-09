@@ -151,10 +151,10 @@ public:
     void scrollByLines(int lines);
     void scrollByPages(int pages);
 
-    virtual int offsetLeft();
-    virtual int offsetTop();
-    virtual int offsetWidth();
-    virtual int offsetHeight();
+    int offsetLeft();
+    int offsetTop();
+    int offsetWidth();
+    int offsetHeight();
     Element* offsetParent();
     int clientLeft();
     int clientTop();
@@ -384,7 +384,6 @@ protected:
     
     void idAttributeChanged(Attribute*);
 
-    static int adjustForLocalZoom(int value, RenderObject* renderer);
 private:
     void scrollByUnits(int units, ScrollGranularity);
 

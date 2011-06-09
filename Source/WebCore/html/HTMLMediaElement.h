@@ -203,12 +203,6 @@ public:
 
     bool isPlaying() const { return m_playing; }
 
-    // Override Element implementations
-    virtual int offsetLeft();
-    virtual int offsetTop();
-    virtual int offsetWidth();
-    virtual int offsetHeight();
-
 protected:
     HTMLMediaElement(const QualifiedName&, Document*);
     virtual ~HTMLMediaElement();

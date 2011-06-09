@@ -58,7 +58,6 @@
 #include "MouseEvent.h"
 #include "MIMETypeRegistry.h"
 #include "Page.h"
-#include "RenderFullScreen.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
 #include "ScriptEventListener.h"
@@ -2717,46 +2716,6 @@ void* HTMLMediaElement::preDispatchEventHandler(Event* event)
     return 0;
 }
 
-static RenderBlock* elementPlaceholder(Element* element)
-{
-    RenderObject* renderer = element->renderer();
-    RenderObject* parent = renderer ? renderer->parent() : 0;
-    RenderFullScreen* fullScreen = parent && parent->isRenderFullScreen() ? toRenderFullScreen(parent) : 0;
-
-    return fullScreen ? fullScreen->placeholder() : 0;
-}
-
-int HTMLMediaElement::offsetLeft()
-{
-    int left = Element::offsetLeft();
-    if (RenderBlock* block = elementPlaceholder(this))
-        left = Element::adjustForLocalZoom(block->offsetLeft(), block);
-    return left;
-}
-
-int HTMLMediaElement::offsetTop()
-{
-    int top = Element::offsetTop();
-    if (RenderBlock* block = elementPlaceholder(this))
-        top = Element::adjustForLocalZoom(block->offsetTop(), block);
-    return top;
-}
-
-int HTMLMediaElement::offsetWidth()
-{
-    int width = Element::offsetWidth();
-    if (RenderBlock* block = elementPlaceholder(this))
-        width = Element::adjustForLocalZoom(block->offsetWidth(), block);
-    return width;
-}
-
-int HTMLMediaElement::offsetHeight()
-{
-    int height = Element::offsetHeight();
-    if (RenderBlock* block = elementPlaceholder(this))
-        height = Element::adjustForLocalZoom(block->offsetHeight(), block);
-    return height;
-}
 
 }
 

@@ -1,3 +1,18 @@
+2011-06-09  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r88468.
+        http://trac.webkit.org/changeset/88468
+        https://bugs.webkit.org/show_bug.cgi?id=62408
+
+        It broke build if !ENABLE(FULLSCREEN_API) (Requested by Ossy
+        on #webkit).
+
+        * dom/Element.cpp:
+        (WebCore::adjustForLocalZoom):
+        * dom/Element.h:
+        * html/HTMLMediaElement.cpp:
+        * html/HTMLMediaElement.h:
+
 2011-06-09  Kenneth Russell  <kbr@google.com>
 
         Reviewed by Adam Barth.

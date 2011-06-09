@@ -352,7 +352,7 @@ static float localZoomForRenderer(RenderObject* renderer)
     return zoomFactor;
 }
 
-int Element::adjustForLocalZoom(int value, RenderObject* renderer)
+static int adjustForLocalZoom(int value, RenderObject* renderer)
 {
     float zoomFactor = localZoomForRenderer(renderer);
     if (zoomFactor == 1)
