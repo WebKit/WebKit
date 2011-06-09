@@ -1,5 +1,12 @@
 2011-06-08  James Robinson  <jamesr@chromium.org>
 
+        Hopefully last change to features.gypi - set ENABLE_REGISTER_PROTOCOL_HANDLER based off of the the variable set
+        in chromium's common.gypi. Should green up the chromium linux tester on build.webkit.org.
+
+        * features.gypi:
+
+2011-06-08  James Robinson  <jamesr@chromium.org>
+
         Set ENABLE_REGISTER_PROTOCOL_HANDLER=1 for chromium. I didn't mean to turn that off...
 
         * features.gypi:

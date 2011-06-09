@@ -80,7 +80,6 @@
         'ENABLE_PAGE_VISIBILITY_API=1',
         'ENABLE_PROGRESS_TAG=1',
         'ENABLE_QUOTA=1',
-        'ENABLE_REGISTER_PROTOCOL_HANDLER=1',
         'ENABLE_REQUEST_ANIMATION_FRAME=1',
         'ENABLE_SHARED_WORKERS=1',
         'ENABLE_SPELLCHECK_API=1',
@@ -108,10 +107,21 @@
 
       'use_accelerated_compositing%': 1,
       'enable_svg%': 1,
+      'enable_register_protocol_handler%': 0,
+
     },
 
     'feature_defines%': '<(feature_defines)',
     'use_accelerated_compositing%': '<(use_accelerated_compositing)',
     'enable_svg%': '<(enable_svg)',
+    'enable_register_protocol_handler%': '<(enable_register_protocol_handler)',
+
+    'conditions': [
+      ['enable_register_protocol_handler==1', {
+        'feature_defines': [
+          'ENABLE_REGISTER_PROTOCOL_HANDLER=1',
+        ]
+      }],
+    ],
   },
 }
