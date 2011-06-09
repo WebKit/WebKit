@@ -1,3 +1,16 @@
+2011-06-09  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Tony Chang.
+
+        Test plugin should support event logging on the windows port.
+        https://bugs.webkit.org/show_bug.cgi?id=61721
+
+        The WebKit win port interprets a 0 return from plugin NPP_HandleEvent()
+        calls to mean the plugin handled the event.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (handleEventWin): Return 0 for each event on windows.
+
 2011-06-09  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Andreas Kling.
