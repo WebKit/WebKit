@@ -1,3 +1,10 @@
+2011-06-08  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Add PASS expectations to two tests that have been passing on
+        build.webkit.org Chromium Linux bot.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-08  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, more inspector flakiness.

@@ -754,7 +754,7 @@ BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAG
 
 // Needs rebaseline
 BUGMORRITA : editing/spelling/spellcheck-api-pixel.html = MISSING
-BUGWK62296 : editing/spelling/spellcheck-api.html = FAIL
+BUGWK62296 : editing/spelling/spellcheck-api.html = FAIL PASS
 
 // Directionality of mixed-direction text in selected choice should
 // match that in the <select> option lists.
@@ -4020,4 +4020,4 @@ BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = TEXT P
 
 BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = IMAGE PASS
 
-BUGCR85394 : fast/js/eval-var-decl.html = FAIL
+BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
