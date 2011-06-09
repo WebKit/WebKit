@@ -73,6 +73,8 @@ public:
         m_data.clear();
     }
 
+    bool isUninitialized() { return m_type == Uninitialized; }
+
     int startIndex() const { return m_range.m_start; }
     int endIndex() const { return m_range.m_end; }
 

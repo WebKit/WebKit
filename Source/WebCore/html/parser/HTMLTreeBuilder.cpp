@@ -435,7 +435,26 @@ PassRefPtr<Element> HTMLTreeBuilder::takeScriptToProcess(TextPosition1& scriptSt
 void HTMLTreeBuilder::constructTreeFromToken(HTMLToken& rawToken)
 {
     AtomicHTMLToken token(rawToken);
+
+    // We clear the rawToken in case constructTreeFromAtomicToken
+    // synchronously re-enters the parser. We don't clear the token immedately
+    // for Character tokens because the AtomicHTMLToken avoids copying the
+    // characters by keeping a pointer to the underlying buffer in the
+    // HTMLToken. Fortuantely, Character tokens can't cause use to re-enter
+    // the parser.
+    //
+    // FIXME: Top clearing the rawToken once we start running the parser off
+    // the main thread or once we stop allowing synchronous JavaScript
+    // execution from parseMappedAttribute.
+    if (rawToken.type() != HTMLToken::Character)
+        rawToken.clear();
+
     constructTreeFromAtomicToken(token);
+
+    if (!rawToken.isUninitialized()) {
+        ASSERT(rawToken.type() == HTMLToken::Character);
+        rawToken.clear();
+    }
 }
 
 void HTMLTreeBuilder::constructTreeFromAtomicToken(AtomicHTMLToken& token)

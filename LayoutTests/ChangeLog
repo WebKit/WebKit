@@ -1,3 +1,25 @@
+2011-06-08  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Use after free in WebCore::ContainerNode::parserAddChild
+        https://bugs.webkit.org/show_bug.cgi?id=62160
+
+        Test that we don't trigger asserts when re-entering the parser from
+        tree construction.
+
+        * fast/parser/document-write-onload-nesting-expected.txt: Added.
+        * fast/parser/document-write-onload-nesting.html: Added.
+        * fast/parser/document-write-onload-ordering-expected.txt: Added.
+        * fast/parser/document-write-onload-ordering.html: Added.
+            - The exact ordering of the script execution here differs a bit
+              between browsers.  For example, Firefox executes the scripts in a
+              slightly different order because Firefox runs the parser on a
+              separate thread (and therefore cannot be re-entered from tree
+              construction). If/when we move the parser off the main thread,
+              we're likely to change the ordering here a bit, which should be
+              ok.
+
 2011-06-08  Ryosuke Niwa  <rniwa@webkit.org>
 
         Add PASS expectations to two tests that have been passing on
