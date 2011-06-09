@@ -1,3 +1,22 @@
+2011-06-09  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Teach Qt about window.internals
+        https://bugs.webkit.org/show_bug.cgi?id=61074
+
+        A weakness of the Qt DRT setup is that things like JSContextRef are abstracted
+        away from the QtWebKit API so we need DumpRenderTreeSupportQt to access WebCore internals.
+        Since the window.internals object requires JSContextRef we need to implement it in DumpRenderTreeSupportQt
+        where we can access it. DumpRenderTreeSupportQt cannot be compiled outside Qt's WebCore and as it
+        is our only possible route into the WebCoreTestSupport class neither can the new window.internals plumbing.
+        Likewise we can't put the accessor in WebCoreTestSupport because it would then need to know about QWebFrame
+        and others. The only alternative seems like a compile time guard which we would have to teach the bots about.
+
+        * CodeGenerators.pri:
+        * WebCore.pri:
+        * WebCore.pro:
+
 2011-06-08  Mikołaj Małecki  <m.malecki@samsung.com>
 
         Reviewed by Pavel Feldman.

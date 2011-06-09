@@ -48,14 +48,16 @@ v8 {
         $$SOURCE_DIR/WebCore/bindings/v8 \
         $$SOURCE_DIR/WebCore/bindings/v8/custom \
         $$SOURCE_DIR/WebCore/bindings/v8/specialization \
-        $$SOURCE_DIR/WebCore/bridge/qt/v8
+        $$SOURCE_DIR/WebCore/bridge/qt/v8 \
+        $$SOURCE_DIR/WebCore/testing/v8
 
 } else {
     WEBCORE_INCLUDEPATH = \
         $$SOURCE_DIR/WebCore/bridge/jsc \
         $$SOURCE_DIR/WebCore/bindings/js \
         $$SOURCE_DIR/WebCore/bindings/js/specialization \
-        $$SOURCE_DIR/WebCore/bridge/c
+        $$SOURCE_DIR/WebCore/bridge/c \
+        $$SOURCE_DIR/WebCore/testing/js
 }
 
 WEBCORE_INCLUDEPATH = \
@@ -110,6 +112,7 @@ WEBCORE_INCLUDEPATH = \
     $$SOURCE_DIR/WebCore/svg/graphics \
     $$SOURCE_DIR/WebCore/svg/graphics/filters \
     $$SOURCE_DIR/WebCore/svg/properties \
+    $$SOURCE_DIR/WebCore/testing \
     $$SOURCE_DIR/WebCore/webaudio \
     $$SOURCE_DIR/WebCore/websockets \
     $$SOURCE_DIR/WebCore/workers \

@@ -224,7 +224,8 @@ v8 {
         bindings/v8/custom/V8NotificationCenterCustom.cpp \
         bindings/v8/custom/V8ConsoleCustom.cpp \
         bindings/v8/custom/V8SQLTransactionSyncCustom.cpp \
-        bindings/v8/V8WorkerContextErrorHandler.cpp
+        bindings/v8/V8WorkerContextErrorHandler.cpp \
+        testing/v8/WebCoreTestSupport.cpp
 } else {
     SOURCES += \
         bindings/ScriptControllerBase.cpp \
@@ -376,7 +377,8 @@ v8 {
         bridge/runtime_array.cpp \
         bridge/runtime_method.cpp \
         bridge/runtime_object.cpp \
-        bridge/runtime_root.cpp
+        bridge/runtime_root.cpp \
+        testing/js/WebCoreTestSupport.cpp
 }
 
 SOURCES += \
@@ -1182,6 +1184,7 @@ SOURCES += \
     rendering/style/StyleSurroundData.cpp \
     rendering/style/StyleTransformData.cpp \
     rendering/style/StyleVisualData.cpp \
+    testing/Internals.cpp \
     xml/DOMParser.cpp \
     xml/XMLHttpRequest.cpp \
     xml/XMLHttpRequestProgressEventThrottle.cpp \
@@ -2447,6 +2450,7 @@ HEADERS += \
     svg/SVGVKernElement.h \
     svg/SVGZoomAndPan.h \
     svg/SVGZoomEvent.h \
+    testing/Internals.h \
     workers/AbstractWorker.h \
     workers/DedicatedWorkerContext.h \
     workers/DedicatedWorkerThread.h \

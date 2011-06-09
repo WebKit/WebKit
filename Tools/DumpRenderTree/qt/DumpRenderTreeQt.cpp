@@ -751,6 +751,7 @@ void DumpRenderTree::initJSObjects()
     frame->addToJavaScriptWindowObject(QLatin1String("textInputController"), m_textInputController);
     frame->addToJavaScriptWindowObject(QLatin1String("GCController"), m_gcController);
     frame->addToJavaScriptWindowObject(QLatin1String("plainText"), m_plainTextController);
+    DumpRenderTreeSupportQt::injectInternalsObject(frame);
 }
 
 void DumpRenderTree::showPage()

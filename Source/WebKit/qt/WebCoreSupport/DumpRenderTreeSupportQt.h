@@ -216,6 +216,8 @@ public:
     static QString shadowPseudoId(const QWebElement&);
 
     static QString layerTreeAsText(QWebFrame*);
+
+    static void injectInternalsObject(QWebFrame*);
 };
 
 #endif

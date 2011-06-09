@@ -524,6 +524,7 @@ IDL_BINDINGS += \
     svg/SVGUseElement.idl \
     svg/SVGViewElement.idl \
     svg/SVGVKernElement.idl \
+    testing/Internals.idl \
     webaudio/AudioBuffer.idl \
     webaudio/AudioBufferSourceNode.idl \
     webaudio/AudioChannelMerger.idl \
@@ -629,6 +630,7 @@ idl.commands = perl -I$$PWD/bindings/scripts $$idl.wkScript \
                --include $$PWD/svg \
                --include $$PWD/storage \
                --include $$PWD/css \
+               --include $$PWD/testing \
                --include $$PWD/webaudio \
                --include $$PWD/workers \
                --outputDir $$WC_GENERATED_SOURCES_DIR \
