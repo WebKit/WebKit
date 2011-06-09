@@ -1,3 +1,13 @@
+2011-06-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Running script from attach can remove elements from the stack of open elements
+        https://bugs.webkit.org/show_bug.cgi?id=62160
+
+        * fast/parser/document-write-onload-clear-expected.txt: Added.
+        * fast/parser/document-write-onload-clear.html: Added.
+
 2011-06-09  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Reviewed by Chris Fleizach.

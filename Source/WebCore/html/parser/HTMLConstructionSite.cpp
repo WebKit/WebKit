@@ -82,13 +82,14 @@ bool causesFosterParenting(const QualifiedName& tagName)
 } // namespace
 
 template<typename ChildType>
-PassRefPtr<ChildType> HTMLConstructionSite::attach(ContainerNode* parent, PassRefPtr<ChildType> prpChild)
+PassRefPtr<ChildType> HTMLConstructionSite::attach(ContainerNode* rawParent, PassRefPtr<ChildType> prpChild)
 {
     RefPtr<ChildType> child = prpChild;
+    RefPtr<ContainerNode> parent = rawParent;
 
     // FIXME: It's confusing that HTMLConstructionSite::attach does the magic
     // redirection to the foster parent but HTMLConstructionSite::attachAtSite
-    // doesn't.  It feels like we're missing a concept somehow.
+    // doesn't. It feels like we're missing a concept somehow.
     if (shouldFosterParent()) {
         fosterParent(child.get());
         ASSERT(child->attached() || !child->parentNode() || !child->parentNode()->attached());
@@ -102,11 +103,6 @@ PassRefPtr<ChildType> HTMLConstructionSite::attach(ContainerNode* parent, PassRe
     if (!child->parentNode())
         return child.release();
 
-    // It's slightly unfortunate that we need to hold a reference to child
-    // here to call attach().  We should investigate whether we can rely on
-    // |parent| to hold a ref at this point.  In the common case (at least
-    // for elements), however, we'll get to use this ref in the stack of
-    // open elements.
     if (parent->attached() && !child->attached())
         child->attach();
     return child.release();
