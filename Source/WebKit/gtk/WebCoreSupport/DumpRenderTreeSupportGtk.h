@@ -97,10 +97,6 @@ public:
     static void executeCoreCommandByName(WebKitWebView*, const gchar* name, const gchar* value);
     static bool isCommandEnabled(WebKitWebView*, const gchar* name);
     static bool findString(WebKitWebView*, const gchar*, WebKitFindOptions);
-    static void setComposition(WebKitWebView*, const char* text, int start, int end);
-    static void confirmComposition(WebKitWebView*, const char* text);
-    static bool firstRectForCharacterRange(WebKitWebView*, int location, int length, GdkRectangle*);
-    static bool selectedRange(WebKitWebView*, int* start, int* end);
     static double defaultMinimumTimerInterval(); // Not really tied to WebView
     static void setMinimumTimerInterval(WebKitWebView*, double);
     static void rectangleForSelection(WebKitWebFrame*, GdkRectangle*);
@@ -110,6 +106,14 @@ public:
     // Accessibility
     static void incrementAccessibilityValue(AtkObject*);
     static void decrementAccessibilityValue(AtkObject*);
+
+    // TextInputController
+    static void setComposition(WebKitWebView*, const char*, int start, int length);
+    static bool hasComposition(WebKitWebView*);
+    static bool compositionRange(WebKitWebView*, int* start, int* length);
+    static void confirmComposition(WebKitWebView*, const char*);
+    static bool firstRectForCharacterRange(WebKitWebView*, int location, int length, GdkRectangle*);
+    static bool selectedRange(WebKitWebView*, int* start, int* length);
 
     // GC
     static void gcCollectJavascriptObjects();

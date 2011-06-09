@@ -512,7 +512,7 @@ bool DumpRenderTreeSupportGtk::isCommandEnabled(WebKitWebView* webView, const gc
     return core(webView)->focusController()->focusedOrMainFrame()->editor()->command(name).isEnabled();
 }
 
-void DumpRenderTreeSupportGtk::setComposition(WebKitWebView* webView, const char* text, int start, int end)
+void DumpRenderTreeSupportGtk::setComposition(WebKitWebView* webView, const char* text, int start, int length)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
     g_return_if_fail(text);
@@ -522,15 +522,45 @@ void DumpRenderTreeSupportGtk::setComposition(WebKitWebView* webView, const char
         return;
 
     Editor* editor = frame->editor();
-    if (!editor)
-        return;
-    if (!editor->canEdit() && !editor->hasComposition())
+    if (!editor || (!editor->canEdit() && !editor->hasComposition()))
         return;
 
     String compositionString = String::fromUTF8(text);
     Vector<CompositionUnderline> underlines;
     underlines.append(CompositionUnderline(0, compositionString.length(), Color(0, 0, 0), false));
-    editor->setComposition(compositionString, underlines, start, end);
+    editor->setComposition(compositionString, underlines, start, start + length);
+}
+
+bool DumpRenderTreeSupportGtk::hasComposition(WebKitWebView* webView)
+{
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), false);
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return false;
+    Editor* editor = frame->editor();
+    if (!editor)
+        return false;
+
+    return editor->hasComposition();
+}
+
+bool DumpRenderTreeSupportGtk::compositionRange(WebKitWebView* webView, int* start, int* length)
+{
+    g_return_val_if_fail(start && length, false);
+    *start = *length = 0;
+
+    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), false);
+    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
+    if (!frame)
+        return false;
+
+    Editor* editor = frame->editor();
+    if (!editor || !editor->hasComposition())
+        return false;
+
+    *start = editor->compositionStart();
+    *length = editor->compositionEnd() - *start;
+    return true;
 }
 
 void DumpRenderTreeSupportGtk::confirmComposition(WebKitWebView* webView, const char* text)
@@ -542,16 +572,18 @@ void DumpRenderTreeSupportGtk::confirmComposition(WebKitWebView* webView, const 
         return;
 
     Editor* editor = frame->editor();
-    if (!editor || (!editor->hasComposition() && !text))
+    if (!editor)
         return;
 
-    if (editor->hasComposition()) {
-        if (text)
-            editor->confirmComposition(String::fromUTF8(text));
-        else
-            editor->confirmComposition();
-    } else
+    if (!editor->hasComposition()) {
         editor->insertText(String::fromUTF8(text), 0);
+        return;
+    }
+    if (text) {
+        editor->confirmComposition(String::fromUTF8(text));
+        return;
+    }
+    editor->confirmComposition();
 }
 
 bool DumpRenderTreeSupportGtk::firstRectForCharacterRange(WebKitWebView* webView, int location, int length, GdkRectangle* rect)
@@ -577,21 +609,21 @@ bool DumpRenderTreeSupportGtk::firstRectForCharacterRange(WebKitWebView* webView
         return false;
 
     *rect = editor->firstRectForRange(range.get());
-
     return true;
 }
 
-bool DumpRenderTreeSupportGtk::selectedRange(WebKitWebView* webView, int* start, int* end)
+bool DumpRenderTreeSupportGtk::selectedRange(WebKitWebView* webView, int* start, int* length)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), false);
-    g_return_val_if_fail(start, false);
-    g_return_val_if_fail(end, false);
+    g_return_val_if_fail(start && length, false);
 
     Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
     if (!frame)
         return false;
 
     RefPtr<Range> range = frame->selection()->toNormalizedRange().get();
+    if (!range)
+        return false;
 
     Element* selectionRoot = frame->selection()->rootEditableElement();
     Element* scope = selectionRoot ? selectionRoot : frame->document()->documentElement();
@@ -603,7 +635,7 @@ bool DumpRenderTreeSupportGtk::selectedRange(WebKitWebView* webView, int* start,
     ExceptionCode ec;
     testRange->setEnd(range->endContainer(), range->endOffset(), ec);
     ASSERT(testRange->startContainer() == scope);
-    *end = TextIterator::rangeLength(testRange.get());
+    *length = TextIterator::rangeLength(testRange.get());
 
     return true;
 }

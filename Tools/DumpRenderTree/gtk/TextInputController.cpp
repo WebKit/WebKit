@@ -41,14 +41,12 @@
 static JSValueRef setMarkedTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-    if (!view)
-        return JSValueMakeUndefined(context);
-
+    ASSERT(view);
     if (argumentCount < 3)
         return JSValueMakeUndefined(context);
 
     JSStringRef string = JSValueToStringCopy(context, arguments[0], exception);
-    g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+    ASSERT(!exception || !*exception);
 
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(string);
     GOwnPtr<gchar> stringBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
@@ -56,27 +54,49 @@ static JSValueRef setMarkedTextCallback(JSContextRef context, JSObjectRef functi
     JSStringRelease(string);
 
     int start = static_cast<int>(JSValueToNumber(context, arguments[1], exception));
-    g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+    ASSERT(!exception || !*exception);
 
-    int end = static_cast<int>(JSValueToNumber(context, arguments[2], exception));
-    g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+    int length = static_cast<int>(JSValueToNumber(context, arguments[2], exception));
+    ASSERT(!exception || !*exception);
 
-    DumpRenderTreeSupportGtk::setComposition(view, stringBuffer.get(), start, end);
-
+    DumpRenderTreeSupportGtk::setComposition(view, stringBuffer.get(), start, length);
     return JSValueMakeUndefined(context);
+}
+
+static JSValueRef hasMarkedTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+    return JSValueMakeBoolean(context, DumpRenderTreeSupportGtk::hasComposition(view));
+}
+
+static JSValueRef markedRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
+{
+    WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
+    ASSERT(view);
+
+    int start, length;
+    if (!DumpRenderTreeSupportGtk::compositionRange(view, &start, &length))
+        return JSValueMakeUndefined(context);
+
+    JSValueRef arrayValues[2];
+    arrayValues[0] = JSValueMakeNumber(context, start);
+    arrayValues[1] = JSValueMakeNumber(context, length);
+    JSObjectRef arrayObject = JSObjectMakeArray(context, 2, arrayValues, exception);
+    ASSERT(!exception || !*exception);
+    return arrayObject;
 }
 
 static JSValueRef insertTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-    if (!view)
-        return JSValueMakeUndefined(context);
+    ASSERT(view);
 
     if (argumentCount < 1)
         return JSValueMakeUndefined(context);
 
     JSStringRef string = JSValueToStringCopy(context, arguments[0], exception);
-    g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+    ASSERT(!exception || !*exception);
 
     size_t bufferSize = JSStringGetMaximumUTF8CStringSize(string);
     GOwnPtr<gchar> stringBuffer(static_cast<gchar*>(g_malloc(bufferSize)));
@@ -84,15 +104,13 @@ static JSValueRef insertTextCallback(JSContextRef context, JSObjectRef function,
     JSStringRelease(string);
 
     DumpRenderTreeSupportGtk::confirmComposition(view, stringBuffer.get());
-
     return JSValueMakeUndefined(context);
 }
 
 static JSValueRef unmarkTextCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-    if (!view)
-        return JSValueMakeUndefined(context);
+    ASSERT(view);
 
     DumpRenderTreeSupportGtk::confirmComposition(view, 0);
     return JSValueMakeUndefined(context);
@@ -101,17 +119,15 @@ static JSValueRef unmarkTextCallback(JSContextRef context, JSObjectRef function,
 static JSValueRef firstRectForCharacterRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-    if (!view)
-        return JSValueMakeUndefined(context);
-
+    ASSERT(view);
     if (argumentCount < 2)
         return JSValueMakeUndefined(context);
 
     int location = static_cast<int>(JSValueToNumber(context, arguments[0], exception));
-    g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+    ASSERT(!exception || !*exception);
 
     int length = static_cast<int>(JSValueToNumber(context, arguments[1], exception));
-    g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+    ASSERT(!exception || !*exception);
 
     GdkRectangle rect;
     if (!DumpRenderTreeSupportGtk::firstRectForCharacterRange(view, location, length, &rect))
@@ -123,7 +139,7 @@ static JSValueRef firstRectForCharacterRangeCallback(JSContextRef context, JSObj
     arrayValues[2] = JSValueMakeNumber(context, rect.width);
     arrayValues[3] = JSValueMakeNumber(context, rect.height);
     JSObjectRef arrayObject = JSObjectMakeArray(context, 4, arrayValues, exception);
-    g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+    ASSERT(!exception || !*exception);
 
     return arrayObject;
 }
@@ -131,24 +147,25 @@ static JSValueRef firstRectForCharacterRangeCallback(JSContextRef context, JSObj
 static JSValueRef selectedRangeCallback(JSContextRef context, JSObjectRef function, JSObjectRef thisObject, size_t argumentCount, const JSValueRef arguments[], JSValueRef* exception)
 {
     WebKitWebView* view = webkit_web_frame_get_web_view(mainFrame);
-    if (!view)
-        return JSValueMakeUndefined(context);
+    ASSERT(view);
 
-    int start, end;
-    if (!DumpRenderTreeSupportGtk::selectedRange(view, &start, &end))
+    int start, length;
+    if (!DumpRenderTreeSupportGtk::selectedRange(view, &start, &length))
         return JSValueMakeUndefined(context);
 
     JSValueRef arrayValues[2];
     arrayValues[0] = JSValueMakeNumber(context, start);
-    arrayValues[1] = JSValueMakeNumber(context, end);
+    arrayValues[1] = JSValueMakeNumber(context, length);
     JSObjectRef arrayObject = JSObjectMakeArray(context, 2, arrayValues, exception);
-    g_return_val_if_fail((!exception || !*exception), JSValueMakeUndefined(context));
+    ASSERT(!exception || !*exception);
 
     return arrayObject;
 }
 
 static JSStaticFunction staticFunctions[] = {
     { "setMarkedText", setMarkedTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "hasMarkedText", hasMarkedTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+    { "markedRange", markedRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "insertText", insertTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "unmarkText", unmarkTextCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
     { "firstRectForCharacterRange", firstRectForCharacterRangeCallback, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },

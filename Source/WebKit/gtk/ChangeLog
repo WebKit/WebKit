@@ -1,3 +1,23 @@
+2011-06-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Implement the next bit of the TextInputController (hasMarkedText and markedRange)
+        https://bugs.webkit.org/show_bug.cgi?id=55603
+
+        Added DumpRenderTreeSupport methods to support hasMarkedText and markedRange.
+
+        * WebCoreSupport/DumpRenderTreeSupportGtk.cpp:
+        (DumpRenderTreeSupportGtk::setComposition): Use start and length rather than start and
+        end. This matches other ports. Only use GLib style early returns when checking the
+        validity of GObjects.
+        (DumpRenderTreeSupportGtk::hasComposition):  Added.
+        (DumpRenderTreeSupportGtk::compositionRange): Added.
+        (DumpRenderTreeSupportGtk::confirmComposition): Cleanup as described above.
+        (DumpRenderTreeSupportGtk::firstRectForCharacterRange): Cleanup as described above.
+        (DumpRenderTreeSupportGtk::selectedRange): Cleanup as described above.
+        * WebCoreSupport/DumpRenderTreeSupportGtk.h: Added new declarations.
+
 2011-06-08  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

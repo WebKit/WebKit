@@ -1,3 +1,23 @@
+2011-06-09  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Implement the next bit of the TextInputController (hasMarkedText and markedRange)
+        https://bugs.webkit.org/show_bug.cgi?id=55603
+
+        Add callbacks to support hasMarkedText and markedRange and also clean up existing 
+        TextInputController support.
+
+        * DumpRenderTree/gtk/TextInputController.cpp:
+        (setMarkedTextCallback): Accept parameters in terms of start and length, instead
+        of start and end. This matches the other ports. Do not use GLib style early returns.
+        (hasMarkedTextCallback): Added.
+        (markedRangeCallback): Added.
+        (insertTextCallback): Cleanup as described above.
+        (unmarkTextCallback): Cleanup as described above.
+        (firstRectForCharacterRangeCallback): Cleanup as described above.
+        (selectedRangeCallback): Cleanup as described above.
+
 2011-06-09  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
