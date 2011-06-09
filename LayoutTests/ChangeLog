@@ -1,5 +1,11 @@
 2011-06-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Mark tests failing after http://trac.webkit.org/changeset/88478/ as failing.
+
+        * platform/chromium/test_expectations.txt: Added failing tests.
+
+2011-06-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Update expectations.
 
         * platform/chromium-linux/plugins/mouse-events-expected.txt: Added.
