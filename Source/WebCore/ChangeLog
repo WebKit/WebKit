@@ -1,3 +1,16 @@
+2011-06-09  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Add an ASSERT to HTMLTreeBuilder
+        https://bugs.webkit.org/show_bug.cgi?id=62403
+
+        This ASSERT was useful in investigating a re-entrancy bug.  We should
+        keep it.
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndOfFile):
+
 2011-06-09  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

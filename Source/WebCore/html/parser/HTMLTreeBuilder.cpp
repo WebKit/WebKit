@@ -2657,6 +2657,7 @@ void HTMLTreeBuilder::processEndOfFile(AtomicHTMLToken& token)
         if (m_tree.currentNode()->hasTagName(scriptTag))
             notImplemented(); // mark the script element as "already started".
         m_tree.openElements()->pop();
+        ASSERT(m_originalInsertionMode != TextMode);
         setInsertionMode(m_originalInsertionMode);
         prepareToReprocessToken();
         processEndOfFile(token);
