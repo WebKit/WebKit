@@ -1,3 +1,16 @@
+2011-06-09  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        WebCore::WebKitCSSKeyframesRuleInternal::nameAttrSetter() - crash
+        https://bugs.webkit.org/show_bug.cgi?id=62384
+
+        Test: fast/css/webkit-keyframes-crash.html
+
+        * css/WebKitCSSKeyframesRule.cpp:
+        (WebCore::WebKitCSSKeyframesRule::setName): stylesheet() is never garanteed
+        to return a non-null pointer. Thus null-check here like the rest of the code.
+
 2011-06-09  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by David Hyatt.

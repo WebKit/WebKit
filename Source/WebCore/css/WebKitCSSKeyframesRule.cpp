@@ -66,7 +66,8 @@ void WebKitCSSKeyframesRule::setName(const String& name)
     
     // Since the name is used in the keyframe map list in CSSStyleSelector, we need
     // to recompute the style sheet to get the updated name.
-    stylesheet()->styleSheetChanged();
+    if (stylesheet())
+        stylesheet()->styleSheetChanged();
 }
 
 unsigned WebKitCSSKeyframesRule::length() const
