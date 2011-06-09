@@ -29,6 +29,7 @@
 
 """Chromium implementations of the Port interface."""
 
+import base64
 import errno
 import logging
 import re
@@ -478,6 +479,8 @@ class ChromiumDriver(base.Driver):
         actual_checksum = None
         self._clear_output_image()
         start_time = time.time()
+        has_audio = False
+        has_base64 = False
 
         uri = self._port.filename_to_uri(driver_input.filename)
         cmd = self._test_shell_command(uri, driver_input.timeout,
@@ -515,6 +518,10 @@ class ChromiumDriver(base.Driver):
             elif line.startswith("#TEST_TIMED_OUT"):
                 timeout = True
                 # Test timed out, but we still need to read until #EOF.
+            elif line.startswith("Content-Type: audio/wav"):
+                has_audio = True
+            elif line.startswith("Content-Transfer-Encoding: base64"):
+                has_base64 = True
             elif actual_uri:
                 output.append(line)
             else:
@@ -522,15 +529,22 @@ class ChromiumDriver(base.Driver):
 
             (line, crash) = self._write_command_and_read_line(input=None)
 
-        # FIXME: Add support for audio when we're ready.
-
         run_time = time.time() - start_time
         output_image = self._output_image_with_retry()
-        text = ''.join(output)
-        if not text:
-            text = None
 
-        return base.DriverOutput(text, output_image, actual_checksum, audio=None,
+        audio_bytes = None
+        text = None
+        if has_audio:
+            if has_base64:
+                audio_bytes = base64.b64decode(''.join(output))
+            else:
+                audio_bytes = ''.join(output)
+        else:
+            text = ''.join(output)
+            if not text:
+                text = None
+
+        return base.DriverOutput(text, output_image, actual_checksum, audio=audio_bytes,
             crash=crash, test_time=run_time, timeout=timeout, error=''.join(error))
 
     def stop(self):
