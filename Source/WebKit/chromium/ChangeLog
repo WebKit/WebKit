@@ -1,3 +1,19 @@
+2011-06-09  Jay Civelli  <jcivelli@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Page serializer APIs now use WebData instead of fetching the entire
+        resource contents.
+        https://bugs.webkit.org/show_bug.cgi?id=61908
+
+        * public/WebData.h:
+        * public/WebPageSerializer.h:
+        * src/WebData.cpp:
+        (WebKit::WebData::getSomeData):
+        * src/WebPageSerializer.cpp:
+        (WebKit::WebPageSerializer::serialize):
+        (WebKit::WebPageSerializer::serializeToMHTML):
+
 2011-06-09  Bill Budge  <bbudge@chromium.org>
 
         Reviewed by Adam Barth.

@@ -193,19 +193,15 @@ void WebPageSerializer::serialize(WebView* view, WebVector<WebPageSerializer::Re
         Resource resource;
         resource.url = iter->url;
         resource.mimeType = iter->mimeType.ascii();
-        // FIXME: we are copying all the resource data here. Idealy we would have a WebSharedData().
-        resource.data = WebCString(iter->data->data(), iter->data->size());
+        resource.data = iter->data;
         result.append(resource);
     }
-
     *resourcesParam = result;         
 }
 
-WebCString WebPageSerializer::serializeToMHTML(WebView* view)
+WebData WebPageSerializer::serializeToMHTML(WebView* view)
 {
-    RefPtr<SharedBuffer> mhtml = MHTMLArchive::generateMHTMLData(static_cast<WebViewImpl*>(view)->page());
-    // FIXME: we are copying all the data here. Idealy we would have a WebSharedData().
-    return WebCString(mhtml->data(), mhtml->size());
+    return MHTMLArchive::generateMHTMLData(static_cast<WebViewImpl*>(view)->page());
 }
 
 bool WebPageSerializer::serialize(WebFrame* frame,
