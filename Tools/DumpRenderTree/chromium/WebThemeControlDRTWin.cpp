@@ -464,7 +464,7 @@ void WebThemeControlDRTWin::draw()
         // Draw a narrow rect for the track plus box hatches on the ends.
         SkIRect lirect;
         lirect = m_irect;
-        lirect.inset(halfWidth - sliderIndex, noOffset);
+        lirect.inset(halfWidth - sliderIndent, noOffset);
         box(lirect, m_bgColor);
         line(m_left, m_top, m_right, m_top, m_edgeColor);
         line(m_left, m_bottom, m_right, m_bottom, m_edgeColor);

@@ -1,5 +1,12 @@
 2011-06-08  Kent Tamura  <tkent@chromium.org>
 
+        [Chromium] Fix a typo.
+
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.cpp:
+        (WebThemeControlDRTWin::draw):
+
+2011-06-08  Kent Tamura  <tkent@chromium.org>
+
         Reviewed by Hajime Morita.
 
         [Chromium] Support vertical sliders in Windows DRT
