@@ -41,6 +41,11 @@ namespace JSC {
     class MarkedBlock : public DoublyLinkedListNode<MarkedBlock> {
         friend class WTF::DoublyLinkedListNode<MarkedBlock>;
     public:
+        struct VoidFunctor {
+            typedef void ReturnType;
+            void returnValue() { }
+        };
+
         static const size_t atomSize = sizeof(double); // Ensures natural alignment for all built-in types.
 
         static MarkedBlock* create(Heap*, size_t cellSize);
@@ -72,7 +77,7 @@ namespace JSC {
         bool testAndClearMarked(const void*);
         void setMarked(const void*);
         
-        template <typename Functor> void forEach(Functor&);
+        template <typename Functor> void forEachCell(Functor&);
 
     private:
         static const size_t blockSize = 16 * KB;
@@ -184,7 +189,7 @@ namespace JSC {
         m_marks.set(atomNumber(p));
     }
 
-    template <typename Functor> inline void MarkedBlock::forEach(Functor& functor)
+    template <typename Functor> inline void MarkedBlock::forEachCell(Functor& functor)
     {
         for (size_t i = firstAtom(); i < m_endAtom; i += m_atomsPerCell) {
             if (!m_marks.get(i))

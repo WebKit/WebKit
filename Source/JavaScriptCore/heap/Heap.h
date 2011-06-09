@@ -91,9 +91,9 @@ namespace JSC {
 
         bool contains(const void*);
 
-        size_t size() const;
-        size_t capacity() const;
-        size_t objectCount() const;
+        size_t size();
+        size_t capacity();
+        size_t objectCount();
         size_t globalObjectCount();
         size_t protectedObjectCount();
         size_t protectedGlobalObjectCount();
@@ -105,7 +105,12 @@ namespace JSC {
     
         HashSet<MarkedArgumentBuffer*>& markListSet() { if (!m_markListSet) m_markListSet = new HashSet<MarkedArgumentBuffer*>; return *m_markListSet; }
         
-        template <typename Functor> void forEach(Functor&);
+        template<typename Functor> typename Functor::ReturnType forEachProtectedCell(Functor&);
+        template<typename Functor> typename Functor::ReturnType forEachProtectedCell();
+        template<typename Functor> typename Functor::ReturnType forEachCell(Functor&);
+        template<typename Functor> typename Functor::ReturnType forEachCell();
+        template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&);
+        template<typename Functor> typename Functor::ReturnType forEachBlock();
         
         HandleSlot allocateGlobalHandle() { return m_handleHeap.allocate(); }
         HandleSlot allocateLocalHandle() { return m_handleStack.push(); }
@@ -124,7 +129,7 @@ namespace JSC {
         void resetAllocator();
 
         MarkedBlock* allocateBlock(size_t cellSize);
-        void freeBlocks(DoublyLinkedList<MarkedBlock>&);
+        void freeBlocks(MarkedBlock*);
 
         void clearMarks();
         void markRoots();
@@ -221,11 +226,48 @@ namespace JSC {
             reportExtraMemoryCostSlowCase(cost);
     }
 
-    template <typename Functor> inline void Heap::forEach(Functor& functor)
+    template<typename Functor> inline typename Functor::ReturnType Heap::forEachProtectedCell(Functor& functor)
+    {
+        ProtectCountSet::iterator end = m_protectedValues.end();
+        for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
+            functor(it->first);
+        m_handleHeap.forEachStrongHandle(functor, m_protectedValues);
+
+        return functor.returnValue();
+    }
+
+    template<typename Functor> inline typename Functor::ReturnType Heap::forEachProtectedCell()
+    {
+        Functor functor;
+        return forEachProtectedCell(functor);
+    }
+
+    template<typename Functor> inline typename Functor::ReturnType Heap::forEachCell(Functor& functor)
     {
         BlockIterator end = m_blocks.end();
         for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-            (*it)->forEach(functor);
+            (*it)->forEachCell(functor);
+        return functor.returnValue();
+    }
+
+    template<typename Functor> inline typename Functor::ReturnType Heap::forEachCell()
+    {
+        Functor functor;
+        return forEachCell(functor);
+    }
+
+    template<typename Functor> inline typename Functor::ReturnType Heap::forEachBlock(Functor& functor)
+    {
+        BlockIterator end = m_blocks.end();
+        for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+            functor(*it);
+        return functor.returnValue();
+    }
+
+    template<typename Functor> inline typename Functor::ReturnType Heap::forEachBlock()
+    {
+        Functor functor;
+        return forEachBlock(functor);
     }
 
     inline void* Heap::allocate(size_t bytes)

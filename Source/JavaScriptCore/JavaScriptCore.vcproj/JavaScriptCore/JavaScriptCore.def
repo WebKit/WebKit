@@ -76,7 +76,7 @@ EXPORTS
     ?callOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
     ?callOnMainThreadAndWait@WTF@@YAXP6AXPAX@Z0@Z
     ?cancelCallOnMainThread@WTF@@YAXP6AXPAX@Z0@Z
-    ?capacity@Heap@JSC@@QBEIXZ
+    ?capacity@Heap@JSC@@QAEIXZ
     ?changePrototypeTransition@Structure@JSC@@SAPAV12@AAVJSGlobalData@2@PAV12@VJSValue@2@@Z
     ?checkCurrentIdentifierTable@Identifier@JSC@@CAXPAVExecState@2@@Z
     ?checkCurrentIdentifierTable@Identifier@JSC@@CAXPAVJSGlobalData@2@@Z
@@ -253,7 +253,7 @@ EXPORTS
     ?number@UString@JSC@@SA?AV12@I@Z
     ?number@UString@JSC@@SA?AV12@N@Z
     ?numberToString@WTF@@YAINQA_W@Z
-    ?objectCount@Heap@JSC@@QBEIXZ
+    ?objectCount@Heap@JSC@@QAEIXZ
     ?objectProtoFuncToString@JSC@@YI_JPAVExecState@1@@Z
     ?parseDateFromNullTerminatedCharacters@WTF@@YANPBD@Z
     ?preventExtensions@JSObject@JSC@@UAEXAAVJSGlobalData@2@@Z
@@ -312,7 +312,7 @@ EXPORTS
     ?setter@PropertyDescriptor@JSC@@QBE?AVJSValue@2@XZ
     ?shrinkToFit@StringBuilder@WTF@@QAEXXZ
     ?signal@ThreadCondition@WTF@@QAEXXZ
-    ?size@Heap@JSC@@QBEIXZ
+    ?size@Heap@JSC@@QAEIXZ
     ?slowAppend@MarkedArgumentBuffer@JSC@@AAEXVJSValue@2@@Z
     ?slowValidateCell@JSC@@YAXPAVJSCell@1@@Z
     ?slowValidateCell@JSC@@YAXPAVJSGlobalObject@1@@Z

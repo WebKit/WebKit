@@ -75,7 +75,7 @@ namespace {
 
 using namespace JSC;
 
-class Recompiler {
+class Recompiler : public MarkedBlock::VoidFunctor {
 public:
     void operator()(JSCell*);
 };
@@ -186,7 +186,6 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , parser(new Parser)
     , interpreter(0)
     , heap(this)
-    , globalObjectCount(0)
     , dynamicGlobalObject(0)
     , cachedUTCOffset(NaN)
     , maxReentryDepth(threadStackType == ThreadStackTypeSmall ? MaxSmallThreadReentryDepth : MaxLargeThreadReentryDepth)
@@ -448,8 +447,7 @@ void JSGlobalData::recompileAllJSFunctions()
     // up throwing away code that is live on the stack.
     ASSERT(!dynamicGlobalObject);
     
-    Recompiler recompiler;
-    heap.forEach(recompiler);
+    heap.forEachCell<Recompiler>();
 }
 
 void JSGlobalData::releaseExecutableMemory()

@@ -33,7 +33,7 @@ namespace {
 
 using namespace JSC;
 
-class Recompiler {
+class Recompiler : public MarkedBlock::VoidFunctor {
 public:
     Recompiler(Debugger*);
     ~Recompiler();
@@ -118,7 +118,7 @@ void Debugger::recompileAllJSFunctions(JSGlobalData* globalData)
         return;
 
     Recompiler recompiler(this);
-    globalData->heap.forEach(recompiler);
+    globalData->heap.forEachCell(recompiler);
 }
 
 JSValue evaluateInGlobalCallFrame(const UString& script, JSValue& exception, JSGlobalObject* globalObject)

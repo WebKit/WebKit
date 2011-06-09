@@ -1,3 +1,77 @@
+2011-06-08  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Factored a bunch of Heap functionality into stand-alone functors
+        https://bugs.webkit.org/show_bug.cgi?id=62337
+        
+        This is in preparation for making these functors operate on arbitrary
+        sets of MarkedBlocks.
+
+        * JavaScriptCore.exp: This file is a small tragedy.
+
+        * debugger/Debugger.cpp:
+        (JSC::Debugger::recompileAllJSFunctions): Updated for type change and rename.
+
+        * heap/HandleHeap.h:
+        (JSC::HandleHeap::forEachStrongHandle): New function for iterating all
+        strong handles, so we can play along in the functor game.
+
+        * heap/Heap.cpp:
+        (JSC::CountFunctor::CountFunctor::CountFunctor):
+        (JSC::CountFunctor::CountFunctor::count):
+        (JSC::CountFunctor::CountFunctor::returnValue):
+        (JSC::CountFunctor::ClearMarks::operator()):
+        (JSC::CountFunctor::ResetAllocator::operator()):
+        (JSC::CountFunctor::Sweep::operator()):
+        (JSC::CountFunctor::MarkCount::operator()):
+        (JSC::CountFunctor::Size::operator()):
+        (JSC::CountFunctor::Capacity::operator()):
+        (JSC::CountFunctor::Count::operator()):
+        (JSC::CountFunctor::CountIfGlobalObject::operator()):
+        (JSC::CountFunctor::TakeIfEmpty::TakeIfEmpty):
+        (JSC::CountFunctor::TakeIfEmpty::operator()):
+        (JSC::CountFunctor::TakeIfEmpty::returnValue):
+        (JSC::CountFunctor::RecordType::RecordType):
+        (JSC::CountFunctor::RecordType::typeName):
+        (JSC::CountFunctor::RecordType::operator()):
+        (JSC::CountFunctor::RecordType::returnValue): These functors factor out
+        behavior that used to be in the functions below.
+
+        (JSC::Heap::clearMarks):
+        (JSC::Heap::sweep):
+        (JSC::Heap::objectCount):
+        (JSC::Heap::size):
+        (JSC::Heap::capacity):
+        (JSC::Heap::protectedGlobalObjectCount):
+        (JSC::Heap::protectedObjectCount):
+        (JSC::Heap::protectedObjectTypeCounts):
+        (JSC::Heap::objectTypeCounts):
+        (JSC::Heap::resetAllocator):
+        (JSC::Heap::freeBlocks):
+        (JSC::Heap::shrink): Factored out behavior into the functors above.
+
+        * heap/Heap.h:
+        (JSC::Heap::forEachProtectedCell):
+        (JSC::Heap::forEachCell):
+        (JSC::Heap::forEachBlock): Added forEach* iteration templates. I chose
+        functor-based templates instead of plain iterators because they're simpler
+        to implement in this case and they require a lot less code at the call site.
+
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::VoidFunctor::returnValue): Default parent class for
+        trivial functors.
+
+        (JSC::MarkedBlock::forEachCell): Renamed forEach to forEachCell because
+        we have a few different kind of "for each" now.
+
+        * runtime/JSGlobalData.cpp:
+        (WTF::Recompile::operator()):
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::recompileAllJSFunctions): Updated for type change and rename.
+
+        * runtime/JSGlobalData.h: Removed globalObjectCount because it was unused.
+
 2011-06-08  Mikołaj Małecki  <m.malecki@samsung.com>
 
         Reviewed by Pavel Feldman.

@@ -28,6 +28,7 @@
 
 #include "BlockStack.h"
 #include "Handle.h"
+#include "HashCountedSet.h"
 #include "SentinelLinkedList.h"
 #include "SinglyLinkedList.h"
 
@@ -38,7 +39,6 @@ class HeapRootVisitor;
 class JSGlobalData;
 class JSValue;
 class MarkStack;
-class TypeCounter;
 typedef MarkStack SlotVisitor;
 
 class WeakHandleOwner {
@@ -74,7 +74,8 @@ public:
 #endif
 
     unsigned protectedGlobalObjectCount();
-    void protectedObjectTypeCounts(TypeCounter&);
+
+    template<typename Functor> void forEachStrongHandle(Functor&, const HashCountedSet<JSCell*>& skipSet);
 
 private:
     class Node {
@@ -276,6 +277,19 @@ inline HandleHeap::Node* HandleHeap::Node::next()
 inline WeakHandleOwner* HandleHeap::Node::emptyWeakOwner()
 {
     return reinterpret_cast<WeakHandleOwner*>(-1);
+}
+
+template<typename Functor> void HandleHeap::forEachStrongHandle(Functor& functor, const HashCountedSet<JSCell*>& skipSet)
+{
+    Node* end = m_strongList.end();
+    for (Node* node = m_strongList.begin(); node != end; node = node->next()) {
+        JSValue value = *node->slot();
+        if (!value || !value.isCell())
+            continue;
+        if (skipSet.contains(value.asCell()))
+            continue;
+        functor(value.asCell());
+    }
 }
 
 }

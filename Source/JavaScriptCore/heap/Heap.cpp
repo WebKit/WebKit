@@ -36,8 +36,11 @@
 #define COLLECT_ON_EVERY_ALLOCATION 0
 
 using namespace std;
+using namespace JSC;
 
 namespace JSC {
+
+namespace { 
 
 const size_t minBytesPerCycle = 512 * 1024;
 
@@ -62,6 +65,179 @@ static inline bool isValidThreadState(JSGlobalData* globalData)
 
     return true;
 }
+
+class CountFunctor {
+public:
+    typedef size_t ReturnType;
+
+    CountFunctor();
+    void count(size_t);
+    ReturnType returnValue();
+
+private:
+    ReturnType m_count;
+};
+
+inline CountFunctor::CountFunctor()
+    : m_count(0)
+{
+}
+
+inline void CountFunctor::count(size_t count)
+{
+    m_count += count;
+}
+
+inline CountFunctor::ReturnType CountFunctor::returnValue()
+{
+    return m_count;
+}
+
+struct ClearMarks : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock*);
+};
+
+inline void ClearMarks::operator()(MarkedBlock* block)
+{
+    block->clearMarks();
+}
+
+struct ResetAllocator : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock*);
+};
+
+inline void ResetAllocator::operator()(MarkedBlock* block)
+{
+    block->resetAllocator();
+}
+
+struct Sweep : MarkedBlock::VoidFunctor {
+    void operator()(MarkedBlock*);
+};
+
+inline void Sweep::operator()(MarkedBlock* block)
+{
+    block->sweep();
+}
+
+struct MarkCount : CountFunctor {
+    void operator()(MarkedBlock*);
+};
+
+inline void MarkCount::operator()(MarkedBlock* block)
+{
+    count(block->markCount());
+}
+
+struct Size : CountFunctor {
+    void operator()(MarkedBlock*);
+};
+
+inline void Size::operator()(MarkedBlock* block)
+{
+    count(block->markCount() * block->cellSize());
+}
+
+struct Capacity : CountFunctor {
+    void operator()(MarkedBlock*);
+};
+
+inline void Capacity::operator()(MarkedBlock* block)
+{
+    count(block->capacity());
+}
+
+struct Count : public CountFunctor {
+    void operator()(JSCell*);
+};
+
+inline void Count::operator()(JSCell*)
+{
+    count(1);
+}
+
+struct CountIfGlobalObject : CountFunctor {
+    void operator()(JSCell*);
+};
+
+inline void CountIfGlobalObject::operator()(JSCell* cell)
+{
+    if (!cell->isObject())
+        return;
+    if (!asObject(cell)->isGlobalObject())
+        return;
+    count(1);
+}
+
+class TakeIfEmpty {
+public:
+    typedef MarkedBlock* ReturnType;
+
+    TakeIfEmpty(NewSpace*);
+    void operator()(MarkedBlock*);
+    ReturnType returnValue();
+
+private:
+    NewSpace* m_newSpace;
+    DoublyLinkedList<MarkedBlock> m_empties;
+};
+
+inline TakeIfEmpty::TakeIfEmpty(NewSpace* newSpace)
+    : m_newSpace(newSpace)
+{
+}
+
+inline void TakeIfEmpty::operator()(MarkedBlock* block)
+{
+    if (!block->isEmpty())
+        return;
+
+    m_newSpace->removeBlock(block);
+    m_empties.append(block);
+}
+
+inline TakeIfEmpty::ReturnType TakeIfEmpty::returnValue()
+{
+    return m_empties.head();
+}
+
+class RecordType {
+public:
+    typedef PassOwnPtr<TypeCountSet> ReturnType;
+
+    RecordType();
+    void operator()(JSCell*);
+    ReturnType returnValue();
+
+private:
+    const char* typeName(JSCell*);
+    OwnPtr<TypeCountSet> m_typeCountSet;
+};
+
+inline RecordType::RecordType()
+    : m_typeCountSet(adoptPtr(new TypeCountSet))
+{
+}
+
+inline const char* RecordType::typeName(JSCell* cell)
+{
+    const ClassInfo* info = cell->classInfo();
+    if (!info || !info->className)
+        return "[unknown]";
+    return info->className;
+}
+
+inline void RecordType::operator()(JSCell* cell)
+{
+    m_typeCountSet->add(typeName(cell));
+}
+
+inline PassOwnPtr<TypeCountSet> RecordType::returnValue()
+{
+    return m_typeCountSet.release();
+}
+
+} // anonymous namespace
 
 Heap::Heap(JSGlobalData* globalData)
     : m_operationInProgress(NoOperation)
@@ -282,141 +458,52 @@ void Heap::markRoots()
 
 void Heap::clearMarks()
 {
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-        (*it)->clearMarks();
+    forEachBlock<ClearMarks>();
 }
 
 void Heap::sweep()
 {
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-        (*it)->sweep();
+    forEachBlock<Sweep>();
 }
 
-size_t Heap::objectCount() const
+size_t Heap::objectCount()
 {
-    size_t result = 0;
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-        result += (*it)->markCount();
-    return result;
+    return forEachBlock<MarkCount>();
 }
 
-size_t Heap::size() const
+size_t Heap::size()
 {
-    size_t result = 0;
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-        result += (*it)->size();
-    return result;
+    return forEachBlock<Size>();
 }
 
-size_t Heap::capacity() const
+size_t Heap::capacity()
 {
-    size_t result = 0;
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-        result += (*it)->capacity();
-    return result;
-}
-
-size_t Heap::globalObjectCount()
-{
-    return m_globalData->globalObjectCount;
+    return forEachBlock<Capacity>();
 }
 
 size_t Heap::protectedGlobalObjectCount()
 {
-    size_t count = m_handleHeap.protectedGlobalObjectCount();
+    return forEachProtectedCell<CountIfGlobalObject>();
+}
 
-    ProtectCountSet::iterator end = m_protectedValues.end();
-    for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it) {
-        if (it->first->isObject() && asObject(it->first)->isGlobalObject())
-            count++;
-    }
-
-    return count;
+size_t Heap::globalObjectCount()
+{
+    return forEachCell<CountIfGlobalObject>();
 }
 
 size_t Heap::protectedObjectCount()
 {
-    return m_protectedValues.size();
-}
-
-class TypeCounter {
-public:
-    TypeCounter();
-    void operator()(JSCell*);
-    PassOwnPtr<TypeCountSet> take();
-    
-private:
-    const char* typeName(JSCell*);
-    OwnPtr<TypeCountSet> m_typeCountSet;
-    HashSet<JSCell*> m_cells;
-};
-
-inline TypeCounter::TypeCounter()
-    : m_typeCountSet(adoptPtr(new TypeCountSet))
-{
-}
-
-inline const char* TypeCounter::typeName(JSCell* cell)
-{
-    if (cell->isString())
-        return "string";
-    if (cell->isGetterSetter())
-        return "Getter-Setter";
-    if (cell->isAPIValueWrapper())
-        return "API wrapper";
-    if (cell->isPropertyNameIterator())
-        return "For-in iterator";
-    if (const ClassInfo* info = cell->classInfo())
-        return info->className;
-    if (!cell->isObject())
-        return "[empty cell]";
-    return "Object";
-}
-
-inline void TypeCounter::operator()(JSCell* cell)
-{
-    if (!m_cells.add(cell).second)
-        return;
-    m_typeCountSet->add(typeName(cell));
-}
-
-inline PassOwnPtr<TypeCountSet> TypeCounter::take()
-{
-    return m_typeCountSet.release();
+    return forEachProtectedCell<Count>();
 }
 
 PassOwnPtr<TypeCountSet> Heap::protectedObjectTypeCounts()
 {
-    TypeCounter typeCounter;
-
-    ProtectCountSet::iterator end = m_protectedValues.end();
-    for (ProtectCountSet::iterator it = m_protectedValues.begin(); it != end; ++it)
-        typeCounter(it->first);
-    m_handleHeap.protectedObjectTypeCounts(typeCounter);
-
-    return typeCounter.take();
-}
-
-void HandleHeap::protectedObjectTypeCounts(TypeCounter& typeCounter)
-{
-    Node* end = m_strongList.end();
-    for (Node* node = m_strongList.begin(); node != end; node = node->next()) {
-        JSValue value = *node->slot();
-        if (value && value.isCell())
-            typeCounter(value.asCell());
-    }
+    return forEachProtectedCell<RecordType>();
 }
 
 PassOwnPtr<TypeCountSet> Heap::objectTypeCounts()
 {
-    TypeCounter typeCounter;
-    forEach(typeCounter);
-    return typeCounter.take();
+    return forEachCell<RecordType>();
 }
 
 void Heap::collectAllGarbage()
@@ -463,13 +550,9 @@ void Heap::collect(SweepToggle sweepToggle)
 
 void Heap::resetAllocator()
 {
-    m_newSpace.resetAllocator();
-
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it)
-        (*it)->resetAllocator();
-
     m_extraCost = 0;
+    m_newSpace.resetAllocator();
+    forEachBlock<ResetAllocator>();
 }
 
 void Heap::setActivityCallback(PassOwnPtr<GCActivityCallback> activityCallback)
@@ -504,10 +587,10 @@ MarkedBlock* Heap::allocateBlock(size_t cellSize)
     return block;
 }
 
-void Heap::freeBlocks(DoublyLinkedList<MarkedBlock>& blocks)
+void Heap::freeBlocks(MarkedBlock* head)
 {
     MarkedBlock* next;
-    for (MarkedBlock* block = blocks.head(); block; block = next) {
+    for (MarkedBlock* block = head; block; block = next) {
         next = block->next();
 
         m_blocks.remove(block);
@@ -518,19 +601,8 @@ void Heap::freeBlocks(DoublyLinkedList<MarkedBlock>& blocks)
 void Heap::shrink()
 {
     // We record a temporary list of empties to avoid modifying m_blocks while iterating it.
-    DoublyLinkedList<MarkedBlock> empties;
-
-    BlockIterator end = m_blocks.end();
-    for (BlockIterator it = m_blocks.begin(); it != end; ++it) {
-        MarkedBlock* block = *it;
-        if (!block->isEmpty())
-            continue;
-
-        m_newSpace.removeBlock(block);
-        empties.append(block);
-    }
-    
-    freeBlocks(empties);
+    TakeIfEmpty takeIfEmpty(&m_newSpace);
+    freeBlocks(forEachBlock(takeIfEmpty));
 }
 
 } // namespace JSC
