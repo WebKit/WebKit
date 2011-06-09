@@ -1,5 +1,11 @@
 2011-06-08  James Robinson  <jamesr@chromium.org>
 
+        Set ENABLE_REGISTER_PROTOCOL_HANDLER=1 for chromium. I didn't mean to turn that off...
+
+        * features.gypi:
+
+2011-06-08  James Robinson  <jamesr@chromium.org>
+
         [chromium] Update the chromium-within-WebKit revision to r88481
         https://bugs.webkit.org/show_bug.cgi?id=62353
 
