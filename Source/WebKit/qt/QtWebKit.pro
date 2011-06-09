@@ -79,6 +79,11 @@ CONFIG(release):!CONFIG(standalone_package) {
 
 CONFIG(QTDIR_build) {
     include($$QT_SOURCE_TREE/src/qbase.pri)
+    # The following lines are to prevent qmake from adding the jscore, webcore and webkit2 libs to libQtWebKit's prl dependencies.
+    # The compromise we have to accept by disabling explicitlib is to drop support to link QtWebKit and QtScript
+    # statically in applications (which isn't used often because, among other things, of licensing obstacles).
+    CONFIG -= explicitlib
+    CONFIG -= staticlib
 } else {
     DESTDIR = $$OUTPUT_DIR/lib
     symbian: TARGET =$$TARGET$${QT_LIBINFIX}

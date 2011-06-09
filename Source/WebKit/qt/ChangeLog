@@ -1,3 +1,15 @@
+2011-06-09  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix the in-tree build on Linux
+        https://bugs.webkit.org/show_bug.cgi?id=62378
+
+        In case of an in-tree build qmake generates defect prl dependencies for
+        the QtWebKit library, because the inclusion of qtbase.pri adds explicitlib to CONFIG.
+
+        * QtWebKit.pro: Remove explicitlib and staticlib from CONFIG.
+
 2011-06-09  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
