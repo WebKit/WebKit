@@ -1,3 +1,15 @@
+2011-06-09  Mike Lawther  <mikelawther@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Parsing issue with -webkit-calc
+        https://bugs.webkit.org/show_bug.cgi?id=62276
+
+        Set the CSSParserString for the calc functions.
+
+        * css3/calc/regression-62276-expected.txt: Added.
+        * css3/calc/regression-62276.html: Added.
+
 2011-06-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         REGRESSION(r88393): Tests fail on Qt platform
