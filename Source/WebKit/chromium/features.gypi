@@ -32,6 +32,10 @@
   # The following defines turn webkit features on and off.
   'variables': {
     'variables': {
+      'variables': {
+        'enable_register_protocol_handler%': 0,
+      },
+      'enable_register_protocol_handler%': '<(enable_register_protocol_handler)',
       # We have to nest variables inside variables as a hack for variables
       # override.
 
@@ -107,21 +111,19 @@
 
       'use_accelerated_compositing%': 1,
       'enable_svg%': 1,
-      'enable_register_protocol_handler%': 0,
 
+      'conditions': [
+        ['enable_register_protocol_handler==1', {
+          'feature_defines': [
+            'ENABLE_REGISTER_PROTOCOL_HANDLER=1',
+          ]
+        }],
+      ],
     },
 
     'feature_defines%': '<(feature_defines)',
     'use_accelerated_compositing%': '<(use_accelerated_compositing)',
     'enable_svg%': '<(enable_svg)',
     'enable_register_protocol_handler%': '<(enable_register_protocol_handler)',
-
-    'conditions': [
-      ['enable_register_protocol_handler==1', {
-        'feature_defines': [
-          'ENABLE_REGISTER_PROTOCOL_HANDLER=1',
-        ]
-      }],
-    ],
   },
 }

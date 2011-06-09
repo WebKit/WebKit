@@ -1,3 +1,9 @@
+2011-06-09  James Robinson  <jamesr@chromium.org>
+
+        Fix chromium build on build.webkit.org builders.
+
+        * features.gypi:
+
 2011-06-08  Justin Novosad  <junov@chromium.org>
 
         Reviewed by James Robinson.
