@@ -1,3 +1,12 @@
+2011-06-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] The profiler test is entirely unrelated to the original change r88337
+        and seems to be highly related to https://bugs.webkit.org/show_bug.cgi?id=60881
+
+        https://bugs.webkit.org/show_bug.cgi?id=62278
+
+        * platform/qt/Skipped: Skip 3 inspector tests to make buildbot happy.
+
 2011-06-09  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
