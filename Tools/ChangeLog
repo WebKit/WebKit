@@ -1,3 +1,15 @@
+2011-06-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Added a test for Vector::reverse()
+        https://bugs.webkit.org/show_bug.cgi?id=62393
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/VectorReverse.cpp: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+
 2011-06-09  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Andreas Kling.

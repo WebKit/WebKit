@@ -591,6 +591,10 @@
 					RelativePath="..\Tests\WTF\VectorBasic.cpp"
 					>
 				</File>
+				<File
+					RelativePath="..\Tests\WTF\VectorReverse.cpp"
+					>
+				</File>
 			</Filter>
 		</Filter>
 		<File
