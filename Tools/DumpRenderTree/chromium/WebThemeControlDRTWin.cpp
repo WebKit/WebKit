@@ -388,6 +388,7 @@ void WebThemeControlDRTWin::draw()
         break;
 
     case HorizontalSliderThumbType:
+    case VerticalSliderThumbType:
         // Slider thumbs are ovals.
         oval(m_bgColor);
         break;
@@ -456,6 +457,17 @@ void WebThemeControlDRTWin::draw()
         box(lirect, m_bgColor);
         line(m_left,  m_top, m_left,  m_bottom, m_edgeColor);
         line(m_right, m_top, m_right, m_bottom, m_edgeColor);
+        break;
+    }
+
+    case VerticalSliderTrackType: {
+        // Draw a narrow rect for the track plus box hatches on the ends.
+        SkIRect lirect;
+        lirect = m_irect;
+        lirect.inset(halfWidth - sliderIndex, noOffset);
+        box(lirect, m_bgColor);
+        line(m_left, m_top, m_right, m_top, m_edgeColor);
+        line(m_left, m_bottom, m_right, m_bottom, m_edgeColor);
         break;
     }
 

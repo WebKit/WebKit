@@ -1,3 +1,19 @@
+2011-06-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        [Chromium] Support vertical sliders in Windows DRT
+        https://bugs.webkit.org/show_bug.cgi?id=62352
+
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.cpp:
+        (WebThemeControlDRTWin::draw):
+          Paint VerticalSliderThumbType and VerticalSliderTrackType.
+        * DumpRenderTree/chromium/WebThemeControlDRTWin.h:
+          Add VerticalSliderTrackType and VerticalSliderThumbType.
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.cpp:
+        (WebThemeEngineDRTWin::paintTrackbar):
+          Convert Windows identifiers to the internal identifiers for vertical sliders.
+
 2011-06-08  Ojan Vafai  <ojan@chromium.org>
 
         Reviewed by Tony Chang.

@@ -116,6 +116,8 @@ public:
         DownArrowType,
         HorizontalSliderTrackType,
         HorizontalSliderThumbType,
+        VerticalSliderTrackType,
+        VerticalSliderThumbType,
         DropDownButtonType,
         ProgressBarType
     };

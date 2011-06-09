@@ -729,8 +729,40 @@ void WebThemeEngineDRTWin::paintTrackbar(WebCanvas* canvas,
             ASSERT_NOT_REACHED();
             break;
         }
+    } else if (TKP_THUMBVERT == part) {
+        ctype = WebThemeControlDRTWin::VerticalSliderThumbType;
+        switch (state) {
+        case TUS_NORMAL:
+            ASSERT(classicState == dfcsNormal);
+            cstate = WebThemeControlDRTWin::NormalState;
+            break;
+
+        case TUS_HOT:
+            ASSERT(classicState == DFCS_HOT);
+            cstate = WebThemeControlDRTWin::HotState;
+            break;
+
+        case TUS_DISABLED:
+            ASSERT(classicState == DFCS_INACTIVE);
+            cstate = WebThemeControlDRTWin::DisabledState;
+            break;
+
+        case TUS_PRESSED:
+            ASSERT(classicState == DFCS_PUSHED);
+            cstate = WebThemeControlDRTWin::PressedState;
+            break;
+
+        default:
+            ASSERT_NOT_REACHED();
+            break;
+        }
     } else if (TKP_TRACK == part) {
         ctype = WebThemeControlDRTWin::HorizontalSliderTrackType;
+        ASSERT(part == TUS_NORMAL);
+        ASSERT(classicState == dfcsNormal);
+        cstate = WebThemeControlDRTWin::NormalState;
+    } else if (TKP_TRACKVERT == part) {
+        ctype = WebThemeControlDRTWin::VerticalSliderTrackType;
         ASSERT(part == TUS_NORMAL);
         ASSERT(classicState == dfcsNormal);
         cstate = WebThemeControlDRTWin::NormalState;
