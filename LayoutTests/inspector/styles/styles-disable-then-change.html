@@ -16,7 +16,7 @@ function test()
 
         var treeItem = InspectorTest.getElementStylePropertyTreeItem("font-weight");
         treeItem.toggleEnabled({ target: { checked: false } });
-        InspectorTest.runAfterPendingDispatches(step2);
+        InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", step2);
     }
 
     function step2()
