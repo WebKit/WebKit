@@ -1,3 +1,18 @@
+2011-06-08  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Rebaseline for r87881 and r88415.
+
+        * platform/chromium-linux/fast/forms/thumbslider-no-parent-slider-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-spinbutton-disabled-readonly-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-spinbutton-layer-expected.png:
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-spinbutton-visibility-expected.png:
+        * platform/chromium-mac-leopard/platform/mac/fast/forms/input-appearance-spinbutton-expected.png: Added.
+        * platform/chromium-mac-leopard/platform/mac/fast/forms/input-appearance-spinbutton-up-expected.png: Added.
+        * platform/chromium-mac/fast/forms/thumbslider-no-parent-slider-expected.png: Copied from LayoutTests/platform/chromium-mac-leopard/fast/forms/input-appearance-spinbutton-layer-expected.png.
+        * platform/chromium-win/fast/forms/thumbslider-no-parent-slider-expected.png:
+        * platform/chromium-win/fast/forms/thumbslider-no-parent-slider-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-08  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Dimitri Glazkov.

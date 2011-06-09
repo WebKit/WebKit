@@ -3202,14 +3202,6 @@ BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-visibility.html = 
 //BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
 
-// Needs rebaseline
-BUG_TKENT LEOPARD : platform/mac/fast/forms/input-appearance-spinbutton.html = IMAGE
-BUG_TKENT LEOPARD : platform/mac/fast/forms/input-appearance-spinbutton-up.html= IMAGE
-BUG_TKENT LEOPARD : fast/forms/input-appearance-spinbutton-disabled-readonly.html = IMAGE
-BUG_TKENT LEOPARD : fast/forms/input-appearance-spinbutton-visibility.html = IMAGE
-BUG_TKENT LEOPARD : fast/forms/input-appearance-spinbutton-layer.html= IMAGE
-BUGWK62196 : fast/forms/thumbslider-no-parent-slider.html = FAIL
-
 // Need expectations
 BUGWK59281 WIN LINUX : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE+TEXT
 BUGWK59281 LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE PASS
@@ -3546,7 +3538,6 @@ BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-t
 BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-table-row.html = IMAGE
 BUGCR79917 WIN LINUX : transforms/svg-vs-css.xhtml = IMAGE
 
-BUGWK60095 SLOW DEBUG : editing/selection/move-by-word-visually.html = PASS
 BUGWK58951 MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
 BUGWK58924 MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT
 
