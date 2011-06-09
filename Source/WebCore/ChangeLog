@@ -1,3 +1,15 @@
+2011-06-09  Ben Murdoch  <benm@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Build break in ScriptProfile.cpp and inspector disabled.
+        https://bugs.webkit.org/show_bug.cgi?id=62373
+
+        No new tests - build fix only.
+
+        * bindings/v8/ScriptProfile.cpp: Add necessary guards.
+        * bindings/v8/ScriptProfile.h: ditto.
+
 2011-06-09  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Yury Semikhatsky.
