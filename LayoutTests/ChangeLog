@@ -1,3 +1,10 @@
+2011-06-08  James Kozianski  <koz@chromium.org>
+
+        [Chromium] Unreviewed. Fix expectations for
+        styles-disable-then-change.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
