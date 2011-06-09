@@ -65,6 +65,7 @@ EXPORTS
     ?attach@Debugger@JSC@@QAEXPAVJSGlobalObject@2@@Z
     ?broadcast@ThreadCondition@WTF@@QAEXXZ
     ?bufferLengthForStringDecimal@DecimalNumber@WTF@@QBEIXZ
+    ?bufferLengthForStringExponential@DecimalNumber@WTF@@QBEIXZ
     ?byteCompile@Yarr@JSC@@YA?AV?$PassOwnPtr@UBytecodePattern@Yarr@JSC@@@WTF@@AAUYarrPattern@12@PAVBumpPointerAllocator@4@@Z
     ?byteSize@SourceProviderCache@JSC@@QBEIXZ
     ?calculateDSTOffset@WTF@@YANNN@Z
@@ -349,6 +350,7 @@ EXPORTS
     ?toString@JSObject@JSC@@UBE?AVUString@2@PAVExecState@2@@Z
     ?toString@JSString@JSC@@EBE?AVUString@2@PAVExecState@2@@Z
     ?toStringDecimal@DecimalNumber@WTF@@QBEIPA_WI@Z
+    ?toStringExponential@DecimalNumber@WTF@@QBEIPA_WI@Z
     ?toThisObject@JSCell@JSC@@UBEPAVJSObject@2@PAVExecState@2@@Z
     ?toThisObject@JSObject@JSC@@UBEPAV12@PAVExecState@2@@Z
     ?toThisObject@JSString@JSC@@EBEPAVJSObject@2@PAVExecState@2@@Z

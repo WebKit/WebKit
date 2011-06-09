@@ -620,7 +620,18 @@ void InspectorBasicValue::writeJSON(Vector<UChar>* output) const
             output->append(falseString, 5);
     } else if (type() == TypeNumber) {
         NumberToStringBuffer buffer;
-        unsigned length = DecimalNumber(m_doubleValue).toStringDecimal(buffer, WTF::NumberToStringBufferLength);
+        DecimalNumber decimal = m_doubleValue;
+        unsigned length = 0;
+        if (decimal.bufferLengthForStringDecimal() > WTF::NumberToStringBufferLength) {
+            // Not enough room for decimal. Use exponential format.
+            if (decimal.bufferLengthForStringExponential() > WTF::NumberToStringBufferLength) {
+                // Fallback for an abnormal case if it's too little even for exponential.
+                output->append("NaN", 3);
+                return;
+            }
+            length = decimal.toStringExponential(buffer, WTF::NumberToStringBufferLength);
+        } else
+            length = decimal.toStringDecimal(buffer, WTF::NumberToStringBufferLength);
         output->append(buffer, length);
     }
 }
