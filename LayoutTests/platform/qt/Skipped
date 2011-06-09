@@ -2465,7 +2465,8 @@ fast/url/idna2003.html
 fast/url/idna2008.html
 
 # https://bugs.webkit.org/show_bug.cgi?id=59265
-editing/selection/move-by-word-visually.html
+editing/selection/move-by-word-visually-others.html
+editing/selection/move-by-word-visually-single-space-sigle-line.html
 
 # [Qt] New tests introduced in r84742 fail
 # https://bugs.webkit.org/show_bug.cgi?id=59334
@@ -2558,8 +2559,3 @@ inspector/profiler/detailed-heapshots-comparison-expansion-preserved-when-sortin
 inspector/debugger/source-frame.html
 inspector/profiler/detailed-heapshots-comparison-show-all.html
 inspector/profiler/detailed-heapshots-comparison-show-next.html
-
-# REGRESSION(r88393): Tests fail on Qt platform
-# https://bugs.webkit.org/show_bug.cgi?id=62374
-editing/selection/move-by-word-visually-others.html
-editing/selection/move-by-word-visually-single-space-sigle-line.html

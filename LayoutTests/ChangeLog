@@ -1,5 +1,11 @@
 2011-06-09  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt] Unreviewed fix after r88447.
+
+        * platform/qt/Skipped:
+
+2011-06-09  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] The profiler test is entirely unrelated to the original change r88337
         and seems to be highly related to https://bugs.webkit.org/show_bug.cgi?id=60881
 
