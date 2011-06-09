@@ -1,5 +1,14 @@
 2011-06-09  Andreas Kling  <kling@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        WebKit2: Remove unused function CoreIPC::Connection::deprecatedWaitFor().
+        https://bugs.webkit.org/show_bug.cgi?id=62386
+
+        * Platform/CoreIPC/Connection.h:
+
+2011-06-09  Andreas Kling  <kling@webkit.org>
+
         Reviewed by Anders Carlsson.
 
         [Qt][WK2] Remove usage of deprecated CoreIPC functions.

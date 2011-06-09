@@ -159,8 +159,7 @@ public:
     // All clients should move to the overloads that take a message type.
     template<typename E, typename T> bool deprecatedSend(E messageID, uint64_t destinationID, const T& arguments);
     template<typename E, typename T, typename U> bool deprecatedSendSync(E messageID, uint64_t destinationID, const T& arguments, const U& reply, double timeout = NoTimeout);
-    template<typename E> PassOwnPtr<ArgumentDecoder> deprecatedWaitFor(E messageID, uint64_t destinationID, double timeout);
-    
+
 private:
     template<typename T> class Message {
     public:
@@ -414,11 +413,6 @@ bool Connection::deprecatedSend(E messageID, uint64_t destinationID, const T& ar
     argumentEncoder->encode(arguments);
 
     return sendMessage(MessageID(messageID), argumentEncoder.release());
-}
-
-template<typename E> inline PassOwnPtr<ArgumentDecoder> Connection::deprecatedWaitFor(E messageID, uint64_t destinationID, double timeout)
-{
-    return waitForMessage(MessageID(messageID), destinationID, timeout);
 }
 
 } // namespace CoreIPC
