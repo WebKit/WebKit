@@ -1,3 +1,39 @@
+2011-06-09  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        WebKit2: Generate correct header conditionals in message receivers.
+        https://bugs.webkit.org/show_bug.cgi?id=62379
+
+        Given a *.messages.in file like this:
+
+        Foo(AwesomeObject o)
+        #if ENABLE(ESOTERIC_FEATURE)
+        Bar(AwesomeObject o)
+        #endif
+
+        messages.py would include AwesomeObject.h only #if ENABLE(ESOTERIC_FEATURE).
+        This breaks the build on platforms without that defined.
+
+        Furthermore, if two messages guarded by different conditionals both pull in the same
+        header, only the last conditional will be applied, for example:
+
+        #if ENABLE(ESOTERIC_FEATURE)
+        Foo(AwesomeObject o)
+        #endif
+        #if ENABLE(MYSTERIOUS_FEATURE)
+        Bar(AwesomeObject o)
+        #endif
+
+        Would include AwesomeObject.h #if ENABLE(MYSTERIOUS_FEATURE) when it really should
+        check #if ENABLE(ESOTERIC_FEATURE) || ENABLE(MYSTERIOUS_FEATURE).
+
+        Change the generator to consider all conditionals for a given header file.
+        Also consider conditionals for reply parameters.
+
+        * Scripts/webkit2/messages.py:
+        * Scripts/webkit2/messages_unittest.py:
+
 2011-06-09  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

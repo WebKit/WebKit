@@ -86,11 +86,10 @@ class MessageReceiver(object):
                 name, parameters_string, reply_parameters_string, attributes_string = match.groups()
                 if parameters_string:
                     parameters = parse_parameter_string(parameters_string)
+                    for parameter in parameters:
+                        parameter.condition = condition
                 else:
                     parameters = []
-
-                for parameter in parameters:
-                    parameter.condition = condition
 
                 if attributes_string:
                     attributes = frozenset(attributes_string.split())
@@ -102,6 +101,8 @@ class MessageReceiver(object):
 
                 if reply_parameters_string:
                     reply_parameters = parse_parameter_string(reply_parameters_string)
+                    for reply_parameter in reply_parameters:
+                        reply_parameter.condition = condition
                 elif reply_parameters_string == '':
                     reply_parameters = []
                 else:
@@ -483,34 +484,36 @@ def headers_for_type(type):
 def generate_message_handler(file):
     receiver = MessageReceiver.parse(file)
     headers = {
-        '"%s"' % messages_header_filename(receiver): None,
-        '"HandleMessage.h"': None,
-        '"ArgumentDecoder.h"': None,
+        '"%s"' % messages_header_filename(receiver): [None],
+        '"HandleMessage.h"': [None],
+        '"ArgumentDecoder.h"': [None],
     }
 
     type_conditions = {}
     for parameter in receiver.iterparameters():
+        if not parameter.type in type_conditions:
+            type_conditions[parameter.type] = []
+
+        if not parameter.condition in type_conditions[parameter.type]:
+            type_conditions[parameter.type].append(parameter.condition)
+
+    for parameter in receiver.iterparameters():
         type = parameter.type
-        condition = parameter.condition
+        conditions = type_conditions[type]
 
-        if type in type_conditions:
-            if not type_conditions[type]:
-                condition = type_conditions[type]
-            else:
-                if not condition:
-                    type_conditions[type] = condition
-        else:
-            type_conditions[type] = condition
-
-        argument_encoder_headers = argument_coder_headers_for_type(parameter.type)
+        argument_encoder_headers = argument_coder_headers_for_type(type)
         if argument_encoder_headers:
             for header in argument_encoder_headers:
-                headers[header] = condition
+                if header not in headers:
+                    headers[header] = []
+                headers[header].extend(conditions)
             continue
 
         type_headers = headers_for_type(type)
         for header in type_headers:
-            headers[header] = condition
+            if header not in headers:
+                headers[header] = []
+            headers[header].extend(conditions)
 
     for message in receiver.messages:
         if message.reply_parameters is not None:
@@ -519,12 +522,17 @@ def generate_message_handler(file):
                 argument_encoder_headers = argument_coder_headers_for_type(type)
                 if argument_encoder_headers:
                     for header in argument_encoder_headers:
-                        headers[header] = message.condition
+                        if header not in headers:
+                            headers[header] = []
+                        headers[header].append(message.condition)
                     continue
 
                 type_headers = headers_for_type(type)
                 for header in type_headers:
-                    headers[header] = message.condition
+                    if header not in headers:
+                        headers[header] = []
+                    headers[header].append(message.condition)
+
 
     result = []
 
@@ -537,8 +545,8 @@ def generate_message_handler(file):
 
     result.append('#include "%s.h"\n\n' % receiver.name)
     for headercondition in sorted(headers):
-        if headers[headercondition]:
-            result.append('#if %s\n' % headers[headercondition])
+        if headers[headercondition] and not None in headers[headercondition]:
+            result.append('#if %s\n' % ' || '.join(set(headers[headercondition])))
             result += ['#include %s\n' % headercondition]
             result.append('#endif\n')
         else:
