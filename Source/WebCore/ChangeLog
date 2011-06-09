@@ -1,3 +1,18 @@
+2011-06-08  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Make CSSPrimitiveValue support cast to EVerticalAlign.
+        https://bugs.webkit.org/show_bug.cgi?id=62356
+
+        No new tests / refactoring only.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::CSSPrimitiveValue):
+        (WebCore::CSSPrimitiveValue::operator EVerticalAlign):
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+
 2011-06-08  Justin Novosad  <junov@chromium.org>
 
         Reviewed by James Robinson.

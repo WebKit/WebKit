@@ -1849,6 +1849,70 @@ template<> inline CSSPrimitiveValue::operator EUserSelect() const
     }
 }
 
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EVerticalAlign a)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (a) {
+    case TOP:
+        m_value.ident = CSSValueTop;
+        break;
+    case BOTTOM:
+        m_value.ident = CSSValueBottom;
+        break;
+    case MIDDLE:
+        m_value.ident = CSSValueMiddle;
+        break;
+    case BASELINE:
+        m_value.ident = CSSValueBaseline;
+        break;
+    case TEXT_BOTTOM:
+        m_value.ident = CSSValueTextBottom;
+        break;
+    case TEXT_TOP:
+        m_value.ident = CSSValueTextTop;
+        break;
+    case SUB:
+        m_value.ident = CSSValueSub;
+        break;
+    case SUPER:
+        m_value.ident = CSSValueSuper;
+        break;
+    case BASELINE_MIDDLE:
+        m_value.ident = CSSValueWebkitBaselineMiddle;
+        break;
+    case LENGTH:
+        m_value.ident = CSSValueInvalid;
+    }
+}
+
+template<> inline CSSPrimitiveValue::operator EVerticalAlign() const
+{
+    switch (m_value.ident) {
+    case CSSValueTop:
+        return TOP;
+    case CSSValueBottom:
+        return BOTTOM;
+    case CSSValueMiddle:
+        return MIDDLE;
+    case CSSValueBaseline:
+        return BASELINE;
+    case CSSValueTextBottom:
+        return TEXT_BOTTOM;
+    case CSSValueTextTop:
+        return TEXT_TOP;
+    case CSSValueSub:
+        return SUB;
+    case CSSValueSuper:
+        return SUPER;
+    case CSSValueWebkitBaselineMiddle:
+        return BASELINE_MIDDLE;
+    default:
+        ASSERT_NOT_REACHED();
+        return TOP;
+    }
+}
+
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EVisibility e)
     : m_type(CSS_IDENT)
     , m_hasCachedCSSText(false)

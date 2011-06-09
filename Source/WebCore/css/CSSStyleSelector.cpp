@@ -3872,49 +3872,27 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         return;
     }
     case CSSPropertyVerticalAlign:
+    {
         HANDLE_INHERIT_AND_INITIAL(verticalAlign, VerticalAlign)
         if (!primitiveValue)
             return;
+
         if (primitiveValue->getIdent()) {
-          EVerticalAlign align;
-
-          switch (primitiveValue->getIdent()) {
-                case CSSValueTop:
-                    align = TOP; break;
-                case CSSValueBottom:
-                    align = BOTTOM; break;
-                case CSSValueMiddle:
-                    align = MIDDLE; break;
-                case CSSValueBaseline:
-                    align = BASELINE; break;
-                case CSSValueTextBottom:
-                    align = TEXT_BOTTOM; break;
-                case CSSValueTextTop:
-                    align = TEXT_TOP; break;
-                case CSSValueSub:
-                    align = SUB; break;
-                case CSSValueSuper:
-                    align = SUPER; break;
-                case CSSValueWebkitBaselineMiddle:
-                    align = BASELINE_MIDDLE; break;
-                default:
-                    return;
-            }
-          m_style->setVerticalAlign(align);
+          m_style->setVerticalAlign(*primitiveValue);
           return;
-        } else {
-          int type = primitiveValue->primitiveType();
-          Length l;
-          if (CSSPrimitiveValue::isUnitTypeLength(type))
-            l = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
-          else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-            l = Length(primitiveValue->getDoubleValue(), Percent);
-
-          m_style->setVerticalAlign(LENGTH);
-          m_style->setVerticalAlignLength(l);
         }
-        return;
 
+        int type = primitiveValue->primitiveType();
+        Length length;
+        if (CSSPrimitiveValue::isUnitTypeLength(type))
+            length = Length(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor), Fixed);
+        else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
+            length = Length(primitiveValue->getDoubleValue(), Percent);
+
+        m_style->setVerticalAlign(LENGTH);
+        m_style->setVerticalAlignLength(length);
+        return;
+    }
     case CSSPropertyFontSize:
     {
         FontDescription fontDescription = m_style->fontDescription();
