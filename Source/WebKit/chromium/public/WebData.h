@@ -76,22 +76,6 @@ public:
     WEBKIT_API void assign(const char* data, size_t size);
 
     WEBKIT_API size_t size() const;
-
-    // Sets |data| to point to the content of the WebData at index |position|
-    // and returns the number of bytes available to be read in |data|.
-    // Return 0 when no more data is left.
-    // Usage:
-    //      const char* segment;
-    //      size_t position = 0;
-    //      while (size_t length = webData.getSomeData(segment, position)) {
-    //          // Use the data. for example: decoder->decode(segment, length);
-    //          position += length;
-    //      }
-    WEBKIT_API size_t getSomeData(const char*& data, size_t position) const;
-
-    // Returns all the data from the SharedBuffer.
-    // Consider using getSomeData() as data() could require flattening the internal buffer
-    // which might be expensive.
     WEBKIT_API const char* data() const;
 
     bool isEmpty() const { return !size(); }

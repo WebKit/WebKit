@@ -69,11 +69,6 @@ size_t WebData::size() const
     return const_cast<WebDataPrivate*>(m_private)->size();
 }
 
-size_t WebData::getSomeData(const char*& data, size_t position) const
-{
-    return m_private->getSomeData(data, position);
-}
-
 const char* WebData::data() const
 {
     if (!m_private)

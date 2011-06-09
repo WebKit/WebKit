@@ -33,7 +33,6 @@
 
 #include "WebCString.h"
 #include "WebCommon.h"
-#include "WebData.h"
 #include "WebURL.h"
 
 namespace WebKit {
@@ -50,7 +49,7 @@ public:
     struct Resource {
         WebURL url;
         WebCString mimeType;
-        WebData data;
+        WebCString data;
     };
 
     // Serializes all the frames from the WebView, retrieves the page's
@@ -60,7 +59,7 @@ public:
     WEBKIT_API static void serialize(WebView*, WebVector<Resource>*);
 
     // Serializes the WebView contents to a MHTML representation.
-    WEBKIT_API static WebData serializeToMHTML(WebView*);
+    WEBKIT_API static WebCString serializeToMHTML(WebView*);
 
     // IMPORTANT:
     // The API below is an older implementation of a pageserialization that
