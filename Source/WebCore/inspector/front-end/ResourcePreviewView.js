@@ -55,6 +55,7 @@ WebInspector.ResourcePreviewView.prototype = {
         function callback()
         {
             this._createInnerView(callback).show(this.element);
+            this._innerViewShowRequested = false;
         }
 
         this.resource.requestContent(callback.bind(this));

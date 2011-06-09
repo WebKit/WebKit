@@ -1,3 +1,14 @@
+2011-06-09  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: Network panel preview tab does not reattach SourceFrame when switching between preview and response tabs.
+        https://bugs.webkit.org/show_bug.cgi?id=62298
+
+        * inspector/front-end/ResourcePreviewView.js:
+        (WebInspector.ResourcePreviewView.prototype._ensureInnerViewShown.callback):
+        (WebInspector.ResourcePreviewView.prototype._ensureInnerViewShown):
+
 2011-06-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Speculative buildfix after r88286.
