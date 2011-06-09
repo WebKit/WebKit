@@ -1,3 +1,21 @@
+2011-06-09  Nico Weber  <thakis@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [chromium] Make a few destructors private.
+        https://bugs.webkit.org/show_bug.cgi?id=62341
+
+        No intended functionality change.
+
+        * src/NotificationPresenterImpl.cpp:
+        (WebKit::VoidCallbackClient::~VoidCallbackClient):
+        * src/WebTextCheckingCompletionImpl.h:
+        (WebKit::WebTextCheckingCompletionImpl::~WebTextCheckingCompletionImpl):
+        * src/WebURLRequest.cpp:
+        (WebKit::WebURLRequestPrivateImpl::~WebURLRequestPrivateImpl):
+        * src/WebURLResponse.cpp:
+        (WebKit::WebURLResponsePrivateImpl::~WebURLResponsePrivateImpl):
+
 2011-06-09  James Robinson  <jamesr@chromium.org>
 
         Fix chromium build on build.webkit.org builders.

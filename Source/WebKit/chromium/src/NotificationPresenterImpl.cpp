@@ -56,8 +56,6 @@ public:
     {
     }
 
-    virtual ~VoidCallbackClient() { }
-
     virtual void permissionRequestComplete()
     {
         if (m_callback)
@@ -66,6 +64,8 @@ public:
     }
 
 private:
+    virtual ~VoidCallbackClient() { }
+
     RefPtr<VoidCallback> m_callback;
 };
 
