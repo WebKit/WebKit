@@ -172,7 +172,7 @@ void ComplexTextController::collectComplexTextRunsForCharactersCoreText(const UC
     CFIndex runCount = CFArrayGetCount(runArray);
 
     for (CFIndex r = 0; r < runCount; r++) {
-        CTRunRef ctRun = static_cast<CTRunRef>(CFArrayGetValueAtIndex(runArray, r));
+        CTRunRef ctRun = static_cast<CTRunRef>(CFArrayGetValueAtIndex(runArray, m_run.ltr() ? r : runCount - 1 - r));
         ASSERT(CFGetTypeID(ctRun) == CTRunGetTypeID());
         CFRange runRange = CTRunGetStringRange(ctRun);
         m_complexTextRuns.append(ComplexTextRun::create(ctRun, fontData, cp, stringLocation, length, runRange));

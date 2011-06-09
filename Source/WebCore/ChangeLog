@@ -1,3 +1,14 @@
+2011-06-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix a regression from r88478.
+
+        * platform/graphics/mac/ComplexTextControllerCoreText.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRunsForCharactersCoreText): Add the runs
+        in reverse order in the RTL case here, since the whole vector is reversed by collectComplexTextRuns()
+        afterwards.
+
 2011-06-09  Julien Chaffraix  <jchaffraix@codeaurora.org>
 
         Reviewed by Antti Koivisto.
