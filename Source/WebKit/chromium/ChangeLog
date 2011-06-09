@@ -1,3 +1,34 @@
+2011-06-08  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Add stubs to WebWidget
+        https://bugs.webkit.org/show_bug.cgi?id=62263
+
+        This change add stub implementations for all WebWidget functions. Having stub methods should make it easier to add new functions to the class without breaking Chromium.
+
+        * public/WebWidget.h:
+        (WebKit::WebWidget::close):
+        (WebKit::WebWidget::size):
+        (WebKit::WebWidget::resize):
+        (WebKit::WebWidget::animate):
+        (WebKit::WebWidget::layout):
+        (WebKit::WebWidget::paint):
+        (WebKit::WebWidget::composite):
+        (WebKit::WebWidget::themeChanged):
+        (WebKit::WebWidget::handleInputEvent):
+        (WebKit::WebWidget::mouseCaptureLost):
+        (WebKit::WebWidget::setFocus):
+        (WebKit::WebWidget::setComposition):
+        (WebKit::WebWidget::confirmComposition):
+        (WebKit::WebWidget::compositionRange):
+        (WebKit::WebWidget::textInputType):
+        (WebKit::WebWidget::caretOrSelectionBounds):
+        (WebKit::WebWidget::selectionRange):
+        (WebKit::WebWidget::caretOrSelectionRange):
+        (WebKit::WebWidget::setTextDirection):
+        (WebKit::WebWidget::isAcceleratedCompositingActive):
+
 2011-06-08  Tom Sepez  <tsepez@chromium.org>
 
         Reviewed by Adam Barth.

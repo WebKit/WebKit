@@ -34,6 +34,8 @@
 #include "WebCanvas.h"
 #include "WebCommon.h"
 #include "WebCompositionUnderline.h"
+#include "WebRect.h"
+#include "WebSize.h"
 #include "WebTextInputType.h"
 #include "WebTextDirection.h"
 
@@ -43,17 +45,15 @@ class WebInputEvent;
 class WebRange;
 class WebString;
 struct WebPoint;
-struct WebRect;
-struct WebSize;
 template <typename T> class WebVector;
 
 class WebWidget {
 public:
     // This method closes and deletes the WebWidget.
-    virtual void close() = 0;
+    virtual void close() { }
 
     // Returns the current size of the WebWidget.
-    virtual WebSize size() = 0;
+    virtual WebSize size() { return WebSize(); }
 
     // Used to group a series of resize events. For example, if the user
     // drags a resizer then willStartLiveResize will be called, followed by a
@@ -62,7 +62,7 @@ public:
     virtual void willStartLiveResize() { }
 
     // Called to resize the WebWidget.
-    virtual void resize(const WebSize&) = 0;
+    virtual void resize(const WebSize&) { }
 
     // Ends a group of resize events that was started with a call to
     // willStartLiveResize.
@@ -70,11 +70,11 @@ public:
 
     // Called to update imperative animation state.  This should be called before
     // paint, although the client can rate-limit these calls.
-    virtual void animate() = 0;
+    virtual void animate() { }
 
     // Called to layout the WebWidget.  This MUST be called before Paint,
     // and it may result in calls to WebWidgetClient::didInvalidateRect.
-    virtual void layout() = 0;
+    virtual void layout() { }
 
     // Called to paint the rectangular region within the WebWidget 
     // onto the specified canvas at (viewPort.x,viewPort.y). You MUST call
@@ -83,29 +83,29 @@ public:
     // changes are made to the WebWidget (e.g., once events are
     // processed, it should be assumed that another call to layout is
     // warranted before painting again).
-    virtual void paint(WebCanvas*, const WebRect& viewPort) = 0;
+    virtual void paint(WebCanvas*, const WebRect& viewPort) { }
 
     // Triggers compositing of the current layers onto the screen.
     // The finish argument controls whether the compositor will wait for the
     // GPU to finish rendering before returning. You MUST call Layout
     // before calling this method, for the same reasons described in
     // the paint method above.
-    virtual void composite(bool finish) = 0;
+    virtual void composite(bool finish) { }
 
     // Called to inform the WebWidget of a change in theme.
     // Implementors that cache rendered copies of widgets need to re-render
     // on receiving this message
-    virtual void themeChanged() = 0;
+    virtual void themeChanged() { }
 
     // Called to inform the WebWidget of an input event.  Returns true if
     // the event has been processed, false otherwise.
-    virtual bool handleInputEvent(const WebInputEvent&) = 0;
+    virtual bool handleInputEvent(const WebInputEvent&) { return false; }
 
     // Called to inform the WebWidget that mouse capture was lost.
-    virtual void mouseCaptureLost() = 0;
+    virtual void mouseCaptureLost() { }
 
     // Called to inform the WebWidget that it has gained or lost keyboard focus.
-    virtual void setFocus(bool) = 0;
+    virtual void setFocus(bool) { }
 
     // Called to inform the WebWidget of a new composition text.
     // If selectionStart and selectionEnd has the same value, then it indicates
@@ -116,12 +116,12 @@ public:
         const WebString& text,
         const WebVector<WebCompositionUnderline>& underlines,
         int selectionStart,
-        int selectionEnd) = 0;
+        int selectionEnd) { return false; }
 
     // Called to inform the WebWidget to confirm an ongoing composition.
     // This method is same as confirmComposition(WebString());
     // Returns true if there is an ongoing composition.
-    virtual bool confirmComposition() = 0;
+    virtual bool confirmComposition() { return false; }
 
     // Called to inform the WebWidget to confirm an ongoing composition with a
     // new composition text. If the text is empty then the current composition
@@ -129,36 +129,36 @@ public:
     // current selection and inserts the text. This method has no effect if
     // there is no ongoing composition and the text is empty.
     // Returns true if there is an ongoing composition or the text is inserted.
-    virtual bool confirmComposition(const WebString& text) = 0;
+    virtual bool confirmComposition(const WebString& text) { return false; }
 
     // Fetches the character range of the current composition, also called the
     // "marked range." Returns true and fills the out-paramters on success;
     // returns false on failure.
-    virtual bool compositionRange(size_t* location, size_t* length) = 0;
+    virtual bool compositionRange(size_t* location, size_t* length) { return false; }
 
     // Returns the current text input type of this WebWidget.
-    virtual WebTextInputType textInputType() = 0;
+    virtual WebTextInputType textInputType() { return WebKit::WebTextInputTypeNone; }
 
     // Returns the current caret bounds of this WebWidget. The selection bounds
     // will be returned if a selection range is available.
-    virtual WebRect caretOrSelectionBounds() = 0;
+    virtual WebRect caretOrSelectionBounds() { return WebRect(); }
 
     // Returns the start and end point for the current selection, aligned to the
     // bottom of the selected line.
-    virtual bool selectionRange(WebPoint& start, WebPoint& end) const = 0;
+    virtual bool selectionRange(WebPoint& start, WebPoint& end) const { return false; }
 
     // Fetch the current selection range of this WebWidget. If there is no
     // selection, it will output a 0-length range with the location at the
     // caret. Returns true and fills the out-paramters on success; returns false
     // on failure.
-    virtual bool caretOrSelectionRange(size_t* location, size_t* length) = 0;
+    virtual bool caretOrSelectionRange(size_t* location, size_t* length) { return false; }
 
     // Changes the text direction of the selected input node.
-    virtual void setTextDirection(WebTextDirection) = 0;
+    virtual void setTextDirection(WebTextDirection) { }
 
     // Returns true if the WebWidget uses GPU accelerated compositing
     // to render its contents.
-    virtual bool isAcceleratedCompositingActive() const = 0;
+    virtual bool isAcceleratedCompositingActive() const { return false; }
 
 protected:
     ~WebWidget() { }
