@@ -401,11 +401,19 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    for (unsigned n = 0; n < exec->argumentCount(); n++)
-        thisObj->put(exec, length + n, exec->argument(n));
-    length += exec->argumentCount();
-    putProperty(exec, thisObj, exec->propertyNames().length, jsNumber(length));
-    return JSValue::encode(jsNumber(length));
+    for (unsigned n = 0; n < exec->argumentCount(); n++) {
+        // Check for integer overflow; where safe we can do a fast put by index.
+        if (length + n >= length)
+            thisObj->put(exec, length + n, exec->argument(n));
+        else {
+            PutPropertySlot slot;
+            Identifier propertyName(exec, JSValue((int64_t)length + (int64_t)n).toString(exec));
+            thisObj->put(exec, propertyName, exec->argument(n), slot);
+        }
+    }
+    JSValue newLength = jsNumber((int64_t)length + (int64_t)exec->argumentCount());
+    putProperty(exec, thisObj, exec->propertyNames().length, newLength);
+    return JSValue::encode(newLength);
 }
 
 EncodedJSValue JSC_HOST_CALL arrayProtoFuncReverse(ExecState* exec)

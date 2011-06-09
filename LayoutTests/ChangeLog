@@ -1,3 +1,22 @@
+2011-06-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Bug 62405 - Fix integer overflow in Array.prototype.push
+
+        There are three integer overflows here, leading to safe (not a security risk)
+        but incorrect (non-spec-compliant) behaviour.
+
+        Two overflows occur when calculating the new length after pushing (one in the
+        fast version of push in JSArray, one in the generic version in ArrayPrototype).
+        The other occurs calculating indices to write to when multiple items are pushed.
+
+        These errors result in three test-262 failures.
+
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.7_Array_prototype_push/S15.4.4.7_A3-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.7_Array_prototype_push/S15.4.4.7_A4_T2-expected.txt:
+        * sputnik/Conformance/15_Native_Objects/15.4_Array/15.4.4/15.4.4.7_Array_prototype_push/S15.4.4.7_A4_T3-expected.txt:
+
 2011-06-09  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

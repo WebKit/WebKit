@@ -330,7 +330,7 @@ void JSArray::put(ExecState* exec, const Identifier& propertyName, JSValue value
     if (propertyName == exec->propertyNames().length) {
         unsigned newLength = value.toUInt32(exec);
         if (value.toNumber(exec) != static_cast<double>(newLength)) {
-            throwError(exec, createRangeError(exec, "Invalid array length."));
+            throwError(exec, createRangeError(exec, "Invalid array length"));
             return;
         }
         setLength(newLength);
@@ -735,6 +735,12 @@ void JSArray::push(ExecState* exec, JSValue value)
     checkConsistency();
     
     ArrayStorage* storage = m_storage;
+
+    if (UNLIKELY(storage->m_length == 0xFFFFFFFFu)) {
+        put(exec, storage->m_length, value);
+        throwError(exec, createRangeError(exec, "Invalid array length"));
+        return;
+    }
 
     if (storage->m_length < m_vectorLength) {
         storage->m_vector[storage->m_length].set(exec->globalData(), this, value);
