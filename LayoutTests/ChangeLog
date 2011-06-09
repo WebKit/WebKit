@@ -1,3 +1,14 @@
+2011-06-09  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] [WK2] Many editing tests failed on missing shouldBeginEditingInDOMRange:range printout
+        https://bugs.webkit.org/show_bug.cgi?id=62381
+
+        Unskip passed tests.
+
+        * platform/qt-wk2/Skipped:
+
 2011-06-08  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Ryosuke Niwa.

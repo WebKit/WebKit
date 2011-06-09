@@ -60,6 +60,10 @@ PlatformWebView::PlatformWebView(WKContextRef contextRef, WKPageGroupRef pageGro
     m_view->setParent(m_window);
     m_window->setCentralWidget(m_view);
     m_window->setGeometry(0, 0, 800, 600);
+
+    QFocusEvent ev(QEvent::WindowActivate);
+    QApplication::sendEvent(m_view->scene(), &ev);
+    m_view->wkView()->setFocus(Qt::OtherFocusReason);
 }
 
 PlatformWebView::~PlatformWebView()

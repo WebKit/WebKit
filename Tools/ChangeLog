@@ -1,3 +1,16 @@
+2011-06-09  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] [WK2] Many editing tests failed on missing shouldBeginEditingInDOMRange:range printout
+        https://bugs.webkit.org/show_bug.cgi?id=62381
+
+        Activate QGraphicsScene and setFocus on QGraphicsItem to make sure the view has the focus.
+        QWKPagePrivate::isViewFocused() will check it later.
+
+        * WebKitTestRunner/qt/PlatformWebViewQt.cpp:
+        (WTR::PlatformWebView::PlatformWebView):
+
 2011-06-09  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
