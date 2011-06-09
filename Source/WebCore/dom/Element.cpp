@@ -1952,7 +1952,7 @@ bool Element::isSpellCheckingEnabled() const
         ContainerNode* parent = const_cast<Element*>(element)->parentOrHostNode();
         if (parent && parent->isElementNode())
             element = toElement(parent);
-        else if (parent && parent->isShadowBoundary())
+        else if (parent && parent->isShadowRoot())
             element = toElement(parent->parentOrHostNode());
         else
             element = 0;

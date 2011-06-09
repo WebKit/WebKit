@@ -723,7 +723,7 @@ static String nodePosition(Node* node)
                 result += "body";
                 break;
             }
-            if (n->isShadowBoundary())
+            if (n->isShadowRoot())
                 result += "{" + getTagName(n) + "}";
             else
                 result += "child " + String::number(n->nodeIndex()) + " {" + getTagName(n) + "}";

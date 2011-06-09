@@ -211,8 +211,7 @@ public:
     virtual bool isCharacterDataNode() const { return false; }
     bool isDocumentNode() const;
     bool isShadowRoot() const { return getFlag(IsShadowRootFlag); }
-    // FIXME: Remove this when all shadow roots are ShadowRoots.
-    virtual bool isShadowBoundary() const { return false; }
+    virtual bool isContentElement() const { return false; }
     virtual bool canHaveLightChildRendererWithShadow() const { return false; }
 
     Node* shadowAncestorNode() const;

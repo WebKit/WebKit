@@ -1549,13 +1549,13 @@ Node* Node::shadowTreeRootNode() const
 
 Node* Node::nonBoundaryShadowTreeRootNode()
 {
-    ASSERT(!isShadowBoundary());
+    ASSERT(!isShadowRoot());
     Node* root = this;
     while (root) {
         if (root->isShadowRoot() || root->isSVGShadowRoot())
             return root;
         Node* parent = root->parentNodeGuaranteedHostFree();
-        if (parent && parent->isShadowBoundary())
+        if (parent && parent->isShadowRoot())
             return root;
         root = parent;
     }
@@ -1565,7 +1565,7 @@ Node* Node::nonBoundaryShadowTreeRootNode()
 ContainerNode* Node::nonShadowBoundaryParentNode() const
 {
     ContainerNode* parent = parentNode();
-    return parent && !parent->isShadowBoundary() ? parent : 0;
+    return parent && !parent->isShadowRoot() ? parent : 0;
 }
 
 bool Node::isInShadowTree()

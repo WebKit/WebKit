@@ -46,7 +46,7 @@ NodeRenderingContext::NodeRenderingContext(Node* node)
     if (!parent)
         return;
 
-    if (parent->isShadowBoundary()) {
+    if (parent->isShadowRoot()) {
         m_location = LocationShadowChild;
         m_parentNodeForRenderingAndStyle = parent->shadowHost();
         return;

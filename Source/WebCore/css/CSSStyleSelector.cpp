@@ -1786,7 +1786,7 @@ static inline bool isAtShadowBoundary(Element* element)
         return false;
 
     ContainerNode* parentNode = element->parentNode();
-    return parentNode && parentNode->isShadowBoundary();
+    return parentNode && parentNode->isShadowRoot();
 }
 
 void CSSStyleSelector::adjustRenderStyle(RenderStyle* style, RenderStyle* parentStyle, Element *e)

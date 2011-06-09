@@ -1,3 +1,43 @@
+2011-06-09  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Fold isShadowBoundary into isShadowRoot.
+        https://bugs.webkit.org/show_bug.cgi?id=62317
+
+        Since there are no longer cases where Node::isShadowBoundary() != Node::isShadowRoot, we can remove this function.
+
+        In one case where isShadowBoundary was also tested to find ShadowContentElemnt, added a new isContentElement function.
+
+        Refactoring, covered by existing tests.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::isAtShadowBoundary): Changed to use isShadowRoot.
+        * dom/Element.cpp:
+        (WebCore::Element::isSpellCheckingEnabled): Ditto.
+        * dom/Node.cpp:
+        (WebCore::Node::nonBoundaryShadowTreeRootNode): Ditto.
+        (WebCore::Node::nonShadowBoundaryParentNode): Ditto.
+        * dom/Node.h:
+        (WebCore::Node::isContentElement): Added.
+        * dom/NodeRenderingContext.cpp:
+        (WebCore::NodeRenderingContext::NodeRenderingContext): Changed to use isShadowRoot.
+        * dom/Position.cpp:
+        (WebCore::Position::Position): Ditto.
+        * dom/ShadowContentElement.h:
+        (WebCore::ShadowContentElement::isContentElement): Added.
+        * dom/ShadowRoot.cpp:
+        (WebCore::ShadowRoot::hasContentElement): Changed to use isContentElement.
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::insertNodeAfter): Changed to use isShadowRoot.
+        * editing/htmlediting.cpp:
+        (WebCore::visiblePositionBeforeNode): Ditto.
+        (WebCore::visiblePositionAfterNode): Ditto.
+        * page/DragController.cpp:
+        (WebCore::asFileInput): Ditto.
+        * rendering/RenderTreeAsText.cpp:
+        (WebCore::nodePosition): Ditto.
+
 2011-06-09  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Darin Adler.

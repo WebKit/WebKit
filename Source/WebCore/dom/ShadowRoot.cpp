@@ -113,9 +113,7 @@ void ShadowRoot::hostChildrenChanged()
 bool ShadowRoot::hasContentElement() const
 {
     for (Node* n = firstChild(); n; n = n->traverseNextNode(this)) {
-        // FIXME: This should be replaced with tag-name checking once <content> is ready.
-        // See also http://webkit.org/b/56973
-        if (n->isShadowBoundary())
+        if (n->isContentElement())
             return true;
     }
 

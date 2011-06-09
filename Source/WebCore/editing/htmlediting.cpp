@@ -502,7 +502,7 @@ VisiblePosition visiblePositionBeforeNode(Node* node)
     if (node->childNodeCount())
         return VisiblePosition(firstPositionInOrBeforeNode(node), DOWNSTREAM);
     ASSERT(node->parentNode());
-    ASSERT(!node->parentNode()->isShadowBoundary());
+    ASSERT(!node->parentNode()->isShadowRoot());
     return positionInParentBeforeNode(node);
 }
 
@@ -513,7 +513,7 @@ VisiblePosition visiblePositionAfterNode(Node* node)
     if (node->childNodeCount())
         return VisiblePosition(lastPositionInOrAfterNode(node), DOWNSTREAM);
     ASSERT(node->parentNode());
-    ASSERT(!node->parentNode()->isShadowBoundary());
+    ASSERT(!node->parentNode()->isShadowRoot());
     return positionInParentAfterNode(node);
 }
 

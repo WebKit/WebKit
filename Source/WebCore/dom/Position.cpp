@@ -80,7 +80,7 @@ Position::Position(PassRefPtr<Node> anchorNode, int offset)
     , m_anchorType(anchorTypeForLegacyEditingPosition(m_anchorNode.get(), m_offset))
     , m_isLegacyEditingPosition(true)
 {
-    ASSERT(!m_anchorNode || !m_anchorNode->isShadowBoundary());
+    ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot());
 }
 
 Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
@@ -89,7 +89,7 @@ Position::Position(PassRefPtr<Node> anchorNode, AnchorType anchorType)
     , m_anchorType(anchorType)
     , m_isLegacyEditingPosition(false)
 {
-    ASSERT(!m_anchorNode || !m_anchorNode->isShadowBoundary());
+    ASSERT(!m_anchorNode || !m_anchorNode->isShadowRoot());
     ASSERT(anchorType != PositionIsOffsetInAnchor);
 }
 
@@ -99,7 +99,7 @@ Position::Position(PassRefPtr<Node> anchorNode, int offset, AnchorType anchorTyp
     , m_anchorType(anchorType)
     , m_isLegacyEditingPosition(false)
 {
-    ASSERT(!m_anchorNode || !editingIgnoresContent(m_anchorNode.get()) || !m_anchorNode->isShadowBoundary());
+    ASSERT(!m_anchorNode || !editingIgnoresContent(m_anchorNode.get()) || !m_anchorNode->isShadowRoot());
     ASSERT(anchorType == PositionIsOffsetInAnchor);
 }
 

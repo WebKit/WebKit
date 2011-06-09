@@ -146,7 +146,7 @@ void CompositeEditCommand::insertNodeAfter(PassRefPtr<Node> insertChild, PassRef
     ASSERT(!refChild->hasTagName(bodyTag));
     ContainerNode* parent = refChild->parentNode();
     ASSERT(parent);
-    ASSERT(!parent->isShadowBoundary());
+    ASSERT(!parent->isShadowRoot());
     if (parent->lastChild() == refChild)
         appendNode(insertChild, parent);
     else {
