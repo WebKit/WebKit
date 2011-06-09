@@ -1,3 +1,60 @@
+2011-06-09  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL][WK2] Add PageClientImpl and WebPageProxyEfl for efl port
+        https://bugs.webkit.org/show_bug.cgi?id=62363
+
+        * UIProcess/API/efl/PageClientImpl.cpp: Added.
+        (WebKit::PageClientImpl::PageClientImpl):
+        (WebKit::PageClientImpl::~PageClientImpl):
+        (WebKit::PageClientImpl::createDrawingAreaProxy):
+        (WebKit::PageClientImpl::setViewNeedsDisplay):
+        (WebKit::PageClientImpl::displayView):
+        (WebKit::PageClientImpl::scrollView):
+        (WebKit::PageClientImpl::viewSize):
+        (WebKit::PageClientImpl::isViewWindowActive):
+        (WebKit::PageClientImpl::isViewFocused):
+        (WebKit::PageClientImpl::isViewVisible):
+        (WebKit::PageClientImpl::isViewInWindow):
+        (WebKit::PageClientImpl::processDidCrash):
+        (WebKit::PageClientImpl::didRelaunchProcess):
+        (WebKit::PageClientImpl::pageClosed):
+        (WebKit::PageClientImpl::toolTipChanged):
+        (WebKit::PageClientImpl::setCursor):
+        (WebKit::PageClientImpl::setViewportArguments):
+        (WebKit::PageClientImpl::registerEditCommand):
+        (WebKit::PageClientImpl::clearAllEditCommands):
+        (WebKit::PageClientImpl::canUndoRedo):
+        (WebKit::PageClientImpl::executeUndoRedo):
+        (WebKit::PageClientImpl::convertToDeviceSpace):
+        (WebKit::PageClientImpl::convertToUserSpace):
+        (WebKit::PageClientImpl::windowToScreen):
+        (WebKit::PageClientImpl::doneWithKeyEvent):
+        (WebKit::PageClientImpl::createPopupMenuProxy):
+        (WebKit::PageClientImpl::createContextMenuProxy):
+        (WebKit::PageClientImpl::setFindIndicator):
+        (WebKit::PageClientImpl::didChangeScrollbarsForMainFrame):
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::didFinishLoadingDataForCustomRepresentation):
+        (WebKit::PageClientImpl::customRepresentationZoomFactor):
+        (WebKit::PageClientImpl::setCustomRepresentationZoomFactor):
+        (WebKit::PageClientImpl::flashBackingStoreUpdates):
+        (WebKit::PageClientImpl::findStringInCustomRepresentation):
+        (WebKit::PageClientImpl::countStringMatchesInCustomRepresentation):
+        (WebKit::PageClientImpl::userSpaceScaleFactor):
+        * UIProcess/API/efl/PageClientImpl.h: Added.
+        (WebKit::PageClientImpl::create):
+        (WebKit::PageClientImpl::viewObject):
+        (WebKit::PageClientImpl::page):
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/efl/WebPageProxyEfl.cpp: Added.
+        (WebKit::WebPageProxy::viewObject):
+        (WebKit::WebPageProxy::standardUserAgent):
+        (WebKit::WebPageProxy::getEditorCommandsForKeyEvent):
+        (WebKit::WebPageProxy::saveRecentSearches):
+        (WebKit::WebPageProxy::loadRecentSearches):
+
 2011-06-08  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Darin Adler.

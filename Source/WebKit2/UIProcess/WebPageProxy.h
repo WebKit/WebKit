@@ -57,6 +57,9 @@
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/WTFString.h>
+#if PLATFORM(EFL)
+#include <Evas.h>
+#endif
 
 namespace CoreIPC {
     class ArgumentDecoder;
@@ -312,6 +315,9 @@ public:
 #endif
 #if PLATFORM(GTK)
     GtkWidget* viewWidget();
+#endif
+#if PLATFORM(EFL)
+    Evas_Object* viewObject();
 #endif
 #if ENABLE(TILED_BACKING_STORE)
     void setActualVisibleContentRect(const WebCore::IntRect& rect);
@@ -657,7 +663,7 @@ private:
     void executeSavedCommandBySelector(const String& selector, bool& handled);
 #endif
 
-#if PLATFORM(GTK)
+#if PLATFORM(GTK) || PLATFORM(EFL)
     void getEditorCommandsForKeyEvent(Vector<String>&);
 #endif
 
