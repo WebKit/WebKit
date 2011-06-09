@@ -1,3 +1,9 @@
+2011-06-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Speculative buildfix after r88286.
+
+        * platform/graphics/IntPoint.h:
+
 2011-06-09  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by Kent Tamura.
