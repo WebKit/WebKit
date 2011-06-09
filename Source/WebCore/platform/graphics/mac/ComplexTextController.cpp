@@ -186,24 +186,18 @@ void ComplexTextController::collectComplexTextRuns()
     if (m_font.isSmallCaps())
         m_smallCapsBuffer.resize(m_end);
 
-    unsigned indexOfFontTransition = m_run.rtl() ? m_end - 1 : 0;
-    const UChar* curr = m_run.rtl() ? cp + m_end  - 1 : cp;
-    const UChar* end = m_run.rtl() ? cp - 1 : cp + m_end;
+    unsigned indexOfFontTransition = 0;
+    const UChar* curr = cp;
+    const UChar* end = cp + m_end;
 
     GlyphData glyphData;
     GlyphData nextGlyphData;
 
     bool isSurrogate = U16_IS_SURROGATE(*curr);
     if (isSurrogate) {
-        if (m_run.ltr()) {
-            if (!U16_IS_SURROGATE_LEAD(curr[0]) || curr + 1 == end || !U16_IS_TRAIL(curr[1]))
-                return;
-            nextGlyphData = m_font.glyphDataForCharacter(U16_GET_SUPPLEMENTARY(curr[0], curr[1]), false);
-        } else {
-            if (!U16_IS_TRAIL(curr[0]) || curr -1 == end || !U16_IS_SURROGATE_LEAD(curr[-1]))
-                return;
-            nextGlyphData = m_font.glyphDataForCharacter(U16_GET_SUPPLEMENTARY(curr[-1], curr[0]), false);
-        }
+        if (!U16_IS_SURROGATE_LEAD(curr[0]) || curr + 1 == end || !U16_IS_TRAIL(curr[1]))
+            return;
+        nextGlyphData = m_font.glyphDataForCharacter(U16_GET_SUPPLEMENTARY(curr[0], curr[1]), false);
     } else
         nextGlyphData = m_font.glyphDataForCharacter(*curr, false);
 
@@ -216,7 +210,7 @@ void ComplexTextController::collectComplexTextRuns()
         m_smallCapsBuffer[curr - cp] = newC;
 
     while (true) {
-        curr = m_run.rtl() ? curr - (isSurrogate ? 2 : 1) : curr + (isSurrogate ? 2 : 1);
+        curr = curr + (isSurrogate ? 2 : 1);
         if (curr == end)
             break;
 
@@ -227,15 +221,9 @@ void ComplexTextController::collectComplexTextRuns()
         UChar c = *curr;
         bool forceSmallCaps = !isSurrogate && isSmallCaps && (U_GET_GC_MASK(c) & U_GC_M_MASK);
         if (isSurrogate) {
-            if (m_run.ltr()) {
-                if (!U16_IS_SURROGATE_LEAD(curr[0]) || curr + 1 == end || !U16_IS_TRAIL(curr[1]))
-                    return;
-                nextGlyphData = m_font.glyphDataForCharacter(U16_GET_SUPPLEMENTARY(curr[0], curr[1]), false);
-            } else {
-                if (!U16_IS_TRAIL(curr[0]) || curr -1 == end || !U16_IS_SURROGATE_LEAD(curr[-1]))
-                    return;
-                nextGlyphData = m_font.glyphDataForCharacter(U16_GET_SUPPLEMENTARY(curr[-1], curr[0]), false);
-            }
+            if (!U16_IS_SURROGATE_LEAD(curr[0]) || curr + 1 == end || !U16_IS_TRAIL(curr[1]))
+                return;
+            nextGlyphData = m_font.glyphDataForCharacter(U16_GET_SUPPLEMENTARY(curr[0], curr[1]), false);
         } else
             nextGlyphData = m_font.glyphDataForCharacter(*curr, false, forceSmallCaps ? SmallCapsVariant : AutoVariant);
 
@@ -246,18 +234,21 @@ void ComplexTextController::collectComplexTextRuns()
         }
 
         if (nextGlyphData.fontData != glyphData.fontData || nextIsSmallCaps != isSmallCaps || !nextGlyphData.glyph != !glyphData.glyph) {
-            int itemStart = m_run.rtl() ? index + 1 : static_cast<int>(indexOfFontTransition);
-            int itemLength = m_run.rtl() ? indexOfFontTransition - index : index - indexOfFontTransition;
+            int itemStart = static_cast<int>(indexOfFontTransition);
+            int itemLength = index - indexOfFontTransition;
             collectComplexTextRunsForCharacters((isSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, glyphData.glyph ? glyphData.fontData : 0);
             indexOfFontTransition = index;
         }
     }
 
-    int itemLength = m_run.rtl() ? indexOfFontTransition + 1 : m_end - indexOfFontTransition;
+    int itemLength = m_end - indexOfFontTransition;
     if (itemLength) {
-        int itemStart = m_run.rtl() ? 0 : indexOfFontTransition;
+        int itemStart = indexOfFontTransition;
         collectComplexTextRunsForCharacters((nextIsSmallCaps ? m_smallCapsBuffer.data() : cp) + itemStart, itemLength, itemStart, nextGlyphData.glyph ? nextGlyphData.fontData : 0);
     }
+
+    if (!m_run.ltr())
+        m_complexTextRuns.reverse();
 }
 
 #if USE(CORE_TEXT) && USE(ATSUI)

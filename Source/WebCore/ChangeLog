@@ -1,3 +1,16 @@
+2011-06-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Simplify ComplexTextController::collectComplexTextRuns()
+        https://bugs.webkit.org/show_bug.cgi?id=62387
+
+        No new test, since functionality is unchanged.
+
+        * platform/graphics/mac/ComplexTextController.cpp:
+        (WebCore::ComplexTextController::collectComplexTextRuns): Always iterate characters in logical order,
+        then reverse the run vector for RTL.
+
 2011-06-09  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.
