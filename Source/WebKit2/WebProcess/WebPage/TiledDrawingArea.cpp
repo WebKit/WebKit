@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2010 Nokia Corporation and/or its subsidiary(-ies)
+ * Copyright (C) 2010, 2011 Nokia Corporation and/or its subsidiary(-ies)
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -28,8 +28,7 @@
 
 #if ENABLE(TILED_BACKING_STORE)
 
-#include "DrawingAreaMessageKinds.h"
-#include "DrawingAreaProxyMessageKinds.h"
+#include "DrawingAreaProxyMessages.h"
 #include "MessageID.h"
 #include "UpdateInfo.h"
 #include "WebCore/Frame.h"
@@ -82,7 +81,7 @@ void TiledDrawingArea::display()
     IntRect dirtyRect = m_dirtyRect;
     m_dirtyRect = IntRect();
 
-    WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::Invalidate, m_webPage->pageID(), CoreIPC::In(dirtyRect));
+    m_webPage->send(Messages::DrawingAreaProxy::Invalidate(dirtyRect));
 
     m_displayTimer.stop();
 }
@@ -107,7 +106,7 @@ void TiledDrawingArea::setSize(const IntSize& viewSize)
 
     scheduleDisplay();
 
-    WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::DidSetSize, m_webPage->pageID(), CoreIPC::In(viewSize));
+    m_webPage->send(Messages::DrawingAreaProxy::DidSetSize(viewSize));
 }
 
 void TiledDrawingArea::suspendPainting()
@@ -148,7 +147,7 @@ void TiledDrawingArea::updateTile(int tileID, const IntRect& dirtyRect, float sc
     paintIntoBitmap(bitmap.get(), dirtyRect, scale);
 
     unsigned pendingUpdateCount = m_pendingUpdates.size();
-    WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::TileUpdated, m_webPage->pageID(), CoreIPC::In(tileID, updateInfo, scale, pendingUpdateCount));
+    m_webPage->send(Messages::DrawingAreaProxy::TileUpdated(tileID, updateInfo, scale, pendingUpdateCount));
 }
 
 void TiledDrawingArea::scheduleTileUpdate()
@@ -173,84 +172,55 @@ void TiledDrawingArea::tileUpdateTimerFired()
     updateTile(update.tileID, update.dirtyRect, update.scale);
 
     if (m_pendingUpdates.isEmpty())
-        WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::AllTileUpdatesProcessed, m_webPage->pageID(), CoreIPC::In());
+        m_webPage->send(Messages::DrawingAreaProxy::AllTileUpdatesProcessed());
     else
         scheduleTileUpdate();
 }
 
-void TiledDrawingArea::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void TiledDrawingArea::cancelTileUpdate(int tileID)
 {
-    switch (messageID.get<DrawingAreaLegacyMessage::Kind>()) {
-    case DrawingAreaLegacyMessage::SetSize: {
-        IntSize size;
-        if (!arguments->decode(CoreIPC::Out(size)))
-            return;
+    UpdateMap::iterator it = m_pendingUpdates.find(tileID);
+    if (it == m_pendingUpdates.end())
+        return;
+    m_pendingUpdates.remove(it);
+    if (m_pendingUpdates.isEmpty()) {
+        m_webPage->send(Messages::DrawingAreaProxy::AllTileUpdatesProcessed());
+        m_tileUpdateTimer.stop();
+    }
+}
 
-        setSize(size);
-        break;
-    }
-    case DrawingAreaLegacyMessage::SuspendPainting:
-        suspendPainting();
-        break;
-    case DrawingAreaLegacyMessage::ResumePainting:
-        resumePainting();
-        break;
-    case DrawingAreaLegacyMessage::CancelTileUpdate: {
-        int tileID;
-        if (!arguments->decode(CoreIPC::Out(tileID)))
-            return;
-        UpdateMap::iterator it = m_pendingUpdates.find(tileID);
-        if (it != m_pendingUpdates.end()) {
-            m_pendingUpdates.remove(it);
-            if (m_pendingUpdates.isEmpty()) {
-                WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::AllTileUpdatesProcessed, m_webPage->pageID(), CoreIPC::In());
-                m_tileUpdateTimer.stop();
-            }
-        }
-        break;
-    }
-    case DrawingAreaLegacyMessage::RequestTileUpdate: {
+void TiledDrawingArea::requestTileUpdate(int tileID, const WebCore::IntRect& dirtyRect, float scale)
+{
+    UpdateMap::iterator it = m_pendingUpdates.find(tileID);
+    if (it != m_pendingUpdates.end())
+        it->second.dirtyRect.unite(dirtyRect);
+    else {
         TileUpdate update;
-        if (!arguments->decode(CoreIPC::Out(update.tileID, update.dirtyRect, update.scale)))
-            return;
-        UpdateMap::iterator it = m_pendingUpdates.find(update.tileID);
-        if (it != m_pendingUpdates.end())
-            it->second.dirtyRect.unite(update.dirtyRect);
-        else {
-            m_pendingUpdates.add(update.tileID, update);
-            scheduleTileUpdate();
-        }
-        break;
+        update.tileID = tileID;
+        update.dirtyRect = dirtyRect;
+        update.scale = scale;
+        m_pendingUpdates.add(tileID, update);
+        scheduleTileUpdate();
     }
-    case DrawingAreaLegacyMessage::TakeSnapshot: {
-        IntSize targetSize;
-        IntRect contentsRect;
+}
 
-        if (!arguments->decode(CoreIPC::Out(targetSize, contentsRect)))
-            return;
+void TiledDrawingArea::takeSnapshot(const WebCore::IntSize& targetSize, const WebCore::IntRect& contentsRect)
+{
+    m_webPage->layoutIfNeeded();
 
-        m_webPage->layoutIfNeeded();
+    WebCore::IntRect rect(contentsRect);
+    rect.intersect(IntRect(IntPoint::zero(), m_webPage->mainFrame()->coreFrame()->view()->contentsSize()));
 
-        contentsRect.intersect(IntRect(IntPoint::zero(), m_webPage->mainFrame()->coreFrame()->view()->contentsSize()));
+    float targetScale = float(targetSize.width()) / rect.width();
+    IntRect tileRect(IntPoint(rect.x() * targetScale, rect.y() * targetScale), targetSize);
 
-        float targetScale = float(targetSize.width()) / contentsRect.width();
+    UpdateInfo updateInfo;
+    updateInfo.updateRectBounds = tileRect;
+    RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(tileRect.size(), ShareableBitmap::SupportsAlpha);
+    bitmap->createHandle(updateInfo.bitmapHandle);
 
-        IntRect tileRect(IntPoint(contentsRect.x() * targetScale, contentsRect.y() * targetScale), targetSize);
-
-        UpdateInfo updateInfo;
-        updateInfo.updateRectBounds = tileRect;
-        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(tileRect.size(), ShareableBitmap::SupportsAlpha);
-        bitmap->createHandle(updateInfo.bitmapHandle);
-
-        paintIntoBitmap(bitmap.get(), tileRect, targetScale);
-
-        WebProcess::shared().connection()->deprecatedSend(DrawingAreaProxyLegacyMessage::SnapshotTaken, m_webPage->pageID(), CoreIPC::In(updateInfo));
-        break;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-        break;
-    }
+    paintIntoBitmap(bitmap.get(), tileRect, targetScale);
+    m_webPage->send(Messages::DrawingAreaProxy::SnapshotTaken(updateInfo));
 }
 
 } // namespace WebKit

@@ -54,23 +54,25 @@ public:
     virtual void syncCompositingLayers() { }
 #endif
 
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
-
 private:
     void scheduleDisplay();
 
     // CoreIPC message handlers.
-    void setSize(const WebCore::IntSize& viewSize);
-    void suspendPainting();
-    void resumePainting();
-    void didUpdate();
-    void updateTile(int tileID, const WebCore::IntRect& dirtyRect, float scale);
+    virtual void setSize(const WebCore::IntSize& viewSize);
+    virtual void suspendPainting();
+    virtual void resumePainting();
+    virtual void didUpdate();
+    virtual void cancelTileUpdate(int tileID);
+    virtual void requestTileUpdate(int tileID, const WebCore::IntRect& dirtyRect, float scale);
+    virtual void takeSnapshot(const WebCore::IntSize& targetSize, const WebCore::IntRect& contentsRect);
 
     // Platform overrides
     void paintIntoBitmap(ShareableBitmap*, const WebCore::IntRect& tileRect, float scale);
 
     void scheduleTileUpdate();
     void tileUpdateTimerFired();
+
+    void updateTile(int tileID, const WebCore::IntRect& dirtyRect, float scale);
 
     WebCore::IntRect m_dirtyRect;
     bool m_isWaitingForUpdate;

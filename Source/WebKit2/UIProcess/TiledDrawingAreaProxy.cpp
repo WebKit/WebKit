@@ -27,8 +27,8 @@
 #include "TiledDrawingAreaProxy.h"
 
 #if ENABLE(TILED_BACKING_STORE)
-#include "DrawingAreaMessageKinds.h"
-#include "DrawingAreaProxyMessageKinds.h"
+#include "DrawingAreaMessages.h"
+#include "DrawingAreaProxyMessages.h"
 #include "MessageID.h"
 #include "UpdateInfo.h"
 #include "WebCoreArgumentCoders.h"
@@ -83,7 +83,7 @@ void TiledDrawingAreaProxy::sizeDidChange()
     m_isWaitingForDidSetFrameNotification = true;
 
     page->process()->responsivenessTimer()->start();
-    page->process()->deprecatedSend(DrawingAreaLegacyMessage::SetSize, page->pageID(), CoreIPC::In(m_size));
+    page->process()->send(Messages::DrawingArea::SetSize(m_size), page->pageID());
 }
 
 void TiledDrawingAreaProxy::setPageIsVisible(bool isVisible)
@@ -99,12 +99,12 @@ void TiledDrawingAreaProxy::setPageIsVisible(bool isVisible)
 
     if (!m_isVisible) {
         // Tell the web process that it doesn't need to paint anything for now.
-        page->process()->deprecatedSend(DrawingAreaLegacyMessage::SuspendPainting, page->pageID(), CoreIPC::In());
+        page->process()->send(Messages::DrawingArea::SuspendPainting(), page->pageID());
         return;
     }
 
     // The page is now visible.
-    page->process()->deprecatedSend(DrawingAreaLegacyMessage::ResumePainting, page->pageID(), CoreIPC::In());
+    page->process()->send(Messages::DrawingArea::ResumePainting(), page->pageID());
 
     // FIXME: We should request a full repaint here if needed.
 }
@@ -121,87 +121,23 @@ void TiledDrawingAreaProxy::didSetSize(const IntSize& viewSize)
     page->process()->responsivenessTimer()->stop();
 }
 
-void TiledDrawingAreaProxy::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID messageID, CoreIPC::ArgumentDecoder* arguments)
+void TiledDrawingAreaProxy::tileUpdated(int tileID, const UpdateInfo& updateInfo, float scale, unsigned pendingUpdateCount)
 {
-    switch (messageID.get<DrawingAreaProxyLegacyMessage::Kind>()) {
-    case DrawingAreaProxyLegacyMessage::TileUpdated: {
-        int tileID;
-        UpdateInfo updateInfo;
-        float scale;
-        unsigned pendingUpdateCount;
-        if (!arguments->decode(CoreIPC::Out(tileID, updateInfo, scale, pendingUpdateCount)))
-            return;
+    TiledDrawingAreaTile* tile = m_tilesByID.get(tileID);
+    ASSERT(!tile || tile->ID() == tileID);
+    if (tile)
+        tile->incorporateUpdate(updateInfo, scale);
+    tileBufferUpdateComplete();
+}
 
-        TiledDrawingAreaTile* tile = m_tilesByID.get(tileID);
-        ASSERT(!tile || tile->ID() == tileID);
-        if (tile)
-            tile->incorporateUpdate(updateInfo, scale);
-        tileBufferUpdateComplete();
-        break;
-    }
-    case DrawingAreaProxyLegacyMessage::DidSetSize: {
-        IntSize size;
-        if (!arguments->decode(CoreIPC::Out(size)))
-            return;
-
-        didSetSize(size);
-        break;
-    }
-    case DrawingAreaProxyLegacyMessage::Invalidate: {
-        IntRect rect;
-        if (!arguments->decode(CoreIPC::Out(rect)))
-            return;
-
-        invalidate(rect);
-        break;
-    }
-    case DrawingAreaProxyLegacyMessage::AllTileUpdatesProcessed: {
-        tileBufferUpdateComplete();
-        break;
-    }
-    case DrawingAreaProxyLegacyMessage::SnapshotTaken: {
-        ShareableBitmap::Handle handle;
-        if (!arguments->decode(CoreIPC::Out(handle)))
-            return;
-        RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle);
-        snapshotTaken(bitmap.get());
-        break;
-    }
-    default:
-        ASSERT_NOT_REACHED();
-    }
+void TiledDrawingAreaProxy::allTileUpdatesProcessed()
+{
+    tileBufferUpdateComplete();
 }
 
 void TiledDrawingAreaProxy::requestTileUpdate(int tileID, const IntRect& dirtyRect)
 {
-    page()->process()->connection()->deprecatedSend(DrawingAreaLegacyMessage::RequestTileUpdate, page()->pageID(), CoreIPC::In(tileID, dirtyRect, contentsScale()));
-}
-
-void TiledDrawingAreaProxy::waitUntilUpdatesComplete()
-{
-    // Do not block when the drawing area is not visible.
-    // The web process side is not going to send tile updates
-    // because the painting is suspended.
-    if (!m_isVisible)
-        return;
-
-    while (hasPendingUpdates()) {
-        int tileID;
-        UpdateInfo updateInfo;
-        float scale;
-        unsigned pendingUpdateCount;
-        static const double tileUpdateTimeout = 10.0;
-        OwnPtr<CoreIPC::ArgumentDecoder> arguments = page()->process()->connection()->deprecatedWaitFor(DrawingAreaProxyLegacyMessage::TileUpdated, page()->pageID(), tileUpdateTimeout);
-        if (!arguments)
-            break;
-        if (!arguments->decode(CoreIPC::Out(tileID, updateInfo, scale, pendingUpdateCount)))
-            break;
-        TiledDrawingAreaTile* tile = m_tilesByID.get(tileID);
-        ASSERT(!tile || tile->ID() == tileID);
-        if (tile)
-            tile->incorporateUpdate(updateInfo, scale);
-    }
-    tileBufferUpdateComplete();
+    page()->process()->connection()->send(Messages::DrawingArea::RequestTileUpdate(tileID, dirtyRect, contentsScale()), page()->pageID());
 }
 
 PassRefPtr<TiledDrawingAreaTile> TiledDrawingAreaProxy::createTile(const TiledDrawingAreaTile::Coordinate& coordinate)
@@ -235,7 +171,7 @@ void TiledDrawingAreaProxy::setKeepAndCoverAreaMultipliers(const FloatSize& keep
 void TiledDrawingAreaProxy::takeSnapshot(const IntSize& size, const IntRect& contentsRect)
 {
     WebPageProxy* page = this->page();
-    page->process()->deprecatedSend(DrawingAreaLegacyMessage::TakeSnapshot, page->pageID(), CoreIPC::Out(size, contentsRect));
+    page->process()->send(Messages::DrawingArea::TakeSnapshot(size, contentsRect), page->pageID());
 }
 
 void TiledDrawingAreaProxy::invalidate(const IntRect& contentsDirtyRect)
@@ -543,7 +479,7 @@ void TiledDrawingAreaProxy::removeTile(const TiledDrawingAreaTile::Coordinate& c
     if (!tile->hasBackBufferUpdatePending())
         return;
     WebPageProxy* page = this->page();
-    page->process()->deprecatedSend(DrawingAreaLegacyMessage::CancelTileUpdate, page->pageID(), CoreIPC::In(tile->ID()));
+    page->process()->send(Messages::DrawingArea::CancelTileUpdate(tile->ID()), page->pageID());
 }
 
 IntRect TiledDrawingAreaProxy::mapToContents(const IntRect& rect) const

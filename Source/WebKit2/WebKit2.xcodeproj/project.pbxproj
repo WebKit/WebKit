@@ -642,8 +642,6 @@
 		BC963D6B113DD19200574BE2 /* WebPage.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BC963D6A113DD19200574BE2 /* WebPage.cpp */; };
 		BC963D6E113DD1A500574BE2 /* WebPageMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = BC963D6D113DD1A500574BE2 /* WebPageMac.mm */; };
 		BC9B38A110F538BE00443A15 /* WebFrameProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9B389F10F538BE00443A15 /* WebFrameProxy.h */; };
-		BC9E969A11457EDE00870E71 /* DrawingAreaProxyMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9E969911457EDE00870E71 /* DrawingAreaProxyMessageKinds.h */; };
-		BC9E969C11457F3F00870E71 /* DrawingAreaMessageKinds.h in Headers */ = {isa = PBXBuildFile; fileRef = BC9E969B11457F3F00870E71 /* DrawingAreaMessageKinds.h */; };
 		BCA0EF7F12331E78007D3CFB /* WebEditCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA0EF7D12331E78007D3CFB /* WebEditCommand.h */; };
 		BCA0EF8012331E78007D3CFB /* WebEditCommand.cpp in Sources */ = {isa = PBXBuildFile; fileRef = BCA0EF7E12331E78007D3CFB /* WebEditCommand.cpp */; };
 		BCA0EF9F12332642007D3CFB /* WebEditCommandProxy.h in Headers */ = {isa = PBXBuildFile; fileRef = BCA0EF9D12332642007D3CFB /* WebEditCommandProxy.h */; };
@@ -1587,8 +1585,6 @@
 		BC963D6A113DD19200574BE2 /* WebPage.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebPage.cpp; sourceTree = "<group>"; };
 		BC963D6D113DD1A500574BE2 /* WebPageMac.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebPageMac.mm; sourceTree = "<group>"; };
 		BC9B389F10F538BE00443A15 /* WebFrameProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFrameProxy.h; sourceTree = "<group>"; };
-		BC9E969911457EDE00870E71 /* DrawingAreaProxyMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaProxyMessageKinds.h; sourceTree = "<group>"; };
-		BC9E969B11457F3F00870E71 /* DrawingAreaMessageKinds.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawingAreaMessageKinds.h; sourceTree = "<group>"; };
 		BCA0EF7D12331E78007D3CFB /* WebEditCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEditCommand.h; sourceTree = "<group>"; };
 		BCA0EF7E12331E78007D3CFB /* WebEditCommand.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebEditCommand.cpp; sourceTree = "<group>"; };
 		BCA0EF9D12332642007D3CFB /* WebEditCommandProxy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebEditCommandProxy.h; sourceTree = "<group>"; };
@@ -2926,8 +2922,6 @@
 		BC111B5F112F635E00337BAB /* CoreIPCSupport */ = {
 			isa = PBXGroup;
 			children = (
-				BC9E969B11457F3F00870E71 /* DrawingAreaMessageKinds.h */,
-				BC9E969911457EDE00870E71 /* DrawingAreaProxyMessageKinds.h */,
 				BCB28CBF120233D9007D99BC /* InjectedBundleMessageKinds.h */,
 				BCCB75C51203A1CE00222D1B /* WebContextMessageKinds.h */,
 			);
@@ -3438,9 +3432,7 @@
 				BC032DAB10F437D10058C15A /* Connection.h in Headers */,
 				BC131BC911726C2800B69727 /* CoreIPCMessageKinds.h in Headers */,
 				BC8452A81162C80900CAB9B5 /* DrawingArea.h in Headers */,
-				BC9E969C11457F3F00870E71 /* DrawingAreaMessageKinds.h in Headers */,
 				BC2652171182608100243E12 /* DrawingAreaProxy.h in Headers */,
-				BC9E969A11457EDE00870E71 /* DrawingAreaProxyMessageKinds.h in Headers */,
 				BC17753F118BABF0007D9E9A /* GenericCallback.h in Headers */,
 				BC64697011DBE603006455B0 /* ImmutableArray.h in Headers */,
 				BC204EE311C83E98008F3375 /* InjectedBundle.h in Headers */,

@@ -25,4 +25,11 @@ messages -> DrawingArea {
     DidUpdate()
     SuspendPainting()
     ResumePainting()
+
+#if ENABLE(TILED_BACKING_STORE)
+    SetSize(WebCore::IntSize viewSize)
+    RequestTileUpdate(int tileID, WebCore::IntRect dirtyRect, float scale)
+    CancelTileUpdate(int tileID)
+    TakeSnapshot(WebCore::IntSize size, WebCore::IntRect contentsRect)
+#endif
 }

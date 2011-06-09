@@ -61,7 +61,6 @@ private:
     virtual void setRootCompositingLayer(WebCore::GraphicsLayer*);
     virtual void scheduleCompositingLayerSync();
     virtual void syncCompositingLayers();
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
 #if PLATFORM(WIN)
     virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&);

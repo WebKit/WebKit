@@ -74,8 +74,6 @@ public:
 
     void didReceiveDrawingAreaProxyMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
 
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;
-
     // Returns true if painting was successful, false otherwise.
     virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext) = 0;
 
@@ -109,6 +107,13 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) { }
     virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) { }
+#endif
+#if ENABLE(TILED_BACKING_STORE)
+    virtual void didSetSize(const WebCore::IntSize&) { }
+    virtual void invalidate(const WebCore::IntRect&) { }
+    virtual void snapshotTaken(const UpdateInfo&) { }
+    virtual void tileUpdated(int tileID, const UpdateInfo&, float scale, unsigned pendingUpdateCount) { }
+    virtual void allTileUpdatesProcessed() { }
 #endif
 };
 

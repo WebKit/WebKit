@@ -451,8 +451,6 @@ void QGraphicsWKViewPrivate::commitScale()
         if (tiledDrawingArea->contentsScale() == newScale)
             return;
         tiledDrawingArea->setContentsScale(newScale);
-        // For now we block until complete.
-        tiledDrawingArea->waitUntilUpdatesComplete();
     }
 #endif
 }

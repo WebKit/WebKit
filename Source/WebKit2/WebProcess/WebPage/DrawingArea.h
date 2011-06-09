@@ -79,8 +79,6 @@ public:
     virtual void syncCompositingLayers() = 0;
 #endif
 
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;
-
 #if PLATFORM(WIN)
     virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&) = 0;
 #endif
@@ -98,6 +96,13 @@ private:
     virtual void didUpdate() { }
     virtual void suspendPainting() { }
     virtual void resumePainting() { }
+
+#if ENABLE(TILED_BACKING_STORE)
+    virtual void setSize(const WebCore::IntSize& viewSize) { }
+    virtual void cancelTileUpdate(int tileID) { }
+    virtual void requestTileUpdate(int tileID, const WebCore::IntRect& dirtyRect, float scale) { }
+    virtual void takeSnapshot(const WebCore::IntSize& targetSize, const WebCore::IntRect& contentsRect) { }
+#endif
 };
 
 } // namespace WebKit

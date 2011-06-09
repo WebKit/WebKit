@@ -301,10 +301,6 @@ void DrawingAreaImpl::syncCompositingLayers()
 {
 }
 
-void DrawingAreaImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*)
-{
-}
-
 void DrawingAreaImpl::updateBackingStoreState(uint64_t stateID, bool respondImmediately, const WebCore::IntSize& size, const WebCore::IntSize& scrollOffset)
 {
     ASSERT(!m_inUpdateBackingStoreState);

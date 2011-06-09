@@ -106,16 +106,6 @@ void DrawingAreaProxyImpl::paint(BackingStore::PlatformGraphicsContext context, 
     discardBackingStoreSoon();
 }
 
-void DrawingAreaProxyImpl::didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void DrawingAreaProxyImpl::didReceiveSyncMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*, CoreIPC::ArgumentEncoder*)
-{
-    ASSERT_NOT_REACHED();
-}
-
 bool DrawingAreaProxyImpl::paint(const WebCore::IntRect&, PlatformDrawingContext)
 {
     ASSERT_NOT_REACHED();

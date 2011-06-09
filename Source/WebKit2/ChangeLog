@@ -2,6 +2,90 @@
 
         Reviewed by Anders Carlsson.
 
+        [Qt][WK2] Remove usage of deprecated CoreIPC functions.
+        https://bugs.webkit.org/show_bug.cgi?id=62290
+
+        Use the new DrawingArea{,Proxy}.messages.in approach to CoreIPC in TiledDrawingArea.
+        The TiledDrawingArea{,Proxy}-specific messages were moved up into DrawingArea{,Proxy}
+        and guarded by ENABLE(TILED_BACKING_STORE).
+
+        * Shared/CoreIPCSupport/DrawingAreaMessageKinds.h: Removed.
+        * Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h: Removed.
+
+        * GNUmakefile.am:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj: Prune deleted files from build system.
+
+        * Platform/CoreIPC/MessageID.h: Remove legacy DrawingArea message ID's.
+
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        (QGraphicsWKViewPrivate::commitScale): No longer waits for all tile updates to complete,
+        this will be addressed by the soon-to-be-upstreamed TileSet mechanism.
+
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::didSetSize):
+        (WebKit::DrawingAreaProxy::invalidate):
+        (WebKit::DrawingAreaProxy::snapshotTaken):
+        (WebKit::DrawingAreaProxy::tileUpdated):
+        (WebKit::DrawingAreaProxy::allTileUpdatesProcessed): Added IPC calls used by
+        TiledDrawingAreaProxy to DrawingAreaProxy.
+
+        * WebProcess/WebPage/DrawingArea.messages.in:
+        * WebProcess/WebPage/DrawingArea.h:
+        (WebKit::DrawingArea::setSize):
+        (WebKit::DrawingArea::cancelTileUpdate):
+        (WebKit::DrawingArea::requestTileUpdate):
+        (WebKit::DrawingArea::takeSnapshot): Added IPC calls used by TiledDrawingArea
+        to DrawingArea.
+
+        * UIProcess/DrawingAreaProxyImpl.h:
+        * UIProcess/DrawingAreaProxyImpl.cpp: Remove the now-unneeded didReceiveMessage()
+        and didReceiveSyncMessage().
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        * WebProcess/WebPage/DrawingAreaImpl.h: Remove the now-unneeded didReceiveMessage().
+
+        * UIProcess/TiledDrawingAreaProxy.h:
+        * UIProcess/TiledDrawingAreaProxy.cpp:
+        (WebKit::TiledDrawingAreaProxy::sizeDidChange):
+        (WebKit::TiledDrawingAreaProxy::tileUpdated):
+        (WebKit::TiledDrawingAreaProxy::allTileUpdatesProcessed): Split didReceiveMessage()
+        into functions.
+
+        (WebKit::TiledDrawingAreaProxy::removeTile):
+        (WebKit::TiledDrawingAreaProxy::requestTileUpdate):
+        (WebKit::TiledDrawingAreaProxy::setPageIsVisible):
+        (WebKit::TiledDrawingAreaProxy::takeSnapshot): Use new-style IPC.
+
+        * WebProcess/WebPage/TiledDrawingArea.cpp:
+        (WebKit::TiledDrawingArea::setSize):
+        (WebKit::TiledDrawingArea::cancelTileUpdate):
+        (WebKit::TiledDrawingArea::requestTileUpdate):
+        (WebKit::TiledDrawingArea::takeSnapshot): Split didReceiveMessage() into functions.
+
+        (WebKit::TiledDrawingArea::display):
+        (WebKit::TiledDrawingArea::updateTile):
+        (WebKit::TiledDrawingArea::tileUpdateTimerFired): Use new-style IPC.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::didReceiveMessage): Remove handling of
+        CoreIPC::MessageClassDrawingAreaProxyLegacy.
+
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::didReceiveMessage): Remove handling of
+        CoreIPC::MessageClassDrawingAreaLegacy.
+
+        * UIProcess/qt/TiledDrawingAreaProxyQt.cpp: Remove unneeded includes.
+
+        * WebProcess/WebPage/TiledDrawingArea.h: Remove didReceiveMessage() and make
+        CoreIPC message handlers explicitly virtual.
+
+2011-06-09  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
         WebKit2: Generate correct header conditionals in message receivers.
         https://bugs.webkit.org/show_bug.cgi?id=62379
 

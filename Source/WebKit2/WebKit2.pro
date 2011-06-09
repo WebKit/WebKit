@@ -116,8 +116,6 @@ HEADERS += \
     Shared/ShareableBitmap.h \
     Shared/CacheModel.h \
     Shared/ChildProcess.h \
-    Shared/CoreIPCSupport/DrawingAreaMessageKinds.h \
-    Shared/CoreIPCSupport/DrawingAreaProxyMessageKinds.h \
     Shared/DictionaryPopupInfo.h \
     Shared/FontInfo.h \
     Shared/ImageOptions.h \

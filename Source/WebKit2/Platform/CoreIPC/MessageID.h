@@ -37,7 +37,6 @@ enum MessageClass {
     // Messages sent by the UI process to the web process.
     MessageClassAuthenticationManager,
     MessageClassDrawingArea,
-    MessageClassDrawingAreaLegacy,
     MessageClassInjectedBundle,
     MessageClassWebApplicationCacheManager,
     MessageClassWebCookieManager,
@@ -55,7 +54,6 @@ enum MessageClass {
     // Messages sent by the web process to the UI process.
     MessageClassDownloadProxy,
     MessageClassDrawingAreaProxy,
-    MessageClassDrawingAreaProxyLegacy,
     MessageClassWebApplicationCacheManagerProxy,
     MessageClassWebContext,
     MessageClassWebContextLegacy,

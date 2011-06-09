@@ -1373,11 +1373,6 @@ void WebPageProxy::didReceiveMessage(CoreIPC::Connection* connection, CoreIPC::M
         return;
     }
 
-    if (messageID.is<CoreIPC::MessageClassDrawingAreaProxyLegacy>()) {
-        m_drawingArea->didReceiveMessage(connection, messageID, arguments);
-        return;
-    }
-
 #if ENABLE(INSPECTOR)
     if (messageID.is<CoreIPC::MessageClassWebInspectorProxy>()) {
         if (WebInspectorProxy* inspector = this->inspector())

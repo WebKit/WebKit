@@ -28,8 +28,6 @@
 
 #if ENABLE(TILED_BACKING_STORE)
 
-#include "DrawingAreaMessageKinds.h"
-#include "DrawingAreaProxyMessageKinds.h"
 #include "ShareableBitmap.h"
 #include "WKAPICast.h"
 #include "WebPageProxy.h"

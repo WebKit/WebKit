@@ -72,8 +72,6 @@ public:
     float contentsScale() const { return m_contentsScale; }
     void setContentsScale(float);
 
-    void waitUntilUpdatesComplete();
-
     void takeSnapshot(const WebCore::IntSize& size, const WebCore::IntRect& contentsRect);
 
 #if USE(ACCELERATED_COMPOSITING)
@@ -112,13 +110,15 @@ private:
     void snapshotTaken(ShareableBitmap*);
 
     // DrawingAreaProxy
-    virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*);
     virtual bool paint(const WebCore::IntRect&, PlatformDrawingContext);
     virtual void sizeDidChange();
     virtual void setPageIsVisible(bool isVisible);
 
-    void didSetSize(const WebCore::IntSize&);
-    void invalidate(const WebCore::IntRect& rect);
+    virtual void didSetSize(const WebCore::IntSize&);
+    virtual void invalidate(const WebCore::IntRect& rect);
+    virtual void tileUpdated(int tileID, const UpdateInfo& updateInfo, float scale, unsigned pendingUpdateCount);
+    virtual void allTileUpdatesProcessed();
+
     void adjustVisibleRect();
 
     void requestTileUpdate(int tileID, const WebCore::IntRect& dirtyRect);
