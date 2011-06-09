@@ -121,7 +121,10 @@ SharedGraphicsContext3D::~SharedGraphicsContext3D()
     m_context->deleteBuffer(m_quadVertices);
     allContexts()->remove(this);
 #if USE(SKIA)
-    GrSafeUnref(m_grContext);
+    if (m_grContext) {
+        m_grContext->contextDestroyed();
+        GrSafeUnref(m_grContext);
+    }
 #endif
 }
 

@@ -1174,7 +1174,7 @@ void GraphicsContextLostCallbackAdapter::onContextLost()
 
 PassOwnPtr<GraphicsContextLostCallbackAdapter> GraphicsContextLostCallbackAdapter::create(PassOwnPtr<GraphicsContext3D::ContextLostCallback> cb)
 {
-    return adoptPtr(new GraphicsContextLostCallbackAdapter(cb));
+    return adoptPtr(cb.get() ? new GraphicsContextLostCallbackAdapter(cb) : 0);
 }
 
 void GraphicsContext3DInternal::setContextLostCallback(PassOwnPtr<GraphicsContext3D::ContextLostCallback> cb)
