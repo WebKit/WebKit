@@ -550,11 +550,13 @@ void MediaPlayerPrivateAVFoundation::seekableTimeRangesChanged()
 
 void MediaPlayerPrivateAVFoundation::timeChanged(double time)
 {
+    UNUSED_PARAM(time);
     LOG(Media, "MediaPlayerPrivateAVFoundation::timeChanged(%p) - time = %f", this, time);
 }
 
 void MediaPlayerPrivateAVFoundation::seekCompleted(bool finished)
 {
+    UNUSED_PARAM(finished);
     LOG(Media, "MediaPlayerPrivateAVFoundation::seekCompleted(%p) - finished = %d", this, finished);
     
     m_seekTo = invalidTime();
