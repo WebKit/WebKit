@@ -139,6 +139,10 @@ public:
     unsigned workerThreadCount() const;
     int windowCount();
     
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN)
+    JSRetainPtr<JSStringRef> platformName() const;
+#endif
+
     void grantDesktopNotificationPermission(JSStringRef origin);
     bool checkDesktopNotificationPermission(JSStringRef origin);
 

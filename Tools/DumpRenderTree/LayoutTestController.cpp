@@ -2192,6 +2192,17 @@ static JSValueRef getWorkerThreadCountCallback(JSContextRef context, JSObjectRef
     return JSValueMakeNumber(context, controller->workerThreadCount());
 }
 
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN)
+static JSValueRef getPlatformNameCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef* exception)
+{
+    LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
+    JSRetainPtr<JSStringRef> platformName(controller->platformName());
+    if (!platformName.get())
+        return JSValueMakeUndefined(context);
+    return JSValueMakeString(context, platformName.get());
+}
+#endif
+
 static bool setGlobalFlagCallback(JSContextRef context, JSObjectRef thisObject, JSStringRef propertyName, JSValueRef value, JSValueRef* exception)
 {
     LayoutTestController* controller = static_cast<LayoutTestController*>(JSObjectGetPrivate(thisObject));
@@ -2262,6 +2273,9 @@ JSStaticValue* LayoutTestController::staticValues()
         { "globalFlag", getGlobalFlagCallback, setGlobalFlagCallback, kJSPropertyAttributeNone },
         { "webHistoryItemCount", getWebHistoryItemCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
         { "workerThreadCount", getWorkerThreadCountCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#if PLATFORM(MAC) || PLATFORM(GTK) || PLATFORM(WIN)
+        { "platformName", getPlatformNameCallback, 0, kJSPropertyAttributeReadOnly | kJSPropertyAttributeDontDelete },
+#endif
         { 0, 0, 0, 0 }
     };
     return staticValues;

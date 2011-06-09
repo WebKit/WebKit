@@ -1,3 +1,31 @@
+2011-06-09  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Reviewed by Chris Fleizach.
+
+        [GTK] Provide a way in DRT to check the platform name
+        https://bugs.webkit.org/show_bug.cgi?id=56855
+
+        Patch for adding 'platformName' static property to DRT's
+        LayoutController and provide platform specific implementations.
+
+        In principle, this feature will be only of interest for writing
+        accessibility tests, so that's why it's only implemented in the
+        Mac, Gtk and Win platforms.
+
+        * DumpRenderTree/LayoutTestController.h: New method platformName().
+        * DumpRenderTree/LayoutTestController.cpp:
+        (getPlatformNameCallback): New callback for 'platformName'.
+        (LayoutTestController::staticValues): New static property.
+
+        * DumpRenderTree/gtk/LayoutTestControllerGtk.cpp:
+        (LayoutTestController::platformName): Implemented.
+
+        * DumpRenderTree/mac/LayoutTestControllerMac.mm:
+        (LayoutTestController::platformName): Implemented.
+
+        * DumpRenderTree/win/LayoutTestControllerWin.cpp:
+        (LayoutTestController::platformName): Implemented.
+
 2011-06-08  Mike Lawther  <mikelawther@chromium.org>
 
         Reviewed by James Robinson.

@@ -297,6 +297,12 @@ unsigned LayoutTestController::workerThreadCount() const
     return count;
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::platformName() const
+{
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("win"));
+    return platformName;
+}
+
 void LayoutTestController::notifyDone()
 {
     // Same as on mac.  This can be shared.

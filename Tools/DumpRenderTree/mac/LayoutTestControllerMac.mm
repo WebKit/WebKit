@@ -352,6 +352,12 @@ unsigned LayoutTestController::workerThreadCount() const
     return [WebWorkersPrivate workerThreadCount];
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::platformName() const
+{
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("mac"));
+    return platformName;
+}
+
 void LayoutTestController::notifyDone()
 {
     if (m_waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())

@@ -185,6 +185,12 @@ unsigned LayoutTestController::workerThreadCount() const
     return DumpRenderTreeSupportGtk::workerThreadCount();
 }
 
+JSRetainPtr<JSStringRef> LayoutTestController::platformName() const
+{
+    JSRetainPtr<JSStringRef> platformName(Adopt, JSStringCreateWithUTF8CString("gtk"));
+    return platformName;
+}
+
 void LayoutTestController::notifyDone()
 {
     if (m_waitToDump && !topLoadingFrame && !WorkQueue::shared()->count())

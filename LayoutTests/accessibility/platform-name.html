@@ -1,0 +1,24 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+<p id="description"></p>
+<div id="console"></div>
+<script>
+description("This test just prints the name of the current platform.");
+if (window.layoutTestController) {
+  layoutTestController.dumpAsText();
+
+  debug("Platform name: " + layoutTestController.platformName);
+}
+successfullyParsed = true;
+</script>
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>
