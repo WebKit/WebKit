@@ -167,10 +167,10 @@ static bool paintMediaSlider(RenderObject* object, const PaintInfo& paintInfo, c
 
 static bool paintMediaSliderThumb(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!object->parent()->isSlider())
-        return false;
-
-    HTMLMediaElement* mediaElement = toParentMediaElement(object->parent());
+    ASSERT(object->node());
+    Node* hostNode = object->node()->shadowAncestorNode();
+    ASSERT(hostNode);
+    HTMLMediaElement* mediaElement = toParentMediaElement(hostNode);
     if (!mediaElement)
         return false;
 
@@ -202,9 +202,6 @@ static bool paintMediaVolumeSlider(RenderObject* object, const PaintInfo& paintI
 
 static bool paintMediaVolumeSliderThumb(RenderObject* object, const PaintInfo& paintInfo, const IntRect& rect)
 {
-    if (!object->parent()->isSlider())
-        return false;
-
     static Image* mediaVolumeSliderThumb = platformResource("mediaVolumeSliderThumb");
     return paintMediaButton(paintInfo.context, rect, mediaVolumeSliderThumb);
 }

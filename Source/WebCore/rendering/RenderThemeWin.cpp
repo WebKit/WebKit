@@ -463,11 +463,11 @@ unsigned RenderThemeWin::determineState(RenderObject* o)
 unsigned RenderThemeWin::determineSliderThumbState(RenderObject* o)
 {
     unsigned result = TUS_NORMAL;
-    if (!isEnabled(o->parent()))
+    if (!isEnabled(o))
         result = TUS_DISABLED;
-    else if (supportsFocus(o->style()->appearance()) && isFocused(o->parent()))
+    else if (supportsFocus(o->style()->appearance()) && isFocused(o))
         result = TUS_FOCUSED;
-    else if (toRenderSlider(o->parent())->inDragMode())
+    else if (isPressed(o))
         result = TUS_PRESSED;
     else if (isHovered(o))
         result = TUS_HOT;

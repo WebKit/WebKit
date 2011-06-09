@@ -963,6 +963,11 @@ bool Node::isMouseFocusable() const
     return isFocusable();
 }
 
+Node* Node::focusDelegate()
+{
+    return this;
+}
+
 unsigned Node::nodeIndex() const
 {
     Node *_tempNode = previousSibling();

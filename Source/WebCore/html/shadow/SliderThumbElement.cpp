@@ -95,6 +95,21 @@ RenderObject* SliderThumbElement::createRenderer(RenderArena* arena, RenderStyle
     return new (arena) RenderSliderThumb(this);
 }
 
+bool SliderThumbElement::isEnabledFormControl() const
+{
+    return hostInput()->isEnabledFormControl();
+}
+
+bool SliderThumbElement::isReadOnlyFormControl() const
+{
+    return hostInput()->isReadOnlyFormControl();
+}
+
+Node* SliderThumbElement::focusDelegate()
+{
+    return hostInput();
+}
+
 void SliderThumbElement::dragFrom(const IntPoint& point)
 {
     setPositionFromPoint(point);
@@ -191,15 +206,17 @@ void SliderThumbElement::detach()
 {
     if (m_inDragMode) {
         if (Frame* frame = document()->frame())
-            frame->eventHandler()->setCapturingMouseEventsNode(0);      
+            frame->eventHandler()->setCapturingMouseEventsNode(0);
     }
     HTMLDivElement::detach();
 }
 
-HTMLInputElement* SliderThumbElement::hostInput()
+HTMLInputElement* SliderThumbElement::hostInput() const
 {
-    ASSERT(parentNode());
-    return static_cast<HTMLInputElement*>(parentNode()->shadowHost());
+    // Only HTMLInputElement creates SliderThumbElement instances as its shadow nodes.
+    // So, shadowAncestorNode() must be an HTMLInputElement.
+    HTMLInputElement* input = shadowAncestorNode()->toInputElement();
+    return input;
 }
 
 const AtomicString& SliderThumbElement::shadowPseudoId() const

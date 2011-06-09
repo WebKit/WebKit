@@ -3208,6 +3208,7 @@ BUG_TKENT LEOPARD : platform/mac/fast/forms/input-appearance-spinbutton-up.html=
 BUG_TKENT LEOPARD : fast/forms/input-appearance-spinbutton-disabled-readonly.html = IMAGE
 BUG_TKENT LEOPARD : fast/forms/input-appearance-spinbutton-visibility.html = IMAGE
 BUG_TKENT LEOPARD : fast/forms/input-appearance-spinbutton-layer.html= IMAGE
+BUGWK62196 : fast/forms/thumbslider-no-parent-slider.html = FAIL
 
 // Need expectations
 BUGWK59281 WIN LINUX : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE+TEXT

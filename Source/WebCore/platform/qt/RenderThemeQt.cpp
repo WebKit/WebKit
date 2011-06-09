@@ -1442,11 +1442,10 @@ bool RenderThemeQt::paintMediaSliderTrack(RenderObject* o, const PaintInfo& pain
 
 bool RenderThemeQt::paintMediaSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    if (!o->parent()->isSlider())
-        return false;
-
-    // We can get the HTMLMediaElement from the parent of the thumb : MediaControlTimelineElement.
-    HTMLMediaElement* mediaElement = toParentMediaElement(o->parent());
+    ASSERT(o->node());
+    Node* hostNode = o->node()->shadowAncestorNode();
+    ASSERT(hostNode);
+    HTMLMediaElement* mediaElement = toParentMediaElement(hostNode);
     if (!mediaElement)
         return false;
 
@@ -1457,7 +1456,7 @@ bool RenderThemeQt::paintMediaSliderThumb(RenderObject* o, const PaintInfo& pain
     p.painter->setRenderHint(QPainter::Antialiasing, true);
 
     p.painter->setPen(Qt::NoPen);
-    p.painter->setBrush(getMediaControlForegroundColor(o->parent()));
+    p.painter->setBrush(getMediaControlForegroundColor(hostNode->renderer()));
     p.painter->drawRect(r.x(), r.y(), r.width(), r.height());
 
     return false;

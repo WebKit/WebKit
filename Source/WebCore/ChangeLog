@@ -1,3 +1,66 @@
+2011-06-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Allow drawing a slider thumb for any nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=62196
+
+        RenderObject::node() should provide various information which is
+        necessary for rendering. We don't need to refer the parent renderer.
+
+        * dom/Node.cpp:
+        (WebCore::Node::focusDe1egate): Added.
+        * dom/Node.h: Added a declaration.
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::toParentMediaElement):
+          Added an overload of toParentMediaElement() with Node* parameter.
+        * html/shadow/MediaControlElements.h:
+        (WebCore::toParentMediaElement): ditto.
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::isEnabledFormControl):
+          Returns the status of the host node.
+        (WebCore::SliderThumbElement::isReadOnlyFormControl): ditto.
+        (WebCore::SliderThumbElement::focusDe1egate):
+          Returns the host node so that RenderTheme::isFocused() returns true.
+        (WebCore::SliderThumbElement::detach): Style nit.
+        (WebCore::SliderThumbElement::hostInput):
+          Make it const because it is called by const functions.
+        * html/shadow/SliderThumbElement.h:
+          - Remove inDragMode()
+          - Update declarations
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintMediaSliderThumb):
+          Use Node::shadowAncestorNode() instead of RenderObject::parent() to
+          support deeper thumb nodes.
+        * rendering/RenderMediaControlsChromium.cpp:
+        (WebCore::paintMediaSliderThumb): ditto.
+        (WebCore::paintMediaVolumeSliderThumb): Remove isSlider() check.
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::inDragMode):
+          SliderThumbElement::inDragMode() was removed, and Node::active() has
+          the same information.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::paint): Remove isSlider() checks.
+        (WebCore::RenderTheme::isFocused): Apply Node::focusDelegate().
+        * rendering/RenderThemeChromiumLinux.cpp:
+        (WebCore::RenderThemeChromiumLinux::paintSliderThumb):
+          isPressed() is enough.
+        * rendering/RenderThemeChromiumWin.cpp:
+          isEnabled(), isFocused(), and isPressed() are enough.
+        (WebCore::RenderThemeChromiumWin::determineSliderThumbState):
+        (WebCore::RenderThemeChromiumWin::determineClassicState):
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::paintSliderThumb):
+          - Remove isSlider() check.
+          - Passing 'o' to udpateFooState functions is enough.
+          - isPressed() is enough.
+        * rendering/RenderThemeSafari.cpp:
+        (WebCore::RenderThemeSafari::paintSliderThumb):
+          We don't need special handling anymore.
+        * rendering/RenderThemeWin.cpp:
+        (WebCore::RenderThemeWin::determineSliderThumbState):
+          isEnabled(), isFocused(), and isPressed() are enough.
+
 2011-06-08  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

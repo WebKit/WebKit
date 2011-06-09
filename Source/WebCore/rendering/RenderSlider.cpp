@@ -186,7 +186,7 @@ SliderThumbElement* RenderSlider::shadowSliderThumb() const
 bool RenderSlider::inDragMode() const
 {
     SliderThumbElement* thumbElement = shadowSliderThumb();
-    return thumbElement && thumbElement->inDragMode();
+    return thumbElement && thumbElement->active();
 }
 
 } // namespace WebCore

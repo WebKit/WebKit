@@ -52,9 +52,8 @@ namespace WebCore {
 
 using namespace HTMLNames;
 
-HTMLMediaElement* toParentMediaElement(RenderObject* o)
+HTMLMediaElement* toParentMediaElement(Node* node)
 {
-    Node* node = o->node();
     Node* mediaNode = node ? node->shadowAncestorNode() : 0;
     if (!mediaNode || (!mediaNode->hasTagName(HTMLNames::videoTag) && !mediaNode->hasTagName(HTMLNames::audioTag)))
         return 0;

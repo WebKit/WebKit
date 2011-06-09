@@ -1299,8 +1299,6 @@ const float verticalSliderHeightPadding = 0.1f;
 
 bool RenderThemeMac::paintSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
-    ASSERT(o->parent()->isSlider());
-
     NSSliderCell* sliderThumbCell = o->style()->appearance() == SliderThumbVerticalPart
         ? sliderThumbVertical()
         : sliderThumbHorizontal();
@@ -1308,9 +1306,9 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const PaintInfo& paintInf
     LocalCurrentGraphicsContext localContext(paintInfo.context);
 
     // Update the various states we respond to.
-    updateActiveState(sliderThumbCell, o->parent());
-    updateEnabledState(sliderThumbCell, o->parent());
-    updateFocusedState(sliderThumbCell, o->parent());
+    updateActiveState(sliderThumbCell, o);
+    updateEnabledState(sliderThumbCell, o);
+    updateFocusedState(sliderThumbCell, o);
 
     // Update the pressed state using the NSCell tracking methods, since that's how NSSliderCell keeps track of it.
     bool oldPressed;
@@ -1319,7 +1317,7 @@ bool RenderThemeMac::paintSliderThumb(RenderObject* o, const PaintInfo& paintInf
     else
         oldPressed = m_isSliderThumbHorizontalPressed;
 
-    bool pressed = toRenderSlider(o->parent())->inDragMode();
+    bool pressed = isPressed(o);
 
     if (o->style()->appearance() == SliderThumbVerticalPart)
         m_isSliderThumbVerticalPressed = pressed;

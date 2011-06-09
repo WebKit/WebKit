@@ -335,6 +335,7 @@ public:
     virtual bool isFocusable() const;
     virtual bool isKeyboardFocusable(KeyboardEvent*) const;
     virtual bool isMouseFocusable() const;
+    virtual Node* focusDelegate();
 
     bool isContentEditable() const;
 

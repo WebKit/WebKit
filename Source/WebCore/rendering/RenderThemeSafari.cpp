@@ -999,16 +999,7 @@ const float verticalSliderHeightPadding = 0.1f;
 bool RenderThemeSafari::paintSliderThumb(RenderObject* o, const PaintInfo& paintInfo, const IntRect& r)
 {
     ASSERT(SafariThemeLibrary());
-
-    ASSERT(o->parent()->isSlider());
-
-    bool pressed = toRenderSlider(o->parent())->inDragMode();
-    ThemeControlState state = determineState(o->parent());
-    state &= ~SafariTheme::PressedState;
-    if (pressed)
-        state |= SafariTheme::PressedState;
-
-    paintThemePart(SliderThumbPart, paintInfo.context->platformContext(), r, NSSmallControlSize, state);
+    paintThemePart(SliderThumbPart, paintInfo.context->platformContext(), r, NSSmallControlSize, determineState(o));
     return false;
 }
 

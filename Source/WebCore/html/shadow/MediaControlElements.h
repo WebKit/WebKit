@@ -70,7 +70,8 @@ enum MediaControlElementType {
     MediaVolumeSliderMuteButton,
 };
 
-HTMLMediaElement* toParentMediaElement(RenderObject*);
+HTMLMediaElement* toParentMediaElement(Node*);
+inline HTMLMediaElement* toParentMediaElement(RenderObject* renderer) { return toParentMediaElement(renderer->node()); }
 
 // ----------------------------
 

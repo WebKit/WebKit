@@ -306,10 +306,7 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
             return paintSliderTrack(o, paintInfo, r);
         case SliderThumbHorizontalPart:
         case SliderThumbVerticalPart:
-            if (o->parent()->isSlider())
-                return paintSliderThumb(o, paintInfo, r);
-            // We don't support drawing a slider thumb without a parent slider
-            break;
+            return paintSliderThumb(o, paintInfo, r);
         case MediaFullscreenButtonPart:
             return paintMediaFullscreenButton(o, paintInfo, r);
         case MediaPlayButtonPart:
@@ -329,9 +326,7 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
         case MediaSliderPart:
             return paintMediaSliderTrack(o, paintInfo, r);
         case MediaSliderThumbPart:
-            if (o->parent()->isSlider())
-                return paintMediaSliderThumb(o, paintInfo, r);
-            break;
+            return paintMediaSliderThumb(o, paintInfo, r);
         case MediaVolumeSliderMuteButtonPart:
             return paintMediaMuteButton(o, paintInfo, r);
         case MediaVolumeSliderContainerPart:
@@ -339,9 +334,7 @@ bool RenderTheme::paint(RenderObject* o, const PaintInfo& paintInfo, const IntRe
         case MediaVolumeSliderPart:
             return paintMediaVolumeSliderTrack(o, paintInfo, r);
         case MediaVolumeSliderThumbPart:
-            if (o->parent()->isSlider())
-                return paintMediaVolumeSliderThumb(o, paintInfo, r);
-            break;
+            return paintMediaVolumeSliderThumb(o, paintInfo, r);
         case MediaTimeRemainingPart:
             return paintMediaTimeRemaining(o, paintInfo, r);
         case MediaCurrentTimePart:
@@ -777,6 +770,8 @@ bool RenderTheme::isFocused(const RenderObject* o) const
     Node* node = o->node();
     if (!node)
         return false;
+
+    node = node->focusDelegate();
     Document* document = node->document();
     Frame* frame = document->frame();
     return node == document->focusedNode() && frame && frame->selection()->isFocusedAndActive();

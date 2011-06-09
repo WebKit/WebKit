@@ -296,7 +296,7 @@ bool RenderThemeChromiumLinux::paintSliderThumb(RenderObject* o, const PaintInfo
 {
     PlatformBridge::ThemePaintExtraParams extraParams;
     extraParams.slider.vertical = o->style()->appearance() == SliderThumbVerticalPart;
-    extraParams.slider.inDrag = toRenderSlider(o->parent())->inDragMode();
+    extraParams.slider.inDrag = isPressed(o);
 
     PlatformBridge::paintThemePart(i.context, PlatformBridge::PartSliderThumb, getWebThemeState(this, o), rect, &extraParams);
     return false;

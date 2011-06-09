@@ -560,11 +560,11 @@ unsigned RenderThemeChromiumWin::determineState(RenderObject* o, ControlSubPart 
 unsigned RenderThemeChromiumWin::determineSliderThumbState(RenderObject* o)
 {
     unsigned result = TUS_NORMAL;
-    if (!isEnabled(o->parent()))
+    if (!isEnabled(o))
         result = TUS_DISABLED;
-    else if (supportsFocus(o->style()->appearance()) && isFocused(o->parent()))
+    else if (supportsFocus(o->style()->appearance()) && isFocused(o))
         result = TUS_FOCUSED;
-    else if (toRenderSlider(o->parent())->inDragMode())
+    else if (isPressed(o))
         result = TUS_PRESSED;
     else if (isHovered(o))
         result = TUS_HOT;
@@ -586,9 +586,9 @@ unsigned RenderThemeChromiumWin::determineClassicState(RenderObject* o, ControlS
         return result;   
 
     if (part == SliderThumbHorizontalPart || part == SliderThumbVerticalPart) {
-        if (!isEnabled(o->parent()))
+        if (!isEnabled(o))
             result = DFCS_INACTIVE;
-        else if (toRenderSlider(o->parent())->inDragMode()) // Active supersedes hover
+        else if (isPressed(o)) // Active supersedes hover
             result = DFCS_PUSHED;
         else if (isHovered(o))
             result = DFCS_HOT;

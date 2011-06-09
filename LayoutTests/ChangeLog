@@ -1,3 +1,18 @@
+2011-06-08  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Allow drawing a slider thumb for any nodes.
+        https://bugs.webkit.org/show_bug.cgi?id=62196
+
+        The behavior was changed. We should show slider thumbs for any nodes with
+        -webkit-appearance:slidertumb-horizontal/vertical.
+
+        * fast/forms/thumbslider-no-parent-slider.html:
+        * platform/chromium/test_expections.txt: Expect to fail with thumbslider-no-parent-slider.html.
+        * platform/mac/fast/forms/thumbslider-no-parent-slider-expected.png:
+        * platform/mac/fast/forms/thumbslider-no-parent-slider-expected.txt:
+
 2011-06-08  James Kozianski  <koz@chromium.org>
 
         [Chromium] Unreviewed. Revert r88412 because it introduced syntax

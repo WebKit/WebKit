@@ -49,7 +49,6 @@ class SliderThumbElement : public HTMLDivElement {
 public:
     static PassRefPtr<SliderThumbElement> create(Document*);
 
-    bool inDragMode() const { return m_inDragMode; }
     void setPositionFromValue();
 
     void dragFrom(const IntPoint&);
@@ -61,10 +60,13 @@ private:
     SliderThumbElement(Document*);
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
     virtual PassRefPtr<Element> cloneElementWithoutAttributesAndChildren() const;
+    virtual bool isEnabledFormControl() const;
+    virtual bool isReadOnlyFormControl() const;
+    virtual Node* focusDelegate();
     void startDragging();
     void stopDragging();
     void setPositionFromPoint(const IntPoint&);
-    HTMLInputElement* hostInput();
+    HTMLInputElement* hostInput() const;
 
     bool m_inDragMode;
 };
