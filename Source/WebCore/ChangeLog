@@ -1,3 +1,25 @@
+2011-06-08  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Make indexForVisiblePosition and isSelectableElement static.
+        https://bugs.webkit.org/show_bug.cgi?id=62329
+
+        This protects us when converting frame->selection->start() or end()
+        to VisiblePosition which blows away the RenderTextControl from
+        underneath (due to layout update).
+
+        Test: fast/forms/text-control-selection-crash.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::indexForVisiblePosition):
+        * rendering/RenderTextControl.cpp:
+        (WebCore::RenderTextControl::selectionStart):
+        (WebCore::RenderTextControl::selectionEnd):
+        (WebCore::RenderTextControl::isSelectableElement):
+        (WebCore::RenderTextControl::indexForVisiblePosition):
+        * rendering/RenderTextControl.h:
+
 2011-06-09  Ben Murdoch  <benm@google.com>
 
         Reviewed by Yury Semikhatsky.

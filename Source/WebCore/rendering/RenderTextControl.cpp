@@ -177,7 +177,12 @@ int RenderTextControl::selectionStart() const
     Frame* frame = this->frame();
     if (!frame)
         return 0;
-    return indexForVisiblePosition(frame->selection()->start());
+    
+    HTMLElement* innerText = innerTextElement();
+    // Do not call innerTextElement() in the function arguments as creating a VisiblePosition
+    // from frame->selection->start() can blow us from underneath. Also, function ordering is
+    // usually dependent on the compiler.
+    return RenderTextControl::indexForVisiblePosition(innerText, frame->selection()->start());
 }
 
 int RenderTextControl::selectionEnd() const
@@ -185,7 +190,12 @@ int RenderTextControl::selectionEnd() const
     Frame* frame = this->frame();
     if (!frame)
         return 0;
-    return indexForVisiblePosition(frame->selection()->end());
+
+    HTMLElement* innerText = innerTextElement();
+    // Do not call innerTextElement() in the function arguments as creating a VisiblePosition
+    // from frame->selection->end() can blow us from underneath. Also, function ordering is
+    // usually dependent on the compiler.
+    return RenderTextControl::indexForVisiblePosition(innerText, frame->selection()->end());
 }
 
 bool RenderTextControl::hasVisibleTextArea() const
@@ -229,15 +239,11 @@ void setSelectionRange(Node* node, int start, int end)
         frame->selection()->setSelection(newSelection);
 }
 
-bool RenderTextControl::isSelectableElement(Node* node) const
+bool RenderTextControl::isSelectableElement(HTMLElement* innerText, Node* node)
 {
-    if (!node)
+    if (!node || !innerText)
         return false;
 
-    HTMLElement* innerText = innerTextElement();
-    if (!innerText)
-        return false;
-    
     if (node->rootEditableElement() == innerText)
         return true;
     
@@ -312,14 +318,14 @@ VisiblePosition RenderTextControl::visiblePositionForIndex(int index) const
     return VisiblePosition(Position(endContainer, endOffset, Position::PositionIsOffsetInAnchor), UPSTREAM);
 }
 
-int RenderTextControl::indexForVisiblePosition(const VisiblePosition& pos) const
+int RenderTextControl::indexForVisiblePosition(HTMLElement* innerTextElement, const VisiblePosition& pos)
 {
     Position indexPosition = pos.deepEquivalent();
-    if (!isSelectableElement(indexPosition.deprecatedNode()))
+    if (!RenderTextControl::isSelectableElement(innerTextElement, indexPosition.deprecatedNode()))
         return 0;
     ExceptionCode ec = 0;
-    RefPtr<Range> range = Range::create(document());
-    range->setStart(innerTextElement(), 0, ec);
+    RefPtr<Range> range = Range::create(indexPosition.document());
+    range->setStart(innerTextElement, 0, ec);
     ASSERT(!ec);
     range->setEnd(indexPosition.deprecatedNode(), indexPosition.deprecatedEditingOffset(), ec);
     ASSERT(!ec);

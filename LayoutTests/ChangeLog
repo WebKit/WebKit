@@ -1,3 +1,13 @@
+2011-06-08  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Tests that setting selection on a text control does not result in crash.
+        https://bugs.webkit.org/show_bug.cgi?id=62329
+
+        * fast/forms/text-control-selection-crash-expected.txt: Added.
+        * fast/forms/text-control-selection-crash.html: Added.
+
 2011-06-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Unreviewed fix after r88447.
