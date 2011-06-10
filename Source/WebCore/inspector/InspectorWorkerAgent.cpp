@@ -30,7 +30,7 @@
 
 #include "config.h"
 
-#if ENABLE(WORKERS)
+#if ENABLE(WORKERS) && ENABLE(INSPECTOR)
 
 #include "InspectorWorkerAgent.h"
 
@@ -197,4 +197,4 @@ void InspectorWorkerAgent::workerContextTerminated(WorkerContextProxy* proxy)
 
 } // namespace WebCore
 
-#endif // ENABLE(WORKERS)
+#endif // ENABLE(WORKERS) && ENABLE(INSPECTOR)
