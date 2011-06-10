@@ -1,3 +1,16 @@
+2011-05-30  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Reviewed by Brent Fulgham.
+
+        [efl] Do not enable the encoding detector by default.
+        https://bugs.webkit.org/show_bug.cgi?id=61744
+
+        This should match the behaviour of other ports more closely, and makes
+        at least dom/xhtml/level3/core/documentgetinputencoding01.xhtml pass.
+
+        * ewk/ewk_view.cpp:
+        (_ewk_view_priv_new):
+
 2011-06-08  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Reviewed by Antonio Gomes.

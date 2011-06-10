@@ -575,7 +575,7 @@ static Ewk_View_Private_Data* _ewk_view_priv_new(Ewk_View_Smart_Data* sd)
     priv->page_settings->setLocalStorageEnabled(true);
     priv->page_settings->setOfflineWebApplicationCacheEnabled(true);
     priv->page_settings->setUsesPageCache(true);
-    priv->page_settings->setUsesEncodingDetector(true);
+    priv->page_settings->setUsesEncodingDetector(false);
 
     url = priv->page_settings->userStyleSheetLocation();
     priv->settings.user_stylesheet = eina_stringshare_add(url.string().utf8().data());
