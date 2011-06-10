@@ -1105,6 +1105,7 @@ SET(WebCore_SOURCES
     platform/graphics/GlyphPageTreeNode.cpp
     platform/graphics/Gradient.cpp
     platform/graphics/GraphicsContext.cpp
+    platform/graphics/GraphicsLayer.cpp
     platform/graphics/GraphicsTypes.cpp
     platform/graphics/Image.cpp
     platform/graphics/ImageBuffer.cpp
@@ -1251,6 +1252,8 @@ SET(WebCore_SOURCES
     rendering/RenderImageResourceStyleImage.cpp
     rendering/RenderInline.cpp
     rendering/RenderLayer.cpp
+    rendering/RenderLayerBacking.cpp
+    rendering/RenderLayerCompositor.cpp
     rendering/RenderLineBoxList.cpp
     rendering/RenderListBox.cpp
     rendering/RenderListItem.cpp

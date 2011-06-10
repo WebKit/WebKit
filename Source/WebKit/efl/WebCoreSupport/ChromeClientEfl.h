@@ -125,6 +125,13 @@ public:
     virtual void needTouchEvents(bool);
 #endif
 
+#if USE(ACCELERATED_COMPOSITING)
+    virtual void attachRootGraphicsLayer(Frame*, GraphicsLayer*);
+    virtual void setNeedsOneShotDrawingSynchronization();
+    virtual void scheduleCompositingLayerSync();
+    virtual CompositingTriggerFlags allowedCompositingTriggers() const;
+#endif
+
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
     virtual void chooseIconForFiles(const Vector<String>&, FileChooser*);
     virtual void formStateDidChange(const Node*);

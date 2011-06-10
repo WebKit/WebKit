@@ -557,4 +557,26 @@ PassRefPtr<SearchPopupMenu> ChromeClientEfl::createSearchPopupMenu(PopupMenuClie
     return adoptRef(new SearchPopupMenuEfl(client));
 }
 
+#if USE(ACCELERATED_COMPOSITING)
+void ChromeClientEfl::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* rootLayer)
+{
+    notImplemented();
+}
+
+void ChromeClientEfl::setNeedsOneShotDrawingSynchronization()
+{
+    notImplemented();
+}
+
+void ChromeClientEfl::scheduleCompositingLayerSync()
+{
+    notImplemented();
+}
+
+ChromeClient::CompositingTriggerFlags ChromeClientEfl::allowedCompositingTriggers() const
+{
+    return 0;
+}
+#endif
+
 }
