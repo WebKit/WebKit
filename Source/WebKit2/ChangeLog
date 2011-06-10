@@ -1,3 +1,34 @@
+2011-06-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL][WK2] Add dummy files in WebProcess/WebCoreSupport/efl
+        https://bugs.webkit.org/show_bug.cgi?id=62346
+
+        Add WebProcess/WebCoreSupport/efl directory and files.
+
+        * WebProcess/WebCoreSupport/efl/WebContextMenuClientEfl.cpp: Added.
+        (WebKit::WebContextMenuClient::lookUpInDictionary):
+        (WebKit::WebContextMenuClient::isSpeaking):
+        (WebKit::WebContextMenuClient::speak):
+        (WebKit::WebContextMenuClient::stopSpeaking):
+        * WebProcess/WebCoreSupport/efl/WebEditorClientEfl.cpp: Added.
+        (WebKit::WebEditorClient::handleKeyboardEvent):
+        (WebKit::WebEditorClient::handleInputMethodKeydown):
+        * WebProcess/WebCoreSupport/efl/WebErrorsEfl.cpp: Added.
+        (WebKit::cancelledError):
+        (WebKit::blockedError):
+        (WebKit::cannotShowURLError):
+        (WebKit::interruptForPolicyChangeError):
+        (WebKit::cannotShowMIMETypeError):
+        (WebKit::fileDoesNotExistError):
+        (WebKit::pluginWillHandleLoadError):
+        * WebProcess/WebCoreSupport/efl/WebFrameNetworkingContext.h: Added.
+        (WebFrameNetworkingContext::create):
+        (WebFrameNetworkingContext::WebFrameNetworkingContext):
+        * WebProcess/WebCoreSupport/efl/WebPopupMenuEfl.cpp: Added.
+        (WebKit::WebPopupMenu::setUpPlatformData):
+
 2011-06-09  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Darin Adler.
