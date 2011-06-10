@@ -1,3 +1,15 @@
+2011-06-10  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        <rdar://problem/9562114> Fix DumpRenderTree build for production configuration.
+
+        Ensure that DumpRenderTree can find libWebCoreTestSupport.dylib and the associated
+        header file.
+
+        * DumpRenderTree/DumpRenderTree.xcodeproj/project.pbxproj:
+        * DumpRenderTree/mac/Configurations/Base.xcconfig:
+
 2011-06-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         Unreviewed rolling out r88471, because it broke plugin tests on Qt.

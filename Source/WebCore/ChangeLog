@@ -1,3 +1,18 @@
+2011-06-10  Mark Rowe  <mrowe@apple.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        <rdar://problem/9562114> Fix DumpRenderTree build for production configuration.
+
+        Rename the built WebCoreTestSupport dylib to libWebCoreTestSupport.dylib so
+        that it can be found via the library search path rather than requiring an
+        absolute path be passed to the linker.
+
+        Install the library and its associated header file in a more appropriate location
+        for the production configuration.
+
+        * Configurations/WebCoreTestSupport.xcconfig:
+
 2011-06-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dave Hyatt.
