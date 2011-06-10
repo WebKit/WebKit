@@ -1,3 +1,12 @@
+2011-06-10  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        add a compile guard ENABLE(FLEXBOX)
+        https://bugs.webkit.org/show_bug.cgi?id=62049
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-06-10  Sam Weinig  <sam@webkit.org>
 
         Roll out r88568. It is not the right fix for the problem.
