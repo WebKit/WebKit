@@ -1920,6 +1920,11 @@ bool RenderLayer::scrollsOverflow() const
     return toRenderBox(renderer())->scrollsOverflow();
 }
 
+bool RenderLayer::allowsScrolling() const
+{
+    return (m_hBar && m_hBar->enabled()) || (m_vBar && m_vBar->enabled());
+}
+
 void RenderLayer::didAddHorizontalScrollbar(Scrollbar* scrollbar)
 {
     m_renderer->document()->didAddWheelEventHandler();

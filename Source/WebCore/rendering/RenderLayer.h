@@ -241,6 +241,7 @@ public:
     IntRect getRectToExpose(const IntRect& visibleRect, const IntRect& exposeRect, const ScrollAlignment& alignX, const ScrollAlignment& alignY);
 
     bool scrollsOverflow() const;
+    bool allowsScrolling() const; // Returns true if at least one scrollbar is visible and enabled.
     virtual void didAddHorizontalScrollbar(Scrollbar*);
     virtual void willRemoveHorizontalScrollbar(Scrollbar*);
     void setHasHorizontalScrollbar(bool);

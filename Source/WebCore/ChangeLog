@@ -1,3 +1,17 @@
+2011-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Beth Dakin.
+
+        Add utility to RenderLayer to determine if the layer is scrollable
+        https://bugs.webkit.org/show_bug.cgi?id=62467
+
+        New method that returns true if either scrollbar is present and enabled.
+        Not called anywhere yet.
+
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::allowsScrolling):
+        * rendering/RenderLayer.h:
+
 2011-06-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Tony Chang.
