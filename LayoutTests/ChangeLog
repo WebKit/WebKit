@@ -1,3 +1,13 @@
+2011-06-09  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: protocol: json: Whitespace can be inserted between any pair of tokens.
+        https://bugs.webkit.org/show_bug.cgi?id=62377
+
+        * inspector/report-protocol-errors-expected.txt:
+        * inspector/report-protocol-errors.html:
+
 2011-06-10  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
 
         Reviewed by Antonio Gomes.
