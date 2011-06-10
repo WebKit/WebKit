@@ -367,6 +367,13 @@ public:
 
     bool usingTiledLayer() const { return m_usingTiledLayer; }
 
+#if PLATFORM(QT)
+    // This allows several alternative GraphicsLayer implementations in the same port,
+    // e.g. if a different GraphicsLayer implementation is needed in WebKit1 vs. WebKit2.
+    typedef PassOwnPtr<GraphicsLayer> GraphicsLayerFactory(GraphicsLayerClient*);
+    static void setGraphicsLayerFactory(GraphicsLayerFactory);
+#endif
+
 protected:
 
     typedef Vector<TransformOperation::OperationType> TransformOperationList;
@@ -375,7 +382,7 @@ protected:
     static void fetchTransformOperationList(const KeyframeValueList&, TransformOperationList&, bool& isValid, bool& hasBigRotation);
 
     virtual void setOpacityInternal(float) { }
-    
+
     // The layer being replicated.
     GraphicsLayer* replicatedLayer() const { return m_replicatedLayer; }
     virtual void setReplicatedLayer(GraphicsLayer* layer) { m_replicatedLayer = layer; }
@@ -428,6 +435,10 @@ protected:
     IntRect m_contentsRect;
 
     int m_repaintCount;
+
+#if PLATFORM(QT)
+    static GraphicsLayer::GraphicsLayerFactory* s_graphicsLayerFactory;
+#endif
 };
 
 

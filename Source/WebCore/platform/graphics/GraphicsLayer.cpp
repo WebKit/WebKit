@@ -312,6 +312,15 @@ void GraphicsLayer::distributeOpacity(float accumulatedOpacity)
     }
 }
 
+#if PLATFORM(QT)
+GraphicsLayer::GraphicsLayerFactory* GraphicsLayer::s_graphicsLayerFactory = 0;
+
+void GraphicsLayer::setGraphicsLayerFactory(GraphicsLayer::GraphicsLayerFactory factory)
+{
+    s_graphicsLayerFactory = factory;
+}
+#endif
+
 // An "invalid" list is one whose functions don't match, and therefore has to be animated as a Matrix
 // The hasBigRotation flag will always return false if isValid is false. Otherwise hasBigRotation is 
 // true if the rotation between any two keyframes is >= 180 degrees.

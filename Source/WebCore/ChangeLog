@@ -1,3 +1,27 @@
+2011-06-10  No'am Rosenthal  <noam.rosenthal@nokia.com> and Viatcheslav Ostapenko <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add layer factory to GraphicsLayer for creating non-default layer type.
+        https://bugs.webkit.org/show_bug.cgi?id=61925
+
+        Added a static factory protected member to GraphicsLayer, which should be accessed from
+        a port-specific implementation of GraphicsLayer::create. For now this is enabled for Qt only.
+
+        This is needed for accelerated compositing across processes in WebKit2, since WebCore
+        doesn't know in compile time whether it's in WebKit or WebKit2, which makes having two
+        different implementations of GraphicsLayer coexist impossible without some runtime
+        factory that can be overridden by the web process.
+
+        Note that the use of the factory would be optional, and the port-specific GraphicsLayer::create
+        would have to explicitly call it, in order to be unintrusive with current implementations.
+
+        No new functionality, so no new tests.
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::setGraphicsLayerFactory):
+        * platform/graphics/GraphicsLayer.h:
+
 2011-06-10  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
