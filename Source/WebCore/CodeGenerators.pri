@@ -386,6 +386,51 @@ IDL_BINDINGS += \
     storage/SQLTransactionErrorCallback.idl \
     storage/SQLTransactionSync.idl \
     storage/SQLTransactionSyncCallback.idl \
+    testing/Internals.idl \
+    webaudio/AudioBuffer.idl \
+    webaudio/AudioBufferSourceNode.idl \
+    webaudio/AudioChannelMerger.idl \
+    webaudio/AudioChannelSplitter.idl \
+    webaudio/AudioContext.idl \
+    webaudio/AudioDestinationNode.idl \
+    webaudio/AudioGain.idl \
+    webaudio/AudioGainNode.idl \
+    webaudio/AudioListener.idl \
+    webaudio/AudioNode.idl \
+    webaudio/AudioPannerNode.idl \
+    webaudio/AudioParam.idl \
+    webaudio/AudioProcessingEvent.idl \
+    webaudio/AudioSourceNode.idl \
+    webaudio/ConvolverNode.idl \
+    webaudio/DelayNode.idl \
+    webaudio/HighPass2FilterNode.idl \
+    webaudio/JavaScriptAudioNode.idl \
+    webaudio/LowPass2FilterNode.idl \
+    webaudio/RealtimeAnalyserNode.idl \
+    websockets/CloseEvent.idl \
+    websockets/WebSocket.idl \
+    workers/AbstractWorker.idl \
+    workers/DedicatedWorkerContext.idl \
+    workers/SharedWorker.idl \
+    workers/SharedWorkerContext.idl \
+    workers/Worker.idl \
+    workers/WorkerContext.idl \
+    workers/WorkerLocation.idl \
+    xml/DOMParser.idl \
+    xml/XMLHttpRequest.idl \
+    xml/XMLHttpRequestException.idl \
+    xml/XMLHttpRequestProgressEvent.idl \
+    xml/XMLHttpRequestUpload.idl \
+    xml/XMLSerializer.idl \
+    xml/XPathNSResolver.idl \
+    xml/XPathException.idl \
+    xml/XPathExpression.idl \
+    xml/XPathResult.idl \
+    xml/XPathEvaluator.idl \
+    xml/XSLTProcessor.idl
+
+contains(DEFINES, ENABLE_SVG=1) {
+  IDL_BINDINGS += \
     svg/SVGZoomEvent.idl \
     svg/SVGAElement.idl \
     svg/SVGAltGlyphElement.idl \
@@ -523,49 +568,8 @@ IDL_BINDINGS += \
     svg/SVGUnitTypes.idl \
     svg/SVGUseElement.idl \
     svg/SVGViewElement.idl \
-    svg/SVGVKernElement.idl \
-    testing/Internals.idl \
-    webaudio/AudioBuffer.idl \
-    webaudio/AudioBufferSourceNode.idl \
-    webaudio/AudioChannelMerger.idl \
-    webaudio/AudioChannelSplitter.idl \
-    webaudio/AudioContext.idl \
-    webaudio/AudioDestinationNode.idl \
-    webaudio/AudioGain.idl \
-    webaudio/AudioGainNode.idl \
-    webaudio/AudioListener.idl \
-    webaudio/AudioNode.idl \
-    webaudio/AudioPannerNode.idl \
-    webaudio/AudioParam.idl \
-    webaudio/AudioProcessingEvent.idl \
-    webaudio/AudioSourceNode.idl \
-    webaudio/ConvolverNode.idl \
-    webaudio/DelayNode.idl \
-    webaudio/HighPass2FilterNode.idl \
-    webaudio/JavaScriptAudioNode.idl \
-    webaudio/LowPass2FilterNode.idl \
-    webaudio/RealtimeAnalyserNode.idl \
-    websockets/CloseEvent.idl \
-    websockets/WebSocket.idl \
-    workers/AbstractWorker.idl \
-    workers/DedicatedWorkerContext.idl \
-    workers/SharedWorker.idl \
-    workers/SharedWorkerContext.idl \
-    workers/Worker.idl \
-    workers/WorkerContext.idl \
-    workers/WorkerLocation.idl \
-    xml/DOMParser.idl \
-    xml/XMLHttpRequest.idl \
-    xml/XMLHttpRequestException.idl \
-    xml/XMLHttpRequestProgressEvent.idl \
-    xml/XMLHttpRequestUpload.idl \
-    xml/XMLSerializer.idl \
-    xml/XPathNSResolver.idl \
-    xml/XPathException.idl \
-    xml/XPathExpression.idl \
-    xml/XPathResult.idl \
-    xml/XPathEvaluator.idl \
-    xml/XSLTProcessor.idl
+    svg/SVGVKernElement.idl
+}
 
 v8: wrapperFactoryArg = --wrapperFactoryV8
 else: wrapperFactoryArg = --wrapperFactory
