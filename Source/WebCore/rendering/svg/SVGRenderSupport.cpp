@@ -63,6 +63,7 @@ void SVGRenderSupport::computeRectForRepaint(RenderObject* object, RenderBoxMode
     const SVGRenderStyle* svgStyle = object->style()->svgStyle();
     if (const ShadowData* shadow = svgStyle->shadow())
         shadow->adjustRectForShadow(repaintRect);
+    repaintRect.inflate(object->style()->outlineWidth());
 
     // Translate to coords in our parent renderer, and then call computeRectForRepaint on our parent
     repaintRect = object->localToParentTransform().mapRect(repaintRect);

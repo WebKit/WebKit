@@ -46,6 +46,7 @@ private:
     SVGImageElement(const QualifiedName&, Document*);
     
     virtual bool isValid() const { return SVGTests::isValid(); }
+    virtual bool supportsFocus() const { return true; }
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);

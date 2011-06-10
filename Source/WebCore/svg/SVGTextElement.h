@@ -44,6 +44,8 @@ public:
 private:
     SVGTextElement(const QualifiedName&, Document*);
 
+    virtual bool supportsFocus() const { return true; }
+
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
 

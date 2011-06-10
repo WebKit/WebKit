@@ -42,6 +42,8 @@ public:
 private:
     SVGSymbolElement(const QualifiedName&, Document*);
 
+    virtual bool supportsFocus() const { return true; }
+
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
     virtual void svgAttributeChanged(const QualifiedName&);

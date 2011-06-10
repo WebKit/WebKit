@@ -26,6 +26,7 @@
 #include "Attr.h"
 #include "CSSParser.h"
 #include "Document.h"
+#include "EventNames.h"
 #include "HTMLNames.h"
 #include "PlatformString.h"
 #include "RenderObject.h"
@@ -504,6 +505,19 @@ void SVGStyledElement::updateRelativeLengthsInformation(bool hasRelativeLengths,
         static_cast<SVGStyledElement*>(element)->updateRelativeLengthsInformation(hasRelativeLengths, this);
         break;
     }
+}
+
+bool SVGStyledElement::isMouseFocusable() const
+{
+    if (!isFocusable())
+        return false;
+    Element* eventTarget = const_cast<SVGStyledElement *>(this);
+    return eventTarget->hasEventListeners(eventNames().focusinEvent) || eventTarget->hasEventListeners(eventNames().focusoutEvent);
+}
+
+bool SVGStyledElement::isKeyboardFocusable(KeyboardEvent*) const
+{
+    return isMouseFocusable();
 }
 
 }

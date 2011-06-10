@@ -1,3 +1,55 @@
+2011-06-10  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        amation event handling broken: focusin
+        https://bugs.webkit.org/show_bug.cgi?id=12894
+
+        focusin, focusout, activate not implemented in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=40545
+
+        Make elements that should support GraphicalEventAttribute handle focussing, since focusin, focusout is part of that:
+
+        http://www.w3.org/TR/SVG11/intro.html#TermGraphicalEventAttribute
+
+        Match Opera behaviour ; elements that support GraphicalEventAttribute can receive visual mouse focus when having either a focusin or focusout event handler. Elements that support GraphicalEventAttribute can receive visual keyboard focus when having either a focusin or focusout event handler. Keyboard focus does not advance to SVG elements that are not focusable at the time.
+
+        Tests: svg/custom/focus-event-handling-keyboard.xhtml
+               svg/custom/focus-event-handling.xhtml
+
+        * rendering/svg/SVGRenderSupport.cpp:
+        (WebCore::SVGRenderSupport::computeRectForRepaint):
+        * svg/SVGCircleElement.h:
+        (WebCore::SVGCircleElement::supportsFocus):
+        * svg/SVGEllipseElement.h:
+        (WebCore::SVGEllipseElement::supportsFocus):
+        * svg/SVGGElement.h:
+        (WebCore::SVGGElement::supportsFocus):
+        * svg/SVGImageElement.h:
+        (WebCore::SVGImageElement::supportsFocus):
+        * svg/SVGLineElement.h:
+        (WebCore::SVGLineElement::supportsFocus):
+        * svg/SVGPathElement.h:
+        (WebCore::SVGPathElement::supportsFocus):
+        * svg/SVGPolyElement.h:
+        (WebCore::SVGPolyElement::supportsFocus):
+        * svg/SVGRectElement.h:
+        (WebCore::SVGRectElement::supportsFocus):
+        * svg/SVGSVGElement.h:
+        (WebCore::SVGSVGElement::supportsFocus):
+        * svg/SVGStyledElement.cpp:
+        (WebCore::SVGStyledElement::isMouseFocusable):
+        (WebCore::SVGStyledElement::isKeyboardFocusable):
+        * svg/SVGStyledElement.h:
+        * svg/SVGSwitchElement.h:
+        (WebCore::SVGSwitchElement::supportsFocus):
+        * svg/SVGSymbolElement.h:
+        (WebCore::SVGSymbolElement::supportsFocus):
+        * svg/SVGTextElement.h:
+        (WebCore::SVGTextElement::supportsFocus):
+        * svg/SVGUseElement.h:
+        (WebCore::SVGUseElement::supportsFocus):
+
 2011-06-10  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Eric Seidel.

@@ -87,6 +87,9 @@ protected:
 private:
     virtual bool isStyled() const { return true; }
 
+    virtual bool isKeyboardFocusable(KeyboardEvent*) const;
+    virtual bool isMouseFocusable() const;
+
     void buildPendingResourcesIfNeeded() const;
 
     HashSet<SVGStyledElement*> m_elementsWithRelativeLengths;

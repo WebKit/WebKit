@@ -52,6 +52,7 @@ public:
     static PassRefPtr<SVGSVGElement> create(const QualifiedName&, Document*);
 
     virtual bool isValid() const { return SVGTests::isValid(); }
+    virtual bool supportsFocus() const { return true; }
 
     // 'SVGSVGElement' functions
     const AtomicString& contentScriptType() const;

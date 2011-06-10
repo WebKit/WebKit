@@ -1,3 +1,29 @@
+2011-06-10  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Nikolas Zimmermann.
+
+        animation event handling broken: focusin
+        https://bugs.webkit.org/show_bug.cgi?id=12894
+
+        focusin, focusout, activate not implemented in SVG
+        https://bugs.webkit.org/show_bug.cgi?id=40545
+
+        Test whether focusin and focusout events are dispatched and seen in the focusin/focusout event handlers.
+
+        * platform/mac/svg/custom/focus-ring-expected.txt:
+        * svg/custom/focus-event-handling-expected.txt: Added.
+        * svg/custom/focus-event-handling-keyboard-expected.txt: Added.
+        * svg/custom/focus-event-handling-keyboard.xhtml: Added.
+        * svg/custom/focus-event-handling.xhtml: Added.
+        * svg/custom/resources/focus-event-handling-keyboard.js: Added.
+        (focusinHandler):
+        (focusoutHandler):
+        * svg/custom/resources/focus-event-handling.js: Added.
+        (clearFocusSeen):
+        ():
+        (focusoutHandler):
+        (clickAt):
+
 2011-06-10  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Tony Gentilcore.
