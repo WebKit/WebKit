@@ -459,7 +459,7 @@ bool ApplicationCacheHost::swapCache()
 
 bool ApplicationCacheHost::isApplicationCacheEnabled()
 {
-    return m_documentLoader->frame()->settings()
+    return m_documentLoader->frame() && m_documentLoader->frame()->settings()
            && m_documentLoader->frame()->settings()->offlineWebApplicationCacheEnabled();
 }
 

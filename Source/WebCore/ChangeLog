@@ -1,3 +1,14 @@
+2011-06-10  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Beth Dakin.
+
+        Common crash in ApplicationCacheHost::isApplicationCacheEnabled
+        <rdar://problem/9328684>
+
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::isApplicationCacheEnabled):
+        Speculative fix for a null frame on ApplicationCacheHost's DocumentLoader.
+
 2011-06-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.
