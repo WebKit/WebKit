@@ -1,3 +1,21 @@
+2011-06-09  James Kozianski  <koz@chromium.org>
+
+        Unreviewed, rolling out r88466.
+        http://trac.webkit.org/changeset/88466
+        https://bugs.webkit.org/show_bug.cgi?id=60059
+
+        Broke PPAPITest.URLLoader test on the chromium bots
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * src/AssociatedURLLoader.cpp:
+        (WebKit::AssociatedURLLoader::ClientAdapter::clearClient):
+        (WebKit::AssociatedURLLoader::ClientAdapter::ClientAdapter):
+        (WebKit::AssociatedURLLoader::ClientAdapter::didFinishLoading):
+        (WebKit::AssociatedURLLoader::ClientAdapter::didFail):
+        (WebKit::AssociatedURLLoader::loadAsynchronously):
+        * tests/AssociatedURLLoaderTest.cpp: Removed.
+
 2011-06-09  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Eric Seidel.
