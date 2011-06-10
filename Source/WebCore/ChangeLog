@@ -1,3 +1,47 @@
+2011-06-10  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        Integrate SVG Fonts within GlyphPage concept, removing the special SVG code paths from Font, making it possible to reuse the simple text code path for SVG Fonts
+        https://bugs.webkit.org/show_bug.cgi?id=59085
+
+        Add glyph table to SVGFontElement mapping between SVGGlyph <-> Glyph
+        https://bugs.webkit.org/show_bug.cgi?id=62441
+
+        Preparation patch 1: Introduce the internal glyph table in SVGGlyphMap that will be used to identify each
+        SVGGlyph identifier with a Glyph (which is just an ushort). It will be used by follow-up patches.
+
+        Doesn't affect any test so far.
+
+        * platform/graphics/SVGGlyph.h:
+        (WebCore::SVGGlyph::SVGGlyph):
+        (WebCore::SVGGlyph::operator==):
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::SVGTextRunWalker::walk):
+        * svg/SVGFontData.cpp:
+        (WebCore::SVGFontData::initializeFontData):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::SVGFontElement):
+        (WebCore::SVGFontElement::registerLigaturesInGlyphCache):
+        (WebCore::SVGFontElement::ensureGlyphCache):
+        (WebCore::kerningForPairOfStringsAndGlyphs):
+        (WebCore::SVGFontElement::horizontalKerningForPairOfStringsAndGlyphs):
+        (WebCore::SVGFontElement::verticalKerningForPairOfStringsAndGlyphs):
+        (WebCore::SVGFontElement::collectGlyphsForString):
+        (WebCore::SVGFontElement::collectGlyphsForGlyphName):
+        (WebCore::SVGFontElement::svgGlyphForGlyph):
+        (WebCore::SVGFontElement::missingGlyph):
+        * svg/SVGFontElement.h:
+        (WebCore::SVGKerningPair::SVGKerningPair):
+        * svg/SVGGlyphMap.h:
+        (WebCore::SVGGlyphMap::addGlyphByUnicodeString):
+        (WebCore::SVGGlyphMap::addGlyphByName):
+        (WebCore::SVGGlyphMap::appendToGlyphTable):
+        (WebCore::SVGGlyphMap::collectGlyphsForString):
+        (WebCore::SVGGlyphMap::clear):
+        (WebCore::SVGGlyphMap::svgGlyphForGlyph):
+        (WebCore::SVGGlyphMap::glyphIdentifierForGlyphName):
+
 2011-06-10  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.

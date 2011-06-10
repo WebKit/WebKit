@@ -24,6 +24,7 @@
 #define SVGGlyph_h
 
 #if ENABLE(SVG_FONTS)
+#include "Glyph.h"
 #include "Path.h"
 
 #include <limits>
@@ -54,6 +55,7 @@ struct SVGGlyph {
         , orientation(Both)
         , arabicForm(None)
         , priority(0)
+        , tableEntry(0)
         , unicodeStringLength(0)
         , horizontalAdvanceX(0)
         , verticalOriginX(0)
@@ -74,6 +76,7 @@ struct SVGGlyph {
         return isValid == other.isValid
             && orientation == other.orientation
             && arabicForm == other.arabicForm
+            && tableEntry == other.tableEntry
             && unicodeStringLength == other.unicodeStringLength
             && glyphName == other.glyphName
             && horizontalAdvanceX == other.horizontalAdvanceX
@@ -88,6 +91,7 @@ struct SVGGlyph {
     unsigned orientation : 2; // Orientation
     unsigned arabicForm : 3; // ArabicForm
     int priority;
+    Glyph tableEntry;
     size_t unicodeStringLength;
     String glyphName;
 

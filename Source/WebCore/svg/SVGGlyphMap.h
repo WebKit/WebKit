@@ -21,11 +21,16 @@
 #define SVGGlyphMap_h
 
 #if ENABLE(SVG_FONTS)
+#include "SVGGlyph.h"
 #include "SVGGlyphElement.h"
+
+#include <wtf/HashMap.h>
+#include <wtf/Vector.h>
 
 namespace WebCore {
 
 struct GlyphMapNode;
+class SVGFontData;
 
 typedef HashMap<UChar, RefPtr<GlyphMapNode> > GlyphMapLayer;
 
@@ -45,7 +50,7 @@ class SVGGlyphMap {
 public:
     SVGGlyphMap() : m_currentPriority(0) { }
 
-    void add(const String& string, const SVGGlyph& glyph) 
+    void addGlyphByUnicodeString(const String& string, const SVGGlyph& glyph)
     {
         size_t len = string.length();
         GlyphMapLayer* currentLayer = &m_rootLayer;
@@ -63,10 +68,31 @@ public:
 
         if (node) {
             node->glyphs.append(glyph);
-            node->glyphs.last().priority = m_currentPriority++;
-            node->glyphs.last().unicodeStringLength = len;
-            node->glyphs.last().isValid = true;
+
+            SVGGlyph& svgGlyph = node->glyphs.last();
+            svgGlyph.priority = m_currentPriority++;
+            svgGlyph.unicodeStringLength = len;
+            svgGlyph.isValid = true;
+            appendToGlyphTable(svgGlyph);
         }
+    }
+
+    void addGlyphByName(const String& glyphName, SVGGlyph& glyph)
+    {
+        if (glyphName.isEmpty())
+            return;
+        appendToGlyphTable(glyph);
+        m_namedGlyphs.add(glyphName, glyph.tableEntry);
+    }
+
+    void appendToGlyphTable(SVGGlyph& glyph)
+    {
+        size_t tableEntry = m_glyphTable.size();
+        ASSERT(tableEntry < std::numeric_limits<unsigned short>::max());
+
+        // The first table entry starts with 1. 0 denotes an unknown glyph.
+        glyph.tableEntry = tableEntry + 1;
+        m_glyphTable.append(glyph);
     }
 
     static inline bool compareGlyphPriority(const SVGGlyph& first, const SVGGlyph& second)
@@ -74,11 +100,12 @@ public:
         return first.priority < second.priority;
     }
 
-    void get(const String& string, Vector<SVGGlyph>& glyphs)
+    void collectGlyphsForString(const String& string, Vector<SVGGlyph>& glyphs)
     {
         GlyphMapLayer* currentLayer = &m_rootLayer;
 
-        for (size_t i = 0; i < string.length(); ++i) {
+        size_t length = string.length();
+        for (size_t i = 0; i < length; ++i) {
             UChar curChar = string[i];
             RefPtr<GlyphMapNode> node = currentLayer->get(curChar);
             if (!node)
@@ -88,21 +115,36 @@ public:
         }
         std::sort(glyphs.begin(), glyphs.end(), compareGlyphPriority);
     }
-
+    
     void clear() 
     { 
-        m_rootLayer.clear(); 
+        m_rootLayer.clear();
+        m_glyphTable.clear();
         m_currentPriority = 0;
+    }
+
+    const SVGGlyph& svgGlyphForGlyph(Glyph glyph) const
+    {
+        if (!glyph || glyph > m_glyphTable.size()) {
+            DEFINE_STATIC_LOCAL(SVGGlyph, defaultGlyph, ());
+            return defaultGlyph;
+        }
+        return m_glyphTable[glyph - 1];
+    }
+
+    const SVGGlyph& glyphIdentifierForGlyphName(const String& glyphName) const
+    {
+        return svgGlyphForGlyph(m_namedGlyphs.get(glyphName));
     }
 
 private:
     GlyphMapLayer m_rootLayer;
+    Vector<SVGGlyph, 256> m_glyphTable;
+    HashMap<String, Glyph> m_namedGlyphs;
     int m_currentPriority;
 };
 
 }
 
 #endif // ENABLE(SVG_FONTS)
-
-
 #endif // SVGGlyphMap_h

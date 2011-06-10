@@ -43,7 +43,7 @@ struct SVGKerningPair {
     HashSet<String> glyphName2;
     
     SVGKerningPair()
-        : kerning(0.0f)
+        : kerning(0)
     {
     }
 };
@@ -58,12 +58,16 @@ public:
     static PassRefPtr<SVGFontElement> create(const QualifiedName&, Document*);
 
     void invalidateGlyphCache();
-
-    void getGlyphIdentifiersForString(const String&, Vector<SVGGlyph>&) const;
+    void collectGlyphsForString(const String&, Vector<SVGGlyph>&);
+    void collectGlyphsForGlyphName(const String&, Vector<SVGGlyph>&);
 
     float horizontalKerningForPairOfStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const;
     float verticalKerningForPairOfStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const;
-    
+
+    // Used by SimpleFontData/WidthIterator.
+    SVGGlyph svgGlyphForGlyph(Glyph);
+    Glyph missingGlyph();
+
     SVGMissingGlyphElement* firstMissingGlyphElement() const;
 
 private:
@@ -74,17 +78,19 @@ private:
     virtual void fillAttributeToPropertyTypeMap();
     virtual AttributeToPropertyTypeMap& attributeToPropertyTypeMap();
 
-    void ensureGlyphCache() const;
+    void ensureGlyphCache();
+    void registerLigaturesInGlyphCache(Vector<String>&);
 
     // Animated property declarations
 
     // SVGExternalResourcesRequired
     DECLARE_ANIMATED_BOOLEAN(ExternalResourcesRequired, externalResourcesRequired)
 
-    mutable KerningPairVector m_horizontalKerningPairs;
-    mutable KerningPairVector m_verticalKerningPairs;
-    mutable SVGGlyphMap m_glyphMap;
-    mutable bool m_isGlyphCacheValid;
+    KerningPairVector m_horizontalKerningPairs;
+    KerningPairVector m_verticalKerningPairs;
+    SVGGlyphMap m_glyphMap;
+    Glyph m_missingGlyph;
+    bool m_isGlyphCacheValid;
 };
 
 } // namespace WebCore

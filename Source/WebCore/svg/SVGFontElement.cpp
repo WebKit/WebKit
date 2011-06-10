@@ -41,6 +41,7 @@ DEFINE_ANIMATED_BOOLEAN(SVGFontElement, SVGNames::externalResourcesRequiredAttr,
 
 inline SVGFontElement::SVGFontElement(const QualifiedName& tagName, Document* document)
     : SVGStyledElement(tagName, document) 
+    , m_missingGlyph(0)
     , m_isGlyphCacheValid(false)
 {
     ASSERT(hasTagName(SVGNames::fontTag));
@@ -79,26 +80,94 @@ SVGMissingGlyphElement* SVGFontElement::firstMissingGlyphElement() const
     return 0;
 }
 
-void SVGFontElement::ensureGlyphCache() const
+void SVGFontElement::registerLigaturesInGlyphCache(Vector<String>& ligatures)
+{
+    ASSERT(!ligatures.isEmpty());
+
+    // Register each character of a ligature in the map, if not present.
+    // Eg. If only a "fi" ligature is present, but not "f" and "i", the
+    // GlyphPage will not contain any entries for "f" and "i", so the
+    // SVGFont is not used to render the text "fi1234". Register an
+    // empty SVGGlyph with the character, so the SVG Font will be used
+    // to render the text. If someone tries to render "f2" the SVG Font
+    // will not be able to find a glyph for "f", but handles the fallback
+    // character substitution properly through glyphDataForCharacter().
+    Vector<SVGGlyph> glyphs;
+    size_t ligaturesSize = ligatures.size();
+    for (size_t i = 0; i < ligaturesSize; ++i) {
+        const String& unicode = ligatures[i];
+
+        unsigned unicodeLength = unicode.length();
+        ASSERT(unicodeLength > 1);
+
+        const UChar* characters = unicode.characters();
+        for (unsigned i = 0; i < unicodeLength; ++i) {
+            String lookupString(characters + i, 1);
+            m_glyphMap.collectGlyphsForString(lookupString, glyphs);
+            if (!glyphs.isEmpty()) {
+                glyphs.clear();
+                continue;
+            }
+                
+            // This glyph is never meant to be used for rendering, only as identifier as a part of a ligature.
+            SVGGlyph newGlyphPart;
+            /* FIXME: Enable this once with the next patch.
+            newGlyphPart.isPartOfLigature = true;
+            */
+            m_glyphMap.addGlyphByUnicodeString(lookupString, newGlyphPart);
+        }
+    }
+}
+
+void SVGFontElement::ensureGlyphCache()
 {
     if (m_isGlyphCacheValid)
         return;
 
+    SVGMissingGlyphElement* firstMissingGlyphElement = 0;
+    Vector<String> ligatures;
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(SVGNames::glyphTag)) {
             SVGGlyphElement* glyph = static_cast<SVGGlyphElement*>(child);
             String unicode = glyph->getAttribute(SVGNames::unicodeAttr);
-            if (unicode.length())
-                m_glyphMap.add(unicode, glyph->buildGlyphIdentifier());
+            SVGGlyph svgGlyph = glyph->buildGlyphIdentifier();
+            unsigned unicodeLength = unicode.length();
+
+            // Register named glyphs in the glyph table as well.
+            if (!unicodeLength) {
+                m_glyphMap.addGlyphByName(glyph->getIdAttribute(), svgGlyph);
+                continue;
+            }
+
+            // Register ligatures, if needed.
+            if (unicodeLength > 1)
+                ligatures.append(unicode);
+
+            m_glyphMap.addGlyphByUnicodeString(unicode, svgGlyph);
         } else if (child->hasTagName(SVGNames::hkernTag)) {
             SVGHKernElement* hkern = static_cast<SVGHKernElement*>(child);
             hkern->buildHorizontalKerningPair(m_horizontalKerningPairs);
         } else if (child->hasTagName(SVGNames::vkernTag)) {
             SVGVKernElement* vkern = static_cast<SVGVKernElement*>(child);
             vkern->buildVerticalKerningPair(m_verticalKerningPairs);
-        }
+        } else if (child->hasTagName(SVGNames::missing_glyphTag) && !firstMissingGlyphElement)
+            firstMissingGlyphElement = static_cast<SVGMissingGlyphElement*>(child);
     }
-        
+
+    /* FIXME: Register each character of each ligature, if needed.
+       This is not needed yet, turn it on with the next patch. With the current SVG Fonts code it would break fonts-glyph-04-t.svg
+    if (!ligatures.isEmpty())
+        registerLigaturesInGlyphCache(ligatures);
+    */
+
+    // Register missing-glyph element, if present.
+    if (firstMissingGlyphElement) {
+        SVGGlyph svgGlyph = SVGGlyphElement::buildGenericGlyphIdentifier(firstMissingGlyphElement);
+        m_glyphMap.appendToGlyphTable(svgGlyph);
+        m_missingGlyph = svgGlyph.tableEntry;
+        ASSERT(m_missingGlyph > 0);
+    }
+
     m_isGlyphCacheValid = true;
 }
 
@@ -132,7 +201,7 @@ static bool stringMatchesGlyphName(const String& glyphName, const HashSet<String
     
     return false;
 }
-    
+
 static bool matches(const String& u1, const String& g1, const String& u2, const String& g2, const SVGKerningPair& kerningPair)
 {
     if (!stringMatchesUnicodeRange(u1, kerningPair.unicodeRange1, kerningPair.unicodeName1)
@@ -146,7 +215,7 @@ static bool matches(const String& u1, const String& g1, const String& u2, const 
     return true;
 }
 
-static float kerningForPairOfStringsAndGlyphs(KerningPairVector& kerningPairs, const String& u1, const String& g1, const String& u2, const String& g2)
+static float kerningForPairOfStringsAndGlyphs(const KerningPairVector& kerningPairs, const String& u1, const String& g1, const String& u2, const String& g2)
 {
     KerningPairVector::const_iterator it = kerningPairs.end() - 1;
     const KerningPairVector::const_iterator begin = kerningPairs.begin() - 1;
@@ -155,13 +224,13 @@ static float kerningForPairOfStringsAndGlyphs(KerningPairVector& kerningPairs, c
             return it->kerning;
     }
 
-    return 0.0f;
+    return 0;
 }
     
 float SVGFontElement::horizontalKerningForPairOfStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const
 {
     if (m_horizontalKerningPairs.isEmpty())
-        return 0.0f;
+        return 0;
 
     return kerningForPairOfStringsAndGlyphs(m_horizontalKerningPairs, u1, g1, u2, g2);
 }
@@ -169,15 +238,34 @@ float SVGFontElement::horizontalKerningForPairOfStringsAndGlyphs(const String& u
 float SVGFontElement::verticalKerningForPairOfStringsAndGlyphs(const String& u1, const String& g1, const String& u2, const String& g2) const
 {
     if (m_verticalKerningPairs.isEmpty())
-        return 0.0f;
+        return 0;
 
     return kerningForPairOfStringsAndGlyphs(m_verticalKerningPairs, u1, g1, u2, g2);
 }
 
-void SVGFontElement::getGlyphIdentifiersForString(const String& string, Vector<SVGGlyph>& glyphs) const
+void SVGFontElement::collectGlyphsForString(const String& string, Vector<SVGGlyph>& glyphs)
 {
     ensureGlyphCache();
-    m_glyphMap.get(string, glyphs);
+    m_glyphMap.collectGlyphsForString(string, glyphs);
+}
+
+void SVGFontElement::collectGlyphsForGlyphName(const String& glyphName, Vector<SVGGlyph>& glyphs)
+{
+    ensureGlyphCache();
+    // FIXME: We only support glyphName -> single glyph mapping so far.
+    glyphs.append(m_glyphMap.glyphIdentifierForGlyphName(glyphName));
+}
+
+SVGGlyph SVGFontElement::svgGlyphForGlyph(Glyph glyph)
+{
+    ensureGlyphCache();
+    return m_glyphMap.svgGlyphForGlyph(glyph);
+}
+    
+Glyph SVGFontElement::missingGlyph()
+{
+    ensureGlyphCache();
+    return m_missingGlyph;
 }
 
 AttributeToPropertyTypeMap& SVGFontElement::attributeToPropertyTypeMap()

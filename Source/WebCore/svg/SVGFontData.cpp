@@ -59,7 +59,7 @@ void SVGFontData::initializeFontData(SimpleFontData* fontData, int size)
     if (!xHeight) {
         // Fallback if x_heightAttr is not specified for the font element.
         Vector<SVGGlyph> letterXGlyphs;
-        associatedFontElement->getGlyphIdentifiersForString(String("x", 1), letterXGlyphs);
+        associatedFontElement->collectGlyphsForString(String("x", 1), letterXGlyphs);
         xHeight = letterXGlyphs.isEmpty() ? 2 * ascent / 3 : letterXGlyphs.first().horizontalAdvanceX * scale;
     }
 
@@ -72,15 +72,15 @@ void SVGFontData::initializeFontData(SimpleFontData* fontData, int size)
     fontMetrics.setXHeight(xHeight);
 
     Vector<SVGGlyph> spaceGlyphs;
-    associatedFontElement->getGlyphIdentifiersForString(String(" ", 1), spaceGlyphs);
+    associatedFontElement->collectGlyphsForString(String(" ", 1), spaceGlyphs);
     fontData->setSpaceWidth(spaceGlyphs.isEmpty() ? xHeight : spaceGlyphs.first().horizontalAdvanceX * scale);
 
     Vector<SVGGlyph> numeralZeroGlyphs;
-    associatedFontElement->getGlyphIdentifiersForString(String("0", 1), numeralZeroGlyphs);
+    associatedFontElement->collectGlyphsForString(String("0", 1), numeralZeroGlyphs);
     fontData->setAvgCharWidth(numeralZeroGlyphs.isEmpty() ? fontData->spaceWidth() : numeralZeroGlyphs.first().horizontalAdvanceX * scale);
 
     Vector<SVGGlyph> letterWGlyphs;
-    associatedFontElement->getGlyphIdentifiersForString(String("W", 1), letterWGlyphs);
+    associatedFontElement->collectGlyphsForString(String("W", 1), letterWGlyphs);
     fontData->setMaxCharWidth(letterWGlyphs.isEmpty() ? ascent : letterWGlyphs.first().horizontalAdvanceX * scale);
 
     // FIXME: is there a way we can get the space glyph from the SVGGlyph above?

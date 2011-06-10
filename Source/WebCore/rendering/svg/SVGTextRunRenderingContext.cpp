@@ -152,7 +152,7 @@ struct SVGTextRunWalker {
             if (haveAltGlyph)
                 glyphs.append(altGlyphIdentifier);
             else
-                m_fontElement->getGlyphIdentifiersForString(lookupString, glyphs);
+                m_fontElement->collectGlyphsForString(lookupString, glyphs);
 
             Vector<SVGGlyph>::iterator it = glyphs.begin();
             Vector<SVGGlyph>::iterator end = glyphs.end();
