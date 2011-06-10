@@ -74,6 +74,13 @@ private:
     virtual int computeReplacedLogicalHeight() const;
     virtual int minimumReplacedHeight() const;
 
+#if ENABLE(FULLSCREEN_API)
+    virtual int offsetLeft() const;
+    virtual int offsetTop() const;
+    virtual int offsetWidth() const;
+    virtual int offsetHeight() const;
+#endif
+
     void updatePlayer();
 
     IntSize m_cachedImageSize;

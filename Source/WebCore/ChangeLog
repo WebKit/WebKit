@@ -1,3 +1,20 @@
+2011-06-09  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Roll out r88468, and fix bug #61911 without making Element::offset functions virtual.
+        https://bugs.webkit.org/show_bug.cgi?id=62400
+
+        No new tests; covered by existing fullscreen/full-screen-video-offset.html test.
+
+        * rendering/RenderVideo.cpp:
+        (WebCore::rendererPlaceholder): Added; returns the placeholder block, if it exists.
+        (WebCore::RenderVideo::offsetLeft): Pass the offset request to the placeholder block.
+        (WebCore::RenderVideo::offsetTop): Ditto.
+        (WebCore::RenderVideo::offsetWidth): Ditto.
+        (WebCore::RenderVideo::offsetHeight): Ditto.
+        * rendering/RenderVideo.h: Added virtual overrides for the offset functions.
+
 2011-06-09  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Kenneth Russell.

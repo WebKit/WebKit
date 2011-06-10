@@ -37,6 +37,10 @@
 #include "PaintInfo.h"
 #include "RenderView.h"
 
+#if ENABLE(FULLSCREEN_API)
+#include "RenderFullScreen.h"
+#endif
+
 #if USE(ACCELERATED_COMPOSITING)
 #include "RenderLayer.h"
 #include "RenderLayerBacking.h"
@@ -281,6 +285,49 @@ void RenderVideo::acceleratedRenderingStateChanged()
         p->acceleratedRenderingStateChanged();
 }
 #endif  // USE(ACCELERATED_COMPOSITING)
+
+#if ENABLE(FULLSCREEN_API)
+static const RenderBlock* rendererPlaceholder(const RenderObject* renderer)
+{
+    RenderObject* parent = renderer->parent();
+    if (!parent)
+        return 0;
+    
+    RenderFullScreen* fullScreen = parent->isRenderFullScreen() ? toRenderFullScreen(parent) : 0;
+    if (!fullScreen)
+        return 0;
+    
+    return fullScreen->placeholder();
+}
+
+int RenderVideo::offsetLeft() const
+{
+    if (const RenderBlock* block = rendererPlaceholder(this))
+        return block->offsetLeft();
+    return RenderMedia::offsetLeft();
+}
+
+int RenderVideo::offsetTop() const
+{
+    if (const RenderBlock* block = rendererPlaceholder(this))
+        return block->offsetTop();
+    return RenderMedia::offsetTop();
+}
+
+int RenderVideo::offsetWidth() const
+{
+    if (const RenderBlock* block = rendererPlaceholder(this))
+        return block->offsetWidth();
+    return RenderMedia::offsetWidth();
+}
+
+int RenderVideo::offsetHeight() const
+{
+    if (const RenderBlock* block = rendererPlaceholder(this))
+        return block->offsetHeight();
+    return RenderMedia::offsetHeight();
+}
+#endif
 
 } // namespace WebCore
 

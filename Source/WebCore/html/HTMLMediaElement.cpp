@@ -2716,7 +2716,6 @@ void* HTMLMediaElement::preDispatchEventHandler(Event* event)
     return 0;
 }
 
-
 }
 
 #endif
