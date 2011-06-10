@@ -449,7 +449,7 @@ void QWebFramePrivate::emitUrlChanged()
 
 void QWebFramePrivate::_q_orientationChanged()
 {
-#if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
+#if ENABLE(ORIENTATION_EVENTS)
     int orientation;
     WebCore::Frame* frame = core(q);
 
@@ -592,7 +592,7 @@ QWebFrame::QWebFrame(QWebPage *parent, QWebFrameData *frameData)
         WebCore::ResourceRequest request(frameData->url, frameData->referrer);
         d->frame->loader()->load(request, frameData->name, false);
     }
-#if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
+#if ENABLE(ORIENTATION_EVENTS)
     connect(&d->m_orientation, SIGNAL(readingChanged()), this, SLOT(_q_orientationChanged()));
     d->m_orientation.start();
 #endif
@@ -604,7 +604,7 @@ QWebFrame::QWebFrame(QWebFrame *parent, QWebFrameData *frameData)
 {
     d->page = parent->d->page;
     d->init(this, frameData);
-#if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
+#if ENABLE(ORIENTATION_EVENTS)
     connect(&d->m_orientation, SIGNAL(readingChanged()), this, SLOT(_q_orientationChanged()));
     d->m_orientation.start();
 #endif

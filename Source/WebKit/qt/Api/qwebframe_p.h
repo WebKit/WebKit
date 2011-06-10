@@ -28,7 +28,7 @@
 #include "GraphicsContext.h"
 #include "KURL.h"
 #include "PlatformString.h"
-#if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
+#if ENABLE(ORIENTATION_EVENTS)
 #include "qorientationsensor.h"
 #endif
 #include "qwebelement.h"
@@ -126,7 +126,7 @@ public:
     OwnPtr<WebCore::TextureMapper> textureMapper;
 #endif
 
-#if ENABLE(ORIENTATION_EVENTS) && ENABLE(DEVICE_ORIENTATION)
+#if ENABLE(ORIENTATION_EVENTS)
     QtMobility::QOrientationSensor m_orientation;
 #endif
 
