@@ -1,3 +1,18 @@
+2011-06-10  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [chromium] make features.gypi the same as features_override.gypi
+        https://bugs.webkit.org/show_bug.cgi?id=62399
+
+        Make the file the same as chromium's features_override.gypi so we
+        can remove features_override.gypi in chromium.
+
+        Remove ENABLE_DATAGRID=0 since the define is gone and remove
+        ENABLE_FULLSCREEN_API=1 since we want to disable it.
+
+        * features.gypi:
+
 2011-06-09  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Dmitry Titov.
