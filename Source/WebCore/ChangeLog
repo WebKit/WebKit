@@ -1,3 +1,14 @@
+2011-06-10  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB: indexedDB.open() name argument is required
+        https://bugs.webkit.org/show_bug.cgi?id=62398
+
+        Test: storage/indexeddb/database-name-undefined.html
+
+        * storage/IDBFactory.idl: use appropriate IDL magic to force undefined values to null, so we handle missing arguments as well as null arguments
+
 2011-06-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Beth Dakin.
