@@ -45,12 +45,14 @@ NewSpace::NewSpace(Heap* heap)
 
 void NewSpace::addBlock(SizeClass& sizeClass, MarkedBlock* block)
 {
+    block->setInNewSpace(true);
     sizeClass.nextBlock = block;
     sizeClass.blockList.append(block);
 }
 
 void NewSpace::removeBlock(MarkedBlock* block)
 {
+    block->setInNewSpace(false);
     SizeClass& sizeClass = sizeClassFor(block->cellSize());
     sizeClass.nextBlock = block->next();
     sizeClass.blockList.remove(block);

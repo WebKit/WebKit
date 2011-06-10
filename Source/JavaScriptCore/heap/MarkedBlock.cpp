@@ -50,6 +50,7 @@ void MarkedBlock::destroy(MarkedBlock* block)
 
 MarkedBlock::MarkedBlock(const PageAllocationAligned& allocation, Heap* heap, size_t cellSize)
     : m_nextAtom(firstAtom())
+    , m_inNewSpace(false)
     , m_allocation(allocation)
     , m_heap(heap)
 {

@@ -61,6 +61,7 @@ namespace JSC {
 
         SizeClass& sizeClassFor(size_t);
         void* allocate(SizeClass&);
+        void resetAllocator();
 
         void addBlock(SizeClass&, MarkedBlock*);
         void removeBlock(MarkedBlock*);
@@ -69,7 +70,8 @@ namespace JSC {
         size_t highWaterMark();
         void setHighWaterMark(size_t);
 
-        void resetAllocator();
+        template<typename Functor> typename Functor::ReturnType forEachBlock(Functor&); // Safe to remove the current item while iterating.
+        template<typename Functor> typename Functor::ReturnType forEachBlock();
 
     private:
         // [ 8, 16... 128 )
@@ -122,6 +124,35 @@ namespace JSC {
         }
 
         return 0;
+    }
+
+    template <typename Functor> inline typename Functor::ReturnType NewSpace::forEachBlock(Functor& functor)
+    {
+        for (size_t i = 0; i < preciseCount; ++i) {
+            SizeClass& sizeClass = m_preciseSizeClasses[i];
+            MarkedBlock* next;
+            for (MarkedBlock* block = sizeClass.blockList.head(); block; block = next) {
+                next = block->next();
+                functor(block);
+            }
+        }
+
+        for (size_t i = 0; i < impreciseCount; ++i) {
+            SizeClass& sizeClass = m_impreciseSizeClasses[i];
+            MarkedBlock* next;
+            for (MarkedBlock* block = sizeClass.blockList.head(); block; block = next) {
+                next = block->next();
+                functor(block);
+            }
+        }
+
+        return functor.returnValue();
+    }
+
+    template <typename Functor> inline typename Functor::ReturnType NewSpace::forEachBlock()
+    {
+        Functor functor;
+        return forEachBlock(functor);
     }
 
     inline NewSpace::SizeClass::SizeClass()

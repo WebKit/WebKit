@@ -85,6 +85,8 @@
 		1429D8DE0ED2205B00B89619 /* CallFrame.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D8DC0ED2205B00B89619 /* CallFrame.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		1429D92F0ED22D7000B89619 /* JIT.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1429D92D0ED22D7000B89619 /* JIT.cpp */; };
 		1429D9300ED22D7000B89619 /* JIT.h in Headers */ = {isa = PBXBuildFile; fileRef = 1429D92E0ED22D7000B89619 /* JIT.h */; };
+		142A1D8313A19C84009DA5FE /* OldSpace.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142A1D8113A19C84009DA5FE /* OldSpace.cpp */; };
+		142A1D8413A19C84009DA5FE /* OldSpace.h in Headers */ = {isa = PBXBuildFile; fileRef = 142A1D8213A19C84009DA5FE /* OldSpace.h */; };
 		142D3939103E4560007DCB52 /* NumericStrings.h in Headers */ = {isa = PBXBuildFile; fileRef = 142D3938103E4560007DCB52 /* NumericStrings.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		142D6F0813539A2800B02E86 /* MarkedBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 142D6F0613539A2800B02E86 /* MarkedBlock.cpp */; };
 		142D6F0913539A2800B02E86 /* MarkedBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 142D6F0713539A2800B02E86 /* MarkedBlock.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -744,6 +746,8 @@
 		1429D8DC0ED2205B00B89619 /* CallFrame.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallFrame.h; sourceTree = "<group>"; };
 		1429D92D0ED22D7000B89619 /* JIT.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JIT.cpp; sourceTree = "<group>"; };
 		1429D92E0ED22D7000B89619 /* JIT.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JIT.h; sourceTree = "<group>"; };
+		142A1D8113A19C84009DA5FE /* OldSpace.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OldSpace.cpp; sourceTree = "<group>"; };
+		142A1D8213A19C84009DA5FE /* OldSpace.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OldSpace.h; sourceTree = "<group>"; };
 		142D3938103E4560007DCB52 /* NumericStrings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NumericStrings.h; sourceTree = "<group>"; };
 		142D6F0613539A2800B02E86 /* MarkedBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MarkedBlock.cpp; sourceTree = "<group>"; };
 		142D6F0713539A2800B02E86 /* MarkedBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MarkedBlock.h; sourceTree = "<group>"; };
@@ -1503,14 +1507,16 @@
 				14B7234012D7D0DA003BD5ED /* MachineStackMarker.h */,
 				142D6F0613539A2800B02E86 /* MarkedBlock.cpp */,
 				142D6F0713539A2800B02E86 /* MarkedBlock.h */,
+				141448CA13A176EC00F5BA1A /* MarkedBlockSet.h */,
 				142D6F0E13539A4100B02E86 /* MarkStack.cpp */,
 				142D6F0F13539A4100B02E86 /* MarkStack.h */,
 				14D2F3D8139F4BE200491031 /* NewSpace.cpp */,
 				14D2F3D9139F4BE200491031 /* NewSpace.h */,
+				142A1D8113A19C84009DA5FE /* OldSpace.cpp */,
+				142A1D8213A19C84009DA5FE /* OldSpace.h */,
 				142E3132134FF0A600AFADB5 /* Strong.h */,
-				142E3133134FF0A600AFADB5 /* Weak.h */,
-				141448CA13A176EC00F5BA1A /* MarkedBlockSet.h */,
 				141448CC13A1783700F5BA1A /* TinyBloomFilter.h */,
+				142E3133134FF0A600AFADB5 /* Weak.h */,
 			);
 			path = heap;
 			sourceTree = "<group>";
@@ -2559,6 +2565,7 @@
 				14D2F3DB139F4BE200491031 /* NewSpace.h in Headers */,
 				141448CB13A176EC00F5BA1A /* MarkedBlockSet.h in Headers */,
 				141448CD13A1783700F5BA1A /* TinyBloomFilter.h in Headers */,
+				142A1D8413A19C84009DA5FE /* OldSpace.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3006,6 +3013,7 @@
 				7934BB7C1361979400CB99A1 /* ParallelJobsGeneric.cpp in Sources */,
 				86BB09C0138E381B0056702F /* DFGRepatch.cpp in Sources */,
 				14D2F3DA139F4BE200491031 /* NewSpace.cpp in Sources */,
+				142A1D8313A19C84009DA5FE /* OldSpace.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

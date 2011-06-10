@@ -78,6 +78,7 @@ SOURCES += \
     heap/MarkStack.cpp \
     heap/MarkedBlock.cpp \
     heap/NewSpace.cpp \
+    heap/OldSpace.cpp \
     debugger/DebuggerActivation.cpp \
     debugger/DebuggerCallFrame.cpp \
     debugger/Debugger.cpp \

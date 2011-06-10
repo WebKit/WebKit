@@ -58,6 +58,9 @@ namespace JSC {
         static size_t firstAtom();
         
         Heap* heap() const;
+        
+        bool inNewSpace();
+        void setInNewSpace(bool);
 
         void* allocate();
         void resetAllocator();
@@ -97,6 +100,7 @@ namespace JSC {
         size_t m_endAtom; // This is a fuzzy end. Always test for < m_endAtom.
         size_t m_atomsPerCell;
         WTF::Bitmap<blockSize / atomSize> m_marks;
+        bool m_inNewSpace;
         PageAllocationAligned m_allocation;
         Heap* m_heap;
         MarkedBlock* m_prev;
@@ -126,6 +130,16 @@ namespace JSC {
     inline Heap* MarkedBlock::heap() const
     {
         return m_heap;
+    }
+
+    inline bool MarkedBlock::inNewSpace()
+    {
+        return m_inNewSpace;
+    }
+    
+    inline void MarkedBlock::setInNewSpace(bool inNewSpace)
+    {
+        m_inNewSpace = inNewSpace;
     }
 
     inline void MarkedBlock::resetAllocator()
