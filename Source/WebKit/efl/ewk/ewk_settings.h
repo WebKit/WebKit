@@ -56,6 +56,8 @@ EAPI Eina_Bool        ewk_settings_cache_enable_get(void);
 EAPI void             ewk_settings_cache_enable_set(Eina_Bool set);
 EAPI void             ewk_settings_cache_capacity_set(unsigned capacity);
 
+EAPI void             ewk_settings_repaint_throttling_set(double deferred_repaint_delay, double initial_deferred_repaint_delay_during_loading, double max_deferred_repaint_delay_during_loading, double deferred_repaint_delay_increment_during_loading);
+
 #ifdef __cplusplus
 }
 #endif

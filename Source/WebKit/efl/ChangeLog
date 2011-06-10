@@ -1,3 +1,17 @@
+2011-06-10  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Repaint throttling API.
+        https://bugs.webkit.org/show_bug.cgi?id=56178
+
+        The API allows to set the values for repaint throttling.
+        It should ensure displaying a content with many css/gif animations.
+
+        * ewk/ewk_settings.cpp:
+        (ewk_settings_repaint_throttling_set):
+        * ewk/ewk_settings.h:
+
 2011-06-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kent Tamura.

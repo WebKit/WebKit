@@ -25,6 +25,7 @@
 #if ENABLE(DATABASE)
 #include "DatabaseTracker.h"
 #endif
+#include "FrameView.h"
 #include "IconDatabase.h"
 #include "Image.h"
 #include "IntSize.h"
@@ -370,6 +371,32 @@ void ewk_settings_cache_capacity_set(unsigned capacity)
 {
     WebCore::MemoryCache* cache = WebCore::memoryCache();
     cache->setCapacities(0, capacity, capacity);
+}
+
+/**
+ * Sets values for repaint throttling.
+ *
+ * It allows to slow down page loading and
+ * should ensure displaying a content with many css/gif animations.
+ *
+ * These values can be used as a example for repaints throttling.
+ * 0,     0,   0,    0    - default WebCore's values, these do not delay any repaints
+ * 0.025, 0,   2.5,  0.5  - recommended values for dynamic content
+ * 0.01,  0,   1,    0.2  - minimal level
+ * 0.025, 1,   5,    0.5  - medium level
+ * 0.1,   2,   10,   1    - heavy level
+ *
+ * @param deferred_repaint_delay a normal delay
+ * @param initial_deferred_repaint_delay_during_loading negative value would mean that first few repaints happen without a delay
+ * @param max_deferred_repaint_delay_during_loading the delay grows on each repaint to this maximum value
+ * @param deferred_repaint_delay_increment_during_loading on each repaint the delay increses by this amount
+ */
+void ewk_settings_repaint_throttling_set(double deferred_repaint_delay, double initial_deferred_repaint_delay_during_loading, double max_deferred_repaint_delay_during_loading, double deferred_repaint_delay_increment_during_loading)
+{
+    WebCore::FrameView::setRepaintThrottlingDeferredRepaintDelay(deferred_repaint_delay);
+    WebCore::FrameView::setRepaintThrottlingnInitialDeferredRepaintDelayDuringLoading(initial_deferred_repaint_delay_during_loading);
+    WebCore::FrameView::setRepaintThrottlingMaxDeferredRepaintDelayDuringLoading(max_deferred_repaint_delay_during_loading);
+    WebCore::FrameView::setRepaintThrottlingDeferredRepaintDelayIncrementDuringLoading(deferred_repaint_delay_increment_during_loading);
 }
 
 /**
