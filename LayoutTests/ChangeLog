@@ -1,3 +1,9 @@
+2011-06-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Update expectations after r88555.
+
+        * platform/chromium-win/svg/custom/focus-ring-expected.txt: Updated.
+
 2011-06-10  Emil A Eklund  <eae@chromium.org>
 
         Reviewed by Eric Seidel.
