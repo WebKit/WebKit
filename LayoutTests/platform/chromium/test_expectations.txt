@@ -4000,18 +4000,4 @@ BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = IMAGE PASS
 
 BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
 
-// Need to investigate, failed after http://trac.webkit.org/changeset/88478.
-BUG_DGLAZKOV MAC : fast/text/atsui-negative-spacing-features.html = IMAGE
-BUG_DGLAZKOV MAC : fast/text/atsui-spacing-features.html = IMAGE
-BUG_DGLAZKOV MAC : svg/W3C-I18N/g-dirRTL-ubNone.svg = IMAGE
-BUG_DGLAZKOV MAC : svg/W3C-I18N/g-dirRTL-ubOverride.svg = IMAGE
-BUG_DGLAZKOV MAC : svg/W3C-I18N/text-dirRTL-ubNone.svg = IMAGE
-BUG_DGLAZKOV MAC : svg/W3C-I18N/text-dirRTL-ubOverride.svg = IMAGE
-BUG_DGLAZKOV MAC : svg/W3C-I18N/tspan-dirNone-ubOverride-in-rtl-context.svg = IMAGE
-BUG_DGLAZKOV MAC : svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-default-context.svg = IMAGE
-BUG_DGLAZKOV MAC : svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context.svg = IMAGE
-BUG_DGLAZKOV MAC : svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context.svg = IMAGE
-BUG_DGLAZKOV MAC : svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context.svg = IMAGE
-BUG_DGLAZKOV MAC : svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg = IMAGE
-
 BUGWK62460 DEBUG : fast/dom/prototype-inheritance-2.html = TEXT CRASH
