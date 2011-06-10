@@ -99,10 +99,25 @@ class MediaControlPanelElement : public MediaControlElement {
 public:
     static PassRefPtr<MediaControlPanelElement> create(HTMLMediaElement*);
 
+    void setCanBeDragged(bool);
+    void resetPosition();
+
 private:
     MediaControlPanelElement(HTMLMediaElement*);
     virtual MediaControlElementType displayType() const;
     virtual const AtomicString& shadowPseudoId() const;
+    virtual void defaultEventHandler(Event*);
+
+    void startDrag(const IntPoint& eventLocation);
+    void continueDrag(const IntPoint& eventLocation);
+    void endDrag();
+
+    void setPosition(const IntPoint&);
+
+    bool m_canBeDragged;
+    bool m_isBeingDragged;
+    IntPoint m_dragStartPosition;
+    IntPoint m_dragStartEventLocation;
 };
 
 // ----------------------------

@@ -451,6 +451,8 @@ void MediaControlRootElement::enteredFullscreen()
         m_returnToRealTimeButton->hide();
     }
 
+    m_panel->setCanBeDragged(true);
+
     startHideFullscreenControlsTimer();
 }
 
@@ -463,6 +465,13 @@ void MediaControlRootElement::exitedFullscreen()
     m_seekBackButton->show();
     m_seekForwardButton->show();
     m_returnToRealTimeButton->show();
+
+    m_panel->setCanBeDragged(false);
+
+    // We will keep using the panel, but we want it to go back to the standard position.
+    // This will matter right away because we use the panel even when not fullscreen.
+    // And if we reenter fullscreen we also want the panel in the standard position.
+    m_panel->resetPosition();
 
     stopHideFullscreenControlsTimer();    
 }

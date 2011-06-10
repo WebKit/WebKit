@@ -2,6 +2,42 @@
 
         Reviewed by Eric Carlson.
 
+        REGRESSION: Fullscreen video controller can't be dragged
+        https://bugs.webkit.org/show_bug.cgi?id=62462
+
+        No regression test because we don't have machinery for testing the fullscreen
+        mode. We may find a way to add this in the future.
+
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlPanelElement::MediaControlPanelElement): Initialize new
+        booleans related to dragging.
+        (WebCore::MediaControlPanelElement::startDrag): Added. Starts drag if dragging
+        is allowed and a drag isn't already in progress.
+        (WebCore::MediaControlPanelElement::continueDrag): Added. Moves the window if
+        dragging is already in progress.
+        (WebCore::MediaControlPanelElement::endDrag): Added. Ends the capture that is
+        done during the dragging process.
+        (WebCore::MediaControlPanelElement::setPosition): Added. Positions the panel
+        using explicit top/left.
+        (WebCore::MediaControlPanelElement::resetPosition): Added. Removes the positioning
+        done by setPosition.
+        (WebCore::MediaControlPanelElement::defaultEventHandler): Added. Calls startDrag,
+        continueDrag, and endDrag in response to mouse events.
+        (WebCore::MediaControlPanelElement::setCanBeDragged): Added.
+        * html/shadow/MediaControlElements.h: Added new function and data members
+        as mentioned above.
+
+        * html/shadow/MediaControlRootElement.cpp:
+        (WebCore::MediaControlRootElement::enteredFullscreen): Call setCanBeDragged(true)
+        so you can drag the panel while in fullscreen.
+        (WebCore::MediaControlRootElement::exitedFullscreen): Call setCanBeDragged(false)
+        so you can't drag the panel while not in fullscreen. Also call resetPosition so
+        position changes from dragging don't affect the panel in other contexts.
+
+2011-06-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Carlson.
+
         REGRESSION: Full screen video HUD is positioned too low for standalone video documents
         https://bugs.webkit.org/show_bug.cgi?id=62463
 

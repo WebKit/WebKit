@@ -33,6 +33,7 @@
 #include "MediaControlElements.h"
 
 #include "CSSStyleSelector.h"
+#include "CSSValueKeywords.h"
 #include "EventNames.h"
 #include "FloatConversion.h"
 #include "Frame.h"
@@ -99,6 +100,8 @@ void MediaControlElement::hide()
 
 inline MediaControlPanelElement::MediaControlPanelElement(HTMLMediaElement* mediaElement)
     : MediaControlElement(mediaElement)
+    , m_canBeDragged(false)
+    , m_isBeingDragged(false)
 {
 }
 
@@ -116,6 +119,108 @@ const AtomicString& MediaControlPanelElement::shadowPseudoId() const
 {
     DEFINE_STATIC_LOCAL(AtomicString, id, ("-webkit-media-controls-panel"));
     return id;
+}
+
+void MediaControlPanelElement::startDrag(const IntPoint& eventLocation)
+{
+    if (!m_canBeDragged)
+        return;
+
+    if (m_isBeingDragged)
+        return;
+
+    RenderObject* renderer = this->renderer();
+    if (!renderer || !renderer->isBox())
+        return;
+
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+
+    m_dragStartPosition = toRenderBox(renderer)->location();
+    m_dragStartEventLocation = eventLocation;
+
+    frame->eventHandler()->setCapturingMouseEventsNode(this);
+
+    m_isBeingDragged = true;
+}
+
+void MediaControlPanelElement::continueDrag(const IntPoint& eventLocation)
+{
+    if (!m_isBeingDragged)
+        return;
+
+    IntSize distanceDragged = eventLocation - m_dragStartEventLocation;
+    setPosition(m_dragStartPosition + distanceDragged);
+}
+
+void MediaControlPanelElement::endDrag()
+{
+    if (!m_isBeingDragged)
+        return;
+
+    m_isBeingDragged = false;
+
+    Frame* frame = document()->frame();
+    if (!frame)
+        return;
+
+    frame->eventHandler()->setCapturingMouseEventsNode(0);
+}
+
+void MediaControlPanelElement::setPosition(const IntPoint& position)
+{
+    CSSMutableStyleDeclaration* style = getInlineStyleDecl();
+
+    double left = position.x();
+    double top = position.y();
+
+    // Set the left and top to control the panel's position; this depends on it being absolute positioned.
+    // Set the margin to zero since the position passed in will already include the effect of the margin.
+    style->setProperty(CSSPropertyLeft, left, CSSPrimitiveValue::CSS_PX);
+    style->setProperty(CSSPropertyTop, top, CSSPrimitiveValue::CSS_PX);
+    style->setProperty(CSSPropertyMarginLeft, 0.0, CSSPrimitiveValue::CSS_PX);
+    style->setProperty(CSSPropertyMarginTop, 0.0, CSSPrimitiveValue::CSS_PX);
+}
+
+void MediaControlPanelElement::resetPosition()
+{
+    CSSMutableStyleDeclaration* style = getInlineStyleDecl();
+
+    style->removeProperty(CSSPropertyLeft);
+    style->removeProperty(CSSPropertyTop);
+    style->removeProperty(CSSPropertyMarginLeft);
+    style->removeProperty(CSSPropertyMarginTop);
+}
+
+void MediaControlPanelElement::defaultEventHandler(Event* event)
+{
+    MediaControlElement::defaultEventHandler(event);
+
+    if (event->isMouseEvent()) {
+        IntPoint location = static_cast<MouseEvent*>(event)->absoluteLocation();
+        if (event->type() == eventNames().mousedownEvent) {
+            startDrag(location);
+            event->setDefaultHandled();
+        } else if (event->type() == eventNames().mousemoveEvent)
+            continueDrag(location);
+        else if (event->type() == eventNames().mouseupEvent) {
+            continueDrag(location);
+            endDrag();
+            event->setDefaultHandled();
+        }
+    }
+}
+
+void MediaControlPanelElement::setCanBeDragged(bool canBeDragged)
+{
+    if (m_canBeDragged == canBeDragged)
+        return;
+
+    m_canBeDragged = canBeDragged;
+
+    if (!canBeDragged)
+        endDrag();
 }
 
 // ----------------------------
