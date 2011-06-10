@@ -59,7 +59,7 @@ protected:
     String m_serviceType;
     String m_url;
     
-    static void updateWidgetCallback(Node*);
+    static void updateWidgetCallback(Node*, unsigned = 0);
     virtual void attach();
     virtual void detach();
 

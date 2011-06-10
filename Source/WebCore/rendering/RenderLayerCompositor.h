@@ -243,7 +243,6 @@ private:
 
     void updateOverflowControlsLayers();
 
-    void scheduleNeedsStyleRecalc(Element*);
     void notifyIFramesOfCompositingChange();
 
     // Whether a running transition or animation enforces the need for a compositing layer.

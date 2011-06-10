@@ -147,7 +147,7 @@ static bool shouldAutofocus(HTMLFormControlElement* element)
     return false;
 }
 
-static void focusPostAttach(Node* element) 
+static void focusPostAttach(Node* element, unsigned)
 { 
     static_cast<Element*>(element)->focus(); 
     element->deref(); 
@@ -256,7 +256,7 @@ bool HTMLFormControlElement::required() const
     return m_required;
 }
 
-static void updateFromElementCallback(Node* node)
+static void updateFromElementCallback(Node* node, unsigned)
 {
     ASSERT_ARG(node, node->isElementNode());
     ASSERT_ARG(node, static_cast<Element*>(node)->isFormControlElement());

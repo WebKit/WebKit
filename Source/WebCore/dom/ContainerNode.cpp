@@ -43,13 +43,18 @@
 #include <wtf/CurrentTime.h>
 #include <wtf/Vector.h>
 
+using namespace std;
+
 namespace WebCore {
 
 static void notifyChildInserted(Node*);
 static void dispatchChildInsertionEvents(Node*);
 static void dispatchChildRemovalEvents(Node*);
 
-typedef Vector<std::pair<NodeCallback, RefPtr<Node> > > NodeCallbackQueue;
+typedef pair<RefPtr<Node>, unsigned> CallbackParameters;
+typedef pair<NodeCallback, CallbackParameters> CallbackInfo;
+typedef Vector<CallbackInfo> NodeCallbackQueue;
+
 typedef Vector<RefPtr<Node>, 1> NodeVector;
 static NodeCallbackQueue* s_postAttachCallbackQueue;
 
@@ -716,12 +721,12 @@ void ContainerNode::resumePostAttachCallbacks()
     --s_attachDepth;
 }
 
-void ContainerNode::queuePostAttachCallback(NodeCallback callback, Node* node)
+void ContainerNode::queuePostAttachCallback(NodeCallback callback, Node* node, unsigned callbackData)
 {
     if (!s_postAttachCallbackQueue)
         s_postAttachCallbackQueue = new NodeCallbackQueue;
     
-    s_postAttachCallbackQueue->append(std::pair<NodeCallback, RefPtr<Node> >(callback, node));
+    s_postAttachCallbackQueue->append(CallbackInfo(callback, CallbackParameters(node, callbackData)));
 }
 
 bool ContainerNode::postAttachCallbacksAreSuspended()
@@ -734,13 +739,26 @@ void ContainerNode::dispatchPostAttachCallbacks()
     // We recalculate size() each time through the loop because a callback
     // can add more callbacks to the end of the queue.
     for (size_t i = 0; i < s_postAttachCallbackQueue->size(); ++i) {
-        std::pair<NodeCallback, RefPtr<Node> >& pair = (*s_postAttachCallbackQueue)[i];
-        NodeCallback callback = pair.first;
-        Node* node = pair.second.get();
+        const CallbackInfo& info = (*s_postAttachCallbackQueue)[i];
+        NodeCallback callback = info.first;
+        CallbackParameters params = info.second;
 
-        callback(node);
+        callback(params.first.get(), params.second);
     }
     s_postAttachCallbackQueue->clear();
+}
+
+static void needsStyleRecalcCallback(Node* node, unsigned data)
+{
+    node->setNeedsStyleRecalc(static_cast<StyleChangeType>(data));
+}
+
+void ContainerNode::scheduleSetNeedsStyleRecalc(StyleChangeType changeType)
+{
+    if (postAttachCallbacksAreSuspended())
+        queuePostAttachCallback(needsStyleRecalcCallback, this, static_cast<unsigned>(changeType));
+    else
+        setNeedsStyleRecalc(changeType);
 }
 
 void ContainerNode::attach()

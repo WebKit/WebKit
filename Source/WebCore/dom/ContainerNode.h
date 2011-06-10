@@ -30,7 +30,7 @@ namespace WebCore {
 
 class FloatPoint;
     
-typedef void (*NodeCallback)(Node*);
+typedef void (*NodeCallback)(Node*, unsigned);
 
 namespace Private { 
     template<class GenericNode, class GenericNodeContainer>
@@ -83,7 +83,9 @@ public:
     
     bool dispatchBeforeLoadEvent(const String& sourceURL);
 
-    static void queuePostAttachCallback(NodeCallback, Node*);
+    virtual void scheduleSetNeedsStyleRecalc(StyleChangeType = FullStyleChange);
+
+    static void queuePostAttachCallback(NodeCallback, Node*, unsigned = 0);
     static bool postAttachCallbacksAreSuspended();
     
 protected:

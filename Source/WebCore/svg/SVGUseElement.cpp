@@ -717,7 +717,7 @@ RenderObject* SVGUseElement::createRenderer(RenderArena* arena, RenderStyle*)
     return new (arena) RenderSVGShadowTreeRootContainer(this);
 }
 
-static void updateFromElementCallback(Node* node)
+static void updateFromElementCallback(Node* node, unsigned)
 {
     if (RenderObject* renderer = node->renderer())
         renderer->updateFromElement();

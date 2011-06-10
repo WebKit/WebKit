@@ -1654,7 +1654,7 @@ void RenderLayerCompositor::attachRootPlatformLayer(RootLayerAttachment attachme
         case RootLayerAttachedViaEnclosingFrame: {
             // The layer will get hooked up via RenderLayerBacking::updateGraphicsLayerConfiguration()
             // for the frame's renderer in the parent document.
-            scheduleNeedsStyleRecalc(m_renderView->document()->ownerElement());
+            m_renderView->document()->ownerElement()->scheduleSetNeedsStyleRecalc(SyntheticStyleChange);
             break;
         }
     }
@@ -1678,7 +1678,7 @@ void RenderLayerCompositor::detachRootPlatformLayer()
             m_rootPlatformLayer->removeFromParent();
 
         if (HTMLFrameOwnerElement* ownerElement = m_renderView->document()->ownerElement())
-            scheduleNeedsStyleRecalc(ownerElement);
+            ownerElement->scheduleSetNeedsStyleRecalc(SyntheticStyleChange);
         break;
     }
     case RootLayerAttachedViaChromeClient: {
@@ -1712,19 +1712,6 @@ void RenderLayerCompositor::rootLayerAttachmentChanged()
         backing->updateDrawsContent();
 }
 
-static void needsStyleRecalcCallback(Node* node)
-{
-    node->setNeedsStyleRecalc(SyntheticStyleChange);
-}
-
-void RenderLayerCompositor::scheduleNeedsStyleRecalc(Element* element)
-{
-    if (ContainerNode::postAttachCallbacksAreSuspended())
-        ContainerNode::queuePostAttachCallback(needsStyleRecalcCallback, element);
-    else
-        element->setNeedsStyleRecalc(SyntheticStyleChange);
-}
-
 // IFrames are special, because we hook compositing layers together across iframe boundaries
 // when both parent and iframe content are composited. So when this frame becomes composited, we have
 // to use a synthetic style change to get the iframes into RenderLayers in order to allow them to composite.
@@ -1736,13 +1723,13 @@ void RenderLayerCompositor::notifyIFramesOfCompositingChange()
 
     for (Frame* child = frame->tree()->firstChild(); child; child = child->tree()->traverseNext(frame)) {
         if (child->document() && child->document()->ownerElement())
-            scheduleNeedsStyleRecalc(child->document()->ownerElement());
+            child->document()->ownerElement()->scheduleSetNeedsStyleRecalc(SyntheticStyleChange);
     }
     
     // Compositing also affects the answer to RenderIFrame::requiresAcceleratedCompositing(), so 
     // we need to schedule a style recalc in our parent document.
     if (HTMLFrameOwnerElement* ownerElement = m_renderView->document()->ownerElement())
-        scheduleNeedsStyleRecalc(ownerElement);
+        ownerElement->scheduleSetNeedsStyleRecalc(SyntheticStyleChange);
 }
 
 bool RenderLayerCompositor::layerHas3DContent(const RenderLayer* layer) const

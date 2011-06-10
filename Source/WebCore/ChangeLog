@@ -1,3 +1,38 @@
+2011-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dave Hyatt.
+
+        Add a scheduleSetNeedsStyleRecalc() method to ContainerNode for use by RenderLayerCompositor
+        https://bugs.webkit.org/show_bug.cgi?id=62471
+
+        RenderLayerCompositor had some code that did a setNeedsStyleRecalc(), but
+        in a way that was safe to call during existing style recalc or layout.
+        
+        Move this code to ContainerElement so it can be called elsewhere.
+        Also add a param to the node callback so we can pass the style change type.
+
+        * dom/ContainerNode.cpp:
+        (WebCore::ContainerNode::queuePostAttachCallback):
+        (WebCore::ContainerNode::dispatchPostAttachCallbacks):
+        (WebCore::needsStyleRecalcCallback):
+        (WebCore::ContainerNode::scheduleSetNeedsStyleRecalc):
+        * dom/ContainerNode.h:
+        * dom/Node.h:
+        (WebCore::Node::scheduleSetNeedsStyleRecalc):
+        * html/HTMLFormControlElement.cpp:
+        (WebCore::focusPostAttach):
+        (WebCore::updateFromElementCallback):
+        * html/HTMLPlugInImageElement.cpp:
+        (WebCore::HTMLPlugInImageElement::updateWidgetCallback):
+        * html/HTMLPlugInImageElement.h:
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::attachRootPlatformLayer):
+        (WebCore::RenderLayerCompositor::detachRootPlatformLayer):
+        (WebCore::RenderLayerCompositor::notifyIFramesOfCompositingChange):
+        * rendering/RenderLayerCompositor.h:
+        * svg/SVGUseElement.cpp:
+        (WebCore::updateFromElementCallback):
+
 2011-06-10  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.
