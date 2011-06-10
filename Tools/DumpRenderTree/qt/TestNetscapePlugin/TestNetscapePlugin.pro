@@ -28,7 +28,6 @@ INCLUDEPATH += ../../../../Source/JavaScriptCore \
 SOURCES = PluginObject.cpp \
           PluginTest.cpp \
           TestObject.cpp \
-          main.cpp \
           Tests/DocumentOpenInDestroyStream.cpp \
           Tests/EvaluateJSAfterRemovingPluginElement.cpp \
           Tests/GetURLNotifyWithURLThatFailsToLoad.cpp \
@@ -44,8 +43,11 @@ SOURCES = PluginObject.cpp \
           Tests/PluginScriptableNPObjectInvokeDefault.cpp
 
 mac {
+    SOURCES += ../../TestNetscapePlugIn/main.cpp
     OBJECTIVE_SOURCES += PluginObjectMac.mm
     LIBS += -framework Carbon -framework Cocoa -framework QuartzCore
+} else {
+    SOURCES += ../../unix/TestNetscapePlugin/TestNetscapePlugin.cpp
 }
 
 DEFINES -= QT_ASCII_CAST_WARNINGS

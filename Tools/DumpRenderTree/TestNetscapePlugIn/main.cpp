@@ -27,12 +27,10 @@
 
 #include "PluginTest.h"
 #include <cstdlib>
-#include <cstring>
 #include <string>
 
 #ifdef XP_UNIX
 #include <X11/Xlib.h>
-#include <X11/Xutil.h>
 #endif
 
 #if !defined(NP_NO_CARBON) && defined(QD_HEADERS_ARE_PRIVATE) && QD_HEADERS_ARE_PRIVATE
@@ -624,38 +622,32 @@ static int16_t handleEventCocoa(NPP instance, PluginObject* obj, NPCocoaEvent* e
 #endif // XP_MACOSX
 
 #ifdef XP_UNIX
-
-static char keyEventToChar(XKeyEvent* event)
-{
-    char c = ' ';
-    XLookupString(event, &c, sizeof(c), 0, 0);
-    return c;
-}
-
 static int16_t handleEventX11(NPP instance, PluginObject* obj, XEvent* event)
 {
+    XButtonPressedEvent* buttonPressEvent = reinterpret_cast<XButtonPressedEvent*>(event);
+    XButtonReleasedEvent* buttonReleaseEvent = reinterpret_cast<XButtonReleasedEvent*>(event);
     switch (event->type) {
     case ButtonPress:
         if (obj->eventLogging)
-            pluginLog(instance, "mouseDown at (%d, %d)", event->xbutton.x, event->xbutton.y);
+            pluginLog(instance, "mouseDown at (%d, %d)", buttonPressEvent->x, buttonPressEvent->y);
         if (obj->evaluateScriptOnMouseDownOrKeyDown && obj->mouseDownForEvaluateScript)
             executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
         break;
     case ButtonRelease:
         if (obj->eventLogging)
-            pluginLog(instance, "mouseUp at (%d, %d)", event->xbutton.x, event->xbutton.y);
+            pluginLog(instance, "mouseUp at (%d, %d)", buttonReleaseEvent->x, buttonReleaseEvent->y);
         break;
     case KeyPress:
         // FIXME: extract key code
         if (obj->eventLogging)
-            pluginLog(instance, "keyDown '%c'", keyEventToChar(&event->xkey));
+            pluginLog(instance, "NOTIMPLEMENTED: keyDown '%c'", ' ');
         if (obj->evaluateScriptOnMouseDownOrKeyDown && !obj->mouseDownForEvaluateScript)
             executeScript(obj, obj->evaluateScriptOnMouseDownOrKeyDown);
         break;
     case KeyRelease:
         // FIXME: extract key code
         if (obj->eventLogging)
-            pluginLog(instance, "keyUp '%c'", keyEventToChar(&event->xkey));
+            pluginLog(instance, "NOTIMPLEMENTED: keyUp '%c'", ' ');
         break;
     case GraphicsExpose:
         if (obj->eventLogging)
@@ -675,6 +667,8 @@ static int16_t handleEventX11(NPP instance, PluginObject* obj, XEvent* event)
     case EnterNotify:
     case LeaveNotify:
     case MotionNotify:
+        if (obj->eventLogging)
+            pluginLog(instance, "adjustCursorEvent");
         break;
     default:
         if (obj->eventLogging)
@@ -784,10 +778,6 @@ NPError NPP_GetValue(NPP instance, NPPVariable variable, void *value)
     }
     if (variable == NPPVpluginDescriptionString) {
         *((char **)value) = const_cast<char*>("Simple Netscape plug-in that handles test content for WebKit");
-        return NPERR_NO_ERROR;
-    }
-    if (variable == NPPVpluginNeedsXEmbed) {
-        *((NPBool *)value) = TRUE;
         return NPERR_NO_ERROR;
     }
 #endif

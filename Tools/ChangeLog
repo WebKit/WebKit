@@ -1,3 +1,33 @@
+2011-06-09  Csaba Osztrogonác  <ossy@webkit.org>
+
+        Unreviewed rolling out r88471, because it broke plugin tests on Qt.
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (handleEventX11):
+        (NPP_GetValue):
+        * DumpRenderTree/qt/TestNetscapePlugin/TestNetscapePlugin.pro:
+        * DumpRenderTree/unix/TestNetscapePlugin/TestNetscapePlugin.cpp: Added.
+        (webkit_test_plugin_new_instance):
+        (webkit_test_plugin_destroy_instance):
+        (webkit_test_plugin_set_window):
+        (executeScript):
+        (webkit_test_plugin_new_stream):
+        (webkit_test_plugin_destroy_stream):
+        (webkit_test_plugin_stream_as_file):
+        (webkit_test_plugin_write_ready):
+        (webkit_test_plugin_write):
+        (webkit_test_plugin_print):
+        (keyEventToChar):
+        (webkit_test_plugin_handle_event):
+        (webkit_test_plugin_url_notify):
+        (webkit_test_plugin_get_value):
+        (webkit_test_plugin_set_value):
+        (NP_GetMIMEDescription):
+        (NP_Initialize):
+        (NP_Shutdown):
+        (NP_GetValue):
+        * GNUmakefile.am:
+
 2011-06-09  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.
