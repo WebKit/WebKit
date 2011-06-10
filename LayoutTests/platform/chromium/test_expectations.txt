@@ -1586,7 +1586,7 @@ BUGCR11613 LINUX DEBUG : fast/overflow/scrollRevealButton.html = FAIL
 
 // New tests with WebKit merge 46288:46363
 BUGCR18116 : fast/dom/constructed-objects-prototypes.html = TEXT
-BUGCR18116 : fast/dom/prototype-inheritance-2.html = TEXT
+BUGCR18116 RELEASE : fast/dom/prototype-inheritance-2.html = TEXT
 // New in WebKit r52559
 BUGCR18116 : svg/custom/global-constructors.html = TEXT
 
@@ -4013,3 +4013,5 @@ BUG_DGLAZKOV MAC : svg/W3C-I18N/tspan-dirRTL-ubEmbed-in-ltr-context.svg = IMAGE
 BUG_DGLAZKOV MAC : svg/W3C-I18N/tspan-dirRTL-ubOverride-in-default-context.svg = IMAGE
 BUG_DGLAZKOV MAC : svg/W3C-I18N/tspan-dirRTL-ubOverride-in-ltr-context.svg = IMAGE
 BUG_DGLAZKOV MAC : svg/W3C-I18N/tspan-dirRTL-ubOverride-in-rtl-context.svg = IMAGE
+
+BUGWK62460 DEBUG : fast/dom/prototype-inheritance-2.html = TEXT CRASH
