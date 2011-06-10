@@ -67,7 +67,8 @@ void ResourceResponse::updateFromSoupMessage(SoupMessage* soupMessage)
 
     soup_message_headers_iter_init(&headersIter, soupMessage->response_headers);
     while (soup_message_headers_iter_next(&headersIter, &headerName, &headerValue))
-        m_httpHeaderFields.set(String::fromUTF8(headerName), String::fromUTF8(headerValue));
+        m_httpHeaderFields.set(String::fromUTF8(headerName),
+                               String::fromUTF8WithLatin1Fallback(headerValue, strlen(headerValue)));
 
     m_soupFlags = soup_message_get_flags(soupMessage);
 

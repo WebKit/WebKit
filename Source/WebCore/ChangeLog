@@ -1,3 +1,19 @@
+2011-06-10  Sergio Villar Senin  <svillar@igalia.com>
+
+        Reviewed by Gustavo Noronha Silva.
+
+        [GTK] Add support for non-ASCII filenames in Content-Disposition header
+        https://bugs.webkit.org/show_bug.cgi?id=62454
+
+        Try latin1 as fallback for header parameter values as some servers
+        do not follow RFC 2045 for example with filename parameter in
+        Content-Disposition.
+
+        No new tests required as no functionality changed.
+
+        * platform/network/soup/ResourceResponseSoup.cpp:
+        (WebCore::ResourceResponse::updateFromSoupMessage):
+
 2011-06-10  No'am Rosenthal  <noam.rosenthal@nokia.com> and Viatcheslav Ostapenko <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
