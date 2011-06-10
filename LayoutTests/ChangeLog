@@ -1,3 +1,10 @@
+2011-06-09  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Mark the fullscreen directory as skipped
+        https://bugs.webkit.org/show_bug.cgi?id=62397
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

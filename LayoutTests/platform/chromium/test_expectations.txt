@@ -831,6 +831,9 @@ BUGCR25375 BUGCR59399 SKIP : media/audio-delete-while-step-button-clicked.html =
 BUGCR16735 SKIP : media/media-fullscreen-inline.html = TIMEOUT
 BUGCR16735 SKIP : media/media-fullscreen-not-in-document.html = TIMEOUT
 
+// We haven't implemented the WebKit fullscreen API yet
+BUGCR73923 SKIP : fullscreen = TIMEOUT FAIL
+
 // We haven't implemented the WebKit captioning extension.
 // UNIMPLEMENTED
 BUGCR28301 SKIP : media/media-captions.html = TIMEOUT
@@ -3598,7 +3601,6 @@ BUGDPRANKE WIN: http/tests/xmlhttprequest/access-control-preflight-headers-async
 
 BUGDPRANKE WIN : http/tests/mime/standard-mode-does-not-load-stylesheet-with-text-plain.html = TIMEOUT PASS
 BUGDPRANKE MAC LINUX DEBUG : fast/css/only-of-type-pseudo-class.html = TEXT PASS
-BUGDPRANKE LINUX DEBUG : fullscreen/full-screen-iframe-allowed.html = TEXT PASS
 BUGDPRANKE LINUX DEBUG : jquery/deferred.html = TEXT PASS
 
 // Introduced in r84443
@@ -3763,9 +3765,6 @@ BUGWK60346 : fast/xpath/4XPath/Core/test_boolean_expr.html = PASS CRASH
 
 // Since http://trac.webkit.org/changeset/85788
 BUGWK60237 DEBUG : svg/text/text-block-child-crash.xhtml = PASS CRASH
-
-// The test is added at r85811.
-BUGWK60243 : fullscreen/full-screen-stacking-context.html = IMAGE
 
 BUGWK60252 MAC GPU : animations/3d/matrix-transform-type-animation.html = IMAGE
 BUGWK60252 MAC GPU : animations/3d/state-at-end-event-transform.html = IMAGE
