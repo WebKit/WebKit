@@ -1,3 +1,20 @@
+2011-06-09  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: Vertical scroll bar appears when taking videos into full screen at jerryseinfeld.com
+        https://bugs.webkit.org/show_bug.cgi?id=62402
+
+        Sites are able to override the "overflow:hidden" rule for root full-screen nodes
+        simply by adding a "html {}" rule.  Make this rule !important, and also make it apply
+        to root nodes who are merely ancestors of full-screen elements, to cover the case of
+        a root node containing an <iframe> whose contents have gone full-screen.
+
+        * css/fullscreen.css:
+        (:root:-webkit-full-screen-document:not(:-webkit-full-screen),
+            :root:-webkit-full-screen-ancestor): Apply the overflow rule to root elements
+            who are full-screen ancestors, and make them !important.
+
 2011-06-09  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Eric Seidel.
