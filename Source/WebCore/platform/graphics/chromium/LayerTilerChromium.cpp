@@ -378,7 +378,7 @@ void LayerTilerChromium::draw(const IntRect& contentRect, const TransformationMa
             // OpenGL coordinate system is bottom-up.
             // If tile texture is top-down, we need to flip the texture coordinates.
             if (m_textureUpdater->orientation() == LayerTextureUpdater::TopDownOrientation) {
-                texTranslateY += 1.0;
+                texTranslateY = 1.0 - texTranslateY;
                 texScaleY *= -1.0;
             }
             drawTexturedQuad(context, layerRenderer()->projectionMatrix(), tileMatrix, tileRect.width(), tileRect.height(), opacity, texTranslateX, texTranslateY, texScaleX, texScaleY, program);

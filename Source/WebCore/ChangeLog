@@ -1,3 +1,16 @@
+2011-06-10  Alok Priyadarshi  <alokp@chromium.org>
+
+        Reviewed by James Robinson.
+
+        [chromium] Top portion of page is rendered messed up with accelerated drawing
+        https://bugs.webkit.org/show_bug.cgi?id=62484
+
+        Fixed the math in flipping the texture from bottom-up to top-down.
+        Test: compositing/repaint/shrink-layer.html (existing)
+
+        * platform/graphics/chromium/LayerTilerChromium.cpp:
+        (WebCore::LayerTilerChromium::draw):
+
 2011-06-10  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.
