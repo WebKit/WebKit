@@ -1,3 +1,15 @@
+2011-06-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        REGRESSION (r88332): prototype-inheritance-2 ASSERTS attempting to enumerate spellCheckRanges
+        https://bugs.webkit.org/show_bug.cgi?id=62460
+
+        Test: fast/dom/prototype-inheritance-2.html
+
+        * dom/DocumentMarkerController.cpp:
+        (WebCore::DocumentMarkerController::userSpellingMarkersForNode): Added an extra 0-check.
+
 2011-06-10  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Tony Gentilcore.

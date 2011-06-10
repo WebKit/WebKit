@@ -660,7 +660,11 @@ PassRefPtr<SpellcheckRangeList> DocumentMarkerController::userSpellingMarkersFor
 {
     RefPtr<SpellcheckRangeList> result = SpellcheckRangeList::create();
 
-    MarkerList* list = m_markers.get(userSpellingNode(node));
+    Node* spellingNode = userSpellingNode(node);
+    if (!spellingNode)
+        return result;
+
+    MarkerList* list = m_markers.get(spellingNode);
     if (!list)
         return result;
 
