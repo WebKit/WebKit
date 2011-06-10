@@ -1,5 +1,11 @@
 2011-06-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [V8] Add failure expectation for a test, added in r88559.
+
+        * platform/chromium/test_expectations.txt: Added.
+
+2011-06-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Remove expectation of crash, fixed in r88551.
 
         * platform/chromium/test_expectations.txt: Removed expectation.

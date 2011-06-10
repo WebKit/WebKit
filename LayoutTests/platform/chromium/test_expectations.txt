@@ -3999,3 +3999,4 @@ BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = TEXT P
 BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = IMAGE PASS
 
 BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
+BUGCR85755 : fast/js/exception-properties.html = TEXT
