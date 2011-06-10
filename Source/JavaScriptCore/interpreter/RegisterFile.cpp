@@ -54,12 +54,7 @@ RegisterFile::~RegisterFile()
 
 void RegisterFile::gatherConservativeRoots(ConservativeRoots& conservativeRoots)
 {
-    for (Register* it = start(); it != end(); ++it) {
-        JSValue v = it->jsValue();
-        if (!v.isCell())
-            continue;
-        conservativeRoots.add(v.asCell());
-    }
+    conservativeRoots.add(start(), end());
 }
 
 void RegisterFile::releaseExcessCapacity()

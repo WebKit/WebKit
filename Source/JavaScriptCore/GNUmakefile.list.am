@@ -117,6 +117,8 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/heap/HeapRootVisitor.h \
 	Source/JavaScriptCore/heap/MarkedBlock.cpp \
 	Source/JavaScriptCore/heap/MarkedBlock.h \
+	Source/JavaScriptCore/heap/MarkedBlockSet.h \
+	Source/JavaScriptCore/heap/TinyBloomFilter.h \
 	Source/JavaScriptCore/heap/NewSpace.cpp \
 	Source/JavaScriptCore/heap/NewSpace.h \
 	Source/JavaScriptCore/heap/Strong.h \

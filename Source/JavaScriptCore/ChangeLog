@@ -1,3 +1,63 @@
+2011-06-09  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Factored MarkedBlock set management into a helper class with a fast case Bloom filter
+        https://bugs.webkit.org/show_bug.cgi?id=62413
+        
+        SunSpider reports a small speedup.
+        
+        This is in preparation for having ConservativeSet operate on arbitrary
+        sets of MarkedBlocks, and in preparation for conservative scanning
+        becoming proportionally more important than other GC activities.
+
+        * GNUmakefile.list.am:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Build-o.
+
+        * heap/ConservativeRoots.cpp:
+        (JSC::ConservativeRoots::add):
+        * heap/ConservativeRoots.h:
+        (JSC::ConservativeRoots::ConservativeRoots): Operate on a MarkedBlockSet
+        directly, instead of a Heap, so we can operate on subsets of the Heap
+        instead.
+        
+        Use a TinyBloomFilter for single-cycle exclusion of most pointers. This
+        is particularly important since we expect not to find our subject pointer
+        in the MarkedBlock hash, and hash misses are more expensive than typical
+        hash lookups because they have high collision rates.
+        
+        No need for single-pointer add() to be public anymore, since nobody uses it.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::markRoots):
+        * heap/Heap.h:
+        (JSC::Heap::forEachCell):
+        (JSC::Heap::forEachBlock): Use MarkedBlockSet since that's what
+        ConservativeRoots relies on.
+        
+        Nixed contains(), since nobody uses it anymore.
+
+        * heap/MarkedBlock.h:
+        (WTF::MarkedBlockHash::hash): Added a faster hash taking advantage of
+        the VM layout properties of MarkedBlocks.
+
+        * heap/MarkedBlockSet.h: Added.
+        (JSC::MarkedBlockSet::add):
+        (JSC::MarkedBlockSet::remove):
+        (JSC::MarkedBlockSet::recomputeFilter):
+        (JSC::MarkedBlockSet::filter):
+        (JSC::MarkedBlockSet::set):
+        * heap/TinyBloomFilter.h: Added.
+        (JSC::TinyBloomFilter::TinyBloomFilter):
+        (JSC::TinyBloomFilter::add):
+        (JSC::TinyBloomFilter::ruleOut): New helper class, used above.
+
+        * interpreter/RegisterFile.cpp:
+        (JSC::RegisterFile::gatherConservativeRoots): No need to specifically
+        exclude values by tag -- the tiny bloom filter is already a register-register
+        compare, so adding another "rule out" factor just slows things down.
+
 2011-06-09  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.

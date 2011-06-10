@@ -25,6 +25,7 @@
 #include "HandleHeap.h"
 #include "HandleStack.h"
 #include "MarkStack.h"
+#include "MarkedBlockSet.h"
 #include "NewSpace.h"
 #include <wtf/Forward.h>
 #include <wtf/HashCountedSet.h>
@@ -89,8 +90,6 @@ namespace JSC {
         void protect(JSValue);
         bool unprotect(JSValue); // True when the protect count drops to 0.
 
-        bool contains(const void*);
-
         size_t size();
         size_t capacity();
         size_t objectCount();
@@ -145,7 +144,7 @@ namespace JSC {
 
         OperationInProgress m_operationInProgress;
         NewSpace m_newSpace;
-        HashSet<MarkedBlock*> m_blocks;
+        MarkedBlockSet m_blocks;
 
         size_t m_extraCost;
 
@@ -208,18 +207,6 @@ namespace JSC {
     {
     }
 
-    inline bool Heap::contains(const void* x)
-    {
-        if (!MarkedBlock::isAtomAligned(x))
-            return false;
-
-        MarkedBlock* block = MarkedBlock::blockFor(x);
-        if (!block || !m_blocks.contains(block))
-            return false;
-            
-        return true;
-    }
-
     inline void Heap::reportExtraMemoryCost(size_t cost)
     {
         if (cost > minExtraCost) 
@@ -244,8 +231,8 @@ namespace JSC {
 
     template<typename Functor> inline typename Functor::ReturnType Heap::forEachCell(Functor& functor)
     {
-        BlockIterator end = m_blocks.end();
-        for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        BlockIterator end = m_blocks.set().end();
+        for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
             (*it)->forEachCell(functor);
         return functor.returnValue();
     }
@@ -258,8 +245,8 @@ namespace JSC {
 
     template<typename Functor> inline typename Functor::ReturnType Heap::forEachBlock(Functor& functor)
     {
-        BlockIterator end = m_blocks.end();
-        for (BlockIterator it = m_blocks.begin(); it != end; ++it)
+        BlockIterator end = m_blocks.set().end();
+        for (BlockIterator it = m_blocks.set().begin(); it != end; ++it)
             functor(*it);
         return functor.returnValue();
     }

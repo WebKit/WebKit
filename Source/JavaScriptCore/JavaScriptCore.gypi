@@ -322,6 +322,8 @@
             'heap/HeapRootVisitor.h',
             'heap/MarkedBlock.cpp',
             'heap/MarkedBlock.h',
+            'heap/MarkedBlockSet.h',
+            'heap/TinyBloomFilter.h',
             'heap/NewSpace.cpp',
             'heap/NewSpace.h',
             'debugger/Debugger.cpp',

@@ -37,10 +37,9 @@ class Heap;
 
 class ConservativeRoots {
 public:
-    ConservativeRoots(Heap*);
+    ConservativeRoots(const MarkedBlockSet*);
     ~ConservativeRoots();
 
-    void add(void*);
     void add(void* begin, void* end);
     
     size_t size();
@@ -50,20 +49,21 @@ private:
     static const size_t inlineCapacity = 128;
     static const size_t nonInlineCapacity = 8192 / sizeof(JSCell*);
     
+    void add(void*, TinyBloomFilter);
     void grow();
 
-    Heap* m_heap;
     JSCell** m_roots;
     size_t m_size;
     size_t m_capacity;
+    const MarkedBlockSet* m_blocks;
     JSCell* m_inlineRoots[inlineCapacity];
 };
 
-inline ConservativeRoots::ConservativeRoots(Heap* heap)
-    : m_heap(heap)
-    , m_roots(m_inlineRoots)
+inline ConservativeRoots::ConservativeRoots(const MarkedBlockSet* blocks)
+    : m_roots(m_inlineRoots)
     , m_size(0)
     , m_capacity(inlineCapacity)
+    , m_blocks(blocks)
 {
 }
 
@@ -71,23 +71,6 @@ inline ConservativeRoots::~ConservativeRoots()
 {
     if (m_roots != m_inlineRoots)
         OSAllocator::decommitAndRelease(m_roots, m_capacity * sizeof(JSCell*));
-}
-
-inline void ConservativeRoots::add(void* p)
-{
-    if (!m_heap->contains(p))
-        return;
-
-    // The conservative set inverts the typical meaning of mark bits: We only
-    // visit marked pointers, and our visit clears the mark bit. This efficiently
-    // sifts out pointers to dead objects and duplicate pointers.
-    if (!m_heap->testAndClearMarked(p))
-        return;
-
-    if (m_size == m_capacity)
-        grow();
-
-    m_roots[m_size++] = static_cast<JSCell*>(p);
 }
 
 inline size_t ConservativeRoots::size()

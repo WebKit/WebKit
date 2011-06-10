@@ -24,6 +24,7 @@
 
 #include <wtf/Bitmap.h>
 #include <wtf/DoublyLinkedList.h>
+#include <wtf/HashFunctions.h>
 #include <wtf/PageAllocationAligned.h>
 #include <wtf/StdLibExtras.h>
 
@@ -47,6 +48,7 @@ namespace JSC {
         };
 
         static const size_t atomSize = sizeof(double); // Ensures natural alignment for all built-in types.
+        static const size_t blockSize = 16 * KB;
 
         static MarkedBlock* create(Heap*, size_t cellSize);
         static void destroy(MarkedBlock*);
@@ -80,7 +82,6 @@ namespace JSC {
         template <typename Functor> void forEachCell(Functor&);
 
     private:
-        static const size_t blockSize = 16 * KB;
         static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
 
         static const size_t atomMask = ~(atomSize - 1); // atomSize must be a power of two.
@@ -214,5 +215,23 @@ namespace JSC {
     }
     
 } // namespace JSC
+
+namespace WTF {
+
+    struct MarkedBlockHash : PtrHash<JSC::MarkedBlock*> {
+        static unsigned hash(JSC::MarkedBlock* const& key)
+        {
+            // Aligned VM regions tend to be monotonically increasing integers,
+            // which is a great hash function, but we have to remove the low bits,
+            // since they're always zero, which is a terrible hash function!
+            return reinterpret_cast<JSC::Bits>(key) / JSC::MarkedBlock::blockSize;
+        }
+    };
+
+    template<> struct DefaultHash<JSC::MarkedBlock*> {
+        typedef MarkedBlockHash Hash;
+    };
+
+} // namespace WTF
 
 #endif // MarkedBlock_h

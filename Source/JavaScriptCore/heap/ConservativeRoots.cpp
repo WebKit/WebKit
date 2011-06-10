@@ -44,6 +44,32 @@ void ConservativeRoots::grow()
     m_roots = newRoots;
 }
 
+inline void ConservativeRoots::add(void* p, TinyBloomFilter filter)
+{
+    MarkedBlock* candidate = MarkedBlock::blockFor(p);
+    if (filter.ruleOut(reinterpret_cast<Bits>(candidate))) {
+        ASSERT(!candidate || !m_blocks->set().contains(candidate));
+        return;
+    }
+
+    if (!MarkedBlock::isAtomAligned(p))
+        return;
+
+    if (!m_blocks->set().contains(candidate))
+        return;
+
+    // The conservative set inverts the typical meaning of mark bits: We only
+    // visit marked pointers, and our visit clears the mark bit. This efficiently
+    // sifts out pointers to dead objects and duplicate pointers.
+    if (!candidate->testAndClearMarked(p))
+        return;
+
+    if (m_size == m_capacity)
+        grow();
+
+    m_roots[m_size++] = static_cast<JSCell*>(p);
+}
+
 void ConservativeRoots::add(void* begin, void* end)
 {
     ASSERT(begin <= end);
@@ -51,8 +77,9 @@ void ConservativeRoots::add(void* begin, void* end)
     ASSERT(isPointerAligned(begin));
     ASSERT(isPointerAligned(end));
 
+    TinyBloomFilter filter = m_blocks->filter(); // Make a local copy of filter to show the compiler it won't alias, and can be register-allocated.
     for (char** it = static_cast<char**>(begin); it != static_cast<char**>(end); ++it)
-        add(*it);
+        add(*it, filter);
 }
 
 } // namespace JSC

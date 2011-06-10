@@ -404,18 +404,18 @@ void Heap::markRoots()
 
     void* dummy;
 
-    MarkStack& visitor = m_markStack;
-    HeapRootVisitor heapRootVisitor(visitor);
-
     // We gather conservative roots before clearing mark bits because conservative
     // gathering uses the mark bits to determine whether a reference is valid.
-    ConservativeRoots machineThreadRoots(this);
+    ConservativeRoots machineThreadRoots(&m_blocks);
     m_machineThreads.gatherConservativeRoots(machineThreadRoots, &dummy);
 
-    ConservativeRoots registerFileRoots(this);
+    ConservativeRoots registerFileRoots(&m_blocks);
     registerFile().gatherConservativeRoots(registerFileRoots);
 
     clearMarks();
+
+    MarkStack& visitor = m_markStack;
+    HeapRootVisitor heapRootVisitor(visitor);
 
     visitor.append(machineThreadRoots);
     visitor.drain();
