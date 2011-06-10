@@ -1,3 +1,12 @@
+2011-06-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Remove all spurious copies of test expectations that somehow made it into the tree.
+
+        * platform/chromium-linux/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
+        * platform/chromium-mac/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
+        * platform/mac/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
+
 2011-06-10  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.
