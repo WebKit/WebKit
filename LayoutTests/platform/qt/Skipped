@@ -2556,9 +2556,6 @@ fast/events/touch/touch-gesture-scroll.html
 # https://bugs.webkit.org/show_bug.cgi?id=62278
 # The profiler test is entirely unrelated to the original change r88337
 # and seems to be highly related to https://bugs.webkit.org/show_bug.cgi?id=60881
-inspector/profiler/cpu-profiler-profiling.html
 inspector/styles/styles-update-from-js.html
-inspector/profiler/detailed-heapshots-comparison-expansion-preserved-when-sorting.html
 inspector/debugger/source-frame.html
-inspector/profiler/detailed-heapshots-comparison-show-all.html
-inspector/profiler/detailed-heapshots-comparison-show-next.html
+inspector/profiler
