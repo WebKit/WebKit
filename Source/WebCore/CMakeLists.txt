@@ -847,6 +847,7 @@ SET(WebCore_SOURCES
 
     html/canvas/ArrayBuffer.cpp
     html/canvas/ArrayBufferView.cpp
+    html/canvas/CanvasContextAttributes.cpp
     html/canvas/CanvasGradient.cpp
     html/canvas/CanvasPattern.cpp
     html/canvas/CanvasPixelArray.cpp
@@ -1980,6 +1981,84 @@ IF (ENABLE_MHTML)
    )
 ENDIF ()
 
+IF (ENABLE_WEBGL)
+    LIST(APPEND WebCore_INCLUDE_DIRECTORIES
+        ${OPENGL_INCLUDE_DIR}
+        ${THIRDPARTY_DIR}/ANGLE/src
+        ${THIRDPARTY_DIR}/ANGLE/include
+        ${THIRDPARTY_DIR}/ANGLE/include/GLSLANG
+    )
+    LIST(APPEND WebCore_LIBRARIES
+        ${OPENGL_gl_LIBRARY}
+    )
+    LIST(APPEND WebCore_SOURCES
+        ${DERIVED_SOURCES_WEBCORE_DIR}/glslang.cpp
+        ${DERIVED_SOURCES_WEBCORE_DIR}/glslang_tab.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/CodeGenGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/Compiler.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/debug.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/InfoSink.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/Initialize.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/InitializeDll.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/Intermediate.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/intermOut.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/IntermTraverse.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/ossource_posix.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/OutputGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/OutputHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/parseConst.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/ParseHelper.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/PoolAlloc.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/atom.c
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/cpp.c
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/cppstruct.c
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/memory.c
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/scanner.c
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/symbols.c
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/preprocessor/tokens.c
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/QualifierAlive.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/RemoveTree.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/SearchSymbol.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/ShaderLang.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/SymbolTable.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/VersionGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/TranslatorGLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/TranslatorHLSL.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/UnfoldSelect.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/util.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/ValidateLimitations.cpp
+        ${THIRDPARTY_DIR}/ANGLE/src/compiler/VariableInfo.cpp
+
+        bindings/js/JSWebGLRenderingContextCustom.cpp
+
+        html/canvas/WebGLBuffer.cpp
+        html/canvas/WebGLContextAttributes.cpp
+        html/canvas/WebGLContextEvent.cpp
+        html/canvas/WebGLFramebuffer.cpp
+        html/canvas/WebGLGetInfo.cpp
+        html/canvas/WebGLObject.cpp
+        html/canvas/WebGLProgram.cpp
+        html/canvas/WebGLRenderbuffer.cpp
+        html/canvas/WebGLRenderingContext.cpp
+        html/canvas/WebGLShader.cpp
+        html/canvas/WebGLTexture.cpp
+        html/canvas/WebGLUniformLocation.cpp
+        html/canvas/WebGLVertexArrayObjectOES.cpp
+        html/canvas/WebGLExtension.cpp
+        html/canvas/OESStandardDerivatives.cpp
+        html/canvas/OESTextureFloat.cpp
+        html/canvas/OESVertexArrayObject.cpp
+        html/canvas/WebKitLoseContext.cpp
+
+        platform/graphics/ANGLEWebKitBridge.cpp
+        platform/graphics/gpu/DrawingBuffer.cpp
+        platform/graphics/GraphicsContext3D.cpp
+        platform/graphics/opengl/Extensions3DOpenGL.cpp
+        platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+    )
+ENDIF ()
+
 # Modules that the bindings generator scripts may use
 SET(SCRIPTS_BINDINGS
     ${WEBCORE_DIR}/bindings/scripts/IDLParser.pm
@@ -1994,6 +2073,20 @@ SET(WebCore_LIBRARIES ${JavaScriptCore_LIBRARY_NAME})
 SET(WebCore_LINK_FLAGS "")
 INCLUDE_IF_EXISTS(${WEBCORE_DIR}/CMakeLists${PORT}.txt)
 
+# ANGLE tokenizer & parser
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/glslang.cpp
+    MAIN_DEPENDENCY ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang.l
+    COMMAND ${FLEX_EXECUTABLE} --noline --nounistd --outfile=glslang.cpp ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang.l
+    WORKING_DIRECTORY ${DERIVED_SOURCES_WEBCORE_DIR}
+    VERBATIM)
+
+ADD_CUSTOM_COMMAND(
+    OUTPUT ${DERIVED_SOURCES_WEBCORE_DIR}/glslang_tab.cpp ${DERIVED_SOURCES_WEBCORE_DIR}/glslang_tab.h
+    MAIN_DEPENDENCY ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang.y
+    COMMAND ${BISON_EXECUTABLE} --no-lines --defines=glslang_tab.h --skeleton=yacc.c --output=glslang_tab.cpp ${THIRDPARTY_DIR}/ANGLE/src/compiler/glslang.y
+    WORKING_DIRECTORY ${DERIVED_SOURCES_WEBCORE_DIR}
+    VERBATIM)
 
 # All Web Inspector generated files are created with this one call to CodeGeneratorInspector.pm
 ADD_CUSTOM_COMMAND(

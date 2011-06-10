@@ -1,3 +1,16 @@
+2011-06-10  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [CMAKE] Add generic support for building with WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=62376
+
+        Set new THIRDPARTY_DIR variable to compile sources under ThirdParty.
+
+        No change in functionality so no new tests.
+
+        * CMakeLists.txt:
+
 2011-06-10  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Andreas Kling.

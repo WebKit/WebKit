@@ -1,3 +1,20 @@
+2011-06-10  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [CMAKE] Add generic support for building with WebGL
+        https://bugs.webkit.org/show_bug.cgi?id=62376
+
+        Add files that need to be compiled in every port for supporting WebGL.
+        Each port still needs to add its specific files to
+        CMakeLists${PORT}.txt. Therefore we do not enable WebGL in any port
+        yet.
+
+        * Source/CMakeLists.txt: Add files needed to support WebGL.
+        * Source/cmake/OptionsCommon.cmake: Find required OpenGL package.
+        * Source/cmakeconfig.h.cmake: define ENABLE_WEBGL this feature is
+        enabled.
+
 2011-06-09  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Antonio Gomes.
