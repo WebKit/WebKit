@@ -1,3 +1,15 @@
+2011-06-10  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Don't execute scripts in shadow SVG.
+        https://bugs.webkit.org/show_bug.cgi?id=62225
+
+        Test: svg/dom/use-style-recalc-script-execute-crash.html
+
+        * dom/ScriptElement.cpp:
+        (WebCore::ScriptElement::prepareScript):
+
 2011-06-10  Konstantin Tokarev  <ktokarev@smartlabs.tv>
 
         Reviewed by Joseph Pecoraro.

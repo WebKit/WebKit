@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+Test passes if it does not crash and "script" inside "rect" does not execute.
+<script>
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+<svg>
+<g>
+<use xlink:href="#test"/>
+<rect id="test">
+<script>
+document.body.innerHTML = "FAIL";
+</script>
+</rect>
+</g>
+</svg>
+</html>
+

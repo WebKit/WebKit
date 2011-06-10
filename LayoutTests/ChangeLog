@@ -1,3 +1,14 @@
+2011-06-10  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        Tests that trying to remove all document children while building a svg <use>
+        element shadow and instance tree does not result in crash.
+        https://bugs.webkit.org/show_bug.cgi?id=62225
+
+        * svg/dom/use-style-recalc-script-execute-crash-expected.txt: Added.
+        * svg/dom/use-style-recalc-script-execute-crash.html: Added.
+
 2011-06-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Remove tests that are now passing.
