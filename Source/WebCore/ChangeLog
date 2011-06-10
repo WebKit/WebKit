@@ -1,3 +1,19 @@
+2011-06-10  Darin Adler  <darin@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        REGRESSION: Full screen video HUD is positioned too low for standalone video documents
+        https://bugs.webkit.org/show_bug.cgi?id=62463
+
+        No test because we don't currently have machinery for testing fullscreen.
+
+        * css/fullscreen.css: Removed rule that said bottom: 0px for the control panel
+        for full page media in full screen mode. This is not needed because the control
+        panel for full screen mode already has style rules to set its vertical position.
+        (:-webkit-full-screen-ancestor:not(iframe)): Fixed typo where it said
+        -webkit-tranform. This will fix a potential problem where fullscreen would
+        malfunction on a page that had a media element inside a transform.
+
 2011-06-10  Sergio Villar Senin  <svillar@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.

@@ -1,16 +1,16 @@
 :-webkit-full-screen {
     background-color: white;
-    z-index:2147483647;
+    z-index: 2147483647;
 }
 
 :root:-webkit-full-screen-document:not(:-webkit-full-screen), :root:-webkit-full-screen-ancestor {
-    overflow:hidden !important;
+    overflow: hidden !important;
 }
 
 :-webkit-full-screen-ancestor:not(iframe) {
     z-index: auto !important;
     opacity: 1 !important;
-    -webkit-tranform: none !important;
+    -webkit-transform: none !important;
 }
 
 video:-webkit-full-screen {
@@ -39,8 +39,3 @@ iframe:-webkit-full-screen {
     left: 0 !important;
     top: 0 !important;
 }
-
-video:-webkit-full-page-media:-webkit-full-screen::-webkit-media-controls-panel {
-    bottom: 0px;
-}
-
