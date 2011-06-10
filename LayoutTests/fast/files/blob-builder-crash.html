@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script>
+function log(message)
+{
+    document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
+}
+
+function test()
+{
+    log("Test that calling WebKitBlobBuilder.append with null value should not cause crash.");
+    var builder = new WebKitBlobBuilder();
+    builder.append(null);
+
+    log("DONE");
+}
+
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+</script>
+</head>
+<body onload="test()">
+<pre id='console'></pre>
+</body>
+</html>

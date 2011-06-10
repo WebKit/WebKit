@@ -1,3 +1,15 @@
+2011-06-09  Jian Li  <jianli@chromium.org>
+
+        Reviewed by David Levin.
+
+        Calling WebKitBlobBuilder.append with null argument should not crash
+        https://bugs.webkit.org/show_bug.cgi?id=62419
+
+        Test: fast/files/blob-builder-crash.html
+
+        * fileapi/WebKitBlobBuilder.cpp:
+        (WebCore::WebKitBlobBuilder::append):
+
 2011-06-09  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by David Hyatt.

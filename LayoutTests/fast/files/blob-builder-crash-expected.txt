@@ -1,0 +1,3 @@
+Test that calling WebKitBlobBuilder.append with null value should not cause crash.
+DONE
+
