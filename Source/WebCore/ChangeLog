@@ -1,3 +1,16 @@
+2011-06-10  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB: setVersion() version argument is required
+        https://bugs.webkit.org/show_bug.cgi?id=62401
+
+        Test: storage/indexeddb/setVersion-undefined.html
+
+        * storage/IDBDatabase.cpp:
+        (WebCore::IDBDatabase::setVersion): check for null version
+        * storage/IDBDatabase.idl: add IDL magic to force undefined to null so we can handle both missing and null arguments
+
 2011-06-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
