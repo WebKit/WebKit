@@ -1,3 +1,12 @@
+2011-06-10  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Fix 'headers' autotest when building inside Qt.
+        https://bugs.webkit.org/show_bug.cgi?id=62449
+
+        * Api/qwebkitplatformplugin.h:
+
 2011-06-10  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
