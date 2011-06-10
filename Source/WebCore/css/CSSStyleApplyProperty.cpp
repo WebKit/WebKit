@@ -371,7 +371,7 @@ private:
             width = 5;
             break;
         case CSSValueInvalid:
-            width = primitiveValue->computeLengthShort(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
+            width = primitiveValue->computeLength<short>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom());
             // CSS2 box model does not allow negative lengths for borders.
             if (width < 0)
                 return;

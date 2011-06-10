@@ -572,9 +572,9 @@ void CSSStyleSelector::applySVGProperty(int id, CSSValue* value)
             if (!firstValue->isShadowValue())
                 return;
             ShadowValue* item = static_cast<ShadowValue*>(firstValue);
-            int x = item->x->computeLengthInt(style(), m_rootElementStyle);
-            int y = item->y->computeLengthInt(style(), m_rootElementStyle);
-            int blur = item->blur ? item->blur->computeLengthInt(style(), m_rootElementStyle) : 0;
+            int x = item->x->computeLength<int>(style(), m_rootElementStyle);
+            int y = item->y->computeLength<int>(style(), m_rootElementStyle);
+            int blur = item->blur ? item->blur->computeLength<int>(style(), m_rootElementStyle) : 0;
             Color color;
             if (item->color)
                 color = getColorFromPrimitiveValue(item->color.get());

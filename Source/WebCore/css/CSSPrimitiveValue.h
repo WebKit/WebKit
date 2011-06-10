@@ -136,15 +136,8 @@ public:
      * this is screen/printer dependent, so we probably need a config option for this,
      * and some tool to calibrate.
      */
-    int computeLengthInt(RenderStyle* currStyle, RenderStyle* rootStyle);
-    int computeLengthInt(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier);
-    int computeLengthIntForLength(RenderStyle* currStyle, RenderStyle* rootStyle);
-    int computeLengthIntForLength(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier);
-    short computeLengthShort(RenderStyle* currStyle, RenderStyle* rootStyle);
-    short computeLengthShort(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier);
-    float computeLengthFloat(RenderStyle* currStyle, RenderStyle* rootStyle, bool computingFontSize = false);
-    float computeLengthFloat(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier, bool computingFontSize = false);
-    double computeLengthDouble(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false);
+    template<typename T> T computeLength(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false);
+    int computeLengthIntForLength(RenderStyle* currStyle, RenderStyle* rootStyle, double multiplier = 1.0, bool computingFontSize = false);
 
     // use with care!!!
     void setPrimitiveType(unsigned short type) { m_type = type; }
@@ -220,6 +213,8 @@ private:
     void init(PassRefPtr<Pair>);
     void init(PassRefPtr<DashboardRegion>); // FIXME: Dashboard region should not be a primitive value.
     bool getDoubleValueInternal(UnitTypes targetUnitType, double* result) const;
+
+    double computeLengthDouble(RenderStyle* currentStyle, RenderStyle* rootStyle, double multiplier, bool computingFontSize);
 
     virtual bool isPrimitiveValue() const { return true; }
 

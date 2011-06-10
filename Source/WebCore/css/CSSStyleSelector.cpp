@@ -3344,7 +3344,7 @@ static Length convertToLength(CSSPrimitiveValue* primitiveValue, RenderStyle* st
                 *ok = false;
         } else if (CSSPrimitiveValue::isUnitTypeLength(type)) {
             if (toFloat)
-                l = Length(primitiveValue->computeLengthDouble(style, rootStyle, multiplier), Fixed);
+                l = Length(primitiveValue->computeLength<double>(style, rootStyle, multiplier), Fixed);
             else
                 l = Length(primitiveValue->computeLengthIntForLength(style, rootStyle, multiplier), Fixed);
         }
@@ -3740,7 +3740,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(horizontalBorderSpacing, HorizontalBorderSpacing)
         if (!primitiveValue)
             return;
-        short spacing = primitiveValue->computeLengthShort(style(), m_rootElementStyle, zoomFactor);
+        short spacing = primitiveValue->computeLength<short>(style(), m_rootElementStyle, zoomFactor);
         m_style->setHorizontalBorderSpacing(spacing);
         return;
     }
@@ -3748,7 +3748,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         HANDLE_INHERIT_AND_INITIAL(verticalBorderSpacing, VerticalBorderSpacing)
         if (!primitiveValue)
             return;
-        short spacing = primitiveValue->computeLengthShort(style(), m_rootElementStyle, zoomFactor);
+        short spacing = primitiveValue->computeLength<short>(style(), m_rootElementStyle, zoomFactor);
         m_style->setVerticalBorderSpacing(spacing);
         return;
     }
@@ -3817,7 +3817,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         } else {
             if (!primitiveValue)
                 return;
-            width = primitiveValue->computeLengthInt(style(), m_rootElementStyle, useSVGZoomRules(m_element) ? 1.0f : zoomFactor);
+            width = primitiveValue->computeLength<int>(style(), m_rootElementStyle, useSVGZoomRules(m_element) ? 1.0f : zoomFactor);
         }
         switch (id) {
         case CSSPropertyLetterSpacing:
@@ -3942,7 +3942,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                                                type != CSSPrimitiveValue::CSS_EXS &&
                                                type != CSSPrimitiveValue::CSS_REMS));
             if (CSSPrimitiveValue::isUnitTypeLength(type))
-                size = primitiveValue->computeLengthFloat(m_parentStyle, m_rootElementStyle, true);
+                size = primitiveValue->computeLength<float>(m_parentStyle, m_rootElementStyle, 1.0, true);
             else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 size = (primitiveValue->getFloatValue() * oldSize) / 100.0f;
             else
@@ -4562,11 +4562,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
         if (pair->first()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
             radiusWidth = Length(pair->first()->getDoubleValue(), Percent);
         else
-            radiusWidth = Length(max(intMinForLength, min(intMaxForLength, pair->first()->computeLengthInt(style(), m_rootElementStyle, zoomFactor))), Fixed);
+            radiusWidth = Length(max(intMinForLength, min(intMaxForLength, pair->first()->computeLength<int>(style(), m_rootElementStyle, zoomFactor))), Fixed);
         if (pair->second()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
             radiusHeight = Length(pair->second()->getDoubleValue(), Percent);
         else
-            radiusHeight = Length(max(intMinForLength, min(intMaxForLength, pair->second()->computeLengthInt(style(), m_rootElementStyle, zoomFactor))), Fixed);
+            radiusHeight = Length(max(intMinForLength, min(intMaxForLength, pair->second()->computeLength<int>(style(), m_rootElementStyle, zoomFactor))), Fixed);
         int width = radiusWidth.value();
         int height = radiusHeight.value();
         if (width < 0 || height < 0)
@@ -4599,7 +4599,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
 
     case CSSPropertyOutlineOffset:
         HANDLE_INHERIT_AND_INITIAL(outlineOffset, OutlineOffset)
-        m_style->setOutlineOffset(primitiveValue->computeLengthInt(style(), m_rootElementStyle, zoomFactor));
+        m_style->setOutlineOffset(primitiveValue->computeLength<int>(style(), m_rootElementStyle, zoomFactor));
         return;
     case CSSPropertyImageRendering:
         if (!primitiveValue)
@@ -4627,10 +4627,10 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             if (!currValue->isShadowValue())
                 continue;
             ShadowValue* item = static_cast<ShadowValue*>(list->itemWithoutBoundsCheck(i));
-            int x = item->x->computeLengthInt(style(), m_rootElementStyle, zoomFactor);
-            int y = item->y->computeLengthInt(style(), m_rootElementStyle, zoomFactor);
-            int blur = item->blur ? item->blur->computeLengthInt(style(), m_rootElementStyle, zoomFactor) : 0;
-            int spread = item->spread ? item->spread->computeLengthInt(style(), m_rootElementStyle, zoomFactor) : 0;
+            int x = item->x->computeLength<int>(style(), m_rootElementStyle, zoomFactor);
+            int y = item->y->computeLength<int>(style(), m_rootElementStyle, zoomFactor);
+            int blur = item->blur ? item->blur->computeLength<int>(style(), m_rootElementStyle, zoomFactor) : 0;
+            int spread = item->spread ? item->spread->computeLength<int>(style(), m_rootElementStyle, zoomFactor) : 0;
             ShadowStyle shadowStyle = item->style && item->style->getIdent() == CSSValueInset ? Inset : Normal;
             Color color;
             if (item->color)
@@ -4760,7 +4760,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setHasNormalColumnGap();
             return;
         }
-        m_style->setColumnGap(primitiveValue->computeLengthFloat(style(), m_rootElementStyle, zoomFactor));
+        m_style->setColumnGap(primitiveValue->computeLength<float>(style(), m_rootElementStyle, zoomFactor));
         return;
     }
     case CSSPropertyWebkitColumnSpan: {
@@ -4779,7 +4779,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setHasAutoColumnWidth();
             return;
         }
-        m_style->setColumnWidth(primitiveValue->computeLengthFloat(style(), m_rootElementStyle, zoomFactor));
+        m_style->setColumnWidth(primitiveValue->computeLength<float>(style(), m_rootElementStyle, zoomFactor));
         return;
     }
     case CSSPropertyWebkitColumnRuleStyle:
@@ -5056,11 +5056,11 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
                     result *= 3;
                 else if (primitiveValue->getIdent() == CSSValueThick)
                     result *= 5;
-                width = CSSPrimitiveValue::create(result, CSSPrimitiveValue::CSS_EMS)->computeLengthFloat(style(), m_rootElementStyle, zoomFactor);
+                width = CSSPrimitiveValue::create(result, CSSPrimitiveValue::CSS_EMS)->computeLength<float>(style(), m_rootElementStyle, zoomFactor);
                 break;
             }
             default:
-                width = primitiveValue->computeLengthFloat(style(), m_rootElementStyle, zoomFactor);
+                width = primitiveValue->computeLength<float>(style(), m_rootElementStyle, zoomFactor);
                 break;
         }
         m_style->setTextStrokeWidth(width);
@@ -5109,7 +5109,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             perspectiveValue = static_cast<float>(primitiveValue->computeLengthIntForLength(style(), m_rootElementStyle, zoomFactor));
         else if (type == CSSPrimitiveValue::CSS_NUMBER) {
             // For backward compatibility, treat valueless numbers as px.
-            perspectiveValue = CSSPrimitiveValue::create(primitiveValue->getDoubleValue(), CSSPrimitiveValue::CSS_PX)->computeLengthFloat(style(), m_rootElementStyle, zoomFactor);
+            perspectiveValue = CSSPrimitiveValue::create(primitiveValue->getDoubleValue(), CSSPrimitiveValue::CSS_PX)->computeLength<float>(style(), m_rootElementStyle, zoomFactor);
         } else
             return;
 

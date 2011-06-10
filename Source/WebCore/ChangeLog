@@ -1,3 +1,30 @@
+2011-06-10  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Clean up CSSPrimitiveValue::computeLength*
+        https://bugs.webkit.org/show_bug.cgi?id=61612
+
+        No new tests as no functionality changed.
+
+        * css/CSSGradientValue.cpp:
+        Use new computeLength functions.
+        * css/CSSPrimitiveValue.cpp:
+        (WebCore::CSSPrimitiveValue::computeLengthIntForLength):
+        Reduce to a single function using default parameter values.
+        (WebCore::CSSPrimitiveValue::computeLength):
+        Redefine existing functions with separate names as a single function using templated function specialization.
+        * css/CSSPrimitiveValue.h:
+        Prototypes for computeLengthIntForLength and computeLength.
+        * css/CSSStyleApplyProperty.cpp:
+        Use new computeLength functions.
+        * css/CSSStyleSelector.cpp:
+        Use new computeLength functions.
+        * css/MediaQueryEvaluator.cpp:
+        Use new computeLength functions.
+        * css/SVGCSSStyleSelector.cpp:
+        Use new computeLength functions.
+
 2011-06-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Beth Dakin.

@@ -249,46 +249,36 @@ void CSSPrimitiveValue::cleanup()
     }
 }
 
-int CSSPrimitiveValue::computeLengthInt(RenderStyle* style, RenderStyle* rootStyle)
+template<> int CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
 {
-    return roundForImpreciseConversion<int, INT_MAX, INT_MIN>(computeLengthDouble(style, rootStyle));
-}
-
-int CSSPrimitiveValue::computeLengthInt(RenderStyle* style, RenderStyle* rootStyle, double multiplier)
-{
-    return roundForImpreciseConversion<int, INT_MAX, INT_MIN>(computeLengthDouble(style, rootStyle, multiplier));
+    return roundForImpreciseConversion<int, INT_MAX, INT_MIN>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));
 }
 
 // Lengths expect an int that is only 28-bits, so we have to check for a
 // different overflow.
-int CSSPrimitiveValue::computeLengthIntForLength(RenderStyle* style, RenderStyle* rootStyle)
+int CSSPrimitiveValue::computeLengthIntForLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
 {
-    return roundForImpreciseConversion<int, intMaxForLength, intMinForLength>(computeLengthDouble(style, rootStyle));
+    return roundForImpreciseConversion<int, intMaxForLength, intMinForLength>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));
 }
 
-int CSSPrimitiveValue::computeLengthIntForLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier)
+template<> Length CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
 {
-    return roundForImpreciseConversion<int, intMaxForLength, intMinForLength>(computeLengthDouble(style, rootStyle, multiplier));
+    return Length(computeLengthIntForLength(style, rootStyle, multiplier, computingFontSize), Fixed);
 }
 
-short CSSPrimitiveValue::computeLengthShort(RenderStyle* style, RenderStyle* rootStyle)
+template<> short CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
 {
-    return roundForImpreciseConversion<short, SHRT_MAX, SHRT_MIN>(computeLengthDouble(style, rootStyle));
+    return roundForImpreciseConversion<short, SHRT_MAX, SHRT_MIN>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));
 }
 
-short CSSPrimitiveValue::computeLengthShort(RenderStyle* style, RenderStyle* rootStyle, double multiplier)
-{
-    return roundForImpreciseConversion<short, SHRT_MAX, SHRT_MIN>(computeLengthDouble(style, rootStyle, multiplier));
-}
-
-float CSSPrimitiveValue::computeLengthFloat(RenderStyle* style, RenderStyle* rootStyle, bool computingFontSize)
-{
-    return static_cast<float>(computeLengthDouble(style, rootStyle, 1.0, computingFontSize));
-}
-
-float CSSPrimitiveValue::computeLengthFloat(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
+template<> float CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
 {
     return static_cast<float>(computeLengthDouble(style, rootStyle, multiplier, computingFontSize));
+}
+
+template<> double CSSPrimitiveValue::computeLength(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
+{
+    return computeLengthDouble(style, rootStyle, multiplier, computingFontSize);
 }
 
 double CSSPrimitiveValue::computeLengthDouble(RenderStyle* style, RenderStyle* rootStyle, double multiplier, bool computingFontSize)
