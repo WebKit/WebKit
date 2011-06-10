@@ -7,7 +7,8 @@
             layoutTestController.setCanOpenWindows();
             layoutTestController.dumpAsText();
             layoutTestController.waitUntilDone();
-            eventSender.mouseMoveTo(17, 30);
+            var button = document.getElementById("button");
+            eventSender.mouseMoveTo(button.offsetParent.offsetLeft + button.offsetLeft + button.offsetWidth / 2, button.offsetParent.offsetTop +  button.offsetTop + button.offsetHeight / 2);
             eventSender.mouseDown();
             eventSender.mouseUp();
         }
@@ -20,7 +21,7 @@
 </head>
 <body onload="test()">
     This tests that history.go(0) will force a page reload.<br>
-    <input type="button" onclick="openWindow()" value="click"></input>
+    <input id="button" type="button" onclick="openWindow()" value="click"></input>
     <div id="console"></div>
 </body>
 </html>

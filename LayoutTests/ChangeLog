@@ -1,3 +1,16 @@
+2011-06-10  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] LayoutTests/fast/history/history_reload.html failing
+        https://bugs.webkit.org/show_bug.cgi?id=62369
+
+        Unskipping. Generating click of button element in generic way.
+        Remove hardcoding of click co-ordinates to avoid native font differences.
+
+        * fast/history/history_reload.html:
+        * platform/qt/Skipped:
+
 2011-06-09  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] The profiler test is entirely unrelated to the original change r88337

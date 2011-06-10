@@ -1231,10 +1231,6 @@ fast/ruby/overhang-vertical.html
 # https://bugs.webkit.org/show_bug.cgi?id=40584
 fast/text/justify-padding-distribution.html
 
-# Failing tests introduced by changing the default font sizes to
-# conform other platforms. Probably caused by previously hidden bugs.
-fast/history/history_reload.html
-
 # This test fails because Qt does not support conditionals in unicode special casing.
 # See also http://trolltech.com/developer/task-tracker/index_html?id=212870&method=entry
 fast/css/case-transform.html
