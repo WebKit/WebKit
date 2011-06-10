@@ -1,3 +1,15 @@
+2011-06-10  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Andreas Kling.
+
+        [GTK][EFL] m_imageInterpolationQuality is not initialized in PlatformContextCairo::PlatformContextCairo.
+        https://bugs.webkit.org/show_bug.cgi?id=62435
+
+        No new tests required as just fixed warning.
+
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::PlatformContextCairo::PlatformContextCairo):
+
 2011-06-11-06-09  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.

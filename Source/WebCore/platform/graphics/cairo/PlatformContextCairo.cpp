@@ -74,6 +74,7 @@ public:
 
 PlatformContextCairo::PlatformContextCairo(cairo_t* cr)
     : m_cr(cr)
+    , m_imageInterpolationQuality(InterpolationDefault)
 {
     m_stateStack.append(State());
     m_state = &m_stateStack.last();
