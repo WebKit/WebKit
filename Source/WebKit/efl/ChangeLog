@@ -1,3 +1,17 @@
+2011-06-10  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL]add image content hint information for tile image object when it is created
+        https://bugs.webkit.org/show_bug.cgi?id=62436
+
+        When application is using opengl_x11 Ecore_Evas, it can be working as gl texture.
+        In order to support this enhanced feature, image content hint information must be 
+        specified as EVAS_IMAGE_CONTENT_HINT_DYNAMIC
+
+        * ewk/ewk_tiled_model.c:
+        (ewk_tile_new):
+
 2011-06-10  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

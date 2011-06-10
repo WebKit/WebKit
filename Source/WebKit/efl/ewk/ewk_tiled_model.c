@@ -24,6 +24,7 @@
 #define _GNU_SOURCE
 #include "ewk_tiled_backing_store.h"
 #include "ewk_tiled_private.h"
+#include <Ecore_Evas.h>
 #include <Eina.h>
 #include <eina_safety_checks.h>
 #include <errno.h>
@@ -251,6 +252,8 @@ Ewk_Tile *ewk_tile_new(Evas *evas, Evas_Coord w, Evas_Coord h, float zoom, Evas_
     cairo_format_t format;
     cairo_status_t status;
     int stride;
+    Ecore_Evas *ee;
+    const char *engine;
 
     area = w * h;
 
@@ -272,6 +275,11 @@ Ewk_Tile *ewk_tile_new(Evas *evas, Evas_Coord w, Evas_Coord h, float zoom, Evas_
 
     MALLOC_OR_OOM_RET(t, sizeof(Ewk_Tile), NULL);
     t->image = evas_object_image_add(evas);
+
+    ee = ecore_evas_ecore_evas_get(evas);
+    engine = ecore_evas_engine_name_get(ee);
+    if (engine && !strcmp(engine, "opengl_x11"))
+        evas_object_image_content_hint_set(t->image, EVAS_IMAGE_CONTENT_HINT_DYNAMIC);
 
     l = EINA_INLIST_GET(t);
     l->prev = NULL;
