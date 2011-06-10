@@ -1,5 +1,11 @@
 2011-06-10  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Turns out, linux baseline isn't spurious.
+
+        * platform/chromium-linux/fast/dom/navigator-detached-no-crash-expected.txt: Added.
+
+2011-06-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Remove all spurious copies of test expectations that somehow made it into the tree.
 
         * platform/chromium-linux/fast/dom/navigator-detached-no-crash-expected.txt: Removed.
