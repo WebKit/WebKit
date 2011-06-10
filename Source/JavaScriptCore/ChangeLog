@@ -1,3 +1,21 @@
+2011-06-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=55347
+        "name" and "message" enumerable on *Error.prototype
+
+        This arises from chapter 15 of the spec:
+            "Every other property described in this clause has the attributes
+            { [[Writable]]: true, [[Enumerable]]: false, [[Configurable]]: true }
+            unless otherwise specified."
+        Standardized properties are not enumerable.
+
+        * runtime/ErrorInstance.cpp:
+        (JSC::ErrorInstance::ErrorInstance):
+        * runtime/NativeErrorPrototype.cpp:
+        (JSC::NativeErrorPrototype::NativeErrorPrototype):
+
 2011-06-09  Geoffrey Garen  <ggaren@apple.com>
 
         Build fix: Corrected header spelling.

@@ -30,7 +30,7 @@ ErrorInstance::ErrorInstance(JSGlobalData* globalData, Structure* structure)
     , m_appendSourceToMessage(false)
 {
     ASSERT(inherits(&s_info));
-    putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, ""));
+    putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, ""), DontEnum);
 }
 
 ErrorInstance::ErrorInstance(JSGlobalData* globalData, Structure* structure, const UString& message)
@@ -38,7 +38,7 @@ ErrorInstance::ErrorInstance(JSGlobalData* globalData, Structure* structure, con
     , m_appendSourceToMessage(false)
 {
     ASSERT(inherits(&s_info));
-    putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, message));
+    putDirect(*globalData, globalData->propertyNames->message, jsString(globalData, message), DontEnum);
 }
 
 ErrorInstance* ErrorInstance::create(JSGlobalData* globalData, Structure* structure, const UString& message)
