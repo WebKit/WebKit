@@ -2604,9 +2604,8 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
         // page width when shrunk, we will lay out at maximum shrink and clip extra content.
         // FIXME: We are assuming a shrink-to-fit printing implementation.  A cropping
         // implementation should not do this!
-        const IntRect& documentRect = root->documentRect();
         bool horizontalWritingMode = root->style()->isHorizontalWritingMode();
-        int docLogicalWidth = horizontalWritingMode ? documentRect.width() : documentRect.height();
+        int docLogicalWidth = horizontalWritingMode ? root->documentRect().width() : root->documentRect().height();
         if (docLogicalWidth > pageLogicalWidth) {
             flooredPageLogicalWidth = std::min<int>(docLogicalWidth, pageLogicalWidth * maximumShrinkFactor);
             if (pageLogicalHeight)
@@ -2614,6 +2613,7 @@ void FrameView::forceLayoutForPagination(const FloatSize& pageSize, float maximu
             root->setLogicalWidth(flooredPageLogicalWidth);
             root->setNeedsLayoutAndPrefWidthsRecalc();
             forceLayout();
+            const IntRect& documentRect = root->documentRect();
             int docLogicalHeight = horizontalWritingMode ? documentRect.height() : documentRect.width();
             int docLogicalTop = horizontalWritingMode ? documentRect.y() : documentRect.x();
             int docLogicalRight = horizontalWritingMode ? documentRect.maxX() : documentRect.maxY();

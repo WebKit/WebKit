@@ -1,3 +1,16 @@
+2011-06-10  Emil A Eklund  <eae@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Regression r85573: Blank pages appear at the end of some wikipedia documents.
+        https://bugs.webkit.org/show_bug.cgi?id=62343
+
+        Fix regression caused by r85573. Cached document size not updated after layout.
+
+        * platform/chromium-linux/printing/page-count-relayout-shrink-expected.txt: Added.
+        * platform/mac/printing/page-count-relayout-shrink-expected.txt: Added.
+        * printing/page-count-relayout-shrink.html: Added.
+
 2011-06-10  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Nikolas Zimmermann.
