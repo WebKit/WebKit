@@ -564,7 +564,9 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyWebkitTextOrientation, new ApplyPropertyFont<TextOrientation>(&FontDescription::textOrientation, &FontDescription::setTextOrientation, RenderStyle::initialTextOrientation()));
     setPropertyHandler(CSSPropertyFontWeight, new ApplyPropertyFontWeight());
 
+    setPropertyHandler(CSSPropertyOutlineStyle, new ApplyPropertyExpanding<ExpandValue>(new ApplyPropertyDefault<OutlineIsAuto>(&RenderStyle::outlineStyleIsAuto, &RenderStyle::setOutlineStyleIsAuto, &RenderStyle::initialOutlineStyleIsAuto), new ApplyPropertyDefault<EBorderStyle>(&RenderStyle::outlineStyle, &RenderStyle::setOutlineStyle, &RenderStyle::initialBorderStyle)));
     setPropertyHandler(CSSPropertyOutlineColor, new ApplyPropertyColor<InheritFromParent>(&RenderStyle::outlineColor, &RenderStyle::setOutlineColor, &RenderStyle::color));
+
 
     setPropertyHandler(CSSPropertyOverflowX, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowX, &RenderStyle::setOverflowX, &RenderStyle::initialOverflowX));
     setPropertyHandler(CSSPropertyOverflowY, new ApplyPropertyDefault<EOverflow>(&RenderStyle::overflowY, &RenderStyle::setOverflowY, &RenderStyle::initialOverflowY));

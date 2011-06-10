@@ -453,7 +453,7 @@ public:
     }
     bool hasOutline() const { return outlineWidth() > 0 && outlineStyle() > BHIDDEN; }
     EBorderStyle outlineStyle() const { return m_background->outline().style(); }
-    bool outlineStyleIsAuto() const { return m_background->outline().isAuto(); }
+    OutlineIsAuto outlineStyleIsAuto() const { return static_cast<OutlineIsAuto>(m_background->outline().isAuto()); }
     
     EOverflow overflowX() const { return static_cast<EOverflow>(noninherited_flags._overflowX); }
     EOverflow overflowY() const { return static_cast<EOverflow>(noninherited_flags._overflowY); }
@@ -884,14 +884,10 @@ public:
     void setBorderBottomWidth(unsigned short v) { SET_VAR(surround, border.m_bottom.m_width, v) }
     void setBorderBottomStyle(EBorderStyle v) { SET_VAR(surround, border.m_bottom.m_style, v) }
     void setBorderBottomColor(const Color& v) { SET_VAR(surround, border.m_bottom.m_color, v) }
+
     void setOutlineWidth(unsigned short v) { SET_VAR(m_background, m_outline.m_width, v) }
-
-    void setOutlineStyle(EBorderStyle v, bool isAuto = false)
-    {
-        SET_VAR(m_background, m_outline.m_style, v)
-        SET_VAR(m_background, m_outline.m_isAuto, isAuto)
-    }
-
+    void setOutlineStyleIsAuto(OutlineIsAuto isAuto) { SET_VAR(m_background, m_outline.m_isAuto, isAuto) }
+    void setOutlineStyle(EBorderStyle v) { SET_VAR(m_background, m_outline.m_style, v) }
     void setOutlineColor(const Color& v) { SET_VAR(m_background, m_outline.m_color, v) }
 
     void setOverflowX(EOverflow v) { noninherited_flags._overflowX = v; }
@@ -1218,6 +1214,7 @@ public:
     // Initial values for all the properties
     static EBorderCollapse initialBorderCollapse() { return BSEPARATE; }
     static EBorderStyle initialBorderStyle() { return BNONE; }
+    static OutlineIsAuto initialOutlineStyleIsAuto() { return AUTO_OFF; }
     static NinePieceImage initialNinePieceImage() { return NinePieceImage(); }
     static LengthSize initialBorderRadius() { return LengthSize(Length(0, Fixed), Length(0, Fixed)); }
     static ECaptionSide initialCaptionSide() { return CAPTOP; }

@@ -3660,15 +3660,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBorderCollapse:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(borderCollapse, BorderCollapse)
         return;
-    case CSSPropertyOutlineStyle:
-        HANDLE_INHERIT_AND_INITIAL_WITH_VALUE(outlineStyle, OutlineStyle, BorderStyle)
-        if (primitiveValue) {
-            if (primitiveValue->getIdent() == CSSValueAuto)
-                m_style->setOutlineStyle(DOTTED, true);
-            else
-                m_style->setOutlineStyle(*primitiveValue);
-        }
-        return;
     case CSSPropertyCaptionSide:
         HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(captionSide, CaptionSide)
         return;
@@ -5410,6 +5401,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyWebkitTextOrientation:
     case CSSPropertyWebkitFontSmoothing:
     case CSSPropertyFontWeight:
+    case CSSPropertyOutlineStyle:
     case CSSPropertyOutlineWidth:
     case CSSPropertyWebkitColumnRuleWidth:
     case CSSPropertyOutlineColor:

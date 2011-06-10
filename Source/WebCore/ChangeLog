@@ -2,6 +2,34 @@
 
         Reviewed by Eric Seidel.
 
+        Implement CSSPropertyOutlineStyle handler in CSSStyleApplyProperty
+        https://bugs.webkit.org/show_bug.cgi?id=61601
+
+        No new tests. No new functionality added / covered by existing tests.
+
+        * css/CSSPrimitiveValueMappings.h:
+        (WebCore::CSSPrimitiveValue::operator EBorderStyle):
+        Support CSSValueAuto as required by outline-style property.
+        (WebCore::CSSPrimitiveValue::operator OutlineIsAuto):
+        Add cast to new OutlineIsAuto enum.
+        * css/CSSStyleApplyProperty.cpp:
+        (WebCore::CSSStyleApplyProperty::CSSStyleApplyProperty):
+        Initialize handler for CSSPropertyOutlineStyle.
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::applyProperty):
+        Remove old handler for CSSPropertyOutlineStyle.
+        * rendering/style/OutlineValue.h:
+        Use new OutlineIsAuto enum instead of bool.
+        * rendering/style/RenderStyle.h:
+        Split existing two-parameter setter setOutlineStyle into separate setters for style and auto properties.
+        Use new OutlineIsAuto enum type.
+        * rendering/style/RenderStyleConstants.h:
+        Define new enum OutlineIsAuto.
+
+2011-06-09  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Code cleanup - add wrappers for function pointer dereferences to improve readability in ApplyPropertyDefaultBase and derived classes.
         https://bugs.webkit.org/show_bug.cgi?id=62418
 

@@ -87,7 +87,16 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(EBorderStyle e)
 
 template<> inline CSSPrimitiveValue::operator EBorderStyle() const
 {
+    if (m_value.ident == CSSValueAuto) // Valid for CSS outline-style
+        return DOTTED;
     return (EBorderStyle)(m_value.ident - CSSValueNone);
+}
+
+template<> inline CSSPrimitiveValue::operator OutlineIsAuto() const
+{
+    if (m_value.ident == CSSValueAuto)
+        return AUTO_ON;
+    return AUTO_OFF;
 }
 
 template<> inline CSSPrimitiveValue::CSSPrimitiveValue(CompositeOperator e)

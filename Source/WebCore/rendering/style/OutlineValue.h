@@ -34,7 +34,7 @@ friend class RenderStyle;
 public:
     OutlineValue()
         : m_offset(0)
-        , m_isAuto(false)
+        , m_isAuto(AUTO_OFF)
     {
     }
     
@@ -49,11 +49,11 @@ public:
     }
     
     int offset() const { return m_offset; }
-    bool isAuto() const { return m_isAuto; }
+    OutlineIsAuto isAuto() const { return m_isAuto; }
 
 private:
     int m_offset;
-    bool m_isAuto;
+    OutlineIsAuto m_isAuto;
 };
 
 } // namespace WebCore
