@@ -1,3 +1,10 @@
+2011-06-10  Sam Weinig  <sam@webkit.org>
+
+        Roll out r88568. It is not the right fix for the problem.
+
+        * loader/appcache/ApplicationCacheHost.cpp:
+        (WebCore::ApplicationCacheHost::isApplicationCacheEnabled):
+
 2011-06-10  Mark Rowe  <mrowe@apple.com>
 
         Reviewed by Dimitri Glazkov.
