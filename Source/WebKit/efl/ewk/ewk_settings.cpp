@@ -77,7 +77,7 @@ static WTF::String _ewk_settings_webkit_os_version_get()
     struct utsname name;
 
     if (uname(&name) != -1)
-        ua_os_version = WTF::String(name.sysname) + " " + WTF::String(name.machine);
+        ua_os_version = makeString(name.sysname, ' ', name.machine);
     else
         ua_os_version = "Unknown";
 

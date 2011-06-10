@@ -1,3 +1,16 @@
+2011-06-10  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Use makeString() when getting os version
+        https://bugs.webkit.org/show_bug.cgi?id=62434
+
+        When os version string is created, to use makeString() is better than
+        String operation.
+
+        * ewk/ewk_settings.cpp:
+        (_ewk_settings_webkit_os_version_get):
+
 2011-06-09  Hyowon Kim  <hw1008.kim@samsung.com>
 
         Reviewed by Antonio Gomes.
