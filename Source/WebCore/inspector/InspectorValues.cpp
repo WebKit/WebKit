@@ -186,15 +186,10 @@ bool parseStringToken(const UChar* start, const UChar* end, const UChar** tokenE
     return false;
 }
 
-Token parseToken(const UChar* start, const UChar* end, const UChar** tokenStart, const UChar** tokenEnd)
+Token parseToken(const UChar* start, const UChar* end, const UChar** tokenEnd)
 {
-    while (start < end && u_isspace(*start))
-        ++start;
-
     if (start == end)
         return INVALID_TOKEN;
-
-    *tokenStart = start;
 
     switch (*start) {
     case 'n':
@@ -335,9 +330,8 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
         return 0;
 
     RefPtr<InspectorValue> result;
-    const UChar* tokenStart;
     const UChar* tokenEnd;
-    Token token = parseToken(start, end, &tokenStart, &tokenEnd);
+    Token token = parseToken(start, end, &tokenEnd);
     switch (token) {
     case INVALID_TOKEN:
         return 0;
@@ -352,7 +346,7 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
         break;
     case NUMBER: {
         bool ok;
-        double value = charactersToDouble(tokenStart, tokenEnd - tokenStart, &ok);
+        double value = charactersToDouble(start, tokenEnd - start, &ok);
         if (!ok)
             return 0;
         result = InspectorBasicValue::create(value);
@@ -360,7 +354,7 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
     }
     case STRING: {
         String value;
-        bool ok = decodeString(tokenStart + 1, tokenEnd - 1, &value);
+        bool ok = decodeString(start + 1, tokenEnd - 1, &value);
         if (!ok)
             return 0;
         result = InspectorString::create(value);
@@ -369,7 +363,7 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
     case ARRAY_BEGIN: {
         RefPtr<InspectorArray> array = InspectorArray::create();
         start = tokenEnd;
-        token = parseToken(start, end, &tokenStart, &tokenEnd);
+        token = parseToken(start, end, &tokenEnd);
         while (token != ARRAY_END) {
             RefPtr<InspectorValue> arrayNode = buildValue(start, end, &tokenEnd, depth + 1);
             if (!arrayNode)
@@ -378,10 +372,10 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
 
             // After a list value, we expect a comma or the end of the list.
             start = tokenEnd;
-            token = parseToken(start, end, &tokenStart, &tokenEnd);
+            token = parseToken(start, end, &tokenEnd);
             if (token == LIST_SEPARATOR) {
                 start = tokenEnd;
-                token = parseToken(start, end, &tokenStart, &tokenEnd);
+                token = parseToken(start, end, &tokenEnd);
                 if (token == ARRAY_END)
                     return 0;
             } else if (token != ARRAY_END) {
@@ -397,16 +391,16 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
     case OBJECT_BEGIN: {
         RefPtr<InspectorObject> object = InspectorObject::create();
         start = tokenEnd;
-        token = parseToken(start, end, &tokenStart, &tokenEnd);
+        token = parseToken(start, end, &tokenEnd);
         while (token != OBJECT_END) {
             if (token != STRING)
                 return 0;
             String key;
-            if (!decodeString(tokenStart + 1, tokenEnd - 1, &key))
+            if (!decodeString(start + 1, tokenEnd - 1, &key))
                 return 0;
             start = tokenEnd;
 
-            token = parseToken(start, end, &tokenStart, &tokenEnd);
+            token = parseToken(start, end, &tokenEnd);
             if (token != OBJECT_PAIR_SEPARATOR)
                 return 0;
             start = tokenEnd;
@@ -419,10 +413,10 @@ PassRefPtr<InspectorValue> buildValue(const UChar* start, const UChar* end, cons
 
             // After a key/value pair, we expect a comma or the end of the
             // object.
-            token = parseToken(start, end, &tokenStart, &tokenEnd);
+            token = parseToken(start, end, &tokenEnd);
             if (token == LIST_SEPARATOR) {
                 start = tokenEnd;
-                token = parseToken(start, end, &tokenStart, &tokenEnd);
+                token = parseToken(start, end, &tokenEnd);
                  if (token == OBJECT_END)
                     return 0;
             } else if (token != OBJECT_END) {
