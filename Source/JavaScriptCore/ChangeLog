@@ -1,3 +1,14 @@
+2011-06-09  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Geoff Garen.
+
+        Bug 62405 - Fix integer overflow in Array.prototype.push
+
+        Fix geoff's review comments re static_cast.
+
+        * runtime/ArrayPrototype.cpp:
+        (JSC::arrayProtoFuncPush):
+
 2011-06-09  Geoffrey Garen  <ggaren@apple.com>
 
         Reviewed by Oliver Hunt.

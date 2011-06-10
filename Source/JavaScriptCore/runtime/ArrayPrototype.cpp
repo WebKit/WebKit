@@ -407,11 +407,11 @@ EncodedJSValue JSC_HOST_CALL arrayProtoFuncPush(ExecState* exec)
             thisObj->put(exec, length + n, exec->argument(n));
         else {
             PutPropertySlot slot;
-            Identifier propertyName(exec, JSValue((int64_t)length + (int64_t)n).toString(exec));
+            Identifier propertyName(exec, JSValue(static_cast<int64_t>(length) + static_cast<int64_t>(n)).toString(exec));
             thisObj->put(exec, propertyName, exec->argument(n), slot);
         }
     }
-    JSValue newLength = jsNumber((int64_t)length + (int64_t)exec->argumentCount());
+    JSValue newLength(static_cast<int64_t>(length) + static_cast<int64_t>(exec->argumentCount()));
     putProperty(exec, thisObj, exec->propertyNames().length, newLength);
     return JSValue::encode(newLength);
 }
