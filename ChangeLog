@@ -1,3 +1,23 @@
+2011-06-09  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Antonio Gomes.
+
+        [CMAKE] Never let USER_AGENT defined to nothing
+        https://bugs.webkit.org/show_bug.cgi?id=62410
+
+        This patch is similar to r88342, but sets WEBKIT_USER_AGENT_*
+        definitions only if that port defined it. A port might prefer to set it
+        in other place, e.g. a header that is part of the public API (like GTK
+        does).
+
+        By using #cmakedefine instead of #define, if that variable is not set
+        in CMake it will expand to:
+
+        /* #define WEBKIT_USER_AGENT_MAJOR_VERSION */
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2011-06-08  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Antonio Gomes.

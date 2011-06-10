@@ -8,8 +8,8 @@ SET(PROJECT_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_
 # Sync with Source/WebCore/Configurations/Version.xcconfig whenever Safari is
 # version up.
 # -----------------------------------------------------------------------------
-SET(USER_AGENT_VERSION_MAJOR 534)
-SET(USER_AGENT_VERSION_MINOR 16)
+SET(WEBKIT_USER_AGENT_MAJOR_VERSION 534)
+SET(WEBKIT_USER_AGENT_MINOR_VERSION 16)
 
 ADD_DEFINITIONS(-DWTF_PLATFORM_EFL=1)
 SET(WTF_PLATFORM_EFL 1)
