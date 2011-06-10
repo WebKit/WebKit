@@ -3785,11 +3785,6 @@ BUGCR82419 : svg/custom/fill-opacity-update.svg = IMAGE
 BUGWK58999 WIN LINUX : fast/borders/outline-alpha-block.html = IMAGE
 BUGWK58999 WIN LINUX : fast/borders/outline-alpha-inline.html = IMAGE
 
-// New pixel tests added for bug 58999. These should be rebaselined for chromium-mac
-// as the bug fix is available on that platform but there are image differences due to fonts
-BUGWK58999 MAC : fast/borders/outline-alpha-block.html = IMAGE
-BUGWK58999 MAC : fast/borders/outline-alpha-inline.html = IMAGE
-
 // Likely rebaseline needed.
 BUGATWILSON LINUX WIN : svg/custom/stroke-opacity-update.svg = IMAGE
 

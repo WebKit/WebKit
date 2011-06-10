@@ -1,3 +1,9 @@
+2011-06-09  James Kozianski  <koz@chromium.org>
+
+        [Chromium] Unreviewed. Remove expectations for passing tests.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-09  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update some chromium gpu baselines
