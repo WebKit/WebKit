@@ -1,3 +1,16 @@
+2011-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Null-check the layer owner again when painting layers
+        https://bugs.webkit.org/show_bug.cgi?id=62473
+
+        Speculative fix for a crash that occurs when the layer's owner
+        gets destroyed during painting.
+
+        * platform/graphics/mac/WebLayer.mm:
+        (drawLayerContents):
+
 2011-06-08  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.
