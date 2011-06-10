@@ -28,7 +28,7 @@
 
 #include "MarkedBlock.h"
 #include <wtf/DoublyLinkedList.h>
-#include <wtf/NonCopyable.h>
+#include <wtf/Noncopyable.h>
 
 namespace JSC {
     

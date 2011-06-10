@@ -1,5 +1,11 @@
 2011-06-09  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: Corrected header spelling.
+
+        * heap/OldSpace.h:
+
+2011-06-09  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Added OldSpace to the project
