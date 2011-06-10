@@ -74,6 +74,8 @@
 
         Sort all our Xcode projects
 
+        Accomplished using sort-Xcode-project-file.
+
         Requested by Dave Kilzer.
 
         * NetscapeCocoaPlugin/NetscapeCocoaPlugin.xcodeproj/project.pbxproj:
