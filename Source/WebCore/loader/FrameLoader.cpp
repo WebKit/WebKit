@@ -447,10 +447,11 @@ void FrameLoader::stop()
     // http://bugs.webkit.org/show_bug.cgi?id=10854
     // The frame's last ref may be removed and it will be deleted by checkCompleted().
     RefPtr<Frame> protector(m_frame);
-    
-    if (m_frame->document()->parser())
-        m_frame->document()->parser()->stopParsing();
-    m_frame->document()->finishParsing();
+
+    if (DocumentParser* parser = m_frame->document()->parser()) {
+        parser->stopParsing();
+        parser->finish();
+    }
 
     if (m_iconLoader)
         m_iconLoader->stopLoading();

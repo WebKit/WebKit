@@ -416,8 +416,7 @@ void HTMLDocumentParser::finish()
 {
     // FIXME: We should ASSERT(!m_parserStopped) here, since it does not
     // makes sense to call any methods on DocumentParser once it's been stopped.
-    // However, FrameLoader::stop calls Document::finishParsing unconditionally
-    // which in turn calls m_parser->finish().
+    // However, FrameLoader::stop calls DocumentParser::finish unconditionally.
 
     // We're not going to get any more data off the network, so we tell the
     // input stream we've reached the end of file.  finish() can be called more

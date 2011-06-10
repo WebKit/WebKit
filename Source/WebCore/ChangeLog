@@ -1,3 +1,29 @@
+2011-06-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove Document::finishParsing
+        https://bugs.webkit.org/show_bug.cgi?id=62474
+
+        This function appears to exist only to confuse and befuddle us.  This
+        patch prepares for DocumentWriter to grab hold of the parser.
+
+        This patch removes one of the print statements from
+        INSTRUMENT_LAYOUT_SCHEDULING, but I'm not sure
+        INSTRUMENT_LAYOUT_SCHEDULING works anymore anyway.
+
+        * dom/Document.cpp:
+        * dom/Document.h:
+        * dom/XMLDocumentParser.cpp:
+        (WebCore::XMLDocumentParser::finish):
+        * html/parser/HTMLDocumentParser.cpp:
+        (WebCore::HTMLDocumentParser::finish):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::addData):
+        (WebCore::DocumentWriter::endIfNotLoadingMainResource):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::stop):
+
 2011-06-10  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

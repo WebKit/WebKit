@@ -198,8 +198,7 @@ void DocumentWriter::addData(const char* str, int len, bool flush)
     if (len == -1)
         len = strlen(str);
 
-    DocumentParser* parser = m_frame->document()->parser();
-    if (parser)
+    if (DocumentParser* parser = m_frame->document()->parser())
         parser->appendBytes(this, str, len, flush);
 }
 
@@ -219,9 +218,11 @@ void DocumentWriter::endIfNotLoadingMainResource()
     // so we'll add a protective refcount
     RefPtr<Frame> protector(m_frame);
 
-    // make sure nothing's left in there
+    // FIXME: Can we remove this call? Finishing the parser should flush anyway.
     addData(0, 0, true);
-    m_frame->document()->finishParsing();
+
+    if (DocumentParser* parser = m_frame->document()->parser())
+        parser->finish();
 }
 
 String DocumentWriter::encoding() const

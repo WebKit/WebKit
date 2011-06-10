@@ -589,7 +589,6 @@ public:
     void write(const SegmentedString& text, Document* ownerDocument = 0);
     void write(const String& text, Document* ownerDocument = 0);
     void writeln(const String& text, Document* ownerDocument = 0);
-    void finishParsing();
 
     bool wellFormed() const { return m_wellFormed; }
 

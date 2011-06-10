@@ -2280,22 +2280,6 @@ void Document::writeln(const String& text, Document* ownerDocument)
     write("\n", ownerDocument);
 }
 
-void Document::finishParsing()
-{
-#ifdef INSTRUMENT_LAYOUT_SCHEDULING
-    if (!ownerElement())
-        printf("Received all data at %d\n", elapsedTime());
-#endif
-    
-    // Let the parser go through as much data as it can.  There will be three possible outcomes after
-    // finish() is called:
-    // (1) All remaining data is parsed, document isn't loaded yet
-    // (2) All remaining data is parsed, document is loaded, parser gets deleted
-    // (3) Data is still remaining to be parsed.
-    if (m_parser)
-        m_parser->finish();
-}
-
 const KURL& Document::virtualURL() const
 {
     return m_url;
