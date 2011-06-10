@@ -1,3 +1,23 @@
+2011-06-09  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        [Chromium] Worker object may be garbage collected even if it has message handlers
+        https://bugs.webkit.org/show_bug.cgi?id=62292
+
+        I'd like to convert the test case into a layout test but I don't see yet
+        how to do this so that the test isn't too slow and reliable. The problem
+        with test is that full-GC needs to be triggered right after
+        WebWorkerClientImpl::confirmMessageFromWorkerObject is called and there
+        is no way to hook WebWorkerClientImpl::confirmMessageFromWorkerObject from JavaScript.
+        So no test for now.
+
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::confirmMessageFromWorkerObject):
+        (WebKit::WebWorkerClientImpl::confirmMessageFromWorkerObjectTask): update worker context pending
+        activity state every time a message is confirmed since the message may have created a new activity.
+        * src/WebWorkerClientImpl.h:
+
 2011-06-09  James Kozianski  <koz@chromium.org>
 
         Unreviewed, rolling out r88466.

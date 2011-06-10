@@ -318,7 +318,8 @@ void WebWorkerClientImpl::confirmMessageFromWorkerObject(bool hasPendingActivity
     // accessed.  Otherwise there are race conditions with v8's garbage
     // collection.
     m_scriptExecutionContext->postTask(createCallbackTask(&confirmMessageFromWorkerObjectTask,
-                                                          AllowCrossThreadAccess(this)));
+                                                          AllowCrossThreadAccess(this),
+                                                          hasPendingActivity));
 }
 
 void WebWorkerClientImpl::reportPendingActivity(bool hasPendingActivity)
@@ -432,9 +433,11 @@ void WebWorkerClientImpl::postConsoleMessageToWorkerObjectTask(ScriptExecutionCo
 }
 
 void WebWorkerClientImpl::confirmMessageFromWorkerObjectTask(ScriptExecutionContext* context,
-                                                             WebWorkerClientImpl* thisPtr)
+                                                             WebWorkerClientImpl* thisPtr,
+                                                             bool hasPendingActivity)
 {
     thisPtr->m_unconfirmedMessageCount--;
+    thisPtr->m_workerContextHadPendingActivity = hasPendingActivity;
 }
 
 void WebWorkerClientImpl::reportPendingActivityTask(ScriptExecutionContext* context,

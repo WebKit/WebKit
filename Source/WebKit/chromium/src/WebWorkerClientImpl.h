@@ -153,7 +153,8 @@ private:
                                                      int lineNumber,
                                                      const WTF::String& sourceURL);
     static void confirmMessageFromWorkerObjectTask(WebCore::ScriptExecutionContext* context,
-                                                   WebWorkerClientImpl* thisPtr);
+                                                   WebWorkerClientImpl* thisPtr,
+                                                   bool hasPendingActivity);
     static void reportPendingActivityTask(WebCore::ScriptExecutionContext* context,
                                           WebWorkerClientImpl* thisPtr,
                                           bool hasPendingActivity);
