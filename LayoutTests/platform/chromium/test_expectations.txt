@@ -1586,7 +1586,7 @@ BUGCR11613 LINUX DEBUG : fast/overflow/scrollRevealButton.html = FAIL
 
 // New tests with WebKit merge 46288:46363
 BUGCR18116 : fast/dom/constructed-objects-prototypes.html = TEXT
-BUGCR18116 RELEASE : fast/dom/prototype-inheritance-2.html = TEXT
+BUGCR18116 : fast/dom/prototype-inheritance-2.html = TEXT
 // New in WebKit r52559
 BUGCR18116 : svg/custom/global-constructors.html = TEXT
 
@@ -3999,5 +3999,3 @@ BUGCR85292 : platform/chromium/permissionclient/storage-permission.html = TEXT P
 BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = IMAGE PASS
 
 BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
-
-BUGWK62460 DEBUG : fast/dom/prototype-inheritance-2.html = TEXT CRASH

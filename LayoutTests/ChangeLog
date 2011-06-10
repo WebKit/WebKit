@@ -1,3 +1,9 @@
+2011-06-10  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Remove expectation of crash, fixed in r88551.
+
+        * platform/chromium/test_expectations.txt: Removed expectation.
+
 2011-06-10  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
