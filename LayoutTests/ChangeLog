@@ -1,3 +1,9 @@
+2011-06-10  Emil A Eklund  <eae@chromium.org>
+
+        Land Windows expectations for new test added in r88556.
+
+        * platform/win/printing/page-count-relayout-shrink-expected.txt: Added.
+
 2011-06-10  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.
