@@ -174,7 +174,7 @@ protected:
                 && (_border_collapse == other._border_collapse)
                 && (_white_space == other._white_space)
                 && (_box_direction == other._box_direction)
-                && (_visuallyOrdered == other._visuallyOrdered)
+                && (m_rtlOrdering == other.m_rtlOrdering)
                 && (_force_backgrounds_to_white == other._force_backgrounds_to_white)
                 && (_pointerEvents == other._pointerEvents)
                 && (_insideLink == other._insideLink)
@@ -199,7 +199,7 @@ protected:
         // 34 bits
         
         // non CSS2 inherited
-        bool _visuallyOrdered : 1;
+        unsigned m_rtlOrdering : 1; // Order
         bool _force_backgrounds_to_white : 1;
         unsigned _pointerEvents : 4; // EPointerEvents
         unsigned _insideLink : 2; // EInsideLink
@@ -278,7 +278,7 @@ protected:
         inherited_flags._direction = initialDirection();
         inherited_flags._border_collapse = initialBorderCollapse();
         inherited_flags._white_space = initialWhiteSpace();
-        inherited_flags._visuallyOrdered = initialVisuallyOrdered();
+        inherited_flags.m_rtlOrdering = initialRTLOrdering();
         inherited_flags._box_direction = initialBoxDirection();
         inherited_flags._force_backgrounds_to_white = false;
         inherited_flags._pointerEvents = initialPointerEvents();
@@ -358,8 +358,8 @@ public:
         return hasBackgroundImage();
     }
 
-    bool visuallyOrdered() const { return inherited_flags._visuallyOrdered; }
-    void setVisuallyOrdered(bool b) { inherited_flags._visuallyOrdered = b; }
+    Order rtlOrdering() const { return static_cast<Order>(inherited_flags.m_rtlOrdering); }
+    void setRTLOrdering(Order o) { inherited_flags.m_rtlOrdering = o; }
 
     bool isStyleAvailable() const;
 
@@ -1297,7 +1297,7 @@ public:
     static EBorderFit initialBorderFit() { return BorderFitBorder; }
     static EResize initialResize() { return RESIZE_NONE; }
     static ControlPart initialAppearance() { return NoControlPart; }
-    static bool initialVisuallyOrdered() { return false; }
+    static Order initialRTLOrdering() { return LogicalOrder; }
     static float initialTextStrokeWidth() { return 0; }
     static unsigned short initialColumnCount() { return 1; }
     static bool initialColumnSpan() { return false; }

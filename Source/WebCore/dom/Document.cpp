@@ -1912,7 +1912,7 @@ void Document::setVisuallyOrdered()
 {
     m_visuallyOrdered = true;
     if (renderer())
-        renderer()->style()->setVisuallyOrdered(true);
+        renderer()->style()->setRTLOrdering(VisualOrder);
 }
 
 PassRefPtr<DocumentParser> Document::createParser()

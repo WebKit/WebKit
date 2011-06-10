@@ -6308,7 +6308,7 @@ TextRun RenderBlock::constructTextRun(RenderObject* context, const Font& font, c
     ASSERT(style);
 
     TextDirection textDirection = LTR;
-    bool directionalOverride = style->visuallyOrdered();
+    bool directionalOverride = style->rtlOrdering() == VisualOrder;
     if (flags != DefaultTextRunFlags) {
         if (flags & RespectDirection)
             textDirection = style->direction();

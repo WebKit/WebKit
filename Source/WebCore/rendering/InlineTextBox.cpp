@@ -1314,7 +1314,7 @@ TextRun InlineTextBox::constructTextRun(RenderStyle* style, const Font& font, co
     if (charactersWithHyphen)
         adjustCharactersAndLengthForHyphen(*charactersWithHyphen, style, characters, length);
 
-    TextRun run(characters, length, textRenderer->allowTabs(), textPos(), expansion(), expansionBehavior(), direction(), m_dirOverride || style->visuallyOrdered());
+    TextRun run(characters, length, textRenderer->allowTabs(), textPos(), expansion(), expansionBehavior(), direction(), m_dirOverride || style->rtlOrdering() == VisualOrder);
     if (textRunNeedsRenderingContext(font))
         run.setRenderingContext(SVGTextRunRenderingContext::create(textRenderer));
 

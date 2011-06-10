@@ -423,7 +423,7 @@ TextRun SVGInlineTextBox::constructTextRun(RenderStyle* style, const SVGTextFrag
                 , 0 /* padding, only relevant for justified text, not relevant for SVG */
                 , TextRun::AllowTrailingExpansion
                 , direction()
-                , m_dirOverride || style->visuallyOrdered() /* directionalOverride */);
+                , m_dirOverride || style->rtlOrdering() == VisualOrder /* directionalOverride */);
 
     if (textRunNeedsRenderingContext(style->font()))
         run.setRenderingContext(SVGTextRunRenderingContext::create(text));

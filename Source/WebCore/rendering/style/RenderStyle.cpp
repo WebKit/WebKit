@@ -421,7 +421,7 @@ StyleDifference RenderStyle::diff(const RenderStyle* other, unsigned& changedCon
         || inherited->horizontal_border_spacing != other->inherited->horizontal_border_spacing
         || inherited->vertical_border_spacing != other->inherited->vertical_border_spacing
         || inherited_flags._box_direction != other->inherited_flags._box_direction
-        || inherited_flags._visuallyOrdered != other->inherited_flags._visuallyOrdered
+        || inherited_flags.m_rtlOrdering != other->inherited_flags.m_rtlOrdering
         || noninherited_flags._position != other->noninherited_flags._position
         || noninherited_flags._floating != other->noninherited_flags._floating
         || noninherited_flags._originalDisplay != other->noninherited_flags._originalDisplay)

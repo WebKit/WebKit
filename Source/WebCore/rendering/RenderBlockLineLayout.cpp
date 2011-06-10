@@ -345,7 +345,7 @@ RootInlineBox* RenderBlock::constructLine(BidiRunList<BidiRun>& bidiRuns, const 
             parentBox->addToLine(box);
         }
 
-        bool visuallyOrdered = r->m_object->style()->visuallyOrdered();
+        bool visuallyOrdered = r->m_object->style()->rtlOrdering() == VisualOrder;
         box->setBidiLevel(r->level());
 
         if (box->isInlineTextBox()) {
@@ -961,7 +961,7 @@ void RenderBlock::layoutRunsAndFloats(LineLayoutState& layoutState, bool hasInli
             if (lastRootBox())
                 lastRootBox()->setLineBreakInfo(end.m_obj, end.m_pos, resolver.status());
         } else {
-            VisualDirectionOverride override = (style()->visuallyOrdered() ? (style()->direction() == LTR ? VisualLeftToRightOverride : VisualRightToLeftOverride) : NoVisualOverride);
+            VisualDirectionOverride override = (style()->rtlOrdering() == VisualOrder ? (style()->direction() == LTR ? VisualLeftToRightOverride : VisualRightToLeftOverride) : NoVisualOverride);
             // FIXME: This ownership is reversed. We should own the BidiRunList and pass it to createBidiRunsForLine.
             BidiRunList<BidiRun>& bidiRuns = resolver.runs();
             resolver.createBidiRunsForLine(end, override, lineInfo.previousLineBrokeCleanly());

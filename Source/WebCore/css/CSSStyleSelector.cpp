@@ -1223,7 +1223,7 @@ PassRefPtr<RenderStyle> CSSStyleSelector::styleForDocument(Document* document)
 
     RefPtr<RenderStyle> documentStyle = RenderStyle::create();
     documentStyle->setDisplay(BLOCK);
-    documentStyle->setVisuallyOrdered(document->visuallyOrdered());
+    documentStyle->setRTLOrdering(document->visuallyOrdered() ? VisualOrder : LogicalOrder);
     documentStyle->setZoom(frame ? frame->pageZoomFactor() : 1);
     documentStyle->setPageScaleTransform(frame ? frame->pageScaleFactor() : 1);
     documentStyle->setUserModify(document->inDesignMode() ? READ_WRITE : READ_ONLY);
@@ -5042,10 +5042,7 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     }
 #endif        
     case CSSPropertyWebkitRtlOrdering:
-        HANDLE_INHERIT_AND_INITIAL(visuallyOrdered, VisuallyOrdered)
-        if (!primitiveValue || !primitiveValue->getIdent())
-            return;
-        m_style->setVisuallyOrdered(primitiveValue->getIdent() == CSSValueVisual);
+        HANDLE_INHERIT_AND_INITIAL_AND_PRIMITIVE(rtlOrdering, RTLOrdering)
         return;
     case CSSPropertyWebkitTextStrokeWidth: {
         HANDLE_INHERIT_AND_INITIAL(textStrokeWidth, TextStrokeWidth)

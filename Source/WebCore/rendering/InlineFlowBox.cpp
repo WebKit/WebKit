@@ -1387,7 +1387,7 @@ void InlineFlowBox::collectLeafBoxesInLogicalOrder(Vector<InlineBox*>& leafBoxes
         leafBoxesInLogicalOrder.append(leaf);
     }
 
-    if (renderer()->style()->visuallyOrdered())
+    if (renderer()->style()->rtlOrdering() == VisualOrder)
         return;
 
     // Reverse of reordering of the line (L2 according to Bidi spec):

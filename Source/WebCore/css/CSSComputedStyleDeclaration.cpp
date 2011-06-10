@@ -1568,9 +1568,7 @@ PassRefPtr<CSSValue> CSSComputedStyleDeclaration::getPropertyCSSValue(int proper
             return list.release();
         }
         case CSSPropertyWebkitRtlOrdering:
-            if (style->visuallyOrdered())
-                return primitiveValueCache->createIdentifierValue(CSSValueVisual);
-            return primitiveValueCache->createIdentifierValue(CSSValueLogical);
+            return primitiveValueCache->createIdentifierValue(style->rtlOrdering() ? CSSValueVisual : CSSValueLogical);
         case CSSPropertyWebkitUserDrag:
             return primitiveValueCache->createValue(style->userDrag());
         case CSSPropertyWebkitUserSelect:

@@ -2,6 +2,30 @@
 
         Reviewed by Eric Seidel.
 
+        Rename RenderStyle visuallyOrdered property and use an enum instead of a bool.
+        https://bugs.webkit.org/show_bug.cgi?id=61495
+
+        No new tests required as no functionality changed.
+
+        * css/CSSPrimitiveValueMappings.h:
+        Support cast to/from Order
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::styleForDocument):
+        Convert from bool to enum type.
+        (WebCore::CSSStyleSelector::applyProperty):
+        Convert to macro that uses the cast defined in CSSPrimitiveValueMappings.
+        * dom/Document.cpp:
+        (WebCore::Document::setVisuallyOrdered):
+        Change call to RenderStyle::setRTLOrdering using enum parameter.
+        * rendering/style/RenderStyle.h:
+        rename visuallyOrdered proerties rtlOrdering and use appropriate enum types.
+        * rendering/style/RenderStyleConstants.h:
+        Define enum type.
+
+2011-06-09  Luke Macpherson   <macpherson@chromium.org>
+
+        Reviewed by Eric Seidel.
+
         Implement CSSPropertyOutlineStyle handler in CSSStyleApplyProperty
         https://bugs.webkit.org/show_bug.cgi?id=61601
 

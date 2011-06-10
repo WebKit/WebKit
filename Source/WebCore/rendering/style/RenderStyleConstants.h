@@ -433,7 +433,9 @@ enum TextEmphasisMark { TextEmphasisMarkNone, TextEmphasisMarkAuto, TextEmphasis
 enum TextEmphasisPosition { TextEmphasisPositionOver, TextEmphasisPositionUnder };
 
 enum EImageRendering { ImageRenderingAuto, ImageRenderingOptimizeSpeed, ImageRenderingOptimizeQuality, ImageRenderingOptimizeContrast };
-    
+
+enum Order { LogicalOrder = 0, VisualOrder };
+
 } // namespace WebCore
 
 #endif // RenderStyleConstants_h

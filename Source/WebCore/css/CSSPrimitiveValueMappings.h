@@ -2645,6 +2645,33 @@ template<> inline CSSPrimitiveValue::CSSPrimitiveValue(ESpeak e)
     }
 }
     
+template<> inline CSSPrimitiveValue::operator Order() const
+{
+    switch (m_value.ident) {
+    case CSSValueLogical:
+        return LogicalOrder;
+    case CSSValueVisual:
+        return VisualOrder;
+    default:
+        ASSERT_NOT_REACHED();
+        return LogicalOrder;
+    }
+}
+
+template<> inline CSSPrimitiveValue::CSSPrimitiveValue(Order e)
+    : m_type(CSS_IDENT)
+    , m_hasCachedCSSText(false)
+{
+    switch (e) {
+    case LogicalOrder:
+        m_value.ident = CSSValueLogical;
+        break;
+    case VisualOrder:
+        m_value.ident = CSSValueVisual;
+        break;
+    }
+}
+
 template<> inline CSSPrimitiveValue::operator ESpeak() const
 {
     switch (m_value.ident) {
