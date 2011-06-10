@@ -92,15 +92,30 @@ public:
 private:
     virtual void applyInheritValue(CSSStyleSelector* selector) const
     {
-        (selector->style()->*m_setter)((selector->parentStyle()->*m_getter)());
+        setValue(selector->style(), value(selector->parentStyle()));
     }
 
     virtual void applyInitialValue(CSSStyleSelector* selector) const
     {
-        (selector->style()->*m_setter)((*m_initial)());
+        setValue(selector->style(), initial());
     }
 
 protected:
+    void setValue(RenderStyle* style, T value) const
+    {
+        (style->*m_setter)(value);
+    }
+
+    T value(RenderStyle* style) const
+    {
+        return (style->*m_getter)();
+    }
+
+    T initial() const
+    {
+        return (*m_initial)();
+    }
+
     GetterFunction m_getter;
     SetterFunction m_setter;
     InitialFunction m_initial;
@@ -119,7 +134,7 @@ protected:
     virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
     {
         if (value->isPrimitiveValue())
-            (selector->style()->*ApplyPropertyDefaultBase<T>::m_setter)(*static_cast<CSSPrimitiveValue*>(value));
+            ApplyPropertyDefaultBase<T>::setValue(selector->style(), *static_cast<CSSPrimitiveValue*>(value));
     }
 };
 
@@ -217,21 +232,21 @@ private:
         CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
         if (noneEnabled && primitiveValue->getIdent() == CSSValueNone)
             if (noneUndefined)
-                (selector->style()->*m_setter)(Length(undefinedLength, Fixed));
+                setValue(selector->style(), Length(undefinedLength, Fixed));
             else
-                (selector->style()->*m_setter)(Length());
+                setValue(selector->style(), Length());
         else if (intrinsicEnabled && primitiveValue->getIdent() == CSSValueIntrinsic)
-            (selector->style()->*m_setter)(Length(Intrinsic));
+            setValue(selector->style(), Length(Intrinsic));
         else if (minIntrinsicEnabled && primitiveValue->getIdent() == CSSValueMinIntrinsic)
-            (selector->style()->*m_setter)(Length(MinIntrinsic));
+            setValue(selector->style(), Length(MinIntrinsic));
         else if (autoEnabled && primitiveValue->getIdent() == CSSValueAuto)
-            (selector->style()->*m_setter)(Length());
+            setValue(selector->style(), Length());
         else {
             int type = primitiveValue->primitiveType();
             if (CSSPrimitiveValue::isUnitTypeLength(type))
-                (selector->style()->*m_setter)(Length(primitiveValue->computeLengthIntForLength(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()), Fixed, primitiveValue->isQuirkValue()));
+                setValue(selector->style(), Length(primitiveValue->computeLengthIntForLength(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()), Fixed, primitiveValue->isQuirkValue()));
             else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
-                (selector->style()->*m_setter)(Length(primitiveValue->getDoubleValue(), Percent));
+                setValue(selector->style(), Length(primitiveValue->getDoubleValue(), Percent));
         }
     }
 };
@@ -365,7 +380,7 @@ private:
             return;
         }
 
-        (selector->style()->*m_setter)(width);
+        setValue(selector->style(), width);
     }
 };
 
