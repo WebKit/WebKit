@@ -1,3 +1,10 @@
+2011-06-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK and Qt rebaselines after r88555.
+
+        * platform/gtk/svg/custom/focus-ring-expected.txt:
+        * platform/qt/svg/custom/focus-ring-expected.txt:
+
 2011-06-10  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update chromium gpu baselines
