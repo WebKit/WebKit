@@ -105,7 +105,6 @@ void PluginDocumentParser::createDocumentStructure()
 
 void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, int, bool)
 {
-    ASSERT(!m_embedElement);
     if (m_embedElement)
         return;
 

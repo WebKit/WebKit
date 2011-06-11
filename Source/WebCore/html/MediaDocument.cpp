@@ -105,7 +105,6 @@ void MediaDocumentParser::createDocumentStructure()
 
 void MediaDocumentParser::appendBytes(DocumentWriter*, const char*, int, bool)
 {
-    ASSERT(!m_mediaElement);
     if (m_mediaElement)
         return;
 

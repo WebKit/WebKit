@@ -1,3 +1,20 @@
+2011-06-10  Adam Barth  <abarth@webkit.org>
+
+        Remove bogus ASSERTs.  These ASSERTs used to be correct before I
+        changed DocumentWriter to put the onus for ignoring empty writes onto
+        the parser.
+
+        This patch should stop these test from triggering ASSERTs:
+
+        plugins/plugin-document-back-forward.html
+        plugins/return-error-from-new-stream-callback-in-full-frame-plugin.html
+        userscripts/user-script-plugin-document.html
+
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::appendBytes):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::appendBytes):
+
 2011-06-09  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.
