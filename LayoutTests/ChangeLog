@@ -1,3 +1,33 @@
+2011-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Keep overlap testing logic until real 3d transforms are being used
+        https://bugs.webkit.org/show_bug.cgi?id=49857
+
+        New tests:
+        * compositing/layer-creation/rotate3d-overlap-expected.txt: Added.
+        * compositing/layer-creation/rotate3d-overlap.html: Added.
+        * compositing/layer-creation/translatez-overlap-expected.txt: Added.
+        * compositing/layer-creation/translatez-overlap.html: Added.
+
+        Changed to use a non-zero z offset to preserve old behavior:
+        * compositing/geometry/ancestor-overflow-change-expected.txt:
+        * compositing/geometry/ancestor-overflow-change.html:
+        * compositing/geometry/clip-expected.txt:
+        * compositing/geometry/clip.html:
+        * compositing/geometry/foreground-layer-expected.txt:
+        * compositing/geometry/foreground-layer.html:
+        * compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * compositing/iframes/invisible-nested-iframe-show.html:
+        * compositing/overflow/clip-descendents-expected.txt:
+        * compositing/overflow/clip-descendents.html:
+
+        New results with extra layers, but will be fixed via bug 50192.
+        * compositing/tiling/huge-layer-add-remove-child-expected.txt:
+        * compositing/tiling/huge-layer-expected.txt:
+        * compositing/tiling/huge-layer-resize-expected.txt:
+
 2011-06-10  David Levin  <levin@chromium.org>
 
         Reviewed by Dmitry Titov.

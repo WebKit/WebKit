@@ -328,8 +328,8 @@ bool RenderLayerCompositor::updateBacking(RenderLayer* layer, CompositingChangeR
     if (needsToBeComposited(layer)) {
         enableCompositingMode();
         
-        // 3D transforms turn off the testing of overlap.
-        if (requiresCompositingForTransform(layer->renderer()))
+        // Non-identity 3D transforms turn off the testing of overlap.
+        if (hasNonIdentity3DTransform(layer->renderer()))
             setCompositingConsultsOverlap(false);
 
         if (!layer->backing()) {
@@ -1410,6 +1410,20 @@ bool RenderLayerCompositor::requiresCompositingForFullScreen(RenderObject* rende
     UNUSED_PARAM(renderer);
     return false;
 #endif
+}
+
+bool RenderLayerCompositor::hasNonIdentity3DTransform(RenderObject* renderer) const
+{
+    if (!renderer->hasTransform())
+        return false;
+    
+    if (renderer->style()->hasPerspective())
+        return true;
+
+    if (TransformationMatrix* transform = toRenderBoxModelObject(renderer)->layer()->transform())
+        return !transform->isAffine();
+    
+    return false;
 }
 
 // If an element has negative z-index children, those children render in front of the 

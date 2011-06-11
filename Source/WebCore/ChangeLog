@@ -1,3 +1,24 @@
+2011-06-10  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Keep overlap testing logic until real 3d transforms are being used
+        https://bugs.webkit.org/show_bug.cgi?id=49857
+        
+        For pages that use the translateZ(0) hack to force compositing layers, it's
+        advantageous to keep overlap testing, to avoid putting too many other
+        elements into layers.
+        
+        Only turn off overlap testing if non-identity 3D transforms are used.
+
+        Tests: compositing/layer-creation/rotate3d-overlap.html
+               compositing/layer-creation/translatez-overlap.html
+
+        * rendering/RenderLayerCompositor.cpp:
+        (WebCore::RenderLayerCompositor::updateBacking):
+        (WebCore::RenderLayerCompositor::hasNonIdentity3DTransform):
+        * rendering/RenderLayerCompositor.h:
+
 2011-06-10  David Levin  <levin@chromium.org>
 
         Reviewed by Dmitry Titov.

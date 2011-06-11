@@ -11,6 +11,18 @@ The yellow box should be large enough to scroll off the bottom. There should be 
           (bounds 502.00 5002.00)
           (usingTiledLayer 1)
           (drawsContent 1)
+          (children 2
+            (GraphicsLayer
+              (position 51.00 101.00)
+              (bounds 200.00 200.00)
+              (drawsContent 1)
+            )
+            (GraphicsLayer
+              (position 51.00 4701.00)
+              (bounds 200.00 200.00)
+              (drawsContent 1)
+            )
+          )
         )
       )
     )

@@ -13,6 +13,7 @@
             (GraphicsLayer
               (position 60.00 60.00)
               (bounds 50.00 50.00)
+              (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
             )
             (GraphicsLayer
               (bounds 320.00 320.00)
@@ -31,6 +32,7 @@
               (children 2
                 (GraphicsLayer
                   (bounds 50.00 50.00)
+                  (transform [1.00 0.00 0.00 0.00] [0.00 1.00 0.00 0.00] [0.00 0.00 1.00 0.00] [0.00 0.00 1.00 1.00])
                 )
                 (GraphicsLayer
                   (bounds 200.00 200.00)

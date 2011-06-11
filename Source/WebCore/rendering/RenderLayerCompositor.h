@@ -232,6 +232,7 @@ private:
     void removeCompositedChildren(RenderLayer*);
 
     bool layerHas3DContent(const RenderLayer*) const;
+    bool hasNonIdentity3DTransform(RenderObject*) const;
 
     void ensureRootPlatformLayer();
     void destroyRootPlatformLayer();

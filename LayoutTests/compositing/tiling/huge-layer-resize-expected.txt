@@ -11,6 +11,13 @@ First (small layer):
           (position 8.00 68.00)
           (bounds 502.00 502.00)
           (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 51.00 101.00)
+              (bounds 200.00 200.00)
+              (drawsContent 1)
+            )
+          )
         )
       )
     )
@@ -30,6 +37,13 @@ Second (huge layer):
           (bounds 502.00 5002.00)
           (usingTiledLayer 1)
           (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 51.00 101.00)
+              (bounds 200.00 200.00)
+              (drawsContent 1)
+            )
+          )
         )
       )
     )
@@ -48,6 +62,13 @@ Third (small layer):
           (position 8.00 68.00)
           (bounds 502.00 502.00)
           (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 51.00 101.00)
+              (bounds 200.00 200.00)
+              (drawsContent 1)
+            )
+          )
         )
       )
     )
