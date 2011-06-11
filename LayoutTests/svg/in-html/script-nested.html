@@ -1,0 +1,27 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+</head>
+<body>
+<!-- Makes scripts nested scripts run immediately and don't hang.
+Test passes if nested script runs before inline script finishes. -->
+<div id="console"></div>
+<svg>
+    <g>
+        <rect id="test">
+            <script>
+                nested = document.createElement("script");
+                nested.innerHTML = 'debug("nested script ran!");';
+                document.getElementsByTagName("head")[0].appendChild(nested);
+                debug("inline script done!");
+            </script>
+        </rect>
+    </g>
+</svg>
+</body>
+</html>

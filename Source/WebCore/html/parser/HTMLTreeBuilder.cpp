@@ -2314,7 +2314,9 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
         break;
     case InForeignContentMode:
         if (token.name() == SVGNames::scriptTag && m_tree.currentNode()->hasTagName(SVGNames::scriptTag)) {
-            notImplemented();
+            m_isPaused = true;
+            m_scriptToProcess = m_tree.currentElement();
+            m_tree.openElements()->pop();
             return;
         }
         if (!isInHTMLNamespace(m_tree.currentNode())) {
@@ -2329,7 +2331,7 @@ void HTMLTreeBuilder::processEndTag(AtomicHTMLToken& token)
                     return;
                 }
                 nodeRecord = nodeRecord->next();
-                
+
                 if (isInHTMLNamespace(nodeRecord->node()))
                     break;
             }

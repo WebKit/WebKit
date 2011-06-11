@@ -1,0 +1,27 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+</head>
+<body>
+<!-- Makes sure the insertion point is at the end of the running script.
+Test passes if written script runs before second inline script. -->
+<div id="console"></div>
+<svg>
+    <g>
+        <rect id="test">
+            <script>
+                document.write('<script>debug("written script ran!");</script>');
+            </script>
+            <script>
+                debug("second inline script ran!");
+            </script>
+        </rect>
+    </g>
+</svg>
+</body>
+</html>

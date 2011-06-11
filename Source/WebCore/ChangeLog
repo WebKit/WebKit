@@ -1,3 +1,18 @@
+2011-06-10  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        <script> inside <svg> should be executed
+        https://bugs.webkit.org/show_bug.cgi?id=62412
+
+        Tests: svg/in-html/script-external.html
+               svg/in-html/script-nested.html
+               svg/in-html/script-write.html
+               svg/in-html/script.html
+
+        * html/parser/HTMLTreeBuilder.cpp:
+        (WebCore::HTMLTreeBuilder::processEndTag):
+
 2011-06-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

@@ -1,3 +1,25 @@
+2011-06-10  James Simonsen  <simonjam@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        <script> inside <svg> should be executed
+        https://bugs.webkit.org/show_bug.cgi?id=62412
+
+        * platform/chromium/html5lib/runner-expected.txt: Passes another test.
+        * svg/dom/range-delete-expected.txt: Removed.
+        * svg/dom/range-delete.html: Removed.
+        * svg/dom/use-style-recalc-script-execute-crash-expected.txt: Now expected to execute script (and not crash).
+        * svg/dom/use-style-recalc-script-execute-crash.html:
+        * svg/in-html/resources/external.js: Added.
+        * svg/in-html/script-expected.txt: Added.
+        * svg/in-html/script-external-expected.txt: Added.
+        * svg/in-html/script-external.html: Added.
+        * svg/in-html/script-nested-expected.txt: Added.
+        * svg/in-html/script-nested.html: Added.
+        * svg/in-html/script-write-expected.txt: Added.
+        * svg/in-html/script-write.html: Added.
+        * svg/in-html/script.html: Added.
+
 2011-06-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

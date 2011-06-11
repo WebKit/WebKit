@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-Test passes if it does not crash and "script" inside "rect" does not execute.
+Test passes if it does not crash and "script" inside "rect" executes.
 <script>
 if (window.layoutTestController)
     layoutTestController.dumpAsText();
@@ -10,7 +10,7 @@ if (window.layoutTestController)
 <use xlink:href="#test"/>
 <rect id="test">
 <script>
-document.body.innerHTML = "FAIL";
+document.body.innerHTML = "PASS";
 </script>
 </rect>
 </g>

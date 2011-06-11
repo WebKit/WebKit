@@ -1,0 +1,23 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+</head>
+<body>
+<!-- Makes sure we execute scripts inside <svg>. Test passes if PASS is printed. -->
+<div id="console"></div>
+<svg>
+    <g>
+        <rect id="test">
+            <script>
+                testPassed("script ran!");
+            </script>
+        </rect>
+    </g>
+</svg>
+</body>
+</html>

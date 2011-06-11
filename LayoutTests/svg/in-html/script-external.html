@@ -1,0 +1,25 @@
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script>
+    if (window.layoutTestController)
+        layoutTestController.dumpAsText();
+</script>
+</head>
+<body>
+<!-- Makes sure we execute external scripts inside <svg>.
+Test passes if external script runs before second inline script. -->
+<div id="console"></div>
+<svg>
+    <g>
+        <rect id="test">
+            <script xlink:href="resources/external.js"></script>
+            <script>
+                debug("second inline ran!");
+            </script>
+        </rect>
+    </g>
+</svg>
+</body>
+</html>
