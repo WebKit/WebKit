@@ -271,7 +271,7 @@ private:
     RefPtr<SharedWorker> m_worker;
     OwnPtr<MessagePortChannel> m_port;
     RefPtr<SharedWorkerProxy> m_proxy;
-    OwnPtr<WorkerScriptLoader> m_scriptLoader;
+    RefPtr<WorkerScriptLoader> m_scriptLoader;
 };
 
 SharedWorkerScriptLoader::SharedWorkerScriptLoader(PassRefPtr<SharedWorker> worker, PassOwnPtr<MessagePortChannel> port, PassRefPtr<SharedWorkerProxy> proxy)
@@ -283,13 +283,13 @@ SharedWorkerScriptLoader::SharedWorkerScriptLoader(PassRefPtr<SharedWorker> work
 
 void SharedWorkerScriptLoader::load(const KURL& url)
 {
-    // Mark this object as active for the duration of the load.
-    m_scriptLoader = adoptPtr(new WorkerScriptLoader(ResourceRequestBase::TargetIsSharedWorker));
-    m_scriptLoader->loadAsynchronously(m_worker->scriptExecutionContext(), url, DenyCrossOriginRequests, this);
-
     // Stay alive (and keep the SharedWorker and JS wrapper alive) until the load finishes.
     this->ref();
     m_worker->setPendingActivity(m_worker.get());
+
+    // Mark this object as active for the duration of the load.
+    m_scriptLoader = WorkerScriptLoader::create(ResourceRequestBase::TargetIsSharedWorker);
+    m_scriptLoader->loadAsynchronously(m_worker->scriptExecutionContext(), url, DenyCrossOriginRequests, this);
 }
 
 void SharedWorkerScriptLoader::notifyFinished()

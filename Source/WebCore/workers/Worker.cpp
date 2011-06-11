@@ -64,11 +64,11 @@ PassRefPtr<Worker> Worker::create(const String& url, ScriptExecutionContext* con
     if (scriptURL.isEmpty())
         return 0;
 
-    worker->m_scriptLoader = adoptPtr(new WorkerScriptLoader(ResourceRequestBase::TargetIsWorker));
-    worker->m_scriptLoader->loadAsynchronously(context, scriptURL, DenyCrossOriginRequests, worker.get());
-
     // The worker context does not exist while loading, so we must ensure that the worker object is not collected, nor are its event listeners.
     worker->setPendingActivity(worker.get());
+
+    worker->m_scriptLoader = WorkerScriptLoader::create(ResourceRequestBase::TargetIsWorker);
+    worker->m_scriptLoader->loadAsynchronously(context, scriptURL, DenyCrossOriginRequests, worker.get());
 
     InspectorInstrumentation::didCreateWorker(context, worker->asID(), scriptURL.string(), false);
 

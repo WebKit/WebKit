@@ -33,12 +33,16 @@
 
 #include "CrossThreadTask.h"
 #include "ResourceRequest.h"
+#include "ResourceResponse.h"
 #include "ScriptExecutionContext.h"
 #include "SecurityOrigin.h"
+#include "TextResourceDecoder.h"
 #include "WorkerContext.h"
 #include "WorkerScriptLoaderClient.h"
 #include "WorkerThreadableLoader.h"
+
 #include <wtf/OwnPtr.h>
+#include <wtf/RefPtr.h>
 #include <wtf/UnusedParam.h>
 
 namespace WebCore {
@@ -48,6 +52,10 @@ WorkerScriptLoader::WorkerScriptLoader(ResourceRequestBase::TargetType targetTyp
     , m_failed(false)
     , m_identifier(0)
     , m_targetType(targetType)
+{
+}
+
+WorkerScriptLoader::~WorkerScriptLoader()
 {
 }
 
@@ -84,6 +92,8 @@ void WorkerScriptLoader::loadAsynchronously(ScriptExecutionContext* scriptExecut
     options.crossOriginRequestPolicy = crossOriginRequestPolicy;
     options.sendLoadCallbacks = true;
 
+    // During create, callbacks may happen which remove the last reference to this object.
+    RefPtr<WorkerScriptLoader> protect(this);
     m_threadableLoader = ThreadableLoader::create(scriptExecutionContext, this, *request, options);
 }
 

@@ -37,9 +37,7 @@
 #include "MessagePort.h"
 #include "WorkerScriptLoaderClient.h"
 #include <wtf/Forward.h>
-#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
-#include <wtf/RefCounted.h>
 #include <wtf/RefPtr.h>
 #include <wtf/text/AtomicStringHash.h>
 
@@ -79,7 +77,7 @@ namespace WebCore {
         virtual void refEventTarget() { ref(); }
         virtual void derefEventTarget() { deref(); }
 
-        OwnPtr<WorkerScriptLoader> m_scriptLoader;
+        RefPtr<WorkerScriptLoader> m_scriptLoader;
         WorkerContextProxy* m_contextProxy; // The proxy outlives the worker to perform thread shutdown.
     };
 

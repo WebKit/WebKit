@@ -31,20 +31,29 @@
 #if ENABLE(WORKERS)
 
 #include "KURL.h"
-#include "ResourceRequest.h"
-#include "ResourceResponse.h"
-#include "TextResourceDecoder.h"
+#include "ResourceRequestBase.h"
 #include "ThreadableLoader.h"
 #include "ThreadableLoaderClient.h"
 
+#include <wtf/FastAllocBase.h>
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
+
 namespace WebCore {
 
+    class ResourceRequest;
+    class ResourceResponse;
     class ScriptExecutionContext;
+    class TextResourceDecoder;
     class WorkerScriptLoaderClient;
 
-    class WorkerScriptLoader : public ThreadableLoaderClient {
+    class WorkerScriptLoader : public RefCounted<WorkerScriptLoader>, public ThreadableLoaderClient {
+        WTF_MAKE_FAST_ALLOCATED;
     public:
-        explicit WorkerScriptLoader(ResourceRequestBase::TargetType);
+        static PassRefPtr<WorkerScriptLoader> create(ResourceRequestBase::TargetType targetType)
+        {
+            return adoptRef(new WorkerScriptLoader(targetType));
+        }
 
         void loadSynchronously(ScriptExecutionContext*, const KURL&, CrossOriginRequestPolicy);
         void loadAsynchronously(ScriptExecutionContext*, const KURL&, CrossOriginRequestPolicy, WorkerScriptLoaderClient*);
@@ -65,6 +74,11 @@ namespace WebCore {
         virtual void didReceiveAuthenticationCancellation(const ResourceResponse&);
 
     private:
+        friend class WTF::RefCounted<WorkerScriptLoader>;
+
+        explicit WorkerScriptLoader(ResourceRequestBase::TargetType);
+        ~WorkerScriptLoader();
+
         PassOwnPtr<ResourceRequest> createResourceRequest();
         void notifyFinished();
 

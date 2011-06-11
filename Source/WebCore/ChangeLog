@@ -1,3 +1,30 @@
+2011-06-10  David Levin  <levin@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Fetching a Worker with url that isn't allowed from a file based test causes DRT to crash.
+        https://bugs.webkit.org/show_bug.cgi?id=62469
+
+        Test: fast/workers/worker-crash-with-invalid-location.html
+
+        * workers/DefaultSharedWorkerRepository.cpp:
+        (WebCore::SharedWorkerScriptLoader::load): Changed to using the RefCounted version of WorkerScriptLoader.
+        * workers/Worker.cpp:
+        (WebCore::Worker::create): Ditto.
+        * workers/Worker.h: Ditto.
+        * workers/WorkerContext.cpp:
+        (WebCore::WorkerContext::importScripts):  Ditto.
+        * workers/WorkerScriptLoader.cpp:
+        (WebCore::WorkerScriptLoader::~WorkerScriptLoader): Created to
+        allow removing some header includes in WorkerScriptLoader.h.
+        (WebCore::WorkerScriptLoader::loadAsynchronously): Fix the ordering
+        of setPendingActivity and keep WorkerScriptLoader alive during a
+        potential callback.
+        * workers/WorkerScriptLoader.h: Made this RefCounted to allow for
+        keeping it alive during callbacks. Also, removed unnecessary header
+        inclusions (and added a destructor to facilitate that).
+        (WebCore::WorkerScriptLoader::create):
+
 2011-06-10  Alok Priyadarshi  <alokp@chromium.org>
 
         Reviewed by James Robinson.

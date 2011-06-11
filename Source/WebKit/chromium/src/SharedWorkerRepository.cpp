@@ -70,7 +70,7 @@ public:
         , m_name(name)
         , m_webWorker(webWorker)
         , m_port(port)
-        , m_scriptLoader(ResourceRequestBase::TargetIsSharedWorker)
+        , m_scriptLoader(WorkerScriptLoader::create(ResourceRequestBase::TargetIsSharedWorker))
         , m_loading(false)
         , m_responseAppCacheID(0)
     {
@@ -96,7 +96,7 @@ private:
     String m_name;
     OwnPtr<WebSharedWorker> m_webWorker;
     OwnPtr<MessagePortChannel> m_port;
-    WorkerScriptLoader m_scriptLoader;
+    RefPtr<WorkerScriptLoader> m_scriptLoader;
     bool m_loading;
     long long m_responseAppCacheID;
 };
@@ -134,10 +134,11 @@ void SharedWorkerScriptLoader::load()
     if (m_webWorker->isStarted())
         sendConnect();
     else {
-        m_scriptLoader.loadAsynchronously(m_worker->scriptExecutionContext(), m_url, DenyCrossOriginRequests, this);
         // Keep the worker + JS wrapper alive until the resource load is complete in case we need to dispatch an error event.
         m_worker->setPendingActivity(m_worker.get());
         m_loading = true;
+
+        m_scriptLoader->loadAsynchronously(m_worker->scriptExecutionContext(), m_url, DenyCrossOriginRequests, this);
     }
 }
 
@@ -158,13 +159,13 @@ void SharedWorkerScriptLoader::didReceiveResponse(const ResourceResponse& respon
 
 void SharedWorkerScriptLoader::notifyFinished()
 {
-    if (m_scriptLoader.failed()) {
+    if (m_scriptLoader->failed()) {
         m_worker->dispatchEvent(Event::create(eventNames().errorEvent, false, true));
         delete this;
     } else {
-        InspectorInstrumentation::scriptImported(m_worker->scriptExecutionContext(), m_scriptLoader.identifier(), m_scriptLoader.script());
+        InspectorInstrumentation::scriptImported(m_worker->scriptExecutionContext(), m_scriptLoader->identifier(), m_scriptLoader->script());
         // Pass the script off to the worker, then send a connect event.
-        m_webWorker->startWorkerContext(m_url, m_name, m_worker->scriptExecutionContext()->userAgent(m_url), m_scriptLoader.script(), m_responseAppCacheID);
+        m_webWorker->startWorkerContext(m_url, m_name, m_worker->scriptExecutionContext()->userAgent(m_url), m_scriptLoader->script(), m_responseAppCacheID);
         sendConnect();
     }
 }

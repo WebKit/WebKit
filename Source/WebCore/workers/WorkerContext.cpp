@@ -245,19 +245,19 @@ void WorkerContext::importScripts(const Vector<String>& urls, ExceptionCode& ec)
     Vector<KURL>::const_iterator end = completedURLs.end();
 
     for (Vector<KURL>::const_iterator it = completedURLs.begin(); it != end; ++it) {
-        WorkerScriptLoader scriptLoader(ResourceRequestBase::TargetIsScript);
-        scriptLoader.loadSynchronously(scriptExecutionContext(), *it, AllowCrossOriginRequests);
+        RefPtr<WorkerScriptLoader> scriptLoader(WorkerScriptLoader::create(ResourceRequestBase::TargetIsScript));
+        scriptLoader->loadSynchronously(scriptExecutionContext(), *it, AllowCrossOriginRequests);
 
         // If the fetching attempt failed, throw a NETWORK_ERR exception and abort all these steps.
-        if (scriptLoader.failed()) {
+        if (scriptLoader->failed()) {
             ec = XMLHttpRequestException::NETWORK_ERR;
             return;
         }
 
-       InspectorInstrumentation::scriptImported(scriptExecutionContext(), scriptLoader.identifier(), scriptLoader.script());
+        InspectorInstrumentation::scriptImported(scriptExecutionContext(), scriptLoader->identifier(), scriptLoader->script());
 
         ScriptValue exception;
-        m_script->evaluate(ScriptSourceCode(scriptLoader.script(), scriptLoader.responseURL()), &exception);
+        m_script->evaluate(ScriptSourceCode(scriptLoader->script(), scriptLoader->responseURL()), &exception);
         if (!exception.hasNoValue()) {
             m_script->setException(exception);
             return;
