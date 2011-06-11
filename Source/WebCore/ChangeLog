@@ -1,5 +1,16 @@
 2011-06-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, rolling out r88569.
+        http://trac.webkit.org/changeset/88569
+        https://bugs.webkit.org/show_bug.cgi?id=62398
+
+        Broke Chromium browser test:
+        IndexedDBBrowserTestWithGCExposed.DatabaseCallbacksTest
+
+        * storage/IDBFactory.idl:
+
+2011-06-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Unreviewed, rolling out r88565.
         http://trac.webkit.org/changeset/88565
         https://bugs.webkit.org/show_bug.cgi?id=62401

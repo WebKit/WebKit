@@ -1,5 +1,17 @@
 2011-06-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        Unreviewed, rolling out r88569.
+        http://trac.webkit.org/changeset/88569
+        https://bugs.webkit.org/show_bug.cgi?id=62398
+
+        Broke Chromium browser test:
+        IndexedDBBrowserTestWithGCExposed.DatabaseCallbacksTest
+
+        * storage/indexeddb/database-name-undefined-expected.txt: Removed.
+        * storage/indexeddb/database-name-undefined.html: Removed.
+
+2011-06-11  Dimitri Glazkov  <dglazkov@chromium.org>
+
         Remove expectation of failure after clobber.
         https://bugs.webkit.org/show_bug.cgi?id=62364
 
