@@ -49,9 +49,6 @@ using namespace Unicode;
 
 namespace JSC {
 
-#define NaN std::numeric_limits<double>::quiet_NaN()
-#define Inf std::numeric_limits<double>::infinity()
-
 static JSValue encode(ExecState* exec, const char* doNotEscape)
 {
     UString str = exec->argument(0).toString(exec);
@@ -182,9 +179,9 @@ double parseIntOverflow(const char* s, int length, int radix)
     double radixMultiplier = 1.0;
 
     for (const char* p = s + length - 1; p >= s; p--) {
-        if (radixMultiplier == Inf) {
+        if (radixMultiplier == std::numeric_limits<double>::infinity()) {
             if (*p != '0') {
-                number = Inf;
+                number = std::numeric_limits<double>::infinity();
                 break;
             }
         } else {
@@ -204,9 +201,9 @@ double parseIntOverflow(const UChar* s, int length, int radix)
     double radixMultiplier = 1.0;
 
     for (const UChar* p = s + length - 1; p >= s; p--) {
-        if (radixMultiplier == Inf) {
+        if (radixMultiplier == std::numeric_limits<double>::infinity()) {
             if (*p != '0') {
-                number = Inf;
+                number = std::numeric_limits<double>::infinity();
                 break;
             }
         } else {
@@ -250,7 +247,7 @@ static double parseInt(const UString& s, int radix)
     }
 
     if (radix < 2 || radix > 36)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     int firstDigitPosition = p;
     bool sawDigit = false;
@@ -273,7 +270,7 @@ static double parseInt(const UString& s, int radix)
     }
 
     if (!sawDigit)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     return sign * number;
 }
@@ -341,27 +338,27 @@ static double jsStrDecimalLiteral(const UChar*& data, const UChar* end)
     case 'I':
         if (isInfinity(data, end)) {
             data += SizeOfInfinity;
-            return Inf;
+            return std::numeric_limits<double>::infinity();
         }
         break;
 
     case '+':
         if (isInfinity(data + 1, end)) {
             data += SizeOfInfinity + 1;
-            return Inf;
+            return std::numeric_limits<double>::infinity();
         }
         break;
 
     case '-':
         if (isInfinity(data + 1, end)) {
             data += SizeOfInfinity + 1;
-            return -Inf;
+            return -std::numeric_limits<double>::infinity();
         }
         break;
     }
 
     // Not a number.
-    return NaN;
+    return std::numeric_limits<double>::quiet_NaN();
 }
 
 // See ecma-262 9.3.1
@@ -375,7 +372,7 @@ double jsToNumber(const UString& s)
             return c - '0';
         if (isStrWhiteSpace(c))
             return 0;
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     }
 
     const UChar* data = s.characters();
@@ -403,7 +400,7 @@ double jsToNumber(const UString& s)
             break;
     }
     if (data != end)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     return number;
 }
@@ -416,7 +413,7 @@ static double parseFloat(const UString& s)
         UChar c = s.characters()[0];
         if (isASCIIDigit(c))
             return c - '0';
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     }
 
     const UChar* data = s.characters();
@@ -430,7 +427,7 @@ static double parseFloat(const UString& s)
 
     // Empty string.
     if (data == end)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     return jsStrDecimalLiteral(data, end);
 }

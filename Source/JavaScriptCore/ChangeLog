@@ -1,5 +1,26 @@
 2011-06-11  Gavin Barraclough  <barraclough@apple.com>
 
+        Reviewed by Darin Adler.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16777
+
+        Remove #define NaN per Darin's comments.
+
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::parseIntOverflow):
+        (JSC::parseInt):
+        (JSC::jsStrDecimalLiteral):
+        (JSC::jsToNumber):
+        (JSC::parseFloat):
+        * wtf/DateMath.cpp:
+        (WTF::equivalentYearForDST):
+        (WTF::parseES5DateFromNullTerminatedCharacters):
+        (WTF::parseDateFromNullTerminatedCharacters):
+        (WTF::timeClip):
+        (JSC::parseDateFromNullTerminatedCharacters):
+
+2011-06-11  Gavin Barraclough  <barraclough@apple.com>
+
         Rubber stamped by Geoff Garen.
 
         https://bugs.webkit.org/show_bug.cgi?id=62503

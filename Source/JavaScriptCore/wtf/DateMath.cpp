@@ -113,8 +113,6 @@ extern "C" struct tm * localtime(const time_t *timer);
 #include "CallFrame.h"
 #endif
 
-#define NaN std::numeric_limits<double>::quiet_NaN()
-
 using namespace WTF;
 
 namespace WTF {
@@ -389,7 +387,7 @@ int equivalentYearForDST(int year)
     int product = (quotient) * 28;
 
     year += product;
-    ASSERT((year >= minYear && year <= maxYear) || (product - year == static_cast<int>(NaN)));
+    ASSERT((year >= minYear && year <= maxYear) || (product - year == static_cast<int>(std::numeric_limits<double>::quiet_NaN())));
     return year;
 }
 
@@ -589,54 +587,54 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString)
     // it accepts any integer value. Consider this an implementation fallback.
     long year;
     if (!parseLong(currentPosition, &postParsePosition, 10, &year))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (*postParsePosition != '-')
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     currentPosition = postParsePosition + 1;
     
     long month;
     if (!isASCIIDigit(*currentPosition))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (!parseLong(currentPosition, &postParsePosition, 10, &month))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (*postParsePosition != '-' || (postParsePosition - currentPosition) != 2)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     currentPosition = postParsePosition + 1;
     
     long day;
     if (!isASCIIDigit(*currentPosition))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (!parseLong(currentPosition, &postParsePosition, 10, &day))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (*postParsePosition != 'T' || (postParsePosition - currentPosition) != 2)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     currentPosition = postParsePosition + 1;
     
     long hours;
     if (!isASCIIDigit(*currentPosition))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (!parseLong(currentPosition, &postParsePosition, 10, &hours))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (*postParsePosition != ':' || (postParsePosition - currentPosition) != 2)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     currentPosition = postParsePosition + 1;
     
     long minutes;
     if (!isASCIIDigit(*currentPosition))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (!parseLong(currentPosition, &postParsePosition, 10, &minutes))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (*postParsePosition != ':' || (postParsePosition - currentPosition) != 2)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     currentPosition = postParsePosition + 1;
     
     long intSeconds;
     if (!isASCIIDigit(*currentPosition))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (!parseLong(currentPosition, &postParsePosition, 10, &intSeconds))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if ((postParsePosition - currentPosition) != 2)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     
     double seconds = intSeconds;
     if (*postParsePosition == '.') {
@@ -646,12 +644,12 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString)
         // a reasonable interpretation guided by the given examples and RFC 3339 says "no".
         // We check the next character to avoid reading +/- timezone hours after an invalid decimal.
         if (!isASCIIDigit(*currentPosition))
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         
         // We are more lenient than ES5 by accepting more or less than 3 fraction digits.
         long fracSeconds;
         if (!parseLong(currentPosition, &postParsePosition, 10, &fracSeconds))
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         
         long numFracDigits = postParsePosition - currentPosition;
         seconds += fracSeconds * pow(10.0, static_cast<double>(-numFracDigits));
@@ -661,19 +659,19 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString)
     // A few of these checks could be done inline above, but since many of them are interrelated
     // we would be sacrificing readability to "optimize" the (presumably less common) failure path.
     if (month < 1 || month > 12)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (day < 1 || day > daysPerMonth[month - 1])
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (month == 2 && day > 28 && !isLeapYear(year))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (hours < 0 || hours > 24)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (hours == 24 && (minutes || seconds))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (minutes < 0 || minutes > 59)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (seconds < 0 || seconds >= 61)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (seconds > 60) {
         // Discard leap seconds by clamping to the end of a minute.
         seconds = 60;
@@ -687,7 +685,7 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString)
         else if (*currentPosition == '+')
             tzNegative = false;
         else
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         currentPosition += 1;
         
         long tzHours;
@@ -695,26 +693,26 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString)
         long tzMinutes;
         
         if (!isASCIIDigit(*currentPosition))
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         if (!parseLong(currentPosition, &postParsePosition, 10, &tzHours))
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         if (*postParsePosition != ':' || (postParsePosition - currentPosition) != 2)
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         tzHoursAbs = abs(tzHours);
         currentPosition = postParsePosition + 1;
         
         if (!isASCIIDigit(*currentPosition))
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         if (!parseLong(currentPosition, &postParsePosition, 10, &tzMinutes))
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         if ((postParsePosition - currentPosition) != 2)
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         currentPosition = postParsePosition;
         
         if (tzHoursAbs > 24)
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         if (tzMinutes < 0 || tzMinutes > 59)
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         
         timeZoneSeconds = 60 * (tzMinutes + (60 * tzHoursAbs));
         if (tzNegative)
@@ -723,7 +721,7 @@ double parseES5DateFromNullTerminatedCharacters(const char* dateString)
         currentPosition += 1;
     }
     if (*currentPosition)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     
     double dateSeconds = ymdhmsToSeconds(year, month, day, hours, minutes, seconds) - timeZoneSeconds;
     return dateSeconds * msPerSecond;
@@ -772,52 +770,52 @@ static double parseDateFromNullTerminatedCharacters(const char* dateString, bool
     skipSpacesAndComments(dateString);
 
     if (!*dateString)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     // ' 09-Nov-99 23:12:40 GMT'
     char* newPosStr;
     long day;
     if (!parseLong(dateString, &newPosStr, 10, &day))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     dateString = newPosStr;
 
     if (!*dateString)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     if (day < 0)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     long year = 0;
     if (day > 31) {
         // ### where is the boundary and what happens below?
         if (*dateString != '/')
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         // looks like a YYYY/MM/DD date
         if (!*++dateString)
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         year = day;
         if (!parseLong(dateString, &newPosStr, 10, &month))
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         month -= 1;
         dateString = newPosStr;
         if (*dateString++ != '/' || !*dateString)
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         if (!parseLong(dateString, &newPosStr, 10, &day))
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         dateString = newPosStr;
     } else if (*dateString == '/' && month == -1) {
         dateString++;
         // This looks like a MM/DD/YYYY date, not an RFC date.
         month = day - 1; // 0-based
         if (!parseLong(dateString, &newPosStr, 10, &day))
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         if (day < 1 || day > 31)
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         dateString = newPosStr;
         if (*dateString == '/')
             dateString++;
         if (!*dateString)
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
      } else {
         if (*dateString == '-')
             dateString++;
@@ -830,28 +828,28 @@ static double parseDateFromNullTerminatedCharacters(const char* dateString, bool
         if (month == -1) { // not found yet
             month = findMonth(dateString);
             if (month == -1)
-                return NaN;
+                return std::numeric_limits<double>::quiet_NaN();
 
             while (*dateString && *dateString != '-' && *dateString != ',' && !isASCIISpace(*dateString))
                 dateString++;
 
             if (!*dateString)
-                return NaN;
+                return std::numeric_limits<double>::quiet_NaN();
 
             // '-99 23:12:40 GMT'
             if (*dateString != '-' && *dateString != '/' && *dateString != ',' && !isASCIISpace(*dateString))
-                return NaN;
+                return std::numeric_limits<double>::quiet_NaN();
             dateString++;
         }
     }
 
     if (month < 0 || month > 11)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     // '99 23:12:40 GMT'
     if (year <= 0 && *dateString) {
         if (!parseLong(dateString, &newPosStr, 10, &year))
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
     }
 
     // Don't fail if the time is missing.
@@ -864,7 +862,7 @@ static double parseDateFromNullTerminatedCharacters(const char* dateString, bool
         // ' 23:12:40 GMT'
         if (!(isASCIISpace(*newPosStr) || *newPosStr == ',')) {
             if (*newPosStr != ':')
-                return NaN;
+                return std::numeric_limits<double>::quiet_NaN();
             // There was no year; the number was the hour.
             year = -1;
         } else {
@@ -883,50 +881,50 @@ static double parseDateFromNullTerminatedCharacters(const char* dateString, bool
             dateString = newPosStr;
 
             if (hour < 0 || hour > 23)
-                return NaN;
+                return std::numeric_limits<double>::quiet_NaN();
 
             if (!*dateString)
-                return NaN;
+                return std::numeric_limits<double>::quiet_NaN();
 
             // ':12:40 GMT'
             if (*dateString++ != ':')
-                return NaN;
+                return std::numeric_limits<double>::quiet_NaN();
 
             if (!parseLong(dateString, &newPosStr, 10, &minute))
-                return NaN;
+                return std::numeric_limits<double>::quiet_NaN();
             dateString = newPosStr;
 
             if (minute < 0 || minute > 59)
-                return NaN;
+                return std::numeric_limits<double>::quiet_NaN();
 
             // ':40 GMT'
             if (*dateString && *dateString != ':' && !isASCIISpace(*dateString))
-                return NaN;
+                return std::numeric_limits<double>::quiet_NaN();
 
             // seconds are optional in rfc822 + rfc2822
             if (*dateString ==':') {
                 dateString++;
 
                 if (!parseLong(dateString, &newPosStr, 10, &second))
-                    return NaN;
+                    return std::numeric_limits<double>::quiet_NaN();
                 dateString = newPosStr;
 
                 if (second < 0 || second > 59)
-                    return NaN;
+                    return std::numeric_limits<double>::quiet_NaN();
             }
 
             skipSpacesAndComments(dateString);
 
             if (strncasecmp(dateString, "AM", 2) == 0) {
                 if (hour > 12)
-                    return NaN;
+                    return std::numeric_limits<double>::quiet_NaN();
                 if (hour == 12)
                     hour = 0;
                 dateString += 2;
                 skipSpacesAndComments(dateString);
             } else if (strncasecmp(dateString, "PM", 2) == 0) {
                 if (hour > 12)
-                    return NaN;
+                    return std::numeric_limits<double>::quiet_NaN();
                 if (hour != 12)
                     hour += 12;
                 dateString += 2;
@@ -956,11 +954,11 @@ static double parseDateFromNullTerminatedCharacters(const char* dateString, bool
         if (*dateString == '+' || *dateString == '-') {
             long o;
             if (!parseLong(dateString, &newPosStr, 10, &o))
-                return NaN;
+                return std::numeric_limits<double>::quiet_NaN();
             dateString = newPosStr;
 
             if (o < -9959 || o > 9959)
-                return NaN;
+                return std::numeric_limits<double>::quiet_NaN();
 
             int sgn = (o < 0) ? -1 : 1;
             o = labs(o);
@@ -969,7 +967,7 @@ static double parseDateFromNullTerminatedCharacters(const char* dateString, bool
             } else { // GMT+05:00
                 long o2;
                 if (!parseLong(dateString, &newPosStr, 10, &o2))
-                    return NaN;
+                    return std::numeric_limits<double>::quiet_NaN();
                 dateString = newPosStr;
                 offset = (o * 60 + o2) * sgn;
             }
@@ -990,7 +988,7 @@ static double parseDateFromNullTerminatedCharacters(const char* dateString, bool
 
     if (*dateString && year == -1) {
         if (!parseLong(dateString, &newPosStr, 10, &year))
-            return NaN;
+            return std::numeric_limits<double>::quiet_NaN();
         dateString = newPosStr;
     }
 
@@ -998,7 +996,7 @@ static double parseDateFromNullTerminatedCharacters(const char* dateString, bool
 
     // Trailing garbage
     if (*dateString)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     // Y2K: Handle 2 digit years.
     if (year >= 0 && year < 100) {
@@ -1017,7 +1015,7 @@ double parseDateFromNullTerminatedCharacters(const char* dateString)
     int offset;
     double ms = parseDateFromNullTerminatedCharacters(dateString, haveTZ, offset);
     if (isnan(ms))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     // fall back to local timezone
     if (!haveTZ) {
@@ -1031,9 +1029,9 @@ double parseDateFromNullTerminatedCharacters(const char* dateString)
 double timeClip(double t)
 {
     if (!isfinite(t))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     if (fabs(t) > maxECMAScriptTime)
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     return trunc(t);
 }
 
@@ -1191,7 +1189,7 @@ double parseDateFromNullTerminatedCharacters(ExecState* exec, const char* dateSt
     int offset;
     double ms = WTF::parseDateFromNullTerminatedCharacters(dateString, haveTZ, offset);
     if (isnan(ms))
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
 
     // fall back to local timezone
     if (!haveTZ) {
