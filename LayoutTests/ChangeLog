@@ -1,5 +1,12 @@
 2011-06-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Windows and Chromium rebaselines after r88592. Apparently, some tests are failing on Windows.
+
+        * platform/chromium/fast/harness/results-expected.txt:
+        * platform/win/fast/harness/results-expected.txt:
+
+2011-06-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add fail expectation to fast/dom/navigator-detached-no-crash.htm on Chromium Mac
         because it has been failing on the bot; the failure is tracked by the bug 62364.
 
