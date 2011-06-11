@@ -146,8 +146,10 @@ void WorkerScriptLoader::didReceiveData(const char* data, int len)
 
 void WorkerScriptLoader::didFinishLoading(unsigned long identifier, double)
 {
-    if (m_failed)
+    if (m_failed) {
+        notifyError();
         return;
+    }
 
     if (m_decoder)
         m_script += m_decoder->flush();

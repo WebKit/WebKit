@@ -2,6 +2,16 @@
 
         Reviewed by Dmitry Titov.
 
+        Web Worker fails to fire error event when a resource fetch fails.
+        https://bugs.webkit.org/show_bug.cgi?id=62475
+
+        * http/tests/workers/worker-workerScriptNotThere-expected.txt: Added.
+        * http/tests/workers/worker-workerScriptNotThere.html: Added.
+
+2011-06-10  David Levin  <levin@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
         Fetching a Worker with url that isn't allowed from a file based test causes DRT to crash.
         https://bugs.webkit.org/show_bug.cgi?id=62469
 
