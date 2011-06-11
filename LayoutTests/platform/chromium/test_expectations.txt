@@ -2862,9 +2862,7 @@ BUGWK54306 GPU WIN LINUX MAC : compositing/reflections/nested-reflection-animate
 
 // Most of the tiling tests are misbehaving in Chrome even though the
 // DRT output looks similar to Safari's. These need to be investigated.
-BUGWK47951 GPU MAC : compositing/tiling/huge-layer-add-remove-child.html = TEXT
 BUGWK47951 GPU MAC : compositing/tiling/huge-layer-with-layer-children.html = TEXT
-BUGWK47951 GPU MAC : compositing/tiling/huge-layer.html = TEXT
 
 BUGWK48012 GPU WIN LINUX : compositing/tiling/huge-layer-with-layer-children-resize.html = TEXT PASS
 
@@ -2874,7 +2872,6 @@ BUGWK47953 GPU MAC : compositing/webgl/webgl-background-color.html = IMAGE
 
 // The following tests are failing on Mac.
 BUGWK48029 GPU MAC : compositing/tiling/crash-reparent-tiled-layer.html = TEXT
-BUGWK48029 GPU MAC : compositing/tiling/huge-layer-resize.html = TEXT
 BUGWK48029 GPU MAC : compositing/tiling/huge-layer-with-layer-children-resize.html = TEXT
 
 // These tests are too slow with our MESA backend.  We can re-enable when we have
@@ -3535,7 +3532,6 @@ BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-t
 BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-table-row.html = IMAGE
 BUGCR79917 WIN LINUX : transforms/svg-vs-css.xhtml = IMAGE
 
-BUGWK58951 MAC : compositing/iframes/invisible-nested-iframe-show.html = TEXT
 BUGWK58924 MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT
 
 BUGWK60099 DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH PASS

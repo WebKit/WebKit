@@ -1,3 +1,33 @@
+2011-06-10  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Update chromium compositor baselines for r88580
+
+        * platform/chromium-gpu-linux/compositing/direct-image-compositing-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/clip-expected.txt: Added.
+        * platform/chromium-gpu-linux/compositing/geometry/fixed-in-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/geometry/foreground-layer-expected.txt: Added.
+        * platform/chromium-gpu-linux/compositing/iframes/invisible-nested-iframe-show-expected.txt: Added.
+        * platform/chromium-gpu-linux/compositing/overflow/clip-descendents-expected.txt: Added.
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/chromium-gpu-linux/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/chromium-gpu-linux/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/reflections/reflection-on-composited-expected.png:
+        * platform/chromium-gpu-linux/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-gpu-linux/compositing/tiling/huge-layer-add-remove-child-expected.txt: Added.
+        * platform/chromium-gpu-linux/compositing/tiling/huge-layer-expected.txt: Added.
+        * platform/chromium-gpu-linux/compositing/tiling/huge-layer-resize-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/geometry/foreground-layer-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/iframes/invisible-nested-iframe-show-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/chromium-gpu-mac/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/chromium-gpu-mac/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-gpu-mac/compositing/reflections/reflection-on-composited-expected.png:
+        * platform/chromium-gpu-mac/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-gpu-mac/compositing/tiling/huge-layer-add-remove-child-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/tiling/huge-layer-expected.txt: Added.
+        * platform/chromium-gpu-mac/compositing/tiling/huge-layer-resize-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-10  James Simonsen  <simonjam@chromium.org>
 
         Unreviewed, missing expectations for non-V8 from change 88584.
