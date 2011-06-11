@@ -1,3 +1,15 @@
+2011-06-11  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaseline after r85560.
+
+        Also update test expectation for svg/W3C-SVG-1.1/text-intro-05-t.svg
+        because it has been passing on Mac.
+
+        * platform/chromium-linux/fast/forms/input-placeholder-text-indent-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-text-indent-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-placeholder-text-indent-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r88569.

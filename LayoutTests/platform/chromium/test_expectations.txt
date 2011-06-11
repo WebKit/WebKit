@@ -1440,7 +1440,7 @@ BUGCR10429 LINUX : css2.1/t100801-c544-valgn-01-d-ag.html = FAIL
 
 // May need rebaseline or expectations change (Linux looks like Mac but is using
 // expectations from Windows instead).
-BUGCR10430 MAC WIN LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
+BUGCR10430 WIN LINUX : svg/W3C-SVG-1.1/text-intro-05-t.svg = IMAGE+TEXT
 
 // Flakey. Not clear when it started, but it was before 3/9/09.
 // This test also started failing with the merge of March 25th 2009
@@ -3740,9 +3740,6 @@ BUG_HCLAM : fast/js/mozilla/strict/assign-to-callee-name.html = TEXT
 
 // New test added in r85535.
 BUG_HCLAM : editing/inserting/typing-at-end-of-line.html = FAIL MISSING
-
-// New test added in r85560.
-BUG_HCLAM : fast/forms/input-placeholder-text-indent.html = IMAGE+TEXT
 
 // Flakiness around r85622.
 BUG_HCLAM WIN SLOW: http/tests/inspector/resource-tree/resource-tree-document-url.html = PASS
