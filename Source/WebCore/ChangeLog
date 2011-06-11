@@ -1,3 +1,28 @@
+2011-06-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Script-created parsers should ignore data from the network
+        https://bugs.webkit.org/show_bug.cgi?id=62336
+
+        If the network packet boundaries line up just right, we can end up
+        feeding network data to a parser created by document.write (or
+        document.open).  That's incorrect.
+
+        This patch causes DocumentWriter to grab hold of the original parser
+        and direct all input to that parser.
+
+        Test: fast/parser/document-write-ignores-later-network-bytes.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::explicitClose):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::begin):
+        (WebCore::DocumentWriter::addData):
+        (WebCore::DocumentWriter::endIfNotLoadingMainResource):
+        (WebCore::DocumentWriter::setDocumentWasLoadedAsPartOfNavigation):
+        * loader/DocumentWriter.h:
+
 2011-06-10  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

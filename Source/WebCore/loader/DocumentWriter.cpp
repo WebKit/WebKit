@@ -144,6 +144,8 @@ void DocumentWriter::begin(const KURL& url, bool dispatch, SecurityOrigin* origi
 
     document->implicitOpen();
 
+    m_parser = document->parser();
+
     if (m_frame->view() && m_frame->loader()->client()->hasHTMLView())
         m_frame->view()->setContentsSize(IntSize());
 }
@@ -198,8 +200,7 @@ void DocumentWriter::addData(const char* str, int len, bool flush)
     if (len == -1)
         len = strlen(str);
 
-    if (DocumentParser* parser = m_frame->document()->parser())
-        parser->appendBytes(this, str, len, flush);
+    m_parser->appendBytes(this, str, len, flush);
 }
 
 void DocumentWriter::end()
@@ -221,8 +222,10 @@ void DocumentWriter::endIfNotLoadingMainResource()
     // FIXME: Can we remove this call? Finishing the parser should flush anyway.
     addData(0, 0, true);
 
-    if (DocumentParser* parser = m_frame->document()->parser())
-        parser->finish();
+    if (!m_parser)
+        return;
+    m_parser->finish();
+    m_parser = 0;
 }
 
 String DocumentWriter::encoding() const
@@ -254,7 +257,8 @@ String DocumentWriter::deprecatedFrameEncoding() const
 
 void DocumentWriter::setDocumentWasLoadedAsPartOfNavigation()
 {
-    m_frame->document()->parser()->setDocumentWasLoadedAsPartOfNavigation();
+    ASSERT(!m_parser->isStopped());
+    m_parser->setDocumentWasLoadedAsPartOfNavigation();
 }
 
 } // namespace WebCore

@@ -2068,20 +2068,18 @@ void Document::close()
 
 void Document::explicitClose()
 {
+    if (m_parser)
+        m_parser->finish();
+
     if (!m_frame) {
         // Because we have no frame, we don't know if all loading has completed,
         // so we just call implicitClose() immediately. FIXME: This might fire
         // the load event prematurely <http://bugs.webkit.org/show_bug.cgi?id=14568>.
-        if (m_parser)
-            m_parser->finish();
         implicitClose();
         return;
     }
 
-    // This code calls implicitClose() if all loading has completed.
-    loader()->writer()->endIfNotLoadingMainResource();
-    if (m_frame)
-        m_frame->loader()->checkCompleted();
+    m_frame->loader()->checkCompleted();
 }
 
 void Document::implicitClose()

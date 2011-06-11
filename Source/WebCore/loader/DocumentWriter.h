@@ -35,6 +35,7 @@
 namespace WebCore {
 
 class Document;
+class DocumentParser;
 class Frame;
 class SecurityOrigin;
 class TextResourceDecoder;
@@ -87,6 +88,7 @@ private:
     bool m_encodingWasChosenByUser;
     String m_encoding;
     RefPtr<TextResourceDecoder> m_decoder;
+    RefPtr<DocumentParser> m_parser;
 };
 
 } // namespace WebCore
