@@ -1,5 +1,13 @@
 2011-06-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Skip inspector/profiler/cpu-profiler-profiling-without-inspector.html and
+        svg/custom/focus-event-handling-keyboard.html on Mac WebKit2
+        because they use DRT features not supported by WebKitTestRunner.
+
+        * platform/mac-wk2/Skipped:
+
+2011-06-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         GTK and Qt rebaselines after r88555.
 
         * platform/gtk/svg/custom/focus-ring-expected.txt:

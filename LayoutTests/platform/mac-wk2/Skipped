@@ -1030,6 +1030,7 @@ webarchive/test-xml-stylesheet.xml
 # WebKitTestRunner needs to support layoutTestController.setJavaScriptProfilingEnabled
 # <https://bugs.webkit.org/show_bug.cgi?id=42328>
 fast/profiler
+inspector/profiler/cpu-profiler-profiling-without-inspector.html
 
 # WebKitTestRunner needs layoutTestController.waitForPolicyDelegate
 # <https://bugs.webkit.org/show_bug.cgi?id=42330>
@@ -1760,6 +1761,7 @@ fast/dom/shadow/tab-order-iframe-and-shadow.html
 fast/forms/radio-group-keyboard-change-event.html
 fast/forms/focus-with-display-block.html
 fast/forms/ValidityState-valueMissing-002.html
+svg/custom/focus-event-handling-keyboard.html
 
 # eventSender.contextClick() is unimplemented
 editing/spelling/spellcheck-input-search-crash.html
