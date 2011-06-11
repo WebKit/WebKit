@@ -1,3 +1,17 @@
+2011-06-10  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Tests that accessing the parent element sheet of an inline style, link
+        declaration of styled, body elements which are removed from document,
+        does not result in crash.
+        https://bugs.webkit.org/show_bug.cgi?id=62230
+
+        * fast/dom/body-link-decl-parent-crash-expected.txt: Added.
+        * fast/dom/body-link-decl-parent-crash.html: Added.
+        * fast/dom/styled-inline-style-decl-parent-crash-expected.txt: Added.
+        * fast/dom/styled-inline-style-decl-parent-crash.html: Added.
+
 2011-06-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip inspector/profiler/cpu-profiler-profiling-without-inspector.html and

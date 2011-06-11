@@ -1,3 +1,32 @@
+2011-06-10  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Simon Fraser.
+
+        Null parent element sheet pointers in CSSMutableStyleDeclaration consumers
+        when removed from document, set them when reinserted into document.
+        https://bugs.webkit.org/show_bug.cgi?id=62230
+
+        When a HTMLBodyElement, StyledElement are removed from document,
+        we didn't clear out the parent pointers from their link, style declarations.
+        These parent pointers pointed to the document's element sheet which will
+        get removed when document is getting destroyed. It does make sense to
+        clear out parent pointers when we are getting removed from document and
+        readd them when we get inserted again.
+
+        Tests: fast/dom/body-link-decl-parent-crash.html
+               fast/dom/styled-inline-style-decl-parent-crash.html
+
+        * dom/StyledElement.cpp:
+        (WebCore::StyledElement::insertedIntoDocument):
+        (WebCore::StyledElement::removedFromDocument):
+        * dom/StyledElement.h:
+        * html/HTMLBodyElement.cpp:
+        (WebCore::HTMLBodyElement::parseMappedAttribute):
+        (WebCore::HTMLBodyElement::insertedIntoDocument):
+        (WebCore::HTMLBodyElement::removedFromDocument):
+        (WebCore::HTMLBodyElement::didMoveToNewOwnerDocument):
+        * html/HTMLBodyElement.h:
+
 2011-06-10  Adam Barth  <abarth@webkit.org>
 
         Remove bogus ASSERTs.  These ASSERTs used to be correct before I
