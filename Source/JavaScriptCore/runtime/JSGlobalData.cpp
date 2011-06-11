@@ -187,7 +187,7 @@ JSGlobalData::JSGlobalData(GlobalDataType globalDataType, ThreadStackType thread
     , interpreter(0)
     , heap(this)
     , dynamicGlobalObject(0)
-    , cachedUTCOffset(NaN)
+    , cachedUTCOffset(std::numeric_limits<double>::quiet_NaN())
     , maxReentryDepth(threadStackType == ThreadStackTypeSmall ? MaxSmallThreadReentryDepth : MaxLargeThreadReentryDepth)
     , m_regExpCache(new RegExpCache(this))
 #if ENABLE(REGEXP_TRACING)
@@ -419,10 +419,10 @@ JSGlobalData::ClientData::~ClientData()
 
 void JSGlobalData::resetDateCache()
 {
-    cachedUTCOffset = NaN;
+    cachedUTCOffset = std::numeric_limits<double>::quiet_NaN();
     dstOffsetCache.reset();
     cachedDateString = UString();
-    cachedDateStringValue = NaN;
+    cachedDateStringValue = std::numeric_limits<double>::quiet_NaN();
     dateInstanceCache.reset();
 }
 

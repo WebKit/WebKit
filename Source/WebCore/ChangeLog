@@ -1,3 +1,17 @@
+2011-06-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16777
+        Eliminate JSC::NaN and JSC::Inf
+
+        There's no good reason for -K-J-S- JSC to have its own NAN and infinity constants.
+        The ones in std::numeric_limits are perfectly good.
+        Remove JSC::Inf, JSC::NaN, switch some cases of (isnan || isinf) to !isfinite.
+
+        * bindings/js/JSDataViewCustom.cpp:
+        (WebCore::getDataViewMember):
+
 2011-06-10  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by Eric Seidel.

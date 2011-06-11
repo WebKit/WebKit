@@ -51,9 +51,6 @@ using namespace std;
 
 namespace JSC {
 
-extern const double NaN;
-extern const double Inf;
-
 COMPILE_ASSERT(sizeof(UString) == sizeof(void*), UString_should_stay_small);
 
 // Construct a string with UTF-16 data.

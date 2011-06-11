@@ -180,15 +180,6 @@ int32_t toInt32(double number)
     return bits < 0 ? -result : result;
 }
 
-NEVER_INLINE double nonInlineNaN()
-{
-#if OS(SYMBIAN)
-    return nanval();
-#else
-    return std::numeric_limits<double>::quiet_NaN();
-#endif
-}
-
 bool JSValue::isValidCallee()
 {
     return asObject(asObject(asCell())->getAnonymousValue(0))->isGlobalObject();

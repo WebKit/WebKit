@@ -67,7 +67,7 @@ namespace JSC {
 
     inline JSValue jsNaN()
     {
-        return JSValue(nonInlineNaN());
+        return JSValue(std::numeric_limits<double>::quiet_NaN());
     }
 
     inline bool JSValue::getNumber(double& result) const

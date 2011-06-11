@@ -1,3 +1,62 @@
+2011-06-10  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=16777
+        Eliminate JSC::NaN and JSC::Inf
+
+        There's no good reason for -K-J-S- JSC to have its own NAN and infinity constants.
+        The ones in std::numeric_limits are perfectly good.
+        Remove JSC::Inf, JSC::NaN, switch some cases of (isnan || isinf) to !isfinite.
+
+        * API/JSCallbackObjectFunctions.h:
+        (JSC::::toNumber):
+        * API/JSValueRef.cpp:
+        (JSValueMakeNumber):
+        (JSValueToNumber):
+        * JavaScriptCore.exp:
+        * runtime/CachedTranscendentalFunction.h:
+        (JSC::CachedTranscendentalFunction::initialize):
+        * runtime/DateConstructor.cpp:
+        (JSC::constructDate):
+        * runtime/DateInstanceCache.h:
+        (JSC::DateInstanceData::DateInstanceData):
+        (JSC::DateInstanceCache::reset):
+        * runtime/JSCell.cpp:
+        * runtime/JSCell.h:
+        (JSC::JSCell::JSValue::getPrimitiveNumber):
+        (JSC::JSCell::JSValue::toNumber):
+        * runtime/JSGlobalData.cpp:
+        (JSC::JSGlobalData::JSGlobalData):
+        (JSC::JSGlobalData::resetDateCache):
+        * runtime/JSGlobalObject.cpp:
+        (JSC::JSGlobalObject::reset):
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncParseInt):
+        (JSC::globalFuncIsFinite):
+        * runtime/JSNotAnObject.cpp:
+        (JSC::JSNotAnObject::toNumber):
+        * runtime/JSValue.cpp:
+        * runtime/JSValue.h:
+        * runtime/JSValueInlineMethods.h:
+        (JSC::jsNaN):
+        * runtime/MathObject.cpp:
+        (JSC::mathProtoFuncMax):
+        (JSC::mathProtoFuncMin):
+        * runtime/NumberConstructor.cpp:
+        (JSC::numberConstructorNegInfinity):
+        (JSC::numberConstructorPosInfinity):
+        * runtime/NumberPrototype.cpp:
+        (JSC::numberProtoFuncToExponential):
+        (JSC::numberProtoFuncToFixed):
+        (JSC::numberProtoFuncToPrecision):
+        (JSC::numberProtoFuncToString):
+        * runtime/UString.cpp:
+        * wtf/DecimalNumber.h:
+        (WTF::DecimalNumber::DecimalNumber):
+        * wtf/dtoa.cpp:
+        (WTF::dtoa):
+
 2011-06-10  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.

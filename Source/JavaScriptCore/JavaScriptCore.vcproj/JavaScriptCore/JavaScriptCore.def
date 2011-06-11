@@ -43,7 +43,6 @@ EXPORTS
     ??2JSGlobalObject@JSC@@SAPAXIPAVJSGlobalData@1@@Z
     ??8JSC@@YA_NABVUString@0@0@Z
     ??8WTF@@YA_NABVCString@0@0@Z
-    ?NaN@JSC@@3NB
     ?absoluteTimeToWaitTimeoutInterval@WTF@@YAKN@Z
     ?activityCallback@Heap@JSC@@QAEPAVGCActivityCallback@2@XZ
     ?add@Identifier@JSC@@SA?AV?$PassRefPtr@VStringImpl@WTF@@@WTF@@PAVExecState@2@PBD@Z
@@ -247,7 +246,6 @@ EXPORTS
     ?name@InternalFunction@JSC@@QAEABVUString@2@PAVExecState@2@@Z
     ?name@JSFunction@JSC@@QAEABVUString@2@PAVExecState@2@@Z
     ?newUninitialized@CString@WTF@@SA?AV12@IAAPAD@Z
-    ?nonInlineNaN@JSC@@YANXZ
     ?nullptr@@3Vnullptr_t@std@@A
     ?number@UString@JSC@@SA?AV12@H@Z
     ?number@UString@JSC@@SA?AV12@I@Z

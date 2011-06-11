@@ -129,7 +129,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToExponential(ExecState* exec)
         return throwVMError(exec, createRangeError(exec, "toExponential() argument must be between 0 and 20"));
 
     // Handle NaN and Infinity.
-    if (isnan(x) || isinf(x))
+    if (!isfinite(x))
         return JSValue::encode(jsString(exec, UString::number(x)));
 
     // Round if the argument is not undefined, always format as exponential.
@@ -168,7 +168,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToFixed(ExecState* exec)
 
     // The check above will return false for NaN or Infinity, these will be
     // handled by numberToString.
-    ASSERT(!isnan(x) && !isinf(x));
+    ASSERT(isfinite(x));
 
     // Convert to decimal with rounding, and format as decimal.
     NumberToStringBuffer buffer;
@@ -203,7 +203,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToPrecision(ExecState* exec)
         return JSValue::encode(jsString(exec, UString::number(x)));
 
     // Handle NaN and Infinity.
-    if (isnan(x) || isinf(x))
+    if (!isfinite(x))
         return JSValue::encode(jsString(exec, UString::number(x)));
 
     // Convert to decimal with rounding.
@@ -260,7 +260,7 @@ EncodedJSValue JSC_HOST_CALL numberProtoFuncToString(ExecState* exec)
     char s[2048 + 3];
     const char* lastCharInString = s + sizeof(s) - 1;
     double x = v.uncheckedGetNumber();
-    if (isnan(x) || isinf(x))
+    if (!isfinite(x))
         return JSValue::encode(jsString(exec, UString::number(x)));
 
     bool isNegative = x < 0.0;

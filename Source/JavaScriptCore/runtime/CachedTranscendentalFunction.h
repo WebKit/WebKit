@@ -30,8 +30,6 @@
 
 namespace JSC {
 
-extern const double NaN;
-
 typedef double (*TranscendentalFunctionPtr)(double);
 
 // CachedTranscendentalFunction provides a generic mechanism to cache results
@@ -76,8 +74,8 @@ private:
         // Lazily allocate the table, populate with NaN->NaN mapping.
         m_cache = static_cast<CacheEntry*>(fastMalloc(s_cacheSize * sizeof(CacheEntry)));
         for (unsigned x = 0; x < s_cacheSize; ++x) {
-            m_cache[x].operand = NaN;
-            m_cache[x].result = NaN;
+            m_cache[x].operand = std::numeric_limits<double>::quiet_NaN();
+            m_cache[x].result = std::numeric_limits<double>::quiet_NaN();
         }
     }
 

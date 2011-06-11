@@ -49,6 +49,9 @@ using namespace Unicode;
 
 namespace JSC {
 
+#define NaN std::numeric_limits<double>::quiet_NaN()
+#define Inf std::numeric_limits<double>::infinity()
+
 static JSValue encode(ExecState* exec, const char* doNotEscape)
 {
     UString str = exec->argument(0).toString(exec);
@@ -472,9 +475,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncParseInt(ExecState* exec)
         double d = value.asDouble();
         if (isfinite(d))
             return JSValue::encode(jsNumber((d > 0) ? floor(d) : ceil(d)));
-        if (isnan(d) || isinf(d))
-            return JSValue::encode(jsNaN());
-        return JSValue::encode(jsNumber(0));
+        return JSValue::encode(jsNaN());
     }
 
     return JSValue::encode(jsNumber(parseInt(value.toString(exec), radix)));
@@ -493,7 +494,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncIsNaN(ExecState* exec)
 EncodedJSValue JSC_HOST_CALL globalFuncIsFinite(ExecState* exec)
 {
     double n = exec->argument(0).toNumber(exec);
-    return JSValue::encode(jsBoolean(!isnan(n) && !isinf(n)));
+    return JSValue::encode(jsBoolean(isfinite(n)));
 }
 
 EncodedJSValue JSC_HOST_CALL globalFuncDecodeURI(ExecState* exec)

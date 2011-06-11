@@ -58,7 +58,7 @@ bool JSNotAnObject::toBoolean(ExecState* exec) const
 double JSNotAnObject::toNumber(ExecState* exec) const
 {
     ASSERT_UNUSED(exec, exec->hadException());
-    return NaN;
+    return std::numeric_limits<double>::quiet_NaN();
 }
 
 UString JSNotAnObject::toString(ExecState* exec) const

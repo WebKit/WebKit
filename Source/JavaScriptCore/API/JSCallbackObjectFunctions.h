@@ -444,7 +444,7 @@ double JSCallbackObject<Base>::toNumber(ExecState* exec) const
     // a binary expression where lhs threw an exception in its conversion to
     // primitive
     if (exec->hadException())
-        return NaN;
+        return std::numeric_limits<double>::quiet_NaN();
     JSContextRef ctx = toRef(exec);
     JSObjectRef thisRef = toRef(this);
     
@@ -463,7 +463,7 @@ double JSCallbackObject<Base>::toNumber(ExecState* exec) const
 
             double dValue;
             if (value)
-                return toJS(exec, value).getNumber(dValue) ? dValue : NaN;
+                return toJS(exec, value).getNumber(dValue) ? dValue : std::numeric_limits<double>::quiet_NaN();
         }
             
     return Base::toNumber(exec);

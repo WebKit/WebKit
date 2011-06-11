@@ -89,7 +89,7 @@ static JSValue getDataViewMember(ExecState* exec, DataView* imp, DataViewAccessT
     case AccessDataViewMemberAsFloat32:
     case AccessDataViewMemberAsFloat64: {
         double value = (type == AccessDataViewMemberAsFloat32) ? imp->getFloat32(byteOffset, littleEndian, ec) : imp->getFloat64(byteOffset, littleEndian, ec);
-        result = isnan(value) ? JSValue(nonInlineNaN()) : jsNumber(value);
+        result = isnan(value) ? jsNaN() : jsNumber(value);
         break;
     } default:
         ASSERT_NOT_REACHED();

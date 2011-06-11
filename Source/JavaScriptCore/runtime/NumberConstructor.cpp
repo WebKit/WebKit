@@ -83,12 +83,12 @@ static JSValue numberConstructorNaNValue(ExecState*, JSValue, const Identifier&)
 
 static JSValue numberConstructorNegInfinity(ExecState*, JSValue, const Identifier&)
 {
-    return jsNumber(-Inf);
+    return jsNumber(-std::numeric_limits<double>::infinity());
 }
 
 static JSValue numberConstructorPosInfinity(ExecState*, JSValue, const Identifier&)
 {
-    return jsNumber(Inf);
+    return jsNumber(std::numeric_limits<double>::infinity());
 }
 
 static JSValue numberConstructorMaxValue(ExecState*, JSValue, const Identifier&)

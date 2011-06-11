@@ -287,7 +287,7 @@ void JSGlobalObject::reset(JSValue prototype)
     GlobalPropertyInfo staticGlobals[] = {
         GlobalPropertyInfo(Identifier(exec, "Math"), new (exec) MathObject(exec, this, MathObject::createStructure(exec->globalData(), m_objectPrototype.get())), DontEnum | DontDelete),
         GlobalPropertyInfo(Identifier(exec, "NaN"), jsNaN(), DontEnum | DontDelete | ReadOnly),
-        GlobalPropertyInfo(Identifier(exec, "Infinity"), jsNumber(Inf), DontEnum | DontDelete | ReadOnly),
+        GlobalPropertyInfo(Identifier(exec, "Infinity"), jsNumber(std::numeric_limits<double>::infinity()), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(Identifier(exec, "undefined"), jsUndefined(), DontEnum | DontDelete | ReadOnly),
         GlobalPropertyInfo(Identifier(exec, "JSON"), new (exec) JSONObject(this, JSONObject::createStructure(exec->globalData(), m_objectPrototype.get())), DontEnum | DontDelete)
     };

@@ -34,9 +34,6 @@
 
 namespace JSC {
 
-    extern const double NaN;
-    extern const double Inf;
-
     class ExecState;
     class Identifier;
     class JSCell;
@@ -82,8 +79,6 @@ namespace JSC {
         } asBits;
 #endif
     };
-
-    double nonInlineNaN();
 
     // This implements ToInt32, defined in ECMA-262 9.5.
     int32_t toInt32(double);
