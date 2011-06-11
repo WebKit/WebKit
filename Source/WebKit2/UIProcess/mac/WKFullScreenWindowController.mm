@@ -194,14 +194,15 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
     // monitors, we must create a window large enough to contain the destination
     // frame and the initial frame.
     NSRect windowFrame = NSUnionRect(screenFrame, webViewFrame);
+    
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
     [[self window] setFrame:windowFrame display:YES];
     
     CALayer* backgroundLayer = [[self _fullScreenWindow] backgroundLayer];
     NSRect backgroundFrame = {[[self window] convertScreenToBase:screenFrame.origin], screenFrame.size};
     backgroundFrame = [[[self window] contentView] convertRectFromBase:backgroundFrame];
     
-    [CATransaction begin];
-    [CATransaction setDisableActions:YES];
     [backgroundLayer setFrame:NSRectToCGRect(backgroundFrame)];
     [CATransaction commit];
 
@@ -583,10 +584,13 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context)
 
 - (void)_swapView:(NSView*)view with:(NSView*)otherView
 {
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
     [otherView setFrame:[view frame]];        
     [otherView setAutoresizingMask:[view autoresizingMask]];
     [otherView removeFromSuperview];
     [[view superview] replaceSubview:view with:otherView];
+    [CATransaction commit];
 }
 
 #pragma mark -

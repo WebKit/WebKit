@@ -393,8 +393,11 @@ PlatformLayer* MediaPlayerPrivateAVFoundationObjC::platformLayer() const
 
 void MediaPlayerPrivateAVFoundationObjC::platformSetVisible(bool isVisible)
 {
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];    
     if (m_videoLayer)
         [m_videoLayer.get() setHidden:!isVisible];
+    [CATransaction commit];
 }
     
 void MediaPlayerPrivateAVFoundationObjC::platformPlay()

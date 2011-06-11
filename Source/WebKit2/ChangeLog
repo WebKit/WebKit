@@ -1,3 +1,21 @@
+2011-06-09  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        AVPlayerLayer is adding a "fade" animation during Safari full-screen
+        https://bugs.webkit.org/show_bug.cgi?id=62433
+
+        CoreAnimation will add default animations when certain properties are changed, unless
+        those changes are wrapped in a CATransaction which has had its disableActions property set
+        to true.  Wrap each of these three property changes in a CATransaction and disable its actions,
+        so that the default "fade" animation is not created in response.
+
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController enterFullScreen:]): Wrap with CATransaction.
+        (-[WKFullScreenWindowController _swapView:with:]): Ditto:
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::setRootFullScreenLayer): Ditto.
+
 2011-06-10  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.
