@@ -110,7 +110,6 @@ Expected:
 |       "quux"
 resources/tests10.dat:
 15
-40
 53
 54
 
@@ -146,23 +145,6 @@ Expected:
 |           "baz"
 |     <p>
 |       "quux"
-
-Test 40 of 54 in resources/tests10.dat failed. Input:
-<svg><script></script><path>
-Got:
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg script>
-|         <svg path>
-Expected:
-| <html>
-|   <head>
-|   <body>
-|     <svg svg>
-|       <svg script>
-|       <svg path>
 
 Test 53 of 54 in resources/tests10.dat failed. Input:
 <math><annotation-xml><svg><foreignObject><div><math><mi></mi></math><span></span></div></foreignObject><path></path></svg></annotation-xml><mi>

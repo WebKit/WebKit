@@ -1,5 +1,12 @@
 2011-06-10  James Simonsen  <simonjam@chromium.org>
 
+        Unreviewed, missing expectations for non-V8 from change 88584.
+        https://bugs.webkit.org/show_bug.cgi?id=62412
+
+        * html5lib/runner-expected.txt:
+
+2011-06-10  James Simonsen  <simonjam@chromium.org>
+
         Reviewed by Eric Seidel.
 
         <script> inside <svg> should be executed
