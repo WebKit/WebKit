@@ -48,6 +48,7 @@
 #include "IntRect.h"
 #include "LayerRendererChromium.h"
 #include "NotificationPresenterImpl.h"
+#include "PageOverlay.h"
 #include <wtf/OwnPtr.h>
 #include <wtf/RefCounted.h>
 
@@ -206,6 +207,11 @@ public:
     void setIgnoreInputEvents(bool newValue);
     WebDevToolsAgentPrivate* devToolsAgentPrivate() { return m_devToolsAgent.get(); }
 
+    PageOverlay* pageOverlay() const { return m_pageOverlay.get(); }
+    void setPageOverlayClient(PageOverlay::PageOverlayClient*);
+
+    void setOverlayLayer(WebCore::GraphicsLayer*);
+
     const WebPoint& lastMouseDownPoint() const
     {
         return m_lastMouseDownPoint;
@@ -345,7 +351,8 @@ public:
 #if USE(ACCELERATED_COMPOSITING)
     bool allowsAcceleratedCompositing();
     bool pageHasRTLStyle() const;
-    void setRootGraphicsLayer(WebCore::PlatformLayer*);
+    void setRootGraphicsLayer(WebCore::GraphicsLayer*);
+    void setRootPlatformLayer(WebCore::PlatformLayer*);
     void setRootLayerNeedsDisplay();
     void scrollRootLayerRect(const WebCore::IntSize& scrollDelta, const WebCore::IntRect& clipRect);
     void invalidateRootLayerRect(const WebCore::IntRect&);
@@ -508,6 +515,7 @@ private:
     RefPtr<WebCore::PopupContainer> m_selectPopup;
 
     OwnPtr<WebDevToolsAgentPrivate> m_devToolsAgent;
+    OwnPtr<PageOverlay> m_pageOverlay;
 
     // Whether the webview is rendering transparently.
     bool m_isTransparent;
@@ -533,6 +541,7 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     WebCore::IntRect m_rootLayerScrollDamage;
     RefPtr<WebCore::LayerRendererChromium> m_layerRenderer;
+    WebCore::GraphicsLayer* m_rootGraphicsLayer;
     bool m_isAcceleratedCompositingActive;
     bool m_compositorCreationFailed;
     // If true, the graphics context is being restored.

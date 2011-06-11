@@ -329,6 +329,7 @@ WebViewImpl::WebViewImpl(WebViewClient* client)
     , m_dragScrollTimer(adoptPtr(new DragScrollTimer))
 #if USE(ACCELERATED_COMPOSITING)
     , m_layerRenderer(0)
+    , m_rootGraphicsLayer(0)
     , m_isAcceleratedCompositingActive(false)
     , m_compositorCreationFailed(false)
     , m_recreatingGraphicsContext(false)
@@ -2290,6 +2291,32 @@ void WebViewImpl::setIgnoreInputEvents(bool newValue)
     m_ignoreInputEvents = newValue;
 }
 
+void WebViewImpl::setPageOverlayClient(PageOverlay::PageOverlayClient* pageOverlayClient)
+{
+    if (pageOverlayClient) {
+        if (!m_pageOverlay)
+            m_pageOverlay = PageOverlay::create(this, pageOverlayClient);
+        else
+            m_pageOverlay->setClient(pageOverlayClient);
+        m_pageOverlay->update();
+        setRootLayerNeedsDisplay();
+    } else {
+        if (m_pageOverlay) {
+            m_pageOverlay->clear();
+            m_pageOverlay = nullptr;
+            setRootLayerNeedsDisplay();
+        }
+    }
+}
+
+void WebViewImpl::setOverlayLayer(WebCore::GraphicsLayer* layer)
+{
+    if (m_rootGraphicsLayer) {
+        if (layer->parent() != m_rootGraphicsLayer)
+            m_rootGraphicsLayer->addChild(layer);
+    }
+}
+
 #if ENABLE(NOTIFICATIONS)
 NotificationPresenterImpl* WebViewImpl::notificationPresenterImpl()
 {
@@ -2372,7 +2399,13 @@ bool WebViewImpl::pageHasRTLStyle() const
     return (style->direction() == RTL);
 }
 
-void WebViewImpl::setRootGraphicsLayer(WebCore::PlatformLayer* layer)
+void WebViewImpl::setRootGraphicsLayer(WebCore::GraphicsLayer* layer)
+{
+    m_rootGraphicsLayer = layer;
+    setRootPlatformLayer(layer ? layer->platformLayer() : 0);
+}
+
+void WebViewImpl::setRootPlatformLayer(WebCore::PlatformLayer* layer)
 {
     setIsAcceleratedCompositingActive(layer);
     if (m_layerRenderer)
@@ -2477,6 +2510,8 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
             m_client->didActivateAcceleratedCompositing(true);
             m_isAcceleratedCompositingActive = true;
             m_compositorCreationFailed = false;
+            if (m_pageOverlay)
+                m_pageOverlay->update();
         } else {
             m_isAcceleratedCompositingActive = false;
             m_client->didActivateAcceleratedCompositing(false);
@@ -2505,6 +2540,9 @@ void WebViewImpl::doComposite()
     hud->setShowFPSCounter(settings()->showFPSCounter());
     hud->setShowPlatformLayerTree(settings()->showPlatformLayerTree());
 
+    if (m_pageOverlay)
+        m_pageOverlay->update();
+
     m_layerRenderer->updateAndDrawLayers();
 }
 
@@ -2528,12 +2566,14 @@ void WebViewImpl::reallocateRenderer()
         // immediately obvious that GraphicsContext3D object will not
         // function properly until its reshape method is called.
         newContext->reshape(std::max(1, m_size.width), std::max(1, m_size.height));
-        setRootGraphicsLayer(m_layerRenderer->rootLayer());
+        setRootPlatformLayer(m_layerRenderer->rootLayer());
         // Forces ViewHostMsg_DidActivateAcceleratedCompositing to be sent so
         // that the browser process can reacquire surfaces.
         m_client->didActivateAcceleratedCompositing(true);
+        if (m_pageOverlay)
+            m_pageOverlay->update();
     } else
-        setRootGraphicsLayer(0);
+        setRootPlatformLayer(0);
 }
 #endif
 

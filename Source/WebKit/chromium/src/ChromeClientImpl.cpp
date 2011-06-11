@@ -836,7 +836,7 @@ void ChromeClientImpl::cancelGeolocationPermissionRequestForFrame(Frame* frame, 
 #if USE(ACCELERATED_COMPOSITING)
 void ChromeClientImpl::attachRootGraphicsLayer(Frame* frame, GraphicsLayer* graphicsLayer)
 {
-    m_webView->setRootGraphicsLayer(graphicsLayer ? graphicsLayer->platformLayer() : 0);
+    m_webView->setRootGraphicsLayer(graphicsLayer);
 }
 
 void ChromeClientImpl::scheduleCompositingLayerSync()

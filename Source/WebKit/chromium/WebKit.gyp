@@ -393,6 +393,8 @@
                 'src/NotificationPresenterImpl.h',
                 'src/NotificationPresenterImpl.cpp',
                 'src/painting/GraphicsContextBuilder.h',
+                'src/PageOverlay.cpp',
+                'src/PageOverlay.h',
                 'src/PlatformBridge.cpp',
                 'src/PlatformMessagePortChannel.cpp',
                 'src/PlatformMessagePortChannel.h',

@@ -33,6 +33,7 @@
 
 #include "InspectorClient.h"
 
+#include "PageOverlay.h"
 #include "WebDevToolsAgentPrivate.h"
 
 #include <wtf/Forward.h>
@@ -41,6 +42,7 @@
 namespace WebCore {
 class Document;
 class Frame;
+class GraphicsContext;
 class InspectorClient;
 class InspectorController;
 class Node;
@@ -60,7 +62,8 @@ struct WebURLError;
 struct WebDevToolsMessageData;
 
 class WebDevToolsAgentImpl : public WebDevToolsAgentPrivate,
-                             public WebCore::InspectorClient {
+                             public WebCore::InspectorClient,
+                             public PageOverlay::PageOverlayClient {
 public:
     WebDevToolsAgentImpl(WebViewImpl* webViewImpl, WebDevToolsAgentClient* client);
     virtual ~WebDevToolsAgentImpl();
@@ -89,6 +92,9 @@ public:
     virtual bool sendMessageToFrontend(const WTF::String&);
 
     int hostId() { return m_hostId; }
+
+    // PageOverlayClient
+    virtual void paintPageOverlay(WebCore::GraphicsContext&);
 
 private:
     WebCore::InspectorController* inspectorController();

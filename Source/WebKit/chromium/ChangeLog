@@ -1,3 +1,52 @@
+2011-06-10  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Web Inspector: [Chromium] DevTools does not highlight elements when accelerated compositing is on.
+        https://bugs.webkit.org/show_bug.cgi?id=62149
+
+        Added page overlay for inspector highlight support.
+
+        * WebKit.gyp:
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::attachRootGraphicsLayer):
+        * src/PageOverlay.cpp: Added.
+        (WebKit::PageOverlay::create):
+        (WebKit::PageOverlay::PageOverlay):
+        (WebKit::OverlayGraphicsLayerClientImpl::create):
+        (WebKit::OverlayGraphicsLayerClientImpl::~OverlayGraphicsLayerClientImpl):
+        (WebKit::OverlayGraphicsLayerClientImpl::notifyAnimationStarted):
+        (WebKit::OverlayGraphicsLayerClientImpl::notifySyncRequired):
+        (WebKit::OverlayGraphicsLayerClientImpl::paintContents):
+        (WebKit::OverlayGraphicsLayerClientImpl::showDebugBorders):
+        (WebKit::OverlayGraphicsLayerClientImpl::showRepaintCounter):
+        (WebKit::OverlayGraphicsLayerClientImpl::OverlayGraphicsLayerClientImpl):
+        (WebKit::PageOverlay::clear):
+        (WebKit::PageOverlay::update):
+        (WebKit::PageOverlay::paintWebFrame):
+        (WebKit::PageOverlay::invalidateWebFrame):
+        * src/PageOverlay.h: Added.
+        (WebKit::PageOverlay::~PageOverlay):
+        (WebKit::PageOverlay::setClient):
+        * src/WebDevToolsAgentImpl.cpp:
+        (WebKit::WebDevToolsAgentImpl::paintPageOverlay):
+        (WebKit::WebDevToolsAgentImpl::highlight):
+        (WebKit::WebDevToolsAgentImpl::hideHighlight):
+        * src/WebDevToolsAgentImpl.h:
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::paintWithContext):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::WebViewImpl):
+        (WebKit::WebViewImpl::setPageOverlayClient):
+        (WebKit::WebViewImpl::setOverlayLayer):
+        (WebKit::WebViewImpl::setRootGraphicsLayer):
+        (WebKit::WebViewImpl::setRootPlatformLayer):
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+        (WebKit::WebViewImpl::doComposite):
+        (WebKit::WebViewImpl::reallocateRenderer):
+        * src/WebViewImpl.h:
+        (WebKit::WebViewImpl::pageOverlay):
+
 2011-06-10  David Levin  <levin@chromium.org>
 
         Reviewed by Dmitry Titov.

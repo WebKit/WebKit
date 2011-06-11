@@ -34,12 +34,14 @@
 #include "DebuggerAgentImpl.h"
 #include "DebuggerAgentManager.h"
 #include "ExceptionCode.h"
+#include "GraphicsContext.h"
 #include "InjectedScriptHost.h"
 #include "InspectorBackendDispatcher.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "PageGroup.h"
+#include "PageOverlay.h"
 #include "PageScriptDebugServer.h"
 #include "PlatformString.h"
 #include "ResourceError.h"
@@ -271,24 +273,22 @@ void WebDevToolsAgentImpl::openInspectorFrontend(InspectorController*)
 {
 }
 
+// PageOverlayClient
+void WebDevToolsAgentImpl::paintPageOverlay(GraphicsContext& gc)
+{
+    InspectorController* ic = inspectorController();
+    if (ic)
+        ic->drawNodeHighlight(gc);
+}
+
 void WebDevToolsAgentImpl::highlight(Node* node)
 {
-    // InspectorController does the actuall tracking of the highlighted node
-    // and the drawing of the highlight. Here we just make sure to invalidate
-    // the rects of the old and new nodes.
-    hideHighlight();
+    m_webViewImpl->setPageOverlayClient(this);
 }
 
 void WebDevToolsAgentImpl::hideHighlight()
 {
-    // FIXME: able to invalidate a smaller rect.
-    // FIXME: Is it important to just invalidate the rect of the node region
-    // given that this is not on a critical codepath?  In order to do so, we'd
-    // have to take scrolling into account.
-    const WebSize& size = m_webViewImpl->size();
-    WebRect damagedRect(0, 0, size.width, size.height);
-    if (m_webViewImpl->client())
-        m_webViewImpl->client()->didInvalidateRect(damagedRect);
+    m_webViewImpl->setPageOverlayClient(0);
 }
 
 bool WebDevToolsAgentImpl::sendMessageToFrontend(const String& message)

@@ -104,6 +104,7 @@
 #include "IconURL.h"
 #include "InspectorController.h"
 #include "Page.h"
+#include "PageOverlay.h"
 #include "painting/GraphicsContextBuilder.h"
 #include "Performance.h"
 #include "PlatformBridge.h"
@@ -2021,7 +2022,8 @@ void WebFrameImpl::paintWithContext(GraphicsContext& gc, const WebRect& rect)
     if (m_frame->document() && frameView()) {
         gc.clip(dirtyRect);
         frameView()->paint(&gc, dirtyRect);
-        m_frame->page()->inspectorController()->drawNodeHighlight(gc);
+        if (viewImpl()->pageOverlay())
+            viewImpl()->pageOverlay()->paintWebFrame(gc);
     } else
         gc.fillRect(dirtyRect, Color::white, ColorSpaceDeviceRGB);
     gc.restore();
