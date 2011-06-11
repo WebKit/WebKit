@@ -1,3 +1,13 @@
+2011-06-10  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by James Robinson.
+
+        When sheriffbot reports failures on IRC instead of saying "(and more..)" it should say the number of tests that are failing
+        https://bugs.webkit.org/show_bug.cgi?id=62489
+
+        * Scripts/webkitpy/tool/bot/sheriff.py:
+        * Scripts/webkitpy/tool/commands/sheriffbot_unittest.py:
+
 2011-06-10  Tony Chang  <tony@chromium.org>
 
         Reviewed by Ojan Vafai.

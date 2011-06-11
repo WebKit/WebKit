@@ -58,7 +58,7 @@ MOCK: irc.post: New failures: mock-test-1
             "begin_work_queue": self._default_begin_work_queue_stderr("sheriff-bot", tool.scm().checkout_root),
             "next_work_item": "",
             "process_work_item": """MOCK: irc.post: abarth, darin, eseidel: http://trac.webkit.org/changeset/29837 might have broken Builder1
-MOCK: irc.post: New failures: test1, test2, test3, test4, test5 (and more...)
+MOCK: irc.post: New failures: test1, test2, test3, test4, test5 (and 2 more...)
 """,
             "handle_unexpected_error": "Mock error message\n",
         }

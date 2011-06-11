@@ -57,8 +57,9 @@ class Sheriff(object):
             return
         test_list_limit = 5
         irc_message = "New failures: %s" % ", ".join(sorted(failing_tests)[:test_list_limit])
-        if len(failing_tests) > test_list_limit:
-            irc_message += " (and more...)"
+        failure_count = len(failing_tests)
+        if failure_count > test_list_limit:
+            irc_message += " (and %s more...)" % (failure_count - test_list_limit)
         self._tool.irc().post(irc_message)
 
     def post_rollout_patch(self, svn_revision_list, rollout_reason):
