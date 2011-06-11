@@ -3067,6 +3067,14 @@ void WebPageProxy::drawFooter(WebFrameProxy* frame, const FloatRect& rect)
     m_uiClient.drawFooter(this, frame, rect);
 }
 
+void WebPageProxy::runModal()
+{
+    // Since runModal() can (and probably will) spin a nested run loop we need to turn off the responsiveness timer.
+    process()->responsivenessTimer()->stop();
+
+    m_uiClient.runModal(this);
+}
+
 void WebPageProxy::didCompleteRubberBandForMainFrame(const IntSize& initialOverhang)
 {
     m_uiClient.didCompleteRubberBandForMainFrame(this, initialOverhang);
