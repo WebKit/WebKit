@@ -105,11 +105,6 @@ void IDBDatabase::deleteObjectStore(const String& name, ExceptionCode& ec)
 
 PassRefPtr<IDBVersionChangeRequest> IDBDatabase::setVersion(ScriptExecutionContext* context, const String& version, ExceptionCode& ec)
 {
-    if (version.isNull()) {
-        ec = IDBDatabaseException::NON_TRANSIENT_ERR;
-        return 0;
-    }
-
     RefPtr<IDBVersionChangeRequest> request = IDBVersionChangeRequest::create(context, IDBAny::create(this), version);
     m_backend->setVersion(version, request, m_databaseCallbacks, ec);
     return request;
