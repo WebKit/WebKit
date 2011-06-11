@@ -1,3 +1,19 @@
+2011-06-11  Stephanie Lewis  <slewis@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62480
+        part of <rdar://problem/8675177>
+        Add API to launch the WebProcess.  Launching it earlier can save time 
+        when loading the first page.
+
+        * UIProcess/API/C/WKContext.cpp:
+        (WKContextWarmInitialProcess):
+        * UIProcess/API/C/WKContextPrivate.h:
+        * UIProcess/WebContext.cpp:
+        (WebKit::WebContext::warmInitialProcess):
+        * UIProcess/WebContext.h:
+
 2011-06-09  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

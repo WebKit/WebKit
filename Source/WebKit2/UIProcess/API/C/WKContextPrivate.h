@@ -67,6 +67,8 @@ WK_EXPORT void WKContextDisableProcessTermination(WKContextRef context);
 WK_EXPORT void WKContextEnableProcessTermination(WKContextRef context);
 
 WK_EXPORT void _WKContextSetHTTPPipeliningEnabled(WKContextRef context, bool enabled);
+    
+WK_EXPORT void WKContextWarmInitialProcess(WKContextRef context);
 
 #ifdef __cplusplus
 }

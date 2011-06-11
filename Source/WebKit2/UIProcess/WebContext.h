@@ -165,6 +165,7 @@ public:
     void setLocalStorageDirectory(const String& dir) { m_overrideLocalStorageDirectory = dir; }
 
     void ensureWebProcess();
+    void warmInitialProcess();
 
     bool shouldTerminate(WebProcessProxy*);
 

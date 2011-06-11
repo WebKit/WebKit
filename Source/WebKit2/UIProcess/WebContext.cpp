@@ -260,6 +260,11 @@ void WebContext::ensureWebProcess()
     m_pendingMessagesToPostToInjectedBundle.clear();
 }
 
+void WebContext::warmInitialProcess()  
+{
+    ensureWebProcess();
+}
+
 void WebContext::enableProcessTermination()
 {
     m_processTerminationEnabled = true;
