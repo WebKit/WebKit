@@ -1,3 +1,14 @@
+2011-06-10  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Stephanie Lewis.
+
+        Script to kill old processes on Mac.
+        This matches the windows version.
+        https://bugs.webkit.org/show_bug.cgi?id=62479  
+        
+        * BuildSlaveSupport/mac: Added.
+        * BuildSlaveSupport/mac/kill-old-processes: Added.
+
 2011-06-10  Adam Barth  <abarth@webkit.org>
 
         Reviewed by James Robinson.
