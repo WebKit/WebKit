@@ -1,3 +1,15 @@
+2011-06-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: 'images' links on results.html don't work
+        https://bugs.webkit.org/show_bug.cgi?id=62194
+
+        Use relative path when generating images-diffs.html
+
+        * Scripts/webkitpy/layout_tests/layout_package/test_result_writer.py:
+        Added _output_testname.
+
 2011-06-10  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Stephanie Lewis.

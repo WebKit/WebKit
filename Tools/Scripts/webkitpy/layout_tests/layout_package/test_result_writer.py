@@ -132,6 +132,10 @@ class TestResultWriter(object):
         output_filename = fs.join(self._root_output_dir, self._testname)
         return fs.splitext(output_filename)[0] + modifier
 
+    def _output_testname(self, modifier):
+        fs = self._port._filesystem
+        return fs.splitext(fs.basename(self._testname))[0] + modifier
+
     def write_output_files(self, file_type, output, expected):
         """Writes the test output, the expected output in the results directory.
 
@@ -241,7 +245,7 @@ Difference between images: <a href="%(diff_filename)s">diff</a><br>
     toggleImages();
     setInterval(toggleImages, 2000)
 </script>
-""" % { 'title': self._testname, 'diff_filename': self.output_filename('-diff.png'), 'prefix': self.output_filename('') }
+""" % { 'title': self._testname, 'diff_filename': self._output_testname('-diff.png'), 'prefix': self._output_testname('') }
         self._port._filesystem.write_binary_file(diffs_html_filename, html)
 
         return True
