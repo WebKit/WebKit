@@ -1,3 +1,31 @@
+2011-06-10  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Update chromium gpu baselines
+
+        * platform/chromium-gpu-linux/compositing/flat-with-transformed-child-expected.png: Removed.
+        * platform/chromium-gpu-linux/compositing/geometry/clip-expected.txt: Removed.
+        * platform/chromium-gpu-linux/compositing/geometry/foreground-layer-expected.png: Removed.
+        * platform/chromium-gpu-linux/compositing/geometry/repaint-foreground-layer-expected.png: Removed.
+        * platform/chromium-gpu-linux/compositing/iframes/iframe-content-flipping-expected.png: Removed.
+        * platform/chromium-gpu-linux/compositing/overflow/zero-size-overflow-expected.png: Removed.
+        * platform/chromium-gpu-linux/compositing/reflections/backface-hidden-reflection-expected.png: Removed.
+        * platform/chromium-gpu-linux/compositing/repaint/content-into-overflow-expected.png: Removed.
+        * platform/chromium-gpu-linux/compositing/repaint/overflow-into-content-expected.png: Removed.
+        * platform/chromium-gpu-win/compositing/geometry/clip-expected.txt: Removed.
+        * platform/chromium-gpu-win/compositing/geometry/fixed-in-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/geometry/foreground-layer-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/iframes/invisible-nested-iframe-show-expected.txt: Added.
+        * platform/chromium-gpu-win/compositing/overflow/clip-descendents-expected.txt:
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transformed-expected.png:
+        * platform/chromium-gpu-win/compositing/reflections/nested-reflection-transformed2-expected.png:
+        * platform/chromium-gpu-win/compositing/reflections/reflection-in-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/reflections/reflection-on-composited-expected.png:
+        * platform/chromium-gpu-win/compositing/shadows/shadow-drawing-expected.png:
+        * platform/chromium-gpu-win/compositing/tiling/huge-layer-add-remove-child-expected.txt:
+        * platform/chromium-gpu-win/compositing/tiling/huge-layer-expected.txt:
+        * platform/chromium-gpu-win/compositing/tiling/huge-layer-resize-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows and Chromium rebaselines after r88592. Apparently, some tests are failing on Windows.

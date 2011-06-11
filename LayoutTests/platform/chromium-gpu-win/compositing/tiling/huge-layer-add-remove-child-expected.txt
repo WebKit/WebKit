@@ -29,6 +29,13 @@ Second (child added):
           (position 8.00 92.00)
           (bounds 502.00 5002.00)
           (drawsContent 1)
+          (children 1
+            (GraphicsLayer
+              (position 51.00 401.00)
+              (bounds 200.00 200.00)
+              (drawsContent 1)
+            )
+          )
         )
       )
     )
