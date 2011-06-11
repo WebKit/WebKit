@@ -1,5 +1,12 @@
 2011-06-10  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Add fail expectation to fast/dom/navigator-detached-no-crash.htm on Chromium Mac
+        because it has been failing on the bot; the failure is tracked by the bug 62364.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-10  Ryosuke Niwa  <rniwa@webkit.org>
+
         Reviewed by Ojan Vafai.
 
         new-run-webkit-tests: results.html don't list the same list of failed tests as bots do
