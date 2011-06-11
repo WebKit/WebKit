@@ -448,9 +448,7 @@ void JIT::privateCompileSlowCases()
         emitJumpSlowToHot(jump(), 0);
     }
 
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     ASSERT(m_propertyAccessInstructionIndex == m_propertyAccessCompilationInfo.size());
-#endif
     ASSERT(m_callLinkInfoIndex == m_codeBlock->numberOfCallLinkInfos());
 
 #ifndef NDEBUG
@@ -569,22 +567,18 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
     for (Vector<JSRInfo>::iterator iter = m_jsrSites.begin(); iter != m_jsrSites.end(); ++iter)
         patchBuffer.patch(iter->storeLocation, patchBuffer.locationOf(iter->target).executableAddress());
 
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     m_codeBlock->setNumberOfStructureStubInfos(m_propertyAccessCompilationInfo.size());
     for (unsigned i = 0; i < m_propertyAccessCompilationInfo.size(); ++i) {
         StructureStubInfo& info = m_codeBlock->structureStubInfo(i);
         info.callReturnLocation = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = patchBuffer.locationOf(m_propertyAccessCompilationInfo[i].hotPathBegin);
     }
-#endif
-#if ENABLE(JIT_OPTIMIZE_CALL)
     for (unsigned i = 0; i < m_codeBlock->numberOfCallLinkInfos(); ++i) {
         CallLinkInfo& info = m_codeBlock->callLinkInfo(i);
         info.callReturnLocation = patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].callReturnLocation);
         info.hotPathBegin = patchBuffer.locationOf(m_callStructureStubCompilationInfo[i].hotPathBegin);
         info.hotPathOther = patchBuffer.locationOfNearCall(m_callStructureStubCompilationInfo[i].hotPathOther);
     }
-#endif
     unsigned methodCallCount = m_methodCallCompilationInfo.size();
     m_codeBlock->addMethodCallLinkInfos(methodCallCount);
     for (unsigned i = 0; i < methodCallCount; ++i) {
@@ -598,8 +592,6 @@ JITCode JIT::privateCompile(CodePtr* functionEntryArityCheck)
 
     return patchBuffer.finalizeCode();
 }
-
-#if ENABLE(JIT_OPTIMIZE_CALL)
 
 void JIT::linkCall(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBlock* calleeCodeBlock, JIT::CodePtr code, CallLinkInfo* callLinkInfo, int callerArgCount, JSGlobalData* globalData)
 {
@@ -634,7 +626,6 @@ void JIT::linkConstruct(JSFunction* callee, CodeBlock* callerCodeBlock, CodeBloc
     // patch the call so we do not continue to try to link.
     repatchBuffer.relink(callLinkInfo->callReturnLocation, globalData->jitStubs->ctiVirtualConstruct());
 }
-#endif // ENABLE(JIT_OPTIMIZE_CALL)
 
 } // namespace JSC
 

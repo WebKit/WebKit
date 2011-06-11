@@ -46,7 +46,6 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Label softModBegin = align();
     softModulo();
 #endif
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     // (1) This function provides fast property access for string length
     Label stringLengthBegin = align();
 
@@ -63,11 +62,9 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     move(TrustedImm32(JSValue::Int32Tag), regT1);
 
     ret();
-#endif
     
     JumpList callLinkFailures;
     // (2) Trampolines for the slow cases of op_call / op_call_eval / op_construct.
-#if ENABLE(JIT_OPTIMIZE_CALL)
     // VirtualCallLink Trampoline
     // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
     Label virtualCallLinkBegin = align();
@@ -93,8 +90,6 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     callLinkFailures.append(branchTestPtr(Zero, regT0));
     emitGetFromCallFrameHeader32(RegisterFile::ArgumentCount, regT1);
     jump(regT0);
-
-#endif // ENABLE(JIT_OPTIMIZE_CALL)
 
     // VirtualCall Trampoline
     // regT0 holds callee, regT1 holds argCount.  regT2 will hold the FunctionExecutable.
@@ -152,24 +147,18 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     Label nativeCallThunk = privateCompileCTINativeCall(globalData);    
     Label nativeConstructThunk = privateCompileCTINativeCall(globalData, true);    
 
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     Call string_failureCases1Call = makeTailRecursiveCall(string_failureCases1);
     Call string_failureCases2Call = makeTailRecursiveCall(string_failureCases2);
     Call string_failureCases3Call = makeTailRecursiveCall(string_failureCases3);
-#endif
 
     // All trampolines constructed! copy the code, link up calls, and set the pointers on the Machine object.
     LinkBuffer patchBuffer(*m_globalData, this, m_globalData->executableAllocator);
 
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     patchBuffer.link(string_failureCases1Call, FunctionPtr(cti_op_get_by_id_string_fail));
     patchBuffer.link(string_failureCases2Call, FunctionPtr(cti_op_get_by_id_string_fail));
     patchBuffer.link(string_failureCases3Call, FunctionPtr(cti_op_get_by_id_string_fail));
-#endif
-#if ENABLE(JIT_OPTIMIZE_CALL)
     patchBuffer.link(callLazyLinkCall, FunctionPtr(cti_vm_lazyLinkCall));
     patchBuffer.link(callLazyLinkConstruct, FunctionPtr(cti_vm_lazyLinkConstruct));
-#endif
     patchBuffer.link(callCompileCall, FunctionPtr(cti_op_call_jitCompile));
     patchBuffer.link(callCompileCconstruct, FunctionPtr(cti_op_construct_jitCompile));
 
@@ -180,13 +169,9 @@ void JIT::privateCompileCTIMachineTrampolines(RefPtr<ExecutablePool>* executable
     trampolines->ctiVirtualConstruct = patchBuffer.trampolineAt(virtualConstructBegin);
     trampolines->ctiNativeCall = patchBuffer.trampolineAt(nativeCallThunk);
     trampolines->ctiNativeConstruct = patchBuffer.trampolineAt(nativeConstructThunk);
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
     trampolines->ctiStringLengthTrampoline = patchBuffer.trampolineAt(stringLengthBegin);
-#endif
-#if ENABLE(JIT_OPTIMIZE_CALL)
     trampolines->ctiVirtualCallLink = patchBuffer.trampolineAt(virtualCallLinkBegin);
     trampolines->ctiVirtualConstructLink = patchBuffer.trampolineAt(virtualConstructLinkBegin);
-#endif
 #if ENABLE(JIT_USE_SOFT_MODULO)
     trampolines->ctiSoftModulo = patchBuffer.trampolineAt(softModBegin);
 #endif
@@ -296,9 +281,8 @@ JIT::Label JIT::privateCompileCTINativeCall(JSGlobalData* globalData, bool isCon
 
     restoreReturnAddressBeforeReturn(regT3);
 
-#elif ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
-#error "JIT_OPTIMIZE_NATIVE_CALL not yet supported on this platform."
 #else
+#error "JIT not supported on this platform."
     UNUSED_PARAM(executableOffsetToFunction);
     breakpoint();
 #endif // CPU(X86)
@@ -435,9 +419,8 @@ JIT::CodePtr JIT::privateCompileCTINativeCall(PassRefPtr<ExecutablePool> executa
     nativeCall = call();
 
     restoreReturnAddressBeforeReturn(regT3);
-#elif ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
-#error "JIT_OPTIMIZE_NATIVE_CALL not yet supported on this platform."
 #else
+#error "JIT not supported on this platform."
     breakpoint();
 #endif // CPU(X86)
 
@@ -1800,7 +1783,7 @@ void JIT::softModulo()
 #if CPU(ARM)
     elementSizeByShift = 3;
 #else
-#error "JIT_OPTIMIZE_MOD not yet supported on this platform."
+#error "JIT_USE_SOFT_MODULO not yet supported on this platform."
 #endif
     relativeTableJump(regT1, elementSizeByShift);
 
@@ -1816,7 +1799,7 @@ void JIT::softModulo()
         m_assembler.it(ARMv7Assembler::ConditionCS);
         m_assembler.mov(regT2, regT1);
 #else
-#error "JIT_OPTIMIZE_MOD not yet supported on this platform."
+#error "JIT_USE_SOFT_MODULO not yet supported on this platform."
 #endif
     }
 

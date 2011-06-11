@@ -77,7 +77,7 @@ namespace JSC {
 
         unsigned char attributes() const { return m_attributes; }
 
-#if ENABLE(JIT) && ENABLE(JIT_OPTIMIZE_NATIVE_CALL)
+#if ENABLE(JIT)
         ThunkGenerator generator() const { ASSERT(m_attributes & Function); return m_u.function.generator; }
 #endif
         NativeFunction function() const { ASSERT(m_attributes & Function); return m_u.function.functionValue; }

@@ -100,94 +100,6 @@ void JIT::emit_op_del_by_id(Instruction* currentInstruction)
     stubCall.call(dst);
 }
 
-
-#if !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-
-/* ------------------------------ BEGIN: !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS) ------------------------------ */
-
-// Treat these as nops - the call will be handed as a regular get_by_id/op_call pair.
-void JIT::emit_op_method_check(Instruction*) {}
-void JIT::emitSlow_op_method_check(Instruction*, Vector<SlowCaseEntry>::iterator&) { ASSERT_NOT_REACHED(); }
-#if ENABLE(JIT_OPTIMIZE_METHOD_CALLS)
-#error "JIT_OPTIMIZE_METHOD_CALLS requires JIT_OPTIMIZE_PROPERTY_ACCESS"
-#endif
-
-void JIT::emit_op_get_by_val(Instruction* currentInstruction)
-{
-    unsigned dst = currentInstruction[1].u.operand;
-    unsigned base = currentInstruction[2].u.operand;
-    unsigned property = currentInstruction[3].u.operand;
-    
-    JITStubCall stubCall(this, cti_op_get_by_val);
-    stubCall.addArgument(base);
-    stubCall.addArgument(property);
-    stubCall.call(dst);
-}
-
-void JIT::emitSlow_op_get_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void JIT::emit_op_put_by_val(Instruction* currentInstruction)
-{
-    unsigned base = currentInstruction[1].u.operand;
-    unsigned property = currentInstruction[2].u.operand;
-    unsigned value = currentInstruction[3].u.operand;
-    
-    JITStubCall stubCall(this, cti_op_put_by_val);
-    stubCall.addArgument(base);
-    stubCall.addArgument(property);
-    stubCall.addArgument(value);
-    stubCall.call();
-}
-
-void JIT::emitSlow_op_put_by_val(Instruction*, Vector<SlowCaseEntry>::iterator&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void JIT::emit_op_get_by_id(Instruction* currentInstruction)
-{
-    int dst = currentInstruction[1].u.operand;
-    int base = currentInstruction[2].u.operand;
-    int ident = currentInstruction[3].u.operand;
-    
-    JITStubCall stubCall(this, cti_op_get_by_id_generic);
-    stubCall.addArgument(base);
-    stubCall.addArgument(TrustedImmPtr(&(m_codeBlock->identifier(ident))));
-    stubCall.call(dst);
-}
-
-void JIT::emitSlow_op_get_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-void JIT::emit_op_put_by_id(Instruction* currentInstruction)
-{
-    int base = currentInstruction[1].u.operand;
-    int ident = currentInstruction[2].u.operand;
-    int value = currentInstruction[3].u.operand;
-    
-    JITStubCall stubCall(this, cti_op_put_by_id_generic);
-    stubCall.addArgument(base);
-    stubCall.addArgument(TrustedImmPtr(&(m_codeBlock->identifier(ident))));
-    stubCall.addArgument(value);
-    stubCall.call();
-}
-
-void JIT::emitSlow_op_put_by_id(Instruction*, Vector<SlowCaseEntry>::iterator&)
-{
-    ASSERT_NOT_REACHED();
-}
-
-#else // !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-
-/* ------------------------------ BEGIN: ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS) ------------------------------ */
-
-#if ENABLE(JIT_OPTIMIZE_METHOD_CALLS)
-
 void JIT::emit_op_method_check(Instruction* currentInstruction)
 {
     // Assert that the following instruction is a get_by_id.
@@ -252,14 +164,6 @@ void JIT::emitSlow_op_method_check(Instruction* currentInstruction, Vector<SlowC
     // We've already generated the following get_by_id, so make sure it's skipped over.
     m_bytecodeOffset += OPCODE_LENGTH(op_get_by_id);
 }
-
-#else //!ENABLE(JIT_OPTIMIZE_METHOD_CALLS)
-
-// Treat these as nops - the call will be handed as a regular get_by_id/op_call pair.
-void JIT::emit_op_method_check(Instruction*) {}
-void JIT::emitSlow_op_method_check(Instruction*, Vector<SlowCaseEntry>::iterator&) { ASSERT_NOT_REACHED(); }
-
-#endif
 
 JIT::CodePtr JIT::stringGetByValStubGenerator(JSGlobalData* globalData, ExecutablePool* pool)
 {
@@ -1038,10 +942,6 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
     // We don't want to patch more than once - in future go to cti_op_put_by_id_generic.
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_proto_list));
 }
-
-/* ------------------------------ END: !ENABLE / ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS) ------------------------------ */
-
-#endif // !ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
 void JIT::compileGetDirectOffset(RegisterID base, RegisterID resultTag, RegisterID resultPayload, RegisterID offset)
 {

@@ -102,67 +102,6 @@ void JIT::compileOpCallVarargsSlowCase(Instruction*, Vector<SlowCaseEntry>::iter
     sampleCodeBlock(m_codeBlock);
 }
     
-#if !ENABLE(JIT_OPTIMIZE_CALL)
-
-/* ------------------------------ BEGIN: !ENABLE(JIT_OPTIMIZE_CALL) ------------------------------ */
-
-void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned)
-{
-    int callee = instruction[1].u.operand;
-    int argCount = instruction[2].u.operand;
-    int registerOffset = instruction[3].u.operand;
-
-    // Handle eval
-    Jump wasEval;
-    if (opcodeID == op_call_eval) {
-        JITStubCall stubCall(this, cti_op_call_eval);
-        stubCall.addArgument(callee, regT0);
-        stubCall.addArgument(JIT::Imm32(registerOffset));
-        stubCall.addArgument(JIT::Imm32(argCount));
-        stubCall.call();
-        wasEval = branchPtr(NotEqual, regT0, TrustedImmPtr(JSValue::encode(JSValue())));
-    }
-
-    emitGetVirtualRegister(callee, regT0);
-
-    // Check for JSFunctions.
-    emitJumpSlowCaseIfNotJSCell(regT0);
-    addSlowCase(branchPtr(NotEqual, Address(regT0), TrustedImmPtr(m_globalData->jsFunctionVPtr)));
-
-    // Speculatively roll the callframe, assuming argCount will match the arity.
-    storePtr(callFrameRegister, Address(callFrameRegister, (RegisterFile::CallerFrame + registerOffset) * static_cast<int>(sizeof(Register))));
-    addPtr(Imm32(registerOffset * static_cast<int>(sizeof(Register))), callFrameRegister);
-    move(Imm32(argCount), regT1);
-
-    emitNakedCall(opcodeID == op_construct ? m_globalData->jitStubs->ctiVirtualConstruct() : m_globalData->jitStubs->ctiVirtualCall());
-
-    if (opcodeID == op_call_eval)
-        wasEval.link(this);
-
-    sampleCodeBlock(m_codeBlock);
-}
-
-void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>::iterator& iter, unsigned, OpcodeID opcodeID)
-{
-    int argCount = instruction[2].u.operand;
-    int registerOffset = instruction[3].u.operand;
-
-    linkSlowCase(iter);
-    linkSlowCase(iter);
-
-    JITStubCall stubCall(this, opcodeID == op_construct ? cti_op_construct_NotJSConstruct : cti_op_call_NotJSFunction);
-    stubCall.addArgument(regT0);
-    stubCall.addArgument(JIT::Imm32(registerOffset));
-    stubCall.addArgument(JIT::Imm32(argCount));
-    stubCall.call();
-
-    sampleCodeBlock(m_codeBlock);
-}
-
-#else // !ENABLE(JIT_OPTIMIZE_CALL)
-
-/* ------------------------------ BEGIN: ENABLE(JIT_OPTIMIZE_CALL) ------------------------------ */
-
 void JIT::compileOpCall(OpcodeID opcodeID, Instruction* instruction, unsigned callLinkInfoIndex)
 {
     int callee = instruction[1].u.operand;
@@ -253,10 +192,6 @@ void JIT::compileOpCallSlowCase(Instruction* instruction, Vector<SlowCaseEntry>:
 
     sampleCodeBlock(m_codeBlock);
 }
-
-/* ------------------------------ END: !ENABLE / ENABLE(JIT_OPTIMIZE_CALL) ------------------------------ */
-
-#endif // !ENABLE(JIT_OPTIMIZE_CALL)
 
 } // namespace JSC
 

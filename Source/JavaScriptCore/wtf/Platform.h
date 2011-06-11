@@ -1042,32 +1042,13 @@
 
 #if CPU(SH4) && PLATFORM(QT)
 #define ENABLE_JIT 1
-#define ENABLE_YARR 1
-#define ENABLE_YARR_JIT 1
-#define WTF_USE_JIT_STUB_ARGUMENT_REGISTER 1
-#define ENABLE_ASSEMBLER 1
 #endif
 
 /* Configure the JIT */
-#if ENABLE(JIT)
-    #if CPU(ARM)
-    #if !defined(ENABLE_JIT_USE_SOFT_MODULO) && WTF_ARM_ARCH_AT_LEAST(5)
-    #define ENABLE_JIT_USE_SOFT_MODULO 1
-    #endif
-    #endif
-
-    #ifndef ENABLE_JIT_OPTIMIZE_CALL
-    #define ENABLE_JIT_OPTIMIZE_CALL 1
-    #endif
-    #ifndef ENABLE_JIT_OPTIMIZE_NATIVE_CALL
-    #define ENABLE_JIT_OPTIMIZE_NATIVE_CALL 1
-    #endif
-    #ifndef ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS
-    #define ENABLE_JIT_OPTIMIZE_PROPERTY_ACCESS 1
-    #endif
-    #ifndef ENABLE_JIT_OPTIMIZE_METHOD_CALLS
-    #define ENABLE_JIT_OPTIMIZE_METHOD_CALLS 1
-    #endif
+#if CPU(ARM)
+#if !defined(ENABLE_JIT_USE_SOFT_MODULO) && WTF_ARM_ARCH_AT_LEAST(5)
+#define ENABLE_JIT_USE_SOFT_MODULO 1
+#endif
 #endif
 
 #if CPU(X86) && COMPILER(MSVC)

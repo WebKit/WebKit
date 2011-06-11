@@ -801,8 +801,6 @@ JITThunks::~JITThunks()
 {
 }
 
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-
 NEVER_INLINE void JITThunks::tryCachePutByID(CallFrame* callFrame, CodeBlock* codeBlock, ReturnAddressPtr returnAddress, JSValue baseValue, const PutPropertySlot& slot, StructureStubInfo* stubInfo, bool direct)
 {
     // The interpreter checks for recursion here; I do not believe this can occur in CTI.
@@ -941,8 +939,6 @@ NEVER_INLINE void JITThunks::tryCacheGetByID(CallFrame* callFrame, CodeBlock* co
     stubInfo->initGetByIdChain(callFrame->globalData(), codeBlock->ownerExecutable(), structure, prototypeChain);
     JIT::compileGetByIdChain(callFrame->scopeChain()->globalData, callFrame, codeBlock, stubInfo, structure, prototypeChain, count, propertyName, slot, offset, returnAddress);
 }
-
-#endif // ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
 
 #ifndef NDEBUG
 
@@ -1427,8 +1423,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_generic)
     return JSValue::encode(result);
 }
 
-#if ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-
 DEFINE_STUB_FUNCTION(void, op_put_by_id)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -1821,8 +1815,6 @@ DEFINE_STUB_FUNCTION(EncodedJSValue, op_get_by_id_string_fail)
     return JSValue::encode(result);
 }
 
-#endif // ENABLE(JIT_OPTIMIZE_PROPERTY_ACCESS)
-
 DEFINE_STUB_FUNCTION(void, op_check_has_instance)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -2083,7 +2075,6 @@ DEFINE_STUB_FUNCTION(void*, op_construct_arityCheck)
     return callFrame;
 }
 
-#if ENABLE(JIT_OPTIMIZE_CALL)
 DEFINE_STUB_FUNCTION(void*, vm_lazyLinkCall)
 {
     STUB_INIT_STACK_FRAME(stackFrame);
@@ -2151,7 +2142,6 @@ DEFINE_STUB_FUNCTION(void*, vm_lazyLinkConstruct)
 
     return codePtr.executableAddress();
 }
-#endif // !ENABLE(JIT_OPTIMIZE_CALL)
 
 DEFINE_STUB_FUNCTION(JSObject*, op_push_activation)
 {
