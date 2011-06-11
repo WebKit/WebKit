@@ -326,14 +326,13 @@ PassOwnPtr<ArgumentDecoder> Connection::waitForMessage(MessageID messageID, uint
     {
         MutexLocker locker(m_incomingMessagesLock);
 
-        for (size_t i = 0; i < m_incomingMessages.size(); ++i) {
-            IncomingMessage& message = m_incomingMessages[i];
+        for (Deque<IncomingMessage>::iterator it = m_incomingMessages.begin(), end = m_incomingMessages.end(); it != end; ++it) {
+            IncomingMessage& message = *it;
 
             if (message.messageID() == messageID && message.arguments()->destinationID() == destinationID) {
                 OwnPtr<ArgumentDecoder> arguments = message.releaseArguments();
 
-                // Erase the incoming message.
-                m_incomingMessages.remove(i);
+                m_incomingMessages.remove(it);
                 return arguments.release();
             }
         }
@@ -689,15 +688,19 @@ void Connection::dispatchMessage(IncomingMessage& message)
 
 void Connection::dispatchMessages()
 {
-    Vector<IncomingMessage> incomingMessages;
-    
-    {
-        MutexLocker locker(m_incomingMessagesLock);
-        m_incomingMessages.swap(incomingMessages);
-    }
+    while (true) {
+        IncomingMessage incomingMessage;
 
-    for (size_t i = 0; i < incomingMessages.size(); ++i)
-        dispatchMessage(incomingMessages[i]);
+        {
+            MutexLocker locker(m_incomingMessagesLock);
+            if (m_incomingMessages.isEmpty())
+                break;
+
+            incomingMessage = m_incomingMessages.takeFirst();
+        }
+
+        dispatchMessage(incomingMessage);
+    }
 }
 
 } // namespace CoreIPC

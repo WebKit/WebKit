@@ -1,3 +1,22 @@
+2011-06-10  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        REGRESSION (WebKit2): window.showModalDialog() broken
+        https://bugs.webkit.org/show_bug.cgi?id=62496
+        <rdar://problem/9581492>
+
+        If dispatching a message ends up creating a nested run loop, some incoming messages can end up not being
+        delivered until we exit from the run loop.
+
+        Fix this by using a Deque instead of a Vector for incoming messages, and get one message at a time and then
+        dispatch it. That prevents us from having any lingering messages lying around in stack allocated space.
+
+        * Platform/CoreIPC/Connection.cpp:
+        (CoreIPC::Connection::waitForMessage):
+        (CoreIPC::Connection::dispatchMessages):
+        * Platform/CoreIPC/Connection.h:
+
 2011-06-10  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Anders Carlsson.

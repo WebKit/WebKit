@@ -257,7 +257,7 @@ private:
 
     // Incoming messages.
     Mutex m_incomingMessagesLock;
-    Vector<IncomingMessage> m_incomingMessages;
+    Deque<IncomingMessage> m_incomingMessages;
 
     // Outgoing messages.
     Mutex m_outgoingMessagesLock;
