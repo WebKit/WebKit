@@ -1,3 +1,14 @@
+2011-06-10  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: End of apple.com video in full-screen mode leads to unusable page.
+        https://bugs.webkit.org/show_bug.cgi?id=62411
+
+        * fullscreen/full-screen-remove-ancestor-after-expected.txt: Added.
+        * fullscreen/full-screen-remove-ancestor-after.html: Added.
+        * platform/mac/fullscreen/full-screen-remove-ancestor-after-expected.png: Added.
+
 2011-06-10  James Robinson  <jamesr@chromium.org>
 
         [chromium] Update chromium compositor baselines for r88580

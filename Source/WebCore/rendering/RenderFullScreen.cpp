@@ -36,6 +36,25 @@
 
 using namespace WebCore;
 
+class RenderFullScreenPlaceholder : public RenderBlock {
+public:
+    RenderFullScreenPlaceholder(RenderFullScreen* owner) 
+        : RenderBlock(owner->document())
+        , m_owner(owner) 
+    { 
+    }
+private:
+    virtual bool isRenderFullScreenPlaceholder() const { return true; }
+    virtual void destroy();
+    RenderFullScreen* m_owner;
+};
+
+void RenderFullScreenPlaceholder::destroy()
+{
+    m_owner->setPlaceholder(0);
+    RenderBlock::destroy();
+}
+
 RenderFullScreen::RenderFullScreen(Node* node) 
     : RenderFlexibleBox(node) 
     , m_placeholder(0)
@@ -49,7 +68,7 @@ void RenderFullScreen::destroy()
         remove();
         if (!m_placeholder->beingDestroyed())
             m_placeholder->destroy();
-        m_placeholder = 0;
+        ASSERT(!m_placeholder);
     }
 
     // RenderObjects are unretained, so notify the document (which holds a pointer to a RenderFullScreen)
@@ -86,6 +105,11 @@ PassRefPtr<RenderStyle> RenderFullScreen::createFullScreenStyle()
     return fullscreenStyle.release();
 }
 
+void RenderFullScreen::setPlaceholder(RenderBlock* placeholder)
+{
+    m_placeholder = placeholder;
+}
+
 void RenderFullScreen::createPlaceholder(PassRefPtr<RenderStyle> style, const IntRect& frameRect)
 {
     if (style->width().isAuto())
@@ -94,9 +118,8 @@ void RenderFullScreen::createPlaceholder(PassRefPtr<RenderStyle> style, const In
         style->setHeight(Length(frameRect.height(), Fixed));
 
     if (!m_placeholder) {
-        m_placeholder = new (document()->renderArena()) RenderBlock(document());
+        m_placeholder = new (document()->renderArena()) RenderFullScreenPlaceholder(this);
         m_placeholder->setStyle(style);
-        m_placeholder->setIsAnonymous(false);
         if (parent()) {
             parent()->addChild(m_placeholder, this);
             remove();

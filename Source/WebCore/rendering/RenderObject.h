@@ -311,6 +311,7 @@ public:
     virtual bool isCanvas() const { return false; }
 #if ENABLE(FULLSCREEN_API)
     virtual bool isRenderFullScreen() const { return false; }
+    virtual bool isRenderFullScreenPlaceholder() const { return false; }
 #endif
 
     bool isRoot() const { return document()->documentElement() == m_node; }
@@ -402,6 +403,7 @@ public:
         return m_isAnonymous && (style()->display() == BLOCK || style()->display() == BOX) && style()->styleType() == NOPSEUDO && isRenderBlock() && !isListMarker()
 #if ENABLE(FULLSCREEN_API)
             && !isRenderFullScreen()
+            && !isRenderFullScreenPlaceholder()
 #endif
             ;
     }

@@ -1,3 +1,36 @@
+2011-06-09  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION: End of apple.com video in full-screen mode leads to unusable page.
+        https://bugs.webkit.org/show_bug.cgi?id=62411
+        
+        Test: fullscreen/full-screen-remove-ancestor-after.html
+
+        The placeholder for RenderFullScreen was being created as a non-anonymous object, which led
+        to the document's renderer being set to 0 when the placeholder was removed due to its parent
+        being removed. Setting the placeholder to be anonymous, however, means that it will be
+        coalesced with sibling anonymous blocks, so added the RenderFullScreenPlaceholder to the
+        list of anonymous objects that are not considered anonymous blocks, to avoid the placeholder
+        being so coalesced. To do so, made the placeholder object a true subclass, and add and
+        override its destroy() function to notify the RenderFullScreen object that it has been
+        destroyed.
+
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreenPlaceholder::RenderFullScreenPlaceholder): Added.
+        (RenderFullScreenPlaceholder::~RenderFullScreenPlaceholder): Added.
+        (RenderFullScreenPlaceholder::isRenderFullScreenPlaceholder): Added.
+        (RenderFullScreenPlaceholder::destroy): Notify the owner renderer that its placeholder
+            has been destroyed.
+        (RenderFullScreen::destroy): Assert that the m_placeholder ivar is 0 after destroying it.
+        (RenderFullScreen::setPlaceholder): Added.
+        (RenderFullScreen::createPlaceholder): Do not make the placeholder anonymous.
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderObject.h:
+        (WebCore::RenderObject::isRenderFullScreenPlaceholder): Added.
+        (WebCore::RenderObject::isAnonymousBlock): Added the placeholder class to the list of
+            objects which are not anonymous blocks.
+
 2011-06-10  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
