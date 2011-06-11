@@ -432,6 +432,67 @@ function runTests()
         assertTrue(document.querySelector('tbody td:nth-child(3)').textContent == 'expected actual  diff ');
     }, '{"toggle-images":false,"unexpected-results":false}');
 
+    function enclosingNodeWithTagNameHasClassName(node, tagName, className) {
+        while (node && (!node.tagName || node.localName != tagName))
+            node = node.parentNode;
+        if (!node)
+            return false;
+        return node.className == className;
+    }
+
+    results = mockResults();
+    var subtree = results.tests['foo'] = {}
+    subtree['expected-to-pass-but-crashed.html'] = mockExpectation('PASS', 'CRASH');
+    subtree['expected-to-pass-or-crash-and-crashed.html'] = mockExpectation('PASS CRASH', 'CRASH');
+    subtree['expected-to-pass-but-timeouted.html'] = mockExpectation('PASS', 'CRASH');
+    subtree['expected-to-pass-or-timeout-and-timeouted.html'] = mockExpectation('PASS TIMEOUT', 'TIMEOUT');
+    subtree['expected-fail-but-passed.html'] = mockExpectation('FAIL', 'PASS');
+    subtree['expected-pass-or-fail-and-passed.html'] = mockExpectation('PASS FAIL', 'PASS');
+    runTest(results, function() {
+        assertTrue(!document.getElementById('results-table'));
+
+        var testLinks = document.querySelectorAll('.test-link');
+        assertTrue(testLinks[0].innerText == 'foo/expected-to-pass-but-crashed.html');
+        assertTrue(!enclosingNodeWithTagNameHasClassName(testLinks[0], 'tbody', 'expected'));
+        assertTrue(testLinks[1].innerText == 'foo/expected-to-pass-or-crash-and-crashed.html');
+        assertTrue(enclosingNodeWithTagNameHasClassName(testLinks[1], 'tbody', 'expected'));
+        assertTrue(!enclosingNodeWithTagNameHasClassName(testLinks[0], 'table', 'expected'));
+
+        assertTrue(testLinks[2].innerText == 'foo/expected-to-pass-but-timeouted.html');
+        assertTrue(!enclosingNodeWithTagNameHasClassName(testLinks[2], 'tbody', 'expected'));
+        assertTrue(testLinks[3].innerText == 'foo/expected-to-pass-or-timeout-and-timeouted.html');
+        assertTrue(enclosingNodeWithTagNameHasClassName(testLinks[3], 'tbody', 'expected'));
+        assertTrue(!enclosingNodeWithTagNameHasClassName(testLinks[2], 'table', 'expected'));
+
+        assertTrue(testLinks[4].innerText == 'foo/expected-fail-but-passed.html');
+        assertTrue(!enclosingNodeWithTagNameHasClassName(testLinks[4], 'tbody', 'expected'));
+        assertTrue(testLinks[5].innerText == 'foo/expected-pass-or-fail-and-passed.html');
+        assertTrue(enclosingNodeWithTagNameHasClassName(testLinks[5], 'tbody', 'expected'));
+        assertTrue(!enclosingNodeWithTagNameHasClassName(testLinks[4], 'table', 'expected'));
+    });
+
+    results = mockResults();
+    var subtree = results.tests['foo'] = {}
+    subtree['expected-to-pass-or-crash-and-crashed.html'] = mockExpectation('PASS CRASH', 'CRASH');
+    subtree['expected-to-pass-or-timeout-and-timeouted.html'] = mockExpectation('PASS TIMEOUT', 'TIMEOUT');
+    subtree['expected-pass-or-fail-and-passed.html'] = mockExpectation('PASS FAIL', 'PASS');
+    runTest(results, function() {
+        assertTrue(!document.getElementById('results-table'));
+
+        var testLinks = document.querySelectorAll('.test-link');
+        assertTrue(testLinks[0].innerText == 'foo/expected-to-pass-or-crash-and-crashed.html');
+        assertTrue(enclosingNodeWithTagNameHasClassName(testLinks[0], 'tbody', 'expected'));
+        assertTrue(enclosingNodeWithTagNameHasClassName(testLinks[0], 'table', 'expected'));
+
+        assertTrue(testLinks[1].innerText == 'foo/expected-to-pass-or-timeout-and-timeouted.html');
+        assertTrue(enclosingNodeWithTagNameHasClassName(testLinks[1], 'tbody', 'expected'));
+        assertTrue(enclosingNodeWithTagNameHasClassName(testLinks[1], 'table', 'expected'));
+
+        assertTrue(testLinks[2].innerText == 'foo/expected-pass-or-fail-and-passed.html');
+        assertTrue(enclosingNodeWithTagNameHasClassName(testLinks[2], 'tbody', 'expected'));
+        assertTrue(enclosingNodeWithTagNameHasClassName(testLinks[2], 'table', 'expected'));
+    });
+
     document.body.innerHTML = '<pre>' + g_log.join('\n') + '</pre>';
 }
 

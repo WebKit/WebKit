@@ -1,3 +1,16 @@
+2011-06-10  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        new-run-webkit-tests: results.html don't list the same list of failed tests as bots do
+        https://bugs.webkit.org/show_bug.cgi?id=62425
+
+        Fixed the bug by hiding expected crash, timeout, pass, etc... by default.
+
+        * fast/harness/resources/results-test.js:
+        * fast/harness/results-expected.txt:
+        * fast/harness/results.html:
+
 2011-06-10  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

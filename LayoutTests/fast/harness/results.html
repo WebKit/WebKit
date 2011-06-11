@@ -555,22 +555,34 @@ function forEachTest(handler, opt_tree, opt_prefix)
     }
 }
 
+function hasUnexpected(tests)
+{
+    return tests.some(function (test) { return !test.isExpected; });
+}
+
 function testList(tests, header, tableId)
 {
     tests.sort();
 
-    var html = '<p>' + header + '</p><table id="' + tableId + '">';
+    var html = '<p>' + header + ':</p><table id="' + tableId + '"';
+    if (!hasUnexpected(tests))
+        html += ' class=expected';
+    html += '>';
 
+    // FIXME: add the expected failure column for all the test lists if globalState().results.uses_expectations_file
     if (tableId == 'passes-table')
         html += '<thead><th>test</th><th>expected failure</th></thead>';
 
     for (var i = 0; i < tests.length; i++) {
         var testObject = tests[i];
         var test = testObject.name;
-        html += '<tbody><tr><td>';
+        html += '<tbody';
+        if (globalState().results.uses_expectations_file)
+            html += ' class="' + (testObject.isExpected ? 'expected' : '') + '"';
+        html += '><tr><td>';
         html += (tableId == 'passes-table') ? testLink(test) : testLinkWithExpandButton(test);
         html += '</td><td>';
-        
+
         if (tableId == 'stderr-table')
             html += resultLink(stripExtension(test), '-stderr.txt', 'stderr');
         else if (tableId == 'passes-table')
@@ -965,15 +977,11 @@ function failingTestsTable(tests, title, id)
         return '';
 
     var tableRowHtml = '';
-    var hasUnexpected = false;
-    for (var i = 0; i < tests.length; i++) {
-        if (!tests[i].isExpected)
-            hasUnexpected = true;
+    for (var i = 0; i < tests.length; i++)
         tableRowHtml += tableRow(tests[i]);
-    }
 
     var header = '<div';
-    if (!hasUnexpected)
+    if (!hasUnexpected(tests))
         header += ' class=expected';
 
     header += '><p>' + title + ':</p>' +
@@ -1015,19 +1023,19 @@ function generatePage()
         'Flaky tests (failed the first run and got a different result on retry)', 'flaky-tests-table');
 
     if (globalState().crashTests.length)
-        html += testList(globalState().crashTests, 'Tests that crashed:', 'crash-tests-table');
+        html += testList(globalState().crashTests, 'Tests that crashed', 'crash-tests-table');
 
     if (globalState().timeoutTests.length)
-        html += testList(globalState().timeoutTests, 'Tests that timed out:', 'timeout-tests-table');
+        html += testList(globalState().timeoutTests, 'Tests that timed out', 'timeout-tests-table');
 
     if (globalState().newTests.length)
-        html += testList(globalState().newTests, 'Tests that had no expected results (probably new):', 'new-tests-table');
+        html += testList(globalState().newTests, 'Tests that had no expected results (probably new)', 'new-tests-table');
 
     if (globalState().testsWithStderr.length)
-        html += testList(globalState().testsWithStderr, 'Tests that had stderr output:', 'stderr-table');
+        html += testList(globalState().testsWithStderr, 'Tests that had stderr output', 'stderr-table');
 
     if (globalState().results.uses_expectations_file && globalState().unexpectedPassTests.length)
-        html += testList(globalState().unexpectedPassTests, 'Tests expected to fail but passed:', 'passes-table');
+        html += testList(globalState().unexpectedPassTests, 'Tests expected to fail but passed', 'passes-table');
 
     if (globalState().hasHttpTests) {
         html += '<p>httpd access log: <a href="access_log.txt">access_log.txt</a></p>' +
