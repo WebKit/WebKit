@@ -307,7 +307,7 @@ void DocumentLoader::commitLoad(const char* data, int length)
     frameLoader->client()->committedLoad(this, data, length);
 }
 
-void DocumentLoader::commitData(const char* bytes, int length)
+void DocumentLoader::commitData(const char* bytes, size_t length)
 {
     // Set the text encoding.  This is safe to call multiple times.
     bool userChosen = true;

@@ -51,7 +51,7 @@ public:
 
     void begin();
     void begin(const KURL&, bool dispatchWindowObjectAvailable = true, SecurityOrigin* forcedSecurityOrigin = 0);
-    void addData(const char* bytes, int length = -1);
+    void addData(const char* bytes, size_t length);
     void end();
     void endIfNotLoadingMainResource();
     

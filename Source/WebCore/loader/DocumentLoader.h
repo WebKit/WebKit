@@ -238,7 +238,7 @@ namespace WebCore {
 
         // The WebKit layer calls this function when it's ready for the data to
         // actually be added to the document.
-        void commitData(const char* bytes, int length);
+        void commitData(const char* bytes, size_t length);
 
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
         ApplicationCacheHost* applicationCacheHost() const { return m_applicationCacheHost.get(); }

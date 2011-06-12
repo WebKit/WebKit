@@ -198,11 +198,8 @@ void DocumentWriter::reportDataReceived()
     m_frame->document()->recalcStyle(Node::Force);
 }
 
-void DocumentWriter::addData(const char* bytes, int length)
+void DocumentWriter::addData(const char* bytes, size_t length)
 {
-    if (length == -1)
-        length = strlen(bytes);
-
     m_parser->appendBytes(this, bytes, length);
 }
 
