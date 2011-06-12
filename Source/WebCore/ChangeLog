@@ -1,3 +1,16 @@
+2011-06-12  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Darin Adler.
+
+        <rdar://problem/9513180> REGRESSION (r84166): recalcStyle for display:inline to display:none transition has complexity N^2 where N is the number of child Text nodes
+        https://bugs.webkit.org/show_bug.cgi?id=61557
+
+        Replaced the fix for bug 58500 with a refined version.
+
+        * rendering/RenderText.cpp:
+        (WebCore::RenderText::clippedOverflowRectForRepaint): Use the containing block unless it is
+        across a layer boundary.
+
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Andreas Kling.
