@@ -1,3 +1,10 @@
+2011-06-12  Patrick Gansterer  <paroga@webkit.org>
+
+        Unreviewed. Build fix for !ENABLE(JIT) after r88604.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::visitAggregate):
+
 2011-06-11  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Darin Adler.

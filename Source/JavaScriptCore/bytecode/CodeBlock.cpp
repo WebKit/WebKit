@@ -1479,9 +1479,11 @@ void CodeBlock::visitAggregate(SlotVisitor& visitor)
         visitor.append(&m_functionExprs[i]);
     for (size_t i = 0; i < m_functionDecls.size(); ++i)
         visitor.append(&m_functionDecls[i]);
+#if ENABLE(JIT)
     for (unsigned i = 0; i < numberOfCallLinkInfos(); ++i)
         if (callLinkInfo(i).isLinked())
             visitor.append(&callLinkInfo(i).callee);
+#endif
 #if ENABLE(INTERPRETER)
     for (size_t size = m_propertyAccessInstructions.size(), i = 0; i < size; ++i)
         visitStructures(visitor, &m_instructions[m_propertyAccessInstructions[i]]);
