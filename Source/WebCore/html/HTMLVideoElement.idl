@@ -39,9 +39,6 @@ module html {
 
         [NeedsUserGestureCheck] void webkitEnterFullscreen() raises (DOMException);
         void webkitExitFullscreen();
-    
-        [NeedsUserGestureCheck] void webkitEnterFullScreen() raises (DOMException);
-        void webkitExitFullScreen();
 
 #if defined(ENABLE_MEDIA_STATISTICS) && ENABLE_MEDIA_STATISTICS
         // The number of frames that have been decoded and made available for

@@ -1,3 +1,17 @@
+2011-06-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        Minor user-gesture related cleanup
+        https://bugs.webkit.org/show_bug.cgi?id=62511
+
+        In reading the user gesture code, I noticed that these lines of code
+        should be deleted because they don't do anything.
+
+        * bindings/v8/NPV8Object.cpp:
+        * html/HTMLAnchorElement.cpp:
+        * html/HTMLVideoElement.idl:
+
 2011-06-11  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Dirk Schulze.

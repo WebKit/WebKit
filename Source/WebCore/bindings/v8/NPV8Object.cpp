@@ -34,7 +34,6 @@
 #include "OwnArrayPtr.h"
 #include "PlatformString.h"
 #include "ScriptSourceCode.h"
-#include "UserGestureIndicator.h"
 #include "V8GCController.h"
 #include "V8Helpers.h"
 #include "V8NPUtils.h"
