@@ -1,3 +1,33 @@
+2011-06-12  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix methods.html and methods-lower-case.html
+        https://bugs.webkit.org/show_bug.cgi?id=62221
+
+        Our expectations for the unskipped tests have the following differences from the mac
+        platform:
+          - POST requests with no data get a default Content-Type of 'application/octet-stream' in
+            Qt 4.8 and 'application/x-www-form-urlencoded' in Qt 4.7.3.
+            This is Qt-defined behaviour in QNetworkAccessManager (see QHttpNetworkRequestPrivate::header
+            in qhttpnetworkrequest.cpp)
+          - DELETE and HEAD requests get their ContentType and ContentLength headers (if present) removed
+            by QNetworkReplyHandler. QtWebKit does not send data for either of these request types.
+
+        * platform/qt-4.8/http/tests/xmlhttprequest/methods-expected.txt: Added.
+        * platform/qt-4.8/http/tests/xmlhttprequest/workers/methods-async-expected.txt: Added.
+        * platform/qt-4.8/http/tests/xmlhttprequest/workers/methods-expected.txt: Added.
+        * platform/qt-4.8/http/tests/xmlhttprequest/workers/shared-worker-methods-async-expected.txt: Added.
+        * platform/qt/Skipped: Unskip: http/tests/xmlhttprequest/methods.html
+                                       http/tests/xmlhttprequest/methods-lower-case.html
+                                       http/tests/xmlhttprequest/workers/methods-async.html
+                                       http/tests/xmlhttprequest/workers/methods.html
+                                       http/tests/xmlhttprequest/workers/shared-worker-methods-async.html
+        * platform/qt/http/tests/xmlhttprequest/methods-expected.txt: Added.
+        * platform/qt/http/tests/xmlhttprequest/workers/methods-async-expected.txt: Added.
+        * platform/qt/http/tests/xmlhttprequest/workers/methods-expected.txt: Added.
+        * platform/qt/http/tests/xmlhttprequest/workers/shared-worker-methods-async-expected.txt: Added.
+
 2011-06-11  Ryosuke Niwa  <rniwa@webkit.org>
 
         Chromium rebaseline after r85560.

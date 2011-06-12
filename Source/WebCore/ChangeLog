@@ -1,3 +1,19 @@
+2011-06-12  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] Fix methods.html and methods-lower-case.html
+        https://bugs.webkit.org/show_bug.cgi?id=62221
+
+        * platform/network/qt/QNetworkReplyHandler.cpp:
+        (WebCore::QNetworkReplyHandler::clearContentsHeaders): Refactor code from sendNetworkRequest
+        (WebCore::QNetworkReplyHandler::getIODevice): ditto
+        (WebCore::QNetworkReplyHandler::sendNetworkRequest):
+            - Remove ContentType and ContentLength headers from GET, DELETE and HEAD requests since
+              we do not send data with any of these requests.
+            - If a custom HTTP operation contains data, send it.
+        * platform/network/qt/QNetworkReplyHandler.h:
+
 2011-06-11  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by James Robinson.

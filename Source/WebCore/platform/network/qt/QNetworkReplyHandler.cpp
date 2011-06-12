@@ -598,6 +598,24 @@ void QNetworkReplyHandler::uploadProgress(qint64 bytesSent, qint64 bytesTotal)
     client->didSendData(m_resourceHandle, bytesSent, bytesTotal);
 }
 
+void QNetworkReplyHandler::clearContentHeaders()
+{
+    // Clearing Content-length and Content-type of the requests that do not have contents.
+    // This is necessary to ensure POST requests redirected to GETs do not leak metadata
+    // about the POST content to the site they've been redirected to.
+    m_request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant());
+    m_request.setHeader(QNetworkRequest::ContentLengthHeader, QVariant());
+}
+
+FormDataIODevice* QNetworkReplyHandler::getIODevice(const ResourceRequest& request)
+{
+    FormDataIODevice* device = new FormDataIODevice(request.httpBody());
+    // We may be uploading files so prevent QNR from buffering data.
+    m_request.setHeader(QNetworkRequest::ContentLengthHeader, device->getFormDataSize());
+    m_request.setAttribute(QNetworkRequest::DoNotBufferUploadDataAttribute, QVariant(true));
+    return device;
+}
+
 QNetworkReply* QNetworkReplyHandler::sendNetworkRequest(QNetworkAccessManager* manager, const ResourceRequest& request)
 {
     if (m_loadType == SynchronousLoad)
@@ -615,40 +633,35 @@ QNetworkReply* QNetworkReplyHandler::sendNetworkRequest(QNetworkAccessManager* m
         && (!url.toLocalFile().isEmpty() || url.scheme() == QLatin1String("data")))
         m_method = QNetworkAccessManager::GetOperation;
 
-    if (m_method != QNetworkAccessManager::PostOperation && m_method != QNetworkAccessManager::PutOperation) {
-        // clearing Contents-length and Contents-type of the requests that do not have contents.
-        m_request.setHeader(QNetworkRequest::ContentTypeHeader, QVariant());
-        m_request.setHeader(QNetworkRequest::ContentLengthHeader, QVariant());
-    }
-
     switch (m_method) {
         case QNetworkAccessManager::GetOperation:
+            clearContentHeaders();
             return manager->get(m_request);
         case QNetworkAccessManager::PostOperation: {
-            FormDataIODevice* postDevice = new FormDataIODevice(request.httpBody());
-            // We may be uploading files so prevent QNR from buffering data
-            m_request.setHeader(QNetworkRequest::ContentLengthHeader, postDevice->getFormDataSize());
-            m_request.setAttribute(QNetworkRequest::DoNotBufferUploadDataAttribute, QVariant(true));
+            FormDataIODevice* postDevice = getIODevice(request);
             QNetworkReply* result = manager->post(m_request, postDevice);
             postDevice->setParent(result);
             return result;
         }
         case QNetworkAccessManager::HeadOperation:
+            clearContentHeaders();
             return manager->head(m_request);
         case QNetworkAccessManager::PutOperation: {
-            FormDataIODevice* putDevice = new FormDataIODevice(request.httpBody());
-            // We may be uploading files so prevent QNR from buffering data
-            m_request.setHeader(QNetworkRequest::ContentLengthHeader, putDevice->getFormDataSize());
-            m_request.setAttribute(QNetworkRequest::DoNotBufferUploadDataAttribute, QVariant(true));
+            FormDataIODevice* putDevice = getIODevice(request);
             QNetworkReply* result = manager->put(m_request, putDevice);
             putDevice->setParent(result);
             return result;
         }
         case QNetworkAccessManager::DeleteOperation: {
+            clearContentHeaders();
             return manager->deleteResource(m_request);
         }
-        case QNetworkAccessManager::CustomOperation:
-            return manager->sendCustomRequest(m_request, m_resourceHandle->firstRequest().httpMethod().latin1().data());
+        case QNetworkAccessManager::CustomOperation: {
+            FormDataIODevice* customDevice = getIODevice(request);
+            QNetworkReply* result = manager->sendCustomRequest(m_request, m_resourceHandle->firstRequest().httpMethod().latin1().data(), customDevice);
+            customDevice->setParent(result);
+            return result;
+        }
         case QNetworkAccessManager::UnknownOperation:
             ASSERT_NOT_REACHED();
             return 0;

@@ -35,6 +35,7 @@ QT_END_NAMESPACE
 
 namespace WebCore {
 
+class FormDataIODevice;
 class ResourceHandle;
 class ResourceRequest;
 class ResourceResponse;
@@ -140,6 +141,8 @@ private:
     void redirect(ResourceResponse&, const QUrl&);
     bool wasAborted() const { return !m_resourceHandle; }
     QNetworkReply* sendNetworkRequest(QNetworkAccessManager*, const ResourceRequest&);
+    FormDataIODevice* getIODevice(const ResourceRequest&);
+    void clearContentHeaders();
 
     OwnPtr<QNetworkReplyWrapper> m_replyWrapper;
     ResourceHandle* m_resourceHandle;
