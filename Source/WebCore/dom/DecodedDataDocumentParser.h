@@ -40,11 +40,12 @@ protected:
     explicit DecodedDataDocumentParser(Document*);
 
 private:
-    // append is used by DocumentWriter::replaceDocument
+    // append is used by DocumentWriter::replaceDocument.
     virtual void append(const SegmentedString&) = 0;
 
-    // appendBytes is used by DocumentWriter (the loader)
-    virtual void appendBytes(DocumentWriter*, const char* bytes, int length, bool flush);
+    // appendBytes and flush are used by DocumentWriter (the loader).
+    virtual void appendBytes(DocumentWriter*, const char* bytes, int length);
+    virtual void flush(DocumentWriter*);
 };
 
 }

@@ -60,7 +60,7 @@ private:
     {
     }
 
-    virtual void appendBytes(DocumentWriter*, const char*, int, bool);
+    virtual void appendBytes(DocumentWriter*, const char*, int);
 
     void createDocumentStructure();
 
@@ -103,7 +103,7 @@ void MediaDocumentParser::createDocumentStructure()
     frame->loader()->activeDocumentLoader()->mainResourceLoader()->setShouldBufferData(false);
 }
 
-void MediaDocumentParser::appendBytes(DocumentWriter*, const char*, int, bool)
+void MediaDocumentParser::appendBytes(DocumentWriter*, const char*, int)
 {
     if (m_mediaElement)
         return;

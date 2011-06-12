@@ -51,7 +51,7 @@ public:
 
     void begin();
     void begin(const KURL&, bool dispatchWindowObjectAvailable = true, SecurityOrigin* forcedSecurityOrigin = 0);
-    void addData(const char* string, int length = -1, bool flush = false);
+    void addData(const char* bytes, int length = -1);
     void end();
     void endIfNotLoadingMainResource();
     
@@ -82,7 +82,7 @@ private:
 
     Frame* m_frame;
 
-    bool m_receivedData;
+    bool m_hasReceivedSomeData;
     String m_mimeType;
 
     bool m_encodingWasChosenByUser;

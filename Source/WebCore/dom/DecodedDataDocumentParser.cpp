@@ -37,22 +37,27 @@ DecodedDataDocumentParser::DecodedDataDocumentParser(Document* document)
 {
 }
 
-void DecodedDataDocumentParser::appendBytes(DocumentWriter* writer , const char* data, int length, bool shouldFlush)
+void DecodedDataDocumentParser::appendBytes(DocumentWriter* writer, const char* data, int length)
 {
-    if (!length && !shouldFlush)
+    if (!length)
         return;
 
-    TextResourceDecoder* decoder = writer->createDecoderIfNeeded();
-    String decoded = decoder->decode(data, length);
-    if (shouldFlush)
-        decoded += decoder->flush();
+    String decoded = writer->createDecoderIfNeeded()->decode(data, length);
     if (decoded.isEmpty())
         return;
 
     writer->reportDataReceived();
-
     append(decoded);
 }
 
-};
+void DecodedDataDocumentParser::flush(DocumentWriter* writer)
+{
+    String remainingData = writer->createDecoderIfNeeded()->flush();
+    if (remainingData.isEmpty())
+        return;
 
+    writer->reportDataReceived();
+    append(remainingData);
+}
+
+};

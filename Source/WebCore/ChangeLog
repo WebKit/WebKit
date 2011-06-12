@@ -1,3 +1,37 @@
+2011-06-11  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        DocumentParser::appendBytes shouldn't have a "flush" boolean parameter
+        https://bugs.webkit.org/show_bug.cgi?id=62499
+
+        This patch removes the "flush" Boolean parameter from
+        DocumentParser::appendBytes in favor of a new flush method.  This makes
+        some code in DocumentWriter look less ridiculous.
+
+        There's still lots of on contorting to do here, but it's a start.
+
+        * dom/DecodedDataDocumentParser.cpp:
+        (WebCore::DecodedDataDocumentParser::appendBytes):
+        (WebCore::DecodedDataDocumentParser::flush):
+        * dom/DecodedDataDocumentParser.h:
+        * dom/DocumentParser.h:
+        * dom/RawDataDocumentParser.h:
+        (WebCore::RawDataDocumentParser::flush):
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::appendBytes):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::appendBytes):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::appendBytes):
+        * loader/DocumentWriter.cpp:
+        (WebCore::DocumentWriter::reportDataReceived):
+        (WebCore::DocumentWriter::addData):
+        (WebCore::DocumentWriter::endIfNotLoadingMainResource):
+        * loader/DocumentWriter.h:
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocumentParser::appendBytes):
+
 2011-06-11  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r88569.

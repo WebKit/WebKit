@@ -44,6 +44,12 @@ protected:
     }
 
 private:
+    virtual void flush(DocumentWriter* writer)
+    {
+        // Make sure appendBytes is called at least once.
+        appendBytes(writer, 0, 0);
+    }
+
     virtual void insert(const SegmentedString&)
     {
         // <https://bugs.webkit.org/show_bug.cgi?id=25397>: JS code can always call document.write, we need to handle it.

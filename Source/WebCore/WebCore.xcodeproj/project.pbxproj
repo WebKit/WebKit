@@ -7437,7 +7437,7 @@
 		417253A91354BBBC00360F2A /* MediaControlElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlElements.h; sourceTree = "<group>"; };
 		417DA4CE13734326007C57FB /* Internals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Internals.h; sourceTree = "<group>"; };
 		417DA4CF13734326007C57FB /* Internals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Internals.cpp; sourceTree = "<group>"; };
-		417DA6D013734E02007C57FB /* WebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = WebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		417DA6D013734E02007C57FB /* libWebCoreTestSupport.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libWebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
 		417DA71B13735DFA007C57FB /* JSInternals.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSInternals.cpp; sourceTree = "<group>"; };
 		417DA71C13735DFA007C57FB /* JSInternals.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSInternals.h; sourceTree = "<group>"; };
 		41813F9113818AD60057AAA4 /* Internals.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Internals.idl; sourceTree = "<group>"; };
@@ -12730,7 +12730,7 @@
 			isa = PBXGroup;
 			children = (
 				5D87BB4F11E3EAEB00702B6F /* WebCoreExportFileGenerator */,
-				417DA6D013734E02007C57FB /* WebCoreTestSupport.dylib */,
+				417DA6D013734E02007C57FB /* libWebCoreTestSupport.dylib */,
 				93F19B1A08245E5A001E9ABC /* WebCore.framework */,
 			);
 			name = Products;
@@ -23194,7 +23194,7 @@
 			);
 			name = WebCoreTestSupport;
 			productName = WebCoreTestSupport;
-			productReference = 417DA6D013734E02007C57FB /* WebCoreTestSupport.dylib */;
+			productReference = 417DA6D013734E02007C57FB /* libWebCoreTestSupport.dylib */;
 			productType = "com.apple.product-type.library.dynamic";
 		};
 		5D87BB4E11E3EAEB00702B6F /* WebCoreExportFileGenerator */ = {

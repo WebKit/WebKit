@@ -56,7 +56,7 @@ static inline bool canReferToParentFrameEncoding(const Frame* frame, const Frame
     
 DocumentWriter::DocumentWriter(Frame* frame)
     : m_frame(frame)
-    , m_receivedData(false)
+    , m_hasReceivedSomeData(false)
     , m_encodingWasChosenByUser(false)
 {
 }
@@ -70,8 +70,8 @@ void DocumentWriter::replaceDocument(const String& source)
     begin(m_frame->document()->url(), true, m_frame->document()->securityOrigin());
 
     if (!source.isNull()) {
-        if (!m_receivedData) {
-            m_receivedData = true;
+        if (!m_hasReceivedSomeData) {
+            m_hasReceivedSomeData = true;
             m_frame->document()->setCompatibilityMode(Document::NoQuirksMode);
         }
 
@@ -87,7 +87,7 @@ void DocumentWriter::replaceDocument(const String& source)
 void DocumentWriter::clear()
 {
     m_decoder = 0;
-    m_receivedData = false;
+    m_hasReceivedSomeData = false;
     if (!m_encodingWasChosenByUser)
         m_encoding = String();
 }
@@ -144,6 +144,9 @@ void DocumentWriter::begin(const KURL& url, bool dispatch, SecurityOrigin* origi
 
     document->implicitOpen();
 
+    // We grab a reference to the parser so that we'll always send data to the
+    // original parser, even if the document acquires a new parser (e.g., via
+    // document.open).
     m_parser = document->parser();
 
     if (m_frame->view() && m_frame->loader()->client()->hasHTMLView())
@@ -187,20 +190,20 @@ TextResourceDecoder* DocumentWriter::createDecoderIfNeeded()
 void DocumentWriter::reportDataReceived()
 {
     ASSERT(m_decoder);
-    if (!m_receivedData) {
-        m_receivedData = true;
-        if (m_decoder->encoding().usesVisualOrdering())
-            m_frame->document()->setVisuallyOrdered();
-        m_frame->document()->recalcStyle(Node::Force);
-    }
+    if (m_hasReceivedSomeData)
+        return;
+    m_hasReceivedSomeData = true;
+    if (m_decoder->encoding().usesVisualOrdering())
+        m_frame->document()->setVisuallyOrdered();
+    m_frame->document()->recalcStyle(Node::Force);
 }
 
-void DocumentWriter::addData(const char* str, int len, bool flush)
+void DocumentWriter::addData(const char* bytes, int length)
 {
-    if (len == -1)
-        len = strlen(str);
+    if (length == -1)
+        length = strlen(bytes);
 
-    m_parser->appendBytes(this, str, len, flush);
+    m_parser->appendBytes(this, bytes, length);
 }
 
 void DocumentWriter::end()
@@ -219,9 +222,8 @@ void DocumentWriter::endIfNotLoadingMainResource()
     // so we'll add a protective refcount
     RefPtr<Frame> protector(m_frame);
 
-    // FIXME: Can we remove this call? Finishing the parser should flush anyway.
-    addData(0, 0, true);
-
+    // FIXME: m_parser->finish() should imply m_parser->flush().
+    m_parser->flush(this);
     if (!m_parser)
         return;
     m_parser->finish();

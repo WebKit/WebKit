@@ -58,7 +58,7 @@ private:
     {
     }
 
-    virtual void appendBytes(DocumentWriter*, const char*, int, bool);
+    virtual void appendBytes(DocumentWriter*, const char*, int);
 
     void createDocumentStructure();
 
@@ -103,7 +103,7 @@ void PluginDocumentParser::createDocumentStructure()
     body->appendChild(embedElement, ec);    
 }
 
-void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, int, bool)
+void PluginDocumentParser::appendBytes(DocumentWriter*, const char*, int)
 {
     if (m_embedElement)
         return;

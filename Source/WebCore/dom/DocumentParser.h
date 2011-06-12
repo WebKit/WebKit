@@ -42,11 +42,12 @@ public:
     // http://www.whatwg.org/specs/web-apps/current-work/#insertion-point
     virtual bool hasInsertionPoint() { return true; }
 
-    // insert is used by document.write
+    // insert is used by document.write.
     virtual void insert(const SegmentedString&) = 0;
 
-    // appendBytes is used by DocumentWriter (the loader)
-    virtual void appendBytes(DocumentWriter*, const char* bytes, int length, bool flush) = 0;
+    // appendBytes and flush are used by DocumentWriter (the loader).
+    virtual void appendBytes(DocumentWriter*, const char* bytes, int length) = 0;
+    virtual void flush(DocumentWriter*) = 0;
 
     // FIXME: append() should be private, but DocumentWriter::replaceDocument
     // uses it for now.
