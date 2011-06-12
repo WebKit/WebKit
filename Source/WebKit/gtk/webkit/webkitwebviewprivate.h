@@ -119,8 +119,6 @@ GList* webkit_web_view_get_subresources(WebKitWebView*);
 void webkit_web_view_set_tooltip_text(WebKitWebView*, const char*);
 GtkMenu* webkit_web_view_get_context_menu(WebKitWebView*);
 
-WEBKIT_API gchar* webkit_web_view_get_selected_text(WebKitWebView*);
-
 void webViewEnterFullscreen(WebKitWebView* webView, WebCore::Node*);
 void webViewExitFullscreen(WebKitWebView* webView);
 

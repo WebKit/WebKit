@@ -4216,22 +4216,6 @@ gboolean webkit_web_view_has_selection(WebKitWebView* webView)
 }
 
 /**
- * webkit_web_view_get_selected_text:
- * @webView: a #WebKitWebView
- *
- * Retrieves the selected text if any.
- *
- * Return value: a newly allocated string with the selection or %NULL
- */
-gchar* webkit_web_view_get_selected_text(WebKitWebView* webView)
-{
-    g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
-
-    Frame* frame = core(webView)->focusController()->focusedOrMainFrame();
-    return g_strdup(frame->editor()->selectedText().utf8().data());
-}
-
-/**
  * webkit_web_view_select_all:
  * @webView: a #WebKitWebView
  *

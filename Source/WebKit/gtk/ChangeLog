@@ -1,3 +1,16 @@
+2011-06-12  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Remove webkit_web_view_get_selected_text
+        https://bugs.webkit.org/show_bug.cgi?id=62512
+
+        It's no longer used and it's a private method, so it can be
+        removed.
+
+        * webkit/webkitwebview.cpp: kill it.
+        * webkit/webkitwebviewprivate.h: ditto.
+
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
