@@ -1,5 +1,11 @@
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
+        Fix fullscreen/full-screen-iframe-legacy.html.
+
+        * html/HTMLVideoElement.idl:
+
+2011-06-12  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Alexey Proskuryakov.
 
         Remove trival "forward-to-client" member functions from FrameLoader
