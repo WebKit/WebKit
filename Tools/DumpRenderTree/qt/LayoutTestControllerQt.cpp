@@ -954,5 +954,15 @@ QString LayoutTestController::layerTreeAsText()
     return DumpRenderTreeSupportQt::layerTreeAsText(m_drt->webPage()->mainFrame());
 }
 
+void LayoutTestController::setTextDirection(const QString& directionName)
+{
+    if (directionName == "auto")
+        m_drt->webPage()->triggerAction(QWebPage::SetTextDirectionDefault);
+    else if (directionName == "rtl")
+        m_drt->webPage()->triggerAction(QWebPage::SetTextDirectionRightToLeft);
+    else if (directionName == "ltr")
+        m_drt->webPage()->triggerAction(QWebPage::SetTextDirectionLeftToRight);
+}
+
 const unsigned LayoutTestController::maxViewWidth = 800;
 const unsigned LayoutTestController::maxViewHeight = 600;

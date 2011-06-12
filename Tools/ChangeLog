@@ -1,3 +1,16 @@
+2011-06-12  Mahesh Kulkarni  <mahesh.kulkarni@nokia.com>
+
+        Reviewed by Antonio Gomes.
+
+        [Qt] LayoutTestController needs setTextDirection implementation
+        https://bugs.webkit.org/show_bug.cgi?id=62442
+
+        Implements LayoutController.setTextDirection.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::setTextDirection):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+
 2011-06-10  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.

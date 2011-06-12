@@ -274,6 +274,7 @@ public slots:
     void observeStorageTrackerNotifications(unsigned number);
     void syncLocalStorage();
     QString layerTreeAsText();
+    void setTextDirection(const QString& directionName);
 
 private slots:
     void processWork();
