@@ -115,6 +115,11 @@ PingLoader::PingLoader(Frame* frame, ResourceRequest& request)
     : m_timeout(this, &PingLoader::timeout)
 {
     unsigned long identifier = frame->page()->progress()->createUniqueIdentifier();
+    // FIXME: Why activeDocumentLoader? I would have expected documentLoader().
+    // Itseems like the PingLoader should be associated with the current
+    // Document in the Frame, but the activeDocumentLoader will be associated
+    // with the provisional DocumentLoader if there is a provisional
+    // DocumentLoader.
     m_shouldUseCredentialStorage = frame->loader()->client()->shouldUseCredentialStorage(frame->loader()->activeDocumentLoader(), identifier);
     m_handle = ResourceHandle::create(frame->loader()->networkingContext(), request, this, false, false);
 

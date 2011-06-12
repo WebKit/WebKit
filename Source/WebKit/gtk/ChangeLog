@@ -1,3 +1,17 @@
+2011-06-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove trival "forward-to-client" member functions from FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=62510
+
+        Update to call the FrameLoaderClient directly.  Also, remove cargo-cult
+        code that checks whether FrameLoader is null.
+
+        * webkit/webkitwebview.cpp:
+        (webkit_web_view_stop_loading):
+        (webkit_web_view_can_show_mime_type):
+
 2011-06-09  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

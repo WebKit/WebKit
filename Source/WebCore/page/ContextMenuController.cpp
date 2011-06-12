@@ -47,6 +47,7 @@
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "FrameSelection.h"
 #include "HTMLFormElement.h"
 #include "HitTestRequest.h"
@@ -694,7 +695,7 @@ void ContextMenuController::populate()
         FrameLoader* loader = frame->loader();
         KURL linkURL = m_hitTestResult.absoluteLinkURL();
         if (!linkURL.isEmpty()) {
-            if (loader->canHandleRequest(ResourceRequest(linkURL))) {
+            if (loader->client()->canHandleRequest(ResourceRequest(linkURL))) {
                 appendItem(OpenLinkItem, m_contextMenu.get());
                 appendItem(OpenLinkInNewWindowItem, m_contextMenu.get());
                 appendItem(DownloadFileItem, m_contextMenu.get());
@@ -855,7 +856,7 @@ void ContextMenuController::populate()
         FrameLoader* loader = frame->loader();
         KURL linkURL = m_hitTestResult.absoluteLinkURL();
         if (!linkURL.isEmpty()) {
-            if (loader->canHandleRequest(ResourceRequest(linkURL))) {
+            if (loader->client()->canHandleRequest(ResourceRequest(linkURL))) {
                 appendItem(OpenLinkItem, m_contextMenu.get());
                 appendItem(OpenLinkInNewWindowItem, m_contextMenu.get());
                 appendItem(DownloadFileItem, m_contextMenu.get());

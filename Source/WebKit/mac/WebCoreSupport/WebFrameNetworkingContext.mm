@@ -19,6 +19,7 @@
 
 #import "WebFrameNetworkingContext.h"
 
+#import <WebCore/FrameLoaderClient.h>
 #import <WebCore/Page.h>
 #import <WebCore/ResourceError.h>
 #import <WebCore/Settings.h>
@@ -42,5 +43,5 @@ SchedulePairHashSet* WebFrameNetworkingContext::scheduledRunLoopPairs() const
 
 ResourceError WebFrameNetworkingContext::blockedError(const ResourceRequest& request) const
 {
-    return frame()->loader()->blockedError(request);
+    return frame()->loader()->client()->blockedError(request);
 }

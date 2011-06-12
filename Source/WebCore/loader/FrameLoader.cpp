@@ -263,11 +263,6 @@ void FrameLoader::setDefersLoading(bool defers)
     }
 }
 
-bool FrameLoader::canHandleRequest(const ResourceRequest& request)
-{
-    return m_client->canHandleRequest(request);
-}
-
 void FrameLoader::changeLocation(PassRefPtr<SecurityOrigin> securityOrigin, const KURL& url, const String& referrer, bool lockHistory, bool lockBackForwardList, bool refresh)
 {
     RefPtr<Frame> protect(m_frame);
@@ -1076,18 +1071,6 @@ ObjectContentType FrameLoader::defaultObjectContentType(const KURL& url, const S
 
     return WebCore::ObjectContentNone;
 }
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-void FrameLoader::hideMediaPlayerProxyPlugin(Widget* widget)
-{
-    m_client->hideMediaPlayerProxyPlugin(widget);
-}
-
-void FrameLoader::showMediaPlayerProxyPlugin(Widget* widget)
-{
-    m_client->showMediaPlayerProxyPlugin(widget);
-}
-#endif // ENABLE(PLUGIN_PROXY_FOR_VIDEO)
 
 String FrameLoader::outgoingReferrer() const
 {
@@ -2307,26 +2290,6 @@ bool FrameLoader::isLoadingMainFrame() const
     return page && m_frame == page->mainFrame();
 }
 
-bool FrameLoader::canShowMIMEType(const String& MIMEType) const
-{
-    return m_client->canShowMIMEType(MIMEType);
-}
-
-bool FrameLoader::representationExistsForURLScheme(const String& URLScheme)
-{
-    return m_client->representationExistsForURLScheme(URLScheme);
-}
-
-String FrameLoader::generatedMIMETypeForURLScheme(const String& URLScheme)
-{
-    return m_client->generatedMIMETypeForURLScheme(URLScheme);
-}
-
-void FrameLoader::didReceiveServerRedirectForProvisionalLoadForFrame()
-{
-    m_client->dispatchDidReceiveServerRedirectForProvisionalLoad();
-}
-
 void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
 {
     // FIXME: Platforms shouldn't differ here!
@@ -2373,11 +2336,6 @@ bool FrameLoader::isReplacing() const
 void FrameLoader::setReplacing()
 {
     m_loadType = FrameLoadTypeReplace;
-}
-
-void FrameLoader::revertToProvisional(DocumentLoader* loader)
-{
-    m_client->revertToProvisionalState(loader);
 }
 
 bool FrameLoader::subframeIsLoading() const
@@ -2577,6 +2535,7 @@ void FrameLoader::didFirstLayout()
 
     if (m_stateMachine.committedFirstRealDocumentLoad() && !m_stateMachine.isDisplayingInitialEmptyDocument() && !m_stateMachine.firstLayoutDone())
         m_stateMachine.advanceTo(FrameLoaderStateMachine::FirstLayoutDone);
+
     m_client->dispatchDidFirstLayout();
 }
 
@@ -3367,11 +3326,6 @@ void FrameLoader::loadItem(HistoryItem* item, FrameLoadType loadType)
         loadDifferentDocumentItem(item, loadType);
 }
 
-void FrameLoader::setMainDocumentError(DocumentLoader* loader, const ResourceError& error)
-{
-    m_client->setMainDocumentError(loader, error);
-}
-
 void FrameLoader::mainReceivedCompleteError(DocumentLoader* loader, const ResourceError&)
 {
     loader->setPrimaryLoadComplete(true);
@@ -3392,38 +3346,6 @@ ResourceError FrameLoader::cancelledError(const ResourceRequest& request) const
     error.setIsCancellation(true);
     return error;
 }
-
-ResourceError FrameLoader::blockedError(const ResourceRequest& request) const
-{
-    return m_client->blockedError(request);
-}
-
-ResourceError FrameLoader::cannotShowURLError(const ResourceRequest& request) const
-{
-    return m_client->cannotShowURLError(request);
-}
-
-ResourceError FrameLoader::interruptionForPolicyChangeError(const ResourceRequest& request) const
-{
-    return m_client->interruptForPolicyChangeError(request);
-}
-
-ResourceError FrameLoader::fileDoesNotExistError(const ResourceResponse& response) const
-{
-    return m_client->fileDoesNotExistError(response);    
-}
-
-bool FrameLoader::shouldUseCredentialStorage(ResourceLoader* loader)
-{
-    return m_client->shouldUseCredentialStorage(loader->documentLoader(), loader->identifier());
-}
-
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-bool FrameLoader::canAuthenticateAgainstProtectionSpace(ResourceLoader* loader, const ProtectionSpace& protectionSpace)
-{
-    return m_client->canAuthenticateAgainstProtectionSpace(loader->documentLoader(), loader->identifier(), protectionSpace);
-}
-#endif
 
 void FrameLoader::setTitle(const StringWithDirection& title)
 {

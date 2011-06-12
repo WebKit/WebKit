@@ -177,17 +177,17 @@ void DocumentLoader::setRequest(const ResourceRequest& req)
     KURL oldURL = m_request.url();
     m_request = req;
 
-    // Only send webView:didReceiveServerRedirectForProvisionalLoadForFrame: if URL changed (and is non-null).
+    // Only dispatchDidReceiveServerRedirectForProvisionalLoad() if URL changed (and is non-null).
     // Also, don't send it when replacing unreachable URLs with alternate content.
     if (!handlingUnreachableURL && !req.url().isNull() && oldURL != req.url())
-        frameLoader()->didReceiveServerRedirectForProvisionalLoadForFrame();
+        frameLoader()->client()->dispatchDidReceiveServerRedirectForProvisionalLoad();
 }
 
 void DocumentLoader::setMainDocumentError(const ResourceError& error)
 {
     m_mainDocumentError = error;    
-    frameLoader()->setMainDocumentError(this, error);
- }
+    frameLoader()->client()->setMainDocumentError(this, error);
+}
 
 void DocumentLoader::clearErrors()
 {
@@ -341,7 +341,7 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
     String oldMIMEType = m_response.mimeType();
     
     if (!doesProgressiveLoad(oldMIMEType)) {
-        frameLoader()->revertToProvisional(this);
+        frameLoader()->client()->revertToProvisionalState(this);
         setupForReplace();
         RefPtr<SharedBuffer> resourceData = mainResourceData();
         commitLoad(resourceData->data(), resourceData->size());
@@ -354,7 +354,7 @@ void DocumentLoader::setupForReplaceByMIMEType(const String& newMIMEType)
     m_gotFirstByte = false;
     
     if (doesProgressiveLoad(newMIMEType)) {
-        frameLoader()->revertToProvisional(this);
+        frameLoader()->client()->revertToProvisionalState(this);
         setupForReplace();
     }
     

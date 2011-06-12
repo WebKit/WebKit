@@ -1,3 +1,49 @@
+2011-06-12  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Remove trival "forward-to-client" member functions from FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=62510
+
+        Originally, FrameLoader was supposed to abstract FrameLoaderClient, but
+        we lost that battle log ago.  Nowadays, it's easier if folks just call
+        into FrameLoaderClient directly.  Many of these functions have direct
+        callers already anyway.
+
+        * WebCore.exp.in:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::createRenderer):
+        (WebCore::HTMLMediaElement::attach):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::setRequest):
+        (WebCore::DocumentLoader::setMainDocumentError):
+        (WebCore::DocumentLoader::setupForReplaceByMIMEType):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::didFirstLayout):
+        * loader/FrameLoader.h:
+            - cancelledError is slightly more delicate, so I'm going to move it in
+              a separate patch.
+        * loader/MainResourceLoader.cpp:
+        (WebCore::MainResourceLoader::interruptForPolicyChangeError):
+        (WebCore::MainResourceLoader::stopLoadingForPolicyChange):
+        (WebCore::MainResourceLoader::continueAfterContentPolicy):
+        (WebCore::MainResourceLoader::handleEmptyLoad):
+        (WebCore::MainResourceLoader::loadNow):
+        * loader/MainResourceLoader.h:
+        * loader/NetscapePlugInStreamLoader.cpp:
+        (WebCore::NetscapePlugInStreamLoader::didReceiveResponse):
+        * loader/PingLoader.cpp:
+        (WebCore::PingLoader::PingLoader):
+        * loader/PolicyChecker.cpp:
+        (WebCore::PolicyChecker::continueAfterNavigationPolicy):
+        * loader/ResourceLoader.cpp:
+        (WebCore::ResourceLoader::blockedError):
+        (WebCore::ResourceLoader::cannotShowURLError):
+        (WebCore::ResourceLoader::shouldUseCredentialStorage):
+        (WebCore::ResourceLoader::canAuthenticateAgainstProtectionSpace):
+        * page/ContextMenuController.cpp:
+        (WebCore::ContextMenuController::populate):
+
 2011-06-12  Dan Bernstein  <mitz@apple.com>
 
         Reviewed by Darin Adler.

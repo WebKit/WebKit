@@ -406,12 +406,12 @@ ResourceError ResourceLoader::cancelledError()
 
 ResourceError ResourceLoader::blockedError()
 {
-    return frameLoader()->blockedError(m_request);
+    return frameLoader()->client()->blockedError(m_request);
 }
 
 ResourceError ResourceLoader::cannotShowURLError()
 {
-    return frameLoader()->cannotShowURLError(m_request);
+    return frameLoader()->client()->cannotShowURLError(m_request);
 }
 
 void ResourceLoader::willSendRequest(ResourceHandle*, ResourceRequest& request, const ResourceResponse& redirectResponse)
@@ -471,7 +471,7 @@ void ResourceLoader::cannotShowURL(ResourceHandle*)
 bool ResourceLoader::shouldUseCredentialStorage()
 {
     RefPtr<ResourceLoader> protector(this);
-    return frameLoader()->shouldUseCredentialStorage(this);
+    return frameLoader()->client()->shouldUseCredentialStorage(documentLoader(), identifier());
 }
 
 void ResourceLoader::didReceiveAuthenticationChallenge(const AuthenticationChallenge& challenge)
@@ -494,7 +494,7 @@ void ResourceLoader::didCancelAuthenticationChallenge(const AuthenticationChalle
 bool ResourceLoader::canAuthenticateAgainstProtectionSpace(const ProtectionSpace& protectionSpace)
 {
     RefPtr<ResourceLoader> protector(this);
-    return frameLoader()->canAuthenticateAgainstProtectionSpace(this, protectionSpace);
+    return frameLoader()->client()->canAuthenticateAgainstProtectionSpace(documentLoader(), identifier(), protectionSpace);
 }
 #endif
 

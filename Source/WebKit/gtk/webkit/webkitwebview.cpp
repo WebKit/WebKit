@@ -52,6 +52,7 @@
 #include "FloatQuad.h"
 #include "FocusController.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "FrameLoaderTypes.h"
 #include "FrameView.h"
 #include "GOwnPtrGtk.h"
@@ -3978,10 +3979,7 @@ void webkit_web_view_stop_loading(WebKitWebView* webView)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
 
-    Frame* frame = core(webView)->mainFrame();
-
-    if (FrameLoader* loader = frame->loader())
-        loader->stopForUserCancel();
+    core(webView)->mainFrame()->loader()->stopForUserCancel();
 }
 
 /**
@@ -4356,10 +4354,7 @@ gboolean webkit_web_view_can_show_mime_type(WebKitWebView* webView, const gchar*
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), FALSE);
 
     Frame* frame = core(webkit_web_view_get_main_frame(webView));
-    if (FrameLoader* loader = frame->loader())
-        return loader->canShowMIMEType(String::fromUTF8(mimeType));
-    else
-        return FALSE;
+    return frame->loader()->client()->canShowMIMEType(String::fromUTF8(mimeType));
 }
 
 /**

@@ -30,6 +30,7 @@
 #include "NetscapePlugInStreamLoader.h"
 
 #include "FrameLoader.h"
+#include "FrameLoaderClient.h"
 #include "DocumentLoader.h"
 
 namespace WebCore {
@@ -89,7 +90,7 @@ void NetscapePlugInStreamLoader::didReceiveResponse(const ResourceResponse& resp
         return;
     
     if (response.httpStatusCode() < 100 || response.httpStatusCode() >= 400)
-        cancel(frameLoader()->fileDoesNotExistError(response));
+        cancel(frameLoader()->client()->fileDoesNotExistError(response));
 }
 
 void NetscapePlugInStreamLoader::didReceiveData(const char* data, int length, long long encodedDataLength, bool allAtOnce)

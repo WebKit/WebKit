@@ -18,8 +18,9 @@
 */
 
 #include "config.h"
-
 #include "WebFrameNetworkingContext.h"
+
+#include "FrameLoaderClient.h"
 
 using namespace WebCore;
 
@@ -40,5 +41,5 @@ String WebFrameNetworkingContext::referrer() const
 
 WebCore::ResourceError WebFrameNetworkingContext::blockedError(const WebCore::ResourceRequest& request) const
 {
-    return frame()->loader()->blockedError(request);
+    return frame()->loader()->client()->blockedError(request);
 }

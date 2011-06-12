@@ -128,8 +128,6 @@ public:
 
     unsigned long loadResourceSynchronously(const ResourceRequest&, StoredCredentials, ResourceError&, ResourceResponse&, Vector<char>& data);
 
-    bool canHandleRequest(const ResourceRequest&);
-
     // Also not cool.
     void stopAllLoaders(ClearProvisionalItemPolicy = ShouldClearProvisionalItem);
     void stopForUserCancel(bool deferCheckLoadComplete = false);
@@ -152,10 +150,6 @@ public:
     FrameState state() const { return m_state; }
     static double timeOfLastCompletedLoad();
 
-    bool shouldUseCredentialStorage(ResourceLoader*);
-#if USE(PROTECTION_SPACE_AUTH_CALLBACK)
-    bool canAuthenticateAgainstProtectionSpace(ResourceLoader* loader, const ProtectionSpace& protectionSpace);
-#endif
     const ResourceRequest& originalRequest() const;
     const ResourceRequest& initialRequest() const;
     void receivedMainResourceError(const ResourceError&, bool isComplete);
@@ -167,27 +161,18 @@ public:
 
     void finishedLoading();
 
+    // FIXME: Move this method to ResourceLoader with the rest of the ResourceError accessors.
     ResourceError cancelledError(const ResourceRequest&) const;
-    ResourceError fileDoesNotExistError(const ResourceResponse&) const;
-    ResourceError blockedError(const ResourceRequest&) const;
-    ResourceError cannotShowURLError(const ResourceRequest&) const;
-    ResourceError interruptionForPolicyChangeError(const ResourceRequest&) const;
 
     bool isHostedByObjectElement() const;
     bool isLoadingMainFrame() const;
-    bool canShowMIMEType(const String& MIMEType) const;
-    bool representationExistsForURLScheme(const String& URLScheme);
-    String generatedMIMETypeForURLScheme(const String& URLScheme);
 
     void reload(bool endToEndReload = false);
     void reloadWithOverrideEncoding(const String& overrideEncoding);
 
-    void didReceiveServerRedirectForProvisionalLoadForFrame();
     void finishedLoadingDocument(DocumentLoader*);
     bool isReplacing() const;
     void setReplacing();
-    void revertToProvisional(DocumentLoader*);
-    void setMainDocumentError(DocumentLoader*, const ResourceError&);
     void mainReceivedCompleteError(DocumentLoader*, const ResourceError&);
     bool subframeIsLoading() const;
     void willChangeTitle(DocumentLoader*);
@@ -308,11 +293,6 @@ public:
     bool shouldInterruptLoadForXFrameOptions(const String&, const KURL&);
 
     void open(CachedFrameBase&);
-
-#if ENABLE(PLUGIN_PROXY_FOR_VIDEO)
-    void hideMediaPlayerProxyPlugin(Widget*);
-    void showMediaPlayerProxyPlugin(Widget*);
-#endif
 
     // FIXME: Should these really be public?
     void completed();

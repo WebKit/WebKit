@@ -118,14 +118,14 @@ void MainResourceLoader::didCancel(const ResourceError& error)
     frameLoader()->receivedMainResourceError(error, true);
 }
 
-ResourceError MainResourceLoader::interruptionForPolicyChangeError() const
+ResourceError MainResourceLoader::interruptForPolicyChangeError() const
 {
-    return frameLoader()->interruptionForPolicyChangeError(request());
+    return frameLoader()->client()->interruptForPolicyChangeError(request());
 }
 
 void MainResourceLoader::stopLoadingForPolicyChange()
 {
-    ResourceError error = interruptionForPolicyChangeError();
+    ResourceError error = interruptForPolicyChangeError();
     error.setIsCancellation(true);
     cancel(error);
 }
@@ -258,7 +258,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
         // Prevent remote web archives from loading because they can claim to be from any domain and thus avoid cross-domain security checks (4120255).
         bool isRemoteWebArchive = (equalIgnoringCase("application/x-webarchive", mimeType) || equalIgnoringCase("multipart/related", mimeType))
             && !m_substituteData.isValid() && !url.isLocalFile();
-        if (!frameLoader()->canShowMIMEType(mimeType) || isRemoteWebArchive) {
+        if (!frameLoader()->client()->canShowMIMEType(mimeType) || isRemoteWebArchive) {
             frameLoader()->policyChecker()->cannotShowMIMEType(r);
             // Check reachedTerminalState since the load may have already been cancelled inside of _handleUnimplementablePolicyWithErrorCode::.
             if (!reachedTerminalState())
@@ -278,7 +278,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
         frameLoader()->client()->download(m_handle.get(), request(), m_handle.get()->firstRequest(), r);
         // It might have gone missing
         if (frameLoader())
-            receivedError(interruptionForPolicyChangeError());
+            receivedError(interruptForPolicyChangeError());
         return;
 
     case PolicyIgnore:
@@ -316,7 +316,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
                 didReceiveData(m_substituteData.content()->data(), m_substituteData.content()->size(), m_substituteData.content()->size(), true);
             if (frameLoader() && !frameLoader()->isStopping()) 
                 didFinishLoading(0);
-        } else if (shouldLoadAsEmptyDocument(url) || frameLoader()->representationExistsForURLScheme(url.protocol()))
+        } else if (shouldLoadAsEmptyDocument(url) || frameLoader()->client()->representationExistsForURLScheme(url.protocol()))
             didFinishLoading(0);
     }
 }
@@ -510,7 +510,7 @@ void MainResourceLoader::handleEmptyLoad(const KURL& url, bool forURLScheme)
 {
     String mimeType;
     if (forURLScheme)
-        mimeType = frameLoader()->generatedMIMETypeForURLScheme(url.protocol());
+        mimeType = frameLoader()->client()->generatedMIMETypeForURLScheme(url.protocol());
     else
         mimeType = "text/html";
     
@@ -580,7 +580,7 @@ bool MainResourceLoader::loadNow(ResourceRequest& r)
     resourceLoadScheduler()->addMainResourceLoad(this);
     if (m_substituteData.isValid()) 
         handleDataLoadSoon(r);
-    else if (shouldLoadEmpty || frameLoader()->representationExistsForURLScheme(url.protocol()))
+    else if (shouldLoadEmpty || frameLoader()->client()->representationExistsForURLScheme(url.protocol()))
         handleEmptyLoad(url, !shouldLoadEmpty);
     else
         m_handle = ResourceHandle::create(m_frame->loader()->networkingContext(), r, this, false, true);

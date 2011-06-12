@@ -153,7 +153,7 @@ void PolicyChecker::continueAfterNavigationPolicy(PolicyAction policy)
             ResourceRequest request(callback.request());
 
             if (!m_frame->loader()->client()->canHandleRequest(request)) {
-                handleUnimplementablePolicy(m_frame->loader()->cannotShowURLError(callback.request()));
+                handleUnimplementablePolicy(m_frame->loader()->client()->cannotShowURLError(callback.request()));
                 callback.clearRequest();
                 shouldContinue = false;
             }
