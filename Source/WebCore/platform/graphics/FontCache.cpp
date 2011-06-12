@@ -251,8 +251,13 @@ typedef HashMap<FontPlatformData, pair<SimpleFontData*, unsigned>, FontDataCache
 
 static FontDataCache* gFontDataCache = 0;
 
-const int cMaxInactiveFontData = 120; // Pretty Low Threshold
-const int cTargetInactiveFontData = 100;
+#if PLATFORM(CHROMIUM)
+const int cMaxInactiveFontData = 250;
+const int cTargetInactiveFontData = 200;
+#else
+const int cMaxInactiveFontData = 50; // Pretty Low Threshold
+const int cTargetInactiveFontData = 30;
+#endif
 static ListHashSet<const SimpleFontData*>* gInactiveFontData = 0;
 
 SimpleFontData* FontCache::getCachedFontData(const FontDescription& fontDescription, const AtomicString& family, bool checkingAlternateName, ShouldRetain shouldRetain)

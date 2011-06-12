@@ -1,3 +1,20 @@
+2011-06-11  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by James Robinson.
+
+        REGRESSION(88260): 10-50% performance regression across many page cyclers
+        https://bugs.webkit.org/show_bug.cgi?id=62349
+
+        Made CHROMIUM platform specific values for cMaxInactiveFontData and
+        cTargetInactiveFontData to mitigate the current performance issue on Chromium
+        page cycler tests.  Made the chromium value for cMaxInactiveFontData 250 based
+        on recommendation from James Robinson.  Changed cTargetInactiveFontData to 200
+        so that 50 inactive fonts will be cleaned up at a time.
+
+        Change made to address existing Chromium performance test regression.
+
+        * platform/graphics/FontCache.cpp:
+
 2011-06-11  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
