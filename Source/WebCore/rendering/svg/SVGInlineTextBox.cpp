@@ -430,6 +430,10 @@ TextRun SVGInlineTextBox::constructTextRun(RenderStyle* style, const SVGTextFrag
 
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
+
+    // Propagate the maximum length of the characters buffer to the TextRun, even when we're only processing a substring.
+    run.setCharactersLength(text->textLength() - fragment.characterOffset);
+    ASSERT(run.charactersLength() >= run.length());
     return run;
 }
 

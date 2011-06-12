@@ -48,6 +48,7 @@ public:
 
     TextRun(const UChar* c, int len, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false)
         : m_characters(c)
+        , m_charactersLength(len)
         , m_len(len)
         , m_xpos(xpos)
         , m_expansion(expansion)
@@ -64,6 +65,7 @@ public:
 
     TextRun(const String& s, bool allowTabs = false, float xpos = 0, float expansion = 0, ExpansionBehavior expansionBehavior = AllowTrailingExpansion | ForbidLeadingExpansion, TextDirection direction = LTR, bool directionalOverride = false)
         : m_characters(s.characters())
+        , m_charactersLength(s.length())
         , m_len(s.length())
         , m_xpos(xpos)
         , m_expansion(expansion)
@@ -83,8 +85,10 @@ public:
 
     const UChar* characters() const { return m_characters; }
     int length() const { return m_len; }
+    int charactersLength() const { return m_charactersLength; }
 
     void setText(const UChar* c, int len) { m_characters = c; m_len = len; }
+    void setCharactersLength(int charactersLength) { m_charactersLength = charactersLength; }
 
 #if ENABLE(SVG)
     float horizontalGlyphStretch() const { return m_horizontalGlyphStretch; }
@@ -127,6 +131,7 @@ public:
 
 private:
     const UChar* m_characters;
+    int m_charactersLength; // Marks the end of the m_characters buffer. Default equals to m_len.
     int m_len;
 
     // m_xpos is the x position relative to the left start of the text line, not relative to the left

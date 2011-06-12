@@ -1574,7 +1574,11 @@ static inline float textWidth(RenderText* text, unsigned from, unsigned len, con
 {
     if (isFixedPitch || (!from && len == text->textLength()) || text->style()->hasTextCombine())
         return text->width(from, len, font, xPos);
+
     TextRun run = RenderBlock::constructTextRun(text, font, text->characters() + from, len, text->style());
+    run.setCharactersLength(text->textLength() - from);
+    ASSERT(run.charactersLength() >= run.length());
+
     run.setAllowTabs(!collapseWhiteSpace);
     run.setXPos(xPos);
     return font.width(run);
@@ -1602,6 +1606,9 @@ static void tryHyphenating(RenderText* text, const Font& font, const AtomicStrin
         return;
 
     TextRun run = RenderBlock::constructTextRun(text, font, text->characters() + lastSpace, pos - lastSpace, text->style());
+    run.setCharactersLength(text->textLength() - lastSpace);
+    ASSERT(run.charactersLength() >= run.length());
+
     run.setAllowTabs(!collapseWhiteSpace);
     run.setXPos(xPos + lastSpaceWordSpacing);
 

@@ -150,7 +150,7 @@ void Font::drawComplexText(GraphicsContext* context, const TextRun& run, const F
 
     // Draw the glyph buffer now at the starting point returned in startX.
     FloatPoint startPoint(startX, point.y());
-    drawGlyphBuffer(context, glyphBuffer, startPoint);
+    drawGlyphBuffer(context, run, glyphBuffer, startPoint);
 #else
     notImplemented();
 #endif
@@ -164,7 +164,7 @@ void Font::drawEmphasisMarksForComplexText(GraphicsContext* context, const TextR
     if (glyphBuffer.isEmpty())
         return;
 
-    drawEmphasisMarks(context, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
+    drawEmphasisMarks(context, run, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
 }
 
 float Font::floatWidthForComplexText(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow*) const

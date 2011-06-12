@@ -1318,6 +1318,8 @@ TextRun InlineTextBox::constructTextRun(RenderStyle* style, const Font& font, co
     if (textRunNeedsRenderingContext(font))
         run.setRenderingContext(SVGTextRunRenderingContext::create(textRenderer));
 
+    // Propagate the maximum length of the characters buffer to the TextRun, even when we're only processing a substring.
+    run.setCharactersLength(textRenderer->textLength());
     return run;
 }
 

@@ -1,3 +1,51 @@
+2011-06-11  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Dirk Schulze.
+
+        Add TextRun charactersLength member
+        https://bugs.webkit.org/show_bug.cgi?id=62501
+
+        Preparation patch 2: Propagate the maximum length of the characters buffer the TextRun operates on, even when we're only measuring a substring.
+        For example: In RenderText when we're measuring 'len' characters starting from "text()->characters() + start", there's a portion
+        of "textLength() - start" characters that we're not processing. In order to support ligatures when integrating SVG Fonts
+        within the GlyphPage concept, we need this extra information, to lookup ligatures even when single chars are measured.
+        If a font defines an eg "ffl" ligature, and we're measuring the "f" of "ffl", it shall looukp the "ffl" glyph from the font,
+        and skip the next two characters (this will be done in WidthIterator).
+
+        This doesn't yet affect any test, the new SVG Fonts code is not merged yet, this is the preparaion patch 2.
+
+        * platform/graphics/Font.h: Add yet-unused "const TextRun&" parameter to drawGlyphBuffer/drawEmphasisMarks.
+        * platform/graphics/FontFastPath.cpp: Ditto. This parameter will be used to looukp the TextRunRenderingContext in a follow-up patch.
+        (WebCore::Font::drawSimpleText):
+        (WebCore::Font::drawEmphasisMarksForSimpleText):
+        (WebCore::Font::drawGlyphBuffer):
+        (WebCore::Font::drawEmphasisMarks):
+        * platform/graphics/TextRun.h: Add "int m_charactersLength", similar to "int m_len". It denotes the maximum length of the characters buffer
+                                       that we're holding. It defaults to the passed "len" value, but is overriden by explicit setCharactersLength calls.
+        (WebCore::TextRun::TextRun):
+        (WebCore::TextRun::charactersLength):
+        (WebCore::TextRun::setCharactersLength):
+        * platform/graphics/mac/FontComplexTextMac.cpp: Pass TextRun do drawGlyphBuffer/drawEmphasisMarks.
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawEmphasisMarksForComplexText):
+        * platform/graphics/win/FontWin.cpp: Ditto.
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawEmphasisMarksForComplexText):
+        * platform/graphics/wx/FontWx.cpp: Ditto.
+        (WebCore::Font::drawComplexText):
+        (WebCore::Font::drawEmphasisMarksForComplexText):
+        * rendering/InlineTextBox.cpp: Call setCharactersLength on the processed TextRun.
+        (WebCore::InlineTextBox::constructTextRun):
+        * rendering/RenderBlockLineLayout.cpp: Ditto.
+        (WebCore::textWidth):
+        (WebCore::tryHyphenating):
+        * rendering/RenderText.cpp: Ditto.
+        (WebCore::RenderText::widthFromCache):
+        (WebCore::RenderText::computePreferredLogicalWidths):
+        (WebCore::RenderText::width):
+        * rendering/svg/SVGInlineTextBox.cpp: Ditto.
+        (WebCore::SVGInlineTextBox::constructTextRun):
+
 2011-06-12  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Andreas Kling.

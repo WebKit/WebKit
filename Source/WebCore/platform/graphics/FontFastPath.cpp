@@ -362,7 +362,7 @@ void Font::drawSimpleText(GraphicsContext* context, const TextRun& run, const Fl
         return;
 
     FloatPoint startPoint(startX, point.y());
-    drawGlyphBuffer(context, glyphBuffer, startPoint);
+    drawGlyphBuffer(context, run, glyphBuffer, startPoint);
 }
 
 void Font::drawEmphasisMarksForSimpleText(GraphicsContext* context, const TextRun& run, const AtomicString& mark, const FloatPoint& point, int from, int to) const
@@ -373,10 +373,10 @@ void Font::drawEmphasisMarksForSimpleText(GraphicsContext* context, const TextRu
     if (glyphBuffer.isEmpty())
         return;
 
-    drawEmphasisMarks(context, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
+    drawEmphasisMarks(context, run, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
 }
 
-void Font::drawGlyphBuffer(GraphicsContext* context, const GlyphBuffer& glyphBuffer, const FloatPoint& point) const
+void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun&, const GlyphBuffer& glyphBuffer, const FloatPoint& point) const
 {   
     // Draw each contiguous run of glyphs that use the same font data.
     const SimpleFontData* fontData = glyphBuffer.fontDataAt(0);
@@ -418,7 +418,7 @@ inline static float offsetToMiddleOfGlyphAtIndex(const GlyphBuffer& glyphBuffer,
     return offsetToMiddleOfGlyph(glyphBuffer.fontDataAt(i), glyphBuffer.glyphAt(i));
 }
 
-void Font::drawEmphasisMarks(GraphicsContext* context, const GlyphBuffer& glyphBuffer, const AtomicString& mark, const FloatPoint& point) const
+void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const GlyphBuffer& glyphBuffer, const AtomicString& mark, const FloatPoint& point) const
 {
     GlyphData markGlyphData;
     if (!getEmphasisMarkGlyphData(mark, markGlyphData))
@@ -444,7 +444,7 @@ void Font::drawEmphasisMarks(GraphicsContext* context, const GlyphBuffer& glyphB
     }
     markBuffer.add(glyphBuffer.glyphAt(glyphBuffer.size() - 1) ? markGlyph : spaceGlyph, markFontData, 0);
 
-    drawGlyphBuffer(context, markBuffer, startPoint);
+    drawGlyphBuffer(context, run, markBuffer, startPoint);
 }
 
 float Font::floatWidthForSimpleText(const TextRun& run, GlyphBuffer* glyphBuffer, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const

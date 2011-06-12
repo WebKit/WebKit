@@ -631,6 +631,9 @@ ALWAYS_INLINE float RenderText::widthFromCache(const Font& f, int start, int len
     }
 
     TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, text()->characters() + start, len, style());
+    run.setCharactersLength(textLength() - start);
+    ASSERT(run.charactersLength() >= run.length());
+
     run.setAllowTabs(allowTabs());
     run.setXPos(xPos);
     return f.width(run, fallbackFonts, glyphOverflow);
@@ -918,6 +921,9 @@ void RenderText::computePreferredLogicalWidths(float leadWidth, HashSet<const Si
                 currMaxWidth = 0;
             } else {
                 TextRun run = RenderBlock::constructTextRun(this, f, txt + i, 1, style());
+                run.setCharactersLength(len - i);
+                ASSERT(run.charactersLength() >= run.length());
+
                 run.setAllowTabs(allowTabs());
                 run.setXPos(leadWidth + currMaxWidth);
 
@@ -1297,6 +1303,9 @@ float RenderText::width(unsigned from, unsigned len, const Font& f, float xPos, 
             w = widthFromCache(f, from, len, xPos, fallbackFonts, glyphOverflow);
     } else {
         TextRun run = RenderBlock::constructTextRun(const_cast<RenderText*>(this), f, text()->characters() + from, len, style());
+        run.setCharactersLength(textLength() - from);
+        ASSERT(run.charactersLength() >= run.length());
+
         run.setAllowTabs(allowTabs());
         run.setXPos(xPos);
         w = f.width(run, fallbackFonts, glyphOverflow);
