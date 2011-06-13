@@ -1,6 +1,15 @@
 2011-06-13  Vitaly Repeshko  <vitalyr@chromium.org>
 
-	Unreviewed.
+        Unreviewed.
+
+        [chromium] Update test expectations.
+
+        * platform/chromium-mac-leopard/svg/as-image/svg-as-background-with-relative-size-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-06-13  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
 
         [chromium] Update test expectations.
 
