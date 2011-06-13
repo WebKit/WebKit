@@ -1,3 +1,21 @@
+2011-06-12  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (full screen video): Watch Again button is obscured after full screen playback ends at Apple trailers page
+        https://bugs.webkit.org/show_bug.cgi?id=62507
+
+        No new tests; DRT would have to be modified to delay between receiving exitFullScreenForElement() and calling 
+        webkitWillExitFullScreenForElement() to be able to test this.
+
+        If the full-screen element is removed, and webkitWillExitFullScreenForElement() is not called before
+        fullScreenElementRemoved() returns, then ancestors of the full-screen element will not have their
+        containsFullScreenElement property removed.  To protect against this, reset the property by calling 
+        setContainsFullScreenElementRecursively() from within fullScreenElementRemoved().
+
+        * dom/Document.cpp:
+        (WebCore::Document::fullScreenElementRemoved): Added call to setContainsFullScreenElementRecursively.
+
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
