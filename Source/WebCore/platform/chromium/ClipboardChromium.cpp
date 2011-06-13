@@ -264,11 +264,8 @@ void ClipboardChromium::declareAndWriteDragImage(Element* element, const KURL& u
     if (fullURL.isEmpty())
         return;
 
-#if !defined(OS_MACOSX)
-    // Put img tag on the clipboard referencing the image. We don't do this on Mac to match Safari
-    // behavior and to ensure that an image dragged to Mail.app is properly attached.
+    // Put img tag on the clipboard referencing the image
     m_dataObject->setData(mimeTypeTextHTML, imageToMarkup(fullURL, element));
-#endif
 }
 
 void ClipboardChromium::writeURL(const KURL& url, const String& title, Frame*)

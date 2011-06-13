@@ -1,3 +1,14 @@
+2011-06-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Unreviewed, rolling out r88704.
+        http://trac.webkit.org/changeset/88704
+        https://bugs.webkit.org/show_bug.cgi?id=62466
+
+        Caused layout test failures on Chromium Mac.
+
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::declareAndWriteDragImage):
+
 2011-06-13   Morgan Winer  <mwiner@apple.com>
 
         Reviewed by Enrica Casucci.
