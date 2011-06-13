@@ -314,6 +314,16 @@ on_load_finished(void *user_data, Evas_Object *webview, void *event_info)
 }
 
 static void
+on_load_error(void *user_data, Evas_Object *webview, void *event_info)
+{
+    const Ewk_Frame_Load_Error *err = (const Ewk_Frame_Load_Error *)event_info;
+    char message[1024];
+    snprintf(message, 1024, "<html><body><div style=\"color:#ff0000\">ERROR!</div><br><div>Code: %d<br>Domain: %s<br>Description: %s<br>URL: %s</div></body</html>",
+             err->code, err->domain, err->description, err->failing_url);
+    ewk_frame_contents_set(err->frame, message, 0, "text/html", "UTF-8", err->failing_url);
+}
+
+static void
 on_toolbars_visible_set(void* user_data, Evas_Object* webview, void* event_info)
 {
     Eina_Bool *visible = (Eina_Bool *)event_info;
@@ -711,6 +721,7 @@ browserCreate(const char *url, const char *theme, const char *userAgent, Eina_Re
     evas_object_smart_callback_add(app->browser, "title,changed", on_title_changed, app);
     evas_object_smart_callback_add(app->browser, "load,progress", on_progress, app);
     evas_object_smart_callback_add(app->browser, "load,finished", on_load_finished, app);
+    evas_object_smart_callback_add(app->browser, "load,error", on_load_error, app);
     evas_object_smart_callback_add(app->browser, "viewport,changed", on_viewport_changed, app);
 
     evas_object_smart_callback_add(app->browser, "toolbars,visible,set", on_toolbars_visible_set, app);

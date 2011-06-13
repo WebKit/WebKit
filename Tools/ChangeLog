@@ -1,3 +1,17 @@
+2011-06-13  Jaehun Lim  <ljaehun.lim@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Add load error handler to EWebLauncher
+        https://bugs.webkit.org/show_bug.cgi?id=62347
+
+        Add a handler function of "load,error" to EWebLauncher.
+        EWebLauncher now displays a simple error page on load errors.
+
+        * EWebLauncher/main.c:
+        (on_load_error):
+        (browserCreate):
+
 2011-06-13  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.
