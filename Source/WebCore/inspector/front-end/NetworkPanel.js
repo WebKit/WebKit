@@ -108,11 +108,6 @@ WebInspector.NetworkPanel.prototype = {
         return [this._largerResourcesButton.element, this._preserveLogToggle.element, this._clearButton.element, this._filterBarElement];
     },
 
-    isCategoryVisible: function(categoryName)
-    {
-        return true;
-    },
-
     elementsToRestoreScrollPositionsFor: function()
     {
         return [this.containerElement, this._dataGrid.scrollContainer];
@@ -646,30 +641,6 @@ WebInspector.NetworkPanel.prototype = {
     {
         WebInspector.Panel.prototype.hide.call(this);
         this._popoverHelper.hidePopup();
-    },
-
-    get searchableViews()
-    {
-        var views = [];
-        return views;
-    },
-
-    searchMatchFound: function(view, matches)
-    {
-        this._resourceGridNode(view.resource).searchMatches = matches;
-    },
-
-    searchCanceled: function(startingNewSearch)
-    {
-        WebInspector.Panel.prototype.searchCanceled.call(this, startingNewSearch);
-
-        if (startingNewSearch || !this._resources)
-            return;
-    },
-
-    performSearch: function(query)
-    {
-        WebInspector.Panel.prototype.performSearch.call(this, query);
     },
 
     refresh: function()
