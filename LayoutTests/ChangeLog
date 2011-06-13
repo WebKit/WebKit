@@ -1,3 +1,13 @@
+2011-06-13  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        IndexedDB test: odd database names
+        https://bugs.webkit.org/show_bug.cgi?id=62322
+
+        * storage/indexeddb/database-odd-names-expected.txt: Added.
+        * storage/indexeddb/database-odd-names.html: Added.
+
 2011-06-13  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.
