@@ -115,7 +115,6 @@ TestShell::TestShell(bool testShellMode)
     WebRuntimeFeatures::enableIndexedDatabase(true);
     WebRuntimeFeatures::enableFileSystem(true);
     WebRuntimeFeatures::enableJavaScriptI18NAPI(true);
-    WebRuntimeFeatures::enableWebAudio(true);
 
     m_webPermissions = adoptPtr(new WebPermissions());
     m_accessibilityController = adoptPtr(new AccessibilityController(this));
