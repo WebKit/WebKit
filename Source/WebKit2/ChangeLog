@@ -1,3 +1,27 @@
+2011-06-13  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL][WK2] Add initial TextCheckerEfl.cpp for webkit2 efl port
+        https://bugs.webkit.org/show_bug.cgi?id=62438
+
+        * UIProcess/efl/TextCheckerEfl.cpp: Added.
+        (WebKit::TextChecker::state):
+        (WebKit::TextChecker::isContinuousSpellCheckingAllowed):
+        (WebKit::TextChecker::setContinuousSpellCheckingEnabled):
+        (WebKit::TextChecker::setGrammarCheckingEnabled):
+        (WebKit::TextChecker::uniqueSpellDocumentTag):
+        (WebKit::TextChecker::closeSpellDocumentWithTag):
+        (WebKit::TextChecker::checkSpellingOfString):
+        (WebKit::TextChecker::checkGrammarOfString):
+        (WebKit::TextChecker::spellingUIIsShowing):
+        (WebKit::TextChecker::toggleSpellingUIIsShowing):
+        (WebKit::TextChecker::updateSpellingUIWithMisspelledWord):
+        (WebKit::TextChecker::updateSpellingUIWithGrammarString):
+        (WebKit::TextChecker::getGuessesForWord):
+        (WebKit::TextChecker::learnWord):
+        (WebKit::TextChecker::ignoreWord):
+
 2011-06-13  Sangyong Park  <sy302.park@gmail.com>
 
         Reviewed by Eric Seidel.
