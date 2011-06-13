@@ -1,3 +1,18 @@
+2011-06-13  KwangHyuk Kim  <hyuki.kim@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] change of cairo_format_t corresponding to EVAS_COLORSPACE_ARGB8888 color space
+        https://bugs.webkit.org/show_bug.cgi?id=62448 
+ 
+        Use CAIRO_FORMAT_ARGB32 for EWK as pixman does not support the fast path for converting
+        from ARGB32 to AGB24 when using source over operation in combination with a bilinear filter
+
+        * ewk/ewk_tiled_model.c:
+        (ewk_tile_new):
+        * ewk/ewk_view_single.c:
+        (_ewk_view_single_smart_repaints_process):
+
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

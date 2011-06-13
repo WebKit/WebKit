@@ -260,7 +260,7 @@ Ewk_Tile *ewk_tile_new(Evas *evas, Evas_Coord w, Evas_Coord h, float zoom, Evas_
     if (cspace == EVAS_COLORSPACE_ARGB8888) {
         bytes = area * 4;
         stride = w * 4;
-        format = CAIRO_FORMAT_RGB24;
+        format = CAIRO_FORMAT_ARGB32;
     } else if (cspace == EVAS_COLORSPACE_RGB565_A5P) {
         bytes = area * 2;
         stride = w * 2;

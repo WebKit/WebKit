@@ -391,11 +391,7 @@ static Eina_Bool _ewk_view_single_smart_repaints_process(Ewk_View_Smart_Data *sd
 
     pixels = evas_object_image_data_get(sd->backing_store, 1);
     evas_object_image_size_get(sd->backing_store, &ow, &oh);
-
-    if (sd->bg_color.a < 255)
-        format = CAIRO_FORMAT_ARGB32;
-    else
-        format = CAIRO_FORMAT_RGB24;
+    format = CAIRO_FORMAT_ARGB32;
 
     surface = cairo_image_surface_create_for_data
         ((unsigned char*)pixels, format, ow, oh, ow * 4);
