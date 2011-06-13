@@ -5,6 +5,22 @@
         [Qt] Implement accelerated compositing on WK2 Qt port
         https://bugs.webkit.org/show_bug.cgi?id=56935
 
+        Added WebGraphicsLayer, a subclass of WebCore::GraphicsLayer that serializes the state of the layer
+        tree to the UI process WebLayerTreeInfo.
+        For now this patch doesn't serialize the animation information, a feature that will be upstreamed later on.
+
+        Together with Viatcheslav Ostapenko.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp: Added.
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h: Added.
+
+2011-06-13  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Implement accelerated compositing on WK2 Qt port
+        https://bugs.webkit.org/show_bug.cgi?id=56935
+
         Added WebLayerTreeInfo: a set of structures that can serialize a tree of GraphicsLayers
         across to the UI process.
 
