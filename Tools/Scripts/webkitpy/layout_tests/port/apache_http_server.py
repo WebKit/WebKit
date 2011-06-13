@@ -227,9 +227,7 @@ class LayoutTestApacheHttpd(http_server_base.HttpServerBase):
         """Stops the apache http server."""
         _log.debug("Shutting down any running http servers")
         httpd_pid = None
-        if self._httpd_proc:
-            httpd_pid = self._httpd_proc.pid
-        elif os.path.exists(self._pid_file):
+        if os.path.exists(self._pid_file):
             httpd_pid = int(open(self._pid_file).readline())
-        if httpd_pid:
-            self._executive.kill_process(httpd_pid)
+        # FIXME: We shouldn't be calling a protected method of _port_obj!
+        self._port_obj._shut_down_http_server(httpd_pid)

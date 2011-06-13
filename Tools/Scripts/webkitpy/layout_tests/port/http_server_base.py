@@ -43,7 +43,6 @@ class HttpServerBase(object):
 
     def __init__(self, port_obj):
         self._port_obj = port_obj
-        self._executive = port_obj._executive
 
     def wait_for_action(self, action):
         """Repeat the action for 20 seconds or until it succeeds. Returns

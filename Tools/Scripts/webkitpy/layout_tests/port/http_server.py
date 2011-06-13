@@ -226,14 +226,14 @@ class Lighttpd(http_server_base.HttpServerBase):
     # TODO(deanm): Find a nicer way to shutdown cleanly.  Our log files are
     # probably not being flushed, etc... why doesn't our python have os.kill ?
 
-    def stop(self):
-        if not self.is_running():
+    def stop(self, force=False):
+        if not force and not self.is_running():
             return
 
         httpd_pid = None
         if self._process:
             httpd_pid = self._process.pid
-        self._executive.kill_process(httpd_pid)
+        self._port_obj._shut_down_http_server(httpd_pid)
 
         if self._process:
             # wait() is not threadsafe and can throw OSError due to:

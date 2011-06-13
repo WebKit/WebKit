@@ -48,8 +48,9 @@ mock_options = mocktool.MockOptions(configuration='Release')
 
 class PortTestCase(unittest.TestCase):
     """Tests that all Port implementations must pass."""
-    HTTP_PORTS = (8000, 8080, 8443)
-    WEBSOCKET_PORTS = (8880,)
+
+    HTTP_PORTS = [8000, 8080, 8443]
+    WEBSOCKET_PORTS = [8880]
 
     def port_maker(self, platform):
         """Override to return the class object of the port to be tested,
@@ -91,23 +92,23 @@ class PortTestCase(unittest.TestCase):
     def assert_servers_are_down(self, host, ports):
         for port in ports:
             try:
-                test_socket = socket.socket()
-                test_socket.connect((host, port))
+                s = socket.socket()
+                s.connect((host, port))
                 self.fail()
             except IOError, e:
                 self.assertTrue(e.errno in (errno.ECONNREFUSED, errno.ECONNRESET))
             finally:
-                test_socket.close()
+                s.close()
 
     def assert_servers_are_up(self, host, ports):
         for port in ports:
             try:
-                test_socket = socket.socket()
-                test_socket.connect((host, port))
+                s = socket.socket()
+                s.connect((host, port))
             except IOError, e:
                 self.fail('failed to connect to %s:%d' % (host, port))
             finally:
-                test_socket.close()
+                s.close()
 
     def integration_test_http_lock(self):
         port = self.make_port()
@@ -136,6 +137,7 @@ class PortTestCase(unittest.TestCase):
         port = self.make_port()
         if not port:
             return
+
         self.assert_servers_are_down('localhost', self.HTTP_PORTS)
         port.start_http_server()
         self.assert_servers_are_up('localhost', self.HTTP_PORTS)
@@ -146,12 +148,13 @@ class PortTestCase(unittest.TestCase):
         port = self.make_port()
         if not port:
             return
+
         # Test that if a port isn't available, the call fails.
         for port_number in self.HTTP_PORTS:
-            test_socket = socket.socket()
+            s = socket.socket()
             try:
                 try:
-                    test_socket.bind(('localhost', port_number))
+                    s.bind(('localhost', port_number))
                 except socket.error, e:
                     if e.errno in (errno.EADDRINUSE, errno.EALREADY):
                         self.fail('could not bind to port %d' % port_number)
@@ -163,7 +166,7 @@ class PortTestCase(unittest.TestCase):
                     pass
             finally:
                 port.stop_http_server()
-                test_socket.close()
+                s.close()
 
         # Test that calling start() twice fails.
         try:
@@ -257,9 +260,9 @@ class PortTestCase(unittest.TestCase):
 
         # Test that start() fails if a port isn't available.
         for port_number in self.WEBSOCKET_PORTS:
-            test_socket = socket.socket()
+            s = socket.socket()
             try:
-                test_socket.bind(('localhost', port_number))
+                s.bind(('localhost', port_number))
                 try:
                     port.start_websocket_server()
                     self.fail('should not have been able to start the server while bound to %d' % port_number)
@@ -267,7 +270,7 @@ class PortTestCase(unittest.TestCase):
                     pass
             finally:
                 port.stop_websocket_server()
-                test_socket.close()
+                s.close()
 
         # Test that calling start() twice fails.
         try:
