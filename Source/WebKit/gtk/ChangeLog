@@ -1,3 +1,12 @@
+2011-06-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Update the list of ignored GTK+ header files for the documentation
+        generation.
+
+        * docs/GNUmakefile.am: Update ignored header list.
+
 2011-06-13  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
