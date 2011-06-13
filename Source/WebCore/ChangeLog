@@ -1,3 +1,20 @@
+2011-06-11  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Avoid flashing when exiting full-screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=62338
+
+        No new tests; covered by the existing full-screen tests.
+
+        Now that we are forcing a repaint inside of setRootFullScreenLayer() instead of during
+        the next run loop, make sure that we have disabled animation before calling 
+        setRootFullScreenLayer() so that the RenderFullScreen renderer and its contents are
+        painted.
+
+        * dom/Document.cpp:
+        (WebCore::Document::webkitDidEnterFullScreenForElement):
+
 2011-06-10  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Darin Adler.

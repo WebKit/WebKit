@@ -1,3 +1,41 @@
+2011-06-11  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Avoid flashing when exiting full-screen mode.
+        https://bugs.webkit.org/show_bug.cgi?id=62338
+
+        Instead of making a round-trip between processes by calling forceRepaint
+        and waiting for a callback, instead make a WebProcess-side call to
+        forceRepaintWithoutCallback before sending the ExitAcceleratedCompositingMode
+        message to the WebFullScreenControllerProxy. This also means we can get rid of
+        the dragImage creation and display.
+
+        Because this redraw will happen during the current run-loop instead of a future
+        one, make sure the background color has been set before the redraw in 
+        didEnterFullScreen().
+
+        Wait to hide the full-screen window until after we have received the 
+        ExitAcceleratedCompositingMode message.  By this time, repaint will have already
+        completed.
+
+        * UIProcess/mac/WKFullScreenWindowController.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+        (-[WKFullScreenWindowController finishedEnterFullScreenAnimation:]): Disable
+            screen updates, to be re-enabled during exitAcceleratedCompositingMode.
+        (-[WKFullScreenWindowController finishedExitFullScreenAnimation:]): Don't hide
+            the full-screen window here; wait for exitAcceleratedCompositing instead.
+        (-[WKFullScreenWindowController exitAcceleratedCompositingMode]): Collapse 
+            the redrawCompleted method into this one.
+        (-[WKFullScreenWindowController close]): Remove the reference to 
+            exitCompositedModeRepaintCompleted.
+        * WebProcess/FullScreen/WebFullScreenManager.cpp:
+        (WebKit::WebFullScreenManager::didEnterFullScreen): Set the full screen
+            background color first.
+        * WebProcess/FullScreen/mac/WebFullScreenManagerMac.mm:
+        (WebKit::WebFullScreenManagerMac::setRootFullScreenLayer): Repaint before
+            sending the ExitAcceleratedCompositingMode message. 
+
 2011-06-13  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.

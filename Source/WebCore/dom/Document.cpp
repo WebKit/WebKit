@@ -4792,12 +4792,10 @@ void Document::webkitDidEnterFullScreenForElement(Element*)
     m_fullScreenElement->didBecomeFullscreenElement();
 
     if (m_fullScreenRenderer) {
-#if USE(ACCELERATED_COMPOSITING)
-        page()->chrome()->client()->setRootFullScreenLayer(0);
-#endif
         setAnimatingFullScreen(false);
 #if USE(ACCELERATED_COMPOSITING)
         view()->updateCompositingLayers();
+        page()->chrome()->client()->setRootFullScreenLayer(0);
 #endif
     }
     m_fullScreenChangeEventTargetQueue.append(m_fullScreenElement);
