@@ -1,3 +1,15 @@
+2011-06-13  Lei Zhang  <thestig@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [Chromium] Add a WebSetting to control printing backgrounds
+        https://bugs.webkit.org/show_bug.cgi?id=62423
+
+        * public/WebSettings.h:
+        * src/WebSettingsImpl.cpp:
+        (WebKit::WebSettingsImpl::setShouldPrintBackgrounds):
+        * src/WebSettingsImpl.h:
+
 2011-06-13  Dominic Mazzoni  <dmazzoni@google.com>
 
         Reviewed by Dimitri Glazkov.

@@ -116,6 +116,7 @@ public:
     virtual void setFullScreenEnabled(bool);
     virtual void setAllowDisplayOfInsecureContent(bool);
     virtual void setAllowRunningOfInsecureContent(bool);
+    virtual void setShouldPrintBackgrounds(bool);
 
 private:
     WebCore::Settings* m_settings;

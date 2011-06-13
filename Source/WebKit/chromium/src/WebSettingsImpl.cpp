@@ -417,4 +417,9 @@ void WebSettingsImpl::setAllowRunningOfInsecureContent(bool enabled)
     m_settings->setAllowRunningOfInsecureContent(enabled);
 }
 
+void WebSettingsImpl::setShouldPrintBackgrounds(bool enabled)
+{
+    m_settings->setShouldPrintBackgrounds(enabled);
+}
+
 } // namespace WebKit
