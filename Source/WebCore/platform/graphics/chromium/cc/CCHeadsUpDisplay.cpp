@@ -29,6 +29,7 @@
 
 #include "Extensions3DChromium.h"
 #include "Font.h"
+#include "FontCache.h"
 #include "FontDescription.h"
 #include "GraphicsContext3D.h"
 #include "LayerChromium.h"
@@ -145,6 +146,8 @@ void CCHeadsUpDisplay::draw()
 
 void CCHeadsUpDisplay::drawHudContents(GraphicsContext* ctx, const IntSize& hudSize)
 {
+    FontCachePurgePreventer fontCachePurgePreventer;
+
     if (m_showPlatformLayerTree) {
         ctx->setFillColor(Color(0, 0, 0, 192), ColorSpaceDeviceRGB);
         ctx->fillRect(FloatRect(0, 0, hudSize.width(), hudSize.height()));

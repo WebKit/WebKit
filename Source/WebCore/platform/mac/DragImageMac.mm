@@ -29,6 +29,7 @@
 #if ENABLE(DRAG_SUPPORT)
 #import "CachedImage.h"
 #import "Font.h"
+#import "FontCache.h"
 #import "FontDescription.h"
 #import "FontSelector.h"
 #import "GraphicsContext.h"
@@ -156,6 +157,8 @@ static float widthWithFont(NSString *string, NSFont *font)
     [string getCharacters:buffer.data()];
     
     if (canUseFastRenderer(buffer.data(), length)) {
+        FontCachePurgePreventer fontCachePurgePreventer;
+
         Font webCoreFont(FontPlatformData(font, [font pointSize]), ![[NSGraphicsContext currentContext] isDrawingToScreen]);
         TextRun run(buffer.data(), length);
         return webCoreFont.width(run);
@@ -179,6 +182,8 @@ static void drawAtPoint(NSString *string, NSPoint point, NSFont *font, NSColor *
     [string getCharacters:buffer.data()];
     
     if (canUseFastRenderer(buffer.data(), length)) {
+        FontCachePurgePreventer fontCachePurgePreventer;
+
         // The following is a half-assed attempt to match AppKit's rounding rules for drawAtPoint.
         // It's probably incorrect for high DPI.
         // If you change this, be sure to test all the text drawn this way in Safari, including

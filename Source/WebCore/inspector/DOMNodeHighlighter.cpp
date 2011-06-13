@@ -32,6 +32,7 @@
 #if ENABLE(INSPECTOR)
 
 #include "Element.h"
+#include "FontCache.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
@@ -139,6 +140,7 @@ void drawElementTitle(GraphicsContext& context, Node* node, const IntRect& bound
     static const Color tooltipBackgroundColor(255, 255, 194, 255);
     static const Color tooltipBorderColor(Color::black);
     static const Color tooltipFontColor(Color::black);
+    FontCachePurgePreventer fontCachePurgePreventer;
 
     Element* element = static_cast<Element*>(node);
     bool isXHTML = element->document()->isXHTMLDocument();

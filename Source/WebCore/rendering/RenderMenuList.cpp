@@ -29,6 +29,7 @@
 #include "CSSFontSelector.h"
 #include "CSSStyleSelector.h"
 #include "Chrome.h"
+#include "FontCache.h"
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLNames.h"
@@ -143,6 +144,8 @@ void RenderMenuList::updateOptionsWidth()
     float maxOptionWidth = 0;
     const Vector<Element*>& listItems = toSelectElement(static_cast<Element*>(node()))->listItems();
     int size = listItems.size();    
+    FontCachePurgePreventer fontCachePurgePreventer;
+
     for (int i = 0; i < size; ++i) {
         Element* element = listItems[i];
         OptionElement* optionElement = toOptionElement(element);

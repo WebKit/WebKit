@@ -1,3 +1,32 @@
+2011-06-13  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Additional FontCache::FontCachePurgePreventer instances needed
+        https://bugs.webkit.org/show_bug.cgi?id=62498
+
+        Added some needed and speculative FontCachePurgePreventer objects.
+        Built and ran Safari with debug version of webkit that purges all
+        purgeable fonts in FontCache::purgeInactiveFontDataIfNeeded in order
+        to find system fallback fonts access via code paths that aren't
+        protected with FontCachePurgePreventer objects.  Also examined
+        platform specific code that calls either Font::drawText() or
+        Canvas::drawText().  For those methods that may be called from currently
+        unprotected paths, added FontCachePurgePreventer objects.
+
+        No new functionality so no new tests.
+
+        * inspector/DOMNodeHighlighter.cpp:
+        * platform/graphics/ca/win/PlatformCALayerWinInternal.cpp:
+        (PlatformCALayerWinInternal::displayCallback):
+        * platform/graphics/chromium/cc/CCHeadsUpDisplay.cpp:
+        (WebCore::CCHeadsUpDisplay::drawHudContents):
+        * platform/mac/DragImageMac.mm:
+        (WebCore::widthWithFont):
+        (WebCore::drawAtPoint):
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::updateOptionsWidth):
+
 2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Dan Bernstein.

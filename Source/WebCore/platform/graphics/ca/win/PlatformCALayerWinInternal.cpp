@@ -30,6 +30,7 @@
 #include "PlatformCALayerWinInternal.h"
 
 #include "Font.h"
+#include "FontCache.h"
 #include "PlatformCALayer.h"
 #include "TextRun.h"
 #include <QuartzCore/CACFLayer.h>
@@ -93,6 +94,8 @@ void PlatformCALayerWinInternal::displayCallback(CACFLayerRef caLayer, CGContext
 #endif
 
     if (owner()->owner()->platformCALayerShowRepaintCounter()) {
+        FontCachePurgePreventer fontCachePurgePreventer;
+
         String text = String::number(owner()->owner()->platformCALayerIncrementRepaintCount());
 
         CGContextSaveGState(context);
