@@ -1,3 +1,17 @@
+2011-06-13  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL][WK2] Add initial WebPreferencesEfl.cpp for webkit2 efl port
+        https://bugs.webkit.org/show_bug.cgi?id=62525
+
+        * UIProcess/efl/WebPreferencesEfl.cpp: Added.
+        (WebKit::WebPreferences::platformInitializeStore):
+        (WebKit::WebPreferences::platformUpdateStringValueForKey):
+        (WebKit::WebPreferences::platformUpdateBoolValueForKey):
+        (WebKit::WebPreferences::platformUpdateUInt32ValueForKey):
+        (WebKit::WebPreferences::platformUpdateDoubleValueForKey):
+
 2011-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
