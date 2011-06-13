@@ -1,3 +1,14 @@
+2011-06-13  Jessie Berlin  <jberlin@apple.com>
+
+        [Windows Tests] EventSender.contextClick() needs to return a JS array of the context menu
+        items.
+        https://bugs.webkit.org/show_bug.cgi?id=62597
+
+        Add editing/pasteboard/copy-standalone-image-crash.htm to the Windows skipped list, since
+        it depends on getting a list of the context menu items.
+
+        * platform/win/Skipped:
+
 2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Windows rebaseline after r62565. The failure is tracked by the bug 62565.
