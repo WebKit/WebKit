@@ -72,6 +72,7 @@ my (
     $channelMessagingSupport,
     $clientBasedGeolocationSupport,
     $coverageSupport,
+    $css3FlexboxSupport,
     $cssRegionsSupport,
     $cssExclusionsSupport,
     $databaseSupport,
@@ -84,7 +85,6 @@ my (
     $eventsourceSupport,
     $fileSystemSupport,
     $filtersSupport,
-    $flexboxSupport,
     $fullscreenAPISupport,
     $geolocationSupport,
     $iconDatabaseSupport,
@@ -153,6 +153,9 @@ my @features = (
     { option => "client-based-geolocation", desc => "Toggle client-based Geolocation support",
       define => "ENABLE_CLIENT_BASED_GEOLOCATION", default => isAppleWebKit(), value => \$clientBasedGeolocationSupport },
 
+    { option => "css3-flexbox", desc => "Toggle CSS3 Flexbox support",
+      define => "ENABLE_CSS3_FLEXBOX", default => 0, value => \$css3FlexboxSupport },
+
     { option => "css-regions", desc => "Toggle CSS Regions support",
       define => "ENABLE_CSS_REGIONS", default => 0, value => \$cssRegionsSupport },
      
@@ -191,9 +194,6 @@ my @features = (
 
     { option => "filters", desc => "Toggle Filters support",
       define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl()), value => \$filtersSupport },
-
-    { option => "new-flexbox", desc => "Toggle New Flexbox support",
-      define => "ENABLE_NEW_FLEXBOX", default => 0, value => \$flexboxSupport },
 
     { option => "fullscreen-api", desc => "Toggle Fullscreen API support",
       define => "ENABLE_FULLSCREEN_API", default => (isAppleMacWebKit() || isGtk()), value => \$fullscreenAPISupport },

@@ -1,3 +1,12 @@
+2011-06-13  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        rename ENABLE_NEW_FLEXBOX to ENABLE_CSS3_FLEXBOX
+        https://bugs.webkit.org/show_bug.cgi?id=62578
+
+        * Configurations/FeatureDefines.xcconfig:
+
 2011-06-13  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

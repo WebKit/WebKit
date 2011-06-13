@@ -1,5 +1,15 @@
 2011-06-13  Tony Chang  <tony@chromium.org>
 
+        Reviewed by Dimitri Glazkov.
+
+        rename ENABLE_NEW_FLEXBOX to ENABLE_CSS3_FLEXBOX
+        https://bugs.webkit.org/show_bug.cgi?id=62578
+
+        * win/tools/vsprops/FeatureDefines.vsprops:
+        * win/tools/vsprops/FeatureDefinesCairo.vsprops:
+
+2011-06-13  Tony Chang  <tony@chromium.org>
+
         Reviewed by Adam Barth.
 
         rename ENABLE_FLEXBOX to ENABLE_NEW_FLEXBOX
