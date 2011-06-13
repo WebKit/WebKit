@@ -228,6 +228,11 @@ FloatRect QWKPagePrivate::convertToDeviceSpace(const FloatRect& rect)
     return rect;
 }
 
+IntPoint QWKPagePrivate::screenToWindow(const IntPoint& point)
+{
+    return point;
+}
+
 IntRect QWKPagePrivate::windowToScreen(const IntRect& rect)
 {
     return rect;

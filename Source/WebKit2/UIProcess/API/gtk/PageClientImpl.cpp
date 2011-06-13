@@ -185,6 +185,12 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& viewRect)
     return viewRect;
 }
 
+IntPoint PageClientImpl::screenToWindow(const IntPoint& point)
+{
+    notImplemented();
+    return point;
+}
+
 IntRect PageClientImpl::windowToScreen(const IntRect& rect)
 {
     return convertWidgetRectToScreenRect(m_viewWidget, rect);

@@ -278,6 +278,12 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& rect)
 {
     return [m_wkView _convertToUserSpace:rect];
 }
+   
+IntPoint PageClientImpl::screenToWindow(const IntPoint& point)
+{
+    NSPoint windowCoord = [[m_wkView window] convertScreenToBase:point];
+    return IntPoint([m_wkView convertPoint:windowCoord fromView:nil]);
+}
     
 IntRect PageClientImpl::windowToScreen(const IntRect& rect)
 {

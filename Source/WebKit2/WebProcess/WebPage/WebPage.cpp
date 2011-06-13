@@ -1358,6 +1358,13 @@ void WebPage::setUserAgent(const String& userAgent)
 {
     m_userAgent = userAgent;
 }
+  
+IntPoint WebPage::screenToWindow(const IntPoint& point)
+{
+    IntPoint windowPoint;
+    sendSync(Messages::WebPageProxy::ScreenToWindow(point), Messages::WebPageProxy::ScreenToWindow::Reply(windowPoint));
+    return windowPoint;
+}
     
 IntRect WebPage::windowToScreen(const IntRect& rect)
 {

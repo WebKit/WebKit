@@ -79,6 +79,7 @@ private:
 
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
+    virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&);
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&);
     
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled);

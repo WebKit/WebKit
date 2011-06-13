@@ -2068,7 +2068,12 @@ void WebPageProxy::getWindowFrame(FloatRect& newWindowFrame)
 {
     newWindowFrame = m_pageClient->convertToUserSpace(m_uiClient.windowFrame(this));
 }
-
+    
+void WebPageProxy::screenToWindow(const IntPoint& screenPoint, IntPoint& windowPoint)
+{
+    windowPoint = m_pageClient->screenToWindow(screenPoint);
+}
+    
 void WebPageProxy::windowToScreen(const IntRect& viewRect, IntRect& result)
 {
     result = m_pageClient->windowToScreen(viewRect);
