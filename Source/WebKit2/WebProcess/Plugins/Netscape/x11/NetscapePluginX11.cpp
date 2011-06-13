@@ -326,8 +326,8 @@ static inline unsigned xKeyModifiers(const WebEvent& event)
     return xModifiers;
 }
 
-template <typename XEventType>
-static inline void setCommonMouseEventFields(XEventType& xEvent, const WebMouseEvent& webEvent, const WebCore::IntPoint& pluginLocation)
+template <typename XEventType, typename WebEventType>
+static inline void setCommonMouseEventFields(XEventType& xEvent, const WebEventType& webEvent, const WebCore::IntPoint& pluginLocation)
 {
     xEvent.root = rootWindowID();
     xEvent.subwindow = 0;
@@ -363,6 +363,26 @@ static inline void setXButtonEventFields(XEvent& xEvent, const WebMouseEvent& we
     case WebMouseEvent::RightButton:
         xButton.button = Button3;
         break;
+    }
+}
+
+static inline void setXButtonEventFieldsByWebWheelEvent(XEvent& xEvent, const WebWheelEvent& webEvent, const WebCore::IntPoint& pluginLocation)
+{
+    XButtonEvent& xButton = xEvent.xbutton;
+    setCommonMouseEventFields(xButton, webEvent, pluginLocation);
+
+    xButton.type = ButtonPress;
+    FloatSize ticks = webEvent.wheelTicks();
+    if (ticks.height()) {
+        if (ticks.height() > 0)
+            xButton.button = 4; // up
+        else
+            xButton.button = 5; // down
+    } else {
+        if (ticks.width() > 0)
+            xButton.button = 6; // left
+        else
+            xButton.button = 7; // right
     }
 }
 
@@ -405,10 +425,16 @@ const int kKeyReleaseType = 3;
 const int kFocusInType = 9;
 const int kFocusOutType = 10;
 
-bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent&)
+bool NetscapePlugin::platformHandleWheelEvent(const WebWheelEvent& event)
 {
-    notImplemented();
-    return false;
+    if (m_isWindowed)
+        return false;
+
+    XEvent xEvent;
+    initializeXEvent(xEvent);
+    setXButtonEventFieldsByWebWheelEvent(xEvent, event, m_frameRect.location());
+
+    return NPP_HandleEvent(&xEvent);
 }
 
 void NetscapePlugin::platformSetFocus(bool)

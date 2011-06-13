@@ -1,3 +1,18 @@
+2011-06-13  Sangyong Park  <sy302.park@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        implement to handle wheel event of plugin on x11
+        https://bugs.webkit.org/show_bug.cgi?id=62522
+
+        Implement platformHandleWheelEvent() in NetscapePluginX11.cpp
+        for to handle wheel event on plugins
+
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::setCommonMouseEventFields): add template argument to support WebWheelEvent
+        (WebKit::setXButtonEventFieldsByWebWheelEvent): initialize XButtonEvent by WebWheelEvent
+        (WebKit::NetscapePlugin::platformHandleWheelEvent): handle wheel event on plugin
+
 2011-06-13  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         Reviewed by Eric Seidel.
