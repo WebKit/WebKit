@@ -1,3 +1,16 @@
+2011-06-13  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Adam Barth.
+
+        Simplify logic in ProgressTracker::progressCompleted()
+        https://bugs.webkit.org/show_bug.cgi?id=62598
+
+        Testing for "m_numProgressTrackedFrames != 0" is unnecessary because it is
+        always true, otherwise we would entered in the first part of the conditional.
+
+        * loader/ProgressTracker.cpp:
+        (WebCore::ProgressTracker::progressCompleted):
+
 2011-06-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Unreviewed, rolling out r88704.

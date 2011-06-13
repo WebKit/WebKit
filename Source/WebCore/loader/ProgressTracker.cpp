@@ -129,8 +129,7 @@ void ProgressTracker::progressCompleted(Frame* frame)
     frame->loader()->client()->willChangeEstimatedProgress();
         
     m_numProgressTrackedFrames--;
-    if (m_numProgressTrackedFrames == 0 ||
-        (frame == m_originatingProgressFrame && m_numProgressTrackedFrames != 0))
+    if (!m_numProgressTrackedFrames || m_originatingProgressFrame == frame)
         finalProgressComplete();
     
     frame->loader()->client()->didChangeEstimatedProgress();
