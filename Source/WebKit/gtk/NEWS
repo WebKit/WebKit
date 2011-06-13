@@ -1,3 +1,18 @@
+================
+WebKitGTK+ 1.5.1
+================
+
+What's new in WebKitGTK+ 1.5.1?
+
+  - The JSC library is now available independently. It's called
+    "libjavascriptcoregtk", and it comes with its own pkg-config file.
+  - New spellchecking APIs, useful to implement spellchecking features
+    in the UAs.
+  - New DOM methods to check if editable areas have been modified by
+    the user (webkit_dom_html_{input,text_area}_is_edited).
+  - Lots of improvements in the WebKit2GTK+ port.
+  - Lots of bugfixes.
+
 =================
 WebKitGTK+ 1.3.13
 =================
