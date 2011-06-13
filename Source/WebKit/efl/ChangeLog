@@ -1,3 +1,17 @@
+2011-06-13  Michal Pakula vel Rutka  <m.pakula@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Input method hints not updated while clicking non-input field editable area
+        https://bugs.webkit.org/show_bug.cgi?id=62539
+
+        This fixes a minor bug when input method hints are not updated while focus is 
+        changed from editable area with input tags to other which are does not have input 
+        tag i.e. textarea.
+
+        * ewk/ewk_view.cpp:
+        (ewk_view_input_method_state_set):
+
 2011-06-13  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Reviewed by Eric Seidel.

@@ -3441,6 +3441,7 @@ void ewk_view_input_method_state_set(Evas_Object* o, Eina_Bool active)
     EWK_VIEW_PRIV_GET(sd, priv);
     WebCore::Frame* focusedFrame = priv->page->focusController()->focusedOrMainFrame();
 
+    priv->imh = 0;
     if (focusedFrame
         && focusedFrame->document()
         && focusedFrame->document()->focusedNode()
@@ -3449,7 +3450,6 @@ void ewk_view_input_method_state_set(Evas_Object* o, Eina_Bool active)
 
         inputElement = static_cast<WebCore::HTMLInputElement*>(focusedFrame->document()->focusedNode());
         if (inputElement) {
-            priv->imh = 0;
             // for password fields, active == false
             if (!active) {
                 active = inputElement->isPasswordField();
