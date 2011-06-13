@@ -1861,6 +1861,8 @@ void HTMLInputElement::addSpellcheckRange(unsigned long start, unsigned long len
 
 void HTMLInputElement::removeSpellcheckRange(RefPtr<SpellcheckRange> range)
 {
+    if (!range)
+        return;
     document()->markers()->removeUserSpellingMarker(this, range->start(), range->length());
 }
 #endif

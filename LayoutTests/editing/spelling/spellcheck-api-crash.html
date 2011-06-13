@@ -1,0 +1,27 @@
+<html>
+<head>
+<title></title>
+<script language="javascript" type="text/javascript">
+if (window.layoutTestController)
+    layoutTestController.dumpAsText();
+
+function Test() {
+    var node0 = document.getElementById('test0');
+    if (node0.removeSpellcheckRange)
+        node0.removeSpellcheckRange(null);
+    var node1 = document.getElementById('test1');
+    if (node1.removeSpellcheckRange)
+        node1.removeSpellcheckRange(null);
+    var node2 = document.getElementById('test2');
+    if (node2.removeSpellcheckRange)
+        node2.removeSpellcheckRange(null);
+}
+</script>
+</head>
+<body onload="Test()">
+<p>This tests thats WebKit does not crash when we call removeSpellcheckRange() with a null parameter. To test manually, open this HTML file and check if the browser can open this file without a crash.</p>
+<textarea id="test0" rows="10" cols="80">wellcome</textarea><br />
+<input id="test1" type="text" value="wellcome" /><br />
+<div id="test2" contenteditable="true">wellcome</div><br />
+</body>
+</html>

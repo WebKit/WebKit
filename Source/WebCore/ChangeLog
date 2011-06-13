@@ -1,3 +1,25 @@
+2011-06-12  Hironori Bono  <hbono@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        Add null checks to HTMLTextAreaElement::removeSpellcheckRange().
+        https://bugs.webkit.org/show_bug.cgi?id=62526
+
+        This change adds null checks to the following function to prevent crashes
+        when calling removeSpellcheckRange() with null:
+        HTMLTextAreaElement::removeSpellcheckRange(),
+        HTMLInputElement::removeSpellcheckRange(), and
+        HTMLDivElement::removeSpellcheckRange().
+
+        Test: editing/spelling/spellcheck-api-crash.html
+
+        * html/HTMLDivElement.cpp:
+        (WebCore::HTMLDivElement::removeSpellcheckRange):
+        * html/HTMLInputElement.cpp:
+        (WebCore::HTMLInputElement::removeSpellcheckRange):
+        * html/HTMLTextAreaElement.cpp:
+        (WebCore::HTMLTextAreaElement::removeSpellcheckRange):
+
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

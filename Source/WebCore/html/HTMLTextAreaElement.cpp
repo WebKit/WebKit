@@ -462,6 +462,8 @@ void HTMLTextAreaElement::addSpellcheckRange(unsigned long start, unsigned long 
 
 void HTMLTextAreaElement::removeSpellcheckRange(RefPtr<SpellcheckRange> range)
 {
+    if (!range)
+        return;
     document()->markers()->removeUserSpellingMarker(this, range->start(), range->length());
 }
 #endif
