@@ -1,5 +1,29 @@
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Remove FrameLoader::isProcessingUserGesture
+        https://bugs.webkit.org/show_bug.cgi?id=62519
+
+        This function is a remnant of the old user gesture design, which
+        involved per-frame state stored on FrameLoader.  Now that we're using
+        static state, we don't need this function anymore.
+
+        This function used to check whether JavaScript was enabled for the
+        top-level frame, but that check doesn't make any sense (like much of
+        the old user gesture code).
+
+        * WebCore.exp.in:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::processingUserGesture):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::submitForm):
+        * loader/FrameLoader.h:
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::click):
+
+2011-06-12  Adam Barth  <abarth@webkit.org>
+
         Fix fullscreen/full-screen-iframe-legacy.html.
 
         * html/HTMLVideoElement.idl:

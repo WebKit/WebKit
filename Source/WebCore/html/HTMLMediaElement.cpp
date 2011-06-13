@@ -60,6 +60,7 @@
 #include "Page.h"
 #include "RenderVideo.h"
 #include "RenderView.h"
+#include "ScriptController.h"
 #include "ScriptEventListener.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
@@ -2375,14 +2376,14 @@ void HTMLMediaElement::defaultEventHandler(Event* event)
 #endif
 }
 
+// FIXME: We should remove this function in favor of just calling ScriptController::processingUserGesture().
 bool HTMLMediaElement::processingUserGesture() const
 {
-    // FIXME: We should call ScriptController::processingUserGesture() so
-    // we know what to do without a Frame.
-    Frame* frame = document()->frame();
-    if (!frame)
+    // FIXME: We should remove this check, but it seems to be needed to stop
+    // some media tests from crashing.
+    if (!document()->frame())
         return true;
-    return frame->loader()->isProcessingUserGesture();
+    return ScriptController::processingUserGesture();
 }
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

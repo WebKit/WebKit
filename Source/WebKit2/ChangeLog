@@ -1,5 +1,20 @@
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Eric Seidel.
+
+        Remove FrameLoader::isProcessingUserGesture
+        https://bugs.webkit.org/show_bug.cgi?id=62519
+
+        Instead of asking the gesture indicator directly, ask the
+        ScriptController, like everyone else.  The gesture indicator is just
+        one of the piece of information we use to determine whether we're
+        processing a user gesture.
+
+        * WebProcess/InjectedBundle/InjectedBundle.cpp:
+        (WebKit::InjectedBundle::isProcessingUserGesture):
+
+2011-06-12  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Alexey Proskuryakov.
 
         Remove trival "forward-to-client" member functions from FrameLoader

@@ -1109,8 +1109,7 @@ unsigned WebFrameImpl::unloadListenerCount() const
 
 bool WebFrameImpl::isProcessingUserGesture() const
 {
-    // FIXME: We should call ScriptController::processingUserGesture().
-    return frame()->loader()->isProcessingUserGesture();
+    return ScriptController::processingUserGesture();
 }
 
 bool WebFrameImpl::willSuppressOpenerInNewFrame() const

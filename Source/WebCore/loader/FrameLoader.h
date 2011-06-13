@@ -251,8 +251,6 @@ public:
     Frame* opener();
     void setOpener(Frame*);
 
-    bool isProcessingUserGesture();
-
     void resetMultipleFormSubmissionProtection();
 
     void checkCallImplicitClose();

@@ -1237,9 +1237,7 @@ static bool fastDocumentTeardownEnabled()
 // Indicates if the WebView is in the midst of a user gesture.
 - (BOOL)_isProcessingUserGesture
 {
-    WebFrame *frame = [self mainFrame];
-    // FIXME: We should call ScriptController::processingUserGesture().
-    return core(frame)->loader()->isProcessingUserGesture();
+    return ScriptController::processingUserGesture();
 }
 
 + (NSString *)_MIMETypeForFile:(NSString *)path

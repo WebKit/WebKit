@@ -36,6 +36,7 @@
 #include "RenderText.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
+#include "ScriptController.h"
 #include "ShadowRoot.h"
 #include "TextRun.h"
 #include <math.h>
@@ -121,8 +122,7 @@ void RenderFileUploadControl::chooseIconForFiles(FileChooser* chooser, const Vec
 
 void RenderFileUploadControl::click()
 {
-    // FIXME: We should call ScriptController::processingUserGesture().
-    if (!frame() || !frame()->loader()->isProcessingUserGesture())
+    if (!ScriptController::processingUserGesture())
         return;
     if (Chrome* chromePointer = chrome())
         chromePointer->runOpenPanel(frame(), m_fileChooser);

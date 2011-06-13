@@ -49,6 +49,7 @@
 #include <WebCore/Page.h>
 #include <WebCore/PageGroup.h>
 #include <WebCore/PrintContext.h>
+#include <WebCore/ScriptController.h>
 #include <WebCore/SecurityOrigin.h>
 #include <WebCore/Settings.h>
 #include <WebCore/UserGestureIndicator.h>
@@ -233,7 +234,7 @@ bool InjectedBundle::isPageBoxVisible(WebFrame* frame, int pageIndex)
 
 bool InjectedBundle::isProcessingUserGesture()
 {
-    return UserGestureIndicator::getUserGestureState() == DefinitelyProcessingUserGesture;
+    return ScriptController::processingUserGesture();
 }
 
 static PassOwnPtr<Vector<String> > toStringVector(ImmutableArray* patterns)
