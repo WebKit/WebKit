@@ -50,7 +50,7 @@ private:
     virtual PassOwnPtr<DrawingAreaProxy> createDrawingAreaProxy();
     virtual void setViewNeedsDisplay(const WebCore::IntRect&);
     virtual void displayView();
-    virtual void scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset);
+    virtual void scrollView(const WebCore::IntRect&, const WebCore::IntSize&);
     virtual WebCore::IntSize viewSize();
     virtual bool isViewWindowActive();
     virtual bool isViewFocused();
@@ -74,23 +74,23 @@ private:
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&);
 
-    virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled);
+    virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool);
 
     virtual PassRefPtr<WebPopupMenuProxy> createPopupMenuProxy(WebPageProxy*);
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
 
-    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut);
+    virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool);
 
     virtual void didChangeScrollbarsForMainFrame() const;
 
-    virtual void didCommitLoadForMainFrame(bool useCustomRepresentation);
-    virtual void didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&);
+    virtual void didCommitLoadForMainFrame(bool);
+    virtual void didFinishLoadingDataForCustomRepresentation(const String&, const CoreIPC::DataReference&);
     virtual double customRepresentationZoomFactor();
     virtual void setCustomRepresentationZoomFactor(double);
 
-    virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>& updateRects);
-    virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount);
-    virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount);
+    virtual void flashBackingStoreUpdates(const Vector<WebCore::IntRect>&);
+    virtual void findStringInCustomRepresentation(const String&, FindOptions, unsigned);
+    virtual void countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned);
 
     virtual float userSpaceScaleFactor() const;
 

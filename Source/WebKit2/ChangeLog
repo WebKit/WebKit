@@ -2,6 +2,25 @@
 
         Reviewed by Kenneth Rohde Christiansen.
 
+        [EFL][WK2] Minor fix: fix coding style and remove unnecessary codes for WebKit2 efl port's PageClientImpl
+        https://bugs.webkit.org/show_bug.cgi?id=62429
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::scrollView):
+        (WebKit::PageClientImpl::setCursor):
+        (WebKit::PageClientImpl::windowToScreen):
+        (WebKit::PageClientImpl::doneWithKeyEvent):
+        (WebKit::PageClientImpl::setFindIndicator):
+        (WebKit::PageClientImpl::didCommitLoadForMainFrame):
+        (WebKit::PageClientImpl::didFinishLoadingDataForCustomRepresentation):
+        (WebKit::PageClientImpl::findStringInCustomRepresentation):
+        (WebKit::PageClientImpl::countStringMatchesInCustomRepresentation):
+        * UIProcess/API/efl/PageClientImpl.h:
+
+2011-06-13  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
         [EFL][WK2] Add initial WebPreferencesEfl.cpp for webkit2 efl port
         https://bugs.webkit.org/show_bug.cgi?id=62525
 

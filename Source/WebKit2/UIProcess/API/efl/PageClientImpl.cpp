@@ -64,13 +64,9 @@ void PageClientImpl::displayView()
     notImplemented();
 }
 
-void PageClientImpl::scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize& scrollOffset)
+void PageClientImpl::scrollView(const WebCore::IntRect& scrollRect, const WebCore::IntSize&)
 {
     setViewNeedsDisplay(scrollRect);
-#define USE_EWK_TOUCH 1
-#if USE_EWK_TOUCH
-    evas_object_move(m_viewObject, 0, 0);
-#endif
 }
 
 WebCore::IntSize PageClientImpl::viewSize()
@@ -124,7 +120,7 @@ void PageClientImpl::toolTipChanged(const String&, const String&)
     notImplemented();
 }
 
-void PageClientImpl::setCursor(const Cursor& cursor)
+void PageClientImpl::setCursor(const Cursor&)
 {
     notImplemented();
 }
@@ -167,13 +163,13 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& viewRect)
     return viewRect;
 }
 
-IntRect PageClientImpl::windowToScreen(const IntRect& rect)
+IntRect PageClientImpl::windowToScreen(const IntRect&)
 {
     notImplemented();
     return IntRect();
 }
 
-void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled)
+void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool)
 {
     notImplemented();
 }
@@ -190,7 +186,7 @@ PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPagePr
     return 0;
 }
 
-void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)
+void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool)
 {
     notImplemented();
 }
@@ -200,12 +196,12 @@ void PageClientImpl::didChangeScrollbarsForMainFrame() const
     notImplemented();
 }
 
-void PageClientImpl::didCommitLoadForMainFrame(bool useCustomRepresentation)
+void PageClientImpl::didCommitLoadForMainFrame(bool)
 {
     notImplemented();
 }
 
-void PageClientImpl::didFinishLoadingDataForCustomRepresentation(const String& suggestedFilename, const CoreIPC::DataReference&)
+void PageClientImpl::didFinishLoadingDataForCustomRepresentation(const String&, const CoreIPC::DataReference&)
 {
     notImplemented();
 }
@@ -226,12 +222,12 @@ void PageClientImpl::flashBackingStoreUpdates(const Vector<IntRect>&)
     notImplemented();
 }
 
-void PageClientImpl::findStringInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount)
+void PageClientImpl::findStringInCustomRepresentation(const String&, FindOptions, unsigned)
 {
     notImplemented();
 }
 
-void PageClientImpl::countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned maxMatchCount)
+void PageClientImpl::countStringMatchesInCustomRepresentation(const String&, FindOptions, unsigned)
 {
     notImplemented();
 }
