@@ -110,6 +110,7 @@ public:
     virtual void setContentsToImage(Image*);
     virtual void setContentsToMedia(PlatformLayer*);
     virtual void setContentsToCanvas(PlatformLayer*);
+    virtual void setContentsToBackgroundColor(const Color&);
 
     virtual bool hasContentsLayer() const { return m_contentsLayer; }
     
@@ -350,7 +351,8 @@ private:
         NoContentsLayer = 0,
         ContentsLayerForImage,
         ContentsLayerForMedia,
-        ContentsLayerForCanvas
+        ContentsLayerForCanvas,
+        ContentsLayerForBackgroundColor
     };
     
     ContentsLayerPurpose m_contentsLayerPurpose;

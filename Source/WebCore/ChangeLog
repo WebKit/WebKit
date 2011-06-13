@@ -1,3 +1,37 @@
+2011-06-10  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Flash of white on left and right edges of screen when showing fullscreen controller when movie doesn't fill the entire screen
+        https://bugs.webkit.org/show_bug.cgi?id=62491
+        <rdar://problem/9584427>
+
+        No new tests; should be covered by existing fullscreen pixel tests.
+
+        On certain displays, when a RenderFullScreen renderer is created, it is large enough to trigger the 
+        creation of a tiled CALayer (instead of a normal CALayer).  Painting in these layers necessarily
+        happens asynchronously, so the flash is occurring because of the async painting of the RenderFullScreen
+        renderer's background color.  Since we know the RenderFullScreen does not otherwise paint its contents,
+        we can add a special case in the RenderLayerBacking to set the GraphicsLayer contents to be the
+        renderer's background color.  Fill in support for creating a contentLayer to contain the background 
+        color inside GraphicsLayerCA.
+
+        * platform/graphics/GraphicsLayer.h:
+        (WebCore::GraphicsLayer::setContentsToBackgroundColor): Renamed from setContentsBackgroundColor to match
+            the other setContentsTo... functions.
+        * platform/graphics/ca/GraphicsLayerCA.cpp:
+        (WebCore::GraphicsLayerCA::setContentsToBackgroundColor): Added. Creates a contentsLayer to host the 
+            background color.
+        (WebCore::GraphicsLayerCA::updateLayerBackgroundColor): Removed a comment only.
+        * platform/graphics/ca/GraphicsLayerCA.h:
+        * rendering/RenderLayerBacking.cpp:
+        (WebCore::RenderLayerBacking::updateGraphicsLayerConfiguration): Special case the RenderFullScreen
+            renderer to call updateBackgroundColor.
+        (WebCore::RenderLayerBacking::updateBackgroundColor): Added.
+        (WebCore::RenderLayerBacking::containsPaintedContent): Tell the backing that the RenderFullScreen
+            renderer does not paint its contents.
+        * rendering/RenderLayerBacking.h:
+
 2011-06-13  Tim Horton  <timothy_horton@apple.com>
 
         Reviewed by Simon Fraser.

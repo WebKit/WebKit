@@ -313,7 +313,7 @@ public:
     // Layer contents
     virtual void setContentsToImage(Image*) { }
     virtual void setContentsToMedia(PlatformLayer*) { } // video or plug-in
-    virtual void setContentsBackgroundColor(const Color&) { }
+    virtual void setContentsToBackgroundColor(const Color&) { }
     virtual void setContentsToCanvas(PlatformLayer*) { }
     virtual bool hasContentsLayer() const { return false; }
 

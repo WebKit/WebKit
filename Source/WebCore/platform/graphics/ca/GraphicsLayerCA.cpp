@@ -670,6 +670,26 @@ void GraphicsLayerCA::platformCALayerAnimationStarted(CFTimeInterval startTime)
         m_client->notifyAnimationStarted(this, startTime);
 }
 
+void GraphicsLayerCA::setContentsToBackgroundColor(const Color& color)
+{
+    setBackgroundColor(color);
+    if (color != Color::transparent) {
+        m_contentsLayerPurpose = ContentsLayerForBackgroundColor;
+        m_contentsLayer = PlatformCALayer::create(PlatformCALayer::LayerTypeLayer, this);
+#ifndef NDEBUG
+        m_contentsLayer->setName("Background Color Layer");
+#endif
+        updateContentsRect();
+        setupContentsLayer(m_contentsLayer.get());
+    } else {
+        m_contentsLayerPurpose = NoContentsLayer;
+        m_contentsLayer = 0;
+    }
+
+    noteSublayersChanged();
+    noteLayerPropertyChanged(BackgroundColorChanged);
+}
+
 void GraphicsLayerCA::setContentsToImage(Image* image)
 {
     if (image) {
@@ -1254,7 +1274,6 @@ void GraphicsLayerCA::updateLayerBackgroundColor()
     if (!m_contentsLayer)
         return;
 
-    // We never create the contents layer just for background color yet.
     if (m_backgroundColorSet)
         m_contentsLayer->setBackgroundColor(m_backgroundColor);
     else

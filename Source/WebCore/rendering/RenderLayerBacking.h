@@ -182,6 +182,7 @@ private:
 
     bool rendererHasBackground() const;
     const Color rendererBackgroundColor() const;
+    void updateBackgroundColor();
 
     bool hasNonCompositingDescendants() const;
     

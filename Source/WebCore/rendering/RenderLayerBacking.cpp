@@ -305,7 +305,19 @@ bool RenderLayerBacking::updateGraphicsLayerConfiguration()
         layerConfigChanged = true;
     }
 #endif
-
+#if ENABLE(FULLSCREEN_API)
+    else if (renderer->isRenderFullScreen()) {
+        // RenderFullScreen renderers have no content, and only a solid
+        // background color.  They also can be large enough to trigger the
+        // creation of a tiled-layer, which can cause flashing problems
+        // during repainting.  Special case the RenderFullScreen case because
+        // we know its style does not come from CSS and it is therefore will
+        // not contain paintable content (e.g. background images, gradients,
+        // etc), so safe to set the layer's background color to the renderer's 
+        // style's background color.
+        updateBackgroundColor();
+    }
+#endif
     if (renderer->isRenderPart())
         layerConfigChanged = RenderLayerCompositor::parentFrameContentLayers(toRenderPart(renderer));
 
@@ -770,6 +782,11 @@ const Color RenderLayerBacking::rendererBackgroundColor() const
     return renderer()->style()->visitedDependentColor(CSSPropertyBackgroundColor);
 }
 
+void RenderLayerBacking::updateBackgroundColor()
+{
+    m_graphicsLayer->setContentsToBackgroundColor(rendererBackgroundColor());
+}
+
 // A "simple container layer" is a RenderLayer which has no visible content to render.
 // It may have no children, or all its children may be themselves composited.
 // This is a useful optimization, because it allows us to avoid allocating backing store.
@@ -902,6 +919,10 @@ bool RenderLayerBacking::containsPaintedContent() const
 #elif ENABLE(WEBGL) || ENABLE(ACCELERATED_2D_CANVAS)
     if (isAcceleratedCanvas(renderer()))
         return hasBoxDecorationsOrBackground(renderer());
+#endif
+#if ENABLE(FULLSCREEN_API)
+    if (renderer()->isRenderFullScreen())
+        return false;
 #endif
 
     return true;
