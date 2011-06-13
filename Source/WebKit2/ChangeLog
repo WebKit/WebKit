@@ -1,3 +1,18 @@
+2011-06-13  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL][WK2] Add initial WebContextEfl.cpp for webkit2 efl port
+        https://bugs.webkit.org/show_bug.cgi?id=62523
+
+        * UIProcess/efl/WebContextEfl.cpp: Added.
+        (WebKit::WebContext::applicationCacheDirectory):
+        (WebKit::WebContext::platformInitializeWebProcess):
+        (WebKit::WebContext::platformInvalidateContext):
+        (WebKit::WebContext::platformDefaultDatabaseDirectory):
+        (WebKit::WebContext::platformDefaultIconDatabasePath):
+        (WebKit::WebContext::platformDefaultLocalStorageDirectory):
+
 2011-06-13  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Unreviewed fix - removed parts of r88659 that were committed by mistake.
