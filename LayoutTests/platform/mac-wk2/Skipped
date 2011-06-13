@@ -440,6 +440,7 @@ svg/animations/animate-path-nested-transforms.html
 svg/animations/animate-path-to-animation.html
 svg/animations/animate-points.html
 svg/animations/animate-text-nested-transforms.html
+svg/animations/animateTransform-pattern-transform.html
 
 svg/custom/absolute-sized-content-with-resources.xhtml
 svg/custom/circle-move-invalidation.svg

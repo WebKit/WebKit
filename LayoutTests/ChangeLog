@@ -1,3 +1,19 @@
+2011-06-13  Dirk Schulze  <krit@webkit.org>
+
+        Rubber-stamped by Rob Buis.
+
+        SVG patternTransform not animatable
+        https://bugs.webkit.org/show_bug.cgi?id=62538
+
+        Removing 'transform' animation test. It was added as an example for animateTransform tests but fails on some platforms.
+        Also it is not part of the fix for 'patternTransform' animation. The test for 'patternTransform' works.
+        Adding animateTransform-pattern-transform to the skip list of Mac WebKit2, like all other animation or dynamic-update tests.
+
+        * platform/mac-wk2/Skipped:
+        * svg/animations/animateTransform-transformable-transform-expected.txt: Removed.
+        * svg/animations/animateTransform-transformable-transform.html: Removed.
+        * svg/animations/script-tests/animateTransform-transformable-transform.js: Removed.
+
 2011-06-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Updated Leopard pixel baselines.
