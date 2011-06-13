@@ -961,7 +961,7 @@ BUGCR3244 WIN LINUX : fast/backgrounds/repeat/mask-negative-offset-repeat.html =
 // or might be expected and that we should either go with the buildbot output
 // or change the test upstream to specify explicitly what font to use.
 // The mask part of this test is totally wrong.
-BUGCR3244 WIN LINUX : fast/backgrounds/svg-as-background-6.html = FAIL
+BUGCR3244 WIN LINUX LEOPARD : fast/backgrounds/svg-as-background-6.html = FAIL
 
 // Our gradients are wrong here.
 BUGCR19559 WIN LINUX : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = FAIL
@@ -3994,3 +3994,13 @@ BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = IMAGE PASS
 BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
 BUGCR85755 : fast/js/exception-properties.html = TEXT
 
+// Started failing after r88321
+BUGCR85902 LEOPARD : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
+BUGCR85902 LEOPARD : fast/borders/border-image-rotate-transform.html = IMAGE
+
+BUGVITALYR LEOPARD : fast/borders/outline-alpha-block.html = IMAGE
+BUGVITALYR LEOPARD : fast/borders/outline-alpha-inline.html = IMAGE
+
+BUGVITALYR LEOPARD : fast/inline/inline-wrap-with-parent-padding.html = IMAGE
+BUGVITALYR LEOPARD : svg/as-image/svg-as-background-with-relative-size.html = IMAGE
+BUGVITALYR LINUX MAC GPU : compositing/geometry/tall-page-composited.html = CRASH FAIL

@@ -1,3 +1,11 @@
+2011-06-13  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
+
+        [chromium] Update test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-12  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r88625.
