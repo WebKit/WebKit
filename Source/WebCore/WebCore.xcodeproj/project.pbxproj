@@ -968,6 +968,7 @@
 		436708F812D9CA4B00044234 /* SVGResourcesCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708B912D9CA4B00044234 /* SVGResourcesCache.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		436708FA12D9CA4B00044234 /* SVGResourcesCycleSolver.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708BB12D9CA4B00044234 /* SVGResourcesCycleSolver.h */; };
 		436708FC12D9CA4B00044234 /* SVGShadowTreeElements.h in Headers */ = {isa = PBXBuildFile; fileRef = 436708BD12D9CA4B00044234 /* SVGShadowTreeElements.h */; };
+		4381763B13A697D4007D1187 /* SVGAnimatedLength.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4381763A13A697D4007D1187 /* SVGAnimatedLength.cpp */; };
 		439046D712DA25E800AF80A2 /* RenderMathMLBlock.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046C312DA25E800AF80A2 /* RenderMathMLBlock.cpp */; };
 		439046D812DA25E800AF80A2 /* RenderMathMLBlock.h in Headers */ = {isa = PBXBuildFile; fileRef = 439046C412DA25E800AF80A2 /* RenderMathMLBlock.h */; };
 		439046D912DA25E800AF80A2 /* RenderMathMLFenced.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 439046C512DA25E800AF80A2 /* RenderMathMLFenced.cpp */; };
@@ -7562,6 +7563,7 @@
 		436708BB12D9CA4B00044234 /* SVGResourcesCycleSolver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGResourcesCycleSolver.h; sourceTree = "<group>"; };
 		436708BC12D9CA4B00044234 /* SVGShadowTreeElements.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGShadowTreeElements.cpp; sourceTree = "<group>"; };
 		436708BD12D9CA4B00044234 /* SVGShadowTreeElements.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SVGShadowTreeElements.h; sourceTree = "<group>"; };
+		4381763A13A697D4007D1187 /* SVGAnimatedLength.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SVGAnimatedLength.cpp; sourceTree = "<group>"; };
 		439046C312DA25E800AF80A2 /* RenderMathMLBlock.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderMathMLBlock.cpp; path = mathml/RenderMathMLBlock.cpp; sourceTree = "<group>"; };
 		439046C412DA25E800AF80A2 /* RenderMathMLBlock.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RenderMathMLBlock.h; path = mathml/RenderMathMLBlock.h; sourceTree = "<group>"; };
 		439046C512DA25E800AF80A2 /* RenderMathMLFenced.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = RenderMathMLFenced.cpp; path = mathml/RenderMathMLFenced.cpp; sourceTree = "<group>"; };
@@ -17401,6 +17403,7 @@
 				B22277E80D00BF1F0071B782 /* SVGAnimatedEnumeration.idl */,
 				0823D158127AD6AC000EBC95 /* SVGAnimatedInteger.h */,
 				B22277E90D00BF1F0071B782 /* SVGAnimatedInteger.idl */,
+				4381763A13A697D4007D1187 /* SVGAnimatedLength.cpp */,
 				089021A8126EF5DE0092D5EA /* SVGAnimatedLength.h */,
 				B22277EA0D00BF1F0071B782 /* SVGAnimatedLength.idl */,
 				089021AC126EF5E90092D5EA /* SVGAnimatedLengthList.h */,
@@ -25918,6 +25921,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				4381763B13A697D4007D1187 /* SVGAnimatedLength.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -1,5 +1,16 @@
 2011-06-13  Dirk Schulze  <krit@webkit.org>
 
+        Reviewed build fix of mac.
+
+        SVGAnimation should use direct unit animation for SVGLength
+        https://bugs.webkit.org/show_bug.cgi?id=61368
+
+        Forgot to add SVGAnimatedLength.cpp. 
+
+        * WebCore.xcodeproj/project.pbxproj:
+
+2011-06-13  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Nikolas Zimmermann.
 
         SVGAnimation should use direct unit animation for SVGLength
