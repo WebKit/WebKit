@@ -192,8 +192,8 @@ my @features = (
     { option => "filters", desc => "Toggle Filters support",
       define => "ENABLE_FILTERS", default => (isAppleWebKit() || isGtk() || isQt() || isEfl()), value => \$filtersSupport },
 
-    { option => "flexbox", desc => "Toggle Flexbox support",
-      define => "ENABLE_FLEXBOX", default => 0, value => \$flexboxSupport },
+    { option => "new-flexbox", desc => "Toggle New Flexbox support",
+      define => "ENABLE_NEW_FLEXBOX", default => 0, value => \$flexboxSupport },
 
     { option => "fullscreen-api", desc => "Toggle Fullscreen API support",
       define => "ENABLE_FULLSCREEN_API", default => (isAppleMacWebKit() || isGtk()), value => \$fullscreenAPISupport },
