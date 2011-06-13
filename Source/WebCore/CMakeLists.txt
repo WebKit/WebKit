@@ -137,7 +137,6 @@ SET(WebCore_IDL_FILES
     dom/Comment.idl
     dom/CompositionEvent.idl
     dom/CustomEvent.idl
-    dom/DataTransferItem.idl
     dom/DataTransferItems.idl
     dom/DeviceMotionEvent.idl
     dom/DeviceOrientationEvent.idl
@@ -176,7 +175,6 @@ SET(WebCore_IDL_FILES
     dom/ProgressEvent.idl
     dom/RangeException.idl
     dom/Range.idl
-    dom/StringCallback.idl
     dom/TextEvent.idl
     dom/Text.idl
     dom/TouchEvent.idl
@@ -316,8 +314,6 @@ SET(WebCore_IDL_FILES
     inspector/ScriptProfile.idl
     inspector/ScriptProfileNode.idl
 
-    loader/appcache/DOMApplicationCache.idl
-
     page/BarInfo.idl
     page/Console.idl
     page/Coordinates.idl
@@ -353,34 +349,6 @@ SET(WebCore_IDL_FILES
     plugins/DOMPlugin.idl
     plugins/DOMPluginArray.idl
 
-    storage/Database.idl
-    storage/DatabaseCallback.idl
-    storage/DatabaseSync.idl
-    storage/IDBAny.idl
-    storage/IDBCursor.idl
-    storage/IDBDatabaseError.idl
-    storage/IDBDatabaseException.idl
-    storage/IDBDatabase.idl
-    storage/IDBFactory.idl
-    storage/IDBIndex.idl
-    storage/IDBKey.idl
-    storage/IDBKeyRange.idl
-    storage/IDBObjectStore.idl
-    storage/IDBRequest.idl
-    storage/IDBTransaction.idl
-    storage/SQLError.idl
-    storage/SQLException.idl
-    storage/SQLResultSet.idl
-    storage/SQLResultSetRowList.idl
-    storage/SQLStatementCallback.idl
-    storage/SQLStatementErrorCallback.idl
-    storage/SQLTransaction.idl
-    storage/SQLTransactionCallback.idl
-    storage/SQLTransactionErrorCallback.idl
-    storage/SQLTransactionSync.idl
-    storage/SQLTransactionSyncCallback.idl
-    storage/Storage.idl
-    storage/StorageEvent.idl
     storage/StorageInfo.idl
     storage/StorageInfoErrorCallback.idl
     storage/StorageInfoQuotaCallback.idl
@@ -407,9 +375,6 @@ SET(WebCore_IDL_FILES
     webaudio/LowPass2FilterNode.idl
     webaudio/RealtimeAnalyserNode.idl
 
-    websockets/CloseEvent.idl
-    websockets/WebSocket.idl
-
     workers/AbstractWorker.idl
     workers/DedicatedWorkerContext.idl
     workers/SharedWorker.idl
@@ -424,11 +389,6 @@ SET(WebCore_IDL_FILES
     xml/XMLHttpRequestProgressEvent.idl
     xml/XMLHttpRequestUpload.idl
     xml/XMLSerializer.idl
-    xml/XPathEvaluator.idl
-    xml/XPathException.idl
-    xml/XPathExpression.idl
-    xml/XPathNSResolver.idl
-    xml/XPathResult.idl
     xml/XSLTProcessor.idl
 )
 
@@ -1458,15 +1418,57 @@ IF (ENABLE_DATABASE)
         platform/sql/SQLiteStatement.cpp
         platform/sql/SQLiteTransaction.cpp
     )
+    LIST(APPEND WebCore_IDL_FILES
+        storage/Database.idl
+        storage/DatabaseCallback.idl
+        storage/DatabaseSync.idl
+        storage/SQLError.idl
+        storage/SQLException.idl
+        storage/SQLResultSet.idl
+        storage/SQLResultSetRowList.idl
+        storage/SQLStatementCallback.idl
+        storage/SQLStatementErrorCallback.idl
+        storage/SQLTransaction.idl
+        storage/SQLTransactionCallback.idl
+        storage/SQLTransactionErrorCallback.idl
+        storage/SQLTransactionSync.idl
+        storage/SQLTransactionSyncCallback.idl
+    )
 ENDIF ()
 
 IF (ENABLE_DATA_TRANSFER_ITEMS)
     LIST(APPEND WebCore_IDL_FILES
+        dom/DataTransferItem.idl
+        dom/StringCallback.idl
     )
     LIST(APPEND WebCore_SOURCES
         dom/DataTransferItem.cpp
         dom/DataTransferItems.cpp
         dom/StringCallback.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_INDEXED_DATABASE)
+    LIST(APPEND WebCore_IDL_FILES
+        storage/IDBAny.idl
+        storage/IDBCursor.idl
+        storage/IDBDatabaseError.idl
+        storage/IDBDatabaseException.idl
+        storage/IDBDatabase.idl
+        storage/IDBFactory.idl
+        storage/IDBIndex.idl
+        storage/IDBKey.idl
+        storage/IDBKeyRange.idl
+        storage/IDBObjectStore.idl
+        storage/IDBRequest.idl
+        storage/IDBTransaction.idl
+    )
+ENDIF ()
+
+IF (ENABLE_DOM_STORAGE)
+    LIST(APPEND WebCore_IDL_FILES
+        storage/Storage.idl
+        storage/StorageEvent.idl
     )
 ENDIF ()
 
@@ -1566,6 +1568,16 @@ if (ENABLE_FILE_SYSTEM)
         fileapi/WebKitFlags.idl
         fileapi/Metadata.idl
         fileapi/MetadataCallback.idl
+    )
+ENDIF ()
+
+IF (ENABLE_XPATH)
+    LIST(APPEND WebCore_IDL_FILES
+        xml/XPathEvaluator.idl
+        xml/XPathException.idl
+        xml/XPathExpression.idl
+        xml/XPathNSResolver.idl
+        xml/XPathResult.idl
     )
 ENDIF ()
 
@@ -1939,6 +1951,13 @@ IF (ENABLE_VIDEO)
     )
 ENDIF()
 
+IF (ENABLE_WEB_SOCKETS)
+    LIST(APPEND WebCore_IDL_FILES
+        websockets/CloseEvent.idl
+        websockets/WebSocket.idl
+    )
+ENDIF ()
+
 IF (ENABLE_VIDEO_TRACK)
     LIST(APPEND WebCore_SOURCES
         html/HTMLTrackElement.cpp
@@ -2051,6 +2070,12 @@ IF (ENABLE_WEBGL)
         platform/graphics/GraphicsContext3D.cpp
         platform/graphics/opengl/Extensions3DOpenGL.cpp
         platform/graphics/opengl/GraphicsContext3DOpenGL.cpp
+    )
+ENDIF ()
+
+IF (ENABLE_OFFLINE_WEB_APPLICATIONS)
+    LIST(APPEND WebCore_IDL_FILES
+        loader/appcache/DOMApplicationCache.idl
     )
 ENDIF ()
 

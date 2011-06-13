@@ -1,3 +1,21 @@
+2011-06-13  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        [CMAKE] Conditionally generate DerivedSources
+        https://bugs.webkit.org/show_bug.cgi?id=62277
+
+        Speedup build by not generating DerivedSources of features that are
+        disabled. This was already been done for some features like ENABLE_SVG
+        and now it's extended the following features: ENABLE_DATABASE,
+        ENABLE_INDEXED_DATABASE, ENABLE_DOM_STORAGE, ENABLE_XPATH,
+        ENABLE_OFFLINE_WEB_APPLICATIONS, ENABLE_WEB_SOCKETS,
+        ENABLE_DATA_TRANSFER_ITEMS.
+
+        No change in functionality so no new tests.
+
+        * CMakeLists.txt: move .idl files to be conditionally generated.
+
 2011-06-13  Leandro Pereira  <leandro@profusion.mobi>
 
         Reviewed by Eric Seidel.
