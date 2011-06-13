@@ -76,8 +76,6 @@ static inline RenderObject* firstParentRendererForNonTextNode(RenderObject* rend
 {
     ASSERT(renderer);
     RenderObject* newRenderer = renderer->isText() ? renderer->parent() : renderer;
-    ASSERT(newRenderer->node());
-    ASSERT(newRenderer->node()->isElementNode());
     return newRenderer;
 }
 
@@ -131,7 +129,7 @@ struct SVGTextRunWalker {
         bool haveAltGlyph = false;
         SVGGlyph altGlyphIdentifier;
         Node* node = parentRenderObject->node();
-        if (node->hasTagName(SVGNames::altGlyphTag)) {
+        if (node && node->hasTagName(SVGNames::altGlyphTag)) {
             if (SVGGlyphElement* glyphElement = static_cast<SVGAltGlyphElement*>(node)->glyphElement()) {
                 haveAltGlyph = true;
                 altGlyphIdentifier = glyphElement->buildGlyphIdentifier();
@@ -267,9 +265,12 @@ static float floatWidthOfSubStringUsingSVGFont(const Font& font, const TextRun& 
         data.length = 0.0f;
 
         RenderObject* renderObject = referencingRenderObjectFromRun(run);
-        RenderObject* parentRenderObject = firstParentRendererForNonTextNode(renderObject); 
+        RenderObject* parentRenderObject = firstParentRendererForNonTextNode(renderObject);
 
-        String language = toElement(parentRenderObject->node())->getAttribute(XMLNames::langAttr);
+        String language;
+        if (SVGElement* element = static_cast<SVGElement*>(parentRenderObject->node()))
+            language = element->getAttribute(XMLNames::langAttr);
+
         bool isVerticalText = isVerticalWritingMode(parentRenderObject->style()->svgStyle());
 
         SVGTextRunWalker<SVGTextRunWalkerMeasuredLengthData> runWalker(fontData, fontElement, data, floatWidthUsingSVGFontCallback, floatWidthMissingGlyphCallback);
@@ -348,8 +349,9 @@ void SVGTextRunRenderingContext::drawTextUsingSVGFont(const Font& font, Graphics
         float xStartOffset = floatWidthOfSubStringUsingSVGFont(font, run, 0, run.rtl() ? to : 0, run.rtl() ? run.length() : from, charsConsumed, glyphName);
         FloatPoint glyphOrigin;
 
-        Node* node = parentRenderObject->node();
-        String language = toElement(node)->getAttribute(XMLNames::langAttr);
+        String language;
+        if (SVGElement* element = static_cast<SVGElement*>(parentRenderObject->node()))
+            language = element->getAttribute(XMLNames::langAttr);
 
         RenderStyle* parentRenderObjectStyle = parentRenderObject->style();
         bool isVerticalText = isVerticalWritingMode(parentRenderObjectStyle->svgStyle());

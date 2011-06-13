@@ -1,3 +1,21 @@
+2011-06-13  Tim Horton  <timothy_horton@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        REGRESSION(87152): Crash on page with svg fonts
+        https://bugs.webkit.org/show_bug.cgi?id=61556
+
+        We can't assume that the parent of a SVG-font-styled
+        text node won't be an anonymous block.
+
+        Test: svg/text/text-font-anonymous-parent.xhtml
+
+        * rendering/svg/SVGTextRunRenderingContext.cpp:
+        (WebCore::firstParentRendererForNonTextNode):
+        (WebCore::SVGTextRunWalker::walk):
+        (WebCore::floatWidthOfSubStringUsingSVGFont):
+        (WebCore::SVGTextRunRenderingContext::drawTextUsingSVGFont):
+
 2011-06-13  Tony Chang  <tony@chromium.org>
 
         Reviewed by Adam Barth.
