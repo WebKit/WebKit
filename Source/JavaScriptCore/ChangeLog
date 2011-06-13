@@ -1,3 +1,12 @@
+2011-06-13  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Distcheck fixes.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+
 2011-06-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Simon Fraser.

@@ -98,6 +98,29 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/bytecompiler/LabelScope.h \
 	Source/JavaScriptCore/bytecompiler/NodesCodegen.cpp \
 	Source/JavaScriptCore/bytecompiler/RegisterID.h \
+	Source/JavaScriptCore/dfg/DFGAliasTracker.h \
+	Source/JavaScriptCore/dfg/DFGByteCodeParser.cpp \
+	Source/JavaScriptCore/dfg/DFGByteCodeParser.h \
+	Source/JavaScriptCore/dfg/DFGFPRInfo.h \
+	Source/JavaScriptCore/dfg/DFGGenerationInfo.h \
+	Source/JavaScriptCore/dfg/DFGGPRInfo.h \
+	Source/JavaScriptCore/dfg/DFGGraph.cpp \
+	Source/JavaScriptCore/dfg/DFGGraph.h \
+	Source/JavaScriptCore/dfg/DFGJITCodeGenerator.cpp \
+	Source/JavaScriptCore/dfg/DFGJITCodeGenerator.h \
+	Source/JavaScriptCore/dfg/DFGJITCompiler.cpp \
+	Source/JavaScriptCore/dfg/DFGJITCompiler.h \
+	Source/JavaScriptCore/dfg/DFGNode.h \
+	Source/JavaScriptCore/dfg/DFGNonSpeculativeJIT.cpp \
+	Source/JavaScriptCore/dfg/DFGNonSpeculativeJIT.h \
+	Source/JavaScriptCore/dfg/DFGOperations.cpp \
+	Source/JavaScriptCore/dfg/DFGOperations.h \
+	Source/JavaScriptCore/dfg/DFGRegisterBank.h \
+	Source/JavaScriptCore/dfg/DFGRepatch.cpp \
+	Source/JavaScriptCore/dfg/DFGRepatch.h \
+	Source/JavaScriptCore/dfg/DFGScoreBoard.h \
+	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.cpp \
+	Source/JavaScriptCore/dfg/DFGSpeculativeJIT.h \
 	Source/JavaScriptCore/heap/ConservativeRoots.cpp \
 	Source/JavaScriptCore/heap/ConservativeRoots.h \
 	Source/JavaScriptCore/heap/Handle.h \
@@ -413,6 +436,7 @@ javascriptcore_sources += \
 	Source/JavaScriptCore/runtime/WeakGCMap.h \
 	Source/JavaScriptCore/runtime/WeakRandom.h \
 	Source/JavaScriptCore/runtime/WriteBarrier.h \
+	Source/JavaScriptCore/wtf/Alignment.h \
 	Source/JavaScriptCore/wtf/AlwaysInline.h \
 	Source/JavaScriptCore/wtf/ASCIICType.h \
 	Source/JavaScriptCore/wtf/Assertions.cpp \

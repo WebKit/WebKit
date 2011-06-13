@@ -145,6 +145,7 @@ EXTRA_DIST += \
 	Source/JavaScriptCore/create_regex_tables \
 	Source/JavaScriptCore/icu/LICENSE \
 	Source/JavaScriptCore/icu/README \
+	Source/JavaScriptCore/KeywordLookupGenerator.py \
 	Source/JavaScriptCore/parser/Keywords.table \
 	Source/JavaScriptCore/THANKS
 
