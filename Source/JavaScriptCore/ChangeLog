@@ -2,6 +2,22 @@
 
         Reviewed by Gavin Barraclough.
 
+        Fix llocp and lvalp names in the lexer to something more meaningful
+        https://bugs.webkit.org/show_bug.cgi?id=62605
+
+        A simple rename
+
+        * parser/Lexer.cpp:
+        (JSC::Lexer::parseIdentifier):
+        (JSC::Lexer::parseString):
+        (JSC::Lexer::lex):
+        * parser/Lexer.h:
+        (JSC::Lexer::lexExpectIdentifier):
+
+2011-06-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
         Make it possible to inline the common case of identifier lexing
         https://bugs.webkit.org/show_bug.cgi?id=62600
 

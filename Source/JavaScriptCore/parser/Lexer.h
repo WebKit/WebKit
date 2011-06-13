@@ -57,7 +57,7 @@ namespace JSC {
             DontBuildStrings = 2,
             DontBuildKeywords = 4
         };
-        JSTokenType lex(JSTokenData* lvalp, JSTokenInfo* llocp, unsigned, bool strictMode);
+        JSTokenType lex(JSTokenData*, JSTokenInfo*, unsigned, bool strictMode);
         bool nextTokenIsColon();
         int lineNumber() const { return m_lineNumber; }
         void setLastLineNumber(int lastLineNumber) { m_lastLineNumber = lastLineNumber; }
@@ -89,7 +89,7 @@ namespace JSC {
 
         SourceProvider* sourceProvider() const { return m_source->provider(); }
         
-        JSTokenType lexExpectIdentifier(JSTokenData* lvalp, JSTokenInfo* llocp, unsigned, bool strictMode);
+        JSTokenType lexExpectIdentifier(JSTokenData*, JSTokenInfo*, unsigned, bool strictMode);
         
     private:
         friend class JSGlobalData;
@@ -119,7 +119,7 @@ namespace JSC {
         template <int shiftAmount, ShiftType shouldBoundsCheck> void internalShift();
         template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType parseKeyword(JSTokenData*);
         template <bool shouldBuildIdentifiers> ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, unsigned);
-        template <bool shouldBuildStrings> ALWAYS_INLINE bool parseString(JSTokenData* lvalp, bool strictMode);
+        template <bool shouldBuildStrings> ALWAYS_INLINE bool parseString(JSTokenData*, bool strictMode);
         ALWAYS_INLINE void parseHex(double& returnValue);
         ALWAYS_INLINE bool parseOctal(double& returnValue);
         ALWAYS_INLINE bool parseDecimal(double& returnValue);
@@ -181,7 +181,7 @@ namespace JSC {
         return &m_arena->makeIdentifier(m_globalData, characters, length);
     }
 
-    ALWAYS_INLINE JSTokenType Lexer::lexExpectIdentifier(JSTokenData* lvalp, JSTokenInfo* llocp, unsigned lexType, bool strictMode)
+    ALWAYS_INLINE JSTokenType Lexer::lexExpectIdentifier(JSTokenData* tokenData, JSTokenInfo* tokenInfo, unsigned lexType, bool strictMode)
     {
         ASSERT((lexType & IgnoreReservedWords));
         const UChar* start = m_code;
@@ -212,17 +212,17 @@ namespace JSC {
 
         // Create the identifier if needed
         if (lexType & DontBuildKeywords)
-            lvalp->ident = 0;
+            tokenData->ident = 0;
         else
-            lvalp->ident = makeIdentifier(start, ptr - start);
-        llocp->line = m_lineNumber;
-        llocp->startOffset = start - m_codeStart;
-        llocp->endOffset = currentOffset();
+            tokenData->ident = makeIdentifier(start, ptr - start);
+        tokenInfo->line = m_lineNumber;
+        tokenInfo->startOffset = start - m_codeStart;
+        tokenInfo->endOffset = currentOffset();
         m_lastToken = IDENT;
         return IDENT;
         
     slowCase:
-        return lex(lvalp, llocp, lexType, strictMode);
+        return lex(tokenData, tokenInfo, lexType, strictMode);
     }
 
 } // namespace JSC

@@ -405,13 +405,13 @@ inline void Lexer::record16(int c)
     record16(UChar(static_cast<unsigned short>(c)));
 }
 
-template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIdentifier(JSTokenData* lvalp, unsigned lexType)
+template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIdentifier(JSTokenData* tokenData, unsigned lexType)
 {
     const ptrdiff_t remaining = m_codeEnd - m_code;
     if ((remaining >= maxTokenLength) && !(lexType & IgnoreReservedWords)) {
-        JSTokenType keyword = parseKeyword<shouldCreateIdentifier>(lvalp);
+        JSTokenType keyword = parseKeyword<shouldCreateIdentifier>(tokenData);
         if (keyword != IDENT) {
-            ASSERT((!shouldCreateIdentifier) || lvalp->ident);
+            ASSERT((!shouldCreateIdentifier) || tokenData->ident);
             return keyword;
         }
     }
@@ -457,9 +457,9 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIde
         }
 
         ident = makeIdentifier(identifierStart, identifierLength);
-        lvalp->ident = ident;
+        tokenData->ident = ident;
     } else
-        lvalp->ident = 0;
+        tokenData->ident = 0;
 
     m_delimited = false;
 
@@ -478,7 +478,7 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIde
     return IDENT;
 }
 
-template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer::parseString(JSTokenData* lvalp, bool strictMode)
+template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer::parseString(JSTokenData* tokenData, bool strictMode)
 {
     int stringQuoteCharacter = m_current;
     shift();
@@ -574,9 +574,9 @@ template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer::parseString(JSToken
     if (currentCharacter() != stringStart && shouldBuildStrings)
         m_buffer16.append(stringStart, currentCharacter() - stringStart);
     if (shouldBuildStrings)
-        lvalp->ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
+        tokenData->ident = makeIdentifier(m_buffer16.data(), m_buffer16.size());
     else
-        lvalp->ident = 0;
+        tokenData->ident = 0;
 
     m_buffer16.resize(0);
     return true;
@@ -752,7 +752,7 @@ bool Lexer::nextTokenIsColon()
     return code < m_codeEnd && *code == ':';
 }
 
-JSTokenType Lexer::lex(JSTokenData* lvalp, JSTokenInfo* llocp, unsigned lexType, bool strictMode)
+JSTokenType Lexer::lex(JSTokenData* tokenData, JSTokenInfo* tokenInfo, unsigned lexType, bool strictMode)
 {
     ASSERT(!m_error);
     ASSERT(m_buffer8.isEmpty());
@@ -1007,12 +1007,12 @@ start:
         token = SEMICOLON;
         break;
     case CharacterOpenBrace:
-        lvalp->intValue = currentOffset();
+        tokenData->intValue = currentOffset();
         shift();
         token = OPENBRACE;
         break;
     case CharacterCloseBrace:
-        lvalp->intValue = currentOffset();
+        tokenData->intValue = currentOffset();
         m_delimited = true;
         shift();
         token = CLOSEBRACE;
@@ -1027,12 +1027,12 @@ start:
     case CharacterZero:
         shift();
         if ((m_current | 0x20) == 'x' && isASCIIHexDigit(peek(1))) {
-            parseHex(lvalp->doubleValue);
+            parseHex(tokenData->doubleValue);
             token = NUMBER;
         } else {
             record8('0');
             if (isASCIIOctalDigit(m_current)) {
-                if (parseOctal(lvalp->doubleValue)) {
+                if (parseOctal(tokenData->doubleValue)) {
                     if (strictMode)
                         goto returnError;
                     token = NUMBER;
@@ -1042,7 +1042,7 @@ start:
         // Fall through into CharacterNumber
     case CharacterNumber:
         if (LIKELY(token != NUMBER)) {
-            if (!parseDecimal(lvalp->doubleValue)) {
+            if (!parseDecimal(tokenData->doubleValue)) {
                 if (m_current == '.') {
                     shift();
 inNumberAfterDecimalPoint:
@@ -1053,7 +1053,7 @@ inNumberAfterDecimalPoint:
                         goto returnError;
                 // Null-terminate string for strtod.
                 m_buffer8.append('\0');
-                lvalp->doubleValue = WTF::strtod(m_buffer8.data(), 0);
+                tokenData->doubleValue = WTF::strtod(m_buffer8.data(), 0);
             }
             token = NUMBER;
         }
@@ -1066,10 +1066,10 @@ inNumberAfterDecimalPoint:
         break;
     case CharacterQuote:
         if (lexType & DontBuildStrings) {
-            if (UNLIKELY(!parseString<false>(lvalp, strictMode)))
+            if (UNLIKELY(!parseString<false>(tokenData, strictMode)))
                 goto returnError;
         } else {
-            if (UNLIKELY(!parseString<true>(lvalp, strictMode)))
+            if (UNLIKELY(!parseString<true>(tokenData, strictMode)))
                 goto returnError;
         }
         shift();
@@ -1081,9 +1081,9 @@ inNumberAfterDecimalPoint:
         // Fall through into CharacterBackSlash.
     case CharacterBackSlash:
         if (lexType & DontBuildKeywords)
-            token = parseIdentifier<false>(lvalp, lexType);
+            token = parseIdentifier<false>(tokenData, lexType);
         else
-            token = parseIdentifier<true>(lvalp, lexType);
+            token = parseIdentifier<true>(tokenData, lexType);
         break;
     case CharacterLineTerminator:
         ASSERT(isLineTerminator(m_current));
@@ -1118,9 +1118,9 @@ inSingleLineComment:
     // Fall through into returnToken.
 
 returnToken:
-    llocp->line = m_lineNumber;
-    llocp->startOffset = startOffset;
-    llocp->endOffset = currentOffset();
+    tokenInfo->line = m_lineNumber;
+    tokenInfo->startOffset = startOffset;
+    tokenInfo->endOffset = currentOffset();
     m_lastToken = token;
     return token;
 
