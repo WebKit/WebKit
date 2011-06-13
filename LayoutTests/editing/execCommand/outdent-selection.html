@@ -1,10 +1,7 @@
-<script>
-if (window.layoutTestController)
-     layoutTestController.dumpEditingCallbacks();
-</script>
-<div id="description">This test uses the execCommand to Outdent the text below. <b>This demonstrates a bug: the content in the blockquote that's not in a list is pulled out of position.</b></div>
-<br>
-<div contenteditable="true">
+<!DOCTYPE html>
+<html>
+<body>
+<div contenteditable="true" id="editable">
 <span id="item1">Lorem</span><br>
 more Lorem!
 <blockquote class="webkit-indent-blockquote" style="margin: 0 0 0 40px;">
@@ -23,6 +20,8 @@ Dolor
 Sum!<br>
 <span id="item2">Thing</span>
 </div>
+
+<script src="../../resources/dump-as-markup.js"></script> 
 <script>
 var s = window.getSelection();
 var p1 = document.getElementById("item1");
@@ -30,4 +29,11 @@ var p2 = document.getElementById("item2");
 s.setPosition(p1, 0);
 s.setBaseAndExtent(p1, 0, p2, 2);
 document.execCommand("Outdent", false, "");
+Markup.description("This test uses the execCommand to Outdent the text below.\n" +
+    "This demonstrates a bug: the content in the blockquote that's not in a list is pulled out of position.");
+Markup.dump(editable);
+
 </script>
+
+</body>
+</html>
