@@ -1,3 +1,17 @@
+2011-06-13  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        Add layer factory to GraphicsLayer for creating non-default layer type.
+        https://bugs.webkit.org/show_bug.cgi?id=61925
+
+        Use the new factory function in TextureMapper.
+
+        No new functionality so no new tests.
+
+        * platform/graphics/texmap/GraphicsLayerTextureMapper.cpp:
+        (WebCore::GraphicsLayer::create):
+
 2011-06-13  Young Han Lee  <joybro@company100.net>
 
         Reviewed by Kenneth Rohde Christiansen.

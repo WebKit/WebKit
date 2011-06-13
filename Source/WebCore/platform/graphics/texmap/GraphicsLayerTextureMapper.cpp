@@ -349,11 +349,6 @@ PlatformLayer* GraphicsLayerTextureMapper::platformLayer() const
     return const_cast<TextureMapperPlatformLayer*>(node()->media());
 }
 
-PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
-{
-    return adoptPtr(new GraphicsLayerTextureMapper(client));
-}
-
 bool GraphicsLayerTextureMapper::addAnimation(const KeyframeValueList& valueList, const IntSize& boxSize, const Animation* anim, const String& keyframesName, double timeOffset)
 {
     ASSERT(!keyframesName.isEmpty());
@@ -419,6 +414,13 @@ void GraphicsLayerTextureMapper::removeAnimation(const String& animationName)
 void GraphicsLayerTextureMapper::animationStartedTimerFired(Timer<GraphicsLayerTextureMapper>*)
 {
     client()->notifyAnimationStarted(this, /* DOM time */ WTF::currentTime());
+}
+
+PassOwnPtr<GraphicsLayer> GraphicsLayer::create(GraphicsLayerClient* client)
+{
+    if (s_graphicsLayerFactory)
+        return (*s_graphicsLayerFactory)(client);
+    return adoptPtr(new GraphicsLayerTextureMapper(client));
 }
 
 }
