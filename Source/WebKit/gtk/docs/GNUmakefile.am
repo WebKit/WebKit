@@ -47,7 +47,28 @@ CFILE_GLOB=$(top_srcdir)/Source/WebKit/gtk/webkit/*.cpp
 
 # Header files to ignore when scanning.
 # e.g. IGNORE_HFILES=gtkdebug.h gtkintl.h
-IGNORE_HFILES=webkitprivate.h
+IGNORE_HFILES = \
+   webkitdownloadprivate.h \
+   webkitgeolocationpolicydecisionprivate.h \
+   webkitglobalsprivate.h \
+   webkithittestresultprivate.h \
+   webkitnetworkrequestprivate.h \
+   webkitnetworkresponseprivate.h \
+   webkitsecurityoriginprivate.h \
+   webkitviewportattributesprivate.h \
+   webkitwebbackforwardlistprivate.h \
+   webkitwebdatasourceprivate.h \
+   webkitwebframeprivate.h \
+   webkitwebhistoryitemprivate.h \
+   webkitwebinspectorprivate.h \
+   webkitwebnavigationactionprivate.h \
+   webkitwebplugindatabaseprivate.h \
+   webkitwebpluginprivate.h \
+   webkitwebpolicydecisionprivate.h \
+   webkitwebresourceprivate.h \
+   webkitwebsettingsprivate.h \
+   webkitwebviewprivate.h \
+   webkitwebwindowfeaturesprivate.h
 
 # Images to copy into HTML directory.
 # e.g. HTML_IMAGES=$(top_srcdir)/gtk/stock-icons/stock_about_24.png
