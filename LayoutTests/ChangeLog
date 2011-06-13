@@ -1,3 +1,19 @@
+2011-06-13  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        chrome.dll!WebCore::Node::createRendererIfNeeded ReadAV@NULL (7079875ef32458c5c891a311715b683f)
+        https://bugs.webkit.org/show_bug.cgi?id=49316
+
+        The bug got fixed, thus just landing the test case. Including another test case from
+        http://code.google.com/p/chromium/issues/detail?id=61562
+        which should have the same root cause.
+
+        * fast/html/crash-style-first-letter-expected.txt: Added.
+        * fast/html/crash-style-first-letter.html: Added.
+        * svg/custom/svg-use-style-float-crash-expected.txt: Added.
+        * svg/custom/svg-use-style-float-crash.svg: Added.
+
 2011-06-13  James Robinson  <jamesr@chromium.org>
 
         [chromium] Fix up a boo-boo in GPU test expectations
