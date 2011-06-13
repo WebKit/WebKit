@@ -109,7 +109,7 @@ void RenderMathMLSubSup::stretchToHeight(int height)
     if (!base || !base->firstChild())
         return;
     
-    if (base->firstChild()->isRenderMathMLBlock()) {
+    if (base->firstChild() && base->firstChild()->isRenderMathMLBlock()) {
         RenderMathMLBlock* block = toRenderMathMLBlock(base->firstChild());
         block->stretchToHeight(static_cast<int>(gSubSupStretch * height));
         

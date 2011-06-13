@@ -1,3 +1,22 @@
+2011-06-13  Jeffrey Pfau  <jpfau@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash in WebCore::RenderMathMLUnderOver::layout()
+        https://bugs.webkit.org/show_bug.cgi?id=57900
+
+        Add more null checks so that removing children in MathML elements does not cause crashes.
+        Note that this only half fixes the third repro in the Bugzilla bug, as another bug will
+        still crash that repro.
+
+        Test: mathml/munderover-remove-children.html
+
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::stretchToHeight):
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::layout):
+        (WebCore::RenderMathMLUnderOver::nonOperatorHeight):
+
 2011-06-13  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by Adam Barth.

@@ -1,3 +1,15 @@
+2011-06-13  Jeffrey Pfau  <jpfau@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Crash in WebCore::RenderMathMLUnderOver::layout()
+        https://bugs.webkit.org/show_bug.cgi?id=57900
+
+        Added a test that tries to remove the children of munder, mover and munderover elements.
+
+        * mathml/munderover-remove-children-expected.txt: Added.
+        * mathml/munderover-remove-children.html: Added.
+
 2011-06-13  Wyatt Carss  <wcarss@google.com>
 
         Reviewed by Ryosuke Niwa.

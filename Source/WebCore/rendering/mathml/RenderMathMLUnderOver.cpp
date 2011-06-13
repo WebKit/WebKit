@@ -155,7 +155,7 @@ void RenderMathMLUnderOver::layout()
         if (over) {
             // FIXME: descending glyphs intrude into base (e.g. lowercase y over base)
             // FIXME: bases that ascend higher than the line box intrude into the over
-            if (!over->firstChild()->isBoxModelObject())
+            if (!over->firstChild() || !over->firstChild()->isBoxModelObject())
                 break;
             
             int overSpacing = static_cast<int>(gOverSpacingAdjustment * (getOffsetHeight(over) - toRenderBoxModelObject(over->firstChild())->baselinePosition(AlphabeticBaseline, true, HorizontalLine)));
@@ -183,7 +183,7 @@ void RenderMathMLUnderOver::layout()
             int baseHeight = getOffsetHeight(base);
             // actual base
             base = base->firstChild();
-            if (!base->isBoxModelObject())
+            if (!base || !base->isBoxModelObject())
                 break;
             
             // FIXME: We need to look at the space between a single maximum height of
@@ -207,7 +207,7 @@ void RenderMathMLUnderOver::layout()
         if (over) {
             // FIXME: descending glyphs intrude into base (e.g. lowercase y over base)
             // FIXME: bases that ascend higher than the line box intrude into the over
-            if (!over->firstChild()->isBoxModelObject())
+            if (!over->firstChild() || !over->firstChild()->isBoxModelObject())
                 break;
             int overSpacing = static_cast<int>(gOverSpacingAdjustment * (getOffsetHeight(over) - toRenderBoxModelObject(over->firstChild())->baselinePosition(AlphabeticBaseline, true, HorizontalLine)));
             
@@ -224,7 +224,7 @@ void RenderMathMLUnderOver::layout()
                 int baseHeight = getOffsetHeight(base);
                 // actual base
                 base = base->firstChild();
-                if (!base->isBoxModelObject())
+                if (!base || !base->isBoxModelObject())
                     break;
 
                 // FIXME: We need to look at the space between a single maximum height of
@@ -232,7 +232,7 @@ void RenderMathMLUnderOver::layout()
                 int underSpacing = baseHeight - toRenderBoxModelObject(base)->baselinePosition(AlphabeticBaseline, true, HorizontalLine);
                 
                 RenderObject* under = lastChild();
-                if (under && under->firstChild()->isRenderInline() && underSpacing > 0)
+                if (under && under->firstChild() && under->firstChild()->isRenderInline() && underSpacing > 0)
                     under->style()->setMarginTop(Length(-underSpacing, Fixed));
                 
             }
@@ -282,7 +282,7 @@ int RenderMathMLUnderOver::nonOperatorHeight() const
 {
     int nonOperators = 0;
     for (RenderObject* current = firstChild(); current; current = current->nextSibling()) {
-        if (current->firstChild()->isRenderMathMLBlock()) {
+        if (current->firstChild() && current->firstChild()->isRenderMathMLBlock()) {
             RenderMathMLBlock* block = toRenderMathMLBlock(current->firstChild());
             if (!block->isRenderMathMLOperator()) 
                 nonOperators += getOffsetHeight(current);
