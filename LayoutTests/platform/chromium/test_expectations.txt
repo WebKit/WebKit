@@ -771,7 +771,7 @@ BUGWK48164 MAC LINUX WIN : plugins/invalid-mime-with-valid-extension-shows-missi
 // WIN started failing during webkit roll 62670 -> 62844.
 BUGCR38353 MAC LINUX: plugins/keyboard-events.html = TEXT
 BUGCR10351 MAC : plugins/mouse-events.html = FAIL
-BUGCR32864 MAC LINUX : plugins/mouse-events-fixedpos.html = TEXT
+BUGCR32864 : plugins/mouse-events-fixedpos.html = TEXT
 BUGCR35822 : plugins/npruntime/browser-object-identity.html = TEXT
 // Object.keys on an NPObject produces the wrong output.
 BUGCR21901 : plugins/npruntime/enumerate.html = TEXT

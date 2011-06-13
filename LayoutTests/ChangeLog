@@ -1,5 +1,11 @@
 2011-06-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
+        [Chromium] Correctly classify the test as failing.
+
+        * platform/chromium/test_expectations.txt: It's failing.
+
+2011-06-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
         [Chromium] Record more flakiness...
 
         * platform/chromium/test_expectations.txt: Added expectation of flakiness.
