@@ -28,6 +28,7 @@
 
 #include "InjectedBundle.h"
 #include "StringFunctions.h"
+#include "WebCoreTestSupport.h"
 #include <cmath>
 #include <JavaScriptCore/JSRetainPtr.h>
 #include <WebKit2/WKArray.h>
@@ -616,6 +617,7 @@ void InjectedBundlePage::didClearWindowForFrame(WKBundleFrameRef frame, WKBundle
     InjectedBundle::shared().layoutTestController()->makeWindowObject(context, window, &exception);
     InjectedBundle::shared().gcController()->makeWindowObject(context, window, &exception);
     InjectedBundle::shared().eventSendingController()->makeWindowObject(context, window, &exception);
+    WebCoreTestSupport::injectInternalsObject(context);
 }
 
 void InjectedBundlePage::didCancelClientRedirectForFrame(WKBundleFrameRef frame)

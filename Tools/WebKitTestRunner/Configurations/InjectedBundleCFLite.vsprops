@@ -6,7 +6,7 @@
 	>
 	<Tool
 		Name="VCLinkerTool"
-		AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib CFLite$(LibraryConfigSuffix).lib"
+		AdditionalDependencies="JavaScriptCore$(WebKitDLLConfigSuffix).lib WebCoreTestSupport$(WebKitDLLConfigSuffix).lib WebKit$(WebKitDLLConfigSuffix).lib CFLite$(LibraryConfigSuffix).lib"
 		OutputFile="$(OutDir)\$(ProjectName)$(WebKitConfigSuffix).dll"
 	/>
 </VisualStudioPropertySheet>
