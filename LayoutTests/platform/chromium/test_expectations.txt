@@ -3540,7 +3540,6 @@ BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEX
 
 BUGWK60102 LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
 BUGWK60102 MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
-BUGWK60102 LINUX DEBUG GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/masks/masked-ancestor.html = IMAGE
 BUGWK60102 LINUX DEBUG GPU : compositing/masks/simple-composited-mask.html = IMAGE
 // Commented because of BUGCR81605
