@@ -1,3 +1,9 @@
+2011-06-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Record more flakiness...
+
+        * platform/chromium/test_expectations.txt: Added expectation of flakiness.
+
 2011-06-13  Jessie Berlin  <jberlin@apple.com>
 
         [Windows Tests] EventSender.contextClick() needs to return a JS array of the context menu

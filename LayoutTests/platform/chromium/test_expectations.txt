@@ -2498,7 +2498,7 @@ BUGCR31342 WIN RELEASE : security/block-test-no-port.html = TEXT PASS
 
 // See also https://webkit.org/b/49045
 BUGCR61978 : svg/animations/animate-path-nested-transforms.html = CRASH PASS TEXT
-BUGCR61978 : svg/animations/animate-text-nested-transforms.html = PASS TEXT
+BUGCR61978 : svg/animations/animate-text-nested-transforms.html = CRASH PASS TEXT
 
 // New test; was added in http://trac.webkit.org/changeset/68520
 WONTFIX SKIP WIN BUGWK46735 : platform/win/plugins/window-geometry-initialized-before-set-window.html = TEXT CRASH
