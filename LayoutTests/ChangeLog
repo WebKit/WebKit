@@ -1,3 +1,10 @@
+2011-06-13  Jessie Berlin  <jberlin@apple.com>
+
+        Remove an extra space in the Windows-specific failing expected results to ge the bots
+        green.
+
+        * platform/win/printing/page-count-relayout-shrink-expected.txt:
+
 2011-06-13  James Robinson  <jamesr@chromium.org>
 
         [chromium] Clean up GPU test expectations.
