@@ -1,3 +1,13 @@
+2011-06-13  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Unreviewed fix - removed parts of r88659 that were committed by mistake.
+
+        The patch accidentally included parts that weren't supposed to be there, namely the whole
+        code was duplicated. This patch rectifies that and brings it to the original reviewed code.
+
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.h:
+
 2011-06-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Dan Bernstein.
