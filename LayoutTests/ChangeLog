@@ -1,3 +1,13 @@
+2011-06-13  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB: setVersion() version argument is required
+        https://bugs.webkit.org/show_bug.cgi?id=62401
+
+        * storage/indexeddb/setVersion-undefined-expected.txt: Added.
+        * storage/indexeddb/setVersion-undefined.html: Added.
+
 2011-06-13  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Clean up test expectations, add a flake.
