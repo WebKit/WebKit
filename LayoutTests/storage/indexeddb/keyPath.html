@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<link rel="stylesheet" href="../../fast/js/resources/js-test-style.css">
+<script src="../../fast/js/resources/js-test-pre.js"></script>
+<script src="../../fast/js/resources/js-test-post-function.js"></script>
+<script src="resources/shared.js"></script>
+</head>
+<body>
+<p id="description"></p>
+<div id="console"></div>
+<script>
+
+description("Test IndexedDB keyPaths");
+if (window.layoutTestController)
+    layoutTestController.waitUntilDone();
+
+function test()
+{
+    indexedDB = evalAndLog("indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB;");
+    shouldBeFalse("indexedDB == null");
+    IDBDatabaseException = evalAndLog("IDBDatabaseException = window.IDBDatabaseException || window.webkitIDBDatabaseException;");
+    shouldBeFalse("IDBDatabaseException == null");
+    IDBCursor = evalAndLog("IDBCursor = window.IDBCursor || window.webkitIDBCursor;");
+    shouldBeFalse("IDBCursor == null");
+    IDBKeyRange = evalAndLog("IDBKeyRange = window.IDBKeyRange || window.webkitIDBKeyRange;");
+    shouldBeFalse("IDBKeyRange == null");
+
+    name = window.location.pathname;
+    description = "My Test Database";
+    request = evalAndLog("indexedDB.open(name, description)");
+    request.onsuccess = openSuccess;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function openSuccess()
+{
+    db = evalAndLog("db = event.target.result");
+
+    request = evalAndLog("request = db.setVersion('1')");
+
+    testData = [{ name: "simple identifier",
+                  value: {id:42},
+                  keyPath: "id",
+                  key: 42 },
+                { name: "nested identifiers",
+                  value: {outer:{inner:42}},
+                  keyPath: "outer.inner",
+                  key: 42 },
+                { name: "nested identifiers with distractions",
+                  value: {outer:{inner:42}, inner:{outer:41}},
+                  keyPath: "outer.inner",
+                  key: 42 },
+                { name: "simple array",
+                  value: {outer:[42]},
+                  keyPath: "outer[0]",
+                  key: 42 },
+                { name: "nested array",
+                  value: {outer:[[41,42],[40,39]]},
+                  keyPath: "outer[0][1]",
+                  key: 42 },
+                { name: "array with distractions",
+                  value: {outer:[42, {outer:41}]},
+                  keyPath: "outer[0]",
+                  key: 42 },
+                { name: "mixed identifiers and arrays",
+                  value: {outer:[41, {inner:42}]},
+                  keyPath: "outer[1].inner",
+                  key: 42 },
+    ];
+    nextToOpen = 0;
+    request.onsuccess = createAndPopulateObjectStore;
+    request.onerror = unexpectedErrorCallback;
+}
+
+function createAndPopulateObjectStore()
+{
+    debug("");
+    debug("testing " + testData[nextToOpen].name);
+
+    deleteAllObjectStores(db);
+
+    objectStore = evalAndLog("objectStore = db.createObjectStore(testData[nextToOpen].name, {keyPath: testData[nextToOpen].keyPath});");
+    result = evalAndLog("result = objectStore.add(testData[nextToOpen].value);");
+    result.onerror = unexpectedErrorCallback;
+    result.onsuccess = openCursor;
+}
+
+function openCursor()
+{
+    result = evalAndLog("result = objectStore.openCursor();");
+    result.onerror = unexpectedErrorCallback;
+    result.onsuccess = checkCursor;
+}
+
+function checkCursor()
+{
+    cursor = evalAndLog("cursor = event.target.result;");
+    if (cursor) {
+        shouldBe("cursor.key", "testData[nextToOpen].key");
+    } else {
+        testFailed("cursor is null");
+    }
+    if (++nextToOpen < testData.length) {
+        createAndPopulateObjectStore();
+    } else {
+        done();
+    }
+}
+
+var successfullyParsed = true;
+
+test();
+
+</script>
+</body>
+</html>
