@@ -20,6 +20,7 @@
 #include "config.h"
 #include "qt_runtime.h"
 
+#include "APICast.h"
 #include "BooleanObject.h"
 #include "DateInstance.h"
 #include "DateMath.h"
@@ -37,6 +38,7 @@
 #include "JSHTMLElement.h"
 #include "JSLock.h"
 #include "JSObject.h"
+#include "JSRetainPtr.h"
 #include "ObjectPrototype.h"
 #include "PropertyNameArray.h"
 #include "RegExpConstructor.h"
@@ -1642,7 +1644,8 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
                 //  receiver function [from arguments]
                 //  receiver this object [from arguments]
 
-                QtConnectionObject* conn = new QtConnectionObject(exec->globalData(), d->m_instance, signalIndex, thisObject, funcObject);
+                ExecState* globalExec = exec->lexicalGlobalObject()->globalExec();
+                QtConnectionObject* conn = QtConnectionObject::createWithInternalJSC(globalExec, d->m_instance, signalIndex, thisObject, funcObject);
                 bool ok = QMetaObject::connect(sender, signalIndex, conn, conn->metaObject()->methodOffset());
                 if (!ok) {
                     delete conn;
@@ -1660,9 +1663,13 @@ EncodedJSValue QtRuntimeConnectionMethod::call(ExecState* exec)
                 QList<QtConnectionObject*> conns = connections.values(sender);
                 bool ret = false;
 
+                JSContextRef context = ::toRef(exec);
+                JSObjectRef receiver = ::toRef(thisObject);
+                JSObjectRef receiverFunction = ::toRef(funcObject);
+
                 foreach(QtConnectionObject* conn, conns) {
                     // Is this the right connection?
-                    if (conn->match(sender, signalIndex, thisObject, funcObject)) {
+                    if (conn->match(context, sender, signalIndex, receiver, receiverFunction)) {
                         // Yep, disconnect it
                         QMetaObject::disconnect(sender, signalIndex, conn, conn->metaObject()->methodOffset());
                         delete conn; // this will also remove it from the map
@@ -1736,21 +1743,27 @@ JSValue QtRuntimeConnectionMethod::lengthGetter(ExecState*, JSValue, const Ident
 
 // ===============
 
-QtConnectionObject::QtConnectionObject(JSGlobalData& globalData, PassRefPtr<QtInstance> instance, int signalIndex, JSObject* thisObject, JSObject* funcObject)
-    : m_instance(instance)
+QtConnectionObject::QtConnectionObject(JSContextRef context, PassRefPtr<QtInstance> senderInstance, int signalIndex, JSObjectRef receiver, JSObjectRef receiverFunction)
+    : QObject(senderInstance->getObject())
+    , m_context(context)
+    , m_senderInstance(senderInstance)
+    , m_originalSender(m_senderInstance->getObject())
     , m_signalIndex(signalIndex)
-    , m_originalObject(m_instance->getObject())
-    , m_thisObject(globalData, thisObject)
-    , m_funcObject(globalData, funcObject)
+    , m_receiver(receiver)
+    , m_receiverFunction(receiverFunction)
 {
-    setParent(m_originalObject);
-    ASSERT(JSLock::currentThreadIsHoldingLock()); // so our ProtectedPtrs are safe
+    JSValueProtect(m_context, m_receiver);
+    JSValueProtect(m_context, m_receiverFunction);
 }
 
 QtConnectionObject::~QtConnectionObject()
 {
-    // Remove us from the map of active connections
-    QtRuntimeConnectionMethod::connections.remove(m_originalObject, this);
+    // We can safely use m_originalSender because connection object will never outlive the sender,
+    // which is its QObject parent.
+    QtRuntimeConnectionMethod::connections.remove(m_originalSender, this);
+
+    JSValueUnprotect(m_context, m_receiver);
+    JSValueUnprotect(m_context, m_receiverFunction);
 }
 
 static const uint qt_meta_data_QtConnectionObject[] = {
@@ -1791,6 +1804,7 @@ void *QtConnectionObject::qt_metacast(const char *_clname)
     return QObject::qt_metacast(_clname);
 }
 
+// This is what moc would generate except by the fact that we pass all arguments to our execute() slot.
 int QtConnectionObject::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
 {
     _id = QObject::qt_metacall(_c, _id, _a);
@@ -1805,65 +1819,64 @@ int QtConnectionObject::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
     return _id;
 }
 
-void QtConnectionObject::execute(void **argv)
+static bool isJavaScriptFunction(JSObjectRef object)
 {
-    QObject* obj = m_instance->getObject();
-    if (obj) {
-        const QMetaObject* meta = obj->metaObject();
-        const QMetaMethod method = meta->method(m_signalIndex);
-
-        QList<QByteArray> parameterTypes = method.parameterTypes();
-
-        int argc = parameterTypes.count();
-
-        JSLock lock(SilenceAssertionsOnly);
-
-        // ### Should the Interpreter/ExecState come from somewhere else?
-        RefPtr<RootObject> ro = m_instance->rootObject();
-        if (ro) {
-            JSGlobalObject* globalobj = ro->globalObject();
-            if (globalobj) {
-                ExecState* exec = globalobj->globalExec();
-                if (exec) {
-                    // Build the argument list (up to the formal argument length of the slot)
-                    MarkedArgumentBuffer l;
-                    // ### DropAllLocks?
-                    int funcArgC = m_funcObject->get(exec, exec->propertyNames().length).toInt32(exec);
-                    int argTotal = qMax(funcArgC, argc);
-                    for(int i=0; i < argTotal; i++) {
-                        if (i < argc) {
-                            int argType = QMetaType::type(parameterTypes.at(i));
-                            l.append(convertQVariantToValue(exec, ro, QVariant(argType, argv[i+1])));
-                        } else {
-                            l.append(jsUndefined());
-                        }
-                    }
-
-                    const bool withQtSenderStack = m_funcObject->inherits(&JSFunction::s_info);
-                    if (withQtSenderStack)
-                        QtInstance::qtSenderStack()->push(QObject::sender());
-
-                    CallData callData;
-                    CallType callType = m_funcObject->getCallData(callData);
-                    call(exec, m_funcObject.get(), callType, callData, m_thisObject.get(), l);
-
-                    if (withQtSenderStack)
-                        QtInstance::qtSenderStack()->pop();
-                }
-            }
-        }
-    } else {
-        // A strange place to be - a deleted object emitted a signal here.
-        qWarning() << "sender deleted, cannot deliver signal";
-    }
+    CallData callData;
+    return toJS(object)->getCallData(callData) == CallTypeJS;
 }
 
-bool QtConnectionObject::match(QObject* sender, int signalIndex, JSObject* thisObject, JSObject *funcObject)
+void QtConnectionObject::execute(void** argv)
 {
-    if (m_originalObject == sender && m_signalIndex == signalIndex
-        && thisObject == (JSObject*)m_thisObject.get() && funcObject == (JSObject*)m_funcObject.get())
-        return true;
-    return false;
+    QObject* sender = m_senderInstance->getObject();
+    if (!sender) {
+        qWarning() << "sender deleted, cannot deliver signal";
+        return;
+    }
+
+    ASSERT(sender == m_originalSender);
+
+    const QMetaObject* meta = sender->metaObject();
+    const QMetaMethod method = meta->method(m_signalIndex);
+
+    QList<QByteArray> parameterTypes = method.parameterTypes();
+
+    JSValueRef* ignoredException = 0;
+    JSRetainPtr<JSStringRef> lengthProperty(JSStringCreateWithUTF8CString("length"));
+    int receiverLength = int(JSValueToNumber(m_context, JSObjectGetProperty(m_context, m_receiverFunction, lengthProperty.get(), ignoredException), ignoredException));
+    int argc = qMax(parameterTypes.count(), receiverLength);
+    WTF::Vector<JSValueRef> args(argc);
+
+    // TODO: remove once conversion functions use JSC API.
+    ExecState* exec = ::toJS(m_context);
+    RefPtr<RootObject> rootObject = m_senderInstance->rootObject();
+
+    for (int i = 0; i < argc; i++) {
+        int argType = QMetaType::type(parameterTypes.at(i));
+        args[i] = ::toRef(exec, convertQVariantToValue(exec, rootObject, QVariant(argType, argv[i+1])));
+    }
+
+    const bool updateQtSender = isJavaScriptFunction(m_receiverFunction);
+    if (updateQtSender)
+        QtInstance::qtSenderStack()->push(QObject::sender());
+
+    JSObjectCallAsFunction(m_context, m_receiverFunction, m_receiver, argc, args.data(), 0);
+
+    if (updateQtSender)
+        QtInstance::qtSenderStack()->pop();
+}
+
+bool QtConnectionObject::match(JSContextRef context, QObject* sender, int signalIndex, JSObjectRef receiver, JSObjectRef receiverFunction)
+{
+    if (sender != m_originalSender || signalIndex != m_signalIndex)
+        return false;
+    JSValueRef* ignoredException = 0;
+    const bool receiverMatch = (!receiver && !m_receiver) || JSValueIsEqual(context, receiver, m_receiver, ignoredException);
+    return receiverMatch && JSValueIsEqual(context, receiverFunction, m_receiverFunction, ignoredException);
+}
+
+QtConnectionObject* QtConnectionObject::createWithInternalJSC(ExecState* exec, PassRefPtr<QtInstance> senderInstance, int signalIndex, JSObject* receiver, JSObject* receiverFunction)
+{
+    return new QtConnectionObject(::toRef(exec), senderInstance, signalIndex, ::toRef(receiver), ::toRef(receiverFunction));
 }
 
 // ===============

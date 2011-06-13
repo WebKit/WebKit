@@ -21,8 +21,7 @@
 #define BINDINGS_QT_RUNTIME_H_
 
 #include "BridgeJSC.h"
-#include "Completion.h"
-#include "Strong.h"
+#include "JavaScript.h"
 #include "Weak.h"
 #include "runtime_method.h"
 
@@ -192,28 +191,37 @@ private:
     friend class QtConnectionObject;
 };
 
-class QtConnectionObject: public QObject
+// A QtConnectionObject represents a connection created inside JS. It will connect its own execute() slot
+// with the appropriate signal of 'sender'. When execute() is called, it will call JS 'receiverFunction'.
+class QtConnectionObject : public QObject
 {
 public:
-    QtConnectionObject(JSGlobalData&, PassRefPtr<QtInstance> instance, int signalIndex, JSObject* thisObject, JSObject* funcObject);
+    QtConnectionObject(JSContextRef, PassRefPtr<QtInstance> senderInstance, int signalIndex, JSObjectRef receiver, JSObjectRef receiverFunction);
     ~QtConnectionObject();
 
+    // Explicitly define these because want a custom qt_metacall(), so we can't use Q_OBJECT macro.
     static const QMetaObject staticMetaObject;
     virtual const QMetaObject *metaObject() const;
     virtual void *qt_metacast(const char *);
     virtual int qt_metacall(QMetaObject::Call, int, void **argv);
 
-    bool match(QObject *sender, int signalIndex, JSObject* thisObject, JSObject *funcObject);
-
-    // actual slot:
     void execute(void **argv);
 
+    bool match(JSContextRef, QObject* sender, int signalIndex, JSObjectRef thisObject, JSObjectRef funcObject);
+
+    // Note: for callers using JSC internals, remove once we don't need anymore.
+    static QtConnectionObject* createWithInternalJSC(ExecState*, PassRefPtr<QtInstance> senderInstance, int signalIndex, JSObject* receiver, JSObject* receiverFunction);
+
 private:
-    RefPtr<QtInstance> m_instance;
+    JSContextRef m_context;
+    RefPtr<QtInstance> m_senderInstance;
+
+    // We use this as key in active connections multimap.
+    QObject* m_originalSender;
+
     int m_signalIndex;
-    QObject* m_originalObject; // only used as a key, not dereferenced
-    Strong<JSObject> m_thisObject;
-    Strong<JSObject> m_funcObject;
+    JSObjectRef m_receiver;
+    JSObjectRef m_receiverFunction;
 };
 
 QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type hint, int *distance);

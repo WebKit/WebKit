@@ -1,3 +1,42 @@
+2011-06-13  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] JSC Bridge: convert QtConnectionObject to use JSC API
+        https://bugs.webkit.org/show_bug.cgi?id=62330
+
+        This patch is based on the draft patch by Noam Rosenthal in bug 60842.
+        Qt API autotests cover the bridge behavior and pass after this patch.
+
+        * bridge/qt/qt_runtime.h: Change QtConnectionObject to use JSC API types. In
+        particular, we got rid of Strong<JSObject> members. Renamed some members and
+        arguments to follow existing naming in QObject::connect().
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::QtRuntimeConnectionMethod::call): Use a new helper function
+        to create a connection, passing the ExecState* that will be used when the
+        connection is activated (signal emitted). Use JSC API types when looking up
+        the matching signal to disconnect.
+
+        (JSC::Bindings::QtConnectionObject::QtConnectionObject): Use JSC API to
+        protect the receiver and receiverFunction from being garbage
+        collected. Removed the ASSERT() since we don't hold ProtectedPtrs (in current
+        code were Strong<>) anymore.
+
+        (JSC::Bindings::QtConnectionObject::~QtConnectionObject): Explain why is safe
+        to use m_originalSender here. Unprotect values that we protected in constructor.
+
+        (JSC::Bindings::isJavaScriptFunction): Helper function to identify whether a
+        JSObjectRef is a JS function (in contrast to a native function exposed to JS).
+
+        (JSC::Bindings::QtConnectionObject::execute):
+        (JSC::Bindings::QtConnectionObject::match):
+        Both updated to use JSC API when appliable. Note that convertQVariantToValue
+        still returns JSC internal types, will be handled in a different patch.
+
+        (JSC::Bindings::QtConnectionObject::createWithInternalJSC):
+        Convenince for the existing caller until it is converted to JSC as well.
+
 2011-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
