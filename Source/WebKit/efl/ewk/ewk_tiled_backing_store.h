@@ -31,7 +31,7 @@
  * try "kill -USR1 $PID" to get instantaneous debug
  * try "kill -USR2 $PID" to get instantaneous debug and force flush of cache
  */
-#define DEBUG_MEM_LEAKS 1
+#undef DEBUG_MEM_LEAKS
 
 #define TILE_W (256)
 #define TILE_H (256)

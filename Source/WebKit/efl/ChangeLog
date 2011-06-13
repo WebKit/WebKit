@@ -1,3 +1,16 @@
+2011-06-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [efl] Disable tiled backing store debug messages by default.
+        https://bugs.webkit.org/show_bug.cgi?id=61745
+
+        These messages pollute the output and are only useful to people
+        working on TBS itself. It makes more sense to have them disabled by
+        default.
+
+        * ewk/ewk_tiled_backing_store.h:
+
 2011-06-13  KwangHyuk Kim  <hyuki.kim@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.
