@@ -1328,3 +1328,6 @@ http/tests/security/isolatedWorld/cross-origin-xhr.html
 http/tests/security/webgl-remote-read-remote-image-allowed.html
 http/tests/security/webgl-remote-read-remote-image-allowed-with-credentials.html
 http/tests/security/webgl-remote-read-remote-image-blocked-no-crossorigin.html
+
+# Causes a SyntaxError (http://webkit.org/b/62595).
+fast/workers/worker-crash-with-invalid-location.html

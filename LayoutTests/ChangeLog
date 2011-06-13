@@ -1,3 +1,12 @@
+2011-06-13  David Levin  <levin@chromium.org>
+
+        Test fix for Windows.
+
+        [Windows] Web Worker test causes script error on Windows platform alone.
+        https://bugs.webkit.org/show_bug.cgi?id=62595
+
+        * platform/win/Skipped: Skipped the test with the problem.
+
 2011-06-13  Jessie Berlin  <jberlin@apple.com>
 
         plugins/mouse-events and plugins/mouse-events-fixedpos don't fire events on the plugin.
