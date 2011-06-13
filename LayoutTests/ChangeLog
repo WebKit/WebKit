@@ -1,3 +1,9 @@
+2011-06-13  James Robinson  <jamesr@chromium.org>
+
+        [chromium] Clean up GPU test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-13  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

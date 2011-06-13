@@ -1002,7 +1002,7 @@ BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-shadow.html = TEXT
 BUGCR81858 WIN LINUX GPU : fast/canvas/canvas-longlived-context.html = PASS TEXT
 
 // Misc. render failures
-BUGWK62138 WIN LINUX GPU : compositing/tiling/huge-layer-img.html = TEXT
+BUGWK62138 WIN GPU : compositing/tiling/huge-layer-img.html = TEXT
 BUGCR81606 WIN LINUX GPU : fast/canvas/drawImage-with-globalAlpha.html = IMAGE
 
 // fillRect failures
@@ -3020,14 +3020,12 @@ BUGCR75109 WIN LINUX : svg/css/getComputedStyle-basic.xhtml = TEXT
 BUGCR75019 WIN LINUX MAC :fast/text/hyphenate-limit-before-after.html = IMAGE+TEXT
 
 // Chromium GPU draws scrollbars slightly differently in debug vs. release.
-// Commented out because BUGWK57113 supersedes it below, and BUGCR78457
-//BUGWK58587 DEBUG GPU LINUX : compositing/geometry/horizontal-scroll-composited.html = IMAGE
-//BUGWK58587 DEBUG GPU LINUX : fast/canvas/image-object-in-canvas.html = IMAGE
-//BUGWK58587 DEBUG GPU LINUX : platform/chromium/compositing/layout-width-change.html = IMAGE
-
-// Chromium GPU draws scrollbars slightly differently in debug vs. release.
 BUGWK58587 DEBUG GPU LINUX : compositing/direct-image-compositing.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : compositing/geometry/horizontal-scroll-composited.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : compositing/geometry/tall-page-composited.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGWK58587 DEBUG GPU LINUX : media/video-zoom.html = IMAGE
+BUGWK58587 DEBUG GPU LINUX : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
@@ -3541,14 +3539,12 @@ BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEX
 // Needs rebaseline
 
 BUGWK60102 LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
-BUGWK60102 LINUX DEBUG GPU : compositing/geometry/horizontal-scroll-composited.html = IMAGE
 BUGWK60102 MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGWK60102 LINUX DEBUG GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/masks/masked-ancestor.html = IMAGE
 BUGWK60102 LINUX DEBUG GPU : compositing/masks/simple-composited-mask.html = IMAGE
 // Commented because of BUGCR81605
 //BUGWK60102 LINUX DEBUG GPU : fast/canvas/canvas-text-alignment.html = IMAGE
-BUGWK60102 LINUX GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // Looks like some uninitialized memory at the bottom.
 BUGWK60103 : fast/replaced/border-radius-clip.html = IMAGE TIMEOUT IMAGE+TEXT
@@ -3756,9 +3752,6 @@ BUGWK60346 : fast/xpath/4XPath/Core/test_boolean_expr.html = PASS CRASH
 
 // Since http://trac.webkit.org/changeset/85788
 BUGWK60237 DEBUG : svg/text/text-block-child-crash.xhtml = PASS CRASH
-
-BUGWK60252 MAC GPU : animations/3d/matrix-transform-type-animation.html = IMAGE
-BUGWK60252 MAC GPU : animations/3d/state-at-end-event-transform.html = IMAGE
 
 BUGWK60351 DEBUG : http/tests/local/formdata/send-form-data-with-sliced-file.html = PASS CRASH
 
@@ -3973,14 +3966,8 @@ BUGCR84157 GPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-
 BUGCR84157 GPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = IMAGE
 BUGCR84157 GPU : fast/dom/object-plugin-hides-properties.html = TEXT
 BUGCR84157 GPU : fast/js/property-getters-and-setters.html = TEXT
-BUGCR84157 WIN LINUX GPU : fast/canvas/canvas-as-image-incremental-repaint.html = IMAGE
-BUGCR84157 GPU : fast/canvas/canvas-as-image.html = IMAGE
-BUGCR84157 GPU : fast/canvas/canvas-bg-zoom.html = IMAGE
-BUGCR84157 GPU : fast/canvas/canvas-bg.html = IMAGE
-BUGCR84157 GPU : fast/canvas/canvas-currentColor.html = TEXT
-BUGCR84157 GPU : fast/canvas/canvas-fillPath-shadow.html = TEXT
-BUGCR84157 GPU : fast/canvas/canvas-transform-skewed.html = IMAGE
-BUGCR84157 GPU : fast/canvas/zero-size-fill-rect.html = IMAGE
+BUGCR84157 GPU WIN : fast/canvas/canvas-currentColor.html = TEXT
+BUGCR84157 GPU WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
 BUGCR84157 BUGCR74979 WIN LINUX GPU : media/video-canvas-alpha.html = IMAGE
 
 BUGCR85051 WIN GPU : canvas/philip/tests/2d.composite.canvas.source-over.html = TEXT
@@ -3993,8 +3980,6 @@ BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = IMAGE PASS
 
 BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
 BUGCR85755 : fast/js/exception-properties.html = TEXT
-
-BUGVITALYR LINUX MAC GPU : compositing/geometry/tall-page-composited.html = CRASH FAIL
 
 // Has been flaky, probably since birth.
 BUGWK62580 : fast/loader/inherit-charset-to-empty-frame.html = PASS TEXT
