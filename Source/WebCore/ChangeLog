@@ -1,3 +1,9 @@
+2011-06-13  Xan Lopez  <xlopez@igalia.com>
+
+        Try to fix GTK+ build.
+
+        * GNUmakefile.list.am: remove CredentialStorage.cpp
+
 2011-06-13  Stephen White  <senorblanco@chromium.org>
 
         Reviewed by James Robinson.
