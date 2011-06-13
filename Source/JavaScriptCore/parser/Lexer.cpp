@@ -331,11 +331,6 @@ void Lexer::shiftLineTerminator()
     ++m_lineNumber;
 }
 
-ALWAYS_INLINE const Identifier* Lexer::makeIdentifier(const UChar* characters, size_t length)
-{
-    return &m_arena->makeIdentifier(m_globalData, characters, length);
-}
-
 ALWAYS_INLINE bool Lexer::lastTokenWasRestrKeyword() const
 {
     return m_lastToken == CONTINUE || m_lastToken == BREAK || m_lastToken == RETURN || m_lastToken == THROW;

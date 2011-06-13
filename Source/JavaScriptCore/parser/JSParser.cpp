@@ -107,6 +107,14 @@ private:
         m_token.m_type = m_lexer->lex(&m_token.m_data, &m_token.m_info, lexType, strictMode());
     }
     
+    ALWAYS_INLINE void nextExpectIdentifier(unsigned lexType = 0)
+    {
+        m_lastLine = m_token.m_info.line;
+        m_lastTokenEnd = m_token.m_info.endOffset;
+        m_lexer->setLastLineNumber(m_lastLine);
+        m_token.m_type = m_lexer->lexExpectIdentifier(&m_token.m_data, &m_token.m_info, lexType, strictMode());
+    }
+    
     ALWAYS_INLINE bool nextTokenIsColon()
     {
         return m_lexer->nextTokenIsColon();
@@ -1707,9 +1715,9 @@ template <bool complete, class TreeBuilder> TreeProperty JSParser::parseProperty
     case STRING: {
         const Identifier* ident = m_token.m_data.ident;
         if (complete || (wasIdent && (*ident == m_globalData->propertyNames->get || *ident == m_globalData->propertyNames->set)))
-            next(Lexer::IgnoreReservedWords);
+            nextExpectIdentifier(Lexer::IgnoreReservedWords);
         else
-            next(Lexer::IgnoreReservedWords | TreeBuilder::DontBuildKeywords);
+            nextExpectIdentifier(Lexer::IgnoreReservedWords | TreeBuilder::DontBuildKeywords);
 
         if (match(COLON)) {
             next();
@@ -2038,7 +2046,7 @@ template <class TreeBuilder> TreeExpression JSParser::parseMemberExpression(Tree
         case DOT: {
             m_nonTrivialExpressionCount++;
             int expressionEnd = lastTokenEnd();
-            next(Lexer::IgnoreReservedWords | TreeBuilder::DontBuildKeywords);
+            nextExpectIdentifier(Lexer::IgnoreReservedWords | TreeBuilder::DontBuildKeywords);
             matchOrFail(IDENT);
             base = context.createDotAccess(base, m_token.m_data.ident, expressionStart, expressionEnd, tokenEnd());
             next();

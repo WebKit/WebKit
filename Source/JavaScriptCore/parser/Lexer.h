@@ -88,7 +88,9 @@ namespace JSC {
         }
 
         SourceProvider* sourceProvider() const { return m_source->provider(); }
-
+        
+        JSTokenType lexExpectIdentifier(JSTokenData* lvalp, JSTokenInfo* llocp, unsigned, bool strictMode);
+        
     private:
         friend class JSGlobalData;
 
@@ -172,6 +174,55 @@ namespace JSC {
     inline UChar Lexer::convertUnicode(int c1, int c2, int c3, int c4)
     {
         return (convertHex(c1, c2) << 8) | convertHex(c3, c4);
+    }
+    
+    ALWAYS_INLINE const Identifier* Lexer::makeIdentifier(const UChar* characters, size_t length)
+    {
+        return &m_arena->makeIdentifier(m_globalData, characters, length);
+    }
+
+    ALWAYS_INLINE JSTokenType Lexer::lexExpectIdentifier(JSTokenData* lvalp, JSTokenInfo* llocp, unsigned lexType, bool strictMode)
+    {
+        ASSERT((lexType & IgnoreReservedWords));
+        const UChar* start = m_code;
+        const UChar* ptr = start;
+        const UChar* end = m_codeEnd;
+        if (ptr >= end) {
+            ASSERT(ptr == end);
+            goto slowCase;
+        }
+        if (!WTF::isASCIIAlpha(*ptr))
+            goto slowCase;
+        ++ptr;
+        while (ptr < end) {
+            if (!WTF::isASCIIAlphanumeric(*ptr))
+                break;
+            ++ptr;
+        }
+
+        // Here's the shift
+        if (ptr < end) {
+            if (!WTF::isASCII(*ptr) || (*ptr == '\\') || (*ptr == '_'))
+                goto slowCase;
+            m_current = *ptr;
+        } else
+            m_current = -1;
+
+        m_code = ptr;
+
+        // Create the identifier if needed
+        if (lexType & DontBuildKeywords)
+            lvalp->ident = 0;
+        else
+            lvalp->ident = makeIdentifier(start, ptr - start);
+        llocp->line = m_lineNumber;
+        llocp->startOffset = start - m_codeStart;
+        llocp->endOffset = currentOffset();
+        m_lastToken = IDENT;
+        return IDENT;
+        
+    slowCase:
+        return lex(lvalp, llocp, lexType, strictMode);
     }
 
 } // namespace JSC

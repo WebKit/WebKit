@@ -1,3 +1,24 @@
+2011-06-13  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Make it possible to inline the common case of identifier lexing
+        https://bugs.webkit.org/show_bug.cgi?id=62600
+
+        Add a lexing function that expects to lex an "normal" alpha numeric
+        identifier (that ignores keywords) so it's possible to inline the
+        common parsing cases.  This comes out as a reasonable parsing speed
+        boost.
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::nextExpectIdentifier):
+        (JSC::JSParser::parseProperty):
+        (JSC::JSParser::parseMemberExpression):
+        * parser/Lexer.cpp:
+        * parser/Lexer.h:
+        (JSC::Lexer::makeIdentifier):
+        (JSC::Lexer::lexExpectIdentifier):
+
 2011-06-13  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.
