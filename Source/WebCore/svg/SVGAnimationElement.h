@@ -4,6 +4,7 @@
  * Copyright (C) 2007 Eric Seidel <eric@webkit.org>
  * Copyright (C) 2008 Apple Inc. All rights reserved.
  * Copyright (C) 2008 Cameron McCormack <cam@mcc.id.au>
+ * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,7 +37,24 @@
 #include "UnitBezier.h"
 
 namespace WebCore {
-    
+
+enum AnimationMode {
+    NoAnimation,
+    FromToAnimation,
+    FromByAnimation,
+    ToAnimation,
+    ByAnimation,
+    ValuesAnimation,
+    PathAnimation // Used by AnimateMotion.
+};
+
+enum CalcMode {
+    CalcModeDiscrete,
+    CalcModeLinear,
+    CalcModePaced,
+    CalcModeSpline
+};
+
 class ConditionEventListener;
 class TimeContainer;
 
@@ -49,7 +67,7 @@ public:
     float getStartTime() const;
     float getCurrentTime() const;
     float getSimpleDuration(ExceptionCode&) const;
-    
+
     // ElementTimeControl
     virtual void beginElement();
     virtual void beginElementAt(float offset);
@@ -58,36 +76,36 @@ public:
 
     static bool isTargetAttributeCSSProperty(SVGElement*, const QualifiedName&);
 
+    bool isAdditive() const;
+    bool isAccumulated() const;
+    AnimationMode animationMode() const;
+    CalcMode calcMode() const;
+
 protected:
     SVGAnimationElement(const QualifiedName&, Document*);
 
     bool isSupportedAttribute(const QualifiedName&);
     virtual void parseMappedAttribute(Attribute*);
 
-    enum CalcMode { CalcModeDiscrete, CalcModeLinear, CalcModePaced, CalcModeSpline };
-    CalcMode calcMode() const;
-    
-    enum AttributeType { AttributeTypeCSS, AttributeTypeXML, AttributeTypeAuto };
+    enum AttributeType {
+        AttributeTypeCSS,
+        AttributeTypeXML,
+        AttributeTypeAuto
+    };
     AttributeType attributeType() const;
-    
+
     String toValue() const;
     String byValue() const;
     String fromValue() const;
-    
-    enum AnimationMode { NoAnimation, ToAnimation, ByAnimation, ValuesAnimation, FromToAnimation, FromByAnimation, PathAnimation };
-    AnimationMode animationMode() const;
-    
+
     String targetAttributeBaseValue() const;
     void setTargetAttributeAnimatedValue(const String&);
-    
-    bool isAdditive() const;
-    bool isAccumulated() const;
 
     // from SVGSMILElement
     virtual void startedActiveInterval();
     virtual void updateAnimation(float percent, unsigned repeat, SVGSMILElement* resultElement);
     virtual void endedActiveInterval();
-    
+
 private:
     virtual void attributeChanged(Attribute*, bool preserveDecls);
     virtual void synchronizeProperty(const QualifiedName&);
@@ -97,7 +115,7 @@ private:
     virtual void calculateAnimatedValue(float percentage, unsigned repeat, SVGSMILElement* resultElement) = 0;
     virtual float calculateDistance(const String& /*fromString*/, const String& /*toString*/) { return -1.f; }
     virtual Path animationPath() const { return Path(); }
-    
+
     void currentValuesForValuesAnimation(float percent, float& effectivePercent, String& from, String& to) const;
     void calculateKeyTimesForCalcModePaced();
     float calculatePercentFromKeyPoints(float percent) const;

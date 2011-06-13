@@ -2,6 +2,7 @@
  * Copyright (C) 2004, 2005 Nikolas Zimmermann <zimmermann@kde.org>
  * Copyright (C) 2004, 2005, 2006 Rob Buis <buis@kde.org>
  * Copyright (C) 2008 Apple Inc. All rights reserved.
+ * Copyright (C) Research In Motion Limited 2011. All rights reserved.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -31,6 +32,7 @@
 #include "FloatConversion.h"
 #include "QualifiedName.h"
 #include "RenderObject.h"
+#include "SVGAnimatorFactory.h"
 #include "SVGColor.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
@@ -70,8 +72,6 @@ static bool parseNumberValueAndUnit(const String& in, double& value, String& uni
     String parse = in.stripWhiteSpace();
     if (parse.endsWith("%"))
         unitLength = 1;
-    else if (parse.endsWith("px") || parse.endsWith("pt") || parse.endsWith("em"))
-        unitLength = 2;
     else if (parse.endsWith("deg") || parse.endsWith("rad"))
         unitLength = 3;
     else if (parse.endsWith("grad"))
@@ -89,7 +89,7 @@ static bool parseNumberValueAndUnit(const String& in, double& value, String& uni
     return ok;
 }
 
-static inline void adjustForCurrentColor(SVGElement* targetElement, Color& color)
+void SVGAnimateElement::adjustForCurrentColor(SVGElement* targetElement, Color& color)
 {
     ASSERT(targetElement);
     
@@ -99,7 +99,13 @@ static inline void adjustForCurrentColor(SVGElement* targetElement, Color& color
         color = Color();
 }
 
-static inline void adjustForInheritance(SVGElement* targetElement, const QualifiedName& attributeName, String& value)
+static inline void getPropertyValue(SVGElement* svgParent, const QualifiedName& attributeName, String& value)
+{
+    ASSERT(svgParent->isStyled());
+    value = computedStyle(svgParent)->getPropertyValue(cssPropertyID(attributeName.localName()));
+}
+
+void SVGAnimateElement::adjustForInheritance(SVGElement* targetElement, const QualifiedName& attributeName, String& value)
 {
     // FIXME: At the moment the computed style gets returned as a String and needs to get parsed again.
     // In the future we might want to work with the value type directly to avoid the String parsing.
@@ -111,7 +117,7 @@ static inline void adjustForInheritance(SVGElement* targetElement, const Qualifi
 
     SVGElement* svgParent = static_cast<SVGElement*>(parent);
     if (svgParent->isStyled())
-        value = computedStyle(svgParent)->getPropertyValue(cssPropertyID(attributeName.localName()));
+        getPropertyValue(svgParent, attributeName, value);
 }
 
 bool SVGAnimateElement::hasValidAttributeType() const
@@ -136,16 +142,17 @@ AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGEleme
     switch (type) {
     case AnimatedBoolean:
     case AnimatedEnumeration:
-    case AnimatedLengthList:
     case AnimatedNumberList:
     case AnimatedNumberOptionalNumber:
+    case AnimatedLengthList:
     case AnimatedPreserveAspectRatio:
     case AnimatedRect:
     case AnimatedString:
         return AnimatedString;
+    case AnimatedLength:
+        return AnimatedLength;
     case AnimatedAngle:
     case AnimatedInteger:
-    case AnimatedLength:
     case AnimatedNumber:
         return AnimatedNumber;
     case AnimatedPath:
@@ -154,8 +161,8 @@ AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGEleme
         return AnimatedPoints;
     case AnimatedColor:
         return AnimatedColor;
-    case AnimatedUnknown:
     case AnimatedTransformList:
+    case AnimatedUnknown:
         // Animations of transform lists are not allowed for <animate> or <set>
         // http://www.w3.org/TR/SVG/animate.html#AnimationAttributesAndProperties
         return AnimatedUnknown;
@@ -171,14 +178,9 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     ASSERT(resultElement);
     bool isInFirstHalfOfAnimation = percentage < 0.5f;
     AnimationMode animationMode = this->animationMode();
-    SVGElement* targetElement = 0;
-    // Avoid targetElement() call if possible. It might slow down animations.
-    if (m_fromPropertyValueType == InheritValue || m_toPropertyValueType == InheritValue
-        || m_fromPropertyValueType == CurrentColorValue || m_toPropertyValueType == CurrentColorValue) {
-        targetElement = this->targetElement();
-        if (!targetElement)
-            return;
-    }
+    SVGElement* targetElement = this->targetElement();
+    if (!targetElement)
+        return;
     
     if (hasTagName(SVGNames::setTag))
         percentage = 1;
@@ -189,7 +191,8 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     // Can't accumulate over a string property.
     if (results->m_animatedAttributeType == AnimatedString && m_animatedAttributeType != AnimatedString)
         return;
-    if (m_animatedAttributeType == AnimatedNumber) {
+    switch (m_animatedAttributeType) {
+    case AnimatedNumber: {
         // To animation uses contributions from the lower priority animations as the base value.
         if (animationMode == ToAnimation)
             m_fromNumber = results->m_animatedNumber;
@@ -223,7 +226,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
             results->m_animatedNumber = number;
         return;
     } 
-    if (m_animatedAttributeType == AnimatedColor) {
+    case AnimatedColor: {
         if (animationMode == ToAnimation)
             m_fromColor = results->m_animatedColor;
 
@@ -256,7 +259,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
             results->m_animatedColor = color;
         return;
     }
-    if (m_animatedAttributeType == AnimatedPath) {
+    case AnimatedPath: {
         if (animationMode == ToAnimation) {
             ASSERT(results->m_animatedPathPointer);
             m_fromPath = results->m_animatedPathPointer->copy();
@@ -289,7 +292,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
         }
         return;
     }
-    if (m_animatedAttributeType == AnimatedPoints) {
+    case AnimatedPoints: {
         if (!percentage)
             results->m_animatedPoints = m_fromPoints;
         else if (percentage == 1)
@@ -305,6 +308,17 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
                     ? m_toPoints : m_fromPoints;
         }
         return;
+    }
+    case AnimatedLength: {
+        ASSERT(m_animator);
+        ASSERT(results->m_animatedType);
+        // Target element might have changed.
+        m_animator->setContextElement(targetElement);
+        m_animator->calculateAnimatedValue(this, percentage, repeat, m_fromType, m_toType, results->m_animatedType, m_fromPropertyValueType == InheritValue, m_toPropertyValueType == InheritValue);
+        return;
+    }
+    default:
+        break;
     }
     ASSERT(animationMode == FromToAnimation || animationMode == ToAnimation || animationMode == ValuesAnimation);
     // Replace 'currentColor' / 'inherit' by their computed property values.
@@ -347,7 +361,8 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
 
     // FIXME: Needs more solid way determine target attribute type.
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
-    if (m_animatedAttributeType == AnimatedColor) {
+    switch (m_animatedAttributeType) {
+    case AnimatedColor: {
         bool fromIsCurrentColor = attributeValueIsCurrentColor(fromString);
         bool toIsCurrentColor = attributeValueIsCurrentColor(toString);
         if (fromIsCurrentColor)
@@ -362,14 +377,18 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
         bool toIsValid = m_toColor.isValid() || toIsCurrentColor || m_toPropertyValueType == InheritValue;
         if ((fromIsValid && toIsValid) || (toIsValid && animationMode() == ToAnimation))
             return true;
-    } else if (m_animatedAttributeType == AnimatedNumber) {
+        break;
+    }
+    case AnimatedNumber: {
         m_numberUnit = String();
         if (parseNumberValueAndUnit(toString, m_toNumber, m_numberUnit)) {
             // For to-animations the from number is calculated later
             if (animationMode() == ToAnimation || parseNumberValueAndUnit(fromString, m_fromNumber, m_numberUnit))
                 return true;
         }
-    } else if (m_animatedAttributeType == AnimatedPath) {
+        break;
+    }
+    case AnimatedPath: {
         SVGPathParserFactory* factory = SVGPathParserFactory::self();
         if (factory->buildSVGPathByteStreamFromString(toString, m_toPath, UnalteredParsing)) {
             // For to-animations the from number is calculated later
@@ -378,13 +397,23 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
         }
         m_fromPath.clear();
         m_toPath.clear();
-    } else if (m_animatedAttributeType == AnimatedPoints) {
+        break;
+    }
+    case AnimatedPoints: {
         m_fromPoints.clear();
         if (pointsListFromSVGData(m_fromPoints, fromString)) {
             m_toPoints.clear();
             if (pointsListFromSVGData(m_toPoints, toString))
                 return true;
         }
+        break;
+    }
+    case AnimatedLength: {
+        ensureAnimator()->calculateFromAndToValues(m_fromType, m_toType, fromString, toString);
+        return true;
+    }
+    default:
+        break;
     }
     m_fromString = fromString;
     m_toString = toString;
@@ -402,7 +431,8 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
 
     ASSERT(!hasTagName(SVGNames::setTag));
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
-    if (m_animatedAttributeType == AnimatedColor) {
+    switch (m_animatedAttributeType) {
+    case AnimatedColor: {
         bool fromIsCurrentColor = attributeValueIsCurrentColor(fromString);
         bool byIsCurrentColor = attributeValueIsCurrentColor(byString);
         if (fromIsCurrentColor)
@@ -417,7 +447,14 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
         if ((!m_fromColor.isValid() && !fromIsCurrentColor)
             || (!m_toColor.isValid() && !byIsCurrentColor))
             return false;
-    } else {
+        return true;
+    }
+    case AnimatedLength: {
+        ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
+        return true;
+
+    }
+    default:
         m_numberUnit = String();
         m_fromNumber = 0;
         if (!fromString.isEmpty() && !parseNumberValueAndUnit(fromString, m_fromNumber, m_numberUnit))
@@ -436,13 +473,15 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     m_animatedString = baseString;
     AnimatedAttributeType lastType = m_animatedAttributeType;
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
-    if (m_animatedAttributeType == AnimatedColor) {
+    switch (m_animatedAttributeType) {
+    case AnimatedColor:
         m_animatedColor = baseString.isEmpty() ? Color() : SVGColor::colorFromRGBColorString(baseString);
         if (isContributing(elapsed())) {
             m_animatedAttributeType = lastType;
             return;
         }
-    } else if (m_animatedAttributeType == AnimatedNumber) {
+        break;
+    case AnimatedNumber:
         if (baseString.isEmpty()) {
             m_animatedNumber = 0;
             m_numberUnit = String();
@@ -450,15 +489,23 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
         }
         if (parseNumberValueAndUnit(baseString, m_animatedNumber, m_numberUnit))
             return;
-    } else if (m_animatedAttributeType == AnimatedPath) {
+        break;
+    case AnimatedPath: {
         m_animatedPath.clear();
         SVGPathParserFactory* factory = SVGPathParserFactory::self();
         factory->buildSVGPathByteStreamFromString(baseString, m_animatedPath, UnalteredParsing);
         m_animatedPathPointer = m_animatedPath.get();
         return;
-    } else if (m_animatedAttributeType == AnimatedPoints) {
+    }
+    case AnimatedPoints:
         m_animatedPoints.clear();
         return;
+    case AnimatedLength: {
+        m_animatedType = ensureAnimator()->constructFromString(baseString);
+        return;
+    }
+    default:
+        break;
     }
     m_animatedAttributeType = AnimatedString;
 }
@@ -483,6 +530,8 @@ void SVGAnimateElement::applyResultsToTarget()
         }
     } else if (m_animatedAttributeType == AnimatedPoints)
         valueToApply = m_animatedPoints.isEmpty() ? m_animatedString : m_animatedPoints.valueAsString();
+    else if (m_animatedAttributeType == AnimatedLength)
+        valueToApply = m_animatedType->length().valueAsString();
     else
         valueToApply = m_animatedString;
     
@@ -514,8 +563,17 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
             return -1;
         return ColorDistance(from, to).distance();
     }
+    if (m_animatedAttributeType == AnimatedLength)
+        return ensureAnimator()->calculateDistance(this, fromString, toString);
     return -1;
 }
-   
+
+SVGAnimatedTypeAnimator* SVGAnimateElement::ensureAnimator()
+{
+    if (!m_animator)
+        m_animator = SVGAnimatorFactory::create(targetElement(), m_animatedAttributeType, attributeName());
+    return m_animator.get();
+}
+
 }
 #endif // ENABLE(SVG)

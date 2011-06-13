@@ -25,6 +25,8 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 
 #include "Color.h"
+#include "SVGAnimatedType.h"
+#include "SVGAnimatedTypeAnimator.h"
 #include "SVGAnimationElement.h"
 #include "SVGPathByteStream.h"
 #include "SVGPointList.h"
@@ -39,6 +41,9 @@ public:
     static PassRefPtr<SVGAnimateElement> create(const QualifiedName&, Document*);
 
     virtual ~SVGAnimateElement();
+    
+    static void adjustForCurrentColor(SVGElement* targetElement, Color&);
+    void adjustForInheritance(SVGElement* targetElement, const QualifiedName&, String& value);
 
 protected:
     SVGAnimateElement(const QualifiedName&, Document*);
@@ -51,6 +56,8 @@ protected:
     virtual float calculateDistance(const String& fromString, const String& toString);
 
 private:
+    SVGAnimatedTypeAnimator* ensureAnimator();
+    
     // If we have 'currentColor' or 'inherit' as animation value, we need to grab the value during the animation
     // since the value can be animated itself.
     enum AnimatedPropertyValueType {
@@ -82,6 +89,12 @@ private:
     SVGPointList m_fromPoints;
     SVGPointList m_toPoints;
     SVGPointList m_animatedPoints;
+    
+    OwnPtr<SVGAnimatedType> m_fromType;
+    OwnPtr<SVGAnimatedType> m_toType;
+    OwnPtr<SVGAnimatedType> m_animatedType;
+    
+    OwnPtr<SVGAnimatedTypeAnimator> m_animator;
 };
 
 } // namespace WebCore

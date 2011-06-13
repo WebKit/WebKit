@@ -65246,6 +65246,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\svg\SVGAnimatedType.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGAnimatedTypeAnimator.h"
+				>
+			</File>
+			<File
 				RelativePath="..\svg\SVGAnimateElement.h"
 				>
 			</File>
@@ -65259,6 +65267,10 @@
 			</File>
 			<File
 				RelativePath="..\svg\SVGAnimationElement.h"
+				>
+			</File>
+			<File
+				RelativePath="..\svg\SVGAnimatorFactory.h"
 				>
 			</File>
 			<File

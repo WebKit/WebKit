@@ -1642,6 +1642,7 @@ IF (ENABLE_SVG)
         svg/SVGAltGlyphElement.cpp
         svg/SVGAngle.cpp
         svg/SVGAnimateColorElement.cpp
+        svg/SVGAnimatedLength.cpp
         svg/SVGAnimateElement.cpp
         svg/SVGAnimateMotionElement.cpp
         svg/SVGAnimateTransformElement.cpp

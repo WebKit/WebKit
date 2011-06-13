@@ -2317,10 +2317,13 @@ HEADERS += \
     svg/SVGAnimatedRect.h \
     svg/SVGAnimatedString.h \
     svg/SVGAnimatedTransformList.h \
+    svg/SVGAnimatedType.h \
+    svg/SVGAnimatedTypeAnimator.h \
     svg/SVGAnimateElement.h \
     svg/SVGAnimateMotionElement.h \
     svg/SVGAnimateTransformElement.h \
     svg/SVGAnimationElement.h \
+    svg/SVGAnimatorFactory.h \
     svg/SVGCircleElement.h \
     svg/SVGClipPathElement.h \
     svg/SVGColor.h \
@@ -3264,6 +3267,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               svg/SVGAltGlyphElement.cpp \
               svg/SVGAngle.cpp \
               svg/SVGAnimateColorElement.cpp \
+              svg/SVGAnimatedLength.cpp \
               svg/SVGAnimateElement.cpp \
               svg/SVGAnimateMotionElement.cpp \
               svg/SVGAnimateTransformElement.cpp \

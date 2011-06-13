@@ -1,3 +1,131 @@
+2011-06-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGAnimation should use direct unit animation for SVGLength
+        https://bugs.webkit.org/show_bug.cgi?id=61368
+
+        Added new tests to check correct behavior of SVGLength animations.
+
+        * svg/animations/script-tests/svglength-animation-LengthModeHeight.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-LengthModeOther.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-LengthModeWidth.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-invalid-value-1.js: Added.
+        (sample1):
+        (sample2):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-invalid-value-2.js: Added.
+        (sample1):
+        (sample2):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-invalid-value-3.js: Added.
+        (sample1):
+        (sample2):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-number-to-number.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-px-to-cm.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-px-to-ems.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-px-to-exs.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-px-to-in.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-px-to-number.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-px-to-pc.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-px-to-percentage.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-px-to-pt.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-px-to-px.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svglength-animation-values.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (sample4):
+        (sample5):
+        (executeTest):
+        * svg/animations/svglength-animation-LengthModeHeight-expected.txt: Added.
+        * svg/animations/svglength-animation-LengthModeHeight.html: Added.
+        * svg/animations/svglength-animation-LengthModeOther-expected.txt: Added.
+        * svg/animations/svglength-animation-LengthModeOther.html: Added.
+        * svg/animations/svglength-animation-LengthModeWidth-expected.txt: Added.
+        * svg/animations/svglength-animation-LengthModeWidth.html: Added.
+        * svg/animations/svglength-animation-invalid-value-1-expected.txt: Added.
+        * svg/animations/svglength-animation-invalid-value-1.html: Added.
+        * svg/animations/svglength-animation-invalid-value-2-expected.txt: Added.
+        * svg/animations/svglength-animation-invalid-value-2.html: Added.
+        * svg/animations/svglength-animation-invalid-value-3-expected.txt: Added.
+        * svg/animations/svglength-animation-invalid-value-3.html: Added.
+        * svg/animations/svglength-animation-number-to-number-expected.txt: Added.
+        * svg/animations/svglength-animation-number-to-number.html: Added.
+        * svg/animations/svglength-animation-px-to-cm-expected.txt: Added.
+        * svg/animations/svglength-animation-px-to-cm.html: Added.
+        * svg/animations/svglength-animation-px-to-ems-expected.txt: Added.
+        * svg/animations/svglength-animation-px-to-ems.html: Added.
+        * svg/animations/svglength-animation-px-to-exs-expected.txt: Added.
+        * svg/animations/svglength-animation-px-to-exs.html: Added.
+        * svg/animations/svglength-animation-px-to-in-expected.txt: Added.
+        * svg/animations/svglength-animation-px-to-in.html: Added.
+        * svg/animations/svglength-animation-px-to-number-expected.txt: Added.
+        * svg/animations/svglength-animation-px-to-number.html: Added.
+        * svg/animations/svglength-animation-px-to-pc-expected.txt: Added.
+        * svg/animations/svglength-animation-px-to-pc.html: Added.
+        * svg/animations/svglength-animation-px-to-percentage-expected.txt: Added.
+        * svg/animations/svglength-animation-px-to-percentage.html: Added.
+        * svg/animations/svglength-animation-px-to-pt-expected.txt: Added.
+        * svg/animations/svglength-animation-px-to-pt.html: Added.
+        * svg/animations/svglength-animation-px-to-px-expected.txt: Added.
+        * svg/animations/svglength-animation-px-to-px.html: Added.
+        * svg/animations/svglength-animation-values-expected.txt: Added.
+        * svg/animations/svglength-animation-values.html: Added.
+
 2011-06-13  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.

@@ -49,6 +49,7 @@ enum SVGLengthMode {
     LengthModeOther
 };
 
+class QualifiedName;
 class SVGElement;
 
 class SVGLength {
@@ -87,7 +88,8 @@ public:
 
     String valueAsString() const;
     void setValueAsString(const String&, ExceptionCode&);
-
+    void setValueAsString(const String&, SVGLengthMode);
+    
     void newValueSpecifiedUnits(unsigned short, float valueInSpecifiedUnits, ExceptionCode&);
     void convertToSpecifiedUnits(unsigned short, const SVGElement* context, ExceptionCode&);
 
@@ -100,6 +102,7 @@ public:
 
     static SVGLength fromCSSPrimitiveValue(CSSPrimitiveValue*);
     static PassRefPtr<CSSPrimitiveValue> toCSSPrimitiveValue(const SVGLength&);
+    static SVGLengthMode lengthModeForAnimatedLengthAttribute(const QualifiedName&);
 
 private:
     bool determineViewport(const SVGElement* context, float& width, float& height) const;

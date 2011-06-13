@@ -3317,6 +3317,7 @@ webcore_sources += \
 	Source/WebCore/svg/SVGAnimatedBoolean.h \
 	Source/WebCore/svg/SVGAnimatedEnumeration.h \
 	Source/WebCore/svg/SVGAnimatedInteger.h \
+	Source/WebCore/svg/SVGAnimatedLength.cpp \
 	Source/WebCore/svg/SVGAnimatedLength.h \
 	Source/WebCore/svg/SVGAnimatedLengthList.h \
 	Source/WebCore/svg/SVGAnimatedNumber.h \
@@ -3325,6 +3326,8 @@ webcore_sources += \
 	Source/WebCore/svg/SVGAnimatedRect.h \
 	Source/WebCore/svg/SVGAnimatedString.h \
 	Source/WebCore/svg/SVGAnimatedTransformList.h \
+	Source/WebCore/svg/SVGAnimatedType.h \
+	Source/WebCore/svg/SVGAnimatedTypeAnimator.h \
 	Source/WebCore/svg/SVGAnimateElement.cpp \
 	Source/WebCore/svg/SVGAnimateElement.h \
 	Source/WebCore/svg/SVGAnimateMotionElement.cpp \
@@ -3333,6 +3336,7 @@ webcore_sources += \
 	Source/WebCore/svg/SVGAnimateTransformElement.h \
 	Source/WebCore/svg/SVGAnimationElement.cpp \
 	Source/WebCore/svg/SVGAnimationElement.h \
+	Source/WebCore/svg/SVGAnimatorFactory.h \
 	Source/WebCore/svg/SVGCircleElement.cpp \
 	Source/WebCore/svg/SVGCircleElement.h \
 	Source/WebCore/svg/SVGClipPathElement.cpp \

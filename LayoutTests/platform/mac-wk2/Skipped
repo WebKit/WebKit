@@ -441,6 +441,23 @@ svg/animations/animate-path-to-animation.html
 svg/animations/animate-points.html
 svg/animations/animate-text-nested-transforms.html
 svg/animations/animateTransform-pattern-transform.html
+svg/animations/svglength-animation-LengthModeHeight.html
+svg/animations/svglength-animation-LengthModeOther.html
+svg/animations/svglength-animation-LengthModeWidth.html
+svg/animations/svglength-animation-invalid-value-1.html
+svg/animations/svglength-animation-invalid-value-2.html
+svg/animations/svglength-animation-invalid-value-3.html
+svg/animations/svglength-animation-number-to-number.html
+svg/animations/svglength-animation-px-to-cm.html
+svg/animations/svglength-animation-px-to-ems.html
+svg/animations/svglength-animation-px-to-exs.html
+svg/animations/svglength-animation-px-to-in.html
+svg/animations/svglength-animation-px-to-number.html
+svg/animations/svglength-animation-px-to-pc.html
+svg/animations/svglength-animation-px-to-percentage.html
+svg/animations/svglength-animation-px-to-pt.html
+svg/animations/svglength-animation-px-to-px.html
+svg/animations/svglength-animation-values.html
 
 svg/custom/absolute-sized-content-with-resources.xhtml
 svg/custom/circle-move-invalidation.svg

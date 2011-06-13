@@ -158,7 +158,12 @@ void SVGAnimationElement::parseMappedAttribute(Attribute* attr)
     }
 
     if (attr->name() == SVGNames::valuesAttr) {
+        // Per the SMIL specification, leading and trailing white space,
+        // and white space before and after semicolon separators, is allowed and will be ignored.
+        // http://www.w3.org/TR/SVG11/animate.html#ValuesAttribute
         attr->value().string().split(';', m_values);
+        for (unsigned i = 0; i < m_values.size(); ++i)
+            m_values[i] = m_values[i].stripWhiteSpace();
         return;
     }
 
@@ -248,7 +253,7 @@ void SVGAnimationElement::endElementAt(float offset)
     addEndTime(elapsed() + offset);
 }
 
-SVGAnimationElement::AnimationMode SVGAnimationElement::animationMode() const
+AnimationMode SVGAnimationElement::animationMode() const
 {
     // http://www.w3.org/TR/2001/REC-smil-animation-20010904/#AnimFuncValues
     if (hasTagName(SVGNames::setTag))
@@ -264,7 +269,7 @@ SVGAnimationElement::AnimationMode SVGAnimationElement::animationMode() const
     return NoAnimation;
 }
 
-SVGAnimationElement::CalcMode SVGAnimationElement::calcMode() const
+CalcMode SVGAnimationElement::calcMode() const
 {    
     DEFINE_STATIC_LOCAL(const AtomicString, discrete, ("discrete"));
     DEFINE_STATIC_LOCAL(const AtomicString, linear, ("linear"));

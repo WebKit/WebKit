@@ -1,3 +1,114 @@
+2011-06-13  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGAnimation should use direct unit animation for SVGLength
+        https://bugs.webkit.org/show_bug.cgi?id=61368
+
+        When running SMIL animations  within SVG, we unnecessarily transform the underlying SVG primitive datatype to strings, number+units, and back. As first step the target element
+        gets asked for its current value. This value gets transformed to a string. In SVGAnimateElement we try to parse this string again and
+        split it into a number and its unit. In the further steps we just animate the number. This number gets transformed back to a string
+        together with the parsed unit. The string gets passed back to the target element, which is responsible for parsing the passed string back
+        to a value as a SVG primitive datatype (like SVGLength, SVGNumber, SVGAngle, SVGColor, ...), relayout and rerendering.
+
+        In short: SVG primitive datatype -> string -> number + unit animation -> string -> SVG primitive datatype.
+
+        This patch does not attempt to change the string transformations, but addresses the parsing of the string back to a number and unit in the
+        SVG animation code. There's no need to write a new parser in SVGAnimateElement to parse SVG primitive datatypes, we can instead reuse the existing ones.
+        Also the current parser of SVGAnimateElement does not handle most unit types, nor is it possible to animate lists like SVGLengthList with the
+        parsed content. An animation of values with different unit types is not possible:
+
+        <rect width="20" height="20">
+            <animate animateAttribute="width" from="20px" to="10%" dur="4s"/>
+        </rect>
+
+        For the example above we would animate the rect width from 20px to 10px in 4 seconds and jump to the 10% of the viewport at the end of the
+        animation.
+        With using the parsers of SVG primitive datatypes we will also use the SVG primitive datatypes in the animation code itself. And that makes
+        it possible to do such animations.
+
+        In short: SVG primitive datatype -> string -> SVG primitive datatype animation -> string -> SVG primitive datatype.
+
+        It will be easier to avoid the string transformation once all SVG primitive datatypes are supported.
+
+        To hide the complexity of the animation code, the actual calculations of SVG animation specific values was moved to the corresponding
+        SVGAnimated* files (SVGAnimatedLength.cpp for SVGLength). SVGAnimateElement itself just works with the new added generic datatype SVGAnimationType.
+        SVGAnimatorFactory creates the SVG primitive datatype specific animators. This makes the main animation code a lot more readable and 
+        maintainable.
+
+        With this patch I add the SVGAnimatorFactory and convert SVGLength animation to the new concept.
+
+        Tests: svg/animations/svglength-animation-LengthModeHeight.html
+               svg/animations/svglength-animation-LengthModeOther.html
+               svg/animations/svglength-animation-LengthModeWidth.html
+               svg/animations/svglength-animation-invalid-value-1.html
+               svg/animations/svglength-animation-invalid-value-2.html
+               svg/animations/svglength-animation-invalid-value-3.html
+               svg/animations/svglength-animation-number-to-number.html
+               svg/animations/svglength-animation-px-to-cm.html
+               svg/animations/svglength-animation-px-to-ems.html
+               svg/animations/svglength-animation-px-to-exs.html
+               svg/animations/svglength-animation-px-to-in.html
+               svg/animations/svglength-animation-px-to-number.html
+               svg/animations/svglength-animation-px-to-pc.html
+               svg/animations/svglength-animation-px-to-percentage.html
+               svg/animations/svglength-animation-px-to-pt.html
+               svg/animations/svglength-animation-px-to-px.html
+               svg/animations/svglength-animation-values.html
+
+        * CMakeLists.txt: Added new files to build system.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * svg/SVGAllInOne.cpp: Added SVGAnimatedLength.cpp for Win and other build systems.
+        * svg/SVGAnimateElement.cpp:
+        (WebCore::parseNumberValueAndUnit): Remove parsing code for SVGLength. Use SVGLength parser directly.
+        (WebCore::SVGAnimateElement::adjustForCurrentColor): Made adjustForCurrentColor public as preperation for SVGAnimatedColor.
+        (WebCore::getPropertyValue): Inline function to get computedStyle of CSS property.
+        (WebCore::SVGAnimateElement::adjustForInheritance): Made adjustForInheritance as preperation for SVGAnimated* files.
+        (WebCore::SVGAnimateElement::determineAnimatedAttributeType): SVGLength need special handling via SVGAnimator now.
+        (WebCore::SVGAnimateElement::calculateAnimatedValue): Cleanup. Make use of SVGAnimator for SVGLength.
+        (WebCore::SVGAnimateElement::calculateFromAndToValues): Ditto.
+        (WebCore::SVGAnimateElement::calculateFromAndByValues): Ditto.
+        (WebCore::SVGAnimateElement::resetToBaseValue): Ditto.
+        (WebCore::SVGAnimateElement::applyResultsToTarget): Ditto.
+        (WebCore::SVGAnimateElement::calculateDistance): Ditto.
+        * svg/SVGAnimateElement.h:
+        * svg/SVGAnimatedLength.cpp: Added.
+        (WebCore::SVGAnimatedLengthAnimator::SVGAnimatedLengthAnimator):
+        (WebCore::sharedSVGLength):
+        (WebCore::SVGAnimatedLengthAnimator::constructFromString):
+        (WebCore::SVGAnimatedLengthAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedLengthAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedLengthAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedLengthAnimator::calculateDistance):
+        * svg/SVGAnimatedLength.h: Added new class SVGAnimatedLengthAnimator which is responsible for the actual animation.
+        (WebCore::SVGAnimatedLengthAnimator::~SVGAnimatedLengthAnimator):
+        * svg/SVGAnimatedType.h: Added. Generic SVG unit type for animations in SVGAnimateElement.
+        (WebCore::SVGAnimatedType::createLength):
+        (WebCore::SVGAnimatedType::~SVGAnimatedType):
+        (WebCore::SVGAnimatedType::type):
+        (WebCore::SVGAnimatedType::length):
+        (WebCore::SVGAnimatedType::SVGAnimatedType):
+        * svg/SVGAnimatedTypeAnimator.h: Added. Base class for SVGAnimatedLengthAnimator and future SVG unit animators.
+        (WebCore::SVGAnimatedTypeAnimator::~SVGAnimatedTypeAnimator):
+        (WebCore::SVGAnimatedTypeAnimator::setContextElement):
+        (WebCore::SVGAnimatedTypeAnimator::SVGAnimatedTypeAnimator):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::parseMappedAttribute): We do not use parseNumberValueAndUnit for SVGLength now. Have to strip white spaces here. Whitespaces shouldn't
+          be stripped on the following attributes: 'from', 'to' and 'by'. This is not the case for SVGLength anymore. Added new tests to check this behavior.
+        (WebCore::SVGAnimationElement::animationMode): Enum is accessible in WebCore namespace now.
+        (WebCore::SVGAnimationElement::calcMode): Ditto.
+        * svg/SVGAnimationElement.h:
+        * svg/SVGAnimatorFactory.h: Added.
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGLength.cpp:
+        (WebCore::SVGLength::setValueAsString): New setter with string and SVGLengthMode.
+        (WebCore::SVGLength::lengthModeForAnimatedLengthAttribute): Get LengthMode for SVGLength depending on the attribute name.
+        * svg/SVGLength.h:
+
 2011-06-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.
