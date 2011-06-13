@@ -1,3 +1,15 @@
+2011-06-13  Daniel Cheng  <dcheng@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        [chromium] Dragging images to Mail.app results in broken attachments
+        https://bugs.webkit.org/show_bug.cgi?id=62466
+
+        No new tests.
+
+        * platform/chromium/ClipboardChromium.cpp:
+        (WebCore::ClipboardChromium::declareAndWriteDragImage):
+
 2011-06-13  Adrienne Walker  <enne@google.com>
 
         Reviewed by Simon Fraser.
