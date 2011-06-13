@@ -1,3 +1,18 @@
+2011-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Fix a crash when drawing area has been deleted
+        https://bugs.webkit.org/show_bug.cgi?id=62541
+
+        Check whether WebPageProxy::drawingArea() returns a valid pointer
+        before using it, it might be null, for example, when the web
+        process crashes.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (callDrawingAreaPaintMethod):
+        (webkitWebViewBaseSizeAllocate):
+
 2011-06-13  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

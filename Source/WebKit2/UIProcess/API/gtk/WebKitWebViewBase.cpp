@@ -153,6 +153,9 @@ static void webkit_web_view_base_init(WebKitWebViewBase* webkitWebViewBase)
 
 static void callDrawingAreaPaintMethod(DrawingAreaProxy* drawingArea, cairo_t* context, const IntRect& area)
 {
+    if (!drawingArea)
+        return;
+
     WebKit::Region unpaintedRegion; // This is simply unused.
     static_cast<DrawingAreaProxyImpl*>(drawingArea)->paint(context, area, unpaintedRegion);
 }
@@ -183,6 +186,9 @@ static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allo
 {
     WebKitWebViewBase* webViewBase = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
+
+    if (!priv->pageProxy->drawingArea())
+        return;
 
     GTK_WIDGET_CLASS(webkit_web_view_base_parent_class)->size_allocate(widget, allocation);
     priv->pageProxy->drawingArea()->setSize(IntSize(allocation->width, allocation->height), IntSize());
