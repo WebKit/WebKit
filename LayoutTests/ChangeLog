@@ -1,3 +1,16 @@
+2011-06-13  Young Han Lee  <joybro@company100.net>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Texmap][Qt] Accelerated animation is repeating as if its direction property is always 'alternate'.
+        https://bugs.webkit.org/show_bug.cgi?id=62281
+
+        syncAnimations() has miscalculated a normalized progress value as if the animation always has alternate direction property.
+
+        * animations/animation-direction-normal-expected.png: Added.
+        * animations/animation-direction-normal-expected.txt: Added.
+        * animations/animation-direction-normal.html: Added.
+
 2011-06-13  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Rob Buis.

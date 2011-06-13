@@ -842,7 +842,7 @@ void TextureMapperNode::syncAnimations(GraphicsLayerTextureMapper* layer)
 
         double totalRunningTime = WTF::currentTime() - animation->startTime;
         RefPtr<Animation> anim = animation->animation;
-        double normalizedValue = normalizedAnimationValue(totalRunningTime, anim->duration(), true);
+        double normalizedValue = normalizedAnimationValue(totalRunningTime, anim->duration(), anim->direction());
 
         if (anim->iterationCount() != Animation::IterationCountInfinite && totalRunningTime >= anim->duration() * anim->iterationCount()) {
             // We apply an animation that very close to the edge, so that the final frame is applied, oterwise we might get, for example, an opacity of 0.01 which is still visible.
