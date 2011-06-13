@@ -42,6 +42,7 @@ public:
     void handleTimedOut() const;
     void handleTextHeader() const;
     void handleTextFooter() const;
+    void handleAudioHeader() const;
     void handleImage(const char* actualHash, const char* expectedHash, const unsigned char* imageData, size_t imageSize, const char* fileName) const;
     void handleImageFooter() const;
     void handleTestFooter(bool dumpedAnything) const;
@@ -54,6 +55,7 @@ public:
     void handleTimedOut() const;
     void handleTextHeader() const;
     void handleTextFooter() const;
+    void handleAudioHeader() const;
     void handleImage(const char* actualHash, const char* expectedHash, const unsigned char* imageData, size_t imageSize, const char* fileName) const;
     void handleImageFooter() const;
     void handleTestFooter(bool dumpedAnything) const;
@@ -93,6 +95,12 @@ void DRTPrinter::handleTextHeader() const
 void DRTPrinter::handleTextFooter() const
 {
     printf("#EOF\n");
+}
+
+void DRTPrinter::handleAudioHeader() const
+{
+    printf("Content-Type: audio/wav\n");
+    printf("Content-Transfer-Encoding: base64\n");            
 }
 
 void DRTPrinter::handleImage(const char* actualHash, const char* expectedHash, const unsigned char* imageData, size_t imageSize, const char*) const
@@ -139,6 +147,12 @@ void TestShellPrinter::handleTextHeader() const
 
 void TestShellPrinter::handleTextFooter() const
 {
+}
+
+void TestShellPrinter::handleAudioHeader() const
+{
+    printf("Content-Type: audio/wav\n");
+    printf("Content-Transfer-Encoding: base64\n");
 }
 
 void TestShellPrinter::handleImage(const char* actualHash, const char*, const unsigned char* imageData, size_t imageSize, const char* fileName) const

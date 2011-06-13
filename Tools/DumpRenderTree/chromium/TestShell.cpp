@@ -115,6 +115,8 @@ TestShell::TestShell(bool testShellMode)
     WebRuntimeFeatures::enableIndexedDatabase(true);
     WebRuntimeFeatures::enableFileSystem(true);
     WebRuntimeFeatures::enableJavaScriptI18NAPI(true);
+    WebRuntimeFeatures::enableWebAudio(true);
+
     m_webPermissions = adoptPtr(new WebPermissions());
     m_accessibilityController = adoptPtr(new AccessibilityController(this));
     m_layoutTestController = adoptPtr(new LayoutTestController(this));
@@ -461,8 +463,24 @@ void TestShell::dump()
     if (!frame)
         return;
     bool shouldDumpAsText = m_layoutTestController->shouldDumpAsText();
+    bool shouldDumpAsAudio = m_layoutTestController->shouldDumpAsAudio();
     bool shouldGeneratePixelResults = m_layoutTestController->shouldGeneratePixelResults();
     bool dumpedAnything = false;
+
+    if (shouldDumpAsAudio) {
+        m_printer->handleAudioHeader();
+
+        const string& encodedAudioData = m_layoutTestController->encodedAudioData();
+        if (fwrite(encodedAudioData.c_str(), 1, encodedAudioData.size(), stdout) != encodedAudioData.size())
+            FATAL("Short write to stdout, disk full?\n");
+        printf("\n");
+
+        m_printer->handleTestFooter(true);
+        fflush(stdout);
+        fflush(stderr);
+        return;
+    }
+
     if (m_params.dumpTree) {
         dumpedAnything = true;
         m_printer->handleTextHeader();

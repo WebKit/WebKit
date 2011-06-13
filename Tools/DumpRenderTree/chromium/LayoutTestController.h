@@ -249,6 +249,10 @@ public:
     void setDeferMainResourceDataLoad(const CppArgumentList&, CppVariant*);
     void setEditingBehavior(const CppArgumentList&, CppVariant*);
 
+    // Deals with Web Audio base64 encoded WAVE file data.
+    void setEncodedAudioData(const CppArgumentList&, CppVariant*);
+    const std::string& encodedAudioData() const { return m_encodedAudioData; } 
+
     // The following are only stubs.
     // FIXME: Implement any of these that are needed to pass the layout tests.
     void dumpAsWebArchive(const CppArgumentList&, CppVariant*);
@@ -398,6 +402,8 @@ public:
     void setWorkQueueFrozen(bool frozen) { m_workQueue.setFrozen(frozen); }
 
     WebKit::WebSpeechInputController* speechInputController(WebKit::WebSpeechInputListener*);
+    bool shouldDumpAsAudio() const { return m_dumpAsAudio; } 
+    void setShouldDumpAsAudio(bool dumpAsAudio) { m_dumpAsAudio = dumpAsAudio; } 
     bool shouldDumpAsText() { return m_dumpAsText; }
     void setShouldDumpAsText(bool value) { m_dumpAsText = value; }
     bool shouldDumpEditingCallbacks() { return m_dumpEditingCallbacks; }
@@ -518,6 +524,9 @@ private:
     // text representation of the renderer.
     bool m_dumpAsText;
 
+    // If true, the test_shell will output a base64 encoded WAVE file.
+    bool m_dumpAsAudio;
+
     // If true, the test_shell will write a descriptive line for each editing
     // command.
     bool m_dumpEditingCallbacks;
@@ -617,6 +626,9 @@ private:
     WebKit::WebURL m_userStyleSheetLocation;
 
     OwnPtr<WebKit::WebSpeechInputControllerMock> m_speechInputControllerMock;
+
+    // base64 encoded WAV audio data is stored here.
+    std::string m_encodedAudioData;
 };
 
 #endif // LayoutTestController_h

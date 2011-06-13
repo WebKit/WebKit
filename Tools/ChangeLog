@@ -1,3 +1,26 @@
+2011-06-13  Chris Rogers  <crogers@google.com>
+
+        Reviewed by Dirk Pranke.
+
+        Add Web Audio support to chromium DRT
+        https://bugs.webkit.org/show_bug.cgi?id=62306
+
+        * DumpRenderTree/chromium/LayoutTestController.cpp:
+        (LayoutTestController::LayoutTestController):
+        (LayoutTestController::reset):
+        (LayoutTestController::setEncodedAudioData):
+        * DumpRenderTree/chromium/LayoutTestController.h:
+        (LayoutTestController::encodedAudioData):
+        (LayoutTestController::shouldDumpAsAudio):
+        (LayoutTestController::setShouldDumpAsAudio):
+        * DumpRenderTree/chromium/TestEventPrinter.cpp:
+        (DRTPrinter::handleAudioHeader):
+        (TestShellPrinter::handleAudioHeader):
+        * DumpRenderTree/chromium/TestEventPrinter.h:
+        * DumpRenderTree/chromium/TestShell.cpp:
+        (TestShell::TestShell):
+        (TestShell::dump):
+
 2011-06-13  Jaehun Lim  <ljaehun.lim@samsung.com>
 
         Reviewed by Eric Seidel.

@@ -156,6 +156,7 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setDeferMainResourceDataLoad", &LayoutTestController::setDeferMainResourceDataLoad);
     bindMethod("setDomainRelaxationForbiddenForURLScheme", &LayoutTestController::setDomainRelaxationForbiddenForURLScheme);
     bindMethod("setEditingBehavior", &LayoutTestController::setEditingBehavior);
+    bindMethod("setEncodedAudioData", &LayoutTestController::setEncodedAudioData);
     bindMethod("setGeolocationPermission", &LayoutTestController::setGeolocationPermission);
     bindMethod("setIconDatabaseEnabled", &LayoutTestController::setIconDatabaseEnabled);
     bindMethod("setJavaScriptCanAccessClipboard", &LayoutTestController::setJavaScriptCanAccessClipboard);
@@ -573,6 +574,7 @@ void LayoutTestController::reset()
         m_shell->webView()->removeAllUserContent();
     }
     m_dumpAsText = false;
+    m_dumpAsAudio = false;
     m_dumpEditingCallbacks = false;
     m_dumpFrameLoadCallbacks = false;
     m_dumpUserGestureInFrameLoadCallbacks = false;
@@ -1921,4 +1923,14 @@ void LayoutTestController::setTextDirection(const CppArgumentList& arguments, Cp
         return;
 
     m_shell->webView()->setTextDirection(direction);
+}
+
+void LayoutTestController::setEncodedAudioData(const CppArgumentList& arguments, CppVariant* result)
+{
+    result->setNull();
+    if (arguments.size() < 1 || !arguments[0].isString())
+        return;
+
+    m_encodedAudioData = arguments[0].toString();
+    setShouldDumpAsAudio(true);
 }
