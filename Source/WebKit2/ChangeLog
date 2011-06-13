@@ -1,3 +1,41 @@
+2011-06-13  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL][WK2] Add dummy files at below of WebProcess.
+        https://bugs.webkit.org/show_bug.cgi?id=62445
+
+        Add Efl related directory and files in WebKit2/WebProcess/.
+
+        * WebProcess/Cookies/efl/WebCookieManagerEfl.cpp: Added.
+        (WebKit::WebCookieManager::platformSetHTTPCookieAcceptPolicy):
+        (WebKit::WebCookieManager::platformGetHTTPCookieAcceptPolicy):
+        * WebProcess/InjectedBundle/efl/InjectedBundleEfl.cpp: Added.
+        (WebKit::InjectedBundle::load):
+        (WebKit::InjectedBundle::activateMacFontAscentHack):
+        * WebProcess/WebPage/efl/WebInspectorEfl.cpp: Added.
+        (WebKit::WebInspector::localizedStringsURL):
+        * WebProcess/WebPage/efl/WebPageEfl.cpp: Added.
+        (WebKit::WebPage::platformInitialize):
+        (WebKit::WebPage::platformPreferencesDidChange):
+        (WebKit::scroll):
+        (WebKit::WebPage::performDefaultBehaviorForKeyEvent):
+        (WebKit::WebPage::platformHasLocalDataForURL):
+        (WebKit::WebPage::cachedResponseMIMETypeForURL):
+        (WebKit::WebPage::platformCanHandleRequest):
+        (WebKit::WebPage::cachedSuggestedFilenameForURL):
+        (WebKit::WebPage::cachedResponseDataForURL):
+        * WebProcess/efl/WebProcessEfl.cpp: Added.
+        (WebKit::WebProcess::platformSetCacheModel):
+        (WebKit::WebProcess::platformClearResourceCaches):
+        (WebKit::WebProcess::platformInitializeWebProcess):
+        (WebKit::WebProcess::platformTerminate):
+        * WebProcess/efl/WebProcessMainEfl.cpp: Added.
+        (WebKit::WebProcessMainEfl):
+        * WebProcess/efl/WebProcessMainEfl.h: Added.
+        * efl/MainEfl.cpp: Added.
+        (main):
+
 2011-06-13  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         Reviewed by Eric Seidel.
