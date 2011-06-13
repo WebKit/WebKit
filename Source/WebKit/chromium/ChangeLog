@@ -1,3 +1,14 @@
+2011-06-13  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62345
+        Use per-isolate embedder data instead of statics for caches in bindings.
+        This is a prerequisite for more than one v8 isolate per process.
+
+        * tests/IDBBindingUtilitiesTest.cpp:
+        (WebCore::TEST):
+
 2011-06-13  Lei Zhang  <thestig@chromium.org>
 
         Reviewed by Darin Fisher.

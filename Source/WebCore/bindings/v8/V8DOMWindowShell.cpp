@@ -299,10 +299,11 @@ bool V8DOMWindowShell::initContextIfNeeded()
         v8::V8::SetFailedAccessCheckCallbackFunction(reportUnsafeJavaScriptAccess);
 
         ScriptProfiler::initialize();
-        
+
+        V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
+
         isV8Initialized = true;
     }
-
 
     m_context = createNewContext(m_global, 0);
     if (m_context.IsEmpty())

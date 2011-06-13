@@ -34,6 +34,8 @@
 #include <wtf/Forward.h>
 #include <v8.h>
 
+#include "OwnHandle.h"
+
 namespace WebCore {
 
     class EventListener;
@@ -63,6 +65,15 @@ namespace WebCore {
     };
 
     typedef unsigned CallbackAllowedValueFlags;
+
+    class V8LocalContext {
+    public:
+        V8LocalContext();
+        virtual ~V8LocalContext();
+    private:
+        v8::HandleScope m_handleScope;
+        OwnHandle<v8::Context> m_context;
+    };
 
     // 'FunctionOnly' is assumed for the created callback.
     template <typename V8CallbackType>

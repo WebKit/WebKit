@@ -50,6 +50,40 @@ namespace WebCore {
     };
     typedef BindingSecurity<V8Binding> V8BindingSecurity;
 
+    class V8BindingPerIsolateData {
+    public:
+        static V8BindingPerIsolateData* create(v8::Isolate*);
+        static void ensureInitialized(v8::Isolate*);
+        static V8BindingPerIsolateData* get(v8::Isolate* isolate)
+        {
+            ASSERT(isolate->GetData());
+            return static_cast<V8BindingPerIsolateData*>(isolate->GetData()); 
+        }
+
+        static V8BindingPerIsolateData* current()
+        {
+            return get(v8::Isolate::GetCurrent());
+        }
+        static void dispose(v8::Isolate*);
+
+        typedef HashMap<WrapperTypeInfo*, v8::Persistent<v8::FunctionTemplate> > TemplateMap;
+
+        TemplateMap& rawTemplateMap() { return m_rawTemplates; }
+        TemplateMap& templateMap() { return m_templates; }
+        v8::Persistent<v8::String>& toStringName() { return m_toStringName; }
+        v8::Persistent<v8::FunctionTemplate>& toStringTemplate() { return m_toStringTemplate; }
+
+    private:
+        explicit V8BindingPerIsolateData(v8::Isolate*);
+        ~V8BindingPerIsolateData();
+
+        TemplateMap m_rawTemplates;
+        TemplateMap m_templates;
+        v8::Persistent<v8::String> m_toStringName;
+        v8::Persistent<v8::FunctionTemplate> m_toStringTemplate;
+    };
+
+
     enum ExternalMode {
         Externalize,
         DoNotExternalize

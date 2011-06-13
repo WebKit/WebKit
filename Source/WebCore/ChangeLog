@@ -1,3 +1,39 @@
+2011-06-13  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62345
+        Use per-isolate embedder data instead of statics for caches in bindings.
+        This is a prerequisite for more than one v8 isolate per process.
+
+        * bindings/scripts/CodeGeneratorV8.pm:
+        * bindings/v8/IDBBindingUtilities.cpp:
+        (WebCore::createIDBKeyFromSerializedValueAndKeyPath):
+        (WebCore::injectIDBKeyIntoSerializedValue):
+        * bindings/v8/V8Binding.cpp:
+        (WebCore::V8BindingPerIsolateData::V8BindingPerIsolateData):
+        (WebCore::V8BindingPerIsolateData::~V8BindingPerIsolateData):
+        (WebCore::V8BindingPerIsolateData::create):
+        (WebCore::V8BindingPerIsolateData::ensureInitialized):
+        (WebCore::V8BindingPerIsolateData::dispose):
+        (WebCore::getToStringName):
+        (WebCore::getToStringTemplate):
+        * bindings/v8/V8Binding.h:
+        (WebCore::V8BindingPerIsolateData::get):
+        (WebCore::V8BindingPerIsolateData::current):
+        (WebCore::V8BindingPerIsolateData::rawTemplateMap):
+        (WebCore::V8BindingPerIsolateData::templateMap):
+        (WebCore::V8BindingPerIsolateData::toStringName):
+        (WebCore::V8BindingPerIsolateData::toStringTemplate):
+        * bindings/v8/V8DOMWindowShell.cpp:
+        (WebCore::V8DOMWindowShell::initContextIfNeeded):
+        * bindings/v8/V8Utilities.cpp:
+        (WebCore::V8LocalContext::V8LocalContext):
+        (WebCore::V8LocalContext::~V8LocalContext):
+        * bindings/v8/V8Utilities.h:
+        * bindings/v8/WorkerContextExecutionProxy.cpp:
+        (WebCore::WorkerContextExecutionProxy::initV8IfNeeded):
+
 2011-06-13  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Adam Barth.

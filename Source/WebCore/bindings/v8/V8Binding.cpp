@@ -47,6 +47,40 @@
 
 namespace WebCore {
 
+
+V8BindingPerIsolateData::V8BindingPerIsolateData(v8::Isolate* isolate)
+{
+}
+
+V8BindingPerIsolateData::~V8BindingPerIsolateData()
+{
+}
+
+V8BindingPerIsolateData* V8BindingPerIsolateData::create(v8::Isolate* isolate)
+{
+    ASSERT(isolate);
+    ASSERT(!isolate->GetData());
+    V8BindingPerIsolateData* data = new V8BindingPerIsolateData(isolate);
+    isolate->SetData(data);
+    return data;
+}
+
+void V8BindingPerIsolateData::ensureInitialized(v8::Isolate* isolate) 
+{
+    ASSERT(isolate);
+    if (!isolate->GetData()) 
+        create(isolate);
+}
+
+void V8BindingPerIsolateData::dispose(v8::Isolate* isolate)
+{
+    void* data = isolate->GetData();
+    delete static_cast<V8BindingPerIsolateData*>(data);
+    isolate->SetData(0);
+}
+
+
+
 // WebCoreStringResource is a helper class for v8ExternalString. It is used
 // to manage the life-cycle of the underlying buffer of the external string.
 class WebCoreStringResource : public v8::String::ExternalStringResource {
@@ -540,10 +574,11 @@ v8::Local<v8::Signature> configureTemplate(v8::Persistent<v8::FunctionTemplate> 
 
 v8::Persistent<v8::String> getToStringName()
 {
-    DEFINE_STATIC_LOCAL(v8::Persistent<v8::String>, value, ());
-    if (value.IsEmpty())
-        value = v8::Persistent<v8::String>::New(v8::String::New("toString"));
-    return value;
+    v8::Persistent<v8::String>& toStringName = V8BindingPerIsolateData::current()->toStringName();
+    if (toStringName.IsEmpty())
+        toStringName = v8::Persistent<v8::String>::New(v8::String::New("toString"));
+    return *toStringName;
+
 }
 
 static v8::Handle<v8::Value> constructorToString(const v8::Arguments& args)
@@ -564,7 +599,7 @@ static v8::Handle<v8::Value> constructorToString(const v8::Arguments& args)
 
 v8::Persistent<v8::FunctionTemplate> getToStringTemplate()
 {
-    DEFINE_STATIC_LOCAL(v8::Persistent<v8::FunctionTemplate>, toStringTemplate, ());
+    v8::Persistent<v8::FunctionTemplate>& toStringTemplate = V8BindingPerIsolateData::current()->toStringTemplate();
     if (toStringTemplate.IsEmpty())
         toStringTemplate = v8::Persistent<v8::FunctionTemplate>::New(v8::FunctionTemplate::New(constructorToString));
     return toStringTemplate;

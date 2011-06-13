@@ -28,6 +28,7 @@
 #include "IDBKey.h"
 #include "IDBKeyPath.h"
 #include "SerializedScriptValue.h"
+#include "V8Utilities.h"
 
 #include <gtest/gtest.h>
 #include <wtf/Vector.h>
@@ -37,25 +38,6 @@
 using namespace WebCore;
 
 namespace {
-
-class LocalContext {
-public:
-    LocalContext()
-        : m_context(v8::Context::New())
-    {
-        m_context->Enter();
-    }
-
-    virtual ~LocalContext()
-    {
-        m_context->Exit();
-        m_context.Dispose();
-    }
-
-private:
-    v8::HandleScope m_scope;
-    v8::Persistent<v8::Context> m_context;
-};
 
 PassRefPtr<IDBKey> checkKeyFromValueAndKeyPathInternal(SerializedScriptValue* value, const String& keyPath)
 {
@@ -113,7 +95,7 @@ void checkKeyPathNumberValue(SerializedScriptValue* value, const String& keyPath
 
 TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyStringValue)
 {
-    LocalContext v8context;
+    V8LocalContext v8context;
     v8::Local<v8::Object> object = v8::Object::New();
     object->Set(v8::String::New("foo"), v8::String::New("zoo"));
 
@@ -126,7 +108,7 @@ TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyStringValue)
 
 TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyNumberValue)
 {
-    LocalContext v8context;
+    V8LocalContext v8context;
     v8::Local<v8::Object> object = v8::Object::New();
     object->Set(v8::String::New("foo"), v8::Number::New(456));
 
@@ -139,7 +121,7 @@ TEST(IDBKeyFromValueAndKeyPathTest, TopLevelPropertyNumberValue)
 
 TEST(IDBKeyFromValueAndKeyPathTest, TopLevelArrayElement)
 {
-    LocalContext v8context;
+    V8LocalContext v8context;
     v8::Local<v8::Array> array = v8::Array::New();
     array->Set(3, v8::String::New("zoo"));
 
@@ -152,7 +134,7 @@ TEST(IDBKeyFromValueAndKeyPathTest, TopLevelArrayElement)
 
 TEST(IDBKeyFromValueAndKeyPathTest, SubProperty)
 {
-    LocalContext v8context;
+    V8LocalContext v8context;
     v8::Local<v8::Object> object = v8::Object::New();
     v8::Local<v8::Object> subProperty = v8::Object::New();
     subProperty->Set(v8::String::New("bar"), v8::String::New("zee"));
@@ -167,7 +149,7 @@ TEST(IDBKeyFromValueAndKeyPathTest, SubProperty)
 
 TEST(IDBKeyFromValueAndKeyPathTest, Array2D)
 {
-    LocalContext v8context;
+    V8LocalContext v8context;
     v8::Local<v8::Object> object = v8::Object::New();
     v8::Local<v8::Array> array = v8::Array::New();
     v8::Local<v8::Array> subArray = v8::Array::New();
@@ -184,7 +166,7 @@ TEST(IDBKeyFromValueAndKeyPathTest, Array2D)
 
 TEST(InjectIDBKeyTest, TopLevelPropertyStringValue)
 {
-    LocalContext v8context;
+    V8LocalContext v8context;
     v8::Local<v8::Object> object = v8::Object::New();
     object->Set(v8::String::New("foo"), v8::String::New("zoo"));
 
@@ -197,7 +179,7 @@ TEST(InjectIDBKeyTest, TopLevelPropertyStringValue)
 
 TEST(InjectIDBKeyTest, TopLevelArrayElement)
 {
-    LocalContext v8context;
+    V8LocalContext v8context;
     v8::Local<v8::Array> array = v8::Array::New();
     array->Set(3, v8::String::New("zoo"));
 
@@ -210,7 +192,7 @@ TEST(InjectIDBKeyTest, TopLevelArrayElement)
 
 TEST(InjectIDBKeyTest, SubProperty)
 {
-    LocalContext v8context;
+    V8LocalContext v8context;
     v8::Local<v8::Object> object = v8::Object::New();
     v8::Local<v8::Object> subProperty = v8::Object::New();
     subProperty->Set(v8::String::New("bar"), v8::String::New("zee"));
@@ -227,7 +209,7 @@ TEST(InjectIDBKeyTest, SubProperty)
 
 TEST(InjectIDBKeyTest, Array2D)
 {
-    LocalContext v8context;
+    V8LocalContext v8context;
     v8::Local<v8::Object> object = v8::Object::New();
     v8::Local<v8::Array> array = v8::Array::New();
     v8::Local<v8::Array> subArray = v8::Array::New();

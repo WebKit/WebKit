@@ -48,6 +48,19 @@
 
 namespace WebCore {
 
+V8LocalContext::V8LocalContext()
+{
+    V8BindingPerIsolateData::ensureInitialized(v8::Isolate::GetCurrent());
+    m_context.set(v8::Context::New());
+    m_context.get()->Enter();
+}
+
+
+V8LocalContext::~V8LocalContext() 
+{
+    m_context.get()->Exit();
+}
+
 // Use an array to hold dependents. It works like a ref-counted scheme.
 // A value can be added more than once to the DOM object.
 void createHiddenDependency(v8::Handle<v8::Object> object, v8::Local<v8::Value> value, int cacheIndex)
