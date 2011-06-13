@@ -1,3 +1,10 @@
+2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac, GTK, and Qt rebaselines after r88717.
+
+        * platform/gtk/editing/pasteboard/paste-xml-expected.txt:
+        * platform/mac/editing/pasteboard/paste-xml-expected.txt:
+
 2011-06-13  Jeffrey Pfau  <jpfau@apple.com>
 
         Reviewed by Darin Adler.
