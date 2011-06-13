@@ -58,7 +58,12 @@ static double defaultSyncMessageTimeout(const String& pluginPath)
     // This way we could check if the plug-in process is actually hung or not.
     if (pathGetFileName(pluginPath) == "SharePointBrowserPlugin.plugin")
         return CoreIPC::Connection::NoTimeout;
-    
+
+    // We don't want a message timeout for the BankID plug-in since it can spin a nested
+    // run loop when it's waiting for a reply to an AppleEvent.
+    if (pathGetFileName(pluginPath) == "PersonalPlugin.bundle")
+        return CoreIPC::Connection::NoTimeout;
+
     return syncMessageTimeout;
 }
 

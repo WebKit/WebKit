@@ -441,6 +441,12 @@ void NetscapePluginModule::determineQuirks()
         // so we'll allow it to be instantiated even though we don't support QuickDraw.
         m_pluginQuirks.add(PluginQuirks::AllowHalfBakedQuickDrawSupport);
     }
+
+    if (plugin.bundleIdentifier == "com.jattesaker.macid2.NPPlugin") {
+        // The BankID plug-in uses QuickDraw but doesn't paint or receive events
+        // so we'll allow it to be instantiated even though we don't support QuickDraw.
+        m_pluginQuirks.add(PluginQuirks::AllowHalfBakedQuickDrawSupport);
+    }
 #endif
 }
 

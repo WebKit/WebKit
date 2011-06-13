@@ -1,3 +1,21 @@
+2011-06-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        BankID plug-in isn't instantiated correctly
+        https://bugs.webkit.org/show_bug.cgi?id=62588
+        <rdar://problem/9586600>
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::determineQuirks):
+        The BankID plug-in uses the QuickDraw drawing model but doesn't draw anything so we can
+        use the half-baked QuickDraw support.
+
+        * WebProcess/Plugins/PluginProcessConnection.cpp:
+        (WebKit::defaultSyncMessageTimeout):
+        Don't use a sync message timeout for the BankID plug-in since it sends synchronous Apple Events
+        and we don't want the plug-in to die while it's waiting for a reply.
+
 2011-06-13  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by Darin Adler.
