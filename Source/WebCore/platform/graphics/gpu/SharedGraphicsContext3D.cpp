@@ -71,6 +71,8 @@ PassRefPtr<SharedGraphicsContext3D> SharedGraphicsContext3D::create(HostWindow* 
     RefPtr<GraphicsContext3D> context = GraphicsContext3D::create(attr, hostWindow);
     if (!context)
         return 0;
+    if (flags & UseSkiaGPU)
+        return adoptRef(new SharedGraphicsContext3D(context.release(), PassOwnPtr<SolidFillShader>(), PassOwnPtr<TexShader>(), PassOwnPtr<BicubicShader>(), PassOwnArrayPtr<OwnPtr<ConvolutionShader> >(), flags));
     OwnPtr<SolidFillShader> solidFillShader = SolidFillShader::create(context.get());
     if (!solidFillShader)
         return 0;

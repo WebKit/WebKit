@@ -1,3 +1,17 @@
+2011-06-13  Stephen White  <senorblanco@chromium.org>
+
+        Reviewed by James Robinson.
+
+        Improve GPU canvas startup time on the SkiaGPU path.
+        https://bugs.webkit.org/show_bug.cgi?id=62594
+        
+        Fixed by skipping creation of shaders used only by the legacy path.
+
+        Covered by existing canvas tests.
+
+        * platform/graphics/gpu/SharedGraphicsContext3D.cpp:
+        (WebCore::SharedGraphicsContext3D::create):
+
 2011-06-13  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Oliver Hunt.
