@@ -1,3 +1,15 @@
+2011-06-13  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] [Qt] Eliminate duplicate TestNetscapePlugin implementation
+        https://bugs.webkit.org/show_bug.cgi?id=62385
+
+        Remove adjustCursorEvent from platform-specific test expectation for Chromium Linux,
+        since the TestPlugin no longer prints this event.
+
+        * platform/chromium-linux/plugins/mouse-events-expected.txt: Remove adjustCursorEvent output.
+
 2011-06-13  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Adam Barth.
