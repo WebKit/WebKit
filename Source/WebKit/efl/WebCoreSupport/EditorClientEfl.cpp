@@ -147,17 +147,19 @@ void EditorClientEfl::didSetSelectionTypesForPasteboard()
 
 void EditorClientEfl::registerCommandForUndo(WTF::PassRefPtr<EditCommand> command)
 {
+    redoStack.clear();
     undoStack.append(command);
 }
 
-void EditorClientEfl::registerCommandForRedo(WTF::PassRefPtr<EditCommand>)
+void EditorClientEfl::registerCommandForRedo(WTF::PassRefPtr<EditCommand> command)
 {
-    notImplemented();
+    redoStack.append(command);
 }
 
 void EditorClientEfl::clearUndoRedoOperations()
 {
     undoStack.clear();
+    redoStack.clear();
 }
 
 bool EditorClientEfl::canCopyCut(Frame*, bool defaultValue) const
@@ -177,8 +179,7 @@ bool EditorClientEfl::canUndo() const
 
 bool EditorClientEfl::canRedo() const
 {
-    notImplemented();
-    return false;
+    return !redoStack.isEmpty();
 }
 
 void EditorClientEfl::undo()
@@ -190,7 +191,9 @@ void EditorClientEfl::undo()
 
 void EditorClientEfl::redo()
 {
-    notImplemented();
+    RefPtr<WebCore::EditCommand> command(*(--redoStack.end()));
+    redoStack.remove(--redoStack.end());
+    command->reapply();
 }
 
 bool EditorClientEfl::shouldInsertNode(Node*, Range*, EditorInsertAction)
