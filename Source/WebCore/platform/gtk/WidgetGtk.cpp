@@ -52,6 +52,7 @@ Widget::Widget(PlatformWidget widget)
 Widget::~Widget()
 {
     ASSERT(!parent());
+
     releasePlatformWidget();
 }
 

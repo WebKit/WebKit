@@ -1,5 +1,14 @@
 2011-06-13  Xan Lopez  <xlopez@igalia.com>
 
+        Unreviewed build fix.
+
+        Touch this to try to fix the build...
+
+        * platform/gtk/WidgetGtk.cpp:
+        (WebCore::Widget::~Widget):
+
+2011-06-13  Xan Lopez  <xlopez@igalia.com>
+
         Try to fix GTK+ build.
 
         * GNUmakefile.list.am: remove CredentialStorage.cpp
