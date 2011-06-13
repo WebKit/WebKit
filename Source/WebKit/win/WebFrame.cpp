@@ -1717,7 +1717,7 @@ ResourceError WebFrame::cannotShowURLError(const ResourceRequest& request)
     return ResourceError(String(WebKitErrorDomain), WebKitErrorCannotShowURL, request.url().string(), String());
 }
 
-ResourceError WebFrame::interruptForPolicyChangeError(const ResourceRequest& request)
+ResourceError WebFrame::interruptedForPolicyChangeError(const ResourceRequest& request)
 {
     // FIXME: Need to implement the String descriptions for errors in the WebKitErrorDomain and have them localized
     return ResourceError(String(WebKitErrorDomain), WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().string(), String());

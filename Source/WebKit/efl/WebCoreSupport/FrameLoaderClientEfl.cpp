@@ -804,7 +804,7 @@ ResourceError FrameLoaderClientEfl::cannotShowURLError(const ResourceRequest& re
                          "Cannot show URL");
 }
 
-ResourceError FrameLoaderClientEfl::interruptForPolicyChangeError(const ResourceRequest& request)
+ResourceError FrameLoaderClientEfl::interruptedForPolicyChangeError(const ResourceRequest& request)
 {
     return ResourceError("Error", WebKitErrorFrameLoadInterruptedByPolicyChange,
                          request.url().string(), "Frame load interrupted by policy change");

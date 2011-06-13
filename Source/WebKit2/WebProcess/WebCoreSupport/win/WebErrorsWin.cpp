@@ -58,7 +58,7 @@ ResourceError cannotShowURLError(const ResourceRequest& request)
     return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodeCannotShowURL, request.url().string(), String());
 }
 
-ResourceError interruptForPolicyChangeError(const ResourceRequest& request)
+ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
 {
     return ResourceError(WebError::webKitErrorDomain(), kWKErrorCodeFrameLoadInterruptedByPolicyChange, request.url().string(), String());
 }

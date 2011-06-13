@@ -1227,7 +1227,7 @@ ResourceError FrameLoaderClientImpl::cannotShowURLError(const ResourceRequest& r
         m_webFrame, WrappedResourceRequest(request));
 }
 
-ResourceError FrameLoaderClientImpl::interruptForPolicyChangeError(
+ResourceError FrameLoaderClientImpl::interruptedForPolicyChangeError(
     const ResourceRequest& request)
 {
     return ResourceError(internalErrorDomain, PolicyChangeError,

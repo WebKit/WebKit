@@ -69,7 +69,7 @@ ResourceError cannotShowURLError(const ResourceRequest& request)
                          QCoreApplication::translate("QWebFrame", "Cannot show URL", 0, QCoreApplication::UnicodeUTF8));
 }
 
-ResourceError interruptForPolicyChangeError(const ResourceRequest& request)
+ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
 {
     return ResourceError("WebKit", WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().string(),
                          QCoreApplication::translate("QWebFrame", "Frame load interrupted by policy change", 0, QCoreApplication::UnicodeUTF8));

@@ -664,7 +664,7 @@ WebCore::ResourceError FrameLoaderClientWx::cannotShowURLError(const WebCore::Re
     return ResourceError(String(), WebKitErrorCannotShowURL, request.url().string(), String());
 }
 
-WebCore::ResourceError FrameLoaderClientWx::interruptForPolicyChangeError(const WebCore::ResourceRequest& request)
+WebCore::ResourceError FrameLoaderClientWx::interruptedForPolicyChangeError(const WebCore::ResourceRequest& request)
 {
     notImplemented();
     return ResourceError(String(), WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().string(), String());

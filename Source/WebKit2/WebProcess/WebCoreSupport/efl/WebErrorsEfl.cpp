@@ -52,7 +52,7 @@ ResourceError cannotShowURLError(const ResourceRequest& request)
     return ResourceError();
 }
 
-ResourceError interruptForPolicyChangeError(const ResourceRequest& request)
+ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
 {
     notImplemented();
     return ResourceError();

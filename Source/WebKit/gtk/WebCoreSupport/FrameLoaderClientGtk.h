@@ -152,7 +152,7 @@ namespace WebKit {
         virtual WebCore::ResourceError cancelledError(const WebCore::ResourceRequest&);
         virtual WebCore::ResourceError blockedError(const WebCore::ResourceRequest&);
         virtual WebCore::ResourceError cannotShowURLError(const WebCore::ResourceRequest&);
-        virtual WebCore::ResourceError interruptForPolicyChangeError(const WebCore::ResourceRequest&);
+        virtual WebCore::ResourceError interruptedForPolicyChangeError(const WebCore::ResourceRequest&);
 
         virtual WebCore::ResourceError cannotShowMIMETypeError(const WebCore::ResourceResponse&);
         virtual WebCore::ResourceError fileDoesNotExistError(const WebCore::ResourceResponse&);

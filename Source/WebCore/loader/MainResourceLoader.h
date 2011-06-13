@@ -86,7 +86,7 @@ namespace WebCore {
         void handleDataLoad(ResourceRequest&);
 
         void receivedError(const ResourceError&);
-        ResourceError interruptForPolicyChangeError() const;
+        ResourceError interruptedForPolicyChangeError() const;
         void stopLoadingForPolicyChange();
         bool isPostOrRedirectAfterPost(const ResourceRequest& newRequest, const ResourceResponse& redirectResponse);
 

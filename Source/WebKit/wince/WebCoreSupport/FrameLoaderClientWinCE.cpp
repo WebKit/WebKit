@@ -546,7 +546,7 @@ ResourceError FrameLoaderClientWinCE::cannotShowURLError(const WebCore::Resource
     return ResourceError();
 }
 
-ResourceError FrameLoaderClientWinCE::interruptForPolicyChangeError(const WebCore::ResourceRequest&)
+ResourceError FrameLoaderClientWinCE::interruptedForPolicyChangeError(const WebCore::ResourceRequest&)
 {
     return ResourceError();
 }

@@ -154,7 +154,7 @@ ResourceError cannotShowURLError(const ResourceRequest& request)
     return [NSError _webKitErrorWithDomain:WebError::webKitErrorDomain() code:kWKErrorCodeCannotShowURL URL:request.url()];
 }
 
-ResourceError interruptForPolicyChangeError(const ResourceRequest& request)
+ResourceError interruptedForPolicyChangeError(const ResourceRequest& request)
 {
     return [NSError _webKitErrorWithDomain:WebError::webKitErrorDomain() code:kWKErrorCodeFrameLoadInterruptedByPolicyChange URL:request.url()];
 }

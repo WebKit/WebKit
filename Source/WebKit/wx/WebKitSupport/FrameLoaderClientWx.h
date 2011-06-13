@@ -176,7 +176,7 @@ namespace WebCore {
         virtual ResourceError cancelledError(const ResourceRequest&);
         virtual ResourceError blockedError(const ResourceRequest&);
         virtual ResourceError cannotShowURLError(const ResourceRequest&);
-        virtual ResourceError interruptForPolicyChangeError(const ResourceRequest&);
+        virtual ResourceError interruptedForPolicyChangeError(const ResourceRequest&);
         virtual ResourceError cannotShowMIMETypeError(const ResourceResponse&);
         virtual ResourceError fileDoesNotExistError(const ResourceResponse&);
         virtual bool shouldFallBack(const ResourceError&);

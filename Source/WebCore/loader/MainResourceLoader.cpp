@@ -118,14 +118,14 @@ void MainResourceLoader::didCancel(const ResourceError& error)
     frameLoader()->receivedMainResourceError(error, true);
 }
 
-ResourceError MainResourceLoader::interruptForPolicyChangeError() const
+ResourceError MainResourceLoader::interruptedForPolicyChangeError() const
 {
-    return frameLoader()->client()->interruptForPolicyChangeError(request());
+    return frameLoader()->client()->interruptedForPolicyChangeError(request());
 }
 
 void MainResourceLoader::stopLoadingForPolicyChange()
 {
-    ResourceError error = interruptForPolicyChangeError();
+    ResourceError error = interruptedForPolicyChangeError();
     error.setIsCancellation(true);
     cancel(error);
 }
@@ -278,7 +278,7 @@ void MainResourceLoader::continueAfterContentPolicy(PolicyAction contentPolicy, 
         frameLoader()->client()->download(m_handle.get(), request(), m_handle.get()->firstRequest(), r);
         // It might have gone missing
         if (frameLoader())
-            receivedError(interruptForPolicyChangeError());
+            receivedError(interruptedForPolicyChangeError());
         return;
 
     case PolicyIgnore:

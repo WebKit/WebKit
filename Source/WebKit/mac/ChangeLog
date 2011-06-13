@@ -1,5 +1,16 @@
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Rename FrameLoaderClient::interruptForPolicyChangeError to use the past tense
+        https://bugs.webkit.org/show_bug.cgi?id=62516
+
+        * WebCoreSupport/WebFrameLoaderClient.h:
+        * WebCoreSupport/WebFrameLoaderClient.mm:
+        (WebFrameLoaderClient::interruptedForPolicyChangeError):
+
+2011-06-12  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Remove FrameLoader::isProcessingUserGesture

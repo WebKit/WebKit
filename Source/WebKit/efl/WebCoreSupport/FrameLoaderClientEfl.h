@@ -171,7 +171,7 @@ class FrameLoaderClientEfl : public FrameLoaderClient {
     virtual ResourceError cancelledError(const ResourceRequest&);
     virtual ResourceError blockedError(const ResourceRequest&);
     virtual ResourceError cannotShowURLError(const ResourceRequest&);
-    virtual ResourceError interruptForPolicyChangeError(const ResourceRequest&);
+    virtual ResourceError interruptedForPolicyChangeError(const ResourceRequest&);
 
     virtual ResourceError cannotShowMIMETypeError(const ResourceResponse&);
     virtual ResourceError fileDoesNotExistError(const ResourceResponse&);

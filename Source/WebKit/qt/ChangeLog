@@ -1,5 +1,16 @@
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Rename FrameLoaderClient::interruptForPolicyChangeError to use the past tense
+        https://bugs.webkit.org/show_bug.cgi?id=62516
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (WebCore::FrameLoaderClientQt::interruptedForPolicyChangeError):
+        * WebCoreSupport/FrameLoaderClientQt.h:
+
+2011-06-12  Adam Barth  <abarth@webkit.org>
+
         Attempt to fix Qt build.
 
         * WebCoreSupport/FrameLoaderClientQt.cpp:

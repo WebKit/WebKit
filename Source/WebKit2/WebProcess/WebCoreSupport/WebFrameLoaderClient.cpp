@@ -975,9 +975,9 @@ ResourceError WebFrameLoaderClient::cannotShowURLError(const ResourceRequest& re
     return WebKit::cannotShowURLError(request);
 }
 
-ResourceError WebFrameLoaderClient::interruptForPolicyChangeError(const ResourceRequest& request)
+ResourceError WebFrameLoaderClient::interruptedForPolicyChangeError(const ResourceRequest& request)
 {
-    return WebKit::interruptForPolicyChangeError(request);
+    return WebKit::interruptedForPolicyChangeError(request);
 }
 
 ResourceError WebFrameLoaderClient::cannotShowMIMETypeError(const ResourceResponse& response)

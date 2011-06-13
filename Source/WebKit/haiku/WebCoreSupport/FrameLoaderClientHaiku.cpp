@@ -537,7 +537,7 @@ WebCore::ResourceError FrameLoaderClientHaiku::cannotShowURLError(const WebCore:
     return ResourceError(String(), WebKitErrorCannotShowURL, request.url().string(), String());
 }
 
-WebCore::ResourceError FrameLoaderClientHaiku::interruptForPolicyChangeError(const WebCore::ResourceRequest& request)
+WebCore::ResourceError FrameLoaderClientHaiku::interruptedForPolicyChangeError(const WebCore::ResourceRequest& request)
 {
     notImplemented();
     return ResourceError(String(), WebKitErrorFrameLoadInterruptedByPolicyChange, request.url().string(), String());
