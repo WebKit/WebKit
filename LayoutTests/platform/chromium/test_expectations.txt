@@ -4004,3 +4004,6 @@ BUGVITALYR LEOPARD : fast/borders/outline-alpha-inline.html = IMAGE
 BUGVITALYR LEOPARD : fast/inline/inline-wrap-with-parent-padding.html = IMAGE
 BUGVITALYR LEOPARD : svg/as-image/svg-as-background-with-relative-size.html = IMAGE
 BUGVITALYR LINUX MAC GPU : compositing/geometry/tall-page-composited.html = CRASH FAIL
+
+// Added in r88637
+BUGCR85917 MAC : svg/animations/animateTransform-transformable-transform.html = TEXT
