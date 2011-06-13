@@ -34,13 +34,13 @@
 #include "SVGGradientElement.h"
 #include "SVGNames.h"
 #include "SVGParserUtilities.h"
+#include "SVGPatternElement.h"
 #include "SVGSVGElement.h"
 #include "SVGStyledTransformableElement.h"
 #include "SVGTextElement.h"
 #include "SVGTransform.h"
 #include "SVGTransformList.h"
 #include "SVGUseElement.h"
-#include <math.h>
 #include <wtf/MathExtras.h>
 
 using namespace std;
@@ -123,7 +123,8 @@ static SVGTransformList* transformListFor(SVGElement* element)
         return &static_cast<SVGTextElement*>(element)->transform();
     if (element->hasTagName(SVGNames::linearGradientTag) || element->hasTagName(SVGNames::radialGradientTag))
         return &static_cast<SVGGradientElement*>(element)->gradientTransform();
-    // FIXME: Handle patternTransform, which is obviously missing!
+    if (element->hasTagName(SVGNames::patternTag))
+        return &static_cast<SVGPatternElement*>(element)->patternTransform();
     return 0;
 }
     
@@ -133,11 +134,16 @@ void SVGAnimateTransformElement::resetToBaseValue(const String& baseValue)
     if (!targetElement || determineAnimatedAttributeType(targetElement) == AnimatedUnknown)
         return;
 
+    // FIXME: This might not be correct for accumulated sum. Needs checking.
     if (targetElement->hasTagName(SVGNames::linearGradientTag) || targetElement->hasTagName(SVGNames::radialGradientTag)) {
         targetElement->setAttribute(SVGNames::gradientTransformAttr, baseValue.isEmpty() ? "matrix(1 0 0 1 0 0)" : baseValue);
         return;
     }
-
+    if (targetElement->hasTagName(SVGNames::patternTag)) {
+        targetElement->setAttribute(SVGNames::patternTransformAttr, baseValue.isEmpty() ? "matrix(1 0 0 1 0 0)" : baseValue);
+        return;
+    }
+    
     if (baseValue.isEmpty()) {
         if (SVGTransformList* list = transformListFor(targetElement))
             list->clear();
@@ -221,7 +227,8 @@ void SVGAnimateTransformElement::applyResultsToTarget()
             static_cast<SVGTextElement*>(shadowTreeElement)->setTransformBaseValue(*transformList);
         else if (shadowTreeElement->hasTagName(SVGNames::linearGradientTag) || shadowTreeElement->hasTagName(SVGNames::radialGradientTag))
             static_cast<SVGGradientElement*>(shadowTreeElement)->setGradientTransformBaseValue(*transformList);
-        // FIXME: Handle patternTransform, obviously missing!
+        else if (shadowTreeElement->hasTagName(SVGNames::patternTag))
+            static_cast<SVGPatternElement*>(shadowTreeElement)->setPatternTransformBaseValue(*transformList);
         if (RenderObject* renderer = shadowTreeElement->renderer()) {
             renderer->setNeedsTransformUpdate();
             RenderSVGResource::markForLayoutAndParentResourceInvalidation(renderer);

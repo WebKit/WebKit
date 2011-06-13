@@ -1,0 +1,17 @@
+SVG 1.1 dynamic animation tests
+
+Tests animation of 'transform'. Should result in a 200x200 rect and only PASS messages.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS rect.transform.animVal.getItem(0).matrix.a is 1
+PASS rect.transform.baseVal.getItem(0).matrix.a is 1
+PASS rect.transform.animVal.getItem(0).matrix.a is 1.5
+PASS rect.transform.baseVal.getItem(0).matrix.a is 1.5
+PASS rect.transform.animVal.getItem(0).matrix.a is 2
+PASS rect.transform.baseVal.getItem(0).matrix.a is 2
+PASS successfullyParsed is true
+
+TEST COMPLETE
+
