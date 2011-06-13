@@ -174,7 +174,8 @@ Position Position::parentAnchoredEquivalent() const
         return firstPositionInOrBeforeNode(m_anchorNode.get());
     }
     if (!m_anchorNode->offsetInCharacters() && (m_anchorType == PositionIsAfterAnchor || static_cast<unsigned>(m_offset) == m_anchorNode->childNodeCount())
-        && (editingIgnoresContent(m_anchorNode.get()) || isTableElement(m_anchorNode.get()))) {
+        && (editingIgnoresContent(m_anchorNode.get()) || isTableElement(m_anchorNode.get()))
+        && containerNode()) {
         return positionInParentAfterNode(m_anchorNode.get());
     }
 

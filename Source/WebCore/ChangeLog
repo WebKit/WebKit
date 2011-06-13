@@ -1,3 +1,21 @@
+2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r81518): Crash in makeRange() when invoking the dictionary panel over a file input
+        https://bugs.webkit.org/show_bug.cgi?id=62544
+
+        Fixed the crash by adding null pointer checks.
+
+        No new tests since there's no way to open dictionary panel.
+
+        * dom/Position.cpp:
+        (WebCore::Position::parentAnchoredEquivalent):
+        * editing/VisiblePosition.cpp:
+        (WebCore::makeRange):
+        * page/Frame.cpp:
+        (WebCore::Frame::rangeForPoint):
+
 2011-06-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Nate Chapin.
