@@ -1,3 +1,19 @@
+2011-06-13  No'am Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Implement accelerated compositing on WK2 Qt port
+        https://bugs.webkit.org/show_bug.cgi?id=56935
+
+        Added WebLayerTreeInfo: a set of structures that can serialize a tree of GraphicsLayers
+        across to the UI process.
+
+        Together with Viatcheslav Ostapenko.
+
+        * Scripts/webkit2/messages.py:
+        * Shared/WebLayerTreeInfo.cpp: Added.
+        * Shared/WebLayerTreeInfo.h: Added.
+
 2011-06-11  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Anders Carlsson.
