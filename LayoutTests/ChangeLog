@@ -1,3 +1,27 @@
+2011-06-13  Wyatt Carss  <wcarss@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        dump-as-markup conversion: editing/pasteboard/paste-xml.xhtml
+        https://bugs.webkit.org/show_bug.cgi?id=58159
+
+        Converted to dump the key part of page as text. The platform-dependent files are
+        copied from the previous setup of this test, as mac appears to do something different
+        in its delegate info -- 'insertText' instead of 'insertNode', and some differences
+        in how it counts indices. Note that chromium-mac works the same as chromium-win, but
+        would hit mac first. GTK appears to pass for now; if tests fail we'll reorganize these
+        a bit accordingly.
+
+        * editing/pasteboard/paste-xml.xhtml:
+        * platform/chromium-linux/editing/pasteboard/paste-xml-expected.png: Removed.
+        * platform/chromium-mac/editing/pasteboard/paste-xml-expected.txt:
+        * platform/chromium-win/editing/pasteboard/paste-xml-expected.png: Removed.
+        * platform/chromium-win/editing/pasteboard/paste-xml-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/editing/pasteboard/paste-xml-expected.png: Removed.
+        * platform/mac/editing/pasteboard/paste-xml-expected.txt:
+        * platform/win/editing/pasteboard/paste-xml-expected.txt:
+
 2011-06-13  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Eric Seidel.
