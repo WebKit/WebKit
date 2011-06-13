@@ -1,3 +1,15 @@
+2011-06-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson.
+
+        Add utility method to report whether a RenderLayer has any scrollbars
+        https://bugs.webkit.org/show_bug.cgi?id=62579
+        
+        New method that returns true with either scrollbar is present.
+
+        * rendering/RenderLayer.h:
+        (WebCore::RenderLayer::hasScrollbars):
+
 2011-06-11  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Anders Carlsson.
