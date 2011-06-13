@@ -446,6 +446,24 @@ WebAccessibilityRole WebAccessibilityObject::roleValue() const
     return static_cast<WebAccessibilityRole>(m_private->roleValue());
 }
 
+unsigned WebAccessibilityObject::selectionEnd() const
+{
+    if (!m_private)
+        return 0;
+
+    m_private->updateBackingStore();
+    return m_private->selectedTextRange().start + m_private->selectedTextRange().length;
+}
+
+unsigned WebAccessibilityObject::selectionStart() const
+{
+    if (!m_private)
+        return 0;
+
+    m_private->updateBackingStore();
+    return m_private->selectedTextRange().start;
+}
+
 void WebAccessibilityObject::setFocused(bool on) const
 {
     if (m_private)

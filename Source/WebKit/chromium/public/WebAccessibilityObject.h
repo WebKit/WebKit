@@ -110,6 +110,8 @@ public:
     WEBKIT_API WebString keyboardShortcut() const;
     WEBKIT_API bool performDefaultAction() const;
     WEBKIT_API WebAccessibilityRole roleValue() const;
+    WEBKIT_API unsigned selectionEnd() const;
+    WEBKIT_API unsigned selectionStart() const;
     WEBKIT_API void setFocused(bool) const;
     WEBKIT_API WebString stringValue() const;
     WEBKIT_API WebString title() const;
