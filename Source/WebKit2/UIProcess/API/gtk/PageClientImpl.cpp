@@ -33,7 +33,7 @@
 #include "NativeWebMouseEvent.h"
 #include "NotImplemented.h"
 #include "WebContext.h"
-#include "WebContextMenuProxy.h"
+#include "WebContextMenuProxyGtk.h"
 #include "WebEventFactory.h"
 #include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
@@ -210,10 +210,9 @@ PassRefPtr<WebPopupMenuProxy> PageClientImpl::createPopupMenuProxy(WebPageProxy*
     return WebPopupMenuProxyGtk::create(m_viewWidget, page);
 }
 
-PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy*)
+PassRefPtr<WebContextMenuProxy> PageClientImpl::createContextMenuProxy(WebPageProxy* page)
 {
-    notImplemented();
-    return 0;
+    return WebContextMenuProxyGtk::create(m_viewWidget, page);
 }
 
 void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool fadeOut)

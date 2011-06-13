@@ -43,6 +43,7 @@ class NSMenuItem;
 typedef struct tagMENUITEMINFOW MENUITEMINFO;
 #elif PLATFORM(GTK)
 typedef struct _GtkMenuItem GtkMenuItem;
+typedef struct _GtkAction GtkAction;
 #elif PLATFORM(QT)
 #include <QAction>
 #elif PLATFORM(WX)
@@ -247,6 +248,10 @@ namespace WebCore {
         bool enabled() const;
 
         void setSubMenu(ContextMenu*);
+
+#if PLATFORM(GTK)
+        GtkAction* gtkAction() const;
+#endif
 
 #if USE(CROSS_PLATFORM_CONTEXT_MENUS)
 #if PLATFORM(WIN)

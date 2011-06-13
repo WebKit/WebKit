@@ -24,7 +24,7 @@
 
 #include "ContextMenu.h"
 #include "GOwnPtr.h"
-#include "NotImplemented.h"
+#include "GRefPtr.h"
 #include <gtk/gtk.h>
 #include <wtf/text/CString.h>
 
@@ -117,51 +117,56 @@ static const char* gtkStockIDFromContextMenuAction(const ContextMenuAction& acti
     }
 }
 
+static PlatformMenuItemDescription createPlatformMenuItemDescription(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked)
+{
+    if (type == SeparatorType)
+        return GTK_MENU_ITEM(gtk_separator_menu_item_new());
+
+    GOwnPtr<char> actionName(g_strdup_printf("context-menu-action-%d", action));
+    GRefPtr<GtkAction> platformAction;
+
+    if (type == CheckableActionType) {
+        platformAction = adoptGRef(GTK_ACTION(gtk_toggle_action_new(actionName.get(), title.utf8().data(), 0, gtkStockIDFromContextMenuAction(action))));
+        gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(platformAction.get()), checked);
+    } else
+        platformAction = adoptGRef(gtk_action_new(actionName.get(), title.utf8().data(), 0, gtkStockIDFromContextMenuAction(action)));
+    gtk_action_set_sensitive(platformAction.get(), enabled);
+
+    GtkMenuItem* item = GTK_MENU_ITEM(gtk_action_create_menu_item(platformAction.get()));
+    g_object_set_data(G_OBJECT(item), WEBKIT_CONTEXT_MENU_ACTION, GINT_TO_POINTER(action));
+
+    return item;
+}
+
 // Extract the ActionType from the menu item
 ContextMenuItem::ContextMenuItem(PlatformMenuItemDescription item)
     : m_platformDescription(item)
 {
 }
 
-ContextMenuItem::ContextMenuItem(ContextMenu*)
+ContextMenuItem::ContextMenuItem(ContextMenu* subMenu)
 {
-    notImplemented();
-}
-
-ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu)
-{
-    if (type == SeparatorType) {
-        m_platformDescription = GTK_MENU_ITEM(gtk_separator_menu_item_new());
-        return;
-    }
-
-    GOwnPtr<char> actionName(g_strdup_printf("context-menu-action-%d", action));
-    GtkAction* platformAction = 0;
-
-    if (type == CheckableActionType)
-        platformAction = GTK_ACTION(gtk_toggle_action_new(actionName.get(), title.utf8().data(), 0, gtkStockIDFromContextMenuAction(action)));
-    else
-        platformAction = gtk_action_new(actionName.get(), title.utf8().data(), 0, gtkStockIDFromContextMenuAction(action));
-
-    m_platformDescription = GTK_MENU_ITEM(gtk_action_create_menu_item(platformAction));
-    g_object_unref(platformAction);
-
-    g_object_set_data(G_OBJECT(m_platformDescription), WEBKIT_CONTEXT_MENU_ACTION, GINT_TO_POINTER(action));
-
+    m_platformDescription = GTK_MENU_ITEM(gtk_menu_item_new());
     if (subMenu)
         setSubMenu(subMenu);
 }
 
-ContextMenuItem::ContextMenuItem(ContextMenuItemType, ContextMenuAction, const String&, bool, bool)
+ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, ContextMenu* subMenu)
 {
-    // FIXME: Implement with WebKit2 ContextMenu changes.
-    notImplemented();
+    m_platformDescription = createPlatformMenuItemDescription(type, action, title, true, false);
+    if (subMenu)
+        setSubMenu(subMenu);
 }
 
-ContextMenuItem::ContextMenuItem(ContextMenuAction, const String&, bool, bool, Vector<ContextMenuItem>&)
+ContextMenuItem::ContextMenuItem(ContextMenuItemType type, ContextMenuAction action, const String& title, bool enabled, bool checked)
 {
-    // FIXME: Implement with WebKit2 ContextMenu changes.
-    notImplemented();
+    m_platformDescription = createPlatformMenuItemDescription(type, action, title, enabled, checked);
+}
+
+ContextMenuItem::ContextMenuItem(ContextMenuAction action, const String& title, bool enabled, bool checked, Vector<ContextMenuItem>& subMenuItems)
+{
+    m_platformDescription = createPlatformMenuItemDescription(SubmenuType, action, title, enabled, checked);
+    setSubMenu(subMenuItems);
 }
 
 ContextMenuItem::~ContextMenuItem()
@@ -204,13 +209,13 @@ void ContextMenuItem::setAction(ContextMenuAction action)
 
 String ContextMenuItem::title() const
 {
-    GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription));
-    return action ? String(gtk_action_get_label(action)) : String();
+    GtkAction* action = gtkAction();
+    return action ? String::fromUTF8(gtk_action_get_label(action)) : String();
 }
 
 void ContextMenuItem::setTitle(const String& title)
 {
-    GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription));
+    GtkAction* action = gtkAction();
     if (action)
         gtk_action_set_label(action, title.utf8().data());
 }
@@ -223,35 +228,46 @@ PlatformMenuDescription ContextMenuItem::platformSubMenu() const
 
 void ContextMenuItem::setSubMenu(ContextMenu* menu)
 {
-    gtk_menu_item_set_submenu(m_platformDescription, GTK_WIDGET(menu->platformDescription()));
+    gtk_menu_item_set_submenu(m_platformDescription, GTK_WIDGET(menu->releasePlatformDescription()));
+}
+
+void ContextMenuItem::setSubMenu(Vector<ContextMenuItem>& subMenuItems)
+{
+    ContextMenu menu(platformMenuDescription(subMenuItems));
+    setSubMenu(&menu);
 }
 
 void ContextMenuItem::setChecked(bool shouldCheck)
 {
-    GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription));
+    GtkAction* action = gtkAction();
     if (action && GTK_IS_TOGGLE_ACTION(action))
         gtk_toggle_action_set_active(GTK_TOGGLE_ACTION(action), shouldCheck);
 }
 
 bool ContextMenuItem::checked() const
 {
-    // FIXME: Implement with WebKit2 ContextMenu changes.
-    notImplemented();
+    GtkAction* action = gtkAction();
+    if (action && GTK_IS_TOGGLE_ACTION(action))
+        return gtk_toggle_action_get_active(GTK_TOGGLE_ACTION(action));
     return false;
 }
 
 bool ContextMenuItem::enabled() const
 {
-    // FIXME: Implement with WebKit2 ContextMenu changes.
-    notImplemented();
-    return false;
+    GtkAction* action = gtkAction();
+    return action ? gtk_action_get_sensitive(action) : false;
 }
 
 void ContextMenuItem::setEnabled(bool shouldEnable)
 {
-    GtkAction* action = gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription));
+    GtkAction* action = gtkAction();
     if (action)
         gtk_action_set_sensitive(action, shouldEnable);
+}
+
+GtkAction* ContextMenuItem::gtkAction() const
+{
+    return gtk_activatable_get_related_action(GTK_ACTIVATABLE(m_platformDescription));
 }
 
 }

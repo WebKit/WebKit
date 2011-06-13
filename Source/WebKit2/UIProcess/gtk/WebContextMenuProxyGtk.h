@@ -1,6 +1,4 @@
 /*
- * Copyright (C) 2010 Apple Inc. All rights reserved.
- * Portions Copyright (c) 2010 Motorola Mobility, Inc.  All rights reserved.
  * Copyright (C) 2011 Igalia S.L.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -12,7 +10,7 @@
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
  *
- * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS ``AS IS''
+ * THIS SOFTWARE IS PROVIDED BY APPLE INC. AND ITS CONTRIBUTORS AS IS''
  * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
  * THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
  * PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL APPLE INC. OR ITS CONTRIBUTORS
@@ -25,29 +23,36 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#ifndef WebKitWebViewBasePrivate_h
-#define WebKitWebViewBasePrivate_h
+#ifndef WebContextMenuProxyGtk_h
+#define WebContextMenuProxyGtk_h
 
-#include "WebKitWebViewBase.h"
-#include "WebPageProxy.h"
-#include <WebKit2/WebKit2.h>
+#include "WebContextMenuProxy.h"
 
-using namespace WebKit;
+namespace WebKit {
 
-G_BEGIN_DECLS
+class WebContextMenuItemData;
+class WebPageProxy;
 
-WebKitWebViewBase* webkitWebViewBaseCreate(WebContext*, WebPageGroup*);
+class WebContextMenuProxyGtk : public WebContextMenuProxy {
+public:
+    static PassRefPtr<WebContextMenuProxyGtk> create(GtkWidget* webView, WebPageProxy* page)
+    {
+        return adoptRef(new WebContextMenuProxyGtk(webView, page));
+    }
+    ~WebContextMenuProxyGtk();
 
-GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
+    virtual void showContextMenu(const WebCore::IntPoint&, const Vector<WebContextMenuItemData>&);
+    virtual void hideContextMenu();
 
-WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
+private:
+    WebContextMenuProxyGtk(GtkWidget*, WebPageProxy*);
+    GtkMenu* createGtkMenu(const Vector<WebContextMenuItemData>&);
 
-void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WKContextRef, WKPageGroupRef);
+    GtkWidget* m_webView;
+    WebPageProxy* m_page;
+};
 
-void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
 
-void webkitWebViewBaseShowContextMenu(WebKitWebViewBase*, GtkMenu*, const WebCore::IntPoint&);
+} // namespace WebKit
 
-G_END_DECLS
-
-#endif // WebKitWebViewBasePrivate_h
+#endif // WebContextMenuProxyGtk_h

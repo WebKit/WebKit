@@ -1,3 +1,36 @@
+2011-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add context menu support for Webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=54827
+
+        * platform/ContextMenuItem.h: Add gtkAction().
+        * platform/gtk/ContextMenuGtk.cpp:
+        (WebCore::ContextMenu::ContextMenu): Implement constructor that
+        receives a platform menu.
+        (WebCore::ContextMenu::setPlatformDescription): Make sure we don't
+        destroy the menu if the new context menu is the current one.
+        (WebCore::contextMenuItemVector): Implement this method to return
+        the list of menu items in the given context menu, required by WebKit2.
+        (WebCore::platformMenuDescription): Implement this method to
+        return a platform menu for the given menu items.
+        * platform/gtk/ContextMenuItemGtk.cpp:
+        (WebCore::createPlatformMenuItemDescription): Helper function to
+        create a platform context menu item.
+        (WebCore::ContextMenuItem::ContextMenuItem): Use
+        createPlatformMenuItemDescription().
+        (WebCore::ContextMenuItem::title): Convert the title from UTF-8.
+        (WebCore::ContextMenuItem::setTitle): Use gtkAction().
+        (WebCore::ContextMenuItem::setSubMenu): Implement setSubMenu()
+        that receives a list of items.
+        (WebCore::ContextMenuItem::setChecked): Use gtkAction().
+        (WebCore::ContextMenuItem::checked): Implement this, required by WebKit2.
+        (WebCore::ContextMenuItem::enabled): Ditto.
+        (WebCore::ContextMenuItem::setEnabled): Use gtkAction().
+        (WebCore::ContextMenuItem::gtkAction): Return the GtkAction
+        associated to the context menu item.
+
 2011-06-13  Keishi Hattori  <keishi@webkit.org>
 
         Sort WebCore.xcodeproj

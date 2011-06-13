@@ -2,6 +2,34 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Add context menu support for Webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=54827
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::createContextMenuProxy): Create a context
+        menu proxy.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (globalPointForClientPoint): Function copied from webkit1 to
+        convert a point in widget coordinates to global coordinates.
+        (popupMenuPositionFunction):
+        (webkitWebViewBaseShowContextMenu): Show the given context menu at
+        the given position.
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp: Added.
+        (WebKit::contextMenuItemActivatedCallback):
+        (WebKit::WebContextMenuProxyGtk::createGtkMenu):
+        (WebKit::WebContextMenuProxyGtk::showContextMenu):
+        (WebKit::WebContextMenuProxyGtk::hideContextMenu):
+        (WebKit::WebContextMenuProxyGtk::WebContextMenuProxyGtk):
+        (WebKit::WebContextMenuProxyGtk::~WebContextMenuProxyGtk):
+        * UIProcess/gtk/WebContextMenuProxyGtk.h: Copied from Source/WebKit2/UIProcess/API/gtk/WebKitWebViewBasePrivate.h.
+        (WebKit::WebContextMenuProxyGtk::create):
+
+2011-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Export an API similar to WebKit1
         https://bugs.webkit.org/show_bug.cgi?id=57820
 
