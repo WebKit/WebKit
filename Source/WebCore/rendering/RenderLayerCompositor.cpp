@@ -629,8 +629,10 @@ void RenderLayerCompositor::computeCompositingRequirements(RenderLayer* layer, O
         compositingState.m_subtreeIsCompositing = true;
         // This layer now acts as the ancestor for kids.
         childState.m_compositingAncestor = layer;
-        if (overlapMap)
-            addToOverlapMap(*overlapMap, layer, absBounds, haveComputedBounds);
+    }
+
+    if (overlapMap && childState.m_compositingAncestor && !childState.m_compositingAncestor->isRootLayer()) {
+        addToOverlapMap(*overlapMap, layer, absBounds, haveComputedBounds);
     }
 
 #if ENABLE(VIDEO)
