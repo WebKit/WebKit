@@ -1,3 +1,16 @@
+2011-06-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Don't access freed memory in the UI process when a plug-in process crashes
+        https://bugs.webkit.org/show_bug.cgi?id=62548
+
+        Call pluginProcessCrashedOrFailedToLaunch after sending messages to all processes about the plug-in crash,
+        otherwise we'll try to dereference m_pluginInfo.path after the PluginProcessProxy object has been deleted.
+
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::didClose):
+
 2011-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.
