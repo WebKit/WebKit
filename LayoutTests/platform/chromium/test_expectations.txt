@@ -3995,14 +3995,8 @@ BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
 BUGCR85755 : fast/js/exception-properties.html = TEXT
 
 // Started failing after r88321
-BUGCR85902 LEOPARD : fast/backgrounds/repeat/negative-offset-repeat-transformed.html = IMAGE
-BUGCR85902 LEOPARD : fast/borders/border-image-rotate-transform.html = IMAGE
 
-BUGVITALYR LEOPARD : fast/borders/outline-alpha-block.html = IMAGE
-BUGVITALYR LEOPARD : fast/borders/outline-alpha-inline.html = IMAGE
 
-BUGVITALYR LEOPARD : fast/inline/inline-wrap-with-parent-padding.html = IMAGE
-BUGVITALYR REBASELINE LEOPARD : svg/as-image/svg-as-background-with-relative-size.html = IMAGE
 BUGVITALYR LINUX MAC GPU : compositing/geometry/tall-page-composited.html = CRASH FAIL
 
 // Added in r88637

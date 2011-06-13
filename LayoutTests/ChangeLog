@@ -1,3 +1,14 @@
+2011-06-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Updated Leopard pixel baselines.
+
+        * platform/chromium-mac-leopard/fast/backgrounds/repeat/negative-offset-repeat-transformed-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/border-image-rotate-transform-expected.png:
+        * platform/chromium-mac-leopard/fast/borders/outline-alpha-block-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/borders/outline-alpha-inline-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/inline/inline-wrap-with-parent-padding-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-13  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Unreviewed.
