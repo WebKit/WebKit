@@ -1,3 +1,20 @@
+2011-06-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        r87539 broke HTMLMediaElement url logging
+        https://bugs.webkit.org/show_bug.cgi?id=62551
+
+        Returning pointers to temporaries is bad times!
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::urlForLogging):
+        (WebCore::HTMLMediaElement::loadResource):
+        (WebCore::HTMLMediaElement::isSafeToLoadURL):
+        (WebCore::HTMLMediaElement::selectNextSourceChild):
+        (WebCore::HTMLMediaElement::sourceWasAdded):
+        (WebCore::HTMLMediaElement::sourceWillBeRemoved):
+
 2011-06-13  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.

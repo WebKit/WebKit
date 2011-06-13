@@ -86,13 +86,13 @@ using namespace std;
 namespace WebCore {
 
 #if !LOG_DISABLED
-static const char* urlForLogging(const KURL& url)
+static String urlForLogging(const KURL& url)
 {
     static const unsigned maximumURLLengthForLogging = 128;
 
     if (url.string().length() < maximumURLLengthForLogging)
-        return url.string().utf8().data();
-    return String(url.string().substring(0, maximumURLLengthForLogging) + "...").utf8().data();
+        return url.string();
+    return url.string().substring(0, maximumURLLengthForLogging) + "...";
 }
 
 static const char* boolString(bool val)
@@ -675,7 +675,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
 {
     ASSERT(isSafeToLoadURL(initialURL, Complain));
 
-    LOG(Media, "HTMLMediaElement::loadResource(%s, %s)", urlForLogging(initialURL), contentType.raw().utf8().data());
+    LOG(Media, "HTMLMediaElement::loadResource(%s, %s)", urlForLogging(initialURL).utf8().data(), contentType.raw().utf8().data());
 
     Frame* frame = document()->frame();
     if (!frame)
@@ -690,7 +690,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
 
     m_currentSrc = url;
 
-    LOG(Media, "HTMLMediaElement::loadResource - m_currentSrc -> %s", urlForLogging(m_currentSrc));
+    LOG(Media, "HTMLMediaElement::loadResource - m_currentSrc -> %s", urlForLogging(m_currentSrc).utf8().data());
 
     if (m_sendProgressEvents) 
         startProgressEventTimer();
@@ -720,7 +720,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
 bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidSourceAction actionIfInvalid)
 {
     if (!url.isValid()) {
-        LOG(Media, "HTMLMediaElement::isSafeToLoadURL(%s) -> FALSE because url is invalid", urlForLogging(url));
+        LOG(Media, "HTMLMediaElement::isSafeToLoadURL(%s) -> FALSE because url is invalid", urlForLogging(url).utf8().data());
         return false;
     }
 
@@ -728,7 +728,7 @@ bool HTMLMediaElement::isSafeToLoadURL(const KURL& url, InvalidSourceAction acti
     if (!frame || !document()->securityOrigin()->canDisplay(url)) {
         if (actionIfInvalid == Complain)
             FrameLoader::reportLocalLoadFailed(frame, url.string());
-        LOG(Media, "HTMLMediaElement::isSafeToLoadURL(%s) -> FALSE rejected by SecurityOrigin", urlForLogging(url));
+        LOG(Media, "HTMLMediaElement::isSafeToLoadURL(%s) -> FALSE rejected by SecurityOrigin", urlForLogging(url).utf8().data());
         return false;
     }
 
@@ -1730,7 +1730,7 @@ KURL HTMLMediaElement::selectNextSourceChild(ContentType *contentType, InvalidSo
         mediaURL = source->getNonEmptyURLAttribute(srcAttr);
 #if !LOG_DISABLED
         if (shouldLog)
-            LOG(Media, "HTMLMediaElement::selectNextSourceChild - 'src' is %s", urlForLogging(mediaURL));
+            LOG(Media, "HTMLMediaElement::selectNextSourceChild - 'src' is %s", urlForLogging(mediaURL).utf8().data());
 #endif
         if (mediaURL.isEmpty())
             goto check_again;
@@ -1781,7 +1781,7 @@ check_again:
 
 #if !LOG_DISABLED
     if (shouldLog)
-        LOG(Media, "HTMLMediaElement::selectNextSourceChild -> %p, %s", m_currentSourceNode, canUse ? urlForLogging(mediaURL) : "");
+        LOG(Media, "HTMLMediaElement::selectNextSourceChild -> %p, %s", m_currentSourceNode, canUse ? urlForLogging(mediaURL).utf8().data() : "");
 #endif
     return canUse ? mediaURL : KURL();
 }
@@ -1793,7 +1793,7 @@ void HTMLMediaElement::sourceWasAdded(HTMLSourceElement* source)
 #if !LOG_DISABLED
     if (source->hasTagName(sourceTag)) {
         KURL url = source->getNonEmptyURLAttribute(srcAttr);
-        LOG(Media, "HTMLMediaElement::sourceWasAdded - 'src' is %s", urlForLogging(url));
+        LOG(Media, "HTMLMediaElement::sourceWasAdded - 'src' is %s", urlForLogging(url).utf8().data());
     }
 #endif
     
@@ -1840,7 +1840,7 @@ void HTMLMediaElement::sourceWillBeRemoved(HTMLSourceElement* source)
 #if !LOG_DISABLED
     if (source->hasTagName(sourceTag)) {
         KURL url = source->getNonEmptyURLAttribute(srcAttr);
-        LOG(Media, "HTMLMediaElement::sourceWillBeRemoved - 'src' is %s", urlForLogging(url));
+        LOG(Media, "HTMLMediaElement::sourceWillBeRemoved - 'src' is %s", urlForLogging(url).utf8().data());
     }
 #endif
 
