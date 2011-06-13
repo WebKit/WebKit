@@ -205,6 +205,7 @@ enum {
     ID_RESIZE_TO,
     ID_NORMALIZE,
     ID_INVALIDATE_RECT,
+    ID_OBJECTS_ARE_SAME,
     NUM_METHOD_IDENTIFIERS
 };
 
@@ -246,7 +247,8 @@ static const NPUTF8 *pluginMethodIdentifierNames[NUM_METHOD_IDENTIFIERS] = {
     "setStatus",
     "resizeTo",
     "normalize",
-    "invalidateRect"
+    "invalidateRect",
+    "objectsAreSame"
 };
 
 static NPUTF8* createCStringFromNPVariant(const NPVariant* variant)
@@ -1008,6 +1010,15 @@ static bool invalidateRect(PluginObject* obj, const NPVariant* args, uint32_t ar
     return true;
 }
 
+static bool objectsAreSame(PluginObject* obj, const NPVariant* args, uint32_t argCount, NPVariant* result)
+{
+    if (argCount != 2 || !NPVARIANT_IS_OBJECT(args[0]) || !NPVARIANT_IS_OBJECT(args[1]))
+        return false;
+
+    BOOLEAN_TO_NPVARIANT(NPVARIANT_TO_OBJECT(args[0]) == NPVARIANT_TO_OBJECT(args[1]), *result);
+    return true;
+}
+
 static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* args, uint32_t argCount, NPVariant* result)
 {
     PluginObject* plugin = reinterpret_cast<PluginObject*>(header);
@@ -1124,6 +1135,8 @@ static bool pluginInvoke(NPObject* header, NPIdentifier name, const NPVariant* a
         return normalizeOverride(plugin, args, argCount, result);
     if (name == pluginMethodIdentifiers[ID_INVALIDATE_RECT])
         return invalidateRect(plugin, args, argCount, result);
+    if (name == pluginMethodIdentifiers[ID_OBJECTS_ARE_SAME])
+        return objectsAreSame(plugin, args, argCount, result);
 
     return false;
 }

@@ -1,3 +1,17 @@
+2011-06-13  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        [V8] Cache V8NPObjects so that we don't create multiple
+        NPObjects for the same v8::Object.
+        https://bugs.webkit.org/show_bug.cgi?id=61482
+
+        Test: plugins/npruntime/embed-property-equality.html
+
+        * bindings/v8/NPV8Object.cpp:
+        (WebCore::freeV8NPObject):
+        (WebCore::npCreateV8ScriptObject):
+
 2011-06-13  Xan Lopez  <xlopez@igalia.com>
 
         Reviewed by Martin Robinson.

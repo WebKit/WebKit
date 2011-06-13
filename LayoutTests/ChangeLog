@@ -1,3 +1,13 @@
+2011-06-13  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Test for https://bugs.webkit.org/show_bug.cgi?id=61482,
+        mostly written by Kelly Norton (knorton@google.com).
+
+        * plugins/npruntime/embed-property-equality-expected.txt: Added.
+        * plugins/npruntime/embed-property-equality.html: Added.
+
 2011-06-13  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

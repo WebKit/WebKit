@@ -61,6 +61,14 @@ WrapperTypeInfo* npObjectTypeInfo()
     return &typeInfo;
 }
 
+typedef HashMap<int, V8NPObject*> V8NPObjectMap;
+
+static V8NPObjectMap* staticV8NPObjectMap()
+{
+    DEFINE_STATIC_LOCAL(V8NPObjectMap, v8npObjectMap, ());
+    return &v8npObjectMap;
+}
+
 // FIXME: Comments on why use malloc and free.
 static NPObject* allocV8NPObject(NPP, NPClass*)
 {
@@ -70,6 +78,14 @@ static NPObject* allocV8NPObject(NPP, NPClass*)
 static void freeV8NPObject(NPObject* npObject)
 {
     V8NPObject* v8NpObject = reinterpret_cast<V8NPObject*>(npObject);
+    if (int v8ObjectHash = v8NpObject->v8Object->GetIdentityHash()) {
+        ASSERT(staticV8NPObjectMap()->contains(v8ObjectHash));
+        staticV8NPObjectMap()->remove(v8ObjectHash);
+    } else {
+        ASSERT(!v8::Context::InContext());
+        staticV8NPObjectMap()->clear();
+    }
+
 #ifndef NDEBUG
     V8GCController::unregisterGlobalHandle(v8NpObject, v8NpObject->v8Object);
 #endif
@@ -125,12 +141,24 @@ NPObject* npCreateV8ScriptObject(NPP npp, v8::Handle<v8::Object> object, DOMWind
         }
     }
 
+    int v8ObjectHash = object->GetIdentityHash();
+    ASSERT(v8ObjectHash);
+    if (staticV8NPObjectMap()->contains(v8ObjectHash)) {
+        V8NPObject* v8npObject = staticV8NPObjectMap()->get(v8ObjectHash);
+        ASSERT(v8npObject->v8Object == object);
+        _NPN_RetainObject(&v8npObject->object);
+        return reinterpret_cast<NPObject*>(v8npObject);
+    }
+
     V8NPObject* v8npObject = reinterpret_cast<V8NPObject*>(_NPN_CreateObject(npp, &V8NPObjectClass));
     v8npObject->v8Object = v8::Persistent<v8::Object>::New(object);
 #ifndef NDEBUG
     V8GCController::registerGlobalHandle(NPOBJECT, v8npObject, v8npObject->v8Object);
 #endif
     v8npObject->rootObject = root;
+
+    staticV8NPObjectMap()->set(v8ObjectHash, v8npObject);
+
     return reinterpret_cast<NPObject*>(v8npObject);
 }
 

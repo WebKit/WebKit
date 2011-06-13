@@ -1,3 +1,11 @@
+2011-06-13  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        New test method on TestNetscapePlugin for https://bugs.webkit.org/show_bug.cgi?id=61482.
+
+        * DumpRenderTree/TestNetscapePlugIn/PluginObject.cpp:
+
 2011-06-13  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
