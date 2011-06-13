@@ -61,6 +61,7 @@ class StepSequence(object):
 
     def _run(self, tool, options, state):
         for step in self._steps:
+            print state
             step(tool, options).run(state)
 
     def run_and_handle_errors(self, tool, options, state=None):
