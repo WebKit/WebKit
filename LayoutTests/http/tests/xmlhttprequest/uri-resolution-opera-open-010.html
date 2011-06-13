@@ -7,6 +7,7 @@
             if (window.layoutTestController) {
                 layoutTestController.dumpAsText();
                 layoutTestController.dumpChildFramesAsText();
+                layoutTestController.waitUntilDone();
             }
         </script>
         <p><iframe src="resources/uri-resolution-opera-open-010-iframe.html" onload="this.contentWindow.client()"></iframe></p>

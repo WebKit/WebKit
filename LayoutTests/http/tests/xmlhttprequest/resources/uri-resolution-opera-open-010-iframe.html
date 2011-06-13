@@ -10,10 +10,12 @@
         function client()
         {
             var client = new XMLHttpRequest();
-            client.onreadystatechange = function()
-            {
-                if (client.readyState == 4)
+            client.onreadystatechange = function() {
+                if (client.readyState == 4) {
                     p.firstChild.data = client.responseText;
+                    if (window.layoutTestController)
+                        layoutTestController.notifyDone();
+                }
             }
             client.open("GET", "test-uri-resolution.txt");
             client.send("");

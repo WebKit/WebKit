@@ -6,8 +6,10 @@
 <p>Test page for the <a href="http://bugs.webkit.org/show_bug.cgi?id=14898">bug 14898</a> : XMLHttpRequest.getAllResponseHeaders should separate headers with CRLF</p>
 <script type="text/javascript">
 
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
 
 var xhr = new XMLHttpRequest();
 xhr.onreadystatechange = function() {
@@ -22,6 +24,9 @@ xhr.onreadystatechange = function() {
         } else {
             document.body.appendChild(document.createTextNode("PASS"));
         }
+
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
     }
 }
 xhr.open("GET", "testPage.html", true);

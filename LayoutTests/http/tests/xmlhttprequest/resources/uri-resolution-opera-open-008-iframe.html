@@ -16,6 +16,8 @@
         function test(client)
         {
             p.firstChild.data = client.responseText;
+            if (window.layoutTestController)
+                layoutTestController.notifyDone();
         }
         </script>
     </body>

@@ -6,8 +6,10 @@
  <body>
   <p>Script did not run.</p>
   <script type="text/javascript">
-   if (window.layoutTestController)
+   if (window.layoutTestController) {
      layoutTestController.dumpAsText();
+     layoutTestController.waitUntilDone();
+   }
 
    var p = document.getElementsByTagName('p')[0];
    p.firstChild.data = 'Test script started.';
@@ -15,9 +17,11 @@
    // window.XMLHttpRequest = function () { return new ActiveXObject("Microsoft.XMLHTTP"); }
    var r = new XMLHttpRequest();
    r.onreadystatechange = function () {
-     if (r.readyState == 4)
+     if (r.readyState == 4) {
        p.firstChild.data = r.responseText;
-     else
+       if (window.layoutTestController)
+         layoutTestController.notifyDone();
+     } else
        p.firstChild.data = 'Test in progress (' + r.readyState + '/4)';
    };
    r.open('GET', '001-test.cgi', true);

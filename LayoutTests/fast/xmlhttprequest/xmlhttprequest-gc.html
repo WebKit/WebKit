@@ -2,6 +2,10 @@
 <script>
 function stateChange() {
     document.write(this.foo + '<br>');
+    if (this.readyState == 4) {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
 }
 
 function collectGarbage() {
@@ -29,9 +33,6 @@ function runTest() {
 
     xhr = null;
     collectGarbage();
-
-    if (window.layoutTestController)
-        layoutTestController.notifyDone();
 }
 
 </script>

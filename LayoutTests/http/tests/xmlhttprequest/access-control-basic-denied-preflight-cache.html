@@ -27,8 +27,9 @@
     }
 
     function processStateChange() {
-        if (xhr.readyState == 1) {
+        if (xhr.readyState == 1)
             log("PASS");
+        else if (xhr.readyState == 4) {
             if (window.layoutTestController)
                 layoutTestController.notifyDone();
         }

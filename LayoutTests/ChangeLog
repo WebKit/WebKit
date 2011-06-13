@@ -1,3 +1,45 @@
+2011-06-13  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Rewrite a bunch of XHR-based tests to use waitUntilDone()/notifyDone().
+        https://bugs.webkit.org/show_bug.cgi?id=62066
+
+        * fast/xmlhttprequest/xmlhttprequest-gc.html:
+        * fast/xmlhttprequest/xmlhttprequest-get.xhtml:
+        * fast/xmlhttprequest/xmlhttprequest-html-response-encoding.html:
+        * html5lib/runner.html:
+        * html5lib/webkit-resumer.html:
+        * http/tests/xmlhttprequest/access-control-basic-denied-preflight-cache.html:
+        * http/tests/xmlhttprequest/access-control-basic-non-simple-allow-async.html:
+        * http/tests/xmlhttprequest/access-control-preflight-async-header-denied.html:
+        * http/tests/xmlhttprequest/access-control-preflight-async-method-denied.html:
+        * http/tests/xmlhttprequest/access-control-preflight-async-not-supported.html:
+        * http/tests/xmlhttprequest/cross-origin-preflight-get.html:
+        * http/tests/xmlhttprequest/event-listener-gc.html:
+        * http/tests/xmlhttprequest/interactive-state.html:
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-004-iframe.html:
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-005-iframe.html:
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-006-iframe.html:
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-007-iframe.html:
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-008-iframe.html:
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-009-iframe.html:
+        * http/tests/xmlhttprequest/resources/uri-resolution-opera-open-010-iframe.html:
+        * http/tests/xmlhttprequest/response-encoding.html:
+        * http/tests/xmlhttprequest/simple-cross-origin-progress-events.html:
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-004.html:
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-005.html:
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-006.html:
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-007.html:
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-008.html:
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-009.html:
+        * http/tests/xmlhttprequest/uri-resolution-opera-open-010.html:
+        * http/tests/xmlhttprequest/web-apps/001.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-50ms-download-dispatch.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-crlf-getAllResponseHeader.html:
+        * http/tests/xmlhttprequest/xmlhttprequest-unsafe-redirect.html:
+        * http/tests/xmlhttprequest/zero-length-response.html:
+
 2011-06-13  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Eric Seidel.

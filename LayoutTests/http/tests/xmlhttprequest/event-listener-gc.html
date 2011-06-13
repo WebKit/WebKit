@@ -17,16 +17,22 @@ function collect()
             new String("");
 }
 
-function processStateChange()
+function processStateChange(e)
 {
     if (didCollect)
         write("PASS: event handler fired after garbage collection.\n");
+    if (e.target.readyState == 4) {
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
 }
 
 function test() 
 {
-    if (window.layoutTestController)
+    if (window.layoutTestController) {
         layoutTestController.dumpAsText();
+        layoutTestController.waitUntilDone();
+    }
         
     var request = new XMLHttpRequest();
     request.onreadystatechange = processStateChange;

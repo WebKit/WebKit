@@ -7,8 +7,10 @@ function log(message)
     document.getElementById('console').appendChild(document.createTextNode(message + "\n"));
 }
 
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
 
 (function() {
     var xhr = new XMLHttpRequest();
@@ -45,6 +47,8 @@ if (window.layoutTestController)
         }
 
         log(xhr.responseText);
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
     }
 
     xhr.onreadystatechange = function() {

@@ -5,6 +5,7 @@
 <script>
 if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
 }
 
 function log(message)
@@ -22,6 +23,8 @@ function test()
     xhr.onerror = function() { log("onerror") }
     xhr.onload = function() {
         log(xhr.responseText);
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
     }
     xhr.send(null);
 }

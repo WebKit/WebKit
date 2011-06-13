@@ -101,12 +101,14 @@ function test3()
     xhr.send(stringToSend);
     xhr.upload.onprogress = uploadProgress;
     xhr.upload.onload = function() { log("FAIL: upload.onload") }
-    xhr.upload.onerror = function() { log("upload.onerror (expected)") }
+    xhr.upload.onerror = function() { 
+        log("upload.onerror (expected)")
+        if (window.layoutTestController)
+            layoutTestController.notifyDone();
+    }
     xhr.onerror = function() {
         log("onerror (expected)");
         log("Response length: " + xhr.responseText.length);
-        if (window.layoutTestController)
-            layoutTestController.notifyDone();
     }
     xhr.onload = function() {
         log("onload");

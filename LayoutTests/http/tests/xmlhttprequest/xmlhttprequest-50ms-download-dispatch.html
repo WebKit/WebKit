@@ -11,14 +11,18 @@ every 50ms or for every byte received, whichever is least frequent".</p>
 <p id="console"></p>
 
 <script type="text/javascript">
-if (window.layoutTestController)
+if (window.layoutTestController) {
     layoutTestController.dumpAsText();
+    layoutTestController.waitUntilDone();
+}
 
 function log(message)
 {
     document.getElementById("console").appendChild(document.createTextNode(message));
     document.getElementById("console").appendChild(document.createElement("br"));
 }
+
+var testsCompleted = 0;
 
 function test(iteration, delay, compare, testDescription)
 {
@@ -35,6 +39,11 @@ function test(iteration, delay, compare, testDescription)
             sawReadyStateDONE = true;
             var passed =  compare(count, iteration);
             log(passed ? "PASSED" : "FAILED (count was " + count + ") for " + testDescription);
+            ++testsCompleted;
+            if (testsCompleted == 5) {
+                if (window.layoutTestController)
+                    layoutTestController.notifyDone();
+            }
         }
     }
 

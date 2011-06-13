@@ -7,6 +7,7 @@
         if (window.layoutTestController) {
             layoutTestController.dumpAsText();
             layoutTestController.dumpChildFramesAsText();
+            layoutTestController.waitUntilDone();
         }
         var client = frame.contentWindow.client();
         client.send("");
