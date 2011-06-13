@@ -1,3 +1,14 @@
+2011-06-13  Jessie Berlin  <jberlin@apple.com>
+
+        plugins/mouse-events and plugins/mouse-events-fixedpos don't fire events on the plugin.
+        https://bugs.webkit.org/show_bug.cgi?id=33973
+
+        Update the Windows-specific results to reflect that the mouseUp and mouseDown events are
+        getting fired on the plugin, but not the getFocusEvent in order to get the bots green.
+
+        * platform/win/plugins/mouse-events-expected.txt:
+        * platform/win/plugins/mouse-events-fixedpos-expected.txt:
+
 2011-06-13  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.
