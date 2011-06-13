@@ -209,9 +209,7 @@ class PyWebSocket(http_server.Lighttpd):
         url = url + '://127.0.0.1:%d/' % self._port
         if not url_is_alive(url):
             if self._process.returncode == None:
-                # FIXME: We should use a non-static Executive for easier
-                # testing.
-                Executive().kill_process(self._process.pid)
+                self._executive.kill_process(self._process.pid)
             with codecs.open(output_log, "r", "utf-8") as fp:
                 for line in fp:
                     _log.error(line)
@@ -227,8 +225,8 @@ class PyWebSocket(http_server.Lighttpd):
             with codecs.open(self._pidfile, "w", "ascii") as file:
                 file.write("%d" % self._process.pid)
 
-    def stop(self, force=False):
-        if not force and not self.is_running():
+    def stop(self):
+        if not self.is_running():
             return
 
         pid = None
@@ -243,8 +241,7 @@ class PyWebSocket(http_server.Lighttpd):
                 'Failed to find %s server pid.' % self._server_name)
 
         _log.debug('Shutting down %s server %d.' % (self._server_name, pid))
-        # FIXME: We should use a non-static Executive for easier testing.
-        Executive().kill_process(pid)
+        self._executive.kill_process(pid)
 
         if self._process:
             # wait() is not threadsafe and can throw OSError due to:
