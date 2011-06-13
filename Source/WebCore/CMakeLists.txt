@@ -1501,14 +1501,7 @@ IF (ENABLE_NETSCAPE_PLUGIN_API)
     LIST(APPEND WebCore_SOURCES
         plugins/PluginDebug.cpp
         plugins/PluginStream.cpp
-        plugins/PluginPackage.cpp
-        plugins/PluginView.cpp
         plugins/npapi.cpp
-    )
-ELSE ()
-    LIST(APPEND WebCore_SOURCES
-        plugins/PluginPackageNone.cpp
-        plugins/PluginViewNone.cpp
     )
 ENDIF ()
 

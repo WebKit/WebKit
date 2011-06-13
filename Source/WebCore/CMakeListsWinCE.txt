@@ -135,9 +135,13 @@ IF (ENABLE_NETSCAPE_PLUGIN_API)
         plugins/win/PluginMessageThrottlerWin.cpp
         plugins/win/PluginPackageWin.cpp
         plugins/win/PluginViewWin.cpp
+        plugins/PluginPackage.cpp
+        plugins/PluginView.cpp
     )
 ELSE ()
     LIST(APPEND WebCore_SOURCES
         plugins/PluginPackage.cpp
+        plugins/PluginPackageNone.cpp
+        plugins/PluginViewNone.cpp
     )
 ENDIF ()

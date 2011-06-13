@@ -75,6 +75,8 @@ LIST(APPEND WebCore_SOURCES
   platform/posix/FileSystemPOSIX.cpp
   platform/text/efl/TextBreakIteratorInternalICUEfl.cpp
   plugins/PluginDataNone.cpp
+  plugins/PluginPackageNone.cpp
+  plugins/PluginViewNone.cpp
 )
 
 LIST(APPEND WebCore_USER_AGENT_STYLE_SHEETS
