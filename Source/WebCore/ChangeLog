@@ -1,3 +1,22 @@
+2011-06-13   Morgan Winer  <mwiner@apple.com>
+
+        Reviewed by Enrica Casucci.
+
+        Frame::visiblePositionForPoint returns null position if the point is over an imagemap.
+        https://bugs.webkit.org/show_bug.cgi?id=62562
+        <rdar://problem/9313885>
+
+        The innerNode() of an imageMap is an area, and doesn't have a renderer and
+        therefore can't report a position.
+        Every result's innerNonSharedNode() should be the same as the innerNode(),
+        except for imageMaps, which will have the actual image as its innerNonSharedNode(),
+        and will therefore have a renderer and can report a position.
+
+        There are no layout tests for this, since it can be tested only at API level.
+
+        * page/Frame.cpp:
+        (WebCore::Frame::visiblePositionForPoint): Changing innerNode() to innerNonSharedNode().
+
 2011-06-13  Lucas De Marchi  <lucas.demarchi@profusion.mobi>
 
         Reviewed by Eric Seidel.

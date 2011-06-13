@@ -858,7 +858,7 @@ String Frame::displayStringModifiedByEncoding(const String& str) const
 VisiblePosition Frame::visiblePositionForPoint(const IntPoint& framePoint)
 {
     HitTestResult result = eventHandler()->hitTestResultAtPoint(framePoint, true);
-    Node* node = result.innerNode();
+    Node* node = result.innerNonSharedNode();
     if (!node)
         return VisiblePosition();
     RenderObject* renderer = node->renderer();
