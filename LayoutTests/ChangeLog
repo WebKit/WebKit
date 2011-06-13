@@ -1,3 +1,13 @@
+2011-06-13  Robert Hogan  <robert@webkit.org>
+
+        Unreviewed, cleanup r87611. 
+
+        [Qt]Unskip fast/events/backspace-navigates-back.html
+
+        This should have been unskipped by http://trac.webkit.org/changeset/87611
+
+        * platform/qt/Skipped:
+
 2011-06-13  Jessie Berlin  <jberlin@apple.com>
 
         Remove an extra space in the Windows-specific failing expected results to ge the bots
