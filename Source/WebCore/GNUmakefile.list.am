@@ -2094,6 +2094,8 @@ webcore_sources += \
 	Source/WebCore/loader/FTPDirectoryParser.h \
 	Source/WebCore/loader/HistoryController.cpp \
 	Source/WebCore/loader/HistoryController.h \
+	Source/WebCore/loader/icon/IconController.cpp \
+	Source/WebCore/loader/icon/IconController.h \
 	Source/WebCore/loader/icon/IconDatabaseClient.h \
 	Source/WebCore/loader/icon/IconDatabase.cpp \
 	Source/WebCore/loader/icon/IconDatabase.h \

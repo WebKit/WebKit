@@ -25917,6 +25917,14 @@
 				Name="icon"
 				>
 				<File
+					RelativePath="..\loader\icon\IconController.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\loader\icon\IconController.h"
+					>
+				</File>
+				<File
 					RelativePath="..\loader\icon\IconDatabase.cpp"
 					>
 				</File>

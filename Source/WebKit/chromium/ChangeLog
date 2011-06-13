@@ -1,3 +1,13 @@
+2011-06-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Nate Chapin.
+
+        Factor IconController out of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=62509
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::iconURLs):
+
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

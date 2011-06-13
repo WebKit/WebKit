@@ -35,7 +35,7 @@
 #include "FrameLoaderStateMachine.h"
 #include "FrameLoaderTypes.h"
 #include "HistoryController.h"
-#include "IconDatabaseBase.h"
+#include "IconController.h"
 #include "IconURL.h"
 #include "PolicyChecker.h"
 #include "ResourceLoadNotifier.h"
@@ -65,7 +65,6 @@ class FrameLoaderClient;
 class FrameNetworkingContext;
 class HistoryItem;
 class HTMLFormElement;
-class IconLoader;
 class NavigationAction;
 class NetworkingContext;
 class Page;
@@ -102,6 +101,7 @@ public:
     HistoryController* history() const { return &m_history; }
     ResourceLoadNotifier* notifier() const { return &m_notifer; }
     SubframeLoader* subframeLoader() const { return &m_subframeLoader; }
+    IconController* icon() const { return &m_icon; }
 
     // FIXME: This is not cool, people. There are too many different functions that all start loads.
     // We should aim to consolidate these into a smaller set of functions, and try to reuse more of
@@ -219,13 +219,6 @@ public:
     void didEndDocument();
     void willSetEncoding();
 
-    // Returns favicon.
-    KURL iconURL();
-
-    // Returns the given iconTypes' IconURLs, iconTypes could be any combination of IconType.
-    IconURLs iconURLs(int iconTypes);
-    void commitIconURLToIconDatabase(const KURL&);
-
     KURL baseURL() const;
 
     void handledOnloadEvents();
@@ -272,16 +265,11 @@ public:
     void cancelAndClear();
 
     void setTitle(const StringWithDirection&);
-    void setIconURL(const IconURL&);
 
     void commitProvisionalLoad();
     bool isLoadingFromCachedPage() const { return m_loadingFromCachedPage; }
 
     FrameLoaderStateMachine* stateMachine() const { return &m_stateMachine; }
-
-    void startIconLoader();
-    void iconLoadDecisionReceived(IconLoadDecision);
-    void continueIconLoadWithDecision(IconLoadDecision);
 
     bool shouldAllowNavigation(Frame* targetFrame) const;
     Frame* findFrameForNavigation(const AtomicString& name);
@@ -409,14 +397,9 @@ private:
     void scheduleCheckLoadComplete();
     void startCheckCompleteTimer();
 
-    KURL originalRequestURL() const;
-
     bool shouldTreatURLAsSameAsCurrent(const KURL&) const;
 
     void updateSandboxFlags();
-
-    bool fillIconURL(IconType, IconURLs*);
-    IconURL getDefaultIconURL(IconType);
 
     Frame* m_frame;
     FrameLoaderClient* m_client;
@@ -426,6 +409,7 @@ private:
     mutable ResourceLoadNotifier m_notifer;
     mutable SubframeLoader m_subframeLoader;
     mutable FrameLoaderStateMachine m_stateMachine;
+    mutable IconController m_icon;
 
     FrameState m_state;
     FrameLoadType m_loadType;
@@ -457,9 +441,6 @@ private:
     RefPtr<SerializedScriptValue> m_pendingStateObject;
 
     KURL m_workingURL;
-
-    OwnPtr<IconLoader> m_iconLoader;
-    bool m_mayLoadIconLater;
 
     bool m_needsClear;
 

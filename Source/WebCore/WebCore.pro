@@ -870,6 +870,7 @@ SOURCES += \
     loader/FrameLoaderStateMachine.cpp \
     loader/HistoryController.cpp \
     loader/FTPDirectoryParser.cpp \
+    loader/icon/IconController.cpp \
     loader/icon/IconDatabaseBase.cpp \
     loader/icon/IconLoader.cpp \
     loader/ImageLoader.cpp \
@@ -1819,6 +1820,7 @@ HEADERS += \
     loader/FrameLoader.h \
     loader/FrameLoaderStateMachine.h \
     loader/FTPDirectoryParser.h \
+    loader/icon/IconController.h \
     loader/icon/IconDatabase.h \
     loader/icon/IconDatabaseBase.h \
     loader/icon/IconLoader.h \

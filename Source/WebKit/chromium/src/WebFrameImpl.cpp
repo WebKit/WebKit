@@ -531,7 +531,7 @@ WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypes) const
     // The URL to the icon may be in the header. As such, only
     // ask the loader for the icon if it's finished loading.
     if (frameLoader->state() == FrameStateComplete)
-        return frameLoader->iconURLs(iconTypes);
+        return frameLoader->icon()->urlsForTypes(iconTypes);
     return WebVector<WebIconURL>();
 }
 

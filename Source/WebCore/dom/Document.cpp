@@ -2115,12 +2115,10 @@ void Document::implicitClose()
     // But those add a dynamic component to the favicon that has UI 
     // ramifications, and we need to decide what is the Right Thing To Do(tm)
     Frame* f = frame();
-    if (f)
-        f->loader()->startIconLoader();
-
-    // Resume the animations (or start them)
-    if (f)
+    if (f) {
+        f->loader()->icon()->startLoader();
         f->animation()->resumeAnimationsForDocument(this);
+    }
 
     ImageLoader::dispatchPendingBeforeLoadEvents();
     ImageLoader::dispatchPendingLoadEvents();
@@ -4318,7 +4316,7 @@ void Document::setIconURL(const String& url, const String& mimeType, IconType ic
     else if (!mimeType.isEmpty())
         setIconURL(newURL);
     if (Frame* f = frame())
-        f->loader()->setIconURL(newURL);
+        f->loader()->icon()->setURL(newURL);
 }
 
 void Document::setIconURL(const IconURL& iconURL)

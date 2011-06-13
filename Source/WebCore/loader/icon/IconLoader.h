@@ -42,12 +42,12 @@ class IconLoader : private SubresourceLoaderClient {
 public:
     static PassOwnPtr<IconLoader> create(Frame*);
     ~IconLoader();
-    
+
     void startLoading();
     void stopLoading();
 
 private:
-    IconLoader(Frame*);
+    explicit IconLoader(Frame*);
 
     virtual void didReceiveResponse(SubresourceLoader*, const ResourceResponse&);
     virtual void didReceiveData(SubresourceLoader*, const char*, int);
@@ -55,7 +55,7 @@ private:
     virtual void didFail(SubresourceLoader*, const ResourceError&);
 
     virtual void didReceiveAuthenticationChallenge(SubresourceLoader*, const AuthenticationChallenge&);
-    
+
     void finishLoading(const KURL&, PassRefPtr<SharedBuffer> data);
     void clearLoadingState();
 
@@ -63,7 +63,7 @@ private:
 
     RefPtr<SubresourceLoader> m_resourceLoader;
     bool m_loadIsInProgress;
-}; // class IconLoader
+};
 
 } // namespace WebCore
 

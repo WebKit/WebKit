@@ -71,9 +71,6 @@
 #include "HTMLObjectElement.h"
 #include "HTTPParsers.h"
 #include "HistoryItem.h"
-#include "IconDatabase.h"
-#include "IconLoader.h"
-#include "IconURL.h"
 #include "InspectorController.h"
 #include "InspectorInstrumentation.h"
 #include "Logging.h"
@@ -186,6 +183,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_history(frame)
     , m_notifer(frame)
     , m_subframeLoader(frame)
+    , m_icon(frame)
     , m_state(FrameStateCommittedPage)
     , m_loadType(FrameLoadTypeStandard)
     , m_delegateIsHandlingProvisionalLoadError(false)
@@ -447,9 +445,8 @@ void FrameLoader::stop()
         parser->stopParsing();
         parser->finish();
     }
-
-    if (m_iconLoader)
-        m_iconLoader->stopLoading();
+    
+    icon()->stopLoader();
 }
 
 bool FrameLoader::closeURL()
@@ -462,82 +459,6 @@ bool FrameLoader::closeURL()
     
     m_frame->editor()->clearUndoRedoOperations();
     return true;
-}
-
-KURL FrameLoader::iconURL()
-{
-    IconURLs urls = iconURLs(Favicon);
-    return urls.isEmpty() ? KURL() : urls[0].m_iconURL;
-}
-
-IconURLs FrameLoader::iconURLs(int iconTypes)
-{
-    IconURLs iconURLs;
-    // If this isn't a top level frame, return
-    if (m_frame->tree() && m_frame->tree()->parent())
-        return iconURLs;
-
-    if (iconTypes & Favicon && !fillIconURL(Favicon, &iconURLs))
-        iconURLs.append(getDefaultIconURL(Favicon));
-
-#if ENABLE(TOUCH_ICON_LOADING)
-    bool havePrecomposedIcon = false;
-    if (iconTypes & TouchPrecomposedIcon)
-        havePrecomposedIcon = fillIconURL(TouchPrecomposedIcon, &iconURLs);
-
-    bool haveTouchIcon = false;
-    if (iconTypes & TouchIcon)
-        haveTouchIcon = fillIconURL(TouchIcon, &iconURLs);
-
-    // Only return the default touch icons when the both were required and neither was gotten.
-    if (iconTypes & TouchPrecomposedIcon && iconTypes & TouchIcon && !havePrecomposedIcon && !haveTouchIcon) {
-        iconURLs.append(getDefaultIconURL(TouchPrecomposedIcon));
-        iconURLs.append(getDefaultIconURL(TouchIcon));
-    }
-#endif
-    return iconURLs;
-}
-
-bool FrameLoader::fillIconURL(IconType iconType, IconURLs* iconURLs)
-{
-    // If we have an iconURL from a Link element, return that
-    IconURL url = m_frame->document()->iconURL(iconType);
-    if (url.m_iconURL.isEmpty())
-        return false;
-
-    iconURLs->append(url);
-
-    return true;
-}
-
-IconURL FrameLoader::getDefaultIconURL(IconType iconType)
-{
-    // Don't return a favicon iconURL unless we're http or https
-    KURL documentURL = m_frame->document()->url();
-    if (!documentURL.protocolInHTTPFamily())
-        return IconURL();
-
-    KURL url;
-    bool couldSetProtocol = url.setProtocol(documentURL.protocol());
-    ASSERT_UNUSED(couldSetProtocol, couldSetProtocol);
-    url.setHost(documentURL.host());
-    if (documentURL.hasPort())
-        url.setPort(documentURL.port());
-    if (iconType == Favicon) {
-        url.setPath("/favicon.ico");
-        return IconURL(KURL(ParsedURLString, url), Favicon);
-    }
-#if ENABLE(TOUCH_ICON_LOADING)
-    if (iconType == TouchPrecomposedIcon) {
-        url.setPath("/apple-touch-icon-precomposed.png");
-        return IconURL(KURL(ParsedURLString, url), TouchPrecomposedIcon);
-    }
-    if (iconType == TouchIcon) {
-        url.setPath("/apple-touch-icon.png");
-        return IconURL(KURL(ParsedURLString, url), TouchIcon);
-    }
-#endif
-    return IconURL();
 }
 
 bool FrameLoader::didOpenURL(const KURL& url)
@@ -730,115 +651,6 @@ void FrameLoader::didBeginDocument(bool dispatch)
 void FrameLoader::didEndDocument()
 {
     m_isLoadingMainResource = false;
-}
-
-// Callback for the old-style synchronous IconDatabase interface.
-void FrameLoader::iconLoadDecisionReceived(IconLoadDecision iconLoadDecision)
-{
-    if (!m_mayLoadIconLater)
-        return;
-    LOG(IconDatabase, "FrameLoader %p was told a load decision is available for its icon", this);
-    continueIconLoadWithDecision(iconLoadDecision);
-    m_mayLoadIconLater = false;
-}
-
-void FrameLoader::startIconLoader()
-{
-    // FIXME: We kick off the icon loader when the frame is done receiving its main resource.
-    // But we should instead do it when we're done parsing the head element.
-    if (!isLoadingMainFrame())
-        return;
-
-    if (!iconDatabase().isEnabled())
-        return;
-    
-    KURL url(iconURL());
-    String urlString(url.string());
-    if (urlString.isEmpty())
-        return;
-
-    // People who want to avoid loading images generally want to avoid loading all images, unless an exception has been made for site icons.
-    // Now that we've accounted for URL mapping, avoid starting the network load if images aren't set to display automatically.
-    Settings* settings = m_frame->settings();
-    if (settings && !settings->loadsImagesAutomatically() && !settings->loadsSiteIconsIgnoringImageLoadingSetting())
-        return;
-
-    // If we're reloading the page, always start the icon load now.
-    if (loadType() == FrameLoadTypeReload && loadType() == FrameLoadTypeReloadFromOrigin) {
-        continueIconLoadWithDecision(IconLoadYes);
-        return;
-    }
-
-    if (iconDatabase().supportsAsynchronousMode()) {
-        m_documentLoader->getIconLoadDecisionForIconURL(urlString);
-        // Commit the icon url mapping to the database just in case we don't end up loading later.
-        commitIconURLToIconDatabase(url);
-        return;
-    }
-    
-    IconLoadDecision decision = iconDatabase().synchronousLoadDecisionForIconURL(urlString, m_documentLoader.get());
-
-    if (decision == IconLoadUnknown) {
-        // In this case, we may end up loading the icon later, but we still want to commit the icon url mapping to the database
-        // just in case we don't end up loading later - if we commit the mapping a second time after the load, that's no big deal
-        // We also tell the client to register for the notification that the icon is received now so it isn't missed in case the 
-        // icon is later read in from disk
-        LOG(IconDatabase, "FrameLoader %p might load icon %s later", this, urlString.ascii().data());
-        m_mayLoadIconLater = true;    
-        m_client->registerForIconNotification();
-        commitIconURLToIconDatabase(url);
-        return;
-    }
-
-    continueIconLoadWithDecision(decision);
-}
-
-void FrameLoader::continueIconLoadWithDecision(IconLoadDecision iconLoadDecision)
-{
-    ASSERT(iconLoadDecision != IconLoadUnknown);
-    
-    //  FIXME (<rdar://problem/9168605>) - We should support in-memory-only private browsing icons in asynchronous icon database mode.
-    if (iconDatabase().supportsAsynchronousMode() && m_frame->page()->settings()->privateBrowsingEnabled())
-        return;
-        
-    if (iconLoadDecision == IconLoadNo) {
-        KURL url(iconURL());
-        String urlString(url.string());
-        
-        LOG(IconDatabase, "FrameLoader::startIconLoader() - Told not to load this icon, committing iconURL %s to database for pageURL mapping", urlString.ascii().data());
-        commitIconURLToIconDatabase(url);
-        
-        if (iconDatabase().supportsAsynchronousMode()) {
-            m_documentLoader->getIconDataForIconURL(urlString);
-            return;
-        }
-        
-        // We were told not to load this icon - that means this icon is already known by the database
-        // If the icon data hasn't been read in from disk yet, kick off the read of the icon from the database to make sure someone
-        // has done it. This is after registering for the notification so the WebView can call the appropriate delegate method.
-        // Otherwise if the icon data *is* available, notify the delegate
-        if (!iconDatabase().synchronousIconDataKnownForIconURL(urlString)) {
-            LOG(IconDatabase, "Told not to load icon %s but icon data is not yet available - registering for notification and requesting load from disk", urlString.ascii().data());
-            m_client->registerForIconNotification();
-            iconDatabase().synchronousIconForPageURL(m_frame->document()->url().string(), IntSize(0, 0));
-            iconDatabase().synchronousIconForPageURL(originalRequestURL().string(), IntSize(0, 0));
-        } else
-            m_client->dispatchDidReceiveIcon();
-            
-        return;
-    } 
-    
-    if (!m_iconLoader)
-        m_iconLoader = IconLoader::create(m_frame);
-        
-    m_iconLoader->startLoading();
-}
-
-void FrameLoader::commitIconURLToIconDatabase(const KURL& icon)
-{
-    LOG(IconDatabase, "Committing iconURL %s to database for pageURLs %s and %s", icon.string().ascii().data(), m_frame->document()->url().string().ascii().data(), originalRequestURL().string().ascii().data());
-    iconDatabase().setIconURLForPageURL(icon.string(), m_frame->document()->url().string());
-    iconDatabase().setIconURLForPageURL(icon.string(), originalRequestURL().string());
 }
 
 void FrameLoader::finishedParsing()
@@ -3342,16 +3154,6 @@ ResourceError FrameLoader::cancelledError(const ResourceRequest& request) const
 void FrameLoader::setTitle(const StringWithDirection& title)
 {
     documentLoader()->setTitle(title);
-}
-
-void FrameLoader::setIconURL(const IconURL& iconURL)
-{
-    documentLoader()->setIconURL(iconURL);
-}
-
-KURL FrameLoader::originalRequestURL() const
-{
-    return activeDocumentLoader()->originalRequest().url();
 }
 
 String FrameLoader::referrer() const

@@ -237,7 +237,7 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
             if (response.mimeType().isEmpty())
                 resourceResponse->setString("mimeType", cachedResource->response().mimeType());
         }
-        if (equalIgnoringFragmentIdentifier(response.url(), loader->frameLoader()->iconURL()))
+        if (equalIgnoringFragmentIdentifier(response.url(), loader->frameLoader()->icon()->url()))
             type = InspectorPageAgent::ImageResource;
         else if (equalIgnoringFragmentIdentifier(response.url(), loader->url()) && type == InspectorPageAgent::OtherResource)
             type = InspectorPageAgent::DocumentResource;

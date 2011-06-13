@@ -1,3 +1,38 @@
+2011-06-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Nate Chapin.
+
+        Factor IconController out of FrameLoader
+        https://bugs.webkit.org/show_bug.cgi?id=62509
+
+        This new class contains all the icon-related logic from FrameLoader.
+        The icon-related logic and state has almost zero interaction with the
+        rest of FrameLoader and is better handled as a separate concern.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * dom/Document.cpp:
+        (WebCore::Document::implicitClose):
+        (WebCore::Document::setIconURL):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::iconLoadDecisionAvailable):
+        (WebCore::DocumentLoader::continueIconLoadWithDecision):
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::FrameLoader):
+        (WebCore::FrameLoader::stop):
+        * loader/FrameLoader.h:
+        (WebCore::FrameLoader::icon):
+        * loader/icon/IconLoader.cpp:
+        (WebCore::IconLoader::startLoading):
+        (WebCore::IconLoader::finishLoading):
+        * loader/icon/IconLoader.h:
+
 2011-06-13  Nate Chapin  <japhet@chromium.org>
 
         Reviewed by Darin Fisher.

@@ -3170,6 +3170,8 @@
 		97C471DC12F925BD0086354B /* ContentSecurityPolicy.h in Headers */ = {isa = PBXBuildFile; fileRef = 97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97DCE20110807C750057D394 /* HistoryController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97DCE1FF10807C750057D394 /* HistoryController.cpp */; };
 		97DCE20210807C750057D394 /* HistoryController.h in Headers */ = {isa = PBXBuildFile; fileRef = 97DCE20010807C750057D394 /* HistoryController.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		97E4028F13A696ED00913D67 /* IconController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97E4028D13A696ED00913D67 /* IconController.cpp */; };
+		97E4029013A696ED00913D67 /* IconController.h in Headers */ = {isa = PBXBuildFile; fileRef = 97E4028E13A696ED00913D67 /* IconController.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		97EF7DFE107E55B700D7C49C /* ScriptControllerBase.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */; };
 		98EB1F951313FE0500D0E1EA /* NotImplemented.h in Headers */ = {isa = PBXBuildFile; fileRef = 98EB1F941313FE0500D0E1EA /* NotImplemented.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		9B417064125662B3006B28FC /* ApplyBlockElementCommand.h in Headers */ = {isa = PBXBuildFile; fileRef = 9B417062125662B3006B28FC /* ApplyBlockElementCommand.h */; settings = {ATTRIBUTES = (Private, ); }; };
@@ -9787,6 +9789,8 @@
 		97C471DA12F925BD0086354B /* ContentSecurityPolicy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ContentSecurityPolicy.h; sourceTree = "<group>"; };
 		97DCE1FF10807C750057D394 /* HistoryController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = HistoryController.cpp; sourceTree = "<group>"; };
 		97DCE20010807C750057D394 /* HistoryController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = HistoryController.h; sourceTree = "<group>"; };
+		97E4028D13A696ED00913D67 /* IconController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = IconController.cpp; sourceTree = "<group>"; };
+		97E4028E13A696ED00913D67 /* IconController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IconController.h; sourceTree = "<group>"; };
 		97EF7DFD107E55B700D7C49C /* ScriptControllerBase.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptControllerBase.cpp; sourceTree = "<group>"; };
 		98EB1F941313FE0500D0E1EA /* NotImplemented.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotImplemented.h; sourceTree = "<group>"; };
 		9B417062125662B3006B28FC /* ApplyBlockElementCommand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApplyBlockElementCommand.h; sourceTree = "<group>"; };
@@ -13977,6 +13981,8 @@
 		5126E6B60A2E3AEF005C29FA /* icon */ = {
 			isa = PBXGroup;
 			children = (
+				97E4028D13A696ED00913D67 /* IconController.cpp */,
+				97E4028E13A696ED00913D67 /* IconController.h */,
 				5126E6B90A2E3B12005C29FA /* IconDatabase.cpp */,
 				5126E6BA0A2E3B12005C29FA /* IconDatabase.h */,
 				516953951329A3C800B92D04 /* IconDatabaseBase.cpp */,
@@ -23188,6 +23194,7 @@
 				439D334313A6911C00C20F4F /* SVGAnimatedType.h in Headers */,
 				439D334413A6911C00C20F4F /* SVGAnimatedTypeAnimator.h in Headers */,
 				439D334513A6911C00C20F4F /* SVGAnimatorFactory.h in Headers */,
+				97E4029013A696ED00913D67 /* IconController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -25921,6 +25928,7 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
+				97E4028F13A696ED00913D67 /* IconController.cpp in Sources */,
 				4381763B13A697D4007D1187 /* SVGAnimatedLength.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

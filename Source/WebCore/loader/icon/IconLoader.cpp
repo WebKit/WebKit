@@ -69,12 +69,12 @@ void IconLoader::startLoading()
     // SubresourceLoader::create returns.
     m_loadIsInProgress = true;
 
-    ResourceRequest resourceRequest(m_frame->loader()->iconURL());
+    ResourceRequest resourceRequest(m_frame->loader()->icon()->url());
     resourceRequest.setPriority(ResourceLoadPriorityLow);
 
     RefPtr<SubresourceLoader> loader = resourceLoadScheduler()->scheduleSubresourceLoad(m_frame, this, resourceRequest);
     if (!loader)
-        LOG_ERROR("Failed to start load for icon at url %s", m_frame->loader()->iconURL().string().ascii().data());
+        LOG_ERROR("Failed to start load for icon at url %s", m_frame->loader()->icon()->url().string().ascii().data());
 
     // Store the handle so we can cancel the load if stopLoading is called later.
     // But only do it if the load hasn't already completed.
@@ -157,7 +157,7 @@ void IconLoader::finishLoading(const KURL& iconURL, PassRefPtr<SharedBuffer> dat
     
     if (!iconURL.isEmpty() && m_loadIsInProgress) {
         LOG(IconDatabase, "IconLoader::finishLoading() - Committing iconURL %s to database", iconURL.string().ascii().data());
-        m_frame->loader()->commitIconURLToIconDatabase(iconURL);
+        m_frame->loader()->icon()->commitToDatabase(iconURL);
         // Setting the icon data only after committing to the database ensures that the data is
         // kept in memory (so it does not have to be read from the database asynchronously), since
         // there is a page URL referencing it.
