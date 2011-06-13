@@ -1,3 +1,9 @@
+2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Windows rebaseline after r62565. The failure is tracked by the bug 62565.
+
+        * platform/win/fast/harness/results-expected.txt:
+
 2011-06-13  David Levin  <levin@chromium.org>
 
         Test fix for Windows.
