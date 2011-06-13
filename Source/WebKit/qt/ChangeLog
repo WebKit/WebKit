@@ -1,5 +1,12 @@
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
+        Attempt to fix Qt build.
+
+        * WebCoreSupport/FrameLoaderClientQt.cpp:
+        (drtPrintFrameUserGestureStatus):
+
+2011-06-12  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Remove FrameLoader::isProcessingUserGesture
