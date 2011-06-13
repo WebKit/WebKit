@@ -280,37 +280,6 @@ bool ScriptController::isJavaScriptAnchorNavigation() const
     return false;
 }
 
-bool ScriptController::anyPageIsProcessingUserGesture() const
-{
-    Page* page = m_frame->page();
-    if (!page)
-        return false;
-
-    const HashSet<Page*>& pages = page->group().pages();
-    HashSet<Page*>::const_iterator end = pages.end();
-    for (HashSet<Page*>::const_iterator it = pages.begin(); it != end; ++it) {
-        for (Frame* frame = page->mainFrame(); frame; frame = frame->tree()->traverseNext()) {
-            ScriptController* script = frame->script();
-
-            if (script->m_allowPopupsFromPlugin)
-                return true;
-
-            const ShellMap::const_iterator iterEnd = m_windowShells.end();
-            for (ShellMap::const_iterator iter = m_windowShells.begin(); iter != iterEnd; ++iter) {
-                JSDOMWindowShell* shell = iter->second.get();
-                Event* event = shell->window()->currentEvent();
-                if (event && event->fromUserGesture())
-                    return true;
-            }
-
-            if (isJavaScriptAnchorNavigation())
-                return true;
-        }
-    }
-
-    return false;
-}
-
 bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)
 {
     ExecState* exec = JSMainThreadExecState::currentState();

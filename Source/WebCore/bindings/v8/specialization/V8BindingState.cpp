@@ -84,11 +84,6 @@ void State<V8Binding>::immediatelyReportUnsafeAccessTo(Frame* target)
     V8Proxy::reportUnsafeAccessTo(target);
 }
 
-bool State<V8Binding>::processingUserGesture()
-{
-    return ScriptController::processingUserGesture();
-}
-
 bool State<V8Binding>::allowsAccessFromFrame(Frame* frame)
 {
     return ScriptController::isSafeScript(frame);

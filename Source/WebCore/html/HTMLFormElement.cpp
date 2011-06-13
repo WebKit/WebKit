@@ -295,10 +295,7 @@ void HTMLFormElement::submit()
 
 void HTMLFormElement::submitFromJavaScript()
 {
-    Frame* frame = document()->frame();
-    if (!frame)
-        return;
-    submit(0, false, frame->script()->anyPageIsProcessingUserGesture(), SubmittedByJavaScript);
+    submit(0, false, ScriptController::processingUserGesture(), SubmittedByJavaScript);
 }
 
 void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool processingUserGesture, FormSubmissionTrigger formSubmissionTrigger)
@@ -335,7 +332,8 @@ void HTMLFormElement::submit(Event* event, bool activateSubmitButton, bool proce
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(true);
 
-    frame->loader()->submitForm(FormSubmission::create(this, m_attributes, event, !processingUserGesture, formSubmissionTrigger));
+    bool lockHistory = !processingUserGesture;
+    frame->loader()->submitForm(FormSubmission::create(this, m_attributes, event, lockHistory, formSubmissionTrigger));
 
     if (needButtonActivation && firstSuccessfulSubmitButton)
         firstSuccessfulSubmitButton->setActivatedSubmit(false);

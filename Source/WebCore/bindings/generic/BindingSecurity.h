@@ -38,6 +38,7 @@
 #include "HTMLFrameElementBase.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "ScriptController.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -116,7 +117,7 @@ bool BindingSecurity<Binding>::checkNodeSecurity(State<Binding>* state, Node* no
 template <class Binding>
 bool BindingSecurity<Binding>::allowPopUp(State<Binding>* state)
 {
-    if (state->processingUserGesture())
+    if (ScriptController::processingUserGesture())
         return true;
 
     Frame* frame = state->firstFrame();

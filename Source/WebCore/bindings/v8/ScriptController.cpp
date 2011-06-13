@@ -199,12 +199,6 @@ bool ScriptController::processingUserGesture()
     return UserGestureIndicator::processingUserGesture();
 }
 
-bool ScriptController::anyPageIsProcessingUserGesture() const
-{
-    // FIXME: is this right?
-    return ScriptController::processingUserGesture();
-}
-
 void ScriptController::evaluateInIsolatedWorld(unsigned worldID, const Vector<ScriptSourceCode>& sources)
 {
     m_proxy->evaluateInIsolatedWorld(worldID, sources, 0);

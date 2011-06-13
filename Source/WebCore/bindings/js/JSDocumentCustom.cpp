@@ -78,8 +78,9 @@ void JSDocument::setLocation(ExecState* exec, JSValue value)
     Frame* activeFrame = asJSDOMWindow(exec->dynamicGlobalObject())->impl()->frame();
     str = activeFrame->document()->completeURL(str).string();
 
+    bool lockHistory = !ScriptController::processingUserGesture();
     frame->navigationScheduler()->scheduleLocationChange(lexicalFrame->document()->securityOrigin(),
-        str, activeFrame->loader()->outgoingReferrer(), !activeFrame->script()->anyPageIsProcessingUserGesture(), false);
+        str, activeFrame->loader()->outgoingReferrer(), lockHistory, false);
 }
 
 JSValue toJS(ExecState* exec, JSDOMGlobalObject* globalObject, Document* document)

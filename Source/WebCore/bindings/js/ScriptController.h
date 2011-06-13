@@ -110,7 +110,6 @@ public:
 
     void setProcessingTimerCallback(bool b) { m_processingTimerCallback = b; }
     static bool processingUserGesture();
-    bool anyPageIsProcessingUserGesture() const;
 
     static bool canAccessFromCurrentOrigin(Frame*);
     bool canExecuteScripts(ReasonForCallingCanExecuteScripts);

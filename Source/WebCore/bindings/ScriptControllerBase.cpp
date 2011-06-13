@@ -54,6 +54,8 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
 
 ScriptValue ScriptController::executeScript(const String& script, bool forceUserGesture)
 {
+    // FIXME: Why does the URL of the script depend on forceUserGesture?
+    // This looks suspiciously like an old user-gesture back-channel.
     return executeScript(ScriptSourceCode(script, forceUserGesture ? KURL() : m_frame->document()->url()));
 }
 

@@ -1677,7 +1677,7 @@ void DOMWindow::setLocation(const String& urlString, DOMWindow* activeWindow, DO
     // We want a new history item if we are processing a user gesture.
     m_frame->navigationScheduler()->scheduleLocationChange(activeFrame->document()->securityOrigin(),
         completedURL, activeFrame->loader()->outgoingReferrer(),
-        locking != LockHistoryBasedOnGestureState || !activeFrame->script()->anyPageIsProcessingUserGesture(),
+        locking != LockHistoryBasedOnGestureState || !ScriptController::processingUserGesture(),
         locking != LockHistoryBasedOnGestureState);
 }
 
@@ -1765,8 +1765,8 @@ Frame* DOMWindow::createWindow(const String& urlString, const AtomicString& fram
     if (created)
         newFrame->loader()->changeLocation(activeWindow->securityOrigin(), completedURL, referrer, false, false);
     else if (!urlString.isEmpty()) {
-        newFrame->navigationScheduler()->scheduleLocationChange(activeWindow->securityOrigin(), completedURL.string(), referrer,
-            !activeFrame->script()->anyPageIsProcessingUserGesture(), false);
+        bool lockHistory = !ScriptController::processingUserGesture();
+        newFrame->navigationScheduler()->scheduleLocationChange(activeWindow->securityOrigin(), completedURL.string(), referrer, lockHistory, false);
     }
 
     return newFrame;
@@ -1814,11 +1814,13 @@ PassRefPtr<DOMWindow> DOMWindow::open(const String& urlString, const AtomicStrin
 
         // For whatever reason, Firefox uses the first window rather than the active window to
         // determine the outgoing referrer. We replicate that behavior here.
-        targetFrame->navigationScheduler()->scheduleLocationChange(activeFrame->document()->securityOrigin(),
+        bool lockHistory = !ScriptController::processingUserGesture();
+        targetFrame->navigationScheduler()->scheduleLocationChange(
+            activeFrame->document()->securityOrigin(),
             firstFrame->document()->completeURL(urlString).string(),
             firstFrame->loader()->outgoingReferrer(),
-            !activeFrame->script()->anyPageIsProcessingUserGesture(), false);
-
+            lockHistory,
+            false);
         return targetFrame->domWindow();
     }
 

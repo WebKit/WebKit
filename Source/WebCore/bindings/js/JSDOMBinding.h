@@ -251,8 +251,7 @@ namespace WebCore {
     JSC::JSValue objectToStringFunctionGetter(JSC::ExecState*, JSC::JSValue, const JSC::Identifier& propertyName);
 
     Frame* toDynamicFrame(JSC::ExecState*);
-    bool processingUserGesture();
-    
+
     inline JSC::JSValue jsString(JSC::ExecState* exec, const String& s)
     {
         StringImpl* stringImpl = s.impl();

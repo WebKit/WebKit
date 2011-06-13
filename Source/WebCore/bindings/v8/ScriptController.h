@@ -158,10 +158,7 @@ public:
     TextPosition0 eventHandlerPosition() const;
 
     void setProcessingTimerCallback(bool processingTimerCallback) { m_processingTimerCallback = processingTimerCallback; }
-    // FIXME: Currently we don't use the parameter world at all.
-    // See http://trac.webkit.org/changeset/54182
     static bool processingUserGesture();
-    bool anyPageIsProcessingUserGesture() const;
 
     void setPaused(bool paused) { m_paused = paused; }
     bool isPaused() const { return m_paused; }

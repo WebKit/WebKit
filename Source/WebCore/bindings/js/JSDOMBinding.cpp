@@ -303,12 +303,6 @@ Frame* toDynamicFrame(ExecState* exec)
     return firstDOMWindow(exec)->frame();
 }
 
-// FIXME: We should remove this function. Callers can use ScriptController directly.
-bool processingUserGesture()
-{
-    return ScriptController::processingUserGesture();
-}
-
 JSValue objectToStringFunctionGetter(ExecState* exec, JSValue, const Identifier& propertyName)
 {
     return new (exec) JSFunction(exec, exec->lexicalGlobalObject(), exec->lexicalGlobalObject()->functionStructure(), 0, propertyName, objectProtoFuncToString);

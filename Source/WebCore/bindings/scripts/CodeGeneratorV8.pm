@@ -2752,10 +2752,9 @@ sub GenerateFunctionCallString()
 
     if ($function->signature->extendedAttributes->{"NeedsUserGestureCheck"}) {
         $functionString .= ", " if $index;
-        # FIXME: We need to pass DOMWrapperWorld as a parameter.
-        # See http://trac.webkit.org/changeset/54182
-        $functionString .= "processingUserGesture()";
+        $functionString .= "ScriptController::processingUserGesture()";
         $index++;
+        $implIncludes{"ScriptController.h"} = 1;
     }
 
     if (@{$function->raisesExceptions}) {

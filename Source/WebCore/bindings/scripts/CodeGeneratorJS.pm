@@ -2099,8 +2099,9 @@ sub GenerateImplementation
 
                     if ($function->signature->extendedAttributes->{"NeedsUserGestureCheck"}) {
                         $functionString .= ", " if $paramIndex;
-                        $functionString .= "processingUserGesture()";
+                        $functionString .= "ScriptController::processingUserGesture()";
                         $paramIndex++;
+                        $implIncludes{"ScriptController.h"} = 1;
                     }
 
                     push(@implContent, "\n");

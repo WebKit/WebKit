@@ -55,8 +55,6 @@ public:
     Frame* activeFrame();
     Frame* firstFrame();
 
-    bool processingUserGesture();
-
     // FIXME: This should be shared in BindingSecurity
     bool allowsAccessFromFrame(Frame*);
 

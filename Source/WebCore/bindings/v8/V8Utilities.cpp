@@ -107,11 +107,6 @@ void transferHiddenDependency(v8::Handle<v8::Object> object,
         createHiddenDependency(object, newValue, cacheIndex);
 }
 
-bool processingUserGesture()
-{
-    return V8BindingState::Only()->processingUserGesture();
-}
-
 Frame* callingOrEnteredFrame()
 {
     return V8BindingState::Only()->activeFrame();
