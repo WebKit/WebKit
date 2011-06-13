@@ -2505,9 +2505,6 @@ fast/events/remove-target-in-mouseup.html
 fast/events/selectstart-by-double-triple-clicks.html
 fast/events/selectstart-by-drag.html
 
-# LayoutTestController::setTextDirection is not implemented.
-fast/html/set-text-direction.html
-
 # JSC does not support setIsolatedWorldSecurityOrigin (http://webkit.org/b/61540)
 http/tests/security/isolatedWorld/cross-origin-xhr.html
 
