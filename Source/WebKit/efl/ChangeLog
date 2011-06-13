@@ -1,3 +1,17 @@
+2011-06-13  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Remove ewk_frame_select_* functions from ewk_frame.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=62365
+
+        These functions do not exist in any public headers and
+        they are not used internally.
+        Moreover ewk_view has the same functionality added
+        https://bugs.webkit.org/show_bug.cgi?id=60435
+
+        * ewk/ewk_frame.cpp:
+
 2011-06-13  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         Reviewed by Kenneth Rohde Christiansen.
