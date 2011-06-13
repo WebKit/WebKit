@@ -888,9 +888,9 @@ AC_ARG_ENABLE(animation_api,
               [], [enable_animation_api="no"])
 AC_MSG_RESULT([$enable_animation_api])
 
-# check whether to enable animation API
+# check whether to enable touch icon loading 
 AC_MSG_CHECKING([whether to enable touch icon loading])
-AC_ARG_ENABLE(animation_api,
+AC_ARG_ENABLE(touch_icon_loading,
               AC_HELP_STRING([--enable-touch-icon-loading],
                              [enable support for loading touch icons [default=no]]),
               [], [enable_touch_icon_loading="no"])
@@ -1250,6 +1250,7 @@ Features:
  XSLT support                                             : $enable_xslt
  Spellcheck support                                       : $enable_spellcheck
  Animation API                                            : $enable_animation_api
+ Touch Icon Loading support                               : $enable_touch_icon_loading
 
 GTK+ configuration:
  GTK+ version                                             : $with_gtk
