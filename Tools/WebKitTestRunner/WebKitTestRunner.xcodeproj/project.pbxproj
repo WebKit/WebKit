@@ -21,7 +21,6 @@
 /* End PBXAggregateTarget section */
 
 /* Begin PBXBuildFile section */
-		41230F0A138C78DF00BCCFCA /* WebCoreTestSupport.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 41230E16138C78BF00BCCFCA /* WebCoreTestSupport.dylib */; };
 		6510A78211EC643800410867 /* AHEM____.TTF in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77711EC643800410867 /* AHEM____.TTF */; };
 		6510A78311EC643800410867 /* ColorBits.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77811EC643800410867 /* ColorBits.ttf */; };
 		6510A78411EC643800410867 /* WebKitWeightWatcher100.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */; };
@@ -79,8 +78,6 @@
 
 /* Begin PBXFileReference section */
 		378D442213346D00006A777B /* config.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = config.h; sourceTree = "<group>"; };
-		41230E16138C78BF00BCCFCA /* WebCoreTestSupport.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; path = WebCoreTestSupport.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
-		4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WebCoreTestSupport.h; path = ../../Source/WebCore/testing/js/WebCoreTestSupport.h; sourceTree = SOURCE_ROOT; };
 		6510A77711EC643800410867 /* AHEM____.TTF */ = {isa = PBXFileReference; lastKnownFileType = file; name = "AHEM____.TTF"; path = "fonts/AHEM____.TTF"; sourceTree = "<group>"; };
 		6510A77811EC643800410867 /* ColorBits.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = ColorBits.ttf; path = fonts/ColorBits.ttf; sourceTree = "<group>"; };
 		6510A77911EC643800410867 /* WebKitWeightWatcher100.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = WebKitWeightWatcher100.ttf; path = fonts/WebKitWeightWatcher100.ttf; sourceTree = "<group>"; };
@@ -161,7 +158,6 @@
 			files = (
 				BC25193E11D15D8B002EBC01 /* Cocoa.framework in Frameworks */,
 				BC25193F11D15D8B002EBC01 /* WebKit2.framework in Frameworks */,
-				41230F0A138C78DF00BCCFCA /* WebCoreTestSupport.dylib in Frameworks */,
 				BC25194011D15D8B002EBC01 /* JavaScriptCore.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -205,8 +201,6 @@
 				BC7934A411906584005EA8E2 /* Cocoa.framework */,
 				BC7934AB1190658C005EA8E2 /* WebKit2.framework */,
 				BCDA2B991191051F00C3BC47 /* JavaScriptCore.framework */,
-				4181731B138AD39D0057AAA4 /* WebCoreTestSupport.h */,
-				41230E16138C78BF00BCCFCA /* WebCoreTestSupport.dylib */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";

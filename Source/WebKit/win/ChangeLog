@@ -1,3 +1,13 @@
+2011-06-12  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed, rolling out r88625.
+        http://trac.webkit.org/changeset/88625
+        https://bugs.webkit.org/show_bug.cgi?id=61073
+
+        Breaks SL Webkit2 Tests
+
+        * WebKit.vcproj/WebKit.sln:
+
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
