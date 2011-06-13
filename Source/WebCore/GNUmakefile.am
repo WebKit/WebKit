@@ -715,7 +715,7 @@ IDL_PATH := \
     $(WebCore)/workers \
     $(WebCore)/xml
 
-vpath %.idl = $(IDL_PATH)
+vpath %.idl $(IDL_PATH)
 
 # This does not appear to work correctly with gnumake unless
 # it includes an empty command list (the semicolon).
@@ -788,6 +788,12 @@ EXTRA_DIST += \
 	$(shell ls $(srcdir)/Source/WebCore/websockets/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/workers/*.idl) \
 	$(shell ls $(srcdir)/Source/WebCore/xml/*.idl) \
+	Source/WebCore/bindings/scripts/CodeGenerator.pm \
+	Source/WebCore/bindings/scripts/IDLParser.pm \
+	Source/WebCore/bindings/scripts/IDLStructure.pm \
+	Source/WebCore/bindings/scripts/InFilesParser.pm \
+	Source/WebCore/bindings/scripts/generate-bindings.pl \
+	Source/WebCore/bindings/scripts/preprocessor.pm
 	Source/WebCore/bindings/scripts/CodeGeneratorGObject.pm \
 	Source/WebCore/bindings/scripts/CodeGeneratorJS.pm \
 	Source/WebCore/bindings/scripts/CodeGenerator.pm \

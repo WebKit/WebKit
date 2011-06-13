@@ -1274,8 +1274,6 @@ webcore_sources += \
 	Source/WebCore/dom/StaticNodeList.h \
 	Source/WebCore/dom/Stream.cpp \
 	Source/WebCore/dom/Stream.h \
-	Source/WebCore/dom/StreamEvent.cpp \
-	Source/WebCore/dom/Streamevent.h \
 	Source/WebCore/dom/StyledElement.cpp \
 	Source/WebCore/dom/StyledElement.h \
 	Source/WebCore/dom/StyleElement.cpp \
@@ -1861,7 +1859,6 @@ webcore_sources += \
 	Source/WebCore/html/shadow/MeterShadowElement.h \
 	Source/WebCore/html/shadow/ProgressShadowElement.cpp \
 	Source/WebCore/html/shadow/ProgressShadowElement.h \
-	Source/WebCore/html/shadow/ShadowContentElement.h \
 	Source/WebCore/html/shadow/SliderThumbElement.cpp \
 	Source/WebCore/html/shadow/SliderThumbElement.h \
 	Source/WebCore/html/shadow/TextControlInnerElements.cpp \
@@ -3735,7 +3732,7 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
 	Source/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/ImageBufferData.h \
+	Source/WebCore/platform/graphics/cairo/ImageBufferDataCairo.h \
 	Source/WebCore/platform/graphics/cairo/ImageCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/OwnPtrCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/OwnPtrCairo.h \

@@ -1,3 +1,15 @@
+2011-06-13  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        Some distcheck fixes. Still broken, but this is moves us closer to
+        the target.
+
+        * GNUmakefile.am: fix vpath syntax and add missing files to
+        EXTRA_DIST.
+        * GNUmakefile.list.am: add missing files and remove dead files.
+        * bindings/gobject/GNUmakefile.am: fix comment.
+
 2011-06-13  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
