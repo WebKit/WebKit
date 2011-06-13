@@ -3994,10 +3994,7 @@ BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = IMAGE PASS
 BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
 BUGCR85755 : fast/js/exception-properties.html = TEXT
 
-// Started failing after r88321
-
-
 BUGVITALYR LINUX MAC GPU : compositing/geometry/tall-page-composited.html = CRASH FAIL
 
-// Added in r88637
-BUGCR85917 MAC : svg/animations/animateTransform-transformable-transform.html = TEXT
+// Has been flaky, probably since birth.
+BUGWK62580 : fast/loader/inherit-charset-to-empty-frame.html = PASS TEXT

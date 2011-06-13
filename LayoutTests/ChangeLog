@@ -1,3 +1,9 @@
+2011-06-13  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Clean up test expectations, add a flake.
+
+        * platform/chromium/test_expectations.txt: Cleaned up.
+
 2011-06-13  Dirk Schulze  <krit@webkit.org>
 
         Rubber-stamped by Rob Buis.
