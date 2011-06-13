@@ -152,6 +152,18 @@
 
         Reviewed by Adele Peterson.
 
+        Print out bounds origin in layer dump
+        https://bugs.webkit.org/show_bug.cgi?id=62583
+
+        Include m_boundsOrigin in the layer dump, which is used by layerTreeAsText().
+
+        * platform/graphics/GraphicsLayer.cpp:
+        (WebCore::GraphicsLayer::dumpProperties):
+
+2011-06-13  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Adele Peterson.
+
         Add utility method to report whether a RenderLayer has any scrollbars
         https://bugs.webkit.org/show_bug.cgi?id=62579
         
