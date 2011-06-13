@@ -1,3 +1,14 @@
+2011-06-13  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (81679-81939): In Safari, Dictionary look up (tap or Ctrl-Cmd-D) doesn't work if you have clicked on a word and not moved the mouse
+        <rdar://problem/9580237> 
+
+        * WebProcess/WebPage/mac/WebPageMac.mm:
+        (WebKit::shouldUseSelection):
+        Return early if the selection we are using is not a range.
+
 2011-06-13  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dimitri Glazkov.
