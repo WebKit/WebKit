@@ -30,6 +30,7 @@
 
 #include "WebKitWebViewBase.h"
 #include "WebPageProxy.h"
+#include <WebKit2/WebKit2.h>
 
 using namespace WebKit;
 
@@ -40,6 +41,8 @@ WebKitWebViewBase* webkitWebViewBaseCreate(WebContext*, WebPageGroup*);
 GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase*);
 
 WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase*);
+
+void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WKContextRef, WKPageGroupRef);
 
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
 

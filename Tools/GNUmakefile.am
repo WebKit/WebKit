@@ -3,7 +3,32 @@ noinst_PROGRAMS += \
 	Programs/GtkLauncher \
 	Programs/ImageDiff
 
+if ENABLE_WEBKIT2
+noinst_PROGRAMS += \
+	Programs/GtkLauncher2
+endif
+
 # GtkLauncher
+gtklauncher_sources = \
+	Tools/GtkLauncher/main.c
+
+gtklauncher_cflags = \
+	-fno-strict-aliasing \
+	$(global_cflags) \
+	$(GTK_CFLAGS) \
+	$(LIBSOUP_CFLAGS)
+
+gtklauncher_ldadd = \
+	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(GTK_LIBS) \
+	$(GLIB_LIBS) \
+	$(LIBSOUP_LIBS) \
+	$(WINMM_LIBS)
+
+gtklauncher_ldflags = \
+	-no-fast-install \
+	-no-install
+
 Programs_GtkLauncher_CPPFLAGS = \
 	-I$(srcdir)/Source/WebKit/gtk \
 	-I$(srcdir)/Source/WebCore/platform/network/soup/cache/ \
@@ -13,26 +38,46 @@ Programs_GtkLauncher_CPPFLAGS = \
 	$(javascriptcore_cppflags)
 
 Programs_GtkLauncher_SOURCES = \
-	Tools/GtkLauncher/main.c
+	$(gtklauncher_sources)
 
 Programs_GtkLauncher_CFLAGS = \
 	-ansi \
-	-fno-strict-aliasing \
-	$(global_cflags) \
-	$(GTK_CFLAGS) \
-	$(LIBSOUP_CFLAGS)
+	$(gtklauncher_cflags)
 
 Programs_GtkLauncher_LDADD = \
-	libjavascriptcoregtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
 	libwebkitgtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
-	$(GTK_LIBS) \
-	$(GLIB_LIBS) \
-	$(LIBSOUP_LIBS) \
-	$(WINMM_LIBS)
+	$(gtklauncher_ldadd)
 
 Programs_GtkLauncher_LDFLAGS = \
-	-no-fast-install \
-	-no-install
+	$(gtklauncher_ldflags)
+
+if ENABLE_WEBKIT2
+Programs_GtkLauncher2_CPPFLAGS = \
+	-I$(srcdir)/Source \
+	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	-I$(srcdir)/Source/WebKit2/UIProcess/API/gtk \
+	-I$(top_builddir)/Source/WebKit2/UIProcess/API/gtk \
+	-I$(srcdir)/Source/WebKit/gtk \
+	-I$(top_builddir)/Source/WebKit/gtk \
+	-I$(top_builddir)/DerivedSources \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags)
+
+Programs_GtkLauncher2_SOURCES = \
+	$(gtklauncher_sources)
+
+Programs_GtkLauncher2_CFLAGS = \
+	-DWEBKIT2=\"1\" \
+	$(gtklauncher_cflags)
+
+Programs_GtkLauncher2_LDADD = \
+	libwebkit2gtk-@WEBKITGTK_API_MAJOR_VERSION@.@WEBKITGTK_API_MINOR_VERSION@.la \
+	$(gtklauncher_ldadd)
+
+Programs_GtkLauncher2_LDFLAGS = \
+	$(gtklauncher_ldflags)
+
+endif
 
 # libWebCoreInternals
 # We must split off the window.internals implementation into a separate
@@ -189,6 +234,11 @@ CLEANFILES += \
 	Programs/DumpRenderTree \
 	Programs/GtkLauncher \
 	Programs/ImageDiff
+
+if ENABLE_WEBKIT2
+CLEANFILES += \
+	Programs/GtkLauncher2
+endif
 
 if TARGET_X11
 

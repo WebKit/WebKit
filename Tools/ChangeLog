@@ -1,3 +1,18 @@
+2011-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Export an API similar to WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=57820
+
+        Build GtkLauncher2 for WebKit2. It's actually the same GtkLauncher
+        code, but linking to libwebkit2gtk.
+
+        * GNUmakefile.am:
+        * GtkLauncher/main.c:
+        (createBrowser):
+        (main):
+
 2011-06-12  MORITA Hajime  <morrita@google.com>
 
         Unreviewed, rolling out r88625.

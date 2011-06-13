@@ -337,11 +337,7 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
 WebKitWebViewBase* webkitWebViewBaseCreate(WebContext* context, WebPageGroup* pageGroup)
 {
     WebKitWebViewBase* webkitWebViewBase = WEBKIT_WEB_VIEW_BASE(g_object_new(WEBKIT_TYPE_WEB_VIEW_BASE, NULL));
-    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
-
-    priv->pageProxy = context->createWebPage(priv->pageClient.get(), pageGroup);
-    priv->pageProxy->initializeWebPage();
-
+    webkitWebViewBaseCreateWebPage(webkitWebViewBase, toAPI(context), toAPI(pageGroup));
     return webkitWebViewBase;
 }
 
@@ -353,6 +349,14 @@ GtkIMContext* webkitWebViewBaseGetIMContext(WebKitWebViewBase* webkitWebViewBase
 WebPageProxy* webkitWebViewBaseGetPage(WebKitWebViewBase* webkitWebViewBase)
 {
     return webkitWebViewBase->priv->pageProxy.get();
+}
+
+void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WKContextRef context, WKPageGroupRef pageGroup)
+{
+    WebKitWebViewBasePrivate* priv = webkitWebViewBase->priv;
+
+    priv->pageProxy = toImpl(context)->createWebPage(priv->pageClient.get(), toImpl(pageGroup));
+    priv->pageProxy->initializeWebPage();
 }
 
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char* tooltip)

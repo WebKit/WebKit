@@ -1,3 +1,15 @@
+2011-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Export an API similar to WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=57820
+
+        * GNUmakefile.am: Add webkitwebviewcommon.h to public header list.
+        * webkit/webkitwebview.h: Move declarations common to WebKit2 to
+        webkitwebviewcommon.h.
+        * webkit/webkitwebviewcommon.h: Added.
+
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

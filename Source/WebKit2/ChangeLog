@@ -1,3 +1,29 @@
+2011-06-13  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Export an API similar to WebKit1
+        https://bugs.webkit.org/show_bug.cgi?id=57820
+
+        Add first implementation of WebKitWebView, a class with the same
+        API than webkit1, that wraps the C API to provide a high level
+        WebKit2 API for GTK port.
+
+        * GNUmakefile.am: Add new files to compilation.
+        * UIProcess/API/gtk/WebKitWebView.cpp: Added.
+        (webkit_web_view_init):
+        (webkit_web_view_class_init):
+        (webkit_web_view_new):
+        (webkit_web_view_load_uri):
+        (webkit_web_view_go_back):
+        (webkit_web_view_go_forward):
+        * UIProcess/API/gtk/WebKitWebView.h: Added.
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseCreate):
+        (webkitWebViewBaseCreateWebPage):
+        * UIProcess/API/gtk/WebKitWebViewBasePrivate.h:
+        * UIProcess/API/gtk/webkit/webkit.h: Added.
+
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

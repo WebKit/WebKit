@@ -137,7 +137,8 @@ webkitgtk_static_h_api += \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebresource.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebsettings.h \
 	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebwindowfeatures.h \
-	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebview.h
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebview.h \
+	$(srcdir)/Source/WebKit/gtk/webkit/webkitwebviewcommon.h
 
 webkitgtk_built_h_api += \
 	Source/WebKit/gtk/webkit/webkitversion.h
