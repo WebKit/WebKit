@@ -90,7 +90,7 @@ private:
     {
     }
 
-    virtual void appendBytes(DocumentWriter*, const char*, int);
+    virtual void appendBytes(DocumentWriter*, const char*, size_t);
     virtual void finish();
 };
 
@@ -124,7 +124,7 @@ static float pageZoomFactor(const Document* document)
     return frame ? frame->pageZoomFactor() : 1;
 }
 
-void ImageDocumentParser::appendBytes(DocumentWriter*, const char*, int)
+void ImageDocumentParser::appendBytes(DocumentWriter*, const char*, size_t)
 {
     Frame* frame = document()->frame();
     Settings* settings = frame->settings();

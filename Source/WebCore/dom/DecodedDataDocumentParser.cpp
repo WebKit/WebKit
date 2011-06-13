@@ -37,7 +37,7 @@ DecodedDataDocumentParser::DecodedDataDocumentParser(Document* document)
 {
 }
 
-void DecodedDataDocumentParser::appendBytes(DocumentWriter* writer, const char* data, int length)
+void DecodedDataDocumentParser::appendBytes(DocumentWriter* writer, const char* data, size_t length)
 {
     if (!length)
         return;

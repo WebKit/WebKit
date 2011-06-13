@@ -1,5 +1,28 @@
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Darin Adler.
+
+        DocumentParser::appendBytes should use size_t for length instead of int
+        https://bugs.webkit.org/show_bug.cgi?id=62508
+
+        size_t is the proper type for distances in memory, especially on 64 bit
+        machines.
+
+        * dom/DecodedDataDocumentParser.cpp:
+        (WebCore::DecodedDataDocumentParser::appendBytes):
+        * dom/DecodedDataDocumentParser.h:
+        * dom/DocumentParser.h:
+        * html/ImageDocument.cpp:
+        (WebCore::ImageDocumentParser::appendBytes):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocumentParser::appendBytes):
+        * html/PluginDocument.cpp:
+        (WebCore::PluginDocumentParser::appendBytes):
+        * loader/SinkDocument.cpp:
+        (WebCore::SinkDocumentParser::appendBytes):
+
+2011-06-12  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Remove FrameLoader::isProcessingUserGesture

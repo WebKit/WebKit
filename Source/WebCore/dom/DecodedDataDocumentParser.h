@@ -44,7 +44,7 @@ private:
     virtual void append(const SegmentedString&) = 0;
 
     // appendBytes and flush are used by DocumentWriter (the loader).
-    virtual void appendBytes(DocumentWriter*, const char* bytes, int length);
+    virtual void appendBytes(DocumentWriter*, const char* bytes, size_t length);
     virtual void flush(DocumentWriter*);
 };
 
