@@ -41,14 +41,14 @@ function testMessageAfterClose(evt) {
     worker.postMessage("close");
     worker.postMessage("ping");
     worker.onmessage = function(evt) {
-        if (evt.data != "pong")
+        if (evt.data != "pong") {
             log("PASS: Received message posted right after close() was invoked: " + evt.data);
-        else {
+            timeout = setTimeout(testErrorAfterClose, 1000);
+        } else {
             log("FAIL: Received a message originated from a handler in the worker after the JS fragment with close() exited" + evt.data);
             done();
         }
     };
-    timeout = setTimeout(testErrorAfterClose, 1000);
 }
 
 function testErrorAfterClose()
