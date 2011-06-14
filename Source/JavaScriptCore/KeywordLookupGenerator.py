@@ -103,11 +103,12 @@ class Trie:
             return self
         if len(self.keys) != 1:
             return self
-        (prefix, suffix) = self.keys.items()[0]
-        res = Trie(self.prefix + prefix)
-        res.value = suffix.value
-        res.keys = suffix.keys
-        return res
+        # Python 3: for() loop for compatibility. Use next() when Python 2.6 is the baseline.
+        for (prefix, suffix) in self.keys.items():
+            res = Trie(self.prefix + prefix)
+            res.value = suffix.value
+            res.keys = suffix.keys
+            return res
 
     def fillOut(self, prefix=""):
         self.fullPrefix = prefix + self.prefix

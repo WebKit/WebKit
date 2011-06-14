@@ -1,3 +1,17 @@
+2011-06-14  Benjamin Poulain  <benjamin@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        KeywordLookupGenerator's Trie does not work with Python 3
+        https://bugs.webkit.org/show_bug.cgi?id=62635
+
+        With Python 3, dict.items() return an iterator. Since the iterator
+        protocol changed between Python 2 and 3, the easiest way to get the
+        values is to have something that use the iterator implicitely, like a
+        for() loop.
+
+        * KeywordLookupGenerator.py:
+
 2011-06-13  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
