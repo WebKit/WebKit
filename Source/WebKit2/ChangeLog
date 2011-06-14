@@ -1,3 +1,29 @@
+2011-06-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=62666>
+        <rdar://problem/9606676>
+        Callers should be robust against WebImage::create() returning an image with a null snapshot
+
+        * Shared/API/c/cg/WKImageCG.cpp:
+        (WKImageCreateCGImage):
+        Return 0 if no bitmap was created.
+        (WKImageCreateFromCGImage):
+        Ditto.
+        
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        Check for null before dereferencing image->bitmap() in two places.
+        
+        * WebProcess/WebPage/WebPage.cpp:
+        (WebKit::WebPage::snapshotInViewCoordinates):
+        Return 0 if no bitmap was created.
+        (WebKit::WebPage::scaledSnapshotInDocumentCoordinates):
+        Ditto.
+        (WebKit::WebPage::createSnapshotOfVisibleContent):
+        Bail out if no bitmap was created.
+
 2011-06-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

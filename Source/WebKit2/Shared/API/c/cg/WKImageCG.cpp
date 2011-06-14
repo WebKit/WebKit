@@ -36,13 +36,26 @@ using namespace WebCore;
 
 CGImageRef WKImageCreateCGImage(WKImageRef imageRef)
 {
-    return toImpl(imageRef)->bitmap()->makeCGImageCopy().leakRef();
+    if (!imageRef)
+        return 0;
+    
+    WebImage* webImage = toImpl(imageRef);
+    if (!webImage || !webImage->bitmap())
+        return 0;
+    
+    return webImage->bitmap()->makeCGImageCopy().leakRef();
 }
 
 WKImageRef WKImageCreateFromCGImage(CGImageRef imageRef, WKImageOptions options)
 {
+    if (!imageRef)
+        return 0;
+    
     IntSize imageSize(CGImageGetWidth(imageRef), CGImageGetHeight(imageRef));
     RefPtr<WebImage> webImage = WebImage::create(imageSize, toImageOptions(options));
+    if (!webImage || !webImage->bitmap())
+        return 0;
+    
     OwnPtr<GraphicsContext> graphicsContext = webImage->bitmap()->createGraphicsContext();
     CGContextDrawImage(graphicsContext->platformContext(), CGRectMake(0, 0, imageSize.width(), imageSize.height()), imageRef);
     return toAPI(webImage.release().leakRef());
