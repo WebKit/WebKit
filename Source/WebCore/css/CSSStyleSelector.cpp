@@ -65,6 +65,7 @@
 #include "HTMLFrameElementBase.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "HTMLProgressElement.h"
 #include "HTMLTextAreaElement.h"
 #include "KeyframeList.h"
 #include "LinkHash.h"
@@ -1019,6 +1020,61 @@ bool CSSStyleSelector::matchesSiblingRules()
     return true;
 }
 
+bool CSSStyleSelector::canShareStyleWithControl(StyledElement* element) const
+{
+#if ENABLE(PROGRESS_TAG)
+    if (element->hasTagName(progressTag)) {
+        if (!m_element->hasTagName(progressTag))
+            return false;
+        
+        HTMLProgressElement* thisProgressElement = static_cast<HTMLProgressElement*>(element);
+        HTMLProgressElement* otherProgressElement = static_cast<HTMLProgressElement*>(m_element);
+        if (thisProgressElement->isDeterminate() != otherProgressElement->isDeterminate())
+            return false;
+        
+        return true;
+    }
+#endif
+    
+    HTMLInputElement* thisInputElement = element->toInputElement();
+    HTMLInputElement* otherInputElement = m_element->toInputElement();
+    
+    if (!thisInputElement || !otherInputElement)
+        return false;
+    
+    if (thisInputElement->isAutofilled() != otherInputElement->isAutofilled())
+        return false;
+    if (thisInputElement->isChecked() != otherInputElement->isChecked())
+        return false;
+    if (thisInputElement->isIndeterminate() != otherInputElement->isIndeterminate())
+        return false;
+    
+    if (element->isEnabledFormControl() != m_element->isEnabledFormControl())
+        return false;
+    
+    if (element->isDefaultButtonForForm() != m_element->isDefaultButtonForForm())
+        return false;
+    
+    if (!m_element->document()->containsValidityStyleRules())
+        return false;
+    
+    bool willValidate = element->willValidate();
+    
+    if (willValidate != m_element->willValidate())
+        return false;
+    
+    if (willValidate && (element->isValidFormControlElement() != m_element->isValidFormControlElement()))
+        return false;
+    
+    if (element->isInRange() != m_element->isInRange())
+        return false;
+    
+    if (element->isOutOfRange() != m_element->isOutOfRange())
+        return false;
+    
+    return true;
+}
+
 bool CSSStyleSelector::canShareStyleWithElement(Node* node) const
 {
     if (!node->isStyledElement())
@@ -1074,43 +1130,8 @@ bool CSSStyleSelector::canShareStyleWithElement(Node* node) const
     if (isControl != m_element->isFormControlElement())
         return false;
 
-    if (isControl) {
-        HTMLInputElement* thisInputElement = element->toInputElement();
-        HTMLInputElement* otherInputElement = m_element->toInputElement();
-
-        if (!thisInputElement || !otherInputElement)
-            return false;
-
-        if (thisInputElement->isAutofilled() != otherInputElement->isAutofilled())
-            return false;
-        if (thisInputElement->isChecked() != otherInputElement->isChecked())
-            return false;
-        if (thisInputElement->isIndeterminate() != otherInputElement->isIndeterminate())
-            return false;
-
-        if (element->isEnabledFormControl() != m_element->isEnabledFormControl())
-            return false;
-
-        if (element->isDefaultButtonForForm() != m_element->isDefaultButtonForForm())
-            return false;
-
-        if (!m_element->document()->containsValidityStyleRules())
-            return false;
-
-        bool willValidate = element->willValidate();
-
-        if (willValidate != m_element->willValidate())
-            return false;
-
-        if (willValidate && (element->isValidFormControlElement() != m_element->isValidFormControlElement()))
-            return false;
-
-        if (element->isInRange() != m_element->isInRange())
-            return false;
-
-        if (element->isOutOfRange() != m_element->isOutOfRange())
-            return false;
-    }
+    if (isControl && !canShareStyleWithControl(element))
+        return false;
 
     if (style->transitions() || style->animations())
         return false;
@@ -2881,6 +2902,16 @@ bool CSSStyleSelector::SelectorChecker::checkOneSelector(CSSSelector* sel, Eleme
             case CSSSelector::PseudoIndeterminate: {
                 if (!e || !e->isFormControlElement())
                     break;
+                
+#if ENABLE(PROGRESS_TAG)
+                if (e->hasTagName(progressTag)) {
+                    HTMLProgressElement* progress = static_cast<HTMLProgressElement*>(e);
+                    if (progress && !progress->isDeterminate())
+                        return true;
+                    break;
+                }
+#endif
+                
                 HTMLInputElement* inputElement = e->toInputElement();
                 if (inputElement && inputElement->isIndeterminate())
                     return true;

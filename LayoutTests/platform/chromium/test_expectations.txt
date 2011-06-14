@@ -3988,5 +3988,7 @@ BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = IMAGE PASS
 BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
 BUGCR85755 : fast/js/exception-properties.html = TEXT
 
+BUGWK62430 : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = FAIL
+
 // Has been flaky, probably since birth.
 BUGWK62580 : fast/loader/inherit-charset-to-empty-frame.html = PASS TEXT

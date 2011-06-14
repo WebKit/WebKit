@@ -43,6 +43,8 @@ public:
 
     double position() const;
 
+    bool isDeterminate();
+    
     virtual bool canContainRangeEndPoint() const { return false; }
 
 private:

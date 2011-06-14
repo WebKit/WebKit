@@ -315,6 +315,8 @@ public:
         void mapAnimationTimingFunction(Animation*, CSSValue*);
 
         void mapNinePieceImage(CSSPropertyID, CSSValue*, NinePieceImage&);
+        
+        bool canShareStyleWithControl(StyledElement*) const;
 
         void applyProperty(int id, CSSValue*);
         void applyPageSizeProperty(CSSValue*);

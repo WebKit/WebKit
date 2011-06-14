@@ -1,3 +1,17 @@
+2011-06-14  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kent Tamura.
+
+        <progress> should support :indeterminate pseudo-class
+        https://bugs.webkit.org/show_bug.cgi?id=62430
+
+        * fast/dom/HTMLProgressElement/indeterminate-progress-001.html: Added.
+        * fast/dom/HTMLProgressElement/indeterminate-progress-002-expected.txt: Added.
+        * fast/dom/HTMLProgressElement/indeterminate-progress-002.html: Added.
+        * platform/mac/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.png: Added.
+        * platform/mac/fast/dom/HTMLProgressElement/indeterminate-progress-001-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-14  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

@@ -1,3 +1,24 @@
+2011-06-14  Yael Aharon  <yael.aharon@nokia.com>
+
+        Reviewed by Kent Tamura.
+
+        <progress> should support :indeterminate pseudo-class
+        https://bugs.webkit.org/show_bug.cgi?id=62430
+
+        Add support for :indeterminate pseudo class for progress element.
+
+        Tests: fast/dom/HTMLProgressElement/indeterminate-progress-001.html
+               fast/dom/HTMLProgressElement/indeterminate-progress-002.html
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::canShareStyleWithControl):
+        (WebCore::CSSStyleSelector::canShareStyleWithElement):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * html/HTMLProgressElement.cpp:
+        (WebCore::HTMLProgressElement::isDeterminate):
+        (WebCore::HTMLProgressElement::didElementStateChange):
+        * html/HTMLProgressElement.h:
+
 2011-06-14  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.

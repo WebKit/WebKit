@@ -135,11 +135,22 @@ double HTMLProgressElement::position() const
     return value() / max();
 }
 
+bool HTMLProgressElement::isDeterminate()
+{
+    double currentPosition = position();
+    return (HTMLProgressElement::IndeterminatePosition != currentPosition && HTMLProgressElement::InvalidPosition != currentPosition);
+}
+    
 void HTMLProgressElement::didElementStateChange()
 {
     m_value->setWidthPercentage(position()*100);
-    if (renderer())
+    if (renderer()) {
+        RenderProgress* render = toRenderProgress(renderer());
+        bool wasDeterminate = render->isDeterminate();
         renderer()->updateFromElement();
+        if (wasDeterminate != isDeterminate())
+            setNeedsStyleRecalc();
+    }
 }
 
 void HTMLProgressElement::createShadowSubtree()
