@@ -1,5 +1,11 @@
 2011-06-13  James Simonsen  <simonjam@chromium.org>
 
+        [Chromium] Unreviewed, rolled DEPS.
+
+        * DEPS:
+
+2011-06-13  James Simonsen  <simonjam@chromium.org>
+
         Reviewed by James Robinson.
 
         [Chromium] Implement monotonicallyIncreasingClock()
