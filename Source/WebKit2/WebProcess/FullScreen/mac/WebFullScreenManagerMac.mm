@@ -186,9 +186,12 @@ void WebFullScreenManagerMac::setRootFullScreenLayer(WebCore::GraphicsLayer* lay
         m_page->send(Messages::WebFullScreenManagerProxy::EnterAcceleratedCompositingMode(m_layerTreeContext));
     }
 
+    [CATransaction begin];
+    [CATransaction setDisableActions:YES];
     m_rootLayer->removeAllChildren();
     m_rootLayer->addChild(layer);
     m_rootLayer->syncCompositingState();
+    [CATransaction commit];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:@"WebKitLayerHostChanged" object:m_rootLayer->platformLayer() userInfo:nil];
 }
