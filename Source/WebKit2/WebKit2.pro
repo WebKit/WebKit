@@ -149,6 +149,7 @@ HEADERS += \
     Shared/WebGeolocationPosition.h \
     Shared/WebGraphicsContext.h \
     Shared/WebImage.h \
+    Shared/WebLayerTreeInfo.h \
     Shared/WebNavigationDataStore.h \
     Shared/WebNumber.h \
     Shared/WebOpenPanelParameters.h \
@@ -279,6 +280,7 @@ HEADERS += \
     WebProcess/WebCoreSupport/WebErrors.h \
     WebProcess/WebCoreSupport/WebFrameLoaderClient.h \
     WebProcess/WebCoreSupport/WebGeolocationClient.h \
+    WebProcess/WebCoreSupport/WebGraphicsLayer.h \
     WebProcess/WebCoreSupport/WebInspectorClient.h \
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.h \
     WebProcess/WebCoreSupport/WebPlatformStrategies.h \
@@ -357,6 +359,7 @@ SOURCES += \
     Shared/WebGraphicsContext.cpp \
     Shared/WebKeyboardEvent.cpp \
     Shared/WebImage.cpp \
+    Shared/WebLayerTreeInfo.cpp \
     Shared/WebMouseEvent.cpp \
     Shared/WebOpenPanelParameters.cpp \
     Shared/WebPageCreationParameters.cpp \
@@ -504,6 +507,7 @@ SOURCES += \
     WebProcess/WebCoreSupport/WebEditorClient.cpp \
     WebProcess/WebCoreSupport/WebFrameLoaderClient.cpp \
     WebProcess/WebCoreSupport/WebGeolocationClient.cpp \
+    WebProcess/WebCoreSupport/WebGraphicsLayer.cpp \
     WebProcess/WebCoreSupport/WebInspectorClient.cpp \
     WebProcess/WebCoreSupport/WebInspectorFrontendClient.cpp \
     WebProcess/WebCoreSupport/WebPlatformStrategies.cpp \

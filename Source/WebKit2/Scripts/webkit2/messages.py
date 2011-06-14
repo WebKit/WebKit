@@ -464,6 +464,7 @@ def headers_for_type(type):
         'WebCore::TextCheckingResult': '<WebCore/TextCheckerClient.h>',
         'WebKit::WebGestureEvent': '"WebEvent.h"',
         'WebKit::WebKeyboardEvent': '"WebEvent.h"',
+        'WebKit::WebLayerUpdateInfo': '"WebLayerTreeInfo.h"',
         'WebKit::WebMouseEvent': '"WebEvent.h"',
         'WebKit::WebTouchEvent': '"WebEvent.h"',
         'WebKit::WebWheelEvent': '"WebEvent.h"',

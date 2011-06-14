@@ -1,3 +1,73 @@
+2011-06-14  No'am Rosenthal  <noam.rosenthal@nokia.com> and Viatcheslav Ostapenko <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Implement accelerated compositing on WK2 Qt port
+        https://bugs.webkit.org/show_bug.cgi?id=56935
+
+        Implementing LayerTreeHost and LayerTreeContext and LayerTreeHost for Qt.
+        Add the necessary plumbing to make the LayerTreeHost work with Qt, based on the original Mac
+        implementation (the code is nearly identical). This includes creating the right layers for the
+        overlay and for the non-composited content, and passing the root layer to the UI process.
+
+        Also, since LayerTreeHostQt is compiled, we have to add some of the rest of the existing patches,
+        namely the new messages: syncCompositingLayers and updateCompositingLayerContent, and create a
+        stub implementation for them in DrawingAreaProxy.
+
+        Note that this is not activated yet, until we enable accelerated compositing in the settings and
+        create the right GraphicsLayer.
+
+        * Scripts/webkit2/messages.py:
+        * Shared/LayerTreeContext.h:
+        * Shared/qt/LayerTreeContextQt.cpp:
+        (WebKit::LayerTreeContext::LayerTreeContext):
+        (WebKit::LayerTreeContext::~LayerTreeContext):
+        (WebKit::LayerTreeContext::encode):
+        (WebKit::LayerTreeContext::decode):
+        (WebKit::LayerTreeContext::isEmpty):
+        (WebKit::operator==):
+        * UIProcess/DrawingAreaProxy.h:
+        (WebKit::DrawingAreaProxy::syncCompositingLayers):
+        (WebKit::DrawingAreaProxy::updateCompositingLayerContent):
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * WebKit2.pro:
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::collectCompositingInfoForThisLayer):
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        (WebKit::LayerTreeHostQt::create):
+        (WebKit::LayerTreeHostQt::~LayerTreeHostQt):
+        (WebKit::LayerTreeHostQt::LayerTreeHostQt):
+        (WebKit::LayerTreeHostQt::setLayerFlushSchedulingEnabled):
+        (WebKit::LayerTreeHostQt::scheduleLayerFlush):
+        (WebKit::LayerTreeHostQt::cancelPendingLayerFlush):
+        (WebKit::LayerTreeHostQt::setShouldNotifyAfterNextScheduledLayerFlush):
+        (WebKit::LayerTreeHostQt::setRootCompositingLayer):
+        (WebKit::LayerTreeHostQt::invalidate):
+        (WebKit::LayerTreeHostQt::setNonCompositedContentsNeedDisplay):
+        (WebKit::LayerTreeHostQt::scrollNonCompositedContents):
+        (WebKit::LayerTreeHostQt::forceRepaint):
+        (WebKit::LayerTreeHostQt::sizeDidChange):
+        (WebKit::LayerTreeHostQt::didInstallPageOverlay):
+        (WebKit::LayerTreeHostQt::didUninstallPageOverlay):
+        (WebKit::LayerTreeHostQt::setPageOverlayNeedsDisplay):
+        (WebKit::LayerTreeHostQt::flushPendingLayerChanges):
+        (WebKit::LayerTreeHostQt::performScheduledLayerFlush):
+        (WebKit::LayerTreeHostQt::layerFlushTimerFired):
+        (WebKit::LayerTreeHostQt::createPageOverlayLayer):
+        (WebKit::LayerTreeHostQt::destroyPageOverlayLayer):
+        (WebKit::LayerTreeHostQt::notifyAnimationStarted):
+        (WebKit::LayerTreeHostQt::notifySyncRequired):
+        (WebKit::LayerTreeHostQt::paintContents):
+        (WebKit::LayerTreeHostQt::showDebugBorders):
+        (WebKit::LayerTreeHostQt::showRepaintCounter):
+        (WebKit::LayerTreeHost::supportsAcceleratedCompositing):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h: Added.
+        (WebKit::LayerTreeHostQt::layerTreeContext):
+        (WebKit::LayerTreeHostQt::pauseRendering):
+        (WebKit::LayerTreeHostQt::resumeRendering):
+
 2011-06-14  Noam Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.
