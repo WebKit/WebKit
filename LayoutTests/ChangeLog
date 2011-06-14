@@ -1,3 +1,18 @@
+2011-06-13  Kentaro Hara  <haraken@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add a new test for checking rounding error in printing codes
+        https://bugs.webkit.org/show_bug.cgi?id=61256
+
+        Add a new test (printing/page-count-with-one-word.html). This test
+        checks if only one page is printed for an HTML page with one word for
+        various paper sizes around A4 portrait size, i.e. [530px, 560px) for
+        width and [730px, 760px) for height.
+
+        * printing/page-count-with-one-word-expected.txt: Added.
+        * printing/page-count-with-one-word.html: Added.
+
 2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac, GTK, and Qt rebaselines after r88717.

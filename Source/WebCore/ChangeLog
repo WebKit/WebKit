@@ -1,3 +1,27 @@
+2011-06-13  Kentaro Hara  <haraken@google.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Add resizePageRectsKeepingRatio(), which expands/shrinks a page, keeping the ratio of the original page
+        https://bugs.webkit.org/show_bug.cgi?id=61256
+
+        In order to prevent rounding error caused by expanding/shrinking a page
+        using different calculation here and there, I added a common calculation
+        method, resizePageRectsKeepingRatio(), which expands/shrinks a page,
+        keeping the ratio of width and height of the original page.
+        PrintContext::computePageRects() and PrintContext::begin()
+        use resizePageRectsKeepingRatio() to expand/shrink a page.
+
+        Test: printing/page-count-with-one-word.html
+
+        * WebCore.exp.in:
+        * page/Frame.cpp:
+        (WebCore::Frame::resizePageRectsKeepingRatio):
+        * page/Frame.h:
+        * page/PrintContext.cpp:
+        (WebCore::PrintContext::computePageRects):
+        (WebCore::PrintContext::begin):
+
 2011-06-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Adler.

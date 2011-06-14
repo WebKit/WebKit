@@ -568,6 +568,24 @@ void Frame::setPrinting(bool printing, const FloatSize& pageSize, float maximumS
         child->setPrinting(printing, IntSize(), 0, shouldAdjustViewSize);
 }
 
+FloatSize Frame::resizePageRectsKeepingRatio(const FloatSize& originalSize, const FloatSize& expectedSize)
+{
+    FloatSize resultSize;
+    if (!contentRenderer())
+        return FloatSize();
+
+    if (contentRenderer()->style()->isHorizontalWritingMode()) {
+        float ratio = originalSize.height() / originalSize.width();
+        resultSize.setWidth(floorf(expectedSize.width()));
+        resultSize.setHeight(floorf(resultSize.width() * ratio));
+    } else {
+        float ratio = originalSize.width() / originalSize.height();
+        resultSize.setHeight(floorf(expectedSize.height()));
+        resultSize.setWidth(floorf(resultSize.height() * ratio));
+    }
+    return resultSize;
+}
+
 void Frame::injectUserScripts(UserScriptInjectionTime injectionTime)
 {
     if (!m_page)

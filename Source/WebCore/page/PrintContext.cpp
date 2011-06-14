@@ -69,21 +69,10 @@ void PrintContext::computePageRects(const FloatRect& printRect, float headerHeig
     }
 
     RenderView* view = toRenderView(m_frame->document()->renderer());
-
-    bool isHorizontal = view->style()->isHorizontalWritingMode();
-
-    float pageWidth;
-    float pageHeight;
     const IntRect& documentRect = view->documentRect();
-    if (isHorizontal) {
-        float ratio = printRect.height() / printRect.width();
-        pageWidth = documentRect.width();
-        pageHeight = floorf(pageWidth * ratio);
-    } else {
-        float ratio = printRect.width() / printRect.height();
-        pageHeight = documentRect.height();
-        pageWidth = floorf(pageHeight * ratio);
-    }
+    FloatSize pageSize = m_frame->resizePageRectsKeepingRatio(FloatSize(printRect.width(), printRect.height()), FloatSize(documentRect.width(), documentRect.height()));
+    float pageWidth = pageSize.width();
+    float pageHeight = pageSize.height();
 
     outPageHeight = pageHeight; // this is the height of the page adjusted by margins
     pageHeight -= headerHeight + footerHeight;
@@ -176,11 +165,10 @@ void PrintContext::begin(float width, float height)
     // This function can be called multiple times to adjust printing parameters without going back to screen mode.
     m_isPrinting = true;
 
-    float minLayoutWidth = width * printingMinimumShrinkFactor;
-    float minLayoutHeight = height * printingMinimumShrinkFactor;
+    FloatSize minLayoutSize = m_frame->resizePageRectsKeepingRatio(FloatSize(width, height), FloatSize(width * printingMinimumShrinkFactor, height * printingMinimumShrinkFactor));
 
     // This changes layout, so callers need to make sure that they don't paint to screen while in printing mode.
-    m_frame->setPrinting(true, FloatSize(minLayoutWidth, minLayoutHeight), printingMaximumShrinkFactor / printingMinimumShrinkFactor, AdjustViewSize);
+    m_frame->setPrinting(true, minLayoutSize, printingMaximumShrinkFactor / printingMinimumShrinkFactor, AdjustViewSize);
 }
 
 float PrintContext::computeAutomaticScaleFactor(const FloatSize& availablePaperSize)
