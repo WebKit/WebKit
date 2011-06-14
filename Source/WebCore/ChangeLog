@@ -1,5 +1,12 @@
 2011-06-13  Kent Tamura  <tkent@chromium.org>
 
+        [EFL] Fix a typo.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::paintThemePart):
+
+2011-06-13  Kent Tamura  <tkent@chromium.org>
+
         [EFL] Try to fix a build break by r88757.
 
         * platform/efl/RenderThemeEfl.cpp:
