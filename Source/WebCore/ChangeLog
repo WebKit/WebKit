@@ -1,3 +1,21 @@
+2011-06-13  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Support for painting thumb of media slider
+        https://bugs.webkit.org/show_bug.cgi?id=62174
+
+        Implement paintMediaSliderThumb() function to show thumb of media slider.
+        adjustSliderThumbSize() should be implemented in order to call paintMediaSliderThumb().
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::RenderThemeEfl):
+        (WebCore::RenderThemeEfl::adjustSliderThumbSize):
+        (WebCore::RenderThemeEfl::paintMediaSliderTrack):
+        (WebCore::RenderThemeEfl::paintMediaSliderThumb):
+        (WebCore::RenderThemeEfl::paintMediaCurrentTime):
+        * platform/efl/RenderThemeEfl.h:
+
 2011-06-13  Keishi Hattori  <keishi@webkit.org>
 
         Sort WebCore.xcodeproj

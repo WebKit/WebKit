@@ -60,6 +60,15 @@ using namespace HTMLNames;
 // TODO: change from object count to ecore_evas size (bytes)
 // TODO: as objects are webpage/user defined and they can be very large.
 #define RENDER_THEME_EFL_PART_CACHE_MAX 32
+    
+static const int sliderThumbWidth = 12;
+static const int sliderThumbHeight = 12;
+
+#if ENABLE(VIDEO)
+static const int mediaSliderHeight = 14;
+static const int mediaSliderThumbWidth = 12;
+static const int mediaSliderThumbHeight = 12;
+#endif
 
 void RenderThemeEfl::adjustSizeConstraints(RenderStyle* style, FormType type) const
 {
@@ -692,10 +701,10 @@ RenderThemeEfl::RenderThemeEfl(Page* page)
     , m_entryTextForegroundColor(0, 0, 0)
     , m_searchTextBackgroundColor(0, 0, 0, 0)
     , m_searchTextForegroundColor(0, 0, 0)
+    , m_sliderThumbColor(255, 0, 0) // red color.
 #if ENABLE(VIDEO)
-    , m_panelColor(220, 220, 195) // light tannish color.
-    , m_sliderColor(Color::white)
-    , m_mediaSliderHeight(14)
+    , m_mediaPanelColor(220, 220, 195) // light tannish color.
+    , m_mediaSliderColor(Color::white)
 #endif
     , m_canvas(0)
     , m_edje(0)
@@ -836,6 +845,21 @@ void RenderThemeEfl::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderSt
 {
     RenderTheme::adjustSliderThumbStyle(selector, style, element);
     adjustSliderTrackStyle(selector, style, element);
+}
+
+void RenderThemeEfl::adjustSliderThumbSize(RenderObject* o) const
+{
+    ControlPart part = o->style()->appearance();
+    if (part == SliderThumbVerticalPart || part == SliderThumbHorizontalPart) {
+        o->style()->setWidth(Length(sliderThumbHeight, Fixed));
+        o->style()->setHeight(Length(sliderThumbWidth, Fixed));
+    }
+#if ENABLE(VIDEO)
+    else if (part == MediaSliderThumbPart) {
+        o->style()->setWidth(Length(mediaSliderThumbWidth, Fixed));
+        o->style()->setHeight(Length(mediaSliderThumbHeight, Fixed));
+    }
+#endif
 }
 
 bool RenderThemeEfl::paintSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
@@ -1179,9 +1203,9 @@ bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* object, const PaintInfo
 {
     GraphicsContext* context = info.context;
 
-    context->fillRect(FloatRect(rect), m_panelColor, ColorSpaceDeviceRGB);
-    context->fillRect(FloatRect(IntRect(rect.x(), rect.y() + (rect.height() - m_mediaSliderHeight) / 2,
-                                        rect.width(), m_mediaSliderHeight)), m_sliderColor, ColorSpaceDeviceRGB);
+    context->fillRect(FloatRect(rect), m_mediaPanelColor, ColorSpaceDeviceRGB);
+    context->fillRect(FloatRect(IntRect(rect.x(), rect.y() + (rect.height() - mediaSliderHeight) / 2,
+                                        rect.width(), mediaSliderHeight)), m_mediaSliderColor, ColorSpaceDeviceRGB);
 
     RenderStyle* style = object->style();
     HTMLMediaElement* mediaElement = toParentMediaElement(object);
@@ -1222,7 +1246,7 @@ bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* object, const PaintInfo
         IntPoint sliderTopRight = sliderTopLeft;
         sliderTopRight.move(0, rangeRect.height());
 
-        context->fillRect(FloatRect(rect), m_panelColor, ColorSpaceDeviceRGB);
+        context->fillRect(FloatRect(rect), m_mediaPanelColor, ColorSpaceDeviceRGB);
     }
     context->restore();
     return true;
@@ -1230,8 +1254,8 @@ bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* object, const PaintInfo
 
 bool RenderThemeEfl::paintMediaSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    notImplemented();
-    return false;
+    info.context->fillRoundedRect(rect, IntSize(3, 3), IntSize(3, 3), IntSize(3, 3), IntSize(3, 3), m_sliderThumbColor, ColorSpaceDeviceRGB);
+    return true;
 }
 
 bool RenderThemeEfl::paintMediaVolumeSliderContainer(RenderObject*, const PaintInfo& info, const IntRect& rect)
@@ -1254,7 +1278,7 @@ bool RenderThemeEfl::paintMediaVolumeSliderThumb(RenderObject* object, const Pai
 
 bool RenderThemeEfl::paintMediaCurrentTime(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    info.context->fillRect(FloatRect(rect), m_panelColor, ColorSpaceDeviceRGB);
+    info.context->fillRect(FloatRect(rect), m_mediaPanelColor, ColorSpaceDeviceRGB);
     return true;
 }
 #endif

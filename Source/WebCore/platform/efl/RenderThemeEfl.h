@@ -156,6 +156,9 @@ public:
     virtual bool paintSliderTrack(RenderObject*, const PaintInfo&, const IntRect&);
 
     virtual void adjustSliderThumbStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
+
+    virtual void adjustSliderThumbSize(RenderObject*) const;
+
     virtual bool paintSliderThumb(RenderObject*, const PaintInfo&, const IntRect&);
 
     static void setDefaultFontSize(int fontsize);
@@ -212,10 +215,11 @@ private:
     Color m_entryTextForegroundColor;
     Color m_searchTextBackgroundColor;
     Color m_searchTextForegroundColor;
+    Color m_sliderThumbColor;
+
 #if ENABLE(VIDEO)
-    Color m_panelColor;
-    Color m_sliderColor;
-    const int m_mediaSliderHeight;
+    Color m_mediaPanelColor;
+    Color m_mediaSliderColor;
 #endif
     Ecore_Evas* m_canvas;
     Evas_Object* m_edje;
