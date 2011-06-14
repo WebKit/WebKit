@@ -375,6 +375,13 @@ IntRect ChromeClient::windowResizerRect() const
     return IntRect();
 }
 
+#if ENABLE(REGISTER_PROTOCOL_HANDLER) 
+void ChromeClient::registerProtocolHandler(const String& scheme, const String& baseURL, const String& url, const String& title) 
+{ 
+    notImplemented(); 
+} 
+#endif 
+
 void ChromeClient::invalidateWindow(const IntRect&, bool immediate)
 {
     // If we've invalidated regions for scrolling, force GDK to process those invalidations

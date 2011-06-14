@@ -575,6 +575,13 @@ FEATURE_DEFINES += ENABLE_MHTML=1
 webcore_cppflags += -DENABLE_MHTML=1
 endif  # END ENABLE_MHTML
 
+# ---
+# Register Protocol Handler support
+# ---
+if ENABLE_REGISTER_PROTOCOL_HANDLER
+FEATURE_DEFINES += ENABLE_REGISTER_PROTOCOL_HANDLER=1
+webcore_cppflags += -DENABLE_REGISTER_PROTOCOL_HANDLER=1
+endif  # END ENABLE_REGISTER_PROTOCOL_HANDLER
 
 DerivedSources/WebCore/CSSPropertyNames.cpp: DerivedSources/WebCore/CSSPropertyNames.h
 DerivedSources/WebCore/CSSPropertyNames.h: $(WEBCORE_CSS_PROPERTY_NAMES) $(WebCore)/css/makeprop.pl

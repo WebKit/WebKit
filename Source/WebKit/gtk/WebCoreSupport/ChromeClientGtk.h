@@ -96,7 +96,9 @@ namespace WebKit {
         virtual WebCore::KeyboardUIMode keyboardUIMode();
 
         virtual WebCore::IntRect windowResizerRect() const;
-
+#if ENABLE(REGISTER_PROTOCOL_HANDLER) 
+        virtual void registerProtocolHandler(const WTF::String&, const WTF::String&, const WTF::String&, const WTF::String&); 
+#endif 
         virtual void invalidateWindow(const WebCore::IntRect&, bool);
         virtual void invalidateContentsAndWindow(const WebCore::IntRect&, bool);
         virtual void invalidateContentsForSlowScroll(const WebCore::IntRect&, bool);

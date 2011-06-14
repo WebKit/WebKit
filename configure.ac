@@ -896,6 +896,14 @@ AC_ARG_ENABLE(touch_icon_loading,
               [], [enable_touch_icon_loading="no"])
 AC_MSG_RESULT([$enable_touch_icon_loading])
 
+# check whether to enable Register Protocol Handler support
+AC_MSG_CHECKING([whether to enable Register Protocol Handler])
+AC_ARG_ENABLE(register_protocol_handler,
+              AC_HELP_STRING([--enable-register-protocol-handler],
+                             [enable support for Register Protocol Handler (experimental) [default=no]]),
+              [],[enable_register_protocol_handler="no"])
+AC_MSG_RESULT([$enable_register_protocol_handler])
+
 G_IR_SCANNER=
 G_IR_COMPILER=
 G_IR_GENERATE=
@@ -1154,6 +1162,7 @@ AM_CONDITIONAL([ENABLE_PLUGIN_PROCESS],[test "$enable_plugin_process" = "yes"])
 AM_CONDITIONAL([ENABLE_SPELLCHECK],[test "$enable_spellcheck" = "yes"])
 AM_CONDITIONAL([ENABLE_ANIMATION_API],[test "$enable_animation_api" = "yes"])
 AM_CONDITIONAL([ENABLE_TOUCH_ICON_LOADING],[test "$enable_touch_icon_loading" = "yes"])
+AM_CONDITIONAL([ENABLE_REGISTER_PROTOCOL_HANDLER],[test "$enable_register_protocol_handler" = "yes"])
 
 # Gtk conditionals
 AM_CONDITIONAL([ENABLE_INTROSPECTION],[test "$enable_introspection" = "yes"])
@@ -1251,6 +1260,7 @@ Features:
  Spellcheck support                                       : $enable_spellcheck
  Animation API                                            : $enable_animation_api
  Touch Icon Loading support                               : $enable_touch_icon_loading
+ Register Protocol Handler support                        : $enable_register_protocol_handler
 
 GTK+ configuration:
  GTK+ version                                             : $with_gtk
