@@ -1,5 +1,12 @@
 2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium test expectation update; svg/css/group-with-shadow.svg is passing on
+        Windows Vista and Windows 7.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Remove failing test expectation for plugins/npruntime/browser-object-identity.html
         on Chromium since it has been fixed by r88679.
 
