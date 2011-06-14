@@ -1,3 +1,10 @@
+2011-06-13  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium-win] Fix two wrong assertions exposed by r88757.
+
+        * DumpRenderTree/chromium/WebThemeEngineDRTWin.cpp:
+        (WebThemeEngineDRTWin::paintTrackbar):
+
 2011-06-13  Alexey Proskuryakov  <ap@apple.com>
 
         Added an updated e-mail address for Matt Lilek, to make Bugzilla autocomplete
