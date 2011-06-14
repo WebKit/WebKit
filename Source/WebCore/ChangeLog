@@ -1,3 +1,18 @@
+2011-06-14  Jeffrey Pfau  <jpfau@apple.com>
+
+        Reviewed by David Hyatt.
+
+        Null dereference in WebCore::RenderBlock::splitFlow regarding use of multicol, inline-block, and spanning elements
+        https://bugs.webkit.org/show_bug.cgi?id=60028
+
+        Ensure that the parent block of a spanning element, if it is not itself
+        a multicol element, is not inline.
+
+        Test: fast/multicol/span/span-as-nested-inline-block-child.html
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::columnsBlockForSpanningElement):
+
 2011-06-14  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.
