@@ -456,6 +456,20 @@ namespace JSC {
         }
         RegExp* regexp(int index) const { ASSERT(m_rareData); return m_rareData->m_regexps[index].get(); }
 
+        unsigned addImmediateBuffer(unsigned length)
+        {
+            createRareDataIfNecessary();
+            unsigned size = m_rareData->m_immediateBuffers.size();
+            m_rareData->m_immediateBuffers.append(Vector<JSValue>(length));
+            return size;
+        }
+
+        JSValue* immediateBuffer(unsigned index)
+        {
+            ASSERT(m_rareData);
+            return m_rareData->m_immediateBuffers[index].data();
+        }
+
         JSGlobalObject* globalObject() { return m_globalObject.get(); }
 
         // Jump Tables
@@ -559,6 +573,9 @@ namespace JSC {
             // Rare Constants
             Vector<WriteBarrier<RegExp> > m_regexps;
 
+            // Buffers used for large array literals
+            Vector<Vector<JSValue> > m_immediateBuffers;
+            
             // Jump Tables
             Vector<SimpleJumpTable> m_immediateSwitchJumpTables;
             Vector<SimpleJumpTable> m_characterSwitchJumpTables;

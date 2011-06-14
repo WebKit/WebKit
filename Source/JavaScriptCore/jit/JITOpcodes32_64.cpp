@@ -733,14 +733,6 @@ void JIT::emit_op_tear_off_arguments(Instruction* currentInstruction)
     argsNotCreated.link(this);
 }
 
-void JIT::emit_op_new_array(Instruction* currentInstruction)
-{
-    JITStubCall stubCall(this, cti_op_new_array);
-    stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
-    stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
-    stubCall.call(currentInstruction[1].u.operand);
-}
-
 void JIT::emit_op_resolve(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_resolve);

@@ -1541,8 +1541,40 @@ RegisterID* BytecodeGenerator::emitNewObject(RegisterID* dst)
     return dst;
 }
 
-RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elements)
+unsigned BytecodeGenerator::addImmediateBuffer(unsigned length)
 {
+    return m_codeBlock->addImmediateBuffer(length);
+}
+
+RegisterID* BytecodeGenerator::emitNewArray(RegisterID* dst, ElementNode* elements, unsigned length)
+{
+#if !ASSERT_DISABLED
+    unsigned checkLength = 0;
+#endif
+    bool hadNonNumber = false;
+    for (ElementNode* n = elements; n; n = n->next()) {
+#if !ASSERT_DISABLED
+        checkLength++;
+#endif
+        if (!n->value()->isNumber()) {
+            hadNonNumber = true;
+            break;
+        }
+    }
+    if (!hadNonNumber) {
+        ASSERT(length == checkLength);
+        unsigned immediateBufferIndex = addImmediateBuffer(length);
+        JSValue* immediateBuffer = m_codeBlock->immediateBuffer(immediateBufferIndex);
+        unsigned index = 0;
+        for (ElementNode* n = elements; n; n = n->next())
+            immediateBuffer[index++] = jsNumber(static_cast<NumberNode*>(n->value())->value());
+        emitOpcode(op_new_array_buffer);
+        instructions().append(dst->index());
+        instructions().append(immediateBufferIndex);
+        instructions().append(length);
+        return dst;
+    }
+
     Vector<RefPtr<RegisterID>, 16> argv;
     for (ElementNode* n = elements; n; n = n->next()) {
         if (n->elision())

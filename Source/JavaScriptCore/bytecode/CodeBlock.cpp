@@ -530,6 +530,13 @@ void CodeBlock::dump(ExecState* exec, const Vector<Instruction>::const_iterator&
             printf("[%4d] new_array\t %s, %s, %d\n", location, registerName(exec, dst).data(), registerName(exec, argv).data(), argc);
             break;
         }
+        case op_new_array_buffer: {
+            int dst = (++it)->u.operand;
+            int argv = (++it)->u.operand;
+            int argc = (++it)->u.operand;
+            printf("[%4d] new_array_buffer %s, %d, %d\n", location, registerName(exec, dst).data(), argv, argc);
+            break;
+        }
         case op_new_regexp: {
             int r0 = (++it)->u.operand;
             int re0 = (++it)->u.operand;
