@@ -182,6 +182,38 @@ static JSRealType valueRealType(ExecState* exec, JSValue val)
     return String; // I don't know.
 }
 
+static QMetaType::Type hintForRealType(JSRealType type, JSObject* object)
+{
+    switch (type) {
+    case Number:
+        return QMetaType::Double;
+    case Boolean:
+        return QMetaType::Bool;
+    case String:
+        return QMetaType::QString;
+    case Date:
+        return QMetaType::QDateTime;
+    case RegExp:
+        return QMetaType::QRegExp;
+    case Object:
+        if (object->inherits(&NumberObject::s_info))
+            return QMetaType::Double;
+        if (object->inherits(&BooleanObject::s_info))
+            return QMetaType::Bool;
+        if (object->inherits(&JSElement::s_info))
+            return static_cast<QMetaType::Type>(qMetaTypeId<QWebElement>());
+        return QMetaType::QVariantMap;
+    case QObj:
+        return QMetaType::QObjectStar;
+    case JSByteArray:
+        return QMetaType::QByteArray;
+    case Array:
+    case RTArray:
+        return QMetaType::QVariantList;
+    }
+    return QMetaType::QString;
+}
+
 QVariant convertValueToQVariant(ExecState*, JSValue, QMetaType::Type, int*, HashSet<JSObject*>*, int);
 
 static QVariantMap convertValueToQVariantMap(ExecState* exec, JSObject* object, HashSet<JSObject*>* visitedObjects, int recursionLimit)
@@ -241,44 +273,8 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
 
     JSLock lock(SilenceAssertionsOnly);
     JSRealType type = valueRealType(exec, value);
-    if (hint == QMetaType::Void) {
-        switch(type) {
-            case Number:
-                hint = QMetaType::Double;
-                break;
-            case Boolean:
-                hint = QMetaType::Bool;
-                break;
-            case String:
-            default:
-                hint = QMetaType::QString;
-                break;
-            case Date:
-                hint = QMetaType::QDateTime;
-                break;
-            case RegExp:
-                hint = QMetaType::QRegExp;
-                break;
-            case Object:
-                if (object->inherits(&NumberObject::s_info))
-                    hint = QMetaType::Double;
-                else if (object->inherits(&BooleanObject::s_info))
-                    hint = QMetaType::Bool;
-                else
-                    hint = QMetaType::QVariantMap;
-                break;
-            case QObj:
-                hint = QMetaType::QObjectStar;
-                break;
-            case JSByteArray:
-                hint = QMetaType::QByteArray;
-                break;
-            case Array:
-            case RTArray:
-                hint = QMetaType::QVariantList;
-                break;
-        }
-    }
+    if (hint == QMetaType::Void)
+        hint = hintForRealType(type, object);
 
     qConvDebug() << "convertValueToQVariant: jstype is " << type << ", hint is" << hint;
 
@@ -778,12 +774,15 @@ QVariant convertValueToQVariant(ExecState* exec, JSValue value, QMetaType::Type 
             } else if (QtPixmapInstance::canHandle(static_cast<QMetaType::Type>(hint))) {
                 ret = QtPixmapInstance::variantFromObject(object, static_cast<QMetaType::Type>(hint));
             } else if (hint == (QMetaType::Type) qMetaTypeId<QWebElement>()) {
-                if (object && object->inherits(&JSHTMLElement::s_info))
-                    ret = QVariant::fromValue<QWebElement>(QtWebElementRuntime::create((static_cast<JSHTMLElement*>(object))->impl()));
-                else if (object && object->inherits(&JSDocument::s_info))
-                    ret = QVariant::fromValue<QWebElement>(QtWebElementRuntime::create((static_cast<JSDocument*>(object))->impl()->documentElement()));
-                else
-                    ret = QVariant::fromValue<QWebElement>(QWebElement());
+                if (object && object->inherits(&JSElement::s_info)) {
+                    ret = QVariant::fromValue<QWebElement>(QtWebElementRuntime::create((static_cast<JSElement*>(object))->impl()));
+                    dist = 0;
+                    // Allow other objects to reach this one. This won't cause our algorithm to
+                    // loop since when we find an Element we do not recurse.
+                    visitedObjects->remove(object);
+                    break;
+                }
+                ret = QVariant::fromValue<QWebElement>(QWebElement());
             } else if (hint == (QMetaType::Type) qMetaTypeId<QDRTNode>()) {
                 if (object && object->inherits(&JSNode::s_info))
                     ret = QVariant::fromValue<QDRTNode>(QtDRTNodeRuntime::create((static_cast<JSNode*>(object))->impl()));

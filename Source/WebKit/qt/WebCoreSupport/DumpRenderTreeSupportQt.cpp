@@ -974,23 +974,31 @@ void DumpRenderTreeSupportQt::simulateDesktopNotificationClick(const QString& ti
 #endif
 }
 
-QString DumpRenderTreeSupportQt::plainText(const QVariant& range)
+QString DumpRenderTreeSupportQt::plainText(const QVariantMap& range)
 {
-    QMap<QString, QVariant> map = range.toMap();
-    QVariant startContainer  = map.value(QLatin1String("startContainer"));
-    map = startContainer.toMap();
-
-    return map.value(QLatin1String("innerText")).toString();
+    QVariant v = range.value(QLatin1String("startContainer"));
+    ASSERT(v.isValid());
+    QWebElement startContainer = qvariant_cast<QWebElement>(v);
+    return startContainer.toPlainText();
 }
 
-QVariantList DumpRenderTreeSupportQt::nodesFromRect(const QWebElement& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping)
+WebCore::Document* DumpRenderTreeSupportQt::getCoreDocumentFromVariantMap(const QVariantMap& document)
+{
+    QVariant v = document.value(QLatin1String("documentElement"));
+    ASSERT(v.isValid());
+    QWebElement documentElement = qvariant_cast<QWebElement>(v);
+
+    WebCore::Element* element = documentElement.m_element;
+    if (!element)
+        return 0;
+
+    return element->document();
+}
+
+QVariantList DumpRenderTreeSupportQt::nodesFromRect(const QVariantMap& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping)
 {
     QVariantList res;
-    WebCore::Element* webElement = document.m_element;
-    if (!webElement)
-        return res;
-
-    Document* doc = webElement->document();
+    Document* doc = getCoreDocumentFromVariantMap(document);
     if (!doc)
         return res;
     RefPtr<NodeList> nodes = doc->nodesFromRect(x, y, top, right, bottom, left, ignoreClipping);

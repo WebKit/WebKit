@@ -1,3 +1,37 @@
+2011-06-14  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] tst_QWebFrame::overloadedSlots() fails
+        https://bugs.webkit.org/show_bug.cgi?id=37319
+
+        Increase the likeness that JSElements are converted to QWebElements. When hinted
+        with QWebElement metatype, we qualify the conversion from JSElement as a "perfect
+        match".
+
+        The test was failing because the wrong slot was called, since the QWebElement
+        match was taken as equal to the others and not chosen when the metacall happened.
+
+        We also remove the implicit conversion between JSDocument (which is not an
+        element) to QWebElement. The conversion only worked for calling slots, while
+        without hint it returned a QVariantMap (as can be seen in domCycles test). It was
+        added for supporting DRT, but since this change we can use it as QVariantMap and
+        get the value for "documentElement".
+
+        This patch is based on Noam Rosenthal original patch in the same bug.
+
+        * bridge/qt/qt_runtime.cpp:
+        (JSC::Bindings::hintForRealType):
+        Extracted function to choose the metatype hint based on the JSValue type.  Add
+        QWebElement metatype as a hint for JSElement objects, this way if no hint is
+        provided, JSElement objects will always be converted to QWebElements.
+
+        (JSC::Bindings::convertValueToQVariant):
+        Use previous function. Identify the conversion between JSElement to QWebElement
+        as a "perfect match" (dist = 0). And remove the implicit conversion when the hint
+        is QWebElement metatype and we have a JSDocument.  Changed from JSHTMLElement to
+        JSElement to cover the 'documentElement'.
+
 2011-06-14  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Benjamin Poulain.

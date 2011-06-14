@@ -1,3 +1,42 @@
+2011-06-14  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] tst_QWebFrame::overloadedSlots() fails
+        https://bugs.webkit.org/show_bug.cgi?id=37319
+
+        Since the implicit conversion was removed, change support functions of DRT to
+        expect a QVariantMap instead of a QWebElement. This matches the exposed function
+        in the controller, which takes 'document' and not 'document.documentElement'.
+
+        And now that Element -> QWebElement is a perfect match, we must use QWebElement
+        instead of QVariantMap, like in plainText().
+
+        * WebCoreSupport/DumpRenderTreeSupportQt.h:
+        * WebCoreSupport/DumpRenderTreeSupportQt.cpp:
+        (DumpRenderTreeSupportQt::plainText): Fix to use QWebElement instead of
+        QVariantMap when getting the startContainer. Also use QVariantMap directly,
+        bridge will do conversion for us now.
+
+        (getCoreDocumentFromVariantMap): Extracts the WebCore::Document* from the
+        QVariantMap that Qt bridge gives us when 'document' is passed from JS.
+
+        (DumpRenderTreeSupportQt::nodesFromRect): Use helper function.
+
+        * tests/qwebframe/tst_qwebframe.cpp: Splitted the test domCycles() into two
+        different tests. In practice, the original test just checked whether we could
+        create a QVariantMap representing 'document' without infinite looping due to
+        cycles in the DOM. This was more evident before since we haven't a conversion
+        from JSElement to QWebElement, but from JSElement to QVariantMap.
+
+        (tst_QWebFrame::documentHasDocumentElement): Evaluates 'document' and extracts
+        'documentElement' from it. Compares to QWebFrame::documentElement().
+
+        (tst_QWebFrame::documentAllHasDocumentElement): Look inside 'document.all' for
+        the documentElement.
+
+        (tst_QWebFrame::overloadedSlots): Remove expected failure and fix wrong comment.
+
 2011-06-14  Andreas Kling  <kling@webkit.org>
 
         Reviewed by Benjamin Poulain.

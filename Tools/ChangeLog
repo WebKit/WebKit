@@ -1,3 +1,23 @@
+2011-06-14  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] tst_QWebFrame::overloadedSlots() fails
+        https://bugs.webkit.org/show_bug.cgi?id=37319
+
+        Since we don't implictly convert 'document' object to QWebElement
+        in metacalls anymore, change the controller to expect QVariantMap instead.
+
+        The method plainText() was updated to use QVariantMap as well to let the bridge
+        do the conversion directly for us.
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::nodesFromRect):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/qt/PlainTextControllerQt.cpp:
+        (PlainTextController::plainText):
+        * DumpRenderTree/qt/PlainTextControllerQt.h:
+
 2011-06-14  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
