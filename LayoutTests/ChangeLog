@@ -1,5 +1,13 @@
 2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix a typo in Mac WebKit2's skipped list.
+
+        svg/custom/focus-event-handling-keyboard's extension is xhtml, not html.
+
+        * platform/mac-wk2/Skipped:
+
+2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Skip editing/pasteboard/smart-paste-004.html per bug 61633.
 
         * platform/win/Skipped:
