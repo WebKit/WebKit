@@ -1,3 +1,12 @@
+2011-06-14  Andreas Kling  <kling@webkit.org>
+
+        Reviewed by Benjamin Poulain.
+
+        [Qt] Don't include convenience "QWebFoo" headers in WebKit code.
+        https://bugs.webkit.org/show_bug.cgi?id=62632
+
+        * WebCoreSupport/FrameNetworkingContextQt.cpp:
+
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
