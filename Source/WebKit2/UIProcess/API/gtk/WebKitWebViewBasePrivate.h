@@ -46,8 +46,6 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase*, WKContextRef, WKPageGrou
 
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase*, const char*);
 
-void webkitWebViewBaseShowContextMenu(WebKitWebViewBase*, GtkMenu*, const WebCore::IntPoint&);
-
 G_END_DECLS
 
 #endif // WebKitWebViewBasePrivate_h

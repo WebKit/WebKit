@@ -56,7 +56,6 @@ struct _WebKitWebViewBasePrivate {
     GtkIMContext* imContext;
     GtkClickCounter clickCounter;
     CString tooltipText;
-    IntPoint lastPopupPosition;
 };
 
 G_DEFINE_TYPE(WebKitWebViewBase, webkit_web_view_base, GTK_TYPE_CONTAINER)
@@ -386,41 +385,4 @@ void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char*
 #endif
 }
 
-static IntPoint globalPointForClientPoint(GdkWindow* window, const IntPoint& clientPoint)
-{
-    int x, y;
-    gdk_window_get_origin(window, &x, &y);
-    return clientPoint + IntSize(x, y);
-}
 
-static void popupMenuPositionFunction(GtkMenu* menu, gint* x, gint* y, gboolean* pushIn, gpointer userData)
-{
-    WebKitWebViewBase* view = WEBKIT_WEB_VIEW_BASE(userData);
-    WebKitWebViewBasePrivate* priv = view->priv;
-    GdkScreen* screen = gtk_widget_get_screen(GTK_WIDGET(view));
-    GtkRequisition menuSize;
-
-#ifdef GTK_API_VERSION_2
-    gtk_widget_size_request(GTK_WIDGET(menu), &menuSize);
-#else
-    gtk_widget_get_preferred_size(GTK_WIDGET(menu), &menuSize, 0);
-#endif
-
-    *x = priv->lastPopupPosition.x();
-    if ((*x + menuSize.width) >= gdk_screen_get_width(screen))
-        *x -= menuSize.width;
-
-    *y = priv->lastPopupPosition.y();
-    if ((*y + menuSize.height) >= gdk_screen_get_height(screen))
-        *y -= menuSize.height;
-
-    *pushIn = FALSE;
-}
-
-void webkitWebViewBaseShowContextMenu(WebKitWebViewBase* webViewBase, GtkMenu* menu, const IntPoint& position)
-{
-    webViewBase->priv->lastPopupPosition = globalPointForClientPoint(gtk_widget_get_window(GTK_WIDGET(webViewBase)), position);
-
-    // Display menu initiated by right click (mouse button pressed = 3).
-    gtk_menu_popup(menu, 0, 0, &popupMenuPositionFunction, webViewBase, 3, gtk_get_current_event_time());
-}

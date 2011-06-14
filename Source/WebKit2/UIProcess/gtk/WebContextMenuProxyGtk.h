@@ -27,6 +27,7 @@
 #define WebContextMenuProxyGtk_h
 
 #include "WebContextMenuProxy.h"
+#include <WebCore/IntPoint.h>
 
 namespace WebKit {
 
@@ -48,8 +49,12 @@ private:
     WebContextMenuProxyGtk(GtkWidget*, WebPageProxy*);
     GtkMenu* createGtkMenu(const Vector<WebContextMenuItemData>&);
 
+    static void menuPositionFunction(GtkMenu*, gint*, gint*, gboolean*, WebContextMenuProxyGtk*);
+
     GtkWidget* m_webView;
     WebPageProxy* m_page;
+    GtkMenu* m_popup;
+    WebCore::IntPoint m_popupPosition;
 };
 
 

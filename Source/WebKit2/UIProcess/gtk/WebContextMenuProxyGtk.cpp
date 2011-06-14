@@ -26,11 +26,10 @@
 #include "config.h"
 #include "WebContextMenuProxyGtk.h"
 
-#include "IntPoint.h"
 #include "WebContextMenuItemData.h"
-#include "WebKitWebViewBasePrivate.h"
 #include "WebPageProxy.h"
 #include <WebCore/ContextMenu.h>
+#include <WebCore/GtkUtilities.h>
 #include <gtk/gtk.h>
 #include <wtf/text/CString.h>
 
@@ -78,21 +77,50 @@ void WebContextMenuProxyGtk::showContextMenu(const WebCore::IntPoint& position, 
     if (items.isEmpty())
         return;
 
-    webkitWebViewBaseShowContextMenu(WEBKIT_WEB_VIEW_BASE(m_webView), createGtkMenu(items), position);
+    m_popup = createGtkMenu(items);
+    m_popupPosition = convertWidgetPointToScreenPoint(m_webView, position);
+
+    // Display menu initiated by right click (mouse button pressed = 3).
+    gtk_menu_popup(m_popup, 0, 0, reinterpret_cast<GtkMenuPositionFunc>(menuPositionFunction), this, 3, GDK_CURRENT_TIME);
 }
 
 void WebContextMenuProxyGtk::hideContextMenu()
 {
+    gtk_menu_popdown(m_popup);
 }
 
 WebContextMenuProxyGtk::WebContextMenuProxyGtk(GtkWidget* webView, WebPageProxy* page)
     : m_webView(webView)
     , m_page(page)
+    , m_popup(0)
 {
 }
 
 WebContextMenuProxyGtk::~WebContextMenuProxyGtk()
 {
+    if (m_popup)
+        gtk_widget_destroy(GTK_WIDGET(m_popup));
+}
+
+void WebContextMenuProxyGtk::menuPositionFunction(GtkMenu* menu, gint* x, gint* y, gboolean* pushIn, WebContextMenuProxyGtk* popupMenu)
+{
+    GtkRequisition menuSize;
+#ifdef GTK_API_VERSION_2
+    gtk_widget_size_request(GTK_WIDGET(menu), &menuSize);
+#else
+    gtk_widget_get_preferred_size(GTK_WIDGET(menu), &menuSize, 0);
+#endif
+
+    GdkScreen* screen = gtk_widget_get_screen(popupMenu->m_webView);
+    *x = popupMenu->m_popupPosition.x();
+    if ((*x + menuSize.width) >= gdk_screen_get_width(screen))
+        *x -= menuSize.width;
+
+    *y = popupMenu->m_popupPosition.y();
+    if ((*y + menuSize.height) >= gdk_screen_get_height(screen))
+        *y -= menuSize.height;
+
+    *pushIn = FALSE;
 }
 
 } // namespace WebKit
