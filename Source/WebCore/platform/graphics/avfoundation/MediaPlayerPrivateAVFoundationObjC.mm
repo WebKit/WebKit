@@ -201,6 +201,8 @@ void MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer()
 
     [m_imageGenerator.get() setApertureMode:AVAssetImageGeneratorApertureModeCleanAperture];
     [m_imageGenerator.get() setAppliesPreferredTrackTransform:YES];
+    [m_imageGenerator.get() setRequestedTimeToleranceBefore:kCMTimeZero];
+    [m_imageGenerator.get() setRequestedTimeToleranceAfter:kCMTimeZero];
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::createImageGenerator(%p) - returning %p", this, m_imageGenerator.get());
 }

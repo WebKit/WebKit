@@ -1,3 +1,19 @@
+2011-06-14  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        REGRESSION: Drawing video into canvas gets about one frame every 5 seconds (AVFoundation)
+        https://bugs.webkit.org/show_bug.cgi?id=62655
+
+        No new tests; we don't have any media-engine specific tests.
+
+        AVAssetImageGenerator will, by default, return the nearest keyframe.  To get the generator to return
+        the image from the current time instead of the nearest keyframe, set the requested time tolerance to 
+        zero (which defaults to infinity).
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::createContextVideoRenderer):
+
 2011-06-14  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Darin Fisher.
