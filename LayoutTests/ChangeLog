@@ -1,3 +1,12 @@
+2011-06-13  Jessie Berlin  <jberlin@apple.com>
+
+        Add Windows-specific pixel and text results to account for the different design of the
+        ying-yang character on Windows (and of course to get the bots green).
+
+        * platform/win/svg/hixie/intrinsic: Added.
+        * platform/win/svg/hixie/intrinsic/003-expected.png: Added.
+        * platform/win/svg/hixie/intrinsic/003-expected.txt: Added.
+
 2011-06-13  Kentaro Hara  <haraken@google.com>
 
         Reviewed by Alexey Proskuryakov.
