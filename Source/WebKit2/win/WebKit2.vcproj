@@ -1997,6 +1997,10 @@
 						>
 					</File>
 					<File
+						RelativePath="..\WebProcess\WebPage\win\DrawingAreaImplWin.cpp"
+						>
+					</File>
+                    <File
 						RelativePath="..\WebProcess\WebPage\win\LayerTreeHostWin.cpp"
 						>
 					</File>

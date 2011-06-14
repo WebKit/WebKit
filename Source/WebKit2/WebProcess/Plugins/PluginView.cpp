@@ -1058,7 +1058,7 @@ HWND PluginView::nativeParentWindow()
 
 void PluginView::scheduleWindowedPluginGeometryUpdate(const WindowGeometry& geometry)
 {
-    m_webPage->scheduleChildWindowGeometryUpdate(geometry);
+    m_webPage->drawingArea()->scheduleChildWindowGeometryUpdate(geometry);
 }
 #endif
 

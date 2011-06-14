@@ -46,6 +46,10 @@ namespace WebKit {
 class WebPage;
 struct WebPageCreationParameters;
 
+#if PLATFORM(WIN)
+struct WindowGeometry;
+#endif
+
 class DrawingArea {
     WTF_MAKE_NONCOPYABLE(DrawingArea);
 
@@ -76,6 +80,10 @@ public:
 #endif
 
     virtual void didReceiveMessage(CoreIPC::Connection*, CoreIPC::MessageID, CoreIPC::ArgumentDecoder*) = 0;
+
+#if PLATFORM(WIN)
+    virtual void scheduleChildWindowGeometryUpdate(const WindowGeometry&) = 0;
+#endif
 
 protected:
     DrawingArea(DrawingAreaType, WebPage*);
