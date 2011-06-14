@@ -134,35 +134,18 @@ WebFullScreenManagerMac::~WebFullScreenManagerMac()
 
 void WebFullScreenManagerMac::setRootFullScreenLayer(WebCore::GraphicsLayer* layer)
 {
-    if ((!m_rootLayer || m_rootLayer->children().isEmpty()) && !layer)
+    if (!m_rootLayer && !layer)
         return;
 
     if (!layer) {
+        m_page->forceRepaintWithoutCallback();
         m_page->send(Messages::WebFullScreenManagerProxy::ExitAcceleratedCompositingMode());
 
-        Frame* frame = m_element->document()->frame();
-        FrameView* view = frame ? frame->view() : 0;
-        DragImageRef dragImage = 0;
-        if (view) {
-            Color savedBackgroundColor = view->baseBackgroundColor();
-            bool savedIsTransparent = view->isTransparent();
-            view->setBaseBackgroundColor(Color::transparent);
-            view->setTransparent(true);
-            dragImage = frame->nodeImage(m_element.get());
-            view->setBaseBackgroundColor(savedBackgroundColor);
-            view->setTransparent(savedIsTransparent);
-        }
-
-        [CATransaction begin];
         PlatformLayer* rootPlatformLayer = m_rootLayer->platformLayer();
         [[NSNotificationCenter defaultCenter] postNotificationName:@"WebKitLayerHostChanged" object:rootPlatformLayer userInfo:nil];
-
         m_rootLayer->removeAllChildren();
         m_rootLayer->syncCompositingStateForThisLayerOnly();
         m_rootLayer = nullptr;
-        [rootPlatformLayer setContents:dragImage.get()];
-        [CATransaction commit];
-        
         return;
     }
 

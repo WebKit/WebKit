@@ -47,8 +47,6 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
 using namespace WebKit;
 using namespace WebCore;
 
-static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
-
 #if defined(BUILDING_ON_LEOPARD)
 @interface CATransaction(SnowLeopardConvenienceFunctions)
 + (void)setDisableActions:(BOOL)flag;
@@ -247,7 +245,9 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
         return;
     _isEnteringFullScreen = NO;
     
-    if (completed) {                
+    if (completed) {
+        NSDisableScreenUpdates(); 
+            
         // Swap the webView placeholder into place.
         if (!_webViewPlaceholder)
             _webViewPlaceholder.adoptNS([[NSView alloc] init]);
@@ -354,11 +354,8 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
     [self _updateMenuAndDockForFullScreen];
     [self _updatePowerAssertions];
     [NSCursor setHiddenUntilMouseMoves:YES];
-    [[self window] orderOut:self];
-    [[_webView window] makeKeyAndOrderFront:self];
 
     [self _manager]->didExitFullScreen();
-    NSEnableScreenUpdates();    
 }
 
 - (void)enterAcceleratedCompositingMode:(const WebKit::LayerTreeContext&)layerTreeContext
@@ -394,13 +391,7 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
 {
     if (!_layerHostingView)
         return;
-
-    NSDisableScreenUpdates();
-    [self _page]->forceRepaint(VoidCallback::create(self, exitCompositedModeRepaintCompleted));
-}
-
-- (void)exitCompositedModeRepaintCompleted
-{    
+        
     [CATransaction begin];
     [CATransaction setDisableActions:YES];
     [_layerHostingView.get() removeFromSuperview];
@@ -408,16 +399,19 @@ static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context);
     [_layerHostingView.get() setWantsLayer:NO];
     [[[self _fullScreenWindow] backgroundLayer] setHidden:YES];
     [CATransaction commit];
+
+    // Complete the animation out of full-screen mode
+    // by hiding the full-screen window:
+    if (!_isFullScreen) {
+        [[_webView window] display];
+        [[self window] orderOut:self];
+        [[_webView window] makeKeyAndOrderFront:self];
+    }
     
     _layerHostingView = 0;
     NSEnableScreenUpdates();
-
-    [self _manager]->disposeOfLayerClient();
-}
-
-static void exitCompositedModeRepaintCompleted(WKErrorRef, void* context)
-{
-    [(WKFullScreenWindowController*)context exitCompositedModeRepaintCompleted];
+    
+    [self _manager]->disposeOfLayerClient();  
 }
 
 - (WebCore::IntRect)getFullScreenRect

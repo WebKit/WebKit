@@ -123,8 +123,8 @@ void WebFullScreenManager::willEnterFullScreen()
 void WebFullScreenManager::didEnterFullScreen()
 {
     ASSERT(m_element);
-    m_element->document()->webkitDidEnterFullScreenForElement(m_element.get());
     m_element->document()->setFullScreenRendererBackgroundColor(Color::black);
+    m_element->document()->webkitDidEnterFullScreenForElement(m_element.get());
 }
 
 void WebFullScreenManager::willExitFullScreen()
