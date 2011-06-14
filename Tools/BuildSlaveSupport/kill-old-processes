@@ -26,7 +26,33 @@
 import os, sys
 
 def main():
-    tasksToKill = [ "DumpRenderTree", 
+
+    tasksToKillWin = [ "cl.exe", 
+					"devenv.com", 
+					"devenv.exe", 
+					"DumpRenderTree.exe", 
+					"DumpRenderTree_debug.exe",
+					"httpd.exe", 
+					"imagediff.exe", 
+					"imagediff_debug.exe", 
+					"jsc.exe", 
+					"jsc_debug.exe",
+					"LightTPD.exe", 
+					"link.exe", 
+					"midl.exe", 
+					"perl.exe", 
+					"Safari.exe", 
+					"svn.exe", 
+					"testapi.exe", 
+					"testapi_debug.exe", 
+					"VcBuildHelper.exe", 
+					"wdiff.exe", 
+					"WebKit2WebProcess.exe", 
+					"WebKit2WebProcess_debug.exe", 
+					"WebKitTestRunner.exe", 
+					"WebKitTestRunner_debug.exe" ]
+
+    tasksToKillMac = [ "DumpRenderTree", 
 					"make",
 					"perl", 
 					"per5.12",
@@ -41,10 +67,16 @@ def main():
 					"TestWebKitAPI Web Content",
 					"jsc",
 					"Problem Reporter",
-					"WebKitPluginAgen"]
-					
-    for task in tasksToKill:
-        os.system("killall -9 -v -m " + task)
+					"WebKitPluginAgen" ]
+
+    if sys.platform == 'darwin':
+        for task in tasksToKillMac:
+            os.system("killall -9 -v -m " + task)
+    elif sys.platform == 'cygwin' or sys.platform == 'win32':
+        for task in tasksToKillWin:
+            os.system("taskkill /t /f /im " + task)
+    else:
+        raise Exception("Have not implemented kill-old-processes for this platform")  
 
 if __name__ == '__main__':
     sys.exit(main())

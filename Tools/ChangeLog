@@ -1,3 +1,16 @@
+2011-06-14  Lucas Forschler  <lforschler@apple.com>
+
+        Reviewed by Stephanie Lewis.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62495
+        Bug 62495 - combine windows and mac kill-old-processes script
+        Add a platform agnostic script.  Remove the recently added mac flavor.
+        Note: Leaving the windows one alone, since it is currently used by the WebKit bots.
+        
+        * BuildSlaveSupport/kill-old-processes: Added.
+        * BuildSlaveSupport/mac: Removed.
+        * BuildSlaveSupport/mac/kill-old-processes: Removed.
+
 2011-06-14  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
