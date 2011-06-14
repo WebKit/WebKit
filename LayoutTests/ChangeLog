@@ -1,3 +1,10 @@
+2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Remove failing test expectation for plugins/npruntime/browser-object-identity.html
+        on Chromium since it has been fixed by r88679.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-10  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.
