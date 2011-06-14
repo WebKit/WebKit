@@ -1,3 +1,12 @@
+2011-06-14  Claudio Saavedra  <csaavedra@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        Broken reference to webkitsoupauthdialog.c
+        https://bugs.webkit.org/show_bug.cgi?id=62650
+
+        * POTFILES: Fix reference to webkitsoupauthdialog.cpp
+
 2011-03-23  Luca Ferretti  <lferrett@gnome.org>
 
         Rubber-stamped by Gustavo Noronha.
