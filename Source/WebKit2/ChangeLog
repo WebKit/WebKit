@@ -1,3 +1,28 @@
+2011-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add PluginModuleInfo header and prepare for renaming of PluginInfoStore::Plugin to PluginModuleInfo
+        https://bugs.webkit.org/show_bug.cgi?id=62647
+
+        Make PluginModuleInfo a typedef of PluginInfoStore::Plugin for now; eventually it should be its own class,
+        and PluginInfoStore::Plugin should go away.
+
+        * GNUmakefile.am:
+        * Shared/Plugins/Netscape/NetscapePluginModule.h:
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::getPluginArchitecture):
+        (WebKit::getMIMETypesFromPluginBundle):
+        (WebKit::getPluginInfoFromPropertyLists):
+        (WebKit::getPluginInfoFromCarbonResources):
+        (WebKit::NetscapePluginModule::getPluginInfo):
+        (WebKit::NetscapePluginModule::determineQuirks):
+        * Shared/Plugins/PluginModuleInfo.cpp: Added.
+        * Shared/Plugins/PluginModuleInfo.h: Added.
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
 2011-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

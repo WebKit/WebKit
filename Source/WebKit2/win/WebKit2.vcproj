@@ -1430,6 +1430,14 @@
 				Name="Plugins"
 				>
 				<File
+					RelativePath="..\Shared\Plugins\PluginModuleInfo.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\Plugins\PluginModuleInfo.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\Plugins\PluginQuirks.h"
 					>
 				</File>

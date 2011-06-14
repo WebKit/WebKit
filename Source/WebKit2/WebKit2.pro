@@ -167,6 +167,7 @@ HEADERS += \
     Shared/Plugins/NPObjectMessageReceiver.h \
     Shared/Plugins/NPObjectProxy.h \
     Shared/Plugins/NPVariantData.h \
+    Shared/Plugins/PluginModuleInfo.h \
     Shared/Plugins/PluginProcessCreationParameters.h \
     Shared/Plugins/PluginQuirks.h \
     Shared/qt/PlatformCertificateInfo.h \
@@ -334,6 +335,7 @@ SOURCES += \
     Shared/Plugins/NPObjectMessageReceiver.cpp \
     Shared/Plugins/NPObjectProxy.cpp \
     Shared/Plugins/NPVariantData.cpp \
+    Shared/Plugins/PluginModuleInfo.cpp \
     Shared/Plugins/PluginProcessCreationParameters.cpp \
     Shared/ChildProcess.cpp \
     Shared/DictionaryPopupInfo.cpp \

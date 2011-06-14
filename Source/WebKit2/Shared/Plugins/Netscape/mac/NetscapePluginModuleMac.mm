@@ -35,7 +35,7 @@ using namespace WebCore;
 
 namespace WebKit {
 
-static bool getPluginArchitecture(CFBundleRef bundle, PluginInfoStore::Plugin& plugin)
+static bool getPluginArchitecture(CFBundleRef bundle, PluginModuleInfo& plugin)
 {
     RetainPtr<CFArrayRef> pluginArchitecturesArray(AdoptCF, CFBundleCopyExecutableArchitectures(bundle));
     if (!pluginArchitecturesArray)
@@ -108,7 +108,7 @@ static RetainPtr<CFDictionaryRef> contentsOfPropertyListAtURL(CFURLRef propertyL
     return RetainPtr<CFDictionaryRef>(AdoptCF, static_cast<CFDictionaryRef>(propertyList.leakRef()));
 }
 
-static RetainPtr<CFDictionaryRef> getMIMETypesFromPluginBundle(CFBundleRef bundle, const PluginInfoStore::Plugin& plugin)
+static RetainPtr<CFDictionaryRef> getMIMETypesFromPluginBundle(CFBundleRef bundle, const PluginModuleInfo& plugin)
 {
     CFStringRef propertyListFilename = static_cast<CFStringRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginMIMETypesFilename")));
     if (propertyListFilename) {
@@ -131,7 +131,7 @@ static RetainPtr<CFDictionaryRef> getMIMETypesFromPluginBundle(CFBundleRef bundl
     return static_cast<CFDictionaryRef>(CFBundleGetValueForInfoDictionaryKey(bundle, CFSTR("WebPluginMIMETypes")));
 }
 
-static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginInfoStore::Plugin& plugin)
+static bool getPluginInfoFromPropertyLists(CFBundleRef bundle, PluginModuleInfo& plugin)
 {
     RetainPtr<CFDictionaryRef> mimeTypes = getMIMETypesFromPluginBundle(bundle, plugin);
     if (!mimeTypes || CFGetTypeID(mimeTypes.get()) != CFDictionaryGetTypeID())
@@ -288,7 +288,7 @@ static const ResID PluginNameOrDescriptionStringNumber = 126;
 static const ResID MIMEDescriptionStringNumber = 127;
 static const ResID MIMEListStringStringNumber = 128;
 
-static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginInfoStore::Plugin& plugin)
+static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginModuleInfo& plugin)
 {
     ResourceMap resourceMap(bundle);
     if (!resourceMap.isValid())
@@ -342,7 +342,7 @@ static bool getPluginInfoFromCarbonResources(CFBundleRef bundle, PluginInfoStore
     return true;
 }
 
-bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginInfoStore::Plugin& plugin)
+bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
     RetainPtr<CFStringRef> bundlePath(AdoptCF, pluginPath.createCFString());
     RetainPtr<CFURLRef> bundleURL(AdoptCF, CFURLCreateWithFileSystemPath(kCFAllocatorDefault, bundlePath.get(), kCFURLPOSIXPathStyle, false));
@@ -449,7 +449,7 @@ bool PluginVersion::isLessThan(unsigned componentA) const
 
 void NetscapePluginModule::determineQuirks()
 {
-    PluginInfoStore::Plugin plugin;
+    PluginModuleInfo plugin;
     if (!getPluginInfo(m_pluginPath, plugin))
         return;
 

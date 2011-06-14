@@ -100,6 +100,8 @@
 		1A30EAC6115D7DA30053E937 /* ConnectionMac.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */; };
 		1A3979F61332983A00E00300 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0867D6A5FE840307C02AAC07 /* AppKit.framework */; };
 		1A3979F71332983F00E00300 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1AA1CC5C100FA1A10078DEBC /* QuartzCore.framework */; };
+		1A3D610113A7CC2A00F95D4E /* PluginModuleInfo.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3D60FF13A7CC2A00F95D4E /* PluginModuleInfo.cpp */; };
+		1A3D610213A7CC2A00F95D4E /* PluginModuleInfo.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3D610013A7CC2A00F95D4E /* PluginModuleInfo.h */; };
 		1A3DD1FD125E59F3004515E6 /* WebFindClient.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */; };
 		1A3DD202125E5A1F004515E6 /* WebFindClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3DD201125E5A1F004515E6 /* WebFindClient.h */; };
 		1A3DD206125E5A2F004515E6 /* APIClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 1A3DD205125E5A2F004515E6 /* APIClient.h */; };
@@ -1006,6 +1008,8 @@
 		1A2D956E12848564001EB962 /* ChildProcess.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ChildProcess.cpp; sourceTree = "<group>"; };
 		1A30066C1110F4F70031937C /* ResponsivenessTimer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ResponsivenessTimer.h; sourceTree = "<group>"; };
 		1A30EAC5115D7DA30053E937 /* ConnectionMac.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConnectionMac.cpp; sourceTree = "<group>"; };
+		1A3D60FF13A7CC2A00F95D4E /* PluginModuleInfo.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = PluginModuleInfo.cpp; sourceTree = "<group>"; };
+		1A3D610013A7CC2A00F95D4E /* PluginModuleInfo.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PluginModuleInfo.h; sourceTree = "<group>"; };
 		1A3DD1FC125E59F3004515E6 /* WebFindClient.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WebFindClient.cpp; sourceTree = "<group>"; };
 		1A3DD201125E5A1F004515E6 /* WebFindClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebFindClient.h; sourceTree = "<group>"; };
 		1A3DD205125E5A2F004515E6 /* APIClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = APIClient.h; sourceTree = "<group>"; };
@@ -2244,6 +2248,8 @@
 			isa = PBXGroup;
 			children = (
 				1A4A9C5212B816CF008FE984 /* Netscape */,
+				1A3D60FF13A7CC2A00F95D4E /* PluginModuleInfo.cpp */,
+				1A3D610013A7CC2A00F95D4E /* PluginModuleInfo.h */,
 				1A2D90D11281C966001EB962 /* PluginProcessCreationParameters.cpp */,
 				1A2D90D01281C966001EB962 /* PluginProcessCreationParameters.h */,
 				1A4A9F3112B844E2008FE984 /* PluginQuirks.h */,
@@ -3817,6 +3823,7 @@
 				512DF701138C254600A22FC6 /* SecKeychainItemResponseData.h in Headers */,
 				512DF70B138C26C700A22FC6 /* KeychainAttribute.h in Headers */,
 				93C01DAC139AC91700ED51D7 /* CoreIPCClientRunLoop.h in Headers */,
+				1A3D610213A7CC2A00F95D4E /* PluginModuleInfo.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -4485,6 +4492,7 @@
 				512DF700138C254600A22FC6 /* SecKeychainItemResponseData.cpp in Sources */,
 				512DF70A138C26C700A22FC6 /* KeychainAttribute.cpp in Sources */,
 				93C01DAD139AC91700ED51D7 /* CoreIPCClientRunLoop.mm in Sources */,
+				1A3D610113A7CC2A00F95D4E /* PluginModuleInfo.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
