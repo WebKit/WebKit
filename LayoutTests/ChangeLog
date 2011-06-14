@@ -1,3 +1,9 @@
+2011-06-14  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skipping tests crashing in the GTK bots.
+
+        * platform/gtk/Skipped: Skipped tests.
+
 2011-06-14  Kent Tamura  <tkent@chromium.org>
 
         [Mac-WK2] Rebaseline for r88757.

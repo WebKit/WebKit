@@ -248,6 +248,19 @@ http/tests/fileapi/create-blob-url-from-data-url.html
 http/tests/history/back-during-onload-triggered-by-back.html
 http/tests/history/back-to-post.php
 
+# Crashing on debug bots because of failing ASSERT in HashTable.cpp
+# https://bugs.webkit.org/show_bug.cgi?id=62623
+svg/text/text-align-01-b.svg
+fast/borders/bidi-009a.html
+
+# Crashing on debug bots because of failing ASSERT in FontCache.cpp
+# https://bugs.webkit.org/show_bug.cgi?id=62624
+fast/backgrounds/animated-svg-as-background.html
+fast/xsl/xslt-extra-content-at-end.xml
+svg/W3C-SVG-1.1/text-tref-01-b.svg
+svg/carto.net/window.svg
+svg/wicd/rightsizing-grid.xhtml
+
 # Different results on 32-bit and 64-bit bots because of signed zero values
 # https://bugs.webkit.org/show_bug.cgi?id=62003
 svg/custom/embedding-external-svgs.xhtml
