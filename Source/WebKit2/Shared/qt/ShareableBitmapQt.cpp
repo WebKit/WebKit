@@ -28,6 +28,7 @@
 
 #include <QImage>
 #include <QPainter>
+#include <WebCore/BitmapImage.h>
 #include <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
@@ -36,8 +37,17 @@ namespace WebKit {
 
 QImage ShareableBitmap::createQImage()
 {
-    return QImage(reinterpret_cast<uchar*>(data()), m_size.width(), m_size.height(), m_size.width() * 4, QImage::Format_RGB32);
+    return QImage(reinterpret_cast<uchar*>(data()), m_size.width(), m_size.height(), m_size.width() * 4,
+                  m_flags & SupportsAlpha ? QImage::Format_ARGB32_Premultiplied : QImage::Format_RGB32);
 }
+
+#if PLATFORM(QT)
+PassRefPtr<Image> ShareableBitmap::createImage()
+{
+    QPixmap* pixmap = new QPixmap(QPixmap::fromImage(createQImage()));
+    return BitmapImage::create(pixmap);
+}
+#endif
 
 PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {

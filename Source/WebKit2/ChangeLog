@@ -1,3 +1,20 @@
+2011-06-14  Noam Rosenthal  <noam.rosenthal@nokia.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [Qt] Implement accelerated compositing on WK2 Qt port
+        https://bugs.webkit.org/show_bug.cgi?id=56935
+
+        Add a createImage() function to ShareableBitmap, for now ifdef'ed to Qt only.
+        This allows us to support directly composited images across the WebKit2 processes.
+
+        Together with Viatcheslav Ostapenko.
+
+        * Shared/ShareableBitmap.h:
+        * Shared/qt/ShareableBitmapQt.cpp:
+        (WebKit::ShareableBitmap::createQImage):
+        (WebKit::ShareableBitmap::createImage):
+
 2011-06-13  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

@@ -27,6 +27,7 @@
 #define ShareableBitmap_h
 
 #include "SharedMemory.h"
+#include <WebCore/Image.h>
 #include <WebCore/IntRect.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -121,6 +122,7 @@ public:
     // This creates a QImage that directly references the shared bitmap data.
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
     QImage createQImage();
+    PassRefPtr<WebCore::Image> createImage();
 #endif
 
 private:
