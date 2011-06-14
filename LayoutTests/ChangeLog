@@ -1,3 +1,15 @@
+2011-06-13  Igor Oliveira  <igor.oliveira@openbossa.org>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Rebaseline http/tests/misc/slow-loading-image-in-pattern.html after r69386 and r83871
+        https://bugs.webkit.org/show_bug.cgi?id=62125
+
+
+        Rebaseline LayoutTests/platform/qt/http/tests/misc/slow-loading-image-in-pattern-expected.txt after r69386 and r83871
+
+        * platform/qt/http/tests/misc/slow-loading-image-in-pattern-expected.txt:
+
 2011-06-13  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
 
         Reviewed by Eric Seidel.
