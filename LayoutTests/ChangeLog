@@ -1,5 +1,16 @@
 2011-06-14  Yael Aharon  <yael.aharon@nokia.com>
 
+        Unreviewed.
+
+        <progress> should support :indeterminate pseudo-class
+        https://bugs.webkit.org/show_bug.cgi?id=62430
+
+        Skip new tests since Windows port does not support the progress element.
+
+        * platform/win/Skipped:
+
+2011-06-14  Yael Aharon  <yael.aharon@nokia.com>
+
         Reviewed by Kent Tamura.
 
         <progress> should support :indeterminate pseudo-class
