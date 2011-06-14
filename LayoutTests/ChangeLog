@@ -1,5 +1,12 @@
 2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Another GTK rebaseline after r88717 because non-breaking spaces were somehow converted to
+        regular spaces in r88742.
+
+        * platform/gtk/editing/pasteboard/paste-xml-expected.txt:
+
+2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium rebaselines after r88617. The test is now passing on all platforms.
 
         * platform/chromium-mac-leopard/fast/repaint/selection-after-remove-expected.png: Added.

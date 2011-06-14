@@ -15,6 +15,6 @@ EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotificatio
 EDITING DELEGATE: shouldChangeSelectedDOMRange:range from 0 of #text > span > div > body > html > #document to 1 of #text > span > div > body > html > #document toDOMRange:range from 3 of #text > span > div > body > html > #document to 3 of #text > span > div > body > html > #document affinity:NSSelectionAffinityDownstream stillSelecting:FALSE
 EDITING DELEGATE: webViewDidChangeSelection:WebViewDidChangeSelectionNotification
 EDITING DELEGATE: webViewDidChange:WebViewDidChangeNotification
-foo barbar baz
+foo barbar baz
 execCopyCommand: <span xmlns="http://www.w3.org/1999/xhtml" id="test">foo bar baz</span>
-execPasteCommand: <span xmlns="http://www.w3.org/1999/xhtml" id="test">foo barbar baz</span>
+execPasteCommand: <span xmlns="http://www.w3.org/1999/xhtml" id="test">foo barbar baz</span>
