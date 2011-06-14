@@ -277,11 +277,11 @@ public:
     // Creates an instance of file system object.
     virtual v8::Handle<v8::Value> createFileSystem(WebFileSystem::Type,
                                                    const WebString& name,
-                                                   const WebString& path) = 0;
+                                                   const WebString& rootURL) = 0;
     // Creates an instance of file or directory entry object.
     virtual v8::Handle<v8::Value> createFileEntry(WebFileSystem::Type,
                                                   const WebString& fileSystemName,
-                                                  const WebString& fileSystemPath,
+                                                  const WebString& fileSystemRootURL,
                                                   const WebString& filePath,
                                                   bool isDirectory) = 0;
 #endif

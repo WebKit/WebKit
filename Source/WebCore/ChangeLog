@@ -1,3 +1,36 @@
+2011-06-14  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Clean up filesystem base path code.
+        https://bugs.webkit.org/show_bug.cgi?id=60218
+
+        Change a bunch of url-held-in-a-string parameters into real KURLS and
+        WebURLs.
+
+        No new tests--no change in functionality.
+
+        * fileapi/DOMFileSystem.cpp:
+        (WebCore::DOMFileSystem::createWriter):
+        (WebCore::DOMFileSystem::createFile):
+        * fileapi/DOMFileSystemBase.cpp:
+        (WebCore::DOMFileSystemBase::getMetadata):
+        (WebCore::DOMFileSystemBase::move):
+        (WebCore::DOMFileSystemBase::copy):
+        (WebCore::DOMFileSystemBase::remove):
+        (WebCore::DOMFileSystemBase::removeRecursively):
+        (WebCore::DOMFileSystemBase::getParent):
+        (WebCore::DOMFileSystemBase::getFile):
+        (WebCore::DOMFileSystemBase::getDirectory):
+        (WebCore::DOMFileSystemBase::readDirectory):
+        * fileapi/DOMFileSystemSync.cpp:
+        (WebCore::DOMFileSystemSync::createFile):
+        (WebCore::DOMFileSystemSync::createWriter):
+        * platform/AsyncFileSystem.cpp:
+        (WebCore::AsyncFileSystem::openFileSystem):
+        * platform/AsyncFileSystem.h:
+        (WebCore::AsyncFileSystem::AsyncFileSystem):
+
 2011-06-14  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Stephen White.

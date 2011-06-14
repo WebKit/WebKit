@@ -33,6 +33,7 @@
 
 #if ENABLE(FILE_SYSTEM)
 
+#include "KURL.h"
 #include "PlatformString.h"
 #include "Timer.h"
 #include <wtf/PassOwnPtr.h>
@@ -66,7 +67,7 @@ public:
     virtual bool waitForOperationToComplete() { return false; }
 
     // Creates and returns a new platform-specific AsyncFileSystem instance if the platform has its own implementation.
-    static PassOwnPtr<AsyncFileSystem> create(Type, const String& rootPath);
+    static PassOwnPtr<AsyncFileSystem> create(Type);
 
     // Opens a new file system. The create parameter specifies whether or not to create the path if it does not already exists.
     static void openFileSystem(const String& basePath, const String& storageIdentifier, Type, bool create, PassOwnPtr<AsyncFileSystemCallbacks>);
@@ -127,23 +128,15 @@ public:
     // AsyncFileSystemCallbacks::didFail() is called otherwise.
     virtual void createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks>) = 0;
 
-    // Converts a given absolute virtual path to a platform path that starts with the platform root path of this file system.
-    virtual String virtualToPlatformPath(const String& path) const;
-
-    // Getter for this file system's root path.
-    String root() const { return m_platformRootPath; }
-
     Type type() const { return m_type; }
 
 protected:
-    AsyncFileSystem(Type type, const String& platformRootPath)
+    AsyncFileSystem(Type type)
         : m_type(type)
-        , m_platformRootPath(platformRootPath)
     {
     }
 
     Type m_type;
-    String m_platformRootPath;
 };
 
 } // namespace WebCore

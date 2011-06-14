@@ -34,11 +34,13 @@
 #if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
 #include "CrossThreadTask.h"
+#include "KURL.h"
 #include "WebCommonWorkerClient.h"
 #include "WebFileInfo.h"
 #include "WebFileSystemCallbacks.h"
 #include "WebFileSystemEntry.h"
 #include "WebString.h"
+#include "WebURL.h"
 #include "WebWorkerBase.h"
 #include "WorkerContext.h"
 #include "WorkerScriptController.h"
@@ -97,9 +99,9 @@ public:
     {
     }
 
-    virtual void didOpenFileSystem(const WebString& name, const WebString& path)
+    virtual void didOpenFileSystem(const WebString& name, const WebURL& rootURL)
     {
-        m_bridge->didOpenFileSystemOnMainThread(name, path, m_mode);
+        m_bridge->didOpenFileSystemOnMainThread(name, rootURL, m_mode);
         delete this;
     }
 
@@ -161,7 +163,7 @@ void WorkerFileSystemCallbacksBridge::postOpenFileSystemToMainThread(WebCommonWo
                            AllowCrossThreadAccess(this), mode));
 }
 
-void WorkerFileSystemCallbacksBridge::postMoveToMainThread(WebFileSystem* fileSystem, const String& sourcePath, const String& destinationPath, const String& mode)
+void WorkerFileSystemCallbacksBridge::postMoveToMainThread(WebFileSystem* fileSystem, const KURL& sourcePath, const KURL& destinationPath, const String& mode)
 {
     dispatchTaskToMainThread(
         createCallbackTask(&moveOnMainThread,
@@ -169,7 +171,7 @@ void WorkerFileSystemCallbacksBridge::postMoveToMainThread(WebFileSystem* fileSy
                            AllowCrossThreadAccess(this), mode));
 }
 
-void WorkerFileSystemCallbacksBridge::postCopyToMainThread(WebFileSystem* fileSystem, const String& sourcePath, const String& destinationPath, const String& mode)
+void WorkerFileSystemCallbacksBridge::postCopyToMainThread(WebFileSystem* fileSystem, const KURL& sourcePath, const KURL& destinationPath, const String& mode)
 {
     dispatchTaskToMainThread(
         createCallbackTask(&copyOnMainThread,
@@ -177,7 +179,7 @@ void WorkerFileSystemCallbacksBridge::postCopyToMainThread(WebFileSystem* fileSy
                            AllowCrossThreadAccess(this), mode));
 }
 
-void WorkerFileSystemCallbacksBridge::postRemoveToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
+void WorkerFileSystemCallbacksBridge::postRemoveToMainThread(WebFileSystem* fileSystem, const KURL& path, const String& mode)
 {
     ASSERT(fileSystem);
     dispatchTaskToMainThread(
@@ -186,7 +188,7 @@ void WorkerFileSystemCallbacksBridge::postRemoveToMainThread(WebFileSystem* file
                            AllowCrossThreadAccess(this), mode));
 }
 
-void WorkerFileSystemCallbacksBridge::postRemoveRecursivelyToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
+void WorkerFileSystemCallbacksBridge::postRemoveRecursivelyToMainThread(WebFileSystem* fileSystem, const KURL& path, const String& mode)
 {
     ASSERT(fileSystem);
     dispatchTaskToMainThread(
@@ -195,7 +197,7 @@ void WorkerFileSystemCallbacksBridge::postRemoveRecursivelyToMainThread(WebFileS
                            AllowCrossThreadAccess(this), mode));
 }
 
-void WorkerFileSystemCallbacksBridge::postReadMetadataToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
+void WorkerFileSystemCallbacksBridge::postReadMetadataToMainThread(WebFileSystem* fileSystem, const KURL& path, const String& mode)
 {
     ASSERT(fileSystem);
     dispatchTaskToMainThread(
@@ -204,7 +206,7 @@ void WorkerFileSystemCallbacksBridge::postReadMetadataToMainThread(WebFileSystem
                            AllowCrossThreadAccess(this), mode));
 }
 
-void WorkerFileSystemCallbacksBridge::postCreateFileToMainThread(WebFileSystem* fileSystem, const String& path, bool exclusive, const String& mode)
+void WorkerFileSystemCallbacksBridge::postCreateFileToMainThread(WebFileSystem* fileSystem, const KURL& path, bool exclusive, const String& mode)
 {
     dispatchTaskToMainThread(
         createCallbackTask(&createFileOnMainThread,
@@ -212,7 +214,7 @@ void WorkerFileSystemCallbacksBridge::postCreateFileToMainThread(WebFileSystem* 
                            AllowCrossThreadAccess(this), mode));
 }
 
-void WorkerFileSystemCallbacksBridge::postCreateDirectoryToMainThread(WebFileSystem* fileSystem, const String& path, bool exclusive, const String& mode)
+void WorkerFileSystemCallbacksBridge::postCreateDirectoryToMainThread(WebFileSystem* fileSystem, const KURL& path, bool exclusive, const String& mode)
 {
     ASSERT(fileSystem);
     dispatchTaskToMainThread(
@@ -221,7 +223,7 @@ void WorkerFileSystemCallbacksBridge::postCreateDirectoryToMainThread(WebFileSys
                            AllowCrossThreadAccess(this), mode));
 }
 
-void WorkerFileSystemCallbacksBridge::postFileExistsToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
+void WorkerFileSystemCallbacksBridge::postFileExistsToMainThread(WebFileSystem* fileSystem, const KURL& path, const String& mode)
 {
     ASSERT(fileSystem);
     dispatchTaskToMainThread(
@@ -230,7 +232,7 @@ void WorkerFileSystemCallbacksBridge::postFileExistsToMainThread(WebFileSystem* 
                            AllowCrossThreadAccess(this), mode));
 }
 
-void WorkerFileSystemCallbacksBridge::postDirectoryExistsToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
+void WorkerFileSystemCallbacksBridge::postDirectoryExistsToMainThread(WebFileSystem* fileSystem, const KURL& path, const String& mode)
 {
     ASSERT(fileSystem);
     dispatchTaskToMainThread(
@@ -239,7 +241,7 @@ void WorkerFileSystemCallbacksBridge::postDirectoryExistsToMainThread(WebFileSys
                            AllowCrossThreadAccess(this), mode));
 }
 
-void WorkerFileSystemCallbacksBridge::postReadDirectoryToMainThread(WebFileSystem* fileSystem, const String& path, const String& mode)
+void WorkerFileSystemCallbacksBridge::postReadDirectoryToMainThread(WebFileSystem* fileSystem, const KURL& path, const String& mode)
 {
     ASSERT(fileSystem);
     dispatchTaskToMainThread(
@@ -257,52 +259,52 @@ void WorkerFileSystemCallbacksBridge::openFileSystemOnMainThread(ScriptExecution
     }
 }
 
-void WorkerFileSystemCallbacksBridge::moveOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const String& sourcePath, const String& destinationPath, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
+void WorkerFileSystemCallbacksBridge::moveOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const KURL& sourcePath, const KURL& destinationPath, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
 {
     fileSystem->move(sourcePath, destinationPath, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
 }
 
-void WorkerFileSystemCallbacksBridge::copyOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const String& sourcePath, const String& destinationPath, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
+void WorkerFileSystemCallbacksBridge::copyOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const KURL& sourcePath, const KURL& destinationPath, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
 {
     fileSystem->copy(sourcePath, destinationPath, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
 }
 
-void WorkerFileSystemCallbacksBridge::removeOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const String& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
+void WorkerFileSystemCallbacksBridge::removeOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const KURL& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
 {
     fileSystem->remove(path, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
 }
 
-void WorkerFileSystemCallbacksBridge::removeRecursivelyOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const String& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
+void WorkerFileSystemCallbacksBridge::removeRecursivelyOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const KURL& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
 {
     fileSystem->removeRecursively(path, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
 }
 
-void WorkerFileSystemCallbacksBridge::readMetadataOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const String& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
+void WorkerFileSystemCallbacksBridge::readMetadataOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const KURL& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
 {
     fileSystem->readMetadata(path, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
 }
 
-void WorkerFileSystemCallbacksBridge::createFileOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const String& path, bool exclusive, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
+void WorkerFileSystemCallbacksBridge::createFileOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const KURL& path, bool exclusive, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
 {
     fileSystem->createFile(path, exclusive, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
 }
 
-void WorkerFileSystemCallbacksBridge::createDirectoryOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const String& path, bool exclusive, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
+void WorkerFileSystemCallbacksBridge::createDirectoryOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const KURL& path, bool exclusive, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
 {
     fileSystem->createDirectory(path, exclusive, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
 }
 
-void WorkerFileSystemCallbacksBridge::fileExistsOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const String& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
+void WorkerFileSystemCallbacksBridge::fileExistsOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const KURL& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
 {
     fileSystem->fileExists(path, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
 }
 
-void WorkerFileSystemCallbacksBridge::directoryExistsOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const String& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
+void WorkerFileSystemCallbacksBridge::directoryExistsOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const KURL& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
 {
     fileSystem->directoryExists(path, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
 }
 
-void WorkerFileSystemCallbacksBridge::readDirectoryOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const String& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
+void WorkerFileSystemCallbacksBridge::readDirectoryOnMainThread(WebCore::ScriptExecutionContext*, WebFileSystem* fileSystem, const KURL& path, WorkerFileSystemCallbacksBridge* bridge, const String& mode)
 {
     fileSystem->readDirectory(path, MainThreadFileSystemCallbacks::createLeakedPtr(bridge, mode));
 }
@@ -312,10 +314,10 @@ void WorkerFileSystemCallbacksBridge::didFailOnMainThread(WebFileError error, co
     mayPostTaskToWorker(createCallbackTask(&didFailOnWorkerThread, AllowCrossThreadAccess(this), error), mode);
 }
 
-void WorkerFileSystemCallbacksBridge::didOpenFileSystemOnMainThread(const String& name, const String& rootPath, const String& mode)
+void WorkerFileSystemCallbacksBridge::didOpenFileSystemOnMainThread(const String& name, const KURL& rootURL, const String& mode)
 {
     mayPostTaskToWorker(createCallbackTask(&didOpenFileSystemOnWorkerThread,
-                                           AllowCrossThreadAccess(this), name, rootPath), mode);
+                                           AllowCrossThreadAccess(this), name, rootURL), mode);
 }
 
 void WorkerFileSystemCallbacksBridge::didSucceedOnMainThread(const String& mode)
@@ -354,9 +356,9 @@ void WorkerFileSystemCallbacksBridge::didFailOnWorkerThread(ScriptExecutionConte
     bridge->m_callbacksOnWorkerThread->didFail(error);
 }
 
-void WorkerFileSystemCallbacksBridge::didOpenFileSystemOnWorkerThread(ScriptExecutionContext*, WorkerFileSystemCallbacksBridge* bridge, const String& name, const String& rootPath)
+void WorkerFileSystemCallbacksBridge::didOpenFileSystemOnWorkerThread(ScriptExecutionContext*, WorkerFileSystemCallbacksBridge* bridge, const String& name, const KURL& rootURL)
 {
-    bridge->m_callbacksOnWorkerThread->didOpenFileSystem(name, rootPath);
+    bridge->m_callbacksOnWorkerThread->didOpenFileSystem(name, rootURL);
 }
 
 void WorkerFileSystemCallbacksBridge::didSucceedOnWorkerThread(ScriptExecutionContext*, WorkerFileSystemCallbacksBridge* bridge)

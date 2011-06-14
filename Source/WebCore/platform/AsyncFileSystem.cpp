@@ -52,33 +52,12 @@ PassOwnPtr<AsyncFileSystem> AsyncFileSystem::create(Type, const String&)
     return 0;
 }
 
-// Default implementation.
 void AsyncFileSystem::openFileSystem(const String& basePath, const String& storageIdentifier, Type type, bool, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    String typeString = (type == Persistent) ? "Persistent" : "Temporary";
-
-    String name = storageIdentifier;
-    name += ":";
-    name += typeString;
-
-    String rootPath = basePath;
-    rootPath.append(PlatformFilePathSeparator);
-    rootPath += storageIdentifier;
-    rootPath.append(PlatformFilePathSeparator);
-    rootPath += typeString;
-    rootPath.append(PlatformFilePathSeparator);
-
-    callbacks->didOpenFileSystem(name, AsyncFileSystem::create(type, rootPath));
+    notImplemented();
+    callbacks->didFail(NOT_SUPPORTED_ERR);
 }
 #endif
-
-// Default implementation.
-String AsyncFileSystem::virtualToPlatformPath(const String& path) const
-{
-    ASSERT(!m_platformRootPath.isEmpty());
-    String virtualPath = path;
-    return m_platformRootPath + virtualPath.replace('/', PlatformFilePathSeparator);
-}
 
 } // namespace
 

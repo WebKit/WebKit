@@ -1,3 +1,34 @@
+2011-06-14  Eric Uhrhane  <ericu@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Clean up filesystem base path code.
+        https://bugs.webkit.org/show_bug.cgi?id=60218
+
+        Change a bunch of url-held-in-a-string parameters into real KURLS and
+        WebURLs.  Also add a #define to make it easier to stage this change, as
+        it involves both Chromium and WebKit changes that would ideally be 
+        simultaneous.
+
+        No new tests--no change in functionality.
+
+        * public/WebFileSystem.h:
+        * public/WebFileSystemCallbacks.h:
+        * public/WebFrame.h:
+        * src/AsyncFileSystemChromium.cpp:
+        * src/AsyncFileSystemChromium.h:
+        * src/WebFileSystemCallbacksImpl.cpp:
+        * src/WebFileSystemCallbacksImpl.h:
+        * src/WebFrameImpl.cpp:
+        * src/WorkerAsyncFileSystemChromium.cpp:
+        * src/WorkerAsyncFileSystemChromium.h:
+        * src/WorkerAsyncFileWriterChromium.cpp:
+        * src/WorkerAsyncFileWriterChromium.h:
+        * src/WorkerFileSystemCallbacksBridge.cpp:
+        * src/WorkerFileSystemCallbacksBridge.h:
+        * src/WorkerFileWriterCallbacksBridge.cpp:
+        * src/WorkerFileWriterCallbacksBridge.h:
+
 2011-06-14  James Robinson  <jamesr@chromium.org>
 
         Reviewed by Stephen White.

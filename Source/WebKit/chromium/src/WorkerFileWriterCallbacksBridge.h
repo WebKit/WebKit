@@ -33,6 +33,7 @@
 
 #if ENABLE(FILE_SYSTEM) && ENABLE(WORKERS)
 
+#include "KURL.h"
 #include "WebFileError.h"
 #include "WebFileWriterClient.h"
 #include "WorkerContext.h"
@@ -56,6 +57,7 @@ namespace WebKit {
 class WebFileSystem;
 class WebFileWriter;
 class WebFileWriterClient;
+class WebURL;
 class WebWorkerBase;
 
 // This class is used as a mechanism to bridge calls between threads.
@@ -86,7 +88,7 @@ public:
     // WorkerContext::Observer method.
     virtual void notifyStop();
 
-    static PassRefPtr<WorkerFileWriterCallbacksBridge> create(const String& path, WebCore::WorkerLoaderProxy* proxy, WebCore::ScriptExecutionContext* workerContext, WebCore::AsyncFileWriterClient* client)
+    static PassRefPtr<WorkerFileWriterCallbacksBridge> create(const WebCore::KURL& path, WebCore::WorkerLoaderProxy* proxy, WebCore::ScriptExecutionContext* workerContext, WebCore::AsyncFileWriterClient* client)
     {
         return adoptRef(new WorkerFileWriterCallbacksBridge(path, proxy, workerContext, client));
     }
@@ -110,15 +112,15 @@ public:
     bool waitForOperationToComplete();
 
 private:
-    WorkerFileWriterCallbacksBridge(const String& path, WebCore::WorkerLoaderProxy*, WebCore::ScriptExecutionContext*, WebCore::AsyncFileWriterClient*);
+    WorkerFileWriterCallbacksBridge(const WebCore::KURL& path, WebCore::WorkerLoaderProxy*, WebCore::ScriptExecutionContext*, WebCore::AsyncFileWriterClient*);
 
-    void postInitToMainThread(const String& path);
+    void postInitToMainThread(const WebCore::KURL& path);
 
     // Methods that are to be called on the main thread.
     static void writeOnMainThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge>, long long position, const WebCore::KURL& data);
     static void truncateOnMainThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge>, long long length);
     static void abortOnMainThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge>);
-    static void initOnMainThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge>, const String& path);
+    static void initOnMainThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge>, const WebCore::KURL& path);
     static void shutdownOnMainThread(WebCore::ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge>);
 
     // Methods that dispatch to AsyncFileWriterClient on the worker threads.

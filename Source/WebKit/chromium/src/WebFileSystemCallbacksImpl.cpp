@@ -85,18 +85,18 @@ void WebFileSystemCallbacksImpl::didReadDirectory(const WebVector<WebFileSystemE
     delete this;
 }
 
-void WebFileSystemCallbacksImpl::didOpenFileSystem(const WebString& name, const WebString& path)
+void WebFileSystemCallbacksImpl::didOpenFileSystem(const WebString& name, const WebURL& rootURL)
 {
     // This object is intended to delete itself on exit.
     OwnPtr<WebFileSystemCallbacksImpl> callbacks = adoptPtr(this);
 
 #if ENABLE(WORKERS)
     if (m_context && m_context->isWorkerContext()) {
-        m_callbacks->didOpenFileSystem(name, WorkerAsyncFileSystemChromium::create(m_context, m_type, path, m_synchronous));
+        m_callbacks->didOpenFileSystem(name, WorkerAsyncFileSystemChromium::create(m_context, m_type, rootURL, m_synchronous));
         return;
     }
 #endif
-    m_callbacks->didOpenFileSystem(name, AsyncFileSystemChromium::create(m_type, path));
+    m_callbacks->didOpenFileSystem(name, AsyncFileSystemChromium::create(m_type, rootURL));
 }
 
 void WebFileSystemCallbacksImpl::didFail(WebFileError error)

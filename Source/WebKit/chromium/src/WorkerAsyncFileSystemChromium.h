@@ -40,6 +40,7 @@
 
 namespace WebKit {
 class WebFileSystem;
+class WebURL;
 class WebWorkerBase;
 class WorkerFileSystemCallbacksBridge;
 }
@@ -52,9 +53,9 @@ class WorkerContext;
 
 class WorkerAsyncFileSystemChromium : public AsyncFileSystem {
 public:
-    static PassOwnPtr<AsyncFileSystem> create(ScriptExecutionContext* context, AsyncFileSystem::Type type, const String& rootPath, bool synchronous)
+    static PassOwnPtr<AsyncFileSystem> create(ScriptExecutionContext* context, AsyncFileSystem::Type type, const WebKit::WebURL& rootURL, bool synchronous)
     {
-        return adoptPtr(new WorkerAsyncFileSystemChromium(context, type, rootPath, synchronous));
+        return adoptPtr(new WorkerAsyncFileSystemChromium(context, type, rootURL, synchronous));
     }
 
     virtual ~WorkerAsyncFileSystemChromium();
@@ -75,9 +76,12 @@ public:
     virtual void createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 private:
-    WorkerAsyncFileSystemChromium(ScriptExecutionContext*, AsyncFileSystem::Type, const String& rootPath, bool synchronous);
+    WorkerAsyncFileSystemChromium(ScriptExecutionContext*, AsyncFileSystem::Type, const WebKit::WebURL& rootURL, bool synchronous);
 
     PassRefPtr<WebKit::WorkerFileSystemCallbacksBridge> createWorkerFileSystemCallbacksBridge(PassOwnPtr<AsyncFileSystemCallbacks>);
+
+    // Converts a given absolute virtual path to a full origin-qualified FileSystem URL.
+    KURL virtualPathToFileSystemURL(const String& virtualPath) const;
 
     ScriptExecutionContext* m_scriptExecutionContext;
     WebKit::WebFileSystem* m_webFileSystem;
@@ -86,6 +90,7 @@ private:
     RefPtr<WebKit::WorkerFileSystemCallbacksBridge> m_bridgeForCurrentOperation;
     String m_modeForCurrentOperation;
     bool m_synchronous;
+    KURL m_filesystemRootURL;
 };
 
 } // namespace WebCore

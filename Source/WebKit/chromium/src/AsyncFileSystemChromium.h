@@ -43,12 +43,13 @@ class WebFileSystem;
 namespace WebCore {
 
 class AsyncFileSystemCallbacks;
+class KURL;
 
 class AsyncFileSystemChromium : public AsyncFileSystem {
 public:
-    static PassOwnPtr<AsyncFileSystem> create(AsyncFileSystem::Type type, const String& rootPath)
+    static PassOwnPtr<AsyncFileSystem> create(AsyncFileSystem::Type type, const KURL& rootURL)
     {
-        return adoptPtr(new AsyncFileSystemChromium(type, rootPath));
+        return adoptPtr(new AsyncFileSystemChromium(type, rootURL));
     }
 
     virtual ~AsyncFileSystemChromium();
@@ -66,8 +67,13 @@ public:
     virtual void createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks>);
 
 private:
-    AsyncFileSystemChromium(AsyncFileSystem::Type, const String& rootPath);
+    AsyncFileSystemChromium(AsyncFileSystem::Type, const KURL& rootURL);
     WebKit::WebFileSystem* m_webFileSystem;
+
+    // Converts a given absolute virtual path to a full origin-qualified FileSystem URL.
+    KURL virtualPathToFileSystemURL(const String& virtualPath) const;
+
+    KURL m_filesystemRootURL;
 };
 
 } // namespace WebCore

@@ -156,9 +156,8 @@ private:
 PassRefPtr<File> DOMFileSystemSync::createFile(const FileEntrySync* fileEntry, ExceptionCode& ec)
 {
     ec = 0;
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(fileEntry->fullPath());
     RefPtr<GetPathHelper::GetPathResult> result(GetPathHelper::GetPathResult::create());
-    m_asyncFileSystem->readMetadata(platformPath, GetPathHelper::create(result));
+    m_asyncFileSystem->readMetadata(fileEntry->fullPath(), GetPathHelper::create(result));
     if (!m_asyncFileSystem->waitForOperationToComplete()) {
         ec = FileException::ABORT_ERR;
         return 0;
@@ -167,9 +166,8 @@ PassRefPtr<File> DOMFileSystemSync::createFile(const FileEntrySync* fileEntry, E
         ec = result->m_code;
         return 0;
     }
-    if (!result->m_path.isEmpty())
-        platformPath = result->m_path;
-    return File::createWithName(platformPath, fileEntry->name());
+    ASSERT(!result->m_path.isEmpty());
+    return File::createWithName(result->m_path, fileEntry->name());
 }
 
 namespace {
@@ -243,14 +241,13 @@ PassRefPtr<FileWriterSync> DOMFileSystemSync::createWriter(const FileEntrySync* 
     ASSERT(fileEntry);
     ec = 0;
 
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(fileEntry->fullPath());
 
     RefPtr<FileWriterSync> fileWriter = FileWriterSync::create();
     RefPtr<ReceiveFileWriterCallback> successCallback = ReceiveFileWriterCallback::create();
     RefPtr<LocalErrorCallback> errorCallback = LocalErrorCallback::create();
 
     OwnPtr<FileWriterBaseCallbacks> callbacks = FileWriterBaseCallbacks::create(fileWriter, successCallback, errorCallback);
-    m_asyncFileSystem->createWriter(fileWriter.get(), platformPath, callbacks.release());
+    m_asyncFileSystem->createWriter(fileWriter.get(), fileEntry->fullPath(), callbacks.release());
     if (!m_asyncFileSystem->waitForOperationToComplete()) {
         ec = FileException::ABORT_ERR;
         return 0;

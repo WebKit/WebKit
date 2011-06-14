@@ -50,9 +50,10 @@ bool AsyncFileSystem::isAvailable()
     return true;
 }
 
-AsyncFileSystemChromium::AsyncFileSystemChromium(AsyncFileSystem::Type type, const String& rootPath)
-    : AsyncFileSystem(type, rootPath)
+AsyncFileSystemChromium::AsyncFileSystemChromium(AsyncFileSystem::Type type, const KURL& rootURL)
+    : AsyncFileSystem(type)
     , m_webFileSystem(WebKit::webKitClient()->fileSystem())
+    , m_filesystemRootURL(rootURL)
 {
     ASSERT(m_webFileSystem);
 }
@@ -63,57 +64,57 @@ AsyncFileSystemChromium::~AsyncFileSystemChromium()
 
 void AsyncFileSystemChromium::move(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->move(sourcePath, destinationPath, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->move(virtualPathToFileSystemURL(sourcePath), virtualPathToFileSystemURL(destinationPath), new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
 void AsyncFileSystemChromium::copy(const String& sourcePath, const String& destinationPath, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->copy(sourcePath, destinationPath, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->copy(virtualPathToFileSystemURL(sourcePath), virtualPathToFileSystemURL(destinationPath), new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
 void AsyncFileSystemChromium::remove(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->remove(path, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->remove(virtualPathToFileSystemURL(path), new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
 void AsyncFileSystemChromium::removeRecursively(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->removeRecursively(path, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->removeRecursively(virtualPathToFileSystemURL(path), new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
 void AsyncFileSystemChromium::readMetadata(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->readMetadata(path, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->readMetadata(virtualPathToFileSystemURL(path), new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
 void AsyncFileSystemChromium::createFile(const String& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->createFile(path, exclusive, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->createFile(virtualPathToFileSystemURL(path), exclusive, new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
 void AsyncFileSystemChromium::createDirectory(const String& path, bool exclusive, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->createDirectory(path, exclusive, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->createDirectory(virtualPathToFileSystemURL(path), exclusive, new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
 void AsyncFileSystemChromium::fileExists(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->fileExists(path, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->fileExists(virtualPathToFileSystemURL(path), new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
 void AsyncFileSystemChromium::directoryExists(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->directoryExists(path, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->directoryExists(virtualPathToFileSystemURL(path), new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
 void AsyncFileSystemChromium::readDirectory(const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->readDirectory(path, new WebKit::WebFileSystemCallbacksImpl(callbacks));
+    m_webFileSystem->readDirectory(virtualPathToFileSystemURL(path), new WebKit::WebFileSystemCallbacksImpl(callbacks));
 }
 
 class FileWriterHelperCallbacks : public WebKit::WebFileSystemCallbacks {
 public:
-    FileWriterHelperCallbacks(AsyncFileWriterClient* client, const String& path, WebKit::WebFileSystem* webFileSystem, PassOwnPtr<WebCore::AsyncFileSystemCallbacks> callbacks)
+    FileWriterHelperCallbacks(AsyncFileWriterClient* client, const KURL& path, WebKit::WebFileSystem* webFileSystem, PassOwnPtr<WebCore::AsyncFileSystemCallbacks> callbacks)
         : m_client(client)
         , m_path(path)
         , m_webFileSystem(webFileSystem)
@@ -145,7 +146,7 @@ public:
         ASSERT_NOT_REACHED();
         delete this;
     }
-    virtual void didOpenFileSystem(const WebKit::WebString& name, const WebKit::WebString& rootPath)
+    virtual void didOpenFileSystem(const WebKit::WebString& name, const WebKit::WebURL& rootURL)
     {
         ASSERT_NOT_REACHED();
         delete this;
@@ -160,14 +161,24 @@ public:
 
 private:
     AsyncFileWriterClient* m_client;
-    String m_path;
+    KURL m_path;
     WebKit::WebFileSystem* m_webFileSystem;
     OwnPtr<WebCore::AsyncFileSystemCallbacks> m_callbacks;
 };
 
 void AsyncFileSystemChromium::createWriter(AsyncFileWriterClient* client, const String& path, PassOwnPtr<AsyncFileSystemCallbacks> callbacks)
 {
-    m_webFileSystem->readMetadata(path, new FileWriterHelperCallbacks(client, path, m_webFileSystem, callbacks));
+    KURL pathAsURL = virtualPathToFileSystemURL(path);
+    m_webFileSystem->readMetadata(pathAsURL, new FileWriterHelperCallbacks(client, pathAsURL, m_webFileSystem, callbacks));
+}
+
+KURL AsyncFileSystemChromium::virtualPathToFileSystemURL(const String& virtualPath) const
+{
+    ASSERT(!m_filesystemRootURL.isEmpty());
+    KURL url = m_filesystemRootURL;
+    // Remove the extra leading slash.
+    url.setPath(url.path() + virtualPath.substring(1));
+    return url;
 }
 
 } // namespace WebCore

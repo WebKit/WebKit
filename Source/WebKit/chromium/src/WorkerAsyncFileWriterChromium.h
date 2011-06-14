@@ -39,6 +39,7 @@
 namespace WebKit {
     class WebFileSystem;
     class WebFileWriter;
+    class WebURL;
     class WorkerFileWriterCallbacksBridge;
 }
 
@@ -61,7 +62,7 @@ public:
         Synchronous,
     };
 
-    static PassOwnPtr<WorkerAsyncFileWriterChromium> create(WebKit::WebFileSystem* webFileSystem, const String& path, WorkerContext* workerContext, AsyncFileWriterClient* client, WriterType type)
+    static PassOwnPtr<WorkerAsyncFileWriterChromium> create(WebKit::WebFileSystem* webFileSystem, const WebKit::WebURL& path, WorkerContext* workerContext, AsyncFileWriterClient* client, WriterType type)
     {
         return adoptPtr(new WorkerAsyncFileWriterChromium(webFileSystem, path, workerContext, client, type));
     }
@@ -76,7 +77,7 @@ public:
 
 private:
 
-    WorkerAsyncFileWriterChromium(WebKit::WebFileSystem*, const String& path, WorkerContext*, AsyncFileWriterClient*, WriterType);
+    WorkerAsyncFileWriterChromium(WebKit::WebFileSystem*, const WebKit::WebURL& path, WorkerContext*, AsyncFileWriterClient*, WriterType);
     RefPtr<WebKit::WorkerFileWriterCallbacksBridge> m_bridge;
     WriterType m_type;
 };

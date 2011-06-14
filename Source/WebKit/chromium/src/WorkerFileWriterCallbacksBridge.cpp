@@ -101,7 +101,7 @@ void WorkerFileWriterCallbacksBridge::abortOnMainThread(ScriptExecutionContext*,
     bridge->m_writer->cancel();
 }
 
-void WorkerFileWriterCallbacksBridge::initOnMainThread(ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge> bridge, const String& path)
+void WorkerFileWriterCallbacksBridge::initOnMainThread(ScriptExecutionContext*, PassRefPtr<WorkerFileWriterCallbacksBridge> bridge, const KURL& path)
 {
     ASSERT(!bridge->m_writer);
     bridge->m_writer = adoptPtr(webKitClient()->fileSystem()->createFileWriter(path, bridge.get()));
@@ -130,7 +130,7 @@ void WorkerFileWriterCallbacksBridge::didTruncate()
 
 static const char fileWriterOperationsMode[] = "fileWriterOperationsMode";
 
-WorkerFileWriterCallbacksBridge::WorkerFileWriterCallbacksBridge(const String& path, WorkerLoaderProxy* proxy, ScriptExecutionContext* scriptExecutionContext, AsyncFileWriterClient* client)
+WorkerFileWriterCallbacksBridge::WorkerFileWriterCallbacksBridge(const KURL& path, WorkerLoaderProxy* proxy, ScriptExecutionContext* scriptExecutionContext, AsyncFileWriterClient* client)
     : WorkerContext::Observer(static_cast<WorkerContext*>(scriptExecutionContext))
     , m_proxy(proxy)
     , m_workerContext(scriptExecutionContext)
@@ -144,7 +144,7 @@ WorkerFileWriterCallbacksBridge::WorkerFileWriterCallbacksBridge(const String& p
     postInitToMainThread(path);
 }
 
-void WorkerFileWriterCallbacksBridge::postInitToMainThread(const String& path)
+void WorkerFileWriterCallbacksBridge::postInitToMainThread(const KURL& path)
 {
     dispatchTaskToMainThread(
         createCallbackTask(&initOnMainThread, AllowCrossThreadAccess(this), path));

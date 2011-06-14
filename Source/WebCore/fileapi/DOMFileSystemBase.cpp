@@ -105,8 +105,7 @@ SecurityOrigin* DOMFileSystemBase::securityOrigin() const
 
 bool DOMFileSystemBase::getMetadata(const EntryBase* entry, PassRefPtr<MetadataCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(entry->fullPath());
-    m_asyncFileSystem->readMetadata(platformPath, MetadataCallbacks::create(successCallback, errorCallback));
+    m_asyncFileSystem->readMetadata(entry->fullPath(), MetadataCallbacks::create(successCallback, errorCallback));
     return true;
 }
 
@@ -156,9 +155,7 @@ bool DOMFileSystemBase::move(const EntryBase* source, EntryBase* parent, const S
     if (!verifyAndGetDestinationPathForCopyOrMove(source, parent, newName, destinationPath))
         return false;
 
-    String sourcePlatformPath = m_asyncFileSystem->virtualToPlatformPath(source->fullPath());
-    String destinationPlatformPath = parent->filesystem()->asyncFileSystem()->virtualToPlatformPath(destinationPath);
-    m_asyncFileSystem->move(sourcePlatformPath, destinationPlatformPath, EntryCallbacks::create(successCallback, errorCallback, this, destinationPath, source->isDirectory()));
+    m_asyncFileSystem->move(source->fullPath(), destinationPath, EntryCallbacks::create(successCallback, errorCallback, this, destinationPath, source->isDirectory()));
     return true;
 }
 
@@ -168,9 +165,7 @@ bool DOMFileSystemBase::copy(const EntryBase* source, EntryBase* parent, const S
     if (!verifyAndGetDestinationPathForCopyOrMove(source, parent, newName, destinationPath))
         return false;
 
-    String sourcePlatformPath = m_asyncFileSystem->virtualToPlatformPath(source->fullPath());
-    String destinationPlatformPath = parent->filesystem()->asyncFileSystem()->virtualToPlatformPath(destinationPath);
-    m_asyncFileSystem->copy(sourcePlatformPath, destinationPlatformPath, EntryCallbacks::create(successCallback, errorCallback, this, destinationPath, source->isDirectory()));
+    m_asyncFileSystem->copy(source->fullPath(), destinationPath, EntryCallbacks::create(successCallback, errorCallback, this, destinationPath, source->isDirectory()));
     return true;
 }
 
@@ -180,8 +175,7 @@ bool DOMFileSystemBase::remove(const EntryBase* entry, PassRefPtr<VoidCallback> 
     // We don't allow calling remove() on the root directory.
     if (entry->fullPath() == String(DOMFilePath::root))
         return false;
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(entry->fullPath());
-    m_asyncFileSystem->remove(platformPath, VoidCallbacks::create(successCallback, errorCallback));
+    m_asyncFileSystem->remove(entry->fullPath(), VoidCallbacks::create(successCallback, errorCallback));
     return true;
 }
 
@@ -191,8 +185,7 @@ bool DOMFileSystemBase::removeRecursively(const EntryBase* entry, PassRefPtr<Voi
     // We don't allow calling remove() on the root directory.
     if (entry->fullPath() == String(DOMFilePath::root))
         return false;
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(entry->fullPath());
-    m_asyncFileSystem->removeRecursively(platformPath, VoidCallbacks::create(successCallback, errorCallback));
+    m_asyncFileSystem->removeRecursively(entry->fullPath(), VoidCallbacks::create(successCallback, errorCallback));
     return true;
 }
 
@@ -200,46 +193,43 @@ bool DOMFileSystemBase::getParent(const EntryBase* entry, PassRefPtr<EntryCallba
 {
     ASSERT(entry);
     String path = DOMFilePath::getDirectory(entry->fullPath());
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(path);
-    m_asyncFileSystem->directoryExists(platformPath, EntryCallbacks::create(successCallback, errorCallback, this, path, true));
+
+    m_asyncFileSystem->directoryExists(path, EntryCallbacks::create(successCallback, errorCallback, this, path, true));
     return true;
 }
 
-bool DOMFileSystemBase::getFile(const EntryBase* base, const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+bool DOMFileSystemBase::getFile(const EntryBase* entry, const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     String absolutePath;
-    if (!pathToAbsolutePath(m_asyncFileSystem->type(), base, path, absolutePath))
+    if (!pathToAbsolutePath(m_asyncFileSystem->type(), entry, path, absolutePath))
         return false;
 
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(absolutePath);
     OwnPtr<EntryCallbacks> callbacks = EntryCallbacks::create(successCallback, errorCallback, this, absolutePath, false);
     if (flags && flags->isCreate())
-        m_asyncFileSystem->createFile(platformPath, flags->isExclusive(), callbacks.release());
+        m_asyncFileSystem->createFile(absolutePath, flags->isExclusive(), callbacks.release());
     else
-        m_asyncFileSystem->fileExists(platformPath, callbacks.release());
+        m_asyncFileSystem->fileExists(absolutePath, callbacks.release());
     return true;
 }
 
-bool DOMFileSystemBase::getDirectory(const EntryBase* base, const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
+bool DOMFileSystemBase::getDirectory(const EntryBase* entry, const String& path, PassRefPtr<WebKitFlags> flags, PassRefPtr<EntryCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     String absolutePath;
-    if (!pathToAbsolutePath(m_asyncFileSystem->type(), base, path, absolutePath))
+    if (!pathToAbsolutePath(m_asyncFileSystem->type(), entry, path, absolutePath))
         return false;
 
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(absolutePath);
     OwnPtr<EntryCallbacks> callbacks = EntryCallbacks::create(successCallback, errorCallback, this, absolutePath, true);
     if (flags && flags->isCreate())
-        m_asyncFileSystem->createDirectory(platformPath, flags->isExclusive(), callbacks.release());
+        m_asyncFileSystem->createDirectory(absolutePath, flags->isExclusive(), callbacks.release());
     else
-        m_asyncFileSystem->directoryExists(platformPath, callbacks.release());
+        m_asyncFileSystem->directoryExists(absolutePath, callbacks.release());
     return true;
 }
 
 bool DOMFileSystemBase::readDirectory(PassRefPtr<DirectoryReaderBase> reader, const String& path, PassRefPtr<EntriesCallback> successCallback, PassRefPtr<ErrorCallback> errorCallback)
 {
     ASSERT(DOMFilePath::isAbsolute(path));
-    String platformPath = m_asyncFileSystem->virtualToPlatformPath(path);
-    m_asyncFileSystem->readDirectory(platformPath, EntriesCallbacks::create(successCallback, errorCallback, reader, path));
+    m_asyncFileSystem->readDirectory(path, EntriesCallbacks::create(successCallback, errorCallback, reader, path));
     return true;
 }
 
