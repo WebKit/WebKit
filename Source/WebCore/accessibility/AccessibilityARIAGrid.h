@@ -55,7 +55,7 @@ private:
     // ARIA treegrids and grids support selected rows.
     virtual bool supportsSelectedRows() { return true; }    
 
-    void addChild(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
+    bool addChild(AccessibilityObject*, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount);
 };
 
 } // namespace WebCore 

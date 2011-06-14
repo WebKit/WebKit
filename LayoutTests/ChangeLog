@@ -1,3 +1,13 @@
+2011-06-14  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        VoiceOver cannot navigate the itunes album view table
+        https://bugs.webkit.org/show_bug.cgi?id=62335
+
+        * platform/mac/accessibility/aria-grid-with-strange-hierarchy-expected.txt: Added.
+        * platform/mac/accessibility/aria-grid-with-strange-hierarchy.html: Added.
+
 2011-06-13  Adrienne Walker  <enne@google.com>
 
         Reviewed by James Robinson.

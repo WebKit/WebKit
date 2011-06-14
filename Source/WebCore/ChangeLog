@@ -1,3 +1,21 @@
+2011-06-14  Chris Fleizach  <cfleizach@apple.com>
+
+        Reviewed by David Kilzer.
+
+        VoiceOver cannot navigate the iTunes album view table
+        https://bugs.webkit.org/show_bug.cgi?id=62335
+
+        This is a regression from https://bugs.webkit.org/show_bug.cgi?id=57463.
+        Part of that patch made a change so that an ARIA table will only look at it's children and grandchildren
+        for possible rows. That however, doesn't allow arbitrary hierarchies to work with ARIA, like in iTunes album view.
+
+        Test: platform/mac/accessibility/aria-grid-with-strange-hierarchy.html
+
+        * accessibility/AccessibilityARIAGrid.cpp:
+        (WebCore::AccessibilityARIAGrid::addChild):
+        (WebCore::AccessibilityARIAGrid::addChildren):
+        * accessibility/AccessibilityARIAGrid.h:
+
 2011-06-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r88823.
