@@ -2,6 +2,18 @@
 
         Reviewed by Sam Weinig.
 
+        Remove PluginInfoStore::Plugin typedef
+        https://bugs.webkit.org/show_bug.cgi?id=62657
+
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::PluginInfoStore::getPluginInfo):
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+
+2011-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Create the PluginModuleInfo class and reverse the typedef so that PluginInfoStore::Plugin is now a typedef
         https://bugs.webkit.org/show_bug.cgi?id=62654
 

@@ -40,9 +40,6 @@ class PluginInfoStore {
 public:
     PluginInfoStore();
 
-    // FIXME: Remove this typedef.
-    typedef PluginModuleInfo Plugin;
-
     void setAdditionalPluginsDirectories(const Vector<String>&);
 
     void refresh();

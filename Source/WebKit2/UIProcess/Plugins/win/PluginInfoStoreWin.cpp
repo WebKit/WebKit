@@ -323,7 +323,7 @@ static uint64_t fileVersion(DWORD leastSignificant, DWORD mostSignificant)
     return version.QuadPart;
 }
 
-bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
+bool PluginInfoStore::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
     return NetscapePluginModule::getPluginInfo(pluginPath, plugin);
 }
@@ -395,7 +395,7 @@ bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlu
     // only the first. <http://webkit.org/b/58469>
     String pluginFileName = pathGetFileName(plugin.path);
     for (size_t i = 0; i < alreadyLoadedPlugins.size(); ++i) {
-        const Plugin& loadedPlugin = alreadyLoadedPlugins[i];
+        const PluginModuleInfo& loadedPlugin = alreadyLoadedPlugins[i];
 
         // If a plug-in with the same filename already exists, we don't want to load it.
         if (equalIgnoringCase(pluginFileName, pathGetFileName(loadedPlugin.path)))
