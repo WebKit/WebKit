@@ -25,18 +25,14 @@
 #include "CanvasRenderingContext2D.h"
 #include "CanvasStyle.h"
 #include "ExceptionCode.h"
-#include "FloatRect.h"
 #include "HTMLCanvasElement.h"
 #include "HTMLImageElement.h"
-#include "HTMLVideoElement.h"
 #include "ImageData.h"
 #include "JSCanvasGradient.h"
 #include "JSCanvasPattern.h"
 #include "JSHTMLCanvasElement.h"
 #include "JSHTMLImageElement.h"
-#include "JSHTMLVideoElement.h"
 #include "JSImageData.h"
-#include <runtime/Error.h>
 
 using namespace JSC;
 
