@@ -697,7 +697,7 @@ RenderThemeEfl::RenderThemeEfl(Page* page)
     , m_entryTextForegroundColor(0, 0, 0)
     , m_searchTextBackgroundColor(0, 0, 0, 0)
     , m_searchTextForegroundColor(0, 0, 0)
-    , m_sliderThumbColor(255, 0, 0) // red color.
+    , m_sliderThumbColor(Color::darkGray)
 #if ENABLE(VIDEO)
     , m_mediaPanelColor(220, 220, 195) // light tannish color.
     , m_mediaSliderColor(Color::white)
@@ -843,17 +843,17 @@ void RenderThemeEfl::adjustSliderThumbStyle(CSSStyleSelector* selector, RenderSt
     adjustSliderTrackStyle(selector, style, element);
 }
 
-void RenderThemeEfl::adjustSliderThumbSize(RenderObject* o) const
+void RenderThemeEfl::adjustSliderThumbSize(RenderStyle* style) const
 {
-    ControlPart part = o->style()->appearance();
+    ControlPart part = style->appearance();
     if (part == SliderThumbVerticalPart || part == SliderThumbHorizontalPart) {
-        o->style()->setWidth(Length(sliderThumbHeight, Fixed));
-        o->style()->setHeight(Length(sliderThumbWidth, Fixed));
+        style->setWidth(Length(sliderThumbHeight, Fixed));
+        style->setHeight(Length(sliderThumbWidth, Fixed));
     }
 #if ENABLE(VIDEO)
     else if (part == MediaSliderThumbPart) {
-        o->style()->setWidth(Length(mediaSliderThumbWidth, Fixed));
-        o->style()->setHeight(Length(mediaSliderThumbHeight, Fixed));
+        style->setWidth(Length(mediaSliderThumbWidth, Fixed));
+        style->setHeight(Length(mediaSliderThumbHeight, Fixed));
     }
 #endif
 }
@@ -1250,7 +1250,8 @@ bool RenderThemeEfl::paintMediaSliderTrack(RenderObject* object, const PaintInfo
 
 bool RenderThemeEfl::paintMediaSliderThumb(RenderObject* object, const PaintInfo& info, const IntRect& rect)
 {
-    info.context->fillRoundedRect(rect, IntSize(3, 3), IntSize(3, 3), IntSize(3, 3), IntSize(3, 3), m_sliderThumbColor, ColorSpaceDeviceRGB);
+    IntSize thumbRect(3, 3);
+    info.context->fillRoundedRect(rect, thumbRect, thumbRect, thumbRect, thumbRect, m_sliderThumbColor, ColorSpaceDeviceRGB);
     return true;
 }
 
