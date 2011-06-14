@@ -67,7 +67,7 @@ void WebBackForwardListItem::encode(CoreIPC::ArgumentEncoder& encoder) const
     encoder.encode(m_url);
     encoder.encode(m_title);
     encoder.encode(m_itemID);
-    encoder.encode(CoreIPC::DataReference(m_backForwardData.data(), m_backForwardData.size()));
+    encoder.encode(CoreIPC::DataReference(m_backForwardData));
 }
 
 PassRefPtr<WebBackForwardListItem> WebBackForwardListItem::decode(CoreIPC::ArgumentDecoder& decoder)

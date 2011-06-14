@@ -26,7 +26,7 @@
 #ifndef DataReference_h
 #define DataReference_h
 
-#include <inttypes.h>
+#include <wtf/Vector.h>
 
 namespace CoreIPC {
 
@@ -47,6 +47,13 @@ public:
     {
     }
 
+    template<size_t inlineCapacity>
+    DataReference(const Vector<uint8_t, inlineCapacity>& vector)
+        : m_data(vector.data())
+        , m_size(vector.size())
+    {
+    }
+
     bool isEmpty() const { return size() == 0; }
 
     size_t size() const { return m_size; }
@@ -55,6 +62,14 @@ public:
         if (isEmpty())
             return 0;
         return m_data; 
+    }
+
+    Vector<uint8_t> vector()
+    {
+        Vector<uint8_t> result;
+        result.append(m_data, m_size);
+
+        return result;
     }
 
     void encode(ArgumentEncoder* encoder) const;
