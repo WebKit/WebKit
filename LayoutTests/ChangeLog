@@ -1,3 +1,15 @@
+2011-06-13  Jessie Berlin  <jberlin@apple.com>
+
+        REGRESSION (r88579-r88581): compositing/iframes/invisible-nested-iframe-show.html,
+        compositing/tiling/huge-layer-add-remove-child.html failing on Windows 7 Release (Tests).
+        https://bugs.webkit.org/show_bug.cgi?id=62566
+
+        Add/update the (failing?) expected results for Windows in order to get the bots green.
+
+        * platform/win/compositing/iframes/invisible-nested-iframe-show-expected.txt:
+        * platform/win/compositing/tiling: Added.
+        * platform/win/compositing/tiling/huge-layer-add-remove-child-expected.txt: Added.
+
 2011-06-13  David Levin  <levin@chromium.org>
 
         Reviewed by Dmitry Titov.
