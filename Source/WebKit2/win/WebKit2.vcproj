@@ -1170,6 +1170,14 @@
 				Name="win"
 				>
 				<File
+					RelativePath="..\Shared\win\CoalescedWindowGeometriesUpdater.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\Shared\win\CoalescedWindowGeometriesUpdater.h"
+					>
+				</File>
+				<File
 					RelativePath="..\Shared\win\CommandLineWin.cpp"
 					>
 				</File>

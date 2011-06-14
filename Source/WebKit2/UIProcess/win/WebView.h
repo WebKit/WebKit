@@ -27,6 +27,7 @@
 #define WebView_h
 
 #include "APIObject.h"
+#include "CoalescedWindowGeometriesUpdater.h"
 #include "PageClient.h"
 #include "WKView.h"
 #include "WebPageProxy.h"
@@ -274,7 +275,7 @@ private:
 
     bool m_gestureReachedScrollingLimit;
 
-    HashMap<HWND, WindowGeometry> m_childWindowGeometriesToUpdate;
+    CoalescedWindowGeometriesUpdater m_geometriesUpdater;
 
 #if ENABLE(FULLSCREEN_API)
     OwnPtr<WebCore::FullScreenController> m_fullScreenController;
