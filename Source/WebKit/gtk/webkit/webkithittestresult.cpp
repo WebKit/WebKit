@@ -211,7 +211,7 @@ static void webkit_hit_test_result_class_init(WebKitHitTestResultClass* webHitTe
      * representative of the information given in the context
      * property, since WebKit uses a series of heuristics to figure
      * out that information. One common example is inner-node having
-     * the text node inside the anchor (<a>) tag; WebKit knows the
+     * the text node inside the anchor (&lt;a&gt;) tag; WebKit knows the
      * whole context and will put WEBKIT_HIT_TEST_RESULT_CONTEXT_LINK
      * in the 'context' property, but the user might be confused by
      * the lack of any link tag in 'inner-node'.

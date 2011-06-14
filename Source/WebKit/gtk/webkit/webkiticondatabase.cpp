@@ -301,7 +301,7 @@ GdkPixbuf* webkit_icon_database_get_icon_pixbuf(WebKitIconDatabase* database, co
 }
 
 /**
- * webkit_icon_database_clear():
+ * webkit_icon_database_clear:
  * @database: a #WebKitIconDatabase
  *
  * Clears all icons from the database.

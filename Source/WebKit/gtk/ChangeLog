@@ -1,5 +1,23 @@
 2011-06-13  Martin Robinson  <mrobinson@igalia.com>
 
+        Reviewed by Gustavo Noronha Silva.
+
+        Update gtkdoc files and inline documentation to reduce gtkdoc errors
+        and ensure complete documentation output.
+
+        * docs/webkitgtk-sections.txt: Add missing sections to the list and remove
+        unneeded sections.
+        * docs/webkitgtk.types: Update the types list.
+        * webkit/webkithittestresult.cpp: Fix inline documentation errors.
+        (webkit_hit_test_result_class_init): Ditto.
+        * webkit/webkiticondatabase.cpp: Ditto.
+        * webkit/webkitwebsettings.cpp: Ditto.
+        (webkit_web_settings_class_init): Ditto.
+        * webkit/webkitwebview.cpp: Ditto.
+        (webkit_web_view_class_init): Ditto.
+
+2011-06-13  Martin Robinson  <mrobinson@igalia.com>
+
         Reviewed by Xan Lopez.
 
         Update the list of ignored GTK+ header files for the documentation

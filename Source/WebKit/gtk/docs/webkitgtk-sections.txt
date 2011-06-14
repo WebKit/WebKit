@@ -1,8 +1,8 @@
 <SECTION>
 <FILE>webkitwebsettings</FILE>
 <TITLE>WebKitWebSettings</TITLE>
-WebKitEditingBehavior
 WebKitWebSettings
+WebKitEditingBehavior
 webkit_web_settings_copy
 webkit_web_settings_new
 webkit_web_settings_get_user_agent
@@ -14,10 +14,8 @@ WEBKIT_WEB_SETTINGS_CLASS
 WEBKIT_IS_WEB_SETTINGS_CLASS
 WEBKIT_WEB_SETTINGS_GET_CLASS
 <SUBSECTION Private>
-webkit_web_settings_get_type
-WebKitWebSettingsPrivate
-WebKitWebSettings
 WebKitWebSettingsClass
+webkit_web_settings_get_type
 </SECTION>
 
 <SECTION>
@@ -51,7 +49,6 @@ WEBKIT_WEB_BACK_FORWARD_LIST_GET_CLASS
 <SUBSECTION Private>
 WebKitWebBackForwardListPrivate
 webkit_web_back_forward_list_get_type
-WebKitWebBackForwardList
 WebKitWebBackForwardListClass
 </SECTION>
 
@@ -78,7 +75,6 @@ WEBKIT_WEB_HISTORY_ITEM_GET_CLASS
 <SUBSECTION Private>
 webkit_web_history_item_get_type
 WebKitWebHistoryItemPrivate
-WebKitWebHistoryItem
 WebKitWebHistoryItemClass
 </SECTION>
 
@@ -120,7 +116,6 @@ WEBKIT_WEB_FRAME_GET_CLASS
 <SUBSECTION Private>
 WebKitWebFramePrivate
 webkit_web_frame_get_type
-WebKitWebFrame
 WebKitWebFrameClass
 </SECTION>
 
@@ -153,7 +148,6 @@ WEBKIT_IS_DOWNLOAD_CLASS
 WEBKIT_TYPE_DOWNLOAD
 <SUBSECTION Private>
 webkit_download_get_type
-WebKitDownload
 WebKitDownloadClass
 WebKitDownloadPrivate
 </SECTION>
@@ -178,7 +172,6 @@ WEBKIT_IS_SECURITY_ORIGIN
 WEBKIT_IS_SECURITY_ORIGIN_CLASS
 WEBKIT_TYPE_SECURITY_ORIGIN
 <SUBSECTION Private>
-WebKitSecurityOrigin
 WebKitSecurityOriginClass
 WebKitSecurityOriginPrivate
 </SECTION>
@@ -196,9 +189,7 @@ WEBKIT_IS_HIT_TEST_RESULT
 WEBKIT_IS_HIT_TEST_RESULT_CLASS
 WEBKIT_TYPE_HIT_TEST_RESULT
 <SUBSECTION Private>
-WebKitHitTestResult
 WebKitHitTestResultClass
-WebKitHitTestResultContext
 WebKitHitTestResultPrivate
 webkit_hit_test_result_get_type
 </SECTION>
@@ -225,7 +216,6 @@ WEBKIT_WEB_DATA_SOURCE
 WEBKIT_WEB_DATA_SOURCE_CLASS
 WEBKIT_WEB_DATA_SOURCE_GET_CLASS
 <SUBSECTION Private>
-WebKitWebDataSource
 WebKitWebDataSourceClass
 WebKitWebDataSourcePrivate
 webkit_web_data_source_new_with_request
@@ -251,7 +241,6 @@ WEBKIT_WEB_DATABASE
 WEBKIT_WEB_DATABASE_CLASS
 WEBKIT_WEB_DATABASE_GET_CLASS
 <SUBSECTION Private>
-WebKitWebDatabase
 WebKitWebDatabaseClass
 WebKitWebDatabasePrivate
 webkit_web_database_get_type
@@ -270,7 +259,6 @@ WEBKIT_SOUP_AUTH_DIALOG_GET_CLASS
 WEBKIT_TYPE_SOUP_AUTH_DIALOG
 <SUBSECTION Private>
 webkit_soup_auth_dialog_get_type
-WebKitSoupAuthDialog
 WebKitSoupAuthDialogClass
 </SECTION>
 
@@ -293,7 +281,6 @@ WEBKIT_WEB_INSPECTOR_GET_CLASS
 <SUBSECTION Private>
 webkit_web_inspector_get_type
 WebKitWebInspectorPrivate
-WebKitWebInspector
 WebKitWebInspectorClass
 </SECTION>
 
@@ -318,7 +305,6 @@ WEBKIT_WEB_NAVIGATION_ACTION
 WEBKIT_WEB_NAVIGATION_ACTION_CLASS
 WEBKIT_WEB_NAVIGATION_ACTION_GET_CLASS
 <SUBSECTION Private>
-WebKitWebNavigationAction
 WebKitWebNavigationActionClass
 WebKitWebNavigationActionPrivate
 </SECTION>
@@ -339,7 +325,6 @@ WEBKIT_WEB_POLICY_DECISION
 WEBKIT_WEB_POLICY_DECISION_CLASS
 WEBKIT_WEB_POLICY_DECISION_GET_CLASS
 <SUBSECTION Private>
-WebKitWebPolicyDecision
 WebKitWebPolicyDecisionClass
 WebKitWebPolicyDecisionPrivate
 </SECTION>
@@ -359,7 +344,6 @@ WEBKIT_GEOLOCATION_POLICY_DECISION
 WEBKIT_GEOLOCATION_POLICY_DECISION_CLASS
 WEBKIT_GEOLOCATION_POLICY_DECISION_GET_CLASS
 <SUBSECTION Private>
-WebKitGeolocationPolicyDecision
 WebKitGeolocationPolicyDecisionClass
 WebKitGeolocationPolicyDecisionPrivate
 </SECTION>
@@ -382,7 +366,6 @@ WEBKIT_NETWORK_REQUEST_GET_CLASS
 <SUBSECTION Private>
 webkit_network_request_get_type
 WebKitNetworkRequestPrivate
-WebKitNetworkRequest
 WebKitNetworkRequestClass
 </SECTION>
 
@@ -404,7 +387,6 @@ WEBKIT_NETWORK_RESPONSE_GET_CLASS
 webkit_network_response_get_type
 webkit_network_response_new
 WebKitNetworkResponsePrivate
-WebKitNetworkResponse
 WebKitNetworkResponseClass
 </SECTION>
 
@@ -496,9 +478,7 @@ WEBKIT_WEB_VIEW_GET_CLASS
 <SUBSECTION Private>
 webkit_web_view_get_type
 WebKitWebViewPrivate
-WebKitWebView
 WebKitWebViewClass
-WEBKIT_WEB_VIEW_GET_PRIVATE
 </SECTION>
 
 <SECTION>
@@ -516,7 +496,6 @@ WEBKIT_WEB_WINDOW_FEATURES_CLASS
 WEBKIT_WEB_WINDOW_FEATURES_GET_CLASS
 <SUBSECTION Private>
 webkit_web_window_features_get_type
-WebKitWebWindowFeatures
 WebKitWebWindowFeaturesClass
 WebKitWebWindowFeaturesPrivate
 </SECTION>
@@ -556,16 +535,14 @@ WEBKIT_WEB_RESOURCE_CLASS
 WEBKIT_IS_WEB_RESOURCE_CLASS
 WEBKIT_WEB_RESOURCE_GET_CLASS
 <SUBSECTION Private>
-webkit_web_resource_get_type
-webkit_web_resource_new
 WebKitWebResourcePrivate
-WebKitWebResource
 WebKitWebResourceClass
 </SECTION>
 
 <SECTION>
 <FILE>webkitviewportattributes</FILE>
 <TITLE>WebKitViewportAttributes</TITLE>
+WebKitViewportAttributes
 webkit_viewport_attributes_recompute
 <SUBSECTION Standard>
 WEBKIT_IS_VIEWPORT_ATTRIBUTES
@@ -576,7 +553,6 @@ WEBKIT_VIEWPORT_ATTRIBUTES_CLASS
 WEBKIT_VIEWPORT_ATTRIBUTES_GET_CLASS
 <SUBSECTION Private>
 webkit_viewport_attributes_get_type
-WebKitViewportAttributes
 WebKitViewportAttributesClass
 WebKitViewportAttributesPrivate
 </SECTION>
@@ -584,12 +560,14 @@ WebKitViewportAttributesPrivate
 <SECTION>
 <FILE>webkitwebplugin</FILE>
 <TITLE>WebKitWebPlugin</TITLE>
+WebKitWebPlugin
 WebKitWebPluginMIMEType
 webkit_web_plugin_get_description
 webkit_web_plugin_get_enabled
 webkit_web_plugin_get_mimetypes
 webkit_web_plugin_get_name
 webkit_web_plugin_set_enabled
+webkit_web_plugin_get_path
 <SUBSECTION Standard>
 WEBKIT_IS_WEB_PLUGIN
 WEBKIT_IS_WEB_PLUGIN_CLASS
@@ -599,7 +577,6 @@ WEBKIT_WEB_PLUGIN_CLASS
 WEBKIT_WEB_PLUGIN_GET_CLASS
 <SUBSECTION Private>
 webkit_web_plugin_get_type
-WebKitWebPlugin
 WebKitWebPluginClass
 WebKitWebPluginPrivate
 </SECTION>
@@ -607,9 +584,9 @@ WebKitWebPluginPrivate
 <SECTION>
 <FILE>webkitwebplugindatabase</FILE>
 <TITLE>WebKitWebPluginDatabase</TITLE>
+WebKitWebPluginDatabase
 webkit_web_plugin_database_get_plugin_for_mimetype
 webkit_web_plugin_database_get_plugins
-webkit_web_plugin_database_new
 webkit_web_plugin_database_plugins_list_free
 webkit_web_plugin_database_refresh
 <SUBSECTION Standard>
@@ -620,22 +597,9 @@ WEBKIT_WEB_PLUGIN_DATABASE
 WEBKIT_WEB_PLUGIN_DATABASE_CLASS
 WEBKIT_WEB_PLUGIN_DATABASE_GET_CLASS
 <SUBSECTION Private>
-WebKitWebPluginDatabase
 WebKitWebPluginDatabaseClass
 WebKitWebPluginDatabasePrivate
 webkit_web_plugin_database_get_type
-</SECTION>
-
-<SECTION>
-<FILE>webkitprivate</FILE>
-getViewFromFrame
-kit
-WEBKIT_PARAM_READABLE
-WEBKIT_PARAM_READWRITE
-webkit_web_history_item_new_with_core_item
-webkit_web_inspector_set_inspector_client
-webkit_web_inspector_set_web_view
-webkit_web_inspector_set_inspected_uri
 </SECTION>
 
 <SECTION>
