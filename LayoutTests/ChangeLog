@@ -1,5 +1,11 @@
 2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Skip editing/pasteboard/smart-paste-004.html per bug 61633.
+
+        * platform/win/Skipped:
+
+2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Chromium test expectation update; svg/css/group-with-shadow.svg is passing on
         Windows Vista and Windows 7.
 
