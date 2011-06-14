@@ -1,3 +1,9 @@
+2011-06-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Turns out, inspector/cookie-parser.html can timeout out.
+
+        * platform/chromium/test_expectations.txt: Added expectation of TIMEOUT.
+
 2011-06-14  Jeffrey Pfau  <jpfau@apple.com>
 
         Reviewed by David Hyatt.
