@@ -441,6 +441,8 @@ class WebKitDriver(base.Driver):
             if block.content and block.content_type == 'image/png':
                 image = block.decoded_content
                 actual_image_hash = block.content_hash
+            elif block.content_hash:
+                actual_image_hash = block.content_hash
 
         error_lines = self._server_process.error.splitlines()
         # FIXME: This is a hack.  It is unclear why sometimes

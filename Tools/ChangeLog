@@ -1,3 +1,18 @@
+2011-06-13  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        [NRWT] Fix a WebKitDriver so that it returns an actual hash value if DRT returns that.
+        https://bugs.webkit.org/show_bug.cgi?id=59188
+
+        A current WebKitDriver doesn't try to return an actual hash value if DRT does not return an image.
+        WebKitDriver should always return an actual hash value if DRT returns that.
+
+        No tests since I'll add sample reftests to make sure mismatch reftests work later,
+        which should be in a separate patch.
+
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-06-13  Kent Tamura  <tkent@chromium.org>
 
         [Chromium-win] Fix two wrong assertions exposed by r88757.
