@@ -29,6 +29,7 @@
 
 #include "FrameView.h"
 #include "GOwnPtr.h"
+#include "GtkUtilities.h"
 #include "HostWindow.h"
 #include <gtk/gtk.h>
 #include <wtf/text/CString.h>
@@ -82,13 +83,8 @@ void PopupMenuGtk::show(const IntRect& rect, FrameView* view, int index)
         }
     }
 
-    int x = 0;
-    int y = 0;
-    GdkWindow* window = gtk_widget_get_window(GTK_WIDGET(view->hostWindow()->platformPageClient()));
-    if (window)
-        gdk_window_get_origin(window, &x, &y);
-    IntPoint menuPosition(view->contentsToWindow(rect.location()));
-    menuPosition.move(x, y + rect.height());
+    IntPoint menuPosition = convertWidgetPointToScreenPoint(GTK_WIDGET(view->hostWindow()->platformPageClient()), view->contentsToWindow(rect.location()));
+    menuPosition.move(0, rect.height());
 
     m_popup->popUp(rect.size(), menuPosition, size, index, gtk_get_current_event());
 }

@@ -28,6 +28,7 @@
 
 #include "NativeWebMouseEvent.h"
 #include "WebPopupItem.h"
+#include <WebCore/GtkUtilities.h>
 #include <gtk/gtk.h>
 #include <wtf/gobject/GOwnPtr.h>
 #include <wtf/text/CString.h>
@@ -80,11 +81,8 @@ void WebPopupMenuProxyGtk::showPopupMenu(const IntRect& rect, TextDirection text
         }
     }
 
-    int x = 0;
-    int y = 0;
-    if (GdkWindow* window = gtk_widget_get_window(m_webView))
-        gdk_window_get_origin(window, &x, &y);
-    IntPoint menuPosition(rect.x() + x, rect.y() + y + rect.height());
+    IntPoint menuPosition = convertWidgetPointToScreenPoint(m_webView, rect.location());
+    menuPosition.move(0, rect.height());
 
     gulong unmapHandler = g_signal_connect(m_popup->platformMenu(), "unmap", G_CALLBACK(menuUnmapped), this);
     m_popup->popUp(rect.size(), menuPosition, size, selectedIndex, m_client->currentlyProcessedMouseDownEvent() ? m_client->currentlyProcessedMouseDownEvent()->nativeEvent() : 0);

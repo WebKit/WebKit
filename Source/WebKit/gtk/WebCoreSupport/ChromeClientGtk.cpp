@@ -464,13 +464,12 @@ void ChromeClient::scroll(const IntSize& delta, const IntRect& rectToScroll, con
 
 IntRect ChromeClient::windowToScreen(const IntRect& rect) const
 {
-    return convertWidgetRectToScreenRect(GTK_WIDGET(m_webView), rect);
+    return IntRect(convertWidgetPointToScreenPoint(GTK_WIDGET(m_webView), rect.location()), rect.size());
 }
 
 IntPoint ChromeClient::screenToWindow(const IntPoint& point) const
 {
-    IntPoint widgetPositionOnScreen = convertWidgetRectToScreenRect(GTK_WIDGET(m_webView),
-                                                                    IntRect(IntPoint(), IntSize())).location();
+    IntPoint widgetPositionOnScreen = convertWidgetPointToScreenPoint(GTK_WIDGET(m_webView), IntPoint());
     IntPoint result(point);
     result.move(-widgetPositionOnScreen.x(), -widgetPositionOnScreen.y());
     return result;

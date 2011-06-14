@@ -21,9 +21,9 @@
 
 namespace WebCore {
 
-class IntRect;
+class IntPoint;
 
-IntRect convertWidgetRectToScreenRect(GtkWidget*, const IntRect&);
+IntPoint convertWidgetPointToScreenPoint(GtkWidget*, const IntPoint&);
 
 } // namespace WebCore
 

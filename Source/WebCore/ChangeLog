@@ -2,6 +2,26 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Rename convertWidgetRectToScreenRect() to convertWidgetPointToScreenPoint()
+        https://bugs.webkit.org/show_bug.cgi?id=62626
+
+        The method actually converts coordinates, the rectangle size is
+        not affected, so it can be modified to return a point
+        instead. Fix also a bug in the implementation, it was translating
+        the coordinates twice returning the wrong position when the given
+        rectangle was not at 0,0.
+
+        * platform/gtk/GtkUtilities.cpp:
+        (WebCore::convertWidgetPointToScreenPoint):
+        * platform/gtk/GtkUtilities.h:
+        * platform/gtk/PopupMenuGtk.cpp:
+        (WebCore::PopupMenuGtk::show): Use
+        convertWidgetPointToScreenPoint().
+
+2011-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Support authentication dialogs in WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=62366
 

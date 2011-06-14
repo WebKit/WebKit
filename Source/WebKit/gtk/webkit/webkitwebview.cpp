@@ -57,6 +57,7 @@
 #include "FrameView.h"
 #include "GOwnPtrGtk.h"
 #include "GraphicsContext.h"
+#include "GtkUtilities.h"
 #include "GtkVersioning.h"
 #include "HTMLNames.h"
 #include "HitTestRequest.h"
@@ -144,7 +145,6 @@ using namespace WebKit;
 using namespace WebCore;
 
 static const double defaultDPI = 96.0;
-static IntPoint globalPointForClientPoint(GdkWindow* window, const IntPoint& clientPoint);
 
 enum {
     /* normal signals */
@@ -415,7 +415,7 @@ static gboolean webkit_web_view_popup_menu_handler(GtkWidget* widget)
     location.expandedTo(IntPoint(gContextMenuMargin, gContextMenuMargin));
     location.shrunkTo(IntPoint(view->width() - gContextMenuMargin, view->height() - gContextMenuMargin));
 
-    IntPoint globalPoint(globalPointForClientPoint(gtk_widget_get_window(widget), location));
+    IntPoint globalPoint(convertWidgetPointToScreenPoint(widget, location));
     PlatformMouseEvent event(location, globalPoint, RightButton, MouseEventPressed, 0, false, false, false, false, gtk_get_current_event_time());
     return webkit_web_view_forward_context_menu_event(WEBKIT_WEB_VIEW(widget), event);
 }
@@ -1441,14 +1441,6 @@ static void webkit_web_view_screen_changed(GtkWidget* widget, GdkScreen* previou
     settings->setMinimumLogicalFontSize(minimumLogicalFontSize / 72.0 * DPI);
 }
 
-static IntPoint globalPointForClientPoint(GdkWindow* window, const IntPoint& clientPoint)
-{
-    int x, y;
-    gdk_window_get_origin(window, &x, &y);
-    return clientPoint + IntSize(x, y);
-}
-
-
 static void webkit_web_view_drag_end(GtkWidget* widget, GdkDragContext* context)
 {
     WebKitWebView* webView = WEBKIT_WEB_VIEW(widget);
@@ -1519,7 +1511,7 @@ static gboolean doDragLeaveLater(DroppingContext* context)
     // happens in the case of a successful drop onto the view.
     if (!context->dropHappened) {
         const IntPoint& position = context->lastMotionPosition;
-        DragData dragData(context->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(GTK_WIDGET(webView)), position), DragOperationNone);
+        DragData dragData(context->dataObject.get(), position, convertWidgetPointToScreenPoint(GTK_WIDGET(webView), position), DragOperationNone);
         core(webView)->dragController()->dragExited(&dragData);
     }
 
@@ -1575,7 +1567,7 @@ static gboolean webkit_web_view_drag_motion(GtkWidget* widget, GdkDragContext* c
     if (droppingContext->pendingDataRequests > 0)
         return TRUE;
 
-    DragData dragData(droppingContext->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(widget), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
+    DragData dragData(droppingContext->dataObject.get(), position, convertWidgetPointToScreenPoint(widget, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
     DragOperation operation = core(webView)->dragController()->dragUpdated(&dragData);
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
 
@@ -1602,7 +1594,7 @@ static void webkit_web_view_drag_data_received(GtkWidget* widget, GdkDragContext
     const IntPoint& position = droppingContext->lastMotionPosition;
 
     // If there are no more pending requests, start sending dragging data to WebCore.
-    DragData dragData(droppingContext->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(widget), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
+    DragData dragData(droppingContext->dataObject.get(), position, convertWidgetPointToScreenPoint(widget, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
     DragOperation operation = core(webView)->dragController()->dragEntered(&dragData);
     gdk_drag_status(context, dragOperationToSingleGdkDragAction(operation), time);
 }
@@ -1619,7 +1611,7 @@ static gboolean webkit_web_view_drag_drop(GtkWidget* widget, GdkDragContext* con
     droppingContext->dropHappened = true;
 
     IntPoint position(x, y);
-    DragData dragData(droppingContext->dataObject.get(), position, globalPointForClientPoint(gtk_widget_get_window(widget), position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
+    DragData dragData(droppingContext->dataObject.get(), position, convertWidgetPointToScreenPoint(widget, position), gdkDragActionToDragOperation(gdk_drag_context_get_actions(context)));
     core(webView)->dragController()->performDrag(&dragData);
 
     gtk_drag_finish(context, TRUE, FALSE, time);

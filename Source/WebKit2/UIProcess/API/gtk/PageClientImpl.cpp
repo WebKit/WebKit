@@ -187,13 +187,15 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& viewRect)
 
 IntPoint PageClientImpl::screenToWindow(const IntPoint& point)
 {
-    notImplemented();
-    return point;
+    IntPoint widgetPositionOnScreen = convertWidgetPointToScreenPoint(m_viewWidget, IntPoint());
+    IntPoint result(point);
+    result.move(-widgetPositionOnScreen.x(), -widgetPositionOnScreen.y());
+    return result;
 }
 
 IntRect PageClientImpl::windowToScreen(const IntRect& rect)
 {
-    return convertWidgetRectToScreenRect(m_viewWidget, rect);
+    return IntRect(convertWidgetPointToScreenPoint(m_viewWidget, rect.location()), rect.size());
 }
 
 void PageClientImpl::doneWithKeyEvent(const NativeWebKeyboardEvent&, bool wasEventHandled)

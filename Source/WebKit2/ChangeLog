@@ -2,6 +2,22 @@
 
         Reviewed by Martin Robinson.
 
+        [GTK] Rename convertWidgetRectToScreenRect() to convertWidgetPointToScreenPoint()
+        https://bugs.webkit.org/show_bug.cgi?id=62626
+
+        * UIProcess/API/gtk/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::screenToWindow): Implement this method
+        using convertWidgetPointToScreenPoint().
+        (WebKit::PageClientImpl::windowToScreen): Update to use
+        convertWidgetPointToScreenPoint().
+        * UIProcess/gtk/WebPopupMenuProxyGtk.cpp:
+        (WebKit::WebPopupMenuProxyGtk::showPopupMenu): Use
+        convertWidgetPointToScreenPoint().
+
+2011-06-14  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
         [GTK] Support authentication dialogs in WebKit2
         https://bugs.webkit.org/show_bug.cgi?id=62366
 
