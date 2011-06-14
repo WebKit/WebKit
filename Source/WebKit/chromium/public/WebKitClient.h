@@ -266,6 +266,11 @@ public:
     // Wall clock time in seconds since the epoch.
     virtual double currentTime() { return 0; }
 
+    // Monotonically increasing time in seconds from an arbitrary fixed point in the past.
+    // This function is expected to return at least millisecond-precision values. For this reason,
+    // it is recommended that the fixed point be no further in the past than the epoch.
+    virtual double monotonicallyIncreasingTime() { return 0; }
+
     virtual void cryptographicallyRandomValues(unsigned char* buffer, size_t length)
     {
         // WebKit clients must implement this funcion if they use cryptographic randomness.

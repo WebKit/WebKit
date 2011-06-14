@@ -246,6 +246,7 @@ public:
 
     // SystemTime ---------------------------------------------------------
     static double currentTime();
+    static double monotonicallyIncreasingTime();
 
     // Theming ------------------------------------------------------------
 #if OS(WINDOWS)

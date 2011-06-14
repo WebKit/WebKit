@@ -45,12 +45,7 @@ double currentTime()
 
 double monotonicallyIncreasingTime()
 {
-    static double lastTime = 0;
-    double currentTimeNow = currentTime();
-    if (currentTimeNow < lastTime)
-        return lastTime;
-    lastTime = currentTimeNow;
-    return currentTimeNow;
+    return PlatformBridge::monotonicallyIncreasingTime();
 }
 
 float userIdleTime()
