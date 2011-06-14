@@ -1,3 +1,9 @@
+2011-06-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Record expectation of crash for inspector/cookie-parser.html.
+
+        * platform/chromium/test_expectations.txt: Recorded.
+
 2011-06-14  Chris Fleizach  <cfleizach@apple.com>
 
         Unreviewed.

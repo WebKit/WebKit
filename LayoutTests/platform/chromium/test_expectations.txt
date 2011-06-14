@@ -3993,3 +3993,4 @@ BUGWK62430 : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = FAIL
 
 // Has been flaky, probably since birth.
 BUGWK62580 : fast/loader/inherit-charset-to-empty-frame.html = PASS TEXT
+BUGWK62662 : inspector/cookie-parser.html = PASS CRASH
