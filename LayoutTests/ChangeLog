@@ -1,3 +1,14 @@
+2011-06-14  Chris Fleizach  <cfleizach@apple.com>
+
+        Unreviewed.
+
+        VoiceOver cannot navigate the itunes album view table
+        https://bugs.webkit.org/show_bug.cgi?id=62335
+
+        Tables are not supported on Leopard for accessibility.
+
+        * platform/mac-leopard/Skipped:
+
 2011-06-14  Wyatt Carss  <wcarss@google.com>
 
         Reviewed by Ryosuke Niwa.

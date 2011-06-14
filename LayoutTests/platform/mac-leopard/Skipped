@@ -3,6 +3,8 @@ http/tests/security/frame-loading-via-document-write.html
 
 # Tests of table accessibility functionality not supported on Leopard
 platform/mac/accessibility/table-multi-bodies.html
+platform/mac/accessibility/aria-grid-with-strange-hierarchy-actual.txt
+
 # Lists are not supported on Leopard.
 platform/mac/accessibility/aria-directory.html
 
