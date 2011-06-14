@@ -342,7 +342,7 @@ gint webkit_web_navigation_action_get_modifier_state(WebKitWebNavigationAction* 
  *
  * Since: 1.1.13
  */
-G_CONST_RETURN gchar* webkit_web_navigation_action_get_target_frame(WebKitWebNavigationAction* navigationAction)
+const gchar* webkit_web_navigation_action_get_target_frame(WebKitWebNavigationAction* navigationAction)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_NAVIGATION_ACTION(navigationAction), NULL);
 

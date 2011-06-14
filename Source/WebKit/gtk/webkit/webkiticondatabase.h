@@ -55,7 +55,7 @@ struct _WebKitIconDatabaseClass {
 WEBKIT_API GType
 webkit_icon_database_get_type            (void);
 
-WEBKIT_API G_CONST_RETURN gchar*
+WEBKIT_API const gchar*
 webkit_icon_database_get_path            (WebKitIconDatabase* database);
 
 WEBKIT_API void

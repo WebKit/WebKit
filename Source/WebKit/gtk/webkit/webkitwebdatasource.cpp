@@ -280,7 +280,7 @@ WebKitNetworkRequest* webkit_web_data_source_get_request(WebKitWebDataSource* we
  *
  * Since: 1.1.14
  */
-G_CONST_RETURN gchar* webkit_web_data_source_get_encoding(WebKitWebDataSource* webDataSource)
+const gchar* webkit_web_data_source_get_encoding(WebKitWebDataSource* webDataSource)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_DATA_SOURCE(webDataSource), NULL);
 
@@ -390,7 +390,7 @@ WebKitWebResource* webkit_web_data_source_get_main_resource(WebKitWebDataSource*
  *
  * Since: 1.1.14
  */
-G_CONST_RETURN gchar* webkit_web_data_source_get_unreachable_uri(WebKitWebDataSource* webDataSource)
+const gchar* webkit_web_data_source_get_unreachable_uri(WebKitWebDataSource* webDataSource)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_DATA_SOURCE(webDataSource), NULL);
 

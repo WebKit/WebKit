@@ -30,7 +30,7 @@ webkit_application_cache_get_maximum_size(void);
 WEBKIT_API void
 webkit_application_cache_set_maximum_size(unsigned long long size);
 
-WEBKIT_API G_CONST_RETURN gchar*
+WEBKIT_API const gchar*
 webkit_application_cache_get_database_directory_path(void);
 
 G_END_DECLS

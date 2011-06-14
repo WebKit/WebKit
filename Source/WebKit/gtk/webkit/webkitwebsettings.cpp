@@ -1402,7 +1402,7 @@ void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* webView, cons
  *
  * Since: 1.1.11
  */
-G_CONST_RETURN gchar* webkit_web_settings_get_user_agent(WebKitWebSettings* webSettings)
+const gchar* webkit_web_settings_get_user_agent(WebKitWebSettings* webSettings)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(webSettings), NULL);
 

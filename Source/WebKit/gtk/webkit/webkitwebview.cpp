@@ -3653,7 +3653,7 @@ WebKitWebWindowFeatures* webkit_web_view_get_window_features(WebKitWebView* webV
  *
  * Return value: the title of @web_view
  */
-G_CONST_RETURN gchar* webkit_web_view_get_title(WebKitWebView* webView)
+const gchar* webkit_web_view_get_title(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
 
@@ -3671,7 +3671,7 @@ G_CONST_RETURN gchar* webkit_web_view_get_title(WebKitWebView* webView)
  *
  * Return value: the URI of @web_view
  */
-G_CONST_RETURN gchar* webkit_web_view_get_uri(WebKitWebView* webView)
+const gchar* webkit_web_view_get_uri(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), NULL);
 
@@ -4949,7 +4949,7 @@ WebKitHitTestResult* webkit_web_view_get_hit_test_result(WebKitWebView* webView,
  *
  * Since: 1.1.18
  */
-G_CONST_RETURN gchar* webkit_web_view_get_icon_uri(WebKitWebView* webView)
+const gchar* webkit_web_view_get_icon_uri(WebKitWebView* webView)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), 0);
     String iconURL = iconDatabase().synchronousIconURLForPageURL(core(webView)->mainFrame()->document()->url().string());

@@ -53,10 +53,10 @@ struct _WebKitSecurityOriginClass {
 WEBKIT_API GType
 webkit_security_origin_get_type (void);
 
-WEBKIT_API G_CONST_RETURN gchar*
+WEBKIT_API const gchar*
 webkit_security_origin_get_protocol           (WebKitSecurityOrigin* securityOrigin);
 
-WEBKIT_API G_CONST_RETURN gchar*
+WEBKIT_API const gchar*
 webkit_security_origin_get_host               (WebKitSecurityOrigin* securityOrigin);
 
 WEBKIT_API guint

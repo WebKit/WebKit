@@ -432,7 +432,7 @@ WebKitWebFrame* webkit_web_frame_new(WebKitWebView* webView)
  *
  * Return value: the title of @frame
  */
-G_CONST_RETURN gchar* webkit_web_frame_get_title(WebKitWebFrame* frame)
+const gchar* webkit_web_frame_get_title(WebKitWebFrame* frame)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
 
@@ -448,7 +448,7 @@ G_CONST_RETURN gchar* webkit_web_frame_get_title(WebKitWebFrame* frame)
  *
  * Return value: the URI of @frame
  */
-G_CONST_RETURN gchar* webkit_web_frame_get_uri(WebKitWebFrame* frame)
+const gchar* webkit_web_frame_get_uri(WebKitWebFrame* frame)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
 
@@ -485,7 +485,7 @@ WebKitWebView* webkit_web_frame_get_web_view(WebKitWebFrame* frame)
  * the #WebKitWebFrame is invalid or an empty string if it is not backed
  * by a live WebCore frame.
  */
-G_CONST_RETURN gchar* webkit_web_frame_get_name(WebKitWebFrame* frame)
+const gchar* webkit_web_frame_get_name(WebKitWebFrame* frame)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_FRAME(frame), 0);
     Frame* coreFrame = core(frame);

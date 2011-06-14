@@ -58,10 +58,10 @@ webkit_web_database_get_type            (void);
 WEBKIT_API WebKitSecurityOrigin *
 webkit_web_database_get_security_origin (WebKitWebDatabase* webDatabase);
 
-WEBKIT_API G_CONST_RETURN gchar*
+WEBKIT_API const gchar*
 webkit_web_database_get_name            (WebKitWebDatabase* webDatabase);
 
-WEBKIT_API G_CONST_RETURN gchar*
+WEBKIT_API const gchar*
 webkit_web_database_get_display_name    (WebKitWebDatabase* webDatabase);
 
 WEBKIT_API guint64
@@ -70,7 +70,7 @@ webkit_web_database_get_expected_size   (WebKitWebDatabase* webDatabase);
 WEBKIT_API guint64
 webkit_web_database_get_size            (WebKitWebDatabase* webDatabase);
 
-WEBKIT_API G_CONST_RETURN gchar*
+WEBKIT_API const gchar*
 webkit_web_database_get_filename        (WebKitWebDatabase* webDatabase);
 
 WEBKIT_API void
@@ -79,7 +79,7 @@ webkit_web_database_remove              (WebKitWebDatabase* webDatabase);
 WEBKIT_API void
 webkit_remove_all_web_databases         (void);
 
-WEBKIT_API G_CONST_RETURN gchar*
+WEBKIT_API const gchar*
 webkit_get_web_database_directory_path  (void);
 
 WEBKIT_API void

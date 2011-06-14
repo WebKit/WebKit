@@ -100,13 +100,13 @@ webkit_web_frame_new                (WebKitWebView        *web_view);
 WEBKIT_API WebKitWebView *
 webkit_web_frame_get_web_view       (WebKitWebFrame       *frame);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_frame_get_name           (WebKitWebFrame       *frame);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_frame_get_title          (WebKitWebFrame       *frame);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_frame_get_uri            (WebKitWebFrame       *frame);
 
 WEBKIT_API WebKitWebFrame*

@@ -73,7 +73,7 @@ webkit_web_data_source_get_initial_request    (WebKitWebDataSource  *data_source
 WEBKIT_API WebKitNetworkRequest *
 webkit_web_data_source_get_request            (WebKitWebDataSource  *data_source);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_data_source_get_encoding           (WebKitWebDataSource  *data_source);
 
 WEBKIT_API gboolean
@@ -85,7 +85,7 @@ webkit_web_data_source_get_data               (WebKitWebDataSource  *data_source
 WEBKIT_API WebKitWebResource *
 webkit_web_data_source_get_main_resource      (WebKitWebDataSource  *data_source);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_data_source_get_unreachable_uri    (WebKitWebDataSource  *data_source);
 
 WEBKIT_API GList*

@@ -312,7 +312,7 @@ GString* webkit_web_resource_get_data(WebKitWebResource* webResource)
  *
  * Since: 1.1.14
  */
-G_CONST_RETURN gchar* webkit_web_resource_get_uri(WebKitWebResource* webResource)
+const gchar* webkit_web_resource_get_uri(WebKitWebResource* webResource)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_RESOURCE(webResource), NULL);
 
@@ -340,7 +340,7 @@ G_CONST_RETURN gchar* webkit_web_resource_get_uri(WebKitWebResource* webResource
  *
  * Since: 1.1.14
  */
-G_CONST_RETURN gchar* webkit_web_resource_get_mime_type(WebKitWebResource* webResource)
+const gchar* webkit_web_resource_get_mime_type(WebKitWebResource* webResource)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_RESOURCE(webResource), NULL);
 
@@ -362,7 +362,7 @@ G_CONST_RETURN gchar* webkit_web_resource_get_mime_type(WebKitWebResource* webRe
  *
  * Since: 1.1.14
  */
-G_CONST_RETURN gchar* webkit_web_resource_get_encoding(WebKitWebResource* webResource)
+const gchar* webkit_web_resource_get_encoding(WebKitWebResource* webResource)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_RESOURCE(webResource), NULL);
 
@@ -384,7 +384,7 @@ G_CONST_RETURN gchar* webkit_web_resource_get_encoding(WebKitWebResource* webRes
  *
  * Since: 1.1.14
  */
-G_CONST_RETURN gchar* webkit_web_resource_get_frame_name(WebKitWebResource* webResource)
+const gchar* webkit_web_resource_get_frame_name(WebKitWebResource* webResource)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_RESOURCE(webResource), NULL);
 

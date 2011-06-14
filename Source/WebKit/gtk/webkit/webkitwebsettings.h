@@ -68,7 +68,7 @@ webkit_web_settings_new               (void);
 WEBKIT_API WebKitWebSettings *
 webkit_web_settings_copy              (WebKitWebSettings *web_settings);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_settings_get_user_agent    (WebKitWebSettings *web_settings);
 
 G_END_DECLS

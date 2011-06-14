@@ -154,7 +154,7 @@ struct _WebKitWebViewClass {
     void (*_webkit_reserved2) (void);
 };
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_view_get_uri                         (WebKitWebView        *webView);
 
 WEBKIT_API void
@@ -376,7 +376,7 @@ WEBKIT_API WebKitHitTestResult*
 webkit_web_view_get_hit_test_result             (WebKitWebView        *webView,
                                                  GdkEventButton       *event);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_view_get_icon_uri                    (WebKitWebView        *webView);
 
 WEBKIT_API GdkPixbuf *

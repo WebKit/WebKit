@@ -83,7 +83,7 @@ void webkit_application_cache_set_maximum_size(unsigned long long size)
  *
  * Since: 1.3.13
  **/
-G_CONST_RETURN gchar* webkit_application_cache_get_database_directory_path()
+const gchar* webkit_application_cache_get_database_directory_path()
 {
 #if ENABLE(OFFLINE_WEB_APPLICATIONS)
     CString path = WebCore::fileSystemRepresentation(WebCore::cacheStorage().cacheDirectory());

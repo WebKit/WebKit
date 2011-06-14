@@ -303,7 +303,7 @@ WebKitSecurityOrigin* webkit_web_database_get_security_origin(WebKitWebDatabase*
  *
  * Since: 1.1.14
  **/
-G_CONST_RETURN gchar* webkit_web_database_get_name(WebKitWebDatabase* webDatabase)
+const gchar* webkit_web_database_get_name(WebKitWebDatabase* webDatabase)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_DATABASE(webDatabase), NULL);
     WebKitWebDatabasePrivate* priv = webDatabase->priv;
@@ -321,7 +321,7 @@ G_CONST_RETURN gchar* webkit_web_database_get_name(WebKitWebDatabase* webDatabas
  *
  * Since: 1.1.14
  **/
-G_CONST_RETURN gchar* webkit_web_database_get_display_name(WebKitWebDatabase* webDatabase)
+const gchar* webkit_web_database_get_display_name(WebKitWebDatabase* webDatabase)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_DATABASE(webDatabase), NULL);
 
@@ -399,7 +399,7 @@ guint64 webkit_web_database_get_size(WebKitWebDatabase* webDatabase)
  *
  * Since: 1.1.14
  **/
-G_CONST_RETURN gchar* webkit_web_database_get_filename(WebKitWebDatabase* webDatabase)
+const gchar* webkit_web_database_get_filename(WebKitWebDatabase* webDatabase)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_DATABASE(webDatabase), NULL);
 
@@ -464,7 +464,7 @@ void webkit_remove_all_web_databases()
  *
  * Since: 1.1.14
  **/
-G_CONST_RETURN gchar* webkit_get_web_database_directory_path()
+const gchar* webkit_get_web_database_directory_path()
 {
 #if ENABLE(DATABASE)
     WTF::String path = WebCore::DatabaseTracker::tracker().databaseDirectoryPath();

@@ -192,7 +192,7 @@ static void webkit_icon_database_init(WebKitIconDatabase* database)
  *
  * Since: 1.3.13
  **/
-G_CONST_RETURN gchar* webkit_icon_database_get_path(WebKitIconDatabase* database)
+const gchar* webkit_icon_database_get_path(WebKitIconDatabase* database)
 {
     g_return_val_if_fail(WEBKIT_IS_ICON_DATABASE(database), 0);
 

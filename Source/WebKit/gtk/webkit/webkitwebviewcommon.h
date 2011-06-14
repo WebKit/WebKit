@@ -30,7 +30,7 @@ webkit_web_view_get_type (void);
 WEBKIT_API GtkWidget *
 webkit_web_view_new (void);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_view_get_title                       (WebKitWebView        *webView);
 
 WEBKIT_API void

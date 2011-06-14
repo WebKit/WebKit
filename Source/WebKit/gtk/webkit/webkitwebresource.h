@@ -67,16 +67,16 @@ webkit_web_resource_new                    (const gchar        *data,
 WEBKIT_API GString *
 webkit_web_resource_get_data               (WebKitWebResource  *web_resource);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_resource_get_uri                (WebKitWebResource  *web_resource);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_resource_get_mime_type          (WebKitWebResource  *web_resource);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_resource_get_encoding           (WebKitWebResource  *web_resource);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_resource_get_frame_name         (WebKitWebResource  *web_resource);
 
 G_END_DECLS

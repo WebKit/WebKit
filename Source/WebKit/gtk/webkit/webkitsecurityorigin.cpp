@@ -227,7 +227,7 @@ static void webkit_security_origin_init(WebKitSecurityOrigin* securityOrigin)
  *
  * Since: 1.1.14
  **/
-G_CONST_RETURN gchar* webkit_security_origin_get_protocol(WebKitSecurityOrigin* securityOrigin)
+const gchar* webkit_security_origin_get_protocol(WebKitSecurityOrigin* securityOrigin)
 {
     g_return_val_if_fail(WEBKIT_IS_SECURITY_ORIGIN(securityOrigin), NULL);
 
@@ -250,7 +250,7 @@ G_CONST_RETURN gchar* webkit_security_origin_get_protocol(WebKitSecurityOrigin* 
  *
  * Since: 1.1.14
  **/
-G_CONST_RETURN gchar* webkit_security_origin_get_host(WebKitSecurityOrigin* securityOrigin)
+const gchar* webkit_security_origin_get_host(WebKitSecurityOrigin* securityOrigin)
 {
     g_return_val_if_fail(WEBKIT_IS_SECURITY_ORIGIN(securityOrigin), NULL);
 

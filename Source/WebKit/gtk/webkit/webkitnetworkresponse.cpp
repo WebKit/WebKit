@@ -216,7 +216,7 @@ void webkit_network_response_set_uri(WebKitNetworkResponse* response, const gcha
  *
  * Since: 1.1.14
  */
-G_CONST_RETURN gchar* webkit_network_response_get_uri(WebKitNetworkResponse* response)
+const gchar* webkit_network_response_get_uri(WebKitNetworkResponse* response)
 {
     g_return_val_if_fail(WEBKIT_IS_NETWORK_RESPONSE(response), NULL);
 

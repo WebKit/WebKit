@@ -88,7 +88,7 @@ webkit_web_navigation_action_get_button(WebKitWebNavigationAction* navigationAct
 WEBKIT_API gint
 webkit_web_navigation_action_get_modifier_state(WebKitWebNavigationAction* navigationAction);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_web_navigation_action_get_target_frame(WebKitWebNavigationAction* navigationAction);
 
 G_END_DECLS

@@ -63,7 +63,7 @@ WEBKIT_API void
 webkit_network_response_set_uri  (WebKitNetworkResponse *response,
                                   const gchar*          uri);
 
-WEBKIT_API G_CONST_RETURN gchar *
+WEBKIT_API const gchar *
 webkit_network_response_get_uri  (WebKitNetworkResponse *response);
 
 WEBKIT_API SoupMessage *
