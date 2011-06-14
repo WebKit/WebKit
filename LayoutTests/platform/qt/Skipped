@@ -1380,7 +1380,6 @@ fast/dom/Element/getClientRects.html
 fast/dom/Range/getBoundingClientRect.html
 fast/dom/Range/getClientRects.html
 fast/dom/tabindex-clamp.html
-fast/dom/HTMLScriptElement/nested-execution.html
 fast/dom/Window/webkitConvertPoint.html
 fast/encoding/char-encoding-mac.html
 fast/encoding/hebrew/8859-8-e.html

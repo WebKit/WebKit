@@ -599,6 +599,16 @@ QStringList LayoutTestController::originsWithApplicationCache()
     return QStringList();
 }
 
+void LayoutTestController::setCacheModel(int model)
+{
+    // qwebsetting doesn't have matched setting yet :
+    // WEBKIT_CACHE_MODEL_DOCUMENT_VIEWER
+    // WEBKIT_CACHE_MODEL_DOCUMENT_BROWSER
+    // WEBKIT_CACHE_MODEL_WEB_BROWSER
+
+    // FIXME: Implement.
+}
+
 void LayoutTestController::setDatabaseQuota(int size)
 {
     if (!m_topLoadingFrame)

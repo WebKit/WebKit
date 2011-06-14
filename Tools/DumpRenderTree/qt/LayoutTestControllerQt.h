@@ -197,6 +197,7 @@ public slots:
     void setApplicationCacheOriginQuota(unsigned long long quota);
     QStringList originsWithApplicationCache();
     long long applicationCacheDiskUsageForOrigin(const QString&); 
+    void setCacheModel(int);
 
     void setDatabaseQuota(int size);
     void clearAllDatabases();
