@@ -171,9 +171,9 @@ RegisterID* ArrayNode::emitBytecode(BytecodeGenerator& generator, RegisterID* ds
     }
 
     if (!firstPutElement && !m_elision)
-        return generator.emitNewArray(generator.finalDestination(dst), m_element, length);
+        return generator.emitNewArray(generator.finalDestination(dst), m_element);
 
-    RefPtr<RegisterID> array = generator.emitNewArray(generator.tempDestination(dst), m_element, length);
+    RefPtr<RegisterID> array = generator.emitNewArray(generator.tempDestination(dst), m_element);
 
     for (ElementNode* n = firstPutElement; n; n = n->next()) {
         RegisterID* value = generator.emitNode(n->value());

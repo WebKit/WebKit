@@ -2260,14 +2260,6 @@ DEFINE_STUB_FUNCTION(JSObject*, op_new_array)
     return constructArray(stackFrame.callFrame, argList);
 }
 
-DEFINE_STUB_FUNCTION(JSObject*, op_new_array_buffer)
-{
-    STUB_INIT_STACK_FRAME(stackFrame);
-    
-    ArgList argList(stackFrame.callFrame->codeBlock()->immediateBuffer(stackFrame.args[0].int32()), stackFrame.args[1].int32());
-    return constructArray(stackFrame.callFrame, argList);
-}
-
 DEFINE_STUB_FUNCTION(EncodedJSValue, op_resolve)
 {
     STUB_INIT_STACK_FRAME(stackFrame);

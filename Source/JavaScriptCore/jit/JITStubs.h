@@ -380,7 +380,6 @@ extern "C" {
     EncodedJSValue JIT_STUB cti_op_urshift(STUB_ARGS_DECLARATION);
     EncodedJSValue JIT_STUB cti_to_object(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_new_array(STUB_ARGS_DECLARATION);
-    JSObject* JIT_STUB cti_op_new_array_buffer(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_new_func(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_new_func_exp(STUB_ARGS_DECLARATION);
     JSObject* JIT_STUB cti_op_new_object(STUB_ARGS_DECLARATION);
