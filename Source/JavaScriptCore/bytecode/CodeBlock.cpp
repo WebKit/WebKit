@@ -358,12 +358,10 @@ void CodeBlock::dump(ExecState* exec) const
 
     if (!m_constantRegisters.isEmpty()) {
         printf("\nConstants:\n");
-        unsigned registerIndex = m_numVars;
         size_t i = 0;
         do {
-            printf("   k%u = %s\n", registerIndex, valueToSourceString(exec, m_constantRegisters[i].get()).utf8().data());
+            printf("   k%u = %s\n", static_cast<unsigned>(i), valueToSourceString(exec, m_constantRegisters[i].get()).utf8().data());
             ++i;
-            ++registerIndex;
         } while (i < m_constantRegisters.size());
     }
 

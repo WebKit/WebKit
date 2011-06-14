@@ -1,3 +1,12 @@
+2011-06-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen.
+
+        Fix dumping of constants to have the correct constant number.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+
 2011-06-14  Benjamin Poulain  <benjamin@webkit.org>
 
         Reviewed by Eric Seidel.
