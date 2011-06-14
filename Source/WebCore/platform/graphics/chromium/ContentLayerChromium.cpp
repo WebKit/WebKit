@@ -109,6 +109,9 @@ void ContentLayerChromium::paintContentsIfDirty(const IntRect& targetSurfaceRect
     dirty.intersect(layerBounds());
     m_tiler->invalidateRect(dirty);
 
+    if (!drawsContent())
+        return;
+
     m_tiler->prepareToUpdate(layerRect);
     m_dirtyRect = FloatRect();
 }
@@ -218,7 +221,16 @@ void ContentLayerChromium::draw(const IntRect& targetSurfaceRect)
 
 bool ContentLayerChromium::drawsContent() const
 {
-    return m_owner && m_owner->drawsContent() && (!m_tiler || !m_tiler->skipsDraw());
+    if (!m_owner || !m_owner->drawsContent())
+        return false;
+
+    if (!m_tiler)
+        return true;
+
+    if (m_tilingOption == NeverTile && m_tiler->numTiles() > 1)
+        return false;
+
+    return !m_tiler->skipsDraw();
 }
 
 void ContentLayerChromium::createTilerIfNeeded()

@@ -1,3 +1,13 @@
+2011-06-13  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Disable drawing for huge mask layers
+        https://bugs.webkit.org/show_bug.cgi?id=62607
+
+        * platform/chromium/compositing/huge-mask-layer-expected.txt: Added.
+        * platform/chromium/compositing/huge-mask-layer.html: Added.
+
 2011-06-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Add expectations for flaky tests.

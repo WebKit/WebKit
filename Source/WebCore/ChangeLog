@@ -1,3 +1,23 @@
+2011-06-13  Adrienne Walker  <enne@google.com>
+
+        Reviewed by James Robinson.
+
+        [chromium] Disable drawing for huge mask layers
+        https://bugs.webkit.org/show_bug.cgi?id=62607
+
+        Because masks have a different layer size than the layer they are
+        masking, they are untiled.  If they are too large to be contained
+        within a single texture, then they should just be disabled.
+
+        Test: platform/chromium/compositing/huge-mask-layer.html
+
+        * platform/graphics/chromium/ContentLayerChromium.cpp:
+        (WebCore::ContentLayerChromium::drawsContent):
+        (WebCore::ContentLayerChromium::paintContentsIfDirty):
+        * platform/graphics/chromium/LayerTilerChromium.h:
+        (WebCore::LayerTilerChromium::getSingleTexture):
+        (WebCore::LayerTilerChromium::numTiles):
+
 2011-06-14  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
 
         Reviewed by Laszlo Gombos.

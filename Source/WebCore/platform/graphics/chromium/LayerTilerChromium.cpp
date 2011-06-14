@@ -83,6 +83,9 @@ void LayerTilerChromium::setTileSize(const IntSize& size)
 
 LayerTexture* LayerTilerChromium::getSingleTexture()
 {
+    if (m_tilingData.numTiles() != 1)
+        return 0;
+
     Tile* tile = tileAt(0, 0);
     return tile ? tile->texture() : 0;
 }
