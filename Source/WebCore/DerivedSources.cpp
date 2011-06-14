@@ -293,6 +293,7 @@
 #include "JSStorageInfoUsageCallback.cpp"
 #include "JSStream.cpp"
 #include "JSStreamEvent.cpp"
+#include "JSStreamList.cpp"
 #include "JSStringCallback.cpp"
 #include "JSStyleMedia.cpp"
 #include "JSStyleSheet.cpp"

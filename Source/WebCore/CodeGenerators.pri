@@ -157,6 +157,7 @@ IDL_BINDINGS += \
     dom/Range.idl \
     dom/Stream.idl \
     dom/StreamEvent.idl \
+    dom/StreamList.idl \
     dom/StringCallback.idl \
     dom/Text.idl \
     dom/TextEvent.idl \

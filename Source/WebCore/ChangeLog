@@ -1,3 +1,29 @@
+2011-06-14  Tommy Widenflycht  <tommyw@google.com>
+
+        Reviewed by Tony Gentilcore.
+
+        Media Stream PeerConnection API: adding the StreamList and supporting classes.
+        https://bugs.webkit.org/show_bug.cgi?id=61539
+
+        * dom/StreamContainer.h: Added.
+        (WebCore::StreamContainer::create):
+        (WebCore::StreamContainer::~StreamContainer):
+        (WebCore::StreamContainer::length):
+        (WebCore::StreamContainer::item):
+        (WebCore::StreamContainer::add):
+        (WebCore::StreamContainer::remove):
+        (WebCore::StreamContainer::contains):
+        (WebCore::StreamContainer::get):
+        (WebCore::StreamContainer::StreamContainer):
+        * dom/StreamList.cpp: Added.
+        (WebCore::StreamList::create):
+        (WebCore::StreamList::StreamList):
+        (WebCore::StreamList::~StreamList):
+        (WebCore::StreamList::length):
+        (WebCore::StreamList::item):
+        * dom/StreamList.h: Added.
+        * dom/StreamList.idl: Added.
+
 2011-06-14  Caio Marcelo de Oliveira Filho  <caio.oliveira@openbossa.org>
 
         Reviewed by Andreas Kling.

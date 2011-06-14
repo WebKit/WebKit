@@ -4162,6 +4162,11 @@
 		B12D236A1356033F002A28D4 /* JSExclusiveTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D23681356033F002A28D4 /* JSExclusiveTrackList.h */; };
 		B12D236D1356034D002A28D4 /* JSMultipleTrackList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B12D236B1356034D002A28D4 /* JSMultipleTrackList.cpp */; };
 		B12D236E1356034D002A28D4 /* JSMultipleTrackList.h in Headers */ = {isa = PBXBuildFile; fileRef = B12D236C1356034D002A28D4 /* JSMultipleTrackList.h */; };
+		B14353D4138EA8ED00D53276 /* StreamContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = B14353D0138EA8ED00D53276 /* StreamContainer.h */; };
+		B14353D5138EA8ED00D53276 /* StreamList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14353D1138EA8ED00D53276 /* StreamList.cpp */; };
+		B14353D6138EA8ED00D53276 /* StreamList.h in Headers */ = {isa = PBXBuildFile; fileRef = B14353D2138EA8ED00D53276 /* StreamList.h */; };
+		B14353F8138EA95B00D53276 /* JSStreamList.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B14353F6138EA95B00D53276 /* JSStreamList.cpp */; };
+		B14353F9138EA95B00D53276 /* JSStreamList.h in Headers */ = {isa = PBXBuildFile; fileRef = B14353F7138EA95B00D53276 /* JSStreamList.h */; };
 		B1827493134CA4C100B98C2D /* CallbackFunction.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1827492134CA4C100B98C2D /* CallbackFunction.cpp */; };
 		B1D5ECB5134B58DA0087C78F /* CallbackFunction.h in Headers */ = {isa = PBXBuildFile; fileRef = B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */; };
 		B1E5457A1346291F0092A545 /* GeneratedStream.cpp in Sources */ = {isa = PBXBuildFile; fileRef = B1E545711346291F0092A545 /* GeneratedStream.cpp */; };
@@ -10540,6 +10545,12 @@
 		B12D23681356033F002A28D4 /* JSExclusiveTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSExclusiveTrackList.h; sourceTree = "<group>"; };
 		B12D236B1356034D002A28D4 /* JSMultipleTrackList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSMultipleTrackList.cpp; sourceTree = "<group>"; };
 		B12D236C1356034D002A28D4 /* JSMultipleTrackList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSMultipleTrackList.h; sourceTree = "<group>"; };
+		B14353D0138EA8ED00D53276 /* StreamContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamContainer.h; sourceTree = "<group>"; };
+		B14353D1138EA8ED00D53276 /* StreamList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = StreamList.cpp; sourceTree = "<group>"; };
+		B14353D2138EA8ED00D53276 /* StreamList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = StreamList.h; sourceTree = "<group>"; };
+		B14353D3138EA8ED00D53276 /* StreamList.idl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = StreamList.idl; sourceTree = "<group>"; };
+		B14353F6138EA95B00D53276 /* JSStreamList.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = JSStreamList.cpp; sourceTree = "<group>"; };
+		B14353F7138EA95B00D53276 /* JSStreamList.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSStreamList.h; sourceTree = "<group>"; };
 		B1827492134CA4C100B98C2D /* CallbackFunction.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = CallbackFunction.cpp; sourceTree = "<group>"; };
 		B1D5ECB4134B58DA0087C78F /* CallbackFunction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CallbackFunction.h; sourceTree = "<group>"; };
 		B1E545711346291F0092A545 /* GeneratedStream.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeneratedStream.cpp; sourceTree = "<group>"; };
@@ -17180,6 +17191,8 @@
 				B1E545D813462B0B0092A545 /* JSStream.h */,
 				49A85B75138D58EE00ECB7B3 /* JSStreamEvent.cpp */,
 				49A85B76138D58EE00ECB7B3 /* JSStreamEvent.h */,
+				B14353F6138EA95B00D53276 /* JSStreamList.cpp */,
+				B14353F7138EA95B00D53276 /* JSStreamList.h */,
 				65DF31EF09D1CC60000BE325 /* JSText.cpp */,
 				65DF31F009D1CC60000BE325 /* JSText.h */,
 				B12D23631356032F002A28D4 /* JSTrackList.cpp */,
@@ -19731,9 +19744,13 @@
 				B1E545741346291F0092A545 /* Stream.cpp */,
 				B1E545751346291F0092A545 /* Stream.h */,
 				B1E545761346291F0092A545 /* Stream.idl */,
+				B14353D0138EA8ED00D53276 /* StreamContainer.h */,
 				49A85B68138D573900ECB7B3 /* StreamEvent.cpp */,
 				49A85B69138D573A00ECB7B3 /* StreamEvent.h */,
 				49A85B6A138D573A00ECB7B3 /* StreamEvent.idl */,
+				B14353D1138EA8ED00D53276 /* StreamList.cpp */,
+				B14353D2138EA8ED00D53276 /* StreamList.h */,
+				B14353D3138EA8ED00D53276 /* StreamList.idl */,
 				8102C5871325BB1100DDE67A /* StringCallback.cpp */,
 				81AC6C35131C57D30009A7E0 /* StringCallback.h */,
 				81AC6C34131C57C20009A7E0 /* StringCallback.idl */,
@@ -21960,6 +21977,7 @@
 				892CF212134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.h in Headers */,
 				B1E545E613462B0B0092A545 /* JSStream.h in Headers */,
 				49A85B78138D58EE00ECB7B3 /* JSStreamEvent.h in Headers */,
+				B14353F9138EA95B00D53276 /* JSStreamList.h in Headers */,
 				0FF5026A102BA9430066F39A /* JSStyleMedia.h in Headers */,
 				BCE0139B0C0BEF180043860A /* JSStyleSheet.h in Headers */,
 				A84EBD830CB8C97700079609 /* JSStyleSheetList.h in Headers */,
@@ -22717,7 +22735,9 @@
 				3AB02D2A12D4F91600FBB694 /* StorageTracker.h in Headers */,
 				3AC3680012EF7A09006A3D6F /* StorageTrackerClient.h in Headers */,
 				B1E5457E1346291F0092A545 /* Stream.h in Headers */,
+				B14353D4138EA8ED00D53276 /* StreamContainer.h in Headers */,
 				49A85B6C138D573A00ECB7B3 /* StreamEvent.h in Headers */,
+				B14353D6138EA8ED00D53276 /* StreamList.h in Headers */,
 				81AC6C36131C57D30009A7E0 /* StringCallback.h in Headers */,
 				65488D6B0DD5A83D009D83B2 /* StringSourceProvider.h in Headers */,
 				B23540F30D00782E002382FA /* StringTruncator.h in Headers */,
@@ -24905,6 +24925,7 @@
 				892CF211134C8BB300AAEDA1 /* JSStorageInfoUsageCallback.cpp in Sources */,
 				B1E545E513462B0B0092A545 /* JSStream.cpp in Sources */,
 				49A85B77138D58EE00ECB7B3 /* JSStreamEvent.cpp in Sources */,
+				B14353F8138EA95B00D53276 /* JSStreamList.cpp in Sources */,
 				0FF50269102BA9430066F39A /* JSStyleMedia.cpp in Sources */,
 				BCE0139A0C0BEF180043860A /* JSStyleSheet.cpp in Sources */,
 				BC98A27D0C0C9950004BEBF7 /* JSStyleSheetCustom.cpp in Sources */,
@@ -25575,6 +25596,7 @@
 				3AB02D2B12D4F91600FBB694 /* StorageTracker.cpp in Sources */,
 				B1E5457D1346291F0092A545 /* Stream.cpp in Sources */,
 				49A85B6B138D573A00ECB7B3 /* StreamEvent.cpp in Sources */,
+				B14353D5138EA8ED00D53276 /* StreamList.cpp in Sources */,
 				B2C3DA300D006C1D00EF6F26 /* String.cpp in Sources */,
 				8102C5881325BB1100DDE67A /* StringCallback.cpp in Sources */,
 				B2B2645C0D00A77E000ACC1D /* StringCF.cpp in Sources */,

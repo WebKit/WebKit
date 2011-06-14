@@ -367,6 +367,7 @@ DOM_CLASSES = \
     StorageInfoUsageCallback \
     Stream \
     StreamEvent \
+    StreamList \
     StringCallback \
     SVGAElement \
     SVGAltGlyphElement \

@@ -1976,6 +1976,7 @@ IF (ENABLE_MEDIA_STREAM)
         dom/GeneratedStream.cpp
         dom/Stream.cpp
         dom/StreamEvent.cpp
+        dom/StreamList.cpp
         page/MediaStreamController.cpp
         page/MediaStreamFrameController.cpp
     )
@@ -1984,6 +1985,7 @@ IF (ENABLE_MEDIA_STREAM)
         dom/GeneratedStream.idl
         dom/Stream.idl
         dom/StreamEvent.idl
+        dom/StreamList.idl
         page/NavigatorUserMediaError.idl
     )
 ENDIF ()
