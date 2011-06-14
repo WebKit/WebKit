@@ -32,6 +32,7 @@
 #include "config.h"
 #include "RangeInputType.h"
 
+#include "ElementWithPseudoId.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
@@ -151,11 +152,12 @@ double RangeInputType::stepScaleFactor() const
 
 void RangeInputType::handleMouseDownEvent(MouseEvent* event)
 {
-    if (event->button() != LeftButton || event->target() != element())
+    Node* targetNode = event->target()->toNode();
+    if (event->button() != LeftButton || !targetNode || (targetNode != element() && !targetNode->isDescendantOf(element()->shadowRoot())))
         return;
 
-    if (SliderThumbElement* thumb = shadowSliderThumb())
-        thumb->dragFrom(event->absoluteLocation());
+    SliderThumbElement* thumb = sliderThumbElementOf(element());
+    thumb->dragFrom(event->absoluteLocation());
 }
 
 void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
@@ -203,7 +205,13 @@ void RangeInputType::handleKeydownEvent(KeyboardEvent* event)
 void RangeInputType::createShadowSubtree()
 {
     ExceptionCode ec = 0;
-    element()->ensureShadowRoot()->appendChild(SliderThumbElement::create(element()->document()), ec);
+    Document* document = element()->document();
+    RefPtr<HTMLElement> track = ElementWithPseudoId::create(document, "-webkit-slider-runnable-track");
+    track->appendChild(SliderThumbElement::create(document), ec);
+    RefPtr<HTMLElement> container = SliderContainerElement::create(document);
+    container->appendChild(track.release(), ec);
+    container->appendChild(TrackLimiterElement::create(document), ec);
+    element()->ensureShadowRoot()->appendChild(container.release(), ec);
 }
 
 RenderObject* RangeInputType::createRenderer(RenderArena* arena, RenderStyle*) const
@@ -248,7 +256,7 @@ void RangeInputType::minOrMaxAttributeChanged()
 
 void RangeInputType::valueChanged()
 {
-    shadowSliderThumb()->setPositionFromValue();
+    sliderThumbElementOf(element())->setPositionFromValue();
 }
 
 String RangeInputType::fallbackValue()
@@ -270,12 +278,6 @@ String RangeInputType::sanitizeValue(const String& proposedValue)
 bool RangeInputType::shouldRespectListAttribute()
 {
     return true;
-}
-
-SliderThumbElement* RangeInputType::shadowSliderThumb() const
-{
-    Node* shadow = element()->shadowRoot();
-    return shadow ? toSliderThumbElement(shadow->firstChild()) : 0;
 }
 
 } // namespace WebCore

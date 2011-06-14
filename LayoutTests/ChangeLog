@@ -1,3 +1,54 @@
+2011-06-10  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Use CSS machinery to position slider thumb.
+        https://bugs.webkit.org/show_bug.cgi?id=52920
+
+        Add two new tests, and update tests with sliders.
+
+        * fast/dom/HTMLInputElement/input-slider-update-styled-expected.txt:
+        * fast/forms/input-appearance-range.html: Added.
+        * fast/forms/slider-thumb-stylability.html: Remove text.
+        * fast/forms/validation-message-on-range-expected.txt: Added.
+        * fast/forms/validation-message-on-range.html: Added.
+        * fast/multicol/client-rects-expected.txt:
+        * fast/repaint/slider-thumb-float-expected.txt:
+        * media/audio-repaint-expected.txt:
+        * media/controls-without-preload-expected.txt:
+        * media/media-document-audio-repaint-expected.txt:
+        * platform/chromium/test_expectations.txt:
+        * platform/gtk/Skipped: Skip validaiton-message-on-range.html because
+          this platform doesn't support the interactive validation.
+        * platform/mac-wk2/Skipped: Skip validaiton-message-on-range.html.
+        * platform/mac/fast/dom/HTMLInputElement/input-slider-update-expected.png:
+        * platform/mac/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/mac/fast/forms/box-shadow-override-expected.png:
+        * platform/mac/fast/forms/box-shadow-override-expected.txt:
+        * platform/mac/fast/forms/input-appearance-height-expected.png:
+        * platform/mac/fast/forms/input-appearance-height-expected.txt:
+        * platform/mac/fast/forms/input-appearance-range-expected.png: Added.
+        * platform/mac/fast/forms/input-appearance-range-expected.txt: Added.
+        * platform/mac/fast/forms/range-thumb-height-percentage-expected.txt:
+        * platform/mac/fast/forms/slider-padding-expected.png:
+        * platform/mac/fast/forms/slider-padding-expected.txt:
+        * platform/mac/fast/forms/slider-thumb-shared-style-expected.png:
+        * platform/mac/fast/forms/slider-thumb-shared-style-expected.txt:
+        * platform/mac/fast/forms/slider-thumb-stylability-expected.png:
+        * platform/mac/fast/forms/slider-thumb-stylability-expected.txt:
+        * platform/mac/fast/forms/thumbslider-no-parent-slider-expected.png:
+        * platform/mac/fast/forms/thumbslider-no-parent-slider-expected.txt:
+        * platform/mac/fast/repaint/slider-thumb-drag-release-expected.png:
+        * platform/mac/fast/repaint/slider-thumb-drag-release-expected.txt:
+        * platform/mac/media/audio-controls-rendering-expected.png:
+        * platform/mac/media/audio-controls-rendering-expected.txt:
+        * platform/mac/media/controls-after-reload-expected.png:
+        * platform/mac/media/controls-after-reload-expected.txt:
+        * platform/mac/media/controls-styling-expected.png:
+        * platform/mac/media/controls-styling-expected.txt:
+        * platform/qt/Skipped: Skip validaiton-message-on-range.html.
+        * platform/win/Skipped: Skip validaiton-message-on-range.html.
+
 2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another GTK rebaseline after r88717 because non-breaking spaces were somehow converted to

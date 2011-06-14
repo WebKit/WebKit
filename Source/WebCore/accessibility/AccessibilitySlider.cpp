@@ -34,6 +34,7 @@
 #include "HTMLNames.h"
 #include "RenderObject.h"
 #include "RenderSlider.h"
+#include "SliderThumbElement.h"
 
 namespace WebCore {
     
@@ -175,13 +176,10 @@ PassRefPtr<AccessibilitySliderThumb> AccessibilitySliderThumb::create()
     
 IntRect AccessibilitySliderThumb::elementRect() const
 {
-    if (!m_parentSlider->renderer())
+    RenderObject* sliderRenderer = m_parentSlider->renderer();
+    if (!sliderRenderer || !sliderRenderer->isSlider())
         return IntRect();
-
-    IntRect intRect = toRenderSlider(m_parentSlider->renderer())->thumbRect();
-    FloatQuad floatQuad = m_parentSlider->renderer()->localToAbsoluteQuad(FloatRect(intRect));
-
-    return floatQuad.enclosingBoundingBox();
+    return sliderThumbElementOf(sliderRenderer->node())->getRect();
 }
 
 IntSize AccessibilitySliderThumb::size() const

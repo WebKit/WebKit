@@ -55,6 +55,7 @@ public:
     virtual void defaultEventHandler(Event*);
     virtual void detach();
     virtual const AtomicString& shadowPseudoId() const;
+    HTMLInputElement* hostInput() const;
 
 private:
     SliderThumbElement(Document*);
@@ -66,7 +67,6 @@ private:
     void startDragging();
     void stopDragging();
     void setPositionFromPoint(const IntPoint&);
-    HTMLInputElement* hostInput() const;
 
     bool m_inDragMode;
 };
@@ -92,6 +92,34 @@ inline SliderThumbElement* toSliderThumbElement(Node* node)
     ASSERT(!node || node->isHTMLElement());
     return static_cast<SliderThumbElement*>(node);
 }
+
+// This always return a valid pointer.
+// An assertion fails if the specified node is not a range input.
+SliderThumbElement* sliderThumbElementOf(Node*);
+
+// --------------------------------
+
+class TrackLimiterElement : public HTMLDivElement {
+public:
+    static PassRefPtr<TrackLimiterElement> create(Document*);
+
+private:
+    TrackLimiterElement(Document*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual const AtomicString& shadowPseudoId() const;
+};
+
+// --------------------------------
+
+class SliderContainerElement : public HTMLDivElement {
+public:
+    static PassRefPtr<SliderContainerElement> create(Document*);
+
+private:
+    SliderContainerElement(Document*);
+    virtual RenderObject* createRenderer(RenderArena*, RenderStyle*);
+    virtual const AtomicString& shadowPseudoId() const;
+};
 
 }
 

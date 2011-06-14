@@ -1,3 +1,75 @@
+2011-06-10  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Use CSS machinery to position slider thumb.
+        https://bugs.webkit.org/show_bug.cgi?id=52920
+
+        Remove RenderSlider::layout().
+        In order to remove it, we introduce new three shadow nodes:
+         - A flex box container occupying the whole box
+         - A flex box item representing a movable area of the thumb
+         - A flex box item limiting the movable area of the thumb
+        The thumb position is specified by percentage position in the second element.
+
+        This change also fixes Bug 60353.
+
+        Tests: fast/forms/input-appearance-range.html
+               fast/forms/validation-message-on-range.html
+
+        * accessibility/AccessibilitySlider.cpp:
+        (WebCore::AccessibilitySliderThumb::elementRect):
+          Use Node::getRect() for the thumb element.
+        * css/html.css: Add new style definitions for the new node layout.
+        (input[type="range"]::-webkit-slider-container):
+        (input[type="range"]::-webkit-slider-runnable-track):
+        (input[type="range"]::-webkit-slider-thumb):
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent):
+          Accepts events on shadow nodes, use sliderThumbElementOf().
+        (WebCore::RangeInputType::createShadowSubtree):
+          Creates new nodes layout.
+        (WebCore::RangeInputType::valueChanged): Use sliderThumbElementOf().
+        * html/RangeInputType.h: Remove shadowSliderThumb().
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::sliderPosition): Moved from RenderSlider.cpp.
+        (WebCore::hasVerticalAppearance): New utility function.
+        (WebCore::sliderThumbElementOf): New utility function.
+        (WebCore::RenderSliderThumb::layout):
+          Sets CSS top/left values.
+        (WebCore::RenderSliderContainer::RenderSliderContainer):
+        (WebCore::RenderSliderContainer::layout):
+          Add some adjustment code.
+          - Setting box-orient
+          - Adjust heights of some nodes. It is required to pass existing tests.
+        (WebCore::SliderThumbElement::setPositionFromValue):
+          Update comments.
+        (WebCore::SliderThumbElement::setPositionFromPoint):
+          Calculate the current position from absolute positions.
+        (WebCore::SliderThumbElement::hostInput):
+          Removed unnecessary variable.
+        (WebCore::TrackLimiterElement::TrackLimiterElement):
+        (WebCore::TrackLimiterElement::create): Adjust style.
+        (WebCore::TrackLimiterElement::createRenderer):
+          This node uses RenderSliderThumb.
+        (WebCore::TrackLimiterElement::shadowPseudoId):
+          This node also uses -webkit-slider-thumb.
+        (WebCore::SliderContainerElement::SliderContainerElement):
+        (WebCore::SliderContainerElement::create):
+        (WebCore::SliderContainerElement::createRenderer):
+          Uses RenderSliderContainer.
+        (WebCore::SliderContainerElement::shadowPseudoId):
+        * html/shadow/SliderThumbElement.h:
+          Make hostInput() public, add declarations of TrackLimiterElement
+          and SliderContainerElement.
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::RenderSlider): Added an assertion.
+        (WebCore::RenderSlider::inDragMode): Uses sliderThumbElementOf().
+        * rendering/RenderSlider.h: Remove declarations of removed functions.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::adjustSliderThumbStyle):
+          Calls adjustSliderThumbSize().
+
 2011-06-13  Joone Hur  <joone.hur@collabora.co.uk>
 
         Reviewed by Martin Robinson.

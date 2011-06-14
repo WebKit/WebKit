@@ -1108,6 +1108,7 @@ fast/forms/validation-message-on-checkbox.html
 fast/forms/validation-message-on-listbox.html
 fast/forms/validation-message-on-menulist.html
 fast/forms/validation-message-on-radio.html
+fast/forms/validation-message-on-range.html
 fast/forms/validation-message-on-textarea.html
 
 # Web Timing is not enabled.

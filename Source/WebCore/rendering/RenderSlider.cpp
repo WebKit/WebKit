@@ -48,16 +48,11 @@ namespace WebCore {
 
 static const int defaultTrackLength = 129;
 
-// Returns a value between 0 and 1.
-static double sliderPosition(HTMLInputElement* element)
-{
-    StepRange range(element);
-    return range.proportionFromValue(range.valueFromElement(element));
-}
-
 RenderSlider::RenderSlider(HTMLInputElement* element)
     : RenderBlock(element)
 {
+    // We assume RenderSlider works only with <input type=range>.
+    ASSERT(element->isRangeControl());
 }
 
 RenderSlider::~RenderSlider()
@@ -100,93 +95,9 @@ void RenderSlider::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false); 
 }
 
-IntRect RenderSlider::thumbRect()
-{
-    SliderThumbElement* thumbElement = shadowSliderThumb();
-    if (!thumbElement)
-        return IntRect();
-
-    IntRect thumbRect;
-    RenderBox* thumb = toRenderBox(thumbElement->renderer());
-
-    thumbRect.setWidth(thumb->style()->width().calcMinValue(contentWidth()));
-    thumbRect.setHeight(thumb->style()->height().calcMinValue(contentHeight()));
-
-    double fraction = sliderPosition(static_cast<HTMLInputElement*>(node()));
-    IntRect contentRect = contentBoxRect();
-    if (style()->appearance() == SliderVerticalPart || style()->appearance() == MediaVolumeSliderPart) {
-        thumbRect.setX(contentRect.x() + (contentRect.width() - thumbRect.width()) / 2);
-        thumbRect.setY(contentRect.y() + static_cast<int>(nextafter((contentRect.height() - thumbRect.height()) + 1, 0) * (1 - fraction)));
-    } else {
-        thumbRect.setX(contentRect.x() + static_cast<int>(nextafter((contentRect.width() - thumbRect.width()) + 1, 0) * fraction));
-        thumbRect.setY(contentRect.y() + (contentRect.height() - thumbRect.height()) / 2);
-    }
-
-    return thumbRect;
-}
-
-void RenderSlider::layout()
-{
-    ASSERT(needsLayout());
-
-    SliderThumbElement* thumbElement = shadowSliderThumb();
-    RenderBox* thumb = thumbElement ? toRenderBox(thumbElement->renderer()) : 0;
-
-    IntSize baseSize(borderAndPaddingWidth(), borderAndPaddingHeight());
-
-    if (thumb) {
-        // Allow the theme to set the size of the thumb.
-        if (thumb->style()->hasAppearance())
-            theme()->adjustSliderThumbSize(thumb->style());
-
-        baseSize.expand(thumb->style()->width().calcMinValue(0), thumb->style()->height().calcMinValue(0));
-    }
-
-    LayoutRepainter repainter(*this, checkForRepaintDuringLayout());
-
-    IntSize oldSize = size();
-
-    setSize(baseSize);
-    computeLogicalWidth();
-    computeLogicalHeight();
-    updateLayerTransform();
-
-    m_overflow.clear();
-
-    if (thumb) {
-        if (oldSize != size())
-            thumb->setChildNeedsLayout(true, false);
-
-        LayoutStateMaintainer statePusher(view(), this, IntSize(x(), y()), style()->isFlippedBlocksWritingMode());
-
-        IntRect oldThumbRect = thumb->frameRect();
-
-        thumb->layoutIfNeeded();
-
-        IntRect rect = thumbRect();
-        thumb->setFrameRect(rect);
-        if (thumb->checkForRepaintDuringLayout())
-            thumb->repaintDuringLayoutIfMoved(oldThumbRect);
-
-        statePusher.pop();
-        addOverflowFromChild(thumb);
-    }
-
-    repainter.repaintAfterLayout();    
-
-    setNeedsLayout(false);
-}
-
-SliderThumbElement* RenderSlider::shadowSliderThumb() const
-{
-    Node* shadow = static_cast<Element*>(node())->shadowRoot();
-    return shadow ? toSliderThumbElement(shadow->firstChild()) : 0;
-}
-
 bool RenderSlider::inDragMode() const
 {
-    SliderThumbElement* thumbElement = shadowSliderThumb();
-    return thumbElement && thumbElement->active();
+    return sliderThumbElementOf(node())->active();
 }
 
 } // namespace WebCore
