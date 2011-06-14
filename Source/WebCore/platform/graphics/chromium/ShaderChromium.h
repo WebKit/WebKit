@@ -42,7 +42,7 @@ class VertexShaderPosTex {
 public:
     VertexShaderPosTex();
 
-    bool init(GraphicsContext3D*, unsigned program);
+    void init(GraphicsContext3D*, unsigned program);
     String getShaderString() const;
 
     int matrixLocation() const { return m_matrixLocation; }
@@ -55,7 +55,7 @@ class VertexShaderPosTexYUVStretch {
 public:
     VertexShaderPosTexYUVStretch();
 
-    bool init(GraphicsContext3D*, unsigned program);
+    void init(GraphicsContext3D*, unsigned program);
     String getShaderString() const;
 
     int matrixLocation() const { return m_matrixLocation; }
@@ -72,7 +72,7 @@ class VertexShaderPos {
 public:
     VertexShaderPos();
 
-    bool init(GraphicsContext3D*, unsigned program);
+    void init(GraphicsContext3D*, unsigned program);
     String getShaderString() const;
 
     int matrixLocation() const { return m_matrixLocation; }
@@ -85,7 +85,7 @@ class VertexShaderPosTexTransform {
 public:
     VertexShaderPosTexTransform();
 
-    bool init(GraphicsContext3D*, unsigned program);
+    void init(GraphicsContext3D*, unsigned program);
     String getShaderString() const;
 
     int matrixLocation() const { return m_matrixLocation; }
@@ -100,7 +100,7 @@ class FragmentTexAlphaBinding {
 public:
     FragmentTexAlphaBinding();
 
-    bool init(GraphicsContext3D*, unsigned program);
+    void init(GraphicsContext3D*, unsigned program);
     int alphaLocation() const { return m_alphaLocation; }
     int samplerLocation() const { return m_samplerLocation; }
 
@@ -129,7 +129,7 @@ public:
     FragmentShaderRGBATexAlphaMask();
     String getShaderString() const;
 
-    bool init(GraphicsContext3D*, unsigned program);
+    void init(GraphicsContext3D*, unsigned program);
     int alphaLocation() const { return m_alphaLocation; }
     int samplerLocation() const { return m_samplerLocation; }
     int maskSamplerLocation() const { return m_maskSamplerLocation; }
@@ -151,7 +151,7 @@ public:
     FragmentShaderYUVVideo();
     String getShaderString() const;
 
-    bool init(GraphicsContext3D*, unsigned program);
+    void init(GraphicsContext3D*, unsigned program);
 
     int yTextureLocation() const { return m_yTextureLocation; }
     int uTextureLocation() const { return m_uTextureLocation; }
@@ -174,7 +174,7 @@ public:
     FragmentShaderColor();
     String getShaderString() const;
 
-    bool init(GraphicsContext3D*, unsigned program);
+    void init(GraphicsContext3D*, unsigned program);
     int colorLocation() const { return m_colorLocation; }
 
 private:

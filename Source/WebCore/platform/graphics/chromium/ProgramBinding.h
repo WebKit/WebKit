@@ -29,6 +29,7 @@
 #if USE(ACCELERATED_COMPOSITING)
 
 #include "PlatformString.h"
+#include "TraceEvent.h"
 
 namespace WebCore {
 
@@ -39,7 +40,7 @@ public:
     explicit ProgramBindingBase(GraphicsContext3D*);
     ~ProgramBindingBase();
 
-    bool init(const String& vertexShader, const String& fragmentShader);
+    void init(const String& vertexShader, const String& fragmentShader);
 
     unsigned program() const { return m_program; }
     bool initialized() const { return m_initialized; }
@@ -60,12 +61,13 @@ public:
     explicit ProgramBinding(GraphicsContext3D* context)
         : ProgramBindingBase(context)
     {
-        if (!ProgramBindingBase::init(m_vertexShader.getShaderString(), m_fragmentShader.getShaderString()))
-            return;
-        if (!m_vertexShader.init(m_context, m_program))
-            return;
-        if (!m_fragmentShader.init(m_context, m_program))
-            return;
+        ProgramBindingBase::init(m_vertexShader.getShaderString(), m_fragmentShader.getShaderString());
+    }
+
+    void initialize()
+    {
+        m_vertexShader.init(m_context, m_program);
+        m_fragmentShader.init(m_context, m_program);
         m_initialized = true;
     }
 

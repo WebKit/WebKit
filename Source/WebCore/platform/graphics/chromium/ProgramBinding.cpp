@@ -33,6 +33,7 @@
 #include "GraphicsContext.h"
 #include "GraphicsContext3D.h"
 #include "LayerRendererChromium.h"
+#include "TraceEvent.h"
 
 namespace WebCore {
 
@@ -49,14 +50,10 @@ ProgramBindingBase::~ProgramBindingBase()
         GLC(m_context, m_context->deleteProgram(m_program));
 }
 
-bool ProgramBindingBase::init(const String& vertexShader, const String& fragmentShader)
+void ProgramBindingBase::init(const String& vertexShader, const String& fragmentShader)
 {
     m_program = createShaderProgram(vertexShader, fragmentShader);
-    if (!m_program) {
-        LOG_ERROR("Failed to create shader program");
-        return false;
-    }
-    return true;
+    ASSERT(m_program);
 }
 
 unsigned ProgramBindingBase::loadShader(unsigned type, const String& shaderSource)
@@ -67,17 +64,20 @@ unsigned ProgramBindingBase::loadShader(unsigned type, const String& shaderSourc
     String sourceString(shaderSource);
     GLC(m_context, m_context->shaderSource(shader, sourceString));
     GLC(m_context, m_context->compileShader(shader));
+#ifndef NDEBUG
     int compiled = 0;
     GLC(m_context, m_context->getShaderiv(shader, GraphicsContext3D::COMPILE_STATUS, &compiled));
     if (!compiled) {
         GLC(m_context, m_context->deleteShader(shader));
         return 0;
     }
+#endif
     return shader;
 }
 
 unsigned ProgramBindingBase::createShaderProgram(const String& vertexShaderSource, const String& fragmentShaderSource)
 {
+    TRACE_EVENT("ProgramBindingBase::createShaderProgram", this, 0);
     unsigned vertexShader = loadShader(GraphicsContext3D::VERTEX_SHADER, vertexShaderSource);
     if (!vertexShader) {
         LOG_ERROR("Failed to create vertex shader");
@@ -105,6 +105,7 @@ unsigned ProgramBindingBase::createShaderProgram(const String& vertexShaderSourc
     GLC(m_context, m_context->bindAttribLocation(programObject, GeometryBinding::texCoordAttribLocation(), "a_texCoord"));
 
     GLC(m_context, m_context->linkProgram(programObject));
+#ifndef NDEBUG
     int linked = 0;
     GLC(m_context, m_context->getProgramiv(programObject, GraphicsContext3D::LINK_STATUS, &linked));
     if (!linked) {
@@ -112,6 +113,7 @@ unsigned ProgramBindingBase::createShaderProgram(const String& vertexShaderSourc
         GLC(m_context, m_context->deleteProgram(programObject));
         return 0;
     }
+#endif
 
     GLC(m_context, m_context->deleteShader(vertexShader));
     GLC(m_context, m_context->deleteShader(fragmentShader));

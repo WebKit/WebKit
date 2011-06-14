@@ -124,15 +124,15 @@ public:
     int maxTextureSize() const { return m_maxTextureSize; }
 
     const GeometryBinding* sharedGeometry() const { return m_sharedGeometry.get(); }
-    const LayerChromium::BorderProgram* borderProgram() const { return m_borderProgram.get(); }
-    const CCHeadsUpDisplay::Program* headsUpDisplayProgram() const { return m_headsUpDisplayProgram.get(); }
-    const RenderSurfaceChromium::Program* renderSurfaceProgram() const { return m_renderSurfaceProgram.get(); }
-    const RenderSurfaceChromium::MaskProgram* renderSurfaceMaskProgram() const { return m_renderSurfaceMaskProgram.get(); }
-    const LayerTilerChromium::Program* tilerProgram() const { return m_tilerProgram.get(); }
-    const CCCanvasLayerImpl::Program* canvasLayerProgram() const { return m_canvasLayerProgram.get(); }
-    const CCPluginLayerImpl::Program* pluginLayerProgram() const { return m_pluginLayerProgram.get(); }
-    const CCVideoLayerImpl::RGBAProgram* videoLayerRGBAProgram() const { return m_videoLayerRGBAProgram.get(); }
-    const CCVideoLayerImpl::YUVProgram* videoLayerYUVProgram() const { return m_videoLayerYUVProgram.get(); }
+    const LayerChromium::BorderProgram* borderProgram();
+    const CCHeadsUpDisplay::Program* headsUpDisplayProgram();
+    const RenderSurfaceChromium::Program* renderSurfaceProgram();
+    const RenderSurfaceChromium::MaskProgram* renderSurfaceMaskProgram();
+    const LayerTilerChromium::Program* tilerProgram();
+    const CCCanvasLayerImpl::Program* canvasLayerProgram();
+    const CCPluginLayerImpl::Program* pluginLayerProgram();
+    const CCVideoLayerImpl::RGBAProgram* videoLayerRGBAProgram();
+    const CCVideoLayerImpl::YUVProgram* videoLayerYUVProgram();
 
     void resizeOnscreenContent(const IntSize&);
 

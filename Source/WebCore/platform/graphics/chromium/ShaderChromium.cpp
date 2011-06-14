@@ -42,10 +42,10 @@ VertexShaderPosTex::VertexShaderPosTex()
 {
 }
 
-bool VertexShaderPosTex::init(GraphicsContext3D* context, unsigned program)
+void VertexShaderPosTex::init(GraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
-    return m_matrixLocation != -1;
+    ASSERT(m_matrixLocation != -1);
 }
 
 String VertexShaderPosTex::getShaderString() const
@@ -70,12 +70,12 @@ VertexShaderPosTexYUVStretch::VertexShaderPosTexYUVStretch()
 {
 }
 
-bool VertexShaderPosTexYUVStretch::init(GraphicsContext3D* context, unsigned program)
+void VertexShaderPosTexYUVStretch::init(GraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
     m_yWidthScaleFactorLocation = context->getUniformLocation(program, "y_widthScaleFactor");
     m_uvWidthScaleFactorLocation = context->getUniformLocation(program, "uv_widthScaleFactor");
-    return m_matrixLocation != -1 && m_yWidthScaleFactorLocation != -1 && m_uvWidthScaleFactorLocation != -1;
+    ASSERT(m_matrixLocation != -1 && m_yWidthScaleFactorLocation != -1 && m_uvWidthScaleFactorLocation != -1);
 }
 
 String VertexShaderPosTexYUVStretch::getShaderString() const
@@ -103,10 +103,10 @@ VertexShaderPos::VertexShaderPos()
 {
 }
 
-bool VertexShaderPos::init(GraphicsContext3D* context, unsigned program)
+void VertexShaderPos::init(GraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
-    return m_matrixLocation != -1;
+    ASSERT(m_matrixLocation != -1);
 }
 
 String VertexShaderPos::getShaderString() const
@@ -127,11 +127,11 @@ VertexShaderPosTexTransform::VertexShaderPosTexTransform()
 {
 }
 
-bool VertexShaderPosTexTransform::init(GraphicsContext3D* context, unsigned program)
+void VertexShaderPosTexTransform::init(GraphicsContext3D* context, unsigned program)
 {
     m_matrixLocation = context->getUniformLocation(program, "matrix");
     m_texTransformLocation = context->getUniformLocation(program, "texTransform");
-    return m_matrixLocation != -1 && m_texTransformLocation != -1;
+    ASSERT(m_matrixLocation != -1 && m_texTransformLocation != -1);
 }
 
 String VertexShaderPosTexTransform::getShaderString() const
@@ -156,12 +156,12 @@ FragmentTexAlphaBinding::FragmentTexAlphaBinding()
 {
 }
 
-bool FragmentTexAlphaBinding::init(GraphicsContext3D* context, unsigned program)
+void FragmentTexAlphaBinding::init(GraphicsContext3D* context, unsigned program)
 {
     m_samplerLocation = context->getUniformLocation(program, "s_texture");
     m_alphaLocation = context->getUniformLocation(program, "alpha");
 
-    return m_samplerLocation != -1 && m_alphaLocation != -1;
+    ASSERT(m_samplerLocation != -1 && m_alphaLocation != -1);
 }
 
 String FragmentShaderRGBATexFlipAlpha::getShaderString() const
@@ -216,13 +216,12 @@ FragmentShaderRGBATexAlphaMask::FragmentShaderRGBATexAlphaMask()
 {
 }
 
-bool FragmentShaderRGBATexAlphaMask::init(GraphicsContext3D* context, unsigned program)
+void FragmentShaderRGBATexAlphaMask::init(GraphicsContext3D* context, unsigned program)
 {
     m_samplerLocation = context->getUniformLocation(program, "s_texture");
     m_maskSamplerLocation = context->getUniformLocation(program, "s_mask");
     m_alphaLocation = context->getUniformLocation(program, "alpha");
-
-    return m_samplerLocation != -1 && m_maskSamplerLocation != -1 && m_alphaLocation != -1;
+    ASSERT(m_samplerLocation != -1 && m_maskSamplerLocation != -1 && m_alphaLocation != -1);
 }
 
 String FragmentShaderRGBATexAlphaMask::getShaderString() const
@@ -252,7 +251,7 @@ FragmentShaderYUVVideo::FragmentShaderYUVVideo()
 {
 }
 
-bool FragmentShaderYUVVideo::init(GraphicsContext3D* context, unsigned program)
+void FragmentShaderYUVVideo::init(GraphicsContext3D* context, unsigned program)
 {
     m_yTextureLocation = context->getUniformLocation(program, "y_texture");
     m_uTextureLocation = context->getUniformLocation(program, "u_texture");
@@ -261,8 +260,8 @@ bool FragmentShaderYUVVideo::init(GraphicsContext3D* context, unsigned program)
     m_ccMatrixLocation = context->getUniformLocation(program, "cc_matrix");
     m_yuvAdjLocation = context->getUniformLocation(program, "yuv_adj");
 
-    return m_yTextureLocation != -1 && m_uTextureLocation != -1 && m_vTextureLocation != -1
-           && m_alphaLocation != -1 && m_ccMatrixLocation != -1 && m_yuvAdjLocation != -1;
+    ASSERT(m_yTextureLocation != -1 && m_uTextureLocation != -1 && m_vTextureLocation != -1
+           && m_alphaLocation != -1 && m_ccMatrixLocation != -1 && m_yuvAdjLocation != -1);
 }
 
 String FragmentShaderYUVVideo::getShaderString() const
@@ -295,10 +294,10 @@ FragmentShaderColor::FragmentShaderColor()
 {
 }
 
-bool FragmentShaderColor::init(GraphicsContext3D* context, unsigned program)
+void FragmentShaderColor::init(GraphicsContext3D* context, unsigned program)
 {
     m_colorLocation = context->getUniformLocation(program, "color");
-    return m_colorLocation != -1;
+    ASSERT(m_colorLocation != -1);
 }
 
 String FragmentShaderColor::getShaderString() const

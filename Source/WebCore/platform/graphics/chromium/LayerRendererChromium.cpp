@@ -349,7 +349,10 @@ void LayerRendererChromium::updateLayers(LayerList& renderSurfaceLayerList)
 
     updateCompositorResources(renderSurfaceLayerList);
     // Update compositor resources for root layer.
-    m_rootLayerContentTiler->updateRect();
+    {
+        TRACE_EVENT("LayerRendererChromium::updateLayer::updateRoot", this, 0);
+        m_rootLayerContentTiler->updateRect();
+    }
 
     // After updateCompositorResources, set/wait latches for all child
     // contexts. This will prevent the compositor from using any of the child
@@ -1074,6 +1077,7 @@ void LayerRendererChromium::resizeOnscreenContent(const IntSize& size)
 
 bool LayerRendererChromium::initializeSharedObjects()
 {
+    TRACE_EVENT("LayerRendererChromium::initializeSharedObjects", this, 0);
     makeContextCurrent();
 
     // Get the max texture size supported by the system.
@@ -1083,31 +1087,115 @@ bool LayerRendererChromium::initializeSharedObjects()
     // Create an FBO for doing offscreen rendering.
     GLC(m_context.get(), m_offscreenFramebufferId = m_context->createFramebuffer());
 
+    // We will always need these programs to render, so create the programs eagerly so that the shader compilation can
+    // start while we do other work. Other programs are created lazily on first access.
     m_sharedGeometry = adoptPtr(new GeometryBinding(m_context.get()));
-    m_borderProgram = adoptPtr(new LayerChromium::BorderProgram(m_context.get()));
-    m_headsUpDisplayProgram = adoptPtr(new CCHeadsUpDisplay::Program(m_context.get()));
-    m_canvasLayerProgram = adoptPtr(new CCCanvasLayerImpl::Program(m_context.get()));
-    m_videoLayerRGBAProgram = adoptPtr(new CCVideoLayerImpl::RGBAProgram(m_context.get()));
-    m_videoLayerYUVProgram = adoptPtr(new CCVideoLayerImpl::YUVProgram(m_context.get()));
-    m_pluginLayerProgram = adoptPtr(new CCPluginLayerImpl::Program(m_context.get()));
     m_renderSurfaceProgram = adoptPtr(new RenderSurfaceChromium::Program(m_context.get()));
-    m_renderSurfaceMaskProgram = adoptPtr(new RenderSurfaceChromium::MaskProgram(m_context.get()));
     m_tilerProgram = adoptPtr(new LayerTilerChromium::Program(m_context.get()));
 
-    if (!m_sharedGeometry->initialized() || !m_borderProgram->initialized()
-        || !m_canvasLayerProgram->initialized()
-        || !m_headsUpDisplayProgram->initialized()
-        || !m_videoLayerRGBAProgram->initialized() || !m_videoLayerYUVProgram->initialized()
-        || !m_pluginLayerProgram->initialized() || !m_renderSurfaceProgram->initialized()
-        || !m_renderSurfaceMaskProgram->initialized() || !m_tilerProgram->initialized()) {
-        LOG_ERROR("Compositor failed to initialize shaders. Falling back to software.");
-        cleanupSharedObjects();
-        return false;
-    }
+    GLC(m_context.get(), m_context->flush());
 
     m_textureManager = TextureManager::create(m_context.get(), textureMemoryLimitBytes, m_maxTextureSize);
     return true;
 }
+
+const LayerChromium::BorderProgram* LayerRendererChromium::borderProgram()
+{
+    if (!m_borderProgram)
+        m_borderProgram = adoptPtr(new LayerChromium::BorderProgram(m_context.get()));
+    if (!m_borderProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        m_borderProgram->initialize();
+    }
+    return m_borderProgram.get();
+}
+
+const CCHeadsUpDisplay::Program* LayerRendererChromium::headsUpDisplayProgram()
+{
+    if (!m_headsUpDisplayProgram)
+        m_headsUpDisplayProgram = adoptPtr(new CCHeadsUpDisplay::Program(m_context.get()));
+    if (!m_headsUpDisplayProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        m_headsUpDisplayProgram->initialize();
+    }
+    return m_headsUpDisplayProgram.get();
+}
+
+const RenderSurfaceChromium::Program* LayerRendererChromium::renderSurfaceProgram()
+{
+    ASSERT(m_renderSurfaceProgram);
+    if (!m_renderSurfaceProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        m_renderSurfaceProgram->initialize();
+    }
+    return m_renderSurfaceProgram.get();
+}
+
+const RenderSurfaceChromium::MaskProgram* LayerRendererChromium::renderSurfaceMaskProgram()
+{
+    if (!m_renderSurfaceMaskProgram)
+        m_renderSurfaceMaskProgram = adoptPtr(new RenderSurfaceChromium::MaskProgram(m_context.get()));
+    if (!m_renderSurfaceMaskProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        m_renderSurfaceMaskProgram->initialize();
+    }
+    return m_renderSurfaceMaskProgram.get();
+}
+
+const LayerTilerChromium::Program* LayerRendererChromium::tilerProgram()
+{
+    ASSERT(m_tilerProgram);
+    if (!m_tilerProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        m_tilerProgram->initialize();
+    }
+    return m_tilerProgram.get();
+}
+
+const CCCanvasLayerImpl::Program* LayerRendererChromium::canvasLayerProgram()
+{
+    if (!m_canvasLayerProgram)
+        m_canvasLayerProgram = adoptPtr(new CCCanvasLayerImpl::Program(m_context.get()));
+    if (!m_canvasLayerProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        m_canvasLayerProgram->initialize();
+    }
+    return m_canvasLayerProgram.get();
+}
+
+const CCPluginLayerImpl::Program* LayerRendererChromium::pluginLayerProgram()
+{
+    if (!m_pluginLayerProgram)
+        m_pluginLayerProgram = adoptPtr(new CCPluginLayerImpl::Program(m_context.get()));
+    if (!m_pluginLayerProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        m_pluginLayerProgram->initialize();
+    }
+    return m_pluginLayerProgram.get();
+}
+
+const CCVideoLayerImpl::RGBAProgram* LayerRendererChromium::videoLayerRGBAProgram()
+{
+    if (!m_videoLayerRGBAProgram)
+        m_videoLayerRGBAProgram = adoptPtr(new CCVideoLayerImpl::RGBAProgram(m_context.get()));
+    if (!m_videoLayerRGBAProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        m_videoLayerRGBAProgram->initialize();
+    }
+    return m_videoLayerRGBAProgram.get();
+}
+
+const CCVideoLayerImpl::YUVProgram* LayerRendererChromium::videoLayerYUVProgram()
+{
+    if (!m_videoLayerYUVProgram)
+        m_videoLayerYUVProgram = adoptPtr(new CCVideoLayerImpl::YUVProgram(m_context.get()));
+    if (!m_videoLayerYUVProgram->initialized()) {
+        TRACE_EVENT("LayerRendererChromium::borderProgram::initialize", this, 0);
+        m_videoLayerYUVProgram->initialize();
+    }
+    return m_videoLayerYUVProgram.get();
+}
+
 
 void LayerRendererChromium::cleanupSharedObjects()
 {

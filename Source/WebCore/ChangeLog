@@ -1,3 +1,59 @@
+2011-06-14  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Stephen White.
+
+        [chromium] Compositor shader initialization is inefficient
+        https://bugs.webkit.org/show_bug.cgi?id=62618
+
+        This fixes several issues causing slowdowns in compositor shader initialization, mostly due to lack of
+        parallelism:
+
+        - Avoid initializing all programs eagerly. We only use two programs on every page, the other programs depend on
+        content and are constructed on demand.
+
+        - Defer querying uniform locations until draw time.  For the eagerly constructed programs (render surface +
+        tiler) this means that the GPU process has a chance to compile the shader while the renderer is busy
+        painting+uploading instead of blocking on shader compilation in order to get uniform locations.
+
+        - Calls to query COMPILE_STATUS/LINK_STATUS moved behind #ifndef NDEBUG guards since these should never fail in
+        release builds and force synchronous compilation/linking.
+
+        This also adds a number of TRACE_EVENT()s to make analysing the performance of this bit of code easier.
+
+        * platform/graphics/chromium/LayerRendererChromium.cpp:
+        (WebCore::LayerRendererChromium::updateLayers):
+        (WebCore::LayerRendererChromium::initializeSharedObjects):
+        (WebCore::LayerRendererChromium::borderProgram):
+        (WebCore::LayerRendererChromium::headsUpDisplayProgram):
+        (WebCore::LayerRendererChromium::renderSurfaceProgram):
+        (WebCore::LayerRendererChromium::renderSurfaceMaskProgram):
+        (WebCore::LayerRendererChromium::tilerProgram):
+        (WebCore::LayerRendererChromium::canvasLayerProgram):
+        (WebCore::LayerRendererChromium::pluginLayerProgram):
+        (WebCore::LayerRendererChromium::videoLayerRGBAProgram):
+        (WebCore::LayerRendererChromium::videoLayerYUVProgram):
+        * platform/graphics/chromium/LayerRendererChromium.h:
+        * platform/graphics/chromium/LayerTextureSubImage.cpp:
+        (WebCore::LayerTextureSubImage::uploadWithTexSubImage):
+        (WebCore::LayerTextureSubImage::uploadWithMapTexSubImage):
+        * platform/graphics/chromium/ProgramBinding.cpp:
+        (WebCore::ProgramBindingBase::init):
+        (WebCore::ProgramBindingBase::loadShader):
+        (WebCore::ProgramBindingBase::createShaderProgram):
+        * platform/graphics/chromium/ProgramBinding.h:
+        (WebCore::ProgramBinding::ProgramBinding):
+        (WebCore::ProgramBinding::initialize):
+        * platform/graphics/chromium/ShaderChromium.cpp:
+        (WebCore::VertexShaderPosTex::init):
+        (WebCore::VertexShaderPosTexYUVStretch::init):
+        (WebCore::VertexShaderPos::init):
+        (WebCore::VertexShaderPosTexTransform::init):
+        (WebCore::FragmentTexAlphaBinding::init):
+        (WebCore::FragmentShaderRGBATexAlphaMask::init):
+        (WebCore::FragmentShaderYUVVideo::init):
+        (WebCore::FragmentShaderColor::init):
+        * platform/graphics/chromium/ShaderChromium.h:
+
 2011-06-14  Stephanie Lewis  <slewis@apple.com>
 
         Rubber stamped by Oliver Hunt.

@@ -31,6 +31,7 @@
 
 #include "Extensions3DChromium.h"
 #include "GraphicsContext3D.h"
+#include "TraceEvent.h"
 
 namespace WebCore {
 
@@ -66,6 +67,7 @@ void LayerTextureSubImage::uploadWithTexSubImage(const uint8_t* image, const Int
                                                  const IntRect& sourceRect, const IntRect& destRect,
                                                  GraphicsContext3D* context)
 {
+    TRACE_EVENT("LayerTextureSubImage::uploadWithTexSubImage", this, 0);
     if (!m_subImage)
         m_subImage = adoptArrayPtr(new uint8_t[m_subImageSize.width() * m_subImageSize.height() * 4]);
 
@@ -92,6 +94,7 @@ void LayerTextureSubImage::uploadWithMapTexSubImage(const uint8_t* image, const 
                                                     const IntRect& sourceRect, const IntRect& destRect,
                                                     GraphicsContext3D* context)
 {
+    TRACE_EVENT("LayerTextureSubImage::uploadWithMapTexSubImage", this, 0);
     // Offset from image-rect to source-rect.
     IntPoint offset(sourceRect.x() - imageRect.x(), sourceRect.y() - imageRect.y());
 

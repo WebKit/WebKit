@@ -1,3 +1,15 @@
+2011-06-14  James Robinson  <jamesr@chromium.org>
+
+        Reviewed by Stephen White.
+
+        [chromium] Compositor shader initialization is inefficient
+        https://bugs.webkit.org/show_bug.cgi?id=62618
+
+        Add a TRACE_EVENT() around initial compositor initialization.
+
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::setIsAcceleratedCompositingActive):
+
 2011-06-14  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Darin Fisher.

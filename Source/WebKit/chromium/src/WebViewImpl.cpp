@@ -2497,6 +2497,7 @@ void WebViewImpl::setIsAcceleratedCompositingActive(bool active)
 
         m_client->didActivateAcceleratedCompositing(true);
     } else {
+        TRACE_EVENT("WebViewImpl::setIsAcceleratedCompositingActive(true)", this, 0);
         RefPtr<GraphicsContext3D> context = m_temporaryOnscreenGraphicsContext3D.release();
         if (!context) {
             context = GraphicsContext3D::create(getCompositorContextAttributes(), m_page->chrome(), GraphicsContext3D::RenderDirectlyToHostWindow);
