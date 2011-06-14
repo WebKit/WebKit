@@ -23,45 +23,52 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "config.h"
-#include "LayerTreeContext.h"
+#ifndef WKCACFViewWindow_h
+#define WKCACFViewWindow_h
 
-#include "ArgumentCoders.h"
+#include "HeaderDetection.h"
+
+#if HAVE(WKQCA)
+
+#include <wtf/Noncopyable.h>
+#include <wtf/RetainPtr.h>
+
+typedef struct _WKCACFView* WKCACFViewRef;
 
 namespace WebKit {
 
-LayerTreeContext::LayerTreeContext()
-    : window(0)
-{
-}
+// FIXME: Move this class down to WebCore. (Maybe it can even replace some of WKCACFViewLayerTreeHost.)
+class WKCACFViewWindow {
+    WTF_MAKE_NONCOPYABLE(WKCACFViewWindow);
+public:
+    // WKCACFViewWindow will destroy its HWND when this message is received.
+    static const UINT customDestroyMessage = WM_USER + 1;
 
-LayerTreeContext::~LayerTreeContext()
-{
-}
+    WKCACFViewWindow(WKCACFViewRef, HWND parentWindow, DWORD additionalStyles);
+    ~WKCACFViewWindow();
 
-void LayerTreeContext::encode(CoreIPC::ArgumentEncoder* encoder) const
-{
-    encoder->encodeUInt64(reinterpret_cast<uint64_t>(window));
-}
+    void setDeletesSelfWhenWindowDestroyed(bool deletes) { m_deletesSelfWhenWindowDestroyed = deletes; }
 
-bool LayerTreeContext::decode(CoreIPC::ArgumentDecoder* decoder, LayerTreeContext& context)
-{
-    uint64_t window;
-    if (!decoder->decode(window))
-        return false;
+    HWND window() const { return m_window; }
 
-    context.window = reinterpret_cast<HWND>(window);
-    return true;
-}
+private:
+    LRESULT onCustomDestroy(WPARAM, LPARAM);
+    LRESULT onDestroy(WPARAM, LPARAM);
+    LRESULT onEraseBackground(WPARAM, LPARAM);
+    LRESULT onNCDestroy(WPARAM, LPARAM);
+    LRESULT onPaint(WPARAM, LPARAM);
+    LRESULT onPrintClient(WPARAM, LPARAM);
+    static void registerClass();
+    static LRESULT CALLBACK staticWndProc(HWND, UINT, WPARAM, LPARAM);
+    LRESULT wndProc(UINT, WPARAM, LPARAM);
 
-bool LayerTreeContext::isEmpty() const
-{
-    return !window;
-}
-
-bool operator==(const LayerTreeContext& a, const LayerTreeContext& b)
-{
-    return a.window == b.window;
-}
+    HWND m_window;
+    RetainPtr<WKCACFViewRef> m_view;
+    bool m_deletesSelfWhenWindowDestroyed;
+};
 
 } // namespace WebKit
+
+#endif // HAVE(WKQCA)
+
+#endif // WKCACFViewWindow_h

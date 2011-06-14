@@ -33,6 +33,8 @@ namespace WebKit {
 
 struct WindowGeometry;
 
+enum BringToTopOrNot { BringToTop, DoNotBringToTop };
+
 class CoalescedWindowGeometriesUpdater {
     WTF_MAKE_NONCOPYABLE(CoalescedWindowGeometriesUpdater);
 public:
@@ -40,7 +42,7 @@ public:
     ~CoalescedWindowGeometriesUpdater();
 
     void addPendingUpdate(const WindowGeometry&);
-    void updateGeometries();
+    void updateGeometries(BringToTopOrNot);
 
 private:
     HashMap<HWND, WindowGeometry> m_geometries;

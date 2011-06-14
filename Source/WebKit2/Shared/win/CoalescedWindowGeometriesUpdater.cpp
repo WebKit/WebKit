@@ -55,7 +55,7 @@ static void setWindowRegion(HWND window, PassOwnPtr<HRGN> popRegion)
     region.leakPtr();
 }
 
-void CoalescedWindowGeometriesUpdater::updateGeometries()
+void CoalescedWindowGeometriesUpdater::updateGeometries(BringToTopOrNot bringToTopOrNot)
 {
     HashMap<HWND, WindowGeometry> geometries;
     geometries.swap(m_geometries);
@@ -68,13 +68,21 @@ void CoalescedWindowGeometriesUpdater::updateGeometries()
         if (!::IsWindow(geometry.window))
             continue;
 
-        UINT flags = SWP_NOACTIVATE | SWP_NOOWNERZORDER | SWP_NOZORDER;
+        UINT flags = SWP_NOACTIVATE;
         if (geometry.visible)
             flags |= SWP_SHOWWINDOW;
         else
             flags |= SWP_HIDEWINDOW;
 
-        deferWindowPos = ::DeferWindowPos(deferWindowPos, geometry.window, 0, geometry.frame.x(), geometry.frame.y(), geometry.frame.width(), geometry.frame.height(), flags);
+        HWND hwndInsertAfter;
+        if (bringToTopOrNot == BringToTop)
+            hwndInsertAfter = HWND_TOP;
+        else {
+            hwndInsertAfter = 0;
+            flags |= SWP_NOOWNERZORDER | SWP_NOZORDER;
+        }
+
+        deferWindowPos = ::DeferWindowPos(deferWindowPos, geometry.window, hwndInsertAfter, geometry.frame.x(), geometry.frame.y(), geometry.frame.width(), geometry.frame.height(), flags);
 
         setWindowRegion(geometry.window, adoptPtr(::CreateRectRgn(geometry.clipRect.x(), geometry.clipRect.y(), geometry.clipRect.maxX(), geometry.clipRect.maxY())));
     }
