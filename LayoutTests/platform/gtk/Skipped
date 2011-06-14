@@ -1210,6 +1210,9 @@ http/tests/xmlhttprequest/remember-bad-password.html
 fast/css/user-drag-none.html
 fast/events/5056619.html
 
+# https://bugs.webkit.org/show_bug.cgi?id=62625
+fast/css/counters/complex-before.html
+
 # EventSender::dumpFilenameBeingDragged not implemented.
 # https://bugs.webkit.org/show_bug.cgi?id=61826
 fast/events/drag-image-filename.html
