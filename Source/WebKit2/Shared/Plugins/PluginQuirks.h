@@ -59,6 +59,10 @@ public:
         // WebKit1 expects a retained plug-in layer. We use this for Flash to avoid leaking OpenGL layers.
         ReturnsRetainedCoreAnimationLayer,
 
+        // Whether NPP_GetValue with NPPVpluginScriptableNPObject returns a non-retained NPObject or not.
+        // Versions of Silverlight prior to 4 never retained the returned NPObject.
+        ReturnsNonRetainedScriptableNPObject,
+
 #ifndef NP_NO_QUICKDRAW
         // Allow the plug-in to use the QuickDraw drawing model, since we know that the plug-in
         // will never paint or receive events. Used by the AppleConnect plug-in.

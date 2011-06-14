@@ -1,3 +1,35 @@
+2011-06-13  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Crash when trying to use Netflix Watch Instantly with Silverlight 3
+        https://bugs.webkit.org/show_bug.cgi?id=62611
+        <rdar://problem/9058370>
+
+        * Shared/Plugins/Netscape/mac/NetscapePluginModuleMac.mm:
+        (WebKit::NetscapePluginModule::getPluginInfo):
+        Get the plug-in version string instead of the version number.
+
+        (WebKit::PluginVersion::isValid):
+        (WebKit::PluginVersion::PluginVersion):
+        (WebKit::PluginVersion::parse):
+        (WebKit::PluginVersion::isLessThan):
+        Add a new PluginVersion class that represents a plug-in version. The idea is
+        that this class be made cross platform.
+
+        (WebKit::NetscapePluginModule::determineQuirks):
+        Add the ReturnsNonRetainedScriptableNPObject quirk for versions of Silverlight less than 4.
+
+        * Shared/Plugins/PluginQuirks.h:
+        Add the ReturnsNonRetainedScriptableNPObject quirk.
+
+        * UIProcess/Plugins/PluginInfoStore.h:
+        Use a version string. Eventually this should hold the PluginVersion class we added.
+
+        * WebProcess/Plugins/Netscape/NetscapePlugin.cpp:
+        (WebKit::NetscapePlugin::pluginScriptableNPObject):
+        If the plug-in has the ReturnsNonRetainedScriptableNPObject quirk, do an extra retain.
+
 2011-06-13  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Kenneth Rohde Christiansen.

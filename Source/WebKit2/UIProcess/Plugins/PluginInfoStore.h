@@ -47,7 +47,7 @@ public:
 #if PLATFORM(MAC)
         cpu_type_t pluginArchitecture;
         String bundleIdentifier;
-        unsigned versionNumber;
+        String versionString;
 #elif PLATFORM(WIN)
         uint64_t fileVersion;
 #endif

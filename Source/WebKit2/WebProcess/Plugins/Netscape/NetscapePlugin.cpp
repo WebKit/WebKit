@@ -27,6 +27,7 @@
 #include "NetscapePlugin.h"
 
 #include "NPRuntimeObjectMap.h"
+#include "NPRuntimeUtilities.h"
 #include "NetscapePluginStream.h"
 #include "PluginController.h"
 #include "ShareableBitmap.h"
@@ -737,7 +738,12 @@ NPObject* NetscapePlugin::pluginScriptableNPObject()
     
     if (NPP_GetValue(NPPVpluginScriptableNPObject, &scriptableNPObject) != NPERR_NO_ERROR)
         return 0;
-    
+
+#if PLUGIN_ARCHITECTURE(MAC)
+    if (m_pluginModule->pluginQuirks().contains(PluginQuirks::ReturnsNonRetainedScriptableNPObject))
+        retainNPObject(scriptableNPObject);        
+#endif    
+
     return scriptableNPObject;
 }
 
