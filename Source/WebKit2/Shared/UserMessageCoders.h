@@ -28,6 +28,7 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
+#include "DataReference.h"
 #include "ImmutableArray.h"
 #include "ImmutableDictionary.h"
 #include "ShareableBitmap.h"
@@ -97,7 +98,7 @@ public:
         }
         case APIObject::TypeSerializedScriptValue: {
             WebSerializedScriptValue* scriptValue = static_cast<WebSerializedScriptValue*>(m_root);
-            encoder->encodeBytes(scriptValue->data().data(), scriptValue->data().size());
+            encoder->encodeVariableLengthByteArray(scriptValue->dataReference());
             return true;
         }
         case APIObject::TypeDouble: {
@@ -143,7 +144,7 @@ public:
         }
         case APIObject::TypeData: {
             WebData* data = static_cast<WebData*>(m_root);
-            encoder->encodeBytes(data->bytes(), data->size());
+            encoder->encodeVariableLengthByteArray(data->dataReference());
             return true;
         }
         case APIObject::TypeCertificateInfo: {
@@ -243,10 +244,12 @@ public:
             break;
         }
         case APIObject::TypeSerializedScriptValue: {
-            Vector<uint8_t> buffer;
-            if (!decoder->decodeBytes(buffer))
+            CoreIPC::DataReference dataReference;
+            if (!decoder->decodeVariableLengthByteArray(dataReference))
                 return false;
-            coder.m_root = WebSerializedScriptValue::adopt(buffer);
+            
+            Vector<uint8_t> vector = dataReference.vector();
+            coder.m_root = WebSerializedScriptValue::adopt(vector);
             break;
         }
         case APIObject::TypeDouble: {
@@ -300,10 +303,10 @@ public:
             return true;
         }
         case APIObject::TypeData: {
-            Vector<uint8_t> buffer;
-            if (!decoder->decodeBytes(buffer))
+            CoreIPC::DataReference dataReference;
+            if (!decoder->decodeVariableLengthByteArray(dataReference))
                 return false;
-            coder.m_root = WebData::create(buffer);
+            coder.m_root = WebData::create(dataReference.data(), dataReference.size());
             break;
         }
         case APIObject::TypeCertificateInfo: {

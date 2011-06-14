@@ -291,7 +291,7 @@ void encode(ArgumentEncoder* encoder, CFDataRef data)
     CFIndex length = CFDataGetLength(data);
     const UInt8* bytePtr = CFDataGetBytePtr(data);
 
-    encoder->encodeBytes(bytePtr, length);
+    encoder->encodeVariableLengthByteArray(CoreIPC::DataReference(bytePtr, length));
 }
 
 bool decode(ArgumentDecoder* decoder, RetainPtr<CFDataRef>& result)
@@ -376,7 +376,7 @@ void encode(ArgumentEncoder* encoder, CFNumberRef number)
     ASSERT_UNUSED(result, result);
 
     encoder->encodeEnum(numberType);
-    encoder->encodeBytes(buffer.data(), buffer.size());
+    encoder->encodeVariableLengthByteArray(buffer);
 }
 
 static size_t sizeForNumberType(CFNumberType numberType)
@@ -464,7 +464,7 @@ void encode(ArgumentEncoder* encoder, CFStringRef string)
     ASSERT(numConvertedBytes == length);
 
     encoder->encodeEnum(encoding);
-    encoder->encodeBytes(buffer.data(), bufferLength);
+    encoder->encodeVariableLengthByteArray(buffer);
 }
 
 bool decode(ArgumentDecoder* decoder, RetainPtr<CFStringRef>& result)

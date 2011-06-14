@@ -41,7 +41,7 @@ class EncoderAdapter : public Encoder {
 public:
     EncoderAdapter();
 
-    CoreIPC::DataReference data() const;
+    CoreIPC::DataReference dataReference() const;
 
 private:
     virtual void encodeBytes(const uint8_t*, size_t);

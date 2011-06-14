@@ -2,6 +2,51 @@
 
         Reviewed by Sam Weinig.
 
+        Start using the new encode/decode functions
+        https://bugs.webkit.org/show_bug.cgi?id=62676
+
+        * Platform/CoreIPC/DataReference.cpp:
+        (CoreIPC::DataReference::encode):
+        Use encodeVariableLengthByteArray.
+
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        Use encodeVariableLengthByteArray and the new dataReference accessors.
+
+        (WebKit::UserMessageDecoder::baseDecode):
+        Use decodeVariableLengthByteArray.
+ 
+        * Shared/WebData.h:
+        (WebKit::WebData::dataReference):
+        Return a reference to the data.
+
+        * Shared/WebSerializedScriptValue.h:
+        (WebKit::WebSerializedScriptValue::dataReference):
+        Ditto.
+
+        * Shared/cf/ArgumentCodersCF.cpp:
+        (CoreIPC::encode):
+        Use encodeVariableLengthByteArray.
+
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::Handle::encode):
+        Use encodeVariableLengthByteArray.
+
+        * WebProcess/WebPage/DecoderAdapter.cpp:
+        (WebKit::DecoderAdapter::decodeBytes):
+        Use decodeVariableLengthByteArray.
+
+        * WebProcess/WebPage/EncoderAdapter.cpp:
+        (WebKit::EncoderAdapter::dataReference):
+        Rename data() to dataReference() to indicate that it returns a reference to the data.
+
+        (WebKit::EncoderAdapter::encodeBytes):
+        Use encodeVariableLengthByteArray.
+
+2011-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add encodeVariableLengthByteArray and decodeVariableLengthByteArray
         https://bugs.webkit.org/show_bug.cgi?id=62674
 

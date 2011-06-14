@@ -26,6 +26,7 @@
 #include "config.h"
 #include "DecoderAdapter.h"
 
+#include "DataReference.h"
 #include "WebCoreArgumentCoders.h"
 
 namespace WebKit {
@@ -37,7 +38,12 @@ DecoderAdapter::DecoderAdapter(const uint8_t* buffer, size_t bufferSize)
 
 bool DecoderAdapter::decodeBytes(Vector<uint8_t>& bytes)
 {
-    return m_decoder.decodeBytes(bytes);
+    CoreIPC::DataReference dataReference;
+    if (!m_decoder.decodeVariableLengthByteArray(dataReference))
+        return false;
+
+    bytes = dataReference.vector();
+    return true;
 }
 
 bool DecoderAdapter::decodeBool(bool& value)

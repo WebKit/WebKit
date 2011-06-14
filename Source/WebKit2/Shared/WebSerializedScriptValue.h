@@ -28,6 +28,7 @@
 
 #include "APIObject.h"
 
+#include "DataReference.h"
 #include <WebCore/SerializedScriptValue.h>
 #include <wtf/RefPtr.h>
 
@@ -59,8 +60,8 @@ public:
     {
         return m_serializedScriptValue->deserialize(context, exception);
     }
-    
-    const Vector<uint8_t>& data() { return m_serializedScriptValue->data(); }
+
+    CoreIPC::DataReference dataReference() const { return m_serializedScriptValue->data(); }
 
     void* internalRepresentation() { return m_serializedScriptValue.get(); }
 

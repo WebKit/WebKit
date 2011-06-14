@@ -88,8 +88,7 @@ static void updateBackForwardItem(uint64_t itemID, HistoryItem* item)
     EncoderAdapter encoder;
     item->encodeBackForwardTree(encoder);
 
-    WebProcess::shared().connection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID,
-        item->originalURLString(), item->urlString(), item->title(), encoder.data()), 0);
+    WebProcess::shared().connection()->send(Messages::WebProcessProxy::AddBackForwardItem(itemID, item->originalURLString(), item->urlString(), item->title(), encoder.dataReference()), 0);
 }
 
 void WebBackForwardListProxy::addItemFromUIProcess(uint64_t itemID, PassRefPtr<WebCore::HistoryItem> prpItem)

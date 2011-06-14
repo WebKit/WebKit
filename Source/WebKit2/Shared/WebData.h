@@ -27,6 +27,7 @@
 #define WebData_h
 
 #include "APIObject.h"
+#include "DataReference.h"
 #include <wtf/Forward.h>
 #include <wtf/Vector.h>
 
@@ -69,6 +70,8 @@ public:
 
     const unsigned char* bytes() const { return m_bytes; }
     size_t size() const { return m_size; }
+
+    CoreIPC::DataReference dataReference() const { return CoreIPC::DataReference(m_bytes, m_size); }
 
 private:
     WebData(const unsigned char* bytes, size_t size, FreeDataFunction freeDataFunction, const void* context)

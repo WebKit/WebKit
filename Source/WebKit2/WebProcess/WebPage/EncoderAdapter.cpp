@@ -36,14 +36,14 @@ EncoderAdapter::EncoderAdapter()
 {
 }
 
-CoreIPC::DataReference EncoderAdapter::data() const
+CoreIPC::DataReference EncoderAdapter::dataReference() const
 {
     return CoreIPC::DataReference(m_encoder->buffer(), m_encoder->bufferSize());
 }
 
 void EncoderAdapter::encodeBytes(const uint8_t* bytes, size_t size)
 {
-    m_encoder->encodeBytes(bytes, size);
+    m_encoder->encodeVariableLengthByteArray(CoreIPC::DataReference(bytes, size));
 }
 
 void EncoderAdapter::encodeBool(bool value)
