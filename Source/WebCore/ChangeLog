@@ -1,3 +1,15 @@
+2011-06-14  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: reload from within inspector window does not work while debugger is paused.
+        https://bugs.webkit.org/show_bug.cgi?id=62631
+
+        Test: inspector/debugger/debugger-reload-on-pause.html
+
+        * loader/FrameLoader.cpp:
+        (WebCore::FrameLoader::continueLoadAfterNavigationPolicy):
+
 2011-06-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kent Tamura.

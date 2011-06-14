@@ -1,0 +1,9 @@
+Tests "reload" from within inspector window while on pause.
+
+Debugger was enabled.
+Set timer for test function.
+Script execution paused.
+Script execution resumed.
+Page reloaded.
+Debugger was disabled.
+
