@@ -3,8 +3,8 @@
     z-index:2147483647;
 }
 
-:root:-webkit-full-screen-document:not(:-webkit-full-screen) {
-    overflow:hidden;
+:root:-webkit-full-screen-document:not(:-webkit-full-screen), :root:-webkit-full-screen-ancestor {
+    overflow:hidden !important;
 }
 
 :-webkit-full-screen-ancestor:not(iframe) {
