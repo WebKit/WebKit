@@ -1,3 +1,16 @@
+2011-06-14  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [CMAKE] Add ENABLE_TOUCH_ICON_LOADING feature.
+        https://bugs.webkit.org/show_bug.cgi?id=62604
+
+        Add feature to enable or disable ENABLE_TOUCH_ICON which supports
+        apple-touch-icon and apple-touch-icon-precomposed in link tag.
+
+        * Source/cmake/OptionsEfl.cmake:
+        * Source/cmakeconfig.h.cmake:
+
 2011-06-13  Joone Hur  <joone.hur@collabora.co.uk>
 
         Reviewed by Martin Robinson.
