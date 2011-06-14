@@ -1,5 +1,14 @@
 2011-06-14  Mario Sanchez Prada  <msanchez@igalia.com>
 
+        Unreviewed, added new baselines for GTK needed after r88266.
+
+        * platform/gtk/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.png: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/styling-css-04-f-expected.txt: Added.
+        * platform/gtk/svg/custom/invalid-dasharray-expected.png: Added.
+        * platform/gtk/svg/custom/invalid-dasharray-expected.txt: Added.
+
+2011-06-14  Mario Sanchez Prada  <msanchez@igalia.com>
+
         Unreviewed, skipping tests crashing in the GTK bots.
 
         * platform/gtk/Skipped: Skipped tests.
