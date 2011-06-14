@@ -1,3 +1,18 @@
+2011-06-14  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Joseph Pecoraro.
+
+        Incorrect #if[n]def for building without DISPATCH_VM_PRESSURE
+        https://bugs.webkit.org/show_bug.cgi?id=62649
+
+        Take 2.
+        The #ifdef DISPATCH_VM_PRESSURE doesn't work.  Combined the code
+        inside this #ifdef with the prior #ifndef DISPATCH_SOURCE_TYPE_VM.
+
+        No functional changes, fixing build issue therefore no tests.
+
+        * platform/mac/MemoryPressureHandlerMac.mm:
+
 2011-06-14  Jeffrey Pfau  <jpfau@apple.com>
 
         Reviewed by David Hyatt.

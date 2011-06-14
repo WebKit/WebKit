@@ -38,9 +38,7 @@
 #ifndef DISPATCH_SOURCE_TYPE_VM
 #define DISPATCH_SOURCE_TYPE_VM (&_dispatch_source_type_vm)
 DISPATCH_EXPORT const struct dispatch_source_type_s _dispatch_source_type_vm;
-#endif
 
-#ifdef DISPATCH_VM_PRESSURE
 enum {
  DISPATCH_VM_PRESSURE = 0x80000000,
 };
