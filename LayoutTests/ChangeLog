@@ -1,3 +1,11 @@
+2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium rebaselines after r88617. The test is now passing on all platforms.
+
+        * platform/chromium-mac-leopard/fast/repaint/selection-after-remove-expected.png: Added.
+        * platform/chromium-mac/fast/repaint/selection-after-remove-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-13  Jessie Berlin  <jberlin@apple.com>
 
         REGRESSION (r88579-r88581): compositing/iframes/invisible-nested-iframe-show.html,
