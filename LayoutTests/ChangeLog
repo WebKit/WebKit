@@ -1,3 +1,9 @@
+2011-06-14  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Chromium] Add expectations for flaky tests.
+
+        * platform/chromium/test_expectations.txt: Recorded flakiness.
+
 2011-06-14  Sreeram Ramachandran  <sreeram@chromium.org>
 
         Reviewed by Pavel Feldman.
