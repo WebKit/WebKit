@@ -1,3 +1,10 @@
+2011-06-13  Alexey Proskuryakov  <ap@apple.com>
+
+        Added an updated e-mail address for Matt Lilek, to make Bugzilla autocomplete
+        and commit queue happy.
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-06-13  Chris Rogers  <crogers@google.com>
 
         Unreviewed build fix.
