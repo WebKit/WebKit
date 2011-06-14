@@ -2,6 +2,22 @@
 
         Reviewed by Sam Weinig.
 
+        Move string ArgumentCoder template specializations out into a .cpp file
+        https://bugs.webkit.org/show_bug.cgi?id=62660
+
+        * GNUmakefile.am:
+        * Platform/CoreIPC/ArgumentCoders.cpp: Added.
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * Platform/CoreIPC/ArgumentCoders.h:
+        * WebKit2.pro:
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+
+2011-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Remove PluginInfoStore::Plugin typedef
         https://bugs.webkit.org/show_bug.cgi?id=62657
 

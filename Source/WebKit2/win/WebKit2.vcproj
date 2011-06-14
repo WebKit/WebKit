@@ -3738,6 +3738,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\Platform\CoreIPC\ArgumentCoders.cpp"
+					>
+				</File>
+				<File
 					RelativePath="..\Platform\CoreIPC\ArgumentCoders.h"
 					>
 				</File>

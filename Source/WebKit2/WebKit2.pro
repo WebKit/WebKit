@@ -303,6 +303,7 @@ HEADERS += \
     $$WEBKIT2_GENERATED_HEADERS
 
 SOURCES += \
+    Platform/CoreIPC/ArgumentCoders.cpp \
     Platform/CoreIPC/ArgumentDecoder.cpp \
     Platform/CoreIPC/ArgumentEncoder.cpp \
     Platform/CoreIPC/Attachment.cpp \

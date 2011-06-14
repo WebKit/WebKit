@@ -76,6 +76,7 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit/gtk/webkit/webkiterror.h \
 	Source/WebKit/gtk/webkit/webkiterror.cpp \
 	Source/WebKit2/Platform/CoreIPC/ArgumentCoder.h \
+	Source/WebKit2/Platform/CoreIPC/ArgumentCoders.cpp \
 	Source/WebKit2/Platform/CoreIPC/ArgumentCoders.h \
 	Source/WebKit2/Platform/CoreIPC/ArgumentDecoder.cpp \
 	Source/WebKit2/Platform/CoreIPC/ArgumentDecoder.h \
