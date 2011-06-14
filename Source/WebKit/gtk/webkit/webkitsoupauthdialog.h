@@ -21,6 +21,7 @@
 #define webkitsoupauthdialog_h
 
 #include <gtk/gtk.h>
+#include <libsoup/soup.h>
 #include <webkit/webkitdefines.h>
 
 G_BEGIN_DECLS

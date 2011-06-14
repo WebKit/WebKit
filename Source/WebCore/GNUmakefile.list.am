@@ -3817,6 +3817,8 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/GOwnPtrGtk.h \
 	Source/WebCore/platform/gtk/GRefPtrGtk.cpp \
 	Source/WebCore/platform/gtk/GRefPtrGtk.h \
+	Source/WebCore/platform/gtk/GtkAuthenticationDialog.cpp \
+	Source/WebCore/platform/gtk/GtkAuthenticationDialog.h \
 	Source/WebCore/platform/gtk/GtkPluginWidget.cpp \
 	Source/WebCore/platform/gtk/GtkPluginWidget.h \
 	Source/WebCore/platform/gtk/GtkPopupMenu.cpp \

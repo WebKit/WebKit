@@ -526,6 +526,8 @@ libwebkit2gtk_@WEBKITGTK_API_MAJOR_VERSION@_@WEBKITGTK_API_MINOR_VERSION@_la_SOU
 	Source/WebKit2/WebProcess/Geolocation/GeolocationPermissionRequestManager.h \
 	Source/WebKit2/WebProcess/Geolocation/WebGeolocationManager.cpp \
 	Source/WebKit2/WebProcess/Geolocation/WebGeolocationManager.h \
+	Source/WebKit2/WebProcess/gtk/WebAuthDialog.cpp \
+	Source/WebKit2/WebProcess/gtk/WebAuthDialog.h \
 	Source/WebKit2/WebProcess/gtk/WebProcessGtk.cpp \
 	Source/WebKit2/WebProcess/gtk/WebProcessMainGtk.cpp \
 	Source/WebKit2/WebProcess/gtk/WebProcessMainGtk.h \

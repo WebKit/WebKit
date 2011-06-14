@@ -27,7 +27,9 @@
 #include "config.h"
 #include "WebProcessMainGtk.h"
 
+#include "WebAuthDialog.h"
 #include "WKBase.h"
+#include <WebCore/GtkAuthenticationDialog.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebKit2/RunLoop.h>
 #include <WebKit2/WebProcess.h>
@@ -56,11 +58,13 @@ WK_EXPORT int WebProcessMainGtk(int argc, char* argv[])
     RunLoop::initializeMainRunLoop();
     SoupSession* session = WebCore::ResourceHandle::defaultSession();
 
-    SoupSessionFeature* sniffer = static_cast<SoupSessionFeature*>(g_object_new(SOUP_TYPE_CONTENT_SNIFFER, NULL));
-    soup_session_add_feature(session, sniffer);
-    g_object_unref(sniffer);
+    GRefPtr<SoupSessionFeature> sniffer = adoptGRef(static_cast<SoupSessionFeature*>(g_object_new(SOUP_TYPE_CONTENT_SNIFFER, NULL)));
+    soup_session_add_feature(session, sniffer.get());
 
     soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
+
+    GRefPtr<SoupSessionFeature> authDialog = adoptGRef(static_cast<SoupSessionFeature*>(g_object_new(WEB_TYPE_AUTH_DIALOG, NULL)));
+    soup_session_add_feature(session, authDialog.get());
 
     int socket = atoi(argv[1]);
     WebProcess::shared().initialize(socket, RunLoop::main());

@@ -217,7 +217,7 @@ webkitgtk_sources += \
 	Source/WebKit/gtk/webkit/webkitnetworkresponseprivate.h \
 	Source/WebKit/gtk/webkit/webkitsecurityorigin.cpp \
 	Source/WebKit/gtk/webkit/webkitsecurityoriginprivate.h \
-	Source/WebKit/gtk/webkit/webkitsoupauthdialog.c \
+	Source/WebKit/gtk/webkit/webkitsoupauthdialog.cpp \
 	Source/WebKit/gtk/webkit/webkitspellchecker.cpp \
 	Source/WebKit/gtk/webkit/webkitspellcheckerenchant.cpp \
 	Source/WebKit/gtk/webkit/webkitspellcheckerenchant.h \
