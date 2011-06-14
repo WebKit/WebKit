@@ -1,5 +1,20 @@
 2011-06-13  Kent Tamura  <tkent@chromium.org>
 
+        [Win] Rebaseline for r88757.
+        https://bugs.webkit.org/show_bug.cgi?id=52920
+
+        * platform/win/media/audio-controls-rendering-expected.txt:
+        * platform/win/media/controls-after-reload-expected.txt:
+        * platform/win/media/controls-strict-expected.txt:
+        * platform/win/media/controls-styling-expected.txt:
+        * platform/win/media/controls-without-preload-expected.txt:
+        * platform/win/media/media-document-audio-repaint-expected.txt:
+        * platform/win/media/video-controls-rendering-expected.txt:
+        * platform/win/media/video-display-toggle-expected.txt:
+        * platform/win/media/video-no-audio-expected.txt:
+
+2011-06-13  Kent Tamura  <tkent@chromium.org>
+
         [GTK] Rebaseline for r88757.
 
         * platform/gtk/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
