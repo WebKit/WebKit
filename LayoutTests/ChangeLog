@@ -1,3 +1,25 @@
+2011-06-14  Wyatt Carss  <wcarss@google.com>
+
+        Reviewed by Ryosuke Niwa.
+
+        dump-as-text conversion: editing/deleting/5300379.html
+        https://bugs.webkit.org/show_bug.cgi?id=62620
+
+        Converted from pixel test to dump-as-text. This tests that delete backward 
+        by word does not hang inside an empty div, and that delete backward by word
+        deletes exactly one word.
+
+        * editing/deleting/5300379-expected.txt: Added.
+        * editing/deleting/5300379.html:
+        * platform/chromium-win/editing/deleting/5300379-expected.txt: Removed.
+        * platform/chromium-win/editing/deleting/5300379-expected.png: Removed.
+        * platform/gtk/editing/deleting/5300379-expected.txt: Removed.
+        * platform/gtk/editing/deleting/5300379-expected.png: Removed.
+        * platform/mac/editing/deleting/5300379-expected.txt: Removed.
+        * platform/mac/editing/deleting/5300379-expected.png: Removed.
+        * platform/qt/editing/deleting/5300379-expected.txt: Removed.
+        * platform/qt/editing/deleting/5300379-expected.png: Removed.
+
 2011-06-14  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Laszlo Gombos.
