@@ -63,6 +63,7 @@
 #include "RenderSlider.h"
 #include "RenderTheme.h"
 #include "ScrollbarThemeQt.h"
+#include "SliderThumbElement.h"
 #include "TimeRanges.h"
 #include "UserAgentStyleSheets.h"
 
@@ -913,17 +914,18 @@ bool RenderThemeQt::paintSliderTrack(RenderObject* o, const PaintInfo& pi,
     ControlPart appearance = initializeCommonQStyleOptions(option, o);
 
     RenderSlider* renderSlider = toRenderSlider(o);
-    IntRect thumbRect = renderSlider->thumbRect();
+    HTMLInputElement* input = renderSlider->node()->toInputElement();
+    IntRect thumbRect = sliderThumbElementOf(input)->getRect();
 
     option.rect = r;
 
     int value;
     if (appearance == SliderVerticalPart) {
         option.maximum = r.height() - thumbRect.height();
-        value = thumbRect.y();
+        value = thumbRect.y() - r.y();
     } else {
         option.maximum = r.width() - thumbRect.width();
-        value = thumbRect.x();
+        value = thumbRect.x() - r.x();
     }
 
     value = QStyle::sliderValueFromPosition(0, option.maximum, value, option.maximum);

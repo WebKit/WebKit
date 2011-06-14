@@ -1,3 +1,11 @@
+2011-06-14  Kent Tamura  <tkent@chromium.org>
+
+        [Qt] Attempt to fix a build break by r88757.
+        https://bugs.webkit.org/show_bug.cgi?id=52920
+
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::paintSliderTrack):
+
 2011-06-13  Kent Tamura  <tkent@chromium.org>
 
         [EFL] The second try to fix a build break.
