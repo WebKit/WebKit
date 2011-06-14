@@ -3529,7 +3529,7 @@ BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-t
 BUGCR79917 WIN LINUX : tables/mozilla_expected_failures/marvin/backgr_position-table-row.html = IMAGE
 BUGCR79917 WIN LINUX : transforms/svg-vs-css.xhtml = IMAGE
 
-BUGWK58924 MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT
+BUGWK58924 MAC : plugins/mouse-click-iframe-to-plugin.html = TIMEOUT PASS
 
 BUGWK60099 DEBUG : fast/dom/Attr/access-after-element-destruction.html = CRASH PASS
 BUGWK60096 DEBUG : fast/css/last-child-pseudo-class.html = TEXT PASS
@@ -3762,7 +3762,7 @@ BUGCR82281 : fast/xpath/xpath-snapshot-result-should-mark-its-nodeset.html = TEX
 
 BUGCR47036 DEBUG : html5lib/runner.html = PASS TIMEOUT
 
-BUGCR82419 : svg/custom/fill-opacity-update.svg = IMAGE
+BUGCR82419 WIN LINUX : svg/custom/fill-opacity-update.svg = IMAGE
 
 // New pixel tests added for bug 58999. These will fail on windows and linux until bug
 // 60342 is fixed and the 58999 fix enabled for skia.
@@ -3923,12 +3923,12 @@ BUGADAMK SNOWLEOPARD DEBUG : svg/wicd/test-rightsizing-a.xhtml = IMAGE+TEXT
 // After r87526, these all have extra scrollbars where the platform/mac expectations do not.
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT IMAGE
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-absolute-size.xhtml = IMAGE+TEXT IMAGE
-BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT
+BUGWK61664 WIN LINUX LEOPARD : svg/zoom/page/zoom-svg-through-object-with-huge-size.xhtml = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-override-size.html = IMAGE+TEXT
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-text.xhtml = IMAGE+TEXT
 BUGWK61664 LINUX : svg/zoom/page/relative-sized-document-scrollbars.svg = IMAGE
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-percentage-size.xhtml = PASS IMAGE+TEXT IMAGE
-BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT
+BUGWK61664 WIN LINUX LEOPARD : svg/zoom/page/zoom-svg-through-object-with-auto-size.html = IMAGE+TEXT
 
 BUGCR84317 DEBUG : svg/wicd/test-scalable-background-image1.xhtml = CRASH
 
@@ -3947,9 +3947,6 @@ BUGWK59782 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgd
 BUGWK59782 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
-
-// Register protocol handler doesn't seem to be enabled on Mac.
-BUGCR84161 MAC : fast/dom/register-protocol-handler.html = TEXT
 
 BUGWK61936 : fast/filesystem/filesystem-no-callback-null-ptr-crash.html = CRASH PASS
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = IMAGE PASS

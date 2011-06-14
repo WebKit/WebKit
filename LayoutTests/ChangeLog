@@ -1,5 +1,12 @@
 2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Chromium Mac test expectation updates; Removed failing test expectations from
+        various tests because they seem to be passing now.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
         Skip test added by r88578 on GTK per bug 62585.
 
         * platform/gtk/Skipped:
