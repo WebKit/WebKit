@@ -148,7 +148,8 @@ WebInspector.ConsoleView.prototype = {
 
             messagesCleared: function()
             {
-                console.clearMessages();
+                if (!WebInspector.settings.preserveConsoleLog)
+                    console.clearMessages();
             },
         }
         InspectorBackend.registerDomainDispatcher("Console", dispatcher);
@@ -327,6 +328,7 @@ WebInspector.ConsoleView.prototype = {
     requestClearMessages: function()
     {
         ConsoleAgent.clearConsoleMessages();
+        this.clearMessages();
     },
 
     clearMessages: function()
@@ -449,12 +451,19 @@ WebInspector.ConsoleView.prototype = {
             return;
         }
 
-        var itemAction = function () {
+        var contextMenu = new WebInspector.ContextMenu();
+
+        var monitoringXHRItemAction = function () {
             WebInspector.settings.monitoringXHREnabled = !WebInspector.settings.monitoringXHREnabled;
             ConsoleAgent.setMonitoringXHREnabled(WebInspector.settings.monitoringXHREnabled);
         }.bind(this);
-        var contextMenu = new WebInspector.ContextMenu();
-        contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "XMLHttpRequest logging" : "XMLHttpRequest Logging"), itemAction, WebInspector.settings.monitoringXHREnabled)
+        contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "XMLHttpRequest logging" : "XMLHttpRequest Logging"), monitoringXHRItemAction, WebInspector.settings.monitoringXHREnabled);
+
+        var preserveLogItemAction = function () {
+            WebInspector.settings.preserveConsoleLog = !WebInspector.settings.preserveConsoleLog;
+        }.bind(this);
+        contextMenu.appendCheckboxItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Preserve log" : "Preserve Log"), preserveLogItemAction, WebInspector.settings.preserveConsoleLog);
+
         contextMenu.appendItem(WebInspector.UIString(WebInspector.useLowerCaseMenuTitles() ? "Clear console" : "Clear Console"), this.requestClearMessages.bind(this));
         contextMenu.show(event);
     },

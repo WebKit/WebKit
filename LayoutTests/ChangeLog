@@ -1,3 +1,15 @@
+2011-06-14  Sreeram Ramachandran  <sreeram@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Allow the console to persist on page refresh or navigation
+        https://bugs.webkit.org/show_bug.cgi?id=53359
+
+        Tests that console messages are preserved upon navigation.
+
+        * inspector/console/console-preserve-log-expected.txt: Added.
+        * inspector/console/console-preserve-log.html: Added.
+
 2011-06-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.

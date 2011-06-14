@@ -982,7 +982,8 @@ WebInspector.reset = function()
     this.resources = {};
     this.highlightDOMNode(0);
 
-    this.console.clearMessages();
+    if (!WebInspector.settings.preserveConsoleLog)
+        this.console.clearMessages();
     this.extensionServer.notifyInspectorReset();
     if (this.workerManager)
         this.workerManager.reset();

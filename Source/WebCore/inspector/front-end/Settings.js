@@ -66,6 +66,7 @@ WebInspector.Settings = function()
     this.installApplicationSetting("lastActivePanel", "elements");
     this.installApplicationSetting("lastViewedScriptFile", "application");
     this.installApplicationSetting("monitoringXHREnabled", false);
+    this.installApplicationSetting("preserveConsoleLog", false);
     this.installApplicationSetting("pauseOnExceptionStateString", WebInspector.ScriptsPanel.PauseOnExceptionsState.DontPauseOnExceptions);
     this.installApplicationSetting("resourcesLargeRows", true);
     this.installApplicationSetting("resourcesSortOptions", {timeOption: "responseTime", sizeOption: "transferSize"});

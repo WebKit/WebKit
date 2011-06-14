@@ -1,3 +1,30 @@
+2011-06-14  Sreeram Ramachandran  <sreeram@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Allow the console to persist on page refresh or navigation
+        https://bugs.webkit.org/show_bug.cgi?id=53359
+
+        Adds a context menu checkbox to preserve the console log across
+        navigations. However, the underlying messages and objects are actually
+        deleted from the backend, so they are not expandable; their continued
+        display in the console frontend is merely cosmetic.
+
+        Test: inspector/console/console-preserve-log.html
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ConsoleView.js:
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher.dispatcher.messagesCleared):
+        (WebInspector.ConsoleView.prototype._registerConsoleDomainDispatcher):
+        (WebInspector.ConsoleView.prototype.requestClearMessages):
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent.monitoringXHRItemAction):
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent.preserveLogItemAction):
+        (WebInspector.ConsoleView.prototype._handleContextMenuEvent):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        * inspector/front-end/inspector.js:
+        (WebInspector.reset):
+
 2011-06-14  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Pavel Feldman.
