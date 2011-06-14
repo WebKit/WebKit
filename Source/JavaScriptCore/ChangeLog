@@ -1,3 +1,12 @@
+2011-06-14  Stephanie Lewis  <slewis@apple.com>
+
+        Rubber stamped by Oliver Hunt.
+
+        <rdar://problem/9511169>
+        Update order files.
+
+        * JavaScriptCore.order:
+
 2011-06-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen.

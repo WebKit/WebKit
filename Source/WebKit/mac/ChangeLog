@@ -1,3 +1,12 @@
+2011-06-14  Stephanie Lewis  <slewis@apple.com>
+
+        Rubber stamped by Oliver Hunt.
+
+        <rdar://problem/9511169>
+        Update order files.
+
+        * WebKit.order:
+
 2011-06-13  Kentaro Hara  <haraken@google.com>
 
         Reviewed by Alexey Proskuryakov.

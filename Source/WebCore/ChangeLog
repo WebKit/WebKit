@@ -1,3 +1,14 @@
+2011-06-14  Stephanie Lewis  <slewis@apple.com>
+
+        Rubber stamped by Oliver Hunt.
+
+        <rdar://problem/9511169>
+        Update order files.
+
+        Build system change, no change in functionality so no new tests.
+
+        * WebCore.order:
+
 2011-06-14  Chris Fleizach  <cfleizach@apple.com>
 
         Reviewed by David Kilzer.
