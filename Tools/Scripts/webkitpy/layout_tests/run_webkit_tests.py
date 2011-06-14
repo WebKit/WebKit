@@ -52,6 +52,8 @@ import port
 _log = logging.getLogger(__name__)
 
 
+WorkerException = manager.WorkerException
+
 def run(port, options, args, regular_output=sys.stderr,
         buildbot_output=sys.stdout):
     """Run the tests.
@@ -459,5 +461,11 @@ if '__main__' == __name__:
     try:
         sys.exit(main())
     except KeyboardInterrupt:
-        # this mirrors what the shell normally does
-        sys.exit(signal.SIGINT + 128)
+        # This mirrors what the shell normally does.
+        INTERRUPTED_EXIT_STATUS = signal.SIGINT + 128
+        sys.exit(INTERRUPTED_EXIT_STATUS)
+    except WorkerException, e:
+        # This is a randomly chosen exit code that can be tested against to
+        # indicate that an unexpected exception occurred.
+        EXCEPTIONAL_EXIT_STATUS = 254
+        sys.exit(EXCEPTIONAL_EXIT_STATUS)

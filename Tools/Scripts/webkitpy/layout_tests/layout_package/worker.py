@@ -32,6 +32,7 @@ import logging
 import sys
 import threading
 import time
+import traceback
 
 from webkitpy.common.system import stack_utils
 from webkitpy.layout_tests.layout_package import manager_worker_broker
@@ -99,19 +100,22 @@ class Worker(manager_worker_broker.AbstractWorker):
                                      % self._name)
         except KeyboardInterrupt:
             exception_msg = ", interrupted"
+            self.post_exception()
         except:
             exception_msg = ", exception raised"
+            self.post_exception()
         finally:
             _log.debug("%s done with message loop%s" % (self._name, exception_msg))
-            if exception_msg:
-                exception_type, exception_value, exception_traceback = sys.exc_info()
-                stack_utils.log_traceback(_log.debug, exception_traceback)
-                # FIXME: Figure out how to send a message with a traceback.
-                self._worker_connection.post_message('exception',
-                    (exception_type, exception_value, None))
             self._worker_connection.post_message('done')
             self.cleanup()
             _log.debug("%s exiting" % self._name)
+
+    def post_exception(self):
+        # Since tracebacks aren't picklable, send the extracted stack instead.
+        exception_type, exception_value, exception_traceback = sys.exc_info()
+        stack_utils.log_traceback(_log.debug, exception_traceback)
+        stack = traceback.extract_tb(exception_traceback)
+        self._worker_connection.post_message('exception', exception_type, exception_value, stack)
 
     def handle_test_list(self, src, list_name, test_list):
         if list_name == "tests_to_http_lock":

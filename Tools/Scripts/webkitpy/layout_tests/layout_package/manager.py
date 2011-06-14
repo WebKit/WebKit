@@ -229,6 +229,11 @@ class TestRunInterruptedException(Exception):
         return self.__class__, (self.reason,)
 
 
+class WorkerException(Exception):
+    """Raised when we receive an unexpected/unknown exception from a worker."""
+    pass
+
+
 class Manager:
     """A class for managing running a series of tests on a series of layout
     test files."""
@@ -687,9 +692,13 @@ class Manager:
             _log.info(e.reason)
             self.cancel_workers()
             interrupted = True
+        except WorkerException:
+            self.cancel_workers()
+            raise
         except:
             # Unexpected exception; don't try to clean up workers.
-            _log.info("Exception raised, exiting")
+            _log.error("Exception raised, exiting")
+            self.cancel_workers()
             raise
 
         thread_timings = [worker_state.stats for worker_state in self._worker_states.values()]
@@ -1309,9 +1318,15 @@ class Manager:
         worker_state = self._worker_states[source]
         worker_state.done = True
 
-    def handle_exception(self, source, exception_info):
-        exception_type, exception_value, exception_traceback = exception_info
-        raise exception_type, exception_value, exception_traceback
+    def handle_exception(self, source, exception_type, exception_value, stack):
+        if exception_type in (KeyboardInterrupt, TestRunInterruptedException):
+            raise exception_type(exception_value)
+        _log.error("%s raised %s('%s'):" % (
+                   source,
+                   exception_value.__class__.__name__,
+                   str(exception_value)))
+        self._log_worker_stack(stack)
+        raise WorkerException(str(exception_value))
 
     def handle_finished_list(self, source, list_name, num_tests, elapsed_time):
         self._group_stats[list_name] = (num_tests, elapsed_time)
@@ -1330,6 +1345,13 @@ class Manager:
         self._all_results.append(result)
         self._update_summary_with_result(self._current_result_summary, result)
 
+    def _log_worker_stack(self, stack):
+        webkitpydir = self._port.path_from_webkit_base('Tools', 'Scripts', 'webkitpy') + self._port._filesystem.sep
+        for filename, line_number, function_name, text in stack:
+            if filename.startswith(webkitpydir):
+                filename = filename.replace(webkitpydir, '')
+            _log.error('  %s:%u (in %s)' % (filename, line_number, function_name))
+            _log.error('    %s' % text)
 
 def read_test_files(fs, files):
     tests = []

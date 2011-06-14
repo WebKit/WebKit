@@ -220,7 +220,7 @@ class MainTest(unittest.TestCase):
         self.assertEqual(batch_tests_run, [])
 
     def test_exception_raised(self):
-        self.assertRaises(ValueError, logging_run,
+        self.assertRaises(run_webkit_tests.WorkerException, logging_run,
             ['failures/expected/exception.html'], tests_included=True)
 
     def test_full_results_html(self):
@@ -319,7 +319,7 @@ class MainTest(unittest.TestCase):
     def test_run_force(self):
         # This raises an exception because we run
         # failures/expected/exception.html, which is normally SKIPped.
-        self.assertRaises(ValueError, logging_run, ['--force'])
+        self.assertRaises(run_webkit_tests.WorkerException, logging_run, ['--force'])
 
     def test_run_part(self):
         # Test that we actually select the right part
