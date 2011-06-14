@@ -1240,7 +1240,6 @@ fast/forms/textarea-scrollbar-height.html
 # Final four tests before Qt buildbot is green
 # https://bugs.webkit.org/show_bug.cgi?id=27914
 fast/css/positioned-overflow-scroll.html
-fast/dom/prototype-inheritance-2.html
 # This port doesn't support detecting slow unload handlers.
 fast/dom/Window/slow-unload-handler.html
 fast/dom/Window/slow-unload-handler-only-frame-is-stopped.html

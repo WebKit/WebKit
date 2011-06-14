@@ -1,3 +1,15 @@
+2011-06-13  Laszlo Gombos  <laszlo.1.gombos@nokia.com>
+
+        Reviewed by Eric Seidel.
+
+        [Qt] Pass prototype-inheritance-2.html LayoutTest
+        https://bugs.webkit.org/show_bug.cgi?id=62224
+
+        Fix the expected result and remove the test from the Skipped list.
+
+        * platform/qt/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/qt/Skipped:
+
 2011-06-13  Kent Tamura  <tkent@chromium.org>
 
         [Mac] Leopard expectation files for r88757.
