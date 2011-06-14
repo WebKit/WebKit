@@ -894,7 +894,7 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
     /**
     * WebKitWebSettings:enable-hyperlink-auditing:
     *
-    * Enable or disable support for <a ping>.
+    * Enable or disable support for &lt;a ping&gt;.
     *
     * Since: 1.2.5
     */
@@ -1315,6 +1315,7 @@ WebKitWebSettings* webkit_web_settings_new()
 
 /**
  * webkit_web_settings_copy:
+ * @web_settings: a #WebKitWebSettings to copy.
  *
  * Copies an existing #WebKitWebSettings instance.
  *
@@ -1396,7 +1397,7 @@ void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* webView, cons
  * webkit_web_settings_get_user_agent:
  * @web_settings: a #WebKitWebSettings
  *
- * Returns the User-Agent string currently used by the web view(s) associated
+ * Returns: the User-Agent string currently used by the web view(s) associated
  * with the @web_settings.
  *
  * Since: 1.1.11

@@ -2914,7 +2914,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /**
     * WebKitWebView:title:
     *
-    * Returns the @web_view's document title.
+    * Returns: the @web_view's document title.
     *
     * Since: 1.1.4
     */
@@ -2928,7 +2928,7 @@ static void webkit_web_view_class_init(WebKitWebViewClass* webViewClass)
     /**
     * WebKitWebView:uri:
     *
-    * Returns the current URI of the contents displayed by the @web_view.
+    * Returns: the current URI of the contents displayed by the @web_view.
     *
     * Since: 1.1.4
     */
@@ -3607,12 +3607,12 @@ WebKitWebInspector* webkit_web_view_get_inspector(WebKitWebView* webView)
  *
  * Obtains the #WebKitViewportAttributes associated with the
  * #WebKitWebView. Every #WebKitWebView object has a
- * #WebKitWebViewporAttributes object attached to it as soon as it is
+ * #WebKitViewportAttributes object attached to it as soon as it is
  * created, so this function will only return NULL if the argument is
  * not a valid #WebKitWebView. Do note however that the viewport
  * attributes object only contains valid information when the current
  * page has a viewport meta tag. You can check whether the data should
- * be used by checking the #WebKitViewport:valid property.
+ * be used by checking the #WebKitViewportAttributes:valid property.
  *
  * Return value: (transfer none): the #WebKitViewportAttributes instance.
  *
@@ -3638,7 +3638,7 @@ static void webkit_web_view_set_window_features(WebKitWebView* webView, WebKitWe
  * webkit_web_view_get_window_features:
  * @webView: a #WebKitWebView
  *
- * Returns the instance of #WebKitWebWindowFeatures held by the given
+ * Returns: the instance of #WebKitWebWindowFeatures held by the given
  * #WebKitWebView.
  *
  * Return value: (transfer none): the #WebKitWebWindowFeatures
