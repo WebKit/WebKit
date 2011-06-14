@@ -1,5 +1,17 @@
 2011-06-14  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 87834.
+
+    2011-06-14  Lucas Forschler  <lforschler@apple.com>
+
+        Build fix after r87831
+
+        * UIProcess/win/WebView.cpp:
+        (WebKit::WebView::enterAcceleratedCompositingMode):
+        (WebKit::WebView::exitAcceleratedCompositingMode):
+        Added some HAVE(WKQCA) guards.
+        2011-06-14  Lucas Forschler  <lforschler@apple.com>
+
     Merged 87831.
 
     2011-06-01  Adam Roben  <aroben@apple.com>
