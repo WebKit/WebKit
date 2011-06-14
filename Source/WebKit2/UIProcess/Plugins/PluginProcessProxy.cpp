@@ -44,7 +44,7 @@
 
 namespace WebKit {
 
-PassOwnPtr<PluginProcessProxy> PluginProcessProxy::create(PluginProcessManager* PluginProcessManager, const PluginInfoStore::Plugin& pluginInfo)
+PassOwnPtr<PluginProcessProxy> PluginProcessProxy::create(PluginProcessManager* PluginProcessManager, const PluginModuleInfo& pluginInfo)
 {
     return adoptPtr(new PluginProcessProxy(PluginProcessManager, pluginInfo));
 }

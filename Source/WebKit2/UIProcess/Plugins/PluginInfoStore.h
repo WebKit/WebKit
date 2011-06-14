@@ -64,12 +64,12 @@ public:
     Plugin findPlugin(String& mimeType, const WebCore::KURL& url);
     
     // Returns the info for the plug-in with the given path.
-    Plugin infoForPluginWithPath(const String& pluginPath);
+    Plugin infoForPluginWithPath(const String& pluginPath) const;
 
 private:
 
-    Plugin findPluginForMIMEType(const String& mimeType);
-    Plugin findPluginForExtension(const String& extension, String& mimeType);
+    PluginInfoStore::Plugin findPluginForMIMEType(const String& mimeType) const;
+    PluginInfoStore::Plugin findPluginForExtension(const String& extension, String& mimeType) const;
 
     void loadPluginsIfNecessary();
     static void loadPlugin(Vector<Plugin>& plugins, const String& pluginPath);

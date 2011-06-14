@@ -45,7 +45,7 @@ PluginProcessManager::PluginProcessManager()
 {
 }
 
-void PluginProcessManager::getPluginProcessConnection(PluginInfoStore& pluginInfoStore, const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
+void PluginProcessManager::getPluginProcessConnection(const PluginInfoStore& pluginInfoStore, const String& pluginPath, PassRefPtr<Messages::WebProcessProxy::GetPluginProcessConnection::DelayedReply> reply)
 {
     ASSERT(!pluginPath.isNull());
 
@@ -62,13 +62,13 @@ void PluginProcessManager::removePluginProcessProxy(PluginProcessProxy* pluginPr
     m_pluginProcesses.remove(vectorIndex);
 }
 
-void PluginProcessManager::getSitesWithData(const PluginInfoStore::Plugin& plugin, WebPluginSiteDataManager* webPluginSiteDataManager, uint64_t callbackID)
+void PluginProcessManager::getSitesWithData(const PluginModuleInfo& plugin, WebPluginSiteDataManager* webPluginSiteDataManager, uint64_t callbackID)
 {
     PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin);
     pluginProcess->getSitesWithData(webPluginSiteDataManager, callbackID);
 }
 
-void PluginProcessManager::clearSiteData(const PluginInfoStore::Plugin& plugin, WebPluginSiteDataManager* webPluginSiteDataManager, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
+void PluginProcessManager::clearSiteData(const PluginModuleInfo& plugin, WebPluginSiteDataManager* webPluginSiteDataManager, const Vector<String>& sites, uint64_t flags, uint64_t maxAgeInSeconds, uint64_t callbackID)
 {
     PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin);
     pluginProcess->clearSiteData(webPluginSiteDataManager, sites, flags, maxAgeInSeconds, callbackID);
@@ -92,7 +92,7 @@ PluginProcessProxy* PluginProcessManager::pluginProcessWithPath(const String& pl
     return 0;
 }
 
-PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(const PluginInfoStore::Plugin& plugin)
+PluginProcessProxy* PluginProcessManager::getOrCreatePluginProcess(const PluginModuleInfo& plugin)
 {
     if (PluginProcessProxy* pluginProcess = pluginProcessWithPath(plugin.path))
         return pluginProcess;

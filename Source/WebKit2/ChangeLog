@@ -1,5 +1,32 @@
 2011-06-14  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Dan Bernstein.
+
+        Start replacing PluginInfoStore::Plugin with PluginModuleInfo
+        https://bugs.webkit.org/show_bug.cgi?id=62651
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::plugins):
+        (WebKit::PluginInfoStore::findPluginForMIMEType):
+        (WebKit::PluginInfoStore::findPluginForExtension):
+        (WebKit::PluginInfoStore::infoForPluginWithPath):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::getPluginProcessConnection):
+        (WebKit::PluginProcessManager::getSitesWithData):
+        (WebKit::PluginProcessManager::clearSiteData):
+        (WebKit::PluginProcessManager::getOrCreatePluginProcess):
+        * UIProcess/Plugins/PluginProcessManager.h:
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::create):
+        * UIProcess/Plugins/PluginProcessProxy.h:
+        (WebKit::PluginProcessProxy::pluginInfo):
+        * UIProcess/Plugins/mac/PluginProcessProxyMac.mm:
+        (WebKit::PluginProcessProxy::pluginNeedsExecutableHeap):
+        (WebKit::PluginProcessProxy::createPropertyListFile):
+
+2011-06-14  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Add PluginModuleInfo header and prepare for renaming of PluginInfoStore::Plugin to PluginModuleInfo

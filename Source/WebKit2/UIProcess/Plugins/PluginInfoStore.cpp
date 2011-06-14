@@ -26,6 +26,7 @@
 #include "config.h"
 #include "PluginInfoStore.h"
 
+#include "PluginModuleInfo.h"
 #include <WebCore/KURL.h>
 #include <WebCore/MIMETypeRegistry.h>
 #include <algorithm>
@@ -110,16 +111,16 @@ void PluginInfoStore::loadPlugin(Vector<Plugin>& plugins, const String& pluginPa
     plugins.append(plugin);
 }
 
-Vector<PluginInfoStore::Plugin> PluginInfoStore::plugins()
+Vector<PluginModuleInfo> PluginInfoStore::plugins()
 {
     loadPluginsIfNecessary();
 
-    Vector<Plugin> plugins(m_plugins);
+    Vector<PluginModuleInfo> plugins(m_plugins);
 
     return plugins;
 }
 
-PluginInfoStore::Plugin PluginInfoStore::findPluginForMIMEType(const String& mimeType)
+PluginModuleInfo PluginInfoStore::findPluginForMIMEType(const String& mimeType) const
 {
     ASSERT(!mimeType.isNull());
     
@@ -136,7 +137,7 @@ PluginInfoStore::Plugin PluginInfoStore::findPluginForMIMEType(const String& mim
     return Plugin();
 }
 
-PluginInfoStore::Plugin PluginInfoStore::findPluginForExtension(const String& extension, String& mimeType)
+PluginModuleInfo PluginInfoStore::findPluginForExtension(const String& extension, String& mimeType) const
 {
     ASSERT(!extension.isNull());
     
@@ -211,7 +212,7 @@ PluginInfoStore::Plugin PluginInfoStore::findPlugin(String& mimeType, const KURL
     return Plugin();
 }
 
-PluginInfoStore::Plugin PluginInfoStore::infoForPluginWithPath(const String& pluginPath)
+PluginInfoStore::Plugin PluginInfoStore::infoForPluginWithPath(const String& pluginPath) const
 {
     for (size_t i = 0; i < m_plugins.size(); ++i) {
         if (m_plugins[i].path == pluginPath)

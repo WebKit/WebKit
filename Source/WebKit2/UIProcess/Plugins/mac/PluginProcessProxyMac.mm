@@ -53,7 +53,7 @@ using namespace WebCore;
 
 namespace WebKit {
     
-bool PluginProcessProxy::pluginNeedsExecutableHeap(const PluginInfoStore::Plugin& pluginInfo)
+bool PluginProcessProxy::pluginNeedsExecutableHeap(const PluginModuleInfo& pluginInfo)
 {
     static bool forceNonexecutableHeapForPlugins = [[NSUserDefaults standardUserDefaults] boolForKey:@"ForceNonexecutableHeapForPlugins"];
     if (forceNonexecutableHeapForPlugins)
@@ -65,7 +65,7 @@ bool PluginProcessProxy::pluginNeedsExecutableHeap(const PluginInfoStore::Plugin
     return true;
 }
 
-bool PluginProcessProxy::createPropertyListFile(const PluginInfoStore::Plugin& plugin)
+bool PluginProcessProxy::createPropertyListFile(const PluginModuleInfo& plugin)
 {
     NSBundle *webKit2Bundle = [NSBundle bundleWithIdentifier:@"com.apple.WebKit2"];
     NSString *frameworksPath = [[webKit2Bundle bundlePath] stringByDeletingLastPathComponent];

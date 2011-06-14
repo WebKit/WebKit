@@ -29,7 +29,7 @@
 #if ENABLE(PLUGIN_PROCESS)
 
 #include "Connection.h"
-#include "PluginInfoStore.h"
+#include "PluginModuleInfo.h"
 #include "ProcessLauncher.h"
 #include "WebProcessProxyMessages.h"
 #include <wtf/Deque.h>
@@ -54,10 +54,10 @@ struct PluginProcessCreationParameters;
 
 class PluginProcessProxy : CoreIPC::Connection::Client, ProcessLauncher::Client {
 public:
-    static PassOwnPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginInfoStore::Plugin&);
+    static PassOwnPtr<PluginProcessProxy> create(PluginProcessManager*, const PluginModuleInfo&);
     ~PluginProcessProxy();
 
-    const PluginInfoStore::Plugin& pluginInfo() const { return m_pluginInfo; }
+    const PluginModuleInfo& pluginInfo() const { return m_pluginInfo; }
 
     // Asks the plug-in process to create a new connection to a web process. The connection identifier will be 
     // encoded in the given argument encoder and sent back to the connection of the given web process.
@@ -74,14 +74,14 @@ public:
 
 #if PLATFORM(MAC)
     // Returns whether the plug-in needs the heap to be marked executable.
-    static bool pluginNeedsExecutableHeap(const PluginInfoStore::Plugin&);
+    static bool pluginNeedsExecutableHeap(const PluginModuleInfo&);
 
     // Creates a property list in ~/Library/Preferences that contains all the MIME types supported by the plug-in.
-    static bool createPropertyListFile(const PluginInfoStore::Plugin&);
+    static bool createPropertyListFile(const PluginModuleInfo&);
 #endif
 
 private:
-    PluginProcessProxy(PluginProcessManager*, const PluginInfoStore::Plugin&);
+    PluginProcessProxy(PluginProcessManager*, const PluginModuleInfo&);
 
     void pluginProcessCrashedOrFailedToLaunch();
 
@@ -124,7 +124,7 @@ private:
     PluginProcessManager* m_pluginProcessManager;
     
     // Information about the plug-in.
-    PluginInfoStore::Plugin m_pluginInfo;
+    PluginModuleInfo m_pluginInfo;
 
     // The connection to the plug-in host process.
     RefPtr<CoreIPC::Connection> m_connection;
