@@ -1,5 +1,17 @@
 2011-06-13  Kent Tamura  <tkent@chromium.org>
 
+        [Mac] Leopard expectation files for r88757.
+
+        * platform/mac-leopard/media/controls-after-reload-expected.txt:
+        * platform/mac-leopard/media/controls-strict-expected.txt:
+        * platform/mac-leopard/media/controls-styling-expected.txt:
+        * platform/mac-leopard/media/controls-without-preload-expected.txt:
+        * platform/mac-leopard/media/video-controls-rendering-expected.txt:
+        * platform/mac-leopard/media/video-display-toggle-expected.txt:
+        * platform/mac-leopard/media/video-no-audio-expected.txt:
+
+2011-06-13  Kent Tamura  <tkent@chromium.org>
+
         [Mac] Rebaseline for r88757.
 
         * media/audio-repaint-expected.txt:
