@@ -116,29 +116,35 @@ void WebNotification::detachPresenter()
 
 void WebNotification::dispatchDisplayEvent()
 {
-    RefPtr<Event> event = Event::create("display", false, true);
-    m_private->dispatchEvent(event.release());
+    dispatchEvent("display");
 }
 
 void WebNotification::dispatchErrorEvent(const WebKit::WebString& /* errorMessage */)
 {
     // FIXME: errorMessage not supported by WebCore yet
-    RefPtr<Event> event = Event::create(eventNames().errorEvent, false, true);
-    m_private->dispatchEvent(event.release());
+    dispatchEvent(eventNames().errorEvent);
 }
 
 void WebNotification::dispatchCloseEvent(bool /* byUser */)
 {
     // FIXME: byUser flag not supported by WebCore yet
-    RefPtr<Event> event = Event::create(eventNames().closeEvent, false, true);
-    m_private->dispatchEvent(event.release());
+    dispatchEvent(eventNames().closeEvent);
 }
 
 void WebNotification::dispatchClickEvent()
 {
     // Make sure clicks on notifications are treated as user gestures.
     UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
-    RefPtr<Event> event = Event::create(eventNames().clickEvent, false, true);
+    dispatchEvent(eventNames().clickEvent);
+}
+
+void WebNotification::dispatchEvent(const WTF::AtomicString& type)
+{
+    // Do not dispatch if the context is gone.
+    if (!m_private->scriptExecutionContext())
+        return;
+
+    RefPtr<Event> event = Event::create(type, false, true);
     m_private->dispatchEvent(event.release());
 }
 

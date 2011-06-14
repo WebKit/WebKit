@@ -39,6 +39,10 @@ namespace WebCore { class Notification; }
 namespace WTF { template <typename T> class PassRefPtr; }
 #endif
 
+namespace WTF {
+class AtomicString;
+}
+
 namespace WebKit {
 
 class WebNotificationPrivate;
@@ -104,6 +108,7 @@ public:
 
 private:
     void assign(WebNotificationPrivate*);
+    void dispatchEvent(const WTF::AtomicString& type);
     WebNotificationPrivate* m_private;
 };
 
