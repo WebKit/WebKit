@@ -167,11 +167,12 @@ void PluginProcessProxy::didClose(CoreIPC::Connection*)
         exitFullscreen();
 #endif
 
-    pluginProcessCrashedOrFailedToLaunch();
-
     const Vector<WebContext*>& contexts = WebContext::allContexts();
     for (size_t i = 0; i < contexts.size(); ++i)
         contexts[i]->sendToAllProcesses(Messages::WebProcess::PluginProcessCrashed(m_pluginInfo.path));
+
+    // This will cause us to be deleted.
+    pluginProcessCrashedOrFailedToLaunch();
 }
 
 void PluginProcessProxy::didReceiveInvalidMessage(CoreIPC::Connection*, CoreIPC::MessageID)
