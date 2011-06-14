@@ -35,6 +35,7 @@
 namespace CoreIPC {
 
 class ArgumentEncoder;
+class DataReference;
 
 class ArgumentEncoder {
 public:
@@ -42,7 +43,7 @@ public:
     ~ArgumentEncoder();
 
     void encodeFixedLengthData(const uint8_t*, size_t, unsigned alignment);
-    void encodeVariableLengthData(const uint8_t*, size_t, unsigned alignment);
+    void encodeVariableLengthByteArray(const DataReference&);
 
     void encodeBytes(const uint8_t*, size_t);
 

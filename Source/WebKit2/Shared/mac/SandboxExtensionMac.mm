@@ -76,7 +76,7 @@ bool SandboxExtension::Handle::decode(CoreIPC::ArgumentDecoder* decoder, Handle&
     ASSERT(!result.m_sandboxExtension);
 
     CoreIPC::DataReference dataReference;
-    if (!decoder->decodeBytes(dataReference))
+    if (!decoder->decodeVariableLengthByteArray(dataReference))
         return false;
 
     if (dataReference.isEmpty())

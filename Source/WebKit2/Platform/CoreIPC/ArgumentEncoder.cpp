@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ArgumentEncoder.h"
 
+#include "DataReference.h"
 #include <algorithm>
 #include <stdio.h>
 
@@ -87,17 +88,18 @@ uint8_t* ArgumentEncoder::grow(unsigned alignment, size_t size)
 
 void ArgumentEncoder::encodeFixedLengthData(const uint8_t* data, size_t size, unsigned alignment)
 {
+    ASSERT(!(reinterpret_cast<uintptr_t>(data) % alignment));
+
     uint8_t* buffer = grow(alignment, size);
     memcpy(buffer, data, size);
 }
 
-void ArgumentEncoder::encodeVariableLengthData(const uint8_t* data, size_t size, unsigned alignment)
+void ArgumentEncoder::encodeVariableLengthByteArray(const DataReference& dataReference)
 {
     // Encode the size.
-    encodeUInt64(static_cast<uint64_t>(size));
+    encodeUInt64(static_cast<uint64_t>(dataReference.size()));
 
-    // Encode the data.
-    encodeFixedLengthData(data, size, alignment);
+    encodeFixedLengthData(dataReference.data(), dataReference.size(), 1);
 }
 
 void ArgumentEncoder::encodeBytes(const uint8_t* bytes, size_t size)

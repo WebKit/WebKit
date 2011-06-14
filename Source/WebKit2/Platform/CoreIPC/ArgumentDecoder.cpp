@@ -129,7 +129,7 @@ bool ArgumentDecoder::decodeBytes(Vector<uint8_t>& buffer)
     return true;
 }
 
-bool ArgumentDecoder::decodeBytes(DataReference& dataReference)
+bool ArgumentDecoder::decodeVariableLengthByteArray(DataReference& dataReference)
 {
     uint64_t size;
     if (!decodeUInt64(size))

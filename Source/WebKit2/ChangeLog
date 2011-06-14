@@ -2,6 +2,28 @@
 
         Reviewed by Sam Weinig.
 
+        Add encodeVariableLengthByteArray and decodeVariableLengthByteArray
+        https://bugs.webkit.org/show_bug.cgi?id=62674
+
+        Rename the ArgumentDecoder::decodeBytes overload that takes a DataReference to
+        decodeVariableLengthByteArray, to match the added encodeVariableLengthByteArray.
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::decodeVariableLengthByteArray):
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::ArgumentEncoder::encodeFixedLengthData):
+        (CoreIPC::ArgumentEncoder::encodeVariableLengthByteArray):
+        * Platform/CoreIPC/ArgumentEncoder.h:
+        * Platform/CoreIPC/DataReference.cpp:
+        (CoreIPC::DataReference::decode):
+        * Shared/mac/SandboxExtensionMac.mm:
+        (WebKit::SandboxExtension::Handle::decode):
+
+2011-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Add functions for converting between DataReferences and vectors
         https://bugs.webkit.org/show_bug.cgi?id=62671
 
