@@ -1,3 +1,10 @@
+2011-06-14  Kent Tamura  <tkent@chromium.org>
+
+        [Mac-WK2] Rebaseline for r88757.
+        https://bugs.webkit.org/show_bug.cgi?id=52920
+
+        * platform/mac-wk2/media/controls-without-preload-expected.txt:
+
 2011-06-13  Kent Tamura  <tkent@chromium.org>
 
         [Win] More rebaseline for r88757.
