@@ -303,7 +303,7 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
     // treatment, move them to special functions.
     if (type == SliderVertical || type == SliderHorizontal) {
         RenderSlider* renderSlider = toRenderSlider(object);
-        HTMLInputElement* input = renderSlider->toInputElement();
+        HTMLInputElement* input = renderSlider->node()->toInputElement();
         Edje_Message_Float_Set* msg;
         double valueRange = input->maximum() - input->minimum();
 
