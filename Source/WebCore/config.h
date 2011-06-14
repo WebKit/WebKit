@@ -109,41 +109,6 @@
 
 #endif /* OS(WINDOWS) */
 
-#if PLATFORM(ANDROID)
-// Android uses a single set of include directories when building WebKit and
-// JavaScriptCore. Since WebCore/ is included before JavaScriptCore/, Android
-// includes JavaScriptCore/config.h explicitly here to make sure it gets picked
-// up.
-#include <JavaScriptCore/config.h>
-
-#define WEBCORE_NAVIGATOR_VENDOR "Google Inc."
-// This must be defined before we include FastMalloc.h, below.
-#define USE_SYSTEM_MALLOC 1
-#define LOG_DISABLED 1
-#include <wtf/Assertions.h>
-// Central place to set which optional features Android uses.
-#define ENABLE_CHANNEL_MESSAGING 1
-#define ENABLE_DOM_STORAGE 1
-#undef ENABLE_FTPDIR  // Enabled by default in Platform.h
-#define ENABLE_FTPDIR 0
-#ifndef ENABLE_SVG
-#define ENABLE_SVG 0
-#endif
-#define ENABLE_VIDEO 1
-#define ENABLE_WORKERS 1
-#define ENABLE_XBL 0
-#define ENABLE_XHTMLMP 0
-#define ENABLE_XPATH 0
-#define ENABLE_XSLT 0
-#define ENABLE_ARCHIVE 0
-#define ENABLE_OFFLINE_WEB_APPLICATIONS 1
-#undef ENABLE_GEOLOCATION  // Disabled by default in Platform.h
-#define ENABLE_GEOLOCATION 1
-#undef ENABLE_INSPECTOR  // Enabled by default in Platform.h
-#define ENABLE_INSPECTOR 0
-#define ENABLE_EVENT_SOURCE 0
-#endif /* PLATFORM(ANDROID) */
-
 #ifdef __cplusplus
 
 // These undefs match up with defines in WebCorePrefix.h for Mac OS X.

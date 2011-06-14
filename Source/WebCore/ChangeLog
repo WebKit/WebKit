@@ -1,3 +1,14 @@
+2011-06-13  Steve Block  <steveblock@google.com>
+
+        Reviewed by Darin Adler.
+
+        Remove Android defines from WebCore/config.h
+        https://bugs.webkit.org/show_bug.cgi?id=62602
+
+        No new tests, build cleanup only.
+
+        * config.h:
+
 2011-06-13  Adam Barth  <abarth@webkit.org>
 
         Reviewed by David Levin.
