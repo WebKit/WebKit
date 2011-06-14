@@ -1,3 +1,15 @@
+2011-06-14  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
+
+        Unreviewed: unskip test rebasedlined by r88772
+
+        [Qt] Rebaseline http/tests/misc/slow-loading-image-in-pattern.html after r69386 and r83871
+        http://trac.webkit.org/changeset/88772
+
+        The test was rebaselined but the committer forgot to remove it from
+        the Skip list.
+
+        * platform/qt/Skipped: unskip test
+
 2011-06-14  Yael Aharon  <yael.aharon@nokia.com>
 
         Unreviewed.
