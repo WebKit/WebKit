@@ -132,8 +132,6 @@ static void executeScript(const PluginObject* obj, const char* script);
 
 NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc, char *argn[], char *argv[], NPSavedData *saved)
 {
-    bool forceCarbon = false;
-
 #ifdef XP_MACOSX
     NPEventModel eventModel;
     
@@ -165,7 +163,7 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
     if (browser->getvalue(instance, NPNVsupportsCocoaBool, &supportsCocoa) != NPERR_NO_ERROR)
         supportsCocoa = false;
 
-    if (supportsCocoa && !forceCarbon) {
+    if (supportsCocoa) {
         eventModel = NPEventModelCocoa;
 #ifndef NP_NO_CARBON
     } else if (supportsCarbon) {
@@ -214,8 +212,6 @@ NPError NPP_New(NPMIMEType pluginType, NPP instance, uint16_t mode, int16_t argc
             obj->logSetWindow = TRUE;
         else if (strcasecmp(argn[i], "testnpruntime") == 0)
             testNPRuntime(instance);
-        else if (strcasecmp(argn[i], "forcecarbon") == 0)
-            forceCarbon = true;
         else if (strcasecmp(argn[i], "logSrc") == 0) {
             for (int i = 0; i < argc; i++)
                 if (strcasecmp(argn[i], "src") == 0)

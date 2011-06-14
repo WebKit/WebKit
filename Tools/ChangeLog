@@ -1,3 +1,13 @@
+2011-06-14  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Remove dead code in DumpRenderTree/TestNetscapePlugIn/main.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=62630
+
+        * DumpRenderTree/TestNetscapePlugIn/main.cpp:
+        (NPP_New): remove dead variable 'forceCarbon'
+
 2011-06-13  Hayato Ito  <hayato@chromium.org>
 
         Reviewed by Ojan Vafai.
