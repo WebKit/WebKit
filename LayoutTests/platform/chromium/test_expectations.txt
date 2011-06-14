@@ -1223,7 +1223,6 @@ BUGCR23496 MAC : fast/forms/formmove.html = IMAGE
 // Recently became crashy. See http://crbug.com/24721
 BUGCR23496 MAC : fast/forms/formmove2.html = IMAGE
 BUGCR23496 MAC : fast/forms/indeterminate.html = IMAGE
-BUGCR23496 MAC : fast/forms/input-appearance-height.html = IMAGE+TEXT
 BUGCR23496 MAC : fast/forms/input-value.html = IMAGE+TEXT
 BUGCR23496 MAC : fast/forms/radio-attr-order.html = IMAGE
 BUGCR23496 MAC : fast/forms/radio-nested-labels.html = IMAGE
@@ -1249,9 +1248,6 @@ BUGCR26253 SLOW WIN RELEASE : http/tests/navigation/reload-subframe-object.html 
 BUGCR9798 WIN RELEASE : http/tests/navigation/no-referrer-reset.html = TIMEOUT PASS
 // Regressions from r67349? 
 BUGCR10364 MAC : http/tests/navigation/reload-subframe-object.html = FAIL
-
-// Big button widgets are broken
-BUGCR23495 MAC : fast/forms/box-shadow-override.html = IMAGE+TEXT
 
 // Text declared as "monospace" with no size is bigger in Chromium
 BUGCR23494 MAC : css1/font_properties/font_family.html = IMAGE
@@ -3948,29 +3944,20 @@ BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
 BUGWK61936 : fast/filesystem/filesystem-no-callback-null-ptr-crash.html = CRASH PASS
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = IMAGE PASS
 
-// Need rebaseline for all of rendering tests with <input type=range> including media controls.
-BUGWK52920 : fast/dom/HTMLInputElement/input-slider-update.html = FAIL
-BUGWK52920 LINUX WIN : fast/forms/box-shadow-override.html = FAIL
-BUGWK52920 LINUX WIN : fast/forms/input-appearance-height.html = FAIL
-BUGWK52920 : fast/forms/input-appearance-range.html = FAIL
-BUGWK52920 : fast/forms/range-thumb-height-percentage.html = FAIL
+// REGRESSION(r88757): There is a problem on event handling.
 BUGWK52920 : fast/forms/slider-delete-while-dragging-thumb.html = FAIL
 BUGWK52920 : fast/forms/slider-mouse-events.html = FAIL
 BUGWK52920 : fast/forms/slider-onchange-event.html = FAIL
-BUGWK52920 : fast/forms/slider-padding.html = FAIL
-BUGWK52920 : fast/forms/slider-thumb-shared-style.html = FAIL
-BUGWK52920 : fast/forms/slider-thumb-stylability.html = FAIL
-BUGWK52920 : fast/forms/thumbslider-no-parent-slider.html = FAIL
 BUGWK52920 : fast/layers/video-layer.html = FAIL
-BUGWK52920 : fast/multicol/client-rects.html = FAIL
-BUGWK52920 : fast/repaint/slider-thumb-drag-release.html = FAIL
+// REGRESSION(r88757): The position of the time slider thumb is wrong.
 BUGWK52920 : media/audio-controls-rendering.html = FAIL
 BUGWK52920 : media/audio-repaint.html = FAIL
 BUGWK52920 : media/controls-after-reload.html = FAIL
 BUGWK52920 : media/controls-strict.html = FAIL
 BUGWK52920 : media/controls-styling.html = FAIL
 BUGWK52920 : media/controls-without-preload.html = FAIL
-BUGWK52920 : media/video-controls-rendering.html = FAIL
+BUGWK52920 MAC WIN : media/video-controls-rendering.html = FAIL
+BUGWK52920 LINUX CPU : media/video-controls-rendering.html = FAIL
 BUGWK52920 : media/video-display-toggle.html = FAIL
 BUGWK52920 : media/video-empty-source.html = FAIL
 BUGWK52920 : media/video-no-audio.html = FAIL

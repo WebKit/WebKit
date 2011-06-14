@@ -1,3 +1,41 @@
+2011-06-14  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update for r88757.
+        https://bugs.webkit.org/show_bug.cgi?id=52920
+
+        * platform/chromium-linux/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-linux/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-linux/fast/forms/input-appearance-range-expected.png: Added.
+        * platform/chromium-linux/fast/forms/slider-thumb-stylability-expected.png: Removed.
+        * platform/chromium-linux/fast/forms/thumbslider-no-parent-slider-expected.png:
+        * platform/chromium-linux/fast/multicol/client-rects-expected.txt: Removed.
+        * platform/chromium-mac-leopard/fast/forms/box-shadow-override-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-height-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/forms/input-appearance-range-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/forms/slider-thumb-stylability-expected.png: Added.
+        * platform/chromium-mac-leopard/fast/forms/thumbslider-no-parent-slider-expected.png:
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.png: Added.
+        * platform/chromium-mac/fast/forms/box-shadow-override-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/input-appearance-height-expected.png: Added.
+        * platform/chromium-mac/fast/forms/input-appearance-height-expected.txt: Added.
+        * platform/chromium-mac/fast/forms/input-appearance-range-expected.png: Added.
+        * platform/chromium-mac/fast/forms/thumbslider-no-parent-slider-expected.png:
+        * platform/chromium-win/fast/dom/HTMLInputElement/input-slider-update-expected.txt:
+        * platform/chromium-win/fast/forms/box-shadow-override-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-height-expected.txt:
+        * platform/chromium-win/fast/forms/input-appearance-range-expected.png: Added.
+        * platform/chromium-win/fast/forms/input-appearance-range-expected.txt: Added.
+        * platform/chromium-win/fast/forms/range-thumb-height-percentage-expected.txt:
+        * platform/chromium-win/fast/forms/slider-padding-expected.txt:
+        * platform/chromium-win/fast/forms/slider-thumb-shared-style-expected.txt:
+        * platform/chromium-win/fast/forms/slider-thumb-stylability-expected.png:
+        * platform/chromium-win/fast/forms/slider-thumb-stylability-expected.txt: Removed.
+        * platform/chromium-win/fast/forms/thumbslider-no-parent-slider-expected.png:
+        * platform/chromium-win/fast/forms/thumbslider-no-parent-slider-expected.txt: Copied from LayoutTests/platform/chromium-win/fast/dom/HTMLInputElement/input-slider-update-expected.txt.
+        * platform/chromium-win/fast/multicol/client-rects-expected.txt:
+        * platform/chromium-win/fast/repaint/slider-thumb-drag-release-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-14  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skipping test failing in the GTK bots.
