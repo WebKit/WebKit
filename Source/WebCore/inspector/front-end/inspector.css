@@ -97,7 +97,7 @@ body.detached.platform-mac-snowleopard:not(.remote) #toolbar {
 body.attached #toolbar {
     height: 34px;
     border-top: 1px solid rgb(100, 100, 100);
-    cursor: row-resize;
+    cursor: ns-resize;
     padding-left: 0;
 }
 
@@ -445,7 +445,7 @@ body.drawer-visible #main-status-bar {
     background-image: url(Images/statusbarResizerVertical.png), url(Images/statusbarBackground.png);
     background-repeat: no-repeat, repeat-x;
     background-position: right center, center;
-    cursor: row-resize;
+    cursor: ns-resize;
 }
 
 body.drawer-visible #main-status-bar * {
@@ -2687,7 +2687,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     bottom: 0;
     right: 225px;
     width: 16px;
-    cursor: col-resize;
+    cursor: ew-resize;
     background-image: url(Images/statusbarResizerHorizontal.png);
     background-repeat: no-repeat;
     background-position: center;
@@ -3220,7 +3220,7 @@ button.enable-toggle-status-bar-item.toggled-on .glyph {
     bottom: 0;
     width: 5px;
     z-index: 500;
-    cursor: col-resize;
+    cursor: ew-resize;
 }
 
 .resources .sidebar-resizer-vertical {
@@ -3728,7 +3728,7 @@ body.inactive li.selected .bubble.search-matches {
     margin-right: -2px;
     background-color: rgb(153, 153, 153);
     z-index: 500;
-    cursor: col-resize;
+    cursor: ew-resize;
     -webkit-border-radius: 2px;
     -webkit-box-shadow: white 1px 0 0, white -1px 0 0, white 0 1px 0, white 0 -1px 0;
 }

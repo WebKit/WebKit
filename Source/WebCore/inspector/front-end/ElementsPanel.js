@@ -1098,7 +1098,7 @@ WebInspector.ElementsPanel.prototype = {
 
     rightSidebarResizerDragStart: function(event)
     {
-        WebInspector.elementDragStart(this.sidebarElement, this.rightSidebarResizerDrag.bind(this), this.rightSidebarResizerDragEnd.bind(this), event, "col-resize");
+        WebInspector.elementDragStart(this.sidebarElement, this.rightSidebarResizerDrag.bind(this), this.rightSidebarResizerDragEnd.bind(this), event, "ew-resize");
     },
 
     rightSidebarResizerDragEnd: function(event)

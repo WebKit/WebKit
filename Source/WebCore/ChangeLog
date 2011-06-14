@@ -159,6 +159,29 @@
 
         Reviewed by Yury Semikhatsky.
 
+        Web Inspector: use ew-resize instead of col-resize for non-columns.
+        https://bugs.webkit.org/show_bug.cgi?id=62640
+
+        * inspector/front-end/ElementsPanel.js:
+        (WebInspector.ElementsPanel.prototype.rightSidebarResizerDragStart):
+        * inspector/front-end/Panel.js:
+        (WebInspector.Panel.prototype._startSidebarDragging):
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._startSidebarResizeDrag):
+        * inspector/front-end/TimelineOverviewPane.js:
+        (WebInspector.TimelineOverviewPane.prototype._resizeWindow):
+        (WebInspector.TimelineOverviewPane.prototype._dragWindow):
+        * inspector/front-end/inspector.css:
+        (body.attached #toolbar):
+        (body.drawer-visible #main-status-bar):
+        (#scripts-sidebar-resizer-widget):
+        (.sidebar-resizer-vertical):
+        (.timeline-window-resizer):
+
+2011-06-14  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
         Web Inspector: reload from within inspector window does not work while debugger is paused.
         https://bugs.webkit.org/show_bug.cgi?id=62631
 

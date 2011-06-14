@@ -221,7 +221,7 @@ WebInspector.TimelineOverviewPane.prototype = {
 
     _resizeWindow: function(resizeElement, event)
     {
-        WebInspector.elementDragStart(resizeElement, this._windowResizeDragging.bind(this, resizeElement), this._endWindowDragging.bind(this), event, "col-resize");
+        WebInspector.elementDragStart(resizeElement, this._windowResizeDragging.bind(this, resizeElement), this._endWindowDragging.bind(this), event, "ew-resize");
     },
 
     _windowResizeDragging: function(resizeElement, event)
@@ -244,7 +244,7 @@ WebInspector.TimelineOverviewPane.prototype = {
             } else if (node === this._overviewGrid.element) {
                 var position = event.pageX - this._overviewGrid.element.offsetLeft;
                 this._overviewWindowSelector = new WebInspector.TimelinePanel.WindowSelector(this._overviewGrid.element, position, event);
-                WebInspector.elementDragStart(null, this._windowSelectorDragging.bind(this), this._endWindowSelectorDragging.bind(this), event, "col-resize");
+                WebInspector.elementDragStart(null, this._windowSelectorDragging.bind(this), this._endWindowSelectorDragging.bind(this), event, "ew-resize");
                 break;
             } else if (node === this._leftResizeElement || node === this._rightResizeElement) {
                 this._resizeWindow(node, event);

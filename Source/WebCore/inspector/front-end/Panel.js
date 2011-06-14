@@ -316,7 +316,7 @@ WebInspector.Panel.prototype = {
 
     _startSidebarDragging: function(event)
     {
-        WebInspector.elementDragStart(this.sidebarResizeElement, this._sidebarDragging.bind(this), this._endSidebarDragging.bind(this), event, "col-resize");
+        WebInspector.elementDragStart(this.sidebarResizeElement, this._sidebarDragging.bind(this), this._endSidebarDragging.bind(this), event, "ew-resize");
     },
 
     _sidebarDragging: function(event)
