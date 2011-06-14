@@ -68,6 +68,11 @@ QT_BEGIN_NAMESPACE
 class QPainter;
 QT_END_NAMESPACE
 #endif
+#if PLATFORM(QT) && USE(ACCELERATED_COMPOSITING) && ENABLE(NETSCAPE_PLUGIN_API) && (defined(XP_UNIX) || OS(SYMBIAN))
+#ifndef WTF_USE_ACCELERATED_COMPOSITING_PLUGIN_LAYER
+#define WTF_USE_ACCELERATED_COMPOSITING_PLUGIN_LAYER 1
+#endif
+#endif
 #if PLATFORM(GTK)
 typedef struct _GtkSocket GtkSocket;
 #endif
@@ -259,8 +264,9 @@ namespace WebCore {
         void keepAlive();
 
 #if USE(ACCELERATED_COMPOSITING)
-#if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API) && PLATFORM(QT)
+#if USE(ACCELERATED_COMPOSITING_PLUGIN_LAYER)
         virtual PlatformLayer* platformLayer() const;
+        bool shouldUseAcceleratedCompositing() const;
 #else
         virtual PlatformLayer* platformLayer() const { return 0; }
 #endif
@@ -432,11 +438,11 @@ private:
 #endif
 #if defined(XP_UNIX) && ENABLE(NETSCAPE_PLUGIN_API)
         void paintUsingXPixmap(QPainter* painter, const QRect &exposedRect);
-#if USE(ACCELERATED_COMPOSITING)
+#endif
+#if USE(ACCELERATED_COMPOSITING_PLUGIN_LAYER)
         OwnPtr<PlatformLayer> m_platformLayer;
         friend class PluginGraphicsLayerQt;
-#endif // USE(ACCELERATED_COMPOSITING)
-#endif
+#endif // USE(ACCELERATED_COMPOSITING_PLUGIN_LAYER)
 #endif // PLATFORM(QT)
 
 #if PLATFORM(GTK)

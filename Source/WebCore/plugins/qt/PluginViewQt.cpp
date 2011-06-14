@@ -120,6 +120,13 @@ public:
 private:
     PluginView* m_view;
 };
+
+bool PluginView::shouldUseAcceleratedCompositing() const
+{
+    return m_parentFrame->page()->chrome()->client()->allowsAcceleratedCompositing()
+           && m_parentFrame->page()->settings()
+           && m_parentFrame->page()->settings()->acceleratedCompositingEnabled();
+}
 #endif
 
 void PluginView::updatePluginWidget()
@@ -959,9 +966,7 @@ bool PluginView::platformStart()
         m_pluginDisplay = getPluginDisplay();
 
 #if USE(ACCELERATED_COMPOSITING) && !USE(TEXTURE_MAPPER)
-        if (m_parentFrame->page()->chrome()->client()->allowsAcceleratedCompositing()
-            && m_parentFrame->page()->settings() 
-            && m_parentFrame->page()->settings()->acceleratedCompositingEnabled()) {
+        if (shouldUseAcceleratedCompositing()) {
             m_platformLayer = adoptPtr(new PluginGraphicsLayerQt(this));
             // Trigger layer computation in RenderLayerCompositor
             m_element->setNeedsStyleRecalc(SyntheticStyleChange);

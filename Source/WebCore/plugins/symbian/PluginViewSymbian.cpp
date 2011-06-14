@@ -20,6 +20,8 @@
 #include "PluginView.h"
 
 #include "BridgeJSC.h"
+#include "Chrome.h"
+#include "ChromeClient.h"
 #include "Document.h"
 #include "DocumentLoader.h"
 #include "Element.h"
@@ -59,6 +61,7 @@
 #include <QKeyEvent>
 #include <QPixmap>
 #include <QRegion>
+#include <QStyleOptionGraphicsItem>
 #include <QVector>
 #include <QWidget>
 #include <runtime/JSLock.h>
@@ -84,6 +87,49 @@ using namespace WTF;
 namespace WebCore {
 
 using namespace HTMLNames;
+
+#if USE(ACCELERATED_COMPOSITING)
+class PluginGraphicsLayerQt : public QGraphicsWidget {
+public:
+    PluginGraphicsLayerQt(PluginView* view) : m_view(view)
+    {
+        setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
+    }
+
+    ~PluginGraphicsLayerQt() { }
+
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget = 0)
+    {
+        Q_UNUSED(widget);
+
+        m_view->m_npWindow.ws_info = (void*)(painter);
+        m_view->setNPWindowIfNeeded();
+
+        painter->save();
+        QRectF clipRect(QPointF(0, 0), QSizeF(m_view->frameRect().size()));
+        if (option && !option->exposedRect.isEmpty())
+            clipRect &= option->exposedRect;
+        painter->setClipRect(clipRect);
+
+        QRect rect = clipRect.toRect();
+        QPaintEvent ev(rect);
+        QEvent& npEvent = ev;
+        m_view->dispatchNPEvent(npEvent);
+
+        painter->restore();
+    }
+
+private:
+    PluginView* m_view;
+};
+
+bool PluginView::shouldUseAcceleratedCompositing() const
+{
+    return m_parentFrame->page()->chrome()->client()->allowsAcceleratedCompositing()
+           && m_parentFrame->page()->settings()
+           && m_parentFrame->page()->settings()->acceleratedCompositingEnabled();
+}
+#endif
 
 void PluginView::updatePluginWidget()
 {
@@ -147,6 +193,11 @@ void PluginView::paint(GraphicsContext* context, const IntRect& rect)
 
     if (m_isWindowed)
         return;
+
+#if USE(ACCELERATED_COMPOSITING)
+    if (m_platformLayer)
+        return;
+#endif
 
     context->save();
     IntRect clipRect(rect);
@@ -344,6 +395,13 @@ bool PluginView::platformGetValue(NPNVariable, void*, NPError*)
 
 void PluginView::invalidateRect(const IntRect& rect)
 {
+#if USE(ACCELERATED_COMPOSITING) && !USE(TEXTURE_MAPPER)
+    if (m_platformLayer) {
+        m_platformLayer->update(QRectF(rect));
+        return;
+    }
+#endif
+
     if (m_isWindowed) {
         platformWidget()->update(rect);
         return;
@@ -415,6 +473,12 @@ bool PluginView::platformStart()
         setPlatformWidget(0);
         m_npWindow.type = NPWindowTypeDrawable;
         m_npWindow.window = 0; // Not used?
+#if USE(ACCELERATED_COMPOSITING) && !USE(TEXTURE_MAPPER)
+        if (shouldUseAcceleratedCompositing()) {
+            m_platformLayer = new PluginGraphicsLayerQt(this);
+            m_element->setNeedsStyleRecalc(SyntheticStyleChange);
+        }
+#endif
     }    
     updatePluginWidget();
     setNPWindowIfNeeded();
@@ -443,5 +507,12 @@ void PluginView::halt()
 void PluginView::restart()
 {
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+PlatformLayer* PluginView::platformLayer() const
+{
+    return m_platformLayer.get();
+}
+#endif
 
 } // namespace WebCore

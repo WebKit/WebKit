@@ -1,3 +1,26 @@
+2011-06-14  Viatcheslav Ostapenko  <ostapenko.viatcheslav@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] [Symbian] GraphicsLayer: support plugins on symbian
+        https://bugs.webkit.org/show_bug.cgi?id=57418
+
+        Implement graphics layer for plugins on Symbian.
+
+        * plugins/PluginView.h:
+        * plugins/qt/PluginViewQt.cpp:
+        (WebCore::PluginView::shouldUseAcceleratedCompositing):
+        (WebCore::PluginView::platformStart):
+        * plugins/symbian/PluginViewSymbian.cpp:
+        (WebCore::PluginGraphicsLayerQt::PluginGraphicsLayerQt):
+        (WebCore::PluginGraphicsLayerQt::~PluginGraphicsLayerQt):
+        (WebCore::PluginGraphicsLayerQt::paint):
+        (WebCore::PluginView::shouldUseAcceleratedCompositing):
+        (WebCore::PluginView::paint):
+        (WebCore::PluginView::invalidateRect):
+        (WebCore::PluginView::platformStart):
+        (WebCore::PluginView::platformLayer):
+
 2011-06-14  Sreeram Ramachandran  <sreeram@chromium.org>
 
         Reviewed by Pavel Feldman.
