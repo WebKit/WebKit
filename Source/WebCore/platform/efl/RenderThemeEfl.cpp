@@ -31,6 +31,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
+#include "HTMLInputElement.h"
 #include "NotImplemented.h"
 #include "Page.h"
 #include "PaintInfo.h"
@@ -302,21 +303,16 @@ bool RenderThemeEfl::paintThemePart(RenderObject* object, FormType type, const P
     // treatment, move them to special functions.
     if (type == SliderVertical || type == SliderHorizontal) {
         RenderSlider* renderSlider = toRenderSlider(object);
+        HTMLInputElement* inpu = renderSlider->toInputElement();
         Edje_Message_Float_Set* msg;
-        int max, value;
-
-        if (type == SliderVertical) {
-            max = rect.height() - renderSlider->thumbRect().height();
-            value = renderSlider->thumbRect().y();
-        } else {
-            max = rect.width() - renderSlider->thumbRect().width();
-            value = renderSlider->thumbRect().x();
-        }
+        double valueRange = input->maximum() - input->minimum();
 
         msg = static_cast<Edje_Message_Float_Set*>(alloca(sizeof(Edje_Message_Float_Set) + sizeof(float)));
-
         msg->count = 2;
-        msg->val[0] = static_cast<float>(value) / static_cast<float>(max);
+        if (valueRange > 0)
+            msg->val[0] = static_cast<float>((input->valueAsNumber() - input->minimum()) / valueRange);
+        else
+            msg->val[0] = 0;
         msg->val[1] = 0.1;
         edje_object_message_send(entry->o, EDJE_MESSAGE_FLOAT_SET, 0, msg);
 #if ENABLE(PROGRESS_TAG)
