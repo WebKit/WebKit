@@ -420,10 +420,10 @@ public:
 
     const NinePieceImage& borderImage() const { return surround->border.image(); }
 
-    const LengthSize& borderTopLeftRadius() const { return surround->border.topLeft(); }
-    const LengthSize& borderTopRightRadius() const { return surround->border.topRight(); }
-    const LengthSize& borderBottomLeftRadius() const { return surround->border.bottomLeft(); }
-    const LengthSize& borderBottomRightRadius() const { return surround->border.bottomRight(); }
+    LengthSize borderTopLeftRadius() const { return surround->border.topLeft(); }
+    LengthSize borderTopRightRadius() const { return surround->border.topRight(); }
+    LengthSize borderBottomLeftRadius() const { return surround->border.bottomLeft(); }
+    LengthSize borderBottomRightRadius() const { return surround->border.bottomRight(); }
     bool hasBorderRadius() const { return surround->border.hasBorderRadius(); }
 
     unsigned short borderLeftWidth() const { return surround->border.borderLeftWidth(); }
@@ -849,12 +849,12 @@ public:
     
     void setBorderImage(const NinePieceImage& b) { SET_VAR(surround, border.m_image, b) }
 
-    void setBorderTopLeftRadius(const LengthSize& s) { SET_VAR(surround, border.m_topLeft, s) }
-    void setBorderTopRightRadius(const LengthSize& s) { SET_VAR(surround, border.m_topRight, s) }
-    void setBorderBottomLeftRadius(const LengthSize& s) { SET_VAR(surround, border.m_bottomLeft, s) }
-    void setBorderBottomRightRadius(const LengthSize& s) { SET_VAR(surround, border.m_bottomRight, s) }
+    void setBorderTopLeftRadius(LengthSize s) { SET_VAR(surround, border.m_topLeft, s) }
+    void setBorderTopRightRadius(LengthSize s) { SET_VAR(surround, border.m_topRight, s) }
+    void setBorderBottomLeftRadius(LengthSize s) { SET_VAR(surround, border.m_bottomLeft, s) }
+    void setBorderBottomRightRadius(LengthSize s) { SET_VAR(surround, border.m_bottomRight, s) }
 
-    void setBorderRadius(const LengthSize& s)
+    void setBorderRadius(LengthSize s)
     {
         setBorderTopLeftRadius(s);
         setBorderTopRightRadius(s);

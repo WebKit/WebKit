@@ -4546,88 +4546,6 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
             m_style->setMaskBoxImage(image);
         return;
     }
-
-    case CSSPropertyBorderRadius:
-    case CSSPropertyWebkitBorderRadius:
-        if (isInherit) {
-            m_style->setBorderTopLeftRadius(m_parentStyle->borderTopLeftRadius());
-            m_style->setBorderTopRightRadius(m_parentStyle->borderTopRightRadius());
-            m_style->setBorderBottomLeftRadius(m_parentStyle->borderBottomLeftRadius());
-            m_style->setBorderBottomRightRadius(m_parentStyle->borderBottomRightRadius());
-            return;
-        }
-        if (isInitial) {
-            m_style->resetBorderRadius();
-            return;
-        }
-        // Fall through
-    case CSSPropertyBorderTopLeftRadius:
-    case CSSPropertyBorderTopRightRadius:
-    case CSSPropertyBorderBottomLeftRadius:
-    case CSSPropertyBorderBottomRightRadius: {
-        if (isInherit) {
-            HANDLE_INHERIT_COND(CSSPropertyBorderTopLeftRadius, borderTopLeftRadius, BorderTopLeftRadius)
-            HANDLE_INHERIT_COND(CSSPropertyBorderTopRightRadius, borderTopRightRadius, BorderTopRightRadius)
-            HANDLE_INHERIT_COND(CSSPropertyBorderBottomLeftRadius, borderBottomLeftRadius, BorderBottomLeftRadius)
-            HANDLE_INHERIT_COND(CSSPropertyBorderBottomRightRadius, borderBottomRightRadius, BorderBottomRightRadius)
-            return;
-        }
-        
-        if (isInitial) {
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderTopLeftRadius, BorderTopLeftRadius, BorderRadius)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderTopRightRadius, BorderTopRightRadius, BorderRadius)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderBottomLeftRadius, BorderBottomLeftRadius, BorderRadius)
-            HANDLE_INITIAL_COND_WITH_VALUE(CSSPropertyBorderBottomRightRadius, BorderBottomRightRadius, BorderRadius)
-            return;
-        }
-
-        if (!primitiveValue)
-            return;
-
-        Pair* pair = primitiveValue->getPairValue();
-        if (!pair || !pair->first() || !pair->second())
-            return;
-
-        Length radiusWidth;
-        Length radiusHeight;
-        if (pair->first()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-            radiusWidth = Length(pair->first()->getDoubleValue(), Percent);
-        else
-            radiusWidth = Length(max(intMinForLength, min(intMaxForLength, pair->first()->computeLength<int>(style(), m_rootElementStyle, zoomFactor))), Fixed);
-        if (pair->second()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
-            radiusHeight = Length(pair->second()->getDoubleValue(), Percent);
-        else
-            radiusHeight = Length(max(intMinForLength, min(intMaxForLength, pair->second()->computeLength<int>(style(), m_rootElementStyle, zoomFactor))), Fixed);
-        int width = radiusWidth.value();
-        int height = radiusHeight.value();
-        if (width < 0 || height < 0)
-            return;
-        if (width == 0)
-            radiusHeight = radiusWidth; // Null out the other value.
-        else if (height == 0)
-            radiusWidth = radiusHeight; // Null out the other value.
-
-        LengthSize size(radiusWidth, radiusHeight);
-        switch (id) {
-            case CSSPropertyBorderTopLeftRadius:
-                m_style->setBorderTopLeftRadius(size);
-                break;
-            case CSSPropertyBorderTopRightRadius:
-                m_style->setBorderTopRightRadius(size);
-                break;
-            case CSSPropertyBorderBottomLeftRadius:
-                m_style->setBorderBottomLeftRadius(size);
-                break;
-            case CSSPropertyBorderBottomRightRadius:
-                m_style->setBorderBottomRightRadius(size);
-                break;
-            default:
-                m_style->setBorderRadius(size);
-                break;
-        }
-        return;
-    }
-
     case CSSPropertyOutlineOffset:
         HANDLE_INHERIT_AND_INITIAL(outlineOffset, OutlineOffset)
         m_style->setOutlineOffset(primitiveValue->computeLength<int>(style(), m_rootElementStyle, zoomFactor));
@@ -5423,6 +5341,12 @@ void CSSStyleSelector::applyProperty(int id, CSSValue *value)
     case CSSPropertyBorderRight:
     case CSSPropertyBorderBottom:
     case CSSPropertyBorderLeft:
+    case CSSPropertyBorderRadius:
+    case CSSPropertyWebkitBorderRadius:
+    case CSSPropertyBorderTopLeftRadius:
+    case CSSPropertyBorderTopRightRadius:
+    case CSSPropertyBorderBottomLeftRadius:
+    case CSSPropertyBorderBottomRightRadius:
     case CSSPropertyFontStyle:
     case CSSPropertyFontVariant:
     case CSSPropertyTextRendering:

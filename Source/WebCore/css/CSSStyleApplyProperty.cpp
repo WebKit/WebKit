@@ -30,6 +30,7 @@
 #include "CSSValueList.h"
 #include "Document.h"
 #include "Element.h"
+#include "Pair.h"
 #include "RenderStyle.h"
 #include <wtf/StdLibExtras.h>
 #include <wtf/UnusedParam.h>
@@ -248,6 +249,47 @@ private:
             else if (type == CSSPrimitiveValue::CSS_PERCENTAGE)
                 setValue(selector->style(), Length(primitiveValue->getDoubleValue(), Percent));
         }
+    }
+};
+
+class ApplyPropertyBorderRadius : public ApplyPropertyDefaultBase<LengthSize> {
+public:
+    ApplyPropertyBorderRadius(GetterFunction getter, SetterFunction setter, InitialFunction initial)
+        : ApplyPropertyDefaultBase<LengthSize>(getter, setter, initial)
+    {
+    }
+private:
+    virtual void applyValue(CSSStyleSelector* selector, CSSValue* value) const
+    {
+        if (!value->isPrimitiveValue())
+            return;
+
+        CSSPrimitiveValue* primitiveValue = static_cast<CSSPrimitiveValue*>(value);
+        Pair* pair = primitiveValue->getPairValue();
+        if (!pair || !pair->first() || !pair->second())
+            return;
+
+        Length radiusWidth;
+        Length radiusHeight;
+        if (pair->first()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+            radiusWidth = Length(pair->first()->getDoubleValue(), Percent);
+        else
+            radiusWidth = Length(max(intMinForLength, min(intMaxForLength, pair->first()->computeLength<int>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()))), Fixed);
+        if (pair->second()->primitiveType() == CSSPrimitiveValue::CSS_PERCENTAGE)
+            radiusHeight = Length(pair->second()->getDoubleValue(), Percent);
+        else
+            radiusHeight = Length(max(intMinForLength, min(intMaxForLength, pair->second()->computeLength<int>(selector->style(), selector->rootElementStyle(), selector->style()->effectiveZoom()))), Fixed);
+        int width = radiusWidth.value();
+        int height = radiusHeight.value();
+        if (width < 0 || height < 0)
+            return;
+        if (!width)
+            radiusHeight = radiusWidth; // Null out the other value.
+        else if (!height)
+            radiusWidth = radiusHeight; // Null out the other value.
+
+        LengthSize size(radiusWidth, radiusHeight);
+        setValue(selector->style(), size);
     }
 };
 
@@ -556,6 +598,13 @@ CSSStyleApplyProperty::CSSStyleApplyProperty()
     setPropertyHandler(CSSPropertyBorderWidth, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyBorderTopWidth), propertyHandler(CSSPropertyBorderRightWidth), propertyHandler(CSSPropertyBorderBottomWidth), propertyHandler(CSSPropertyBorderLeftWidth)));
     setPropertyHandler(CSSPropertyBorderColor, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyBorderTopColor), propertyHandler(CSSPropertyBorderRightColor), propertyHandler(CSSPropertyBorderBottomColor), propertyHandler(CSSPropertyBorderLeftColor)));
     setPropertyHandler(CSSPropertyBorder, new ApplyPropertyExpanding<SuppressValue>(propertyHandler(CSSPropertyBorderStyle), propertyHandler(CSSPropertyBorderWidth), propertyHandler(CSSPropertyBorderColor)));
+
+    setPropertyHandler(CSSPropertyBorderTopLeftRadius, new ApplyPropertyBorderRadius(&RenderStyle::borderTopLeftRadius, &RenderStyle::setBorderTopLeftRadius, &RenderStyle::initialBorderRadius));
+    setPropertyHandler(CSSPropertyBorderTopRightRadius, new ApplyPropertyBorderRadius(&RenderStyle::borderTopRightRadius, &RenderStyle::setBorderTopRightRadius, &RenderStyle::initialBorderRadius));
+    setPropertyHandler(CSSPropertyBorderBottomLeftRadius, new ApplyPropertyBorderRadius(&RenderStyle::borderBottomLeftRadius, &RenderStyle::setBorderBottomLeftRadius, &RenderStyle::initialBorderRadius));
+    setPropertyHandler(CSSPropertyBorderBottomRightRadius, new ApplyPropertyBorderRadius(&RenderStyle::borderBottomRightRadius, &RenderStyle::setBorderBottomRightRadius, &RenderStyle::initialBorderRadius));
+    setPropertyHandler(CSSPropertyBorderRadius, new ApplyPropertyExpanding<ExpandValue>(propertyHandler(CSSPropertyBorderTopLeftRadius), propertyHandler(CSSPropertyBorderTopRightRadius), propertyHandler(CSSPropertyBorderBottomLeftRadius), propertyHandler(CSSPropertyBorderBottomRightRadius)));
+    setPropertyHandler(CSSPropertyWebkitBorderRadius, CSSPropertyBorderRadius);
 
     setPropertyHandler(CSSPropertyFontStyle, new ApplyPropertyFont<FontItalic>(&FontDescription::italic, &FontDescription::setItalic, FontItalicOff));
     setPropertyHandler(CSSPropertyFontVariant, new ApplyPropertyFont<FontSmallCaps>(&FontDescription::smallCaps, &FontDescription::setSmallCaps, FontSmallCapsOff));
