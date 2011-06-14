@@ -1,3 +1,10 @@
+2011-06-13  Keishi Hattori  <keishi@webkit.org>
+
+        Sort WebCore.xcodeproj
+        Accomplished using sort-Xcode-project-file.
+
+        * WebCore.xcodeproj/project.pbxproj:
+
 2011-06-13  James Simonsen  <simonjam@chromium.org>
 
         Reviewed by James Robinson.

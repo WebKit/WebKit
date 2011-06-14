@@ -21522,6 +21522,7 @@
 				514C76730CE923A1007EF3CD /* HTTPParsers.h in Headers */,
 				375CD232119D43C800A2A859 /* Hyphenation.h in Headers */,
 				B275356E0B053814002CE64F /* Icon.h in Headers */,
+				97E4029013A696ED00913D67 /* IconController.h in Headers */,
 				5126E6BC0A2E3B12005C29FA /* IconDatabase.h in Headers */,
 				516953981329A3C800B92D04 /* IconDatabaseBase.h in Headers */,
 				51E1ECBE0C91C90400DC255B /* IconDatabaseClient.h in Headers */,
@@ -22780,10 +22781,13 @@
 				084DB59B128008CC002A6D64 /* SVGAnimatedString.h in Headers */,
 				08250939128BD4D800E2ED8E /* SVGAnimatedTransformList.h in Headers */,
 				085A15931289A8DD002710E3 /* SVGAnimatedTransformListPropertyTearOff.h in Headers */,
+				439D334313A6911C00C20F4F /* SVGAnimatedType.h in Headers */,
+				439D334413A6911C00C20F4F /* SVGAnimatedTypeAnimator.h in Headers */,
 				B22279900D00BF220071B782 /* SVGAnimateElement.h in Headers */,
 				B22279930D00BF220071B782 /* SVGAnimateMotionElement.h in Headers */,
 				B22279950D00BF220071B782 /* SVGAnimateTransformElement.h in Headers */,
 				B22279980D00BF220071B782 /* SVGAnimationElement.h in Headers */,
+				439D334513A6911C00C20F4F /* SVGAnimatorFactory.h in Headers */,
 				B222799C0D00BF220071B782 /* SVGCircleElement.h in Headers */,
 				B222799F0D00BF220071B782 /* SVGClipPathElement.h in Headers */,
 				B22279A20D00BF220071B782 /* SVGColor.h in Headers */,
@@ -23191,10 +23195,6 @@
 				E1BE512E0CF6C512002EA959 /* XSLTUnicodeSort.h in Headers */,
 				977E2E0F12F0FC9C00C13379 /* XSSAuditor.h in Headers */,
 				FD537353137B651800008DCE /* ZeroPole.h in Headers */,
-				439D334313A6911C00C20F4F /* SVGAnimatedType.h in Headers */,
-				439D334413A6911C00C20F4F /* SVGAnimatedTypeAnimator.h in Headers */,
-				439D334513A6911C00C20F4F /* SVGAnimatorFactory.h in Headers */,
-				97E4029013A696ED00913D67 /* IconController.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -24398,6 +24398,7 @@
 				514C76720CE923A1007EF3CD /* HTTPParsers.cpp in Sources */,
 				371A67CB11C6C7DB00047B8B /* HyphenationCF.cpp in Sources */,
 				375CD23B119D44EA00A2A859 /* HyphenationMac.mm in Sources */,
+				97E4028F13A696ED00913D67 /* IconController.cpp in Sources */,
 				5126E6BB0A2E3B12005C29FA /* IconDatabase.cpp in Sources */,
 				516953971329A3C800B92D04 /* IconDatabaseBase.cpp in Sources */,
 				513F14530AB634C400094DDF /* IconLoader.cpp in Sources */,
@@ -25611,6 +25612,7 @@
 				65653F2D0D9727D200CA9723 /* SVGAltGlyphElement.cpp in Sources */,
 				B22279760D00BF220071B782 /* SVGAngle.cpp in Sources */,
 				B22279790D00BF220071B782 /* SVGAnimateColorElement.cpp in Sources */,
+				4381763B13A697D4007D1187 /* SVGAnimatedLength.cpp in Sources */,
 				B222798F0D00BF220071B782 /* SVGAnimateElement.cpp in Sources */,
 				B22279920D00BF220071B782 /* SVGAnimateMotionElement.cpp in Sources */,
 				B22279940D00BF220071B782 /* SVGAnimateTransformElement.cpp in Sources */,
@@ -25928,8 +25930,6 @@
 				E1BE512D0CF6C512002EA959 /* XSLTUnicodeSort.cpp in Sources */,
 				977E2E0E12F0FC9C00C13379 /* XSSAuditor.cpp in Sources */,
 				FD537352137B651800008DCE /* ZeroPole.cpp in Sources */,
-				97E4028F13A696ED00913D67 /* IconController.cpp in Sources */,
-				4381763B13A697D4007D1187 /* SVGAnimatedLength.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
