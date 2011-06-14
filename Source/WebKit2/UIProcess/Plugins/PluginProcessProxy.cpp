@@ -49,7 +49,7 @@ PassOwnPtr<PluginProcessProxy> PluginProcessProxy::create(PluginProcessManager* 
     return adoptPtr(new PluginProcessProxy(PluginProcessManager, pluginInfo));
 }
 
-PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManager, const PluginInfoStore::Plugin& pluginInfo)
+PluginProcessProxy::PluginProcessProxy(PluginProcessManager* PluginProcessManager, const PluginModuleInfo& pluginInfo)
     : m_pluginProcessManager(PluginProcessManager)
     , m_pluginInfo(pluginInfo)
     , m_numPendingConnectionRequests(0)

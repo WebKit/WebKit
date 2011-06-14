@@ -581,7 +581,7 @@ bool WebPageProxy::canShowMIMEType(const String& mimeType) const
         return !MIMETypeRegistry::isUnsupportedTextMIMEType(mimeType);
 
     String newMimeType = mimeType;
-    PluginInfoStore::Plugin plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL());
+    PluginModuleInfo plugin = m_process->context()->pluginInfoStore().findPlugin(newMimeType, KURL());
     if (!plugin.path.isNull())
         return true;
 

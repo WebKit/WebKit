@@ -26,7 +26,7 @@
 #ifndef PluginInfoStore_h
 #define PluginInfoStore_h
 
-#include <WebCore/PluginData.h>
+#include "PluginModuleInfo.h"
 
 namespace WebCore {
     class KURL;
@@ -40,39 +40,29 @@ class PluginInfoStore {
 public:
     PluginInfoStore();
 
-    // Represents a single plug-in.
-    struct Plugin {
-        String path;
-        WebCore::PluginInfo info;
-#if PLATFORM(MAC)
-        cpu_type_t pluginArchitecture;
-        String bundleIdentifier;
-        String versionString;
-#elif PLATFORM(WIN)
-        uint64_t fileVersion;
-#endif
-    };
+    // FIXME: Remove this typedef.
+    typedef PluginModuleInfo Plugin;
 
     void setAdditionalPluginsDirectories(const Vector<String>&);
 
     void refresh();
-    Vector<Plugin> plugins();
+    Vector<PluginModuleInfo> plugins();
 
     // Returns the info for a plug-in that can handle the given MIME type.
     // If the MIME type is null, the file extension of the given url will be used to infer the
     // plug-in type. In that case, mimeType will be filled in with the right MIME type.
-    Plugin findPlugin(String& mimeType, const WebCore::KURL& url);
+    PluginModuleInfo findPlugin(String& mimeType, const WebCore::KURL&);
     
     // Returns the info for the plug-in with the given path.
-    Plugin infoForPluginWithPath(const String& pluginPath) const;
+    PluginModuleInfo infoForPluginWithPath(const String& pluginPath) const;
 
 private:
 
-    PluginInfoStore::Plugin findPluginForMIMEType(const String& mimeType) const;
-    PluginInfoStore::Plugin findPluginForExtension(const String& extension, String& mimeType) const;
+    PluginModuleInfo findPluginForMIMEType(const String& mimeType) const;
+    PluginModuleInfo findPluginForExtension(const String& extension, String& mimeType) const;
 
     void loadPluginsIfNecessary();
-    static void loadPlugin(Vector<Plugin>& plugins, const String& pluginPath);
+    static void loadPlugin(Vector<PluginModuleInfo>& plugins, const String& pluginPath);
     
     // Platform-specific member functions:
 
@@ -86,16 +76,16 @@ private:
     static Vector<String> individualPluginPaths();
 
     // Load plug-in info for the plug-in with the specified path.
-    static bool getPluginInfo(const String& pluginPath, Plugin& plugin);
+    static bool getPluginInfo(const String& pluginPath, PluginModuleInfo&);
 
     // Return whether this plug-in should be used (added to the list of plug-ins) or not.
-    static bool shouldUsePlugin(Vector<Plugin>& alreadyLoadedPlugins, const Plugin&);
+    static bool shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo&);
 
     // Get the MIME type for the given extension.
     static String getMIMETypeForExtension(const String& extension);
 
     Vector<String> m_additionalPluginsDirectories;
-    Vector<Plugin> m_plugins;
+    Vector<PluginModuleInfo> m_plugins;
     bool m_pluginListIsUpToDate;
 };
     

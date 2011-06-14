@@ -328,17 +328,17 @@ bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
     return NetscapePluginModule::getPluginInfo(pluginPath, plugin);
 }
 
-static bool isOldWindowsMediaPlayerPlugin(const PluginInfoStore::Plugin& plugin)
+static bool isOldWindowsMediaPlayerPlugin(const PluginModuleInfo& plugin)
 {
     return equalIgnoringCase(plugin.info.file, "npdsplay.dll");
 }
 
-static bool isNewWindowsMediaPlayerPlugin(const PluginInfoStore::Plugin& plugin)
+static bool isNewWindowsMediaPlayerPlugin(const PluginModuleInfo& plugin)
 {
     return equalIgnoringCase(plugin.info.file, "np-mswmp.dll");
 }
 
-bool PluginInfoStore::shouldUsePlugin(Vector<Plugin>& alreadyLoadedPlugins, const Plugin& plugin)
+bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo& plugin)
 {
     if (plugin.info.name == "Citrix ICA Client") {
         // The Citrix ICA Client plug-in requires a Mozilla-based browser; see <rdar://6418681>.

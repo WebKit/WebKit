@@ -1,3 +1,36 @@
+2011-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Create the PluginModuleInfo class and reverse the typedef so that PluginInfoStore::Plugin is now a typedef
+        https://bugs.webkit.org/show_bug.cgi?id=62654
+
+        * UIProcess/Plugins/PluginInfoStore.cpp:
+        (WebKit::PluginInfoStore::loadPluginsIfNecessary):
+        (WebKit::PluginInfoStore::loadPlugin):
+        (WebKit::PluginInfoStore::findPluginForMIMEType):
+        (WebKit::PluginInfoStore::findPluginForExtension):
+        (WebKit::PluginInfoStore::findPlugin):
+        (WebKit::PluginInfoStore::infoForPluginWithPath):
+        * UIProcess/Plugins/PluginInfoStore.h:
+        * UIProcess/Plugins/PluginProcessManager.cpp:
+        (WebKit::PluginProcessManager::getPluginProcessConnection):
+        * UIProcess/Plugins/PluginProcessProxy.cpp:
+        (WebKit::PluginProcessProxy::PluginProcessProxy):
+        * UIProcess/Plugins/WebPluginSiteDataManager.cpp:
+        (WebKit::WebPluginSiteDataManager::getSitesWithData):
+        (WebKit::WebPluginSiteDataManager::clearSiteData):
+        * UIProcess/Plugins/mac/PluginInfoStoreMac.mm:
+        (WebKit::PluginInfoStore::getPluginInfo):
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp:
+        (WebKit::PluginInfoStore::getPluginInfo):
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+        * UIProcess/Plugins/win/PluginInfoStoreWin.cpp:
+        (WebKit::isOldWindowsMediaPlayerPlugin):
+        (WebKit::isNewWindowsMediaPlayerPlugin):
+        (WebKit::PluginInfoStore::shouldUsePlugin):
+
 2011-06-14  Stephanie Lewis  <slewis@apple.com>
 
         Rubber stamped by Oliver Hunt.

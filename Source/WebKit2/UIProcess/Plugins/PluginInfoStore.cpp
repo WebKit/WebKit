@@ -88,7 +88,7 @@ void PluginInfoStore::loadPluginsIfNecessary()
     // Then load plug-ins that are not in the standard plug-ins directories.
     addFromVector(uniquePluginPaths, individualPluginPaths());
 
-    Vector<Plugin> plugins;
+    Vector<PluginModuleInfo> plugins;
 
     PathHashSet::const_iterator end = uniquePluginPaths.end();
     for (PathHashSet::const_iterator it = uniquePluginPaths.begin(); it != end; ++it)
@@ -98,9 +98,9 @@ void PluginInfoStore::loadPluginsIfNecessary()
     m_pluginListIsUpToDate = true;
 }
 
-void PluginInfoStore::loadPlugin(Vector<Plugin>& plugins, const String& pluginPath)
+void PluginInfoStore::loadPlugin(Vector<PluginModuleInfo>& plugins, const String& pluginPath)
 {
-    Plugin plugin;
+    PluginModuleInfo plugin;
     
     if (!getPluginInfo(pluginPath, plugin))
         return;
@@ -125,7 +125,7 @@ PluginModuleInfo PluginInfoStore::findPluginForMIMEType(const String& mimeType) 
     ASSERT(!mimeType.isNull());
     
     for (size_t i = 0; i < m_plugins.size(); ++i) {
-        const Plugin& plugin = m_plugins[i];
+        const PluginModuleInfo& plugin = m_plugins[i];
         
         for (size_t j = 0; j < plugin.info.mimes.size(); ++j) {
             const MimeClassInfo& mimeClassInfo = plugin.info.mimes[j];
@@ -134,7 +134,7 @@ PluginModuleInfo PluginInfoStore::findPluginForMIMEType(const String& mimeType) 
         }
     }
     
-    return Plugin();
+    return PluginModuleInfo();
 }
 
 PluginModuleInfo PluginInfoStore::findPluginForExtension(const String& extension, String& mimeType) const
@@ -142,7 +142,7 @@ PluginModuleInfo PluginInfoStore::findPluginForExtension(const String& extension
     ASSERT(!extension.isNull());
     
     for (size_t i = 0; i < m_plugins.size(); ++i) {
-        const Plugin& plugin = m_plugins[i];
+        const PluginModuleInfo& plugin = m_plugins[i];
         
         for (size_t j = 0; j < plugin.info.mimes.size(); ++j) {
             const MimeClassInfo& mimeClassInfo = plugin.info.mimes[j];
@@ -157,7 +157,7 @@ PluginModuleInfo PluginInfoStore::findPluginForExtension(const String& extension
         }
     }
     
-    return Plugin();
+    return PluginModuleInfo();
 }
 
 static inline String pathExtension(const KURL& url)
@@ -180,13 +180,13 @@ String PluginInfoStore::getMIMETypeForExtension(const String& extension)
 }
 #endif
 
-PluginInfoStore::Plugin PluginInfoStore::findPlugin(String& mimeType, const KURL& url)
+PluginModuleInfo PluginInfoStore::findPlugin(String& mimeType, const KURL& url)
 {
     loadPluginsIfNecessary();
     
     // First, check if we can get the plug-in based on its MIME type.
     if (!mimeType.isNull()) {
-        Plugin plugin = findPluginForMIMEType(mimeType);
+        PluginModuleInfo plugin = findPluginForMIMEType(mimeType);
         if (!plugin.path.isNull())
             return plugin;
     }
@@ -194,14 +194,14 @@ PluginInfoStore::Plugin PluginInfoStore::findPlugin(String& mimeType, const KURL
     // Next, check if any plug-ins claim to support the URL extension.
     String extension = pathExtension(url).lower();
     if (!extension.isNull() && mimeType.isEmpty()) {
-        Plugin plugin = findPluginForExtension(extension, mimeType);
+        PluginModuleInfo plugin = findPluginForExtension(extension, mimeType);
         if (!plugin.path.isNull())
             return plugin;
         
         // Finally, try to get the MIME type from the extension in a platform specific manner and use that.
         String extensionMimeType = getMIMETypeForExtension(extension);
         if (!extensionMimeType.isNull()) {
-            Plugin plugin = findPluginForMIMEType(extensionMimeType);
+            PluginModuleInfo plugin = findPluginForMIMEType(extensionMimeType);
             if (!plugin.path.isNull()) {
                 mimeType = extensionMimeType;
                 return plugin;
@@ -209,10 +209,10 @@ PluginInfoStore::Plugin PluginInfoStore::findPlugin(String& mimeType, const KURL
         }
     }
     
-    return Plugin();
+    return PluginModuleInfo();
 }
 
-PluginInfoStore::Plugin PluginInfoStore::infoForPluginWithPath(const String& pluginPath) const
+PluginModuleInfo PluginInfoStore::infoForPluginWithPath(const String& pluginPath) const
 {
     for (size_t i = 0; i < m_plugins.size(); ++i) {
         if (m_plugins[i].path == pluginPath)
@@ -220,7 +220,7 @@ PluginInfoStore::Plugin PluginInfoStore::infoForPluginWithPath(const String& plu
     }
     
     ASSERT_NOT_REACHED();
-    return Plugin();
+    return PluginModuleInfo();
 }
 
 } // namespace WebKit

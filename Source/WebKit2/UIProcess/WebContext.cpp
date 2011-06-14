@@ -532,7 +532,7 @@ void WebContext::getPlugins(bool refresh, Vector<PluginInfo>& pluginInfos)
     if (refresh)
         m_pluginInfoStore.refresh();
 
-    Vector<PluginInfoStore::Plugin> plugins = m_pluginInfoStore.plugins();
+    Vector<PluginModuleInfo> plugins = m_pluginInfoStore.plugins();
     for (size_t i = 0; i < plugins.size(); ++i)
         pluginInfos.append(plugins[i].info);
 }
@@ -541,7 +541,7 @@ void WebContext::getPluginPath(const String& mimeType, const String& urlString, 
 {
     String newMimeType = mimeType.lower();
 
-    PluginInfoStore::Plugin plugin = pluginInfoStore().findPlugin(newMimeType, KURL(ParsedURLString, urlString));
+    PluginModuleInfo plugin = pluginInfoStore().findPlugin(newMimeType, KURL(ParsedURLString, urlString));
     if (!plugin.path)
         return;
 

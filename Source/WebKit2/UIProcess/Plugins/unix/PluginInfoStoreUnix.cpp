@@ -59,12 +59,12 @@ Vector<String> PluginInfoStore::individualPluginPaths()
     return Vector<String>();
 }
 
-bool PluginInfoStore::getPluginInfo(const String& pluginPath, Plugin& plugin)
+bool PluginInfoStore::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
     return NetscapePluginModule::getPluginInfo(pluginPath, plugin);
 }
 
-bool PluginInfoStore::shouldUsePlugin(Vector<Plugin>& alreadyLoadedPlugins, const Plugin& plugin)
+bool PluginInfoStore::shouldUsePlugin(Vector<PluginModuleInfo>& alreadyLoadedPlugins, const PluginModuleInfo& plugin)
 {
     // We do not do any black-listing presently.
     return true;

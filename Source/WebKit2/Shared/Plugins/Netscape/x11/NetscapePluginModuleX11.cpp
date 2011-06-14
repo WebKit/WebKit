@@ -63,7 +63,7 @@ void NetscapePluginModule::applyX11QuirksBeforeLoad()
 #endif
 }
 
-bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginInfoStore::Plugin& plugin)
+bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
     // We are loading the plugin here since it does not seem to be a standardized way to
     // get the needed informations from a UNIX plugin without loading it.

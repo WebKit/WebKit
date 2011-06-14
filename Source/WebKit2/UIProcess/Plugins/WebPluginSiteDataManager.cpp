@@ -70,7 +70,7 @@ public:
 private:
     WebPluginSiteDataManager* m_webPluginSiteDataManager;
     uint64_t m_callbackID;
-    Vector<PluginInfoStore::Plugin> m_plugins;
+    Vector<PluginModuleInfo> m_plugins;
     HashSet<String> m_sites;
 };
 
@@ -108,7 +108,7 @@ private:
     uint64_t m_flags;
     uint64_t m_maxAgeInSeconds;
     uint64_t m_callbackID;
-    Vector<PluginInfoStore::Plugin> m_plugins;
+    Vector<PluginModuleInfo> m_plugins;
 };
 #endif // ENABLE(PLUGIN_PROCESS)
 
@@ -165,7 +165,7 @@ void WebPluginSiteDataManager::getSitesWithData(PassRefPtr<ArrayCallback> prpCal
 #else
     m_webContext->relaunchProcessIfNecessary();
 
-    Vector<PluginInfoStore::Plugin> plugins = m_webContext->pluginInfoStore().plugins();
+    Vector<PluginModuleInfo> plugins = m_webContext->pluginInfoStore().plugins();
     Vector<String> pluginPaths;
     for (size_t i = 0; i < plugins.size(); ++i)
         pluginPaths.append(plugins[i].path);
@@ -228,7 +228,7 @@ void WebPluginSiteDataManager::clearSiteData(ImmutableArray* sites, uint64_t fla
 #else
     m_webContext->relaunchProcessIfNecessary();
 
-    Vector<PluginInfoStore::Plugin> plugins = m_webContext->pluginInfoStore().plugins();
+    Vector<PluginModuleInfo> plugins = m_webContext->pluginInfoStore().plugins();
     Vector<String> pluginPaths;
     for (size_t i = 0; i < plugins.size(); ++i)
         pluginPaths.append(plugins[i].path);

@@ -26,12 +26,22 @@
 #ifndef PluginModuleInfo_h
 #define PluginModuleInfo_h
 
-// FIXME: Remove this include and move PluginInfoStore::Plugin here and rename it to PluginModuleInfo.
-#include "PluginInfoStore.h"
+#include <WebCore/PluginData.h>
 
 namespace WebKit {
 
-typedef PluginInfoStore::Plugin PluginModuleInfo;
+struct PluginModuleInfo {
+    String path;
+    WebCore::PluginInfo info;
+
+#if PLATFORM(MAC)
+    cpu_type_t pluginArchitecture;
+    String bundleIdentifier;
+    String versionString;
+#elif PLATFORM(WIN)
+    uint64_t fileVersion;
+#endif
+};
 
 } // namespace WebKit
 

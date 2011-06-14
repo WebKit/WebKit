@@ -49,7 +49,7 @@ void PluginProcessManager::getPluginProcessConnection(const PluginInfoStore& plu
 {
     ASSERT(!pluginPath.isNull());
 
-    PluginInfoStore::Plugin plugin = pluginInfoStore.infoForPluginWithPath(pluginPath);
+    PluginModuleInfo plugin = pluginInfoStore.infoForPluginWithPath(pluginPath);
     PluginProcessProxy* pluginProcess = getOrCreatePluginProcess(plugin);
     pluginProcess->getPluginProcessConnection(reply);
 }

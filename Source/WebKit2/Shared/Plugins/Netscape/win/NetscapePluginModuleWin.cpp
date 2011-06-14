@@ -53,7 +53,7 @@ static uint64_t fileVersion(DWORD leastSignificant, DWORD mostSignificant)
     return version.QuadPart;
 }
 
-bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginInfoStore::Plugin& plugin)
+bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
         String pathCopy = pluginPath;
     DWORD versionInfoSize = ::GetFileVersionInfoSizeW(pathCopy.charactersWithNullTermination(), 0);
@@ -116,7 +116,7 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginInfoSto
 
 void NetscapePluginModule::determineQuirks()
 {
-    PluginInfoStore::Plugin plugin;
+    PluginModuleInfo plugin;
     getPluginInfo(m_pluginPath, plugin);
 
     Vector<MimeClassInfo> mimeTypes = plugin.info.mimes;
