@@ -898,8 +898,7 @@ PassRefPtr<Range> Frame::rangeForPoint(const IntPoint& framePoint)
     }
 
     VisiblePosition next = position.next();
-    if (next.isNotNull()) {
-        RefPtr<Range> nextCharacterRange = makeRange(position, next);
+    if (RefPtr<Range> nextCharacterRange = makeRange(position, next)) {
         IntRect rect = editor()->firstRectForRange(nextCharacterRange.get());
         if (rect.contains(framePoint))
             return nextCharacterRange.release();
