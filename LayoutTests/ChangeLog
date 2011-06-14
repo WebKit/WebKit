@@ -1,3 +1,9 @@
+2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip test added by r88578 on GTK per bug 62585.
+
+        * platform/gtk/Skipped:
+
 2011-06-13  Jessie Berlin  <jberlin@apple.com>
 
         Add Windows-specific pixel and text results to account for the different design of the
