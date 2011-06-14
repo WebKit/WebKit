@@ -285,7 +285,7 @@ namespace JSC {
         RegisterID* emitUnaryNoDstOp(OpcodeID, RegisterID* src);
 
         RegisterID* emitNewObject(RegisterID* dst);
-        RegisterID* emitNewArray(RegisterID* dst, ElementNode*); // stops at first elision
+        RegisterID* emitNewArray(RegisterID* dst, ElementNode*, unsigned length); // stops at first elision
 
         RegisterID* emitNewFunction(RegisterID* dst, FunctionBodyNode* body);
         RegisterID* emitLazyNewFunction(RegisterID* dst, FunctionBodyNode* body);
@@ -477,6 +477,8 @@ namespace JSC {
         RegisterID* addConstantValue(JSValue);
         unsigned addRegExp(RegExp*);
 
+        unsigned addImmediateBuffer(unsigned length);
+        
         FunctionExecutable* makeFunction(ExecState* exec, FunctionBodyNode* body)
         {
             return FunctionExecutable::create(exec, body->ident(), body->source(), body->usesArguments(), body->parameters(), body->isStrictMode(), body->lineNo(), body->lastLine());

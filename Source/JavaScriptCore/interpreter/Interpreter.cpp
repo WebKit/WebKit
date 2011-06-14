@@ -1554,6 +1554,22 @@ JSValue Interpreter::privateExecute(ExecutionFlag flag, RegisterFile* registerFi
         vPC += OPCODE_LENGTH(op_new_array);
         NEXT_INSTRUCTION();
     }
+    DEFINE_OPCODE(op_new_array_buffer) {
+        /* new_array_buffer dst(r) index(n) argCount(n)
+         
+         Constructs a new Array instance using the original
+         constructor, and puts the result in register dst.
+         The array be initialized with the values from immediateBuffer[index]
+         */
+        int dst = vPC[1].u.operand;
+        int firstArg = vPC[2].u.operand;
+        int argCount = vPC[3].u.operand;
+        ArgList args(codeBlock->immediateBuffer(firstArg), argCount);
+        callFrame->uncheckedR(dst) = JSValue(constructArray(callFrame, args));
+        
+        vPC += OPCODE_LENGTH(op_new_array);
+        NEXT_INSTRUCTION();
+    }
     DEFINE_OPCODE(op_new_regexp) {
         /* new_regexp dst(r) regExp(re)
 

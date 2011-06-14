@@ -1,3 +1,42 @@
+2011-06-14  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        Constant array literals result in unnecessarily large amounts of code
+        https://bugs.webkit.org/show_bug.cgi?id=62658
+
+        Add a new version of op_new_array that simply copies values from a buffer
+        we hang off of the CodeBlock, rather than generating code to place each
+        entry into the registerfile, and then copying it from the registerfile into
+        the array.  This is a slight improvement on some sunspider tests, but no
+        measurable overall change.  That's okay though as our goal was to reduce
+        code size without hurting performance.
+
+        * bytecode/CodeBlock.cpp:
+        (JSC::CodeBlock::dump):
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::addImmediateBuffer):
+        (JSC::CodeBlock::immediateBuffer):
+        * bytecode/Opcode.h:
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::addImmediateBuffer):
+        (JSC::BytecodeGenerator::emitNewArray):
+        * bytecompiler/BytecodeGenerator.h:
+        * bytecompiler/NodesCodegen.cpp:
+        (JSC::ArrayNode::emitBytecode):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::privateExecute):
+        * jit/JIT.cpp:
+        (JSC::JIT::privateCompileMainPass):
+        * jit/JIT.h:
+        * jit/JITOpcodes.cpp:
+        (JSC::JIT::emit_op_new_array):
+        (JSC::JIT::emit_op_new_array_buffer):
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITStubs.cpp:
+        (JSC::DEFINE_STUB_FUNCTION):
+        * jit/JITStubs.h:
+
 2011-06-14  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r88841.

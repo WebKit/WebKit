@@ -579,14 +579,6 @@ void JIT::emit_op_ret_object_or_this(Instruction* currentInstruction)
     ret();
 }
 
-void JIT::emit_op_new_array(Instruction* currentInstruction)
-{
-    JITStubCall stubCall(this, cti_op_new_array);
-    stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
-    stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
-    stubCall.call(currentInstruction[1].u.operand);
-}
-
 void JIT::emit_op_resolve(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_resolve);
@@ -1732,6 +1724,22 @@ void JIT::emit_op_new_func(Instruction* currentInstruction)
     stubCall.call(currentInstruction[1].u.operand);
     if (currentInstruction[3].u.operand)
         lazyJump.link(this);
+}
+
+void JIT::emit_op_new_array(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, cti_op_new_array);
+    stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
+    stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
+    stubCall.call(currentInstruction[1].u.operand);
+}
+
+void JIT::emit_op_new_array_buffer(Instruction* currentInstruction)
+{
+    JITStubCall stubCall(this, cti_op_new_array_buffer);
+    stubCall.addArgument(Imm32(currentInstruction[2].u.operand));
+    stubCall.addArgument(Imm32(currentInstruction[3].u.operand));
+    stubCall.call(currentInstruction[1].u.operand);
 }
 
 } // namespace JSC
