@@ -1,3 +1,15 @@
+2011-06-13  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by David Levin.
+
+        Remove redundant "true" parameter to scheduleLocationChange
+        https://bugs.webkit.org/show_bug.cgi?id=62612
+
+        This parameter defaults to true anyway.
+
+        * loader/appcache/ApplicationCacheGroup.cpp:
+        (WebCore::ApplicationCacheGroup::selectCache):
+
 2011-06-13  Kentaro Hara  <haraken@google.com>
 
         Reviewed by Alexey Proskuryakov.
