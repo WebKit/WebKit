@@ -5037,6 +5037,7 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
 
 void Document::fullScreenElementRemoved()
 {
+    setContainsFullScreenElementRecursively(m_fullScreenElement->parentElement() ? m_fullScreenElement->parentElement() : ownerElement(), false);
     webkitCancelFullScreen();
 }
 
