@@ -1,3 +1,13 @@
+2011-06-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add tooltip to file select options in scripts panel.
+        https://bugs.webkit.org/show_bug.cgi?id=62537
+
+        * inspector/debugger/scripts-panel-expected.txt:
+        * inspector/debugger/scripts-panel.html:
+
 2011-06-14  Ademar de Souza Reis Jr.  <ademar.reis@openbossa.org>
 
         Unreviewed: unskip test rebasedlined by r88772

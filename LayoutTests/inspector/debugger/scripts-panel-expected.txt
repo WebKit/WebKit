@@ -8,5 +8,15 @@ Running: testHistory
 
 Running: testSourceFramesCount
 Page reloaded.
+
+Running: testFilesSelect
+text: script.js, tooltip: ...foo/bar/script.js
+text: script.js, tooltip: ...foo/bar/script.js?a=1
+text: script.js, tooltip: ...foo/bar/script.js?a=2
+text: script.js, tooltip: ...foo/baz/script.js
+text: Content scripts, tooltip: ...
+text: contentScript.js, tooltip: ...foo/bar/contentScript.js?a=1
+text: contentScript.js, tooltip: ...foo/bar/contentScript.js?a=2
+text: contentScript2.js, tooltip: ...foo/bar/contentScript2.js?a=1
 Debugger was disabled.
 

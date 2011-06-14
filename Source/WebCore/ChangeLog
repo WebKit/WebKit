@@ -1,3 +1,18 @@
+2011-06-14  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: add tooltip to file select options in scripts panel.
+        https://bugs.webkit.org/show_bug.cgi?id=62537
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel):
+        (WebInspector.ScriptsPanel.prototype._sourceFileAdded):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect.compare):
+        (WebInspector.ScriptsPanel.prototype._addOptionToFilesSelect):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected.didGetSourceLocation):
+        (WebInspector.ScriptsPanel.prototype._callFrameSelected):
+
 2011-06-14  Luke Macpherson   <macpherson@chromium.org>
 
         Reviewed by Eric Seidel.

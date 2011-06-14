@@ -118,9 +118,9 @@ WebInspector.ScriptsPanel = function()
 
     this.sidebarPanes.scopechain.expanded = true;
     this.sidebarPanes.jsBreakpoints.expanded = true;
-    
+
     var helpSection = WebInspector.shortcutsHelp.section(WebInspector.UIString("Scripts Panel"));
-    this.sidebarPanes.callstack.registerShortcuts(helpSection, this.registerShortcut.bind(this));   
+    this.sidebarPanes.callstack.registerShortcuts(helpSection, this.registerShortcut.bind(this));
 
     var panelEnablerHeading = WebInspector.UIString("You need to enable debugging before you can use the Scripts panel.");
     var panelEnablerDisclaimer = WebInspector.UIString("Enabling debugging will make scripts run slower.");
@@ -234,7 +234,7 @@ WebInspector.ScriptsPanel.prototype = {
             return;
         }
 
-        this._addOptionToFilesSelect(sourceFile.id);
+        this._addOptionToFilesSelect(sourceFile);
 
         var lastViewedURL = WebInspector.settings.lastViewedScriptFile;
         if (this._filesSelectElement.length === 1) {
@@ -248,15 +248,19 @@ WebInspector.ScriptsPanel.prototype = {
             this._showSourceFrameAndAddToHistory(sourceFile.id);
     },
 
-    _addOptionToFilesSelect: function(sourceFileId)
+    _addOptionToFilesSelect: function(sourceFile)
     {
-        var sourceFile = this._presentationModel.sourceFile(sourceFileId);
         var select = this._filesSelectElement;
         var option = document.createElement("option");
         option.text = sourceFile.displayName;
+        option.title = sourceFile.url;
         option.isContentScript = sourceFile.isContentScript;
         if (sourceFile.isContentScript)
             option.addStyleClass("extension-script");
+        function compare(a, b)
+        {
+            return a < b ? -1 : (a > b ? 1 : 0);
+        }
         function optionCompare(a, b)
         {
             if (a === select.contentScriptSection)
@@ -269,9 +273,7 @@ WebInspector.ScriptsPanel.prototype = {
             if (!a.isContentScript && b.isContentScript)
                 return -1;
 
-            if (a.text === b.text)
-                return 0;
-            return a.text < b.text ? -1 : 1;
+            return compare(a.text, b.text) || compare(a.title, b.title);
         }
 
         var insertionIndex = insertionIndexForObjectInListSortedByFunction(option, select.childNodes, optionCompare);
@@ -286,8 +288,8 @@ WebInspector.ScriptsPanel.prototype = {
             var insertionIndex = insertionIndexForObjectInListSortedByFunction(contentScriptSection, select.childNodes, optionCompare);
             select.insertBefore(contentScriptSection, insertionIndex < 0 ? null : select.childNodes.item(insertionIndex));
         }
-        option._sourceFileId = sourceFileId;
-        this._sourceFileIdToFilesSelectOption[sourceFileId] = option;
+        option._sourceFileId = sourceFile.id;
+        this._sourceFileIdToFilesSelectOption[sourceFile.id] = option;
     },
 
     setScriptSourceIsBeingEdited: function(sourceFileId, inEditMode)
@@ -648,7 +650,8 @@ WebInspector.ScriptsPanel.prototype = {
 
             if (!(sourceFileId in this._sourceFileIdToFilesSelectOption)) {
                 // Anonymous scripts are not added to files select by default.
-                this._addOptionToFilesSelect(sourceFileId);
+                var sourceFile = this._presentationModel.sourceFile(sourceFileId);
+                this._addOptionToFilesSelect(sourceFile);
             }
             var sourceFrame = this._showSourceFrameAndAddToHistory(sourceFileId);
             sourceFrame.setExecutionLine(lineNumber);
