@@ -519,10 +519,7 @@ long long WebFrameImpl::identifier() const
 
 WebURL WebFrameImpl::url() const
 {
-    const WebDataSource* ds = dataSource();
-    if (!ds)
-        return WebURL();
-    return ds->request().url();
+    return m_frame->document()->url();
 }
 
 WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypes) const

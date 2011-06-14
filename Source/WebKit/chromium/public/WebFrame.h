@@ -128,8 +128,7 @@ public:
     // A globally unique identifier for this frame.
     virtual long long identifier() const = 0;
 
-    // The url of the document loaded in this frame.  This is equivalent to
-    // dataSource()->request().url().
+    // The url of the document loaded in this frame.
     virtual WebURL url() const = 0;
 
     // The urls of the given combination types of favicon (if any) specified by

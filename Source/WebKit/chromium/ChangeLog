@@ -1,3 +1,16 @@
+2011-06-14  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Darin Fisher.
+
+        WebFrame::url() should use the one true URL
+        https://bugs.webkit.org/show_bug.cgi?id=62610
+
+        The Document's URL is the one true URL.  Thou shalt have no URLs before
+        Document::url().
+
+        * src/WebFrameImpl.cpp:
+        (WebKit::WebFrameImpl::url):
+
 2011-06-13  James Simonsen  <simonjam@chromium.org>
 
         [Chromium] Unreviewed, rolled DEPS.
