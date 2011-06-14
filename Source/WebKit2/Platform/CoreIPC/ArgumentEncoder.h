@@ -41,6 +41,9 @@ public:
     static PassOwnPtr<ArgumentEncoder> create(uint64_t destinationID);
     ~ArgumentEncoder();
 
+    void encodeFixedLengthData(const uint8_t*, size_t, unsigned alignment);
+    void encodeVariableLengthData(const uint8_t*, size_t, unsigned alignment);
+
     void encodeBytes(const uint8_t*, size_t);
 
     void encodeBool(bool);

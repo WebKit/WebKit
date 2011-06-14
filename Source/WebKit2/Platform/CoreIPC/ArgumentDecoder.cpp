@@ -102,6 +102,17 @@ bool ArgumentDecoder::bufferIsLargeEnoughToContain(unsigned alignment, size_t si
     return alignedBufferIsLargeEnoughToContain(roundUpToAlignment(m_bufferPos, alignment), m_bufferEnd, size);
 }
 
+bool ArgumentDecoder::decodeFixedLengthData(uint8_t* data, size_t size, unsigned alignment)
+{
+    if (!alignBufferPosition(size, alignment))
+        return false;
+
+    memcpy(data, m_bufferPos, size);
+    m_bufferPos += size;
+
+    return true;
+}
+
 bool ArgumentDecoder::decodeBytes(Vector<uint8_t>& buffer)
 {
     uint64_t size;

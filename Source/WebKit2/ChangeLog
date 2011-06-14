@@ -1,5 +1,20 @@
 2011-06-14  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Add functions for encoding/decoding data with a known size and alignment
+        https://bugs.webkit.org/show_bug.cgi?id=62663
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::ArgumentDecoder::decodeFixedLengthData):
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        (CoreIPC::ArgumentEncoder::encodeFixedLengthData):
+        (CoreIPC::ArgumentEncoder::encodeVariableLengthData):
+        * Platform/CoreIPC/ArgumentEncoder.h:
+
+2011-06-14  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Move string ArgumentCoder template specializations out into a .cpp file

@@ -85,6 +85,21 @@ uint8_t* ArgumentEncoder::grow(unsigned alignment, size_t size)
     return m_buffer + alignedSize;
 }
 
+void ArgumentEncoder::encodeFixedLengthData(const uint8_t* data, size_t size, unsigned alignment)
+{
+    uint8_t* buffer = grow(alignment, size);
+    memcpy(buffer, data, size);
+}
+
+void ArgumentEncoder::encodeVariableLengthData(const uint8_t* data, size_t size, unsigned alignment)
+{
+    // Encode the size.
+    encodeUInt64(static_cast<uint64_t>(size));
+
+    // Encode the data.
+    encodeFixedLengthData(data, size, alignment);
+}
+
 void ArgumentEncoder::encodeBytes(const uint8_t* bytes, size_t size)
 {
     // Encode the size.
