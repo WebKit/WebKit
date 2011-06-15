@@ -1,3 +1,11 @@
+2011-06-15  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test expectations update.
+
+        A few more updates to bring test_expectations in line with reality.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

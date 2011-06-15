@@ -3017,7 +3017,6 @@ BUGWK58587 DEBUG GPU LINUX : compositing/geometry/horizontal-scroll-composited.h
 BUGWK58587 DEBUG GPU LINUX : compositing/geometry/tall-page-composited.html = IMAGE
 BUGWK58587 DEBUG GPU LINUX : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGWK58587 DEBUG GPU LINUX : media/video-zoom.html = IMAGE
-BUGWK58587 DEBUG GPU LINUX : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // WebKit roll 80564:80631: rendering on Leopard is shifted to the top right
 // started at some point at or after WK r80582 (Dave Hyatt's vertical text change - a very likely candidate)
@@ -4181,7 +4180,8 @@ BUG_SENORBLANCO WIN LINUX : css2.1/20110323/replaced-intrinsic-ratio-001.htm = I
 BUG_SENORBLANCO WIN LINUX : css2.1/20110323/replaced-min-max-001.htm = IMAGE+TEXT
 BUG_SENORBLANCO WIN LINUX : css2.1/20110323/width-non-replaced-inline-001.htm = IMAGE+TEXT
 BUG_SENORBLANCO WIN LINUX : css2.1/20110323/width-replaced-element-001.htm = IMAGE+TEXT
-BUG_SENORBLANCO WIN LINUX : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT
+BUG_SENORBLANCO WIN : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT
+BUG_SENORBLANCO LINUX DEBUG : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT
 BUG_SENORBLANCO : svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm = IMAGE+TEXT
 BUG_SENORBLANCO WIN LINUX : css2.1/20110323/abspos-non-replaced-width-margin-000-ref.htm = IMAGE
 BUG_SENORBLANCO WIN LINUX : css2.1/20110323/abspos-non-replaced-width-margin-000.htm = IMAGE
@@ -4196,3 +4196,12 @@ BUG_SENORBLANCO MAC : css2.1/20110323/block-non-replaced-height-012.htm = IMAGE
 BUG_SENORBLANCO MAC : css2.1/20110323/block-non-replaced-height-014.htm = IMAGE
 BUG_SENORBLANCO MAC : css2.1/20110323/block-non-replaced-height-016.htm = IMAGE
 BUG_SENORBLANCO MAC : css2.1/20110323/inline-replaced-width-014.htm = IMAGE
+
+// Has been failing since at least WebKit r88541; probably needs a rebaseline.
+BUG_SENORBLANCO LINUX MAC GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
+
+// Has been crashing since WebKit r88279-88297.
+BUG_SENORBLANCO MAC GPU : compositing/geometry/tall-page-composited.html = CRASH
+
+// Has been timing out since r88913.
+BUG_SENORBLANCO MAC LINUX RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TIMEOUT
