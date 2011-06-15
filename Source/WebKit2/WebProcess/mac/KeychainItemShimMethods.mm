@@ -234,8 +234,9 @@ static void webSecKeychainItemCreateFromContentOnMainThread(void* voidContext)
         ASSERT_NOT_REACHED();
         return;
     }
-        
-    CFRetain(response.keychainItem());
+
+    if (response.keychainItem())
+        CFRetain(response.keychainItem());
     context->item = response.keychainItem();
     context->resultCode = response.resultCode();
 }

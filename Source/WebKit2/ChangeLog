@@ -1,5 +1,17 @@
 2011-06-15  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Fix possible null dereference in webSecKeychainItemCreateFromContentOnMainThread
+        https://bugs.webkit.org/show_bug.cgi?id=62736
+        <rdar://problem/9601595>
+
+        * WebProcess/mac/KeychainItemShimMethods.mm:
+        (WebKit::webSecKeychainItemCreateFromContentOnMainThread):
+        SecKeychainItemCreateFromContent can potentially return a null keychain item, so add a null check before trying to retain it.
+
+2011-06-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Dan Bernstein.
 
         Ignore responsiveness timer callbacks on closed pages
