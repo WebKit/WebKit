@@ -1,3 +1,17 @@
+2011-06-15  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: introduce context menu on ImageView with Copy and Open in new tab actions.
+        https://bugs.webkit.org/show_bug.cgi?id=62727
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/ImageView.js:
+        (WebInspector.ImageView.prototype._base64ToSize):
+        (WebInspector.ImageView.prototype._contextMenu):
+        (WebInspector.ImageView.prototype._copyImageURL):
+        (WebInspector.ImageView.prototype._openInNewTab):
+
 2011-06-15  Andrey Kosyakov  <caseq@chromium.org>
 
         Reviewed by Pavel Feldman.
