@@ -994,6 +994,8 @@ PassRefPtr<IDBBackingStore::Cursor> IDBSQLiteBackingStore::openIndexCursor(int64
 bool IDBSQLiteBackingStore::backingStoreExists(SecurityOrigin* securityOrigin, const String& pathBase)
 {
     String path = pathByAppendingComponent(pathBase, securityOrigin->databaseIdentifier() + ".indexeddb");
+    if (!fileExists(path))
+        return false;
 
     SQLiteDatabase db;
     if (!db.open(path))

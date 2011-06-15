@@ -1,3 +1,22 @@
+2011-06-14  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        IndexedDB: Use fileExists() first when checking if SQLite db exists
+        https://bugs.webkit.org/show_bug.cgi?id=62638
+
+        In IDBSQLiteBackingStore::backingStoreExists(), which is used to check
+        if a SQLite database exists and should be considered for migration,
+        check if the file exists first.
+
+        Trying to open a SQLite database for a non-existing file prints a
+        noisy error message in debug builds.
+
+        No new functionality, no new tests.
+
+        * storage/IDBSQLiteBackingStore.cpp:
+        (WebCore::IDBSQLiteBackingStore::backingStoreExists):
+
 2011-06-14  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
