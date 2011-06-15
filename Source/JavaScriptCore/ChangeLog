@@ -1,5 +1,18 @@
 2011-06-15  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Darin Adler.
+
+        REGRESSION (r88719): 5by5.tv schedule is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=62720
+
+        Problem here is that the lexer wasn't considering '$' to be
+        a valid character in an identifier.
+
+        * parser/Lexer.h:
+        (JSC::Lexer::lexExpectIdentifier):
+
+2011-06-15  Oliver Hunt  <oliver@apple.com>
+
         Reviewed by Sam Weinig.
 
         Reduce the size of global_resolve

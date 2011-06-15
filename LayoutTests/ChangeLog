@@ -1,3 +1,15 @@
+2011-06-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r88719): 5by5.tv schedule is not visible
+        https://bugs.webkit.org/show_bug.cgi?id=62720
+
+        Add test for the "interesting" ascii characters that may occur in an identifier
+
+        * fast/js/parser-syntax-check-expected.txt:
+        * fast/js/script-tests/parser-syntax-check.js:
+
 2011-06-15  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; more chromium test expectations updates.

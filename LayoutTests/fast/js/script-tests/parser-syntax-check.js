@@ -351,4 +351,14 @@ invalid("(function __proto__(){})")
 invalid("'use strict'; function __proto__(){}")
 invalid("'use strict'; (function __proto__(){})")
 
+valid("if (0) $foo; ")
+valid("if (0) _foo; ")
+valid("if (0) foo$; ")
+valid("if (0) foo_; ")
+valid("if (0) obj.$foo; ")
+valid("if (0) obj._foo; ")
+valid("if (0) obj.foo$; ")
+valid("if (0) obj.foo_; ")
+valid("if (0) obj.foo\\u03bb; ")
+
 var successfullyParsed = true;

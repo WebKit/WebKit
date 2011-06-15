@@ -202,7 +202,7 @@ namespace JSC {
 
         // Here's the shift
         if (ptr < end) {
-            if (!WTF::isASCII(*ptr) || (*ptr == '\\') || (*ptr == '_'))
+            if ((!WTF::isASCII(*ptr)) || (*ptr == '\\') || (*ptr == '_') || (*ptr == '$'))
                 goto slowCase;
             m_current = *ptr;
         } else
