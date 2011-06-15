@@ -42,14 +42,14 @@ namespace WebCore {
     public:
         virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/) { }
 
-        virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&) { }
+        virtual void didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse&) { }
         virtual void didReceiveData(const char*, int /*dataLength*/) { }
         virtual void didReceiveCachedMetadata(const char*, int /*dataLength*/) { }
         virtual void didFinishLoading(unsigned long /*identifier*/, double /*finishTime*/) { }
         virtual void didFail(const ResourceError&) { }
         virtual void didFailRedirectCheck() { }
 
-        virtual void didReceiveAuthenticationCancellation(unsigned long identifier, const ResourceResponse&) { }
+        virtual void didReceiveAuthenticationCancellation(unsigned long /*identifier*/, const ResourceResponse&) { }
 
         virtual bool isDocumentThreadableLoaderClient() { return false; }
 

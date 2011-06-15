@@ -1,3 +1,11 @@
+2011-06-15  Andrey Kosyakov  <caseq@chromium.org>
+
+        Unreviewed build fix: comment unused parameter names.
+
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::didReceiveResponse):
+        (WebCore::ThreadableLoaderClient::didReceiveAuthenticationCancellation):
+
 2011-06-15  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.
