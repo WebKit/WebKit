@@ -345,6 +345,13 @@ QWebPagePrivate::QWebPagePrivate(QWebPage *qq)
 #endif
     page = new Page(pageClients);
 
+    // By default each page is put into their own unique page group, which affects popup windows
+    // and visited links. Page groups (per process only) is a feature making it possible to use
+    // separate settings for each group, so that for instance an integrated browser/email reader
+    // can use different settings for displaying HTML pages and HTML email. To make QtWebKit work
+    // as expected out of the box, we use a default group similar to what other ports are doing.
+    page->setGroupName("Default Group");
+
 #if ENABLE(CLIENT_BASED_GEOLOCATION)
     // In case running in DumpRenderTree mode set the controller to mock provider.
     if (QWebPagePrivate::drtRun)

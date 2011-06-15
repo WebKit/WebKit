@@ -89,11 +89,11 @@ public slots:
 private slots:
     void initTestCase();
     void cleanupTestCase();
-
     void contextMenuCopy();
     void acceptNavigationRequest();
     void geolocationRequestJS();
     void loadFinished();
+    void popupFormSubmission();
     void acceptNavigationRequestWithNewWindow();
     void userStyleSheet();
     void loadHtml5Video();
@@ -389,6 +389,25 @@ public:
         return page;
     }
 };
+
+void tst_QWebPage::popupFormSubmission()
+{
+    TestPage page;
+    page.settings()->setAttribute(QWebSettings::JavascriptCanOpenWindows, true);
+    page.mainFrame()->setHtml("<form name=form1 method=get action='' target=myNewWin>"\
+                                "<input type=hidden name=foo value='bar'>"\
+                                "</form>");
+    page.mainFrame()->evaluateJavaScript("window.open('', 'myNewWin', 'width=500,height=300,toolbar=0')");
+    page.mainFrame()->evaluateJavaScript("document.form1.submit();");
+
+    QTest::qWait(500);
+    // The number of popup created should be one.
+    QVERIFY(page.createdWindows.size() == 1);
+
+    QString url = page.createdWindows.takeFirst()->mainFrame()->url().toString();
+    // Check if the form submission was OK.
+    QVERIFY(url.contains("?foo=bar"));
+}
 
 void tst_QWebPage::acceptNavigationRequestWithNewWindow()
 {
