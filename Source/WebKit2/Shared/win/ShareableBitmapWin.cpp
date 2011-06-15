@@ -24,38 +24,29 @@
  */
 
 #include "config.h"
-#include "DrawingAreaImpl.h"
-
 #include "ShareableBitmap.h"
-#include "UpdateInfo.h"
-#include "WebPage.h"
-#include "WebPageProxyMessages.h"
-#include "WindowGeometry.h"
+
+#include <WebCore/BitmapInfo.h>
 #include <WebCore/GraphicsContext.h>
 
 using namespace WebCore;
 
 namespace WebKit {
 
-void DrawingAreaImpl::scheduleChildWindowGeometryUpdate(const WindowGeometry& geometry)
+HDC ShareableBitmap::windowsContext() const
 {
-#if USE(ACCELERATED_COMPOSITING)
-    if (m_layerTreeHost) {
-        m_layerTreeHost->scheduleChildWindowGeometryUpdate(geometry);
-        return;
-    }
-#endif
+    ASSERT(isBackedBySharedMemory());
+    if (m_windowsContext)
+        return m_windowsContext.get();
 
-    // FIXME: This should be a Messages::DrawingAreaProxy, and DrawingAreaProxy should pass the
-    // data off to the WebPageProxy.
-    m_webPage->send(Messages::WebPageProxy::ScheduleChildWindowGeometryUpdate(geometry));
-}
+    OwnPtr<HDC> screenDC = adoptPtr(::GetDC(0));
+    BitmapInfo bmInfo = BitmapInfo::createBottomUp(m_size);
 
-PassOwnPtr<GraphicsContext> DrawingAreaImpl::createGraphicsContext(ShareableBitmap* bitmap)
-{
-    HDC bitmapDC = bitmap->windowsContext();
-    return adoptPtr(new GraphicsContext(bitmapDC, true));
+    m_windowsContext = adoptPtr(::CreateCompatibleDC(screenDC.get()));
+    m_windowsBitmap = adoptPtr(CreateDIBSection(m_windowsContext.get(), &bmInfo, DIB_RGB_COLORS, 0, m_sharedMemory->handle(), 0));
+    ::SelectObject(m_windowsContext.get(), m_windowsBitmap.get());
+
+    return m_windowsContext.get();
 }
 
 } // namespace WebKit
-

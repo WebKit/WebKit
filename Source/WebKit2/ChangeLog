@@ -1,3 +1,58 @@
+2011-06-14  Jon Honeycutt  <jhoneycutt@apple.com>
+
+        REGRESSION(78201): Windowless Flash plug-ins are transparent on some sites
+        https://bugs.webkit.org/show_bug.cgi?id=62690
+        <rdar://problem/9512026>
+
+        Reviewed by Ada Chan.
+
+        The bug arises when mixing CoreGraphics and GDI. When we create a Windows
+        bitmap for a windowless plug-in to draw into, we first fill it with "clear",
+        or all 0s. If the plug-in uses GDI to draw, the GDI calls will ignore the
+        alpha channel, and if we then use CG to blend this bitmap onto the
+        GraphicsContext for the rest of the page, CG will treat the 0-filled
+        alpha channel as being transparent.
+
+        To fix this, on Windows, use a GDI-backed GraphicsContext to paint the
+        page in the WebProcess, and use GDI to blit from the UpdateInfo to the
+        backing store in the UI process.
+
+        * Platform/SharedMemory.h:
+        (WebKit::SharedMemory::handle):
+        Return the handle for the memory.
+
+        * Shared/ShareableBitmap.h:
+        Declared windowsContext() to return a HDC with the bitmap selected into it.
+        Added members to store the HDC and the HBITMAP.
+
+        * Shared/win/ShareableBitmapWin.cpp: Added.
+        (WebKit::ShareableBitmap::windowsContext):
+        Get the screen DC, and create a compatible DC from it. Create a DIB
+        section backed by the shared memory, select it into the context, and
+        return it.
+
+        * UIProcess/win/BackingStoreWin.cpp:
+        (WebKit::BackingStore::incorporateUpdate):
+        Use GDI to blit from the update info's bitmap into the backing store bitmap.
+
+        * WebProcess/WebPage/DrawingAreaImpl.cpp:
+        (WebKit::DrawingAreaImpl::createGraphicsContext):
+        Return a GraphicsContext from the ShareableBitmap.
+        (WebKit::DrawingAreaImpl::display):
+        Call createGraphicsContext(), and pass the ShareableBitmap.
+
+        * WebProcess/WebPage/DrawingAreaImpl.h:
+        Declare createGraphicsContext(), which on Windows will create a GDI-backed
+        GraphicsContext.
+
+        * WebProcess/WebPage/win/DrawingAreaImplWin.cpp: Added.
+        (WebKit::DrawingAreaImpl::createGraphicsContext):
+        Get a Windows context for the bitmap, and create and return a new
+        GraphicsContext using the DC.
+
+        * win/WebKit2.vcproj:
+        Added new files.
+
 2011-06-15  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

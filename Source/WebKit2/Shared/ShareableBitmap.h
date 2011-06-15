@@ -111,6 +111,9 @@ public:
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
     PassRefPtr<WebCore::Image> createImage();
 
+#if PLATFORM(WIN)
+    HDC windowsContext() const;
+#endif
 #if USE(CG)
     // This creates a copied CGImageRef (most likely a copy-on-write) of the shareable bitmap.
     RetainPtr<CGImageRef> makeCGImageCopy();
@@ -155,6 +158,10 @@ private:
 
     // If the shareable bitmap is backed by fastMalloced memory, this points to the data.
     void* m_data;
+#if PLATFORM(WIN)
+    mutable OwnPtr<HDC> m_windowsContext;
+    mutable OwnPtr<HBITMAP> m_windowsBitmap;
+#endif
 };
 
 } // namespace WebKit

@@ -94,6 +94,9 @@ public:
 
     size_t size() const { return m_size; }
     void* data() const { return m_data; }
+#if PLATFORM(WIN)
+    HANDLE handle() const { return m_handle; }
+#endif
 
     // Creates a copy-on-write copy of the first |size| bytes.
     PassRefPtr<SharedMemory> createCopyOnWriteCopy(size_t) const;

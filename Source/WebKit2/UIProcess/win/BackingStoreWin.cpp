@@ -84,8 +84,8 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
 
     IntPoint updateRectLocation = updateInfo.updateRectBounds.location();
 
-    BitmapDC dc(m_bitmap.get(), 0);
-    GraphicsContext graphicsContext(dc);
+    BitmapDC backingStoreDC(m_bitmap.get(), 0);
+    HDC bitmapDC = bitmap->windowsContext();
 
     // Paint all update rects.
     for (size_t i = 0; i < updateInfo.updateRects.size(); ++i) {
@@ -93,7 +93,8 @@ void BackingStore::incorporateUpdate(ShareableBitmap* bitmap, const UpdateInfo& 
         IntRect srcRect = updateRect;
         srcRect.move(-updateRectLocation.x(), -updateRectLocation.y());
 
-        bitmap->paint(graphicsContext, updateRect.location(), srcRect);
+        ::BitBlt(backingStoreDC, updateRect.location().x(), updateRect.location().y(), updateRect.size().width(), updateRect.size().height(),
+            bitmapDC, srcRect.x(), srcRect.y(), SRCCOPY);
     }
 }
 

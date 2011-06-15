@@ -31,8 +31,13 @@
 #include "Region.h"
 #include "RunLoop.h"
 
+namespace WebCore {
+    class GraphicsContext;
+}
+
 namespace WebKit {
 
+class ShareableBitmap;
 class UpdateInfo;
 
 class DrawingAreaImpl : public DrawingArea {
@@ -83,6 +88,7 @@ private:
     void displayTimerFired();
     void display();
     void display(UpdateInfo&);
+    PassOwnPtr<WebCore::GraphicsContext> createGraphicsContext(ShareableBitmap*);
 
     uint64_t m_backingStoreStateID;
 
