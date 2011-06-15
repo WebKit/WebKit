@@ -1,3 +1,9 @@
+2011-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Unreviewed. Remove unneeded constructor declaration added by mistake in r88800.
+
+        * platform/gtk/GtkAuthenticationDialog.h:
+
 2011-06-15  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

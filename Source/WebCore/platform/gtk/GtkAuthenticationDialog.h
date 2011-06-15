@@ -42,8 +42,6 @@ public:
     void show();
 
 private:
-    GtkAuthenticationDialog();
-
     void destroy();
     void authenticate();
 
