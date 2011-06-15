@@ -1002,7 +1002,7 @@ BUGCR79896 WIN LINUX GPU : fast/canvas/canvas-shadow.html = TEXT
 BUGCR81858 WIN LINUX GPU : fast/canvas/canvas-longlived-context.html = PASS TEXT
 
 // Misc. render failures
-BUGWK62138 WIN GPU : compositing/tiling/huge-layer-img.html = TEXT
+BUGWK62138 WIN MAC GPU : compositing/tiling/huge-layer-img.html = TEXT PASS
 BUGCR81606 WIN LINUX GPU : fast/canvas/drawImage-with-globalAlpha.html = IMAGE
 
 // fillRect failures
@@ -2876,7 +2876,8 @@ BUGCR60965 GPU WIN LINUX : fast/canvas/setWidthResetAfterForcedRender.html = IMA
 
 BUGNONE SLOW GPU DEBUG WIN : fast/canvas/canvas-getImageData.html = PASS
 
-BUGWK53469 GPU MAC : compositing/scroll-painted-composited-content.html = CRASH
+BUGWK53469 GPU SNOWLEOPARD : compositing/scroll-painted-composited-content.html = CRASH
+BUGWK53469 GPU LEOPARD RELEASE : compositing/scroll-painted-composited-content.html = CRASH
 
 // Accelerated 2d for mac isn't supported yet, so SKIP this test for now.
 BUGCR74979 GPU MAC SKIP: media/video-canvas-alpha.html = IMAGE
@@ -3362,7 +3363,6 @@ BUGCR79110 WIN LINUX : fast/block/float/021.html = TEXT
 BUGCR79110 WIN LINUX : fast/overflow/infiniteRecursionGuard.html = IMAGE+TEXT
 
 // Regression caused by r83518.
-BUGCR79111 GPU WIN LINUX : fast/canvas/DrawImageSinglePixelStretch.html = TEXT
 BUGCR79111 GPU : compositing/framesets/composited-frame-alignment.html = IMAGE
 
 BUGWK58308 GPU WIN LINUX DEBUG : compositing/z-order/negative-z-index.html = PASS CRASH
@@ -3530,7 +3530,6 @@ BUGWK60097 DEBUG : fast/dom/HTMLLinkElement/link-and-subresource-test.html = TEX
 // Needs rebaseline
 
 BUGWK60102 LINUX DEBUG GPU : compositing/geometry/fixed-in-composited.html = IMAGE
-BUGWK60102 MAC GPU : compositing/geometry/video-fixed-scrolling.html = IMAGE
 BUGWK60102 LINUX GPU : compositing/masks/masked-ancestor.html = IMAGE
 BUGWK60102 LINUX DEBUG GPU : compositing/masks/simple-composited-mask.html = IMAGE
 // Commented because of BUGCR81605
@@ -3729,9 +3728,6 @@ BUG_HCLAM WIN SLOW: http/tests/inspector/resource-tree/resource-tree-document-ur
 
 // Failure introduced by Chromium r83848.
 BUG_HCLAM : fast/url/ipv6.html = TEXT
-
-// Failure since r85661.
-BUG_HCLAM MAC GPU : compositing/tiling/huge-layer-img.html = FAIL
 
 // Flaky
 BUGWK60344 MAC DEBUG : fast/css/counters/complex-before.html = PASS CRASH
@@ -3959,10 +3955,10 @@ BUGCR84157 GPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacit
 BUGCR84157 GPU : fast/dom/object-plugin-hides-properties.html = TEXT
 BUGCR84157 GPU : fast/js/property-getters-and-setters.html = TEXT
 BUGCR84157 GPU WIN : fast/canvas/canvas-currentColor.html = TEXT
-BUGCR84157 GPU WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT
+BUGCR84157 GPU WIN : fast/canvas/canvas-fillPath-shadow.html = TEXT PASS
 BUGCR84157 BUGCR74979 WIN LINUX GPU : media/video-canvas-alpha.html = IMAGE
 
-BUGCR85051 WIN GPU : canvas/philip/tests/2d.composite.canvas.source-over.html = TEXT
+BUGCR85051 WIN RELEASE GPU : canvas/philip/tests/2d.composite.canvas.source-over.html = TEXT
 
 BUGWK62255 : animations/animation-iteration-event-destroy-renderer.html = TIMEOUT PASS
 

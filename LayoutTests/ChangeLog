@@ -1,3 +1,11 @@
+2011-06-15  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; more test expectations cleanup.
+
+        Get rid of some unexpected passes from the GPU bots.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.
