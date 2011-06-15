@@ -18,19 +18,9 @@
     Boston, MA 02110-1301, USA.
 */
 
-#ifndef ewk_frame_h
-#define ewk_frame_h
-
-#include <Evas.h>
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 /**
- * @file
- *
- * WebKit frame smart object.
+ * @file    ewk_frame.h
+ * @brief   WebKit frame smart object.
  *
  * This object is the low level access to WebKit-EFL browser
  * component. It represents both the main and internal frames that
@@ -70,18 +60,27 @@ extern "C" {
  *  - "state,save", void: frame's state will be saved as a history item.
  */
 
+#ifndef ewk_frame_h
+#define ewk_frame_h
 
+#include <Evas.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/// Creates a type name for _Ewk_Frame_Load_Error.
+typedef struct _Ewk_Frame_Load_Error Ewk_Frame_Load_Error;
 /**
- * Structure used to report load errors.
+ * @brief   Structure used to report load errors.
  *
  * Load errors are reported as signal by ewk_view. All the strings are
  * temporary references and should @b not be used after the signal
- * callback returns. If required, make copies with strdup() or
+ * callback returns. If it's required, make copies with strdup() or
  * eina_stringshare_add() (they are not even guaranteed to be
  * stringshared, so must use eina_stringshare_add() and not
  * eina_stringshare_ref()).
  */
-typedef struct _Ewk_Frame_Load_Error Ewk_Frame_Load_Error;
 struct _Ewk_Frame_Load_Error {
     int code; /**< numeric error code */
     Eina_Bool is_cancellation; /**< if load failed because it was canceled */
@@ -91,43 +90,45 @@ struct _Ewk_Frame_Load_Error {
     Evas_Object *frame; /**< frame where the failure happened */
 };
 
+/// Creates a type name for _Ewk_Frame_Resource_Request.
+typedef struct _Ewk_Frame_Resource_Request Ewk_Frame_Resource_Request;
 /**
- * Structure used to report resource requests
+ * @brief   Structure used to report resource request.
  *
  * Details given before a resource is loaded on a given frame. It's used by
  * ewk_frame_request_will_send() to inform the details of a to-be-loaded
  * resource, allowing them to be overridden.
  */
-typedef struct _Ewk_Frame_Resource_Request Ewk_Frame_Resource_Request;
 struct _Ewk_Frame_Resource_Request {
-    const char *url; /**< url of this resource */
-    const unsigned long identifier; /**< resource's identifier. Can not be changed */
+    const char *url; /**< url of the resource */
+    const unsigned long identifier; /**< identifier of resource, can not be changed */
 };
 
-/**
- * Structure used to report hit test results.
- */
+/// Creates a type name for _Ewk_Hit_Test.
 typedef struct _Ewk_Hit_Test Ewk_Hit_Test;
+/// Structure used to report hit test result.
 struct _Ewk_Hit_Test {
-    int x, y;
+    int x; /**< the horizontal position of the hit test */
+    int y; /**< the vertical position of the hit test */
     struct {
         int x, y, w, h;
-    } bounding_box;
-    const char *title;
-    const char *alternate_text; /**< for image, area, input and applet */
-    Evas_Object *frame;
+    } bounding_box; /**< DEPRECATED, see ewk_frame_hit_test_new() */
+    const char *title; /**< title of the element */
+    const char *alternate_text; /**< the alternate text for image, area, input and applet */
+    Evas_Object *frame; /**< the pointer to frame where hit test was requested */
     struct {
-        const char *text;
-        const char *url;
-        const char *title;
+        const char *text; /**< the text of the link */
+        const char *url; /**< URL of the link */
+        const char *title; /**< the title of link */
         Evas_Object *target_frame;
     } link;
     struct {
-        Eina_Bool editable:1;
-        Eina_Bool selected:1;
+        Eina_Bool editable:1; /**< @c EINA_TRUE if element is editable, @c EINA_FALSE if not */
+        Eina_Bool selected:1; /**< @c EINA_TRUE if element is selected, @c EINA_FALSE if not */
     } flags;
 };
 
+/// Represents actions of touch events.
 typedef enum {
     EWK_TOUCH_START,
     EWK_TOUCH_END,
@@ -135,6 +136,7 @@ typedef enum {
     EWK_TOUCH_CANCEL
 } Ewk_Touch_Event_Type;
 
+/// Represents states of touch events.
 typedef enum {
     EWK_TOUCH_POINT_PRESSED,
     EWK_TOUCH_POINT_RELEASED,
@@ -142,11 +144,14 @@ typedef enum {
     EWK_TOUCH_POINT_CANCELLED
 } Ewk_Touch_Point_Type;
 
+/// Creates a type name for _Ewk_Touch_Point.
 typedef struct _Ewk_Touch_Point Ewk_Touch_Point;
+/// Represents a touch point.
 struct _Ewk_Touch_Point {
-    unsigned int id;
-    int x, y;
-    Ewk_Touch_Point_Type state;
+    unsigned int id; /**< identifier of the touch event */
+    int x; /**< the horizontal position of the touch event */
+    int y; /**< the horizontal position of the touch event */
+    Ewk_Touch_Point_Type state; /**< state of the touch event */
 };
 
 EAPI Evas_Object *ewk_frame_view_get(const Evas_Object *o);
