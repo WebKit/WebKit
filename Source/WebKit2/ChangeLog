@@ -1,3 +1,16 @@
+2011-06-14  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Ada Chan.
+
+        <https://bugs.webkit.org/show_bug.cgi?id=62693>
+        <rdar://problem/9601436>
+        windowsKeyCodeForKeyEvent should be robust against NSFlagsChanged events
+
+        * Shared/mac/WebEventFactory.mm:
+        (WebKit::windowsKeyCodeForKeyEvent):
+        Explicitly check for NSFlagsChanged before calling -charactersIgnoringModifiers, since
+        charactersIgnoringModifiers throws an exception for NSFlagsChanged events.
+
 2011-06-14  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Sam Weinig.

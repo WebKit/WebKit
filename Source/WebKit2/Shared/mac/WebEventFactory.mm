@@ -696,6 +696,9 @@ static int windowsKeyCodeForKeyEvent(NSEvent* event)
         // VK_DIVIDE (6F) Divide key
         case 75: return 0x6F;
      }
+    
+    if ([event type] == NSFlagsChanged)
+        return 0;
 
     NSString* s = [event charactersIgnoringModifiers];
     if ([s length] != 1)
