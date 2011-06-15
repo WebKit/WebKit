@@ -1,3 +1,10 @@
+2011-06-15  Tony Chang  <tony@chromium.org>
+
+        Fix Qt results for RenderDeprecatedFlexibleBox rename.
+
+        * platform/qt/fast/forms/range-thumb-height-percentage-expected.txt:
+        * platform/qt/fast/multicol/client-rects-expected.txt:
+
 2011-06-15  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Alexey Proskuryakov.
@@ -13,7 +20,7 @@
 
 2011-06-15  Tony Chang  <tony@chromium.org>
 
-        Fixing more results with RenderDeprecatedFlexibleBot rename.
+        Fixing more results with RenderDeprecatedFlexibleBox rename.
 
         * platform/chromium-mac/fast/layers/video-layer-expected.txt:
         * platform/chromium-mac/media/audio-controls-rendering-expected.txt:
