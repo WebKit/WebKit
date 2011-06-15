@@ -1,5 +1,14 @@
 2011-06-15  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed; more chromium test expectations updates.
+
+        Rebaselined one additional CSS 2.1 test on Linux.
+
+        * platform/chromium-linux/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
+2011-06-15  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed; new chromium test baselines.
 
         New chromium baselines for CSS 2.1 tests introduced in r88913.  Note

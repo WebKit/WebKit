@@ -3980,14 +3980,12 @@ BUGWK62430 : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = FAIL
 BUGWK62580 : fast/loader/inherit-charset-to-empty-frame.html = PASS TEXT
 BUGWK62662 : inspector/cookie-parser.html = PASS CRASH TIMEOUT
 
-// These started failing with r88913.  The results are visibly wrong, and are probably wrong on the
-// Safari results too.
-BUG_SENORBLANCO WIN LINUX : css2.1/20110323/block-non-replaced-width-008.htm = IMAGE+TEXT
-BUG_SENORBLANCO WIN LINUX : css2.1/20110323/block-replaced-width-001.htm = IMAGE+TEXT
-BUG_SENORBLANCO MAC       : css2.1/20110323/inline-replaced-width-014.htm = IMAGE
-BUG_SENORBLANCO WIN LINUX : css2.1/20110323/inline-replaced-width-014.htm = IMAGE+TEXT
-BUG_SENORBLANCO WIN LINUX : css2.1/20110323/replaced-elements-001.htm = IMAGE+TEXT
-BUG_SENORBLANCO WIN LINUX : css2.1/20110323/replaced-intrinsic-ratio-001.htm = IMAGE+TEXT
+// These started failing with r88913.  The results are visibly wrong, and the
+// checked-in pixel results for Safari (platform/mac) are wrong too.
+BUGWK62754 WIN LINUX : css2.1/20110323/block-non-replaced-width-008.htm = IMAGE+TEXT
+BUGWK62754 WIN LINUX : css2.1/20110323/block-replaced-width-001.htm = IMAGE+TEXT
+BUGWK62754 WIN LINUX : css2.1/20110323/replaced-elements-001.htm = IMAGE+TEXT
+BUGWK62754 WIN LINUX : css2.1/20110323/replaced-intrinsic-ratio-001.htm = IMAGE+TEXT
 
 // Has been failing since at least WebKit r88541; probably needs a rebaseline.
 BUG_SENORBLANCO LINUX MAC GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
