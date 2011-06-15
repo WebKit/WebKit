@@ -128,17 +128,17 @@ public:
         }
         case APIObject::TypeImage: {
             WebImage* image = static_cast<WebImage*>(m_root);
-            if (!image->bitmap() || !image->bitmap()->isBackedBySharedMemory()) {
+
+            ShareableBitmap::Handle handle;
+            if (!image->bitmap() || !image->bitmap()->isBackedBySharedMemory() || !image->bitmap()->createHandle(handle)) {
+                // Initial false indicates no allocated bitmap or is not shareable.
                 encoder->encode(false);
                 return true;
             }
 
-            ShareableBitmap::Handle handle;
-            if (!image->bitmap() || !image->bitmap()->createHandle(handle))
-                return false;
-
+            // Initial true indicates a bitmap was allocated and is shareable.
             encoder->encode(true);
-            
+
             encoder->encode(handle);
             return true;
         }

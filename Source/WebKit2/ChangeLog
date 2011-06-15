@@ -1,3 +1,20 @@
+2011-06-14  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Simon Fraser.
+
+        Follow up for Callers should be robust against WebImage::create() returning an image with a null snapshot
+        https://bugs.webkit.org/show_bug.cgi?id=62666
+
+        * Shared/API/c/cg/WKImageCG.cpp:
+        (WKImageCreateCGImage):
+        (WKImageCreateFromCGImage):
+        Don't null check the arguments (as per our API design) or the direct result of WebImage::create.
+
+        * Shared/UserMessageCoders.h:
+        (WebKit::UserMessageEncoder::baseEncode):
+        Remove redundant check and make not being able to create a handle the same
+        as not being backed by shareable memory.
+
 2011-06-14  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Ada Chan.
