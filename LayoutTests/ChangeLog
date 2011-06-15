@@ -1,3 +1,15 @@
+2011-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Textarea will not accept space characters at end of line
+        https://bugs.webkit.org/show_bug.cgi?id=61483
+
+        Added a regression test now that the bug has been resolved by r88883.
+
+        * editing/input/insert-wrapping-space-in-textarea-expected.txt: Added.
+        * editing/input/insert-wrapping-space-in-textarea.html: Added.
+
 2011-06-15  Andrey Kosyakov  <caseq@chromium.org>
 
        Unreviewed, rolled out r88937 (broke build on mac)
