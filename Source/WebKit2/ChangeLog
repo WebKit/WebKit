@@ -1,3 +1,24 @@
+2011-06-15  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Ignore responsiveness timer callbacks on closed pages
+        https://bugs.webkit.org/show_bug.cgi?id=62735
+        <rdar://problem/9511295>
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::close):
+        Use nullptr instead of clear.
+
+        (WebKit::WebPageProxy::processDidBecomeUnresponsive):
+        Return early if the page isn't valid.
+
+        (WebKit::WebPageProxy::processDidBecomeResponsive):
+        Ditto.
+
+        (WebKit::WebPageProxy::updateBackingStoreDiscardableState):
+        Assert that the page is valid.
+
 2011-06-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r88907.
