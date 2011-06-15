@@ -1,3 +1,11 @@
+2011-06-15  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; chromium test expectations update.
+
+        Suppressing the failures introduced at r88913.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-15  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.
