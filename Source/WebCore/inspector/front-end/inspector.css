@@ -768,8 +768,8 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     display: none;
 }
 
-.console-error-level .console-message-text {
-    color: red;
+.console-error-level .console-message-text, .console-error-level .section .header .title {
+    color: red !important;
 }
 
 .console-debug-level .console-message-text {
@@ -881,6 +881,7 @@ body.platform-linux .monospace, body.platform-linux .source-code {
     position: relative;
     display: inline-block;
     vertical-align: top;
+    color: black;
 }
 
 .console-formatted-object .section, .console-formatted-node .section {

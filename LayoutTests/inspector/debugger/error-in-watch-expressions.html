@@ -1,0 +1,34 @@
+<html>
+<head>
+<script src="../../http/tests/inspector/inspector-test.js"></script>
+<script>
+
+var foo = 123
+
+var test = function()
+{
+    var watchExpressionsSection = WebInspector.panels.scripts.sidebarPanes.watchExpressions.section;
+    watchExpressionsSection.addExpression();
+    watchExpressionsSection.watchExpressions[0] = "foo";
+    watchExpressionsSection.watchExpressions[1] = "#$%";
+    watchExpressionsSection.update();
+    InspectorTest.runAfterPendingDispatches(step1);
+
+    function step1()
+    {
+        InspectorTest.addResult(watchExpressionsSection.element.textContent);
+        InspectorTest.addResult(watchExpressionsSection.element.innerHTML.indexOf("watch-expressions-error-level") !== -1 ? "SUCCESS" : "FAILED");
+        InspectorTest.completeTest();
+    }
+}
+
+</script>
+</head>
+
+<body onload="runTest()">
+<p>
+Tests that watches pane renders errors in red.
+</p>
+
+</body>
+</html>

@@ -1,3 +1,13 @@
+2011-06-15  Pavel Feldman  <pfeldman@google.com>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: [REGRESSION] errors in watches and in console are not rendered in red.
+        https://bugs.webkit.org/show_bug.cgi?id=62708
+
+        * inspector/debugger/error-in-watch-expressions-expected.txt: Added.
+        * inspector/debugger/error-in-watch-expressions.html: Added.
+
 2011-06-15  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

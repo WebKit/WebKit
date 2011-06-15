@@ -102,11 +102,6 @@ WebInspector.RemoteObject.prototype = {
         return this._hasChildren;
     },
 
-    isError: function()
-    {
-        return this._type === "error";
-    },
-
     getOwnProperties: function(callback)
     {
         this._getProperties(false, callback);

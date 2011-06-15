@@ -102,12 +102,14 @@ WebInspector.WatchExpressionsSection.NewWatchExpression = "\xA0";
 WebInspector.WatchExpressionsSection.prototype = {
     update: function(e)
     {
-        e && e.stopPropagation();
+        if (e)
+            e.stopPropagation();
 
-        function appendResult(expression, watchIndex, result)
+        function appendResult(expression, watchIndex, result, wasThrown)
         {
             var property = new WebInspector.RemoteObjectProperty(expression, result);
             property.watchIndex = watchIndex;
+            property.wasThrown = wasThrown;
 
             // To clarify what's going on here:
             // In the outer function, we calculate the number of properties
@@ -262,7 +264,7 @@ WebInspector.WatchExpressionTreeElement.prototype = {
     {
         WebInspector.ObjectPropertyTreeElement.prototype.update.call(this);
 
-        if (this.property.value.isError())
+        if (this.property.wasThrown)
             this.valueElement.addStyleClass("watch-expressions-error-level");
 
         var deleteButton = document.createElement("input");
