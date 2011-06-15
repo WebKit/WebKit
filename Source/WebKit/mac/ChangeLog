@@ -1,3 +1,13 @@
+2011-06-15  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/62745> Convert WebNSFileManagerExtras.m to Objective-C++
+
+        Reviewed by Joseph Pecoraro.
+
+        * Misc/WebNSFileManagerExtras.mm: Renamed from Source/WebKit/mac/Misc/WebNSFileManagerExtras.m.
+        (-[NSFileManager _webkit_setMetadataURL:referrer:atPath:]):
+        Added static_cast<MetaDataInfo *>.
+
 2011-06-14  Stephanie Lewis  <slewis@apple.com>
 
         Rubber stamped by Oliver Hunt.

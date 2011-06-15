@@ -127,7 +127,7 @@ static void *setMetaData(void* context)
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_DETACHED);
 
-    MetaDataInfo *info = malloc(sizeof(MetaDataInfo));
+    MetaDataInfo *info = static_cast<MetaDataInfo *>(malloc(sizeof(MetaDataInfo)));
     
     info->URLString = URLString ? CFStringCreateCopy(0, (CFStringRef)URLString) : 0;
     info->referrer = referrer ? CFStringCreateCopy(0, (CFStringRef)referrer) : 0;

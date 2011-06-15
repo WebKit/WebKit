@@ -1,3 +1,13 @@
+2011-06-15  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/62745> Convert WebNSFileManagerExtras.m to Objective-C++
+
+        Reviewed by Joseph Pecoraro.
+
+        * WebKit.xcodeproj/project.pbxproj:
+        (WebNSFileManagerExtras.m): Rename to WebNSFileManagerExtras.mm
+        and change file type to Objective-C++.
+
 2011-06-02  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Ryosuke Niwa.
