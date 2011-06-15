@@ -163,8 +163,8 @@ inline void HandleHeap::deallocate(HandleSlot handle)
 {
     Node* node = toNode(handle);
     if (node == m_nextToFinalize) {
-        m_nextToFinalize = node->next();
         ASSERT(m_nextToFinalize->next());
+        m_nextToFinalize = m_nextToFinalize->next();
     }
 
     SentinelLinkedList<Node>::remove(node);

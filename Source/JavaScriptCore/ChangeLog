@@ -1,3 +1,26 @@
+2011-06-14  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Fixed an inavlid ASSERT I found while investigating
+        <rdar://problem/9580254> Crash in JSC::HandleHeap::finalizeWeakHandles + 92
+        https://bugs.webkit.org/show_bug.cgi?id=62699        
+
+        No test since we don't know of a way to get WebCore to deallocate the
+        next-to-finalize handle, which is also the last handle in the list,
+        while finalizing the second-to-last handle in the list.
+
+        * heap/HandleHeap.h:
+        (JSC::HandleHeap::deallocate): Don't ASSERT that m_nextToFinalize has a
+        non-0 next() after updating it, since it is valid to update m_nextToFinalize
+        to point to the tail sentinel.
+        
+        Do ASSERT that m_nextToFinalize has a non-0 next() before updating it,
+        since it is not valid to update m_nextToFinalize to point past the tail
+        sentinel.
+        
+        Also, use m_nextToFinalize consistently for clarity.
+
 2011-06-14  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Sam Weinig.
