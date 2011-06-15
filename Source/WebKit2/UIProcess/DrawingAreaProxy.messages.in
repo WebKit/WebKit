@@ -27,10 +27,6 @@ messages -> DrawingAreaProxy {
     EnterAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::LayerTreeContext context)
     ExitAcceleratedCompositingMode(uint64_t backingStoreStateID, WebKit::UpdateInfo updateInfo)
 #endif
-#if USE(ACCELERATED_COMPOSITING) && USE(TEXTURE_MAPPER)
-    SyncCompositingLayers(WebKit::WebLayerTreeInfo layerTreeInfo)
-    UpdateCompositingLayerContent(WebKit::WebLayerUpdateInfo layerUpdateInfo)
-#endif
 #if ENABLE(TILED_BACKING_STORE)
     Invalidate(WebCore::IntRect dirtyRect)
     DidSetSize(WebCore::IntSize viewSize)

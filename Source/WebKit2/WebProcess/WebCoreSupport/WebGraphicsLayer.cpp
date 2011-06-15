@@ -405,9 +405,9 @@ static Vector<FloatRect> divideIntoTiles(const FloatRect& rect)
     return tiles;
 }
 
-static void collectCompositingInfoForThisLayer(GraphicsLayer* graphicsLayer, WebLayerTreeInfo& outInfo, Vector<WebGraphicsLayer*>& outLayers)
+static void collectCompositingInfoForThisLayer(GraphicsLayer* layer, WebLayerTreeInfo& outInfo, Vector<WebGraphicsLayer*>& outLayers)
 {
-    WebGraphicsLayer* layer = toWebGraphicsLayer(graphicsLayer);
+    WebGraphicsLayer* layer = toWebGraphicsLayer(layer);
     if (!layer)
         return;
     if (!layer->isModified())

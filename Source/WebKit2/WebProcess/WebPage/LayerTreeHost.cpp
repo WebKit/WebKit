@@ -34,10 +34,6 @@
 #endif
 #endif
 
-#if PLATFORM(QT) && USE(TEXTURE_MAPPER)
-#include "qt/LayerTreeHostQt.h"
-#endif
-
 using namespace WebCore;
 
 namespace WebKit {
@@ -48,8 +44,6 @@ PassRefPtr<LayerTreeHost> LayerTreeHost::create(WebPage* webPage)
     return LayerTreeHostCAMac::create(webPage);
 #elif PLATFORM(WIN) && HAVE(WKQCA)
     return LayerTreeHostCAWin::create(webPage);
-#elif PLATFORM(QT) && USE(TEXTURE_MAPPER)
-    return LayerTreeHostQt::create(webPage);
 #else
     return 0;
 #endif

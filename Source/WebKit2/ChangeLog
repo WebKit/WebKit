@@ -1,3 +1,26 @@
+2011-06-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] Unreviewed rolling out r88799, because it made web process crash.
+
+        * Scripts/webkit2/messages.py:
+        * Shared/LayerTreeContext.h:
+        * Shared/qt/LayerTreeContextQt.cpp:
+        (WebKit::LayerTreeContext::LayerTreeContext):
+        (WebKit::LayerTreeContext::~LayerTreeContext):
+        (WebKit::LayerTreeContext::encode):
+        (WebKit::LayerTreeContext::decode):
+        (WebKit::LayerTreeContext::isEmpty):
+        (WebKit::operator==):
+        * UIProcess/DrawingAreaProxy.h:
+        * UIProcess/DrawingAreaProxy.messages.in:
+        * WebKit2.pro:
+        * WebProcess/WebCoreSupport/WebGraphicsLayer.cpp:
+        (WebCore::collectCompositingInfoForThisLayer):
+        * WebProcess/WebPage/LayerTreeHost.cpp:
+        (WebKit::LayerTreeHost::create):
+        * WebProcess/WebPage/qt/LayerTreeHostQt.cpp:
+        * WebProcess/WebPage/qt/LayerTreeHostQt.h: Removed.
+
 2011-06-14  Eunmi Lee  <eunmi15.lee@samsung.com>
 
         Reviewed by Sam Weinig.

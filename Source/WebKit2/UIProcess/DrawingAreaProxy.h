@@ -52,8 +52,6 @@ namespace WebKit {
 
 class LayerTreeContext;
 class UpdateInfo;
-class WebLayerTreeInfo;
-class WebLayerUpdateInfo;
 class WebPageProxy;
 
 #if PLATFORM(MAC)
@@ -109,10 +107,6 @@ private:
 #if USE(ACCELERATED_COMPOSITING)
     virtual void enterAcceleratedCompositingMode(uint64_t backingStoreStateID, const LayerTreeContext&) { }
     virtual void exitAcceleratedCompositingMode(uint64_t backingStoreStateID, const UpdateInfo&) { }
-#if USE(TEXTURE_MAPPER)
-    virtual void syncCompositingLayers(const WebLayerTreeInfo&) { }
-    virtual void updateCompositingLayerContent(const WebLayerUpdateInfo&) { }
-#endif
 #endif
 #if ENABLE(TILED_BACKING_STORE)
     virtual void didSetSize(const WebCore::IntSize&) { }
