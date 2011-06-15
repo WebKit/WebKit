@@ -1,3 +1,68 @@
+2011-06-15  Kent Tamura  <tkent@chromium.org>
+
+        [Chromium] Test expectation update for r88757 and r88901.
+        https://bugs.webkit.org/show_bug.cgi?id=52920
+        https://bugs.webkit.org/show_bug.cgi?id=62685
+
+        * platform/chromium-gpu-linux/media/controls-after-reload-expected.png:
+        * platform/chromium-gpu-linux/media/controls-strict-expected.png:
+        * platform/chromium-gpu-linux/media/controls-styling-expected.png:
+        * platform/chromium-gpu-linux/media/controls-without-preload-expected.png:
+        * platform/chromium-gpu-linux/media/video-controls-rendering-expected.png:
+        * platform/chromium-gpu-linux/media/video-display-toggle-expected.png:
+        * platform/chromium-gpu-linux/media/video-no-audio-expected.png:
+        * platform/chromium-gpu-linux/media/video-volume-slider-expected.png:
+        * platform/chromium-gpu-linux/media/video-zoom-controls-expected.png:
+        * platform/chromium-gpu-mac/media/controls-after-reload-expected.png:
+        * platform/chromium-gpu-mac/media/controls-strict-expected.png:
+        * platform/chromium-gpu-mac/media/controls-styling-expected.png:
+        * platform/chromium-gpu-mac/media/controls-without-preload-expected.png:
+        * platform/chromium-gpu-mac/media/video-controls-rendering-expected.png:
+        * platform/chromium-gpu-mac/media/video-display-toggle-expected.png:
+        * platform/chromium-gpu-mac/media/video-no-audio-expected.png:
+        * platform/chromium-gpu-mac/media/video-volume-slider-expected.png:
+        * platform/chromium-gpu-mac/media/video-zoom-controls-expected.png:
+        * platform/chromium-gpu-win/media/controls-after-reload-expected.png:
+        * platform/chromium-gpu-win/media/controls-strict-expected.png:
+        * platform/chromium-gpu-win/media/controls-styling-expected.png:
+        * platform/chromium-gpu-win/media/controls-without-preload-expected.png:
+        * platform/chromium-gpu-win/media/video-controls-rendering-expected.png:
+        * platform/chromium-gpu-win/media/video-display-toggle-expected.png:
+        * platform/chromium-gpu-win/media/video-no-audio-expected.png:
+        * platform/chromium-gpu-win/media/video-volume-slider-expected.png:
+        * platform/chromium-gpu-win/media/video-zoom-controls-expected.png:
+        * platform/chromium-linux/media/video-volume-slider-expected.png:
+        * platform/chromium-mac-leopard/media/video-volume-slider-expected.png:
+        * platform/chromium-mac/fast/layers/video-layer-expected.txt:
+        * platform/chromium-mac/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-mac/media/audio-repaint-expected.txt:
+        * platform/chromium-mac/media/controls-after-reload-expected.txt:
+        * platform/chromium-mac/media/controls-strict-expected.txt:
+        * platform/chromium-mac/media/controls-styling-expected.txt:
+        * platform/chromium-mac/media/controls-without-preload-expected.txt:
+        * platform/chromium-mac/media/video-controls-rendering-expected.txt:
+        * platform/chromium-mac/media/video-display-toggle-expected.txt:
+        * platform/chromium-mac/media/video-empty-source-expected.txt:
+        * platform/chromium-mac/media/video-no-audio-expected.txt:
+        * platform/chromium-mac/media/video-volume-slider-expected.png:
+        * platform/chromium-mac/media/video-volume-slider-expected.txt:
+        * platform/chromium-mac/media/video-zoom-controls-expected.txt:
+        * platform/chromium-win/fast/layers/video-layer-expected.txt:
+        * platform/chromium-win/media/audio-controls-rendering-expected.txt:
+        * platform/chromium-win/media/audio-repaint-expected.txt:
+        * platform/chromium-win/media/controls-after-reload-expected.txt:
+        * platform/chromium-win/media/controls-strict-expected.txt:
+        * platform/chromium-win/media/controls-styling-expected.txt:
+        * platform/chromium-win/media/controls-without-preload-expected.txt:
+        * platform/chromium-win/media/video-controls-rendering-expected.txt:
+        * platform/chromium-win/media/video-display-toggle-expected.txt:
+        * platform/chromium-win/media/video-empty-source-expected.txt:
+        * platform/chromium-win/media/video-no-audio-expected.txt:
+        * platform/chromium-win/media/video-volume-slider-expected.png:
+        * platform/chromium-win/media/video-volume-slider-expected.txt:
+        * platform/chromium-win/media/video-zoom-controls-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Skip failing tests.
