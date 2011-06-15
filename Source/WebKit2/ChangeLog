@@ -1,3 +1,34 @@
+2011-06-14  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Use new byte array encoding/decoding functions for WTF argument coders
+        https://bugs.webkit.org/show_bug.cgi?id=62682
+
+        * Platform/CoreIPC/ArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        Use the new functions for the string argument coders.
+        
+        * Platform/CoreIPC/ArgumentCoders.h:
+        (CoreIPC::SimpleArgumentCoder::encode):
+        (CoreIPC::SimpleArgumentCoder::decode):
+        Use the new functions to avoid encoding/decoding the size when it's known at decode time.
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        (CoreIPC::roundUpToAlignment):
+        Assert that the alignment is a power of 2.
+
+        (CoreIPC::decodeFixedLengthData):
+        Alignment comes before the size.
+
+        * UIProcess/cf/WebBackForwardListCF.cpp:
+        (WebKit::WebBackForwardList::createCFDictionaryRepresentation):
+        Add a FIXME about now using the internal CoreIPC encoding format here.
+
+        * UIProcess/cf/WebPageProxyCF.cpp:
+        Bump the current session state data version number.
+
 2011-06-14  No'am Rosenthal  <noam.rosenthal@nokia.com>
 
         Reviewed by Kenneth Rohde Christiansen.

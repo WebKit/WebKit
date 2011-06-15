@@ -56,7 +56,7 @@ void ArgumentCoder<CString>::encode(ArgumentEncoder* encoder, const CString& str
 
     uint32_t length = string.length();
     encoder->encode(length);
-    encoder->encodeBytes(reinterpret_cast<const uint8_t*>(string.data()), length);
+    encoder->encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.data()), length, 1);
 }
 
 bool ArgumentCoder<CString>::decode(ArgumentDecoder* decoder, CString& result)
@@ -79,7 +79,7 @@ bool ArgumentCoder<CString>::decode(ArgumentDecoder* decoder, CString& result)
 
     char* buffer;
     CString string = CString::newUninitialized(length, buffer);
-    if (!decoder->decodeBytes(reinterpret_cast<uint8_t*>(buffer), length))
+    if (!decoder->decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length, 1))
         return false;
 
     result = string;
@@ -97,7 +97,7 @@ void ArgumentCoder<String>::encode(ArgumentEncoder* encoder, const String& strin
 
     uint32_t length = string.length();
     encoder->encode(length);
-    encoder->encodeBytes(reinterpret_cast<const uint8_t*>(string.characters()), length * sizeof(UChar));
+    encoder->encodeFixedLengthData(reinterpret_cast<const uint8_t*>(string.characters()), length * sizeof(UChar), __alignof(UChar)); 
 }
 
 bool ArgumentCoder<String>::decode(ArgumentDecoder* decoder, String& result)
@@ -120,7 +120,7 @@ bool ArgumentCoder<String>::decode(ArgumentDecoder* decoder, String& result)
     
     UChar* buffer;
     String string = String::createUninitialized(length, buffer);
-    if (!decoder->decodeBytes(reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar)))
+    if (!decoder->decodeFixedLengthData(reinterpret_cast<uint8_t*>(buffer), length * sizeof(UChar), __alignof(UChar)))
         return false;
     
     result = string;

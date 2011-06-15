@@ -40,11 +40,12 @@ namespace CoreIPC {
 template<typename T> struct SimpleArgumentCoder {
     static void encode(ArgumentEncoder* encoder, const T& t)
     {
-        encoder->encodeBytes(reinterpret_cast<const uint8_t*>(&t), sizeof(T));
+        encoder->encodeFixedLengthData(reinterpret_cast<const uint8_t*>(&t), sizeof(T), __alignof(T));
     }
+
     static bool decode(ArgumentDecoder* decoder, T& t)
     {
-        return decoder->decodeBytes(reinterpret_cast<uint8_t*>(&t), sizeof(T));
+        return decoder->decodeFixedLengthData(reinterpret_cast<uint8_t*>(&t), sizeof(T), __alignof(T));
     }
 };
 
@@ -106,9 +107,7 @@ template<typename T> struct VectorArgumentCoder<true, T> {
     static void encode(ArgumentEncoder* encoder, const Vector<T>& vector)
     {
         encoder->encodeUInt64(vector.size());
-        // FIXME: If we could tell the encoder to align the buffer, we could just do an encodeBytes here.
-        for (size_t i = 0; i < vector.size(); ++i)
-            encoder->encode(vector[i]);
+        encoder->encodeFixedLengthData(reinterpret_cast<const uint8_t*>(vector.data()), vector.size(), __alignof(T));
     }
     
     static bool decode(ArgumentDecoder* decoder, Vector<T>& vector)
@@ -125,36 +124,17 @@ template<typename T> struct VectorArgumentCoder<true, T> {
             return false;
         }
 
-        Vector<T> tmp;
-        tmp.reserveCapacity(size);
+        Vector<T> temp;
+        temp.resize(size);
 
-        for (size_t i = 0; i < size; ++i) {
-            T element;
-            if (!decoder->decode(element))
-                return false;
-            
-            tmp.uncheckedAppend(element);
-        }
+        decoder->decodeFixedLengthData(reinterpret_cast<uint8_t*>(temp.data()), size, __alignof(T));
 
-        vector.swap(tmp);
+        vector.swap(temp);
         return true;
     }
 };
 
 template<typename T> struct ArgumentCoder<Vector<T> > : VectorArgumentCoder<WTF::IsArithmetic<T>::value, T> { };
-
-// Specialization for Vector<uint8_t>
-template<> struct ArgumentCoder<Vector<uint8_t> > {
-    static void encode(ArgumentEncoder* encoder, const Vector<uint8_t>& vector)
-    {
-        encoder->encodeBytes(vector.data(), vector.size());
-    }
-
-    static bool decode(ArgumentDecoder* decoder, Vector<uint8_t>& vector)
-    {
-        return decoder->decodeBytes(vector);
-    }
-};
 
 template<typename KeyArg, typename MappedArg, typename HashArg, typename KeyTraitsArg, typename MappedTraitsArg> struct ArgumentCoder<HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> > {
     typedef HashMap<KeyArg, MappedArg, HashArg, KeyTraitsArg, MappedTraitsArg> HashMapType;

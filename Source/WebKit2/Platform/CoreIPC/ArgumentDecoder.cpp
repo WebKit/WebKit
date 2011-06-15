@@ -58,7 +58,9 @@ ArgumentDecoder::~ArgumentDecoder()
 
 static inline uint8_t* roundUpToAlignment(uint8_t* ptr, unsigned alignment)
 {
-    ASSERT(alignment);
+    // Assert that the alignment is a power of 2.
+    ASSERT(alignment && !(alignment & (alignment - 1)));
+
     uintptr_t alignmentMask = alignment - 1;
     return reinterpret_cast<uint8_t*>((reinterpret_cast<uintptr_t>(ptr) + alignmentMask) & ~alignmentMask);
 }
@@ -104,7 +106,7 @@ bool ArgumentDecoder::bufferIsLargeEnoughToContain(unsigned alignment, size_t si
 
 bool ArgumentDecoder::decodeFixedLengthData(uint8_t* data, size_t size, unsigned alignment)
 {
-    if (!alignBufferPosition(size, alignment))
+    if (!alignBufferPosition(alignment, size))
         return false;
 
     memcpy(data, m_bufferPos, size);
