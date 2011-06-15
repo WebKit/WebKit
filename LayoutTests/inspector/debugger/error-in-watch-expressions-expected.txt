@@ -1,5 +1,4 @@
 Tests that watches pane renders errors in red.
 
-foo: 123#$%: [Exception: SyntaxError]
 SUCCESS
 

@@ -1,3 +1,10 @@
+2011-06-15  Pavel Feldman  <pfeldman@google.com>
+
+        Not reviewed: fixing new inspector test.
+
+        * inspector/debugger/error-in-watch-expressions-expected.txt:
+        * inspector/debugger/error-in-watch-expressions.html:
+
 2011-06-15  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; chromium test expectations update.

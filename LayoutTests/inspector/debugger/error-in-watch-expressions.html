@@ -9,14 +9,12 @@ var test = function()
 {
     var watchExpressionsSection = WebInspector.panels.scripts.sidebarPanes.watchExpressions.section;
     watchExpressionsSection.addExpression();
-    watchExpressionsSection.watchExpressions[0] = "foo";
-    watchExpressionsSection.watchExpressions[1] = "#$%";
+    watchExpressionsSection.watchExpressions[0] = "#$%";
     watchExpressionsSection.update();
     InspectorTest.runAfterPendingDispatches(step1);
 
     function step1()
     {
-        InspectorTest.addResult(watchExpressionsSection.element.textContent);
         InspectorTest.addResult(watchExpressionsSection.element.innerHTML.indexOf("watch-expressions-error-level") !== -1 ? "SUCCESS" : "FAILED");
         InspectorTest.completeTest();
     }
