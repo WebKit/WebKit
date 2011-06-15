@@ -1,3 +1,17 @@
+2011-06-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Geoffrey Garen and Gavin Barraclough.
+
+        Make access-nseive ~9x faster on the non-speculative path by
+        adding special casing for doubles that can lossless-ly be converted
+        to a uint32_t in getByVal and putByVal. This avoids calls to stringification
+        and the hash lookup.  Long term, we should try and get property of a getByVal
+        and putByVal to be an integer immediate even in the non-speculative path.
+
+        * dfg/DFGOperations.cpp:
+        (JSC::DFG::putByVal):
+        (JSC::DFG::operationPutByValInternal):
+
 2011-06-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

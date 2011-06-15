@@ -46,47 +46,61 @@
 
 namespace JSC { namespace DFG {
 
-template<bool strict>
-ALWAYS_INLINE static void operationPutByValInternal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+static inline void putByVal(ExecState* exec, JSValue baseValue, uint32_t index, JSValue value)
 {
     JSGlobalData* globalData = &exec->globalData();
 
+    if (isJSArray(globalData, baseValue)) {
+        JSArray* array = asArray(baseValue);
+        if (array->canSetIndex(index)) {
+            array->setIndex(*globalData, index, value);
+            return;
+        }
+
+        array->JSArray::put(exec, index, value);
+        return;
+    }
+
+    if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(index)) {
+        JSByteArray* byteArray = asByteArray(baseValue);
+        // FIXME: the JITstub used to relink this to an optimized form!
+        if (value.isInt32()) {
+            byteArray->setIndex(index, value.asInt32());
+            return;
+        }
+
+        double dValue = 0;
+        if (value.getNumber(dValue)) {
+            byteArray->setIndex(index, dValue);
+            return;
+        }
+    }
+
+    baseValue.put(exec, index, value);
+}
+
+template<bool strict>
+ALWAYS_INLINE static void operationPutByValInternal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty, EncodedJSValue encodedValue)
+{
     JSValue baseValue = JSValue::decode(encodedBase);
     JSValue property = JSValue::decode(encodedProperty);
     JSValue value = JSValue::decode(encodedValue);
 
     if (LIKELY(property.isUInt32())) {
-        uint32_t index = property.asUInt32();
-
-        if (isJSArray(globalData, baseValue)) {
-            JSArray* array = asArray(baseValue);
-            if (array->canSetIndex(index)) {
-                array->setIndex(*globalData, index, value);
-                return;
-            }
-
-            array->JSArray::put(exec, index, value);
-            return;
-        }
-
-        if (isJSByteArray(globalData, baseValue) && asByteArray(baseValue)->canAccessIndex(index)) {
-            JSByteArray* byteArray = asByteArray(baseValue);
-            // FIXME: the JITstub used to relink this to an optimized form!
-            if (value.isInt32()) {
-                byteArray->setIndex(index, value.asInt32());
-                return;
-            }
-
-            double dValue = 0;
-            if (value.getNumber(dValue)) {
-                byteArray->setIndex(index, dValue);
-                return;
-            }
-        }
-
-        baseValue.put(exec, index, value);
+        putByVal(exec, baseValue, property.asUInt32(), value);
         return;
     }
+
+    if (property.isDouble()) {
+        double propertyAsDouble = property.asDouble();
+        uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
+        if (propertyAsDouble == propertyAsUInt32) {
+            putByVal(exec, baseValue, propertyAsUInt32, value);
+            return;
+        }
+    }
+
+    JSGlobalData* globalData = &exec->globalData();
 
     // Don't put to an object if toString throws an exception.
     Identifier ident(exec, property.toString(exec));
@@ -124,6 +138,25 @@ EncodedJSValue operationValueAdd(ExecState* exec, EncodedJSValue encodedOp1, Enc
     return JSValue::encode(jsAddSlowCase(exec, op1, op2));
 }
 
+static inline EncodedJSValue getByVal(ExecState* exec, JSCell* base, uint32_t index)
+{
+    JSGlobalData* globalData = &exec->globalData();
+
+    // FIXME: the JIT used to handle these in compiled code!
+    if (isJSArray(globalData, base) && asArray(base)->canGetIndex(index))
+        return JSValue::encode(asArray(base)->getIndex(index));
+
+    // FIXME: the JITstub used to relink this to an optimized form!
+    if (isJSString(globalData, base) && asString(base)->canGetIndex(index))
+        return JSValue::encode(asString(base)->getIndex(exec, index));
+
+    // FIXME: the JITstub used to relink this to an optimized form!
+    if (isJSByteArray(globalData, base) && asByteArray(base)->canAccessIndex(index))
+        return JSValue::encode(asByteArray(base)->getIndex(exec, index));
+
+    return JSValue::encode(JSValue(base).get(exec, index));
+}
+
 EncodedJSValue operationGetByVal(ExecState* exec, EncodedJSValue encodedBase, EncodedJSValue encodedProperty)
 {
     JSValue baseValue = JSValue::decode(encodedBase);
@@ -133,25 +166,13 @@ EncodedJSValue operationGetByVal(ExecState* exec, EncodedJSValue encodedBase, En
         JSCell* base = baseValue.asCell();
 
         if (property.isUInt32()) {
-            JSGlobalData* globalData = &exec->globalData();
-            uint32_t index = property.asUInt32();
-
-            // FIXME: the JIT used to handle these in compiled code!
-            if (isJSArray(globalData, base) && asArray(base)->canGetIndex(index))
-                return JSValue::encode(asArray(base)->getIndex(index));
-
-            // FIXME: the JITstub used to relink this to an optimized form!
-            if (isJSString(globalData, base) && asString(base)->canGetIndex(index))
-                return JSValue::encode(asString(base)->getIndex(exec, index));
-
-            // FIXME: the JITstub used to relink this to an optimized form!
-            if (isJSByteArray(globalData, base) && asByteArray(base)->canAccessIndex(index))
-                return JSValue::encode(asByteArray(base)->getIndex(exec, index));
-
-            return JSValue::encode(baseValue.get(exec, index));
-        }
-
-        if (property.isString()) {
+            return getByVal(exec, base, property.asUInt32());
+        } else if (property.isDouble()) {
+            double propertyAsDouble = property.asDouble();
+            uint32_t propertyAsUInt32 = static_cast<uint32_t>(propertyAsDouble);
+            if (propertyAsUInt32 == propertyAsDouble)
+                return getByVal(exec, base, propertyAsUInt32);
+        } else if (property.isString()) {
             Identifier propertyName(exec, asString(property)->value(exec));
             PropertySlot slot(base);
             if (base->fastGetOwnPropertySlot(exec, propertyName, slot))
