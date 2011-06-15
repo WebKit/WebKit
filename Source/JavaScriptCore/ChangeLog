@@ -1,3 +1,14 @@
+2011-06-14  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=43841
+        SegmentedVector::operator== typo
+
+        * wtf/SegmentedVector.h:
+        (WTF::SegmentedVectorIterator::operator==):
+        (WTF::SegmentedVectorIterator::operator!=):
+
 2011-06-14  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.

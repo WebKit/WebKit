@@ -67,12 +67,12 @@ namespace WTF {
 
         bool operator==(const Iterator& other) const
         {
-            return (m_index == other.m_index && m_segment = other.m_segment && &m_vector == &other.m_vector);
+            return m_index == other.m_index && m_segment == other.m_segment && &m_vector == &other.m_vector;
         }
 
         bool operator!=(const Iterator& other) const
         {
-            return (m_index != other.m_index || m_segment != other.m_segment || &m_vector != &other.m_vector);
+            return m_index != other.m_index || m_segment != other.m_segment || &m_vector != &other.m_vector;
         }
 
         SegmentedVectorIterator& operator=(const SegmentedVectorIterator<T, SegmentSize>& other)
