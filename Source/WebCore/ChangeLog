@@ -1,3 +1,18 @@
+2011-06-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Clarify FileChooser creation code.
+        https://bugs.webkit.org/show_bug.cgi?id=62756
+
+        initialize() method is only used once and that is not obvious, so just fold it into the create method.
+
+        Refactoring, no change in behavior.
+
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::create): Folded initialize() code there.
+        * platform/FileChooser.h: Removed decl.
+
 2011-06-15  Eric Carlson  <eric.carlson@apple.com>
 
         Reviewed by Alexey Proskuryakov.
