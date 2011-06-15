@@ -1,3 +1,13 @@
+2011-06-15  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: script links are displayed with original line number in pretty-print mode.
+        https://bugs.webkit.org/show_bug.cgi?id=62282
+
+        * inspector/debugger/script-formatter-expected.txt:
+        * inspector/debugger/script-formatter.html:
+
 2011-06-15  Kent Tamura  <tkent@chromium.org>
 
         [Chromium] Test expectation update for r88757 and r88901.

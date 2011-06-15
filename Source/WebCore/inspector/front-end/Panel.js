@@ -388,6 +388,23 @@ WebInspector.Panel.prototype = {
             visibleView.resize();
     },
 
+    createAnchor: function(url, lineNumber, classes, tooltipText)
+    {
+        var linkText = this.formatAnchorText(url, lineNumber);
+        var anchor = WebInspector.linkifyURLAsNode(url, linkText, classes, false, tooltipText);
+        if (lineNumber !== undefined)
+            anchor.setAttribute("line_number", lineNumber);
+        return anchor;
+    },
+
+    formatAnchorText: function(url, lineNumber)
+    {
+        var text = WebInspector.displayNameForURL(url);
+        if (lineNumber !== undefined)
+            text += ":" + (lineNumber + 1);
+        return text;
+    },
+
     canShowAnchorLocation: function(anchor)
     {
         return false;

@@ -803,10 +803,10 @@ WebInspector.NetworkPanel.prototype = {
 
     showAnchorLocation: function(anchor)
     {
-        this._showResource(this._resourcesByURL[anchor.href], anchor.getAttribute("line_number") - 1);
+        this._showResource(this._resourcesByURL[anchor.href]);
     },
 
-    _showResource: function(resource, line)
+    _showResource: function(resource)
     {
         if (!resource)
             return;

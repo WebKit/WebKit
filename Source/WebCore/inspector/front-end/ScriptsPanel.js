@@ -521,6 +521,19 @@ WebInspector.ScriptsPanel.prototype = {
             x.show(this.viewsContainerElement);
     },
 
+    createAnchor: function(url, lineNumber, classes, tooltipText)
+    {
+        var anchor = WebInspector.Panel.prototype.createAnchor.call(this, url, lineNumber, classes, tooltipText);
+        if (lineNumber !== undefined) {
+            function updateAnchor(url, lineNumber)
+            {
+                anchor.textContent = this.formatAnchorText(url, lineNumber)
+            }
+            this._presentationModel.registerAnchor(url, null, lineNumber, 0, updateAnchor.bind(this));
+        }
+        return anchor;
+    },
+
     canShowAnchorLocation: function(anchor)
     {
         return this._debuggerEnabled && this._presentationModel.sourceFileForScriptURL(anchor.href);
@@ -528,18 +541,16 @@ WebInspector.ScriptsPanel.prototype = {
 
     showAnchorLocation: function(anchor)
     {
-        var anchorLineNumber = parseInt(anchor.getAttribute("line_number"));
-        var hasAnchorLineNumber = anchorLineNumber !== NaN;
-        var lineNumber = hasAnchorLineNumber ? anchorLineNumber - 1 : 0;
+        var anchorLineNumber = anchor.hasAttribute("line_number") ? parseInt(anchor.getAttribute("line_number")) : 0;
 
         function didGetUILocation(sourceFileId, lineNumber)
         {
-            if (hasAnchorLineNumber)
+            if (anchor.hasAttribute("line_number"))
                 this._showSourceLine(sourceFileId, lineNumber);
             else
                 this._showSourceFrameAndAddToHistory(sourceFileId);
         }
-        this._presentationModel.scriptLocationToUILocation(anchor.href, null, lineNumber, 0, didGetUILocation.bind(this));
+        this._presentationModel.scriptLocationToUILocation(anchor.href, null, anchorLineNumber, 0, didGetUILocation.bind(this));
     },
 
     _showSourceLine: function(sourceFileId, lineNumber)

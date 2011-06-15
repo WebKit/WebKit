@@ -32,6 +32,7 @@ WebInspector.DebuggerPresentationModel = function()
 {
     this._sourceFiles = {};
     this._messages = [];
+    this._anchors = [];
     this._breakpointsByDebuggerId = {};
     this._breakpointsWithoutSourceFile = {};
 
@@ -99,6 +100,26 @@ WebInspector.DebuggerPresentationModel.prototype = {
     requestSourceFileContent: function(sourceFileId, callback)
     {
         this._sourceFiles[sourceFileId].requestContent(callback);
+    },
+
+    registerAnchor: function(sourceURL, sourceId, lineNumber, columnNumber, updateHandler)
+    {
+        var anchor = { sourceURL: sourceURL, sourceId: sourceId, lineNumber: lineNumber, columnNumber: columnNumber, updateHandler: updateHandler };
+        this._anchors.push(anchor);
+        this._updateAnchor(anchor);
+    },
+
+    _updateAnchor: function(anchor)
+    {
+        var sourceFile = this._sourceFileForScript(anchor.sourceURL, anchor.sourceId);
+        if (!sourceFile)
+            return;
+
+        function didGetUILocation(sourceFileId, lineNumber)
+        {
+            anchor.updateHandler(sourceFile.url, lineNumber);
+        }
+        this.scriptLocationToUILocation(anchor.sourceURL, anchor.sourceId, anchor.lineNumber, anchor.columnNumber, didGetUILocation);
     },
 
     _parsedScriptSource: function(event)
@@ -245,6 +266,9 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         for (var i = 0; i < messages.length; ++i)
             this._addConsoleMessage(messages[i]);
+
+        for (var i = 0; i < this._anchors.length; ++i)
+            this._updateAnchor(this._anchors[i]);
 
         if (WebInspector.debuggerModel.callFrames)
             this._debuggerPaused();
@@ -615,6 +639,7 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _debuggerReset: function()
     {
         this._reset();
+        this._anchors = [];
         this._presentationCallFrames = [];
         this._selectedCallFrameIndex = 0;
     }

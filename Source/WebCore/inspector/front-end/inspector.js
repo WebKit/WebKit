@@ -1172,7 +1172,7 @@ WebInspector.displayNameForURL = function(url)
 
 WebInspector._showAnchorLocation = function(anchor)
 {
-    var preferedPanel = this.panels[anchor.getAttribute("preferred_panel") || "scripts"];
+    var preferedPanel = this.panels[anchor.getAttribute("preferred_panel")];
     if (WebInspector._showAnchorLocationInPanel(anchor, preferedPanel))
         return true;
     if (preferedPanel !== this.panels.resources && WebInspector._showAnchorLocationInPanel(anchor, this.panels.resources))
@@ -1275,13 +1275,12 @@ WebInspector.linkifyURL = function(url, linkText, classes, isExternal, tooltipTe
     return WebInspector.linkifyURLAsNode(url, linkText, classes, isExternal, tooltipText).outerHTML;
 }
 
-WebInspector.linkifyResourceAsNode = function(url, preferredPanel, lineNumber, classes, tooltipText)
+WebInspector.linkifyResourceAsNode = function(url, preferredPanel, oneBasedLineNumber, classes, tooltipText)
 {
-    var linkText = WebInspector.displayNameForURL(url);
-    if (lineNumber)
-        linkText += ":" + lineNumber;
-    var node = WebInspector.linkifyURLAsNode(url, linkText, classes, false, tooltipText);
-    node.setAttribute("line_number", lineNumber);
+    preferredPanel = preferredPanel || "scripts";
+    // FIXME(62725): stack trace line/column numbers are one-based.
+    var lineNumber = oneBasedLineNumber ? oneBasedLineNumber - 1 : undefined;
+    var node = this.panels[preferredPanel].createAnchor(url, lineNumber, classes, tooltipText);
     node.setAttribute("preferred_panel", preferredPanel);
     return node;
 }

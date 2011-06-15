@@ -19,6 +19,11 @@ function f2()
     return 0;
 }
 
+function f3()
+{
+    console.log("Test message.");
+}
+
 var test = function()
 {
     var panel = WebInspector.panels.scripts;
@@ -151,7 +156,6 @@ var test = function()
             {
                 // There should be no breakpoint in f1 since script is pretty-printed now.
                 InspectorTest.evaluateInPageWithTimeout("f1()");
-
                 InspectorTest.setBreakpoint(panel.visibleView, 24, "", true);
                 InspectorTest.waitUntilPaused(pausedInF2);
                 InspectorTest.evaluateInPageWithTimeout("f2()");
@@ -160,6 +164,34 @@ var test = function()
             function pausedInF2(callFrames)
             {
                 InspectorTest.captureStackTrace(callFrames);
+                panel._toggleFormatSourceFiles();
+                InspectorTest.resumeExecution(next);
+            }
+        },
+
+        function testConsoleMessagesForFormattedScripts(next)
+        {
+            function dumpConsoleMessageURLs()
+            {
+                var messages = WebInspector.console.messages;
+                for (var i = 0; i < messages.length; ++i) {
+                    var element = messages[i].toMessageElement();
+                    var anchor = element.query("//*//a[contains(@class, 'console-message-url')]");
+                    InspectorTest.addResult(anchor.textContent);
+                }
+            }
+            InspectorTest.evaluateInPage("f3()", didEvaluate);
+
+            function didEvaluate()
+            {
+                dumpConsoleMessageURLs();
+                InspectorTest.addSniffer(panel, "formatAnchorText", InspectorTest.runAfterPendingDispatches.bind(InspectorTest, didFormatAnchorText));
+                panel._toggleFormatSourceFiles();
+            }
+
+            function didFormatAnchorText()
+            {
+                dumpConsoleMessageURLs();
                 next();
             }
         }
