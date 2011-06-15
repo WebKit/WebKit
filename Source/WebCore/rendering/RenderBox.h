@@ -409,6 +409,9 @@ public:
 
     RenderOverflow* hasRenderOverflow() const { return m_overflow.get(); }
 
+    virtual bool needsPreferredWidthsRecalculation() const;
+    virtual void computeIntrinsicRatioInformation(FloatSize& /* intrinsicRatio */, bool& /* isPercentageIntrinsicSize */) const { }
+
 protected:
     virtual void styleWillChange(StyleDifference, const RenderStyle* newStyle);
     virtual void styleDidChange(StyleDifference, const RenderStyle* oldStyle);

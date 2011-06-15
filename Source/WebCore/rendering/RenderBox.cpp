@@ -44,6 +44,7 @@
 #include "RenderFlexibleBox.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
+#include "RenderPart.h"
 #include "RenderTableCell.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
@@ -659,6 +660,11 @@ void RenderBox::panScroll(const IntPoint& source)
 {
     if (layer())
         layer()->panScrollFromPoint(source);
+}
+
+bool RenderBox::needsPreferredWidthsRecalculation() const
+{
+    return style()->paddingStart().isPercent() || style()->paddingEnd().isPercent();
 }
 
 int RenderBox::minPreferredLogicalWidth() const

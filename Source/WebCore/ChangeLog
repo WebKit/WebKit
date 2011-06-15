@@ -1,3 +1,77 @@
+2011-06-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by David Hyatt.
+
+        CSS 2.1: Support replaced elements with relative intrinsic sizes
+        https://bugs.webkit.org/show_bug.cgi?id=15849
+
+        CSS 2.1 failure: html4/replaced-intrinsic-ratio-001
+        https://bugs.webkit.org/show_bug.cgi?id=53099
+
+        Generalize the recently added SVG specific host <-> embedded document size-negotiation used
+        to support embedding SVGs with intrinsic ratio/size via <iframe>/<object>/<embed> from 
+        RenderPart right into RenderReplaced. It will be used to share the size-negotiation logic
+        with RenderImage, which still has its own way to negotiate with the embedded SVG to figure
+        out its size (and it's broken in several ways).
+
+        This fully implements intrinsic size/ratio support for replaced elements, as specified in:
+        http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width
+        http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-height
+
+        RenderImage has not yet been converted to use the new size negotiation logic, this is just
+        the ground work. As soon as this is done all ways of embedding SVG is unified in a single
+        way: the same size negotiation logic used for object/embed/iframe/img for SVG documents.
+
+        To use it for non-SVG target documents, it's just a matter of implementing
+        "RenderBox* embeddedContentBox()" which needs to return the root renderer of the embedded document.
+        For SVG it's the embedded document RenderSVGRoot renderer, associated with the outermost <svg> element.
+        It's easy to implement this for embedded MathML documents or PDF documents now, if needed.
+
+        Imported all CSS 2.1 tests named *replaced* and *intrinsic* tests, except the still failing background-intrinsic-*
+        which embed SVGs through background-image or <img>, which still use the old size-negotiation logic.
+
+        Tests: css2.1/20110323/* (203 tests + support files)
+               svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm (same as replaced-intrinsic-ratio-001.htm, but zooms in a few times, to see whether all boxes react properly)
+               http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm (same as replaced-intrinsic-ratio-001.htm, but with delayed loading of the SVG to test late-size-negotiation)
+
+        This fixes:
+        css2.1/20110323/replaced-intrinsic-ratio-001.htm
+        css2.1/20110323/replaced-intrinsic-003.htm
+        css2.1/20110323/block-replaced-height-007.htm
+        css2.1/20110323/float-replaced-height-007.htm
+        css2.1/20110323/inline-block-replaced-height-007.htm
+        css2.1/20110323/inline-replaced-height-007.htm
+
+        We're now the first to properly handle replaced-intrinsic-ratio-001.htm out of Opera/FF/IE9 :-)
+        This is an important piece of embedding SVGs though, so glad that we finally have it.
+
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::layoutBlockChildren): Use new helper needsPreferredWidthsRecalculation() to figure out whether pref widths need to be calculated.
+        (WebCore::RenderBlock::layoutPositionedObjects): Ditto.
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::RenderBlock::layoutInlineChildren): Ditto.
+        * rendering/RenderBox.cpp:
+        (WebCore::RenderBox::needsPreferredWidthsRecalculation): Refactored and extended from RenderBlock*. We have to recalculate pref widths upon layout
+                                                                 if we embed a document with an intrinsic ratio/size, extensively covered by
+                                                                 svg/zoom/page/zoom-replaced-intrinsic-ratio-001.htm
+        * rendering/RenderBox.h:
+        (WebCore::RenderBox::computeIntrinsicRatioInformation): New virtual function, only implemented in RenderPart so far. This generalizes the existing method from RenderPart.
+        * rendering/RenderPart.cpp:
+        (WebCore::RenderPart::needsPreferredWidthsRecalculation): Always recompute pref widths of we have an embeddedContentBox() - it may depend on our size.
+        (WebCore::RenderPart::embeddedContentBox): Return the RenderSVGRoot box of the embedded SVG document, if we're embedded through object/embed/iframe (soon img as well).
+        * rendering/RenderPart.h:
+        * rendering/RenderReplaced.cpp:
+        (WebCore::RenderReplaced::computeIntrinsicLogicalWidth): New helper function, that either returns a fixed intrinsic size (set by a class inheriting from us) or the embedded target document size.
+        (WebCore::RenderReplaced::computeIntrinsicLogicalHeight): Ditto.
+        (WebCore::RenderReplaced::computeReplacedLogicalWidth): Full implementation of: 10.3.2 Inline, replaced elements: http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-width.
+        (WebCore::RenderReplaced::computeReplacedLogicalHeight): Full implementation of: 10.6.2 Inline, replaced elements: http://www.w3.org/TR/CSS21/visudet.html#inline-replaced-height
+        * rendering/RenderReplaced.h:
+        (WebCore::RenderReplaced::embeddedContentBox):
+        * rendering/svg/RenderSVGRoot.cpp:
+        (WebCore::RenderSVGRoot::computeReplacedLogicalWidth): Fix problem when zooming replaced-intrinsic-ratio-001.htm: if ownerWidth is auto, don't apply style()->effectiveZoom() twice.
+        (WebCore::RenderSVGRoot::computeReplacedLogicalHeight): Ditto for ownerHeight auto.
+        * rendering/svg/RenderSVGRoot.h: Mark 'computeIntrinsicRatioInformation' virtual.
+        
 2011-06-09  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

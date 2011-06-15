@@ -1161,8 +1161,8 @@ void RenderBlock::layoutInlineChildren(bool relayoutChildren, int& repaintLogica
                 if (relayoutChildren || o->style()->width().isPercent() || o->style()->height().isPercent())
                     o->setChildNeedsLayout(true, false);
 
-                // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.
-                if (relayoutChildren && (o->style()->paddingStart().isPercent() || o->style()->paddingEnd().isPercent()))
+                // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
+                if (relayoutChildren && box->needsPreferredWidthsRecalculation())
                     o->setPreferredLogicalWidthsDirty(true, false);
 
                 if (o->isPositioned())

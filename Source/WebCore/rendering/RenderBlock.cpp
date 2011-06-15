@@ -1902,8 +1902,8 @@ void RenderBlock::layoutBlockChildren(bool relayoutChildren, int& maxFloatLogica
         if (relayoutChildren || ((child->style()->logicalHeight().isPercent() || child->style()->logicalMinHeight().isPercent() || child->style()->logicalMaxHeight().isPercent()) && !isRenderView()))
             child->setChildNeedsLayout(true, false);
 
-        // If relayoutChildren is set and the child has percentage padding, we also need to invalidate the child's pref widths.
-        if (relayoutChildren && (child->style()->paddingStart().isPercent() || child->style()->paddingEnd().isPercent()))
+        // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
+        if (relayoutChildren && child->needsPreferredWidthsRecalculation())
             child->setPreferredLogicalWidthsDirty(true, false);
 
         // Handle the four types of special elements first.  These include positioned content, floating content, compacts and
@@ -2174,8 +2174,8 @@ void RenderBlock::layoutPositionedObjects(bool relayoutChildren)
         if (relayoutChildren || (r->style()->hasStaticBlockPosition(isHorizontalWritingMode()) && r->parent() != this && r->parent()->isBlockFlow()))
             r->setChildNeedsLayout(true, false);
             
-        // If relayoutChildren is set and we have percentage padding, we also need to invalidate the child's pref widths.
-        if (relayoutChildren && (r->style()->paddingStart().isPercent() || r->style()->paddingEnd().isPercent()))
+        // If relayoutChildren is set and the child has percentage padding or an embedded content box, we also need to invalidate the childs pref widths.
+        if (relayoutChildren && r->needsPreferredWidthsRecalculation())
             r->setPreferredLogicalWidthsDirty(true, false);
         
         if (!r->needsLayout())

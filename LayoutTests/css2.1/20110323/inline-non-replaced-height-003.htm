@@ -1,0 +1,42 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Inline non-replaced elements and border</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#inline-non-replaced">
+        <meta name="flags" content="ahem">
+        <meta name="assert" content="The border starts at the top and bottom of the content area not the 'line-height'.">
+        <style type="text/css">
+            #div1
+            {
+                margin-top: 1in;
+                position: relative;
+            }
+            span
+            {
+                background: blue;
+                border-bottom: 0.5in solid blue;
+                border-top: 0.5in solid blue;
+                color: blue;
+                font: 1in Ahem;
+                line-height: 1.5in;
+            }
+            div div
+            {
+                background: orange;
+                height: 2in;
+                left: 1in;
+                position: absolute;
+                top: -0.25in;
+                width: 1in;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the blue and orange boxes below are the same height.</p>
+        <div id="div1">
+            <span>X</span>
+            <div></div>
+        </div>
+    </body>
+</html>

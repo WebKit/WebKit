@@ -27,8 +27,6 @@
 
 namespace WebCore {
 
-class RenderSVGRoot;
-
 // Renderer for frames via RenderFrameBase, and plug-ins via RenderEmbeddedObject.
 class RenderPart : public RenderWidget {
 public:
@@ -42,18 +40,12 @@ public:
     bool requiresAcceleratedCompositing() const;
 #endif
 
+    virtual bool needsPreferredWidthsRecalculation() const;
+    virtual RenderBox* embeddedContentBox() const;
+
 protected:
 #if USE(ACCELERATED_COMPOSITING)
     virtual bool requiresLayer() const;
-#endif
-
-#if ENABLE(SVG)
-    RenderSVGRoot* embeddedSVGContentRenderer() const;
-    int computeEmbeddedDocumentReplacedWidth(RenderSVGRoot* contentRenderer, bool includeMaxWidth) const;
-    int computeEmbeddedDocumentReplacedHeight(RenderSVGRoot* contentRenderer) const;
-    virtual int computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
-    virtual int computeReplacedLogicalHeight() const;
-    virtual void layout();
 #endif
 
 private:

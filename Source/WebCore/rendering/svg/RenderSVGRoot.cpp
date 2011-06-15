@@ -166,7 +166,7 @@ int RenderSVGRoot::computeReplacedLogicalWidth(bool includeMaxWidth) const
 
     Length ownerWidth = ownerRendererStyle->width();
     if (ownerWidth.isAuto())
-        return computeIntrinsicWidth(replacedWidth);
+        return replacedWidth;
 
     // Spec: http://dev.w3.org/SVG/profiles/1.1F2/publish/coords.html#ViewportSpace
     // The SVG user agent negotiates with its parent user agent to determine the viewport into which the SVG user agent can render
@@ -208,7 +208,7 @@ int RenderSVGRoot::computeReplacedLogicalHeight() const
 
     Length ownerHeight = ownerRendererStyle->height();
     if (ownerHeight.isAuto())
-        return computeIntrinsicHeight(replacedHeight);
+        return replacedHeight;
 
     // Spec: http://dev.w3.org/SVG/profiles/1.1F2/publish/coords.html#ViewportSpace
     // See comment in RenderSVGRoot::computeReplacedLogicalWidth().

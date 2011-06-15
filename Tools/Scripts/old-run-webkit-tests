@@ -503,7 +503,7 @@ system "ln", "-s", $testDirectory, "/tmp/LayoutTests" unless -x "/tmp/LayoutTest
 my %ignoredFiles = ( "results.html" => 1 );
 my %ignoredDirectories = map { $_ => 1 } qw(platform);
 my %ignoredLocalDirectories = map { $_ => 1 } qw(.svn _svn resources script-tests);
-my %supportedFileExtensions = map { $_ => 1 } qw(html shtml xml xhtml xhtmlmp pl php mht);
+my %supportedFileExtensions = map { $_ => 1 } qw(htm html shtml xml xhtml xhtmlmp pl php mht);
 
 if (!checkWebCoreFeatureSupport("MathML", 0)) {
     $ignoredDirectories{'mathml'} = 1;

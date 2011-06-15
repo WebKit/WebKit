@@ -32,13 +32,14 @@ public:
     RenderReplaced(Node*, const IntSize& intrinsicSize);
     virtual ~RenderReplaced();
 
+    virtual int computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
+    virtual int computeReplacedLogicalHeight() const;
+
 protected:
     virtual void layout();
 
     virtual IntSize intrinsicSize() const;
 
-    virtual int computeReplacedLogicalWidth(bool includeMaxWidth = true) const;
-    virtual int computeReplacedLogicalHeight() const;
     virtual int minimumReplacedHeight() const { return 0; }
 
     virtual void setSelectionState(SelectionState);
@@ -56,6 +57,10 @@ protected:
     IntRect localSelectionRect(bool checkWhetherSelected = true) const; // This is in local coordinates, but it's a physical rect (so the top left corner is physical top left).
 
 private:
+    virtual RenderBox* embeddedContentBox() const { return 0; }
+    int computeIntrinsicLogicalWidth(RenderBox* contentRenderer, bool includeMaxWidth) const;
+    int computeIntrinsicLogicalHeight(RenderBox* contentRenderer) const;
+
     virtual const char* renderName() const { return "RenderReplaced"; }
 
     virtual bool canHaveChildren() const { return false; }

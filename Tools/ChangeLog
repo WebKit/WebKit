@@ -1,3 +1,18 @@
+2011-06-15  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by David Hyatt.
+
+        CSS 2.1: Support replaced elements with relative intrinsic sizes
+        https://bugs.webkit.org/show_bug.cgi?id=15849
+
+        CSS 2.1 failure: html4/replaced-intrinsic-ratio-001
+        https://bugs.webkit.org/show_bug.cgi?id=53099
+
+        Recognize *.htm tests in the old & new DRT implementation, needed for the vanilla css2.1 html4 tests.
+
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/port/test_files.py:
+
 2011-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

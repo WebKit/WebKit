@@ -1,0 +1,48 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Inline-block non-replaced elements' margin box is used for the height of the line box</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#block-root-margin">
+        <meta name="flags" content="">
+        <meta name="assert" content="Inline-block non-replaced elements use the margin box for sizing the height of the line box.">
+        <style type="text/css">
+            #div1
+            {
+                line-height: 0;
+                position: relative;
+            }
+            #div2
+            {
+                background: blue;
+            }
+            #div2 div
+            {
+                display: inline-block;
+                height: 0;
+                margin: 0.5in 0;
+            }
+            div div
+            {
+                width: 1in;
+            }
+            #div3
+            {
+                background: orange;
+                left: 1in;
+                height: 1in;
+                position: absolute;
+                top: 0;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if the blue and orange boxes below are the same height.</p>
+        <div id="div1">
+            <div id="div2">
+                <div></div>
+            </div>
+            <div id="div3"></div>
+        </div>
+    </body>
+</html>

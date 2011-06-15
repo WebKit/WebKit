@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>CSS Test: Max-height on absolutely positioned, non-replaced elements</title>
+        <link rel="author" title="Microsoft" href="http://www.microsoft.com/">
+        <link rel="help" href="http://www.w3.org/TR/CSS21/visudet.html#abs-non-replaced-height">
+        <meta name="flags" content="ahem">
+        <meta name="assert" content="When 'top', 'height', and 'bottom' of an absolutely positioned element are 'auto', then set 'top' to the static position and make 'height' based on the content; such height may be constrained by a given 'max-height' value.">
+        <style type="text/css">
+            #div1
+            {
+                border: solid black;
+                height: 2in;
+                position: relative;
+                width: 2in;
+            }
+            div div
+            {
+                background: blue;
+                bottom: auto;
+                font: 1in/1em Ahem;
+                height: auto;
+                margin-bottom: auto;
+                margin-top: auto;
+                max-height: 0.5in;
+                position: absolute;
+                right: 0;
+                top: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <p>Test passes if there is blue rectangle, and not a square, in the upper-right corner of the black box.</p>
+        <div id="div1">
+            <div>&nbsp;</div>
+        </div>
+    </body>
+</html>
