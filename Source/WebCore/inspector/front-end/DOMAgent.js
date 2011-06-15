@@ -325,6 +325,7 @@ WebInspector.DOMDocument.prototype.__proto__ = WebInspector.DOMNode.prototype;
 WebInspector.DOMAgent = function() {
     this._idToDOMNode = null;
     this._document = null;
+    this._attributeLoadNodeIds = {};
     InspectorBackend.registerDomainDispatcher("DOM", new WebInspector.DOMDispatcher(this));
 }
 
@@ -413,11 +414,41 @@ WebInspector.DOMAgent.prototype = {
         this.requestDocument(onDocumentAvailable.bind(this));
     },
 
-    _attributesUpdated: function(nodeId, attrsArray)
+    _attributesUpdated: function(nodeIds)
     {
-        var node = this._idToDOMNode[nodeId];
-        node._setAttributesPayload(attrsArray);
-        this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrModified, node);
+        this._loadNodeAttributesSoon(nodeIds);
+    },
+
+    _loadNodeAttributesSoon: function(nodeIds)
+    {
+        for (var i = 0; i < nodeIds.length; ++i)
+            this._attributeLoadNodeIds[nodeIds[i]] = true;
+        if ("_loadNodeAttributesTimeout" in this)
+            return;
+        this._loadNodeAttributesTimeout = setTimeout(this._loadNodeAttributes.bind(this), 0);
+    },
+
+    _loadNodeAttributes: function()
+    {
+        function callback(nodeAttributes)
+        {
+            if (!nodeAttributes)
+                return;
+            for (var i = 0; i < nodeAttributes.length; ++i) {
+                var entry = nodeAttributes[i];
+                var node = this._idToDOMNode[entry.id];
+                node._setAttributesPayload(entry.attributes);
+                this.dispatchEventToListeners(WebInspector.DOMAgent.Events.AttrModified, node);
+            }
+        }
+
+        delete this._loadNodeAttributesTimeout;
+
+        var nodeIds = [];
+        for (var nodeId in this._attributeLoadNodeIds)
+            nodeIds.push(Number(nodeId));
+        DOMAgent.getAttributes(nodeIds, this._wrapClientCallback(callback.bind(this)));
+        this._attributeLoadNodeIds = {};
     },
 
     _characterDataModified: function(nodeId, newValue)
@@ -542,9 +573,14 @@ WebInspector.DOMDispatcher.prototype = {
         this._domAgent._documentUpdated();
     },
 
-    attributesUpdated: function(nodeId, attrsArray)
+    attributesUpdated: function(nodeId)
     {
-        this._domAgent._attributesUpdated(nodeId, attrsArray);
+        this._domAgent._attributesUpdated([nodeId]);
+    },
+
+    inlineStyleInvalidated: function(nodeIds)
+    {
+        this._domAgent._attributesUpdated(nodeIds);
     },
 
     characterDataModified: function(nodeId, newValue)

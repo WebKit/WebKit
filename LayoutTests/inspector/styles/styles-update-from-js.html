@@ -23,9 +23,16 @@ function modifyParsedAttributes()
 function test()
 {
     var sniffCount = 0;
+    var inlineStyleInvalidationCount = 0;
 
     InspectorTest.selectNodeWithId("container");
     InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", snifferCallback, true);
+    InspectorTest.addSniffer(WebInspector.DOMDispatcher.prototype, "inlineStyleInvalidated", inlineStyleInvalidatedSniffer, true);
+
+    function inlineStyleInvalidatedSniffer()
+    {
+        inlineStyleInvalidationCount += 1;
+    }
 
     function snifferCallback()
     {
@@ -48,6 +55,7 @@ function test()
                 case 3:
                     InspectorTest.addResult("Modified parsed attributes");
                     dumpAttributeAndStyles();
+                    InspectorTest.addResult("Inline style invalidated " + inlineStyleInvalidationCount + " times");
                     InspectorTest.completeTest();
                     break;
             }

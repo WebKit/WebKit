@@ -1,3 +1,15 @@
+2011-06-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Serious performance regression during continuous focused element style updates
+        https://bugs.webkit.org/show_bug.cgi?id=61038
+
+        * inspector/elements/edit-dom-actions.html:
+        * inspector/elements/set-attribute.html:
+        * inspector/styles/styles-update-from-js-expected.txt:
+        * inspector/styles/styles-update-from-js.html:
+
 2011-06-15  Martin Robinson  <mrobinson@igalia.com>
 
         Reclassify a failing GTK+ test.

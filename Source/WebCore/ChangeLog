@@ -1,3 +1,34 @@
+2011-06-15  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Serious performance regression during continuous focused element style updates
+        https://bugs.webkit.org/show_bug.cgi?id=61038
+
+        Inline style invalidation events are coalesced in the backend and sent over the wire on timer.
+
+        * inspector/Inspector.json:
+        * inspector/InspectorDOMAgent.cpp:
+        (WebCore::RevalidateStyleAttributeTask::onTimer):
+        (WebCore::InspectorDOMAgent::getAttributes):
+        (WebCore::InspectorDOMAgent::didModifyDOMAttr):
+        (WebCore::InspectorDOMAgent::styleAttributeInvalidated):
+        * inspector/InspectorDOMAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheetForInlineStyle::didModifyElementAttribute):
+        (WebCore::InspectorStyleSheetForInlineStyle::text):
+        (WebCore::InspectorStyleSheetForInlineStyle::setStyleText):
+        (WebCore::InspectorStyleSheetForInlineStyle::ensureParsedDataReady):
+        (WebCore::InspectorStyleSheetForInlineStyle::getStyleAttributeRanges):
+        * inspector/InspectorStyleSheet.h:
+        * inspector/front-end/DOMAgent.js:
+        (WebInspector.DOMAgent):
+        (WebInspector.DOMAgent.prototype._attributesUpdated):
+        (WebInspector.DOMAgent.prototype._loadNodeAttributesSoon):
+        (WebInspector.DOMAgent.prototype._loadNodeAttributes):
+        (WebInspector.DOMDispatcher.prototype.attributesUpdated):
+        (WebInspector.DOMDispatcher.prototype.inlineStyleInvalidated):
+
 2011-06-15  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Timothy Hatcher.

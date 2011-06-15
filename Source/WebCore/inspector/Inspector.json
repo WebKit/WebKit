@@ -782,6 +782,15 @@
                     { "name": "lineNumber", "type": "number", "optional": true, "description": "Handler location line number." }
                 ],
                 "description": "DOM interaction is implemented in terms of mirror objects that represent the actual DOM nodes. DOMNode is a base node mirror type."
+            },
+            {
+                "id": "Attributes",
+                "type": "object",
+                "properties": [
+                    { "name": "id", "type": "integer", "description": "Element id to get attributes for." },
+                    { "name": "attributes", "type": "array", "items": { "type": "string" }, "description": "An interleaved array of node attribute names and values." }
+                ],
+                "description": "A holder structure for all attributes of a single node."
             }
         ],
         "commands": [
@@ -973,6 +982,16 @@
                     { "name": "object", "$ref": "Runtime.RemoteObject", "description": "JavaScript object wrapper for given node." }
                 ],
                 "description": "Resolves JavaScript node object for given node id."
+            },
+            {
+                "name": "getAttributes",
+                "parameters": [
+                    { "name": "nodeIds", "type": "array", "items": { "type": "integer" }, "description": "Ids of the nodes to retrieve attibutes for." }
+                ],
+                "returns": [
+                    { "name": "attributes", "type": "array", "items": { "type": "Attributes" }, "description": "Attribute holders for the requested nodes." }
+                ],
+                "description": "Returns attributes for the specified nodes."
             }
         ],
         "events": [
@@ -991,10 +1010,16 @@
             {
                 "name": "attributesUpdated",
                 "parameters": [
-                    { "name": "id", "type": "integer", "description": "Id of the node that has changed." },
-                    { "name": "attributes", "type": "array", "items": { "$ref": "DOMAttribute"}, "description": "New attributes value." }
+                    { "name": "nodeId", "type": "integer", "description": "Id of the node that has changed." }
                 ],
                 "description": "Fired when <code>Element</code>'s attributes are updated."
+            },
+            {
+                "name": "inlineStyleInvalidated",
+                "parameters": [
+                    { "name": "nodeIds", "type": "array", "items": { "type": "integer" }, "description": "Ids of the nodes for which the inline styles have been invalidated." }
+                ],
+                "description": "Fired when <code>Element</code>'s inline style is modified via a CSS property modification."
             },
             {
                 "name": "characterDataModified",

@@ -41,7 +41,8 @@ function test()
                 InspectorTest.dumpElementsTree(targetNode);
                 next();
             }
-            InspectorTest.evaluateInPage("setAttribute('name', 'value')", callback);
+            InspectorTest.evaluateInPage("setAttribute('name', 'value')");
+            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", callback);
         },
 
         function testRemoveAttribute(next) {
@@ -51,7 +52,8 @@ function test()
                 InspectorTest.dumpElementsTree(targetNode);
                 next();
             }
-            InspectorTest.evaluateInPage("removeAttribute('name')", callback);
+            InspectorTest.evaluateInPage("removeAttribute('name')");
+            InspectorTest.addSniffer(WebInspector.StylesSidebarPane.prototype, "_rebuildUpdate", callback);
         }
     ]);
 }

@@ -247,14 +247,15 @@ protected:
 private:
     CSSStyleDeclaration* inlineStyle() const;
     const String& elementStyleText() const;
-    bool getStyleAttributeRanges(RefPtr<CSSStyleSourceData>* result);
+    bool getStyleAttributeRanges(RefPtr<CSSStyleSourceData>* result) const;
 
     RefPtr<Element> m_element;
     RefPtr<CSSRuleSourceData> m_ruleSourceData;
     RefPtr<InspectorStyle> m_inspectorStyle;
 
-    // Contains "style" attribute value and should always be up-to-date.
-    String m_styleText;
+    // Contains "style" attribute value.
+    mutable String m_styleText;
+    mutable bool m_isStyleTextValid;
 };
 
 #endif

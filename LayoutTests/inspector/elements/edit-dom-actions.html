@@ -54,7 +54,7 @@ function test()
          
             function testBody(node, done)
             {
-                editNodePartAndRun(node, "webkit-html-attribute", "bar=\"edited attribute\"", done);
+                editNodePartAndRun(node, "webkit-html-attribute", "bar=\"edited attribute\"", done, true);
             }
         },
 
@@ -64,7 +64,7 @@ function test()
          
             function testBody(node, done)
             {
-                editNodePartAndRun(node, "webkit-html-attribute", "", done);
+                editNodePartAndRun(node, "webkit-html-attribute", "", done, true);
             }
         },
 
@@ -84,7 +84,7 @@ function test()
                     var editorElement = window.getSelection().anchorNode.parentElement;
                     editorElement.textContent = "newattr=\"new-value\"";
                     editorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
-                    InspectorTest.runAfterPendingDispatches(done);
+                    InspectorTest.addSniffer(WebInspector.ElementsPanel.prototype, "updateModifiedNodes", done);
                 }
             }
         },
@@ -127,7 +127,7 @@ function test()
 
         function step2()
         {
-	        InspectorTest.addResult("==== after ====");
+            InspectorTest.addResult("==== after ====");
             InspectorTest.dumpElementsTree(testNode);
             next();
         }
@@ -141,12 +141,15 @@ function test()
         return textElement;
     }
 
-    function editNodePartAndRun(node, className, newValue, step2)
+    function editNodePartAndRun(node, className, newValue, step2, useSniffer)
     {
         var editorElement = editNodePart(node, className);
         editorElement.textContent = newValue;
         editorElement.dispatchEvent(InspectorTest.createKeyEvent("Enter"));
-        InspectorTest.runAfterPendingDispatches(step2);
+        if (useSniffer)
+            InspectorTest.addSniffer(WebInspector.ElementsPanel.prototype, "updateModifiedNodes", step2);
+        else
+            InspectorTest.runAfterPendingDispatches(step2);
     }
 }
 

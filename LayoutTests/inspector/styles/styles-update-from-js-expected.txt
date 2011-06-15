@@ -45,4 +45,5 @@ border-width: 3px;
     border-left-width: 3px;
 
 
+Inline style invalidated 3 times
 

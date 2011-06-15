@@ -249,8 +249,10 @@ void RevalidateStyleAttributeTask::scheduleFor(Element* element)
 void RevalidateStyleAttributeTask::onTimer(Timer<RevalidateStyleAttributeTask>*)
 {
     // The timer is stopped on m_domAgent destruction, so this method will never be called after m_domAgent has been destroyed.
+    Vector<Element*> elements;
     for (HashSet<RefPtr<Element> >::iterator it = m_elements.begin(), end = m_elements.end(); it != end; ++it)
-        m_domAgent->didModifyDOMAttr(it->get());
+        elements.append(it->get());
+    m_domAgent->styleAttributeInvalidated(elements);
 
     m_elements.clear();
 }
@@ -1022,6 +1024,23 @@ void InspectorDOMAgent::resolveNode(ErrorString* error, int nodeId, RefPtr<Inspe
     *result = resolveNode(node);
 }
 
+void InspectorDOMAgent::getAttributes(ErrorString*, const RefPtr<InspectorArray>& nodeIds, RefPtr<InspectorArray>* result)
+{
+    for (unsigned i = 0, size = nodeIds->length(); i < size; ++i) {
+        RefPtr<InspectorValue> nodeIdValue = nodeIds->get(i);
+        int nodeId;
+        if (!nodeIdValue->asNumber(&nodeId))
+            continue;
+        Node* node = nodeForId(nodeId);
+        if (node && node->isElementNode()) {
+            RefPtr<InspectorObject> entry = InspectorObject::create();
+            entry->setNumber("id", nodeId);
+            entry->setArray("attributes", buildArrayForElementAttributes(static_cast<Element*>(node)));
+            (*result)->pushObject(entry.release());
+        }
+    }
+}
+
 void InspectorDOMAgent::pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId)
 {
     InjectedScript injectedScript = m_injectedScriptManager->injectedScriptForObjectId(objectId);
@@ -1302,7 +1321,7 @@ void InspectorDOMAgent::didRemoveDOMNode(Node* node)
 
 void InspectorDOMAgent::didModifyDOMAttr(Element* element)
 {
-    int id = m_documentNodeToIdMap.get(element);
+    int id = boundNodeId(element);
     // If node is not mapped yet -> ignore the event.
     if (!id)
         return;
@@ -1310,7 +1329,24 @@ void InspectorDOMAgent::didModifyDOMAttr(Element* element)
     if (m_domListener)
         m_domListener->didModifyDOMAttr(element);
 
-    m_frontend->attributesUpdated(id, buildArrayForElementAttributes(element));
+    m_frontend->attributesUpdated(id);
+}
+
+void InspectorDOMAgent::styleAttributeInvalidated(const Vector<Element*>& elements)
+{
+    RefPtr<InspectorArray> nodeIds = InspectorArray::create();
+    for (unsigned i = 0, size = elements.size(); i < size; ++i) {
+        Element* element = elements.at(i);
+        int id = boundNodeId(element);
+        // If node is not mapped yet -> ignore the event.
+        if (!id)
+            continue;
+
+        if (m_domListener)
+            m_domListener->didModifyDOMAttr(element);
+        nodeIds->pushNumber(id);
+    }
+    m_frontend->inlineStyleInvalidated(nodeIds.release());
 }
 
 void InspectorDOMAgent::characterDataModified(CharacterData* characterData)

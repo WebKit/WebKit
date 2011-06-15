@@ -1184,22 +1184,18 @@ InspectorStyleSheetForInlineStyle::InspectorStyleSheetForInlineStyle(const Strin
 
 void InspectorStyleSheetForInlineStyle::didModifyElementAttribute()
 {
-    String newStyleText = elementStyleText();
-    bool shouldDropSourceData = false;
-    if (m_element->isStyledElement() && m_element->style() != m_inspectorStyle->cssStyle()) {
+    m_isStyleTextValid = false;
+    if (m_element->isStyledElement() && m_element->style() != m_inspectorStyle->cssStyle())
         m_inspectorStyle = InspectorStyle::create(InspectorCSSId(id(), 0), inlineStyle(), this);
-        shouldDropSourceData = true;
-    }
-    if (newStyleText != m_styleText) {
-        m_styleText = newStyleText;
-        shouldDropSourceData = true;
-    }
-    if (shouldDropSourceData)
-        m_ruleSourceData.clear();
+    m_ruleSourceData.clear();
 }
 
 bool InspectorStyleSheetForInlineStyle::text(String* result) const
 {
+    if (!m_isStyleTextValid) {
+        m_styleText = elementStyleText();
+        m_isStyleTextValid = true;
+    }
     *result = m_styleText;
     return true;
 }
@@ -1210,6 +1206,7 @@ bool InspectorStyleSheetForInlineStyle::setStyleText(CSSStyleDeclaration* style,
     ExceptionCode ec = 0;
     m_element->setAttribute("style", text, ec);
     m_styleText = text;
+    m_isStyleTextValid = true;
     m_ruleSourceData.clear();
     return !ec;
 }
@@ -1226,6 +1223,7 @@ bool InspectorStyleSheetForInlineStyle::ensureParsedDataReady()
     if (m_styleText != currentStyleText) {
         m_ruleSourceData.clear();
         m_styleText = currentStyleText;
+        m_isStyleTextValid = true;
     }
 
     if (m_ruleSourceData)
@@ -1257,7 +1255,7 @@ const String& InspectorStyleSheetForInlineStyle::elementStyleText() const
     return m_element->getAttribute("style").string();
 }
 
-bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(RefPtr<CSSStyleSourceData>* result)
+bool InspectorStyleSheetForInlineStyle::getStyleAttributeRanges(RefPtr<CSSStyleSourceData>* result) const
 {
     if (!m_element->isStyledElement())
         return false;

@@ -126,6 +126,7 @@ public:
     void performSearch(ErrorString*, const String& whitespaceTrimmedQuery, const bool* const runSynchronously);
     void cancelSearch(ErrorString*);
     void resolveNode(ErrorString*, int nodeId, RefPtr<InspectorObject>* result);
+    void getAttributes(ErrorString*, const RefPtr<InspectorArray>& nodeIds, RefPtr<InspectorArray>* result);
     void setInspectModeEnabled(ErrorString*, bool enabled);
     void pushNodeToFrontend(ErrorString*, const String& objectId, int* nodeId);
     void pushNodeByPathToFrontend(ErrorString*, const String& path, int* nodeId);
@@ -146,6 +147,7 @@ public:
     void didInsertDOMNode(Node*);
     void didRemoveDOMNode(Node*);
     void didModifyDOMAttr(Element*);
+    void styleAttributeInvalidated(const Vector<Element*>& elements);
     void characterDataModified(CharacterData*);
     void didInvalidateStyleAttr(Node*);
 
