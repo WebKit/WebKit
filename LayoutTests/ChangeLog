@@ -1,3 +1,9 @@
+2011-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK rebaseline after r88913.
+
+        * platform/gtk/svg/hixie/text/003-expected.txt:
+
 2011-06-15  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Tony Chang.
