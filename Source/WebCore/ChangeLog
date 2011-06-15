@@ -1,3 +1,16 @@
+2011-06-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Kent Tamura.
+
+        [EFL] Change color initialization with clear color constant
+        https://bugs.webkit.org/show_bug.cgi?id=62691
+
+        Some color values are initialized by rbg value. Color constant value is more clear than
+        rgb value.
+
+        * platform/efl/RenderThemeEfl.cpp:
+        (WebCore::RenderThemeEfl::RenderThemeEfl):
+
 2011-06-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by James Robinson.
