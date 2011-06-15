@@ -33,8 +33,10 @@
 
 #if ENABLE(INSPECTOR)
 
+#include "Frame.h"
 #include "InspectorFrontend.h"
 #include "PlatformString.h"
+#include <wtf/HashMap.h>
 #include <wtf/RefCounted.h>
 #include <wtf/Vector.h>
 
@@ -98,6 +100,7 @@ public:
     void loadEventFired();
     void frameNavigated(DocumentLoader*);
     void frameDetached(Frame*);
+    void frameDestroyed(Frame*);
 
     // Inspector Controller API
     void setFrontend(InspectorFrontend*);
@@ -120,6 +123,8 @@ private:
     InjectedScriptManager* m_injectedScriptManager;
     InspectorFrontend::Page* m_frontend;
     Vector<String> m_scriptsToEvaluateOnLoad;
+    HashMap<Frame*, unsigned int> m_frameToIdentifier;
+    HashMap<unsigned int, Frame*> m_identifierToFrame;
 };
 
 

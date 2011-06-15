@@ -136,6 +136,7 @@ public:
     static void loadEventFired(Frame*, const KURL&);
     static void frameDetachedFromParent(Frame*);
     static void didCommitLoad(Frame*, DocumentLoader*);
+    static void frameDestroyed(Frame*);
 
     static InspectorInstrumentationCookie willWriteHTML(Document*, unsigned int length, unsigned int startLine);
     static void didWriteHTML(const InspectorInstrumentationCookie&, unsigned int endLine);
@@ -263,6 +264,7 @@ private:
     static void loadEventFiredImpl(InstrumentingAgents*, Frame*, const KURL&);
     static void frameDetachedFromParentImpl(InstrumentingAgents*, Frame*);
     static void didCommitLoadImpl(InstrumentingAgents*, Page*, DocumentLoader*);
+    static void frameDestroyedImpl(InstrumentingAgents*, Frame*);
 
     static InspectorInstrumentationCookie willWriteHTMLImpl(InstrumentingAgents*, unsigned int length, unsigned int startLine);
     static void didWriteHTMLImpl(const InspectorInstrumentationCookie&, unsigned int endLine);
@@ -850,6 +852,17 @@ inline void InspectorInstrumentation::didCommitLoad(Frame* frame, DocumentLoader
         return;
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
         didCommitLoadImpl(instrumentingAgents, page, loader);
+#endif
+}
+
+inline void InspectorInstrumentation::frameDestroyed(Frame* frame)
+{
+#if ENABLE(INSPECTOR)
+    Page* page = frame->page();
+    if (!page)
+        return;
+    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForPage(page))
+        frameDestroyedImpl(instrumentingAgents, frame);
 #endif
 }
 

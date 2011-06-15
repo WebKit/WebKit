@@ -1,5 +1,24 @@
 2011-06-15  Andrey Kosyakov  <caseq@chromium.org>
 
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: provide unique identifiers for frames
+        https://bugs.webkit.org/show_bug.cgi?id=62721
+
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::frameDestroyedImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::frameDestroyed):
+        * inspector/InspectorPageAgent.cpp:
+        (WebCore::InspectorPageAgent::frameForId):
+        (WebCore::InspectorPageAgent::frameId):
+        (WebCore::InspectorPageAgent::frameDestroyed):
+        * inspector/InspectorPageAgent.h:
+        * page/Frame.cpp:
+        (WebCore::Frame::~Frame):
+
+2011-06-15  Andrey Kosyakov  <caseq@chromium.org>
+
         Unreviewed build fix: comment unused parameter names.
 
         * loader/ThreadableLoaderClient.h:

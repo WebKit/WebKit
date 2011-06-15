@@ -57,6 +57,7 @@
 #include "HTMLNames.h"
 #include "HTMLTableCellElement.h"
 #include "HitTestResult.h"
+#include "InspectorInstrumentation.h"
 #include "Logging.h"
 #include "MediaFeatureNames.h"
 #include "MediaStreamFrameController.h"
@@ -237,6 +238,8 @@ Frame::~Frame()
     HashSet<FrameDestructionObserver*>::iterator stop = m_destructionObservers.end();
     for (HashSet<FrameDestructionObserver*>::iterator it = m_destructionObservers.begin(); it != stop; ++it)
         (*it)->frameDestroyed();
+
+    InspectorInstrumentation::frameDestroyed(this);
 
     if (m_view) {
         m_view->hide();

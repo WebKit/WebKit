@@ -69,6 +69,7 @@ namespace WebCore {
 namespace {
 // This should be kept the same as the one in front-end/utilities.js
 static const char regexSpecialCharacters[] = "[](){}+-*.,?\\^$|";
+static unsigned int s_lastFrameIdentifier = 0;
 }
 
 static bool decodeSharedBuffer(PassRefPtr<SharedBuffer> buffer, const String& textEncodingName, String* result)
@@ -562,22 +563,38 @@ static String pointerAsId(void* pointer)
 
 Frame* InspectorPageAgent::frameForId(const String& frameId)
 {
-    Frame* mainFrame = m_page->mainFrame();
-    for (Frame* frame = mainFrame; frame; frame = frame->tree()->traverseNext(mainFrame)) {
-        if (pointerAsId(frame) == frameId)
-            return frame;
-    }
-    return 0;
+    bool ok = false;
+    unsigned int identifier = frameId.toUIntStrict(&ok);
+    if (!ok || !identifier)
+        return 0;
+    return m_identifierToFrame.get(identifier);
 }
 
 String InspectorPageAgent::frameId(Frame* frame)
 {
-    return pointerAsId(frame);
+    if (!frame)
+        return "";
+    unsigned int identifier = m_frameToIdentifier.get(frame);
+    if (!identifier) {
+        identifier = ++s_lastFrameIdentifier;
+        m_frameToIdentifier.set(frame, identifier);
+        m_identifierToFrame.set(identifier, frame);
+    }
+    return String::number(identifier);
 }
 
 String InspectorPageAgent::loaderId(DocumentLoader* loader)
 {
     return pointerAsId(loader);
+}
+
+void InspectorPageAgent::frameDestroyed(Frame* frame)
+{
+    HashMap<Frame*, unsigned int>::iterator iterator = m_frameToIdentifier.find(frame);
+    if (iterator != m_frameToIdentifier.end()) {
+        m_identifierToFrame.remove(iterator->second);
+        m_frameToIdentifier.remove(iterator);
+    }
 }
 
 PassRefPtr<InspectorObject> InspectorPageAgent::buildObjectForFrame(Frame* frame)
