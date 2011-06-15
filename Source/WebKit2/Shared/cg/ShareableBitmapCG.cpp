@@ -26,6 +26,7 @@
 #include "config.h"
 #include "ShareableBitmap.h"
 
+#include <WebCore/BitmapImage.h>
 #include <WebCore/GraphicsContext.h>
 #include <wtf/RetainPtr.h>
 #include "CGUtilities.h"
@@ -48,7 +49,6 @@ static CGBitmapInfo bitmapInfo(ShareableBitmap::Flags flags)
 PassOwnPtr<GraphicsContext> ShareableBitmap::createGraphicsContext()
 {
     RetainPtr<CGColorSpaceRef> colorSpace(AdoptCF, CGColorSpaceCreateDeviceRGB());
-
 
     ref(); // Balanced by deref in releaseBitmapContextData.
     RetainPtr<CGContextRef> bitmapContext(AdoptCF, CGBitmapContextCreateWithData(data(),
@@ -104,6 +104,16 @@ void ShareableBitmap::releaseDataProviderData(void* typelessBitmap, const void* 
     ShareableBitmap* bitmap = static_cast<ShareableBitmap*>(typelessBitmap);
     ASSERT_UNUSED(typelessData, bitmap->data() == typelessData);
     bitmap->deref(); // Balanced by ref in createCGImage.
+}
+
+PassRefPtr<Image> ShareableBitmap::createImage()
+{
+    RetainPtr<CGImageRef> platformImage = makeCGImage();
+    if (!platformImage)
+        return 0;
+
+    // BitmapImage::create adopts the CGImageRef that's passed in, which is why we need to leakRef here.
+    return BitmapImage::create(platformImage.leakRef());
 }
 
 } // namespace WebKit

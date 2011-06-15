@@ -141,7 +141,6 @@ template<> struct ArgumentCoder<WebCore::Credential> {
 
 void encodeImage(ArgumentEncoder*, WebCore::Image*);
 bool decodeImage(ArgumentDecoder*, RefPtr<WebCore::Image>&);
-RefPtr<WebCore::Image> createImage(WebKit::ShareableBitmap*);
 
 template<> struct ArgumentCoder<WebCore::Cursor> {
     static void encode(ArgumentEncoder* encoder, const WebCore::Cursor& cursor)

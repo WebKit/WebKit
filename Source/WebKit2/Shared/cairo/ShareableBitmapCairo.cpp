@@ -28,9 +28,9 @@
 #include "config.h"
 #include "ShareableBitmap.h"
 
+#include <WebCore/BitmapImage.h>
 #include <WebCore/CairoUtilities.h>
 #include <WebCore/GraphicsContext.h>
-#include <WebCore/NotImplemented.h>
 #include <WebCore/PlatformContextCairo.h>
 
 using namespace WebCore;
@@ -70,6 +70,16 @@ PassRefPtr<cairo_surface_t> ShareableBitmap::createCairoSurface()
 void ShareableBitmap::releaseSurfaceData(void* typelessBitmap)
 {
     static_cast<ShareableBitmap*>(typelessBitmap)->deref(); // Balanced by ref in createCairoSurface.
+}
+
+PassRefPtr<Image> ShareableBitmap::createImage()
+{
+    RefPtr<cairo_surface_t> surface = createCairoSurface();
+    if (!surface)
+        return 0;
+
+    // BitmapImage::create adopts the cairo_surface_t that's passed in, which is why we need to leakRef here.
+    return BitmapImage::create(surface.release().leakRef());
 }
 
 } // namespace WebKit

@@ -1,5 +1,35 @@
 2011-06-15  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Darin Adler.
+
+        Add ShareableBitmap::createImage and get rid of WebCoreArgumentCodersCG.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=62742
+
+        * Shared/ShareableBitmap.h:
+        Move createImage out of the #if PLATFORM(QT) section.
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::decodeImage):
+        Call ShareableBitmap::createImage.
+
+        * Shared/WebCoreArgumentCoders.h:
+        remove createImage function declaration.
+
+        * Shared/cairo/ShareableBitmapCairo.cpp:
+        (WebKit::ShareableBitmap::createImage):
+        Add implementation.
+
+        * Shared/cg/ShareableBitmapCG.cpp:
+        (WebKit::ShareableBitmap::createGraphicsContext):
+        (WebKit::ShareableBitmap::createImage):
+        Move createImage implementation from WebCoreArgumentCodersCG.cpp here.
+
+        * WebKit2.xcodeproj/project.pbxproj:
+        * win/WebKit2.vcproj:
+        Update projects.
+
+2011-06-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Alexey Proskuryakov.
 
         Move some argument coders to WebCoreArgumentCoders.cpp

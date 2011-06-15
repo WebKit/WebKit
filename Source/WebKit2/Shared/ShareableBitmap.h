@@ -27,7 +27,6 @@
 #define ShareableBitmap_h
 
 #include "SharedMemory.h"
-#include <WebCore/Image.h>
 #include <WebCore/IntRect.h>
 #include <wtf/PassOwnPtr.h>
 #include <wtf/PassRefPtr.h>
@@ -47,6 +46,7 @@
 #endif
 
 namespace WebCore {
+    class Image;
     class GraphicsContext;
 }
 
@@ -107,6 +107,10 @@ public:
 
     bool isBackedBySharedMemory() const { return m_sharedMemory; }
 
+    // This creates a bitmap image that directly references the shared bitmap data.
+    // This is only safe to use when we know that the contents of the shareable bitmap won't change.
+    PassRefPtr<WebCore::Image> createImage();
+
 #if USE(CG)
     // This creates a copied CGImageRef (most likely a copy-on-write) of the shareable bitmap.
     RetainPtr<CGImageRef> makeCGImageCopy();
@@ -122,7 +126,6 @@ public:
     // This creates a QImage that directly references the shared bitmap data.
     // This is only safe to use when we know that the contents of the shareable bitmap won't change.
     QImage createQImage();
-    PassRefPtr<WebCore::Image> createImage();
 #endif
 
 private:

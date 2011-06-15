@@ -181,7 +181,7 @@ bool decodeImage(ArgumentDecoder* decoder, RefPtr<Image>& image)
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::create(handle);
     if (!bitmap)
         return false;
-    image = createImage(bitmap.get());
+    image = bitmap->createImage();
     if (!image)
         return false;
     return true;
