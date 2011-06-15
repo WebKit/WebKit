@@ -1,3 +1,21 @@
+2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Trailing tabs in a textarea become unselectable under certain conditions
+        https://bugs.webkit.org/show_bug.cgi?id=54598
+
+        Added a test to ensure Webkit renders leading whitespace when white-space is set to pre-wrap
+        and word-wrap is set to break-word.
+
+        Also rebaselined few tests because WebKit now renders leading whitespace in those tests.
+
+        * fast/text/pre-wrap-trailing-tab-expected.txt: Added.
+        * fast/text/pre-wrap-trailing-tab.html: Added.
+        * http/tests/misc/acid3-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-quirks-expected.txt
+
 2011-06-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Qt rebaseline after r88757.

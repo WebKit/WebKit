@@ -1481,9 +1481,15 @@ static inline bool skipNonBreakingSpace(const InlineIterator& it, const LineInfo
     return true;
 }
 
-static inline bool shouldCollapseWhiteSpace(const RenderStyle* style, const LineInfo& lineInfo)
+enum WhitespacePosition { LeadingWhitespace, TrailingWhitespace };
+static inline bool shouldCollapseWhiteSpace(const RenderStyle* style, const LineInfo& lineInfo, WhitespacePosition whitespacePosition)
 {
-    return style->collapseWhiteSpace() || (style->whiteSpace() == PRE_WRAP && (!lineInfo.isEmpty() || !lineInfo.previousLineBrokeCleanly()));
+    // CSS2 16.6.1
+    // If a space (U+0020) at the beginning of a line has 'white-space' set to 'normal', 'nowrap', or 'pre-line', it is removed.
+    // If a space (U+0020) at the end of a line has 'white-space' set to 'normal', 'nowrap', or 'pre-line', it is also removed.
+    // If spaces (U+0020) or tabs (U+0009) at the end of a line have 'white-space' set to 'pre-wrap', UAs may visually collapse them.
+    return style->collapseWhiteSpace()
+        || (whitespacePosition == TrailingWhitespace && style->whiteSpace() == PRE_WRAP && (!lineInfo.isEmpty() || !lineInfo.previousLineBrokeCleanly()));
 }
 
 static bool inlineFlowRequiresLineBox(RenderInline* flow)
@@ -1494,7 +1500,7 @@ static bool inlineFlowRequiresLineBox(RenderInline* flow)
     return !flow->firstChild() && flow->hasInlineDirectionBordersPaddingOrMargin();
 }
 
-static bool requiresLineBox(const InlineIterator& it, const LineInfo& lineInfo = LineInfo())
+static bool requiresLineBox(const InlineIterator& it, const LineInfo& lineInfo = LineInfo(), WhitespacePosition whitespacePosition = LeadingWhitespace)
 {
     if (it.m_obj->isFloatingOrPositioned())
         return false;
@@ -1502,7 +1508,7 @@ static bool requiresLineBox(const InlineIterator& it, const LineInfo& lineInfo =
     if (it.m_obj->isRenderInline() && !inlineFlowRequiresLineBox(toRenderInline(it.m_obj)))
         return false;
 
-    if (!shouldCollapseWhiteSpace(it.m_obj->style(), lineInfo) || it.m_obj->isBR())
+    if (!shouldCollapseWhiteSpace(it.m_obj->style(), lineInfo, whitespacePosition) || it.m_obj->isBR())
         return true;
 
     UChar current = it.current();
@@ -1515,6 +1521,7 @@ bool RenderBlock::generatesLineBoxesForInlineChild(RenderObject* inlineObj)
     ASSERT(inlineObj->parent() == this);
 
     InlineIterator it(this, inlineObj, 0);
+    // FIXME: We should pass correct value for WhitespacePosition.
     while (!it.atEnd() && !requiresLineBox(it))
         it.increment();
 
@@ -1529,7 +1536,7 @@ bool RenderBlock::generatesLineBoxesForInlineChild(RenderObject* inlineObj)
 // be skipped but it will not position them.
 void RenderBlock::LineBreaker::skipTrailingWhitespace(InlineIterator& iterator, const LineInfo& lineInfo)
 {
-    while (!iterator.atEnd() && !requiresLineBox(iterator, lineInfo)) {
+    while (!iterator.atEnd() && !requiresLineBox(iterator, lineInfo, TrailingWhitespace)) {
         RenderObject* object = iterator.m_obj;
         if (object->isFloating()) {
             m_block->insertFloatingObject(toRenderBox(object));
@@ -1542,7 +1549,7 @@ void RenderBlock::LineBreaker::skipTrailingWhitespace(InlineIterator& iterator, 
 void RenderBlock::LineBreaker::skipLeadingWhitespace(InlineBidiResolver& resolver, const LineInfo& lineInfo,
                                                      FloatingObject* lastFloatFromPreviousLine, LineWidth& width)
 {
-    while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo)) {
+    while (!resolver.position().atEnd() && !requiresLineBox(resolver.position(), lineInfo, LeadingWhitespace)) {
         RenderObject* object = resolver.position().m_obj;
         if (object->isFloating())
             m_block->positionNewFloatOnLine(m_block->insertFloatingObject(toRenderBox(object)), lastFloatFromPreviousLine, width);

@@ -1,3 +1,31 @@
+2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by David Hyatt.
+
+        Trailing tabs in a textarea become unselectable under certain conditions
+        https://bugs.webkit.org/show_bug.cgi?id=54598
+
+        The bug was caused by WebKit's erroneously collapsing leading whitespace when white-space is
+        set to pre-wrap. Per CSS 2.1 spec section 16.1.1, leading whitespace should not be removed
+        in this case.
+
+        See also: http://www.w3.org/TR/CSS2/text.html#white-space-model
+
+        Fixed the bug by adding an extra argument to shouldCollapseWhiteSpace, indicating whether
+        whitespace is leading or trailing. It defaults to leading because 16.1.1 does not allow allow
+        collapsing of whitespace anywhere but at the end of each line.
+
+        Test: fast/text/pre-wrap-trailing-tab.html
+
+        * rendering/RenderBlockLineLayout.cpp:
+        (WebCore::shouldCollapseWhiteSpace): Added WhitespacePosition as an argument. Returns false
+        when whitespacePosition is not TrailingWhitespace even if white-space is pre-wrap.
+        (WebCore::requiresLineBox): Takes WhitespacePosition as an argument and passes it to
+        shouldCollapseWhiteSpace.
+        (WebCore::RenderBlock::generatesLineBoxesForInlineChild): Calls requiresLineBox.
+        (WebCore::RenderBlock::LineBreaker::skipTrailingWhitespace): Ditto.
+        (WebCore::RenderBlock::LineBreaker::skipLeadingWhitespace): Ditto.
+
 2011-06-14  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Dan Bernstein.
