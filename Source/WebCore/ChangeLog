@@ -1,5 +1,17 @@
 2011-06-14  David Kilzer  <ddkilzer@apple.com>
 
+        <http://webkit.org/b/62677> Part 2/2: Remove duplicate header entries in WebCore project file
+
+        Reviewed by Darin Adler.
+
+        Most of the DOMSVG*.h headers were added in late 2006, and then
+        duplicated by late 2007.  They've been in the tree a long time.
+
+        * WebCore.xcodeproj/project.pbxproj: Let Xcode 4 remove
+        duplicate header entries.
+
+2011-06-14  David Kilzer  <ddkilzer@apple.com>
+
         <http://webkit.org/b/62677> Part 1/2: Remove duplicate header entries in WebCore project file
 
         Reviewed by Darin Adler.
