@@ -161,7 +161,7 @@ video:-webkit-full-screen::-webkit-media-controls-timeline-container {
     right: 8px;
 }
 
-video:-webkit-full-screen::video::-webkit-media-controls-status-display {
+video:-webkit-full-screen::-webkit-media-controls-status-display {
     width: 420px;
     position: absolute;
     bottom: 9px;
