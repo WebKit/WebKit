@@ -1,3 +1,11 @@
+2011-06-15  Mario Sanchez Prada  <msanchez@igalia.com>
+
+        Unreviewed, skipped accessibility test failing in GTK.
+
+        Failing after r88830, filed bug 62335 for fixing this issue.
+
+        * platform/gtk/Skipped: Skipped test.
+
 2011-06-15  Pavel Feldman  <pfeldman@google.com>
 
         Reviewed by Yury Semikhatsky.
