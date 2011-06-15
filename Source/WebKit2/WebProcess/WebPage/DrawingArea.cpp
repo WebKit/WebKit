@@ -43,8 +43,10 @@ PassOwnPtr<DrawingArea> DrawingArea::create(WebPage* webPage, const WebPageCreat
     switch (parameters.drawingAreaType) {
     case DrawingAreaTypeImpl:
         return DrawingAreaImpl::create(webPage, parameters);
+#if !PLATFORM(WIN)
     case DrawingAreaTypeChunkedUpdate:
         return adoptPtr(new ChunkedUpdateDrawingArea(webPage));
+#endif
 #if ENABLE(TILED_BACKING_STORE)
     case DrawingAreaTypeTiled:
         return adoptPtr(new TiledDrawingArea(webPage));
