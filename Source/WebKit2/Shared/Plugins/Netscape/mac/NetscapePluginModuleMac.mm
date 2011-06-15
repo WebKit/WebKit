@@ -364,7 +364,10 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginInfoSto
 
     plugin.path = pluginPath;
     plugin.bundleIdentifier = CFBundleGetIdentifier(bundle.get());
-    plugin.versionNumber = CFBundleGetVersionNumber(bundle.get());
+    if (CFTypeRef versionTypeRef = CFBundleGetValueForInfoDictionaryKey(bundle.get(), kCFBundleVersionKey)) {
+        if (CFGetTypeID(versionTypeRef) == CFStringGetTypeID())
+            plugin.versionString = static_cast<CFStringRef>(versionTypeRef);
+    }
     
     // Check that there's valid info for this plug-in.
     if (!getPluginInfoFromPropertyLists(bundle.get(), plugin) &&
@@ -398,9 +401,50 @@ bool NetscapePluginModule::createPluginMIMETypesPreferences(const String& plugin
     void (*createPluginMIMETypesPreferences)(void) = reinterpret_cast<void (*)(void)>(CFBundleGetFunctionPointerForName(bundle.get(), CFSTR("BP_CreatePluginMIMETypesPreferences")));
     if (!createPluginMIMETypesPreferences)
         return false;
-    
+
     createPluginMIMETypesPreferences();
     return true;
+}
+
+// FIXME: This doesn't need to be platform-specific.
+class PluginVersion {
+public:
+    static PluginVersion parse(const String& versionString);
+
+    bool isLessThan(unsigned componentA) const;
+    bool isValid() const { return !m_versionComponents.isEmpty(); }
+
+private:
+    PluginVersion()
+    {
+    }
+
+    Vector<unsigned, 4> m_versionComponents;
+};
+
+PluginVersion PluginVersion::parse(const String& versionString)
+{
+    PluginVersion version;
+
+    Vector<String> versionStringComponents;
+    versionString.split(".", versionStringComponents);
+    for (size_t i = 0; i < versionStringComponents.size(); ++i) {
+        bool successfullyParsed = false;
+        unsigned versionComponent = versionStringComponents[i].toUInt(&successfullyParsed);
+        if (!successfullyParsed)
+            return PluginVersion();
+
+        version.m_versionComponents.append(versionComponent);
+    }
+
+    return version;
+}
+
+bool PluginVersion::isLessThan(unsigned componentA) const
+{
+    ASSERT(isValid());
+
+    return m_versionComponents[0] < componentA;
 }
 
 void NetscapePluginModule::determineQuirks()
@@ -427,6 +471,14 @@ void NetscapePluginModule::determineQuirks()
         // Silverlight doesn't explicitly opt into transparency, so we'll do it whenever
         // there's a 'background' attribute.
         m_pluginQuirks.add(PluginQuirks::MakeTransparentIfBackgroundAttributeExists);
+
+        PluginVersion pluginVersion = PluginVersion::parse(plugin.versionString);
+        if (pluginVersion.isValid()) {
+            if (pluginVersion.isLessThan(4)) {
+                // Versions of Silverlight prior to 4 don't retain the scriptable NPObject.
+                m_pluginQuirks.add(PluginQuirks::ReturnsNonRetainedScriptableNPObject);
+            }
+        }
     }
 
 #ifndef NP_NO_QUICKDRAW
