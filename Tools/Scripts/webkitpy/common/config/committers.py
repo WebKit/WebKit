@@ -320,7 +320,7 @@ reviewers_list = [
     Reviewer("Holger Freyther", ["zecke@selfish.org", "zecke@webkit.org"], "zecke"),
     Reviewer("James Robinson", ["jamesr@chromium.org", "jamesr@google.com"], "jamesr"),
     Reviewer("Jan Alonzo", ["jmalonzo@gmail.com", "jmalonzo@webkit.org"], "janm"),
-    Reviewer("Jeremy Orlow", "jorlow@chromium.org", "jorlow"),
+    Reviewer("Jeremy Orlow", "jorlow@webkit.org", "jorlow"),
     Reviewer("Jian Li", "jianli@chromium.org", "jianli"),
     Reviewer("John Sullivan", "sullivan@apple.com", "sullivan"),
     Reviewer("Jon Honeycutt", "jhoneycutt@apple.com", "jhoneycutt"),

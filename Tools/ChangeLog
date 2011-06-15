@@ -1,3 +1,9 @@
+2011-06-15  Jeremy Orlow  <jorlow@webkit.org>
+
+        Change my email to @webkit.org
+
+        * Scripts/webkitpy/common/config/committers.py:
+
 2011-06-15  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by David Hyatt.
