@@ -232,3 +232,9 @@ void _WKContextSetHTTPPipeliningEnabled(WKContextRef contextRef, bool enabled)
 {
     toImpl(contextRef)->setHTTPPipeliningEnabled(enabled);
 }
+
+void WKContextWarmInitialProcess(WKContextRef contextRef)
+{
+    toImpl(contextRef)->warmInitialProcess();
+}
+
