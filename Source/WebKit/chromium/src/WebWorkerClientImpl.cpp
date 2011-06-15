@@ -150,7 +150,13 @@ void WebWorkerClientImpl::startWorkerContext(const KURL& scriptURL,
             sourceCode));
         return;
     }
+    startWorkerContextInternal(scriptURL, userAgent, sourceCode);
+}
+
+void WebWorkerClientImpl::startWorkerContextInternal(const KURL& scriptURL, const WTF::String& userAgent, const WTF::String& sourceCode)
+{
     m_webWorker->startWorkerContext(scriptURL, userAgent, sourceCode);
+    m_workerContextHadPendingActivity = true; // Worker initialization means a pending activity.
 }
 
 void WebWorkerClientImpl::terminateWorkerContext()
@@ -351,8 +357,7 @@ void WebWorkerClientImpl::startWorkerContextTask(ScriptExecutionContext* context
                                                  const String& userAgent,
                                                  const String& sourceCode)
 {
-    thisPtr->m_webWorker->startWorkerContext(KURL(ParsedURLString, scriptURL),
-                                             userAgent, sourceCode);
+    thisPtr->startWorkerContextInternal(KURL(ParsedURLString, scriptURL), userAgent, sourceCode);
 }
 
 void WebWorkerClientImpl::terminateWorkerContextTask(ScriptExecutionContext* context,

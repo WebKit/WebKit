@@ -1,3 +1,20 @@
+2011-06-10  Yury Semikhatsky  <yurys@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        [Chromium] Worker object may be garbage collected if it doesn't send any messages
+        https://bugs.webkit.org/show_bug.cgi?id=62446
+
+        Assume that WorkerContext has pending activity before explicit notification
+        is received from it. It prevents worker object from being collected before
+        the first message from its context is received.
+
+        * src/WebWorkerClientImpl.cpp:
+        (WebKit::WebWorkerClientImpl::startWorkerContext):
+        (WebKit::WebWorkerClientImpl::startWorkerContextInternal):
+        (WebKit::WebWorkerClientImpl::startWorkerContextTask):
+        * src/WebWorkerClientImpl.h:
+
 2011-06-14  Eric Uhrhane  <ericu@chromium.org>
 
         Reviewed by Darin Fisher.

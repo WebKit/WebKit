@@ -159,6 +159,8 @@ private:
                                           WebWorkerClientImpl* thisPtr,
                                           bool hasPendingActivity);
 
+    void startWorkerContextInternal(const WebCore::KURL& scriptURL, const WTF::String& userAgent, const WTF::String& sourceCode);
+
     // Guard against context from being destroyed before a worker exits.
     RefPtr<WebCore::ScriptExecutionContext> m_scriptExecutionContext;
 
