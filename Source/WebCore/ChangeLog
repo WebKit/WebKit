@@ -1,3 +1,108 @@
+2011-06-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Cache XHR content in backend, do not use initialContentSet for XHRs.
+        https://bugs.webkit.org/show_bug.cgi?id=61205
+
+        Added inspector backend cache for XHR content.
+
+        Tests: http/tests/inspector/network/network-xhr-async.html
+               http/tests/inspector/network/network-xhr-sync.html
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * fileapi/FileReaderLoader.cpp:
+        (WebCore::FileReaderLoader::didReceiveResponse):
+        * fileapi/FileReaderLoader.h:
+        * inspector/Inspector.json:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didReceiveXHRResponseImpl):
+        (WebCore::InspectorInstrumentation::willLoadXHRSynchronouslyImpl):
+        (WebCore::InspectorInstrumentation::didLoadXHRSynchronouslyImpl):
+        (WebCore::InspectorInstrumentation::didCommitLoadImpl):
+        * inspector/InspectorInstrumentation.h:
+        (WebCore::InspectorInstrumentation::didReceiveXHRResponse):
+        (WebCore::InspectorInstrumentation::willLoadXHRSynchronously):
+        (WebCore::InspectorInstrumentation::didLoadXHRSynchronously):
+        * inspector/InspectorResourceAgent.cpp:
+        (WebCore::InspectorResourceAgent::willSendRequest):
+        (WebCore::InspectorResourceAgent::didReceiveResponse):
+        (WebCore::InspectorResourceAgent::setInitialXHRContent):
+        (WebCore::InspectorResourceAgent::didReceiveXHRResponse):
+        (WebCore::InspectorResourceAgent::willLoadXHRSynchronously):
+        (WebCore::InspectorResourceAgent::didLoadXHRSynchronously):
+        (WebCore::InspectorResourceAgent::getResourceContent):
+        (WebCore::InspectorResourceAgent::mainFrameNavigated):
+        (WebCore::InspectorResourceAgent::InspectorResourceAgent):
+        * inspector/InspectorResourceAgent.h:
+        * inspector/NetworkResourcesData.cpp: Added.
+        (WebCore::NetworkResourcesData::ResourceData::ResourceData):
+        (WebCore::NetworkResourcesData::ResourceData::content):
+        (WebCore::NetworkResourcesData::ResourceData::appendContent):
+        (WebCore::NetworkResourcesData::ResourceData::purgeContent):
+        (WebCore::NetworkResourcesData::NetworkResourcesData):
+        (WebCore::NetworkResourcesData::~NetworkResourcesData):
+        (WebCore::NetworkResourcesData::resourceCreated):
+        (WebCore::NetworkResourcesData::responseReceived):
+        (WebCore::NetworkResourcesData::didReceiveXHRResponse):
+        (WebCore::NetworkResourcesData::addResourceContent):
+        (WebCore::NetworkResourcesData::isXHR):
+        (WebCore::NetworkResourcesData::data):
+        (WebCore::NetworkResourcesData::clear):
+        (WebCore::NetworkResourcesData::ensureFreeSpace):
+        * inspector/NetworkResourcesData.h: Added.
+        (WebCore::NetworkResourcesData::ResourceData::identifier):
+        (WebCore::NetworkResourcesData::ResourceData::loaderId):
+        (WebCore::NetworkResourcesData::ResourceData::frameId):
+        (WebCore::NetworkResourcesData::ResourceData::setFrameId):
+        (WebCore::NetworkResourcesData::ResourceData::url):
+        (WebCore::NetworkResourcesData::ResourceData::setUrl):
+        (WebCore::NetworkResourcesData::ResourceData::isXHR):
+        (WebCore::NetworkResourcesData::ResourceData::setIsXHR):
+        (WebCore::NetworkResourcesData::ResourceData::hasContent):
+        (WebCore::NetworkResourcesData::ResourceData::isContentPurged):
+        (WebCore::NetworkResourcesData::ResourceData::setIsContentPurged):
+        * inspector/front-end/NetworkManager.js:
+        (WebInspector.NetworkManager.prototype.requestContent):
+        (WebInspector.NetworkDispatcher.prototype._appendRedirect):
+        * inspector/front-end/NetworkPanel.js:
+        (WebInspector.NetworkPanel.prototype._appendResource):
+        (WebInspector.NetworkPanel.prototype._frameNavigated):
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::didReceiveResponse):
+        (WebCore::DocumentThreadableLoader::receivedCancellation):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/DocumentThreadableLoader.h:
+        * loader/ThreadableLoaderClient.h:
+        (WebCore::ThreadableLoaderClient::didReceiveResponse):
+        (WebCore::ThreadableLoaderClient::didReceiveAuthenticationCancellation):
+        * loader/ThreadableLoaderClientWrapper.h:
+        (WebCore::ThreadableLoaderClientWrapper::didReceiveResponse):
+        (WebCore::ThreadableLoaderClientWrapper::didReceiveAuthenticationCancellation):
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::workerContextDidReceiveResponse):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveResponse):
+        (WebCore::workerContextDidReceiveAuthenticationCancellation):
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::didReceiveAuthenticationCancellation):
+        * loader/WorkerThreadableLoader.h:
+        * notifications/Notification.cpp:
+        (WebCore::Notification::didReceiveResponse):
+        (WebCore::Notification::didReceiveAuthenticationCancellation):
+        * notifications/Notification.h:
+        * page/EventSource.cpp:
+        (WebCore::EventSource::didReceiveResponse):
+        * page/EventSource.h:
+        * xml/XMLHttpRequest.cpp:
+        (WebCore::XMLHttpRequest::createRequest):
+        (WebCore::XMLHttpRequest::didReceiveResponse):
+        (WebCore::XMLHttpRequest::didReceiveAuthenticationCancellation):
+        * xml/XMLHttpRequest.h:
+
 2011-06-15  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

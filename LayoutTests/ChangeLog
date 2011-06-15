@@ -1,3 +1,17 @@
+2011-06-15  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Cache XHR content in backend, do not use initialContentSet for XHRs.
+        https://bugs.webkit.org/show_bug.cgi?id=61205
+
+        Added inspector backend cache for XHR content.
+
+        * http/tests/inspector/network/network-xhr-async-expected.txt: Added.
+        * http/tests/inspector/network/network-xhr-async.html: Added.
+        * http/tests/inspector/network/network-xhr-sync-expected.txt: Added.
+        * http/tests/inspector/network/network-xhr-sync.html: Added.
+
 2011-06-15  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

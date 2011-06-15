@@ -113,13 +113,13 @@ namespace WebCore {
             static void mainThreadCreateLoader(ScriptExecutionContext*, MainThreadBridge*, PassOwnPtr<CrossThreadResourceRequestData>, ThreadableLoaderOptions, const String& outgoingReferrer);
             static void mainThreadCancel(ScriptExecutionContext*, MainThreadBridge*);
             virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
-            virtual void didReceiveResponse(const ResourceResponse&);
+            virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
             virtual void didReceiveData(const char*, int dataLength);
             virtual void didReceiveCachedMetadata(const char*, int dataLength);
             virtual void didFinishLoading(unsigned long identifier, double finishTime);
             virtual void didFail(const ResourceError&);
             virtual void didFailRedirectCheck();
-            virtual void didReceiveAuthenticationCancellation(const ResourceResponse&);
+            virtual void didReceiveAuthenticationCancellation(unsigned long identifier, const ResourceResponse&);
 
             // Only to be used on the main thread.
             RefPtr<ThreadableLoader> m_mainThreadLoader;

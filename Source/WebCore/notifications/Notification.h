@@ -102,12 +102,12 @@ namespace WebCore {
         // Deprecated. Use functions from NotificationCenter.
         void detachPresenter() { }
 
-        virtual void didReceiveResponse(const ResourceResponse&);
+        virtual void didReceiveResponse(unsigned long, const ResourceResponse&);
         virtual void didReceiveData(const char* data, int dataLength);
         virtual void didFinishLoading(unsigned long identifier, double finishTime);
         virtual void didFail(const ResourceError&);
         virtual void didFailRedirectCheck();
-        virtual void didReceiveAuthenticationCancellation(const ResourceResponse&);
+        virtual void didReceiveAuthenticationCancellation(unsigned long, const ResourceResponse&);
 
     private:
         Notification(const KURL&, ScriptExecutionContext*, ExceptionCode&, PassRefPtr<NotificationCenter>);

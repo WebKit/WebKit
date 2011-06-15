@@ -2009,6 +2009,8 @@ webcore_sources += \
 	Source/WebCore/inspector/InspectorWorkerAgent.h \
 	Source/WebCore/inspector/InspectorWorkerResource.h \
 	Source/WebCore/inspector/InstrumentingAgents.h \
+	Source/WebCore/inspector/NetworkResourcesData.cpp \
+	Source/WebCore/inspector/NetworkResourcesData.h \
 	Source/WebCore/inspector/PageDebuggerAgent.cpp \
 	Source/WebCore/inspector/PageDebuggerAgent.h \
 	Source/WebCore/inspector/ScriptArguments.cpp \

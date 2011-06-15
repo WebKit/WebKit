@@ -839,6 +839,7 @@ SOURCES += \
     inspector/InspectorTimelineAgent.cpp \
     inspector/InspectorValues.cpp \
     inspector/InspectorWorkerAgent.cpp \
+    inspector/NetworkResourcesData.cpp \
     inspector/PageDebuggerAgent.cpp \
     inspector/ScriptArguments.cpp \
     inspector/ScriptCallFrame.cpp \
@@ -1788,6 +1789,7 @@ HEADERS += \
     inspector/InspectorTimelineAgent.h \
     inspector/InspectorWorkerAgent.h \
     inspector/InstrumentingAgents.h \
+    inspector/NetworkResourcesData.h \
     inspector/PageDebuggerAgent.h \
     inspector/ScriptGCEventListener.h \
     inspector/TimelineRecordFactory.h \

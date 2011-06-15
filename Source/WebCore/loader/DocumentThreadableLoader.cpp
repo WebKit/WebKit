@@ -171,8 +171,13 @@ void DocumentThreadableLoader::didSendData(SubresourceLoader* loader, unsigned l
 
 void DocumentThreadableLoader::didReceiveResponse(SubresourceLoader* loader, const ResourceResponse& response)
 {
+    ASSERT(loader == m_loader);
+    didReceiveResponse(loader->identifier(), response);
+}
+
+void DocumentThreadableLoader::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
+{
     ASSERT(m_client);
-    ASSERT_UNUSED(loader, loader == m_loader);
 
     String accessControlErrorDescription;
     if (m_actualRequest) {
@@ -198,7 +203,7 @@ void DocumentThreadableLoader::didReceiveResponse(SubresourceLoader* loader, con
             }
         }
 
-        m_client->didReceiveResponse(response);
+        m_client->didReceiveResponse(identifier, response);
     }
 }
 
@@ -285,7 +290,7 @@ void DocumentThreadableLoader::receivedCancellation(SubresourceLoader* loader, c
 {
     ASSERT(m_client);
     ASSERT_UNUSED(loader, loader == m_loader);
-    m_client->didReceiveAuthenticationCancellation(challenge.failureResponse());
+    m_client->didReceiveAuthenticationCancellation(loader->identifier(), challenge.failureResponse());
 }
 
 void DocumentThreadableLoader::preflightSuccess()
@@ -351,7 +356,7 @@ void DocumentThreadableLoader::loadRequest(const ResourceRequest& request, Secur
         return;
     }
 
-    didReceiveResponse(0, response);
+    didReceiveResponse(identifier, response);
 
     const char* bytes = static_cast<const char*>(data.data());
     int len = static_cast<int>(data.size());

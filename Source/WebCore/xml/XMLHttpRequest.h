@@ -150,12 +150,12 @@ private:
 #endif
 
     virtual void didSendData(unsigned long long bytesSent, unsigned long long totalBytesToBeSent);
-    virtual void didReceiveResponse(const ResourceResponse&);
+    virtual void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
     virtual void didReceiveData(const char* data, int dataLength);
     virtual void didFinishLoading(unsigned long identifier, double finishTime);
     virtual void didFail(const ResourceError&);
     virtual void didFailRedirectCheck();
-    virtual void didReceiveAuthenticationCancellation(const ResourceResponse&);
+    virtual void didReceiveAuthenticationCancellation(unsigned long identifier, const ResourceResponse&);
 
     String responseMIMEType() const;
     bool responseIsXML() const;
