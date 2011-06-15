@@ -1,3 +1,10 @@
+2011-06-15  Martin Robinson  <mrobinson@igalia.com>
+
+        Reclassify a failing GTK+ test.
+
+        * platform/gtk/Skipped: This test is actually failing because
+        EventSender.mouseScrollBy is missing.
+
 2011-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
