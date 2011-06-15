@@ -47,12 +47,34 @@ public:
 
     virtual bool shouldInclude(Node*) = 0;
     virtual void attach();
+    virtual void detach();
+
+    Node* inclusionAt(size_t) const;
+    size_t inclusionCount() const;
 
 private:
     virtual bool isContentElement() const { return true; }
     virtual bool rendererIsNeeded(const NodeRenderingContext&) { return false; }
     virtual RenderObject* createRenderer(RenderArena*, RenderStyle*) { return 0; }
+
+    Vector<RefPtr<Node> > m_inclusions;
 };
+
+inline Node* ShadowContentElement::inclusionAt(size_t index) const
+{
+    return m_inclusions.at(index).get();
+}
+
+inline size_t ShadowContentElement::inclusionCount() const
+{
+    return m_inclusions.size();
+}
+
+inline ShadowContentElement* toShadowContentElement(Node* node)
+{
+    ASSERT(!node || node->isContentElement());
+    return static_cast<ShadowContentElement*>(node);
+}
 
 }
 

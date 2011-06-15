@@ -34,9 +34,22 @@ namespace WebCore {
 void ShadowContentElement::attach()
 {
     ASSERT(!firstChild()); // Currently doesn't support any light child.
-    Element::attach();
-    if (ShadowContentSelector* selector = ShadowContentSelector::currentInstance())
-        selector->attachChildrenFor(this);
+    StyledElement::attach();
+    if (ShadowContentSelector* selector = ShadowContentSelector::currentInstance()) {
+        selector->willAttachContentFor(this);
+        selector->selectInclusion(m_inclusions);
+        for (size_t i = 0; i < m_inclusions.size(); ++i)
+            m_inclusions[i]->detach();
+        for (size_t i = 0; i < m_inclusions.size(); ++i)
+            m_inclusions[i]->attach();
+        selector->didAttachContent();
+    }
+}
+
+void ShadowContentElement::detach()
+{
+    m_inclusions.clear();
+    StyledElement::detach();
 }
 
 }

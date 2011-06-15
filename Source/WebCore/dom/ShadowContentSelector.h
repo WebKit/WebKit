@@ -47,16 +47,19 @@ public:
     explicit ShadowContentSelector(ShadowRoot*);
     ~ShadowContentSelector();
 
-    void attachChildrenFor(ShadowContentElement*);
+    void willAttachContentFor(ShadowContentElement*);
+    void didAttachContent();
+    void selectInclusion(Vector<RefPtr<Node> >& inclusions);
+
     ShadowRoot* shadowRoot() const { return m_shadowRoot; }
-    Element* activeElement() const { return m_activeElement; }
+    Element* activeElement() const;
 
     static ShadowContentSelector* currentInstance() { return s_currentInstance; }
 
 private:
     ShadowContentSelector* m_parent;
     ShadowRoot* m_shadowRoot;
-    Element* m_activeElement;
+    ShadowContentElement* m_activeElement;
     Vector<RefPtr<Node> > m_children;
 
     static ShadowContentSelector* s_currentInstance;

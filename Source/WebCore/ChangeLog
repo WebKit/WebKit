@@ -1,3 +1,35 @@
+2011-06-09  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        ShadowContentElement should detach its inclusions before attaching them.
+        https://bugs.webkit.org/show_bug.cgi?id=62428
+
+        - On ShadowContentElement::attach(), changed inclusion attach scheme
+          from per-node reattach() to detach()-all-and-attach()-them.  This
+          eliminates attach() order problems which ShadowContentElement
+          possibly has.
+        - Changed ShadowContentElement to have m_inclusions as a member variable,
+          which will be used by upcoming changes.
+        - Moved attach() code from ShadowContentSelector to ShadowContentElement
+          because the element now owns the inclusion list.
+        
+        No new tests. No visible behavioral change yet.
+
+        * dom/ShadowContentElement.cpp:
+        (WebCore::ShadowContentElement::attach):
+        (WebCore::ShadowContentElement::detach): Added.
+        * dom/ShadowContentElement.h:
+        (WebCore::ShadowContentElement::inclusionAt): Added.
+        (WebCore::ShadowContentElement::inclusionCount): Added.
+        (WebCore::toShadowContentElement):
+        * dom/ShadowContentSelector.cpp: Removed attachChildrenFor()
+        (WebCore::ShadowContentSelector::selectInclusion): Extracted from attachChildrenFor()
+        (WebCore::ShadowContentSelector::willAttachContentFor): Extracted from attachChildrenFor()
+        (WebCore::ShadowContentSelector::didAttachContent): Extracted from attachChildrenFor()
+        (WebCore::ShadowContentSelector::activeElement):
+        * dom/ShadowContentSelector.h:
+
 2011-06-14  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/62677> Part 2/2: Remove duplicate header entries in WebCore project file
