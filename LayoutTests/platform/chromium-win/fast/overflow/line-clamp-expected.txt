@@ -26,7 +26,7 @@ layer at (0,0) size 800x600
         text run at (208,248) width 4: " "
       RenderText {#text} at (0,0) size 0x0
 layer at (8,48) size 102x81 clip at (9,49) size 100x79 scrollHeight 139
-  RenderFlexibleBox {DIV} at (0,40) size 102x81 [border: (1px solid #808080)]
+  RenderDeprecatedFlexibleBox {DIV} at (0,40) size 102x81 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x79
       RenderText {#text} at (0,0) size 96x139
         text run at (0,0) width 96: "50% truncation."
@@ -41,7 +41,7 @@ layer at (8,48) size 102x81 clip at (9,49) size 100x79 scrollHeight 139
           text run at (26,120) width 34: "More"
       RenderText {#text} at (0,0) size 0x0
 layer at (114,108) size 102x21 clip at (115,109) size 100x19 scrollHeight 119
-  RenderFlexibleBox {DIV} at (106,100) size 102x21 [border: (1px solid #808080)]
+  RenderDeprecatedFlexibleBox {DIV} at (106,100) size 102x21 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x19
       RenderText {#text} at (0,0) size 92x119
         text run at (0,0) width 88: "0% truncation."
@@ -55,7 +55,7 @@ layer at (114,108) size 102x21 clip at (115,109) size 100x19 scrollHeight 119
           text run at (24,100) width 34: "More"
       RenderText {#text} at (0,0) size 0x0
 layer at (220,88) size 102x41 clip at (221,89) size 100x39 scrollHeight 119
-  RenderFlexibleBox {DIV} at (212,80) size 102x41 [border: (1px solid #808080)]
+  RenderDeprecatedFlexibleBox {DIV} at (212,80) size 102x41 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x39
       RenderText {#text} at (0,0) size 84x119
         text run at (0,0) width 46: "2 lines. "
@@ -70,7 +70,7 @@ layer at (220,88) size 102x41 clip at (221,89) size 100x39 scrollHeight 119
           text run at (26,100) width 34: "More"
       RenderText {#text} at (0,0) size 0x0
 layer at (326,68) size 102x61 clip at (327,69) size 100x59 scrollHeight 179
-  RenderFlexibleBox {DIV} at (318,60) size 102x61 [border: (1px solid #808080)]
+  RenderDeprecatedFlexibleBox {DIV} at (318,60) size 102x61 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x59
       RenderText {#text} at (0,0) size 94x179
         text run at (0,0) width 69: "Backwards"
@@ -89,7 +89,7 @@ layer at (326,68) size 102x61 clip at (327,69) size 100x59 scrollHeight 179
           text run at (53,160) width 34: "More"
       RenderText {#text} at (0,0) size 0x0
 layer at (432,88) size 102x41 clip at (433,89) size 100x39 scrollHeight 139
-  RenderFlexibleBox {DIV} at (424,80) size 102x41 [border: (1px solid #808080)]
+  RenderDeprecatedFlexibleBox {DIV} at (424,80) size 102x41 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x39
       RenderText {#text} at (0,0) size 96x139
         text run at (0,0) width 96: "30% truncation."
@@ -101,7 +101,7 @@ layer at (432,88) size 102x41 clip at (433,89) size 100x39 scrollHeight 139
         text run at (0,100) width 75: "truncation of"
         text run at (0,120) width 84: "multi-line text."
 layer at (538,68) size 102x61 clip at (539,69) size 100x59 scrollHeight 119
-  RenderFlexibleBox {DIV} at (530,60) size 102x61 [border: (1px solid #808080)]
+  RenderDeprecatedFlexibleBox {DIV} at (530,60) size 102x61 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x59
       RenderText {#text} at (0,0) size 97x119
         text run at (0,0) width 46: "3 lines. "
@@ -113,7 +113,7 @@ layer at (538,68) size 102x61 clip at (539,69) size 100x59 scrollHeight 119
         text run at (0,80) width 75: "truncation of"
         text run at (0,100) width 84: "multi-line text."
 layer at (644,53) size 102x82 clip at (645,54) size 100x80
-  RenderFlexibleBox {DIV} at (636,45) size 102x82 [border: (1px solid #808080)]
+  RenderDeprecatedFlexibleBox {DIV} at (636,45) size 102x82 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x80
       RenderText {#text} at (0,0) size 100x79
         text run at (0,0) width 46: "0 lines. "
@@ -122,7 +122,7 @@ layer at (644,53) size 102x82 clip at (645,54) size 100x80
         text run at (0,40) width 100: "for -webkit-line-"
         text run at (0,60) width 40: "clamp."
 layer at (8,195) size 102x82 clip at (9,196) size 100x80
-  RenderFlexibleBox {DIV} at (0,187) size 102x82 [border: (1px solid #808080)]
+  RenderDeprecatedFlexibleBox {DIV} at (0,187) size 102x82 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x80
       RenderText {#text} at (0,0) size 100x79
         text run at (0,0) width 52: "-1 lines. "
@@ -131,7 +131,7 @@ layer at (8,195) size 102x82 clip at (9,196) size 100x80
         text run at (0,40) width 100: "for -webkit-line-"
         text run at (0,60) width 40: "clamp."
 layer at (114,195) size 102x82 clip at (115,196) size 100x80
-  RenderFlexibleBox {DIV} at (106,187) size 102x82 [border: (1px solid #808080)]
+  RenderDeprecatedFlexibleBox {DIV} at (106,187) size 102x82 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x80
       RenderText {#text} at (0,0) size 94x79
         text run at (0,0) width 35: "-1%. "
@@ -140,7 +140,7 @@ layer at (114,195) size 102x82 clip at (115,196) size 100x80
         text run at (0,40) width 79: "-webkit-line-"
         text run at (0,60) width 40: "clamp."
 layer at (220,135) size 102x142 clip at (221,136) size 100x140
-  RenderFlexibleBox {DIV} at (212,127) size 102x142 [border: (1px solid #808080)]
+  RenderDeprecatedFlexibleBox {DIV} at (212,127) size 102x142 [border: (1px solid #808080)]
     RenderBlock (anonymous) at (1,1) size 100x140
       RenderText {#text} at (0,0) size 92x139
         text run at (0,0) width 37: "150%"

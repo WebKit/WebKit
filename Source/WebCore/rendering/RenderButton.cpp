@@ -33,7 +33,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderButton::RenderButton(Node* node)
-    : RenderFlexibleBox(node)
+    : RenderDeprecatedFlexibleBox(node)
     , m_buttonText(0)
     , m_inner(0)
     , m_default(false)
@@ -52,7 +52,7 @@ void RenderButton::addChild(RenderObject* newChild, RenderObject* beforeChild)
         bool isFlexibleBox = style()->display() == BOX || style()->display() == INLINE_BOX;
         m_inner = createAnonymousBlock(isFlexibleBox);
         setupInnerStyle(m_inner->style());
-        RenderFlexibleBox::addChild(m_inner);
+        RenderDeprecatedFlexibleBox::addChild(m_inner);
     }
     
     m_inner->addChild(newChild, beforeChild);
@@ -61,7 +61,7 @@ void RenderButton::addChild(RenderObject* newChild, RenderObject* beforeChild)
 void RenderButton::removeChild(RenderObject* oldChild)
 {
     if (oldChild == m_inner || !m_inner) {
-        RenderFlexibleBox::removeChild(oldChild);
+        RenderDeprecatedFlexibleBox::removeChild(oldChild);
         m_inner = 0;
     } else
         m_inner->removeChild(oldChild);

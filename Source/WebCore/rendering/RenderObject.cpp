@@ -43,7 +43,7 @@
 #include "Page.h"
 #include "RenderArena.h"
 #include "RenderCounter.h"
-#include "RenderFlexibleBox.h"
+#include "RenderDeprecatedFlexibleBox.h"
 #include "RenderImage.h"
 #include "RenderImageResourceStyleImage.h"
 #include "RenderInline.h"
@@ -162,7 +162,7 @@ RenderObject* RenderObject::createObject(Node* node, RenderStyle* style)
             return new (arena) RenderBlock(node);
         case BOX:
         case INLINE_BOX:
-            return new (arena) RenderFlexibleBox(node);
+            return new (arena) RenderDeprecatedFlexibleBox(node);
     }
 
     return 0;

@@ -1105,12 +1105,12 @@ SOURCES += \
     rendering/RenderButton.cpp \
     rendering/RenderCombineText.cpp \
     rendering/RenderCounter.cpp \
+    rendering/RenderDeprecatedFlexibleBox.cpp \
     rendering/RenderDetails.cpp \
     rendering/RenderDetailsMarker.cpp \
     rendering/RenderEmbeddedObject.cpp \
     rendering/RenderFieldset.cpp \
     rendering/RenderFileUploadControl.cpp \
-    rendering/RenderFlexibleBox.cpp \
     rendering/RenderFrame.cpp \
     rendering/RenderFrameBase.cpp \
     rendering/RenderFrameSet.cpp \
@@ -2135,12 +2135,12 @@ HEADERS += \
     rendering/RenderButton.h \
     rendering/RenderCombineText.h \
     rendering/RenderCounter.h \
+    rendering/RenderDeprecatedFlexibleBox.h \
     rendering/RenderDetails.h \
     rendering/RenderDetailsMarker.h \
     rendering/RenderEmbeddedObject.h \
     rendering/RenderFieldset.h \
     rendering/RenderFileUploadControl.h \
-    rendering/RenderFlexibleBox.h \
     rendering/RenderFrame.h \
     rendering/RenderFrameBase.h \
     rendering/RenderFrameSet.h \

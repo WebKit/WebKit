@@ -3,7 +3,7 @@ layer at (0,0) size 800x600
 layer at (0,0) size 800x600
   RenderBlock {HTML} at (0,0) size 800x600
     RenderBody {BODY} at (8,8) size 784x584
-      RenderFlexibleBox {DIV} at (0,0) size 300x100 [bgcolor=#0000FF]
+      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 300x100 [bgcolor=#0000FF]
         RenderBlock {DIV} at (0,0) size 400x100 [bgcolor=#FF0000]
           RenderText {#text} at (0,0) size 66x22
             text run at (0,0) width 66: "Some text"

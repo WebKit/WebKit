@@ -13,35 +13,35 @@ layer at (0,0) size 800x600
           text run at (0,38) width 115: "browser window. "
           text run at (115,38) width 669: "The black box should get taller when you make your window wider and get shorter when you shrink your"
           text run at (0,57) width 111: "browser window."
-      RenderFlexibleBox {DIV} at (0,92) size 784x54 [border: (2px solid #000000)]
-        RenderFlexibleBox {DIV} at (6,6) size 40x42 [border: (2px solid #008000)]
+      RenderDeprecatedFlexibleBox {DIV} at (0,92) size 784x54 [border: (2px solid #000000)]
+        RenderDeprecatedFlexibleBox {DIV} at (6,6) size 40x42 [border: (2px solid #008000)]
           RenderBlock (anonymous) at (2,2) size 36x38
             RenderText {#text} at (0,0) size 36x19
               text run at (0,0) width 36: "Fixed"
-        RenderFlexibleBox {DIV} at (50,6) size 196x42 [border: (2px solid #800080)]
+        RenderDeprecatedFlexibleBox {DIV} at (50,6) size 196x42 [border: (2px solid #800080)]
           RenderBlock (anonymous) at (2,2) size 192x38
             RenderText {#text} at (0,0) size 191x38
               text run at (0,0) width 186: "This is a flexible block, and it"
               text run at (0,19) width 191: "will shrink or grow as needed."
-        RenderFlexibleBox {DIV} at (250,6) size 40x42 [border: (2px solid #008000)]
+        RenderDeprecatedFlexibleBox {DIV} at (250,6) size 40x42 [border: (2px solid #008000)]
           RenderBlock (anonymous) at (2,2) size 36x38
             RenderText {#text} at (0,0) size 36x19
               text run at (0,0) width 36: "Fixed"
-        RenderFlexibleBox {DIV} at (294,6) size 196x42 [border: (2px solid #800080)]
+        RenderDeprecatedFlexibleBox {DIV} at (294,6) size 196x42 [border: (2px solid #800080)]
           RenderBlock (anonymous) at (2,2) size 192x38
             RenderText {#text} at (0,0) size 191x38
               text run at (0,0) width 186: "This is a flexible block, and it"
               text run at (0,19) width 191: "will shrink or grow as needed."
-        RenderFlexibleBox {DIV} at (494,6) size 40x42 [border: (2px solid #008000)]
+        RenderDeprecatedFlexibleBox {DIV} at (494,6) size 40x42 [border: (2px solid #008000)]
           RenderBlock (anonymous) at (2,2) size 36x38
             RenderText {#text} at (0,0) size 36x19
               text run at (0,0) width 36: "Fixed"
-        RenderFlexibleBox {DIV} at (538,6) size 196x42 [border: (2px solid #800080)]
+        RenderDeprecatedFlexibleBox {DIV} at (538,6) size 196x42 [border: (2px solid #800080)]
           RenderBlock (anonymous) at (2,2) size 192x38
             RenderText {#text} at (0,0) size 191x38
               text run at (0,0) width 186: "This is a flexible block, and it"
               text run at (0,19) width 191: "will shrink or grow as needed."
-        RenderFlexibleBox {DIV} at (738,6) size 40x42 [border: (2px solid #008000)]
+        RenderDeprecatedFlexibleBox {DIV} at (738,6) size 40x42 [border: (2px solid #008000)]
           RenderBlock (anonymous) at (2,2) size 36x38
             RenderText {#text} at (0,0) size 36x19
               text run at (0,0) width 36: "Fixed"

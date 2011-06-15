@@ -11,4 +11,4 @@ layer at (0,0) size 800x600
           text run at (0,22) width 619: "sure that boxes will shift to avoid floats that try to intrude into their space (just as tables do)."
       RenderBlock {DIV} at (0,60) size 200x200 [bgcolor=#FF0000]
         RenderBlock (floating) {DIV} at (0,0) size 100x200 [bgcolor=#008000]
-        RenderFlexibleBox {DIV} at (100,0) size 100x200 [bgcolor=#008000]
+        RenderDeprecatedFlexibleBox {DIV} at (100,0) size 100x200 [bgcolor=#008000]

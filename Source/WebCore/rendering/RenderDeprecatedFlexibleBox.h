@@ -20,8 +20,8 @@
  *
  */
 
-#ifndef RenderFlexibleBox_h
-#define RenderFlexibleBox_h
+#ifndef RenderDeprecatedFlexibleBox_h
+#define RenderDeprecatedFlexibleBox_h
 
 #include "RenderBlock.h"
 
@@ -29,10 +29,10 @@ namespace WebCore {
 
 class FlexBoxIterator;
 
-class RenderFlexibleBox : public RenderBlock {
+class RenderDeprecatedFlexibleBox : public RenderBlock {
 public:
-    RenderFlexibleBox(Node*);
-    virtual ~RenderFlexibleBox();
+    RenderDeprecatedFlexibleBox(Node*);
+    virtual ~RenderDeprecatedFlexibleBox();
 
     virtual const char* renderName() const;
 
@@ -68,4 +68,4 @@ private:
 
 } // namespace WebCore
 
-#endif // RenderFlexibleBox_h
+#endif // RenderDeprecatedFlexibleBox_h

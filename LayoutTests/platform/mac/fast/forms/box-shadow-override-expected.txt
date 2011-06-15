@@ -35,7 +35,7 @@ layer at (0,0) size 800x600
         RenderText {#text} at (36,9) size 4x18
           text run at (36,9) width 4: " "
         RenderSlider {INPUT} at (42,8) size 129x15 [bgcolor=#FFFFFF]
-          RenderFlexibleBox {DIV} at (0,0) size 129x15
+          RenderDeprecatedFlexibleBox {DIV} at (0,0) size 129x15
             RenderBlock {DIV} at (0,0) size 114x15
             RenderBlock {DIV} at (114,0) size 15x15
         RenderText {#text} at (173,9) size 4x18

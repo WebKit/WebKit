@@ -52,7 +52,7 @@ namespace WebCore {
 using namespace HTMLNames;
 
 RenderMenuList::RenderMenuList(Element* element)
-    : RenderFlexibleBox(element)
+    : RenderDeprecatedFlexibleBox(element)
     , m_buttonText(0)
     , m_innerBlock(0)
     , m_optionsChanged(true)
@@ -81,7 +81,7 @@ void RenderMenuList::createInnerBlock()
     ASSERT(!firstChild());
     m_innerBlock = createAnonymousBlock();
     adjustInnerStyle();
-    RenderFlexibleBox::addChild(m_innerBlock);
+    RenderDeprecatedFlexibleBox::addChild(m_innerBlock);
 }
 
 void RenderMenuList::adjustInnerStyle()
@@ -119,7 +119,7 @@ void RenderMenuList::addChild(RenderObject* newChild, RenderObject* beforeChild)
 void RenderMenuList::removeChild(RenderObject* oldChild)
 {
     if (oldChild == m_innerBlock || !m_innerBlock) {
-        RenderFlexibleBox::removeChild(oldChild);
+        RenderDeprecatedFlexibleBox::removeChild(oldChild);
         m_innerBlock = 0;
     } else
         m_innerBlock->removeChild(oldChild);

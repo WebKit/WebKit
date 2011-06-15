@@ -27,11 +27,11 @@
 
 #if ENABLE(FULLSCREEN_API)
 
-#include "RenderFlexibleBox.h"
+#include "RenderDeprecatedFlexibleBox.h"
 
 namespace WebCore {
 
-class RenderFullScreen : public RenderFlexibleBox {
+class RenderFullScreen : public RenderDeprecatedFlexibleBox {
 public:
     RenderFullScreen(Node*);
     virtual void destroy();

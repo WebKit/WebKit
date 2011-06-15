@@ -8,8 +8,8 @@ layer at (0,0) size 800x600
           text run at (0,0) width 333: "You should see identical rows of numbers below. "
           text run at (333,0) width 436: "Every row should look exactly the same. If any objects are out of"
           text run at (0,22) width 200: "order, then the test has failed."
-      RenderFlexibleBox {DIV} at (0,60) size 784x210
-        RenderFlexibleBox {DIV} at (0,0) size 784x42
+      RenderDeprecatedFlexibleBox {DIV} at (0,60) size 784x210
+        RenderDeprecatedFlexibleBox {DIV} at (0,0) size 784x42
           RenderBlock {DIV} at (4,4) size 20x34 [border: (2px solid #000000)]
             RenderText {#text} at (6,6) size 8x22
               text run at (6,6) width 8: "1"
@@ -25,7 +25,7 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (116,4) size 20x34 [border: (2px solid #000000)]
             RenderText {#text} at (6,6) size 8x22
               text run at (6,6) width 8: "5"
-        RenderFlexibleBox {DIV} at (0,42) size 784x42
+        RenderDeprecatedFlexibleBox {DIV} at (0,42) size 784x42
           RenderBlock {DIV} at (116,4) size 20x34 [border: (2px solid #000000)]
             RenderText {#text} at (6,6) size 8x22
               text run at (6,6) width 8: "5"
@@ -41,7 +41,7 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (4,4) size 20x34 [border: (2px solid #000000)]
             RenderText {#text} at (6,6) size 8x22
               text run at (6,6) width 8: "1"
-        RenderFlexibleBox {DIV} at (0,84) size 784x42
+        RenderDeprecatedFlexibleBox {DIV} at (0,84) size 784x42
           RenderBlock {DIV} at (4,4) size 20x34 [border: (2px solid #000000)]
             RenderText {#text} at (6,6) size 8x22
               text run at (6,6) width 8: "1"
@@ -57,7 +57,7 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (116,4) size 20x34 [border: (2px solid #000000)]
             RenderText {#text} at (6,6) size 8x22
               text run at (6,6) width 8: "5"
-        RenderFlexibleBox {DIV} at (0,126) size 784x42
+        RenderDeprecatedFlexibleBox {DIV} at (0,126) size 784x42
           RenderBlock {DIV} at (60,4) size 20x34 [border: (2px solid #000000)]
             RenderText {#text} at (6,6) size 8x22
               text run at (6,6) width 8: "3"
@@ -73,7 +73,7 @@ layer at (0,0) size 800x600
           RenderBlock {DIV} at (116,4) size 20x34 [border: (2px solid #000000)]
             RenderText {#text} at (6,6) size 8x22
               text run at (6,6) width 8: "5"
-        RenderFlexibleBox {DIV} at (0,168) size 784x42
+        RenderDeprecatedFlexibleBox {DIV} at (0,168) size 784x42
           RenderBlock {DIV} at (60,4) size 20x34 [border: (2px solid #000000)]
             RenderText {#text} at (6,6) size 8x22
               text run at (6,6) width 8: "3"

@@ -40,7 +40,7 @@
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderCombineText.h"
-#include "RenderFlexibleBox.h"
+#include "RenderDeprecatedFlexibleBox.h"
 #include "RenderImage.h"
 #include "RenderInline.h"
 #include "RenderLayer.h"
@@ -5889,7 +5889,7 @@ RenderBlock* RenderBlock::createAnonymousBlock(bool isFlexibleBox) const
     RenderBlock* newBox = 0;
     if (isFlexibleBox) {
         newStyle->setDisplay(BOX);
-        newBox = new (renderArena()) RenderFlexibleBox(document() /* anonymous box */);
+        newBox = new (renderArena()) RenderDeprecatedFlexibleBox(document() /* anonymous box */);
     } else {
         newStyle->setDisplay(BLOCK);
         newBox = new (renderArena()) RenderBlock(document() /* anonymous box */);

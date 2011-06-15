@@ -56,7 +56,7 @@ void RenderFullScreenPlaceholder::destroy()
 }
 
 RenderFullScreen::RenderFullScreen(Node* node) 
-    : RenderFlexibleBox(node) 
+    : RenderDeprecatedFlexibleBox(node)
     , m_placeholder(0)
 { 
     setReplaced(false); 
@@ -76,7 +76,7 @@ void RenderFullScreen::destroy()
     if (document() && document()->fullScreenRenderer() == this)
         document()->fullScreenRendererDestroyed();
 
-    RenderFlexibleBox::destroy();
+    RenderDeprecatedFlexibleBox::destroy();
 }
 
 PassRefPtr<RenderStyle> RenderFullScreen::createFullScreenStyle()

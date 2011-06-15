@@ -11,7 +11,7 @@ layer at (0,0) size 800x600
           text run at (0,0) width 705: "If it works properly, the article below should show only the first few lines. Otherwise, it might show many lines."
       RenderBlock {HR} at (0,70) size 784x2 [border: (1px inset #000000)]
 layer at (8,88) size 784x56 scrollHeight 600
-  RenderFlexibleBox {DIV} at (0,80) size 784x56
+  RenderDeprecatedFlexibleBox {DIV} at (0,80) size 784x56
     RenderBlock {DIV} at (0,0) size 784x38
       RenderBlock {P} at (0,0) size 784x38
         RenderText {#text} at (0,0) size 781x38

@@ -23,9 +23,8 @@
 
 #if ENABLE(DETAILS)
 
-#include "RenderFlexibleBox.h"
-#include "Timer.h"
-#include <wtf/OwnPtr.h>
+#include "RenderBlock.h"
+#include "RenderObject.h"
 
 namespace WebCore {
 

@@ -39,7 +39,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLParserIdioms.h"
 #include "MouseEvent.h"
-#include "RenderFlexibleBox.h"
+#include "RenderDeprecatedFlexibleBox.h"
 #include "RenderSlider.h"
 #include "RenderTheme.h"
 #include "ShadowRoot.h"
@@ -126,10 +126,10 @@ void RenderSliderThumb::layout()
 
 // FIXME: Find a way to cascade appearance and adjust heights, and get rid of this class.
 // http://webkit.org/b/62535
-class RenderSliderContainer : public RenderFlexibleBox {
+class RenderSliderContainer : public RenderDeprecatedFlexibleBox {
 public:
     RenderSliderContainer(Node* node)
-        : RenderFlexibleBox(node) { }
+        : RenderDeprecatedFlexibleBox(node) { }
 
 private:
     virtual void layout();
@@ -158,7 +158,7 @@ void RenderSliderContainer::layout()
             trackRenderer->style()->setHeight(Length());
     }
 
-    RenderFlexibleBox::layout();
+    RenderDeprecatedFlexibleBox::layout();
 
     // Percentage 'top' for the thumb doesn't work if the parent style has no
     // concrete height.

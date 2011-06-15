@@ -3,7 +3,7 @@ layer at (0,0) size 812x584
 layer at (0,0) size 800x584
   RenderBlock {HTML} at (0,0) size 800x584 [bgcolor=#FFFFFF]
     RenderBody {BODY} at (0,0) size 800x584
-      RenderFlexibleBox {DIV} at (0,0) size 800x584
+      RenderDeprecatedFlexibleBox {DIV} at (0,0) size 800x584
         RenderBlock {DIV} at (0,0) size 800x66
           RenderText {#text} at (0,0) size 794x66
             text run at (0,0) width 520: "This header should remain at the top of the browser window as you resize it. "

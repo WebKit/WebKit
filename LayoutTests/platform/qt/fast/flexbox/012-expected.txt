@@ -12,9 +12,9 @@ layer at (0,0) size 800x600
           text run at (739,22) width 32: "Box-"
           text run at (0,44) width 474: "align of center is used to align the second child in the center of the box."
 layer at (8,90) size 300x100
-  RenderFlexibleBox (relative positioned) {DIV} at (0,82) size 300x100 [bgcolor=#FF0000]
-    RenderFlexibleBox {DIV} at (100,0) size 100x100 [bgcolor=#008000]
+  RenderDeprecatedFlexibleBox (relative positioned) {DIV} at (0,82) size 300x100 [bgcolor=#FF0000]
+    RenderDeprecatedFlexibleBox {DIV} at (100,0) size 100x100 [bgcolor=#008000]
 layer at (8,90) size 100x100
-  RenderFlexibleBox (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,0) size 100x100 [bgcolor=#008000]
 layer at (208,90) size 100x100
-  RenderFlexibleBox (positioned) {DIV} at (200,0) size 100x100 [bgcolor=#008000]
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (200,0) size 100x100 [bgcolor=#008000]

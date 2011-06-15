@@ -18,18 +18,18 @@ layer at (0,0) size 800x600
           text run at (244,20) width 4: "."
       RenderBlock {HR} at (0,56) size 784x2 [border: (1px inset #000000)]
       RenderBlock {DIV} at (0,66) size 784x100
-        RenderFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
+        RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
           RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
             RenderText {#text} at (1,1) size 169x19
               text run at (1,1) width 169: "Lorem ipsum dolor sit amet."
       RenderBlock {DIV} at (0,186) size 784x100
-        RenderFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
+        RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
           RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,306) size 784x100
-        RenderFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
+        RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
           RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
       RenderBlock {DIV} at (0,426) size 784x100
-        RenderFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
+        RenderDeprecatedFlexibleBox {DIV} at (10,10) size 80x80 [bgcolor=#FFFF00]
           RenderBlock {DIV} at (-10,-10) size 100x100 [border: (1px solid #000000)]
             RenderText {#text} at (1,1) size 94x159
               text run at (1,1) width 79: "Lorem ipsum"

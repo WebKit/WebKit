@@ -42,7 +42,7 @@
 #include "MediaControls.h"
 #include "MouseEvent.h"
 #include "Page.h"
-#include "RenderFlexibleBox.h"
+#include "RenderDeprecatedFlexibleBox.h"
 #include "RenderMedia.h"
 #include "RenderSlider.h"
 #include "RenderTheme.h"
@@ -973,7 +973,7 @@ const AtomicString& MediaControlFullscreenVolumeMaxButtonElement::shadowPseudoId
 
 // ----------------------------
 
-class RenderMediaControlTimeDisplay : public RenderFlexibleBox {
+class RenderMediaControlTimeDisplay : public RenderDeprecatedFlexibleBox {
 public:
     RenderMediaControlTimeDisplay(Node*);
 
@@ -982,7 +982,7 @@ private:
 };
 
 RenderMediaControlTimeDisplay::RenderMediaControlTimeDisplay(Node* node)
-    : RenderFlexibleBox(node)
+    : RenderDeprecatedFlexibleBox(node)
 {
 }
 
@@ -992,7 +992,7 @@ static const int minWidthToDisplayTimeDisplays = 45 + 100 + 45;
 
 void RenderMediaControlTimeDisplay::layout()
 {
-    RenderFlexibleBox::layout();
+    RenderDeprecatedFlexibleBox::layout();
     RenderBox* timelineContainerBox = parentBox();
     while (timelineContainerBox && timelineContainerBox->isAnonymous())
         timelineContainerBox = timelineContainerBox->parentBox();

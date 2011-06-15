@@ -23,7 +23,7 @@
  */
 
 #include "config.h"
-#include "RenderFlexibleBox.h"
+#include "RenderDeprecatedFlexibleBox.h"
 
 #include "RenderLayer.h"
 #include "RenderView.h"
@@ -36,7 +36,7 @@ namespace WebCore {
 
 class FlexBoxIterator {
 public:
-    FlexBoxIterator(RenderFlexibleBox* parent)
+    FlexBoxIterator(RenderDeprecatedFlexibleBox* parent)
         : m_box(parent)
         , m_lastOrdinal(1)
     {
@@ -95,21 +95,21 @@ public:
     }
 
 private:
-    RenderFlexibleBox* m_box;
+    RenderDeprecatedFlexibleBox* m_box;
     RenderBox* m_currentChild;
     bool m_forward;
     unsigned int m_currentOrdinal;
     unsigned int m_lastOrdinal;
 };
 
-RenderFlexibleBox::RenderFlexibleBox(Node* node)
+RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox(Node* node)
     : RenderBlock(node)
 {
     setChildrenInline(false); // All of our children must be block-level
     m_flexingChildren = m_stretchingChildren = false;
 }
 
-RenderFlexibleBox::~RenderFlexibleBox()
+RenderDeprecatedFlexibleBox::~RenderDeprecatedFlexibleBox()
 {
 }
 
@@ -128,7 +128,7 @@ static int marginWidthForChild(RenderBox* child)
     return margin;
 }
 
-void RenderFlexibleBox::calcHorizontalPrefWidths()
+void RenderDeprecatedFlexibleBox::calcHorizontalPrefWidths()
 {
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         // Positioned children and collapsed children don't affect the min/max width.
@@ -141,7 +141,7 @@ void RenderFlexibleBox::calcHorizontalPrefWidths()
     }
 }
 
-void RenderFlexibleBox::calcVerticalPrefWidths()
+void RenderDeprecatedFlexibleBox::calcVerticalPrefWidths()
 {
     for (RenderBox* child = firstChildBox(); child; child = child->nextSiblingBox()) {
         // Positioned children and collapsed children don't affect the min/max width.
@@ -157,7 +157,7 @@ void RenderFlexibleBox::calcVerticalPrefWidths()
     }
 }
 
-void RenderFlexibleBox::computePreferredLogicalWidths()
+void RenderDeprecatedFlexibleBox::computePreferredLogicalWidths()
 {
     ASSERT(preferredLogicalWidthsDirty());
 
@@ -198,7 +198,7 @@ void RenderFlexibleBox::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false);
 }
 
-void RenderFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXME: Implement */)
+void RenderDeprecatedFlexibleBox::layoutBlock(bool relayoutChildren, int /*pageHeight FIXME: Implement */)
 {
     ASSERT(needsLayout());
 
@@ -308,7 +308,7 @@ static void gatherFlexChildrenInfo(FlexBoxIterator& iterator, bool relayoutChild
     }
 }
 
-void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
+void RenderDeprecatedFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
 {
     int toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
     int yPos = borderTop() + paddingTop();
@@ -588,7 +588,7 @@ void RenderFlexibleBox::layoutHorizontalBox(bool relayoutChildren)
         setHeight(oldHeight);
 }
 
-void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
+void RenderDeprecatedFlexibleBox::layoutVerticalBox(bool relayoutChildren)
 {
     int yPos = borderTop() + paddingTop();
     int toAdd = borderBottom() + paddingBottom() + horizontalScrollbarHeight();
@@ -830,7 +830,7 @@ void RenderFlexibleBox::layoutVerticalBox(bool relayoutChildren)
         setHeight(oldHeight);
 }
 
-void RenderFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutChildren)
+void RenderDeprecatedFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutChildren)
 {
     int maxLineCount = 0;
     for (RenderBox* child = iterator.first(); child; child = iterator.next()) {
@@ -932,7 +932,7 @@ void RenderFlexibleBox::applyLineClamp(FlexBoxIterator& iterator, bool relayoutC
     }
 }
 
-void RenderFlexibleBox::placeChild(RenderBox* child, const IntPoint& location)
+void RenderDeprecatedFlexibleBox::placeChild(RenderBox* child, const IntPoint& location)
 {
     IntRect oldRect = child->frameRect();
 
@@ -946,7 +946,7 @@ void RenderFlexibleBox::placeChild(RenderBox* child, const IntPoint& location)
         child->repaintDuringLayoutIfMoved(oldRect);
 }
 
-int RenderFlexibleBox::allowedChildFlex(RenderBox* child, bool expanding, unsigned int group)
+int RenderDeprecatedFlexibleBox::allowedChildFlex(RenderBox* child, bool expanding, unsigned int group)
 {
     if (child->isPositioned() || child->style()->boxFlex() == 0.0f || child->style()->boxFlexGroup() != group)
         return 0;
@@ -1002,17 +1002,17 @@ int RenderFlexibleBox::allowedChildFlex(RenderBox* child, bool expanding, unsign
     return 0;
 }
 
-const char *RenderFlexibleBox::renderName() const
+const char *RenderDeprecatedFlexibleBox::renderName() const
 {
     if (isFloating())
-        return "RenderFlexibleBox (floating)";
+        return "RenderDeprecatedFlexibleBox (floating)";
     if (isPositioned())
-        return "RenderFlexibleBox (positioned)";
+        return "RenderDeprecatedFlexibleBox (positioned)";
     if (isAnonymous())
-        return "RenderFlexibleBox (generated)";
+        return "RenderDeprecatedFlexibleBox (generated)";
     if (isRelPositioned())
-        return "RenderFlexibleBox (relative positioned)";
-    return "RenderFlexibleBox";
+        return "RenderDeprecatedFlexibleBox (relative positioned)";
+    return "RenderDeprecatedFlexibleBox";
 }
 
 } // namespace WebCore

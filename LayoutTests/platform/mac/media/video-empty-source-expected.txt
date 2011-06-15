@@ -15,7 +15,7 @@ layer at (8,42) size 302x152
 layer at (9,43) size 300x150
   RenderBlock (relative positioned) {DIV} at (1,1) size 300x150
 layer at (9,168) size 300x25
-  RenderFlexibleBox (positioned) {DIV} at (0,125) size 300x25
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (0,125) size 300x25
     RenderButton {INPUT} at (6,3) size 18x18
     RenderButton {INPUT} at (32,4) size 16x16
     RenderButton {INPUT} at (277,4) size 16x16

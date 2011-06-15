@@ -2834,6 +2834,8 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderCombineText.h \
 	Source/WebCore/rendering/RenderCounter.cpp \
 	Source/WebCore/rendering/RenderCounter.h \
+	Source/WebCore/rendering/RenderDeprecatedFlexibleBox.cpp \
+	Source/WebCore/rendering/RenderDeprecatedFlexibleBox.h \
 	Source/WebCore/rendering/RenderDetails.cpp \
 	Source/WebCore/rendering/RenderDetails.h \
 	Source/WebCore/rendering/RenderDetailsMarker.cpp \
@@ -2844,8 +2846,6 @@ webcore_sources += \
 	Source/WebCore/rendering/RenderFieldset.h \
 	Source/WebCore/rendering/RenderFileUploadControl.cpp \
 	Source/WebCore/rendering/RenderFileUploadControl.h \
-	Source/WebCore/rendering/RenderFlexibleBox.cpp \
-	Source/WebCore/rendering/RenderFlexibleBox.h \
 	Source/WebCore/rendering/RenderFrameBase.cpp \
 	Source/WebCore/rendering/RenderFrameBase.h \
 	Source/WebCore/rendering/RenderFrame.cpp \

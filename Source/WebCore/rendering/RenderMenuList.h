@@ -26,7 +26,7 @@
 
 #include "PopupMenu.h"
 #include "PopupMenuClient.h"
-#include "RenderFlexibleBox.h"
+#include "RenderDeprecatedFlexibleBox.h"
 
 #if PLATFORM(MAC)
 #define POPUP_MENU_PULLS_DOWN 0
@@ -39,9 +39,9 @@ namespace WebCore {
 class RenderText;
 
 #if ENABLE(NO_LISTBOX_RENDERING)
-class RenderMenuList : public RenderFlexibleBox, private ListPopupMenuClient {
+class RenderMenuList : public RenderDeprecatedFlexibleBox, private ListPopupMenuClient {
 #else
-class RenderMenuList : public RenderFlexibleBox, private PopupMenuClient {
+class RenderMenuList : public RenderDeprecatedFlexibleBox, private PopupMenuClient {
 #endif
 
 public:

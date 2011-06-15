@@ -7,5 +7,5 @@ layer at (20,8) size 116x116 clip at (20,8) size 100x100
   RenderBlock (positioned) {DIV} at (20,8) size 116x116
     RenderBlock {SPAN} at (0,0) size 100x100 [bgcolor=#008000]
 layer at (140,8) size 116x116 clip at (140,8) size 100x100
-  RenderFlexibleBox (positioned) {DIV} at (140,8) size 116x116
+  RenderDeprecatedFlexibleBox (positioned) {DIV} at (140,8) size 116x116
     RenderBlock {SPAN} at (0,0) size 100x100 [bgcolor=#008000]

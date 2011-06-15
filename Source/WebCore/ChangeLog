@@ -1,3 +1,73 @@
+2011-06-15  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        Rename RenderFlexibleBox to RenderDeprecatedFlexibleBox
+        https://bugs.webkit.org/show_bug.cgi?id=62670
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.order:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::RenderMediaControlTimeDisplay::RenderMediaControlTimeDisplay):
+        (WebCore::RenderMediaControlTimeDisplay::layout):
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::RenderSliderContainer::RenderSliderContainer):
+        (WebCore::RenderSliderContainer::layout):
+        * rendering/RenderBlock.cpp:
+        (WebCore::RenderBlock::createAnonymousBlock):
+        * rendering/RenderBox.cpp:
+        * rendering/RenderButton.cpp:
+        (WebCore::RenderButton::RenderButton):
+        (WebCore::RenderButton::addChild):
+        (WebCore::RenderButton::removeChild):
+        * rendering/RenderButton.h:
+        * rendering/RenderDeprecatedFlexibleBox.cpp:
+        (WebCore::FlexBoxIterator::FlexBoxIterator):
+        (WebCore::FlexBoxIterator::reset):
+        (WebCore::FlexBoxIterator::first):
+        (WebCore::FlexBoxIterator::next):
+        (WebCore::RenderDeprecatedFlexibleBox::RenderDeprecatedFlexibleBox):
+        (WebCore::RenderDeprecatedFlexibleBox::~RenderDeprecatedFlexibleBox):
+        (WebCore::marginWidthForChild):
+        (WebCore::RenderDeprecatedFlexibleBox::calcHorizontalPrefWidths):
+        (WebCore::RenderDeprecatedFlexibleBox::calcVerticalPrefWidths):
+        (WebCore::RenderDeprecatedFlexibleBox::computePreferredLogicalWidths):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutBlock):
+        (WebCore::gatherFlexChildrenInfo):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutHorizontalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::layoutVerticalBox):
+        (WebCore::RenderDeprecatedFlexibleBox::applyLineClamp):
+        (WebCore::RenderDeprecatedFlexibleBox::placeChild):
+        (WebCore::RenderDeprecatedFlexibleBox::allowedChildFlex):
+        (WebCore::RenderDeprecatedFlexibleBox::renderName):
+        * rendering/RenderDeprecatedFlexibleBox.h:
+        (WebCore::RenderDeprecatedFlexibleBox::avoidsFloats):
+        (WebCore::RenderDeprecatedFlexibleBox::isFlexibleBox):
+        (WebCore::RenderDeprecatedFlexibleBox::isFlexingChildren):
+        (WebCore::RenderDeprecatedFlexibleBox::isStretchingChildren):
+        (WebCore::RenderDeprecatedFlexibleBox::hasMultipleLines):
+        (WebCore::RenderDeprecatedFlexibleBox::isVertical):
+        (WebCore::RenderDeprecatedFlexibleBox::isHorizontal):
+        * rendering/RenderDetails.h: Removed the header since it wasn't actually
+              needed.  Looks like a copy/paste error from RenderButton.h.
+        * rendering/RenderFullScreen.cpp:
+        (RenderFullScreen::RenderFullScreen):
+        (RenderFullScreen::destroy):
+        * rendering/RenderFullScreen.h:
+        * rendering/RenderMenuList.cpp:
+        (WebCore::RenderMenuList::RenderMenuList):
+        (WebCore::RenderMenuList::createInnerBlock):
+        (WebCore::RenderMenuList::removeChild):
+        * rendering/RenderMenuList.h:
+        * rendering/RenderObject.cpp:
+        (WebCore::RenderObject::createObject):
+        * rendering/RenderingAllInOne.cpp:
+
 2011-06-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
