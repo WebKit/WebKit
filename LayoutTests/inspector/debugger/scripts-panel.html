@@ -129,29 +129,25 @@ function test()
             var panel = new WebInspector.ScriptsPanel();
             var rootURL = WebInspector.mainResource.url.substring(0, WebInspector.mainResource.url.lastIndexOf("/") + 1);
             var nextId = 0;
-
             function addOption(url, isContentScript)
             {
-                var displayName = url;
-                var indexOfQuery = displayName.indexOf("?");
-                if (indexOfQuery !== -1)
-                    displayName = displayName.substring(0, indexOfQuery);
-                var lastSlashIndex = displayName.lastIndexOf("/");
-                if (lastSlashIndex !== -1)
-                    displayName = displayName.substring(lastSlashIndex + 1);
-                panel._addOptionToFilesSelect({ id: nextId++, url: rootURL + url, displayName: displayName, isContentScript: isContentScript });
+                panel._addOptionToFilesSelect({ id: nextId++, url: url, isContentScript: isContentScript });
             }
-            addOption("foo/bar/script.js", false);
-            addOption("foo/bar/contentScript2.js?a=1", true);
-            addOption("foo/bar/script.js?a=2", false);
-            addOption("foo/bar/contentScript.js?a=2", true);
-            addOption("foo/bar/script.js?a=1", false);
-            addOption("foo/baz/script.js", false);
-            addOption("foo/bar/contentScript.js?a=1", true);
+            addOption(rootURL + "foo/bar/script.js", false);
+            addOption(rootURL + "foo/bar/contentScript2.js?a=1", true);
+            addOption(rootURL + "foo/bar/script.js?a=2", false);
+            addOption(rootURL + "foo/bar/contentScript.js?a=2", true);
+            addOption(rootURL + "foo/bar/script.js?a=1", false);
+            addOption(rootURL + "foo/baz/script.js", false);
+            addOption(rootURL + "foo/bar/contentScript.js?a=1", true);
+            addOption("http://example.com/?a=b", false);
+            addOption("?a=b", false);
+            addOption("very_looooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooooong_url", false);
+
             var select = panel._filesSelectElement;
             for (var i = 0; i < select.length; ++i) {
                 var option = select[i];
-                var tooltip = "..." + option.title.substring(rootURL.length);
+                var tooltip = option.title.replace(rootURL, "<root>/");
                 InspectorTest.addResult("text: " + option.text + ", tooltip: " + tooltip);
             }
             next();
