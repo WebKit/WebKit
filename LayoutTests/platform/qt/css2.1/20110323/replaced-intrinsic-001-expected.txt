@@ -1,0 +1,26 @@
+layer at (0,0) size 800x600
+  RenderView at (0,0) size 800x600
+layer at (8,8) size 150x266 layerType: background only
+layer at (6,116) size 154x154
+  RenderBlock (positioned) zI: -1 {P} at (6,116) size 154x154 [bgcolor=#FF0000] [border: (2px solid #00FF00)]
+    RenderText zI: -1 {#text} at (2,2) size 104x66
+      text run at (2,2) width 104: "FAIL (absolute"
+      text run at (2,24) width 100: "positioning not"
+      text run at (2,46) width 74: "supported)"
+layer at (8,8) size 150x266 layerType: foreground only
+  RenderBlock {HTML} at (8,8) size 150x266
+    RenderBody {BODY} at (0,0) size 150x266
+      RenderBlock {P} at (0,0) size 150x110
+        RenderText {#text} at (0,0) size 132x110
+          text run at (0,0) width 122: "There should be a"
+          text run at (0,22) width 132: "green square below"
+          text run at (0,44) width 107: "this line, exactly"
+          text run at (0,66) width 124: "fitting inside a 2px"
+          text run at (0,88) width 83: "lime border."
+      RenderBlock {P} at (0,110) size 150x156
+        RenderEmbeddedObject {OBJECT} at (0,0) size 150x150
+          layer at (0,0) size 150x150
+            RenderView at (0,0) size 150x150
+          layer at (0,0) size 150x150
+            RenderSVGRoot {svg} at (0,0) size 150x150
+              RenderSVGPath {rect} at (0,0) size 150x150 [fill={[type=SOLID] [color=#008000]}] [x=0.00] [y=0.00] [width=300.00] [height=200.00]

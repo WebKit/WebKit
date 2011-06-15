@@ -980,6 +980,11 @@ css2.1/t140201-c534-bgreps-04-c-ag.html
 css2.1/t140201-c534-bgreps-05-c-ag.html
 css2.1/t140201-c537-bgfxps-00-c-ag.html
 
+# [Qt] css2.1/20110323/inline-non-replaced-height-* tests fail
+# https://bugs.webkit.org/show_bug.cgi?id=62710
+css2.1/20110323/inline-non-replaced-height-002.htm
+css2.1/20110323/inline-non-replaced-height-003.htm
+
 # ============================================================================= #
 # Failing dom/xhtml tests
 # ============================================================================= #
