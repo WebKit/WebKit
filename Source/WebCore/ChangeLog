@@ -1,3 +1,27 @@
+2011-06-14  David Kilzer  <ddkilzer@apple.com>
+
+        <http://webkit.org/b/62677> Part 1/2: Remove duplicate header entries in WebCore project file
+
+        Reviewed by Darin Adler.
+
+        These headers were added as duplicates in r83256:
+
+            DefaultAudioDestinationNode.h
+            JSOfflineAudioCompletionEvent.h
+            OfflineAudioCompletionEvent.h
+            OfflineAudioDestinationNode.h
+
+        The following duplicates were introduced in r84053 (after having
+        been originally added in r83729):
+
+            StorageInfo.h
+            StorageInfoErrorCallback.h
+            StorageInfoQuotaCallback.h
+            StorageInfoUsageCallback.h
+
+        * WebCore.xcodeproj/project.pbxproj: Remove duplicates using
+        'uniq' since sort-Xcode-project-file did most of the work.
+
 2011-06-14  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Hajime Morita.
