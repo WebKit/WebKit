@@ -17,7 +17,7 @@ layer at (67,227) size 27x28
 layer at (102,217) size 144x48
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (45,0) size 144x48 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
     RenderSlider {INPUT} at (10,10) size 124x27 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
-      RenderFlexibleBox {DIV} at (1,1) size 122x25
+      RenderDeprecatedFlexibleBox {DIV} at (1,1) size 122x25
         RenderBlock {DIV} at (0,0) size 109x43
         RenderBlock {DIV} at (109,0) size 13x43
 layer at (113,219) size 13x43
@@ -35,7 +35,7 @@ layer at (67,452) size 27x28
 layer at (102,442) size 144x48
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (45,0) size 144x48 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
     RenderSlider {INPUT} at (10,10) size 124x27 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
-      RenderFlexibleBox {DIV} at (1,1) size 122x25
+      RenderDeprecatedFlexibleBox {DIV} at (1,1) size 122x25
         RenderBlock {DIV} at (0,0) size 109x43
         RenderBlock {DIV} at (109,0) size 13x43
 layer at (113,444) size 13x43

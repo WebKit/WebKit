@@ -23,7 +23,7 @@ layer at (15,82) size 18x19
 layer at (38,76) size 236x32
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (30,0) size 236x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
     RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
-      RenderFlexibleBox {DIV} at (1,1) size 162x16
+      RenderDeprecatedFlexibleBox {DIV} at (1,1) size 162x16
         RenderBlock {DIV} at (0,0) size 153x29
         RenderBlock {DIV} at (153,0) size 9x29
 layer at (215,82) size 58x20 scrollHeight 21
@@ -44,7 +44,7 @@ layer at (15,50) size 18x19
 layer at (38,44) size 236x32
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (30,0) size 236x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
     RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
-      RenderFlexibleBox {DIV} at (1,1) size 162x16
+      RenderDeprecatedFlexibleBox {DIV} at (1,1) size 162x16
         RenderBlock {DIV} at (0,0) size 153x29
         RenderBlock {DIV} at (153,0) size 9x29
 layer at (215,50) size 58x20 scrollHeight 21
@@ -67,7 +67,7 @@ layer at (15,166) size 18x19
 layer at (38,160) size 236x32
   RenderDeprecatedFlexibleBox (positioned) {DIV} at (30,0) size 236x32 [border: (1px solid #FFFFFF33) none (1px solid #FFFFFF33)]
     RenderSlider {INPUT} at (7,7) size 164x18 [color=#328CDF] [bgcolor=#FFFFFF14] [border: (1px solid #FFFFFF33)]
-      RenderFlexibleBox {DIV} at (1,1) size 162x16
+      RenderDeprecatedFlexibleBox {DIV} at (1,1) size 162x16
         RenderBlock {DIV} at (0,0) size 153x29
         RenderBlock {DIV} at (153,0) size 9x29
 layer at (215,166) size 58x20 scrollHeight 21
