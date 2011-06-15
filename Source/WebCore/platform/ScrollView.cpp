@@ -938,6 +938,11 @@ bool ScrollView::isScrollCornerVisible() const
     return !scrollCornerRect().isEmpty();
 }
 
+void ScrollView::scrollbarStyleChanged()
+{
+    updateScrollbars(scrollOffset());
+}
+
 void ScrollView::updateScrollCorner()
 {
 }

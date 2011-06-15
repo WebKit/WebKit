@@ -1,3 +1,29 @@
+2011-06-14  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62678
+        When the window is small enough, the scrollbars are misplaced with painting 
+        artifacts, after changing the scrollbar appearance
+        -and corresponding-
+        <rdar://problem/9414015>
+
+        Get rid of the FrameView implementation of scrollbarStyleChanged(). Its approach 
+        is just not good.
+        * page/FrameView.cpp:
+        * page/FrameView.h:
+
+        Implement scrollbarStyleChanged() on ScrollView instead. And just call 
+        updatedScrollbars().
+        * platform/ScrollView.cpp:
+        (WebCore::ScrollView::scrollbarStyleChanged):
+        * platform/ScrollView.h:
+
+        Invalidate the old scrollbar before changing it to the new scrollbar. This way 
+        when the scrollbar gets smaller, the older, larger pieces still repaint properly.
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+
 2011-06-14  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Joseph Pecoraro.

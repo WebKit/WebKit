@@ -1238,6 +1238,8 @@ void ScrollAnimatorMac::updateScrollerStyle()
     int newStyle = wkScrollbarPainterControllerStyle(m_scrollbarPainterController.get());
 
     if (Scrollbar* verticalScrollbar = scrollableArea()->verticalScrollbar()) {
+        verticalScrollbar->invalidate();
+
         WKScrollbarPainterRef oldVerticalPainter = wkVerticalScrollbarPainterForController(m_scrollbarPainterController.get());
         WKScrollbarPainterRef newVerticalPainter = wkMakeScrollbarReplacementPainter(oldVerticalPainter,
                                                                                      newStyle,
@@ -1254,6 +1256,8 @@ void ScrollAnimatorMac::updateScrollerStyle()
     }
 
     if (Scrollbar* horizontalScrollbar = scrollableArea()->horizontalScrollbar()) {
+        horizontalScrollbar->invalidate();
+
         WKScrollbarPainterRef oldHorizontalPainter = wkHorizontalScrollbarPainterForController(m_scrollbarPainterController.get());
         WKScrollbarPainterRef newHorizontalPainter = wkMakeScrollbarReplacementPainter(oldHorizontalPainter,
                                                                                        newStyle,

@@ -2216,14 +2216,6 @@ void FrameView::didCompleteAnimatedScroll() const
     return page->chrome()->client()->didCompleteAnimatedScroll();
 }
 
-void FrameView::scrollbarStyleChanged()
-{
-    Page* page = m_frame->page();
-    if (!page)
-        return;
-    page->setNeedsRecalcStyleInAllFrames();
-}
-
 void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
 {
     Page* page = m_frame->page();
