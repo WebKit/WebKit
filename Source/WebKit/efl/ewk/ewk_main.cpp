@@ -53,6 +53,7 @@
 #if USE(SOUP)
 // REMOVE-ME: see todo below
 #include "ResourceHandle.h"
+#include "ewk_auth_soup.h"
 #include <libsoup/soup.h>
 #endif
 
@@ -210,9 +211,11 @@ Eina_Bool _ewk_init_body(void)
         SoupSession* session = WebCore::ResourceHandle::defaultSession();
         soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_SNIFFER);
         soup_session_add_feature_by_type(session, SOUP_TYPE_CONTENT_DECODER);
+
+        SoupSessionFeature* auth_dialog = static_cast<SoupSessionFeature*>(g_object_new(EWK_TYPE_SOUP_AUTH_DIALOG, 0));
+        soup_session_add_feature(session, auth_dialog);
     }
 #endif
 
     return EINA_TRUE;
 }
-

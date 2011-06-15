@@ -1,3 +1,37 @@
+2011-06-15  Kamil Blank  <k.blank@samsung.com>
+
+        Reviewed by Kenneth Rohde Christiansen.
+
+        [EFL] Soup authentication feature implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=54752
+
+        This implementation is based on GTK implementation.
+        During ewk initialization SoupSessionFeature is added which provides possibility to handle HTTP basic auth.
+
+        To support authentication we have to set function (callback) via ewk_auth_show_dialog_callback_set()
+        which will be responsible for session authentication.
+        If callback is set and authentication required - webkit pauses soup message, calls previously set callback
+        and waits for authentication data (username/password) which should be passed by ewk_auth_credentials_set().
+
+        * CMakeListsEfl.txt:
+        * ewk/ewk_auth.cpp: Added.
+        (ewk_auth_show_dialog_callback_set): Setting callback which should be called when authentication is required.
+        (ewk_auth_credentials_set): Passing authentication data.
+        * ewk/ewk_auth.h: Added. Authentication API.
+        * ewk/ewk_auth_soup.cpp: Added. Soup authentication implementation.
+        (_Ewk_Auth_Data::ewk_auth_soup_dialog_class_init):
+        (_Ewk_Auth_Data::ewk_auth_soup_dialog_init):
+        (_Ewk_Auth_Data::ewk_auth_soup_dialog_session_feature_init):
+        (_Ewk_Auth_Data::ewk_auth_soup_show_dialog_callback_set):
+        (_Ewk_Auth_Data::ewk_auth_soup_credentials_set):
+        (_Ewk_Auth_Data::session_authenticate):
+        (_Ewk_Auth_Data::free_auth_data):
+        (_Ewk_Auth_Data::attach):
+        (_Ewk_Auth_Data::detach):
+        * ewk/ewk_auth_soup.h: Added.
+        * ewk/ewk_main.cpp:
+        (_ewk_init_body): SoupSessionFeature responsible for authentication added to SoupSession.
+
 2011-06-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r88723.
