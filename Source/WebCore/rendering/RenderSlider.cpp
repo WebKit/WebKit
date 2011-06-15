@@ -95,6 +95,17 @@ void RenderSlider::computePreferredLogicalWidths()
     setPreferredLogicalWidthsDirty(false); 
 }
 
+void RenderSlider::layout()
+{
+    RenderBlock::layout();
+    RenderBox* thumbBox = sliderThumbElementOf(node())->renderBox();
+    if (!thumbBox)
+        return;
+    int heightDiff = thumbBox->height() - contentHeight();
+    if (heightDiff > 0)
+        thumbBox->setY(thumbBox->y() - (heightDiff / 2));
+}
+
 bool RenderSlider::inDragMode() const
 {
     return sliderThumbElementOf(node())->active();

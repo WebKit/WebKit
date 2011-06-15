@@ -43,6 +43,7 @@ namespace WebCore {
         virtual int baselinePosition(FontBaseline, bool firstLine, LineDirectionMode, LinePositionMode = PositionOnContainingLine) const;
         virtual void computePreferredLogicalWidths();
         virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
+        virtual void layout();
     };
 
     inline RenderSlider* toRenderSlider(RenderObject* object)

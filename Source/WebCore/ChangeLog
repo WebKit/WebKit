@@ -1,3 +1,16 @@
+2011-06-14  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        REGRESSION(r88757): [Chromium] Vertical position of media slider thumb is wrong.
+        https://bugs.webkit.org/show_bug.cgi?id=62685
+
+        No new tests. Covered by existing tests.
+
+        * rendering/RenderSlider.cpp:
+        (WebCore::RenderSlider::layout): Center the thumb position.
+        * rendering/RenderSlider.h:
+
 2011-06-14  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kent Tamura.
