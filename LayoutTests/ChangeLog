@@ -1,3 +1,9 @@
+2011-06-15  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; yet more test expectations updates.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

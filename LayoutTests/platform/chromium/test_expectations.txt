@@ -739,6 +739,7 @@ BUGCR19665 MAC : platform/mac/editing/input/kotoeri-enter-to-confirm-and-newline
 
 // Flaky
 BUGCR31803 MAC LINUX : editing/inserting/12882.html = IMAGE PASS
+BUGCR31803 WIN MAC : editing/pasteboard/copy-standalone-image.html = PASS TEXT
 
 BUGWK45438 MAC : editing/spelling/spelling-backspace-between-lines.html = TEXT
 
@@ -3178,6 +3179,7 @@ BUGWK57593 : fast/preloader/document-write.html = TEXT
 BUGWK57754 WIN DEBUG : inspector/debugger/xhr-breakpoints.html = CRASH PASS TIMEOUT
 
 BUGCR78326 : fast/filesystem/filesystem-reference.html = CRASH PASS
+BUGCR78326 WIN : fast/filesystem/filesystem-uri-origin.html = CRASH PASS
 
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-disabled-readonly.html = TEXT PASS
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-layer.html = IMAGE+TEXT TEXT PASS
@@ -3987,13 +3989,9 @@ BUGWK62754 WIN LINUX : css2.1/20110323/block-replaced-width-001.htm = IMAGE+TEXT
 BUGWK62754 WIN LINUX : css2.1/20110323/replaced-elements-001.htm = IMAGE+TEXT
 BUGWK62754 WIN LINUX : css2.1/20110323/replaced-intrinsic-ratio-001.htm = IMAGE+TEXT
 
-// Has been failing since at least WebKit r88541; probably needs a rebaseline.
-// Commenting this out to see if the WONTFIX GPU LEOPARD expectation above
-// will hide it.
-// BUG_SENORBLANCO LEOPARD GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
-
 // Has been crashing since WebKit r88279-88297.
-BUG_SENORBLANCO MAC GPU : compositing/geometry/tall-page-composited.html = CRASH
+BUGCR86239 MAC GPU : compositing/geometry/tall-page-composited.html = CRASH
 
 // Has been timing out since r88913.
-BUG_SENORBLANCO MAC LINUX RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = TIMEOUT
+BUGWK62754 RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT TIMEOUT
+BUGWK62754 DEBUG SLOW : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
