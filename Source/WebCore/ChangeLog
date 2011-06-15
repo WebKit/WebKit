@@ -1,5 +1,20 @@
 2011-06-14  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 88833.
+
+    2011-06-14  Stephanie Lewis  <slewis@apple.com>
+
+        Rubber stamped by Oliver Hunt.
+
+        <rdar://problem/9511169>
+        Update order files.
+
+        Build system change, no change in functionality so no new tests.
+
+        * WebCore.order:
+
+2011-06-14  Lucas Forschler  <lforschler@apple.com>
+
     Merged 88591.
 
     2011-06-09  Jer Noble  <jer.noble@apple.com>
