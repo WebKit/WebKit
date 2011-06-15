@@ -1,3 +1,13 @@
+2011-06-14  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: "data" URLs not detected in CSS url(...) values properly
+        https://bugs.webkit.org/show_bug.cgi?id=62643
+
+        * inspector/styles/styles-url-linkify-expected.txt:
+        * inspector/styles/styles-url-linkify.html:
+
 2011-06-15  Mario Sanchez Prada  <msanchez@igalia.com>
 
         Unreviewed, skipped accessibility test failing in GTK.

@@ -1318,7 +1318,7 @@ WebInspector.completeURL = function(baseURL, href)
     if (href) {
         // Return absolute URLs as-is.
         var parsedHref = href.asParsedURL();
-        if (parsedHref && parsedHref.scheme)
+        if ((parsedHref && parsedHref.scheme) || href.indexOf("data:") === 0)
             return href;
     }
 
