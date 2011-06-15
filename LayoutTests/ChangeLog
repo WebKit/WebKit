@@ -1,5 +1,16 @@
 2011-06-15  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed; test expectations cleanup.
+
+        Removing some incorrect text results (platform/mac fallback is correct).
+        Adding some bug IDs from my lazy gardening last time around.
+
+        * platform/chromium-win/animations/animation-drt-api-expected.txt: Removed.
+        * platform/chromium-win/animations/animation-drt-api-multiple-keyframes-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+
+2011-06-15  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed; yet more test expectations updates.
 
         * platform/chromium/test_expectations.txt:

@@ -3631,11 +3631,8 @@ BUGWK60121 : http/tests/misc/will-send-request-returns-null-on-redirect.html = T
 // changed in r84745 (see commented-out entry above)
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = TEXT
 
-BUGSENORBLANCO WIN LINUX : animations/animation-drt-api-multiple-keyframes.html = TEXT
-BUGSENORBLANCO WIN LINUX : animations/animation-drt-api.html = TEXT
-BUGSENORBLANCO GPU MAC : compositing/direct-image-compositing.html = IMAGE CRASH
-BUGSENORBLANCO MAC LINUX : fast/css/string-quote-binary.html = CRASH PASS
-BUGSENORBLANCO LINUX : fast/events/panScroll-click-hyperlink.html = TEXT
+BUGWK62761 WIN : fast/events/panScroll-click-hyperlink.html = PASS TEXT
+BUGWK62761 LINUX : fast/events/panScroll-click-hyperlink.html = TEXT
 BUGSENORBLANCO : fast/files/domurl-script-execution-context-crash.html = CRASH PASS
 BUGSENORBLANCO : fast/loader/file-protocol-fragment.html = TEXT
 BUGSENORBLANCO : fast/filesystem/file-writer-write-overlapped.html = CRASH PASS TEXT
@@ -3991,6 +3988,9 @@ BUGWK62754 WIN LINUX : css2.1/20110323/replaced-intrinsic-ratio-001.htm = IMAGE+
 
 // Has been crashing since WebKit r88279-88297.
 BUGCR86239 MAC GPU : compositing/geometry/tall-page-composited.html = CRASH
+
+// Has been crashing for much longer.
+BUGCR86239 MAC GPU : compositing/direct-image-compositing.html = IMAGE CRASH
 
 // Has been timing out since r88913.
 BUGWK62754 RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT TIMEOUT
