@@ -442,8 +442,12 @@ float MediaPlayerPrivateAVFoundationObjC::platformDuration() const
     if (CMTIME_IS_NUMERIC(cmDuration))
         return narrowPrecisionToFloat(CMTimeGetSeconds(cmDuration));
 
-    if (CMTIME_IS_INDEFINITE(cmDuration))
-        return numeric_limits<float>::infinity();
+    if (CMTIME_IS_INDEFINITE(cmDuration)) {
+        if (![[m_avAsset.get() tracks] count])
+            return 0;
+        else
+            return numeric_limits<float>::infinity();
+    }
 
     LOG(Media, "MediaPlayerPrivateAVFoundationObjC::platformDuration(%p) - invalid duration, returning %.0f", this, invalidTime());
     return invalidTime();

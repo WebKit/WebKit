@@ -1,3 +1,19 @@
+2011-06-14  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        (AVFoundation) Apple event video appears as live stream and is not seekable
+        https://bugs.webkit.org/show_bug.cgi?id=62694
+
+        No new tests; There are no media-player port specific tests yet.
+
+        Work around a bug in apple.com live stream javascript controller library.  When an AVAsset returns an indefinite time
+        for its duration, return 0 if the asset has no tracks, and infinity otherwise.  This keeps the apple.com controller 
+        from identifying the stored stream as a live stream.
+
+        * platform/graphics/avfoundation/MediaPlayerPrivateAVFoundationObjC.mm:
+        (WebCore::MediaPlayerPrivateAVFoundationObjC::platformDuration):
+
 2011-06-15  Andrey Kosyakov  <caseq@chromium.org>
 
        Unreviewed, rolled out r88937 (broke build on mac)
