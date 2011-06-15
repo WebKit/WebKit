@@ -119,82 +119,15 @@ template<> struct ArgumentCoder<WebCore::ProtectionSpace> {
 };
 
 template<> struct ArgumentCoder<WebCore::Credential> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::Credential& credential)
-    {
-        encoder->encode(CoreIPC::In(credential.user(), credential.password(), static_cast<uint32_t>(credential.persistence())));
-    }
-
-    static bool decode(ArgumentDecoder* decoder, WebCore::Credential& credential)
-    {
-        String user;
-        String password;
-        int persistence;
-        if (!decoder->decode(CoreIPC::Out(user, password, persistence)))
-            return false;
-        
-        credential = WebCore::Credential(user, password, static_cast<WebCore::CredentialPersistence>(persistence));
-        return true;
-    }
+    static void encode(ArgumentEncoder*, const WebCore::Credential&);
+    static bool decode(ArgumentDecoder*, WebCore::Credential&);
 };
 
 #if USE(LAZY_NATIVE_CURSOR)
-
-void encodeImage(ArgumentEncoder*, WebCore::Image*);
-bool decodeImage(ArgumentDecoder*, RefPtr<WebCore::Image>&);
-
 template<> struct ArgumentCoder<WebCore::Cursor> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::Cursor& cursor)
-    {
-        WebCore::Cursor::Type type = cursor.type();
-#if !USE(CG)
-        // FIXME: Currently we only have the createImage function implemented for CG.
-        // Once we implement it for other platforms we can remove this conditional,
-        // and the other conditionals below and in WebCoreArgumentCoders.cpp.
-        if (type == WebCore::Cursor::Custom)
-            type = WebCore::Cursor::Pointer;
-#endif
-        encoder->encode(static_cast<uint32_t>(type));
-#if USE(CG)
-        if (type != WebCore::Cursor::Custom)
-            return;
-
-        encodeImage(encoder, cursor.image());
-        encoder->encode(cursor.hotSpot());
-#endif
-    }
-    
-    static bool decode(ArgumentDecoder* decoder, WebCore::Cursor& cursor)
-    {
-        uint32_t typeInt;
-        if (!decoder->decode(typeInt))
-            return false;
-        if (typeInt > WebCore::Cursor::Custom)
-            return false;
-        WebCore::Cursor::Type type = static_cast<WebCore::Cursor::Type>(typeInt);
-
-        if (type != WebCore::Cursor::Custom) {
-            cursor = WebCore::Cursor::fromType(type);
-            return true;
-        }
-
-#if !USE(CG)
-        return false;
-#else
-        RefPtr<WebCore::Image> image;
-        if (!decodeImage(decoder, image))
-            return false;
-        WebCore::IntPoint hotSpot;
-        if (!decoder->decode(hotSpot))
-            return false;
-        if (!image->rect().contains(WebCore::IntRect(hotSpot, WebCore::IntSize())))
-            return false;
-
-        cursor = WebCore::Cursor(image.get(), hotSpot);
-        return true;
-#endif
-    }
+    static void encode(ArgumentEncoder*, const WebCore::Cursor&);
+    static bool decode(ArgumentDecoder*, WebCore::Cursor&);
 };
-
 #endif
 
 // These two functions are implemented in a platform specific manner.
@@ -246,94 +179,13 @@ template<> struct ArgumentCoder<WebCore::ResourceError> {
 };
 
 template<> struct ArgumentCoder<WebCore::WindowFeatures> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::WindowFeatures& windowFeatures)
-    {
-        encoder->encode(windowFeatures.x);
-        encoder->encode(windowFeatures.y);
-        encoder->encode(windowFeatures.width);
-        encoder->encode(windowFeatures.height);
-        encoder->encode(windowFeatures.xSet);
-        encoder->encode(windowFeatures.ySet);
-        encoder->encode(windowFeatures.widthSet);
-        encoder->encode(windowFeatures.heightSet);
-        encoder->encode(windowFeatures.menuBarVisible);
-        encoder->encode(windowFeatures.statusBarVisible);
-        encoder->encode(windowFeatures.toolBarVisible);
-        encoder->encode(windowFeatures.locationBarVisible);
-        encoder->encode(windowFeatures.scrollbarsVisible);
-        encoder->encode(windowFeatures.resizable);
-        encoder->encode(windowFeatures.fullscreen);
-        encoder->encode(windowFeatures.dialog);
-    }
-    
-    static bool decode(ArgumentDecoder* decoder, WebCore::WindowFeatures& windowFeatures)
-    {
-        if (!decoder->decode(windowFeatures.x))
-            return false;
-        if (!decoder->decode(windowFeatures.y))
-            return false;
-        if (!decoder->decode(windowFeatures.width))
-            return false;
-        if (!decoder->decode(windowFeatures.height))
-            return false;
-        if (!decoder->decode(windowFeatures.xSet))
-            return false;
-        if (!decoder->decode(windowFeatures.ySet))
-            return false;
-        if (!decoder->decode(windowFeatures.widthSet))
-            return false;
-        if (!decoder->decode(windowFeatures.heightSet))
-            return false;
-        if (!decoder->decode(windowFeatures.menuBarVisible))
-            return false;
-        if (!decoder->decode(windowFeatures.statusBarVisible))
-            return false;
-        if (!decoder->decode(windowFeatures.toolBarVisible))
-            return false;
-        if (!decoder->decode(windowFeatures.locationBarVisible))
-            return false;
-        if (!decoder->decode(windowFeatures.scrollbarsVisible))
-            return false;
-        if (!decoder->decode(windowFeatures.resizable))
-            return false;
-        if (!decoder->decode(windowFeatures.fullscreen))
-            return false;
-        if (!decoder->decode(windowFeatures.dialog))
-            return false;
-        return true;
-    }
+    static void encode(ArgumentEncoder*, const WebCore::WindowFeatures&);
+    static bool decode(ArgumentDecoder*, WebCore::WindowFeatures&);
 };
 
 template<> struct ArgumentCoder<WebCore::Color> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::Color& color)
-    {
-        if (!color.isValid()) {
-            encoder->encodeBool(false);
-            return;
-        }
-
-        encoder->encodeBool(true);
-        encoder->encode(color.rgb());
-    }
-
-    static bool decode(ArgumentDecoder* decoder, WebCore::Color& color)
-    {
-        bool isValid;
-        if (!decoder->decode(isValid))
-            return false;
-
-        if (!isValid) {
-            color = WebCore::Color();
-            return true;
-        }
-
-        WebCore::RGBA32 rgba;
-        if (!decoder->decode(rgba))
-            return false;
-
-        color = WebCore::Color(rgba);
-        return true;
-    }
+    static void encode(ArgumentEncoder*, const WebCore::Color&);
+    static bool decode(ArgumentDecoder*, WebCore::Color&);
 };
 
 #if PLATFORM(MAC)

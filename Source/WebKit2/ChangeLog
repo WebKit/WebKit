@@ -1,5 +1,19 @@
 2011-06-15  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Move more argument coders to WebCoreArgumentCoders.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=62755
+
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::decode):
+        (CoreIPC::::encode):
+        (CoreIPC::encodeImage):
+        (CoreIPC::decodeImage):
+        * Shared/WebCoreArgumentCoders.h:
+
+2011-06-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Add ShareableBitmap::createImage and get rid of WebCoreArgumentCodersCG.cpp

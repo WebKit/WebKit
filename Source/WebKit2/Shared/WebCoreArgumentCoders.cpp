@@ -118,7 +118,7 @@ bool ArgumentCoder<AuthenticationChallenge>::decode(ArgumentDecoder* decoder, Au
     if (!decoder->decode(error))
         return false;
     
-    challenge = WebCore::AuthenticationChallenge(protectionSpace, proposedCredential, previousFailureCount, failureResponse, error);
+    challenge = AuthenticationChallenge(protectionSpace, proposedCredential, previousFailureCount, failureResponse, error);
     return true;
 }
 
@@ -154,25 +154,47 @@ bool ArgumentCoder<ProtectionSpace>::decode(ArgumentDecoder* decoder, Protection
     if (!decoder->decodeEnum(authenticationScheme))
         return false;
 
-    space = WebCore::ProtectionSpace(host, port, serverType, realm, authenticationScheme);
+    space = ProtectionSpace(host, port, serverType, realm, authenticationScheme);
     return true;
 }
 
-// For now, these are CG-only. Once other platforms have createImage functions,
-// we can compile these for non-CG builds.
-#if USE(CG)
+void ArgumentCoder<Credential>::encode(ArgumentEncoder* encoder, const Credential& credential)
+{
+    encoder->encode(credential.user());
+    encoder->encode(credential.password());
+    encoder->encodeEnum(credential.persistence());
+}
 
-void encodeImage(ArgumentEncoder* encoder, Image* image)
+bool ArgumentCoder<Credential>::decode(ArgumentDecoder* decoder, Credential& credential)
+{
+    String user;
+    if (!decoder->decode(user))
+        return false;
+
+    String password;
+    if (!decoder->decode(password))
+        return false;
+
+    CredentialPersistence persistence;
+    if (!decoder->decodeEnum(persistence))
+        return false;
+    
+    credential = Credential(user, password, persistence);
+    return true;
+}
+
+static void encodeImage(ArgumentEncoder* encoder, Image* image)
 {
     RefPtr<ShareableBitmap> bitmap = ShareableBitmap::createShareable(image->size(), ShareableBitmap::SupportsAlpha);
     bitmap->createGraphicsContext()->drawImage(image, ColorSpaceDeviceRGB, IntPoint());
+
     ShareableBitmap::Handle handle;
     bitmap->createHandle(handle);
 
     encoder->encode(handle);
 }
 
-bool decodeImage(ArgumentDecoder* decoder, RefPtr<Image>& image)
+static bool decodeImage(ArgumentDecoder* decoder, RefPtr<Image>& image)
 {
     ShareableBitmap::Handle handle;
     if (!decoder->decode(handle))
@@ -186,7 +208,136 @@ bool decodeImage(ArgumentDecoder* decoder, RefPtr<Image>& image)
         return false;
     return true;
 }
-    
-#endif
 
+#if USE(LAZY_NATIVE_CURSOR)
+void ArgumentCoder<Cursor>::encode(ArgumentEncoder* encoder, const Cursor& cursor)
+{
+    encoder->encodeEnum(cursor.type());
+        
+    if (cursor.type() != Cursor::Custom)
+        return;
+
+    encodeImage(encoder, cursor.image());
+    encoder->encode(cursor.hotSpot());
 }
+
+bool ArgumentCoder<Cursor>::decode(ArgumentDecoder* decoder, Cursor& cursor)
+{
+    Cursor::Type type;
+    if (!decoder->decodeEnum(type))
+        return false;
+
+    if (type > Cursor::Custom)
+        return false;
+
+    if (type != Cursor::Custom) {
+        cursor = Cursor::fromType(type);
+        return true;
+    }
+
+    RefPtr<Image> image;
+    if (!decodeImage(decoder, image))
+        return false;
+
+    IntPoint hotSpot;
+    if (!decoder->decode(hotSpot))
+        return false;
+
+    if (!image->rect().contains(hotSpot))
+        return false;
+
+    cursor = Cursor(image.get(), hotSpot);
+    return true;
+}
+#endif // USE(LAZY_NATIVE_CURSOR)
+
+
+void ArgumentCoder<WindowFeatures>::encode(ArgumentEncoder* encoder, const WindowFeatures& windowFeatures)
+{
+    encoder->encode(windowFeatures.x);
+    encoder->encode(windowFeatures.y);
+    encoder->encode(windowFeatures.width);
+    encoder->encode(windowFeatures.height);
+    encoder->encode(windowFeatures.xSet);
+    encoder->encode(windowFeatures.ySet);
+    encoder->encode(windowFeatures.widthSet);
+    encoder->encode(windowFeatures.heightSet);
+    encoder->encode(windowFeatures.menuBarVisible);
+    encoder->encode(windowFeatures.statusBarVisible);
+    encoder->encode(windowFeatures.toolBarVisible);
+    encoder->encode(windowFeatures.locationBarVisible);
+    encoder->encode(windowFeatures.scrollbarsVisible);
+    encoder->encode(windowFeatures.resizable);
+    encoder->encode(windowFeatures.fullscreen);
+    encoder->encode(windowFeatures.dialog);
+}
+
+bool ArgumentCoder<WindowFeatures>::decode(ArgumentDecoder* decoder, WindowFeatures& windowFeatures)
+{
+    if (!decoder->decode(windowFeatures.x))
+        return false;
+    if (!decoder->decode(windowFeatures.y))
+        return false;
+    if (!decoder->decode(windowFeatures.width))
+        return false;
+    if (!decoder->decode(windowFeatures.height))
+        return false;
+    if (!decoder->decode(windowFeatures.xSet))
+        return false;
+    if (!decoder->decode(windowFeatures.ySet))
+        return false;
+    if (!decoder->decode(windowFeatures.widthSet))
+        return false;
+    if (!decoder->decode(windowFeatures.heightSet))
+        return false;
+    if (!decoder->decode(windowFeatures.menuBarVisible))
+        return false;
+    if (!decoder->decode(windowFeatures.statusBarVisible))
+        return false;
+    if (!decoder->decode(windowFeatures.toolBarVisible))
+        return false;
+    if (!decoder->decode(windowFeatures.locationBarVisible))
+        return false;
+    if (!decoder->decode(windowFeatures.scrollbarsVisible))
+        return false;
+    if (!decoder->decode(windowFeatures.resizable))
+        return false;
+    if (!decoder->decode(windowFeatures.fullscreen))
+        return false;
+    if (!decoder->decode(windowFeatures.dialog))
+        return false;
+    return true;
+}
+
+
+void ArgumentCoder<Color>::encode(ArgumentEncoder* encoder, const Color& color)
+{
+    if (!color.isValid()) {
+        encoder->encodeBool(false);
+        return;
+    }
+
+    encoder->encodeBool(true);
+    encoder->encode(color.rgb());
+}
+
+bool ArgumentCoder<Color>::decode(ArgumentDecoder* decoder, Color& color)
+{
+    bool isValid;
+    if (!decoder->decode(isValid))
+        return false;
+
+    if (!isValid) {
+        color = Color();
+        return true;
+    }
+
+    RGBA32 rgba;
+    if (!decoder->decode(rgba))
+        return false;
+
+    color = Color(rgba);
+    return true;
+}
+
+} // namespace CoreIPC
