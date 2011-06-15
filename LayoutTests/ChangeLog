@@ -2,6 +2,15 @@
 
         Unreviewed; more chromium test expectations updates.
 
+        Rebaseline one GPU test on Linux.
+
+        * platform/chromium-gpu-linux/platform/chromium/compositing/layout-width-change-expected.png:
+        * platform/chromium/test_expectations.txt:
+
+2011-06-15  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed; more chromium test expectations updates.
+
         Rebaselined one additional CSS 2.1 test on Linux.
 
         * platform/chromium-linux/svg/zoom/page/zoom-replaced-intrinsic-ratio-001-expected.png: Added.
