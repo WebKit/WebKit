@@ -1,0 +1,16 @@
+Test that <video> can be loaded from the application cache.
+
+*** Setting 'src' to file specified in manifest. This file should load.
+
+EVENT(durationchange)
+
+*** Setting 'src' to valid media file not in manifest. This file should fail to load.
+
+EVENT(error)
+
+*** Setting 'src' to non-media file that is in manifest. This file should fail to load.
+
+EVENT(error)
+
+END OF TEST
+

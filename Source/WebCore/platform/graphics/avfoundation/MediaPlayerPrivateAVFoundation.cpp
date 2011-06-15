@@ -29,8 +29,6 @@
 
 #include "MediaPlayerPrivateAVFoundation.h"
 
-#include "ApplicationCacheHost.h"
-#include "ApplicationCacheResource.h"
 #include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameView.h"
@@ -618,23 +616,8 @@ void MediaPlayerPrivateAVFoundation::setPreload(MediaPlayer::Preload preload)
     setDelayCallbacks(true);
 
     if (m_preload >= MediaPlayer::MetaData && assetStatus() == MediaPlayerAVAssetStatusDoesNotExist) {
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-        Frame* frame = m_player->frameView() ? m_player->frameView()->frame() : 0;
-        ApplicationCacheHost* cacheHost = frame ? frame->loader()->documentLoader()->applicationCacheHost() : 0;
-        ApplicationCacheResource* resource;
-        if (cacheHost && cacheHost->shouldLoadResourceFromApplicationCache(ResourceRequest(m_assetURL), resource) && resource) {
-            // AVFoundation can't open arbitrary data pointers, so if this ApplicationCacheResource doesn't 
-            // have a valid local path, just open the resource's original URL.
-            if (resource->path().isEmpty())
-                createAVAssetForURL(resource->url());
-            else
-                createAVAssetForCacheResource(resource);
-        } else
-#endif    
-            createAVAssetForURL(m_assetURL);
-
+        createAVAssetForURL(m_assetURL);
         createAVPlayer();
-
         checkPlayability();
     }
 

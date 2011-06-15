@@ -28,6 +28,8 @@
 #if ENABLE(VIDEO)
 #include "HTMLMediaElement.h"
 
+#include "ApplicationCacheHost.h"
+#include "ApplicationCacheResource.h"
 #include "Attribute.h"
 #include "Chrome.h"
 #include "ChromeClient.h"
@@ -37,6 +39,7 @@
 #include "ContentType.h"
 #include "CSSPropertyNames.h"
 #include "CSSValueKeywords.h"
+#include "DocumentLoader.h"
 #include "Event.h"
 #include "EventNames.h"
 #include "ExceptionCode.h"
@@ -671,6 +674,21 @@ void HTMLMediaElement::loadNextSourceChild()
     loadResource(mediaURL, contentType);
 }
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS) && !PLATFORM(CHROMIUM)
+static KURL createFileURLForApplicationCacheResource(const String& path)
+{
+    // KURL should have a function to create a url from a path, but it does not. This function
+    // is not suitable because KURL::setPath uses encodeWithURLEscapeSequences, which it notes
+    // does not correctly escape '#' and '?'. This function works for our purposes because
+    // app cache media files are always created with encodeForFileName(createCanonicalUUIDString()).
+    KURL url;
+
+    url.setProtocol("file");
+    url.setPath(path);
+    return url;
+}
+#endif
+
 void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& contentType)
 {
     ASSERT(isSafeToLoadURL(initialURL, Complain));
@@ -688,7 +706,31 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     // The resource fetch algorithm 
     m_networkState = NETWORK_LOADING;
 
+#if ENABLE(OFFLINE_WEB_APPLICATIONS) && !PLATFORM(CHROMIUM)
+    // If the url should be loaded from the application cache, pass the url of the cached file
+    // to the media engine.
+    ApplicationCacheHost* cacheHost = frame->loader()->documentLoader()->applicationCacheHost();
+    ApplicationCacheResource* resource = 0;
+    if (cacheHost && cacheHost->shouldLoadResourceFromApplicationCache(ResourceRequest(url), resource)) {
+        // Resources that are not present in the manifest will always fail to load (at least, after the
+        // cache has been primed the first time), making the testing of offline applications simpler.
+        if (!resource || resource->path().isEmpty()) {
+            mediaLoadingFailed(MediaPlayer::NetworkError);
+            return;
+        }
+    }
+#endif
+
+    // Set m_currentSrc *before* changing to the cache url, the fact that we are loading from the app
+    // cache is an internal detail not exposed through the media element API.
     m_currentSrc = url;
+
+#if ENABLE(OFFLINE_WEB_APPLICATIONS) && !PLATFORM(CHROMIUM)
+    if (resource) {
+        url = createFileURLForApplicationCacheResource(resource->path());
+        LOG(Media, "HTMLMediaElement::loadResource - will load from app cache -> %s", urlForLogging(url).utf8().data());
+    }
+#endif
 
     LOG(Media, "HTMLMediaElement::loadResource - m_currentSrc -> %s", urlForLogging(m_currentSrc).utf8().data());
 
@@ -707,7 +749,7 @@ void HTMLMediaElement::loadResource(const KURL& initialURL, ContentType& content
     m_player->setPreservesPitch(m_webkitPreservesPitch);
     updateVolume();
 
-    m_player->load(m_currentSrc.string(), contentType);
+    m_player->load(url.string(), contentType);
 
     // If there is no poster to display, allow the media engine to render video frames as soon as
     // they are available.
@@ -856,6 +898,42 @@ void HTMLMediaElement::mediaPlayerNetworkStateChanged(MediaPlayer*)
     endProcessingMediaPlayerCallback();
 }
 
+void HTMLMediaElement::mediaLoadingFailed(MediaPlayer::NetworkState state)
+{
+    stopPeriodicTimers();
+    
+    // If we failed while trying to load a <source> element, the movie was never parsed, and there are more
+    // <source> children, schedule the next one
+    if (m_readyState < HAVE_METADATA && m_loadState == LoadingFromSourceElement) {
+        
+        if (m_currentSourceNode)
+            m_currentSourceNode->scheduleErrorEvent();
+        else
+            LOG(Media, "HTMLMediaElement::setNetworkState - error event not sent, <source> was removed");
+        
+        if (havePotentialSourceChild()) {
+            LOG(Media, "HTMLMediaElement::setNetworkState - scheduling next <source>");
+            scheduleNextSourceChild();
+        } else {
+            LOG(Media, "HTMLMediaElement::setNetworkState - no more <source> elements, waiting");
+            waitForSourceChange();
+        }
+        
+        return;
+    }
+    
+    if (state == MediaPlayer::NetworkError && m_readyState >= HAVE_METADATA)
+        mediaEngineError(MediaError::create(MediaError::MEDIA_ERR_NETWORK));
+    else if (state == MediaPlayer::DecodeError)
+        mediaEngineError(MediaError::create(MediaError::MEDIA_ERR_DECODE));
+    else if ((state == MediaPlayer::FormatError || state == MediaPlayer::NetworkError) && m_loadState == LoadingFromSrcAttr)
+        noneSupported();
+    
+    updateDisplayState();
+    if (hasMediaControls())
+        mediaControls()->reportedError();
+}
+
 void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
 {
     LOG(Media, "HTMLMediaElement::setNetworkState(%d) - current state is %d", static_cast<int>(state), static_cast<int>(m_networkState));
@@ -867,38 +945,7 @@ void HTMLMediaElement::setNetworkState(MediaPlayer::NetworkState state)
     }
 
     if (state == MediaPlayer::FormatError || state == MediaPlayer::NetworkError || state == MediaPlayer::DecodeError) {
-        stopPeriodicTimers();
-
-        // If we failed while trying to load a <source> element, the movie was never parsed, and there are more
-        // <source> children, schedule the next one
-        if (m_readyState < HAVE_METADATA && m_loadState == LoadingFromSourceElement) {
-
-            if (m_currentSourceNode)
-                m_currentSourceNode->scheduleErrorEvent();
-            else
-                LOG(Media, "HTMLMediaElement::setNetworkState - error event not sent, <source> was removed");
-
-            if (havePotentialSourceChild()) {
-                LOG(Media, "HTMLMediaElement::setNetworkState - scheduling next <source>");
-                scheduleNextSourceChild();
-            } else {
-                LOG(Media, "HTMLMediaElement::setNetworkState - no more <source> elements, waiting");
-                waitForSourceChange();
-            }
-
-            return;
-        }
-
-        if (state == MediaPlayer::NetworkError)
-            mediaEngineError(MediaError::create(MediaError::MEDIA_ERR_NETWORK));
-        else if (state == MediaPlayer::DecodeError)
-            mediaEngineError(MediaError::create(MediaError::MEDIA_ERR_DECODE));
-        else if (state == MediaPlayer::FormatError && m_loadState == LoadingFromSrcAttr)
-            noneSupported();
-
-        updateDisplayState();
-        if (hasMediaControls())
-            mediaControls()->reportedError();
+        mediaLoadingFailed(state);
         return;
     }
 

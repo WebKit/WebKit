@@ -29,11 +29,6 @@
 
 #import "MediaPlayerPrivateQTKit.h"
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-#include "ApplicationCacheHost.h"
-#include "ApplicationCacheResource.h"
-#endif
-
 #import "BlockExceptions.h"
 #import "DocumentLoader.h"
 #import "Frame.h"
@@ -292,33 +287,6 @@ void MediaPlayerPrivateQTKit::createQTMovie(const String& url)
 #endif
     
     createQTMovie(cocoaURL, movieAttributes);
-}
-
-void MediaPlayerPrivateQTKit::createQTMovie(ApplicationCacheResource* resource)
-{
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    ASSERT(resource);
-
-    NSMutableDictionary *movieAttributes = commonMovieAttributes();    
-    [movieAttributes setObject:[NSNumber numberWithBool:YES] forKey:@"QTMovieOpenForPlaybackAttribute"];
-    
-    // ApplicationCacheResources can supply either a data pointer, or a path to a locally cached 
-    // flat file.  We would prefer the path over the data, but QTKit can handle either:
-    String localPath = resource->path();
-    NSURL* cocoaURL = !localPath.isEmpty() ? [NSURL fileURLWithPath:localPath isDirectory:NO] : nil;
-    if (cocoaURL)
-        [movieAttributes setValue:cocoaURL forKey:QTMovieURLAttribute];
-    else {
-        NSData* movieData = resource->data()->createNSData();
-        [movieAttributes setValue:movieData forKey:QTMovieDataAttribute];
-        [movieData release];
-    }
-    
-    createQTMovie(cocoaURL, movieAttributes);
-    
-#else
-    ASSERT_NOT_REACHED();
-#endif
 }
 
 static void disableComponentsOnce()
@@ -682,14 +650,6 @@ void MediaPlayerPrivateQTKit::loadInternal(const String& url)
     
     [m_objcObserver.get() setDelayCallbacks:YES];
 
-#if ENABLE(OFFLINE_WEB_APPLICATIONS)
-    Frame* frame = m_player->frameView() ? m_player->frameView()->frame() : NULL;
-    ApplicationCacheHost* cacheHost = frame ? frame->loader()->documentLoader()->applicationCacheHost() : NULL;
-    ApplicationCacheResource* resource = NULL;
-    if (cacheHost && cacheHost->shouldLoadResourceFromApplicationCache(ResourceRequest(url), resource) && resource)
-        createQTMovie(resource);
-    else
-#endif    
     createQTMovie(url);
 
     [m_objcObserver.get() loadStateChanged:nil];

@@ -300,6 +300,7 @@ private:
     enum InvalidSourceAction { DoNothing, Complain };
     bool isSafeToLoadURL(const KURL&, InvalidSourceAction);
     KURL selectNextSourceChild(ContentType*, InvalidSourceAction);
+    void mediaLoadingFailed(MediaPlayer::NetworkState);
 
     // These "internal" functions do not check user gesture restrictions.
     void loadInternal();
@@ -362,13 +363,13 @@ private:
     unsigned m_previousProgress;
     double m_previousProgressTime;
 
-    // the last time a timeupdate event was sent (wall clock)
+    // The last time a timeupdate event was sent (wall clock).
     double m_lastTimeUpdateEventWallTime;
 
-    // the last time a timeupdate event was sent in movie time
+    // The last time a timeupdate event was sent in movie time.
     float m_lastTimeUpdateEventMovieTime;
     
-    // loading state
+    // Loading state.
     enum LoadState { WaitingForSource, LoadingFromSrcAttr, LoadingFromSourceElement };
     LoadState m_loadState;
     HTMLSourceElement* m_currentSourceNode;

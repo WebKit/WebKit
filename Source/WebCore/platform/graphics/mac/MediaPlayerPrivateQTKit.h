@@ -57,8 +57,6 @@ class WebCoreMovieObserver;
 
 namespace WebCore {
     
-class ApplicationCacheResource;
-
 class MediaPlayerPrivateQTKit : public MediaPlayerPrivateInterface {
 public:
     ~MediaPlayerPrivateQTKit();
@@ -149,7 +147,6 @@ private:
 
     void createQTMovie(const String& url);
     void createQTMovie(NSURL *, NSDictionary *movieAttributes);
-    void createQTMovie(ApplicationCacheResource*);
 
     enum MediaRenderingMode { MediaRenderingNone, MediaRenderingMovieView, MediaRenderingSoftwareRenderer, MediaRenderingMovieLayer };
     MediaRenderingMode currentRenderingMode() const;
