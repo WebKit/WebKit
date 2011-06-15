@@ -1508,8 +1508,10 @@ void CanvasRenderingContext2D::setCompositeOperation(const String& operation)
 bool CanvasRenderingContext2D::shouldDisplayTransparencyElsewhere() const
 {
     // See 4.8.11.1.3 Compositing
-    // CompositeSourceAtop is not listed here as the platforms already implement the specification's behavior.
-    return state().m_globalComposite == CompositeSourceIn || state().m_globalComposite == CompositeSourceOut;
+    // CompositeSourceAtop and CompositeDestinationOut are not listed here as the platforms already
+    // implement the specification's behavior.
+    return state().m_globalComposite == CompositeSourceIn || state().m_globalComposite == CompositeSourceOut
+           || state().m_globalComposite == CompositeDestinationIn;
 }
 
 template<class T> void CanvasRenderingContext2D::displayTransparencyElsewhere(const T& area)

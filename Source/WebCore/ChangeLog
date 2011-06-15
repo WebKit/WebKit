@@ -1,3 +1,19 @@
+2011-06-14  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by James Robinson.
+
+        Fix LayoutTests/canvas/philip/tests/2d.composite.uncovered.fill.destination-in.html
+        https://bugs.webkit.org/show_bug.cgi?id=48293
+
+        And
+
+        Fix LayoutTests/canvas/philip/tests/2d.composite.uncovered.pattern.destination-in.html
+        https://bugs.webkit.org/show_bug.cgi?id=48303
+
+        * html/canvas/CanvasRenderingContext2D.cpp:
+        (WebCore::CanvasRenderingContext2D::shouldDisplayTransparencyElsewhere): Added CompositeDestinationIn
+        as this is the only one that needs a specific treatment.
+
 2011-06-14  Naoki Takano  <takano.naoki@gmail.com>
 
         Reviewed by Kent Tamura.
