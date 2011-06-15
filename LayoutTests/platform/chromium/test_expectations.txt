@@ -2889,7 +2889,7 @@ BUGWK55968 BUGWK58306 GPU MAC : compositing/webgl/webgl-nonpremultiplied-blend.h
 BUGWK55968 GPU WIN DEBUG : compositing/webgl/webgl-nonpremultiplied-blend.html = IMAGE
 
 // 2 pixel stretching when rendering some videos with the GPU (Now it's flaky)
-BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE PASS
+//BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE PASS
 
 // BUGCR74102 GPU WIN : media/video-layer-crash.html = IMAGE
 
@@ -3948,25 +3948,27 @@ BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
 BUGWK61936 : fast/filesystem/filesystem-no-callback-null-ptr-crash.html = CRASH PASS
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = IMAGE PASS
 
-// REGRESSION(r88757): There is a problem on event handling.
-BUGWK52920 : fast/forms/slider-delete-while-dragging-thumb.html = FAIL
-BUGWK52920 : fast/forms/slider-mouse-events.html = FAIL
-BUGWK52920 : fast/forms/slider-onchange-event.html = FAIL
-BUGWK52920 : fast/layers/video-layer.html = FAIL
+// REGRESSION(r88757)
+BUGWK62683 : fast/forms/slider-delete-while-dragging-thumb.html = FAIL
+BUGWK62683 : fast/forms/slider-mouse-events.html = FAIL
+BUGWK62683 : fast/forms/slider-onchange-event.html = FAIL
 // REGRESSION(r88757): The position of the time slider thumb is wrong.
-BUGWK52920 : media/audio-controls-rendering.html = FAIL
-BUGWK52920 : media/audio-repaint.html = FAIL
-BUGWK52920 : media/controls-after-reload.html = FAIL
-BUGWK52920 : media/controls-strict.html = FAIL
-BUGWK52920 : media/controls-styling.html = FAIL
-BUGWK52920 : media/controls-without-preload.html = FAIL
-BUGWK52920 MAC WIN : media/video-controls-rendering.html = FAIL
-BUGWK52920 LINUX CPU : media/video-controls-rendering.html = FAIL
-BUGWK52920 : media/video-display-toggle.html = FAIL
-BUGWK52920 : media/video-empty-source.html = FAIL
-BUGWK52920 : media/video-no-audio.html = FAIL
-BUGWK52920 : media/video-volume-slider.html = FAIL
-BUGWK52920 : media/video-zoom-controls.html = FAIL
+BUGWK62685 : fast/layers/video-layer.html = FAIL
+BUGWK62685 : media/audio-controls-rendering.html = FAIL
+BUGWK62685 : media/audio-repaint.html = FAIL
+BUGWK62685 : media/controls-after-reload.html = FAIL
+BUGWK62685 : media/controls-strict.html = FAIL
+BUGWK62685 : media/controls-styling.html = FAIL
+BUGWK62685 : media/controls-without-preload.html = FAIL
+BUGWK62685 MAC WIN : media/video-controls-rendering.html = FAIL
+BUGWK62685 LINUX CPU : media/video-controls-rendering.html = FAIL
+// There is another entry for GPU video-controls-rendering.html.
+BUGWK62685 LINUX GPU : media/video-controls-rendering.html = FAIL
+BUGWK62685 : media/video-display-toggle.html = FAIL
+BUGWK62685 : media/video-empty-source.html = FAIL
+BUGWK62685 : media/video-no-audio.html = FAIL
+BUGWK62685 : media/video-volume-slider.html = FAIL
+BUGWK62685 : media/video-zoom-controls.html = FAIL
 
 BUGCR84157 GPU : plugins/embed-attributes-style.html = IMAGE+TEXT
 BUGCR84157 GPU : svg/as-image/svg-as-background-with-relative-size.html = IMAGE+TEXT
