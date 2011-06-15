@@ -758,10 +758,16 @@ bool PopupListBox::handleKeyEvent(const PlatformKeyboardEvent& event)
         acceptIndex(m_selectedIndex);  // may delete this
         return true;
     case VKEY_UP:
-        selectPreviousRow();
-        break;
     case VKEY_DOWN:
-        selectNextRow();
+        // We have to forward only shift + up combination to focused node when autofill popup.
+        // Because all characters from the cursor to the start of the text area should selected when you press shift + up arrow.
+        // shift + down should be the similar way to shift + up.
+        if (event.modifiers() && m_popupClient->menuStyle().menuType() == PopupMenuStyle::AutofillPopup)
+            m_focusedNode->dispatchKeyEvent(event);
+        else if (event.windowsVirtualKeyCode() == VKEY_UP)
+            selectPreviousRow();
+        else
+            selectNextRow();
         break;
     case VKEY_PRIOR:
         adjustSelectedIndex(-m_visibleRows);

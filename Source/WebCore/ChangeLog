@@ -1,3 +1,17 @@
+2011-06-14  Naoki Takano  <takano.naoki@gmail.com>
+
+        Reviewed by Kent Tamura.
+
+        [Chromium] Forward modifiers + up/down key events to text field when autofill popup window is shown.
+        https://bugs.webkit.org/show_bug.cgi?id=62350
+        http://code.google.com/p/chromium/issues/detail?id=61349
+
+        Manual test: autofill-popup-shiftupdown.html
+
+        * manual-tests/chromium/autofill-popup-shiftupdown.hml: Added to check modifier + up/down key is working correctly for text area in autofill popup is shown.
+        * platform/chromium/PopupMenuChromium.cpp:
+        (WebCore::PopupListBox::handleKeyEvent): Check modifier key and menu style to decide if the event should be forwarded or not.
+
 2011-06-14  Annie Sullivan  <sullivan@chromium.org>
         
         Reviewed by Ryosuke Niwa.
