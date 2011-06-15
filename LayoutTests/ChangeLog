@@ -1,3 +1,15 @@
+2011-06-15  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        Can't type text when input element is shrunken by a CSS rule
+        https://bugs.webkit.org/show_bug.cgi?id=62550
+
+        Added a regression test now that the bug no longer reproduces.
+
+        * fast/forms/type-after-focus-rule-shrink-width-expected.txt: Added.
+        * fast/forms/type-after-focus-rule-shrink-width.html: Added.
+
 2011-06-15  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by Pavel Feldman.
