@@ -1,3 +1,15 @@
+2011-06-14  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        Reviewed by Sam Weinig.
+
+        [EFL][WK2] Change string operation to makeString()
+        https://bugs.webkit.org/show_bug.cgi?id=62527
+
+        Use makeString() because it is better than creating individual strings and concatenating them.
+
+        * UIProcess/efl/WebPageProxyEfl.cpp:
+        (WebKit::WebPageProxy::standardUserAgent):
+
 2011-06-14  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Simon Fraser.
