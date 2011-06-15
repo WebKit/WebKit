@@ -1,3 +1,10 @@
+2011-06-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip editing/inserting/return-key-span-start.html added by r88890 on Mac WebKit2
+        since TestRunner doesn't implement eventSender.keyDown.
+
+        * platform/mac-wk2/Skipped:
+
 2011-06-14  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by James Robinson.

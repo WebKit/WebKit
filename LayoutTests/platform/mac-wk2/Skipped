@@ -1781,6 +1781,7 @@ fast/forms/radio-group-keyboard-change-event.html
 fast/forms/focus-with-display-block.html
 fast/forms/ValidityState-valueMissing-002.html
 svg/custom/focus-event-handling-keyboard.xhtml
+editing/inserting/return-key-span-start.html
 
 # eventSender.contextClick() is unimplemented
 editing/spelling/spellcheck-input-search-crash.html
