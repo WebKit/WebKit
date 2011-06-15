@@ -1,3 +1,10 @@
+2011-06-15  Kent Tamura  <tkent@chromium.org>
+
+        [Win] Update expectation for r88757.
+        https://bugs.webkit.org/show_bug.cgi?id=52920
+
+        * platform/win-xp/media/audio-repaint-expected.txt:
+
 2011-06-14  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] Update platform specific expected file.
