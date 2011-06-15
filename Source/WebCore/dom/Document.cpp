@@ -3524,6 +3524,8 @@ void Document::addListenerTypeIfNeeded(const AtomicString& eventType)
             page->chrome()->client()->needTouchEvents(true);
     }
 #endif
+    else if (eventType == eventNames().scrollEvent)
+        addListenerType(SCROLL_LISTENER);
 }
 
 CSSStyleDeclaration* Document::getOverrideStyle(Element*, const String&)

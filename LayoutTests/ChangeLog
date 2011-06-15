@@ -1,3 +1,17 @@
+2011-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Have Document keep track of whether scroll listeners are registered
+        https://bugs.webkit.org/show_bug.cgi?id=62757
+        
+        This test relied on the fact that, with async scroll event dispatch,
+        an element would get a scroll event even if the listener is registered
+        after the scroll happens. Fix the test to register the listener before
+        the first scroll.
+
+        * fast/events/remove-child-onscroll.html:
+
 2011-06-15  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; test expectations cleanup.

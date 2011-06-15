@@ -1,3 +1,20 @@
+2011-06-15  Simon Fraser  <simon.fraser@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        Have Document keep track of whether scroll listeners are registered
+        https://bugs.webkit.org/show_bug.cgi?id=62757
+        
+        To avoid extra work dispatching scroll events when there are no listeners,
+        have Document keep track of whether any scroll listeners are registered,
+        just like it does for some other event types.
+
+        * dom/Document.cpp:
+        (WebCore::Document::addListenerTypeIfNeeded):
+        * dom/Document.h:
+        * dom/EventQueue.cpp:
+        (WebCore::EventQueue::enqueueOrDispatchScrollEvent):
+
 2011-06-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Adam Barth.

@@ -10,8 +10,6 @@
             {
                 if (window.eventSender && window.layoutTestController) {
                     layoutTestController.waitUntilDone();
-                    eventSender.mouseMoveTo(100, 100);
-                    eventSender.mouseScrollBy(0, -1);
                     var scrollCount = 0;
                     document.getElementById('dv').addEventListener(
                         'scroll',
@@ -24,6 +22,9 @@
                                 layoutTestController.notifyDone();
                         },
                         false);
+
+                      eventSender.mouseMoveTo(100, 100);
+                      eventSender.mouseScrollBy(0, -1);
                 }
             }
         </script>
