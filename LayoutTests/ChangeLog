@@ -1,3 +1,9 @@
+2011-06-14  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Update platform specific expected file.
+
+        * platform/qt/fast/dom/prototype-inheritance-2-expected.txt:
+
 2011-06-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Skip editing/inserting/return-key-span-start.html added by r88890 on Mac WebKit2
