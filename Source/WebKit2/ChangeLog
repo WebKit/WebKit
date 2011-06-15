@@ -1,5 +1,19 @@
 2011-06-15  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Alexey Proskuryakov.
+
+        Move some argument coders to WebCoreArgumentCoders.cpp
+        https://bugs.webkit.org/show_bug.cgi?id=62739
+
+        * GNUmakefile.am:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * WebKit2.pro:
+
+2011-06-15  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Fix possible null dereference in webSecKeychainItemCreateFromContentOnMainThread

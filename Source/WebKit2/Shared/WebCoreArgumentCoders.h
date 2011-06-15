@@ -49,7 +49,6 @@
 #include <WebCore/Matrix3DTransformOperation.h>
 #include <WebCore/MatrixTransformOperation.h>
 #include <WebCore/PerspectiveTransformOperation.h>
-#include <WebCore/PluginData.h>
 #include <WebCore/ProtectionSpace.h>
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceRequest.h>
@@ -66,6 +65,11 @@
 #include <WebCore/WindowFeatures.h>
 #include <limits>
 
+namespace WebCore {
+    class HTTPHeaderMap;
+    struct MimeClassInfo;
+    struct PluginInfo;
+}
 
 namespace CoreIPC {
 
@@ -90,106 +94,28 @@ template<> struct ArgumentCoder<WebCore::SkewTransformOperation> : SimpleArgumen
 template<> struct ArgumentCoder<WebCore::TranslateTransformOperation> : SimpleArgumentCoder<WebCore::TranslateTransformOperation> { };
 
 template<> struct ArgumentCoder<WebCore::MimeClassInfo> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::MimeClassInfo& mimeClassInfo)
-    {
-        encoder->encode(mimeClassInfo.type);
-        encoder->encode(mimeClassInfo.desc);
-        encoder->encode(mimeClassInfo.extensions);
-    }
-
-    static bool decode(ArgumentDecoder* decoder, WebCore::MimeClassInfo& mimeClassInfo)
-    {
-        if (!decoder->decode(mimeClassInfo.type))
-            return false;
-        if (!decoder->decode(mimeClassInfo.desc))
-            return false;
-        if (!decoder->decode(mimeClassInfo.extensions))
-            return false;
-
-        return true;
-    }
+    static void encode(ArgumentEncoder*, const WebCore::MimeClassInfo&);
+    static bool decode(ArgumentDecoder*, WebCore::MimeClassInfo&);
 };
-    
-template<> struct ArgumentCoder<WebCore::PluginInfo> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::PluginInfo& pluginInfo)
-    {
-        encoder->encode(pluginInfo.name);
-        encoder->encode(pluginInfo.file);
-        encoder->encode(pluginInfo.desc);
-        encoder->encode(pluginInfo.mimes);
-    }
-    
-    static bool decode(ArgumentDecoder* decoder, WebCore::PluginInfo& pluginInfo)
-    {
-        if (!decoder->decode(pluginInfo.name))
-            return false;
-        if (!decoder->decode(pluginInfo.file))
-            return false;
-        if (!decoder->decode(pluginInfo.desc))
-            return false;
-        if (!decoder->decode(pluginInfo.mimes))
-            return false;
 
-        return true;
-    }
+template<> struct ArgumentCoder<WebCore::PluginInfo> {
+    static void encode(ArgumentEncoder*, const WebCore::PluginInfo&);
+    static bool decode(ArgumentDecoder*, WebCore::PluginInfo&);
 };
 
 template<> struct ArgumentCoder<WebCore::HTTPHeaderMap> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::HTTPHeaderMap& headerMap)
-    {
-        encoder->encode(static_cast<const HashMap<AtomicString, String, CaseFoldingHash>&>(headerMap));
-    }
-
-    static bool decode(ArgumentDecoder* decoder, WebCore::HTTPHeaderMap& headerMap)
-    {
-        return decoder->decode(static_cast<HashMap<AtomicString, String, CaseFoldingHash>&>(headerMap));
-    }
+    static void encode(ArgumentEncoder*, const WebCore::HTTPHeaderMap&);
+    static bool decode(ArgumentDecoder*, WebCore::HTTPHeaderMap&);
 };
 
 template<> struct ArgumentCoder<WebCore::AuthenticationChallenge> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::AuthenticationChallenge& challenge)
-    {
-        encoder->encode(CoreIPC::In(challenge.protectionSpace(), challenge.proposedCredential(), challenge.previousFailureCount(), challenge.failureResponse(), challenge.error()));
-    }
-
-    static bool decode(ArgumentDecoder* decoder, WebCore::AuthenticationChallenge& challenge)
-    {    
-        WebCore::ProtectionSpace protectionSpace;
-        WebCore::Credential proposedCredential;
-        unsigned previousFailureCount;
-        WebCore::ResourceResponse failureResponse;
-        WebCore::ResourceError error;
-
-        if (!decoder->decode(CoreIPC::Out(protectionSpace, proposedCredential, previousFailureCount, failureResponse, error)))
-            return false;
-        
-        challenge = WebCore::AuthenticationChallenge(protectionSpace, proposedCredential, previousFailureCount, failureResponse, error);
-
-        return true;
-    }
+    static void encode(ArgumentEncoder*, const WebCore::AuthenticationChallenge&);
+    static bool decode(ArgumentDecoder*, WebCore::AuthenticationChallenge&);
 };
 
 template<> struct ArgumentCoder<WebCore::ProtectionSpace> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::ProtectionSpace& space)
-    {
-        encoder->encode(CoreIPC::In(space.host(), space.port(), static_cast<uint32_t>(space.serverType()), space.realm(), static_cast<uint32_t>(space.authenticationScheme())));
-    }
-
-    static bool decode(ArgumentDecoder* decoder, WebCore::ProtectionSpace& space)
-    {
-        String host;
-        int port;
-        uint32_t serverType;
-        String realm;
-        uint32_t authenticationScheme;
-
-        if (!decoder->decode(CoreIPC::Out(host, port, serverType, realm, authenticationScheme)))
-            return false;
-    
-        space = WebCore::ProtectionSpace(host, port, static_cast<WebCore::ProtectionSpaceServerType>(serverType), realm, static_cast<WebCore::ProtectionSpaceAuthenticationScheme>(authenticationScheme));
-
-        return true;
-    }
+    static void encode(ArgumentEncoder*, const WebCore::ProtectionSpace&);
+    static bool decode(ArgumentDecoder*, WebCore::ProtectionSpace&);
 };
 
 template<> struct ArgumentCoder<WebCore::Credential> {

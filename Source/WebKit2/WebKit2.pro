@@ -353,6 +353,7 @@ SOURCES += \
     Shared/WebBackForwardListItem.cpp \
     Shared/WebContextMenuItem.cpp \
     Shared/WebContextMenuItemData.cpp \
+    Shared/WebCoreArgumentCoders.cpp \
     Shared/WebError.cpp \
     Shared/WebEvent.cpp \
     Shared/WebEventConversion.cpp \
