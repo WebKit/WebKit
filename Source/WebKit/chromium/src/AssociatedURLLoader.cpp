@@ -60,7 +60,7 @@ public:
     virtual void didSendData(unsigned long long /*bytesSent*/, unsigned long long /*totalBytesToBeSent*/);
     virtual void willSendRequest(ResourceRequest& /*newRequest*/, const ResourceResponse& /*redirectResponse*/);
 
-    virtual void didReceiveResponse(unsigned long, const ResourceResponse&);
+    virtual void didReceiveResponse(const ResourceResponse&);
     virtual void didReceiveData(const char*, int /*dataLength*/);
     virtual void didReceiveCachedMetadata(const char*, int /*dataLength*/);
     virtual void didFinishLoading(unsigned long /*identifier*/, double /*finishTime*/);
@@ -113,7 +113,7 @@ void AssociatedURLLoader::ClientAdapter::didSendData(unsigned long long bytesSen
     m_client->didSendData(m_loader, bytesSent, totalBytesToBeSent);
 }
 
-void AssociatedURLLoader::ClientAdapter::didReceiveResponse(unsigned long, const ResourceResponse& response)
+void AssociatedURLLoader::ClientAdapter::didReceiveResponse(const ResourceResponse& response)
 {
     WrappedResourceResponse wrappedResponse(response);
     m_client->didReceiveResponse(m_loader, wrappedResponse);

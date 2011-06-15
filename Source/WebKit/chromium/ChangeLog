@@ -1,11 +1,6 @@
-2011-06-15  Vsevolod Vlasov  <vsevik@chromium.org>
+2011-06-15  Andrey Kosyakov  <caseq@chromium.org>
 
-        Reviewed by Pavel Feldman.
-
-        Web Inspector: Cache XHR content in backend, do not use initialContentSet for XHRs.
-        https://bugs.webkit.org/show_bug.cgi?id=61205
-
-        Added inspector backend cache for XHR content.
+       Unreviewed, rolled out r88937 (broke build on mac)
 
         * src/AssociatedURLLoader.cpp:
         (WebKit::AssociatedURLLoader::ClientAdapter::didReceiveResponse):

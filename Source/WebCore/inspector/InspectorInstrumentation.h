@@ -128,9 +128,6 @@ public:
     static void didFinishLoading(Frame*, unsigned long identifier, double finishTime);
     static void didFailLoading(Frame*, unsigned long identifier, const ResourceError&);
     static void resourceRetrievedByXMLHttpRequest(ScriptExecutionContext*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
-    static void didReceiveXHRResponse(ScriptExecutionContext*, unsigned long identifier);
-    static void willLoadXHRSynchronously(ScriptExecutionContext*);
-    static void didLoadXHRSynchronously(ScriptExecutionContext*);
     static void scriptImported(ScriptExecutionContext*, unsigned long identifier, const String& sourceString);
     static void domContentLoadedEventFired(Frame*, const KURL&);
     static void loadEventFired(Frame*, const KURL&);
@@ -256,9 +253,6 @@ private:
     static void didFinishLoadingImpl(InstrumentingAgents*, unsigned long identifier, double finishTime);
     static void didFailLoadingImpl(InstrumentingAgents*, unsigned long identifier, const ResourceError&);
     static void resourceRetrievedByXMLHttpRequestImpl(InstrumentingAgents*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
-    static void didReceiveXHRResponseImpl(InstrumentingAgents*, unsigned long identifier);
-    static void willLoadXHRSynchronouslyImpl(InstrumentingAgents*);
-    static void didLoadXHRSynchronouslyImpl(InstrumentingAgents*);
     static void scriptImportedImpl(InstrumentingAgents*, unsigned long identifier, const String& sourceString);
     static void domContentLoadedEventFiredImpl(InstrumentingAgents*, Frame*, const KURL&);
     static void loadEventFiredImpl(InstrumentingAgents*, Frame*, const KURL&);
@@ -783,30 +777,6 @@ inline void InspectorInstrumentation::resourceRetrievedByXMLHttpRequest(ScriptEx
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
         resourceRetrievedByXMLHttpRequestImpl(instrumentingAgents, identifier, sourceString, url, sendURL, sendLineNumber);
-#endif
-}
-
-inline void InspectorInstrumentation::didReceiveXHRResponse(ScriptExecutionContext* context, unsigned long identifier)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        didReceiveXHRResponseImpl(instrumentingAgents, identifier);
-#endif
-}
-
-inline void InspectorInstrumentation::willLoadXHRSynchronously(ScriptExecutionContext* context)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        willLoadXHRSynchronouslyImpl(instrumentingAgents);
-#endif
-}
-
-inline void InspectorInstrumentation::didLoadXHRSynchronously(ScriptExecutionContext* context)
-{
-#if ENABLE(INSPECTOR)
-    if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForContext(context))
-        didLoadXHRSynchronouslyImpl(instrumentingAgents);
 #endif
 }
 

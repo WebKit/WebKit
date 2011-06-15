@@ -62,10 +62,10 @@ public:
             m_client->didSendData(bytesSent, totalBytesToBeSent);
     }
 
-    void didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
+    void didReceiveResponse(const ResourceResponse& response)
     {
         if (m_client)
-            m_client->didReceiveResponse(identifier, response);
+            m_client->didReceiveResponse(response);
     }
 
     void didReceiveData(const char* data, int dataLength)
@@ -101,10 +101,10 @@ public:
             m_client->didFailRedirectCheck();
     }
 
-    void didReceiveAuthenticationCancellation(unsigned long identifier, const ResourceResponse& response)
+    void didReceiveAuthenticationCancellation(const ResourceResponse& response)
     {
         if (m_client)
-            m_client->didReceiveResponse(identifier, response);
+            m_client->didReceiveResponse(response);
     }
 
 protected:

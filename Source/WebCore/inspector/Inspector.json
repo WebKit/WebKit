@@ -485,17 +485,6 @@
                 "returns": [
                     { "name": "enabled", "type": "boolean" }
                 ]
-            },
-            {
-                "name": "getResourceContent",
-                "description": "Returns content of the given resource.",
-                "parameters": [
-                    { "name": "identifier", "type": "number", "description": "Identifier of the resource to get content for." },
-                    { "name": "base64Encode", "type": "boolean", "optional": true, "description": "Requests that resource content is served as base64." }
-                ],
-                "returns": [
-                    { "name": "content", "type": "string", "description": "Resource content." }
-                ]
             }
         ],
         "events": [
@@ -571,7 +560,7 @@
             },
             {
                 "name": "initialContentSet",
-                "description": "Fired for worker scripts when their content becomes available.",
+                "description": "Fired for XMLHttpRequests when their content becomes available.",
                 "parameters": [
                     { "name": "identifier", "type": "integer", "description": "Request identifier." },
                     { "name": "content", "type": "string", "description": "Resource content." },

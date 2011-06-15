@@ -3315,8 +3315,6 @@
             'inspector/InspectorWorkerAgent.cpp',
             'inspector/InspectorWorkerAgent.h',
             'inspector/InstrumentingAgents.h',
-            'inspector/NetworkResourcesData.cpp',
-            'inspector/NetworkResourcesData.h',
             'inspector/PageDebuggerAgent.cpp',
             'inspector/PageDebuggerAgent.h',
             'inspector/ScriptArguments.cpp',
