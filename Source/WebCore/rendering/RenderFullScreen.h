@@ -38,6 +38,7 @@ public:
     virtual bool isRenderFullScreen() const { return true; }
     virtual const char* renderName() const { return "RenderFullScreen"; }
 
+    void setPlaceholder(RenderBlock*);
     RenderBlock* placeholder() { return m_placeholder; }
     void createPlaceholder(PassRefPtr<RenderStyle>, const IntRect& frameRect);
 
