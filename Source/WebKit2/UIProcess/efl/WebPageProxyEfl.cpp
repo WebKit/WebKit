@@ -30,7 +30,6 @@
 #include "PageClientImpl.h"
 
 #include <sys/utsname.h>
-#include <wtf/text/StringConcatenate.h>
 
 namespace WebKit {
 
@@ -41,9 +40,9 @@ Evas_Object* WebPageProxy::viewObject()
 
 String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent)
 {
-    String platform;
-    String version;
-    String osVersion;
+    WTF::String platform;
+    WTF::String version;
+    WTF::String osVersion;
 
 #if PLATFORM(X11)
     platform = "X11";
@@ -54,7 +53,7 @@ String WebPageProxy::standardUserAgent(const String& applicationNameForUserAgent
                          String::number(WEBKIT_USER_AGENT_MINOR_VERSION), '+');
     struct utsname name;
     if (uname(&name) != -1)
-        osVersion = makeString(name.sysname, ' ', name.machine);
+        osVersion = WTF::String(name.sysname) + " " + WTF::String(name.machine);
     else
         osVersion = "Unknown";
 
