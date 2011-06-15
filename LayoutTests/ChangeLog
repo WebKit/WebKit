@@ -1,3 +1,15 @@
+2011-06-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Mac, Windows, and Chromium rebaseline for r88883.
+
+        * platform/chromium-linux/fast/forms/basic-textareas-expected.png:
+        * platform/chromium-win/fast/forms/basic-textareas-expected.png:
+        * platform/chromium-win/fast/forms/basic-textareas-expected.txt:
+        * platform/chromium-win/fast/forms/basic-textareas-quirks-expected.txt:
+        * platform/mac/fast/forms/basic-textareas-expected.png:
+        * platform/win/fast/forms/basic-textareas-expected.txt:
+        * platform/win/fast/forms/basic-textareas-quirks-expected.txt:
+
 2011-06-14  Kent Tamura  <tkent@chromium.org>
 
         [Chromium][Qt] Assign new bug numbers for slider failures, and skip a test on Qt.
