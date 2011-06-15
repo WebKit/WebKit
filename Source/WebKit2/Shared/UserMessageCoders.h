@@ -127,13 +127,13 @@ public:
         }
         case APIObject::TypeImage: {
             WebImage* image = static_cast<WebImage*>(m_root);
-            if (!image->bitmap()->isBackedBySharedMemory()) {
+            if (!image->bitmap() || !image->bitmap()->isBackedBySharedMemory()) {
                 encoder->encode(false);
                 return true;
             }
 
             ShareableBitmap::Handle handle;
-            if (!image->bitmap()->createHandle(handle))
+            if (!image->bitmap() || !image->bitmap()->createHandle(handle))
                 return false;
 
             encoder->encode(true);

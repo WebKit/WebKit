@@ -858,6 +858,9 @@ PassRefPtr<WebImage> WebPage::snapshotInViewCoordinates(const IntRect& rect, Ima
     frameView->setPaintBehavior(oldBehavior | PaintBehaviorFlattenCompositingLayers);
 
     RefPtr<WebImage> snapshot = WebImage::create(rect.size(), options);
+    if (!snapshot->bitmap())
+        return 0;
+    
     OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
 
     graphicsContext->save();
@@ -887,6 +890,9 @@ PassRefPtr<WebImage> WebPage::scaledSnapshotInDocumentCoordinates(const IntRect&
         size = IntSize(ceil(rect.width() * scaleFactor), ceil(rect.height() * scaleFactor));
 
     RefPtr<WebImage> snapshot = WebImage::create(size, options);
+    if (!snapshot->bitmap())
+        return 0;
+    
     OwnPtr<WebCore::GraphicsContext> graphicsContext = snapshot->bitmap()->createGraphicsContext();
     graphicsContext->save();
     
@@ -912,8 +918,12 @@ void WebPage::createSnapshotOfVisibleContent(ShareableBitmap::Handle& snapshotHa
     FrameView* frameView = m_mainFrame->coreFrame()->view();
     if (!frameView)
         return;
+    
     IntRect contentRect = frameView->visibleContentRect(false);
     RefPtr<WebImage> snapshotImage = scaledSnapshotInDocumentCoordinates(contentRect, 1, ImageOptionsShareable);
+    if (!snapshotImage->bitmap())
+        return;
+    
     snapshotImage->bitmap()->createHandle(snapshotHandle);
 }
 
