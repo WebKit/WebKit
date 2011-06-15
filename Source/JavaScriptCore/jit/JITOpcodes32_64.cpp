@@ -806,17 +806,18 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool dynamic)
     void* globalObject = m_codeBlock->globalObject();
 
     unsigned currentIndex = m_globalResolveInfoIndex++;
-    void* structureAddress = &(m_codeBlock->globalResolveInfo(currentIndex).structure);
-    void* offsetAddr = &(m_codeBlock->globalResolveInfo(currentIndex).offset);
+    GlobalResolveInfo* resolveInfoAddress = &m_codeBlock->globalResolveInfo(currentIndex);
+
 
     // Verify structure.
     move(TrustedImmPtr(globalObject), regT0);
-    loadPtr(structureAddress, regT1);
+    move(TrustedImmPtr(resolveInfoAddress), regT3);
+    loadPtr(Address(regT3, OBJECT_OFFSETOF(GlobalResolveInfo, structure)), regT1);
     addSlowCase(branchPtr(NotEqual, regT1, Address(regT0, JSCell::structureOffset())));
 
     // Load property.
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSGlobalObject, m_propertyStorage)), regT2);
-    load32(offsetAddr, regT3);
+    load32(Address(regT3, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), regT3);
     load32(BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.payload)), regT0); // payload
     load32(BaseIndex(regT2, regT3, TimesEight, OBJECT_OFFSETOF(JSValue, u.asBits.tag)), regT1); // tag
     emitStore(dst, regT1, regT0);

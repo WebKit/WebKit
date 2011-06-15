@@ -638,18 +638,18 @@ void JIT::emit_op_resolve_global(Instruction* currentInstruction, bool)
     // Fast case
     void* globalObject = m_codeBlock->globalObject();
     unsigned currentIndex = m_globalResolveInfoIndex++;
-    void* structureAddress = &(m_codeBlock->globalResolveInfo(currentIndex).structure);
-    void* offsetAddr = &(m_codeBlock->globalResolveInfo(currentIndex).offset);
+    GlobalResolveInfo* resolveInfoAddress = &(m_codeBlock->globalResolveInfo(currentIndex));
 
     // Check Structure of global object
     move(TrustedImmPtr(globalObject), regT0);
-    loadPtr(structureAddress, regT1);
+    move(TrustedImmPtr(resolveInfoAddress), regT2);
+    loadPtr(Address(regT2, OBJECT_OFFSETOF(GlobalResolveInfo, structure)), regT1);
     addSlowCase(branchPtr(NotEqual, regT1, Address(regT0, JSCell::structureOffset()))); // Structures don't match
 
     // Load cached property
     // Assume that the global object always uses external storage.
     loadPtr(Address(regT0, OBJECT_OFFSETOF(JSGlobalObject, m_propertyStorage)), regT0);
-    load32(offsetAddr, regT1);
+    load32(Address(regT2, OBJECT_OFFSETOF(GlobalResolveInfo, offset)), regT1);
     loadPtr(BaseIndex(regT0, regT1, ScalePtr), regT0);
     emitPutVirtualRegister(currentInstruction[1].u.operand);
 }
