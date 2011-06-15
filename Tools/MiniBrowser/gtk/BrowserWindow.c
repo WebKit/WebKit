@@ -36,11 +36,14 @@ enum {
 struct _BrowserWindow {
     GtkWindow parent;
 
-    GtkWidget* mainBox;
-    GtkWidget* uriEntry;
+    GtkWidget *mainBox;
+    GtkWidget *uriEntry;
+    GtkWidget *statusBar;
     WKViewRef webView;
 
-    gchar* title;
+    guint statusBarContextId;
+
+    gchar *title;
     gdouble loadProgress;
 };
 
@@ -163,6 +166,11 @@ static void browserWindowConstructed(GObject* gObject)
 
     gtk_box_pack_start(GTK_BOX(window->mainBox), GTK_WIDGET(window->webView), TRUE, TRUE, 0);
     gtk_widget_show(GTK_WIDGET(window->webView));
+
+    window->statusBar = gtk_statusbar_new();
+    window->statusBarContextId = gtk_statusbar_get_context_id(GTK_STATUSBAR(window->statusBar), "Link Hover");
+    gtk_box_pack_start(GTK_BOX(window->mainBox), window->statusBar, FALSE, FALSE, 0);
+    gtk_widget_show(window->statusBar);
 
     browserWindowLoaderClientInit(window);
     browserWindowUIClientInit(window);
@@ -463,6 +471,22 @@ static WKStringRef runJavaScriptPrompt(WKPageRef page, WKStringRef message, WKSt
     return returnValue;
 }
 
+static void mouseDidMoveOverElement(WKPageRef page, WKEventModifiers modifiers, WKTypeRef userData, const void *clientInfo)
+{
+    BrowserWindow *window = BROWSER_WINDOW(clientInfo);
+    gtk_statusbar_pop(GTK_STATUSBAR(window->statusBar), window->statusBarContextId);
+
+    if (!userData)
+        return;
+
+    if (WKGetTypeID(userData) != WKURLGetTypeID())
+        return;
+
+    gchar *link = WKURLGetCString((WKURLRef)userData);
+    gtk_statusbar_push(GTK_STATUSBAR(window->statusBar), window->statusBarContextId, link);
+    g_free(link);
+}
+
 static void browserWindowUIClientInit(BrowserWindow *window)
 {
     WKPageUIClient uiClient = {
@@ -478,7 +502,7 @@ static void browserWindowUIClientInit(BrowserWindow *window)
         runJavaScriptConfirm,
         runJavaScriptPrompt,
         0,      /* setStatusText */
-        0,      /* mouseDidMoveOverElement */
+        mouseDidMoveOverElement,
         0,      /* missingPluginButtonClicked */
         0,      /* didNotHandleKeyEvent */
         0,      /* didNotHandleWheelEvent */

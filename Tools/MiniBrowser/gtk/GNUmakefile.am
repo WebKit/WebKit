@@ -33,3 +33,21 @@ Programs_MiniBrowser_LDFLAGS = \
 
 CLEANFILES += \
 	$(top_builddir)/Programs/MiniBrowser
+
+# Injected bundle
+noinst_LTLIBRARIES += Libraries/libMiniBrowserWebBundle.la
+Libraries_libMiniBrowserWebBundle_la_SOURCES = \
+	Tools/MiniBrowser/gtk/WebBundle/WebBundleMain.c
+
+Libraries_libMiniBrowserWebBundle_la_LDFLAGS = \
+	-rpath ${shell pwd}/$(top_builddir)/../unix/TestNetscapePlugin/.libs \
+	$(no_undefined) \
+	-avoid-version \
+	-module
+
+Libraries_libMiniBrowserWebBundle_la_CPPFLAGS = \
+	-I$(top_builddir)/DerivedSources/InjectedBundle \
+	-I$(top_builddir)/DerivedSources/WebKit2/include \
+	$(global_cppflags) \
+	$(javascriptcore_cppflags) \
+	$(GLIB_CFLAGS)

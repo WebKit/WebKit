@@ -31,6 +31,22 @@
 
 static const gchar **uriArguments = NULL;
 
+static WKContextRef createWKContextWithInjectedBundle()
+{
+    WKStringRef bundlePath = WKStringCreateWithUTF8CString("Libraries/.libs/libMiniBrowserWebBundle.so");
+    WKContextRef processContext = WKContextCreateWithInjectedBundlePath(bundlePath);
+    WKContextInjectedBundleClient bundleClient = {
+            0, /* version */
+            0, /* clientInfo */
+            0, /* didRecieveMessageFromInjectedBundle,*/
+            0
+    };
+    WKContextSetInjectedBundleClient(processContext, &bundleClient);
+    WKRelease(bundlePath);
+
+    return processContext;
+}
+
 static gchar *argumentToURL(const char *filename)
 {
     GFile *gfile = g_file_new_for_commandline_arg(filename);
@@ -40,9 +56,9 @@ static gchar *argumentToURL(const char *filename)
     return fileURL;
 }
 
-static void loadURI(const gchar *uri)
+static void loadURI(const gchar *uri, WKContextRef processContext)
 {
-    WKViewRef webView = WKViewCreate(WKContextGetSharedProcessContext(), 0);
+    WKViewRef webView = WKViewCreate(processContext, 0);
     GtkWidget *mainWindow = browser_window_new(webView);
     gchar *url = argumentToURL(uri);
     WKPageLoadURL(WKViewGetPage(webView), WKURLCreateWithUTF8CString(url));
@@ -77,13 +93,15 @@ int main(int argc, char *argv[])
     }
     g_option_context_free (context);
 
+    WKContextRef processContext = createWKContextWithInjectedBundle();
+
     if (uriArguments) {
         int i;
 
         for (i = 0; uriArguments[i]; i++)
-            loadURI(uriArguments[i]);
+            loadURI(uriArguments[i], processContext);
     } else
-        loadURI("http://www.webkitgtk.org/");
+        loadURI("http://www.webkitgtk.org/", processContext);
 
     gtk_main();
 

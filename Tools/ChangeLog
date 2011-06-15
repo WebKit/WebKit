@@ -1,3 +1,30 @@
+2011-06-15  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Add a statusbar to MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=62634
+
+        It shows the url of the current hovered link.
+
+        * MiniBrowser/gtk/BrowserWindow.c:
+        (browserWindowConstructed): Create the GtkSatusbar.
+        (mouseDidMoveOverElement): Update statusbar text.
+        (browserWindowUIClientInit): Add implementation for
+        mouseDidMoveOverElement().
+        * MiniBrowser/gtk/GNUmakefile.am: Add new files to compilation.
+        * MiniBrowser/gtk/WebBundle/WebBundleMain.c: Added.
+        (mouseDidMoveOverElement): Pass the url of the current hovered
+        link to the UI process.
+        (didCreatePage): Set the UI client adding an implementation for
+        mouseDidMoveOverElement().
+        (WKBundleInitialize):
+        * MiniBrowser/gtk/main.c:
+        (createWKContextWithInjectedBundle): Create a global context with
+        the injected bundle.
+        (loadURI): Use the global context.
+        (main):
+
 2011-06-14  Lucas Forschler  <lforschler@apple.com>
 
         Reviewed by Stephanie Lewis.
