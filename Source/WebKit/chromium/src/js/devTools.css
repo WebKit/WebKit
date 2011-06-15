@@ -24,11 +24,11 @@ body.detached.platform-mac-leopard.inactive #toolbar {
 }
 
 body.detached.platform-mac-snowleopard #toolbar {
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(189, 189, 189)), to(rgb(151, 151, 151))) !important;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(189, 189, 189)), to(rgb(167, 167, 167))) !important;
 }
 
 body.detached.platform-mac-snowleopard.inactive #toolbar {
-    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(215, 215, 215)), to(rgb(207, 207, 207))) !important;
+    background-image: -webkit-gradient(linear, left top, left bottom, from(rgb(228, 228, 228)), to(rgb(216, 216, 216))) !important;
 }
 
 body.platform-linux #scripts-files {

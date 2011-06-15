@@ -1,3 +1,11 @@
+2011-06-15  Pavel Feldman  <pfeldman@chromium.org>
+
+        Not reviewed: [Chromium] one line background color fix for inspector.
+
+        * src/js/devTools.css:
+        (body.detached.platform-mac-snowleopard #toolbar):
+        (body.detached.platform-mac-snowleopard.inactive #toolbar):
+
 2011-06-14  Hans Wennborg  <hans@chromium.org>
 
         Reviewed by Tony Gentilcore.
