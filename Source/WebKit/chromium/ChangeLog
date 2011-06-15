@@ -1,3 +1,17 @@
+2011-06-14  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        IndexedDB: LevelDB doesn't do incognito mode; fall back to SQLite.
+        https://bugs.webkit.org/show_bug.cgi?id=62633
+
+        LevelDB does not support in-memory databases. Fall back to SQLite
+        for incognito mode browsing. This will be tested by browser_tests
+        in Chromium.
+
+        * src/WebIDBFactoryImpl.cpp:
+        (WebKit::WebIDBFactoryImpl::open):
+
 2011-06-10  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Dmitry Titov.

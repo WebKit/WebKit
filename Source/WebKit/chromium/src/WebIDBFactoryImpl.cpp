@@ -75,16 +75,21 @@ void WebIDBFactoryImpl::open(const WebString& name, WebIDBCallbacks* callbacks, 
 {
     WebString path = dataDir;
     if (overriddenBackingStoreType != DefaultBackingStore) {
+        // Backing store type overridden by LayoutTestController.
         backingStoreType = overriddenBackingStoreType;
 
-        // The dataDir is empty for two reasons: LevelDB in icognito mode or
-        // LevelDB from DumpRenderTree. The first case is taken care of inside
-        // IDBFactoryBackendImpl.cpp by forcing SQLITE backend for incognito.
-        // For the DumpRenderTree case we need to keep track of the location
-        // so we can wipe it out when we're done with the test.
-        if (dataDir.isEmpty() && backingStoreType == LevelDBBackingStore)
+        // dataDir is empty for layout tests.
+        ASSERT(dataDir.isEmpty());
+
+        if (backingStoreType == LevelDBBackingStore) {
+            // LevelDB doesn't support in-memory databases, so use a temporary folder.
             path = tempDatabaseFolder;
+        }
+    } else if (dataDir.isEmpty() && backingStoreType == LevelDBBackingStore) {
+        // Fall back to SQLite for incognito mode.
+        backingStoreType = SQLiteBackingStore;
     }
+
     m_idbFactoryBackend->open(name, IDBCallbacksProxy::create(adoptPtr(callbacks)), origin, 0, path, maximumSize, static_cast<IDBFactoryBackendInterface::BackingStoreType>(backingStoreType));
 }
 
