@@ -83,7 +83,7 @@ public:
 
     bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
 
-    virtual void setIsActive(bool);
+    virtual void setIsActive();
 
 #if USE(WK_SCROLLBAR_PAINTER)
     void updateScrollerStyle();

@@ -2226,12 +2226,19 @@ void FrameView::setVisibleScrollerThumbRect(const IntRect& scrollerThumb)
     return page->chrome()->client()->notifyScrollerThumbIsVisibleInRect(scrollerThumb);
 }
 
+bool FrameView::isOnActivePage() const
+{
+    if (m_frame->view() != this)
+        return false;
+    return !m_frame->document()->inPageCache();
+}
+
 bool FrameView::shouldSuspendScrollAnimations() const
 {
     return m_frame->loader()->state() != FrameStateComplete;
 }
 
-void FrameView::setAnimatorsAreActive(bool active)
+void FrameView::setAnimatorsAreActive()
 {
     Page* page = m_frame->page();
     if (!page)
@@ -2242,8 +2249,14 @@ void FrameView::setAnimatorsAreActive(bool active)
         return;
 
     HashSet<ScrollableArea*>::const_iterator end = scrollableAreas->end(); 
-    for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it)
-        (*it)->scrollAnimator()->setIsActive(active);
+    for (HashSet<ScrollableArea*>::const_iterator it = scrollableAreas->begin(); it != end; ++it) {
+        // FIXME: This extra check to make sure the ScrollableArea is on an active page needs 
+        // to be here as long as the ScrollableArea HashSet lives on Page. But it should really be
+        // moved to the top-level Document or a similar class that really represents a single 
+        // web page. https://bugs.webkit.org/show_bug.cgi?id=62762
+        if ((*it)->isOnActivePage())
+            (*it)->scrollAnimator()->setIsActive();
+    }
 }
 
 void FrameView::notifyPageThatContentAreaWillPaint() const

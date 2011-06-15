@@ -546,6 +546,7 @@ private:
     virtual IntPoint currentMousePosition() const;
     virtual void didCompleteRubberBand(const IntSize&) const;
     virtual bool shouldSuspendScrollAnimations() const;
+    virtual bool isOnActivePage() const;
 
     // Rectangle encompassing the scroll corner and resizer rect.
     IntRect scrollCornerAndResizerRect() const;

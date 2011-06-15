@@ -1817,6 +1817,11 @@ bool RenderLayer::shouldSuspendScrollAnimations() const
     return view->frameView()->shouldSuspendScrollAnimations();
 }
 
+bool RenderLayer::isOnActivePage() const
+{
+    return !m_renderer->document()->inPageCache();
+}
+
 IntPoint RenderLayer::currentMousePosition() const
 {
     return renderer()->frame() ? renderer()->frame()->eventHandler()->currentMousePosition() : IntPoint();

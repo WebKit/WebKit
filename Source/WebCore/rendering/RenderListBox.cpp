@@ -801,6 +801,11 @@ bool RenderListBox::shouldSuspendScrollAnimations() const
     return view->frameView()->shouldSuspendScrollAnimations();
 }
 
+bool RenderListBox::isOnActivePage() const
+{
+    return !document()->inPageCache();
+}
+
 PassRefPtr<Scrollbar> RenderListBox::createScrollbar()
 {
     RefPtr<Scrollbar> widget;

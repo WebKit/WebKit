@@ -1,3 +1,68 @@
+2011-06-15  Beth Dakin  <bdakin@apple.com>
+
+        Reviewed by Simon Fraser.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62746
+        Crash possible when switching scrollbar appearance preference on Mac
+        -and corresponding-
+        <rdar://problem/9323983>
+        
+        This crash happens because the current mechanism that is intended to flag 
+        ScrollAnimators as being in the page cache or not does not work correctly. 
+        Long-term the fix for this is to move the ScrollableArea HashSet to a more 
+        appropriate place. In the meantime, this patch addresses the crash by getting 
+        rid of the m_isActive bool on ScrollAnimator that was intended to represent 
+        whether or not the ScrollableArea is in the page cache. Instead, ScrollableArea 
+        implementations now have their own functions to compute whether they are in 
+        active pages. ScrollAnimator::setIsActive() needs to be kept around even though 
+        there is no bool to flip anymore because scrollbars may need to be properly 
+        updated if the appearance was switched while the document was in the page cache.
+
+        No longer call FrameView::setAnimatorsAreActive() from 
+        Document::setIsInPageCache(), instead call it in 
+        Document::documentDidBecomeActive()
+        * dom/Document.cpp:
+        (WebCore::Document::setInPageCache):
+        (WebCore::Document::documentDidBecomeActive):
+
+        ScrollableAreas can now assess whether or not they are on active pages (ie, not 
+        in the page cache).
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::isOnActivePage):
+        * rendering/RenderLayer.cpp:
+        (WebCore::RenderLayer::isOnActivePage):
+        * rendering/RenderLayer.h:
+        * rendering/RenderListBox.cpp:
+        (WebCore::RenderListBox::isOnActivePage):
+        * rendering/RenderListBox.h:
+
+        A FrameView cannot access its Document when it's in the page cache, so it 
+        usually determines whether it's in the page cache by checking if its frame 
+        points to a FrameView other than itself.
+        * page/FrameView.cpp:
+        (WebCore::FrameView::isOnActivePage):
+        
+        Make sure ScrollableAreas are on active pages before setting them as 
+        active. This will not be necessary when the HashSet become a per-web page 
+        HashSet.
+        (WebCore::FrameView::setAnimatorsAreActive):
+        * page/FrameView.h:
+        
+        ScrollAnimator no longer tracks the m_isActive bool. 
+        * platform/ScrollAnimator.cpp:
+        (WebCore::ScrollAnimator::ScrollAnimator):
+        * platform/ScrollAnimator.h:
+        (WebCore::ScrollAnimator::setIsActive):
+        
+        setIsActive() now exclusively calls updateScrollStyle() if there is a pending 
+        need to do so.
+        * platform/mac/ScrollAnimatorMac.h:
+        * platform/mac/ScrollAnimatorMac.mm:
+        (WebCore::ScrollAnimatorMac::setIsActive):
+        
+        Return early if the ScrollableArea is in the page cache. 
+        (WebCore::ScrollAnimatorMac::updateScrollerStyle):
+
 2011-06-15  Simon Fraser  <simon.fraser@apple.com>
 
         Reviewed by Dan Bernstein.

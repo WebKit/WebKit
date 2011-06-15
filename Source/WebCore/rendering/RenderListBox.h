@@ -117,6 +117,7 @@ private:
     virtual int visibleWidth() const;
     virtual IntPoint currentMousePosition() const;
     virtual bool shouldSuspendScrollAnimations() const;
+    virtual bool isOnActivePage() const;
 
     virtual void disconnectFromPage() { m_page = 0; }
 

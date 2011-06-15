@@ -1216,10 +1216,8 @@ void ScrollAnimatorMac::snapRubberBandTimerFired(Timer<ScrollAnimatorMac>*)
 }
 #endif
 
-void ScrollAnimatorMac::setIsActive(bool active)
+void ScrollAnimatorMac::setIsActive()
 {
-    ScrollAnimator::setIsActive(active);
-
 #if USE(WK_SCROLLBAR_PAINTER)
     if (needsScrollerStyleUpdate())
         updateScrollerStyle();
@@ -1229,7 +1227,7 @@ void ScrollAnimatorMac::setIsActive(bool active)
 #if USE(WK_SCROLLBAR_PAINTER)
 void ScrollAnimatorMac::updateScrollerStyle()
 {
-    if (!isActive()) {
+    if (!scrollableArea()->isOnActivePage()) {
         setNeedsScrollerStyleUpdate(true);
         return;
     }
