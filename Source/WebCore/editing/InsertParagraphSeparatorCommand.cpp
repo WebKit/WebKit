@@ -136,6 +136,10 @@ PassRefPtr<Element> InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock
     RefPtr<Element> parent = blockToInsert;
     for (size_t i = ancestors.size(); i != 0; --i) {
         RefPtr<Element> child = ancestors[i - 1]->cloneElementWithoutChildren();
+        // It should always be okay to remove id from the cloned elements, since the originals are not deleted.
+        ExceptionCode ec = 0;
+        child->removeAttribute(idAttr, ec);
+        ASSERT(!ec);
         appendNode(child, parent);
         parent = child.release();
     }

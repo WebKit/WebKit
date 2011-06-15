@@ -1,3 +1,15 @@
+2011-06-14  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        Span ID duplicated when pressing enter at beginning of span
+        https://bugs.webkit.org/show_bug.cgi?id=62621
+
+        Added test for span id not getting duplicated when span is cloned.
+
+        * editing/inserting/return-key-span-start-expected.txt: Added.
+        * editing/inserting/return-key-span-start.html: Added.
+
 2011-06-14  Ryosuke Niwa  <rniwa@webkit.org>
 
         Mac, Windows, and Chromium rebaseline for r88883.

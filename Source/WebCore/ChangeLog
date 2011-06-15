@@ -1,3 +1,17 @@
+2011-06-14  Annie Sullivan  <sullivan@chromium.org>
+        
+        Reviewed by Ryosuke Niwa.
+
+        Span ID duplicated when pressing enter at beginning of span
+        https://bugs.webkit.org/show_bug.cgi?id=62621
+
+        Strip id from cloned span, so that it is not duplicated.
+        
+        Test: editing/inserting/return-key-span-start.html
+        
+        * editing/InsertParagraphSeparatorCommand.cpp:
+        (WebCore::InsertParagraphSeparatorCommand::cloneHierarchyUnderNewBlock):
+
 2011-06-13  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by David Hyatt.
