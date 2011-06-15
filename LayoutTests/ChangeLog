@@ -1,3 +1,10 @@
+2011-06-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        GTK rebaseline for r88883.
+
+        * platform/gtk/fast/forms/basic-textareas-expected.txt:
+        * platform/gtk/fast/forms/basic-textareas-quirks-expected.txt:
+
 2011-06-14  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Ryosuke Niwa.
