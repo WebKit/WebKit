@@ -26,6 +26,7 @@
 #include "config.h"
 #include "WebPageProxy.h"
 
+#include "PageClient.h"
 #include <WebCore/NotImplemented.h>
 
 namespace WebKit {
@@ -44,6 +45,11 @@ void WebPageProxy::saveRecentSearches(const String&, const Vector<String>&)
 void WebPageProxy::loadRecentSearches(const String&, Vector<String>&)
 {
     notImplemented();
+}
+
+WebCore::IntRect WebPageProxy::viewportVisibleRect()
+{
+    return m_pageClient->viewportVisibleRect();
 }
 
 } // namespace WebKit

@@ -69,6 +69,7 @@ public:
     virtual void didRelaunchProcess();
     virtual void didChangeContentsSize(const WebCore::IntSize&);
     virtual void didFindZoomableArea(const WebCore::IntRect&);
+    virtual WebCore::IntRect viewportVisibleRect() const;
     virtual void setCursor(const WebCore::Cursor&);
     virtual void setViewportArguments(const WebCore::ViewportArguments&);
     virtual void toolTipChanged(const WTF::String&, const WTF::String&);

@@ -831,6 +831,12 @@ void QWKPagePrivate::didFindZoomableArea(const IntRect& area)
     emit q->zoomableAreaFound(QRect(area));
 }
 
+WebCore::IntRect QWKPagePrivate::viewportVisibleRect() const
+{
+    QGraphicsWKView* wkView = static_cast<QGraphicsWKView*>(view);
+    return enclosingIntRect(FloatRect(wkView->visibleRect()));
+}
+
 bool QWKPage::isConnectedToEngine() const
 {
     return d->isConnectedToEngine;
