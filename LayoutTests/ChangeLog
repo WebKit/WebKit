@@ -1,3 +1,11 @@
+2011-06-14  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Qt rebaseline after r88757.
+
+        * platform/qt/fast/forms/range-thumb-height-percentage-expected.txt:
+        * platform/qt/fast/forms/thumbslider-no-parent-slider-expected.txt:
+        * platform/qt/fast/multicol/client-rects-expected.txt:
+
 2011-06-14  Dimitri Glazkov  <dglazkov@chromium.org>
 
         [Chromium] Turns out, inspector/cookie-parser.html can timeout out.
