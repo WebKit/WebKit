@@ -1,3 +1,23 @@
+2011-06-15  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        Draw CSS outline style for render widgets: iframe, embed, object, applet.
+        https://bugs.webkit.org/show_bug.cgi?id=57439
+
+        Draw CSS outlines for render widgets: iframe, embed, object, applet. These elements can
+        be focused (via clicks or tabIndex) but should not have a visible focus ring by default.
+
+        Tests: fast/replaced/no-focus-ring-embed.html
+               fast/replaced/no-focus-ring-iframe.html
+               fast/replaced/no-focus-ring-object.html
+               fast/replaced/outline-replaced-elements.html
+
+        * css/html.css:
+        (applet:focus, embed:focus, iframe:focus, object:focus): Default to no focus ring.
+        * rendering/RenderWidget.cpp:
+        (WebCore::RenderWidget::paint): Paint the render widget CSS outline style.
+
 2011-06-15  Steve Block  <steveblock@google.com>
 
         Reviewed by Tony Gentilcore.

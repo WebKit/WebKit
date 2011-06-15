@@ -1,3 +1,22 @@
+2011-06-15  Noel Gordon  <noel.gordon@gmail.com>
+
+        Reviewed by Eric Seidel.
+
+        CSS property outline not displayed on an iframe.
+        https://bugs.webkit.org/show_bug.cgi?id=57439
+
+        * fast/replaced/no-focus-ring-embed-expected.txt: Added.
+        * fast/replaced/no-focus-ring-embed.html: Added.
+        * fast/replaced/no-focus-ring-iframe-expected.txt: Added.
+        * fast/replaced/no-focus-ring-iframe.html: Added.
+        * fast/replaced/no-focus-ring-object-expected.txt: Added.
+        * fast/replaced/no-focus-ring-object.html: Added.
+        * fast/replaced/outline-replaced-elements-expected.txt: Added.
+        * fast/replaced/outline-replaced-elements.html: Added.
+        * fast/replaced/resources/focus-test.js: Added.
+        (element.onfocus): Use a small delay to avoid test false positives.
+        * platform/mac/fast/replaced/outline-replaced-elements-expected.png: Added.
+
 2011-06-15  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r88916.

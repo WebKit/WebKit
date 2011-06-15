@@ -868,6 +868,10 @@ nobr {
 html:focus, body:focus, input[readonly]:focus { 
     outline: none
 }
+
+applet:focus, embed:focus, iframe:focus, object:focus {
+    outline: none
+}
   
 input:focus, textarea:focus, isindex:focus, keygen:focus, select:focus {
     outline-offset: -2px
