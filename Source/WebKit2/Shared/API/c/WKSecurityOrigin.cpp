@@ -48,12 +48,12 @@ WKSecurityOriginRef WKSecurityOriginCreate(WKStringRef protocol, WKStringRef hos
     return toAPI(securityOrigin.release().leakRef());
 }
 
-WKStringRef WKSecurityOriginGetProtocol(WKSecurityOriginRef securityOrigin)
+WKStringRef WKSecurityOriginCopyProtocol(WKSecurityOriginRef securityOrigin)
 {
     return toCopiedAPI(toImpl(securityOrigin)->protocol());
 }
 
-WKStringRef WKSecurityOriginGetHost(WKSecurityOriginRef securityOrigin)
+WKStringRef WKSecurityOriginCopyHost(WKSecurityOriginRef securityOrigin)
 {
     return toCopiedAPI(toImpl(securityOrigin)->host());
 }

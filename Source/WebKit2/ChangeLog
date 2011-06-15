@@ -1,3 +1,20 @@
+2011-06-15  John Sullivan  <sullivan@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        WKSecurityOriginGetProtocol and WKSecurityOriginGetHost are named wrong because they return copied strings
+        <https://bugs.webkit.org/show_bug.cgi?id=62763>
+        <rdar://problem/9618071>
+
+        * Shared/API/c/WKSecurityOrigin.cpp:
+        (WKSecurityOriginCopyProtocol):
+        Renamed to use "Copy" instead of "Get" because it returns a copy.
+        (WKSecurityOriginCopyHost):
+        Ditto.
+
+        * Shared/API/c/WKSecurityOrigin.h:
+        Updated declarations.
+
 2011-06-14  Jon Honeycutt  <jhoneycutt@apple.com>
 
         REGRESSION(78201): Windowless Flash plug-ins are transparent on some sites
