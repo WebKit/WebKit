@@ -1,3 +1,13 @@
+2011-06-15  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        IndexedDB: indexedDB.open() name argument is required
+        https://bugs.webkit.org/show_bug.cgi?id=62398
+
+        * storage/indexeddb/database-name-undefined-expected.txt: Added.
+        * storage/indexeddb/database-name-undefined.html: Added.
+
 2011-06-15  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Dimitri Glazkov.
