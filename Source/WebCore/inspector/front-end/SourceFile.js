@@ -63,11 +63,6 @@ WebInspector.SourceFile.prototype = {
         this._requestContent();
     },
 
-    get displayName()
-    {
-        return this.url ? WebInspector.displayNameForURL(this.url) : WebInspector.UIString("(program)");
-    },
-
     get content()
     {
         return this._content;

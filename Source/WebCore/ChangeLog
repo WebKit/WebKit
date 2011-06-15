@@ -1,3 +1,17 @@
+2011-06-15  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: script select can be too wide.
+        https://bugs.webkit.org/show_bug.cgi?id=62701
+
+        * inspector/front-end/ScriptsPanel.js:
+        (WebInspector.ScriptsPanel.prototype._displayNameForScriptURL):
+        (WebInspector.ScriptsPanel.prototype._createSourceFrame):
+        (WebInspector.SourceFrameDelegateForScriptsPanel):
+        (WebInspector.SourceFrameDelegateForScriptsPanel.prototype.suggestedFileName):
+        * inspector/front-end/SourceFile.js:
+
 2011-06-15  Noel Gordon  <noel.gordon@gmail.com>
 
         Reviewed by Eric Seidel.

@@ -252,7 +252,7 @@ WebInspector.ScriptsPanel.prototype = {
     {
         var select = this._filesSelectElement;
         var option = document.createElement("option");
-        option.text = sourceFile.displayName;
+        option.text = this._displayNameForScriptURL(sourceFile.url) || WebInspector.UIString("(program)");
         option.title = sourceFile.url;
         option.isContentScript = sourceFile.isContentScript;
         if (sourceFile.isContentScript)
@@ -290,6 +290,20 @@ WebInspector.ScriptsPanel.prototype = {
         }
         option._sourceFileId = sourceFile.id;
         this._sourceFileIdToFilesSelectOption[sourceFile.id] = option;
+    },
+
+    _displayNameForScriptURL: function(url)
+    {
+        var displayName = url;
+        var indexOfQuery = displayName.indexOf("?");
+        if (indexOfQuery > 0)
+            displayName = displayName.substring(0, indexOfQuery);
+        var fromIndex = displayName.lastIndexOf("/", displayName.length - 2);
+        if (fromIndex !== -1)
+            displayName = displayName.substring(fromIndex + 1);
+        if (displayName.length > 100)
+            displayName = displayName.substring(0, 80) + "...";
+        return displayName;
     },
 
     setScriptSourceIsBeingEdited: function(sourceFileId, inEditMode)
@@ -590,7 +604,7 @@ WebInspector.ScriptsPanel.prototype = {
     _createSourceFrame: function(sourceFileId)
     {
         var sourceFile = this._presentationModel.sourceFile(sourceFileId);
-        var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this._presentationModel, sourceFileId, sourceFile.displayName);
+        var delegate = new WebInspector.SourceFrameDelegateForScriptsPanel(this._presentationModel, sourceFileId);
         var sourceFrame = new WebInspector.SourceFrame(delegate, sourceFile.url);
         sourceFrame._sourceFileId = sourceFileId;
         sourceFrame.addEventListener(WebInspector.SourceFrame.Events.Loaded, this._sourceFrameLoaded, this);
@@ -1055,13 +1069,12 @@ WebInspector.ScriptsPanel.prototype = {
 WebInspector.ScriptsPanel.prototype.__proto__ = WebInspector.Panel.prototype;
 
 
-WebInspector.SourceFrameDelegateForScriptsPanel = function(model, sourceFileId, scriptName)
+WebInspector.SourceFrameDelegateForScriptsPanel = function(model, sourceFileId)
 {
     WebInspector.SourceFrameDelegate.call(this);
     this._model = model;
     this._sourceFileId = sourceFileId;
     this._popoverObjectGroup = "popover";
-    this._scriptName = scriptName;
 }
 
 WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
@@ -1135,7 +1148,8 @@ WebInspector.SourceFrameDelegateForScriptsPanel.prototype = {
 
     suggestedFileName: function()
     {
-        return this._scriptName;
+        var sourceFile = this._model.sourceFile(this._sourceFileId);
+        return WebInspector.panels.scripts._displayNameForScriptURL(sourceFile.url) || "untitled.js";
     }
 }
 
