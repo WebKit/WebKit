@@ -213,11 +213,6 @@ WKScrollbarPainterRef wkHorizontalScrollbarPainterForController(WKScrollbarPaint
     return [controller horizontalScrollerImp];
 }
 
-NSScrollerStyle wkScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef controller)
-{
-    return [controller scrollerStyle];
-}
-
 WKScrollbarPainterRef wkMakeScrollbarReplacementPainter(WKScrollbarPainterRef oldPainter, int newStyle, int controlSize, bool isHorizontal)
 {
     if (!isScrollbarOverlayAPIAvailable())

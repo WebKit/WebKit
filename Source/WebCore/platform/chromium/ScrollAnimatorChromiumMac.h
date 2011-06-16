@@ -71,18 +71,12 @@ public:
     void immediateScrollByDeltaX(float deltaX);
     void immediateScrollByDeltaY(float deltaY);
 
-    void immediateScrollToPointForScrollAnimation(const FloatPoint& newPosition);
-
     void setIsDrawingIntoLayer(bool b) { m_drawingIntoLayer = b; }
     bool isDrawingIntoLayer() const { return m_drawingIntoLayer; }
 
     bool haveScrolledSincePageLoad() const { return m_haveScrolledSincePageLoad; }
 
-    virtual void setIsActive(bool);
-
 #if USE(WK_SCROLLBAR_PAINTER)
-    void updateScrollerStyle();
-
     bool scrollbarPaintTimerIsActive() const;
     void startScrollbarPaintTimer();
     void stopScrollbarPaintTimer();
@@ -121,9 +115,6 @@ private:
     virtual void didAddHorizontalScrollbar(Scrollbar*);
     virtual void willRemoveHorizontalScrollbar(Scrollbar*);
 
-    void setNeedsScrollerStyleUpdate(bool needsUpdate) { m_needsScrollerStyleUpdate = needsUpdate; }
-    bool needsScrollerStyleUpdate() const { return m_needsScrollerStyleUpdate; }
-
     float adjustScrollXPositionIfNecessary(float) const;
     float adjustScrollYPositionIfNecessary(float) const;
     FloatPoint adjustScrollPositionIfNecessary(const FloatPoint&) const;
@@ -141,13 +132,8 @@ private:
     bool m_inScrollGesture;
     bool m_momentumScrollInProgress;
     bool m_ignoreMomentumScrolls;
-
-    bool m_scrollerInitiallyPinnedOnLeft;
-    bool m_scrollerInitiallyPinnedOnRight;
-    int m_cumulativeHorizontalScroll;
-    bool m_didCumulativeHorizontalScrollEverSwitchToOppositeDirectionOfPin;
-
-    CFTimeInterval m_lastMomentumScrollTimestamp;
+    
+    CFTimeInterval m_lastMomemtumScrollTimestamp;
     FloatSize m_overflowScrollDelta;
     FloatSize m_stretchScrollForce;
     FloatSize m_momentumVelocity;
@@ -161,7 +147,6 @@ private:
 #endif
     bool m_drawingIntoLayer;
     bool m_haveScrolledSincePageLoad;
-    bool m_needsScrollerStyleUpdate;
     IntRect m_visibleScrollerThumbRect;
 };
 
