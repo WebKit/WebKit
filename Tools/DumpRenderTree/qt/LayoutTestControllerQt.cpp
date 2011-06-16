@@ -919,7 +919,7 @@ bool LayoutTestController::hasSpellingMarker(int, int)
     return false;
 }
 
-QVariantList LayoutTestController::nodesFromRect(const QVariantMap& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping)
+QVariantList LayoutTestController::nodesFromRect(const QWebElement& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping)
 {
     return DumpRenderTreeSupportQt::nodesFromRect(document, x, y, top, right, bottom, left, ignoreClipping);
 }

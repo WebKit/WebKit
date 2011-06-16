@@ -27,7 +27,6 @@
 #include <QVariant>
 
 namespace WebCore {
-class Document;
 class Text;
 class Node;
 }
@@ -161,7 +160,7 @@ public:
 
     static QString markerTextForListItem(const QWebElement& listItem);
     static QVariantMap computedStyleIncludingVisitedInfo(const QWebElement& element);
-    static QString plainText(const QVariantMap& range);
+    static QString plainText(const QVariant& rng);
 
     static void dumpFrameLoader(bool b);
     static void dumpUserGestureInFrameLoader(bool b);
@@ -199,7 +198,7 @@ public:
 
     static void scalePageBy(QWebFrame*, float scale, const QPoint& origin);
 
-    static QVariantList nodesFromRect(const QVariantMap& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping);
+    static QVariantList nodesFromRect(const QWebElement& document, int x, int y, unsigned top, unsigned right, unsigned bottom, unsigned left, bool ignoreClipping);
     static QString responseMimeType(QWebFrame*);
     static void clearOpener(QWebFrame*);
     static void addURLToRedirect(const QString& origin, const QString& destination);
@@ -219,9 +218,6 @@ public:
     static QString layerTreeAsText(QWebFrame*);
 
     static void injectInternalsObject(QWebFrame*);
-
-private:
-    static WebCore::Document* getCoreDocumentFromVariantMap(const QVariantMap& document);
 };
 
 #endif

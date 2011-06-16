@@ -38,7 +38,7 @@ PlainTextController::PlainTextController(QWebPage* parent)
 {
 }
 
-QString PlainTextController::plainText(const QVariantMap& range)
+QString PlainTextController::plainText(const QVariant& range)
 {
     return DumpRenderTreeSupportQt::plainText(range);
 }

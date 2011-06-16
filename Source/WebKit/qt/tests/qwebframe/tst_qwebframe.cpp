@@ -612,8 +612,7 @@ private slots:
     void symmetricUrl();
     void progressSignal();
     void urlChange();
-    void documentHasDocumentElement();
-    void documentAllHasDocumentElement();
+    void domCycles();
     void requestedUrl();
     void requestedUrlAfterSetAndLoadFailures();
     void javaScriptWindowObjectCleared_data();
@@ -2005,9 +2004,10 @@ void tst_QWebFrame::overloadedSlots()
     QCOMPARE(m_myObject->qtFunctionInvoked(), 35);
     */
 
-    // should pick myOverloadedSlot(QWebElement)
+    // should pick myOverloadedSlot(QRegExp)
     m_myObject->resetQtFunctionInvoked();
     evalJS("myObject.myOverloadedSlot(document.body)");
+    QEXPECT_FAIL("", "https://bugs.webkit.org/show_bug.cgi?id=37319", Continue);
     QCOMPARE(m_myObject->qtFunctionInvoked(), 36);
 
     // should pick myOverloadedSlot(QObject*)
@@ -2291,46 +2291,11 @@ void tst_QWebFrame::urlChange()
 }
 
 
-void tst_QWebFrame::documentHasDocumentElement()
+void tst_QWebFrame::domCycles()
 {
-    m_view->setHtml("<html><body></body></html>");
-    QVariant docVariant = m_page->mainFrame()->evaluateJavaScript("document");
-    QVERIFY(docVariant.isValid());
-    QCOMPARE(docVariant.type(), QVariant::Map);
-    QVariantMap document = docVariant.toMap();
-
-    QVariant docElementVariant = document.value("documentElement");
-    QVERIFY(docElementVariant.isValid());
-    QCOMPARE(docElementVariant.userType(), qMetaTypeId<QWebElement>());
-    QWebElement documentElement = qvariant_cast<QWebElement>(docElementVariant);
-
-    QVERIFY(!documentElement.isNull());
-    QCOMPARE(documentElement, m_page->mainFrame()->documentElement());
-}
-
-void tst_QWebFrame::documentAllHasDocumentElement()
-{
-    m_view->setHtml("<html><body></body></html>");
-    QVariant docVariant = m_page->mainFrame()->evaluateJavaScript("document");
-    QVariantMap document = docVariant.toMap();
-
-    QVariant allVariant = document.value("all");
-    QVERIFY(allVariant.isValid());
-    QCOMPARE(allVariant.type(), QVariant::Map);
-    QVariantMap all = allVariant.toMap();
-
-    bool foundDocumentElement = false;
-    foreach (QVariant v, all.values()) {
-        if (v.userType() != qMetaTypeId<QWebElement>())
-            continue;
-        QWebElement e = qvariant_cast<QWebElement>(v);
-        if (e == m_page->mainFrame()->documentElement()) {
-            foundDocumentElement = true;
-            break;
-        }
-    }
-
-    QVERIFY(foundDocumentElement);
+    m_view->setHtml("<html><body>");
+    QVariant v = m_page->mainFrame()->evaluateJavaScript("document");
+    QVERIFY(v.type() == QVariant::Map);
 }
 
 class FakeReply : public QNetworkReply {

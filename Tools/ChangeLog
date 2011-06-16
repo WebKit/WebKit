@@ -1,3 +1,19 @@
+2011-06-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r88796.
+        http://trac.webkit.org/changeset/88796
+        https://bugs.webkit.org/show_bug.cgi?id=62790
+
+        It made fast/dom/nodesFromRect-basic.html time out on Qt,
+        64-bit, debug mode (Requested by Ossy on #webkit).
+
+        * DumpRenderTree/qt/LayoutTestControllerQt.cpp:
+        (LayoutTestController::nodesFromRect):
+        * DumpRenderTree/qt/LayoutTestControllerQt.h:
+        * DumpRenderTree/qt/PlainTextControllerQt.cpp:
+        (PlainTextController::plainText):
+        * DumpRenderTree/qt/PlainTextControllerQt.h:
+
 2011-06-15  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, build fix.

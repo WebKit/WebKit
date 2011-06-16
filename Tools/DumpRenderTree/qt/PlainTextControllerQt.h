@@ -41,7 +41,7 @@ public:
     PlainTextController(QWebPage* parent);
 
 public slots:
-    QString plainText(const QVariantMap& range);
+    QString plainText(const QVariant& range);
 };
 
 #endif // PlainTextControllerQt_h
