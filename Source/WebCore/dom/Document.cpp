@@ -3938,9 +3938,6 @@ void Document::setInPageCache(bool flag)
         if (childNeedsStyleRecalc())
             scheduleStyleRecalc();
     }
-
-    if (v)
-        v->setAnimatorsAreActive(!m_inPageCache);
 }
 
 void Document::documentWillBecomeInactive() 
@@ -3965,6 +3962,9 @@ void Document::documentDidBecomeActive()
     if (renderer())
         renderView()->didMoveOnscreen();
 #endif
+
+    if (FrameView* frameView = view())
+        frameView->setAnimatorsAreActive();
 
     ASSERT(m_frame);
     m_frame->loader()->client()->dispatchDidBecomeFrameset(isFrameSet());

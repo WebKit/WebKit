@@ -277,7 +277,7 @@ public:
 
     virtual bool shouldSuspendScrollAnimations() const;
 
-    void setAnimatorsAreActive(bool);
+    void setAnimatorsAreActive();
 
 protected:
     virtual bool scrollContentsFastPath(const IntSize& scrollDelta, const IntRect& rectToScroll, const IntRect& clipRect);
@@ -329,6 +329,7 @@ private:
     virtual void didCompleteAnimatedScroll() const;
     virtual void scrollbarStyleChanged();
     virtual void setVisibleScrollerThumbRect(const IntRect&);
+    virtual bool isOnActivePage() const;
 #if USE(ACCELERATED_COMPOSITING)
     virtual GraphicsLayer* layerForHorizontalScrollbar() const;
     virtual GraphicsLayer* layerForVerticalScrollbar() const;
