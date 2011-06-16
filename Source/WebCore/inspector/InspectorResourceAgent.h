@@ -34,6 +34,7 @@
 #include "InspectorFrontend.h"
 #include "PlatformString.h"
 
+#include <wtf/OwnPtr.h>
 #include <wtf/PassRefPtr.h>
 #include <wtf/Vector.h>
 
@@ -48,7 +49,6 @@ namespace WebCore {
 class CachedResource;
 class Document;
 class DocumentLoader;
-class EventsCollector;
 class Frame;
 class InspectorArray;
 class InspectorFrontend;
@@ -58,7 +58,7 @@ class InspectorPageAgent;
 class InspectorState;
 class InstrumentingAgents;
 class KURL;
-class NetworkResourcesData;
+class EventsCollector;
 class Page;
 class ResourceError;
 class ResourceRequest;
@@ -94,13 +94,8 @@ public:
     void didFinishLoading(unsigned long identifier, double finishTime);
     void didFailLoading(unsigned long identifier, const ResourceError&);
     void didLoadResourceFromMemoryCache(DocumentLoader*, const CachedResource*);
-    void mainFrameNavigated(DocumentLoader*);
     void setInitialScriptContent(unsigned long identifier, const String& sourceString);
     void setInitialXHRContent(unsigned long identifier, const String& sourceString);
-    void didReceiveXHRResponse(unsigned long identifier);
-    void willLoadXHRSynchronously();
-    void didLoadXHRSynchronously();
-
     void applyUserAgentOverride(String* userAgent);
 
 #if ENABLE(WEB_SOCKETS)
@@ -118,8 +113,7 @@ public:
     void disable(ErrorString*);
     void setUserAgentOverride(ErrorString*, const String& userAgent);
     void setExtraHeaders(ErrorString*, PassRefPtr<InspectorObject>);
-    void getResourceContent(ErrorString*, unsigned long identifier, const bool* const base64Encode, String* content);
-    void clearCache(ErrorString*, const String* const optionalPreservedLoaderId);
+
 
 private:
     InspectorResourceAgent(InstrumentingAgents*, InspectorPageAgent*, InspectorState*);
@@ -136,8 +130,6 @@ private:
     OwnPtr<InspectorFrontendProxy> m_inspectorFrontendProxy;
     OwnPtr<InspectorFrontend::Network> m_mockFrontend;
     String m_userAgentOverride;
-    OwnPtr<NetworkResourcesData> m_resourcesData;
-    bool m_loadingXHRSynchronously;
 };
 
 } // namespace WebCore

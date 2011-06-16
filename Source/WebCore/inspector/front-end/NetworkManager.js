@@ -48,12 +48,7 @@ WebInspector.NetworkManager.prototype = {
         {
             callback(!error ? content : null);
         }
-        // FIXME: https://bugs.webkit.org/show_bug.cgi?id=61363 We should separate NetworkResource (NetworkPanel resource) 
-        // from ResourceRevision (ResourcesPanel/ScriptsPanel resource) and request content accordingly.
-        if (resource.identifier)
-            NetworkAgent.getResourceContent(resource.identifier, base64Encode, callbackWrapper);
-        else
-            PageAgent.getResourceContent(resource.frameId, resource.url, base64Encode, callbackWrapper);
+        PageAgent.getResourceContent(resource.frameId, resource.url, base64Encode, callbackWrapper);
     },
 
     inflightResourceForURL: function(url)
@@ -268,7 +263,7 @@ WebInspector.NetworkDispatcher.prototype = {
     {
         var originalResource = this._inflightResourcesById[identifier];
         var previousRedirects = originalResource.redirects || [];
-        delete originalResource.identifier;
+        originalResource.identifier = "redirected:" + identifier + "." + previousRedirects.length;
         delete originalResource.redirects;
         this._finishResource(originalResource, time);
         var newResource = this._createResource(identifier, originalResource.frameId, originalResource.loaderId,

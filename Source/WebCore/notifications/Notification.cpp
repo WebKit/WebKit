@@ -181,7 +181,7 @@ void Notification::stopLoading()
     m_loader->cancel();
 }
 
-void Notification::didReceiveResponse(unsigned long, const ResourceResponse& response)
+void Notification::didReceiveResponse(const ResourceResponse& response)
 {
     int status = response.httpStatusCode();
     if (status && (status < 200 || status > 299)) {
@@ -211,7 +211,7 @@ void Notification::didFailRedirectCheck()
     finishLoading();
 }
 
-void Notification::didReceiveAuthenticationCancellation(unsigned long, const ResourceResponse&)
+void Notification::didReceiveAuthenticationCancellation(const ResourceResponse&)
 {
     finishLoading();
 }

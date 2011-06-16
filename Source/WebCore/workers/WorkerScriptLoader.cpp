@@ -111,7 +111,7 @@ PassOwnPtr<ResourceRequest> WorkerScriptLoader::createResourceRequest()
     return request.release();
 }
     
-void WorkerScriptLoader::didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse& response)
+void WorkerScriptLoader::didReceiveResponse(const ResourceResponse& response)
 {
     if (response.httpStatusCode() / 100 != 2 && response.httpStatusCode()) {
         m_failed = true;
@@ -168,7 +168,7 @@ void WorkerScriptLoader::didFailRedirectCheck()
     notifyError();
 }
 
-void WorkerScriptLoader::didReceiveAuthenticationCancellation(unsigned long /*identifier*/, const ResourceResponse&)
+void WorkerScriptLoader::didReceiveAuthenticationCancellation(const ResourceResponse&)
 {
     notifyError();
 }

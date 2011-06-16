@@ -86,7 +86,6 @@ namespace WebCore {
         virtual void didReceiveAuthenticationChallenge(SubresourceLoader*, const AuthenticationChallenge&);
         virtual void receivedCancellation(SubresourceLoader*, const AuthenticationChallenge&);
 
-        void didReceiveResponse(unsigned long identifier, const ResourceResponse&);
         void didFinishLoading(unsigned long identifier, double finishTime);
         void makeSimpleCrossOriginAccessRequest(const ResourceRequest& request);
         void makeCrossOriginAccessRequestWithPreflight(const ResourceRequest& request);

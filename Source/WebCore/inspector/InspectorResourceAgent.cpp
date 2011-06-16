@@ -48,7 +48,6 @@
 #include "InspectorValues.h"
 #include "InstrumentingAgents.h"
 #include "KURL.h"
-#include "NetworkResourcesData.h"
 #include "ProgressTracker.h"
 #include "ResourceError.h"
 #include "ResourceRequest.h"
@@ -195,8 +194,6 @@ InspectorResourceAgent::~InspectorResourceAgent()
 
 void InspectorResourceAgent::willSendRequest(unsigned long identifier, DocumentLoader* loader, ResourceRequest& request, const ResourceResponse& redirectResponse)
 {
-    m_resourcesData->resourceCreated(identifier, m_pageAgent->loaderId(loader));
-
     RefPtr<InspectorObject> headers = m_state->getObject(ResourceAgentState::extraRequestHeaders);
 
     if (headers) {
@@ -244,12 +241,7 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
             type = InspectorPageAgent::ImageResource;
         else if (equalIgnoringFragmentIdentifier(response.url(), loader->url()) && type == InspectorPageAgent::OtherResource)
             type = InspectorPageAgent::DocumentResource;
-        else if (m_loadingXHRSynchronously || m_resourcesData->isXHR(identifier))
-            type = InspectorPageAgent::XHRResource;
-
-        m_resourcesData->responseReceived(identifier, m_pageAgent->frameId(loader->frame()), response.url());
     }
-
     m_frontend->responseReceived(static_cast<int>(identifier), currentTime(), InspectorPageAgent::resourceTypeString(type), resourceResponse);
     // If we revalidated the resource and got Not modified, send content length following didReceiveResponse
     // as there will be no calls to didReceiveContentLength from the network stack.
@@ -287,22 +279,7 @@ void InspectorResourceAgent::setInitialScriptContent(unsigned long identifier, c
 
 void InspectorResourceAgent::setInitialXHRContent(unsigned long identifier, const String& sourceString)
 {
-    m_resourcesData->addResourceContent(identifier, sourceString);
-}
-
-void InspectorResourceAgent::didReceiveXHRResponse(unsigned long identifier)
-{
-    m_resourcesData->didReceiveXHRResponse(identifier);
-}
-
-void InspectorResourceAgent::willLoadXHRSynchronously()
-{
-    m_loadingXHRSynchronously = true;
-}
-
-void InspectorResourceAgent::didLoadXHRSynchronously()
-{
-    m_loadingXHRSynchronously = false;
+    m_frontend->initialContentSet(static_cast<int>(identifier), sourceString, InspectorPageAgent::resourceTypeString(InspectorPageAgent::XHRResource));
 }
 
 void InspectorResourceAgent::applyUserAgentOverride(String* userAgent)
@@ -425,33 +402,10 @@ void InspectorResourceAgent::initializeBackgroundCollection()
     m_mockFrontend = adoptPtr(new InspectorFrontend::Network(m_inspectorFrontendProxy.get()));
 }
 
-void InspectorResourceAgent::getResourceContent(ErrorString* errorString, unsigned long identifier, const bool* const optionalBase64Encode, String* content)
-{
-    NetworkResourcesData::ResourceData* resourceData = m_resourcesData->data(identifier);
-    if (!resourceData) {
-        *errorString = "No resource with given identifier found";
-        return;
-    }
-
-    if (resourceData->hasContent())
-        *content = resourceData->content();
-    else if (!resourceData->frameId().isNull() && !resourceData->url().isNull())
-        m_pageAgent->getResourceContent(errorString, resourceData->frameId(), resourceData->url(), optionalBase64Encode, content);
-    else
-        *errorString = "No data found for resource with given identifier";
-}
-
-void InspectorResourceAgent::mainFrameNavigated(DocumentLoader* loader)
-{
-    m_resourcesData->clear(m_pageAgent->loaderId(loader));
-}
-
 InspectorResourceAgent::InspectorResourceAgent(InstrumentingAgents* instrumentingAgents, InspectorPageAgent* pageAgent, InspectorState* state)
     : m_instrumentingAgents(instrumentingAgents)
     , m_pageAgent(pageAgent)
     , m_state(state)
-    , m_resourcesData(adoptPtr(new NetworkResourcesData()))
-    , m_loadingXHRSynchronously(false)
 {
     if (isBackgroundEventsCollectionEnabled()) {
         initializeBackgroundCollection();

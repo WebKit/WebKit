@@ -1,3 +1,16 @@
+2011-06-16  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r89025.
+        http://trac.webkit.org/changeset/89025
+        https://bugs.webkit.org/show_bug.cgi?id=62799
+
+        "Some layout tests fail" (Requested by yurys on #webkit).
+
+        * http/tests/inspector/network/network-xhr-async-expected.txt: Removed.
+        * http/tests/inspector/network/network-xhr-async.html: Removed.
+        * http/tests/inspector/network/network-xhr-sync-expected.txt: Removed.
+        * http/tests/inspector/network/network-xhr-sync.html: Removed.
+
 2011-06-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -123,7 +123,7 @@ void FileReaderLoader::cleanup()
     }
 }
 
-void FileReaderLoader::didReceiveResponse(unsigned long, const ResourceResponse& response)
+void FileReaderLoader::didReceiveResponse(const ResourceResponse& response)
 {
     if (response.httpStatusCode() != 200) {
         failed(httpStatusCodeToErrorCode(response.httpStatusCode()));
