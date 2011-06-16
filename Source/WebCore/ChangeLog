@@ -1,3 +1,19 @@
+2011-06-16  Hayato Ito  <hayato@chromium.org>
+
+        Reviewed by Hajime Morita.
+
+        Show child elements of a shadow host in Node::showTreeForThisAcrossFrame.
+        https://bugs.webkit.org/show_bug.cgi?id=62782
+
+        To make an implementation simple, get rid of traverseNextNodeAcrossFrame
+        and traverse each Node recursively.
+
+        No new tests since the function is only available in debug builds.
+
+        * dom/Node.cpp:
+        (WebCore::showSubTreeAcrossFrame):
+        (WebCore::Node::showTreeForThisAcrossFrame):
+
 2011-06-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kent Tamura.

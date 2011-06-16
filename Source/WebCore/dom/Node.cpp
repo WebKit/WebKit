@@ -2364,21 +2364,18 @@ static ContainerNode* parentOrHostOrFrameOwner(Node* node)
     return parent;
 }
 
-static Node* traverseNextNodeAcrossFrame(Node* node)
+static void showSubTreeAcrossFrame(Node* node, const Node* markedNode, const String& indent)
 {
+    if (node == markedNode)
+        fputs("*", stderr);
+    fputs(indent.utf8().data(), stderr);
+    node->showNode();
     if (node->isFrameOwnerElement())
-        return static_cast<HTMLFrameOwnerElement*>(node)->contentDocument();
+        showSubTreeAcrossFrame(static_cast<HTMLFrameOwnerElement*>(node)->contentDocument(), markedNode, indent + "\t");
     if (ShadowRoot* shadow = shadowRoot(node))
-        return shadow;
-    if (node->firstChild())
-        return node->firstChild();
-    if (node->nextSibling())
-        return node->nextSibling();
-    while (node && !node->nextSibling())
-        node = parentOrHostOrFrameOwner(node);
-    if (node)
-        return node->nextSibling();
-    return 0;
+        showSubTreeAcrossFrame(shadow, markedNode, indent + "\t");
+    for (Node* child = node->firstChild(); child; child = child->nextSibling())
+        showSubTreeAcrossFrame(child, markedNode, indent + "\t");
 }
 
 void Node::showTreeForThisAcrossFrame() const
@@ -2386,15 +2383,7 @@ void Node::showTreeForThisAcrossFrame() const
     Node* rootNode = const_cast<Node*>(this);
     while (parentOrHostOrFrameOwner(rootNode))
         rootNode = parentOrHostOrFrameOwner(rootNode);
-    for (Node* node = rootNode; node; node = traverseNextNodeAcrossFrame(node)) {
-        if (node == this)
-            fputs("*", stderr);
-        String indent;
-        for (Node* tmpNode = node; tmpNode && tmpNode != rootNode; tmpNode = parentOrHostOrFrameOwner(tmpNode))
-            indent += "\t";
-        fputs(indent.utf8().data(), stderr);
-        node->showNode();
-    }
+    showSubTreeAcrossFrame(rootNode, this, "");
 }
 
 #endif
