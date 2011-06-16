@@ -518,10 +518,12 @@ long long WebFrameImpl::identifier() const
     return m_identifier;
 }
 
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
 WebURL WebFrameImpl::url() const
 {
     return m_frame->document()->url();
 }
+#endif
 
 WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypes) const
 {
@@ -533,6 +535,7 @@ WebVector<WebIconURL> WebFrameImpl::iconURLs(int iconTypes) const
     return WebVector<WebIconURL>();
 }
 
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
 WebURL WebFrameImpl::openSearchDescriptionURL() const
 {
     FrameLoader* frameLoader = m_frame->loader();
@@ -559,6 +562,7 @@ WebString WebFrameImpl::encoding() const
 {
     return frame()->document()->loader()->writer()->encoding();
 }
+#endif
 
 WebSize WebFrameImpl::scrollOffset() const
 {
@@ -702,6 +706,7 @@ WebDocument WebFrameImpl::document() const
     return WebDocument(m_frame->document());
 }
 
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
 void WebFrameImpl::forms(WebVector<WebFormElement>& results) const
 {
     if (!m_frame)
@@ -719,6 +724,7 @@ void WebFrameImpl::forms(WebVector<WebFormElement>& results) const
     }
     results.assign(temp);
 }
+#endif
 
 WebAnimationController* WebFrameImpl::animationController()
 {
@@ -733,6 +739,7 @@ WebPerformance WebFrameImpl::performance() const
     return WebPerformance(m_frame->domWindow()->performance());
 }
 
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
 WebSecurityOrigin WebFrameImpl::securityOrigin() const
 {
     if (!m_frame || !m_frame->document())
@@ -747,6 +754,7 @@ void WebFrameImpl::grantUniversalAccess()
     if (m_frame && m_frame->document())
         m_frame->document()->securityOrigin()->grantUniversalAccess();
 }
+#endif
 
 NPObject* WebFrameImpl::windowObject() const
 {
@@ -877,6 +885,7 @@ v8::Handle<v8::Value> WebFrameImpl::createFileEntry(WebFileSystem::Type type,
 }
 #endif
 
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
 bool WebFrameImpl::insertStyleText(
     const WebString& css, const WebString& id) {
     Document* document = frame()->document();
@@ -909,6 +918,7 @@ bool WebFrameImpl::insertStyleText(
     ASSERT(success);
     return success;
 }
+#endif
 
 void WebFrameImpl::reload(bool ignoreCache)
 {
@@ -1806,6 +1816,7 @@ void WebFrameImpl::resetMatchCount()
     m_framesScopingCount = 0;
 }
 
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
 WebString WebFrameImpl::contentAsText(size_t maxChars) const
 {
     if (!m_frame)
@@ -1820,6 +1831,7 @@ WebString WebFrameImpl::contentAsMarkup() const
 {
     return createFullMarkup(m_frame->document());
 }
+#endif
 
 WebString WebFrameImpl::renderTreeAsText(bool showDebugInfo) const
 {

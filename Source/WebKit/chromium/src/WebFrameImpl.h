@@ -69,10 +69,14 @@ public:
     virtual WebString name() const;
     virtual void setName(const WebString&);
     virtual long long identifier() const;
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     virtual WebURL url() const;
+#endif
     virtual WebVector<WebIconURL> iconURLs(int iconTypes) const;
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     virtual WebURL openSearchDescriptionURL() const;
     virtual WebString encoding() const;
+#endif
     virtual WebSize scrollOffset() const;
     virtual void setScrollOffset(const WebSize&);
     virtual WebSize contentsSize() const;
@@ -93,11 +97,15 @@ public:
     virtual WebFrame* findChildByName(const WebString&) const;
     virtual WebFrame* findChildByExpression(const WebString&) const;
     virtual WebDocument document() const;
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     virtual void forms(WebVector<WebFormElement>&) const;
+#endif
     virtual WebAnimationController* animationController();
     virtual WebPerformance performance() const;
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     virtual WebSecurityOrigin securityOrigin() const;
     virtual void grantUniversalAccess();
+#endif
     virtual NPObject* windowObject() const;
     virtual void bindToWindowObject(const WebString& name, NPObject*);
     virtual void executeScript(const WebScriptSource&);
@@ -120,7 +128,9 @@ public:
                                                   const WebString& filePath,
                                                   bool isDirectory);
 #endif
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     virtual bool insertStyleText(const WebString& css, const WebString& id);
+#endif
     virtual void reload(bool ignoreCache);
     virtual void loadRequest(const WebURLRequest&);
     virtual void loadHistoryItem(const WebHistoryItem&);
@@ -195,8 +205,10 @@ public:
     virtual void notifiyPasswordListenerOfAutocomplete(
         const WebInputElement&);
 
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     virtual WebString contentAsText(size_t maxChars) const;
     virtual WebString contentAsMarkup() const;
+#endif
     virtual WebString renderTreeAsText(bool showDebugInfo = false) const;
     virtual WebString counterValueForElementById(const WebString& id) const;
     virtual WebString markerTextForListItem(const WebElement&) const;

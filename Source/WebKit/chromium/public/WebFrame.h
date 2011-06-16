@@ -128,8 +128,10 @@ public:
     // A globally unique identifier for this frame.
     virtual long long identifier() const = 0;
 
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     // The url of the document loaded in this frame.
     virtual WebURL url() const = 0;
+#endif
 
     // The urls of the given combination types of favicon (if any) specified by
     // the document loaded in this frame. The iconTypes is a bit-mask of
@@ -137,12 +139,14 @@ public:
     // URLs
     virtual WebVector<WebIconURL> iconURLs(int iconTypes) const = 0;
 
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     // The url of the OpenSearch Desription Document (if any) specified by
     // the document loaded in this frame.
     virtual WebURL openSearchDescriptionURL() const = 0;
 
     // Return the frame's encoding.
     virtual WebString encoding() const = 0;
+#endif
 
 
     // Geometry -----------------------------------------------------------
@@ -215,7 +219,9 @@ public:
 
     virtual WebDocument document() const = 0;
 
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     virtual void forms(WebVector<WebFormElement>&) const = 0;
+#endif
 
     virtual WebAnimationController* animationController() = 0;
 
@@ -224,6 +230,7 @@ public:
 
     // Scripting ----------------------------------------------------------
 
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     // Returns the security origin of the current document.
     virtual WebSecurityOrigin securityOrigin() const = 0;
 
@@ -231,6 +238,7 @@ public:
     // origins (including file URLs).  Use with care.  The access is
     // revoked when a new document is loaded into this frame.
     virtual void grantUniversalAccess() = 0;
+#endif
 
     // Returns a NPObject corresponding to this frame's DOMWindow.
     virtual NPObject* windowObject() const = 0;
@@ -289,12 +297,14 @@ public:
 
     // Styling -------------------------------------------------------------
 
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     // Insert the given text as a STYLE element at the beginning of the
     // document. |elementId| can be empty, but if specified then it is used
     // as the id for the newly inserted element (replacing an existing one
     // with the same id, if any).
     virtual bool insertStyleText(const WebString& styleText,
                                  const WebString& elementId) = 0;
+#endif
 
 
     // Navigation ----------------------------------------------------------
@@ -565,6 +575,7 @@ public:
 
     // Utility -------------------------------------------------------------
 
+#if !defined(WEBKIT_FRAME_TO_DOCUMENT_API_MOVE)
     // Returns the contents of this frame as a string.  If the text is
     // longer than maxChars, it will be clipped to that length.  WARNING:
     // This function may be slow depending on the number of characters
@@ -578,6 +589,7 @@ public:
     // Returns HTML text for the contents of this frame.  This is generated
     // from the DOM.
     virtual WebString contentAsMarkup() const = 0;
+#endif
 
     // Returns a text representation of the render tree.  This method is used
     // to support layout tests.
