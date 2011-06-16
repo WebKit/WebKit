@@ -459,6 +459,7 @@ namespace JSC {
         void addParameter(const Identifier&, int parameterIndex);
         
         void preserveLastVar();
+        bool shouldAvoidResolveGlobal();
 
         RegisterID& registerFor(int index)
         {

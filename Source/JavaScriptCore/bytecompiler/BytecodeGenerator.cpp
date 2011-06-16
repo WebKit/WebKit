@@ -1201,6 +1201,13 @@ RegisterID* BytecodeGenerator::emitInstanceOf(RegisterID* dst, RegisterID* value
     return dst;
 }
 
+static const unsigned maxGlobalResolves = 128;
+
+bool BytecodeGenerator::shouldAvoidResolveGlobal()
+{
+    return m_codeBlock->globalResolveInfoCount() > maxGlobalResolves && !m_labelScopes.size();
+}
+
 RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& property)
 {
     size_t depth = 0;
@@ -1214,7 +1221,11 @@ RegisterID* BytecodeGenerator::emitResolve(RegisterID* dst, const Identifier& pr
         instructions().append(addConstant(property));
         return dst;
     }
-
+    if (shouldAvoidResolveGlobal()) {
+        globalObject = 0;
+        requiresDynamicChecks = true;
+    }
+        
     if (globalObject) {
         bool forceGlobalResolve = false;
 
@@ -1363,7 +1374,12 @@ RegisterID* BytecodeGenerator::emitResolveWithBase(RegisterID* baseDst, Register
         emitGetScopedVar(propDst, depth, index, globalObject);
         return baseDst;
     }
-
+    if (shouldAvoidResolveGlobal()) {
+        emitOpcode(op_resolve);
+        instructions().append(propDst->index());
+        instructions().append(addConstant(property));
+        return baseDst;
+    }
 #if ENABLE(JIT)
     m_codeBlock->addGlobalResolveInfo(instructions().size());
 #endif

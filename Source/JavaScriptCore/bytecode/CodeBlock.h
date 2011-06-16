@@ -372,6 +372,14 @@ namespace JSC {
         void addMethodCallLinkInfos(unsigned n) { m_methodCallLinkInfos.grow(n); }
         MethodCallLinkInfo& methodCallLinkInfo(int index) { return m_methodCallLinkInfos[index]; }
 #endif
+        unsigned globalResolveInfoCount() const
+        {
+#if ENABLE(JIT)    
+            if (m_globalData->canUseJIT())
+                return m_globalResolveInfos.size();
+#endif
+            return 0;
+        }
 
         // Exception handling support
 

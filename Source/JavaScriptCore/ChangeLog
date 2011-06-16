@@ -1,3 +1,24 @@
+2011-06-15  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Geoffrey Garen.
+
+        Reduce memory usage of resolve_global
+        https://bugs.webkit.org/show_bug.cgi?id=62765
+
+        If we have a large number of resolve_globals in a single
+        block start planting plain resolve instructions instead 
+        whenever we aren't in a loop.  This allows us to reduce
+        the code size for extremely large functions without
+        losing the performance benefits of op_resolve_global.
+
+        * bytecode/CodeBlock.h:
+        (JSC::CodeBlock::globalResolveInfoCount):
+        * bytecompiler/BytecodeGenerator.cpp:
+        (JSC::BytecodeGenerator::shouldAvoidResolveGlobal):
+        (JSC::BytecodeGenerator::emitResolve):
+        (JSC::BytecodeGenerator::emitResolveWithBase):
+        * bytecompiler/BytecodeGenerator.h:
+
 2011-06-16  Qi Zhang  <qi.2.zhang@nokia.com>
 
         Reviewed by Laszlo Gombos.
