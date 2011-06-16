@@ -3869,9 +3869,7 @@ BUGCR84031 MAC LINUX : storage/domstorage/sessionstorage/delete-removal.html = T
 BUGCR84032 WIN CPU : fast/dom/object-plugin-hides-properties.html = TIMEOUT PASS
 
 // Works slowly, we have an equivalent test that doesn't open Inspector and runs fast.
-BUGWK61533 LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = CRASH TIMEOUT PASS
-BUGWK61533 LINUX RELEASE : inspector/profiler/cpu-profiler-profiling.html = CRASH PASS
-BUGWK61533 LINUX : inspector/profiler/cpu-profiler-profiling-without-inspector.html = CRASH PASS
+WONTFIX LINUX DEBUG SKIP : inspector/profiler/cpu-profiler-profiling.html = TIMEOUT PASS
 
 BUGCR84093 VISTA : http/tests/history/redirect-200-refresh-2-seconds.pl = TIMEOUT PASS
 BUGCR84095 VISTA : svg/custom/use-detach.svg = TIMEOUT PASS
