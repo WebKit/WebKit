@@ -153,22 +153,6 @@ void ScriptController::updatePlatformScriptObjects()
 
 bool ScriptController::processingUserGesture()
 {
-    Frame* firstFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!firstFrame)
-        return UserGestureIndicator::getUserGestureState() != DefinitelyNotProcessingUserGesture;
-
-    v8::HandleScope handleScope;
-    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(firstFrame);
-    if (v8Context.IsEmpty())
-        return true;
-    v8::Context::Scope scope(v8Context);
-    v8::Handle<v8::Object> global = v8Context->Global();
-    v8::Handle<v8::String> eventSymbol = V8HiddenPropertyName::event();
-    v8::Handle<v8::Value> jsEvent = global->GetHiddenValue(eventSymbol);
-    Event* event = V8DOMWrapper::isValidDOMObject(jsEvent) ? V8Event::toNative(v8::Handle<v8::Object>::Cast(jsEvent)) : 0;
-    if (event)
-        return event->fromUserGesture();
-
     return UserGestureIndicator::processingUserGesture();
 }
 

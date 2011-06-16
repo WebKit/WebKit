@@ -243,19 +243,6 @@ void ScriptController::disableEval()
 
 bool ScriptController::processingUserGesture()
 {
-    ExecState* exec = JSMainThreadExecState::currentState();
-    Frame* frame = exec ? toDynamicFrame(exec) : 0;
-    // No script is running, so it is user-initiated unless the gesture stack
-    // explicitly says it is not.
-    if (!frame)
-        return UserGestureIndicator::getUserGestureState() != DefinitelyNotProcessingUserGesture;
-
-    // If a DOM event is being processed, check that it was initiated by the user
-    // and that it is in the whitelist of event types allowed to generate pop-ups.
-    if (JSDOMWindowShell* shell = frame->script()->existingWindowShell(currentWorld(exec)))
-        if (Event* event = shell->window()->currentEvent())
-            return event->fromUserGesture();
-
     return UserGestureIndicator::processingUserGesture();
 }
 

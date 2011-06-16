@@ -39,6 +39,7 @@
 #include "Page.h"
 #include "RenderLayer.h"
 #include "RenderTextControlSingleLine.h"
+#include "ScriptController.h"
 #include "ScrollbarTheme.h"
 #include "SpeechInput.h"
 #include "SpeechInputEvent.h"
@@ -388,7 +389,7 @@ PassRefPtr<InputFieldSpeechButtonElement> InputFieldSpeechButtonElement::create(
 void InputFieldSpeechButtonElement::defaultEventHandler(Event* event)
 {
     // For privacy reasons, only allow clicks directly coming from the user.
-    if (!event->fromUserGesture()) {
+    if (!ScriptController::processingUserGesture()) {
         HTMLDivElement::defaultEventHandler(event);
         return;
     }

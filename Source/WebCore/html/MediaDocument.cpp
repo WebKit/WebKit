@@ -40,6 +40,7 @@
 #include "MainResourceLoader.h"
 #include "NodeList.h"
 #include "RawDataDocumentParser.h"
+#include "ScriptController.h"
 
 namespace WebCore {
 
@@ -164,12 +165,12 @@ void MediaDocument::defaultEventHandler(Event* event)
     if (HTMLVideoElement* video = ancestorVideoElement(targetNode)) {
         if (event->type() == eventNames().clickEvent) {
             if (!video->canPlay()) {
-                video->pause(event->fromUserGesture());
+                video->pause(ScriptController::processingUserGesture());
                 event->setDefaultHandled();
             }
         } else if (event->type() == eventNames().dblclickEvent) {
             if (video->canPlay()) {
-                video->play(event->fromUserGesture());
+                video->play(ScriptController::processingUserGesture());
                 event->setDefaultHandled();
             }
         }
@@ -184,9 +185,9 @@ void MediaDocument::defaultEventHandler(Event* event)
         if (keyboardEvent->keyIdentifier() == "U+0020") { // space
             if (video->paused()) {
                 if (video->canPlay())
-                    video->play(event->fromUserGesture());
+                    video->play(ScriptController::processingUserGesture());
             } else
-                video->pause(event->fromUserGesture());
+                video->pause(ScriptController::processingUserGesture());
             event->setDefaultHandled();
         }
     }

@@ -28,17 +28,26 @@
 
 namespace WebCore {
 
-ProcessingUserGestureState UserGestureIndicator::s_processingUserGesture = PossiblyProcessingUserGesture;
+static bool isDefinite(ProcessingUserGestureState state)
+{
+    return state == DefinitelyProcessingUserGesture || state == DefinitelyNotProcessingUserGesture;
+}
+
+ProcessingUserGestureState UserGestureIndicator::s_state = DefinitelyNotProcessingUserGesture;
 
 UserGestureIndicator::UserGestureIndicator(ProcessingUserGestureState state)
-    : m_previousValue(s_processingUserGesture)
+    : m_previousState(s_state)
 {
-    s_processingUserGesture = state;
+    // We overwrite s_state only if the caller is definite about the gesture state.
+    if (isDefinite(state))
+        s_state = state;
+    ASSERT(isDefinite(s_state));
 }
 
 UserGestureIndicator::~UserGestureIndicator()
 {
-    s_processingUserGesture = m_previousValue;
+    s_state = m_previousState;
+    ASSERT(isDefinite(s_state));
 }
 
-} // namespace WebCore
+}

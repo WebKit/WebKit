@@ -39,17 +39,16 @@ enum ProcessingUserGestureState {
 class UserGestureIndicator {
     WTF_MAKE_NONCOPYABLE(UserGestureIndicator);
 public:
-    static bool processingUserGesture() { return s_processingUserGesture == DefinitelyProcessingUserGesture; }
-    static ProcessingUserGestureState getUserGestureState() { return s_processingUserGesture; }
+    static bool processingUserGesture() { return s_state == DefinitelyProcessingUserGesture; }
 
     explicit UserGestureIndicator(ProcessingUserGestureState);
     ~UserGestureIndicator();
 
 private:
-    static ProcessingUserGestureState s_processingUserGesture;
-    ProcessingUserGestureState m_previousValue;
-};    
+    static ProcessingUserGestureState s_state;
+    ProcessingUserGestureState m_previousState;
+};
 
-} // namespace WebCore
+}
 
-#endif // UserGestureIndicator_h
+#endif

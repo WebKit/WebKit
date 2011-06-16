@@ -1,3 +1,15 @@
+2011-06-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove Event::fromUserGesture
+        https://bugs.webkit.org/show_bug.cgi?id=62778
+
+        This call site is not definite about there not being a user gesture.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::loadFrameRequest):
+
 2011-06-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.

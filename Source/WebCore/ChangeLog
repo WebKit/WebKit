@@ -1,3 +1,39 @@
+2011-06-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove Event::fromUserGesture
+        https://bugs.webkit.org/show_bug.cgi?id=62778
+
+        This function is a remnant from the old user-gesture design.  The list
+        of events here is redundant with our selection of call sites for
+        setting the user gesture indicator.
+
+        As part of this patch, I've also cleaned up the implementation of
+        UserGestureIndicator itself to always be definite about whether we're
+        processing a user gesture.  We now start out in a definite state (no
+        user gesture) and inductively state in a definite state.
+
+        * WebCore.exp.in:
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture):
+        * dom/Event.cpp:
+        * dom/Event.h:
+        * dom/UserGestureIndicator.cpp:
+        (WebCore::isDefinite):
+        (WebCore::UserGestureIndicator::UserGestureIndicator):
+        (WebCore::UserGestureIndicator::~UserGestureIndicator):
+        * dom/UserGestureIndicator.h:
+        (WebCore::UserGestureIndicator::processingUserGesture):
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocument::defaultEventHandler):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlSeekButtonElement::defaultEventHandler):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+
 2011-06-08  Keishi Hattori  <keishi@webkit.org>
 
         Reviewed by Kent Tamura.
