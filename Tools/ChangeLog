@@ -2,6 +2,21 @@
 
         Unreviewed, build fix.
 
+        Revert the patches in r88995 and r88999; the http servers don't
+        seem to be shutting down reliably.
+
+        * Scripts/webkitpy/layout_tests/port/apache_http_server.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/http_server.py:
+        * Scripts/webkitpy/layout_tests/port/http_server_base.py:
+        * Scripts/webkitpy/layout_tests/port/http_server_integrationtest.py: Removed.
+        * Scripts/webkitpy/layout_tests/port/port_testcase.py:
+        * Scripts/webkitpy/layout_tests/port/websocket_server.py:
+
+2011-06-15  Dirk Pranke  <dpranke@chromium.org>
+
+        Unreviewed, build fix.
+
         Add some debugging messages to triage problems introduced in
         r88995.
 

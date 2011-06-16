@@ -227,7 +227,6 @@ class Executive(object):
             try:
                 retries_left -= 1
                 os.kill(pid, signal.SIGKILL)
-                _ = os.waitpid(pid, os.WNOHANG)
             except OSError, e:
                 if e.errno == errno.EAGAIN:
                     if retries_left <= 0:
