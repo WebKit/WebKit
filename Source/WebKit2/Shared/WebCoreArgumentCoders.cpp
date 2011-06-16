@@ -442,7 +442,7 @@ bool ArgumentCoder<TextCheckingResult>::decode(ArgumentDecoder* decoder, TextChe
     return true;
 }
 
-
+#if PLATFORM(QT)
 void ArgumentCoder<RefPtr<TimingFunction> >::encode(ArgumentEncoder* encoder, const RefPtr<TimingFunction>& function)
 {
     // We don't want to encode null-references.
@@ -768,5 +768,6 @@ bool ArgumentCoder<Animation>::decode(ArgumentDecoder* decoder, Animation& anima
 
     return true;
 }
+#endif
 
 } // namespace CoreIPC

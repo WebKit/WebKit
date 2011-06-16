@@ -215,6 +215,7 @@ template<> struct ArgumentCoder<WebCore::TextCheckingResult> {
     static bool decode(ArgumentDecoder*, WebCore::TextCheckingResult&);
 };
 
+#if PLATFORM(QT)
 template<> struct ArgumentCoder<RefPtr<WebCore::TimingFunction> > {
     static void encode(ArgumentEncoder*, const RefPtr<WebCore::TimingFunction>&);
     static bool decode(ArgumentDecoder*, RefPtr<WebCore::TimingFunction>&);
@@ -234,6 +235,7 @@ template<> struct ArgumentCoder<WebCore::Animation> {
     static void encode(ArgumentEncoder*, const WebCore::Animation&);
     static bool decode(ArgumentDecoder*, WebCore::Animation&);
 };
+#endif
 
 } // namespace CoreIPC
 
