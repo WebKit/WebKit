@@ -2651,7 +2651,6 @@ BUGCR66087 WIN : http/tests/xmlhttprequest/open-async-overload.html = PASS TEXT
 BUGCR66099 SKIP : fast/js/array-sort-modifying-tostring.html = TEXT CRASH TIMEOUT
 
 BUGCR66466 MAC WIN DEBUG SLOW : perf/array-nested-loop.html = PASS TEXT
-BUGCR66554 WIN DEBUG : fast/js/kde/encode_decode_uri.html = CRASH PASS
 
 BUGCR66683 WIN LINUX : fast/canvas/canvas-draw-canvas-on-canvas-shadow.html = TEXT
 BUGCR66686 : fast/loader/user-stylesheet-fast-path.html = TEXT
