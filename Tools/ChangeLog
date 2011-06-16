@@ -1,3 +1,14 @@
+2011-06-15  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        NRWT: doesn't support webarchives, has stale skipping logic.
+        https://bugs.webkit.org/show_bug.cgi?id=58293
+
+        * Scripts/webkitpy/layout_tests/layout_package/printing.py:
+        * Scripts/webkitpy/layout_tests/port/base.py:
+        * Scripts/webkitpy/layout_tests/port/webkit.py:
+
 2011-06-15  Jeremy Orlow  <jorlow@webkit.org>
 
         Change my email to @webkit.org

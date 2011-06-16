@@ -395,7 +395,9 @@ class Port(object):
         # baselines as a binary string, too.
         path = self.expected_filename(test, '.txt')
         if not self.path_exists(path):
-            return None
+            path = self.expected_filename(test, '.webarchive')
+            if not self.path_exists(path):
+                return None
         text = self._filesystem.read_binary_file(path)
         return text.replace("\r\n", "\n")
 

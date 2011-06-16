@@ -324,7 +324,7 @@ class Printer(object):
         filename = result.filename
         test_name = self._port.relative_test_filename(filename)
         self._write('trace: %s' % test_name)
-        for extension in ('.txt', '.wav', '.png'):
+        for extension in ('.txt', '.png', '.wav', '.webarchive'):
             self._print_baseline(filename, extension)
         self._write('  exp: %s' % exp_str)
         self._write('  got: %s' % got_str)

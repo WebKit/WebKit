@@ -258,28 +258,6 @@ class WebKitPort(base.Port):
                               if feature not in feature_list]
         return reduce(operator.add, skipped_directories)
 
-    def _tests_for_disabled_features(self):
-        # FIXME: This should use the feature detection from
-        # webkitperl/features.pm to match run-webkit-tests.
-        # For now we hard-code a list of features known to be disabled on
-        # the Mac platform.
-        disabled_feature_tests = [
-            "fast/xhtmlmp",
-            "mathml",
-        ]
-        # FIXME: webarchive tests expect to read-write from
-        # -expected.webarchive files instead of .txt files.
-        # This script doesn't know how to do that yet, so pretend they're
-        # just "disabled".
-        webarchive_tests = [
-            "webarchive",
-            "svg/webarchive",
-            "http/tests/webarchive",
-            "svg/custom/image-with-prefix-in-webarchive.svg",
-        ]
-        unsupported_feature_tests = self._skipped_tests_for_unsupported_features()
-        return disabled_feature_tests + webarchive_tests + unsupported_feature_tests
-
     def _tests_from_skipped_file_contents(self, skipped_file_contents):
         tests_to_skip = []
         for line in skipped_file_contents.split('\n'):
@@ -326,7 +304,7 @@ class WebKitPort(base.Port):
         # Use a set to allow duplicates
         tests_to_skip = set(self._expectations_from_skipped_files())
         tests_to_skip.update(self._tests_for_other_platforms())
-        tests_to_skip.update(self._tests_for_disabled_features())
+        tests_to_skip.update(self._skipped_tests_for_unsupported_features())
         return tests_to_skip
 
     def _build_path(self, *comps):
