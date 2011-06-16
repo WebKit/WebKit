@@ -1,3 +1,11 @@
+2011-06-16  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix, make sure the waf build checks the webKitBranchBuild
+        preference like the perl scripts do.
+
+        * waf/build/build_utils.py:
+        * waf/build/settings.py:
+
 2011-06-16  Tommy Widenflycht  <tommyw@google.com>
 
         Reviewed by Tony Gentilcore.

@@ -161,11 +161,8 @@ webcore_dirs_common = [
 config = get_config(wk_root)
 arch = get_arch(wk_root)
 config_dir = config
-git_branch = git_branch_name()
-if git_branch != "":
-    config_dir = os.path.join(git_branch, config_dir)
 
-output_dir = os.path.join(wk_root, 'WebKitBuild', config_dir)
+output_dir = os.path.join(get_base_product_dir(wk_root), config_dir)
 
 building_on_win32 = sys.platform.startswith('win')
 

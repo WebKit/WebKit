@@ -162,7 +162,6 @@ def flattenSources(sources):
 
     return flat_sources
 
-
 def git_branch_name():
     try:
         branches = commands.getoutput("git branch --no-color")
@@ -174,10 +173,22 @@ def git_branch_name():
 
     return ""
 
+def is_git_branch_build():
+    branch = git_branch_name()
+    is_branch_build = commands.getoutput("git config --bool branch.%s.webKitBranchBuild" % branch)
+    if is_branch_build == "true":
+        return True
+    elif is_branch_build == "false":
+        return False
+        
+    # not defined for this branch, use the default
+    is_branch_build = commands.getoutput("git config --bool core.webKitBranchBuild")
+    return is_branch_build == "true"
+
 def get_base_product_dir(wk_root):
     build_dir = os.path.join(wk_root, 'WebKitBuild')
     git_branch = git_branch_name()
-    if git_branch != "":
+    if git_branch != "" and is_git_branch_build():
         build_dir = os.path.join(build_dir, git_branch)
         
     return build_dir
