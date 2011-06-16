@@ -2,6 +2,12 @@
 
         [Qt] Build fix after r89039.
 
+        * platform/qt/RenderThemeQt.cpp: Added StringTruncator include.
+
+2011-06-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Qt] Build fix after r89039.
+
         * platform/qt/RenderThemeQt.h: Renamed local variable f to font.
 
 2011-06-16  Dimitri Glazkov  <dglazkov@chromium.org>

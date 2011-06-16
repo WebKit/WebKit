@@ -65,6 +65,7 @@
 #include "RenderTheme.h"
 #include "ScrollbarThemeQt.h"
 #include "SliderThumbElement.h"
+#include "StringTruncator.h"
 #include "TimeRanges.h"
 #include "UserAgentStyleSheets.h"
 
