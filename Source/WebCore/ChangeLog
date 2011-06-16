@@ -1,3 +1,35 @@
+2011-06-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove HTMLVideoElement::processingUserGesture
+        https://bugs.webkit.org/show_bug.cgi?id=62784
+
+        HTMLMediaElement shouldn't have its own notion of the user gesture
+        state.  It should just use the normal user gesture state.  Also,
+        there's no point in having the bindings send the user gesture state in
+        a boolean parameter.
+
+        * WebCore.exp.in:
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::removedFromDocument):
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::beginScrubbing):
+        (WebCore::HTMLMediaElement::resume):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitEnterFullscreen):
+        * html/HTMLVideoElement.h:
+        (WebCore::HTMLVideoElement::webkitEnterFullScreen):
+        * html/HTMLVideoElement.idl:
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocument::defaultEventHandler):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlSeekButtonElement::defaultEventHandler):
+
 2011-06-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89011.

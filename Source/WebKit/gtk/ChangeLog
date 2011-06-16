@@ -1,3 +1,14 @@
+2011-06-16  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove HTMLVideoElement::processingUserGesture
+        https://bugs.webkit.org/show_bug.cgi?id=62784
+
+        * WebCoreSupport/FullscreenVideoController.cpp:
+        (FullscreenVideoController::play):
+        (FullscreenVideoController::pause):
+
 2011-06-15  Claudio Saavedra  <csaavedra@igalia.com>
 
         Reviewed by Xan Lopez.
