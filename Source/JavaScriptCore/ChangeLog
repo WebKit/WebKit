@@ -1,3 +1,25 @@
+2011-06-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62824
+        DFG JIT - add support for branch-fusion of compareEq, JSValue comparisons in SpeculativeJIT
+
+        CompareEq of non-integer values is the most common cause of speculation failure.
+
+        * dfg/DFGSpeculativeJIT.cpp:
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleIntegerBranch):
+            - Support Equals.
+        (JSC::DFG::SpeculativeJIT::compilePeepHoleEq):
+            - new! - peephole optimized Eq of JSValues.
+        (JSC::DFG::SpeculativeJIT::compile):
+            - Add peephole optimization for CompareEq.
+        * dfg/DFGSpeculativeJIT.h:
+        (JSC::DFG::SpeculativeJIT::detectPeepHoleBranch):
+            - Add support for dead nodes between compare & branch.
+        (JSC::DFG::SpeculativeJIT::isInteger):
+            - Added to determine which form of peephole to do in CompareEq.
+
 2011-06-16  Geoffrey Garen  <ggaren@apple.com>
 
         Try to fix the Windows build.
