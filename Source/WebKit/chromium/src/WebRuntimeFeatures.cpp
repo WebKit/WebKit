@@ -356,4 +356,22 @@ bool WebRuntimeFeatures::isSpellCheckAPIEnabled()
 #endif
 }
 
+void WebRuntimeFeatures::enableMediaStream(bool enable)
+{
+#if ENABLE(MEDIA_STREAM)
+    RuntimeEnabledFeatures::setMediaStreamEnabled(enable);
+#else
+    UNUSED_PARAM(enable);
+#endif
+}
+
+bool WebRuntimeFeatures::isMediaStreamEnabled()
+{
+#if ENABLE(MEDIA_STREAM)
+    return RuntimeEnabledFeatures::mediaStreamEnabled();
+#else
+    return false;
+#endif
+}
+
 } // namespace WebKit

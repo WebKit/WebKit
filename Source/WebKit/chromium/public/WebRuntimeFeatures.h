@@ -106,6 +106,9 @@ public:
     WEBKIT_API static void enableSpellCheckAPI(bool);
     WEBKIT_API static bool isSpellCheckAPIEnabled();
 
+    WEBKIT_API static void enableMediaStream(bool);
+    WEBKIT_API static bool isMediaStreamEnabled();
+
 private:
     WebRuntimeFeatures();
 };
