@@ -1,3 +1,16 @@
+2011-06-15  Sam Weinig  <sam@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Frequent crashes due to null frame below ApplicationCacheHost::scheduleLoadFallbackResourceFromApplicationCache
+        https://bugs.webkit.org/show_bug.cgi?id=62764
+
+        This is an non-reproducible high volume crash, so no test :(. 
+
+        * loader/DocumentLoader.cpp:
+        (WebCore::DocumentLoader::detachFromFrame):
+        Be conservative and stop loading when we detach a document loader from a frame.
+
 2011-06-15  Beth Dakin  <bdakin@apple.com>
 
         Reviewed by Simon Fraser.
