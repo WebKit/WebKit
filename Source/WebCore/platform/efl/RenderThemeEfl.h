@@ -166,6 +166,8 @@ public:
 #if ENABLE(PROGRESS_TAG)
     virtual void adjustProgressBarStyle(CSSStyleSelector*, RenderStyle*, Element*) const;
     virtual bool paintProgressBar(RenderObject*, const PaintInfo&, const IntRect&);
+    virtual double animationRepeatIntervalForProgressBar(RenderProgress*) const;
+    virtual double animationDurationForProgressBar(RenderProgress*) const;
 #endif
 
 #if ENABLE(VIDEO)

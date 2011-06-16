@@ -61,10 +61,14 @@ using namespace HTMLNames;
 // TODO: change from object count to ecore_evas size (bytes)
 // TODO: as objects are webpage/user defined and they can be very large.
 #define RENDER_THEME_EFL_PART_CACHE_MAX 32
-    
+
+// Constants for progress tag animation.
+// These values have been copied from RenderThemeGtk.cpp
+static const int progressAnimationFrames = 10;
+static const double progressAnimationInterval = 0.125;
+
 static const int sliderThumbWidth = 12;
 static const int sliderThumbHeight = 12;
-
 #if ENABLE(VIDEO)
 static const int mediaSliderHeight = 14;
 static const int mediaSliderThumbWidth = 12;
@@ -1090,6 +1094,16 @@ void RenderThemeEfl::systemFont(int propId, FontDescription& fontDescription) co
 void RenderThemeEfl::adjustProgressBarStyle(CSSStyleSelector* selector, RenderStyle* style, Element* element) const
 {
     style->setBoxShadow(nullptr);
+}
+
+double RenderThemeEfl::animationRepeatIntervalForProgressBar(RenderProgress*) const
+{
+    return progressAnimationInterval;
+}
+
+double RenderThemeEfl::animationDurationForProgressBar(RenderProgress*) const
+{
+    return progressAnimationInterval * progressAnimationFrames * 2; // "2" for back and forth;
 }
 
 bool RenderThemeEfl::paintProgressBar(RenderObject* object, const PaintInfo& info, const IntRect& rect)
