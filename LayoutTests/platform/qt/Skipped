@@ -2533,9 +2533,6 @@ svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml
 svg/zoom/page/zoom-svg-through-object-with-auto-size.html
 http/tests/misc/object-embedding-svg-delayed-size-negotiation.xhtml
 
-# REGRESSION(r88757): [Chromium][Qt] Some slider clicking tests fail
-fast/forms/slider-onchange-event.html
-
 # New tests introduced in r88307, but fail on Qt
 # https://bugs.webkit.org/show_bug.cgi?id=54417
 fast/events/touch/touch-gesture-click.html

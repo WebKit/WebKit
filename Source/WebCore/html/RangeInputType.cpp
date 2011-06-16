@@ -158,6 +158,7 @@ void RangeInputType::handleMouseDownEvent(MouseEvent* event)
 
     SliderThumbElement* thumb = sliderThumbElementOf(element());
     thumb->dragFrom(event->absoluteLocation());
+    event->setDefaultHandled();
 }
 
 void RangeInputType::handleKeydownEvent(KeyboardEvent* event)

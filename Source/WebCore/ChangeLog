@@ -1,3 +1,22 @@
+2011-06-15  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium][Qt] Some slider clicking tests fail.
+        https://bugs.webkit.org/show_bug.cgi?id=62683
+
+        When we pressed a mouse button on a slider thumb,
+        SliderThumbElement::startDragging() were called twice.
+         - From SliderThumbElement::defaultEventHandler(), and
+         - from RangeInputType::handleMouseDownEvent()
+        The latter is not needed. We should call setDefaultHandled() correctly.
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::handleMouseDownEvent): Calls setDefaultHandled()
+        * html/shadow/SliderThumbElement.cpp:
+        (WebCore::SliderThumbElement::setPositionFromPoint): Remove FIXME comments.
+        (WebCore::SliderThumbElement::defaultEventHandler): Calls setDefaultHandled()
+
 2011-06-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Anders Carlsson.

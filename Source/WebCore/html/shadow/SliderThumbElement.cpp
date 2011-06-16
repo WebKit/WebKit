@@ -225,18 +225,10 @@ void SliderThumbElement::setPositionFromPoint(const IntPoint& point)
     IntPoint absoluteSliderContentOrigin = roundedIntPoint(input->renderer()->localToAbsolute());
     if (isVertical) {
         trackSize = input->renderBox()->contentHeight() - renderBox()->height();
-        // FIXME: The following expression assumes the pointer position is
-        // always the center of the thumb. If a user presses the mouse button at
-        // non-center of the thumb and start moving the pointer, the thumb is
-        // forcely adjusted so that the pointer is at the center of the thumb.
         position = offset.y() - renderBox()->height() / 2;
         currentPosition = absoluteThumbOrigin.y() - absoluteSliderContentOrigin.y();
     } else {
         trackSize = input->renderBox()->contentWidth() - renderBox()->width();
-        // FIXME: The following expression assumes the pointer position is
-        // always the center of the thumb. If a user presses the mouse button at
-        // non-center of the thumb and start moving the pointer, the thumb is
-        // forcely adjusted so that the pointer is at the center of the thumb.
         position = offset.x() - renderBox()->width() / 2;
         currentPosition = absoluteThumbOrigin.x() - absoluteSliderContentOrigin.x();
     }
@@ -289,13 +281,16 @@ void SliderThumbElement::defaultEventHandler(Event* event)
 
     if (eventType == eventNames().mousedownEvent && isLeftButton) {
         startDragging();
+        event->setDefaultHandled();
         return;
     } else if (eventType == eventNames().mouseupEvent && isLeftButton) {
         stopDragging();
+        event->setDefaultHandled();
         return;
     } else if (eventType == eventNames().mousemoveEvent) {
         if (m_inDragMode)
             setPositionFromPoint(mouseEvent->absoluteLocation());
+        event->setDefaultHandled();
         return;
     }
 

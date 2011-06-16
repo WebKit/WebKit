@@ -1,3 +1,16 @@
+2011-06-15  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Dimitri Glazkov.
+
+        [Chromium][Qt] Some slider clicking tests fail.
+        https://bugs.webkit.org/show_bug.cgi?id=62683
+
+        * fast/forms/slider-mouse-events-expected.txt:
+        * fast/forms/slider-mouse-events.html: Add step=5 to ignore small difference of thumb sizes.
+        * platform/chromium-win/fast/forms/slider-mouse-events-expected.txt: Removed.
+        * platform/chromium/test_expectations.txt:
+        * platform/qt/Skipped: slider-onchange-event.html should pass by this change.
+
 2011-06-15  Dirk Pranke  <dpranke@chromium.org>
 
         Unreviewed, whitespace change to force a build.
