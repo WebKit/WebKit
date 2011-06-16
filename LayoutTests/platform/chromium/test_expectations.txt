@@ -3059,9 +3059,6 @@ BUGCR69594 SKIP : http/tests/appcache/different-https-origin-resource-main.html 
 BUG_ANTONM LEOPARD : http/tests/security/xss-DENIED-xml-external-entity.xhtml = TEXT
 BUG_ANTONM LEOPARD : http/tests/security/xss-DENIED-xsl-external-entity.xml = TEXT
 
-// are failing after roll 80582 -> 80608
-BUG_LOISLO MAC DEBUG : fast/text/font-size-zero.html = TEXT
-
 BUGCR76253 : plugins/npruntime/np-deallocate-called-before-np-shutdown.html = CRASH
 
 // Slow
@@ -3683,8 +3680,6 @@ BUGWK60135 SNOWLEOPARD : css1/font_properties/font.html = IMAGE+TEXT PASS
 
 BUGWK60133 DEBUG : http/tests/multipart/multipart-wait-before-boundary.html = TIMEOUT PASS
 
-BUGWK60134 SNOWLEOPARD DEBUG : http/tests/loading/preload-slow-loading.php = TEXT
-
 BUGWK59673 : fast/dom/Window/get-set-properties.html = TEXT
 BUGWK59673 : fast/dom/Window/window-property-shadowing.html = TEXT
 BUGWK59673 : http/tests/history/cross-origin-replace-history-object-child.html = TIMEOUT
@@ -3866,8 +3861,6 @@ BUGWK61370 LINUX : svg/W3C-SVG-1.1/fonts-glyph-04-t.svg = IMAGE
 // New tests added in r87274
 BUGCR83865 : fast/forms/color = FAIL PASS
 
-BUGWK61486 DEBUG : http/tests/misc/drag-not-loaded-image.html = CRASH
-
 // New test added in r87324
 BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html = CRASH
 
@@ -3894,9 +3887,9 @@ BUGWK61624 WIN : editing/pasteboard/smart-paste-003.html = TEXT
 BUGWK61624 WIN : editing/pasteboard/smart-paste-004.html = TEXT
 
 // Weird failures only on debug bots after r87526.
-BUGADAMK DEBUG : svg/custom/object-sizing-explicit-height.xhtml = IMAGE+TEXT
-BUGADAMK DEBUG : svg/custom/object-sizing-explicit-width.xhtml = IMAGE+TEXT
-BUGADAMK SNOWLEOPARD DEBUG : svg/wicd/test-rightsizing-a.xhtml = IMAGE+TEXT
+BUGADAMK DEBUG : svg/custom/object-sizing-explicit-height.xhtml = IMAGE+TEXT PASS
+BUGADAMK DEBUG : svg/custom/object-sizing-explicit-width.xhtml = IMAGE+TEXT PASS
+BUGADAMK SNOWLEOPARD DEBUG : svg/wicd/test-rightsizing-a.xhtml = IMAGE+TEXT PASS
 
 // After r87526, these all have extra scrollbars where the platform/mac expectations do not.
 BUGWK61664 : svg/zoom/page/zoom-svg-through-object-with-absolute-size-2.xhtml = IMAGE+TEXT IMAGE
@@ -3916,14 +3909,10 @@ BUGWK61767 WIN DEBUG : http/tests/websocket/tests/client-close.html = PASS TEXT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-dx-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-dy-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-in-attr.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-opacity-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-dom-stdDeviation-attr.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dx-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-dy-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-in-prop.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-color-prop.html = TIMEOUT
-BUGWK59782 WIN LINUX DEBUG CPU : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-shadow-opacity-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/dynamic-updates/SVGFEDropShadowElement-svgdom-stdDeviation-prop.html = TIMEOUT
 BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
 
