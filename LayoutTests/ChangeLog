@@ -1,3 +1,12 @@
+2011-06-16  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
+
+        [chromium] Updating test expectations after V8 push.
+
+        * platform/chromium-mac/fast/js/function-prototype-descriptor-expected.txt:
+        * platform/chromium-win/fast/js/function-prototype-descriptor-expected.txt:
+
 2011-06-16  Zsolt Fehér  <h490267@stud.u-szeged.hu>
 
         Reviewed by Csaba Osztrogonác.

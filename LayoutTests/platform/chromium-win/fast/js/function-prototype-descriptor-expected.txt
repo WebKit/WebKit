@@ -9,7 +9,7 @@ PASS descriptor['configurable'] is false
 PASS descriptor['writable'] is true
 PASS descriptor['enumerable'] is false
 PASS descriptor['configurable'] is false
-PASS Object.defineProperty(c, 'prototype', { get: function(){} }) threw exception TypeError: Cannot redefine property: defineProperty.
+PASS Object.defineProperty(c, 'prototype', { get: function(){} }) threw exception TypeError: Cannot redefine property: prototype.
 PASS descriptor['writable'] is true
 PASS descriptor['enumerable'] is false
 PASS descriptor['configurable'] is false
