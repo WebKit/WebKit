@@ -1,3 +1,17 @@
+2011-06-16  una sabovic  <una.sabovic@palm.com>
+
+        Reviewed by Simon Fraser.
+
+        Optimization: do a single fillRect when painting the root background in RenderBoxModelObject::paintFillLayerExtended
+        https://bugs.webkit.org/show_bug.cgi?id=62593
+
+        When painting the root background, instead of doing two fillRects blend the base with background color and do a single fillRect.
+        
+        No new tests. This is an optimization and it doesn't change any existing functionality.
+
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+
 2011-06-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.
