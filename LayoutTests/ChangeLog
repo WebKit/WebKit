@@ -1,3 +1,11 @@
+2011-06-16  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.
+
+        Yet more chromium expectations updates.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Eric Seidel.

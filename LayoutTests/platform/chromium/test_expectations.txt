@@ -3853,7 +3853,7 @@ BUGCR83865 : fast/forms/color = FAIL PASS
 BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html = CRASH
 
 BUGWK61519 WIN LINUX : inspector/debugger/scripts-panel.html = TEXT TIMEOUT PASS
-BUGCR84031 MAC LINUX : storage/domstorage/sessionstorage/delete-removal.html = TIMEOUT PASS
+BUGCR84031 : storage/domstorage/sessionstorage/delete-removal.html = TIMEOUT PASS
 BUGCR84032 WIN CPU : fast/dom/object-plugin-hides-properties.html = TIMEOUT PASS
 
 // Works slowly, we have an equivalent test that doesn't open Inspector and runs fast.
@@ -3957,3 +3957,9 @@ BUGWK59921 WIN LINUX : inspector/debugger/debugger-scripts.html = TEXT PASS
 // The scrollbar varies slightly from Release build.  Since we don't maintain separate debug/release results,
 // we're currently unable to fix this.  :(
 WONTFIX LINUX DEBUG GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
+
+// Started failing at WebKit r8905[67]; probably just needs a rebaseline.
+BUGSENORBLANCO LINUX : fast/transforms/transformed-document-element.html = IMAGE
+
+// Has been flaky/crashy for a while
+BUGCR86359 WIN : fast/dom/DeviceOrientation/add-listener-from-callback.html = CRASH PASS
