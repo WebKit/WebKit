@@ -516,6 +516,24 @@ void InspectorInstrumentation::resourceRetrievedByXMLHttpRequestImpl(Instrumenti
         resourceAgent->setInitialXHRContent(identifier, sourceString);
 }
 
+void InspectorInstrumentation::didReceiveXHRResponseImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier)
+{
+    if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
+        resourceAgent->didReceiveXHRResponse(identifier);
+}
+
+void InspectorInstrumentation::willLoadXHRSynchronouslyImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
+        resourceAgent->willLoadXHRSynchronously();
+}
+
+void InspectorInstrumentation::didLoadXHRSynchronouslyImpl(InstrumentingAgents* instrumentingAgents)
+{
+    if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
+        resourceAgent->didLoadXHRSynchronously();
+}
+
 void InspectorInstrumentation::scriptImportedImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const String& sourceString)
 {
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
@@ -577,6 +595,10 @@ void InspectorInstrumentation::didCommitLoadImpl(InstrumentingAgents* instrument
     if (loader->frame() == mainFrame) {
         if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
             consoleAgent->reset();
+
+        if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
+            resourceAgent->mainFrameNavigated(loader);
+
 #if ENABLE(JAVASCRIPT_DEBUGGER)
         if (InspectorDebuggerAgent* debuggerAgent = instrumentingAgents->inspectorDebuggerAgent()) {
             KURL url = inspectorAgent->inspectedURLWithoutFragment();

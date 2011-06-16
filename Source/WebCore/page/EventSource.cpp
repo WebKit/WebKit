@@ -181,7 +181,7 @@ ScriptExecutionContext* EventSource::scriptExecutionContext() const
     return ActiveDOMObject::scriptExecutionContext();
 }
 
-void EventSource::didReceiveResponse(const ResourceResponse& response)
+void EventSource::didReceiveResponse(unsigned long, const ResourceResponse& response)
 {
     int statusCode = response.httpStatusCode();
     bool mimeTypeIsValid = response.mimeType() == "text/event-stream";
