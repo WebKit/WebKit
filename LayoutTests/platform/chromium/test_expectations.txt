@@ -3868,16 +3868,6 @@ BUGCR83865 : fast/forms/color = FAIL PASS
 
 BUGWK61486 DEBUG : http/tests/misc/drag-not-loaded-image.html = CRASH
 
-// New tests added in r87189
-BUGCR83833 WIN : mhtml/multi_frames_ie.mht = MISSING
-BUGCR83833 WIN : mhtml/multi_frames_unmht.mht = MISSING
-BUGCR83833 WIN : mhtml/page_with_css_and_js_ie.mht = MISSING
-BUGCR83833 WIN : mhtml/page_with_css_and_js_unmht.mht = MISSING
-BUGCR83833 WIN : mhtml/page_with_image_ie.mht = MISSING
-BUGCR83833 WIN : mhtml/page_with_image_unmht.mht = MISSING
-BUGCR83833 WIN : mhtml/simple_page_ie.mht = MISSING
-BUGCR83833 WIN : mhtml/simple_page_unmht.mht = MISSING
-
 // New test added in r87324
 BUGCR83994 WIN : platform/win/plugins/call-javascript-that-destroys-plugin.html = CRASH
 
@@ -3941,9 +3931,9 @@ BUGWK61936 : fast/filesystem/filesystem-no-callback-null-ptr-crash.html = CRASH 
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = IMAGE PASS
 
 // REGRESSION(r88757)
-BUGWK62683 : fast/forms/slider-delete-while-dragging-thumb.html = FAIL
-BUGWK62683 : fast/forms/slider-mouse-events.html = FAIL
-BUGWK62683 : fast/forms/slider-onchange-event.html = FAIL
+BUGWK62683 WIN LINUX : fast/forms/slider-delete-while-dragging-thumb.html = TEXT
+BUGWK62683 WIN LINUX : fast/forms/slider-mouse-events.html = TEXT
+BUGWK62683 WIN LINUX : fast/forms/slider-onchange-event.html = TEXT
 
 BUGCR84157 GPU : plugins/embed-attributes-style.html = IMAGE+TEXT
 BUGCR84157 GPU : svg/as-image/svg-as-background-with-relative-size.html = IMAGE+TEXT
@@ -3969,7 +3959,7 @@ BUGCR85293 LINUX : svg/text/foreignObject-text-clipping-bug.xml = IMAGE PASS
 BUGCR85394 : fast/js/eval-var-decl.html = FAIL PASS
 BUGCR85755 : fast/js/exception-properties.html = TEXT
 
-BUGWK62430 : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = FAIL
+BUGWK62430 WIN LINUX : fast/dom/HTMLProgressElement/indeterminate-progress-001.html = FAIL
 
 // Has been flaky, probably since birth.
 BUGWK62580 : fast/loader/inherit-charset-to-empty-frame.html = PASS TEXT
