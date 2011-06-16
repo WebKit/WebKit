@@ -24,7 +24,7 @@
 
 #include "HandleHeap.h"
 #include "HandleStack.h"
-#include "MarkStack.h"
+#include "SlotVisitor.h"
 #include "MarkedBlockSet.h"
 #include "NewSpace.h"
 #include <wtf/Forward.h>
@@ -40,12 +40,11 @@ namespace JSC {
     class JSGlobalData;
     class JSValue;
     class LiveObjectIterator;
-    class MarkStack;
     class MarkedArgumentBuffer;
     class RegisterFile;
     class UString;
     class WeakGCHandlePool;
-    typedef MarkStack SlotVisitor;
+    class SlotVisitor;
 
     typedef std::pair<JSValue, UString> ValueStringPair;
     typedef HashCountedSet<JSCell*> ProtectCountSet;
@@ -155,7 +154,7 @@ namespace JSC {
         OwnPtr<GCActivityCallback> m_activityCallback;
         
         MachineThreads m_machineThreads;
-        MarkStack m_markStack;
+        SlotVisitor m_slotVisitor;
         HandleHeap m_handleHeap;
         HandleStack m_handleStack;
 

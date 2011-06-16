@@ -37,7 +37,7 @@ namespace JSC {
     class JSString;
     class MarkStack;
     class SmallStringsStorage;
-    typedef MarkStack SlotVisitor;
+    class SlotVisitor;
 
     static const unsigned maxSingleCharacterString = 0xFF;
 

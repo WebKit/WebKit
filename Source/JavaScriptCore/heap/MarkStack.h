@@ -93,10 +93,9 @@ namespace JSC {
         bool containsOpaqueRoot(void*);
         int opaqueRootCount();
 
-        void drain();
         void reset();
 
-    private:
+    protected:
 #if ENABLE(GC_VALIDATION)
         static void validateSet(JSValue*, size_t);
         static void validateValue(JSValue);
@@ -108,7 +107,6 @@ namespace JSC {
 
         void internalAppend(JSCell*);
         void internalAppend(JSValue);
-        void visitChildren(JSCell*);
 
         void* m_jsArrayVPtr;
         MarkStackArray<MarkSet> m_markSets;
@@ -272,7 +270,7 @@ namespace JSC {
             internalAppend(value.asCell());
     }
 
-    typedef MarkStack SlotVisitor;
+    class SlotVisitor;
 
 } // namespace JSC
 

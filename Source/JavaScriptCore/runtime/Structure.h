@@ -48,7 +48,7 @@ namespace JSC {
     class PropertyNameArray;
     class PropertyNameArrayData;
     class StructureChain;
-    typedef MarkStack SlotVisitor;
+    class SlotVisitor;
 
     struct ClassInfo;
 

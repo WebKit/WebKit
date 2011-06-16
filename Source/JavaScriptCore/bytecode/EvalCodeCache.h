@@ -42,7 +42,7 @@
 namespace JSC {
 
     class MarkStack;
-    typedef MarkStack SlotVisitor;
+    class SlotVisitor;
 
     class EvalCodeCache {
     public:

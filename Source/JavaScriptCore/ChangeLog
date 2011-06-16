@@ -1,3 +1,50 @@
+2011-06-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Introduced SlotVisitor into the project
+        https://bugs.webkit.org/show_bug.cgi?id=62820
+        
+        This resolves a class vs typedef forward declaration issue, and gives all
+        exported symbols the correct names.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * JavaScriptCore.exp:
+        * JavaScriptCore.gypi:
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
+        * JavaScriptCore.xcodeproj/project.pbxproj: Build!
+
+        * bytecode/EvalCodeCache.h:
+        * heap/HandleHeap.h:
+        * heap/Heap.cpp:
+        (JSC::Heap::Heap):
+        (JSC::Heap::markRoots):
+        * heap/Heap.h:
+        * heap/HeapRootVisitor.h: Replaced MarkStack with SlotVisitor. Now no
+        clients operate on a MarkStack.
+
+        * heap/MarkStack.cpp:
+        (JSC::SlotVisitor::visitChildren):
+        (JSC::SlotVisitor::drain):
+        * heap/SlotVisitor.h: Added.
+        (JSC::SlotVisitor::SlotVisitor): Used 'protected' and a little cheesy
+        inheritance to give SlotVisitor all the attributes of MarkStack without
+        making this change giant. Over time, we will move more behavior into
+        SlotVisitor and its subclasses.
+
+        * heap/MarkStack.h:
+        * heap/NewSpace.h: Replaced MarkStack with SlotVisitor. Now no
+        clients operate on a MarkStack.
+
+        * runtime/ArgList.h:
+        * runtime/JSCell.h:
+        * runtime/JSObject.h:
+        * runtime/ScopeChain.h:
+        * runtime/SmallStrings.h:
+        * runtime/Structure.h: Replaced MarkStack with SlotVisitor. Now no
+        clients operate on a MarkStack.
+
 2011-06-15  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Geoffrey Garen.

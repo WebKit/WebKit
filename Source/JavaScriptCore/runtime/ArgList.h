@@ -31,7 +31,7 @@
 namespace JSC {
 
     class MarkStack;
-    typedef MarkStack SlotVisitor;
+    class SlotVisitor;
 
     class MarkedArgumentBuffer {
         WTF_MAKE_NONCOPYABLE(MarkedArgumentBuffer);

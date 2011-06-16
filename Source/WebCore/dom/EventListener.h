@@ -25,8 +25,7 @@
 
 namespace JSC {
     class JSObject;
-    class MarkStack;
-    typedef MarkStack SlotVisitor;
+    class SlotVisitor;
 }
 
 namespace WebCore {

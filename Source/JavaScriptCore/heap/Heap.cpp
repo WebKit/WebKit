@@ -246,7 +246,7 @@ Heap::Heap(JSGlobalData* globalData)
     , m_markListSet(0)
     , m_activityCallback(DefaultGCActivityCallback::create(this))
     , m_machineThreads(this)
-    , m_markStack(globalData->jsArrayVPtr)
+    , m_slotVisitor(globalData->jsArrayVPtr)
     , m_handleHeap(globalData)
     , m_globalData(globalData)
 {
@@ -414,7 +414,7 @@ void Heap::markRoots()
 
     clearMarks();
 
-    MarkStack& visitor = m_markStack;
+    SlotVisitor& visitor = m_slotVisitor;
     HeapRootVisitor heapRootVisitor(visitor);
 
     visitor.append(machineThreadRoots);

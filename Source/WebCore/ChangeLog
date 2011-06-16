@@ -1,3 +1,17 @@
+2011-06-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Introduced SlotVisitor into the project
+        https://bugs.webkit.org/show_bug.cgi?id=62820
+
+        This resolves a class vs typedef forward declaration issue, and gives all
+        exported symbols the correct names.
+
+        * dom/EventListener.h:
+        * dom/Node.h:
+        * dom/NodeFilterCondition.h:
+
 2011-06-16  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Adam Barth.

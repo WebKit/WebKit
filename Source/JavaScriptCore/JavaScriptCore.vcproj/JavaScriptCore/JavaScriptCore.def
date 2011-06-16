@@ -227,7 +227,7 @@ EXPORTS
     ?isGetterSetter@JSCell@JSC@@UBE_NXZ
     ?isHostFunctionNonInline@JSFunction@JSC@@ABE_NXZ
     ?isMainThread@WTF@@YA_NXZ
-    ?isReachableFromOpaqueRoots@WeakHandleOwner@JSC@@UAE_NV?$Handle@W4Unknown@JSC@@@2@PAXAAVMarkStack@2@@Z
+    ?isReachableFromOpaqueRoots@WeakHandleOwner@JSC@@UAE_NV?$Handle@W4Unknown@JSC@@@2@PAXAAVSlotVisitor@2@@Z
     ?isValidAllocation@Heap@JSC@@AAE_NI@Z
     ?isValidCallee@JSValue@JSC@@QAE_NXZ
     ?isVariableObject@JSVariableObject@JSC@@UBE_NXZ
@@ -365,10 +365,10 @@ EXPORTS
     ?unprotect@Heap@JSC@@QAE_NVJSValue@2@@Z
     ?unwrappedObject@JSObject@JSC@@UAEPAV12@XZ
     ?utf8@UString@JSC@@QBE?AVCString@WTF@@_N@Z
-    ?visitChildren@JSGlobalObject@JSC@@UAEXAAVMarkStack@2@@Z
-    ?visitChildren@JSObject@JSC@@UAEXAAVMarkStack@2@@Z
-    ?visitChildren@JSWrapperObject@JSC@@EAEXAAVMarkStack@2@@Z
-    ?visitChildren@ScopeChainNode@JSC@@UAEXAAVMarkStack@2@@Z
+    ?visitChildren@JSDOMGlobalObject@WebCore@@UAEXAAVSlotVisitor@JSC@@@Z
+    ?visitChildren@JSObject@JSC@@UAEXAAVSlotVisitor@2@@Z
+    ?visitChildren@JSWrapperObject@JSC@@EAEXAAVSlotVisitor@2@@Z
+    ?visitChildren@ScopeChainNode@JSC@@UAEXAAVSlotVisitor@2@@Z
     ?vtableAnchor@InternalFunction@JSC@@EAEXXZ
     ?wait@ThreadCondition@WTF@@QAEXAAVMutex@2@@Z
     ?waitForThreadCompletion@WTF@@YAHIPAPAX@Z

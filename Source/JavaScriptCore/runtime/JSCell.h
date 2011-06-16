@@ -29,7 +29,7 @@
 #include "Heap.h"
 #include "JSLock.h"
 #include "JSValueInlineMethods.h"
-#include "MarkStack.h"
+#include "SlotVisitor.h"
 #include "WriteBarrier.h"
 #include <wtf/Noncopyable.h>
 

@@ -39,7 +39,7 @@ class HeapRootVisitor;
 class JSGlobalData;
 class JSValue;
 class MarkStack;
-typedef MarkStack SlotVisitor;
+class SlotVisitor;
 
 class WeakHandleOwner {
 public:

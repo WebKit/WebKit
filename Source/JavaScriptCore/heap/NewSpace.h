@@ -41,7 +41,7 @@ namespace JSC {
     class LiveObjectIterator;
     class MarkStack;
     class WeakGCHandle;
-    typedef MarkStack SlotVisitor;
+    class SlotVisitor;
 
     class NewSpace {
         WTF_MAKE_NONCOPYABLE(NewSpace);

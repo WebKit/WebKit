@@ -32,7 +32,7 @@ namespace JSC {
     class JSObject;
     class MarkStack;
     class ScopeChainIterator;
-    typedef MarkStack SlotVisitor;
+    class SlotVisitor;
     
     class ScopeChainNode : public JSCell {
     public:

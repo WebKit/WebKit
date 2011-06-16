@@ -44,6 +44,7 @@ SET(JavaScriptCore_SOURCES
 
     heap/Heap.cpp
     heap/HandleHeap.cpp
+    heap/SlotVisitor.cpp
     heap/HandleStack.cpp
     heap/MachineStackMarker.cpp
     heap/MarkedBlock.cpp

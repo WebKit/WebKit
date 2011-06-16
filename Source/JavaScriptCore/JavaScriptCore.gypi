@@ -30,6 +30,7 @@
             'heap/ConservativeRoots.h',
             'heap/Handle.h',
             'heap/HandleHeap.h',
+            'heap/SlotVisitor.h',
             'heap/HandleStack.h',
             'heap/HandleTypes.h',
             'heap/Heap.h',

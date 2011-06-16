@@ -26,7 +26,7 @@
 #ifndef HeapRootVisitor_h
 #define HeapRootVisitor_h
 
-#include "MarkStack.h"
+#include "SlotVisitor.h"
 
 namespace JSC {
 
