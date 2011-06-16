@@ -1,5 +1,12 @@
 2011-06-16  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Mac build: Removed and re-added SlotVisitor.h to the Xcode
+        project while crossing my fingers and facing west.
+
+        * JavaScriptCore.xcodeproj/project.pbxproj:
+
+2011-06-16  Geoffrey Garen  <ggaren@apple.com>
+
         Build fix: Removed an incorrect symbol on Windows.
 
         * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def:
