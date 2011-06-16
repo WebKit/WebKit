@@ -3956,3 +3956,4 @@ BUGCR86239 MAC GPU : compositing/direct-image-compositing.html = IMAGE CRASH
 BUGWK62754 RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT TIMEOUT
 BUGWK62754 DEBUG SLOW : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
 
+BUGWK59921 WIN LINUX : inspector/debugger/debugger-scripts.html = TEXT PASS
