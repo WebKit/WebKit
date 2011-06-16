@@ -1,3 +1,16 @@
+2011-06-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Rubber stamped by Eric Seidel.
+
+        [CMAKE][WK2] Add an option to build webkit2.
+        https://bugs.webkit.org/show_bug.cgi?id=62260
+
+        Add ENABLE_WEBKIT2 to build WebKit2 using CMake and ENABLE_WEBKIT to disable
+        WebKit.
+
+        * Source/CMakeLists.txt:
+        * Source/cmake/WebKitFS.cmake:
+
 2011-06-14  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Reviewed by Eric Seidel.

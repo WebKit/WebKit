@@ -9,13 +9,25 @@ IF (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_C_FLAGS AND NOT CMAKE_CXX_FLAGS)
 ENDIF ()
 SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
+# -----------------------------------------------------------------------------
+# Default library type
+# -----------------------------------------------------------------------------
+IF (NOT ENABLE_WEBKIT AND NOT ENABLE_WEBKIT2)
+    SET(ENABLE_WEBKIT On)
+ENDIF ()
+
 SET(JAVASCRIPTCORE_DIR "${CMAKE_SOURCE_DIR}/JavaScriptCore")
 SET(WEBCORE_DIR "${CMAKE_SOURCE_DIR}/WebCore")
 SET(WEBKIT_DIR "${CMAKE_SOURCE_DIR}/WebKit")
+SET(WEBKIT2_DIR "${CMAKE_SOURCE_DIR}/WebKit2")
+
 SET(THIRDPARTY_DIR "${CMAKE_SOURCE_DIR}/ThirdParty")
 SET(TOOLS_DIR "${CMAKE_SOURCE_DIR}/../Tools")
-SET(DERIVED_SOURCES_WEBCORE_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebCore")
+
+SET(DERIVED_SOURCES_DIR "${CMAKE_BINARY_DIR}/DerivedSources")
 SET(DERIVED_SOURCES_JAVASCRIPTCORE_DIR "${CMAKE_BINARY_DIR}/DerivedSources/JavaScriptCore")
+SET(DERIVED_SOURCES_WEBCORE_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebCore")
+SET(DERIVED_SOURCES_WEBKIT2_DIR "${CMAKE_BINARY_DIR}/DerivedSources/WebKit2")
 
 INCLUDE(WebKitMacros)
 INCLUDE(WebKitFS)
@@ -79,6 +91,7 @@ SET(WTF_LIBRARY_NAME WTF)
 SET(JavaScriptCore_LIBRARY_NAME JavaScriptCore)
 SET(WebCore_LIBRARY_NAME WebCore)
 SET(WebKit_LIBRARY_NAME WebKit)
+SET(WebKit2_LIBRARY_NAME WebKit2)
 
 # -----------------------------------------------------------------------------
 # Default library types
@@ -96,6 +109,7 @@ ELSE ()
 ENDIF ()
 
 SET(WebKit_LIBRARY_TYPE SHARED)
+SET(WebKit2_LIBRARY_TYPE SHARED)
 
 # -----------------------------------------------------------------------------
 # Port-specific options
@@ -113,7 +127,14 @@ INCLUDE(WebKitPackaging)
 # -----------------------------------------------------------------------------
 ADD_SUBDIRECTORY(JavaScriptCore)
 ADD_SUBDIRECTORY(WebCore)
-ADD_SUBDIRECTORY(WebKit)
+
+IF (ENABLE_WEBKIT)
+    ADD_SUBDIRECTORY(WebKit)
+ENDIF ()
+
+IF (ENABLE_WEBKIT2)
+    ADD_SUBDIRECTORY(WebKit2)
+ENDIF ()
 
 # -----------------------------------------------------------------------------
 # Add test browser if exists
@@ -126,7 +147,14 @@ INCLUDE_IF_EXISTS(${TOOLS_DIR}/CMakeLists${PORT}.txt)
 WEBKIT_SET_EXTRA_COMPILER_FLAGS(${WTF_LIBRARY_NAME})
 WEBKIT_SET_EXTRA_COMPILER_FLAGS(${JavaScriptCore_LIBRARY_NAME})
 WEBKIT_SET_EXTRA_COMPILER_FLAGS(${WebCore_LIBRARY_NAME})
-WEBKIT_SET_EXTRA_COMPILER_FLAGS(${WebKit_LIBRARY_NAME})
+
+IF (ENABLE_WEBKIT)
+    WEBKIT_SET_EXTRA_COMPILER_FLAGS(${WebKit_LIBRARY_NAME})
+ENDIF ()
+
+IF (ENABLE_WEBKIT2)
+    WEBKIT_SET_EXTRA_COMPILER_FLAGS(${WebKit2_LIBRARY_NAME})
+ENDIF ()
 
 # -----------------------------------------------------------------------------
 # Create the configuration file

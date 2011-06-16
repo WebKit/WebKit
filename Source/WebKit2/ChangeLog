@@ -1,3 +1,14 @@
+2011-06-15  Ryuan Choi  <ryuan.choi@samsung.com>
+
+        Rubber stamped by Eric Seidel.
+
+        [CMAKE][WK2] Add an option to build webkit2.
+        https://bugs.webkit.org/show_bug.cgi?id=62260
+
+        Add script to build WebKit2 using CMake.
+
+        * CMakeLists.txt: Added.
+
 2011-06-15  John Sullivan  <sullivan@apple.com>
 
         Reviewed by Sam Weinig.
