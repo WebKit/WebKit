@@ -29,14 +29,16 @@
 #include <WebCore/NotImplemented.h>
 #include <WebCore/ResourceResponse.h>
 
+using namespace WebCore;
+ 
 namespace CoreIPC {
 
-void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
+void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
 {
     notImplemented();
 }
 
-bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
+bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
 {
     notImplemented();
 
@@ -46,34 +48,49 @@ bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& r
     return true;
 }
 
-void encodeResourceResponse(ArgumentEncoder* encoder, const WebCore::ResourceResponse& resourceResponse)
+
+void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
 {
     notImplemented();
 }
 
-bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse& resourceResponse)
+bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
 {
     notImplemented();
 
     // FIXME: Ditto.
-    resourceResponse = WebCore::ResourceResponse();
+    resourceResponse = ResourceResponse();
     return true;
 }
 
-void encodeResourceError(ArgumentEncoder* encoder, const WebCore::ResourceError& resourceError)
+
+void ArgumentCoder<ResourceError>::encode(ArgumentEncoder* encoder, const ResourceError& resourceError)
 {
-    encoder->encode(CoreIPC::In(resourceError.domain(), resourceError.errorCode(), resourceError.failingURL(), resourceError.localizedDescription()));
+    encoder->encode(resourceError.domain());
+    encoder->encode(resourceError.errorCode());
+    encoder->encode(resourceError.failingURL()); 
+    encoder->encode(resourceError.localizedDescription());
 }
 
-bool decodeResourceError(ArgumentDecoder* decoder, WebCore::ResourceError& resourceError)
+bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder* decoder, ResourceError& resourceError)
 {
     String domain;
-    int errorCode;
-    String failingURL;
-    String localizedDescription;
-    if (!decoder->decode(CoreIPC::Out(domain, errorCode, failingURL, localizedDescription)))
+    if (!decoder->decode(domain))
         return false;
-    resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription);
+
+    int errorCode;
+    if (!decoder->decode(errorCode))
+        return false;
+
+    String failingURL;
+    if (!decoder->decode(failingURL))
+        return false;
+
+    String localizedDescription;
+    if (!decoder->decode(localizedDescription))
+        return false;
+    
+    resourceError = ResourceError(domain, errorCode, failingURL, localizedDescription);
     return true;
 }
 

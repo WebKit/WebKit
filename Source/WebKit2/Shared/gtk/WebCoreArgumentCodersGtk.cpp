@@ -28,74 +28,63 @@
 #include "ResourceRequest.h"
 #include "WebCoreArgumentCoders.h"
 
+using namespace WebCore;
+
 namespace CoreIPC {
 
-void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
+void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
 {
-    encoder->encode(CoreIPC::In(resourceRequest.url().string()));
-    encoder->encode(CoreIPC::In(resourceRequest.httpMethod()));
+    encoder->encode(resourceRequest.url().string());
+    encoder->encode(resourceRequest.httpMethod());
 
-    const WebCore::HTTPHeaderMap& headers = resourceRequest.httpHeaderFields();
-    encoder->encode(CoreIPC::In(static_cast<uint32_t>(headers.size())));
-    if (!headers.isEmpty()) {
-        WebCore::HTTPHeaderMap::const_iterator end = headers.end();
-        for (WebCore::HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)
-            encoder->encode(CoreIPC::In(it->first, it->second));
-    }
+    const HTTPHeaderMap& headers = resourceRequest.httpHeaderFields();
+    encoder->encode(headers);
 
-    WebCore::FormData* httpBody = resourceRequest.httpBody();
-    encoder->encode(CoreIPC::In(static_cast<bool>(httpBody)));
+    FormData* httpBody = resourceRequest.httpBody();
+    encoder->encode(static_cast<bool>(httpBody));
     if (httpBody)
-        encoder->encode(CoreIPC::In(httpBody->flattenToString()));
+        encoder->encode(httpBody->flattenToString());
 
-    encoder->encode(CoreIPC::In(resourceRequest.firstPartyForCookies().string()));
-    encoder->encode(CoreIPC::In(static_cast<uint32_t>(resourceRequest.soupMessageFlags())));
+    encoder->encode(resourceRequest.firstPartyForCookies().string());
+    encoder->encode(static_cast<uint32_t>(resourceRequest.soupMessageFlags()));
 }
 
-bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
+bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
 {
-    WebCore::ResourceRequest request;
+    ResourceRequest request;
 
     String url;
-    if (!decoder->decode(CoreIPC::Out(url)))
+    if (!decoder->decode(url))
         return false;
-    request.setURL(WebCore::KURL(WebCore::KURL(), url));
+    request.setURL(KURL(KURL(), url));
 
     String httpMethod;
-    if (!decoder->decode(CoreIPC::Out(httpMethod)))
+    if (!decoder->decode(httpMethod))
         return false;
     request.setHTTPMethod(httpMethod);
 
-    uint32_t size;
-    if (!decoder->decode(CoreIPC::Out(size)))
+    HTTPHeaderMap headers;
+    if (!decoder->decode(headers))
         return false;
-    if (size) {
-        AtomicString name;
-        String value;
-        for (uint32_t i = 0; i < size; ++i) {
-            if (!decoder->decode(CoreIPC::Out(name, value)))
-                return false;
-            request.setHTTPHeaderField(name, value);
-        }
-    }
+    request.addHTTPHeaderFields(headers);
 
     bool hasHTTPBody;
-    if (!decoder->decode(CoreIPC::Out(hasHTTPBody)))
+    if (!decoder->decode(hasHTTPBody))
         return false;
     if (hasHTTPBody) {
         String httpBody;
-        if (!decoder->decode(CoreIPC::Out(httpBody)))
+        if (!decoder->decode(httpBody))
             return false;
-        request.setHTTPBody(WebCore::FormData::create(httpBody.utf8()));
+        request.setHTTPBody(FormData::create(httpBody.utf8()));
     }
 
     String firstPartyForCookies;
-    if (!decoder->decode(CoreIPC::Out(firstPartyForCookies)))
+    if (!decoder->decode(firstPartyForCookies))
         return false;
-    request.setFirstPartyForCookies(WebCore::KURL(WebCore::KURL(), firstPartyForCookies));
+    request.setFirstPartyForCookies(KURL(KURL(), firstPartyForCookies));
 
     uint32_t soupMessageFlags;
-    if (!decoder->decode(CoreIPC::Out(soupMessageFlags)))
+    if (!decoder->decode(soupMessageFlags))
         return false;
     request.setSoupMessageFlags(static_cast<SoupMessageFlags>(soupMessageFlags));
 
@@ -103,81 +92,69 @@ bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& r
     return true;
 }
 
-void encodeResourceResponse(ArgumentEncoder* encoder, const WebCore::ResourceResponse& resourceResponse)
+
+void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
 {
-    encoder->encode(CoreIPC::In(resourceResponse.url().string()));
-    encoder->encode(CoreIPC::In(static_cast<int32_t>(resourceResponse.httpStatusCode())));
+    encoder->encode(resourceResponse.url().string());
+    encoder->encode(static_cast<int32_t>(resourceResponse.httpStatusCode()));
 
-    const WebCore::HTTPHeaderMap& headers = resourceResponse.httpHeaderFields();
-    encoder->encode(CoreIPC::In(static_cast<uint32_t>(headers.size())));
-    if (!headers.isEmpty()) {
-        WebCore::HTTPHeaderMap::const_iterator end = headers.end();
-        for (WebCore::HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)
-            encoder->encode(CoreIPC::In(it->first, it->second));
-    }
+    encoder->encode(headers);
 
-    encoder->encode(CoreIPC::In(static_cast<uint32_t>(resourceResponse.soupMessageFlags())));
-    encoder->encode(CoreIPC::In(resourceResponse.mimeType()));
-    encoder->encode(CoreIPC::In(resourceResponse.textEncodingName()));
-    encoder->encode(CoreIPC::In(static_cast<int64_t>(resourceResponse.expectedContentLength())));
-    encoder->encode(CoreIPC::In(resourceResponse.httpStatusText()));
-    encoder->encode(CoreIPC::In(resourceResponse.suggestedFilename()));
+    encoder->encode(static_cast<uint32_t>(resourceResponse.soupMessageFlags()));
+    encoder->encode(resourceResponse.mimeType());
+    encoder->encode(resourceResponse.textEncodingName());
+    encoder->encode(static_cast<int64_t>(resourceResponse.expectedContentLength()));
+    encoder->encode(resourceResponse.httpStatusText());
+    encoder->encode(resourceResponse.suggestedFilename());
 }
 
-bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse& resourceResponse)
+bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
 {
-    WebCore::ResourceResponse response;
+    ResourceResponse response;
 
     String url;
-    if (!decoder->decode(CoreIPC::Out(url)))
+    if (!decoder->decode(url))
         return false;
-    response.setURL(WebCore::KURL(WebCore::KURL(), url));
+    response.setURL(KURL(KURL(), url));
 
     int32_t httpStatusCode;
-    if (!decoder->decode(CoreIPC::Out(httpStatusCode)))
+    if (!decoder->decode(httpStatusCode))
         return false;
     response.setHTTPStatusCode(httpStatusCode);
 
-    uint32_t size;
-    if (!decoder->decode(CoreIPC::Out(size)))
+    HTTPHeaderMap headers;
+    if (!decoder->decode(headers))
         return false;
-    if (size) {
-        AtomicString name;
-        String value;
-        for (uint32_t i = 0; i < size; ++i) {
-            if (!decoder->decode(CoreIPC::Out(name, value)))
-                return false;
-            response.setHTTPHeaderField(name, value);
-        }
-    }
+    for (HTTPHeaderMap::const_iterator it = headers.begin(), end = headers.end(); it != end; ++it)
+        response.setHTTPHeaderField(it->first, it->second);
 
     uint32_t soupMessageFlags;
-    if (!decoder->decode(CoreIPC::Out(soupMessageFlags)))
+    if (!decoder->decode(soupMessageFlags))
         return false;
     response.setSoupMessageFlags(static_cast<SoupMessageFlags>(soupMessageFlags));
 
     String mimeType;
-    if (!decoder->decode(CoreIPC::Out(mimeType)))
+    if (!decoder->decode(mimeType))
         return false;
     response.setMimeType(mimeType);
 
     String textEncodingName;
-    if (!decoder->decode(CoreIPC::Out(textEncodingName)))
+    if (!decoder->decode(textEncodingName))
         return false;
     response.setTextEncodingName(textEncodingName);
 
     int64_t contentLength;
-    if (!decoder->decode(CoreIPC::Out(contentLength)))
+    if (!decoder->decode(contentLength))
         return false;
     response.setExpectedContentLength(contentLength);
 
     String httpStatusText;
-    if (!decoder->decode(CoreIPC::Out(httpStatusText)))
+    if (!decoder->decode(httpStatusText))
         return false;
     response.setHTTPStatusText(httpStatusText);
 
     String suggestedFilename;
-    if (!decoder->decode(CoreIPC::Out(suggestedFilename)))
+    if (!decoder->decode(suggestedFilename))
         return false;
     response.setSuggestedFilename(suggestedFilename);
 
@@ -185,20 +162,34 @@ bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse&
     return true;
 }
 
-void encodeResourceError(ArgumentEncoder* encoder, const WebCore::ResourceError& resourceError)
+
+void ArgumentCoder<ResourceError>::encode(ArgumentEncoder* encoder, const ResourceError& resourceError)
 {
-    encoder->encode(CoreIPC::In(resourceError.domain(), resourceError.errorCode(), resourceError.failingURL(), resourceError.localizedDescription()));
+    encoder->encode(resourceError.domain());
+    encoder->encode(resourceError.errorCode());
+    encoder->encode(resourceError.failingURL()); 
+    encoder->encode(resourceError.localizedDescription());
 }
 
-bool decodeResourceError(ArgumentDecoder* decoder, WebCore::ResourceError& resourceError)
+bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder* decoder, ResourceError& resourceError)
 {
     String domain;
-    int errorCode;
-    String failingURL;
-    String localizedDescription;
-    if (!decoder->decode(CoreIPC::Out(domain, errorCode, failingURL, localizedDescription)))
+    if (!decoder->decode(domain))
         return false;
-    resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription);
+
+    int errorCode;
+    if (!decoder->decode(errorCode))
+        return false;
+
+    String failingURL;
+    if (!decoder->decode(failingURL))
+        return false;
+
+    String localizedDescription;
+    if (!decoder->decode(localizedDescription))
+        return false;
+    
+    resourceError = ResourceError(domain, errorCode, failingURL, localizedDescription);
     return true;
 }
 

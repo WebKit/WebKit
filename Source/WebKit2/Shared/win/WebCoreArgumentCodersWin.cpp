@@ -35,11 +35,14 @@
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
+using namespace WebCore;
+using namespace WebKit;
+ 
 namespace CoreIPC {
 
 // FIXME: These coders should really go in a WebCoreArgumentCodersCFNetwork file.
 
-void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
+void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
 {
 #if USE(CFNETWORK)
     bool requestIsPresent = resourceRequest.cfURLRequest();
@@ -49,11 +52,11 @@ void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequ
         return;
 
     RetainPtr<CFDictionaryRef> dictionary(AdoptCF, wkCFURLRequestCreateSerializableRepresentation(resourceRequest.cfURLRequest(), CoreIPC::tokenNullTypeRef()));
-    encode(encoder, dictionary.get());
+    CoreIPC::encode(encoder, dictionary.get());
 #endif
 }
 
-bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
+bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
 {
 #if USE(CFNETWORK)
     bool requestIsPresent;
@@ -61,31 +64,31 @@ bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& r
         return false;
 
     if (!requestIsPresent) {
-        resourceRequest = WebCore::ResourceRequest();
+        resourceRequest = ResourceRequest();
         return true;
     }
 
     RetainPtr<CFDictionaryRef> dictionary;
-    if (!decode(decoder, dictionary))
+    if (!CoreIPC::decode(decoder, dictionary))
         return false;
 
-    CFURLRequestRef cfURLRequest = wkCFURLRequestCreateFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
+    RetainPtr<CFURLRequestRef> cfURLRequest(AdoptCF, wkCFURLRequestCreateFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef()));
     if (!cfURLRequest)
         return false;
-    CFMutableURLRequestRef mutableCFURLRequest = CFURLRequestCreateMutableCopy(0, cfURLRequest);
-    CFRelease(cfURLRequest);
+    RetainPtr<CFMutableURLRequestRef> mutableCFURLRequest(AdoptCF, CFURLRequestCreateMutableCopy(0, cfURLRequest.get()));
 #if USE(CFURLSTORAGESESSIONS)
-    wkSetRequestStorageSession(WebCore::ResourceHandle::currentStorageSession(), mutableCFURLRequest);
+    wkSetRequestStorageSession(ResourceHandle::currentStorageSession(), mutableCFURLRequest.get());
 #endif
 
-    resourceRequest = WebCore::ResourceRequest(mutableCFURLRequest);
+    resourceRequest = ResourceRequest(mutableCFURLRequest.get());
     return true;
 #else
     return false;
 #endif
 }
 
-void encodeResourceResponse(ArgumentEncoder* encoder, const WebCore::ResourceResponse& resourceResponse)
+
+void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
 {
 #if USE(CFNETWORK)
     bool responseIsPresent = resourceResponse.cfURLResponse();
@@ -95,11 +98,11 @@ void encodeResourceResponse(ArgumentEncoder* encoder, const WebCore::ResourceRes
         return;
 
     RetainPtr<CFDictionaryRef> dictionary(AdoptCF, wkCFURLResponseCreateSerializableRepresentation(resourceResponse.cfURLResponse(), CoreIPC::tokenNullTypeRef()));
-    encode(encoder, dictionary.get());
+    CoreIPC::encode(encoder, dictionary.get());
 #endif
 }
 
-bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse& resourceResponse)
+bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
 {
 #if USE(CFNETWORK)
     bool responseIsPresent;
@@ -107,57 +110,70 @@ bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse&
         return false;
 
     if (!responseIsPresent) {
-        resourceResponse = WebCore::ResourceResponse();
+        resourceResponse = ResourceResponse();
         return true;
     }
 
     RetainPtr<CFDictionaryRef> dictionary;
-    if (!decode(decoder, dictionary))
+    if (!CoreIPC::decode(decoder, dictionary))
         return false;
 
-    CFURLResponseRef cfURLResponse = wkCFURLResponseCreateFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
+    RetainPtr<CFURLResponseRef> cfURLResponse(AdoptCF, wkCFURLResponseCreateFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef()));
     if (!cfURLResponse)
         return false;
 
-    resourceResponse = WebCore::ResourceResponse(cfURLResponse);
+    resourceResponse = ResourceResponse(cfURLResponse.get());
     return true;
 #else
     return false;
 #endif
 }
 
-void encodeResourceError(ArgumentEncoder* encoder, const WebCore::ResourceError& resourceError)
+
+void ArgumentCoder<ResourceError>::encode(ArgumentEncoder* encoder, const ResourceError& resourceError)
 {
-    encoder->encode(CoreIPC::In(resourceError.domain(), resourceError.errorCode(), resourceError.failingURL(), resourceError.localizedDescription()));
+    encoder->encode(resourceError.domain());
+    encoder->encode(resourceError.errorCode());
+    encoder->encode(resourceError.failingURL()); 
+    encoder->encode(resourceError.localizedDescription());
 
 #if USE(CFNETWORK)
-    encoder->encode(WebKit::PlatformCertificateInfo(resourceError.certificate()));
+    encoder->encode(PlatformCertificateInfo(resourceError.certificate()));
 #endif
 }
 
-bool decodeResourceError(ArgumentDecoder* decoder, WebCore::ResourceError& resourceError)
+bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder* decoder, ResourceError& resourceError)
 {
     String domain;
+    if (!decoder->decode(domain))
+        return false;
+
     int errorCode;
+    if (!decoder->decode(errorCode))
+        return false;
+
     String failingURL;
+    if (!decoder->decode(failingURL))
+        return false;
+
     String localizedDescription;
-    if (!decoder->decode(CoreIPC::Out(domain, errorCode, failingURL, localizedDescription)))
+    if (!decoder->decode(localizedDescription))
         return false;
 
 #if USE(CFNETWORK)
-    WebKit::PlatformCertificateInfo certificate;
+    PlatformCertificateInfo certificate;
     if (!decoder->decode(certificate))
         return false;
     
     const Vector<PCCERT_CONTEXT> certificateChain = certificate.certificateChain();
     if (!certificateChain.isEmpty()) {
         ASSERT(certificateChain.size() == 1);
-        resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription, WebCore::copyCertificateToData(certificateChain.first()).get());
+        resourceError = ResourceError(domain, errorCode, failingURL, localizedDescription, copyCertificateToData(certificateChain.first()).get());
         return true;
     }
 #endif
 
-    resourceError = WebCore::ResourceError(domain, errorCode, failingURL, localizedDescription);
+    resourceError = ResourceError(domain, errorCode, failingURL, localizedDescription);
     return true;
 }
 

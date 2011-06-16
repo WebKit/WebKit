@@ -130,52 +130,18 @@ template<> struct ArgumentCoder<WebCore::Cursor> {
 };
 #endif
 
-// These two functions are implemented in a platform specific manner.
-void encodeResourceRequest(ArgumentEncoder*, const WebCore::ResourceRequest&);
-bool decodeResourceRequest(ArgumentDecoder*, WebCore::ResourceRequest&);
-
 template<> struct ArgumentCoder<WebCore::ResourceRequest> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
-    {
-        encodeResourceRequest(encoder, resourceRequest);
-    }
-    
-    static bool decode(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
-    {
-        return decodeResourceRequest(decoder, resourceRequest);
-    }
+    static void encode(ArgumentEncoder*, const WebCore::ResourceRequest&);
+    static bool decode(ArgumentDecoder*, WebCore::ResourceRequest&);
 };
-
-// These two functions are implemented in a platform specific manner.
-void encodeResourceResponse(ArgumentEncoder*, const WebCore::ResourceResponse&);
-bool decodeResourceResponse(ArgumentDecoder*, WebCore::ResourceResponse&);
 
 template<> struct ArgumentCoder<WebCore::ResourceResponse> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::ResourceResponse& resourceResponse)
-    {
-        encodeResourceResponse(encoder, resourceResponse);
-    }
-
-    static bool decode(ArgumentDecoder* decoder, WebCore::ResourceResponse& resourceResponse)
-    {
-        return decodeResourceResponse(decoder, resourceResponse);
-    }
+    static void encode(ArgumentEncoder*, const WebCore::ResourceResponse&);
+    static bool decode(ArgumentDecoder*, WebCore::ResourceResponse&);
 };
-
-// These two functions are implemented in a platform specific manner.
-void encodeResourceError(ArgumentEncoder*, const WebCore::ResourceError&);
-bool decodeResourceError(ArgumentDecoder*, WebCore::ResourceError&);
-
 template<> struct ArgumentCoder<WebCore::ResourceError> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::ResourceError& resourceError)
-    {
-        encodeResourceError(encoder, resourceError);
-    }
-    
-    static bool decode(ArgumentDecoder* decoder, WebCore::ResourceError& resourceError)
-    {
-        return decodeResourceError(decoder, resourceError);
-    }
+    static void encode(ArgumentEncoder*, const WebCore::ResourceError&);
+    static bool decode(ArgumentDecoder*, WebCore::ResourceError&);
 };
 
 template<> struct ArgumentCoder<WebCore::WindowFeatures> {

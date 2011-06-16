@@ -35,7 +35,7 @@ using namespace WebKit;
 
 namespace CoreIPC {
 
-void encodeResourceRequest(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
+void ArgumentCoder<ResourceRequest>::encode(ArgumentEncoder* encoder, const ResourceRequest& resourceRequest)
 {
     bool requestIsPresent = resourceRequest.nsURLRequest();
     encoder->encode(requestIsPresent);
@@ -44,10 +44,10 @@ void encodeResourceRequest(ArgumentEncoder* encoder, const ResourceRequest& reso
         return;
 
     RetainPtr<CFDictionaryRef> dictionary(AdoptCF, WKNSURLRequestCreateSerializableRepresentation(resourceRequest.nsURLRequest(), CoreIPC::tokenNullTypeRef()));
-    encode(encoder, dictionary.get());
+    CoreIPC::encode(encoder, dictionary.get());
 }
 
-bool decodeResourceRequest(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
+bool ArgumentCoder<ResourceRequest>::decode(ArgumentDecoder* decoder, ResourceRequest& resourceRequest)
 {
     bool requestIsPresent;
     if (!decoder->decode(requestIsPresent))
@@ -59,7 +59,7 @@ bool decodeResourceRequest(ArgumentDecoder* decoder, ResourceRequest& resourceRe
     }
 
     RetainPtr<CFDictionaryRef> dictionary;
-    if (!decode(decoder, dictionary))
+    if (!CoreIPC::decode(decoder, dictionary))
         return false;
 
     NSURLRequest *nsURLRequest = WKNSURLRequestFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
@@ -70,7 +70,7 @@ bool decodeResourceRequest(ArgumentDecoder* decoder, ResourceRequest& resourceRe
     return true;
 }
 
-void encodeResourceResponse(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
+void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder* encoder, const ResourceResponse& resourceResponse)
 {
     bool responseIsPresent = resourceResponse.nsURLResponse();
     encoder->encode(responseIsPresent);
@@ -79,10 +79,10 @@ void encodeResourceResponse(ArgumentEncoder* encoder, const ResourceResponse& re
         return;
 
     RetainPtr<CFDictionaryRef> dictionary(AdoptCF, WKNSURLResponseCreateSerializableRepresentation(resourceResponse.nsURLResponse(), CoreIPC::tokenNullTypeRef()));
-    encode(encoder, dictionary.get());
+    CoreIPC::encode(encoder, dictionary.get());
 }
 
-bool decodeResourceResponse(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
+bool ArgumentCoder<ResourceResponse>::decode(ArgumentDecoder* decoder, ResourceResponse& resourceResponse)
 {
     bool responseIsPresent;
     if (!decoder->decode(responseIsPresent))
@@ -94,7 +94,7 @@ bool decodeResourceResponse(ArgumentDecoder* decoder, ResourceResponse& resource
     }
 
     RetainPtr<CFDictionaryRef> dictionary;
-    if (!decode(decoder, dictionary))
+    if (!CoreIPC::decode(decoder, dictionary))
         return false;
 
     NSURLResponse* nsURLResponse = WKNSURLResponseFromSerializableRepresentation(dictionary.get(), CoreIPC::tokenNullTypeRef());
@@ -110,7 +110,7 @@ static NSString* nsString(const String& string)
     return string.impl() ? [NSString stringWithCharacters:reinterpret_cast<const UniChar*>(string.characters()) length:string.length()] : @"";
 }
 
-void encodeResourceError(ArgumentEncoder* encoder, const ResourceError& resourceError)
+void ArgumentCoder<ResourceError>::encode(ArgumentEncoder* encoder, const ResourceError& resourceError)
 {
     bool errorIsNull = resourceError.isNull();
     encoder->encode(errorIsNull);
@@ -144,7 +144,7 @@ void encodeResourceError(ArgumentEncoder* encoder, const ResourceError& resource
     encoder->encode(PlatformCertificateInfo((CFArrayRef)peerCertificateChain));
 }
 
-bool decodeResourceError(ArgumentDecoder* decoder, ResourceError& resourceError)
+bool ArgumentCoder<ResourceError>::decode(ArgumentDecoder* decoder, ResourceError& resourceError)
 {
     bool errorIsNull;
     if (!decoder->decode(errorIsNull))
@@ -185,13 +185,11 @@ bool decodeResourceError(ArgumentDecoder* decoder, ResourceError& resourceError)
     if (certificate.certificateChain())
         [userInfo setObject:(NSArray *)certificate.certificateChain() forKey:@"NSErrorPeerCertificateChainKey"];
 
-    NSError *nsError = [[NSError alloc] initWithDomain:nsString(domain) code:code userInfo:userInfo];
+    RetainPtr<NSError> nsError(AdoptNS, [[NSError alloc] initWithDomain:nsString(domain) code:code userInfo:userInfo]);
 
-    resourceError = ResourceError(nsError);
-    [nsError release];
+    resourceError = ResourceError(nsError.get());
     return true;
 }
-
 
 void ArgumentCoder<KeypressCommand>::encode(ArgumentEncoder* encoder, const KeypressCommand& keypressCommand)
 {
