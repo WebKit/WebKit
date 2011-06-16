@@ -126,15 +126,11 @@ void ScheduledAction::execute(Document* document)
     if (!frame || !frame->script()->canExecuteScripts(AboutToExecuteScript))
         return;
 
-    frame->script()->setProcessingTimerCallback(true);
-
     if (m_function) {
         executeFunctionInContext(window, window->shell(), document);
         Document::updateStyleForAllDocuments();
     } else
         frame->script()->executeScriptInWorld(m_isolatedWorld.get(), m_code);
-
-    frame->script()->setProcessingTimerCallback(false);
 }
 
 #if ENABLE(WORKERS)

@@ -108,7 +108,6 @@ public:
 
     void disableEval();
 
-    void setProcessingTimerCallback(bool b) { m_processingTimerCallback = b; }
     static bool processingUserGesture();
 
     static bool canAccessFromCurrentOrigin(Frame*);

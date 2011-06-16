@@ -157,7 +157,6 @@ public:
 
     TextPosition0 eventHandlerPosition() const;
 
-    void setProcessingTimerCallback(bool processingTimerCallback) { m_processingTimerCallback = processingTimerCallback; }
     static bool processingUserGesture();
 
     void setPaused(bool paused) { m_paused = paused; }
@@ -195,7 +194,6 @@ private:
 
     bool m_inExecuteScript;
 
-    bool m_processingTimerCallback;
     bool m_paused;
 
     OwnPtr<V8Proxy> m_proxy;
