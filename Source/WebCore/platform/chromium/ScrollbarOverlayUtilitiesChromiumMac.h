@@ -95,6 +95,7 @@ void wkSetScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef, int n
 void wkSetPainterForPainterController(WKScrollbarPainterControllerRef, WKScrollbarPainterRef, bool isHorizontal);
 WKScrollbarPainterRef wkVerticalScrollbarPainterForController(WKScrollbarPainterControllerRef);
 WKScrollbarPainterRef wkHorizontalScrollbarPainterForController(WKScrollbarPainterControllerRef);
+NSScrollerStyle wkScrollbarPainterControllerStyle(WKScrollbarPainterControllerRef);
 
 #endif // USE(WK_SCROLLBAR_PAINTER)
 
