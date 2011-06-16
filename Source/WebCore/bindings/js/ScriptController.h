@@ -169,15 +169,12 @@ private:
 
     void disconnectPlatformScriptObjects();
 
-    bool isJavaScriptAnchorNavigation() const;
-
     ShellMap m_windowShells;
     Frame* m_frame;
     const String* m_sourceURL;
 
     bool m_inExecuteScript;
 
-    bool m_processingTimerCallback;
     bool m_paused;
 
     // The root object used for objects bound outside the context of a plugin, such

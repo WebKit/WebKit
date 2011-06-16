@@ -1,5 +1,22 @@
 2011-06-15  Adam Barth  <abarth@webkit.org>
 
+        Reviewed by Anders Carlsson.
+
+        Remove ScriptController::isJavaScriptAnchorNavigation
+        https://bugs.webkit.org/show_bug.cgi?id=62775
+
+        This function no longer plays a role in the user gesture code now that
+        we're not encoding the user gesture state into the ScriptSourceCode
+        URL.
+
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture):
+        * bindings/js/ScriptController.h:
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::processingUserGesture):
+
+2011-06-15  Adam Barth  <abarth@webkit.org>
+
         Reviewed by Eric Seidel.
 
         Remove ScriptController::setAllowPopupsFromPlugin

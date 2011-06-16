@@ -170,11 +170,6 @@ bool ScriptController::processingUserGesture()
     if (event)
         return event->fromUserGesture();
 
-    // FIXME: Remove this check once https://bugs.webkit.org/show_bug.cgi?id=62702 is fixed.
-    const String* sourceURL = firstFrame->script()->sourceURL();
-    if (sourceURL && sourceURL->isNull() && !firstFrame->script()->proxy()->timerCallback())
-        return true;
-
     return UserGestureIndicator::processingUserGesture();
 }
 
