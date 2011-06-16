@@ -3620,14 +3620,9 @@ BUGWK60121 : http/tests/misc/will-send-request-returns-null-on-redirect.html = T
 
 BUGWK62761 WIN : fast/events/panScroll-click-hyperlink.html = PASS TEXT
 BUGWK62761 LINUX : fast/events/panScroll-click-hyperlink.html = TEXT
-BUGSENORBLANCO : fast/files/domurl-script-execution-context-crash.html = CRASH PASS
-BUGSENORBLANCO : fast/loader/file-protocol-fragment.html = TEXT
-BUGSENORBLANCO : fast/filesystem/file-writer-write-overlapped.html = CRASH PASS TEXT
-BUGSENORBLANCO : editing/selection/drag-select-rapidly.html = CRASH PASS
-BUGSENORBLANCO LINUX DEBUG : fast/css/transform-default-parameter.html = CRASH PASS
-BUGSENORBLANCO MAC LINUX DEBUG : editing/execCommand/outdent-nested-lists-2.html = CRASH PASS
-BUGSENORBLANCO MAC DEBUG : fast/css/table-text-align-strict.html = CRASH PASS
-BUGSENORBLANCO DEBUG : fast/css/table-border-spacing.html = CRASH PASS
+BUGCR86337 : fast/files/domurl-script-execution-context-crash.html = CRASH PASS
+BUGCR86338 : fast/loader/file-protocol-fragment.html = TEXT
+BUGCR86340 : fast/filesystem/file-writer-write-overlapped.html = CRASH PASS TEXT
 
 // flakiness on deps bots (noted ~ r83108)
 BUGDPRANKE WIN CPU DEBUG : editing/selection/select-line.html = PASS CRASH
@@ -3956,3 +3951,7 @@ BUGWK62754 RELEASE : http/tests/misc/object-embedding-svg-delayed-size-negotiati
 BUGWK62754 DEBUG SLOW : http/tests/misc/object-embedding-svg-delayed-size-negotiation-2.htm = IMAGE+TEXT IMAGE
 
 BUGWK59921 WIN LINUX : inspector/debugger/debugger-scripts.html = TEXT PASS
+
+// The scrollbar varies slightly from Release build.  Since we don't maintain separate debug/release results,
+// we're currently unable to fix this.  :(
+WONTFIX LINUX DEBUG GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
