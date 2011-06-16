@@ -41,8 +41,10 @@
 #include "TiledDrawingAreaProxy.h"
 #include "WebContext.h"
 #include "WebContextMenuProxyQt.h"
+#include "WebEditCommandProxy.h"
 #include "WebEventFactoryQt.h"
 #include "WebPopupMenuProxyQt.h"
+#include "WebUndoCommandQt.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
 #include "ViewportArguments.h"
@@ -51,6 +53,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QStyle>
 #include <QTouchEvent>
+#include <QUndoStack>
 #include <QtDebug>
 #include <WebCore/Cursor.h>
 #include <WebCore/FloatRect.h>
@@ -96,6 +99,9 @@ QWKPagePrivate::QWKPagePrivate(QWKPage* qq, QWKContext* c, WKPageGroupRef pageGr
     , createNewPageFn(0)
     , backingStoreType(QGraphicsWKView::Simple)
     , isConnectedToEngine(true)
+#ifndef QT_NO_UNDOSTACK
+    , undoStack(adoptPtr(new QUndoStack(qq)))
+#endif
 {
     memset(actions, 0, sizeof(actions));
     page = context->d->context->createWebPage(this, toImpl(pageGroupRef));
@@ -206,21 +212,44 @@ void QWKPagePrivate::toolTipChanged(const String&, const String& newTooltip)
     emit q->toolTipChanged(QString(newTooltip));
 }
 
-void QWKPagePrivate::registerEditCommand(PassRefPtr<WebEditCommandProxy>, WebPageProxy::UndoOrRedo)
+void QWKPagePrivate::registerEditCommand(PassRefPtr<WebEditCommandProxy> command, WebPageProxy::UndoOrRedo undoOrRedo)
 {
+#ifndef QT_NO_UNDOSTACK
+    if (undoOrRedo == WebPageProxy::Undo) {
+        const WebUndoCommandQt* webUndoCommand = static_cast<const WebUndoCommandQt*>(undoStack->command(undoStack->index()));
+        if (webUndoCommand && webUndoCommand->inUndoRedo())
+            return;
+        undoStack->push(new WebUndoCommandQt(command));
+    }
+#endif
 }
 
 void QWKPagePrivate::clearAllEditCommands()
 {
+#ifndef QT_NO_UNDOSTACK
+    undoStack->clear();
+#endif
 }
 
-bool QWKPagePrivate::canUndoRedo(WebPageProxy::UndoOrRedo)
+bool QWKPagePrivate::canUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
+#ifdef QT_NO_UNDOSTACK
     return false;
+#else
+    if (undoOrRedo == WebPageProxy::Undo)
+        return undoStack->canUndo();
+    return undoStack->canRedo();
+#endif
 }
 
-void QWKPagePrivate::executeUndoRedo(WebPageProxy::UndoOrRedo)
+void QWKPagePrivate::executeUndoRedo(WebPageProxy::UndoOrRedo undoOrRedo)
 {
+#ifndef QT_NO_UNDOSTACK
+    if (undoOrRedo == WebPageProxy::Undo)
+        undoStack->undo();
+    else
+        undoStack->redo();
+#endif
 }
 
 FloatRect QWKPagePrivate::convertToDeviceSpace(const FloatRect& rect)

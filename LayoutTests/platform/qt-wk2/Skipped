@@ -199,9 +199,6 @@ editing/selection/triple-click-in-pre.html
 editing/selection/user-drag-element-and-user-select-none.html
 editing/selection/word-granularity.html
 editing/spelling/context-menu-suggestions.html
-editing/undo/undo-deleteWord.html
-editing/undo/undo-smart-delete-reversed-selection.html
-editing/undo/undo-smart-delete-word.html
 fast/blockflow/horizontal-bt-replaced-selection.html
 fast/blockflow/japanese-lr-selection.html
 fast/blockflow/japanese-rl-selection.html
@@ -1297,7 +1294,6 @@ editing/spelling/design-mode-spellcheck-off.html
 editing/style/remove-underline-from-stylesheet.html
 editing/style/typing-style-003.html
 editing/text-iterator/thai-cursor-movement.html
-editing/undo/replace-by-span-then-remove.html
 editing/deleting/5168598.html
 editing/deleting/delete-line-011.html
 editing/pasteboard/createMarkup-assert.xml
@@ -1748,28 +1744,6 @@ printing/page-rule-selection.html
 # WebKit2 needs support for moving/resizing and querying the location/size the window
 fast/dom/Window/window-resize-and-move-arguments.html
 fast/dom/Window/window-resize.html
-
-# WebKit2 needs undo/redo support
-editing/undo/remove-css-property-and-remove-style.html
-editing/deleting/delete-and-undo.html
-editing/execCommand/convert-style-elements-to-spans.html
-editing/inserting/redo.html
-editing/undo/4063751.html
-editing/undo/5378473.html
-editing/undo/redo-split-text-node.html
-editing/undo/redo-split-text-with-removal.html
-editing/undo/redo-style.html
-editing/undo/redo-typing-001.html
-editing/undo/undo-combined-delete-boundary.html
-editing/undo/undo-combined-delete.html
-editing/undo/undo-delete-boundary.html
-editing/undo/undo-delete.html
-editing/undo/undo-forward-delete-boundary.html
-editing/undo/undo-forward-delete.html
-editing/undo/undo-iframe-location-change.html
-editing/undo/undo-indent.html
-editing/undo/undo-misspellings.html
-editing/undo/undo-typing-001.html
 
 # WebKit2 needs to define a default charset (Settings::defaultTextEncodingName)
 fast/dom/Document/document-charset.html
@@ -2968,6 +2942,7 @@ tables/mozilla_expected_failures/dom/appendCells1.html
 tables/mozilla_expected_failures/dom/appendCellsRebuild1.html
 tables/mozilla_expected_failures/dom/insertTbodyExpand1.html
 tables/mozilla_expected_failures/dom/insertTbodyRebuild1.html
+editing/deleting/delete-and-undo.html
 
 # [Qt][WK2]http/tests/loading/preload-append-scan.php fails
 # https://bugs.webkit.org/show_bug.cgi?id=58253
@@ -3017,9 +2992,6 @@ fast/replaced/object-with-non-empty-classid-triggers-fallback.html
 
 # fail after http://trac.webkit.org/changeset/87067
 fast/forms/textfield-overflow.html
-
-# new test inroduced in r87204, but fail
-editing/undo/undo-after-setting-value.html
 
 # unskipped by r88152, but fail on Qt-WK2 platform
 editing/selection/select-across-readonly-input-1.html

@@ -1,3 +1,29 @@
+2011-06-16  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        [Qt] [WK2] Qt WebKit2 needs undo/redo support
+        https://bugs.webkit.org/show_bug.cgi?id=62637
+
+        Implement undo/redo support for document.execCommand().
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPagePrivate::QWKPagePrivate):
+        (QWKPagePrivate::~QWKPagePrivate):
+        (QWKPagePrivate::registerEditCommand):
+        (QWKPagePrivate::clearAllEditCommands):
+        (QWKPagePrivate::canUndoRedo):
+        (QWKPagePrivate::executeUndoRedo):
+        * UIProcess/API/qt/qwkpage_p.h:
+        * UIProcess/qt/WebUndoCommandQt.cpp: Added.
+        (WebUndoCommandQt::WebUndoCommandQt):
+        (WebUndoCommandQt::~WebUndoCommandQt):
+        (WebUndoCommandQt::redo):
+        (WebUndoCommandQt::undo):
+        * UIProcess/qt/WebUndoCommandQt.h: Added.
+        (WebUndoCommandQt::inUndoRedo):
+        * WebKit2.pro:
+
 2011-06-16  Anders Carlsson  <andersca@apple.com>
 
         Fix build.

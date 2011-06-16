@@ -1,3 +1,14 @@
+2011-06-16  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Sam Weinig.
+
+        [Qt] [WK2] Qt WebKit2 needs undo/redo support
+        https://bugs.webkit.org/show_bug.cgi?id=62637
+
+        Unskip passed tests.
+
+        * platform/qt-wk2/Skipped:
+
 2011-06-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

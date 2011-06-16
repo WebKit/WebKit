@@ -34,6 +34,7 @@
 #include <QKeyEvent>
 
 class QGraphicsWKView;
+class QUndoStack;
 class QWKPreferences;
 
 using namespace WebKit;
@@ -138,6 +139,10 @@ public:
     QGraphicsWKView::BackingStoreType backingStoreType;
 
     bool isConnectedToEngine;
+
+#ifndef QT_NO_UNDOSTACK
+    OwnPtr<QUndoStack> undoStack;
+#endif
 };
 
 class QtViewportAttributesPrivate : public QSharedData {
