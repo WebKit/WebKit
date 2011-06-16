@@ -2,6 +2,15 @@
 
         Unreviewed.
 
+        [chromium] Adding more new baselines.
+
+        * platform/chromium-mac-leopard/fast/forms/basic-textareas-expected.png:
+        * platform/chromium-mac-leopard/svg/hixie/text/003-expected.png:
+
+2011-06-16  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
+
         [chromium] Adding new baselines.
 
         * platform/chromium-mac-leopard/fast/replaced/outline-replaced-elements-expected.png: Added.
