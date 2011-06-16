@@ -75,9 +75,6 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
     attributes.height = allocation.height;
     attributes.wclass = GDK_INPUT_OUTPUT;
     attributes.visual = gtk_widget_get_visual(widget);
-#ifdef GTK_API_VERSION_2
-    attributes.colormap = gtk_widget_get_colormap(widget);
-#endif
     attributes.event_mask = GDK_VISIBILITY_NOTIFY_MASK
         | GDK_EXPOSURE_MASK
         | GDK_BUTTON_PRESS_MASK
@@ -91,23 +88,12 @@ static void webkitWebViewBaseRealize(GtkWidget* widget)
         | GDK_BUTTON3_MOTION_MASK;
 
     gint attributesMask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL;
-#ifdef GTK_API_VERSION_2
-    attributesMask |= GDK_WA_COLORMAP;
-#endif
+
     GdkWindow* window = gdk_window_new(gtk_widget_get_parent_window(widget), &attributes, attributesMask);
     gtk_widget_set_window(widget, window);
     gdk_window_set_user_data(window, widget);
 
-#ifdef GTK_API_VERSION_2
-#if GTK_CHECK_VERSION(2, 20, 0)
-    gtk_widget_style_attach(widget);
-#else
-    widget->style = gtk_style_attach(gtk_widget_get_style(widget), window);
-#endif
-    gtk_style_set_background(gtk_widget_get_style(widget), window, GTK_STATE_NORMAL);
-#else
     gtk_style_context_set_background(gtk_widget_get_style_context(widget), window);
-#endif
 
     WebKitWebViewBase* webView = WEBKIT_WEB_VIEW_BASE(widget);
     WebKitWebViewBasePrivate* priv = webView->priv;
@@ -150,36 +136,21 @@ static void webkit_web_view_base_init(WebKitWebViewBase* webkitWebViewBase)
     priv->pageClient = PageClientImpl::create(GTK_WIDGET(webkitWebViewBase));
 }
 
-static void callDrawingAreaPaintMethod(DrawingAreaProxy* drawingArea, cairo_t* context, const IntRect& area)
-{
-    if (!drawingArea)
-        return;
-
-    WebKit::Region unpaintedRegion; // This is simply unused.
-    static_cast<DrawingAreaProxyImpl*>(drawingArea)->paint(context, area, unpaintedRegion);
-}
-
-#ifdef GTK_API_VERSION_2
-static gboolean webkitWebViewBaseExpose(GtkWidget* widget, GdkEventExpose* event)
-{
-    GdkRectangle clipRect;
-    gdk_region_get_clipbox(event->region, &clipRect);
-
-    RefPtr<cairo_t> cr = adoptRef(gdk_cairo_create(gtk_widget_get_window(widget)));
-    callDrawingAreaPaintMethod(WEBKIT_WEB_VIEW_BASE(widget)->priv->pageProxy->drawingArea(), cr.get(), clipRect);
-    return FALSE;
-}
-#else
 static gboolean webkitWebViewBaseDraw(GtkWidget* widget, cairo_t* cr)
 {
+    DrawingAreaProxy* drawingArea = WEBKIT_WEB_VIEW_BASE(widget)->priv->pageProxy->drawingArea();
+    if (!drawingArea)
+        return FALSE;
+
     GdkRectangle clipRect;
     if (!gdk_cairo_get_clip_rectangle(cr, &clipRect))
         return FALSE;
 
-    callDrawingAreaPaintMethod(WEBKIT_WEB_VIEW_BASE(widget)->priv->pageProxy->drawingArea(), cr, clipRect);
+    WebKit::Region unpaintedRegion; // This is simply unused.
+    static_cast<DrawingAreaProxyImpl*>(drawingArea)->paint(cr, clipRect, unpaintedRegion);
+
     return FALSE;
 }
-#endif
 
 static void webkitWebViewBaseSizeAllocate(GtkWidget* widget, GtkAllocation* allocation)
 {
@@ -290,7 +261,6 @@ static gboolean webkitWebViewBaseMotionNotifyEvent(GtkWidget* widget, GdkEventMo
     return FALSE;
 }
 
-#if GTK_CHECK_VERSION(2, 12, 0)
 static gboolean webkitWebViewBaseQueryTooltip(GtkWidget* widget, gint x, gint y, gboolean keyboardMode, GtkTooltip* tooltip)
 {
     WebKitWebViewBasePrivate* priv = WEBKIT_WEB_VIEW_BASE(widget)->priv;
@@ -309,17 +279,12 @@ static gboolean webkitWebViewBaseQueryTooltip(GtkWidget* widget, gint x, gint y,
     gtk_tooltip_set_text(tooltip, priv->tooltipText.data());
     return TRUE;
 }
-#endif
 
 static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebViewBaseClass)
 {
     GtkWidgetClass* widgetClass = GTK_WIDGET_CLASS(webkitWebViewBaseClass);
     widgetClass->realize = webkitWebViewBaseRealize;
-#ifdef GTK_API_VERSION_2
-    widgetClass->expose_event = webkitWebViewBaseExpose;
-#else
     widgetClass->draw = webkitWebViewBaseDraw;
-#endif
     widgetClass->size_allocate = webkitWebViewBaseSizeAllocate;
     widgetClass->focus_in_event = webkitWebViewBaseFocusInEvent;
     widgetClass->focus_out_event = webkitWebViewBaseFocusOutEvent;
@@ -329,9 +294,7 @@ static void webkit_web_view_base_class_init(WebKitWebViewBaseClass* webkitWebVie
     widgetClass->button_release_event = webkitWebViewBaseButtonReleaseEvent;
     widgetClass->scroll_event = webkitWebViewBaseScrollEvent;
     widgetClass->motion_notify_event = webkitWebViewBaseMotionNotifyEvent;
-#if GTK_CHECK_VERSION(2, 12, 0)
     widgetClass->query_tooltip = webkitWebViewBaseQueryTooltip;
-#endif
 
     GObjectClass* gobjectClass = G_OBJECT_CLASS(webkitWebViewBaseClass);
     gobjectClass->finalize = webkitWebViewBaseFinalize;
@@ -367,7 +330,6 @@ void webkitWebViewBaseCreateWebPage(WebKitWebViewBase* webkitWebViewBase, WKCont
 
 void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char* tooltip)
 {
-#if GTK_CHECK_VERSION(2, 12, 0)
     WebKitWebViewBasePrivate* priv = webViewBase->priv;
     if (tooltip && tooltip[0] != '\0') {
         priv->tooltipText = tooltip;
@@ -378,11 +340,6 @@ void webkitWebViewBaseSetTooltipText(WebKitWebViewBase* webViewBase, const char*
     }
 
     gtk_widget_trigger_tooltip_query(GTK_WIDGET(webViewBase));
-#else
-    // TODO: Support older GTK+ versions
-    // See http://bugs.webkit.org/show_bug.cgi?id=15793
-    notImplemented();
-#endif
 }
 
 

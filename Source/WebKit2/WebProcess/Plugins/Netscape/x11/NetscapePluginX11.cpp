@@ -134,11 +134,7 @@ static inline int x11Screen()
 #if PLATFORM(GTK)
 static bool moduleMixesGtkSymbols(Module* module)
 {
-#ifdef GTK_API_VERSION_2
-    return module->functionPointer<gpointer>("gtk_application_get_type");
-#else
     return module->functionPointer<gpointer>("gtk_object_get_type");
-#endif
 }
 #endif
 

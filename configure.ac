@@ -1060,6 +1060,11 @@ AC_ARG_ENABLE(webkit2,
                 [build webkit2 [default=no]]),
                 [], [enable_webkit2="no"])
 AC_MSG_RESULT([$enable_webkit2])
+if test "$enable_webkit2" = "yes"; then
+   if test "$GTK_API_VERSION" = "2.0"; then
+      AC_MSG_ERROR([WebKit2 requires GTK+ 3.x, use --with-gtk=3.0])
+   fi
+fi
 
 # Plugin Process
 AC_MSG_CHECKING([whether to build plugin process for WebKit2])

@@ -1,3 +1,21 @@
+2011-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Remove support for GTK+2 in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=62794
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkitWebViewBaseRealize):
+        (webkitWebViewBaseDraw):
+        (webkitWebViewBaseQueryTooltip):
+        (webkit_web_view_base_class_init):
+        (webkitWebViewBaseSetTooltipText):
+        * UIProcess/gtk/WebContextMenuProxyGtk.cpp:
+        (WebKit::WebContextMenuProxyGtk::menuPositionFunction):
+        * WebProcess/Plugins/Netscape/x11/NetscapePluginX11.cpp:
+        (WebKit::moduleMixesGtkSymbols):
+
 2011-06-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

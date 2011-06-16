@@ -1,3 +1,12 @@
+2011-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Remove support for GTK+2 in WebKit2
+        https://bugs.webkit.org/show_bug.cgi?id=62794
+
+        * configure.ac: Make WebKit2 require GTK+ 3.x.
+
 2011-06-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Rubber stamped by Eric Seidel.
