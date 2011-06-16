@@ -63,6 +63,7 @@ ScriptController::ScriptController(Frame* frame)
     : m_frame(frame)
     , m_sourceURL(0)
     , m_inExecuteScript(false)
+    , m_processingTimerCallback(false)
     , m_paused(false)
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_windowScriptNPObject(0)
@@ -243,7 +244,35 @@ void ScriptController::disableEval()
 
 bool ScriptController::processingUserGesture()
 {
+    ExecState* exec = JSMainThreadExecState::currentState();
+    Frame* frame = exec ? toDynamicFrame(exec) : 0;
+    // No script is running, so it is user-initiated unless the gesture stack
+    // explicitly says it is not.
+    if (!frame)
+        return UserGestureIndicator::getUserGestureState() != DefinitelyNotProcessingUserGesture;
+
+    // FIXME: Remove the isJavaScriptAnchorNavigation check once https://bugs.webkit.org/show_bug.cgi?id=62702 is fixed.
+    if (frame->script()->isJavaScriptAnchorNavigation())
+        return true;
+
+    // If a DOM event is being processed, check that it was initiated by the user
+    // and that it is in the whitelist of event types allowed to generate pop-ups.
+    if (JSDOMWindowShell* shell = frame->script()->existingWindowShell(currentWorld(exec)))
+        if (Event* event = shell->window()->currentEvent())
+            return event->fromUserGesture();
+
     return UserGestureIndicator::processingUserGesture();
+}
+
+// FIXME: This seems like an insufficient check to verify a click on a javascript: anchor.
+bool ScriptController::isJavaScriptAnchorNavigation() const
+{
+    // This is the <a href="javascript:window.open('...')> case -> we let it through
+    if (m_sourceURL && m_sourceURL->isNull() && !m_processingTimerCallback)
+        return true;
+
+    // This is the <script>window.open(...)</script> case or a timer callback -> block it
+    return false;
 }
 
 bool ScriptController::canAccessFromCurrentOrigin(Frame *frame)

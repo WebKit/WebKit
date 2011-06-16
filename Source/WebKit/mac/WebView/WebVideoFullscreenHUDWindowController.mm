@@ -563,9 +563,9 @@ static NSTextField *createTimeTextField(NSRect frame)
         return;
 
     if (playing)
-        mediaElement->play();
+        mediaElement->play(mediaElement->processingUserGesture());
     else
-        mediaElement->pause();
+        mediaElement->pause(mediaElement->processingUserGesture());
 }
 
 static NSString *timeToString(double time)

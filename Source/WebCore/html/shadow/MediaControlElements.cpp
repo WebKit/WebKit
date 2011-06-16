@@ -47,7 +47,6 @@
 #include "RenderSlider.h"
 #include "RenderTheme.h"
 #include "RenderView.h"
-#include "ScriptController.h"
 #include "Settings.h"
 
 namespace WebCore {
@@ -548,7 +547,7 @@ void MediaControlSeekButtonElement::defaultEventHandler(Event* event)
             m_capturing = true;
             frame->eventHandler()->setCapturingMouseEventsNode(this);
         }
-        mediaElement()->pause();
+        mediaElement()->pause(event->fromUserGesture());
         m_seekTimer.startRepeating(cSeekRepeatDelay);
         event->setDefaultHandled();
     } else if (event->type() == eventNames().mouseupEvent) {

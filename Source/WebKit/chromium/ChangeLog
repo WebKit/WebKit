@@ -1,3 +1,17 @@
+2011-06-16  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
+
+        Revert Adam's user gesture patch series r89002, r89005, r89007, r89018
+        https://bugs.webkit.org/show_bug.cgi?id=62796
+
+        The patches broke chromium browser tests.
+
+        * src/WebPluginContainerImpl.cpp:
+        (WebKit::WebPluginContainerImpl::loadFrameRequest):
+        * src/WebViewImpl.cpp:
+        (WebKit::WebViewImpl::performMediaPlayerAction):
+
 2011-06-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Yury Semikhatsky.

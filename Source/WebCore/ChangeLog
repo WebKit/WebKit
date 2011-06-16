@@ -1,3 +1,57 @@
+2011-06-16  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
+
+        Revert Adam's user gesture patch series r89002, r89005, r89007, r89018
+        https://bugs.webkit.org/show_bug.cgi?id=62796
+
+        The patches broke chromium browser tests.
+
+        * WebCore.exp.in:
+        * bindings/js/ScheduledAction.cpp:
+        (WebCore::ScheduledAction::execute):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::processingUserGesture):
+        (WebCore::ScriptController::isJavaScriptAnchorNavigation):
+        * bindings/js/ScriptController.h:
+        (WebCore::ScriptController::setProcessingTimerCallback):
+        * bindings/v8/ScriptController.cpp:
+        (WebCore::ScriptController::ScriptController):
+        (WebCore::ScriptController::processingUserGesture):
+        * bindings/v8/ScriptController.h:
+        (WebCore::ScriptController::setProcessingTimerCallback):
+        * dom/Event.cpp:
+        (WebCore::Event::fromUserGesture):
+        * dom/Event.h:
+        * dom/UserGestureIndicator.cpp:
+        (WebCore::UserGestureIndicator::UserGestureIndicator):
+        (WebCore::UserGestureIndicator::~UserGestureIndicator):
+        * dom/UserGestureIndicator.h:
+        (WebCore::UserGestureIndicator::processingUserGesture):
+        (WebCore::UserGestureIndicator::getUserGestureState):
+        * html/HTMLMediaElement.cpp:
+        (WebCore::HTMLMediaElement::removedFromDocument):
+        (WebCore::HTMLMediaElement::load):
+        (WebCore::HTMLMediaElement::play):
+        (WebCore::HTMLMediaElement::pause):
+        (WebCore::HTMLMediaElement::beginScrubbing):
+        (WebCore::HTMLMediaElement::resume):
+        (WebCore::HTMLMediaElement::processingUserGesture):
+        * html/HTMLMediaElement.h:
+        * html/HTMLMediaElement.idl:
+        * html/HTMLVideoElement.cpp:
+        (WebCore::HTMLVideoElement::webkitEnterFullscreen):
+        * html/HTMLVideoElement.h:
+        (WebCore::HTMLVideoElement::webkitEnterFullScreen):
+        * html/HTMLVideoElement.idl:
+        * html/MediaDocument.cpp:
+        (WebCore::MediaDocument::defaultEventHandler):
+        * html/shadow/MediaControlElements.cpp:
+        (WebCore::MediaControlSeekButtonElement::defaultEventHandler):
+        * html/shadow/TextControlInnerElements.cpp:
+        (WebCore::InputFieldSpeechButtonElement::defaultEventHandler):
+
 2011-06-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Yury Semikhatsky.

@@ -1797,7 +1797,8 @@ double WebView::zoomFactorToZoomLevel(double factor)
 void WebViewImpl::performMediaPlayerAction(const WebMediaPlayerAction& action,
                                            const WebPoint& location)
 {
-    HitTestResult result = hitTestResultForWindowPos(location);
+    HitTestResult result =
+        hitTestResultForWindowPos(location);
     RefPtr<Node> node = result.innerNonSharedNode();
     if (!node->hasTagName(HTMLNames::videoTag) && !node->hasTagName(HTMLNames::audioTag))
       return;
@@ -1807,9 +1808,9 @@ void WebViewImpl::performMediaPlayerAction(const WebMediaPlayerAction& action,
     switch (action.type) {
     case WebMediaPlayerAction::Play:
         if (action.enable)
-            mediaElement->play();
+            mediaElement->play(mediaElement->processingUserGesture());
         else
-            mediaElement->pause();
+            mediaElement->pause(mediaElement->processingUserGesture());
         break;
     case WebMediaPlayerAction::Mute:
         mediaElement->setMuted(action.enable);

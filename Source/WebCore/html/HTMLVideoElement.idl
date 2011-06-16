@@ -37,11 +37,11 @@ module html {
         readonly attribute boolean webkitSupportsFullscreen;
         readonly attribute boolean webkitDisplayingFullscreen;
 
-        void webkitEnterFullscreen() raises (DOMException);
+        [NeedsUserGestureCheck] void webkitEnterFullscreen() raises (DOMException);
         void webkitExitFullscreen();
 
         // Note the different capitalization of the "S" in FullScreen.
-        void webkitEnterFullScreen() raises (DOMException);
+        [NeedsUserGestureCheck] void webkitEnterFullScreen() raises (DOMException);
         void webkitExitFullScreen();
 
 #if defined(ENABLE_MEDIA_STATISTICS) && ENABLE_MEDIA_STATISTICS

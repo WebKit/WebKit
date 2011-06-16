@@ -39,7 +39,6 @@
 #include "Page.h"
 #include "RenderImage.h"
 #include "RenderVideo.h"
-#include "ScriptController.h"
 
 namespace WebCore {
 
@@ -231,14 +230,14 @@ bool HTMLVideoElement::hasAvailableVideoFrame() const
     return player()->hasAvailableVideoFrame();
 }
 
-void HTMLVideoElement::webkitEnterFullscreen(ExceptionCode& ec)
+void HTMLVideoElement::webkitEnterFullscreen(bool isUserGesture, ExceptionCode& ec)
 {
     if (isFullscreen())
         return;
 
     // Generate an exception if this isn't called in response to a user gesture, or if the 
     // element does not support fullscreen.
-    if ((requireUserGestureForFullScreen() && !ScriptController::processingUserGesture()) || !supportsFullscreen()) {
+    if ((requireUserGestureForFullScreen() && !isUserGesture) || !supportsFullscreen()) {
         ec = INVALID_STATE_ERR;
         return;
     }

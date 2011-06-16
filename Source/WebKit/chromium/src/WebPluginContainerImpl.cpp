@@ -365,7 +365,8 @@ WebString WebPluginContainerImpl::executeScriptURL(const WebURL& url, bool popup
     return resultStr;
 }
 
-void WebPluginContainerImpl::loadFrameRequest(const WebURLRequest& request, const WebString& target, bool notifyNeeded, void* notifyData)
+void WebPluginContainerImpl::loadFrameRequest(
+    const WebURLRequest& request, const WebString& target, bool notifyNeeded, void* notifyData)
 {
     Frame* frame = m_element->document()->frame();
     if (!frame)
@@ -381,9 +382,19 @@ void WebPluginContainerImpl::loadFrameRequest(const WebURLRequest& request, cons
         WebDataSourceImpl::setNextPluginLoadObserver(observer.release());
     }
 
-    FrameLoadRequest frameRequest(frame->document()->securityOrigin(), request.toResourceRequest(), target);
-    UserGestureIndicator gestureIndicator(request.hasUserGesture() ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
-    frame->loader()->loadFrameRequest(frameRequest, false, false, 0, 0, SendReferrer);
+    FrameLoadRequest frameRequest(frame->document()->securityOrigin(),
+        request.toResourceRequest(), target);
+
+    UserGestureIndicator gestureIndicator(request.hasUserGesture() ?
+        DefinitelyProcessingUserGesture : DefinitelyNotProcessingUserGesture);
+
+    frame->loader()->loadFrameRequest(
+        frameRequest,
+        false,  // lock history
+        false,  // lock back forward list
+        0,      // event
+        0,     // form state
+        SendReferrer);
 }
 
 void WebPluginContainerImpl::zoomLevelChanged(double zoomLevel)

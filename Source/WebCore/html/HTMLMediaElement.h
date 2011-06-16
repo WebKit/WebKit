@@ -95,7 +95,7 @@ public:
     void setPreload(const String&);
 
     PassRefPtr<TimeRanges> buffered() const;
-    void load(ExceptionCode&);
+    void load(bool isUserGesture, ExceptionCode&);
     String canPlayType(const String& mimeType) const;
 
 // ready state
@@ -122,8 +122,8 @@ public:
     void setAutoplay(bool b);
     bool loop() const;    
     void setLoop(bool b);
-    void play();
-    void pause();
+    void play(bool isUserGesture);
+    void pause(bool isUserGesture);
 
 // captions
     bool webkitHasClosedCaptions() const;
@@ -173,6 +173,8 @@ public:
     void setClosedCaptionsVisible(bool);
 
     MediaControls* mediaControls();
+
+    bool processingUserGesture() const;
 
     void sourceWillBeRemoved(HTMLSourceElement*);
     void sourceWasAdded(HTMLSourceElement*);
