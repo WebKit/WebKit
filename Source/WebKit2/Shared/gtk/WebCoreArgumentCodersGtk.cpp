@@ -25,39 +25,163 @@
  */
 
 #include "config.h"
+#include "ResourceRequest.h"
 #include "WebCoreArgumentCoders.h"
-
-#include <WebCore/NotImplemented.h>
 
 namespace CoreIPC {
 
 void encodeResourceRequest(ArgumentEncoder* encoder, const WebCore::ResourceRequest& resourceRequest)
 {
-    notImplemented();
+    encoder->encode(CoreIPC::In(resourceRequest.url().string()));
+    encoder->encode(CoreIPC::In(resourceRequest.httpMethod()));
+
+    const WebCore::HTTPHeaderMap& headers = resourceRequest.httpHeaderFields();
+    encoder->encode(CoreIPC::In(static_cast<uint32_t>(headers.size())));
+    if (!headers.isEmpty()) {
+        WebCore::HTTPHeaderMap::const_iterator end = headers.end();
+        for (WebCore::HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)
+            encoder->encode(CoreIPC::In(it->first, it->second));
+    }
+
+    WebCore::FormData* httpBody = resourceRequest.httpBody();
+    encoder->encode(CoreIPC::In(static_cast<bool>(httpBody)));
+    if (httpBody)
+        encoder->encode(CoreIPC::In(httpBody->flattenToString()));
+
+    encoder->encode(CoreIPC::In(resourceRequest.firstPartyForCookies().string()));
+    encoder->encode(CoreIPC::In(static_cast<uint32_t>(resourceRequest.soupMessageFlags())));
 }
 
 bool decodeResourceRequest(ArgumentDecoder* decoder, WebCore::ResourceRequest& resourceRequest)
 {
-    notImplemented();
+    WebCore::ResourceRequest request;
 
-    // FIXME: Add real implementation when we want to implement something that
-    // depends on this like the policy client.
-    // https://bugs.webkit.org/show_bug.cgi?id=55934
-    resourceRequest = WebCore::ResourceRequest();
+    String url;
+    if (!decoder->decode(CoreIPC::Out(url)))
+        return false;
+    request.setURL(WebCore::KURL(WebCore::KURL(), url));
+
+    String httpMethod;
+    if (!decoder->decode(CoreIPC::Out(httpMethod)))
+        return false;
+    request.setHTTPMethod(httpMethod);
+
+    uint32_t size;
+    if (!decoder->decode(CoreIPC::Out(size)))
+        return false;
+    if (size) {
+        AtomicString name;
+        String value;
+        for (uint32_t i = 0; i < size; ++i) {
+            if (!decoder->decode(CoreIPC::Out(name, value)))
+                return false;
+            request.setHTTPHeaderField(name, value);
+        }
+    }
+
+    bool hasHTTPBody;
+    if (!decoder->decode(CoreIPC::Out(hasHTTPBody)))
+        return false;
+    if (hasHTTPBody) {
+        String httpBody;
+        if (!decoder->decode(CoreIPC::Out(httpBody)))
+            return false;
+        request.setHTTPBody(WebCore::FormData::create(httpBody.utf8()));
+    }
+
+    String firstPartyForCookies;
+    if (!decoder->decode(CoreIPC::Out(firstPartyForCookies)))
+        return false;
+    request.setFirstPartyForCookies(WebCore::KURL(WebCore::KURL(), firstPartyForCookies));
+
+    uint32_t soupMessageFlags;
+    if (!decoder->decode(CoreIPC::Out(soupMessageFlags)))
+        return false;
+    request.setSoupMessageFlags(static_cast<SoupMessageFlags>(soupMessageFlags));
+
+    resourceRequest = request;
     return true;
 }
 
 void encodeResourceResponse(ArgumentEncoder* encoder, const WebCore::ResourceResponse& resourceResponse)
 {
-    notImplemented();
+    encoder->encode(CoreIPC::In(resourceResponse.url().string()));
+    encoder->encode(CoreIPC::In(static_cast<int32_t>(resourceResponse.httpStatusCode())));
+
+    const WebCore::HTTPHeaderMap& headers = resourceResponse.httpHeaderFields();
+    encoder->encode(CoreIPC::In(static_cast<uint32_t>(headers.size())));
+    if (!headers.isEmpty()) {
+        WebCore::HTTPHeaderMap::const_iterator end = headers.end();
+        for (WebCore::HTTPHeaderMap::const_iterator it = headers.begin(); it != end; ++it)
+            encoder->encode(CoreIPC::In(it->first, it->second));
+    }
+
+    encoder->encode(CoreIPC::In(static_cast<uint32_t>(resourceResponse.soupMessageFlags())));
+    encoder->encode(CoreIPC::In(resourceResponse.mimeType()));
+    encoder->encode(CoreIPC::In(resourceResponse.textEncodingName()));
+    encoder->encode(CoreIPC::In(static_cast<int64_t>(resourceResponse.expectedContentLength())));
+    encoder->encode(CoreIPC::In(resourceResponse.httpStatusText()));
+    encoder->encode(CoreIPC::In(resourceResponse.suggestedFilename()));
 }
 
 bool decodeResourceResponse(ArgumentDecoder* decoder, WebCore::ResourceResponse& resourceResponse)
 {
-    notImplemented();
+    WebCore::ResourceResponse response;
 
-    // FIXME: Ditto.
-    resourceResponse = WebCore::ResourceResponse();
+    String url;
+    if (!decoder->decode(CoreIPC::Out(url)))
+        return false;
+    response.setURL(WebCore::KURL(WebCore::KURL(), url));
+
+    int32_t httpStatusCode;
+    if (!decoder->decode(CoreIPC::Out(httpStatusCode)))
+        return false;
+    response.setHTTPStatusCode(httpStatusCode);
+
+    uint32_t size;
+    if (!decoder->decode(CoreIPC::Out(size)))
+        return false;
+    if (size) {
+        AtomicString name;
+        String value;
+        for (uint32_t i = 0; i < size; ++i) {
+            if (!decoder->decode(CoreIPC::Out(name, value)))
+                return false;
+            response.setHTTPHeaderField(name, value);
+        }
+    }
+
+    uint32_t soupMessageFlags;
+    if (!decoder->decode(CoreIPC::Out(soupMessageFlags)))
+        return false;
+    response.setSoupMessageFlags(static_cast<SoupMessageFlags>(soupMessageFlags));
+
+    String mimeType;
+    if (!decoder->decode(CoreIPC::Out(mimeType)))
+        return false;
+    response.setMimeType(mimeType);
+
+    String textEncodingName;
+    if (!decoder->decode(CoreIPC::Out(textEncodingName)))
+        return false;
+    response.setTextEncodingName(textEncodingName);
+
+    int64_t contentLength;
+    if (!decoder->decode(CoreIPC::Out(contentLength)))
+        return false;
+    response.setExpectedContentLength(contentLength);
+
+    String httpStatusText;
+    if (!decoder->decode(CoreIPC::Out(httpStatusText)))
+        return false;
+    response.setHTTPStatusText(httpStatusText);
+
+    String suggestedFilename;
+    if (!decoder->decode(CoreIPC::Out(suggestedFilename)))
+        return false;
+    response.setSuggestedFilename(suggestedFilename);
+
+    resourceResponse = response;
     return true;
 }
 

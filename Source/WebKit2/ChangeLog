@@ -1,3 +1,16 @@
+2011-06-16  Sangyong Park  <sy302.park@gmail.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Implement ResourceRequest and ResourceResponse encoder/decoder
+        https://bugs.webkit.org/show_bug.cgi?id=55934
+
+        * Shared/gtk/WebCoreArgumentCodersGtk.cpp:
+        (CoreIPC::encodeResourceRequest):
+        (CoreIPC::decodeResourceRequest):
+        (CoreIPC::encodeResourceResponse):
+        (CoreIPC::decodeResourceResponse):
+
 2011-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Xan Lopez.
