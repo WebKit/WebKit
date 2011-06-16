@@ -1,3 +1,9 @@
+2011-06-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Qt] Build fix after r89039.
+
+        * platform/qt/RenderThemeQt.h: Move decl out of ENABLE(VIDEO) ifdef.
+
 2011-06-15  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Kent Tamura.
