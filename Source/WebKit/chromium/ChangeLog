@@ -1,3 +1,37 @@
+2011-06-16  Bill Budge  <bbudge@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        The AssociatedURLLoader returns URL access errors synchronously. Use a timer to return such errors asynchronously. Also add unit tests for successful loads, same-origin restriction by default, and successful cross-origin loads.
+        https://bugs.webkit.org/show_bug.cgi?id=60059
+
+        * WebKit.gyp:
+        * WebKit.gypi:
+        * src/AssociatedURLLoader.cpp:
+        (WebKit::AssociatedURLLoader::ClientAdapter::clearClient):
+        (WebKit::AssociatedURLLoader::ClientAdapter::ClientAdapter):
+        (WebKit::AssociatedURLLoader::ClientAdapter::didFinishLoading):
+        (WebKit::AssociatedURLLoader::ClientAdapter::didFail):
+        (WebKit::AssociatedURLLoader::ClientAdapter::enableErrorNotifications):
+        (WebKit::AssociatedURLLoader::ClientAdapter::notifyError):
+        (WebKit::AssociatedURLLoader::loadAsynchronously):
+        * tests/AssociatedURLLoaderTest.cpp: Added.
+        (WebKit::TestWebFrameClient::cancelledError):
+        (WebKit::AssociatedURLLoaderTest::AssociatedURLLoaderTest):
+        (WebKit::AssociatedURLLoaderTest::SetUp):
+        (WebKit::AssociatedURLLoaderTest::TearDown):
+        (WebKit::AssociatedURLLoaderTest::serveRequests):
+        (WebKit::AssociatedURLLoaderTest::createAssociatedURLLoader):
+        (WebKit::AssociatedURLLoaderTest::willSendRequest):
+        (WebKit::AssociatedURLLoaderTest::didSendData):
+        (WebKit::AssociatedURLLoaderTest::didReceiveResponse):
+        (WebKit::AssociatedURLLoaderTest::didDownloadData):
+        (WebKit::AssociatedURLLoaderTest::didReceiveData):
+        (WebKit::AssociatedURLLoaderTest::didReceiveCachedMetadata):
+        (WebKit::AssociatedURLLoaderTest::didFinishLoading):
+        (WebKit::AssociatedURLLoaderTest::didFail):
+        (WebKit::TEST_F):
+
 2011-06-16  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Mihai Parparita.

@@ -53,6 +53,7 @@
         ],
         'webkit_unittest_files': [
             'tests/ArenaTestHelpers.h',
+            'tests/AssociatedURLLoaderTest.cpp',
             'tests/InnerGestureRecognizerTest.cpp',
             'tests/CCThreadTaskTest.cpp',
             'tests/CCThreadTest.cpp',
