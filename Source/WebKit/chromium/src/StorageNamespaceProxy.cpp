@@ -24,10 +24,6 @@
  */
 
 #include "config.h"
-
-// FIXME: Remove this define!
-#define LOOSE_OWN_PTR
-
 #include "StorageNamespaceProxy.h"
 
 #if ENABLE(DOM_STORAGE)
@@ -57,8 +53,9 @@ PassRefPtr<StorageNamespace> StorageNamespace::sessionStorageNamespace(Page* pag
     return adoptRef(new StorageNamespaceProxy(webViewClient->createSessionStorageNamespace(quota), SessionStorage));
 }
 
+// FIXME: storageNamespace argument should be a PassOwnPtr.
 StorageNamespaceProxy::StorageNamespaceProxy(WebKit::WebStorageNamespace* storageNamespace, StorageType storageType)
-    : m_storageNamespace(storageNamespace)
+    : m_storageNamespace(adoptPtr(storageNamespace))
     , m_storageType(storageType)
 {
 }

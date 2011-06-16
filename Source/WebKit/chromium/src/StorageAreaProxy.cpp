@@ -25,10 +25,6 @@
  */
 
 #include "config.h"
-
-// FIXME: Remove this define!
-#define LOOSE_OWN_PTR
-
 #include "StorageAreaProxy.h"
 
 #if ENABLE(DOM_STORAGE)
@@ -53,8 +49,9 @@
 
 namespace WebCore {
 
+// FIXME: storageArea argument should be a PassOwnPtr.
 StorageAreaProxy::StorageAreaProxy(WebKit::WebStorageArea* storageArea, StorageType storageType)
-    : m_storageArea(storageArea)
+    : m_storageArea(adoptPtr(storageArea))
     , m_storageType(storageType)
 {
 }

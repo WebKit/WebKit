@@ -76,11 +76,6 @@ public:
 
     void swap(OwnArrayPtr& o) { std::swap(m_ptr, o.m_ptr); }
 
-#ifdef LOOSE_OWN_ARRAY_PTR
-    explicit OwnArrayPtr(PtrType ptr) : m_ptr(ptr) { }
-    void set(PtrType);
-#endif
-
 private:
     PtrType m_ptr;
 };
@@ -110,16 +105,6 @@ template<typename T> inline typename OwnArrayPtr<T>::PtrType OwnArrayPtr<T>::lea
     m_ptr = 0;
     return ptr;
 }
-
-#ifdef LOOSE_OWN_ARRAY_PTR
-template<typename T> inline void OwnArrayPtr<T>::set(PtrType ptr)
-{
-    ASSERT(!ptr || m_ptr != ptr);
-    PtrType oldPtr = m_ptr;
-    m_ptr = ptr;
-    deleteOwnedArrayPtr(oldPtr);
-}
-#endif
 
 template<typename T> inline OwnArrayPtr<T>& OwnArrayPtr<T>::operator=(const PassOwnArrayPtr<T>& o)
 {

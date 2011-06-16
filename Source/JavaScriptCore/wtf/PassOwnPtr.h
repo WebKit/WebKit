@@ -70,22 +70,13 @@ namespace WTF {
         operator UnspecifiedBoolType() const { return m_ptr ? &PassOwnPtr::m_ptr : 0; }
 
         PassOwnPtr& operator=(const PassOwnPtr<T>&);
-#if !defined(LOOSE_PASS_OWN_PTR) || !HAVE(NULLPTR)
         PassOwnPtr& operator=(std::nullptr_t) { clear(); return *this; }
-#endif
         template<typename U> PassOwnPtr& operator=(const PassOwnPtr<U>&);
 
         template<typename U> friend PassOwnPtr<U> adoptPtr(U*);
 
-#ifdef LOOSE_PASS_OWN_PTR
-        PassOwnPtr(PtrType ptr) : m_ptr(ptr) { }
-        PassOwnPtr& operator=(PtrType);
-#endif
-
     private:
-#ifndef LOOSE_PASS_OWN_PTR
         explicit PassOwnPtr(PtrType ptr) : m_ptr(ptr) { }
-#endif
 
         // We should never have two OwnPtrs for the same underlying object (otherwise we'll get
         // double-destruction), so these equality operators should never be needed.
@@ -110,18 +101,6 @@ namespace WTF {
         m_ptr = 0;
         return ptr;
     }
-
-#ifdef LOOSE_PASS_OWN_PTR
-    template<typename T> inline PassOwnPtr<T>& PassOwnPtr<T>::operator=(PtrType optr)
-    {
-        PtrType ptr = m_ptr;
-        m_ptr = optr;
-        ASSERT(!ptr || m_ptr != ptr);
-        if (ptr)
-            deleteOwnedPtr(ptr);
-        return *this;
-    }
-#endif
 
     template<typename T> inline PassOwnPtr<T>& PassOwnPtr<T>::operator=(const PassOwnPtr<T>& optr)
     {

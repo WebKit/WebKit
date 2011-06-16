@@ -1,3 +1,16 @@
+2011-06-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Remove obsolete LOOSE_OWN_PTR code
+        https://bugs.webkit.org/show_bug.cgi?id=59909
+
+        * src/StorageAreaProxy.cpp:
+        (WebCore::StorageAreaProxy::StorageAreaProxy): Use adoptPtr
+        instead of LOOSE_OWN_PTR.
+        * src/StorageNamespaceProxy.cpp:
+        (WebCore::StorageNamespaceProxy::StorageNamespaceProxy): Ditto.
+
 2011-06-15  Andrey Kosyakov  <caseq@chromium.org>
 
        Unreviewed, rolled out r88937 (broke build on mac)

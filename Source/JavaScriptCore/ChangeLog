@@ -1,3 +1,27 @@
+2011-06-15  Darin Adler  <darin@apple.com>
+
+        Reviewed by Adam Barth.
+
+        Remove obsolete LOOSE_OWN_PTR code
+        https://bugs.webkit.org/show_bug.cgi?id=59909
+
+        The internal Apple dependency on this is gone now.
+
+        * wtf/OwnArrayPtr.h: Removed constructor that takes a raw pointer,
+        set function that takes a raw pointer.
+
+        * wtf/OwnPtr.h: Removed constructor that takes a raw pointer,
+        set functino that takes a raw pointer.
+
+        * wtf/PassOwnArrayPtr.h: Made constructor that takes a nullptr
+        and assignment operator that takes a nullptr unconditional.
+        Made constructor that takes a raw pointer private and explicit,
+        and removed assignment operator that takes a raw pointer.
+
+        * wtf/PassOwnPtr.h: Made assignment operator that takes a nullptr
+        unconditional. Made constructor that takes a raw pointer private
+        and explicit, and removed assignment operator that takes a raw pointer.
+
 2011-06-15  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Geoffrey Garen and Gavin Barraclough.
