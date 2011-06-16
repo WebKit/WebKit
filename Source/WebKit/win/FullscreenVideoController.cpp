@@ -325,13 +325,13 @@ bool FullscreenVideoController::canPlay() const
 void FullscreenVideoController::play()
 {
     if (m_mediaElement)
-        m_mediaElement->play(m_mediaElement->processingUserGesture());
+        m_mediaElement->play();
 }
 
 void FullscreenVideoController::pause()
 {
     if (m_mediaElement)
-        m_mediaElement->pause(m_mediaElement->processingUserGesture());
+        m_mediaElement->pause();
 }
 
 float FullscreenVideoController::volume() const

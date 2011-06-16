@@ -109,7 +109,6 @@ ScriptController::ScriptController(Frame* frame)
     : m_frame(frame)
     , m_sourceURL(0)
     , m_inExecuteScript(false)
-    , m_processingTimerCallback(false)
     , m_paused(false)
     , m_proxy(adoptPtr(new V8Proxy(frame)))
 #if ENABLE(NETSCAPE_PLUGIN_API)
@@ -154,27 +153,6 @@ void ScriptController::updatePlatformScriptObjects()
 
 bool ScriptController::processingUserGesture()
 {
-    Frame* firstFrame = V8Proxy::retrieveFrameForEnteredContext();
-    if (!firstFrame)
-        return UserGestureIndicator::getUserGestureState() != DefinitelyNotProcessingUserGesture;
-
-    v8::HandleScope handleScope;
-    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(firstFrame);
-    if (v8Context.IsEmpty())
-        return true;
-    v8::Context::Scope scope(v8Context);
-    v8::Handle<v8::Object> global = v8Context->Global();
-    v8::Handle<v8::String> eventSymbol = V8HiddenPropertyName::event();
-    v8::Handle<v8::Value> jsEvent = global->GetHiddenValue(eventSymbol);
-    Event* event = V8DOMWrapper::isValidDOMObject(jsEvent) ? V8Event::toNative(v8::Handle<v8::Object>::Cast(jsEvent)) : 0;
-    if (event)
-        return event->fromUserGesture();
-
-    // FIXME: Remove this check once https://bugs.webkit.org/show_bug.cgi?id=62702 is fixed.
-    const String* sourceURL = firstFrame->script()->sourceURL();
-    if (sourceURL && sourceURL->isNull() && !firstFrame->script()->proxy()->timerCallback())
-        return true;
-
     return UserGestureIndicator::processingUserGesture();
 }
 

@@ -359,7 +359,7 @@ void HTMLMediaElement::removedFromDocument()
 {
     LOG(Media, "HTMLMediaElement::removedFromDocument");
     if (m_networkState > NETWORK_EMPTY)
-        pause(processingUserGesture());
+        pause();
     if (m_isFullscreen)
         exitFullscreen();
     HTMLElement::removedFromDocument();
@@ -489,14 +489,14 @@ String HTMLMediaElement::canPlayType(const String& mimeType) const
     return canPlay;
 }
 
-void HTMLMediaElement::load(bool isUserGesture, ExceptionCode& ec)
+void HTMLMediaElement::load(ExceptionCode& ec)
 {
-    LOG(Media, "HTMLMediaElement::load(isUserGesture : %s)", boolString(isUserGesture));
+    LOG(Media, "HTMLMediaElement::load()");
 
-    if (m_restrictions & RequireUserGestureForLoadRestriction && !isUserGesture)
+    if (m_restrictions & RequireUserGestureForLoadRestriction && !ScriptController::processingUserGesture())
         ec = INVALID_STATE_ERR;
     else {
-        m_loadInitiatedByUserGesture = isUserGesture;
+        m_loadInitiatedByUserGesture = ScriptController::processingUserGesture();
         prepareForLoad();
         loadInternal();
     }
@@ -1454,24 +1454,23 @@ void HTMLMediaElement::setPreload(const String& preload)
     setAttribute(preloadAttr, preload);
 }
 
-void HTMLMediaElement::play(bool isUserGesture)
+void HTMLMediaElement::play()
 {
-    LOG(Media, "HTMLMediaElement::play(isUserGesture : %s)", boolString(isUserGesture));
+    LOG(Media, "HTMLMediaElement::play()");
 
-    if (m_restrictions & RequireUserGestureForRateChangeRestriction && !isUserGesture)
+    if (m_restrictions & RequireUserGestureForRateChangeRestriction && !ScriptController::processingUserGesture())
         return;
 
-    Document* doc = document();
-    Settings* settings = doc->settings();
+    Settings* settings = document()->settings();
     if (settings && settings->needsSiteSpecificQuirks() && m_dispatchingCanPlayEvent && !m_loadInitiatedByUserGesture) {
         // It should be impossible to be processing the canplay event while handling a user gesture
         // since it is dispatched asynchronously.
-        ASSERT(!isUserGesture);
-        String host = doc->baseURL().host();
+        ASSERT(!ScriptController::processingUserGesture());
+        String host = document()->baseURL().host();
         if (host.endsWith(".npr.org", false) || equalIgnoringCase(host, "npr.org"))
             return;
     }
-    
+
     playInternal();
 }
 
@@ -1503,11 +1502,11 @@ void HTMLMediaElement::playInternal()
     updatePlayState();
 }
 
-void HTMLMediaElement::pause(bool isUserGesture)
+void HTMLMediaElement::pause()
 {
-    LOG(Media, "HTMLMediaElement::pause(isUserGesture : %s)", boolString(isUserGesture));
+    LOG(Media, "HTMLMediaElement::pause()");
 
-    if (m_restrictions & RequireUserGestureForRateChangeRestriction && !isUserGesture)
+    if (m_restrictions & RequireUserGestureForRateChangeRestriction && !ScriptController::processingUserGesture())
         return;
 
     pauseInternal();
@@ -1635,7 +1634,7 @@ void HTMLMediaElement::beginScrubbing()
             // Because a media element stays in non-paused state when it reaches end, playback resumes 
             // when the slider is dragged from the end to another position unless we pause first. Do 
             // a "hard pause" so an event is generated, since we want to stay paused after scrubbing finishes.
-            pause(processingUserGesture());
+            pause();
         } else {
             // Not at the end but we still want to pause playback so the media engine doesn't try to
             // continue playing during scrubbing. Pause without generating an event as we will 
@@ -2386,7 +2385,7 @@ void HTMLMediaElement::resume()
         //  MEDIA_ERR_ABORTED while the abortEvent is being sent, but cleared immediately afterwards).
         // This behavior is not specified but it seems like a sensible thing to do.
         ExceptionCode ec;
-        load(processingUserGesture(), ec);
+        load(ec);
     }
 
     if (renderer())
@@ -2421,16 +2420,6 @@ void HTMLMediaElement::defaultEventHandler(Event* event)
 #else
     HTMLElement::defaultEventHandler(event);
 #endif
-}
-
-// FIXME: We should remove this function in favor of just calling ScriptController::processingUserGesture().
-bool HTMLMediaElement::processingUserGesture() const
-{
-    // FIXME: We should remove this check, but it seems to be needed to stop
-    // some media tests from crashing.
-    if (!document()->frame())
-        return true;
-    return ScriptController::processingUserGesture();
 }
 
 #if ENABLE(PLUGIN_PROXY_FOR_VIDEO)

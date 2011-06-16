@@ -257,30 +257,6 @@ bool Event::isStreamEvent() const
 }
 #endif
 
-bool Event::fromUserGesture()
-{
-    if (!UserGestureIndicator::processingUserGesture())
-        return false;
-
-    const AtomicString& type = this->type();
-    return
-        // mouse events
-        type == eventNames().clickEvent || type == eventNames().mousedownEvent 
-        || type == eventNames().mouseupEvent || type == eventNames().dblclickEvent 
-        // keyboard events
-        || type == eventNames().keydownEvent || type == eventNames().keypressEvent
-        || type == eventNames().keyupEvent
-#if ENABLE(TOUCH_EVENTS)
-        // touch events
-        || type == eventNames().touchstartEvent || type == eventNames().touchmoveEvent
-        || type == eventNames().touchendEvent || type == eventNames().touchcancelEvent
-#endif
-        // other accepted events
-        || type == eventNames().selectEvent || type == eventNames().changeEvent
-        || type == eventNames().focusEvent || type == eventNames().blurEvent
-        || type == eventNames().submitEvent;
-}
-
 bool Event::storesResultAsString() const
 {
     return false;
