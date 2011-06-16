@@ -1,3 +1,11 @@
+2011-06-16  Vitaly Repeshko  <vitalyr@chromium.org>
+
+        Unreviewed.
+
+        [chromium] Adding new baselines.
+
+        * platform/chromium-mac-leopard/fast/replaced/outline-replaced-elements-expected.png: Added.
+
 2011-06-16  Eric Carlson  <eric.carlson@apple.com>
 
         Unreviewed, removing test incorrectly added to GTK skipped list.
