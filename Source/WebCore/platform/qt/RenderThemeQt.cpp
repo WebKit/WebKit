@@ -1513,7 +1513,7 @@ String RenderThemeQt::fileListNameForWidth(const Vector<String>& filenames, cons
         string = fileButtonNoFileSelectedLabel();
     else if (filenames.size() == 1) {
         String fname = filenames[0];
-        QFontMetrics fm(f.font());
+        QFontMetrics fm(font.font());
         string = fm.elidedText(fname, Qt::ElideLeft, width);
     } else {
         int n = filenames.size();
