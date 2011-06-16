@@ -58,6 +58,7 @@
 #include <WebCore/ScriptValue.h>
 #include <WebCore/ScrollView.h>
 #include <WebCore/Settings.h>
+#include <WebCore/UserGestureIndicator.h>
 
 using namespace JSC;
 using namespace WebCore;
@@ -778,13 +779,7 @@ void PluginView::performJavaScriptURLRequest(URLRequest* request)
     // Evaluate the JavaScript code. Note that running JavaScript here could cause the plug-in to be destroyed, so we
     // grab references to the plug-in here.
     RefPtr<Plugin> plugin = m_plugin;
-
-    bool oldAllowPopups = frame->script()->allowPopupsFromPlugin();
-    frame->script()->setAllowPopupsFromPlugin(request->allowPopups());
-    
-    ScriptValue result = frame->script()->executeScript(jsString);
-
-    frame->script()->setAllowPopupsFromPlugin(oldAllowPopups);
+    ScriptValue result = frame->script()->executeScript(jsString, request->allowPopups());
 
     // Check if evaluating the JavaScript destroyed the plug-in.
     if (!plugin->controller())
@@ -979,22 +974,16 @@ NPObject* PluginView::pluginElementNPObject()
 
 bool PluginView::evaluate(NPObject* npObject, const String& scriptString, NPVariant* result, bool allowPopups)
 {
-    RefPtr<Frame> frame = m_pluginElement->document()->frame();
-    if (!frame)
+    // FIXME: Is this check necessary?
+    if (!m_pluginElement->document()->frame())
         return false;
-
-    bool oldAllowPopups = frame->script()->allowPopupsFromPlugin();
-    frame->script()->setAllowPopupsFromPlugin(allowPopups);
 
     // Calling evaluate will run JavaScript that can potentially remove the plug-in element, so we need to
     // protect the plug-in view from destruction.
     NPRuntimeObjectMap::PluginProtector pluginProtector(&m_npRuntimeObjectMap);
 
-    bool returnValue = m_npRuntimeObjectMap.evaluate(npObject, scriptString, result);
-
-    frame->script()->setAllowPopupsFromPlugin(oldAllowPopups);
-
-    return returnValue;
+    UserGestureIndicator gestureIndicator(allowPopups ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
+    return m_npRuntimeObjectMap.evaluate(npObject, scriptString, result);
 }
 
 bool PluginView::tryToShortCircuitInvoke(NPObject*, NPIdentifier methodName, const NPVariant* arguments, uint32_t argumentCount, bool& returnValue, NPVariant& result)

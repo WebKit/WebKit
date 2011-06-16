@@ -111,7 +111,6 @@ ScriptController::ScriptController(Frame* frame)
     , m_inExecuteScript(false)
     , m_processingTimerCallback(false)
     , m_paused(false)
-    , m_allowPopupsFromPlugin(false)
     , m_proxy(adoptPtr(new V8Proxy(frame)))
 #if ENABLE(NETSCAPE_PLUGIN_API)
     , m_windowScriptNPObject(0)
@@ -155,47 +154,27 @@ void ScriptController::updatePlatformScriptObjects()
 
 bool ScriptController::processingUserGesture()
 {
-    Frame* activeFrame = V8Proxy::retrieveFrameForEnteredContext();
-    // No script is running, so it is user-initiated unless the gesture stack
-    // explicitly says it is not.
-    if (!activeFrame)
+    Frame* firstFrame = V8Proxy::retrieveFrameForEnteredContext();
+    if (!firstFrame)
         return UserGestureIndicator::getUserGestureState() != DefinitelyNotProcessingUserGesture;
 
-    V8Proxy* activeProxy = activeFrame->script()->proxy();
-
     v8::HandleScope handleScope;
-    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(activeFrame);
-    // FIXME: find all cases context can be empty:
-    //  1) JS is disabled;
-    //  2) page is NULL;
+    v8::Handle<v8::Context> v8Context = V8Proxy::mainWorldContext(firstFrame);
     if (v8Context.IsEmpty())
         return true;
-
     v8::Context::Scope scope(v8Context);
-
     v8::Handle<v8::Object> global = v8Context->Global();
     v8::Handle<v8::String> eventSymbol = V8HiddenPropertyName::event();
     v8::Handle<v8::Value> jsEvent = global->GetHiddenValue(eventSymbol);
     Event* event = V8DOMWrapper::isValidDOMObject(jsEvent) ? V8Event::toNative(v8::Handle<v8::Object>::Cast(jsEvent)) : 0;
-
-    // Based on code from JSC's ScriptController::processingUserGesture.
-    // Note: This is more liberal than Firefox's implementation.
-    if (event) {
-        // Event::fromUserGesture will return false when UserGestureIndicator::processingUserGesture() returns false.
+    if (event)
         return event->fromUserGesture();
-    }
-    // FIXME: We check the javascript anchor navigation from the last entered
-    // frame becuase it should only be initiated on the last entered frame in
-    // which execution began if it does happen.    
-    const String* sourceURL = activeFrame->script()->sourceURL();
-    if (sourceURL && sourceURL->isNull() && !activeProxy->timerCallback()) {
-        // This is the <a href="javascript:window.open('...')> case -> we let it through.
+
+    // FIXME: Remove this check once https://bugs.webkit.org/show_bug.cgi?id=62702 is fixed.
+    const String* sourceURL = firstFrame->script()->sourceURL();
+    if (sourceURL && sourceURL->isNull() && !firstFrame->script()->proxy()->timerCallback())
         return true;
-    }
-    if (activeFrame->script()->allowPopupsFromPlugin())
-        return true;
-    // This is the <script>window.open(...)</script> case or a timer callback -> block it.
-    // Based on JSC version, use returned value of UserGestureIndicator::processingUserGesture for all other situations. 
+
     return UserGestureIndicator::processingUserGesture();
 }
 

@@ -70,6 +70,7 @@
 #import <WebCore/ScriptController.h>
 #import <WebCore/SecurityOrigin.h>
 #import <WebCore/SoftLinking.h> 
+#import <WebCore/UserGestureIndicator.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreURLResponse.h>
 #import <WebCore/npruntime_impl.h>
@@ -665,16 +666,13 @@ static inline void getNPRect(const NSRect& nr, NPRect& npr)
     [self willCallPlugInFunction];
     // Set the pluginAllowPopup flag.
     ASSERT(_eventHandler);
-    bool oldAllowPopups = frame->script()->allowPopupsFromPlugin();
-    frame->script()->setAllowPopupsFromPlugin(_eventHandler->currentEventIsUserGesture());    
     {
         JSC::JSLock::DropAllLocks dropAllLocks(JSC::SilenceAssertionsOnly);
+        UserGestureIndicator gestureIndicator(_eventHandler->currentEventIsUserGesture() ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
         acceptedEvent = [_pluginPackage.get() pluginFuncs]->event(plugin, event);
     }
-    // Restore the old pluginAllowPopup flag.
-    frame->script()->setAllowPopupsFromPlugin(oldAllowPopups);     
     [self didCallPlugInFunction];
-        
+
     if (portState) {
         if ([self currentWindow])
             [self restorePortState:portState];

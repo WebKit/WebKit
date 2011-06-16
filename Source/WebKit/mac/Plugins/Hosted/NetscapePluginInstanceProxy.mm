@@ -55,6 +55,7 @@
 #import <WebCore/ScriptController.h>
 #import <WebCore/ScriptValue.h>
 #import <WebCore/StringSourceProvider.h>
+#import <WebCore/UserGestureIndicator.h>
 #import <WebCore/npruntime_impl.h>
 #import <WebCore/runtime_object.h>
 #import <WebKitSystemInterface.h>
@@ -869,16 +870,14 @@ bool NetscapePluginInstanceProxy::evaluate(uint32_t objectID, const String& scri
     Strong<JSGlobalObject> globalObject(*pluginWorld()->globalData(), frame->script()->globalObject(pluginWorld()));
     ExecState* exec = globalObject->globalExec();
 
-    bool oldAllowPopups = frame->script()->allowPopupsFromPlugin();
-    frame->script()->setAllowPopupsFromPlugin(allowPopups);
-    
     globalObject->globalData().timeoutChecker.start();
+
+    UserGestureIndicator gestureIndicator(allowPopups ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
     Completion completion = JSC::evaluate(exec, globalObject->globalScopeChain(), makeSource(script));
+
     globalObject->globalData().timeoutChecker.stop();
     ComplType type = completion.complType();
 
-    frame->script()->setAllowPopupsFromPlugin(oldAllowPopups);
-    
     JSValue result;
     if (type == Normal)
         result = completion.value();

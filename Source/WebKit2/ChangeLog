@@ -1,3 +1,14 @@
+2011-06-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove ScriptController::setAllowPopupsFromPlugin
+        https://bugs.webkit.org/show_bug.cgi?id=62706
+
+        * WebProcess/Plugins/PluginView.cpp:
+        (WebKit::PluginView::performJavaScriptURLRequest):
+        (WebKit::PluginView::evaluate):
+
 2011-06-15  Ryuan Choi  <ryuan.choi@samsung.com>
 
         Rubber stamped by Eric Seidel.

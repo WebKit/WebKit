@@ -121,9 +121,6 @@ public:
     void setPaused(bool b) { m_paused = b; }
     bool isPaused() const { return m_paused; }
 
-    void setAllowPopupsFromPlugin(bool allowPopupsFromPlugin) { m_allowPopupsFromPlugin = allowPopupsFromPlugin; }
-    bool allowPopupsFromPlugin() const { return m_allowPopupsFromPlugin; }
-    
     const String* sourceURL() const { return m_sourceURL; } // 0 if we are not evaluating any script
 
     void clearWindowShell(bool goingIntoPageCache = false);
@@ -182,7 +179,6 @@ private:
 
     bool m_processingTimerCallback;
     bool m_paused;
-    bool m_allowPopupsFromPlugin;
 
     // The root object used for objects bound outside the context of a plugin, such
     // as NPAPI plugins. The plugins using these objects prevent a page from being cached so they
