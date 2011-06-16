@@ -1,3 +1,16 @@
+2011-06-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
+
+        Reviewed by Eric Seidel.
+
+        [CMAKE] Enable METER_TAG of HTML5
+        https://bugs.webkit.org/show_bug.cgi?id=62697
+
+        Support for meter tag of html5 in CMake build system. However, this feature is
+        only enabled on EFL port now. 
+
+        * Source/cmake/OptionsEfl.cmake: Add ENABLE_METER_TAG.
+        * Source/cmakeconfig.h.cmake:ditto.
+
 2011-06-16  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Xan Lopez.
