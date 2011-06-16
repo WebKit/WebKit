@@ -67714,6 +67714,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\inspector\NetworkResourcesData.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\inspector\NetworkResourcesData.h"
+				>
+			</File>
+			<File
 				RelativePath="..\inspector\PageDebuggerAgent.cpp"
 				>
 			</File>

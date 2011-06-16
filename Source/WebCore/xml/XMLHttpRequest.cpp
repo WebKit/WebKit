@@ -672,8 +672,11 @@ void XMLHttpRequest::createRequest(ExceptionCode& ec)
             // and they are referenced by the JavaScript wrapper.
             setPendingActivity(this);
         }
-    } else
+    } else {
+        InspectorInstrumentation::willLoadXHRSynchronously(scriptExecutionContext());
         ThreadableLoader::loadResourceSynchronously(scriptExecutionContext(), request, *this, options);
+        InspectorInstrumentation::didLoadXHRSynchronously(scriptExecutionContext());
+    }
 
     if (!m_exceptionCode && m_error)
         m_exceptionCode = XMLHttpRequestException::NETWORK_ERR;
@@ -1032,15 +1035,17 @@ void XMLHttpRequest::didSendData(unsigned long long bytesSent, unsigned long lon
     }
 }
 
-void XMLHttpRequest::didReceiveResponse(const ResourceResponse& response)
+void XMLHttpRequest::didReceiveResponse(unsigned long identifier, const ResourceResponse& response)
 {
+    InspectorInstrumentation::didReceiveXHRResponse(scriptExecutionContext(), identifier);
+
     m_response = response;
     m_responseEncoding = extractCharsetFromMediaType(m_mimeTypeOverride);
     if (m_responseEncoding.isEmpty())
         m_responseEncoding = response.textEncodingName();
 }
 
-void XMLHttpRequest::didReceiveAuthenticationCancellation(const ResourceResponse& failureResponse)
+void XMLHttpRequest::didReceiveAuthenticationCancellation(unsigned long, const ResourceResponse& failureResponse)
 {
     m_response = failureResponse;
 }

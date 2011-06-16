@@ -66,7 +66,7 @@ public:
     void cancel();
 
     // ThreadableLoaderClient
-    virtual void didReceiveResponse(const ResourceResponse&);
+    virtual void didReceiveResponse(unsigned long, const ResourceResponse&);
     virtual void didReceiveData(const char*, int);
     virtual void didFinishLoading(unsigned long, double);
     virtual void didFail(const ResourceError&);

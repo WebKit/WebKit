@@ -741,7 +741,8 @@ WebInspector.NetworkPanel.prototype = {
     _appendResource: function(resource)
     {
         this._resources.push(resource);
-        this._resourcesById[resource.identifier] = resource;
+        if (resource.identifier)
+            this._resourcesById[resource.identifier] = resource;
         this._resourcesByURL[resource.url] = resource;
 
         // Pull all the redirects of the main resource upon commit load.
@@ -778,8 +779,14 @@ WebInspector.NetworkPanel.prototype = {
 
         var loaderId = event.data.loaderId;
         // Main frame committed load.
-        if (this._preserveLogToggle.toggled)
+        if (this._preserveLogToggle.toggled) {
+            for (var i = 0; i < this._resources.length; ++i) {
+                var resource = this._resources[i];
+                if (resource.loaderId !== loaderId)
+                    resource.identifier = null;
+            }
             return;
+        }
 
         // Preserve provisional load resources.
         var resourcesToPreserve = [];

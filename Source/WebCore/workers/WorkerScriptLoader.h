@@ -66,12 +66,12 @@ namespace WebCore {
         bool failed() const { return m_failed; }
         unsigned long identifier() const { return m_identifier; }
 
-        virtual void didReceiveResponse(const ResourceResponse&);
+        virtual void didReceiveResponse(unsigned long /*identifier*/, const ResourceResponse&);
         virtual void didReceiveData(const char* data, int dataLength);
         virtual void didFinishLoading(unsigned long identifier, double);
         virtual void didFail(const ResourceError&);
         virtual void didFailRedirectCheck();
-        virtual void didReceiveAuthenticationCancellation(const ResourceResponse&);
+        virtual void didReceiveAuthenticationCancellation(unsigned long /*identifier*/, const ResourceResponse&);
 
     private:
         friend class WTF::RefCounted<WorkerScriptLoader>;
