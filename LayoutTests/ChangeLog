@@ -1,3 +1,12 @@
+2011-06-16  Zsolt Fehér  <h490267@stud.u-szeged.hu>
+
+        Reviewed by Csaba Osztrogonác.
+
+        Unskip passing tests what needs layoutTestController.clearBackForwardList
+        https://bugs.webkit.org/show_bug.cgi?id=42333
+
+        * platform/qt-wk2/Skipped:
+
 2011-06-16  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Unreviewed.
