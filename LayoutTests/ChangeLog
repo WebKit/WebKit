@@ -1,3 +1,14 @@
+2011-06-08  Keishi Hattori  <keishi@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Fix range element not updating when value attribute is set with JS
+        https://bugs.webkit.org/show_bug.cgi?id=61857
+
+        * fast/forms/range-set-attribute-expected.txt: Added.
+        * fast/forms/range-set-attribute.html: Added. Test to see if setting the value attribute of a 
+        range input element updates the value.
+
 2011-06-15  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Dimitri Glazkov.

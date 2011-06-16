@@ -1,3 +1,15 @@
+2011-06-08  Keishi Hattori  <keishi@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Fix range element not updating when value attribute is set with JS
+        https://bugs.webkit.org/show_bug.cgi?id=61857
+
+        Test: fast/forms/range-set-attribute.html
+
+        * html/RangeInputType.cpp:
+        (WebCore::RangeInputType::minOrMaxAttributeChanged): Changed to only sanitize the value when the dirty value flag is true.
+
 2011-06-15  Adam Barth  <abarth@webkit.org>
 
         Unreviewed.  (Technically I should get this reviewed, but I

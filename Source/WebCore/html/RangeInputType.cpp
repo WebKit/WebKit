@@ -251,7 +251,8 @@ void RangeInputType::minOrMaxAttributeChanged()
     InputType::minOrMaxAttributeChanged();
 
     // Sanitize the value.
-    element()->setValue(element()->value());
+    if (element()->hasDirtyValue())
+        element()->setValue(element()->value());
     element()->setNeedsStyleRecalc();
 }
 
