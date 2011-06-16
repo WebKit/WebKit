@@ -1,3 +1,14 @@
+2011-06-16  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][WK2] fast/frames/flattening tests fail intermittently
+        https://bugs.webkit.org/show_bug.cgi?id=62785
+
+        * platform/qt-wk2/Skipped: Skip flakey tests until fix.
+         - fast/frames/flattening/frameset-flattening-advanced.html
+         - fast/frames/flattening/frameset-flattening-simple.html
+        * platform/qt-wk2/fast/dom/prototype-inheritance-2-expected.txt: Added,
+        because NotificationCenter and NotificationCenterPrototype is missing.
+
 2011-06-16  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectations update.
