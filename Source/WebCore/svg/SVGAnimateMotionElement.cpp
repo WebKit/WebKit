@@ -118,7 +118,7 @@ SVGAnimateMotionElement::RotateMode SVGAnimateMotionElement::rotateMode() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, autoVal, ("auto"));
     DEFINE_STATIC_LOCAL(const AtomicString, autoReverse, ("auto-reverse"));
-    String rotate = getAttribute(SVGNames::rotateAttr);
+    String rotate = fastGetAttribute(SVGNames::rotateAttr);
     if (rotate == autoVal)
         return RotateAuto;
     if (rotate == autoReverse)
@@ -138,7 +138,7 @@ Path SVGAnimateMotionElement::animationPath() const
             return path;
         }
     }
-    if (hasAttribute(SVGNames::pathAttr))
+    if (fastHasAttribute(SVGNames::pathAttr))
         return m_path;
     return Path();
 }

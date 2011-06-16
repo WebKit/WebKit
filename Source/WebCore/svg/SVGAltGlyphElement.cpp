@@ -76,7 +76,7 @@ void SVGAltGlyphElement::setGlyphRef(const AtomicString&, ExceptionCode& ec)
 
 const AtomicString& SVGAltGlyphElement::glyphRef() const
 {
-    return getAttribute(SVGNames::glyphRefAttr);
+    return fastGetAttribute(SVGNames::glyphRefAttr);
 }
 
 void SVGAltGlyphElement::setFormat(const AtomicString&, ExceptionCode& ec)
@@ -86,7 +86,7 @@ void SVGAltGlyphElement::setFormat(const AtomicString&, ExceptionCode& ec)
 
 const AtomicString& SVGAltGlyphElement::format() const
 {
-    return getAttribute(SVGNames::formatAttr);
+    return fastGetAttribute(SVGNames::formatAttr);
 }
 
 bool SVGAltGlyphElement::childShouldCreateRenderer(Node* child) const
@@ -103,7 +103,7 @@ RenderObject* SVGAltGlyphElement::createRenderer(RenderArena* arena, RenderStyle
 
 SVGGlyphElement* SVGAltGlyphElement::glyphElement() const
 {
-    Element* elt = treeScope()->getElementById(getTarget(getAttribute(XLinkNames::hrefAttr)));
+    Element* elt = treeScope()->getElementById(getTarget(fastGetAttribute(XLinkNames::hrefAttr)));
     if (!elt || !elt->hasTagName(SVGNames::glyphTag))
         return 0;
     return static_cast<SVGGlyphElement*>(elt);

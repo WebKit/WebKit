@@ -55,8 +55,8 @@ SVGFontFaceUriElement::~SVGFontFaceUriElement()
 
 PassRefPtr<CSSFontFaceSrcValue> SVGFontFaceUriElement::srcValue() const
 {
-    RefPtr<CSSFontFaceSrcValue> src = CSSFontFaceSrcValue::create(getAttribute(XLinkNames::hrefAttr));
-    AtomicString value(getAttribute(formatAttr));
+    RefPtr<CSSFontFaceSrcValue> src = CSSFontFaceSrcValue::create(fastGetAttribute(XLinkNames::hrefAttr));
+    AtomicString value(fastGetAttribute(formatAttr));
     src->setFormat(value.isEmpty() ? "svg" : value); // Default format
     return src.release();
 }
@@ -93,7 +93,7 @@ void SVGFontFaceUriElement::loadFont()
     if (m_cachedFont)
         m_cachedFont->removeClient(this);
 
-    String href = getAttribute(XLinkNames::hrefAttr);
+    String href = fastGetAttribute(XLinkNames::hrefAttr);
     if (!href.isNull()) {        
         CachedResourceLoader* cachedResourceLoader = document()->cachedResourceLoader();
         ResourceRequest request(document()->completeURL(href));

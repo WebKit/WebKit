@@ -175,7 +175,7 @@ void SVGSMILElement::insertedIntoDocument()
     for (ContainerNode* n = this; n; n = n->parentNode())
         ASSERT(!n->isSVGShadowRoot());
 #endif
-    m_attributeName = constructQualifiedName(this, getAttribute(SVGNames::attributeNameAttr));
+    m_attributeName = constructQualifiedName(this, fastGetAttribute(SVGNames::attributeNameAttr));
     SVGSVGElement* owner = ownerSVGElement();
     if (!owner)
         return;
@@ -184,7 +184,7 @@ void SVGSMILElement::insertedIntoDocument()
     m_timeContainer->setDocumentOrderIndexesDirty();
 
     // "If no attribute is present, the default begin value (an offset-value of 0) must be evaluated."
-    if (!hasAttribute(SVGNames::beginAttr))
+    if (!fastHasAttribute(SVGNames::beginAttr))
         m_beginTimes.append(0);
 
     if (m_isWaitingForFirstInterval) {
@@ -373,7 +373,7 @@ void SVGSMILElement::parseMappedAttribute(Attribute* attr)
         if (!m_conditions.isEmpty()) {
             disconnectConditions();
             m_conditions.clear();
-            parseBeginOrEnd(getAttribute(SVGNames::endAttr), End);
+            parseBeginOrEnd(fastGetAttribute(SVGNames::endAttr), End);
         }
         parseBeginOrEnd(attr->value().string(), Begin);
         if (inDocument())
@@ -382,7 +382,7 @@ void SVGSMILElement::parseMappedAttribute(Attribute* attr)
         if (!m_conditions.isEmpty()) {
             disconnectConditions();
             m_conditions.clear();
-            parseBeginOrEnd(getAttribute(SVGNames::beginAttr), Begin);
+            parseBeginOrEnd(fastGetAttribute(SVGNames::beginAttr), Begin);
         }
         parseBeginOrEnd(attr->value().string(), End);
         if (inDocument())
@@ -523,7 +523,7 @@ SVGSMILElement::Restart SVGSMILElement::restart() const
 {    
     DEFINE_STATIC_LOCAL(const AtomicString, never, ("never"));
     DEFINE_STATIC_LOCAL(const AtomicString, whenNotActive, ("whenNotActive"));
-    const AtomicString& value = getAttribute(SVGNames::restartAttr);
+    const AtomicString& value = fastGetAttribute(SVGNames::restartAttr);
     if (value == never)
         return RestartNever;
     if (value == whenNotActive)
@@ -534,20 +534,20 @@ SVGSMILElement::Restart SVGSMILElement::restart() const
 SVGSMILElement::FillMode SVGSMILElement::fill() const
 {   
     DEFINE_STATIC_LOCAL(const AtomicString, freeze, ("freeze"));
-    const AtomicString& value = getAttribute(SVGNames::fillAttr);
+    const AtomicString& value = fastGetAttribute(SVGNames::fillAttr);
     return value == freeze ? FillFreeze : FillRemove;
 }
     
 String SVGSMILElement::xlinkHref() const
 {    
-    return getAttribute(XLinkNames::hrefAttr);
+    return fastGetAttribute(XLinkNames::hrefAttr);
 }
     
 SMILTime SVGSMILElement::dur() const
 {   
     if (m_cachedDur != invalidCachedTime)
         return m_cachedDur;
-    const AtomicString& value = getAttribute(SVGNames::durAttr);
+    const AtomicString& value = fastGetAttribute(SVGNames::durAttr);
     SMILTime clockValue = parseClockValue(value);
     return m_cachedDur = clockValue <= 0 ? SMILTime::unresolved() : clockValue;
 }
@@ -556,7 +556,7 @@ SMILTime SVGSMILElement::repeatDur() const
 {    
     if (m_cachedRepeatDur != invalidCachedTime)
         return m_cachedRepeatDur;
-    const AtomicString& value = getAttribute(SVGNames::repeatDurAttr);
+    const AtomicString& value = fastGetAttribute(SVGNames::repeatDurAttr);
     SMILTime clockValue = parseClockValue(value);
     m_cachedRepeatDur = clockValue <= 0 ? SMILTime::unresolved() : clockValue;
     return m_cachedRepeatDur;
@@ -567,7 +567,7 @@ SMILTime SVGSMILElement::repeatCount() const
 {    
     if (m_cachedRepeatCount != invalidCachedTime)
         return m_cachedRepeatCount;
-    const AtomicString& value = getAttribute(SVGNames::repeatCountAttr);
+    const AtomicString& value = fastGetAttribute(SVGNames::repeatCountAttr);
     if (value.isNull())
         return SMILTime::unresolved();
 
@@ -583,7 +583,7 @@ SMILTime SVGSMILElement::maxValue() const
 {    
     if (m_cachedMax != invalidCachedTime)
         return m_cachedMax;
-    const AtomicString& value = getAttribute(SVGNames::maxAttr);
+    const AtomicString& value = fastGetAttribute(SVGNames::maxAttr);
     SMILTime result = parseClockValue(value);
     return m_cachedMax = (result.isUnresolved() || result < 0) ? SMILTime::indefinite() : result;
 }
@@ -592,7 +592,7 @@ SMILTime SVGSMILElement::minValue() const
 {    
     if (m_cachedMin != invalidCachedTime)
         return m_cachedMin;
-    const AtomicString& value = getAttribute(SVGNames::minAttr);
+    const AtomicString& value = fastGetAttribute(SVGNames::minAttr);
     SMILTime result = parseClockValue(value);
     return m_cachedMin = (result.isUnresolved() || result < 0) ? 0 : result;
 }

@@ -122,7 +122,7 @@ void SVGGlyphElement::inheritUnspecifiedAttributes(SVGGlyph& identifier, const S
 
 static inline float parseSVGGlyphAttribute(const SVGElement* element, const WebCore::QualifiedName& name)
 {
-    AtomicString value(element->getAttribute(name));
+    AtomicString value(element->fastGetAttribute(name));
     if (value.isEmpty())
         return SVGGlyph::inheritedValue();
 
@@ -146,7 +146,7 @@ void SVGGlyphElement::fillAttributeToPropertyTypeMap()
 SVGGlyph SVGGlyphElement::buildGenericGlyphIdentifier(const SVGElement* element)
 {
     SVGGlyph identifier;
-    identifier.pathData = parsePathData(element->getAttribute(SVGNames::dAttr));
+    identifier.pathData = parsePathData(element->fastGetAttribute(SVGNames::dAttr));
  
     // Spec: The horizontal advance after rendering the glyph in horizontal orientation.
     // If the attribute is not specified, the effect is as if the attribute were set to the
@@ -175,11 +175,11 @@ SVGGlyph SVGGlyphElement::buildGenericGlyphIdentifier(const SVGElement* element)
 SVGGlyph SVGGlyphElement::buildGlyphIdentifier() const
 {
     SVGGlyph identifier(buildGenericGlyphIdentifier(this));
-    identifier.glyphName = getAttribute(SVGNames::glyph_nameAttr);
-    identifier.orientation = parseOrientation(getAttribute(SVGNames::orientationAttr));
-    identifier.arabicForm = parseArabicForm(getAttribute(SVGNames::arabic_formAttr));
+    identifier.glyphName = fastGetAttribute(SVGNames::glyph_nameAttr);
+    identifier.orientation = parseOrientation(fastGetAttribute(SVGNames::orientationAttr));
+    identifier.arabicForm = parseArabicForm(fastGetAttribute(SVGNames::arabic_formAttr));
 
-    String language = getAttribute(SVGNames::langAttr);
+    String language = fastGetAttribute(SVGNames::langAttr);
     if (!language.isEmpty())
         identifier.languages = parseDelimitedString(language, ',');
 

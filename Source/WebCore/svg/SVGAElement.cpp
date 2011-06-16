@@ -67,7 +67,7 @@ PassRefPtr<SVGAElement> SVGAElement::create(const QualifiedName& tagName, Docume
 String SVGAElement::title() const
 {
     // If the xlink:title is set (non-empty string), use it.
-    const AtomicString& title = getAttribute(XLinkNames::titleAttr);
+    const AtomicString& title = fastGetAttribute(XLinkNames::titleAttr);
     if (!title.isEmpty())
         return title;
 
@@ -227,7 +227,7 @@ void SVGAElement::defaultEventHandler(Event* event)
             // FIXME: It's not clear why setting target to "_self" is ever
             // helpful.
             if (target.isEmpty())
-                target = (getAttribute(XLinkNames::showAttr) == "new") ? "_blank" : "_self";
+                target = (fastGetAttribute(XLinkNames::showAttr) == "new") ? "_blank" : "_self";
 
             handleLinkClick(event, document(), url, target);
             return;

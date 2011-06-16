@@ -110,7 +110,7 @@ bool SVGElement::isSupported(StringImpl* feature, StringImpl* version) const
 
 String SVGElement::xmlbase() const
 {
-    return getAttribute(XMLNames::baseAttr);
+    return fastGetAttribute(XMLNames::baseAttr);
 }
 
 void SVGElement::setXmlbase(const String& value, ExceptionCode&)

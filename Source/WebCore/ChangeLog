@@ -1,3 +1,81 @@
+2011-06-15  Rob Buis  <rbuis@rim.com>
+
+        Reviewed by Darin Adler.
+
+        Try to use fastGetAttribute where possible
+        https://bugs.webkit.org/show_bug.cgi?id=62747
+
+        Use the fast versions of get/hasAttribute where we can.
+
+        No new tests since this is a simple cleanup.
+
+        * svg/SVGAElement.cpp:
+        (WebCore::SVGAElement::title):
+        (WebCore::SVGAElement::defaultEventHandler):
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::glyphRef):
+        (WebCore::SVGAltGlyphElement::format):
+        (WebCore::SVGAltGlyphElement::glyphElement):
+        * svg/SVGAnimateMotionElement.cpp:
+        (WebCore::SVGAnimateMotionElement::rotateMode):
+        (WebCore::SVGAnimateMotionElement::animationPath):
+        * svg/SVGAnimationElement.cpp:
+        (WebCore::SVGAnimationElement::animationMode):
+        (WebCore::SVGAnimationElement::calcMode):
+        (WebCore::SVGAnimationElement::attributeType):
+        (WebCore::SVGAnimationElement::toValue):
+        (WebCore::SVGAnimationElement::byValue):
+        (WebCore::SVGAnimationElement::fromValue):
+        (WebCore::SVGAnimationElement::isAdditive):
+        (WebCore::SVGAnimationElement::isAccumulated):
+        (WebCore::SVGAnimationElement::startedActiveInterval):
+        * svg/SVGElement.cpp:
+        (WebCore::SVGElement::xmlbase):
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::ensureGlyphCache):
+        * svg/SVGFontFaceElement.cpp:
+        (WebCore::SVGFontFaceElement::unitsPerEm):
+        (WebCore::SVGFontFaceElement::xHeight):
+        (WebCore::SVGFontFaceElement::horizontalOriginX):
+        (WebCore::SVGFontFaceElement::horizontalOriginY):
+        (WebCore::SVGFontFaceElement::horizontalAdvanceX):
+        (WebCore::SVGFontFaceElement::verticalOriginX):
+        (WebCore::SVGFontFaceElement::verticalOriginY):
+        (WebCore::SVGFontFaceElement::verticalAdvanceY):
+        (WebCore::SVGFontFaceElement::ascent):
+        (WebCore::SVGFontFaceElement::descent):
+        * svg/SVGFontFaceNameElement.cpp:
+        (WebCore::SVGFontFaceNameElement::srcValue):
+        * svg/SVGFontFaceUriElement.cpp:
+        (WebCore::SVGFontFaceUriElement::srcValue):
+        (WebCore::SVGFontFaceUriElement::loadFont):
+        * svg/SVGGlyphElement.cpp:
+        (WebCore::parseSVGGlyphAttribute):
+        (WebCore::SVGGlyphElement::buildGenericGlyphIdentifier):
+        (WebCore::SVGGlyphElement::buildGlyphIdentifier):
+        * svg/SVGHKernElement.cpp:
+        (WebCore::SVGHKernElement::buildHorizontalKerningPair):
+        * svg/SVGSVGElement.cpp:
+        (WebCore::SVGSVGElement::contentScriptType):
+        (WebCore::SVGSVGElement::contentStyleType):
+        * svg/SVGStyleElement.cpp:
+        (WebCore::SVGStyleElement::type):
+        (WebCore::SVGStyleElement::media):
+        (WebCore::SVGStyleElement::title):
+        * svg/SVGVKernElement.cpp:
+        (WebCore::SVGVKernElement::buildVerticalKerningPair):
+        * svg/animation/SVGSMILElement.cpp:
+        (WebCore::SVGSMILElement::insertedIntoDocument):
+        (WebCore::SVGSMILElement::parseMappedAttribute):
+        (WebCore::SVGSMILElement::restart):
+        (WebCore::SVGSMILElement::fill):
+        (WebCore::SVGSMILElement::xlinkHref):
+        (WebCore::SVGSMILElement::dur):
+        (WebCore::SVGSMILElement::repeatDur):
+        (WebCore::SVGSMILElement::repeatCount):
+        (WebCore::SVGSMILElement::maxValue):
+        (WebCore::SVGSMILElement::minValue):
+
 2011-06-15  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Antti Koivisto.

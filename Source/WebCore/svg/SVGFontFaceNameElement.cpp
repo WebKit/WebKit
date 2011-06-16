@@ -40,7 +40,7 @@ PassRefPtr<SVGFontFaceNameElement> SVGFontFaceNameElement::create(const Qualifie
 
 PassRefPtr<CSSFontFaceSrcValue> SVGFontFaceNameElement::srcValue() const
 {
-    return CSSFontFaceSrcValue::createLocal(getAttribute(SVGNames::nameAttr));
+    return CSSFontFaceSrcValue::createLocal(fastGetAttribute(SVGNames::nameAttr));
 }
 
 }

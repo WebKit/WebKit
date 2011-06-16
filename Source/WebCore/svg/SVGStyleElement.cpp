@@ -55,7 +55,7 @@ PassRefPtr<SVGStyleElement> SVGStyleElement::create(const QualifiedName& tagName
 const AtomicString& SVGStyleElement::type() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("text/css"));
-    const AtomicString& n = getAttribute(SVGNames::typeAttr);
+    const AtomicString& n = fastGetAttribute(SVGNames::typeAttr);
     return n.isNull() ? defaultValue : n;
 }
 
@@ -67,7 +67,7 @@ void SVGStyleElement::setType(const AtomicString& type, ExceptionCode& ec)
 const AtomicString& SVGStyleElement::media() const
 {
     DEFINE_STATIC_LOCAL(const AtomicString, defaultValue, ("all"));
-    const AtomicString& n = getAttribute(SVGNames::mediaAttr);
+    const AtomicString& n = fastGetAttribute(SVGNames::mediaAttr);
     return n.isNull() ? defaultValue : n;
 }
 
@@ -78,7 +78,7 @@ void SVGStyleElement::setMedia(const AtomicString& media, ExceptionCode& ec)
 
 String SVGStyleElement::title() const
 {
-    return getAttribute(SVGNames::titleAttr);
+    return fastGetAttribute(SVGNames::titleAttr);
 }
 
 void SVGStyleElement::setTitle(const AtomicString& title, ExceptionCode& ec)

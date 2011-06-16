@@ -129,7 +129,7 @@ void SVGFontElement::ensureGlyphCache()
     for (Node* child = firstChild(); child; child = child->nextSibling()) {
         if (child->hasTagName(SVGNames::glyphTag)) {
             SVGGlyphElement* glyph = static_cast<SVGGlyphElement*>(child);
-            String unicode = glyph->getAttribute(SVGNames::unicodeAttr);
+            String unicode = glyph->fastGetAttribute(SVGNames::unicodeAttr);
             SVGGlyph svgGlyph = glyph->buildGlyphIdentifier();
             unsigned unicodeLength = unicode.length();
 
