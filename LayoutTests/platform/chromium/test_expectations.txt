@@ -3178,7 +3178,6 @@ BUGCR78326 WIN : fast/filesystem/filesystem-uri-origin.html = CRASH PASS
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-disabled-readonly.html = TEXT PASS
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-layer.html = IMAGE+TEXT TEXT PASS
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-visibility.html = TEXT PASS
-//BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = IMAGE+TEXT PASS
 BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
 
 // Need expectations
@@ -3619,9 +3618,6 @@ BUGWK60118 WIN DEBUG : svg/dom/SVGScriptElement/script-set-href.svg = TEXT PASS
 
 // broke in r84742 - just needs a new baseline?
 BUGWK60121 : http/tests/misc/will-send-request-returns-null-on-redirect.html = TEXT
-
-// changed in r84745 (see commented-out entry above)
-BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-element.html = TEXT
 
 BUGWK62761 WIN : fast/events/panScroll-click-hyperlink.html = PASS TEXT
 BUGWK62761 LINUX : fast/events/panScroll-click-hyperlink.html = TEXT

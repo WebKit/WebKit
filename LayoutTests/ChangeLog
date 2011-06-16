@@ -1,3 +1,10 @@
+2011-06-16  MORITA Hajime <morrita@google.com>
+
+        Unreviewed expectations update for meter-element.html
+        
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-element-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-16  Adam Barth  <abarth@webkit.org>
 
         Disable a subtest while we investigate.  I'm going to need dglazkov's
