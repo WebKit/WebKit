@@ -159,7 +159,8 @@ function test()
          
             var provider = new WebInspector.HeapSnapshotNodesProvider(snapshot, nodeFilter);
             // Sort by names in reverse order.
-            provider.sort(WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator(["name", false, "id", false]));
+            InspectorTest.assertEquals(3, provider.length, "nodes provider length");
+            provider.sort(WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator(["name", false, "id", false]), 0, 2, 3);
             InspectorTest.assertEquals(3, provider.length, "nodes provider length");
             var names = [];
             for (provider.first(); provider.hasNext(); provider.next())
@@ -178,7 +179,8 @@ function test()
             }
          
             var provider = new WebInspector.HeapSnapshotEdgesProvider(snapshot, snapshot.rootNodeIndex, edgeFilter);
-            provider.sort(WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator(["!edgeName", false, "id", false]));
+            InspectorTest.assertEquals(1, provider.length, "edges provider length");
+            provider.sort(WebInspector.HeapSnapshotFilteredOrderedIterator.prototype.createComparator(["!edgeName", false, "id", false]), 0, 0, 1);
             InspectorTest.assertEquals(1, provider.length, "edges provider length");
             var names = [];
             for (provider.first(); provider.hasNext(); provider.next())

@@ -5,46 +5,82 @@
 
 function test()
 {
-    (function binaryIndexOfTest()
-    {
-        var testArrays = [
-            [],
-            [1],
-            [1, 10],
-            [1, 10, 11, 12, 13, 14, 100],
-            [-100, -50, 0, 50, 100],
-            [-100, -14, -13, -12, -11, -10, -1]
-        ];
-
-        function testArray(array)
+    InspectorTest.runTestSuite([
+        function binaryIndexOfTest(next)
         {
-            function comparator(a, b)
+            var testArrays = [
+                [],
+                [1],
+                [1, 10],
+                [1, 10, 11, 12, 13, 14, 100],
+                [-100, -50, 0, 50, 100],
+                [-100, -14, -13, -12, -11, -10, -1]
+            ];
+     
+            function testArray(array)
             {
-                return a < b ? -1 : (a > b ? 1 : 0);
+                function comparator(a, b)
+                {
+                    return a < b ? -1 : (a > b ? 1 : 0);
+                }
+     
+                for (var i = -100; i <= 100; ++i) {
+                    var reference = array.indexOf(i);
+                    var actual = array.binaryIndexOf(i, comparator);
+                    InspectorTest.assertEquals(reference, actual, "binaryIndexOf");
+                }
+                return true;
             }
+     
+            for (var i = 0, l = testArrays.length; i < l; ++i)
+                testArray(testArrays[i]);
+            next();
+        },
 
-            for (var i = -100; i <= 100; ++i) {
-                var reference = array.indexOf(i);
-                var actual = array.binaryIndexOf(i, comparator);
-                if (reference !== actual) {
-                    InspectorTest.addResult(String.vsprintf("FAIL: binaryIndexOf: expected %d, actual %d for %d on %s", [expected, actual, i, array.join(",")]));
-                    return false;
+        function sortRangeTest(next)
+        {
+            var testArrays = [
+                [],
+                [1],
+                [2, 1],
+                [6, 4, 2, 7, 10, 15, 1],
+                [10, 44, 3, 6, 56, 66, 10, 55, 32, 56, 2, 5]
+            ];
+
+            function testArray(array)
+            {
+                function comparator(a, b)
+                {
+                    return a < b ? -1 : (a > b ? 1 : 0);
+                }
+
+                function compareArrays(a, b, message)
+                {
+                    InspectorTest.assertEquals(JSON.stringify(a), JSON.stringify(b), message);
+                }
+
+                for (var left = 0, l = array.length - 1; left < l; ++left) {
+                     for (var right = left + 1, r = array.length; right < r; ++right)
+                          for (var count = 1, k = right - left + 1; count <= k; ++count) {
+                              var actual = array.slice(0);
+                              actual.sortRange(comparator, left, right, count);
+                              compareArrays(array.slice(0, left), actual.slice(0, left), "left " + left + " " + right + " " + count);
+                              compareArrays(array.slice(right + 1), actual.slice(right + 1), "right " + left + " " + right + " " + count);
+                              var middle = array.slice(left, right + 1);
+                              middle.sort(comparator);
+                              compareArrays(middle.slice(0, count), actual.slice(left, left + count), "sorted " + left + " " + right + " " + count);
+                              actualRest = actual.slice(left + count, right + 1);
+                              actualRest.sort(comparator);
+                              compareArrays(middle.slice(count), actualRest, "unsorted " + left + " " + right + " " + count);
+                          }
                 }
             }
-            return true;
-        }
 
-        var passed = true;
-        for (var i = 0, l = testArrays.length; i < l; ++i) {
-            if (!testArray(testArrays[i])) {
-                passed = false;
-                break;
-            }
+            for (var i = 0, len = testArrays.length; i < len; ++i)
+                testArray(testArrays[i]);
+            next();
         }
-        if (passed)
-            InspectorTest.addResult("PASS: binaryIndexOf");
-        InspectorTest.completeTest();
-    })();
+    ]);
 }
 
 </script>

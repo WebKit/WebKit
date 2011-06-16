@@ -85,10 +85,17 @@ WebInspector.HeapSnapshotGridNode.prototype = {
                 break;
             }
         }
-        
+
+        var part = 0;
+        function callSerialize()
+        {
+            if (part >= howMany)
+                return;
+            part += this._defaultPopulateCount;
+            provider.serializeNextItems(this._defaultPopulateCount, childrenRetrieved.bind(this));
+        }
         function childrenRetrieved(items)
         {
-            var hasNext = items.hasNext;
             var length = items.totalLength;
             for (var i = 0, l = items.length; i < l; ++i) {
                 var item = items[i];
@@ -102,8 +109,12 @@ WebInspector.HeapSnapshotGridNode.prototype = {
                 this.insertChild(this._createChildNode(item, provider), atIndex++);
             }
             provider.instanceCount += items.length;
+            if (part < howMany) {
+                setTimeout(callSerialize.bind(this), 0);
+                return;
+            }
 
-            if (hasNext)
+            if (items.hasNext)
                 this.insertChild(new WebInspector.ShowMoreDataGridNode(this.populateChildren.bind(this, provider), this._defaultPopulateCount, length), atIndex++);
             if (afterPopulate)
                 afterPopulate();
@@ -115,10 +126,6 @@ WebInspector.HeapSnapshotGridNode.prototype = {
                 setTimeout(notify.bind(this), 0);
             }
             WebInspector.PleaseWaitMessage.prototype.hide();
-        }
-        function callSerialize()
-        {
-            provider.serializeNextItems(howMany, childrenRetrieved.bind(this));
         }
         setTimeout(callSerialize.bind(this), 0);
     },

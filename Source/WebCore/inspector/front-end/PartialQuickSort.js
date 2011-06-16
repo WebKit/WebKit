@@ -28,18 +28,44 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-WebInspector = {};
-WebInspector.UIString = function(s) { return s; };
-
-importScripts("BinarySearch.js");
-importScripts("HeapSnapshot.js");
-importScripts("HeapSnapshotWorkerDispatcher.js");
-importScripts("PartialQuickSort.js");
-
-function postMessageWrapper(message)
+Object.defineProperty(Array.prototype, "sortRange", { value: function(comparator, leftBound, rightBound, k)
 {
-    postMessage(message);
-}
+    function swap(array, i1, i2)
+    {
+        var temp = array[i1];
+        array[i1] = array[i2];
+        array[i2] = temp;
+    }
+     
+    function partition(array, comparator, left, right, pivotIndex)
+    {
+        var pivotValue = array[pivotIndex];
+        swap(array, right, pivotIndex);
+        var storeIndex = left;
+        for (var i = left; i < right; ++i) {
+            if (comparator(array[i], pivotValue) < 0) {
+                swap(array, storeIndex, i);
+                ++storeIndex;
+            }
+        }
+        swap(array, right, storeIndex);
+        return storeIndex;
+    }
+     
+    function quickSortFirstK(array, comparator, left, right, k)
+    {
+        if (right <= left)
+            return;
+        var pivotIndex = Math.floor(Math.random() * (right - left)) + left;
+        var pivotNewIndex = partition(array, comparator, left, right, pivotIndex);
+        quickSortFirstK(array, comparator, left, pivotNewIndex - 1, k);
+        if (pivotNewIndex < left + k - 1)
+            quickSortFirstK(array, comparator, pivotNewIndex + 1, right, k);
+    }
 
-var dispatcher = new WebInspector.HeapSnapshotWorkerDispatcher(this, postMessageWrapper);
-addEventListener("message", dispatcher.dispatchMessage.bind(dispatcher), false);
+    if (leftBound === 0 && rightBound === (this.length - 1) && k === this.length)
+        this.sort(comparator);
+    else
+        quickSortFirstK(this, comparator, leftBound, rightBound, k);
+    return this;
+}});

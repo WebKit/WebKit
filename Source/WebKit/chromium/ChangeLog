@@ -1,3 +1,16 @@
+2011-06-15  Mikhail Naganov  <mnaganov@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        WebInspector [Chromium]: Make heap snapshots UI more responsive.
+        https://bugs.webkit.org/show_bug.cgi?id=62360
+
+        Two changes have been made:
+          - when we request elements, sort array only partially;
+          - when populating children, do it in batches;
+
+        * WebKit.gyp:
+
 2011-06-15  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Eric Seidel.

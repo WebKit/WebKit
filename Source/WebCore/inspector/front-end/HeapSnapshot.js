@@ -957,6 +957,7 @@ WebInspector.HeapSnapshotFilteredOrderedIterator = function(iterator, filter, it
     this._iterator = iterator;
     this._iterationOrder = iterationOrder ? iterationOrder.slice(0) : null;
     this._position = 0;
+    this._currentComparator = null;
     this._lastComparator = null;
 }
 
@@ -1020,18 +1021,24 @@ WebInspector.HeapSnapshotFilteredOrderedIterator.prototype = {
 
     serializeNextItems: function(count)
     {
+        if (!this._iterationOrder)
+            this._createIterationOrder();
         var result = new Array(count);
+        if (this._lastComparator !== this._currentComparator)
+            this.sort(this._currentComparator, this._position, this._iterationOrder.length - 1, count);
         for (var i = 0 ; i < count && this.hasNext(); ++i, this.next())
             result[i] = this._serialize(this.item);
         result.length = i;
         result.hasNext = this.hasNext();
-        result.totalLength = this.length;
+        result.totalLength = this._iterationOrder.length;
         return result;
     },
 
     sortAndRewind: function(comparator)
     {
-        var result = this.sort(comparator);
+        this._lastComparator = this._currentComparator;
+        this._currentComparator = comparator;
+        var result = this._lastComparator !== this._currentComparator;
         if (result)
             this.first();
         return result;
@@ -1056,11 +1063,8 @@ WebInspector.HeapSnapshotEdgesProvider.prototype = {
         return {name: edge.name, node: WebInspector.HeapSnapshotNodesProvider.prototype._serialize(edge.node), nodeIndex: edge.nodeIndex, type: edge.type};
     },
 
-    sort: function(comparator)
+    sort: function(comparator, leftBound, rightBound, count)
     {
-        if (this._lastComparator === comparator)
-            return false;
-        this._lastComparator = comparator;
         var fieldName1 = comparator.fieldName1;
         var fieldName2 = comparator.fieldName2;
         var ascending1 = comparator.ascending1;
@@ -1096,9 +1100,6 @@ WebInspector.HeapSnapshotEdgesProvider.prototype = {
             return ascending ? result : -result;
         }
 
-        if (!this._iterationOrder)
-            this._createIterationOrder();
-
         function sortByEdgeAndNode(indexA, indexB) {
             var result = sortByEdgeFieldName(ascending1, indexA, indexB);
             if (result === 0)
@@ -1121,12 +1122,11 @@ WebInspector.HeapSnapshotEdgesProvider.prototype = {
         }
 
         if (fieldName1 === "!edgeName")
-            this._iterationOrder.sort(sortByEdgeAndNode);
+            this._iterationOrder.sortRange(sortByEdgeAndNode, leftBound, rightBound, count);
         else if (fieldName2 === "!edgeName")
-            this._iterationOrder.sort(sortByNodeAndEdge);
+            this._iterationOrder.sortRange(sortByNodeAndEdge, leftBound, rightBound, count);
         else
-            this._iterationOrder.sort(sortByNodeAndNode);
-        return true;
+            this._iterationOrder.sortRange(sortByNodeAndNode, leftBound, rightBound, count);
     }
 };
 
@@ -1147,11 +1147,8 @@ WebInspector.HeapSnapshotNodesProvider.prototype = {
         return {id: node.id, name: node.name, nodeIndex: node.nodeIndex, retainedSize: node.retainedSize, selfSize: node.selfSize, type: node.type};
     },
 
-    sort: function(comparator)
+    sort: function(comparator, leftBound, rightBound, count)
     {
-        if (this._lastComparator === comparator)
-            return false;
-        this._lastComparator = comparator;
         var fieldName1 = comparator.fieldName1;
         var fieldName2 = comparator.fieldName2;
         var ascending1 = comparator.ascending1;
@@ -1170,9 +1167,6 @@ WebInspector.HeapSnapshotNodesProvider.prototype = {
             return ascending ? result : -result;
         }
 
-        if (!this._iterationOrder)
-            this._createIterationOrder();
-
         function sortByComparator(indexA, indexB) {
             var result = sortByNodeField(fieldName1, ascending1, indexA, indexB);
             if (result === 0)
@@ -1180,8 +1174,7 @@ WebInspector.HeapSnapshotNodesProvider.prototype = {
             return result;
         }
 
-        this._iterationOrder.sort(sortByComparator);
-        return true;
+        this._iterationOrder.sortRange(sortByComparator, leftBound, rightBound, count);
     }
 };
 

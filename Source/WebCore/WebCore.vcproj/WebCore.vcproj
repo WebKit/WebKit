@@ -68093,6 +68093,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\inspector\front-end\PartialQuickSort.js"
+					>
+				</File>
+				<File
 					RelativePath="..\inspector\front-end\Placard.js"
 					>
 				</File>

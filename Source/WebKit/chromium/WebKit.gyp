@@ -1279,6 +1279,7 @@
                             '../../WebCore/inspector/front-end/BinarySearch.js',
                             '../../WebCore/inspector/front-end/HeapSnapshot.js',
                             '../../WebCore/inspector/front-end/HeapSnapshotWorkerDispatcher.js',
+                            '../../WebCore/inspector/front-end/PartialQuickSort.js',
                         ],
                         'search_path': '../../WebCore/inspector/front-end',
                         'outputs': ['<(PRODUCT_DIR)/resources/inspector/HeapSnapshotWorker.js'],

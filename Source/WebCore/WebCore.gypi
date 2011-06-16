@@ -6257,6 +6257,7 @@
             'inspector/front-end/ObjectPropertiesSection.js',
             'inspector/front-end/Panel.js',
             'inspector/front-end/PanelEnablerView.js',
+            'inspector/front-end/PartialQuickSort.js',
             'inspector/front-end/Placard.js',
             'inspector/front-end/PleaseWaitMessage.js',
             'inspector/front-end/Popover.js',
