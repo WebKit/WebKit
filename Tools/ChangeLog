@@ -1,3 +1,39 @@
+2011-06-16  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] DumpRenderTree: Add GCController, PixelDumpSupport and
+        WorkQueueItem.
+        They will be plugged into the build system once the EFL's DRT is
+        fully upstreamed.
+        https://bugs.webkit.org/show_bug.cgi?id=61958
+
+        * DumpRenderTree/efl: Added.
+        * DumpRenderTree/efl/GCControllerEfl.cpp: Added.
+        (GCController::collect):
+        (GCController::collectOnAlternateThread):
+        (GCController::getJSObjectCount):
+        * DumpRenderTree/efl/PixelDumpSupportEfl.cpp: Added.
+        (createBitmapContextFromWebView):
+        * DumpRenderTree/efl/WorkQueueItemEfl.cpp: Added.
+        (LoadItem::invoke):
+        (LoadHTMLStringItem::invoke):
+        (ReloadItem::invoke):
+        (ScriptItem::invoke):
+        (BackForwardItem::invoke):
+        * DumpRenderTree/efl/WorkQueueItemEfl.h: Added.
+        (WorkQueueItem::~WorkQueueItem):
+        (LoadItem::LoadItem):
+        (LoadHTMLStringItem::LoadHTMLStringItem):
+        (ScriptItem::ScriptItem):
+        (LoadingScriptItem::LoadingScriptItem):
+        (LoadingScriptItem::invoke):
+        (NonLoadingScriptItem::NonLoadingScriptItem):
+        (NonLoadingScriptItem::invoke):
+        (BackForwardItem::BackForwardItem):
+        (BackItem::BackItem):
+        (ForwardItem::ForwardItem):
+
 2011-06-16  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix, make sure the waf build checks the webKitBranchBuild
