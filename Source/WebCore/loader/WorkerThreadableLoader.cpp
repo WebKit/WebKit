@@ -111,10 +111,11 @@ void WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader(ScriptExec
     Document* document = static_cast<Document*>(context);
 
     OwnPtr<ResourceRequest> request(ResourceRequest::adopt(requestData));
+    request->setHTTPReferrer(outgoingReferrer);
     // FIXME: If the a site requests a local resource, then this will return a non-zero value but the sync path
     // will return a 0 value.  Either this should return 0 or the other code path should do a callback with
     // a failure.
-    thisPtr->m_mainThreadLoader = DocumentThreadableLoader::create(document, thisPtr, *request, options, outgoingReferrer);
+    thisPtr->m_mainThreadLoader = DocumentThreadableLoader::create(document, thisPtr, *request, options);
     ASSERT(thisPtr->m_mainThreadLoader);
 }
 

@@ -1,3 +1,27 @@
+2011-06-16  Nate Chapin  <japhet@chromium.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Set the referrer on a ResourceRequest from a WorkerThreadableLoader
+        as soon as the request reaches the main thread and remove the
+        optionalOutgoingReferrer parameter from some functions.
+        https://bugs.webkit.org/show_bug.cgi?id=62806
+
+        * loader/DocumentThreadableLoader.cpp:
+        (WebCore::DocumentThreadableLoader::loadResourceSynchronously):
+        (WebCore::DocumentThreadableLoader::create):
+        (WebCore::DocumentThreadableLoader::DocumentThreadableLoader):
+        (WebCore::DocumentThreadableLoader::loadRequest):
+        * loader/DocumentThreadableLoader.h:
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::scheduleSubresourceLoad):
+        * loader/ResourceLoadScheduler.h:
+        * loader/SubresourceLoader.cpp:
+        (WebCore::SubresourceLoader::create):
+        * loader/SubresourceLoader.h:
+        * loader/WorkerThreadableLoader.cpp:
+        (WebCore::WorkerThreadableLoader::MainThreadBridge::mainThreadCreateLoader):
+
 2011-06-16  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.

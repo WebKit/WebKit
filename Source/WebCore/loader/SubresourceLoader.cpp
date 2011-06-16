@@ -61,7 +61,7 @@ SubresourceLoader::~SubresourceLoader()
 #endif
 }
 
-PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks, bool shouldContentSniff, const String& optionalOutgoingReferrer, bool shouldBufferData)
+PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, SubresourceLoaderClient* client, const ResourceRequest& request, SecurityCheckPolicy securityCheck, bool sendResourceLoadCallbacks, bool shouldContentSniff, bool shouldBufferData)
 {
     if (!frame)
         return 0;
@@ -83,11 +83,11 @@ PassRefPtr<SubresourceLoader> SubresourceLoader::create(Frame* frame, Subresourc
 
     String outgoingReferrer;
     String outgoingOrigin;
-    if (optionalOutgoingReferrer.isNull()) {
+    if (request.httpReferrer().isNull()) {
         outgoingReferrer = fl->outgoingReferrer();
         outgoingOrigin = fl->outgoingOrigin();
     } else {
-        outgoingReferrer = optionalOutgoingReferrer;
+        outgoingReferrer = request.httpReferrer();
         outgoingOrigin = SecurityOrigin::createFromString(outgoingReferrer)->toString();
     }
 
