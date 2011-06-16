@@ -624,6 +624,14 @@ void HTMLTableElement::addSharedGroupDecls(bool rows, Vector<CSSMutableStyleDecl
     results.append(decl);
 }
 
+CollectionCache* HTMLTableElement::collectionCache() const
+{
+    if (!m_collectionCache)
+        m_collectionCache = adoptPtr(new CollectionCache());
+
+    return m_collectionCache.get();
+}
+
 void HTMLTableElement::attach()
 {
     ASSERT(!attached());

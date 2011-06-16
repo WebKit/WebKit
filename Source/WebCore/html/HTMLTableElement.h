@@ -68,6 +68,8 @@ public:
     void addSharedCellDecls(Vector<CSSMutableStyleDeclaration*>&);
     void addSharedGroupDecls(bool rows, Vector<CSSMutableStyleDeclaration*>&);
 
+    CollectionCache* collectionCache() const;
+
 private:
     HTMLTableElement(const QualifiedName&, Document*);
 
@@ -100,6 +102,7 @@ private:
 
     unsigned short m_padding;
     RefPtr<CSSMappedAttributeDeclaration> m_paddingDecl;
+    mutable OwnPtr<CollectionCache> m_collectionCache;
 };
 
 } //namespace

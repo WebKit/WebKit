@@ -1,3 +1,15 @@
+2011-06-16  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLTable should cache its 'rows' collection results
+        https://bugs.webkit.org/show_bug.cgi?id=62800
+
+        * perf/table-rows-length-caching-expected.txt: Added.
+        * perf/table-rows-length-caching.html: Added.
+        This test checks that the call to table.rows is CONSTANT once it has
+        been populated once (and the DOM is not mutated).
+
 2011-06-16  Vitaly Repeshko  <vitalyr@chromium.org>
 
         Unreviewed.

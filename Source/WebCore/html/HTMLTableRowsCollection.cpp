@@ -149,7 +149,7 @@ HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
 }
 
 HTMLTableRowsCollection::HTMLTableRowsCollection(PassRefPtr<HTMLTableElement> table)
-    : HTMLCollection(table, OtherCollection, 0)
+    : HTMLCollection(table, OtherCollection, table->collectionCache())
 {
 }
 

@@ -1,3 +1,30 @@
+2011-06-16  Julien Chaffraix  <jchaffraix@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        HTMLTable should cache its 'rows' collection results
+        https://bugs.webkit.org/show_bug.cgi?id=62800
+
+        Test: perf/table-rows-length-caching.html
+
+        Currently all our HTMLCollection's are recreated on call. This means that
+        we don't cache the information about the collection between calls to, for
+        example, table.rows.
+
+        This change adds a CollectionCache to HTMLTableElement. It is similar to what
+        is done for HTMLFormElement.
+
+        * html/HTMLTableElement.cpp:
+        (WebCore::HTMLTableElement::collectionCache): This method does
+        lazy initialization of the table's collectionCache.
+        * html/HTMLTableElement.h: Added a new member and the previous
+        method.
+
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::HTMLTableRowsCollection): Pass
+        the HTMLTableElement's CollectionCache so that we reuse the cached
+        results.
+
 2011-06-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89025.
