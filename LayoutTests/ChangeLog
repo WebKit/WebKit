@@ -1,3 +1,17 @@
+2011-06-16  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed expectations update.
+        - spellcheck-api-pixel.html -> Added expectations
+        - spellcheck-api.html -> Removed test_expectations.txt entry because it passes.
+
+        * platform/chromium-linux/editing/spelling/spellcheck-api-pixel-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/spelling/spellcheck-api-pixel-expected.png: Added.
+        * platform/chromium-mac/editing/spelling/spellcheck-api-pixel-expected.png: Added.
+        * platform/chromium-mac/editing/spelling/spellcheck-api-pixel-expected.txt: Added.
+        * platform/chromium-win/editing/spelling/spellcheck-api-pixel-expected.png: Added.
+        * platform/chromium-win/editing/spelling/spellcheck-api-pixel-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-15  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt] new test introduced in r88958 fail on Qt

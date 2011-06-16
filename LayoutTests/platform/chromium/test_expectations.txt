@@ -750,10 +750,6 @@ BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline
 BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-removing-underline.html = IMAGE+TEXT
 BUGCR58254 MAC : platform/mac/editing/spelling/autocorrection-simple.html = IMAGE+TEXT
 
-// Needs rebaseline
-BUGMORRITA : editing/spelling/spellcheck-api-pixel.html = MISSING
-BUGWK62296 : editing/spelling/spellcheck-api.html = FAIL PASS
-
 // Directionality of mixed-direction text in selected choice should
 // match that in the <select> option lists.
 // Low priority, unclear if test expectations are correct (see bug)
