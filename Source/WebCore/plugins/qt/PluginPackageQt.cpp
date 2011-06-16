@@ -162,7 +162,7 @@ bool PluginPackage::load()
 
     initializeBrowserFuncs();
 
-    if (m_path.contains("npwrapper.")) {
+    if (m_path.contains("npwrapper.") || m_path.contains("gnash")) {
         // nspluginwrapper relies on the toolkit value to know if glib is available
         // It does so in NP_Initialize with a null instance, therefore it is done this way:
         m_browserFuncs.getvalue = staticPluginQuirkRequiresGtkToolKit_NPN_GetValue;

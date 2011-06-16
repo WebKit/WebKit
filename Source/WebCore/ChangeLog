@@ -1,3 +1,17 @@
+2011-06-16  Dawit Alemayehu  <adawit@kde.org>
+
+        Reviewed by Antonio Gomes.
+
+        Support for gnash flash player plugin in QtWebKit
+
+        [Qt] Support for the gnash flash player plugin
+        https://bugs.webkit.org/show_bug.cgi?id=62283
+
+        No new tests needed. Existing nsplugin tests are sufficient.
+
+        * plugins/qt/PluginPackageQt.cpp:
+        (WebCore::PluginPackage::load):
+
 2011-06-16  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Mihai Parparita.
