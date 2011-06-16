@@ -1127,6 +1127,10 @@ media/context-menu-actions.html
 # https://bugs.webkit.org/show_bug.cgi?id=51517
 editing/selection/extend-to-line-boundary.html
 
+# [Qt] editing/selection/move-vertically-with-paddings-borders.html fails
+# https://bugs.webkit.org/show_bug.cgi?id=62821
+editing/selection/move-vertically-with-paddings-borders.html
+
 # ============================================================================= #
 # Failing editing/spelling tests
 # ============================================================================= #

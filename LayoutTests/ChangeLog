@@ -1,3 +1,10 @@
+2011-06-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Skip the failing test added by r89056 on Qt.
+        The failure is tracked by the bug 62821.
+
+        * platform/qt/Skipped:
+
 2011-06-16  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed.
