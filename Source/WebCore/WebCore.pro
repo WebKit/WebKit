@@ -1003,6 +1003,7 @@ SOURCES += \
     platform/graphics/ShadowBlur.cpp \
     platform/graphics/SVGGlyph.cpp \
     platform/graphics/SimpleFontData.cpp \
+    platform/graphics/StringTruncator.cpp \
     platform/graphics/TiledBackingStore.cpp \
     platform/graphics/transforms/AffineTransform.cpp \
     platform/graphics/transforms/TransformationMatrix.cpp \

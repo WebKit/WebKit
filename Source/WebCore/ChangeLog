@@ -51,6 +51,13 @@
 
         [Qt] Build fix after r89039.
 
+        * WebCore.pro: Added StringTruncator to build system.
+        * platform/qt/RenderThemeQt.cpp: Reverted previous change.
+
+2011-06-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        [Qt] Build fix after r89039.
+
         * platform/qt/RenderThemeQt.cpp: Added StringTruncator include.
 
 2011-06-16  Dimitri Glazkov  <dglazkov@chromium.org>
