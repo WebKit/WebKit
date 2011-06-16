@@ -365,7 +365,6 @@ EXPORTS
     ?unprotect@Heap@JSC@@QAE_NVJSValue@2@@Z
     ?unwrappedObject@JSObject@JSC@@UAEPAV12@XZ
     ?utf8@UString@JSC@@QBE?AVCString@WTF@@_N@Z
-    ?visitChildren@JSDOMGlobalObject@WebCore@@UAEXAAVSlotVisitor@JSC@@@Z
     ?visitChildren@JSObject@JSC@@UAEXAAVSlotVisitor@2@@Z
     ?visitChildren@JSWrapperObject@JSC@@EAEXAAVSlotVisitor@2@@Z
     ?visitChildren@ScopeChainNode@JSC@@UAEXAAVSlotVisitor@2@@Z
