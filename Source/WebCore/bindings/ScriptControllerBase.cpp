@@ -31,6 +31,7 @@
 #include "ScriptValue.h"
 #include "SecurityOrigin.h"
 #include "Settings.h"
+#include "UserGestureIndicator.h"
 
 namespace WebCore {
 
@@ -54,9 +55,8 @@ bool ScriptController::canExecuteScripts(ReasonForCallingCanExecuteScripts reaso
 
 ScriptValue ScriptController::executeScript(const String& script, bool forceUserGesture)
 {
-    // FIXME: Why does the URL of the script depend on forceUserGesture?
-    // This looks suspiciously like an old user-gesture back-channel.
-    return executeScript(ScriptSourceCode(script, forceUserGesture ? KURL() : m_frame->document()->url()));
+    UserGestureIndicator gestureIndicator(forceUserGesture ? DefinitelyProcessingUserGesture : PossiblyProcessingUserGesture);
+    return executeScript(ScriptSourceCode(script, m_frame->document()->url()));
 }
 
 ScriptValue ScriptController::executeScript(const ScriptSourceCode& sourceCode)
@@ -95,7 +95,7 @@ bool ScriptController::executeIfJavaScriptURL(const KURL& url, ShouldReplaceDocu
     const int javascriptSchemeLength = sizeof("javascript:") - 1;
 
     String decodedURL = decodeURLEscapeSequences(url.string());
-    ScriptValue result = executeScript(decodedURL.substring(javascriptSchemeLength), false);
+    ScriptValue result = executeScript(decodedURL.substring(javascriptSchemeLength));
 
     // If executing script caused this frame to be removed from the page, we
     // don't want to try to replace its document!

@@ -1,3 +1,22 @@
+2011-06-15  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Remove forceUserGesture bool in favor of UserGestureIndicator
+        https://bugs.webkit.org/show_bug.cgi?id=62702
+
+        This patch is an intermediate step towards removing the
+        forceUserGesture bool.  In this patch, we use the user gesture
+        indicator to store the gesture state instead of encoding it in the URL
+        of the script source code.  In a future patch, we'll push the indicator
+        higher up the stack, closer to the reason for setting it.
+
+        * bindings/ScriptControllerBase.cpp:
+        (WebCore::ScriptController::executeScript):
+        (WebCore::ScriptController::executeIfJavaScriptURL):
+        * bindings/js/ScriptController.cpp:
+        (WebCore::ScriptController::executeScriptInWorld):
+
 2011-06-15  Rob Buis  <rbuis@rim.com>
 
         Reviewed by Darin Adler.
