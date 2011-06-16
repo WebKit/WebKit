@@ -59,14 +59,14 @@ PassRefPtr<AccessibilityARIAGrid> AccessibilityARIAGrid::create(RenderObject* re
     return adoptRef(new AccessibilityARIAGrid(renderer));
 }
 
-void AccessibilityARIAGrid::addChild(AccessibilityObject* child, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)
+bool AccessibilityARIAGrid::addChild(AccessibilityObject* child, HashSet<AccessibilityObject*>& appendedRows, unsigned& columnCount)
 {
     if (!child || !child->isTableRow() || child->ariaRoleAttribute() != RowRole)
-        return;
+        return false;
         
     AccessibilityTableRow* row = static_cast<AccessibilityTableRow*>(child);
     if (appendedRows.contains(row))
-        return;
+        return false;
         
     // store the maximum number of columns
     unsigned rowCellCount = row->children().size();
@@ -84,6 +84,7 @@ void AccessibilityARIAGrid::addChild(AccessibilityObject* child, HashSet<Accessi
         m_children.append(row->children());
 
     appendedRows.add(row);
+    return true;
 }
     
 void AccessibilityARIAGrid::addChildren()
@@ -106,20 +107,18 @@ void AccessibilityARIAGrid::addChildren()
     unsigned columnCount = 0;
     for (RefPtr<AccessibilityObject> child = firstChild(); child; child = child->nextSibling()) {
 
-        if (child->isTableRow() || child->ariaRoleAttribute() == RowRole)
-            addChild(child.get(), appendedRows, columnCount);
-        else {
+        if (!addChild(child.get(), appendedRows, columnCount)) {
+            
             // in case the render tree doesn't match the expected ARIA hierarchy, look at the children
             if (!child->hasChildren())
                 child->addChildren();
 
-            // Do not navigate children through the Accessibility
-            // children vector to let addChild() check the result
-            // of accessibilityIsIgnored() and make the proper
-            // decision (add the objects or their children).
-            AccessibilityObject* grandChild = 0;
-            for (grandChild = child->firstChild(); grandChild; grandChild = grandChild->nextSibling())
-                addChild(grandChild, appendedRows, columnCount);
+            // The children of this non-row will contain all non-ignored elements (recursing to find them). 
+            // This allows the table to dive arbitrarily deep to find the rows.
+            AccessibilityChildrenVector children = child->children();
+            size_t length = children.size();
+            for (size_t i = 0; i < length; ++i)
+                addChild(children[i].get(), appendedRows, columnCount);
         }
     }
     
