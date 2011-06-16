@@ -2544,4 +2544,5 @@ fast/events/touch/touch-gesture-scroll.html
 inspector
 
 # new test introduced in r88958, but fail on Qt
+# https://bugs.webkit.org/show_bug.cgi?id=62741
 http/tests/appcache/video.html
