@@ -1,5 +1,11 @@
 2011-06-16  Geoffrey Garen  <ggaren@apple.com>
 
+        Build fix: Removed an accidental commit from the future.
+
+        * CMakeLists.txt:
+
+2011-06-16  Geoffrey Garen  <ggaren@apple.com>
+
         Reviewed by Oliver Hunt.
 
         Introduced SlotVisitor into the project
