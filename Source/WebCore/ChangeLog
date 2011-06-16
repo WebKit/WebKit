@@ -2,6 +2,37 @@
 
         Reviewed by Mihai Parparita.
 
+        [Chromium] Update forked ScrollAnimatorChromiumMac.mm/h
+        https://bugs.webkit.org/show_bug.cgi?id=62779
+
+        Updated ScrollAnimatorChromiumMac.mm/h with the latest code in WebCore/platform/mac/ScrollAnimatorMac.mm/h
+
+        * platform/chromium/ScrollAnimatorChromiumMac.h:
+        (WebCore::ScrollAnimatorChromiumMac::setNeedsScrollerStyleUpdate):
+        (WebCore::ScrollAnimatorChromiumMac::needsScrollerStyleUpdate):
+        * platform/chromium/ScrollAnimatorChromiumMac.mm:
+        (-[ScrollAnimationHelperDelegate _immediateScrollToPoint:]):
+        (-[ScrollbarPainterControllerDelegate scrollerImpPair:updateScrollerStyleForNewRecommendedScrollerStyle:]):
+        (WebCore::ScrollAnimatorChromiumMac::ScrollAnimatorChromiumMac):
+        (WebCore::ScrollAnimatorChromiumMac::scroll):
+        (WebCore::ScrollAnimatorChromiumMac::immediateScrollToPointForScrollAnimation):
+        (WebCore::isScrollingLeftAndShouldNotRubberBand):
+        (WebCore::isScrollingRightAndShouldNotRubberBand):
+        (WebCore::ScrollAnimatorChromiumMac::handleWheelEvent):
+        (WebCore::ScrollAnimatorChromiumMac::smoothScrollWithEvent):
+        (WebCore::ScrollAnimatorChromiumMac::beginScrollGesture):
+        (WebCore::ScrollAnimatorChromiumMac::snapRubberBand):
+        (WebCore::ScrollAnimatorChromiumMac::snapRubberBandTimerFired):
+        (WebCore::ScrollAnimatorChromiumMac::setIsActive):
+        (WebCore::ScrollAnimatorChromiumMac::updateScrollerStyle):
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.h:
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.mm:
+        (wkScrollbarPainterControllerStyle):
+
+2011-06-16  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
         [Chromium] Overlay scrollbars leave glitches on web content
         https://bugs.webkit.org/show_bug.cgi?id=62383
 
