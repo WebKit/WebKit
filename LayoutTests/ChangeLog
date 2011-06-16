@@ -1,3 +1,18 @@
+2011-06-15  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        Tests that accessing the parent stylesheet in nodes (not in document)
+        do not result in crash when document is cleared.
+        https://bugs.webkit.org/show_bug.cgi?id=62586
+
+        * fast/dom/body-clone-link-decl-parent-crash-expected.txt: Added.
+        * fast/dom/body-clone-link-decl-parent-crash.html: Added.
+        * fast/dom/styled-clone-inline-style-decl-parent-crash-expected.txt: Added.
+        * fast/dom/styled-clone-inline-style-decl-parent-crash.html: Added.
+        * fast/dom/styled-not-in-document-clone-inline-style-decl-parent-crash-expected.txt: Added.
+        * fast/dom/styled-not-in-document-clone-inline-style-decl-parent-crash.html: Added.
+
 2011-06-15  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed; more test expectations cleanup.

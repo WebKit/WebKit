@@ -1,3 +1,18 @@
+2011-06-15  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Antti Koivisto.
+
+        Revert speculative fix in r84151. It caused some issues with
+        stylesheet lifetimes.
+        https://bugs.webkit.org/show_bug.cgi?id=62586
+
+        Tests: fast/dom/body-clone-link-decl-parent-crash.html
+               fast/dom/styled-clone-inline-style-decl-parent-crash.html
+               fast/dom/styled-not-in-document-clone-inline-style-decl-parent-crash.html
+
+        * dom/Document.cpp:
+        (WebCore::Document::removedLastRef):
+
 2011-06-15  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Kent Tamura.

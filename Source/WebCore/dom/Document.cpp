@@ -571,12 +571,6 @@ void Document::removedLastRef()
 #if ENABLE(FULLSCREEN_API)
         m_fullScreenElement = 0;
 #endif
-        m_styleSelector.clear();
-        m_styleSheets.clear();
-        m_elemSheet.clear();
-        m_mappedElementSheet.clear();
-        m_pageUserSheet.clear();
-        m_pageGroupUserSheets.clear();
 
         // removeAllChildren() doesn't always unregister IDs,
         // so tear down scope information upfront to avoid having stale references in the map.
