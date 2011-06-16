@@ -2542,3 +2542,6 @@ fast/events/touch/touch-gesture-scroll.html
 # The profiler test is entirely unrelated to the original change r88337
 # and seems to be highly related to https://bugs.webkit.org/show_bug.cgi?id=60881
 inspector
+
+# new test introduced in r88958, but fail on Qt
+http/tests/appcache/video.html

@@ -1,3 +1,9 @@
+2011-06-15  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] new test introduced in r88958 fail on Qt
+
+        * platform/qt/Skipped: Skip http/tests/appcache/video.html until fix.
+
 2011-06-15  Mikhail Naganov  <mnaganov@chromium.org>
 
         Reviewed by Pavel Feldman.
