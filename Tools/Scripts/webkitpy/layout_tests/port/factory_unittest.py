@@ -144,6 +144,8 @@ class FactoryTest(unittest.TestCase):
         self.assert_port("chromium-linux", chromium_linux.ChromiumLinuxPort)
         self.assert_platform_port("linux2", self.chromium_options,
                                   chromium_linux.ChromiumLinuxPort)
+        self.assert_platform_port("linux3", self.chromium_options,
+                                  chromium_linux.ChromiumLinuxPort)
 
     def test_chromium_win(self):
         self.assert_port("chromium-win", chromium_win.ChromiumWinPort)

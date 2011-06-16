@@ -150,7 +150,7 @@ def _set_up_derived_options(port_obj, options):
         options.pixel_tests = True
 
     if not options.use_apache:
-        options.use_apache = sys.platform in ('darwin', 'linux2')
+        options.use_apache = sys.platform.startswith('linux') or sys.platform == 'darwin'
 
     if not options.time_out_ms:
         if options.configuration == "Debug":

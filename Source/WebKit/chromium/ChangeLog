@@ -1,3 +1,15 @@
+2011-06-16  Torsten Kurbad  <gentoo@tk-webart.de>
+
+        Reviewed by Eric Seidel.
+
+        Add support for sys.platform == 'linux3' by relaxing 
+        conditional statements and/or extending lookup dicts.
+        This way, Linux kernels >=3.0-rc1 get supported in the
+        build process.
+        https://bugs.webkit.org/show_bug.cgi?id=62730
+
+        * gyp_webkit:
+
 2011-06-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89025.

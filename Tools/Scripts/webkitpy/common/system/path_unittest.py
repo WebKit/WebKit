@@ -65,6 +65,9 @@ class AbspathTest(unittest.TestCase):
         self.assertEqual(path.abspath_to_uri("/foo/bar.html",
                                              platform='linux2'),
                          "file:///foo/bar.html")
+        self.assertEqual(path.abspath_to_uri("/foo/bar.html",
+                                             platform='linux3'),
+                         "file:///foo/bar.html")
 
     def test_abspath_to_uri_win(self):
         self.assertMatch('c:\\foo\\bar.html',
@@ -81,6 +84,9 @@ class AbspathTest(unittest.TestCase):
         self.assertMatch('/foo/bar + baz%?.html',
                          'file:///foo/bar%20+%20baz%25%3F.html',
                          platform='linux2')
+        self.assertMatch('/foo/bar + baz%?.html',
+                         'file:///foo/bar%20+%20baz%25%3F.html',
+                         platform='linux3')
 
         # Note that you can't have '?' in a filename on windows.
         self.assertMatch('/cygdrive/c/foo/bar + baz%.html',

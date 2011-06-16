@@ -504,7 +504,7 @@ class Manager:
         # turn shard the http tests there as well. Switching to apache is
         # what made them stable on linux/mac.
         return_value = directory
-        while ((directory != 'http' or sys.platform in ('darwin', 'linux2'))
+        while ((directory != 'http' or sys.platform == 'darwin' or sys.platform.startswith('linux'))
                 and test_file.find(self._fs.sep) >= 0):
             test_file_parts = test_file.split(self._fs.sep, 1)
             directory = test_file_parts[0]

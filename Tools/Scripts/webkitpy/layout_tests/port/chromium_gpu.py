@@ -41,7 +41,7 @@ def get(platform=None, port_name='chromium-gpu', **kwargs):
     if port_name == 'chromium-gpu':
         if platform in ('cygwin', 'win32'):
             port_name = 'chromium-gpu-win'
-        elif platform == 'linux2':
+        elif platform.startswith('linux'):
             port_name = 'chromium-gpu-linux'
         elif platform == 'darwin':
             port_name = 'chromium-gpu-mac'

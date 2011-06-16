@@ -49,7 +49,7 @@ class QtPort(WebKitPort):
 
     def baseline_search_path(self):
         port_names = []
-        if sys.platform == 'linux2':
+        if sys.platform.startswith('linux'):
             port_names.append("qt-linux")
         elif sys.platform in ('win32', 'cygwin'):
             port_names.append("qt-win")

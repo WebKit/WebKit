@@ -66,7 +66,7 @@ def _get_kwargs(**kwargs):
                 port_to_use = 'chromium-win'
             else:
                 port_to_use = 'win'
-        elif sys.platform == 'linux2':
+        elif sys.platform.startswith('linux'):
             port_to_use = 'chromium-linux'
         elif sys.platform == 'darwin':
             if options and hasattr(options, 'chromium') and options.chromium:

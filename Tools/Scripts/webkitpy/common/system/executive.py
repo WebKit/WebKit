@@ -275,7 +275,7 @@ class Executive(object):
 
     def check_running_pid(self, pid):
         """Return True if pid is alive, otherwise return False."""
-        if sys.platform in ('darwin', 'linux2', 'cygwin'):
+        if sys.platform.startswith('linux') or sys.platform in ('darwin', 'cygwin'):
             try:
                 os.kill(pid, 0)
                 return True

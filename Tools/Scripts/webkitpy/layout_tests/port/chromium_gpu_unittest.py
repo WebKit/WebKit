@@ -43,6 +43,7 @@ class ChromiumGpuTest(unittest.TestCase):
 
     def test_get_chromium_gpu__on_linux(self):
         self.assertOverridesWorked('chromium-gpu-linux', 'chromium-gpu', 'linux2')
+        self.assertOverridesWorked('chromium-gpu-linux', 'chromium-gpu', 'linux3')
 
     def test_get_chromium_gpu__on_mac(self):
         self.assertOverridesWorked('chromium-gpu-mac', 'chromium-gpu', 'darwin')

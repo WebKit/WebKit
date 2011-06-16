@@ -37,7 +37,7 @@ from webkitpy.layout_tests.port import port_testcase
 
 class ChromiumLinuxPortTest(port_testcase.PortTestCase):
     def port_maker(self, platform):
-        if platform != 'linux2':
+        if not platform.startswith('linux'):
             return None
         return chromium_linux.ChromiumLinuxPort
 
