@@ -62,6 +62,9 @@ using namespace HTMLNames;
 // TODO: as objects are webpage/user defined and they can be very large.
 #define RENDER_THEME_EFL_PART_CACHE_MAX 32
 
+// Initialize default font size.
+float RenderThemeEfl::defaultFontSize = 16.0f;
+
 // Constants for progress tag animation.
 // These values have been copied from RenderThemeGtk.cpp
 static const int progressAnimationFrames = 10;
@@ -682,8 +685,6 @@ void RenderThemeEfl::themeChanged()
     applyEdjeColors();
     applyPartDescriptions();
 }
-
-float RenderThemeEfl::defaultFontSize = 16.0f;
 
 RenderThemeEfl::RenderThemeEfl(Page* page)
     : RenderTheme()
