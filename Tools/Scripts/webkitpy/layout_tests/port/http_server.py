@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (C) 2010 Google Inc. All rights reserved.
+# Copyright (C) 2011 Google Inc. All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are
@@ -29,24 +29,14 @@
 
 """A class to help start/stop the lighttpd server used by layout tests."""
 
-from __future__ import with_statement
-
-import codecs
 import logging
-import optparse
 import os
-import shutil
-import subprocess
 import sys
-import tempfile
 import time
-import urllib
 
-import factory
-import http_server_base
+from webkitpy.layout_tests.port import http_server_base
 
 _log = logging.getLogger("webkitpy.layout_tests.port.http_server")
-
 
 class Lighttpd(http_server_base.HttpServerBase):
 
@@ -57,12 +47,14 @@ class Lighttpd(http_server_base.HttpServerBase):
         """
         # Webkit tests
         http_server_base.HttpServerBase.__init__(self, port_obj)
+        self._name = 'lighttpd'
         self._output_dir = output_dir
-        self._process = None
         self._port = port
         self._root = root
         self._run_background = run_background
         self._layout_tests_dir = layout_tests_dir
+
+        self._pid_file = self._filesystem.join(self._runtime_path, '%s.pid' % self._name)
 
         if self._port:
             self._port = int(self._port)
@@ -70,18 +62,9 @@ class Lighttpd(http_server_base.HttpServerBase):
         if not self._layout_tests_dir:
             self._layout_tests_dir = self._port_obj.layout_tests_dir()
 
-        try:
-            self._webkit_tests = os.path.join(
-                self._layout_tests_dir, 'http', 'tests')
-            self._js_test_resource = os.path.join(
-                self._layout_tests_dir, 'fast', 'js', 'resources')
-            self._media_resource = os.path.join(
-                self._layout_tests_dir, 'media')
-
-        except:
-            self._webkit_tests = None
-            self._js_test_resource = None
-            self._media_resource = None
+        self._webkit_tests = os.path.join(self._layout_tests_dir, 'http', 'tests')
+        self._js_test_resource = os.path.join(self._layout_tests_dir, 'fast', 'js', 'resources')
+        self._media_resource = os.path.join(self._layout_tests_dir, 'media')
 
         # Self generated certificate for SSL server (for client cert get
         # <base-path>\chrome\test\data\ssl\certs\root_ca_cert.crt)
@@ -99,13 +82,7 @@ class Lighttpd(http_server_base.HttpServerBase):
                 {'port': 8443, 'docroot': self._webkit_tests,
                  'sslcert': self._pem_file}])
 
-    def is_running(self):
-        return self._process != None
-
-    def start(self):
-        if self.is_running():
-            raise 'Lighttpd already running'
-
+    def _prepare_config(self):
         base_conf_file = self._port_obj.path_from_webkit_base('Tools',
             'Scripts', 'webkitpy', 'layout_tests', 'port', 'lighttpd.conf')
         out_conf_file = os.path.join(self._output_dir, 'lighttpd.conf')
@@ -115,19 +92,12 @@ class Lighttpd(http_server_base.HttpServerBase):
         log_file_name = "error.log-" + time_str + ".txt"
         error_log = os.path.join(self._output_dir, log_file_name)
 
-        # Remove old log files. We only need to keep the last ones.
-        self.remove_log_files(self._output_dir, "access.log-")
-        self.remove_log_files(self._output_dir, "error.log-")
-
         # Write out the config
-        with codecs.open(base_conf_file, "r", "utf-8") as file:
-            base_conf = file.read()
+        base_conf = self._filesystem.read_text_file(base_conf_file)
 
         # FIXME: This should be re-worked so that this block can
         # use with open() instead of a manual file.close() call.
-        # lighttpd.conf files seem to be UTF-8 without BOM:
-        # http://redmine.lighttpd.net/issues/992
-        f = codecs.open(out_conf_file, "w", "utf-8")
+        f = self._filesystem.open_text_file_for_writing(out_conf_file)
         f.write(base_conf)
 
         # Write out our cgi handlers.  Run perl through env so that it
@@ -204,39 +174,21 @@ class Lighttpd(http_server_base.HttpServerBase):
             if not os.path.exists(tmp_module_path):
                 os.makedirs(tmp_module_path)
             lib_file = 'liblightcomp.dylib'
-            shutil.copyfile(os.path.join(module_path, lib_file),
-                            os.path.join(tmp_module_path, lib_file))
+            self._filesystem.copyfile(os.path.join(module_path, lib_file),
+                                      os.path.join(tmp_module_path, lib_file))
 
-        env = self._port_obj.setup_environ_for_server()
-        _log.debug('Starting http server, cmd="%s"' % str(start_cmd))
-        # FIXME: Should use Executive.run_command
-        self._process = subprocess.Popen(start_cmd, env=env, stdin=subprocess.PIPE)
+        self._start_cmd = start_cmd
+        self._env = self._port_obj.setup_environ_for_server()
+        self._mappings = mappings
 
-        # Wait for server to start.
-        self.mappings = mappings
-        server_started = self.wait_for_action(
-            self.is_server_running_on_all_ports)
+    def _remove_stale_logs(self):
+        # Sometimes logs are open in other processes but they should clear eventually.
+        for log_prefix in ('access.log-', 'error.log-'):
+            try:
+                self._remove_log_files(self._output_dir, log_prefix)
+            except OSError, e:
+                _log.warning('Failed to remove old %s %s files' % self._name, log_prefix)
 
-        # Our process terminated already
-        if not server_started or self._process.returncode != None:
-            raise Exception('Failed to start httpd.')
-
-        _log.debug("Server successfully started")
-
-    # TODO(deanm): Find a nicer way to shutdown cleanly.  Our log files are
-    # probably not being flushed, etc... why doesn't our python have os.kill ?
-
-    def stop(self, force=False):
-        if not force and not self.is_running():
-            return
-
-        httpd_pid = None
-        if self._process:
-            httpd_pid = self._process.pid
-        self._port_obj._shut_down_http_server(httpd_pid)
-
-        if self._process:
-            # wait() is not threadsafe and can throw OSError due to:
-            # http://bugs.python.org/issue1731717
-            self._process.wait()
-            self._process = None
+    def _spawn_process(self):
+        _log.debug('starting %s, cmd="%s"' % (self._name, self._start_cmd))
+        return self._executive.popen(self._start_cmd, env=self._env, shell=False, stderr=self._executive.PIPE)
