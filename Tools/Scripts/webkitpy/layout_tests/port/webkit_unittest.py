@@ -92,7 +92,7 @@ class WebKitPortTest(port_testcase.PortTestCase):
 
     def test_skipped_layout_tests(self):
         self.assertEqual(TestWebKitPort(None, None).skipped_layout_tests(),
-                         set(["media", "accessibility"]))
+                         set(["media"]))
 
     def test_test_expectations(self):
         # Check that we read both the expectations file and anything in a
@@ -107,8 +107,7 @@ class WebKitPortTest(port_testcase.PortTestCase):
         self.assertEqual(port.test_expectations(),
         """BUG_TESTEXPECTATIONS SKIP : fast/html/article-element.html = FAIL
 BUG_SKIPPED SKIP : fast/html/keygen.html = FAIL
-BUG_SKIPPED SKIP : media = FAIL
-BUG_SKIPPED SKIP : accessibility = FAIL""")
+BUG_SKIPPED SKIP : media = FAIL""")
 
 
 if __name__ == '__main__':
