@@ -57,7 +57,7 @@ WebInspector.HAREntry.prototype = {
     {
         var res = {
             method: this._resource.requestMethod,
-            url: this._resource.url,
+            url: this._buildRequestURL(this._resource.url),
             // httpVersion: "HTTP/1.1" -- Not available.
             headers: this._buildHeaders(this._resource.requestHeaders),
             queryString: this._buildParameters(this._resource.queryParameters || []),
@@ -150,6 +150,11 @@ WebInspector.HAREntry.prototype = {
     _buildParameters: function(parameters)
     {
         return parameters.slice();
+    },
+
+    _buildRequestURL: function(url)
+    {
+        return url.split("#", 2)[0];
     },
 
     _buildCookies: function(cookies)

@@ -17,7 +17,7 @@ function test()
     function onResourceFinished(event)
     {
         var resource = event.data;
-        if (resource.url !== "http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=")
+        if (resource.url !== "http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=#fragmentParam1=fragmentValue1&fragmentParam2=")
             return;
         InspectorTest.addObject(new WebInspector.HAREntry(resource).build(), InspectorTest.HARNondeterministicProperties);
         InspectorTest.completeTest();
@@ -30,7 +30,7 @@ function test()
 <p>
 Tests that resources panel shows form data parameters.
 </p>
-<form target="target-iframe" method="POST" action="http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=">
+<form target="target-iframe" method="POST" action="http://localhost:8000/inspector/resources/post-target.cgi?queryParam1=queryValue1&queryParam2=#fragmentParam1=fragmentValue1&fragmentParam2=">
 <input name="formParam1" value="formValue1">
 <input name="formParam2">
 <input id="submit" type="submit">

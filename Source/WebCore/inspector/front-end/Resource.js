@@ -206,6 +206,7 @@ WebInspector.Resource.prototype = {
         var parsedURL = x.asParsedURL();
         this.domain = parsedURL ? parsedURL.host : "";
         this.path = parsedURL ? parsedURL.path : "";
+        this.urlFragment = parsedURL ? parsedURL.fragment : "";
         this.lastPathComponent = "";
         if (parsedURL && parsedURL.path) {
             // First cut the query params.
@@ -640,6 +641,7 @@ WebInspector.Resource.prototype = {
         var queryString = this.url.split("?", 2)[1];
         if (!queryString)
             return;
+        queryString = queryString.split("#", 2)[0];
         this._parsedQueryParameters = this._parseParameters(queryString);
         return this._parsedQueryParameters;
     },

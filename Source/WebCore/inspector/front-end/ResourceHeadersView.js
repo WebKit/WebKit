@@ -70,6 +70,12 @@ WebInspector.ResourceHeadersView = function(resource)
     this._queryStringTreeElement.hidden = true;
     this._headersTreeOutline.appendChild(this._queryStringTreeElement);
 
+    this._urlFragmentTreeElement = new TreeElement("", null, true);
+    this._urlFragmentTreeElement.expanded = true;
+    this._urlFragmentTreeElement.selectable = false;
+    this._urlFragmentTreeElement.hidden = true;
+    this._headersTreeOutline.appendChild(this._urlFragmentTreeElement);
+
     this._formDataTreeElement = new TreeElement("", null, true);
     this._formDataTreeElement.expanded = true;
     this._formDataTreeElement.selectable = false;
@@ -93,6 +99,7 @@ WebInspector.ResourceHeadersView = function(resource)
 
     this._refreshURL();
     this._refreshQueryString();
+    this._refreshUrlFragment();
     this._refreshRequestHeaders();
     this._refreshResponseHeaders();
     this._refreshHTTPInformation();
@@ -114,6 +121,29 @@ WebInspector.ResourceHeadersView.prototype = {
             this._refreshParms(WebInspector.UIString("Query String Parameters"), queryParameters, this._queryStringTreeElement);
     },
 
+    _refreshUrlFragment: function()
+    {
+        var urlFragment = this._resource.urlFragment;
+        this._urlFragmentTreeElement.hidden = !urlFragment;
+
+        if (!urlFragment)
+            return;
+
+        var sectionTitle = WebInspector.UIString("URL fragment"); 
+
+        this._urlFragmentTreeElement.removeChildren();
+        this._urlFragmentTreeElement.listItemElement.removeChildren();
+        this._urlFragmentTreeElement.listItemElement.appendChild(document.createTextNode(sectionTitle));
+        
+        var title = "<div class=\"header-name\">#:</div>";
+        title += "<div class=\"header-value source-code\">" + urlFragment.escapeHTML() + "</div>";
+
+        var fragmentTreeElement = new TreeElement(null, null, false);
+        fragmentTreeElement.titleHTML = title;
+        fragmentTreeElement.selectable = false;
+        this._urlFragmentTreeElement.appendChild(fragmentTreeElement);
+    },
+    
     _refreshFormData: function()
     {
         this._formDataTreeElement.hidden = true;

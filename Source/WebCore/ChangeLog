@@ -1,3 +1,21 @@
+2011-06-16  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Network panel shows incorrect query parameters when url has fragment.
+        https://bugs.webkit.org/show_bug.cgi?id=62723
+
+        * English.lproj/localizedStrings.js:
+        * inspector/front-end/HAREntry.js:
+        (WebInspector.HAREntry.prototype._buildRequest):
+        (WebInspector.HAREntry.prototype._buildRequestURL):
+        * inspector/front-end/Resource.js:
+        (WebInspector.Resource.prototype.set url):
+        (WebInspector.Resource.prototype.get queryParameters):
+        * inspector/front-end/ResourceHeadersView.js:
+        (WebInspector.ResourceHeadersView):
+        (WebInspector.ResourceHeadersView.prototype._refreshUrlFragment):
+
 2011-06-16  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Clang fix after r89039.
