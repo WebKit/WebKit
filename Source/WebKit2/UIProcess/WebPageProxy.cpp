@@ -353,7 +353,7 @@ void WebPageProxy::close()
     m_policyClient.initialize(0);
     m_uiClient.initialize(0);
 
-    m_drawingArea.clear();
+    m_drawingArea = nullptr;
 
     process()->send(Messages::WebPage::Close(), m_pageID);
     process()->removeWebPage(m_pageID);
@@ -2836,6 +2836,9 @@ void WebPageProxy::frameSetLargestFrameChanged(uint64_t frameID)
 
 void WebPageProxy::processDidBecomeUnresponsive()
 {
+    if (!isValid())
+        return;
+
     updateBackingStoreDiscardableState();
 
     m_loaderClient.processDidBecomeUnresponsive(this);
@@ -2843,6 +2846,9 @@ void WebPageProxy::processDidBecomeUnresponsive()
 
 void WebPageProxy::processDidBecomeResponsive()
 {
+    if (!isValid())
+        return;
+    
     updateBackingStoreDiscardableState();
 
     m_loaderClient.processDidBecomeResponsive(this);
@@ -3162,6 +3168,8 @@ void WebPageProxy::flashBackingStoreUpdates(const Vector<IntRect>& updateRects)
 
 void WebPageProxy::updateBackingStoreDiscardableState()
 {
+    ASSERT(isValid());
+
     bool isDiscardable;
 
     if (!process()->responsivenessTimer()->isResponsive())
