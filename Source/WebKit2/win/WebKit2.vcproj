@@ -1230,6 +1230,9 @@
 					>
 				</File>
 				<File
+                    RelativePath="..\Shared\win\ShareableBitmapWin.cpp"
+                    >
+				</File><File
 					RelativePath="..\Shared\win\WebCoreArgumentCodersWin.cpp"
 					>
 				</File>
