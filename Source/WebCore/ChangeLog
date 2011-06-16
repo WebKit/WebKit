@@ -1,3 +1,23 @@
+2011-06-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Consider padding and border when looking for the next/previous line position
+        https://bugs.webkit.org/show_bug.cgi?id=55481
+
+        The bug was caused by previousLinePosition and nextLinePosition passing y coordinate
+        above the line in some cases. Fixed the bug by passing the larger of selectionTop and logicalTop.
+
+        This patch is based on a patch originally written by Mario Sanchez Prada <msanchez@igalia.com>.
+
+        Test: editing/selection/move-vertically-with-paddings-borders.html
+
+        * editing/visible_units.cpp:
+        (WebCore::previousLinePosition):
+        (WebCore::nextLinePosition):
+        * rendering/RootInlineBox.h:
+        (WebCore::RootInlineBox::blockDirectionPointInLine):
+
 2011-06-16  Keunsoon Lee  <keunsoon.lee@samsung.com>
 
         Reviewed by Martin Robinson.

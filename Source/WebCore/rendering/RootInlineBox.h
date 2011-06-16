@@ -57,6 +57,8 @@ public:
     int selectionBottom() const;
     int selectionHeight() const { return max(0, selectionBottom() - selectionTop()); }
 
+    int blockDirectionPointInLine() const { return max(lineTop(), selectionTop()); }
+
     int alignBoxesInBlockDirection(int heightOfBlock, GlyphOverflowAndFallbackFontsMap&, VerticalPositionCache&);
     void setLineTopBottomPositions(int top, int bottom);
 
