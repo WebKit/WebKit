@@ -340,4 +340,4 @@ bool decode(ArgumentDecoder* decoder, RetainPtr<NSString>& result)
     return true;
 }
 
-}
+} // namespace CoreIPC

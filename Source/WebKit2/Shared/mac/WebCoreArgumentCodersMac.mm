@@ -192,4 +192,22 @@ bool decodeResourceError(ArgumentDecoder* decoder, ResourceError& resourceError)
     return true;
 }
 
+
+void ArgumentCoder<KeypressCommand>::encode(ArgumentEncoder* encoder, const KeypressCommand& keypressCommand)
+{
+    encoder->encode(keypressCommand.commandName);
+    encoder->encode(keypressCommand.text);
+}
+    
+bool ArgumentCoder<KeypressCommand>::decode(ArgumentDecoder* decoder, KeypressCommand& keypressCommand)
+{
+    if (!decoder->decode(keypressCommand.commandName))
+        return false;
+
+    if (!decoder->decode(keypressCommand.text))
+        return false;
+
+    return true;
+}
+
 } // namespace CoreIPC

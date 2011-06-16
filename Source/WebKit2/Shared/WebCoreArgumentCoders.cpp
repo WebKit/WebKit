@@ -340,4 +340,433 @@ bool ArgumentCoder<Color>::decode(ArgumentDecoder* decoder, Color& color)
     return true;
 }
 
+
+void ArgumentCoder<CompositionUnderline>::encode(ArgumentEncoder* encoder, const CompositionUnderline& underline)
+{
+    encoder->encode(underline.startOffset);
+    encoder->encode(underline.endOffset);
+    encoder->encode(underline.thick);
+    encoder->encode(underline.color);
+}
+
+bool ArgumentCoder<CompositionUnderline>::decode(ArgumentDecoder* decoder, CompositionUnderline& underline)
+{
+    if (!decoder->decode(underline.startOffset))
+        return false;
+    if (!decoder->decode(underline.endOffset))
+        return false;
+    if (!decoder->decode(underline.thick))
+        return false;
+    if (!decoder->decode(underline.color))
+        return false;
+
+    return true;
+}
+
+
+void ArgumentCoder<DatabaseDetails>::encode(ArgumentEncoder* encoder, const DatabaseDetails& details)
+{
+    encoder->encode(details.name());
+    encoder->encode(details.displayName());
+    encoder->encode(details.expectedUsage());
+    encoder->encode(details.currentUsage());
+}
+    
+bool ArgumentCoder<DatabaseDetails>::decode(ArgumentDecoder* decoder, DatabaseDetails& details)
+{
+    String name;
+    if (!decoder->decode(name))
+        return false;
+
+    String displayName;
+    if (!decoder->decode(displayName))
+        return false;
+
+    uint64_t expectedUsage;
+    if (!decoder->decode(expectedUsage))
+        return false;
+
+    uint64_t currentUsage;
+    if (!decoder->decode(currentUsage))
+        return false;
+    
+    details = DatabaseDetails(name, displayName, expectedUsage, currentUsage);
+    return true;
+}
+
+
+void ArgumentCoder<GrammarDetail>::encode(ArgumentEncoder* encoder, const GrammarDetail& detail)
+{
+    encoder->encode(detail.location);
+    encoder->encode(detail.length);
+    encoder->encode(detail.guesses);
+    encoder->encode(detail.userDescription);
+}
+
+bool ArgumentCoder<GrammarDetail>::decode(ArgumentDecoder* decoder, GrammarDetail& detail)
+{
+    if (!decoder->decode(detail.location))
+        return false;
+    if (!decoder->decode(detail.length))
+        return false;
+    if (!decoder->decode(detail.guesses))
+        return false;
+    if (!decoder->decode(detail.userDescription))
+        return false;
+
+    return true;
+}
+
+
+void ArgumentCoder<TextCheckingResult>::encode(ArgumentEncoder* encoder, const TextCheckingResult& result)
+{
+    encoder->encodeEnum(result.type);
+    encoder->encode(result.location);
+    encoder->encode(result.length);
+    encoder->encode(result.details);
+    encoder->encode(result.replacement);
+}
+
+bool ArgumentCoder<TextCheckingResult>::decode(ArgumentDecoder* decoder, TextCheckingResult& result)
+{
+    if (!decoder->decodeEnum(result.type))
+        return false;
+    if (!decoder->decode(result.location))
+        return false;
+    if (!decoder->decode(result.length))
+        return false;
+    if (!decoder->decode(result.details))
+        return false;
+    if (!decoder->decode(result.replacement))
+        return false;
+    return true;
+}
+
+
+void ArgumentCoder<RefPtr<TimingFunction> >::encode(ArgumentEncoder* encoder, const RefPtr<TimingFunction>& function)
+{
+    // We don't want to encode null-references.
+    ASSERT(function);
+
+    encoder->encodeEnum(function->type());
+    switch (function->type()) {
+    case TimingFunction::LinearFunction:
+        break;
+    case TimingFunction::CubicBezierFunction: {
+        CubicBezierTimingFunction* cubicFunction = static_cast<CubicBezierTimingFunction*>(function.get());
+        encoder->encodeDouble(cubicFunction->x1());
+        encoder->encodeDouble(cubicFunction->y1());
+        encoder->encodeDouble(cubicFunction->x2());
+        encoder->encodeDouble(cubicFunction->y2());
+        break;
+    }
+    case TimingFunction::StepsFunction: {
+        StepsTimingFunction* stepsFunction = static_cast<StepsTimingFunction*>(function.get());
+        encoder->encodeInt32(stepsFunction->numberOfSteps());
+        encoder->encodeBool(stepsFunction->stepAtStart());
+        break;
+    }
+    }
+}
+
+bool ArgumentCoder<RefPtr<TimingFunction> >::decode(ArgumentDecoder* decoder, RefPtr<TimingFunction>& function)
+{
+    TimingFunction::TimingFunctionType type;
+    if (!decoder->decodeEnum(type))
+        return false;
+
+    switch (type) {
+    case TimingFunction::LinearFunction:
+        function = LinearTimingFunction::create();
+        return true;
+
+    case TimingFunction::CubicBezierFunction: {
+        double x1, y1, x2, y2;
+        if (!decoder->decodeDouble(x1))
+            return false;
+        if (!decoder->decodeDouble(y1))
+            return false;
+        if (!decoder->decodeDouble(x2))
+            return false;
+        if (!decoder->decodeDouble(y2))
+            return false;
+        function = CubicBezierTimingFunction::create(x1, y1, x2, y2);
+        return true;
+    }
+
+    case TimingFunction::StepsFunction: {
+        int numSteps;
+        bool stepAtStart;
+        if (!decoder->decodeInt32(numSteps))
+            return false;
+        if (!decoder->decodeBool(stepAtStart))
+            return false;
+
+        function = StepsTimingFunction::create(numSteps, stepAtStart);
+        return true;
+    }
+
+    }
+
+    return false;
+}
+
+
+template<typename T>
+void encodeOperation(ArgumentEncoder* encoder, const RefPtr<TransformOperation>& operation)
+{
+    encoder->encode(*static_cast<const T*>(operation.get()));
+}
+
+void ArgumentCoder<RefPtr<TransformOperation> >::encode(ArgumentEncoder* encoder, const RefPtr<TransformOperation>& operation)
+{
+    // We don't want to encode null-references.
+    ASSERT(operation);
+
+    encoder->encodeEnum(operation->getOperationType());
+    switch (operation->getOperationType()) {
+    case TransformOperation::SCALE:
+    case TransformOperation::SCALE_X:
+    case TransformOperation::SCALE_Y:
+    case TransformOperation::SCALE_Z:
+    case TransformOperation::SCALE_3D:
+        encodeOperation<ScaleTransformOperation>(encoder, operation);
+        return;
+
+    case TransformOperation::TRANSLATE:
+    case TransformOperation::TRANSLATE_X:
+    case TransformOperation::TRANSLATE_Y:
+    case TransformOperation::TRANSLATE_Z:
+    case TransformOperation::TRANSLATE_3D:
+        encodeOperation<TranslateTransformOperation>(encoder, operation);
+        return;
+
+    case TransformOperation::ROTATE:
+    case TransformOperation::ROTATE_X:
+    case TransformOperation::ROTATE_Y:
+    case TransformOperation::ROTATE_3D:
+        encodeOperation<RotateTransformOperation>(encoder, operation);
+        return;
+
+    case TransformOperation::SKEW:
+    case TransformOperation::SKEW_X:
+    case TransformOperation::SKEW_Y:
+        encodeOperation<SkewTransformOperation>(encoder, operation);
+        return;
+
+    case TransformOperation::MATRIX:
+        encodeOperation<MatrixTransformOperation>(encoder, operation);
+        return;
+
+    case TransformOperation::MATRIX_3D:
+        encodeOperation<Matrix3DTransformOperation>(encoder, operation);
+        return;
+
+    case TransformOperation::PERSPECTIVE:
+        encodeOperation<PerspectiveTransformOperation>(encoder, operation);
+        return;
+
+    case TransformOperation::IDENTITY:
+    case TransformOperation::NONE:
+        return;
+    }
+}
+
+template<typename T>
+bool decodeOperation(ArgumentDecoder* decoder, RefPtr<TransformOperation>& operation, PassRefPtr<T> newOperation)
+{
+    if (!decoder->decode(*newOperation.get()))
+        return false;
+
+    operation = newOperation.get();
+    return true;
+}
+
+bool ArgumentCoder<RefPtr<TransformOperation> >::decode(ArgumentDecoder* decoder, RefPtr<TransformOperation>& operation)
+{
+    TransformOperation::OperationType type;
+    if (!decoder->decodeEnum(type))
+        return false;
+
+    switch (type) {
+    case TransformOperation::SCALE:
+    case TransformOperation::SCALE_X:
+    case TransformOperation::SCALE_Y:
+    case TransformOperation::SCALE_Z:
+    case TransformOperation::SCALE_3D:
+        return decodeOperation(decoder, operation, ScaleTransformOperation::create(1.0, 1.0, type));
+
+    case TransformOperation::TRANSLATE:
+    case TransformOperation::TRANSLATE_X:
+    case TransformOperation::TRANSLATE_Y:
+    case TransformOperation::TRANSLATE_Z:
+    case TransformOperation::TRANSLATE_3D:
+        return decodeOperation(decoder, operation, TranslateTransformOperation::create(Length(0, WebCore::Fixed), Length(0, WebCore::Fixed), type));
+
+    case TransformOperation::ROTATE:
+    case TransformOperation::ROTATE_X:
+    case TransformOperation::ROTATE_Y:
+    case TransformOperation::ROTATE_3D:
+        return decodeOperation(decoder, operation, RotateTransformOperation::create(0.0, type));
+
+    case TransformOperation::SKEW:
+    case TransformOperation::SKEW_X:
+    case TransformOperation::SKEW_Y:
+        return decodeOperation(decoder, operation, SkewTransformOperation::create(0.0, 0.0, type));
+
+    case TransformOperation::MATRIX:
+        return decodeOperation(decoder, operation, MatrixTransformOperation::create(TransformationMatrix()));
+
+    case TransformOperation::MATRIX_3D:
+        return decodeOperation(decoder, operation, Matrix3DTransformOperation::create(TransformationMatrix()));
+
+    case TransformOperation::PERSPECTIVE:
+        return decodeOperation(decoder, operation, PerspectiveTransformOperation::create(Length(0, WebCore::Fixed)));
+
+    case TransformOperation::IDENTITY:
+    case TransformOperation::NONE:
+        operation = IdentityTransformOperation::create();
+        return true;
+    }
+
+    return false;
+}
+
+void ArgumentCoder<TransformOperations>::encode(ArgumentEncoder* encoder, const TransformOperations& operations)
+{
+    Vector<RefPtr<TransformOperation> > operationsVector = operations.operations();
+    int size = operationsVector.size();
+    encoder->encodeInt32(size);
+    for (int i = 0; i < size; ++i)
+        ArgumentCoder<RefPtr<TransformOperation> >::encode(encoder, operationsVector[i]);
+}
+
+bool ArgumentCoder<TransformOperations>::decode(ArgumentDecoder* decoder, TransformOperations& operations)
+{
+    int size;
+    if (!decoder->decodeInt32(size))
+        return false;
+
+    Vector<RefPtr<TransformOperation> >& operationVector = operations.operations();
+    operationVector.clear();
+    operationVector.resize(size);
+    for (int i = 0; i < size; ++i) {
+        RefPtr<TransformOperation> operation;
+        if (!ArgumentCoder<RefPtr<TransformOperation> >::decode(decoder, operation))
+            return false;
+        operationVector[i] = operation;
+    }
+
+    return true;
+}
+
+template<typename T>
+static void encodeBoolAndValue(ArgumentEncoder* encoder, bool isSet, const T& value)
+{
+    encoder->encodeBool(isSet);
+    if (isSet)
+        encoder->encode(value);
+}
+
+template<typename T>
+static void encodeBoolAndEnumValue(ArgumentEncoder* encoder, bool isSet, T value)
+{
+    encoder->encodeBool(isSet);
+    if (isSet)
+        encoder->encodeEnum(value);
+}
+
+void ArgumentCoder<Animation>::encode(ArgumentEncoder* encoder, const Animation& animation)
+{
+    encodeBoolAndValue(encoder, animation.isDelaySet(), animation.delay());
+    encodeBoolAndEnumValue(encoder, animation.isDirectionSet(), animation.direction());
+    encodeBoolAndValue(encoder, animation.isDurationSet(), animation.duration());
+    encodeBoolAndValue(encoder, animation.isFillModeSet(), animation.fillMode());
+    encodeBoolAndValue(encoder, animation.isIterationCountSet(), animation.iterationCount());
+    encodeBoolAndValue(encoder, animation.isNameSet(), animation.name());
+    encodeBoolAndEnumValue(encoder, animation.isPlayStateSet(), animation.playState());
+    encodeBoolAndValue(encoder, animation.isPropertySet(), animation.property());
+    encodeBoolAndValue<RefPtr<TimingFunction> >(encoder, animation.isTimingFunctionSet(), animation.timingFunction());
+    encoder->encodeBool(animation.isNoneAnimation());
+}
+
+
+template<typename T>
+static bool decodeBoolAndValue(ArgumentDecoder* decoder, bool& isSet, T& value)
+{
+    if (!decoder->decodeBool(isSet))
+        return false;
+    if (!isSet)
+        return true;
+
+    return decoder->decode(value);
+}
+
+template<typename T>
+static bool decodeBoolAndEnumValue(ArgumentDecoder* decoder, bool& isSet, T& value)
+{
+    if (!decoder->decodeBool(isSet))
+        return false;
+    if (!isSet)
+        return true;
+
+    return decoder->decodeEnum(value);
+}
+
+bool ArgumentCoder<Animation>::decode(ArgumentDecoder* decoder, Animation& animation)
+{
+    bool isDelaySet, isDirectionSet, isDurationSet, isFillModeSet, isIterationCountSet, isNameSet, isPlayStateSet, isPropertySet, isTimingFunctionSet;
+    int property, iterationCount, fillMode;
+    double duration;
+    RefPtr<TimingFunction> timingFunction;
+    String name;
+
+    animation.clearAll();
+
+    double delay;
+    if (!decodeBoolAndValue(decoder, isDelaySet, delay))
+        return false;
+
+    Animation::AnimationDirection direction = Animation::AnimationDirectionNormal;
+    if (!decodeBoolAndEnumValue(decoder, isDirectionSet, direction))
+        return false;
+    if (!decodeBoolAndValue(decoder, isDurationSet, duration))
+        return false;
+    if (!decodeBoolAndValue(decoder, isFillModeSet, fillMode))
+        return false;
+    if (!decodeBoolAndValue(decoder, isIterationCountSet, iterationCount))
+        return false;
+    if (!decodeBoolAndValue(decoder, isNameSet, name))
+        return false;
+
+    EAnimPlayState playState = AnimPlayStatePlaying;
+    if (!decodeBoolAndEnumValue(decoder, isPlayStateSet, playState))
+        return false;
+    if (!decodeBoolAndValue(decoder, isPropertySet, property))
+        return false;
+    if (!decodeBoolAndValue<RefPtr<TimingFunction> >(decoder, isTimingFunctionSet, timingFunction))
+        return false;
+
+    if (isDelaySet)
+        animation.setDelay(delay);
+    if (isDirectionSet)
+        animation.setDirection(direction);
+    if (isDurationSet)
+        animation.setDuration(duration);
+    if (isFillModeSet)
+        animation.setFillMode(fillMode);
+    if (isIterationCountSet)
+        animation.setIterationCount(iterationCount);
+    if (isNameSet)
+        animation.setName(name);
+    if (isPlayStateSet)
+        animation.setPlayState(playState);
+    if (isPropertySet)
+        animation.setProperty(property);
+    if (isTimingFunctionSet)
+        animation.setTimingFunction(timingFunction);
+
+    return true;
+}
+
 } // namespace CoreIPC

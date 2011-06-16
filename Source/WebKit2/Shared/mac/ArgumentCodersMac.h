@@ -57,6 +57,6 @@ bool decode(ArgumentDecoder*, RetainPtr<NSNumber>&);
 void encode(ArgumentEncoder*, NSString *);
 bool decode(ArgumentDecoder*, RetainPtr<NSString>&);
 
-}
+} // namespace CoreIPC
 
 #endif // ArgumentCodersMac_h

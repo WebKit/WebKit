@@ -190,441 +190,49 @@ template<> struct ArgumentCoder<WebCore::Color> {
 
 #if PLATFORM(MAC)
 template<> struct ArgumentCoder<WebCore::KeypressCommand> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::KeypressCommand& keypressCommand)
-    {
-        encoder->encode(CoreIPC::In(keypressCommand.commandName, keypressCommand.text));
-    }
-    
-    static bool decode(ArgumentDecoder* decoder, WebCore::KeypressCommand& keypressCommand)
-    {
-        return decoder->decode(CoreIPC::Out(keypressCommand.commandName, keypressCommand.text));
-    }
+    static void encode(ArgumentEncoder*, const WebCore::KeypressCommand&);
+    static bool decode(ArgumentDecoder*, WebCore::KeypressCommand&);
 };
 #endif
 
 template<> struct ArgumentCoder<WebCore::CompositionUnderline> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::CompositionUnderline& underline)
-    {
-        encoder->encode(CoreIPC::In(underline.startOffset, underline.endOffset, underline.thick, underline.color));
-    }
-    
-    static bool decode(ArgumentDecoder* decoder, WebCore::CompositionUnderline& underline)
-    {
-        return decoder->decode(CoreIPC::Out(underline.startOffset, underline.endOffset, underline.thick, underline.color));
-    }
+    static void encode(ArgumentEncoder*, const WebCore::CompositionUnderline&);
+    static bool decode(ArgumentDecoder*, WebCore::CompositionUnderline&);
 };
 
 template<> struct ArgumentCoder<WebCore::DatabaseDetails> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::DatabaseDetails& details)
-    {
-        encoder->encode(CoreIPC::In(details.name(), details.displayName(), details.expectedUsage(), details.currentUsage()));
-    }
-    
-    static bool decode(ArgumentDecoder* decoder, WebCore::DatabaseDetails& details)
-    {
-        String name;
-        String displayName;
-        uint64_t expectedUsage;
-        uint64_t currentUsage;
-        if (!decoder->decode(CoreIPC::Out(name, displayName, expectedUsage, currentUsage)))
-            return false;
-        
-        details = WebCore::DatabaseDetails(name, displayName, expectedUsage, currentUsage);
-        return true;
-    }
+    static void encode(ArgumentEncoder*, const WebCore::DatabaseDetails&);
+    static bool decode(ArgumentDecoder*, WebCore::DatabaseDetails&);
 };
 
 template<> struct ArgumentCoder<WebCore::GrammarDetail> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::GrammarDetail& detail)
-    {
-        encoder->encodeInt32(detail.location);
-        encoder->encodeInt32(detail.length);
-        encoder->encode(detail.guesses);
-        encoder->encode(detail.userDescription);
-    }
-
-    static bool decode(ArgumentDecoder* decoder, WebCore::GrammarDetail& detail)
-    {
-        if (!decoder->decodeInt32(detail.location))
-            return false;
-        if (!decoder->decodeInt32(detail.length))
-            return false;
-        if (!decoder->decode(detail.guesses))
-            return false;
-        if (!decoder->decode(detail.userDescription))
-            return false;
-
-        return true;
-    }
+    static void encode(ArgumentEncoder*, const WebCore::GrammarDetail&);
+    static bool decode(ArgumentDecoder*, WebCore::GrammarDetail&);
 };
 
 template<> struct ArgumentCoder<WebCore::TextCheckingResult> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::TextCheckingResult& result)
-    {
-        encoder->encodeEnum(result.type);
-        encoder->encodeInt32(result.location);
-        encoder->encodeInt32(result.length);
-        encoder->encode(result.details);
-        encoder->encode(result.replacement);
-    }
-
-    static bool decode(ArgumentDecoder* decoder, WebCore::TextCheckingResult& result)
-    {
-        if (!decoder->decodeEnum(result.type))
-            return false;
-        if (!decoder->decodeInt32(result.location))
-            return false;
-        if (!decoder->decodeInt32(result.length))
-            return false;
-        if (!decoder->decode(result.details))
-            return false;
-        if (!decoder->decode(result.replacement))
-            return false;
-        return true;
-    }
+    static void encode(ArgumentEncoder*, const WebCore::TextCheckingResult&);
+    static bool decode(ArgumentDecoder*, WebCore::TextCheckingResult&);
 };
 
 template<> struct ArgumentCoder<RefPtr<WebCore::TimingFunction> > {
-    static void encode(ArgumentEncoder* encoder, const RefPtr<WebCore::TimingFunction>& function)
-    {
-        // We don't want to encode null-references.
-        ASSERT(function);
-
-        WebCore::TimingFunction::TimingFunctionType type = function->type();
-        encoder->encodeInt32(type);
-        switch (type) {
-        case WebCore::TimingFunction::LinearFunction:
-            break;
-        case WebCore::TimingFunction::CubicBezierFunction: {
-            WebCore::CubicBezierTimingFunction* cubicFunction = static_cast<WebCore::CubicBezierTimingFunction*>(function.get());
-            encoder->encodeDouble(cubicFunction->x1());
-            encoder->encodeDouble(cubicFunction->y1());
-            encoder->encodeDouble(cubicFunction->x2());
-            encoder->encodeDouble(cubicFunction->y2());
-            break;
-        }
-        case WebCore::TimingFunction::StepsFunction: {
-            WebCore::StepsTimingFunction* stepsFunction = static_cast<WebCore::StepsTimingFunction*>(function.get());
-            encoder->encodeInt32(stepsFunction->numberOfSteps());
-            encoder->encodeBool(stepsFunction->stepAtStart());
-            break;
-        }
-        }
-    }
-
-    static bool decode(ArgumentDecoder* decoder, RefPtr<WebCore::TimingFunction>& function)
-    {
-        WebCore::TimingFunction::TimingFunctionType type;
-        int typeInt;
-        if (!decoder->decodeInt32(typeInt))
-            return false;
-
-        type = static_cast<WebCore::TimingFunction::TimingFunctionType>(typeInt);
-        switch (type) {
-        case WebCore::TimingFunction::LinearFunction:
-            function = WebCore::LinearTimingFunction::create();
-            return true;
-
-        case WebCore::TimingFunction::CubicBezierFunction: {
-            double x1, y1, x2, y2;
-            if (!decoder->decodeDouble(x1))
-                return false;
-            if (!decoder->decodeDouble(y1))
-                return false;
-            if (!decoder->decodeDouble(x2))
-                return false;
-            if (!decoder->decodeDouble(y2))
-                return false;
-            function = WebCore::CubicBezierTimingFunction::create(x1, y1, x2, y2);
-            return true;
-        }
-
-        case WebCore::TimingFunction::StepsFunction: {
-            int numSteps;
-            bool stepAtStart;
-            if (!decoder->decodeInt32(numSteps))
-                return false;
-            if (!decoder->decodeBool(stepAtStart))
-                return false;
-
-            function = WebCore::StepsTimingFunction::create(numSteps, stepAtStart);
-            return true;
-        }
-
-        }
-
-        return false;
-    }
+    static void encode(ArgumentEncoder*, const RefPtr<WebCore::TimingFunction>&);
+    static bool decode(ArgumentDecoder*, RefPtr<WebCore::TimingFunction>&);
 };
 
 template<> struct ArgumentCoder<RefPtr<WebCore::TransformOperation> > {
-    template<class T>
-    static bool decodeOperation(ArgumentDecoder* decoder, RefPtr<WebCore::TransformOperation>& operation, PassRefPtr<T> newOperation)
-    {
-        if (!ArgumentCoder<T>::decode(decoder, *newOperation.get()))
-            return false;
-        operation = newOperation.get();
-        return true;
-    }
-
-    template<class T>
-    static void encodeOperation(ArgumentEncoder* encoder, const WebCore::TransformOperation* operation)
-    {
-        ArgumentCoder<T>::encode(encoder, *static_cast<const T*>(operation));
-    }
-
-    static void encode(ArgumentEncoder* encoder, const RefPtr<WebCore::TransformOperation>& operation)
-    {
-        // We don't want to encode null-references.
-        ASSERT(operation);
-
-        WebCore::TransformOperation::OperationType type = operation->getOperationType();
-        encoder->encodeInt32(type);
-        switch (type) {
-        case WebCore::TransformOperation::SCALE:
-        case WebCore::TransformOperation::SCALE_X:
-        case WebCore::TransformOperation::SCALE_Y:
-        case WebCore::TransformOperation::SCALE_Z:
-        case WebCore::TransformOperation::SCALE_3D:
-            encodeOperation<WebCore::ScaleTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::TRANSLATE:
-        case WebCore::TransformOperation::TRANSLATE_X:
-        case WebCore::TransformOperation::TRANSLATE_Y:
-        case WebCore::TransformOperation::TRANSLATE_Z:
-        case WebCore::TransformOperation::TRANSLATE_3D:
-            encodeOperation<WebCore::TranslateTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::ROTATE:
-        case WebCore::TransformOperation::ROTATE_X:
-        case WebCore::TransformOperation::ROTATE_Y:
-        case WebCore::TransformOperation::ROTATE_3D:
-            encodeOperation<WebCore::RotateTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::SKEW:
-        case WebCore::TransformOperation::SKEW_X:
-        case WebCore::TransformOperation::SKEW_Y:
-            encodeOperation<WebCore::SkewTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::MATRIX:
-            encodeOperation<WebCore::MatrixTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::MATRIX_3D:
-            encodeOperation<WebCore::Matrix3DTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::PERSPECTIVE:
-            encodeOperation<WebCore::PerspectiveTransformOperation>(encoder, operation.get());
-            return;
-
-        case WebCore::TransformOperation::IDENTITY:
-        case WebCore::TransformOperation::NONE:
-            return;
-        }
-    }
-
-    static bool decode(ArgumentDecoder* decoder, RefPtr<WebCore::TransformOperation>& operation)
-    {
-        WebCore::TransformOperation::OperationType type;
-        int typeInt;
-        if (!decoder->decodeInt32(typeInt))
-            return false;
-        type = static_cast<WebCore::TransformOperation::OperationType>(typeInt);
-        switch (type) {
-        case WebCore::TransformOperation::SCALE:
-        case WebCore::TransformOperation::SCALE_X:
-        case WebCore::TransformOperation::SCALE_Y:
-        case WebCore::TransformOperation::SCALE_Z:
-        case WebCore::TransformOperation::SCALE_3D:
-            return decodeOperation<WebCore::ScaleTransformOperation>(decoder, operation, WebCore::ScaleTransformOperation::create(1.0, 1.0, type));
-
-        case WebCore::TransformOperation::TRANSLATE:
-        case WebCore::TransformOperation::TRANSLATE_X:
-        case WebCore::TransformOperation::TRANSLATE_Y:
-        case WebCore::TransformOperation::TRANSLATE_Z:
-        case WebCore::TransformOperation::TRANSLATE_3D:
-            return decodeOperation<WebCore::TranslateTransformOperation>(decoder, operation, WebCore::TranslateTransformOperation::create(WebCore::Length(0, WebCore::Fixed), WebCore::Length(0, WebCore::Fixed), type));
-
-        case WebCore::TransformOperation::ROTATE:
-        case WebCore::TransformOperation::ROTATE_X:
-        case WebCore::TransformOperation::ROTATE_Y:
-        case WebCore::TransformOperation::ROTATE_3D:
-            return decodeOperation<WebCore::RotateTransformOperation>(decoder, operation, WebCore::RotateTransformOperation::create(0.0, type));
-
-        case WebCore::TransformOperation::SKEW:
-        case WebCore::TransformOperation::SKEW_X:
-        case WebCore::TransformOperation::SKEW_Y:
-            return decodeOperation<WebCore::SkewTransformOperation>(decoder, operation, WebCore::SkewTransformOperation::create(0.0, 0.0, type));
-
-        case WebCore::TransformOperation::MATRIX:
-            return decodeOperation<WebCore::MatrixTransformOperation>(decoder, operation, WebCore::MatrixTransformOperation::create(WebCore::TransformationMatrix()));
-
-        case WebCore::TransformOperation::MATRIX_3D:
-            return decodeOperation<WebCore::Matrix3DTransformOperation>(decoder, operation, WebCore::Matrix3DTransformOperation::create(WebCore::TransformationMatrix()));
-
-        case WebCore::TransformOperation::PERSPECTIVE:
-            return decodeOperation<WebCore::PerspectiveTransformOperation>(decoder, operation, WebCore::PerspectiveTransformOperation::create(WebCore::Length(0, WebCore::Fixed)));
-
-        case WebCore::TransformOperation::IDENTITY:
-        case WebCore::TransformOperation::NONE:
-            operation = WebCore::IdentityTransformOperation::create();
-            return true;
-        }
-
-        return false;
-    }
+    static void encode(ArgumentEncoder*, const RefPtr<WebCore::TransformOperation>&);
+    static bool decode(ArgumentDecoder*, RefPtr<WebCore::TransformOperation>&);
 };
 
 template<> struct ArgumentCoder<WebCore::TransformOperations> {
-    static void encode(ArgumentEncoder* encoder, const WebCore::TransformOperations& operations)
-    {
-        WTF::Vector<RefPtr<WebCore::TransformOperation> > operationsVector = operations.operations();
-        int size = operationsVector.size();
-        encoder->encodeInt32(size);
-        for (int i = 0; i < size; ++i)
-            ArgumentCoder<RefPtr<WebCore::TransformOperation> >::encode(encoder, operationsVector[i]);
-    }
-
-    static bool decode(ArgumentDecoder* decoder, WebCore::TransformOperations& operations)
-    {
-        int size;
-        if (!decoder->decodeInt32(size))
-            return false;
-
-        WTF::Vector<RefPtr<WebCore::TransformOperation> >& operationVector = operations.operations();
-        operationVector.clear();
-        operationVector.resize(size);
-        for (int i = 0; i < size; ++i) {
-            RefPtr<WebCore::TransformOperation> operation;
-            if (!ArgumentCoder<RefPtr<WebCore::TransformOperation> >::decode(decoder, operation))
-                return false;
-            operationVector[i] = operation;
-        }
-
-        return true;
-    }
+    static void encode(ArgumentEncoder*, const WebCore::TransformOperations&);
+    static bool decode(ArgumentDecoder*, WebCore::TransformOperations&);
 };
 
-
 template<> struct ArgumentCoder<WebCore::Animation> {
-    static bool encodeBoolAndReturnValue(ArgumentEncoder* encoder, bool value)
-    {
-        encoder->encodeBool(value);
-        return value;
-    }
-
-    template<typename T>
-    static void encodeBoolAndValue(ArgumentEncoder* encoder, bool isSet, const T& value)
-    {
-        if (encodeBoolAndReturnValue(encoder, isSet))
-            encoder->encode<T>(value);
-    }
-
-    static bool decodeBoolAndValue(ArgumentDecoder* decoder, bool& isSet, double& value)
-    {
-        if (!decoder->decodeBool(isSet))
-            return false;
-        if (!isSet)
-            return true;
-
-        return decoder->decodeDouble(value);
-    }
-
-    template<class T>
-    static bool decodeBoolAndValue(ArgumentDecoder* decoder, bool& isSet, T& value)
-    {
-        if (!decoder->decodeBool(isSet))
-            return false;
-        if (!isSet)
-            return true;
-
-        return ArgumentCoder<T>::decode(decoder, value);
-    }
-
-    static bool decodeBoolAndValue(ArgumentDecoder* decoder, bool& isSet, int& value)
-    {
-        if (!decoder->decodeBool(isSet))
-            return false;
-        if (!isSet)
-            return true;
-
-        return decoder->decodeInt32(value);
-    }
-
-    static void encode(ArgumentEncoder* encoder, const WebCore::Animation& animation)
-    {
-        encodeBoolAndValue(encoder, animation.isDelaySet(), animation.delay());
-        encodeBoolAndValue<int>(encoder, animation.isDirectionSet(), animation.direction());
-        encodeBoolAndValue(encoder, animation.isDurationSet(), animation.duration());
-        encodeBoolAndValue(encoder, animation.isFillModeSet(), animation.fillMode());
-        encodeBoolAndValue(encoder, animation.isIterationCountSet(), animation.iterationCount());
-
-        if (encodeBoolAndReturnValue(encoder, animation.isNameSet()))
-            ArgumentCoder<String>::encode(encoder, animation.name());
-
-        encodeBoolAndValue<int>(encoder, animation.isPlayStateSet(), animation.playState());
-        encodeBoolAndValue(encoder, animation.isPropertySet(), animation.property());
-
-        if (encodeBoolAndReturnValue(encoder, animation.isTimingFunctionSet()))
-            ArgumentCoder<RefPtr<WebCore::TimingFunction> >::encode(encoder, animation.timingFunction());
-        encoder->encodeBool(animation.isNoneAnimation());
-    }
-
-    static bool decode(ArgumentDecoder* decoder, WebCore::Animation& animation)
-    {
-        bool isDelaySet, isDirectionSet, isDurationSet, isFillModeSet, isIterationCountSet, isNameSet, isPlayStateSet, isPropertySet, isTimingFunctionSet;
-        int property, iterationCount, direction, fillMode, playState;
-        double delay, duration;
-        RefPtr<WebCore::TimingFunction> timingFunction;
-        String name;
-
-        animation.clearAll();
-
-        if (!decodeBoolAndValue(decoder, isDelaySet, delay))
-            return false;
-        if (!decodeBoolAndValue(decoder, isDirectionSet, direction))
-            return false;
-        if (!decodeBoolAndValue(decoder, isDurationSet, duration))
-            return false;
-        if (!decodeBoolAndValue(decoder, isFillModeSet, fillMode))
-            return false;
-        if (!decodeBoolAndValue(decoder, isIterationCountSet, iterationCount))
-            return false;
-        if (!decodeBoolAndValue<String>(decoder, isNameSet, name))
-            return false;
-        if (!decodeBoolAndValue(decoder, isPlayStateSet, playState))
-            return false;
-        if (!decodeBoolAndValue(decoder, isPropertySet, property))
-            return false;
-        if (!decodeBoolAndValue<RefPtr<WebCore::TimingFunction> >(decoder, isTimingFunctionSet, timingFunction))
-            return false;
-
-        if (isDelaySet)
-            animation.setDelay(delay);
-        if (isDirectionSet)
-            animation.setDirection(static_cast<WebCore::Animation::AnimationDirection>(direction));
-        if (isDurationSet)
-            animation.setDuration(duration);
-        if (isFillModeSet)
-            animation.setFillMode(fillMode);
-        if (isIterationCountSet)
-            animation.setIterationCount(iterationCount);
-        if (isNameSet)
-            animation.setName(name);
-        if (isPlayStateSet)
-            animation.setPlayState(static_cast<WebCore::EAnimPlayState>(playState));
-        if (isPropertySet)
-            animation.setProperty(property);
-        if (isTimingFunctionSet)
-            animation.setTimingFunction(timingFunction);
-
-        return true;
-    }
+    static void encode(ArgumentEncoder*, const WebCore::Animation&);
+    static bool decode(ArgumentDecoder*, WebCore::Animation&);
 };
 
 } // namespace CoreIPC
