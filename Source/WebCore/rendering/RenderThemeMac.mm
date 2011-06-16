@@ -2051,7 +2051,7 @@ NSSliderCell* RenderThemeMac::sliderThumbVertical() const
     return m_sliderThumbVertical.get();
 }
 
-String RenderThemeMac::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width) const
+String RenderThemeMac::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width)
 {
     if (width <= 0)
         return String();

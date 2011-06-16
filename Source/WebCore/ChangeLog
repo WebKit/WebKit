@@ -1,3 +1,11 @@
+2011-06-16  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Clang fix after r89039.
+
+        * rendering/RenderThemeMac.h: Removed spurious constipation.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::fileListNameForWidth): Ditto.
+
 2011-06-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89026.
