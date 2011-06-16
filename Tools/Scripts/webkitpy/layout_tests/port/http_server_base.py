@@ -90,9 +90,11 @@ class HttpServerBase(object):
         pid = None
         if self._process:
             pid = self._process.pid
+            _log.debug("Attempting to shut down %s server at pid %d" % (self._name, pid))
         elif self._pid_file and self._filesystem.exists(self._pid_file):
             pid = int(self._filesystem.read_text_file(self._pid_file))
         else:
+            _log.warning("No running %s servers found" % self._name)
             return
 
         self._port_obj._executive.kill_process(pid)
@@ -107,6 +109,7 @@ class HttpServerBase(object):
             self._process = None
         if self._pid_file and self._filesystem.exists(self._pid_file):
             self._filesystem.remove(self._pid_file)
+        _log.debug("%s server at pid %d killed" % (self._name, pid))
 
         self._cleanup_after_stop()
 
