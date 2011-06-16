@@ -150,11 +150,6 @@ void assemblePasswordFormResult(const KURL& fullOrigin,
 WebPasswordFormData::WebPasswordFormData(const WebFormElement& webForm)
 {
     RefPtr<HTMLFormElement> form = webForm.operator PassRefPtr<HTMLFormElement>();
-
-    Frame* frame = form->document()->frame();
-    if (!frame)
-        return;
-
     PasswordFormFields fields;
     findPasswordFormFields(form.get(), &fields);
 
@@ -165,7 +160,7 @@ WebPasswordFormData::WebPasswordFormData(const WebFormElement& webForm)
     String action = form->action();
     if (action.isNull())
         action = ""; // missing 'action' attribute implies current URL
-    KURL fullAction = frame->loader()->completeURL(action);
+    KURL fullAction = form->document()->completeURL(action);
     if (!fullAction.isValid())
         return;
 

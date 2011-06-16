@@ -335,12 +335,12 @@ void NavigationScheduler::scheduleLocationChange(PassRefPtr<SecurityOrigin> secu
     lockBackForwardList = lockBackForwardList || mustLockBackForwardList(m_frame);
 
     FrameLoader* loader = m_frame->loader();
-    
+
     // If the URL we're going to navigate to is the same as the current one, except for the
     // fragment part, we don't need to schedule the location change.
     KURL parsedURL(ParsedURLString, url);
     if (parsedURL.hasFragmentIdentifier() && equalIgnoringFragmentIdentifier(m_frame->document()->url(), parsedURL)) {
-        loader->changeLocation(securityOrigin, loader->completeURL(url), referrer, lockHistory, lockBackForwardList);
+        loader->changeLocation(securityOrigin, m_frame->document()->completeURL(url), referrer, lockHistory, lockBackForwardList);
         return;
     }
 

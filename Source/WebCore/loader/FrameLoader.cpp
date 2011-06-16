@@ -788,18 +788,6 @@ void FrameLoader::checkCallImplicitClose()
     m_frame->document()->implicitClose();
 }
 
-KURL FrameLoader::baseURL() const
-{
-    ASSERT(m_frame->document());
-    return m_frame->document()->baseURL();
-}
-
-KURL FrameLoader::completeURL(const String& url)
-{
-    ASSERT(m_frame->document());
-    return m_frame->document()->completeURL(url);
-}
-
 void FrameLoader::loadURLIntoChildFrame(const KURL& url, const String& referer, Frame* childFrame)
 {
     ASSERT(childFrame);

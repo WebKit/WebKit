@@ -954,7 +954,7 @@ String WebHaltablePlugin::pluginName() const
     if (!frame->document()->securityOrigin()->canAccess(targetFrame->document()->securityOrigin()))
         return CString();
   
-    KURL absoluteURL = targetFrame->loader()->completeURL(relativeURLString);
+    KURL absoluteURL = targetFrame->document()->completeURL(relativeURLString);
     return absoluteURL.string().utf8();
 }
 

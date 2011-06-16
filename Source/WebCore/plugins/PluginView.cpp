@@ -829,7 +829,7 @@ PluginView::PluginView(Frame* parentFrame, const IntSize& size, PluginPackage* p
     , m_element(element)
     , m_isStarted(false)
     , m_url(url)
-    , m_baseURL(m_parentFrame->loader()->completeURL(m_parentFrame->document()->baseURL().string()))
+    , m_baseURL(m_parentFrame->document()->baseURL()) // FIXME: No need for this member variable!
     , m_status(PluginStatusLoadedSuccessfully)
     , m_requestTimer(this, &PluginView::requestTimerFired)
     , m_invalidateTimer(this, &PluginView::invalidateTimerFired)

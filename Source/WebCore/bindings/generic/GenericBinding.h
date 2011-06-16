@@ -31,6 +31,7 @@
 #ifndef GenericBinding_h
 #define GenericBinding_h
 
+#include "Document.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 
@@ -58,7 +59,7 @@ KURL completeURL(State<Binding>* state, const String& relativeURL)
     Frame* frame = state->firstFrame();
     if (!frame)
         return KURL();
-    return frame->loader()->completeURL(relativeURL);
+    return frame->document()->completeURL(relativeURL);
 }
 
 }

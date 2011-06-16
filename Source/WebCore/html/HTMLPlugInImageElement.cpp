@@ -59,7 +59,7 @@ bool HTMLPlugInImageElement::isImageType()
         m_serviceType = mimeTypeFromDataURL(m_url);
 
     if (Frame* frame = document()->frame()) {
-        KURL completedURL = frame->loader()->completeURL(m_url);
+        KURL completedURL = document()->completeURL(m_url);
         return frame->loader()->client()->objectContentType(completedURL, m_serviceType, shouldPreferPlugInsForImages()) == ObjectContentImage;
     }
 
@@ -95,12 +95,12 @@ bool HTMLPlugInImageElement::wouldLoadAsNetscapePlugin(const String& url, const 
 {
     ASSERT(document());
     ASSERT(document()->frame());
-    FrameLoader* frameLoader = document()->frame()->loader();
-    ASSERT(frameLoader);
     KURL completedURL;
     if (!url.isEmpty())
-        completedURL = frameLoader->completeURL(url);
+        completedURL = document()->completeURL(url);
 
+    FrameLoader* frameLoader = document()->frame()->loader();
+    ASSERT(frameLoader);
     if (frameLoader->client()->objectContentType(completedURL, serviceType, shouldPreferPlugInsForImages()) == ObjectContentNetscapePlugin)
         return true;
     return false;

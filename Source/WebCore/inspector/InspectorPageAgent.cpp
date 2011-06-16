@@ -317,7 +317,8 @@ void InspectorPageAgent::open(ErrorString*, const String& url, const bool* const
         frame = mainFrame;
 
     UserGestureIndicator indicator(DefinitelyProcessingUserGesture);
-    frame->loader()->changeLocation(mainFrame->document()->securityOrigin(), frame->loader()->completeURL(url), "", false, false);
+    // FIXME: Why does one use mainFrame and the other frame?
+    frame->loader()->changeLocation(mainFrame->document()->securityOrigin(), frame->document()->completeURL(url), "", false, false);
 }
 
 static PassRefPtr<InspectorObject> buildObjectForCookie(const Cookie& cookie)

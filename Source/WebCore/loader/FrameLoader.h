@@ -219,8 +219,6 @@ public:
     void didEndDocument();
     void willSetEncoding();
 
-    KURL baseURL() const;
-
     void handledOnloadEvents();
     String userAgent(const KURL&) const;
 
@@ -259,8 +257,6 @@ public:
     void checkDidPerformFirstNavigation();
 
     bool isComplete() const;
-
-    KURL completeURL(const String& url);
 
     void cancelAndClear();
 
