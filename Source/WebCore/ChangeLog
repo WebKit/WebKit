@@ -1,5 +1,21 @@
 2011-06-14  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 88948.
+
+    2011-06-15  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Timothy Hatcher.
+
+        Full-screen live streams have status text in wrong location
+        https://bugs.webkit.org/show_bug.cgi?id=62733
+
+        Fix a misspelling in the user-agent stylesheet for full-screen mode.
+
+        * css/fullscreenQuickTime.css:
+        (video:-webkit-full-screen::-webkit-media-controls-status-display):
+
+2011-06-14  Lucas Forschler  <lforschler@apple.com>
+
     Merged 88945.
 
     2011-06-14  Jer Noble  <jer.noble@apple.com>
