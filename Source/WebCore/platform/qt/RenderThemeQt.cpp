@@ -47,6 +47,7 @@
 #if USE(QT_MOBILE_THEME)
 #include "QtMobileWebStyle.h"
 #endif
+#include "LocalizedStrings.h"
 #if ENABLE(VIDEO)
 #include "MediaControlElements.h"
 #endif
@@ -69,7 +70,9 @@
 
 #include <QApplication>
 #include <QColor>
+#include <QCoreApplication>
 #include <QFile>
+#include <QFontMetrics>
 #include <QLineEdit>
 #include <QMacStyle>
 #include <QPainter>
@@ -1498,6 +1501,28 @@ void RenderThemeQt::adjustSliderThumbSize(RenderStyle* style) const
 double RenderThemeQt::caretBlinkInterval() const
 {
     return  QApplication::cursorFlashTime() / 1000.0 / 2.0;
+}
+
+String RenderThemeQt::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width)
+{
+    if (width <= 0)
+        return String();
+
+    String string;
+    if (filenames.isEmpty())
+        string = fileButtonNoFileSelectedLabel();
+    else if (filenames.size() == 1) {
+        String fname = filenames[0];
+        QFontMetrics fm(f.font());
+        string = fm.elidedText(fname, Qt::ElideLeft, width);
+    } else {
+        int n = filenames.size();
+        string = QCoreApplication::translate("QWebPage", "%n file(s)",
+                                             "number of chosen file",
+                                             QCoreApplication::CodecForTr, n);
+    }
+
+    return string;
 }
 
 }

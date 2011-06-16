@@ -24,6 +24,7 @@
 
 #include "CSSValueKeywords.h"
 #include "Document.h"
+#include "FileSystem.h"
 #include "FloatConversion.h"
 #include "FocusController.h"
 #include "FontSelector.h"
@@ -32,12 +33,14 @@
 #include "GraphicsContext.h"
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
+#include "LocalizedStrings.h"
 #include "MediaControlElements.h"
 #include "Page.h"
 #include "PaintInfo.h"
 #include "RenderStyle.h"
 #include "RenderView.h"
 #include "Settings.h"
+#include "StringTruncator.h"
 #include "TextControlInnerElements.h"
 
 #if ENABLE(METER_TAG)
@@ -1090,5 +1093,22 @@ Color RenderTheme::focusRingColor()
 {
     return customFocusRingColor().isValid() ? customFocusRingColor() : defaultTheme()->platformFocusRingColor();
 }
+
+String RenderTheme::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width)
+{
+    if (width <= 0)
+        return String();
+
+    String string;
+    if (filenames.isEmpty())
+        string = fileButtonNoFileSelectedLabel();
+    else if (filenames.size() == 1)
+        string = pathGetFileName(filenames[0]);
+    else
+        return StringTruncator::rightTruncate(multipleFileUploadText(filenames.size()), width, font);
+
+    return StringTruncator::centerTruncate(string, width, font);
+}
+
 
 } // namespace WebCore

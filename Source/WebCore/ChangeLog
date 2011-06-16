@@ -1,3 +1,52 @@
+2011-06-15  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Kent Tamura.
+
+        Move FileChooser::basenameForWidth to RenderTheme::fileListNameForWidth, eliminate gnarly FileChooserFoo proliferation.
+        https://bugs.webkit.org/show_bug.cgi?id=62748
+
+        Refactoring, covered by existing tests.
+
+        * CMakeListsEfl.txt: Removed FileChooserFoo from build system.
+        * CMakeListsWinCE.txt: Ditto.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.order: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * platform/FileChooser.h: Removed baseNameForWidth decl.
+        * platform/FileSystem.h: Removed now-unnecessary Chromium-specific cruft.
+        * platform/android/FileChooserAndroid.cpp: Removed.
+        * platform/brew/FileChooserBrew.cpp: Removed.
+        * platform/chromium/FileChooserChromium.cpp: Removed.
+        * platform/chromium/FileSystemChromiumLinux.cpp: Removed now-unnecessary code.
+        * platform/chromium/FileSystemChromiumMac.mm: Ditto.
+        * platform/chromium/FileSystemChromiumWin.cpp: Ditto.
+        * platform/efl/FileChooserEfl.cpp: Removed.
+        * platform/gtk/FileChooserGtk.cpp: Removed.
+        * platform/gtk/RenderThemeGtk.cpp:
+        (WebCore::stringByAdoptingFileSystemRepresentation): Moved from FileChooserGtk.
+        (WebCore::RenderThemeGtk::fileListNameForWidth): Ditto.
+        * platform/gtk/RenderThemeGtk.h: Added decl.
+        * platform/haiku/FileChooserHaiku.cpp: Removed.
+        * platform/mac/FileChooserMac.mm: Removed.
+        * platform/qt/FileChooserQt.cpp: Removed.
+        * platform/qt/RenderThemeQt.cpp:
+        (WebCore::RenderThemeQt::RenderThemeQt): Moved from FileChooserQt.
+        (WebCore::RenderThemeQt::fileListNameForWidth): Ditto.
+        * platform/qt/RenderThemeQt.h: Adde decl.
+        * platform/win/FileChooserWin.cpp: Removed.
+        * platform/wx/FileChooserWx.cpp: Removed.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::fileTextValue): Changed to use RenderTheme.
+        * rendering/RenderTheme.cpp:
+        (WebCore::RenderTheme::fileListNameForWidth): Added default impl.
+        * rendering/RenderTheme.h: Added decl.
+        * rendering/RenderThemeMac.h: Ditto.
+        * rendering/RenderThemeMac.mm:
+        (WebCore::RenderThemeMac::fileListNameForWidth): Added default Mac impl.
+
 2011-06-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

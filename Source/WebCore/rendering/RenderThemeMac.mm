@@ -34,6 +34,7 @@
 #import "Image.h"
 #import "ImageBuffer.h"
 #import "LocalCurrentGraphicsContext.h"
+#import "LocalizedStrings.h"
 #import "MediaControlElements.h"
 #import "PaintInfo.h"
 #import "RenderMedia.h"
@@ -41,6 +42,7 @@
 #import "RenderSlider.h"
 #import "RenderView.h"
 #import "SharedBuffer.h"
+#import "StringTruncator.h"
 #import "TimeRanges.h"
 #import "ThemeMac.h"
 #import "WebCoreSystemInterface.h"
@@ -2047,6 +2049,22 @@ NSSliderCell* RenderThemeMac::sliderThumbVertical() const
     }
     
     return m_sliderThumbVertical.get();
+}
+
+String RenderThemeMac::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width) const
+{
+    if (width <= 0)
+        return String();
+
+    String strToTruncate;
+    if (filenames.isEmpty())
+        strToTruncate = fileButtonNoFileSelectedLabel();
+    else if (filenames.size() == 1)
+        strToTruncate = [[NSFileManager defaultManager] displayNameAtPath:(filenames[0])];
+    else
+        return StringTruncator::rightTruncate(multipleFileUploadText(filenames.size()), width, font);
+
+    return StringTruncator::centerTruncate(strToTruncate, width, font);
 }
 
 } // namespace WebCore

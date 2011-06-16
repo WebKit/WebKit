@@ -26,21 +26,26 @@
 #include "RenderThemeGtk.h"
 
 #include "CSSValueKeywords.h"
+#include "FileSystem.h"
 #include "GOwnPtr.h"
 #include "Gradient.h"
 #include "GraphicsContext.h"
 #include "GtkVersioning.h"
 #include "HTMLMediaElement.h"
 #include "HTMLNames.h"
+#include "LocalizedStrings.h"
 #include "MediaControlElements.h"
 #include "PaintInfo.h"
 #include "PlatformContextCairo.h"
 #include "RenderBox.h"
 #include "RenderObject.h"
+#include "StringTruncator.h"
 #include "TimeRanges.h"
 #include "UserAgentStyleSheets.h"
 #include <gdk/gdk.h>
+#include <glib.h>
 #include <gtk/gtk.h>
+#include <wtf/text/CString.h>
 
 #if ENABLE(PROGRESS_TAG)
 #include "RenderProgress.h"
@@ -676,5 +681,33 @@ IntRect RenderThemeGtk::calculateProgressRect(RenderObject* renderObject, const 
     return progressRect;
 }
 #endif
+
+static bool stringByAdoptingFileSystemRepresentation(gchar* systemFilename, String& result)
+{
+    if (!systemFilename)
+        return false;
+
+    result = filenameToString(systemFilename);
+    g_free(systemFilename);
+
+    return true;
+}
+
+String RenderThemeGtk::fileListNameForWidth(const Vector<String>& filenames, const Font& font, int width)
+{
+    if (width <= 0)
+        return String();
+
+    String string = fileButtonNoFileSelectedLabel();
+
+    if (filenames.size() == 1) {
+        CString systemFilename = fileSystemRepresentation(filenames[0]);
+        gchar* systemBasename = g_path_get_basename(systemFilename.data());
+        stringByAdoptingFileSystemRepresentation(systemBasename, string);
+    } else if (filenames.size() > 1)
+        return StringTruncator::rightTruncate(multipleFileUploadText(filenames.size()), width, font);
+
+    return StringTruncator::centerTruncate(string, width, font);
+}
 
 }

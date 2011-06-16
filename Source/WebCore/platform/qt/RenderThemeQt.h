@@ -160,6 +160,8 @@ protected:
     virtual String formatMediaControlsRemainingTime(float currentTime, float duration) const;
     virtual bool hasOwnDisabledStateHandlingFor(ControlPart) const { return true; }
 private:
+    virtual String fileListNameForWidth(const Vector<String>& filenames, const Font&, int width);
+
     void paintMediaBackground(QPainter* painter, const IntRect& r) const;
     double mediaControlsBaselineOpacity() const;
     QColor getMediaControlForegroundColor(RenderObject* o = 0) const;

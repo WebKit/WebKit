@@ -2537,7 +2537,6 @@ SOURCES += \
     platform/qt/DragDataQt.cpp \
     platform/qt/DragImageQt.cpp \
     platform/qt/EventLoopQt.cpp \
-    platform/qt/FileChooserQt.cpp \
     platform/qt/FileSystemQt.cpp \
     platform/qt/SharedBufferQt.cpp \
     platform/graphics/qt/FontCacheQt.cpp \

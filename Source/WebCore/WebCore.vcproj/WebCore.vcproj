@@ -26877,10 +26877,6 @@
 					>
 				</File>
 				<File
-					RelativePath="..\platform\win\FileChooserWin.cpp"
-					>
-				</File>
-				<File
 					RelativePath="..\platform\win\FileSystemWin.cpp"
 					>
 				</File>

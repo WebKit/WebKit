@@ -204,6 +204,8 @@ public:
     virtual bool shouldShowPlaceholderWhenFocused() const { return false; }
     virtual bool shouldHaveSpinButton(HTMLInputElement*) const;
 
+    virtual String fileListNameForWidth(const Vector<String>& filenames, const Font&, int width);
+
 protected:
     // The platform selection color.
     virtual Color platformActiveSelectionBackgroundColor() const;

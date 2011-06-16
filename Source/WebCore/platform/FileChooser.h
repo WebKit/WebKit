@@ -61,7 +61,6 @@ public:
     bool disconnected() { return !m_client; }
 
     const Vector<String>& filenames() const { return m_filenames; }
-    String basenameForWidth(const Font&, int width) const;
 
     Icon* icon() const { return m_icon.get(); }
 

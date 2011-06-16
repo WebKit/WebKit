@@ -315,7 +315,7 @@ String RenderFileUploadControl::buttonValue()
 
 String RenderFileUploadControl::fileTextValue() const
 {
-    return m_fileChooser->basenameForWidth(style()->font(), maxFilenameWidth());
+    return theme()->fileListNameForWidth(m_fileChooser->filenames(), style()->font(), maxFilenameWidth());
 }
     
 } // namespace WebCore

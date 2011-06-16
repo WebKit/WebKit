@@ -60,7 +60,6 @@
 		0668E18B0ADD9624004128E0 /* PopupMenu.h in Headers */ = {isa = PBXBuildFile; fileRef = 0668E1890ADD9624004128E0 /* PopupMenu.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0668E1900ADD9640004128E0 /* PopupMenuMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */; };
 		066C772B0AB603B700238CC4 /* FileChooser.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772A0AB603B700238CC4 /* FileChooser.h */; settings = {ATTRIBUTES = (Private, ); }; };
-		066C772D0AB603D200238CC4 /* FileChooserMac.mm in Sources */ = {isa = PBXBuildFile; fileRef = 066C772C0AB603D200238CC4 /* FileChooserMac.mm */; };
 		066C77300AB603FD00238CC4 /* RenderFileUploadControl.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 066C772E0AB603FD00238CC4 /* RenderFileUploadControl.cpp */; };
 		066C77310AB603FD00238CC4 /* RenderFileUploadControl.h in Headers */ = {isa = PBXBuildFile; fileRef = 066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */; };
 		06E81ED70AB5D5E900C87837 /* LocalCurrentGraphicsContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */; };
@@ -6362,7 +6361,6 @@
 		0668E1890ADD9624004128E0 /* PopupMenu.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = PopupMenu.h; sourceTree = "<group>"; };
 		0668E18E0ADD9640004128E0 /* PopupMenuMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = PopupMenuMac.mm; sourceTree = "<group>"; };
 		066C772A0AB603B700238CC4 /* FileChooser.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = FileChooser.h; sourceTree = "<group>"; };
-		066C772C0AB603D200238CC4 /* FileChooserMac.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = FileChooserMac.mm; sourceTree = "<group>"; };
 		066C772E0AB603FD00238CC4 /* RenderFileUploadControl.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RenderFileUploadControl.cpp; sourceTree = "<group>"; };
 		066C772F0AB603FD00238CC4 /* RenderFileUploadControl.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RenderFileUploadControl.h; sourceTree = "<group>"; };
 		06E81ED60AB5D5E900C87837 /* LocalCurrentGraphicsContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LocalCurrentGraphicsContext.h; sourceTree = "<group>"; };
@@ -14171,7 +14169,6 @@
 				A7CFB3D40B7ED1180070C32D /* DragImageMac.mm */,
 				5DC87EEF11716DF2001C0E6D /* EmptyProtocolDefinitions.h */,
 				1CA19E030DC255950065A994 /* EventLoopMac.mm */,
-				066C772C0AB603D200238CC4 /* FileChooserMac.mm */,
 				514B3F750C722055000530DF /* FileSystemMac.mm */,
 				935C476C09AC4D6300A6AAB4 /* FoundationExtras.h */,
 				C5392D331326AD0100043D35 /* HTMLConverter.h */,
@@ -23864,7 +23861,6 @@
 				FD3160C012B0272A00C1A359 /* FFTFrameMac.cpp in Sources */,
 				976D6C80122B8A3D001FD1F7 /* File.cpp in Sources */,
 				934FE9E50B5CA539003E4A73 /* FileChooser.cpp in Sources */,
-				066C772D0AB603D200238CC4 /* FileChooserMac.mm in Sources */,
 				89878561122CA064003AABDA /* FileEntry.cpp in Sources */,
 				893C480E1248BD3A002B3D86 /* FileEntrySync.cpp in Sources */,
 				F55B3DBD1251F12D003EF269 /* FileInputType.cpp in Sources */,

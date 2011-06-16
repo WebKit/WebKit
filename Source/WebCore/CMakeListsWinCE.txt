@@ -55,7 +55,6 @@ LIST(APPEND WebCore_SOURCES
     platform/win/CursorWin.cpp
     platform/win/EditorWin.cpp
     platform/win/EventLoopWin.cpp
-    platform/win/FileChooserWin.cpp
     platform/win/KeyEventWin.cpp
     platform/win/LanguageWin.cpp
     platform/win/LocalizedStringsWin.cpp

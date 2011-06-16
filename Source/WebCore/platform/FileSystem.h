@@ -201,10 +201,6 @@ String encodeForFileName(const String&);
 RetainPtr<CFURLRef> pathAsURL(const String&);
 #endif
 
-#if PLATFORM(CHROMIUM)
-String pathGetDisplayFileName(const String&);
-#endif
-
 #if PLATFORM(GTK)
 String filenameToString(const char*);
 String filenameForDisplay(const String&);
