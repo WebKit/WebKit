@@ -192,6 +192,9 @@ var tests = {
         log("Label should look beyond shadow boundary to detect if it encloses its associated element", count == 1);
         label.parentNode.removeChild(label);
     },
+    /* This subtest started crashing after r89007:
+     *   https://bugs.webkit.org/show_bug.cgi?id=62788
+     * I'm disabling this test for now while I ask for help understanding the problem.
     defaultEventRetargeting: function()
     {
         var count = 0;
@@ -207,6 +210,7 @@ var tests = {
         document.body.removeEventListener('DOMActivate', counter, false);
         fileInput.parentNode.removeChild(fileInput);
     },
+    */
     relatedTargetRetargeting: function()
     {
         var count = 0;

@@ -1,3 +1,11 @@
+2011-06-16  Adam Barth  <abarth@webkit.org>
+
+        Disable a subtest while we investigate.  I'm going to need dglazkov's
+        help to understand what's going on in the shadows here.
+
+        * fast/events/shadow-boundary-crossing-expected.txt:
+        * fast/events/shadow-boundary-crossing.html:
+
 2011-06-16  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] fast/frames/flattening tests fail intermittently
