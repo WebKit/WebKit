@@ -2890,9 +2890,6 @@ BUGCR74102 GPU LINUX : media/video-controls-rendering.html = IMAGE PASS
 
 // BUGCR74102 GPU WIN : media/video-layer-crash.html = IMAGE
 
-// New test causes an assertion failure.
-BUGWK58214 WIN LINUX DEBUG GPU : fast/canvas/font-update.html = CRASH
-
 // Slight differences.  Need rebaseline?
 BUGCR78999 WIN LINUX GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE+TEXT
 BUGCR78999 MAC GPU : compositing/geometry/ancestor-overflow-change.html = IMAGE
@@ -3959,7 +3956,7 @@ BUGWK59921 WIN LINUX : inspector/debugger/debugger-scripts.html = TEXT PASS
 WONTFIX LINUX DEBUG GPU : platform/chromium/compositing/layout-width-change.html = IMAGE
 
 // Started failing at WebKit r8905[67]; probably just needs a rebaseline.
-BUGSENORBLANCO LINUX : fast/transforms/transformed-document-element.html = IMAGE
+BUGSENORBLANCO WIN LINUX : fast/transforms/transformed-document-element.html = IMAGE
 
 // Has been flaky/crashy for a while
 BUGCR86359 WIN : fast/dom/DeviceOrientation/add-listener-from-callback.html = CRASH PASS
