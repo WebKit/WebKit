@@ -124,11 +124,6 @@ static NSControlSize scrollbarControlSizeToNSControlSize(int controlSize)
 
 static NSScrollerStyle preferredScrollerStyle()
 {
-    // TODO(sail): Disable overlay scrollbars for now until the following issues are fixed:
-    // #1: Invalidation issues causes the scrollbar to leave trailing artifacts.
-    // #2: Find tick marks need to be drawn on the scrollbar track.
-    return NSScrollerStyleLegacy;
-
     if ([NSScroller respondsToSelector:@selector(preferredScrollerStyle)])
         return [NSScroller preferredScrollerStyle];
     return NSScrollerStyleLegacy;

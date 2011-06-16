@@ -1,3 +1,15 @@
+2011-06-16  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        [Chromium] Overlay scrollbars leave glitches on web content
+        https://bugs.webkit.org/show_bug.cgi?id=62383
+
+        Fix glitches when scrolling with overlay scrollbars. The problem was that the render widget was copying the scrollbars when scrolling. Fix was to intersect the clip rect with the scroll rect. This is the same thing that Safari does (see WebChromeClient::scroll).
+
+        * src/ChromeClientImpl.cpp:
+        (WebKit::ChromeClientImpl::scroll):
+
 2011-06-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Rolled DEPS.

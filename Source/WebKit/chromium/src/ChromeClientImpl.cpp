@@ -555,7 +555,7 @@ void ChromeClientImpl::scroll(
         if (m_webView->client()) {
             int dx = scrollDelta.width();
             int dy = scrollDelta.height();
-            m_webView->client()->didScrollRect(dx, dy, clipRect);
+            m_webView->client()->didScrollRect(dx, dy, intersection(scrollRect, clipRect));
         }
 #if USE(ACCELERATED_COMPOSITING)
     } else

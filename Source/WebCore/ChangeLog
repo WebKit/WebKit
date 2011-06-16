@@ -1,3 +1,15 @@
+2011-06-16  Sailesh Agrawal  <sail@chromium.org>
+
+        Reviewed by Mihai Parparita.
+
+        [Chromium] Overlay scrollbars leave glitches on web content
+        https://bugs.webkit.org/show_bug.cgi?id=62383
+
+        Enable overlay scrollbars on Chromium Mac.
+
+        * platform/chromium/ScrollbarOverlayUtilitiesChromiumMac.mm:
+        (preferredScrollerStyle):
+
 2011-06-16  una sabovic  <una.sabovic@palm.com>
 
         Reviewed by Simon Fraser.
