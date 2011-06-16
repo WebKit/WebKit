@@ -1,3 +1,16 @@
+2011-06-16  Abhishek Arya  <inferno@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        RefPtr frame since it can get removed in
+        FrameLoader::finishedParsing.
+        https://bugs.webkit.org/show_bug.cgi?id=62812
+
+        Tests: already tested by fast/parser/document-write-into-initial-document.html.
+
+        * dom/Document.cpp:
+        (WebCore::Document::finishedParsing):
+
 2011-06-16  Sailesh Agrawal  <sail@chromium.org>
 
         Reviewed by Mihai Parparita.
