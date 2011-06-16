@@ -38,7 +38,6 @@ class HandleHeap;
 class HeapRootVisitor;
 class JSGlobalData;
 class JSValue;
-class MarkStack;
 class SlotVisitor;
 
 class WeakHandleOwner {

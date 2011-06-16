@@ -30,7 +30,6 @@
 
 namespace JSC {
 
-    class MarkStack;
     class SlotVisitor;
 
     class MarkedArgumentBuffer {

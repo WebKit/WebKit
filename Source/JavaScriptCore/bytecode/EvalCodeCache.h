@@ -41,7 +41,6 @@
 
 namespace JSC {
 
-    class MarkStack;
     class SlotVisitor;
 
     class EvalCodeCache {

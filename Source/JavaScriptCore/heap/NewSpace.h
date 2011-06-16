@@ -39,7 +39,6 @@ namespace JSC {
     class Heap;
     class JSCell;
     class LiveObjectIterator;
-    class MarkStack;
     class WeakGCHandle;
     class SlotVisitor;
 

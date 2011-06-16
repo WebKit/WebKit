@@ -32,8 +32,7 @@ namespace JSC {
 
     // Privileged class for marking JSValues directly. It is only safe to use
     // this class to mark direct heap roots that are marked during every GC pass.
-    // All other references should be wrapped in WriteBarriers and marked through
-    // the MarkStack.
+    // All other references should be wrapped in WriteBarriers.
     class HeapRootVisitor {
     private:
         friend class Heap;

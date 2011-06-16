@@ -1,5 +1,22 @@
 2011-06-16  Geoffrey Garen  <ggaren@apple.com>
 
+        Try to fix the Windows build.
+
+        * JavaScriptCore.vcproj/JavaScriptCore/JavaScriptCore.def: Export another
+        symbol.
+
+        * bytecode/EvalCodeCache.h:
+        * heap/HandleHeap.h:
+        * heap/HeapRootVisitor.h:
+        * heap/NewSpace.h:
+        * runtime/ArgList.h:
+        * runtime/ScopeChain.h:
+        * runtime/SmallStrings.h:
+        * runtime/Structure.h: Stop forward-declaring things that don't really
+        exist anymore.
+
+2011-06-16  Geoffrey Garen  <ggaren@apple.com>
+
         Try to fix the Mac build: Removed and re-added SlotVisitor.h to the Xcode
         project while crossing my fingers and facing west.
 

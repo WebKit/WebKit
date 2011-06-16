@@ -35,7 +35,6 @@ namespace JSC {
     class HeapRootVisitor;
     class JSGlobalData;
     class JSString;
-    class MarkStack;
     class SmallStringsStorage;
     class SlotVisitor;
 

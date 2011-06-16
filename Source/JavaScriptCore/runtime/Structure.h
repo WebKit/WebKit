@@ -44,7 +44,6 @@
 
 namespace JSC {
 
-    class MarkStack;
     class PropertyNameArray;
     class PropertyNameArrayData;
     class StructureChain;
