@@ -1,3 +1,14 @@
+2011-06-16  Qi Zhang  <qi.2.zhang@nokia.com>
+
+        Reviewed by Laszlo Gombos.
+
+        [Qt] Fix building with CONFIG(use_system_icu)
+        https://bugs.webkit.org/show_bug.cgi?id=62744
+
+        Do not define WTF_USE_QT4_UNICODE if WTF_USE_ICU_UNICODE is set.
+
+        * wtf/Platform.h:
+
 2011-06-15  Darin Adler  <darin@apple.com>
 
         Reviewed by Adam Barth.
