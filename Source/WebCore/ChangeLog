@@ -1,3 +1,44 @@
+2011-06-16  Keunsoon Lee  <keunsoon.lee@samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        [SOUP] Abnormal operation if server sends 5xx status code without HTTP body
+        https://bugs.webkit.org/show_bug.cgi?id=60875
+
+        Handle status code 4xx and 5xx after receiving HTTP body
+
+        Webkit soup port premises that server always sends error page
+        in case server sends error code, 4xx and 5xx.
+        But, sometimes there is no HTTP body for error page.
+        In that case, Webkit does nothing or tries to download the HTTP response
+        according to received MIME Type even if there is no HTTP body. (abnormal operation)
+
+        With this modification,
+        Browser will show received error page if server sends error page.
+        Or it will show its own error page from each port if server sends nothing.
+
+        Modified algorithm
+        1) libsoup sends status code 4xx or 5xx (client error or server error)
+        2) Webkit soup port orders to accumulate HTTP body chunks to libsoup.
+        3) Webkit soup port ignores gotHeadersCallback, contentSniffedCallback and gotChunkCallback.
+        4) Webkit soup port checks there is HTTP body or not on sendRequestCallback and;
+             4-1) if there is HTTP body, calls didReceiveResponse()
+             4-2) if there is no HTTP body, calls didFail() - prevent the abnormal operation
+
+        Test: http/tests/loading/status-code-error-without-response-body.html
+
+        * platform/network/soup/ResourceHandleSoup.cpp:
+        (WebCore::statusWillBeHandledBySoup):
+            Add a new condition, SOUP_STATUS_IS_CLIENT_ERROR() and SOUP_STATUS_IS_SERVER_ERROR()
+        (WebCore::soupErrorAndHaveNotReceivedBody):
+            Add a new helper function, it checks received body is exist if soup sends error code
+        (WebCore::soupErrorShouldCauseLoadFailure):
+           Add a new condition, soupErrorAndHaveNotReceivedBody()
+        (WebCore::convertSoupErrorToResourceError):
+           Add a new condition, soupErrorAndHaveNotReceivedBody()
+        (WebCore::sendRequestCallback):
+           Check handle->client() again, because didReceiveResponse() can make it zero
+
 2011-06-16  Vsevolod Vlasov  <vsevik@chromium.org>
 
         Reviewed by Pavel Feldman.

@@ -1,3 +1,19 @@
+2011-06-16  Keunsoon Lee  <keunsoon.lee@samsung.com>
+
+        Reviewed by Martin Robinson.
+
+        [SOUP] Abnormal operation if server sends 5xx status code without HTTP body
+        https://bugs.webkit.org/show_bug.cgi?id=60875
+
+        * http/tests/loading/resources/status-code-error-with-response-body.php: Added.
+            Accepting status code and creating response having body with the received status code
+        * http/tests/loading/resources/status-code-error-without-response-body.php: Added.
+            Accepting status code and creating response having no body with the received status code
+        * http/tests/loading/status-code-error-without-response-body-expected.txt: Added.
+        * http/tests/loading/status-code-error-without-response-body.html: Added.
+            Sending XMLHttpRequest and check if return callback is onerror or onload for all 4xx and 5xx status codes.
+        * platform/chromium/test_expectations.txt: add BUGWK60875
+
 2011-06-16  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Sam Weinig.

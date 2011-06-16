@@ -194,6 +194,8 @@ void ResourceHandle::prepareForURL(const KURL& url)
 static gboolean statusWillBeHandledBySoup(guint statusCode)
 {
     if (SOUP_STATUS_IS_TRANSPORT_ERROR(statusCode)
+        || SOUP_STATUS_IS_CLIENT_ERROR(statusCode)
+        || SOUP_STATUS_IS_SERVER_ERROR(statusCode)
         || (SOUP_STATUS_IS_REDIRECTION(statusCode) && (statusCode != SOUP_STATUS_NOT_MODIFIED))
         || (statusCode == SOUP_STATUS_UNAUTHORIZED))
         return true;
@@ -403,10 +405,23 @@ static void cleanupSoupRequestOperation(ResourceHandle* handle, bool isDestroyin
         handle->deref();
 }
 
+static bool receivedClientOrServerErrorWithoutBody(SoupMessage* message)
+{
+    if ((message && SOUP_STATUS_IS_CLIENT_ERROR(message->status_code))
+        || (message && SOUP_STATUS_IS_SERVER_ERROR(message->status_code))) {
+        if (!message->response_body || !message->response_body->length)
+            return true;
+    }
+
+    return false;
+}
+
 static bool soupErrorShouldCauseLoadFailure(GError* error, SoupMessage* message)
 {
     // Libsoup treats some non-error conditions as errors, including redirects and 304 Not Modified responses.
-    return message && SOUP_STATUS_IS_TRANSPORT_ERROR(message->status_code) || error->domain == G_IO_ERROR;
+    return (message && SOUP_STATUS_IS_TRANSPORT_ERROR(message->status_code))
+            || receivedClientOrServerErrorWithoutBody(message)
+            || error->domain == G_IO_ERROR;
 }
 
 static ResourceError convertSoupErrorToResourceError(GError* error, SoupRequest* request, SoupMessage* message = 0)
@@ -415,7 +430,7 @@ static ResourceError convertSoupErrorToResourceError(GError* error, SoupRequest*
     ASSERT(request);
 
     GOwnPtr<char> uri(soup_uri_to_string(soup_request_get_uri(request), FALSE));
-    if (message && SOUP_STATUS_IS_TRANSPORT_ERROR(message->status_code)) {
+    if ((message && SOUP_STATUS_IS_TRANSPORT_ERROR(message->status_code)) || receivedClientOrServerErrorWithoutBody(message)) {
         return ResourceError(g_quark_to_string(SOUP_HTTP_ERROR),
                              static_cast<gint>(message->status_code),
                              uri.get(),
@@ -466,6 +481,13 @@ static void sendRequestCallback(GObject* source, GAsyncResult* res, gpointer use
 
             d->m_response.updateFromSoupMessage(soupMessage);
             client->didReceiveResponse(handle.get(), d->m_response);
+
+            // handle->client() can be zero on above client->didReceiveResponse() if there is something wrong on received response.
+            // It means cancel from WebCore, so, we need to check it again here.
+            if (d->m_cancelled || !(handle->client())) {
+                cleanupSoupRequestOperation(handle.get());
+                return;
+            }
 
             // WebCore might have cancelled the job in the while. We
             // must check for response_body->length and not

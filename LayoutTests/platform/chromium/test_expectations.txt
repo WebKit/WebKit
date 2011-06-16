@@ -211,6 +211,8 @@ WONTFIX SKIP : animations/animation-api-1.html = FAIL
 // Unskip after implementing LayoutTestController::setDefersLoading and ::goBack.
 BUGWK60877 SKIP : loader/navigation-while-deferring-loads.html = FAIL
 
+BUGWK60875 SKIP : http/tests/loading/status-code-error-without-response-body.html = FAIL
+
 // -----------------------------------------------------------------
 // WONTFIX TESTS
 // -----------------------------------------------------------------
