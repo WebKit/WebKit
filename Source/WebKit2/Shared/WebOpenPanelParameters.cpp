@@ -46,12 +46,24 @@ WebOpenPanelParameters::~WebOpenPanelParameters()
 
 void WebOpenPanelParameters::Data::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(allowMultipleFiles, allowsDirectoryUpload, acceptTypes, filenames));
+    encoder->encode(allowMultipleFiles);
+    encoder->encode(allowsDirectoryUpload);
+    encoder->encode(acceptTypes);
+    encoder->encode(filenames);
 }
 
 bool WebOpenPanelParameters::Data::decode(CoreIPC::ArgumentDecoder* decoder, Data& result)
 {
-    return decoder->decode(CoreIPC::Out(result.allowMultipleFiles, result.allowsDirectoryUpload, result.acceptTypes, result.filenames));
+    if (!decoder->decode(result.allowMultipleFiles))
+        return false;
+    if (!decoder->decode(result.allowsDirectoryUpload))
+        return false;
+    if (!decoder->decode(result.acceptTypes))
+        return false;
+    if (!decoder->decode(result.filenames))
+        return false;
+
+    return true;
 }
 
 } // namespace WebCore

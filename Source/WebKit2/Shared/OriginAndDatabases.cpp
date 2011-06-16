@@ -34,12 +34,24 @@ namespace WebKit {
 
 void OriginAndDatabases::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(originIdentifier, originQuota, originUsage, databases));
+    encoder->encode(originIdentifier);
+    encoder->encode(originQuota);
+    encoder->encode(originUsage);
+    encoder->encode(databases);
 }
 
 bool OriginAndDatabases::decode(CoreIPC::ArgumentDecoder* decoder, OriginAndDatabases& originAndDatabases)
 {
-    return decoder->decode(CoreIPC::Out(originAndDatabases.originIdentifier, originAndDatabases.originQuota, originAndDatabases.originUsage, originAndDatabases.databases));
+    if (!decoder->decode(originAndDatabases.originIdentifier))
+        return false;
+    if (!decoder->decode(originAndDatabases.originQuota))
+        return false;
+    if (!decoder->decode(originAndDatabases.originUsage))
+        return false;
+    if (!decoder->decode(originAndDatabases.databases))
+        return false;
+
+    return true;
 }
 
 } // namespace WebKit

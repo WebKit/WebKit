@@ -37,12 +37,21 @@ namespace WebKit {
 
 void SecurityOriginData::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(protocol, host, port));
+    encoder->encode(protocol);
+    encoder->encode(host);
+    encoder->encode(port);
 }
 
 bool SecurityOriginData::decode(CoreIPC::ArgumentDecoder* decoder, SecurityOriginData& securityOriginData)
 {
-    return decoder->decode(CoreIPC::Out(securityOriginData.protocol, securityOriginData.host, securityOriginData.port));
+    if (!decoder->decode(securityOriginData.protocol))
+        return false;
+    if (!decoder->decode(securityOriginData.host))
+        return false;
+    if (!decoder->decode(securityOriginData.port))
+        return false;
+
+    return true;
 }
 
 void performAPICallbackWithSecurityOriginDataVector(const Vector<SecurityOriginData>& originDatas, ArrayCallback* callback)

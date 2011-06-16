@@ -57,16 +57,25 @@ WebPreferencesStore::WebPreferencesStore()
 
 void WebPreferencesStore::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
-    encoder->encode(CoreIPC::In(m_stringValues, m_boolValues, m_uint32Values, m_doubleValues));
+    encoder->encode(m_stringValues);
+    encoder->encode(m_boolValues);
+    encoder->encode(m_uint32Values);
+    encoder->encode(m_doubleValues);
 }
 
-bool WebPreferencesStore::decode(CoreIPC::ArgumentDecoder* decoder, WebPreferencesStore& s)
+bool WebPreferencesStore::decode(CoreIPC::ArgumentDecoder* decoder, WebPreferencesStore& result)
 {
-    if (!decoder->decode(CoreIPC::Out(s.m_stringValues, s.m_boolValues, s.m_uint32Values, s.m_doubleValues)))
+    if (!decoder->decode(result.m_stringValues))
+        return false;
+    if (!decoder->decode(result.m_boolValues))
+        return false;
+    if (!decoder->decode(result.m_uint32Values))
+        return false;
+    if (!decoder->decode(result.m_doubleValues))
         return false;
 
     if (hasXSSAuditorEnabledTestRunnerOverride)
-        s.m_boolValues.set(WebPreferencesKey::xssAuditorEnabledKey(), xssAuditorEnabledTestRunnerOverride);
+        result.m_boolValues.set(WebPreferencesKey::xssAuditorEnabledKey(), xssAuditorEnabledTestRunnerOverride);
 
     return true;
 }

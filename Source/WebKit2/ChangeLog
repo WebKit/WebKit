@@ -2,6 +2,29 @@
 
         Reviewed by Sam Weinig.
 
+        Get rid of CoreIPC::In and CoreIPC::Out from some argument coders
+        https://bugs.webkit.org/show_bug.cgi?id=62832
+
+        * Shared/OriginAndDatabases.cpp:
+        (WebKit::OriginAndDatabases::encode):
+        (WebKit::OriginAndDatabases::decode):
+        * Shared/SecurityOriginData.cpp:
+        (WebKit::SecurityOriginData::encode):
+        (WebKit::SecurityOriginData::decode):
+        * Shared/WebKeyboardEvent.cpp:
+        (WebKit::WebKeyboardEvent::encode):
+        (WebKit::WebKeyboardEvent::decode):
+        * Shared/WebOpenPanelParameters.cpp:
+        (WebKit::WebOpenPanelParameters::Data::encode):
+        (WebKit::WebOpenPanelParameters::Data::decode):
+        * Shared/WebPreferencesStore.cpp:
+        (WebKit::WebPreferencesStore::encode):
+        (WebKit::WebPreferencesStore::decode):
+
+2011-06-16  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
         Cleanup ResourceRequest, ResourceResponse and ResourceError argument coders
         https://bugs.webkit.org/show_bug.cgi?id=62803
 

@@ -49,19 +49,42 @@ void WebKeyboardEvent::encode(CoreIPC::ArgumentEncoder* encoder) const
 {
     WebEvent::encode(encoder);
 
-    encoder->encode(CoreIPC::In(m_text, m_unmodifiedText, m_keyIdentifier, m_windowsVirtualKeyCode, m_nativeVirtualKeyCode, m_macCharCode));
-    encoder->encode(CoreIPC::In(m_isAutoRepeat, m_isKeypad, m_isSystemKey));
+    encoder->encode(m_text);
+    encoder->encode(m_unmodifiedText);
+    encoder->encode(m_keyIdentifier);
+    encoder->encode(m_windowsVirtualKeyCode);
+    encoder->encode(m_nativeVirtualKeyCode);
+    encoder->encode(m_macCharCode);
+    encoder->encode(m_isAutoRepeat);
+    encoder->encode(m_isKeypad);
+    encoder->encode(m_isSystemKey);
 }
 
-bool WebKeyboardEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebKeyboardEvent& t)
+bool WebKeyboardEvent::decode(CoreIPC::ArgumentDecoder* decoder, WebKeyboardEvent& result)
 {
-    if (!WebEvent::decode(decoder, t))
+    if (!WebEvent::decode(decoder, result))
         return false;
 
-    if (!decoder->decode(CoreIPC::Out(t.m_text, t.m_unmodifiedText, t.m_keyIdentifier, t.m_windowsVirtualKeyCode, t.m_nativeVirtualKeyCode, t.m_macCharCode)))
+    if (!decoder->decode(result.m_text))
+        return false;
+    if (!decoder->decode(result.m_unmodifiedText))
+        return false;
+    if (!decoder->decode(result.m_keyIdentifier))
+        return false;
+    if (!decoder->decode(result.m_windowsVirtualKeyCode))
+        return false;
+    if (!decoder->decode(result.m_nativeVirtualKeyCode))
+        return false;
+    if (!decoder->decode(result.m_macCharCode))
+        return false;
+    if (!decoder->decode(result.m_isAutoRepeat))
+        return false;
+    if (!decoder->decode(result.m_isKeypad))
+        return false;
+    if (!decoder->decode(result.m_isSystemKey))
         return false;
 
-    return decoder->decode(CoreIPC::Out(t.m_isAutoRepeat, t.m_isKeypad, t.m_isSystemKey));
+    return true;
 }
 
 bool WebKeyboardEvent::isKeyboardEventType(Type type)
