@@ -1,3 +1,12 @@
+2011-06-17  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber Stamped by Sam Weinig.
+
+        Land a couple more regex tests.
+
+        * fast/regex/pcre-test-1-expected.txt:
+        * fast/regex/script-tests/pcre-test-1.js:
+
 2011-06-17  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

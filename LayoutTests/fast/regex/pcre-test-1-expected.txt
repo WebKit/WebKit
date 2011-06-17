@@ -1319,6 +1319,9 @@ PASS regex673.exec(input1); is results
 PASS regex673.exec(input2); is results
 PASS regex673.exec(input3); is results
 PASS regex673.exec(input4); is results
+PASS regex674.exec(input0); is results
+PASS regex675.exec(input0); is results
+PASS regex676.exec(input0); is results
 PASS input0.match(regexGlobal0); is results
 PASS input0.match(regexGlobal1); is results
 PASS input0.match(regexGlobal2); is results

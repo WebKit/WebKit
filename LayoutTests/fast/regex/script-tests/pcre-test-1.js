@@ -5305,6 +5305,21 @@ var input4 = "p";
 var results = ["p"];
 shouldBe('regex673.exec(input4);', 'results');
 
+var regex674 = /(a(b)*)*/;
+var input0 = "aba";
+var results = ["aba","a",undefined];
+shouldBe('regex674.exec(input0);', 'results');
+
+var regex675 = /(a*)*/;
+var input0 = "ab";
+var results = ["a","a"];
+shouldBe('regex675.exec(input0);', 'results');
+
+var regex676 = /([ab]*)*/;
+var input0 = "abab";
+var results = ["abab","abab"];
+shouldBe('regex676.exec(input0);', 'results');
+
 // Global matches.
 
 var regexGlobal0 = RegExp("", "g");
