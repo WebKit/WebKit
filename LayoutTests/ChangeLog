@@ -1,3 +1,14 @@
+2011-06-17  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        [Qt] [WK2] Debug info leaks to stdout from plugins in Qt WebKit2 layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=61940
+
+        Unskip passed tests.
+
+        * platform/qt-wk2/Skipped:
+
 2011-06-17  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Ryosuke Niwa.

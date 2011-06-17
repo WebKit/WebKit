@@ -1,3 +1,17 @@
+2011-06-17  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Anders Carlsson.
+
+        [Qt] [WK2] Debug info leaks to stdout from plugins in Qt WebKit2 layout tests
+        https://bugs.webkit.org/show_bug.cgi?id=61940
+
+        Tempararily supress stdout during getPluginInfo during which debug info was leaked out.
+
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::StdoutRedirect::StdoutRedirect):
+        (WebKit::StdoutRedirect::~StdoutRedirect):
+        (WebKit::NetscapePluginModule::getPluginInfo):
+
 2011-06-17  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Andreas Kling.

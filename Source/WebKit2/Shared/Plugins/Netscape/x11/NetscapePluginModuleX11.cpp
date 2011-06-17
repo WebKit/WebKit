@@ -35,9 +35,39 @@
 #include <QLibrary>
 #endif
 
+#include <fcntl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
 using namespace WebCore;
 
 namespace WebKit {
+
+class StdoutDevNullRedirector {
+public:
+    StdoutDevNullRedirector();
+    ~StdoutDevNullRedirector();
+
+private:
+    int m_savedStdout;
+};
+
+StdoutDevNullRedirector::StdoutDevNullRedirector()
+    : m_savedStdout(-1)
+{
+    int newStdout = open("/dev/null", O_WRONLY);
+    if (newStdout == -1)
+        return;
+    m_savedStdout = dup(STDOUT_FILENO);
+    dup2(newStdout, STDOUT_FILENO);
+}
+
+StdoutDevNullRedirector::~StdoutDevNullRedirector()
+{
+    if (m_savedStdout != -1)
+        dup2(m_savedStdout, STDOUT_FILENO);
+}
 
 #if PLATFORM(QT)
 static void initializeGTK()
@@ -65,6 +95,10 @@ void NetscapePluginModule::applyX11QuirksBeforeLoad()
 
 bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
+    // Tempararily suppress stdout in this function as plugins will be loaded and shutdown and debug info
+    // is leaked to layout test output.
+    StdoutDevNullRedirector stdoutDevNullRedirector;
+
     // We are loading the plugin here since it does not seem to be a standardized way to
     // get the needed informations from a UNIX plugin without loading it.
 
