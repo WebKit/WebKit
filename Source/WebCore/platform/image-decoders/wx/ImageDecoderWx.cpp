@@ -54,11 +54,17 @@ NativeImagePtr ImageFrame::asNewNativeImage() const
         WxPixelData::Iterator p(data);
         WxPixelData::Iterator rowStart = p; 
         for (size_t i = 0; i < m_size.width() * m_size.height() * sizeof(PixelData); i += sizeof(PixelData)) {
-                p.Red() = bytes[i + 2];
-                p.Green() = bytes[i + 1];
-                p.Blue() = bytes[i + 0];
-                p.Alpha() = bytes[i + 3];
-            
+#if CPU(BIG_ENDIAN)
+            p.Alpha() = bytes[i + 3];
+            p.Red() = bytes[i + 2];
+            p.Green() = bytes[i + 1];
+            p.Blue() = bytes[i + 0];
+#else
+            p.Alpha() = bytes[i + 0];
+            p.Red() = bytes[i + 1];
+            p.Green() = bytes[i + 2];
+            p.Blue() = bytes[i + 3];
+#endif
             p++;
 
             pixelCounter++;

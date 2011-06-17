@@ -1,3 +1,14 @@
+2011-06-16  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+
+        [wx] Account for differing byte order when decoding images in the PPC build.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=62830
+
+        * platform/image-decoders/wx/ImageDecoderWx.cpp:
+        (WebCore::ImageFrame::asNewNativeImage):
+
 2011-06-16  Darin Adler  <darin@apple.com>
 
         Reviewed by Dan Bernstein.
