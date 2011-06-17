@@ -586,7 +586,7 @@ void DumpRenderTreeSupportGtk::confirmComposition(WebKitWebView* webView, const 
     editor->confirmComposition();
 }
 
-bool DumpRenderTreeSupportGtk::firstRectForCharacterRange(WebKitWebView* webView, int location, int length, GdkRectangle* rect)
+bool DumpRenderTreeSupportGtk::firstRectForCharacterRange(WebKitWebView* webView, int location, int length, cairo_rectangle_int_t* rect)
 {
     g_return_val_if_fail(WEBKIT_IS_WEB_VIEW(webView), false);
     g_return_val_if_fail(rect, false);
@@ -824,7 +824,7 @@ void DumpRenderTreeSupportGtk::setValueForUser(JSContextRef context, JSValueRef 
     inputElement->setValueForUser(String::fromUTF8(valueBuffer.get()));
 }
 
-void DumpRenderTreeSupportGtk::rectangleForSelection(WebKitWebFrame* frame, GdkRectangle* rectangle)
+void DumpRenderTreeSupportGtk::rectangleForSelection(WebKitWebFrame* frame, cairo_rectangle_int_t* rectangle)
 {
     Frame* coreFrame = core(frame);
     if (!coreFrame)

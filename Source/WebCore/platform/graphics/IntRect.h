@@ -50,14 +50,15 @@ QT_END_NAMESPACE
 #elif PLATFORM(GTK)
 #ifdef GTK_API_VERSION_2
 typedef struct _GdkRectangle GdkRectangle;
-#else
-typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
-typedef cairo_rectangle_int_t GdkRectangle;
 #endif
 #elif PLATFORM(HAIKU)
 class BRect;
 #elif PLATFORM(EFL)
 typedef struct _Eina_Rectangle Eina_Rectangle;
+#endif
+
+#if USE(CAIRO)
+typedef struct _cairo_rectangle_int cairo_rectangle_int_t;
 #endif
 
 #if PLATFORM(WX)
@@ -184,14 +185,21 @@ public:
     IntRect(const QRect&);
     operator QRect() const;
 #elif PLATFORM(GTK)
+#ifdef GTK_API_VERSION_2
     IntRect(const GdkRectangle&);
     operator GdkRectangle() const;
+#endif
 #elif PLATFORM(HAIKU)
     explicit IntRect(const BRect&);
     operator BRect() const;
 #elif PLATFORM(EFL)
     explicit IntRect(const Eina_Rectangle&);
     operator Eina_Rectangle() const;
+#endif
+
+#if USE(CAIRO)
+    IntRect(const cairo_rectangle_int_t&);
+    operator cairo_rectangle_int_t() const;
 #endif
 
 #if USE(CG) || USE(SKIA_ON_MAC_CHROME)

@@ -99,7 +99,7 @@ public:
     static bool findString(WebKitWebView*, const gchar*, WebKitFindOptions);
     static double defaultMinimumTimerInterval(); // Not really tied to WebView
     static void setMinimumTimerInterval(WebKitWebView*, double);
-    static void rectangleForSelection(WebKitWebFrame*, GdkRectangle*);
+    static void rectangleForSelection(WebKitWebFrame*, cairo_rectangle_int_t*);
     static void scalePageBy(WebKitWebView*, float, float, float);
     static void setSmartInsertDeleteEnabled(WebKitWebView*, bool);
 
@@ -112,7 +112,7 @@ public:
     static bool hasComposition(WebKitWebView*);
     static bool compositionRange(WebKitWebView*, int* start, int* length);
     static void confirmComposition(WebKitWebView*, const char*);
-    static bool firstRectForCharacterRange(WebKitWebView*, int location, int length, GdkRectangle*);
+    static bool firstRectForCharacterRange(WebKitWebView*, int location, int length, cairo_rectangle_int_t*);
     static bool selectedRange(WebKitWebView*, int* start, int* length);
 
     // GC

@@ -3755,6 +3755,7 @@ webcoregtk_sources += \
 	Source/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/ImageBufferDataCairo.h \
 	Source/WebCore/platform/graphics/cairo/ImageCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/IntRectCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/OwnPtrCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/OwnPtrCairo.h \
 	Source/WebCore/platform/graphics/cairo/PathCairo.cpp \

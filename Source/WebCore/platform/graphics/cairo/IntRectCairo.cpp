@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007 Alp Toker <alp@atoker.com>
+ * Copyright (C) 2011 Collabora Ltd.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -20,22 +21,20 @@
 #include "config.h"
 #include "IntRect.h"
 
-#include <gdk/gdk.h>
+#include <cairo.h>
 
-#ifdef GTK_API_VERSION_2
 namespace WebCore {
 
-IntRect::IntRect(const GdkRectangle& r)
+IntRect::IntRect(const cairo_rectangle_int_t& r)
     : m_location(IntPoint(r.x, r.y))
     , m_size(r.width, r.height)
 {
 }
 
-IntRect::operator GdkRectangle() const
+IntRect::operator cairo_rectangle_int_t() const
 {
-    GdkRectangle r = { x(), y(), width(), height() };
+    cairo_rectangle_int_t r = { x(), y(), width(), height() };
     return r;
 }
 
 }
-#endif

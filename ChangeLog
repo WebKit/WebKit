@@ -1,3 +1,14 @@
+2011-06-17  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Replace GdkRectangle by cairo_rectangle_int_t
+        https://bugs.webkit.org/show_bug.cgi?id=60687
+
+        Replace GdkRectangle by cairo_rectangle_int_t.
+
+        * configure.ac: Check whether Cairo version is higher than 1.10.
+
 2011-06-16  Gyuyoung Kim  <gyuyoung.kim@samsung.com>
 
         Reviewed by Eric Seidel.

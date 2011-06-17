@@ -1,3 +1,22 @@
+2011-06-17  Joone Hur  <joone.hur@collabora.co.uk>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Replace GdkRectangle by cairo_rectangle_int_t
+        https://bugs.webkit.org/show_bug.cgi?id=60687
+
+        Replace GdkRectangle by cairo_rectangle_int_t.
+
+        * GNUmakefile.list.am: Added IntRectCairo.cpp instead of IntRectGtk.cpp
+        * platform/graphics/IntRect.h: IntRect class can be instantiated through the given cairo_rectangle_int_t 
+        instead of GdkRectangle.
+        * platform/graphics/cairo/IntRectCairo.cpp: Add the constructor and operator for handling cairo_rectangle_int_t.
+        (WebCore::IntRect::IntRect): 
+        (WebCore::IntRect::operator cairo_rectangle_int_t):
+        * platform/graphics/gtk/IntRectGtk.cpp: Include this file only for Gtk+2.
+        * platform/gtk/GtkPluginWidget.cpp: Replace GdkRectangle by cairo_rectangle_int_t.
+        (WebCore::GtkPluginWidget::invalidateRect):
+
 2011-06-17  Alexander Pavlov  <apavlov@chromium.org>
 
         Reviewed by David Hyatt.

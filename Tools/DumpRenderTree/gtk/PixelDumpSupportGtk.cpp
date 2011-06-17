@@ -60,7 +60,7 @@ PassRefPtr<BitmapContext> createBitmapContextFromWebView(bool, bool, bool, bool 
 #endif
 
     if (drawSelectionRect) {
-        GdkRectangle rectangle;
+        cairo_rectangle_int_t rectangle;
         DumpRenderTreeSupportGtk::rectangleForSelection(mainFrame, &rectangle);
 
         cairo_set_line_width(context, 1.0);

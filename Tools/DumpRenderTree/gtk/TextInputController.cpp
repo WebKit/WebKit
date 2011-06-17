@@ -129,7 +129,7 @@ static JSValueRef firstRectForCharacterRangeCallback(JSContextRef context, JSObj
     int length = static_cast<int>(JSValueToNumber(context, arguments[1], exception));
     ASSERT(!exception || !*exception);
 
-    GdkRectangle rect;
+    cairo_rectangle_int_t rect;
     if (!DumpRenderTreeSupportGtk::firstRectForCharacterRange(view, location, length, &rect))
         return JSValueMakeUndefined(context);
 

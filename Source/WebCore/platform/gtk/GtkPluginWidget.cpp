@@ -41,7 +41,7 @@ GtkPluginWidget::GtkPluginWidget(GtkWidget* widget)
     gtk_widget_hide(widget);
 }
 
-void GtkPluginWidget::invalidateRect(const IntRect& _rect)
+void GtkPluginWidget::invalidateRect(const IntRect& coreRect)
 {
     /* no need to */
     if (!gtk_widget_get_has_window(platformWidget()))
@@ -51,7 +51,7 @@ void GtkPluginWidget::invalidateRect(const IntRect& _rect)
     if (!window)
         return;
 
-    GdkRectangle rect = _rect;
+    GdkRectangle rect = coreRect;
     gdk_window_invalidate_rect(window, &rect, FALSE);
 }
 
