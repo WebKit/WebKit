@@ -9,4 +9,8 @@
 		AdditionalIncludeDirectories="&quot;$(ProjectDir)\..\cairo&quot;;"
 		PreprocessorDefinitions="WIN_CAIRO=1"
 	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="cairo.lib"
+	/>
 </VisualStudioPropertySheet>

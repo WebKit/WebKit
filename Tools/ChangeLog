@@ -1,4 +1,12 @@
-2011-05-25  Brent Fulgham  <bfulgham@webkit.org>
+2011-06-17  Brent Fulgham  <bfulgham@webkit.org>
+
+        [WinCairo] Unreviewed build correction.
+
+        * DumpRenderTree/win/DumpRenderTreeCairo.vsprops:
+        Update WinCairo property sheet to link against the Cairo DLL,
+        now that we are using a more recent Cairo build. 
+
+2011-06-17  Brent Fulgham  <bfulgham@webkit.org>
 
         Reviewed by Brian Weinstein.
 
