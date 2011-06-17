@@ -32,6 +32,7 @@
 #include "SegmentedString.h"
 #include <wtf/HashMap.h>
 #include <wtf/OwnPtr.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/StringHash.h>
 
 #if USE(QXMLSTREAM)
@@ -56,8 +57,8 @@ class Text;
 #if !USE(QXMLSTREAM)
     class XMLParserContext : public RefCounted<XMLParserContext> {
     public:
-        static PassRefPtr<XMLParserContext> createMemoryParser(xmlSAXHandlerPtr, void*, const char*);
-        static PassRefPtr<XMLParserContext> createStringParser(xmlSAXHandlerPtr, void*);
+        static PassRefPtr<XMLParserContext> createMemoryParser(xmlSAXHandlerPtr, void* userData, const CString& chunk);
+        static PassRefPtr<XMLParserContext> createStringParser(xmlSAXHandlerPtr, void* userData);
         ~XMLParserContext();
         xmlParserCtxtPtr context() const { return m_context; }
 
@@ -160,7 +161,7 @@ public:
         void endDocument();
 #endif
     private:
-        void initializeParserContext(const char* chunk = 0);
+        void initializeParserContext(const CString& chunk = CString());
 
         void pushCurrentNode(ContainerNode*);
         void popCurrentNode();

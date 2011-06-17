@@ -1,3 +1,17 @@
+2011-06-16  Jeffrey Pfau  <jpfau@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Using null bytes when setting innerHTML in XTHML results in assertion and a crash due to null-pointer dereference
+        https://bugs.webkit.org/show_bug.cgi?id=61053
+
+        Added test cases covering two cases of using innerHTML with null bytes in XHTML.
+
+        * fast/parser/xhtml-innerhtml-null-byte-expected.txt: Added.
+        * fast/parser/xhtml-innerhtml-null-byte-first-expected.txt: Added.
+        * fast/parser/xhtml-innerhtml-null-byte-first.xhtml: Added.
+        * fast/parser/xhtml-innerhtml-null-byte.xhtml: Added.
+
 2011-06-16  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, mark more Chromium test failures for tests added in r89091.

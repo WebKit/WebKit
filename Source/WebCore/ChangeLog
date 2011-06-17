@@ -1,3 +1,21 @@
+2011-06-16  Jeffrey Pfau  <jpfau@apple.com>
+
+        Reviewed by Alexey Proskuryakov.
+
+        Using null bytes when setting innerHTML in XTHML results in assertion and a crash due to null-pointer dereference
+        https://bugs.webkit.org/show_bug.cgi?id=61053
+
+        XML parsing in-memory XML chunks now passes around a string object instead of a C string, ensuring null characters are properly handled.
+
+        Tests: fast/parser/xhtml-innerhtml-null-byte-first.xhtml
+               fast/parser/xhtml-innerhtml-null-byte.xhtml
+
+        * dom/XMLDocumentParser.h:
+        * dom/XMLDocumentParserLibxml2.cpp:
+        (WebCore::XMLParserContext::createMemoryParser):
+        (WebCore::XMLDocumentParser::initializeParserContext):
+        (WebCore::XMLDocumentParser::appendFragmentSource):
+
 2011-06-16  Robin Dunn  <robin@alldunn.com>
 
         Reviewed by Kevin Ollivier.

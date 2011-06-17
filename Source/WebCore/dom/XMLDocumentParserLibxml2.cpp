@@ -501,7 +501,7 @@ PassRefPtr<XMLParserContext> XMLParserContext::createStringParser(xmlSAXHandlerP
 
 
 // Chunk should be encoded in UTF-8
-PassRefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerPtr handlers, void* userData, const char* chunk)
+PassRefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerPtr handlers, void* userData, const CString& chunk)
 {
     if (!didInit) {
         xmlInitParser();
@@ -511,7 +511,8 @@ PassRefPtr<XMLParserContext> XMLParserContext::createMemoryParser(xmlSAXHandlerP
         didInit = true;
     }
 
-    xmlParserCtxtPtr parser = xmlCreateMemoryParserCtxt(chunk, xmlStrlen((const xmlChar*)chunk));
+    // appendFragmentSource() checks that the length doesn't overflow an int.
+    xmlParserCtxtPtr parser = xmlCreateMemoryParserCtxt(chunk.data(), chunk.length());
 
     if (!parser)
         return 0;
@@ -1276,7 +1277,7 @@ static void ignorableWhitespaceHandler(void*, const xmlChar*, int)
     // http://bugs.webkit.org/show_bug.cgi?id=5792
 }
 
-void XMLDocumentParser::initializeParserContext(const char* chunk)
+void XMLDocumentParser::initializeParserContext(const CString& chunk)
 {
     xmlSAXHandler sax;
     memset(&sax, 0, sizeof(sax));
@@ -1308,7 +1309,7 @@ void XMLDocumentParser::initializeParserContext(const char* chunk)
     if (m_parsingFragment)
         m_context = XMLParserContext::createMemoryParser(&sax, this, chunk);
     else {
-        ASSERT(!chunk);
+        ASSERT(!chunk.data());
         m_context = XMLParserContext::createStringParser(&sax, this);
     }
 }
@@ -1443,7 +1444,12 @@ bool XMLDocumentParser::appendFragmentSource(const String& chunk)
     ASSERT(m_parsingFragment);
 
     CString chunkAsUtf8 = chunk.utf8();
-    initializeParserContext(chunkAsUtf8.data());
+    
+    // libxml2 takes an int for a length, and therefore can't handle XML chunks larger than 2 GiB.
+    if (chunkAsUtf8.length() > INT_MAX)
+        return false;
+
+    initializeParserContext(chunkAsUtf8);
     xmlParseContent(context());
     endDocument(); // Close any open text nodes.
 
@@ -1452,9 +1458,9 @@ bool XMLDocumentParser::appendFragmentSource(const String& chunk)
     // Check if all the chunk has been processed.
     long bytesProcessed = xmlByteConsumed(context());
     if (bytesProcessed == -1 || ((unsigned long)bytesProcessed) != chunkAsUtf8.length()) {
-        // FIXME: I don't believe we can hit this case without also having seen an error.
+        // FIXME: I don't believe we can hit this case without also having seen an error or a null byte.
         // If we hit this ASSERT, we've found a test case which demonstrates the need for this code.
-        ASSERT(m_sawError);
+        ASSERT(m_sawError || (bytesProcessed >= 0 && !chunkAsUtf8.data()[bytesProcessed]));
         return false;
     }
 
