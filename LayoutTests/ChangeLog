@@ -1,3 +1,26 @@
+2011-06-16  Wyatt Carss  <wcarss@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        markup-dump conversion + rename: editing/deleting/5408255.html
+        https://bugs.webkit.org/show_bug.cgi?id=62680
+
+        Tests if the UI delete button works while '-webkit-user-select: none' is applied. 
+        There should be no visible content in the dumped markup. Holding off on rename.
+
+        * editing/deleting/5408255.html:
+        * editing/deleting/5408255-expected.txt:
+        * platform/chromium-linux/editing/deleting/5408255-expected.png: Removed.
+        * platform/chromium-mac-leopard/editing/deleting/5408255-expected.png: Removed.
+        * platform/chromium-mac/editing/deleting/5408255-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5408255-expected.png: Removed.
+        * platform/chromium-win/editing/deleting/5408255-expected.txt: Removed.
+        * platform/gtk/editing/deleting/5408255-expected.png: Removed.
+        * platform/gtk/editing/deleting/5408255-expected.txt: Removed.
+        * platform/mac/editing/deleting/5408255-expected.png: Removed.
+        * platform/mac/editing/deleting/5408255-expected.txt: Removed.
+        * platform/qt/editing/deleting/5408255-expected.txt: Removed.
+
 2011-06-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Darin Adler.
