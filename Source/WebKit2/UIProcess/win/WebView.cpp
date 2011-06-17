@@ -47,6 +47,7 @@
 #include <Commctrl.h>
 #include <WebCore/BitmapInfo.h>
 #include <WebCore/Cursor.h>
+#include <WebCore/Editor.h>
 #include <WebCore/FloatRect.h>
 #if USE(CG)
 #include <WebCore/GraphicsContextCG.h>

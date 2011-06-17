@@ -1,5 +1,11 @@
 2011-06-17  Anders Carlsson  <andersca@apple.com>
 
+        Windows build fix.
+
+        * UIProcess/win/WebView.cpp:
+
+2011-06-17  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Sam Weinig.
 
         Move the remaining WebCore argument coders to the .cpp file
