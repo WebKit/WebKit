@@ -148,8 +148,11 @@ HTMLTableRowElement* HTMLTableRowsCollection::lastRow(HTMLTableElement* table)
     return 0;
 }
 
+// Must call get() on the table in case that argument is compiled before dereferencing the
+// table to get at the collection cache. Order of argument evaluation is undefined and can
+// differ between compilers.
 HTMLTableRowsCollection::HTMLTableRowsCollection(PassRefPtr<HTMLTableElement> table)
-    : HTMLCollection(table, OtherCollection, table->collectionCache())
+    : HTMLCollection(table.get(), OtherCollection, table->collectionCache())
 {
 }
 

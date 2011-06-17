@@ -1,3 +1,17 @@
+2011-06-16  Darin Adler  <darin@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        REGRESSION (r89035): HTMLTableRowsCollection constructor crashes; depends on compiler order of evaluation
+        https://bugs.webkit.org/show_bug.cgi?id=62836
+
+        Covered by existing tests on platforms where it occurs.
+
+        * html/HTMLTableRowsCollection.cpp:
+        (WebCore::HTMLTableRowsCollection::HTMLTableRowsCollection): Add a call to get()
+        to prevent the passing behavior of PassRefPtr from kicking in and changing the
+        table pointer to 0, possibly before it is dereferenced.
+
 2011-06-16  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89055.
