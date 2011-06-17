@@ -1,3 +1,31 @@
+2011-06-17  Alexander Pavlov  <apavlov@chromium.org>
+
+        Reviewed by David Hyatt.
+
+        Web Inspector: support for emulating element's pseudo class state in styleRulesForElement()
+        https://bugs.webkit.org/show_bug.cgi?id=61070
+
+        This patch is a slight rework of a solution by Alexander Udalov.
+        It is supposed to help implement a feature in Web Inspector to examine
+        style rules matched for different states of a given element.
+        Web Inspector is supposed to pass a mask of ForcePseudoClassFlags to
+        styleRulesForElement(), so that it will filter only the rules whose state
+        (a set of pseudo classes in their selectors) matches a given
+        mask, ignoring the state of the element itself.
+        DoNotForcePseudoClassMask is the default behaviour; it always examines
+        the state of a given element to make a match.
+
+        Tests will be provided in a subsequent Web Inspector change employing this functionality.
+
+        * css/CSSStyleSelector.cpp:
+        (WebCore::CSSStyleSelector::initForStyleResolve):
+        (WebCore::CSSStyleSelector::styleRulesForElement):
+        (WebCore::CSSStyleSelector::pseudoStyleRulesForElement):
+        (WebCore::CSSStyleSelector::checkSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkSelector):
+        (WebCore::CSSStyleSelector::SelectorChecker::checkOneSelector):
+        * css/CSSStyleSelector.h:
+
 2011-06-17  Yury Semikhatsky  <yurys@chromium.org>
 
         Reviewed by Pavel Feldman.
