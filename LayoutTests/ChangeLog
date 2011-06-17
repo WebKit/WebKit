@@ -1,3 +1,15 @@
+2011-06-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Rubber stamped by Sam Weinig.
+
+        https://bugs.webkit.org/show_bug.cgi?id=25079
+        JS Arrays et al receive the wrong prototype
+
+        Adding abarth's testcase, for this issue that was already fixed in ToT by other changes.
+
+        * fast/js/cross-frame-prototype-expected.txt: Added.
+        * fast/js/cross-frame-prototype.html: Added.
+
 2011-06-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Another Windows rebaseline after r89091.
