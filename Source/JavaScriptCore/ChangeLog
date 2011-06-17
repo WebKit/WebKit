@@ -1,5 +1,19 @@
 2011-06-14  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 88477.
+
+    2011-06-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Add Vector::reverse()
+        https://bugs.webkit.org/show_bug.cgi?id=62393
+
+        * wtf/Vector.h:
+        (WTF::Vector::reverse): Added
+
+2011-06-14  Lucas Forschler  <lforschler@apple.com>
+
     Merged 88833.
 
     2011-06-14  Stephanie Lewis  <slewis@apple.com>

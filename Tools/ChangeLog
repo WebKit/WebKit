@@ -1,5 +1,21 @@
 2011-06-14  Lucas Forschler  <lforschler@apple.com>
 
+    Merged 88477.
+
+    2011-06-09  Dan Bernstein  <mitz@apple.com>
+
+        Reviewed by Anders Carlsson.
+
+        Added a test for Vector::reverse()
+        https://bugs.webkit.org/show_bug.cgi?id=62393
+
+        * TestWebKitAPI/TestWebKitAPI.xcodeproj/project.pbxproj:
+        * TestWebKitAPI/Tests/WTF/VectorReverse.cpp: Added.
+        (TestWebKitAPI::TEST):
+        * TestWebKitAPI/win/TestWebKitAPI.vcproj:
+
+2011-06-14  Lucas Forschler  <lforschler@apple.com>
+
     Merged 88857.
     Fix branch build tools break.  
 

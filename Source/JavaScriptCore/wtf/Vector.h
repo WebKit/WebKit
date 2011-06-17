@@ -619,6 +619,8 @@ namespace WTF {
             m_buffer.swap(other.m_buffer);
         }
 
+        void reverse();
+
         void checkConsistency();
 
     private:
@@ -1094,6 +1096,13 @@ namespace WTF {
         TypeOperations::destruct(beginSpot, endSpot); 
         TypeOperations::moveOverlapping(endSpot, end(), beginSpot);
         m_size -= length;
+    }
+
+    template<typename T, size_t inlineCapacity>
+    inline void Vector<T, inlineCapacity>::reverse()
+    {
+        for (size_t i = 0; i < m_size / 2; ++i)
+            std::swap(at(i), at(m_size - 1 - i));
     }
 
     template<typename T, size_t inlineCapacity>
