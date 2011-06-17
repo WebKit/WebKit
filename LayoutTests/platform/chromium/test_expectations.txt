@@ -1046,6 +1046,9 @@ BUGCR24209 : fast/js/pic/cached-prototype-setter.html = FAIL
 // WebKit Bug 23611 - Multiline Javascript comments cause incorrect parsing of following script.
 BUGCR86431 : fast/js/multiline-comment-newline.html = FAIL
 
+// Another V8 vs JSC difference since r89109.
+BUGCR86442 : fast/js/keywords-and-reserved_words.html = TEXT
+
 // We have the wrong shadow for "This".
 // It appears we're not obeying the "transparent" fill color.
 BUGCR10317 LINUX : fast/css/shadow-multiple.html = FAIL

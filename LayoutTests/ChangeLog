@@ -1,3 +1,9 @@
+2011-06-16  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, add Chromium test expectation for fast/js/keywords-and-reserved_words.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-16  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber stamped by Sam Weinig.
