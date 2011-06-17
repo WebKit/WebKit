@@ -1,5 +1,11 @@
 2011-06-17  Anders Carlsson  <andersca@apple.com>
 
+        Fix Qt build.
+
+        * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
+
+2011-06-17  Anders Carlsson  <andersca@apple.com>
+
         Windows build fix.
 
         * UIProcess/win/WebView.cpp:
