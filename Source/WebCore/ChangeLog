@@ -1,3 +1,32 @@
+2011-06-17  Julien Chaffraix  <jchaffraix@google.com>
+
+        Reviewed by Darin Adler.
+
+        Avoid extra work in RenderStyle::visitedDependentColor
+        https://bugs.webkit.org/show_bug.cgi?id=62868
+
+        Refactoring only, no new test required.
+
+        The code used to cache the result of borderStyleForColorProperty. However
+        the value was either overwritten inside colorIncludingFallback or there was
+        not border. Thus I removed borderStyleForColorProperty and inlined the logic in
+        colorIncludingFallback.
+
+        This shows some nice performance improvements on the bug page (table of 22k rows with a link
+        for each row). Using pprof, the time spend in RenderStyle::visitedDependentColor is reduced
+        by ~10%, mostly due to removing the call to borderStyleForColorProperty.
+
+        * rendering/style/RenderStyle.cpp:
+        (WebCore::RenderStyle::colorIncludingFallback): We now calculate the borderStyle
+        inside this function (which was already the case I just made it explicit). Also
+        simplified the final 'if' as the border will be set only for the right CSS border
+        properties.
+
+        (WebCore::RenderStyle::visitedDependentColor): Removed the |borderStyle| variable
+        as it was never read.
+
+        * rendering/style/RenderStyle.h: Removed the parameter.
+
 2011-06-16  Pavel Podivilov  <podivilov@chromium.org>
 
         Reviewed by Yury Semikhatsky.

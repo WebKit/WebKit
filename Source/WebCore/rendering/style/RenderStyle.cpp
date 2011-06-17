@@ -1093,32 +1093,10 @@ void RenderStyle::getShadowVerticalExtent(const ShadowData* shadow, int &top, in
     }
 }
 
-static EBorderStyle borderStyleForColorProperty(const RenderStyle* style, int colorProperty)
-{
-    EBorderStyle borderStyle;
-    switch (colorProperty) {
-    case CSSPropertyBorderLeftColor:
-        borderStyle = style->borderLeftStyle();
-        break;
-    case CSSPropertyBorderRightColor:
-        borderStyle = style->borderRightStyle();
-        break;
-    case CSSPropertyBorderTopColor:
-        borderStyle = style->borderTopStyle();
-        break;
-    case CSSPropertyBorderBottomColor:
-        borderStyle = style->borderBottomStyle();
-        break;
-    default:
-        borderStyle = BNONE;
-        break;
-    }
-    return borderStyle;
-}
-
-const Color RenderStyle::colorIncludingFallback(int colorProperty, EBorderStyle borderStyle) const
+const Color RenderStyle::colorIncludingFallback(int colorProperty) const
 {
     Color result;
+    EBorderStyle borderStyle = BNONE;
     switch (colorProperty) {
     case CSSPropertyBackgroundColor:
         return backgroundColor(); // Background color doesn't fall back.
@@ -1162,9 +1140,7 @@ const Color RenderStyle::colorIncludingFallback(int colorProperty, EBorderStyle 
     }
 
     if (!result.isValid()) {
-        if ((colorProperty == CSSPropertyBorderLeftColor || colorProperty == CSSPropertyBorderRightColor
-            || colorProperty == CSSPropertyBorderTopColor || colorProperty == CSSPropertyBorderBottomColor)
-            && (borderStyle == INSET || borderStyle == OUTSET || borderStyle == RIDGE || borderStyle == GROOVE))
+        if (borderStyle == INSET || borderStyle == OUTSET || borderStyle == RIDGE || borderStyle == GROOVE)
             result.setRGB(238, 238, 238);
         else
             result = color();
@@ -1175,15 +1151,14 @@ const Color RenderStyle::colorIncludingFallback(int colorProperty, EBorderStyle 
 
 const Color RenderStyle::visitedDependentColor(int colorProperty) const
 {
-    EBorderStyle borderStyle = borderStyleForColorProperty(this, colorProperty);
-    Color unvisitedColor = colorIncludingFallback(colorProperty, borderStyle);
+    Color unvisitedColor = colorIncludingFallback(colorProperty);
     if (insideLink() != InsideVisitedLink)
         return unvisitedColor;
 
     RenderStyle* visitedStyle = getCachedPseudoStyle(VISITED_LINK);
     if (!visitedStyle)
         return unvisitedColor;
-    Color visitedColor = visitedStyle->colorIncludingFallback(colorProperty, borderStyle);
+    Color visitedColor = visitedStyle->colorIncludingFallback(colorProperty);
 
     // FIXME: Technically someone could explicitly specify the color transparent, but for now we'll just
     // assume that if the background color is transparent that it wasn't set. Note that it's weird that

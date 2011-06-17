@@ -1356,7 +1356,7 @@ private:
     const Color& textFillColor() const { return rareInheritedData->textFillColor; }
     const Color& textStrokeColor() const { return rareInheritedData->textStrokeColor; }
     
-    const Color colorIncludingFallback(int colorProperty, EBorderStyle) const;
+    const Color colorIncludingFallback(int colorProperty) const;
 
     void appendContent(PassOwnPtr<ContentData>);
 };
