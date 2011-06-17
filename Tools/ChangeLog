@@ -1,3 +1,25 @@
+2011-05-25  Brent Fulgham  <bfulgham@webkit.org>
+
+        Reviewed by Brian Weinstein.
+
+        Create a simple example of using the COM-based C++ listeners.
+        A new onclick event is attached (via C++) to the WebKit logo
+        in the default test pattern displayed on startup.  Clicking on
+        the logo causes a message box to be displayed.
+        https://bugs.webkit.org/show_bug.cgi?id=61885
+
+        * WinLauncher/DOMDefaultImpl.h: Added.  Stub implementation of
+          the WebScriptObject and DOMEventListener.
+        * WinLauncher/WinLauncher.cpp:
+        (SimpleEventListener::SimpleEventListener): Example implementation
+          of a simple DOM event listener.
+        (SimpleEventListener::handleEvent): 
+        (WinLauncherWebHost::didFinishLoadForFrame): Added implementation
+         to bind a C++ method to the 'onclick' event for the WebKit logo.
+        (_tWinMain):
+        * WinLauncher/WinLauncher.h:
+        * WinLauncher/WinLauncher.vcproj: Add new DOMDefaultImpl.h file.
+
 2011-06-17  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Andreas Kling.

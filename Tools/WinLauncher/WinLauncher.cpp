@@ -27,18 +27,18 @@
 
 #include "stdafx.h"
 #include "WinLauncher.h"
-#include <WebKit/WebKitCOMAPI.h>
 
-#include <string>
+#include "DOMDefaultImpl.h"
+#include "PrintWebUIDelegate.h"
+#include <WebKit/WebKitCOMAPI.h>
 
 #include <commctrl.h>
 #include <commdlg.h>
 #include <objbase.h>
 #include <shellapi.h>
 #include <shlwapi.h>
+#include <string>
 #include <wininet.h>
-
-#include "PrintWebUIDelegate.h"
 
 #define MAX_LOADSTRING 100
 #define URLBAR_HEIGHT  24
@@ -81,6 +81,27 @@ static bool shouldUseFullDesktop()
 {
     return s_fullDesktop;
 }
+
+class SimpleEventListener : public DOMEventListener {
+public:
+    SimpleEventListener(LPWSTR type)
+    {
+        wcsncpy_s(m_eventType, 100, type, 100);
+        m_eventType[99] = 0;
+    }
+
+    virtual HRESULT STDMETHODCALLTYPE handleEvent(IDOMEvent* evt)
+    {
+        wchar_t message[255];
+        wcscpy_s(message, 255, m_eventType);
+        wcscat_s(message, 255, L" event fired!");
+        ::MessageBox(0, message, L"Event Handler", MB_OK);
+        return S_OK;
+    }
+
+private:
+    wchar_t m_eventType[100];
+};
 
 HRESULT WinLauncherWebHost::updateAddressBar(IWebView* webView)
 {
@@ -148,6 +169,36 @@ ULONG STDMETHODCALLTYPE WinLauncherWebHost::Release(void)
         delete(this);
 
     return newRef;
+}
+
+HRESULT WinLauncherWebHost::didFinishLoadForFrame(IWebView* webView, IWebFrame* frame)
+{
+    IDOMDocument* doc = 0;
+    frame->DOMDocument(&doc);
+
+    IDOMElement* element = 0;
+    IDOMEventTarget* target = 0;
+    HRESULT hr = doc->getElementById(L"webkit logo", &element);
+    if (!SUCCEEDED(hr))
+        goto exit;
+
+    hr = element->QueryInterface(IID_IDOMEventTarget, reinterpret_cast<void**>(&target));
+    if (!SUCCEEDED(hr))
+        goto exit;
+
+    hr = target->addEventListener(L"click", new SimpleEventListener (L"webkit logo click"), FALSE);
+    if (!SUCCEEDED(hr))
+        goto exit;
+
+exit:
+    if (target)
+        target->Release();
+    if (element)
+        element->Release();
+    if (doc)
+        doc->Release();
+
+    return hr;
 }
 
 static void resizeSubViews()
@@ -292,7 +343,7 @@ int APIENTRY _tWinMain(HINSTANCE hInstance,
     if (FAILED(hr))
         goto exit;
 
-    static BSTR defaultHTML = SysAllocString(TEXT("<p style=\"background-color: #00FF00\">Testing</p><img src=\"http://webkit.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue; background: white;\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>"));
+    static BSTR defaultHTML = SysAllocString(TEXT("<p style=\"background-color: #00FF00\">Testing</p><img id=\"webkit logo\" src=\"http://webkit.org/images/icon-gold.png\" alt=\"Face\"><div style=\"border: solid blue; background: white;\" contenteditable=\"true\">div with blue border</div><ul><li>foo<li>bar<li>baz</ul>"));
     frame->loadHTMLString(defaultHTML, 0);
     frame->Release();
 

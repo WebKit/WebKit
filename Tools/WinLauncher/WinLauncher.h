@@ -72,7 +72,7 @@ public:
     
     virtual HRESULT STDMETHODCALLTYPE didFinishLoadForFrame( 
         /* [in] */ IWebView* webView,
-        /* [in] */ IWebFrame* /*frame*/) { return S_OK; }
+        /* [in] */ IWebFrame* /*frame*/);
     
     virtual HRESULT STDMETHODCALLTYPE didFailLoadWithError( 
         /* [in] */ IWebView *webView,
