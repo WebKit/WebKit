@@ -1,5 +1,22 @@
 2011-06-16  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix Mac baselines for r89091. I don't know why the original baseline was wrong.
+
+        * platform/mac/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt:
+        * platform/mac/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt:
+
+2011-06-16  Ryosuke Niwa  <rniwa@webkit.org>
+
         Update Chromium test expectation after r89100.
 
         * platform/chromium/test_expectations.txt:
