@@ -102,6 +102,7 @@ public:
     void preload(CachedResource::Type, ResourceRequest&, const String& charset, bool referencedFromBody);
     void checkForPendingPreloads();
     void printPreloadStats();
+    bool checkInsecureContent(CachedResource::Type, const KURL&) const;
     
 private:
     CachedResource* requestResource(CachedResource::Type, ResourceRequest&, const String& charset, ResourceLoadPriority = ResourceLoadPriorityUnresolved, bool isPreload = false);

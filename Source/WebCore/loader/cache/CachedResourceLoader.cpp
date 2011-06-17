@@ -199,6 +199,41 @@ CachedResource* CachedResourceLoader::requestLinkResource(CachedResource::Type t
 }
 #endif
 
+bool CachedResourceLoader::checkInsecureContent(CachedResource::Type type, const KURL& url) const
+{
+    switch (type) {
+    case CachedResource::Script:
+#if ENABLE(XSLT)
+    case CachedResource::XSLStyleSheet:
+#endif
+    case CachedResource::CSSStyleSheet:
+        // These resource can inject script into the current document (Script,
+        // XSL) or exfiltrate the content of the current document (CSS).
+        if (Frame* f = frame())
+            if (!f->loader()->checkIfRunInsecureContent(m_document->securityOrigin(), url))
+                return false;
+        break;
+    case CachedResource::ImageResource:
+    case CachedResource::FontResource: {
+        // These resources can corrupt only the frame's pixels.
+        if (Frame* f = frame()) {
+            Frame* top = f->tree()->top();
+            if (!top->loader()->checkIfDisplayInsecureContent(top->document()->securityOrigin(), url))
+                return false;
+        }
+        break;
+    }
+#if ENABLE(LINK_PREFETCH)
+    case CachedResource::LinkPrefetch:
+    case CachedResource::LinkPrerender:
+    case CachedResource::LinkSubresource:
+        // Prefetch cannot affect the current document.
+        break;
+#endif
+    }
+    return true;
+}
+
 bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url, bool forPreload)
 {
     if (!document()->securityOrigin()->canDisplay(url)) {
@@ -237,42 +272,10 @@ bool CachedResourceLoader::canRequest(CachedResource::Type type, const KURL& url
     // Given that the load is allowed by the same-origin policy, we should
     // check whether the load passes the mixed-content policy.
     //
-    // Note: Currently, we always allow mixed content, but we generate a
-    //       callback to the FrameLoaderClient in case the embedder wants to
-    //       update any security indicators.
-    // 
     // FIXME: Should we consider forPreload here?
-    //
-    switch (type) {
-    case CachedResource::Script:
-#if ENABLE(XSLT)
-    case CachedResource::XSLStyleSheet:
-#endif
-    case CachedResource::CSSStyleSheet:
-        // These resource can inject script into the current document (Script,
-        // XSL) or exfiltrate the content of the current document (CSS).
-        if (Frame* f = frame())
-            if (!f->loader()->checkIfRunInsecureContent(m_document->securityOrigin(), url))
-                return false;
-        break;
-    case CachedResource::ImageResource:
-    case CachedResource::FontResource: {
-        // These resources can corrupt only the frame's pixels.
-        if (Frame* f = frame()) {
-            Frame* top = f->tree()->top();
-            if (!top->loader()->checkIfDisplayInsecureContent(top->document()->securityOrigin(), url))
-                return false;
-        }
-        break;
-    }
-#if ENABLE(LINK_PREFETCH)
-    case CachedResource::LinkPrefetch:
-    case CachedResource::LinkPrerender:
-    case CachedResource::LinkSubresource:
-        // Prefetch cannot affect the current document.
-        break;
-#endif
-    }
+    if (!checkInsecureContent(type, url))
+        return false;
+
     // FIXME: Consider letting the embedder block mixed content loads.
 
     switch (type) {
