@@ -85,7 +85,7 @@ public:
     void removeBreakpoint(ErrorString*, const String& breakpointId);
     void continueToLocation(ErrorString*, PassRefPtr<InspectorObject> location);
 
-    void editScriptSource(ErrorString*, const String& sourceId, const String& newContent, RefPtr<InspectorArray>* newCallFrames);
+    void editScriptSource(ErrorString*, const String& sourceId, const String& newContent, RefPtr<InspectorArray>* newCallFrames, RefPtr<InspectorObject>* result);
     void getScriptSource(ErrorString*, const String& sourceId, String* scriptSource);
     void schedulePauseOnNextStatement(DebuggerEventType type, PassRefPtr<InspectorValue> data);
     void cancelPauseOnNextStatement();

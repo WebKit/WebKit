@@ -52,6 +52,7 @@ namespace WebCore {
 
 class JavaScriptCallFrame;
 class ScriptDebugListener;
+class ScriptObject;
 class ScriptValue;
 
 class ScriptDebugServer : protected JSC::Debugger {
@@ -79,7 +80,7 @@ public:
     void stepOverStatement();
     void stepOutOfFunction();
 
-    bool editScriptSource(const String& sourceID, const String& newContent, String* error, ScriptValue* newCallFrames);
+    bool editScriptSource(const String& sourceID, const String& newContent, String* error, ScriptValue* newCallFrames, ScriptObject* result);
 
     void recompileAllJSFunctionsSoon();
     virtual void recompileAllJSFunctions(Timer<ScriptDebugServer>* = 0) = 0;

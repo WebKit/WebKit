@@ -187,8 +187,7 @@ DebuggerScript.editScriptSource = function(scriptId, newSource)
         throw("Script not found");
 
     var changeLog = [];
-    Debug.LiveEdit.SetScriptSource(scriptToEdit, newSource, false, changeLog);
-    return scriptToEdit.source;
+    return Debug.LiveEdit.SetScriptSource(scriptToEdit, newSource, false, changeLog);
 }
 
 DebuggerScript.clearBreakpoints = function(execState, args)

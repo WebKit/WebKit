@@ -1494,7 +1494,8 @@
                     { "name": "scriptSource", "type": "string", "description": "New content of the script." }
                 ],
                 "returns": [
-                    { "name": "callFrames", "type": "array", "optional": true, "items": { "$ref": "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." }
+                    { "name": "callFrames", "type": "array", "optional": true, "items": { "$ref": "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." },
+                    { "name": "result", "type": "object", "optional": true, "description": "VM-specific description of the changes applied." }
                 ],
                 "description": "Edits JavaScript script live."
             },

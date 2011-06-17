@@ -36,6 +36,7 @@
 #include "DebuggerScriptSource.h"
 #include "JavaScriptCallFrame.h"
 #include "ScriptDebugListener.h"
+#include "ScriptObject.h"
 #include "V8Binding.h"
 #include "V8JavaScriptCallFrame.h"
 #include <wtf/StdLibExtras.h>
@@ -211,7 +212,7 @@ void ScriptDebugServer::stepOutOfFunction()
     continueProgram();
 }
 
-bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& newContent, String* error, ScriptValue* newCallFrames)
+bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& newContent, String* error, ScriptValue* newCallFrames, ScriptObject* result)
 {
     ensureDebuggerScriptCompiled();
     v8::HandleScope scope;
@@ -225,7 +226,7 @@ bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& n
 
     v8::TryCatch tryCatch;
     tryCatch.SetVerbose(false);
-    v8::Handle<v8::Value> result = function->Call(m_debuggerScript.get(), 2, argv);
+    v8::Handle<v8::Value> v8result = function->Call(m_debuggerScript.get(), 2, argv);
     if (tryCatch.HasCaught()) {
         v8::Local<v8::Message> message = tryCatch.Message();
         if (!message.IsEmpty())
@@ -234,7 +235,9 @@ bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& n
             *error = "Unknown error.";
         return false;
     }
-    ASSERT(!result.IsEmpty());
+    ASSERT(!v8result.IsEmpty());
+    if (v8result->IsObject())
+        *result = ScriptObject(ScriptState::current(), v8result->ToObject());
 
     // Call stack may have changed after if the edited function was on the stack.
     if (isPaused())

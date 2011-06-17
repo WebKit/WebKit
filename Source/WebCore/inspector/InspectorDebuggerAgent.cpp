@@ -285,10 +285,25 @@ PassRefPtr<InspectorObject> InspectorDebuggerAgent::resolveBreakpoint(const Stri
     return location;
 }
 
-void InspectorDebuggerAgent::editScriptSource(ErrorString* error, const String& sourceId, const String& newContent, RefPtr<InspectorArray>* newCallFrames)
+static PassRefPtr<InspectorObject> scriptToInspectorObject(ScriptObject scriptObject)
 {
-    if (scriptDebugServer().editScriptSource(sourceId, newContent, error, &m_currentCallStack))
-        *newCallFrames = currentCallFrames();
+    if (scriptObject.hasNoValue())
+        return 0;
+    RefPtr<InspectorValue> value = scriptObject.toInspectorValue(scriptObject.scriptState());
+    if (!value)
+        return 0;
+    return value->asObject();
+}
+
+void InspectorDebuggerAgent::editScriptSource(ErrorString* error, const String& sourceId, const String& newContent, RefPtr<InspectorArray>* newCallFrames, RefPtr<InspectorObject>* result)
+{
+    ScriptObject resultObject;
+    if (!scriptDebugServer().editScriptSource(sourceId, newContent, error, &m_currentCallStack, &resultObject))
+        return;
+    *newCallFrames = currentCallFrames();
+    RefPtr<InspectorObject> object = scriptToInspectorObject(resultObject);
+    if (object)
+        *result = object;
 }
 
 void InspectorDebuggerAgent::getScriptSource(ErrorString*, const String& sourceId, String* scriptSource)
