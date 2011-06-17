@@ -44,8 +44,9 @@ WebInspector.TextViewer = function(textModel, platform, url, delegate)
     var exitTextChangeMode = this._exitInternalTextChangeMode.bind(this);
     var syncScrollListener = this._syncScroll.bind(this);
     var syncDecorationsForLineListener = this._syncDecorationsForLine.bind(this);
+    var syncLineHeightListener = this._syncLineHeight.bind(this);
     this._mainPanel = new WebInspector.TextEditorMainPanel(this._textModel, url, syncScrollListener, syncDecorationsForLineListener, enterTextChangeMode, exitTextChangeMode);
-    this._gutterPanel = new WebInspector.TextEditorGutterPanel(this._textModel, syncDecorationsForLineListener);
+    this._gutterPanel = new WebInspector.TextEditorGutterPanel(this._textModel, syncDecorationsForLineListener, syncLineHeightListener);
     this.element.appendChild(this._mainPanel.element);
     this.element.appendChild(this._gutterPanel.element);
 
@@ -226,6 +227,16 @@ WebInspector.TextViewer.prototype = {
             var gutterChunk = this._gutterPanel.chunkForLine(lineNumber);
             if (gutterChunk.linesCount === 1)
                 gutterChunk.element.style.removeProperty("height");
+        }
+    },
+
+    _syncLineHeight: function(gutterRow) {
+        if (this._lineHeightSynced)
+            return;
+        if (gutterRow && gutterRow.offsetHeight) {
+            // Force equal line heights for the child panels.
+            this.element.style.setProperty("line-height", gutterRow.offsetHeight + "px");
+            this._lineHeightSynced = true;
         }
     },
 
@@ -636,11 +647,12 @@ WebInspector.TextEditorChunkedPanel.prototype = {
     }
 }
 
-WebInspector.TextEditorGutterPanel = function(textModel, syncDecorationsForLineListener)
+WebInspector.TextEditorGutterPanel = function(textModel, syncDecorationsForLineListener, syncLineHeightListener)
 {
     WebInspector.TextEditorChunkedPanel.call(this, textModel);
 
     this._syncDecorationsForLineListener = syncDecorationsForLineListener;
+    this._syncLineHeightListener = syncLineHeightListener;
 
     this.element = document.createElement("div");
     this.element.className = "text-editor-lines";
@@ -798,6 +810,7 @@ WebInspector.TextEditorGutterChunk.prototype = {
                 this._expandedLineRows.push(lineRow);
             }
             parentElement.removeChild(this.element);
+            this._textViewer._syncLineHeightListener(this._expandedLineRows[0]);
         } else {
             var elementInserted = false;
             for (var i = 0; i < this._expandedLineRows.length; ++i) {
