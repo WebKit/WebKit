@@ -28,6 +28,9 @@
 #include "CachedResourceHandle.h"
 #include "HTMLElement.h"
 #include "IconURL.h"
+#include "LinkLoader.h"
+#include "LinkLoaderClient.h"
+#include "LinkRelAttribute.h"
 #include "Timer.h"
 
 namespace WebCore {
@@ -36,33 +39,8 @@ class CachedCSSStyleSheet;
 class CachedResource;
 class KURL;
 
-class HTMLLinkElement : public HTMLElement, public CachedResourceClient {
+class HTMLLinkElement : public HTMLElement, public CachedResourceClient, public LinkLoaderClient {
 public:
-    struct RelAttribute {
-        bool m_isStyleSheet;
-        IconType m_iconType;
-        bool m_isAlternate;
-        bool m_isDNSPrefetch;
-#if ENABLE(LINK_PREFETCH)
-        bool m_isLinkPrefetch;
-        bool m_isLinkPrerender;
-        bool m_isLinkSubresource;
-#endif
-
-        RelAttribute()
-            : m_isStyleSheet(false)
-            , m_iconType(InvalidIcon)
-            , m_isAlternate(false)
-            , m_isDNSPrefetch(false)
-#if ENABLE(LINK_PREFETCH)
-            , m_isLinkPrefetch(false)
-            , m_isLinkPrerender(false)
-            , m_isLinkSubresource(false)
-#endif
-            { 
-            }
-    };
-
     static PassRefPtr<HTMLLinkElement> create(const QualifiedName&, Document*, bool createdByParser);
     virtual ~HTMLLinkElement();
 
@@ -84,10 +62,7 @@ public:
 private:
     virtual void parseMappedAttribute(Attribute*);
 
-#if ENABLE(LINK_PREFETCH)
-    void onloadTimerFired(Timer<HTMLLinkElement>*);
-#endif
-    bool checkBeforeLoadEvent();
+    virtual bool shouldLoadLink();
     void process();
     static void processCallback(Node*);
 
@@ -96,18 +71,15 @@ private:
 
     // from CachedResourceClient
     virtual void setCSSStyleSheet(const String& href, const KURL& baseURL, const String& charset, const CachedCSSStyleSheet* sheet);
-#if ENABLE(LINK_PREFETCH)
-    virtual void notifyFinished(CachedResource*);
-#endif
     virtual bool sheetLoaded();
     virtual void startLoadingDynamicSheet();
+
+    virtual void linkLoaded();
+    virtual void linkLoadingErrored();
 
     bool isAlternate() const { return m_relAttribute.m_isAlternate; }
     
     virtual bool isURLAttribute(Attribute*) const;
-
-public:
-    static void tokenizeRelAttribute(const AtomicString& value, RelAttribute&);
 
 private:
     virtual void addSubresourceAttributeURLs(ListHashSet<KURL>&) const;
@@ -121,16 +93,13 @@ private:
 private:
     HTMLLinkElement(const QualifiedName&, Document*, bool createdByParser);
 
+    LinkLoader m_linkLoader;
     CachedResourceHandle<CachedCSSStyleSheet> m_cachedSheet;
     RefPtr<CSSStyleSheet> m_sheet;
-#if ENABLE(LINK_PREFETCH)
-    CachedResourceHandle<CachedResource> m_cachedLinkResource;
-    Timer<HTMLLinkElement> m_onloadTimer;
-#endif
     KURL m_url;
     String m_type;
     String m_media;
-    RelAttribute m_relAttribute;
+    LinkRelAttribute m_relAttribute;
     bool m_loading;
     bool m_isEnabledViaScript;
     bool m_createdByParser;

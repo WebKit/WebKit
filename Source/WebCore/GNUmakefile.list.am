@@ -1802,6 +1802,8 @@ webcore_sources += \
 	Source/WebCore/html/IsIndexInputType.h \
 	Source/WebCore/html/LabelsNodeList.cpp \
 	Source/WebCore/html/LabelsNodeList.h \
+	Source/WebCore/html/LinkRelAttribute.cpp \
+	Source/WebCore/html/LinkRelAttribute.h \
 	Source/WebCore/html/MediaDocument.cpp \
 	Source/WebCore/html/MediaDocument.h \
 	Source/WebCore/html/MediaError.h \
@@ -2118,6 +2120,9 @@ webcore_sources += \
 	Source/WebCore/loader/icon/PageURLRecord.h \
 	Source/WebCore/loader/ImageLoader.cpp \
 	Source/WebCore/loader/ImageLoader.h \
+	Source/WebCore/loader/LinkLoader.h \
+	Source/WebCore/loader/LinkLoader.cpp \
+	Source/WebCore/loader/LinkLoaderClient.h \
 	Source/WebCore/loader/MainResourceLoader.cpp \
 	Source/WebCore/loader/MainResourceLoader.h \
 	Source/WebCore/loader/NavigationAction.cpp \

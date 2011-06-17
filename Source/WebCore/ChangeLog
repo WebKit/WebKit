@@ -1,3 +1,54 @@
+2011-06-17  Gavin Peters  <gavinp@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        refactor HTMLLinkElement to allow Link header implementation
+        https://bugs.webkit.org/show_bug.cgi?id=51941
+
+        This change moves the LinkRelAttribute helper struct into its own
+        file in html/, since the LinkRelAttribute is used by the LinkLoader,
+        and leaving it in HTMLLinkElement would have been too circular for
+        my tastes.
+
+        The new LinkLoader class contains the loader code for icons, dns
+        prefetching and prefetch/prerender/subresource into a common
+        LinkLoader.  This is a step in getting the Link header working in
+        WebKit, as discussed in webkit-dev For more information, see
+        thread "beforeload & link
+        (esp rel prefetch)".
+
+        No new tests, since this is a refactoring.
+
+        * CMakeLists.txt:
+        * GNUmakefile.list.am:
+        * WebCore.gypi:
+        * WebCore.pro:
+        * WebCore.vcproj/WebCore.vcproj:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/HTMLLinkElement.cpp:
+        (WebCore::HTMLLinkElement::HTMLLinkElement):
+        (WebCore::HTMLLinkElement::~HTMLLinkElement):
+        (WebCore::HTMLLinkElement::parseMappedAttribute):
+        (WebCore::HTMLLinkElement::shouldLoadLink):
+        (WebCore::HTMLLinkElement::process):
+        (WebCore::HTMLLinkElement::linkLoaded):
+        (WebCore::HTMLLinkElement::linkLoadingErrored):
+        * html/HTMLLinkElement.h:
+        * html/LinkRelAttribute.cpp: Added.
+        (WebCore::LinkRelAttribute::LinkRelAttribute):
+        * html/LinkRelAttribute.h: Added.
+        * html/parser/HTMLPreloadScanner.cpp:
+        (WebCore::HTMLNames::PreloadTask::relAttributeIsStyleSheet):
+        * loader/LinkLoader.cpp: Added.
+        (WebCore::LinkLoader::LinkLoader):
+        (WebCore::LinkLoader::~LinkLoader):
+        (WebCore::LinkLoader::linkLoadedTimerFired):
+        (WebCore::LinkLoader::notifyFinished):
+        (WebCore::LinkLoader::loadLink):
+        * loader/LinkLoader.h: Added.
+        * loader/LinkLoaderClient.h: Added.
+        (WebCore::LinkLoaderClient::~LinkLoaderClient):
+
 2011-06-17  Annie Sullivan  <sullivan@chromium.org>
 
         Reviewed by Ryosuke Niwa.

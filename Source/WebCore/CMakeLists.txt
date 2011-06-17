@@ -784,6 +784,7 @@ SET(WebCore_SOURCES
     html/InputType.cpp
     html/IsIndexInputType.cpp
     html/LabelsNodeList.cpp
+    html/LinkRelAttribute.cpp
     html/MediaDocument.cpp
     html/MonthInputType.cpp
     html/NumberInputType.cpp
@@ -906,6 +907,7 @@ SET(WebCore_SOURCES
     loader/FrameLoaderStateMachine.cpp
     loader/HistoryController.cpp
     loader/ImageLoader.cpp
+    loader/LinkLoader.cpp
     loader/MainResourceLoader.cpp
     loader/NavigationAction.cpp
     loader/NetscapePlugInStreamLoader.cpp

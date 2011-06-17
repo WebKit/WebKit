@@ -33,9 +33,9 @@
 #include "InputType.h"
 #include "HTMLDocumentParser.h"
 #include "HTMLTokenizer.h"
-#include "HTMLLinkElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
+#include "LinkRelAttribute.h"
 #include "MediaList.h"
 #include "MediaQueryEvaluator.h"
 
@@ -93,8 +93,7 @@ public:
 
     static bool relAttributeIsStyleSheet(const String& attributeValue)
     {
-        HTMLLinkElement::RelAttribute rel;
-        HTMLLinkElement::tokenizeRelAttribute(attributeValue, rel);
+        LinkRelAttribute rel(attributeValue);
         return rel.m_isStyleSheet && !rel.m_isAlternate && rel.m_iconType == InvalidIcon && !rel.m_isDNSPrefetch;
     }
 

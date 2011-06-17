@@ -52,9 +52,7 @@ using namespace HTMLNames;
 
 inline HTMLLinkElement::HTMLLinkElement(const QualifiedName& tagName, Document* document, bool createdByParser)
     : HTMLElement(tagName, document)
-#if ENABLE(LINK_PREFETCH)
-    , m_onloadTimer(this, &HTMLLinkElement::onloadTimerFired)
-#endif
+    , m_linkLoader(this)
     , m_loading(false)
     , m_isEnabledViaScript(false)
     , m_createdByParser(createdByParser)
@@ -78,11 +76,6 @@ HTMLLinkElement::~HTMLLinkElement()
         m_cachedSheet->removeClient(this);
         removePendingSheet();
     }
-    
-#if ENABLE(LINK_PREFETCH)
-    if (m_cachedLinkResource)
-        m_cachedLinkResource->removeClient(this);
-#endif
 }
 
 void HTMLLinkElement::setDisabled(bool disabled)
@@ -132,7 +125,7 @@ StyleSheet* HTMLLinkElement::sheet() const
 void HTMLLinkElement::parseMappedAttribute(Attribute* attr)
 {
     if (attr->name() == relAttr) {
-        tokenizeRelAttribute(attr->value(), m_relAttribute);
+        m_relAttribute = LinkRelAttribute(attr->value());
         process();
     } else if (attr->name() == hrefAttr) {
         m_url = document()->completeURL(stripLeadingAndTrailingHTMLSpaces(attr->value()));
@@ -158,65 +151,7 @@ void HTMLLinkElement::parseMappedAttribute(Attribute* attr)
     }
 }
 
-void HTMLLinkElement::tokenizeRelAttribute(const AtomicString& rel, RelAttribute& relAttribute)
-{
-    relAttribute.m_isStyleSheet = false;
-    relAttribute.m_iconType = InvalidIcon;
-    relAttribute.m_isAlternate = false;
-    relAttribute.m_isDNSPrefetch = false;
-#if ENABLE(LINK_PREFETCH)
-    relAttribute.m_isLinkPrefetch = false;
-    relAttribute.m_isLinkPrerender = false;
-    relAttribute.m_isLinkSubresource = false;
-#endif
-    if (equalIgnoringCase(rel, "stylesheet"))
-        relAttribute.m_isStyleSheet = true;
-    else if (equalIgnoringCase(rel, "icon") || equalIgnoringCase(rel, "shortcut icon"))
-        relAttribute.m_iconType = Favicon;
-#if ENABLE(TOUCH_ICON_LOADING)
-    else if (equalIgnoringCase(rel, "apple-touch-icon"))
-        relAttribute.m_iconType = TouchIcon;
-    else if (equalIgnoringCase(rel, "apple-touch-icon-precomposed"))
-        relAttribute.m_iconType = TouchPrecomposedIcon;
-#endif
-    else if (equalIgnoringCase(rel, "dns-prefetch"))
-        relAttribute.m_isDNSPrefetch = true;
-    else if (equalIgnoringCase(rel, "alternate stylesheet") || equalIgnoringCase(rel, "stylesheet alternate")) {
-        relAttribute.m_isStyleSheet = true;
-        relAttribute.m_isAlternate = true;
-    } else {
-        // Tokenize the rel attribute and set bits based on specific keywords that we find.
-        String relString = rel.string();
-        relString.replace('\n', ' ');
-        Vector<String> list;
-        relString.split(' ', list);
-        Vector<String>::const_iterator end = list.end();
-        for (Vector<String>::const_iterator it = list.begin(); it != end; ++it) {
-            if (equalIgnoringCase(*it, "stylesheet"))
-                relAttribute.m_isStyleSheet = true;
-            else if (equalIgnoringCase(*it, "alternate"))
-                relAttribute.m_isAlternate = true;
-            else if (equalIgnoringCase(*it, "icon"))
-                relAttribute.m_iconType = Favicon;
-#if ENABLE(TOUCH_ICON_LOADING)
-            else if (equalIgnoringCase(*it, "apple-touch-icon"))
-                relAttribute.m_iconType = TouchIcon;
-            else if (equalIgnoringCase(*it, "apple-touch-icon-precomposed"))
-                relAttribute.m_iconType = TouchPrecomposedIcon;
-#endif
-#if ENABLE(LINK_PREFETCH)
-            else if (equalIgnoringCase(*it, "prefetch"))
-              relAttribute.m_isLinkPrefetch = true;
-            else if (equalIgnoringCase(*it, "prerender"))
-              relAttribute.m_isLinkPrerender = true;
-            else if (equalIgnoringCase(*it, "subresource"))
-              relAttribute.m_isLinkSubresource = true;
-#endif
-        }
-    }
-}
-
-bool HTMLLinkElement::checkBeforeLoadEvent()
+bool HTMLLinkElement::shouldLoadLink()
 {
     RefPtr<Document> originalDocument = document();
     if (!dispatchBeforeLoadEvent(m_url))
@@ -236,50 +171,11 @@ void HTMLLinkElement::process()
 
     String type = m_type.lower();
 
-    // IE extension: location of small icon for locationbar / bookmarks
-    // We'll record this URL per document, even if we later only use it in top level frames
-    if (m_relAttribute.m_iconType != InvalidIcon && m_url.isValid() && !m_url.isEmpty()) {
-        if (!checkBeforeLoadEvent()) 
-            return;
-        document()->setIconURL(m_url.string(), type, m_relAttribute.m_iconType);
-    }
-
-    if (m_relAttribute.m_isDNSPrefetch) {
-        Settings* settings = document()->settings();
-        // FIXME: The href attribute of the link element can be in "//hostname" form, and we shouldn't attempt
-        // to complete that as URL <https://bugs.webkit.org/show_bug.cgi?id=48857>.
-        if (settings && settings->dnsPrefetchingEnabled() && m_url.isValid() && !m_url.isEmpty())
-            ResourceHandle::prepareForURL(m_url);
-    }
-
-#if ENABLE(LINK_PREFETCH)
-    if ((m_relAttribute.m_isLinkPrefetch || m_relAttribute.m_isLinkPrerender || m_relAttribute.m_isLinkSubresource) && m_url.isValid() && document()->frame()) {
-        if (!checkBeforeLoadEvent())
-            return;
-        ResourceLoadPriority priority = ResourceLoadPriorityUnresolved;
-        CachedResource::Type type = CachedResource::LinkPrefetch;
-        // We only make one request to the cachedresourcelodaer if multiple rel types are
-        // specified, 
-        if (m_relAttribute.m_isLinkSubresource) {
-            priority = ResourceLoadPriorityLow;
-            type = CachedResource::LinkSubresource;
-        } else if (m_relAttribute.m_isLinkPrerender)
-            type = CachedResource::LinkPrerender;
-
-        ResourceRequest linkRequest(document()->completeURL(m_url));
-        
-        if (m_cachedLinkResource) {
-            m_cachedLinkResource->removeClient(this);
-            m_cachedLinkResource = 0;
-        }
-        m_cachedLinkResource = document()->cachedResourceLoader()->requestLinkResource(type, linkRequest, priority);
-        if (m_cachedLinkResource)
-            m_cachedLinkResource->addClient(this);
-    }
-#endif
+    if (!m_linkLoader.loadLink(m_relAttribute, type, m_url, document()))
+        return;
 
     bool acceptIfTypeContainsTextCSS = document()->page() && document()->page()->settings() && document()->page()->settings()->treatsAnyTextCSSLinkAsStylesheet();
-    
+
     if (!disabled() && (m_relAttribute.m_isStyleSheet || (acceptIfTypeContainsTextCSS && type.contains("text/css")))
         && document()->frame() && m_url.isValid()) {
         
@@ -293,7 +189,7 @@ void HTMLLinkElement::process()
             m_cachedSheet = 0;
         }
 
-        if (!checkBeforeLoadEvent())
+        if (!shouldLoadLink())
             return;
 
         m_loading = true;
@@ -443,26 +339,15 @@ bool HTMLLinkElement::isLoading() const
     return static_cast<CSSStyleSheet *>(m_sheet.get())->isLoading();
 }
 
-#if ENABLE(LINK_PREFETCH)
-void HTMLLinkElement::onloadTimerFired(Timer<HTMLLinkElement>* timer)
+void HTMLLinkElement::linkLoaded()
 {
-    ASSERT_UNUSED(timer, timer == &m_onloadTimer);
-    if (m_cachedLinkResource->errorOccurred())
-        dispatchEvent(Event::create(eventNames().errorEvent, false, false));
-    else if (!m_cachedLinkResource->wasCanceled())
-        dispatchEvent(Event::create(eventNames().loadEvent, false, false));
-
-    m_cachedLinkResource->removeClient(this);
-    m_cachedLinkResource = 0;
+    dispatchEvent(Event::create(eventNames().loadEvent, false, false));
 }
 
-void HTMLLinkElement::notifyFinished(CachedResource* resource)
+void HTMLLinkElement::linkLoadingErrored()
 {
-    ASSERT(m_cachedLinkResource.get() == resource || m_cachedSheet.get() == resource);
-    if (m_cachedLinkResource.get() == resource)
-        m_onloadTimer.startOneShot(0);
+    dispatchEvent(Event::create(eventNames().errorEvent, false, false));
 }
-#endif
 
 bool HTMLLinkElement::sheetLoaded()
 {

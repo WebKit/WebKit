@@ -25786,6 +25786,18 @@
 				>
 			</File>
 			<File
+				RelativePath="..\loader\LinkLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\LinkLoader.h"
+				>
+			</File>
+			<File
+				RelativePath="..\loader\LinkLoaderClient.h"
+				>
+			</File>
+			<File
 				RelativePath="..\loader\MainResourceLoader.cpp"
 				>
 			</File>
@@ -57107,6 +57119,14 @@
 			</File>
 			<File
 				RelativePath="..\html\LabelsNodeList.h"
+				>
+			</File>
+			<File
+				RelativePath="..\html\LinkRelAttribute.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\html\LinkRelAttribute.h"
 				>
 			</File>
 			<File

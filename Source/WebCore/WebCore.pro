@@ -743,6 +743,7 @@ SOURCES += \
     html/InputType.cpp \
     html/IsIndexInputType.cpp \
     html/LabelsNodeList.cpp \
+    html/LinkRelAttribute.cpp \
     html/MediaDocument.cpp \
     html/MonthInputType.cpp \
     html/NumberInputType.cpp \
@@ -875,6 +876,7 @@ SOURCES += \
     loader/icon/IconDatabaseBase.cpp \
     loader/icon/IconLoader.cpp \
     loader/ImageLoader.cpp \
+    loader/LinkLoader.cpp \
     loader/MainResourceLoader.cpp \
     loader/NavigationAction.cpp \
     loader/NetscapePlugInStreamLoader.cpp \
@@ -1730,6 +1732,7 @@ HEADERS += \
     html/ImageData.h \
     html/ImageDocument.h \
     html/LabelsNodeList.h \
+    html/LinkRelAttribute.h \
     html/MediaDocument.h \
     html/PluginDocument.h \
     html/StepRange.h \
@@ -1830,6 +1833,8 @@ HEADERS += \
     loader/icon/IconRecord.h \
     loader/icon/PageURLRecord.h \
     loader/ImageLoader.h \
+    loader/LinkLoader.h \
+    loader/LinkLoaderClient.h \
     loader/MainResourceLoader.h \
     loader/NavigationAction.h \
     loader/NetscapePlugInStreamLoader.h \
