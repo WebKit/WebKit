@@ -1,3 +1,13 @@
+2011-06-17  Vsevolod Vlasov  <vsevik@chromium.org>
+
+        Reviewed by Pavel Feldman.
+
+        Web Inspector: Network panel does not show main resource content for iframes deleted from the document
+        https://bugs.webkit.org/show_bug.cgi?id=62810
+
+        * http/tests/inspector/network/network-iframe-load-and-delete-expected.txt: Added.
+        * http/tests/inspector/network/network-iframe-load-and-delete.html: Added.
+
 2011-06-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Fix Chromium test expectations.

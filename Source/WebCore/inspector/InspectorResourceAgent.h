@@ -91,8 +91,8 @@ public:
     void markResourceAsCached(unsigned long identifier);
     void didReceiveResponse(unsigned long identifier, DocumentLoader* laoder, const ResourceResponse&);
     void didReceiveContentLength(unsigned long identifier, int dataLength, int encodedDataLength);
-    void didFinishLoading(unsigned long identifier, double finishTime);
-    void didFailLoading(unsigned long identifier, const ResourceError&);
+    void didFinishLoading(unsigned long identifier, DocumentLoader*, double finishTime);
+    void didFailLoading(unsigned long identifier, DocumentLoader*, const ResourceError&);
     void didLoadResourceFromMemoryCache(DocumentLoader*, const CachedResource*);
     void mainFrameNavigated(DocumentLoader*);
     void setInitialScriptContent(unsigned long identifier, const String& sourceString);

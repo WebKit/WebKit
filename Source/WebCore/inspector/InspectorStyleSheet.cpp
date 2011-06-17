@@ -1069,7 +1069,7 @@ bool InspectorStyleSheet::resourceStyleSheetText(String* result) const
         return false;
 
     String error;
-    InspectorPageAgent::resourceContent(&error, ownerDocument()->frame(), m_pageStyleSheet->finalURL(), result);
+    InspectorPageAgent::resourceContent(&error, ownerDocument()->frame(), m_pageStyleSheet->finalURL(), false, result);
     return error.isEmpty();
 }
 

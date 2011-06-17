@@ -35,6 +35,7 @@
 
 #include "CachedResource.h"
 #include "CachedResourceLoader.h"
+#include "Document.h"
 #include "DocumentLoader.h"
 #include "EventsCollector.h"
 #include "Frame.h"
@@ -244,12 +245,12 @@ void InspectorResourceAgent::didReceiveResponse(unsigned long identifier, Docume
             type = InspectorPageAgent::ImageResource;
         else if (equalIgnoringFragmentIdentifier(response.url(), loader->url()) && type == InspectorPageAgent::OtherResource)
             type = InspectorPageAgent::DocumentResource;
-        else if (m_loadingXHRSynchronously || m_resourcesData->isXHR(identifier))
+        else if (m_loadingXHRSynchronously || m_resourcesData->resourceType(identifier) == InspectorPageAgent::XHRResource)
             type = InspectorPageAgent::XHRResource;
 
         m_resourcesData->responseReceived(identifier, m_pageAgent->frameId(loader->frame()), response.url());
     }
-
+    m_resourcesData->setResourceType(identifier, type);
     m_frontend->responseReceived(static_cast<int>(identifier), currentTime(), InspectorPageAgent::resourceTypeString(type), resourceResponse);
     // If we revalidated the resource and got Not modified, send content length following didReceiveResponse
     // as there will be no calls to didReceiveContentLength from the network stack.
@@ -262,16 +263,22 @@ void InspectorResourceAgent::didReceiveContentLength(unsigned long identifier, i
     m_frontend->dataReceived(static_cast<int>(identifier), currentTime(), dataLength, encodedDataLength);
 }
 
-void InspectorResourceAgent::didFinishLoading(unsigned long identifier, double finishTime)
+void InspectorResourceAgent::didFinishLoading(unsigned long identifier, DocumentLoader* loader, double finishTime)
 {
+    if (m_resourcesData->resourceType(identifier) == InspectorPageAgent::DocumentResource)
+        m_resourcesData->addResourceSharedBuffer(identifier, loader->frameLoader()->documentLoader()->mainResourceData(), loader->frame()->document()->inputEncoding());
+
     if (!finishTime)
         finishTime = currentTime();
 
     m_frontend->loadingFinished(static_cast<int>(identifier), finishTime);
 }
 
-void InspectorResourceAgent::didFailLoading(unsigned long identifier, const ResourceError& error)
+void InspectorResourceAgent::didFailLoading(unsigned long identifier, DocumentLoader* loader, const ResourceError& error)
 {
+    if (m_resourcesData->resourceType(identifier) == InspectorPageAgent::DocumentResource)
+        m_resourcesData->addResourceSharedBuffer(identifier, loader->frameLoader()->documentLoader()->mainResourceData(), loader->frame()->document()->inputEncoding());
+
     m_frontend->loadingFailed(static_cast<int>(identifier), currentTime(), error.localizedDescription(), error.isCancellation());
 }
 
@@ -292,7 +299,7 @@ void InspectorResourceAgent::setInitialXHRContent(unsigned long identifier, cons
 
 void InspectorResourceAgent::didReceiveXHRResponse(unsigned long identifier)
 {
-    m_resourcesData->didReceiveXHRResponse(identifier);
+    m_resourcesData->setResourceType(identifier, InspectorPageAgent::XHRResource);
 }
 
 void InspectorResourceAgent::willLoadXHRSynchronously()
@@ -433,9 +440,19 @@ void InspectorResourceAgent::getResourceContent(ErrorString* errorString, unsign
         return;
     }
 
-    if (resourceData->hasContent())
+    bool base64Encode = optionalBase64Encode ? *optionalBase64Encode : false;
+
+    if (resourceData->hasContent()) {
         *content = resourceData->content();
-    else if (!resourceData->frameId().isNull() && !resourceData->url().isNull())
+        return;
+    }
+
+    if (resourceData->buffer() && !resourceData->textEncodingName().isNull()) {
+        if (InspectorPageAgent::sharedBufferContent(resourceData->buffer(), resourceData->textEncodingName(), base64Encode, content))
+            return;
+    }
+
+    if (!resourceData->frameId().isNull() && !resourceData->url().isNull())
         m_pageAgent->getResourceContent(errorString, resourceData->frameId(), resourceData->url(), optionalBase64Encode, content);
     else
         *errorString = "No data found for resource with given identifier";

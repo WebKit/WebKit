@@ -29,14 +29,22 @@
 #ifndef NetworkResourcesData_h
 #define NetworkResourcesData_h
 
+#include "CachedResourceHandle.h"
+#include "InspectorPageAgent.h"
+#include "SharedBuffer.h"
+
 #include <wtf/Deque.h>
 #include <wtf/HashMap.h>
+#include <wtf/RefCounted.h>
 #include <wtf/text/StringBuilder.h>
 #include <wtf/text/WTFString.h>
 
 #if ENABLE(INSPECTOR)
 
 namespace WebCore {
+
+class SharedBuffer;
+class CachedResource;
 
 class NetworkResourcesData {
 public:
@@ -53,9 +61,6 @@ public:
         String url() const { return m_url; }
         void setUrl(String url) { m_url = url; }
 
-        bool isXHR() const { return m_isXHR; }
-        void setIsXHR(bool isXHR) { m_isXHR = isXHR; }
-
         bool hasContent() const { return m_hasContent; }
         String content();
         void appendContent(const String&);
@@ -64,6 +69,15 @@ public:
         void setIsContentPurged(bool isContentPurged) { m_isContentPurged = isContentPurged; }
         unsigned purgeContent();
 
+        InspectorPageAgent::ResourceType type() const { return m_type; }
+        void setType(InspectorPageAgent::ResourceType type) { m_type = type; }
+
+        PassRefPtr<SharedBuffer> buffer() const { return m_buffer; }
+        void setBuffer(PassRefPtr<SharedBuffer> buffer) { m_buffer = buffer; }
+
+        String textEncodingName() const { return m_textEncodingName; }
+        void setTextEncodingName(String textEncodingName) { m_textEncodingName = textEncodingName; }
+
     private:
         unsigned long m_identifier;
         String m_loaderId;
@@ -71,8 +85,11 @@ public:
         String m_url;
         bool m_hasContent;
         StringBuilder m_contentBuilder;
-        bool m_isXHR;
         bool m_isContentPurged;
+        InspectorPageAgent::ResourceType m_type;
+
+        RefPtr<SharedBuffer> m_buffer;
+        String m_textEncodingName;
     };
 
     NetworkResourcesData();
@@ -81,10 +98,10 @@ public:
 
     void resourceCreated(unsigned long identifier, const String& loaderId);
     void responseReceived(unsigned long identifier, const String& frameId, const String& url);
-    void didReceiveXHRResponse(unsigned long identifier);
+    void setResourceType(unsigned long identifier, InspectorPageAgent::ResourceType);
+    InspectorPageAgent::ResourceType resourceType(unsigned long identifier);
     void addResourceContent(unsigned long identifier, const String& content);
-
-    bool isXHR(unsigned long identifier);
+    void addResourceSharedBuffer(unsigned long identifier, PassRefPtr<SharedBuffer>, const String& textEncodingName);
     ResourceData* data(unsigned long identifier);
     void clear(const String& preservedLoaderId = String());
 

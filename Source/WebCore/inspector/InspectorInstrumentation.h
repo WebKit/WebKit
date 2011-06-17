@@ -125,8 +125,8 @@ public:
     static void continueWithPolicyDownload(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     static void continueWithPolicyIgnore(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     static void didReceiveContentLength(Frame*, unsigned long identifier, int dataLength, int encodedDataLength);
-    static void didFinishLoading(Frame*, unsigned long identifier, double finishTime);
-    static void didFailLoading(Frame*, unsigned long identifier, const ResourceError&);
+    static void didFinishLoading(Frame*, DocumentLoader*, unsigned long identifier, double finishTime);
+    static void didFailLoading(Frame*, DocumentLoader*, unsigned long identifier, const ResourceError&);
     static void resourceRetrievedByXMLHttpRequest(ScriptExecutionContext*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
     static void didReceiveXHRResponse(ScriptExecutionContext*, unsigned long identifier);
     static void willLoadXHRSynchronously(ScriptExecutionContext*);
@@ -253,8 +253,8 @@ private:
     static void continueWithPolicyDownloadImpl(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     static void continueWithPolicyIgnoreImpl(Frame*, DocumentLoader*, unsigned long identifier, const ResourceResponse&);
     static void didReceiveContentLengthImpl(InstrumentingAgents*, unsigned long identifier, int dataLength, int encodedDataLength);
-    static void didFinishLoadingImpl(InstrumentingAgents*, unsigned long identifier, double finishTime);
-    static void didFailLoadingImpl(InstrumentingAgents*, unsigned long identifier, const ResourceError&);
+    static void didFinishLoadingImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, double finishTime);
+    static void didFailLoadingImpl(InstrumentingAgents*, unsigned long identifier, DocumentLoader*, const ResourceError&);
     static void resourceRetrievedByXMLHttpRequestImpl(InstrumentingAgents*, unsigned long identifier, const String& sourceString, const String& url, const String& sendURL, unsigned sendLineNumber);
     static void didReceiveXHRResponseImpl(InstrumentingAgents*, unsigned long identifier);
     static void willLoadXHRSynchronouslyImpl(InstrumentingAgents*);
@@ -762,19 +762,19 @@ inline void InspectorInstrumentation::didReceiveContentLength(Frame* frame, unsi
 #endif
 }
 
-inline void InspectorInstrumentation::didFinishLoading(Frame* frame, unsigned long identifier, double finishTime)
+inline void InspectorInstrumentation::didFinishLoading(Frame* frame, DocumentLoader* loader, unsigned long identifier, double finishTime)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        didFinishLoadingImpl(instrumentingAgents, identifier, finishTime);
+        didFinishLoadingImpl(instrumentingAgents, identifier, loader, finishTime);
 #endif
 }
 
-inline void InspectorInstrumentation::didFailLoading(Frame* frame, unsigned long identifier, const ResourceError& error)
+inline void InspectorInstrumentation::didFailLoading(Frame* frame, DocumentLoader* loader, unsigned long identifier, const ResourceError& error)
 {
 #if ENABLE(INSPECTOR)
     if (InstrumentingAgents* instrumentingAgents = instrumentingAgentsForFrame(frame))
-        didFailLoadingImpl(instrumentingAgents, identifier, error);
+        didFailLoadingImpl(instrumentingAgents, identifier, loader, error);
 #endif
 }
 

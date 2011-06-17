@@ -110,12 +110,22 @@ static bool prepareCachedResourceBuffer(CachedResource* cachedResource, bool* ha
     return true;
 }
 
-static bool decodeCachedResource(CachedResource* cachedResource, String* result)
+static bool cachedResourceContent(CachedResource* cachedResource, bool withBase64Encode, String* result)
 {
     bool hasZeroSize;
     bool prepared = prepareCachedResourceBuffer(cachedResource, &hasZeroSize);
     if (!prepared)
         return false;
+
+    if (withBase64Encode) {
+        RefPtr<SharedBuffer> buffer = hasZeroSize ? SharedBuffer::create() : cachedResource->data();
+
+        if (!buffer)
+            return false;
+
+        *result = base64Encode(buffer->data(), buffer->size());
+        return true;
+    }
 
     if (cachedResource) {
         switch (cachedResource->type()) {
@@ -136,10 +146,24 @@ static bool decodeCachedResource(CachedResource* cachedResource, String* result)
     return false;
 }
 
-static bool decodeMainResource(Frame* frame, String* result)
+static bool mainResourceContent(Frame* frame, bool withBase64Encode, String* result)
 {
-    String textEncodingName = frame->document()->inputEncoding();
     RefPtr<SharedBuffer> buffer = frame->loader()->documentLoader()->mainResourceData();
+    if (!buffer)
+        return false;
+    String textEncodingName = frame->document()->inputEncoding();
+
+    return InspectorPageAgent::sharedBufferContent(buffer, textEncodingName, withBase64Encode, result);
+}
+
+// static
+bool InspectorPageAgent::sharedBufferContent(PassRefPtr<SharedBuffer> buffer, const String& textEncodingName, bool withBase64Encode, String* result)
+{
+    if (withBase64Encode) {
+        *result = base64Encode(buffer->data(), buffer->size());
+        return true;
+    }
+
     return decodeSharedBuffer(buffer, textEncodingName, result);
 }
 
@@ -148,7 +172,8 @@ PassOwnPtr<InspectorPageAgent> InspectorPageAgent::create(InstrumentingAgents* i
     return adoptPtr(new InspectorPageAgent(instrumentingAgents, page, injectedScriptManager));
 }
 
-void InspectorPageAgent::resourceContent(ErrorString* errorString, Frame* frame, const KURL& url, String* result)
+// static
+void InspectorPageAgent::resourceContent(ErrorString* errorString, Frame* frame, const KURL& url, bool base64Encode, String* result)
 {
     if (!frame) {
         *errorString = "No frame to get resource content for";
@@ -157,53 +182,21 @@ void InspectorPageAgent::resourceContent(ErrorString* errorString, Frame* frame,
 
     FrameLoader* frameLoader = frame->loader();
     DocumentLoader* loader = frameLoader->documentLoader();
-    RefPtr<SharedBuffer> buffer;
-    bool success = false;
-    if (equalIgnoringFragmentIdentifier(url, loader->url()))
-        success = decodeMainResource(frame, result);
-    if (!success)
-        success = decodeCachedResource(cachedResource(frame, url), result);
 
-    if (!success)
-        *errorString = "No resource with given URL found";
-}
-
-void InspectorPageAgent::resourceContentBase64(ErrorString* errorString, Frame* frame, const KURL& url, String* result)
-{
-    String textEncodingName;
-    RefPtr<SharedBuffer> data = InspectorPageAgent::resourceData(frame, url, &textEncodingName);
-    if (!data) {
-        *result = String();
-        *errorString = "No resource with given URL found";
+    if (!loader) {
+        *errorString = "No documentLoader for frame to get resource content for";
         return;
     }
 
-    *result = base64Encode(data->data(), data->size());
-}
-
-PassRefPtr<SharedBuffer> InspectorPageAgent::resourceData(Frame* frame, const KURL& url, String* textEncodingName)
-{
     RefPtr<SharedBuffer> buffer;
-    FrameLoader* frameLoader = frame->loader();
-    DocumentLoader* loader = frameLoader->documentLoader();
-    if (equalIgnoringFragmentIdentifier(url, loader->url())) {
-        *textEncodingName = frame->document()->inputEncoding();
-        buffer = frameLoader->documentLoader()->mainResourceData();
-        if (buffer)
-            return buffer;
-    }
+    bool success = false;
+    if (equalIgnoringFragmentIdentifier(url, loader->url()))
+        success = mainResourceContent(frame, base64Encode, result);
+    if (!success)
+        success = cachedResourceContent(cachedResource(frame, url), base64Encode, result);
 
-    CachedResource* cachedResource = InspectorPageAgent::cachedResource(frame, url);
-    if (!cachedResource)
-        return 0;
-
-    bool hasZeroSize;
-    bool prepared = prepareCachedResourceBuffer(cachedResource, &hasZeroSize);
-    if (!prepared)
-        return 0;
-
-    *textEncodingName = cachedResource->encoding();
-    return hasZeroSize ? SharedBuffer::create() : cachedResource->data();
+    if (!success)
+        *errorString = "No resource with given URL found";
 }
 
 CachedResource* InspectorPageAgent::cachedResource(Frame* frame, const KURL& url)
@@ -428,10 +421,8 @@ void InspectorPageAgent::getResourceContent(ErrorString* errorString, const Stri
         *errorString = "No frame for given id found";
         return;
     }
-    if (optionalBase64Encode ? *optionalBase64Encode : false)
-        InspectorPageAgent::resourceContentBase64(errorString, frame, KURL(ParsedURLString, url), content);
-    else
-        InspectorPageAgent::resourceContent(errorString, frame, KURL(ParsedURLString, url), content);
+    bool base64Encode = optionalBase64Encode ? *optionalBase64Encode : false;
+    resourceContent(errorString, frame, KURL(ParsedURLString, url), base64Encode, content);
 }
 
 static String createSearchRegexSource(const String& text)
@@ -493,7 +484,7 @@ void InspectorPageAgent::searchInResources(ErrorString*, const String& text, con
             switch (InspectorPageAgent::cachedResourceType(*cachedResource)) {
             case InspectorPageAgent::StylesheetResource:
             case InspectorPageAgent::ScriptResource:
-                if (decodeCachedResource(cachedResource, &content)) {
+                if (cachedResourceContent(cachedResource, false, &content)) {
                     int matchesCount = countRegularExpressionMatches(regex, content);
                     if (matchesCount)
                         result->pushValue(buildObjectForSearchMatch(frameId(frame), cachedResource->url(), matchesCount));
@@ -503,7 +494,7 @@ void InspectorPageAgent::searchInResources(ErrorString*, const String& text, con
                 break;
             }
         }
-        if (decodeMainResource(frame, &content)) {
+        if (mainResourceContent(frame, false, &content)) {
             int matchesCount = countRegularExpressionMatches(regex, content);
             if (matchesCount)
                 result->pushValue(buildObjectForSearchMatch(frameId(frame), frame->document()->url(), matchesCount));

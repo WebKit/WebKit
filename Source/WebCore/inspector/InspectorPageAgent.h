@@ -54,6 +54,7 @@ class InstrumentingAgents;
 class KURL;
 class Page;
 class RegularExpression;
+class SharedBuffer;
 
 typedef String ErrorString;
 
@@ -74,8 +75,8 @@ public:
 
     static PassOwnPtr<InspectorPageAgent> create(InstrumentingAgents*, Page*, InjectedScriptManager*);
 
-    static void resourceContent(ErrorString*, Frame*, const KURL&, String* result);
-    static void resourceContentBase64(ErrorString*, Frame*, const KURL&, String* result);
+    static bool sharedBufferContent(PassRefPtr<SharedBuffer>, const String& textEncodingName, bool withBase64Encode, String* result);
+    static void resourceContent(ErrorString*, Frame*, const KURL&, bool base64Encode, String* result);
 
     static PassRefPtr<SharedBuffer> resourceData(Frame*, const KURL&, String* textEncodingName);
     static CachedResource* cachedResource(Frame*, const KURL&);

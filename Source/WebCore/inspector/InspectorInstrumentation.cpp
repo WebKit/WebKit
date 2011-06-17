@@ -490,20 +490,20 @@ void InspectorInstrumentation::didReceiveContentLengthImpl(InstrumentingAgents* 
         resourceAgent->didReceiveContentLength(identifier, dataLength, encodedDataLength);
 }
 
-void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, double finishTime)
+void InspectorInstrumentation::didFinishLoadingImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, DocumentLoader* loader, double finishTime)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didFinishLoadingResource(identifier, false, finishTime);
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
-        resourceAgent->didFinishLoading(identifier, finishTime);
+        resourceAgent->didFinishLoading(identifier, loader, finishTime);
 }
 
-void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, const ResourceError& error)
+void InspectorInstrumentation::didFailLoadingImpl(InstrumentingAgents* instrumentingAgents, unsigned long identifier, DocumentLoader* loader, const ResourceError& error)
 {
     if (InspectorTimelineAgent* timelineAgent = instrumentingAgents->inspectorTimelineAgent())
         timelineAgent->didFinishLoadingResource(identifier, true, 0);
     if (InspectorResourceAgent* resourceAgent = instrumentingAgents->inspectorResourceAgent())
-        resourceAgent->didFailLoading(identifier, error);
+        resourceAgent->didFailLoading(identifier, loader, error);
     if (InspectorConsoleAgent* consoleAgent = instrumentingAgents->inspectorConsoleAgent())
         consoleAgent->didFailLoading(identifier, error); // This should come AFTER resource notification, front-end relies on this.
 }

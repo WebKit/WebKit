@@ -43,8 +43,8 @@ NetworkResourcesData::ResourceData::ResourceData(unsigned long identifier, const
     : m_identifier(identifier)
     , m_loaderId(loaderId)
     , m_hasContent(false)
-    , m_isXHR(false)
     , m_isContentPurged(false)
+    , m_type(InspectorPageAgent::OtherResource)
 {
 }
 
@@ -94,12 +94,20 @@ void NetworkResourcesData::responseReceived(unsigned long identifier, const Stri
     resourceData->setUrl(url);
 }
 
-void NetworkResourcesData::didReceiveXHRResponse(unsigned long identifier)
+void NetworkResourcesData::setResourceType(unsigned long identifier, InspectorPageAgent::ResourceType type)
 {
     ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
     if (!resourceData)
         return;
-    resourceData->setIsXHR(true);
+    resourceData->setType(type);
+}
+
+InspectorPageAgent::ResourceType NetworkResourcesData::resourceType(unsigned long identifier)
+{
+    ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
+    if (!resourceData)
+        return InspectorPageAgent::OtherResource;
+    return resourceData->type();
 }
 
 void NetworkResourcesData::addResourceContent(unsigned long identifier, const String& content)
@@ -117,12 +125,13 @@ void NetworkResourcesData::addResourceContent(unsigned long identifier, const St
     }
 }
 
-bool NetworkResourcesData::isXHR(unsigned long identifier)
+void NetworkResourcesData::addResourceSharedBuffer(unsigned long identifier, PassRefPtr<SharedBuffer> buffer, const String& textEncodingName)
 {
     ResourceData* resourceData = m_identifierToResourceDataMap.get(identifier);
     if (!resourceData)
-        return false;
-    return resourceData->isXHR();
+        return;
+    resourceData->setBuffer(buffer);
+    resourceData->setTextEncodingName(textEncodingName);
 }
 
 NetworkResourcesData::ResourceData* NetworkResourcesData::data(unsigned long identifier)

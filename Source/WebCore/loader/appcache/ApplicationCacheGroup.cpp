@@ -590,7 +590,7 @@ void ApplicationCacheGroup::didReceiveData(ResourceHandle* handle, const char* d
 void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double finishTime)
 {
 #if ENABLE(INSPECTOR)
-    InspectorInstrumentation::didFinishLoading(m_frame, m_currentResourceIdentifier, finishTime);
+    InspectorInstrumentation::didFinishLoading(m_frame, m_frame->loader()->documentLoader(), m_currentResourceIdentifier, finishTime);
 #endif
 
     if (handle == m_manifestHandle) {
@@ -631,7 +631,7 @@ void ApplicationCacheGroup::didFinishLoading(ResourceHandle* handle, double fini
 void ApplicationCacheGroup::didFail(ResourceHandle* handle, const ResourceError& error)
 {
 #if ENABLE(INSPECTOR)
-    InspectorInstrumentation::didFailLoading(m_frame, m_currentResourceIdentifier, error);
+    InspectorInstrumentation::didFailLoading(m_frame, m_frame->loader()->documentLoader(), m_currentResourceIdentifier, error);
 #endif
 
     if (handle == m_manifestHandle) {
