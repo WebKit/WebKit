@@ -1,3 +1,30 @@
+2011-06-17  Leandro Pereira  <leandro@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Add Evas-based ImageDiff implementation.
+        https://bugs.webkit.org/show_bug.cgi?id=61942
+
+        Build system changes will be performed as soon as the complete
+        DumpRenderTree implementation is upstreamed.
+
+        * DumpRenderTree/efl/ImageDiff.cpp: Added.
+        (pixelFromImageData):
+        (differenceImageFromDifferenceBuffer):
+        (computeDistanceBetweenPixelComponents):
+        (calculatePixelDifference):
+        (calculateDifference):
+        (getTemporaryFile):
+        (printImage):
+        (printImageDifferences):
+        (resizeEcoreEvasIfNeeded):
+        (readImageFromStdin):
+        (parseCommandLineOptions):
+        (shutdownEfl):
+        (abortWithErrorMessage):
+        (initEfl):
+        (main):
+
 2011-06-17  Tony Chang  <tony@chromium.org>
 
         Reviewed by Dirk Pranke.
