@@ -98,6 +98,7 @@ void ArgumentCoder<ResourceResponse>::encode(ArgumentEncoder* encoder, const Res
     encoder->encode(resourceResponse.url().string());
     encoder->encode(static_cast<int32_t>(resourceResponse.httpStatusCode()));
 
+    const HTTPHeaderMap& headers = resourceResponse.httpHeaderFields();
     encoder->encode(headers);
 
     encoder->encode(static_cast<uint32_t>(resourceResponse.soupMessageFlags()));
