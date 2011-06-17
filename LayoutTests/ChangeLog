@@ -1,3 +1,17 @@
+2011-06-16  MORITA Hajime <morrita@google.com>
+
+        Unreviewed expectations update for:
+        - fast/speech/input-appearance-numberandspeech.html
+        and just unskips them because they pass always.
+        - input-appearance-spinbutton-disabled-readonly.html
+        - input-appearance-spinbutton-layer.html
+        - input-appearance-spinbutton-visibility.html
+
+        * platform/chromium-mac-leopard/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.png:
+        * platform/chromium-mac/fast/speech/input-appearance-numberandspeech-expected.txt:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-16  MORITA Hajime  <morrita@google.com>
 
         Unreviewed expectations update for

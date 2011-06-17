@@ -3179,10 +3179,6 @@ BUGWK57754 WIN DEBUG : inspector/debugger/xhr-breakpoints.html = CRASH PASS TIME
 BUGCR78326 : fast/filesystem/filesystem-reference.html = CRASH PASS
 BUGCR78326 WIN : fast/filesystem/filesystem-uri-origin.html = CRASH PASS
 
-BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-disabled-readonly.html = TEXT PASS
-BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-layer.html = IMAGE+TEXT TEXT PASS
-BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-visibility.html = TEXT PASS
-
 // We need to skip Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
 // http://trac.webkit.org/changeset/83126
 BUGWK58008 SNOWLEOPARD : fast/dom/52776.html = IMAGE+TEXT
@@ -3365,9 +3361,6 @@ BUGCR79241 : http/tests/misc/favicon-loads-with-icon-loading-override.html = TEX
 
 // Regression caused by r83669. Seems to be V8 related.
 BUGCR79259 : fast/js/array-proto-func-property-getter-except.html = TEXT
-
-// Need rebaselining
-
 
 // Flaky, perhaps Skia related.
 BUGCR79851 LINUX : fast/table/frame-and-rules.html = PASS TEXT
@@ -3760,7 +3753,6 @@ BUGCR82891 LINUX : fast/speech/input-appearance-searchandspeech.html = FAIL PASS
 BUGCR82891 LINUX : fast/speech/input-appearance-speechbutton.html = IMAGE+TEXT PASS
 BUGWK59208 WIN MAC : fast/speech/input-appearance-searchandspeech.html = FAIL
 // Need rebaseline.
-BUGWK61845 MAC : fast/speech/input-appearance-numberandspeech.html = FAIL
 
 // Fails on windows - added in r86693
 BUGCR82950 WIN : http/tests/navigation/post-301-response.html = TEXT
