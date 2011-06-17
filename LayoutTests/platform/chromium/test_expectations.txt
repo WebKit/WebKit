@@ -3965,3 +3965,5 @@ BUGRNIWA LEOPARD : editing/selection/vertical-rl-rtl-extend-line-backward-br.htm
 BUGRNIWA LEOPARD : editing/selection/vertical-rl-rtl-extend-line-backward-p.html = IMAGE
 BUGRNIWA LEOPARD : editing/selection/vertical-rl-rtl-extend-line-forward-br.html = IMAGE
 BUGRNIWA LEOPARD : editing/selection/vertical-rl-rtl-extend-line-forward-p.html = IMAGE
+
+BUGWK62858 LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE

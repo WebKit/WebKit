@@ -1,3 +1,9 @@
+2011-06-17  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, update Chromium test expectation for fast/dom/HTMLMeterElement/meter-writing-mode.html.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-17  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][WK2] fast/frames/flattening tests fail intermittently
