@@ -184,7 +184,7 @@
 		14B8EC720A5652090062BE54 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6560A4CF04B3B3E7008AE952 /* CoreFoundation.framework */; };
 		14BA78F113AAB88F005B7C2C /* SlotVisitor.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BA78F013AAB88F005B7C2C /* SlotVisitor.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14BA7A9713AADFF8005B7C2C /* Heap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BA7A9513AADFF8005B7C2C /* Heap.cpp */; };
-		14BA7A9813AADFF8005B7C2C /* Heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BA7A9613AADFF8005B7C2C /* Heap.h */; };
+		14BA7A9813AADFF8005B7C2C /* Heap.h in Headers */ = {isa = PBXBuildFile; fileRef = 14BA7A9613AADFF8005B7C2C /* Heap.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		14BD59C50A3E8F9F00BAF59C /* JavaScriptCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 932F5BD90822A1C700736975 /* JavaScriptCore.framework */; };
 		14BD5A300A3E91F600BAF59C /* JSContextRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */; };
 		14BD5A320A3E91F600BAF59C /* JSValueRef.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 14BD5A2B0A3E91F600BAF59C /* JSValueRef.cpp */; };
