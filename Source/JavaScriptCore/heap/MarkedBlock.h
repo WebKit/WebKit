@@ -42,13 +42,34 @@ namespace JSC {
     class MarkedBlock : public DoublyLinkedListNode<MarkedBlock> {
         friend class WTF::DoublyLinkedListNode<MarkedBlock>;
     public:
+        static const size_t atomSize = sizeof(double); // Ensures natural alignment for all built-in types.
+        static const size_t blockSize = 16 * KB;
+
+        static const size_t atomsPerBlock = blockSize / atomSize; // ~1.5% overhead
+        static const size_t ownerSetsPerBlock = 8; // ~2% overhead.
+
         struct VoidFunctor {
             typedef void ReturnType;
             void returnValue() { }
         };
 
-        static const size_t atomSize = sizeof(double); // Ensures natural alignment for all built-in types.
-        static const size_t blockSize = 16 * KB;
+        class OwnerSet {
+        public:
+            OwnerSet();
+            
+            void add(const JSCell*);
+            void clear();
+
+            size_t size();
+            bool didOverflow();
+            
+            const JSCell** owners();
+
+        private:
+            static const size_t capacity = 5;
+            unsigned char m_size;
+            const JSCell* m_owners[capacity];
+        };
 
         static MarkedBlock* create(Heap*, size_t cellSize);
         static void destroy(MarkedBlock*);
@@ -76,31 +97,33 @@ namespace JSC {
         size_t size();
         size_t capacity();
 
-        size_t atomNumber(const void*);
         bool isMarked(const void*);
         bool testAndSetMarked(const void*);
         bool testAndClearMarked(const void*);
         void setMarked(const void*);
-        
+
+        void addOldSpaceOwner(const JSCell* owner, const JSCell*);
+
         template <typename Functor> void forEachCell(Functor&);
 
     private:
         static const size_t blockMask = ~(blockSize - 1); // blockSize must be a power of two.
-
         static const size_t atomMask = ~(atomSize - 1); // atomSize must be a power of two.
-        
-        static const size_t atomsPerBlock = blockSize / atomSize;
 
         typedef char Atom[atomSize];
 
         MarkedBlock(const PageAllocationAligned&, Heap*, size_t cellSize);
         Atom* atoms();
 
+        size_t atomNumber(const void*);
+        size_t ownerSetNumber(const JSCell*);
+
         size_t m_nextAtom;
         size_t m_endAtom; // This is a fuzzy end. Always test for < m_endAtom.
         size_t m_atomsPerCell;
         WTF::Bitmap<blockSize / atomSize> m_marks;
         bool m_inNewSpace;
+        OwnerSet m_ownerSets[ownerSetsPerBlock];
         PageAllocationAligned m_allocation;
         Heap* m_heap;
         MarkedBlock* m_prev;
@@ -119,12 +142,12 @@ namespace JSC {
 
     inline bool MarkedBlock::isAtomAligned(const void* p)
     {
-        return !((intptr_t)(p) & ~atomMask);
+        return !(reinterpret_cast<Bits>(p) & ~atomMask);
     }
 
     inline MarkedBlock* MarkedBlock::blockFor(const void* p)
     {
-        return reinterpret_cast<MarkedBlock*>(reinterpret_cast<uintptr_t>(p) & blockMask);
+        return reinterpret_cast<MarkedBlock*>(reinterpret_cast<Bits>(p) & blockMask);
     }
 
     inline Heap* MarkedBlock::heap() const
@@ -181,7 +204,7 @@ namespace JSC {
 
     inline size_t MarkedBlock::atomNumber(const void* p)
     {
-        return (reinterpret_cast<uintptr_t>(p) - reinterpret_cast<uintptr_t>(this)) / atomSize;
+        return (reinterpret_cast<Bits>(p) - reinterpret_cast<Bits>(this)) / atomSize;
     }
 
     inline bool MarkedBlock::isMarked(const void* p)
@@ -227,7 +250,52 @@ namespace JSC {
 
         return 0;
     }
-    
+
+    inline size_t MarkedBlock::ownerSetNumber(const JSCell* cell)
+    {
+        return (reinterpret_cast<Bits>(cell) - reinterpret_cast<Bits>(this)) * ownerSetsPerBlock / blockSize;
+    }
+
+    inline void MarkedBlock::addOldSpaceOwner(const JSCell* owner, const JSCell* cell)
+    {
+        OwnerSet& ownerSet = m_ownerSets[ownerSetNumber(cell)];
+        ownerSet.add(owner);
+    }
+
+    inline MarkedBlock::OwnerSet::OwnerSet()
+        : m_size(0)
+    {
+    }
+
+    inline void MarkedBlock::OwnerSet::add(const JSCell* owner)
+    {
+        if (m_size < capacity) {
+            m_owners[m_size++] = owner;
+            return;
+        }
+        m_size = capacity + 1; // Signals overflow.
+    }
+
+    inline void MarkedBlock::OwnerSet::clear()
+    {
+        m_size = 0;
+    }
+
+    inline size_t MarkedBlock::OwnerSet::size()
+    {
+        return m_size;
+    }
+
+    inline bool MarkedBlock::OwnerSet::didOverflow()
+    {
+        return m_size > capacity;
+    }
+
+    inline const JSCell** MarkedBlock::OwnerSet::owners()
+    {
+        return m_owners;
+    }
+
 } // namespace JSC
 
 namespace WTF {

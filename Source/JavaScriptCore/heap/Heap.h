@@ -141,6 +141,8 @@ namespace JSC {
 
         RegisterFile& registerFile();
 
+        static void writeBarrierSlowCase(const JSCell*, JSCell*);
+
         OperationInProgress m_operationInProgress;
         NewSpace m_newSpace;
         MarkedBlockSet m_blocks;
@@ -198,13 +200,33 @@ namespace JSC {
         MarkedBlock::blockFor(cell)->setMarked(cell);
     }
 
-    inline void Heap::writeBarrier(const JSCell*, JSValue)
+#if ENABLE(GGC)
+    inline void Heap::writeBarrier(const JSCell* owner, JSCell* cell)
     {
+        if (MarkedBlock::blockFor(owner)->inNewSpace())
+            return;
+        writeBarrierSlowCase(owner, cell);
     }
+
+    inline void Heap::writeBarrier(const JSCell* owner, JSValue value)
+    {
+        if (!value)
+            return;
+        if (!value.isCell())
+            return;
+        writeBarrier(owner, value.asCell());
+    }
+
+#else
 
     inline void Heap::writeBarrier(const JSCell*, JSCell*)
     {
     }
+
+    inline void Heap::writeBarrier(const JSCell*, JSValue)
+    {
+    }
+#endif
 
     inline void Heap::reportExtraMemoryCost(size_t cost)
     {

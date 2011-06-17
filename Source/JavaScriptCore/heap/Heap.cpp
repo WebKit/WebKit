@@ -605,4 +605,19 @@ void Heap::shrink()
     freeBlocks(forEachBlock(takeIfEmpty));
 }
 
+#if ENABLE(GGC)
+void Heap::writeBarrierSlowCase(const JSCell* owner, JSCell* cell)
+{
+    if (!cell)
+        return;
+    MarkedBlock::blockFor(cell)->addOldSpaceOwner(owner, cell);
+}
+
+#else
+
+void Heap::writeBarrierSlowCase(const JSCell*, JSCell*)
+{
+}
+#endif
+
 } // namespace JSC

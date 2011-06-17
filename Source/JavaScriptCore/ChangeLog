@@ -1,3 +1,33 @@
+2011-06-16  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Added some write barrier action, compiled out by default
+        https://bugs.webkit.org/show_bug.cgi?id=62844
+
+        * JavaScriptCore.exp: Build!
+
+        * JavaScriptCore.xcodeproj/project.pbxproj: Fixed an incremental build
+        issue with Heap.cpp.
+
+        * heap/Heap.cpp:
+        (JSC::Heap::writeBarrierSlowCase):
+        * heap/Heap.h:
+        (JSC::Heap::writeBarrier):
+        * heap/MarkedBlock.h:
+        (JSC::MarkedBlock::isAtomAligned):
+        (JSC::MarkedBlock::blockFor):
+        (JSC::MarkedBlock::atomNumber):
+        (JSC::MarkedBlock::ownerSetNumber):
+        (JSC::MarkedBlock::addOldSpaceOwner):
+        (JSC::MarkedBlock::OwnerSet::OwnerSet):
+        (JSC::MarkedBlock::OwnerSet::add):
+        (JSC::MarkedBlock::OwnerSet::clear):
+        (JSC::MarkedBlock::OwnerSet::size):
+        (JSC::MarkedBlock::OwnerSet::didOverflow):
+        (JSC::MarkedBlock::OwnerSet::owners): Added a basic write barrier that
+        tracks owners for regions within blocks. Currently unused.
+
 2011-06-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
 
         Reviewed by Eric Seidel.
