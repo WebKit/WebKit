@@ -1,3 +1,9 @@
+2011-06-17  Darin Adler  <darin@apple.com>
+
+        Fix clang build.
+
+        * loader/LinkLoader.h: Use struct, not class, to forward-declare struct.
+
 2011-06-17  Chris Evans  <cevans@chromium.org>
 
         Reviewed by Adam Barth.

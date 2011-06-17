@@ -39,7 +39,7 @@
 
 namespace WebCore {
 
-class LinkRelAttribute;
+struct LinkRelAttribute;
 
 // The LinkLoader can load link rel types icon, dns-prefetch, subresource, prefetch and prerender.
 class LinkLoader : public CachedResourceClient {
