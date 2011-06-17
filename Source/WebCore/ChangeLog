@@ -1,3 +1,10 @@
+2011-06-16  Gabor Loki  <loki@webkit.org>
+
+        [Qt] Unreviewed, build fix after r89118.
+
+        * dom/XMLDocumentParserQt.cpp:
+        (WebCore::XMLDocumentParser::initializeParserContext):
+
 2011-06-16  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, rolling out r89073.

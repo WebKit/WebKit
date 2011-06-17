@@ -202,7 +202,7 @@ void XMLDocumentParser::doWrite(const String& parseString)
     return;
 }
 
-void XMLDocumentParser::initializeParserContext(const char*)
+void XMLDocumentParser::initializeParserContext(const CString&)
 {
     DocumentParser::startParsing();
     m_sawError = false;
