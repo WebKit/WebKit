@@ -220,6 +220,24 @@ void JIT::emit_op_put_by_val(Instruction* currentInstruction)
     end.link(this);
 }
 
+void JIT::emitSlow_op_put_by_val(Instruction* currentInstruction, Vector<SlowCaseEntry>::iterator& iter)
+{
+    unsigned base = currentInstruction[1].u.operand;
+    unsigned property = currentInstruction[2].u.operand;
+    unsigned value = currentInstruction[3].u.operand;
+
+    linkSlowCase(iter); // property int32 check
+    linkSlowCaseIfNotJSCell(iter, base); // base cell check
+    linkSlowCase(iter); // base not array check
+    linkSlowCase(iter); // in vector check
+
+    JITStubCall stubPutByValCall(this, cti_op_put_by_val);
+    stubPutByValCall.addArgument(regT0);
+    stubPutByValCall.addArgument(property, regT2);
+    stubPutByValCall.addArgument(value, regT2);
+    stubPutByValCall.call();
+}
+
 void JIT::emit_op_put_by_index(Instruction* currentInstruction)
 {
     JITStubCall stubCall(this, cti_op_put_by_index);
@@ -943,6 +961,68 @@ void JIT::privateCompileGetByIdChain(StructureStubInfo* stubInfo, Structure* str
 
     // We don't want to patch more than once - in future go to cti_op_put_by_id_generic.
     repatchBuffer.relinkCallerToFunction(returnAddress, FunctionPtr(cti_op_get_by_id_proto_list));
+}
+
+void JIT::emit_op_get_scoped_var(Instruction* currentInstruction)
+{
+    int skip = currentInstruction[3].u.operand;
+
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT0);
+    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        Jump activationNotCreated;
+        if (checkTopLevel)
+            activationNotCreated = branchTestPtr(Zero, addressFor(m_codeBlock->activationRegister()));
+        loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, next)), regT0);
+        activationNotCreated.link(this);
+    }
+    while (skip--)
+        loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, next)), regT0);
+
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(ScopeChainNode, object)), regT0);
+    loadPtr(Address(regT0, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT0);
+    loadPtr(Address(regT0, currentInstruction[2].u.operand * sizeof(Register)), regT0);
+    emitPutVirtualRegister(currentInstruction[1].u.operand);
+}
+
+void JIT::emit_op_put_scoped_var(Instruction* currentInstruction)
+{
+    int skip = currentInstruction[2].u.operand;
+
+    emitGetFromCallFrameHeaderPtr(RegisterFile::ScopeChain, regT1);
+    emitGetVirtualRegister(currentInstruction[3].u.operand, regT0);
+    bool checkTopLevel = m_codeBlock->codeType() == FunctionCode && m_codeBlock->needsFullScopeChain();
+    ASSERT(skip || !checkTopLevel);
+    if (checkTopLevel && skip--) {
+        Jump activationNotCreated;
+        if (checkTopLevel)
+            activationNotCreated = branchTestPtr(Zero, addressFor(m_codeBlock->activationRegister()));
+        loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, next)), regT1);
+        activationNotCreated.link(this);
+    }
+    while (skip--)
+        loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, next)), regT1);
+
+    loadPtr(Address(regT1, OBJECT_OFFSETOF(ScopeChainNode, object)), regT1);
+    loadPtr(Address(regT1, OBJECT_OFFSETOF(JSVariableObject, m_registers)), regT1);
+    storePtr(regT0, Address(regT1, currentInstruction[1].u.operand * sizeof(Register)));
+}
+
+void JIT::emit_op_get_global_var(Instruction* currentInstruction)
+{
+    JSVariableObject* globalObject = m_codeBlock->globalObject();
+    loadPtr(&globalObject->m_registers, regT0);
+    loadPtr(Address(regT0, currentInstruction[2].u.operand * sizeof(Register)), regT0);
+    emitPutVirtualRegister(currentInstruction[1].u.operand);
+}
+
+void JIT::emit_op_put_global_var(Instruction* currentInstruction)
+{
+    emitGetVirtualRegister(currentInstruction[2].u.operand, regT1);
+    JSVariableObject* globalObject = m_codeBlock->globalObject();
+    loadPtr(&globalObject->m_registers, regT0);
+    storePtr(regT1, Address(regT0, currentInstruction[1].u.operand * sizeof(Register)));
 }
 
 #endif // USE(JSVALUE64)

@@ -1,3 +1,24 @@
+2011-06-17  Geoffrey Garen  <ggaren@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        Moved some property access JIT code into property access JIT files
+        https://bugs.webkit.org/show_bug.cgi?id=62906
+
+        * jit/JITOpcodes.cpp:
+        * jit/JITOpcodes32_64.cpp:
+        * jit/JITPropertyAccess.cpp:
+        (JSC::JIT::emitSlow_op_put_by_val):
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_get_global_var):
+        (JSC::JIT::emit_op_put_global_var):
+        * jit/JITPropertyAccess32_64.cpp:
+        (JSC::JIT::emit_op_get_scoped_var):
+        (JSC::JIT::emit_op_put_scoped_var):
+        (JSC::JIT::emit_op_get_global_var):
+        (JSC::JIT::emit_op_put_global_var):
+
 2011-06-17  Anders Carlsson  <andersca@apple.com>
 
         Build fix.
