@@ -471,7 +471,11 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
         }
 
         ScrollAnimatorChromiumMac* scrollAnimator = static_cast<ScrollAnimatorChromiumMac*>(scrollbar->scrollableArea()->scrollAnimator());
+#if !USE(SKIA)
         scrollAnimator->setIsDrawingIntoLayer(context->isCALayerContext());
+#else
+        scrollAnimator->setIsDrawingIntoLayer(false);
+#endif
 
         wkSetScrollbarPainterKnobStyle(painterForScrollbar(scrollbar), toScrollbarPainterKnobStyle(scrollbar->scrollableArea()->recommendedScrollbarOverlayStyle()));
 

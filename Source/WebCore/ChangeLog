@@ -1,3 +1,18 @@
+2011-06-17  Cary Clark  <caryclark@google.com>
+
+        Reviewed by Mihai Parparita.
+
+        Exclude isCALayerContext check if building Chrome to use Skia on Mac.
+        https://bugs.webkit.org/show_bug.cgi?id=62859
+
+        No new tests. This change does not affect existing functionality.
+
+        * platform/chromium/ScrollbarThemeChromiumMac.mm:
+        (WebCore::ScrollbarThemeChromiumMac::paint):
+        Add a conditional to always set drawing into layer to false if
+        Skia is the WebKit rendering engine. Once USE(SKIA) is enabled,
+        this condition can be removed.
+
 2011-06-17  Gavin Peters  <gavinp@chromium.org>
 
         Reviewed by Adam Barth.
