@@ -1,3 +1,23 @@
+2011-06-16  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Another Windows rebaseline after r89091.
+
+        The problem was that my original rebaseline for Windows overrode mac's expected results.
+        This rebaseline should work.
+
+        * platform/win/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.txt: Added.
+        * platform/win/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.txt: Added.
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.txt: Added.
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.txt: Added.
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.txt: Added.
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.txt: Added.
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.txt: Added.
+        * platform/win/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.txt: Added.
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.txt: Added.
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.txt: Added.
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.txt: Added.
+        * platform/win/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.txt: Added.
+
 2011-06-16  Gavin Barraclough  <barraclough@apple.com>
 
         Reviewed by Oliver Hunt.
