@@ -1,5 +1,14 @@
 2011-06-16  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, rolling out r89107.
+        http://trac.webkit.org/changeset/89107
+
+        The test already had correct expectation.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-16  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed, add Chromium test expectation for fast/js/multiline-comment-newline.html.
 
         * platform/chromium/test_expectations.txt:
