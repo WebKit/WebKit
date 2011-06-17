@@ -1,3 +1,29 @@
+2011-06-17  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Chromium Mac rebaselines for r89091.
+
+        * platform/chromium-mac-leopard/editing/selection/vertical-lr-ltr-extend-line-backward-br-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/vertical-lr-ltr-extend-line-forward-br-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-ltr-extend-line-backward-br-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-ltr-extend-line-backward-p-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-ltr-extend-line-forward-br-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-ltr-extend-line-forward-p-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-rtl-extend-line-backward-br-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-rtl-extend-line-backward-p-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-rtl-extend-line-forward-br-expected.png: Added.
+        * platform/chromium-mac-leopard/editing/selection/vertical-rl-rtl-extend-line-forward-p-expected.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-lr-ltr-extend-line-backward-br-actual.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-lr-ltr-extend-line-forward-br-actual.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-backward-br-actual.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-backward-p-actual.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-backward-wrap-actual.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-br-actual.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-p-actual.png: Added.
+        * platform/chromium-mac/editing/selection/vertical-rl-ltr-extend-line-forward-wrap-actual.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-17  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Anders Carlsson.

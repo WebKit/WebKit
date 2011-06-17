@@ -3953,17 +3953,4 @@ WONTFIX LINUX DEBUG GPU : platform/chromium/compositing/layout-width-change.html
 // Has been flaky/crashy for a while
 BUGCR86359 WIN : fast/dom/DeviceOrientation/add-listener-from-callback.html = CRASH PASS
 
-BUGRNIWA MAC : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE
-BUGRNIWA MAC : editing/selection/vertical-lr-ltr-extend-line-forward-br.html = IMAGE
-BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-backward-br.html = IMAGE
-BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-backward-p.html = IMAGE
-BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html = IMAGE
-BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = IMAGE
-BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IMAGE
-BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE
-BUGRNIWA LEOPARD : editing/selection/vertical-rl-rtl-extend-line-backward-br.html = IMAGE
-BUGRNIWA LEOPARD : editing/selection/vertical-rl-rtl-extend-line-backward-p.html = IMAGE
-BUGRNIWA LEOPARD : editing/selection/vertical-rl-rtl-extend-line-forward-br.html = IMAGE
-BUGRNIWA LEOPARD : editing/selection/vertical-rl-rtl-extend-line-forward-p.html = IMAGE
-
 BUGWK62858 LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE
