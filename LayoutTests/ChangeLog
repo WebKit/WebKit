@@ -1,3 +1,9 @@
+2011-06-16  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, mark more Chromium test failures for tests added in r89091.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-16  Kent Tamura  <tkent@chromium.org>
 
         Reviewed by Eric Seidel.
