@@ -815,8 +815,8 @@
 		14B7234012D7D0DA003BD5ED /* MachineStackMarker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MachineStackMarker.h; sourceTree = "<group>"; };
 		14B8ECA60A5653980062BE54 /* JavaScriptCore.exp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.exports; path = JavaScriptCore.exp; sourceTree = "<group>"; tabWidth = 4; usesTabs = 0; };
 		14BA78F013AAB88F005B7C2C /* SlotVisitor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlotVisitor.h; sourceTree = "<group>"; };
-		14BA7A9513AADFF8005B7C2C /* Heap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Heap.cpp; path = ../../../webkit/Source/JavaScriptCore/heap/Heap.cpp; sourceTree = SOURCE_ROOT; };
-		14BA7A9613AADFF8005B7C2C /* Heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = Heap.h; path = ../../../webkit/Source/JavaScriptCore/heap/Heap.h; sourceTree = SOURCE_ROOT; };
+		14BA7A9513AADFF8005B7C2C /* Heap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Heap.cpp; sourceTree = "<group>"; };
+		14BA7A9613AADFF8005B7C2C /* Heap.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Heap.h; sourceTree = "<group>"; };
 		14BD59BF0A3E8F9000BAF59C /* testapi */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = testapi; sourceTree = BUILT_PRODUCTS_DIR; };
 		14BD5A290A3E91F600BAF59C /* JSContextRef.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = JSContextRef.cpp; sourceTree = "<group>"; };
 		14BD5A2A0A3E91F600BAF59C /* JSContextRef.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = JSContextRef.h; sourceTree = "<group>"; };
