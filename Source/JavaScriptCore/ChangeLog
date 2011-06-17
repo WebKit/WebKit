@@ -1,3 +1,16 @@
+2011-06-17  Raphael Kubo da Costa  <kubo@profusion.mobi>
+
+        Reviewed by Eric Seidel.
+
+        [EFL] Add some OwnPtr specializations for EFL types.
+        For now there are specializations for Ecore_Evas and Evas_Object.
+        https://bugs.webkit.org/show_bug.cgi?id=62877
+
+        * wtf/CMakeListsEfl.txt:
+        * wtf/OwnPtrCommon.h:
+        * wtf/efl/OwnPtrEfl.cpp: Added.
+        (WTF::deleteOwnedPtr):
+
 2011-06-17  Joone Hur  <joone.hur@collabora.co.uk>
 
         Reviewed by Martin Robinson.

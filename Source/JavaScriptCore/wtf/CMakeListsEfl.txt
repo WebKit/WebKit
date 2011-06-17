@@ -8,6 +8,7 @@ ENDIF()
 
 LIST(APPEND WTF_SOURCES
     efl/MainThreadEfl.cpp
+    efl/OwnPtrEfl.cpp
 
     OSAllocatorPosix.cpp
     ThreadIdentifierDataPthreads.cpp
@@ -39,10 +40,14 @@ LIST(APPEND WTF_LIBRARIES
 
 LIST(APPEND WTF_LINK_FLAGS
     ${ECORE_LDFLAGS}
+    ${ECORE_EVAS_LDFLAGS}
+    ${EVAS_LDFLAGS}
 )
 
 LIST(APPEND WTF_INCLUDE_DIRECTORIES
     ${ECORE_INCLUDE_DIRS}
+    ${ECORE_EVAS_INCLUDE_DIRS}
+    ${EVAS_INCLUDE_DIRS}
     ${ICU_INCLUDE_DIRS}
     ${JAVASCRIPTCORE_DIR}/wtf/unicode/
 )
