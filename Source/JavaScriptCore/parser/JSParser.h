@@ -66,6 +66,7 @@ enum JSTokenType {
     SWITCH,
     WITH,
     RESERVED,
+    RESERVED_IF_STRICT,
     THROW,
     TRY,
     CATCH,

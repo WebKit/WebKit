@@ -111,7 +111,16 @@
     macro(export) \
     macro(extends) \
     macro(import) \
-    macro(super)
+    macro(super) \
+    macro(implements) \
+    macro(interface) \
+    macro(let) \
+    macro(package) \
+    macro(private) \
+    macro(protected) \
+    macro(public) \
+    macro(static) \
+    macro(yield)
 
 namespace JSC {
 

@@ -118,7 +118,7 @@ namespace JSC {
         enum ShiftType { DoBoundsCheck, DoNotBoundsCheck };
         template <int shiftAmount, ShiftType shouldBoundsCheck> void internalShift();
         template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType parseKeyword(JSTokenData*);
-        template <bool shouldBuildIdentifiers> ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, unsigned);
+        template <bool shouldBuildIdentifiers> ALWAYS_INLINE JSTokenType parseIdentifier(JSTokenData*, unsigned, bool strictMode);
         template <bool shouldBuildStrings> ALWAYS_INLINE bool parseString(JSTokenData*, bool strictMode);
         ALWAYS_INLINE void parseHex(double& returnValue);
         ALWAYS_INLINE bool parseOctal(double& returnValue);

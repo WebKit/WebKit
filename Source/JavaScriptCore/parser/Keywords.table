@@ -1,5 +1,5 @@
 # main keywords
-@begin mainTable 41
+@begin mainTable 47
 
 # types
 null		NULLTOKEN
@@ -43,30 +43,16 @@ extends         RESERVED
 import          RESERVED
 super           RESERVED
 
-# these words are reserved for future use in the ECMA spec, but not in WinIE
-# (see http://bugs.webkit.org/show_bug.cgi?id=6179)
-# abstract      RESERVED
-# boolean       RESERVED
-# byte          RESERVED
-# char          RESERVED
-# double        RESERVED
-# final         RESERVED
-# float         RESERVED
-# goto          RESERVED
-# implements    RESERVED
-# int           RESERVED
-# interface     RESERVED
-# long          RESERVED
-# native        RESERVED
-# package       RESERVED
-# private       RESERVED
-# protected     RESERVED
-# public        RESERVED
-# short         RESERVED
-# static        RESERVED
-# synchronized  RESERVED
-# throws        RESERVED
-# transient     RESERVED
-# volatile      RESERVED
+# reserved for future use in strict code
+implements      RESERVED_IF_STRICT
+interface       RESERVED_IF_STRICT
+let             RESERVED_IF_STRICT
+package         RESERVED_IF_STRICT
+private         RESERVED_IF_STRICT
+protected       RESERVED_IF_STRICT
+public          RESERVED_IF_STRICT
+static          RESERVED_IF_STRICT
+yield           RESERVED_IF_STRICT
+
 @end
 

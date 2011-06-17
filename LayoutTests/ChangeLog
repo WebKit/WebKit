@@ -1,3 +1,20 @@
+2011-06-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=53014
+        ES5 strict mode keyword restrictions aren't implemented
+
+        The following are future restricted words is strict mode code:
+            implements, interface, let, package, private, protected, public, static, yield
+
+        * fast/js/keywords-and-reserved_words-expected.txt: Added.
+        * fast/js/keywords-and-reserved_words.html: Added.
+        * fast/js/script-tests/keywords-and-reserved_words.js: Added.
+        (isKeyword):
+        (isStrictKeyword):
+        (classifyIdentifier):
+
 2011-06-16  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, rolling out r89107.

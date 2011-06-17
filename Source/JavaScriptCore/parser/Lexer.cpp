@@ -405,12 +405,12 @@ inline void Lexer::record16(int c)
     record16(UChar(static_cast<unsigned short>(c)));
 }
 
-template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIdentifier(JSTokenData* tokenData, unsigned lexType)
+template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIdentifier(JSTokenData* tokenData, unsigned lexType, bool strictMode)
 {
     const ptrdiff_t remaining = m_codeEnd - m_code;
     if ((remaining >= maxTokenLength) && !(lexType & IgnoreReservedWords)) {
         JSTokenType keyword = parseKeyword<shouldCreateIdentifier>(tokenData);
-        if (keyword != IDENT) {
+        if (keyword != IDENT && (keyword != RESERVED_IF_STRICT || strictMode)) {
             ASSERT((!shouldCreateIdentifier) || tokenData->ident);
             return keyword;
         }
@@ -469,7 +469,10 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIde
         if (remaining < maxTokenLength) {
             const HashEntry* entry = m_keywordTable.entry(m_globalData, *ident);
             ASSERT((remaining < maxTokenLength) || !entry);
-            return entry ? static_cast<JSTokenType>(entry->lexerValue()) : IDENT;
+            if (!entry)
+                return IDENT;
+            JSTokenType token = static_cast<JSTokenType>(entry->lexerValue());
+            return (token != RESERVED_IF_STRICT) || strictMode ? token : IDENT;
         }
         return IDENT;
     }
@@ -1082,9 +1085,9 @@ inNumberAfterDecimalPoint:
         // Fall through into CharacterBackSlash.
     case CharacterBackSlash:
         if (lexType & DontBuildKeywords)
-            token = parseIdentifier<false>(tokenData, lexType);
+            token = parseIdentifier<false>(tokenData, lexType, strictMode);
         else
-            token = parseIdentifier<true>(tokenData, lexType);
+            token = parseIdentifier<true>(tokenData, lexType, strictMode);
         break;
     case CharacterLineTerminator:
         ASSERT(isLineTerminator(m_current));

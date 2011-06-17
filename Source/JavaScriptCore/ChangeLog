@@ -2,6 +2,30 @@
 
         Reviewed by Oliver Hunt.
 
+        https://bugs.webkit.org/show_bug.cgi?id=53014
+        ES5 strict mode keyword restrictions aren't implemented
+
+        The following are future restricted words is strict mode code:
+            implements, interface, let, package, private, protected, public, static, yield
+
+        * parser/JSParser.h:
+            - Add RESERVED_IF_STRICT token.
+        * parser/Keywords.table:
+            - Add new future restricted words.
+        * parser/Lexer.cpp:
+        (JSC::Lexer::parseIdentifier):
+            - Check for RESERVED_IF_STRICT; in nonstrict code this is converted to IDENT.
+        (JSC::Lexer::lex):
+            - Pass strictMode flag to parseIdentifier.
+        * parser/Lexer.h:
+            - parseIdentifier needs a strictMode flag.
+        * runtime/CommonIdentifiers.h:
+            - Add identifiers for new reserved words.
+
+2011-06-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
         https://bugs.webkit.org/show_bug.cgi?id=23611
         Multiline Javascript comments cause incorrect parsing of following script.
 
