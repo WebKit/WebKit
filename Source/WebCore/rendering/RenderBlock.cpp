@@ -262,12 +262,33 @@ void RenderBlock::styleDidChange(StyleDifference diff, const RenderStyle* oldSty
     }
 
     // After our style changed, if we lose our ability to propagate floats into next sibling
-    // blocks, then we need to mark our descendants with floats for layout and clear all floats
-    // from next sibling blocks that exist in our floating objects list. See bug 56299.
+    // blocks, then we need to find the top most parent containing that overhanging float and
+    // then mark its descendants with floats for layout and clear all floats from its next
+    // sibling blocks that exist in our floating objects list. See bug 56299 and 62875.
     bool canPropagateFloatIntoSibling = !isFloatingOrPositioned() && !avoidsFloats();
     if (diff == StyleDifferenceLayout && s_canPropagateFloatIntoSibling && !canPropagateFloatIntoSibling && hasOverhangingFloats()) {
-        markAllDescendantsWithFloatsForLayout();
-        markSiblingsWithFloatsForLayout();
+        RenderBlock* parentBlock = this;
+        FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+        FloatingObjectSetIterator end = floatingObjectSet.end();
+
+        for (RenderObject* curr = parent(); curr && !curr->isRenderView(); curr = curr->parent()) {
+            if (curr->isRenderBlock()) {
+                RenderBlock* currBlock = toRenderBlock(curr);
+
+                if (currBlock->hasOverhangingFloats()) {
+                    for (FloatingObjectSetIterator it = floatingObjectSet.begin(); it != end; ++it) {
+                        RenderBox* renderer = (*it)->renderer();
+                        if (currBlock->hasOverhangingFloat(renderer)) {
+                            parentBlock = currBlock;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+              
+        parentBlock->markAllDescendantsWithFloatsForLayout();
+        parentBlock->markSiblingsWithFloatsForLayout();
     }
 }
 
@@ -3731,6 +3752,19 @@ int RenderBlock::addOverhangingFloats(RenderBlock* child, int logicalLeftOffset,
         }
     }
     return lowestFloatLogicalBottom;
+}
+
+bool RenderBlock::hasOverhangingFloat(RenderBox* renderer)
+{
+    if (!m_floatingObjects || hasColumns() || !parent())
+        return false;
+
+    FloatingObjectSet& floatingObjectSet = m_floatingObjects->set();
+    FloatingObjectSetIterator it = floatingObjectSet.find<RenderBox*, FloatingObjectHashTranslator>(renderer);
+    if (it == floatingObjectSet.end())
+        return false;
+
+    return logicalBottomForFloat(*it) > logicalHeight();
 }
 
 void RenderBlock::addIntrudingFloats(RenderBlock* prev, int logicalLeftOffset, int logicalTopOffset)
