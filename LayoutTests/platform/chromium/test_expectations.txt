@@ -1042,6 +1042,10 @@ BUGCR10315 WIN : fast/encoding/invalid-UTF-8.html = FAIL
 // recorded will not be called.
 BUGCR24209 : fast/js/pic/cached-prototype-setter.html = FAIL
 
+// [V8] [WebKit] fast/js/multiline-comment-newline.html fails
+// WebKit Bug 23611 - Multiline Javascript comments cause incorrect parsing of following script.
+BUGCR86431 : fast/js/multiline-comment-newline.html = FAIL
+
 // We have the wrong shadow for "This".
 // It appears we're not obeying the "transparent" fill color.
 BUGCR10317 LINUX : fast/css/shadow-multiple.html = FAIL
