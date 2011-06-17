@@ -212,7 +212,7 @@ void ScriptDebugServer::stepOutOfFunction()
     continueProgram();
 }
 
-bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& newContent, String* error, ScriptValue* newCallFrames, ScriptObject* result)
+bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& newContent, bool preview, String* error, ScriptValue* newCallFrames, ScriptObject* result)
 {
     ensureDebuggerScriptCompiled();
     v8::HandleScope scope;
@@ -222,11 +222,11 @@ bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& n
         contextScope = adoptPtr(new v8::Context::Scope(v8::Debug::GetDebugContext()));
 
     v8::Handle<v8::Function> function = v8::Local<v8::Function>::Cast(m_debuggerScript.get()->Get(v8::String::New("editScriptSource")));
-    v8::Handle<v8::Value> argv[] = { v8String(sourceID), v8String(newContent) };
+    v8::Handle<v8::Value> argv[] = { v8String(sourceID), v8String(newContent), v8Boolean(preview) };
 
     v8::TryCatch tryCatch;
     tryCatch.SetVerbose(false);
-    v8::Handle<v8::Value> v8result = function->Call(m_debuggerScript.get(), 2, argv);
+    v8::Handle<v8::Value> v8result = function->Call(m_debuggerScript.get(), 3, argv);
     if (tryCatch.HasCaught()) {
         v8::Local<v8::Message> message = tryCatch.Message();
         if (!message.IsEmpty())
@@ -240,7 +240,7 @@ bool ScriptDebugServer::editScriptSource(const String& sourceID, const String& n
         *result = ScriptObject(ScriptState::current(), v8result->ToObject());
 
     // Call stack may have changed after if the edited function was on the stack.
-    if (isPaused())
+    if (!preview && isPaused())
         *newCallFrames = currentCallFrame();
     return true;
 }

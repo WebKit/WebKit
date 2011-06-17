@@ -295,10 +295,11 @@ static PassRefPtr<InspectorObject> scriptToInspectorObject(ScriptObject scriptOb
     return value->asObject();
 }
 
-void InspectorDebuggerAgent::editScriptSource(ErrorString* error, const String& sourceId, const String& newContent, RefPtr<InspectorArray>* newCallFrames, RefPtr<InspectorObject>* result)
+void InspectorDebuggerAgent::editScriptSource(ErrorString* error, const String& sourceId, const String& newContent, const bool* const preview, RefPtr<InspectorArray>* newCallFrames, RefPtr<InspectorObject>* result)
 {
+    bool previewOnly = preview && *preview;
     ScriptObject resultObject;
-    if (!scriptDebugServer().editScriptSource(sourceId, newContent, error, &m_currentCallStack, &resultObject))
+    if (!scriptDebugServer().editScriptSource(sourceId, newContent, previewOnly, error, &m_currentCallStack, &resultObject))
         return;
     *newCallFrames = currentCallFrames();
     RefPtr<InspectorObject> object = scriptToInspectorObject(resultObject);

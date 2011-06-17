@@ -1491,7 +1491,8 @@
                 "name": "editScriptSource",
                 "parameters": [
                     { "name": "sourceId", "type": "string", "description": "Id of the script to edit." },
-                    { "name": "scriptSource", "type": "string", "description": "New content of the script." }
+                    { "name": "scriptSource", "type": "string", "description": "New content of the script." },
+                    { "name": "preview", "type": "boolean", "optional": true, "description": " If true the change will not actually be applied. Preview mode may be used to get result description without actually modifying the code." }
                 ],
                 "returns": [
                     { "name": "callFrames", "type": "array", "optional": true, "items": { "$ref": "CallFrame"}, "description": "New stack trace in case editing has happened while VM was stopped." },
