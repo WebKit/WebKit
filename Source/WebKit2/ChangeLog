@@ -1,5 +1,35 @@
 2011-06-17  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Andreas Kling.
+
+        Remove WebCore:: qualifier from names in WebPageProxy.
+
+        * UIProcess/WebPageProxy.cpp:
+        (WebKit::WebPageProxy::dragEntered):
+        (WebKit::WebPageProxy::dragUpdated):
+        (WebKit::WebPageProxy::dragExited):
+        (WebKit::WebPageProxy::performDrag):
+        (WebKit::WebPageProxy::performDragControllerAction):
+        (WebKit::WebPageProxy::dragEnded):
+        (WebKit::WebPageProxy::setResizesToContentsUsingLayoutSize):
+        (WebKit::WebPageProxy::unableToImplementPolicy):
+        (WebKit::WebPageProxy::didChangeContentsSize):
+        (WebKit::WebPageProxy::didFindZoomableArea):
+        (WebKit::WebPageProxy::findZoomableAreaForPoint):
+        (WebKit::WebPageProxy::setComposition):
+        (WebKit::WebPageProxy::checkTextOfParagraph):
+        (WebKit::WebPageProxy::checkGrammarOfString):
+        (WebKit::WebPageProxy::setCursor):
+        (WebKit::WebPageProxy::computedPagesCallback):
+        (WebKit::WebPageProxy::canAuthenticateAgainstProtectionSpaceInFrame):
+        (WebKit::WebPageProxy::didReceiveAuthenticationChallenge):
+        (WebKit::WebPageProxy::showCorrectionPanel):
+        (WebKit::WebPageProxy::dismissCorrectionPanel):
+        (WebKit::WebPageProxy::dismissCorrectionPanelSoon):
+        (WebKit::WebPageProxy::recordAutocorrectionResponse):
+
+2011-06-17  Anders Carlsson  <andersca@apple.com>
+
         Reviewed by Darin Adler.
 
         Fix message generator to include headers for all types

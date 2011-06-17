@@ -769,30 +769,30 @@ void WebPageProxy::setActualVisibleContentRect(const IntRect& rect)
 }
 #endif
 
-void WebPageProxy::dragEntered(WebCore::DragData* dragData, const String& dragStorageName)
+void WebPageProxy::dragEntered(DragData* dragData, const String& dragStorageName)
 {
     SandboxExtension::Handle sandboxExtensionHandle;
     performDragControllerAction(DragControllerActionEntered, dragData, dragStorageName, sandboxExtensionHandle);
 }
 
-void WebPageProxy::dragUpdated(WebCore::DragData* dragData, const String& dragStorageName)
+void WebPageProxy::dragUpdated(DragData* dragData, const String& dragStorageName)
 {
     SandboxExtension::Handle sandboxExtensionHandle;
     performDragControllerAction(DragControllerActionUpdated, dragData, dragStorageName, sandboxExtensionHandle);
 }
 
-void WebPageProxy::dragExited(WebCore::DragData* dragData, const String& dragStorageName)
+void WebPageProxy::dragExited(DragData* dragData, const String& dragStorageName)
 {
     SandboxExtension::Handle sandboxExtensionHandle;
     performDragControllerAction(DragControllerActionExited, dragData, dragStorageName, sandboxExtensionHandle);
 }
 
-void WebPageProxy::performDrag(WebCore::DragData* dragData, const String& dragStorageName, const SandboxExtension::Handle& sandboxExtensionHandle)
+void WebPageProxy::performDrag(DragData* dragData, const String& dragStorageName, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
     performDragControllerAction(DragControllerActionPerformDrag, dragData, dragStorageName, sandboxExtensionHandle);
 }
 
-void WebPageProxy::performDragControllerAction(DragControllerAction action, WebCore::DragData* dragData, const String& dragStorageName, const SandboxExtension::Handle& sandboxExtensionHandle)
+void WebPageProxy::performDragControllerAction(DragControllerAction action, DragData* dragData, const String& dragStorageName, const SandboxExtension::Handle& sandboxExtensionHandle)
 {
     if (!isValid())
         return;
@@ -872,7 +872,7 @@ void WebPageProxy::startDragDrop(const IntPoint& imageOrigin, const IntPoint& dr
 }
 #endif
 
-void WebPageProxy::dragEnded(const WebCore::IntPoint& clientPosition, const WebCore::IntPoint& globalPosition, uint64_t operation)
+void WebPageProxy::dragEnded(const IntPoint& clientPosition, const IntPoint& globalPosition, uint64_t operation)
 {
     if (!isValid())
         return;
@@ -1360,7 +1360,7 @@ void WebPageProxy::preferencesDidChange()
 }
 
 #if ENABLE(TILED_BACKING_STORE)
-void WebPageProxy::setResizesToContentsUsingLayoutSize(const WebCore::IntSize& targetLayoutSize)
+void WebPageProxy::setResizesToContentsUsingLayoutSize(const IntSize& targetLayoutSize)
 {
     process()->send(Messages::WebPage::SetResizesToContentsUsingLayoutSize(targetLayoutSize), m_pageID);
 }
@@ -1847,7 +1847,7 @@ void WebPageProxy::decidePolicyForResponse(uint64_t frameID, const ResourceRespo
     }
 }
 
-void WebPageProxy::unableToImplementPolicy(uint64_t frameID, const WebCore::ResourceError& error, CoreIPC::ArgumentDecoder* arguments)
+void WebPageProxy::unableToImplementPolicy(uint64_t frameID, const ResourceError& error, CoreIPC::ArgumentDecoder* arguments)
 {
     RefPtr<APIObject> userData;
     WebContextUserMessageDecoder messageDecoder(userData, m_process->context());
@@ -2143,17 +2143,17 @@ void WebPageProxy::printFrame(uint64_t frameID)
 }
 
 #if PLATFORM(QT)
-void WebPageProxy::didChangeContentsSize(const WebCore::IntSize& size)
+void WebPageProxy::didChangeContentsSize(const IntSize& size)
 {
     m_pageClient->didChangeContentsSize(size);
 }
 
-void WebPageProxy::didFindZoomableArea(const WebCore::IntRect& area)
+void WebPageProxy::didFindZoomableArea(const IntRect& area)
 {
     m_pageClient->didFindZoomableArea(area);
 }
 
-void WebPageProxy::findZoomableAreaForPoint(const WebCore::IntPoint& point)
+void WebPageProxy::findZoomableAreaForPoint(const IntPoint& point)
 {
     if (!isValid())
         return;
@@ -2243,7 +2243,7 @@ void WebPageProxy::confirmComposition(const String& compositionString)
     process()->send(Messages::WebPage::ConfirmComposition(compositionString), m_pageID);
 }
 
-void WebPageProxy::setComposition(const String& compositionString, Vector<WebCore::CompositionUnderline>& underlines, int cursorPosition)
+void WebPageProxy::setComposition(const String& compositionString, Vector<CompositionUnderline>& underlines, int cursorPosition)
 {
     process()->send(Messages::WebPage::SetComposition(compositionString, underlines, cursorPosition), m_pageID);
 }
@@ -2526,12 +2526,10 @@ int64_t WebPageProxy::spellDocumentTag()
 }
 
 #if USE(UNIFIED_TEXT_CHECKING)
-
 void WebPageProxy::checkTextOfParagraph(const String& text, uint64_t checkingTypes, Vector<TextCheckingResult>& results)
 {
     results = TextChecker::checkTextOfParagraph(spellDocumentTag(), text.characters(), text.length(), checkingTypes);
 }
-
 #endif
 
 void WebPageProxy::checkSpellingOfString(const String& text, int32_t& misspellingLocation, int32_t& misspellingLength)
@@ -2539,7 +2537,7 @@ void WebPageProxy::checkSpellingOfString(const String& text, int32_t& misspellin
     TextChecker::checkSpellingOfString(spellDocumentTag(), text.characters(), text.length(), misspellingLocation, misspellingLength);
 }
 
-void WebPageProxy::checkGrammarOfString(const String& text, Vector<WebCore::GrammarDetail>& grammarDetails, int32_t& badGrammarLocation, int32_t& badGrammarLength)
+void WebPageProxy::checkGrammarOfString(const String& text, Vector<GrammarDetail>& grammarDetails, int32_t& badGrammarLocation, int32_t& badGrammarLength)
 {
     TextChecker::checkGrammarOfString(spellDocumentTag(), text.characters(), text.length(), grammarDetails, badGrammarLocation, badGrammarLength);
 }
@@ -2602,7 +2600,7 @@ void WebPageProxy::setToolTip(const String& toolTip)
     m_pageClient->toolTipChanged(oldToolTip, m_toolTip);
 }
 
-void WebPageProxy::setCursor(const WebCore::Cursor& cursor)
+void WebPageProxy::setCursor(const Cursor& cursor)
 {
     m_pageClient->setCursor(cursor);
 }
@@ -2815,7 +2813,7 @@ void WebPageProxy::scriptValueCallback(const CoreIPC::DataReference& dataReferen
     callback->performCallbackWithReturnValue(data.size() ? WebSerializedScriptValue::adopt(data).get() : 0);
 }
 
-void WebPageProxy::computedPagesCallback(const Vector<WebCore::IntRect>& pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
+void WebPageProxy::computedPagesCallback(const Vector<IntRect>& pageRects, double totalScaleFactorForPrinting, uint64_t callbackID)
 {
     RefPtr<ComputedPagesCallback> callback = m_computedPagesCallbacks.take(callbackID);
     if (!callback) {
@@ -3016,7 +3014,7 @@ void WebPageProxy::backForwardClear()
     m_backForwardList->clear();
 }
 
-void WebPageProxy::canAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, const WebCore::ProtectionSpace& coreProtectionSpace, bool& canAuthenticate)
+void WebPageProxy::canAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID, const ProtectionSpace& coreProtectionSpace, bool& canAuthenticate)
 {
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
@@ -3026,7 +3024,7 @@ void WebPageProxy::canAuthenticateAgainstProtectionSpaceInFrame(uint64_t frameID
     canAuthenticate = m_loaderClient.canAuthenticateAgainstProtectionSpaceInFrame(this, frame, protectionSpace.get());
 }
 
-void WebPageProxy::didReceiveAuthenticationChallenge(uint64_t frameID, const WebCore::AuthenticationChallenge& coreChallenge, uint64_t challengeID)
+void WebPageProxy::didReceiveAuthenticationChallenge(uint64_t frameID, const AuthenticationChallenge& coreChallenge, uint64_t challengeID)
 {
     WebFrameProxy* frame = process()->webFrame(frameID);
     MESSAGE_CHECK(frame);
@@ -3252,24 +3250,24 @@ void WebPageProxy::substitutionsPanelIsShowing(bool& isShowing)
 }
 
 #if !defined(BUILDING_ON_SNOW_LEOPARD)
-void WebPageProxy::showCorrectionPanel(int32_t panelType, const WebCore::FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
+void WebPageProxy::showCorrectionPanel(int32_t panelType, const FloatRect& boundingBoxOfReplacedString, const String& replacedString, const String& replacementString, const Vector<String>& alternativeReplacementStrings)
 {
-    m_pageClient->showCorrectionPanel((WebCore::CorrectionPanelInfo::PanelType)panelType, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
+    m_pageClient->showCorrectionPanel((CorrectionPanelInfo::PanelType)panelType, boundingBoxOfReplacedString, replacedString, replacementString, alternativeReplacementStrings);
 }
 
 void WebPageProxy::dismissCorrectionPanel(int32_t reason)
 {
-    m_pageClient->dismissCorrectionPanel((WebCore::ReasonForDismissingCorrectionPanel)reason);
+    m_pageClient->dismissCorrectionPanel((ReasonForDismissingCorrectionPanel)reason);
 }
 
 void WebPageProxy::dismissCorrectionPanelSoon(int32_t reason, String& result)
 {
-    result = m_pageClient->dismissCorrectionPanelSoon((WebCore::ReasonForDismissingCorrectionPanel)reason);
+    result = m_pageClient->dismissCorrectionPanelSoon((ReasonForDismissingCorrectionPanel)reason);
 }
 
 void WebPageProxy::recordAutocorrectionResponse(int32_t responseType, const String& replacedString, const String& replacementString)
 {
-    m_pageClient->recordAutocorrectionResponse((WebCore::EditorClient::AutocorrectionResponseType)responseType, replacedString, replacementString);
+    m_pageClient->recordAutocorrectionResponse((EditorClient::AutocorrectionResponseType)responseType, replacedString, replacementString);
 }
 #endif // !defined(BUILDING_ON_SNOW_LEOPARD)
 
