@@ -1,3 +1,16 @@
+2011-06-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Fix message generator to include headers for all types
+        https://bugs.webkit.org/show_bug.cgi?id=62870
+
+        Previously, if we found an argument coder header for a type, we'd assume
+        that that header includes the necessary headers for the type.
+
+        * Scripts/webkit2/messages.py:
+        * Scripts/webkit2/messages_unittest.py:
+
 2011-06-17  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Andreas Kling.

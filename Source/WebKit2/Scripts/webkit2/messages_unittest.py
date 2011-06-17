@@ -600,6 +600,12 @@ _expected_receiver_implementation = """/*
 #endif
 #include "WebPageMessages.h"
 #include "WebPreferencesStore.h"
+#if PLATFORM(MAC)
+#include <WebCore/KeyboardEvent.h>
+#endif
+#include <WebCore/PluginData.h>
+#include <wtf/Vector.h>
+#include <wtf/text/WTFString.h>
 
 namespace Messages {
 

@@ -456,20 +456,22 @@ def headers_for_type(type):
         return ['<wtf/Vector.h>'] + headers_for_type(element_type)
 
     special_cases = {
-        'WTF::String': '<wtf/text/WTFString.h>',
-        'WebCore::CompositionUnderline': '<WebCore/Editor.h>',
-        'WebCore::GrammarDetail': '<WebCore/TextCheckerClient.h>',
-        'WebCore::KeypressCommand': '<WebCore/KeyboardEvent.h>',
-        'WebCore::PluginInfo': '<WebCore/PluginData.h>',
-        'WebCore::TextCheckingResult': '<WebCore/TextCheckerClient.h>',
-        'WebKit::WebGestureEvent': '"WebEvent.h"',
-        'WebKit::WebKeyboardEvent': '"WebEvent.h"',
-        'WebKit::WebMouseEvent': '"WebEvent.h"',
-        'WebKit::WebTouchEvent': '"WebEvent.h"',
-        'WebKit::WebWheelEvent': '"WebEvent.h"',
+        'WTF::String': ['<wtf/text/WTFString.h>'],
+        'WebCore::CompositionUnderline': ['<WebCore/Editor.h>'],
+        'WebCore::GrammarDetail': ['<WebCore/TextCheckerClient.h>'],
+        'WebCore::KeypressCommand': ['<WebCore/KeyboardEvent.h>'],
+        'WebCore::PluginInfo': ['<WebCore/PluginData.h>'],
+        'WebCore::TextCheckingResult': ['<WebCore/TextCheckerClient.h>'],
+        'WebKit::InjectedBundleUserMessageEncoder': [],
+        'WebKit::WebContextUserMessageEncoder': [],
+        'WebKit::WebGestureEvent': ['"WebEvent.h"'],
+        'WebKit::WebKeyboardEvent': ['"WebEvent.h"'],
+        'WebKit::WebMouseEvent': ['"WebEvent.h"'],
+        'WebKit::WebTouchEvent': ['"WebEvent.h"'],
+        'WebKit::WebWheelEvent': ['"WebEvent.h"'],
     }
     if type in special_cases:
-        return [special_cases[type]]
+        return special_cases[type]
 
     # We assume that we must include a header for a type iff it has a scope
     # resolution operator (::).
@@ -507,7 +509,6 @@ def generate_message_handler(file):
                 if header not in headers:
                     headers[header] = []
                 headers[header].extend(conditions)
-            continue
 
         type_headers = headers_for_type(type)
         for header in type_headers:
@@ -525,7 +526,6 @@ def generate_message_handler(file):
                         if header not in headers:
                             headers[header] = []
                         headers[header].append(message.condition)
-                    continue
 
                 type_headers = headers_for_type(type)
                 for header in type_headers:
