@@ -263,6 +263,11 @@ void InsertParagraphSeparatorCommand::doApply()
 
         if (isFirstInBlock && !nestNewBlock)
             refNode = startBlock;
+        else if (isFirstInBlock && nestNewBlock) {
+            // startBlock should always have children, otherwise isLastInBlock would be true and it's handled above.
+            ASSERT(startBlock->firstChild());
+            refNode = startBlock->firstChild();
+        }
         else if (insertionPosition.deprecatedNode() == startBlock && nestNewBlock) {
             refNode = startBlock->childNode(insertionPosition.deprecatedEditingOffset());
             ASSERT(refNode); // must be true or we'd be in the end of block case

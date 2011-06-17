@@ -1,3 +1,15 @@
+2011-06-17  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
+        div can be a child of span on InsertParagraph
+        https://bugs.webkit.org/show_bug.cgi?id=62687
+
+        Update layout test results with new code to prevent div inside of span.
+
+        * editing/inserting/return-key-span-start-expected.txt: The new result is the correct behavior.
+        * editing/inserting/return-with-object-element-expected.txt: An extra space has been added before the newline.
+
 2011-06-17  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, update Chromium test expectation for fast/dom/HTMLMeterElement/meter-writing-mode.html.
