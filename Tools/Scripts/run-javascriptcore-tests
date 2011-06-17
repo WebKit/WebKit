@@ -54,24 +54,34 @@ my @testsToSkip = (
 );
 
 my $jsDriverArgs = "-L " . join(" ", @testsToSkip);
-my $root; # intentionally left undefined
-my $skipBuild = 0;
-my $showHelp = 0;
+# These variables are intentionally left undefined.
+my $root;
+my $showHelp;
+my $skipBuild;
+
+my $buildJSC = 1;
 
 my $programName = basename($0);
+my $buildJSCDefault = $buildJSC ? "will check" : "will not check";
 my $usage = <<EOF;
 Usage: $programName [options] [options to pass to build system]
   --help                        Show this help message
   --jsDriver-args=              A string of arguments to pass to jsDriver.pl
   --root=                       Path to pre-built root containing jsc
+  --[no-]build                  Check (or don't check) to see if the jsc build is up-to-date (default: $buildJSCDefault)
 EOF
 
 GetOptions(
     'j|jsDriver-args=s' => \$jsDriverArgs,
     'root=s' => \$root,
+    'build!' => \$buildJSC,
     'skip-build' => \$skipBuild,
     'help' => \$showHelp
 );
+
+# FIXME: We'll remove this and the --skip-build option once we change over the buildbot configuration
+# to use --no-build. See <https://bugs.webkit.org/show_bug.cgi?id=62767> for more details.
+$buildJSC = 0 if $skipBuild;
 
 # Assume any arguments left over from GetOptions are assumed to be build arguments
 my @buildArgs = @ARGV;
@@ -86,7 +96,7 @@ if ($showHelp) {
 
 setConfigurationProductDir(Cwd::abs_path($root)) if (defined($root));
 
-if (!defined($root) && !$skipBuild) {
+if (!defined($root) && $buildJSC) {
     chdirWebKit();
 
     push(@buildArgs, argumentsForConfiguration());
