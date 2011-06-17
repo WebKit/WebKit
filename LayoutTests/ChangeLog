@@ -1,3 +1,19 @@
+2011-06-17  David Grogan  <dgrogan@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        layout test for misalignment caused by float->int rounding error
+        https://bugs.webkit.org/show_bug.cgi?id=61906
+
+        Just the layout test demonstrating the problem.  It will be a while
+        until I have cycles to play around with the fix started in
+        https://bugs.webkit.org/show_bug.cgi?id=22759.  And it'd be nice to
+        know if this were fixed for free via the ongoing systemic int->float
+        refactoring.
+
+        * css1/units/rounding-expected.txt: Added.
+        * css1/units/rounding.html: Added.
+
 2011-06-17  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed.
