@@ -2,6 +2,20 @@
 
         Reviewed by Ryosuke Niwa.
 
+        Layout tests editing/inserting/return-key-in-hidden-field.html and return-key-span-start.html don't run in webkit2
+        https://bugs.webkit.org/show_bug.cgi?id=62734
+
+        Modify tests to use execCommand(insertParagraph) instead of eventSender to inject a new line.
+
+        * editing/inserting/return-key-in-hidden-field-expected.txt:
+        * editing/inserting/return-key-in-hidden-field.html:
+        * editing/inserting/return-key-span-start.html:
+        * platform/mac-wk2/Skipped:
+
+2011-06-17  Annie Sullivan  <sullivan@chromium.org>
+
+        Reviewed by Ryosuke Niwa.
+
         div can be a child of span on InsertParagraph
         https://bugs.webkit.org/show_bug.cgi?id=62687
 

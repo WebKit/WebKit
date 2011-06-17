@@ -6,7 +6,7 @@
 <script>
 var sel = window.getSelection();
 sel.setPosition(document.getElementById("dupe"), 0);
-eventSender.keyDown("\n");
+document.execCommand('InsertParagraph', false, null)
 Markup.description("This sets the selection to the start of a span, and hits the enter key.\n"
     + "Expected behavior: when the span is split, its ID should not be duplicated. See bug 62621.");
 Markup.dump(root);

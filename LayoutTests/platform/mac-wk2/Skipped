@@ -85,7 +85,6 @@ editing/input/emacs-ctrl-o.html
 editing/input/option-page-up-down.html
 editing/input/page-up-down-scrolls.html
 editing/input/scroll-viewport-page-up-down.html
-editing/inserting/return-key-in-hidden-field.html
 editing/inserting/typing-tab-designmode-forms.html
 editing/inserting/typing-tab-designmode.html
 editing/pasteboard/4944770-2.html
@@ -1781,7 +1780,6 @@ fast/forms/radio-group-keyboard-change-event.html
 fast/forms/focus-with-display-block.html
 fast/forms/ValidityState-valueMissing-002.html
 svg/custom/focus-event-handling-keyboard.xhtml
-editing/inserting/return-key-span-start.html
 
 # eventSender.contextClick() is unimplemented
 editing/spelling/spellcheck-input-search-crash.html

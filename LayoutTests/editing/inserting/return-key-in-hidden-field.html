@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+<html>
 <body>
 <p>This tests to make sure that inserting a line break in a hidden textarea doesn't crash.
 To repro manually, press enter or return in the textarea.  We pass if we don't crash.</p>
@@ -16,18 +18,19 @@ function runTest()
 {
     document.getElementById("textarea").focus();
 
-    if (!window.layoutTestController || !window.eventSender)
+    if (!window.layoutTestController)
         return;
     layoutTestController.dumpAsText();
-    eventSender.keyDown('\n');
+    document.execCommand('InsertParagraph', false, null);
 
     document.getElementById("d2").focus();
     document.getElementById("d2").style.visibility = "";
 
     layoutTestController.dumpAsText();
-    eventSender.keyDown('\n');
+    document.execCommand('InsertParagraph', false, null);
 }
 runTest();
 
 </script>
 </body>
+</html>
