@@ -20,7 +20,6 @@
 #include "config.h"
 #include "ClientImpl.h"
 
-#include "ViewportArguments.h"
 #include "WebFrameProxy.h"
 #include "WKAPICast.h"
 #include "WKStringQt.h"

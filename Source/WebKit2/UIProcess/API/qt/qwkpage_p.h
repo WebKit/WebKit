@@ -26,6 +26,7 @@
 #include "PageClient.h"
 #include "qwkpage.h"
 #include "qgraphicswkview.h"
+#include "ViewportArguments.h"
 #include "WebPageProxy.h"
 #include <wtf/PassOwnPtr.h>
 #include <wtf/RefPtr.h>

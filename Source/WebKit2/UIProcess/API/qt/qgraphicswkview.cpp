@@ -24,7 +24,6 @@
 #include "IntSize.h"
 #include "RunLoop.h"
 #include "TiledDrawingAreaProxy.h"
-#include "ViewportArguments.h"
 #include "WKAPICast.h"
 #include "qwkpage.h"
 #include "qwkpage_p.h"

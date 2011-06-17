@@ -47,7 +47,6 @@
 #include "WebUndoCommandQt.h"
 #include "WKStringQt.h"
 #include "WKURLQt.h"
-#include "ViewportArguments.h"
 #include <QAction>
 #include <QApplication>
 #include <QGraphicsSceneMouseEvent>

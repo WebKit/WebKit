@@ -1,5 +1,14 @@
 2011-06-17  Anders Carlsson  <andersca@apple.com>
 
+        Yet another Qt build fix attempt.
+
+        * UIProcess/API/qt/ClientImpl.cpp:
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        * UIProcess/API/qt/qwkpage.cpp:
+        * UIProcess/API/qt/qwkpage_p.h:
+
+2011-06-17  Anders Carlsson  <andersca@apple.com>
+
         Another attempt at fixing the Qt build.
 
         * UIProcess/API/qt/ClientImpl.cpp:
