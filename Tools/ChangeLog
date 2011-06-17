@@ -1,3 +1,18 @@
+2011-06-17  Tony Chang  <tony@chromium.org>
+
+        Reviewed by Dirk Pranke.
+
+        [chromium] force rebaseline-chromium-webkit-tests to use the chromium port
+        https://bugs.webkit.org/show_bug.cgi?id=62907
+
+        This fixes a bug where the ImageDiff on the user's machine doesn't
+        match the logic used on the Chromium buildbots.  This has the downside
+        of requiring that the Chromium ImageDiff is built, but it turns out
+        that even with --tolerance 0, the CG ImageDiff will allow small pixel
+        differences through.
+
+        * Scripts/webkitpy/layout_tests/rebaseline_chromium_webkit_tests.py:
+
 2011-06-17  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build correction.

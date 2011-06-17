@@ -805,11 +805,11 @@ class HtmlGenerator(object):
 
 def get_host_port_object(options):
     """Return a port object for the platform we're running on."""
-    # The only thing we really need on the host is a way to diff
-    # text files and image files, which means we need to check that some
-    # version of ImageDiff has been built. We will look for either Debug
-    # or Release versions of the default port on the platform.
+    # We want the ImageDiff logic to match that of the chromium bots, so we
+    # force the use of a Chromium port.  We will look for either Debug or
+    # Release versions.
     options.configuration = "Release"
+    options.chromium = True
     port_obj = port.get(None, options)
     if not port_obj.check_image_diff(override_step=None, logging=False):
         _log.debug('No release version of the image diff binary was found.')
