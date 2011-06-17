@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGPointList {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGPointList {
         readonly attribute unsigned long numberOfItems;
 
         void clear()

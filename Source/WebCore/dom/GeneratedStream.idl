@@ -25,6 +25,7 @@
 module core {
     interface [
         Conditional=MEDIA_STREAM,
+        LegacyDefaultOptionalArguments,
         GenerateNativeConverter,
         EventTarget
     ] GeneratedStream : Stream {

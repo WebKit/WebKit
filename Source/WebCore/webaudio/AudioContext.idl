@@ -25,6 +25,7 @@
 
 module webaudio {
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO,
         ActiveDOMObject,
         CanBeConstructed,

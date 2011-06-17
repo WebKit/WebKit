@@ -24,6 +24,7 @@
 
 module core {
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=MEDIA_STREAM,
         EventTarget
     ] Stream {

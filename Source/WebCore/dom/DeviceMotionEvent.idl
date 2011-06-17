@@ -26,7 +26,8 @@
 module core {
 
     interface [
-        Conditional=DEVICE_ORIENTATION
+        Conditional=DEVICE_ORIENTATION,
+        LegacyDefaultOptionalArguments,
     ] DeviceMotionEvent : Event {
         readonly attribute [Custom] Acceleration acceleration;
         readonly attribute [Custom] Acceleration accelerationIncludingGravity;

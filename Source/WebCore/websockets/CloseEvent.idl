@@ -30,7 +30,9 @@
 
 module events {
 
-interface CloseEvent : Event {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] CloseEvent : Event {
     readonly attribute boolean wasClean;
     void initCloseEvent(in DOMString typeArg, in boolean canBubbleArg, in boolean cancelableArg, in boolean wasCleanArg);
 };

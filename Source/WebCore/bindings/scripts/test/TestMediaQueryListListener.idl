@@ -26,7 +26,9 @@
 // This IDL file is for testing the bindings code generator with an interface
 // that has methods receiving a parameter of the type MediaQueryListListener.
 module test {
-    interface TestMediaQueryListListener {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] TestMediaQueryListListener {
         void method(in MediaQueryListListener listener);
     };
 }

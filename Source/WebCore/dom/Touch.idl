@@ -26,6 +26,7 @@
 module events {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=TOUCH_EVENTS
     ] Touch {
         readonly attribute long             clientX;

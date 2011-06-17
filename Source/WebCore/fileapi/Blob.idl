@@ -31,6 +31,7 @@
 module html {
 
     interface [
+        LegacyDefaultOptionalArguments,
         GenerateIsReachable=Impl,
         NoStaticTables
     ] Blob {

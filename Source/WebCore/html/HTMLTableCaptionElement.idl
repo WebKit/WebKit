@@ -21,6 +21,7 @@
 module html {
 
     interface [
+        LegacyDefaultOptionalArguments,
         GenerateNativeConverter
     ] HTMLTableCaptionElement : HTMLElement {
         attribute [Reflect] DOMString align;

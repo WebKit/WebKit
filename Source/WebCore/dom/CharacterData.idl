@@ -19,7 +19,9 @@
 
 module core {
 
-    interface CharacterData : Node {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] CharacterData : Node {
 
         attribute [ConvertNullToNullString] DOMString data
             setter raises(DOMException);

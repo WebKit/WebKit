@@ -32,6 +32,7 @@ module core {
 
     interface [
         Conditional=DATA_TRANSFER_ITEMS,
+        LegacyDefaultOptionalArguments,
         HasIndexGetter,
 #if defined(V8_BINDING) && V8_BINDING
         CustomDeleteProperty,

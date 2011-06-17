@@ -19,7 +19,9 @@
 
 module core {
 
-    interface Comment : CharacterData {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] Comment : CharacterData {
     };
 
 }

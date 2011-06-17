@@ -26,6 +26,7 @@
 module window {
 
     interface [
+        LegacyDefaultOptionalArguments,
 #if defined(V8_BINDING) && V8_BINDING
         CheckDomainSecurity,
 #endif

@@ -20,7 +20,9 @@
 
 module html {
 
-    interface HTMLInputElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLInputElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString defaultValue;
         attribute [Reflect=checked] boolean defaultChecked;
         readonly attribute HTMLFormElement form;

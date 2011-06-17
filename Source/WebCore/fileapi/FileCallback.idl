@@ -30,6 +30,7 @@
 
 module fileapi {
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=FILE_SYSTEM,
         Callback
     ] FileCallback {

@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG&SVG_FONTS] SVGMissingGlyphElement : SVGElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG&SVG_FONTS
+    ] SVGMissingGlyphElement : SVGElement {
     };
 
 }

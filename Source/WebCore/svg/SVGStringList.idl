@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGStringList {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGStringList {
         readonly attribute unsigned long numberOfItems;
 
         void clear()

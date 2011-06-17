@@ -20,7 +20,9 @@
 
 module html {
 
-    interface HTMLAreaElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLAreaElement : HTMLElement {
         attribute [Reflect] DOMString accessKey;
         attribute [Reflect] DOMString alt;
         attribute [Reflect] DOMString coords;

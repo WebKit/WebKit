@@ -24,6 +24,9 @@
  */
 
 module html {
-    interface [Conditional=WEBGL] WebGLProgram {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=WEBGL
+    ] WebGLProgram {
     };
 }

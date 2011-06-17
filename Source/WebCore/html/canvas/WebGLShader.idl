@@ -24,6 +24,9 @@
  */
 
 module html {
-    interface [Conditional=WEBGL] WebGLShader {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=WEBGL
+    ] WebGLShader {
     };
 }

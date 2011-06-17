@@ -26,6 +26,7 @@ module core {
 
     interface [
         Conditional=MEDIA_STREAM|VIDEO_TRACK,
+        LegacyDefaultOptionalArguments,
         GenerateNativeConverter,
     ] MultipleTrackList : TrackList {
         boolean isEnabled(in unsigned long index)

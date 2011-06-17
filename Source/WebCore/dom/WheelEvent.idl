@@ -21,7 +21,9 @@
 module events {
 
     // Based off of proposed IDL interface for WheelEvent:
-    interface WheelEvent : UIEvent {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] WheelEvent : UIEvent {
         readonly attribute long    screenX;
         readonly attribute long    screenY;
         readonly attribute long    clientX;

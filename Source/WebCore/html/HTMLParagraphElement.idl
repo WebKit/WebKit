@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLParagraphElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLParagraphElement : HTMLElement {
         attribute [Reflect] DOMString align;
     };
 

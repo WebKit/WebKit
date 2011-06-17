@@ -26,6 +26,7 @@
 module html {
     interface [
         Conditional=WEBGL, 
+        LegacyDefaultOptionalArguments,
         GenerateIsReachable=ImplContext,
         OmitConstructor, 
         DontCheckEnums

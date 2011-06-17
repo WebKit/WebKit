@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGAnimatedBoolean {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGAnimatedBoolean {
         attribute [StrictTypeChecking] boolean baseVal
             setter raises(DOMException);
         readonly attribute boolean animVal;

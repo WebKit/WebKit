@@ -20,7 +20,12 @@
 
 module xpath {
 
-    interface [ObjCProtocol, Conditional=XPATH, OmitConstructor] XPathNSResolver {
+    interface [
+        LegacyDefaultOptionalArguments,
+        ObjCProtocol,
+        Conditional=XPATH,
+        OmitConstructor
+    ] XPathNSResolver {
         [ConvertNullStringTo=Null] DOMString lookupNamespaceURI(in DOMString prefix);
     };
 

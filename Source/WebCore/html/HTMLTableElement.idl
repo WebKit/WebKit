@@ -20,7 +20,9 @@
 
 module html {
 
-    interface HTMLTableElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLTableElement : HTMLElement {
         attribute HTMLTableCaptionElement caption setter raises(DOMException);
         attribute HTMLTableSectionElement tHead setter raises(DOMException);
         attribute HTMLTableSectionElement tFoot setter raises(DOMException);

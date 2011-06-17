@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLMarqueeElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLMarqueeElement : HTMLElement {
         void start();
         void stop();
         

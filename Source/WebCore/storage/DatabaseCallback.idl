@@ -29,6 +29,7 @@
 module storage {
     interface [
         Conditional=DATABASE,
+        LegacyDefaultOptionalArguments,
         Callback
     ] DatabaseCallback {
         boolean handleEvent(in Database database);

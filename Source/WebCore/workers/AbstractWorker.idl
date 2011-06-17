@@ -33,6 +33,7 @@ module threads {
 
     interface [
         Conditional=WORKERS,
+        LegacyDefaultOptionalArguments,
         ActiveDOMObject,
         CustomToJS,
         EventTarget

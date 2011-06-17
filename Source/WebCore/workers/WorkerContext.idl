@@ -28,6 +28,7 @@ module threads {
 
     interface [
         Conditional=WORKERS,
+        LegacyDefaultOptionalArguments,
         CustomMarkFunction,
         DelegatingGetOwnPropertySlot,
         EventTarget,

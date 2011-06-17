@@ -25,7 +25,9 @@
 
 module events {
 
-    interface PageTransitionEvent : Event {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] PageTransitionEvent : Event {
 
         readonly attribute boolean persisted;
 

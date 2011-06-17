@@ -26,7 +26,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGPathSegCurvetoCubicAbs : SVGPathSeg {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGPathSegCurvetoCubicAbs : SVGPathSeg {
         attribute [StrictTypeChecking] float x;
         attribute [StrictTypeChecking] float y;
         attribute [StrictTypeChecking] float x1;

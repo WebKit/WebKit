@@ -26,7 +26,9 @@
 
 module events {
 
-    interface BeforeLoadEvent : Event {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] BeforeLoadEvent : Event {
         void initBeforeLoadEvent(in DOMString type,
                                  in boolean canBubble, 
                                  in boolean cancelable,

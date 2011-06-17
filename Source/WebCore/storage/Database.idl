@@ -30,6 +30,7 @@ module storage {
 
     interface [
         Conditional=DATABASE,
+        LegacyDefaultOptionalArguments,
         OmitConstructor,
         NoStaticTables
     ] Database {

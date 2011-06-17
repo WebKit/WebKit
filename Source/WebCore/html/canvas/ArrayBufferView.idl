@@ -24,7 +24,12 @@
  */
 
 module html {
-    interface [CustomToJS, NoStaticTables, OmitConstructor] ArrayBufferView {
+    interface [
+        LegacyDefaultOptionalArguments,
+        CustomToJS,
+        NoStaticTables,
+        OmitConstructor
+    ] ArrayBufferView {
         readonly attribute ArrayBuffer buffer;
         readonly attribute unsigned long byteOffset;
         readonly attribute unsigned long byteLength;

@@ -21,7 +21,9 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface CSSFontFaceRule : CSSRule {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] CSSFontFaceRule : CSSRule {
         readonly attribute CSSStyleDeclaration style;
     };
 

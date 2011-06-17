@@ -27,6 +27,7 @@ module inspector {
 
     interface [
         Conditional=JAVASCRIPT_DEBUGGER,
+        LegacyDefaultOptionalArguments,
         OmitConstructor,
         DontCheckEnums
     ] JavaScriptCallFrame {

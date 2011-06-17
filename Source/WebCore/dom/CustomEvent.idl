@@ -27,7 +27,9 @@ module events {
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
     // Introduced in DOM Level 3:
-    interface CustomEvent : Event {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] CustomEvent : Event {
 
        readonly attribute DOMObject detail;
 

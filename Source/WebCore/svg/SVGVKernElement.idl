@@ -19,7 +19,10 @@
 
 module svg {
 
-    interface [Conditional=SVG&SVG_FONTS] SVGVKernElement : SVGElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG&SVG_FONTS
+    ] SVGVKernElement : SVGElement {
     };
 
 }

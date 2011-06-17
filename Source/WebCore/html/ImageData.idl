@@ -29,6 +29,7 @@
 module html {
 
     interface [
+        LegacyDefaultOptionalArguments,
         CustomToJS
     ] ImageData {
         readonly attribute long width;

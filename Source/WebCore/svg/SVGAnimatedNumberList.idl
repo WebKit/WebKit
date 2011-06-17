@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGAnimatedNumberList {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGAnimatedNumberList {
         readonly attribute SVGNumberList baseVal;
         readonly attribute SVGNumberList animVal;
     };

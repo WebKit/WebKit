@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGScriptElement : SVGElement,
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGScriptElement : SVGElement,
                                                    SVGURIReference,
                                                    SVGExternalResourcesRequired {
                  attribute [ConvertNullToNullString] DOMString type

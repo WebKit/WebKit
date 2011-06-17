@@ -20,7 +20,9 @@
 module events {
 
     // Introduced in DOM Level 2:
-    interface MutationEvent : Event {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] MutationEvent : Event {
 
         // attrChangeType
         const unsigned short MODIFICATION = 1;

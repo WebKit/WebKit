@@ -27,6 +27,7 @@ module css {
 
     // Introduced in DOM Level ?:
     interface [
+        LegacyDefaultOptionalArguments,
         CanBeConstructed,
         CustomConstructFunction,
         ConstructorParameters=1,

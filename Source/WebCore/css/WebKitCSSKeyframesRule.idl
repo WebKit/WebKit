@@ -30,6 +30,7 @@ module css {
 
     // Introduced in DOM Level ?:
     interface [
+        LegacyDefaultOptionalArguments,
         HasIndexGetter
     ] WebKitCSSKeyframesRule : CSSRule {
 

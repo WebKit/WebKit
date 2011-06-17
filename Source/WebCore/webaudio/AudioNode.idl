@@ -24,6 +24,7 @@
 
 module audio {
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO
     ] AudioNode {
         readonly attribute AudioContext context;

@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLDivElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLDivElement : HTMLElement {
         attribute [Reflect] DOMString align;
 
 #if defined(ENABLE_SPELLCHECK_API) && ENABLE_SPELLCHECK_API

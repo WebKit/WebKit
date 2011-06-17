@@ -26,7 +26,11 @@
 
 module core {
 
-    interface [Conditional=JAVASCRIPT_DEBUGGER, OmitConstructor] ScriptProfileNode {
+    interface [
+        Conditional=JAVASCRIPT_DEBUGGER,
+        LegacyDefaultOptionalArguments,
+        OmitConstructor
+    ] ScriptProfileNode {
         readonly attribute DOMString functionName;
         readonly attribute DOMString url;
         readonly attribute unsigned long lineNumber;

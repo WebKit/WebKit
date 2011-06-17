@@ -26,6 +26,7 @@
 module html {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=VIDEO
     ] TimeRanges {
         readonly attribute unsigned long length;

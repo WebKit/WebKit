@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGRadialGradientElement : SVGGradientElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGRadialGradientElement : SVGGradientElement {
         readonly attribute SVGAnimatedLength cx;
         readonly attribute SVGAnimatedLength cy;
         readonly attribute SVGAnimatedLength r;

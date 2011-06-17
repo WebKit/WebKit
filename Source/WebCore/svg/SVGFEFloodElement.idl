@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG&FILTERS] SVGFEFloodElement : SVGElement,
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG&FILTERS
+    ] SVGFEFloodElement : SVGElement,
                                                     SVGFilterPrimitiveStandardAttributes {
     };
 }

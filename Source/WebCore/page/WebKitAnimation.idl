@@ -28,7 +28,9 @@
 
 module html {
 
-    interface WebKitAnimation {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] WebKitAnimation {
 
         readonly attribute DOMString name;
 

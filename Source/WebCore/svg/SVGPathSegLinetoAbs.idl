@@ -26,7 +26,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGPathSegLinetoAbs : SVGPathSeg {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGPathSegLinetoAbs : SVGPathSeg {
         attribute [StrictTypeChecking] float x;
         attribute [StrictTypeChecking] float y;
     };

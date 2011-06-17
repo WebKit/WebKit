@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGTextPathElement : SVGTextContentElement,
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGTextPathElement : SVGTextContentElement,
                                                      SVGURIReference {    
         // textPath Method Types
         const unsigned short TEXTPATH_METHODTYPE_UNKNOWN   = 0;

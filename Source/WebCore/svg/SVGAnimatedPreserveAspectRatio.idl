@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGAnimatedPreserveAspectRatio {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGAnimatedPreserveAspectRatio {
         readonly attribute SVGPreserveAspectRatio baseVal;
         readonly attribute SVGPreserveAspectRatio animVal;
     };

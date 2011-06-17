@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLBlockquoteElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLBlockquoteElement : HTMLElement {
         attribute [Reflect, URL] DOMString cite;
     };
 

@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLHeadElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLHeadElement : HTMLElement {
         attribute [Reflect] DOMString profile;
     };
 

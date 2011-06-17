@@ -26,6 +26,7 @@
 module html {
     interface [
         Conditional=WEBGL,
+        LegacyDefaultOptionalArguments,
     ] WebGLContextEvent : Event {
         readonly attribute DOMString statusMessage;
         [StrictTypeChecking] void initEvent(in DOMString eventTypeArg,

@@ -21,7 +21,9 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface CSSCharsetRule : CSSRule {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] CSSCharsetRule : CSSRule {
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C
         readonly attribute [ConvertNullStringTo=Null] DOMString encoding;
 #else

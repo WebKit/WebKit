@@ -26,6 +26,7 @@ module core {
 
     interface [
         Conditional=MEDIA_STREAM|VIDEO_TRACK,
+        LegacyDefaultOptionalArguments,
         GenerateNativeConverter,
     ] ExclusiveTrackList : TrackList {
         // FIXME: the spec says unsigned long, but -1 is used when nothing is selected.

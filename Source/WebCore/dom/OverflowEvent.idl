@@ -23,7 +23,9 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 module events {
-    interface OverflowEvent : Event {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] OverflowEvent : Event {
         const unsigned short HORIZONTAL = 0;
         const unsigned short VERTICAL   = 1;
         const unsigned short BOTH       = 2;

@@ -18,7 +18,11 @@
  */
 
 module xpath {
-    interface [CanBeConstructed, Conditional=XPATH] XPathEvaluator {
+    interface [
+        LegacyDefaultOptionalArguments,
+        CanBeConstructed,
+        Conditional=XPATH
+    ] XPathEvaluator {
         XPathExpression createExpression(in DOMString expression,
                                          in XPathNSResolver resolver)
             raises(DOMException);

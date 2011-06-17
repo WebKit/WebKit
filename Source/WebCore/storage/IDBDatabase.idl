@@ -28,6 +28,7 @@ module storage {
 
     interface [
         Conditional=INDEXED_DATABASE,
+        LegacyDefaultOptionalArguments,
         ActiveDOMObject,
         EventTarget
     ] IDBDatabase {

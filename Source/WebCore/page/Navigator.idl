@@ -20,6 +20,7 @@
 module window {
 
     interface [
+        LegacyDefaultOptionalArguments,
         GenerateIsReachable=ImplFrame,
         OmitConstructor
     ] Navigator {

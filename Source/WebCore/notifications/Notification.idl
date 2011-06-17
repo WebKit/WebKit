@@ -33,6 +33,7 @@ module threads {
 
     interface [
         Conditional=NOTIFICATIONS,
+        LegacyDefaultOptionalArguments,
         ActiveDOMObject,
         EventTarget,
         OmitConstructor

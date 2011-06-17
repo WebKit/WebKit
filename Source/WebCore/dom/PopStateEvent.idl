@@ -27,7 +27,9 @@
 module events {
 
 #if !defined(LANGUAGE_CPP) || !LANGUAGE_CPP
-    interface PopStateEvent : Event {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] PopStateEvent : Event {
         void initPopStateEvent(in DOMString typeArg, 
                                in boolean canBubbleArg, 
                                in boolean cancelableArg, 

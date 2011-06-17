@@ -28,6 +28,7 @@
 
 module audio {
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO,
         GenerateToJS
     ] AudioGain : AudioParam {

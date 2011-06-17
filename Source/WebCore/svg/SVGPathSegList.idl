@@ -26,7 +26,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGPathSegList {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGPathSegList {
         readonly attribute unsigned long numberOfItems;
 
         void clear()

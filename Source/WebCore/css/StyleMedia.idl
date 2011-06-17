@@ -26,6 +26,7 @@
 
 module view {
     interface [
+        LegacyDefaultOptionalArguments,
         GenerateIsReachable=ImplFrame
     ] StyleMedia {
         readonly attribute DOMString type;

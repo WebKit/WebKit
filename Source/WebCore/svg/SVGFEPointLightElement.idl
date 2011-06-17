@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG&FILTERS] SVGFEPointLightElement : SVGElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG&FILTERS
+    ] SVGFEPointLightElement : SVGElement {
         readonly attribute SVGAnimatedNumber x;
         readonly attribute SVGAnimatedNumber y;
         readonly attribute SVGAnimatedNumber z;

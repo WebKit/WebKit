@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLOptGroupElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLOptGroupElement : HTMLElement {
         attribute [Reflect] boolean disabled;
         attribute [Reflect] DOMString label;
     };

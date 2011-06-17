@@ -20,7 +20,9 @@
 
 module html {
 
-    interface HTMLLabelElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLLabelElement : HTMLElement {
         readonly attribute HTMLFormElement form;
         attribute [Reflect] DOMString accessKey;
         attribute [Reflect=for] DOMString htmlFor;

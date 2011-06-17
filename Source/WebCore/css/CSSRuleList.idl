@@ -27,6 +27,7 @@ module css {
 
     // Introduced in DOM Level 2:
     interface [
+        LegacyDefaultOptionalArguments,
         CustomIsReachable,
         HasIndexGetter,
         V8DependentLifetime

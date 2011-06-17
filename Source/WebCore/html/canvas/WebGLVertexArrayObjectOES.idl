@@ -24,6 +24,9 @@
  */
 
 module html {
-    interface [Conditional=WEBGL] WebGLVertexArrayObjectOES {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=WEBGL
+    ] WebGLVertexArrayObjectOES {
     };
 }

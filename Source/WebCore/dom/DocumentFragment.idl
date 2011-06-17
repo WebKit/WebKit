@@ -19,7 +19,9 @@
 
 module core {
 
-    interface DocumentFragment : Node {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] DocumentFragment : Node {
         // NodeSelector - Selector API
         [RequiresAllArguments=Raise] Element querySelector(in DOMString selectors)
             raises(DOMException);

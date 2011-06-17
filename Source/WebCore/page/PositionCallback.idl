@@ -24,6 +24,7 @@
 
 module core {
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=GEOLOCATION,
         Callback=FunctionOnly
     ] PositionCallback {

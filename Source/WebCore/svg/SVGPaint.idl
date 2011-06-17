@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGPaint : SVGColor {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGPaint : SVGColor {
         const unsigned short SVG_PAINTTYPE_UNKNOWN = 0;
         const unsigned short SVG_PAINTTYPE_RGBCOLOR = 1;
         const unsigned short SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR = 2;

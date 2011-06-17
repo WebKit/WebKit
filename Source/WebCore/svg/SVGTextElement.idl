@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGTextElement : SVGTextPositioningElement,
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGTextElement : SVGTextPositioningElement,
                                                  SVGTransformable {
     };
 

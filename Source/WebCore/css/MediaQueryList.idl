@@ -18,7 +18,9 @@
  */
 
 module view {
-    interface MediaQueryList {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] MediaQueryList {
         readonly attribute DOMString media;
         readonly attribute boolean matches;
         void addListener(in MediaQueryListListener listener);

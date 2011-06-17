@@ -26,7 +26,8 @@
 module core {
 
     interface [
-        Conditional=DEVICE_ORIENTATION
+        Conditional=DEVICE_ORIENTATION,
+        LegacyDefaultOptionalArguments,
     ] DeviceOrientationEvent : Event {
         readonly attribute [Custom] double alpha;
         readonly attribute [Custom] double beta;

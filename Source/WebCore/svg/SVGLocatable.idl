@@ -26,7 +26,12 @@
 
 module svg {
 
-    interface [Conditional=SVG, ObjCProtocol, OmitConstructor] SVGLocatable {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG,
+        ObjCProtocol,
+        OmitConstructor
+    ] SVGLocatable {
         readonly attribute SVGElement nearestViewportElement;
         readonly attribute SVGElement farthestViewportElement;
 

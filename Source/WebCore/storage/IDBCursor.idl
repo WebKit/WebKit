@@ -26,7 +26,8 @@
 module storage {
 
     interface [
-        Conditional=INDEXED_DATABASE
+        Conditional=INDEXED_DATABASE,
+        LegacyDefaultOptionalArguments,
     ] IDBCursor {
         const unsigned short NEXT = 0;
         const unsigned short NEXT_NO_DUPLICATE = 1;

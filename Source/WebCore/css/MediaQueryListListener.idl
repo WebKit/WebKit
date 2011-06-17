@@ -19,6 +19,7 @@
 
 module view {
     interface [
+        LegacyDefaultOptionalArguments,
         NoStaticTables,
         ObjCProtocol,
         PureInterface,

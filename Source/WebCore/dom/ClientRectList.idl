@@ -27,6 +27,7 @@
 module view {
 
     interface [
+        LegacyDefaultOptionalArguments,
         HasIndexGetter
     ] ClientRectList {
         readonly attribute unsigned long length;

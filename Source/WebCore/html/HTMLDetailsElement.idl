@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLDetailsElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLDetailsElement : HTMLElement {
         attribute [Reflect] boolean open;
     };
 

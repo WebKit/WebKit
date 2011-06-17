@@ -21,6 +21,7 @@
 module window {
 
     interface [
+        LegacyDefaultOptionalArguments,
         HasNameGetter,
         HasIndexGetter
     ] DOMPlugin {

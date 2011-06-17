@@ -21,6 +21,7 @@
 module html {
 
     interface [
+        LegacyDefaultOptionalArguments,
         GenerateNativeConverter,
         CustomPushEventHandlerScope
     ] HTMLElement : Element {

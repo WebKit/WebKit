@@ -21,6 +21,7 @@
 module html {
 
     interface [
+        LegacyDefaultOptionalArguments,
         HasOverridingNameGetter
     ] HTMLDocument : Document {
         [Custom, NoCPPCustom] void open();

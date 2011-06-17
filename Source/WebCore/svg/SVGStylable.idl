@@ -27,7 +27,12 @@
 
 module svg {
 
-    interface [Conditional=SVG, ObjCProtocol, OmitConstructor] SVGStylable {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG,
+        ObjCProtocol,
+        OmitConstructor
+    ] SVGStylable {
         readonly attribute SVGAnimatedString className;
         readonly attribute CSSStyleDeclaration style;
 

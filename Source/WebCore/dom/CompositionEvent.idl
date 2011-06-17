@@ -26,7 +26,9 @@
 module events {
 
     // Introduced in DOM Level 3:
-    interface CompositionEvent : UIEvent {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] CompositionEvent : UIEvent {
 
         readonly attribute DOMString data;
 

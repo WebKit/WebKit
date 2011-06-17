@@ -30,6 +30,7 @@
 module storage {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=INDEXED_DATABASE,
         ActiveDOMObject,
         EventTarget

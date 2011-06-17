@@ -30,7 +30,9 @@
 
 module html {
 
-    interface HTMLKeygenElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLKeygenElement : HTMLElement {
         attribute [Reflect] boolean autofocus;
         attribute [Reflect] DOMString challenge;
         attribute [Reflect] boolean disabled;

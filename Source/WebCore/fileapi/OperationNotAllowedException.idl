@@ -31,6 +31,7 @@
 module html {
     interface [
         Conditional=BLOB|FILE_SYSTEM,
+        LegacyDefaultOptionalArguments,
         DontCheckEnums,
         NoStaticTables
     ] OperationNotAllowedException {

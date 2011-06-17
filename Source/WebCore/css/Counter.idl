@@ -20,7 +20,9 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface Counter {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] Counter {
         readonly attribute DOMString identifier;
         readonly attribute DOMString listStyle;
         readonly attribute DOMString separator;

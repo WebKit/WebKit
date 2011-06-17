@@ -27,6 +27,7 @@ module core {
 
     interface [
         Conditional=GEOLOCATION, 
+        LegacyDefaultOptionalArguments,
         GenerateIsReachable=ImplFrame,
         OmitConstructor
     ] Geolocation {

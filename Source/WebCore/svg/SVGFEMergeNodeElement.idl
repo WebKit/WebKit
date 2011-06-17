@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG&FILTERS] SVGFEMergeNodeElement : SVGElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG&FILTERS
+    ] SVGFEMergeNodeElement : SVGElement {
         readonly attribute SVGAnimatedString in1;
     };
 

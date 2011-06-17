@@ -20,7 +20,9 @@
 
 module html {
 
-    interface HTMLTableRowElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLTableRowElement : HTMLElement {
         readonly attribute long rowIndex;
         readonly attribute long sectionRowIndex;
         readonly attribute HTMLCollection cells;

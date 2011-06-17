@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG&SVG_FONTS] SVGAltGlyphElement : SVGTextPositioningElement, SVGURIReference {
+    interface [
+        Conditional=SVG&SVG_FONTS,
+        LegacyDefaultOptionalArguments,
+    ] SVGAltGlyphElement : SVGTextPositioningElement, SVGURIReference {
         attribute DOMString glyphRef
             setter raises(DOMException);
         attribute DOMString format

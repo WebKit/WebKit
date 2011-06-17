@@ -28,6 +28,7 @@
 
 module storage {
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=DATABASE,
         Callback
     ] SQLTransactionCallback {

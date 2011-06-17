@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGRenderingIntent {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGRenderingIntent {
         // Rendering Intent Types
         const unsigned short RENDERING_INTENT_UNKNOWN               = 0;
         const unsigned short RENDERING_INTENT_AUTO                  = 1;

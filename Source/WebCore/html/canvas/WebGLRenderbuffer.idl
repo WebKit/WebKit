@@ -24,6 +24,9 @@
  */
 
 module html {
-    interface [Conditional=WEBGL] WebGLRenderbuffer {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=WEBGL
+    ] WebGLRenderbuffer {
     };
 }

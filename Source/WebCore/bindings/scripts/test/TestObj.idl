@@ -30,7 +30,9 @@
 // This IDL file is for testing the bindings code generator and for tracking
 // changes in its ouput.
 module test {
-    interface TestObj {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] TestObj {
         // Attributes
         readonly attribute long            readOnlyIntAttr;
         readonly attribute DOMString       readOnlyStringAttr;

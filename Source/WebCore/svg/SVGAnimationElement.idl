@@ -25,7 +25,11 @@
 
 module svg {
 
-    interface [Conditional=SVG_ANIMATION, OmitConstructor] SVGAnimationElement : SVGElement,
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG_ANIMATION,
+        OmitConstructor
+    ] SVGAnimationElement : SVGElement,
                                                       SVGTests,
                                                       SVGExternalResourcesRequired,
                                                       ElementTimeControl {

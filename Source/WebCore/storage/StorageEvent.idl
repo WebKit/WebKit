@@ -26,6 +26,7 @@
 module storage {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=DOM_STORAGE
     ] StorageEvent : Event {
         readonly attribute [ConvertNullStringTo=Null] DOMString key;

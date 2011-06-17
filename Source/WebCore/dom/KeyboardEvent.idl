@@ -21,7 +21,9 @@
 module events {
 
     // Introduced in DOM Level 3:
-    interface KeyboardEvent : UIEvent {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] KeyboardEvent : UIEvent {
 
 #if !defined(LANGUAGE_JAVASCRIPT) || !LANGUAGE_JAVASCRIPT
         // KeyLocationCode

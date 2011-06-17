@@ -20,7 +20,9 @@
 
 module html {
 
-    interface HTMLTextAreaElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLTextAreaElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString defaultValue;
         readonly attribute HTMLFormElement form;
         readonly attribute ValidityState validity;

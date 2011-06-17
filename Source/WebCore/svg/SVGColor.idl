@@ -21,7 +21,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGColor : CSSValue {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGColor : CSSValue {
         const unsigned short SVG_COLORTYPE_UNKNOWN = 0;
         const unsigned short SVG_COLORTYPE_RGBCOLOR = 1;
         const unsigned short SVG_COLORTYPE_RGBCOLOR_ICCCOLOR = 2;

@@ -31,7 +31,10 @@
  */
 
 module core {
-    interface [Conditional=INSPECTOR] InspectorFrontendHost {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=INSPECTOR
+    ] InspectorFrontendHost {
         void loaded();
         void closeWindow();
         void disconnectFromBackend();

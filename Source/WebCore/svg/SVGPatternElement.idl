@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGPatternElement : SVGElement,
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGPatternElement : SVGElement,
                                                     SVGURIReference,
                                                     SVGTests,
                                                     SVGLangSpace,

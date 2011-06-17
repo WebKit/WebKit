@@ -29,6 +29,7 @@
 module window {
 
     interface [
+        LegacyDefaultOptionalArguments,
         OmitConstructor
     ] Crypto {
         void getRandomValues(in ArrayBufferView array) raises(DOMException);

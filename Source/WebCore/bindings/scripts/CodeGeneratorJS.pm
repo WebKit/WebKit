@@ -1929,7 +1929,12 @@ sub GenerateImplementation
 
                 my $numParameters = @{$function->parameters};
 
-                my $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"};
+                my $requiresAllArguments;
+                if ($dataNode->extendedAttributes->{"LegacyDefaultOptionalArguments"}) {
+                    $requiresAllArguments = $function->signature->extendedAttributes->{"RequiresAllArguments"};
+                } else {
+                    $requiresAllArguments = "Raise";
+                }
                 if ($requiresAllArguments) {
                     my $numMandatoryParams = @{$function->parameters};
                     foreach my $param (reverse(@{$function->parameters})) {

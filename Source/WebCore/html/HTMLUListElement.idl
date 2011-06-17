@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLUListElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLUListElement : HTMLElement {
         attribute [Reflect] boolean compact;
         attribute [Reflect] DOMString type;
     };

@@ -22,7 +22,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGMatrix {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGMatrix {
         // FIXME: these attributes should all be floats but since we implement
         // AffineTransform with doubles setting these as doubles makes more sense.
         attribute [StrictTypeChecking] double a;

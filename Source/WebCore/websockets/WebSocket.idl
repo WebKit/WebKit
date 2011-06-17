@@ -33,6 +33,7 @@ module websockets {
 
     interface [
         Conditional=WEB_SOCKETS,
+        LegacyDefaultOptionalArguments,
         ActiveDOMObject,
         CanBeConstructed,
         CustomConstructFunction,

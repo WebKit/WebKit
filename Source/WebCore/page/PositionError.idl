@@ -25,7 +25,10 @@
 
 module core {
 
-    interface [Conditional=GEOLOCATION] PositionError {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=GEOLOCATION
+    ] PositionError {
         readonly attribute unsigned short code;
         readonly attribute DOMString message;
 

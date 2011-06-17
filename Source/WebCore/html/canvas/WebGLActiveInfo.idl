@@ -26,7 +26,8 @@
 module html {
 
     interface [
-        Conditional=WEBGL
+        Conditional=WEBGL,
+        LegacyDefaultOptionalArguments,
     ] WebGLActiveInfo {
         readonly attribute int size;
         readonly attribute unsigned int type;

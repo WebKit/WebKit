@@ -26,6 +26,7 @@
 module html {
 
     interface [
+        LegacyDefaultOptionalArguments,
         GenerateNativeConverter,
         GenerateToJS,
         NoStaticTables

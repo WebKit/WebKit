@@ -21,6 +21,7 @@ module events {
 
     // Introduced in http://www.whatwg.org/specs/web-apps/current-work/multipage/history.html#event-hashchange
     interface [
+        LegacyDefaultOptionalArguments,
         GenerateConstructor
     ] HashChangeEvent : Event {
         void initHashChangeEvent(in DOMString type, 

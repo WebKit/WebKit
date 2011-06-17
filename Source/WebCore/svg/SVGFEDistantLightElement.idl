@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG&FILTERS] SVGFEDistantLightElement : SVGElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG&FILTERS
+    ] SVGFEDistantLightElement : SVGElement {
         readonly attribute SVGAnimatedNumber azimuth;
         readonly attribute SVGAnimatedNumber elevation;
     };

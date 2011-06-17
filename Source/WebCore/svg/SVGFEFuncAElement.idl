@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG&FILTERS] SVGFEFuncAElement : SVGComponentTransferFunctionElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG&FILTERS
+    ] SVGFEFuncAElement : SVGComponentTransferFunctionElement {
     };
 
 }

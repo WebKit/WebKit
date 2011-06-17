@@ -19,7 +19,9 @@
 
 module core {
 
-    interface Text : CharacterData {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] Text : CharacterData {
 
         // DOM Level 1
 

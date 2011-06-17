@@ -24,7 +24,11 @@
  */
 
 module html {
-    interface [CustomNativeConverter, OmitConstructor] VoidCallback {
+    interface [
+        LegacyDefaultOptionalArguments,
+        CustomNativeConverter,
+        OmitConstructor
+    ] VoidCallback {
         void handleEvent();
     };
 }

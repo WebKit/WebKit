@@ -21,6 +21,7 @@
 module html {
 
     interface [
+        LegacyDefaultOptionalArguments,
         GenerateNativeConverter
     ] HTMLImageElement : HTMLElement {
         attribute [Reflect] DOMString name;

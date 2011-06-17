@@ -24,7 +24,10 @@
  */
 
 module window {
-    interface [OmitConstructor] Internals {
+    interface [
+        LegacyDefaultOptionalArguments,
+        OmitConstructor
+    ] Internals {
     };
 }
 

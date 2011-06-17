@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGTextPositioningElement : SVGTextContentElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGTextPositioningElement : SVGTextContentElement {
         readonly attribute SVGAnimatedLengthList x;
         readonly attribute SVGAnimatedLengthList y;
         readonly attribute SVGAnimatedLengthList dx;

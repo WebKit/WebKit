@@ -26,6 +26,7 @@
 module storage {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=INDEXED_DATABASE
     ] IDBKeyRange {
         readonly attribute IDBKey lower;

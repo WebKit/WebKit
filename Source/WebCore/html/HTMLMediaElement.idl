@@ -24,7 +24,10 @@
  */
 
 module html {
-interface [Conditional=VIDEO] HTMLMediaElement : HTMLElement {
+    interface [
+        Conditional=VIDEO,
+        LegacyDefaultOptionalArguments,
+    ] HTMLMediaElement : HTMLElement {
 
     // error state
     readonly attribute MediaError error;

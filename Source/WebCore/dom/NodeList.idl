@@ -21,6 +21,7 @@
 module core {
 
     interface [
+        LegacyDefaultOptionalArguments,
         CustomIsReachable,
         HasIndexGetter,
         HasNameGetter,

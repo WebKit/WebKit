@@ -30,6 +30,7 @@
 
 module storage {
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=FILE_SYSTEM,
         GenerateNativeConverter,
         GenerateToJS,

@@ -21,6 +21,7 @@
 module core {
 
     interface [
+        LegacyDefaultOptionalArguments,
         CustomHeader,
         CustomMarkFunction,
         CustomPushEventHandlerScope,

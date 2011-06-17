@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG&SVG_FOREIGN_OBJECT] SVGForeignObjectElement : SVGElement,
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG&SVG_FOREIGN_OBJECT
+    ] SVGForeignObjectElement : SVGElement,
                                                           SVGTests,
                                                           SVGLangSpace,
                                                           SVGExternalResourcesRequired,

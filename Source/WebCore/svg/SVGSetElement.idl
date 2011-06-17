@@ -25,7 +25,10 @@
 
 module svg {
 
-    interface [Conditional=SVG_ANIMATION] SVGSetElement : SVGAnimationElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG_ANIMATION
+    ] SVGSetElement : SVGAnimationElement {
     };
 
 }

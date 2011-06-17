@@ -19,7 +19,10 @@
 
 module svg {
 
-    interface [Conditional=SVG&FILTERS] SVGFEDropShadowElement : SVGElement,
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG&FILTERS
+    ] SVGFEDropShadowElement : SVGElement,
                                                            SVGFilterPrimitiveStandardAttributes { 
         readonly attribute SVGAnimatedString in1;
         readonly attribute SVGAnimatedNumber dx;

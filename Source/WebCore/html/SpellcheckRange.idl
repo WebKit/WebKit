@@ -26,6 +26,7 @@
 module html {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SPELLCHECK_API,
     ] SpellcheckRange {
         readonly attribute unsigned long start;

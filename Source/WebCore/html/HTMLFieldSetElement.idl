@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLFieldSetElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLFieldSetElement : HTMLElement {
         readonly attribute HTMLFormElement form;
         readonly attribute ValidityState   validity;
         readonly attribute boolean         willValidate;

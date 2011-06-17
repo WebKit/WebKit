@@ -21,7 +21,10 @@
 
 module svg {
 
-    interface [Conditional=SVG] SVGDocument : Document {
+    interface [
+        LegacyDefaultOptionalArguments,
+        Conditional=SVG
+    ] SVGDocument : Document {
         readonly attribute SVGSVGElement        rootElement;
 
         // Overwrite the one in events::DocumentEvent

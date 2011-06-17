@@ -19,7 +19,10 @@
 
 module ranges {
 
-    interface [DontCheckEnums] RangeException {
+    interface [
+        LegacyDefaultOptionalArguments,
+        DontCheckEnums
+    ] RangeException {
 
         readonly attribute unsigned short   code;
         readonly attribute DOMString        name;

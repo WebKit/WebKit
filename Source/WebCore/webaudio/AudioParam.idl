@@ -28,6 +28,7 @@
 
 module webaudio {
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO
     ] AudioParam {
         attribute float value;

@@ -24,7 +24,10 @@
  */
 
 module html {
-interface [Conditional=VIDEO_TRACK] HTMLTrackElement : HTMLElement {
+    interface [
+        Conditional=VIDEO_TRACK,
+        LegacyDefaultOptionalArguments,
+    ] HTMLTrackElement : HTMLElement {
     attribute [Reflect, URL] DOMString src;
     attribute DOMString kind;
     attribute DOMString srclang;
