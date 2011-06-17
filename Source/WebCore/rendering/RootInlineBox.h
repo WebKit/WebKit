@@ -111,6 +111,7 @@ public:
 
     RenderBlock* block() const;
 
+    InlineBox* closestLeafChildForPoint(const IntPoint&, bool onlyEditableLeaves);
     InlineBox* closestLeafChildForLogicalLeftPosition(int, bool onlyEditableLeaves = false);
 
     void appendFloat(RenderBox* floatingBox)

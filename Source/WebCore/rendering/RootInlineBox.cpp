@@ -458,6 +458,11 @@ static bool isEditableLeaf(InlineBox* leaf)
     return leaf && leaf->renderer() && leaf->renderer()->node() && leaf->renderer()->node()->rendererIsEditable();
 }
 
+InlineBox* RootInlineBox::closestLeafChildForPoint(const IntPoint& pointInContents, bool onlyEditableLeaves)
+{
+    return closestLeafChildForLogicalLeftPosition(block()->isHorizontalWritingMode() ? pointInContents.x() : pointInContents.y(), onlyEditableLeaves);
+}
+
 InlineBox* RootInlineBox::closestLeafChildForLogicalLeftPosition(int leftPosition, bool onlyEditableLeaves)
 {
     InlineBox* firstLeaf = firstLeafChild();

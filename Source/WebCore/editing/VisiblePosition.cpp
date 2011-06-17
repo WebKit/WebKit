@@ -33,6 +33,7 @@
 #include "InlineTextBox.h"
 #include "Logging.h"
 #include "Range.h"
+#include "RenderBlock.h"
 #include "RootInlineBox.h"
 #include "Text.h"
 #include "htmlediting.h"
@@ -588,7 +589,7 @@ IntRect VisiblePosition::absoluteCaretBounds() const
     return renderer->localToAbsoluteQuad(FloatRect(localRect)).enclosingBoundingBox();
 }
 
-int VisiblePosition::xOffsetForVerticalNavigation() const
+int VisiblePosition::lineDirectionPointForBlockDirectionNavigation() const
 {
     RenderObject* renderer;
     IntRect localRect = localCaretRect(renderer);
@@ -598,7 +599,8 @@ int VisiblePosition::xOffsetForVerticalNavigation() const
     // This ignores transforms on purpose, for now. Vertical navigation is done
     // without consulting transforms, so that 'up' in transformed text is 'up'
     // relative to the text, not absolute 'up'.
-    return renderer->localToAbsolute(localRect.location()).x();
+    FloatPoint caretPoint = renderer->localToAbsolute(localRect.location());
+    return renderer->containingBlock()->isHorizontalWritingMode() ? caretPoint.x() : caretPoint.y();
 }
 
 #ifndef NDEBUG

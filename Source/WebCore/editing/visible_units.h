@@ -54,8 +54,8 @@ VisiblePosition nextSentencePosition(const VisiblePosition &);
 // lines
 VisiblePosition startOfLine(const VisiblePosition &);
 VisiblePosition endOfLine(const VisiblePosition &);
-VisiblePosition previousLinePosition(const VisiblePosition &, int x);
-VisiblePosition nextLinePosition(const VisiblePosition &, int x);
+VisiblePosition previousLinePosition(const VisiblePosition &, int lineDirectionPoint);
+VisiblePosition nextLinePosition(const VisiblePosition &, int lineDirectionPoint);
 bool inSameLine(const VisiblePosition &, const VisiblePosition &);
 bool inSameLogicalLine(const VisiblePosition &, const VisiblePosition &);
 bool isStartOfLine(const VisiblePosition &);

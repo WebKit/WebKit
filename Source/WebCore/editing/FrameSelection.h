@@ -255,7 +255,7 @@ private:
     VisiblePosition modifyMovingLeft(TextGranularity);
     VisiblePosition modifyMovingBackward(TextGranularity);
 
-    int xPosForVerticalArrowNavigation(EPositionType);
+    int lineDirectionPointForBlockDirectionNavigation(EPositionType);
     
     void notifyAccessibilityForSelectionChange();
 

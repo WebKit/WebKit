@@ -506,10 +506,10 @@ VisiblePosition FrameSelection::modifyExtendingForward(TextGranularity granulari
         pos = nextSentencePosition(pos);
         break;
     case LineGranularity:
-        pos = nextLinePosition(pos, xPosForVerticalArrowNavigation(EXTENT));
+        pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(EXTENT));
         break;
     case ParagraphGranularity:
-        pos = nextParagraphPosition(pos, xPosForVerticalArrowNavigation(EXTENT));
+        pos = nextParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(EXTENT));
         break;
     case SentenceBoundary:
         pos = endOfSentence(endForPlatform());
@@ -589,11 +589,11 @@ VisiblePosition FrameSelection::modifyMovingForward(TextGranularity granularity)
         // to leave the selection at that line start (no need to call nextLinePosition!)
         pos = endForPlatform();
         if (!isRange() || !isStartOfLine(pos))
-            pos = nextLinePosition(pos, xPosForVerticalArrowNavigation(START));
+            pos = nextLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(START));
         break;
     }
     case ParagraphGranularity:
-        pos = nextParagraphPosition(endForPlatform(), xPosForVerticalArrowNavigation(START));
+        pos = nextParagraphPosition(endForPlatform(), lineDirectionPointForBlockDirectionNavigation(START));
         break;
     case SentenceBoundary:
         pos = endOfSentence(endForPlatform());
@@ -678,10 +678,10 @@ VisiblePosition FrameSelection::modifyExtendingBackward(TextGranularity granular
         pos = previousSentencePosition(pos);
         break;
     case LineGranularity:
-        pos = previousLinePosition(pos, xPosForVerticalArrowNavigation(EXTENT));
+        pos = previousLinePosition(pos, lineDirectionPointForBlockDirectionNavigation(EXTENT));
         break;
     case ParagraphGranularity:
-        pos = previousParagraphPosition(pos, xPosForVerticalArrowNavigation(EXTENT));
+        pos = previousParagraphPosition(pos, lineDirectionPointForBlockDirectionNavigation(EXTENT));
         break;
     case SentenceBoundary:
         pos = startOfSentence(startForPlatform());
@@ -755,10 +755,10 @@ VisiblePosition FrameSelection::modifyMovingBackward(TextGranularity granularity
         pos = previousSentencePosition(VisiblePosition(m_selection.extent(), m_selection.affinity()));
         break;
     case LineGranularity:
-        pos = previousLinePosition(startForPlatform(), xPosForVerticalArrowNavigation(START));
+        pos = previousLinePosition(startForPlatform(), lineDirectionPointForBlockDirectionNavigation(START));
         break;
     case ParagraphGranularity:
-        pos = previousParagraphPosition(startForPlatform(), xPosForVerticalArrowNavigation(START));
+        pos = previousParagraphPosition(startForPlatform(), lineDirectionPointForBlockDirectionNavigation(START));
         break;
     case SentenceBoundary:
         pos = startOfSentence(startForPlatform());
@@ -843,7 +843,7 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
     // Setting a selection will clear it, so save it to possibly restore later.
     // Note: the START position type is arbitrary because it is unused, it would be
     // the requested position type if there were no xPosForVerticalArrowNavigation set.
-    int x = xPosForVerticalArrowNavigation(START);
+    int x = lineDirectionPointForBlockDirectionNavigation(START);
 
     switch (alter) {
     case AlterationMove:
@@ -915,12 +915,12 @@ bool FrameSelection::modify(EAlteration alter, int verticalDistance, bool userTr
     switch (alter) {
     case AlterationMove:
         pos = VisiblePosition(up ? m_selection.start() : m_selection.end(), m_selection.affinity());
-        xPos = xPosForVerticalArrowNavigation(up ? START : END);
+        xPos = lineDirectionPointForBlockDirectionNavigation(up ? START : END);
         m_selection.setAffinity(up ? UPSTREAM : DOWNSTREAM);
         break;
     case AlterationExtend:
         pos = VisiblePosition(m_selection.extent(), m_selection.affinity());
-        xPos = xPosForVerticalArrowNavigation(EXTENT);
+        xPos = lineDirectionPointForBlockDirectionNavigation(EXTENT);
         m_selection.setAffinity(DOWNSTREAM);
         break;
     }
@@ -971,7 +971,7 @@ bool FrameSelection::modify(EAlteration alter, int verticalDistance, bool userTr
     return true;
 }
 
-int FrameSelection::xPosForVerticalArrowNavigation(EPositionType type)
+int FrameSelection::lineDirectionPointForBlockDirectionNavigation(EPositionType type)
 {
     int x = 0;
 
@@ -1002,7 +1002,7 @@ int FrameSelection::xPosForVerticalArrowNavigation(EPositionType type)
         VisiblePosition visiblePosition(pos, m_selection.affinity());
         // VisiblePosition creation can fail here if a node containing the selection becomes visibility:hidden
         // after the selection is created and before this function is called.
-        x = visiblePosition.isNotNull() ? visiblePosition.xOffsetForVerticalNavigation() : 0;
+        x = visiblePosition.isNotNull() ? visiblePosition.lineDirectionPointForBlockDirectionNavigation() : 0;
         m_xPosForVerticalArrowNavigation = x;
     } else
         x = m_xPosForVerticalArrowNavigation;

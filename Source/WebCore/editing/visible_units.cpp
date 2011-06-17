@@ -503,7 +503,21 @@ static Node* enclosingNodeWithNonInlineRenderer(Node* n)
     return 0;
 }
 
-VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int x)
+static inline IntPoint absoluteLineDirectionPointToLocalPointInBlock(RootInlineBox* root, int lineDirectionPoint)
+{
+    ASSERT(root);
+    RenderBlock* containingBlock = root->block();
+    FloatPoint absoluteBlockPoint = containingBlock->localToAbsolute(FloatPoint());
+    if (containingBlock->hasOverflowClip())
+        absoluteBlockPoint -= containingBlock->layer()->scrolledContentOffset();
+
+    if (root->block()->isHorizontalWritingMode())
+        return IntPoint(lineDirectionPoint - absoluteBlockPoint.x(), root->blockDirectionPointInLine());
+
+    return IntPoint(root->selectionTop(), lineDirectionPoint - absoluteBlockPoint.y());
+}
+
+VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int lineDirectionPoint)
 {
     Position p = visiblePosition.deepEquivalent();
     Node* node = p.deprecatedNode();
@@ -517,7 +531,6 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     if (!renderer)
         return VisiblePosition();
 
-    RenderBlock *containingBlock = 0;
     RootInlineBox *root = 0;
     InlineBox* box;
     int ignoredCaretOffset;
@@ -526,9 +539,7 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
         root = box->root()->prevRootBox();
         // We want to skip zero height boxes.
         // This could happen in case it is a TrailingFloatsRootInlineBox.
-        if (root && root->logicalHeight())
-            containingBlock = renderer->containingBlock();
-        else
+        if (!root || !root->logicalHeight())
             root = 0;
     }
 
@@ -553,7 +564,6 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
                     if (box) {
                         // previous root line box found
                         root = box->root();
-                        containingBlock = n->renderer()->containingBlock();
                         break;
                     }
 
@@ -566,14 +576,12 @@ VisiblePosition previousLinePosition(const VisiblePosition &visiblePosition, int
     
     if (root) {
         // FIXME: Can be wrong for multi-column layout and with transforms.
-        FloatPoint absPos = containingBlock->localToAbsolute(FloatPoint());
-        if (containingBlock->hasOverflowClip())
-            absPos -= containingBlock->layer()->scrolledContentOffset();
-        RenderObject* renderer = root->closestLeafChildForLogicalLeftPosition(x - absPos.x(), isEditablePosition(p))->renderer();
+        IntPoint pointInLine = absoluteLineDirectionPointToLocalPointInBlock(root, lineDirectionPoint);
+        RenderObject* renderer = root->closestLeafChildForPoint(pointInLine, isEditablePosition(p))->renderer();
         Node* node = renderer->node();
         if (node && editingIgnoresContent(node))
             return positionInParentBeforeNode(node);
-        return renderer->positionForPoint(IntPoint(x - absPos.x(), root->blockDirectionPointInLine()));
+        return renderer->positionForPoint(pointInLine);
     }
     
     // Could not find a previous line. This means we must already be on the first line.
@@ -614,7 +622,7 @@ static Node* nextLeafWithSameEditability(Node* node)
     return 0;
 }
 
-VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
+VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int lineDirectionPoint)
 {
     Position p = visiblePosition.deepEquivalent();
     Node* node = p.deprecatedNode();
@@ -628,7 +636,6 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
     if (!renderer)
         return VisiblePosition();
 
-    RenderBlock *containingBlock = 0;
     RootInlineBox *root = 0;
     InlineBox* box;
     int ignoredCaretOffset;
@@ -637,9 +644,7 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
         root = box->root()->nextRootBox();
         // We want to skip zero height boxes.
         // This could happen in case it is a TrailingFloatsRootInlineBox.
-        if (root && root->logicalHeight())
-            containingBlock = renderer->containingBlock();
-        else
+        if (!root || !root->logicalHeight())
             root = 0;
     }
 
@@ -661,7 +666,6 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
                 if (box) {
                     // next root line box found
                     root = box->root();
-                    containingBlock = n->renderer()->containingBlock();
                     break;
                 }
 
@@ -673,15 +677,13 @@ VisiblePosition nextLinePosition(const VisiblePosition &visiblePosition, int x)
     
     if (root) {
         // FIXME: Can be wrong for multi-column layout and with transforms.
-        FloatPoint absPos = containingBlock->localToAbsolute(FloatPoint());
-        if (containingBlock->hasOverflowClip())
-            absPos -= containingBlock->layer()->scrolledContentOffset();
-        RenderObject* renderer = root->closestLeafChildForLogicalLeftPosition(x - absPos.x(), isEditablePosition(p))->renderer();
+        IntPoint pointInLine = absoluteLineDirectionPointToLocalPointInBlock(root, lineDirectionPoint);
+        RenderObject* renderer = root->closestLeafChildForPoint(pointInLine, isEditablePosition(p))->renderer();
         Node* node = renderer->node();
         if (node && editingIgnoresContent(node))
             return positionInParentBeforeNode(node);
-        return renderer->positionForPoint(IntPoint(x - absPos.x(), root->blockDirectionPointInLine()));
-    }    
+        return renderer->positionForPoint(pointInLine);
+    }
 
     // Could not find a next line. This means we must already be on the last line.
     // Move to the end of the content in this block, which effectively moves us
