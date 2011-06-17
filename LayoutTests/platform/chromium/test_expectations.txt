@@ -3969,3 +3969,8 @@ BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html 
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = IMAGE
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IMAGE
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE
+
+REBASELINE BUGRNIWA WIN : editing/selection/vertical-rl-rtl-extend-line-backward-br.html = IMAGE
+REBASELINE BUGRNIWA WIN : editing/selection/vertical-rl-rtl-extend-line-backward-p.html = IMAGE
+REBASELINE BUGRNIWA WIN : editing/selection/vertical-rl-rtl-extend-line-forward-br.html = IMAGE
+REBASELINE BUGRNIWA WIN : editing/selection/vertical-rl-rtl-extend-line-forward-p.html = IMAGE
