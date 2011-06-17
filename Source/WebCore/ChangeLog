@@ -1,3 +1,28 @@
+2011-06-09  Hans Wennborg  <hans@chromium.org>
+
+        Reviewed by Tony Gentilcore.
+
+        IndexedDB: backingStoreMap is per backing store, not per database
+        https://bugs.webkit.org/show_bug.cgi?id=62382
+
+        IDBFactoryBackendImpl::m_backingStoreMap should contain an entry per
+        backing store, not per database. Otherwise, we might accidentally open
+        the same backing store more than once, which is dangerous.
+
+        Also tweak the code that chooses backing store type. It should be
+        simple: we default to SQLite; if LevelDB is specifically requested, we
+        use that. If LevelDB is requested and there is a SQLite database, we
+        migrate.
+
+        No new tests, just cleaning up the code.
+
+        * storage/IDBFactoryBackendImpl.cpp:
+        (WebCore::IDBFactoryBackendImpl::addIDBBackingStore):
+        (WebCore::IDBFactoryBackendImpl::removeIDBBackingStore):
+        (WebCore::IDBFactoryBackendImpl::open):
+        (WebCore::IDBFactoryBackendImpl::migrateFromSQLiteToLevelDB):
+        * storage/IDBFactoryBackendImpl.h:
+
 2011-06-17  Andrey Adaikin  <aandrey@google.com>
 
         Reviewed by Pavel Feldman.

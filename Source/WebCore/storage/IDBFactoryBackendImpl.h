@@ -52,14 +52,14 @@ public:
 
     // Notifications from weak pointers.
     void removeIDBDatabaseBackend(const String& uniqueIdentifier);
-    void addIDBBackingStore(const String& uniqueIdentifier, IDBBackingStore*);
-    void removeIDBBackingStore(const String& uniqueIdentifier);
+    void addIDBBackingStore(const String& fileIdentifier, IDBBackingStore*);
+    void removeIDBBackingStore(const String& fileIdentifier);
 
     virtual void open(const String& name, PassRefPtr<IDBCallbacks>, PassRefPtr<SecurityOrigin>, Frame*, const String& dataDir, int64_t maximumSize, BackingStoreType);
 
 private:
     IDBFactoryBackendImpl();
-    bool migrate(const String& name, SecurityOrigin*, const String& dataDir, int64_t maximumSize);
+    bool migrateFromSQLiteToLevelDB(const String& name, SecurityOrigin*, const String& dataDir, int64_t maximumSize);
 
     typedef HashMap<String, IDBDatabaseBackendImpl*> IDBDatabaseBackendMap;
     IDBDatabaseBackendMap m_databaseBackendMap;
