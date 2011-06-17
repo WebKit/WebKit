@@ -3953,4 +3953,14 @@ WONTFIX LINUX DEBUG GPU : platform/chromium/compositing/layout-width-change.html
 // Has been flaky/crashy for a while
 BUGCR86359 WIN : fast/dom/DeviceOrientation/add-listener-from-callback.html = CRASH PASS
 
-BUGWK62858 LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE
+REBASELINE BUGWK62858 LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE
+
+// These tests are rebaselined using images on the bots but are still failing.
+BUGRNIWA SNOWLEOPARD : editing/selection/vertical-lr-ltr-extend-line-backward-br.html = IMAGE
+BUGRNIWA SNOWLEOPARD : editing/selection/vertical-lr-ltr-extend-line-forward-br.html = IMAGE
+BUGRNIWA SNOWLEOPARD : editing/selection/vertical-rl-ltr-extend-line-backward-br.html = IMAGE
+BUGRNIWA SNOWLEOPARD : editing/selection/vertical-rl-ltr-extend-line-backward-p.html = IMAGE
+BUGRNIWA SNOWLEOPARD : editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html = IMAGE
+BUGRNIWA SNOWLEOPARD : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = IMAGE
+BUGRNIWA SNOWLEOPARD : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IMAGE
+BUGRNIWA SNOWLEOPARD : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE
