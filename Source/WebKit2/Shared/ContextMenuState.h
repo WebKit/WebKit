@@ -27,6 +27,7 @@
 #define ContextMenuState_h
 
 #include "WebCoreArgumentCoders.h"
+#include <wtf/text/WTFString.h>
 
 namespace WebKit {
 

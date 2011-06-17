@@ -29,6 +29,8 @@
 #include "ShareableBitmap.h"
 #include "WebPageProxy.h"
 #include "WebPopupMenuProxy.h"
+#include <WebCore/EditorClient.h>
+#include <WebCore/SpellingCorrectionController.h>
 #include <wtf/Forward.h>
 
 #if PLATFORM(MAC)

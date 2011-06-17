@@ -31,7 +31,10 @@
 #include "PlatformCertificateInfo.h"
 #include <CFNetwork/CFURLRequestPriv.h>
 #include <WebCore/CertificateCFWin.h>
+#include <WebCore/ResourceError.h>
 #include <WebCore/ResourceHandle.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 

@@ -41,6 +41,7 @@
 #import <WebCore/IntRect.h>
 #import <WebKit/WebNSWindowExtras.h>
 #import <WebKitSystemInterface.h>
+#import <wtf/UnusedParam.h>
 
 static const NSTimeInterval tickleTimerInterval = 1.0;
 

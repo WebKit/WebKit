@@ -29,6 +29,9 @@
 #import "ArgumentCodersCF.h"
 #import "PlatformCertificateInfo.h"
 #import "WebKitSystemInterface.h"
+#import <WebCore/KeyboardEvent.h>
+#import <WebCore/ResourceError.h>
+#import <WebCore/ResourceRequest.h>
 
 using namespace WebCore;
 using namespace WebKit;

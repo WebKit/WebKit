@@ -75,6 +75,7 @@
 #include <WebCore/FloatRect.h>
 #include <WebCore/FocusDirection.h>
 #include <WebCore/MIMETypeRegistry.h>
+#include <WebCore/TextCheckerClient.h>
 #include <WebCore/WindowFeatures.h>
 #include <stdio.h>
 

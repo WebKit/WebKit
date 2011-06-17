@@ -1,3 +1,28 @@
+2011-06-17  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Move the remaining WebCore argument coders to the .cpp file
+        https://bugs.webkit.org/show_bug.cgi?id=62874
+
+        Also add includes that other files need that used to be provided by WebCoreArgumentCoders.h,
+        and get rid of the LAZY_NATIVE_CURSOR #if check because all WebKit2 platforms now support it.
+        
+        * Shared/ContextMenuState.h:
+        * Shared/WebCoreArgumentCoders.cpp:
+        (CoreIPC::::encode):
+        (CoreIPC::::decode):
+        * Shared/WebCoreArgumentCoders.h:
+        * Shared/gtk/WebCoreArgumentCodersGtk.cpp:
+        * Shared/mac/WebCoreArgumentCodersMac.mm:
+        * Shared/qt/WebCoreArgumentCodersQt.cpp:
+        * UIProcess/API/mac/PDFViewController.mm:
+        * UIProcess/PageClient.h:
+        * UIProcess/WebIconDatabase.cpp:
+        * UIProcess/WebPageProxy.cpp:
+        * UIProcess/WebPageProxy.h:
+        * UIProcess/mac/WKFullScreenWindowController.mm:
+
 2011-06-17  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Anders Carlsson.

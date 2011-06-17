@@ -35,7 +35,7 @@
 #include "GeolocationPermissionRequestManagerProxy.h"
 #include "PlatformProcessIdentifier.h"
 #include "SandboxExtension.h"
-#include "SharedMemory.h"
+#include "ShareableBitmap.h"
 #include "WKBase.h"
 #include "WKPagePrivate.h"
 #include "WebContextMenuItemData.h"
@@ -49,7 +49,9 @@
 #include "WebPopupMenuProxy.h"
 #include "WebResourceLoadClient.h"
 #include "WebUIClient.h"
+#include <WebCore/DragActions.h>
 #include <WebCore/ScrollTypes.h>
+#include <WebCore/TextChecking.h>
 #include <wtf/HashMap.h>
 #include <wtf/HashSet.h>
 #include <wtf/OwnPtr.h>

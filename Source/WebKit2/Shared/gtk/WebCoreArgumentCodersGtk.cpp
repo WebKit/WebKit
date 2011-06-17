@@ -25,8 +25,11 @@
  */
 
 #include "config.h"
-#include "ResourceRequest.h"
 #include "WebCoreArgumentCoders.h"
+
+#include <WebCore/ResourceError.h>
+#include <WebCore/ResourceRequest.h>
+#include <WebCore/ResourceResponse.h>
 
 using namespace WebCore;
 

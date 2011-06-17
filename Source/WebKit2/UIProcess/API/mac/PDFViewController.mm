@@ -36,6 +36,7 @@
 #import "WebPreferences.h"
 #import <PDFKit/PDFKit.h>
 #import <WebCore/LocalizedStrings.h>
+#import <wtf/text/CString.h>
 #import <wtf/text/WTFString.h>
 
 // Redeclarations of PDFKit notifications. We can't use the API since we use a weak link to the framework.

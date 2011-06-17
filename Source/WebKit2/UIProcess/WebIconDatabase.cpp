@@ -33,6 +33,7 @@
 #include <WebCore/FileSystem.h>
 #include <WebCore/IconDatabase.h>
 #include <WebCore/IconDatabaseBase.h>
+#include <wtf/text/CString.h>
 #include <wtf/text/WTFString.h>
 
 using namespace WebCore;

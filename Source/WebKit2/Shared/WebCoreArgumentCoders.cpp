@@ -26,13 +26,118 @@
 #include "config.h"
 #include "WebCoreArgumentCoders.h"
 
+#include "ShareableBitmap.h"
+#include <WebCore/AuthenticationChallenge.h>
+#include <WebCore/Credential.h>
+#include <WebCore/Cursor.h>
+#include <WebCore/DatabaseDetails.h>
+#include <WebCore/Editor.h>
+#include <WebCore/GraphicsContext.h>
+#include <WebCore/Image.h>
 #include <WebCore/PluginData.h>
+#include <WebCore/ProtectionSpace.h>
+#include <WebCore/TextCheckerClient.h>
+#include <WebCore/ViewportArguments.h>
+#include <WebCore/WindowFeatures.h>
+#include <wtf/text/StringHash.h>
+
+#if PLATFORM(QT)
+#include <WebCore/Animation.h>
+#include <WebCore/FloatPoint3D.h>
+#include <WebCore/IdentityTransformOperation.h>
+#include <WebCore/Matrix3DTransformOperation.h>
+#include <WebCore/MatrixTransformOperation.h>
+#include <WebCore/PerspectiveTransformOperation.h>
+#include <WebCore/RotateTransformOperation.h>
+#include <WebCore/ScaleTransformOperation.h>
+#include <WebCore/SkewTransformOperation.h>
+#include <WebCore/TimingFunction.h>
+#include <WebCore/TransformOperation.h>
+#include <WebCore/TransformOperations.h>
+#include <WebCore/TranslateTransformOperation.h>
+#endif
 
 using namespace WebCore;
 using namespace WebKit;
 
 namespace CoreIPC {
-    
+
+void ArgumentCoder<FloatPoint>::encode(ArgumentEncoder* encoder, const FloatPoint& floatPoint)
+{
+    SimpleArgumentCoder<FloatPoint>::encode(encoder, floatPoint);
+}
+
+bool ArgumentCoder<FloatPoint>::decode(ArgumentDecoder* decoder, FloatPoint& floatPoint)
+{
+    return SimpleArgumentCoder<FloatPoint>::decode(decoder, floatPoint);
+}
+
+
+void ArgumentCoder<FloatRect>::encode(ArgumentEncoder* encoder, const FloatRect& floatRect)
+{
+    SimpleArgumentCoder<FloatRect>::encode(encoder, floatRect);
+}
+
+bool ArgumentCoder<FloatRect>::decode(ArgumentDecoder* decoder, FloatRect& floatRect)
+{
+    return SimpleArgumentCoder<FloatRect>::decode(decoder, floatRect);
+}
+
+
+void ArgumentCoder<FloatSize>::encode(ArgumentEncoder* encoder, const FloatSize& floatSize)
+{
+    SimpleArgumentCoder<FloatSize>::encode(encoder, floatSize);
+}
+
+bool ArgumentCoder<FloatSize>::decode(ArgumentDecoder* decoder, FloatSize& floatSize)
+{
+    return SimpleArgumentCoder<FloatSize>::decode(decoder, floatSize);
+}
+
+
+void ArgumentCoder<IntPoint>::encode(ArgumentEncoder* encoder, const IntPoint& intPoint)
+{
+    SimpleArgumentCoder<IntPoint>::encode(encoder, intPoint);
+}
+
+bool ArgumentCoder<IntPoint>::decode(ArgumentDecoder* decoder, IntPoint& intPoint)
+{
+    return SimpleArgumentCoder<IntPoint>::decode(decoder, intPoint);
+}
+
+
+void ArgumentCoder<IntRect>::encode(ArgumentEncoder* encoder, const IntRect& intRect)
+{
+    SimpleArgumentCoder<IntRect>::encode(encoder, intRect);
+}
+
+bool ArgumentCoder<IntRect>::decode(ArgumentDecoder* decoder, IntRect& intRect)
+{
+    return SimpleArgumentCoder<IntRect>::decode(decoder, intRect);
+}
+
+
+void ArgumentCoder<IntSize>::encode(ArgumentEncoder* encoder, const IntSize& intSize)
+{
+    SimpleArgumentCoder<IntSize>::encode(encoder, intSize);
+}
+
+bool ArgumentCoder<IntSize>::decode(ArgumentDecoder* decoder, IntSize& intSize)
+{
+    return SimpleArgumentCoder<IntSize>::decode(decoder, intSize);
+}
+
+
+void ArgumentCoder<ViewportArguments>::encode(ArgumentEncoder* encoder, const ViewportArguments& viewportArguments)
+{
+    SimpleArgumentCoder<ViewportArguments>::encode(encoder, viewportArguments);
+}
+
+bool ArgumentCoder<ViewportArguments>::decode(ArgumentDecoder* decoder, ViewportArguments& viewportArguments)
+{
+    return SimpleArgumentCoder<ViewportArguments>::decode(decoder, viewportArguments);
+}
+
 void ArgumentCoder<MimeClassInfo>::encode(ArgumentEncoder* encoder, const MimeClassInfo& mimeClassInfo)
 {
     encoder->encode(mimeClassInfo.type);
@@ -209,7 +314,6 @@ static bool decodeImage(ArgumentDecoder* decoder, RefPtr<Image>& image)
     return true;
 }
 
-#if USE(LAZY_NATIVE_CURSOR)
 void ArgumentCoder<Cursor>::encode(ArgumentEncoder* encoder, const Cursor& cursor)
 {
     encoder->encodeEnum(cursor.type());
@@ -249,7 +353,6 @@ bool ArgumentCoder<Cursor>::decode(ArgumentDecoder* decoder, Cursor& cursor)
     cursor = Cursor(image.get(), hotSpot);
     return true;
 }
-#endif // USE(LAZY_NATIVE_CURSOR)
 
 
 void ArgumentCoder<WindowFeatures>::encode(ArgumentEncoder* encoder, const WindowFeatures& windowFeatures)
@@ -443,6 +546,116 @@ bool ArgumentCoder<TextCheckingResult>::decode(ArgumentDecoder* decoder, TextChe
 }
 
 #if PLATFORM(QT)
+
+void ArgumentCoder<FloatPoint3D>::encode(ArgumentEncoder* encoder, const FloatPoint3D& floatPoint3D)
+{
+    SimpleArgumentCoder<FloatPoint3D>::encode(encoder, floatPoint3D);
+}
+
+bool ArgumentCoder<FloatPoint3D>::decode(ArgumentDecoder* decoder, FloatPoint3D& floatPoint3D)
+{
+    return SimpleArgumentCoder<FloatPoint3D>::decode(decoder, floatPoint3D);
+}
+
+
+void ArgumentCoder<Length>::encode(ArgumentEncoder* encoder, const Length& length)
+{
+    SimpleArgumentCoder<Length>::encode(encoder, length);
+}
+
+bool ArgumentCoder<Length>::decode(ArgumentDecoder* decoder, Length& length)
+{
+    return SimpleArgumentCoder<Length>::decode(decoder, length);
+}
+
+
+void ArgumentCoder<TransformationMatrix>::encode(ArgumentEncoder* encoder, const TransformationMatrix& transformationMatrix)
+{
+    SimpleArgumentCoder<TransformationMatrix>::encode(encoder, transformationMatrix);
+}
+
+bool ArgumentCoder<TransformationMatrix>::decode(ArgumentDecoder* decoder, TransformationMatrix& transformationMatrix)
+{
+    return SimpleArgumentCoder<TransformationMatrix>::decode(decoder, transformationMatrix);
+}
+
+
+void ArgumentCoder<MatrixTransformOperation>::encode(ArgumentEncoder* encoder, const MatrixTransformOperation& operation)
+{
+    SimpleArgumentCoder<MatrixTransformOperation>::encode(encoder, operation);
+}
+
+bool ArgumentCoder<MatrixTransformOperation>::decode(ArgumentDecoder* decoder, MatrixTransformOperation& operation)
+{
+    return SimpleArgumentCoder<MatrixTransformOperation>::decode(decoder, operation);
+}
+
+
+void ArgumentCoder<Matrix3DTransformOperation>::encode(ArgumentEncoder* encoder, const Matrix3DTransformOperation& operation)
+{
+    SimpleArgumentCoder<Matrix3DTransformOperation>::encode(encoder, operation);
+}
+
+bool ArgumentCoder<Matrix3DTransformOperation>::decode(ArgumentDecoder* decoder, Matrix3DTransformOperation& operation)
+{
+    return SimpleArgumentCoder<Matrix3DTransformOperation>::decode(decoder, operation);
+}
+
+
+void ArgumentCoder<PerspectiveTransformOperation>::encode(ArgumentEncoder* encoder, const PerspectiveTransformOperation& operation)
+{
+    SimpleArgumentCoder<PerspectiveTransformOperation>::encode(encoder, operation);
+}
+
+bool ArgumentCoder<PerspectiveTransformOperation>::decode(ArgumentDecoder* decoder, PerspectiveTransformOperation& operation)
+{
+    return SimpleArgumentCoder<PerspectiveTransformOperation>::decode(decoder, operation);
+}
+
+
+void ArgumentCoder<RotateTransformOperation>::encode(ArgumentEncoder* encoder, const RotateTransformOperation& operation)
+{
+    SimpleArgumentCoder<RotateTransformOperation>::encode(encoder, operation);
+}
+
+bool ArgumentCoder<RotateTransformOperation>::decode(ArgumentDecoder* decoder, RotateTransformOperation& operation)
+{
+    return SimpleArgumentCoder<RotateTransformOperation>::decode(decoder, operation);
+}
+
+
+void ArgumentCoder<ScaleTransformOperation>::encode(ArgumentEncoder* encoder, const ScaleTransformOperation& operation)
+{
+    SimpleArgumentCoder<ScaleTransformOperation>::encode(encoder, operation);
+}
+
+bool ArgumentCoder<ScaleTransformOperation>::decode(ArgumentDecoder* decoder, ScaleTransformOperation& operation)
+{
+    return SimpleArgumentCoder<ScaleTransformOperation>::decode(decoder, operation);
+}
+
+
+void ArgumentCoder<SkewTransformOperation>::encode(ArgumentEncoder* encoder, const SkewTransformOperation& operation)
+{
+    SimpleArgumentCoder<SkewTransformOperation>::encode(encoder, operation);
+}
+
+bool ArgumentCoder<SkewTransformOperation>::decode(ArgumentDecoder* decoder, SkewTransformOperation& operation)
+{
+    return SimpleArgumentCoder<SkewTransformOperation>::decode(decoder, operation);
+}
+
+
+void ArgumentCoder<TranslateTransformOperation>::encode(ArgumentEncoder* encoder, const TranslateTransformOperation& operation)
+{
+    SimpleArgumentCoder<TranslateTransformOperation>::encode(encoder, operation);
+}
+
+bool ArgumentCoder<TranslateTransformOperation>::decode(ArgumentDecoder* decoder, TranslateTransformOperation& operation)
+{
+    return SimpleArgumentCoder<TranslateTransformOperation>::decode(decoder, operation);
+}
+
 void ArgumentCoder<RefPtr<TimingFunction> >::encode(ArgumentEncoder* encoder, const RefPtr<TimingFunction>& function)
 {
     // We don't want to encode null-references.
