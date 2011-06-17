@@ -57,8 +57,6 @@ bool wkScrollbarPainterIsHorizontal(WKScrollbarPainterRef);
 CGFloat wkScrollbarPainterKnobAlpha(WKScrollbarPainterRef);
 void wkScrollbarPainterSetOverlayState(WKScrollbarPainterRef, int overlayScrollerState);
 void wkScrollbarPainterPaint(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, NSRect frameRect);
-void wkScrollbarPainterPaintTrack(WKScrollbarPainterRef, bool enabled, double value, CGFloat proportion, NSRect frameRect);
-void wkScrollbarPainterPaintKnob(WKScrollbarPainterRef);
 int wkScrollbarMinimumThumbLength(WKScrollbarPainterRef);
 void wkScrollbarPainterSetDelegate(WKScrollbarPainterRef, id scrollbarPainterDelegate);
 CGFloat wkScrollbarPainterTrackAlpha(WKScrollbarPainterRef);

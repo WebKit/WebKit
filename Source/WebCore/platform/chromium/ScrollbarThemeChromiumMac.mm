@@ -479,16 +479,11 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
         context->clip(damageRect);
         context->translate(scrollbar->frameRect().x(), scrollbar->frameRect().y());
         LocalCurrentGraphicsContext localContext(context);
-        WKScrollbarPainterRef scrollbarPainter = scrollbarMap()->get(scrollbar).get();
-        wkScrollbarPainterPaintTrack(scrollbarPainter,
-                                     scrollbar->enabled(),
-                                     value,
-                                     (static_cast<CGFloat>(scrollbar->visibleSize()) - overhang) / scrollbar->totalSize(),
-                                     scrollbar->frameRect());
-        CGFloat trackAlpha = wkScrollbarPainterTrackAlpha(scrollbarPainter);
-        if (trackAlpha >= 0.0)
-            paintTickmarks(scrollbar, context, false, trackAlpha);
-        wkScrollbarPainterPaintKnob(scrollbarPainter);
+        wkScrollbarPainterPaint(scrollbarMap()->get(scrollbar).get(),
+                                scrollbar->enabled(),
+                                value,
+                                (static_cast<CGFloat>(scrollbar->visibleSize()) - overhang) / scrollbar->totalSize(),
+                                scrollbar->frameRect());
 
         scrollAnimator->setIsDrawingIntoLayer(false);
         return true;
@@ -549,40 +544,13 @@ bool ScrollbarThemeChromiumMac::paint(Scrollbar* scrollbar, GraphicsContext* con
 #endif
     HIThemeDrawTrack(&trackInfo, 0, cgContext, kHIThemeOrientationNormal);
 
-    paintTickmarks(scrollbar, drawingContext, canDrawDirectly, 1.0);
-
-    if (hasThumb(scrollbar)) {
-        PlatformBridge::ThemePaintScrollbarInfo scrollbarInfo;
-        scrollbarInfo.orientation = scrollbar->orientation() == HorizontalScrollbar ? PlatformBridge::ScrollbarOrientationHorizontal : PlatformBridge::ScrollbarOrientationVertical;
-        scrollbarInfo.parent = scrollbar->parent() && scrollbar->parent()->isFrameView() && static_cast<FrameView*>(scrollbar->parent())->isScrollViewScrollbar(scrollbar) ? PlatformBridge::ScrollbarParentScrollView : PlatformBridge::ScrollbarParentRenderLayer;
-        scrollbarInfo.maxValue = scrollbar->maximum();
-        scrollbarInfo.currentValue = scrollbar->currentPos();
-        scrollbarInfo.visibleSize = scrollbar->visibleSize();
-        scrollbarInfo.totalSize = scrollbar->totalSize();
-
-        PlatformBridge::paintScrollbarThumb(
-            drawingContext,
-            scrollbarStateToThemeState(scrollbar),
-            scrollbar->controlSize() == RegularScrollbar ? PlatformBridge::SizeRegular : PlatformBridge::SizeSmall,
-            scrollbar->frameRect(),
-            scrollbarInfo);
-    }
-
-    if (!canDrawDirectly)
-        context->drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, scrollbar->frameRect().location());
-
-    return true;
-}
-
-void ScrollbarThemeChromiumMac::paintTickmarks(Scrollbar* scrollbar, GraphicsContext* drawingContext, bool canDrawDirectly, float alpha) {
     Vector<IntRect> tickmarks;
     scrollbar->scrollableArea()->getTickmarks(tickmarks);
     if (scrollbar->orientation() == VerticalScrollbar && tickmarks.size()) {
         drawingContext->save();
         drawingContext->setShouldAntialias(false);
-        int alphaInt = 0xFF * alpha;
-        drawingContext->setStrokeColor(Color(0xCC, 0xAA, 0x00, alphaInt), ColorSpaceDeviceRGB);
-        drawingContext->setFillColor(Color(0xFF, 0xDD, 0x00, alphaInt), ColorSpaceDeviceRGB);
+        drawingContext->setStrokeColor(Color(0xCC, 0xAA, 0x00, 0xFF), ColorSpaceDeviceRGB);
+        drawingContext->setFillColor(Color(0xFF, 0xDD, 0x00, 0xFF), ColorSpaceDeviceRGB);
 
         IntRect thumbArea = trackRect(scrollbar, false);
         if (!canDrawDirectly) {
@@ -610,6 +578,28 @@ void ScrollbarThemeChromiumMac::paintTickmarks(Scrollbar* scrollbar, GraphicsCon
 
         drawingContext->restore();
     }
+
+    if (hasThumb(scrollbar)) {
+        PlatformBridge::ThemePaintScrollbarInfo scrollbarInfo;
+        scrollbarInfo.orientation = scrollbar->orientation() == HorizontalScrollbar ? PlatformBridge::ScrollbarOrientationHorizontal : PlatformBridge::ScrollbarOrientationVertical;
+        scrollbarInfo.parent = scrollbar->parent() && scrollbar->parent()->isFrameView() && static_cast<FrameView*>(scrollbar->parent())->isScrollViewScrollbar(scrollbar) ? PlatformBridge::ScrollbarParentScrollView : PlatformBridge::ScrollbarParentRenderLayer;
+        scrollbarInfo.maxValue = scrollbar->maximum();
+        scrollbarInfo.currentValue = scrollbar->currentPos();
+        scrollbarInfo.visibleSize = scrollbar->visibleSize();
+        scrollbarInfo.totalSize = scrollbar->totalSize();
+
+        PlatformBridge::paintScrollbarThumb(
+            drawingContext,
+            scrollbarStateToThemeState(scrollbar),
+            scrollbar->controlSize() == RegularScrollbar ? PlatformBridge::SizeRegular : PlatformBridge::SizeSmall,
+            scrollbar->frameRect(),
+            scrollbarInfo);
+    }
+
+    if (!canDrawDirectly)
+        context->drawImageBuffer(imageBuffer.get(), ColorSpaceDeviceRGB, scrollbar->frameRect().location());
+
+    return true;
 }
 
 }
