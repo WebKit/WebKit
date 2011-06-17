@@ -828,6 +828,18 @@ QAction* QWKPage::action(WebAction action) const
     case SelectAll:
         text = contextMenuItemTagSelectAll();
         break;
+#ifndef QT_NO_UNDOSTACK
+    case Undo: {
+        QAction* undoAction = d->undoStack->createUndoAction(d->q);
+        d->actions[action] = undoAction;
+        return undoAction;
+    }
+    case Redo: {
+        QAction* redoAction = d->undoStack->createRedoAction(d->q);
+        d->actions[action] = redoAction;
+        return redoAction;
+    }
+#endif
     default:
         return 0;
         break;

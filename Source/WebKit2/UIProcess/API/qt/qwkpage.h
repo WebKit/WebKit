@@ -45,6 +45,9 @@ public:
         Paste,
         SelectAll,
 
+        Undo,
+        Redo,
+
         WebActionCount
     };
 

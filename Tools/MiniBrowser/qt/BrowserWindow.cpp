@@ -84,6 +84,15 @@ BrowserWindow::BrowserWindow(QWKContext* context, WindowOptions* options)
     fileMenu->addSeparator();
     fileMenu->addAction("Quit", this, SLOT(close()));
 
+    QMenu* editMenu = menuBar()->addMenu("&Edit");
+    QAction* undo = page()->action(QWKPage::Undo);
+    undo->setShortcut(QKeySequence(QKeySequence::Undo));
+    editMenu->addAction(undo);
+    QAction* redo = page()->action(QWKPage::Redo);
+    redo->setShortcut(QKeySequence(QKeySequence::Redo));
+    editMenu->addAction(redo);
+    editMenu->addSeparator();
+
     QMenu* viewMenu = menuBar()->addMenu("&View");
     viewMenu->addAction(page()->action(QWKPage::Stop));
     viewMenu->addAction(page()->action(QWKPage::Reload));

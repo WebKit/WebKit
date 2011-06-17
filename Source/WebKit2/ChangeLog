@@ -1,3 +1,14 @@
+2011-06-17  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] [WK2] Support undo/redo in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=62809
+
+        * UIProcess/API/qt/qwkpage.cpp:
+        (QWKPage::action):
+        * UIProcess/API/qt/qwkpage.h:
+
 2011-06-17  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Unreviewed. Fix WebKit2 GTK build after r89060.

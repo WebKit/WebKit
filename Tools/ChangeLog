@@ -1,3 +1,13 @@
+2011-06-17  Chang Shu  <cshu@webkit.org>
+
+        Reviewed by Andreas Kling.
+
+        [Qt] [WK2] Support undo/redo in MiniBrowser
+        https://bugs.webkit.org/show_bug.cgi?id=62809
+
+        * MiniBrowser/qt/BrowserWindow.cpp:
+        (BrowserWindow::BrowserWindow):
+
 2011-06-17  Daniel Bates  <dbates@rim.com>
 
         Rubber-stamped by Eric Seidel.
