@@ -24,6 +24,7 @@
 
 #include "ClientImpl.h"
 #include "IconDatabase.h"
+#include "Image.h"
 #include <QDir>
 #include <QPixmap>
 #include <QUrl>

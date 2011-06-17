@@ -1,5 +1,13 @@
 2011-06-17  Anders Carlsson  <andersca@apple.com>
 
+        Another attempt at fixing the Qt build.
+
+        * UIProcess/API/qt/ClientImpl.cpp:
+        * UIProcess/API/qt/qgraphicswkview.cpp:
+        * UIProcess/API/qt/qwkcontext.cpp:
+
+2011-06-17  Anders Carlsson  <andersca@apple.com>
+
         Fix Qt build.
 
         * WebProcess/ResourceCache/WebResourceCacheManager.cpp:
