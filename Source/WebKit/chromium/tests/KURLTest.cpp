@@ -306,23 +306,51 @@ TEST(KURLTest, Decode)
 
 TEST(KURLTest, Encode)
 {
+    struct EncodeCase {
+        const char* input;
+        const char* output;
+    } encode_cases[] = {
+        {"hello, world", "hello%2C%20world"},
+        {"\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0A\x0B\x0C\x0D\x0E\x0F",
+          "%01%02%03%04%05%06%07%08%09%0A%0B%0C%0D%0E%0F"},
+        {"\x10\x11\x12\x13\x14\x15\x16\x17\x18\x19\x1A\x1B\x1C\x1D\x1E\x1F",
+          "%10%11%12%13%14%15%16%17%18%19%1A%1B%1C%1D%1E%1F"},
+        {" !\"#$%&'()*+,-./",
+          "%20!%22%23%24%25%26'()*%2B%2C-.%2F"},
+        {"0123456789:;<=>?",
+          "0123456789%3A%3B%3C%3D%3E%3F"},
+        {"@ABCDEFGHIJKLMNO",
+          "%40ABCDEFGHIJKLMNO"},
+        {"PQRSTUVWXYZ[\\]^_",
+          "PQRSTUVWXYZ%5B%5C%5D%5E_"},
+        {"`abcdefghijklmno",
+          "%60abcdefghijklmno"},
+        {"pqrstuvwxyz{|}~\x7f",
+          "pqrstuvwxyz%7B%7C%7D~%7F"},
+    };
+
+    for (size_t i = 0; i < ARRAYSIZE_UNSAFE(encode_cases); i++) {
+        WTF::String input(encode_cases[i].input);
+        WTF::String expectedOutput(encode_cases[i].output);
+        WTF::String output = WebCore::encodeWithURLEscapeSequences(input);
+        EXPECT_EQ(expectedOutput, output);
+    }
+
+    // Our encode escapes NULLs for safety, so we need to check that too.
+    WTF::String input("\x00\x01", 2);
+    WTF::String reference("%00%01");
+
+    WTF::String output = WebCore::encodeWithURLEscapeSequences(input);
+    EXPECT_EQ(reference, output);
+
     // Also test that it gets converted to UTF-8 properly.
     char16 wideInputHelper[3] = { 0x4f60, 0x597d, 0 };
     WTF::String wideInput(
         reinterpret_cast<const ::UChar*>(wideInputHelper), 2);
-    WTF::String wideReference("\xe4\xbd\xa0\xe5\xa5\xbd", 6);
+    WTF::String wideReference("%E4%BD%A0%E5%A5%BD");
     WTF::String wideOutput =
         WebCore::encodeWithURLEscapeSequences(wideInput);
     EXPECT_EQ(wideReference, wideOutput);
-
-    // Our encode only escapes NULLs for safety (see the implementation for
-    // more), so we only bother to test a few cases.
-    WTF::String input(
-        "\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f", 16);
-    WTF::String reference(
-        "%00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x0a\x0b\x0c\x0d\x0e\x0f", 18);
-    WTF::String output = WebCore::encodeWithURLEscapeSequences(input);
-    EXPECT_EQ(reference, output);
 }
 
 TEST(KURLTest, ResolveEmpty)
