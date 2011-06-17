@@ -1,3 +1,16 @@
+2011-06-16  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed expectations update for
+        meter-styles.html, meter-writing-mode.html, progress-writing-mode.html
+
+        * platform/chromium-linux/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-expected.png:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-styles-expected.txt:
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-writing-mode-expected.png: Added.
+        * platform/chromium-win/fast/dom/HTMLMeterElement/meter-writing-mode-expected.txt: Added.
+        * platform/chromium-win/fast/dom/HTMLProgressElement/progress-writing-mode-expected.txt: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-16  Jeffrey Pfau  <jpfau@apple.com>
 
         Reviewed by Alexey Proskuryakov.

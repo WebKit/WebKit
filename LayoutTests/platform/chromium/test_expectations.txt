@@ -3182,12 +3182,6 @@ BUGCR78326 WIN : fast/filesystem/filesystem-uri-origin.html = CRASH PASS
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-disabled-readonly.html = TEXT PASS
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-layer.html = IMAGE+TEXT TEXT PASS
 BUGWK50661 WIN LINUX : fast/forms/input-appearance-spinbutton-visibility.html = TEXT PASS
-BUGWK50661 WIN LINUX : fast/dom/HTMLMeterElement/meter-styles.html = IMAGE+TEXT PASS
-
-// Need expectations
-BUGWK59281 WIN LINUX : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE+TEXT
-BUGWK59281 LEOPARD : fast/dom/HTMLMeterElement/meter-writing-mode.html = IMAGE PASS
-BUGWK59281 WIN LINUX : fast/dom/HTMLProgressElement/progress-writing-mode.html = TEXT
 
 // We need to skip Geeza Pro quirk in SimpleFontDataMac.mm for non-Leopard.
 // http://trac.webkit.org/changeset/83126
