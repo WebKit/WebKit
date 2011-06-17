@@ -1,3 +1,12 @@
+2011-06-17  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.
+
+        Some new chromium test expectations and updates.
+
+        * platform/chromium-mac-leopard/fast/dom/HTMLMeterElement/meter-writing-mode-expected.png: Added.
+        * platform/chromium/test_expectations.txt:
+
 2011-06-17  Gavin Barraclough  <barraclough@apple.com>
 
         Rubber Stamped by Sam Weinig.

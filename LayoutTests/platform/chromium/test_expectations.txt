@@ -3964,3 +3964,5 @@ BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html 
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = IMAGE PASS
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IMAGE PASS
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE PASS
+
+BUGCR86563 : fast/canvas/webgl/glsl-conformance.html = TEXT
