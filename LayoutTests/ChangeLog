@@ -1,3 +1,17 @@
+2011-06-16  Kent Tamura  <tkent@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Verify cloned <audio> and <video> are rendered correctly.
+        https://bugs.webkit.org/show_bug.cgi?id=62001
+
+        Add a test to verify cloned media controls are rendered correctly.
+
+        * media/media-controls-clone.html: Added.
+        * platform/chromium/test_expectations.txt:
+        * platform/mac/media/media-controls-clone-expected.png: Added.
+        * platform/mac/media/media-controls-clone-expected.txt: Added.
+
 2011-06-16  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, add Chromium test expectation for fast/js/keywords-and-reserved_words.html.
