@@ -31,16 +31,20 @@
 #include "PlatformCertificateInfo.h"
 #include <CFNetwork/CFURLRequestPriv.h>
 #include <WebCore/CertificateCFWin.h>
+#endif
 #include <WebCore/ResourceError.h>
 #include <WebCore/ResourceHandle.h>
 #include <WebCore/ResourceRequest.h>
 #include <WebCore/ResourceResponse.h>
+#if USE(CFNETWORK)
 #include <WebKitSystemInterface/WebKitSystemInterface.h>
 #endif
 
 using namespace WebCore;
+#if USE(CFNETWORK)
 using namespace WebKit;
- 
+#endif
+
 namespace CoreIPC {
 
 // FIXME: These coders should really go in a WebCoreArgumentCodersCFNetwork file.
