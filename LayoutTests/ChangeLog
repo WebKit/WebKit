@@ -1,5 +1,11 @@
 2011-06-17  Ryosuke Niwa  <rniwa@webkit.org>
 
+        Fix Chromium test expectations.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-17  Ryosuke Niwa  <rniwa@webkit.org>
+
         Add image failing expectations for Leopard after r89091.
         I'm giving up on these tests; no matter what I do, they fail.
 
