@@ -115,22 +115,6 @@ bool ArgumentDecoder::decodeFixedLengthData(uint8_t* data, size_t size, unsigned
     return true;
 }
 
-bool ArgumentDecoder::decodeBytes(Vector<uint8_t>& buffer)
-{
-    uint64_t size;
-    if (!decodeUInt64(size))
-        return false;
-
-    if (!alignBufferPosition(1, size))
-        return false;
-
-    buffer.resize(size);
-    if (size > 0)
-        memcpy(&buffer[0], m_bufferPos, size);
-    m_bufferPos += size;
-    return true;
-}
-
 bool ArgumentDecoder::decodeVariableLengthByteArray(DataReference& dataReference)
 {
     uint64_t size;
@@ -144,25 +128,6 @@ bool ArgumentDecoder::decodeVariableLengthByteArray(DataReference& dataReference
     m_bufferPos += size;
 
     dataReference = DataReference(data, size);
-    return true;
-}
-
-bool ArgumentDecoder::decodeBytes(uint8_t* buffer, size_t bufferSize)
-{
-    // FIXME: Decoding the size is not strictly necessary here since we know the size upfront.
-    uint64_t size;
-    if (!decodeUInt64(size))
-        return false;
-
-    ASSERT(size == bufferSize);
-    if (size != bufferSize)
-        return false;
-
-    if (!alignBufferPosition(1, size))
-        return false;
-
-    memcpy(buffer, m_bufferPos, size);
-    m_bufferPos += size;
     return true;
 }
 

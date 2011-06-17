@@ -45,8 +45,6 @@ public:
     void encodeFixedLengthData(const uint8_t*, size_t, unsigned alignment);
     void encodeVariableLengthByteArray(const DataReference&);
 
-    void encodeBytes(const uint8_t*, size_t);
-
     void encodeBool(bool);
     void encodeUInt32(uint32_t);
     void encodeUInt64(uint64_t);

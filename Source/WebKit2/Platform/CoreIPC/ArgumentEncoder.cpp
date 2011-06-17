@@ -102,16 +102,6 @@ void ArgumentEncoder::encodeVariableLengthByteArray(const DataReference& dataRef
     encodeFixedLengthData(dataReference.data(), dataReference.size(), 1);
 }
 
-void ArgumentEncoder::encodeBytes(const uint8_t* bytes, size_t size)
-{
-    // Encode the size.
-    encodeUInt64(static_cast<uint64_t>(size));
-    
-    uint8_t* buffer = grow(1, size);
-    
-    memcpy(buffer, bytes, size);
-}
-
 void ArgumentEncoder::encodeBool(bool n)
 {
     uint8_t* buffer = grow(sizeof(n), sizeof(n));

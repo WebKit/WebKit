@@ -28,6 +28,7 @@
 
 #include "ArgumentDecoder.h"
 #include "ArgumentEncoder.h"
+#include "DataReference.h"
 #include <WebCore/ResourceResponse.h>
 
 #if USE(CG)
@@ -117,7 +118,7 @@ void PlatformCertificateInfo::encode(CoreIPC::ArgumentEncoder* encoder) const
     encoder->encodeUInt64(length);
 
     for (size_t i = 0; i < length; ++i)
-        encoder->encodeBytes(static_cast<uint8_t*>(m_certificateChain[i]->pbCertEncoded), m_certificateChain[i]->cbCertEncoded);
+        encoder->encodeVariableLengthByteArray(CoreIPC::DataReference(static_cast<uint8_t*>(m_certificateChain[i]->pbCertEncoded), m_certificateChain[i]->cbCertEncoded));
 }
 
 bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder* decoder, PlatformCertificateInfo& c)
@@ -132,13 +133,13 @@ bool PlatformCertificateInfo::decode(CoreIPC::ArgumentDecoder* decoder, Platform
     }
 
     for (size_t i = 0; i < length; ++i) {
-        Vector<uint8_t> bytes;
-        if (!decoder->decodeBytes(bytes)) {
+        CoreIPC::DataReference dataReference;
+        if (!decoder->decodeVariableLengthByteArray(dataReference)) {
             c.clearCertificateChain();
             return false;
         }
 
-        PCCERT_CONTEXT certificateContext = ::CertCreateCertificateContext(PKCS_7_ASN_ENCODING | X509_ASN_ENCODING, bytes.data(), bytes.size());
+        PCCERT_CONTEXT certificateContext = ::CertCreateCertificateContext(PKCS_7_ASN_ENCODING | X509_ASN_ENCODING, dataReference.data(), dataReference.size());
         if (!certificateContext) {
             c.clearCertificateChain();
             return false;

@@ -1,5 +1,23 @@
 2011-06-17  Anders Carlsson  <andersca@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Remove unused ArgumentEncoder and ArgumentDecoder functions
+        https://bugs.webkit.org/show_bug.cgi?id=62909
+
+        * Platform/CoreIPC/ArgumentDecoder.cpp:
+        * Platform/CoreIPC/ArgumentDecoder.h:
+        * Platform/CoreIPC/ArgumentEncoder.cpp:
+        * Platform/CoreIPC/ArgumentEncoder.h:
+        
+        * Shared/win/PlatformCertificateInfo.cpp:
+        (WebKit::PlatformCertificateInfo::encode):
+        (WebKit::PlatformCertificateInfo::decode):
+        Replace calls to encodeBytes/decodeBytes with
+        encodeVariableLengthByteArray/decodeVariableLengthByteArray.
+
+2011-06-17  Anders Carlsson  <andersca@apple.com>
+
         Yet another Qt build fix attempt.
 
         * UIProcess/API/qt/ClientImpl.cpp:

@@ -52,9 +52,6 @@ public:
     // The data in the data reference here will only be valid for the lifetime of the ArgumentDecoder object.
     bool decodeVariableLengthByteArray(DataReference&);
 
-    bool decodeBytes(Vector<uint8_t>&);
-    bool decodeBytes(uint8_t*, size_t);
-
     bool decodeBool(bool&);
     bool decodeUInt32(uint32_t&);
     bool decodeUInt64(uint64_t&);
