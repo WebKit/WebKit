@@ -736,9 +736,10 @@ ALWAYS_INLINE bool Lexer::parseMultilineComment()
         if (UNLIKELY(m_current == -1))
             return false;
 
-        if (isLineTerminator(m_current))
+        if (isLineTerminator(m_current)) {
             shiftLineTerminator();
-        else
+            m_terminator = true;
+        } else
             shift();
     }
 }

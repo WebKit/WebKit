@@ -1,3 +1,23 @@
+2011-06-16  Gavin Barraclough  <barraclough@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        https://bugs.webkit.org/show_bug.cgi?id=23611
+        Multiline Javascript comments cause incorrect parsing of following script.
+
+        From the spec:
+        "A MultiLineComment [is] simply discarded if it contains no line terminator,
+        but if a MultiLineComment contains one or more line terminators, then it is
+        replaced with a single line terminator, which becomes part of the stream of
+        inputs for the syntactic grammar." 
+
+        This may result in behavioural changes, due to automatic semicolon insertion.
+
+        * fast/js/multiline-comment-newline-expected.txt: Added.
+        * fast/js/multiline-comment-newline.html: Added.
+        * fast/js/script-tests/multiline-comment-newline.js: Added.
+        (shouldBeUndefined):
+
 2011-06-16  Ryosuke Niwa  <rniwa@webkit.org>
 
         Qt rebaselines after r89091.
