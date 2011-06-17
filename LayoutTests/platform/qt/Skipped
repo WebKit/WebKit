@@ -2550,3 +2550,7 @@ inspector
 # new test introduced in r88958, but fail on Qt
 # https://bugs.webkit.org/show_bug.cgi?id=62741
 http/tests/appcache/video.html
+
+# new test introduced in r89118, but fail on Qt
+# https://bugs.webkit.org/show_bug.cgi?id=62847
+fast/parser/xhtml-innerhtml-null-byte.xhtml

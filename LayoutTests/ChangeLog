@@ -1,3 +1,10 @@
+2011-06-17  Csaba Osztrogonác  <ossy@webkit.org>
+
+        new test introduced in r89118, but fail on Qt
+        https://bugs.webkit.org/show_bug.cgi?id=62847
+
+        * platform/qt/Skipped: Skip fast/parser/xhtml-innerhtml-null-byte.xhtml.
+
 2011-06-17  Kent Tamura  <tkent@chromium.org>
 
         [Mac] Correct svn:mime-type to image/png.
