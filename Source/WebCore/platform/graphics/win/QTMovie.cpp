@@ -449,8 +449,10 @@ void QTMovie::loadPath(const UChar* url, int len, bool preservesPitch)
 
     load(cfURL, preservesPitch);
 
-    CFRelease(cfURL);
-    CFRelease(urlStringRef);
+    if (cfURL)
+        CFRelease(cfURL);
+    if (urlStringRef)
+        CFRelease(urlStringRef);
 }
 
 void QTMovie::load(const UChar* url, int len, bool preservesPitch)
@@ -460,8 +462,10 @@ void QTMovie::load(const UChar* url, int len, bool preservesPitch)
 
     load(cfURL, preservesPitch);
 
-    CFRelease(cfURL);
-    CFRelease(urlStringRef);
+    if (cfURL)
+        CFRelease(cfURL);
+    if (urlStringRef)
+        CFRelease(urlStringRef);
 }
 
 void QTMovie::load(CFURLRef url, bool preservesPitch)

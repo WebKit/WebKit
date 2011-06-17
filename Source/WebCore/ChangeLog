@@ -1,3 +1,21 @@
+2011-06-17  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Ada Chan.
+
+        Playing video from the manifest crashes on Windows
+        https://bugs.webkit.org/show_bug.cgi?id=62901
+
+        No new tests. This will be covered by existing App Cache tests.
+
+        Two related fixes.  1) Null-check the CFStringRef and CFURLRef created in QTMovie::load() before
+        passing them to CFRelease().  2) Use CFURL to create an appropriate file-URL on windows in 
+        createFileURLForApplicationCacheResource.
+
+        * html/HTMLMediaElement.cpp:
+        (WebCore::createFileURLForApplicationCacheResource):
+        * platform/graphics/win/QTMovie.cpp:
+        (QTMovie::load):
+
 2011-06-17  Abhishek Arya  <inferno@chromium.org>
 
         Reviewed by Dave Hyatt.

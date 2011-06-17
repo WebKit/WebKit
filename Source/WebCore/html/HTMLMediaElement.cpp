@@ -681,10 +681,17 @@ static KURL createFileURLForApplicationCacheResource(const String& path)
     // is not suitable because KURL::setPath uses encodeWithURLEscapeSequences, which it notes
     // does not correctly escape '#' and '?'. This function works for our purposes because
     // app cache media files are always created with encodeForFileName(createCanonicalUUIDString()).
+
+#if USE(CF) && PLATFORM(WIN)
+    RetainPtr<CFStringRef> cfPath(AdoptCF, path.createCFString());
+    RetainPtr<CFURLRef> cfURL(AdoptCF, CFURLCreateWithFileSystemPath(0, cfPath.get(), kCFURLWindowsPathStyle, false));
+    KURL url(cfURL.get());
+#else
     KURL url;
 
     url.setProtocol("file");
     url.setPath(path);
+#endif
     return url;
 }
 #endif
