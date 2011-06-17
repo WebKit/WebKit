@@ -3969,3 +3969,6 @@ BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html 
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-br.html = IMAGE
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-p.html = IMAGE
 BUGRNIWA MAC : editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html = IMAGE
+
+// JSC behavior changed at r89100.
+BUGCR86436 : fast/js/multiline-comment-newline.html = TEXT
