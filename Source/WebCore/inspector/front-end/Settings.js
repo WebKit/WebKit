@@ -79,10 +79,11 @@ WebInspector.Settings = function()
     this.installApplicationSetting("domBreakpoints", []);
     this.installApplicationSetting("xhrBreakpoints", []);
 
-    this._migrateSettings();
+    // If there are too many breakpoints in a storage, it is likely due to a recent bug that caused
+    // periodical breakpoints duplication leading to inspector slowness.
+    if (window.localStorage.breakpoints && window.localStorage.breakpoints.length > 500000)
+        delete window.localStorage.breakpoints;
 }
-
-WebInspector.Settings.version = "1";
 
 WebInspector.Settings.prototype = {
     installApplicationSetting: function(key, defaultValue)
@@ -110,21 +111,6 @@ WebInspector.Settings.prototype = {
     {
         if (window.localStorage != null)
             window.localStorage[key] = JSON.stringify(value);
-    },
-
-    _migrateSettings: function()
-    {
-        if (!window.localStorage)
-            return;
-        var version = localStorage.version;
-        if (version === WebInspector.Settings.version)
-            return;
-
-        var breakpointKeys = ["breakpoints", "eventListenerBreakpoints", "domBreakpoints", "xhrBreakpoints"];
-        for (var i = 0; i < breakpointKeys.length; i++)
-            delete localStorage[breakpointKeys[i]];
-
-        localStorage.version = WebInspector.Settings.version;
     }
 }
 

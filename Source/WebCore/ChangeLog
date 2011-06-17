@@ -1,3 +1,20 @@
+2011-06-16  Pavel Podivilov  <podivilov@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: breakpointsWithoutSourceFile values should be a maps, not arrays.
+        https://bugs.webkit.org/show_bug.cgi?id=62714
+
+        * inspector/front-end/DebuggerPresentationModel.js:
+        (WebInspector.DebuggerPresentationModel.prototype._restoreBreakpoints):
+        (WebInspector.DebuggerPresentationModel.prototype.setFormatSourceFiles):
+        (WebInspector.DebuggerPresentationModel.prototype._restoreBreakpointsFromSettings):
+        (WebInspector.DebuggerPresentationModel.prototype._saveBreakpoints):
+        (WebInspector.DebuggerPresentationModel.prototype._reset):
+        * inspector/front-end/Settings.js:
+        (WebInspector.Settings):
+        (WebInspector.Settings.prototype._set):
+
 2011-06-17  Joone Hur  <joone.hur@collabora.co.uk>
 
         Reviewed by Martin Robinson.

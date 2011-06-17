@@ -159,8 +159,10 @@ WebInspector.DebuggerPresentationModel.prototype = {
     _restoreBreakpoints: function(sourceFile)
     {
         var pendingBreakpoints = this._breakpointsWithoutSourceFile[sourceFile.id];
-        for (var i = 0; pendingBreakpoints && i < pendingBreakpoints.length; ++i) {
-            var breakpointData = pendingBreakpoints[i];
+        if (!pendingBreakpoints)
+            return;
+        for (var lineNumber in pendingBreakpoints) {
+            var breakpointData = pendingBreakpoints[lineNumber];
             if ("debuggerId" in breakpointData) {
                 var breakpoint = new WebInspector.PresentationBreakpoint(sourceFile, breakpointData.lineNumber, breakpointData.condition, breakpointData.enabled);
                 this._bindDebuggerId(breakpoint, breakpointData.debuggerId);
@@ -253,8 +255,8 @@ WebInspector.DebuggerPresentationModel.prototype = {
 
         for (var id in this._breakpointsWithoutSourceFile) {
             var breakpoints = this._breakpointsWithoutSourceFile[id];
-            for (var i = 0; i < breakpoints.length; ++i)
-                this._removeBreakpointFromDebugger(breakpoints[i]);
+            for (var lineNumber in breakpoints)
+                this._removeBreakpointFromDebugger(breakpoints[lineNumber]);
         }
 
         var messages = this._messages;
@@ -521,10 +523,10 @@ WebInspector.DebuggerPresentationModel.prototype = {
             // Add breakpoint once source file becomes available.
             var pendingBreakpoints = this._breakpointsWithoutSourceFile[sourceFileId];
             if (!pendingBreakpoints) {
-                pendingBreakpoints = [];
+                pendingBreakpoints = {};
                 this._breakpointsWithoutSourceFile[sourceFileId] = pendingBreakpoints;
             }
-            pendingBreakpoints.push(breakpointData);
+            pendingBreakpoints[breakpointData.lineNumber] = breakpointData;
         }
     },
 
@@ -543,8 +545,11 @@ WebInspector.DebuggerPresentationModel.prototype = {
         }
 
         // Store not added breakpoints.
-        for (var sourceFileId in this._breakpointsWithoutSourceFile)
-            serializedBreakpoints = serializedBreakpoints.concat(this._breakpointsWithoutSourceFile[sourceFileId]);
+        for (var sourceFileId in this._breakpointsWithoutSourceFile) {
+            var breakpoints = this._breakpointsWithoutSourceFile[sourceFileId];
+            for (var lineNumber in breakpoints)
+                serializedBreakpoints.push(breakpoints[lineNumber]);
+        }
 
         // Sanitize debugger ids.
         for (var i = 0; i < serializedBreakpoints.length; ++i) {
@@ -624,10 +629,10 @@ WebInspector.DebuggerPresentationModel.prototype = {
             for (var line in sourceFile.breakpoints) {
                 var breakpoints = this._breakpointsWithoutSourceFile[sourceFile.id];
                 if (!breakpoints) {
-                    breakpoints = [];
+                    breakpoints = {};
                     this._breakpointsWithoutSourceFile[sourceFile.id] = breakpoints;
                 }
-                breakpoints.push(sourceFile.breakpoints[line].serialize());
+                breakpoints[line] = sourceFile.breakpoints[line].serialize();
             }
         }
 
