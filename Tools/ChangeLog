@@ -1,3 +1,18 @@
+2011-06-18  Evan Martin  <evan@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Compiler warning in double->int conversion in TestNetscapePlugIn
+        https://bugs.webkit.org/show_bug.cgi?id=51554
+
+        This code is providing a JS API for removing a property by numeric ID.
+        We get it from JS as a double, and must convert it to an int before using it.
+
+        Test: LayoutTests/plugins/npruntime/remove-property.html
+
+        * DumpRenderTree/TestNetscapePlugIn/Tests/NPRuntimeRemoveProperty.cpp:
+        (NPRuntimeRemoveProperty::TestObject::invoke):
+
 2011-06-18  Patrick Gansterer  <paroga@webkit.org>
 
         Reviewed by Eric Seidel.

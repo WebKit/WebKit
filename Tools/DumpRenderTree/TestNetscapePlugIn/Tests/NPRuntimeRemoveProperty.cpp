@@ -63,7 +63,7 @@ private:
             
                 propertyName = pluginTest()->NPN_GetStringIdentifier(propertyNameString.c_str());
             } else {
-                int32_t number = arguments[1].value.doubleValue;
+                int32_t number = static_cast<int32_t>(arguments[1].value.doubleValue);
                 propertyName = pluginTest()->NPN_GetIntIdentifier(number);
             }
             
