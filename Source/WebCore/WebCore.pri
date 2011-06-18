@@ -101,6 +101,7 @@ WEBCORE_INCLUDEPATH = \
     $$SOURCE_DIR/WebCore/platform/sql \
     $$SOURCE_DIR/WebCore/platform/text \
     $$SOURCE_DIR/WebCore/platform/text/transcoder \
+    $$SOURCE_DIR/WebCore/platform/track \
     $$SOURCE_DIR/WebCore/plugins \
     $$SOURCE_DIR/WebCore/rendering \
     $$SOURCE_DIR/WebCore/rendering/mathml \

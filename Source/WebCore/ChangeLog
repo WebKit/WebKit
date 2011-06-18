@@ -1,3 +1,46 @@
+2011-06-17  Anna Cavender  <annacc@chromium.org>
+
+        Reviewed by Eric Carlson.
+
+        Adding initial interfaces and stubs for track
+        https://bugs.webkit.org/show_bug.cgi?id=60379
+
+        This marks the first patch of a series to implement out-of-band
+        <track> support in WebKit. This patch adds some of the core header files
+        and their corresponding stub .cpp files.
+ 
+        No new tests because feature is hidden behind VIDEO_TRACK feature
+        define, which is turned off.
+
+        * CMakeLists.txt:
+        * WebCore.gyp/WebCore.gyp:
+        * WebCore.gypi:
+        * WebCore.pri:
+        * WebCore.pro:
+        * WebCore.xcodeproj/project.pbxproj:
+        * html/CueIndex.cpp: Added.
+        * html/CueIndex.h: Added.
+        * html/LoadableTextTrack.cpp: Added.
+        * html/LoadableTextTrack.h: Added.
+        * html/LoadableTextTrackImpl.cpp: Added.
+        * html/LoadableTextTrackImpl.h: Added.
+        * html/MutableTextTrack.cpp: Added.
+        * html/MutableTextTrack.h: Added.
+        * html/MutableTextTrackImpl.cpp: Added.
+        * html/MutableTextTrackImpl.h: Added.
+        * html/TextTrack.cpp: Added.
+        * html/TextTrack.h: Added.
+        * html/TextTrackCue.cpp: Added.
+        * html/TextTrackCue.h: Added.
+        * html/TextTrackCueList.cpp: Added.
+        * html/TextTrackCueList.h: Added.
+        * html/TextTrackPrivate.h: Added.
+        * loader/CueLoader.cpp: Added.
+        * loader/CueLoader.h: Added.
+        * platform/track/CueParser.cpp: Added.
+        * platform/track/CueParser.h: Added.
+        * platform/track/CueParserPrivate.h: Added.
+
 2011-06-17  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by Adam Barth.

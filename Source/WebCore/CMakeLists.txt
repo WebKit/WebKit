@@ -46,6 +46,7 @@ SET(WebCore_INCLUDE_DIRECTORIES
     "${WEBCORE_DIR}/platform/sql"
     "${WEBCORE_DIR}/platform/text"
     "${WEBCORE_DIR}/platform/text/transcoder"
+    "${WEBCORE_DIR}/platform/track"
     "${WEBCORE_DIR}/plugins"
     "${WEBCORE_DIR}/rendering"
     "${WEBCORE_DIR}/rendering/mathml"
@@ -1963,7 +1964,17 @@ ENDIF ()
 
 IF (ENABLE_VIDEO_TRACK)
     LIST(APPEND WebCore_SOURCES
+        html/CueIndex.cpp
         html/HTMLTrackElement.cpp
+        html/LoadableTextTrack.cpp
+        html/LoadableTextTrackImpl.cpp
+        html/MutableTextTrack.cpp
+        html/MutableTextTrackImpl.cpp
+        html/TextTrack.cpp
+        html/TextTrackCue.cpp
+        html/TextTrackCueList.cpp
+        loader/CueLoader.cpp
+        platform/track/CueParser.cpp
     )
 ENDIF()
 

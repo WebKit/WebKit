@@ -1638,6 +1638,7 @@ HEADERS += \
     html/canvas/Uint8Array.h \
     html/ClassList.h \
     html/CollectionCache.h \
+    html/CueIndex.h \
     html/DOMFormData.h \
     html/DOMSettableTokenList.h \
     html/DOMTokenList.h \
@@ -1726,6 +1727,7 @@ HEADERS += \
     html/HTMLTableSectionElement.h \
     html/HTMLTextAreaElement.h \
     html/HTMLTitleElement.h \
+    html/HTMLTrackElement.h \
     html/HTMLUListElement.h \
     html/HTMLVideoElement.h \
     html/HTMLViewSourceDocument.h \
@@ -1733,10 +1735,18 @@ HEADERS += \
     html/ImageDocument.h \
     html/LabelsNodeList.h \
     html/LinkRelAttribute.h \
+    html/LoadableTextTrack.h \
+    html/LoadableTextTrackImpl.h \
     html/MediaDocument.h \
+    html/MutableTextTrack.h \
+    html/MutableTextTrackImpl.h \
     html/PluginDocument.h \
     html/StepRange.h \
     html/TextDocument.h \
+    html/TextTrack.h \
+    html/TextTrackCue.h \
+    html/TextTrackCueList.h \
+    html/TextTrackPrivate.h \
     html/TimeRanges.h \
     html/ValidityState.h \
     html/parser/CSSPreloadScanner.h \
@@ -1819,6 +1829,7 @@ HEADERS += \
     loader/cache/MemoryCache.h \
     loader/CrossOriginAccessControl.h \
     loader/CrossOriginPreflightResultCache.h \
+    loader/CueLoader.h \
     loader/cache/CachedResourceLoader.h \
     loader/DocumentLoader.h \
     loader/DocumentThreadableLoader.h \
@@ -2095,6 +2106,8 @@ HEADERS += \
     platform/ThreadGlobalData.h \
     platform/ThreadTimers.h \
     platform/Timer.h \
+    platform/track/CueParser.h \
+    platform/track/CueParserPrivate.h \
     platform/Widget.h \
     platform/PlatformStrategies.h \
     platform/LocalizedStrings.h \

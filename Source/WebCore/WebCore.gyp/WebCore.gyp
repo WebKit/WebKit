@@ -201,6 +201,7 @@
       '../platform/sql',
       '../platform/text',
       '../platform/text/transcoder',
+      '../platform/track',
       '../plugins',
       '../plugins/chromium',
       '../rendering',
