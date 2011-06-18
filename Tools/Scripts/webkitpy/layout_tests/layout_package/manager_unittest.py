@@ -80,5 +80,48 @@ class ManagerTest(unittest.TestCase):
         self.assertEqual(expected_tests_to_http_lock, set(multi_thread_results[0][1]))
 
 
+class NaturalCompareTest(unittest.TestCase):
+    def assert_cmp(self, x, y, result):
+        self.assertEquals(cmp(manager.natural_sort_key(x), manager.natural_sort_key(y)), result)
+
+    def test_natural_compare(self):
+        self.assert_cmp('a', 'a', 0)
+        self.assert_cmp('ab', 'a', 1)
+        self.assert_cmp('a', 'ab', -1)
+        self.assert_cmp('', '', 0)
+        self.assert_cmp('', 'ab', -1)
+        self.assert_cmp('1', '2', -1)
+        self.assert_cmp('2', '1', 1)
+        self.assert_cmp('1', '10', -1)
+        self.assert_cmp('2', '10', -1)
+        self.assert_cmp('foo_1.html', 'foo_2.html', -1)
+        self.assert_cmp('foo_1.1.html', 'foo_2.html', -1)
+        self.assert_cmp('foo_1.html', 'foo_10.html', -1)
+        self.assert_cmp('foo_2.html', 'foo_10.html', -1)
+        self.assert_cmp('foo_23.html', 'foo_10.html', 1)
+        self.assert_cmp('foo_23.html', 'foo_100.html', -1)
+
+
+class PathCompareTest(unittest.TestCase):
+    def setUp(self):
+        self.filesystem = filesystem_mock.MockFileSystem()
+
+    def path_key(self, k):
+        return manager.path_key(self.filesystem, k)
+
+    def assert_cmp(self, x, y, result):
+        self.assertEquals(cmp(self.path_key(x), self.path_key(y)), result)
+
+    def test_path_compare(self):
+        self.assert_cmp('/a', '/a', 0)
+        self.assert_cmp('/a', '/b', -1)
+        self.assert_cmp('/a2', '/a10', -1)
+        self.assert_cmp('/a2/foo', '/a10/foo', -1)
+        self.assert_cmp('/a/foo11', '/a/foo2', 1)
+        self.assert_cmp('/ab', '/a/a/b', -1)
+        self.assert_cmp('/a/a/b', '/ab', 1)
+        self.assert_cmp('/foo-bar/baz', '/foo/baz', -1)
+
+
 if __name__ == '__main__':
     unittest.main()

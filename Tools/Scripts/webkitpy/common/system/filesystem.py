@@ -263,6 +263,10 @@ class FileSystem(object):
         with codecs.open(path, 'r', 'utf8') as f:
             return f.read()
 
+    def split(self, path):
+        """Return (dirname, basename + '.' + ext)"""
+        return os.path.split(path)
+
     def splitext(self, path):
         """Return (dirname + os.sep + basename, '.' + ext)"""
         return os.path.splitext(path)

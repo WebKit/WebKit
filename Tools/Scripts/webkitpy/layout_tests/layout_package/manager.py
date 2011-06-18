@@ -43,6 +43,7 @@ import logging
 import math
 import Queue
 import random
+import re
 import sys
 import time
 
@@ -374,7 +375,7 @@ class Manager:
         if self._options.randomize_order:
             random.shuffle(self._test_files_list)
         else:
-            self._test_files_list.sort()
+            self._test_files_list.sort(key=lambda path: path_key(self._fs, path))
 
         # If the user specifies they just want to run a subset of the tests,
         # just grab a subset of the non-skipped tests.
@@ -1368,6 +1369,34 @@ def read_test_files(fs, files):
                 _log.critical('--test-list file "%s" not found' % file)
             raise
     return tests
+
+
+def path_key(filesystem, path):
+    """Turns a path into a list with two sublists, the natural key of the
+    dirname, and the natural key of the basename.
+
+    This can be used when sorting paths so that files in a directory.
+    directory are kept together rather than being mixed in with files in
+    subdirectories."""
+    dirname, basename = filesystem.split(path)
+    return (natural_sort_key(dirname + filesystem.sep), natural_sort_key(basename))
+
+
+def natural_sort_key(string_to_split):
+    """ Turn a string into a list of string and number chunks.
+        "z23a" -> ["z", 23, "a"]
+
+        Can be used to implement "natural sort" order. See:
+            http://www.codinghorror.com/blog/2007/12/sorting-for-humans-natural-sort-order.html
+            http://nedbatchelder.com/blog/200712.html#e20071211T054956
+    """
+    def tryint(val):
+        try:
+            return int(val)
+        except:
+            return val
+
+    return [tryint(chunk) for chunk in re.split('(\d+)', string_to_split)]
 
 
 class _WorkerState(object):

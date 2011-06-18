@@ -277,6 +277,12 @@ class MockFileSystem(object):
             if d.startswith(path):
                 self.dirs[d] = None
 
+    def split(self, path):
+        idx = path.rfind(self.sep)
+        if idx == -1:
+            return ('', path)
+        return (path[:idx], path[(idx + 1):])
+
     def splitext(self, path):
         idx = path.rfind('.')
         if idx == -1:

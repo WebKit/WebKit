@@ -1,3 +1,23 @@
+2011-06-18  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Tony Chang.
+
+        new-run-webkit-tests: fix test sorting
+        https://bugs.webkit.org/show_bug.cgi?id=58691
+
+        This changes the sorting to use a "natural" sort order such that
+        foo2.html sorts before foo13.html, and sorts the tests so
+        that all the tests in a directory are run before any test in a
+        subdirectory.
+
+        This change also adds a split() method to the filesystem since
+        that is needed to cluster files into a directory otherwise.
+
+        * Scripts/webkitpy/common/system/filesystem.py:
+        * Scripts/webkitpy/common/system/filesystem_mock.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager.py:
+        * Scripts/webkitpy/layout_tests/layout_package/manager_unittest.py:
+
 2011-06-18  Evan Martin  <evan@chromium.org>
 
         Reviewed by Darin Adler.
