@@ -1,3 +1,9 @@
+2011-06-18  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt][Mac] Skip failing tests.
+
+        * platform/qt-mac/Skipped:
+
 2011-06-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89154.

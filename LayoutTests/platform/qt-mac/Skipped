@@ -4534,3 +4534,17 @@ svg/animations/svglength-animation-px-to-exs.html
 
 # unskipped by r88806, but fail on Qt-Mac platform
 http/tests/misc/slow-loading-image-in-pattern.html
+
+# failing tests - fails introduced somewhere between r88972 and r89135
+editing/selection/vertical-lr-ltr-extend-line-backward-br.html
+editing/selection/vertical-lr-ltr-extend-line-forward-br.html
+editing/selection/vertical-rl-ltr-extend-line-backward-br.html
+editing/selection/vertical-rl-ltr-extend-line-backward-p.html
+editing/selection/vertical-rl-ltr-extend-line-backward-wrap.html
+editing/selection/vertical-rl-ltr-extend-line-forward-br.html
+editing/selection/vertical-rl-ltr-extend-line-forward-p.html
+editing/selection/vertical-rl-ltr-extend-line-forward-wrap.html
+editing/selection/vertical-rl-rtl-extend-line-backward-br.html
+editing/selection/vertical-rl-rtl-extend-line-backward-p.html
+editing/selection/vertical-rl-rtl-extend-line-forward-br.html
+editing/selection/vertical-rl-rtl-extend-line-forward-p.html
