@@ -77,6 +77,9 @@ void SVGRootInlineBox::computePerCharacterLayoutInformation()
     ASSERT(parentBlock);
 
     Vector<SVGTextLayoutAttributes>& attributes = parentBlock->layoutAttributes();
+    if (attributes.isEmpty())
+        return;
+
     if (parentBlock->needsReordering())
         reorderValueLists(attributes);
 
