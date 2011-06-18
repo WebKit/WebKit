@@ -1,3 +1,13 @@
+2011-06-18  Jeremy Moskovich  <jeremy@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Set text-align:-webkit-match-parent for li elements in the default style sheet.
+        https://bugs.webkit.org/show_bug.cgi?id=57232
+
+        * fast/css/list-item-text-align-expected.txt: Added.
+        * fast/css/list-item-text-align.html: Added.
+
 2011-06-18  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Skip failing tests.
