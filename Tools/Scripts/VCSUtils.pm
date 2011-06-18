@@ -1765,7 +1765,7 @@ sub changeLogName()
 
     changeLogNameError("Failed to determine ChangeLog name.") unless $name;
     # getpwuid seems to always succeed on windows, returning the username instead of the full name.  This check will catch that case.
-    changeLogNameError("'$name' does not contain a space!  ChangeLogs should contain your full name.") unless ($name =~ /\w \w/);
+    changeLogNameError("'$name' does not contain a space!  ChangeLogs should contain your full name.") unless ($name =~ /\S\s\S/);
 
     return $name;
 }

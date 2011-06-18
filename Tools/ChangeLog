@@ -1,3 +1,14 @@
+2011-06-18  Berend-Jan Wever  <skylined@chromium.org>
+
+        Reviewed by Eric Seidel.
+
+        Some names with spaces are incorrectly reported as not containing spaces
+        while running prepare-ChangeLog
+        https://bugs.webkit.org/show_bug.cgi?id=55572
+
+        * Scripts/VCSUtils.pm: Updated CHANGE_LOG_NAME check for spaces to allow
+          non-alphanumeric characters in names.
+
 2011-06-18  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Eric Seidel.
