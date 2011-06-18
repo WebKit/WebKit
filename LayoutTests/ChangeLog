@@ -1,3 +1,17 @@
+2011-06-18  Adam Bergkvist  <adam.bergkvist@ericsson.com>
+
+        Reviewed by Tony Gentilcore.
+
+        Media Stream no-interface-object test should not have ReferenceError message in expected results
+        https://bugs.webkit.org/show_bug.cgi?id=60391
+
+        Fixed no-interface-object test to not include ReferenceError message in expected results
+
+        * fast/dom/MediaStream/no-interface-object-expected.txt:
+        * fast/dom/MediaStream/script-tests/no-interface-object.js:
+        (shouldThrowReferenceError):
+        (test):
+
 2011-06-18  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Eric Seidel.
