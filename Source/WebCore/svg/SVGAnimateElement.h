@@ -72,10 +72,9 @@ private:
 
     AnimatedPropertyValueType m_fromPropertyValueType;
     AnimatedPropertyValueType m_toPropertyValueType;
-    double m_fromNumber;
-    double m_toNumber;
-    double m_animatedNumber;
-    String m_numberUnit;
+    float m_fromNumber;
+    float m_toNumber;
+    float m_animatedNumber;
     Color m_fromColor;
     Color m_toColor;
     Color m_animatedColor;

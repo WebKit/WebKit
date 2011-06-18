@@ -147,6 +147,13 @@ bool parseNumber(const UChar*& ptr, const UChar* end, float& number, bool skip)
     return genericParseNumber(ptr, end, number, skip);
 }
 
+bool parseNumberFromString(const String& string, float& number, bool skip)
+{
+    const UChar* ptr = string.characters();
+    const UChar* end = ptr + string.length();
+    return genericParseNumber(ptr, end, number, skip);
+}
+
 // only used to parse largeArcFlag and sweepFlag which must be a "0" or "1"
 // and might not have any whitespace/comma after it
 bool parseArcFlag(const UChar*& ptr, const UChar* end, bool& flag)

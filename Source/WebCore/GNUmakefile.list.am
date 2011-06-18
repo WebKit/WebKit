@@ -3335,6 +3335,7 @@ webcore_sources += \
 	Source/WebCore/svg/SVGAngle.h \
 	Source/WebCore/svg/SVGAnimateColorElement.cpp \
 	Source/WebCore/svg/SVGAnimateColorElement.h \
+	Source/WebCore/svg/SVGAnimatedAngle.cpp \
 	Source/WebCore/svg/SVGAnimatedAngle.h \
 	Source/WebCore/svg/SVGAnimatedBoolean.h \
 	Source/WebCore/svg/SVGAnimatedEnumeration.h \

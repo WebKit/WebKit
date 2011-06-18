@@ -3292,6 +3292,7 @@ contains(DEFINES, ENABLE_SVG=1) {
               svg/SVGAltGlyphElement.cpp \
               svg/SVGAngle.cpp \
               svg/SVGAnimateColorElement.cpp \
+              svg/SVGAnimatedAngle.cpp \
               svg/SVGAnimatedLength.cpp \
               svg/SVGAnimateElement.cpp \
               svg/SVGAnimateMotionElement.cpp \

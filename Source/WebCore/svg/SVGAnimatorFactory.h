@@ -21,6 +21,7 @@
 #define SVGAnimatorFactory_h
 
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
+#include "SVGAnimatedAngle.h"
 #include "SVGAnimatedLength.h"
 
 namespace WebCore {
@@ -31,6 +32,8 @@ public:
     {
         // FIXME: Add animation support for all SVG units.
         switch (attributeType) {
+        case AnimatedAngle:
+            return adoptPtr(new SVGAnimatedAngleAnimator(contextElement, attributeName));
         case AnimatedLength:
             return adoptPtr(new SVGAnimatedLengthAnimator(contextElement, attributeName));
         default:

@@ -132,13 +132,11 @@ SVGLength::SVGLength(SVGLengthMode mode, const String& valueAsString)
     setValueAsString(valueAsString, ec);
 }
     
-void SVGLength::setValueAsString(const String& valueAsString, SVGLengthMode mode)
+void SVGLength::setValueAsString(const String& valueAsString, SVGLengthMode mode, ExceptionCode& ec)
 {
     m_valueInSpecifiedUnits = 0;
     m_unit = storeUnit(mode, LengthTypeNumber);
-    ExceptionCode ec = 0;
     setValueAsString(valueAsString, ec);
-    ASSERT(!ec);
 }
 
 SVGLength::SVGLength(const SVGLength& other)

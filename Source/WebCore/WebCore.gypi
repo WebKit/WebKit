@@ -5704,6 +5704,7 @@
             'svg/SVGAngle.cpp',
             'svg/SVGAnimateColorElement.cpp',
             'svg/SVGAnimateColorElement.h',
+            'svg/SVGAnimatedAngle.cpp',
             'svg/SVGAnimatedLength.cpp',
             'svg/SVGAnimateElement.cpp',
             'svg/SVGAnimateElement.h',

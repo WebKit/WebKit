@@ -88,7 +88,7 @@ public:
 
     String valueAsString() const;
     void setValueAsString(const String&, ExceptionCode&);
-    void setValueAsString(const String&, SVGLengthMode);
+    void setValueAsString(const String&, SVGLengthMode, ExceptionCode&);
     
     void newValueSpecifiedUnits(unsigned short, float valueInSpecifiedUnits, ExceptionCode&);
     void convertToSpecifiedUnits(unsigned short, const SVGElement* context, ExceptionCode&);

@@ -50,7 +50,7 @@ SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* doc
     , m_animatedAttributeType(AnimatedString)
     , m_fromNumber(0)
     , m_toNumber(0)
-    , m_animatedNumber(numeric_limits<double>::infinity())
+    , m_animatedNumber(numeric_limits<float>::infinity())
     , m_animatedPathPointer(0)
 {
     ASSERT(hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::setTag) || hasTagName(SVGNames::animateColorTag));
@@ -63,30 +63,6 @@ PassRefPtr<SVGAnimateElement> SVGAnimateElement::create(const QualifiedName& tag
 
 SVGAnimateElement::~SVGAnimateElement()
 {
-}
-
-static bool parseNumberValueAndUnit(const String& in, double& value, String& unit)
-{
-    // FIXME: These are from top of my head, figure out all property types that can be animated as numbers.
-    unsigned unitLength = 0;
-    String parse = in.stripWhiteSpace();
-    if (parse.endsWith("%"))
-        unitLength = 1;
-    else if (parse.endsWith("deg") || parse.endsWith("rad"))
-        unitLength = 3;
-    else if (parse.endsWith("grad"))
-        unitLength = 4;
-    String newUnit = parse.right(unitLength);
-    String number = parse.left(parse.length() - unitLength);
-    if ((!unit.isEmpty() && newUnit != unit) || number.isEmpty())
-        return false;
-    UChar last = number[number.length() - 1];
-    if (last < '0' || last > '9')
-        return false;
-    unit = newUnit;
-    bool ok;
-    value = number.toDouble(&ok);
-    return ok;
 }
 
 void SVGAnimateElement::adjustForCurrentColor(SVGElement* targetElement, Color& color)
@@ -140,6 +116,8 @@ AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGEleme
     // FIXME: We need type specific animations in the future. Many animations marked as AnimatedString today will
     // support continuous animations.
     switch (type) {
+    case AnimatedAngle:
+        return AnimatedAngle;
     case AnimatedBoolean:
     case AnimatedEnumeration:
     case AnimatedNumberList:
@@ -151,7 +129,6 @@ AnimatedAttributeType SVGAnimateElement::determineAnimatedAttributeType(SVGEleme
         return AnimatedString;
     case AnimatedLength:
         return AnimatedLength;
-    case AnimatedAngle:
     case AnimatedInteger:
     case AnimatedNumber:
         return AnimatedNumber;
@@ -201,17 +178,17 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
         if (m_fromPropertyValueType == InheritValue) {
             String fromNumberString;
             adjustForInheritance(targetElement, attributeName(), fromNumberString);
-            if (!parseNumberValueAndUnit(fromNumberString, m_fromNumber, m_numberUnit))
+            if (!parseNumberFromString(fromNumberString, m_fromNumber, false))
                 return;
         }
         if (m_toPropertyValueType == InheritValue) {
             String toNumberString;
             adjustForInheritance(targetElement, attributeName(), toNumberString);
-            if (!parseNumberValueAndUnit(toNumberString, m_toNumber, m_numberUnit))
+            if (!parseNumberFromString(toNumberString, m_toNumber, false))
                 return;
         }
 
-        double number;
+        float number;
         if (calcMode() == CalcModeDiscrete)
             number = isInFirstHalfOfAnimation ? m_fromNumber : m_toNumber;
         else
@@ -309,6 +286,7 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
         }
         return;
     }
+    case AnimatedAngle:
     case AnimatedLength: {
         ASSERT(m_animator);
         ASSERT(results->m_animatedType);
@@ -380,10 +358,9 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
         break;
     }
     case AnimatedNumber: {
-        m_numberUnit = String();
-        if (parseNumberValueAndUnit(toString, m_toNumber, m_numberUnit)) {
+        if (parseNumberFromString(toString, m_toNumber, false)) {
             // For to-animations the from number is calculated later
-            if (animationMode() == ToAnimation || parseNumberValueAndUnit(fromString, m_fromNumber, m_numberUnit))
+            if (animationMode() == ToAnimation || parseNumberFromString(fromString, m_fromNumber, false))
                 return true;
         }
         break;
@@ -408,10 +385,10 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
         }
         break;
     }
-    case AnimatedLength: {
+    case AnimatedAngle:
+    case AnimatedLength:
         ensureAnimator()->calculateFromAndToValues(m_fromType, m_toType, fromString, toString);
         return true;
-    }
     default:
         break;
     }
@@ -449,17 +426,15 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
             return false;
         return true;
     }
-    case AnimatedLength: {
+    case AnimatedAngle:
+    case AnimatedLength:
         ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
         return true;
-
-    }
     default:
-        m_numberUnit = String();
         m_fromNumber = 0;
-        if (!fromString.isEmpty() && !parseNumberValueAndUnit(fromString, m_fromNumber, m_numberUnit))
+        if (!fromString.isEmpty() && !parseNumberFromString(fromString, m_fromNumber, false))
             return false;
-        if (!parseNumberValueAndUnit(byString, m_toNumber, m_numberUnit))
+        if (!parseNumberFromString(byString, m_toNumber, false))
             return false;
         m_toNumber += m_fromNumber;
     }
@@ -484,10 +459,9 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     case AnimatedNumber:
         if (baseString.isEmpty()) {
             m_animatedNumber = 0;
-            m_numberUnit = String();
             return;
         }
-        if (parseNumberValueAndUnit(baseString, m_animatedNumber, m_numberUnit))
+        if (parseNumberFromString(baseString, m_animatedNumber, false))
             return;
         break;
     case AnimatedPath: {
@@ -500,8 +474,12 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
     case AnimatedPoints:
         m_animatedPoints.clear();
         return;
+    case AnimatedAngle:
     case AnimatedLength: {
-        m_animatedType = ensureAnimator()->constructFromString(baseString);
+        if (!m_animatedType)
+            m_animatedType = ensureAnimator()->constructFromString(baseString);
+        else
+            m_animatedType->setValueAsString(attributeName(), baseString);
         return;
     }
     default:
@@ -513,11 +491,14 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
 void SVGAnimateElement::applyResultsToTarget()
 {
     String valueToApply;
-    if (m_animatedAttributeType == AnimatedColor)
+    switch (m_animatedAttributeType) {
+    case AnimatedColor:
         valueToApply = m_animatedColor.serialized();
-    else if (m_animatedAttributeType == AnimatedNumber)
-        valueToApply = String::number(m_animatedNumber) + m_numberUnit;
-    else if (m_animatedAttributeType == AnimatedPath) {
+        break;
+    case AnimatedNumber:
+        valueToApply = String::number(m_animatedNumber);
+        break;
+    case AnimatedPath: {
         if (!m_animatedPathPointer || m_animatedPathPointer->isEmpty())
             valueToApply = m_animatedString;
         else {
@@ -528,13 +509,18 @@ void SVGAnimateElement::applyResultsToTarget()
             SVGPathParserFactory* factory = SVGPathParserFactory::self();
             factory->buildStringFromByteStream(m_animatedPathPointer, valueToApply, UnalteredParsing);
         }
-    } else if (m_animatedAttributeType == AnimatedPoints)
+        break;
+    }
+    case AnimatedPoints:
         valueToApply = m_animatedPoints.isEmpty() ? m_animatedString : m_animatedPoints.valueAsString();
-    else if (m_animatedAttributeType == AnimatedLength)
-        valueToApply = m_animatedType->length().valueAsString();
-    else
+        break;
+    case AnimatedAngle:
+    case AnimatedLength:
+        valueToApply = m_animatedType->valueAsString();
+        break;
+    default:
         valueToApply = m_animatedString;
-    
+    }
     setTargetAttributeAnimatedValue(valueToApply);
 }
     
@@ -545,14 +531,13 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
         return -1;
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
     if (m_animatedAttributeType == AnimatedNumber) {
-        double from;
-        double to;
-        String unit;
-        if (!parseNumberValueAndUnit(fromString, from, unit))
+        float from;
+        float to;
+        if (!parseNumberFromString(fromString, from, false))
             return -1;
-        if (!parseNumberValueAndUnit(toString, to, unit))
+        if (!parseNumberFromString(toString, to, false))
             return -1;
-        return narrowPrecisionToFloat(fabs(to - from));
+        return fabs(to - from);
     }
     if (m_animatedAttributeType == AnimatedColor) {
         Color from = SVGColor::colorFromRGBColorString(fromString);
@@ -563,7 +548,7 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
             return -1;
         return ColorDistance(from, to).distance();
     }
-    if (m_animatedAttributeType == AnimatedLength)
+    if (m_animatedAttributeType == AnimatedAngle || m_animatedAttributeType == AnimatedLength)
         return ensureAnimator()->calculateDistance(this, fromString, toString);
     return -1;
 }

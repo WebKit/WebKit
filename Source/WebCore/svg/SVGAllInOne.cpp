@@ -30,6 +30,7 @@
 #include "SVGAltGlyphElement.cpp"
 #include "SVGAngle.cpp"
 #include "SVGAnimateColorElement.cpp"
+#include "SVGAnimatedAngle.cpp"
 #include "SVGAnimatedLength.cpp"
 #include "SVGAnimateElement.cpp"
 #include "SVGAnimateMotionElement.cpp"

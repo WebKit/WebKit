@@ -22,6 +22,7 @@
 
 #if ENABLE(SVG)
 #include "SVGAngle.h"
+#include "SVGAnimateElement.h"
 #include "SVGAnimatedPropertyTearOff.h"
 
 namespace WebCore {
@@ -35,7 +36,24 @@ DECLARE_ANIMATED_PROPERTY(SVGAnimatedAngle, SVGAngle, UpperProperty, LowerProper
 #define DEFINE_ANIMATED_ANGLE_MULTIPLE_WRAPPERS(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, UpperProperty, LowerProperty) \
 DEFINE_ANIMATED_PROPERTY(OwnerType, DOMAttribute, SVGDOMAttributeIdentifier, SVGAnimatedAngle, SVGAngle, UpperProperty, LowerProperty)
 
+#if ENABLE(SVG_ANIMATION)
+class SVGAnimatedAngleAnimator : public SVGAnimatedTypeAnimator {
+    
+public:
+    SVGAnimatedAngleAnimator(SVGElement* contextElement, const QualifiedName&);
+    virtual ~SVGAnimatedAngleAnimator() { }
+    
+    virtual PassOwnPtr<SVGAnimatedType> constructFromString(const String&);
+    
+    virtual void calculateFromAndToValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& toString);
+    virtual void calculateFromAndByValues(OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, const String& fromString, const String& byString);
+    virtual void calculateAnimatedValue(SVGSMILElement*, float percentage, unsigned repeatCount,
+                                        OwnPtr<SVGAnimatedType>& fromValue, OwnPtr<SVGAnimatedType>& toValue, OwnPtr<SVGAnimatedType>& animatedValue,
+                                        bool fromPropertyInherits, bool toPropertyInherits);
+    virtual float calculateDistance(SVGSMILElement*, const String& fromString, const String& toString);
+};
 } // namespace WebCore
 
+#endif // ENABLE(SVG_ANIMATION)
 #endif // ENABLE(SVG)
 #endif

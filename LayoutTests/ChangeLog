@@ -1,3 +1,55 @@
+2011-06-17  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Rob Buis.
+
+        SVGAnimation should use direct unit animation for SVGAngle
+        https://bugs.webkit.org/show_bug.cgi?id=62807
+
+        Tests animation of SVGAngle with different units.
+
+        * svg/animations/script-tests/svgangle-animation-deg-to-grad.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svgangle-animation-deg-to-rad.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svgangle-animation-grad-to-deg.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svgangle-animation-grad-to-rad.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svgangle-animation-rad-to-deg.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/script-tests/svgangle-animation-rad-to-grad.js: Added.
+        (sample1):
+        (sample2):
+        (sample3):
+        (executeTest):
+        * svg/animations/svgangle-animation-deg-to-grad-expected.txt: Added.
+        * svg/animations/svgangle-animation-deg-to-grad.html: Added.
+        * svg/animations/svgangle-animation-deg-to-rad-expected.txt: Added.
+        * svg/animations/svgangle-animation-deg-to-rad.html: Added.
+        * svg/animations/svgangle-animation-grad-to-deg-expected.txt: Added.
+        * svg/animations/svgangle-animation-grad-to-deg.html: Added.
+        * svg/animations/svgangle-animation-grad-to-rad-expected.txt: Added.
+        * svg/animations/svgangle-animation-grad-to-rad.html: Added.
+        * svg/animations/svgangle-animation-rad-to-deg-expected.txt: Added.
+        * svg/animations/svgangle-animation-rad-to-deg.html: Added.
+        * svg/animations/svgangle-animation-rad-to-grad-expected.txt: Added.
+        * svg/animations/svgangle-animation-rad-to-grad.html: Added.
+
 2011-06-17  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

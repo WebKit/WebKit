@@ -33,7 +33,9 @@ SVGAnimatedLengthAnimator::SVGAnimatedLengthAnimator(SVGElement* contextElement,
 static inline SVGLength& sharedSVGLength(SVGLengthMode mode, const String& valueAsString)
 {
     DEFINE_STATIC_LOCAL(SVGLength, sharedLength, ());
-    sharedLength.setValueAsString(valueAsString, mode);
+    ExceptionCode ec = 0;
+    sharedLength.setValueAsString(valueAsString, mode, ec);
+    ASSERT(!ec);
     return sharedLength;
 }
 
