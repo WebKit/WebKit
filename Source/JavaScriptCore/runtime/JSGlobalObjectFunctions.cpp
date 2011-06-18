@@ -445,7 +445,7 @@ EncodedJSValue JSC_HOST_CALL globalFuncEval(ExecState* exec)
 
     UString s = x.toString(exec);
 
-    LiteralParser preparser(exec, s.characters(), s.length(), LiteralParser::NonStrictJSON);
+    LiteralParser preparser(exec, s, LiteralParser::NonStrictJSON);
     if (JSValue parsedObject = preparser.tryLiteralParse())
         return JSValue::encode(parsedObject);
 
