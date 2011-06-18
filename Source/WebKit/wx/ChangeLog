@@ -1,3 +1,16 @@
+2011-06-18  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
+
+        Reviewed by Brent Fulgham.
+
+        [misc] JSC/wtf/text/*.h should not be included via #include ""
+        https://bugs.webkit.org/show_bug.cgi?id=60836
+
+        Adam Barth pointed out that one should not include files from
+        JavaScriptCore/wtf/text using #include "File.h". This change
+        is addressing it.
+
+        * WebEdit.cpp: Include file via <wtf/text/File.h>.
+
 2011-06-12  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.

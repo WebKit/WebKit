@@ -1,3 +1,22 @@
+2011-06-18  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
+
+        Reviewed by Brent Fulgham.
+
+        [misc] JSC/wtf/text/*.h should not be included via #include ""
+        https://bugs.webkit.org/show_bug.cgi?id=60836
+
+        Adam Barth pointed out that one should not include files from
+        JavaScriptCore/wtf/text using #include "File.h". This change
+        is addressing it.
+
+        * CMakeListsEfl.txt: Remove JavaScriptCore/wtf/text.
+        * CMakeListsWinCE.txt: Remove JavaScriptCore/wtf/text.
+        * platform/graphics/freetype/FontCacheFreeType.cpp: Change CString.h include.
+        * platform/graphics/pango/FontCachePango.cpp: Change CString.h include.
+        * platform/graphics/wx/FontPlatformData.h: Change StringImpl.h include.
+        * platform/network/soup/ResourceHandleSoup.cpp: Change CString.h include.
+        * platform/network/soup/SocketStreamHandleSoup.cpp: Change CString.h include.
+
 2011-06-18  Sam Weinig  <sam@webkit.org>
 
         Reviewed by Darin Adler.

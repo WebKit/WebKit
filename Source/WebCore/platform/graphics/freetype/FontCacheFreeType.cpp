@@ -22,7 +22,6 @@
 #include "config.h"
 #include "FontCache.h"
 
-#include "CString.h"
 #include "Font.h"
 #include "OwnPtrCairo.h"
 #include "RefPtrCairo.h"
@@ -31,6 +30,7 @@
 #include <cairo.h>
 #include <fontconfig/fcfreetype.h>
 #include <wtf/Assertions.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

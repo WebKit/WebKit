@@ -8,11 +8,11 @@
 #include "Frame.h"
 #include "HTMLNames.h"
 #include "QualifiedName.h"
-#include "StringImpl.h"
 
 #include "WebFrame.h"
 #include "WebDOMElement.h"
 #include <wtf/text/AtomicString.h>
+#include <wtf/text/StringImpl.h>
 
 namespace WebCore {
 

@@ -31,7 +31,6 @@
 #include "config.h"
 #include "SocketStreamHandle.h"
 
-#include "CString.h"
 #include "GOwnPtr.h"
 #include "KURL.h"
 #include "Logging.h"
@@ -42,6 +41,7 @@
 #include "Vector.h"
 #include <gio/gio.h>
 #include <glib.h>
+#include <wtf/text/CString.h>
 
 #define READ_BUFFER_SIZE 1024
 

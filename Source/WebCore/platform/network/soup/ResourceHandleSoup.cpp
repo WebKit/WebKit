@@ -28,7 +28,6 @@
 #include "ResourceHandle.h"
 
 #include "Base64.h"
-#include "CString.h"
 #include "ChromeClient.h"
 #include "CookieJarSoup.h"
 #include "CachedResourceLoader.h"
@@ -57,6 +56,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wtf/text/CString.h>
 
 namespace WebCore {
 

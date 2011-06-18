@@ -1,5 +1,4 @@
 LIST(APPEND WebCore_INCLUDE_DIRECTORIES
-    "${JAVASCRIPTCORE_DIR}/wtf/text"
     "${WEBCORE_DIR}/platform/wince"
     "${WEBCORE_DIR}/platform/win"
     "${WEBCORE_DIR}/platform/text/wince"
