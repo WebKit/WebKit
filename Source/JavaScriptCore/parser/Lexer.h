@@ -90,7 +90,9 @@ namespace JSC {
         SourceProvider* sourceProvider() const { return m_source->provider(); }
         
         JSTokenType lexExpectIdentifier(JSTokenData*, JSTokenInfo*, unsigned, bool strictMode);
-        
+
+        bool isKeyword(const Identifier&);
+
     private:
         friend class JSGlobalData;
 

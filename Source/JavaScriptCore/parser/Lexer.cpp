@@ -481,6 +481,11 @@ template <bool shouldCreateIdentifier> ALWAYS_INLINE JSTokenType Lexer::parseIde
     return IDENT;
 }
 
+bool Lexer::isKeyword(const Identifier& ident)
+{
+    return m_keywordTable.entry(m_globalData, ident);
+}
+
 template <bool shouldBuildStrings> ALWAYS_INLINE bool Lexer::parseString(JSTokenData* tokenData, bool strictMode)
 {
     int stringQuoteCharacter = m_current;

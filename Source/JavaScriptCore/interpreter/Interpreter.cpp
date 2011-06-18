@@ -396,7 +396,7 @@ NEVER_INLINE JSValue Interpreter::callEval(CallFrame* callFrame, RegisterFile* r
     if (!codeBlock->isStrictMode()) {
         // FIXME: We can use the preparser in strict mode, we just need additional logic
         // to prevent duplicates.
-        LiteralParser preparser(callFrame, programSource, LiteralParser::NonStrictJSON);
+        LiteralParser preparser(callFrame, programSource.characters(), programSource.length(), LiteralParser::NonStrictJSON);
         if (JSValue parsedObject = preparser.tryLiteralParse())
             return parsedObject;
     }
@@ -744,6 +744,74 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
         return checkedReturn(throwStackOverflowError(callFrame));
 
     DynamicGlobalObjectScope globalObjectScope(*scopeChain->globalData, scopeChain->globalObject.get());
+    LiteralParser literalParser(callFrame, program->source().data(), program->source().length(), LiteralParser::JSONP);
+    Vector<LiteralParser::JSONPData> JSONPData;
+    if (literalParser.tryJSONPParse(JSONPData)) {
+        JSGlobalObject* globalObject = scopeChain->globalObject.get();
+        JSValue result;
+        for (unsigned entry = 0; entry < JSONPData.size(); entry++) {
+            Vector<LiteralParser::JSONPPathEntry> JSONPPath;
+            JSONPPath.swap(JSONPData[entry].m_path);
+            JSValue JSONPValue = JSONPData[entry].m_value.get();
+            if (JSONPPath.size() == 1 && JSONPPath[0].m_type == LiteralParser::JSONPPathEntryTypeDeclare) {
+                if (globalObject->hasProperty(callFrame, JSONPPath[0].m_pathEntryName)) {
+                    PutPropertySlot slot;
+                    globalObject->put(callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, slot);
+                } else
+                    globalObject->putWithAttributes(callFrame, JSONPPath[0].m_pathEntryName, JSONPValue, DontEnum | DontDelete);
+                // var declarations return undefined
+                result = jsUndefined();
+                continue;
+            }
+            JSValue baseObject(globalObject);
+            for (unsigned i = 0; i < JSONPPath.size() - 1; i++) {
+                ASSERT(JSONPPath[i].m_type != LiteralParser::JSONPPathEntryTypeDeclare);
+                switch (JSONPPath[i].m_type) {
+                case LiteralParser::JSONPPathEntryTypeDot: {
+                    if (i == 0) {
+                        PropertySlot slot(globalObject);
+                        if (!globalObject->getPropertySlot(callFrame, JSONPPath[i].m_pathEntryName, slot))
+                            return throwError(callFrame, createUndefinedVariableError(globalObject->globalExec(), JSONPPath[i].m_pathEntryName));
+                        
+                    } else
+                        baseObject = baseObject.get(callFrame, JSONPPath[i].m_pathEntryName);
+                    if (callFrame->hadException())
+                        return jsUndefined();
+                    continue;
+                }
+                case LiteralParser::JSONPPathEntryTypeLookup: {
+                    baseObject = baseObject.get(callFrame, JSONPPath[i].m_pathIndex);
+                    if (callFrame->hadException())
+                        return jsUndefined();
+                    continue;
+                }
+                default:
+                    ASSERT_NOT_REACHED();
+                    return jsUndefined();
+                }
+            }
+            PutPropertySlot slot;
+            switch (JSONPPath.last().m_type) {
+            case LiteralParser::JSONPPathEntryTypeDot: {
+                baseObject.put(callFrame, JSONPPath.last().m_pathEntryName, JSONPValue, slot);
+                if (callFrame->hadException())
+                    return jsUndefined();
+                break;
+            }
+            case LiteralParser::JSONPPathEntryTypeLookup: {
+                baseObject.put(callFrame, JSONPPath.last().m_pathIndex, JSONPValue);
+                if (callFrame->hadException())
+                    return jsUndefined();
+                break;
+            }
+            default:
+                ASSERT_NOT_REACHED();
+                    return jsUndefined();
+            }
+            result = JSONPValue;
+        }
+        return result;
+    }
 
     JSObject* error = program->compile(callFrame, scopeChain);
     if (error)
