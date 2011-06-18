@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLBRElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLBRElement : HTMLElement {
         attribute [Reflect] DOMString clear;
     };
 

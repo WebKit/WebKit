@@ -25,6 +25,7 @@
 module core {
 
     interface [
+        LegacyDefaultOptionalArguments,
         GenerateConstructor,
         HasIndexGetter,
         GenerateToJS

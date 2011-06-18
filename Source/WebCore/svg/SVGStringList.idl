@@ -26,23 +26,24 @@
 module svg {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGStringList {
         readonly attribute unsigned long numberOfItems;
 
         void clear()
             raises(DOMException);
-        [StrictTypeChecking] DOMString initialize(in DOMString item)
+        [StrictTypeChecking, RequiresAllArguments=Raise] DOMString initialize(in DOMString item)
             raises(DOMException, SVGException);
-        [StrictTypeChecking] DOMString getItem(in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] DOMString getItem(in unsigned long index)
             raises(DOMException);
-        [StrictTypeChecking] DOMString insertItemBefore(in DOMString item, in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] DOMString insertItemBefore(in DOMString item, in unsigned long index)
             raises(DOMException, SVGException);
-        [StrictTypeChecking] DOMString replaceItem(in DOMString item, in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] DOMString replaceItem(in DOMString item, in unsigned long index)
             raises(DOMException, SVGException);
-        [StrictTypeChecking] DOMString removeItem(in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] DOMString removeItem(in unsigned long index)
             raises(DOMException);
-        [StrictTypeChecking] DOMString appendItem(in DOMString item)
+        [StrictTypeChecking, RequiresAllArguments=Raise] DOMString appendItem(in DOMString item)
             raises(DOMException, SVGException);
     };
 

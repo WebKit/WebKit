@@ -26,6 +26,7 @@
 module svg {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SVG&SVG_FONTS
     ] SVGGlyphElement : SVGElement {
     };

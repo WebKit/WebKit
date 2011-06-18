@@ -27,6 +27,7 @@ module svg {
 
     interface [
         Conditional=SVG&FILTERS,
+        LegacyDefaultOptionalArguments,
         DontCheckEnums
     ] SVGFETurbulenceElement : SVGElement,
                                SVGFilterPrimitiveStandardAttributes {

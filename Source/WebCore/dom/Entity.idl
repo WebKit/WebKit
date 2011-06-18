@@ -19,7 +19,9 @@
 
 module core {
 
-    interface Entity : Node {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] Entity : Node {
         readonly attribute [ConvertNullStringTo=Null] DOMString publicId;
         readonly attribute [ConvertNullStringTo=Null] DOMString systemId;
         readonly attribute [ConvertNullStringTo=Null] DOMString notationName;

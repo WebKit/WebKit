@@ -26,6 +26,7 @@
 module svg {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGPaint : SVGColor {
         const unsigned short SVG_PAINTTYPE_UNKNOWN = 0;
@@ -42,8 +43,8 @@ module svg {
         readonly attribute unsigned short paintType;
         readonly attribute DOMString uri;
 
-        [StrictTypeChecking] void setUri(in DOMString uri);
-        [StrictTypeChecking] void setPaint(in unsigned short paintType, in DOMString uri, in DOMString rgbColor, in DOMString iccColor)
+        [StrictTypeChecking, RequiresAllArguments=Raise] void setUri(in DOMString uri);
+        [StrictTypeChecking, RequiresAllArguments=Raise] void setPaint(in unsigned short paintType, in DOMString uri, in DOMString rgbColor, in DOMString iccColor)
             raises(DOMException, SVGException);
     };
 

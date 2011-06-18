@@ -29,7 +29,9 @@
 module css {
 
     // Introduced in DOM Level ?:
-    interface WebKitCSSKeyframeRule : CSSRule {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] WebKitCSSKeyframeRule : CSSRule {
 
         attribute DOMString keyText;
         readonly attribute CSSStyleDeclaration style;

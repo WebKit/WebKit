@@ -30,6 +30,7 @@
 
 module html {
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=BLOB|FILE_SYSTEM,
         DontCheckEnums,
         NoStaticTables

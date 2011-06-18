@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLTitleElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLTitleElement : HTMLElement {
         attribute  [ConvertNullToNullString] DOMString            text;
     };
 

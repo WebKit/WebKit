@@ -22,6 +22,7 @@
 module svg {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGMetadataElement : SVGElement {
     };

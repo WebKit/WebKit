@@ -32,6 +32,7 @@ module window {
 
     // See: http://dev.w3.org/2006/webapi/WebTiming/
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=WEB_TIMING,
         OmitConstructor
     ] Performance {

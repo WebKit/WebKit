@@ -21,6 +21,7 @@
 module css {
 
     interface [
+        LegacyDefaultOptionalArguments,
         CustomToJS,
         CustomIsReachable,
         CustomFinalize,

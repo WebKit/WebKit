@@ -19,6 +19,7 @@
 
 module html {
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=PROGRESS_TAG
     ] HTMLProgressElement : HTMLElement {
                  attribute  double                value

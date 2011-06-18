@@ -22,6 +22,7 @@ module traversal {
 
     // Introduced in DOM Level 2:
     interface [
+        LegacyDefaultOptionalArguments,
         CustomMarkFunction
     ] NodeIterator {
         readonly attribute Node root;

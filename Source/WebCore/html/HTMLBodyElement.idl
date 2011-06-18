@@ -20,7 +20,9 @@
 
 module html {
 
-    interface HTMLBodyElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLBodyElement : HTMLElement {
         attribute [Reflect] DOMString aLink;
         attribute [Reflect] DOMString background;
         attribute [Reflect] DOMString bgColor;

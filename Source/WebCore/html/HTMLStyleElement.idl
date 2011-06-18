@@ -20,7 +20,9 @@
 
 module html {
 
-    interface HTMLStyleElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLStyleElement : HTMLElement {
         attribute boolean disabled;
         attribute [Reflect] DOMString media;
         attribute [Reflect] DOMString type;

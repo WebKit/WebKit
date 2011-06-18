@@ -33,6 +33,7 @@ module threads {
 
     interface [
         Conditional=SHARED_WORKERS,
+        LegacyDefaultOptionalArguments,
         ActiveDOMObject,
         CanBeConstructed,
         CustomConstructFunction,

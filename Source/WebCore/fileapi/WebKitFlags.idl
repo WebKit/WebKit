@@ -31,6 +31,7 @@
 module storage {
     interface [
         Conditional=FILE_SYSTEM,
+        LegacyDefaultOptionalArguments,
         CanBeConstructed,
         NoStaticTables
     ] WebKitFlags {

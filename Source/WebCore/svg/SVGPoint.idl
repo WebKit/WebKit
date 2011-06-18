@@ -23,12 +23,13 @@
 module svg {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGPoint {
         attribute [StrictTypeChecking] float x;
         attribute [StrictTypeChecking] float y;
 
-        [StrictTypeChecking] SVGPoint matrixTransform(in SVGMatrix matrix);
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGPoint matrixTransform(in SVGMatrix matrix);
     };
 
 }

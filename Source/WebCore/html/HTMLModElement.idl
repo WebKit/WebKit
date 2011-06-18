@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLModElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLModElement : HTMLElement {
         attribute [Reflect, URL] DOMString cite;
         attribute [Reflect] DOMString dateTime;
     };

@@ -32,13 +32,14 @@ module storage {
 
     interface [
         Conditional=DATABASE,
+        LegacyDefaultOptionalArguments,
         OmitConstructor,
         NoStaticTables
     ] DatabaseSync {
         readonly attribute DOMString version;
-        void changeVersion(in DOMString oldVersion, in DOMString newVersion, in [Callback, Optional] SQLTransactionSyncCallback callback) raises(DOMException);
-        void transaction(in [Callback] SQLTransactionSyncCallback callback) raises(DOMException);
-        void readTransaction(in [Callback] SQLTransactionSyncCallback callback) raises(DOMException);
+        [RequiresAllArguments=Raise] void changeVersion(in DOMString oldVersion, in DOMString newVersion, in [Callback, Optional] SQLTransactionSyncCallback callback) raises(DOMException);
+        [RequiresAllArguments=Raise] void transaction(in [Callback] SQLTransactionSyncCallback callback) raises(DOMException);
+        [RequiresAllArguments=Raise] void readTransaction(in [Callback] SQLTransactionSyncCallback callback) raises(DOMException);
     };
 
 }

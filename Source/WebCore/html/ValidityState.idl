@@ -23,6 +23,7 @@
 module html {
 
     interface [
+        LegacyDefaultOptionalArguments,
         OmitConstructor
     ] ValidityState {
         readonly attribute boolean         valueMissing;

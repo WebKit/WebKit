@@ -26,6 +26,7 @@ module audio {
     // Two-pole lowpass filter
     // FIXME: design BiquadNode and use instead of this
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO,
         GenerateToJS
     ] LowPass2FilterNode : AudioNode {

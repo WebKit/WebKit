@@ -27,23 +27,24 @@
 module svg {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGNumberList {
         readonly attribute unsigned long numberOfItems;
 
         void clear()
             raises(DOMException);
-        [StrictTypeChecking] SVGNumber initialize(in SVGNumber item)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGNumber initialize(in SVGNumber item)
             raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGNumber getItem(in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGNumber getItem(in unsigned long index)
             raises(DOMException);
-        [StrictTypeChecking] SVGNumber insertItemBefore(in SVGNumber item, in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGNumber insertItemBefore(in SVGNumber item, in unsigned long index)
             raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGNumber replaceItem(in SVGNumber item, in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGNumber replaceItem(in SVGNumber item, in unsigned long index)
             raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGNumber removeItem(in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGNumber removeItem(in unsigned long index)
             raises(DOMException);
-        [StrictTypeChecking] SVGNumber appendItem(in SVGNumber item)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGNumber appendItem(in SVGNumber item)
             raises(DOMException, SVGException);
     };
 

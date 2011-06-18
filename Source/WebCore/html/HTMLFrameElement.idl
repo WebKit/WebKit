@@ -20,7 +20,9 @@
 
 module html {
 
-    interface HTMLFrameElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLFrameElement : HTMLElement {
 
         attribute [Reflect] DOMString frameBorder;
         attribute [Reflect] DOMString longDesc;

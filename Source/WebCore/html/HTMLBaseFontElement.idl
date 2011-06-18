@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLBaseFontElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLBaseFontElement : HTMLElement {
         attribute [Reflect] DOMString color;
         attribute [Reflect] DOMString face;
 #if defined(LANGUAGE_OBJECTIVE_C) && LANGUAGE_OBJECTIVE_C

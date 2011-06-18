@@ -29,6 +29,7 @@
 module xml {
 
     interface [
+        LegacyDefaultOptionalArguments,
         NoStaticTables,
         DontCheckEnums
     ] XMLHttpRequestException {

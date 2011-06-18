@@ -22,6 +22,7 @@
 module svg {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGTransform { 
         // Transform Types
@@ -37,12 +38,12 @@ module svg {
         readonly attribute SVGMatrix matrix;
         readonly attribute float angle;
 
-        [StrictTypeChecking] void setMatrix(in SVGMatrix matrix);
-        [StrictTypeChecking] void setTranslate(in float tx, in float ty);
-        [StrictTypeChecking] void setScale(in float sx, in float sy);
-        [StrictTypeChecking] void setRotate(in float angle, in float cx, in float cy);
-        [StrictTypeChecking] void setSkewX(in float angle);
-        [StrictTypeChecking] void setSkewY(in float angle);
+        [StrictTypeChecking, RequiresAllArguments=Raise] void setMatrix(in SVGMatrix matrix);
+        [StrictTypeChecking, RequiresAllArguments=Raise] void setTranslate(in float tx, in float ty);
+        [StrictTypeChecking, RequiresAllArguments=Raise] void setScale(in float sx, in float sy);
+        [StrictTypeChecking, RequiresAllArguments=Raise] void setRotate(in float angle, in float cx, in float cy);
+        [StrictTypeChecking, RequiresAllArguments=Raise] void setSkewX(in float angle);
+        [StrictTypeChecking, RequiresAllArguments=Raise] void setSkewY(in float angle);
     };
 
 }

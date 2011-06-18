@@ -28,6 +28,7 @@ module svg {
 
     interface [
         Conditional=SVG,
+        LegacyDefaultOptionalArguments,
         ObjCProtocol,
         OmitConstructor
     ] SVGExternalResourcesRequired { 

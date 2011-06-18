@@ -20,7 +20,9 @@
 
 module html {
 
-    interface HTMLIFrameElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLIFrameElement : HTMLElement {
         attribute [Reflect] DOMString align;
         attribute [Reflect] DOMString frameBorder;
         attribute [Reflect] DOMString height;

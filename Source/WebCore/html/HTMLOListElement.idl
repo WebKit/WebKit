@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLOListElement : HTMLElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLOListElement : HTMLElement {
         attribute [Reflect] boolean compact;
         attribute long start;
         attribute [Reflect] DOMString type;

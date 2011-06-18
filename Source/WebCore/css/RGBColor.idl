@@ -21,7 +21,9 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface RGBColor {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] RGBColor {
         readonly attribute CSSPrimitiveValue  red;
         readonly attribute CSSPrimitiveValue  green;
         readonly attribute CSSPrimitiveValue  blue;

@@ -27,6 +27,7 @@ module core {
 
     interface [
         Conditional=GEOLOCATION,
+        LegacyDefaultOptionalArguments,
         OmitConstructor
     ] Geoposition {
         readonly attribute Coordinates coords;

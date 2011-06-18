@@ -23,6 +23,7 @@
 module svg {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGAngle { 
         // Angle Unit Types
@@ -39,10 +40,10 @@ module svg {
         attribute [ConvertNullToNullString] DOMString valueAsString
             setter raises(DOMException);
 
-        [StrictTypeChecking] void newValueSpecifiedUnits(in unsigned short unitType, in float valueInSpecifiedUnits)
+        [StrictTypeChecking, RequiresAllArguments=Raise] void newValueSpecifiedUnits(in unsigned short unitType, in float valueInSpecifiedUnits)
             raises(DOMException);
 
-        [StrictTypeChecking] void convertToSpecifiedUnits(in unsigned short unitType)
+        [StrictTypeChecking, RequiresAllArguments=Raise] void convertToSpecifiedUnits(in unsigned short unitType)
             raises(DOMException);
     };
 

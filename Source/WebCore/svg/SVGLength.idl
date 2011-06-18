@@ -23,6 +23,7 @@
 module svg {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGLength { 
         // Length Unit Types
@@ -47,11 +48,11 @@ module svg {
         attribute [ConvertNullToNullString, StrictTypeChecking] DOMString valueAsString
             setter raises(DOMException);
 
-        [StrictTypeChecking] void newValueSpecifiedUnits(in unsigned short unitType, 
+        [StrictTypeChecking, RequiresAllArguments=Raise] void newValueSpecifiedUnits(in unsigned short unitType, 
                                                          in float valueInSpecifiedUnits)
             raises(DOMException);
 
-        [Custom, StrictTypeChecking] void convertToSpecifiedUnits(in unsigned short unitType)
+        [Custom, StrictTypeChecking, RequiresAllArguments=Raise] void convertToSpecifiedUnits(in unsigned short unitType)
             raises(DOMException);
     };
 

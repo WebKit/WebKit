@@ -23,6 +23,7 @@
 module svg {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGRect {
         attribute [StrictTypeChecking] float x;

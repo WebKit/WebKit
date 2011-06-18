@@ -27,6 +27,7 @@
 module svg {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGRectElement : SVGElement,
                                                  SVGTests,

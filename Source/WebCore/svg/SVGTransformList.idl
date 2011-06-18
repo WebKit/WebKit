@@ -27,26 +27,27 @@
 module svg {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGTransformList {
         readonly attribute unsigned long numberOfItems;
 
         void clear()
             raises(DOMException);
-        [StrictTypeChecking] SVGTransform initialize(in SVGTransform item)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform initialize(in SVGTransform item)
             raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGTransform getItem(in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform getItem(in unsigned long index)
             raises(DOMException);
-        [StrictTypeChecking] SVGTransform insertItemBefore(in SVGTransform item, in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform insertItemBefore(in SVGTransform item, in unsigned long index)
             raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGTransform replaceItem(in SVGTransform item, in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform replaceItem(in SVGTransform item, in unsigned long index)
             raises(DOMException, SVGException);
-        [StrictTypeChecking] SVGTransform removeItem(in unsigned long index)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform removeItem(in unsigned long index)
             raises(DOMException);
-        [StrictTypeChecking] SVGTransform appendItem(in SVGTransform item)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform appendItem(in SVGTransform item)
             raises(DOMException, SVGException);
 
-        [StrictTypeChecking] SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix)
+        [StrictTypeChecking, RequiresAllArguments=Raise] SVGTransform createSVGTransformFromMatrix(in SVGMatrix matrix)
             raises(DOMException);
 
         SVGTransform consolidate()

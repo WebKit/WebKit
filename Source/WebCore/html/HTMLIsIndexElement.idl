@@ -19,7 +19,9 @@
 
 module html {
 
-    interface HTMLIsIndexElement : HTMLInputElement {
+    interface [
+        LegacyDefaultOptionalArguments,
+    ] HTMLIsIndexElement : HTMLInputElement {
         readonly attribute HTMLFormElement form;
         attribute [Reflect] DOMString prompt;
     };

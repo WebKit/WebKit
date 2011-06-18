@@ -25,6 +25,7 @@
 
 module html {
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=VIDEO
     ] MediaError {
           const unsigned short MEDIA_ERR_ABORTED = 1;

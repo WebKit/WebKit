@@ -27,6 +27,7 @@
 module svg {
 
     interface [
+        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGPathSegArcRel : SVGPathSeg {
         attribute [StrictTypeChecking] float x;
