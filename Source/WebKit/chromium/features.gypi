@@ -84,7 +84,6 @@
       'ENABLE_TOUCH_ICON_LOADING=<(enable_touch_icon_loading)',
       'ENABLE_V8_SCRIPT_DEBUG_SERVER=1',
       'ENABLE_VIDEO=1',
-      'ENABLE_WEB_AUDIO=1',
       'ENABLE_WEB_SOCKETS=1',
       'ENABLE_WEB_TIMING=1',
       'ENABLE_WEBGL=1',
@@ -132,6 +131,14 @@
       }],
       ['touchui==1', {
         'enable_touch_icon_loading': 1,
+      }],
+      # TODO(crogers): For the moment Windows is only enabled for
+      # Google-branded build, since the FFmpeg DLLs need to be re-built
+      # for chromium.
+      ['OS=="mac" or OS=="linux" or (OS=="win" and branding=="Chrome")', {
+        'feature_defines': [
+          'ENABLE_WEB_AUDIO=1',
+        ],
       }],
       # Mac OS X uses Accelerate.framework FFT by default instead of FFmpeg.
       ['OS!="mac"', {
