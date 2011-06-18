@@ -367,6 +367,7 @@ http/tests/xmlhttprequest/cross-origin-cookie-storage.html
 http/tests/xmlhttprequest/cache-override.html
 http/tests/xmlhttprequest/cross-origin-authorization.html
 http/tests/xmlhttprequest/cross-origin-no-authorization.html
+http/tests/xmlhttprequest/redirect-cross-origin-tripmine.html
 
 # =========================================================================== #
 #       Failing inserting tests.                                              #

@@ -59,7 +59,6 @@ public:
         , m_data(data)
     {}
 
-    virtual void willSendRequest(ResourceHandle*, ResourceRequest&, const ResourceResponse&);
     virtual void didReceiveResponse(ResourceHandle*, const ResourceResponse& response) { m_response = response; }
     virtual void didReceiveData(ResourceHandle*, const char* data, int length, int) { m_data.append(data, length); }
     virtual void didFinishLoading(ResourceHandle*, double /*finishTime*/) {}
@@ -69,17 +68,6 @@ private:
     ResourceResponse& m_response;
     Vector<char>& m_data;
 };
-
-void WebCoreSynchronousLoader::willSendRequest(ResourceHandle* handle, ResourceRequest& request, const ResourceResponse& /*redirectResponse*/)
-{
-    // FIXME: This needs to be fixed to follow the redirect correctly even for cross-domain requests.
-    if (!protocolHostAndPortAreEqual(handle->firstRequest().url(), request.url())) {
-        ASSERT(!m_error);
-        m_error.setIsCancellation(true);
-        request = ResourceRequest();
-        return;
-    }
-}
 
 ResourceHandleInternal::~ResourceHandleInternal()
 {
