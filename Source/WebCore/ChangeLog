@@ -1,3 +1,17 @@
+2011-06-17  Alexey Proskuryakov  <ap@apple.com>
+
+        Reviewed by Dan Bernstein.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62913
+        Use ICU search collator when available
+
+        <rdar://problem/8830218> Search on a webpage in Safari conflates some Czech characters
+        <rdar://problem/8468873> Safari search doesn't strip Hamza
+
+        This changes behaviors that depend on system language, and isn't practically testable.
+
+        * editing/TextIterator.cpp: (WebCore::createSearcher): Ask ICU for search collator, if available.
+
 2011-06-17  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89143.
