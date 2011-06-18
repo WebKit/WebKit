@@ -4738,14 +4738,6 @@ void Document::webkitCancelFullScreen()
     page()->chrome()->client()->exitFullScreenForElement(m_fullScreenElement.get());
 }
 
-void Document::setContainsFullScreenElementRecursively(Element* element, bool contains)
-{
-    while (element) {
-        element->setContainsFullScreenElement(contains);
-        element = (element->parentElement() ? element->parentElement() : element->document()->ownerElement());
-    } 
-}
-
 void Document::webkitWillEnterFullScreenForElement(Element* element)
 {
     ASSERT(element);
@@ -4767,7 +4759,7 @@ void Document::webkitWillEnterFullScreenForElement(Element* element)
     if (m_fullScreenElement != documentElement())
         m_fullScreenElement->detach();
 
-    setContainsFullScreenElementRecursively(m_fullScreenElement->parentElement() ? m_fullScreenElement->parentElement() : ownerElement(), true);
+    m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
     
     recalcStyle(Force);
     
@@ -4798,7 +4790,7 @@ void Document::webkitDidEnterFullScreenForElement(Element*)
 
 void Document::webkitWillExitFullScreenForElement(Element*)
 {
-    setContainsFullScreenElementRecursively(m_fullScreenElement->parentElement() ? m_fullScreenElement->parentElement() : ownerElement(), false);
+    m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
     
     m_fullScreenElement->willStopBeingFullscreenElement();
 
@@ -4908,7 +4900,7 @@ void Document::fullScreenChangeDelayTimerFired(Timer<Document>*)
 
 void Document::fullScreenElementRemoved()
 {
-    setContainsFullScreenElementRecursively(m_fullScreenElement->parentElement() ? m_fullScreenElement->parentElement() : ownerElement(), false);
+    m_fullScreenElement->setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
     webkitCancelFullScreen();
 }
 

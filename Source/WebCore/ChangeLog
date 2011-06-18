@@ -1,3 +1,31 @@
+2011-06-18  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Rename Document::setContainsFullScreenElementRecursively
+        https://bugs.webkit.org/show_bug.cgi?id=62528
+
+        No new tests; no net change in functionality, so this is covered by existing tests.
+
+        The name of setContainsFullScreenElementRecursively is confusing, since it doesn't actually use
+        recursion, and it walks the ancestor tree instead of the descendent tree (as recursive might
+        otherwise imply).  Move the function into Element, turn it into a member function, and change 
+        the behavior so that the function operates on the called object's parents (as opposed to the 
+        object itself).
+
+        * dom/Element.h:
+        * dom/Element.cpp:
+        (WebCore::parentCrossingFrameBoundaries): Added.
+        (WebCore::Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries): Renamed and 
+            moved from Document.
+        (WebCore::Element::willRemove): Use the newly renamed function.
+        (WebCore::Element::insertedIntoTree): Ditto.
+        * dom/Document.h:
+        * dom/Document.cpp:
+        (WebCore::Document::webkitWillEnterFullScreenForElement): Ditto.
+        (WebCore::Document::webkitWillExitFullScreenForElement): Ditto.
+        (WebCore::Document::fullScreenElementRemoved): Ditto.
+
 2011-06-18  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Chris Fleizach.

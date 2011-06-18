@@ -357,6 +357,7 @@ public:
     void webkitRequestFullScreen(unsigned short flags);
     virtual bool containsFullScreenElement() const;
     virtual void setContainsFullScreenElement(bool);
+    virtual void setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(bool);
 #endif
 
     virtual bool isSpellCheckingEnabled() const;

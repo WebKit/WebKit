@@ -44,6 +44,7 @@
 #include "Frame.h"
 #include "FrameView.h"
 #include "HTMLElement.h"
+#include "HTMLFrameOwnerElement.h"
 #include "HTMLNames.h"
 #include "HTMLParserIdioms.h"
 #include "InspectorInstrumentation.h"
@@ -944,8 +945,8 @@ void Element::setChangedSinceLastFormControlChangeEvent(bool)
 void Element::willRemove()
 {
 #if ENABLE(FULLSCREEN_API)
-    if (containsFullScreenElement() && parentElement())
-        document()->setContainsFullScreenElementRecursively(parentElement(), false);
+    if (containsFullScreenElement())
+        setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(false);
 #endif
     ContainerNode::willRemove();
 }
@@ -991,8 +992,8 @@ void Element::insertedIntoTree(bool deep)
         shadow->insertedIntoTree(true);
 
 #if ENABLE(FULLSCREEN_API)
-    if (parentElement() && containsFullScreenElement() && !parentElement()->containsFullScreenElement())
-        document()->setContainsFullScreenElementRecursively(parentElement(), true);
+    if (containsFullScreenElement() && parentElement() && !parentElement()->containsFullScreenElement())
+        setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(true);
 #endif
 }
 
@@ -1919,6 +1920,19 @@ void Element::setContainsFullScreenElement(bool flag)
 {
     ensureRareData()->m_containsFullScreenElement = flag;
     setNeedsStyleRecalc(SyntheticStyleChange);
+}
+
+static Element* parentCrossingFrameBoundaries(Element* element)
+{
+    ASSERT(element);
+    return element->parentElement() ? element->parentElement() : element->document()->ownerElement();
+}
+
+void Element::setContainsFullScreenElementOnAncestorsCrossingFrameBoundaries(bool flag)
+{
+    Element* element = this;
+    while ((element = parentCrossingFrameBoundaries(element)))
+        element->setContainsFullScreenElement(flag);
 }
 #endif    
 
