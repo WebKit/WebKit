@@ -1,0 +1,18 @@
+Alpha Beta Delta Eta Epsilon Theta
+This tests that if aria-labelledby is used, then aria-label attributes are not used.
+
+On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
+
+
+PASS usingNone.title is "AXTitle: Alpha"
+PASS usingNone.description is "AXDescription: "
+PASS usingLabel.title is "AXTitle: Beta"
+PASS usingLabel.description is "AXDescription: Gamma"
+PASS usingLabelledby.title is "AXTitle: Delta"
+PASS usingLabelledby.description is "AXDescription: Epsilon"
+PASS usingLabeledby.title is "AXTitle: Eta"
+PASS usingLabeledby.description is "AXDescription: Theta"
+PASS successfullyParsed is true
+
+TEST COMPLETE
+

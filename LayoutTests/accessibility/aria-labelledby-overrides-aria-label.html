@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+<head>
+<link rel="stylesheet" href="../fast/js/resources/js-test-style.css">
+<script>
+var successfullyParsed = false;
+</script>
+<script src="../fast/js/resources/js-test-pre.js"></script>
+</head>
+<body id="body">
+
+<button id="using-none">Alpha</button>
+<button id="using-label" aria-label="Gamma">Beta</button>
+<button id="using-labelledby" aria-labelledby="epsilon" aria-label="Zeta">Delta</button>
+<button id="using-labeledby" aria-labeledby="theta" aria-label="Iota">Eta</button>
+<span id="epsilon">Epsilon</span>
+<span id="theta">Theta</span>
+
+<p id="description"></p>
+<ul id="console"></ul>
+
+<script>
+    description("This tests that if aria-labelledby is used, then aria-label attributes are not used.");
+
+    function log(str) {
+        var console = document.getElementById("console");
+        var li = document.createElement("li");
+        li.appendChild(document.createTextNode(str));
+        console.appendChild(li);
+    }
+
+    function logAXObject(obj) {
+        log("for " + obj.allAttributes());
+        log("children:\n" + obj.attributesOfChildren());
+        log("obj.title is " + obj.title);
+        log("obj.description is " + obj.description);
+    }
+
+    function getAccessibilityObject(id) {
+        var element = document.getElementById(id);
+        element.focus();
+        return accessibilityController.focusedElement;
+    }
+
+    if (window.accessibilityController) {
+        var usingNone = getAccessibilityObject("using-none");
+        shouldBe("usingNone.title", '"AXTitle: Alpha"');
+        shouldBe("usingNone.description", '"AXDescription: "');
+
+        var usingLabel = getAccessibilityObject("using-label");
+        shouldBe("usingLabel.title", '"AXTitle: Beta"');
+        shouldBe("usingLabel.description", '"AXDescription: Gamma"');
+
+        var usingLabelledby = getAccessibilityObject("using-labelledby");
+        shouldBe("usingLabelledby.title", '"AXTitle: Delta"');
+        shouldBe("usingLabelledby.description", '"AXDescription: Epsilon"');
+
+        var usingLabeledby = getAccessibilityObject("using-labeledby");
+        shouldBe("usingLabeledby.title", '"AXTitle: Eta"');
+        shouldBe("usingLabeledby.description", '"AXDescription: Theta"');
+    }
+
+    successfullyParsed = true;
+</script>
+
+<script src="../fast/js/resources/js-test-post.js"></script>
+</body>
+</html>

@@ -32,11 +32,11 @@
             var labeledItem = document.getElementById("rep");
             labeledItem.focus();
             var result = document.getElementById("result");
-            if ( accessibilityController.focusedElement.title == "AXTitle: Reply Item Five" ) {
+            if ( accessibilityController.focusedElement.description == "AXDescription: Reply Item Five" ) {
                result.innerText = "Passed";
             }
             else { 
-               result.innerText = "Failed. Result ==" + accessibilityController.focusedElement.title + "==";
+               result.innerText = "Failed. Result ==" + accessibilityController.focusedElement.description + "==";
             }
         }
     </script>

@@ -1,3 +1,16 @@
+2011-06-18  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Chris Fleizach.
+
+        Accessibility description for an element should make use of aria-labelledby.
+        https://bugs.webkit.org/show_bug.cgi?id=61995
+
+        Tests: accessibility/aria-labelledby-overrides-aria-label.html
+
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::title): Don't return value from aria-labelledby.
+        (WebCore::AccessibilityRenderObject::ariaAccessibilityDescription): Return value from aria-labelledby in preference to value from aria-label.
+
 2011-06-18  Christoph Mende  <mende.christoph@gmail.com>
 
         Reviewed by Darin Adler.

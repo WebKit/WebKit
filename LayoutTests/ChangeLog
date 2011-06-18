@@ -1,3 +1,18 @@
+2011-06-18  Alice Boxhall  <aboxhall@chromium.org>
+
+        Reviewed by Chris Fleizach.
+
+        Accessibility description for an element should make use of aria-labelledby.
+        https://bugs.webkit.org/show_bug.cgi?id=61995
+
+        * accessibility/aria-labelledby-on-input.html:
+        * accessibility/aria-labelledby-overrides-aria-label-expected.txt: Added.
+        * accessibility/aria-labelledby-overrides-aria-label.html: Added.
+        * accessibility/aria-labelledby-overrides-label-expected.txt:
+        * accessibility/aria-labelledby-overrides-label.html:
+        * accessibility/aria-labelledby-stay-within.html:
+        * platform/mac/accessibility/aria-labelledby-on-input-expected.txt:
+
 2011-06-18  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Reviewed by Tony Gentilcore.

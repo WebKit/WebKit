@@ -1305,10 +1305,6 @@ String AccessibilityRenderObject::title() const
     if (!node)
         return String();
     
-    String ariaLabel = ariaLabeledByAttribute();
-    if (!ariaLabel.isEmpty())
-        return ariaLabel;
-    
     const AtomicString& title = getAttribute(titleAttr);
     if (!title.isEmpty())
         return title;
@@ -1351,6 +1347,10 @@ String AccessibilityRenderObject::ariaDescribedByAttribute() const
     
 String AccessibilityRenderObject::ariaAccessibilityDescription() const
 {
+    const AtomicString& ariaLabeledBy = ariaLabeledByAttribute();
+    if (!ariaLabeledBy.isEmpty())
+        return ariaLabeledBy;
+
     const AtomicString& ariaLabel = getAttribute(aria_labelAttr);
     if (!ariaLabel.isEmpty())
         return ariaLabel;
