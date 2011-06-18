@@ -1,3 +1,15 @@
+2011-06-18  Patrick Gansterer  <paroga@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Don't exit webkit-patch when running on Win32 python
+        https://bugs.webkit.org/show_bug.cgi?id=55811
+
+        Most of the basic actions work in the meantime,
+        so let people play with in on Win32 now.
+
+        * Scripts/webkit-patch:
+
 2011-06-18  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Ojan Vafai.
