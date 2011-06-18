@@ -1,3 +1,14 @@
+2011-06-17  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by Adam Barth.
+
+        https://bugs.webkit.org/show_bug.cgi?id=62653
+        [V8][Chromium] Make StringCache in V8 bindings per-isolate
+        This moves StringCache into V8BindingPerIsolateData.
+
+        * src/WebScriptController.cpp:
+        (WebKit::WebScriptController::enableV8SingleThreadMode): StringCache is now per-isolate, so ok in multithreaded contexts.
+
 2011-06-17  Ryosuke Niwa  <rniwa@webkit.org>
 
         Roll Chromium DEPS.

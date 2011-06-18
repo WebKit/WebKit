@@ -463,13 +463,6 @@ AtomicString v8NonStringValueToAtomicWebCoreString(v8::Handle<v8::Value> object)
     return AtomicString(v8NonStringValueToWebCoreString(object));
 }
 
-static bool stringImplCacheEnabled = false;
-
-void enableStringImplCache()
-{
-    stringImplCacheEnabled = true;
-}
-
 static v8::Local<v8::String> makeExternalString(const String& string)
 {
     WebCoreStringResource* stringResource = new WebCoreStringResource(string);
@@ -480,43 +473,32 @@ static v8::Local<v8::String> makeExternalString(const String& string)
     return newString;
 }
 
-typedef HashMap<StringImpl*, v8::String*> StringCache;
-
-static StringCache& getStringCache()
-{
-    ASSERT(WTF::isMainThread());
-    DEFINE_STATIC_LOCAL(StringCache, mainThreadStringCache, ());
-    return mainThreadStringCache;
-}
-
 static void cachedStringCallback(v8::Persistent<v8::Value> wrapper, void* parameter)
 {
-    ASSERT(WTF::isMainThread());
     StringImpl* stringImpl = static_cast<StringImpl*>(parameter);
-    ASSERT(getStringCache().contains(stringImpl));
-    getStringCache().remove(stringImpl);
+    V8BindingPerIsolateData::current()->stringCache()->remove(stringImpl);
     wrapper.Dispose();
     stringImpl->deref();
 }
 
-RefPtr<StringImpl> lastStringImpl = 0;
-v8::Persistent<v8::String> lastV8String;
+void StringCache::remove(StringImpl* stringImpl) 
+{
+    ASSERT(m_stringCache.contains(stringImpl));
+    m_stringCache.remove(stringImpl);
+}
 
-v8::Local<v8::String> v8ExternalStringSlow(StringImpl* stringImpl)
+
+v8::Local<v8::String> StringCache::v8ExternalStringSlow(StringImpl* stringImpl)
 {
     if (!stringImpl->length())
         return v8::String::Empty();
 
-    if (!stringImplCacheEnabled)
-        return makeExternalString(String(stringImpl));
-
-    StringCache& stringCache = getStringCache();
-    v8::String* cachedV8String = stringCache.get(stringImpl);
+    v8::String* cachedV8String = m_stringCache.get(stringImpl);
     if (cachedV8String) {
         v8::Persistent<v8::String> handle(cachedV8String);
         if (!handle.IsNearDeath() && !handle.IsEmpty()) {
-            lastStringImpl = stringImpl;
-            lastV8String = handle;
+            m_lastStringImpl = stringImpl;
+            m_lastV8String = handle;
             return v8::Local<v8::String>::New(handle);
         }
     }
@@ -531,10 +513,10 @@ v8::Local<v8::String> v8ExternalStringSlow(StringImpl* stringImpl)
 
     stringImpl->ref();
     wrapper.MakeWeak(stringImpl, cachedStringCallback);
-    stringCache.set(stringImpl, *wrapper);
+    m_stringCache.set(stringImpl, *wrapper);
 
-    lastStringImpl = stringImpl;
-    lastV8String = wrapper;
+    m_lastStringImpl = stringImpl;
+    m_lastV8String = wrapper;
 
     return newString;
 }
