@@ -1,3 +1,13 @@
+2011-06-18  Christoph Mende  <mende.christoph@gmail.com>
+
+        Reviewed by Darin Adler.
+
+        compilation fails with libpng-1.5
+        https://bugs.webkit.org/show_bug.cgi?id=61738
+
+        * platform/image-encoders/skia/PNGImageEncoder.cpp:
+        (WebCore::writeOutput): Use getter function instead of direct access
+
 2011-06-18  Jeremy Moskovich  <jeremy@chromium.org>
 
         Reviewed by Eric Seidel.
