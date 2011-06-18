@@ -222,6 +222,7 @@ public:
     virtual bool isCheckable();
     virtual bool isSteppable() const;
     virtual bool shouldRespectHeightAndWidthAttributes();
+    virtual bool supportsPlaceholder() const;
 
     // Parses the specified string for the type, and return
     // the double value for the parsing result if the parsing

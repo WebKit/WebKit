@@ -264,6 +264,11 @@ bool NumberInputType::shouldRespectSpeechAttribute()
     return true;
 }
 
+bool NumberInputType::supportsPlaceholder() const
+{
+    return true;
+}
+
 bool NumberInputType::isNumberField() const
 {
     return true;

@@ -1803,7 +1803,7 @@ bool HTMLInputElement::isChecked() const
 
 bool HTMLInputElement::supportsPlaceholder() const
 {
-    return isTextType();
+    return m_inputType->supportsPlaceholder();
 }
 
 CheckedRadioButtons& HTMLInputElement::checkedRadioButtons() const

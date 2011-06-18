@@ -70,6 +70,7 @@ private:
     virtual String sanitizeValue(const String&);
     virtual bool hasUnacceptableValue();
     virtual bool shouldRespectSpeechAttribute();
+    virtual bool supportsPlaceholder() const;
     virtual bool isNumberField() const;
 };
 

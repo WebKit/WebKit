@@ -44,6 +44,7 @@ protected:
 private:
     virtual bool isTextType() const;
     virtual bool patternMismatch(const String&) const;
+    virtual bool supportsPlaceholder() const;
 };
 
 } // namespace WebCore

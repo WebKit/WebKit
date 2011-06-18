@@ -50,4 +50,9 @@ bool BaseTextInputType::patternMismatch(const String& value) const
     return matchOffset || matchLength != valueLength;
 }
 
+bool BaseTextInputType::supportsPlaceholder() const
+{
+    return true;
+}
+
 } // namespace WebCore
