@@ -19,9 +19,7 @@
 
 module core {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] EntityReference : Node {
+    interface EntityReference : Node {
     };
 
 }

@@ -25,7 +25,6 @@
 module audio {
     // A linear convolution effect
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO,
         GenerateToJS
     ] ConvolverNode : AudioNode {

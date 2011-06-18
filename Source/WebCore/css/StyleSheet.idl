@@ -22,7 +22,6 @@ module stylesheets {
 
     // Introduced in DOM Level 2:
     interface [
-        LegacyDefaultOptionalArguments,
         CustomMarkFunction,
         GenerateIsReachable,
         CustomToJS,

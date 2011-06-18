@@ -31,7 +31,6 @@
 module window {
 
     interface [
-        LegacyDefaultOptionalArguments,
         OmitConstructor
     ] MemoryInfo {
 

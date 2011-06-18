@@ -19,9 +19,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLDListElement : HTMLElement {
+    interface HTMLDListElement : HTMLElement {
         attribute [Reflect] boolean compact;
     };
 

@@ -25,7 +25,6 @@
 
 module window {
     interface [
-        LegacyDefaultOptionalArguments,
         OmitConstructor
     ] Internals {
     };

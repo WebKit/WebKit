@@ -26,7 +26,6 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGSwitchElement : SVGElement,
                                                    SVGTests,

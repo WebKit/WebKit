@@ -28,7 +28,6 @@
 module test {
     interface [
         Conditional=Condition1|Condition2,
-        LegacyDefaultOptionalArguments,
     ] TestSerializedScriptValueInterface {
         // The case of a single SerializedScriptValue attribute is a bit of a
         // special case.

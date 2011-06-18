@@ -20,9 +20,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLTableCellElement : HTMLElement {
+    interface HTMLTableCellElement : HTMLElement {
         readonly attribute long cellIndex;
         attribute [Reflect] DOMString abbr;
         attribute [Reflect] DOMString align;

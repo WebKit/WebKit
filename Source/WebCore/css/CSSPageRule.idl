@@ -21,9 +21,7 @@
 module css {
 
     // Introduced in DOM Level 2:
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] CSSPageRule : CSSRule {
+    interface CSSPageRule : CSSRule {
 
                  attribute [ConvertNullStringTo=Null, ConvertNullToNullString] DOMString selectorText;
 

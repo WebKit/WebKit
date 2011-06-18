@@ -19,9 +19,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLQuoteElement : HTMLElement {
+    interface HTMLQuoteElement : HTMLElement {
         attribute [Reflect, URL] DOMString cite;
     };
 }

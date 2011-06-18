@@ -26,7 +26,6 @@
 module window {
 
     interface [
-        LegacyDefaultOptionalArguments,
         CanBeConstructed,
         CustomConstructFunction,
         ConstructorParameters=2,

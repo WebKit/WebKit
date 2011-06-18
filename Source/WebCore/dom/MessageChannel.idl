@@ -27,7 +27,6 @@
 module events {
 
     interface [
-        LegacyDefaultOptionalArguments,
         CanBeConstructed,
         CustomConstructFunction,
         V8CustomConstructor,

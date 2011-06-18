@@ -22,7 +22,6 @@ module traversal {
 
     // Introduced in DOM Level 2:
     interface [
-        LegacyDefaultOptionalArguments,
         CustomMarkFunction
     ] TreeWalker {
         readonly attribute Node root;

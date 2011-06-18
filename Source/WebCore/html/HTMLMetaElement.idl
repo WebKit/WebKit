@@ -19,9 +19,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLMetaElement : HTMLElement {
+    interface HTMLMetaElement : HTMLElement {
         attribute [Reflect] DOMString content;
         attribute [Reflect=http_equiv] DOMString httpEquiv;
         attribute [Reflect] DOMString name;

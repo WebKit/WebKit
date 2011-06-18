@@ -25,9 +25,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] TextMetrics {
+    interface TextMetrics {
         readonly attribute float width;
     };
 

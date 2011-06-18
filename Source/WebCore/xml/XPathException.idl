@@ -29,7 +29,6 @@
 module xpath {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=XPATH,
         DontCheckEnums
     ] XPathException {

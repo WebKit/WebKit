@@ -31,7 +31,6 @@
 module html {
     interface [
         Conditional=DATALIST,
-        LegacyDefaultOptionalArguments,
     ] HTMLDataListElement : HTMLElement {
         readonly attribute HTMLCollection options;
     };

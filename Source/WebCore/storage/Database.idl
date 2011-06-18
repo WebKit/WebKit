@@ -30,14 +30,13 @@ module storage {
 
     interface [
         Conditional=DATABASE,
-        LegacyDefaultOptionalArguments,
         OmitConstructor,
         NoStaticTables
     ] Database {
         readonly attribute DOMString version;
-        [RequiresAllArguments=Raise] void changeVersion(in DOMString oldVersion, in DOMString newVersion, in [Callback, Optional] SQLTransactionCallback callback, in [Callback, Optional] SQLTransactionErrorCallback errorCallback, in [Callback, Optional] VoidCallback successCallback);
-        [RequiresAllArguments=Raise] void transaction(in [Callback] SQLTransactionCallback callback, in [Callback, Optional] SQLTransactionErrorCallback errorCallback, in [Callback, Optional] VoidCallback successCallback);
-        [RequiresAllArguments=Raise] void readTransaction(in [Callback] SQLTransactionCallback callback, in [Callback, Optional] SQLTransactionErrorCallback errorCallback, in [Callback, Optional] VoidCallback successCallback);
+        void changeVersion(in DOMString oldVersion, in DOMString newVersion, in [Callback, Optional] SQLTransactionCallback callback, in [Callback, Optional] SQLTransactionErrorCallback errorCallback, in [Callback, Optional] VoidCallback successCallback);
+        void transaction(in [Callback] SQLTransactionCallback callback, in [Callback, Optional] SQLTransactionErrorCallback errorCallback, in [Callback, Optional] VoidCallback successCallback);
+        void readTransaction(in [Callback] SQLTransactionCallback callback, in [Callback, Optional] SQLTransactionErrorCallback errorCallback, in [Callback, Optional] VoidCallback successCallback);
     };
 
 }

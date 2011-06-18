@@ -23,7 +23,6 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateNativeConverter,
         Conditional=SVG
     ] SVGElement : Element {

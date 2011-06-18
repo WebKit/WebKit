@@ -28,7 +28,6 @@ module views {
 
     // Introduced in DOM Level 2:
     interface [
-        LegacyDefaultOptionalArguments,
         ObjCCustomImplementation,
         OmitConstructor
     ] AbstractView {

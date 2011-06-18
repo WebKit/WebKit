@@ -19,9 +19,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLMenuElement : HTMLElement {
+    interface HTMLMenuElement : HTMLElement {
         attribute [Reflect] boolean compact;
     };
 
