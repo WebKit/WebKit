@@ -1,3 +1,14 @@
+2011-06-18  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Eric Seidel.
+
+        Enhancement: New Script to Format malloc_history output as tree
+        https://bugs.webkit.org/show_bug.cgi?id=56378
+
+        New script to process malloc_history output to tree format.
+
+        * Scripts/malloc-tree: Added.
+
 2011-06-17  Dmitry Lomov  <dslomov@google.com>
 
         Reviewed by Daniel Bates.
