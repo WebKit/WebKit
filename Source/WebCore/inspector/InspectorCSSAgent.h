@@ -68,9 +68,9 @@ public:
     void getStyleSheet(ErrorString*, const String& styleSheetId, RefPtr<InspectorObject>* result);
     void getStyleSheetText(ErrorString*, const String& styleSheetId, String* result);
     void setStyleSheetText(ErrorString*, const String& styleSheetId, const String& text);
-    void setPropertyText(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>* result);
-    void toggleProperty(ErrorString*, const RefPtr<InspectorObject>& styleId, int propertyIndex, bool disable, RefPtr<InspectorObject>* result);
-    void setRuleSelector(ErrorString*, const RefPtr<InspectorObject>& ruleId, const String& selector, RefPtr<InspectorObject>* result);
+    void setPropertyText(ErrorString*, InspectorObject* styleId, int propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>* result);
+    void toggleProperty(ErrorString*, InspectorObject* styleId, int propertyIndex, bool disable, RefPtr<InspectorObject>* result);
+    void setRuleSelector(ErrorString*, InspectorObject* ruleId, const String& selector, RefPtr<InspectorObject>* result);
     void addRule(ErrorString*, const int contextNodeId, const String& selector, RefPtr<InspectorObject>* result);
     void getSupportedCSSProperties(ErrorString*, RefPtr<InspectorArray>* result);
 

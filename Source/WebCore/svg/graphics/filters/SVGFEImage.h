@@ -33,7 +33,7 @@ class Image;
 
 class FEImage : public FilterEffect {
 public:
-    static PassRefPtr<FEImage> create(Filter*, RefPtr<Image>, const SVGPreserveAspectRatio&);
+    static PassRefPtr<FEImage> create(Filter*, PassRefPtr<Image>, const SVGPreserveAspectRatio&);
 
     void setAbsoluteSubregion(const FloatRect& absoluteSubregion) { m_absoluteSubregion = absoluteSubregion; }
 
@@ -47,7 +47,7 @@ public:
     virtual TextStream& externalRepresentation(TextStream&, int indention) const;
     
 private:
-    FEImage(Filter*, RefPtr<Image>, const SVGPreserveAspectRatio&);
+    FEImage(Filter*, PassRefPtr<Image>, const SVGPreserveAspectRatio&);
 
     RefPtr<Image> m_image;
     SVGPreserveAspectRatio m_preserveAspectRatio;

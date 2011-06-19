@@ -144,28 +144,28 @@ void ThreadableWebSocketChannelClientWrapper::processPendingTasks()
         (*iter)->performTask(0);
 }
 
-void ThreadableWebSocketChannelClientWrapper::didConnectCallback(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
+void ThreadableWebSocketChannelClientWrapper::didConnectCallback(ScriptExecutionContext* context, ThreadableWebSocketChannelClientWrapper* wrapper)
 {
     ASSERT_UNUSED(context, !context);
     if (wrapper->m_client)
         wrapper->m_client->didConnect();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, String message)
+void ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback(ScriptExecutionContext* context, ThreadableWebSocketChannelClientWrapper* wrapper, String message)
 {
     ASSERT_UNUSED(context, !context);
     if (wrapper->m_client)
         wrapper->m_client->didReceiveMessage(message);
 }
 
-void ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> wrapper)
+void ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback(ScriptExecutionContext* context, ThreadableWebSocketChannelClientWrapper* wrapper)
 {
     ASSERT_UNUSED(context, !context);
     if (wrapper->m_client)
         wrapper->m_client->didStartClosingHandshake();
 }
 
-void ThreadableWebSocketChannelClientWrapper::didCloseCallback(ScriptExecutionContext* context, RefPtr<ThreadableWebSocketChannelClientWrapper> wrapper, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus closingHandshakeCompletion)
+void ThreadableWebSocketChannelClientWrapper::didCloseCallback(ScriptExecutionContext* context, ThreadableWebSocketChannelClientWrapper* wrapper, unsigned long unhandledBufferedAmount, WebSocketChannelClient::ClosingHandshakeCompletionStatus closingHandshakeCompletion)
 {
     ASSERT_UNUSED(context, !context);
     if (wrapper->m_client)

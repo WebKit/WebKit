@@ -698,7 +698,7 @@ void InspectorInstrumentation::addStartProfilingMessageToConsoleImpl(Instrumenti
         profilerAgent->addStartProfilingMessageToConsole(title, lineNumber, sourceURL);
 }
 
-void InspectorInstrumentation::addProfileImpl(InstrumentingAgents* instrumentingAgents, RefPtr<ScriptProfile> profile, PassRefPtr<ScriptCallStack> callStack)
+void InspectorInstrumentation::addProfileImpl(InstrumentingAgents* instrumentingAgents, PassRefPtr<ScriptProfile> profile, PassRefPtr<ScriptCallStack> callStack)
 {
     if (InspectorProfilerAgent* profilerAgent = instrumentingAgents->inspectorProfilerAgent()) {
         const ScriptCallFrame& lastCaller = callStack->at(0);

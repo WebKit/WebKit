@@ -39,16 +39,16 @@ class WebKitAnimationList : public RefCounted<WebKitAnimationList> {
 public:
     static PassRefPtr<WebKitAnimationList> create()
     {
-        return adoptRef(new WebKitAnimationList());
+        return adoptRef(new WebKitAnimationList);
     }
     ~WebKitAnimationList();
 
     unsigned length() const;
     WebKitAnimation* item(unsigned index);
 
-    unsigned insertAnimation(RefPtr<WebKitAnimation>, unsigned index);
+    unsigned insertAnimation(PassRefPtr<WebKitAnimation>, unsigned index);
     void deleteAnimation(unsigned index);
-    void append(RefPtr<WebKitAnimation>);
+    void append(PassRefPtr<WebKitAnimation>);
 
 private:
     WebKitAnimationList();

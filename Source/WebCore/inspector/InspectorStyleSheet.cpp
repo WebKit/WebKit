@@ -875,17 +875,17 @@ PassRefPtr<InspectorStyle> InspectorStyleSheet::inspectorStyleForId(const Inspec
     if (!style)
         return 0;
 
-    InspectorStyleMap::iterator it = m_inspectorStyles.find(style);
-    if (it == m_inspectorStyles.end()) {
-        RefPtr<InspectorStyle> inspectorStyle = InspectorStyle::create(id, style, this);
+    if (RefPtr<InspectorStyle> inspectorStyle = m_inspectorStyles.get(style))
         return inspectorStyle.release();
-    }
-    return it->second;
+
+    return InspectorStyle::create(id, style, this);
 }
 
-void InspectorStyleSheet::rememberInspectorStyle(RefPtr<InspectorStyle> inspectorStyle)
+void InspectorStyleSheet::rememberInspectorStyle(PassRefPtr<InspectorStyle> prpInspectorStyle)
 {
-    m_inspectorStyles.set(inspectorStyle->cssStyle(), inspectorStyle);
+    RefPtr<InspectorStyle> inspectorStyle = prpInspectorStyle;
+    CSSStyleDeclaration* cssStyle = inspectorStyle->cssStyle();
+    m_inspectorStyles.set(cssStyle, inspectorStyle.release());
 }
 
 void InspectorStyleSheet::forgetInspectorStyle(CSSStyleDeclaration* style)

@@ -150,7 +150,7 @@ public:
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     static void addStartProfilingMessageToConsole(Page*, const String& title, unsigned lineNumber, const String& sourceURL);
-    static void addProfile(Page*, RefPtr<ScriptProfile>, PassRefPtr<ScriptCallStack>);
+    static void addProfile(Page*, PassRefPtr<ScriptProfile>, PassRefPtr<ScriptCallStack>);
     static String getCurrentUserInitiatedProfileName(Page*, bool incrementProfileNumber);
     static bool profilerEnabled(Page*);
 #endif
@@ -278,7 +278,7 @@ private:
 
 #if ENABLE(JAVASCRIPT_DEBUGGER)
     static void addStartProfilingMessageToConsoleImpl(InstrumentingAgents*, const String& title, unsigned lineNumber, const String& sourceURL);
-    static void addProfileImpl(InstrumentingAgents*, RefPtr<ScriptProfile>, PassRefPtr<ScriptCallStack>);
+    static void addProfileImpl(InstrumentingAgents*, PassRefPtr<ScriptProfile>, PassRefPtr<ScriptCallStack>);
     static String getCurrentUserInitiatedProfileNameImpl(InstrumentingAgents*, bool incrementProfileNumber);
     static bool profilerEnabledImpl(InstrumentingAgents*);
 #endif

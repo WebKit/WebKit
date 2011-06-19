@@ -304,7 +304,7 @@ void InspectorCSSAgent::setStyleSheetText(ErrorString* errorString, const String
         *errorString = "Internal error setting style sheet text";
 }
 
-void InspectorCSSAgent::setPropertyText(ErrorString* errorString, const RefPtr<InspectorObject>& fullStyleId, int propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>* result)
+void InspectorCSSAgent::setPropertyText(ErrorString* errorString, InspectorObject* fullStyleId, int propertyIndex, const String& text, bool overwrite, RefPtr<InspectorObject>* result)
 {
     InspectorCSSId compoundId(fullStyleId);
     ASSERT(!compoundId.isEmpty());
@@ -318,7 +318,7 @@ void InspectorCSSAgent::setPropertyText(ErrorString* errorString, const RefPtr<I
         *result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
 }
 
-void InspectorCSSAgent::toggleProperty(ErrorString* errorString, const RefPtr<InspectorObject>& fullStyleId, int propertyIndex, bool disable, RefPtr<InspectorObject>* result)
+void InspectorCSSAgent::toggleProperty(ErrorString* errorString, InspectorObject* fullStyleId, int propertyIndex, bool disable, RefPtr<InspectorObject>* result)
 {
     InspectorCSSId compoundId(fullStyleId);
     ASSERT(!compoundId.isEmpty());
@@ -332,7 +332,7 @@ void InspectorCSSAgent::toggleProperty(ErrorString* errorString, const RefPtr<In
         *result = inspectorStyleSheet->buildObjectForStyle(inspectorStyleSheet->styleForId(compoundId));
 }
 
-void InspectorCSSAgent::setRuleSelector(ErrorString* errorString, const RefPtr<InspectorObject>& fullRuleId, const String& selector, RefPtr<InspectorObject>* result)
+void InspectorCSSAgent::setRuleSelector(ErrorString* errorString, InspectorObject* fullRuleId, const String& selector, RefPtr<InspectorObject>* result)
 {
     InspectorCSSId compoundId(fullRuleId);
     ASSERT(!compoundId.isEmpty());

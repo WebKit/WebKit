@@ -82,7 +82,7 @@ private:
     class Peer : public WebSocketChannelClient {
         WTF_MAKE_NONCOPYABLE(Peer); WTF_MAKE_FAST_ALLOCATED;
     public:
-        static Peer* create(RefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext* context, const String& taskMode, const KURL& url, const String& protocol)
+        static Peer* create(PassRefPtr<ThreadableWebSocketChannelClientWrapper> clientWrapper, WorkerLoaderProxy& loaderProxy, ScriptExecutionContext* context, const String& taskMode, const KURL& url, const String& protocol)
         {
             return new Peer(clientWrapper, loaderProxy, context, taskMode, url, protocol);
         }
@@ -103,7 +103,7 @@ private:
         virtual void didClose(unsigned long unhandledBufferedAmount, ClosingHandshakeCompletionStatus);
 
     private:
-        Peer(RefPtr<ThreadableWebSocketChannelClientWrapper>, WorkerLoaderProxy&, ScriptExecutionContext*, const String& taskMode, const KURL&, const String& protocol);
+        Peer(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, WorkerLoaderProxy&, ScriptExecutionContext*, const String& taskMode, const KURL&, const String& protocol);
 
         RefPtr<ThreadableWebSocketChannelClientWrapper> m_workerClientWrapper;
         WorkerLoaderProxy& m_loaderProxy;
@@ -134,10 +134,10 @@ private:
     private:
         Bridge(PassRefPtr<ThreadableWebSocketChannelClientWrapper>, PassRefPtr<WorkerContext>, const String& taskMode, const KURL&, const String& protocol);
 
-        static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, RefPtr<ThreadableWebSocketChannelClientWrapper>);
+        static void setWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, Peer*, PassRefPtr<ThreadableWebSocketChannelClientWrapper>);
 
         // Executed on the main thread to create a Peer for this bridge.
-        static void mainThreadCreateWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, RefPtr<ThreadableWebSocketChannelClientWrapper>, const String& taskMode, const KURL&, const String& protocol);
+        static void mainThreadCreateWebSocketChannel(ScriptExecutionContext*, Bridge* thisPtr, PassRefPtr<ThreadableWebSocketChannelClientWrapper>, const String& taskMode, const KURL&, const String& protocol);
 
         // Executed on the worker context's thread.
         void clearClientWrapper();

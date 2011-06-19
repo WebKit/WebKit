@@ -1,3 +1,54 @@
+2011-06-19  Darin Adler  <darin@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        RefPtr misused as argument type in a few classes
+        https://bugs.webkit.org/show_bug.cgi?id=62955
+
+        * dom/DataTransferItem.cpp:
+        (WebCore::DataTransferItem::DataTransferItem):
+        * dom/DataTransferItem.h:
+        * dom/DataTransferItems.cpp:
+        (WebCore::DataTransferItems::DataTransferItems):
+        * dom/DataTransferItems.h:
+        * editing/CompositeEditCommand.cpp:
+        (WebCore::CompositeEditCommand::rebalanceWhitespaceOnTextSubstring):
+        * editing/CompositeEditCommand.h:
+        * inspector/InspectorConsoleInstrumentation.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::addProfileImpl):
+        * inspector/InspectorInstrumentation.h:
+        * inspector/InspectorProfilerAgent.h:
+        * inspector/InspectorStyleSheet.cpp:
+        (WebCore::InspectorStyleSheet::inspectorStyleForId):
+        (WebCore::InspectorStyleSheet::rememberInspectorStyle):
+        * inspector/InspectorStyleSheet.h:
+        * page/WebKitAnimationList.cpp:
+        (WebCore::WebKitAnimationList::append):
+        (WebCore::WebKitAnimationList::insertAnimation):
+        * page/WebKitAnimationList.h:
+        * svg/graphics/filters/SVGFEImage.cpp:
+        (WebCore::FEImage::FEImage):
+        (WebCore::FEImage::create):
+        * svg/graphics/filters/SVGFEImage.h:
+        * svg/graphics/filters/SVGFilterBuilder.cpp:
+        (WebCore::SVGFilterBuilder::SVGFilterBuilder):
+        (WebCore::SVGFilterBuilder::add):
+        (WebCore::SVGFilterBuilder::appendEffectToEffectReferences):
+        * svg/graphics/filters/SVGFilterBuilder.h:
+        * websockets/ThreadableWebSocketChannelClientWrapper.cpp:
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didConnectCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didReceiveMessageCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didStartClosingHandshakeCallback):
+        (WebCore::ThreadableWebSocketChannelClientWrapper::didCloseCallback):
+        * websockets/ThreadableWebSocketChannelClientWrapper.h:
+        * websockets/WorkerThreadableWebSocketChannel.cpp:
+        (WebCore::WorkerThreadableWebSocketChannel::Peer::Peer):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::setWebSocketChannel):
+        (WebCore::WorkerThreadableWebSocketChannel::Bridge::mainThreadCreateWebSocketChannel):
+        * websockets/WorkerThreadableWebSocketChannel.h:
+        Use PassRefPtr or raw pointer as appropriate for RefPtr arguments.
+
 2011-06-19  Una Sabovic  <una.sabovic@palm.com>
 
         Reviewed by Darin Adler.
