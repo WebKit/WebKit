@@ -41,10 +41,10 @@ class Touch : public RefCounted<Touch> {
 public:
     static PassRefPtr<Touch> create(Frame* frame, EventTarget* target,
             unsigned identifier, int screenX, int screenY, int pageX, int pageY,
-            int radiusX, int radiusY, float rotationAngle)
+            int radiusX, int radiusY, float rotationAngle, float force)
     {
         return adoptRef(new Touch(frame, target, identifier, screenX, 
-                screenY, pageX, pageY, radiusX, radiusY, rotationAngle));
+                screenY, pageX, pageY, radiusX, radiusY, rotationAngle, force));
     }
 
     EventTarget* target() const { return m_target.get(); }
@@ -58,11 +58,12 @@ public:
     int webkitRadiusX() const { return m_radiusX; }
     int webkitRadiusY() const { return m_radiusY; }
     float webkitRotationAngle() const { return m_rotationAngle; }
+    float webkitForce() const { return m_force; }
 
 private:
     Touch(Frame* frame, EventTarget* target, unsigned identifier,
             int screenX, int screenY, int pageX, int pageY,
-            int radiusX, int radiusY, float rotationAngle);
+            int radiusX, int radiusY, float rotationAngle, float force);
 
     RefPtr<EventTarget> m_target;
     unsigned m_identifier;
@@ -75,6 +76,7 @@ private:
     int m_radiusX;
     int m_radiusY;
     float m_rotationAngle;
+    float m_force;
 };
 
 } // namespace WebCore

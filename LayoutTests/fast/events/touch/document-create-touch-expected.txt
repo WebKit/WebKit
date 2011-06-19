@@ -14,6 +14,7 @@ PASS touch.screenY is 103
 PASS touch.webkitRadiusX is 5
 PASS touch.webkitRadiusY is 3
 PASS touch.webkitRotationAngle is 10
+PASS touch.webkitForce is 10
 PASS emptyTouch is non-null.
 PASS emptyTouch.target is null
 PASS emptyTouch.identifier is 0
@@ -24,6 +25,7 @@ PASS emptyTouch.screenY is 0
 PASS emptyTouch.webkitRadiusX is 0
 PASS emptyTouch.webkitRadiusY is 0
 PASS emptyTouch.webkitRotationAngle is NaN
+PASS emptyTouch.webkitForce is NaN
 PASS badParamsTouch is non-null.
 PASS badParamsTouch.target is null
 PASS badParamsTouch.identifier is 0
@@ -34,6 +36,7 @@ PASS badParamsTouch.screenY is 104
 PASS badParamsTouch.webkitRadiusX is 0
 PASS badParamsTouch.webkitRadiusY is 0
 PASS badParamsTouch.webkitRotationAngle is NaN
+PASS badParamsTouch.webkitForce is NaN
 PASS successfullyParsed is true
 
 TEST COMPLETE

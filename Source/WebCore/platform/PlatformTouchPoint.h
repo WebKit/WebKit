@@ -62,6 +62,7 @@ public:
     int radiusX() const { return m_radiusX; }
     int radiusY() const { return m_radiusY; }
     float rotationAngle() const { return m_rotationAngle; }
+    float force() const { return m_force; }
 
 protected:
     unsigned m_id;
@@ -71,6 +72,7 @@ protected:
     int m_radiusY;
     int m_radiusX;
     float m_rotationAngle;
+    float m_force;
 };
 
 }

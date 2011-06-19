@@ -327,7 +327,8 @@ module core {
                                                          in long screenY,
                                                          in long webkitRadiusX,
                                                          in long webkitRadiusY,
-                                                         in float webkitRotationAngle)
+                                                         in float webkitRotationAngle,
+                                                         in float webkitForce)
             raises (DOMException);
         [ReturnsNew, EnabledAtRuntime, Custom] TouchList createTouchList()
             raises (DOMException);

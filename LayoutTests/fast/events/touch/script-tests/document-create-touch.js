@@ -9,7 +9,7 @@ box.style.height = "100px";
 document.body.appendChild(box);
 
 var target = document.getElementById("box");
-var touch = document.createTouch(window, target, 1, 100, 101, 102, 103, 5, 3, 10);
+var touch = document.createTouch(window, target, 1, 100, 101, 102, 103, 5, 3, 10, 10);
 shouldBeNonNull("touch");
 shouldBe("touch.target", "box");
 shouldBe("touch.identifier", "1");
@@ -20,6 +20,7 @@ shouldBe("touch.screenY", "103");
 shouldBe("touch.webkitRadiusX", "5");
 shouldBe("touch.webkitRadiusY", "3");
 shouldBe("touch.webkitRotationAngle", "10");
+shouldBe("touch.webkitForce", "10");
 
 var emptyTouch = document.createTouch();
 shouldBeNonNull("emptyTouch");
@@ -32,9 +33,10 @@ shouldBe("emptyTouch.screenY", "0");
 shouldBe("emptyTouch.webkitRadiusX", "0");
 shouldBe("emptyTouch.webkitRadiusY", "0");
 shouldBeNaN("emptyTouch.webkitRotationAngle");
+shouldBeNaN("emptyTouch.webkitForce");
 
 // Try invoking with incorrect parameter types.
-var badParamsTouch = document.createTouch(function(x) { return x; }, 12, 'a', 'b', 'c', function(x) { return x; }, 104, 'a', 'b', 'c');
+var badParamsTouch = document.createTouch(function(x) { return x; }, 12, 'a', 'b', 'c', function(x) { return x; }, 104, 'a', 'b', 'c', 'd');
 shouldBeNonNull("badParamsTouch");
 shouldBeNull("badParamsTouch.target");
 shouldBe("badParamsTouch.identifier", "0");
@@ -45,6 +47,7 @@ shouldBe("badParamsTouch.screenY", "104");
 shouldBe("badParamsTouch.webkitRadiusX", "0");
 shouldBe("badParamsTouch.webkitRadiusY", "0");
 shouldBeNaN("badParamsTouch.webkitRotationAngle");
+shouldBeNaN("badParamsTouch.webkitForce");
 
 successfullyParsed = true;
 isSuccessfullyParsed();

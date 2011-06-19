@@ -50,6 +50,7 @@ public:
         , radiusX(0)
         , radiusY(0)
         , rotationAngle(0)
+        , force(0)
     {
     }
 
@@ -70,6 +71,7 @@ public:
     int radiusX;
     int radiusY;
     float rotationAngle;
+    float force;
 };
 
 } // namespace WebKit

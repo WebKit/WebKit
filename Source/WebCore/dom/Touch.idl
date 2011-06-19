@@ -40,5 +40,6 @@ module events {
         readonly attribute int              webkitRadiusX;
         readonly attribute int              webkitRadiusY;
         readonly attribute float            webkitRotationAngle;
+        readonly attribute float            webkitForce;
     };
 }

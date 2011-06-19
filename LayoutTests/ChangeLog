@@ -1,3 +1,13 @@
+2011-06-18  Yufeng Shen  <miletus@chromium.org>
+
+        Reviewed by Darin Fisher.
+
+        Adding "force" filed to Touch Event
+        https://bugs.webkit.org/show_bug.cgi?id=62766
+
+        * fast/events/touch/document-create-touch-expected.txt:
+        * fast/events/touch/script-tests/document-create-touch.js:
+
 2011-06-18  Alice Boxhall  <aboxhall@chromium.org>
 
         Reviewed by Chris Fleizach.

@@ -215,6 +215,7 @@ PlatformTouchPointBuilder::PlatformTouchPointBuilder(Widget* widget, const WebTo
     m_radiusY = point.radiusY;
     m_radiusX = point.radiusX;
     m_rotationAngle = point.rotationAngle;
+    m_force = point.force;
 }
 
 PlatformTouchEventBuilder::PlatformTouchEventBuilder(Widget* widget, const WebTouchEvent& event)
