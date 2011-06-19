@@ -1,3 +1,13 @@
+2011-06-19  Robert Hogan  <robert@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        [Qt] Qt Counterpart for http://trac.webkit.org/changeset/42078
+        https://bugs.webkit.org/show_bug.cgi?id=62514
+
+        * platform/network/qt/ResourceHandleQt.cpp:
+        (WebCore::WebCoreSynchronousLoader::willSendRequest):
+
 2011-06-18  Yufeng Shen  <miletus@chromium.org>
 
         Reviewed by Darin Fisher.
