@@ -57,7 +57,6 @@ my $jsDriverArgs = "-L " . join(" ", @testsToSkip);
 # These variables are intentionally left undefined.
 my $root;
 my $showHelp;
-my $skipBuild;
 
 my $buildJSC = 1;
 
@@ -75,13 +74,8 @@ GetOptions(
     'j|jsDriver-args=s' => \$jsDriverArgs,
     'root=s' => \$root,
     'build!' => \$buildJSC,
-    'skip-build' => \$skipBuild,
     'help' => \$showHelp
 );
-
-# FIXME: We'll remove this and the --skip-build option once we change over the buildbot configuration
-# to use --no-build. See <https://bugs.webkit.org/show_bug.cgi?id=62767> for more details.
-$buildJSC = 0 if $skipBuild;
 
 # Assume any arguments left over from GetOptions are assumed to be build arguments
 my @buildArgs = @ARGV;

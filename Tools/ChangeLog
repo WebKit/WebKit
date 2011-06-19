@@ -1,3 +1,19 @@
+2011-06-18  Daniel Bates  <dbates@rim.com>
+
+        Rubber-stamped by Eric Seidel.
+
+        Remove run-javascriptcore-tests --skip-build option; Instead add --build/no-build options
+        https://bugs.webkit.org/show_bug.cgi?id=62767
+
+        Part 3 of 3
+
+        Remove the command-line option --skip-build now that the master BuildBot has been restarted
+        following <http://trac.webkit.org/changeset/89138>.
+
+        Instead, specify --no-build to get analogous functionality.
+
+        * Scripts/run-javascriptcore-tests:
+
 2011-06-18  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Tony Chang.
