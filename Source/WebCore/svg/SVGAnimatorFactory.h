@@ -23,6 +23,7 @@
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
 #include "SVGAnimatedAngle.h"
 #include "SVGAnimatedLength.h"
+#include "SVGAnimatedNumber.h"
 
 namespace WebCore {
     
@@ -36,6 +37,8 @@ public:
             return adoptPtr(new SVGAnimatedAngleAnimator(contextElement, attributeName));
         case AnimatedLength:
             return adoptPtr(new SVGAnimatedLengthAnimator(contextElement, attributeName));
+        case AnimatedNumber:
+            return adoptPtr(new SVGAnimatedNumberAnimator(contextElement, attributeName));
         default:
             ASSERT_NOT_REACHED();
             return adoptPtr(new SVGAnimatedLengthAnimator(contextElement, attributeName));

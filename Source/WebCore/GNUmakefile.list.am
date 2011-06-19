@@ -3345,12 +3345,14 @@ webcore_sources += \
 	Source/WebCore/svg/SVGAnimatedLength.cpp \
 	Source/WebCore/svg/SVGAnimatedLength.h \
 	Source/WebCore/svg/SVGAnimatedLengthList.h \
+	Source/WebCore/svg/SVGAnimatedNumber.cpp \
 	Source/WebCore/svg/SVGAnimatedNumber.h \
 	Source/WebCore/svg/SVGAnimatedNumberList.h \
 	Source/WebCore/svg/SVGAnimatedPreserveAspectRatio.h \
 	Source/WebCore/svg/SVGAnimatedRect.h \
 	Source/WebCore/svg/SVGAnimatedString.h \
 	Source/WebCore/svg/SVGAnimatedTransformList.h \
+	Source/WebCore/svg/SVGAnimatedType.cpp \
 	Source/WebCore/svg/SVGAnimatedType.h \
 	Source/WebCore/svg/SVGAnimatedTypeAnimator.h \
 	Source/WebCore/svg/SVGAnimateElement.cpp \

@@ -3295,6 +3295,8 @@ contains(DEFINES, ENABLE_SVG=1) {
               svg/SVGAnimateColorElement.cpp \
               svg/SVGAnimatedAngle.cpp \
               svg/SVGAnimatedLength.cpp \
+              svg/SVGAnimatedNumber.cpp \
+              svg/SVGAnimatedType.cpp \
               svg/SVGAnimateElement.cpp \
               svg/SVGAnimateMotionElement.cpp \
               svg/SVGAnimateTransformElement.cpp \

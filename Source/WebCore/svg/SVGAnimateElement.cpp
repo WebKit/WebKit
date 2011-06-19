@@ -29,7 +29,6 @@
 #include "CSSParser.h"
 #include "CSSPropertyNames.h"
 #include "ColorDistance.h"
-#include "FloatConversion.h"
 #include "QualifiedName.h"
 #include "RenderObject.h"
 #include "SVGAnimatorFactory.h"
@@ -48,9 +47,6 @@ namespace WebCore {
 SVGAnimateElement::SVGAnimateElement(const QualifiedName& tagName, Document* document)
     : SVGAnimationElement(tagName, document)
     , m_animatedAttributeType(AnimatedString)
-    , m_fromNumber(0)
-    , m_toNumber(0)
-    , m_animatedNumber(numeric_limits<float>::infinity())
     , m_animatedPathPointer(0)
 {
     ASSERT(hasTagName(SVGNames::animateTag) || hasTagName(SVGNames::setTag) || hasTagName(SVGNames::animateColorTag));
@@ -169,40 +165,6 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
     if (results->m_animatedAttributeType == AnimatedString && m_animatedAttributeType != AnimatedString)
         return;
     switch (m_animatedAttributeType) {
-    case AnimatedNumber: {
-        // To animation uses contributions from the lower priority animations as the base value.
-        if (animationMode == ToAnimation)
-            m_fromNumber = results->m_animatedNumber;
-        
-        // Replace 'currentColor' / 'inherit' by their computed property values.
-        if (m_fromPropertyValueType == InheritValue) {
-            String fromNumberString;
-            adjustForInheritance(targetElement, attributeName(), fromNumberString);
-            if (!parseNumberFromString(fromNumberString, m_fromNumber, false))
-                return;
-        }
-        if (m_toPropertyValueType == InheritValue) {
-            String toNumberString;
-            adjustForInheritance(targetElement, attributeName(), toNumberString);
-            if (!parseNumberFromString(toNumberString, m_toNumber, false))
-                return;
-        }
-
-        float number;
-        if (calcMode() == CalcModeDiscrete)
-            number = isInFirstHalfOfAnimation ? m_fromNumber : m_toNumber;
-        else
-            number = (m_toNumber - m_fromNumber) * percentage + m_fromNumber;
-
-        // FIXME: This is not correct for values animation.
-        if (isAccumulated() && repeat)
-            number += m_toNumber * repeat;
-        if (isAdditive() && animationMode != ToAnimation)
-            results->m_animatedNumber += number;
-        else 
-            results->m_animatedNumber = number;
-        return;
-    } 
     case AnimatedColor: {
         if (animationMode == ToAnimation)
             m_fromColor = results->m_animatedColor;
@@ -287,7 +249,8 @@ void SVGAnimateElement::calculateAnimatedValue(float percentage, unsigned repeat
         return;
     }
     case AnimatedAngle:
-    case AnimatedLength: {
+    case AnimatedLength:
+    case AnimatedNumber: {
         ASSERT(m_animator);
         ASSERT(results->m_animatedType);
         // Target element might have changed.
@@ -357,14 +320,6 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
             return true;
         break;
     }
-    case AnimatedNumber: {
-        if (parseNumberFromString(toString, m_toNumber, false)) {
-            // For to-animations the from number is calculated later
-            if (animationMode() == ToAnimation || parseNumberFromString(fromString, m_fromNumber, false))
-                return true;
-        }
-        break;
-    }
     case AnimatedPath: {
         SVGPathParserFactory* factory = SVGPathParserFactory::self();
         if (factory->buildSVGPathByteStreamFromString(toString, m_toPath, UnalteredParsing)) {
@@ -387,6 +342,7 @@ bool SVGAnimateElement::calculateFromAndToValues(const String& fromString, const
     }
     case AnimatedAngle:
     case AnimatedLength:
+    case AnimatedNumber:
         ensureAnimator()->calculateFromAndToValues(m_fromType, m_toType, fromString, toString);
         return true;
     default:
@@ -428,15 +384,11 @@ bool SVGAnimateElement::calculateFromAndByValues(const String& fromString, const
     }
     case AnimatedAngle:
     case AnimatedLength:
+    case AnimatedNumber:
         ensureAnimator()->calculateFromAndByValues(m_fromType, m_toType, fromString, byString);
         return true;
     default:
-        m_fromNumber = 0;
-        if (!fromString.isEmpty() && !parseNumberFromString(fromString, m_fromNumber, false))
-            return false;
-        if (!parseNumberFromString(byString, m_toNumber, false))
-            return false;
-        m_toNumber += m_fromNumber;
+        break;
     }
     return true;
 }
@@ -456,14 +408,6 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
             return;
         }
         break;
-    case AnimatedNumber:
-        if (baseString.isEmpty()) {
-            m_animatedNumber = 0;
-            return;
-        }
-        if (parseNumberFromString(baseString, m_animatedNumber, false))
-            return;
-        break;
     case AnimatedPath: {
         m_animatedPath.clear();
         SVGPathParserFactory* factory = SVGPathParserFactory::self();
@@ -475,7 +419,8 @@ void SVGAnimateElement::resetToBaseValue(const String& baseString)
         m_animatedPoints.clear();
         return;
     case AnimatedAngle:
-    case AnimatedLength: {
+    case AnimatedLength:
+    case AnimatedNumber: {
         if (!m_animatedType)
             m_animatedType = ensureAnimator()->constructFromString(baseString);
         else
@@ -495,9 +440,6 @@ void SVGAnimateElement::applyResultsToTarget()
     case AnimatedColor:
         valueToApply = m_animatedColor.serialized();
         break;
-    case AnimatedNumber:
-        valueToApply = String::number(m_animatedNumber);
-        break;
     case AnimatedPath: {
         if (!m_animatedPathPointer || m_animatedPathPointer->isEmpty())
             valueToApply = m_animatedString;
@@ -516,6 +458,7 @@ void SVGAnimateElement::applyResultsToTarget()
         break;
     case AnimatedAngle:
     case AnimatedLength:
+    case AnimatedNumber:
         valueToApply = m_animatedType->valueAsString();
         break;
     default:
@@ -526,20 +469,13 @@ void SVGAnimateElement::applyResultsToTarget()
     
 float SVGAnimateElement::calculateDistance(const String& fromString, const String& toString)
 {
+    // FIXME: A return value of float is not enough to support paced animations on lists.
     SVGElement* targetElement = this->targetElement();
     if (!targetElement)
         return -1;
     m_animatedAttributeType = determineAnimatedAttributeType(targetElement);
-    if (m_animatedAttributeType == AnimatedNumber) {
-        float from;
-        float to;
-        if (!parseNumberFromString(fromString, from, false))
-            return -1;
-        if (!parseNumberFromString(toString, to, false))
-            return -1;
-        return fabs(to - from);
-    }
-    if (m_animatedAttributeType == AnimatedColor) {
+    switch (m_animatedAttributeType) {
+    case AnimatedColor: {
         Color from = SVGColor::colorFromRGBColorString(fromString);
         if (!from.isValid())
             return -1;
@@ -548,8 +484,13 @@ float SVGAnimateElement::calculateDistance(const String& fromString, const Strin
             return -1;
         return ColorDistance(from, to).distance();
     }
-    if (m_animatedAttributeType == AnimatedAngle || m_animatedAttributeType == AnimatedLength)
+    case AnimatedAngle:
+    case AnimatedLength:
+    case AnimatedNumber:
         return ensureAnimator()->calculateDistance(this, fromString, toString);
+    default:
+        break;
+    }
     return -1;
 }
 

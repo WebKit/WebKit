@@ -21,105 +21,33 @@
 #define SVGAnimatedType_h
 
 #if ENABLE(SVG) && ENABLE(SVG_ANIMATION)
-#include "SVGAngle.h"
 #include "SVGElement.h"
-#include "SVGLength.h"
 
 namespace WebCore {
+
+class SVGAngle;
+class SVGLength;
 
 class SVGAnimatedType {
     WTF_MAKE_FAST_ALLOCATED;
 public:
-    static PassOwnPtr<SVGAnimatedType> create(AnimatedAttributeType type)
-    {
-        return adoptPtr(new SVGAnimatedType(type));
-    }
+    virtual ~SVGAnimatedType();
 
-    static PassOwnPtr<SVGAnimatedType> createAngle(SVGAngle* angle)
-    {
-        ASSERT(angle);
-        OwnPtr<SVGAnimatedType> animatedType = create(AnimatedAngle);
-        animatedType->m_data.angle = angle;
-        return animatedType.release();
-    }
-
-    static PassOwnPtr<SVGAnimatedType> createLength(SVGLength* length)
-    {
-        ASSERT(length);
-        OwnPtr<SVGAnimatedType> animatedType = create(AnimatedLength);
-        animatedType->m_data.length = length;
-        return animatedType.release();
-    }
-
-    virtual ~SVGAnimatedType()
-    {
-        switch (m_type) {
-        case AnimatedAngle:
-            delete m_data.angle;
-            break;
-        case AnimatedLength:
-            delete m_data.length;
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-    }
+    static PassOwnPtr<SVGAnimatedType> createAngle(SVGAngle*);
+    static PassOwnPtr<SVGAnimatedType> createLength(SVGLength*);
+    static PassOwnPtr<SVGAnimatedType> createNumber(float*);
     
     AnimatedAttributeType type() const { return m_type; }
 
-    SVGAngle& angle()
-    {
-        ASSERT(m_type == AnimatedAngle);
-        return *m_data.angle;
-    }
+    SVGAngle& angle();
+    SVGLength& length();
+    float& number();
 
-    SVGLength& length()
-    {
-        ASSERT(m_type == AnimatedLength);
-        return *m_data.length;
-    }
-    
-    String valueAsString()
-    {
-        switch (m_type) {
-        case AnimatedAngle:
-            ASSERT(m_data.angle);
-            return m_data.angle->valueAsString();
-        case AnimatedLength:
-            ASSERT(m_data.length);
-            return m_data.length->valueAsString();
-        default:
-            break;
-        }
-        ASSERT_NOT_REACHED();
-        return String();
-    }
-    
-    bool setValueAsString(const QualifiedName& attrName, const String& value)
-    {
-        ExceptionCode ec = 0;
-        switch (m_type) {
-        case AnimatedAngle:
-            ASSERT(m_data.angle);
-            m_data.angle->setValueAsString(value, ec);
-            break;
-        case AnimatedLength:
-            ASSERT(m_data.length);
-            m_data.length->setValueAsString(value, SVGLength::lengthModeForAnimatedLengthAttribute(attrName), ec);
-            break;
-        default:
-            ASSERT_NOT_REACHED();
-            break;
-        }
-        return !ec;
-    }
+    String valueAsString();
+    bool setValueAsString(const QualifiedName&, const String&);
     
 private:
-    SVGAnimatedType(AnimatedAttributeType type)
-        : m_type(type)
-    {
-    }
+    SVGAnimatedType(AnimatedAttributeType);
     
     AnimatedAttributeType m_type;
     
@@ -132,6 +60,7 @@ private:
         // FIXME: More SVG primitive types need to be added step by step.
         SVGAngle* angle;
         SVGLength* length;
+        float* number;
     } m_data;
 };
     

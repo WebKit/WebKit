@@ -1,3 +1,66 @@
+2011-06-19  Dirk Schulze  <krit@webkit.org>
+
+        Reviewed by Nikolas Zimmermann.
+
+        SVGAnimatorFactory does not support SVGNumber
+        https://bugs.webkit.org/show_bug.cgi?id=62938
+
+        Follow up of "SVGAnimation should use direct unit animation for SVGLength": https://bugs.webkit.org/show_bug.cgi?id=61368
+        This patch continues the conversion to the new concept of SVGAnimatorFactory with SVGNumber. With the new animator for the
+        With the new animator for SVGNumber we also support the scientific notation, and everything else that's supported by
+        the SVGNumber parsing, removing the SVGAnimate* specific number parsing functionality.
+
+        Moving the content of SVGAnimatedType header into its own cpp.
+        
+        Changed behavior of parseNumberFromString(). It checks if the String simply consits of a number now. parseNumberFromString()
+        is using genericParseNumber() for parsing numbers. But this method just stops at the first char that does not belong to a number and
+        returns true. I added a check if the current char pointer is at the last char of the String and return false if not.
+
+        Tests: svg/animations/svgnumber-animation-1.html
+               svg/animations/svgnumber-animation-2.html
+               svg/animations/svgnumber-animation-3.html
+
+        * CMakeLists.txt: Added new files to build system.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.gypi: Ditto.
+        * WebCore.pro: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * svg/SVGAllInOne.cpp: Ditto.
+        * svg/SVGAnimateElement.cpp: Use SVGAnimatedNumberAnimator for animations of SVGNumbers.
+        (WebCore::SVGAnimateElement::SVGAnimateElement):
+        (WebCore::SVGAnimateElement::calculateAnimatedValue):
+        (WebCore::SVGAnimateElement::calculateFromAndToValues):
+        (WebCore::SVGAnimateElement::calculateFromAndByValues):
+        (WebCore::SVGAnimateElement::resetToBaseValue):
+        (WebCore::SVGAnimateElement::applyResultsToTarget):
+        (WebCore::SVGAnimateElement::calculateDistance):
+        * svg/SVGAnimateElement.h: Remove floats for value storage. This is done by SVGAnimatedTypes now.
+        * svg/SVGAnimatedNumber.cpp: Added. Animator for SVGNumbers.
+        (WebCore::SVGAnimatedNumberAnimator::SVGAnimatedNumberAnimator):
+        (WebCore::SVGAnimatedNumberAnimator::constructFromString):
+        (WebCore::SVGAnimatedNumberAnimator::calculateFromAndToValues):
+        (WebCore::SVGAnimatedNumberAnimator::calculateFromAndByValues):
+        (WebCore::SVGAnimatedNumberAnimator::calculateAnimatedValue):
+        (WebCore::SVGAnimatedNumberAnimator::calculateDistance):
+        * svg/SVGAnimatedNumber.h:
+        (WebCore::SVGAnimatedNumberAnimator::~SVGAnimatedNumberAnimator):
+        * svg/SVGAnimatedType.cpp: Added. Moved content from header to cpp.
+        (WebCore::SVGAnimatedType::SVGAnimatedType):
+        (WebCore::SVGAnimatedType::~SVGAnimatedType):
+        (WebCore::SVGAnimatedType::createAngle):
+        (WebCore::SVGAnimatedType::createLength):
+        (WebCore::SVGAnimatedType::createNumber):
+        (WebCore::SVGAnimatedType::angle):
+        (WebCore::SVGAnimatedType::length):
+        (WebCore::SVGAnimatedType::number):
+        (WebCore::SVGAnimatedType::valueAsString):
+        (WebCore::SVGAnimatedType::setValueAsString):
+        * svg/SVGAnimatedType.h: Removed method create(). Allways call type specific create funtcions.
+        * svg/SVGAnimatorFactory.h:
+        (WebCore::SVGAnimatorFactory::create):
+        * svg/SVGParserUtilities.cpp:
+        (WebCore::parseNumberFromString): Check if String simply consits of a number. Return false otherwise.
+
 2011-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
