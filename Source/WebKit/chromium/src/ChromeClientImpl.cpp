@@ -41,6 +41,7 @@
 #include "DocumentLoader.h"
 #include "ExternalPopupMenu.h"
 #include "FileChooser.h"
+#include "FileIconLoader.h"
 #include "FloatRect.h"
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
@@ -49,6 +50,7 @@
 #include "GraphicsLayer.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "Icon.h"
 #include "IntRect.h"
 #include "NavigationAction.h"
 #include "Node.h"
@@ -686,11 +688,11 @@ void ChromeClientImpl::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileCh
     chooserCompletion->didChooseFile(WebVector<WebString>());
 }
 
-void ChromeClientImpl::chooseIconForFiles(const Vector<String>& filenames, FileChooser* fileChooser)
+void ChromeClientImpl::loadIconForFiles(const Vector<String>& filenames, FileIconLoader* loader)
 {
     if (!m_webView->client())
         return;
-    WebIconLoadingCompletionImpl* iconCompletion = new WebIconLoadingCompletionImpl(fileChooser);
+    WebIconLoadingCompletionImpl* iconCompletion = new WebIconLoadingCompletionImpl(loader);
     if (!m_webView->client()->queryIconForFiles(filenames, iconCompletion))
         iconCompletion->didLoadIcon(WebData());
 }

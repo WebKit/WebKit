@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -27,48 +28,35 @@
  */
 
 #include "config.h"
-#include "FileChooser.h"
+#include "FileIconLoader.h"
+
+#include "Icon.h"
 
 namespace WebCore {
 
-FileChooserClient::~FileChooserClient()
+FileIconLoaderClient::~FileIconLoaderClient()
 {
 }
 
-inline FileChooser::FileChooser(FileChooserClient* client, const Vector<String>& initialFilenames)
+PassRefPtr<FileIconLoader> FileIconLoader::create(FileIconLoaderClient* client)
+{
+    return adoptRef(new FileIconLoader(client));
+}
+
+void FileIconLoader::disconnectClient()
+{
+    m_client = 0;
+}
+
+void FileIconLoader::notifyFinished(PassRefPtr<Icon> icon)
+{
+    if (m_client)
+        m_client->updateRendering(icon);
+}
+
+FileIconLoader::FileIconLoader(FileIconLoaderClient* client)
     : m_client(client)
 {
-    m_filenames = initialFilenames;
-}
-
-PassRefPtr<FileChooser> FileChooser::create(FileChooserClient* client, const Vector<String>& initialFilenames)
-{
-    return adoptRef(new FileChooser(client, initialFilenames));
-}
-
-FileChooser::~FileChooser()
-{
-}
-
-void FileChooser::clear()
-{
-    m_filenames.clear();
-}
-
-void FileChooser::chooseFile(const String& filename)
-{
-    Vector<String> filenames;
-    filenames.append(filename);
-    chooseFiles(filenames);
-}
-
-void FileChooser::chooseFiles(const Vector<String>& filenames)
-{
-    if (m_filenames == filenames)
-        return;
-    m_filenames = filenames;
-    if (m_client)
-        m_client->valueChanged();
 }
 
 }

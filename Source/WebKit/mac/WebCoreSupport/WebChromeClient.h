@@ -125,7 +125,7 @@ public:
 #endif
 
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
-    virtual void chooseIconForFiles(const Vector<WTF::String>&, WebCore::FileChooser*);
+    virtual void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader*);
 
     virtual void setCursor(const WebCore::Cursor&);
 

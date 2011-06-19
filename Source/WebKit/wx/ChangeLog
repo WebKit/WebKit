@@ -1,3 +1,14 @@
+2011-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Separate concerns of loading file icons and choosing files.
+        https://bugs.webkit.org/show_bug.cgi?id=62931
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::chooseIconForFiles): Renamed.
+        * WebKitSupport/ChromeClientWx.h:
+
 2011-06-18  Holger Hans Peter Freyther  <holger@moiji-mobile.com>
 
         Reviewed by Brent Fulgham.

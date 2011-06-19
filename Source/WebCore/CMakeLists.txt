@@ -1025,6 +1025,7 @@ SET(WebCore_SOURCES
     platform/DragData.cpp
     platform/DragImage.cpp
     platform/FileChooser.cpp
+    platform/FileIconLoader.cpp
     platform/FileSystem.cpp
     platform/GeolocationService.cpp
     platform/KURL.cpp

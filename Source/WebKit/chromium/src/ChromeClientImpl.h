@@ -139,7 +139,7 @@ public:
     virtual void requestGeolocationPermissionForFrame(WebCore::Frame*, WebCore::Geolocation*);
     virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*, WebCore::Geolocation*);
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
-    virtual void chooseIconForFiles(const Vector<WTF::String>&, WebCore::FileChooser*);
+    virtual void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader*);
 #if ENABLE(DIRECTORY_UPLOAD)
     virtual void enumerateChosenDirectory(const WTF::String&, WebCore::FileChooser*);
 #endif

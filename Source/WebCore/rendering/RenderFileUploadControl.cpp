@@ -56,6 +56,7 @@ const int buttonShadowHeight = 2;
 
 RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
     : RenderBlock(input)
+    , m_iconLoader(FileIconLoader::create(this))
 {
     FileList* list = input->files();
     Vector<String> filenames;
@@ -63,11 +64,22 @@ RenderFileUploadControl::RenderFileUploadControl(HTMLInputElement* input)
     for (unsigned i = 0; i < length; ++i)
         filenames.append(list->item(i)->path());
     m_fileChooser = FileChooser::create(this, filenames);
+    requestIcon(filenames);
 }
 
 RenderFileUploadControl::~RenderFileUploadControl()
 {
+    m_iconLoader->disconnectClient();
     m_fileChooser->disconnectClient();
+}
+
+void RenderFileUploadControl::requestIcon(const Vector<String>& filenames) const
+{
+    if (!filenames.size())
+        return;
+
+    if (Chrome* chrome = this->chrome())
+        chrome->loadIconForFiles(filenames, m_iconLoader.get());
 }
 
 void RenderFileUploadControl::valueChanged()
@@ -78,10 +90,11 @@ void RenderFileUploadControl::valueChanged()
     HTMLInputElement* inputElement = static_cast<HTMLInputElement*>(node());
     inputElement->setFileListFromRenderer(fileChooser->filenames());
     inputElement->dispatchFormControlChangeEvent();
- 
-    // only repaint if it doesn't seem we have been destroyed
-    if (!fileChooser->disconnected())
-        repaint();
+    if (fileChooser->disconnected())
+        return;
+
+    requestIcon(fileChooser->filenames());
+    repaint();
 }
 
 bool RenderFileUploadControl::allowsMultipleFiles()
@@ -104,8 +117,8 @@ bool RenderFileUploadControl::allowsDirectoryUpload()
 
 void RenderFileUploadControl::receiveDropForDirectoryUpload(const Vector<String>& paths)
 {
-    if (Chrome* chromePointer = chrome())
-        chromePointer->enumerateChosenDirectory(paths[0], m_fileChooser.get());
+    if (Chrome* chrome = this->chrome())
+        chrome->enumerateChosenDirectory(paths[0], m_fileChooser.get());
 }
 #endif
 
@@ -114,18 +127,21 @@ String RenderFileUploadControl::acceptTypes()
     return static_cast<HTMLInputElement*>(node())->accept();
 }
 
-void RenderFileUploadControl::chooseIconForFiles(FileChooser* chooser, const Vector<String>& filenames)
+void RenderFileUploadControl::updateRendering(PassRefPtr<Icon> icon)
 {
-    if (Chrome* chromePointer = chrome())
-        chromePointer->chooseIconForFiles(filenames, chooser);
+    if (m_icon == icon)
+        return;
+
+    m_icon = icon;
+    repaint();
 }
 
 void RenderFileUploadControl::click()
 {
     if (!ScriptController::processingUserGesture())
         return;
-    if (Chrome* chromePointer = chrome())
-        chromePointer->runOpenPanel(frame(), m_fileChooser);
+    if (Chrome* chrome = this->chrome())
+        chrome->runOpenPanel(frame(), m_fileChooser);
 }
 
 Chrome* RenderFileUploadControl::chrome() const
@@ -154,6 +170,7 @@ void RenderFileUploadControl::updateFromElement()
     ASSERT(files);
     if (files && files->isEmpty() && !m_fileChooser->filenames().isEmpty()) {
         m_fileChooser->clear();
+        m_icon = 0;
         repaint();
     }
 }
@@ -166,14 +183,13 @@ static int nodeWidth(Node* node)
 int RenderFileUploadControl::maxFilenameWidth() const
 {
     return max(0, contentWidth() - nodeWidth(uploadButton()) - afterButtonSpacing
-        - (m_fileChooser->icon() ? iconWidth + iconFilenameSpacing : 0));
+        - (m_icon ? iconWidth + iconFilenameSpacing : 0));
 }
 
 void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& paintOffset)
 {
     if (style()->visibility() != VISIBLE)
         return;
-    ASSERT(m_fileChooser);
     
     // Push a clip.
     GraphicsContextStateSaver stateSaver(*paintInfo.context, false);
@@ -199,7 +215,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& 
 
         int buttonWidth = nodeWidth(button);
         int buttonAndIconWidth = buttonWidth + afterButtonSpacing
-            + (m_fileChooser->icon() ? iconWidth + iconFilenameSpacing : 0);
+            + (m_icon ? iconWidth + iconFilenameSpacing : 0);
         int textX;
         if (style()->isLeftToRightDirection())
             textX = contentLeft + buttonAndIconWidth;
@@ -216,7 +232,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& 
         // Draw the filename
         paintInfo.context->drawBidiText(font, textRun, IntPoint(textX, textY));
         
-        if (m_fileChooser->icon()) {
+        if (m_icon) {
             // Determine where the icon should be placed
             int iconY = paintOffset.y() + borderTop() + paddingTop() + (contentHeight() - iconHeight) / 2;
             int iconX;
@@ -226,7 +242,7 @@ void RenderFileUploadControl::paintObject(PaintInfo& paintInfo, const IntPoint& 
                 iconX = contentLeft + contentWidth() - buttonWidth - afterButtonSpacing - iconWidth;
 
             // Draw the file icon
-            m_fileChooser->icon()->paint(paintInfo.context, IntRect(iconX, iconY, iconWidth, iconHeight));
+            m_icon->paint(paintInfo.context, IntRect(iconX, iconY, iconWidth, iconHeight));
         }
     }
 
@@ -315,6 +331,7 @@ String RenderFileUploadControl::buttonValue()
 
 String RenderFileUploadControl::fileTextValue() const
 {
+    ASSERT(m_fileChooser);
     return theme()->fileListNameForWidth(m_fileChooser->filenames(), style()->font(), maxFilenameWidth());
 }
     

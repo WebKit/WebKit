@@ -40,6 +40,7 @@
 #endif
 #include "EWebKit.h"
 #include "FileChooser.h"
+#include "FileIconLoader.h"
 #include "FloatRect.h"
 #include "FrameLoader.h"
 #include "FrameLoaderClientEfl.h"
@@ -527,7 +528,7 @@ void ChromeClientEfl::iconForFiles(const Vector<String, 0u>&, PassRefPtr<FileCho
     notImplemented();
 }
 
-void ChromeClientEfl::chooseIconForFiles(const Vector<String>&, FileChooser*)
+void ChromeClientEfl::loadIconForFiles(const Vector<String>&, FileIconLoader*)
 {
     notImplemented();
 }

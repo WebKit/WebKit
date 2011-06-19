@@ -22,6 +22,7 @@
 #define RenderFileUploadControl_h
 
 #include "FileChooser.h"
+#include "FileIconLoader.h"
 #include "RenderBlock.h"
 
 namespace WebCore {
@@ -33,7 +34,7 @@ class HTMLInputElement;
 // sufficient space to draw a file icon and filename. The RenderButton has a shadow node
 // associated with it to receive click/hover events.
 
-class RenderFileUploadControl : public RenderBlock, private FileChooserClient {
+class RenderFileUploadControl : public RenderBlock, private FileChooserClient, private FileIconLoaderClient {
 public:
     RenderFileUploadControl(HTMLInputElement*);
     virtual ~RenderFileUploadControl();
@@ -56,26 +57,29 @@ private:
 
     virtual bool requiresForcedStyleRecalcPropagation() const { return true; }
 
-    // FileChooserClient methods.
-    void valueChanged();
-    void repaint() { RenderBlock::repaint(); }
-    bool allowsMultipleFiles();
+    // FileChooserClient functions.
+    virtual void valueChanged();
+    virtual bool allowsMultipleFiles();
 #if ENABLE(DIRECTORY_UPLOAD)
-    bool allowsDirectoryUpload();
-    void receiveDropForDirectoryUpload(const Vector<String>&);
+    virtual bool allowsDirectoryUpload();
+    virtual void receiveDropForDirectoryUpload(const Vector<String>&);
 #endif
-    String acceptTypes();
-    void chooseIconForFiles(FileChooser*, const Vector<String>&);
+    virtual String acceptTypes();
+
+    // FileIconLoaderClient functions.
+    virtual void updateRendering(PassRefPtr<Icon>);
 
     Chrome* chrome() const;
     int maxFilenameWidth() const;
-    PassRefPtr<RenderStyle> createButtonStyle(const RenderStyle* parentStyle) const;
     
     virtual VisiblePosition positionForPoint(const IntPoint&);
 
     HTMLInputElement* uploadButton() const;
+    void requestIcon(const Vector<String>&) const;
 
     RefPtr<FileChooser> m_fileChooser;
+    RefPtr<FileIconLoader> m_iconLoader;
+    RefPtr<Icon> m_icon;
 };
 
 inline RenderFileUploadControl* toRenderFileUploadControl(RenderObject* object)

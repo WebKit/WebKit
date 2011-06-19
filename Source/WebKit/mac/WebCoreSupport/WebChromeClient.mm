@@ -55,6 +55,7 @@
 #import <WebCore/ContextMenuController.h>
 #import <WebCore/Element.h>
 #import <WebCore/FileChooser.h>
+#import <WebCore/FileIconLoader.h>
 #import <WebCore/FloatRect.h>
 #import <WebCore/Frame.h>
 #import <WebCore/FrameLoadRequest.h>
@@ -784,9 +785,9 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> chooser)
     END_BLOCK_OBJC_EXCEPTIONS;
 }
 
-void WebChromeClient::chooseIconForFiles(const Vector<String>& filenames, FileChooser* chooser)
+void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIconLoader* iconLoader)
 {
-    chooser->iconLoaded(Icon::createIconForFiles(filenames));
+    iconLoader->notifyFinished(Icon::createIconForFiles(filenames));
 }
 
 void WebChromeClient::setCursor(const WebCore::Cursor& cursor)

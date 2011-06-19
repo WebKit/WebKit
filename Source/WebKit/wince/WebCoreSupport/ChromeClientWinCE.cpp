@@ -26,6 +26,7 @@
 #include "ChromeClientWinCE.h"
 
 #include "FileChooser.h"
+#include "FileIconLoader.h"
 #include "Icon.h"
 #include "NotImplemented.h"
 #include "NavigationAction.h"
@@ -350,9 +351,9 @@ void ChromeClientWinCE::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoo
     notImplemented();
 }
 
-void ChromeClientWinCE::chooseIconForFiles(const Vector<String>& filenames, FileChooser* chooser)
+void ChromeClientWinCE::loadIconForFiles(const Vector<String>& filenames, FileIconLoader* loader)
 {
-    chooser->iconLoaded(Icon::createIconForFiles(filenames));
+    loader->notifyFinished(Icon::createIconForFiles(filenames));
 }
 
 void ChromeClientWinCE::setCursor(const Cursor&)

@@ -128,7 +128,7 @@ namespace WebKit {
         virtual void showContextMenu() { }
 #endif
         virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
-        virtual void chooseIconForFiles(const Vector<WTF::String>&, WebCore::FileChooser*);
+        virtual void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader*);
 
         virtual void formStateDidChange(const WebCore::Node*) { }
 

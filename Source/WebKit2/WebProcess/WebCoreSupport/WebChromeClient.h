@@ -169,7 +169,7 @@ private:
     virtual void cancelGeolocationPermissionRequestForFrame(WebCore::Frame*, WebCore::Geolocation*);
 
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
-    virtual void chooseIconForFiles(const Vector<String>&, WebCore::FileChooser*);
+    virtual void loadIconForFiles(const Vector<String>&, WebCore::FileIconLoader*);
 
     virtual void setCursor(const WebCore::Cursor&);
 

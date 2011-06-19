@@ -136,7 +136,7 @@ public:
 #endif
 
     virtual void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
-    virtual void chooseIconForFiles(const Vector<String>&, FileChooser*);
+    virtual void loadIconForFiles(const Vector<String>&, FileIconLoader*);
 
     virtual void formStateDidChange(const Node*) { }
 

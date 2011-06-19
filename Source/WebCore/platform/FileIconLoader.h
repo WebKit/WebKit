@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2006, 2007, 2008 Apple Inc. All rights reserved.
+ * Copyright (C) 2011 Google Inc. All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -24,51 +25,38 @@
  * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
  * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
  */
 
-#include "config.h"
-#include "FileChooser.h"
+#ifndef FileIconLoader_h
+#define FileIconLoader_h
+
+#include <wtf/PassRefPtr.h>
+#include <wtf/RefCounted.h>
 
 namespace WebCore {
 
-FileChooserClient::~FileChooserClient()
-{
-}
+class Icon;
 
-inline FileChooser::FileChooser(FileChooserClient* client, const Vector<String>& initialFilenames)
-    : m_client(client)
-{
-    m_filenames = initialFilenames;
-}
+class FileIconLoaderClient {
+public:
+    virtual void updateRendering(PassRefPtr<Icon>) = 0;
+    virtual ~FileIconLoaderClient();
+};
 
-PassRefPtr<FileChooser> FileChooser::create(FileChooserClient* client, const Vector<String>& initialFilenames)
-{
-    return adoptRef(new FileChooser(client, initialFilenames));
-}
+class FileIconLoader : public RefCounted<FileIconLoader> {
+public:
+    static PassRefPtr<FileIconLoader> create(FileIconLoaderClient*);
 
-FileChooser::~FileChooser()
-{
-}
+    void disconnectClient();
+    void notifyFinished(PassRefPtr<Icon>);
 
-void FileChooser::clear()
-{
-    m_filenames.clear();
-}
+private:
+    explicit FileIconLoader(FileIconLoaderClient*);
 
-void FileChooser::chooseFile(const String& filename)
-{
-    Vector<String> filenames;
-    filenames.append(filename);
-    chooseFiles(filenames);
-}
+    FileIconLoaderClient* m_client;
+};
 
-void FileChooser::chooseFiles(const Vector<String>& filenames)
-{
-    if (m_filenames == filenames)
-        return;
-    m_filenames = filenames;
-    if (m_client)
-        m_client->valueChanged();
-}
+} // namespace WebCore
 
-}
+#endif

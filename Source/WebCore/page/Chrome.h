@@ -37,6 +37,7 @@ namespace WebCore {
 
     class ChromeClient;
     class FileChooser;
+    class FileIconLoader;
     class FloatRect;
     class Frame;
     class Geolocation;
@@ -152,7 +153,7 @@ namespace WebCore {
         void cancelGeolocationPermissionRequestForFrame(Frame*, Geolocation*);
 
         void runOpenPanel(Frame*, PassRefPtr<FileChooser>);
-        void chooseIconForFiles(const Vector<String>&, FileChooser*);
+        void loadIconForFiles(const Vector<String>&, FileIconLoader*);
 #if ENABLE(DIRECTORY_UPLOAD)
         void enumerateChosenDirectory(const String&, FileChooser*);
 #endif

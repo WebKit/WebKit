@@ -34,6 +34,7 @@
 #include "DatabaseTracker.h"
 #include "Document.h"
 #include "FileChooser.h"
+#include "FileIconLoader.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameLoader.h"
@@ -608,9 +609,9 @@ void ChromeClientQt::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFileC
     }
 }
 
-void ChromeClientQt::chooseIconForFiles(const Vector<String>& filenames, FileChooser* chooser)
+void ChromeClientQt::loadIconForFiles(const Vector<String>& filenames, FileIconLoader* loader)
 {
-    chooser->iconLoaded(Icon::createIconForFiles(filenames));
+    loader->notifyFinished(Icon::createIconForFiles(filenames));
 }
 
 void ChromeClientQt::setCursor(const Cursor& cursor)

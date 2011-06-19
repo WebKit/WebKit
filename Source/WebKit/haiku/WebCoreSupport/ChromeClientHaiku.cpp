@@ -29,6 +29,7 @@
 #include "config.h"
 #include "ChromeClientHaiku.h"
 
+#include "FileIconLoader.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
 #include "FrameView.h"
@@ -371,9 +372,9 @@ void ChromeClientHaiku::runOpenPanel(Frame*, PassRefPtr<FileChooser>)
     notImplemented();
 }
 
-void ChromeClientHaiku::chooseIconForFiles(const Vector<String>& filenames, FileChooser* chooser)
+void ChromeClientHaiku::loadIconForFiles(const Vector<String>& filenames, FileIconLoader* loader)
 {
-    chooser->iconLoaded(Icon::createIconForFiles(filenames));
+    loader->notifyFinished(Icon::createIconForFiles(filenames));
 }
 
 void ChromeClientHaiku::setCursor(const Cursor&)

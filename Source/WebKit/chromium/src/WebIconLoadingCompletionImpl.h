@@ -31,10 +31,11 @@
 #ifndef WebIconLoadingCompletionImpl_h
 #define WebIconLoadingCompletionImpl_h
 
-#include "FileChooser.h"
+#include "FileIconLoader.h"
 #include "WebData.h"
 #include "WebIconLoadingCompletion.h"
 #include <wtf/PassRefPtr.h>
+#include <wtf/RefPtr.h>
 
 using WebKit::WebIconLoadingCompletion;
 using WebKit::WebData;
@@ -43,13 +44,13 @@ namespace WebKit {
 
 class WebIconLoadingCompletionImpl : public WebIconLoadingCompletion {
 public:
-    WebIconLoadingCompletionImpl(WebCore::FileChooser*);
+    WebIconLoadingCompletionImpl(WebCore::FileIconLoader*);
     virtual void didLoadIcon(const WebData&);
 
 private:
     ~WebIconLoadingCompletionImpl();
 
-    RefPtr<WebCore::FileChooser> m_fileChooser;
+    RefPtr<WebCore::FileIconLoader> m_fileIconLoader;
 };
 
 } // namespace WebKit

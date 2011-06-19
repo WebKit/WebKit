@@ -24,6 +24,7 @@
 #include "ChromeClient.h"
 #include "DNS.h"
 #include "Document.h"
+#include "FileIconLoader.h"
 #include "FileChooser.h"
 #include "FileList.h"
 #include "FloatRect.h"
@@ -34,6 +35,7 @@
 #include "HTMLInputElement.h"
 #include "HTMLNames.h"
 #include "HitTestResult.h"
+#include "Icon.h"
 #include "InspectorInstrumentation.h"
 #include "Page.h"
 #include "PageGroupLoadDeferrer.h"
@@ -462,9 +464,9 @@ void Chrome::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> fileChooser)
     m_client->runOpenPanel(frame, fileChooser);
 }
 
-void Chrome::chooseIconForFiles(const Vector<String>& filenames, FileChooser* fileChooser)
+void Chrome::loadIconForFiles(const Vector<String>& filenames, FileIconLoader* loader)
 {
-    m_client->chooseIconForFiles(filenames, fileChooser);
+    m_client->loadIconForFiles(filenames, loader);
 }
 
 void Chrome::dispatchViewportDataDidChange(const ViewportArguments& arguments) const

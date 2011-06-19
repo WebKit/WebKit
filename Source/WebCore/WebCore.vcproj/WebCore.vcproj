@@ -26390,6 +26390,14 @@
 				>
 			</File>
 			<File
+				RelativePath="..\platform\FileIconLoader.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\platform\FileIconLoader.h"
+				>
+			</File>
+			<File
 				RelativePath="..\platform\FileMetadata.h"
 				>
 			</File>

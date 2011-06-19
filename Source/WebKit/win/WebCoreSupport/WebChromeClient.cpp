@@ -42,6 +42,7 @@
 #include <WebCore/ContextMenu.h>
 #include <WebCore/Cursor.h>
 #include <WebCore/FileChooser.h>
+#include <WebCore/FileIconLoader.h>
 #include <WebCore/FloatRect.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoadRequest.h>
@@ -789,9 +790,9 @@ void WebChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChoose
     // FIXME: Show some sort of error if too many files are selected and the buffer is too small.  For now, this will fail silently.
 }
 
-void WebChromeClient::chooseIconForFiles(const Vector<WTF::String>& filenames, WebCore::FileChooser* chooser)
+void WebChromeClient::loadIconForFiles(const Vector<WTF::String>& filenames, WebCore::FileIconLoader* loader)
 {
-    chooser->iconLoaded(Icon::createIconForFiles(filenames));
+    loader->notifyFinished(Icon::createIconForFiles(filenames));
 }
 
 void WebChromeClient::setCursor(const Cursor& cursor)

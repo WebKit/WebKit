@@ -36,19 +36,15 @@
 namespace WebCore {
 
 class FileChooser;
-class Font;
-class Icon;
 
 class FileChooserClient {
 public:
     virtual void valueChanged() = 0;
-    virtual void repaint() = 0;
     virtual bool allowsMultipleFiles() = 0;
 #if ENABLE(DIRECTORY_UPLOAD)
     virtual bool allowsDirectoryUpload() = 0;
 #endif
     virtual String acceptTypes() = 0;
-    virtual void chooseIconForFiles(FileChooser*, const Vector<String>&) = 0;
     virtual ~FileChooserClient();
 };
 
@@ -62,14 +58,10 @@ public:
 
     const Vector<String>& filenames() const { return m_filenames; }
 
-    Icon* icon() const { return m_icon.get(); }
-
     void clear(); // for use by client; does not call valueChanged
 
     void chooseFile(const String& path);
     void chooseFiles(const Vector<String>& paths);
-    // Called when FileChooserClient finishes to load an icon requested by iconForFiles().
-    void iconLoaded(PassRefPtr<Icon>);
 
     bool allowsMultipleFiles() const { return m_client ? m_client->allowsMultipleFiles() : false; }
 #if ENABLE(DIRECTORY_UPLOAD)
@@ -80,12 +72,9 @@ public:
 
 private:
     FileChooser(FileChooserClient*, const Vector<String>& initialFilenames);
-    void loadIcon();
 
     FileChooserClient* m_client;
     Vector<String> m_filenames;
-    RefPtr<Icon> m_icon;
-    bool m_isInitializing;
 };
 
 } // namespace WebCore

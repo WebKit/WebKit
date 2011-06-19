@@ -970,6 +970,7 @@ SOURCES += \
     platform/DragData.cpp \
     platform/DragImage.cpp \
     platform/FileChooser.cpp \
+    platform/FileIconLoader.cpp \
     platform/FileStream.cpp \
     platform/FileSystem.cpp \
     platform/GeolocationService.cpp \

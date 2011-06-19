@@ -3625,6 +3625,8 @@
             'platform/DragImage.cpp',
             'platform/EventLoop.h',
             'platform/FileChooser.cpp',
+            'platform/FileIconLoader.cpp',
+            'platform/FileIconLoader.h',
             'platform/FileMetadata.h',
             'platform/FileStream.cpp',
             'platform/FileSystem.cpp',

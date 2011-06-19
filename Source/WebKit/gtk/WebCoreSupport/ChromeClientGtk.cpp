@@ -29,6 +29,7 @@
 #include "DumpRenderTreeSupportGtk.h"
 #include "Element.h"
 #include "FileChooser.h"
+#include "FileIconLoader.h"
 #include "FileSystem.h"
 #include "FloatRect.h"
 #include "FrameLoadRequest.h"
@@ -642,9 +643,9 @@ void ChromeClient::runOpenPanel(Frame*, PassRefPtr<FileChooser> prpFileChooser)
     gtk_widget_destroy(dialog);
 }
 
-void ChromeClient::chooseIconForFiles(const Vector<WTF::String>& filenames, WebCore::FileChooser* chooser)
+void ChromeClient::loadIconForFiles(const Vector<WTF::String>& filenames, WebCore::FileIconLoader* loader)
 {
-    chooser->iconLoaded(Icon::createIconForFiles(filenames));
+    loader->notifyFinished(Icon::createIconForFiles(filenames));
 }
 
 void ChromeClient::dispatchViewportDataDidChange(const ViewportArguments& arguments) const

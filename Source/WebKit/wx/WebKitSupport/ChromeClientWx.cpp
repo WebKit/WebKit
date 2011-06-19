@@ -33,6 +33,7 @@
 #include "DatabaseTracker.h"
 #endif
 #include "FileChooser.h"
+#include "FileIconLoader.h"
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoadRequest.h"
@@ -455,9 +456,9 @@ void ChromeClientWx::runOpenPanel(Frame*, PassRefPtr<FileChooser>)
     notImplemented();
 }
 
-void ChromeClientWx::chooseIconForFiles(const Vector<String>& filenames, FileChooser* chooser)
+void ChromeClientWx::chooseIconForFiles(const Vector<String>& filenames, FileIconLoader* loader)
 {
-    chooser->iconLoaded(Icon::createIconForFiles(filenames));
+    loader->notifyFinished(Icon::createIconForFiles(filenames));
 }
 
 void ChromeClientWx::setCursor(const Cursor& cursor)

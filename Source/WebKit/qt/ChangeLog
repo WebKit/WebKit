@@ -1,3 +1,14 @@
+2011-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Separate concerns of loading file icons and choosing files.
+        https://bugs.webkit.org/show_bug.cgi?id=62931
+
+        * WebCoreSupport/ChromeClientQt.cpp:
+        (WebCore::ChromeClientQt::loadIconForFiles): Renamed.
+        * WebCoreSupport/ChromeClientQt.h:
+
 2011-06-17  Alexis Menard  <alexis.menard@openbossa.org>
 
         Reviewed by Andreas Kling.

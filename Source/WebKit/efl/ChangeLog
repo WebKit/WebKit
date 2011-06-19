@@ -1,3 +1,14 @@
+2011-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Separate concerns of loading file icons and choosing files.
+        https://bugs.webkit.org/show_bug.cgi?id=62931
+
+        * WebCoreSupport/ChromeClientEfl.cpp:
+        (WebCore::ChromeClientEfl::loadIconForFiles): Renamed.
+        * WebCoreSupport/ChromeClientEfl.h:
+
 2011-06-15  Grzegorz Czajkowski  <g.czajkowski@samsung.com>
 
         Reviewed by Antonio Gomes.

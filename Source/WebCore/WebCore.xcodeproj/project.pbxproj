@@ -860,6 +860,8 @@
 		4127D5370F8AAB1D00E424F5 /* ScriptState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */; };
 		4138D3351244054800323D33 /* EventContext.h in Headers */ = {isa = PBXBuildFile; fileRef = 4138D3331244054800323D33 /* EventContext.h */; };
 		4138D3361244054800323D33 /* EventContext.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4138D3341244054800323D33 /* EventContext.cpp */; };
+		414B867313AD074E00B4B373 /* FileIconLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 414B867113AD074E00B4B373 /* FileIconLoader.cpp */; };
+		414B867413AD074E00B4B373 /* FileIconLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 414B867213AD074E00B4B373 /* FileIconLoader.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		4150F9F112B6E0E70008C860 /* SliderThumbElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */; };
 		4150F9F212B6E0E70008C860 /* SliderThumbElement.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */; };
 		4157AF8012F1FB0400A8C6F5 /* MediaControlRootElement.h in Headers */ = {isa = PBXBuildFile; fileRef = 4157AF7E12F1FB0400A8C6F5 /* MediaControlRootElement.h */; };
@@ -7287,6 +7289,8 @@
 		4127D5360F8AAB1D00E424F5 /* ScriptState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ScriptState.cpp; sourceTree = "<group>"; };
 		4138D3331244054800323D33 /* EventContext.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EventContext.h; sourceTree = "<group>"; };
 		4138D3341244054800323D33 /* EventContext.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = EventContext.cpp; sourceTree = "<group>"; };
+		414B867113AD074E00B4B373 /* FileIconLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = FileIconLoader.cpp; sourceTree = "<group>"; };
+		414B867213AD074E00B4B373 /* FileIconLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FileIconLoader.h; sourceTree = "<group>"; };
 		4150F9EF12B6E0E70008C860 /* SliderThumbElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SliderThumbElement.h; sourceTree = "<group>"; };
 		4150F9F012B6E0E70008C860 /* SliderThumbElement.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SliderThumbElement.cpp; sourceTree = "<group>"; };
 		4157AF7E12F1FB0400A8C6F5 /* MediaControlRootElement.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaControlRootElement.h; sourceTree = "<group>"; };
@@ -18761,6 +18765,8 @@
 				1CA19E150DC255CA0065A994 /* EventLoop.h */,
 				934FE9E40B5CA539003E4A73 /* FileChooser.cpp */,
 				066C772A0AB603B700238CC4 /* FileChooser.h */,
+				414B867113AD074E00B4B373 /* FileIconLoader.cpp */,
+				414B867213AD074E00B4B373 /* FileIconLoader.h */,
 				2EF1BFE8121C9F4200C27627 /* FileStream.cpp */,
 				2EF1BFE9121C9F4200C27627 /* FileStream.h */,
 				2EF1BFF8121CB0CE00C27627 /* FileStreamClient.h */,
@@ -21059,6 +21065,7 @@
 				893C480F1248BD3A002B3D86 /* FileEntrySync.h in Headers */,
 				976D6C83122B8A3D001FD1F7 /* FileError.h in Headers */,
 				2EDF369F122C94C8002F7D4E /* FileException.h in Headers */,
+				414B867413AD074E00B4B373 /* FileIconLoader.h in Headers */,
 				F55B3DBE1251F12D003EF269 /* FileInputType.h in Headers */,
 				976D6C86122B8A3D001FD1F7 /* FileList.h in Headers */,
 				4689F1AF1267BAE100E8D380 /* FileMetadata.h in Headers */,
@@ -23971,6 +23978,7 @@
 				934FE9E50B5CA539003E4A73 /* FileChooser.cpp in Sources */,
 				89878561122CA064003AABDA /* FileEntry.cpp in Sources */,
 				893C480E1248BD3A002B3D86 /* FileEntrySync.cpp in Sources */,
+				414B867313AD074E00B4B373 /* FileIconLoader.cpp in Sources */,
 				F55B3DBD1251F12D003EF269 /* FileInputType.cpp in Sources */,
 				976D6C85122B8A3D001FD1F7 /* FileList.cpp in Sources */,
 				976D6C88122B8A3D001FD1F7 /* FileReader.cpp in Sources */,

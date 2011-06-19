@@ -46,6 +46,7 @@
 #include "WebSearchPopupMenu.h"
 #include <WebCore/DatabaseTracker.h>
 #include <WebCore/FileChooser.h>
+#include <WebCore/FileIconLoader.h>
 #include <WebCore/Frame.h>
 #include <WebCore/FrameLoader.h>
 #include <WebCore/FrameView.h>
@@ -636,9 +637,9 @@ void WebChromeClient::runOpenPanel(Frame* frame, PassRefPtr<FileChooser> prpFile
     m_page->send(Messages::WebPageProxy::RunOpenPanel(static_cast<WebFrameLoaderClient*>(frame->loader()->client())->webFrame()->frameID(), parameters));
 }
 
-void WebChromeClient::chooseIconForFiles(const Vector<String>& filenames, FileChooser* chooser)
+void WebChromeClient::loadIconForFiles(const Vector<String>& filenames, FileIconLoader* loader)
 {
-    chooser->iconLoaded(Icon::createIconForFiles(filenames));
+    loader->notifyFinished(Icon::createIconForFiles(filenames));
 }
 
 void WebChromeClient::setCursor(const WebCore::Cursor& cursor)

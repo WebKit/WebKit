@@ -39,8 +39,8 @@ using namespace WebCore;
 
 namespace WebKit {
 
-WebIconLoadingCompletionImpl::WebIconLoadingCompletionImpl(FileChooser* chooser)
-    : m_fileChooser(chooser)
+WebIconLoadingCompletionImpl::WebIconLoadingCompletionImpl(FileIconLoader* fileIconLoader)
+    : m_fileIconLoader(fileIconLoader)
 {
 }
 
@@ -53,7 +53,7 @@ void WebIconLoadingCompletionImpl::didLoadIcon(const WebData& iconData)
     if (!iconData.isEmpty()) {
         RefPtr<Image> image = BitmapImage::create();
         image->setData(iconData, true);
-        m_fileChooser->iconLoaded(Icon::create(image));
+        m_fileIconLoader->notifyFinished(Icon::create(image));
     }
     // This object is no longer needed.
     delete this;

@@ -149,7 +149,7 @@ public:
 
     virtual void runOpenPanel(WebCore::Frame*, PassRefPtr<WebCore::FileChooser>);
     // Asynchronous request to load an icon for specified filenames.
-    virtual void chooseIconForFiles(const Vector<WTF::String>&, WebCore::FileChooser*);
+    virtual void loadIconForFiles(const Vector<WTF::String>&, WebCore::FileIconLoader*);
 
     // Notification that the given form element has changed. This function
     // will be called frequently, so handling should be very fast.

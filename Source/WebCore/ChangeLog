@@ -1,3 +1,60 @@
+2011-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
+
+        Reviewed by Darin Adler.
+
+        Separate concerns of loading file icons and choosing files.
+        https://bugs.webkit.org/show_bug.cgi?id=62931
+
+        Loading an icon and choosing files have similar async nature, but completely different
+        lifetimes: FileChooser should only exist when we are actually attempting to choose a file,
+        not anytime we need to render an input with a proper icon.
+
+        This patch introduces FileIconLoader, a separate abstraction for loading an icon, and removes
+        any notion of an icon from the FileChooser.
+
+        Also, the loaded icon is now stored on the RenderFileUploadControl, which better matches its
+        purpose.
+
+        Refactoring, covered by existing tests.
+
+        * CMakeLists.txt: Added FileIconLoader to build system.
+        * GNUmakefile.list.am: Ditto.
+        * WebCore.exp.in: Updated.
+        * WebCore.gypi: Added FileIconLoader to build system.
+        * WebCore.pro: Ditto.
+        * WebCore.vcproj/WebCore.vcproj: Ditto.
+        * WebCore.xcodeproj/project.pbxproj: Ditto.
+        * loader/EmptyClients.h: Updated.
+        (WebCore::EmptyChromeClient::loadIconForFiles): Renamed function to better reflect what it does.
+        * page/Chrome.cpp:
+        (WebCore::Chrome::loadIconForFiles): Ditto.
+        * page/Chrome.h: Ditto.
+        * page/ChromeClient.h: Ditto.
+        * platform/FileChooser.cpp:
+        (WebCore::FileChooser::FileChooser): Removed now-unnecessary bool.
+        (WebCore::FileChooser::create): Removed the tangled web.
+        (WebCore::FileChooser::clear): Removed icon-related code.
+        (WebCore::FileChooser::chooseFiles): Ditto.
+        * platform/FileChooser.h:
+        * platform/FileIconLoader.cpp: Copied from Source/WebCore/platform/FileChooser.cpp.
+        (WebCore::FileIconLoaderClient::~FileIconLoaderClient): Added.
+        (WebCore::FileIconLoader::create): Added.
+        (WebCore::FileIconLoader::disconnectClient): Added.
+        (WebCore::FileIconLoader::notifyFinished): Added.
+        (WebCore::FileIconLoader::FileIconLoader): Added.
+        * platform/FileIconLoader.h: Copied from Source/WebCore/platform/FileChooser.cpp.
+        * rendering/RenderFileUploadControl.cpp:
+        (WebCore::RenderFileUploadControl::RenderFileUploadControl): Added new member initializations.
+        (WebCore::RenderFileUploadControl::~RenderFileUploadControl): Added FileIconLoader disconnect.s
+        (WebCore::RenderFileUploadControl::requestIcon): Added a helper.
+        (WebCore::RenderFileUploadControl::valueChanged): Changed to request an icon load.
+        (WebCore::RenderFileUploadControl::updateRendering): Added implementation of FileIconLoaderClient func.
+        (WebCore::RenderFileUploadControl::updateFromElement): Added clearing of icon.
+        (WebCore::RenderFileUploadControl::maxFilenameWidth): Changed to use new member directly.
+        (WebCore::RenderFileUploadControl::paintObject): Ditto.
+        (WebCore::RenderFileUploadControl::fileTextValue): Ditto.
+        * rendering/RenderFileUploadControl.h: Updated decls.
+
 2011-06-19  Michael Saboff  <msaboff@apple.com>
 
         Reviewed by Darin Adler.
