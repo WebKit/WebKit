@@ -1,5 +1,16 @@
 2011-06-19  Dirk Schulze  <krit@webkit.org>
 
+        Uneviewed.
+
+        SVGAnimatorFactory does not support SVGNumber
+        https://bugs.webkit.org/show_bug.cgi?id=62938
+        
+        Add animation tests of previous patch to skip list for webkit2.
+
+        * platform/mac-wk2/Skipped:
+
+2011-06-19  Dirk Schulze  <krit@webkit.org>
+
         Reviewed by Nikolas Zimmermann.
 
         SVGAnimatorFactory does not support SVGNumber
