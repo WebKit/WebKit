@@ -400,7 +400,7 @@ class Git(SCM, SVNRepository):
         dcommit_command = ['git', 'svn', 'dcommit']
         if self.dryrun:
             dcommit_command.append('--dry-run')
-        if not self.has_authorization_for_realm(SVN.svn_server_realm):
+        if (not username or not password) and not self.has_authorization_for_realm(SVN.svn_server_realm):
             raise AuthenticationError(SVN.svn_server_host, prompt_for_password=True)
         if username:
             dcommit_command.extend(["--username", username])

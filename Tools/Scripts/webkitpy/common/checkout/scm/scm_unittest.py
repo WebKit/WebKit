@@ -1458,6 +1458,17 @@ class GitTestWithMock(unittest.TestCase):
         expected_stderr = "MOCK run_command: ['git', 'merge-base', u'refs/remotes/origin/master', 'HEAD']\nMOCK run_command: ['git', 'diff', '--binary', '--no-ext-diff', '--full-index', '-M', 'MOCK output of child process', '--']\nMOCK run_command: ['git', 'log', '-25']\n"
         OutputCapture().assert_outputs(self, self.scm.create_patch, kwargs={'changed_files': None}, expected_stderr=expected_stderr)
 
+    def test_push_local_commits_to_server_with_username_and_password(self):
+        self.assertEquals(self.scm.push_local_commits_to_server(username='dbates@webkit.org', password='blah'), "MOCK output of child process")
+
+    def test_push_local_commits_to_server_without_username_and_password(self):
+        self.assertRaises(AuthenticationError, self.scm.push_local_commits_to_server)
+
+    def test_push_local_commits_to_server_with_username_and_without_password(self):
+        self.assertRaises(AuthenticationError, self.scm.push_local_commits_to_server, {'username': 'dbates@webkit.org'})
+
+    def test_push_local_commits_to_server_without_username_and_with_password(self):
+        self.assertRaises(AuthenticationError, self.scm.push_local_commits_to_server, {'password': 'blah'})
 
 if __name__ == '__main__':
     unittest.main()

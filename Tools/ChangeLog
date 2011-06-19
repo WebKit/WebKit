@@ -1,3 +1,20 @@
+2011-06-18  Daniel Bates  <dbates@webkit.org>
+
+        Reviewed by Eric Seidel.
+
+        Git.push_local_commits_to_server should use password username and
+        password when we don't have cached credentials
+        https://bugs.webkit.org/show_bug.cgi?id=62941
+
+        Fixes a issue where Git.push_local_commits_to_server() would always look
+        for cached credentials regardless of whether a username and password
+        were passed as arguments. Instead, if given both a username and password
+        then we shouldn't look for cached credentials (since we were explicitly given
+        credentials).
+
+        * Scripts/webkitpy/common/checkout/scm/git.py:
+        * Scripts/webkitpy/common/checkout/scm/scm_unittest.py: Added unit tests.
+
 2011-06-18  Daniel Bates  <dbates@rim.com>
 
         Rubber-stamped by Eric Seidel.
