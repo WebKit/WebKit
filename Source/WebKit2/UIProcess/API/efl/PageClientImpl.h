@@ -72,6 +72,7 @@ private:
     virtual void executeUndoRedo(WebPageProxy::UndoOrRedo);
     virtual WebCore::FloatRect convertToDeviceSpace(const WebCore::FloatRect&);
     virtual WebCore::FloatRect convertToUserSpace(const WebCore::FloatRect&);
+    virtual WebCore::IntPoint screenToWindow(const WebCore::IntPoint&);
     virtual WebCore::IntRect windowToScreen(const WebCore::IntRect&);
 
     virtual void doneWithKeyEvent(const NativeWebKeyboardEvent&, bool);
@@ -80,6 +81,10 @@ private:
     virtual PassRefPtr<WebContextMenuProxy> createContextMenuProxy(WebPageProxy*);
 
     virtual void setFindIndicator(PassRefPtr<FindIndicator>, bool);
+#if USE(ACCELERATED_COMPOSITING)
+    virtual void enterAcceleratedCompositingMode(const LayerTreeContext&);
+    virtual void exitAcceleratedCompositingMode();
+#endif
 
     virtual void didChangeScrollbarsForMainFrame() const;
 

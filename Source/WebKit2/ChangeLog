@@ -1,3 +1,18 @@
+2011-06-18  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        Reviewed by Sam Weinig.
+
+        [EFL][WK2] Add missing functions of EFL port's PageClientImpl
+        https://bugs.webkit.org/show_bug.cgi?id=62711
+
+        Three functions are added in the PageClient.h, so add them to the EFL's PageClientImpl.
+
+        * UIProcess/API/efl/PageClientImpl.cpp:
+        (WebKit::PageClientImpl::screenToWindow):
+        (WebKit::PageClientImpl::enterAcceleratedCompositingMode):
+        (WebKit::PageClientImpl::exitAcceleratedCompositingMode):
+        * UIProcess/API/efl/PageClientImpl.h:
+
 2011-06-17  Brent Fulgham  <bfulgham@webkit.org>
 
         [WinCairo] Unreviewed build fix after r89060 and r89161.

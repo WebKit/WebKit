@@ -163,6 +163,12 @@ FloatRect PageClientImpl::convertToUserSpace(const FloatRect& viewRect)
     return viewRect;
 }
 
+IntPoint PageClientImpl::screenToWindow(const IntPoint& point)
+{
+    notImplemented();
+    return point;
+}
+
 IntRect PageClientImpl::windowToScreen(const IntRect&)
 {
     notImplemented();
@@ -190,6 +196,18 @@ void PageClientImpl::setFindIndicator(PassRefPtr<FindIndicator>, bool)
 {
     notImplemented();
 }
+
+#if USE(ACCELERATED_COMPOSITING)
+void PageClientImpl::enterAcceleratedCompositingMode(const LayerTreeContext&)
+{
+    notImplemented();
+}
+
+void PageClientImpl::exitAcceleratedCompositingMode()
+{
+    notImplemented();
+}
+#endif // USE(ACCELERATED_COMPOSITING)
 
 void PageClientImpl::didChangeScrollbarsForMainFrame() const
 {
