@@ -1,3 +1,18 @@
+2011-06-19  Michael Saboff  <msaboff@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Add notify handler to trigger MemoryPressureHandler in all builds
+        https://bugs.webkit.org/show_bug.cgi?id=62679
+
+        Removed SIGUSR2 trigger and added a notify trigger for the
+        MemoryPressureHandler.  The notify trigger is enabled for all builds.
+
+        No test added as only added new memory pressure trigger.
+
+        * platform/mac/MemoryPressureHandlerMac.mm:
+        (WebCore::MemoryPressureHandler::install):
+
 2011-06-19  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
