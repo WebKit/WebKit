@@ -1,3 +1,16 @@
+2011-06-19  Sheriff Bot  <webkit.review.bot@gmail.com>
+
+        Unreviewed, rolling out r89198.
+        http://trac.webkit.org/changeset/89198
+        https://bugs.webkit.org/show_bug.cgi?id=62953
+
+        Chromium breakage on "Linux Tests" (Requested by senorblanco
+        on #webkit).
+
+        * Scripts/webkitpy/layout_tests/layout_package/json_layout_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator.py:
+        * Scripts/webkitpy/layout_tests/layout_package/json_results_generator_unittest.py:
+
 2011-06-18  Daniel Bates  <dbates@webkit.org>
 
         Reviewed by Eric Seidel.
