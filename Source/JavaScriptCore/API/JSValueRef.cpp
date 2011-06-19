@@ -234,7 +234,8 @@ JSValueRef JSValueMakeFromJSONString(JSContextRef ctx, JSStringRef string)
 {
     ExecState* exec = toJS(ctx);
     APIEntryShim entryShim(exec);
-    LiteralParser parser(exec, string->ustring(), LiteralParser::StrictJSON);
+    UString str = string->ustring();
+    LiteralParser parser(exec, str.characters(), str.length(), LiteralParser::StrictJSON);
     return toRef(exec, parser.tryLiteralParse());
 }
 

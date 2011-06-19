@@ -26,6 +26,7 @@
 #ifndef LiteralParser_h
 #define LiteralParser_h
 
+#include "Identifier.h"
 #include "JSGlobalObjectFunctions.h"
 #include "JSValue.h"
 #include "UString.h"
@@ -34,10 +35,10 @@ namespace JSC {
 
     class LiteralParser {
     public:
-        typedef enum { StrictJSON, NonStrictJSON } ParserMode;
-        LiteralParser(ExecState* exec, const UString& s, ParserMode mode)
+        typedef enum { StrictJSON, NonStrictJSON, JSONP } ParserMode;
+        LiteralParser(ExecState* exec, const UChar* characters, unsigned length, ParserMode mode)
             : m_exec(exec)
-            , m_lexer(s, mode)
+            , m_lexer(characters, length, mode)
             , m_mode(mode)
         {
         }
@@ -46,10 +47,32 @@ namespace JSC {
         {
             m_lexer.next();
             JSValue result = parse(m_mode == StrictJSON ? StartParseExpression : StartParseStatement);
+            if (m_lexer.currentToken().type == TokSemi)
+                m_lexer.next();
             if (m_lexer.currentToken().type != TokEnd)
                 return JSValue();
             return result;
         }
+        
+        enum JSONPPathEntryType {
+            JSONPPathEntryTypeDeclare, // var pathEntryName = JSON
+            JSONPPathEntryTypeDot, // <prior entries>.pathEntryName = JSON
+            JSONPPathEntryTypeLookup // <prior entries>[pathIndex] = JSON
+        };
+
+        struct JSONPPathEntry {
+            JSONPPathEntryType m_type;
+            Identifier m_pathEntryName;
+            int m_pathIndex;
+        };
+
+        struct JSONPData {
+            Vector<JSONPPathEntry> m_path;
+            Strong<Unknown> m_value;
+        };
+
+        bool tryJSONPParse(Vector<JSONPData>&);
+
     private:
         enum ParserState { StartParseObject, StartParseArray, StartParseExpression, 
                            StartParseStatement, StartParseStatementEndStatement, 
@@ -58,29 +81,31 @@ namespace JSC {
         enum TokenType { TokLBracket, TokRBracket, TokLBrace, TokRBrace, 
                          TokString, TokIdentifier, TokNumber, TokColon, 
                          TokLParen, TokRParen, TokComma, TokTrue, TokFalse,
-                         TokNull, TokEnd, TokError };
-
+                         TokNull, TokEnd, TokDot, TokAssign, TokSemi, TokError };
+        
         class Lexer {
         public:
             struct LiteralParserToken {
                 TokenType type;
                 const UChar* start;
                 const UChar* end;
-                UString stringToken;
-                double numberToken;
+                UString stringBuffer;
+                union {
+                    double numberToken;
+                    struct {
+                        const UChar* stringToken;
+                        int stringLength;
+                    };
+                };
             };
-            Lexer(const UString& s, ParserMode mode)
-                : m_string(s)
-                , m_mode(mode)
-                , m_ptr(s.characters())
-                , m_end(s.characters() + s.length())
+            Lexer(const UChar* characters, unsigned length, ParserMode mode)
+                : m_mode(mode)
+                , m_ptr(characters)
+                , m_end(characters + length)
             {
             }
             
-            TokenType next()
-            {
-                return lex(m_currentToken);
-            }
+            TokenType next();
             
             const LiteralParserToken& currentToken()
             {
@@ -88,9 +113,9 @@ namespace JSC {
             }
             
         private:
-            TokenType lex(LiteralParserToken&);
-            template <ParserMode mode> TokenType lexString(LiteralParserToken&);
-            TokenType lexNumber(LiteralParserToken&);
+            template <ParserMode mode> TokenType lex(LiteralParserToken&);
+            template <ParserMode mode, UChar terminator> ALWAYS_INLINE TokenType lexString(LiteralParserToken&);
+            ALWAYS_INLINE TokenType lexNumber(LiteralParserToken&);
             LiteralParserToken m_currentToken;
             UString m_string;
             ParserMode m_mode;
@@ -104,7 +129,12 @@ namespace JSC {
         ExecState* m_exec;
         LiteralParser::Lexer m_lexer;
         ParserMode m_mode;
+        static unsigned const MaximumCachableCharacter = 128;
+        FixedArray<Identifier, MaximumCachableCharacter> m_shortIdentifiers;
+        FixedArray<Identifier, MaximumCachableCharacter> m_recentIdentifiers;
+        ALWAYS_INLINE const Identifier makeIdentifier(const UChar* characters, size_t length);
     };
+
 }
 
 #endif

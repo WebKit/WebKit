@@ -1,3 +1,50 @@
+2011-06-17  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Gavin Barraclough.
+
+        JSONP is unnecessarily slow
+        https://bugs.webkit.org/show_bug.cgi?id=62920
+
+        JSONP has unfortunately become a fairly common idiom online, yet
+        it triggers very poor performance in JSC as we end up doing codegen
+        for a large number of property accesses that will
+           * only be run once, so the vast amount of logic we dump to handle
+             caching of accesses is unnecessary.
+           * We are doing codegen that is directly proportional to just
+             creating the object in the first place.
+
+        This patch extends the use of the literal parser to JSONP-like structures
+        in global code, handling a number of different forms I have seen online.
+        In an extreme case this improves performance of JSONP by more than 2x
+        due to removal of code generation and execution time, and a few optimisations
+        that I made to the parser itself.
+
+        * API/JSValueRef.cpp:
+        (JSValueMakeFromJSONString):
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::callEval):
+        (JSC::Interpreter::execute):
+        * parser/Lexer.cpp:
+        (JSC::Lexer::isKeyword):
+        * parser/Lexer.h:
+        * runtime/JSGlobalObjectFunctions.cpp:
+        (JSC::globalFuncEval):
+        * runtime/JSONObject.cpp:
+        (JSC::JSONProtoFuncParse):
+        * runtime/LiteralParser.cpp:
+        (JSC::LiteralParser::tryJSONPParse):
+        (JSC::LiteralParser::makeIdentifier):
+        (JSC::LiteralParser::Lexer::lex):
+        (JSC::LiteralParser::Lexer::next):
+        (JSC::isSafeStringCharacter):
+        (JSC::LiteralParser::Lexer::lexString):
+        (JSC::LiteralParser::Lexer::lexNumber):
+        (JSC::LiteralParser::parse):
+        * runtime/LiteralParser.h:
+        (JSC::LiteralParser::LiteralParser):
+        (JSC::LiteralParser::tryLiteralParse):
+        (JSC::LiteralParser::Lexer::Lexer):
+
 2011-06-18  Sheriff Bot  <webkit.review.bot@gmail.com>
 
         Unreviewed, rolling out r89184.
