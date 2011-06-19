@@ -2,6 +2,36 @@
 
         Reviewed by Sam Weinig.
 
+        [EFL][WK2] add WebKit2 EFL port's NativeWebMouseEvent, NativeWebWheelEvent and NativeWebKeyboardEvent
+        https://bugs.webkit.org/show_bug.cgi?id=61993
+
+        Add native mouse and keyboard event classes to convert EFL's events to NativeWebEvent.
+
+        * Shared/NativeWebKeyboardEvent.h:
+        (WebKit::NativeWebKeyboardEvent::nativeEvent):
+        * Shared/NativeWebMouseEvent.h:
+        (WebKit::NativeWebMouseEvent::nativeEvent):
+        * Shared/NativeWebWheelEvent.h:
+        (WebKit::NativeWebWheelEvent::nativeEvent):
+        * Shared/efl/NativeWebKeyboardEventEfl.cpp: Added.
+        (WebKit::NativeWebKeyboardEvent::NativeWebKeyboardEvent):
+        * Shared/efl/NativeWebMouseEventEfl.cpp: Added.
+        (WebKit::NativeWebMouseEvent::NativeWebMouseEvent):
+        * Shared/efl/NativeWebWheelEventEfl.cpp: Added.
+        (WebKit::NativeWebWheelEvent::NativeWebWheelEvent):
+        * Shared/efl/WebEventFactory.cpp: Added.
+        (WebKit::modifiersForEvent):
+        (WebKit::buttonForEvent):
+        (WebKit::clickCountForEvent):
+        (WebKit::WebEventFactory::createWebMouseEvent):
+        (WebKit::WebEventFactory::createWebWheelEvent):
+        (WebKit::WebEventFactory::createWebKeyboardEvent):
+        * Shared/efl/WebEventFactory.h: Added.
+
+2011-06-18  Eunmi Lee  <eunmi15.lee@samsung.com>
+
+        Reviewed by Sam Weinig.
+
         [EFL][WK2] Add missing functions of EFL port's PageClientImpl
         https://bugs.webkit.org/show_bug.cgi?id=62711
 

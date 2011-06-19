@@ -36,6 +36,8 @@ OBJC_CLASS NSView;
 #elif PLATFORM(GTK)
 #include <GOwnPtrGtk.h>
 typedef union _GdkEvent GdkEvent;
+#elif PLATFORM(EFL)
+#include <Evas.h>
 #endif
 
 namespace WebKit {
@@ -51,6 +53,10 @@ public:
 #elif PLATFORM(GTK)
     NativeWebMouseEvent(const NativeWebMouseEvent&);
     NativeWebMouseEvent(GdkEvent*, int);
+#elif PLATFORM(EFL)
+    NativeWebMouseEvent(const Evas_Event_Mouse_Down*, const Evas_Point*);
+    NativeWebMouseEvent(const Evas_Event_Mouse_Up*, const Evas_Point*);
+    NativeWebMouseEvent(const Evas_Event_Mouse_Move*, const Evas_Point*);
 #endif
 
 #if PLATFORM(MAC)
@@ -61,6 +67,8 @@ public:
     const QGraphicsSceneMouseEvent* nativeEvent() const { return m_nativeEvent; }
 #elif PLATFORM(GTK)
     const GdkEvent* nativeEvent() const { return m_nativeEvent.get(); }
+#elif PLATFORM(EFL)
+    const void* nativeEvent() const { return m_nativeEvent; }
 #endif
 
 private:
@@ -72,6 +80,8 @@ private:
     QGraphicsSceneMouseEvent* m_nativeEvent;
 #elif PLATFORM(GTK)
     GOwnPtr<GdkEvent> m_nativeEvent;
+#elif PLATFORM(EFL)
+    const void* m_nativeEvent;
 #endif
 };
 
