@@ -293,6 +293,7 @@ namespace WebCore {
         void fillRect(const FloatRect&);
         void fillRect(const FloatRect&, const Color&, ColorSpace);
         void fillRect(const FloatRect&, Generator&);
+        void fillRect(const FloatRect&, const Color&, ColorSpace, CompositeOperator);
         void fillRoundedRect(const IntRect&, const IntSize& topLeft, const IntSize& topRight, const IntSize& bottomLeft, const IntSize& bottomRight, const Color&, ColorSpace);
         void fillRoundedRect(const RoundedIntRect&, const Color&, ColorSpace);
         void fillRectWithRoundedHole(const IntRect&, const RoundedIntRect& roundedHoleRect, const Color&, ColorSpace);

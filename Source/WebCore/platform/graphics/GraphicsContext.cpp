@@ -613,6 +613,17 @@ void GraphicsContext::fillRect(const FloatRect& rect, Generator& generator)
     generator.fill(this, rect);
 }
 
+void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorSpace styleColorSpace, CompositeOperator op)
+{
+    if (paintingDisabled())
+        return;
+
+    CompositeOperator previousOperator = compositeOperation();
+    setCompositeOperation(op);
+    fillRect(rect, color, styleColorSpace);
+    setCompositeOperation(previousOperator);
+}
+
 void GraphicsContext::fillRoundedRect(const RoundedIntRect& rect, const Color& color, ColorSpace colorSpace)
 {
     fillRoundedRect(rect.rect(), rect.radii().topLeft(), rect.radii().topRight(), rect.radii().bottomLeft(), rect.radii().bottomRight(), color, colorSpace);

@@ -1,3 +1,21 @@
+2011-06-19  Una Sabovic  <una.sabovic@palm.com>
+
+        Reviewed by Darin Adler.
+
+        Optimization: avoid call to clearRect() when bgColor is valid when painting the root background in RenderBoxModelObject::paintFillLayerExtended
+        https://bugs.webkit.org/show_bug.cgi?id=62908
+
+        When root layers base color is fully transparent backgroundRect was cleared before bgColor is applied.
+        Instead of clearing the rect we apply CompositeCopy operation when painting the background color.
+
+        No new tests. This is an optimization, it doesn't change any existing functionality.
+
+        * platform/graphics/GraphicsContext.cpp:
+        (WebCore::GraphicsContext::fillRect):
+        * platform/graphics/GraphicsContext.h:
+        * rendering/RenderBoxModelObject.cpp:
+        (WebCore::RenderBoxModelObject::paintFillLayerExtended):
+
 2011-06-19  Dirk Schulze  <krit@webkit.org>
 
         Reviewed by Nikolas Zimmermann.

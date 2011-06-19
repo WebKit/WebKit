@@ -742,22 +742,23 @@ void RenderBoxModelObject::paintFillLayerExtended(const PaintInfo& paintInfo, co
         backgroundRect.intersect(paintInfo.rect);
         // If we have an alpha and we are painting the root element, go ahead and blend with the base background color.
         Color baseColor;
+        bool shouldClearBackground = false;
         if (isOpaqueRoot) {
             baseColor = view()->frameView()->baseBackgroundColor();
             if (!baseColor.alpha())
-                context->clearRect(backgroundRect);
+                shouldClearBackground = true;
         }
 
-        if (baseColor.alpha() > 0) {
+        if (baseColor.alpha()) {
             if (bgColor.alpha())
                 baseColor = baseColor.blend(bgColor);
 
-            CompositeOperator previousOperator = context->compositeOperation();
-            context->setCompositeOperation(CompositeCopy);
-            context->fillRect(backgroundRect, baseColor, style()->colorSpace());
-            context->setCompositeOperation(previousOperator);
-        } else if (bgColor.alpha() > 0)
-            context->fillRect(backgroundRect, bgColor, style()->colorSpace());
+            context->fillRect(backgroundRect, baseColor, style()->colorSpace(), CompositeCopy);
+        } else if (bgColor.alpha()) {
+            CompositeOperator operation = shouldClearBackground ? CompositeCopy : context->compositeOperation();
+            context->fillRect(backgroundRect, bgColor, style()->colorSpace(), operation);
+        } else if (shouldClearBackground)
+            context->clearRect(backgroundRect);
     }
 
     // no progressive loading of the background image
