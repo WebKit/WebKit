@@ -1,3 +1,11 @@
+2011-06-19  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.
+
+        Marking several tests as crashing on Mac GPU.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-19  Robert Hogan  <robert@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
