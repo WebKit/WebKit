@@ -55,7 +55,10 @@ namespace WebCore {
     public:
         FrameLoaderClientWx();
         ~FrameLoaderClientWx();
+        
+        wxWebFrame* webFrame() { return m_webFrame; }
         void setFrame(wxWebFrame *frame);
+        wxWebView* webView() { return m_webView; }
         void setWebView(wxWebView *webview);
 
         virtual bool hasWebView() const; // mainly for assertions

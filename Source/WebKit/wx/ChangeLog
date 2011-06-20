@@ -1,3 +1,25 @@
+2011-06-20  Robin Dunn  <robin@alldunn.com>
+
+        Reviewed by Kevin Ollivier.
+
+        Make showing the dialog optional, and add handling for Javascript print() calls.
+        
+        https://bugs.webkit.org/show_bug.cgi?id=63008
+
+        * WebFrame.cpp:
+        (kit):
+        (wxWebFrame::Print):
+        * WebFrame.h:
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::print):
+        * WebKitSupport/FrameLoaderClientWx.h:
+        (WebCore::FrameLoaderClientWx::webFrame):
+        (WebCore::FrameLoaderClientWx::webView):
+        * WebView.cpp:
+        (wxWebViewPrintFrameEvent::wxWebViewPrintFrameEvent):
+        * WebView.h:
+        * bindings/python/webview.i:
+
 2011-06-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix after method rename.

@@ -252,6 +252,18 @@ wxWebViewSelectionChangedEvent::wxWebViewSelectionChangedEvent(wxWindow* win)
         SetId(win->GetId());
 }
 
+IMPLEMENT_DYNAMIC_CLASS(wxWebViewPrintFrameEvent, wxCommandEvent)
+
+DEFINE_EVENT_TYPE(wxEVT_WEBVIEW_PRINT_FRAME)
+
+wxWebViewPrintFrameEvent::wxWebViewPrintFrameEvent(wxWindow* win)
+{
+    SetEventType(wxEVT_WEBVIEW_PRINT_FRAME);
+    SetEventObject(win);
+    if (win)
+        SetId(win->GetId());
+}
+
 //---------------------------------------------------------
 // DOM Element info data type
 //---------------------------------------------------------

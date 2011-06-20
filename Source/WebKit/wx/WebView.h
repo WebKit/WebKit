@@ -545,6 +545,21 @@ public:
     wxEvent *Clone(void) const { return new wxWebViewSelectionChangedEvent(*this); }
 };
 
+class WXDLLIMPEXP_WEBKIT wxWebViewPrintFrameEvent : public wxCommandEvent {
+#ifndef SWIG
+    DECLARE_DYNAMIC_CLASS(wxWebViewPrintFrameEvent)
+#endif
+    
+public:
+    wxWebViewPrintFrameEvent(wxWindow* win = 0);
+    wxEvent *Clone(void) const { return new wxWebViewPrintFrameEvent(*this); }
+    
+    wxWebFrame* GetWebFrame() { return m_webFrame; }
+    void SetWebFrame(wxWebFrame* frame) { m_webFrame = frame; }
+private:
+    wxWebFrame* m_webFrame;
+};
+
 typedef void (wxEvtHandler::*wxWebViewLoadEventFunction)(wxWebViewLoadEvent&);
 typedef void (wxEvtHandler::*wxWebViewBeforeLoadEventFunction)(wxWebViewBeforeLoadEvent&);
 typedef void (wxEvtHandler::*wxWebViewNewWindowEventFunction)(wxWebViewNewWindowEvent&);
@@ -557,6 +572,7 @@ typedef void (wxEvtHandler::*wxWebViewReceivedTitleEventFunction)(wxWebViewRecei
 typedef void (wxEvtHandler::*wxWebViewWindowObjectClearedFunction)(wxWebViewWindowObjectClearedEvent&);
 typedef void (wxEvtHandler::*wxWebViewContentsChangedFunction)(wxWebViewContentsChangedEvent&);
 typedef void (wxEvtHandler::*wxWebViewSelectionChangedFunction)(wxWebViewSelectionChangedEvent&);
+typedef void (wxEvtHandler::*wxWebViewPrintFrameFunction)(wxWebViewPrintFrameEvent&);
 
 #define wxWebViewLoadEventHandler(func) \
     (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxWebViewLoadEventFunction, &func)
@@ -582,7 +598,9 @@ typedef void (wxEvtHandler::*wxWebViewSelectionChangedFunction)(wxWebViewSelecti
     (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxWebViewContentsChangedEventFunction, &func)
 #define wxWebViewSelectionChangedEventHandler(func) \
     (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxWebViewSelectionChangedEventFunction, &func)
-    
+#define wxWebViewPrintFrameEventHandler(func) \
+    (wxObjectEventFunction)(wxEventFunction)wxStaticCastEvent(wxWebViewPrintFrameEventFunction, &func)
+
 #ifndef SWIG
 BEGIN_DECLARE_EVENT_TYPES()
     DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_WEBKIT, wxEVT_WEBVIEW_BEFORE_LOAD, wxID_ANY)
@@ -597,6 +615,7 @@ BEGIN_DECLARE_EVENT_TYPES()
     DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_WEBKIT, wxEVT_WEBVIEW_WINDOW_OBJECT_CLEARED, wxID_ANY)
     DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_WEBKIT, wxEVT_WEBVIEW_CONTENTS_CHANGED, wxID_ANY)
     DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_WEBKIT, wxEVT_WEBVIEW_SELECTION_CHANGED, wxID_ANY)
+    DECLARE_EXPORTED_EVENT_TYPE(WXDLLIMPEXP_WEBKIT, wxEVT_WEBVIEW_PRINT_FRAME, wxID_ANY)
 END_DECLARE_EVENT_TYPES()
 #endif
 
@@ -695,6 +714,13 @@ END_DECLARE_EVENT_TYPES()
                             (wxObjectEventFunction)   \
                             (wxWebViewSelectionChangedEventFunction) & func, \
                             static_cast<wxObject*>(0)),
-                            
+
+#define EVT_WEBVIEW_PRINT_FRAME(winid, func)                       \
+            DECLARE_EVENT_TABLE_ENTRY(wxEVT_WEBVIEW_PRINT_FRAME, \
+                            winid, \
+                            wxID_ANY, \
+                            (wxObjectEventFunction)   \
+                            (wxWebViewPrintFrameEventFunction) & func, \
+                            static_cast<wxObject*>(0)),
                             
 #endif // ifndef WXWEBVIEW_H

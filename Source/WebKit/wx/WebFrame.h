@@ -115,7 +115,7 @@ public:
     bool GoForward();
     void Stop();
     void Reload();
-    void Print();
+    void Print(bool showDialog = true);
     
     bool CanGoBack();
     bool CanGoForward();
@@ -179,5 +179,7 @@ private:
     WebFramePrivate* m_impl;
     
 };
+
+wxWebFrame* kit(WebCore::Frame*);
 
 #endif // ifndef WXWEBFRAME_H

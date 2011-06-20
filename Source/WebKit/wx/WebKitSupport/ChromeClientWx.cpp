@@ -415,9 +415,15 @@ void ChromeClientWx::setToolTip(const String& tip, TextDirection)
         m_webView->SetToolTip(tip);
 }
 
-void ChromeClientWx::print(Frame*)
+void ChromeClientWx::print(Frame* frame)
 {
-    notImplemented();
+    wxWebFrame* webFrame = kit(frame);
+    if (webFrame) {
+        wxWebViewPrintFrameEvent event(m_webView);
+        event.SetWebFrame(webFrame);
+        if (!m_webView->GetEventHandler()->ProcessEvent(event))
+            webFrame->Print(true);
+    }
 }
 
 #if ENABLE(DATABASE)

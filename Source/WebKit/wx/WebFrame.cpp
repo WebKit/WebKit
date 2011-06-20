@@ -32,6 +32,7 @@
 #include "FloatRect.h"
 #include "Frame.h"
 #include "FrameLoader.h"
+#include "FrameLoaderClientWx.h"
 #include "FrameView.h"
 #include "GraphicsContext.h"
 #include "HitTestResult.h"
@@ -174,6 +175,20 @@ private:
     WebCore::PrintContext m_printContext;
 };
 #endif
+
+wxWebFrame* kit(WebCore::Frame* frame)
+{
+    if (!frame)
+        return 0;
+    if (!frame->loader())
+        return 0;
+    
+    WebCore::FrameLoaderClientWx* loaderClient = dynamic_cast<WebCore::FrameLoaderClientWx*>(frame->loader()->client());
+    if (loaderClient)
+        return loaderClient->webFrame();
+    
+    return 0;
+}
 
 wxWebFrame::wxWebFrame(wxWebView* container, wxWebFrame* parent, WebViewFrameData* data) :
     m_textMagnifier(1.0),
@@ -556,7 +571,7 @@ void wxWebFrame::Paste()
 
 }
 
-void wxWebFrame::Print()
+void wxWebFrame::Print(bool showDialog)
 {
 #if wxCHECK_VERSION(2, 9, 1)
     if (!m_impl->frame)
@@ -583,15 +598,22 @@ void wxWebFrame::Print()
     printdata.SetFromPage(1);
     printdata.SetToPage(printout->GetPageCount());
 
-    wxPrintDialog dialog(0, &printdata);
-    if (dialog.ShowModal() == wxID_OK) {    
-        wxPrintDialogData data(dialog.GetPrintDialogData());
-        printout->SetFirstPage(data.GetFromPage());
-        printout->SetLastPage(data.GetToPage());
-        wxPrinter printer(&data);
-        
-        printer.Print(0, printout, false);
+    wxPrintDialogData data(printdata);
+
+    if (showDialog) {
+        wxPrintDialog dialog(0, &data);
+        if (dialog.ShowModal() == wxID_OK) {
+            data = dialog.GetPrintDialogData();
+            printout->SetFirstPage(data.GetFromPage());
+            printout->SetLastPage(data.GetToPage());
+        } else
+            return;
     }
+    
+    wxPrinter printer(&data);
+        
+    printer.Print(0, printout, false);
+        
 #else
     wxFAIL_MSG(wxT("Printing is only supported in wxWidgets 2.9.1 and above."));
 #endif
