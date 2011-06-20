@@ -1,3 +1,32 @@
+2011-06-20  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Darin Adler.
+
+        New tests for scripting changes to DOM for msub, msup, msubsup.
+        https://bugs.webkit.org/show_bug.cgi?id=62098
+
+        * mathml/presentation/msub-base-changed.xhtml: Added.
+        * mathml/presentation/msub-sub-changed.xhtml: Added.
+        * mathml/presentation/msubsup-base-changed.xhtml: Added.
+        * mathml/presentation/msubsup-sub-changed.xhtml: Added.
+        * mathml/presentation/msubsup-sup-changed.xhtml: Added.
+        * mathml/presentation/msup-base-changed.xhtml: Added.
+        * mathml/presentation/msup-sup-changed.xhtml: Added.
+        * platform/mac/mathml/presentation/msub-base-changed-expected.png: Added.
+        * platform/mac/mathml/presentation/msub-base-changed-expected.txt: Added.
+        * platform/mac/mathml/presentation/msub-sub-changed-expected.png: Added.
+        * platform/mac/mathml/presentation/msub-sub-changed-expected.txt: Added.
+        * platform/mac/mathml/presentation/msubsup-base-changed-expected.png: Added.
+        * platform/mac/mathml/presentation/msubsup-base-changed-expected.txt: Added.
+        * platform/mac/mathml/presentation/msubsup-sub-changed-expected.png: Added.
+        * platform/mac/mathml/presentation/msubsup-sub-changed-expected.txt: Added.
+        * platform/mac/mathml/presentation/msubsup-sup-changed-expected.png: Added.
+        * platform/mac/mathml/presentation/msubsup-sup-changed-expected.txt: Added.
+        * platform/mac/mathml/presentation/msup-base-changed-expected.png: Added.
+        * platform/mac/mathml/presentation/msup-base-changed-expected.txt: Added.
+        * platform/mac/mathml/presentation/msup-sup-changed-expected.png: Added.
+        * platform/mac/mathml/presentation/msup-sup-changed-expected.txt: Added.
+
 2011-06-20  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Adam Barth.

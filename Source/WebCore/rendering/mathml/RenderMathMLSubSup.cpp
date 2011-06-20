@@ -63,43 +63,52 @@ RenderMathMLSubSup::RenderMathMLSubSup(Element* element)
 
 void RenderMathMLSubSup::addChild(RenderObject* child, RenderObject* beforeChild)
 {
-    if (firstChild()) {
-        // We already have a base, so this is the super/subscripts being added.
-        
-        if (m_kind == SubSup) {
-            if (!m_scripts) {
-                m_scripts = new (renderArena()) RenderMathMLBlock(node());
-                RefPtr<RenderStyle> scriptsStyle = RenderStyle::create();
-                scriptsStyle->inheritFrom(style());
-                scriptsStyle->setDisplay(INLINE_BLOCK);
-                scriptsStyle->setVerticalAlign(TOP);
-                scriptsStyle->setMarginLeft(Length(gSubsupScriptMargin, Fixed));
-                scriptsStyle->setTextAlign(LEFT);
-                m_scripts->setStyle(scriptsStyle.release());
-                RenderMathMLBlock::addChild(m_scripts, beforeChild);
-            }
-            
-            RenderBlock* script = new (renderArena()) RenderMathMLBlock(node());
-            RefPtr<RenderStyle> scriptStyle = RenderStyle::create();
-            scriptStyle->inheritFrom(m_scripts->style());
-            scriptStyle->setDisplay(BLOCK);
-            script->setStyle(scriptStyle.release());
-            
-            m_scripts->addChild(script, m_scripts->firstChild());
-            script->addChild(child);
-        } else
-            RenderMathMLBlock::addChild(child, beforeChild);
-        
-    } else {
+    
+    // Note: The RenderMathMLBlock only allows element children to be added.
+    Element* childElement = toElement(child->node());
+
+    if (!childElement->previousElementSibling()) {
+        // Position 1 is always the base of the msub/msup/msubsup.
         RenderMathMLBlock* wrapper = new (renderArena()) RenderMathMLBlock(node());
         RefPtr<RenderStyle> wrapperStyle = RenderStyle::create();
         wrapperStyle->inheritFrom(style());
         wrapperStyle->setDisplay(INLINE_BLOCK);
         wrapperStyle->setVerticalAlign(BASELINE);
         wrapper->setStyle(wrapperStyle.release());
-        RenderMathMLBlock::addChild(wrapper, beforeChild);
+        RenderMathMLBlock::addChild(wrapper, firstChild());
         wrapper->addChild(child);
-        
+            
+        // Make sure we have a script block for rendering.
+        if (m_kind == SubSup && !m_scripts) {
+            m_scripts = new (renderArena()) RenderMathMLBlock(node());
+            RefPtr<RenderStyle> scriptsStyle = RenderStyle::create();
+            scriptsStyle->inheritFrom(style());
+            scriptsStyle->setDisplay(INLINE_BLOCK);
+            scriptsStyle->setVerticalAlign(TOP);
+            scriptsStyle->setMarginLeft(Length(gSubsupScriptMargin, Fixed));
+            scriptsStyle->setTextAlign(LEFT);
+            m_scripts->setStyle(scriptsStyle.release());
+            RenderMathMLBlock::addChild(m_scripts, beforeChild);
+        }
+    } else {
+        if (m_kind == SubSup) {
+            RenderBlock* script = new (renderArena()) RenderMathMLBlock(node());
+            RefPtr<RenderStyle> scriptStyle = RenderStyle::create();
+            scriptStyle->inheritFrom(m_scripts->style());
+            scriptStyle->setDisplay(BLOCK);
+            script->setStyle(scriptStyle.release());
+
+            // The order is always backwards so the first script is the subscript and the superscript 
+            // is last. That means the superscript is the first to render vertically.
+            Element* previousSibling = childElement->previousElementSibling();
+            if (previousSibling && !previousSibling->previousElementSibling()) 
+                m_scripts->addChild(script);
+            else                 
+                m_scripts->addChild(script, m_scripts->firstChild());
+            
+            script->addChild(child);
+        } else
+            RenderMathMLBlock::addChild(child, beforeChild);
     }
 }
 
@@ -185,15 +194,12 @@ int RenderMathMLSubSup::baselinePosition(FontBaseline, bool firstLine, LineDirec
     switch (m_kind) {
     case SubSup:
         base = base->firstChild();
-        if (!base)
-            break;
-
-        if (m_scripts && base->isBoxModelObject()) {
+        if (m_scripts && base && base->isBoxModelObject()) {
             RenderBoxModelObject* box = toRenderBoxModelObject(base);
             
             int topAdjust = (m_scripts->offsetHeight() - box->offsetHeight()) / 2;
         
-            // FIXME: The last bit of this calculation should be more exact.  Why is the 2-3px scaled for zoom necessary?
+            // FIXME: The last bit of this calculation should be more exact. Why is the 2-3px scaled for zoom necessary?
             // The baseline is top spacing of the base + the baseline of the base + adjusted space for zoom
             float zoomFactor = style()->effectiveZoom();
             return topAdjust + box->baselinePosition(AlphabeticBaseline, firstLine, direction, linePositionMode) + static_cast<int>((zoomFactor > 1.25 ? 2 : 3) * zoomFactor);

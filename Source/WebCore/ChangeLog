@@ -1,3 +1,24 @@
+2011-06-20  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Darin Adler.
+
+        This patch addresses handling wrapping of child properly to maintain the layout regardless of whether 
+        this is the initial build of the render tree or the result of DOM manipulation.
+        https://bugs.webkit.org/show_bug.cgi?id=62098
+
+        Tests: mathml/presentation/msub-base-changed.xhtml
+               mathml/presentation/msub-sub-changed.xhtml
+               mathml/presentation/msubsup-base-changed.xhtml
+               mathml/presentation/msubsup-sub-changed.xhtml
+               mathml/presentation/msubsup-sup-changed.xhtml
+               mathml/presentation/msup-base-changed.xhtml
+               mathml/presentation/msup-sup-changed.xhtml
+
+        * rendering/mathml/RenderMathMLSubSup.cpp:
+        (WebCore::RenderMathMLSubSup::addChild):
+        (WebCore::RenderMathMLSubSup::stretchToHeight):
+        (WebCore::RenderMathMLSubSup::baselinePosition):
+
 2011-06-01  Jer Noble  <jer.noble@apple.com>
 
         Reviewed by Eric Carlson.
