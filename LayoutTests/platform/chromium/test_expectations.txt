@@ -908,6 +908,44 @@ BUGWK53378 WIN LINUX : svg/clip-path/nested-clip-in-mask-path-based-clipping.svg
 BUGWK42370 WIN MAC : svg/custom/image-rescale-scroll.html = FAIL
 BUGWK42370 WIN MAC : svg/custom/image-rescale-clip.html = FAIL
 
+// Since r89233. May need a new baseline.
+BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/W3C-SVG-1.1-SE/coords-units-03-b.svg = IMAGE
+BUGWK62974 WIN : svg/W3C-SVG-1.1-SE/types-dom-05-b.svg = IMAGE+TEXT
+BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1/fonts-glyph-03-t.svg = IMAGE+TEXT
+BUGWK62974 WIN LINUX : svg/W3C-SVG-1.1/text-altglyph-01-b.svg = IMAGE+TEXT
+BUGWK62974 WIN LINUX : svg/batik/text/textEffect.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/batik/text/textEffect.svg = IMAGE
+BUGWK62974 WIN LINUX : svg/batik/text/textEffect3.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/batik/text/textEffect3.svg = IMAGE
+BUGWK62974 WIN LINUX : svg/batik/text/xmlSpace.svg = IMAGE+TEXT
+BUGWK62974 WIN : svg/custom/glyph-selection-lang-attribute.svg = IMAGE+TEXT
+BUGWK62974 WIN LINUX : svg/custom/svg-fonts-fallback.xhtml = IMAGE+TEXT
+BUGWK62974 WIN LINUX : svg/custom/svg-fonts-segmented.xhtml = IMAGE+TEXT
+BUGWK62974 WIN LINUX : svg/custom/svg-fonts-word-spacing.html = IMAGE+TEXT
+BUGWK62974 MAC : svg/custom/svg-fonts-word-spacing.html = IMAGE
+BUGWK62974 WIN LINUX : svg/text/text-altglyph-01-b.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/text/text-altglyph-01-b.svg = IMAGE
+BUGWK62974 WIN LINUX : svg/text/text-overflow-ellipsis-svgfont.html = IMAGE+TEXT
+BUGWK62974 WIN LINUX : svg/text/text-text-04-t.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/text/text-text-04-t.svg = IMAGE
+BUGWK62974 WIN LINUX : svg/text/text-text-05-t.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/text/text-text-05-t.svg = IMAGE
+BUGWK62974 WIN LINUX : svg/text/text-text-06-t.svg = IMAGE+TEXT
+BUGWK62974 MAC : svg/text/text-text-06-t.svg = IMAGE
+BUGWK62974 WIN LINUX : svg/wicd/test-rightsizing-b.xhtml = IMAGE+TEXT
+BUGWK62974 MAC : svg/wicd/test-rightsizing-b.xhtml = IMAGE
+BUGWK62974 WIN : svg/W3C-SVG-1.1/animate-elem-36-t.svg = IMAGE
+BUGWK62974 WIN MAC : svg/custom/svg-fonts-in-html.html = IMAGE
+BUGWK62974 WIN MAC : svg/custom/svg-fonts-with-no-element-reference.html = IMAGE
+BUGWK62974 WIN MAC : svg/foreignObject/text-tref-02-b.svg = IMAGE
+BUGWK62974 MAC : svg/W3C-SVG-1.1/pservers-grad-08-b.svg = IMAGE
+
+// Regressions from r89233. These expectations already existed and moved from there;
+// when these tests are fixed, please don't forget to uncomment corresponding lines below.
+BUGWK62973 BUGWK54322 SNOWLEOPARD : http/tests/misc/acid3.html = TIMEOUT
+BUGWK62973 BUGCR30536 SLOW WIN LINUX : http/tests/misc/acid3.html = TIMEOUT CRASH
+
 // -----------------------------------------------------------------
 // End SVG Regressions
 // -----------------------------------------------------------------
@@ -1071,7 +1109,7 @@ BUGWK27914 WIN : fast/dom/HTMLAnchorElement/set-href-attribute-protocol.html = T
 // ----------------------------------------------------------------------------
 
 // This test isn't hanging, it just takes 12-13 seconds to run.
-BUGCR30536 SLOW WIN LINUX : http/tests/misc/acid3.html = FAIL
+// BUGCR30536 SLOW WIN LINUX : http/tests/misc/acid3.html = FAIL  // Moved to "SVG Tests" section
 BUGCR30536 : http/tests/misc/favicon-as-image.html = FAIL
 
 // Has failed for Chromium since it was first checked in.  (Lighttpd related?)
@@ -2933,7 +2971,7 @@ BUGWK54322 SNOWLEOPARD : fast/replaced/width100percent-textarea.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/pop-up-button-text-alignment-and-direction.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fast/text/international/text-combine-image-test.html = IMAGE
 BUGWK54322 SNOWLEOPARD : fonts/monospace.html = IMAGE
-BUGWK54322 SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE
+// BUGWK54322 SNOWLEOPARD : http/tests/misc/acid3.html = IMAGE  // Moved to "SVG tests" section
 BUGWK54322 SNOWLEOPARD : svg/custom/animate-path-discrete.svg = IMAGE
 BUGWK54322 SNOWLEOPARD : svg/W3C-SVG-1.1/coords-viewattr-01-b.svg = IMAGE+TEXT
 BUGWK54322 SNOWLEOPARD : svg/zoom/text/zoom-coords-viewattr-01-b.svg = IMAGE+TEXT

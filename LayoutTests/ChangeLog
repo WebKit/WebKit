@@ -1,3 +1,9 @@
+2011-06-20  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed, add new Chromium test expectations since r89233.
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-20  Csaba Osztrogonác  <ossy@webkit.org>
 
         [Qt][Mac] Skip failing tests.
