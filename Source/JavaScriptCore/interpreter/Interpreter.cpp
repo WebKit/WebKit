@@ -770,8 +770,11 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
                 case LiteralParser::JSONPPathEntryTypeDot: {
                     if (i == 0) {
                         PropertySlot slot(globalObject);
-                        if (!globalObject->getPropertySlot(callFrame, JSONPPath[i].m_pathEntryName, slot))
-                            return throwError(callFrame, createUndefinedVariableError(globalObject->globalExec(), JSONPPath[i].m_pathEntryName));
+                        if (!globalObject->getPropertySlot(callFrame, JSONPPath[i].m_pathEntryName, slot)) {
+                            if (i)
+                                return throwError(callFrame, createUndefinedVariableError(globalObject->globalExec(), JSONPPath[i].m_pathEntryName));
+                            goto failedJSONP;
+                        }
                         baseObject = slot.getValue(callFrame, JSONPPath[i].m_pathEntryName);
                     } else
                         baseObject = baseObject.get(callFrame, JSONPPath[i].m_pathEntryName);
@@ -812,7 +815,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
         }
         return result;
     }
-
+failedJSONP:
     JSObject* error = program->compile(callFrame, scopeChain);
     if (error)
         return checkedReturn(throwError(callFrame, error));

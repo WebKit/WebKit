@@ -1,3 +1,10 @@
+2011-06-19  Oliver Hunt  <oliver@apple.com>
+
+        Minor fix to correct layout test results.
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+
 2011-06-17  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Gavin Barraclough.
