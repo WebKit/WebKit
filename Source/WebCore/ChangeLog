@@ -1,3 +1,9 @@
+2011-06-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Fix bit flag collision.
+
+        * editing/FrameSelection.h:
+
 2011-06-20  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; Fix Leopard WebCore build.

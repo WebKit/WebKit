@@ -111,8 +111,8 @@ public:
     enum CursorAlignOnScroll { AlignCursorOnScrollIfNeeded,
                                AlignCursorOnScrollAlways };
     enum SetSelectionOption {
-        CloseTyping = 1 << 0,
-        // 1 << 1 is reserved for EUserTriggered 
+        // 1 << 0 is reserved for EUserTriggered
+        CloseTyping = 1 << 1,
         ClearTypingStyle = 1 << 2,
         SpellCorrectionTriggered = 1 << 3,
     };
