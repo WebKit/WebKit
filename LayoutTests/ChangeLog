@@ -1,3 +1,15 @@
+2011-06-20  David Levin  <levin@chromium.org>
+
+        Reviewed by Dmitry Titov.
+
+        Expand Web Worker test coverage for onerror to have test for url/line numbers.
+        https://bugs.webkit.org/show_bug.cgi?id=62898
+
+        * fast/workers/resources/worker-script-error-bubbled.js:
+        (onerror): Added a check for the url and put the last part in the message.
+        * fast/workers/worker-script-error-expected.txt: Update to have the new result.
+        * fast/workers/worker-script-error.html: Actually print the message from the worker.
+
 2011-06-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.

@@ -100,6 +100,9 @@ function testScriptErrorBubbledAndHandledInWorker()
 {
     try {
         var worker = new Worker("resources/worker-script-error-bubbled.js");
+        worker.onmessage = function(evt) {
+            log("message from worker: \"" + evt.data + "\".");
+        }
         worker.onerror = function(evt) {
             log("PASS: onerror invoked for a script that has script error '" + evt.message + "' at line " + evt.lineno + ".");
             runNextTest();
