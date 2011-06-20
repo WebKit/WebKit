@@ -1,5 +1,11 @@
 2011-06-20  Yuta Kitamura  <yutak@chromium.org>
 
+        Unreviewed, fix an error in the last edit of Chromium test_expectations.txt.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-20  Yuta Kitamura  <yutak@chromium.org>
+
         Unreviewed, add new Chromium test expectations since r89233.
 
         * platform/chromium/test_expectations.txt:
