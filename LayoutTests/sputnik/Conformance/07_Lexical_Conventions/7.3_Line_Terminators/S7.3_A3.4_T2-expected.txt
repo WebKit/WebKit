@@ -1,6 +1,6 @@
 S7.3_A3.4_T2
 
-PASS SyntaxError: Parse error
+PASS SyntaxError: Expected an identifier but found 'line' instead
 
 TEST COMPLETE
 

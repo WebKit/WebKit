@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Parse error
+CONSOLE MESSAGE: line 76: SyntaxError: Unexpected token '('
 S12.5_A9_T3
 
 PASS Expected parsing failure

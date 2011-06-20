@@ -1,3 +1,54 @@
+2011-06-20  Juan C. Montemayor  <jmont@apple.com>
+
+        Reviewed by Oliver Hunt.
+
+        No context for javascript parse errors.
+        https://bugs.webkit.org/show_bug.cgi?id=62613
+        
+        Parse errors now show more details like:
+        "Unexpected token: ]"
+        or
+        "Expected token: while"
+        
+        For reserved names, numbers, indentifiers, strings, lexer errors, 
+        and EOFs, the following error messages are printed:
+        
+        "Use of reserved word: super"
+        "Unexpected number: 42"
+        "Unexpected identifier: "
+        "Unexpected string: "foobar""
+        "Invalid token character sequence: \u4023"
+        "Unexpected EOF"
+
+        * parser/JSParser.cpp:
+        (JSC::JSParser::consume):
+        (JSC::JSParser::getToken):
+        (JSC::JSParser::getTokenName):
+        (JSC::JSParser::updateErrorMessageSpecialCase):
+        (JSC::JSParser::updateErrorMessage):
+        (JSC::JSParser::updateErrorWithNameAndMessage):
+        (JSC::jsParse):
+        (JSC::JSParser::JSParser):
+        (JSC::JSParser::parseProgram):
+        (JSC::JSParser::parseVarDeclarationList):
+        (JSC::JSParser::parseForStatement):
+        (JSC::JSParser::parseBreakStatement):
+        (JSC::JSParser::parseContinueStatement):
+        (JSC::JSParser::parseWithStatement):
+        (JSC::JSParser::parseTryStatement):
+        (JSC::JSParser::parseStatement):
+        (JSC::JSParser::parseFormalParameters):
+        (JSC::JSParser::parseFunctionInfo):
+        (JSC::JSParser::parseAssignmentExpression):
+        (JSC::JSParser::parsePrimaryExpression):
+        (JSC::JSParser::parseMemberExpression):
+        (JSC::JSParser::parseUnaryExpression):
+        * parser/JSParser.h:
+        * parser/Lexer.cpp:
+        (JSC::Lexer::lex):
+        * parser/Parser.cpp:
+        (JSC::Parser::parse):
+
 2011-06-20  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Rob Buis.

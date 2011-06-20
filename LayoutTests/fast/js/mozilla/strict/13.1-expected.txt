@@ -10,8 +10,8 @@ PASS true === true
 PASS Function("'use strict'; function f(a,b,c,d,e,f,g,h,d) {}") threw exception of type SyntaxError.
 PASS !!Function("function f(a,b,c,d,e,f,g,h,d) {}") is true
 PASS true === true
-FAIL !!Function("'use strict'; function f([x,y]) {}") should be true. Threw exception SyntaxError: Parse error
-FAIL !!Function("function f([x,y]) {}") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("'use strict'; function f([x,y]) {}") should be true. Threw exception SyntaxError: Expected an identifier but found '[' instead
+FAIL !!Function("function f([x,y]) {}") should be true. Threw exception SyntaxError: Expected an identifier but found '[' instead
 PASS true === true
 PASS Function("'use strict'; function f([x,x]){}") threw exception of type SyntaxError.
 PASS Function("function f([x,x]){}") threw exception of type SyntaxError.
@@ -29,19 +29,19 @@ PASS Function("x","x","'use strict'") threw exception of type SyntaxError.
 PASS true === true
 PASS true === true
 PASS Function("'use strict'; (function (x,x) 2)") threw exception of type SyntaxError.
-FAIL !!Function("(function (x,x) 2)") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("(function (x,x) 2)") should be true. Threw exception SyntaxError: Expected token '{'
 PASS true === true
-FAIL !!Function("'use strict'; (function (x,y) 2)") should be true. Threw exception SyntaxError: Parse error
-FAIL !!Function("(function (x,y) 2)") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("'use strict'; (function (x,y) 2)") should be true. Threw exception SyntaxError: Expected token '{'
+FAIL !!Function("(function (x,y) 2)") should be true. Threw exception SyntaxError: Expected token '{'
 PASS true === true
 PASS Function("'use strict'; function f(eval){}") threw exception of type SyntaxError.
 PASS !!Function("function f(eval){}") is true
 PASS true === true
 PASS Function("'use strict'; function f([eval]){}") threw exception of type SyntaxError.
-FAIL !!Function("function f([eval]){}") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("function f([eval]){}") should be true. Threw exception SyntaxError: Expected an identifier but found '[' instead
 PASS true === true
 PASS Function("'use strict'; function f({x:eval}){}") threw exception of type SyntaxError.
-FAIL !!Function("function f({x:eval}){}") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("function f({x:eval}){}") should be true. Threw exception SyntaxError: Expected an identifier but found '{' instead
 PASS true === true
 PASS Function("'use strict'; function eval(){}") threw exception of type SyntaxError.
 PASS !!Function("function eval(){}") is true
@@ -62,10 +62,10 @@ PASS Function("'use strict'; (function f(eval){})") threw exception of type Synt
 PASS !!Function("(function f(eval){})") is true
 PASS true === true
 PASS Function("'use strict'; (function f([eval]){})") threw exception of type SyntaxError.
-FAIL !!Function("(function f([eval]){})") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("(function f([eval]){})") should be true. Threw exception SyntaxError: Expected an identifier but found '[' instead
 PASS true === true
 PASS Function("'use strict'; (function f({x:eval}){})") threw exception of type SyntaxError.
-FAIL !!Function("(function f({x:eval}){})") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("(function f({x:eval}){})") should be true. Threw exception SyntaxError: Expected an identifier but found '{' instead
 PASS true === true
 PASS Function("'use strict'; (function eval(){})") threw exception of type SyntaxError.
 PASS !!Function("(function eval(){})") is true
@@ -83,25 +83,25 @@ PASS Function("'use strict'; (function eval(){\"use strict\";})") threw exceptio
 PASS Function("(function eval(){\"use strict\";})") threw exception of type SyntaxError.
 PASS true === true
 PASS Function("'use strict'; (function f(eval) 2)") threw exception of type SyntaxError.
-FAIL !!Function("(function f(eval) 2)") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("(function f(eval) 2)") should be true. Threw exception SyntaxError: Expected token '{'
 PASS true === true
 PASS Function("'use strict'; (function f([eval]) 2)") threw exception of type SyntaxError.
-FAIL !!Function("(function f([eval]) 2)") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("(function f([eval]) 2)") should be true. Threw exception SyntaxError: Expected an identifier but found '[' instead
 PASS true === true
 PASS Function("'use strict'; (function f({x:eval}) 2)") threw exception of type SyntaxError.
-FAIL !!Function("(function f({x:eval}) 2)") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("(function f({x:eval}) 2)") should be true. Threw exception SyntaxError: Expected an identifier but found '{' instead
 PASS true === true
 PASS Function("'use strict'; (function eval() 2)") threw exception of type SyntaxError.
-FAIL !!Function("(function eval() 2)") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("(function eval() 2)") should be true. Threw exception SyntaxError: Expected token '{'
 PASS true === true
 PASS Function("'use strict'; ({set x(eval){}})") threw exception of type SyntaxError.
 PASS !!Function("({set x(eval){}})") is true
 PASS true === true
 PASS Function("'use strict'; ({set x([eval]){}})") threw exception of type SyntaxError.
-FAIL !!Function("({set x([eval]){}})") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("({set x([eval]){}})") should be true. Threw exception SyntaxError: Expected an identifier but found '[' instead
 PASS true === true
 PASS Function("'use strict'; ({set x({x:eval}){}})") threw exception of type SyntaxError.
-FAIL !!Function("({set x({x:eval}){}})") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("({set x({x:eval}){}})") should be true. Threw exception SyntaxError: Expected an identifier but found '{' instead
 PASS true === true
 PASS Function("'use strict'; ({set x(eval){\"use strict\";}})") threw exception of type SyntaxError.
 PASS Function("({set x(eval){\"use strict\";}})") threw exception of type SyntaxError.
@@ -116,10 +116,10 @@ PASS Function("'use strict'; function f(arguments){}") threw exception of type S
 PASS !!Function("function f(arguments){}") is true
 PASS true === true
 PASS Function("'use strict'; function f([arguments]){}") threw exception of type SyntaxError.
-FAIL !!Function("function f([arguments]){}") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("function f([arguments]){}") should be true. Threw exception SyntaxError: Expected an identifier but found '[' instead
 PASS true === true
 PASS Function("'use strict'; function f({x:arguments}){}") threw exception of type SyntaxError.
-FAIL !!Function("function f({x:arguments}){}") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("function f({x:arguments}){}") should be true. Threw exception SyntaxError: Expected an identifier but found '{' instead
 PASS true === true
 PASS Function("'use strict'; function arguments(){}") threw exception of type SyntaxError.
 PASS !!Function("function arguments(){}") is true
@@ -140,10 +140,10 @@ PASS Function("'use strict'; (function f(arguments){})") threw exception of type
 PASS !!Function("(function f(arguments){})") is true
 PASS true === true
 PASS Function("'use strict'; (function f([arguments]){})") threw exception of type SyntaxError.
-FAIL !!Function("(function f([arguments]){})") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("(function f([arguments]){})") should be true. Threw exception SyntaxError: Expected an identifier but found '[' instead
 PASS true === true
 PASS Function("'use strict'; (function f({x:arguments}){})") threw exception of type SyntaxError.
-FAIL !!Function("(function f({x:arguments}){})") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("(function f({x:arguments}){})") should be true. Threw exception SyntaxError: Expected an identifier but found '{' instead
 PASS true === true
 PASS Function("'use strict'; (function arguments(){})") threw exception of type SyntaxError.
 PASS !!Function("(function arguments(){})") is true
@@ -161,25 +161,25 @@ PASS Function("'use strict'; (function arguments(){\"use strict\";})") threw exc
 PASS Function("(function arguments(){\"use strict\";})") threw exception of type SyntaxError.
 PASS true === true
 PASS Function("'use strict'; (function f(arguments) 2)") threw exception of type SyntaxError.
-FAIL !!Function("(function f(arguments) 2)") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("(function f(arguments) 2)") should be true. Threw exception SyntaxError: Expected token '{'
 PASS true === true
 PASS Function("'use strict'; (function f([arguments]) 2)") threw exception of type SyntaxError.
-FAIL !!Function("(function f([arguments]) 2)") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("(function f([arguments]) 2)") should be true. Threw exception SyntaxError: Expected an identifier but found '[' instead
 PASS true === true
 PASS Function("'use strict'; (function f({x:arguments}) 2)") threw exception of type SyntaxError.
-FAIL !!Function("(function f({x:arguments}) 2)") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("(function f({x:arguments}) 2)") should be true. Threw exception SyntaxError: Expected an identifier but found '{' instead
 PASS true === true
 PASS Function("'use strict'; (function arguments() 2)") threw exception of type SyntaxError.
-FAIL !!Function("(function arguments() 2)") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("(function arguments() 2)") should be true. Threw exception SyntaxError: Expected token '{'
 PASS true === true
 PASS Function("'use strict'; ({set x(arguments){}})") threw exception of type SyntaxError.
 PASS !!Function("({set x(arguments){}})") is true
 PASS true === true
 PASS Function("'use strict'; ({set x([arguments]){}})") threw exception of type SyntaxError.
-FAIL !!Function("({set x([arguments]){}})") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("({set x([arguments]){}})") should be true. Threw exception SyntaxError: Expected an identifier but found '[' instead
 PASS true === true
 PASS Function("'use strict'; ({set x({x:arguments}){}})") threw exception of type SyntaxError.
-FAIL !!Function("({set x({x:arguments}){}})") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("({set x({x:arguments}){}})") should be true. Threw exception SyntaxError: Expected an identifier but found '{' instead
 PASS true === true
 PASS Function("'use strict'; ({set x(arguments){\"use strict\";}})") threw exception of type SyntaxError.
 PASS Function("({set x(arguments){\"use strict\";}})") threw exception of type SyntaxError.

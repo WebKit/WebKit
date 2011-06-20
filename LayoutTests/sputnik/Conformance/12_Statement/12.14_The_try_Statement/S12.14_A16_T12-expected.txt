@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 82: SyntaxError: Parse error
+CONSOLE MESSAGE: line 82: SyntaxError: Unexpected token '}'
 S12.14_A16_T12
 
 PASS Expected parsing failure

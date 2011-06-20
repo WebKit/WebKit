@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Parse error
+CONSOLE MESSAGE: line 76: SyntaxError: Expected an identifier but found '\u2028' instead
 S7.3_A6_T3
 
 PASS Expected parsing failure

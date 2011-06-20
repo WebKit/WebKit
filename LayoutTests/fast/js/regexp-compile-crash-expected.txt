@@ -4,9 +4,9 @@ On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE
 
 
 PASS !!/\)[;s]+/ is true
-PASS /[/ threw exception SyntaxError: Parse error.
-PASS /[a/ threw exception SyntaxError: Parse error.
-PASS /[-/ threw exception SyntaxError: Parse error.
+PASS /[/ threw exception SyntaxError: Unexpected token '/'.
+PASS /[a/ threw exception SyntaxError: Unexpected token '/'.
+PASS /[-/ threw exception SyntaxError: Unexpected token '/'.
 PASS !!/(a)/ is true
 PASS !!/(a){1,3}/ is true
 PASS No crashes, yay!

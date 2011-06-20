@@ -1,4 +1,11 @@
-CONSOLE MESSAGE: line 84: SyntaxError: Parse error
+CONSOLE MESSAGE: line 84: SyntaxError: Unrecognized token '/*/
+
+} catch (ex) {
+    sputnikException = ex;
+}
+
+var successfullyParsed = true;
+'
 S7.8.5_A1.2_T1
 
 PASS Expected parsing failure

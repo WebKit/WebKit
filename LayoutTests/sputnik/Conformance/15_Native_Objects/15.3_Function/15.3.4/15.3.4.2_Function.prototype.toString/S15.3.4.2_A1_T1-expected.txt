@@ -1,6 +1,6 @@
 S15.3.4.2_A1_T1
 
-FAIL SyntaxError: Parse error
+FAIL SyntaxError: Unexpected token '('
 
 TEST COMPLETE
 

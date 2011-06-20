@@ -15,7 +15,7 @@ PASS ((window.x)) = 9; x is 9
 PASS ((window["x"])) = 10; x is 10
 PASS (y, x) = "FAIL"; threw exception ReferenceError: Left side of assignment is not a reference..
 PASS (true ? x : y) = "FAIL"; threw exception ReferenceError: Left side of assignment is not a reference..
-PASS x++ = "FAIL"; threw exception SyntaxError: Parse error.
+PASS x++ = "FAIL"; threw exception SyntaxError: Unexpected token '='.
 PASS successfullyParsed is true
 
 TEST COMPLETE

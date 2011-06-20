@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Parse error
+CONSOLE MESSAGE: line 77: SyntaxError: Unrecognized token '"\u'
 S7.8.4_A7.2_T5
 
 PASS Expected parsing failure

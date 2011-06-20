@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Parse error
+CONSOLE MESSAGE: line 78: SyntaxError: Unexpected token 'else'
 S7.9_A11_T4
 
 PASS Expected parsing failure

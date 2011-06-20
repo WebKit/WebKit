@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Parse error
+CONSOLE MESSAGE: line 76: SyntaxError: Expected an identifier but found '\u000D' instead
 S7.3_A6_T2
 
 PASS Expected parsing failure

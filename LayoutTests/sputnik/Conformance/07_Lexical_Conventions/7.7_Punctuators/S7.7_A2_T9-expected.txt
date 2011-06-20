@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Parse error
+CONSOLE MESSAGE: line 76: SyntaxError: Unrecognized token '\u002A'
 S7.7_A2_T9
 
 PASS Expected parsing failure

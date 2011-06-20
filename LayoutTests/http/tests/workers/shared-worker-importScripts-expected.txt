@@ -27,7 +27,7 @@ Loaded resource 1
 PASS: Threw Error: NETWORK_ERR: XMLHttpRequest Exception 101 when load failed
 PASS: some resources were loaded despite the network error
 Loaded resource 1
-PASS: Threw SyntaxError: Parse error when encountering a syntax error in imported script
+PASS: Threw SyntaxError: Expected an identifier but found 'syntax' instead when encountering a syntax error in imported script
 PASS: some resources were loaded despite the presence of a syntax error
 Testing multiple arguments, with first resource throwing an exception:
 Loaded resource 1

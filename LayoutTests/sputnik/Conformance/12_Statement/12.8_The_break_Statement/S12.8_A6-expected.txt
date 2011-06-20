@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Parse error
+CONSOLE MESSAGE: line 80: SyntaxError: Label 'LABEL1' is not defined
 S12.8_A6
 
 PASS Expected parsing failure

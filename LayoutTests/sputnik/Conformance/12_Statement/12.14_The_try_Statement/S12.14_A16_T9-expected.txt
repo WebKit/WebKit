@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Parse error
+CONSOLE MESSAGE: line 77: SyntaxError: Unexpected token 'catch'
 S12.14_A16_T9
 
 PASS Expected parsing failure

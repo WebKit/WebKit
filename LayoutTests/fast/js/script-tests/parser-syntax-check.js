@@ -11,7 +11,7 @@ function runTest(_a, throws)
         eval(_a);
         success = true;
     } catch (e) {
-        success = e.toString() != "SyntaxError: Parse error";
+        success = !(e instanceof SyntaxError);
     }
     if (throws == !success) {
         if (throws)

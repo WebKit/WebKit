@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Parse error
+CONSOLE MESSAGE: line 76: SyntaxError: Use of reserved word 'export'
 S7.5.3_A1.10
 
 PASS Expected parsing failure

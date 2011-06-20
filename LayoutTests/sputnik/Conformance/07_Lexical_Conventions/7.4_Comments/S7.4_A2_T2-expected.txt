@@ -1,4 +1,11 @@
-CONSOLE MESSAGE: line 83: SyntaxError: Parse error
+CONSOLE MESSAGE: line 83: SyntaxError: Unrecognized token '/*CHECK#1/
+
+} catch (ex) {
+    sputnikException = ex;
+}
+
+var successfullyParsed = true;
+'
 S7.4_A2_T2
 
 PASS Expected parsing failure

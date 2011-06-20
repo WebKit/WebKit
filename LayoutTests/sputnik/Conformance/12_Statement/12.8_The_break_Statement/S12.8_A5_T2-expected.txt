@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 82: SyntaxError: Parse error
+CONSOLE MESSAGE: line 82: SyntaxError: Label 'IN_DO_FUNC' is not defined
 S12.8_A5_T2
 
 PASS Expected parsing failure

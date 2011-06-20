@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Parse error
+CONSOLE MESSAGE: line 76: SyntaxError: Expected an identifier but found '\u006D' instead
 S7.8.5_A3.1_T9
 
 FAIL successfullyParsed is not set

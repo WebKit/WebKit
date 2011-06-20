@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Parse error
+CONSOLE MESSAGE: line 76: SyntaxError: Unrecognized token '\u002B'
 S7.7_A2_T7
 
 PASS Expected parsing failure

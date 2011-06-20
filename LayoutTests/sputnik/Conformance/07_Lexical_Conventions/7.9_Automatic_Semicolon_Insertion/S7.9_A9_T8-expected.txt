@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Parse error
+CONSOLE MESSAGE: line 77: SyntaxError: Expected token 'while'
 S7.9_A9_T8
 
 PASS Expected parsing failure

@@ -1135,6 +1135,9 @@ returnToken:
 
 returnError:
     m_error = true;
+    tokenInfo->line = m_lineNumber;
+    tokenInfo->startOffset = startOffset;
+    tokenInfo->endOffset = currentOffset();
     return ERRORTOK;
 }
 

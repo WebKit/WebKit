@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Parse error
+CONSOLE MESSAGE: line 76: SyntaxError: Expected an identifier but found 'null' instead
 S8.2_A2
 
 PASS Expected parsing failure

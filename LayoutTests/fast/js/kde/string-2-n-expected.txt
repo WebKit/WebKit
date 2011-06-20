@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Unrecognized token '"broken'
 KDE JS Test
 
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Parse error
+CONSOLE MESSAGE: line 77: SyntaxError: Unrecognized token '"'
 S7.3_A2.1_T2
 
 PASS Expected parsing failure

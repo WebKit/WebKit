@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 1: SyntaxError: Parse error
+CONSOLE MESSAGE: line 1: SyntaxError: Unrecognized token ''
 PASS 1 of 3
 PASS 2 of 3
 PASS 3 of 3

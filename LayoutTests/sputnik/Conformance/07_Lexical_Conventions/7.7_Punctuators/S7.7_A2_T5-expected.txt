@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Parse error
+CONSOLE MESSAGE: line 77: SyntaxError: Unrecognized token '\u002E'
 S7.7_A2_T5
 
 PASS Expected parsing failure

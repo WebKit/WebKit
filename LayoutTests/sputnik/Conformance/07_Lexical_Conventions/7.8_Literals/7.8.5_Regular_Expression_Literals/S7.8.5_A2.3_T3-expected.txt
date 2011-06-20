@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Parse error
+CONSOLE MESSAGE: line 77: SyntaxError: Unexpected token '/'
 S7.8.5_A2.3_T3
 
 PASS Expected parsing failure

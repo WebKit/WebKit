@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Parse error
+CONSOLE MESSAGE: line 80: SyntaxError: Label 'LABEL_ANOTHER_LOOP' is not defined
 S12.7_A5_T1
 
 PASS Expected parsing failure

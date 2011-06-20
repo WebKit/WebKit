@@ -33,8 +33,8 @@ Testing regexp: /a\_/
 PASS regexp.test('a_') is true
 
 Testing regexp: [invalid \ variations]
-PASS /\/ threw exception SyntaxError: Parse error.
-PASS /a\/ threw exception SyntaxError: Parse error.
+PASS /\/ threw exception SyntaxError: Unexpected token '/'.
+PASS /a\/ threw exception SyntaxError: Unexpected token '/'.
 
 Testing regexp: /./
 PASS regexp.test('a') is true
@@ -51,7 +51,7 @@ PASS regexp.test('aaba') is true
 PASS regexp.lastIndex is 2
 
 Testing regexp: [invalid * variations]
-PASS /*/ threw exception SyntaxError: Parse error.
+PASS /*/ threw exception SyntaxError: Unrecognized token '/*/'.
 PASS /^*/ threw exception SyntaxError: Invalid regular expression: nothing to repeat.
 
 Testing regexp: /a+/gm
@@ -80,8 +80,8 @@ PASS /)/ threw exception SyntaxError: Invalid regular expression: unmatched pare
 PASS /a)/ threw exception SyntaxError: Invalid regular expression: unmatched parentheses.
 
 Testing regexp: [invalid [ variations]
-PASS /[/ threw exception SyntaxError: Parse error.
-PASS /a[/ threw exception SyntaxError: Parse error.
+PASS /[/ threw exception SyntaxError: Unexpected token '/'.
+PASS /a[/ threw exception SyntaxError: Unexpected token '/'.
 PASS /[b-a]/ threw exception SyntaxError: Invalid regular expression: range out of order in character class.
 PASS /a[b-a]/ threw exception SyntaxError: Invalid regular expression: range out of order in character class.
 

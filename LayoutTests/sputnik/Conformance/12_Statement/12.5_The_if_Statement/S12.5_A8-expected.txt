@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Parse error
+CONSOLE MESSAGE: line 78: SyntaxError: Unexpected token ')'
 S12.5_A8
 
 PASS Expected parsing failure

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 80: SyntaxError: Parse error
+CONSOLE MESSAGE: line 80: SyntaxError: Expected an identifier but found '}' instead
 S12.1_A4_T1
 
 PASS Expected parsing failure

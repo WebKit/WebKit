@@ -1,5 +1,5 @@
 PASS Function("'use strict'; function f(eval,[x]){}") threw exception of type SyntaxError.
-FAIL !!Function("function f(eval,[x]){}") should be true. Threw exception SyntaxError: Parse error
+FAIL !!Function("function f(eval,[x]){}") should be true. Threw exception SyntaxError: Expected an identifier but found '[' instead
 PASS true === true
  PASSED! 
 PASS successfullyParsed is true

@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 78: SyntaxError: Parse error
+CONSOLE MESSAGE: line 78: SyntaxError: Expected an identifier but found '--' instead
 S12.2_A8_T5
 
 PASS Expected parsing failure

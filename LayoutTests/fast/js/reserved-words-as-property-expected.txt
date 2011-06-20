@@ -3,294 +3,294 @@ Tests to ensure that we can use ES reserved words as property names.
 On success, you will see a series of "PASS" messages, followed by "TEST COMPLETE".
 
 
-PASS var true threw exception SyntaxError: Parse error.
-PASS (function(){var true}) threw exception SyntaxError: Parse error.
-PASS function g(true){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(true){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(true){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(true){}}) threw exception SyntaxError: Parse error.
-PASS function true(){} threw exception SyntaxError: Parse error.
-PASS (function(){function true(){}}) threw exception SyntaxError: Parse error.
-PASS var false threw exception SyntaxError: Parse error.
-PASS (function(){var false}) threw exception SyntaxError: Parse error.
-PASS function g(false){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(false){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(false){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(false){}}) threw exception SyntaxError: Parse error.
-PASS function false(){} threw exception SyntaxError: Parse error.
-PASS (function(){function false(){}}) threw exception SyntaxError: Parse error.
-PASS var null threw exception SyntaxError: Parse error.
-PASS (function(){var null}) threw exception SyntaxError: Parse error.
-PASS function g(null){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(null){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(null){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(null){}}) threw exception SyntaxError: Parse error.
-PASS function null(){} threw exception SyntaxError: Parse error.
-PASS (function(){function null(){}}) threw exception SyntaxError: Parse error.
-PASS var break threw exception SyntaxError: Parse error.
-PASS (function(){var break}) threw exception SyntaxError: Parse error.
-PASS function g(break){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(break){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(break){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(break){}}) threw exception SyntaxError: Parse error.
-PASS function break(){} threw exception SyntaxError: Parse error.
-PASS (function(){function break(){}}) threw exception SyntaxError: Parse error.
-PASS var case threw exception SyntaxError: Parse error.
-PASS (function(){var case}) threw exception SyntaxError: Parse error.
-PASS function g(case){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(case){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(case){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(case){}}) threw exception SyntaxError: Parse error.
-PASS function case(){} threw exception SyntaxError: Parse error.
-PASS (function(){function case(){}}) threw exception SyntaxError: Parse error.
-PASS var catch threw exception SyntaxError: Parse error.
-PASS (function(){var catch}) threw exception SyntaxError: Parse error.
-PASS function g(catch){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(catch){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(catch){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(catch){}}) threw exception SyntaxError: Parse error.
-PASS function catch(){} threw exception SyntaxError: Parse error.
-PASS (function(){function catch(){}}) threw exception SyntaxError: Parse error.
-PASS var continue threw exception SyntaxError: Parse error.
-PASS (function(){var continue}) threw exception SyntaxError: Parse error.
-PASS function g(continue){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(continue){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(continue){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(continue){}}) threw exception SyntaxError: Parse error.
-PASS function continue(){} threw exception SyntaxError: Parse error.
-PASS (function(){function continue(){}}) threw exception SyntaxError: Parse error.
-PASS var debugger threw exception SyntaxError: Parse error.
-PASS (function(){var debugger}) threw exception SyntaxError: Parse error.
-PASS function g(debugger){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(debugger){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(debugger){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(debugger){}}) threw exception SyntaxError: Parse error.
-PASS function debugger(){} threw exception SyntaxError: Parse error.
-PASS (function(){function debugger(){}}) threw exception SyntaxError: Parse error.
-PASS var default threw exception SyntaxError: Parse error.
-PASS (function(){var default}) threw exception SyntaxError: Parse error.
-PASS function g(default){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(default){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(default){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(default){}}) threw exception SyntaxError: Parse error.
-PASS function default(){} threw exception SyntaxError: Parse error.
-PASS (function(){function default(){}}) threw exception SyntaxError: Parse error.
-PASS var delete threw exception SyntaxError: Parse error.
-PASS (function(){var delete}) threw exception SyntaxError: Parse error.
-PASS function g(delete){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(delete){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(delete){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(delete){}}) threw exception SyntaxError: Parse error.
-PASS function delete(){} threw exception SyntaxError: Parse error.
-PASS (function(){function delete(){}}) threw exception SyntaxError: Parse error.
-PASS var do threw exception SyntaxError: Parse error.
-PASS (function(){var do}) threw exception SyntaxError: Parse error.
-PASS function g(do){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(do){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(do){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(do){}}) threw exception SyntaxError: Parse error.
-PASS function do(){} threw exception SyntaxError: Parse error.
-PASS (function(){function do(){}}) threw exception SyntaxError: Parse error.
-PASS var else threw exception SyntaxError: Parse error.
-PASS (function(){var else}) threw exception SyntaxError: Parse error.
-PASS function g(else){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(else){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(else){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(else){}}) threw exception SyntaxError: Parse error.
-PASS function else(){} threw exception SyntaxError: Parse error.
-PASS (function(){function else(){}}) threw exception SyntaxError: Parse error.
-PASS var finally threw exception SyntaxError: Parse error.
-PASS (function(){var finally}) threw exception SyntaxError: Parse error.
-PASS function g(finally){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(finally){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(finally){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(finally){}}) threw exception SyntaxError: Parse error.
-PASS function finally(){} threw exception SyntaxError: Parse error.
-PASS (function(){function finally(){}}) threw exception SyntaxError: Parse error.
-PASS var for threw exception SyntaxError: Parse error.
-PASS (function(){var for}) threw exception SyntaxError: Parse error.
-PASS function g(for){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(for){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(for){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(for){}}) threw exception SyntaxError: Parse error.
-PASS function for(){} threw exception SyntaxError: Parse error.
-PASS (function(){function for(){}}) threw exception SyntaxError: Parse error.
-PASS var function threw exception SyntaxError: Parse error.
-PASS (function(){var function}) threw exception SyntaxError: Parse error.
-PASS function g(function){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(function){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(function){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(function){}}) threw exception SyntaxError: Parse error.
-PASS function function(){} threw exception SyntaxError: Parse error.
-PASS (function(){function function(){}}) threw exception SyntaxError: Parse error.
-PASS var if threw exception SyntaxError: Parse error.
-PASS (function(){var if}) threw exception SyntaxError: Parse error.
-PASS function g(if){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(if){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(if){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(if){}}) threw exception SyntaxError: Parse error.
-PASS function if(){} threw exception SyntaxError: Parse error.
-PASS (function(){function if(){}}) threw exception SyntaxError: Parse error.
-PASS var in threw exception SyntaxError: Parse error.
-PASS (function(){var in}) threw exception SyntaxError: Parse error.
-PASS function g(in){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(in){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(in){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(in){}}) threw exception SyntaxError: Parse error.
-PASS function in(){} threw exception SyntaxError: Parse error.
-PASS (function(){function in(){}}) threw exception SyntaxError: Parse error.
-PASS var instanceof threw exception SyntaxError: Parse error.
-PASS (function(){var instanceof}) threw exception SyntaxError: Parse error.
-PASS function g(instanceof){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(instanceof){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(instanceof){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(instanceof){}}) threw exception SyntaxError: Parse error.
-PASS function instanceof(){} threw exception SyntaxError: Parse error.
-PASS (function(){function instanceof(){}}) threw exception SyntaxError: Parse error.
-PASS var new threw exception SyntaxError: Parse error.
-PASS (function(){var new}) threw exception SyntaxError: Parse error.
-PASS function g(new){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(new){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(new){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(new){}}) threw exception SyntaxError: Parse error.
-PASS function new(){} threw exception SyntaxError: Parse error.
-PASS (function(){function new(){}}) threw exception SyntaxError: Parse error.
-PASS var return threw exception SyntaxError: Parse error.
-PASS (function(){var return}) threw exception SyntaxError: Parse error.
-PASS function g(return){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(return){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(return){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(return){}}) threw exception SyntaxError: Parse error.
-PASS function return(){} threw exception SyntaxError: Parse error.
-PASS (function(){function return(){}}) threw exception SyntaxError: Parse error.
-PASS var switch threw exception SyntaxError: Parse error.
-PASS (function(){var switch}) threw exception SyntaxError: Parse error.
-PASS function g(switch){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(switch){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(switch){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(switch){}}) threw exception SyntaxError: Parse error.
-PASS function switch(){} threw exception SyntaxError: Parse error.
-PASS (function(){function switch(){}}) threw exception SyntaxError: Parse error.
-PASS var this threw exception SyntaxError: Parse error.
-PASS (function(){var this}) threw exception SyntaxError: Parse error.
-PASS function g(this){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(this){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(this){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(this){}}) threw exception SyntaxError: Parse error.
-PASS function this(){} threw exception SyntaxError: Parse error.
-PASS (function(){function this(){}}) threw exception SyntaxError: Parse error.
-PASS var throw threw exception SyntaxError: Parse error.
-PASS (function(){var throw}) threw exception SyntaxError: Parse error.
-PASS function g(throw){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(throw){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(throw){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(throw){}}) threw exception SyntaxError: Parse error.
-PASS function throw(){} threw exception SyntaxError: Parse error.
-PASS (function(){function throw(){}}) threw exception SyntaxError: Parse error.
-PASS var try threw exception SyntaxError: Parse error.
-PASS (function(){var try}) threw exception SyntaxError: Parse error.
-PASS function g(try){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(try){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(try){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(try){}}) threw exception SyntaxError: Parse error.
-PASS function try(){} threw exception SyntaxError: Parse error.
-PASS (function(){function try(){}}) threw exception SyntaxError: Parse error.
-PASS var typeof threw exception SyntaxError: Parse error.
-PASS (function(){var typeof}) threw exception SyntaxError: Parse error.
-PASS function g(typeof){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(typeof){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(typeof){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(typeof){}}) threw exception SyntaxError: Parse error.
-PASS function typeof(){} threw exception SyntaxError: Parse error.
-PASS (function(){function typeof(){}}) threw exception SyntaxError: Parse error.
-PASS var var threw exception SyntaxError: Parse error.
-PASS (function(){var var}) threw exception SyntaxError: Parse error.
-PASS function g(var){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(var){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(var){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(var){}}) threw exception SyntaxError: Parse error.
-PASS function var(){} threw exception SyntaxError: Parse error.
-PASS (function(){function var(){}}) threw exception SyntaxError: Parse error.
-PASS var void threw exception SyntaxError: Parse error.
-PASS (function(){var void}) threw exception SyntaxError: Parse error.
-PASS function g(void){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(void){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(void){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(void){}}) threw exception SyntaxError: Parse error.
-PASS function void(){} threw exception SyntaxError: Parse error.
-PASS (function(){function void(){}}) threw exception SyntaxError: Parse error.
-PASS var while threw exception SyntaxError: Parse error.
-PASS (function(){var while}) threw exception SyntaxError: Parse error.
-PASS function g(while){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(while){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(while){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(while){}}) threw exception SyntaxError: Parse error.
-PASS function while(){} threw exception SyntaxError: Parse error.
-PASS (function(){function while(){}}) threw exception SyntaxError: Parse error.
-PASS var with threw exception SyntaxError: Parse error.
-PASS (function(){var with}) threw exception SyntaxError: Parse error.
-PASS function g(with){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(with){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(with){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(with){}}) threw exception SyntaxError: Parse error.
-PASS function with(){} threw exception SyntaxError: Parse error.
-PASS (function(){function with(){}}) threw exception SyntaxError: Parse error.
-PASS var class threw exception SyntaxError: Parse error.
-PASS (function(){var class}) threw exception SyntaxError: Parse error.
-PASS function g(class){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(class){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(class){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(class){}}) threw exception SyntaxError: Parse error.
-PASS function class(){} threw exception SyntaxError: Parse error.
-PASS (function(){function class(){}}) threw exception SyntaxError: Parse error.
-PASS var const threw exception SyntaxError: Parse error.
-PASS (function(){var const}) threw exception SyntaxError: Parse error.
-PASS function g(const){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(const){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(const){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(const){}}) threw exception SyntaxError: Parse error.
-PASS function const(){} threw exception SyntaxError: Parse error.
-PASS (function(){function const(){}}) threw exception SyntaxError: Parse error.
-PASS var enum threw exception SyntaxError: Parse error.
-PASS (function(){var enum}) threw exception SyntaxError: Parse error.
-PASS function g(enum){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(enum){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(enum){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(enum){}}) threw exception SyntaxError: Parse error.
-PASS function enum(){} threw exception SyntaxError: Parse error.
-PASS (function(){function enum(){}}) threw exception SyntaxError: Parse error.
-PASS var export threw exception SyntaxError: Parse error.
-PASS (function(){var export}) threw exception SyntaxError: Parse error.
-PASS function g(export){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(export){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(export){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(export){}}) threw exception SyntaxError: Parse error.
-PASS function export(){} threw exception SyntaxError: Parse error.
-PASS (function(){function export(){}}) threw exception SyntaxError: Parse error.
-PASS var extends threw exception SyntaxError: Parse error.
-PASS (function(){var extends}) threw exception SyntaxError: Parse error.
-PASS function g(extends){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(extends){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(extends){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(extends){}}) threw exception SyntaxError: Parse error.
-PASS function extends(){} threw exception SyntaxError: Parse error.
-PASS (function(){function extends(){}}) threw exception SyntaxError: Parse error.
-PASS var import threw exception SyntaxError: Parse error.
-PASS (function(){var import}) threw exception SyntaxError: Parse error.
-PASS function g(import){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(import){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(import){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(import){}}) threw exception SyntaxError: Parse error.
-PASS function import(){} threw exception SyntaxError: Parse error.
-PASS (function(){function import(){}}) threw exception SyntaxError: Parse error.
-PASS var super threw exception SyntaxError: Parse error.
-PASS (function(){var super}) threw exception SyntaxError: Parse error.
-PASS function g(super){} threw exception SyntaxError: Parse error.
-PASS (function(){function g(super){}}) threw exception SyntaxError: Parse error.
-PASS try{}catch(super){} threw exception SyntaxError: Parse error.
-PASS (function(){try{}catch(super){}}) threw exception SyntaxError: Parse error.
-PASS function super(){} threw exception SyntaxError: Parse error.
-PASS (function(){function super(){}}) threw exception SyntaxError: Parse error.
+PASS var true threw exception SyntaxError: Expected an identifier but found 'true' instead.
+PASS (function(){var true}) threw exception SyntaxError: Expected an identifier but found 'true' instead.
+PASS function g(true){} threw exception SyntaxError: Expected an identifier but found 'true' instead.
+PASS (function(){function g(true){}}) threw exception SyntaxError: Expected an identifier but found 'true' instead.
+PASS try{}catch(true){} threw exception SyntaxError: Expected an identifier but found 'true' instead.
+PASS (function(){try{}catch(true){}}) threw exception SyntaxError: Expected an identifier but found 'true' instead.
+PASS function true(){} threw exception SyntaxError: Unexpected token 'true'.
+PASS (function(){function true(){}}) threw exception SyntaxError: Unexpected token 'true'.
+PASS var false threw exception SyntaxError: Expected an identifier but found 'false' instead.
+PASS (function(){var false}) threw exception SyntaxError: Expected an identifier but found 'false' instead.
+PASS function g(false){} threw exception SyntaxError: Expected an identifier but found 'false' instead.
+PASS (function(){function g(false){}}) threw exception SyntaxError: Expected an identifier but found 'false' instead.
+PASS try{}catch(false){} threw exception SyntaxError: Expected an identifier but found 'false' instead.
+PASS (function(){try{}catch(false){}}) threw exception SyntaxError: Expected an identifier but found 'false' instead.
+PASS function false(){} threw exception SyntaxError: Unexpected token 'false'.
+PASS (function(){function false(){}}) threw exception SyntaxError: Unexpected token 'false'.
+PASS var null threw exception SyntaxError: Expected an identifier but found 'null' instead.
+PASS (function(){var null}) threw exception SyntaxError: Expected an identifier but found 'null' instead.
+PASS function g(null){} threw exception SyntaxError: Expected an identifier but found 'null' instead.
+PASS (function(){function g(null){}}) threw exception SyntaxError: Expected an identifier but found 'null' instead.
+PASS try{}catch(null){} threw exception SyntaxError: Expected an identifier but found 'null' instead.
+PASS (function(){try{}catch(null){}}) threw exception SyntaxError: Expected an identifier but found 'null' instead.
+PASS function null(){} threw exception SyntaxError: Unexpected token 'null'.
+PASS (function(){function null(){}}) threw exception SyntaxError: Unexpected token 'null'.
+PASS var break threw exception SyntaxError: Expected an identifier but found 'break' instead.
+PASS (function(){var break}) threw exception SyntaxError: Expected an identifier but found 'break' instead.
+PASS function g(break){} threw exception SyntaxError: Expected an identifier but found 'break' instead.
+PASS (function(){function g(break){}}) threw exception SyntaxError: Expected an identifier but found 'break' instead.
+PASS try{}catch(break){} threw exception SyntaxError: Expected an identifier but found 'break' instead.
+PASS (function(){try{}catch(break){}}) threw exception SyntaxError: Expected an identifier but found 'break' instead.
+PASS function break(){} threw exception SyntaxError: Unexpected token 'break'.
+PASS (function(){function break(){}}) threw exception SyntaxError: Unexpected token 'break'.
+PASS var case threw exception SyntaxError: Expected an identifier but found 'case' instead.
+PASS (function(){var case}) threw exception SyntaxError: Expected an identifier but found 'case' instead.
+PASS function g(case){} threw exception SyntaxError: Expected an identifier but found 'case' instead.
+PASS (function(){function g(case){}}) threw exception SyntaxError: Expected an identifier but found 'case' instead.
+PASS try{}catch(case){} threw exception SyntaxError: Expected an identifier but found 'case' instead.
+PASS (function(){try{}catch(case){}}) threw exception SyntaxError: Expected an identifier but found 'case' instead.
+PASS function case(){} threw exception SyntaxError: Unexpected token 'case'.
+PASS (function(){function case(){}}) threw exception SyntaxError: Unexpected token 'case'.
+PASS var catch threw exception SyntaxError: Expected an identifier but found 'catch' instead.
+PASS (function(){var catch}) threw exception SyntaxError: Expected an identifier but found 'catch' instead.
+PASS function g(catch){} threw exception SyntaxError: Expected an identifier but found 'catch' instead.
+PASS (function(){function g(catch){}}) threw exception SyntaxError: Expected an identifier but found 'catch' instead.
+PASS try{}catch(catch){} threw exception SyntaxError: Expected an identifier but found 'catch' instead.
+PASS (function(){try{}catch(catch){}}) threw exception SyntaxError: Expected an identifier but found 'catch' instead.
+PASS function catch(){} threw exception SyntaxError: Unexpected token 'catch'.
+PASS (function(){function catch(){}}) threw exception SyntaxError: Unexpected token 'catch'.
+PASS var continue threw exception SyntaxError: Expected an identifier but found 'continue' instead.
+PASS (function(){var continue}) threw exception SyntaxError: Expected an identifier but found 'continue' instead.
+PASS function g(continue){} threw exception SyntaxError: Expected an identifier but found 'continue' instead.
+PASS (function(){function g(continue){}}) threw exception SyntaxError: Expected an identifier but found 'continue' instead.
+PASS try{}catch(continue){} threw exception SyntaxError: Expected an identifier but found 'continue' instead.
+PASS (function(){try{}catch(continue){}}) threw exception SyntaxError: Expected an identifier but found 'continue' instead.
+PASS function continue(){} threw exception SyntaxError: Unexpected token 'continue'.
+PASS (function(){function continue(){}}) threw exception SyntaxError: Unexpected token 'continue'.
+PASS var debugger threw exception SyntaxError: Expected an identifier but found 'debugger' instead.
+PASS (function(){var debugger}) threw exception SyntaxError: Expected an identifier but found 'debugger' instead.
+PASS function g(debugger){} threw exception SyntaxError: Expected an identifier but found 'debugger' instead.
+PASS (function(){function g(debugger){}}) threw exception SyntaxError: Expected an identifier but found 'debugger' instead.
+PASS try{}catch(debugger){} threw exception SyntaxError: Expected an identifier but found 'debugger' instead.
+PASS (function(){try{}catch(debugger){}}) threw exception SyntaxError: Expected an identifier but found 'debugger' instead.
+PASS function debugger(){} threw exception SyntaxError: Unexpected token 'debugger'.
+PASS (function(){function debugger(){}}) threw exception SyntaxError: Unexpected token 'debugger'.
+PASS var default threw exception SyntaxError: Expected an identifier but found 'default' instead.
+PASS (function(){var default}) threw exception SyntaxError: Expected an identifier but found 'default' instead.
+PASS function g(default){} threw exception SyntaxError: Expected an identifier but found 'default' instead.
+PASS (function(){function g(default){}}) threw exception SyntaxError: Expected an identifier but found 'default' instead.
+PASS try{}catch(default){} threw exception SyntaxError: Expected an identifier but found 'default' instead.
+PASS (function(){try{}catch(default){}}) threw exception SyntaxError: Expected an identifier but found 'default' instead.
+PASS function default(){} threw exception SyntaxError: Unexpected token 'defualt'.
+PASS (function(){function default(){}}) threw exception SyntaxError: Unexpected token 'defualt'.
+PASS var delete threw exception SyntaxError: Expected an identifier but found 'delete' instead.
+PASS (function(){var delete}) threw exception SyntaxError: Expected an identifier but found 'delete' instead.
+PASS function g(delete){} threw exception SyntaxError: Expected an identifier but found 'delete' instead.
+PASS (function(){function g(delete){}}) threw exception SyntaxError: Expected an identifier but found 'delete' instead.
+PASS try{}catch(delete){} threw exception SyntaxError: Expected an identifier but found 'delete' instead.
+PASS (function(){try{}catch(delete){}}) threw exception SyntaxError: Expected an identifier but found 'delete' instead.
+PASS function delete(){} threw exception SyntaxError: Unexpected token 'delete'.
+PASS (function(){function delete(){}}) threw exception SyntaxError: Unexpected token 'delete'.
+PASS var do threw exception SyntaxError: Expected an identifier but found 'do' instead.
+PASS (function(){var do}) threw exception SyntaxError: Expected an identifier but found 'do' instead.
+PASS function g(do){} threw exception SyntaxError: Expected an identifier but found 'do' instead.
+PASS (function(){function g(do){}}) threw exception SyntaxError: Expected an identifier but found 'do' instead.
+PASS try{}catch(do){} threw exception SyntaxError: Expected an identifier but found 'do' instead.
+PASS (function(){try{}catch(do){}}) threw exception SyntaxError: Expected an identifier but found 'do' instead.
+PASS function do(){} threw exception SyntaxError: Unexpected token 'do'.
+PASS (function(){function do(){}}) threw exception SyntaxError: Unexpected token 'do'.
+PASS var else threw exception SyntaxError: Expected an identifier but found 'else' instead.
+PASS (function(){var else}) threw exception SyntaxError: Expected an identifier but found 'else' instead.
+PASS function g(else){} threw exception SyntaxError: Expected an identifier but found 'else' instead.
+PASS (function(){function g(else){}}) threw exception SyntaxError: Expected an identifier but found 'else' instead.
+PASS try{}catch(else){} threw exception SyntaxError: Expected an identifier but found 'else' instead.
+PASS (function(){try{}catch(else){}}) threw exception SyntaxError: Expected an identifier but found 'else' instead.
+PASS function else(){} threw exception SyntaxError: Unexpected token 'else'.
+PASS (function(){function else(){}}) threw exception SyntaxError: Unexpected token 'else'.
+PASS var finally threw exception SyntaxError: Expected an identifier but found 'finally' instead.
+PASS (function(){var finally}) threw exception SyntaxError: Expected an identifier but found 'finally' instead.
+PASS function g(finally){} threw exception SyntaxError: Expected an identifier but found 'finally' instead.
+PASS (function(){function g(finally){}}) threw exception SyntaxError: Expected an identifier but found 'finally' instead.
+PASS try{}catch(finally){} threw exception SyntaxError: Expected an identifier but found 'finally' instead.
+PASS (function(){try{}catch(finally){}}) threw exception SyntaxError: Expected an identifier but found 'finally' instead.
+PASS function finally(){} threw exception SyntaxError: Unexpected token 'finally'.
+PASS (function(){function finally(){}}) threw exception SyntaxError: Unexpected token 'finally'.
+PASS var for threw exception SyntaxError: Expected an identifier but found 'for' instead.
+PASS (function(){var for}) threw exception SyntaxError: Expected an identifier but found 'for' instead.
+PASS function g(for){} threw exception SyntaxError: Expected an identifier but found 'for' instead.
+PASS (function(){function g(for){}}) threw exception SyntaxError: Expected an identifier but found 'for' instead.
+PASS try{}catch(for){} threw exception SyntaxError: Expected an identifier but found 'for' instead.
+PASS (function(){try{}catch(for){}}) threw exception SyntaxError: Expected an identifier but found 'for' instead.
+PASS function for(){} threw exception SyntaxError: Unexpected token 'for'.
+PASS (function(){function for(){}}) threw exception SyntaxError: Unexpected token 'for'.
+PASS var function threw exception SyntaxError: Expected an identifier but found 'function' instead.
+PASS (function(){var function}) threw exception SyntaxError: Expected an identifier but found 'function' instead.
+PASS function g(function){} threw exception SyntaxError: Expected an identifier but found 'function' instead.
+PASS (function(){function g(function){}}) threw exception SyntaxError: Expected an identifier but found 'function' instead.
+PASS try{}catch(function){} threw exception SyntaxError: Expected an identifier but found 'function' instead.
+PASS (function(){try{}catch(function){}}) threw exception SyntaxError: Expected an identifier but found 'function' instead.
+PASS function function(){} threw exception SyntaxError: Unexpected token 'function'.
+PASS (function(){function function(){}}) threw exception SyntaxError: Unexpected token 'function'.
+PASS var if threw exception SyntaxError: Expected an identifier but found 'if' instead.
+PASS (function(){var if}) threw exception SyntaxError: Expected an identifier but found 'if' instead.
+PASS function g(if){} threw exception SyntaxError: Expected an identifier but found 'if' instead.
+PASS (function(){function g(if){}}) threw exception SyntaxError: Expected an identifier but found 'if' instead.
+PASS try{}catch(if){} threw exception SyntaxError: Expected an identifier but found 'if' instead.
+PASS (function(){try{}catch(if){}}) threw exception SyntaxError: Expected an identifier but found 'if' instead.
+PASS function if(){} threw exception SyntaxError: Unexpected token 'if'.
+PASS (function(){function if(){}}) threw exception SyntaxError: Unexpected token 'if'.
+PASS var in threw exception SyntaxError: Expected an identifier but found 'in' instead.
+PASS (function(){var in}) threw exception SyntaxError: Expected an identifier but found 'in' instead.
+PASS function g(in){} threw exception SyntaxError: Expected an identifier but found 'in' instead.
+PASS (function(){function g(in){}}) threw exception SyntaxError: Expected an identifier but found 'in' instead.
+PASS try{}catch(in){} threw exception SyntaxError: Expected an identifier but found 'in' instead.
+PASS (function(){try{}catch(in){}}) threw exception SyntaxError: Expected an identifier but found 'in' instead.
+PASS function in(){} threw exception SyntaxError: Unexpected token 'in'.
+PASS (function(){function in(){}}) threw exception SyntaxError: Unexpected token 'in'.
+PASS var instanceof threw exception SyntaxError: Expected an identifier but found 'instanceof' instead.
+PASS (function(){var instanceof}) threw exception SyntaxError: Expected an identifier but found 'instanceof' instead.
+PASS function g(instanceof){} threw exception SyntaxError: Expected an identifier but found 'instanceof' instead.
+PASS (function(){function g(instanceof){}}) threw exception SyntaxError: Expected an identifier but found 'instanceof' instead.
+PASS try{}catch(instanceof){} threw exception SyntaxError: Expected an identifier but found 'instanceof' instead.
+PASS (function(){try{}catch(instanceof){}}) threw exception SyntaxError: Expected an identifier but found 'instanceof' instead.
+PASS function instanceof(){} threw exception SyntaxError: Unexpected token 'instanceof'.
+PASS (function(){function instanceof(){}}) threw exception SyntaxError: Unexpected token 'instanceof'.
+PASS var new threw exception SyntaxError: Expected an identifier but found 'new' instead.
+PASS (function(){var new}) threw exception SyntaxError: Expected an identifier but found 'new' instead.
+PASS function g(new){} threw exception SyntaxError: Expected an identifier but found 'new' instead.
+PASS (function(){function g(new){}}) threw exception SyntaxError: Expected an identifier but found 'new' instead.
+PASS try{}catch(new){} threw exception SyntaxError: Expected an identifier but found 'new' instead.
+PASS (function(){try{}catch(new){}}) threw exception SyntaxError: Expected an identifier but found 'new' instead.
+PASS function new(){} threw exception SyntaxError: Unexpected token 'new'.
+PASS (function(){function new(){}}) threw exception SyntaxError: Unexpected token 'new'.
+PASS var return threw exception SyntaxError: Expected an identifier but found 'return' instead.
+PASS (function(){var return}) threw exception SyntaxError: Expected an identifier but found 'return' instead.
+PASS function g(return){} threw exception SyntaxError: Expected an identifier but found 'return' instead.
+PASS (function(){function g(return){}}) threw exception SyntaxError: Expected an identifier but found 'return' instead.
+PASS try{}catch(return){} threw exception SyntaxError: Expected an identifier but found 'return' instead.
+PASS (function(){try{}catch(return){}}) threw exception SyntaxError: Expected an identifier but found 'return' instead.
+PASS function return(){} threw exception SyntaxError: Return statements are only valid inside functions.
+PASS (function(){function return(){}}) threw exception SyntaxError: Return statements are only valid inside functions.
+PASS var switch threw exception SyntaxError: Expected an identifier but found 'switch' instead.
+PASS (function(){var switch}) threw exception SyntaxError: Expected an identifier but found 'switch' instead.
+PASS function g(switch){} threw exception SyntaxError: Expected an identifier but found 'switch' instead.
+PASS (function(){function g(switch){}}) threw exception SyntaxError: Expected an identifier but found 'switch' instead.
+PASS try{}catch(switch){} threw exception SyntaxError: Expected an identifier but found 'switch' instead.
+PASS (function(){try{}catch(switch){}}) threw exception SyntaxError: Expected an identifier but found 'switch' instead.
+PASS function switch(){} threw exception SyntaxError: Unexpected token 'switch'.
+PASS (function(){function switch(){}}) threw exception SyntaxError: Unexpected token 'switch'.
+PASS var this threw exception SyntaxError: Expected an identifier but found 'this' instead.
+PASS (function(){var this}) threw exception SyntaxError: Expected an identifier but found 'this' instead.
+PASS function g(this){} threw exception SyntaxError: Expected an identifier but found 'this' instead.
+PASS (function(){function g(this){}}) threw exception SyntaxError: Expected an identifier but found 'this' instead.
+PASS try{}catch(this){} threw exception SyntaxError: Expected an identifier but found 'this' instead.
+PASS (function(){try{}catch(this){}}) threw exception SyntaxError: Expected an identifier but found 'this' instead.
+PASS function this(){} threw exception SyntaxError: Unexpected token 'this'.
+PASS (function(){function this(){}}) threw exception SyntaxError: Unexpected token 'this'.
+PASS var throw threw exception SyntaxError: Expected an identifier but found 'throw' instead.
+PASS (function(){var throw}) threw exception SyntaxError: Expected an identifier but found 'throw' instead.
+PASS function g(throw){} threw exception SyntaxError: Expected an identifier but found 'throw' instead.
+PASS (function(){function g(throw){}}) threw exception SyntaxError: Expected an identifier but found 'throw' instead.
+PASS try{}catch(throw){} threw exception SyntaxError: Expected an identifier but found 'throw' instead.
+PASS (function(){try{}catch(throw){}}) threw exception SyntaxError: Expected an identifier but found 'throw' instead.
+PASS function throw(){} threw exception SyntaxError: Unexpected token 'throw'.
+PASS (function(){function throw(){}}) threw exception SyntaxError: Unexpected token 'throw'.
+PASS var try threw exception SyntaxError: Expected an identifier but found 'try' instead.
+PASS (function(){var try}) threw exception SyntaxError: Expected an identifier but found 'try' instead.
+PASS function g(try){} threw exception SyntaxError: Expected an identifier but found 'try' instead.
+PASS (function(){function g(try){}}) threw exception SyntaxError: Expected an identifier but found 'try' instead.
+PASS try{}catch(try){} threw exception SyntaxError: Expected an identifier but found 'try' instead.
+PASS (function(){try{}catch(try){}}) threw exception SyntaxError: Expected an identifier but found 'try' instead.
+PASS function try(){} threw exception SyntaxError: Unexpected token 'try'.
+PASS (function(){function try(){}}) threw exception SyntaxError: Unexpected token 'try'.
+PASS var typeof threw exception SyntaxError: Expected an identifier but found 'typeof' instead.
+PASS (function(){var typeof}) threw exception SyntaxError: Expected an identifier but found 'typeof' instead.
+PASS function g(typeof){} threw exception SyntaxError: Expected an identifier but found 'typeof' instead.
+PASS (function(){function g(typeof){}}) threw exception SyntaxError: Expected an identifier but found 'typeof' instead.
+PASS try{}catch(typeof){} threw exception SyntaxError: Expected an identifier but found 'typeof' instead.
+PASS (function(){try{}catch(typeof){}}) threw exception SyntaxError: Expected an identifier but found 'typeof' instead.
+PASS function typeof(){} threw exception SyntaxError: Unexpected token 'typeof'.
+PASS (function(){function typeof(){}}) threw exception SyntaxError: Unexpected token 'typeof'.
+PASS var var threw exception SyntaxError: Expected an identifier but found 'var' instead.
+PASS (function(){var var}) threw exception SyntaxError: Expected an identifier but found 'var' instead.
+PASS function g(var){} threw exception SyntaxError: Expected an identifier but found 'var' instead.
+PASS (function(){function g(var){}}) threw exception SyntaxError: Expected an identifier but found 'var' instead.
+PASS try{}catch(var){} threw exception SyntaxError: Expected an identifier but found 'var' instead.
+PASS (function(){try{}catch(var){}}) threw exception SyntaxError: Expected an identifier but found 'var' instead.
+PASS function var(){} threw exception SyntaxError: Unexpected token 'var'.
+PASS (function(){function var(){}}) threw exception SyntaxError: Unexpected token 'var'.
+PASS var void threw exception SyntaxError: Expected an identifier but found 'void' instead.
+PASS (function(){var void}) threw exception SyntaxError: Expected an identifier but found 'void' instead.
+PASS function g(void){} threw exception SyntaxError: Expected an identifier but found 'void' instead.
+PASS (function(){function g(void){}}) threw exception SyntaxError: Expected an identifier but found 'void' instead.
+PASS try{}catch(void){} threw exception SyntaxError: Expected an identifier but found 'void' instead.
+PASS (function(){try{}catch(void){}}) threw exception SyntaxError: Expected an identifier but found 'void' instead.
+PASS function void(){} threw exception SyntaxError: Unexpected token 'void'.
+PASS (function(){function void(){}}) threw exception SyntaxError: Unexpected token 'void'.
+PASS var while threw exception SyntaxError: Expected an identifier but found 'while' instead.
+PASS (function(){var while}) threw exception SyntaxError: Expected an identifier but found 'while' instead.
+PASS function g(while){} threw exception SyntaxError: Expected an identifier but found 'while' instead.
+PASS (function(){function g(while){}}) threw exception SyntaxError: Expected an identifier but found 'while' instead.
+PASS try{}catch(while){} threw exception SyntaxError: Expected an identifier but found 'while' instead.
+PASS (function(){try{}catch(while){}}) threw exception SyntaxError: Expected an identifier but found 'while' instead.
+PASS function while(){} threw exception SyntaxError: Unexpected token 'while'.
+PASS (function(){function while(){}}) threw exception SyntaxError: Unexpected token 'while'.
+PASS var with threw exception SyntaxError: Expected an identifier but found 'with' instead.
+PASS (function(){var with}) threw exception SyntaxError: Expected an identifier but found 'with' instead.
+PASS function g(with){} threw exception SyntaxError: Expected an identifier but found 'with' instead.
+PASS (function(){function g(with){}}) threw exception SyntaxError: Expected an identifier but found 'with' instead.
+PASS try{}catch(with){} threw exception SyntaxError: Expected an identifier but found 'with' instead.
+PASS (function(){try{}catch(with){}}) threw exception SyntaxError: Expected an identifier but found 'with' instead.
+PASS function with(){} threw exception SyntaxError: Unexpected token 'with'.
+PASS (function(){function with(){}}) threw exception SyntaxError: Unexpected token 'with'.
+PASS var class threw exception SyntaxError: Expected an identifier but found 'class' instead.
+PASS (function(){var class}) threw exception SyntaxError: Expected an identifier but found 'class' instead.
+PASS function g(class){} threw exception SyntaxError: Expected an identifier but found 'class' instead.
+PASS (function(){function g(class){}}) threw exception SyntaxError: Expected an identifier but found 'class' instead.
+PASS try{}catch(class){} threw exception SyntaxError: Expected an identifier but found 'class' instead.
+PASS (function(){try{}catch(class){}}) threw exception SyntaxError: Expected an identifier but found 'class' instead.
+PASS function class(){} threw exception SyntaxError: Use of reserved word 'class'.
+PASS (function(){function class(){}}) threw exception SyntaxError: Use of reserved word 'class'.
+PASS var const threw exception SyntaxError: Expected an identifier but found 'const' instead.
+PASS (function(){var const}) threw exception SyntaxError: Expected an identifier but found 'const' instead.
+PASS function g(const){} threw exception SyntaxError: Expected an identifier but found 'const' instead.
+PASS (function(){function g(const){}}) threw exception SyntaxError: Expected an identifier but found 'const' instead.
+PASS try{}catch(const){} threw exception SyntaxError: Expected an identifier but found 'const' instead.
+PASS (function(){try{}catch(const){}}) threw exception SyntaxError: Expected an identifier but found 'const' instead.
+PASS function const(){} threw exception SyntaxError: Unexpected token 'const'.
+PASS (function(){function const(){}}) threw exception SyntaxError: Unexpected token 'const'.
+PASS var enum threw exception SyntaxError: Expected an identifier but found 'enum' instead.
+PASS (function(){var enum}) threw exception SyntaxError: Expected an identifier but found 'enum' instead.
+PASS function g(enum){} threw exception SyntaxError: Expected an identifier but found 'enum' instead.
+PASS (function(){function g(enum){}}) threw exception SyntaxError: Expected an identifier but found 'enum' instead.
+PASS try{}catch(enum){} threw exception SyntaxError: Expected an identifier but found 'enum' instead.
+PASS (function(){try{}catch(enum){}}) threw exception SyntaxError: Expected an identifier but found 'enum' instead.
+PASS function enum(){} threw exception SyntaxError: Use of reserved word 'enum'.
+PASS (function(){function enum(){}}) threw exception SyntaxError: Use of reserved word 'enum'.
+PASS var export threw exception SyntaxError: Expected an identifier but found 'export' instead.
+PASS (function(){var export}) threw exception SyntaxError: Expected an identifier but found 'export' instead.
+PASS function g(export){} threw exception SyntaxError: Expected an identifier but found 'export' instead.
+PASS (function(){function g(export){}}) threw exception SyntaxError: Expected an identifier but found 'export' instead.
+PASS try{}catch(export){} threw exception SyntaxError: Expected an identifier but found 'export' instead.
+PASS (function(){try{}catch(export){}}) threw exception SyntaxError: Expected an identifier but found 'export' instead.
+PASS function export(){} threw exception SyntaxError: Use of reserved word 'export'.
+PASS (function(){function export(){}}) threw exception SyntaxError: Use of reserved word 'export'.
+PASS var extends threw exception SyntaxError: Expected an identifier but found 'extends' instead.
+PASS (function(){var extends}) threw exception SyntaxError: Expected an identifier but found 'extends' instead.
+PASS function g(extends){} threw exception SyntaxError: Expected an identifier but found 'extends' instead.
+PASS (function(){function g(extends){}}) threw exception SyntaxError: Expected an identifier but found 'extends' instead.
+PASS try{}catch(extends){} threw exception SyntaxError: Expected an identifier but found 'extends' instead.
+PASS (function(){try{}catch(extends){}}) threw exception SyntaxError: Expected an identifier but found 'extends' instead.
+PASS function extends(){} threw exception SyntaxError: Use of reserved word 'extends'.
+PASS (function(){function extends(){}}) threw exception SyntaxError: Use of reserved word 'extends'.
+PASS var import threw exception SyntaxError: Expected an identifier but found 'import' instead.
+PASS (function(){var import}) threw exception SyntaxError: Expected an identifier but found 'import' instead.
+PASS function g(import){} threw exception SyntaxError: Expected an identifier but found 'import' instead.
+PASS (function(){function g(import){}}) threw exception SyntaxError: Expected an identifier but found 'import' instead.
+PASS try{}catch(import){} threw exception SyntaxError: Expected an identifier but found 'import' instead.
+PASS (function(){try{}catch(import){}}) threw exception SyntaxError: Expected an identifier but found 'import' instead.
+PASS function import(){} threw exception SyntaxError: Use of reserved word 'import'.
+PASS (function(){function import(){}}) threw exception SyntaxError: Use of reserved word 'import'.
+PASS var super threw exception SyntaxError: Expected an identifier but found 'super' instead.
+PASS (function(){var super}) threw exception SyntaxError: Expected an identifier but found 'super' instead.
+PASS function g(super){} threw exception SyntaxError: Expected an identifier but found 'super' instead.
+PASS (function(){function g(super){}}) threw exception SyntaxError: Expected an identifier but found 'super' instead.
+PASS try{}catch(super){} threw exception SyntaxError: Expected an identifier but found 'super' instead.
+PASS (function(){try{}catch(super){}}) threw exception SyntaxError: Expected an identifier but found 'super' instead.
+PASS function super(){} threw exception SyntaxError: Use of reserved word 'super'.
+PASS (function(){function super(){}}) threw exception SyntaxError: Use of reserved word 'super'.
 PASS (obj=({true: true,false: true,null: true,break: true,case: true,catch: true,continue: true,debugger: true,default: true,delete: true,do: true,else: true,finally: true,for: true,function: true,if: true,in: true,instanceof: true,new: true,return: true,switch: true,this: true,throw: true,try: true,typeof: true,var: true,void: true,while: true,with: true,class: true,const: true,enum: true,export: true,extends: true,import: true,super: true, parsed: true })).parsed is true
 PASS ({ true: true}).true is true
 PASS ({ false: true}).false is true

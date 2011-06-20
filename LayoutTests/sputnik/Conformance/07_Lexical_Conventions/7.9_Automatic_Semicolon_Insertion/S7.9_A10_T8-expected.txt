@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 77: SyntaxError: Parse error
+CONSOLE MESSAGE: line 77: SyntaxError: Unexpected number '2'
 S7.9_A10_T8
 
 PASS Expected parsing failure

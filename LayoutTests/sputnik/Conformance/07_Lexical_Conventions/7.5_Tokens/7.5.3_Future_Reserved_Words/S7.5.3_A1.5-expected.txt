@@ -1,4 +1,4 @@
-CONSOLE MESSAGE: line 76: SyntaxError: Parse error
+CONSOLE MESSAGE: line 76: SyntaxError: Use of reserved word 'class'
 S7.5.3_A1.5
 
 PASS Expected parsing failure
