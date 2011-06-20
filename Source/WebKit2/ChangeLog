@@ -1,3 +1,16 @@
+2011-06-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] [WebKit2] Disable GDK double buffering
+        https://bugs.webkit.org/show_bug.cgi?id=62770
+
+        Explicitly disable GDK double-buffering when instantiating
+        a WebKit2 view widget. This prevents one extra pixmap copy.
+
+        * UIProcess/API/gtk/WebKitWebViewBase.cpp:
+        (webkit_web_view_base_init):
+
 2011-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Martin Robinson.

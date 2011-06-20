@@ -130,6 +130,7 @@ static void webkit_web_view_base_init(WebKitWebViewBase* webkitWebViewBase)
 
     priv->isPageActive = TRUE;
 
+    gtk_widget_set_double_buffered(GTK_WIDGET(webkitWebViewBase), FALSE);
     gtk_widget_set_can_focus(GTK_WIDGET(webkitWebViewBase), TRUE);
     priv->imContext = gtk_im_multicontext_new();
 
