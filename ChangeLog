@@ -1,3 +1,10 @@
+2011-06-20  MORITA Hajime  <morrita@google.com>
+
+        Unreviewed GTK build fix.
+        This change corrected syntax error on symbols.filter.
+
+        * Source/autotools/symbols.filter:
+
 2011-06-19  MORITA Hajime <morrita@google.com>
 
         Unreviewed GTK build fix.
