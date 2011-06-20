@@ -47,6 +47,7 @@ class Settings;
 class VisiblePosition;
 
 enum DirectionalityPolicy { MakeNonDirectionalSelection, MakeDirectionalSelection };
+enum EUserTriggered { NotUserTriggered = 0, UserTriggered = 1 };
 
 class CaretBase {
     WTF_MAKE_NONCOPYABLE(CaretBase);
@@ -111,11 +112,15 @@ public:
                                AlignCursorOnScrollAlways };
     enum SetSelectionOption {
         CloseTyping = 1 << 0,
-        ClearTypingStyle = 1 << 1,
-        UserTriggered = 1 << 2,
+        // 1 << 1 is reserved for EUserTriggered 
+        ClearTypingStyle = 1 << 2,
         SpellCorrectionTriggered = 1 << 3,
     };
-    typedef unsigned SetSelectionOptions;
+    typedef unsigned SetSelectionOptions; // Union of values in SetSelectionOption and EUserTriggered
+    static inline EUserTriggered selectionOptionsToUserTriggered(SetSelectionOptions options)
+    {
+        return static_cast<EUserTriggered>(options & UserTriggered);
+    }
 
     FrameSelection(Frame* = 0);
 
@@ -123,11 +128,11 @@ public:
     bool isContentEditable() const { return m_selection.isContentEditable(); }
     bool isContentRichlyEditable() const { return m_selection.isContentRichlyEditable(); }
      
-    void moveTo(const Range*, EAffinity, bool userTriggered = false);
-    void moveTo(const VisiblePosition&, bool userTriggered = false, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded);
-    void moveTo(const VisiblePosition&, const VisiblePosition&, bool userTriggered = false);
-    void moveTo(const Position&, EAffinity, bool userTriggered = false);
-    void moveTo(const Position&, const Position&, EAffinity, bool userTriggered = false);
+    void moveTo(const Range*, EAffinity, EUserTriggered = NotUserTriggered);
+    void moveTo(const VisiblePosition&, EUserTriggered = NotUserTriggered, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded);
+    void moveTo(const VisiblePosition&, const VisiblePosition&, EUserTriggered = NotUserTriggered);
+    void moveTo(const Position&, EAffinity, EUserTriggered = NotUserTriggered);
+    void moveTo(const Position&, const Position&, EAffinity, EUserTriggered = NotUserTriggered);
 
     const VisibleSelection& selection() const { return m_selection; }
     void setSelection(const VisibleSelection&, SetSelectionOptions = CloseTyping | ClearTypingStyle, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded, TextGranularity = CharacterGranularity, DirectionalityPolicy = MakeDirectionalSelection);
@@ -145,18 +150,19 @@ public:
 
     EAffinity affinity() const { return m_selection.affinity(); }
 
-    bool modify(EAlteration, SelectionDirection, TextGranularity, bool userTriggered = false);
+    bool modify(EAlteration, SelectionDirection, TextGranularity, EUserTriggered = NotUserTriggered);
     enum VerticalDirection { DirectionUp, DirectionDown };
-    bool modify(EAlteration, unsigned verticalDistance, VerticalDirection, bool userTriggered = false, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded);
+    bool modify(EAlteration, unsigned verticalDistance, VerticalDirection, EUserTriggered = NotUserTriggered, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded);
+
     TextGranularity granularity() const { return m_granularity; }
 
-    void setStart(const VisiblePosition &, bool userTriggered = false);
-    void setEnd(const VisiblePosition &, bool userTriggered = false);
+    void setStart(const VisiblePosition &, EUserTriggered = NotUserTriggered);
+    void setEnd(const VisiblePosition &, EUserTriggered = NotUserTriggered);
     
-    void setBase(const VisiblePosition&, bool userTriggered = false);
-    void setBase(const Position&, EAffinity, bool userTriggered = false);
-    void setExtent(const VisiblePosition&, bool userTriggered = false);
-    void setExtent(const Position&, EAffinity, bool userTriggered = false);
+    void setBase(const VisiblePosition&, EUserTriggered = NotUserTriggered);
+    void setBase(const Position&, EAffinity, EUserTriggered = NotUserTriggered);
+    void setExtent(const VisiblePosition&, EUserTriggered = NotUserTriggered);
+    void setExtent(const Position&, EAffinity, EUserTriggered = NotUserTriggered);
 
     Position base() const { return m_selection.base(); }
     Position extent() const { return m_selection.extent(); }
@@ -219,7 +225,7 @@ public:
     bool shouldChangeSelection(const VisibleSelection&) const;
     bool shouldDeleteSelection(const VisibleSelection&) const;
     void setFocusedNodeIfNeeded();
-    void notifyRendererOfSelectionChange(bool userTriggered);
+    void notifyRendererOfSelectionChange(EUserTriggered);
 
     void paintDragCaret(GraphicsContext*, const IntPoint&, const IntRect& clipRect) const;
 

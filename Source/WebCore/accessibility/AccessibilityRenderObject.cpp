@@ -2575,7 +2575,7 @@ void AccessibilityRenderObject::setSelectedVisiblePositionRange(const VisiblePos
     
     // make selection and tell the document to use it. if it's zero length, then move to that position
     if (range.start == range.end)
-        m_renderer->frame()->selection()->moveTo(range.start, true);
+        m_renderer->frame()->selection()->moveTo(range.start, UserTriggered);
     else {
         VisibleSelection newSelection = VisibleSelection(range.start, range.end);
         m_renderer->frame()->selection()->setSelection(newSelection);

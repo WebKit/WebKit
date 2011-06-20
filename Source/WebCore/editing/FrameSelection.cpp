@@ -103,44 +103,34 @@ FrameSelection::FrameSelection(Frame* frame)
     setIsDirectional(false);
 }
 
-void FrameSelection::moveTo(const VisiblePosition &pos, bool userTriggered, CursorAlignOnScroll align)
+void FrameSelection::moveTo(const VisiblePosition &pos, EUserTriggered userTriggered, CursorAlignOnScroll align)
 {
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
-    if (userTriggered)
-        options |= UserTriggered;
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
     setSelection(VisibleSelection(pos.deepEquivalent(), pos.deepEquivalent(), pos.affinity()), options, align);
 }
 
-void FrameSelection::moveTo(const VisiblePosition &base, const VisiblePosition &extent, bool userTriggered)
+void FrameSelection::moveTo(const VisiblePosition &base, const VisiblePosition &extent, EUserTriggered userTriggered)
 {
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
-    if (userTriggered)
-        options |= UserTriggered;
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
     setSelection(VisibleSelection(base.deepEquivalent(), extent.deepEquivalent(), base.affinity()), options);
 }
 
-void FrameSelection::moveTo(const Position &pos, EAffinity affinity, bool userTriggered)
+void FrameSelection::moveTo(const Position &pos, EAffinity affinity, EUserTriggered userTriggered)
 {
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
-    if (userTriggered)
-        options |= UserTriggered;
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
     setSelection(VisibleSelection(pos, affinity), options);
 }
 
-void FrameSelection::moveTo(const Range *r, EAffinity affinity, bool userTriggered)
+void FrameSelection::moveTo(const Range *r, EAffinity affinity, EUserTriggered userTriggered)
 {
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
-    if (userTriggered)
-        options |= UserTriggered;
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
     VisibleSelection selection = r ? VisibleSelection(r->startPosition(), r->endPosition(), affinity) : VisibleSelection(Position(), Position(), affinity);
     setSelection(selection, options);
 }
 
-void FrameSelection::moveTo(const Position &base, const Position &extent, EAffinity affinity, bool userTriggered)
+void FrameSelection::moveTo(const Position &base, const Position &extent, EAffinity affinity, EUserTriggered userTriggered)
 {
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
-    if (userTriggered)
-        options |= UserTriggered;
+    SetSelectionOptions options = CloseTyping | ClearTypingStyle | userTriggered;
     setSelection(VisibleSelection(base, extent, affinity), options);
 }
 
@@ -167,7 +157,7 @@ void FrameSelection::setSelection(const VisibleSelection& s, SetSelectionOptions
 
     bool closeTyping = options & CloseTyping;
     bool shouldClearTypingStyle = options & ClearTypingStyle;
-    bool userTriggered = options & UserTriggered;
+    EUserTriggered userTriggered = selectionOptionsToUserTriggered(options);
 
     setIsDirectional(directionalityPolicy == MakeDirectionalSelection);
 
@@ -214,7 +204,7 @@ void FrameSelection::setSelection(const VisibleSelection& s, SetSelectionOptions
     selectFrameElementInParentIfFullySelected();
     notifyRendererOfSelectionChange(userTriggered);
     m_frame->editor()->respondToChangedSelection(oldSelection, options);
-    if (userTriggered) {
+    if (userTriggered == UserTriggered) {
         ScrollAlignment alignment;
 
         if (m_frame->editor()->behavior().shouldCenterAlignWhenSelectionIsRevealed())
@@ -787,13 +777,13 @@ static bool isBoundary(TextGranularity granularity)
     return granularity == LineBoundary || granularity == ParagraphBoundary || granularity == DocumentBoundary;
 }    
 
-bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, TextGranularity granularity, bool userTriggered)
+bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, TextGranularity granularity, EUserTriggered userTriggered)
 {
-    if (userTriggered) {
+    if (userTriggered == UserTriggered) {
         FrameSelection trialFrameSelection;
         trialFrameSelection.setSelection(m_selection);
         trialFrameSelection.setIsDirectional(m_isDirectional);
-        trialFrameSelection.modify(alter, direction, granularity, false);
+        trialFrameSelection.modify(alter, direction, granularity, NotUserTriggered);
 
         bool change = shouldChangeSelection(trialFrameSelection.selection());
         if (!change)
@@ -867,7 +857,7 @@ bool FrameSelection::modify(EAlteration alter, SelectionDirection direction, Tex
     if (granularity == LineGranularity || granularity == ParagraphGranularity)
         m_xPosForVerticalArrowNavigation = x;
 
-    if (userTriggered)
+    if (userTriggered == UserTriggered)
         m_granularity = CharacterGranularity;
 
 
@@ -888,16 +878,16 @@ static bool absoluteCaretY(const VisiblePosition &c, int &y)
     return true;
 }
 
-bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, VerticalDirection direction, bool userTriggered, CursorAlignOnScroll align)
+bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, VerticalDirection direction, EUserTriggered userTriggered, CursorAlignOnScroll align)
 {
     if (!verticalDistance)
         return false;
 
-    if (userTriggered) {
+    if (userTriggered == UserTriggered) {
         FrameSelection trialFrameSelection;
         trialFrameSelection.setSelection(m_selection);
         trialFrameSelection.setIsDirectional(m_isDirectional);
-        trialFrameSelection.modify(alter, verticalDistance, direction, false);
+        trialFrameSelection.modify(alter, verticalDistance, direction, NotUserTriggered);
 
         bool change = shouldChangeSelection(trialFrameSelection.selection());
         if (!change)
@@ -959,7 +949,7 @@ bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, Vertic
         break;
     }
 
-    if (userTriggered)
+    if (userTriggered == UserTriggered)
         m_granularity = CharacterGranularity;
 
     setIsDirectional(alter == AlterationExtend);
@@ -1012,52 +1002,40 @@ void FrameSelection::clear()
     setSelection(VisibleSelection());
 }
 
-void FrameSelection::setStart(const VisiblePosition &pos, bool userTriggered)
+void FrameSelection::setStart(const VisiblePosition &pos, EUserTriggered trigger)
 {
     if (m_selection.isBaseFirst())
-        setBase(pos, userTriggered);
+        setBase(pos, trigger);
     else
-        setExtent(pos, userTriggered);
+        setExtent(pos, trigger);
 }
 
-void FrameSelection::setEnd(const VisiblePosition &pos, bool userTriggered)
+void FrameSelection::setEnd(const VisiblePosition &pos, EUserTriggered trigger)
 {
     if (m_selection.isBaseFirst())
-        setExtent(pos, userTriggered);
+        setExtent(pos, trigger);
     else
-        setBase(pos, userTriggered);
+        setBase(pos, trigger);
 }
 
-void FrameSelection::setBase(const VisiblePosition &pos, bool userTriggered)
+void FrameSelection::setBase(const VisiblePosition &pos, EUserTriggered userTriggered)
 {
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
-    if (userTriggered)
-        options |= UserTriggered;
-    setSelection(VisibleSelection(pos.deepEquivalent(), m_selection.extent(), pos.affinity()), options);
+    setSelection(VisibleSelection(pos.deepEquivalent(), m_selection.extent(), pos.affinity()), CloseTyping | ClearTypingStyle | userTriggered);
 }
 
-void FrameSelection::setExtent(const VisiblePosition &pos, bool userTriggered)
+void FrameSelection::setExtent(const VisiblePosition &pos, EUserTriggered userTriggered)
 {
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
-    if (userTriggered)
-        options |= UserTriggered;
-    setSelection(VisibleSelection(m_selection.base(), pos.deepEquivalent(), pos.affinity()), options);
+    setSelection(VisibleSelection(m_selection.base(), pos.deepEquivalent(), pos.affinity()), CloseTyping | ClearTypingStyle | userTriggered);
 }
 
-void FrameSelection::setBase(const Position &pos, EAffinity affinity, bool userTriggered)
+void FrameSelection::setBase(const Position &pos, EAffinity affinity, EUserTriggered userTriggered)
 {
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
-    if (userTriggered)
-        options |= UserTriggered;
-    setSelection(VisibleSelection(pos, m_selection.extent(), affinity), options);
+    setSelection(VisibleSelection(pos, m_selection.extent(), affinity), CloseTyping | ClearTypingStyle | userTriggered);
 }
 
-void FrameSelection::setExtent(const Position &pos, EAffinity affinity, bool userTriggered)
+void FrameSelection::setExtent(const Position &pos, EAffinity affinity, EUserTriggered userTriggered)
 {
-    SetSelectionOptions options = CloseTyping | ClearTypingStyle;
-    if (userTriggered)
-        options |= UserTriggered;
-    setSelection(VisibleSelection(m_selection.base(), pos, affinity), options);
+    setSelection(VisibleSelection(m_selection.base(), pos, affinity), CloseTyping | ClearTypingStyle | userTriggered);
 }
 
 void CaretBase::clearCaretRect()
@@ -1479,7 +1457,7 @@ void FrameSelection::selectAll()
         setSelection(newSelection);
 
     selectFrameElementInParentIfFullySelected();
-    notifyRendererOfSelectionChange(true);
+    notifyRendererOfSelectionChange(UserTriggered);
 }
 
 bool FrameSelection::setSelectedRange(Range* range, EAffinity affinity, bool closeTyping)
@@ -1704,7 +1682,7 @@ void FrameSelection::caretBlinkTimerFired(Timer<FrameSelection>*)
 #endif
 }
 
-void FrameSelection::notifyRendererOfSelectionChange(bool userTriggered)
+void FrameSelection::notifyRendererOfSelectionChange(EUserTriggered userTriggered)
 {
     m_frame->document()->updateStyleIfNeeded();
 
@@ -1715,7 +1693,7 @@ void FrameSelection::notifyRendererOfSelectionChange(bool userTriggered)
     if (!renderer || !renderer->isTextControl())
         return;
 
-    toRenderTextControl(renderer)->selectionChanged(userTriggered);
+    toRenderTextControl(renderer)->selectionChanged(userTriggered == UserTriggered);
 }
 
 // Helper function that tells whether a particular node is an element that has an entire

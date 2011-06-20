@@ -338,7 +338,7 @@ void DOMSelection::modify(const String& alterString, const String& directionStri
     else
         return;
 
-    m_frame->selection()->modify(alter, direction, granularity, false);
+    m_frame->selection()->modify(alter, direction, granularity);
 }
 
 void DOMSelection::extend(Node* node, int offset, ExceptionCode& ec)

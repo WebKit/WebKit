@@ -1,3 +1,82 @@
+2011-06-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Darin Adler.
+
+        Various editing functions take boolean userTriggered but should be replaced by an enum
+        https://bugs.webkit.org/show_bug.cgi?id=62933
+
+        Replaced boolean userTriggered in many functions by new EUserTriggered enum.
+
+        * WebCore.exp.in: FrameSelection::modify's signature changed.
+        * accessibility/AccessibilityRenderObject.cpp:
+        (WebCore::AccessibilityRenderObject::setSelectedVisiblePositionRange): Calls FrameSelection::moveTo.
+        * editing/EditorCommand.cpp:
+        (WebCore::executeMoveBackward): Calls FrameSelection::modify.
+        (WebCore::executeMoveBackwardAndModifySelection): Ditto.
+        (WebCore::executeMoveDown): Ditto.
+        (WebCore::executeMoveDownAndModifySelection): Ditto.
+        (WebCore::executeMoveForward): Ditto.
+        (WebCore::executeMoveForwardAndModifySelection): Ditto.
+        (WebCore::executeMoveLeft): Ditto.
+        (WebCore::executeMoveLeftAndModifySelection): Ditto.
+        (WebCore::executeMovePageDown): Ditto.
+        (WebCore::executeMovePageDownAndModifySelection): Ditto.
+        (WebCore::executeMovePageUp): Ditto.
+        (WebCore::executeMovePageUpAndModifySelection): Ditto.
+        (WebCore::executeMoveRight): Ditto.
+        (WebCore::executeMoveRightAndModifySelection): Ditto.
+        (WebCore::executeMoveToBeginningOfDocument): Ditto.
+        (WebCore::executeMoveToBeginningOfDocumentAndModifySelection): Ditto.
+        (WebCore::executeMoveToBeginningOfLine): Ditto.
+        (WebCore::executeMoveToBeginningOfLineAndModifySelection): Ditto.
+        (WebCore::executeMoveToBeginningOfParagraph): Ditto.
+        (WebCore::executeMoveToBeginningOfParagraphAndModifySelection): Ditto.
+        (WebCore::executeMoveToBeginningOfSentence): Ditto.
+        (WebCore::executeMoveToBeginningOfSentenceAndModifySelection): Ditto.
+        (WebCore::executeMoveToEndOfDocument): Ditto.
+        (WebCore::executeMoveToEndOfDocumentAndModifySelection): Ditto.
+        (WebCore::executeMoveToEndOfSentence): Ditto.
+        (WebCore::executeMoveToEndOfSentenceAndModifySelection): Ditto.
+        (WebCore::executeMoveToEndOfLine): Ditto.
+        (WebCore::executeMoveToEndOfLineAndModifySelection): Ditto.
+        (WebCore::executeMoveToEndOfParagraph): Ditto.
+        (WebCore::executeMoveToEndOfParagraphAndModifySelection): Ditto.
+        (WebCore::executeMoveParagraphBackwardAndModifySelection): Ditto.
+        (WebCore::executeMoveParagraphForwardAndModifySelection): Ditto.
+        (WebCore::executeMoveUp): Ditto.
+        (WebCore::executeMoveUpAndModifySelection): Ditto.
+        (WebCore::executeMoveWordBackward): Ditto.
+        (WebCore::executeMoveWordBackwardAndModifySelection): Ditto.
+        (WebCore::executeMoveWordForward): Ditto.
+        (WebCore::executeMoveWordForwardAndModifySelection): Ditto.
+        (WebCore::executeMoveWordLeft): Ditto.
+        (WebCore::executeMoveWordLeftAndModifySelection): Ditto.
+        (WebCore::executeMoveWordRight): Ditto.
+        (WebCore::executeMoveWordRightAndModifySelection): Ditto.
+        (WebCore::executeMoveToLeftEndOfLine): Ditto.
+        (WebCore::executeMoveToLeftEndOfLineAndModifySelection): Ditto.
+        (WebCore::executeMoveToRightEndOfLine): Ditto.
+        (WebCore::executeMoveToRightEndOfLineAndModifySelection): Ditto.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::moveTo): Takes EUserTriggered instead of a boolean.
+        (WebCore::FrameSelection::setSelection): Ditto.
+        (WebCore::FrameSelection::modify): Ditto.
+        (WebCore::FrameSelection::setStart): Ditto.
+        (WebCore::FrameSelection::setEnd): Ditto.
+        (WebCore::FrameSelection::setBase): Ditto.
+        (WebCore::FrameSelection::setExtent): Ditto.
+        (WebCore::FrameSelection::selectAll): Ditto.
+        (WebCore::FrameSelection::notifyRendererOfSelectionChange): Ditto.
+        * editing/FrameSelection.h: Extracted EUserTriggered out of SetSelectionOption; SetSelectionOptions
+        now takes the union of values of SetSelectionOption and EUserTriggered.
+        (WebCore::FrameSelection::selectionOptionsToUserTriggered): Converts SetSelectionOptions to
+        EUserTriggered. 
+        * page/DOMSelection.cpp:
+        (WebCore::DOMSelection::modify): Calls FrameSelection::modify.
+        * page/EventHandler.cpp:
+        (WebCore::EventHandler::handleMouseReleaseEvent): Ditto.
+        (WebCore::handleKeyboardSelectionMovement): Ditto.
+
 2011-06-20  Jer Noble  <jer.noble@apple.com>
 
         Unreviewed build fix; Fix 32-bit build.

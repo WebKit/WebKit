@@ -773,7 +773,7 @@ bool EventHandler::handleMouseReleaseEvent(const MouseEventWithHitTestResults& e
         handled = true;
     }
 
-    m_frame->selection()->notifyRendererOfSelectionChange(true);
+    m_frame->selection()->notifyRendererOfSelectionChange(UserTriggered);
 
     m_frame->selection()->selectFrameElementInParentIfFullySelected();
 
@@ -2647,7 +2647,7 @@ static void handleKeyboardSelectionMovement(FrameSelection* selection, KeyboardE
     }
 
     FrameSelection::EAlteration alternation = event->getModifierState("Shift") ? FrameSelection::AlterationExtend : FrameSelection::AlterationMove;
-    selection->modify(alternation, direction, granularity, true);
+    selection->modify(alternation, direction, granularity, UserTriggered);
     event->setDefaultHandled();
 }
     
