@@ -47,7 +47,10 @@ static inline CGFloat webkit_CGFloor(CGFloat value)
 
 #define HAVE_MEDIA_CONTROL (!defined(BUILDING_ON_LEOPARD))
 
-@interface WebVideoFullscreenHUDWindowController (Private) <NSWindowDelegate>
+@interface WebVideoFullscreenHUDWindowController (Private)
+#if !defined(BUILDING_ON_LEOPARD)
+<NSWindowDelegate>
+#endif
 
 - (void)updateTime;
 - (void)timelinePositionChanged:(id)sender;
