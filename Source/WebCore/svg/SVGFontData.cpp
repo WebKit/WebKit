@@ -22,15 +22,8 @@
 #if ENABLE(SVG_FONTS)
 #include "SVGFontData.h"
 
-#include "RenderObject.h"
-#include "SVGAltGlyphElement.h"
 #include "SVGFontElement.h"
 #include "SVGGlyph.h"
-#include "SVGNames.h"
-#include "SVGTextRunRenderingContext.h"
-#include "TextRun.h"
-#include "WidthIterator.h"
-#include "XMLNames.h"
 
 namespace WebCore {
 
@@ -46,41 +39,28 @@ SVGFontData::SVGFontData(SVGFontFaceElement* fontFaceElement)
     ASSERT_ARG(fontFaceElement, fontFaceElement);
 }
 
-void SVGFontData::initializeFontData(SimpleFontData* fontData, float fontSize)
+void SVGFontData::initializeFontData(SimpleFontData* fontData, int size)
 {
     ASSERT(fontData);
 
     SVGFontFaceElement* svgFontFaceElement = this->svgFontFaceElement();
-    ASSERT(svgFontFaceElement);
-
-    SVGFontElement* svgFontElement = svgFontFaceElement->associatedFontElement();
-    ASSERT(svgFontElement);
-    GlyphData missingGlyphData;
-    missingGlyphData.fontData = fontData;
-    missingGlyphData.glyph = svgFontElement->missingGlyph();
-    fontData->setMissingGlyphData(missingGlyphData);
-
-    fontData->setZeroWidthSpaceGlyph(0);
-    fontData->determinePitch();
-
-    GlyphPage* glyphPageZero = GlyphPageTreeNode::getRootChild(fontData, 0)->page();
-    if (!glyphPageZero) {
-        fontData->setSpaceGlyph(0);
-        fontData->setSpaceWidth(0);
-        return;
-    }
-
     unsigned unitsPerEm = svgFontFaceElement->unitsPerEm();
-    float scale = scaleEmToUnits(fontSize, unitsPerEm);
+
+    float scale = size;
+    if (unitsPerEm)
+        scale /= unitsPerEm;
+
     float xHeight = svgFontFaceElement->xHeight() * scale;
     float ascent = svgFontFaceElement->ascent() * scale;
     float descent = svgFontFaceElement->descent() * scale;
-    float lineGap = 0.1f * fontSize;
+    float lineGap = 0.1f * size;
 
+    SVGFontElement* associatedFontElement = svgFontFaceElement->associatedFontElement();
     if (!xHeight) {
         // Fallback if x_heightAttr is not specified for the font element.
-        Glyph letterXGlyph = glyphPageZero->glyphDataForCharacter('x').glyph;
-        xHeight = letterXGlyph ? fontData->widthForGlyph(letterXGlyph) : 2 * ascent / 3;
+        Vector<SVGGlyph> letterXGlyphs;
+        associatedFontElement->collectGlyphsForString(String("x", 1), letterXGlyphs);
+        xHeight = letterXGlyphs.isEmpty() ? 2 * ascent / 3 : letterXGlyphs.first().horizontalAdvanceX * scale;
     }
 
     FontMetrics& fontMetrics = fontData->fontMetrics();
@@ -91,139 +71,27 @@ void SVGFontData::initializeFontData(SimpleFontData* fontData, float fontSize)
     fontMetrics.setLineSpacing(roundf(ascent) + roundf(descent) + roundf(lineGap));
     fontMetrics.setXHeight(xHeight);
 
-    // Calculate space width.
-    Glyph spaceGlyph = glyphPageZero->glyphDataForCharacter(' ').glyph;
-    fontData->setSpaceGlyph(spaceGlyph);
-    fontData->setSpaceWidth(fontData->widthForGlyph(spaceGlyph));
+    Vector<SVGGlyph> spaceGlyphs;
+    associatedFontElement->collectGlyphsForString(String(" ", 1), spaceGlyphs);
+    fontData->setSpaceWidth(spaceGlyphs.isEmpty() ? xHeight : spaceGlyphs.first().horizontalAdvanceX * scale);
 
-    // Estimate average character width.
-    Glyph numeralZeroGlyph = glyphPageZero->glyphDataForCharacter('0').glyph;
-    fontData->setAvgCharWidth(numeralZeroGlyph ? fontData->widthForGlyph(numeralZeroGlyph) : fontData->spaceWidth());
+    Vector<SVGGlyph> numeralZeroGlyphs;
+    associatedFontElement->collectGlyphsForString(String("0", 1), numeralZeroGlyphs);
+    fontData->setAvgCharWidth(numeralZeroGlyphs.isEmpty() ? fontData->spaceWidth() : numeralZeroGlyphs.first().horizontalAdvanceX * scale);
 
-    // Estimate maximum character width.
-    Glyph letterWGlyph = glyphPageZero->glyphDataForCharacter('W').glyph;
-    fontData->setMaxCharWidth(letterWGlyph ? fontData->widthForGlyph(letterWGlyph) : ascent);
-}
+    Vector<SVGGlyph> letterWGlyphs;
+    associatedFontElement->collectGlyphsForString(String("W", 1), letterWGlyphs);
+    fontData->setMaxCharWidth(letterWGlyphs.isEmpty() ? ascent : letterWGlyphs.first().horizontalAdvanceX * scale);
 
-float SVGFontData::widthForSVGGlyph(Glyph glyph, float fontSize) const
-{
-    SVGFontFaceElement* svgFontFaceElement = this->svgFontFaceElement();
-    ASSERT(svgFontFaceElement);
+    // FIXME: is there a way we can get the space glyph from the SVGGlyph above?
+    fontData->setSpaceGlyph(0);
+    fontData->setZeroWidthSpaceGlyph(0);
+    fontData->determinePitch();
 
-    SVGFontElement* associatedFontElement = svgFontFaceElement->associatedFontElement();
-    ASSERT(associatedFontElement);
-
-    SVGGlyph svgGlyph = associatedFontElement->svgGlyphForGlyph(glyph);
-    SVGGlyphElement::inheritUnspecifiedAttributes(svgGlyph, this);
-    return svgGlyph.horizontalAdvanceX * scaleEmToUnits(fontSize, svgFontFaceElement->unitsPerEm());
-}
-
-bool SVGFontData::applySVGGlyphSelection(WidthIterator& iterator, GlyphData& glyphData, bool mirror, int currentCharacter, unsigned& advanceLength) const
-{
-    const TextRun& run = iterator.run();
-    Vector<SVGGlyph::ArabicForm>& arabicForms = iterator.arabicForms();
-    ASSERT(int(run.charactersLength()) >= currentCharacter);
-
-    // Associate text with arabic forms, if needed.
-    String remainingTextInRun(run.data(currentCharacter), run.charactersLength() - currentCharacter);
-    remainingTextInRun = Font::normalizeSpaces(remainingTextInRun.characters(), remainingTextInRun.length());
-    if (!currentCharacter && arabicForms.isEmpty())
-        arabicForms = charactersWithArabicForm(remainingTextInRun, mirror);
-
-    SVGFontFaceElement* svgFontFaceElement = this->svgFontFaceElement();
-    ASSERT(svgFontFaceElement);
-
-    SVGFontElement* associatedFontElement = svgFontFaceElement->associatedFontElement();
-    ASSERT(associatedFontElement);
-
-    RenderObject* renderObject = 0;
-    if (TextRun::RenderingContext* renderingContext = run.renderingContext())
-        renderObject = static_cast<SVGTextRunRenderingContext*>(renderingContext)->renderer();
-
-    String language;
-    bool isVerticalText = false;
-    String altGlyphName;
-
-    if (renderObject) {
-        RenderObject* parentRenderObject = renderObject->isText() ? renderObject->parent() : renderObject;
-        ASSERT(parentRenderObject);
-
-        isVerticalText = parentRenderObject->style()->svgStyle()->isVerticalWritingMode();
-        if (Element* parentRenderObjectElement = toElement(parentRenderObject->node())) {
-            language = parentRenderObjectElement->getAttribute(XMLNames::langAttr);
-
-            if (parentRenderObjectElement->hasTagName(SVGNames::altGlyphTag)) {
-                SVGAltGlyphElement* altGlyph = static_cast<SVGAltGlyphElement*>(parentRenderObjectElement);
-                if (!altGlyph->hasValidGlyphElement(altGlyphName))
-                    altGlyphName = emptyString();
-            }
-        }
-    }
-
-    Vector<SVGGlyph> glyphs;
-    if (!altGlyphName.isEmpty()) {
-        associatedFontElement->collectGlyphsForGlyphName(altGlyphName, glyphs);
-
-        // Assign the unicodeStringLength now that its known.
-        size_t glyphsSize = glyphs.size();
-        for (size_t i = 0; i < glyphsSize; ++i)
-            glyphs[i].unicodeStringLength = run.length();
-    } else
-        associatedFontElement->collectGlyphsForString(remainingTextInRun, glyphs);
-
-    size_t glyphsSize = glyphs.size();
-    for (size_t i = 0; i < glyphsSize; ++i) {
-        SVGGlyph& svgGlyph = glyphs[i];
-        if (svgGlyph.isPartOfLigature)
-            continue;
-        if (!isCompatibleGlyph(svgGlyph, isVerticalText, language, arabicForms, currentCharacter, currentCharacter + svgGlyph.unicodeStringLength))
-            continue;
-        iterator.setLastGlyphName(svgGlyph.glyphName);
-        glyphData.glyph = svgGlyph.tableEntry;
-        advanceLength = svgGlyph.unicodeStringLength;
-        return true;
-    }
-
-    iterator.setLastGlyphName(String());
-    return false;
-}
-
-bool SVGFontData::fillSVGGlyphPage(GlyphPage* pageToFill, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData) const
-{
-    // bufferLength will be greater than the requested number of glyphs if the buffer contains surrogate pairs.
-    // We won't support this for now.
-    if (bufferLength > length)
-        return false;
-
-    ASSERT(fontData->isCustomFont());
-    ASSERT(fontData->isSVGFont());
-
-    SVGFontFaceElement* fontFaceElement = this->svgFontFaceElement();
-    ASSERT(fontFaceElement);
-
-    SVGFontElement* fontElement = fontFaceElement->associatedFontElement();
-    ASSERT(fontElement);
-
-    bool haveGlyphs = false;
-    Vector<SVGGlyph> glyphs;
-    for (unsigned i = 0; i < length; ++i) {
-        String lookupString(buffer + i, 1);
-        fontElement->collectGlyphsForString(lookupString, glyphs);
-        if (glyphs.isEmpty()) {
-            pageToFill->setGlyphDataForIndex(offset + i, 0, 0);
-            continue;
-        }
-
-        // Associate entry in glyph page with first valid SVGGlyph.
-        // If there are multiple valid ones, just take the first one. WidthIterator will take
-        // care of matching to the correct glyph, if multiple ones are available, as that's
-        // only possible within the context of a string (eg. arabic form matching).
-        haveGlyphs = true;
-        pageToFill->setGlyphDataForIndex(offset + i, glyphs.first().tableEntry, fontData);
-        glyphs.clear();
-    }
-
-    return haveGlyphs;
+    GlyphData missingGlyphData;
+    missingGlyphData.fontData = fontData;
+    missingGlyphData.glyph = 0;
+    fontData->setMissingGlyphData(missingGlyphData);
 }
 
 } // namespace WebCore

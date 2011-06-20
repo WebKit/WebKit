@@ -135,6 +135,13 @@ void Font::drawText(GraphicsContext* context, const TextRun& run, const FloatPoi
     
     to = (to == -1 ? run.length() : to);
 
+#if ENABLE(SVG_FONTS)
+    if (TextRun::RenderingContext* renderingContext = run.renderingContext()) {
+        renderingContext->drawTextUsingSVGFont(*this, context, run, point, from, to);
+        return;
+    }
+#endif
+
     CodePath codePathToUse = codePath(run);
 
 #if PLATFORM(QT) && HAVE(QRAWFONT)
@@ -156,6 +163,12 @@ void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const
     if (to < 0)
         to = run.length();
 
+#if ENABLE(SVG_FONTS)
+    // FIXME: Implement for SVG fonts.
+    if (primaryFont()->isSVGFont())
+        return;
+#endif
+
     if (codePath(run) != Complex)
         drawEmphasisMarksForSimpleText(context, run, mark, point, from, to);
     else
@@ -164,6 +177,11 @@ void Font::drawEmphasisMarks(GraphicsContext* context, const TextRun& run, const
 
 float Font::width(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFonts, GlyphOverflow* glyphOverflow) const
 {
+#if ENABLE(SVG_FONTS)
+    if (TextRun::RenderingContext* renderingContext = run.renderingContext())
+        return renderingContext->floatWidthUsingSVGFont(*this, run);
+#endif
+
     CodePath codePathToUse = codePath(run);
     if (codePathToUse != Complex) {
         // If the complex text implementation cannot return fallback fonts, avoid
@@ -175,11 +193,13 @@ float Font::width(const TextRun& run, HashSet<const SimpleFontData*>* fallbackFo
     return floatWidthForComplexText(run, fallbackFonts, glyphOverflow);
 }
 
-float Font::width(const TextRun& run, int& charsConsumed, String& glyphName) const
+float Font::width(const TextRun& run, int extraCharsAvailable, int& charsConsumed, String& glyphName) const
 {
 #if ENABLE(SVG_FONTS)
     if (TextRun::RenderingContext* renderingContext = run.renderingContext())
-        return renderingContext->floatWidthUsingSVGFont(*this, run, charsConsumed, glyphName);
+        return renderingContext->floatWidthUsingSVGFont(*this, run, extraCharsAvailable, charsConsumed, glyphName);
+#else
+    UNUSED_PARAM(extraCharsAvailable);
 #endif
 
     charsConsumed = run.length();
@@ -193,6 +213,11 @@ float Font::width(const TextRun& run, int& charsConsumed, String& glyphName) con
 
 FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point, int h, int from, int to) const
 {
+#if ENABLE(SVG_FONTS)
+    if (TextRun::RenderingContext* renderingContext = run.renderingContext())
+        return renderingContext->selectionRectForTextUsingSVGFont(*this, run, point, h, from, to);
+#endif
+ 
     to = (to == -1 ? run.length() : to);
 
     if (codePath(run) != Complex)
@@ -203,6 +228,11 @@ FloatRect Font::selectionRectForText(const TextRun& run, const FloatPoint& point
 
 int Font::offsetForPosition(const TextRun& run, float x, bool includePartialGlyphs) const
 {
+#if ENABLE(SVG_FONTS)
+    if (TextRun::RenderingContext* renderingContext = run.renderingContext())
+        return renderingContext->offsetForPositionForTextUsingSVGFont(*this, run, x, includePartialGlyphs);
+#endif
+
     if (codePath(run) != Complex)
         return offsetForPositionForSimpleText(run, x, includePartialGlyphs);
 
@@ -247,11 +277,6 @@ Font::CodePath Font::codePath(const TextRun& run) const
 {
     if (s_codePath != Auto)
         return s_codePath;
-
-#if ENABLE(SVG_FONTS)
-    if (run.renderingContext())
-        return Simple;
-#endif
 
 #if PLATFORM(QT) && !HAVE(QRAWFONT)
     if (run.expansion() || run.rtl() || isSmallCaps() || wordSpacing() || letterSpacing())

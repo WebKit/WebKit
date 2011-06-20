@@ -47,6 +47,8 @@ namespace WebCore {
 
 using std::max;
 
+static inline float scaleEmToUnits(float x, unsigned unitsPerEm) { return unitsPerEm ? x / static_cast<float>(unitsPerEm) : x; }
+
 void SimpleFontData::platformInit()
 {
     m_syntheticBoldOffset = m_platformData.syntheticBold() ? 1.0f : 0.f;

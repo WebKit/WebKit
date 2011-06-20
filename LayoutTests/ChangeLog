@@ -1,3 +1,64 @@
+2011-06-20  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed.
+
+        Rolled out r89233 and r89235 because of crashes in http/tests/misc/acid3.html on Snow Leopard and other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=63022
+
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/fonts-glyph-04-t-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * platform/mac/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.png:
+        * platform/mac/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * platform/mac/svg/batik/text/textEffect-expected.png:
+        * platform/mac/svg/batik/text/textEffect-expected.txt:
+        * platform/mac/svg/batik/text/textEffect3-expected.png:
+        * platform/mac/svg/batik/text/textEffect3-expected.txt:
+        * platform/mac/svg/batik/text/xmlSpace-expected.png:
+        * platform/mac/svg/batik/text/xmlSpace-expected.txt:
+        * platform/mac/svg/custom/glyph-selection-lang-attribute-expected.png:
+        * platform/mac/svg/custom/glyph-selection-lang-attribute-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-fallback-expected.png: Removed.
+        * platform/mac/svg/custom/svg-fonts-fallback-expected.txt: Removed.
+        * platform/mac/svg/custom/svg-fonts-segmented-expected.png: Removed.
+        * platform/mac/svg/custom/svg-fonts-segmented-expected.txt: Removed.
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.png:
+        * platform/mac/svg/custom/svg-fonts-with-no-element-reference-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-without-missing-glyph-expected.png:
+        * platform/mac/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/mac/svg/custom/svg-fonts-word-spacing-expected.png: Removed.
+        * platform/mac/svg/custom/svg-fonts-word-spacing-expected.txt: Removed.
+        * platform/mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-dom-preserveAlpha-attr-expected.png:
+        * platform/mac/svg/dynamic-updates/SVGFEConvolveMatrixElement-svgdom-preserveAlpha-prop-expected.png:
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/mac/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/mac/svg/text/text-altglyph-01-b-expected.png:
+        * platform/mac/svg/text/text-altglyph-01-b-expected.txt:
+        * platform/mac/svg/text/text-overflow-ellipsis-svgfont-expected.png: Removed.
+        * platform/mac/svg/text/text-overflow-ellipsis-svgfont-expected.txt: Removed.
+        * platform/mac/svg/text/text-text-04-t-expected.png:
+        * platform/mac/svg/text/text-text-04-t-expected.txt:
+        * platform/mac/svg/text/text-text-05-t-expected.png:
+        * platform/mac/svg/text/text-text-05-t-expected.txt:
+        * platform/mac/svg/text/text-text-06-t-expected.png:
+        * platform/mac/svg/text/text-text-06-t-expected.txt:
+        * platform/mac/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/mac/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/mac/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/mac/svg/wicd/test-rightsizing-b-expected.txt:
+        * svg/custom/resources/ABCFont.svg:
+        * svg/custom/svg-fonts-fallback.xhtml: Removed.
+        * svg/custom/svg-fonts-segmented.xhtml: Removed.
+        * svg/custom/svg-fonts-word-spacing.html: Removed.
+        * svg/text/select-text-svgfont-expected.txt: Removed.
+        * svg/text/select-text-svgfont.html: Removed.
+        * svg/text/text-overflow-ellipsis-svgfont.html: Removed.
+
 2011-06-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Qt Rebaseline for r89257.

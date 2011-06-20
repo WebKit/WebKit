@@ -1,3 +1,12 @@
+2011-06-20  Kenneth Russell  <kbr@google.com>
+
+        Unreviewed.
+
+        Rolled out r89233 and r89235 because of crashes in http/tests/misc/acid3.html on Snow Leopard and other platforms
+        https://bugs.webkit.org/show_bug.cgi?id=63022
+
+        * wtf/Platform.h:
+
 2011-06-18  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.

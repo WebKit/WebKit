@@ -97,7 +97,7 @@ public:
     void drawEmphasisMarks(GraphicsContext*, const TextRun&, const AtomicString& mark, const FloatPoint&, int from = 0, int to = -1) const;
 
     float width(const TextRun&, HashSet<const SimpleFontData*>* fallbackFonts = 0, GlyphOverflow* = 0) const;
-    float width(const TextRun&, int& charsConsumed, String& glyphName) const;
+    float width(const TextRun&, int extraCharsAvailable, int& charsConsumed, String& glyphName) const;
 
     int offsetForPosition(const TextRun&, float position, bool includePartialGlyphs) const;
     FloatRect selectionRectForText(const TextRun&, const FloatPoint&, int h, int from = 0, int to = -1) const;
@@ -139,7 +139,6 @@ public:
     const SimpleFontData* primaryFont() const;
     const FontData* fontDataAt(unsigned) const;
     GlyphData glyphDataForCharacter(UChar32, bool mirror, FontDataVariant = AutoVariant) const;
-    std::pair<GlyphData, GlyphPage*> glyphDataAndPageForCharacter(UChar32, bool mirror, FontDataVariant = AutoVariant) const;
     bool primaryFontHasGlyphForCharacter(UChar32) const;
 
     static bool isCJKIdeograph(UChar32);
@@ -186,7 +185,6 @@ private:
     FloatRect selectionRectForComplexText(const TextRun&, const FloatPoint&, int h, int from, int to) const;
 
     friend struct WidthIterator;
-    friend class SVGTextRunRenderingContext;
 
 public:
     // Useful for debugging the different font rendering code paths.
@@ -214,7 +212,6 @@ public:
     static String normalizeSpaces(const UChar*, unsigned length);
 
     bool needsTranscoding() const { return m_needsTranscoding; }
-    FontFallbackList* fontList() const { return m_fontList.get(); }
 
 private:
     bool loadingCustomFonts() const

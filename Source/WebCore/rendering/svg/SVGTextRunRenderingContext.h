@@ -21,7 +21,6 @@
 #ifndef SVGTextRunRenderingContext_h
 #define SVGTextRunRenderingContext_h
 
-#include "Font.h"
 #include "TextRun.h"
 
 namespace WebCore {
@@ -42,9 +41,11 @@ public:
     RenderSVGResource* activePaintingResource() const { return m_activePaintingResource; }
     void setActivePaintingResource(RenderSVGResource* object) { m_activePaintingResource = object; }
 
-    virtual GlyphData glyphDataForCharacter(const Font&, const TextRun&, WidthIterator&, UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength);
-    virtual void drawSVGGlyphs(GraphicsContext*, const TextRun&, const SimpleFontData*, const GlyphBuffer&, int from, int to, const FloatPoint&) const;
-    virtual float floatWidthUsingSVGFont(const Font&, const TextRun&, int& charsConsumed, String& glyphName) const;
+    virtual void drawTextUsingSVGFont(const Font&, GraphicsContext*, const TextRun&, const FloatPoint&, int from, int to) const;
+    virtual float floatWidthUsingSVGFont(const Font&, const TextRun&) const;
+    virtual float floatWidthUsingSVGFont(const Font&, const TextRun&, int extraCharsAvailable, int& charsConsumed, String& glyphName) const;
+    virtual FloatRect selectionRectForTextUsingSVGFont(const Font&, const TextRun&, const FloatPoint&, int h, int from, int to) const;
+    virtual int offsetForPositionForTextUsingSVGFont(const Font&, const TextRun&, float position, bool includePartialGlyphs) const;
 #endif
 
 private:
@@ -55,8 +56,6 @@ private:
 #endif
     {
     }
-
-    virtual ~SVGTextRunRenderingContext() { }
 
     RenderObject* m_renderer;
 

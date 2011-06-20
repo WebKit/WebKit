@@ -43,15 +43,10 @@ namespace WebCore {
 
 GlyphData Font::glyphDataForCharacter(UChar32 c, bool mirror, FontDataVariant variant) const
 {
-    return glyphDataAndPageForCharacter(c, mirror, variant).first;
-}
-
-std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, bool mirror, FontDataVariant variant) const
-{
     ASSERT(isMainThread());
 
     if (variant == AutoVariant) {
-        if (m_fontDescription.smallCaps() && !primaryFont()->isSVGFont()) {
+        if (m_fontDescription.smallCaps()) {
             UChar32 upperC = toUpper(c);
             if (upperC != c) {
                 c = upperC;
@@ -84,7 +79,7 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
             if (page) {
                 GlyphData data = page->glyphDataForCharacter(c);
                 if (data.fontData && (data.fontData->platformData().orientation() == Horizontal || data.fontData->isTextOrientationFallback()))
-                    return make_pair(data, page);
+                    return data;
 
                 if (data.fontData) {
                     if (isCJKIdeographOrSymbol(c)) {
@@ -98,37 +93,37 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
                         if (m_fontDescription.textOrientation() == TextOrientationVerticalRight) {
                             const SimpleFontData* verticalRightFontData = data.fontData->verticalRightOrientationFontData();
                             GlyphPageTreeNode* verticalRightNode = GlyphPageTreeNode::getRootChild(verticalRightFontData, pageNumber);
-                            GlyphPage* verticalRightPage = verticalRightNode->page();
+                            const GlyphPage* verticalRightPage = verticalRightNode->page();
                             if (verticalRightPage) {
                                 GlyphData verticalRightData = verticalRightPage->glyphDataForCharacter(c);
                                 // If the glyphs are distinct, we will make the assumption that the font has a vertical-right glyph baked
                                 // into it.
                                 if (data.glyph != verticalRightData.glyph)
-                                    return make_pair(data, page);
+                                    return data;
                                 // The glyphs are identical, meaning that we should just use the horizontal glyph.
                                 if (verticalRightData.fontData)
-                                    return make_pair(verticalRightData, verticalRightPage);
+                                    return verticalRightData;
                             }
                         } else if (m_fontDescription.textOrientation() == TextOrientationUpright) {
                             const SimpleFontData* uprightFontData = data.fontData->uprightOrientationFontData();
                             GlyphPageTreeNode* uprightNode = GlyphPageTreeNode::getRootChild(uprightFontData, pageNumber);
-                            GlyphPage* uprightPage = uprightNode->page();
+                            const GlyphPage* uprightPage = uprightNode->page();
                             if (uprightPage) {
                                 GlyphData uprightData = uprightPage->glyphDataForCharacter(c);
                                 // If the glyphs are the same, then we know we can just use the horizontal glyph rotated vertically to be upright.
                                 if (data.glyph == uprightData.glyph)
-                                    return make_pair(data, page);
+                                    return data;
                                 // The glyphs are distinct, meaning that the font has a vertical-right glyph baked into it. We can't use that
                                 // glyph, so we fall back to the upright data and use the horizontal glyph.
                                 if (uprightData.fontData)
-                                    return make_pair(uprightData, uprightPage);
+                                    return uprightData;
                             }
                         }
 
                         // Shouldn't be possible to even reach this point.
                         ASSERT_NOT_REACHED();
                     }
-                    return make_pair(data, page);
+                    return data;
                 }
 
                 if (node->isSystemFallback())
@@ -153,19 +148,19 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
                     // But if it does, we will just render the capital letter big.
                     const SimpleFontData* variantFontData = data.fontData->variantFontData(m_fontDescription, variant);
                     if (!variantFontData)
-                        return make_pair(data, page);
+                        return data;
 
                     GlyphPageTreeNode* variantNode = GlyphPageTreeNode::getRootChild(variantFontData, pageNumber);
-                    GlyphPage* variantPage = variantNode->page();
+                    const GlyphPage* variantPage = variantNode->page();
                     if (variantPage) {
                         GlyphData data = variantPage->glyphDataForCharacter(c);
                         if (data.fontData)
-                            return make_pair(data, variantPage);
+                            return data;
                     }
 
                     // Do not attempt system fallback off the variantFontData. This is the very unlikely case that
                     // a font has the lowercase character but the small caps font does not have its uppercase version.
-                    return make_pair(variantFontData->missingGlyphData(), page);
+                    return variantFontData->missingGlyphData();
                 }
 
                 if (node->isSystemFallback())
@@ -217,13 +212,13 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
             // So we just always set the glyph to be same as the character, and let GDI solve it.
             page->setGlyphDataForCharacter(c, c, characterFontData);
             characterFontData->setMaxGlyphPageTreeLevel(max(characterFontData->maxGlyphPageTreeLevel(), node->level()));
-            return make_pair(page->glyphDataForCharacter(c), page);
+            return page->glyphDataForCharacter(c);
 #else
             page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
             data.fontData->setMaxGlyphPageTreeLevel(max(data.fontData->maxGlyphPageTreeLevel(), node->level()));
 #endif
         }
-        return make_pair(data, page);
+        return data;
     }
 
     // Even system fallback can fail; use the missing glyph in that case.
@@ -234,13 +229,13 @@ std::pair<GlyphData, GlyphPage*> Font::glyphDataAndPageForCharacter(UChar32 c, b
         // See comment about WINCE GDI handling near setGlyphDataForCharacter above.
         page->setGlyphDataForCharacter(c, c, data.fontData);
         data.fontData->setMaxGlyphPageTreeLevel(max(data.fontData->maxGlyphPageTreeLevel(), node->level()));
-        return make_pair(page->glyphDataForCharacter(c), page);
+        return page->glyphDataForCharacter(c);
 #else
         page->setGlyphDataForCharacter(c, data.glyph, data.fontData);
         data.fontData->setMaxGlyphPageTreeLevel(max(data.fontData->maxGlyphPageTreeLevel(), node->level()));
 #endif
     }
-    return make_pair(data, page);
+    return data;
 }
 
 bool Font::primaryFontHasGlyphForCharacter(UChar32 character) const
@@ -259,6 +254,12 @@ bool Font::getEmphasisMarkGlyphData(const AtomicString& mark, GlyphData& glyphDa
 {
     if (mark.isEmpty())
         return false;
+
+#if ENABLE(SVG_FONTS)
+    // FIXME: Implement for SVG fonts.
+    if (primaryFont()->isSVGFont())
+        return false;
+#endif
 
     UChar32 character = mark[0];
 
@@ -375,7 +376,7 @@ void Font::drawEmphasisMarksForSimpleText(GraphicsContext* context, const TextRu
     drawEmphasisMarks(context, run, glyphBuffer, mark, FloatPoint(point.x() + initialAdvance, point.y()));
 }
 
-void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const GlyphBuffer& glyphBuffer, const FloatPoint& point) const
+void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun&, const GlyphBuffer& glyphBuffer, const FloatPoint& point) const
 {   
     // Draw each contiguous run of glyphs that use the same font data.
     const SimpleFontData* fontData = glyphBuffer.fontDataAt(0);
@@ -384,20 +385,11 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const G
     float nextX = startPoint.x();
     int lastFrom = 0;
     int nextGlyph = 0;
-#if ENABLE(SVG_FONTS)
-    TextRun::RenderingContext* renderingContext = run.renderingContext();
-#endif
     while (nextGlyph < glyphBuffer.size()) {
         const SimpleFontData* nextFontData = glyphBuffer.fontDataAt(nextGlyph);
         FloatSize nextOffset = glyphBuffer.offsetAt(nextGlyph);
-
         if (nextFontData != fontData || nextOffset != offset) {
-#if ENABLE(SVG_FONTS)
-            if (renderingContext && fontData->isSVGFont())
-                renderingContext->drawSVGGlyphs(context, run, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
-            else
-#endif
-                drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
+            drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
 
             lastFrom = nextGlyph;
             fontData = nextFontData;
@@ -408,12 +400,7 @@ void Font::drawGlyphBuffer(GraphicsContext* context, const TextRun& run, const G
         nextGlyph++;
     }
 
-#if ENABLE(SVG_FONTS)
-    if (renderingContext && fontData->isSVGFont())
-        renderingContext->drawSVGGlyphs(context, run, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
-    else
-#endif
-        drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
+    drawGlyphs(context, fontData, glyphBuffer, lastFrom, nextGlyph - lastFrom, startPoint);
 }
 
 inline static float offsetToMiddleOfGlyph(const SimpleFontData* fontData, Glyph glyph)
