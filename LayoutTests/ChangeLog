@@ -1,5 +1,11 @@
 2011-06-20  Csaba Osztrogonác  <ossy@webkit.org>
 
+        [Qt][Mac] Skip failing tests.
+
+        * platform/qt-mac/Skipped:
+
+2011-06-20  Csaba Osztrogonác  <ossy@webkit.org>
+
         [Qt] Unreviewed, update Qt specific expected results after r89233, and skip failing tests until fix.
 
         Integrate SVG Fonts within GlyphPage concept, removing the special SVG code paths
