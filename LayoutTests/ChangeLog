@@ -1,3 +1,13 @@
+2011-06-19  Keishi Hattori  <keishi@webkit.org>
+
+        Reviewed by Kent Tamura.
+
+        Clicking indeterminate checkbox should flip checkedness state
+        https://bugs.webkit.org/show_bug.cgi?id=62262
+
+        * fast/forms/checkbox-click-indeterminate-expected.txt: Added.
+        * fast/forms/checkbox-click-indeterminate.html: Added. Tests behavior when clicking indeterminate checkbox.
+
 2011-06-19  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Sam Weinig.
