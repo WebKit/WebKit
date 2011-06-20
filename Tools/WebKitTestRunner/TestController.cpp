@@ -316,7 +316,7 @@ void TestController::initialize(int argc, const char* argv[])
         0, // drawHeader
         0, // drawFooter
         0, // printFrame
-        0, // runModal
+        runModal,
         0, // didCompleteRubberBandForMainFrame
         0, // saveDataToFileInDownloadsFolder
         0, // shouldInterruptJavaScript
