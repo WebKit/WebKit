@@ -1,3 +1,12 @@
+2011-06-20  Mike Reed  <reed@google.com>
+
+        Reviewed by Stephen White.
+
+        disable test in preparation for chromium change and new baseline
+        https://bugs.webkit.org/show_bug.cgi?id=62984
+
+        * platform/chromium/test_expectations.txt:
+
 2011-06-20  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
