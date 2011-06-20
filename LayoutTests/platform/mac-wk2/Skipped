@@ -440,6 +440,12 @@ svg/animations/animate-path-to-animation.html
 svg/animations/animate-points.html
 svg/animations/animate-text-nested-transforms.html
 svg/animations/animateTransform-pattern-transform.html
+svg/animations/svgangle-animation-deg-to-grad.html
+svg/animations/svgangle-animation-deg-to-rad.html
+svg/animations/svgangle-animation-grad-to-deg.html
+svg/animations/svgangle-animation-grad-to-rad.html
+svg/animations/svgangle-animation-rad-to-deg.html
+svg/animations/svgangle-animation-rad-to-grad.html
 svg/animations/svglength-animation-LengthModeHeight.html
 svg/animations/svglength-animation-LengthModeOther.html
 svg/animations/svglength-animation-LengthModeWidth.html
@@ -1786,6 +1792,9 @@ svg/custom/focus-event-handling-keyboard.xhtml
 
 # eventSender.contextClick() is unimplemented
 editing/spelling/spellcheck-input-search-crash.html
+
+# missing window.internals.createShadowContentElement
+fast/dom/shadow/create-content-element.html
 
 ### END OF (2) Classified failures without bug reports (yet)
 ########################################

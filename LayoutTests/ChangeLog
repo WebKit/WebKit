@@ -1,3 +1,14 @@
+2011-06-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [WK2] Daily gardening.
+
+        * platform/mac-wk2/Skipped: Skip some tests bacause of missing animation pause API
+          and skip one test because of missing window.internals.createShadowContentElement.
+        * platform/qt-wk2/Skipped: Skip one failing SVG test after r89233.
+        * platform/qt-wk2/fast/dom/Window/window-properties-expected.txt: Updated after r89233.
+        * platform/qt-wk2/fast/dom/Window/window-property-descriptors-expected.txt: Updated after r89233.
+        * platform/qt-wk2/fast/dom/prototype-inheritance-2-expected.txt: Updated after r89233.
+
 2011-06-20  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed, add more Chromium expectations for tests which started to fail since r89233.
