@@ -1,52 +1,3 @@
-2011-06-18  Anders Carlsson  <andersca@apple.com>
-
-        Reviewed by Darin Adler.
-
-        Disallow assigning into PassOwnArrayPtr, PassOwnPtr and PassRefPtr
-        https://bugs.webkit.org/show_bug.cgi?id=62940
-
-        Make sure that we never assign into any already existing PassRefPtr.
-
-        * accessibility/AccessibilityMediaControls.cpp:
-        (WebCore::AccessibilityMediaControl::create):
-        Remove local PassRefPtr variable.
-
-        * dom/Document.cpp:
-        (WebCore::Document::setBody):
-        Rename the PassRefPtr parameter and create a RefPtr variable.
-
-        (WebCore::Document::setFocusedNode):
-        Ditto.
-
-        * editing/ApplyStyleCommand.cpp:
-        (WebCore::ApplyStyleCommand::removeInlineStyle):
-        There's no reason to use a PassRefPtr here. Use a RefPtr, and don't initialize it since it's implicitly initialized.
-
-        * editing/CompositeEditCommand.cpp:
-        (WebCore::CompositeEditCommand::prune):
-        Rename the PassRefPtr parameter and create a RefPtr variable.
-
-        * editing/ReplaceSelectionCommand.cpp:
-        (WebCore::ReplaceSelectionCommand::insertAsListItems):
-        Ditto.
-
-        * editing/htmlediting.cpp:
-        (WebCore::createTabSpanElement):
-        Ditto.
-
-        * html/canvas/CanvasRenderingContext2D.cpp:
-        (WebCore::CanvasRenderingContext2D::setStrokeStyle):
-        (WebCore::CanvasRenderingContext2D::setFillStyle):
-        Ditto.
-
-        * platform/network/mac/FormDataStreamMac.mm:
-        (WebCore::formFinalize):
-        Ditto.
-
-        (WebCore::setHTTPBody):
-        Use an OwnPtr instead of explicitly deleting the form variable.
-
-<<<<<<< .mine
 2011-06-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
@@ -95,7 +46,6 @@
         (WebCore::setHTTPBody):
         Use an OwnPtr instead of explicitly deleting the form variable.
 
-=======
 2011-06-20  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Darin Adler.
@@ -168,7 +118,6 @@ Source/WebKit/mac/WebView/WebVideoFullscreenHUDWindowController.h.
         (-[WebWindowScaleAnimation setCurrentProgress:]):
         (-[WebWindowFadeAnimation initWithDuration:window:initialAlpha:finalAlpha:]):
 
->>>>>>> .r89282
 2011-06-20  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Adam Barth.

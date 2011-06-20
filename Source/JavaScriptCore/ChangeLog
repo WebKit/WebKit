@@ -15,25 +15,6 @@
         (WTF::PassRefPtr::operator=):
         (WTF::NonNullPassRefPtr::operator=):
 
-<<<<<<< .mine
-2011-06-20  Anders Carlsson  <andersca@apple.com>
-
-        Reviewed by Darin Adler.
-
-        Disallow assigning into PassOwnArrayPtr, PassOwnPtr and PassRefPtr
-        https://bugs.webkit.org/show_bug.cgi?id=62940
-
-        Remove clear() and all assignment operators except one which now has a COMPILE_ASSERT.
-
-        * wtf/PassOwnArrayPtr.h:
-        (WTF::PassOwnArrayPtr::operator=):
-        * wtf/PassOwnPtr.h:
-        (WTF::PassOwnPtr::operator=):
-        * wtf/PassRefPtr.h:
-        (WTF::PassRefPtr::operator=):
-        (WTF::NonNullPassRefPtr::operator=):
-
-=======
 2011-06-20  Oliver Hunt  <oliver@apple.com>
 
         Reviewed by Darin Adler.
@@ -48,7 +29,6 @@
         * wtf/DateMath.cpp:
         (WTF::parseDateFromNullTerminatedCharacters):
 
->>>>>>> .r89282
 2011-06-20  Juan C. Montemayor  <jmont@apple.com>
 
         Reviewed by Oliver Hunt.
