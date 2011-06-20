@@ -1,5 +1,13 @@
 2011-06-20  Martin Robinson  <mrobinson@igalia.com>
 
+        Rebaseline some tests for GTK+ after r89257.
+
+        * platform/gtk/fast/tokenizer/002-expected.txt:
+        * platform/gtk/fast/tokenizer/external-script-document-write_2-expected.txt:
+        * platform/gtk/fast/tokenizer/script_extra_close-expected.txt:
+
+2011-06-20  Martin Robinson  <mrobinson@igalia.com>
+
         Rebaseline many SVG tests for GTK+ after r89233 and update the skipped list to include
         a new test that relies on the didRunInsecureContent callback. Add a platform-specific
         result for fast/dom/Window/window-properties.html as we now have the media stream
