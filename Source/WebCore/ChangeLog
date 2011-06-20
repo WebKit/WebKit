@@ -1,3 +1,14 @@
+2011-06-20  Andras Becsi  <abecsi@webkit.org>
+
+        Reviewed by Csaba Osztrogonác.
+
+        make-hash-tools.pl: Perl 5.14 compatibility
+        https://bugs.webkit.org/show_bug.cgi?id=61890
+
+        No new tests needed.
+
+        * make-hash-tools.pl: Use if/elsif instead of switch/case.
+
 2011-06-20  Kevin Ollivier  <kevino@theolliviers.com>
 
         [wx] Unreviewed build fix, fix the codepaths run under each CPU type.
