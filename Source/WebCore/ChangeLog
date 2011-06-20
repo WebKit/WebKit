@@ -1,5 +1,15 @@
 2011-06-20  Andras Becsi  <abecsi@webkit.org>
 
+        Unreviewed build fix.
+
+        [Qt][V8] Include missing UnusedParam.h.
+
+        No new tests needed.
+
+        * rendering/svg/SVGTextLayoutEngineSpacing.cpp:
+
+2011-06-20  Andras Becsi  <abecsi@webkit.org>
+
         Rubber-stamped by Csaba Osztrogonác.
 
         [Qt][V8] Remove non-existing headers from project file.

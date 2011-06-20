@@ -29,6 +29,8 @@
 #include "SVGFontData.h"
 #include "SVGFontElement.h"
 #include "SVGFontFaceElement.h"
+#else
+#include <wtf/UnusedParam.h>
 #endif
 
 namespace WebCore {
