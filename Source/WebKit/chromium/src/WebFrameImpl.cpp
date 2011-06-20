@@ -132,6 +132,7 @@
 #include "SubstituteData.h"
 #include "TextAffinity.h"
 #include "TextIterator.h"
+#include "UserGestureIndicator.h"
 #include "WebAnimationControllerImpl.h"
 #include "WebConsoleMessage.h"
 #include "WebDataSourceImpl.h"
@@ -848,12 +849,16 @@ void WebFrameImpl::collectGarbage()
 }
 
 #if USE(V8)
-v8::Handle<v8::Value> WebFrameImpl::executeScriptAndReturnValue(
-    const WebScriptSource& source)
+v8::Handle<v8::Value> WebFrameImpl::executeScriptAndReturnValue(const WebScriptSource& source)
 {
+    // FIXME: This fake user gesture is required to make a bunch of pyauto
+    // tests pass. If this isn't needed in non-test situations, we should
+    // consider removing this code and changing the tests.
+    // http://code.google.com/p/chromium/issues/detail?id=86397
+    UserGestureIndicator gestureIndicator(DefinitelyProcessingUserGesture);
+
     TextPosition1 position(WTF::OneBasedNumber::fromOneBasedInt(source.startLine), WTF::OneBasedNumber::base());
-    return m_frame->script()->executeScript(
-        ScriptSourceCode(source.code, source.url, position)).v8Value();
+    return m_frame->script()->executeScript(ScriptSourceCode(source.code, source.url, position)).v8Value();
 }
 
 // Returns the V8 context for this frame, or an empty handle if there is none.
