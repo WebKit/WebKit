@@ -1,3 +1,19 @@
+2011-06-20  Stephen White  <senorblanco@chromium.org>
+
+        Unreviewed.
+
+        New baselines for tests affected by r62988.
+
+        * platform/chromium-linux-x86/svg/wicd/test-scalable-background-image2-expected.png: Removed.
+        * platform/chromium-linux/plugins/embed-attributes-style-expected.png:
+        * platform/chromium-linux/svg/W3C-SVG-1.1/text-text-08-b-expected.png:
+        * platform/chromium-linux/svg/batik/text/textDecoration-expected.png:
+        * platform/chromium-linux/svg/css/text-shadow-multiple-expected.png:
+        * platform/chromium-linux/svg/filters/sourceAlpha-expected.png:
+        * platform/chromium-linux/svg/text/text-text-08-b-expected.png:
+        * platform/chromium-linux/svg/wicd/test-scalable-background-image2-expected.png:
+        * platform/chromium/test_expectations.txt:
+
 2011-06-20  Adam Barth  <abarth@webkit.org>
 
         Reviewed by Alexey Proskuryakov.
