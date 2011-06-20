@@ -19,9 +19,7 @@
 
 module core {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] CDATASection : Text {
+    interface CDATASection : Text {
     };
 
 }

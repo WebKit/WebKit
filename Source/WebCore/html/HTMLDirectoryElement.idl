@@ -19,9 +19,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLDirectoryElement : HTMLElement {
+    interface HTMLDirectoryElement : HTMLElement {
         attribute [Reflect] boolean compact;
     };
 

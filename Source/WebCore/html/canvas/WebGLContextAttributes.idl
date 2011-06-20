@@ -27,7 +27,6 @@
 module html {
     interface [
         Conditional=WEBGL,
-        LegacyDefaultOptionalArguments,
         OmitConstructor
     ] WebGLContextAttributes {
         attribute boolean alpha;

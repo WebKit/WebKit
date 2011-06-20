@@ -20,7 +20,6 @@
 module ranges {
 
     interface [
-        LegacyDefaultOptionalArguments,
         DontCheckEnums
     ] RangeException {
 

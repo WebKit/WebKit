@@ -32,7 +32,6 @@ module window {
 
     // See: http://www.w3.org/TR/navigation-timing/
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=WEB_TIMING,
         OmitConstructor
     ] PerformanceNavigation {

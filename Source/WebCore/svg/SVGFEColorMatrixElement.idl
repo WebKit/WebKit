@@ -27,7 +27,6 @@ module svg {
 
     interface [
         Conditional=SVG&FILTERS,
-        LegacyDefaultOptionalArguments,
         DontCheckEnums
     ] SVGFEColorMatrixElement : SVGElement,
                                 SVGFilterPrimitiveStandardAttributes {

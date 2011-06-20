@@ -25,7 +25,6 @@
 module audio {
     // For real-time audio stream synthesis/processing in JavaScript 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO,
         GenerateToJS,
         CustomMarkFunction,

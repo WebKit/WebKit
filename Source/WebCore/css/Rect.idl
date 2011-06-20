@@ -19,9 +19,7 @@
 
 module css {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] Rect {
+    interface Rect {
         readonly attribute CSSPrimitiveValue  top;
         readonly attribute CSSPrimitiveValue  right;
         readonly attribute CSSPrimitiveValue  bottom;

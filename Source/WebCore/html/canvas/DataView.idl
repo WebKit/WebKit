@@ -26,7 +26,6 @@
 module html {
 
     interface [
-        LegacyDefaultOptionalArguments,
         CanBeConstructed,
         CustomConstructFunction,
         CustomToJS,
@@ -43,19 +42,19 @@ module html {
         [Custom] DOMObject getUint8()
             raises (DOMException);
 
-        [StrictTypeChecking, RequiresAllArguments=Raise] short getInt16(in unsigned long byteOffset, in [Optional] boolean littleEndian)
+        [StrictTypeChecking] short getInt16(in unsigned long byteOffset, in [Optional] boolean littleEndian)
             raises (DOMException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] unsigned short getUint16(in unsigned long byteOffset, in [Optional] boolean littleEndian)
+        [StrictTypeChecking] unsigned short getUint16(in unsigned long byteOffset, in [Optional] boolean littleEndian)
             raises (DOMException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] long getInt32(in unsigned long byteOffset, in [Optional] boolean littleEndian)
+        [StrictTypeChecking] long getInt32(in unsigned long byteOffset, in [Optional] boolean littleEndian)
             raises (DOMException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] unsigned long getUint32(in unsigned long byteOffset, in [Optional] boolean littleEndian)
+        [StrictTypeChecking] unsigned long getUint32(in unsigned long byteOffset, in [Optional] boolean littleEndian)
             raises (DOMException);
 
         // Use custom code to handle NaN case for JSC.
-        [JSCCustom, StrictTypeChecking, RequiresAllArguments=Raise] float getFloat32(in unsigned long byteOffset, in [Optional] boolean littleEndian)
+        [JSCCustom, StrictTypeChecking] float getFloat32(in unsigned long byteOffset, in [Optional] boolean littleEndian)
             raises (DOMException);
-        [JSCCustom, StrictTypeChecking, RequiresAllArguments=Raise] double getFloat64(in unsigned long byteOffset, in [Optional] boolean littleEndian)
+        [JSCCustom, StrictTypeChecking] double getFloat64(in unsigned long byteOffset, in [Optional] boolean littleEndian)
             raises (DOMException);
 
         // We have to use custom code because our code generator does not support uint8_t type.
@@ -66,17 +65,17 @@ module html {
         [Custom] void setUint8()
             raises (DOMException);
 
-        [StrictTypeChecking, RequiresAllArguments=Raise] void setInt16(in unsigned long byteOffset, in short value, in [Optional] boolean littleEndian)
+        [StrictTypeChecking] void setInt16(in unsigned long byteOffset, in short value, in [Optional] boolean littleEndian)
             raises (DOMException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] void setUint16(in unsigned long byteOffset, in unsigned short value, in [Optional] boolean littleEndian)
+        [StrictTypeChecking] void setUint16(in unsigned long byteOffset, in unsigned short value, in [Optional] boolean littleEndian)
             raises (DOMException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] void setInt32(in unsigned long byteOffset, in long value, in [Optional] boolean littleEndian)
+        [StrictTypeChecking] void setInt32(in unsigned long byteOffset, in long value, in [Optional] boolean littleEndian)
             raises (DOMException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] void setUint32(in unsigned long byteOffset, in unsigned long value, in [Optional] boolean littleEndian)
+        [StrictTypeChecking] void setUint32(in unsigned long byteOffset, in unsigned long value, in [Optional] boolean littleEndian)
             raises (DOMException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] void setFloat32(in unsigned long byteOffset, in float value, in [Optional] boolean littleEndian)
+        [StrictTypeChecking] void setFloat32(in unsigned long byteOffset, in float value, in [Optional] boolean littleEndian)
             raises (DOMException);
-        [StrictTypeChecking, RequiresAllArguments=Raise] void setFloat64(in unsigned long byteOffset, in double value, in [Optional] boolean littleEndian)
+        [StrictTypeChecking] void setFloat64(in unsigned long byteOffset, in double value, in [Optional] boolean littleEndian)
             raises (DOMException);
     };
 

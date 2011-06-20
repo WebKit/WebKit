@@ -23,7 +23,6 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGMatrix {
         // FIXME: these attributes should all be floats but since we implement
@@ -35,19 +34,19 @@ module svg {
         attribute [StrictTypeChecking] double e;
         attribute [StrictTypeChecking] double f;
 
-        [StrictTypeChecking, RequiresAllArguments=Raise] SVGMatrix multiply(in SVGMatrix secondMatrix);
+        [StrictTypeChecking] SVGMatrix multiply(in SVGMatrix secondMatrix);
         SVGMatrix inverse()
             raises(SVGException);
-        [Immutable, StrictTypeChecking, RequiresAllArguments=Raise] SVGMatrix translate(in float x, in float y);
-        [Immutable, StrictTypeChecking, RequiresAllArguments=Raise] SVGMatrix scale(in float scaleFactor);
-        [Immutable, StrictTypeChecking, RequiresAllArguments=Raise] SVGMatrix scaleNonUniform(in float scaleFactorX, in float scaleFactorY);
-        [Immutable, StrictTypeChecking, RequiresAllArguments=Raise] SVGMatrix rotate(in float angle);
-        [StrictTypeChecking, RequiresAllArguments=Raise] SVGMatrix rotateFromVector(in float x, in float y)
+        [Immutable, StrictTypeChecking] SVGMatrix translate(in float x, in float y);
+        [Immutable, StrictTypeChecking] SVGMatrix scale(in float scaleFactor);
+        [Immutable, StrictTypeChecking] SVGMatrix scaleNonUniform(in float scaleFactorX, in float scaleFactorY);
+        [Immutable, StrictTypeChecking] SVGMatrix rotate(in float angle);
+        [StrictTypeChecking] SVGMatrix rotateFromVector(in float x, in float y)
             raises(SVGException);
         [Immutable] SVGMatrix flipX();
         [Immutable] SVGMatrix flipY();
-        [Immutable, StrictTypeChecking, RequiresAllArguments=Raise] SVGMatrix skewX(in float angle);
-        [Immutable, StrictTypeChecking, RequiresAllArguments=Raise] SVGMatrix skewY(in float angle);
+        [Immutable, StrictTypeChecking] SVGMatrix skewX(in float angle);
+        [Immutable, StrictTypeChecking] SVGMatrix skewY(in float angle);
     };
 
 }

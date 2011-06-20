@@ -20,9 +20,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLMapElement : HTMLElement {
+    interface HTMLMapElement : HTMLElement {
         readonly attribute HTMLCollection areas;
         attribute [Reflect] DOMString name;
     };

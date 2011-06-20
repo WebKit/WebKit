@@ -31,7 +31,6 @@
 module test {
     interface [
         Conditional=Condition1|Condition2,
-        LegacyDefaultOptionalArguments,
         CanBeConstructed,
         CallWith=ScriptExecutionContext
     ] TestInterface {

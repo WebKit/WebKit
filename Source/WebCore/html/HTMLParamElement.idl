@@ -19,9 +19,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLParamElement : HTMLElement {
+    interface HTMLParamElement : HTMLElement {
         attribute [Reflect] DOMString name;
         attribute [Reflect] DOMString type;
         attribute [Reflect] DOMString value;

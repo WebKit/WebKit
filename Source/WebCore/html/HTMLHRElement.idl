@@ -19,9 +19,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLHRElement : HTMLElement {
+    interface HTMLHRElement : HTMLElement {
         attribute [Reflect] DOMString align;
         attribute [Reflect] boolean noShade;
         attribute [Reflect] DOMString size;

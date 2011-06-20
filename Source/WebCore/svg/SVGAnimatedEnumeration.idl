@@ -26,7 +26,6 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGAnimatedEnumeration {
         attribute [StrictTypeChecking] unsigned short baseVal

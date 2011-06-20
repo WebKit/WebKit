@@ -19,7 +19,6 @@
 
 module html {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=METER_TAG
     ] HTMLMeterElement : HTMLElement {
                  attribute double value

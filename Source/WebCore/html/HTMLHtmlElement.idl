@@ -19,9 +19,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLHtmlElement : HTMLElement {
+    interface HTMLHtmlElement : HTMLElement {
         attribute [Reflect] DOMString version;
         attribute [Reflect, URL] DOMString manifest;
     };

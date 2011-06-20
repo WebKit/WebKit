@@ -19,9 +19,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLLIElement : HTMLElement {
+    interface HTMLLIElement : HTMLElement {
         attribute [Reflect] DOMString type;
         attribute [Reflect] long value;    
     };

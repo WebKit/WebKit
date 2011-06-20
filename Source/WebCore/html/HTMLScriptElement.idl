@@ -19,9 +19,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLScriptElement : HTMLElement {
+    interface HTMLScriptElement : HTMLElement {
         attribute [ConvertNullToNullString] DOMString text;
         attribute [Reflect=for] DOMString htmlFor;
         attribute [Reflect] DOMString event;

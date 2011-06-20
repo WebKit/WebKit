@@ -20,9 +20,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLTableColElement : HTMLElement {
+    interface HTMLTableColElement : HTMLElement {
         attribute [Reflect] DOMString align;
         attribute [Reflect=char] DOMString ch;
         attribute [Reflect=charoff] DOMString chOff;

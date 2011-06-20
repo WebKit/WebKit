@@ -27,7 +27,6 @@ module core {
 
     interface [
         Conditional=INPUT_SPEECH,
-        LegacyDefaultOptionalArguments,
     ] SpeechInputEvent : Event {
         readonly attribute SpeechInputResultList results;
     };

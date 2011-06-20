@@ -19,9 +19,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLHeadingElement : HTMLElement {
+    interface HTMLHeadingElement : HTMLElement {
         attribute [Reflect] DOMString align;
     };
 

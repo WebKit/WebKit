@@ -20,9 +20,7 @@
 
 module core {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] ProcessingInstruction : Node {
+    interface ProcessingInstruction : Node {
 
         // DOM Level 1
 

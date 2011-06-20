@@ -19,9 +19,7 @@
 
 module html {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] HTMLFontElement : HTMLElement {
+    interface HTMLFontElement : HTMLElement {
         attribute [Reflect] DOMString color;
         attribute [Reflect] DOMString face;
         attribute [Reflect] DOMString size;

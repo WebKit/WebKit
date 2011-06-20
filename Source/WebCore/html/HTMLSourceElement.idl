@@ -26,7 +26,6 @@
 module html {
     interface [
         Conditional=VIDEO,
-        LegacyDefaultOptionalArguments,
     ] HTMLSourceElement : HTMLElement {
     attribute [Reflect, URL] DOMString src;
     attribute DOMString type;

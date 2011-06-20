@@ -27,7 +27,6 @@
 module svg {
 
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=SVG
     ] SVGPathSegCurvetoQuadraticSmoothAbs : SVGPathSeg {
         attribute [StrictTypeChecking] float x;

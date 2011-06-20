@@ -20,7 +20,6 @@
 module core {
 
     interface [
-        LegacyDefaultOptionalArguments,
         GenerateNativeConverter
     ] DocumentType : Node {
 

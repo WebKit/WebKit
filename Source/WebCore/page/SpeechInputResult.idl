@@ -27,7 +27,6 @@ module core {
 
     interface [
         Conditional=INPUT_SPEECH,
-        LegacyDefaultOptionalArguments,
     ] SpeechInputResult {
         readonly attribute DOMString utterance;
         readonly attribute float confidence;

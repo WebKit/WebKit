@@ -1944,11 +1944,14 @@ sub GenerateImplementation
                             last;
                         }
                     }
-                    push(@implContent, "    if (exec->argumentCount() < $numMandatoryParams)\n");
-                    if ($requiresAllArguments eq "Raise") {
-                        push(@implContent, "        return throwVMError(exec, createSyntaxError(exec, \"Not enough arguments\"));\n");
-                    } else {
-                        push(@implContent, "        return JSValue::encode(jsUndefined());\n");
+                    if ($numMandatoryParams > 0)
+                    {
+                        push(@implContent, "    if (exec->argumentCount() < $numMandatoryParams)\n");
+                        if ($requiresAllArguments eq "Raise") {
+                            push(@implContent, "        return throwVMError(exec, createSyntaxError(exec, \"Not enough arguments\"));\n");
+                        } else {
+                            push(@implContent, "        return JSValue::encode(jsUndefined());\n");
+                        }
                     }
                 }
 

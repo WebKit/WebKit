@@ -28,7 +28,6 @@
 
 module audio {
     interface [
-        LegacyDefaultOptionalArguments,
         Conditional=WEB_AUDIO
     ] AudioChannelMerger : AudioNode {
     };

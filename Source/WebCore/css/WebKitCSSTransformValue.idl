@@ -29,7 +29,6 @@
 module css {
 
     interface [
-            LegacyDefaultOptionalArguments,
             HasIndexGetter,
             DontCheckEnums
     ] WebKitCSSTransformValue : CSSValueList {

@@ -20,9 +20,7 @@
 
 module window {
 
-    interface [
-        LegacyDefaultOptionalArguments,
-    ] DOMMimeType {
+    interface DOMMimeType {
         readonly attribute DOMString type;
         readonly attribute DOMString suffixes;
         readonly attribute DOMString description;

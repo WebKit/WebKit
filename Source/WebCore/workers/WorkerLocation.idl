@@ -30,7 +30,6 @@ module threads {
 
     interface [
         Conditional=WORKERS,
-        LegacyDefaultOptionalArguments,
         GenerateIsReachable=Impl,
         NoStaticTables
     ] WorkerLocation {
