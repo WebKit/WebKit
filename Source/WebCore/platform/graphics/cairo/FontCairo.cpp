@@ -43,26 +43,35 @@
 
 namespace WebCore {
 
-static void prepareContextForGlyphDrawing(cairo_t* context, const SimpleFontData* font, const FloatPoint& point)
+static const float gSyntheticObliqueSkew = -tanf(14 * acosf(0) / 90);
+
+static void prepareContextForGlyphDrawing(cairo_t* context, const SimpleFontData* font)
 {
-    static const float syntheticObliqueSkew = -tanf(14 * acosf(0) / 90);
     cairo_set_scaled_font(context, font->platformData().scaledFont());
+
     if (font->platformData().syntheticOblique()) {
-        cairo_matrix_t mat = {1, 0, syntheticObliqueSkew, 1, point.x(), point.y()};
+        cairo_matrix_t mat = {1, 0, gSyntheticObliqueSkew, 1, 0, 0};
         cairo_transform(context, &mat);
-    } else
-        cairo_translate(context, point.x(), point.y());
+    }
 }
 
 static void drawGlyphsToContext(cairo_t* context, const SimpleFontData* font, GlyphBufferGlyph* glyphs, int numGlyphs)
 {
+    cairo_matrix_t originalTransform;
+    float syntheticBoldOffset = font->syntheticBoldOffset();
+    if (font->platformData().syntheticOblique() || syntheticBoldOffset)
+        cairo_get_matrix(context, &originalTransform);
+
+    prepareContextForGlyphDrawing(context, font);
     cairo_show_glyphs(context, glyphs, numGlyphs);
-    if (font->syntheticBoldOffset()) {
-        // We could use cairo_save/cairo_restore here, but two translations are likely faster.
-        cairo_translate(context, font->syntheticBoldOffset(), 0);
+
+    if (syntheticBoldOffset) {
+        cairo_translate(context, syntheticBoldOffset, 0);
         cairo_show_glyphs(context, glyphs, numGlyphs);
-        cairo_translate(context, -font->syntheticBoldOffset(), 0);
     }
+
+    if (font->platformData().syntheticOblique() || syntheticBoldOffset)
+        cairo_set_matrix(context, &originalTransform);
 }
 
 static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint& point, const SimpleFontData* font, GlyphBufferGlyph* glyphs, int numGlyphs)
@@ -79,8 +88,7 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
         cairo_save(context);
         cairo_translate(context, shadow->m_offset.width(), shadow->m_offset.height());
         setSourceRGBAFromColor(context, shadow->m_color);
-        prepareContextForGlyphDrawing(context, font, point);
-        cairo_show_glyphs(context, glyphs, numGlyphs);
+        drawGlyphsToContext(context, font, glyphs, numGlyphs);
         cairo_restore(context);
         return;
     }
@@ -90,7 +98,6 @@ static void drawGlyphsShadow(GraphicsContext* graphicsContext, const FloatPoint&
     FloatRect fontExtentsRect(point.x(), point.y() - extents.height, extents.width, extents.height);
     cairo_t* shadowContext = shadow->beginShadowLayer(graphicsContext, fontExtentsRect);
     if (shadowContext) {
-        prepareContextForGlyphDrawing(shadowContext, font, point);
         drawGlyphsToContext(shadowContext, font, glyphs, numGlyphs);
         shadow->endShadowLayer(graphicsContext);
     }
@@ -104,10 +111,10 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
 
     GlyphBufferGlyph* glyphs = const_cast<GlyphBufferGlyph*>(glyphBuffer.glyphs(from));
 
-    float offset = 0.0f;
+    float offset = point.x();
     for (int i = 0; i < numGlyphs; i++) {
         glyphs[i].x = offset;
-        glyphs[i].y = 0.0f;
+        glyphs[i].y = point.y();
         offset += glyphBuffer.advanceAt(from + i);
     }
 
@@ -117,32 +124,8 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     cairo_t* cr = platformContext->cr();
     cairo_save(cr);
 
-    float globalAlpha = platformContext->globalAlpha();
-
-    prepareContextForGlyphDrawing(cr, font, point);
     if (context->textDrawingMode() & TextModeFill) {
-        if (context->fillGradient()) {
-            cairo_set_source(cr, context->fillGradient()->platformGradient());
-            if (globalAlpha < 1) {
-                cairo_push_group(cr);
-                cairo_paint_with_alpha(cr, globalAlpha);
-                cairo_pop_group_to_source(cr);
-            }
-        } else if (context->fillPattern()) {
-            AffineTransform affine;
-            cairo_pattern_t* pattern = context->fillPattern()->createPlatformPattern(affine);
-            cairo_set_source(cr, pattern);
-            if (globalAlpha < 1) {
-                cairo_push_group(cr);
-                cairo_paint_with_alpha(cr, globalAlpha);
-                cairo_pop_group_to_source(cr);
-            }
-            cairo_pattern_destroy(pattern);
-        } else {
-            float red, green, blue, alpha;
-            context->fillColor().getRGBA(red, green, blue, alpha);
-            cairo_set_source_rgba(cr, red, green, blue, alpha * globalAlpha);
-        }
+        platformContext->prepareForFilling(context->state(), PlatformContextCairo::AdjustPatternForGlobalAlpha);
         drawGlyphsToContext(cr, font, glyphs, numGlyphs);
     }
 
@@ -151,30 +134,12 @@ void Font::drawGlyphs(GraphicsContext* context, const SimpleFontData* font, cons
     // the text as even one single stroke would cover the full wdth of the text.
     //  See https://bugs.webkit.org/show_bug.cgi?id=33759.
     if (context->textDrawingMode() & TextModeStroke && context->strokeThickness() < 2 * offset) {
-        if (context->strokeGradient()) {
-            cairo_set_source(cr, context->strokeGradient()->platformGradient());
-            if (globalAlpha < 1) {
-                cairo_push_group(cr);
-                cairo_paint_with_alpha(cr, globalAlpha);
-                cairo_pop_group_to_source(cr);
-            }
-        } else if (context->strokePattern()) {
-            AffineTransform affine;
-            cairo_pattern_t* pattern = context->strokePattern()->createPlatformPattern(affine);
-            cairo_set_source(cr, pattern);
-            if (globalAlpha < 1) {
-                cairo_push_group(cr);
-                cairo_paint_with_alpha(cr, globalAlpha);
-                cairo_pop_group_to_source(cr);
-            }
-            cairo_pattern_destroy(pattern);
-        } else {
-            float red, green, blue, alpha;
-            context->strokeColor().getRGBA(red, green, blue, alpha);
-            cairo_set_source_rgba(cr, red, green, blue, alpha * globalAlpha);
-        }
-        cairo_glyph_path(cr, glyphs, numGlyphs);
+        platformContext->prepareForStroking(context->state());
         cairo_set_line_width(cr, context->strokeThickness());
+
+        // This may disturb the CTM, but we are going to call cairo_restore soon after.
+        prepareContextForGlyphDrawing(cr, font);
+        cairo_glyph_path(cr, glyphs, numGlyphs);
         cairo_stroke(cr);
     }
 

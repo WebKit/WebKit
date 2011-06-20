@@ -1081,8 +1081,6 @@ svg/batik/paints/gradientLimit.svg
 # The middle circle on both rectangles is missing in the pixel output.
 svg/custom/circular-marker-reference-2.svg
 svg/custom/non-circular-marker-reference.svg
-# The gradient is missing on the first line of text
-svg/custom/js-late-gradient-and-object-creation.svg
 
 # The following  canvas test cases from http://philip.html5.org/tests/canvas/suite/tests/
 # fail for Mac and can likely be removed from this Skipped list when they are removed from

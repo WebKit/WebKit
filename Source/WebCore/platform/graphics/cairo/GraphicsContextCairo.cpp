@@ -70,59 +70,12 @@ using namespace std;
 
 namespace WebCore {
 
-static inline void setPlatformFill(GraphicsContext* context, cairo_t* cr)
+// A helper which quickly fills a rectangle with a simple color fill.
+static inline void fillRectWithColor(cairo_t* cr, const FloatRect& rect, const Color& color)
 {
-    cairo_pattern_t* pattern = 0;
-    cairo_save(cr);
-    
-    const GraphicsContextState& state = context->state();
-    if (state.fillPattern) {
-        AffineTransform affine;
-        pattern = state.fillPattern->createPlatformPattern(affine);
-        cairo_set_source(cr, pattern);
-    } else if (state.fillGradient)
-        cairo_set_source(cr, state.fillGradient->platformGradient());
-    else
-        setSourceRGBAFromColor(cr, context->fillColor());
-    cairo_clip_preserve(cr);
-    cairo_paint_with_alpha(cr, context->platformContext()->globalAlpha());
-    cairo_restore(cr);
-    if (pattern)
-        cairo_pattern_destroy(pattern);
-}
-
-static inline void setPlatformStroke(GraphicsContext* context, cairo_t* cr)
-{
-    float globalAlpha = context->platformContext()->globalAlpha();
-    cairo_pattern_t* pattern = 0;
-    cairo_save(cr);
-    
-    const GraphicsContextState& state = context->state();
-    if (state.strokePattern) {
-        AffineTransform affine;
-        pattern = state.strokePattern->createPlatformPattern(affine);
-        cairo_set_source(cr, pattern);
-    } else if (state.strokeGradient)
-        cairo_set_source(cr, state.strokeGradient->platformGradient());
-    else  {
-        Color strokeColor = colorWithOverrideAlpha(context->strokeColor().rgb(), context->strokeColor().alpha() / 255.f * globalAlpha);
-        setSourceRGBAFromColor(cr, strokeColor);
-    }
-    if (globalAlpha < 1.0f && (state.strokePattern || state.strokeGradient)) {
-        cairo_push_group(cr);
-        cairo_paint_with_alpha(cr, globalAlpha);
-        cairo_pop_group_to_source(cr);
-    }
-    cairo_stroke_preserve(cr);
-    cairo_restore(cr);
-    if (pattern)
-        cairo_pattern_destroy(pattern);
-}
-
-// A fillRect helper
-static inline void fillRectSourceOver(cairo_t* cr, const FloatRect& rect, const Color& col)
-{
-    setSourceRGBAFromColor(cr, col);
+    if (!color.alpha())
+        return;
+    setSourceRGBAFromColor(cr, color);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_set_operator(cr, CAIRO_OPERATOR_OVER);
     cairo_fill(cr);
@@ -175,30 +128,37 @@ static inline void drawPathShadow(GraphicsContext* context, PathDrawingStyle dra
     // It's important to copy the context properties to the new shadow
     // context to preserve things such as the fill rule and stroke width.
     copyContextProperties(cairoContext, shadowContext);
+
     cairo_append_path(shadowContext, path.get());
 
+    // The color of the shadow doesn't matter, since it's simply used as a mask.
+    cairo_set_source_rgb(shadowContext, 1, 0, 0);
     if (drawingStyle & Fill)
-        setPlatformFill(context, shadowContext);
+        cairo_fill_preserve(shadowContext);
     if (drawingStyle & Stroke)
-        setPlatformStroke(context, shadowContext);
-
+        cairo_stroke_preserve(shadowContext);
     shadow->endShadowLayer(context);
 }
 
-static void fillCurrentCairoPath(GraphicsContext* context, cairo_t* cairoContext)
+static inline void shadowAndFillCurrentCairoPath(GraphicsContext* context)
 {
-    cairo_set_fill_rule(cairoContext, context->fillRule() == RULE_EVENODD ? CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+    cairo_t* cr = context->platformContext()->cr();
+    cairo_save(cr);
+
+    context->platformContext()->prepareForFilling(context->state(), PlatformContextCairo::NoAdjustment);
+
     drawPathShadow(context, Fill);
 
-    setPlatformFill(context, cairoContext);
-    cairo_new_path(cairoContext);
+    cairo_clip(cr);
+    cairo_paint_with_alpha(cr, context->platformContext()->globalAlpha());
+    cairo_restore(cr);
 }
 
-static void strokeCurrentCairoPath(GraphicsContext* context,  cairo_t* cairoContext)
+static inline void shadowAndStrokeCurrentCairoPath(GraphicsContext* context)
 {
     drawPathShadow(context, Stroke);
-    setPlatformStroke(context, cairoContext);
-    cairo_new_path(cairoContext);
+    context->platformContext()->prepareForStroking(context->state());
+    cairo_stroke(context->platformContext()->cr());
 }
 
 GraphicsContext::GraphicsContext(cairo_t* cr)
@@ -263,8 +223,7 @@ void GraphicsContext::drawRect(const IntRect& rect)
     cairo_t* cr = platformContext()->cr();
     cairo_save(cr);
 
-    if (fillColor().alpha())
-        fillRectSourceOver(cr, rect, fillColor());
+    fillRectWithColor(cr, rect, fillColor());
 
     if (strokeStyle() != NoStroke) {
         setSourceRGBAFromColor(cr, strokeColor());
@@ -340,8 +299,8 @@ static void drawLineOnCairoContext(GraphicsContext* graphicsContext, cairo_t* co
             firstRect.move(-strokeThickness, -strokeThickness / 2);
             secondRect.move(0, -strokeThickness / 2);
         }
-        fillRectSourceOver(context, firstRect, strokeColor);
-        fillRectSourceOver(context, secondRect, strokeColor);
+        fillRectWithColor(context, firstRect, strokeColor);
+        fillRectWithColor(context, secondRect, strokeColor);
 
         int distance = (isVerticalLine ? (point2.y() - point1.y()) : (point2.x() - point1.x())) - 2 * strokeThickness;
         double patternOffset = calculateStrokePatternOffset(distance, patternWidth);
@@ -513,7 +472,7 @@ void GraphicsContext::fillPath(const Path& path)
 
     cairo_t* cr = platformContext()->cr();
     setPathOnCairoContext(cr, path.platformPath()->context());
-    fillCurrentCairoPath(this, cr);
+    shadowAndFillCurrentCairoPath(this);
 }
 
 void GraphicsContext::strokePath(const Path& path)
@@ -523,7 +482,7 @@ void GraphicsContext::strokePath(const Path& path)
 
     cairo_t* cr = platformContext()->cr();
     setPathOnCairoContext(cr, path.platformPath()->context());
-    strokeCurrentCairoPath(this, cr);
+    shadowAndStrokeCurrentCairoPath(this);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect)
@@ -532,10 +491,8 @@ void GraphicsContext::fillRect(const FloatRect& rect)
         return;
 
     cairo_t* cr = platformContext()->cr();
-    cairo_save(cr);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
-    fillCurrentCairoPath(this, cr);
-    cairo_restore(cr);
+    shadowAndFillCurrentCairoPath(this);
 }
 
 void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorSpace)
@@ -546,8 +503,7 @@ void GraphicsContext::fillRect(const FloatRect& rect, const Color& color, ColorS
     if (hasShadow())
         m_data->shadow.drawRectShadow(this, enclosingIntRect(rect));
 
-    if (color.alpha())
-        fillRectSourceOver(platformContext()->cr(), rect, color);
+    fillRectWithColor(platformContext()->cr(), rect, color);
 }
 
 void GraphicsContext::clip(const FloatRect& rect)
@@ -952,7 +908,7 @@ void GraphicsContext::strokeRect(const FloatRect& rect, float width)
     cairo_save(cr);
     cairo_rectangle(cr, rect.x(), rect.y(), rect.width(), rect.height());
     cairo_set_line_width(cr, width);
-    strokeCurrentCairoPath(this, cr);
+    shadowAndStrokeCurrentCairoPath(this);
     cairo_restore(cr);
 }
 

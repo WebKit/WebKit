@@ -1,3 +1,51 @@
+2011-05-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        REGRESSION: [CAIRO] wrong drawing of Gradients and Patterns on texts
+        https://bugs.webkit.org/show_bug.cgi?id=31507
+
+        When painting text, be sure to set the pattern fill or gradient before modifying the Cairo
+        context CTM. This ensures that gradients and patterns are scaled and positioned properly in
+        the coordinate system of the page. Abstract out the fill preparation to avoid repeating this
+        logic and perform a bit of cleanup.
+
+        * platform/graphics/cairo/FontCairo.cpp:
+        (WebCore::prepareContextForGlyphDrawing): Now set the x and y position of the text using the glyph
+        offsets. This avoids having to set a transformation matrix when there is no synthetic oblique.
+        (WebCore::drawGlyphsToContext): Add a newline as part of cleanup. Call prepareContextForGlyphDrawing from here
+        and restor the original CTM when exiting.
+        (WebCore::drawGlyphsShadow): Use drawGlyphsToContext here to ensure that all glyph drawing goes through
+        the same path.
+        (WebCore::Font::drawGlyphs): Fix a C-style cast and use the glyph offsets to position the glyphs instead
+        of adjusting the transformation matrix. Use GC::prepareForFilling and GC::prepareForStroking instead of
+        setting up the fill and stroke manually.
+        * platform/graphics/cairo/GraphicsContextCairo.cpp:
+        (WebCore::fillRectWithColor): Renamed fillRectSourceOver to fillRectWithColor to make it clearer
+        why this is different than the slower fill method. Moved the no transparency early return here.
+        (WebCore::drawPathShadow): Instead of calling setPlatformFill, just perform a cheap fill and stroke
+        with red color. Since the shadow is used as a mask, the actual fill shouldn't matter.
+        (WebCore::reduceSourceByAlpha): Added this helper.
+        (WebCore::GraphicsContext::prepareForFilling): Added this method adapted from setPlatformFill, which
+        correctly handles the transformation matrix.
+        (WebCore::GraphicsContext::prepareForStroking): Ditto for stroking.
+        (WebCore::shadowAndFillCurrentCairoPath): Adapted from fillCurrentCairoPath, but renamed to clarify
+        what it does and no uses prepareForFilling.
+        (WebCore::shadowAndStrokeCurrentCairoPath): Ditto for stroking.
+        (WebCore::GraphicsContext::drawRect): Update for new method names.
+        (WebCore::GraphicsContext::drawLine): Ditto.
+        (WebCore::GraphicsContext::fillPath): Ditto.
+        (WebCore::GraphicsContext::strokePath): Ditto.
+        (WebCore::GraphicsContext::fillRect): Ditto. Remove the unnecessary save/restore pair here.
+        (WebCore::GraphicsContext::strokeRect): Update to reflect new method names.
+        * platform/graphics/cairo/PlatformContextCairo.cpp:
+        (WebCore::reduceSourceByAlpha): Added this helper.
+        (WebCore::GraphicsContext::prepareForFilling): Added this method adapted from setPlatformFill, which
+        correctly handles the transformation matrix.
+        (WebCore::GraphicsContext::prepareForStroking): Ditto for stroking.
+        (WebCore::reduceSourceByAlpha):
+        * platform/graphics/cairo/PlatformContextCairo.h: Added new method declarations.
+
 2011-06-20  Tim Horton  <timothy_horton@apple.com>
 
         Reviewed by Darin Adler.

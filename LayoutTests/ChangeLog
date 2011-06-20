@@ -1,3 +1,30 @@
+2011-05-03  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Dirk Schulze.
+
+        REGRESSION: [CAIRO] wrong drawing of Gradients and Patterns on texts
+        https://bugs.webkit.org/show_bug.cgi?id=31507
+
+        Unskip a test which is now passing and update pixel results with correct
+        output.
+
+        * platform/gtk/Skipped:
+        * platform/gtk/fast/canvas/canvas-text-alignment-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-11-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-pattern-01-b-expected.png:
+        * platform/gtk/svg/batik/text/textDecoration-expected.png:
+        * platform/gtk/svg/batik/text/textEffect-expected.png:
+        * platform/gtk/svg/batik/text/textEffect3-expected.png:
+        * platform/gtk/svg/css/composite-shadow-text-expected.png:
+        * platform/gtk/svg/css/text-gradient-shadow-expected.png:
+        * platform/gtk/svg/custom/js-late-gradient-and-object-creation-expected.png:
+        * platform/gtk/svg/custom/js-late-gradient-creation-expected.png:
+        * platform/gtk/svg/custom/js-late-pattern-and-object-creation-expected.png:
+        * platform/gtk/svg/custom/js-late-pattern-creation-expected.png:
+        * platform/gtk/svg/custom/pattern-with-transformation-expected.png:
+        * platform/gtk/svg/text/text-align-03-b-expected.png:
+        * platform/gtk/svg/transforms/text-with-pattern-with-svg-transform-expected.png:
+
 2011-06-20  Tim Horton  <timothy_horton@apple.com>
 
         Reviewed by Darin Adler.

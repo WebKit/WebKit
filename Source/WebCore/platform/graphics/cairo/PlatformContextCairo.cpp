@@ -28,6 +28,10 @@
 #include "PlatformContextCairo.h"
 
 #include "GraphicsContext.h"
+#include "CairoUtilities.h"
+#include "Gradient.h"
+#include "GraphicsContext.h"
+#include "Pattern.h"
 #include <cairo.h>
 
 namespace WebCore {
@@ -191,6 +195,55 @@ float PlatformContextCairo::globalAlpha() const
 void PlatformContextCairo::setGlobalAlpha(float globalAlpha)
 {
     m_state->m_globalAlpha = globalAlpha;
+}
+
+static inline void reduceSourceByAlpha(cairo_t* cr, float alpha)
+{
+    if (alpha >= 1)
+        return;
+    cairo_push_group(cr);
+    cairo_set_operator(cr, CAIRO_OPERATOR_SOURCE);
+    cairo_paint_with_alpha(cr, alpha);
+    cairo_pop_group_to_source(cr);
+}
+
+static void prepareCairoContextSource(cairo_t* cr, Pattern* pattern, Gradient* gradient, const Color& color, float globalAlpha)
+{
+    if (pattern) {
+        RefPtr<cairo_pattern_t> cairoPattern(adoptRef(pattern->createPlatformPattern(AffineTransform())));
+        cairo_set_source(cr, cairoPattern.get());
+        reduceSourceByAlpha(cr, globalAlpha);
+    } else if (gradient) {
+        cairo_set_source(cr, gradient->platformGradient());
+
+        // FIXME: It would be faster to simply recreate the Cairo gradient and multiply the
+        // color stops by the global alpha.
+        reduceSourceByAlpha(cr, globalAlpha);
+    } else { // Solid color source.
+        if (globalAlpha < 1)
+            setSourceRGBAFromColor(cr, colorWithOverrideAlpha(color.rgb(), color.alpha() / 255.f * globalAlpha));
+        else
+            setSourceRGBAFromColor(cr, color);
+    }
+}
+
+void PlatformContextCairo::prepareForFilling(const GraphicsContextState& state, PatternAdjustment patternAdjustment)
+{
+    cairo_set_fill_rule(m_cr.get(), state.fillRule == RULE_EVENODD ?  CAIRO_FILL_RULE_EVEN_ODD : CAIRO_FILL_RULE_WINDING);
+    prepareCairoContextSource(m_cr.get(),
+                              state.fillPattern.get(),
+                              state.fillGradient.get(),
+                              state.fillColor,
+                              patternAdjustment == AdjustPatternForGlobalAlpha ? globalAlpha() : 1);
+}
+
+void PlatformContextCairo::prepareForStroking(const GraphicsContextState& state)
+{
+    prepareCairoContextSource(m_cr.get(),
+                              state.strokePattern.get(),
+                              state.strokeGradient.get(),
+                              state.strokeColor,
+                              globalAlpha());
 }
 
 } // namespace WebCore
