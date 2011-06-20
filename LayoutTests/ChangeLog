@@ -1,3 +1,83 @@
+2011-06-20  Csaba Osztrogonác  <ossy@webkit.org>
+
+        [Qt] Unreviewed, update Qt specific expected results after r89233, and skip failing tests until fix.
+
+        Integrate SVG Fonts within GlyphPage concept, removing the special SVG code paths
+        from Font, making it possible to reuse the simple text code path for SVG Fonts
+        https://bugs.webkit.org/show_bug.cgi?id=59085
+
+        * platform/qt/Skipped:
+        * platform/qt/fast/dom/Window/window-properties-expected.png: Added.
+        * platform/qt/fast/dom/Window/window-properties-expected.txt:
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.png: Added.
+        * platform/qt/fast/dom/Window/window-property-descriptors-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-2-expected.png: Added.
+        * platform/qt/fast/dom/prototype-inheritance-2-expected.txt:
+        * platform/qt/fast/dom/prototype-inheritance-expected.png: Added.
+        * platform/qt/fast/dom/prototype-inheritance-expected.txt:
+        * platform/qt/fast/js/global-constructors-expected.png: Added.
+        * platform/qt/fast/js/global-constructors-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-01-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-02-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-03-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-dom-04-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/filters-image-03-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/paths-dom-02-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-17-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-grad-20-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-03-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/pservers-pattern-04-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-01-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-02-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-03-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-04-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-06-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1-SE/types-dom-07-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/filters-turb-02-f-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/filters-turb-02-f-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/render-elems-06-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/render-elems-06-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/render-elems-07-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/render-elems-07-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/render-elems-08-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/render-elems-08-t-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/render-groups-01-b-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/render-groups-01-b-expected.txt:
+        * platform/qt/svg/W3C-SVG-1.1/render-groups-03-t-expected.png:
+        * platform/qt/svg/W3C-SVG-1.1/render-groups-03-t-expected.txt:
+        * platform/qt/svg/custom/glyph-transformation-with-hkern-expected.png: Added.
+        * platform/qt/svg/custom/glyph-transformation-with-hkern-expected.txt: Added.
+        * platform/qt/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.png:
+        * platform/qt/svg/custom/scrolling-embedded-svg-file-image-repaint-problem-expected.txt:
+        * platform/qt/svg/custom/svg-features-expected.png: Added.
+        * platform/qt/svg/custom/svg-features-expected.txt: Added.
+        * platform/qt/svg/custom/svg-fonts-in-html-expected.png:
+        * platform/qt/svg/custom/svg-fonts-in-html-expected.txt:
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/qt/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/qt/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/qt/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/qt/svg/wicd/test-rightsizing-b-expected.txt:
+
 2011-06-20  Nikolas Zimmermann  <nzimmermann@rim.com>
 
         Reviewed by Rob Buis.
