@@ -1,3 +1,37 @@
+2011-06-20  Cary Clark  <caryclark@google.com>
+
+        Reviewed by Eric Seidel.
+
+        Add Font interface to support Skia on Mac Chrome port
+        https://bugs.webkit.org/show_bug.cgi?id=62889
+
+        No new tests. This combination (using Skia as the
+        WebCore renderer on Chrome for Mac) is not yet
+        enabled, so adding this file has no functional
+        change. The corresponding changes to the gyp files
+        exclude FontSkia for all current builds.
+
+        * WebCore.gyp/WebCore.gyp:
+        Exclude FontSkia for all non-mac builds. An existing
+        rule excludes *Skia for mac builds.
+
+        * WebCore.gypi:
+        Add FontSkia to the list of files.
+
+        * platform/graphics/skia/FontSkia.cpp: Added.
+        (WebCore::Font::canReturnFallbackFontsForComplexText):
+        (WebCore::Font::canExpandAroundIdeographsInComplexText):
+        (WebCore::isCanvasMultiLayered):
+        (WebCore::adjustTextRenderMode):
+        (WebCore::setupPaint):
+        (WebCore::Font::drawGlyphs):
+        These functions are similar to their counterparts in
+        platform/graphics/chromium/FontLinux.cpp.
+        The differences are: 
+        The setupPaint uses CTFont instead of FreeType.
+        The width/height font metrics have different accessors.
+        Harfbuzz is not needed in the Mac port. 
+
 2011-06-20  Andras Becsi  <abecsi@webkit.org>
 
         Reviewed by Csaba Osztrogonác.
