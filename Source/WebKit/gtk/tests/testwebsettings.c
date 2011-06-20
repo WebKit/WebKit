@@ -23,6 +23,36 @@
 
 #if GTK_CHECK_VERSION(2, 14, 0)
 
+static void test_webkit_web_settings_copy(void)
+{
+    WebKitWebSettings* settings = webkit_web_settings_new();
+
+    // Set some non-default settings to verify that settings are properly copied.
+    g_object_set(settings,
+                 "enable-webgl", TRUE,
+                 "enable-fullscreen", TRUE,
+                 "auto-load-images", FALSE,
+                 "default-encoding", "utf-8", NULL);
+
+    WebKitWebSettings* copy = webkit_web_settings_copy(settings);
+
+    gboolean enableWebGL = FALSE;
+    gboolean enableFullscreen = FALSE;
+    gboolean autoLoadImages = FALSE;
+    char* defaultEncoding = NULL;
+    g_object_get(copy,
+                 "enable-fullscreen", &enableFullscreen,
+                 "enable-webgl", &enableWebGL,
+                 "auto-load-images", &autoLoadImages,
+                 "default-encoding", &defaultEncoding, NULL);
+
+    g_assert(enableWebGL);
+    g_assert(enableFullscreen);
+    g_assert(!autoLoadImages);
+    g_assert_cmpstr(defaultEncoding, ==, "utf-8");
+    g_free(defaultEncoding);
+}
+
 static void test_webkit_web_settings_user_agent(void)
 {
     WebKitWebSettings* settings;
@@ -68,6 +98,7 @@ int main(int argc, char** argv)
 
     g_test_bug_base("https://bugs.webkit.org/");
     g_test_add_func("/webkit/websettings/user_agent", test_webkit_web_settings_user_agent);
+    g_test_add_func("/webkit/websettings/copy", test_webkit_web_settings_copy);
     return g_test_run ();
 }
 

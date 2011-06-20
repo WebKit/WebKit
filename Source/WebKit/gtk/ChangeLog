@@ -1,3 +1,20 @@
+2011-06-10  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] webkit_web_settings_copy does not copy all settings
+        https://bugs.webkit.org/show_bug.cgi?id=62424
+
+        Instead of trying to keep webkit_web_settings_copy up to date with
+        property additions, create the object copy by dynamically initializing
+        all webkit_web_settings properties at once.
+
+        * tests/testwebsettings.c:
+        (test_webkit_web_settings_copy): Create a test for webkit_web_settings copy.
+        (main): Run the new test.
+        * webkit/webkitwebsettings.cpp:
+        (webkit_web_settings_copy): Dynamically initialize all properties of the copy.
+
 2011-06-20  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Eric Seidel.

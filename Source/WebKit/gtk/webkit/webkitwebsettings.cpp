@@ -1245,53 +1245,25 @@ WebKitWebSettings* webkit_web_settings_new()
  **/
 WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* original)
 {
-    WebKitWebSettingsPrivate* priv = original->priv;
-    return WEBKIT_WEB_SETTINGS(g_object_new(WEBKIT_TYPE_WEB_SETTINGS,
-                 "default-encoding", priv->defaultEncoding.data(),
-                 "cursive-font-family", priv->cursiveFontFamily.data(),
-                 "default-font-family", priv->defaultFontFamily.data(),
-                 "fantasy-font-family", priv->fantasyFontFamily.data(),
-                 "monospace-font-family", priv->monospaceFontFamily.data(),
-                 "sans-serif-font-family", priv->sansSerifFontFamily.data(),
-                 "serif-font-family", priv->serifFontFamily.data(),
-                 "default-font-size", priv->defaultFontSize,
-                 "default-monospace-font-size", priv->defaultMonospaceFontSize,
-                 "minimum-font-size", priv->minimumFontSize,
-                 "minimum-logical-font-size", priv->minimumLogicalFontSize,
-                 "auto-load-images", priv->autoLoadImages,
-                 "auto-shrink-images", priv->autoShrinkImages,
-                 "print-backgrounds", priv->printBackgrounds,
-                 "enable-scripts", priv->enableScripts,
-                 "enable-plugins", priv->enablePlugins,
-                 "resizable-text-areas", priv->resizableTextAreas,
-                 "user-stylesheet-uri", priv->userStylesheetURI.data(),
-                 "zoom-step", priv->zoomStep,
-                 "enable-developer-extras", priv->enableDeveloperExtras,
-                 "spell-checking-languages", priv->spellCheckingLanguages.data(),
-                 "enable-caret-browsing", priv->enableCaretBrowsing,
-                 "enable-html5-database", priv->enableHTML5Database,
-                 "enable-html5-local-storage", priv->enableHTML5LocalStorage,
-                 "enable-xss-auditor", priv->enableXSSAuditor,
-                 "enable-spatial-navigation", priv->enableSpatialNavigation,
-                 "enable-frame-flattening", priv->enableFrameFlattening,
-                 "user-agent", webkit_web_settings_get_user_agent(original),
-                 "javascript-can-open-windows-automatically", priv->javascriptCanOpenWindowsAutomatically,
-                 "javascript-can-access-clipboard", priv->javascriptCanAccessClipboard,
-                 "enable-offline-web-application-cache", priv->enableOfflineWebApplicationCache,
-                 "editing-behavior", priv->editingBehavior,
-                 "enable-universal-access-from-file-uris", priv->enableUniversalAccessFromFileURIs,
-                 "enable-file-access-from-file-uris", priv->enableFileAccessFromFileURIs,
-                 "enable-dom-paste", priv->enableDOMPaste,
-                 "tab-key-cycles-through-elements", priv->tabKeyCyclesThroughElements,
-                 "enable-default-context-menu", priv->enableDefaultContextMenu,
-                 "enable-site-specific-quirks", priv->enableSiteSpecificQuirks,
-                 "enable-page-cache", priv->enablePageCache,
-                 "auto-resize-window", priv->autoResizeWindow,
-                 "enable-java-applet", priv->enableJavaApplet,
-                 "enable-hyperlink-auditing", priv->enableHyperlinkAuditing,
-                 "enable-fullscreen", priv->enableFullscreen,
-                 "enable-dns-prefetching", priv->enableDNSPrefetching,
-                 NULL));
+    unsigned numberOfProperties = 0;
+    GOwnPtr<GParamSpec*> properties(g_object_class_list_properties(
+        G_OBJECT_CLASS(WEBKIT_WEB_SETTINGS_GET_CLASS(original)), &numberOfProperties));
+    GOwnPtr<GParameter> parameters(g_new0(GParameter, numberOfProperties));
+
+    for (size_t i = 0; i < numberOfProperties; i++) {
+        GParamSpec* property = properties.get()[i];
+        GParameter* parameter = parameters.get() + i;
+
+        if (!(property->flags & (G_PARAM_CONSTRUCT | G_PARAM_READWRITE)))
+            continue;
+
+        parameter->name = property->name;
+        g_value_init(&parameter->value, property->value_type);
+        g_object_get_property(G_OBJECT(original), property->name, &parameter->value);
+    }
+
+    return WEBKIT_WEB_SETTINGS(g_object_newv(WEBKIT_TYPE_WEB_SETTINGS, numberOfProperties, parameters.get()));
+
 }
 
 /**
