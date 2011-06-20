@@ -1,3 +1,21 @@
+2011-06-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Eric Seidel.
+
+        [GTK] Clean up unecessary boilerplate from WebKitWebSettings and make private members meet WebKit style guidelines
+        https://bugs.webkit.org/show_bug.cgi?id=61972
+
+        Rename all private members of WebKitWebSettings to meet WebKit style guidelines and
+        put the private struct definition in webkitwebsettingsprivate.h so it can be
+        accessed from webkitwebview.cpp. This cuts down on the boilerplate immensely.
+
+        * webkit/webkitwebsettings.cpp: Rename private members to meet WebKit style guidelines
+        and allocate the private section with new/delete. This allows for using CString and removes
+        the need for manual string memory management.
+        * webkit/webkitwebsettingsprivate.h: Move the private struct definition here.
+        * webkit/webkitwebview.cpp: Update to reflect new struct names. Remove boilerplate
+        and other very small code cleanups.
+
 2011-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
         Reviewed by Xan Lopez.

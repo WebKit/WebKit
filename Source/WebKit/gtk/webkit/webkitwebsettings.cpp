@@ -28,6 +28,7 @@
 
 #include "EditingBehavior.h"
 #include "FileSystem.h"
+#include "GOwnPtr.h"
 #include "PluginDatabase.h"
 #include "webkitenumtypes.h"
 #include "webkitglobalsprivate.h"
@@ -64,59 +65,6 @@
 using namespace WebCore;
 
 G_DEFINE_TYPE(WebKitWebSettings, webkit_web_settings, G_TYPE_OBJECT)
-
-struct _WebKitWebSettingsPrivate {
-    gchar* default_encoding;
-    gchar* cursive_font_family;
-    gchar* default_font_family;
-    gchar* fantasy_font_family;
-    gchar* monospace_font_family;
-    gchar* sans_serif_font_family;
-    gchar* serif_font_family;
-    guint default_font_size;
-    guint default_monospace_font_size;
-    guint minimum_font_size;
-    guint minimum_logical_font_size;
-    gboolean enforce_96_dpi;
-    gboolean auto_load_images;
-    gboolean auto_shrink_images;
-    gboolean print_backgrounds;
-    gboolean enable_scripts;
-    gboolean enable_plugins;
-    gboolean resizable_text_areas;
-    gchar* user_stylesheet_uri;
-    gfloat zoom_step;
-    gboolean enable_developer_extras;
-    gboolean enable_private_browsing;
-    gboolean enable_spell_checking;
-    gchar* spell_checking_languages;
-    gboolean enable_caret_browsing;
-    gboolean enable_html5_database;
-    gboolean enable_html5_local_storage;
-    gboolean enable_xss_auditor;
-    gboolean enable_spatial_navigation;
-    gboolean enable_frame_flattening;
-    gchar* user_agent;
-    gboolean javascript_can_open_windows_automatically;
-    gboolean javascript_can_access_clipboard;
-    gboolean enable_offline_web_application_cache;
-    WebKitEditingBehavior editing_behavior;
-    gboolean enable_universal_access_from_file_uris;
-    gboolean enable_file_access_from_file_uris;
-    gboolean enable_dom_paste;
-    gboolean tab_key_cycles_through_elements;
-    gboolean enable_default_context_menu;
-    gboolean enable_site_specific_quirks;
-    gboolean enable_page_cache;
-    gboolean auto_resize_window;
-    gboolean enable_java_applet;
-    gboolean enable_hyperlink_auditing;
-    gboolean enable_fullscreen;
-    gboolean enable_dns_prefetching;
-    gboolean enable_webgl;
-};
-
-#define WEBKIT_WEB_SETTINGS_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE((obj), WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate))
 
 enum {
     PROP_0,
@@ -946,32 +894,16 @@ static void webkit_web_settings_class_init(WebKitWebSettingsClass* klass)
                                                          _("Whether WebKit prefetches domain names"),
                                                          TRUE,
                                                          flags));
-
-    g_type_class_add_private(klass, sizeof(WebKitWebSettingsPrivate));
 }
 
 static void webkit_web_settings_init(WebKitWebSettings* web_settings)
 {
-    web_settings->priv = G_TYPE_INSTANCE_GET_PRIVATE(web_settings, WEBKIT_TYPE_WEB_SETTINGS, WebKitWebSettingsPrivate);
+    web_settings->priv = new WebKitWebSettingsPrivate;
 }
 
 static void webkit_web_settings_finalize(GObject* object)
 {
-    WebKitWebSettings* web_settings = WEBKIT_WEB_SETTINGS(object);
-    WebKitWebSettingsPrivate* priv = web_settings->priv;
-
-    g_free(priv->default_encoding);
-    g_free(priv->cursive_font_family);
-    g_free(priv->default_font_family);
-    g_free(priv->fantasy_font_family);
-    g_free(priv->monospace_font_family);
-    g_free(priv->sans_serif_font_family);
-    g_free(priv->serif_font_family);
-    g_free(priv->user_stylesheet_uri);
-    g_free(priv->spell_checking_languages);
-
-    g_free(priv->user_agent);
-
+    delete WEBKIT_WEB_SETTINGS(object)->priv;
     G_OBJECT_CLASS(webkit_web_settings_parent_class)->finalize(object);
 }
 
@@ -982,161 +914,151 @@ static void webkit_web_settings_set_property(GObject* object, guint prop_id, con
 
     switch(prop_id) {
     case PROP_DEFAULT_ENCODING:
-        g_free(priv->default_encoding);
-        priv->default_encoding = g_strdup(g_value_get_string(value));
+        priv->defaultEncoding = g_value_get_string(value);
         break;
     case PROP_CURSIVE_FONT_FAMILY:
-        g_free(priv->cursive_font_family);
-        priv->cursive_font_family = g_strdup(g_value_get_string(value));
+        priv->cursiveFontFamily = g_value_get_string(value);
         break;
     case PROP_DEFAULT_FONT_FAMILY:
-        g_free(priv->default_font_family);
-        priv->default_font_family = g_strdup(g_value_get_string(value));
+        priv->defaultFontFamily = g_value_get_string(value);
         break;
     case PROP_FANTASY_FONT_FAMILY:
-        g_free(priv->fantasy_font_family);
-        priv->fantasy_font_family = g_strdup(g_value_get_string(value));
+        priv->fantasyFontFamily = g_value_get_string(value);
         break;
     case PROP_MONOSPACE_FONT_FAMILY:
-        g_free(priv->monospace_font_family);
-        priv->monospace_font_family = g_strdup(g_value_get_string(value));
+        priv->monospaceFontFamily = g_value_get_string(value);
         break;
     case PROP_SANS_SERIF_FONT_FAMILY:
-        g_free(priv->sans_serif_font_family);
-        priv->sans_serif_font_family = g_strdup(g_value_get_string(value));
+        priv->sansSerifFontFamily = g_value_get_string(value);
         break;
     case PROP_SERIF_FONT_FAMILY:
-        g_free(priv->serif_font_family);
-        priv->serif_font_family = g_strdup(g_value_get_string(value));
+        priv->serifFontFamily = g_value_get_string(value);
         break;
     case PROP_DEFAULT_FONT_SIZE:
-        priv->default_font_size = g_value_get_int(value);
+        priv->defaultFontSize = g_value_get_int(value);
         break;
     case PROP_DEFAULT_MONOSPACE_FONT_SIZE:
-        priv->default_monospace_font_size = g_value_get_int(value);
+        priv->defaultMonospaceFontSize = g_value_get_int(value);
         break;
     case PROP_MINIMUM_FONT_SIZE:
-        priv->minimum_font_size = g_value_get_int(value);
+        priv->minimumFontSize = g_value_get_int(value);
         break;
     case PROP_MINIMUM_LOGICAL_FONT_SIZE:
-        priv->minimum_logical_font_size = g_value_get_int(value);
+        priv->minimumLogicalFontSize = g_value_get_int(value);
         break;
     case PROP_ENFORCE_96_DPI:
-        priv->enforce_96_dpi = g_value_get_boolean(value);
+        priv->enforce96DPI = g_value_get_boolean(value);
         break;
     case PROP_AUTO_LOAD_IMAGES:
-        priv->auto_load_images = g_value_get_boolean(value);
+        priv->autoLoadImages = g_value_get_boolean(value);
         break;
     case PROP_AUTO_SHRINK_IMAGES:
-        priv->auto_shrink_images = g_value_get_boolean(value);
+        priv->autoShrinkImages = g_value_get_boolean(value);
         break;
     case PROP_PRINT_BACKGROUNDS:
-        priv->print_backgrounds = g_value_get_boolean(value);
+        priv->printBackgrounds = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_SCRIPTS:
-        priv->enable_scripts = g_value_get_boolean(value);
+        priv->enableScripts = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_PLUGINS:
-        priv->enable_plugins = g_value_get_boolean(value);
+        priv->enablePlugins = g_value_get_boolean(value);
         break;
     case PROP_RESIZABLE_TEXT_AREAS:
-        priv->resizable_text_areas = g_value_get_boolean(value);
+        priv->resizableTextAreas = g_value_get_boolean(value);
         break;
     case PROP_USER_STYLESHEET_URI:
-        g_free(priv->user_stylesheet_uri);
-        priv->user_stylesheet_uri = g_strdup(g_value_get_string(value));
+        priv->userStylesheetURI = g_value_get_string(value);
         break;
     case PROP_ZOOM_STEP:
-        priv->zoom_step = g_value_get_float(value);
+        priv->zoomStep = g_value_get_float(value);
         break;
     case PROP_ENABLE_DEVELOPER_EXTRAS:
-        priv->enable_developer_extras = g_value_get_boolean(value);
+        priv->enableDeveloperExtras = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_PRIVATE_BROWSING:
-        priv->enable_private_browsing = g_value_get_boolean(value);
+        priv->enablePrivateBrowsing = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_CARET_BROWSING:
-        priv->enable_caret_browsing = g_value_get_boolean(value);
+        priv->enableCaretBrowsing = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_HTML5_DATABASE:
-        priv->enable_html5_database = g_value_get_boolean(value);
+        priv->enableHTML5Database = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_HTML5_LOCAL_STORAGE:
-        priv->enable_html5_local_storage = g_value_get_boolean(value);
+        priv->enableHTML5LocalStorage = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_SPELL_CHECKING:
-        priv->enable_spell_checking = g_value_get_boolean(value);
+        priv->enableSpellChecking = g_value_get_boolean(value);
         break;
     case PROP_SPELL_CHECKING_LANGUAGES:
-        g_free(priv->spell_checking_languages);
-        priv->spell_checking_languages = g_strdup(g_value_get_string(value));
+        priv->spellCheckingLanguages = g_value_get_string(value);
         break;
     case PROP_ENABLE_XSS_AUDITOR:
-        priv->enable_xss_auditor = g_value_get_boolean(value);
+        priv->enableXSSAuditor = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_SPATIAL_NAVIGATION:
-        priv->enable_spatial_navigation = g_value_get_boolean(value);
+        priv->enableSpatialNavigation = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_FRAME_FLATTENING:
-        priv->enable_frame_flattening = g_value_get_boolean(value);
+        priv->enableFrameFlattening = g_value_get_boolean(value);
         break;
     case PROP_USER_AGENT:
-        g_free(priv->user_agent);
         if (!g_value_get_string(value) || !strlen(g_value_get_string(value)))
-            priv->user_agent = g_strdup(webkitUserAgent().utf8().data());
+            priv->userAgent = webkitUserAgent().utf8();
         else
-            priv->user_agent = g_strdup(g_value_get_string(value));
+            priv->userAgent = g_value_get_string(value);
         break;
     case PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY:
-        priv->javascript_can_open_windows_automatically = g_value_get_boolean(value);
+        priv->javascriptCanOpenWindowsAutomatically = g_value_get_boolean(value);
         break;
     case PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD:
-        priv->javascript_can_access_clipboard = g_value_get_boolean(value);
+        priv->javascriptCanAccessClipboard = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE:
-        priv->enable_offline_web_application_cache = g_value_get_boolean(value);
+        priv->enableOfflineWebApplicationCache = g_value_get_boolean(value);
         break;
     case PROP_EDITING_BEHAVIOR:
-        priv->editing_behavior = static_cast<WebKitEditingBehavior>(g_value_get_enum(value));
+        priv->editingBehavior = static_cast<WebKitEditingBehavior>(g_value_get_enum(value));
         break;
     case PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS:
-        priv->enable_universal_access_from_file_uris = g_value_get_boolean(value);
+        priv->enableUniversalAccessFromFileURIs = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_FILE_ACCESS_FROM_FILE_URIS:
-        priv->enable_file_access_from_file_uris = g_value_get_boolean(value);
+        priv->enableFileAccessFromFileURIs = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_DOM_PASTE:
-        priv->enable_dom_paste = g_value_get_boolean(value);
+        priv->enableDOMPaste = g_value_get_boolean(value);
         break;
     case PROP_TAB_KEY_CYCLES_THROUGH_ELEMENTS:
-        priv->tab_key_cycles_through_elements = g_value_get_boolean(value);
+        priv->tabKeyCyclesThroughElements = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_DEFAULT_CONTEXT_MENU:
-        priv->enable_default_context_menu = g_value_get_boolean(value);
+        priv->enableDefaultContextMenu = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_SITE_SPECIFIC_QUIRKS:
-        priv->enable_site_specific_quirks = g_value_get_boolean(value);
+        priv->enableSiteSpecificQuirks = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_PAGE_CACHE:
-        priv->enable_page_cache = g_value_get_boolean(value);
+        priv->enablePageCache = g_value_get_boolean(value);
         break;
     case PROP_AUTO_RESIZE_WINDOW:
-        priv->auto_resize_window = g_value_get_boolean(value);
+        priv->autoResizeWindow = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_JAVA_APPLET:
-        priv->enable_java_applet = g_value_get_boolean(value);
+        priv->enableJavaApplet = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_HYPERLINK_AUDITING:
-        priv->enable_hyperlink_auditing = g_value_get_boolean(value);
+        priv->enableHyperlinkAuditing = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_FULLSCREEN:
-        priv->enable_fullscreen = g_value_get_boolean(value);
+        priv->enableFullscreen = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_DNS_PREFETCHING:
-        priv->enable_dns_prefetching = g_value_get_boolean(value);
+        priv->enableDNSPrefetching = g_value_get_boolean(value);
         break;
     case PROP_ENABLE_WEBGL:
-        priv->enable_webgl = g_value_get_boolean(value);
+        priv->enableWebgl = g_value_get_boolean(value);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -1151,148 +1073,148 @@ static void webkit_web_settings_get_property(GObject* object, guint prop_id, GVa
 
     switch (prop_id) {
     case PROP_DEFAULT_ENCODING:
-        g_value_set_string(value, priv->default_encoding);
+        g_value_set_string(value, priv->defaultEncoding.data());
         break;
     case PROP_CURSIVE_FONT_FAMILY:
-        g_value_set_string(value, priv->cursive_font_family);
+        g_value_set_string(value, priv->cursiveFontFamily.data());
         break;
     case PROP_DEFAULT_FONT_FAMILY:
-        g_value_set_string(value, priv->default_font_family);
+        g_value_set_string(value, priv->defaultFontFamily.data());
         break;
     case PROP_FANTASY_FONT_FAMILY:
-        g_value_set_string(value, priv->fantasy_font_family);
+        g_value_set_string(value, priv->fantasyFontFamily.data());
         break;
     case PROP_MONOSPACE_FONT_FAMILY:
-        g_value_set_string(value, priv->monospace_font_family);
+        g_value_set_string(value, priv->monospaceFontFamily.data());
         break;
     case PROP_SANS_SERIF_FONT_FAMILY:
-        g_value_set_string(value, priv->sans_serif_font_family);
+        g_value_set_string(value, priv->sansSerifFontFamily.data());
         break;
     case PROP_SERIF_FONT_FAMILY:
-        g_value_set_string(value, priv->serif_font_family);
+        g_value_set_string(value, priv->serifFontFamily.data());
         break;
     case PROP_DEFAULT_FONT_SIZE:
-        g_value_set_int(value, priv->default_font_size);
+        g_value_set_int(value, priv->defaultFontSize);
         break;
     case PROP_DEFAULT_MONOSPACE_FONT_SIZE:
-        g_value_set_int(value, priv->default_monospace_font_size);
+        g_value_set_int(value, priv->defaultMonospaceFontSize);
         break;
     case PROP_MINIMUM_FONT_SIZE:
-        g_value_set_int(value, priv->minimum_font_size);
+        g_value_set_int(value, priv->minimumFontSize);
         break;
     case PROP_MINIMUM_LOGICAL_FONT_SIZE:
-        g_value_set_int(value, priv->minimum_logical_font_size);
+        g_value_set_int(value, priv->minimumLogicalFontSize);
         break;
     case PROP_ENFORCE_96_DPI:
-        g_value_set_boolean(value, priv->enforce_96_dpi);
+        g_value_set_boolean(value, priv->enforce96DPI);
         break;
     case PROP_AUTO_LOAD_IMAGES:
-        g_value_set_boolean(value, priv->auto_load_images);
+        g_value_set_boolean(value, priv->autoLoadImages);
         break;
     case PROP_AUTO_SHRINK_IMAGES:
-        g_value_set_boolean(value, priv->auto_shrink_images);
+        g_value_set_boolean(value, priv->autoShrinkImages);
         break;
     case PROP_PRINT_BACKGROUNDS:
-        g_value_set_boolean(value, priv->print_backgrounds);
+        g_value_set_boolean(value, priv->printBackgrounds);
         break;
     case PROP_ENABLE_SCRIPTS:
-        g_value_set_boolean(value, priv->enable_scripts);
+        g_value_set_boolean(value, priv->enableScripts);
         break;
     case PROP_ENABLE_PLUGINS:
-        g_value_set_boolean(value, priv->enable_plugins);
+        g_value_set_boolean(value, priv->enablePlugins);
         break;
     case PROP_RESIZABLE_TEXT_AREAS:
-        g_value_set_boolean(value, priv->resizable_text_areas);
+        g_value_set_boolean(value, priv->resizableTextAreas);
         break;
     case PROP_USER_STYLESHEET_URI:
-        g_value_set_string(value, priv->user_stylesheet_uri);
+        g_value_set_string(value, priv->userStylesheetURI.data());
         break;
     case PROP_ZOOM_STEP:
-        g_value_set_float(value, priv->zoom_step);
+        g_value_set_float(value, priv->zoomStep);
         break;
     case PROP_ENABLE_DEVELOPER_EXTRAS:
-        g_value_set_boolean(value, priv->enable_developer_extras);
+        g_value_set_boolean(value, priv->enableDeveloperExtras);
         break;
     case PROP_ENABLE_PRIVATE_BROWSING:
-        g_value_set_boolean(value, priv->enable_private_browsing);
+        g_value_set_boolean(value, priv->enablePrivateBrowsing);
         break;
     case PROP_ENABLE_CARET_BROWSING:
-        g_value_set_boolean(value, priv->enable_caret_browsing);
+        g_value_set_boolean(value, priv->enableCaretBrowsing);
         break;
     case PROP_ENABLE_HTML5_DATABASE:
-        g_value_set_boolean(value, priv->enable_html5_database);
+        g_value_set_boolean(value, priv->enableHTML5Database);
         break;
     case PROP_ENABLE_HTML5_LOCAL_STORAGE:
-        g_value_set_boolean(value, priv->enable_html5_local_storage);
+        g_value_set_boolean(value, priv->enableHTML5LocalStorage);
         break;
     case PROP_ENABLE_SPELL_CHECKING:
-        g_value_set_boolean(value, priv->enable_spell_checking);
+        g_value_set_boolean(value, priv->enableSpellChecking);
         break;
     case PROP_SPELL_CHECKING_LANGUAGES:
-        g_value_set_string(value, priv->spell_checking_languages);
+        g_value_set_string(value, priv->spellCheckingLanguages.data());
         break;
     case PROP_ENABLE_XSS_AUDITOR:
-        g_value_set_boolean(value, priv->enable_xss_auditor);
+        g_value_set_boolean(value, priv->enableXSSAuditor);
         break;
     case PROP_ENABLE_SPATIAL_NAVIGATION:
-        g_value_set_boolean(value, priv->enable_spatial_navigation);
+        g_value_set_boolean(value, priv->enableSpatialNavigation);
         break;
     case PROP_ENABLE_FRAME_FLATTENING:
-        g_value_set_boolean(value, priv->enable_frame_flattening);
+        g_value_set_boolean(value, priv->enableFrameFlattening);
         break;
     case PROP_USER_AGENT:
-        g_value_set_string(value, priv->user_agent);
+        g_value_set_string(value, priv->userAgent.data());
         break;
     case PROP_JAVASCRIPT_CAN_OPEN_WINDOWS_AUTOMATICALLY:
-        g_value_set_boolean(value, priv->javascript_can_open_windows_automatically);
+        g_value_set_boolean(value, priv->javascriptCanOpenWindowsAutomatically);
         break;
     case PROP_JAVASCRIPT_CAN_ACCESS_CLIPBOARD:
-        g_value_set_boolean(value, priv->javascript_can_access_clipboard);
+        g_value_set_boolean(value, priv->javascriptCanAccessClipboard);
         break;
     case PROP_ENABLE_OFFLINE_WEB_APPLICATION_CACHE:
-        g_value_set_boolean(value, priv->enable_offline_web_application_cache);
+        g_value_set_boolean(value, priv->enableOfflineWebApplicationCache);
         break;
     case PROP_EDITING_BEHAVIOR:
-        g_value_set_enum(value, priv->editing_behavior);
+        g_value_set_enum(value, priv->editingBehavior);
         break;
     case PROP_ENABLE_UNIVERSAL_ACCESS_FROM_FILE_URIS:
-        g_value_set_boolean(value, priv->enable_universal_access_from_file_uris);
+        g_value_set_boolean(value, priv->enableUniversalAccessFromFileURIs);
         break;
     case PROP_ENABLE_FILE_ACCESS_FROM_FILE_URIS:
-        g_value_set_boolean(value, priv->enable_file_access_from_file_uris);
+        g_value_set_boolean(value, priv->enableFileAccessFromFileURIs);
         break;
     case PROP_ENABLE_DOM_PASTE:
-        g_value_set_boolean(value, priv->enable_dom_paste);
+        g_value_set_boolean(value, priv->enableDOMPaste);
         break;
     case PROP_TAB_KEY_CYCLES_THROUGH_ELEMENTS:
-        g_value_set_boolean(value, priv->tab_key_cycles_through_elements);
+        g_value_set_boolean(value, priv->tabKeyCyclesThroughElements);
         break;
     case PROP_ENABLE_DEFAULT_CONTEXT_MENU:
-        g_value_set_boolean(value, priv->enable_default_context_menu);
+        g_value_set_boolean(value, priv->enableDefaultContextMenu);
         break;
     case PROP_ENABLE_SITE_SPECIFIC_QUIRKS:
-        g_value_set_boolean(value, priv->enable_site_specific_quirks);
+        g_value_set_boolean(value, priv->enableSiteSpecificQuirks);
         break;
     case PROP_ENABLE_PAGE_CACHE:
-        g_value_set_boolean(value, priv->enable_page_cache);
+        g_value_set_boolean(value, priv->enablePageCache);
         break;
     case PROP_AUTO_RESIZE_WINDOW:
-        g_value_set_boolean(value, priv->auto_resize_window);
+        g_value_set_boolean(value, priv->autoResizeWindow);
         break;
     case PROP_ENABLE_JAVA_APPLET:
-        g_value_set_boolean(value, priv->enable_java_applet);
+        g_value_set_boolean(value, priv->enableJavaApplet);
         break;
     case PROP_ENABLE_HYPERLINK_AUDITING:
-        g_value_set_boolean(value, priv->enable_hyperlink_auditing);
+        g_value_set_boolean(value, priv->enableHyperlinkAuditing);
         break;
     case PROP_ENABLE_FULLSCREEN:
-        g_value_set_boolean(value, priv->enable_fullscreen);
+        g_value_set_boolean(value, priv->enableFullscreen);
         break;
     case PROP_ENABLE_DNS_PREFETCHING:
-        g_value_set_boolean(value, priv->enable_dns_prefetching);
+        g_value_set_boolean(value, priv->enableDNSPrefetching);
         break;
     case PROP_ENABLE_WEBGL:
-        g_value_set_boolean(value, priv->enable_webgl);
+        g_value_set_boolean(value, priv->enableWebgl);
         break;
     default:
         G_OBJECT_WARN_INVALID_PROPERTY_ID(object, prop_id, pspec);
@@ -1321,60 +1243,55 @@ WebKitWebSettings* webkit_web_settings_new()
  *
  * Returns: (transfer full): a new #WebKitWebSettings instance
  **/
-WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
+WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* original)
 {
-    WebKitWebSettingsPrivate* priv = web_settings->priv;
-
-    WebKitWebSettings* copy = WEBKIT_WEB_SETTINGS(g_object_new(WEBKIT_TYPE_WEB_SETTINGS,
-                 "default-encoding", priv->default_encoding,
-                 "cursive-font-family", priv->cursive_font_family,
-                 "default-font-family", priv->default_font_family,
-                 "fantasy-font-family", priv->fantasy_font_family,
-                 "monospace-font-family", priv->monospace_font_family,
-                 "sans-serif-font-family", priv->sans_serif_font_family,
-                 "serif-font-family", priv->serif_font_family,
-                 "default-font-size", priv->default_font_size,
-                 "default-monospace-font-size", priv->default_monospace_font_size,
-                 "minimum-font-size", priv->minimum_font_size,
-                 "minimum-logical-font-size", priv->minimum_logical_font_size,
-                 "auto-load-images", priv->auto_load_images,
-                 "auto-shrink-images", priv->auto_shrink_images,
-                 "print-backgrounds", priv->print_backgrounds,
-                 "enable-scripts", priv->enable_scripts,
-                 "enable-plugins", priv->enable_plugins,
-                 "resizable-text-areas", priv->resizable_text_areas,
-                 "user-stylesheet-uri", priv->user_stylesheet_uri,
-                 "zoom-step", priv->zoom_step,
-                 "enable-developer-extras", priv->enable_developer_extras,
-                 "enable-private-browsing", priv->enable_private_browsing,
-                 "enable-spell-checking", priv->enable_spell_checking,
-                 "spell-checking-languages", priv->spell_checking_languages,
-                 "enable-caret-browsing", priv->enable_caret_browsing,
-                 "enable-html5-database", priv->enable_html5_database,
-                 "enable-html5-local-storage", priv->enable_html5_local_storage,
-                 "enable-xss-auditor", priv->enable_xss_auditor,
-                 "enable-spatial-navigation", priv->enable_spatial_navigation,
-                 "enable-frame-flattening", priv->enable_frame_flattening,
-                 "user-agent", webkit_web_settings_get_user_agent(web_settings),
-                 "javascript-can-open-windows-automatically", priv->javascript_can_open_windows_automatically,
-                 "javascript-can-access-clipboard", priv->javascript_can_access_clipboard,
-                 "enable-offline-web-application-cache", priv->enable_offline_web_application_cache,
-                 "editing-behavior", priv->editing_behavior,
-                 "enable-universal-access-from-file-uris", priv->enable_universal_access_from_file_uris,
-                 "enable-file-access-from-file-uris", priv->enable_file_access_from_file_uris,
-                 "enable-dom-paste", priv->enable_dom_paste,
-                 "tab-key-cycles-through-elements", priv->tab_key_cycles_through_elements,
-                 "enable-default-context-menu", priv->enable_default_context_menu,
-                 "enable-site-specific-quirks", priv->enable_site_specific_quirks,
-                 "enable-page-cache", priv->enable_page_cache,
-                 "auto-resize-window", priv->auto_resize_window,
-                 "enable-java-applet", priv->enable_java_applet,
-                 "enable-hyperlink-auditing", priv->enable_hyperlink_auditing,
-                 "enable-fullscreen", priv->enable_fullscreen,
-                 "enable-dns-prefetching", priv->enable_dns_prefetching,
+    WebKitWebSettingsPrivate* priv = original->priv;
+    return WEBKIT_WEB_SETTINGS(g_object_new(WEBKIT_TYPE_WEB_SETTINGS,
+                 "default-encoding", priv->defaultEncoding.data(),
+                 "cursive-font-family", priv->cursiveFontFamily.data(),
+                 "default-font-family", priv->defaultFontFamily.data(),
+                 "fantasy-font-family", priv->fantasyFontFamily.data(),
+                 "monospace-font-family", priv->monospaceFontFamily.data(),
+                 "sans-serif-font-family", priv->sansSerifFontFamily.data(),
+                 "serif-font-family", priv->serifFontFamily.data(),
+                 "default-font-size", priv->defaultFontSize,
+                 "default-monospace-font-size", priv->defaultMonospaceFontSize,
+                 "minimum-font-size", priv->minimumFontSize,
+                 "minimum-logical-font-size", priv->minimumLogicalFontSize,
+                 "auto-load-images", priv->autoLoadImages,
+                 "auto-shrink-images", priv->autoShrinkImages,
+                 "print-backgrounds", priv->printBackgrounds,
+                 "enable-scripts", priv->enableScripts,
+                 "enable-plugins", priv->enablePlugins,
+                 "resizable-text-areas", priv->resizableTextAreas,
+                 "user-stylesheet-uri", priv->userStylesheetURI.data(),
+                 "zoom-step", priv->zoomStep,
+                 "enable-developer-extras", priv->enableDeveloperExtras,
+                 "spell-checking-languages", priv->spellCheckingLanguages.data(),
+                 "enable-caret-browsing", priv->enableCaretBrowsing,
+                 "enable-html5-database", priv->enableHTML5Database,
+                 "enable-html5-local-storage", priv->enableHTML5LocalStorage,
+                 "enable-xss-auditor", priv->enableXSSAuditor,
+                 "enable-spatial-navigation", priv->enableSpatialNavigation,
+                 "enable-frame-flattening", priv->enableFrameFlattening,
+                 "user-agent", webkit_web_settings_get_user_agent(original),
+                 "javascript-can-open-windows-automatically", priv->javascriptCanOpenWindowsAutomatically,
+                 "javascript-can-access-clipboard", priv->javascriptCanAccessClipboard,
+                 "enable-offline-web-application-cache", priv->enableOfflineWebApplicationCache,
+                 "editing-behavior", priv->editingBehavior,
+                 "enable-universal-access-from-file-uris", priv->enableUniversalAccessFromFileURIs,
+                 "enable-file-access-from-file-uris", priv->enableFileAccessFromFileURIs,
+                 "enable-dom-paste", priv->enableDOMPaste,
+                 "tab-key-cycles-through-elements", priv->tabKeyCyclesThroughElements,
+                 "enable-default-context-menu", priv->enableDefaultContextMenu,
+                 "enable-site-specific-quirks", priv->enableSiteSpecificQuirks,
+                 "enable-page-cache", priv->enablePageCache,
+                 "auto-resize-window", priv->autoResizeWindow,
+                 "enable-java-applet", priv->enableJavaApplet,
+                 "enable-hyperlink-auditing", priv->enableHyperlinkAuditing,
+                 "enable-fullscreen", priv->enableFullscreen,
+                 "enable-dns-prefetching", priv->enableDNSPrefetching,
                  NULL));
-
-    return copy;
 }
 
 /**
@@ -1389,7 +1306,6 @@ WebKitWebSettings* webkit_web_settings_copy(WebKitWebSettings* web_settings)
 void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* webView, const gchar* directory)
 {
     g_return_if_fail(WEBKIT_IS_WEB_VIEW(webView));
-
     PluginDatabase::installedPlugins()->addExtraPluginDirectory(filenameToString(directory));
 }
 
@@ -1404,18 +1320,15 @@ void webkit_web_settings_add_extra_plugin_directory(WebKitWebView* webView, cons
  */
 const gchar* webkit_web_settings_get_user_agent(WebKitWebSettings* webSettings)
 {
-    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(webSettings), NULL);
-
-    WebKitWebSettingsPrivate* priv = webSettings->priv;
-
-    return priv->user_agent;
+    g_return_val_if_fail(WEBKIT_IS_WEB_SETTINGS(webSettings), 0);
+    return webSettings->priv->userAgent.data();
 }
 
 namespace WebKit {
 
 WebCore::EditingBehaviorType core(WebKitEditingBehavior type)
 {
-    return (WebCore::EditingBehaviorType)type;
+    return static_cast<WebCore::EditingBehaviorType>(type);
 }
 
 }
