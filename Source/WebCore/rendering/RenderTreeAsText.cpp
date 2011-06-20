@@ -756,29 +756,44 @@ static void writeSelection(TextStream& ts, const RenderObject* o)
            << "selection end:   position " << selection.end().deprecatedEditingOffset() << " of " << nodePosition(selection.end().deprecatedNode()) << "\n";
 }
 
+static String externalRepresentation(RenderBox* renderer, RenderAsTextBehavior behavior)
+{
+    TextStream ts;
+    if (!renderer->hasLayer())
+        ts.release();
+        
+    RenderLayer* layer = renderer->layer();
+    writeLayers(ts, layer, layer, layer->rect(), 0, behavior);
+    writeSelection(ts, renderer);
+    return ts.release();
+}
+
 String externalRepresentation(Frame* frame, RenderAsTextBehavior behavior)
 {
-    PrintContext printContext(frame);
-    if (behavior & RenderAsTextPrintingMode) {
-        if (!frame->contentRenderer())
-            return String();
-        printContext.begin(frame->contentRenderer()->width());
-    }
+    RenderObject* renderer = frame->contentRenderer();
+    if (!renderer || !renderer->isBox())
+        return String();
 
+    PrintContext printContext(frame);
+    if (behavior & RenderAsTextPrintingMode)
+        printContext.begin(toRenderBox(renderer)->width());
     if (!(behavior & RenderAsTextDontUpdateLayout))
         frame->document()->updateLayout();
 
-    RenderObject* o = frame->contentRenderer();
-    if (!o)
-        return String();
+    return externalRepresentation(toRenderBox(renderer), behavior);
+}
 
-    TextStream ts;
-    if (o->hasLayer()) {
-        RenderLayer* l = toRenderBox(o)->layer();
-        writeLayers(ts, l, l, l->rect(), 0, behavior);
-        writeSelection(ts, o);
-    }
-    return ts.release();
+String externalRepresentation(Element* element, RenderAsTextBehavior behavior)
+{
+    RenderObject* renderer = element->renderer();
+    if (!renderer || !renderer->isBox())
+        return String();
+    // Doesn't support printing mode.
+    ASSERT(!(behavior & RenderAsTextPrintingMode));
+    if (!(behavior & RenderAsTextDontUpdateLayout) && element->document())
+        element->document()->updateLayout();
+    
+    return externalRepresentation(toRenderBox(renderer), behavior | RenderAsTextShowAllLayers);
 }
 
 static void writeCounterValuesFromChildren(TextStream& stream, RenderObject* parent, bool& isFirstCounter)

@@ -46,8 +46,6 @@ private:
         : ShadowContentElement(HTMLNames::divTag, document)
     {
     }
-
-    virtual bool shouldInclude(Node*) { return true; }
 };
 
 PassRefPtr<SummaryContentElement> SummaryContentElement::create(Document* document)

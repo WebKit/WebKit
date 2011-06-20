@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+/* relative positioning ensures underlying RenderLayer */
+.container {
+    position: relative;
+}
+</style>
+<script>
+function log(message)
+{
+    document.getElementById("console").innerHTML += (message + "\n");
+}
+
+function removeContainerLines(text)
+{
+    var lines = text.split("\n");
+    lines.splice(0, 2);
+    return lines.join("\n");
+}
+
+function setupTargetTree()
+{
+    var target = document.createElement("div");
+    target.innerHTML = "<span>content</span>";
+    var root = layoutTestController.ensureShadowRoot(target);
+    
+    var child0 = document.createElement("span");
+    child0.innerHTML = "Hello,";
+    root.appendChild(child0);
+    root.appendChild(window.internals.createShadowContentElement(document));
+    var child1 = document.createElement("span");
+    child1.innerHTML = "World.";
+    root.appendChild(child1);
+
+    document.getElementById("target").appendChild(target);
+}
+
+function test()
+{
+    layoutTestController.dumpAsText();
+    log("This test compares a shadow-based render tree with one for a refrence DOM tree.");
+    setupTargetTree();
+    var targetContainerRenderTree = window.internals.elementRenderTreeAsText(document.getElementById("targetContainer"));
+    var targetRenderTree = removeContainerLines(targetContainerRenderTree);
+    var refContainerRenderTree = window.internals.elementRenderTreeAsText(document.getElementById("refContainer"));
+    var refRenderTree = removeContainerLines(refContainerRenderTree);
+    if (targetRenderTree == refRenderTree)
+        log("PASS");
+    else {
+        log("FAIL");
+        log("Expected:");
+        log(refRenderTree);
+        log("Actual:");
+        log(targetRenderTree);
+    }
+    
+    document.getElementById("test").style.display = "none";
+}
+</script>
+</head>
+<body onload="test()">
+<div id="test">
+<div class="container" id="targetContainer"><div id="target"></div></div>
+<div class="container" id="refContainer"><div><div><span>Hello,</span><span>content</span><span>World.</span></div></div></div>
+</div>
+<pre id="console"></pre>
+</body>
+</html>

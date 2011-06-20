@@ -1,3 +1,14 @@
+2011-06-19  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        The internals object should have createShadowContentElement()
+        https://bugs.webkit.org/show_bug.cgi?id=62432
+
+        * Source/autotools/symbols.filter: Added some more symbols necessary for
+        window.internals to function to the global symbol list.
+        
+
 2011-06-19  Adam Bergkvist  <adam.bergkvist@ericsson.com>
 
         Reviewed by Martin Robinson.

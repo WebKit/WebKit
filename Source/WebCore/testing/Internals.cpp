@@ -26,6 +26,9 @@
 #include "config.h"
 #include "Internals.h"
 
+#include "RenderTreeAsText.h"
+#include "ShadowContentElement.h"
+
 namespace WebCore {
 
 PassRefPtr<Internals> Internals::create()
@@ -39,6 +42,32 @@ Internals::~Internals()
 
 Internals::Internals()
 {
+}
+
+PassRefPtr<Element> Internals::createShadowContentElement(Document* document, ExceptionCode& ec)
+{
+    if (!document) {
+        ec = INVALID_ACCESS_ERR;
+        return 0;
+    }
+
+    return ShadowContentElement::create(document);
+}
+
+String Internals::elementRenderTreeAsText(Element* element, ExceptionCode& ec)
+{
+    if (!element) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    String representation = externalRepresentation(element);
+    if (representation.isEmpty()) {
+        ec = INVALID_ACCESS_ERR;
+        return String();
+    }
+
+    return representation;
 }
 
 }

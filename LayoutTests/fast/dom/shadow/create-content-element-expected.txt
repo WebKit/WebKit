@@ -1,0 +1,3 @@
+This test compares a shadow-based render tree with one for a refrence DOM tree.
+PASS
+

@@ -27,9 +27,25 @@
 #include "config.h"
 #include "ShadowContentElement.h"
 
+#include "HTMLNames.h"
 #include "ShadowContentSelector.h"
 
 namespace WebCore {
+
+PassRefPtr<ShadowContentElement> ShadowContentElement::create(Document* document)
+{
+    DEFINE_STATIC_LOCAL(QualifiedName, tagName, (nullAtom, "webkitShadowContent", HTMLNames::divTag.namespaceURI()));
+    return adoptRef(new ShadowContentElement(tagName, document));
+}
+
+ShadowContentElement::ShadowContentElement(const QualifiedName& name, Document* document)
+    : StyledElement(name, document, CreateHTMLElement)
+{
+}
+
+ShadowContentElement::~ShadowContentElement()
+{
+}
 
 void ShadowContentElement::attach()
 {
@@ -50,6 +66,11 @@ void ShadowContentElement::detach()
 {
     m_inclusions.clear();
     StyledElement::detach();
+}
+
+bool ShadowContentElement::shouldInclude(Node*)
+{
+    return true;
 }
 
 }

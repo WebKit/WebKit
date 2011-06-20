@@ -40,17 +40,18 @@ namespace WebCore {
 // You should create ShadowContentElement during the host construction.
 class ShadowContentElement : public StyledElement {
 public:
-    ShadowContentElement(const QualifiedName& name, Document* document)
-        : StyledElement(name, document, CreateHTMLElement)
-    {
-    }
+    static PassRefPtr<ShadowContentElement> create(Document*);
 
-    virtual bool shouldInclude(Node*) = 0;
+    virtual ~ShadowContentElement();
+    virtual bool shouldInclude(Node*);
     virtual void attach();
     virtual void detach();
 
     Node* inclusionAt(size_t) const;
     size_t inclusionCount() const;
+
+protected:
+    ShadowContentElement(const QualifiedName&, Document*);
 
 private:
     virtual bool isContentElement() const { return true; }

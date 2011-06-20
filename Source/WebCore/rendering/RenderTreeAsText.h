@@ -56,6 +56,7 @@ typedef unsigned RenderAsTextBehavior;
 
 // You don't need pageWidthInPixels if you don't specify RenderAsTextInPrintingMode.
 String externalRepresentation(Frame*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
+String externalRepresentation(Element*, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 void write(TextStream&, const RenderObject&, int indent = 0, RenderAsTextBehavior = RenderAsTextBehaviorNormal);
 void writeIndent(TextStream&, int indent);
 

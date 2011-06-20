@@ -26,16 +26,23 @@
 #ifndef Internals_h
 #define Internals_h
 
+#include "ExceptionCode.h"
 #include <wtf/PassRefPtr.h>
 #include <wtf/RefCounted.h>
+#include <wtf/text/WTFString.h>
 
 namespace WebCore {
+
+class Document;
+class Element;
 
 class Internals : public RefCounted<Internals> {
 public:
     static PassRefPtr<Internals> create();
     virtual ~Internals();
 
+    PassRefPtr<Element> createShadowContentElement(Document*, ExceptionCode&);
+    String elementRenderTreeAsText(Element*, ExceptionCode&);
 private:
     Internals();
 };

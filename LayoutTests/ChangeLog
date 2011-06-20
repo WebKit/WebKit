@@ -1,3 +1,13 @@
+2011-06-19  MORITA Hajime  <morrita@google.com>
+
+        Reviewed by Dimitri Glazkov.
+
+        The internals object should have createShadowContentElement()
+        https://bugs.webkit.org/show_bug.cgi?id=62432
+
+        * fast/dom/shadow/create-content-element-expected.txt: Added.
+        * fast/dom/shadow/create-content-element.html: Added.
+
 2011-06-19  Keishi Hattori  <keishi@webkit.org>
 
         Reviewed by Kent Tamura.
