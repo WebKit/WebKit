@@ -1365,7 +1365,6 @@ webcore_sources += \
 	Source/WebCore/editing/FormatBlockCommand.h \
 	Source/WebCore/editing/FrameSelection.cpp \
 	Source/WebCore/editing/FrameSelection.h \
-	Source/WebCore/editing/gtk/FrameSelectionGtk.cpp \
 	Source/WebCore/editing/htmlediting.cpp \
 	Source/WebCore/editing/htmlediting.h \
 	Source/WebCore/editing/HTMLInterchange.cpp \
@@ -2387,6 +2386,28 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/ContextShadow.cpp \
 	Source/WebCore/platform/graphics/ContextShadow.h \
 	Source/WebCore/platform/graphics/DashArray.h \
+	Source/WebCore/platform/graphics/cairo/CairoUtilities.cpp \
+	Source/WebCore/platform/graphics/cairo/CairoUtilities.h \
+	Source/WebCore/platform/graphics/cairo/ContextShadowCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/FloatRectCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/FontCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/FontCustomPlatformData.h \
+	Source/WebCore/platform/graphics/cairo/GradientCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/ImageBufferDataCairo.h \
+	Source/WebCore/platform/graphics/cairo/ImageCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/IntRectCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/OwnPtrCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/OwnPtrCairo.h \
+	Source/WebCore/platform/graphics/cairo/PathCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/PatternCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/PlatformContextCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/PlatformContextCairo.h \
+	Source/WebCore/platform/graphics/cairo/PlatformPathCairo.h \
+	Source/WebCore/platform/graphics/cairo/PlatformPathCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/RefPtrCairo.cpp \
+	Source/WebCore/platform/graphics/cairo/RefPtrCairo.h \
+	Source/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.cpp \
 	Source/WebCore/platform/graphics/filters/DistantLightSource.h \
 	Source/WebCore/platform/graphics/filters/FEBlend.cpp \
@@ -2555,6 +2576,12 @@ webcore_sources += \
 	Source/WebCore/platform/graphics/WidthIterator.h \
 	Source/WebCore/platform/graphics/WOFFFileFormat.cpp \
 	Source/WebCore/platform/graphics/WOFFFileFormat.h \
+	Source/WebCore/platform/gtk/KURLGtk.cpp \
+	Source/WebCore/platform/gtk/LanguageGtk.cpp \
+	Source/WebCore/platform/gtk/LoggingGtk.cpp \
+	Source/WebCore/platform/gtk/MIMETypeRegistryGtk.cpp \
+	Source/WebCore/platform/gtk/SharedBufferGtk.cpp \
+	Source/WebCore/platform/gtk/TemporaryLinkStubs.cpp \
 	Source/WebCore/platform/HostWindow.h \
 	Source/WebCore/platform/KillRing.h \
 	Source/WebCore/platform/KillRingNone.cpp \
@@ -2585,6 +2612,25 @@ webcore_sources += \
 	Source/WebCore/platform/MIMETypeRegistry.h \
 	Source/WebCore/platform/MemoryPressureHandler.cpp \
 	Source/WebCore/platform/MemoryPressureHandler.h \
+	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.h \
+	Source/WebCore/platform/image-decoders/bmp/BMPImageReader.cpp \
+	Source/WebCore/platform/image-decoders/bmp/BMPImageReader.h \
+	Source/WebCore/platform/image-decoders/cairo/ImageDecoderCairo.cpp \
+	Source/WebCore/platform/image-decoders/gif/GIFImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/gif/GIFImageDecoder.h \
+	Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp \
+	Source/WebCore/platform/image-decoders/gif/GIFImageReader.h \
+	Source/WebCore/platform/image-decoders/ico/ICOImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/ico/ICOImageDecoder.h \
+	Source/WebCore/platform/image-decoders/ImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/ImageDecoder.h \
+	Source/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
+	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h \
+	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
+	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
 	Source/WebCore/platform/mock/DeviceOrientationClientMock.cpp \
 	Source/WebCore/platform/mock/DeviceOrientationClientMock.h \
 	Source/WebCore/platform/mock/GeolocationClientMock.cpp \
@@ -2646,6 +2692,25 @@ webcore_sources += \
 	Source/WebCore/platform/network/SocketStreamHandleBase.cpp \
 	Source/WebCore/platform/network/SocketStreamHandleBase.h \
 	Source/WebCore/platform/network/SocketStreamHandleClient.h \
+	Source/WebCore/platform/network/soup/AuthenticationChallenge.h \
+	Source/WebCore/platform/network/soup/CookieJarSoup.cpp \
+	Source/WebCore/platform/network/soup/CookieJarSoup.h \
+	Source/WebCore/platform/network/soup/CredentialStorageSoup.cpp \
+	Source/WebCore/platform/network/soup/CredentialStorageSoup.h \
+	Source/WebCore/platform/network/soup/GOwnPtrSoup.cpp \
+	Source/WebCore/platform/network/soup/GOwnPtrSoup.h \
+	Source/WebCore/platform/network/soup/ProxyServerSoup.cpp \
+	Source/WebCore/platform/network/soup/ResourceError.h \
+	Source/WebCore/platform/network/soup/ResourceHandleSoup.cpp \
+	Source/WebCore/platform/network/soup/ResourceRequest.h \
+	Source/WebCore/platform/network/soup/ResourceRequestSoup.cpp \
+	Source/WebCore/platform/network/soup/ResourceResponse.h \
+	Source/WebCore/platform/network/soup/ResourceResponseSoup.cpp \
+	Source/WebCore/platform/network/soup/SocketStreamError.h \
+	Source/WebCore/platform/network/soup/SocketStreamHandle.h \
+	Source/WebCore/platform/network/soup/SocketStreamHandleSoup.cpp \
+	Source/WebCore/platform/network/soup/SoupURIUtils.cpp \
+	Source/WebCore/platform/network/soup/SoupURIUtils.h \
 	Source/WebCore/platform/NotImplemented.h \
 	Source/WebCore/platform/Pasteboard.h \
 	Source/WebCore/platform/PlatformKeyboardEvent.h \
@@ -2793,6 +2858,7 @@ webcore_sources += \
 	Source/WebCore/plugins/PluginViewBase.h \
 	Source/WebCore/plugins/PluginView.cpp \
 	Source/WebCore/plugins/PluginView.h \
+	Source/WebCore/plugins/gtk/PluginDataGtk.cpp \
 	Source/WebCore/rendering/AutoTableLayout.cpp \
 	Source/WebCore/rendering/AutoTableLayout.h \
 	Source/WebCore/rendering/BidiRun.cpp \
@@ -3742,6 +3808,7 @@ webcore_sources += \
 	Source/WebCore/xml/XSLTUnicodeSort.cpp \
 	Source/WebCore/xml/XSLTUnicodeSort.h
 
+# WebCore files that use GTK/GDK or any other dependency that requires GTK+.
 webcoregtk_sources += \
 	Source/WebCore/accessibility/gtk/AccessibilityObjectAtk.cpp \
 	Source/WebCore/accessibility/gtk/AccessibilityObjectWrapperAtk.cpp \
@@ -3750,33 +3817,12 @@ webcoregtk_sources += \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleHyperlink.h \
 	Source/WebCore/accessibility/gtk/WebKitAccessibleHyperlink.cpp \
 	Source/WebCore/bindings/js/ScriptControllerGtk.cpp \
+	Source/WebCore/editing/gtk/FrameSelectionGtk.cpp \
 	Source/WebCore/page/gtk/DragControllerGtk.cpp \
 	Source/WebCore/page/gtk/EventHandlerGtk.cpp \
 	Source/WebCore/page/gtk/FrameGtk.cpp \
-	Source/WebCore/platform/graphics/cairo/CairoUtilities.cpp \
-	Source/WebCore/platform/graphics/cairo/CairoUtilities.h \
-	Source/WebCore/platform/graphics/cairo/ContextShadowCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/FloatRectCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/FontCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/FontCustomPlatformData.h \
-	Source/WebCore/platform/graphics/cairo/GradientCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextCairo.cpp \
 	Source/WebCore/platform/graphics/cairo/GraphicsContextPlatformPrivateCairo.h \
-	Source/WebCore/platform/graphics/cairo/ImageBufferCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/ImageBufferDataCairo.h \
-	Source/WebCore/platform/graphics/cairo/ImageCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/IntRectCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/OwnPtrCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/OwnPtrCairo.h \
-	Source/WebCore/platform/graphics/cairo/PathCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/PatternCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/PlatformContextCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/PlatformContextCairo.h \
-	Source/WebCore/platform/graphics/cairo/PlatformPathCairo.h \
-	Source/WebCore/platform/graphics/cairo/PlatformPathCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/RefPtrCairo.cpp \
-	Source/WebCore/platform/graphics/cairo/RefPtrCairo.h \
-	Source/WebCore/platform/graphics/cairo/TransformationMatrixCairo.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GOwnPtrGStreamer.cpp \
 	Source/WebCore/platform/graphics/gstreamer/GOwnPtrGStreamer.h \
 	Source/WebCore/platform/graphics/gstreamer/GRefPtrGStreamer.cpp \
@@ -3839,13 +3885,9 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/GtkVersioning.h \
 	Source/WebCore/platform/gtk/KeyBindingTranslator.cpp \
 	Source/WebCore/platform/gtk/KeyBindingTranslator.h \
-	Source/WebCore/platform/gtk/KURLGtk.cpp \
-	Source/WebCore/platform/gtk/LanguageGtk.cpp \
 	Source/WebCore/platform/gtk/LocalizedStringsGtk.cpp \
-	Source/WebCore/platform/gtk/LoggingGtk.cpp \
 	Source/WebCore/platform/gtk/MainFrameScrollbarGtk.cpp \
 	Source/WebCore/platform/gtk/MainFrameScrollbarGtk.h \
-	Source/WebCore/platform/gtk/MIMETypeRegistryGtk.cpp \
 	Source/WebCore/platform/gtk/PasteboardGtk.cpp \
 	Source/WebCore/platform/gtk/PasteboardHelper.cpp \
 	Source/WebCore/platform/gtk/PasteboardHelper.h \
@@ -3866,51 +3908,11 @@ webcoregtk_sources += \
 	Source/WebCore/platform/gtk/ScrollViewGtk.cpp \
 	Source/WebCore/platform/gtk/SearchPopupMenuGtk.cpp \
 	Source/WebCore/platform/gtk/SearchPopupMenuGtk.h \
-	Source/WebCore/platform/gtk/SharedBufferGtk.cpp \
 	Source/WebCore/platform/gtk/SharedTimerGtk.cpp \
 	Source/WebCore/platform/gtk/SoundGtk.cpp \
-	Source/WebCore/platform/gtk/TemporaryLinkStubs.cpp \
 	Source/WebCore/platform/gtk/WidgetGtk.cpp \
 	Source/WebCore/platform/gtk/WidgetRenderingContext.cpp \
 	Source/WebCore/platform/gtk/WidgetRenderingContext.h \
-	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/bmp/BMPImageDecoder.h \
-	Source/WebCore/platform/image-decoders/bmp/BMPImageReader.cpp \
-	Source/WebCore/platform/image-decoders/bmp/BMPImageReader.h \
-	Source/WebCore/platform/image-decoders/cairo/ImageDecoderCairo.cpp \
-	Source/WebCore/platform/image-decoders/gif/GIFImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/gif/GIFImageDecoder.h \
-	Source/WebCore/platform/image-decoders/gif/GIFImageReader.cpp \
-	Source/WebCore/platform/image-decoders/gif/GIFImageReader.h \
-	Source/WebCore/platform/image-decoders/ico/ICOImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/ico/ICOImageDecoder.h \
-	Source/WebCore/platform/image-decoders/ImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/ImageDecoder.h \
-	Source/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/jpeg/JPEGImageDecoder.h \
-	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/webp/WEBPImageDecoder.h \
-	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.cpp \
-	Source/WebCore/platform/image-decoders/png/PNGImageDecoder.h \
-	Source/WebCore/platform/network/soup/AuthenticationChallenge.h \
-	Source/WebCore/platform/network/soup/CookieJarSoup.cpp \
-	Source/WebCore/platform/network/soup/CookieJarSoup.h \
-	Source/WebCore/platform/network/soup/CredentialStorageSoup.cpp \
-	Source/WebCore/platform/network/soup/GOwnPtrSoup.cpp \
-	Source/WebCore/platform/network/soup/GOwnPtrSoup.h \
-	Source/WebCore/platform/network/soup/ProxyServerSoup.cpp \
-	Source/WebCore/platform/network/soup/ResourceError.h \
-	Source/WebCore/platform/network/soup/ResourceHandleSoup.cpp \
-	Source/WebCore/platform/network/soup/ResourceRequest.h \
-	Source/WebCore/platform/network/soup/ResourceRequestSoup.cpp \
-	Source/WebCore/platform/network/soup/ResourceResponse.h \
-	Source/WebCore/platform/network/soup/ResourceResponseSoup.cpp \
-	Source/WebCore/platform/network/soup/SocketStreamError.h \
-	Source/WebCore/platform/network/soup/SocketStreamHandle.h \
-	Source/WebCore/platform/network/soup/SocketStreamHandleSoup.cpp \
-	Source/WebCore/platform/network/soup/SoupURIUtils.cpp \
-	Source/WebCore/platform/network/soup/SoupURIUtils.h \
-	Source/WebCore/plugins/gtk/PluginDataGtk.cpp \
 	Source/WebCore/plugins/gtk/PluginPackageGtk.cpp \
 	Source/WebCore/plugins/gtk/PluginViewGtk.cpp
 
@@ -3936,7 +3938,7 @@ endif
 # icu unicode backend
 # ----
 if USE_ICU_UNICODE
-webcoregtk_sources += \
+webcore_sources += \
 	Source/WebCore/platform/text/TextCodecICU.cpp \
 	Source/WebCore/platform/text/TextCodecICU.h \
 	Source/WebCore/platform/text/TextBreakIteratorICU.cpp \
@@ -3948,7 +3950,7 @@ endif
 # glib unicode backend
 # ----
 if USE_GLIB_UNICODE
-webcoregtk_sources += \
+webcore_sources += \
 	Source/WebCore/platform/text/gtk/TextCodecGtk.cpp \
 	Source/WebCore/platform/text/gtk/TextCodecGtk.h \
 	Source/WebCore/platform/text/gtk/TextBreakIteratorGtk.cpp
@@ -3958,20 +3960,21 @@ endif
 # FreeType font backend
 # ---
 if USE_FREETYPE
-webcoregtk_sources += \
+webcore_sources += \
 	Source/WebCore/platform/graphics/freetype/FontCacheFreeType.cpp \
 	Source/WebCore/platform/graphics/freetype/FontCustomPlatformDataFreeType.cpp \
-	Source/WebCore/platform/graphics/freetype/FontPlatformDataFreeType.cpp \
 	Source/WebCore/platform/graphics/freetype/FontPlatformData.h \
 	Source/WebCore/platform/graphics/freetype/GlyphPageTreeNodeFreeType.cpp \
 	Source/WebCore/platform/graphics/freetype/SimpleFontDataFreeType.cpp
+webcoregtk_sources += \
+	Source/WebCore/platform/graphics/freetype/FontPlatformDataFreeType.cpp
 endif # END USE_FREETYPE
 
 # ---
 # Pango font backend
 # ---
 if USE_PANGO
-webcoregtk_sources += \
+webcore_sources += \
 	Source/WebCore/platform/graphics/pango/FontCachePango.cpp \
 	Source/WebCore/platform/graphics/pango/FontCustomPlatformDataPango.cpp \
 	Source/WebCore/platform/graphics/pango/FontPlatformDataPango.cpp \

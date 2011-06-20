@@ -1,3 +1,22 @@
+2011-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] Split libWebCore into two libWebCore and libWebCoreGtk
+        https://bugs.webkit.org/show_bug.cgi?id=60539
+
+        libWebCore contains all the webcore files except the ones actually
+        using gtk while libWebCoreGtk contains only the files using
+        gtk. It allows us to build a common WebCore lib and two different
+        gtk WebCore libs depending on the gtk version. In WeKit2 gtk2 is
+        not supported, but the plugin process needs to be built using gtk2
+        because plugins like flash still use gtk2. For WebKit2, we build
+        the common libWebCore and two libWebCoreGtk, one using gtk3 and
+        the other one using gtk2.
+
+        * GNUmakefile.am:
+        * GNUmakefile.list.am:
+
 2011-06-20  Mike Reed  <reed@google.com>
 
         Reviewed by Stephen White.
