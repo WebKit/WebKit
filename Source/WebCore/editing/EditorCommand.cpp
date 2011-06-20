@@ -245,7 +245,7 @@ static TriState stateTextWritingDirection(Frame* frame, WritingDirection directi
     return (selectionDirection == direction && !hasNestedOrMultipleEmbeddings) ? TrueTriState : FalseTriState;
 }
 
-static int verticalScrollDistance(Frame* frame)
+static unsigned verticalScrollDistance(Frame* frame)
 {
     Node* focusedNode = frame->document()->focusedNode();
     if (!focusedNode)
@@ -258,9 +258,8 @@ static int verticalScrollDistance(Frame* frame)
         return 0;
     if (!(style->overflowY() == OSCROLL || style->overflowY() == OAUTO || focusedNode->rendererIsEditable()))
         return 0;
-    int height = std::min<int>(toRenderBox(renderer)->clientHeight(),
-                               frame->view()->visibleHeight());
-    return max(max<int>(height * Scrollbar::minFractionToStepWhenPaging(), height - Scrollbar::maxOverlapBetweenPages()), 1);
+    int height = std::min<int>(toRenderBox(renderer)->clientHeight(), frame->view()->visibleHeight());
+    return static_cast<unsigned>(max(max<int>(height * Scrollbar::minFractionToStepWhenPaging(), height - Scrollbar::maxOverlapBetweenPages()), 1));
 }
 
 static RefPtr<Range> unionDOMRanges(Range* a, Range* b)
@@ -653,34 +652,34 @@ static bool executeMoveLeftAndModifySelection(Frame* frame, Event*, EditorComman
 
 static bool executeMovePageDown(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    int distance = verticalScrollDistance(frame);
+    unsigned distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame->selection()->modify(FrameSelection::AlterationMove, distance, true, FrameSelection::AlignCursorOnScrollAlways);
+    return frame->selection()->modify(FrameSelection::AlterationMove, distance, FrameSelection::DirectionDown, true, FrameSelection::AlignCursorOnScrollAlways);
 }
 
 static bool executeMovePageDownAndModifySelection(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    int distance = verticalScrollDistance(frame);
+    unsigned distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame->selection()->modify(FrameSelection::AlterationExtend, distance, true, FrameSelection::AlignCursorOnScrollAlways);
+    return frame->selection()->modify(FrameSelection::AlterationExtend, distance, FrameSelection::DirectionDown, true, FrameSelection::AlignCursorOnScrollAlways);
 }
 
 static bool executeMovePageUp(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    int distance = verticalScrollDistance(frame);
+    unsigned distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame->selection()->modify(FrameSelection::AlterationMove, -distance, true, FrameSelection::AlignCursorOnScrollAlways);
+    return frame->selection()->modify(FrameSelection::AlterationMove, distance, FrameSelection::DirectionUp, true, FrameSelection::AlignCursorOnScrollAlways);
 }
 
 static bool executeMovePageUpAndModifySelection(Frame* frame, Event*, EditorCommandSource, const String&)
 {
-    int distance = verticalScrollDistance(frame);
+    unsigned distance = verticalScrollDistance(frame);
     if (!distance)
         return false;
-    return frame->selection()->modify(FrameSelection::AlterationExtend, -distance, true, FrameSelection::AlignCursorOnScrollAlways);
+    return frame->selection()->modify(FrameSelection::AlterationExtend, distance, FrameSelection::DirectionUp, true, FrameSelection::AlignCursorOnScrollAlways);
 }
 
 static bool executeMoveRight(Frame* frame, Event*, EditorCommandSource, const String&)

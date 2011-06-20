@@ -888,7 +888,7 @@ static bool absoluteCaretY(const VisiblePosition &c, int &y)
     return true;
 }
 
-bool FrameSelection::modify(EAlteration alter, int verticalDistance, bool userTriggered, CursorAlignOnScroll align)
+bool FrameSelection::modify(EAlteration alter, unsigned verticalDistance, VerticalDirection direction, bool userTriggered, CursorAlignOnScroll align)
 {
     if (!verticalDistance)
         return false;
@@ -897,26 +897,22 @@ bool FrameSelection::modify(EAlteration alter, int verticalDistance, bool userTr
         FrameSelection trialFrameSelection;
         trialFrameSelection.setSelection(m_selection);
         trialFrameSelection.setIsDirectional(m_isDirectional);
-        trialFrameSelection.modify(alter, verticalDistance, false);
+        trialFrameSelection.modify(alter, verticalDistance, direction, false);
 
         bool change = shouldChangeSelection(trialFrameSelection.selection());
         if (!change)
             return false;
     }
 
-    bool up = verticalDistance < 0;
-    if (up)
-        verticalDistance = -verticalDistance;
-
-    willBeModified(alter, up ? DirectionBackward : DirectionForward);
+    willBeModified(alter, direction == DirectionUp ? DirectionBackward : DirectionForward);
 
     VisiblePosition pos;
     int xPos = 0;
     switch (alter) {
     case AlterationMove:
-        pos = VisiblePosition(up ? m_selection.start() : m_selection.end(), m_selection.affinity());
-        xPos = lineDirectionPointForBlockDirectionNavigation(up ? START : END);
-        m_selection.setAffinity(up ? UPSTREAM : DOWNSTREAM);
+        pos = VisiblePosition(direction == DirectionUp ? m_selection.start() : m_selection.end(), m_selection.affinity());
+        xPos = lineDirectionPointForBlockDirectionNavigation(direction == DirectionUp ? START : END);
+        m_selection.setAffinity(direction == DirectionUp ? UPSTREAM : DOWNSTREAM);
         break;
     case AlterationExtend:
         pos = VisiblePosition(m_selection.extent(), m_selection.affinity());
@@ -928,22 +924,22 @@ bool FrameSelection::modify(EAlteration alter, int verticalDistance, bool userTr
     int startY;
     if (!absoluteCaretY(pos, startY))
         return false;
-    if (up)
+    if (direction == DirectionUp)
         startY = -startY;
     int lastY = startY;
 
     VisiblePosition result;
     VisiblePosition next;
     for (VisiblePosition p = pos; ; p = next) {
-        next = (up ? previousLinePosition : nextLinePosition)(p, xPos);
+        next = (direction == DirectionUp ? previousLinePosition : nextLinePosition)(p, xPos);
         if (next.isNull() || next == p)
             break;
         int nextY;
         if (!absoluteCaretY(next, nextY))
             break;
-        if (up)
+        if (direction == DirectionUp)
             nextY = -nextY;
-        if (nextY - startY > verticalDistance)
+        if (nextY - startY > static_cast<int>(verticalDistance))
             break;
         if (nextY >= lastY) {
             lastY = nextY;

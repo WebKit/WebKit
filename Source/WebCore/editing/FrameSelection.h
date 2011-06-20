@@ -146,7 +146,8 @@ public:
     EAffinity affinity() const { return m_selection.affinity(); }
 
     bool modify(EAlteration, SelectionDirection, TextGranularity, bool userTriggered = false);
-    bool modify(EAlteration, int verticalDistance, bool userTriggered = false, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded);
+    enum VerticalDirection { DirectionUp, DirectionDown };
+    bool modify(EAlteration, unsigned verticalDistance, VerticalDirection, bool userTriggered = false, CursorAlignOnScroll = AlignCursorOnScrollIfNeeded);
     TextGranularity granularity() const { return m_granularity; }
 
     void setStart(const VisiblePosition &, bool userTriggered = false);

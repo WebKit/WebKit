@@ -1,3 +1,24 @@
+2011-06-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Reviewed by Ojan Vafai.
+
+        FrameSelection::modify should take verticalDisplacement instead of verticalDistance
+        https://bugs.webkit.org/show_bug.cgi?id=62932
+
+        Added new VerticalDirection enum to the argument list of FrameSelection::modify that takes
+        verticalDistance.  Also changed the type of verticalDistance from int to unsigned int
+        to accidentally pass a negative distance in the future.
+
+        * editing/EditorCommand.cpp:
+        (WebCore::verticalScrollDistance): Returns unsigned int instead of int.
+        (WebCore::executeMovePageDown): Calls FrameSelection::modify.
+        (WebCore::executeMovePageDownAndModifySelection): Ditto.
+        (WebCore::executeMovePageUp): Ditto.
+        (WebCore::executeMovePageUpAndModifySelection): Ditto.
+        * editing/FrameSelection.cpp:
+        (WebCore::FrameSelection::modify): Takes VerticalDirection as an argument.
+        * editing/FrameSelection.h:
+
 2011-06-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Adam Barth.
