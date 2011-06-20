@@ -1,3 +1,12 @@
+2011-06-20  Xan Lopez  <xlopez@igalia.com>
+
+        Reviewed by Martin Robinson.
+
+        [GTK] Link explicitly with XRender on Linux/Unix
+        https://bugs.webkit.org/show_bug.cgi?id=57558
+
+        * GNUmakefile.am: add XRender LIBS.
+
 2011-06-13  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Gustavo Noronha Silva.
