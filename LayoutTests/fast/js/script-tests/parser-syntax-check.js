@@ -361,4 +361,14 @@ valid("if (0) obj.foo$; ")
 valid("if (0) obj.foo_; ")
 valid("if (0) obj.foo\\u03bb; ")
 
+try { eval("a.b.c = {};"); } catch(e1) { e=e1; shouldBe("e.line", "1") }
+foo = 'FAIL';
+bar = 'PASS';
+try {
+     eval("foo = 'PASS'; a.b.c = {}; bar  = 'FAIL';");
+} catch(e) {
+     shouldBe("foo", "'PASS'");
+     shouldBe("bar", "'PASS'");
+}
+
 var successfullyParsed = true;

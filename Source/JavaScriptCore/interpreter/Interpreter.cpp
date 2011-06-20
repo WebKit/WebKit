@@ -771,7 +771,7 @@ JSValue Interpreter::execute(ProgramExecutable* program, CallFrame* callFrame, S
                     if (i == 0) {
                         PropertySlot slot(globalObject);
                         if (!globalObject->getPropertySlot(callFrame, JSONPPath[i].m_pathEntryName, slot)) {
-                            if (i)
+                            if (entry)
                                 return throwError(callFrame, createUndefinedVariableError(globalObject->globalExec(), JSONPPath[i].m_pathEntryName));
                             goto failedJSONP;
                         }

@@ -1,5 +1,17 @@
 2011-06-19  Oliver Hunt  <oliver@apple.com>
 
+        Reviewed by Sam Weinig.
+
+        Correct logic for putting errors on the correct line when handling JSONP
+        https://bugs.webkit.org/show_bug.cgi?id=62962
+
+        Minor fix for the minor fix.  *sigh*
+
+        * interpreter/Interpreter.cpp:
+        (JSC::Interpreter::execute):
+
+2011-06-19  Oliver Hunt  <oliver@apple.com>
+
         Minor fix to correct layout test results.
 
         * interpreter/Interpreter.cpp:
