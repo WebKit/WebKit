@@ -122,7 +122,6 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         font->platformData().setupPaint(&paint);
         adjustTextRenderMode(&paint, gc->platformContext());
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-        paint.setColor(gc->fillColor().rgb());
 
         if (isVertical) {
             SkPath path;
@@ -145,12 +144,12 @@ void Font::drawGlyphs(GraphicsContext* gc, const SimpleFontData* font,
         font->platformData().setupPaint(&paint);
         adjustTextRenderMode(&paint, gc->platformContext());
         paint.setTextEncoding(SkPaint::kGlyphID_TextEncoding);
-        paint.setColor(gc->strokeColor().rgb());
 
         if (textMode & TextModeFill) {
             // If we also filled, we don't want to draw shadows twice.
             // See comment in FontChromiumWin.cpp::paintSkiaText() for more details.
-            SkSafeUnref(paint.setLooper(0));
+            // Since we use the looper for shadows, we remove it (if any) now.
+            paint.setLooper(0);
         }
 
         if (isVertical) {
