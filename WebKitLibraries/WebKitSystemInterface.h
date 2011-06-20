@@ -17,6 +17,7 @@ extern "C" {
 #endif
 
 typedef struct _CFURLResponse* CFURLResponseRef;
+typedef const struct _CFURLRequest* CFURLRequestRef;
 
 typedef enum {
     WKCertificateParseResultSucceeded  = 0,
@@ -334,9 +335,9 @@ UInt8 WKGetNSEventKeyChar(NSEvent *);
 void WKSetCAAnimationValueFunction(CAPropertyAnimation*, NSString* function);
 
 unsigned WKInitializeMaximumHTTPConnectionCountPerHost(unsigned preferredConnectionCount);
-int WKGetHTTPPipeliningPriority(NSURLRequest *);
+int WKGetHTTPPipeliningPriority(CFURLRequestRef);
 void WKSetHTTPPipeliningMaximumPriority(int maximumPriority);
-void WKSetHTTPPipeliningPriority(NSMutableURLRequest *, int priority);
+void WKSetHTTPPipeliningPriority(CFURLRequestRef, int priority);
 void WKSetHTTPPipeliningMinimumFastLanePriority(int priority);
 
 void WKSetCONNECTProxyForStream(CFReadStreamRef, CFStringRef proxyHost, CFNumberRef proxyPort);

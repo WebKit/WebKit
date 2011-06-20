@@ -41,6 +41,7 @@
 @interface NSURLRequest (WebNSURLRequestDetails)
 - (NSArray *)contentDispositionEncodingFallbackArray;
 + (void)setDefaultTimeoutInterval:(NSTimeInterval)seconds;
+- (CFURLRequestRef)_CFURLRequest;
 @end
 
 @interface NSMutableURLRequest (WebMutableNSURLRequestDetails)
@@ -69,7 +70,7 @@ void ResourceRequest::doUpdateResourceRequest()
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     if (ResourceRequest::httpPipeliningEnabled())
-        m_priority = toResourceLoadPriority(wkGetHTTPPipeliningPriority(m_nsRequest.get()));
+        m_priority = toResourceLoadPriority(wkGetHTTPPipeliningPriority([m_nsRequest.get() _CFURLRequest]));
 #endif
 
     NSDictionary *headers = [m_nsRequest.get() allHTTPHeaderFields];
@@ -116,7 +117,7 @@ void ResourceRequest::doUpdatePlatformRequest()
 
 #if !defined(BUILDING_ON_LEOPARD) && !defined(BUILDING_ON_SNOW_LEOPARD)
     if (ResourceRequest::httpPipeliningEnabled())
-        wkSetHTTPPipeliningPriority(nsRequest, toHTTPPipeliningPriority(m_priority));
+        wkSetHTTPPipeliningPriority([nsRequest _CFURLRequest], toHTTPPipeliningPriority(m_priority));
 #endif
 
     [nsRequest setCachePolicy:(NSURLRequestCachePolicy)cachePolicy()];
