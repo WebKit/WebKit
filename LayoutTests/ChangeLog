@@ -1,5 +1,13 @@
 2011-06-20  Stephen White  <senorblanco@chromium.org>
 
+        Unreviewed, test_expectations fix.
+
+        Revert some unintentional changes from my last patch.
+
+        * platform/chromium/test_expectations.txt:
+
+2011-06-20  Stephen White  <senorblanco@chromium.org>
+
         Unreviewed.
 
         New baselines for tests affected by r62988.

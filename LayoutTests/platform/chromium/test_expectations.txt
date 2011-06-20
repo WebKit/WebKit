@@ -3940,7 +3940,7 @@ BUGWK59782 WIN LINUX DEBUG : svg/filters/feDropShadow.svg = TIMEOUT
 BUGWK61936 : fast/filesystem/filesystem-no-callback-null-ptr-crash.html = CRASH PASS
 BUGABARTH LINUX : svg/text/scaling-font-with-geometric-precision.html = IMAGE PASS
 
-// BUGCR84157 GPU : plugins/embed-attributes-style.html = IMAGE+TEXT
+BUGCR84157 GPU : plugins/embed-attributes-style.html = IMAGE+TEXT
 BUGCR84157 GPU : svg/as-image/svg-as-background-with-relative-size.html = IMAGE+TEXT
 BUGCR84157 GPU : svg/custom/embedding-external-svgs.xhtml = IMAGE+TEXT
 BUGCR84157 GPU : svg/dynamic-updates/SVGFEDropShadowElement-dom-shadow-color-attr.html = IMAGE
@@ -4016,4 +4016,3 @@ BUGCR86563 : fast/canvas/webgl/glsl-conformance.html = TEXT
 BUGCR86714 MAC GPU : compositing/tiling/huge-layer-resize.html = CRASH
 BUGCR86714 MAC GPU : media/video-controls-rendering.html = CRASH
 BUGCR86714 MAC GPU : media/video-zoom.html = CRASH
-
