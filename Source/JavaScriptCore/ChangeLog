@@ -1,3 +1,17 @@
+2011-06-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r79060): Searching for a flight at united.com fails
+        https://bugs.webkit.org/show_bug.cgi?id=63003
+
+        This original change also broke Twitter, and we attempted to refine the fix to 
+        address that problem (http://trac.webkit.org/changeset/80542), but since it still breaks United,
+        we need to revert the change until we understand the problem better.
+
+        * wtf/DateMath.cpp:
+        (WTF::parseDateFromNullTerminatedCharacters):
+
 2011-06-20  Juan C. Montemayor  <jmont@apple.com>
 
         Reviewed by Oliver Hunt.

@@ -1,3 +1,16 @@
+2011-06-20  Oliver Hunt  <oliver@apple.com>
+
+        Reviewed by Darin Adler.
+
+        REGRESSION (r79060): Searching for a flight at united.com fails
+        https://bugs.webkit.org/show_bug.cgi?id=63003
+
+        Roll out tests that were added by the patch we're rolling out, and add
+        a test for the united.com Date.
+
+        * fast/js/date-parse-test-expected.txt:
+        * fast/js/script-tests/date-parse-test.js:
+
 2011-06-20  Alex Milowski  <alex@milowski.com>
 
         Reviewed by Darin Adler.
