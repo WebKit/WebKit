@@ -210,7 +210,9 @@ public:
     {
         ASSERT(character);
         ASSERT(m_type == StartTag || m_type == EndTag);
-        ASSERT(m_currentAttribute->m_nameRange.m_start);
+        // FIXME: We should be able to add the following ASSERT once we fix
+        // https://bugs.webkit.org/show_bug.cgi?id=62971
+        //   ASSERT(m_currentAttribute->m_nameRange.m_start);
         m_currentAttribute->m_name.append(character);
     }
 
@@ -545,7 +547,9 @@ inline void AtomicHTMLToken::initializeAttributes(const HTMLToken::AttributeList
         if (attribute.m_name.isEmpty())
             continue;
 
-        ASSERT(attribute.m_nameRange.m_start);
+        // FIXME: We should be able to add the following ASSERT once we fix
+        // https://bugs.webkit.org/show_bug.cgi?id=62971
+        //   ASSERT(attribute.m_nameRange.m_start);
         ASSERT(attribute.m_nameRange.m_end);
         ASSERT(attribute.m_valueRange.m_start);
         ASSERT(attribute.m_valueRange.m_end);

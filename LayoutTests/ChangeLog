@@ -1,3 +1,13 @@
+2011-06-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        ASSERT in WebCore::HTMLToken::appendToAttributeName when visiting www.nba.com
+        https://bugs.webkit.org/show_bug.cgi?id=61774
+
+        * fast/parser/attributes-on-close-script-expected.txt: Added.
+        * fast/parser/attributes-on-close-script.html: Added.
+
 2011-06-20  Juan C. Montemayor  <jmont@apple.com>
 
         Reviewed by Oliver Hunt.

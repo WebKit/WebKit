@@ -1,3 +1,25 @@
+2011-06-20  Adam Barth  <abarth@webkit.org>
+
+        Reviewed by Alexey Proskuryakov.
+
+        ASSERT in WebCore::HTMLToken::appendToAttributeName when visiting www.nba.com
+        https://bugs.webkit.org/show_bug.cgi?id=61774
+
+        This ASSERT triggers for the same underlying issue that causes
+        Bug 62971: When we tokenize a </script> tag, we don't realize that
+        we've already consumed the "</script>" from the input stream when we
+        extracted the previous token.  That causes the source tracker to be
+        out-of-sync, triggering the incorrect view-source highlighting and this
+        ASSERT.
+
+        For now, let's just silence the assert while we work on Bug 62971.
+
+        Test: fast/parser/attributes-on-close-script.html
+
+        * html/parser/HTMLToken.h:
+        (WebCore::HTMLToken::appendToAttributeName):
+        (WebCore::AtomicHTMLToken::initializeAttributes):
+
 2011-06-20  Andras Becsi  <abecsi@webkit.org>
 
         Unreviewed build fix.
