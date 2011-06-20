@@ -1,3 +1,12 @@
+2011-06-20  Dmitry Lomov  <dslomov@google.com>
+
+        Reviewed by David Levin.
+
+        https://bugs.webkit.org/show_bug.cgi?id=63017
+        "Unit tests" step on bots should provide more information in case of failure.
+
+        * BuildSlaveSupport/build.webkit.org-config/master.cfg: added --verbose flag to UnitTests step.
+
 2011-06-20  Dirk Pranke  <dpranke@chromium.org>
 
         Reviewed by Ojan Vafai.
