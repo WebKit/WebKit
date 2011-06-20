@@ -387,7 +387,7 @@ private:
 
     void provisionalLoadStarted();
 
-    bool didOpenURL(const KURL&);
+    bool didOpenURL();
 
     void scheduleCheckCompleted();
     void scheduleCheckLoadComplete();
@@ -436,7 +436,7 @@ private:
 
     RefPtr<SerializedScriptValue> m_pendingStateObject;
 
-    KURL m_workingURL;
+    bool m_hasReceivedFirstData;
 
     bool m_needsClear;
 

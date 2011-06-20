@@ -196,6 +196,7 @@ FrameLoader::FrameLoader(Frame* frame, FrameLoaderClient* client)
     , m_pageDismissalEventBeingDispatched(false)
     , m_isComplete(false)
     , m_isLoadingMainResource(false)
+    , m_hasReceivedFirstData(false)
     , m_needsClear(false)
     , m_checkTimer(this, &FrameLoader::checkTimerFired)
     , m_shouldCallCheckCompleted(false)
@@ -418,8 +419,8 @@ void FrameLoader::stopLoading(UnloadEventPolicy unloadEventPolicy)
         finishedParsing();
         m_frame->document()->setParsing(false);
     }
-  
-    m_workingURL = KURL();
+
+    m_hasReceivedFirstData = true;
 
     if (Document* doc = m_frame->document()) {
         // FIXME: HTML5 doesn't tell us to set the state to complete when aborting, but we do anyway to match legacy behavior.
@@ -461,7 +462,7 @@ bool FrameLoader::closeURL()
     return true;
 }
 
-bool FrameLoader::didOpenURL(const KURL& url)
+bool FrameLoader::didOpenURL()
 {
     if (m_frame->navigationScheduler()->redirectScheduledDuringLoad()) {
         // A redirect was scheduled before the document was created.
@@ -485,9 +486,7 @@ bool FrameLoader::didOpenURL(const KURL& url)
             window->setDefaultStatus(String());
         }
     }
-    m_workingURL = url;
-    if (m_workingURL.protocolInHTTPFamily() && !m_workingURL.host().isEmpty() && m_workingURL.path().isEmpty())
-        m_workingURL.setPath("/");
+    m_hasReceivedFirstData = false;
 
     started();
 
@@ -573,7 +572,13 @@ void FrameLoader::clear(bool clearWindowProperties, bool clearScriptObjects, boo
 
 void FrameLoader::receivedFirstData()
 {
-    activeDocumentLoader()->writer()->begin(m_workingURL, false);
+    KURL workingURL = activeDocumentLoader()->documentURL();
+#if ENABLE(WEB_ARCHIVE) || ENABLE(MHTML)
+    if (m_archive)
+        workingURL = m_archive->mainResource()->url();
+#endif
+
+    activeDocumentLoader()->writer()->begin(workingURL, false);
     activeDocumentLoader()->writer()->setDocumentWasLoadedAsPartOfNavigation();
 
     dispatchDidCommitLoad();
@@ -586,17 +591,17 @@ void FrameLoader::receivedFirstData()
             m_client->dispatchDidReceiveTitle(ptitle);
     }
 
-    m_workingURL = KURL();
+    m_hasReceivedFirstData = true;
 
-    double delay;
-    String url;
     if (!m_documentLoader)
         return;
     if (m_frame->document()->isViewSource())
         return;
+
+    double delay;
+    String url;
     if (!parseHTTPRefresh(m_documentLoader->response().httpHeaderField("Refresh"), false, delay, url))
         return;
-
     if (url.isEmpty())
         url = m_frame->document()->url().string();
     else
@@ -972,7 +977,7 @@ void FrameLoader::resetMultipleFormSubmissionProtection()
 
 void FrameLoader::willSetEncoding()
 {
-    if (!m_workingURL.isEmpty())
+    if (!m_hasReceivedFirstData)
         receivedFirstData();
 }
 
@@ -1770,17 +1775,8 @@ void FrameLoader::commitProvisionalLoad()
             m_client->dispatchDidReceiveTitle(title);
 
         checkCompleted();
-    } else {        
-        KURL url = pdl->substituteData().responseURL();
-        if (url.isEmpty())
-            url = pdl->url();
-        if (url.isEmpty())
-            url = pdl->responseURL();
-        if (url.isEmpty())
-            url = blankURL();
-
-        didOpenURL(url);
-    }
+    } else
+        didOpenURL();
 
     LOG(Loading, "WebCoreLoading %s: Finished committing provisional load to URL %s", m_frame->tree()->uniqueName().string().utf8().data(),
         m_frame->document() ? m_frame->document()->url().string().utf8().data() : "");
@@ -2010,10 +2006,11 @@ void FrameLoader::open(CachedFrameBase& cachedFrame)
 
     KURL url = cachedFrame.url();
 
+    // FIXME: I suspect this block of code doesn't do anything.
     if (url.protocolInHTTPFamily() && !url.host().isEmpty() && url.path().isEmpty())
         url.setPath("/");
-    
-    m_workingURL = url;
+
+    m_hasReceivedFirstData = false;
 
     started();
     clear(true, true, cachedFrame.isMainFrame());
@@ -2110,7 +2107,7 @@ void FrameLoader::finishedLoadingDocument(DocumentLoader* loader)
     loader->writer()->setMIMEType(mainResource->mimeType());
 
     closeURL();
-    didOpenURL(mainResource->url());
+    didOpenURL();
 
     ASSERT(m_frame->document());
     String userChosenEncoding = documentLoader()->overrideEncoding();

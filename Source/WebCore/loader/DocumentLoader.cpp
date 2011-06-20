@@ -733,6 +733,18 @@ const KURL& DocumentLoader::responseURL() const
     return m_response.url();
 }
 
+KURL DocumentLoader::documentURL() const
+{
+    KURL url = substituteData().responseURL();
+    if (url.isEmpty())
+        url = requestURL();
+    if (url.isEmpty())
+        url = responseURL();
+    if (url.isEmpty())
+        url = blankURL();
+    return url;
+}
+
 const String& DocumentLoader::responseMIMEType() const
 {
     return m_response.mimeType();

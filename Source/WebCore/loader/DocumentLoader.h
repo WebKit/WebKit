@@ -93,14 +93,18 @@ namespace WebCore {
 
         const SubstituteData& substituteData() const { return m_substituteData; }
 
+        // FIXME: This is the same as requestURL(). We should remove one of them.
         const KURL& url() const;
         const KURL& unreachableURL() const;
+
+        // The URL of the document resulting from this DocumentLoader.
+        KURL documentURL() const;
 
         const KURL& originalURL() const;
         const KURL& requestURL() const;
         const KURL& responseURL() const;
         const String& responseMIMEType() const;
-        
+
         void replaceRequestURLForSameDocumentNavigation(const KURL&);
         bool isStopping() const { return m_isStopping; }
         void stopLoading();
