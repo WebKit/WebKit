@@ -2,11 +2,11 @@ description("Test the behavior of CanvasRenderingContext2D.strokeText() when cal
 
 var ctx = document.createElement('canvas').getContext('2d');
 
-var SyntaxError = "SyntaxError: Not enough arguments";
+var NotEnoughArguments = "TypeError: Not enough arguments";
 
-shouldThrow("ctx.strokeText()", "SyntaxError");
-shouldThrow("ctx.strokeText('moo')", "SyntaxError");
-shouldThrow("ctx.strokeText('moo',0)", "SyntaxError");
+shouldThrow("ctx.strokeText()", "NotEnoughArguments");
+shouldThrow("ctx.strokeText('moo')", "NotEnoughArguments");
+shouldThrow("ctx.strokeText('moo',0)", "NotEnoughArguments");
 shouldBe("ctx.strokeText('moo',0,0)", "undefined");
 shouldBe("ctx.strokeText('moo',0,0,0)", "undefined");
 shouldBe("ctx.strokeText('moo',0,0,0,0)", "undefined");

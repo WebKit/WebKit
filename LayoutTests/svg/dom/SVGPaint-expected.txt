@@ -19,15 +19,15 @@ PASS document.defaultView.getComputedStyle(rectElement).fill is "#008000"
 Try invalid arguments for setPaint()
 PASS fillPaint.setPaint(null, null, null, null) threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
 PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR, svgElement, '', ''); threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
-PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR, '', '') threw exception SyntaxError: Not enough arguments.
+PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR, '', '') threw exception TypeError: Not enough arguments.
 PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_RGBCOLOR_ICCCOLOR + 1, '', '', ''); threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_NONE - 1, '', '', ''); threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 PASS fillPaint.setPaint(SVGPaint.SVG_PAINTTYPE_URI + 1, '', '', ''); threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
-PASS fillPaint.setPaint() threw exception SyntaxError: Not enough arguments.
-PASS fillPaint.setPaint(fillPaint) threw exception SyntaxError: Not enough arguments.
+PASS fillPaint.setPaint() threw exception TypeError: Not enough arguments.
+PASS fillPaint.setPaint(fillPaint) threw exception TypeError: Not enough arguments.
 
 Try invalid arguments for setUri()
-PASS fillPaint.setUri() threw exception SyntaxError: Not enough arguments.
+PASS fillPaint.setUri() threw exception TypeError: Not enough arguments.
 
 Try assigning to the readonly paintType property, which silently fails
 PASS fillPaint.paintType = SVGPaint.SVG_PAINTTYPE_UNKKNOWN; is undefined.

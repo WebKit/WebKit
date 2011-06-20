@@ -24,10 +24,10 @@ PASS text1.x.baseVal.getItem(text1) is text1.x.baseVal.getItem(0)
 PASS text1.x.baseVal.getItem(null) is text1.x.baseVal.getItem(0)
 
 Test uncommon arguments for insertItemBefore()
-PASS text1.x.baseVal.insertItemBefore(30) threw exception SyntaxError: Not enough arguments.
-PASS text1.x.baseVal.insertItemBefore('aString') threw exception SyntaxError: Not enough arguments.
-PASS text1.x.baseVal.insertItemBefore(text1) threw exception SyntaxError: Not enough arguments.
-PASS text1.x.baseVal.insertItemBefore(null) threw exception SyntaxError: Not enough arguments.
+PASS text1.x.baseVal.insertItemBefore(30) threw exception TypeError: Not enough arguments.
+PASS text1.x.baseVal.insertItemBefore('aString') threw exception TypeError: Not enough arguments.
+PASS text1.x.baseVal.insertItemBefore(text1) threw exception TypeError: Not enough arguments.
+PASS text1.x.baseVal.insertItemBefore(null) threw exception TypeError: Not enough arguments.
 PASS text1.x.baseVal.insertItemBefore(text1.x.baseVal.getItem(1), 'aString') is text1.x.baseVal.getItem(0)
 PASS text1.x.baseVal.numberOfItems is 3
 PASS text1.x.baseVal.getItem(0).value is 1000
@@ -67,10 +67,10 @@ PASS text1.x.baseVal.getItem(3).value is 4
 PASS text1.getAttribute('x') is "1 2 3 4"
 
 Test uncommon arguments for replaceItem()
-PASS text1.x.baseVal.replaceItem(30) threw exception SyntaxError: Not enough arguments.
-PASS text1.x.baseVal.replaceItem('aString') threw exception SyntaxError: Not enough arguments.
-PASS text1.x.baseVal.replaceItem(text1) threw exception SyntaxError: Not enough arguments.
-PASS text1.x.baseVal.replaceItem(null) threw exception SyntaxError: Not enough arguments.
+PASS text1.x.baseVal.replaceItem(30) threw exception TypeError: Not enough arguments.
+PASS text1.x.baseVal.replaceItem('aString') threw exception TypeError: Not enough arguments.
+PASS text1.x.baseVal.replaceItem(text1) threw exception TypeError: Not enough arguments.
+PASS text1.x.baseVal.replaceItem(null) threw exception TypeError: Not enough arguments.
 PASS text1.x.baseVal.replaceItem(30, 0) threw exception TypeError: Type error.
 PASS text1.x.baseVal.replaceItem('aString', 0) threw exception TypeError: Type error.
 PASS text1.x.baseVal.replaceItem(text1, 0) threw exception TypeError: Type error.

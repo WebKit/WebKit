@@ -17,7 +17,7 @@ PASS angle.convertToSpecifiedUnits(5) threw exception Error: NOT_SUPPORTED_ERR: 
 PASS angle.convertToSpecifiedUnits('aString') threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS angle.convertToSpecifiedUnits(angle) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS angle.convertToSpecifiedUnits(svgElement) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
-PASS angle.convertToSpecifiedUnits() threw exception SyntaxError: Not enough arguments.
+PASS angle.convertToSpecifiedUnits() threw exception TypeError: Not enough arguments.
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_UNSPECIFIED
 
 Check valid arguments for 'convertToSpecifiedUnits', that should only modify the 'valueAsString'
@@ -46,7 +46,7 @@ Check invalid arguments for 'newValueSpecifiedUnits'
 PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_UNKNOWN, 50) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS angle.newValueSpecifiedUnits(-1, 50) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS angle.newValueSpecifiedUnits(5, 50) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
-PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG) threw exception SyntaxError: Not enough arguments.
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG) threw exception TypeError: Not enough arguments.
 PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 'aString') is undefined.
 PASS angle.value is NaN
 PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, 0) is undefined.
@@ -54,14 +54,14 @@ PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, angle) is undefine
 PASS angle.value is NaN
 PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG, svgElement) is undefined.
 PASS angle.value is NaN
-PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG) threw exception SyntaxError: Not enough arguments.
+PASS angle.newValueSpecifiedUnits(SVGAngle.SVG_ANGLETYPE_DEG) threw exception TypeError: Not enough arguments.
 PASS angle.newValueSpecifiedUnits('aString', 4) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS angle.newValueSpecifiedUnits(angle, 4) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS angle.newValueSpecifiedUnits(svgElement, 4) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS angle.newValueSpecifiedUnits('aString', 'aString') threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS angle.newValueSpecifiedUnits(angle, angle) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS angle.newValueSpecifiedUnits(svgElement, svgElement) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
-PASS angle.newValueSpecifiedUnits() threw exception SyntaxError: Not enough arguments.
+PASS angle.newValueSpecifiedUnits() threw exception TypeError: Not enough arguments.
 PASS angle.unitType is SVGAngle.SVG_ANGLETYPE_DEG
 
 Check valid arguments for 'newValueSpecifiedUnits', that should only modify the 'valueAsString'

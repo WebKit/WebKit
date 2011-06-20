@@ -19,8 +19,8 @@ PASS stopColor.setColor(null, null, null) threw exception Error: SVG_INVALID_VAL
 PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, svgElement, ''); threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
 PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_RGBCOLOR, '', '') threw exception Error: SVG_INVALID_VALUE_ERR: DOM SVG Exception 1.
 PASS stopColor.setColor(SVGColor.SVG_COLORTYPE_CURRENTCOLOR + 1, '', ''); threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
-PASS stopColor.setColor() threw exception SyntaxError: Not enough arguments.
-PASS stopColor.setColor(stopColor) threw exception SyntaxError: Not enough arguments.
+PASS stopColor.setColor() threw exception TypeError: Not enough arguments.
+PASS stopColor.setColor(stopColor) threw exception TypeError: Not enough arguments.
 
 Try assigning to the readonly colorType property, which silently fails
 PASS stopColor.colorType = SVGColor.SVG_COLORTYPE_UNKKNOWN; is undefined.

@@ -31,10 +31,10 @@ PASS text1.requiredFeatures.getItem(text1) is text1.requiredFeatures.getItem(0)
 PASS text1.requiredFeatures.getItem(null) is text1.requiredFeatures.getItem(0)
 
 Test uncommon arguments for insertItemBefore()
-PASS text1.requiredFeatures.insertItemBefore(30) threw exception SyntaxError: Not enough arguments.
-PASS text1.requiredFeatures.insertItemBefore('aString') threw exception SyntaxError: Not enough arguments.
-PASS text1.requiredFeatures.insertItemBefore(text1) threw exception SyntaxError: Not enough arguments.
-PASS text1.requiredFeatures.insertItemBefore(null) threw exception SyntaxError: Not enough arguments.
+PASS text1.requiredFeatures.insertItemBefore(30) threw exception TypeError: Not enough arguments.
+PASS text1.requiredFeatures.insertItemBefore('aString') threw exception TypeError: Not enough arguments.
+PASS text1.requiredFeatures.insertItemBefore(text1) threw exception TypeError: Not enough arguments.
+PASS text1.requiredFeatures.insertItemBefore(null) threw exception TypeError: Not enough arguments.
 PASS text1.requiredFeatures.insertItemBefore(text1.requiredFeatures.getItem(1), 'aString') threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS text1.requiredFeatures.insertItemBefore(text1.requiredFeatures.getItem(1), text1) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
 PASS text1.requiredFeatures.insertItemBefore(text1.requiredFeatures.getItem(1), null) threw exception Error: INDEX_SIZE_ERR: DOM Exception 1.
@@ -76,9 +76,9 @@ PASS text1.requiredFeatures.getItem(3) is "4"
 PASS text1.getAttribute('requiredFeatures') is "1 2 3 4"
 
 Test uncommon arguments for replaceItem() - part 1
-PASS text1.requiredFeatures.replaceItem(30) threw exception SyntaxError: Not enough arguments.
-PASS text1.requiredFeatures.replaceItem('aString') threw exception SyntaxError: Not enough arguments.
-PASS text1.requiredFeatures.replaceItem(text1) threw exception SyntaxError: Not enough arguments.
+PASS text1.requiredFeatures.replaceItem(30) threw exception TypeError: Not enough arguments.
+PASS text1.requiredFeatures.replaceItem('aString') threw exception TypeError: Not enough arguments.
+PASS text1.requiredFeatures.replaceItem(text1) threw exception TypeError: Not enough arguments.
 PASS text1.requiredFeatures.replaceItem(null, 0) is "null"
 PASS text1.requiredFeatures.numberOfItems is 4
 PASS text1.requiredFeatures.getItem(0) is "null"

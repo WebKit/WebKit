@@ -40,10 +40,10 @@ PASS poly1.points.getItem(poly1) is poly1.points.getItem(0)
 PASS poly1.points.getItem(null) is poly1.points.getItem(0)
 
 Test uncommon arguments for insertItemBefore()
-PASS poly1.points.insertItemBefore(30) threw exception SyntaxError: Not enough arguments.
-PASS poly1.points.insertItemBefore('aString') threw exception SyntaxError: Not enough arguments.
-PASS poly1.points.insertItemBefore(poly1) threw exception SyntaxError: Not enough arguments.
-PASS poly1.points.insertItemBefore(null) threw exception SyntaxError: Not enough arguments.
+PASS poly1.points.insertItemBefore(30) threw exception TypeError: Not enough arguments.
+PASS poly1.points.insertItemBefore('aString') threw exception TypeError: Not enough arguments.
+PASS poly1.points.insertItemBefore(poly1) threw exception TypeError: Not enough arguments.
+PASS poly1.points.insertItemBefore(null) threw exception TypeError: Not enough arguments.
 PASS dumpPoint(poly1.points.insertItemBefore(poly1.points.getItem(1), 'aString')) is "x=100 y=0"
 PASS poly1.points.numberOfItems is 4
 PASS dumpPoint(poly1.points.getItem(0)) is "x=100 y=0"
@@ -77,9 +77,9 @@ PASS poly1.points.insertItemBefore(poly1, 0) threw exception TypeError: Type err
 PASS poly1.points.insertItemBefore(null, 0) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 
 Test uncommon arguments for replaceItem()
-PASS poly1.points.replaceItem(30) threw exception SyntaxError: Not enough arguments.
-PASS poly1.points.replaceItem('aString') threw exception SyntaxError: Not enough arguments.
-PASS poly1.points.replaceItem(poly1) threw exception SyntaxError: Not enough arguments.
+PASS poly1.points.replaceItem(30) threw exception TypeError: Not enough arguments.
+PASS poly1.points.replaceItem('aString') threw exception TypeError: Not enough arguments.
+PASS poly1.points.replaceItem(poly1) threw exception TypeError: Not enough arguments.
 PASS poly1.points.replaceItem(null, 0) threw exception Error: SVG_WRONG_TYPE_ERR: DOM SVG Exception 0.
 PASS poly1.points.replaceItem('aString', 0) threw exception TypeError: Type error.
 PASS poly1.points.replaceItem(poly1, 0) threw exception TypeError: Type error.

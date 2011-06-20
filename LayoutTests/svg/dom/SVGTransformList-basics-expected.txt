@@ -22,10 +22,10 @@ PASS circle1.transform.baseVal.getItem(circle1) is circle1.transform.baseVal.get
 PASS circle1.transform.baseVal.getItem(null) is circle1.transform.baseVal.getItem(0)
 
 Test uncommon arguments for insertItemBefore()
-PASS circle1.transform.baseVal.insertItemBefore(30) threw exception SyntaxError: Not enough arguments.
-PASS circle1.transform.baseVal.insertItemBefore('aString') threw exception SyntaxError: Not enough arguments.
-PASS circle1.transform.baseVal.insertItemBefore(circle1) threw exception SyntaxError: Not enough arguments.
-PASS circle1.transform.baseVal.insertItemBefore(null) threw exception SyntaxError: Not enough arguments.
+PASS circle1.transform.baseVal.insertItemBefore(30) threw exception TypeError: Not enough arguments.
+PASS circle1.transform.baseVal.insertItemBefore('aString') threw exception TypeError: Not enough arguments.
+PASS circle1.transform.baseVal.insertItemBefore(circle1) threw exception TypeError: Not enough arguments.
+PASS circle1.transform.baseVal.insertItemBefore(null) threw exception TypeError: Not enough arguments.
 PASS circle1.transform.baseVal.insertItemBefore(circle1.transform.baseVal.getItem(1), 'aString') is circle1.transform.baseVal.getItem(0)
 PASS circle1.transform.baseVal.numberOfItems is 2
 PASS dumpTransform(circle1.transform.baseVal.getItem(0)) is "type=SVG_TRANSFORM_TRANSLATE matrix=[1.0 0.0 0.0 1.0 10.0 10.0]"
@@ -61,10 +61,10 @@ PASS dumpTransform(circle1.transform.baseVal.getItem(3)) is "type=SVG_TRANSFORM_
 PASS circle1.getAttribute('transform') is "rotate(90) scale(2 2) translate(10 10) skewX(45)"
 
 Test uncommon arguments for replaceItem()
-PASS circle1.transform.baseVal.replaceItem(30) threw exception SyntaxError: Not enough arguments.
-PASS circle1.transform.baseVal.replaceItem('aString') threw exception SyntaxError: Not enough arguments.
-PASS circle1.transform.baseVal.replaceItem(circle1) threw exception SyntaxError: Not enough arguments.
-PASS circle1.transform.baseVal.replaceItem(null) threw exception SyntaxError: Not enough arguments.
+PASS circle1.transform.baseVal.replaceItem(30) threw exception TypeError: Not enough arguments.
+PASS circle1.transform.baseVal.replaceItem('aString') threw exception TypeError: Not enough arguments.
+PASS circle1.transform.baseVal.replaceItem(circle1) threw exception TypeError: Not enough arguments.
+PASS circle1.transform.baseVal.replaceItem(null) threw exception TypeError: Not enough arguments.
 PASS circle1.transform.baseVal.replaceItem(30, 0) threw exception TypeError: Type error.
 PASS circle1.transform.baseVal.replaceItem('aString', 0) threw exception TypeError: Type error.
 PASS circle1.transform.baseVal.replaceItem(circle1, 0) threw exception TypeError: Type error.

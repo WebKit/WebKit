@@ -1,3 +1,38 @@
+2011-06-20  Mark Pilgrim  <pilgrim@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        IDL generator should throw TypeError instead of SyntaxError on not enough arguments
+        https://bugs.webkit.org/show_bug.cgi?id=63011
+
+        To align with WebIDL, we should throw TypeError whenever a function
+        is called with missing required arguments.
+
+        * fast/canvas/canvas-overloads-drawImageFromRect-expected.txt:
+        * fast/canvas/canvas-overloads-fillText-expected.txt:
+        * fast/canvas/canvas-overloads-strokeText-expected.txt:
+        * fast/canvas/script-tests/canvas-overloads-drawImageFromRect.js:
+        * fast/canvas/script-tests/canvas-overloads-fillText.js:
+        * fast/canvas/script-tests/canvas-overloads-strokeText.js:
+        * fast/canvas/webgl/data-view-test-expected.txt:
+        * http/tests/xmlhttprequest/exceptions-expected.txt:
+        * platform/chromium-mac/svg/dom/svgpath-out-of-bounds-getPathSeg-expected.txt:
+        * platform/chromium-win/svg/dom/svgpath-out-of-bounds-getPathSeg-expected.txt:
+        * svg/dom/SVGAngle-expected.txt:
+        * svg/dom/SVGColor-expected.txt:
+        * svg/dom/SVGLength-expected.txt:
+        * svg/dom/SVGLengthList-basics-expected.txt:
+        * svg/dom/SVGMatrix-expected.txt:
+        * svg/dom/SVGNumberList-basics-expected.txt:
+        * svg/dom/SVGPaint-expected.txt:
+        * svg/dom/SVGPoint-expected.txt:
+        * svg/dom/SVGPointList-basics-expected.txt:
+        * svg/dom/SVGStringList-basics-expected.txt:
+        * svg/dom/SVGTransform-expected.txt:
+        * svg/dom/SVGTransformList-basics-expected.txt:
+        * svg/dom/SVGTransformList-expected.txt:
+        * svg/dom/svgpath-out-of-bounds-getPathSeg-expected.txt:
+
 2011-05-03  Martin Robinson  <mrobinson@igalia.com>
 
         Reviewed by Dirk Schulze.

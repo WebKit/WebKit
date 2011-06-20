@@ -90,18 +90,18 @@ PASS matrix.e is 0
 PASS matrix.f is 0
 
 Check calling 'multiply' with invalid arguments
-PASS matrix.multiply() threw exception SyntaxError: Not enough arguments.
+PASS matrix.multiply() threw exception TypeError: Not enough arguments.
 PASS matrix.multiply(true) threw exception TypeError: Type error.
 PASS matrix.multiply(2) threw exception TypeError: Type error.
 PASS matrix.multiply('aString') threw exception TypeError: Type error.
 PASS matrix.multiply(svgElement) threw exception TypeError: Type error.
 
 Check calling 'translate' with invalid arguments
-PASS matrix.translate() threw exception SyntaxError: Not enough arguments.
-PASS matrix.translate(true) threw exception SyntaxError: Not enough arguments.
-PASS matrix.translate(2) threw exception SyntaxError: Not enough arguments.
-PASS matrix.translate('aString') threw exception SyntaxError: Not enough arguments.
-PASS matrix.translate(svgElement) threw exception SyntaxError: Not enough arguments.
+PASS matrix.translate() threw exception TypeError: Not enough arguments.
+PASS matrix.translate(true) threw exception TypeError: Not enough arguments.
+PASS matrix.translate(2) threw exception TypeError: Not enough arguments.
+PASS matrix.translate('aString') threw exception TypeError: Not enough arguments.
+PASS matrix.translate(svgElement) threw exception TypeError: Not enough arguments.
 PASS matrix.translate('aString', 'aString') is non-null.
 PASS matrix.translate(svgElement, svgElement) is non-null.
 PASS matrix.translate(2, 'aString') is non-null.
@@ -110,16 +110,16 @@ PASS matrix.translate('aString', 2) is non-null.
 PASS matrix.translate(svgElement, 2) is non-null.
 
 Check calling 'scale' with invalid arguments
-PASS matrix.scale() threw exception SyntaxError: Not enough arguments.
+PASS matrix.scale() threw exception TypeError: Not enough arguments.
 PASS matrix.scale('aString') is non-null.
 PASS matrix.scale(svgElement) is non-null.
 
 Check calling 'scaleNonUniform' with invalid arguments
-PASS matrix.scaleNonUniform() threw exception SyntaxError: Not enough arguments.
-PASS matrix.scaleNonUniform(true) threw exception SyntaxError: Not enough arguments.
-PASS matrix.scaleNonUniform(2) threw exception SyntaxError: Not enough arguments.
-PASS matrix.scaleNonUniform('aString') threw exception SyntaxError: Not enough arguments.
-PASS matrix.scaleNonUniform(svgElement) threw exception SyntaxError: Not enough arguments.
+PASS matrix.scaleNonUniform() threw exception TypeError: Not enough arguments.
+PASS matrix.scaleNonUniform(true) threw exception TypeError: Not enough arguments.
+PASS matrix.scaleNonUniform(2) threw exception TypeError: Not enough arguments.
+PASS matrix.scaleNonUniform('aString') threw exception TypeError: Not enough arguments.
+PASS matrix.scaleNonUniform(svgElement) threw exception TypeError: Not enough arguments.
 PASS matrix.scaleNonUniform('aString', 'aString') is non-null.
 PASS matrix.scaleNonUniform(svgElement, svgElement) is non-null.
 PASS matrix.scaleNonUniform(2, 'aString') is non-null.
@@ -128,16 +128,16 @@ PASS matrix.scaleNonUniform('aString', 2) is non-null.
 PASS matrix.scaleNonUniform(svgElement, 2) is non-null.
 
 Check calling 'rotate' with invalid arguments
-PASS matrix.rotate() threw exception SyntaxError: Not enough arguments.
+PASS matrix.rotate() threw exception TypeError: Not enough arguments.
 PASS matrix.rotate('aString') is non-null.
 PASS matrix.rotate(svgElement) is non-null.
 
 Check calling 'rotateFromVector' with invalid arguments
-PASS matrix.rotateFromVector() threw exception SyntaxError: Not enough arguments.
-PASS matrix.rotateFromVector(true) threw exception SyntaxError: Not enough arguments.
-PASS matrix.rotateFromVector(2) threw exception SyntaxError: Not enough arguments.
-PASS matrix.rotateFromVector('aString') threw exception SyntaxError: Not enough arguments.
-PASS matrix.rotateFromVector(svgElement) threw exception SyntaxError: Not enough arguments.
+PASS matrix.rotateFromVector() threw exception TypeError: Not enough arguments.
+PASS matrix.rotateFromVector(true) threw exception TypeError: Not enough arguments.
+PASS matrix.rotateFromVector(2) threw exception TypeError: Not enough arguments.
+PASS matrix.rotateFromVector('aString') threw exception TypeError: Not enough arguments.
+PASS matrix.rotateFromVector(svgElement) threw exception TypeError: Not enough arguments.
 PASS matrix.rotateFromVector('aString', 'aString') is non-null.
 PASS matrix.rotateFromVector(svgElement, svgElement) is non-null.
 PASS matrix.rotateFromVector(2, 'aString') is non-null.
@@ -146,12 +146,12 @@ PASS matrix.rotateFromVector('aString', 2) is non-null.
 PASS matrix.rotateFromVector(svgElement, 2) is non-null.
 
 Check calling 'skewX' with invalid arguments
-PASS matrix.skewX() threw exception SyntaxError: Not enough arguments.
+PASS matrix.skewX() threw exception TypeError: Not enough arguments.
 PASS matrix.skewX('aString') is non-null.
 PASS matrix.skewX(svgElement) is non-null.
 
 Check calling 'skewY' with invalid arguments
-PASS matrix.skewY() threw exception SyntaxError: Not enough arguments.
+PASS matrix.skewY() threw exception TypeError: Not enough arguments.
 PASS matrix.skewY('aString') is non-null.
 PASS matrix.skewY(svgElement) is non-null.
 PASS successfullyParsed is true

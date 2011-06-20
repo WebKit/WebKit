@@ -41,7 +41,7 @@ PASS length.value is NaN
 PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, 0) is undefined.
 PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, svgElement) is undefined.
 PASS length.value is NaN
-PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX) threw exception SyntaxError: Not enough arguments.
+PASS length.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX) threw exception TypeError: Not enough arguments.
 PASS length.newValueSpecifiedUnits('aString', 4) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS length.newValueSpecifiedUnits(length, 4) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.
 PASS length.newValueSpecifiedUnits(svgElement, 4) threw exception Error: NOT_SUPPORTED_ERR: DOM Exception 9.

@@ -1948,7 +1948,7 @@ sub GenerateImplementation
                     {
                         push(@implContent, "    if (exec->argumentCount() < $numMandatoryParams)\n");
                         if ($requiresAllArguments eq "Raise") {
-                            push(@implContent, "        return throwVMError(exec, createSyntaxError(exec, \"Not enough arguments\"));\n");
+                            push(@implContent, "        return throwVMError(exec, createTypeError(exec, \"Not enough arguments\"));\n");
                         } else {
                             push(@implContent, "        return JSValue::encode(jsUndefined());\n");
                         }

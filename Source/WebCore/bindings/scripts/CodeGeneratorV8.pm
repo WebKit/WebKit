@@ -1259,7 +1259,7 @@ END
         }
         push(@implContentDecls, "    if (args.Length() < $numMandatoryParams)\n");
         if ($requiresAllArguments eq "Raise") {
-            push(@implContentDecls, "        return throwError(\"Not enough arguments\", V8Proxy::SyntaxError);\n");
+            push(@implContentDecls, "        return throwError(\"Not enough arguments\", V8Proxy::TypeError);\n");
         } else {
             push(@implContentDecls, "        return v8::Handle<v8::Value>();\n");
         }

@@ -698,7 +698,7 @@ static v8::Handle<v8::Value> methodThatRequiresAllArgsAndThrowsCallback(const v8
 {
     INC_STATS("DOM.TestObj.methodThatRequiresAllArgsAndThrows");
     if (args.Length() < 2)
-        return throwError("Not enough arguments", V8Proxy::SyntaxError);
+        return throwError("Not enough arguments", V8Proxy::TypeError);
     TestObj* imp = V8TestObj::toNative(args.Holder());
     ExceptionCode ec = 0;
     {
