@@ -239,6 +239,7 @@ static gchar* filenameToURL(const char* filename)
     return fileURL;
 }
 
+#ifndef WEBKIT2
 gboolean parseOptionEntryCallback(const gchar *optionNameFull, const gchar *value, gpointer data, GError **error)
 {
     WebKitWebSettings *webkitSettings = (WebKitWebSettings *)data;
@@ -368,6 +369,8 @@ static gboolean parseAdditionalOptions(WebKitWebView *webView, int argc, char* a
     g_array_free(optionEntriesArray, TRUE);
     return TRUE;
 }
+#endif
+
 int main(int argc, char* argv[])
 {
     WebKitWebView *webView;
@@ -392,8 +395,10 @@ int main(int argc, char* argv[])
 
     main_window = createWindow(&webView);
 
+#ifndef WEBKIT2
     if (!parseAdditionalOptions(webView, argc, argv))
         return 1;
+#endif
 
     gchar *uri =(gchar*)(argc > 1 ? argv[1] : "http://www.google.com/");
     gchar *fileURL = filenameToURL(uri);
