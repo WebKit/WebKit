@@ -79,6 +79,8 @@ class StepsTest(unittest.TestCase):
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitpy']
 Running Perl unit tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/test-webkitperl']
+Running Bindings tests
+MOCK run_and_throw_if_fail: ['Tools/Scripts/run-bindings-tests']
 Running JavaScriptCore tests
 MOCK run_and_throw_if_fail: ['Tools/Scripts/run-javascriptcore-tests']
 Running run-webkit-tests

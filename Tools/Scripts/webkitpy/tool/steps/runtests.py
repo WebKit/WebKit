@@ -56,6 +56,11 @@ class RunTests(AbstractStep):
             log("Running Perl unit tests")
             self._tool.executive.run_and_throw_if_fail(perl_unittests_command)
 
+        bindings_tests_command = self._tool.port().run_bindings_tests_command()
+        if bindings_tests_command:
+            log("Running Bindings tests")
+            self._tool.executive.run_and_throw_if_fail(bindings_tests_command)
+
         javascriptcore_tests_command = self._tool.port().run_javascriptcore_tests_command()
         if javascriptcore_tests_command:
             log("Running JavaScriptCore tests")

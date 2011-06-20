@@ -1,3 +1,16 @@
+2011-06-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        commit-queue/ews-bots should run run-bindings-tests for every patch
+        https://bugs.webkit.org/show_bug.cgi?id=63010
+
+        * Scripts/webkitpy/common/config/ports.py:
+        * Scripts/webkitpy/tool/commands/download_unittest.py:
+        * Scripts/webkitpy/tool/steps/runtests.py:
+        * Scripts/webkitpy/tool/steps/runtests_unittest.py:
+        * Scripts/webkitpy/tool/steps/steps_unittest.py:
+
 2011-06-20  Chang Shu  <cshu@webkit.org>
 
         Reviewed by Adam Barth.

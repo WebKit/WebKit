@@ -89,7 +89,7 @@ class DownloadCommandsTest(CommandsTest):
         self.assert_execute_outputs(Build(), [], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_build_and_test(self):
-        expected_stderr = "Updating working directory\nBuilding WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\n"
+        expected_stderr = "Updating working directory\nBuilding WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning Bindings tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\n"
         self.assert_execute_outputs(BuildAndTest(), [], options=self._default_options(), expected_stderr=expected_stderr)
 
     def test_apply_attachment(self):
@@ -107,7 +107,7 @@ class DownloadCommandsTest(CommandsTest):
         self.assert_execute_outputs(ApplyFromBug(), [42], options=options, expected_stderr=expected_stderr)
 
     def test_land_diff(self):
-        expected_stderr = "Building WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\nUpdating bug 42\n"
+        expected_stderr = "Building WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning Bindings tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\nUpdating bug 42\n"
         mock_tool = MockTool()
         mock_tool.scm().create_patch = Mock(return_value="Patch1\nMockPatch\n")
         mock_tool.checkout().modified_changelogs = Mock(return_value=[])
@@ -117,7 +117,7 @@ class DownloadCommandsTest(CommandsTest):
         self.assertEqual(mock_tool.checkout().modified_changelogs.call_count, 1)
 
     def test_land_red_builders(self):
-        expected_stderr = '\nWARNING: Builders ["Builder2"] are red, please watch your commit carefully.\nSee http://dummy_buildbot_host/console?category=core\n\nBuilding WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\nUpdating bug 42\n'
+        expected_stderr = '\nWARNING: Builders ["Builder2"] are red, please watch your commit carefully.\nSee http://dummy_buildbot_host/console?category=core\n\nBuilding WebKit\nRunning Python unit tests\nRunning Perl unit tests\nRunning Bindings tests\nRunning JavaScriptCore tests\nRunning run-webkit-tests\nCommitted r49824: <http://trac.webkit.org/changeset/49824>\nUpdating bug 42\n'
         mock_tool = MockTool()
         mock_tool.buildbot.light_tree_on_fire()
         self.assert_execute_outputs(Land(), [42], options=self._default_options(), expected_stderr=expected_stderr, tool=mock_tool)
@@ -143,6 +143,7 @@ Processing patch 197 from bug 42.
 Building WebKit
 Running Python unit tests
 Running Perl unit tests
+Running Bindings tests
 Running JavaScriptCore tests
 Running run-webkit-tests
 Committed r49824: <http://trac.webkit.org/changeset/49824>
@@ -159,6 +160,7 @@ Processing patch 197 from bug 42.
 Building WebKit
 Running Python unit tests
 Running Perl unit tests
+Running Bindings tests
 Running JavaScriptCore tests
 Running run-webkit-tests
 Committed r49824: <http://trac.webkit.org/changeset/49824>
@@ -168,6 +170,7 @@ Processing patch 128 from bug 42.
 Building WebKit
 Running Python unit tests
 Running Perl unit tests
+Running Bindings tests
 Running JavaScriptCore tests
 Running run-webkit-tests
 Committed r49824: <http://trac.webkit.org/changeset/49824>
