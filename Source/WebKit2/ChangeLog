@@ -1,5 +1,30 @@
 2011-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
 
+        Reviewed by Martin Robinson.
+
+        [UNIX] Don't use WebCore::PluginPackage to get plugin information
+        https://bugs.webkit.org/show_bug.cgi?id=62899
+
+        The problem is that both PluginPackage in WebCore and
+        NetscapePluginModule in webkit2 install their own netscape browser
+        functions and that can cause conflicts in some situations.
+
+        * Shared/Plugins/Netscape/NetscapePluginModule.h: Add helper
+        function to set plugin mime type descriptions.
+        * Shared/Plugins/Netscape/x11/NetscapePluginModuleX11.cpp:
+        (WebKit::NetscapePluginModule::setMIMEDescription): Helper
+        function to set plugin mime type descriptions.
+        (WebKit::NetscapePluginModule::getPluginInfo): Use
+        NetscapePluginModule instead of PluginPackage.
+        * UIProcess/Plugins/unix/PluginInfoStoreUnix.cpp: Remove unneeded
+        header include.
+        * WebProcess/Plugins/Netscape/NetscapeBrowserFuncs.cpp:
+        (WebKit::NPN_GetValue): Do not try to get the XDisplay if the
+        plugin doesn't have a view. It fixes a crash with flash plugin and
+        matches WebCore.
+
+2011-06-20  Carlos Garcia Campos  <cgarcia@igalia.com>
+
         Reviewed by Xan Lopez.
 
         [GTK] Split libWebCore into two libWebCore and libWebCoreGtk

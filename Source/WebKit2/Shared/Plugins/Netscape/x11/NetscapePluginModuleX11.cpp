@@ -28,8 +28,8 @@
 
 #include "NetscapePluginModule.h"
 
-#include "PluginDatabase.h"
-#include "PluginPackage.h"
+#include "NetscapeBrowserFuncs.h"
+#include <WebCore/FileSystem.h>
 
 #if PLATFORM(QT)
 #include <QLibrary>
@@ -93,6 +93,31 @@ void NetscapePluginModule::applyX11QuirksBeforeLoad()
 #endif
 }
 
+void NetscapePluginModule::setMIMEDescription(const String& mimeDescription, PluginModuleInfo& plugin)
+{
+    Vector<String> types;
+    mimeDescription.lower().split(UChar(';'), false, types);
+    plugin.info.mimes.reserveCapacity(types.size());
+
+    size_t mimeInfoCount = 0;
+    for (size_t i = 0; i < types.size(); ++i) {
+        Vector<String> mimeTypeParts;
+        types[i].split(UChar(':'), true, mimeTypeParts);
+        if (mimeTypeParts.size() <= 0)
+            continue;
+
+        plugin.info.mimes.uncheckedAppend(MimeClassInfo());
+        MimeClassInfo& mimeInfo = plugin.info.mimes[mimeInfoCount++];
+        mimeInfo.type = mimeTypeParts[0];
+
+        if (mimeTypeParts.size() > 1)
+            mimeTypeParts[1].split(UChar(','), false, mimeInfo.extensions);
+
+        if (mimeTypeParts.size() > 2)
+            mimeInfo.desc = mimeTypeParts[2];
+    }
+}
+
 bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleInfo& plugin)
 {
     // Tempararily suppress stdout in this function as plugins will be loaded and shutdown and debug info
@@ -101,31 +126,33 @@ bool NetscapePluginModule::getPluginInfo(const String& pluginPath, PluginModuleI
 
     // We are loading the plugin here since it does not seem to be a standardized way to
     // get the needed informations from a UNIX plugin without loading it.
-
-    RefPtr<PluginPackage> package = PluginPackage::createPackage(pluginPath, 0 /*lastModified*/);
-    if (!package)
+    RefPtr<NetscapePluginModule> pluginModule = NetscapePluginModule::getOrCreate(pluginPath);
+    if (!pluginModule)
         return false;
 
     plugin.path = pluginPath;
-    plugin.info.desc = package->description();
-    plugin.info.file = package->fileName();
+    plugin.info.file = pathGetFileName(pluginPath);
 
-    const MIMEToDescriptionsMap& descriptions = package->mimeToDescriptions();
-    const MIMEToExtensionsMap& extensions = package->mimeToExtensions();
-    MIMEToDescriptionsMap::const_iterator descEnd = descriptions.end();
-    plugin.info.mimes.reserveCapacity(descriptions.size());
-    unsigned i = 0;
-    for (MIMEToDescriptionsMap::const_iterator it = descriptions.begin(); it != descEnd; ++it) {
-        plugin.info.mimes.uncheckedAppend(MimeClassInfo());
-        MimeClassInfo& mime = plugin.info.mimes[i++];
-        mime.type = it->first;
-        mime.desc = it->second;
-        MIMEToExtensionsMap::const_iterator extensionIt = extensions.find(it->first);
-        ASSERT(extensionIt != extensions.end());
-        mime.extensions = extensionIt->second;
-    }
+    Module* module = pluginModule->module();
+    NPP_GetValueProcPtr NPP_GetValue = module->functionPointer<NPP_GetValueProcPtr>("NP_GetValue");
+    if (!NPP_GetValue)
+        return false;
 
-    package->unload();
+    NP_GetMIMEDescriptionFuncPtr NP_GetMIMEDescription = module->functionPointer<NP_GetMIMEDescriptionFuncPtr>("NP_GetMIMEDescription");
+    if (!NP_GetMIMEDescription)
+        return false;
+
+    char* buffer = 0;
+    NPError err = NPP_GetValue(0, NPPVpluginDescriptionString, &buffer);
+    if (err == NPERR_NO_ERROR)
+        plugin.info.desc = buffer;
+
+    const char* mimeDescription = NP_GetMIMEDescription();
+    if (!mimeDescription)
+        return false;
+
+    setMIMEDescription(mimeDescription, plugin);
+
     return true;
 }
 

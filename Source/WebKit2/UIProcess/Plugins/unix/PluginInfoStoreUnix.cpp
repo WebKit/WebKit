@@ -30,7 +30,6 @@
 
 #include "NetscapePluginModule.h"
 #include "PluginDatabase.h"
-#include "PluginPackage.h"
 
 using namespace WebCore;
 
