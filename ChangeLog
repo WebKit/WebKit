@@ -1,3 +1,9 @@
+2011-06-19  MORITA Hajime <morrita@google.com>
+
+        Unreviewed GTK build fix.
+
+        * Source/autotools/symbols.filter:
+
 2011-06-19  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
