@@ -1,3 +1,22 @@
+2011-06-19  Martin Robinson  <mrobinson@igalia.com>
+
+        Reviewed by Xan Lopez.
+
+        [GTK] ASSERTION FAILED: it != gFontDataCache->end() in FontCache.cpp:318
+        https://bugs.webkit.org/show_bug.cgi?id=62942
+
+        Fix the == operator overload of the FreeType FontPlatformData to properly make the
+        distinction between the hash table deleted value and the hash table empty value.
+
+        No new tests. This is covered by existing tests, which should no longer
+        hit assertions.
+
+        * platform/graphics/freetype/FontPlatformDataFreeType.cpp:
+        (WebCore::FontPlatformData::operator==): Reorder the logic for determining if two
+        FontPlatformData instances are equal. Do a pointer comparison on the Fontconfig patterns,
+        instead of using FcPatternEqual. If the two Fontconfig patterns have different pointers
+        they were created at different times and the overload should return false.
+
 2011-06-20  Ilya Tikhonovsky  <loislo@chromium.org>
 
         Reviewed by Yury Semikhatsky.
