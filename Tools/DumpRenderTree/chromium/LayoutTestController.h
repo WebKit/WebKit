@@ -336,9 +336,6 @@ public:
     // Allows layout tests to start JavaScript profiling.
     void setJavaScriptProfilingEnabled(const CppArgumentList&, CppVariant*);
 
-    // Allows layout tests to start Timeline profiling.
-    void setTimelineProfilingEnabled(const CppArgumentList&, CppVariant*);
-
     // Allows layout tests to exec scripts at WebInspector side.
     void evaluateInWebInspector(const CppArgumentList&, CppVariant*);
 

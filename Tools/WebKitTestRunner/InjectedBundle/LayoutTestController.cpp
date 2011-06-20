@@ -497,11 +497,6 @@ void LayoutTestController::setJavaScriptProfilingEnabled(bool enabled)
     WKBundleInspectorSetJavaScriptProfilingEnabled(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), enabled);
 }
 
-void LayoutTestController::setTimelineProfilingEnabled(bool enabled)
-{
-    WKBundleInspectorSetPageProfilingEnabled(WKBundlePageGetInspector(InjectedBundle::shared().page()->page()), enabled);
-}
-
 typedef WTF::HashMap<unsigned, WKRetainPtr<WKBundleScriptWorldRef> > WorldMap;
 static WorldMap& worldMap()
 {

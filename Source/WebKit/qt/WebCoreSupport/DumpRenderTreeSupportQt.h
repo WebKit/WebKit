@@ -121,7 +121,6 @@ public:
     static void clearScriptWorlds();
     static void evaluateScriptInIsolatedWorld(QWebFrame* frame, int worldID, const QString& script);
 
-    static void setTimelineProfilingEnabled(QWebPage*, bool enabled);
     static void webInspectorExecuteScript(QWebPage* page, long callId, const QString& script);
     static void webInspectorShow(QWebPage* page);
     static void webInspectorClose(QWebPage* page);

@@ -224,19 +224,6 @@ void DumpRenderTreeSupportQt::webInspectorShow(QWebPage* page)
 #endif
 }
 
-void DumpRenderTreeSupportQt::setTimelineProfilingEnabled(QWebPage* page, bool enabled)
-{
-#if ENABLE(INSPECTOR)
-    InspectorController* controller = page->handle()->page->inspectorController();
-    if (!controller)
-        return;
-    if (enabled)
-        controller->startTimelineProfiler();
-    else
-        controller->stopTimelineProfiler();
-#endif
-}
-
 bool DumpRenderTreeSupportQt::hasDocumentElement(QWebFrame* frame)
 {
     return QWebFramePrivate::core(frame)->document()->documentElement();

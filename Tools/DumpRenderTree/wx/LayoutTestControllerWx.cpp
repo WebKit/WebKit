@@ -450,11 +450,6 @@ void LayoutTestController::removeAllVisitedLinks()
     // FIXME: Implement this.
 }
 
-void LayoutTestController::setTimelineProfilingEnabled(bool enabled)
-{
-
-}
-
 void LayoutTestController::evaluateScriptInIsolatedWorld(unsigned worldID, JSObjectRef globalObject, JSStringRef script)
 {
 

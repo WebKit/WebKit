@@ -175,7 +175,6 @@ LayoutTestController::LayoutTestController(TestShell* shell)
     bindMethod("setSmartInsertDeleteEnabled", &LayoutTestController::setSmartInsertDeleteEnabled);
     bindMethod("setStopProvisionalFrameLoads", &LayoutTestController::setStopProvisionalFrameLoads);
     bindMethod("setTabKeyCyclesThroughElements", &LayoutTestController::setTabKeyCyclesThroughElements);
-    bindMethod("setTimelineProfilingEnabled", &LayoutTestController::setTimelineProfilingEnabled);
     bindMethod("setUserStyleSheetEnabled", &LayoutTestController::setUserStyleSheetEnabled);
     bindMethod("setUserStyleSheetLocation", &LayoutTestController::setUserStyleSheetLocation);
     bindMethod("setValueForUser", &LayoutTestController::setValueForUser);
@@ -1667,14 +1666,6 @@ void LayoutTestController::setJavaScriptProfilingEnabled(const CppArgumentList& 
     if (arguments.size() < 1 || !arguments[0].isBool())
         return;
     m_shell->drtDevToolsAgent()->setJavaScriptProfilingEnabled(arguments[0].toBoolean());
-}
-
-void LayoutTestController::setTimelineProfilingEnabled(const CppArgumentList& arguments, CppVariant* result)
-{
-    result->setNull();
-    if (arguments.size() < 1 || !arguments[0].isBool())
-        return;
-    m_shell->drtDevToolsAgent()->setTimelineProfilingEnabled(arguments[0].toBoolean());
 }
 
 void LayoutTestController::evaluateInWebInspector(const CppArgumentList& arguments, CppVariant* result)

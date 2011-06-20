@@ -154,7 +154,6 @@ public slots:
     void setAppCacheMaximumSize(unsigned long long quota);
     void setAutofilled(const QWebElement&, bool enable);
     void setJavaScriptProfilingEnabled(bool enable);
-    void setTimelineProfilingEnabled(bool enable);
     void setValueForUser(const QWebElement&, const QString& value);
     void setFixedContentsSize(int width, int height);
     void setPrivateBrowsingEnabled(bool enable);

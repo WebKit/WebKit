@@ -629,23 +629,6 @@ void LayoutTestController::setTabKeyCyclesThroughElements(bool shouldCycle)
     viewPrivate->setTabKeyCyclesThroughElements(shouldCycle ? TRUE : FALSE);
 }
 
-void LayoutTestController::setTimelineProfilingEnabled(bool flag)
-{
-    COMPtr<IWebView> webView;
-    if (FAILED(frame->webView(&webView)))
-        return;
-
-    COMPtr<IWebViewPrivate> viewPrivate;
-    if (FAILED(webView->QueryInterface(&viewPrivate)))
-        return;
-
-    COMPtr<IWebInspector> inspector;
-    if (FAILED(viewPrivate->inspector(&inspector)))
-        return;
-
-    inspector->setTimelineProfilingEnabled(flag);
-}
-
 void LayoutTestController::setUseDashboardCompatibilityMode(bool flag)
 {
     // FIXME: Implement!

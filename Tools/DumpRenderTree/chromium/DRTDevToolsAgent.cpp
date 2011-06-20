@@ -136,15 +136,6 @@ bool DRTDevToolsAgent::setJavaScriptProfilingEnabled(bool enabled)
     return true;
 }
 
-bool DRTDevToolsAgent::setTimelineProfilingEnabled(bool enabled)
-{
-    WebDevToolsAgent* agent = webDevToolsAgent();
-    if (!agent)
-        return false;
-    agent->setTimelineProfilingEnabled(enabled);
-    return true;
-}
-
 bool DRTDevToolsAgent::evaluateInWebInspector(long callID, const std::string& script)
 {
     WebDevToolsAgent* agent = webDevToolsAgent();

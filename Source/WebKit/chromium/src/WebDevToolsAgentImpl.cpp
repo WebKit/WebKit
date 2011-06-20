@@ -321,15 +321,6 @@ void WebDevToolsAgentImpl::setJavaScriptProfilingEnabled(bool enabled)
         ic->disableProfiler();
 }
 
-void WebDevToolsAgentImpl::setTimelineProfilingEnabled(bool enabled)
-{
-    InspectorController* ic = inspectorController();
-    if (enabled)
-        ic->startTimelineProfiler();
-    else
-        ic->stopTimelineProfiler();
-}
-
 void WebDevToolsAgent::executeDebuggerCommand(const WebString& command, int callerId)
 {
     DebuggerAgentManager::executeDebuggerCommand(command, callerId);

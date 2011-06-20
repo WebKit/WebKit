@@ -440,11 +440,6 @@ void LayoutTestController::setJavaScriptProfilingEnabled(bool enable)
     DumpRenderTreeSupportQt::setJavaScriptProfilingEnabled(m_topLoadingFrame, enable);
 }
 
-void LayoutTestController::setTimelineProfilingEnabled(bool enable)
-{
-    DumpRenderTreeSupportQt::setTimelineProfilingEnabled(m_drt->webPage(), enable);
-}
-
 void LayoutTestController::setValueForUser(const QWebElement& element, const QString& value)
 {
     DumpRenderTreeSupportQt::setValueForUser(element, value);

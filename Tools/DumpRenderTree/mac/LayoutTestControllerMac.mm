@@ -570,11 +570,6 @@ void LayoutTestController::setTabKeyCyclesThroughElements(bool cycles)
     [[mainFrame webView] setTabKeyCyclesThroughElements:cycles];
 }
 
-void LayoutTestController::setTimelineProfilingEnabled(bool enabled)
-{
-    [[[mainFrame webView] inspector] setTimelineProfilingEnabled:enabled];
-}
-
 void LayoutTestController::setUseDashboardCompatibilityMode(bool flag)
 {
     [[mainFrame webView] _setDashboardBehavior:WebDashboardBehaviorUseBackwardCompatibilityMode to:flag];
