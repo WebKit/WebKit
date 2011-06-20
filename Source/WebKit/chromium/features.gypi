@@ -107,11 +107,13 @@
       'enable_touch_events%': 1,
       'use_skia_gpu%': 0,
       'enable_touch_icon_loading%' : 0,
+      'enable_smooth_scrolling%': 0,
     },
     'use_accelerated_compositing%': '<(use_accelerated_compositing)',
     'use_threaded_compositing%': '<(use_threaded_compositing)',
     'enable_svg%': '<(enable_svg)',
     'enable_touch_events%': '<(enable_touch_events)',
+    'enable_smooth_scrolling%': '<(enable_smooth_scrolling)',
     'conditions': [
       ['use_accelerated_compositing==1', {
         'feature_defines': [
@@ -149,6 +151,11 @@
       ['enable_register_protocol_handler==1', {
         'feature_defines': [
           'ENABLE_REGISTER_PROTOCOL_HANDLER=1',
+        ],
+      }],
+      ['enable_smooth_scrolling==1', {
+        'feature_defines': [
+          'ENABLE_SMOOTH_SCROLLING=1',
         ],
       }],
     ],

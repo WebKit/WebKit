@@ -422,4 +422,13 @@ void WebSettingsImpl::setShouldPrintBackgrounds(bool enabled)
     m_settings->setShouldPrintBackgrounds(enabled);
 }
 
+void WebSettingsImpl::setEnableScrollAnimator(bool enabled)
+{
+#if ENABLE(SMOOTH_SCROLLING)
+    m_settings->setEnableScrollAnimator(enabled);
+#else
+    UNUSED_PARAM(enabled);
+#endif
+}
+
 } // namespace WebKit

@@ -65,6 +65,7 @@
             'tests/PODArenaTest.cpp',
             'tests/PODIntervalTreeTest.cpp',
             'tests/PODRedBlackTreeTest.cpp',
+            'tests/ScrollAnimatorNoneTest.cpp',
             'tests/TilingDataTest.cpp',
             'tests/TreeSynchronizerTest.cpp',
             'tests/TreeTestHelpers.cpp',

@@ -146,6 +146,8 @@ public:
 
     virtual void disconnectFromPage() { }
 
+    virtual bool scrollAnimatorEnabled() const { return false; }
+
 private:
     // NOTE: Only called from the ScrollAnimator.
     friend class ScrollAnimator;

@@ -181,6 +181,9 @@ Settings::Settings(Page* page)
     , m_shouldInjectUserScriptsInInitialEmptyDocument(false)
     , m_allowDisplayOfInsecureContent(true)
     , m_allowRunningOfInsecureContent(true)
+#if ENABLE(SMOOTH_SCROLLING)
+    , m_scrollAnimatorEnabled(false)
+#endif
     , m_loadsImagesAutomaticallyTimer(this, &Settings::loadsImagesAutomaticallyTimerFired)
 {
     // A Frame may not have been created yet, so we initialize the AtomicString 

@@ -3658,6 +3658,8 @@
             'platform/SchemeRegistry.cpp',
             'platform/ScrollAnimator.cpp',
             'platform/ScrollAnimator.h',
+            'platform/ScrollAnimatorNone.cpp',
+            'platform/ScrollAnimatorNone.h',
             'platform/ScrollAnimatorWin.cpp',
             'platform/ScrollAnimatorWin.h',
             'platform/ScrollView.cpp',

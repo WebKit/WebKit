@@ -1,3 +1,47 @@
+2011-06-20  Scott Byer  <scottbyer@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        Smooth scrolling for Chromium, initial patch.
+        https://bugs.webkit.org/show_bug.cgi?id=61878
+
+        Add in a default scrolling animator in the platform directory, with a run time enable switch, to provide
+        animated / smooth scrolling on platforms and for input devices where it's not provided by the platform, and to
+        be easily configurable to what situatuations the animations are provided for. The smooth scrolling code is
+        compiled out by default.
+
+        Unit tests in chromium/ScrollAnimatorNoneTest.cpp
+
+        * WebCore.gypi:
+        * page/FrameView.cpp:
+        (WebCore::FrameView::scrollAnimatorEnabled):
+        * page/FrameView.h:
+        * page/Settings.cpp:
+        (WebCore::Settings::Settings):
+        * page/Settings.h:
+        (WebCore::Settings::setEnableScrollAnimator):
+        (WebCore::Settings::scrollAnimatorEnabled):
+        * platform/ScrollAnimatorNone.cpp: Added.
+        (WebCore::ScrollAnimator::create):
+        (WebCore::ScrollAnimatorNone::Parameters::Parameters):
+        (WebCore::ScrollAnimatorNone::PerAxisData::curveAt):
+        (WebCore::ScrollAnimatorNone::PerAxisData::attackCurve):
+        (WebCore::ScrollAnimatorNone::PerAxisData::releaseCurve):
+        (WebCore::ScrollAnimatorNone::PerAxisData::curveDerivativeAt):
+        (WebCore::ScrollAnimatorNone::PerAxisData::PerAxisData):
+        (WebCore::ScrollAnimatorNone::PerAxisData::reset):
+        (WebCore::ScrollAnimatorNone::PerAxisData::updateDataFromParameters):
+        (WebCore::ScrollAnimatorNone::PerAxisData::animateScroll):
+        (WebCore::ScrollAnimatorNone::ScrollAnimatorNone):
+        (WebCore::ScrollAnimatorNone::~ScrollAnimatorNone):
+        (WebCore::ScrollAnimatorNone::scroll):
+        (WebCore::ScrollAnimatorNone::scrollToOffsetWithoutAnimation):
+        (WebCore::ScrollAnimatorNone::animationTimerFired):
+        (WebCore::ScrollAnimatorNone::stopAnimationTimerIfNeeded):
+        * platform/ScrollAnimatorNone.h: Added.
+        * platform/ScrollableArea.h:
+        (WebCore::ScrollableArea::scrollAnimatorEnabled):
+
 2011-06-20  Julien Chaffraix  <jchaffraix@webkit.org>
 
         Reviewed by Darin Adler.

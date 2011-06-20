@@ -2271,6 +2271,15 @@ void FrameView::notifyPageThatContentAreaWillPaint() const
         (*it)->scrollAnimator()->contentAreaWillPaint();
 }
 
+bool FrameView::scrollAnimatorEnabled() const
+{
+#if ENABLE(SMOOTH_SCROLLING)
+    if (m_page && m_page->settings())
+        return m_page->settings()->scrollAnimatorEnabled();
+#endif
+    return false;
+}
+
 #if ENABLE(DASHBOARD_SUPPORT)
 void FrameView::updateDashboardRegions()
 {

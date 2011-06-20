@@ -117,6 +117,7 @@ public:
     virtual void setAllowDisplayOfInsecureContent(bool);
     virtual void setAllowRunningOfInsecureContent(bool);
     virtual void setShouldPrintBackgrounds(bool);
+    virtual void setEnableScrollAnimator(bool);
 
 private:
     WebCore::Settings* m_settings;

@@ -338,6 +338,8 @@ private:
     virtual void notifyPageThatContentAreaWillPaint() const;
     virtual void disconnectFromPage() { m_page = 0; }
 
+    virtual bool scrollAnimatorEnabled() const;
+
     void deferredRepaintTimerFired(Timer<FrameView>*);
     void doDeferredRepaints();
     void updateDeferredRepaintDelay();

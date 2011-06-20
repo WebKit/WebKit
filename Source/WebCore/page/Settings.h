@@ -405,6 +405,11 @@ namespace WebCore {
         void setAllowRunningOfInsecureContent(bool flag) { m_allowRunningOfInsecureContent = flag; }
         bool allowRunningOfInsecureContent() const { return m_allowRunningOfInsecureContent; }
 
+#if ENABLE(SMOOTH_SCROLLING)
+        void setEnableScrollAnimator(bool flag) { m_scrollAnimatorEnabled = flag; }
+        bool scrollAnimatorEnabled() const { return m_scrollAnimatorEnabled; }
+#endif
+
     private:
         Page* m_page;
 
@@ -510,6 +515,9 @@ namespace WebCore {
         bool m_shouldInjectUserScriptsInInitialEmptyDocument : 1;
         bool m_allowDisplayOfInsecureContent : 1;
         bool m_allowRunningOfInsecureContent : 1;
+#if ENABLE(SMOOTH_SCROLLING)
+        bool m_scrollAnimatorEnabled : 1;
+#endif
 
         Timer<Settings> m_loadsImagesAutomaticallyTimer;
         void loadsImagesAutomaticallyTimerFired(Timer<Settings>*);
