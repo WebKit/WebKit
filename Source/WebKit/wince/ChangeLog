@@ -1,3 +1,10 @@
+2011-06-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        WinCE build fix after r89293.
+
+        * WebCoreSupport/EditorClientWinCE.cpp:
+        (WebKit::EditorClientWinCE::handleEditingKeyboardEvent):
+
 2011-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.

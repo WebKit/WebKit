@@ -1,3 +1,10 @@
+2011-06-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        EFL build fix after r89293.
+
+        * WebCoreSupport/EditorClientEfl.cpp:
+        (WebCore::EditorClientEfl::handleEditingKeyboardEvent):
+
 2011-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
