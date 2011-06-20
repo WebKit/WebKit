@@ -1,3 +1,10 @@
+2011-06-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix, fix the codepaths run under each CPU type.
+
+        * platform/image-decoders/wx/ImageDecoderWx.cpp:
+        (WebCore::ImageFrame::asNewNativeImage):
+
 2011-06-20  Ryosuke Niwa  <rniwa@webkit.org>
 
         Reviewed by Ojan Vafai.
