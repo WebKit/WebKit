@@ -228,8 +228,8 @@ my @features = (
     { option => "media-statistics", desc => "Toggle Media Statistics support",
       define => "ENABLE_MEDIA_STATISTICS", default => 0, value => \$mediaStatisticsSupport },
 
-    { option => "media-stream", desc => "Toggle Media Stream API support (implies Blob support, currently Chromium only)",
-      define => "ENABLE_MEDIA_STREAM", default => isChromium(), value => \$mediaStreamSupport },
+    { option => "media-stream", desc => "Toggle Media Stream API support (implies Blob support, currently Chromium and GTK only)",
+      define => "ENABLE_MEDIA_STREAM", default => (isChromium() || isGtk()), value => \$mediaStreamSupport },
 
     { option => "meter-tag", desc => "Meter Tag support",
       define => "ENABLE_METER_TAG", default => !isAppleWinWebKit(), value => \$meterTagSupport },

@@ -360,6 +360,16 @@ webcore_cppflags += -DENABLE_VIDEO_TRACK=0
 endif # END ENABLE_VIDEO_TRACK
 
 # ----
+# Media Stream Support
+# ----
+if ENABLE_MEDIA_STREAM
+FEATURE_DEFINES += ENABLE_MEDIA_STREAM=1
+webcore_cppflags += -DENABLE_MEDIA_STREAM=1
+else
+webcore_cppflags += -DENABLE_MEDIA_STREAM=0
+endif # END ENABLE_MEDIA_STREAM
+
+# ----
 # XHTML-MP Support
 # ----
 if ENABLE_XHTMLMP

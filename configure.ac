@@ -574,6 +574,14 @@ AC_ARG_ENABLE(fullscreen_api,
               [],[enable_fullscreen_api="yes"])
 AC_MSG_RESULT([$enable_fullscreen_api])
 
+# check whether to enable media stream support
+AC_MSG_CHECKING([whether to enable media stream support])
+AC_ARG_ENABLE(media_stream,
+              AC_HELP_STRING([--enable-media-stream],
+                             [enable media stream support (incomplete) [default=no]]),
+              [],[enable_media_stream="no"])
+AC_MSG_RESULT([$enable_media_stream])
+
 # check whether to enable XHTML-MP support
 AC_MSG_CHECKING([whether to enable XHTML-MP support])
 AC_ARG_ENABLE(xhtmlmp,
@@ -1143,6 +1151,7 @@ AM_CONDITIONAL([ENABLE_VIDEO],[test "$enable_video" = "yes"])
 AM_CONDITIONAL([ENABLE_MEDIA_STATISTICS],[test "$enable_media_statistics" = "yes"])
 AM_CONDITIONAL([ENABLE_VIDEO_TRACK],[test "$enable_video_track" = "yes"])
 AM_CONDITIONAL([ENABLE_FULLSCREEN_API],[test "$enable_fullscreen_api" = "yes"])
+AM_CONDITIONAL([ENABLE_MEDIA_STREAM],[test "$enable_media_stream" = "yes"])
 AM_CONDITIONAL([ENABLE_NOTIFICATIONS],[test "$enable_notifications" = "yes"])
 AM_CONDITIONAL([ENABLE_ORIENTATION_EVENTS],[test "$enable_orientation_events" = "yes"])
 AM_CONDITIONAL([ENABLE_SVG],[test "$enable_svg" = "yes"])
@@ -1241,6 +1250,7 @@ Features:
  HTML5 video element support                              : $enable_video
  HTML5 track element support                              : $enable_video_track
  Fullscreen API support                                   : $enable_fullscreen_api
+ Media stream support                                     : $enable_media_stream
  Icon database support                                    : $enable_icon_database
  Image resizer support                                    : $enable_image_resizer
  Link prefetch support                                    : $enable_link_prefetch
