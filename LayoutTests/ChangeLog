@@ -1,3 +1,46 @@
+2011-06-20  Martin Robinson  <mrobinson@igalia.com>
+
+        Rebaseline many SVG tests for GTK+ after r89233 and update the skipped list to include
+        a new test that relies on the didRunInsecureContent callback. Add a platform-specific
+        result for fast/dom/Window/window-properties.html as we now have the media stream
+        feature enabled on the bots.
+
+        * platform/gtk/Skipped: Update the skipped list.
+        * platform/gtk/fast/dom/Window/window-properties-expected.txt: Added.
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1-SE/coords-units-03-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/fonts-glyph-03-t-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/pservers-grad-08-b-expected.txt:
+        * platform/gtk/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.png:
+        * platform/gtk/svg/W3C-SVG-1.1/text-altglyph-01-b-expected.txt:
+        * platform/gtk/svg/batik/text/textEffect-expected.png:
+        * platform/gtk/svg/batik/text/textEffect-expected.txt:
+        * platform/gtk/svg/batik/text/textEffect3-expected.png:
+        * platform/gtk/svg/batik/text/textEffect3-expected.txt:
+        * platform/gtk/svg/batik/text/xmlSpace-expected.png:
+        * platform/gtk/svg/batik/text/xmlSpace-expected.txt:
+        * platform/gtk/svg/custom/glyph-selection-lang-attribute-expected.png:
+        * platform/gtk/svg/custom/glyph-selection-lang-attribute-expected.txt:
+        * platform/gtk/svg/custom/svg-fonts-without-missing-glyph-expected.png:
+        * platform/gtk/svg/custom/svg-fonts-without-missing-glyph-expected.txt:
+        * platform/gtk/svg/foreignObject/text-tref-02-b-expected.png:
+        * platform/gtk/svg/foreignObject/text-tref-02-b-expected.txt:
+        * platform/gtk/svg/text/text-altglyph-01-b-expected.png:
+        * platform/gtk/svg/text/text-altglyph-01-b-expected.txt:
+        * platform/gtk/svg/text/text-text-04-t-expected.png:
+        * platform/gtk/svg/text/text-text-04-t-expected.txt:
+        * platform/gtk/svg/text/text-text-05-t-expected.png:
+        * platform/gtk/svg/text/text-text-05-t-expected.txt:
+        * platform/gtk/svg/text/text-text-06-t-expected.png:
+        * platform/gtk/svg/text/text-text-06-t-expected.txt:
+        * platform/gtk/svg/transforms/text-with-mask-with-svg-transform-expected.png:
+        * platform/gtk/svg/transforms/text-with-mask-with-svg-transform-expected.txt:
+        * platform/gtk/svg/wicd/test-rightsizing-b-expected.png:
+        * platform/gtk/svg/wicd/test-rightsizing-b-expected.txt:
+        * platform/gtk/svg/zoom/page/zoom-svg-through-object-with-auto-size-expected.png:
+
 2011-06-20  David Levin  <levin@chromium.org>
 
         Reviewed by Dmitry Titov.
