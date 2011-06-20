@@ -57,7 +57,6 @@ namespace WTF {
 
         PtrType get() const { return m_ptr; }
 
-        void clear();
         PtrType leakPtr() const WARN_UNUSED_RETURN;
 
         ValueType& operator*() const { ASSERT(m_ptr); return *m_ptr; }
@@ -69,9 +68,7 @@ namespace WTF {
         typedef PtrType PassOwnPtr::*UnspecifiedBoolType;
         operator UnspecifiedBoolType() const { return m_ptr ? &PassOwnPtr::m_ptr : 0; }
 
-        PassOwnPtr& operator=(const PassOwnPtr<T>&);
-        PassOwnPtr& operator=(std::nullptr_t) { clear(); return *this; }
-        template<typename U> PassOwnPtr& operator=(const PassOwnPtr<U>&);
+        PassOwnPtr& operator=(const PassOwnPtr&) { COMPILE_ASSERT(!sizeof(T*), PassOwnPtr_should_never_be_assigned_to); return *this; }
 
         template<typename U> friend PassOwnPtr<U> adoptPtr(U*);
 
@@ -88,38 +85,11 @@ namespace WTF {
         mutable PtrType m_ptr;
     };
 
-    template<typename T> inline void PassOwnPtr<T>::clear()
-    {
-        PtrType ptr = m_ptr;
-        m_ptr = 0;
-        deleteOwnedPtr(ptr);
-    }
-
     template<typename T> inline typename PassOwnPtr<T>::PtrType PassOwnPtr<T>::leakPtr() const
     {
         PtrType ptr = m_ptr;
         m_ptr = 0;
         return ptr;
-    }
-
-    template<typename T> inline PassOwnPtr<T>& PassOwnPtr<T>::operator=(const PassOwnPtr<T>& optr)
-    {
-        PtrType ptr = m_ptr;
-        m_ptr = optr.leakPtr();
-        ASSERT(!ptr || m_ptr != ptr);
-        if (ptr)
-            deleteOwnedPtr(ptr);
-        return *this;
-    }
-
-    template<typename T> template<typename U> inline PassOwnPtr<T>& PassOwnPtr<T>::operator=(const PassOwnPtr<U>& optr)
-    {
-        PtrType ptr = m_ptr;
-        m_ptr = optr.leakPtr();
-        ASSERT(!ptr || m_ptr != ptr);
-        if (ptr)
-            deleteOwnedPtr(ptr);
-        return *this;
     }
 
     template<typename T, typename U> inline bool operator==(const PassOwnPtr<T>& a, const PassOwnPtr<U>& b) 

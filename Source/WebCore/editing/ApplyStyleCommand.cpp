@@ -1058,7 +1058,7 @@ void ApplyStyleCommand::removeInlineStyle(EditingStyle* style, const Position &s
             RefPtr<Node> prev = elem->traversePreviousNodePostOrder();
             RefPtr<Node> next = elem->traverseNextNode();
             RefPtr<EditingStyle> styleToPushDown;
-            PassRefPtr<Node> childNode = 0;
+            RefPtr<Node> childNode;
             if (isStyledInlineElementToRemove(elem.get())) {
                 styleToPushDown = EditingStyle::create();
                 childNode = elem->firstChild();

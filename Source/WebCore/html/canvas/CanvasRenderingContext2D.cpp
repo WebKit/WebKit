@@ -366,8 +366,10 @@ CanvasStyle* CanvasRenderingContext2D::strokeStyle() const
     return state().m_strokeStyle.get();
 }
 
-void CanvasRenderingContext2D::setStrokeStyle(PassRefPtr<CanvasStyle> style)
+void CanvasRenderingContext2D::setStrokeStyle(PassRefPtr<CanvasStyle> prpStyle)
 {
+    RefPtr<CanvasStyle> style = prpStyle;
+
     if (!style)
         return;
 
@@ -382,7 +384,7 @@ void CanvasRenderingContext2D::setStrokeStyle(PassRefPtr<CanvasStyle> style)
     } else
         checkOrigin(style->canvasPattern());
 
-    state().m_strokeStyle = style;
+    state().m_strokeStyle = style.release();
     GraphicsContext* c = drawingContext();
     if (!c)
         return;
@@ -395,8 +397,10 @@ CanvasStyle* CanvasRenderingContext2D::fillStyle() const
     return state().m_fillStyle.get();
 }
 
-void CanvasRenderingContext2D::setFillStyle(PassRefPtr<CanvasStyle> style)
+void CanvasRenderingContext2D::setFillStyle(PassRefPtr<CanvasStyle> prpStyle)
 {
+    RefPtr<CanvasStyle> style = prpStyle;
+
     if (!style)
         return;
 
@@ -411,7 +415,7 @@ void CanvasRenderingContext2D::setFillStyle(PassRefPtr<CanvasStyle> style)
     } else
         checkOrigin(style->canvasPattern());
 
-    state().m_fillStyle = style;
+    state().m_fillStyle = style.release();
     GraphicsContext* c = drawingContext();
     if (!c)
         return;

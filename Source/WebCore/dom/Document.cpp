@@ -2013,8 +2013,10 @@ HTMLElement* Document::body() const
     return toHTMLElement(body);
 }
 
-void Document::setBody(PassRefPtr<HTMLElement> newBody, ExceptionCode& ec)
+void Document::setBody(PassRefPtr<HTMLElement> prpNewBody, ExceptionCode& ec)
 {
+    RefPtr<HTMLElement> newBody = prpNewBody;
+
     if (!newBody || !documentElement() || !newBody->hasTagName(bodyTag)) { 
         ec = HIERARCHY_REQUEST_ERR;
         return;
@@ -2031,9 +2033,9 @@ void Document::setBody(PassRefPtr<HTMLElement> newBody, ExceptionCode& ec)
 
     HTMLElement* b = body();
     if (!b)
-        documentElement()->appendChild(newBody, ec);
+        documentElement()->appendChild(newBody.release(), ec);
     else
-        documentElement()->replaceChild(newBody, b, ec);
+        documentElement()->replaceChild(newBody.release(), b, ec);
 }
 
 HTMLHeadElement* Document::head()
@@ -3068,8 +3070,10 @@ void Document::setDashboardRegions(const Vector<DashboardRegionValue>& regions)
 }
 #endif
 
-bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
-{    
+bool Document::setFocusedNode(PassRefPtr<Node> prpNewFocusedNode)
+{
+    RefPtr<Node> newFocusedNode = prpNewFocusedNode;
+
     // Make sure newFocusedNode is actually in this document
     if (newFocusedNode && (newFocusedNode->document() != this))
         return true;
@@ -3142,7 +3146,7 @@ bool Document::setFocusedNode(PassRefPtr<Node> newFocusedNode)
             goto SetFocusedNodeDone;
         }
         // Set focus on the new node
-        m_focusedNode = newFocusedNode.get();
+        m_focusedNode = newFocusedNode;
 
         // Dispatch the focus event and let the node do any other focus related activities (important for text fields)
         m_focusedNode->dispatchFocusEvent();

@@ -77,7 +77,6 @@ namespace WTF {
         
         T* get() const { return m_ptr; }
 
-        void clear();
         T* leakRef() const WARN_UNUSED_RETURN;
 
         T& operator*() const { return *m_ptr; }
@@ -89,13 +88,7 @@ namespace WTF {
         typedef T* (PassRefPtr::*UnspecifiedBoolType);
         operator UnspecifiedBoolType() const { return m_ptr ? &PassRefPtr::m_ptr : 0; }
 
-        PassRefPtr& operator=(T*);
-        PassRefPtr& operator=(const PassRefPtr&);
-#if !HAVE(NULLPTR)
-        PassRefPtr& operator=(std::nullptr_t) { clear(); return *this; }
-#endif
-        template<typename U> PassRefPtr& operator=(const PassRefPtr<U>&);
-        template<typename U> PassRefPtr& operator=(const RefPtr<U>&);
+        PassRefPtr& operator=(const PassRefPtr&) { COMPILE_ASSERT(!sizeof(T*), PassRefPtr_should_never_be_assigned_to); return *this; }
 
         friend PassRefPtr adoptRef<T>(T*);
 
@@ -155,11 +148,12 @@ namespace WTF {
 
         T* get() const { return m_ptr; }
 
-        void clear();
         T* leakRef() const WARN_UNUSED_RETURN { T* tmp = m_ptr; m_ptr = 0; return tmp; }
 
         T& operator*() const { return *m_ptr; }
         T* operator->() const { return m_ptr; }
+
+        NonNullPassRefPtr& operator=(const NonNullPassRefPtr&) { COMPILE_ASSERT(!sizeof(T*), NonNullPassRefPtr_should_never_be_assigned_to); return *this; }
 
         // FIXME: Remove releaseRef once we change all callers to call leakRef instead.
         T* releaseRef() const WARN_UNUSED_RETURN { return leakRef(); }
@@ -175,13 +169,6 @@ namespace WTF {
         refIfNotNull(ptr);
     }
 
-    template<typename T> inline void PassRefPtr<T>::clear()
-    {
-        T* ptr = m_ptr;
-        m_ptr = 0;
-        derefIfNotNull(ptr);
-    }
-
     template<typename T> inline T* PassRefPtr<T>::leakRef() const
     {
         T* ptr = m_ptr;
@@ -189,41 +176,6 @@ namespace WTF {
         return ptr;
     }
 
-    template<typename T> template<typename U> inline PassRefPtr<T>& PassRefPtr<T>::operator=(const RefPtr<U>& o)
-    {
-        T* optr = o.get();
-        refIfNotNull(optr);
-        T* ptr = m_ptr;
-        m_ptr = optr;
-        derefIfNotNull(ptr);
-        return *this;
-    }
-    
-    template<typename T> inline PassRefPtr<T>& PassRefPtr<T>::operator=(T* optr)
-    {
-        refIfNotNull(optr);
-        T* ptr = m_ptr;
-        m_ptr = optr;
-        derefIfNotNull(ptr);
-        return *this;
-    }
-
-    template<typename T> inline PassRefPtr<T>& PassRefPtr<T>::operator=(const PassRefPtr<T>& ref)
-    {
-        T* ptr = m_ptr;
-        m_ptr = ref.leakRef();
-        derefIfNotNull(ptr);
-        return *this;
-    }
-    
-    template<typename T> template<typename U> inline PassRefPtr<T>& PassRefPtr<T>::operator=(const PassRefPtr<U>& ref)
-    {
-        T* ptr = m_ptr;
-        m_ptr = ref.leakRef();
-        derefIfNotNull(ptr);
-        return *this;
-    }
-    
     template<typename T, typename U> inline bool operator==(const PassRefPtr<T>& a, const PassRefPtr<U>& b) 
     { 
         return a.get() == b.get(); 
@@ -293,13 +245,6 @@ namespace WTF {
     template<typename T> inline T* getPtr(const PassRefPtr<T>& p)
     {
         return p.get();
-    }
-
-    template<typename T> inline void NonNullPassRefPtr<T>::clear()
-    {
-        T* ptr = m_ptr;
-        m_ptr = 0;
-        derefIfNotNull(ptr);
     }
 
 } // namespace WTF

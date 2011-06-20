@@ -247,8 +247,10 @@ static bool hasARenderedDescendant(Node* node)
     return false;
 }
 
-void CompositeEditCommand::prune(PassRefPtr<Node> node)
+void CompositeEditCommand::prune(PassRefPtr<Node> prpNode)
 {
+    RefPtr<Node> node = prpNode;
+
     while (node) {
         // If you change this rule you may have to add an updateLayout() here.
         RenderObject* renderer = node->renderer();

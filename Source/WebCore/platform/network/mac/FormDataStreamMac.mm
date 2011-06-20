@@ -254,12 +254,11 @@ static void* formCreate(CFReadStreamRef stream, void* context)
 
 static void formFinalize(CFReadStreamRef stream, void* context)
 {
-    FormStreamFields* form = static_cast<FormStreamFields*>(context);
+    OwnPtr<FormStreamFields> form = adoptPtr(static_cast<FormStreamFields*>(context));
 
     getStreamFormDataMap().remove(stream);
 
-    closeCurrentStream(form);
-    delete form;
+    closeCurrentStream(form.get());
 }
 
 static Boolean formOpen(CFReadStreamRef, CFStreamError* error, Boolean* openComplete, void* context)
@@ -383,8 +382,10 @@ static void formEventCallback(CFReadStreamRef stream, CFStreamEventType type, vo
     }
 }
 
-void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> formData)
+void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> prpFormData)
 {
+    RefPtr<FormData> formData = prpFormData;
+
     if (!formData)
         return;
         
@@ -439,7 +440,7 @@ void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> formData)
                 }
             }
         }
-        formData = newFormData;
+        formData = newFormData.release();
         count = formData->elements().size();
     }
 #endif
@@ -470,7 +471,7 @@ void setHTTPBody(NSMutableURLRequest *request, PassRefPtr<FormData> formData)
     // Create and set the stream.
 
     // Pass the length along with the formData so it does not have to be recomputed.
-    FormContext formContext = { formData.releaseRef(), length };
+    FormContext formContext = { formData.release().leakRef(), length };
 
     RetainPtr<CFReadStreamRef> stream(AdoptCF, wkCreateCustomCFReadStream(formCreate, formFinalize,
         formOpen, formRead, formCanRead, formClose, formSchedule, formUnschedule,

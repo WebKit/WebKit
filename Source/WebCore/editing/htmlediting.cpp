@@ -882,8 +882,10 @@ Position positionOutsideTabSpan(const Position& pos)
     return positionInParentBeforeNode(node);
 }
 
-PassRefPtr<Element> createTabSpanElement(Document* document, PassRefPtr<Node> tabTextNode)
+PassRefPtr<Element> createTabSpanElement(Document* document, PassRefPtr<Node> prpTabTextNode)
 {
+    RefPtr<Node> tabTextNode = prpTabTextNode;
+
     // Make the span to hold the tab.
     RefPtr<Element> spanElement = document->createElement(spanTag, false);
     spanElement->setAttribute(classAttr, AppleTabSpanClass);
@@ -894,7 +896,7 @@ PassRefPtr<Element> createTabSpanElement(Document* document, PassRefPtr<Node> ta
         tabTextNode = document->createEditingTextNode("\t");
 
     ExceptionCode ec = 0;
-    spanElement->appendChild(tabTextNode, ec);
+    spanElement->appendChild(tabTextNode.release(), ec);
     ASSERT(ec == 0);
 
     return spanElement.release();

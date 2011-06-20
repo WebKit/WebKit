@@ -63,27 +63,20 @@ PassRefPtr<AccessibilityObject> AccessibilityMediaControl::create(RenderObject* 
     else
         controlType = static_cast<MediaControlElement*>(node)->displayType();
 
-    PassRefPtr<AccessibilityObject> obj;
     switch (controlType) {
     case MediaSlider:
-        obj = AccessibilityMediaTimeline::create(renderer);
-        break;
+        return AccessibilityMediaTimeline::create(renderer);
 
     case MediaCurrentTimeDisplay:
     case MediaTimeRemainingDisplay:
-        obj = AccessibilityMediaTimeDisplay::create(renderer);
-        break;
+        return AccessibilityMediaTimeDisplay::create(renderer);
 
     case MediaControlsPanel:
-        obj = AccessibilityMediaControlsContainer::create(renderer);
-        break;
+        return AccessibilityMediaControlsContainer::create(renderer);
 
     default:
-        obj = adoptRef(new AccessibilityMediaControl(renderer));
-        break;
+        return adoptRef(new AccessibilityMediaControl(renderer));
     }
-
-    return obj;
 }
 
 MediaControlElementType AccessibilityMediaControl::controlType() const
