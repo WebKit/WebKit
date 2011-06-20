@@ -33,6 +33,7 @@
 #include <QApplication>
 #include <QByteArray>
 #include <QDir>
+#include <QFont>
 #include <QWindowsStyle>
 
 #ifdef Q_WS_X11
