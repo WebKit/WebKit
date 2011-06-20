@@ -244,16 +244,16 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
 static void constrainFrameToRatioOfFrame(NSRect *frameToConstrain, const NSRect *frame)
 {
     // Keep a constrained aspect ratio for the destination window
-    double originalRatio = frame->size.width / frame->size.height;
-    double newRatio = frameToConstrain->size.width / frameToConstrain->size.height;
+    CGFloat originalRatio = frame->size.width / frame->size.height;
+    CGFloat newRatio = frameToConstrain->size.width / frameToConstrain->size.height;
     if (newRatio > originalRatio) {
-        double newWidth = originalRatio * frameToConstrain->size.height;
-        double diff = frameToConstrain->size.width - newWidth;
+        CGFloat newWidth = originalRatio * frameToConstrain->size.height;
+        CGFloat diff = frameToConstrain->size.width - newWidth;
         frameToConstrain->size.width = newWidth;
         frameToConstrain->origin.x += diff / 2;
     } else {
-        double newHeight = frameToConstrain->size.width / originalRatio;
-        double diff = frameToConstrain->size.height - newHeight;
+        CGFloat newHeight = frameToConstrain->size.width / originalRatio;
+        CGFloat diff = frameToConstrain->size.height - newHeight;
         frameToConstrain->size.height = newHeight;
         frameToConstrain->origin.y += diff / 2;
     }    
@@ -554,7 +554,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
     
     if (NSIsEmptyRect(startRect) || NSIsEmptyRect(endRect)) {
         // Fakely end the subanimation.
-        [subAnimation setCurrentProgress:1.0];
+        [subAnimation setCurrentProgress:1];
         // And remove the weak link to the window.
         [subAnimation stopAnimation];
 

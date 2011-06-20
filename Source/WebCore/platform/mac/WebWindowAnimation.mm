@@ -26,18 +26,22 @@
 #import "config.h"
 
 #import "WebWindowAnimation.h"
+
+#import "FloatConversion.h"
 #import "WebCoreSystemInterface.h"
 #import <wtf/Assertions.h>
 #import <wtf/UnusedParam.h>
 
-static const CGFloat slowMotionFactor = 10.;
+using namespace WebCore;
+
+static const CGFloat slowMotionFactor = 10;
 
 static NSTimeInterval WebWindowAnimationDurationFromDuration(NSTimeInterval duration)
 {
     return ([[NSApp currentEvent] modifierFlags] & NSShiftKeyMask) ? duration * slowMotionFactor : duration;        
 }
 
-static NSRect scaledRect(NSRect _initialFrame, NSRect _finalFrame, double factor)
+static NSRect scaledRect(NSRect _initialFrame, NSRect _finalFrame, CGFloat factor)
 {
     NSRect currentRect = _initialFrame;
     currentRect.origin.x += (NSMinX(_finalFrame) - NSMinX(_initialFrame)) * factor;
@@ -62,7 +66,7 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
     if (!self)
         return nil;
     [self setAnimationBlockingMode:NSAnimationNonblockingThreaded];
-    [self setFrameRate:60.];
+    [self setFrameRate:60];
     return self;
 }
 
@@ -97,7 +101,7 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
 
 - (float)currentValue
 {
-    return 0.5 - 0.5 * cos(M_PI * (1 - [self currentProgress]));
+    return narrowPrecisionToFloat(0.5 - 0.5 * cos(M_PI * (1 - [self currentProgress])));
 }
 
 - (NSRect)currentFrame
@@ -126,8 +130,8 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
 
 - (NSTimeInterval)additionalDurationNeededToReachFinalFrame
 {
-    static const CGFloat maxAdditionalDuration = 1.0;
-    static const CGFloat speedFactor = 0.0001;
+    static const CGFloat maxAdditionalDuration = 1;
+    static const CGFloat speedFactor = 0.0001f;
     
     CGFloat maxDist = squaredDistance(_initialFrame.origin, _finalFrame.origin);
     CGFloat dist;
@@ -196,7 +200,7 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
 
 - (CGFloat)currentAlpha
 {
-    return MAX(0.0, MIN(1.0, _initialAlpha + [self currentValue] * (_finalAlpha - _initialAlpha)));
+    return MAX(0, MIN(1, _initialAlpha + [self currentValue] * (_finalAlpha - _initialAlpha)));
 }
 
 - (void)setCurrentProgress:(NSAnimationProgress)progress

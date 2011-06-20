@@ -28,6 +28,7 @@
 
 #import "WebVideoFullscreenHUDWindowController.h"
 
+#import "FloatConversion.h"
 #import "WebCoreSystemInterface.h"
 #import <JavaScriptCore/RetainPtr.h>
 #import <JavaScriptCore/UnusedParam.h>
@@ -55,9 +56,9 @@ static inline CGFloat webkit_CGFloor(CGFloat value)
 - (double)duration;
 
 - (void)volumeChanged:(id)sender;
-- (double)maxVolume;
-- (double)volume;
-- (void)setVolume:(double)volume;
+- (float)maxVolume;
+- (float)volume;
+- (void)setVolume:(float)volume;
 - (void)decrementVolume;
 - (void)incrementVolume;
 
@@ -416,7 +417,7 @@ static NSTextField *createTimeTextField(NSRect frame)
 
 - (void)updateVolume
 {
-    [_volumeSlider setDoubleValue:[self volume]];
+    [_volumeSlider setFloatValue:[self volume]];
 }
 
 - (void)updateTime
@@ -471,7 +472,7 @@ static NSTextField *createTimeTextField(NSRect frame)
     return [_delegate mediaElement] ? [_delegate mediaElement]->duration() : 0;
 }
 
-- (double)maxVolume
+- (float)maxVolume
 {
     // Set the volume slider resolution
     return 100;
@@ -480,7 +481,7 @@ static NSTextField *createTimeTextField(NSRect frame)
 - (void)volumeChanged:(id)sender
 {
     UNUSED_PARAM(sender);
-    [self setVolume:[_volumeSlider doubleValue]];
+    [self setVolume:[_volumeSlider floatValue]];
 }
 
 - (void)setVolumeToZero:(id)sender
@@ -500,8 +501,8 @@ static NSTextField *createTimeTextField(NSRect frame)
     if (![_delegate mediaElement])
         return;
 
-    double volume = [self volume] - 10;
-    [self setVolume:max(volume, 0.)];
+    float volume = [self volume] - 10;
+    [self setVolume:MAX(volume, 0)];
 }
 
 - (void)incrementVolume
@@ -509,16 +510,16 @@ static NSTextField *createTimeTextField(NSRect frame)
     if (![_delegate mediaElement])
         return;
 
-    double volume = [self volume] + 10;
+    float volume = [self volume] + 10;
     [self setVolume:min(volume, [self maxVolume])];
 }
 
-- (double)volume
+- (float)volume
 {
     return [_delegate mediaElement] ? [_delegate mediaElement]->volume() * [self maxVolume] : 0;
 }
 
-- (void)setVolume:(double)volume
+- (void)setVolume:(float)volume
 {
     if (![_delegate mediaElement])
         return;
@@ -583,7 +584,7 @@ static NSString *timeToString(double time)
     if (!isfinite(time))
         time = 0;
 
-    int seconds = fabs(time); 
+    int seconds = narrowPrecisionToFloat(abs(time));
     int hours = seconds / (60 * 60);
     int minutes = (seconds / 60) % 60;
     seconds %= 60;

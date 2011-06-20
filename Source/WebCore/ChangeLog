@@ -1,3 +1,30 @@
+2011-06-20  Jer Noble  <jer.noble@apple.com>
+
+        Unreviewed build fix; Fix 32-bit build.
+
+        Code recently moved from WebKit -> WebCore does not pass WebCore's more strict compiler warnings.  Use 
+        CGFloat, and float constants wherever possible, and use narrowPrecisionToFloat() where not.
+
+        * WebCore.xcodeproj/project.pbxproj: Add '-Wno-undef' flag for WebVideoFullScreenController.mm 
+        * platform/mac/WebVideoFullscreenController.mm:
+        (constrainFrameToRatioOfFrame): Use CGFloat instead of Double.
+        (-[WebVideoFullscreenWindow animateFromRect:toRect:withSubAnimation:controllerAction:]): Use float constant.
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm:
+        (-[WebVideoFullscreenHUDWindowController updateVolume]): Use float for volume.
+        (-[WebVideoFullscreenHUDWindowController maxVolume]): Ditto.
+        (-[WebVideoFullscreenHUDWindowController volumeChanged:]): Ditto.
+        (-[WebVideoFullscreenHUDWindowController decrementVolume]): Ditto.
+        (-[WebVideoFullscreenHUDWindowController incrementVolume]): Ditto.
+        (-[WebVideoFullscreenHUDWindowController volume]): Ditto.
+        (-[WebVideoFullscreenHUDWindowController setVolume:]): Ditto. 
+        (timeToString): Narrow precision to float when converting to seconds.
+        * platform/mac/WebWindowAnimation.mm:
+        (scaledRect): Use CGFloat.
+        (-[WebWindowScaleAnimation init]): Use float constant.
+        (-[WebWindowScaleAnimation currentValue]): Ditto.
+        (-[WebWindowScaleAnimation additionalDurationNeededToReachFinalFrame]): Ditto.
+        (-[WebWindowFadeAnimation currentAlpha]): Ditto.
+
 2011-06-20  Anders Carlsson  <andersca@apple.com>
 
         Reviewed by Darin Adler.
