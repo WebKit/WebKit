@@ -26,6 +26,7 @@
 #include "ResourceLoadScheduler.h"
 
 #include "Document.h"
+#include "DocumentLoader.h"
 #include "Frame.h"
 #include "FrameLoader.h"
 #include "InspectorInstrumentation.h"
@@ -114,6 +115,13 @@ void ResourceLoadScheduler::scheduleLoad(ResourceLoader* resourceLoader, Resourc
 #endif
 
     LOG(ResourceLoading, "ResourceLoadScheduler::load resource %p '%s'", resourceLoader, resourceLoader->url().string().latin1().data());
+
+    // If there's a web archive resource for this URL, we don't need to schedule the load since it will never touch the network.
+    if (resourceLoader->documentLoader()->archiveResourceForURL(resourceLoader->request().url())) {
+        resourceLoader->start();
+        return;
+    }
+
     HostInformation* host = hostForURL(resourceLoader->url(), CreateIfNotFound);    
     bool hadRequests = host->hasRequests();
     host->schedule(resourceLoader, priority);

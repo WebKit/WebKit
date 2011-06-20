@@ -1,3 +1,17 @@
+2011-06-20  Anders Carlsson  <andersca@apple.com>
+
+        Reviewed by Sam Weinig.
+
+        Web archive resource loads are scheduled together with network loads
+        https://bugs.webkit.org/show_bug.cgi?id=63024
+        <rdar://problem/9508564>
+
+        If the resource being loaded is loaded from a web archive we don't need to schedule the load
+        since it won't touch the network.
+
+        * loader/ResourceLoadScheduler.cpp:
+        (WebCore::ResourceLoadScheduler::scheduleLoad):
+
 2011-06-20  Pratik Solanki  <psolanki@apple.com>
 
         Reviewed by David Kilzer.
