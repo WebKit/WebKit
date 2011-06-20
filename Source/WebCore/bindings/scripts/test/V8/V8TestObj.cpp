@@ -30,6 +30,7 @@
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include "ScriptController.h"
 #include "SerializedScriptValue.h"
 #include "V8Binding.h"
 #include "V8BindingMacros.h"
@@ -869,7 +870,7 @@ static v8::Handle<v8::Value> withDynamicFrameAndUserGestureCallback(const v8::Ar
     Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
     if (!enteredFrame)
         return v8::Undefined();
-    imp->withDynamicFrameAndUserGesture(enteredFrame, intArg, processingUserGesture());
+    imp->withDynamicFrameAndUserGesture(enteredFrame, intArg, ScriptController::processingUserGesture());
     return v8::Handle<v8::Value>();
 }
 
@@ -882,14 +883,14 @@ static v8::Handle<v8::Value> withDynamicFrameAndUserGestureASADCallback(const v8
         Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
         if (!enteredFrame)
             return v8::Undefined();
-        imp->withDynamicFrameAndUserGestureASAD(enteredFrame, intArg, processingUserGesture());
+        imp->withDynamicFrameAndUserGestureASAD(enteredFrame, intArg, ScriptController::processingUserGesture());
         return v8::Handle<v8::Value>();
     }
     EXCEPTION_BLOCK(int, optionalArg, toInt32(args[1]));
     Frame* enteredFrame = V8Proxy::retrieveFrameForEnteredContext();
     if (!enteredFrame)
         return v8::Undefined();
-    imp->withDynamicFrameAndUserGestureASAD(enteredFrame, intArg, optionalArg, processingUserGesture());
+    imp->withDynamicFrameAndUserGestureASAD(enteredFrame, intArg, optionalArg, ScriptController::processingUserGesture());
     return v8::Handle<v8::Value>();
 }
 
@@ -1355,14 +1356,29 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestObjTemplate(v8::Persi
 
 v8::Persistent<v8::FunctionTemplate> V8TestObj::GetRawTemplate()
 {
-    static v8::Persistent<v8::FunctionTemplate> V8TestObjRawCache = createRawTemplate();
-    return V8TestObjRawCache;
+    V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
+    V8BindingPerIsolateData::TemplateMap::iterator result = data->rawTemplateMap().find(&info);
+    if (result != data->rawTemplateMap().end())
+        return result->second;
+
+    v8::HandleScope handleScope;
+    v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate();
+    data->rawTemplateMap().add(&info, templ);
+    return templ;
 }
 
 v8::Persistent<v8::FunctionTemplate> V8TestObj::GetTemplate()
 {
-    static v8::Persistent<v8::FunctionTemplate> V8TestObjCache = ConfigureV8TestObjTemplate(GetRawTemplate());
-    return V8TestObjCache;
+    V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
+    V8BindingPerIsolateData::TemplateMap::iterator result = data->templateMap().find(&info);
+    if (result != data->templateMap().end())
+        return result->second;
+
+    v8::HandleScope handleScope;
+    v8::Persistent<v8::FunctionTemplate> templ =
+        ConfigureV8TestObjTemplate(GetRawTemplate());
+    data->templateMap().add(&info, templ);
+    return templ;
 }
 
 bool V8TestObj::HasInstance(v8::Handle<v8::Value> value)

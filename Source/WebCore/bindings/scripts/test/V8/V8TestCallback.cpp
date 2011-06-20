@@ -132,7 +132,7 @@ bool V8TestCallback::callbackWithClass2Param(Class2* class2Param, const String& 
     return !invokeCallback(m_callback, 2, argv, callbackReturnValue, scriptExecutionContext());
 }
 
-bool V8TestCallback::callbackWithStringList(PassRefPtr<DOMStringList> listParam)
+bool V8TestCallback::callbackWithStringList(RefPtr<DOMStringList> listParam)
 {
     if (!canInvokeCallback())
         return true;

@@ -35,6 +35,7 @@
 #include "ScriptArguments.h"
 #include "ScriptCallStack.h"
 #include "ScriptCallStackFactory.h"
+#include "ScriptController.h"
 #include "SerializedScriptValue.h"
 #include "TestObj.h"
 #include <runtime/Error.h>
@@ -1273,7 +1274,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGe
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    imp->withDynamicFrameAndUserGesture(dynamicFrame, intArg, processingUserGesture());
+    imp->withDynamicFrameAndUserGesture(dynamicFrame, intArg, ScriptController::processingUserGesture());
     return JSValue::encode(jsUndefined());
 }
 
@@ -1302,7 +1303,7 @@ EncodedJSValue JSC_HOST_CALL jsTestObjPrototypeFunctionWithDynamicFrameAndUserGe
     if (exec->hadException())
         return JSValue::encode(jsUndefined());
 
-    imp->withDynamicFrameAndUserGestureASAD(dynamicFrame, intArg, optionalArg, processingUserGesture());
+    imp->withDynamicFrameAndUserGestureASAD(dynamicFrame, intArg, optionalArg, ScriptController::processingUserGesture());
     return JSValue::encode(jsUndefined());
 }
 

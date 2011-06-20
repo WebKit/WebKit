@@ -62,14 +62,29 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestInterfaceTemplate(v8:
 
 v8::Persistent<v8::FunctionTemplate> V8TestInterface::GetRawTemplate()
 {
-    static v8::Persistent<v8::FunctionTemplate> V8TestInterfaceRawCache = createRawTemplate();
-    return V8TestInterfaceRawCache;
+    V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
+    V8BindingPerIsolateData::TemplateMap::iterator result = data->rawTemplateMap().find(&info);
+    if (result != data->rawTemplateMap().end())
+        return result->second;
+
+    v8::HandleScope handleScope;
+    v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate();
+    data->rawTemplateMap().add(&info, templ);
+    return templ;
 }
 
 v8::Persistent<v8::FunctionTemplate> V8TestInterface::GetTemplate()
 {
-    static v8::Persistent<v8::FunctionTemplate> V8TestInterfaceCache = ConfigureV8TestInterfaceTemplate(GetRawTemplate());
-    return V8TestInterfaceCache;
+    V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
+    V8BindingPerIsolateData::TemplateMap::iterator result = data->templateMap().find(&info);
+    if (result != data->templateMap().end())
+        return result->second;
+
+    v8::HandleScope handleScope;
+    v8::Persistent<v8::FunctionTemplate> templ =
+        ConfigureV8TestInterfaceTemplate(GetRawTemplate());
+    data->templateMap().add(&info, templ);
+    return templ;
 }
 
 bool V8TestInterface::HasInstance(v8::Handle<v8::Value> value)

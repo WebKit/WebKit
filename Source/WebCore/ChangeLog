@@ -1,3 +1,34 @@
+2011-06-20  Eric Seidel  <eric@webkit.org>
+
+        Reviewed by Adam Barth.
+
+        buildbots should run run-bindings-tests
+        https://bugs.webkit.org/show_bug.cgi?id=63001
+
+        The test results were out of date, so I'm updating them.
+        (This is exactly the problem that making the buildbots run them will solve.)
+
+        * bindings/scripts/test/JS/JSTestObj.cpp:
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGesture):
+        (WebCore::jsTestObjPrototypeFunctionWithDynamicFrameAndUserGestureASAD):
+        * bindings/scripts/test/V8/V8TestCallback.cpp:
+        (WebCore::V8TestCallback::callbackWithStringList):
+        * bindings/scripts/test/V8/V8TestCallback.h:
+        * bindings/scripts/test/V8/V8TestInterface.cpp:
+        (WebCore::V8TestInterface::GetRawTemplate):
+        (WebCore::V8TestInterface::GetTemplate):
+        * bindings/scripts/test/V8/V8TestMediaQueryListListener.cpp:
+        (WebCore::V8TestMediaQueryListListener::GetRawTemplate):
+        (WebCore::V8TestMediaQueryListListener::GetTemplate):
+        * bindings/scripts/test/V8/V8TestObj.cpp:
+        (WebCore::TestObjInternal::withDynamicFrameAndUserGestureCallback):
+        (WebCore::TestObjInternal::withDynamicFrameAndUserGestureASADCallback):
+        (WebCore::V8TestObj::GetRawTemplate):
+        (WebCore::V8TestObj::GetTemplate):
+        * bindings/scripts/test/V8/V8TestSerializedScriptValueInterface.cpp:
+        (WebCore::V8TestSerializedScriptValueInterface::GetRawTemplate):
+        (WebCore::V8TestSerializedScriptValueInterface::GetTemplate):
+
 2011-06-20  Cary Clark  <caryclark@google.com>
 
         Reviewed by Eric Seidel.

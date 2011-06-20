@@ -69,14 +69,29 @@ static v8::Persistent<v8::FunctionTemplate> ConfigureV8TestMediaQueryListListene
 
 v8::Persistent<v8::FunctionTemplate> V8TestMediaQueryListListener::GetRawTemplate()
 {
-    static v8::Persistent<v8::FunctionTemplate> V8TestMediaQueryListListenerRawCache = createRawTemplate();
-    return V8TestMediaQueryListListenerRawCache;
+    V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
+    V8BindingPerIsolateData::TemplateMap::iterator result = data->rawTemplateMap().find(&info);
+    if (result != data->rawTemplateMap().end())
+        return result->second;
+
+    v8::HandleScope handleScope;
+    v8::Persistent<v8::FunctionTemplate> templ = createRawTemplate();
+    data->rawTemplateMap().add(&info, templ);
+    return templ;
 }
 
 v8::Persistent<v8::FunctionTemplate> V8TestMediaQueryListListener::GetTemplate()
 {
-    static v8::Persistent<v8::FunctionTemplate> V8TestMediaQueryListListenerCache = ConfigureV8TestMediaQueryListListenerTemplate(GetRawTemplate());
-    return V8TestMediaQueryListListenerCache;
+    V8BindingPerIsolateData* data = V8BindingPerIsolateData::current();
+    V8BindingPerIsolateData::TemplateMap::iterator result = data->templateMap().find(&info);
+    if (result != data->templateMap().end())
+        return result->second;
+
+    v8::HandleScope handleScope;
+    v8::Persistent<v8::FunctionTemplate> templ =
+        ConfigureV8TestMediaQueryListListenerTemplate(GetRawTemplate());
+    data->templateMap().add(&info, templ);
+    return templ;
 }
 
 bool V8TestMediaQueryListListener::HasInstance(v8::Handle<v8::Value> value)
