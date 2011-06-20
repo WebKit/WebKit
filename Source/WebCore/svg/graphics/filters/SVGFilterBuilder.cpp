@@ -32,13 +32,14 @@
 namespace WebCore {
 
 SVGFilterBuilder::SVGFilterBuilder(Filter* filter)
+    : m_lastEffect(0)
 {
     m_builtinEffects.add(SourceGraphic::effectName(), SourceGraphic::create(filter));
     m_builtinEffects.add(SourceAlpha::effectName(), SourceAlpha::create(filter));
     addBuiltinEffects();
 }
 
-void SVGFilterBuilder::add(const AtomicString& id, PassRefPtr<FilterEffect> effect)
+void SVGFilterBuilder::add(const AtomicString& id, RefPtr<FilterEffect> effect)
 {
     if (id.isEmpty()) {
         m_lastEffect = effect;
@@ -67,21 +68,20 @@ FilterEffect* SVGFilterBuilder::getEffectById(const AtomicString& id) const
     return m_namedEffects.get(id).get();
 }
 
-void SVGFilterBuilder::appendEffectToEffectReferences(PassRefPtr<FilterEffect> prpEffect, RenderObject* object)
+void SVGFilterBuilder::appendEffectToEffectReferences(RefPtr<FilterEffect> effectReference, RenderObject* object)
 {
-    RefPtr<FilterEffect> effect = prpEffect;
-
     // The effect must be a newly created filter effect.
-    ASSERT(!m_effectReferences.contains(effect));
+    ASSERT(!m_effectReferences.contains(effectReference));
     ASSERT(object && !m_effectRenderer.contains(object));
-    m_effectReferences.add(effect, FilterEffectSet());
+    m_effectReferences.add(effectReference, FilterEffectSet());
 
+    FilterEffect* effect = effectReference.get();
     unsigned numberOfInputEffects = effect->inputEffects().size();
 
     // It is not possible to add the same value to a set twice.
     for (unsigned i = 0; i < numberOfInputEffects; ++i)
-        effectReferences(effect->inputEffect(i)).add(effect.get());
-    m_effectRenderer.add(object, effect.get());
+        effectReferences(effect->inputEffect(i)).add(effect);
+    m_effectRenderer.add(object, effectReference.get());
 }
 
 void SVGFilterBuilder::clearEffects()

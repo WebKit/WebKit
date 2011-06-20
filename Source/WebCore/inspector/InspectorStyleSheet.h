@@ -55,7 +55,7 @@ class InspectorCSSId {
 public:
     InspectorCSSId() { }
 
-    explicit InspectorCSSId(InspectorObject* value)
+    explicit InspectorCSSId(RefPtr<InspectorObject> value)
     {
         if (!value->getString("styleSheetId", &m_styleSheetId))
             return;
@@ -189,7 +189,7 @@ protected:
     virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*) const;
     virtual bool ensureParsedDataReady();
     virtual PassRefPtr<InspectorStyle> inspectorStyleForId(const InspectorCSSId&);
-    virtual void rememberInspectorStyle(PassRefPtr<InspectorStyle>);
+    virtual void rememberInspectorStyle(RefPtr<InspectorStyle> inspectorStyle);
     virtual void forgetInspectorStyle(CSSStyleDeclaration* style);
 
     // Also accessed by friend class InspectorStyle.
@@ -238,7 +238,7 @@ protected:
     virtual unsigned ruleIndexByStyle(CSSStyleDeclaration*) const { return 0; }
     virtual bool ensureParsedDataReady();
     virtual PassRefPtr<InspectorStyle> inspectorStyleForId(const InspectorCSSId&);
-    virtual void rememberInspectorStyle(PassRefPtr<InspectorStyle>) { }
+    virtual void rememberInspectorStyle(RefPtr<InspectorStyle>) { }
     virtual void forgetInspectorStyle(CSSStyleDeclaration*) { }
 
     // Also accessed by friend class InspectorStyle.
