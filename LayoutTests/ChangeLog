@@ -1,3 +1,19 @@
+2011-06-20  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Darin Adler.
+
+        New baselines for tests for the change to use anonymous blocks in the fix for:
+        https://bugs.webkit.org/show_bug.cgi?id=57901
+
+        * platform/mac/mathml/presentation/over-expected.png:
+        * platform/mac/mathml/presentation/over-expected.txt:
+        * platform/mac/mathml/presentation/row-alignment-expected.png:
+        * platform/mac/mathml/presentation/row-alignment-expected.txt:
+        * platform/mac/mathml/presentation/under-expected.png:
+        * platform/mac/mathml/presentation/under-expected.txt:
+        * platform/mac/mathml/presentation/underover-expected.png:
+        * platform/mac/mathml/presentation/underover-expected.txt:
+
 2011-06-20  Stephen White  <senorblanco@chromium.org>
 
         Unreviewed, test_expectations fix.

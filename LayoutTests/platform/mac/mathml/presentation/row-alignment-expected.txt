@@ -122,14 +122,14 @@ layer at (0,0) size 800x544
                 text run at (1,38) width 7: "y"
             RenderBlock {mo} at (8,0) size 6x85
             RenderBlock {munder} at (14,35) size 13x27
-              RenderBlock {munder} at (0,0) size 13x16
+              RenderBlock (anonymous) at (0,0) size 13x16
                 RenderInline {mi} at (0,0) size 13x16
                   RenderText {#text} at (0,0) size 13x16
                     text run at (0,0) width 13: "\x{220F}"
-              RenderBlock {munder} at (0,11) size 13x16
+              RenderBlock (anonymous) at (0,11) size 13x16
                 RenderInline {mi} at (0,0) size 5x12
-                  RenderText {#text} at (4,3) size 5x12
-                    text run at (4,3) width 5: "x"
+                  RenderText {#text} at (0,3) size 5x12
+                    text run at (0,3) width 5: "x"
             RenderBlock {mfrac} at (27,10) size 54x70
               RenderBlock {mfrac} at (0,0) size 54x34
                 RenderBlock {mrow} at (3,0) size 48x34

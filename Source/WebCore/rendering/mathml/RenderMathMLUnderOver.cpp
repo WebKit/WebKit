@@ -60,6 +60,7 @@ void RenderMathMLUnderOver::addChild(RenderObject* child, RenderObject* beforeCh
     RenderMathMLBlock* row = new (renderArena()) RenderMathMLBlock(node());
     RefPtr<RenderStyle> rowStyle = makeBlockStyle();
     row->setStyle(rowStyle.release());
+    row->setIsAnonymous(true);
     
     // look through the children for rendered elements counting the blocks so we know what child
     // we are adding
@@ -100,7 +101,7 @@ void RenderMathMLUnderOver::addChild(RenderObject* child, RenderObject* beforeCh
         }
         break;
     default:
-        // munderover shouldn't have more than three children.  In theory we shouldn't 
+        // munderover shouldn't have more than three children. In theory we shouldn't 
         // get here if the MathML is correctly formed, but that isn't a guarantee.
         // We will treat this as another under element and they'll get something funky.
         RenderBlock::addChild(row, beforeChild);
@@ -286,9 +287,8 @@ int RenderMathMLUnderOver::nonOperatorHeight() const
             RenderMathMLBlock* block = toRenderMathMLBlock(current->firstChild());
             if (!block->isRenderMathMLOperator()) 
                 nonOperators += getOffsetHeight(current);
-        } else {
+        } else
             nonOperators += getOffsetHeight(current);
-        }
     }
     return nonOperators;
 }

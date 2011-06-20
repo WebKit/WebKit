@@ -1,3 +1,14 @@
+2011-06-20  Alex Milowski  <alex@milowski.com>
+
+        Reviewed by Darin Adler.
+
+        A change to mark wrapping blocks created by the renderer as anonymous to fix the crash for:
+        https://bugs.webkit.org/show_bug.cgi?id=57901
+
+        * rendering/mathml/RenderMathMLUnderOver.cpp:
+        (WebCore::RenderMathMLUnderOver::addChild):
+        (WebCore::RenderMathMLUnderOver::nonOperatorHeight):
+
 2011-06-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
