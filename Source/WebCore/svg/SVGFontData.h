@@ -35,7 +35,10 @@ public:
 
     virtual ~SVGFontData() { }
 
-    virtual void initializeFontData(SimpleFontData*, int size);
+    virtual void initializeFontData(SimpleFontData*, float fontSize);
+    virtual float widthForSVGGlyph(Glyph, float fontSize) const;
+    virtual bool fillSVGGlyphPage(GlyphPage*, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData*) const;
+    virtual bool applySVGGlyphSelection(WidthIterator&, GlyphData&, bool mirror, int currentCharacter, unsigned& advanceLength) const;
 
     SVGFontFaceElement* svgFontFaceElement() const { return m_svgFontFaceElement; }
 

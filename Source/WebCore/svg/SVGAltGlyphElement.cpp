@@ -101,16 +101,17 @@ RenderObject* SVGAltGlyphElement::createRenderer(RenderArena* arena, RenderStyle
     return new (arena) RenderSVGTSpan(this);
 }
 
-SVGGlyphElement* SVGAltGlyphElement::glyphElement() const
+bool SVGAltGlyphElement::hasValidGlyphElement(String& glyphName) const
 {
-    Element* elt = treeScope()->getElementById(getTarget(fastGetAttribute(XLinkNames::hrefAttr)));
-    if (!elt || !elt->hasTagName(SVGNames::glyphTag))
-        return 0;
-    return static_cast<SVGGlyphElement*>(elt);
+    // FIXME: No support for altGlyphDef/glyphRef.
+    // This is tracked by https://bugs.webkit.org/show_bug.cgi?id=60850.
+    glyphName = getTarget(fastGetAttribute(XLinkNames::hrefAttr));
+    Element* element = treeScope()->getElementById(glyphName);
+    if (!element || !element->hasTagName(SVGNames::glyphTag))
+        return false;
+    return true;
 }
 
 }
 
 #endif // ENABLE(SVG)
-
-// vim:ts=4:noet

@@ -72,7 +72,6 @@ public:
             SVGGlyph& svgGlyph = node->glyphs.last();
             svgGlyph.priority = m_currentPriority++;
             svgGlyph.unicodeStringLength = len;
-            svgGlyph.isValid = true;
             appendToGlyphTable(svgGlyph);
         }
     }

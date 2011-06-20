@@ -126,14 +126,11 @@ GlyphPageTreeNode::~GlyphPageTreeNode()
 
 static bool fill(GlyphPage* pageToFill, unsigned offset, unsigned length, UChar* buffer, unsigned bufferLength, const SimpleFontData* fontData)
 {
-    if (!fontData->isSVGFont())
-        return pageToFill->fill(offset, length, buffer, bufferLength, fontData);
-
-    // SVG Fonts do not use the glyph page cache. Zero fill the glyph
-    // positions and return false to indicate the glyphs were not found.
-    for (unsigned i = 0; i < length; ++i)
-        pageToFill->setGlyphDataForIndex(offset + i, 0, 0);
-    return false;
+#if ENABLE(SVG_FONTS)
+    if (SimpleFontData::AdditionalFontData* additionalFontData = fontData->fontData())
+        return additionalFontData->fillSVGGlyphPage(pageToFill, offset, length, buffer, bufferLength, fontData);
+#endif
+    return pageToFill->fill(offset, length, buffer, bufferLength, fontData);
 }
 
 void GlyphPageTreeNode::initializePage(const FontData* fontData, unsigned pageNumber)

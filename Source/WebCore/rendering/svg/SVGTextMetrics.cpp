@@ -34,7 +34,7 @@ SVGTextMetrics::SVGTextMetrics()
 {
 }
 
-SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText* textRenderer, const TextRun& run, unsigned position, unsigned textLength)
+SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText* textRenderer, const TextRun& run)
 {
     ASSERT(textRenderer);
 
@@ -42,12 +42,10 @@ SVGTextMetrics::SVGTextMetrics(RenderSVGInlineText* textRenderer, const TextRun&
     ASSERT(scalingFactor);
 
     const Font& scaledFont = textRenderer->scaledFont();
-
-    int extraCharsAvailable = textLength - (position + run.length());
     int length = 0;
 
     // Calculate width/height using the scaled font, divide this result by the scalingFactor afterwards.
-    m_width = scaledFont.width(run, extraCharsAvailable, length, m_glyph.name) / scalingFactor;
+    m_width = scaledFont.width(run, length, m_glyph.name) / scalingFactor;
     m_height = scaledFont.fontMetrics().floatHeight() / scalingFactor;
 
     m_glyph.unicodeString = String(run.characters(), length);
@@ -91,13 +89,17 @@ static TextRun constructTextRun(RenderSVGInlineText* text, const UChar* characte
 
     // We handle letter & word spacing ourselves.
     run.disableSpacing();
+
+    // Propagate the maximum length of the characters buffer to the TextRun, even when we're only processing a substring.
+    run.setCharactersLength(text->textLength() - position);
+    ASSERT(run.charactersLength() >= run.length());
     return run;
 }
 
 SVGTextMetrics SVGTextMetrics::measureCharacterRange(RenderSVGInlineText* text, unsigned position, unsigned length)
 {
     ASSERT(text);
-    return SVGTextMetrics(text, constructTextRun(text, text->characters(), position, length), position, text->textLength());
+    return SVGTextMetrics(text, constructTextRun(text, text->characters(), position, length));
 }
 
 }

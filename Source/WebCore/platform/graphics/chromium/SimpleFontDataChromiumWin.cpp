@@ -46,11 +46,6 @@
 
 namespace WebCore {
 
-static inline float scaleEmToUnits(float x, int unitsPerEm)
-{
-    return unitsPerEm ? x / static_cast<float>(unitsPerEm) : x;
-}
-
 void SimpleFontData::platformInit()
 {
     if (!m_platformData.size()) {

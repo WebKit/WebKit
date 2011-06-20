@@ -122,6 +122,11 @@ private:
     float m_xHeight;
 };
 
+static inline float scaleEmToUnits(float x, unsigned unitsPerEm)
+{
+    return unitsPerEm ? x / unitsPerEm : x;
+}
+
 } // namespace WebCore
 
 #endif // FontMetrics_h

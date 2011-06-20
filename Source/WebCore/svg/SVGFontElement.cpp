@@ -111,9 +111,7 @@ void SVGFontElement::registerLigaturesInGlyphCache(Vector<String>& ligatures)
                 
             // This glyph is never meant to be used for rendering, only as identifier as a part of a ligature.
             SVGGlyph newGlyphPart;
-            /* FIXME: Enable this once with the next patch.
             newGlyphPart.isPartOfLigature = true;
-            */
             m_glyphMap.addGlyphByUnicodeString(lookupString, newGlyphPart);
         }
     }
@@ -154,11 +152,9 @@ void SVGFontElement::ensureGlyphCache()
             firstMissingGlyphElement = static_cast<SVGMissingGlyphElement*>(child);
     }
 
-    /* FIXME: Register each character of each ligature, if needed.
-       This is not needed yet, turn it on with the next patch. With the current SVG Fonts code it would break fonts-glyph-04-t.svg
+    // Register each character of each ligature, if needed.
     if (!ligatures.isEmpty())
         registerLigaturesInGlyphCache(ligatures);
-    */
 
     // Register missing-glyph element, if present.
     if (firstMissingGlyphElement) {

@@ -1,3 +1,118 @@
+2011-06-20  Nikolas Zimmermann  <nzimmermann@rim.com>
+
+        Reviewed by Rob Buis.
+
+        Integrate SVG Fonts within GlyphPage concept, removing the special SVG code paths from Font, making it possible to reuse the simple text code path for SVG Fonts
+        https://bugs.webkit.org/show_bug.cgi?id=59085
+
+        font substitution doesn't work for HTML text using SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=17608
+
+        Selection rects are wrong for text with SVG fonts
+        https://bugs.webkit.org/show_bug.cgi?id=25460
+
+        With @font-face, SVG fonts only work as primary, non-segmented
+        https://bugs.webkit.org/show_bug.cgi?id=32227
+
+        When using SVG fonts with @font-face word-spacing and text-align: justify are not being honored
+        https://bugs.webkit.org/show_bug.cgi?id=34236
+
+        SVG @font-face breaks text-overflow: ellipsis
+        https://bugs.webkit.org/show_bug.cgi?id=36840
+
+        REGRESSION: SVG Font selection problems
+        https://bugs.webkit.org/show_bug.cgi?id=41934
+
+        Tests: svg/custom/svg-fonts-fallback.xhtml (for bug 17608, extended the original test from Mark Ambachtsheer)
+               svg/custom/svg-fonts-segmented.xhtml (for bug 32227)
+               svg/custom/svg-fonts-word-spacing.html (for bug 34236, from Michael Lewis)
+               svg/text/select-text-svgfont.html (for bug 25460/41934, from Emil Schutte)
+               svg/text/text-overflow-ellipsis-svgfont.html (for 36840, from Emil Schutte)
+
+        Rewrite the SVG Fonts support to fully integrate within the GlyphPage concept and the "simple" code path used to render platform fonts.
+        That means the special logic for measuring text using SVG Fonts, calculating offset for positions, computing selection rects etc. is all gone now.
+        There's no difference anymore between using a native font or a SVG Font, in terms of these operations.
+
+        This makes text selection using SVG Fonts possible again.
+
+        * features.pri: Temporarily turn of SVG Fonts for Qt, as long as QRawFont support is not available and the fast path is disabled.
+        * page/DOMWindow.idl: Touched file to force Qt regenerating the bindings.
+        * platform/graphics/Font.cpp: Remove SVG Font special cases, the simple code path now handles SVG Fonts as well.
+        (WebCore::Font::drawText):
+        (WebCore::Font::drawEmphasisMarks):
+        (WebCore::Font::width):
+        (WebCore::Font::selectionRectForText):
+        (WebCore::Font::offsetForPosition):
+        (WebCore::Font::codePath):
+        * platform/graphics/Font.h: Pass TextRun to drawGlyphBuffer/drawEmphasisMarks. Add new glyphDataAndPageForCharacter() method which returns a pair
+                                    std::pair<GlyphData, GlyphPage*>, so we know the associated GlyphPage for a certain GlyphData object, which is needed to properly
+                                    handle font fallback glyph matching for SVG Fonts..
+        (WebCore::Font::fontList): Add FontFallbackList accessor.
+        * platform/graphics/FontFallbackList.h: Add getters/setters for glyphPageZero -- SVG Fonts support needs access to these objects from SVGTextRunRenderingContext.
+        (WebCore::FontFallbackList::glyphPageZero):
+        (WebCore::FontFallbackList::glyphPages):
+        (WebCore::FontFallbackList::setGlyphPageZero):
+        (WebCore::FontFallbackList::setGlyphPages):
+        * platform/graphics/FontFastPath.cpp:
+        (WebCore::Font::glyphDataForCharacter): Move implementation to glyphDataAndPageForCharacter(), and use that method from here.
+        (WebCore::Font::glyphDataAndPageForCharacter): Does the same as before, just returns an additional GlyphPage* pointer.
+        (WebCore::Font::getEmphasisMarkGlyphData): Remove SVG Fonts special case.
+        (WebCore::Font::drawGlyphBuffer): Ditto.
+        * platform/graphics/FontMetrics.h:
+        (WebCore::scaleEmToUnits): Refactored scaleEmToUnits free function from SimpleFontDataMac/CGWin to share with SVGFontData/SVGTextRunRenderingContext.
+        * platform/graphics/GlyphPageTreeNode.cpp:
+        (WebCore::fill): Stop skipping SVG Fonts, they now also fill the GlyphPage using the glyphs defined in the SVG Font.
+        * platform/graphics/SVGGlyph.h: s/isValid/isPartOfLigature/. Its usage has been changed.
+        (WebCore::SVGGlyph::SVGGlyph):
+        (WebCore::SVGGlyph::operator==):
+        * platform/graphics/SimpleFontData.cpp: Change font size to be a float, not an int.
+        (WebCore::SimpleFontData::SimpleFontData):
+        * platform/graphics/SimpleFontData.h: Add new pure virtual methods to the AdditionalFontData interface, to be implemented in SVGFontData.
+        (WebCore::SimpleFontData::widthForGlyph): Call widthForSVGGlyph, if we encounter a SVG glyph.
+        * platform/graphics/TextRun.h: 
+        * platform/graphics/WidthIterator.cpp:
+        (WebCore::WidthIterator::glyphDataForCharacter):
+        (WebCore::WidthIterator::advance):
+        * platform/graphics/WidthIterator.h: Store several new members needed for SVG Fonts support (last processed glyph name used for kerning pair lookup)
+                                             and a map mapping each character of a text to its arabic-form (if needed, to perform SVG glyph selection for Arabic text).
+        (WebCore::WidthIterator::run):
+        (WebCore::WidthIterator::runWidthSoFar):
+        (WebCore::WidthIterator::lastGlyphName):
+        (WebCore::WidthIterator::setLastGlyphName):
+        (WebCore::WidthIterator::arabicForms):
+        * platform/graphics/chromium/SimpleFontDataChromiumWin.cpp: Use new scaleEmToUnits free function from FontMetrics.h.
+        * platform/graphics/mac/SimpleFontDataMac.mm: Ditto.
+        * platform/graphics/win/SimpleFontDataCGWin.cpp: Ditto.
+        * rendering/svg/SVGTextMetrics.cpp:
+        (WebCore::SVGTextMetrics::SVGTextMetrics):
+        (WebCore::constructTextRun):
+        (WebCore::SVGTextMetrics::measureCharacterRange):
+        * rendering/svg/SVGTextMetrics.h:
+        * rendering/svg/SVGTextRunRenderingContext.cpp: Remove drawTextUsingSVGFont/floatWidthUsingSVGFont/selectionRectForTextUsingSVGFont/offsetForPositionForTextUsingSVGFont.
+        (WebCore::firstParentRendererForNonTextNode): Don't assert node() exists, doesn't hold true for generated render objects.
+        (WebCore::renderObjectFromRun): Renamed from referencingRenderObjectFromRun.
+        (WebCore::SVGTextRunRenderingContext::floatWidthUsingSVGFont): Remove extra "extraCharsAvailable" parameter, now solves via TextRun::charactersLength().
+        (WebCore::calculateEmUnitToPixelScaleFactor): Add helper method.
+        (WebCore::SVGTextRunRenderingContext::drawSVGGlyphs): Main drawing method, this actually creates/renders Paths.
+        (WebCore::SVGTextRunRenderingContext::glyphDataForCharacter): Part 1/2 of SVG Glyph selection code.
+        * rendering/svg/SVGTextRunRenderingContext.h:
+        * svg/SVGAltGlyphElement.cpp:
+        (WebCore::SVGAltGlyphElement::hasValidGlyphElement):
+        * svg/SVGAltGlyphElement.h:
+        * svg/SVGFontData.cpp:
+        (WebCore::calculateEmUnitToPixelScaleFactor): Add helper method.
+        (WebCore::SVGFontData::initializeFontData): Changed font size from int to float.
+        (WebCore::SVGFontData::widthForSVGGlyph): Lookup a SVGGlyph from a Glyph using the glyph table in SVGFontElement and calculate its width.
+        (WebCore::SVGFontData::applySVGGlyphSelection): Part 2/2 of SVG Glyph selection code.
+        (WebCore::SVGFontData::fillSVGGlyphPage): Fill GlyphPage using glyphs defined in the SVG Font.
+        * svg/SVGFontData.h:
+        * svg/SVGFontElement.cpp:
+        (WebCore::SVGFontElement::registerLigaturesInGlyphCache): Enable ligature registration for the use within GlyphPage.
+        (WebCore::SVGFontElement::ensureGlyphCache):
+        * svg/SVGGlyphMap.h:
+        (WebCore::SVGGlyphMap::addGlyphByUnicodeString): Remove setting isValid, it's not needed anymore and gone.
+        * svg/svgtags.in: Surround vkern in ENABLE_SVG_FONTS block.
+
 2011-06-19  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.

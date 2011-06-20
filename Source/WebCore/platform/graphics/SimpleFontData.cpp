@@ -56,8 +56,8 @@ SimpleFontData::SimpleFontData(const FontPlatformData& platformData, bool isCust
     platformCharWidthInit();
 }
 
-SimpleFontData::SimpleFontData(PassOwnPtr<AdditionalFontData> fontData, int size, bool syntheticBold, bool syntheticItalic)
-    : m_platformData(FontPlatformData(size, syntheticBold, syntheticItalic))
+SimpleFontData::SimpleFontData(PassOwnPtr<AdditionalFontData> fontData, float fontSize, bool syntheticBold, bool syntheticItalic)
+    : m_platformData(FontPlatformData(fontSize, syntheticBold, syntheticItalic))
     , m_fontData(fontData)
     , m_treatAsFixedPitch(false)
     , m_isCustomFont(true)
@@ -66,7 +66,7 @@ SimpleFontData::SimpleFontData(PassOwnPtr<AdditionalFontData> fontData, int size
     , m_isBrokenIdeographFallback(false)
     , m_hasVerticalGlyphs(false)
 {
-    m_fontData->initializeFontData(this, size);
+    m_fontData->initializeFontData(this, fontSize);
 }
 
 #if !(PLATFORM(QT) && !HAVE(QRAWFONT))

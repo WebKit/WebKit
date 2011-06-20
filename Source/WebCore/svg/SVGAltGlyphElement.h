@@ -40,7 +40,7 @@ public:
     const AtomicString& format() const;
     void setFormat(const AtomicString&, ExceptionCode&);
 
-    SVGGlyphElement* glyphElement() const;
+    bool hasValidGlyphElement(String& glyphName) const;
 
 private:
     SVGAltGlyphElement(const QualifiedName&, Document*);

@@ -74,14 +74,29 @@ WidthIterator::WidthIterator(const Font* font, const TextRun& run, HashSet<const
     }
 }
 
-void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
+GlyphData WidthIterator::glyphDataForCharacter(UChar32 character, bool mirror, int currentCharacter, unsigned& advanceLength)
+{
+    ASSERT(m_font);
+
+#if ENABLE(SVG_FONTS)
+    if (TextRun::RenderingContext* renderingContext = m_run.renderingContext())
+        return renderingContext->glyphDataForCharacter(*m_font, m_run, *this, character, mirror, currentCharacter, advanceLength);
+#else
+    UNUSED_PARAM(currentCharacter);
+    UNUSED_PARAM(advanceLength);
+#endif
+
+    return m_font->glyphDataForCharacter(character, mirror);
+}
+
+unsigned WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
 {
     if (offset > m_end)
         offset = m_end;
 
     int currentCharacter = m_currentCharacter;
     if (currentCharacter >= offset)
-        return;
+        return 0;
 
     const UChar* cp = m_run.data(currentCharacter);
 
@@ -123,7 +138,8 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             }
         }
 
-        const GlyphData& glyphData = m_font->glyphDataForCharacter(c, rtl);
+        unsigned advanceLength = clusterLength;
+        const GlyphData& glyphData = glyphDataForCharacter(c, rtl, currentCharacter, advanceLength);
         Glyph glyph = glyphData.glyph;
         const SimpleFontData* fontData = glyphData.fontData;
 
@@ -206,8 +222,8 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
             glyph = 0;
 
         // Advance past the character we just dealt with.
-        cp += clusterLength;
-        currentCharacter += clusterLength;
+        cp += advanceLength;
+        currentCharacter += advanceLength;
 
         m_runWidthSoFar += width;
 
@@ -221,7 +237,9 @@ void WidthIterator::advance(int offset, GlyphBuffer* glyphBuffer)
         }
     }
 
+    unsigned consumedCharacters = currentCharacter - m_currentCharacter;
     m_currentCharacter = currentCharacter;
+    return consumedCharacters;
 }
 
 bool WidthIterator::advanceOneCharacter(float& width, GlyphBuffer* glyphBuffer)
