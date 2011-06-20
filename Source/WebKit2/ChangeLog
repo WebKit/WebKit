@@ -1,3 +1,9 @@
+2011-06-19  MORITA Hajime <morrita@google.com>
+
+        Unreviewed wincairo build fix.
+
+        * win/WebKit2CFLite.def:
+
 2011-06-19  MORITA Hajime  <morrita@google.com>
 
         Reviewed by Dimitri Glazkov.
