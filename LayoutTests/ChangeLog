@@ -1,3 +1,11 @@
+2011-06-20  Ryosuke Niwa  <rniwa@webkit.org>
+
+        Qt Rebaseline for r89257.
+
+        * platform/qt/fast/tokenizer/002-expected.txt:
+        * platform/qt/fast/tokenizer/external-script-document-write_2-expected.txt:
+        * platform/qt/fast/tokenizer/script_extra_close-expected.txt:
+
 2011-06-20  Martin Robinson  <mrobinson@igalia.com>
 
         Rebaseline some tests for GTK+ after r89257.
