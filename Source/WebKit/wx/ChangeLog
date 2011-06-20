@@ -1,3 +1,10 @@
+2011-06-20  Kevin Ollivier  <kevino@theolliviers.com>
+
+        [wx] Unreviewed build fix after method rename.
+
+        * WebKitSupport/ChromeClientWx.cpp:
+        (WebCore::ChromeClientWx::loadIconForFiles):
+
 2011-06-18  Dimitri Glazkov  <dglazkov@chromium.org>
 
         Reviewed by Darin Adler.
