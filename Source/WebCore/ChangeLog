@@ -1,3 +1,20 @@
+2011-06-19  Mads Ager  <ager@chromium.org>
+
+        Reviewed by Adam Barth.
+
+        [V8] Fix WebGL bindings for subarrays
+        https://bugs.webkit.org/show_bug.cgi?id=62864
+
+        Mark WebGL subarrays as independent of other DOM objects in the
+        V8 bindings. This allows us to clean them up independently which
+        greatly improves performance.
+
+        * bindings/v8/V8Proxy.h:
+        (WebCore::toV8Independent):
+        * bindings/v8/custom/V8ArrayBufferViewCustom.h:
+        (WebCore::constructWebGLArrayWithArrayBufferArgument):
+        (WebCore::constructWebGLArray):
+
 2011-06-20  Yuta Kitamura  <yutak@chromium.org>
 
         Unreviewed build fix for Chromium Clang builders.
