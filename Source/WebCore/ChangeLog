@@ -1,3 +1,9 @@
+2011-06-20  Yuta Kitamura  <yutak@chromium.org>
+
+        Unreviewed build fix for Chromium Clang builders.
+
+        * platform/graphics/FontFallbackList.h: Declare SVGTextRunRenderingContext as class, not struct.
+
 2011-06-20  MORITA Hajime <morrita@google.com>
 
         Unreviewed GTK build fix.

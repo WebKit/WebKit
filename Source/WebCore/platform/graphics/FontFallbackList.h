@@ -57,7 +57,7 @@ public:
     const GlyphPages& glyphPages() const { return m_pages; }
 
 private:
-    friend struct SVGTextRunRenderingContext;
+    friend class SVGTextRunRenderingContext;
     void setGlyphPageZero(GlyphPageTreeNode* pageZero) { m_pageZero = pageZero; }
     void setGlyphPages(const GlyphPages& pages) { m_pages = pages; }
 
