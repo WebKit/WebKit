@@ -568,16 +568,13 @@ class Manager:
                 else:
                     tests_by_dir.setdefault(directory, [])
                     tests_by_dir[directory].append(test_input)
-            # Sort by the number of tests in the dir so that the ones with the
-            # most tests get run first in order to maximize parallelization.
-            # Number of tests is a good enough, but not perfect, approximation
-            # of how long that set of tests will take to run. We can't just use
-            # a PriorityQueue until we move to Python 2.6.
             for directory in tests_by_dir:
                 test_list = tests_by_dir[directory]
                 test_list_tuple = (directory, test_list)
                 test_lists.append(test_list_tuple)
-            test_lists.sort(lambda a, b: cmp(len(b[1]), len(a[1])))
+
+            # Sort the shards by directory name.
+            test_lists.sort(lambda a, b: cmp(a[0], b[0]))
 
         # Put the http tests first. There are only a couple hundred of them,
         # but each http test takes a very long time to run, so sorting by the
