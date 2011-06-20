@@ -1,3 +1,16 @@
+2011-06-20  Tim Horton  <timothy_horton@apple.com>
+
+        Reviewed by Darin Adler.
+
+        Incorrect clamping on SVG masks when root element is not located at (0,0)
+        https://bugs.webkit.org/show_bug.cgi?id=63019
+
+        * platform/mac/svg/custom/absolute-root-position-masking-expected.png: Added.
+        * platform/mac/svg/custom/absolute-root-position-masking-expected.txt: Added.
+        * platform/qt/svg/custom/absolute-root-position-masking-expected.png: Added.
+        * platform/qt/svg/custom/absolute-root-position-masking-expected.txt: Added.
+        * svg/custom/absolute-root-position-masking.xhtml: Added.
+
 2011-06-20  Kenneth Russell  <kbr@google.com>
 
         Unreviewed.

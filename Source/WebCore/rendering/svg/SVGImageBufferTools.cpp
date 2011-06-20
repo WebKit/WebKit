@@ -119,7 +119,7 @@ FloatRect SVGImageBufferTools::clampedAbsoluteTargetRectForRenderer(const Render
 
     const RenderSVGRoot* svgRoot = SVGRenderSupport::findTreeRootObject(renderer);
     FloatRect clampedAbsoluteTargetRect = absoluteTargetRect;
-    clampedAbsoluteTargetRect.intersect(svgRoot->contentBoxRect());
+    clampedAbsoluteTargetRect.intersect(svgRoot->frameRect());
     return clampedAbsoluteTargetRect;
 }
 
