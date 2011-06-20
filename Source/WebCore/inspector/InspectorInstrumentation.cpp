@@ -162,6 +162,8 @@ void InspectorInstrumentation::didInvalidateStyleAttrImpl(InstrumentingAgents* i
 {
     if (InspectorDOMAgent* domAgent = instrumentingAgents->inspectorDOMAgent())
         domAgent->didInvalidateStyleAttr(node);
+    if (InspectorDOMDebuggerAgent* domDebuggerAgent = instrumentingAgents->inspectorDOMDebuggerAgent())
+        domDebuggerAgent->didInvalidateStyleAttr(node);
 }
 
 void InspectorInstrumentation::mouseDidMoveOverElementImpl(InstrumentingAgents* instrumentingAgents, const HitTestResult& result, unsigned modifierFlags)

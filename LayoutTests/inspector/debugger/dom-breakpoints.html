@@ -18,6 +18,12 @@ function modifyAttribute(elementId, name, value)
     element.setAttribute(name, value);
 }
 
+function modifyStyleAttribute(elementId, name, value)
+{
+    var element = document.getElementById(elementId);
+    element.style.setProperty(name, value);
+}
+
 function removeElement(elementId)
 {
     var element = document.getElementById(elementId);
@@ -76,6 +82,22 @@ function test()
             InspectorTest.addResult("Modify rootElement className.");
             waitUntilPausedAndDumpStack(step2);
     
+            function step2(callFrames)
+            {
+                pane._removeBreakpoint(rootElement, pane._breakpointTypes.AttributeModified);
+                next();
+            }
+        },
+
+        function testModifyStyleAttribute(next)
+        {
+            InspectorTest.addResult("Test that 'Attribute Modified' breakpoint is hit when modifying style attribute.");
+            pane._setBreakpoint(rootElement, pane._breakpointTypes.AttributeModified, true);
+            InspectorTest.addResult("Set 'Attribute Modified' DOM breakpoint on rootElement.");
+            InspectorTest.evaluateInPageWithTimeout("modifyStyleAttribute('rootElement', 'color', 'green')");
+            InspectorTest.addResult("Modify rootElement style.color attribute.");
+            waitUntilPausedAndDumpStack(step2);
+
             function step2(callFrames)
             {
                 pane._removeBreakpoint(rootElement, pane._breakpointTypes.AttributeModified);
@@ -167,7 +189,7 @@ function test()
 Tests DOM breakpoints. <a href="https://bugs.webkit.org/show_bug.cgi?id=42886">Bug 42886</a>
 </p>
 
-<div id="rootElement">
+<div id="rootElement" style="color: red">
 <div id="elementToRemove"></div>
 </div>
 

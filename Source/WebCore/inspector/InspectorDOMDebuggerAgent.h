@@ -72,6 +72,7 @@ public:
 
     // InspectorInstrumentation API
     void willInsertDOMNode(Node*, Node* parent);
+    void didInvalidateStyleAttr(Node*);
     void didInsertDOMNode(Node*);
     void willRemoveDOMNode(Node*);
     void didRemoveDOMNode(Node*);

@@ -1,3 +1,20 @@
+2011-06-20  Ilya Tikhonovsky  <loislo@chromium.org>
+
+        Reviewed by Yury Semikhatsky.
+
+        Web Inspector: It would be useful to be able to pause on element's style change.
+        https://bugs.webkit.org/show_bug.cgi?id=62982
+
+        Current workaround is to use mutation events but it's awkward and doesn't
+        compare _usability-wise_ to what could be implemented as native support in web inspector.
+        In complex applications, being able to see which code causes element to change its style is indispensable.
+
+        * inspector/InspectorDOMDebuggerAgent.cpp:
+        (WebCore::InspectorDOMDebuggerAgent::didInvalidateStyleAttr):
+        * inspector/InspectorDOMDebuggerAgent.h:
+        * inspector/InspectorInstrumentation.cpp:
+        (WebCore::InspectorInstrumentation::didInvalidateStyleAttrImpl):
+
 2011-06-19  Mads Ager  <ager@chromium.org>
 
         Reviewed by Adam Barth.

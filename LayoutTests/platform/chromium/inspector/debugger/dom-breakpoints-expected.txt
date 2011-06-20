@@ -28,7 +28,7 @@ Test that 'Subtree Modified' breakpoint is hit when removing a child.
 Remove grandchildElement.
 Script execution paused.
 Call stack:
-    0) removeElement (dom-breakpoints.html:24)
+    0) removeElement (dom-breakpoints.html:30)
     1)  (:1)
 Paused on a "Subtree Modified" breakpoint set on div#rootElement, because its descendant div#grandchildElement was removed.
 Script execution resumed.
@@ -44,13 +44,24 @@ Call stack:
 Paused on a "Attribute Modified" breakpoint set on div#rootElement.
 Script execution resumed.
 
+Running: testModifyStyleAttribute
+Test that 'Attribute Modified' breakpoint is hit when modifying style attribute.
+Set 'Attribute Modified' DOM breakpoint on rootElement.
+Modify rootElement style.color attribute.
+Script execution paused.
+Call stack:
+    0) modifyStyleAttribute (dom-breakpoints.html:24)
+    1)  (:1)
+Paused on a "Attribute Modified" breakpoint set on div#rootElement.
+Script execution resumed.
+
 Running: testRemoveNode
 Test that 'Node Removed' breakpoint is hit when removing a node.
 Set 'Node Removed' DOM breakpoint on elementToRemove.
 Remove elementToRemove.
 Script execution paused.
 Call stack:
-    0) removeElement (dom-breakpoints.html:24)
+    0) removeElement (dom-breakpoints.html:30)
     1)  (:1)
 Paused on a "Node Removed" breakpoint set on div#elementToRemove.
 Script execution resumed.
