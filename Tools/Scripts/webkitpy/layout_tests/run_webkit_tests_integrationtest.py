@@ -351,8 +351,12 @@ class MainTest(unittest.TestCase):
         self.assertEquals(res, 5)
 
     def test_single_file(self):
-        tests_run = get_tests_run(['passes/text.html'], tests_included=True, flatten_batches=True)
-        self.assertEquals(['passes/text.html'], tests_run)
+        # FIXME: We should consider replacing more of the get_tests_run()-style tests
+        # with tests that read the tests_run* files, like this one.
+        fs = port.unit_test_filesystem()
+        tests_run = passing_run(['passes/text.html'], tests_included=True, filesystem=fs)
+        self.assertEquals(fs.read_text_file('/tmp/layout-test-results/tests_run0.txt'),
+                          'passes/text.html\n')
 
     def test_single_file_with_prefix(self):
         tests_run = get_tests_run(['LayoutTests/passes/text.html'], tests_included=True, flatten_batches=True)

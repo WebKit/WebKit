@@ -205,8 +205,8 @@ class Worker(manager_worker_broker.AbstractWorker):
 
     def clean_up_after_test(self, test_input, result):
         self._batch_count += 1
-        self._tests_run_file.write(test_input.filename + "\n")
         test_name = self._port.relative_test_filename(test_input.filename)
+        self._tests_run_file.write(test_name + "\n")
 
         if result.failures:
             # Check and kill DumpRenderTree if we need to.

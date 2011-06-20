@@ -752,7 +752,7 @@ for my $test (@tests) {
 
     my $startTime = time if $report10Slowest;
 
-    print $tests_run_fh "$testDirectory/$test\n";
+    print $tests_run_fh "$test\n";
 
     # Try to read expected hash file for pixel tests
     my $suffixExpectedHash = "";

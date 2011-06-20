@@ -1,3 +1,13 @@
+2011-06-20  Dirk Pranke  <dpranke@chromium.org>
+
+        Reviewed by Ojan Vafai.
+
+        we should only log the test names to the tests_run.txt files during layout_tests
+        https://bugs.webkit.org/show_bug.cgi?id=62751
+
+        * Scripts/old-run-webkit-tests:
+        * Scripts/webkitpy/layout_tests/layout_package/worker.py:
+
 2011-06-20  Eric Seidel  <eric@webkit.org>
 
         Reviewed by Adam Barth.
