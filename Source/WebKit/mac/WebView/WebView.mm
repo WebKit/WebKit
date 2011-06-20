@@ -103,7 +103,6 @@
 #import "WebTextIterator.h"
 #import "WebUIDelegate.h"
 #import "WebUIDelegatePrivate.h"
-#import "WebVideoFullscreenController.h"
 #import <CoreFoundation/CFSet.h>
 #import <Foundation/NSURLConnection.h>
 #import <JavaScriptCore/APICast.h>
@@ -161,6 +160,7 @@
 #import <WebCore/ThreadCheck.h>
 #import <WebCore/WebCoreObjCExtras.h>
 #import <WebCore/WebCoreView.h>
+#import <WebCore/WebVideoFullscreenController.h>
 #import <WebCore/Widget.h>
 #import <WebKit/DOM.h>
 #import <WebKit/DOMExtensions.h>

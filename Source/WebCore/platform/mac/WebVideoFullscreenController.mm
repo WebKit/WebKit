@@ -23,13 +23,15 @@
  * THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
+
 #if ENABLE(VIDEO)
 
 #import "WebVideoFullscreenController.h"
 
-#import "WebTypesInternal.h"
 #import "WebVideoFullscreenHUDWindowController.h"
 #import "WebWindowAnimation.h"
+#import <HIToolbox/MacApplication.h>
 #import <IOKit/pwr_mgt/IOPMLib.h>
 #import <OSServices/Power.h>
 #import <QTKit/QTKit.h>
@@ -221,6 +223,7 @@ static const NSTimeInterval tickleTimerInterval = 1.0;
 
 - (void)applicationDidResignActive:(NSNotification*)notification
 {   
+    UNUSED_PARAM(notification);
     // Check to see if the fullscreenWindow is on the active space; this function is available
     // on 10.6 and later, so default to YES if the function is not available:
     NSWindow* fullscreenWindow = [self fullscreenWindow];
@@ -327,6 +330,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 
 - (void)applicationDidChangeScreenParameters:(NSNotification*)notification
 {
+    UNUSED_PARAM(notification);
     // The user may have changed the main screen by moving the menu bar, or they may have changed
     // the Dock's size or location, or they may have changed the fullscreen screen's dimensions.  
     // Update our presentation parameters, and ensure that the full screen window occupies the 
@@ -605,6 +609,7 @@ static NSWindow *createBackgroundFullscreenWindow(NSRect frame, int level)
 
 - (void)mouseMoved:(NSEvent *)theEvent
 {
+    UNUSED_PARAM(theEvent);
     [[self windowController] fadeHUDIn];
 }
 

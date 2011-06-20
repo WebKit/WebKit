@@ -1,3 +1,54 @@
+2011-06-01  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Move Full Screen Controllers into WebCore.
+
+        Remove dependency on QTKit from wekitExitFullscreen()
+        https://bugs.webkit.org/show_bug.cgi?id=61843
+
+        No new tests; the existing media full screen tests are sufficient.
+
+        * WebCore.exp.in: Add new exports.
+        * WebCore.xcodeproj/project.pbxproj: Add references to moved files.
+        * platform/mac/WebCoreSystemInterface.h: Add new WCSI interfaces to WKSI functions.
+        * platform/mac/WebCoreSystemInterface.mm:
+        * platform/mac/WebVideoFullscreenController.h: Renamed from Source/WebKit/mac/WebView/WebVideoFullscreenController.h.
+        * platform/mac/WebVideoFullscreenController.mm: Renamed from Source/WebKit/mac/WebView/WebVideoFullscreenController.mm.
+        
+        The following functions have had UNUSED_PARAM added:
+        (-[WebVideoFullscreenController applicationDidResignActive:]):
+        (-[WebVideoFullscreenController applicationDidChangeScreenParameters:]):
+        (-[WebVideoFullscreenWindow mouseMoved:]):
+
+Source/WebKit/mac/WebView/WebVideoFullscreenHUDWindowController.h.
+        * platform/mac/WebVideoFullscreenHUDWindowController.mm: Renamed from Source/WebKit/mac/WebView/WebVideoFullscreenHUDWindowController.mm.
+        
+        The following functions have had UNUSED_PARAM added:
+        (-[WebVideoFullscreenHUDWindow cancelOperation:]):
+        (-[WebVideoFullscreenHUDWindowController timelinePositionChanged:]):
+        (-[WebVideoFullscreenHUDWindowController setVolumeToZero:]):
+        (-[WebVideoFullscreenHUDWindowController setVolumeToMaximum:]):
+        (-[WebVideoFullscreenHUDWindowController togglePlaying:]):
+        (-[WebVideoFullscreenHUDWindowController mouseEntered:]):
+        (-[WebVideoFullscreenHUDWindowController mouseExited:]):
+        (-[WebVideoFullscreenHUDWindowController rewind:]):
+        (-[WebVideoFullscreenHUDWindowController fastForward:]):
+        (-[WebVideoFullscreenHUDWindowController windowDidExpose:]):
+        (-[WebVideoFullscreenHUDWindowController windowDidClose:]):
+
+        The following functions have had WKSI calls converted to WCSI ones:
+        (createControlWithMediaUIControlType):
+        (createTimeTextField):
+        
+        * platform/mac/WebWindowAnimation.h: Renamed from Source/WebKit/mac/WebView/WebWindowAnimation.h.
+        * platform/mac/WebWindowAnimation.mm: Renamed from Source/WebKit/mac/WebView/WebWindowAnimation.m.
+        (WebWindowAnimationDurationFromDuration):
+
+        The following functions have had WKSI calls converted to WCSI ones:
+        (-[WebWindowScaleAnimation setCurrentProgress:]):
+        (-[WebWindowFadeAnimation initWithDuration:window:initialAlpha:finalAlpha:]):
+
 2011-06-20  Mark Pilgrim  <pilgrim@chromium.org>
 
         Reviewed by Adam Barth.

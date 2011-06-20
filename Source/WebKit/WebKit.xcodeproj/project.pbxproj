@@ -20,12 +20,6 @@
 		0AEBFF640F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0AEBFF620F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm */; };
 		0F30985F11ECFE4500F559DF /* WebRenderLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 0F30985D11ECFE4400F559DF /* WebRenderLayer.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		0F30986011ECFE4500F559DF /* WebRenderLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0F30985E11ECFE4500F559DF /* WebRenderLayer.mm */; };
-		0FD3B0F21076C3E900039B96 /* WebVideoFullscreenController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3B0EE1076C3E900039B96 /* WebVideoFullscreenController.h */; };
-		0FD3B0F31076C3E900039B96 /* WebVideoFullscreenController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FD3B0EF1076C3E900039B96 /* WebVideoFullscreenController.mm */; };
-		0FD3B0F41076C3E900039B96 /* WebVideoFullscreenHUDWindowController.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3B0F01076C3E900039B96 /* WebVideoFullscreenHUDWindowController.h */; };
-		0FD3B0F51076C3E900039B96 /* WebVideoFullscreenHUDWindowController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 0FD3B0F11076C3E900039B96 /* WebVideoFullscreenHUDWindowController.mm */; };
-		0FD3B0F81076C3F700039B96 /* WebWindowAnimation.h in Headers */ = {isa = PBXBuildFile; fileRef = 0FD3B0F61076C3F700039B96 /* WebWindowAnimation.h */; };
-		0FD3B0F91076C3F700039B96 /* WebWindowAnimation.m in Sources */ = {isa = PBXBuildFile; fileRef = 0FD3B0F71076C3F700039B96 /* WebWindowAnimation.m */; };
 		14D8252F0AF955090004F057 /* WebChromeClient.h in Headers */ = {isa = PBXBuildFile; fileRef = 14D8252D0AF955090004F057 /* WebChromeClient.h */; };
 		14D825300AF955090004F057 /* WebChromeClient.mm in Sources */ = {isa = PBXBuildFile; fileRef = 14D8252E0AF955090004F057 /* WebChromeClient.mm */; };
 		1A20D08B0ED384F20043FA9F /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1A20D08A0ED384F20043FA9F /* QuartzCore.framework */; };
@@ -404,12 +398,6 @@
 		0AEBFF620F9FA8BE000D486B /* WebNetscapeContainerCheckPrivate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebNetscapeContainerCheckPrivate.mm; sourceTree = "<group>"; };
 		0F30985D11ECFE4400F559DF /* WebRenderLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebRenderLayer.h; sourceTree = "<group>"; };
 		0F30985E11ECFE4500F559DF /* WebRenderLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebRenderLayer.mm; sourceTree = "<group>"; };
-		0FD3B0EE1076C3E900039B96 /* WebVideoFullscreenController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenController.h; sourceTree = "<group>"; };
-		0FD3B0EF1076C3E900039B96 /* WebVideoFullscreenController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenController.mm; sourceTree = "<group>"; };
-		0FD3B0F01076C3E900039B96 /* WebVideoFullscreenHUDWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebVideoFullscreenHUDWindowController.h; sourceTree = "<group>"; };
-		0FD3B0F11076C3E900039B96 /* WebVideoFullscreenHUDWindowController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebVideoFullscreenHUDWindowController.mm; sourceTree = "<group>"; };
-		0FD3B0F61076C3F700039B96 /* WebWindowAnimation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebWindowAnimation.h; sourceTree = "<group>"; };
-		0FD3B0F71076C3F700039B96 /* WebWindowAnimation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = WebWindowAnimation.m; sourceTree = "<group>"; };
 		14D8252D0AF955090004F057 /* WebChromeClient.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = WebChromeClient.h; sourceTree = "<group>"; };
 		14D8252E0AF955090004F057 /* WebChromeClient.mm */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.objcpp; path = WebChromeClient.mm; sourceTree = "<group>"; };
 		1A20D08A0ED384F20043FA9F /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = /System/Library/Frameworks/QuartzCore.framework; sourceTree = "<absolute>"; };
@@ -1254,10 +1242,6 @@
 				F834AAD60E64B1C700E2737C /* WebTextIterator.mm */,
 				515E27CC0458C86500CA2D3A /* WebUIDelegate.h */,
 				65A7D44A0568AB2600E70EF6 /* WebUIDelegatePrivate.h */,
-				0FD3B0EE1076C3E900039B96 /* WebVideoFullscreenController.h */,
-				0FD3B0EF1076C3E900039B96 /* WebVideoFullscreenController.mm */,
-				0FD3B0F01076C3E900039B96 /* WebVideoFullscreenHUDWindowController.h */,
-				0FD3B0F11076C3E900039B96 /* WebVideoFullscreenHUDWindowController.mm */,
 				51A8B579042834F700CA2D3A /* WebView.h */,
 				51A8B57A042834F700CA2D3A /* WebView.mm */,
 				BC2E464B0FD8A96800A9D9DE /* WebViewData.h */,
@@ -1265,8 +1249,6 @@
 				BC97E7E110963D260010D361 /* WebViewEventHandling.mm */,
 				930D02BB06275F640076701E /* WebViewInternal.h */,
 				51A8B57D0428353A00CA2D3A /* WebViewPrivate.h */,
-				0FD3B0F61076C3F700039B96 /* WebWindowAnimation.h */,
-				0FD3B0F71076C3F700039B96 /* WebWindowAnimation.m */,
 			);
 			name = WebView;
 			path = mac/WebView;
@@ -1628,14 +1610,11 @@
 				939810830824BF01008DF038 /* WebUIDelegatePrivate.h in Headers */,
 				939810150824BF01008DF038 /* WebURLsWithTitles.h in Headers */,
 				C0C5B3EE1177A4A0002B0AEF /* WebUserContentURLPattern.h in Headers */,
-				0FD3B0F21076C3E900039B96 /* WebVideoFullscreenController.h in Headers */,
-				0FD3B0F41076C3E900039B96 /* WebVideoFullscreenHUDWindowController.h in Headers */,
 				939810700824BF01008DF038 /* WebView.h in Headers */,
 				BC2E464D0FD8A96800A9D9DE /* WebViewData.h in Headers */,
 				939810460824BF01008DF038 /* WebViewFactory.h in Headers */,
 				9398109B0824BF01008DF038 /* WebViewInternal.h in Headers */,
 				939810710824BF01008DF038 /* WebViewPrivate.h in Headers */,
-				0FD3B0F81076C3F700039B96 /* WebWindowAnimation.h in Headers */,
 				41F4484F10338E8C0030E55E /* WebWorkersPrivate.h in Headers */,
 				A5DEFC0B11D5331C00885273 /* WebSecurityOriginInternal.h in Headers */,
 				A5DEFC0C11D5331C00885273 /* WebSecurityOriginPrivate.h in Headers */,
@@ -2008,13 +1987,10 @@
 				F834AAD80E64B1C700E2737C /* WebTextIterator.mm in Sources */,
 				939810BE0824BF01008DF038 /* WebURLsWithTitles.m in Sources */,
 				C0C5B3EF1177A4A0002B0AEF /* WebUserContentURLPattern.mm in Sources */,
-				0FD3B0F31076C3E900039B96 /* WebVideoFullscreenController.mm in Sources */,
-				0FD3B0F51076C3E900039B96 /* WebVideoFullscreenHUDWindowController.mm in Sources */,
 				939811070824BF01008DF038 /* WebView.mm in Sources */,
 				BC2E464E0FD8A96800A9D9DE /* WebViewData.mm in Sources */,
 				BC97E7E210963D260010D361 /* WebViewEventHandling.mm in Sources */,
 				939810E80824BF01008DF038 /* WebViewFactory.mm in Sources */,
-				0FD3B0F91076C3F700039B96 /* WebWindowAnimation.m in Sources */,
 				41F4485010338E8C0030E55E /* WebWorkersPrivate.mm in Sources */,
 				A5DEFC0A11D5331C00885273 /* WebSecurityOrigin.mm in Sources */,
 				A5DEFC1011D5343E00885273 /* WebDatabaseQuotaManager.mm in Sources */,

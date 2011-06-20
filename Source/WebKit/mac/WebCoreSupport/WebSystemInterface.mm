@@ -69,6 +69,10 @@ void InitWebCoreSystemInterface(void)
     INIT(HitTestMediaUIPart);
     INIT(InitializeMaximumHTTPConnectionCountPerHost);
     INIT(MeasureMediaUIPart);
+    INIT(CreateMediaUIBackgroundView);
+    INIT(CreateMediaUIControl);
+    INIT(WindowSetAlpha);
+    INIT(WindowSetScaledFrame);
     INIT(MediaControllerThemeAvailable);
     INIT(PopupMenu);
     INIT(SetCGFontRenderingMode);

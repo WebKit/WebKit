@@ -46,6 +46,10 @@ void (*wkDrawMediaSliderTrack)(int themeStyle, CGContextRef context, CGRect rect
 BOOL (*wkHitTestMediaUIPart)(int part, int themeStyle, CGRect bounds, CGPoint point);
 void (*wkDrawMediaUIPart)(int part, int themeStyle, CGContextRef context, CGRect rect, unsigned state);
 void (*wkMeasureMediaUIPart)(int part, int themeStyle, CGRect *bounds, CGSize *naturalSize);
+NSView *(*wkCreateMediaUIBackgroundView)(void);
+NSControl *(*wkCreateMediaUIControl)(int);
+void (*wkWindowSetAlpha)(NSWindow *, float);
+void (*wkWindowSetScaledFrame)(NSWindow *, NSRect, NSRect);
 BOOL (*wkMediaControllerThemeAvailable)(int themeStyle);
 NSString* (*wkGetPreferredExtensionForMIMEType)(NSString*);
 CFStringRef (*wkSignedPublicKeyAndChallengeString)(unsigned keySize, CFStringRef challenge, CFStringRef keyDescription);

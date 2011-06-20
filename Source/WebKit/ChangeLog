@@ -1,3 +1,17 @@
+2011-06-01  Jer Noble  <jer.noble@apple.com>
+
+        Reviewed by Eric Carlson.
+
+        Move Full Screen Controllers into WebCore.
+
+        Remove dependency on QTKit from wekitExitFullscreen()
+        https://bugs.webkit.org/show_bug.cgi?id=61843
+
+        WebVideoFullscreenController, WebVideoFullscreenHUDController, and WebWindowAnimation
+        have been moved into WebCore.
+
+        * WebKit.xcodeproj/project.pbxproj:
+
 2011-06-15  David Kilzer  <ddkilzer@apple.com>
 
         <http://webkit.org/b/62745> Convert WebNSFileManagerExtras.m to Objective-C++

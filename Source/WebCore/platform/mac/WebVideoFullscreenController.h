@@ -52,8 +52,8 @@ namespace WebCore {
     uint32_t _idleDisplaySleepAssertion;
     uint32_t _idleSystemSleepAssertion;
     NSTimer *_tickleTimer;
-    SystemUIMode _savedUIMode;
-    SystemUIOptions _savedUIOptions;
+    uint32_t _savedUIMode;
+    uint32_t _savedUIOptions;
 }
 
 - (id <WebVideoFullscreenControllerDelegate>)delegate;

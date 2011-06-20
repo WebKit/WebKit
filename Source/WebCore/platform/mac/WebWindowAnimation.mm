@@ -23,9 +23,12 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE. 
  */
 
+#import "config.h"
+
 #import "WebWindowAnimation.h"
-#import "WebKitSystemInterface.h"
+#import "WebCoreSystemInterface.h"
 #import <wtf/Assertions.h>
+#import <wtf/UnusedParam.h>
 
 static const CGFloat slowMotionFactor = 10.;
 
@@ -110,7 +113,7 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
     [super setCurrentProgress:progress];
 
     NSRect currentRect = [self currentFrame];
-    WKWindowSetScaledFrame(_window, currentRect, _realFrame);
+    wkWindowSetScaledFrame(_window, currentRect, _realFrame);
     [_subAnimation setCurrentProgress:progress];
 }
 
@@ -176,6 +179,7 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
 
 - (id)initWithDuration:(NSTimeInterval)duration window:(NSWindow *)window initialAlpha:(CGFloat)initialAlpha finalAlpha:(CGFloat)finalAlpha
 {
+    UNUSED_PARAM(duration);
     self = [self init];
     if (!self)
         return nil;    
@@ -203,7 +207,7 @@ static CGFloat squaredDistance(NSPoint point1, NSPoint point2)
     ASSERT(_window);
     [super setCurrentProgress:progress];
 
-    WKWindowSetAlpha(_window, [self currentAlpha]);
+    wkWindowSetAlpha(_window, [self currentAlpha]);
 }
 
 - (void)setWindow:(NSWindow*)window

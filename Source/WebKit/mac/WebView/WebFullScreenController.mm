@@ -29,7 +29,6 @@
 
 #import "WebNSWindowExtras.h"
 #import "WebPreferencesPrivate.h"
-#import "WebWindowAnimation.h"
 #import "WebViewInternal.h"
 #import <IOKit/pwr_mgt/IOPMLib.h>
 #import <OSServices/Power.h>

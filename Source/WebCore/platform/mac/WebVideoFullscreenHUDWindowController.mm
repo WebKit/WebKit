@@ -22,15 +22,17 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#import "config.h"
+
 #if ENABLE(VIDEO)
 
 #import "WebVideoFullscreenHUDWindowController.h"
 
-#import "WebKitSystemInterface.h"
-#import "WebTypesInternal.h"
+#import "WebCoreSystemInterface.h"
 #import <JavaScriptCore/RetainPtr.h>
 #import <JavaScriptCore/UnusedParam.h>
 #import <WebCore/HTMLMediaElement.h>
+#import <WebKitSystemInterface.h>
 
 using namespace WebCore;
 using namespace std;
@@ -102,6 +104,7 @@ static inline CGFloat webkit_CGFloor(CGFloat value)
 
 - (void)cancelOperation:(id)sender
 {
+    UNUSED_PARAM(sender);
     [[self windowController] exitFullscreen:self];
 }
 
@@ -292,11 +295,11 @@ enum {
 static NSControl *createControlWithMediaUIControlType(int controlType, NSRect frame)
 {
 #ifdef HAVE_MEDIA_CONTROL
-    NSControl *control = WKCreateMediaUIControl(controlType);
+    NSControl *control = wkCreateMediaUIControl(controlType);
     [control setFrame:frame];
     return control;
 #else
-    if (controlType == WKMediaUIControlSlider)
+    if (controlType == wkMediaUIControlSlider)
         return [[NSSlider alloc] initWithFrame:frame];
     return [[NSControl alloc] initWithFrame:frame];
 #endif
@@ -341,7 +344,7 @@ static NSTextField *createTimeTextField(NSRect frame)
     ASSERT(window);
 
 #ifdef HAVE_MEDIA_CONTROL
-    NSView *background = WKCreateMediaUIBackgroundView();
+    NSView *background = wkCreateMediaUIBackgroundView();
 #else
     NSView *background = [[NSView alloc] init];
 #endif
@@ -389,7 +392,7 @@ static NSTextField *createTimeTextField(NSRect frame)
     [volumeUpButton release];
 
 #ifdef HAVE_MEDIA_CONTROL
-    _timeline = WKCreateMediaUIControl(WKMediaUIControlTimeline);
+    _timeline = wkCreateMediaUIControl(WKMediaUIControlTimeline);
 #else
     _timeline = [[NSSlider alloc] init];
 #endif
@@ -437,6 +440,7 @@ static NSTextField *createTimeTextField(NSRect frame)
 
 - (void)timelinePositionChanged:(id)sender
 {
+    UNUSED_PARAM(sender);
     [self setCurrentTime:[_timeline floatValue]];
     if (!_isScrubbing) {
         _isScrubbing = YES;
@@ -475,16 +479,19 @@ static NSTextField *createTimeTextField(NSRect frame)
 
 - (void)volumeChanged:(id)sender
 {
+    UNUSED_PARAM(sender);
     [self setVolume:[_volumeSlider doubleValue]];
 }
 
 - (void)setVolumeToZero:(id)sender
 {
+    UNUSED_PARAM(sender);
     [self setVolume:0];
 }
 
 - (void)setVolumeToMaximum:(id)sender
 {
+    UNUSED_PARAM(sender);
     [self setVolume:[self maxVolume]];
 }
 
@@ -543,6 +550,7 @@ static NSTextField *createTimeTextField(NSRect frame)
 
 - (void)togglePlaying:(id)sender
 {
+    UNUSED_PARAM(sender);
     [self setPlaying:![self playing]];
 }
 
@@ -607,6 +615,7 @@ static NSString *timeToString(double time)
 
 - (void)mouseEntered:(NSEvent *)theEvent
 {
+    UNUSED_PARAM(theEvent);
     // Make sure the HUD won't be hidden from now
     _mouseIsInHUD = YES;
     [self fadeWindowIn];
@@ -614,12 +623,14 @@ static NSString *timeToString(double time)
 
 - (void)mouseExited:(NSEvent *)theEvent
 {
+    UNUSED_PARAM(theEvent);
     _mouseIsInHUD = NO;
     [self fadeWindowIn];
 }
 
 - (void)rewind:(id)sender
 {
+    UNUSED_PARAM(sender);
     if (![_delegate mediaElement])
         return;
     [_delegate mediaElement]->rewind(30);
@@ -627,12 +638,14 @@ static NSString *timeToString(double time)
 
 - (void)fastForward:(id)sender
 {
+    UNUSED_PARAM(sender);
     if (![_delegate mediaElement])
         return;
 }
 
 - (void)exitFullscreen:(id)sender
 {
+    UNUSED_PARAM(sender);
     if (_isEndingFullscreen)
         return;
     _isEndingFullscreen = YES;
@@ -643,11 +656,13 @@ static NSString *timeToString(double time)
 
 - (void)windowDidExpose:(NSNotification *)notification
 {
+    UNUSED_PARAM(notification);
     [self scheduleTimeUpdate];
 }
 
 - (void)windowDidClose:(NSNotification *)notification
 {
+    UNUSED_PARAM(notification);
     [self unscheduleTimeUpdate];
 }
 
